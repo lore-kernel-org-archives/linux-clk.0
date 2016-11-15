@@ -1,69 +1,123 @@
-Return-Path: <yamada.masahiro@socionext.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 15 Nov 2016 22:26:15 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] Allwinner clock changes for 4.10
+Message-ID: <20161115212615.lm3guceyfmdjnhfp@lukather>
 MIME-Version: 1.0
-In-Reply-To: <20161124000503.GE6095@codeaurora.org>
-References: <1477503088-26508-1-git-send-email-yamada.masahiro@socionext.com>
- <1477503088-26508-2-git-send-email-yamada.masahiro@socionext.com> <20161124000503.GE6095@codeaurora.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 24 Nov 2016 09:57:32 +0900
-Message-ID: <CAK7LNAQ6XeSHd7DbvD1jWeMfOqk8+R27Q-fNDWtXxpRd=OFgjA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: uniphier: add clock data for cpufreq
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="khrhj25xjddv4u5g"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
 
+--khrhj25xjddv4u5g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-2016-11-24 9:05 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+Hi Mike, Stephen,
 
->> +#if 1
->> +     /*
->> +      * TODO:
->> +      * The return type of .round_rate() is "long", which is 32 bit wide on
->> +      * 32 bit systems.  Clock rate greater than LONG_MAX (~ 2.15 GHz) is
->> +      * treated as an error.  Needs a workaround until the problem is fixed.
->> +      */
->
-> Just curious is the problem internal to the clk framework because
-> of the clk_ops::round_rate design? Or does the consumer, cpufreq
-> in this case, have to deal with rates that are larger than
-> unsigned long on a 32 bit system? If it's just a clk_ops problem
-> and we need to support rates up to 32 bits wide (~ 4.3 GHz) on
-> the system then the driver could be changed to use
-> .determine_rate() ops and that would allow us to use all the bits
-> of unsigned long to figure out rates.
->
-> If the problem is rates even larger than unsigned long on 32 bit
-> systems, then at the least I'd like to see some sort of plan to
-> fix that in the framework before merging code. Hopefully it can
-> be done gradually, but as I start looking at it it seems more and
-> more complicated to support this so this will be a long term
-> project.
->
-> We can discuss the clk API changes needed as well if those are
-> required, but that is another issue that requires changes in
-> other places outside of clk drivers.
->
+Please pull the following patches for the next merge window.
 
-I understand your point, but core frame-work changes
-need more careful review than clk data changes in low-level drivers.
-It is too late to be included in v4.10.
+Thanks!
+Maxime
 
-If I drop 32bit SoC things, and send v2 only for 64bit SoCs,
-is that acceptable for 4.10-rc1?
+The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
 
-Our ARMv8 SoCs are more actively developed, so
-getting 64bit clk data in first will be helpful.
+  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
 
-I postpone the 32bit SoC data until
-I figure out the root cause of the problem
-(and possible change for the API if necessary).
+are available in the git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git sunxi-c=
+lk-for-4.10
 
--- 
-Best Regards
-Masahiro Yamada
+for you to fetch changes up to 0f6f9302b819ca352cfd4f42c18ec08d521f9cae:
+
+  clk: sunxi-ng: sun8i-h3: Set CLK_SET_RATE_PARENT for audio module clocks =
+(2016-11-11 21:47:41 +0100)
+
+----------------------------------------------------------------
+Allwinner clock changes for 4.10
+
+The usual patches from us, but most notably the introduction of the A64
+clocks unit.
+
+----------------------------------------------------------------
+Chen-Yu Tsai (2):
+      clk: sunxi-ng: sun8i-a23: Set CLK_SET_RATE_PARENT for audio module cl=
+ocks
+      clk: sunxi-ng: sun8i-h3: Set CLK_SET_RATE_PARENT for audio module clo=
+cks
+
+Julia Lawall (1):
+      clk: sunxi: mod0: improve function-level documentation
+
+Maxime Ripard (6):
+      clk: sunxi-ng: Rename the internal structures
+      clk: sunxi-ng: Remove the use of rational computations
+      clk: sunxi-ng: Finish to convert to structures for arguments
+      clk: sunxi-ng: Add minimums for all the relevant structures and clocks
+      clk: sunxi-ng: Implement minimum for multipliers
+      clk: sunxi-ng: Add A64 clocks
+
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
+ drivers/clk/sunxi-ng/Kconfig                       |  14 +-
+ drivers/clk/sunxi-ng/Makefile                      |   1 +
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c              | 915 +++++++++++++++++=
+++++
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.h              |  72 ++
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c               |   6 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |  10 +-
+ drivers/clk/sunxi-ng/ccu_div.h                     |   6 +-
+ drivers/clk/sunxi-ng/ccu_frac.c                    |  12 +-
+ drivers/clk/sunxi-ng/ccu_frac.h                    |  14 +-
+ drivers/clk/sunxi-ng/ccu_mp.h                      |   4 +-
+ drivers/clk/sunxi-ng/ccu_mult.c                    |  33 +-
+ drivers/clk/sunxi-ng/ccu_mult.h                    |  17 +-
+ drivers/clk/sunxi-ng/ccu_nk.c                      |  43 +-
+ drivers/clk/sunxi-ng/ccu_nk.h                      |   4 +-
+ drivers/clk/sunxi-ng/ccu_nkm.c                     |  45 +-
+ drivers/clk/sunxi-ng/ccu_nkm.h                     |   6 +-
+ drivers/clk/sunxi-ng/ccu_nkmp.c                    |  55 +-
+ drivers/clk/sunxi-ng/ccu_nkmp.h                    |   8 +-
+ drivers/clk/sunxi-ng/ccu_nm.c                      |  58 +-
+ drivers/clk/sunxi-ng/ccu_nm.h                      |   6 +-
+ drivers/clk/sunxi/clk-mod0.c                       |   2 +-
+ include/dt-bindings/clock/sun50i-a64-ccu.h         | 134 +++
+ include/dt-bindings/reset/sun50i-a64-ccu.h         |  98 +++
+ 24 files changed, 1434 insertions(+), 130 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a64.h
+ create mode 100644 include/dt-bindings/clock/sun50i-a64-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun50i-a64-ccu.h
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--khrhj25xjddv4u5g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYK313AAoJEBx+YmzsjxAgNnsQAIZMa3Fdr2XQdx+xZS7TJrgo
+k1F1HE1pxgx7303aPJzySyKawtZni+gtkwU7cqgvcQjh/2RAxrlq91pkCKgs7i/I
+GaNCEfz3xkjIymd5cRccuOtn9sWER/1PslWaanOqs1ETUha4c+qQwbZBIq0pqACE
+egCTM9YLD4Gkf57TmpkuFpKdQpBTTYrwgLlPfFAPLJEgSP7UQnriGCYsApByuAbs
+jhG3TLl3RelZ32DwV4fZZVoO5gkhXDQvkWqVQsy3q007SmB55081DYSGP3VUCr7v
+h8hskhrkjmOFpdFvoYOy1/X6zhVOEhc8UFWYGT8HFyUbQ4d3l3NumjBfdoeJIsQT
+2G3bZ6A+kFmlvPP21ftwI0kbzthksR3RbOK7GiRiQbZ806oYG3kcmnxPXJnIdt0R
+G1/T7viecW+cfE2RHsGjHaJYWSAG2nCdLO6ZBJubbagG/7PnOWG6NmKvjyC4AnIm
+PLBSiLwvFpHljv7kRkDF/ezEgxYSotrBLa3c6viuXd9/tfcyjr9fm1I9vBzmbI//
+aWBBcN6wkcyEOvE92OU4RHg7xGX2fG1g3hpnOivIPG9fPD1lJ0zBuf+DK22qG44h
+KGfWtpF6/ym9A7Y9pJgthkccjLk2yC+h2jkKy87A2qRnDdjr5hghAm3//Xgl3Y4S
+/8U++gMbXIv5CGm/vAy3
+=uZl8
+-----END PGP SIGNATURE-----
+
+--khrhj25xjddv4u5g--
