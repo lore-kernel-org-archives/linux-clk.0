@@ -1,77 +1,180 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:38988 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751296AbcKGLeh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Nov 2016 06:34:37 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, andy.gross@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v6 09/14] mmc: sdhci-msm: Add clock changes for DDR mode.
-Date: Mon,  7 Nov 2016 16:54:32 +0530
-Message-Id: <1478517877-23733-10-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
-References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Andy Yan <andy.yan@rock-chips.com>
+Cc: shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, sboyd@codeaurora.org, mturquette@baylibre.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 04/10] clk: rockchip: add clock controller for rk1108
+Date: Tue, 15 Nov 2016 11:32:32 +0100
+Message-ID: <2185081.FigXhudOUe@phil>
+In-Reply-To: <1479125262-24294-1-git-send-email-andy.yan@rock-chips.com>
+References: <1479124550-24037-1-git-send-email-andy.yan@rock-chips.com> <1479125262-24294-1-git-send-email-andy.yan@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-SDHC MSM controller need 2x clock for MCLK at GCC.
-Hence make required changes to have 2x clock for
-DDR timing modes.
+Am Montag, 14. November 2016, 20:07:42 CET schrieb Andy Yan:
+> From: Shawn Lin <shawn.lin@rock-chips.com>
+> 
+> Add the clock tree definition and driver for rk1108 SoC.
+> 
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+> Tested-by: Jacob Chen <jacob2.chen@rock-chips.com>
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> ---
+> 
+> Changes in v2:
+> - fix some CodingStyle issues
+> 
+>  drivers/clk/rockchip/Makefile     |   1 +
+>  drivers/clk/rockchip/clk-rk1108.c | 451
+> ++++++++++++++++++++++++++++++++++++++ drivers/clk/rockchip/clk.h        | 
+> 14 ++
+>  3 files changed, 466 insertions(+)
+>  create mode 100644 drivers/clk/rockchip/clk-rk1108.c
+> 
+> diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+> index b5f2c8e..16e098c 100644
+> --- a/drivers/clk/rockchip/Makefile
+> +++ b/drivers/clk/rockchip/Makefile
+> @@ -11,6 +11,7 @@ obj-y	+= clk-mmc-phase.o
+>  obj-y	+= clk-ddr.o
+>  obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
+> 
+> +obj-y	+= clk-rk1108.o
+>  obj-y	+= clk-rk3036.o
+>  obj-y	+= clk-rk3188.o
+>  obj-y	+= clk-rk3228.o
+> diff --git a/drivers/clk/rockchip/clk-rk1108.c
+> b/drivers/clk/rockchip/clk-rk1108.c new file mode 100644
+> index 0000000..e3a4f74
+> --- /dev/null
+> +++ b/drivers/clk/rockchip/clk-rk1108.c
+> @@ -0,0 +1,451 @@
+> +/*
+> + * Copyright (c) 2016 Rockchip Electronics Co. Ltd.
+> + * Author: Shawn Lin <shawn.lin@rock-chips.com>
+> + *         Andy Yan <andy.yan@rock-chips.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/syscore_ops.h>
+> +#include <dt-bindings/clock/rk1108-cru.h>
+> +#include "clk.h"
+> +
+> +#define RK1108_GRF_SOC_STATUS0	0x480
+> +
+> +enum rk1108_plls {
+> +	apll, dpll, gpll,
+> +};
+> +
+> +static struct rockchip_pll_rate_table rk1108_pll_rates[] = {
+> +	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
+> +	RK3036_PLL_RATE(1608000000, 1, 67, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1584000000, 1, 66, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1560000000, 1, 65, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1536000000, 1, 64, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1512000000, 1, 63, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1488000000, 1, 62, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1464000000, 1, 61, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1440000000, 1, 60, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1416000000, 1, 59, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1392000000, 1, 58, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1368000000, 1, 57, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1344000000, 1, 56, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1320000000, 1, 55, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1296000000, 1, 54, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1272000000, 1, 53, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1248000000, 1, 52, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1200000000, 1, 50, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1188000000, 2, 99, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1104000000, 1, 46, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1100000000, 12, 550, 1, 1, 1, 0),
+> +	RK3036_PLL_RATE(1008000000, 1, 84, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE(1000000000, 6, 500, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 984000000, 1, 82, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 960000000, 1, 80, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 936000000, 1, 78, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 912000000, 1, 76, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 900000000, 4, 300, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 888000000, 1, 74, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 864000000, 1, 72, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 840000000, 1, 70, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 816000000, 1, 68, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 800000000, 6, 400, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 700000000, 6, 350, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 696000000, 1, 58, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 600000000, 1, 75, 3, 1, 1, 0),
+> +	RK3036_PLL_RATE( 594000000, 2, 99, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 504000000, 1, 63, 3, 1, 1, 0),
+> +	RK3036_PLL_RATE( 500000000, 6, 250, 2, 1, 1, 0),
+> +	RK3036_PLL_RATE( 408000000, 1, 68, 2, 2, 1, 0),
+> +	RK3036_PLL_RATE( 312000000, 1, 52, 2, 2, 1, 0),
+> +	RK3036_PLL_RATE( 216000000, 1, 72, 4, 2, 1, 0),
+> +	RK3036_PLL_RATE(  96000000, 1, 64, 4, 4, 1, 0),
+> +	{ /* sentinel */ },
+> +};
+> +
+> +#define RK1108_DIV_CORE_MASK		0xf
+> +#define RK1108_DIV_CORE_SHIFT		4
+> +
+> +#define RK1108_CLKSEL0(_core_peri_div)					\
+> +	{									\
+> +		.reg = RK1108_CLKSEL_CON(1),					\
+> +		.val = HIWORD_UPDATE(_core_peri_div, RK1108_DIV_CORE_MASK,	\
+> +				RK1108_DIV_CORE_SHIFT)				\
+> +	}
+> +
+> +#define RK1108_CPUCLK_RATE(_prate, _core_peri_div)			\
+> +	{								\
+> +		.prate = _prate,					\
+> +		.divs = {						\
+> +			RK1108_CLKSEL0(_core_peri_div),		\
+> +		},							\
+> +	}
+> +
+> +static struct rockchip_cpuclk_rate_table rk1108_cpuclk_rates[] __initdata =
+> { +	RK1108_CPUCLK_RATE(816000000, 4),
+> +	RK1108_CPUCLK_RATE(600000000, 4),
+> +	RK1108_CPUCLK_RATE(312000000, 4),
+> +};
+> +
+> +static const struct rockchip_cpuclk_reg_data rk1108_cpuclk_data = {
+> +	.core_reg = RK1108_CLKSEL_CON(0),
+> +	.div_core_shift = 0,
+> +	.div_core_mask = 0x1f,
+> +	.mux_core_alt = 1,
+> +	.mux_core_main = 0,
+> +	.mux_core_shift = 8,
+> +	.mux_core_mask = 0x1,
+> +};
+> +
+> +PNAME(mux_pll_p)		= { "xin24m", "xin24m"};
+> +PNAME(mux_ddrphy_p)		= { "dpll_ddr", "gpll_ddr", "apll_ddr" };
+> +PNAME(mux_armclk_p)		= { "apll_core", "gpll_core", "dpll_core" };
+> +PNAME(mux_pmu_1f)		= { "xin24m", "pmu_24m"};
+> +PNAME(mux_usb480m_phy_p)	= { "usb480m_phy0", "usb480m_phy1" };
+> +PNAME(mux_usb480m_p)		= { "usb480m_phy", "xin24m" };
+> +PNAME(mux_hdmiphy_p)		= { "hdmiphy_phy", "pclk_top_pre", "xin24m" };
 
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
----
- drivers/mmc/host/sdhci-msm.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+pmu_1f, usbphy and hdmiphy do not seem to be used in this driver, while they 
+are specified in the clock documentation.
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index ff0915b..220567c 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -633,6 +633,7 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-+	struct mmc_ios curr_ios = host->mmc->ios;
- 	int rc;
- 
- 	if (!clock) {
-@@ -641,11 +642,23 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
- 	}
- 
- 	spin_unlock_irq(&host->lock);
-+	/*
-+	 * The SDHC requires internal clock frequency to be double the
-+	 * actual clock that will be set for DDR mode. The controller
-+	 * uses the faster clock(100/400MHz) for some of its parts and
-+	 * send the actual required clock (50/200MHz) to the card.
-+	 */
-+	if ((curr_ios.timing == MMC_TIMING_UHS_DDR50) ||
-+	    (curr_ios.timing == MMC_TIMING_MMC_DDR52) ||
-+	    (curr_ios.timing == MMC_TIMING_MMC_HS400))
-+		clock *= 2;
-+
- 	if (clock != msm_host->clk_rate) {
- 		rc = clk_set_rate(msm_host->clk, clock);
- 		if (rc) {
--			pr_err("%s: Failed to set clock at rate %u\n",
--			       mmc_hostname(host->mmc), clock);
-+			pr_err("%s: Failed to set clock at rate %u at timing %d\n",
-+			       mmc_hostname(host->mmc), clock,
-+			       curr_ios.timing);
- 			spin_lock_irq(&host->lock);
- 			goto out;
- 		}
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
+Also there is a discrepancy between your pmu_24m and pmu_24m_ena below I 
+think.
 
+
+The rest looks sane but I didn't check every register offset :-) .
+
+
+Heiko
