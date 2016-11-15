@@ -1,78 +1,129 @@
-Return-Path: <scott.wood@nxp.com>
-From: Scott Wood <scott.wood@nxp.com>
-To: "Y.T. Tang" <yuantian.tang@nxp.com>, Scott Wood <oss@buserror.net>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>
-CC: "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: qoriq: added ls1012a clock configuration
-Date: Wed, 23 Nov 2016 07:21:18 +0000
-Message-ID: <DB5PR0401MB1928F7FFBDB7D6E4C4B45D9491B70@DB5PR0401MB1928.eurprd04.prod.outlook.com>
-References: <1479275900-42365-1-git-send-email-yuantian.tang@nxp.com>
- <1479279262.21746.40.camel@buserror.net>
- <DB6PR0402MB28371BAAD862417B8AC8AED4F0B40@DB6PR0402MB2837.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1479206594.2456.24.camel@pengutronix.de>
+Subject: Re: [PATCH] reset: hisilicon: add a polarity cell for reset line
+ specifier
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+ mark.rutland@arm.com, xuwei5@hisilicon.com, arnd@arndb.de,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, yanhaifeng@hisilicon.com,
+ wenpan@hisilicon.com, howell.yang@hisilicon.com,
+ hermit.wangheming@hisilicon.com,  elder@linaro.org, bin.chen@linaro.org
+Date: Tue, 15 Nov 2016 11:43:14 +0100
+In-Reply-To: <1479193794-18350-1-git-send-email-xuejiancheng@hisilicon.com>
+References: <1479193794-18350-1-git-send-email-xuejiancheng@hisilicon.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/22/2016 02:20 AM, Y.T. Tang wrote:=0A=
-> Hi Scott,=0A=
-> =0A=
->> -----Original Message-----=0A=
->> From: Scott Wood [mailto:oss@buserror.net]=0A=
->> Sent: Wednesday, November 16, 2016 2:54 PM=0A=
->> To: Y.T. Tang <yuantian.tang@nxp.com>; mturquette@baylibre.com=0A=
->> Cc: sboyd@codeaurora.org; linux-kernel@vger.kernel.org; Scott Wood=0A=
->> <scott.wood@nxp.com>; linux-clk@vger.kernel.org; linux-arm-=0A=
->> kernel@lists.infradead.org=0A=
->> Subject: Re: [PATCH] clk: qoriq: added ls1012a clock configuration=0A=
->>=0A=
->> On Wed, 2016-11-16 at 13:58 +0800, yuantian.tang@nxp.com wrote:=0A=
->>> From: Tang Yuantian <Yuantian.Tang@nxp.com>=0A=
->>>=0A=
->>> Added ls1012a clock configuation information.=0A=
->>=0A=
->> Do we really need the same line in the changelog twice?=0A=
->>=0A=
->>>=0A=
->>> Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>=0A=
->>> ---=0A=
->>>  drivers/clk/clk-qoriq.c | 19 +++++++++++++++++++=0A=
->>>  1 file changed, 19 insertions(+)=0A=
->>>=0A=
->>> diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c index=0A=
->>> 1bece0f..563d874 100644=0A=
->>> --- a/drivers/clk/clk-qoriq.c=0A=
->>> +++ b/drivers/clk/clk-qoriq.c=0A=
->>> @@ -202,6 +202,14 @@ static const struct clockgen_muxinfo ls1021a_cmux=
-=0A=
->> =3D {=0A=
->>>  	}=0A=
->>>  };=0A=
->>>=0A=
->>> +static const struct clockgen_muxinfo ls1012a_cmux =3D {=0A=
->>> +	{=0A=
->>> +		[0] =3D { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },=0A=
->>> +		{},=0A=
->>> +		[2] =3D { CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },=0A=
->>> +	}=0A=
->>> +};=0A=
->>> +=0A=
->>=0A=
->> Based on the "ls1021a_cmux" in the context it looks like this patch is=
-=0A=
->> intended to apply on top=0A=
->> of https://patchwork.kernel.org/patch/8923541/ but I don't see any menti=
-on=0A=
->> of that.=0A=
->>=0A=
-> I saw this patch had been merged already.=0A=
-> =0A=
-> Regards,=0A=
-> Yuantian=0A=
-=0A=
-I don't see it in linux-next.=0A=
-=0A=
--Scott=0A=
-=0A=
+Hi Jiancheng,
+
+Am Dienstag, den 15.11.2016, 15:09 +0800 schrieb Jiancheng Xue:
+> Add a polarity cell for reset line specifier. If the reset line
+> is asserted when the register bit is 1, the polarity is
+> normal. Otherwise, it is inverted.
+>
+> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+> ---
+>  .../devicetree/bindings/clock/hisi-crg.txt         | 11 ++++---
+>  arch/arm/boot/dts/hi3519.dtsi                      |  2 +-
+>  drivers/clk/hisilicon/reset.c                      | 36 ++++++++++++++++------
+>  3 files changed, 33 insertions(+), 16 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/hisi-crg.txt b/Documentation/devicetree/bindings/clock/hisi-crg.txt
+> index e3919b6..fcbb4f3 100644
+> --- a/Documentation/devicetree/bindings/clock/hisi-crg.txt
+> +++ b/Documentation/devicetree/bindings/clock/hisi-crg.txt
+> @@ -25,19 +25,20 @@ to specify the clock which they consume.
+>  
+>  All these identifier could be found in <dt-bindings/clock/hi3519-clock.h>.
+>  
+> -- #reset-cells: should be 2.
+> +- #reset-cells: should be 3.
+>  
+>  A reset signal can be controlled by writing a bit register in the CRG module.
+> -The reset specifier consists of two cells. The first cell represents the
+> +The reset specifier consists of three cells. The first cell represents the
+>  register offset relative to the base address. The second cell represents the
+> -bit index in the register.
+> +bit index in the register. The third cell represents the polarity of the reset
+> +line (0 for normal, 1 for inverted).
+
+What is normal and what is inverted? Please specify which is active-high
+and which is active-low.
+
+>  
+>  Example: CRG nodes
+>  CRG: clock-reset-controller@12010000 {
+>  	compatible = "hisilicon,hi3519-crg";
+>  	reg = <0x12010000 0x10000>;
+>  	#clock-cells = <1>;
+> -	#reset-cells = <2>;
+> +	#reset-cells = <3>;
+>  };
+>  
+>  Example: consumer nodes
+> @@ -45,5 +46,5 @@ i2c0: i2c@12110000 {
+>  	compatible = "hisilicon,hi3519-i2c";
+>  	reg = <0x12110000 0x1000>;
+>  	clocks = <&CRG HI3519_I2C0_RST>;
+> -	resets = <&CRG 0xe4 0>;
+> +	resets = <&CRG 0xe4 0 0>;
+>  };
+> diff --git a/arch/arm/boot/dts/hi3519.dtsi b/arch/arm/boot/dts/hi3519.dtsi
+> index 5729ecf..b7cb182 100644
+> --- a/arch/arm/boot/dts/hi3519.dtsi
+> +++ b/arch/arm/boot/dts/hi3519.dtsi
+> @@ -50,7 +50,7 @@
+>  	crg: clock-reset-controller@12010000 {
+>  		compatible = "hisilicon,hi3519-crg";
+>  		#clock-cells = <1>;
+> -		#reset-cells = <2>;
+> +		#reset-cells = <3>;
+
+That is a backwards incompatible change. Which I think in this case
+could be tolerated, because there are no users yet of the reset
+controller. Or are there any hi3519 based device trees that use the
+resets out in the wild? If there are, the driver must continue to
+support old device trees with two reset-cells. Which would not be
+trivial because currently the core checks in reset_control_get that
+rcdev->of_n_reset_cells is equal to the #reset-cells value from DT.
+One possibility to get around changing the binding would be to stuff the
+polarity bit into low bits of the register address cell.
+
+Either way, I'm not very happy with blowing up the complexity of the
+reset phandles at the reset consumer side.
+If you do change the binding, is there any way you could change from a
+register address + bit offset binding to an index based binding with the
+information about reset bit positions and polarities contained in the
+driver, or in the crg node, similarly to the ti-syscon-reset bindings?
+That would also improve consistency with clock bindings, which already
+use a number as identifier.
+
+[...]
+> @@ -59,14 +65,19 @@ static int hisi_reset_assert(struct reset_controller_dev *rcdev,
+>  	unsigned long flags;
+>  	u32 offset, reg;
+>  	u8 bit;
+> +	bool polarity;
+>  
+>  	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
+> -	bit = id & HISI_RESET_BIT_MASK;
+> +	bit = (id & HISI_RESET_BIT_MASK) >> HISI_RESET_BIT_SHIFT;
+> +	polarity = id & HISI_RESET_POLARITY_MASK;
+>  
+>  	spin_lock_irqsave(&rstc->lock, flags);
+>  
+>  	reg = readl(rstc->membase + offset);
+> -	writel(reg | BIT(bit), rstc->membase + offset);
+> +	if (polarity)
+> +		writel(reg & ~BIT(bit), rstc->membase + offset);
+> +	else
+> +		writel(reg | BIT(bit), rstc->membase + offset);
+
+So there is no hardware polarity setting, which means the
+ti-syscon-reset bindings could fit in this case.
+
+regards
+Philipp
