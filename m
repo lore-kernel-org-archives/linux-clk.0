@@ -1,356 +1,48 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH 1/3] arm: hisi: add ARCH_MULTI_V5 support
+To: Arnd Bergmann <arnd@arndb.de>,
+        Marty Plummer <netz.kernel@gmail.com>
+References: <20161017120705.3726-1-wenpan@hisilicon.com>
+ <20161017120705.3726-2-wenpan@hisilicon.com> <5893354.6MrIxqzRoI@wuerfel>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux@armlinux.org.uk>, <xuwei5@hisilicon.com>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <howell.yang@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+        <jalen.hsu@hisilicon.com>, <lvkuanliang@hisilicon.com>,
+        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
+        <kevin.lixu@hisilicon.com>, <qinxiaojun@huawei.com>
+From: wenpan <wenpan@hisilicon.com>
+Message-ID: <e78a288b-8bab-9441-2edb-6ec08e5103d7@hisilicon.com>
+Date: Wed, 16 Nov 2016 16:56:44 +0800
 MIME-Version: 1.0
-In-Reply-To: <434b49180c2b5f8668f9fd92f5cba6d8b64a7de8.1478625788.git-series.maxime.ripard@free-electrons.com>
-References: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
- <434b49180c2b5f8668f9fd92f5cba6d8b64a7de8.1478625788.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 13 Nov 2016 12:18:07 +0800
-Message-ID: <CAGb2v665CB-fxDgjyG78LPz3ERYOMG6Of6O57prF2ZfOeV+1hw@mail.gmail.com>
-Subject: Re: [PATCH 3/10] clk: sunxi-ng: Implement multiplier offsets
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <5893354.6MrIxqzRoI@wuerfel>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Nov 9, 2016 at 1:23 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The multipliers we've seen so far all had an offset of one. However, on the
+Hi Martyo<
+Does this confict with your patcho< If noto<I hope this could be merged first.  Besides could you tell me the link to your related patch?
 
-Explaining that the offset refers to the difference between the register value
-and the actual multiplier/divider applied to the clock rate would be nice.
+Thanks,
+Pan
 
-> earlier Allwinner SoCs, the multipliers could have no offset at all.
->
-> Implement an additional field for the multipliers to specify that offset.
-
-You are also doing this for dividers. Please mention that.
-
-And you should mention that you're only doing this for "linear" factors,
-not power-of-two ones.
-
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi-ng/ccu_div.h  | 10 +++++++++-
->  drivers/clk/sunxi-ng/ccu_mp.c   | 10 +++++++---
->  drivers/clk/sunxi-ng/ccu_mult.c |  4 ++--
->  drivers/clk/sunxi-ng/ccu_mult.h | 20 ++++++++++++++------
->  drivers/clk/sunxi-ng/ccu_nk.c   | 14 ++++++++++----
->  drivers/clk/sunxi-ng/ccu_nkm.c  | 18 +++++++++++++-----
->  drivers/clk/sunxi-ng/ccu_nkmp.c | 17 +++++++++++++----
->  drivers/clk/sunxi-ng/ccu_nm.c   | 13 ++++++++++---
->  8 files changed, 78 insertions(+), 28 deletions(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
-> index 06540f7cf41c..08d074451204 100644
-> --- a/drivers/clk/sunxi-ng/ccu_div.h
-> +++ b/drivers/clk/sunxi-ng/ccu_div.h
-> @@ -41,6 +41,7 @@ struct ccu_div_internal {
->         u8                      width;
->
->         u32                     max;
-> +       u32                     offset;
->
->         u32                     flags;
->
-> @@ -58,20 +59,27 @@ struct ccu_div_internal {
->  #define _SUNXI_CCU_DIV_TABLE(_shift, _width, _table)                   \
->         _SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, _table, 0)
->
-> -#define _SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, _max, _flags) \
-> +#define _SUNXI_CCU_DIV_OFFSET_MAX_FLAGS(_shift, _width, _off, _max, _flags) \
->         {                                                               \
->                 .shift  = _shift,                                       \
->                 .width  = _width,                                       \
->                 .flags  = _flags,                                       \
->                 .max    = _max,                                         \
-> +               .offset = _off,                                         \
->         }
->
-> +#define _SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, _max, _flags)         \
-> +       _SUNXI_CCU_DIV_OFFSET_MAX_FLAGS(_shift, _width, 1, _max, _flags)
-> +
->  #define _SUNXI_CCU_DIV_FLAGS(_shift, _width, _flags)                   \
->         _SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, 0, _flags)
->
->  #define _SUNXI_CCU_DIV_MAX(_shift, _width, _max)                       \
->         _SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, _max, 0)
->
-> +#define _SUNXI_CCU_DIV_OFFSET(_shift, _width, _offset)                 \
-> +       _SUNXI_CCU_DIV_OFFSET_MAX_FLAGS(_shift, _width, _offset, 0, 0)
-> +
-
-With this macro, you can have a divider offset of anything but 1, but
-no specified maximum. You should handle this in the callbacks somehow.
-Same goes for the multiplier. Otherwise with max = (1 << width), you'll
-overflow the register field when offset = 0.
-
-Also, if specified, does the maximum apply before or after the offset
-is applied? Some clarification is required.
-
->  #define _SUNXI_CCU_DIV(_shift, _width)                                 \
->         _SUNXI_CCU_DIV_FLAGS(_shift, _width, 0)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
-> index ebb1b31568a5..22c2ca7a2a22 100644
-> --- a/drivers/clk/sunxi-ng/ccu_mp.c
-> +++ b/drivers/clk/sunxi-ng/ccu_mp.c
-> @@ -89,11 +89,14 @@ static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
->
->         m = reg >> cmp->m.shift;
->         m &= (1 << cmp->m.width) - 1;
-> +       m += cmp->m.offset;
-> +       if (!m)
-> +               m++;
->
->         p = reg >> cmp->p.shift;
->         p &= (1 << cmp->p.width) - 1;
->
-> -       return (parent_rate >> p) / (m + 1);
-> +       return (parent_rate >> p) / m;
->  }
->
->  static int ccu_mp_determine_rate(struct clk_hw *hw,
-> @@ -124,9 +127,10 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
->         reg = readl(cmp->common.base + cmp->common.reg);
->         reg &= ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m.shift);
->         reg &= ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shift);
-> +       reg |= (m - cmp->m.offset) << cmp->m.shift;
-> +       reg |= ilog2(p) << cmp->p.shift;
->
-> -       writel(reg | (ilog2(p) << cmp->p.shift) | ((m - 1) << cmp->m.shift),
-> -              cmp->common.base + cmp->common.reg);
-> +       writel(reg, cmp->common.base + cmp->common.reg);
->
->         spin_unlock_irqrestore(cmp->common.lock, flags);
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
-> index 826302464650..bf5e11c803f9 100644
-> --- a/drivers/clk/sunxi-ng/ccu_mult.c
-> +++ b/drivers/clk/sunxi-ng/ccu_mult.c
-> @@ -85,7 +85,7 @@ static unsigned long ccu_mult_recalc_rate(struct clk_hw *hw,
->         ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
->                                                 &parent_rate);
->
-> -       return parent_rate * (val + 1);
-> +       return parent_rate * (val + cm->mult.offset);
->  }
->
->  static int ccu_mult_determine_rate(struct clk_hw *hw,
-> @@ -122,7 +122,7 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
->         reg = readl(cm->common.base + cm->common.reg);
->         reg &= ~GENMASK(cm->mult.width + cm->mult.shift - 1, cm->mult.shift);
->
-> -       writel(reg | ((_cm.mult - 1) << cm->mult.shift),
-> +       writel(reg | ((_cm.mult - cm->mult.offset) << cm->mult.shift),
->                cm->common.base + cm->common.reg);
->
->         spin_unlock_irqrestore(cm->common.lock, flags);
-> diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
-> index bd2e38b5a32a..84839641dfdf 100644
-> --- a/drivers/clk/sunxi-ng/ccu_mult.h
-> +++ b/drivers/clk/sunxi-ng/ccu_mult.h
-> @@ -6,20 +6,28 @@
->  #include "ccu_mux.h"
->
->  struct ccu_mult_internal {
-> +       u8      offset;
->         u8      shift;
->         u8      width;
->         u8      min;
->  };
->
-> -#define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)      \
-> -       {                                               \
-> -               .shift  = _shift,                       \
-> -               .width  = _width,                       \
-> -               .min    = _min,                         \
-> +#define _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, _min)      \
-> +       {                                                               \
-> +               .min    = _min,                                         \
-> +               .offset = _offset,                                      \
-> +               .shift  = _shift,                                       \
-> +               .width  = _width,                                       \
->         }
->
-> +#define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)      \
-> +       _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, _min)
-> +
-> +#define _SUNXI_CCU_MULT_OFFSET(_shift, _width, _offset)        \
-> +       _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, 1)
-> +
->  #define _SUNXI_CCU_MULT(_shift, _width)                \
-> -       _SUNXI_CCU_MULT_MIN(_shift, _width, 1)
-> +       _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, 1)
->
->  struct ccu_mult {
->         u32                     enable;
-> diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
-> index eaf0fdf78d2b..90117d3ead8c 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nk.c
-> +++ b/drivers/clk/sunxi-ng/ccu_nk.c
-> @@ -76,12 +76,17 @@ static unsigned long ccu_nk_recalc_rate(struct clk_hw *hw,
->
->         n = reg >> nk->n.shift;
->         n &= (1 << nk->n.width) - 1;
-> +       n += nk->n.offset;
-> +       if (!n)
-> +               n++;
->
->         k = reg >> nk->k.shift;
->         k &= (1 << nk->k.width) - 1;
-> +       k += nk->k.offset;
-> +       if (!k)
-> +               k++;
->
-> -       rate = parent_rate * (n + 1) * (k + 1);
-> -
-> +       rate = parent_rate * n * k;
->         if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
->                 rate /= nk->fixed_post_div;
->
-> @@ -135,8 +140,9 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
->         reg &= ~GENMASK(nk->n.width + nk->n.shift - 1, nk->n.shift);
->         reg &= ~GENMASK(nk->k.width + nk->k.shift - 1, nk->k.shift);
->
-> -       writel(reg | ((_nk.k - 1) << nk->k.shift) | ((_nk.n - 1) << nk->n.shift),
-> -              nk->common.base + nk->common.reg);
-> +       reg |= (_nk.k - nk->k.offset) << nk->k.shift;
-> +       reg |= (_nk.n - nk->n.offset) << nk->n.shift;
-> +       writel(reg, nk->common.base + nk->common.reg);
->
->         spin_unlock_irqrestore(nk->common.lock, flags);
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-> index fd3c6a9d987c..e0b4c914d7ac 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
-> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> @@ -82,14 +82,23 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
->
->         n = reg >> nkm->n.shift;
->         n &= (1 << nkm->n.width) - 1;
-> +       n += nkm->n.offset;
-> +       if (!n)
-> +               n++;
->
->         k = reg >> nkm->k.shift;
->         k &= (1 << nkm->k.width) - 1;
-> +       k += nkm->k.offset;
-> +       if (!k)
-> +               k++;
->
->         m = reg >> nkm->m.shift;
->         m &= (1 << nkm->m.width) - 1;
-> +       m += nkm->m.offset;
-> +       if (!m)
-> +               m++;
->
-> -       rate = parent_rate * (n + 1) * (k + 1) / (m + 1);
-> +       rate = parent_rate * n  * k / m;
->         if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
->                 rate /= nkm->fixed_post_div;
->
-> @@ -156,10 +165,9 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
->         reg &= ~GENMASK(nkm->k.width + nkm->k.shift - 1, nkm->k.shift);
->         reg &= ~GENMASK(nkm->m.width + nkm->m.shift - 1, nkm->m.shift);
->
-> -       reg |= (_nkm.n - 1) << nkm->n.shift;
-> -       reg |= (_nkm.k - 1) << nkm->k.shift;
-> -       reg |= (_nkm.m - 1) << nkm->m.shift;
-> -
-> +       reg |= (_nkm.n - nkm->n.offset) << nkm->n.shift;
-> +       reg |= (_nkm.k - nkm->k.offset) << nkm->k.shift;
-> +       reg |= (_nkm.m - nkm->m.offset) << nkm->m.shift;
->         writel(reg, nkm->common.base + nkm->common.reg);
->
->         spin_unlock_irqrestore(nkm->common.lock, flags);
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-> index 684c42da3ebb..da2bba02b845 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-> +++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-> @@ -88,17 +88,26 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
->
->         n = reg >> nkmp->n.shift;
->         n &= (1 << nkmp->n.width) - 1;
-> +       n += nkmp->n.offset;
-> +       if (!n)
-> +               n++;
->
->         k = reg >> nkmp->k.shift;
->         k &= (1 << nkmp->k.width) - 1;
-> +       k += nkmp->k.offset;
-> +       if (!k)
-> +               k++;
->
->         m = reg >> nkmp->m.shift;
->         m &= (1 << nkmp->m.width) - 1;
-> +       m += nkmp->m.offset;
-> +       if (!m)
-> +               m++;
->
->         p = reg >> nkmp->p.shift;
->         p &= (1 << nkmp->p.width) - 1;
->
-> -       return (parent_rate * (n + 1) * (k + 1) >> p) / (m + 1);
-> +       return parent_rate * n * k >> p / m;
->  }
->
->  static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
-> @@ -148,9 +157,9 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
->         reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
->         reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
->
-> -       reg |= (_nkmp.n - 1) << nkmp->n.shift;
-> -       reg |= (_nkmp.k - 1) << nkmp->k.shift;
-> -       reg |= (_nkmp.m - 1) << nkmp->m.shift;
-> +       reg |= (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
-> +       reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
-> +       reg |= (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
->         reg |= ilog2(_nkmp.p) << nkmp->p.shift;
->
->         writel(reg, nkmp->common.base + nkmp->common.reg);
-> diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-> index c9f3b6c982f0..158d74e0215f 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nm.c
-> +++ b/drivers/clk/sunxi-ng/ccu_nm.c
-> @@ -80,11 +80,17 @@ static unsigned long ccu_nm_recalc_rate(struct clk_hw *hw,
->
->         n = reg >> nm->n.shift;
->         n &= (1 << nm->n.width) - 1;
-> +       n += nm->n.offset;
-> +       if (!n)
-> +               n++;
->
->         m = reg >> nm->m.shift;
->         m &= (1 << nm->m.width) - 1;
-> +       m += nm->m.offset;
-> +       if (!m)
-> +               m++;
->
-> -       return parent_rate * (n + 1) / (m + 1);
-> +       return parent_rate * n / m;
->  }
->
->  static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
-> @@ -129,8 +135,9 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
->         reg &= ~GENMASK(nm->n.width + nm->n.shift - 1, nm->n.shift);
->         reg &= ~GENMASK(nm->m.width + nm->m.shift - 1, nm->m.shift);
->
-> -       writel(reg | ((_nm.m - 1) << nm->m.shift) | ((_nm.n - 1) << nm->n.shift),
-> -              nm->common.base + nm->common.reg);
-> +       reg |= (_nm.n - nm->n.offset) << nm->n.shift;
-> +       reg |= (_nm.m - nm->m.offset) << nm->m.shift;
-> +       writel(reg, nm->common.base + nm->common.reg);
->
->         spin_unlock_irqrestore(nm->common.lock, flags);
->
-> --
-> git-series 0.8.11
-
-The existing bits in this patch look good.
-
-
-Regards
-ChenYu
+On 2016/10/17 21:48, Arnd Bergmann wrote:
+> On Monday, October 17, 2016 8:07:03 PM CEST Pan Wen wrote:
+>> Add support for some HiSilicon SoCs which depend on ARCH_MULTI_V5.
+>>
+>> Signed-off-by: Pan Wen <wenpan@hisilicon.com>
+>>
+> 
+> Looks ok. I've added Marty Plummer to Cc, he was recently proposing
+> patches for Hi3520, which I think is closely related to this one.
+> Please try to work together so the patches don't conflict. It should
+> be fairly straightforward since you are basically doing the same
+> change here.
+> 
+> 	Arnd
+> 
+> .
+> 
