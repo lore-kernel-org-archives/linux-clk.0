@@ -1,81 +1,246 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.10 (take three)
-Date: Wed, 16 Nov 2016 10:47:22 +0100
-Message-Id: <1479289642-13421-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:46370 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752279AbcKPQBs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 11:01:48 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v8 01/16] clk: qcom: Add rcg ops to return floor value closest to the requested rate
+Date: Wed, 16 Nov 2016 21:30:37 +0530
+Message-Id: <1479312052-22396-2-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+References: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-The following changes since commit 1936be95e013802291201c1ed193e04fd1ed3d13:
+The default behaviour with clk_rcg2_ops is for the
+clk_round_rate()/clk_set_rate() to return/set a ceil clock
+rate closest to the requested rate by looking up the corresponding
+frequency table.
+However, we do have some instances (mainly sdcc on various platforms)
+of clients expecting a clk_set_rate() to set a floor value instead.
+Add a new clk_rcg2_floor_ops to handle this for such specific
+rcg instances
 
-  Merge branch 'rzg-clock-defs' into clk-renesas-for-v4.10 (2016-11-07 15:15:33 +0100)
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rcg.h  |  1 +
+ drivers/clk/qcom/clk-rcg2.c | 76 +++++++++++++++++++++++++++++++++++++++------
+ drivers/clk/qcom/common.c   | 16 ++++++++++
+ drivers/clk/qcom/common.h   |  2 ++
+ 4 files changed, 86 insertions(+), 9 deletions(-)
 
-are available in the git repository at:
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index b904c33..1b3e8d2 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -173,6 +173,7 @@ struct clk_rcg2 {
+ #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
+ 
+ extern const struct clk_ops clk_rcg2_ops;
++extern const struct clk_ops clk_rcg2_floor_ops;
+ extern const struct clk_ops clk_rcg2_shared_ops;
+ extern const struct clk_ops clk_edp_pixel_ops;
+ extern const struct clk_ops clk_byte_ops;
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index a071bba..1a0985a 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -47,6 +47,11 @@
+ #define N_REG			0xc
+ #define D_REG			0x10
+ 
++enum freq_policy {
++	FLOOR,
++	CEIL,
++};
++
+ static int clk_rcg2_is_enabled(struct clk_hw *hw)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+@@ -176,15 +181,26 @@ static int clk_rcg2_set_parent(struct clk_hw *hw, u8 index)
+ 	return calc_rate(parent_rate, m, n, mode, hid_div);
+ }
+ 
+-static int _freq_tbl_determine_rate(struct clk_hw *hw,
+-		const struct freq_tbl *f, struct clk_rate_request *req)
++static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
++				    struct clk_rate_request *req,
++				    enum freq_policy policy)
+ {
+ 	unsigned long clk_flags, rate = req->rate;
+ 	struct clk_hw *p;
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	int index;
+ 
+-	f = qcom_find_freq(f, rate);
++	switch (policy) {
++	case FLOOR:
++		f = qcom_find_freq_floor(f, rate);
++		break;
++	case CEIL:
++		f = qcom_find_freq(f, rate);
++		break;
++	default:
++		return -EINVAL;
++	};
++
+ 	if (!f)
+ 		return -EINVAL;
+ 
+@@ -221,7 +237,15 @@ static int clk_rcg2_determine_rate(struct clk_hw *hw,
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 
+-	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, req);
++	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, req, CEIL);
++}
++
++static int clk_rcg2_determine_floor_rate(struct clk_hw *hw,
++					 struct clk_rate_request *req)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++
++	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, req, FLOOR);
+ }
+ 
+ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+@@ -265,12 +289,23 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ 	return update_config(rcg);
+ }
+ 
+-static int __clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate)
++static int __clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
++			       enum freq_policy policy)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	const struct freq_tbl *f;
+ 
+-	f = qcom_find_freq(rcg->freq_tbl, rate);
++	switch (policy) {
++	case FLOOR:
++		f = qcom_find_freq_floor(rcg->freq_tbl, rate);
++		break;
++	case CEIL:
++		f = qcom_find_freq(rcg->freq_tbl, rate);
++		break;
++	default:
++		return -EINVAL;
++	};
++
+ 	if (!f)
+ 		return -EINVAL;
+ 
+@@ -280,13 +315,25 @@ static int __clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate)
+ static int clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			    unsigned long parent_rate)
+ {
+-	return __clk_rcg2_set_rate(hw, rate);
++	return __clk_rcg2_set_rate(hw, rate, CEIL);
++}
++
++static int clk_rcg2_set_floor_rate(struct clk_hw *hw, unsigned long rate,
++				   unsigned long parent_rate)
++{
++	return __clk_rcg2_set_rate(hw, rate, FLOOR);
+ }
+ 
+ static int clk_rcg2_set_rate_and_parent(struct clk_hw *hw,
+ 		unsigned long rate, unsigned long parent_rate, u8 index)
+ {
+-	return __clk_rcg2_set_rate(hw, rate);
++	return __clk_rcg2_set_rate(hw, rate, CEIL);
++}
++
++static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
++		unsigned long rate, unsigned long parent_rate, u8 index)
++{
++	return __clk_rcg2_set_rate(hw, rate, FLOOR);
+ }
+ 
+ const struct clk_ops clk_rcg2_ops = {
+@@ -300,6 +347,17 @@ static int clk_rcg2_set_rate_and_parent(struct clk_hw *hw,
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_ops);
+ 
++const struct clk_ops clk_rcg2_floor_ops = {
++	.is_enabled = clk_rcg2_is_enabled,
++	.get_parent = clk_rcg2_get_parent,
++	.set_parent = clk_rcg2_set_parent,
++	.recalc_rate = clk_rcg2_recalc_rate,
++	.determine_rate = clk_rcg2_determine_floor_rate,
++	.set_rate = clk_rcg2_set_floor_rate,
++	.set_rate_and_parent = clk_rcg2_set_floor_rate_and_parent,
++};
++EXPORT_SYMBOL_GPL(clk_rcg2_floor_ops);
++
+ static int clk_rcg2_shared_force_enable(struct clk_hw *hw, unsigned long rate)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+@@ -323,7 +381,7 @@ static int clk_rcg2_shared_force_enable(struct clk_hw *hw, unsigned long rate)
+ 		pr_err("%s: RCG did not turn on\n", name);
+ 
+ 	/* set clock rate */
+-	ret = __clk_rcg2_set_rate(hw, rate);
++	ret = __clk_rcg2_set_rate(hw, rate, CEIL);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index 94569f4..cfab7b4 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -46,6 +46,22 @@ struct freq_tbl *qcom_find_freq(const struct freq_tbl *f, unsigned long rate)
+ }
+ EXPORT_SYMBOL_GPL(qcom_find_freq);
+ 
++const struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
++					    unsigned long rate)
++{
++	const struct freq_tbl *best = NULL;
++
++	for ( ; f->freq; f++) {
++		if (rate >= f->freq)
++			best = f;
++		else
++			break;
++	}
++
++	return best;
++}
++EXPORT_SYMBOL_GPL(qcom_find_freq_floor);
++
+ int qcom_find_src_index(struct clk_hw *hw, const struct parent_map *map, u8 src)
+ {
+ 	int i, num_parents = clk_hw_get_num_parents(hw);
+diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+index 9fb5b8e..23c1927 100644
+--- a/drivers/clk/qcom/common.h
++++ b/drivers/clk/qcom/common.h
+@@ -41,6 +41,8 @@ struct qcom_cc_desc {
+ 
+ extern const struct freq_tbl *qcom_find_freq(const struct freq_tbl *f,
+ 					     unsigned long rate);
++extern const struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
++						   unsigned long rate);
+ extern void
+ qcom_pll_set_fsm_mode(struct regmap *m, u32 reg, u8 bias_count, u8 lock_count);
+ extern int qcom_find_src_index(struct clk_hw *hw, const struct parent_map *map,
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
 
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag3
-
-for you to fetch changes up to 9127d54bb89471592b3c8af6c6273c21db6de6a6:
-
-  clk: renesas: cpg-mssr: Add R8A7745 support (2016-11-10 15:29:30 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v4.10 (take three)
-
-  - CSI2 and VIN clocks for R-Car M3-W,
-  - Clock drivers for new RZ/G1M and RZ/G1E SoCs,
-  - Minor bug fix for R-Car H3.
-
-This pull request depends on the pull request for
-tags/clk-renesas-for-v4.10-tag2 ("clk: renesas: Updates for v4.10 (take
-two)"), which I sent last week.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Niklas Söderlund (2):
-      clk: renesas: r8a7796: Add CSI2 clocks
-      clk: renesas: r8a7796: Add VIN clocks
-
-Sergei Shtylyov (3):
-      clk: renesas: cpg-mssr: Add common R-Car Gen2 support
-      clk: renesas: cpg-mssr: Add R8A7743 support
-      clk: renesas: cpg-mssr: Add R8A7745 support
-
-Takeshi Kihara (1):
-      clk: renesas: r8a7795: Fix HDMI parent clock
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   5 +-
- drivers/clk/renesas/Kconfig                        |   2 +
- drivers/clk/renesas/Makefile                       |   2 +
- drivers/clk/renesas/r8a7743-cpg-mssr.c             | 270 +++++++++++++++
- drivers/clk/renesas/r8a7745-cpg-mssr.c             | 259 ++++++++++++++
- drivers/clk/renesas/r8a7795-cpg-mssr.c             |   2 +-
- drivers/clk/renesas/r8a7796-cpg-mssr.c             |  12 +
- drivers/clk/renesas/rcar-gen2-cpg.c                | 371 +++++++++++++++++++++
- drivers/clk/renesas/rcar-gen2-cpg.h                |  43 +++
- drivers/clk/renesas/renesas-cpg-mssr.c             |  12 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   2 +
- 11 files changed, 978 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a7743-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a7745-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/rcar-gen2-cpg.c
- create mode 100644 drivers/clk/renesas/rcar-gen2-cpg.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
