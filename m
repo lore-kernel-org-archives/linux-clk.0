@@ -1,37 +1,38 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 1 Nov 2016 17:22:29 -0700
+Date: Wed, 16 Nov 2016 11:12:12 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: lars@metafoo.de, dan.carpenter@oracle.com, ssantosh@kernel.org,
-	mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: keystone: Fix an error checking
-Message-ID: <20161102002228.GC16026@codeaurora.org>
-References: <cover.1477339880.git.christophe.jaillet@wanadoo.fr>
- <ff1de6a7af60b4e3804162e553d7174e2ad1ea16.1477339880.git.christophe.jaillet@wanadoo.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [GIT PULL] Allwinner clock fixes for 4.9
+Message-ID: <20161116191212.GG25626@codeaurora.org>
+References: <20161115212332.w5amyhohmauqzpe5@lukather>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <ff1de6a7af60b4e3804162e553d7174e2ad1ea16.1477339880.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20161115212332.w5amyhohmauqzpe5@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/24, Christophe JAILLET wrote:
-> clk_register_pll() can return ERR_PTR(-ENOMEM) so checking the return value
-> against NULL only is not correct.
-
-The code just doesn't propagate the error up to the caller.
-Instead the caller treats NULL as an error and non-NULL as valid.
-If the callee detects an error it hides it and returns NULL.
-
-> In order to fix it, update clk_register_pll() to always return an error
-> pointer in case of error and check the return value with IS_ERR.
+On 11/15, Maxime Ripard wrote:
+> Hi Mike, Stephen,
 > 
-> While at it, also fix a tab vs space in the surrounding code.
+> Please pull the following fixes for the 4.9 cycle
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Un-compiled and un-tested.
+> Thanks!
+> Maxime
+> 
+> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+> 
+>   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/sunxi-clk-fixes-for-4.9
+> 
+> for you to fetch changes up to ac95330b96376550ae7a533d1396272d675adfa2:
+> 
+>   clk: sunxi: Fix M factor computation for APB1 (2016-11-04 08:49:46 +0100)
 
-Please at least compile test patches.
+Thanks. Pulled into clk-fixes.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
