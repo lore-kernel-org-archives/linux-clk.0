@@ -1,59 +1,65 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <2376126.1sNxSm4GUB@wasted.cogentembedded.com>
-References: <1737840.BeMyoUTlpl@wasted.cogentembedded.com> <2376126.1sNxSm4GUB@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 10 Nov 2016 13:52:28 +0100
-Message-ID: <CAMuHMdX5Mhra9N6bsDi7RX8arJNpnJ90NuUpbTPg3McYFHWQpg@mail.gmail.com>
-Subject: Re: [PATCH v6] clk: renesas: cpg-mssr: add R8A7743 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <jay.xu@rock-chips.com>
+From: Jianqun Xu <jay.xu@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	heiko@sntech.de,
+	tomeu.vizoso@collabora.com,
+	seanpaul@chromium.org,
+	airlied@linux.ie,
+	yamada.masahiro@socionext.com
+Cc: linux-clk@vger.kernel.org,
+	huangtao@rock-chips.com,
+	linux-arm-kernel@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	zhengxing@rock-chips.com,
+	zhangqing@rock-chips.com,
+	wzz@rock-chips.com,
+	Jianqun Xu <jay.xu@rock-chips.com>
+Subject: [PATCH] drm/bridge: analogix_dp: return error if transfer none byte
+Date: Wed, 16 Nov 2016 08:13:39 +0800
+Message-Id: <1479255219-7243-1-git-send-email-jay.xu@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sergei,
+Reference from drm_dp_aux description (about transfer):
+Upon success, the implementation should return the number of payload bytes
+that were transferred, or a negative error-code on failure. Helpers
+propagate errors from the .transfer() function, with the exception of
+the -EBUSY error, which causes a transaction to be retried. On a short,
+helpers will return -EPROTO to make it simpler to check for failure.
 
-On Tue, Nov 8, 2016 at 10:21 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add RZ/G1M (R8A7743) Clock  Pulse Generator / Module Standby and Software
-> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
-> (and RZ/G) code.
->
-> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
-> <geert+renesas@glider.be>.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> ---
-> This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
-> It depends on the common R-Car gen2 (and RZ/G) support just posted.
->
-> Changes in version 6:
-> - passed the PLL0 divisor to rcar_gen2_cpg_init();
-> - undid  the version 5 changes.
+The analogix_dp_transfer will return num_transferred, but if there is none
+byte been transferred, the return value will be 0, which means success, we
+should return error-code if transfer none byte.
 
-Thanks!
+for (retry = 0; retry < 32; retry++) {
+	err = aux->transfer(aux, &msg);
+	if (err < 0) {
+		if (err == -EBUSY)
+			continue;
 
-Will queue with the following trivial changes:
-  - pass cpg_mode to rcar_gen2_cpg_init(),
-  - sort clock names in DT bindings,
-  - reformat tables for easier comparison with other clock drivers.
+		goto unlock;
+	}
+}
 
-Gr{oetje,eeting}s,
+Cc: zain wang <wzz@rock-chips.com>
+Reviewed-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
+---
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index cd37ac0..303083a 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -1162,5 +1162,5 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+ 		 (msg->request & ~DP_AUX_I2C_MOT) == DP_AUX_NATIVE_READ)
+ 		msg->reply = DP_AUX_NATIVE_REPLY_ACK;
+ 
+-	return num_transferred;
++	return num_transferred > 0 ? num_transferred : -EBUSY;
+ }
+-- 
+1.9.1
