@@ -1,71 +1,50 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 9 Nov 2016 12:24:40 -0600
-From: Rob Herring <robh@kernel.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v7 3/3] clk: qcom: Add A53 clock driver
-Message-ID: <20161109182440.hjiv725vpsh5dctd@rob-hp-laptop>
-References: <20161031145526.5023-1-georgi.djakov@linaro.org>
- <20161031145526.5023-4-georgi.djakov@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:53284 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933304AbcKPTNh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 14:13:37 -0500
+Date: Wed, 16 Nov 2016 11:13:35 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ritesh Harjani <riteshh@codeaurora.org>
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, andy.gross@linaro.org,
+        shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com
+Subject: Re: [PATCH v8 05/16] dt-bindings: sdhci-msm: Add xo_clock property
+Message-ID: <20161116191335.GH25626@codeaurora.org>
+References: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+ <1479312052-22396-6-git-send-email-riteshh@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161031145526.5023-4-georgi.djakov@linaro.org>
+In-Reply-To: <1479312052-22396-6-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Oct 31, 2016 at 04:55:26PM +0200, Georgi Djakov wrote:
-> Add a driver for the A53 Clock Controller. It is a hardware block that
-> implements a combined mux and half integer divider functionality. It can
-> choose between a fixed-rate clock or the dedicated A53 PLL. The source
-> and the divider can be set both at the same time.
-> 
-> This is required for enabling CPU frequency scaling on platforms like
-> MSM8916.
-> 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+On 11/16, Ritesh Harjani wrote:
+> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
 > ---
->  .../devicetree/bindings/clock/qcom,a53cc.txt       |  23 ++++
->  drivers/clk/qcom/Kconfig                           |   8 ++
->  drivers/clk/qcom/Makefile                          |   1 +
->  drivers/clk/qcom/a53cc.c                           | 152 +++++++++++++++++++++
->  4 files changed, 184 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
->  create mode 100644 drivers/clk/qcom/a53cc.c
+>  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,a53cc.txt b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-> new file mode 100644
-> index 000000000000..82d1634a2713
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-> @@ -0,0 +1,23 @@
-> +Qualcomm A53 CPU Clock Controller Binding
-> +------------------------------------------------
-> +The A53 CPU Clock Controller is hardware, which provides a combined
-> +mux and divider functionality for the CPU clocks. It can choose between
-> +a fixed rate clock and the dedicated A53 PLL. This hardware block is used
-> +on platforms such as msm8916.
-> +
-> +Required properties :
-> +- compatible : shall contain:
-> +
-> +			"qcom,a53cc-msm8916"
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> index 485483a..243c9f0 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> @@ -17,6 +17,7 @@ Required properties:
+>  	"iface" - Main peripheral bus clock (PCLK/HCLK - AHB Bus clock) (required)
+>  	"core"	- SDC MMC clock (MCLK) (required)
+>  	"bus"	- SDCC bus voter clock (optional)
+> +	"xo_clock" - TCXO clock (optional)
 
-Same comment on the ordering. With that, for the binding:
+I'd prefer we just call it "xo". We usually leave out _clk or
+_clock from clock names because it's redundant.
 
-Acked-by: Rob Herring <robh@kernel.org>
-
-> +
-> +- reg : shall contain base register location and length
-> +	of the APCS region
-> +- #clock-cells : shall contain 1
-> +
-> +Example:
-> +
-> +	apcs: syscon@b011000 {
-> +		compatible = "qcom,a53cc-msm8916";
-> +		reg = <0x0b011000 0x1000>;
-> +		#clock-cells = <1>;
-> +	};
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
