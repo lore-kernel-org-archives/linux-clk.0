@@ -1,160 +1,81 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:39660 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751473AbcKOFKR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2016 00:10:17 -0500
-Subject: Re: [PATCH v7 08/14] mmc: sdhci-msm: Implement set_clock callback for
- sdhci-msm
-To: Stephen Boyd <sboyd@codeaurora.org>, adrian.hunter@intel.com
-References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
- <1479103248-9491-9-git-send-email-riteshh@codeaurora.org>
- <20161114193004.GI5177@codeaurora.org>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        shawn.lin@rock-chips.com, andy.gross@linaro.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, alex.lemberg@sandisk.com,
-        mateusz.nowak@intel.com, Yuliy.Izrailov@sandisk.com,
-        asutoshd@codeaurora.org, kdorfman@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org
-From: Ritesh Harjani <riteshh@codeaurora.org>
-Message-ID: <3c1a7c72-0ac1-8ed0-87fc-238331f0645b@codeaurora.org>
-Date: Tue, 15 Nov 2016 10:40:05 +0530
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v4.10 (take three)
+Date: Wed, 16 Nov 2016 10:47:22 +0100
+Message-Id: <1479289642-13421-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20161114193004.GI5177@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen/Adrian,
+	Hi Mike, Stephen,
 
-On 11/15/2016 1:07 AM, Stephen Boyd wrote:
-> On 11/14, Ritesh Harjani wrote:
->> @@ -577,6 +578,90 @@ static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
->>  	return SDHCI_MSM_MIN_CLOCK;
->>  }
->>
->> +/**
->> + * __sdhci_msm_set_clock - sdhci_msm clock control.
->> + *
->> + * Description:
->> + * Implement MSM version of sdhci_set_clock.
->> + * This is required since MSM controller does not
->> + * use internal divider and instead directly control
->> + * the GCC clock as per HW recommendation.
->> + **/
->> +void __sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
->> +{
->> +	u16 clk;
->> +	unsigned long timeout;
->> +
->> +	/*
->> +	 * Keep actual_clock as zero -
->> +	 * - since there is no divider used so no need of having actual_clock.
->> +	 * - MSM controller uses SDCLK for data timeout calculation. If
->> +	 *   actual_clock is zero, host->clock is taken for calculation.
->> +	 */
->> +	host->mmc->actual_clock = 0;
->> +
->> +	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
->> +
->> +	if (clock == 0)
->> +		return;
->> +
->> +	/*
->> +	 * MSM controller do not use clock divider.
->> +	 * Thus read SDHCI_CLOCK_CONTROL and only enable
->> +	 * clock with no divider value programmed.
->> +	 */
->> +	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
->> +
->> +	clk |= SDHCI_CLOCK_INT_EN;
->> +	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
->> +
->> +	/* Wait max 20 ms */
->> +	timeout = 20;
->> +	while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
->> +		& SDHCI_CLOCK_INT_STABLE)) {
->> +		if (timeout == 0) {
->> +			pr_err("%s: Internal clock never stabilised\n",
->> +			       mmc_hostname(host->mmc));
->> +			return;
->> +		}
->> +		timeout--;
->> +		mdelay(1);
->> +	}
->> +
->> +	clk |= SDHCI_CLOCK_CARD_EN;
->> +	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
->
-> This is almost a copy/paste of sdhci_set_clock(). Can we make
-> sdhci_set_clock() call a __sdhci_set_clock() function that takes
-> unsigned int clock, and also a flag indicating if we want to set
-> the internal clock divider or not? Then we can call
-> __sdhci_set_clock() from sdhci_set_clock() with (clock, true) as
-> arguments and (clock, false).
-Adrian,
-Could you please comment here ?
+The following changes since commit 1936be95e013802291201c1ed193e04fd1ed3d13:
 
->
->> +}
->> +
->> +/* sdhci_msm_set_clock - Called with (host->lock) spinlock held. */
->> +static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
->> +{
->> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
->> +	int rc;
->> +
->> +	if (!clock) {
->> +		msm_host->clk_rate = clock;
->> +		goto out;
->> +	}
->> +
->> +	spin_unlock_irq(&host->lock);
->> +	if (clock != msm_host->clk_rate) {
->
-> Why do we need to check here? Can't we call clk_set_rate()
-> Unconditionally?
-Since it may so happen that above layers may call for ->set_clock
-function with same requested clock more than once, hence we cache the 
-host->clock here.
-Also, since requested clock (host->clock) can be say 400Mhz but the 
-actual pltfm supported clock would be say 384MHz.
+  Merge branch 'rzg-clock-defs' into clk-renesas-for-v4.10 (2016-11-07 15:15:33 +0100)
+
+are available in the git repository at:
 
 
->
->> +		rc = clk_set_rate(msm_host->clk, clock);
->> +		if (rc) {
->> +			pr_err("%s: Failed to set clock at rate %u\n",
->> +			       mmc_hostname(host->mmc), clock);
->> +			spin_lock_irq(&host->lock);
->> +			goto out;
->
-> Or replace the above two lines with goto err;
-Ok, I will have another label out_lock instead of err.
->
->> +		}
->> +		msm_host->clk_rate = clock;
->> +		pr_debug("%s: Setting clock at rate %lu\n",
->> +			 mmc_hostname(host->mmc), clk_get_rate(msm_host->clk));
->> +	}
->
-> And put an err label here.
-will put the label here as out_lock;
->
->> +	spin_lock_irq(&host->lock);
->> +out:
->> +	__sdhci_msm_set_clock(host, clock);
->> +}
->> +
->>  static const struct of_device_id sdhci_msm_dt_match[] = {
->>  	{ .compatible = "qcom,sdhci-msm-v4" },
->>  	{},
->
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag3
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+for you to fetch changes up to 9127d54bb89471592b3c8af6c6273c21db6de6a6:
+
+  clk: renesas: cpg-mssr: Add R8A7745 support (2016-11-10 15:29:30 +0100)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v4.10 (take three)
+
+  - CSI2 and VIN clocks for R-Car M3-W,
+  - Clock drivers for new RZ/G1M and RZ/G1E SoCs,
+  - Minor bug fix for R-Car H3.
+
+This pull request depends on the pull request for
+tags/clk-renesas-for-v4.10-tag2 ("clk: renesas: Updates for v4.10 (take
+two)"), which I sent last week.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Niklas Söderlund (2):
+      clk: renesas: r8a7796: Add CSI2 clocks
+      clk: renesas: r8a7796: Add VIN clocks
+
+Sergei Shtylyov (3):
+      clk: renesas: cpg-mssr: Add common R-Car Gen2 support
+      clk: renesas: cpg-mssr: Add R8A7743 support
+      clk: renesas: cpg-mssr: Add R8A7745 support
+
+Takeshi Kihara (1):
+      clk: renesas: r8a7795: Fix HDMI parent clock
+
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   5 +-
+ drivers/clk/renesas/Kconfig                        |   2 +
+ drivers/clk/renesas/Makefile                       |   2 +
+ drivers/clk/renesas/r8a7743-cpg-mssr.c             | 270 +++++++++++++++
+ drivers/clk/renesas/r8a7745-cpg-mssr.c             | 259 ++++++++++++++
+ drivers/clk/renesas/r8a7795-cpg-mssr.c             |   2 +-
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |  12 +
+ drivers/clk/renesas/rcar-gen2-cpg.c                | 371 +++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen2-cpg.h                |  43 +++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |  12 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   2 +
+ 11 files changed, 978 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a7743-cpg-mssr.c
+ create mode 100644 drivers/clk/renesas/r8a7745-cpg-mssr.c
+ create mode 100644 drivers/clk/renesas/rcar-gen2-cpg.c
+ create mode 100644 drivers/clk/renesas/rcar-gen2-cpg.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
