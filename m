@@ -1,76 +1,49 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 1 Nov 2016 18:27:51 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, mturquette@baylibre.com,
-	galak@codeaurora.org, pradeepb@codeaurora.org,
-	mmcclint@codeaurora.org, varada@codeaurora.org,
-	sricharan@codeaurora.org, architt@codeaurora.org,
-	ntelkar@codeaurora.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 6/7] clk: qcom: ipq4019: changed the frequency value
- for ddr pll
-Message-ID: <20161102012751.GF16026@codeaurora.org>
-References: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
- <1474460512-31994-7-git-send-email-absahu@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1474460512-31994-7-git-send-email-absahu@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:49784 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753107AbcKPQDV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 11:03:21 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v8 12/16] arm64: dts: qcom: msm8916: Add ddr support to sdhc1
+Date: Wed, 16 Nov 2016 21:30:48 +0530
+Message-Id: <1479312052-22396-13-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+References: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/21, Abhishek Sahu wrote:
-> diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-> index b2decd5..a2809db 100644
-> --- a/drivers/clk/qcom/gcc-ipq4019.c
-> +++ b/drivers/clk/qcom/gcc-ipq4019.c
-> @@ -546,7 +546,7 @@ static const struct freq_tbl ftbl_gcc_sdcc1_apps_clk[] = {
->  	F(25000000,  P_FEPLL500, 1,  1, 20),
->  	F(50000000,  P_FEPLL500, 1,  1, 10),
->  	F(100000000, P_FEPLL500, 1,  1, 5),
-> -	F(190000000, P_DDRPLL,   1,  0, 0),
-> +	F(192000000, P_DDRPLL,   1,  0, 0),
+This adds mmc-ddr-1_8v support to DT for sdhc1 of msm8916.
 
-Change from 193 to 190 to 192.... please do it once.
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
->  	{ }
->  };
->  
-> @@ -567,18 +567,18 @@ static struct clk_rcg2  sdcc1_apps_clk_src = {
->  static const struct freq_tbl ftbl_gcc_apps_clk[] = {
->  	F(48000000,  P_XO,         1, 0, 0),
->  	F(200000000, P_FEPLL200,   1, 0, 0),
-> -	F(380000000, P_DDRPLLAPSS, 1, 0, 0),
-> -	F(409000000, P_DDRPLLAPSS, 1, 0, 0),
-> -	F(444000000, P_DDRPLLAPSS, 1, 0, 0),
-> -	F(484000000, P_DDRPLLAPSS, 1, 0, 0),
-> +	F(384000000, P_DDRPLLAPSS, 1, 0, 0),
-> +	F(413000000, P_DDRPLLAPSS, 1, 0, 0),
-> +	F(448000000, P_DDRPLLAPSS, 1, 0, 0),
-> +	F(488000000, P_DDRPLLAPSS, 1, 0, 0),
->  	F(500000000, P_FEPLL500,   1, 0, 0),
-> -	F(507000000, P_DDRPLLAPSS, 1, 0, 0),
-> -	F(532000000, P_DDRPLLAPSS, 1, 0, 0),
-> -	F(560000000, P_DDRPLLAPSS, 1, 0, 0),
-> -	F(592000000, P_DDRPLLAPSS, 1, 0, 0),
-> -	F(626000000, P_DDRPLLAPSS, 1, 0, 0),
-> -	F(666000000, P_DDRPLLAPSS, 1, 0, 0),
-> -	F(710000000, P_DDRPLLAPSS, 1, 0, 0),
-> +	F(512000000, P_DDRPLLAPSS, 1, 0, 0),
-> +	F(537000000, P_DDRPLLAPSS, 1, 0, 0),
-> +	F(565000000, P_DDRPLLAPSS, 1, 0, 0),
-> +	F(597000000, P_DDRPLLAPSS, 1, 0, 0),
-> +	F(632000000, P_DDRPLLAPSS, 1, 0, 0),
-> +	F(672000000, P_DDRPLLAPSS, 1, 0, 0),
-> +	F(716000000, P_DDRPLLAPSS, 1, 0, 0),
-
-Didn't this patch series introduce table updates already? Why
-can't this patch be squashed with that one?
-
->  	{ }
-
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index 6265822..5bc187c 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -515,6 +515,7 @@
+ 				 <&gcc GCC_SDCC1_AHB_CLK>,
+ 				 <&xo_board 0>;
+ 			clock-names = "core", "iface", "xo_clock";
++			mmc-ddr-1_8v;
+ 			bus-width = <8>;
+ 			non-removable;
+ 			status = "disabled";
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
