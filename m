@@ -1,257 +1,96 @@
-Return-Path: <yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-In-Reply-To: <1477503088-26508-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1477503088-26508-1-git-send-email-yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 23 Nov 2016 10:14:10 +0900
-Message-ID: <CAK7LNATUd2bw34a3U0EYgw0Ok7DP3D+nvv0ConF=kBOR+UPCHQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: uniphier: add CPU-gear change (cpufreq) support
-To: linux-clk <linux-clk@vger.kernel.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:50918 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932250AbcKPQDp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 11:03:45 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v8 14/16] mmc: sdhci-msm: Save the calculated tuning phase
+Date: Wed, 16 Nov 2016 21:30:50 +0530
+Message-Id: <1479312052-22396-15-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+References: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Save the tuning phase once the tuning is performed.
+This phase value will be used while calibrating DLL
+for HS400 mode.
 
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci-msm.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Ping.
-
-
-
-2016-10-27 2:31 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> Core support code for CPU frequency changes, which will be used by
-> the generic cpufreq driver.
->
-> The register view is different from the generic clk-mux; it has
-> a separate status register, and an update bit to load the register
-> setting.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
->  drivers/clk/uniphier/Makefile               |   3 +
->  drivers/clk/uniphier/clk-uniphier-core.c    |   3 +
->  drivers/clk/uniphier/clk-uniphier-cpugear.c | 115 ++++++++++++++++++++++++++++
->  drivers/clk/uniphier/clk-uniphier.h         |  17 +++-
->  4 files changed, 136 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/clk/uniphier/clk-uniphier-cpugear.c
->
-> diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
-> index f27b3603..665d1d6 100644
-> --- a/drivers/clk/uniphier/Makefile
-> +++ b/drivers/clk/uniphier/Makefile
-> @@ -1,8 +1,11 @@
->  obj-y  += clk-uniphier-core.o
-> +
-> +obj-y  += clk-uniphier-cpugear.o
->  obj-y  += clk-uniphier-fixed-factor.o
->  obj-y  += clk-uniphier-fixed-rate.o
->  obj-y  += clk-uniphier-gate.o
->  obj-y  += clk-uniphier-mux.o
-> +
->  obj-y  += clk-uniphier-sys.o
->  obj-y  += clk-uniphier-mio.o
->  obj-y  += clk-uniphier-peri.o
-> diff --git a/drivers/clk/uniphier/clk-uniphier-core.c b/drivers/clk/uniphier/clk-uniphier-core.c
-> index 26c53f7..0007218 100644
-> --- a/drivers/clk/uniphier/clk-uniphier-core.c
-> +++ b/drivers/clk/uniphier/clk-uniphier-core.c
-> @@ -27,6 +27,9 @@ static struct clk_hw *uniphier_clk_register(struct device *dev,
->                                         const struct uniphier_clk_data *data)
->  {
->         switch (data->type) {
-> +       case UNIPHIER_CLK_TYPE_CPUGEAR:
-> +               return uniphier_clk_register_cpugear(dev, regmap, data->name,
-> +                                                    &data->data.cpugear);
->         case UNIPHIER_CLK_TYPE_FIXED_FACTOR:
->                 return uniphier_clk_register_fixed_factor(dev, data->name,
->                                                           &data->data.factor);
-> diff --git a/drivers/clk/uniphier/clk-uniphier-cpugear.c b/drivers/clk/uniphier/clk-uniphier-cpugear.c
-> new file mode 100644
-> index 0000000..9bff26e
-> --- /dev/null
-> +++ b/drivers/clk/uniphier/clk-uniphier-cpugear.c
-> @@ -0,0 +1,115 @@
-> +/*
-> + * Copyright (C) 2016 Socionext Inc.
-> + *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include "clk-uniphier.h"
-> +
-> +#define UNIPHIER_CLK_CPUGEAR_STAT      0       /* status */
-> +#define UNIPHIER_CLK_CPUGEAR_SET       4       /* set */
-> +#define UNIPHIER_CLK_CPUGEAR_UPD       8       /* update */
-> +#define   UNIPHIER_CLK_CPUGEAR_UPD_BIT BIT(0)
-> +
-> +struct uniphier_clk_cpugear {
-> +       struct clk_hw hw;
-> +       struct regmap *regmap;
-> +       unsigned int regbase;
-> +       unsigned int mask;
-> +};
-> +
-> +#define to_uniphier_clk_cpugear(_hw) \
-> +                       container_of(_hw, struct uniphier_clk_cpugear, hw)
-> +
-> +static int uniphier_clk_cpugear_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +       struct uniphier_clk_cpugear *gear = to_uniphier_clk_cpugear(hw);
-> +       int ret;
-> +       unsigned int val;
-> +
-> +       ret = regmap_write_bits(gear->regmap,
-> +                               gear->regbase + UNIPHIER_CLK_CPUGEAR_SET,
-> +                               gear->mask, index);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = regmap_write_bits(gear->regmap,
-> +                               gear->regbase + UNIPHIER_CLK_CPUGEAR_SET,
-> +                               UNIPHIER_CLK_CPUGEAR_UPD_BIT,
-> +                               UNIPHIER_CLK_CPUGEAR_UPD_BIT);
-> +       if (ret)
-> +               return ret;
-> +
-> +       return regmap_read_poll_timeout(gear->regmap,
-> +                               gear->regbase + UNIPHIER_CLK_CPUGEAR_UPD,
-> +                               val, !(val & UNIPHIER_CLK_CPUGEAR_UPD_BIT),
-> +                               0, 1);
-> +}
-> +
-> +static u8 uniphier_clk_cpugear_get_parent(struct clk_hw *hw)
-> +{
-> +       struct uniphier_clk_cpugear *gear = to_uniphier_clk_cpugear(hw);
-> +       int num_parents = clk_hw_get_num_parents(hw);
-> +       int ret;
-> +       unsigned int val;
-> +
-> +       ret = regmap_read(gear->regmap,
-> +                         gear->regbase + UNIPHIER_CLK_CPUGEAR_STAT, &val);
-> +       if (ret)
-> +               return ret;
-> +
-> +       val &= gear->mask;
-> +
-> +       return val < num_parents ? val : -EINVAL;
-> +}
-> +
-> +static const struct clk_ops uniphier_clk_cpugear_ops = {
-> +       .determine_rate = __clk_mux_determine_rate,
-> +       .set_parent = uniphier_clk_cpugear_set_parent,
-> +       .get_parent = uniphier_clk_cpugear_get_parent,
-> +};
-> +
-> +struct clk_hw *uniphier_clk_register_cpugear(struct device *dev,
-> +                                        struct regmap *regmap,
-> +                                        const char *name,
-> +                               const struct uniphier_clk_cpugear_data *data)
-> +{
-> +       struct uniphier_clk_cpugear *gear;
-> +       struct clk_init_data init;
-> +       int ret;
-> +
-> +       gear = devm_kzalloc(dev, sizeof(*gear), GFP_KERNEL);
-> +       if (!gear)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       init.name = name;
-> +       init.ops = &uniphier_clk_cpugear_ops;
-> +       init.flags = CLK_SET_RATE_PARENT;
-> +       init.parent_names = data->parent_names;
-> +       init.num_parents = data->num_parents,
-> +
-> +       gear->regmap = regmap;
-> +       gear->regbase = data->regbase;
-> +       gear->mask = data->mask;
-> +       gear->hw.init = &init;
-> +
-> +       ret = devm_clk_hw_register(dev, &gear->hw);
-> +       if (ret)
-> +               return ERR_PTR(ret);
-> +
-> +       return &gear->hw;
-> +}
-> diff --git a/drivers/clk/uniphier/clk-uniphier.h b/drivers/clk/uniphier/clk-uniphier.h
-> index 0244dba..9707b0f 100644
-> --- a/drivers/clk/uniphier/clk-uniphier.h
-> +++ b/drivers/clk/uniphier/clk-uniphier.h
-> @@ -20,15 +20,24 @@
->  struct device;
->  struct regmap;
->
-> -#define UNIPHIER_CLK_MUX_MAX_PARENTS   8
-> +#define UNIPHIER_CLK_CPUGEAR_MAX_PARENTS       16
-> +#define UNIPHIER_CLK_MUX_MAX_PARENTS           8
->
->  enum uniphier_clk_type {
-> +       UNIPHIER_CLK_TYPE_CPUGEAR,
->         UNIPHIER_CLK_TYPE_FIXED_FACTOR,
->         UNIPHIER_CLK_TYPE_FIXED_RATE,
->         UNIPHIER_CLK_TYPE_GATE,
->         UNIPHIER_CLK_TYPE_MUX,
->  };
->
-> +struct uniphier_clk_cpugear_data {
-> +       const char *parent_names[UNIPHIER_CLK_CPUGEAR_MAX_PARENTS];
-> +       unsigned int num_parents;
-> +       unsigned int regbase;
-> +       unsigned int mask;
-> +};
-> +
->  struct uniphier_clk_fixed_factor_data {
->         const char *parent_name;
->         unsigned int mult;
-> @@ -58,6 +67,7 @@ struct uniphier_clk_data {
->         enum uniphier_clk_type type;
->         int idx;
->         union {
-> +               struct uniphier_clk_cpugear_data cpugear;
->                 struct uniphier_clk_fixed_factor_data factor;
->                 struct uniphier_clk_fixed_rate_data rate;
->                 struct uniphier_clk_gate_data gate;
-> @@ -90,7 +100,10 @@ struct uniphier_clk_data {
->                 },                                              \
->         }
->
-> -
-> +struct clk_hw *uniphier_clk_register_cpugear(struct device *dev,
-> +                                            struct regmap *regmap,
-> +                                            const char *name,
-> +                               const struct uniphier_clk_cpugear_data *data);
->  struct clk_hw *uniphier_clk_register_fixed_factor(struct device *dev,
->                                                   const char *name,
->                         const struct uniphier_clk_fixed_factor_data *data);
-> --
-> 1.9.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-
-
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index ab59171..1556d45 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -75,6 +75,7 @@
+ 
+ #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
+ 
++#define INVALID_TUNING_PHASE	-1
+ #define SDHCI_MSM_MIN_CLOCK	400000
+ #define CORE_FREQ_100MHZ	(100 * 1000 * 1000)
+ 
+@@ -97,6 +98,7 @@ struct sdhci_msm_host {
+ 	bool use_14lpp_dll_reset;
+ 	bool tuning_done;
+ 	bool calibration_done;
++	u8 saved_tuning_phase;
+ };
+ 
+ /* Platform specific tuning */
+@@ -136,6 +138,9 @@ static int msm_config_cm_dll_phase(struct sdhci_host *host, u8 phase)
+ 	u32 config;
+ 	struct mmc_host *mmc = host->mmc;
+ 
++	if (phase > 0xf)
++		return -EINVAL;
++
+ 	spin_lock_irqsave(&host->lock, flags);
+ 
+ 	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
+@@ -429,6 +434,8 @@ static int sdhci_msm_execute_tuning(struct sdhci_host *host, u32 opcode)
+ 	int rc;
+ 	struct mmc_host *mmc = host->mmc;
+ 	struct mmc_ios ios = host->mmc->ios;
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+ 
+ 	/*
+ 	 * Tuning is required for SDR104, HS200 and HS400 cards and
+@@ -453,6 +460,7 @@ static int sdhci_msm_execute_tuning(struct sdhci_host *host, u32 opcode)
+ 		if (rc)
+ 			return rc;
+ 
++		msm_host->saved_tuning_phase = phase;
+ 		rc = mmc_send_tuning(mmc, opcode, NULL);
+ 		if (!rc) {
+ 			/* Tuning is successful at this tuning point */
+@@ -799,6 +807,8 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+ 
+ 	sdhci_get_of_property(pdev);
+ 
++	msm_host->saved_tuning_phase = INVALID_TUNING_PHASE;
++
+ 	/* Setup SDCC bus voter clock. */
+ 	msm_host->bus_clk = devm_clk_get(&pdev->dev, "bus");
+ 	if (!IS_ERR(msm_host->bus_clk)) {
 -- 
-Best Regards
-Masahiro Yamada
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
