@@ -1,88 +1,84 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Wed, 16 Nov 2016 13:32:32 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 2/10] clk: sunxi-ng: nkm: Deal with fixed post dividers
-Date: Tue,  8 Nov 2016 18:23:06 +0100
-Message-Id: <f8333c3a1f3308fcebd87bfc3710ce605f9bb595.1478625788.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
-References: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
-References: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
+	Eduardo Valentin <edubezval@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Riku Voipio <riku.voipio@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Amit Kucheria <amit.kucheria@linaro.org>
+Subject: Re: [PATCH 2/3] thermal: hisilicon: fix for dependency
+Message-ID: <20161116053232.GA7240@leoy-linaro>
+References: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
+ <1472633417-9330-3-git-send-email-leo.yan@linaro.org>
+ <20161112120534.GC23848@leoy-linaro>
+ <1479212695.2224.12.camel@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1479212695.2224.12.camel@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_nkm.c | 17 ++++++++++++++---
- drivers/clk/sunxi-ng/ccu_nkm.h |  2 ++
- 2 files changed, 16 insertions(+), 3 deletions(-)
+On Tue, Nov 15, 2016 at 08:24:55PM +0800, Zhang Rui wrote:
+> On Sat, 2016-11-12 at 20:05 +0800, Leo Yan wrote:
+> > Hi Rui, Eduardo,
+> > 
+> > On Wed, Aug 31, 2016 at 04:50:16PM +0800, Leo Yan wrote:
+> > > 
+> > > The thermal driver is standalone driver which is used to enable
+> > > thermal sensors, so it can be used with any cooling device and
+> > > should not bind with CPU cooling device driver.
+> > > 
+> > > This original patch is suggested by Amit Kucheria; so it's to
+> > > polish the dependency in Kconfig, and remove the dependency with
+> > > CPU_THERMAL.
+> > Could you help review this patch? Or need me resend this patch? Sorry
+> > I have not tracked this patches well before, this is one missed
+> > patch for 96board Hikey.
+> > 
+> as it still applies cleanly, the patch is queued for 4.10.
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-index 9b840a47a94d..fd3c6a9d987c 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-@@ -75,7 +75,7 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
- 					unsigned long parent_rate)
- {
- 	struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
--	unsigned long n, m, k;
-+	unsigned long rate, n, m, k;
- 	u32 reg;
- 
- 	reg = readl(nkm->common.base + nkm->common.reg);
-@@ -89,7 +89,11 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
- 	m = reg >> nkm->m.shift;
- 	m &= (1 << nkm->m.width) - 1;
- 
--	return parent_rate * (n + 1) * (k + 1) / (m + 1);
-+	rate = parent_rate * (n + 1) * (k + 1) / (m + 1);
-+	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate /= nkm->fixed_post_div;
-+
-+	return rate;
- }
- 
- static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
-@@ -100,6 +104,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
- 	struct ccu_nkm *nkm = data;
- 	struct _ccu_nkm _nkm;
- 
-+	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate *= nkm->fixed_post_div;
-+
- 	_nkm.min_n = nkm->n.min;
- 	_nkm.max_n = 1 << nkm->n.width;
- 	_nkm.min_k = nkm->k.min;
-@@ -109,7 +116,11 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
- 
- 	ccu_nkm_find_best(parent_rate, rate, &_nkm);
- 
--	return parent_rate * _nkm.n * _nkm.k / _nkm.m;
-+	rate = parent_rate * _nkm.n * _nkm.k / _nkm.m;
-+	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate = rate / nkm->fixed_post_div;
-+
-+	return rate;
- }
- 
- static int ccu_nkm_determine_rate(struct clk_hw *hw,
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
-index 34580894f4d1..0f1dbca25719 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.h
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.h
-@@ -32,6 +32,8 @@ struct ccu_nkm {
- 	struct ccu_mult_internal	n;
- 	struct ccu_mult_internal	k;
- 	struct ccu_div_internal		m;
-+
-+	unsigned int		fixed_post_div;
- 	struct ccu_mux_internal	mux;
- 
- 	struct ccu_common	common;
--- 
-git-series 0.8.11
+Thanks a lot.
+
+> thanks,
+> rui
+> > Thanks,
+> > Leo Yan
+> > 
+> > > 
+> > > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > > ---
+> > >  drivers/thermal/Kconfig | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> > > index 2d702ca..91ebab3 100644
+> > > --- a/drivers/thermal/Kconfig
+> > > +++ b/drivers/thermal/Kconfig
+> > > @@ -177,8 +177,10 @@ config THERMAL_EMULATION
+> > >  
+> > >  config HISI_THERMAL
+> > >  	tristate "Hisilicon thermal driver"
+> > > -	depends on (ARCH_HISI && CPU_THERMAL && OF) ||
+> > > COMPILE_TEST
+> > > +	depends on ARCH_HISI || COMPILE_TEST
+> > >  	depends on HAS_IOMEM
+> > > +	depends on OF
+> > > +	default y
+> > >  	help
+> > >  	  Enable this to plug hisilicon's thermal sensor driver
+> > > into the Linux
+> > >  	  thermal framework. cpufreq is used as the cooling device
+> > > to throttle
