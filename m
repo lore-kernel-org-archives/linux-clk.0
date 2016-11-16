@@ -1,60 +1,28 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 5/10] clk: sunxi-ng: Implement multiplier maximum
-Date: Tue,  8 Nov 2016 18:23:09 +0100
-Message-Id: <1d12cf2cb0a7364f17691705f3bd018eddc51202.1478625788.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
-References: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
-References: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 16 Nov 2016 07:36:07 -0600
+From: Rob Herring <robh@kernel.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: smd-rpm: Add msm8974 clocks
+Message-ID: <20161116133607.p6w4qodal2rfoous@rob-hp-laptop>
+References: <1479192844-1281-1-git-send-email-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1479192844-1281-1-git-send-email-bjorn.andersson@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_mult.h | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+On Mon, Nov 14, 2016 at 10:54:04PM -0800, Bjorn Andersson wrote:
+> This adds all RPM based clocks for msm8974 except cxo and gfx3d_clk_src.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
+>  drivers/clk/qcom/clk-smd-rpm.c                     | 71 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,rpmcc.h             | 40 +++++++++++-
+>  3 files changed, 110 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
-index 84839641dfdf..524acddfcb2e 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.h
-+++ b/drivers/clk/sunxi-ng/ccu_mult.h
-@@ -10,24 +10,26 @@ struct ccu_mult_internal {
- 	u8	shift;
- 	u8	width;
- 	u8	min;
-+	u8	max;
- };
- 
--#define _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, _min)	\
-+#define _SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, _offset, _min, _max) \
- 	{								\
- 		.min	= _min,						\
-+		.max	= _max,						\
- 		.offset	= _offset,					\
- 		.shift	= _shift,					\
- 		.width	= _width,					\
- 	}
- 
- #define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)	\
--	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, _min)
-+	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, 1, _min, 0)
- 
- #define _SUNXI_CCU_MULT_OFFSET(_shift, _width, _offset)	\
--	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, 1)
-+	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, _offset, 1, 0)
- 
- #define _SUNXI_CCU_MULT(_shift, _width)		\
--	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, 1)
-+	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, 1, 1, 0)
- 
- struct ccu_mult {
- 	u32			enable;
--- 
-git-series 0.8.11
+Acked-by: Rob Herring <robh@kernel.org>
