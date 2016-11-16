@@ -1,95 +1,70 @@
-Return-Path: <pankaj.dubey@samsung.com>
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org,
- thomas.ab@samsung.com, myungjoo.ham@samsung.com,
- Pankaj Dubey <pankaj.dubey@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 2/6] dt-bindings: clk: max8997: Add DT binding documentation
-Date: Mon, 07 Nov 2016 15:39:32 +0530
-Message-id: <1478513376-14307-3-git-send-email-pankaj.dubey@samsung.com>
-In-reply-to: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
-References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
+Return-Path: <yuantian.tang@nxp.com>
+From: <yuantian.tang@nxp.com>
+To: <mturquette@baylibre.com>
+CC: <sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <scott.wood@nxp.com>,
+	<linux-arm-kernel@lists.infradead.org>, Tang Yuantian
+	<Yuantian.Tang@nxp.com>, Tang Yuantian <yuantian.tang@nxp.com>
+Subject: [PATCH] clk: qoriq: added ls1012a clock configuration
+Date: Wed, 16 Nov 2016 13:58:20 +0800
+Message-ID: <1479275900-42365-1-git-send-email-yuantian.tang@nxp.com>
+Return-Path: yuantian.tang@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Device Tree binding documentation for the clocks
-outputs in the Maxim-8997 Power Management IC.
+From: Tang Yuantian <Yuantian.Tang@nxp.com>
 
-CC: Michael Turquette <mturquette@baylibre.com>
-CC: Rob Herring <robh+dt@kernel.org>
-CC: devicetree@vger.kernel.org
-CC: linux-clk@vger.kernel.org
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Added ls1012a clock configuation information.
+
+Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
 ---
- .../devicetree/bindings/clock/maxim,max8997.txt    | 44 ++++++++++++++++++++++
- .../bindings/regulator/max8997-regulator.txt       |  3 ++
- 2 files changed, 47 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/maxim,max8997.txt
+ drivers/clk/clk-qoriq.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max8997.txt b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
-new file mode 100644
-index 0000000..d2e2a74
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
-@@ -0,0 +1,44 @@
-+Binding for Maxim MAX8997 32k clock generator block
-+
-+This is a part of device tree bindings of MAX8997 multi-function device.
-+More information can be found in bindings/regulator/max8997-regulator.txt file.
-+
-+The MAX8997 contains two 32.768khz clock outputs that can be controlled
-+(gated/ungated) over I2C.
-+
-+Following properties should be presend in main device node of the MFD chip.
-+
-+Required properties:
-+
-+- #clock-cells: from common clock binding; shall be set to 1.
-+
-+Optional properties:
-+- clock-output-names: From common clock binding.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. Following indices are allowed:
-+    - 0: 32khz_ap clock,
-+    - 1: 32khz_cp clock,
-+
-+Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max8997.h
-+header and can be used in device tree sources.
-+
-+Example: Node of the MFD chip
-+
-+	max8997: max8997_pmic@66 {
-+		compatible = "maxim,max8997-pmic";
-+		reg = <0x66>;
-+		interrupt-parent = <&gpx0>;
-+		interrupts = <4 0>, <3 0>;
-+		#clock-cells = <1>;
-+		/* ... */
-+	};
-+
-+Example: Clock consumer node
-+
-+	foo@0 {
-+		compatible = "bar,foo";
-+		/* ... */
-+		clocks = <&max8997 MAX8997_CLK_AP>;
-+		clock-names = "my-clock";
-+	};
-diff --git a/Documentation/devicetree/bindings/regulator/max8997-regulator.txt b/Documentation/devicetree/bindings/regulator/max8997-regulator.txt
-index 5c186a7..af1f9c0 100644
---- a/Documentation/devicetree/bindings/regulator/max8997-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/max8997-regulator.txt
-@@ -6,6 +6,9 @@ interfaced to the host controller using a i2c interface. Each sub-block is
- addressed by the host system using different i2c slave address. This document
- describes the bindings for 'pmic' sub-block of max8997.
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 1bece0f..563d874 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -202,6 +202,14 @@ static const struct clockgen_muxinfo ls1021a_cmux = {
+ 	}
+ };
  
-+Binding for the built-in 32k clock generator block is defined separately
-+in bindings/clk/maxim,max8997.txt file
++static const struct clockgen_muxinfo ls1012a_cmux = {
++	{
++		[0] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
++		{},
++		[2] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
++	}
++};
 +
- Required properties:
- - compatible: Should be "maxim,max8997-pmic".
- - reg: Specifies the i2c slave address of the pmic block. It should be 0x66.
+ static const struct clockgen_muxinfo t1040_cmux = {
+ 	{
+ 		[0] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
+@@ -482,6 +490,16 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.pll_mask = 0x03,
+ 	},
+ 	{
++		.compat = "fsl,ls1012a-clockgen",
++		.cmux_groups = {
++			&ls1012a_cmux
++		},
++		.cmux_to_group = {
++			0, -1
++		},
++		.pll_mask = 0x03,
++	},
++	{
+ 		.compat = "fsl,ls1043a-clockgen",
+ 		.init_periph = t2080_init_periph,
+ 		.cmux_groups = {
+@@ -1284,6 +1302,7 @@ CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_ls1012a, "fsl,ls1012a-clockgen", clockgen_init);
+ 
+ /* Legacy nodes */
+ CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
 -- 
-2.7.4
+2.1.0.27.g96db324
