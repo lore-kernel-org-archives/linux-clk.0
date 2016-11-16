@@ -1,90 +1,250 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH 4/6] clk: stm32f4: Add I2S clock
-Date: Mon, 7 Nov 2016 14:05:41 +0100
-Message-ID: <1478523943-23142-5-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
-References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:53720 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932297AbcKPEmv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2016 23:42:51 -0500
+Subject: Re: [PATCH v7 08/14] mmc: sdhci-msm: Implement set_clock callback for
+ sdhci-msm
+To: Stephen Boyd <sboyd@codeaurora.org>, adrian.hunter@intel.com,
+        ulf.hansson@linaro.org
+References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
+ <1479103248-9491-9-git-send-email-riteshh@codeaurora.org>
+ <20161114193004.GI5177@codeaurora.org>
+ <3c1a7c72-0ac1-8ed0-87fc-238331f0645b@codeaurora.org>
+Cc: linux-mmc@vger.kernel.org, shawn.lin@rock-chips.com,
+        andy.gross@linaro.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        kdorfman@codeaurora.org, david.griego@linaro.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        rnayak@codeaurora.org, pramod.gurav@linaro.org
+From: Ritesh Harjani <riteshh@codeaurora.org>
+Message-ID: <d723b9fb-0cfc-e72b-ad78-36c8b996b012@codeaurora.org>
+Date: Wed, 16 Nov 2016 10:12:40 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <3c1a7c72-0ac1-8ed0-87fc-238331f0645b@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Hi,
 
-This patch introduces I2S clock for stm32f4 soc.
-The I2S clock could be derived from an external clock or from pll-i2s
+On 11/15/2016 10:40 AM, Ritesh Harjani wrote:
+> Hi Stephen/Adrian,
+>
+> On 11/15/2016 1:07 AM, Stephen Boyd wrote:
+>> On 11/14, Ritesh Harjani wrote:
+>>> @@ -577,6 +578,90 @@ static unsigned int
+>>> sdhci_msm_get_min_clock(struct sdhci_host *host)
+>>>      return SDHCI_MSM_MIN_CLOCK;
+>>>  }
+>>>
+>>> +/**
+>>> + * __sdhci_msm_set_clock - sdhci_msm clock control.
+>>> + *
+>>> + * Description:
+>>> + * Implement MSM version of sdhci_set_clock.
+>>> + * This is required since MSM controller does not
+>>> + * use internal divider and instead directly control
+>>> + * the GCC clock as per HW recommendation.
+>>> + **/
+>>> +void __sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+>>> +{
+>>> +    u16 clk;
+>>> +    unsigned long timeout;
+>>> +
+>>> +    /*
+>>> +     * Keep actual_clock as zero -
+>>> +     * - since there is no divider used so no need of having
+>>> actual_clock.
+>>> +     * - MSM controller uses SDCLK for data timeout calculation. If
+>>> +     *   actual_clock is zero, host->clock is taken for calculation.
+>>> +     */
+>>> +    host->mmc->actual_clock = 0;
+>>> +
+>>> +    sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+>>> +
+>>> +    if (clock == 0)
+>>> +        return;
+>>> +
+>>> +    /*
+>>> +     * MSM controller do not use clock divider.
+>>> +     * Thus read SDHCI_CLOCK_CONTROL and only enable
+>>> +     * clock with no divider value programmed.
+>>> +     */
+>>> +    clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+>>> +
+>>> +    clk |= SDHCI_CLOCK_INT_EN;
+>>> +    sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+>>> +
+>>> +    /* Wait max 20 ms */
+>>> +    timeout = 20;
+>>> +    while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
+>>> +        & SDHCI_CLOCK_INT_STABLE)) {
+>>> +        if (timeout == 0) {
+>>> +            pr_err("%s: Internal clock never stabilised\n",
+>>> +                   mmc_hostname(host->mmc));
+>>> +            return;
+>>> +        }
+>>> +        timeout--;
+>>> +        mdelay(1);
+>>> +    }
+>>> +
+>>> +    clk |= SDHCI_CLOCK_CARD_EN;
+>>> +    sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+>>
+>> This is almost a copy/paste of sdhci_set_clock(). Can we make
+>> sdhci_set_clock() call a __sdhci_set_clock() function that takes
+>> unsigned int clock, and also a flag indicating if we want to set
+>> the internal clock divider or not? Then we can call
+>> __sdhci_set_clock() from sdhci_set_clock() with (clock, true) as
+>> arguments and (clock, false).
+Actually what you may be referring here is some sort of quirks which is 
+not entertained any more for sdhci driver.
+sdhci is tending towards becoming a library and hence such changes are 
+restricted.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32f4.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+But I think we may do below changes to avoid duplication of code which 
+enables the sdhci internal clock and waits for internal clock to be stable.
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 5fa5d51..b7cb359 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -216,6 +216,7 @@ enum {
- 	SYSTICK, FCLK, CLK_LSI, CLK_LSE, CLK_HSE_RTC, CLK_RTC,
- 	PLL_VCO_I2S, PLL_VCO_SAI,
- 	CLK_LCD,
-+	CLK_I2S,
- 	END_PRIMARY_CLK
- };
- 
-@@ -967,6 +968,8 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
- 
- static const char *sdmux_parents[2] = { "pll48", "sys" };
- 
-+static const char *i2s_parents[2] = { "plli2s-r", NULL };
+Adrian, could you please tell if this should be ok?
+Then we may be able to call for sdhci_set_clock_enable function from
+sdhci_msm_set_clock.
+
+
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 42ef3eb..28e605c 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1343,19 +1343,8 @@ u16 sdhci_calc_clk(struct sdhci_host *host, 
+unsigned int clock,
+  }
+  EXPORT_SYMBOL_GPL(sdhci_calc_clk);
+
+-void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
++void sdhci_set_clock_enable(struct sdhci_host *host, unsigned short clk)
+  {
+-       u16 clk;
+-       unsigned long timeout;
+-
+-       host->mmc->actual_clock = 0;
+-
+-       sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+-
+-       if (clock == 0)
+-               return;
+-
+-       clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
+
+         clk |= SDHCI_CLOCK_INT_EN;
+         sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+@@ -1377,6 +1366,24 @@ void sdhci_set_clock(struct sdhci_host *host, 
+unsigned int clock)
+         clk |= SDHCI_CLOCK_CARD_EN;
+         sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+  }
++EXPORT_SYMBOL_GPL(sdhci_set_clock_enable);
 +
- struct stm32f4_clk_data {
- 	const struct stm32f4_gate_data *gates_data;
- 	const u64 *gates_map;
-@@ -1005,7 +1008,7 @@ struct stm32f4_clk_data {
- 
- static void __init stm32f4_rcc_init(struct device_node *np)
- {
--	const char *hse_clk;
-+	const char *hse_clk, *i2s_in_clk;
- 	int n;
- 	const struct of_device_id *match;
- 	const struct stm32f4_clk_data *data;
-@@ -1038,6 +1041,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	stm32f4_gate_map = data->gates_map;
- 
- 	hse_clk = of_clk_get_parent_name(np, 0);
-+	i2s_in_clk = of_clk_get_parent_name(np, 1);
- 
- 	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
- 			16000000, 160000);
-@@ -1053,6 +1057,12 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	clks[PLL_VCO_SAI] = stm32f4_rcc_register_pll(pllsrc,
- 			&data->pll_data[2], &stm32f4_clk_lock);
- 
-+	i2s_parents[1] = i2s_in_clk;
++void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
++{
++       u16 clk;
++       unsigned long timeout;
 +
-+	clks[CLK_I2S] =	clk_hw_register_mux_table(NULL, "i2s",
-+				i2s_parents, ARRAY_SIZE(i2s_parents), 0,
-+				base + STM32F4_RCC_CFGR, 23, 1, 0, NULL,
-+				&stm32f4_clk_lock);
- 	sys_parents[1] = hse_clk;
- 	clk_register_mux_table(
- 	    NULL, "sys", sys_parents, ARRAY_SIZE(sys_parents), 0,
++       host->mmc->actual_clock = 0;
++
++       sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
++
++       if (clock == 0)
++               return;
++
++       clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
++
++       sdhci_set_clock_enable(host, clk);
++}
+  EXPORT_SYMBOL_GPL(sdhci_set_clock);
+
+  static void sdhci_set_power_reg(struct sdhci_host *host, unsigned char 
+mode,
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 766df17..43382e1 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -681,6 +681,7 @@ static inline bool sdhci_sdio_irq_enabled(struct 
+sdhci_host *host)
+  u16 sdhci_calc_clk(struct sdhci_host *host, unsigned int clock,
+                    unsigned int *actual_clock);
+  void sdhci_set_clock(struct sdhci_host *host, unsigned int clock);
++void sdhci_set_clock_enable(struct sdhci_host *host, unsigned short clk);
+  void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
+                      unsigned short vdd);
+  void sdhci_set_power_noreg(struct sdhci_host *host, unsigned char mode,
+
+
+
+> Adrian,
+> Could you please comment here ?
+>
+>>
+>>> +}
+>>> +
+>>> +/* sdhci_msm_set_clock - Called with (host->lock) spinlock held. */
+>>> +static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned
+>>> int clock)
+>>> +{
+>>> +    struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>> +    struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+>>> +    int rc;
+>>> +
+>>> +    if (!clock) {
+>>> +        msm_host->clk_rate = clock;
+>>> +        goto out;
+>>> +    }
+>>> +
+>>> +    spin_unlock_irq(&host->lock);
+>>> +    if (clock != msm_host->clk_rate) {
+>>
+>> Why do we need to check here? Can't we call clk_set_rate()
+>> Unconditionally?
+> Since it may so happen that above layers may call for ->set_clock
+> function with same requested clock more than once, hence we cache the
+> host->clock here.
+> Also, since requested clock (host->clock) can be say 400Mhz but the
+> actual pltfm supported clock would be say 384MHz.
+>
+>
+>>
+>>> +        rc = clk_set_rate(msm_host->clk, clock);
+>>> +        if (rc) {
+>>> +            pr_err("%s: Failed to set clock at rate %u\n",
+>>> +                   mmc_hostname(host->mmc), clock);
+>>> +            spin_lock_irq(&host->lock);
+>>> +            goto out;
+>>
+>> Or replace the above two lines with goto err;
+> Ok, I will have another label out_lock instead of err.
+>>
+>>> +        }
+>>> +        msm_host->clk_rate = clock;
+>>> +        pr_debug("%s: Setting clock at rate %lu\n",
+>>> +             mmc_hostname(host->mmc), clk_get_rate(msm_host->clk));
+>>> +    }
+>>
+>> And put an err label here.
+> will put the label here as out_lock;
+>>
+>>> +    spin_lock_irq(&host->lock);
+>>> +out:
+>>> +    __sdhci_msm_set_clock(host, clock);
+>>> +}
+>>> +
+>>>  static const struct of_device_id sdhci_msm_dt_match[] = {
+>>>      { .compatible = "qcom,sdhci-msm-v4" },
+>>>      {},
+>>
+>
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
