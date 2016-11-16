@@ -1,50 +1,66 @@
-Return-Path: <s.nawrocki@samsung.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@baylibre.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
- linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] clk/samsung updates for v4.10
-Message-id: <b8c981b1-6b0e-d3b7-f326-fcc3b2e729b7@samsung.com>
-Date: Fri, 18 Nov 2016 19:07:58 +0100
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-References: 
- <CGME20161118180800eucas1p24f5dce538660811ac7284ec0d122d563@eucas1p2.samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:33952 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752307AbcKPJdO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 04:33:14 -0500
+Subject: Re: [PATCH 1/3] arm: hisi: add ARCH_MULTI_V5 support
+To: wenpan <wenpan@hisilicon.com>, Arnd Bergmann <arnd@arndb.de>,
+        "Marty Plummer" <netz.kernel@gmail.com>
+References: <20161017120705.3726-1-wenpan@hisilicon.com>
+ <20161017120705.3726-2-wenpan@hisilicon.com> <5893354.6MrIxqzRoI@wuerfel>
+ <e78a288b-8bab-9441-2edb-6ec08e5103d7@hisilicon.com>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux@armlinux.org.uk>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <howell.yang@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+        <jalen.hsu@hisilicon.com>, <lvkuanliang@hisilicon.com>,
+        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
+        <kevin.lixu@hisilicon.com>, <qinxiaojun@huawei.com>
+From: Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <582C2785.2010804@hisilicon.com>
+Date: Wed, 16 Nov 2016 09:31:49 +0000
+MIME-Version: 1.0
+In-Reply-To: <e78a288b-8bab-9441-2edb-6ec08e5103d7@hisilicon.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Pan,
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+On 2016/11/16 8:56, wenpan wrote:
+> Hi Marty，
+> Does this confict with your patch？ If not，I hope this could be merged first.  Besides could you tell me the link to your related patch?
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+This is the link: https://patchwork.kernel.org/patch/9334743/
 
-are available in the git repository at:
+BR,
+Wei
 
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.10-exynos5433
+> 
+> Thanks,
+> Pan
+> 
+> On 2016/10/17 21:48, Arnd Bergmann wrote:
+>> On Monday, October 17, 2016 8:07:03 PM CEST Pan Wen wrote:
+>>> Add support for some HiSilicon SoCs which depend on ARCH_MULTI_V5.
+>>>
+>>> Signed-off-by: Pan Wen <wenpan@hisilicon.com>
+>>>
+>>
+>> Looks ok. I've added Marty Plummer to Cc, he was recently proposing
+>> patches for Hi3520, which I think is closely related to this one.
+>> Please try to work together so the patches don't conflict. It should
+>> be fairly straightforward since you are basically doing the same
+>> change here.
+>>
+>> 	Arnd
+>>
+>> .
+>>
+> 
+> 
+> .
+> 
 
-for you to fetch changes up to 37bf4ab84be2ae00f116436eb2c876a0ca953a64:
-
-  clk: exynos5433: Mark some clocks as critical (2016-11-18 13:55:51 +0100)
-
-----------------------------------------------------------------
-Exynos5433 SoC related fixes:
- - addition of missing documentation and DT properties for the CMU_AUD
-   block source clocks,
- - correction of CMU_FSYS parent clock definition,
- - marking as critical clocks which have to be enabled in order
-   to access control registers of child CMUs.
-
-----------------------------------------------------------------
-Marek Szyprowski (3):
-      clk: exynos5433: Fix parent clocks for FSYS block
-      clk: exynos5433: Add documentation for the audio block parent clocks
-      clk: exynos5433: Mark some clocks as critical
-
- .../bindings/clock/exynos5433-clock.txt       | 13 ++++++--
- drivers/clk/samsung/clk-exynos5433.c          | 30 +++++++++----------
- 2 files changed, 25 insertions(+), 18 deletions(-)
-
---
-Thanks,
-Sylwester
