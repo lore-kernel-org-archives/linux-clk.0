@@ -1,56 +1,171 @@
-Return-Path: <peter.chen@nxp.com>
-From: Peter Chen <peter.chen@nxp.com>
-To: <shawnguo@kernel.org>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <kernel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <robh+dt@kernel.org>, <fabio.estevam@nxp.com>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>, Peter Chen
-	<peter.chen@nxp.com>
-Subject: [PATCH v2 0/3] imx: add imx6ull support
-Date: Tue, 8 Nov 2016 13:56:51 +0800
-Message-ID: <1478584614-12054-1-git-send-email-peter.chen@nxp.com>
-Return-Path: peter.chen@nxp.com
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH] reset: hisilicon: add a polarity cell for reset line
+ specifier
+To: Philipp Zabel <p.zabel@pengutronix.de>
+References: <1479193794-18350-1-git-send-email-xuejiancheng@hisilicon.com>
+ <1479206594.2456.24.camel@pengutronix.de>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <xuwei5@hisilicon.com>, <arnd@arndb.de>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+        <wenpan@hisilicon.com>, <howell.yang@hisilicon.com>,
+        <hermit.wangheming@hisilicon.com>, <elder@linaro.org>,
+        <bin.chen@linaro.org>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Message-ID: <db839cba-a105-fa8e-8633-c98999cd7316@hisilicon.com>
+Date: Wed, 16 Nov 2016 11:17:55 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1479206594.2456.24.camel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shawn,
+Hi Philipp,
 
-In this series, it adds support for imx6ull SoC which is a derived SoC
-from imx6ul, and imx6ull is pin-to-pin compatible with imx6ul, the
-basic functions are tested at imx6ull 14x14 evk, and imx6ul 14x14 evk
-is tested too to avoid regression.
+On 2016/11/15 18:43, Philipp Zabel wrote:
+> Hi Jiancheng,
+> 
+> Am Dienstag, den 15.11.2016, 15:09 +0800 schrieb Jiancheng Xue:
+>> Add a polarity cell for reset line specifier. If the reset line
+>> is asserted when the register bit is 1, the polarity is
+>> normal. Otherwise, it is inverted.
+>>
+>> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+>> ---
+Thank you very much for replying so soon.
 
-Changes for v2:
-- Keep imx6ul.dtsi unchanging, and using GPL/X11 dual license
-  for new dts file. [Patch 1/3]
-- Using IMX6ULL prefix for both imx6ull dedicated pin and clock name.
-  [Patch 1/3, 3/3]
-- Delete useless changes for patch 2/3.
-- Delete blank line for patch 3/3.
-- Using assigned-clocks for imx6ull 14x14 evk. [Patch 1/3, 3/3]
+Please allow me to decribe the reason why this patch exists first.
+All bits in the reset controller were designed to be active-high.
+But in a recent chip only one bit was implemented to be active-low :(
 
+>>  .../devicetree/bindings/clock/hisi-crg.txt         | 11 ++++---
+>>  arch/arm/boot/dts/hi3519.dtsi                      |  2 +-
+>>  drivers/clk/hisilicon/reset.c                      | 36 ++++++++++++++++------
+>>  3 files changed, 33 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/hisi-crg.txt b/Documentation/devicetree/bindings/clock/hisi-crg.txt
+>> index e3919b6..fcbb4f3 100644
+>> --- a/Documentation/devicetree/bindings/clock/hisi-crg.txt
+>> +++ b/Documentation/devicetree/bindings/clock/hisi-crg.txt
+>> @@ -25,19 +25,20 @@ to specify the clock which they consume.
+>>  
+>>  All these identifier could be found in <dt-bindings/clock/hi3519-clock.h>.
+>>  
+>> -- #reset-cells: should be 2.
+>> +- #reset-cells: should be 3.
+>>  
+>>  A reset signal can be controlled by writing a bit register in the CRG module.
+>> -The reset specifier consists of two cells. The first cell represents the
+>> +The reset specifier consists of three cells. The first cell represents the
+>>  register offset relative to the base address. The second cell represents the
+>> -bit index in the register.
+>> +bit index in the register. The third cell represents the polarity of the reset
+>> +line (0 for normal, 1 for inverted).
+> 
+> What is normal and what is inverted? Please specify which is active-high
+> and which is active-low.
+> 
+OK. I'll use active-high and active-low instead.
 
-Bai Ping (1):
-  clk: imx: clk-imx6ul: add clk support for imx6ull
+>>  
+>>  Example: CRG nodes
+>>  CRG: clock-reset-controller@12010000 {
+>>  	compatible = "hisilicon,hi3519-crg";
+>>  	reg = <0x12010000 0x10000>;
+>>  	#clock-cells = <1>;
+>> -	#reset-cells = <2>;
+>> +	#reset-cells = <3>;
+>>  };
+>>  
+>>  Example: consumer nodes
+>> @@ -45,5 +46,5 @@ i2c0: i2c@12110000 {
+>>  	compatible = "hisilicon,hi3519-i2c";
+>>  	reg = <0x12110000 0x1000>;
+>>  	clocks = <&CRG HI3519_I2C0_RST>;
+>> -	resets = <&CRG 0xe4 0>;
+>> +	resets = <&CRG 0xe4 0 0>;
+>>  };
+>> diff --git a/arch/arm/boot/dts/hi3519.dtsi b/arch/arm/boot/dts/hi3519.dtsi
+>> index 5729ecf..b7cb182 100644
+>> --- a/arch/arm/boot/dts/hi3519.dtsi
+>> +++ b/arch/arm/boot/dts/hi3519.dtsi
+>> @@ -50,7 +50,7 @@
+>>  	crg: clock-reset-controller@12010000 {
+>>  		compatible = "hisilicon,hi3519-crg";
+>>  		#clock-cells = <1>;
+>> -		#reset-cells = <2>;
+>> +		#reset-cells = <3>;
+> 
+> That is a backwards incompatible change. Which I think in this case
+> could be tolerated, because there are no users yet of the reset
+> controller. Or are there any hi3519 based device trees that use the
+> resets out in the wild? If there are, the driver must continue to
+> support old device trees with two reset-cells. Which would not be
+> trivial because currently the core checks in reset_control_get that
+> rcdev->of_n_reset_cells is equal to the #reset-cells value from DT.
 
-Peter Chen (2):
-  ARM: imx6ull: add imx6ull support
-  ARM: imx: mach-imx6ul: add imx6ull support
+I understand the backwards compatiblity is very important. As it can be basically
+confirmed that the possibility of using hi3519 based device trees is very low,
+to keep the code simple, I chose to give up the backwards compatiblity.
+Maybe it is not very convincing. If you think it's better to keep backwards
+compatiblity here, I can only change reset-cells to 3 for chipsets except Hi3519.
 
- arch/arm/boot/dts/Makefile               |   3 +-
- arch/arm/boot/dts/imx6u-14x14-evk.dtsi   | 487 +++++++++++++++++++++++++++++++
- arch/arm/boot/dts/imx6ul-14x14-evk.dts   | 479 +-----------------------------
- arch/arm/boot/dts/imx6ull-14x14-evk.dts  |  55 ++++
- arch/arm/boot/dts/imx6ull-pinfunc.h      |  56 ++++
- arch/arm/boot/dts/imx6ull.dtsi           |  43 +++
- arch/arm/mach-imx/mach-imx6ul.c          |   1 +
- drivers/clk/imx/clk-imx6ul.c             |  72 ++++-
- include/dt-bindings/clock/imx6ul-clock.h |  15 +-
- 9 files changed, 720 insertions(+), 491 deletions(-)
- create mode 100644 arch/arm/boot/dts/imx6u-14x14-evk.dtsi
- create mode 100644 arch/arm/boot/dts/imx6ull-14x14-evk.dts
- create mode 100644 arch/arm/boot/dts/imx6ull-pinfunc.h
- create mode 100644 arch/arm/boot/dts/imx6ull.dtsi
+> One possibility to get around changing the binding would be to stuff the
+> polarity bit into low bits of the register address cell.
+> 
+It's also a solution. But I feel it's not very clear for reset consumer to
+composite these information together as a index number. Maybe I'm wrong.
 
--- 
-2.7.4
+> Either way, I'm not very happy with blowing up the complexity of the
+> reset phandles at the reset consumer side.
+
+By complexity, do you mean that the consumer side doesn't need to know the
+detailed information of the implementation of the reset controller eventhough
+only in the device tree?
+
+> If you do change the binding, is there any way you could change from a
+> register address + bit offset binding to an index based binding with the
+> information about reset bit positions and polarities contained in the
+> driver, or in the crg node, similarly to the ti-syscon-reset bindings?
+> That would also improve consistency with clock bindings, which already
+> use a number as identifier.
+> 
+I agree with that this solution is more modular. But the device node of the
+reset controller will get more complicated. Actually, the device tree of
+SoC part is provided by SoC vendor. In my opinion, we need balance between reset
+provider and consumer :). And I supposed rcdev->of_xlate was designed to treat this
+case. Am I right?
+
+> [...]
+>> @@ -59,14 +65,19 @@ static int hisi_reset_assert(struct reset_controller_dev *rcdev,
+>>  	unsigned long flags;
+>>  	u32 offset, reg;
+>>  	u8 bit;
+>> +	bool polarity;
+>>  
+>>  	offset = (id & HISI_RESET_OFFSET_MASK) >> HISI_RESET_OFFSET_SHIFT;
+>> -	bit = id & HISI_RESET_BIT_MASK;
+>> +	bit = (id & HISI_RESET_BIT_MASK) >> HISI_RESET_BIT_SHIFT;
+>> +	polarity = id & HISI_RESET_POLARITY_MASK;
+>>  
+>>  	spin_lock_irqsave(&rstc->lock, flags);
+>>  
+>>  	reg = readl(rstc->membase + offset);
+>> -	writel(reg | BIT(bit), rstc->membase + offset);
+>> +	if (polarity)
+>> +		writel(reg & ~BIT(bit), rstc->membase + offset);
+>> +	else
+>> +		writel(reg | BIT(bit), rstc->membase + offset);
+> 
+> So there is no hardware polarity setting, which means the
+> ti-syscon-reset bindings could fit in this case.
+> 
+It seems that ti-syscon-reset doesn't support polarity now. Certainly it can be extended
+through flags.
+
+Thank you again.
+
+Best Regards,
+Jiancheng
+
+> .
+> 
