@@ -1,35 +1,85 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 2 Nov 2016 14:51:32 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org
-Subject: Re: [PATCH v3 01/11] clk: qcom: Add support for alpha pll hwfsm ops
-Message-ID: <20161102215132.GM16026@codeaurora.org>
-References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
- <1475138152-859-2-git-send-email-rnayak@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1475138152-859-2-git-send-email-rnayak@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:49556 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753157AbcKPQDQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 11:03:16 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v8 11/16] mmc: sdhci-msm: Add clock changes for DDR mode.
+Date: Wed, 16 Nov 2016 21:30:47 +0530
+Message-Id: <1479312052-22396-12-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+References: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/29, Rajendra Nayak wrote:
-> Some PLLs can support an HW FSM mode (different from the Votable FSMs,
-> though its the same bit used to enable Votable FSMs as well as HW FSMs)
-> which enables the HW to do the bypass/reset/enable-output-ctrl sequence
-> on its own. So all thats needed from SW is to set the FSM_ENA bit.
-> PLL_ACTIVE_FLAG is whats used to check if the PLL is active/enabled.
-> 
-> Some of the PLLs which support HW FSM can also need an OFFLINE request
-> that needs to be toggled across the enable/disable. We use a flag to
-> identify such cases and handle them.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
+SDHC MSM controller need 2x clock for MCLK at GCC.
+Hence make required changes to have 2x clock for
+DDR timing modes.
 
-Applied to clk-next
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci-msm.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index 6d02fc2..eb29b97 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -610,6 +610,7 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
++	struct mmc_ios curr_ios = host->mmc->ios;
+ 	int rc;
+ 
+ 	if (!clock) {
+@@ -618,16 +619,28 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+ 	}
+ 
+ 	spin_unlock_irq(&host->lock);
++	/*
++	 * The SDHC requires internal clock frequency to be double the
++	 * actual clock that will be set for DDR mode. The controller
++	 * uses the faster clock(100/400MHz) for some of its parts and
++	 * send the actual required clock (50/200MHz) to the card.
++	 */
++	if (curr_ios.timing == MMC_TIMING_UHS_DDR50 ||
++	    curr_ios.timing == MMC_TIMING_MMC_DDR52 ||
++	    curr_ios.timing == MMC_TIMING_MMC_HS400)
++		clock *= 2;
+ 
+ 	rc = clk_set_rate(msm_host->clk, clock);
+ 	if (rc) {
+-		pr_err("%s: Failed to set clock at rate %u\n",
+-		       mmc_hostname(host->mmc), clock);
++		pr_err("%s: Failed to set clock at rate %u at timing %d\n",
++		       mmc_hostname(host->mmc), clock,
++		       curr_ios.timing);
+ 		goto out_lock;
+ 	}
+ 	msm_host->clk_rate = clock;
+-	pr_debug("%s: Setting clock at rate %lu\n",
+-		 mmc_hostname(host->mmc), clk_get_rate(msm_host->clk));
++	pr_debug("%s: Setting clock at rate %lu at timing %d\n",
++		 mmc_hostname(host->mmc), clk_get_rate(msm_host->clk),
++		 curr_ios.timing);
+ 
+ out_lock:
+ 	spin_lock_irq(&host->lock);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
