@@ -1,141 +1,198 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v2 1/9] clk: stm32f4: Update DT bindings documentation
-Date: Thu, 24 Nov 2016 15:45:41 +0100
-Message-ID: <1479998749-20358-2-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
-References: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:45748 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751741AbcKPQBT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 11:01:19 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v8 00/16] mmc: sdhci-msm: Add clk-rates, DDR, HS400 support
+Date: Wed, 16 Nov 2016 21:30:36 +0530
+Message-Id: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Hi,
 
-Creation of dt include file for specific stm32f4 clocks.
-These specific clocks are not derived from system clock (SYSCLOCK)
-We should use index 1 to use these clocks in DT.
-e.g. <&rcc 1 CLK_LSI>
+This is v8 version of the patch series which adds support for MSM8996.
+Adds HS400 driver support as well.
+These are tested on internal msm8996 & db410c HW.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- .../devicetree/bindings/clock/st,stm32-rcc.txt     |  8 ++++++
- drivers/clk/clk-stm32f4.c                          |  9 +++++--
- include/dt-bindings/clock/stm32f4-clock.h          | 31 ++++++++++++++++++++++
- 3 files changed, 46 insertions(+), 2 deletions(-)
- create mode 100644 include/dt-bindings/clock/stm32f4-clock.h
+Changes from v7 -> v8 :-
+1. Added patch 005 to add dt bindings for xo_clock.
+2. Added patch 009 to factor out sdhci_enable_clock as discussed on v7 series.
+2.a. Modified patch 010 by making use of sdhci_enable_clock.
+2.b. Addressed Stephen's comment on patch 010 to call clk_set_rate unconditionally.
+3. Addressed Stephen comments to remove unncessary one line comments, braces and other
+minor comments.
+4. Added changes from Jeremy in patch 002 for gcc-msm8994 as well for sdcc clk_rcg2_floor_ops.
+minor comments.
 
-diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-index 0532d81..18e05c2 100644
---- a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-+++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-@@ -17,6 +17,8 @@ Required properties:
-   property, containing a phandle to the clock device node, an index selecting
-   between gated clocks and other clocks and an index specifying the clock to
-   use.
-+- clocks: External oscillator clock phandle
-+  - high speed external clock signal (HSE)
- 
- Example:
- 
-@@ -25,6 +27,7 @@ Example:
- 		#clock-cells = <2>
- 		compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
- 		reg = <0x40023800 0x400>;
-+		clocks = <&clk_hse>;
- 	};
- 
- Specifying gated clocks
-@@ -66,6 +69,11 @@ The secondary index is bound with the following magic numbers:
- 
- 	0	SYSTICK
- 	1	FCLK
-+	2	CLK_LSI		(low-power clock source)
-+	3	CLK_LSE		(generated from a 32.768 kHz low-speed external
-+				 crystal or ceramic resonator)
-+	4	CLK_HSE_RTC	(HSE division factor for RTC clock)
-+	5	CLK_RTC		(real-time clock)
- 
- Example:
- 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 5eb05db..39965ab 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -28,6 +28,13 @@
- #include <linux/regmap.h>
- #include <linux/mfd/syscon.h>
- 
-+/*
-+ * Include list of clocks wich are not derived from system clock (SYSCLOCK)
-+ * The index of these clocks is the secondary index of DT bindings
-+ *
-+ */
-+#include <dt-bindings/clock/stm32f4-clock.h>
-+
- #define STM32F4_RCC_PLLCFGR		0x04
- #define STM32F4_RCC_CFGR		0x08
- #define STM32F4_RCC_AHB1ENR		0x30
-@@ -208,8 +215,6 @@ struct stm32f4_gate_data {
- 	{ STM32F4_RCC_APB2ENR, 26,	"ltdc",		"apb2_div" },
- };
- 
--enum { SYSTICK, FCLK, CLK_LSI, CLK_LSE, CLK_HSE_RTC, CLK_RTC, END_PRIMARY_CLK };
--
- /*
-  * This bitmask tells us which bit offsets (0..192) on STM32F4[23]xxx
-  * have gate bits associated with them. Its combined hweight is 71.
-diff --git a/include/dt-bindings/clock/stm32f4-clock.h b/include/dt-bindings/clock/stm32f4-clock.h
-new file mode 100644
-index 0000000..3132b6a
---- /dev/null
-+++ b/include/dt-bindings/clock/stm32f4-clock.h
-@@ -0,0 +1,31 @@
-+/*
-+ * stm32f4-clock.h
-+ *
-+ * Copyright (C) 2016 STMicroelectronics
-+ * Author: Gabriel Fernandez for STMicroelectronics.
-+ * License terms:  GNU General Public License (GPL), version 2
-+ */
-+
-+/*
-+ * List of clocks wich are not derived from system clock (SYSCLOCK)
-+ *
-+ * The index of these clocks is the secondary index of DT bindings
-+ * (see Documentatoin/devicetree/bindings/clock/st,stm32-rcc.txt)
-+ *
-+ * e.g:
-+	<assigned-clocks = <&rcc 1 CLK_LSE>;
-+*/
-+
-+#ifndef _DT_BINDINGS_CLK_STMF4_H
-+#define _DT_BINDINGS_CLK_STMF4_H
-+
-+#define SYSTICK			0
-+#define FCLK			1
-+#define CLK_LSI			2
-+#define CLK_LSE			3
-+#define CLK_HSE_RTC		4
-+#define CLK_RTC			5
-+
-+#define END_PRIMARY_CLK		6
-+
-+#endif
+v7 series was verified on msm8994 target by Jeremy McNicoll.
+
+Older history :-
+Below are the changes in v7.
+
+Changes from v6 -> v7 :-
+1. Removed patch "clk: Add clk_hw_get_clk() helper API to be used by clk providers"
+in v7 as it was not required.
+2. Addressed Stephen review comments on -
+"clk: qcom: Add rcg ops to return floor value closest to the requested rate"
+3. Addressed comments from Stephen to add xo_clock entry in the sdhc clock node.
+Using the same xo_clock entry from DT to get the clk_rate of xo_clock used in
+sdhci-msm driver. Patch 04 adds this entry into DT.
+Patch 05 adds the driver support for xo_clock mentioned above.
+Hence there is a minor change in Patch05, which can be reviewed and taken
+into the tree.
+
+IMHO, almost all patches are almost done and are ready to be accepted.
+Will below process work out? 
+Patches 001 & 002 :- (clock changes) - Can go via Stephen's Boyd Tree.
+Patches 004 & 010 :- (DTS changes) - Can go via Andy Gross. 
+Patches 003, 005-009 & 011-014 :- (sdhci-msm changes) - Adrian's tree.
+
+Please let me know in case if anything else is required on above.
+
+
+Changes from v5 -> v6 :-
+1. Earlier in v5 series DT node was added to get the clk-rates table
+needed for sdhci-msm driver. But this is removed in this(v6) patch series
+and instead the clk changes are done in the clk driver as per Rob H comment.
+
+2. Added clk driver changes(patch 1-3) to provide floor rate values of requested
+clock for sdhc client.
+For following boards- apq8084, msm8996, msm8916, msm8974.
+
+3. Other minor patch comments were addressed.
+
+Changes from v4 -> v5 :-
+1. Added HS400 sdhci-msm controller specific changes:- (Patch 10, 11, 12)
+2. Addressed comment from Adrian on Patch 07 @[3].
+3. Addressed comment from Arnd on Patch 03, to directly add
+   clk_table into sdhci_msm_host. [4]
+4. Addressed comment from Bjorn to not enforce having clk-rates property
+   in DT for older targets based on discussion at [5]
+5. Retained Acks from Adrian on patches (01 & 02 & 06) where there were no
+   changes made while addressing above comments.
+
+Older history:-
+This is v4 version of the patch series.
+Patches 01, 02, 05 & 06 were Acked-by Adrian.
+
+Changes from v3 -> v4 :-
+1. Addressed comments from Adrian on Patch 03, 07, 08.
+2. Addressed comments from Bjorn on Patch 03.
+3. Added clk-rate support for sdhc DT nodes to all MSM platforms.
+   in Pacth 04.
+4. Rebased on next branch of Ulf.
+
+Changes from v2 -> v3 :-
+1. Addded Patch 01 based on Bjorn comment[2] -
+   This fixes/unrolls the poor coding style of read/writes of
+   registers from base sdhci-msm driver.
+
+2. Fixed/unrolled poor style of reads/writes of registers in Patch 02,
+   based on Bjorn comment[2]. Also changed name of flag from
+   use_updated_dll_reset -> use_14lpp_dll_reset.
+
+Changes from v1->v2 :-
+1. Removed patch 06 & 08 from v1 patch series[1]
+(which were introducing unnecessary quirks).
+   Instead have implemented __sdhci_msm_set_clock version of
+   sdhci_set_clock in sdhci_msm driver itself in patch 07 of
+   this patch series.
+2. Enabled extra quirk (SDHCI_QUIRK2_PRESET_VALUE_BROKEN) in
+   patch 05 of this patch series.
+
+
+Description of patches :-
+This patchset adds clk-rates & other required changes to
+upstream sdhci-msm driver from codeaurora tree.
+It has been tested on a db410c Dragonboard and msm8996 based
+platform.
+
+Patch 0001-0003- Adds support in qcom clk driver to return
+floor value of requested clock rate instead of ceil rate
+for sdhc clients.
+
+Patch 0004- Adds updated dll sequence for newer controllers
+which has minor_version >= 0x42. This is required for msm8996.
+
+MSM controller HW recommendation is to use the base MCI clock
+and directly control this MCI clock at GCC in order to
+change the clk-rate.
+Patches 06-08 bring in required change for this to
+sdhci-msm.
+
+MSM controller would require 2x clock rate from source
+for DDR bus speed modes. Patch 09 adds this support.
+
+Patch 0010- adds DDR support in DT for sdhc1 of msm8916.
+
+Patches 0011-0014- Adds HS400 support to sdhci-msm.
+
+
+[1]:- http://www.spinics.net/lists/linux-mmc/msg38467.html
+[2]:- http://www.spinics.net/lists/linux-mmc/msg38578.html
+[3]:- https://patchwork.kernel.org/patch/9289345/
+[4]:- https://www.spinics.net/lists/linux-mmc/msg39107.html
+[5]:- http://www.spinics.net/lists/linux-mmc/msg38749.html
+[6]:- https://patchwork.kernel.org/patch/9297381/
+
+
+Rajendra Nayak (2):
+  clk: qcom: Add rcg ops to return floor value closest to the requested
+    rate
+  clk: qcom: Move all sdcc rcgs to use clk_rcg2_floor_ops
+
+Ritesh Harjani (12):
+  mmc: sdhci-msm: Change poor style writel/readl of registers
+  ARM: dts: Add xo_clock to sdhc nodes on qcom platforms
+  dt-bindings: sdhci-msm: Add xo_clock property
+  mmc: sdhci-msm: Add get_min_clock() and get_max_clock() callback
+  mmc: sdhci-msm: Enable few quirks
+  mmc: sdhci: Factor out sdhci_enable_clock
+  mmc: sdhci-msm: Implement set_clock callback for sdhci-msm
+  mmc: sdhci-msm: Add clock changes for DDR mode.
+  arm64: dts: qcom: msm8916: Add ddr support to sdhc1
+  mmc: sdhci-msm: Save the calculated tuning phase
+  mmc: sdhci-msm: Add calibration tuning for CDCLP533 circuit
+  sdhci: sdhci-msm: update dll configuration
+
+Venkat Gopalakrishnan (2):
+  mmc: sdhci-msm: Update DLL reset sequence
+  mmc: sdhci-msm: Add HS400 platform support
+
+ .../devicetree/bindings/mmc/sdhci-msm.txt          |   1 +
+ arch/arm/boot/dts/qcom-apq8084.dtsi                |  16 +-
+ arch/arm/boot/dts/qcom-msm8974.dtsi                |  16 +-
+ arch/arm64/boot/dts/qcom/msm8916.dtsi              |  11 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              |   9 +-
+ drivers/clk/qcom/clk-rcg.h                         |   1 +
+ drivers/clk/qcom/clk-rcg2.c                        |  76 ++-
+ drivers/clk/qcom/common.c                          |  16 +
+ drivers/clk/qcom/common.h                          |   2 +
+ drivers/clk/qcom/gcc-apq8084.c                     |   8 +-
+ drivers/clk/qcom/gcc-msm8916.c                     |   4 +-
+ drivers/clk/qcom/gcc-msm8974.c                     |   8 +-
+ drivers/clk/qcom/gcc-msm8994.c                     |   8 +-
+ drivers/clk/qcom/gcc-msm8996.c                     |   8 +-
+ drivers/mmc/host/sdhci-msm.c                       | 626 +++++++++++++++++++--
+ drivers/mmc/host/sdhci.c                           |  28 +-
+ drivers/mmc/host/sdhci.h                           |   1 +
+ 17 files changed, 739 insertions(+), 100 deletions(-)
+
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
