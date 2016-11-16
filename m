@@ -1,191 +1,232 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: gnurou@gmail.com,
-	linux@armlinux.org.uk,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH V4 3/6] dt/bindings: Add bindings for Tegra GMI controller
-Date: Mon,  7 Nov 2016 09:30:02 +0100
-Message-Id: <1478507405-13204-4-git-send-email-mirza.krak@gmail.com>
-In-Reply-To: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
-References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:46704 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753140AbcKPQB6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 11:01:58 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v8 02/16] clk: qcom: Move all sdcc rcgs to use clk_rcg2_floor_ops
+Date: Wed, 16 Nov 2016 21:30:38 +0530
+Message-Id: <1479312052-22396-3-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+References: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com>
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Document the devicetree bindings for the Generic Memory Interface (GMI)
-bus driver found on Tegra SOCs.
+The sdcc driver for msm8996/msm8916/msm8974/msm8994 and apq8084
+expects a clk_set_rate() on the sdcc rcg clk to set
+a floor value of supported clk rate closest to the requested
+rate, by looking up the frequency table.
+So move all the sdcc rcgs on all these platforms to use the
+newly introduced clk_rcg2_floor_ops
 
-Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
 ---
+ drivers/clk/qcom/gcc-apq8084.c | 8 ++++----
+ drivers/clk/qcom/gcc-msm8916.c | 4 ++--
+ drivers/clk/qcom/gcc-msm8974.c | 8 ++++----
+ drivers/clk/qcom/gcc-msm8994.c | 8 ++++----
+ drivers/clk/qcom/gcc-msm8996.c | 8 ++++----
+ 5 files changed, 18 insertions(+), 18 deletions(-)
 
-Changes in v2:
-- Updated examples and some information based on comments from Jon Hunter.
+diff --git a/drivers/clk/qcom/gcc-apq8084.c b/drivers/clk/qcom/gcc-apq8084.c
+index 070037a..486d961 100644
+--- a/drivers/clk/qcom/gcc-apq8084.c
++++ b/drivers/clk/qcom/gcc-apq8084.c
+@@ -1142,7 +1142,7 @@ enum {
+ 		.name = "sdcc1_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -1156,7 +1156,7 @@ enum {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -1170,7 +1170,7 @@ enum {
+ 		.name = "sdcc3_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -1184,7 +1184,7 @@ enum {
+ 		.name = "sdcc4_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index 5c4e193..628e6ca 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -1107,7 +1107,7 @@ enum {
+ 		.name = "sdcc1_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -1132,7 +1132,7 @@ enum {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
+index 0091520..348e30d 100644
+--- a/drivers/clk/qcom/gcc-msm8974.c
++++ b/drivers/clk/qcom/gcc-msm8974.c
+@@ -872,7 +872,7 @@ enum {
+ 	.name = "sdcc1_apps_clk_src",
+ 	.parent_names = gcc_xo_gpll0,
+ 	.num_parents = 2,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_floor_ops,
+ };
+ 
+ static struct clk_rcg2 sdcc1_apps_clk_src = {
+@@ -894,7 +894,7 @@ enum {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -908,7 +908,7 @@ enum {
+ 		.name = "sdcc3_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -922,7 +922,7 @@ enum {
+ 		.name = "sdcc4_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm8994.c
+index 84093c1..8afd830 100644
+--- a/drivers/clk/qcom/gcc-msm8994.c
++++ b/drivers/clk/qcom/gcc-msm8994.c
+@@ -912,7 +912,7 @@ enum {
+ 		.name = "sdcc1_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -938,7 +938,7 @@ enum {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -953,7 +953,7 @@ enum {
+ 		.name = "sdcc3_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -968,7 +968,7 @@ enum {
+ 		.name = "sdcc4_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index e22bbc2..4b1fc17 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -460,7 +460,7 @@ enum {
+ 		.name = "sdcc1_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4_gpll0_early_div,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -505,7 +505,7 @@ enum {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -519,7 +519,7 @@ enum {
+ 		.name = "sdcc3_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -543,7 +543,7 @@ enum {
+ 		.name = "sdcc4_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
 
-Changes in v3:
-- Updates ranges description based on comments from Rob Herring
-
-Changes in v4:
-- renamed snor-*-inv to snor-*-active-high
-
- .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132 +++++++++++++++++++++
- 1 file changed, 132 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
-
-diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
-new file mode 100644
-index 0000000..83b0e54
---- /dev/null
-+++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
-@@ -0,0 +1,132 @@
-+Device tree bindings for NVIDIA Tegra Generic Memory Interface bus
-+
-+The Generic Memory Interface bus enables memory transfers between internal and
-+external memory. Can be used to attach various high speed devices such as
-+synchronous/asynchronous NOR, FPGA, UARTS and more.
-+
-+The actual devices are instantiated from the child nodes of a GMI node.
-+
-+Required properties:
-+ - compatible : Should contain one of the following:
-+        For Tegra20 must contain "nvidia,tegra20-gmi".
-+        For Tegra30 must contain "nvidia,tegra30-gmi".
-+ - reg: Should contain GMI controller registers location and length.
-+ - clocks: Must contain an entry for each entry in clock-names.
-+ - clock-names: Must include the following entries: "gmi"
-+ - resets : Must contain an entry for each entry in reset-names.
-+ - reset-names : Must include the following entries: "gmi"
-+ - #address-cells: The number of cells used to represent physical base
-+   addresses in the GMI address space. Should be 2.
-+ - #size-cells: The number of cells used to represent the size of an address
-+   range in the GMI address space. Should be 1.
-+ - ranges: Must be set up to reflect the memory layout with three integer values
-+   for each chip-select line in use (only one entry is supported, see below
-+   comments):
-+   <cs-number> <offset> <physical address of mapping> <size>
-+
-+Note that the GMI controller does not have any internal chip-select address
-+decoding, because of that chip-selects either need to be managed via software
-+or by employing external chip-select decoding logic.
-+
-+If external chip-select logic is used to support multiple devices it is assumed
-+that the devices use the same timing and so are probably the same type. It also
-+assumes that they can fit in the 256MB address range. In this case only one
-+child device is supported which represents the active chip-select line, see
-+examples for more insight.
-+
-+The chip-select number is decoded from the child nodes second address cell of
-+'ranges' property, if 'ranges' property is not present or empty chip-select will
-+then be decoded from the first cell of the 'reg' property.
-+
-+Optional child cs node properties:
-+
-+ - nvidia,snor-data-width-32bit: Use 32bit data-bus, default is 16bit.
-+ - nvidia,snor-mux-mode: Enable address/data MUX mode.
-+ - nvidia,snor-rdy-active-before-data: Assert RDY signal one cycle before data.
-+   If omitted it will be asserted with data.
-+ - nvidia,snor-rdy-active-high: RDY signal is active high
-+ - nvidia,snor-adv-active-high: ADV signal is active high
-+ - nvidia,snor-oe-active-high: WE/OE signal is active high
-+ - nvidia,snor-cs-active-high: CS signal is active high
-+
-+  Note that there is some special handling for the timing values.
-+  From Tegra TRM:
-+  Programming 0 means 1 clock cycle: actual cycle = programmed cycle + 1
-+
-+ - nvidia,snor-muxed-width: Number of cycles MUX address/data asserted on the
-+   bus. Valid values are 0-15, default is 1
-+ - nvidia,snor-hold-width: Number of cycles CE stays asserted after the
-+   de-assertion of WR_N (in case of SLAVE/MASTER Request) or OE_N
-+   (in case of MASTER Request). Valid values are 0-15, default is 1
-+ - nvidia,snor-adv-width: Number of cycles during which ADV stays asserted.
-+   Valid values are 0-15, default is 1.
-+ - nvidia,snor-ce-width: Number of cycles before CE is asserted.
-+   Valid values are 0-15, default is 4
-+ - nvidia,snor-we-width: Number of cycles during which WE stays asserted.
-+   Valid values are 0-15, default is 1
-+ - nvidia,snor-oe-width: Number of cycles during which OE stays asserted.
-+   Valid values are 0-255, default is 1
-+ - nvidia,snor-wait-width: Number of cycles before READY is asserted.
-+   Valid values are 0-255, default is 3
-+
-+Example with two SJA1000 CAN controllers connected to the GMI bus. We wrap the
-+controllers with a simple-bus node since they are all connected to the same
-+chip-select (CS4), in this example external address decoding is provided:
-+
-+gmi@70090000 {
-+	compatible = "nvidia,tegra20-gmi";
-+	reg = <0x70009000 0x1000>;
-+	#address-cells = <2>;
-+	#size-cells = <1>;
-+	clocks = <&tegra_car TEGRA20_CLK_NOR>;
-+	clock-names = "gmi";
-+	resets = <&tegra_car 42>;
-+	reset-names = "gmi";
-+	ranges = <4 0 0xd0000000 0xfffffff>;
-+
-+	status = "okay";
-+
-+	bus@4,0 {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 4 0 0x40100>;
-+
-+		nvidia,snor-mux-mode;
-+		nvidia,snor-adv-active-high;
-+
-+		can@0 {
-+			reg = <0 0x100>;
-+			...
-+		};
-+
-+		can@40000 {
-+			reg = <0x40000 0x100>;
-+			...
-+		};
-+	};
-+};
-+
-+Example with one SJA1000 CAN controller connected to the GMI bus
-+on CS4:
-+
-+gmi@70090000 {
-+	compatible = "nvidia,tegra20-gmi";
-+	reg = <0x70009000 0x1000>;
-+	#address-cells = <2>;
-+	#size-cells = <1>;
-+	clocks = <&tegra_car TEGRA20_CLK_NOR>;
-+	clock-names = "gmi";
-+	resets = <&tegra_car 42>;
-+	reset-names = "gmi";
-+	ranges = <4 0 0xd0000000 0xfffffff>;
-+
-+	status = "okay";
-+
-+	can@4,0 {
-+		reg = <4 0 0x100>;
-+		nvidia,snor-mux-mode;
-+		nvidia,snor-adv-active-high;
-+		...
-+	};
-+};
---
-2.1.4
