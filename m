@@ -1,49 +1,79 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH 0/6] Add STM32F4 missing clocks
-Date: Mon, 7 Nov 2016 14:05:37 +0100
-Message-ID: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH 1/3] arm: hisi: add ARCH_MULTI_V5 support
+To: Wei Xu <xuwei5@hisilicon.com>
+References: <20161017120705.3726-1-wenpan@hisilicon.com>
+ <20161017120705.3726-2-wenpan@hisilicon.com> <5893354.6MrIxqzRoI@wuerfel>
+ <e78a288b-8bab-9441-2edb-6ec08e5103d7@hisilicon.com>
+ <582C2785.2010804@hisilicon.com>
+CC: wenpan <wenpan@hisilicon.com>, Arnd Bergmann <arnd@arndb.de>,
+        "Marty
+ Plummer" <netz.kernel@gmail.com>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux@armlinux.org.uk>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <howell.yang@hisilicon.com>,
+        <jalen.hsu@hisilicon.com>, <lvkuanliang@hisilicon.com>,
+        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
+        <kevin.lixu@hisilicon.com>, <qinxiaojun@huawei.com>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Message-ID: <114569cb-79ab-a46d-8582-6169f182a32c@hisilicon.com>
+Date: Thu, 17 Nov 2016 11:03:42 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <582C2785.2010804@hisilicon.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Hi Wei，
 
-This patch-set adds:
- - I2S & SAI PLLs
- - SDIO & 48 Mhz clocks
- - LCD-TFT clock
- - I2S & SAI clocks
+On 2016/11/16 17:31, Wei Xu wrote:
+> Hi Pan,
+> 
+> On 2016/11/16 8:56, wenpan wrote:
+>> Hi Marty，
+>> Does this confict with your patch？ If not，I hope this could be merged first.  Besides could you tell me the link to your related patch?
+> 
+> This is the link: https://patchwork.kernel.org/patch/9334743/
+> 
 
+Thank you for offering this.If I want to give some comments on Marty's patch,
+what should I do?
 
-Gabriel Fernandez (6):
-  clk: stm32f4: Add PLL_I2S & PLL_SAI for STM32F429/469 boards
-  clk: stm32f4: SDIO & 48Mhz clock management for STM32F469 board
-  clk: stm32f4: Add post divisor for I2S & SAI PLLs and Add lcd-tft
-    clock
-  clk: stm32f4: Add I2S clock
-  clk: stm32f4: Add SAI clocks
-  arm: dts: stm32f4: Add external I2S clock
+For Marty's patch, I think there's no need to add specific config item ARCH_HIxxxx
+for every chipset. Some existing chipsets depend on ARCH_HISI directly like Hi3519
+and Hi3798CV200. If some options like ARM_GIC is removed from ARCH_HISI, this kind
+of chipsets will must choose other place to select it. I suggest we should keep selecting
+ARM_GIC under ARCH_HISI as Pan's patch do.
 
- arch/arm/boot/dts/stm32f429.dtsi |   8 +-
- drivers/clk/clk-stm32f4.c        | 441 +++++++++++++++++++++++++++++++++++++--
- 2 files changed, 434 insertions(+), 15 deletions(-)
+The code may be like this:
 
--- 
-1.9.1
+config ARCH_HISI
+ 	bool "Hisilicon SoC Support"
+-	depends on ARCH_MULTI_V7
++	depends on ARCH_MULTI_V5 || ARCH_MULTI_V6 || ARCH_MULTI_V7
+ 	select ARM_AMBA
+-	select ARM_GIC
++	select ARM_GIC if ARCH_MULTI_V7
++	select ARM_VIC if ARCH_MULTI_V5 || depends on ARCH_MULTI_V6
+ 	select ARM_TIMER_SP804
+ 	select POWER_RESET
+ 	select POWER_RESET_HISI
+ 	select POWER_SUPPLY
+
+What's your opinion?
+
+Best Regards,
+Jiancheng
+
+>> On 2016/10/17 21:48, Arnd Bergmann wrote:
+>>> On Monday, October 17, 2016 8:07:03 PM CEST Pan Wen wrote:
+>>>> Add support for some HiSilicon SoCs which depend on ARCH_MULTI_V5.
+>>>>
+>>>> Signed-off-by: Pan Wen <wenpan@hisilicon.com>
+>>>>
+>>>
+>>> Looks ok. I've added Marty Plummer to Cc, he was recently proposing
+>>> patches for Hi3520, which I think is closely related to this one.
+>>> Please try to work together so the patches don't conflict. It should
+>>> be fairly straightforward since you are basically doing the same
+>>> change here.
+>>>
