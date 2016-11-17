@@ -1,55 +1,35 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	xf@rock-chips.com,
-	rocky.hao@rock-chips.com
-Cc: huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	jay.xu@rock-chips.com,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH] clk: rockchip: validity should be checked prior to clock rate change
-Date: Tue,  8 Nov 2016 17:10:14 +0800
-Message-Id: <1478596214-761-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 17 Nov 2016 15:04:20 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Stephen Boyd <stephen.boyd@linaro.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] clk: efm32gg: Pass correct type to hw provider
+ registration
+Message-ID: <20161117230420.GQ25626@codeaurora.org>
+References: <20161116190932.21767-1-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20161116190932.21767-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-If validity is not checked prior to clock rate change, clk_set_rate(
-cpu_clk, unsupported_rate) will return success, but the real clock rate
-change operation is prohibited in post clock change event. Alough post
-clock change event will report error due to unsupported clock rate is
-set, but this error message is ignored by clock framework.
+On 11/16, Stephen Boyd wrote:
+> Dan Carpenter reports that we're passing a pointer to a pointer
+> here when we should just be passing a pointer. Pass the right
+> pointer so that the of_clk_hw_onecell_get() sees the appropriate
+> data pointer on its end.
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Cc: Stephen Boyd <stephen.boyd@linaro.org>
+> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Fixes: 9337631f52a8 ("clk: efm32gg: Migrate to clk_hw based OF and registration APIs")
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Rocky Hao <rocky.hao@rock-chips.com>
----
- drivers/clk/rockchip/clk-cpu.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Applied to clk-fixes
 
-diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-index 05b3d73bfefa..c4b0cc83fa87 100644
---- a/drivers/clk/rockchip/clk-cpu.c
-+++ b/drivers/clk/rockchip/clk-cpu.c
-@@ -125,8 +125,17 @@ static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
- {
- 	const struct rockchip_cpuclk_reg_data *reg_data = cpuclk->reg_data;
- 	unsigned long alt_prate, alt_div;
-+	const struct rockchip_cpuclk_rate_table *rate;
- 	unsigned long flags;
- 
-+	/* check validity of the new rate */
-+	rate = rockchip_get_cpuclk_settings(cpuclk, ndata->new_rate);
-+	if (!rate) {
-+		pr_err("%s: Invalid rate : %lu for cpuclk\n",
-+		       __func__, ndata->new_rate);
-+		return -EINVAL;
-+	}
-+
- 	alt_prate = clk_get_rate(cpuclk->alt_parent);
- 
- 	spin_lock_irqsave(cpuclk->lock, flags);
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
