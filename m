@@ -1,47 +1,63 @@
-Return-Path: <rnayak@codeaurora.org>
-Message-ID: <581AF4CE.4050000@codeaurora.org>
-Date: Thu, 03 Nov 2016 13:56:54 +0530
-From: Rajendra Nayak <rnayak@codeaurora.org>
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: mturquette@baylibre.com, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- tdas@codeaurora.org,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH 1/7] clk: qcom: Mark a few branch clocks with BRANCH_HALT_DELAY
-References: <1476876523-27378-1-git-send-email-rnayak@codeaurora.org> <1476876523-27378-2-git-send-email-rnayak@codeaurora.org> <20161102203950.GK16026@codeaurora.org>
-In-Reply-To: <20161102203950.GK16026@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Jorik Jonker <jorik@kippendief.biz>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Icenowy Zheng <icenowy@aosc.xyz>
+Subject: [PATCH] clk: sunxi-ng: enable so-said LDOs for A33 SoC's pll-mipi clock
+Date: Fri, 18 Nov 2016 00:49:54 +0800
+Message-Id: <20161117164954.62658-1-icenowy@aosc.xyz>
 List-ID: <linux-clk.vger.kernel.org>
 
+In the user manual of A33 SoC, the bit 22 and 23 of pll-mipi control
+register is called "LDO{1,2}_EN", and according to the BSP source code
+from Allwinner [1], the LDOs are enabled during the clock's enabling
+process.
 
-On 11/03/2016 02:09 AM, Stephen Boyd wrote:
-> On 10/19, Rajendra Nayak wrote:
->> We seem to have a few branch clocks within gcc for msm8996 which do
->> have a valid halt bit but can't be used to check branch enable/disable
->> status as they rely on external clocks in some cases and in some 
->> others only toggle during an ongoing bus transaction.
->> Mark these with BRANCH_HALT_DELAY, so we just add a delay instead.
->>
->> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
->> ---
-> 
-> Srini tells me that if the pcie pipe clocks are enabled after the
-> phy is powered up things work fine and the halt bit checks work.
-> So I don't think we need this patch. Probably the drivers are
-> enabling all their clocks at probe instead of understanding that
-> the phy is outputting a clock that goes into gcc to be gated and
-> then back out into their controller and/or phy.
+The clock failed to generate output if the two LDOs are not enabled.
 
-Sure, I will take a look to see if the usb and ufs clocks show the
-same behavior, in which case we won't need this patch.
+Add the two bits to the clock's gate bits, so that the LDOs are enabled
+when the PLL is enabled.
 
-> 
-> Also, note that these clocks have parents that should be
-> populated by the phys, but so far we haven't done that. That
-> should be fixed as well.
-> 
+[1] https://github.com/allwinner-zh/linux-3.4-sunxi/blob/master/drivers/clk/sunxi/clk-sun8iw5.c#L429
 
+Fixes: d05c748bd730 ("clk: sunxi-ng: Add A33 CCU support")
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+Dear Chen-Yu:
+As you said, the two bits are also present in the CCU of A23 and A31.
+Could you please check whether the PLL works on the two SoCs?
+I remembered you mentioned you failed to make TCON enabled on A23.
+On A31, you may hack the parent of tcon-ch0 to force the tcon clock to
+use pll-mipi as parent, in order to check whether the pll works.
+
+However, I didn't found the code that enables the LDOs in the BSP A23/31
+sources, so you must test them to ensure whether the code is needed for
+these SoCs.
+
+Regards,
+Icenowy
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+index 96b40ca..9bd1f78 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+@@ -131,7 +131,7 @@ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_mipi_clk, "pll-mipi",
+ 				    8, 4,		/* N */
+ 				    4, 2,		/* K */
+ 				    0, 4,		/* M */
+-				    BIT(31),		/* gate */
++				    BIT(31) | BIT(23) | BIT(22), /* gate */
+ 				    BIT(28),		/* lock */
+ 				    CLK_SET_RATE_UNGATE);
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+2.10.1
