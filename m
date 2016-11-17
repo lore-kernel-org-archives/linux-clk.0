@@ -1,89 +1,52 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	michael.scott@linaro.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH 1/2] clk: qcom: clk-smd-rpm: Fix clk_hw_onecell_data references
-Date: Mon, 21 Nov 2016 16:04:49 +0200
-Message-Id: <20161121140450.12353-1-georgi.djakov@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:57836 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753994AbcKQAI4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Nov 2016 19:08:56 -0500
+Subject: Re: [PATCH v8 00/16] mmc: sdhci-msm: Add clk-rates, DDR, HS400
+ support
+To: Ritesh Harjani <riteshh@codeaurora.org>, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org, adrian.hunter@intel.com,
+        sboyd@codeaurora.org, andy.gross@linaro.org
+References: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com
+From: Jeremy McNicoll <jmcnicol@redhat.com>
+Message-ID: <1993f1b4-2989-af06-a5f0-06170db7c333@redhat.com>
+Date: Wed, 16 Nov 2016 16:08:53 -0800
+MIME-Version: 1.0
+In-Reply-To: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The clk_hw_onecell_data struct is missing references to the
-actual clocks. Fix this.
+On 2016-11-16 8:00 AM, Ritesh Harjani wrote:
+> Hi,
+>
+> This is v8 version of the patch series which adds support for MSM8996.
+> Adds HS400 driver support as well.
+> These are tested on internal msm8996 & db410c HW.
+>
+> Changes from v7 -> v8 :-
+> 1. Added patch 005 to add dt bindings for xo_clock.
+> 2. Added patch 009 to factor out sdhci_enable_clock as discussed on v7 series.
+> 2.a. Modified patch 010 by making use of sdhci_enable_clock.
+> 2.b. Addressed Stephen's comment on patch 010 to call clk_set_rate unconditionally.
+> 3. Addressed Stephen comments to remove unncessary one line comments, braces and other
+> minor comments.
+> 4. Added changes from Jeremy in patch 002 for gcc-msm8994 as well for sdcc clk_rcg2_floor_ops.
+> minor comments.
+>
+> v7 series was verified on msm8994 target by Jeremy McNicoll.
 
-Reported-by: Michael Scott <michael.scott@linaro.org>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/clk/qcom/clk-smd-rpm.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index a27013dbc0aa..58821f7213b0 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -148,8 +148,7 @@ struct clk_smd_rpm_req {
- 
- struct rpm_cc {
- 	struct qcom_rpm *rpm;
--	struct clk_hw_onecell_data data;
--	struct clk_hw *hws[];
-+	struct clk_hw_onecell_data *data;
- };
- 
- struct rpm_smd_clk_desc {
-@@ -470,9 +469,7 @@ MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
- 
- static int rpm_smd_clk_probe(struct platform_device *pdev)
- {
--	struct clk_hw **hws;
- 	struct rpm_cc *rcc;
--	struct clk_hw_onecell_data *data;
- 	int ret;
- 	size_t num_clks, i;
- 	struct qcom_smd_rpm *rpm;
-@@ -492,14 +489,13 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
- 	rpm_smd_clks = desc->clks;
- 	num_clks = desc->num_clks;
- 
--	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*hws) * num_clks,
--			   GFP_KERNEL);
-+	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc), GFP_KERNEL);
- 	if (!rcc)
- 		return -ENOMEM;
- 
--	hws = rcc->hws;
--	data = &rcc->data;
--	data->num = num_clks;
-+	rcc->data = devm_kzalloc(&pdev->dev, sizeof(*rcc->data) + num_clks *
-+				 sizeof(*rcc->data->hws), GFP_KERNEL);
-+	rcc->data->num = num_clks;
- 
- 	for (i = 0; i < num_clks; i++) {
- 		if (!rpm_smd_clks[i])
-@@ -518,17 +514,19 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < num_clks; i++) {
- 		if (!rpm_smd_clks[i]) {
--			data->hws[i] = ERR_PTR(-ENOENT);
-+			rcc->data->hws[i] = ERR_PTR(-ENOENT);
- 			continue;
- 		}
- 
- 		ret = devm_clk_hw_register(&pdev->dev, &rpm_smd_clks[i]->hw);
- 		if (ret)
- 			goto err;
-+
-+		rcc->data->hws[i] = &rpm_smd_clks[i]->hw;
- 	}
- 
- 	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
--				     data);
-+				     rcc->data);
- 	if (ret)
- 		goto err;
- 
+v7 was verified on my Nexus 5X (msm8992).
+
+-jeremy
+
