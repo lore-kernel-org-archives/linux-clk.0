@@ -1,75 +1,39 @@
-Return-Path: <mirza.krak@gmail.com>
-Return-Path: <mirza.krak@gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-To: swarren@wwwdotorg.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: gnurou@gmail.com,
-	linux@armlinux.org.uk,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH V4 4/6] ARM: tegra: Add Tegra30 GMI support
-Date: Mon,  7 Nov 2016 09:30:03 +0100
-Message-Id: <1478507405-13204-5-git-send-email-mirza.krak@gmail.com>
-In-Reply-To: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
-References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 17 Nov 2016 15:04:17 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Stephen Boyd <stephen.boyd@linaro.org>
+Subject: Re: [PATCH] clk: berlin: Pass correct type to hw provider
+ registration
+Message-ID: <20161117230417.GP25626@codeaurora.org>
+References: <20161116190847.21417-1-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161116190847.21417-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Mirza Krak <mirza.krak@gmail.com>
+On 11/16, Stephen Boyd wrote:
+> Dan Carpenter reports that we're passing a pointer to a pointer
+> here when we should just be passing a pointer. Pass the right
+> pointer so that the of_clk_hw_onecell_get() sees the appropriate
+> data pointer on its end.
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Cc: Jisheng Zhang <jszhang@marvell.com>
+> Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Stephen Boyd <stephen.boyd@linaro.org>
+> Fixes: f6475e298297 ("clk: berlin: Migrate to clk_hw based registration and OF APIs")
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-Add a device node for the GMI controller found on Tegra30.
+Applied to clk-fixes
 
-Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
----
-
-Changes in v2:
-- added address-cells, size-cells and ranges properties
-
-Changes in v3:
-- no changes
-
-Changes in v4:
-- no changes
-
- arch/arm/boot/dts/tegra30.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 5030065..bbb1c00 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -439,6 +439,19 @@
- 		status = "disabled";
- 	};
-
-+	gmi@70009000 {
-+		compatible = "nvidia,tegra30-gmi";
-+		reg = <0x70009000 0x1000>;
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0x48000000 0x7ffffff>;
-+		clocks = <&tegra_car TEGRA30_CLK_NOR>;
-+		clock-names = "gmi";
-+		resets = <&tegra_car 42>;
-+		reset-names = "gmi";
-+		status = "disabled";
-+	};
-+
- 	pwm: pwm@7000a000 {
- 		compatible = "nvidia,tegra30-pwm", "nvidia,tegra20-pwm";
- 		reg = <0x7000a000 0x100>;
---
-2.1.4
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
