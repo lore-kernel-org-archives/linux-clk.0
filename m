@@ -1,252 +1,818 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 3 Nov 2016 09:15:16 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: =?iso-8859-1?Q?Andr=E9?= Przywara <andre.przywara@arm.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v6 4/4] arm64: dts: add Pine64 support
-Message-ID: <20161103081516.gvf4mdudarxtyxfj@lukather>
-References: <cover.6088b64645bde9b847d2fede5ecb15a0e204a9dd.1478123413.git-series.maxime.ripard@free-electrons.com>
- <45ddd059d22233c3e07852f4f71ee7ad7ed48542.1478123413.git-series.maxime.ripard@free-electrons.com>
- <83b8ff39-91f0-4e5c-61a5-e21f31c909ff@arm.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 16 Nov 2016 17:19:15 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4] clk: tegra: Add BPMP clock driver
+Message-ID: <20161117011915.GN25626@codeaurora.org>
+References: <20161115161129.29722-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7k7g43xkcnipynkz"
-In-Reply-To: <83b8ff39-91f0-4e5c-61a5-e21f31c909ff@arm.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161115161129.29722-1-thierry.reding@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 11/15, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> This driver uses the services provided by the BPMP firmware driver to
 
---7k7g43xkcnipynkz
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+What does BPMP mean?
 
-On Wed, Nov 02, 2016 at 10:05:09PM +0000, Andr=E9 Przywara wrote:
-> On 02/11/16 21:50, Maxime Ripard wrote:
-> > From: Andre Przywara <andre.przywara@arm.com>
-> >=20
-> > The Pine64 is a cost-efficient development board based on the
-> > Allwinner A64 SoC.
-> > There are three models: the basic version with Fast Ethernet and
-> > 512 MB of DRAM (Pine64) and two Pine64+ versions, which both
-> > feature Gigabit Ethernet and additional connectors for touchscreens
-> > and a camera. Or as my son put it: "Those are smaller and these are
-> > missing." ;-)
-> > The two Pine64+ models just differ in the amount of DRAM
-> > (1GB vs. 2GB). Since U-Boot will figure out the right size for us and
-> > patches the DT accordingly we just need to provide one DT for the
-> > Pine64+.
-> >=20
-> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > [Maxime: Removed the common DTSI and include directly the pine64 DTS]
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  arch/arm64/boot/dts/Makefile                             |  1 +-
-> >  arch/arm64/boot/dts/allwinner/Makefile                   |  5 +-
-> >  arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts | 50 ++++++-
-> >  arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts      | 74 ++++++++=
-+-
-> >  4 files changed, 130 insertions(+), 0 deletions(-)
-> >  create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
-> >  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plu=
-s.dts
-> >  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> >=20
-> > diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-> > index 6684f97c2722..080232b0270e 100644
-> > --- a/arch/arm64/boot/dts/Makefile
-> > +++ b/arch/arm64/boot/dts/Makefile
-> > @@ -1,4 +1,5 @@
-> >  dts-dirs +=3D al
-> > +dts-dirs +=3D allwinner
-> >  dts-dirs +=3D altera
-> >  dts-dirs +=3D amd
-> >  dts-dirs +=3D amlogic
-> > diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/d=
-ts/allwinner/Makefile
-> > new file mode 100644
-> > index 000000000000..1e29a5ae8282
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/allwinner/Makefile
-> > @@ -0,0 +1,5 @@
-> > +dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-a64-pine64-plus.dtb sun50i-a64-pi=
-ne64.dtb
-> > +
-> > +always		:=3D $(dtb-y)
-> > +subdir-y	:=3D $(dts-dirs)
-> > +clean-files	:=3D *.dtb
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts b=
-/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
-> > new file mode 100644
-> > index 000000000000..790d14daaa6a
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
-> > @@ -0,0 +1,50 @@
-> > +/*
-> > + * Copyright (c) 2016 ARM Ltd.
-> > + *
-> > + * This file is dual-licensed: you can use it either under the terms
-> > + * of the GPL or the X11 license, at your option. Note that this dual
-> > + * licensing only applies to this file, and not this project as a
-> > + * whole.
-> > + *
-> > + *  a) This library is free software; you can redistribute it and/or
-> > + *     modify it under the terms of the GNU General Public License as
-> > + *     published by the Free Software Foundation; either version 2 of =
-the
-> > + *     License, or (at your option) any later version.
-> > + *
-> > + *     This library is distributed in the hope that it will be useful,
-> > + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + *     GNU General Public License for more details.
-> > + *
-> > + * Or, alternatively,
-> > + *
-> > + *  b) Permission is hereby granted, free of charge, to any person
-> > + *     obtaining a copy of this software and associated documentation
-> > + *     files (the "Software"), to deal in the Software without
-> > + *     restriction, including without limitation the rights to use,
-> > + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> > + *     sell copies of the Software, and to permit persons to whom the
-> > + *     Software is furnished to do so, subject to the following
-> > + *     conditions:
-> > + *
-> > + *     The above copyright notice and this permission notice shall be
-> > + *     included in all copies or substantial portions of the Software.
-> > + *
-> > + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> > + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> > + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> > + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> > + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> > + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> > + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> > + *     OTHER DEALINGS IN THE SOFTWARE.
-> > + */
-> > +
-> > +#include "sun50i-a64-pine64.dts"
-> > +
-> > +/ {
-> > +	model =3D "Pine64+";
-> > +	compatible =3D "pine64,pine64-plus", "allwinner,sun50i-a64";
-> > +
-> > +	/* TODO: Camera, Ethernet PHY, touchscreen, etc. */
-> > +};
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch=
-/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> > new file mode 100644
-> > index 000000000000..9f127b3d0e33
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> > @@ -0,0 +1,74 @@
-> > +/*
-> > + * Copyright (c) 2016 ARM Ltd.
-> > + *
-> > + * This file is dual-licensed: you can use it either under the terms
-> > + * of the GPL or the X11 license, at your option. Note that this dual
-> > + * licensing only applies to this file, and not this project as a
-> > + * whole.
-> > + *
-> > + *  a) This library is free software; you can redistribute it and/or
-> > + *     modify it under the terms of the GNU General Public License as
-> > + *     published by the Free Software Foundation; either version 2 of =
-the
-> > + *     License, or (at your option) any later version.
-> > + *
-> > + *     This library is distributed in the hope that it will be useful,
-> > + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + *     GNU General Public License for more details.
-> > + *
-> > + * Or, alternatively,
-> > + *
-> > + *  b) Permission is hereby granted, free of charge, to any person
-> > + *     obtaining a copy of this software and associated documentation
-> > + *     files (the "Software"), to deal in the Software without
-> > + *     restriction, including without limitation the rights to use,
-> > + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> > + *     sell copies of the Software, and to permit persons to whom the
-> > + *     Software is furnished to do so, subject to the following
-> > + *     conditions:
-> > + *
-> > + *     The above copyright notice and this permission notice shall be
-> > + *     included in all copies or substantial portions of the Software.
-> > + *
-> > + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> > + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> > + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> > + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> > + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> > + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> > + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> > + *     OTHER DEALINGS IN THE SOFTWARE.
-> > + */
-> > +
-> > +/dts-v1/;
-> > +
-> > +#include "sun50i-a64.dtsi"
-> > +
-> > +/ {
-> > +	model =3D "Pine64";
-> > +	compatible =3D "pine64,pine64", "allwinner,sun50i-a64";
-> > +
-> > +	aliases {
-> > +		serial0 =3D &uart0;
-> > +	};
-> > +
-> > +	chosen {
-> > +		stdout-path =3D "serial0:115200n8";
-> > +	};
-> > +};
-> > +
-> > +&uart0 {
-> > +	pinctrl-names =3D "default";
-> > +	pinctrl-0 =3D <&uart0_pins_a>;
-> > +	status =3D "okay";
-> > +};
-> > +
-> > +&i2c1 {
-> > +	pinctrl-names =3D "default";
-> > +	pinctrl-0 =3D <&i2c1_pins>;
-> > +	status =3D "okay";
-> > +};
-> > +
-> > +&i2c1_pins {
-> > +	allwinner,pull =3D <SUN4I_PINCTRL_PULL_UP>;
->=20
-> which should translate to:
-> 	bias-pull-up;
-> in the generic binding, right?
+> implement a clock driver based on the MRQ_CLK request. This part of the
+> BPMP ABI provides a means to enumerate and control clocks and should
+> allow the driver to work on any chip that supports this ABI.
 
-Fixed and applied, thanks!
-Maxime
+Cool! Discoverable is great.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Hi Mike, Stephen,
+> 
+> I'm looking for an Acked-by on this so that I can take it through the
+> Tegra tree because the dependencies are fairly complex.
 
---7k7g43xkcnipynkz
-Content-Type: application/pgp-signature; name="signature.asc"
+Getting this merged for the next window is fairly unlikely. This
+is the first time I've seen the patch and it's on v4.
 
------BEGIN PGP SIGNATURE-----
+> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+> new file mode 100644
+> index 000000000000..9b89cedfcb98
+> --- /dev/null
+> +++ b/drivers/clk/tegra/clk-bpmp.c
+> @@ -0,0 +1,665 @@
+> +/*
+> + * Copyright (C) 2016 NVIDIA Corporation
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/device.h>
+> +#include <linux/seq_buf.h>
+> +#include <linux/slab.h>
+> +
+> +#include <soc/tegra/bpmp.h>
+> +#include <soc/tegra/bpmp-abi.h>
+> +
+> +#define TEGRA_BPMP_DUMP_CLOCK_INFO	0
+> +
+> +#define TEGRA_BPMP_CLK_HAS_MUX		BIT(0)
+> +#define TEGRA_BPMP_CLK_HAS_SET_RATE	BIT(1)
+> +#define TEGRA_BPMP_CLK_IS_ROOT		BIT(2)
+> +
+> +struct tegra_bpmp_clk_info {
+> +	unsigned int id;
+> +	char name[MRQ_CLK_NAME_MAXLEN];
+> +	unsigned int parents[MRQ_CLK_MAX_PARENTS];
+> +	unsigned int num_parents;
+> +	unsigned long flags;
+> +};
+> +
+> +struct tegra_bpmp_clk {
+> +	struct clk_hw hw;
+> +
+> +	struct tegra_bpmp *bpmp;
+> +	unsigned int id;
+> +
+> +	unsigned int num_parents;
+> +	unsigned int *parents;
+> +};
+> +
+> +static inline struct tegra_bpmp_clk *to_tegra_bpmp_clk(struct clk_hw *hw)
+> +{
+> +	return container_of(hw, struct tegra_bpmp_clk, hw);
+> +}
+> +
+> +struct tegra_bpmp_clk_message {
+> +	unsigned int cmd;
+> +	unsigned int clk;
 
-iQIcBAEBCAAGBQJYGvITAAoJEBx+YmzsjxAgoMsP/iOF3AJV0r+9gYpebM8MnSxJ
-wA2LdHwRyyxhKJ4HpKZV4xcN12+qrPRqzWUon+UK6EPyOo04Xru+hayn/nAGBLru
-97cU3Kb5iQd/Xsh2YmcM6QkoybALS69quWptIRISIWr95I76Is5y7Q3I/2LvQcaE
-8bGPKZNOy+ZrfhBSNMGZKGO0+zb3LNI+NSCceWyksBo2WnPx818ojEs46rr0v/hE
-d6ke7Twjz9QYg3l2tBVcQpzy9P6xprY0NVvrg2PfFtjqqBRow3pEoRjCYeabrB7w
-IOH1/wJySaCsuU+HgIxqKwU9Bd7wFSbIGQmeC/TVQOE471IxXneTj6qIboYmYE13
-4PCg4Kiu48cO/mCC9HZxme6Y+LPk39cM3MjGKd4iGaGEb9KMmDgfMIy+XjHZECG9
-IvO6uEDpcQk02mD3d7YWONDZkuZOG00Luy/46PRxXTwPyeK8l7a5YIzYlMiZBxeu
-1LcAJd06Cde9EJNci1NUyPfZm/PtDP30Oqtr3Y+K07315lWxWji9KZF/99rW6nyA
-pnH/hQotESXfpBASpZ8OqTsbqVvEQDAeDe2uqPC6qWU3U10NpTrEsjeJ04Oh4EDg
-kE0jiqLo9DjgowPfkWbuzG+DYROw5BLOvoCQr5EEYAboNxXp+T9QfkEsa27MfuKH
-8J3t316SNNdzfvFfZ9jc
-=6naJ
------END PGP SIGNATURE-----
+s/clk/id or clk_id?
 
---7k7g43xkcnipynkz--
+> +
+> +	struct {
+> +		const void *data;
+> +		size_t size;
+> +	} tx;
+> +
+> +	struct {
+> +		void *data;
+> +		size_t size;
+> +	} rx;
+> +};
+> +
+> +static int
+> +__tegra_bpmp_clk_transfer_atomic(struct tegra_bpmp *bpmp,
+> +				 struct tegra_bpmp_message *msg)
+> +{
+> +	unsigned long flags;
+> +	int err;
+> +
+> +	local_irq_save(flags);
+> +	err = tegra_bpmp_transfer_atomic(bpmp, msg);
+> +	local_irq_restore(flags);
+
+Why do we need to disable irqs? Seems like an odd thing for the
+caller to decide given that there aren't any interrupt handlers
+in this driver.
+
+> +
+> +	return err;
+> +}
+> +
+> +static int
+> +tegra_bpmp_clk_transfer_atomic(struct tegra_bpmp *bpmp,
+> +			       const struct tegra_bpmp_clk_message *clk)
+> +{
+> +	struct mrq_clk_request request;
+> +	struct tegra_bpmp_message msg;
+> +	void *req = (void *)&request;
+
+We shouldn't need to cast to void * here.
+
+> +
+> +	memset(&request, 0, sizeof(request));
+> +	request.cmd_and_id = (clk->cmd << 24) | clk->clk;
+> +	memcpy(req + 4, clk->tx.data, clk->tx.size);
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.mrq = MRQ_CLK;
+> +	msg.tx.data = &request;
+> +	msg.tx.size = sizeof(request);
+> +	msg.rx.data = clk->rx.data;
+> +	msg.rx.size = clk->rx.size;
+> +
+> +	return __tegra_bpmp_clk_transfer_atomic(bpmp, &msg);;
+
+Double semicolon here.
+
+> +}
+> +
+> +static int tegra_bpmp_clk_transfer(struct tegra_bpmp *bpmp,
+> +				   const struct tegra_bpmp_clk_message *clk)
+> +{
+> +	struct mrq_clk_request request;
+> +	struct tegra_bpmp_message msg;
+> +	void *req = (void *)&request;
+
+Useless cast to void.
+
+> +	int err;
+> +
+> +	memset(&request, 0, sizeof(request));
+> +	request.cmd_and_id = (clk->cmd << 24) | clk->clk;
+
+Haha clk clk. I sound like a chicken when I read this.
+
+> +	memcpy(req + 4, clk->tx.data, clk->tx.size);
+
+struct mrq_clk_request could have a member for this called "data"
+or something. Then all the casting to void and adding 4 magic
+could be computed by the compiler and changeable without us
+having to remember we're doing void pointer math here.
+
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.mrq = MRQ_CLK;
+> +	msg.tx.data = &request;
+> +	msg.tx.size = sizeof(request);
+> +	msg.rx.data = clk->rx.data;
+> +	msg.rx.size = clk->rx.size;
+> +
+> +	err = tegra_bpmp_transfer(bpmp, &msg);
+> +	if (err != -EAGAIN)
+> +		return err;
+> +
+> +	return __tegra_bpmp_clk_transfer_atomic(bpmp, &msg);
+> +}
+> +
+> +static int tegra_bpmp_clk_enable(struct clk_hw *hw)
+
+Maybe this should be called tegra_bpmp_clk_prepare() so as to not
+confuse the reader.
+
+> +{
+> +	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
+> +	struct tegra_bpmp_clk_message msg;
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.cmd = CMD_CLK_ENABLE;
+> +	msg.clk = clk->id;
+> +
+> +	return tegra_bpmp_clk_transfer(clk->bpmp, &msg);
+> +}
+> +
+> +static void tegra_bpmp_clk_disable(struct clk_hw *hw)
+> +{
+> +	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
+> +	struct tegra_bpmp_clk_message msg;
+> +	int err;
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.cmd = CMD_CLK_DISABLE;
+> +	msg.clk = clk->id;
+> +
+> +	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
+> +	if (err < 0)
+> +		dev_err(clk->bpmp->dev, "failed to disable clock %s: %d\n",
+> +			clk_hw_get_name(hw), err);
+> +}
+> +
+> +static int tegra_bpmp_clk_is_enabled(struct clk_hw *hw)
+
+Why not *_is_prepared()?
+
+> +{
+> +	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
+> +	struct cmd_clk_is_enabled_response response;
+> +	struct tegra_bpmp_clk_message msg;
+> +	int err;
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.cmd = CMD_CLK_IS_ENABLED;
+> +	msg.clk = clk->id;
+> +	msg.rx.data = &response;
+> +	msg.rx.size = sizeof(response);
+> +
+> +	err = tegra_bpmp_clk_transfer_atomic(clk->bpmp, &msg);
+
+And then I presume this wouldn't need to worry about being called
+in atomic situations.
+
+> +	if (err < 0)
+> +		return err;
+> +
+> +	return response.state;
+> +}
+> +
+> +static u8 tegra_bpmp_clk_get_parent(struct clk_hw *hw)
+> +{
+> +	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
+> +	struct cmd_clk_get_parent_response response;
+> +	struct tegra_bpmp_clk_message msg;
+> +	unsigned int i;
+> +	int err;
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.cmd = CMD_CLK_GET_PARENT;
+> +	msg.clk = clk->id;
+> +	msg.rx.data = &response;
+> +	msg.rx.size = sizeof(&response);
+
+Shouldn't that be sizeof(response)? Or you're expecting a
+pointer to come back?
+
+> +
+> +	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
+> +	if (err < 0) {
+> +		dev_err(clk->bpmp->dev, "failed to get parent for %s: %d\n",
+> +			clk_hw_get_name(hw), err);
+> +		return U8_MAX;
+> +	}
+> +
+> +	for (i = 0; i < clk->num_parents; i++)
+
+Could be clk_hw_get_num_parents() instead?
+
+> +		if (clk->parents[i] == response.parent_id)
+> +			return i;
+> +
+> +	return U8_MAX;
+> +}
+> +
+> +static int tegra_bpmp_clk_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
+> +	struct cmd_clk_set_parent_response response;
+> +	struct cmd_clk_set_parent_request request;
+> +	struct tegra_bpmp_clk_message msg;
+> +	int err;
+> +
+> +	if (index >= clk->num_parents)
+> +		return -EINVAL;
+
+The framework already handles that. Why do we need to check here?
+
+> +
+> +	memset(&request, 0, sizeof(request));
+> +	request.parent_id = clk->parents[index];
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.cmd = CMD_CLK_SET_PARENT;
+> +	msg.clk = clk->id;
+> +	msg.tx.data = &request;
+> +	msg.tx.size = sizeof(request);
+> +	msg.rx.data = &response;
+> +	msg.rx.size = sizeof(response);
+
+Maybe this could be a macro as it comes up a few times.
+
+	msg_set_tx(m, d) ({ m.tx.data = d; m.tx.size = sizeof(d); })
+	msg_set_rx(m, d) ({ m.rx.data = d; m.rx.size = sizeof(d); })
+	msg_set_tx_rx(m, t, r) ({ msg_set_tx(m, t); msg_set_rx(m, r); })
+
+> +
+> +	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	/* XXX check parent ID in response */
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra_bpmp_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				   unsigned long parent_rate)
+> +{
+> +	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
+> +	struct cmd_clk_set_rate_response response;
+> +	struct cmd_clk_set_rate_request request;
+> +	struct tegra_bpmp_clk_message msg;
+> +
+> +	memset(&request, 0, sizeof(request));
+> +	request.rate = rate;
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.cmd = CMD_CLK_SET_RATE;
+> +	msg.clk = clk->id;
+> +	msg.tx.data = &request;
+> +	msg.tx.size = sizeof(request);
+> +	msg.rx.data = &response;
+> +	msg.rx.size = sizeof(response);
+> +
+> +	return tegra_bpmp_clk_transfer(clk->bpmp, &msg);
+> +}
+> +
+> +static long tegra_bpmp_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				      unsigned long *parent_rate)
+> +{
+> +	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
+> +	struct cmd_clk_round_rate_response response;
+> +	struct cmd_clk_round_rate_request request;
+
+Would this structure be used outside of this driver? Why can't we
+define it in this C file?
+
+> +	struct tegra_bpmp_clk_message msg;
+> +	int err;
+> +
+> +	memset(&request, 0, sizeof(request));
+> +	request.rate = rate;
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.cmd = CMD_CLK_ROUND_RATE;
+> +	msg.clk = clk->id;
+> +	msg.tx.data = &request;
+> +	msg.tx.size = sizeof(request);
+> +	msg.rx.data = &response;
+> +	msg.rx.size = sizeof(response);
+> +
+> +	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	return response.rate;
+> +}
+> +
+> +static unsigned long tegra_bpmp_clk_get_rate(struct tegra_bpmp *bpmp,
+> +					     unsigned int id)
+> +{
+> +	struct cmd_clk_get_rate_response response;
+> +	struct cmd_clk_get_rate_request request;
+> +	struct tegra_bpmp_clk_message msg;
+> +	int err;
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.cmd = CMD_CLK_GET_RATE;
+> +	msg.clk = id;
+> +	msg.tx.data = &request;
+> +	msg.tx.size = sizeof(request);
+> +	msg.rx.data = &response;
+> +	msg.rx.size = sizeof(response);
+> +
+> +	err = tegra_bpmp_clk_transfer(bpmp, &msg);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	return response.rate;
+> +}
+> +
+> +static unsigned long tegra_bpmp_clk_recalc_rate(struct clk_hw *hw,
+> +						unsigned long parent_rate)
+> +{
+> +	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
+> +
+> +	return tegra_bpmp_clk_get_rate(clk->bpmp, clk->id);
+> +}
+
+Is there a reason to have two functions? Please fold the two
+together into one.
+
+> +
+> +static const struct clk_ops tegra_bpmp_clk_gate_ops = {
+> +	.is_enabled = tegra_bpmp_clk_is_enabled,
+> +	.prepare = tegra_bpmp_clk_enable,
+> +	.unprepare = tegra_bpmp_clk_disable,
+> +	.recalc_rate = tegra_bpmp_clk_recalc_rate,
+> +};
+> +
+> +static const struct clk_ops tegra_bpmp_clk_mux_ops = {
+> +	.get_parent = tegra_bpmp_clk_get_parent,
+> +	.set_parent = tegra_bpmp_clk_set_parent,
+> +	.is_enabled = tegra_bpmp_clk_is_enabled,
+> +	.prepare = tegra_bpmp_clk_enable,
+> +	.unprepare = tegra_bpmp_clk_disable,
+> +	.recalc_rate = tegra_bpmp_clk_recalc_rate,
+> +};
+> +
+> +static const struct clk_ops tegra_bpmp_clk_rate_ops = {
+> +	.is_enabled = tegra_bpmp_clk_is_enabled,
+> +	.prepare = tegra_bpmp_clk_enable,
+> +	.unprepare = tegra_bpmp_clk_disable,
+> +	.set_rate = tegra_bpmp_clk_set_rate,
+> +	.round_rate = tegra_bpmp_clk_round_rate,
+> +	.recalc_rate = tegra_bpmp_clk_recalc_rate,
+> +};
+> +
+> +static const struct clk_ops tegra_bpmp_clk_mux_rate_ops = {
+> +	.get_parent = tegra_bpmp_clk_get_parent,
+> +	.set_parent = tegra_bpmp_clk_set_parent,
+> +	.is_enabled = tegra_bpmp_clk_is_enabled,
+> +	.prepare = tegra_bpmp_clk_enable,
+> +	.unprepare = tegra_bpmp_clk_disable,
+> +	.set_rate = tegra_bpmp_clk_set_rate,
+> +	.round_rate = tegra_bpmp_clk_round_rate,
+> +	.recalc_rate = tegra_bpmp_clk_recalc_rate,
+> +};
+> +
+> +static int tegra_bpmp_clk_get_max_id(struct tegra_bpmp *bpmp)
+> +{
+> +	struct cmd_clk_get_max_clk_id_response response;
+> +	struct tegra_bpmp_clk_message msg;
+> +	int err;
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.cmd = CMD_CLK_GET_MAX_CLK_ID;
+> +	msg.rx.data = &response;
+> +	msg.rx.size = sizeof(response);
+> +
+> +	err = tegra_bpmp_clk_transfer(bpmp, &msg);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	if (response.max_id > INT_MAX)
+> +		return -E2BIG;
+
+I'm not sure the argument list is too long.
+
+> +
+> +	return response.max_id;
+> +}
+> +
+> +static int tegra_bpmp_clk_get_info(struct tegra_bpmp *bpmp, unsigned int id,
+> +				   struct tegra_bpmp_clk_info *info)
+> +{
+> +	struct cmd_clk_get_all_info_response response;
+> +	struct tegra_bpmp_clk_message msg;
+> +	unsigned int i;
+> +	int err;
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.cmd = CMD_CLK_GET_ALL_INFO;
+> +	msg.clk = id;
+> +	msg.rx.data = &response;
+> +	msg.rx.size = sizeof(response);
+> +
+> +	err = tegra_bpmp_clk_transfer(bpmp, &msg);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	strlcpy(info->name, response.name, MRQ_CLK_NAME_MAXLEN);
+> +	info->num_parents = response.num_parents;
+> +
+> +	for (i = 0; i < info->num_parents; i++)
+> +		info->parents[i] = response.parents[i];
+> +
+> +	info->flags = response.flags;
+> +
+> +	return 0;
+> +}
+> +
+> +static void tegra_bpmp_clk_info_dump(struct tegra_bpmp *bpmp,
+> +				     const char *level,
+> +				     const struct tegra_bpmp_clk_info *info)
+> +{
+> +	const char *prefix = "";
+> +	struct seq_buf buf;
+> +	unsigned int i;
+> +	char flags[64];
+> +
+> +	seq_buf_init(&buf, flags, sizeof(flags));
+> +
+> +	if (info->flags)
+> +		seq_buf_printf(&buf, "(");
+> +
+> +	if (info->flags & TEGRA_BPMP_CLK_HAS_MUX) {
+> +		seq_buf_printf(&buf, "%smux", prefix);
+> +		prefix = ", ";
+> +	}
+> +
+> +	if ((info->flags & TEGRA_BPMP_CLK_HAS_SET_RATE) == 0) {
+> +		seq_buf_printf(&buf, "%sfixed", prefix);
+> +		prefix = ", ";
+> +	}
+> +
+> +	if (info->flags & TEGRA_BPMP_CLK_IS_ROOT) {
+> +		seq_buf_printf(&buf, "%sroot", prefix);
+> +		prefix = ", ";
+> +	}
+> +
+> +	if (info->flags)
+> +		seq_buf_printf(&buf, ")");
+> +
+> +	dev_printk(level, bpmp->dev, "%03u: %s\n", info->id, info->name);
+> +	dev_printk(level, bpmp->dev, "  flags: %lx %s\n", info->flags, flags);
+> +	dev_printk(level, bpmp->dev, "  parents: %u\n", info->num_parents);
+> +
+> +	for (i = 0; i < info->num_parents; i++)
+> +		dev_printk(level, bpmp->dev, "    %03u\n", info->parents[i]);
+> +}
+> +
+> +static int tegra_bpmp_probe_clocks(struct tegra_bpmp *bpmp,
+> +				   struct tegra_bpmp_clk_info **clocksp)
+> +{
+> +	struct tegra_bpmp_clk_info *clocks;
+> +	unsigned int max_id, id, count = 0;
+> +	unsigned int holes = 0;
+> +	int err;
+> +
+> +	err = tegra_bpmp_clk_get_max_id(bpmp);
+
+Just assign to max_id here and make max_id int instead?
+
+> +	if (err < 0)
+> +		return err;
+> +
+> +	max_id = err;
+
+Would make this redundant.
+
+> +
+> +	dev_dbg(bpmp->dev, "maximum clock ID: %u\n", max_id);
+> +
+> +	clocks = kcalloc(max_id + 1, sizeof(*clocks), GFP_KERNEL);
+> +	if (!clocks)
+> +		return -ENOMEM;
+> +
+> +	for (id = 0; id <= max_id; id++) {
+> +		struct tegra_bpmp_clk_info *info = &clocks[count];
+> +
+> +		err = tegra_bpmp_clk_get_info(bpmp, id, info);
+> +		if (err < 0) {
+> +			dev_err(bpmp->dev, "failed to query clock %u: %d\n",
+> +				id, err);
+> +			continue;
+> +		}
+> +
+> +		if (info->num_parents >= U8_MAX) {
+> +			dev_err(bpmp->dev,
+> +				"clock %u has too many parents (%u, max: %u)\n",
+> +				id, info->num_parents, U8_MAX);
+> +			continue;
+> +		}
+> +
+> +		/* clock not exposed by BPMP */
+> +		if (info->name[0] == '\0') {
+> +			holes++;
+> +			continue;
+> +		}
+> +
+> +		info->id = id;
+
+Why not store info at the offset associated with id? We've
+already computed max so it should work?
+
+> +		count++;
+> +
+> +		if (TEGRA_BPMP_DUMP_CLOCK_INFO)
+> +			tegra_bpmp_clk_info_dump(bpmp, KERN_DEBUG, info);
+> +	}
+> +
+> +	dev_dbg(bpmp->dev, "holes: %u\n", holes);
+> +	*clocksp = clocks;
+> +
+> +	return count;
+> +}
+> +
+> +static const struct tegra_bpmp_clk_info *
+> +tegra_bpmp_clk_find(const struct tegra_bpmp_clk_info *clocks,
+> +		    unsigned int num_clocks, unsigned int id)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < num_clocks; i++)
+> +		if (clocks[i].id == id)
+> +			return &clocks[i];
+> +
+> +	return NULL;
+> +}
+> +
+> +static struct clk_hw *
+> +tegra_bpmp_clk_register(struct tegra_bpmp *bpmp,
+> +			const struct tegra_bpmp_clk_info *info,
+> +			const struct tegra_bpmp_clk_info *clocks,
+> +			unsigned int num_clocks)
+> +{
+> +	struct tegra_bpmp_clk *priv;
+> +	struct clk_init_data init;
+
+Best to intialize init to { } here. I don't see init.flags set
+anywhere so that's already a problem.
+
+> +	const char **parents;
+> +	struct clk *clk;
+> +	unsigned int i;
+> +
+> +	priv = devm_kzalloc(bpmp->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	priv->bpmp = bpmp;
+> +	priv->id = info->id;
+> +
+> +	priv->parents = devm_kcalloc(bpmp->dev, info->num_parents,
+> +				     sizeof(*priv->parents), GFP_KERNEL);
+> +	if (!priv->parents)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	priv->num_parents = info->num_parents;
+> +
+> +	/* hardware clock initialization */
+> +	priv->hw.init = &init;
+> +	init.name = info->name;
+> +
+> +	if (info->flags & TEGRA_BPMP_CLK_HAS_MUX) {
+> +		if (info->flags & TEGRA_BPMP_CLK_HAS_SET_RATE)
+> +			init.ops = &tegra_bpmp_clk_mux_rate_ops;
+> +		else
+> +			init.ops = &tegra_bpmp_clk_mux_ops;
+> +	} else {
+> +		if (info->flags & TEGRA_BPMP_CLK_HAS_SET_RATE)
+> +			init.ops = &tegra_bpmp_clk_rate_ops;
+> +		else
+> +			init.ops = &tegra_bpmp_clk_gate_ops;
+> +	}
+> +
+> +	init.num_parents = info->num_parents;
+> +
+> +	parents = kcalloc(info->num_parents, sizeof(*parents), GFP_KERNEL);
+> +	if (!parents)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	for (i = 0; i < info->num_parents; i++) {
+> +		const struct tegra_bpmp_clk_info *parent;
+> +
+> +		/* keep a private copy of the ID to parent index map */
+> +		priv->parents[i] = info->parents[i];
+> +
+> +		parent = tegra_bpmp_clk_find(clocks, num_clocks,
+> +					     info->parents[i]);
+> +		if (!parent) {
+> +			dev_err(bpmp->dev, "no parent %u found for %u\n",
+> +				info->parents[i], info->id);
+> +			continue;
+> +		}
+> +
+> +		parents[i] = parent->name;
+> +	}
+> +
+> +	init.parent_names = parents;
+> +
+> +	clk = clk_register(bpmp->dev, &priv->hw);
+
+Just use clk_hw_register() please, or devm_clk_hw_register().
+
+> +
+> +	kfree(parents);
+> +
+> +	if (IS_ERR(clk))
+> +		return ERR_CAST(clk);
+> +
+> +	return &priv->hw;
+> +}
+> +
+> +static int tegra_bpmp_register_clocks(struct tegra_bpmp *bpmp,
+> +				      struct tegra_bpmp_clk_info *clocks,
+
+s/clocks/infos?
+
+> +				      unsigned int count)
+> +{
+> +	struct clk_hw *hw;
+> +	unsigned int i;
+> +
+> +	bpmp->num_clocks = count;
+> +
+> +	bpmp->clocks = devm_kcalloc(bpmp->dev, count, sizeof(hw), GFP_KERNEL);
+> +	if (!bpmp->clocks)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < count; i++) {
+> +		struct tegra_bpmp_clk_info *info = &clocks[i];
+> +
+> +		hw = tegra_bpmp_clk_register(bpmp, info, clocks, count);
+> +		if (IS_ERR(hw)) {
+> +			dev_err(bpmp->dev,
+> +				"failed to register clock %u (%s): %ld\n",
+> +				info->id, info->name, PTR_ERR(hw));
+> +			continue;
+> +		}
+> +
+> +		bpmp->clocks[i] = hw;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void tegra_bpmp_unregister_clocks(struct tegra_bpmp *bpmp)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < bpmp->num_clocks; i++)
+> +		clk_hw_unregister(bpmp->clocks[i]);
+> +}
+> +
+> +static struct clk_hw *tegra_bpmp_clk_of_xlate(struct of_phandle_args *clkspec,
+> +					      void *data)
+> +{
+> +	unsigned int id = clkspec->args[0], i;
+> +	struct tegra_bpmp *bpmp = data;
+> +	struct tegra_bpmp_clk *clk;
+> +
+> +	for (i = 0; i < bpmp->num_clocks; i++) {
+> +		clk = to_tegra_bpmp_clk(bpmp->clocks[i]);
+> +		if (clk->id == id)
+> +			return bpmp->clocks[i];
+> +	}
+
+ 	for (i = 0; i < bpmp->num_clocks; i++) {
+		hw = bpmp->clocks[i];
+		clk = to_tegra_bpmp_clk(hw);
+		if (clk->id == id)
+			return hw;
+	}
+
+Uses another local variable but is much clearer.
+
+> +
+> +	return NULL;
+> +}
+> +
+> +int tegra_bpmp_init_clocks(struct tegra_bpmp *bpmp)
+
+Someone is going to call this function? Why aren't we doing the
+typical device driver probe?
+
+> +{
+> +	struct tegra_bpmp_clk_info *clocks;
+> +	unsigned int count;
+> +	int err;
+> +
+> +	err = tegra_bpmp_probe_clocks(bpmp, &clocks);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	count = err;
+> +
+> +	dev_dbg(bpmp->dev, "%u clocks probed\n", count);
+> +
+> +	err = tegra_bpmp_register_clocks(bpmp, clocks, count);
+> +	if (err < 0)
+> +		goto free;
+> +
+> +	err = of_clk_add_hw_provider(bpmp->dev->of_node,
+> +				     tegra_bpmp_clk_of_xlate,
+> +				     bpmp);
+> +	if (err < 0) {
+> +		tegra_bpmp_unregister_clocks(bpmp);
+> +		goto free;
+> +	}
+> +
+> +free:
+> +	kfree(clocks);
+> +	return err;
+> +}
+> -- 
+> 2.10.2
+> 
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
