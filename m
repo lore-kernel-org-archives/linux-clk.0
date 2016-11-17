@@ -1,32 +1,49 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 29 Nov 2016 13:12:29 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/3] clk: uniphier: add CPU-gear change (cpufreq)
- support
-Message-ID: <20161129211229.GF6095@codeaurora.org>
-References: <1479967061-25975-1-git-send-email-yamada.masahiro@socionext.com>
- <1479967061-25975-2-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1479967061-25975-2-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:54602 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752679AbcKQAwZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 19:52:25 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v8 12/16] arm64: dts: qcom: msm8916: Add ddr support to sdhc1
+Date: Thu, 17 Nov 2016 06:22:08 +0530
+Message-Id: <1479343928-31493-1-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479312052-22396-13-git-send-email-riteshh@codeaurora.org>
+References: <1479312052-22396-13-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/24, Masahiro Yamada wrote:
-> Core support code for CPU frequency changes, which will be used by
-> the generic cpufreq driver.
-> 
-> The register view is different from the generic clk-mux; it has
-> a separate status register, and an update bit to load the register
-> setting.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+This adds mmc-ddr-1_8v support to DT for sdhc1 of msm8916.
 
-Applied to clk-next
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index 7bce1b3..1be5cd4 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -515,6 +515,7 @@
+ 				 <&gcc GCC_SDCC1_AHB_CLK>,
+ 				 <&xo_board 0>;
+ 			clock-names = "core", "iface", "xo";
++			mmc-ddr-1_8v;
+ 			bus-width = <8>;
+ 			non-removable;
+ 			status = "disabled";
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
