@@ -1,45 +1,194 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.9-rc7
-Date: Wed, 30 Nov 2016 13:52:26 -0800
-Message-Id: <20161130215226.5570-1-sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:51162 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753227AbcKQAoV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 19:44:21 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v8 04/16] ARM: dts: Add xo to sdhc clock node on qcom platforms
+Date: Thu, 17 Nov 2016 06:13:39 +0530
+Message-Id: <1479343419-29326-1-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479312052-22396-5-git-send-email-riteshh@codeaurora.org>
+References: <1479312052-22396-5-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit ac95330b96376550ae7a533d1396272d675adfa2:
+Add xo entry to sdhc clock node on all qcom platforms.
 
-  clk: sunxi: Fix M factor computation for APB1 (2016-11-04 08:49:46 +0100)
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+---
+ arch/arm/boot/dts/qcom-apq8084.dtsi   | 16 ++++++++++------
+ arch/arm/boot/dts/qcom-msm8974.dtsi   | 16 ++++++++++------
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 10 ++++++----
+ arch/arm64/boot/dts/qcom/msm8996.dtsi |  9 +++++----
+ 4 files changed, 31 insertions(+), 20 deletions(-)
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to b7d79eb4615e3eb5947355f7b4354818cba037f7:
-
-  clk: bcm: Fix unmet Kconfig dependencies for CLK_BCM_63XX (2016-11-23 14:31:11 -0800)
-
-----------------------------------------------------------------
-Two small fixes for MIPI PLLs on sunxi devices and a build fix
-for a Broadcom clk driver having unmet dependencies.
-
-----------------------------------------------------------------
-Chen-Yu Tsai (1):
-      clk: sunxi-ng: sun6i-a31: Enable PLL-MIPI LDOs when ungating it
-
-Florian Fainelli (1):
-      clk: bcm: Fix unmet Kconfig dependencies for CLK_BCM_63XX
-
-Icenowy Zheng (1):
-      clk: sunxi-ng: enable so-said LDOs for A33 SoC's pll-mipi clock
-
- drivers/clk/bcm/Kconfig              | 2 +-
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
+diff --git a/arch/arm/boot/dts/qcom-apq8084.dtsi b/arch/arm/boot/dts/qcom-apq8084.dtsi
+index 39eb7a4..f756cbb 100644
+--- a/arch/arm/boot/dts/qcom-apq8084.dtsi
++++ b/arch/arm/boot/dts/qcom-apq8084.dtsi
+@@ -182,13 +182,13 @@
+ 	};
+ 
+ 	clocks {
+-		xo_board {
++		xo_board: xo_board {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <19200000>;
+ 		};
+ 
+-		sleep_clk {
++		sleep_clk: sleep_clk {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <32768>;
+@@ -416,8 +416,10 @@
+ 			reg-names = "hc_mem", "core_mem";
+ 			interrupts = <0 123 0>, <0 138 0>;
+ 			interrupt-names = "hc_irq", "pwr_irq";
+-			clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
+-			clock-names = "core", "iface";
++			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
++				 <&gcc GCC_SDCC1_AHB_CLK>,
++				 <&xo_board 0>;
++			clock-names = "core", "iface", "xo";
+ 			status = "disabled";
+ 		};
+ 
+@@ -427,8 +429,10 @@
+ 			reg-names = "hc_mem", "core_mem";
+ 			interrupts = <0 125 0>, <0 221 0>;
+ 			interrupt-names = "hc_irq", "pwr_irq";
+-			clocks = <&gcc GCC_SDCC2_APPS_CLK>, <&gcc GCC_SDCC2_AHB_CLK>;
+-			clock-names = "core", "iface";
++			clocks = <&gcc GCC_SDCC2_APPS_CLK>,
++				 <&gcc GCC_SDCC2_AHB_CLK>,
++				 <&xo_board 0>;
++			clock-names = "core", "iface", "xo";
+ 			status = "disabled";
+ 		};
+ 
+diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
+index d210947..6333415 100644
+--- a/arch/arm/boot/dts/qcom-msm8974.dtsi
++++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
+@@ -220,13 +220,13 @@
+ 	};
+ 
+ 	clocks {
+-		xo_board {
++		xo_board: xo_board {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <19200000>;
+ 		};
+ 
+-		sleep_clk {
++		sleep_clk: sleep_clk {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <32768>;
+@@ -558,8 +558,10 @@
+ 			reg-names = "hc_mem", "core_mem";
+ 			interrupts = <0 123 0>, <0 138 0>;
+ 			interrupt-names = "hc_irq", "pwr_irq";
+-			clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
+-			clock-names = "core", "iface";
++			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
++				 <&gcc GCC_SDCC1_AHB_CLK>,
++				 <&xo_board 0>;
++			clock-names = "core", "iface", "xo";
+ 			status = "disabled";
+ 		};
+ 
+@@ -569,8 +571,10 @@
+ 			reg-names = "hc_mem", "core_mem";
+ 			interrupts = <0 125 0>, <0 221 0>;
+ 			interrupt-names = "hc_irq", "pwr_irq";
+-			clocks = <&gcc GCC_SDCC2_APPS_CLK>, <&gcc GCC_SDCC2_AHB_CLK>;
+-			clock-names = "core", "iface";
++			clocks = <&gcc GCC_SDCC2_APPS_CLK>,
++				 <&gcc GCC_SDCC2_AHB_CLK>,
++				 <&xo_board 0>;
++			clock-names = "core", "iface", "xo";
+ 			status = "disabled";
+ 		};
+ 
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index 466ca57..7bce1b3 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -512,8 +512,9 @@
+ 			interrupts = <0 123 0>, <0 138 0>;
+ 			interrupt-names = "hc_irq", "pwr_irq";
+ 			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
+-				 <&gcc GCC_SDCC1_AHB_CLK>;
+-			clock-names = "core", "iface";
++				 <&gcc GCC_SDCC1_AHB_CLK>,
++				 <&xo_board 0>;
++			clock-names = "core", "iface", "xo";
+ 			bus-width = <8>;
+ 			non-removable;
+ 			status = "disabled";
+@@ -527,8 +528,9 @@
+ 			interrupts = <0 125 0>, <0 221 0>;
+ 			interrupt-names = "hc_irq", "pwr_irq";
+ 			clocks = <&gcc GCC_SDCC2_APPS_CLK>,
+-				 <&gcc GCC_SDCC2_AHB_CLK>;
+-			clock-names = "core", "iface";
++				 <&gcc GCC_SDCC2_AHB_CLK>,
++				 <&xo_board 0>;
++			clock-names = "core", "iface", "xo";
+ 			bus-width = <4>;
+ 			status = "disabled";
+ 		};
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 338f82a..86bfc2d 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -192,14 +192,14 @@
+ 	};
+ 
+ 	clocks {
+-		xo_board {
++		xo_board: xo_board {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <19200000>;
+ 			clock-output-names = "xo_board";
+ 		};
+ 
+-		sleep_clk {
++		sleep_clk: sleep_clk {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <32764>;
+@@ -347,9 +347,10 @@
+ 			 interrupts = <0 125 0>, <0 221 0>;
+ 			 interrupt-names = "hc_irq", "pwr_irq";
+ 
+-			 clock-names = "iface", "core";
++			 clock-names = "iface", "core", "xo";
+ 			 clocks = <&gcc GCC_SDCC2_AHB_CLK>,
+-			 <&gcc GCC_SDCC2_APPS_CLK>;
++			 <&gcc GCC_SDCC2_APPS_CLK>,
++			 <&xo_board 0>;
+ 			 bus-width = <4>;
+ 		 };
+ 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
