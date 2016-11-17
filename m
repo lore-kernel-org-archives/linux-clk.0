@@ -1,78 +1,52 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:40194 "EHLO
+Received: from smtp.codeaurora.org ([198.145.29.96]:47100 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751157AbcKILzi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2016 06:55:38 -0500
-Subject: Re: [PATCH v6 04/14] mmc: sdhci-msm: Change poor style writel/readl
- of registers
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
- <1478517877-23733-5-git-send-email-riteshh@codeaurora.org>
- <20161108230724.GO16026@codeaurora.org>
+        with ESMTP id S1751966AbcKQXDz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Nov 2016 18:03:55 -0500
+Date: Thu, 17 Nov 2016 15:03:52 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ritesh Harjani <riteshh@codeaurora.org>
 Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, andy.gross@linaro.org,
+        adrian.hunter@intel.com, andy.gross@linaro.org,
+        shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
         linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
         alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
         Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org
-From: Ritesh Harjani <riteshh@codeaurora.org>
-Message-ID: <4f889254-9c5b-b459-7566-1b8b1ff5cbd0@codeaurora.org>
-Date: Wed, 9 Nov 2016 17:25:28 +0530
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com
+Subject: Re: [PATCH v8 05/16] dt-bindings: sdhci-msm: Add xo property
+Message-ID: <20161117230352.GO25626@codeaurora.org>
+References: <20161116191335.GH25626@codeaurora.org>
+ <1479343623-31163-1-git-send-email-riteshh@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20161108230724.GO16026@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1479343623-31163-1-git-send-email-riteshh@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On 11/17, Ritesh Harjani wrote:
+> Add "xo" property which is tcxo clock.
+> 
+> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> index 485483a..4e61086 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> @@ -17,6 +17,7 @@ Required properties:
+>  	"iface" - Main peripheral bus clock (PCLK/HCLK - AHB Bus clock) (required)
+>  	"core"	- SDC MMC clock (MCLK) (required)
+>  	"bus"	- SDCC bus voter clock (optional)
+> +	"xo" - TCXO clock (optional)
 
-On 11/9/2016 4:37 AM, Stephen Boyd wrote:
-> On 11/07, Ritesh Harjani wrote:
->> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
->> index 8ef44a2a..42f42aa 100644
->> --- a/drivers/mmc/host/sdhci-msm.c
->> +++ b/drivers/mmc/host/sdhci-msm.c
->> @@ -137,8 +137,9 @@ static int msm_config_cm_dll_phase(struct sdhci_host *host, u8 phase)
->>  	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
->>
->>  	/* Set CK_OUT_EN bit of DLL_CONFIG register to 1. */
->> -	writel_relaxed((readl_relaxed(host->ioaddr + CORE_DLL_CONFIG)
->> -			| CORE_CK_OUT_EN), host->ioaddr + CORE_DLL_CONFIG);
->> +	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
->> +	config |= CORE_CK_OUT_EN;
->> +	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
->>
->>  	/* Wait until CK_OUT_EN bit of DLL_CONFIG register becomes '1' */
->>  	rc = msm_dll_poll_ck_out_en(host, 1);
->> @@ -305,6 +306,7 @@ static int msm_init_cm_dll(struct sdhci_host *host)
->>  	struct mmc_host *mmc = host->mmc;
->>  	int wait_cnt = 50;
->>  	unsigned long flags;
->> +	u32 config = 0;
->
-> It needs to be initialized?
-No, will make it uninitialized.
+Seems everything else is tabbed before the dash. Otherwise,
 
->
->>
->>  	spin_lock_irqsave(&host->lock, flags);
->>
->> @@ -313,33 +315,40 @@ static int msm_init_cm_dll(struct sdhci_host *host)
->>  	 * tuning is in progress. Keeping PWRSAVE ON may
->>  	 * turn off the clock.
->>  	 */
->> -	writel_relaxed((readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC)
->> -			& ~CORE_CLK_PWRSAVE), host->ioaddr + CORE_VENDOR_SPEC);
->> +	config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
->
-> It's written here unconditionally though?
->
->> +	config &= ~CORE_CLK_PWRSAVE;
->
+Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
