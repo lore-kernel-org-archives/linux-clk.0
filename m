@@ -1,62 +1,86 @@
-Return-Path: <sricharan@codeaurora.org>
-From: "Sricharan" <sricharan@codeaurora.org>
-To: "'Stephen Boyd'" <sboyd@codeaurora.org>
-Cc: <mturquette@baylibre.com>,
-	<linux-clk@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<rnayak@codeaurora.org>,
-	<stanimir.varbanov@linaro.org>
-References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org> <1477304297-5248-2-git-send-email-sricharan@codeaurora.org> <20161102001834.GB16026@codeaurora.org> <003c01d234d5$731b19c0$59514d40$@codeaurora.org> <20161102175944.GI16026@codeaurora.org>
-In-Reply-To: <20161102175944.GI16026@codeaurora.org>
-Subject: RE: [PATCH 1/3] clk: qcom: gdsc: Add support for gdscs with HW control
-Date: Thu, 3 Nov 2016 19:00:17 +0530
-Message-ID: <000f01d235d6$6e63e680$4b2bb380$@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
+Return-Path: <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 2/6] dt-bindings: clk: max8997: Add DT binding documentation
+To: Rob Herring <robh@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org,
+ thomas.ab@samsung.com, myungjoo.ham@samsung.com,
+ Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+From: "pankaj.dubey" <pankaj.dubey@samsung.com>
+Message-id: <873e0495-cc2f-6bef-4a37-a8b9999846d6@samsung.com>
+Date: Thu, 17 Nov 2016 07:47:18 +0530
+MIME-version: 1.0
+In-reply-to: <20161114161546.oitvons6tvlazgsb@rob-hp-laptop>
+Content-type: text/plain; charset=windows-1252
+References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
+ <1478513376-14307-3-git-send-email-pankaj.dubey@samsung.com>
+ <CGME20161114161550epcas1p3a06490b915cff2dffc5af8df54cd6561@epcas1p3.samsung.com>
+ <20161114161546.oitvons6tvlazgsb@rob-hp-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Hi Rob,
 
->> >On 10/24, Sricharan R wrote:
->> >> @@ -164,6 +171,10 @@ static int gdsc_enable(struct generic_pm_domain *domain)
->> >>  	 */
->> >>  	udelay(1);
->> >>
->> >> +	/* Turn on HW trigger mode if supported */
->> >> +	if (sc->flags & HW_CTRL)
->> >> +		gdsc_hwctrl(sc, true);
->> >> +
->> >
->> >It sounds like this will cause glitches if the hardware isn't
->> >asserting their hw control bit by default? This has me concerned
->> >that we can't just throw the hw control enable part into here,
->> >because that bit doesn't live in the clock controller, instead it
->> >lives in the hw block that is powered by the power domain?
->> >
->> >Or does the power on reset value of that hw control signal
->> >asserted? If that's true then we should be ok to force it into hw
->> >control mode by default.
->> >
+On Monday 14 November 2016 09:45 PM, Rob Herring wrote:
+> On Mon, Nov 07, 2016 at 03:39:32PM +0530, Pankaj Dubey wrote:
+>> Add Device Tree binding documentation for the clocks
+>> outputs in the Maxim-8997 Power Management IC.
 >>
->> The hw control bit is set by default. Instead its turned 'off'
->> with the reset value. So it has to not
->> be turned 'on' at some point
->> to put the gdsc in hw control if required. This bit is part of the
->> gdscr register. So i did not quite understand the reason for the
->> glitch here ?
->
->I mean the reset value of the hw control signal inside the device
->that is inside the GDSC power domain. For example, the hw control
->bit inside the video core.
->
- Ok, so the video ip core, has a hw control signal/bit.
- I checked this by dumping this out that,  the moment the
-gdsc is put to hw control, the video ip's hw control bit also
-gets asserted/set. so this means that video ip's bit get
-aligned with the gdsc setting.  so this should avoid the
-glitches, right ?
+>> CC: Michael Turquette <mturquette@baylibre.com>
+>> CC: Rob Herring <robh+dt@kernel.org>
+>> CC: devicetree@vger.kernel.org
+>> CC: linux-clk@vger.kernel.org
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> ---
+>>  .../devicetree/bindings/clock/maxim,max8997.txt    | 44 ++++++++++++++++++++++
+>>  .../bindings/regulator/max8997-regulator.txt       |  3 ++
+>>  2 files changed, 47 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/maxim,max8997.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/maxim,max8997.txt b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
+>> new file mode 100644
+>> index 0000000..d2e2a74
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
+>> @@ -0,0 +1,44 @@
+>> +Binding for Maxim MAX8997 32k clock generator block
+>> +
+>> +This is a part of device tree bindings of MAX8997 multi-function device.
+>> +More information can be found in bindings/regulator/max8997-regulator.txt file.
+>> +
+>> +The MAX8997 contains two 32.768khz clock outputs that can be controlled
+>> +(gated/ungated) over I2C.
+>> +
+>> +Following properties should be presend in main device node of the MFD chip.
+>> +
+>> +Required properties:
+>> +
+>> +- #clock-cells: from common clock binding; shall be set to 1.
+>> +
+>> +Optional properties:
+>> +- clock-output-names: From common clock binding.
+>> +
+>> +Each clock is assigned an identifier and client nodes can use this identifier
+>> +to specify the clock which they consume. Following indices are allowed:
+>> +    - 0: 32khz_ap clock,
+>> +    - 1: 32khz_cp clock,
+>> +
+>> +Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max8997.h
+>> +header and can be used in device tree sources.
+>> +
+>> +Example: Node of the MFD chip
+>> +
+>> +	max8997: max8997_pmic@66 {
+> 
+> pmic@66 {
+> 
+> With that:
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+> 
+> 
 
-Regards,
- Sricharan
+Thanks for review and ack.
+With above mentioned change I will post v2 soon.
+
+Thanks,
+Pankaj Dubey
