@@ -1,35 +1,48 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 17 Nov 2016 15:09:50 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [git pull] clk: renesas: Updates for v4.10 (take three)
-Message-ID: <20161117230950.GS25626@codeaurora.org>
-References: <1479289642-13421-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <svarbanov@mm-sol.com>
+Subject: Re: [PATCH V2 0/2] clk: qcom: gdsc: Add support for gdscs with HW
+ control
+To: Sricharan R <sricharan@codeaurora.org>, sboyd@codeaurora.org,
+ mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rnayak@codeaurora.org, stanimir.varbanov@linaro.org
+References: <1479472107-18472-1-git-send-email-sricharan@codeaurora.org>
+From: Stanimir Varbanov <svarbanov@mm-sol.com>
+Message-ID: <8257df0e-0cae-edbf-e845-e31fb50b7ba7@mm-sol.com>
+Date: Fri, 18 Nov 2016 16:49:22 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1479289642-13421-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1479472107-18472-1-git-send-email-sricharan@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/16, Geert Uytterhoeven wrote:
-> 	Hi Mike, Stephen,
-> 
-> The following changes since commit 1936be95e013802291201c1ed193e04fd1ed3d13:
-> 
->   Merge branch 'rzg-clock-defs' into clk-renesas-for-v4.10 (2016-11-07 15:15:33 +0100)
-> 
-> are available in the git repository at:
-> 
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag3
-> 
-> for you to fetch changes up to 9127d54bb89471592b3c8af6c6273c21db6de6a6:
-> 
->   clk: renesas: cpg-mssr: Add R8A7745 support (2016-11-10 15:29:30 +0100)
+Hi,
 
-Thanks. Pulled into clk-next.
+On 11/18/2016 02:28 PM, Sricharan R wrote:
+> This series adds support for gdscs(powerdomains) that can be configured
+> in hw controlled mode. So they are turned 'ON' based on needs dynamically,
+> helping to save power. Also updated the venus video ip's gdsc/clock
+> data to put them in hw control.
+> 
+> V2:
+>  Dropped patch#3 [1] as it was concluded that the patch was effectively
+>  masking the fact the clocks were not getting turned on when the gdsc
+>  is put in hwctrl. With some change in sequence from venus core, masking
+>  is not needed and so patch needs to handled in venus driver.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Which sequence should be changed in venus driver?
+
+> 
+>  Fixed a comment in patch#1 to check the return value for gdsc_hwctrl
+> 
+> [1] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1270922.html
+> 
+> Rajendra Nayak (1):
+>   clk: qcom: gdsc: Add support for gdscs with HW control
+> 
+> Sricharan R (1):
+>   clk: qcom: Put venus core0/1 gdscs to hw control mode
+> 
+>  drivers/clk/qcom/gdsc.c         | 19 +++++++++++++++++++
+>  drivers/clk/qcom/gdsc.h         |  1 +
+>  drivers/clk/qcom/mmcc-msm8996.c |  2 ++
+>  3 files changed, 22 insertions(+)
+> 
