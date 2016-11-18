@@ -1,58 +1,50 @@
-Return-Path: <peter.chen@nxp.com>
-From: Peter Chen <peter.chen@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>
-CC: "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Jacky Bai <ping.bai@nxp.com>, Peng Fan
-	<peng.fan@nxp.com>
-Subject: RE: [PATCH 3/3] clk: imx: clk-imx6ul: add clk support for imx6ull
-Date: Tue, 8 Nov 2016 03:44:37 +0000
-Message-ID: <HE1PR04MB1450B9A947E90F1E17DABB118BA60@HE1PR04MB1450.eurprd04.prod.outlook.com>
-References: <1477969343-19887-1-git-send-email-peter.chen@nxp.com>
- <1477969343-19887-4-git-send-email-peter.chen@nxp.com>
- <20161105090506.GH5597@dragon>
-In-Reply-To: <20161105090506.GH5597@dragon>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <s.nawrocki@samsung.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+ linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk/samsung updates for v4.10
+Message-id: <b8c981b1-6b0e-d3b7-f326-fcc3b2e729b7@samsung.com>
+Date: Fri, 18 Nov 2016 19:07:58 +0100
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
+References: 
+ <CGME20161118180800eucas1p24f5dce538660811ac7284ec0d122d563@eucas1p2.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Thanks, Shawn. All comments will be adopted in v2.
 
-Peter
+The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
 
->> +"pll4_audio_div", "pll3_pfd2_508m", "pll5_video_div", "pll3_usb_otg",
->> +}; static const char *epdc_sels[] =3D { "epdc_podf", "ipp_di0",
->> +"ipp_di1", "ldb_di0", "ldb_di1", };
->> +
->
->The new line is not needed.  There is already one below.
->
->>
->>  static struct clk *clks[IMX6UL_CLK_END];  static struct
->> clk_onecell_data clk_data;
->
-=20
->> -#define IMX6UL_CLK_END			225
->> +/* For i.MX6ULL */
->> +#define IMX6UL_CLK_ESAI_PRED		225
->> +#define IMX6UL_CLK_ESAI_PODF		226
->> +#define IMX6UL_CLK_ESAI_EXTAL		227
->> +#define IMX6UL_CLK_ESAI_MEM		228
->> +#define IMX6UL_CLK_ESAI_IPG		229
->> +#define IMX6UL_CLK_DCP_CLK		230
->> +#define IMX6UL_CLK_EPDC_PRE_SEL		231
->> +#define IMX6UL_CLK_EPDC_SEL		232
->> +#define IMX6UL_CLK_EPDC_PODF		233
->> +#define IMX6UL_CLK_EPDC_ACLK		234
->> +#define IMX6UL_CLK_EPDC_PIX		235
->> +#define IMX6UL_CLK_ESAI_SEL		236
->
->Can we have these imx6ull only clocks named after IMX6ULL_xxx?
->
->Shawn
-=20
+  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+
+are available in the git repository at:
+
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.10-exynos5433
+
+for you to fetch changes up to 37bf4ab84be2ae00f116436eb2c876a0ca953a64:
+
+  clk: exynos5433: Mark some clocks as critical (2016-11-18 13:55:51 +0100)
+
+----------------------------------------------------------------
+Exynos5433 SoC related fixes:
+ - addition of missing documentation and DT properties for the CMU_AUD
+   block source clocks,
+ - correction of CMU_FSYS parent clock definition,
+ - marking as critical clocks which have to be enabled in order
+   to access control registers of child CMUs.
+
+----------------------------------------------------------------
+Marek Szyprowski (3):
+      clk: exynos5433: Fix parent clocks for FSYS block
+      clk: exynos5433: Add documentation for the audio block parent clocks
+      clk: exynos5433: Mark some clocks as critical
+
+ .../bindings/clock/exynos5433-clock.txt       | 13 ++++++--
+ drivers/clk/samsung/clk-exynos5433.c          | 30 +++++++++----------
+ 2 files changed, 25 insertions(+), 18 deletions(-)
+
+--
+Thanks,
+Sylwester
