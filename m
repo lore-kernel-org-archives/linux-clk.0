@@ -1,39 +1,93 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,  Michael Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: pxa: fix pxa2xx_determine_rate return
-References: <20161108144950.3472058-1-arnd@arndb.de>
-	<20161108144950.3472058-2-arnd@arndb.de>
-	<87k2cdyhnu.fsf@belgarion.home> <2012366.hMim84DLbv@wuerfel>
-Date: Wed, 09 Nov 2016 08:31:37 +0100
-In-Reply-To: <2012366.hMim84DLbv@wuerfel> (Arnd Bergmann's message of "Tue, 08
-	Nov 2016 23:22:40 +0100")
-Message-ID: <871sylw1ly.fsf@belgarion.home>
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH 1/3] arm: hisi: add ARCH_MULTI_V5 support
+References: <20161017120705.3726-1-wenpan@hisilicon.com>
+ <20161017120705.3726-2-wenpan@hisilicon.com> <5893354.6MrIxqzRoI@wuerfel>
+ <e78a288b-8bab-9441-2edb-6ec08e5103d7@hisilicon.com>
+ <582C2785.2010804@hisilicon.com>
+ <114569cb-79ab-a46d-8582-6169f182a32c@hisilicon.com>
+CC: Wei Xu <xuwei5@hisilicon.com>, wenpan <wenpan@hisilicon.com>,
+        "Arnd
+ Bergmann" <arnd@arndb.de>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux@armlinux.org.uk>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <howell.yang@hisilicon.com>,
+        <jalen.hsu@hisilicon.com>, <lvkuanliang@hisilicon.com>,
+        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
+        <kevin.lixu@hisilicon.com>, <qinxiaojun@huawei.com>
+To: Marty Plummer <netz.kernel@gmail.com>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Message-ID: <511e01ae-6083-13c8-a486-40e01bf753be@hisilicon.com>
+Date: Fri, 18 Nov 2016 14:42:08 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <114569cb-79ab-a46d-8582-6169f182a32c@hisilicon.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Arnd Bergmann <arnd@arndb.de> writes:
+Hi Marty,
 
-> On Tuesday, November 8, 2016 7:01:57 PM CET Robert Jarzmik wrote:
->> Arnd Bergmann <arnd@arndb.de> writes:
->> If a non-exact match is found, either by closest_below or closest_above, rate is
->> set (rate = freqs[closest_xxx].cpll). And a couple of lines later after the
->> if/else, req->rate = rate is set as well, so I don't think this part of the
->> commit message is accurate.
->
-> It is only set if rate is zero, and that normally is not the case here:
->
->        if (!rate)
->                req->rate = rate;
-Ah ok, that's where the bug was lurking, if should have been "if (rate)".
+On 2016/11/17 11:03, Jiancheng Xue wrote:
+> Hi Wei，
+> 
+> On 2016/11/16 17:31, Wei Xu wrote:
+>> Hi Pan,
+>>
+>> On 2016/11/16 8:56, wenpan wrote:
+>>> Hi Marty，
+>>> Does this confict with your patch？ If not，I hope this could be merged first.  Besides could you tell me the link to your related patch?
+>>
+>> This is the link: https://patchwork.kernel.org/patch/9334743/
+>>
 
-But anyway, after comparing the end result of your code and mine, I find yours
-more maintainable, especially the replacement of 'ret = 0'.
+Could you give your comments on this patch?
+If you have any objections to it, please let us know.
 
-So let's proceed, thanks for finding this one out.
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> 
+> Thank you for offering this.If I want to give some comments on Marty's patch,
+> what should I do?
+> 
+> For Marty's patch, I think there's no need to add specific config item ARCH_HIxxxx
+> for every chipset. Some existing chipsets depend on ARCH_HISI directly like Hi3519
+> and Hi3798CV200. If some options like ARM_GIC is removed from ARCH_HISI, this kind
+> of chipsets will must choose other place to select it. I suggest we should keep selecting
+> ARM_GIC under ARCH_HISI as Pan's patch do.
+> 
+> The code may be like this:
+> 
+> config ARCH_HISI
+>  	bool "Hisilicon SoC Support"
+> -	depends on ARCH_MULTI_V7
+> +	depends on ARCH_MULTI_V5 || ARCH_MULTI_V6 || ARCH_MULTI_V7
+>  	select ARM_AMBA
+> -	select ARM_GIC
+> +	select ARM_GIC if ARCH_MULTI_V7
+> +	select ARM_VIC if ARCH_MULTI_V5 || depends on ARCH_MULTI_V6
+>  	select ARM_TIMER_SP804
+>  	select POWER_RESET
+>  	select POWER_RESET_HISI
+>  	select POWER_SUPPLY
+> 
 
---
-Robert
+What's your opinion about this?
+
+Best Regards,
+Jiancheng
+
+>>> On 2016/10/17 21:48, Arnd Bergmann wrote:
+>>>> On Monday, October 17, 2016 8:07:03 PM CEST Pan Wen wrote:
+>>>>> Add support for some HiSilicon SoCs which depend on ARCH_MULTI_V5.
+>>>>>
+>>>>> Signed-off-by: Pan Wen <wenpan@hisilicon.com>
+>>>>>
+>>>>
+>>>> Looks ok. I've added Marty Plummer to Cc, he was recently proposing
+>>>> patches for Hi3520, which I think is closely related to this one.
+>>>> Please try to work together so the patches don't conflict. It should
+>>>> be fairly straightforward since you are basically doing the same
+>>>> change here.
+>>>>
+> 
+> 
+> 
+> .
+> 
