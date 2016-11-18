@@ -1,96 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 3 Nov 2016 12:48:38 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org
-Subject: Re: [PATCH v3 06/11] clk: qcom: Fix .set_rate to handle alpha PLLs
- w/wo dynamic update
-Message-ID: <20161103194838.GY16026@codeaurora.org>
-References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
- <1475138152-859-7-git-send-email-rnayak@codeaurora.org>
- <20161102215445.GR16026@codeaurora.org>
- <581AF517.2040907@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34889 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752345AbcKRLSZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Nov 2016 06:18:25 -0500
+Date: Fri, 18 Nov 2016 13:18:19 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH RESEND] clk/samsung: exynos5433: mark some clocks as
+ critical
+Message-ID: <20161118111819.GB2392@kozik-lap>
+References: <1479463458-24187-1-git-send-email-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <581AF517.2040907@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1479463458-24187-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/03, Rajendra Nayak wrote:
+On Fri, Nov 18, 2016 at 11:04:18AM +0100, Marek Szyprowski wrote:
+> Some parent clocks of the Exynos5433 CMUs must be always enabled to access
+> any register in the given CMU or devices connected to it. For the time
+> being, until a proper solution based on runtime PM is applied, mark those
+> clocks as critical (instead of ignore unused) to prevent disabling them.
 > 
-> 
-> On 11/03/2016 03:24 AM, Stephen Boyd wrote:
-> > On 09/29, Rajendra Nayak wrote:
-> >> Alpha PLLs which do not support dynamic update feature
-> >> need to be explicitly disabled before a rate change.
-> >> The ones which do support dynamic update do so within a
-> >> single vco range, so add a min/max freq check for such
-> >> PLLs so they fall in the vco range.
-> >>
-> >> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> > 
-> > Is Taniya the author?
-> 
-> ah, yes, I seem to have messed up the authorship in v3, will fix.
-> 
-> > 
-> >> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> >> ---
-> >>  drivers/clk/qcom/clk-alpha-pll.c | 49 +++++++++++++++++++++++++++++++++-------
-> >>  drivers/clk/qcom/clk-alpha-pll.h |  3 +++
-> >>  2 files changed, 44 insertions(+), 8 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> >> index 89c7fdb..6f90a86 100644
-> >> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> >> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> >> @@ -382,16 +382,41 @@ clk_alpha_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> >>  static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> >>  				  unsigned long prate)
-> >>  {
-> >> +	bool enabled;
-> >>  	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-> >>  	const struct pll_vco *vco;
-> >>  	u32 l, off = pll->offset;
-> >>  	u64 a;
-> >>  
-> >>  	rate = alpha_pll_round_rate(rate, prate, &l, &a);
-> >> -	vco = alpha_pll_find_vco(pll, rate);
-> >> -	if (!vco) {
-> >> -		pr_err("alpha pll not in a valid vco range\n");
-> >> -		return -EINVAL;
-> >> +	enabled = clk_hw_is_enabled(hw);
-> >> +
-> >> +	if (pll->flags & SUPPORTS_DYNAMIC_UPDATE) {
-> >> +		/*
-> >> +		 * PLLs which support dynamic updates support one single
-> >> +		 * vco range, between min_rate and max_rate supported
-> >> +		 */
-> >> +		if (rate < pll->min_rate || rate > pll->max_rate) {
-> >> +			pr_err("alpha pll rate outside supported min/max range\n");
-> >> +			return -EINVAL;
-> >> +		}
-> >> +	} else {
-> >> +		/*
-> >> +		 * All alpha PLLs which do not support dynamic update,
-> >> +		 * should be disabled before a vco update.
-> >> +		 */
-> >> +		if (enabled)
-> >> +			hw->init->ops->disable(hw);
-> > 
-> > Please just call the function directly instead of going through
-> > the init structure.
-> 
-> But we now have 2 different versions of disable based on clk_ops,
-> clk_alpha_pll_disable and clk_alpha_pll_hwfsm_disable.
-> 
+> Reported-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+> Resend reason: corrected reported by tag.
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
 
-So have two set_rate ops that call a common function that takes a
-function pointer pair of enable/disable ops to call? Or have a
-flag to know which one to call? Either way, don't use the init
-structure after registration time please.
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best regards,
+Krzysztof
+
