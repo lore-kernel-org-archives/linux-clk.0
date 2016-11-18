@@ -1,56 +1,110 @@
-Return-Path: <xuejiancheng@hisilicon.com>
-Subject: Re: [PATCH 2/2] clk: hisilicon: add CRG driver for Hi3516CV300 SoC
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1477721618-10809-1-git-send-email-xuejiancheng@hisilicon.com>
- <1477721618-10809-3-git-send-email-xuejiancheng@hisilicon.com>
- <20161112000415.GE5177@codeaurora.org>
- <0c3b49a4-f58c-253a-fd87-ab52b0b26010@hisilicon.com>
- <20161114200359.GM5177@codeaurora.org>
-CC: <mturquette@baylibre.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <bin.chen@linaro.org>,
-        <elder@linaro.org>, <hermit.wangheming@hisilicon.com>,
-        <yanhaifeng@hisilicon.com>, <wenpan@hisilicon.com>,
-        <howell.yang@hisilicon.com>
-From: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Message-ID: <85a91eb4-73bb-582f-b68d-960d423210ef@hisilicon.com>
-Date: Tue, 15 Nov 2016 09:58:07 +0800
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 18 Nov 2016 08:03:13 -0600
+From: Rob Herring <robh@kernel.org>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree@vger.kernel.org, Andy Yan <andy.yan@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: add documentation for rk1108 cru
+Message-ID: <20161118140313.5uz56im37nt6qv7x@rob-hp-laptop>
+References: <1479286163-34789-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <20161114200359.GM5177@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1479286163-34789-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 2016/11/15 4:03, Stephen Boyd wrote:
-> On 11/14, Jiancheng Xue wrote:
->> Hi Stephen,
->>
->> On 2016/11/12 8:04, Stephen Boyd wrote:
->>> On 10/29, Jiancheng Xue wrote:
->>>
->>> Should be a From: Pan Wen here?
->>>
->>>> Add CRG driver for Hi3516CV300 SoC. CRG(Clock and Reset
->>>> Generator) module generates clock and reset signals used
->>>> by other module blocks on SoC.
->>>>
->>>> Signed-off-by: Pan Wen <wenpan@hisilicon.com>
->>>
->>> And you should have signed it off? Care to resend or state that
->>> this is incorrectly attributed to you instead of Pan Wen?
->>>
->>
->> Pan Wen is the main author of this patch. I just made some small modification
->> with agreement from him. Do I need to resend this patch if it's better to add my
->> signed-off?
->>
+On Wed, Nov 16, 2016 at 04:49:21PM +0800, Shawn Lin wrote:
+> This adds the dt-binding documentation for the clock and reset unit
+> found on Rockchip rk1108 SoCs.
 > 
-> Sure I'll apply the resent one. But you should also make sure to
-> retain Pan Wen's authorship. I'll go do that when applying it.
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 > 
+> ---
+> 
+> Changes in v3:
+> - fix mismatch of external clk input name
+> - add hdmiphy and usbphy clk input
+> 
+> Changes in v2: None
+> 
+>  .../bindings/clock/rockchip,rk1108-cru.txt         | 59 ++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt
+> new file mode 100644
+> index 0000000..4da1261
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt
+> @@ -0,0 +1,59 @@
+> +* Rockchip RK1108 Clock and Reset Unit
+> +
+> +The RK1108 clock controller generates and supplies clock to various
+> +controllers within the SoC and also implements a reset controller for SoC
+> +peripherals.
+> +
+> +Required Properties:
+> +
+> +- compatible: should be "rockchip,rk1108-cru"
+> +- reg: physical base address of the controller and length of memory mapped
+> +  region.
+> +- #clock-cells: should be 1.
+> +- #reset-cells: should be 1.
+> +
+> +Optional Properties:
+> +
+> +- rockchip,grf: phandle to the syscon managing the "general register files"
+> +  If missing pll rates are not changeable, due to the missing pll lock status.
+> +
+> +Each clock is assigned an identifier and client nodes can use this identifier
+> +to specify the clock which they consume. All available clocks are defined as
+> +preprocessor macros in the dt-bindings/clock/rk1108-cru.h headers and can be
+> +used in device tree sources. Similar macros exist for the reset sources in
+> +these files.
+> +
+> +External clocks:
+> +
+> +There are several clocks that are generated outside the SoC. It is expected
+> +that they are defined using standard clock bindings with following
+> +clock-output-names:
 
-OK. I have resent this patch. Please check it. Thank you, Stephen.
+This stilll doesn't seem right. These are inputs to the CRU or 
+completely separate? If inputs, then you need a 'clocks' property. If 
+completely separate, then they should be listed in their respective IP 
+block binding (e.g. the USB phy).
 
-Regards,
-Jiancheng
+> + - "xin24m" - crystal input - required,
+> + - "ext_vip" - external VIP clock - optional
+> + - "ext_i2s" - external I2S clock - optional
+> + - "ext_gmac" - external GMAC clock - optional
+> + - "hdmiphy" - external clock input derived from HDMI PHY - optional
+> + - "usbphy" - external clock input derived from USB PHY - optional
+> +
+> +Example: Clock controller node:
+> +
+> +	cru: cru@20200000 {
+> +		compatible = "rockchip,rk1108-cru";
+> +		reg = <0x20200000 0x1000>;
+> +		rockchip,grf = <&grf>;
+> +
+> +		#clock-cells = <1>;
+> +		#reset-cells = <1>;
+> +	};
+> +
+> +Example: UART controller node that consumes the clock generated by the clock
+> +  controller:
+> +
+> +	uart0: serial@10230000 {
+> +		compatible = "rockchip,rk1108-uart", "snps,dw-apb-uart";
+> +		reg = <0x10230000 0x100>;
+> +		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg-shift = <2>;
+> +		reg-io-width = <4>;
+> +		clocks = <&cru SCLK_UART0>;
+> +	};
+> -- 
+> 1.9.1
+> 
+> 
