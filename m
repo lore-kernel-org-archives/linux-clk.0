@@ -1,69 +1,95 @@
-Return-Path: <yuantian.tang@nxp.com>
-From: "Y.T. Tang" <yuantian.tang@nxp.com>
-To: Scott Wood <oss@buserror.net>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>
-CC: "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Scott Wood
-	<scott.wood@nxp.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH] clk: qoriq: added ls1012a clock configuration
-Date: Tue, 22 Nov 2016 08:20:00 +0000
-Message-ID: <DB6PR0402MB28371BAAD862417B8AC8AED4F0B40@DB6PR0402MB2837.eurprd04.prod.outlook.com>
-References: <1479275900-42365-1-git-send-email-yuantian.tang@nxp.com>
- <1479279262.21746.40.camel@buserror.net>
-In-Reply-To: <1479279262.21746.40.camel@buserror.net>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rnayak@codeaurora.org,
+	stanimir.varbanov@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH V2 1/2] clk: qcom: gdsc: Add support for gdscs with HW control
+Date: Fri, 18 Nov 2016 17:58:26 +0530
+Message-Id: <1479472107-18472-2-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1479472107-18472-1-git-send-email-sricharan@codeaurora.org>
+References: <1479472107-18472-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU2NvdHQsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2NvdHQg
-V29vZCBbbWFpbHRvOm9zc0BidXNlcnJvci5uZXRdDQo+IFNlbnQ6IFdlZG5lc2RheSwgTm92ZW1i
-ZXIgMTYsIDIwMTYgMjo1NCBQTQ0KPiBUbzogWS5ULiBUYW5nIDx5dWFudGlhbi50YW5nQG54cC5j
-b20+OyBtdHVycXVldHRlQGJheWxpYnJlLmNvbQ0KPiBDYzogc2JveWRAY29kZWF1cm9yYS5vcmc7
-IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IFNjb3R0IFdvb2QNCj4gPHNjb3R0Lndvb2RA
-bnhwLmNvbT47IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS0NCj4ga2VybmVs
-QGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gY2xrOiBxb3JpcTog
-YWRkZWQgbHMxMDEyYSBjbG9jayBjb25maWd1cmF0aW9uDQo+IA0KPiBPbiBXZWQsIDIwMTYtMTEt
-MTYgYXQgMTM6NTggKzA4MDAsIHl1YW50aWFuLnRhbmdAbnhwLmNvbSB3cm90ZToNCj4gPiBGcm9t
-OiBUYW5nIFl1YW50aWFuIDxZdWFudGlhbi5UYW5nQG54cC5jb20+DQo+ID4NCj4gPiBBZGRlZCBs
-czEwMTJhIGNsb2NrIGNvbmZpZ3VhdGlvbiBpbmZvcm1hdGlvbi4NCj4gDQo+IERvIHdlIHJlYWxs
-eSBuZWVkIHRoZSBzYW1lIGxpbmUgaW4gdGhlIGNoYW5nZWxvZyB0d2ljZT8NCj4gDQo+ID4NCj4g
-PiBTaWduZWQtb2ZmLWJ5OiBUYW5nIFl1YW50aWFuIDx5dWFudGlhbi50YW5nQG54cC5jb20+DQo+
-ID4gLS0tDQo+ID4gwqBkcml2ZXJzL2Nsay9jbGstcW9yaXEuYyB8IDE5ICsrKysrKysrKysrKysr
-KysrKysNCj4gPiDCoDEgZmlsZSBjaGFuZ2VkLCAxOSBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvY2xrLXFvcmlxLmMgYi9kcml2ZXJzL2Nsay9jbGstcW9y
-aXEuYyBpbmRleA0KPiA+IDFiZWNlMGYuLjU2M2Q4NzQgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVy
-cy9jbGsvY2xrLXFvcmlxLmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9jbGstcW9yaXEuYw0KPiA+
-IEBAIC0yMDIsNiArMjAyLDE0IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgY2xvY2tnZW5fbXV4aW5m
-byBsczEwMjFhX2NtdXgNCj4gPSB7DQo+ID4gwqAJfQ0KPiA+IMKgfTsNCj4gPg0KPiA+ICtzdGF0
-aWMgY29uc3Qgc3RydWN0IGNsb2NrZ2VuX211eGluZm8gbHMxMDEyYV9jbXV4ID0gew0KPiA+ICsJ
-ew0KPiA+ICsJCVswXSA9IHsgQ0xLU0VMX1ZBTElELCBDR0FfUExMMSwgUExMX0RJVjEgfSwNCj4g
-PiArCQl7fSwNCj4gPiArCQlbMl0gPSB7IENMS1NFTF9WQUxJRCwgQ0dBX1BMTDEsIFBMTF9ESVYy
-IH0sDQo+ID4gKwl9DQo+ID4gK307DQo+ID4gKw0KPiANCj4gQmFzZWQgb24gdGhlICJsczEwMjFh
-X2NtdXgiIGluIHRoZSBjb250ZXh0IGl0IGxvb2tzIGxpa2UgdGhpcyBwYXRjaCBpcw0KPiBpbnRl
-bmRlZCB0byBhcHBseSBvbiB0b3ANCj4gb2bCoGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcv
-cGF0Y2gvODkyMzU0MS/CoGJ1dCBJIGRvbid0IHNlZSBhbnkgbWVudGlvbg0KPiBvZiB0aGF0Lg0K
-PiANCkkgc2F3IHRoaXMgcGF0Y2ggaGFkIGJlZW4gbWVyZ2VkIGFscmVhZHkuDQoNClJlZ2FyZHMs
-DQpZdWFudGlhbg0KDQo+ID4gwqBzdGF0aWMgY29uc3Qgc3RydWN0IGNsb2NrZ2VuX211eGluZm8g
-dDEwNDBfY211eCA9IHsNCj4gPiDCoAl7DQo+ID4gwqAJCVswXSA9IHsgQ0xLU0VMX1ZBTElELCBD
-R0FfUExMMSwgUExMX0RJVjEgfSwgQEAgLTQ4Miw2DQo+ICs0OTAsMTYgQEANCj4gPiBzdGF0aWMg
-Y29uc3Qgc3RydWN0IGNsb2NrZ2VuX2NoaXBpbmZvIGNoaXBpbmZvW10gPSB7DQo+ID4gwqAJCS5w
-bGxfbWFzayA9IDB4MDMsDQo+ID4gwqAJfSwNCj4gPiDCoAl7DQo+ID4gKwkJLmNvbXBhdCA9ICJm
-c2wsbHMxMDEyYS1jbG9ja2dlbiIsDQo+ID4gKwkJLmNtdXhfZ3JvdXBzID0gew0KPiA+ICsJCQkm
-bHMxMDEyYV9jbXV4DQo+ID4gKwkJfSwNCj4gPiArCQkuY211eF90b19ncm91cCA9IHsNCj4gPiAr
-CQkJMCwgLTENCj4gPiArCQl9LA0KPiA+ICsJCS5wbGxfbWFzayA9IDB4MDMsDQo+ID4gKwl9LA0K
-PiA+ICsJew0KPiA+IMKgCQkuY29tcGF0ID0gImZzbCxsczEwNDNhLWNsb2NrZ2VuIiwNCj4gPiDC
-oAkJLmluaXRfcGVyaXBoID0gdDIwODBfaW5pdF9wZXJpcGgsDQo+ID4gwqAJCS5jbXV4X2dyb3Vw
-cyA9IHsNCj4gPiBAQCAtMTI4NCw2ICsxMzAyLDcgQEAgQ0xLX09GX0RFQ0xBUkUocW9yaXFfY2xv
-Y2tnZW5fMiwNCj4gPiAiZnNsLHFvcmlxLWNsb2NrZ2VuLSAyLjAiLCBjbG9ja2dlbl9pbml0KTsN
-Cj4gPiDCoENMS19PRl9ERUNMQVJFKHFvcmlxX2Nsb2NrZ2VuX2xzMTAyMWEsICJmc2wsbHMxMDIx
-YS1jbG9ja2dlbiIsDQo+ID4gY2xvY2tnZW5faW5pdCk7DQo+ID4gwqBDTEtfT0ZfREVDTEFSRShx
-b3JpcV9jbG9ja2dlbl9sczEwNDNhLCAiZnNsLGxzMTA0M2EtY2xvY2tnZW4iLA0KPiA+IGNsb2Nr
-Z2VuX2luaXQpOw0KPiA+IMKgQ0xLX09GX0RFQ0xBUkUocW9yaXFfY2xvY2tnZW5fbHMyMDgwYSwg
-ImZzbCxsczIwODBhLWNsb2NrZ2VuIiwNCj4gPiBjbG9ja2dlbl9pbml0KTsNCj4gPiArQ0xLX09G
-X0RFQ0xBUkUocW9yaXFfY2xvY2tnZW5fbHMxMDEyYSwgImZzbCxsczEwMTJhLWNsb2NrZ2VuIiwN
-Cj4gPiBjbG9ja2dlbl9pbml0KTsNCj4gDQo+IFBsZWFzZSBrZWVwIHRoZXNlIGxpc3RzIG9mIGNo
-aXBzIHNvcnRlZCAob3IgYXMgY2xvc2UgYXMgeW91IGNhbiBpbiB0aGUgY2FzZSBvZg0KPiB0aGUg
-Y211eCBzdHJ1Y3RzIHdoaWNoIGFscmVhZHkgaGF2ZSBzb21lIHNvcnRpbmcgaXNzdWVzKS4NCj4g
-DQo+IC1TY290dA0KDQo=
+From: Rajendra Nayak <rnayak@codeaurora.org>
+
+Some GDSCs might support a HW control mode, where in the power
+domain (gdsc) is brought in and out of low power state (while
+unsued) without any SW assistance, saving power.
+Such GDSCs can be configured in a HW control mode when powered on
+until they are explicitly requested to be powered off by software.
+
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+[V2] Fixed to take care of the return value of gdsc_hwctrl
+
+ drivers/clk/qcom/gdsc.c | 19 +++++++++++++++++++
+ drivers/clk/qcom/gdsc.h |  1 +
+ 2 files changed, 20 insertions(+)
+
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index f12d7b2..57c7c1b 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -55,6 +55,13 @@ static int gdsc_is_enabled(struct gdsc *sc, unsigned int reg)
+ 	return !!(val & PWR_ON_MASK);
+ }
+ 
++static int gdsc_hwctrl(struct gdsc *sc, bool en)
++{
++	u32 val = en ? HW_CONTROL_MASK : 0;
++
++	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
++}
++
+ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ {
+ 	int ret;
+@@ -164,16 +171,28 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+ 	 */
+ 	udelay(1);
+ 
++	/* Turn on HW trigger mode if supported */
++	if (sc->flags & HW_CTRL)
++		return gdsc_hwctrl(sc, true);
++
+ 	return 0;
+ }
+ 
+ static int gdsc_disable(struct generic_pm_domain *domain)
+ {
+ 	struct gdsc *sc = domain_to_gdsc(domain);
++	int ret;
+ 
+ 	if (sc->pwrsts == PWRSTS_ON)
+ 		return gdsc_assert_reset(sc);
+ 
++	/* Turn off HW trigger mode if supported */
++	if (sc->flags & HW_CTRL) {
++		ret = gdsc_hwctrl(sc, false);
++		if (ret < 0)
++			return ret;
++	}
++
+ 	if (sc->pwrsts & PWRSTS_OFF)
+ 		gdsc_clear_mem_on(sc);
+ 
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 3bf497c..b1f30f8 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -50,6 +50,7 @@ struct gdsc {
+ #define PWRSTS_RET_ON		(PWRSTS_RET | PWRSTS_ON)
+ 	const u8			flags;
+ #define VOTABLE		BIT(0)
++#define HW_CTRL		BIT(1)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
