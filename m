@@ -1,90 +1,133 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-db5eur01on0076.outbound.protection.outlook.com ([104.47.2.76]:38736
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752973AbcKHGt6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Nov 2016 01:49:58 -0500
-From: "Y.B. Lu" <yangbo.lu@nxp.com>
-To: Arnd Bergmann <arnd@arndb.de>
-CC: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Scott Wood <oss@buserror.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "X.B. Xie" <xiaobo.xie@nxp.com>,
-        "M.H. Lian" <minghuan.lian@nxp.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Santosh Shilimkar" <ssantosh@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "Kumar Gala" <galak@codeaurora.org>
-Subject: RE: [v15, 3/7] powerpc/fsl: move mpc85xx.h to include/linux/fsl
-Date: Tue, 8 Nov 2016 06:49:51 +0000
-Message-ID: <DB6PR0401MB25366BC8FF59C68E2823245EF8A60@DB6PR0401MB2536.eurprd04.prod.outlook.com>
-References: <1477637418-38938-1-git-send-email-yangbo.lu@nxp.com>
- <2723366.1bJeJ7SKI6@wuerfel>
- <DB6PR0401MB2536B1B2E6AC36BDC8FC540DF8AE0@DB6PR0401MB2536.eurprd04.prod.outlook.com>
- <1543282.vWjeo4ynTa@wuerfel>
-In-Reply-To: <1543282.vWjeo4ynTa@wuerfel>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Received: from mailout3.samsung.com ([203.254.224.33]:36802 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752007AbcKRKGj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Nov 2016 05:06:39 -0500
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH RESEND] clk/samsung: exynos5433: mark some clocks as critical
+Date: Fri, 18 Nov 2016 11:04:18 +0100
+Message-id: <1479463458-24187-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Arnd,
+Some parent clocks of the Exynos5433 CMUs must be always enabled to access
+any register in the given CMU or devices connected to it. For the time
+being, until a proper solution based on runtime PM is applied, mark those
+clocks as critical (instead of ignore unused) to prevent disabling them.
 
+Reported-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+Resend reason: corrected reported by tag.
+---
+ drivers/clk/samsung/clk-exynos5433.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-> -----Original Message-----
-> From: Arnd Bergmann [mailto:arnd@arndb.de]
-> Sent: Tuesday, November 08, 2016 5:20 AM
-> To: Y.B. Lu
-> Cc: linuxppc-dev@lists.ozlabs.org; linux-mmc@vger.kernel.org;
-> ulf.hansson@linaro.org; Scott Wood; Mark Rutland; Greg Kroah-Hartman; X.B=
-.
-> Xie; M.H. Lian; linux-i2c@vger.kernel.org; linux-clk@vger.kernel.org;
-> Qiang Zhao; Russell King; Bhupesh Sharma; Joerg Roedel; Claudiu Manoil;
-> devicetree@vger.kernel.org; Rob Herring; Santosh Shilimkar; linux-arm-
-> kernel@lists.infradead.org; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Leo Li; iommu@lists.linux-foundation.org; Kumar
-> Gala
-> Subject: Re: [v15, 3/7] powerpc/fsl: move mpc85xx.h to include/linux/fsl
->=20
-> On Monday, October 31, 2016 9:35:33 AM CET Y.B. Lu wrote:
-> > >
-> > > I don't see any of the contents of this header referenced by the soc
-> > > driver any more. I think you can just drop this patch.
-> > >
-> >
-> > [Lu Yangbo-B47093] This header file was included by guts.c.
-> > The guts driver used macro SVR_MAJ/SVR_MIN for calculation.
-> >
-> > This header file was for powerpc arch before. And this patch is to
-> > made it as common header file for both ARM and PPC.
-> > Sooner or later this is needed.
->=20
-> Let's discuss it once we actually need the header then, ok?
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index a8bb60b1f804..f096bd7df40c 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -543,7 +543,7 @@
+ static const struct samsung_gate_clock top_gate_clks[] __initconst = {
+ 	/* ENABLE_ACLK_TOP */
+ 	GATE(CLK_ACLK_G3D_400, "aclk_g3d_400", "div_aclk_g3d_400",
+-			ENABLE_ACLK_TOP, 30, 0, 0),
++			ENABLE_ACLK_TOP, 30, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_IMEM_SSX_266, "aclk_imem_ssx_266",
+ 			"div_aclk_imem_sssx_266", ENABLE_ACLK_TOP,
+ 			29, CLK_IGNORE_UNUSED, 0),
+@@ -555,25 +555,25 @@
+ 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_ACLK_IMEM_200, "aclk_imem_200", "div_aclk_imem_266",
+ 			ENABLE_ACLK_TOP, 24,
+-			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
++			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_ACLK_IMEM_266, "aclk_imem_266", "div_aclk_imem_200",
+ 			ENABLE_ACLK_TOP, 23,
+ 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_ACLK_PERIC_66, "aclk_peric_66", "div_aclk_peric_66_b",
+ 			ENABLE_ACLK_TOP, 22,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_PERIS_66, "aclk_peris_66", "div_aclk_peris_66_b",
+ 			ENABLE_ACLK_TOP, 21,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_MSCL_400, "aclk_mscl_400", "div_aclk_mscl_400",
+ 			ENABLE_ACLK_TOP, 19,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_FSYS_200, "aclk_fsys_200", "div_aclk_fsys_200",
+ 			ENABLE_ACLK_TOP, 18,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_GSCL_111, "aclk_gscl_111", "div_aclk_gscl_111",
+ 			ENABLE_ACLK_TOP, 15,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_GSCL_333, "aclk_gscl_333", "div_aclk_gscl_333",
+ 			ENABLE_ACLK_TOP, 14,
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+@@ -582,7 +582,7 @@
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK_CAM1_400, "aclk_cam1_400", "div_aclk_cam1_400",
+ 			ENABLE_ACLK_TOP, 12,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_CAM1_552, "aclk_cam1_552", "div_aclk_cam1_552",
+ 			ENABLE_ACLK_TOP, 11,
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+@@ -591,7 +591,7 @@
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK_CAM0_400, "aclk_cam0_400", "div_aclk_cam0_400",
+ 			ENABLE_ACLK_TOP, 9,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_CAM0_552, "aclk_cam0_552", "div_aclk_cam0_552",
+ 			ENABLE_ACLK_TOP, 8,
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+@@ -600,19 +600,19 @@
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK_ISP_400, "aclk_isp_400", "div_aclk_isp_400",
+ 			ENABLE_ACLK_TOP, 6,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_HEVC_400, "aclk_hevc_400", "div_aclk_hevc_400",
+ 			ENABLE_ACLK_TOP, 5,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_MFC_400, "aclk_mfc_400", "div_aclk_mfc_400",
+ 			ENABLE_ACLK_TOP, 3,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK_G2D_266, "aclk_g2d_266", "div_aclk_g2d_266",
+ 			ENABLE_ACLK_TOP, 2,
+ 			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK_G2D_400, "aclk_g2d_400", "div_aclk_g2d_400",
+ 			ENABLE_ACLK_TOP, 0,
+-			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
++			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+ 
+ 	/* ENABLE_SCLK_TOP_MSCL */
+ 	GATE(CLK_SCLK_JPEG_MSCL, "sclk_jpeg_mscl", "div_sclk_jpeg",
+@@ -1385,7 +1385,7 @@ static void __init exynos5433_cmu_cpif_init(struct device_node *np)
+ 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_ACLK_DISP_333, "aclk_disp_333", "div_aclk_disp_333",
+ 			ENABLE_ACLK_MIF3, 1,
+-			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
++			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_ACLK_CPIF_200, "aclk_cpif_200", "div_aclk_cpif_200",
+ 			ENABLE_ACLK_MIF3, 0,
+ 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+-- 
+1.9.1
 
-[Lu Yangbo-B47093] As I said, this header file was included by guts.c in pa=
-tch 4.
-The guts driver used macro SVR_MAJ/SVR_MIN for calculation which were defin=
-ed in this header file.
-Did you suggest we dropped this patch and just calculated them in driver?
-
-Thanks :)
-
-
->=20
-> 	Arnd
