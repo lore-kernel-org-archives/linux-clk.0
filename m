@@ -1,103 +1,64 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [PATCH 2/6] clk: stm32f4: SDIO & 48Mhz clock management for
- STM32F469 board
-To: Daniel Thompson <daniel.thompson@linaro.org>,
-        Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King
-	<linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre
-	<nico@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, <andrea.merello@gmail.com>
-References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
- <1478523943-23142-3-git-send-email-gabriel.fernandez@st.com>
- <45a332b6-5170-9ae3-8d5e-c5f827c3edea@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <5954f521-91ea-b415-99e9-8a73abb88bcb@st.com>
-Date: Mon, 7 Nov 2016 15:06:16 +0100
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <45a332b6-5170-9ae3-8d5e-c5f827c3edea@linaro.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20161117230701.GR25626@codeaurora.org>
+References: <1478532904-5604-1-git-send-email-geert+renesas@glider.be> <20161117230701.GR25626@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 18 Nov 2016 10:55:00 +0100
+Message-ID: <CAMuHMdU9TRVWyCFf=auH2qZdW0hDYJW-E2ukruNY8dkn9yarxA@mail.gmail.com>
+Subject: Re: [git pull] clk: renesas: Updates for v4.10 (take two)
+To: Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Daniel,
+Hi Stephen, Simon,
 
+On Fri, Nov 18, 2016 at 12:07 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 11/07, Geert Uytterhoeven wrote:
+>> The following changes since commit dbdcc4f996df280eb2758095b4774ea62da8a2a7:
+>>
+>>   clk: renesas: r8a7796: Add DU and LVDS clocks (2016-11-02 20:40:08 +0100)
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag2
+>>
+>> for you to fetch changes up to 1936be95e013802291201c1ed193e04fd1ed3d13:
+>
+> Ok. Pulled into clk-next. I'm a little wary here as I haven't
+> seen any indication from arm-soc maintainers (not Simon) that
+> they'll take this cross tree merge. I guess we'll see how it
+> goes.
 
-On 11/07/2016 02:55 PM, Daniel Thompson wrote:
-> On 07/11/16 13:05, gabriel.fernandez@st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->>
->> In the stm32f469 soc, the 48Mhz clock could be derived from pll-q or
->> from pll-sai-p.
->>
->> The SDIO clock could be also derived from 48Mhz or from sys clock.
->>
->> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
->> ---
->>  drivers/clk/clk-stm32f4.c | 18 +++++++++++++++++-
->>  1 file changed, 17 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
->> index 7641acd..dda15bc 100644
->> --- a/drivers/clk/clk-stm32f4.c
->> +++ b/drivers/clk/clk-stm32f4.c
->> @@ -199,7 +199,7 @@ struct stm32f4_gate_data {
->>      { STM32F4_RCC_APB2ENR,  8,    "adc1",        "apb2_div" },
->>      { STM32F4_RCC_APB2ENR,  9,    "adc2",        "apb2_div" },
->>      { STM32F4_RCC_APB2ENR, 10,    "adc3",        "apb2_div" },
->> -    { STM32F4_RCC_APB2ENR, 11,    "sdio",        "pll48" },
->> +    { STM32F4_RCC_APB2ENR, 11,    "sdio",        "sdmux" },
->
-> I'm confused. How do the "sdmux" clock come to exist on STM32F429?
->
-"sdmux" only exist on STM32F469 (struct stm32f4_gate_data stm32f469_gates[])
+Thanks for pulling!
 
-BR
+Simon: while it's too late in the v4.10 cycle to queue additional cleanups in
+the platform code on top of this, can you please still pull
 
-Gabriel
->
->>      { STM32F4_RCC_APB2ENR, 12, "spi1",        "apb2_div" },
->>      { STM32F4_RCC_APB2ENR, 13,    "spi4",        "apb2_div" },
->>      { STM32F4_RCC_APB2ENR, 14,    "syscfg",    "apb2_div" },
->> @@ -940,6 +940,10 @@ static struct clk_hw *stm32_register_cclk(struct 
->> device *dev, const char *name,
->>      "no-clock", "lse", "lsi", "hse-rtc"
->>  };
->>
->> +static const char *pll48_parents[2] = { "pll-q", "pllsai-p" };
->> +
->> +static const char *sdmux_parents[2] = { "pll48", "sys" };
->> +
->>  struct stm32f4_clk_data {
->>      const struct stm32f4_gate_data *gates_data;
->>      const u64 *gates_map;
->> @@ -1109,6 +1113,18 @@ static void __init stm32f4_rcc_init(struct 
->> device_node *np)
->>          goto fail;
->>      }
->>
->> +    if (of_device_is_compatible(np, "st,stm32f469-rcc")) {
->> +        clk_hw_register_mux_table(NULL, "pll48",
->> +                pll48_parents, ARRAY_SIZE(pll48_parents), 0,
->> +                base + STM32F4_RCC_DCKCFGR, 27, 1, 0, NULL,
->> +                &stm32f4_clk_lock);
->> +
->> +        clk_hw_register_mux_table(NULL, "sdmux",
->> +                sdmux_parents, ARRAY_SIZE(sdmux_parents), 0,
->> +                base + STM32F4_RCC_DCKCFGR, 28, 1, 0, NULL,
->> +                &stm32f4_clk_lock);
->> +    }
->> +
->>      of_clk_add_hw_provider(np, stm32f4_rcc_lookup_clk, NULL);
->>      return;
->>  fail:
->>
->
+        git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+rcar-rst
+
+to resolve the (trivial) merge conflicts between the conversion to the RST
+driver in that branch, and the addition of PRR and RZ/G support in your tree?
+This will prevent arm-soc and/or Linus from having to deal with these
+conflicts.
+
+For reference, I've pushed the conflict resolution to branch
+
+        renesas-devel-20161117v2-v4.9-rc5+rcar-rst
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
