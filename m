@@ -1,88 +1,137 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:34190 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933969AbcKNT5w (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 14:57:52 -0500
-Date: Mon, 14 Nov 2016 11:57:49 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Ritesh Harjani <riteshh@codeaurora.org>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        andy.gross@linaro.org, devicetree@vger.kernel.org,
+Received: from mga03.intel.com ([134.134.136.65]:38722 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752007AbcKROUA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 18 Nov 2016 09:20:00 -0500
+Subject: Re: [PATCH v8 10/16] mmc: sdhci-msm: Implement set_clock callback for
+ sdhci-msm
+To: Ritesh Harjani <riteshh@codeaurora.org>, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+References: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+ <1479312052-22396-11-git-send-email-riteshh@codeaurora.org>
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org, david.brown@linaro.org,
         linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
         alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
         Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org,
-        Krishna Konda <kkonda@codeaurora.org>
-Subject: Re: [PATCH v7 14/14] sdhci: sdhci-msm: update dll configuration
-Message-ID: <20161114195749.GJ5177@codeaurora.org>
-References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
- <1479103248-9491-15-git-send-email-riteshh@codeaurora.org>
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com
+From: Adrian Hunter <adrian.hunter@intel.com>
+Message-ID: <e34e5767-7557-d68c-6ab7-862991d17b6c@intel.com>
+Date: Fri, 18 Nov 2016 16:14:58 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1479103248-9491-15-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479312052-22396-11-git-send-email-riteshh@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/14, Ritesh Harjani wrote:
-> @@ -903,7 +998,33 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
->  			config |= CORE_HC_SELECT_IN_EN;
->  			writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
->  		}
-> +		if (!msm_host->clk_rate && !msm_host->use_cdclp533) {
-> +			/*
-> +			 * Poll on DLL_LOCK or DDR_DLL_LOCK bits in
-> +			 * CORE_DLL_STATUS to be set.  This should get set
-> +			 * within 15 us at 200 MHz.
-> +			 */
-> +			rc = readl_relaxed_poll_timeout(host->ioaddr +
-> +							CORE_DLL_STATUS,
-> +							dll_lock,
-> +							(dll_lock &
-> +							(CORE_DLL_LOCK |
-> +							CORE_DDR_DLL_LOCK)), 10,
-> +							1000);
-> +			if (rc == -ETIMEDOUT)
-> +				pr_err("%s: Unable to get DLL_LOCK/DDR_DLL_LOCK, dll_status: 0x%08x\n",
-> +				       mmc_hostname(host->mmc), dll_lock);
-> +		}
->  	} else {
-> +		if (!msm_host->use_cdclp533) {
-> +			/* set CORE_PWRSAVE_DLL bit in CORE_VENDOR_SPEC3 */
+On 16/11/16 18:00, Ritesh Harjani wrote:
+> sdhci-msm controller may have different clk-rates for each
+> bus speed mode. Thus implement set_clock callback for
+> sdhci-msm driver.
+> 
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-These types of comments are totally useless. The code says
-exactly what is being done, and the comment is actually wrong in
-this case. Please remove all these "set/clear bit X in register
-Y" comments.
+Yes my Ack stands.
 
-> +			config = readl_relaxed(host->ioaddr +
-> +					CORE_VENDOR_SPEC3);
-> +			config &= ~CORE_PWRSAVE_DLL;
-> +			writel_relaxed(config, host->ioaddr +
-> +					CORE_VENDOR_SPEC3);
-> +		}
-> +
->  		/* Select the default clock (free running MCLK) */
->  		config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
->  		config &= ~CORE_HC_MCLK_SEL_MASK;
-> @@ -1100,6 +1221,13 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->  		msm_host->use_14lpp_dll_reset = true;
+> ---
+>  drivers/mmc/host/sdhci-msm.c | 66 +++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 65 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index 45ead68..6d02fc2 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -84,6 +84,7 @@ struct sdhci_msm_host {
+>  	struct clk *pclk;	/* SDHC peripheral bus clock */
+>  	struct clk *bus_clk;	/* SDHC bus voter clock */
+>  	struct clk *xo_clk;	/* TCXO clk needed for FLL feature of cm_dll*/
+> +	unsigned long clk_rate;
+>  	struct mmc_host *mmc;
+>  	bool use_14lpp_dll_reset;
+>  };
+> @@ -571,6 +572,69 @@ static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
+>  	return SDHCI_MSM_MIN_CLOCK;
+>  }
 >  
->  	/*
-> +	 * SDCC 5 controller with major version 1, minor version 0x34 and later
-> +	 * with HS 400 mode support will use CM DLL instead of CDC LP 533 DLL.
+> +/**
+> + * __sdhci_msm_set_clock - sdhci_msm clock control.
+> + *
+> + * Description:
+> + * MSM controller does not use internal divider and
+> + * instead directly control the GCC clock as per
+> + * HW recommendation.
+> + **/
+> +void __sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+> +{
+> +	u16 clk;
+> +	/*
+> +	 * Keep actual_clock as zero -
+> +	 * - since there is no divider used so no need of having actual_clock.
+> +	 * - MSM controller uses SDCLK for data timeout calculation. If
+> +	 *   actual_clock is zero, host->clock is taken for calculation.
 > +	 */
-> +	if ((core_major == 1) && (core_minor < 0x34))
-
-Drop useless parenthesis please.
-
-> +		msm_host->use_cdclp533 = true;
+> +	host->mmc->actual_clock = 0;
+> +
+> +	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+> +
+> +	if (clock == 0)
+> +		return;
 > +
 > +	/*
+> +	 * MSM controller do not use clock divider.
+> +	 * Thus read SDHCI_CLOCK_CONTROL and only enable
+> +	 * clock with no divider value programmed.
+> +	 */
+> +	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> +	sdhci_enable_clock(host, clk);
+> +}
+> +
+> +/* sdhci_msm_set_clock - Called with (host->lock) spinlock held. */
+> +static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +	int rc;
+> +
+> +	if (!clock) {
+> +		msm_host->clk_rate = clock;
+> +		goto out;
+> +	}
+> +
+> +	spin_unlock_irq(&host->lock);
+> +
+> +	rc = clk_set_rate(msm_host->clk, clock);
+> +	if (rc) {
+> +		pr_err("%s: Failed to set clock at rate %u\n",
+> +		       mmc_hostname(host->mmc), clock);
+> +		goto out_lock;
+> +	}
+> +	msm_host->clk_rate = clock;
+> +	pr_debug("%s: Setting clock at rate %lu\n",
+> +		 mmc_hostname(host->mmc), clk_get_rate(msm_host->clk));
+> +
+> +out_lock:
+> +	spin_lock_irq(&host->lock);
+> +out:
+> +	__sdhci_msm_set_clock(host, clock);
+> +}
+> +
+>  static const struct of_device_id sdhci_msm_dt_match[] = {
+>  	{ .compatible = "qcom,sdhci-msm-v4" },
+>  	{},
+> @@ -581,7 +645,7 @@ static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
+>  static const struct sdhci_ops sdhci_msm_ops = {
+>  	.platform_execute_tuning = sdhci_msm_execute_tuning,
+>  	.reset = sdhci_reset,
+> -	.set_clock = sdhci_set_clock,
+> +	.set_clock = sdhci_msm_set_clock,
+>  	.get_min_clock = sdhci_msm_get_min_clock,
+>  	.get_max_clock = sdhci_msm_get_max_clock,
+>  	.set_bus_width = sdhci_set_bus_width,
+> 
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
