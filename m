@@ -1,45 +1,50 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com,
 	linux-clk@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Stephen Boyd <stephen.boyd@linaro.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Subject: [PATCH] clk: efm32gg: Pass correct type to hw provider registration
-Date: Wed, 16 Nov 2016 11:09:32 -0800
-Message-Id: <20161116190932.21767-1-sboyd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rnayak@codeaurora.org,
+	stanimir.varbanov@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH V2 2/2] clk: qcom: Put venus core0/1 gdscs to hw control mode
+Date: Fri, 18 Nov 2016 17:58:27 +0530
+Message-Id: <1479472107-18472-3-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1479472107-18472-1-git-send-email-sricharan@codeaurora.org>
+References: <1479472107-18472-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dan Carpenter reports that we're passing a pointer to a pointer
-here when we should just be passing a pointer. Pass the right
-pointer so that the of_clk_hw_onecell_get() sees the appropriate
-data pointer on its end.
+The venus video ip's internal core blocks are under the
+control of the firmware and their powerdomains needs to be
+'ON' only when used by the firmware. So putting it into
+hw controlled mode lets this to happen, otherwise the firmware
+hangs checking for this.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Fixes: 9337631f52a8 ("clk: efm32gg: Migrate to clk_hw based OF and registration APIs")
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/clk/clk-efm32gg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/qcom/mmcc-msm8996.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/clk-efm32gg.c b/drivers/clk/clk-efm32gg.c
-index 8802a2dd56ac..f674778fb3ac 100644
---- a/drivers/clk/clk-efm32gg.c
-+++ b/drivers/clk/clk-efm32gg.c
-@@ -82,6 +82,6 @@ static void __init efm32gg_cmu_init(struct device_node *np)
- 	hws[clk_HFPERCLKDAC0] = clk_hw_register_gate(NULL, "HFPERCLK.DAC0",
- 			"HFXO", 0, base + CMU_HFPERCLKEN0, 17, 0, NULL);
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index ca97e11..41aabe3 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -2945,6 +2945,7 @@ enum {
+ 		.name = "venus_core0",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = HW_CTRL,
+ };
  
--	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data);
-+	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
- }
- CLK_OF_DECLARE(efm32ggcmu, "efm32gg,cmu", efm32gg_cmu_init);
+ static struct gdsc venus_core1_gdsc = {
+@@ -2955,6 +2956,7 @@ enum {
+ 		.name = "venus_core1",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = HW_CTRL,
+ };
+ 
+ static struct gdsc camss_gdsc = {
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
