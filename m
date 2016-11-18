@@ -1,109 +1,97 @@
-Return-Path: <wens@csie.org>
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v64YW+7Grr4NvjuhsDNM2bF_fuhTkdW6Hs1=MXK2LFne0g@mail.gmail.com>
-References: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
- <f8333c3a1f3308fcebd87bfc3710ce605f9bb595.1478625788.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v64YW+7Grr4NvjuhsDNM2bF_fuhTkdW6Hs1=MXK2LFne0g@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 13 Nov 2016 11:49:30 +0800
-Message-ID: <CAGb2v65tX5C89bYYkcrd0kHp1eCAwMihspbdtJwVi8kWgCPL4Q@mail.gmail.com>
-Subject: Re: [PATCH 2/10] clk: sunxi-ng: nkm: Deal with fixed post dividers
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+In-Reply-To: <41c58712-bc00-ed05-9d1d-42e31397a70c@ti.com>
+References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
+ <1477053961-27128-2-git-send-email-t-kristo@ti.com> <20161030204121.qvb5d33dh65awwzx@rob-hp-laptop>
+ <41c58712-bc00-ed05-9d1d-42e31397a70c@ti.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 18 Nov 2016 11:20:57 -0600
+Message-ID: <CAL_JsqLtSs6ifnMdEOsfXpGoWnmXuGAx83+ziB9yU+zurvob+A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] Documentation: dt: Add TI SCI clock driver
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Santosh Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Nov 13, 2016 at 11:48 AM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Wed, Nov 9, 2016 at 1:23 AM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
+On Mon, Oct 31, 2016 at 7:50 AM, Tero Kristo <t-kristo@ti.com> wrote:
+> On 30/10/16 22:41, Rob Herring wrote:
+>>
+>> On Fri, Oct 21, 2016 at 03:45:59PM +0300, Tero Kristo wrote:
+>>>
+>>> Add a clock implementation, TI SCI clock, that will hook to the common
+>>> clock framework, and allow each clock to be controlled via TI SCI
+>>> protocol.
+>>>
+>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>>> ---
+>>>  .../devicetree/bindings/clock/ti,sci-clk.txt       | 37
+>>> ++++++++++++++++++++++
+>>>  MAINTAINERS                                        |  1 +
+>>>  2 files changed, 38 insertions(+)
+>>>  create mode 100644
+>>> Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>> b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>> new file mode 100644
+>>> index 0000000..bfc3ca4
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>> @@ -0,0 +1,37 @@
+>>> +Texas Instruments TI-SCI Clocks
+>>> +===============================
+>>> +
+>>> +All clocks on Texas Instruments' SoCs that contain a System Controller,
+>>> +are only controlled by this entity. Communication between a host
+>>> processor
+>>> +running an OS and the System Controller happens through a protocol known
+>>> +as TI-SCI[1]. This clock implementation plugs into the common clock
+>>> +framework and makes use of the TI-SCI protocol on clock API requests.
+>>> +
+>>> +[1] Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
+>>> +
+>>> +Required properties:
+>>> +-------------------
+>>> +- compatible: Must be "ti,k2g-sci-clk"
+>>> +- #clock-cells: Shall be 2.
+>>> +  In clock consumers, this cell represents the device ID and clock ID
+>>> +  exposed by the PM firmware. The assignments can be found in the header
+>>> +  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
+>>> +  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where <soc>
+>>> +  is the SoC involved, for example 'k2g'.
+>>> +
+>>> +Examples:
+>>> +--------
+>>> +
+>>> +pmmc: pmmc {
+>>> +       compatible = "ti,k2g-sci";
+>>> +
+>>> +       k2g_clks: k2g_clks {
+>>
+>>
+>> Use "clocks" for node name instead.
+>>
+>>> +               compatible = "ti,k2g-sci-clk";
+>>
+>>
+>> I'm starting to think all these child nodes for SCI are pointless. Is
+>> there any reason why the parent node can't be the clock provider (along
+>> with all the other providers it acks as)?
 >
-> It'd be better if you mentioned what clock needs this.
 >
->> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->> ---
->>  drivers/clk/sunxi-ng/ccu_nkm.c | 17 ++++++++++++++---
->>  drivers/clk/sunxi-ng/ccu_nkm.h |  2 ++
->>  2 files changed, 16 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
->> index 9b840a47a94d..fd3c6a9d987c 100644
->> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
->> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
->> @@ -75,7 +75,7 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
->>                                         unsigned long parent_rate)
->>  {
->>         struct ccu_nkm *nkm = hw_to_ccu_nkm(hw);
->> -       unsigned long n, m, k;
->> +       unsigned long rate, n, m, k;
->>         u32 reg;
->>
->>         reg = readl(nkm->common.base + nkm->common.reg);
->> @@ -89,7 +89,11 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
->>         m = reg >> nkm->m.shift;
->>         m &= (1 << nkm->m.width) - 1;
->>
->> -       return parent_rate * (n + 1) * (k + 1) / (m + 1);
->> +       rate = parent_rate * (n + 1) * (k + 1) / (m + 1);
->> +       if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
->> +               rate /= nkm->fixed_post_div;
->> +
->> +       return rate;
->>  }
->>
->>  static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
->> @@ -100,6 +104,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
->>         struct ccu_nkm *nkm = data;
->>         struct _ccu_nkm _nkm;
->>
->> +       if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
->> +               rate *= nkm->fixed_post_div;
->> +
->>         _nkm.min_n = nkm->n.min;
->>         _nkm.max_n = 1 << nkm->n.width;
->>         _nkm.min_k = nkm->k.min;
->> @@ -109,7 +116,11 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
->>
->>         ccu_nkm_find_best(parent_rate, rate, &_nkm);
->>
->> -       return parent_rate * _nkm.n * _nkm.k / _nkm.m;
->> +       rate = parent_rate * _nkm.n * _nkm.k / _nkm.m;
->> +       if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
->> +               rate = rate / nkm->fixed_post_div;
->> +
->> +       return rate;
->>  }
->>
+> I believe the only reason to keep them separate is to have kernel side of
+> things modular. If we have separate nodes, the drivers can be probed
+> separately.
 >
-> You also need to handle this in the set_rate callback. You might need
-> to read back
-> the parent index value to determine if the post divider applies, as
-> this clock supports
-> a mux. Or don't support mux + post-div, and leave a TODO note.
+> If not, we need to build one huge blob with all the features in it, so the
+> main driver can probe everything in one go, with annoying back-and-forth
+> callbacks in place (assuming we still want to keep stuff somehow modular.)
 
-Was thinking pre-dividers... sorry. Please ignore the second parent
-index part.
+Since when is DT the only way to create a device? The main driver can
+create devices for all the sub-functions like clocks. This is the same
+as MFDs which have been done both ways.
 
-ChenYu
-
->
-> ChenYu
->
->>  static int ccu_nkm_determine_rate(struct clk_hw *hw,
->> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
->> index 34580894f4d1..0f1dbca25719 100644
->> --- a/drivers/clk/sunxi-ng/ccu_nkm.h
->> +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
->> @@ -32,6 +32,8 @@ struct ccu_nkm {
->>         struct ccu_mult_internal        n;
->>         struct ccu_mult_internal        k;
->>         struct ccu_div_internal         m;
->> +
->> +       unsigned int            fixed_post_div;
->>         struct ccu_mux_internal mux;
->>
->>         struct ccu_common       common;
->> --
->> git-series 0.8.11
+Rob
