@@ -1,111 +1,123 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 2 Nov 2016 14:54:45 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tdas@codeaurora.org
-Subject: Re: [PATCH v3 06/11] clk: qcom: Fix .set_rate to handle alpha PLLs
- w/wo dynamic update
-Message-ID: <20161102215445.GR16026@codeaurora.org>
-References: <1475138152-859-1-git-send-email-rnayak@codeaurora.org>
- <1475138152-859-7-git-send-email-rnayak@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH 1/3] Documentation: dt: Add TI SCI clock driver
+To: Rob Herring <robh@kernel.org>
+References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
+ <1477053961-27128-2-git-send-email-t-kristo@ti.com>
+ <20161030204121.qvb5d33dh65awwzx@rob-hp-laptop>
+ <41c58712-bc00-ed05-9d1d-42e31397a70c@ti.com>
+ <CAL_JsqLtSs6ifnMdEOsfXpGoWnmXuGAx83+ziB9yU+zurvob+A@mail.gmail.com>
+CC: linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Santosh
+ Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <0fe81866-8bfd-f3a7-d808-9cb23841f504@ti.com>
+Date: Mon, 21 Nov 2016 10:14:28 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1475138152-859-7-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <CAL_JsqLtSs6ifnMdEOsfXpGoWnmXuGAx83+ziB9yU+zurvob+A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/29, Rajendra Nayak wrote:
-> Alpha PLLs which do not support dynamic update feature
-> need to be explicitly disabled before a rate change.
-> The ones which do support dynamic update do so within a
-> single vco range, so add a min/max freq check for such
-> PLLs so they fall in the vco range.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+On 18/11/16 19:20, Rob Herring wrote:
+> On Mon, Oct 31, 2016 at 7:50 AM, Tero Kristo <t-kristo@ti.com> wrote:
+>> On 30/10/16 22:41, Rob Herring wrote:
+>>>
+>>> On Fri, Oct 21, 2016 at 03:45:59PM +0300, Tero Kristo wrote:
+>>>>
+>>>> Add a clock implementation, TI SCI clock, that will hook to the common
+>>>> clock framework, and allow each clock to be controlled via TI SCI
+>>>> protocol.
+>>>>
+>>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>>>> ---
+>>>>  .../devicetree/bindings/clock/ti,sci-clk.txt       | 37
+>>>> ++++++++++++++++++++++
+>>>>  MAINTAINERS                                        |  1 +
+>>>>  2 files changed, 38 insertions(+)
+>>>>  create mode 100644
+>>>> Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>>> b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>>> new file mode 100644
+>>>> index 0000000..bfc3ca4
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>>> @@ -0,0 +1,37 @@
+>>>> +Texas Instruments TI-SCI Clocks
+>>>> +===============================
+>>>> +
+>>>> +All clocks on Texas Instruments' SoCs that contain a System Controller,
+>>>> +are only controlled by this entity. Communication between a host
+>>>> processor
+>>>> +running an OS and the System Controller happens through a protocol known
+>>>> +as TI-SCI[1]. This clock implementation plugs into the common clock
+>>>> +framework and makes use of the TI-SCI protocol on clock API requests.
+>>>> +
+>>>> +[1] Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
+>>>> +
+>>>> +Required properties:
+>>>> +-------------------
+>>>> +- compatible: Must be "ti,k2g-sci-clk"
+>>>> +- #clock-cells: Shall be 2.
+>>>> +  In clock consumers, this cell represents the device ID and clock ID
+>>>> +  exposed by the PM firmware. The assignments can be found in the header
+>>>> +  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
+>>>> +  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where <soc>
+>>>> +  is the SoC involved, for example 'k2g'.
+>>>> +
+>>>> +Examples:
+>>>> +--------
+>>>> +
+>>>> +pmmc: pmmc {
+>>>> +       compatible = "ti,k2g-sci";
+>>>> +
+>>>> +       k2g_clks: k2g_clks {
+>>>
+>>>
+>>> Use "clocks" for node name instead.
+>>>
+>>>> +               compatible = "ti,k2g-sci-clk";
+>>>
+>>>
+>>> I'm starting to think all these child nodes for SCI are pointless. Is
+>>> there any reason why the parent node can't be the clock provider (along
+>>> with all the other providers it acks as)?
+>>
+>>
+>> I believe the only reason to keep them separate is to have kernel side of
+>> things modular. If we have separate nodes, the drivers can be probed
+>> separately.
+>>
+>> If not, we need to build one huge blob with all the features in it, so the
+>> main driver can probe everything in one go, with annoying back-and-forth
+>> callbacks in place (assuming we still want to keep stuff somehow modular.)
+>
+> Since when is DT the only way to create a device? The main driver can
+> create devices for all the sub-functions like clocks. This is the same
+> as MFDs which have been done both ways.
 
-Is Taniya the author?
+Yes obviously this can be done, my main point was that it will require 
+building some sort of infra within the driver to handle this. With 
+separate nodes, none of this is going to be needed. Also, we will lose 
+any kind of configurability via DT if we don't have separate nodes; now 
+we can select the available clocks / genpds via the compatible string of 
+the clocks/genpd nodes themselves (this isn't clearly evident as of now 
+as we only support a grand total of one device, which is k2g-evm.) 
+Otherwise we need to probe against the main node and add a separate 
+compatible string for every device, and carry this information to the 
+sibling devices also somehow. It is just so much simpler if we can just 
+keep separate nodes for them.
 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 49 +++++++++++++++++++++++++++++++++-------
->  drivers/clk/qcom/clk-alpha-pll.h |  3 +++
->  2 files changed, 44 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 89c7fdb..6f90a86 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -382,16 +382,41 @@ clk_alpha_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
->  static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->  				  unsigned long prate)
->  {
-> +	bool enabled;
->  	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
->  	const struct pll_vco *vco;
->  	u32 l, off = pll->offset;
->  	u64 a;
->  
->  	rate = alpha_pll_round_rate(rate, prate, &l, &a);
-> -	vco = alpha_pll_find_vco(pll, rate);
-> -	if (!vco) {
-> -		pr_err("alpha pll not in a valid vco range\n");
-> -		return -EINVAL;
-> +	enabled = clk_hw_is_enabled(hw);
-> +
-> +	if (pll->flags & SUPPORTS_DYNAMIC_UPDATE) {
-> +		/*
-> +		 * PLLs which support dynamic updates support one single
-> +		 * vco range, between min_rate and max_rate supported
-> +		 */
-> +		if (rate < pll->min_rate || rate > pll->max_rate) {
-> +			pr_err("alpha pll rate outside supported min/max range\n");
-> +			return -EINVAL;
-> +		}
-> +	} else {
-> +		/*
-> +		 * All alpha PLLs which do not support dynamic update,
-> +		 * should be disabled before a vco update.
-> +		 */
-> +		if (enabled)
-> +			hw->init->ops->disable(hw);
+Also, plenty of things are doing this kind of stuff already in 
+DT/kernel, having a parent node in place and sub-functions added 
+separately for ease of use, with apparently no visible point for having 
+the nodes within the DT.
 
-Please just call the function directly instead of going through
-the init structure.
-
-> +
-> +		vco = alpha_pll_find_vco(pll, rate);
-> +		if (!vco) {
-> +			pr_err("alpha pll not in a valid vco range\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		regmap_update_bits(pll->clkr.regmap, off + PLL_USER_CTL,
-> +				   PLL_VCO_MASK << PLL_VCO_SHIFT,
-> +				   vco->val << PLL_VCO_SHIFT);
->  	}
->  
->  	regmap_write(pll->clkr.regmap, off + PLL_L_VAL, l);
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-> index d6e1ee2..e43a9c0 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.h
-> +++ b/drivers/clk/qcom/clk-alpha-pll.h
-> @@ -37,8 +37,11 @@ struct clk_alpha_pll {
->  #define SUPPORTS_OFFLINE_REQ	BIT(0)
->  #define SUPPORTS_16BIT_ALPHA	BIT(1)
->  #define SUPPORTS_FSM_MODE	BIT(2)
-> +#define SUPPORTS_DYNAMIC_UPDATE	BIT(3)
->  	u8 flags;
->  
-> +	unsigned long min_rate;
-> +	unsigned long max_rate;
-
-Document these?
-
->  	struct clk_regmap clkr;
->  };
->  
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+-Tero
