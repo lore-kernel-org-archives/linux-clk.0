@@ -1,130 +1,132 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v2 5/9] clk: stm32f4: Add I2S clock
-Date: Thu, 24 Nov 2016 15:45:45 +0100
-Message-ID: <1479998749-20358-6-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
-References: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:46474 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753208AbcKUGjI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 01:39:08 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v9 10/16] mmc: sdhci-msm: Implement set_clock callback for sdhci-msm
+Date: Mon, 21 Nov 2016 12:07:20 +0530
+Message-Id: <1479710246-26676-11-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
+References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+sdhci-msm controller may have different clk-rates for each
+bus speed mode. Thus implement set_clock callback for
+sdhci-msm driver.
 
-This patch introduces I2S clock for stm32f4 soc.
-The I2S clock could be derived from an external clock or from pll-i2s
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- Documentation/devicetree/bindings/clock/st,stm32-rcc.txt |  4 +++-
- drivers/clk/clk-stm32f4.c                                | 14 +++++++++++++-
- include/dt-bindings/clock/stm32f4-clock.h                |  3 ++-
- 3 files changed, 18 insertions(+), 3 deletions(-)
+ drivers/mmc/host/sdhci-msm.c | 66 +++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 65 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-index 4cd08da6..8c1ca68 100644
---- a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-+++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-@@ -19,6 +19,7 @@ Required properties:
-   use.
- - clocks: External oscillator clock phandle
-   - high speed external clock signal (HSE)
-+  - external I2S clock (I2S_CKIN)
- 
- Example:
- 
-@@ -27,7 +28,7 @@ Example:
- 		#clock-cells = <2>
- 		compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
- 		reg = <0x40023800 0x400>;
--		clocks = <&clk_hse>;
-+		clocks = <&clk_hse>, <&clk_i2s_ckin>;
- 	};
- 
- Specifying gated clocks
-@@ -77,6 +78,7 @@ The secondary index is bound with the following magic numbers:
- 	6	PLL_VCO_I2S	(vco frequency of I2S pll)
- 	7	PLL_VCO_SAI	(vco frequency of SAI pll)
- 	8	CLK_LCD		(LCD-TFT)
-+	9	CLK_I2S		(I2S clocks)
- 
- Example:
- 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 86244fc..3063b30 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -935,6 +935,8 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
- 
- static const char *lcd_parent[1] = { "pllsai-r-div" };
- 
-+static const char *i2s_parents[2] = { "plli2s-r", NULL };
-+
- struct stm32_aux_clk {
- 	int idx;
- 	const char *name;
-@@ -969,6 +971,12 @@ struct stm32f4_clk_data {
- 		STM32F4_RCC_APB2ENR, 26,
- 		CLK_SET_RATE_PARENT
- 	},
-+	{
-+		CLK_I2S, "i2s", i2s_parents, ARRAY_SIZE(i2s_parents),
-+		STM32F4_RCC_CFGR, 23, 1,
-+		NO_GATE, 0,
-+		CLK_SET_RATE_PARENT
-+	},
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index 15a8b8e..00759ef 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -84,6 +84,7 @@ struct sdhci_msm_host {
+ 	struct clk *pclk;	/* SDHC peripheral bus clock */
+ 	struct clk *bus_clk;	/* SDHC bus voter clock */
+ 	struct clk *xo_clk;	/* TCXO clk needed for FLL feature of cm_dll*/
++	unsigned long clk_rate;
+ 	struct mmc_host *mmc;
+ 	bool use_14lpp_dll_reset;
  };
+@@ -571,6 +572,69 @@ static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
+ 	return SDHCI_MSM_MIN_CLOCK;
+ }
  
- static const struct stm32f4_clk_data stm32f429_clk_data = {
-@@ -1063,7 +1071,7 @@ static struct clk_hw *stm32_register_aux_clk(const char *name,
- 
- static void __init stm32f4_rcc_init(struct device_node *np)
- {
--	const char *hse_clk;
-+	const char *hse_clk, *i2s_in_clk;
- 	int n;
- 	const struct of_device_id *match;
- 	const struct stm32f4_clk_data *data;
-@@ -1098,6 +1106,10 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 
- 	hse_clk = of_clk_get_parent_name(np, 0);
- 
-+	i2s_in_clk = of_clk_get_parent_name(np, 1);
++/**
++ * __sdhci_msm_set_clock - sdhci_msm clock control.
++ *
++ * Description:
++ * MSM controller does not use internal divider and
++ * instead directly control the GCC clock as per
++ * HW recommendation.
++ **/
++void __sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
++{
++	u16 clk;
++	/*
++	 * Keep actual_clock as zero -
++	 * - since there is no divider used so no need of having actual_clock.
++	 * - MSM controller uses SDCLK for data timeout calculation. If
++	 *   actual_clock is zero, host->clock is taken for calculation.
++	 */
++	host->mmc->actual_clock = 0;
 +
-+	i2s_parents[1] = i2s_in_clk;
++	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
 +
- 	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
- 			16000000, 160000);
- 	pllcfgr = readl(base + STM32F4_RCC_PLLCFGR);
-diff --git a/include/dt-bindings/clock/stm32f4-clock.h b/include/dt-bindings/clock/stm32f4-clock.h
-index 1be4a3a..b129ab9 100644
---- a/include/dt-bindings/clock/stm32f4-clock.h
-+++ b/include/dt-bindings/clock/stm32f4-clock.h
-@@ -28,7 +28,8 @@
- #define PLL_VCO_I2S		6
- #define PLL_VCO_SAI		7
- #define CLK_LCD			8
-+#define CLK_I2S			9
- 
--#define END_PRIMARY_CLK		9
-+#define END_PRIMARY_CLK		10
- 
- #endif
++	if (clock == 0)
++		return;
++
++	/*
++	 * MSM controller do not use clock divider.
++	 * Thus read SDHCI_CLOCK_CONTROL and only enable
++	 * clock with no divider value programmed.
++	 */
++	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
++	sdhci_enable_clk(host, clk);
++}
++
++/* sdhci_msm_set_clock - Called with (host->lock) spinlock held. */
++static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
++	int rc;
++
++	if (!clock) {
++		msm_host->clk_rate = clock;
++		goto out;
++	}
++
++	spin_unlock_irq(&host->lock);
++
++	rc = clk_set_rate(msm_host->clk, clock);
++	if (rc) {
++		pr_err("%s: Failed to set clock at rate %u\n",
++		       mmc_hostname(host->mmc), clock);
++		goto out_lock;
++	}
++	msm_host->clk_rate = clock;
++	pr_debug("%s: Setting clock at rate %lu\n",
++		 mmc_hostname(host->mmc), clk_get_rate(msm_host->clk));
++
++out_lock:
++	spin_lock_irq(&host->lock);
++out:
++	__sdhci_msm_set_clock(host, clock);
++}
++
+ static const struct of_device_id sdhci_msm_dt_match[] = {
+ 	{ .compatible = "qcom,sdhci-msm-v4" },
+ 	{},
+@@ -581,7 +645,7 @@ static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
+ static const struct sdhci_ops sdhci_msm_ops = {
+ 	.platform_execute_tuning = sdhci_msm_execute_tuning,
+ 	.reset = sdhci_reset,
+-	.set_clock = sdhci_set_clock,
++	.set_clock = sdhci_msm_set_clock,
+ 	.get_min_clock = sdhci_msm_get_min_clock,
+ 	.get_max_clock = sdhci_msm_get_max_clock,
+ 	.set_bus_width = sdhci_set_bus_width,
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
