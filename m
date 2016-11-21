@@ -1,46 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 14 Nov 2016 18:41:00 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Riku Voipio <riku.voipio@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Amit Kucheria <amit.kucheria@linaro.org>
-Subject: Re: [PATCH 1/3] clk: Hi6220: enable stub clock driver for ARCH_HISI
-Message-ID: <20161115024100.GW5177@codeaurora.org>
-References: <1472633417-9330-1-git-send-email-leo.yan@linaro.org>
- <1472633417-9330-2-git-send-email-leo.yan@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1472633417-9330-2-git-send-email-leo.yan@linaro.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a7796: Add MSIOF controller clocks
+Date: Mon, 21 Nov 2016 18:15:21 +0100
+Message-Id: <1479748521-12788-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/31, Leo Yan wrote:
-> In current kernel config 'CONFIG_STUB_CLK_HI6220' is disabled by
-> default, as result stub clock driver has not been registered and
-> CPUFreq driver cannot work.
-> 
-> This patch is to enable stub clock driver in config for ARCH_HISI.
-> 
-> Reported-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
+From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
 
-Applied to clk-next
+This patch adds MSIOF{0,1,2,3} clocks for R8A7796 SoC.
 
+Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in clk-renesas-for-v4.11.
+
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 7d298c57a3e060b6..f908b779155de106 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -103,6 +103,7 @@ enum clk_ids {
+ 	DEF_FIXED("cl",         R8A7796_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+ 	DEF_FIXED("cp",         R8A7796_CLK_CP,    CLK_EXTAL,      2, 1),
+ 
++	DEF_DIV6P1("mso",       R8A7796_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
+ 	DEF_DIV6P1("csi0",      R8A7796_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
+ 
+ 	DEF_DIV6_RO("osc",      R8A7796_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
+@@ -117,6 +118,10 @@ enum clk_ids {
+ 	DEF_MOD("scif3",		 204,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("scif1",		 206,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("scif0",		 207,	R8A7796_CLK_S3D4),
++	DEF_MOD("msiof3",		 208,	R8A7796_CLK_MSO),
++	DEF_MOD("msiof2",		 209,	R8A7796_CLK_MSO),
++	DEF_MOD("msiof1",		 210,	R8A7796_CLK_MSO),
++	DEF_MOD("msiof0",		 211,	R8A7796_CLK_MSO),
+ 	DEF_MOD("sys-dmac2",		 217,	R8A7796_CLK_S0D3),
+ 	DEF_MOD("sys-dmac1",		 218,	R8A7796_CLK_S0D3),
+ 	DEF_MOD("sys-dmac0",		 219,	R8A7796_CLK_S0D3),
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
