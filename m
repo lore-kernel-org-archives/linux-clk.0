@@ -1,99 +1,100 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:50340 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933049AbcKHMqT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Nov 2016 07:46:19 -0500
-Subject: Re: [PATCH v6 12/14] mmc: sdhci-msm: Save the calculated tuning phase
-To: Ritesh Harjani <riteshh@codeaurora.org>, ulf.hansson@linaro.org,
-        linux-mmc@vger.kernel.org, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org
-References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
- <1478517877-23733-13-git-send-email-riteshh@codeaurora.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, andy.gross@linaro.org,
+Received: from smtp.codeaurora.org ([198.145.29.96]:46378 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753208AbcKUGjD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 01:39:03 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
         linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
         alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
         Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org
-From: Adrian Hunter <adrian.hunter@intel.com>
-Message-ID: <eb259443-e783-3abc-80c7-d4e7ec96ff9b@intel.com>
-Date: Tue, 8 Nov 2016 14:41:19 +0200
-MIME-Version: 1.0
-In-Reply-To: <1478517877-23733-13-git-send-email-riteshh@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v9 09/16] mmc: sdhci: Factor out sdhci_enable_clk
+Date: Mon, 21 Nov 2016 12:07:19 +0530
+Message-Id: <1479710246-26676-10-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
+References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/11/16 13:24, Ritesh Harjani wrote:
-> Save the tuning phase once the tuning is performed.
-> This phase value will be used while calibrating DLL
-> for HS400 mode.
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Factor out sdhci_enable_clk from sdhci_set_clock
+and make it EXPORT_SYMBOL so that it can be called.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+---
+ drivers/mmc/host/sdhci.c | 28 +++++++++++++++++-----------
+ drivers/mmc/host/sdhci.h |  1 +
+ 2 files changed, 18 insertions(+), 11 deletions(-)
 
-> ---
->  drivers/mmc/host/sdhci-msm.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index 2561c41..6431bb8 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -74,6 +74,7 @@
->  
->  #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
->  
-> +#define INVALID_TUNING_PHASE	-1
->  #define TCXO_FREQ		19200000
->  #define SDHCI_MSM_MIN_CLOCK	400000
->  #define CORE_FREQ_100MHZ	(100 * 1000 * 1000)
-> @@ -95,6 +96,7 @@ struct sdhci_msm_host {
->  	bool use_14lpp_dll_reset;
->  	bool tuning_done;
->  	bool calibration_done;
-> +	u8 saved_tuning_phase;
->  };
->  
->  /* Platform specific tuning */
-> @@ -134,6 +136,9 @@ static int msm_config_cm_dll_phase(struct sdhci_host *host, u8 phase)
->  	u32 config;
->  	struct mmc_host *mmc = host->mmc;
->  
-> +	if (phase > 0xf)
-> +		return -EINVAL;
-> +
->  	spin_lock_irqsave(&host->lock, flags);
->  
->  	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
-> @@ -431,6 +436,8 @@ static int sdhci_msm_execute_tuning(struct sdhci_host *host, u32 opcode)
->  	int rc;
->  	struct mmc_host *mmc = host->mmc;
->  	struct mmc_ios ios = host->mmc->ios;
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
->  
->  	/*
->  	 * Tuning is required for SDR104, HS200 and HS400 cards and
-> @@ -455,6 +462,7 @@ static int sdhci_msm_execute_tuning(struct sdhci_host *host, u32 opcode)
->  		if (rc)
->  			return rc;
->  
-> +		msm_host->saved_tuning_phase = phase;
->  		rc = mmc_send_tuning(mmc, opcode, NULL);
->  		if (!rc) {
->  			/* Tuning is successful at this tuning point */
-> @@ -826,6 +834,8 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->  
->  	sdhci_get_of_property(pdev);
->  
-> +	msm_host->saved_tuning_phase = INVALID_TUNING_PHASE;
-> +
->  	/* Setup SDCC bus voter clock. */
->  	msm_host->bus_clk = devm_clk_get(&pdev->dev, "bus");
->  	if (!IS_ERR(msm_host->bus_clk)) {
-> 
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index d08d507..62aedf1 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1344,20 +1344,10 @@ u16 sdhci_calc_clk(struct sdhci_host *host, unsigned int clock,
+ }
+ EXPORT_SYMBOL_GPL(sdhci_calc_clk);
+ 
+-void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
++void sdhci_enable_clk(struct sdhci_host *host, u16 clk)
+ {
+-	u16 clk;
+ 	unsigned long timeout;
+ 
+-	host->mmc->actual_clock = 0;
+-
+-	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+-
+-	if (clock == 0)
+-		return;
+-
+-	clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
+-
+ 	clk |= SDHCI_CLOCK_INT_EN;
+ 	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+ 
+@@ -1378,6 +1368,22 @@ void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+ 	clk |= SDHCI_CLOCK_CARD_EN;
+ 	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+ }
++EXPORT_SYMBOL_GPL(sdhci_enable_clk);
++
++void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
++{
++	u16 clk;
++
++	host->mmc->actual_clock = 0;
++
++	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
++
++	if (clock == 0)
++		return;
++
++	clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
++	sdhci_enable_clk(host, clk);
++}
+ EXPORT_SYMBOL_GPL(sdhci_set_clock);
+ 
+ static void sdhci_set_power_reg(struct sdhci_host *host, unsigned char mode,
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 9c35776..2fe9e80 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -682,6 +682,7 @@ static inline bool sdhci_sdio_irq_enabled(struct sdhci_host *host)
+ u16 sdhci_calc_clk(struct sdhci_host *host, unsigned int clock,
+ 		   unsigned int *actual_clock);
+ void sdhci_set_clock(struct sdhci_host *host, unsigned int clock);
++void sdhci_enable_clk(struct sdhci_host *host, u16 clk);
+ void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
+ 		     unsigned short vdd);
+ void sdhci_set_power_noreg(struct sdhci_host *host, unsigned char mode,
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
 
