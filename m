@@ -1,51 +1,121 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:34910 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933969AbcKNT7a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 14:59:30 -0500
-Date: Mon, 14 Nov 2016 11:59:28 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Ritesh Harjani <riteshh@codeaurora.org>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        andy.gross@linaro.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org
-Subject: Re: [PATCH v7 13/14] mmc: sdhci-msm: Add calibration tuning for
- CDCLP533 circuit
-Message-ID: <20161114195928.GK5177@codeaurora.org>
-References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
- <1479103248-9491-14-git-send-email-riteshh@codeaurora.org>
+Return-Path: <xuejiancheng@hisilicon.com>
+Subject: Re: [PATCH] reset: hisilicon: add a polarity cell for reset line
+ specifier
+To: Philipp Zabel <p.zabel@pengutronix.de>
+References: <1479193794-18350-1-git-send-email-xuejiancheng@hisilicon.com>
+ <1479206594.2456.24.camel@pengutronix.de>
+ <db839cba-a105-fa8e-8633-c98999cd7316@hisilicon.com>
+CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <xuwei5@hisilicon.com>, <arnd@arndb.de>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <yanhaifeng@hisilicon.com>,
+        <wenpan@hisilicon.com>, <howell.yang@hisilicon.com>,
+        <hermit.wangheming@hisilicon.com>, <elder@linaro.org>,
+        <bin.chen@linaro.org>
+From: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Message-ID: <03bb74da-6b24-ee4c-307d-3b3f10ac2f7a@hisilicon.com>
+Date: Mon, 21 Nov 2016 10:58:24 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1479103248-9491-14-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <db839cba-a105-fa8e-8633-c98999cd7316@hisilicon.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/14, Ritesh Harjani wrote:
-> @@ -575,6 +729,15 @@ static void sdhci_msm_set_uhs_signaling(struct sdhci_host *host,
->  	dev_dbg(mmc_dev(mmc), "%s: clock=%u uhs=%u ctrl_2=0x%x\n",
->  		mmc_hostname(host->mmc), host->clock, uhs, ctrl_2);
->  	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
-> +
-> +	spin_unlock_irq(&host->lock);
-> +	/* CDCLP533 HW calibration is only required for HS400 mode*/
-> +	if (host->clock > CORE_FREQ_100MHZ &&
-> +	    msm_host->tuning_done && !msm_host->calibration_done &&
-> +	    (mmc->ios.timing == MMC_TIMING_MMC_HS400))
+Hi Philipp,
 
-Drop useless parenthesis.
+On 2016/11/16 11:17, Jiancheng Xue wrote:
+> Hi Philipp,
+> 
+> On 2016/11/15 18:43, Philipp Zabel wrote:
+>> Hi Jiancheng,
+>>
+>> Am Dienstag, den 15.11.2016, 15:09 +0800 schrieb Jiancheng Xue:
+>>> Add a polarity cell for reset line specifier. If the reset line
+>>> is asserted when the register bit is 1, the polarity is
+>>> normal. Otherwise, it is inverted.
+>>>
+>>> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+>>> ---
+> Thank you very much for replying so soon.
+> 
+> Please allow me to decribe the reason why this patch exists first.
+> All bits in the reset controller were designed to be active-high.
+> But in a recent chip only one bit was implemented to be active-low :(
+> 
+>>>  .../devicetree/bindings/clock/hisi-crg.txt         | 11 ++++---
+>>>  arch/arm/boot/dts/hi3519.dtsi                      |  2 +-
+>>>  drivers/clk/hisilicon/reset.c                      | 36 ++++++++++++++++------
+>>>  3 files changed, 33 insertions(+), 16 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/hisi-crg.txt b/Documentation/devicetree/bindings/clock/hisi-crg.txt
+>>> index e3919b6..fcbb4f3 100644
+>>> --- a/Documentation/devicetree/bindings/clock/hisi-crg.txt
+>>> +++ b/Documentation/devicetree/bindings/clock/hisi-crg.txt
+>>> @@ -25,19 +25,20 @@ to specify the clock which they consume.
+>>>  
+>>>  All these identifier could be found in <dt-bindings/clock/hi3519-clock.h>.
+>>>  
+>>> -- #reset-cells: should be 2.
+>>> +- #reset-cells: should be 3.
+>>>  
+>>>  A reset signal can be controlled by writing a bit register in the CRG module.
+>>> -The reset specifier consists of two cells. The first cell represents the
+>>> +The reset specifier consists of three cells. The first cell represents the
+>>>  register offset relative to the base address. The second cell represents the
+>>> -bit index in the register.
+>>> +bit index in the register. The third cell represents the polarity of the reset
+>>> +line (0 for normal, 1 for inverted).
+>>
+#reset-cells: Should be 2 if compatilbe string is "hisilicon,hi3519-crg". Should be 3 otherwise.
+	      A reset signal can be controlled by writing a bit register in the CRG module.
+	      The reset specifier consists of two or three cells. The first cell represents the
+	      register offset relative to the base address. The second cell represents the
+	      bit index in the register.The third cell represents the polarity of the reset
+	      line (0 for active-high, 1 for active-low).
 
-> +		if (!sdhci_msm_cdclp533_calibration(host))
-> +			msm_host->calibration_done = true;
-> +	spin_lock_irq(&host->lock);
->  }
+If I change the binding like this, can it be accepted?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+Jiancheng
+
+>> What is normal and what is inverted? Please specify which is active-high
+>> and which is active-low.
+>>
+> OK. I'll use active-high and active-low instead.
+> 
+>>>  
+>>>  Example: CRG nodes
+>>>  CRG: clock-reset-controller@12010000 {
+>>>  	compatible = "hisilicon,hi3519-crg";
+>>>  	reg = <0x12010000 0x10000>;
+>>>  	#clock-cells = <1>;
+>>> -	#reset-cells = <2>;
+>>> +	#reset-cells = <3>;
+>>>  };
+>>>  
+>>>  Example: consumer nodes
+>>> @@ -45,5 +46,5 @@ i2c0: i2c@12110000 {
+>>>  	compatible = "hisilicon,hi3519-i2c";
+>>>  	reg = <0x12110000 0x1000>;
+>>>  	clocks = <&CRG HI3519_I2C0_RST>;
+>>> -	resets = <&CRG 0xe4 0>;
+>>> +	resets = <&CRG 0xe4 0 0>;
+>>>  };
+>>> diff --git a/arch/arm/boot/dts/hi3519.dtsi b/arch/arm/boot/dts/hi3519.dtsi
+>>> index 5729ecf..b7cb182 100644
+>>> --- a/arch/arm/boot/dts/hi3519.dtsi
+>>> +++ b/arch/arm/boot/dts/hi3519.dtsi
+>>> @@ -50,7 +50,7 @@
+>>>  	crg: clock-reset-controller@12010000 {
+>>>  		compatible = "hisilicon,hi3519-crg";
+>>>  		#clock-cells = <1>;
+>>> -		#reset-cells = <2>;
+>>> +		#reset-cells = <3>;
+>>
+>> That is a backwards incompatible change. Which I think in this case
+>> could be tolerated, because there are no users yet of the reset
+>> controller. Or are there any hi3519 based device trees that use the
+>> resets out in the wild? If there are, the driver must continue to
+>> support old device trees with two reset-cells. Which would not be
+>> trivial because currently the core checks in reset_control_get that
+>> rcdev->of_n_reset_cells is equal to the #reset-cells value from DT.
+> 
