@@ -1,45 +1,71 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] clk: pxa mark dummy helper as 'inline'
-Date: Tue,  8 Nov 2016 15:49:30 +0100
-Message-Id: <20161108144950.3472058-1-arnd@arndb.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:60448 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754228AbcKUXLl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 18:11:41 -0500
+Date: Mon, 21 Nov 2016 15:11:38 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ritesh Harjani <riteshh@codeaurora.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Alex Lemberg <alex.lemberg@sandisk.com>,
+        Mateusz Nowak <mateusz.nowak@intel.com>,
+        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        David Griego <david.griego@linaro.org>,
+        Sahitya Tummala <stummala@codeaurora.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Pramod Gurav <pramod.gurav@linaro.org>, jeremymc@redhat.com
+Subject: Re: [PATCH v9 00/16] mmc: sdhci-msm: Add clk-rates, DDR, HS400
+ support
+Message-ID: <20161121231138.GY25626@codeaurora.org>
+References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
+ <CAPDyKFrRbf0+G5K=-jsaevAGbTqhTAss2zJv3QdiyCrv0BG-zA@mail.gmail.com>
+ <d4d05fb9-8a9e-6cf2-dc63-0edbd27a9e55@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <d4d05fb9-8a9e-6cf2-dc63-0edbd27a9e55@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The dummy_clk_set_parent function is marked as 'static' but is
-no longer referenced from the pxa25x clk driver after the last use
-of the RATE_RO_OPS() macro is gone from this file, causing a
-harmless build warning:
+On 11/21, Ritesh Harjani wrote:
+> 
+> 
+> On 11/21/2016 3:36 PM, Ulf Hansson wrote:
+> >On 21 November 2016 at 07:37, Ritesh Harjani <riteshh@codeaurora.org> wrote:
+> >>Hi,
+> >>
+> >>This is v9 version of the patch series which adds support for MSM8996.
+> >>Adds HS400 driver support as well.
+> >>These are tested on internal msm8996 & db410c HW.
+> >>
+> >>The patch series is ready. Do we think we can apply these
+> >>patches for next now?
+> >
+> >I guess the DTS changes can be picked up by Andy, so they can go via arm-soc?
+> Yes.
+> 
+> >
+> >Then, does the mmc changes depend on the clock changes? If so, I can
+> >pick them as well, but then I need an ack from Stephen....
+> Ideal and preferable, would be that clk & mmc changes go in
+> together. But either ways should be fine.
+> 
 
-In file included from drivers/clk/pxa/clk-pxa25x.c:24:0:
-drivers/clk/pxa/clk-pxa.h:146:12: error: 'dummy_clk_set_parent' defined but not used [-Werror=unused-function]
+There's only a runtime dependency where the clk rates will be
+wrong if clk tree isn't merged. I'd rather just apply the clk
+ones directly to clk tree and let all three trees come together
+in linux-next and work.
 
-This marks the functon as 'inline', which lets the compiler simply
-drop it when it gets referenced.
-
-Fixes: 9fe694295098 ("clk: pxa: transfer CPU clock setting from pxa2xx-cpufreq")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/pxa/clk-pxa.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/pxa/clk-pxa.h b/drivers/clk/pxa/clk-pxa.h
-index f60a7bccae4e..58abfa816d53 100644
---- a/drivers/clk/pxa/clk-pxa.h
-+++ b/drivers/clk/pxa/clk-pxa.h
-@@ -143,7 +143,7 @@ struct pxa2xx_freq {
- 	unsigned int clkcfg;
- };
- 
--static int dummy_clk_set_parent(struct clk_hw *hw, u8 index)
-+static inline int dummy_clk_set_parent(struct clk_hw *hw, u8 index)
- {
- 	return 0;
- }
 -- 
-2.9.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
