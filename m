@@ -1,91 +1,98 @@
-Return-Path: <vinod.koul@intel.com>
-Date: Mon, 14 Nov 2016 10:24:48 +0530
-From: Vinod Koul <vinod.koul@intel.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 21 Nov 2016 22:45:52 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
 To: Chen-Yu Tsai <wens@csie.org>
-Cc: "maxime.ripard@free-electrons.com" <maxime.ripard@free-electrons.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"thomas.petazzoni@free-electrons.com" <thomas.petazzoni@free-electrons.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"moinejf@free.fr" <moinejf@free.fr>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
-	"lee.jones@linaro.org" <lee.jones@linaro.org>,
-	"broonie@kernel.org" <broonie@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"alexandre.belloni@free-electrons.com" <alexandre.belloni@free-electrons.com>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"tiwai@suse.com" <tiwai@suse.com>,
-	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"mylene.josserand@free-electrons.com" <mylene.josserand@free-electrons.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"perex@perex.cz" <perex@perex.cz>,
-	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 01/14] dma: sun6i-dma: Add burst case of 4
-Message-ID: <20161114045448.GQ3000@localhost>
-References: <cover.1475569400.git.mylene.josserand@free-electrons.com>
- <3a2404510b5f8b16ae3bb193982d70f158700b2b.1475571575.git.mylene.josserand@free-electrons.com>
- <20161004124011.d7f5754a082d5f17d5185fc4@free.fr>
- <20161004165553.GS5228@lukather>
- <20161023183107.5b75b6aad62853378713299f@free.fr>
- <20161027175154.v4kuhyvm3r5n6tdo@lukather>
- <CAGb2v67SSZF6XL-HXv83nuwTKpJc53h8gsrb2r2V98LNZBzqEA@mail.gmail.com>
- <1477922460.2837.5.camel@intel.com>
- <CAGb2v65yR9NOff+VDA0cBj3UenGpdYUfnYfesnmzP8AN4uw4Tw@mail.gmail.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 6/10] clk: sunxi-ng: Add A10s CCU driver
+Message-ID: <20161121214552.yvt7r4jntusb5vx3@lukather>
+References: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
+ <2110deed00d33bdb557efebe8f988976fbf5a440.1478625788.git-series.maxime.ripard@free-electrons.com>
+ <CAGb2v64cft9nWh13c+8jG8qhrD_RnVFc+s8btMTHbdDS155eQA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAGb2v65yR9NOff+VDA0cBj3UenGpdYUfnYfesnmzP8AN4uw4Tw@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="r262yq6d7kf66is4"
+In-Reply-To: <CAGb2v64cft9nWh13c+8jG8qhrD_RnVFc+s8btMTHbdDS155eQA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Nov 01, 2016 at 10:55:13PM +0800, Chen-Yu Tsai wrote:
 
-> >>  * @src_maxburst: the maximum number of words (note: words, as in
-> >>  * units of the src_addr_width member, not bytes) that can be sent
-> >>  * in one burst to the device. Typically something like half the
-> >>  * FIFO depth on I/O peripherals so you don't overflow it. This
-> >>  * may or may not be applicable on memory sources.
-> >>  * @dst_maxburst: same as src_maxburst but for destination target
-> >>  * mutatis mutandis.
-> >>
-> >> The DMA engine driver should be free to select whatever burst size
-> >> that doesn't exceed this. So for max_burst = 4, the driver can select
-> >> burst = 4 for controllers that do support it, or burst = 1 for those
-> >> that don't, and do more bursts.
-> >
-> > Nope, the client configures these parameters and dmaengine driver
-> > validates and programs
-> 
-> Shouldn't we just name it "burst_size" then if it's meant to be what
-> the client specifically asks for?
+--r262yq6d7kf66is4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Well if for some reason we program lesser than than max it would work
-technically. But a larger burst wont work at all, so thats why maxburst is
-significant.
+On Sun, Nov 13, 2016 at 05:34:44PM +0800, Chen-Yu Tsai wrote:
+> > +static struct ccu_nkmp pll_ve_clk =3D {
+> > +       .enable         =3D BIT(31),
+> > +       .n              =3D _SUNXI_CCU_MULT_OFFSET(8, 5, 0),
+> > +       .k              =3D _SUNXI_CCU_MULT(4, 2),
+> > +       .m              =3D _SUNXI_CCU_DIV(0, 2),
+> > +       .p              =3D _SUNXI_CCU_DIV(16, 2),
+>=20
+> Any chance we'll support the bypass switch on this one?
 
-> My understanding is that the client configures its own parameters,
-> such as the trigger level for the DRQ, like raise DRQ when level < 1/4
-> FIFO depth, request maxburst = 1/4 or 1/2 FIFO depth, so as not to
-> overrun the FIFO. When the DRQ is raised, the DMA engine will do a
-> burst, and after the burst the DRQ would be low again, so the DMA
-> engine will wait. So the DMA engine driver should be free to
-> program the actual burst size to something less than maxburst, shouldn't
-> it?
+I'm not sure this will be useful to have it running at 24MHz.
 
-Yup but not more that max..
+> > +static SUNXI_CCU_M(pll_ddr_clk, "pll-ddr", "pll-ddr-base", 0x020, 0, 2=
+, 0);
+>=20
+> Maybe we should set CLK_IS_CRITICAL on this one as well... in case the
+> bootloader uses pll-periph for mbus, and none of the dram gates are enabl=
+ed.
 
-> >> This also means we can increase max_burst for the audio codec, as
-> >> the FIFO is 64 samples deep for stereo, or 128 samples for mono.
-> >
-> > Beware that higher bursts means chance of underrun of FIFO. This value
-> > is selected with consideration of power and performance required. Lazy
-> > allocation would be half of FIFO size..
-> 
-> You mean underrun if its the source right? So the client setting maxburst
-> should take the DRQ trigger level into account for this.
+Ack.
 
-Yes
+> > +static SUNXI_CCU_GATE(hosc_clk,        "hosc", "osc24M", 0x050, BIT(0)=
+, 0);
+>=20
+> Why the extra "hosc" clock here? You should probably just internalize "os=
+c24M".
 
--- 
-~Vinod
+I'd prefer to model it as it is modelled in hardware: you have two
+crystals, and then a gate within the CCU.
+
+> > +static const char * const csi_parents[] =3D { "hosc", "pll-video0", "p=
+ll-video1",
+> > +                                           "pll-video0-2x", "pll-video=
+1-2x" };
+> > +static const u8 csi_table[] =3D { 0, 1, 2, 5, 6 };
+> > +static SUNXI_CCU_M_WITH_MUX_TABLE_GATE(csi_clk, "csi",
+> > +                                      csi_parents, csi_table,
+> > +                                      0x134, 0, 5, 24, 2, BIT(31), 0);
+>=20
+> Do you know if CSI needs to change the module clock?
+
+Apparently not.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--r262yq6d7kf66is4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYM2sMAAoJEBx+YmzsjxAgIjQP/iK3875gjyMqo8zbwLEQNpYC
+RHH7HmFsW+i5XPTgEQQln1zpCvolsRLUxmDoLrpLjLQyE6/CtZiBL+5CLFBjJI3D
+m/+i6wcsnHc8EHVuXpL8BxAhmIBCVgfzCg8wCjq2FPQkbjq0dKNKnOk8y52d6LOv
+tUxY8yL4qsF+r4rEiHQOjWqpO8gCPhQs9VxNZ/OLNDzQhfs7zrDdZf3V6cHMTpBe
+z1/RfRhNa1WpXAoLmgEmmyLbz9p3nasponou3BCQS7MSLZY49KXc30Ls7KsBNDA8
+HH+2r+Cpo6N42uEtFfknn8HgCwvY7Qs2ZJh656J2SdwpKSbwjYsUlvkcf9XwtaHh
+7AE6xkM44hzmBqsxG/bAbAlGukOZZDmrDGeHrA2wnupZ37fYPWUwi25gV3FMyE89
+YkwPt17ZM/30PsIxxBH18hSuluI8x5jEbLEyNdwQmPKZzEtzW04Y1f6NFtFngeBp
+oOMXXaFtnBOUKei4raZFALZBS/IHiii5sRbPnUdD+fRp4pr2fB4Nighs1GpdQ/2U
+I0RglGG1Ueu8KFoJW8HeiRhs22vgyLeYwRrqCgY+BGRJKoNM8inzYeELXA/n6cF2
+N5bq97bOImkloytJPLSiffvl+UIEkWOGBofk8M0mnSHPVSJYnlJREJTmeHGDIaNb
+bW4A3zqT1+KMLMtqp3on
+=1IRz
+-----END PGP SIGNATURE-----
+
+--r262yq6d7kf66is4--
