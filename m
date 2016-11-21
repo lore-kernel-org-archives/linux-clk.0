@@ -1,39 +1,36 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 23 Nov 2016 14:43:04 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL] Allwinner clock fixes for 4.9, take 2
-Message-ID: <20161123224304.GB6095@codeaurora.org>
-References: <20161122145949.quvtzoupxbxbeql6@lukather>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 21 Nov 2016 10:18:08 -0600
+From: Rob Herring <robh@kernel.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v2] clk: qcom: smd-rpmcc: Add msm8974 clocks
+Message-ID: <20161121161808.5kebw6r5lxnepqau@rob-hp-laptop>
+References: <1479486805-21853-1-git-send-email-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161122145949.quvtzoupxbxbeql6@lukather>
+In-Reply-To: <1479486805-21853-1-git-send-email-bjorn.andersson@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/22, Maxime Ripard wrote:
-> Hi Mike, Stephen,
+On Fri, Nov 18, 2016 at 08:33:25AM -0800, Bjorn Andersson wrote:
+> This adds all RPM based clocks for msm8974, except cxo and
+> gfx3d_clk_src.
 > 
-> Here are two new fixes for the 4.9 release.
+> Tested-by: Georgi Djakov <georgi.djakov@linaro.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 > 
-> That should be my final PR for both the 4.9 fixes and 4.10
-> developments.
+> Changes since v1:
+> - Fixed the screwed up indentation
 > 
-> Thanks!
-> Maxime
-> 
-> The following changes since commit ac95330b96376550ae7a533d1396272d675adfa2:
-> 
->   clk: sunxi: Fix M factor computation for APB1 (2016-11-04 08:49:46 +0100)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/sunxi-clk-fixes-for-4.9-2
+>  .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
 
-Ok. Pulled into a tag to send off tomorrow with another fix for
-v4.9. Thanks.
+Acked-by: Rob Herring <robh@kernel.org>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>  drivers/clk/qcom/clk-smd-rpm.c                     | 71 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,rpmcc.h             | 40 +++++++++++-
+>  3 files changed, 110 insertions(+), 2 deletions(-)
