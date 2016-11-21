@@ -1,107 +1,232 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: sboyd@codeaurora.org
-Cc: mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	michael.scott@linaro.org,
-	georgi.djakov@linaro.org
-Subject: [PATCH v2 2/2] clk: qcom: clk-rpm: Fix clk_hw references
-Date: Wed, 23 Nov 2016 16:52:49 +0200
-Message-Id: <20161123145249.14912-2-georgi.djakov@linaro.org>
-In-Reply-To: <20161123145249.14912-1-georgi.djakov@linaro.org>
-References: <20161123145249.14912-1-georgi.djakov@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:45164 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753112AbcKUGiJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 01:38:09 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v9 02/16] clk: qcom: Move all sdcc rcgs to use clk_rcg2_floor_ops
+Date: Mon, 21 Nov 2016 12:07:12 +0530
+Message-Id: <1479710246-26676-3-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
+References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Fix the clk_hw references to the actual clocks and add a xlate function
-to return the hw pointers from the already existing static array.
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Reported-by: Michael Scott <michael.scott@linaro.org>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+The sdcc driver for msm8996/msm8916/msm8974/msm8994 and apq8084
+expects a clk_set_rate() on the sdcc rcg clk to set
+a floor value of supported clk rate closest to the requested
+rate, by looking up the frequency table.
+So move all the sdcc rcgs on all these platforms to use the
+newly introduced clk_rcg2_floor_ops
+
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
 ---
- drivers/clk/qcom/clk-rpm.c | 36 ++++++++++++++++++++++--------------
- 1 file changed, 22 insertions(+), 14 deletions(-)
+ drivers/clk/qcom/gcc-apq8084.c | 8 ++++----
+ drivers/clk/qcom/gcc-msm8916.c | 4 ++--
+ drivers/clk/qcom/gcc-msm8974.c | 8 ++++----
+ drivers/clk/qcom/gcc-msm8994.c | 8 ++++----
+ drivers/clk/qcom/gcc-msm8996.c | 8 ++++----
+ 5 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
-index 1950a9572624..df3e5fe8442a 100644
---- a/drivers/clk/qcom/clk-rpm.c
-+++ b/drivers/clk/qcom/clk-rpm.c
-@@ -127,8 +127,8 @@ struct clk_rpm {
- 
- struct rpm_cc {
- 	struct qcom_rpm *rpm;
--	struct clk_hw_onecell_data data;
--	struct clk_hw *hws[];
-+	struct clk_rpm **clks;
-+	size_t num_clks;
+diff --git a/drivers/clk/qcom/gcc-apq8084.c b/drivers/clk/qcom/gcc-apq8084.c
+index 070037a..486d961 100644
+--- a/drivers/clk/qcom/gcc-apq8084.c
++++ b/drivers/clk/qcom/gcc-apq8084.c
+@@ -1142,7 +1142,7 @@ enum {
+ 		.name = "sdcc1_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
  };
  
- struct rpm_clk_desc {
-@@ -391,11 +391,23 @@ static const struct of_device_id rpm_clk_match_table[] = {
+@@ -1156,7 +1156,7 @@ enum {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
  };
- MODULE_DEVICE_TABLE(of, rpm_clk_match_table);
  
-+static struct clk_hw *qcom_rpm_clk_hw_get(struct of_phandle_args *clkspec,
-+					  void *data)
-+{
-+	struct rpm_cc *rcc = data;
-+	unsigned int idx = clkspec->args[0];
-+
-+	if (idx >= rcc->num_clks) {
-+		pr_err("%s: invalid index %u\n", __func__, idx);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return rcc->clks[idx] ? &rcc->clks[idx]->hw : ERR_PTR(-ENOENT);
-+}
-+
- static int rpm_clk_probe(struct platform_device *pdev)
- {
--	struct clk_hw **hws;
- 	struct rpm_cc *rcc;
--	struct clk_hw_onecell_data *data;
- 	int ret;
- 	size_t num_clks, i;
- 	struct qcom_rpm *rpm;
-@@ -415,14 +427,12 @@ static int rpm_clk_probe(struct platform_device *pdev)
- 	rpm_clks = desc->clks;
- 	num_clks = desc->num_clks;
+@@ -1170,7 +1170,7 @@ enum {
+ 		.name = "sdcc3_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
  
--	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*hws) * num_clks,
--			   GFP_KERNEL);
-+	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc), GFP_KERNEL);
- 	if (!rcc)
- 		return -ENOMEM;
+@@ -1184,7 +1184,7 @@ enum {
+ 		.name = "sdcc4_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
  
--	hws = rcc->hws;
--	data = &rcc->data;
--	data->num = num_clks;
-+	rcc->clks = rpm_clks;
-+	rcc->num_clks = num_clks;
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index 5c4e193..628e6ca 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -1107,7 +1107,7 @@ enum {
+ 		.name = "sdcc1_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
  
- 	for (i = 0; i < num_clks; i++) {
- 		if (!rpm_clks[i])
-@@ -436,18 +446,16 @@ static int rpm_clk_probe(struct platform_device *pdev)
- 	}
+@@ -1132,7 +1132,7 @@ enum {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
  
- 	for (i = 0; i < num_clks; i++) {
--		if (!rpm_clks[i]) {
--			data->hws[i] = ERR_PTR(-ENOENT);
-+		if (!rpm_clks[i])
- 			continue;
--		}
+diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
+index 0091520..348e30d 100644
+--- a/drivers/clk/qcom/gcc-msm8974.c
++++ b/drivers/clk/qcom/gcc-msm8974.c
+@@ -872,7 +872,7 @@ enum {
+ 	.name = "sdcc1_apps_clk_src",
+ 	.parent_names = gcc_xo_gpll0,
+ 	.num_parents = 2,
+-	.ops = &clk_rcg2_ops,
++	.ops = &clk_rcg2_floor_ops,
+ };
  
- 		ret = devm_clk_hw_register(&pdev->dev, &rpm_clks[i]->hw);
- 		if (ret)
- 			goto err;
- 	}
+ static struct clk_rcg2 sdcc1_apps_clk_src = {
+@@ -894,7 +894,7 @@ enum {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
  
--	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
--				     data);
-+	ret = of_clk_add_hw_provider(pdev->dev.of_node, qcom_rpm_clk_hw_get,
-+				     rcc);
- 	if (ret)
- 		goto err;
+@@ -908,7 +908,7 @@ enum {
+ 		.name = "sdcc3_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
  
+@@ -922,7 +922,7 @@ enum {
+ 		.name = "sdcc4_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm8994.c
+index 84093c1..8afd830 100644
+--- a/drivers/clk/qcom/gcc-msm8994.c
++++ b/drivers/clk/qcom/gcc-msm8994.c
+@@ -912,7 +912,7 @@ enum {
+ 		.name = "sdcc1_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -938,7 +938,7 @@ enum {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -953,7 +953,7 @@ enum {
+ 		.name = "sdcc3_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -968,7 +968,7 @@ enum {
+ 		.name = "sdcc4_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index e22bbc2..4b1fc17 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -460,7 +460,7 @@ enum {
+ 		.name = "sdcc1_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4_gpll0_early_div,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -505,7 +505,7 @@ enum {
+ 		.name = "sdcc2_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -519,7 +519,7 @@ enum {
+ 		.name = "sdcc3_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll4,
+ 		.num_parents = 3,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+@@ -543,7 +543,7 @@ enum {
+ 		.name = "sdcc4_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0,
+ 		.num_parents = 2,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
