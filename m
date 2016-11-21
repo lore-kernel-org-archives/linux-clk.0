@@ -1,32 +1,122 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Jianqun Xu <jay.xu@rock-chips.com>, mturquette@baylibre.com, sboyd@codeaurora.org, huangtao@rock-chips.com, zhangqing@rock-chips.com, zhengxing@rock-chips.com, linux-kernel@vger.kernel.org, lintao@rock-chips.com, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: rockchip: fix some clocks' name to be more standard style
-Date: Thu, 03 Nov 2016 15:32:13 +0100
-Message-ID: <44798035.VNVnDcOLnj@diego>
-In-Reply-To: <763cad68-a068-9a4b-e26d-2c459c2d4808@rock-chips.com>
-References: <1478070296-23080-1-git-send-email-jay.xu@rock-chips.com> <763cad68-a068-9a4b-e26d-2c459c2d4808@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:42966 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752332AbcKUGb3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 01:31:29 -0500
+Subject: Re: [PATCH v8 09/16] mmc: sdhci: Factor out sdhci_enable_clock
+To: Adrian Hunter <adrian.hunter@intel.com>, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+References: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
+ <1479312052-22396-10-git-send-email-riteshh@codeaurora.org>
+ <df833f0b-041f-67d1-4b91-ef4399ecf15c@intel.com>
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com
+From: Ritesh Harjani <riteshh@codeaurora.org>
+Message-ID: <abed48c3-d220-e907-d482-dda074c72764@codeaurora.org>
+Date: Mon, 21 Nov 2016 12:01:19 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <df833f0b-041f-67d1-4b91-ef4399ecf15c@intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 3. November 2016, 16:52:48 schrieb Shawn Lin:
-> On 2016/11/2 15:04, Jianqun Xu wrote:
-> > Fix aclk_emmcgrf to aclk_emmc_grf, and fix aclk_emmccore to be
-> > aclk_emmc_core.
-> 
-> What is the standard style should be?
-> 
-> TRM uses aclk_emmccore but not aclk_emmc_core, so should it be more
-> standrad to keep it as-is?
-
-I tend to agree with Shawn. While it looks like the missing "_" is some sort 
-of mistake, we should strive to follow TRM naming, so grepping so it becomes 
-easier to look for informations in these things in the TRM.
-
-Same reason for naming our regulators and pinctrl after the names used in 
-device schematics, if available.
 
 
-Heiko
+On 11/18/2016 7:26 PM, Adrian Hunter wrote:
+> On 16/11/16 18:00, Ritesh Harjani wrote:
+>> Factor out sdhci_enable_clock from sdhci_set_clock
+>> and make it EXPORT_SYMBOL so that it can be called.
+>
+> This seems fine apart from minor comments below.
+>
+>>
+>> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+>> ---
+>>  drivers/mmc/host/sdhci.c | 28 +++++++++++++++++-----------
+>>  drivers/mmc/host/sdhci.h |  1 +
+>>  2 files changed, 18 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>> index d08d507..8a89d89 100644
+>> --- a/drivers/mmc/host/sdhci.c
+>> +++ b/drivers/mmc/host/sdhci.c
+>> @@ -1344,20 +1344,10 @@ u16 sdhci_calc_clk(struct sdhci_host *host, unsigned int clock,
+>>  }
+>>  EXPORT_SYMBOL_GPL(sdhci_calc_clk);
+>>
+>> -void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+>> +void sdhci_enable_clock(struct sdhci_host *host, unsigned short clk)
+>
+> We write a u16 so let's make clk a u16 instead of unsigned short.
+Ok.
+>
+> I would have called it sdhci_enable_clk() to go with sdhci_calc_clk() and
+> slightly different from sdhci_set_clock() which is a callback whereas the
+> other 2 are helpers.
+Sure, will make sdhci_enable_clk()
+
+>
+>>  {
+>> -	u16 clk;
+>>  	unsigned long timeout;
+>>
+>> -	host->mmc->actual_clock = 0;
+>> -
+>> -	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+>> -
+>> -	if (clock == 0)
+>> -		return;
+>> -
+>> -	clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
+>> -
+>>  	clk |= SDHCI_CLOCK_INT_EN;
+>>  	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+>>
+>> @@ -1378,6 +1368,22 @@ void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+>>  	clk |= SDHCI_CLOCK_CARD_EN;
+>>  	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+>>  }
+>> +EXPORT_SYMBOL_GPL(sdhci_enable_clock);
+>> +
+>> +void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+>> +{
+>> +	u16 clk;
+>> +
+>> +	host->mmc->actual_clock = 0;
+>> +
+>> +	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+>> +
+>> +	if (clock == 0)
+>> +		return;
+>> +
+>> +	clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
+>> +	sdhci_enable_clock(host, clk);
+>> +}
+>>  EXPORT_SYMBOL_GPL(sdhci_set_clock);
+>>
+>>  static void sdhci_set_power_reg(struct sdhci_host *host, unsigned char mode,
+>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+>> index 766df17..8e77a3b 100644
+>> --- a/drivers/mmc/host/sdhci.h
+>> +++ b/drivers/mmc/host/sdhci.h
+>> @@ -681,6 +681,7 @@ static inline bool sdhci_sdio_irq_enabled(struct sdhci_host *host)
+>>  u16 sdhci_calc_clk(struct sdhci_host *host, unsigned int clock,
+>>  		   unsigned int *actual_clock);
+>>  void sdhci_set_clock(struct sdhci_host *host, unsigned int clock);
+>> +void sdhci_enable_clock(struct sdhci_host *host, unsigned short clk);
+>>  void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
+>>  		     unsigned short vdd);
+>>  void sdhci_set_power_noreg(struct sdhci_host *host, unsigned char mode,
+>>
+>
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
