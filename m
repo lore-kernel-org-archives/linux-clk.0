@@ -1,112 +1,75 @@
-Return-Path: <erin.lo@mediatek.com>
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Mike Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Daniel Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>, James Liao
-	<jamesjj.liao@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
-Subject: [PATCH v15 3/4] arm: dts: mt2701: Add clock controller device nodes
-Date: Fri, 4 Nov 2016 15:43:07 +0800
-Message-ID: <1478245388-1412-4-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
-References: <1478245388-1412-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Jorik Jonker <jorik@kippendief.biz>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	stable@vger.kernel.org
+In-Reply-To: <20161117164954.62658-1-icenowy@aosc.xyz>
+References: <20161117164954.62658-1-icenowy@aosc.xyz>
+Subject: Re: [PATCH] clk: sunxi-ng: enable so-said LDOs for A33 SoC's pll-mipi clock
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: erin.lo@mediatek.com
+Message-Id: <194651479745774@web24g.yandex.ru>
+Date: Tue, 22 Nov 2016 00:29:34 +0800
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: James Liao <jamesjj.liao@mediatek.com>
 
-Add clock controller nodes for MT2701, include topckgen, infracfg,
-pericfg and apmixedsys. This patch also add two oscillators that
-provide clocks for MT2701.
 
-Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
----
- arch/arm/boot/dts/mt2701.dtsi | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+18.11.2016, 00:50, "Icenowy Zheng" <icenowy@aosc.xyz>:
+> In the user manual of A33 SoC, the bit 22 and 23 of pll-mipi control
+> register is called "LDO{1,2}_EN", and according to the BSP source code
+> from Allwinner [1], the LDOs are enabled during the clock's enabling
+> process.
+>
+> The clock failed to generate output if the two LDOs are not enabled.
+>
+> Add the two bits to the clock's gate bits, so that the LDOs are enabled
+> when the PLL is enabled.
+>
+> [1] https://github.com/allwinner-zh/linux-3.4-sunxi/blob/master/drivers/clk/sunxi/clk-sun8iw5.c#L429
+>
+> Fixes: d05c748bd730 ("clk: sunxi-ng: Add A33 CCU support")
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 
-diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-index 18596a2..c9a8dbf 100644
---- a/arch/arm/boot/dts/mt2701.dtsi
-+++ b/arch/arm/boot/dts/mt2701.dtsi
-@@ -12,8 +12,10 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <dt-bindings/clock/mt2701-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/mt2701-resets.h>
- #include "skeleton64.dtsi"
- #include "mt2701-pinfunc.h"
- 
-@@ -77,6 +79,20 @@
- 		#clock-cells = <0>;
- 	};
- 
-+	clk26m: oscillator@0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+		clock-output-names = "clk26m";
-+	};
-+
-+	rtc32k: oscillator@1 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32000>;
-+		clock-output-names = "rtc32k";
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupt-parent = <&gic>;
-@@ -104,6 +120,26 @@
- 		reg = <0 0x10005000 0 0x1000>;
- 	};
- 
-+	topckgen: syscon@10000000 {
-+		compatible = "mediatek,mt2701-topckgen", "syscon";
-+		reg = <0 0x10000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	infracfg: syscon@10001000 {
-+		compatible = "mediatek,mt2701-infracfg", "syscon";
-+		reg = <0 0x10001000 0 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+	pericfg: syscon@10003000 {
-+		compatible = "mediatek,mt2701-pericfg", "syscon";
-+		reg = <0 0x10003000 0 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
- 	watchdog: watchdog@10007000 {
- 		compatible = "mediatek,mt2701-wdt",
- 			     "mediatek,mt6589-wdt";
-@@ -128,6 +164,12 @@
- 		reg = <0 0x10200100 0 0x1c>;
- 	};
- 
-+	apmixedsys: syscon@10209000 {
-+		compatible = "mediatek,mt2701-apmixedsys", "syscon";
-+		reg = <0 0x10209000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
- 	gic: interrupt-controller@10211000 {
- 		compatible = "arm,cortex-a7-gic";
- 		interrupt-controller;
--- 
-1.9.1
+I forgot to mention that this patch should also apply to 4.9.
+
+As A33 support is added, the problem will appear with some LCD panels.
+
+> ---
+> Dear Chen-Yu:
+> As you said, the two bits are also present in the CCU of A23 and A31.
+> Could you please check whether the PLL works on the two SoCs?
+> I remembered you mentioned you failed to make TCON enabled on A23.
+> On A31, you may hack the parent of tcon-ch0 to force the tcon clock to
+> use pll-mipi as parent, in order to check whether the pll works.
+>
+> However, I didn't found the code that enables the LDOs in the BSP A23/31
+> sources, so you must test them to ensure whether the code is needed for
+> these SoCs.
+>
+> Regards,
+> Icenowy
+>  drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+> index 96b40ca..9bd1f78 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+> @@ -131,7 +131,7 @@ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_mipi_clk, "pll-mipi",
+>                                      8, 4, /* N */
+>                                      4, 2, /* K */
+>                                      0, 4, /* M */
+> - BIT(31), /* gate */
+> + BIT(31) | BIT(23) | BIT(22), /* gate */
+>                                      BIT(28), /* lock */
+>                                      CLK_SET_RATE_UNGATE);
+>
+> --
+> 2.10.1
