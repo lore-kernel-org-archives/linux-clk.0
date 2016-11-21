@@ -1,80 +1,168 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 2 Nov 2016 13:59:11 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Georgi Djakov <georgi.djakov@linaro.org>, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RESEND/PATCH v6 3/3] clk: qcom: Add A53 clock driver
-Message-ID: <20161102205910.GQ25787@tuxbot>
-References: <20161019132816.31073-4-georgi.djakov@linaro.org>
- <20161028015438.GG16026@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161028015438.GG16026@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:45786 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753471AbcKUGii (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 01:38:38 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v9 06/16] mmc: sdhci-msm: Update DLL reset sequence
+Date: Mon, 21 Nov 2016 12:07:16 +0530
+Message-Id: <1479710246-26676-7-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
+References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu 27 Oct 18:54 PDT 2016, Stephen Boyd wrote:
+From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
 
-> On 10/19, Georgi Djakov wrote:
-> > Add a driver for the A53 Clock Controller. It is a hardware block that
-> > implements a combined mux and half integer divider functionality. It can
-> > choose between a fixed-rate clock or the dedicated A53 PLL. The source
-> > and the divider can be set both at the same time.
-> > 
-> > This is required for enabling CPU frequency scaling on platforms like
-> > MSM8916.
-> > 
-> 
-> Please Cc DT reviewers.
-> 
-> > Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> > ---
-> >  .../devicetree/bindings/clock/qcom,a53cc.txt       |  22 +++
-> >  drivers/clk/qcom/Kconfig                           |   8 ++
-> >  drivers/clk/qcom/Makefile                          |   1 +
-> >  drivers/clk/qcom/a53cc.c                           | 155 +++++++++++++++++++++
-> >  4 files changed, 186 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-> >  create mode 100644 drivers/clk/qcom/a53cc.c
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,a53cc.txt b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-> > new file mode 100644
-> > index 000000000000..a025f062f177
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,a53cc.txt
-> > @@ -0,0 +1,22 @@
-> > +Qualcomm A53 CPU Clock Controller Binding
-> > +------------------------------------------------
-> > +The A53 CPU Clock Controller is hardware, which provides a combined
-> > +mux and divider functionality for the CPU clocks. It can choose between
-> > +a fixed rate clock and the dedicated A53 PLL.
-> > +
-> > +Required properties :
-> > +- compatible : shall contain:
-> > +
-> > +			"qcom,a53cc"
-> > +
-> > +- reg : shall contain base register location and length
-> > +	of the APCS region
-> > +- #clock-cells : shall contain 1
-> > +
-> > +Example:
-> > +
-> > +	apcs: syscon@b011000 {
-> > +		compatible = "qcom,a53cc", "syscon";
-> 
-> Why is it a syscon? Is that part used?
-> 
+SDCC core with minor version >= 0x42 introduced new 14lpp
+DLL. This has additional requirements in the reset sequence
+for DLL tuning. Make necessary changes as needed.
 
-I use the register at offset 8 for interrupting the other subsystems, so
-this must be available as something I can poke.
+Without this patch we see below errors on such SDHC controllers
+	sdhci_msm 7464900.sdhci: mmc0: DLL failed to LOCK
+	mmc0: tuning execution failed: -110
 
-Which makes me think that this should be described as a "simple-mfd" and
-"syscon" with the a53cc node as a child - grabbing the regmap of the
-syscon parent, rather then ioremapping the same region again.
+Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci-msm.c | 60 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-Regards,
-Bjorn
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index 2dcbeb0..fc093b8 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -59,6 +59,10 @@
+ #define CORE_DLL_CONFIG		0x100
+ #define CORE_DLL_STATUS		0x108
+ 
++#define CORE_DLL_CONFIG_2	0x1b4
++#define CORE_FLL_CYCLE_CNT	BIT(18)
++#define CORE_DLL_CLOCK_DISABLE	BIT(21)
++
+ #define CORE_VENDOR_SPEC	0x10c
+ #define CORE_CLK_PWRSAVE	BIT(1)
+ 
+@@ -77,7 +81,9 @@ struct sdhci_msm_host {
+ 	struct clk *clk;	/* main SD/MMC bus clock */
+ 	struct clk *pclk;	/* SDHC peripheral bus clock */
+ 	struct clk *bus_clk;	/* SDHC bus voter clock */
++	struct clk *xo_clk;	/* TCXO clk needed for FLL feature of cm_dll*/
+ 	struct mmc_host *mmc;
++	bool use_14lpp_dll_reset;
+ };
+ 
+ /* Platform specific tuning */
+@@ -305,6 +311,8 @@ static inline void msm_cm_dll_set_freq(struct sdhci_host *host)
+ static int msm_init_cm_dll(struct sdhci_host *host)
+ {
+ 	struct mmc_host *mmc = host->mmc;
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+ 	int wait_cnt = 50;
+ 	unsigned long flags;
+ 	u32 config;
+@@ -320,6 +328,16 @@ static int msm_init_cm_dll(struct sdhci_host *host)
+ 	config &= ~CORE_CLK_PWRSAVE;
+ 	writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
+ 
++	if (msm_host->use_14lpp_dll_reset) {
++		config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
++		config &= ~CORE_CK_OUT_EN;
++		writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
++
++		config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG_2);
++		config |= CORE_DLL_CLOCK_DISABLE;
++		writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG_2);
++	}
++
+ 	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
+ 	config |= CORE_DLL_RST;
+ 	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
+@@ -329,6 +347,28 @@ static int msm_init_cm_dll(struct sdhci_host *host)
+ 	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
+ 	msm_cm_dll_set_freq(host);
+ 
++	if (msm_host->use_14lpp_dll_reset &&
++	    !IS_ERR_OR_NULL(msm_host->xo_clk)) {
++		u32 mclk_freq = 0;
++
++		config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG_2);
++		config &= CORE_FLL_CYCLE_CNT;
++		if (config)
++			mclk_freq = DIV_ROUND_CLOSEST_ULL((host->clock * 8),
++					clk_get_rate(msm_host->xo_clk));
++		else
++			mclk_freq = DIV_ROUND_CLOSEST_ULL((host->clock * 4),
++					clk_get_rate(msm_host->xo_clk));
++
++		config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG_2);
++		config &= ~(0xFF << 10);
++		config |= mclk_freq << 10;
++
++		writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG_2);
++		/* wait for 5us before enabling DLL clock */
++		udelay(5);
++	}
++
+ 	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
+ 	config &= ~CORE_DLL_RST;
+ 	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
+@@ -337,6 +377,13 @@ static int msm_init_cm_dll(struct sdhci_host *host)
+ 	config &= ~CORE_DLL_PDN;
+ 	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
+ 
++	if (msm_host->use_14lpp_dll_reset) {
++		msm_cm_dll_set_freq(host);
++		config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG_2);
++		config &= ~CORE_DLL_CLOCK_DISABLE;
++		writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG_2);
++	}
++
+ 	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
+ 	config |= CORE_DLL_EN;
+ 	writel_relaxed(config, host->ioaddr + CORE_DLL_CONFIG);
+@@ -590,6 +637,16 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+ 		goto pclk_disable;
+ 	}
+ 
++	/*
++	 * xo clock is needed for FLL feature of cm_dll.
++	 * In case if xo clock is not mentioned in DT, warn and proceed.
++	 */
++	msm_host->xo_clk = devm_clk_get(&pdev->dev, "xo");
++	if (IS_ERR(msm_host->xo_clk)) {
++		ret = PTR_ERR(msm_host->xo_clk);
++		dev_warn(&pdev->dev, "TCXO clk not present (%d)\n", ret);
++	}
++
+ 	/* Vote for maximum clock rate for maximum performance */
+ 	ret = clk_set_rate(msm_host->clk, INT_MAX);
+ 	if (ret)
+@@ -635,6 +692,9 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+ 	dev_dbg(&pdev->dev, "MCI Version: 0x%08x, major: 0x%04x, minor: 0x%02x\n",
+ 		core_version, core_major, core_minor);
+ 
++	if (core_major == 1 && core_minor >= 0x42)
++		msm_host->use_14lpp_dll_reset = true;
++
+ 	/*
+ 	 * Support for some capabilities is not advertised by newer
+ 	 * controller versions and must be explicitly enabled.
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
+
