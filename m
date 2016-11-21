@@ -1,114 +1,85 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:36828 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754446AbcKIS1u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2016 13:27:50 -0500
-Received: by mail-wm0-f54.google.com with SMTP id p190so325223080wmp.1
-        for <linux-clk@vger.kernel.org>; Wed, 09 Nov 2016 10:27:49 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
-References: <1478661252-42439-1-git-send-email-yangbo.lu@nxp.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 9 Nov 2016 19:27:47 +0100
-Message-ID: <CAPDyKFrcAN_pqgtGaUanfB2zh97zGcL23m5VDtJ3g==NJeRrfA@mail.gmail.com>
-Subject: Re: [v16, 0/7] Fix eSDHC host version register bug
-To: Yangbo Lu <yangbo.lu@nxp.com>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>,
-        Scott Wood <oss@buserror.net>, Arnd Bergmann <arnd@arndb.de>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Jochen Friedrich <jochen@scram.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Claudiu Manoil <claudiu.manoil@freescale.com>,
-        Bhupesh Sharma <bhupesh.sharma@freescale.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Kumar Gala <galak@codeaurora.org>, Leo Li <leoyang.li@nxp.com>,
-        Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>
-Content-Type: text/plain; charset=UTF-8
+Received: from smtp.codeaurora.org ([198.145.29.96]:46694 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752149AbcKUGjP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 01:39:15 -0500
+From: Ritesh Harjani <riteshh@codeaurora.org>
+To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, sboyd@codeaurora.org,
+        andy.gross@linaro.org
+Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Subject: [PATCH v9 11/16] mmc: sdhci-msm: Add clock changes for DDR mode.
+Date: Mon, 21 Nov 2016 12:07:21 +0530
+Message-Id: <1479710246-26676-12-git-send-email-riteshh@codeaurora.org>
+In-Reply-To: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
+References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-- i2c-list
+SDHC MSM controller need 2x clock for MCLK at GCC.
+Hence make required changes to have 2x clock for
+DDR timing modes.
 
-On 9 November 2016 at 04:14, Yangbo Lu <yangbo.lu@nxp.com> wrote:
-> This patchset is used to fix a host version register bug in the T4240-R1.0-R2.0
-> eSDHC controller. To match the SoC version and revision, 15 previous version
-> patchsets had tried many methods but all of them were rejected by reviewers.
-> Such as
->         - dts compatible method
->         - syscon method
->         - ifdef PPC method
->         - GUTS driver getting SVR method
-> Anrd suggested a soc_device_match method in v10, and this is the only available
-> method left now. This v11 patchset introduces the soc_device_match interface in
-> soc driver.
->
-> The first four patches of Yangbo are to add the GUTS driver. This is used to
-> register a soc device which contain soc version and revision information.
-> The other three patches introduce the soc_device_match method in soc driver
-> and apply it on esdhc driver to fix this bug.
->
-> ---
-> Changes for v15:
->         - Dropped patch 'dt: bindings: update Freescale DCFG compatible'
->           since the work had been done by below patch on ShawnGuo's linux tree.
->           'dt-bindings: fsl: add LS1043A/LS1046A/LS2080A compatible for SCFG
->            and DCFG'
->         - Fixed error code issue in guts driver
-> Changes for v16:
->         - Dropped patch 'powerpc/fsl: move mpc85xx.h to include/linux/fsl'
->         - Added a bug-fix patch from Geert
-> ---
->
-> Arnd Bergmann (1):
->   base: soc: introduce soc_device_match() interface
->
-> Geert Uytterhoeven (1):
->   base: soc: Check for NULL SoC device attributes
->
-> Yangbo Lu (5):
->   ARM64: dts: ls2080a: add device configuration node
->   dt: bindings: move guts devicetree doc out of powerpc directory
->   soc: fsl: add GUTS driver for QorIQ platforms
->   MAINTAINERS: add entry for Freescale SoC drivers
->   mmc: sdhci-of-esdhc: fix host version for T4240-R1.0-R2.0
->
->  .../bindings/{powerpc => soc}/fsl/guts.txt         |   3 +
->  MAINTAINERS                                        |  11 +-
->  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi     |   6 +
->  drivers/base/Kconfig                               |   1 +
->  drivers/base/soc.c                                 |  70 ++++++
->  drivers/mmc/host/Kconfig                           |   1 +
->  drivers/mmc/host/sdhci-of-esdhc.c                  |  20 ++
->  drivers/soc/Kconfig                                |   3 +-
->  drivers/soc/fsl/Kconfig                            |  18 ++
->  drivers/soc/fsl/Makefile                           |   1 +
->  drivers/soc/fsl/guts.c                             | 236 +++++++++++++++++++++
->  include/linux/fsl/guts.h                           | 125 ++++++-----
->  include/linux/sys_soc.h                            |   3 +
->  13 files changed, 447 insertions(+), 51 deletions(-)
->  rename Documentation/devicetree/bindings/{powerpc => soc}/fsl/guts.txt (91%)
->  create mode 100644 drivers/soc/fsl/Kconfig
->  create mode 100644 drivers/soc/fsl/guts.c
->
-> --
-> 2.1.0.27.g96db324
->
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci-msm.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
-Thanks, applied on my mmc tree for next!
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index 00759ef..c50cee8 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -610,6 +610,7 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
++	struct mmc_ios curr_ios = host->mmc->ios;
+ 	int rc;
+ 
+ 	if (!clock) {
+@@ -618,16 +619,28 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+ 	}
+ 
+ 	spin_unlock_irq(&host->lock);
++	/*
++	 * The SDHC requires internal clock frequency to be double the
++	 * actual clock that will be set for DDR mode. The controller
++	 * uses the faster clock(100/400MHz) for some of its parts and
++	 * send the actual required clock (50/200MHz) to the card.
++	 */
++	if (curr_ios.timing == MMC_TIMING_UHS_DDR50 ||
++	    curr_ios.timing == MMC_TIMING_MMC_DDR52 ||
++	    curr_ios.timing == MMC_TIMING_MMC_HS400)
++		clock *= 2;
+ 
+ 	rc = clk_set_rate(msm_host->clk, clock);
+ 	if (rc) {
+-		pr_err("%s: Failed to set clock at rate %u\n",
+-		       mmc_hostname(host->mmc), clock);
++		pr_err("%s: Failed to set clock at rate %u at timing %d\n",
++		       mmc_hostname(host->mmc), clock,
++		       curr_ios.timing);
+ 		goto out_lock;
+ 	}
+ 	msm_host->clk_rate = clock;
+-	pr_debug("%s: Setting clock at rate %lu\n",
+-		 mmc_hostname(host->mmc), clk_get_rate(msm_host->clk));
++	pr_debug("%s: Setting clock at rate %lu at timing %d\n",
++		 mmc_hostname(host->mmc), clk_get_rate(msm_host->clk),
++		 curr_ios.timing);
+ 
+ out_lock:
+ 	spin_lock_irq(&host->lock);
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
+a Linux Foundation Collaborative Project.
 
-I noticed that some DT compatibles weren't documented, according to
-checkpatch. Please fix that asap!
-
-Kind regards
-Ulf Hansson
