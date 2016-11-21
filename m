@@ -1,66 +1,89 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga01-in.huawei.com ([58.251.152.64]:33952 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752307AbcKPJdO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 04:33:14 -0500
-Subject: Re: [PATCH 1/3] arm: hisi: add ARCH_MULTI_V5 support
-To: wenpan <wenpan@hisilicon.com>, Arnd Bergmann <arnd@arndb.de>,
-        "Marty Plummer" <netz.kernel@gmail.com>
-References: <20161017120705.3726-1-wenpan@hisilicon.com>
- <20161017120705.3726-2-wenpan@hisilicon.com> <5893354.6MrIxqzRoI@wuerfel>
- <e78a288b-8bab-9441-2edb-6ec08e5103d7@hisilicon.com>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <linux@armlinux.org.uk>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <howell.yang@hisilicon.com>, <xuejiancheng@hisilicon.com>,
-        <jalen.hsu@hisilicon.com>, <lvkuanliang@hisilicon.com>,
-        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
-        <kevin.lixu@hisilicon.com>, <qinxiaojun@huawei.com>
-From: Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <582C2785.2010804@hisilicon.com>
-Date: Wed, 16 Nov 2016 09:31:49 +0000
-MIME-Version: 1.0
-In-Reply-To: <e78a288b-8bab-9441-2edb-6ec08e5103d7@hisilicon.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	michael.scott@linaro.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH 1/2] clk: qcom: clk-smd-rpm: Fix clk_hw_onecell_data references
+Date: Mon, 21 Nov 2016 16:04:49 +0200
+Message-Id: <20161121140450.12353-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Pan,
+The clk_hw_onecell_data struct is missing references to the
+actual clocks. Fix this.
 
-On 2016/11/16 8:56, wenpan wrote:
-> Hi Marty，
-> Does this confict with your patch？ If not，I hope this could be merged first.  Besides could you tell me the link to your related patch?
+Reported-by: Michael Scott <michael.scott@linaro.org>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/clk/qcom/clk-smd-rpm.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
-This is the link: https://patchwork.kernel.org/patch/9334743/
-
-BR,
-Wei
-
-> 
-> Thanks,
-> Pan
-> 
-> On 2016/10/17 21:48, Arnd Bergmann wrote:
->> On Monday, October 17, 2016 8:07:03 PM CEST Pan Wen wrote:
->>> Add support for some HiSilicon SoCs which depend on ARCH_MULTI_V5.
->>>
->>> Signed-off-by: Pan Wen <wenpan@hisilicon.com>
->>>
->>
->> Looks ok. I've added Marty Plummer to Cc, he was recently proposing
->> patches for Hi3520, which I think is closely related to this one.
->> Please try to work together so the patches don't conflict. It should
->> be fairly straightforward since you are basically doing the same
->> change here.
->>
->> 	Arnd
->>
->> .
->>
-> 
-> 
-> .
-> 
-
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index a27013dbc0aa..58821f7213b0 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -148,8 +148,7 @@ struct clk_smd_rpm_req {
+ 
+ struct rpm_cc {
+ 	struct qcom_rpm *rpm;
+-	struct clk_hw_onecell_data data;
+-	struct clk_hw *hws[];
++	struct clk_hw_onecell_data *data;
+ };
+ 
+ struct rpm_smd_clk_desc {
+@@ -470,9 +469,7 @@ MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
+ 
+ static int rpm_smd_clk_probe(struct platform_device *pdev)
+ {
+-	struct clk_hw **hws;
+ 	struct rpm_cc *rcc;
+-	struct clk_hw_onecell_data *data;
+ 	int ret;
+ 	size_t num_clks, i;
+ 	struct qcom_smd_rpm *rpm;
+@@ -492,14 +489,13 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
+ 	rpm_smd_clks = desc->clks;
+ 	num_clks = desc->num_clks;
+ 
+-	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*hws) * num_clks,
+-			   GFP_KERNEL);
++	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc), GFP_KERNEL);
+ 	if (!rcc)
+ 		return -ENOMEM;
+ 
+-	hws = rcc->hws;
+-	data = &rcc->data;
+-	data->num = num_clks;
++	rcc->data = devm_kzalloc(&pdev->dev, sizeof(*rcc->data) + num_clks *
++				 sizeof(*rcc->data->hws), GFP_KERNEL);
++	rcc->data->num = num_clks;
+ 
+ 	for (i = 0; i < num_clks; i++) {
+ 		if (!rpm_smd_clks[i])
+@@ -518,17 +514,19 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < num_clks; i++) {
+ 		if (!rpm_smd_clks[i]) {
+-			data->hws[i] = ERR_PTR(-ENOENT);
++			rcc->data->hws[i] = ERR_PTR(-ENOENT);
+ 			continue;
+ 		}
+ 
+ 		ret = devm_clk_hw_register(&pdev->dev, &rpm_smd_clks[i]->hw);
+ 		if (ret)
+ 			goto err;
++
++		rcc->data->hws[i] = &rpm_smd_clks[i]->hw;
+ 	}
+ 
+ 	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
+-				     data);
++				     rcc->data);
+ 	if (ret)
+ 		goto err;
+ 
