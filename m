@@ -1,77 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.133]:58425 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753129AbcKNL6L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 06:58:11 -0500
-From: Andy Yan <andy.yan@rock-chips.com>
-To: heiko@sntech.de
-Cc: shawn.lin@rock-chips.com, linus.walleij@linaro.org,
-        robh+dt@kernel.org, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@codeaurora.org,
-        linux-gpio@vger.kernel.org, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org, ulf.hansson@linaro.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v2 00/10] Add basic support for Rockchip RK1108 SOC
-Date: Mon, 14 Nov 2016 19:55:50 +0800
-Message-Id: <1479124550-24037-1-git-send-email-andy.yan@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 21 Nov 2016 23:04:14 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 9/10] ARM: sun5i: Convert to CCU
+Message-ID: <20161121220414.bqsdjtpsjsq5tefs@lukather>
+References: <cover.326f50aecc25fbe292184527b52a1e3172aba9cf.1478625788.git-series.maxime.ripard@free-electrons.com>
+ <4046893c1810045bac3eeb1ea3a35c5771d250e0.1478625788.git-series.maxime.ripard@free-electrons.com>
+ <CAGb2v64vOePTQ0a7cmSmimVrkYOxxRwRZnGbsC2ZQ4Su59oJaQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="kzzvkrmn7zojorgc"
+In-Reply-To: <CAGb2v64vOePTQ0a7cmSmimVrkYOxxRwRZnGbsC2ZQ4Su59oJaQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
-RK1108 is embedded with an ARM Cortex-A7 single core and a DSP core.
-It is designed for varies application scenario such as car DVR, sports
-DV, secure camera and UAV camera.
-This patch series add basic support for it, which can boot a board with
-initramfs into shell.
-More new feathers will come soon.
+--kzzvkrmn7zojorgc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes in v2:
-- split dt-binding header from clk driver
-- fix some CodingStyle issues
-- add dt-binding documentation for pinctrl
-- add pull and drive-strength functionality for pinctrl
-- fix timer and gic dt description
-- ordering devices by register address
-- move the board in the rockchip.txt to the block of Rockchip boards
+On Sun, Nov 13, 2016 at 11:01:27PM +0800, Chen-Yu Tsai wrote:
+> >                         compatible =3D "allwinner,sun5i-a13-tcon";
+> >                         reg =3D <0x01c0c000 0x1000>;
+> >                         interrupts =3D <44>;
+> > -                       resets =3D <&tcon_ch0_clk 1>;
+> > +                       resets =3D <&ccu RST_LCD>;
+> >                         reset-names =3D "lcd";
+> > -                       clocks =3D <&ahb_gates 36>,
+> > -                                <&tcon_ch0_clk>,
+> > -                                <&tcon_ch1_clk>;
+> > +                       clocks =3D <&ccu CLK_AHB_LCD>,
+> > +                                <&ccu CLK_TCON_CH0>,
+> > +                                <&ccu CLK_TCON_CH1>;
+>=20
+> Just curious, is CLK_TCON_CH1_SCLK ever used?
 
-Andy Yan (6):
-  dt-bindings: add documentation for rk1108 pinctrl
-  pinctrl: rockchip: add support for rk1108
-  ARM: add low level debug uart for rk1108
-  ARM: dts: add basic support for Rockchip RK1108 SOC
-  ARM: rockchip: enable support for RK1108 SoC
-  ARM: dts: rockchip: add rockchip RK1108 Evaluation board
+Yes, this is an intermediate clock for the channel 1 clock.
 
-Shawn Lin (4):
-  dt-bindings: rockchip-dw-mshc: add RK1108 dw-mshc description
-  dt-bindings: add documentation for rk1108 cru
-  clk: rockchip: add dt-binding header for rk1108
-  clk: rockchip: add clock controller for rk1108
+Maxime
 
- Documentation/devicetree/bindings/arm/rockchip.txt |   5 +-
- .../bindings/clock/rockchip,rk1108-cru.txt         |  60 +++
- .../devicetree/bindings/mmc/rockchip-dw-mshc.txt   |   1 +
- .../bindings/pinctrl/rockchip,pinctrl.txt          |   9 +-
- arch/arm/Kconfig.debug                             |  30 ++
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/rk1108-evb.dts                   |  69 ++++
- arch/arm/boot/dts/rk1108.dtsi                      | 428 +++++++++++++++++++
- arch/arm/mach-rockchip/rockchip.c                  |   1 +
- drivers/clk/rockchip/Makefile                      |   1 +
- drivers/clk/rockchip/clk-rk1108.c                  | 451 +++++++++++++++++++++
- drivers/clk/rockchip/clk.h                         |  14 +
- drivers/pinctrl/pinctrl-rockchip.c                 |  87 +++-
- include/dt-bindings/clock/rk1108-cru.h             | 270 ++++++++++++
- 14 files changed, 1421 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt
- create mode 100644 arch/arm/boot/dts/rk1108-evb.dts
- create mode 100644 arch/arm/boot/dts/rk1108.dtsi
- create mode 100644 drivers/clk/rockchip/clk-rk1108.c
- create mode 100644 include/dt-bindings/clock/rk1108-cru.h
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
--- 
-2.7.4
+--kzzvkrmn7zojorgc
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iQIcBAEBCAAGBQJYM29aAAoJEBx+YmzsjxAgbFcQAJzjss5chc2doiInTHVjBQBl
+RRbZsOeCxOdB8EYrGVs7sSzdDFbQ4qLPKOi+wTE6lZ9DjlyPPdv+JYf/qCvvr80i
+LMIGQVsDrS4/nUemGw/yW/wkRkWilDDH4Qlsprhq+TIlnDA7qZoD6sOEVzjpzYQE
+ijquTgg6EpYuWiQYQnmA9QEjLpmJM6Vqi8nW6J90x1CkLhPiJrPdTy98E/qAjtdi
+QImZS1j44YnQ2lIrMpi5qEFSvrVtVxO2kfnfDhjs7e4DEaa29IViZ/oAjtA4QSFc
+5YMXz9FFalW641nlspYPxDEEjzlYNpU5crJcEAR9dLBjcL1pcihYVeOkBL5E8h6U
+srRZyqeghAQjXjNsd1M3iNMTyEvGM8qRWRu0+qlvmpOzx8z9CBRJOhcDBgOy6mRc
+EhBvBJ6IRSN3pcNMJYmJzryFUC2ibPH7EfHCLe4pMYkNqRmK/GgiKSgP0UAGNV/f
+9q0nFwmJz8lwgK9Sg5/FK0GLHrYRXXQ3a98JgH/FoWWV0EeUAIz0Q24kN79fOUps
+rzOQ5Nsrqa6gzQ+D7ppZHZV4+gRVFim2spT4qPu1TbRDZBHI+1ybplON9ROP2+rJ
+AzxfrR4DL3wAnF6zb4hVb4hlezjuJZ2KyD/6H7zzw1N7nN+I7M2itUpG+/AQQTX5
+W6MbkDAcsnWjwgtOJD17
+=W5gz
+-----END PGP SIGNATURE-----
+
+--kzzvkrmn7zojorgc--
