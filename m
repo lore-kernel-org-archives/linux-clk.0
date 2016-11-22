@@ -1,42 +1,37 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH V3 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
-To: Mirza Krak <mirza.krak@gmail.com>, <swarren@wwwdotorg.org>,
-	<thierry.reding@gmail.com>
-References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
- <1477576872-2665-2-git-send-email-mirza.krak@gmail.com>
-CC: <gnurou@gmail.com>, <linux@armlinux.org.uk>, <pdeschrijver@nvidia.com>,
-	<pgaikwad@nvidia.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <fb7b486b-aa2a-e2c2-cd41-c0ee934f9cf2@nvidia.com>
-Date: Thu, 3 Nov 2016 13:45:39 +0000
-MIME-Version: 1.0
-In-Reply-To: <1477576872-2665-2-git-send-email-mirza.krak@gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <chris.paterson2@renesas.com>
+From: Chris Paterson <chris.paterson2@renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	ramesh.shanmugasundaram@bp.renesas.com,
+	Chris Paterson <chris.paterson2@renesas.com>
+Subject: [PATCH 1/3] clk: renesas: r8a7796: Add CAN peripheral clock
+Date: Tue, 22 Nov 2016 13:46:00 +0000
+Message-Id: <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com>
+In-Reply-To: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com>
+References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-On 27/10/16 15:01, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
->
-> Add TEGRA20_CLK_NOR to init table and set default rate to 92 MHz which
-> is max rate.
->
-> The maximum rate value of 92 MHz is pulled from the downstream L4T
-> kernel.
->
-> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 7d298c5..99b19ce 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -181,6 +181,8 @@ enum clk_ids {
+ 	DEF_MOD("gpio2",		 910,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("gpio1",		 911,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("gpio0",		 912,	R8A7796_CLK_S3D4),
++	DEF_MOD("can-if1",		 915,	R8A7796_CLK_S3D4),
++	DEF_MOD("can-if0",		 916,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("i2c6",			 918,	R8A7796_CLK_S0D6),
+ 	DEF_MOD("i2c5",			 919,	R8A7796_CLK_S0D6),
+ 	DEF_MOD("i2c4",			 927,	R8A7796_CLK_S0D6),
 -- 
-nvpublic
+1.9.1
