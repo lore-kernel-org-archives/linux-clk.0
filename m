@@ -1,93 +1,104 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:42620 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751324AbcKUGao (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Nov 2016 01:30:44 -0500
-Subject: Re: [PATCH v8 04/16] ARM: dts: Add xo to sdhc clock node on qcom
- platforms
-To: Andy Gross <andy.gross@linaro.org>
-References: <1479312052-22396-5-git-send-email-riteshh@codeaurora.org>
- <1479343419-29326-1-git-send-email-riteshh@codeaurora.org>
- <20161118035619.GA6400@hector>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, sboyd@codeaurora.org,
-        shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com
-From: Ritesh Harjani <riteshh@codeaurora.org>
-Message-ID: <7fe256e5-aaad-e087-0c7a-34a39060379b@codeaurora.org>
-Date: Mon, 21 Nov 2016 12:00:32 +0530
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 22 Nov 2016 15:47:31 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: arm@kernel.org
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: [GIT PULL] Allwinner arm64 DT changes for 4.10, bis
+Message-ID: <20161122144731.c6q6jxgd7cyeieqr@lukather>
 MIME-Version: 1.0
-In-Reply-To: <20161118035619.GA6400@hector>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="r2pocq5tag5geony"
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--r2pocq5tag5geony
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 11/18/2016 9:26 AM, Andy Gross wrote:
-> On Thu, Nov 17, 2016 at 06:13:39AM +0530, Ritesh Harjani wrote:
->> Add xo entry to sdhc clock node on all qcom platforms.
->>
->> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
->> ---
->>  arch/arm/boot/dts/qcom-apq8084.dtsi   | 16 ++++++++++------
->>  arch/arm/boot/dts/qcom-msm8974.dtsi   | 16 ++++++++++------
->>  arch/arm64/boot/dts/qcom/msm8916.dtsi | 10 ++++++----
->>  arch/arm64/boot/dts/qcom/msm8996.dtsi |  9 +++++----
->>  4 files changed, 31 insertions(+), 20 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/qcom-apq8084.dtsi b/arch/arm/boot/dts/qcom-apq8084.dtsi
->> index 39eb7a4..f756cbb 100644
->> --- a/arch/arm/boot/dts/qcom-apq8084.dtsi
->> +++ b/arch/arm/boot/dts/qcom-apq8084.dtsi
->> @@ -182,13 +182,13 @@
->>  	};
->>
->>  	clocks {
->> -		xo_board {
->> +		xo_board: xo_board {
->>  			compatible = "fixed-clock";
->>  			#clock-cells = <0>;
->>  			clock-frequency = <19200000>;
->>  		};
->>
->> -		sleep_clk {
->> +		sleep_clk: sleep_clk {
->>  			compatible = "fixed-clock";
->>  			#clock-cells = <0>;
->>  			clock-frequency = <32768>;
->> @@ -416,8 +416,10 @@
->>  			reg-names = "hc_mem", "core_mem";
->>  			interrupts = <0 123 0>, <0 138 0>;
->>  			interrupt-names = "hc_irq", "pwr_irq";
->> -			clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
->> -			clock-names = "core", "iface";
->> +			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
->> +				 <&gcc GCC_SDCC1_AHB_CLK>,
->> +				 <&xo_board 0>;
->
-> With clock-cells = <0>, this should be <&xo_board>
-Ok, done.
->
-> Somehow this passes the dtc compiler.  But it is still incorrect.  Please fix
-> all instances of this to use the correct number of cells in the xo_board
-> references.
-Sure.
->
->
-> Andy
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Hi Arnd, Olof,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Here is a second run at the arm64 PR I sent earlier.
+
+We had a (build) dependency against the clock patches that have been
+merged by Stephen and Mike through the clock tree.
+
+Hence, this new PR is based on top of the tag I sent their way, and it
+supersedes the previous arm64 PR.
+
+I used this occasion to rename the patches prefix as Olof suggested in
+the earlier pull request.
+
+Thanks,
+Maxime
+
+The following changes since commit 0f6f9302b819ca352cfd4f42c18ec08d521f9cae:
+
+  clk: sunxi-ng: sun8i-h3: Set CLK_SET_RATE_PARENT for audio module clocks =
+(2016-11-11 21:47:41 +0100)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/su=
+nxi-dt64-for-4.10-bis
+
+for you to fetch changes up to 5757867e8758f40227e710625df64a471ec81411:
+
+  arm64: dts: allwinner: add Pine64 support (2016-11-22 15:43:01 +0100)
+
+----------------------------------------------------------------
+Allwinner arm64 DT changes for 4.10, bis
+
+Support for the Allwinner A64, their first armv8 SoC.
+
+----------------------------------------------------------------
+Andre Przywara (3):
+      arm64: dts: allwinner: add Allwinner A64 SoC .dtsi
+      Documentation: devicetree: add vendor prefix for Pine64
+      arm64: dts: allwinner: add Pine64 support
+
+ Documentation/devicetree/bindings/arm/sunxi.txt    |   1 +
+ .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+ MAINTAINERS                                        |   1 +
+ arch/arm64/boot/dts/Makefile                       |   1 +
+ arch/arm64/boot/dts/allwinner/Makefile             |   5 +
+ .../boot/dts/allwinner/sun50i-a64-pine64-plus.dts  |  50 ++++
+ .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts |  74 ++++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 263 +++++++++++++++++=
+++++
+ 8 files changed, 396 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/Makefile
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64-plus.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--r2pocq5tag5geony
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYNFqDAAoJEBx+YmzsjxAgntwP/jnKMWx+xxWji20iytLLlRma
+dMihyz1yixOa64cR9fq0jSQGf5PsrcM+XR8uhPR2d2wBicj1/kU4O4Mywp5coM3M
+d3W1401kSzQ6zL1PtKyMYTJagiWGw4FWZBVqvWGa//b+qRtyKzv5QTeRXscTYFIB
+9Aa6cQ9LwokxuGGHv3OZNtEB9i/xes2Br5qEYRaswvqxEVW6oiEs4q9k271ISGJF
+prTnd9CogMrdShofR9FCNu2TBvEOWDceJskBL0TdsaBWAnoS6yySxDOAePQSxo7c
+4jXHdOnMJc7SLVey+4kKVQudkpAN3XXAMs4IfBwl0dDNbhRirvz9A92lS0Bem+0r
+O0cC7aqWjUxklBwga/Nzxh+4+TNVWQ7ISC3mtlkA6NiqdKtowmKVJqVQy1sg0dxp
+9WwFTwsVzBveeO2xPD+xGbY9yUU643yyXBCIaAM8h6kN0Ptgdjx2sTeaPSAZ/A+5
+EW2wr9/XCNqNmbPHIz/86KAJgaXDhX6YQJoROFyR6Ih1noKNQc2mwfRRGbRJ261g
+4fZrDgy12hfi9Qt2ib+Aa0+WBGAJNEmFz/jn1az5hL69/XkuKtpteVA7rM56xymE
+r/OO567WK4V3f2A2KU9NWLZHfQl9Nhsin6Ena9H1SOsmUwd17USDmkaUA78Jm5Cz
+gE2CYEYCpi6mEWGjk8Ip
+=Tdq/
+-----END PGP SIGNATURE-----
+
+--r2pocq5tag5geony--
