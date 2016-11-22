@@ -1,39 +1,71 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 16 Nov 2016 11:12:12 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL] Allwinner clock fixes for 4.9
-Message-ID: <20161116191212.GG25626@codeaurora.org>
-References: <20161115212332.w5amyhohmauqzpe5@lukather>
+Return-Path: <yuantian.tang@nxp.com>
+From: <yuantian.tang@nxp.com>
+To: <mturquette@baylibre.com>
+CC: <sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <scott.wood@nxp.com>,
+	<linux-arm-kernel@lists.infradead.org>, Tang Yuantian
+	<Yuantian.Tang@nxp.com>, Tang Yuantian <yuantian.tang@nxp.com>
+Subject: [PATCH v2] clk: qoriq: added ls1012a clock configuration
+Date: Tue, 22 Nov 2016 16:14:59 +0800
+Message-ID: <1479802499-9083-1-git-send-email-yuantian.tang@nxp.com>
+Return-Path: yuantian.tang@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161115212332.w5amyhohmauqzpe5@lukather>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/15, Maxime Ripard wrote:
-> Hi Mike, Stephen,
-> 
-> Please pull the following fixes for the 4.9 cycle
-> 
-> Thanks!
-> Maxime
-> 
-> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
-> 
->   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/sunxi-clk-fixes-for-4.9
-> 
-> for you to fetch changes up to ac95330b96376550ae7a533d1396272d675adfa2:
-> 
->   clk: sunxi: Fix M factor computation for APB1 (2016-11-04 08:49:46 +0100)
+From: Tang Yuantian <Yuantian.Tang@nxp.com>
 
-Thanks. Pulled into clk-fixes.
+Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
+---
+v2:
+  - remove commit message as it is duplicated to title
 
+ drivers/clk/clk-qoriq.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 1bece0f..65c21d7 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -202,6 +202,14 @@ static const struct clockgen_muxinfo ls1021a_cmux = {
+ 	}
+ };
+ 
++static const struct clockgen_muxinfo ls1012a_cmux = {
++	{
++		[0] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
++		{},
++		[2] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
++	}
++};
++
+ static const struct clockgen_muxinfo t1040_cmux = {
+ 	{
+ 		[0] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
+@@ -482,6 +490,16 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.pll_mask = 0x03,
+ 	},
+ 	{
++		.compat = "fsl,ls1012a-clockgen",
++		.cmux_groups = {
++			&ls1012a_cmux
++		},
++		.cmux_to_group = {
++			0, -1
++		},
++		.pll_mask = 0x03,
++	},
++	{
+ 		.compat = "fsl,ls1043a-clockgen",
+ 		.init_periph = t2080_init_periph,
+ 		.cmux_groups = {
+@@ -1282,6 +1300,7 @@ static void __init clockgen_init(struct device_node *np)
+ CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_ls1012a, "fsl,ls1012a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.0.27.g96db324
