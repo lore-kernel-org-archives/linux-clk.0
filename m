@@ -1,56 +1,57 @@
-Return-Path: <peter.chen@nxp.com>
-From: Peter Chen <peter.chen@nxp.com>
-To: <shawnguo@kernel.org>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <kernel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <robh+dt@kernel.org>, <fabio.estevam@nxp.com>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>, Peter Chen
-	<peter.chen@nxp.com>
-Subject: [PATCH v3 0/3] imx: add imx6ull support
-Date: Mon, 14 Nov 2016 15:04:19 +0800
-Message-ID: <1479107062-15365-1-git-send-email-peter.chen@nxp.com>
-Return-Path: peter.chen@nxp.com
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAMuHMdW8V2v7na1c4B=w2qzN=qVF0QUA3fcqaUXdTEVB20JREg@mail.gmail.com>
+References: <1477033358-7934-1-git-send-email-geert@linux-m68k.org>
+ <20161031092223.GW1041@n2100.armlinux.org.uk> <CAMuHMdW8V2v7na1c4B=w2qzN=qVF0QUA3fcqaUXdTEVB20JREg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 Nov 2016 12:35:05 +0100
+Message-ID: <CAMuHMdXE89a1-qzH5Se-w1L2bLknTae7jPQ07q5Zw_nKt7RLPA@mail.gmail.com>
+Subject: Re: [PATCH v3] clkdev: Detect errors in clk_hw_register_clkdev() for
+ mass registration
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shawn,
+On Mon, Oct 31, 2016 at 10:31 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Mon, Oct 31, 2016 at 10:22 AM, Russell King - ARM Linux
+> <linux@armlinux.org.uk> wrote:
+>> On Fri, Oct 21, 2016 at 09:02:38AM +0200, Geert Uytterhoeven wrote:
+>>> Unlike clk_register_clkdev(), clk_hw_register_clkdev() doesn't check for
+>>> passed error objects from a previous registration call. Hence the caller
+>>> of clk_hw_register_*() has to check for errors before calling
+>>> clk_hw_register_clkdev*().
+>>>
+>>> Make clk_hw_register_clkdev() more similar to clk_register_clkdev() by
+>>> adding this error check, removing the burden from callers that do mass
+>>> registration.
+>>>
+>>> Fixes: e4f1b49bda6d6aa2 ("clkdev: Add clk_hw based registration APIs")
+>>> Fixes: 944b9a41e004534f ("clk: ls1x: Migrate to clk_hw based OF and registration APIs")
+>>> Fixes: 44ce9a9ae977736f ("MIPS: TXx9: Convert to Common Clock Framework")
+>>> Fixes: f48d947a162dfa9d ("clk: clps711x: Migrate to clk_hw based OF and registration APIs")
+>>> Fixes: b4626a7f489238a5 ("CLK: Add Loongson1C clock support")
+>>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>>
+>> Please put this in the patch system, thanks.
+>
+> Done. I hope it went through, the "new" README predates git-send-email.
 
-In this series, it adds support for imx6ull SoC which is a derived SoC
-from imx6ul, and imx6ull is pin-to-pin compatible with imx6ul, the
-basic functions are tested at imx6ull 14x14 evk, and imx6ul 14x14 evk
-is tested too to avoid regression.
+Still no evidence of the patch having arrived...
+Tried the web interface instead, patch is now 8631/1.
 
-Changes for v3:
-- Keep imx6ul-14x14-evk.dts unchanging, and let imx6ull-14x14-evk.dts
-  include it. [Patch 1/3]
+Gr{oetje,eeting}s,
 
-Changes for v2:
-- Keep imx6ul.dtsi unchanging, and using GPL/X11 dual license
-  for new dts file. [Patch 1/3]
-- Using IMX6ULL prefix for both imx6ull dedicated pin and clock name.
-  [Patch 1/3, 3/3]
-- Delete useless changes for patch 2/3.
-- Delete blank line for patch 3/3.
-- Using assigned-clocks for imx6ull 14x14 evk. [Patch 1/3, 3/3]
+                        Geert
 
-Bai Ping (1):
-  clk: imx: clk-imx6ul: add clk support for imx6ull
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Peter Chen (2):
-  ARM: imx6ull: add imx6ull support
-  ARM: imx: mach-imx6ul: add imx6ull support
-
- arch/arm/boot/dts/Makefile               |  3 +-
- arch/arm/boot/dts/imx6ull-14x14-evk.dts  | 52 +++++++++++++++++++++++
- arch/arm/boot/dts/imx6ull-pinfunc.h      | 56 +++++++++++++++++++++++++
- arch/arm/boot/dts/imx6ull.dtsi           | 43 +++++++++++++++++++
- arch/arm/mach-imx/mach-imx6ul.c          |  1 +
- drivers/clk/imx/clk-imx6ul.c             | 72 +++++++++++++++++++++++++++-----
- include/dt-bindings/clock/imx6ul-clock.h | 15 ++++++-
- 7 files changed, 229 insertions(+), 13 deletions(-)
- create mode 100644 arch/arm/boot/dts/imx6ull-14x14-evk.dts
- create mode 100644 arch/arm/boot/dts/imx6ull-pinfunc.h
- create mode 100644 arch/arm/boot/dts/imx6ull.dtsi
-
--- 
-2.7.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
