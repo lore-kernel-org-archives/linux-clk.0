@@ -1,32 +1,51 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 16 Nov 2016 11:17:33 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, kernel@pengutronix.de,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL] i.MX clock updates for 4.10
-Message-ID: <20161116191733.GI25626@codeaurora.org>
-References: <20161115025711.GU3310@dragon>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161115025711.GU3310@dragon>
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Florian Fainelli <f.fainelli@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-clk@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH] clk: bcm2835: Fix ->fixed_divider of pllh_aux
+Date: Tue, 22 Nov 2016 12:45:28 -0800
+Message-Id: <20161122204528.18435-1-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/15, Shawn Guo wrote:
-> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
-> 
->   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-4.10
-> 
-> for you to fetch changes up to 73cd5e53caba2425f5b73ad0950544d1168ad27b:
-> 
->   clk: imx: clk-imx6ul: add clk support for imx6ull (2016-11-15 08:55:36 +0800)
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Thanks. Pulled into clk-next.
+There is no fixed divider on pllh_aux.
 
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+---
+
+This was copy and paste failure on my (anholt's) part.  The divider of
+10 is on PLLH_PIX.  No need to worry about backporting, as this
+channel is only used for the VEC support I'm hoping to land for
+4.11.
+
+ drivers/clk/bcm/clk-bcm2835.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index b68bf573dcfb..82568bfe5a72 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1599,7 +1599,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.a2w_reg = A2W_PLLH_AUX,
+ 		.load_mask = CM_PLLH_LOADAUX,
+ 		.hold_mask = 0,
+-		.fixed_divider = 10),
++		.fixed_divider = 1),
+ 	[BCM2835_PLLH_PIX]	= REGISTER_PLL_DIV(
+ 		.name = "pllh_pix",
+ 		.source_pll = "pllh",
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.10.2
