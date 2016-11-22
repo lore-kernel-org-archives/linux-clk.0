@@ -1,64 +1,53 @@
-Return-Path: <andy.yan@rock-chips.com>
-From: Andy Yan <andy.yan@rock-chips.com>
-To: heiko@sntech.de
-Cc: linus.walleij@linaro.org,
-	robh+dt@kernel.org,
-	shawn.lin@rock-chips.com,
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-clk@vger.kernel.org,
-	briannorris@chromium.org,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-gpio@vger.kernel.org,
-	linux@armlinux.org.uk,
-	linux-arm-kernel@lists.infradead.org,
-	ulf.hansson@linaro.org,
-	linux-kernel@vger.kernel.org,
-	mark.rutland@arm.com,
-	elaine.zhang@rock-chips.com,
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH 0/6] Add basic support for support for Rockchip RK1108 SOC
-Date: Thu,  3 Nov 2016 20:26:15 +0800
-Message-Id: <1478175975-11779-1-git-send-email-andy.yan@rock-chips.com>
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.9-rc6
+Date: Mon, 21 Nov 2016 18:57:35 -0800
+Message-Id: <20161122025735.6626-1-sboyd@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+The following changes since commit 10f2bfb092e3b49000526c02cfe8b2abbbdbb752:
 
-RK1108 is embedded with an ARM Cortex-A7 single core and a DSP core.
-It is designed for varies application scenario such as car DVR, sports
-DV, secure camera and UAV camera.
-This patch series add basic support for it, which can boot a board with
-initramfs into shell.
-More new feathers will come soon.
+  clk: mmp: pxa910: fix return value check in pxa910_clk_init() (2016-11-01 17:41:20 -0700)
 
+are available in the git repository at:
 
-Andy Yan (4):
-  pinctrl: rockchip: add support for rk1108
-  ARM: dts: add basic support for Rockchip RK1108 SOC
-  ARM: add low level debug uart for rk1108
-  ARM: dts: rockchip: add rockchip RK1108 Evaluation board
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-Shawn Lin (2):
-  dt-bindings: rockchip-dw-mshc: add RK1108 dw-mshc description
-  clk: rockchip: add clock controller for rk1108
+for you to fetch changes up to c8616671af913ed2c5fb5b45f09c28599458ba1a:
 
- Documentation/devicetree/bindings/arm/rockchip.txt |   3 +
- .../devicetree/bindings/mmc/rockchip-dw-mshc.txt   |   1 +
- arch/arm/Kconfig.debug                             |  30 ++
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/rk1108-evb.dts                   |  69 +++
- arch/arm/boot/dts/rk1108.dtsi                      | 420 +++++++++++++++++++
- arch/arm/mach-rockchip/rockchip.c                  |   1 +
- drivers/clk/rockchip/Makefile                      |   1 +
- drivers/clk/rockchip/clk-rk1108.c                  | 463 +++++++++++++++++++++
- drivers/clk/rockchip/clk.h                         |  14 +
- drivers/pinctrl/pinctrl-rockchip.c                 |  27 +-
- include/dt-bindings/clock/rk1108-cru.h             | 308 ++++++++++++++
- 12 files changed, 1337 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/rk1108-evb.dts
- create mode 100644 arch/arm/boot/dts/rk1108.dtsi
- create mode 100644 drivers/clk/rockchip/clk-rk1108.c
- create mode 100644 include/dt-bindings/clock/rk1108-cru.h
+  Merge tag 'sunxi-clk-fixes-for-4.9' of https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux into clk-fixes (2016-11-16 11:10:58 -0800)
+
+----------------------------------------------------------------
+A handful of driver fixes. The sunxi fixes are for an incorrect clk tree
+configuration and a bad frequency calculation. The other two are fixes for
+passing the wrong pointer in drivers recently converted to clk_hw style
+registration.
+
+----------------------------------------------------------------
+Chen-Yu Tsai (1):
+      clk: sunxi-ng: sun6i-a31: Force AHB1 clock to use PLL6 as parent
+
+Stephen Boyd (3):
+      clk: berlin: Pass correct type to hw provider registration
+      clk: efm32gg: Pass correct type to hw provider registration
+      Merge tag 'sunxi-clk-fixes-for-4.9' of https://git.kernel.org/.../mripard/linux into clk-fixes
+
+Stéphan Rafin (1):
+      clk: sunxi: Fix M factor computation for APB1
+
+ drivers/clk/berlin/bg2.c             |  2 +-
+ drivers/clk/berlin/bg2q.c            |  2 +-
+ drivers/clk/clk-efm32gg.c            |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 12 ++++++++++++
+ drivers/clk/sunxi/clk-sunxi.c        |  2 +-
+ 5 files changed, 16 insertions(+), 4 deletions(-)
 
 -- 
-2.7.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
