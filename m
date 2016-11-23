@@ -1,306 +1,107 @@
-Return-Path: <andy.yan@rock-chips.com>
-Subject: Re: [PATCH 4/6] ARM: dts: add basic support for Rockchip RK1108 SOC
-To: Heiko Stuebner <heiko@sntech.de>
-References: <1478175975-11779-1-git-send-email-andy.yan@rock-chips.com>
- <1478176848-12132-1-git-send-email-andy.yan@rock-chips.com>
- <1788707.rfxhNfegGu@phil>
-Cc: elaine.zhang@rock-chips.com, mturquette@baylibre.com,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-From: Andy Yan <andy.yan@rock-chips.com>
-Message-ID: <0516ad0b-bfbe-ec80-fdb6-e118dab3e758@rock-chips.com>
-Date: Tue, 8 Nov 2016 20:31:55 +0800
+Return-Path: <scott.branden@broadcom.com>
+Return-Path: <scott.branden@broadcom.com>
+Subject: Re: [PATCH] clk: bcm: Make COMMON_CLK_IPROC into a library
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <20161123224159.9988-1-sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ bcm-kernel-feedback-list@broadcom.com,
+ Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <ray.jui@broadcom.com>,
+ Jon Mason <jonmason@broadcom.com>
+From: Scott Branden <scott.branden@broadcom.com>
+Message-ID: <d7938d3a-39bb-193e-d792-369786cdc54d@broadcom.com>
+Date: Wed, 23 Nov 2016 14:55:30 -0800
 MIME-Version: 1.0
-In-Reply-To: <1788707.rfxhNfegGu@phil>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20161123224159.9988-1-sboyd@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Heiko:
+Hi Stephen,
 
+On 16-11-23 02:41 PM, Stephen Boyd wrote:
+> The broadcom clk driver Kconfig file selects and depends on the
+> COMMON_CLK_IPROC config for different SoC specific drivers. Let's
+> simplify this by always selecting the COMMON_CLK_IPROC config,
+> turning it into a set of library code. We still want to retain
+> the SoC specific options, so we leave those in place. Since we're
+> here we also drop COMMON_CLK dependency because that's implicitly
+> handled by including this file in drivers/clk/Kconfig in the
+> right place and also make CLK_BCM_KONA default to y on the
+> architecture it exists for instead of plain default y.
+>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: Ray Jui <ray.jui@broadcom.com>
+> Cc: Jon Mason <jonmason@broadcom.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/clk/bcm/Kconfig | 16 +++++-----------
+>  1 file changed, 5 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+> index e3eed5a78404..b5ae5311b0a2 100644
+> --- a/drivers/clk/bcm/Kconfig
+> +++ b/drivers/clk/bcm/Kconfig
+> @@ -1,7 +1,6 @@
+>  config CLK_BCM_63XX
+>  	bool "Broadcom BCM63xx clock support"
+>  	depends on ARCH_BCM_63XX || COMPILE_TEST
+> -	depends on COMMON_CLK
+I think the depends on COMMON_CLK needs to remain?
+>  	select COMMON_CLK_IPROC
+>  	default ARCH_BCM_63XX
+>  	help
+> @@ -11,27 +10,22 @@ config CLK_BCM_63XX
+>  config CLK_BCM_KONA
+>  	bool "Broadcom Kona CCU clock support"
+>  	depends on ARCH_BCM_MOBILE || COMPILE_TEST
+> -	depends on COMMON_CLK
+I think the depends on COMMON_CLK needs to remain?
+> -	default y
+> +	default ARCH_BCM_MOBILE
+>  	help
+>  	  Enable common clock framework support for Broadcom SoCs
+>  	  using "Kona" style clock control units, including those
+>  	  in the BCM281xx and BCM21664 families.
+>
+>  config COMMON_CLK_IPROC
+> -	bool "Broadcom iProc clock support"
+> -	depends on ARCH_BCM_IPROC || ARCH_BCM_63XX || COMPILE_TEST
+> -	depends on COMMON_CLK
+I think the depends on COMMON_CLK needs to remain?
+> -	default ARCH_BCM_IPROC
+> +	bool
+>  	help
+>  	  Enable common clock framework support for Broadcom SoCs
+>  	  based on the iProc architecture
+>
+> -if COMMON_CLK_IPROC
+> -
+>  config CLK_BCM_CYGNUS
+>  	bool "Broadcom Cygnus clock support"
+>  	depends on ARCH_BCM_CYGNUS || COMPILE_TEST
+> +	select COMMON_CLK_IPROC
+>  	default ARCH_BCM_CYGNUS
+>  	help
+>  	  Enable common clock framework support for the Broadcom Cygnus SoC
+> @@ -39,6 +33,7 @@ config CLK_BCM_CYGNUS
+>  config CLK_BCM_NSP
+>  	bool "Broadcom Northstar/Northstar Plus clock support"
+>  	depends on ARCH_BCM_5301X || ARCH_BCM_NSP || COMPILE_TEST
+> +	select COMMON_CLK_IPROC
+>  	default ARCH_BCM_5301X || ARCH_BCM_NSP
+>  	help
+>  	  Enable common clock framework support for the Broadcom Northstar and
+> @@ -47,8 +42,7 @@ config CLK_BCM_NSP
+>  config CLK_BCM_NS2
+>  	bool "Broadcom Northstar 2 clock support"
+>  	depends on ARCH_BCM_IPROC || COMPILE_TEST
+> +	select COMMON_CLK_IPROC
+>  	default ARCH_BCM_IPROC
+>  	help
+>  	  Enable common clock framework support for the Broadcom Northstar 2 SoC
+> -
+> -endif
+>
 
-On 2016年11月04日 16:00, Heiko Stuebner wrote:
-> Am Donnerstag, 3. November 2016, 20:40:48 CET schrieb Andy Yan:
->> RK1108 is embedded with an ARM Cortex-A7 single core and a DSP core.
->> It is designed for varies application scenario such as car DVR, sports
->> DV, secure camera and UAV camera.
->>
->> This patch add basic support for it with DMAC / UART / CRU / pinctrl
->> enabled.
->>
->> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
->> ---
->>
->>   arch/arm/boot/dts/rk1108.dtsi     | 420
->> ++++++++++++++++++++++++++++++++++++++ arch/arm/mach-rockchip/rockchip.c |
->>   1 +
->>   2 files changed, 421 insertions(+)
->>   create mode 100644 arch/arm/boot/dts/rk1108.dtsi
->>
->> diff --git a/arch/arm/boot/dts/rk1108.dtsi b/arch/arm/boot/dts/rk1108.dtsi
->> new file mode 100644
->> index 0000000..9dccfea
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/rk1108.dtsi
->> @@ -0,0 +1,420 @@
->> +/*
->> + * This file is dual-licensed: you can use it either under the terms
->> + * of the GPL or the X11 license, at your option. Note that this dual
->> + * licensing only applies to this file, and not this project as a
->> + * whole.
->> + *
->> + *  a) This file is free software; you can redistribute it and/or
->> + *     modify it under the terms of the GNU General Public License as
->> + *     published by the Free Software Foundation; either version 2 of the
->> + *     License, or (at your option) any later version.
->> + *
->> + *     This file is distributed in the hope that it will be useful,
->> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + *     GNU General Public License for more details.
->> + *
->> + * Or, alternatively,
->> + *
->> + *  b) Permission is hereby granted, free of charge, to any person
->> + *     obtaining a copy of this software and associated documentation
->> + *     files (the "Software"), to deal in the Software without
->> + *     restriction, including without limitation the rights to use,
->> + *     copy, modify, merge, publish, distribute, sublicense, and/or
->> + *     sell copies of the Software, and to permit persons to whom the
->> + *     Software is furnished to do so, subject to the following
->> + *     conditions:
->> + *
->> + *     The above copyright notice and this permission notice shall be
->> + *     included in all copies or substantial portions of the Software.
->> + *
->> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
->> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
->> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
->> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
->> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
->> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
->> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
->> + *     OTHER DEALINGS IN THE SOFTWARE.
->> + */
->> +
->> +#include <dt-bindings/gpio/gpio.h>
->> +#include <dt-bindings/interrupt-controller/irq.h>
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/clock/rk1108-cru.h>
->> +#include <dt-bindings/pinctrl/rockchip.h>
->> +/ {
->> +	#address-cells = <1>;
->> +	#size-cells = <1>;
->> +
->> +	compatible = "rockchip,rk1108";
->> +
->> +	interrupt-parent = <&gic>;
->> +
->> +	aliases {
->> +		serial0 = &uart0;
->> +		serial1 = &uart1;
->> +		serial2 = &uart2;
->> +	};
->> +
->> +	cpus {
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		cpu0: cpu@f00 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a7";
->> +			reg = <0xf00>;
->> +		};
->> +
-> unnecessary empty line
-
-     Okay, I will remove it.
->> +	};
->> +
->> +	amba {
->> +		compatible = "simple-bus";
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges;
->> +
->> +		pdma: pdma@102a0000 {
->> +			compatible = "arm,pl330", "arm,primecell";
->> +			reg = <0x102a0000 0x4000>;
->> +			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
->> +			#dma-cells = <1>;
->> +			arm,pl330-broken-no-flushp;
->> +			clocks = <&cru ACLK_DMAC>;
->> +			clock-names = "apb_pclk";
->> +		};
->> +	};
->> +
->> +	arm-pmu {
->> +		compatible = "arm,cortex-a7-pmu";
->> +		interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
->> +	};
->> +
->> +
->> +	timer {
->> +		compatible = "arm,armv7-timer";
->> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) |
-> IRQ_TYPE_LEVEL_HIGH)>,
->> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-> CPU_MASK_SIMPLE(4)? You only have one core, not 4.
->
->
->> +		clock-frequency = <24000000>;
->> +	};
->> +
->> +	xin24m: oscillator {
->> +		compatible = "fixed-clock";
->> +		clock-frequency = <24000000>;
->> +		clock-output-names = "xin24m";
->> +		#clock-cells = <0>;
->> +	};
->> +
->> +	bus_intmem@10080000 {
->> +		compatible = "mmio-sram";
->> +		reg = <0x10080000 0x2000>;
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges = <0 0x10080000 0x2000>;
->> +	};
->> +
->> +	grf: syscon@10300000 {
->> +		compatible = "rockchip,rk1108-grf", "syscon";
->> +		reg = <0x10300000 0x1000>;
->> +	};
->> +
->> +	emmc: dwmmc@30110000 {
->> +		compatible = "rockchip,rk1108-dw-mshc", "rockchip,rk3288-dw-mshc";
->> +		clock-freq-min-max = <400000 150000000>;
->> +		clocks = <&cru HCLK_EMMC>, <&cru SCLK_EMMC>,
->> +			 <&cru SCLK_EMMC_DRV>, <&cru SCLK_EMMC_SAMPLE>;
->> +		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
->> +		fifo-depth = <0x100>;
->> +		interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
->> +		reg = <0x30110000 0x4000>;
->> +		status = "disabled";
->> +	};
->> +
->> +	sdio: dwmmc@30120000 {
->> +		compatible = "rockchip,rk1108-dw-mshc", "rockchip,rk3288-dw-mshc";
->> +		clock-freq-min-max = <400000 150000000>;
->> +		clocks = <&cru HCLK_SDIO>, <&cru SCLK_SDIO>,
->> +			 <&cru SCLK_SDIO_DRV>, <&cru SCLK_SDIO_SAMPLE>;
->> +		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
->> +		fifo-depth = <0x100>;
->> +		interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
->> +		reg = <0x30120000 0x4000>;
->> +		status = "disabled";
->> +	};
->> +
->> +	sdmmc: dwmmc@30130000 {
-> ordering by register address please (uart2 before sdmmc etc; same for
-> everything else)
->
->
->> +		compatible = "rockchip,rk1108-dw-mshc", "rockchip,rk3288-dw-mshc";
->> +		clock-freq-min-max = <400000 100000000>;
->> +		clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>,
->> +			 <&cru SCLK_SDMMC_DRV>, <&cru SCLK_SDMMC_SAMPLE>;
->> +		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
->> +		fifo-depth = <0x100>;
->> +		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
->> +		reg = <0x30130000 0x4000>;
->> +		status = "disabled";
->> +	};
->> +
->> +	uart2: serial@10210000 {
->> +		compatible = "rockchip,rk1108-uart", "snps,dw-apb-uart";
->> +		reg = <0x10210000 0x100>;
->> +		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
->> +		reg-shift = <2>;
->> +		reg-io-width = <4>;
->> +		clock-frequency = <24000000>;
->> +		clocks = <&cru SCLK_UART2>, <&cru PCLK_UART2>;
->> +		clock-names = "baudclk", "apb_pclk";
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&uart2m0_xfer>;
->> +		status = "disabled";
->> +	};
->> +
->> +	uart1: serial@10220000 {
->> +		compatible = "rockchip,rk1108-uart", "snps,dw-apb-uart";
->> +		reg = <0x10220000 0x100>;
->> +		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
->> +		reg-shift = <2>;
->> +		reg-io-width = <4>;
->> +		clock-frequency = <24000000>;
->> +		clocks = <&cru SCLK_UART1>, <&cru PCLK_UART1>;
->> +		clock-names = "baudclk", "apb_pclk";
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&uart1_xfer>;
->> +		status = "disabled";
->> +	};
->> +
->> +	uart0: serial@10230000 {
->> +		compatible = "rockchip,rk1108-uart", "snps,dw-apb-uart";
->> +		reg = <0x10230000 0x100>;
->> +		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
->> +		reg-shift = <2>;
->> +		reg-io-width = <4>;
->> +		clock-frequency = <24000000>;
->> +		clocks = <&cru SCLK_UART0>, <&cru PCLK_UART0>;
->> +		clock-names = "baudclk", "apb_pclk";
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
->> +		status = "disabled";
->> +	};
->> +
->> +	cru: clock-controller@20200000 {
->> +		compatible = "rockchip,rk1108-cru";
->> +		reg = <0x20200000 0x1000>;
->> +		rockchip,grf = <&grf>;
->> +		#clock-cells = <1>;
->> +		#reset-cells = <1>;
->> +	};
->> +
->> +	gic: interrupt-controller@32010000 {
->> +		compatible = "arm,cortex-a15-gic";
-> compatible = "arm,gic-400"; ?
->
->> +		interrupt-controller;
->> +		#interrupt-cells = <3>;
->> +		#address-cells = <0>;
->> +
->> +		reg = <0x32011000 0x1000>,
->> +		      <0x32012000 0x1000>;
-> please provide all 4 register areas and also the interrupt (
-
-     I only found 2 register areas in our rockchip linux 3.10 source 
-code. And haven't found the interrupt. From the arm,gic bindings, the 
-interrupt property is optional. So am not sure if we
-really need it here.
->
->> +	};
->> +
-> [...]
->
->> diff --git a/arch/arm/mach-rockchip/rockchip.c
->> b/arch/arm/mach-rockchip/rockchip.c index a7ab9ec..e7fdf06 100644
->> --- a/arch/arm/mach-rockchip/rockchip.c
->> +++ b/arch/arm/mach-rockchip/rockchip.c
->> @@ -76,6 +76,7 @@ static void __init rockchip_dt_init(void)
->>   }
->>
->>   static const char * const rockchip_board_dt_compat[] = {
->> +	"rockchip,rk1108",
->>   	"rockchip,rk2928",
->>   	"rockchip,rk3066a",
->>   	"rockchip,rk3066b",
-> please split this into a separate patch, as code and dts changes need to go
-> through different branches.
->
->
-> Thanks
-> Heiko
->
->
->
+Regards,
+Scott
