@@ -1,73 +1,26 @@
 Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
 Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20161031095214.GA2335@verge.net.au>
-References: <20161021154737.3803065-1-arnd@arndb.de> <CAMuHMdU6nVn=P0B5Xeqh5T-Mn8YEK_4oH1kvAPcpQzkviX669w@mail.gmail.com>
- <3808786.t4RxxDciQu@wuerfel> <CAMuHMdWq9_xHZgMtho87yRnR+RBVA22Ss+8dPRb4OQ+Vrni69A@mail.gmail.com>
- <CAMuHMdXRjgETtjBHHu2mHt9iEfe_rL5fpD-pgPH9MWniOFubQQ@mail.gmail.com> <20161031095214.GA2335@verge.net.au>
+In-Reply-To: <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com>
+References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com> <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Nov 2016 09:14:02 +0100
-Message-ID: <CAMuHMdVHmRcN0Tc1mWpeU5CCzqZY+naj-eU6hfiTe=tRD9XjNg@mail.gmail.com>
-Subject: Re: [PATCH] clk: fix link error for rcar-gen2
-To: Simon Horman <horms@verge.net.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date: Wed, 23 Nov 2016 09:03:08 +0100
+Message-ID: <CAMuHMdXsE1qH+2aFrmdFjwXpkB9UPy+ot=vHSBQdNdpWkuJ+AQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r8a7796: Add CAN peripheral clock
+To: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Simon,
+On Tue, Nov 22, 2016 at 2:46 PM, Chris Paterson
+<chris.paterson2@renesas.com> wrote:
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-On Mon, Oct 31, 2016 at 10:52 AM, Simon Horman <horms@verge.net.au> wrote:
-> From: Simon Horman <horms+renesas@verge.net.au>
-> Subject: [PATCH] ARM: shmobile: only call rcar_gen2_clocks_init() if present
->
-> The RZ/G1M (r8a7743) uses the R-Car Gen2 core, but not the R-Car Gen2 clock
-> driver. This is a harbinger of a transition for R-Car Gen2 SoCs. As the
-> process to get all the required pieces in place is somewhat complex it
-> seems useful to try to disentangle dependencies where possible.
->
-> The approach here is to temporarily disable calling rcar_gen2_clocks_init()
-> if no R-Car Gen2 SoC are configured and thus the symbol will not be
-> present.
->
-> Fixes: 1254f607fc3d ("ARM: shmobile: r8a7743: basic SoC support")
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
->
-> The current likely path to removing need for this is for
-> "[PATCH v4 00/23] soc: renesas: Add R-Car RST driver for obtaining mode
-> pin state" to be accepted. In particular patch 20 removes the call to
-> rcar_gen2_clocks_init() in rcar_gen2_timer_init().
-> ---
->  arch/arm/mach-shmobile/setup-rcar-gen2.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-> index 875bcb8c1026..657262556dc4 100644
-> --- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-> +++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-> @@ -131,7 +131,13 @@ void __init rcar_gen2_timer_init(void)
->         iounmap(base);
->  #endif /* CONFIG_ARM_ARCH_TIMER */
->
-> -       rcar_gen2_clocks_init(mode);
-> +       if (IS_ENABLED(CONFIG_ARCH_R8A7790) ||
-> +           IS_ENABLED(CONFIG_ARCH_R8A7791) ||
-> +           IS_ENABLED(CONFIG_ARCH_R8A7792) ||
-> +           IS_ENABLED(CONFIG_ARCH_R8A7793) ||
-> +           IS_ENABLED(CONFIG_ARCH_R8A7794))
-> +               rcar_gen2_clocks_init(mode);
-
-Upon second thought (triggered bySergei conflict notification), this needs
-an else clause:
-
-        else
-                of_clk_init(NULL);
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
