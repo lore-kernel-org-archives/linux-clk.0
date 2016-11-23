@@ -1,48 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:42840 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964928AbcKNGCb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 01:02:31 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org, andy.gross@linaro.org
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, alex.lemberg@sandisk.com,
-        mateusz.nowak@intel.com, Yuliy.Izrailov@sandisk.com,
-        asutoshd@codeaurora.org, kdorfman@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v7 10/14] arm64: dts: qcom: msm8916: Add ddr support to sdhc1
-Date: Mon, 14 Nov 2016 11:30:44 +0530
-Message-Id: <1479103248-9491-11-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
-References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Chris.Paterson2@renesas.com>
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: RE: [PATCH 1/3] clk: renesas: r8a7796: Add CAN peripheral clock
+Date: Wed, 23 Nov 2016 08:39:51 +0000
+Message-ID: <HK2PR0601MB1329B185751A31F45081132EB7B70@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com>
+ <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com>
+ <CAMuHMdXsE1qH+2aFrmdFjwXpkB9UPy+ot=vHSBQdNdpWkuJ+AQ@mail.gmail.com>
+ <CAMuHMdX9TthO6W0-6LhxY-oWkUoOOCjkNk+UuSmbFejfeZSogw@mail.gmail.com>
+In-Reply-To: <CAMuHMdX9TthO6W0-6LhxY-oWkUoOOCjkNk+UuSmbFejfeZSogw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds mmc-ddr-1_8v support to DT for sdhc1 of msm8916.
-
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index 6265822..5bc187c 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -515,6 +515,7 @@
- 				 <&gcc GCC_SDCC1_AHB_CLK>,
- 				 <&xo_board 0>;
- 			clock-names = "core", "iface", "xo_clock";
-+			mmc-ddr-1_8v;
- 			bus-width = <8>;
- 			non-removable;
- 			status = "disabled";
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
-
+SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgdGhlIHJldmlldy4NCg0KPiAtLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBnZWVydC51eXR0ZXJob2V2ZW5AZ21haWwuY29tDQo+
+IFttYWlsdG86Z2VlcnQudXl0dGVyaG9ldmVuQGdtYWlsLmNvbV0gT24gQmVoYWxmIE9mIEdlZXJ0
+IFV5dHRlcmhvZXZlbg0KPiBTZW50OiAyMyBOb3ZlbWJlciAyMDE2IDA4OjA2DQo+IFRvOiBDaHJp
+cyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPg0KPiBDYzogR2VlcnQgVXl0
+dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT47IE1pY2hhZWwgVHVycXVldHRlDQo+
+IDxtdHVycXVldHRlQGJheWxpYnJlLmNvbT47IFN0ZXBoZW4gQm95ZCA8c2JveWRAY29kZWF1cm9y
+YS5vcmc+Ow0KPiBMaW51eC1SZW5lc2FzIDxsaW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5lbC5v
+cmc+OyBsaW51eC1jbGsgPGxpbnV4LQ0KPiBjbGtAdmdlci5rZXJuZWwub3JnPjsgUmFtZXNoIFNo
+YW5tdWdhc3VuZGFyYW0NCj4gPHJhbWVzaC5zaGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29t
+Pg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDEvM10gY2xrOiByZW5lc2FzOiByOGE3Nzk2OiBBZGQg
+Q0FOIHBlcmlwaGVyYWwgY2xvY2sNCj4gDQo+IEhpIENocmlzLA0KPiANCj4gT24gV2VkLCBOb3Yg
+MjMsIDIwMTYgYXQgOTowMyBBTSwgR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC0NCj4g
+bTY4ay5vcmc+IHdyb3RlOg0KPiA+IE9uIFR1ZSwgTm92IDIyLCAyMDE2IGF0IDI6NDYgUE0sIENo
+cmlzIFBhdGVyc29uDQo+ID4gPGNocmlzLnBhdGVyc29uMkByZW5lc2FzLmNvbT4gd3JvdGU6DQo+
+ID4+IFNpZ25lZC1vZmYtYnk6IFJhbWVzaCBTaGFubXVnYXN1bmRhcmFtDQo+ID4+IDxyYW1lc2gu
+c2hhbm11Z2FzdW5kYXJhbUBicC5yZW5lc2FzLmNvbT4NCj4gPj4gU2lnbmVkLW9mZi1ieTogQ2hy
+aXMgUGF0ZXJzb24gPGNocmlzLnBhdGVyc29uMkByZW5lc2FzLmNvbT4NCj4gDQo+IEJUVywgYXMg
+YWxsIHBhdGNoZXMgaW4gdGhpcyBzZXJpZXMgd2VyZSBTaWduZWQtb2ZmLWJ5IFJhbWVzaCBmaXJz
+dCwgZG9lcyB0aGF0DQo+IG1lYW4gaGUncyB0aGUgYXV0aG9yLCBhbmQgeW91IHNob3VsZCBoYXZl
+IGFkZGVkIGhpcyBGcm9tOiBsaW5lLCB0b28/DQoNClRlY2huaWNhbGx5IEkgYXV0aG9yZWQgdGhl
+c2UgcGF0Y2hlcywgYnV0IHRoZXkgYXJlIGRpcmVjdCBwb3J0cyBmcm9tIFJhbWVzaCdzIHI4YTc3
+OTUgcGF0Y2hlcyBbMV1bMl1bM10uDQoNClsxXSAxMWM2ZmI3IGNsazogc2htb2JpbGU6IHI4YTc3
+OTU6IEFkZCBDQU4gcGVyaXBoZXJhbCBjbG9jaw0KWzJdIDdlMDBkNjMxIGNsazogc2htb2JpbGU6
+IHI4YTc3OTU6IEFkZCBDQU5GRCBjbG9jaw0KWzNdIGEwODBjOGMgY2xrOiBzaG1vYmlsZTogcjhh
+Nzc5NTogQWRkIENBTiBGRCBwZXJpcGhlcmFsIGNsb2NrDQoNCkFwb2xvZ2llcyBmb3Igbm90IG1h
+a2luZyB0aGlzIGNsZWFyIGluIHRoZSBjb3ZlciBsZXR0ZXIuDQoNCktpbmQgcmVnYXJkcywgQ2hy
+aXMNCg0KPiANCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+IA0KPiAgICAgICAgICAgICAgICAgICAg
+ICAgICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90
+cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC0NCj4gbTY4ay5vcmcNCj4gDQo+
+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwg
+bXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJ
+IGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
