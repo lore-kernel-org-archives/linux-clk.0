@@ -1,75 +1,49 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 7 Nov 2016 13:56:15 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Mirza Krak <mirza.krak@gmail.com>
-Cc: swarren@wwwdotorg.org, jonathanh@nvidia.com, gnurou@gmail.com,
-	linux@armlinux.org.uk, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V4 4/6] ARM: tegra: Add Tegra30 GMI support
-Message-ID: <20161107125615.GA12559@ulmo.ba.sec>
-References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
- <1478507405-13204-5-git-send-email-mirza.krak@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:41728 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933649AbcKWTAX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2016 14:00:23 -0500
+Date: Wed, 23 Nov 2016 11:00:18 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Ritesh Harjani <riteshh@codeaurora.org>
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, andy.gross@linaro.org,
+        shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com
+Subject: Re: [PATCH v9 02/16] clk: qcom: Move all sdcc rcgs to use
+ clk_rcg2_floor_ops
+Message-ID: <20161123190018.GD25626@codeaurora.org>
+References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
+ <1479710246-26676-3-git-send-email-riteshh@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="opJtzjQTFsWo+cga"
-In-Reply-To: <1478507405-13204-5-git-send-email-mirza.krak@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1479710246-26676-3-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
---opJtzjQTFsWo+cga
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Nov 07, 2016 at 09:30:03AM +0100, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
->=20
-> Add a device node for the GMI controller found on Tegra30.
->=20
-> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+On 11/21, Ritesh Harjani wrote:
+> From: Rajendra Nayak <rnayak@codeaurora.org>
+> 
+> The sdcc driver for msm8996/msm8916/msm8974/msm8994 and apq8084
+> expects a clk_set_rate() on the sdcc rcg clk to set
+> a floor value of supported clk rate closest to the requested
+> rate, by looking up the frequency table.
+> So move all the sdcc rcgs on all these platforms to use the
+> newly introduced clk_rcg2_floor_ops
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+> Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
 > ---
->=20
-> Changes in v2:
-> - added address-cells, size-cells and ranges properties
->=20
-> Changes in v3:
-> - no changes
->=20
-> Changes in v4:
-> - no changes
->=20
->  arch/arm/boot/dts/tegra30.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
 
-Applied, thanks.
+Applied to clk-next
 
-Thierry
-
---opJtzjQTFsWo+cga
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJYIHnsAAoJEN0jrNd/PrOhv5EP/3NPO8ULS9ehGfrRyytJedWV
-Bd9vUxHk7lWdv5HfAZiXDZEIRj0Kq14M3YvyLf3oiNa0R5hpjz0pMUv29y9gNDfP
-lxpTa42mUljn/qWuD+kyVU1ylP92uGfdwnSUYmQFwyhr7nkTER0OpQI+Fy6MmEY3
-Fxu/TnIcRJTGO3geA95mWnbLRbDwv7NXvde++lNxMp18C9TtsrVmGI57B/ZYU1g0
-XP5dr0DQQWbV/Jqyi3rAP3cRoeWV+ijmqfUV3EEKgjcTwTjIeg/PAw9lBaDNU/mX
-0AKDZo/1jcJb3dVyOwD6m5RgywS0meoaqmqSe7CiR3PvCWXsPzeC4dKCOQaIccEG
-4I5tsr4Ojm9gn1bqzlv27jViCtECGuo+ZegvwW/dKRoHJbsqcOu2KkHzm1db3HhR
-9nyYUcKNkbTAYzA9Sk/wJSatAoi9Zb4yrp+axeyjPtFmjejKSRH5xr0QpxLTPZfM
-EEj/3G5d0EAoQX8uj4X8welI1TrNsxSPKnvLldrwAqk8lJEO3aEp1k+c+29BA+ib
-ggz39YDGwFW8jzmve+PJD7TohzSOaokZOyAodSZaGXtvhJh7v8S6+HCpV7Npx7Xk
-BVez0bRwxrOZfjyOlXu+Ekv57XsHxaepVZooZ2IVxE63DV5fjI1NzdRQefXYZe1J
-yRgYisUpEILE20vo/3Fd
-=TqL1
------END PGP SIGNATURE-----
-
---opJtzjQTFsWo+cga--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
