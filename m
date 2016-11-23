@@ -1,106 +1,78 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v2 3/9] clk: stm32f4: Add post divisor for I2S & SAI PLLs
-Date: Thu, 24 Nov 2016 15:45:43 +0100
-Message-ID: <1479998749-20358-4-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
-References: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <scott.wood@nxp.com>
+From: Scott Wood <scott.wood@nxp.com>
+To: "Y.T. Tang" <yuantian.tang@nxp.com>, Scott Wood <oss@buserror.net>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>
+CC: "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] clk: qoriq: added ls1012a clock configuration
+Date: Wed, 23 Nov 2016 07:21:18 +0000
+Message-ID: <DB5PR0401MB1928F7FFBDB7D6E4C4B45D9491B70@DB5PR0401MB1928.eurprd04.prod.outlook.com>
+References: <1479275900-42365-1-git-send-email-yuantian.tang@nxp.com>
+ <1479279262.21746.40.camel@buserror.net>
+ <DB6PR0402MB28371BAAD862417B8AC8AED4F0B40@DB6PR0402MB2837.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-
-This patch adds post dividers of I2S & SAI PLLs.
-These dividers are managed by a dedicated register (RCC_DCKCFGR).
-The PLL should be off before a set rate.
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32f4.c | 41 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
-
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index c2b62cc..3918305 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -357,6 +357,18 @@ struct stm32f4_pll {
- 
- #define to_stm32f4_pll(_gate) container_of(_gate, struct stm32f4_pll, gate)
- 
-+struct stm32f4_pll_post_div_data {
-+	u8 pll_num;
-+	const char *name;
-+	const char *parent;
-+	u8 flag;
-+	u8 offset;
-+	u8 shift;
-+	u8 width;
-+	u8 flag_div;
-+	const struct clk_div_table *div_table;
-+};
-+
- struct stm32f4_vco_data {
- 	const char *vco_name;
- 	u8 offset;
-@@ -370,6 +382,18 @@ struct stm32f4_vco_data {
- 	{ "vco-sai", STM32F4_RCC_PLLSAICFGR, 28, 29 },
- };
- 
-+#define MAX_POST_DIV 3
-+static const struct stm32f4_pll_post_div_data  post_div_data[MAX_POST_DIV] = {
-+	{ PLL_I2S, "plli2s-q-div", "plli2s-q", CLK_SET_RATE_PARENT,
-+		STM32F4_RCC_DCKCFGR, 0, 5, 0, NULL},
-+
-+	{ PLL_SAI, "pllsai-q-div", "pllsai-q", CLK_SET_RATE_PARENT,
-+		STM32F4_RCC_DCKCFGR, 8, 5, 0, NULL },
-+
-+	{ PLL_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
-+		STM32F4_RCC_DCKCFGR, 16, 2, CLK_DIVIDER_POWER_OF_TWO},
-+};
-+
- struct stm32f4_div_data {
- 	u8 shift;
- 	u8 width;
-@@ -996,6 +1020,23 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	clks[PLL_VCO_SAI] = stm32f4_rcc_register_pll("vco_in",
- 			&data->pll_data[2], &stm32f4_clk_lock);
- 
-+	for (n = 0; n < MAX_POST_DIV; n++) {
-+		const struct stm32f4_pll_post_div_data *post_div;
-+
-+		post_div = &post_div_data[n];
-+
-+		clk_register_pll_div(post_div->name,
-+				post_div->parent,
-+				post_div->flag,
-+				base + post_div->offset,
-+				post_div->shift,
-+				post_div->width,
-+				post_div->flag_div,
-+				post_div->div_table,
-+				clks[post_div->pll_num],
-+				&stm32f4_clk_lock);
-+	}
-+
- 	sys_parents[1] = hse_clk;
- 	clk_register_mux_table(
- 	    NULL, "sys", sys_parents, ARRAY_SIZE(sys_parents), 0,
--- 
-1.9.1
+On 11/22/2016 02:20 AM, Y.T. Tang wrote:=0A=
+> Hi Scott,=0A=
+> =0A=
+>> -----Original Message-----=0A=
+>> From: Scott Wood [mailto:oss@buserror.net]=0A=
+>> Sent: Wednesday, November 16, 2016 2:54 PM=0A=
+>> To: Y.T. Tang <yuantian.tang@nxp.com>; mturquette@baylibre.com=0A=
+>> Cc: sboyd@codeaurora.org; linux-kernel@vger.kernel.org; Scott Wood=0A=
+>> <scott.wood@nxp.com>; linux-clk@vger.kernel.org; linux-arm-=0A=
+>> kernel@lists.infradead.org=0A=
+>> Subject: Re: [PATCH] clk: qoriq: added ls1012a clock configuration=0A=
+>>=0A=
+>> On Wed, 2016-11-16 at 13:58 +0800, yuantian.tang@nxp.com wrote:=0A=
+>>> From: Tang Yuantian <Yuantian.Tang@nxp.com>=0A=
+>>>=0A=
+>>> Added ls1012a clock configuation information.=0A=
+>>=0A=
+>> Do we really need the same line in the changelog twice?=0A=
+>>=0A=
+>>>=0A=
+>>> Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>=0A=
+>>> ---=0A=
+>>>  drivers/clk/clk-qoriq.c | 19 +++++++++++++++++++=0A=
+>>>  1 file changed, 19 insertions(+)=0A=
+>>>=0A=
+>>> diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c index=0A=
+>>> 1bece0f..563d874 100644=0A=
+>>> --- a/drivers/clk/clk-qoriq.c=0A=
+>>> +++ b/drivers/clk/clk-qoriq.c=0A=
+>>> @@ -202,6 +202,14 @@ static const struct clockgen_muxinfo ls1021a_cmux=
+=0A=
+>> =3D {=0A=
+>>>  	}=0A=
+>>>  };=0A=
+>>>=0A=
+>>> +static const struct clockgen_muxinfo ls1012a_cmux =3D {=0A=
+>>> +	{=0A=
+>>> +		[0] =3D { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },=0A=
+>>> +		{},=0A=
+>>> +		[2] =3D { CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },=0A=
+>>> +	}=0A=
+>>> +};=0A=
+>>> +=0A=
+>>=0A=
+>> Based on the "ls1021a_cmux" in the context it looks like this patch is=
+=0A=
+>> intended to apply on top=0A=
+>> of https://patchwork.kernel.org/patch/8923541/ but I don't see any menti=
+on=0A=
+>> of that.=0A=
+>>=0A=
+> I saw this patch had been merged already.=0A=
+> =0A=
+> Regards,=0A=
+> Yuantian=0A=
+=0A=
+I don't see it in linux-next.=0A=
+=0A=
+-Scott=0A=
+=0A=
