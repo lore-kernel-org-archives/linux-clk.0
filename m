@@ -1,95 +1,63 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:43346 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934182AbcKNGCr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Nov 2016 01:02:47 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org, andy.gross@linaro.org
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, alex.lemberg@sandisk.com,
-        mateusz.nowak@intel.com, Yuliy.Izrailov@sandisk.com,
-        asutoshd@codeaurora.org, kdorfman@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v7 12/14] mmc: sdhci-msm: Save the calculated tuning phase
-Date: Mon, 14 Nov 2016 11:30:46 +0530
-Message-Id: <1479103248-9491-13-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
-References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:35195 "EHLO
+        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750703AbcKWFAp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Nov 2016 00:00:45 -0500
+Received: by mail-oi0-f42.google.com with SMTP id b126so2707633oia.2
+        for <linux-clk@vger.kernel.org>; Tue, 22 Nov 2016 21:00:45 -0800 (PST)
+Date: Tue, 22 Nov 2016 23:00:38 -0600
+From: Andy Gross <andy.gross@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Ritesh Harjani <riteshh@codeaurora.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Alex Lemberg <alex.lemberg@sandisk.com>,
+        Mateusz Nowak <mateusz.nowak@intel.com>,
+        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        David Griego <david.griego@linaro.org>,
+        Sahitya Tummala <stummala@codeaurora.org>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Pramod Gurav <pramod.gurav@linaro.org>, jeremymc@redhat.com
+Subject: Re: [PATCH v9 00/16] mmc: sdhci-msm: Add clk-rates, DDR, HS400
+ support
+Message-ID: <20161123050038.GD16531@hector.attlocal.net>
+References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
+ <CAPDyKFrRbf0+G5K=-jsaevAGbTqhTAss2zJv3QdiyCrv0BG-zA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAPDyKFrRbf0+G5K=-jsaevAGbTqhTAss2zJv3QdiyCrv0BG-zA@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Save the tuning phase once the tuning is performed.
-This phase value will be used while calibrating DLL
-for HS400 mode.
+On Mon, Nov 21, 2016 at 11:06:13AM +0100, Ulf Hansson wrote:
+> On 21 November 2016 at 07:37, Ritesh Harjani <riteshh@codeaurora.org> wrote:
+> > Hi,
+> >
+> > This is v9 version of the patch series which adds support for MSM8996.
+> > Adds HS400 driver support as well.
+> > These are tested on internal msm8996 & db410c HW.
+> >
+> > The patch series is ready. Do we think we can apply these
+> > patches for next now?
+> 
+> I guess the DTS changes can be picked up by Andy, so they can go via arm-soc?
 
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
----
- drivers/mmc/host/sdhci-msm.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Yeah I'll pick up the DTS change and the Documentation change.
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 7618bad..95b47aa 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -74,6 +74,7 @@
- 
- #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
- 
-+#define INVALID_TUNING_PHASE	-1
- #define SDHCI_MSM_MIN_CLOCK	400000
- #define CORE_FREQ_100MHZ	(100 * 1000 * 1000)
- 
-@@ -95,6 +96,7 @@ struct sdhci_msm_host {
- 	bool use_14lpp_dll_reset;
- 	bool tuning_done;
- 	bool calibration_done;
-+	u8 saved_tuning_phase;
- };
- 
- /* Platform specific tuning */
-@@ -134,6 +136,9 @@ static int msm_config_cm_dll_phase(struct sdhci_host *host, u8 phase)
- 	u32 config;
- 	struct mmc_host *mmc = host->mmc;
- 
-+	if (phase > 0xf)
-+		return -EINVAL;
-+
- 	spin_lock_irqsave(&host->lock, flags);
- 
- 	config = readl_relaxed(host->ioaddr + CORE_DLL_CONFIG);
-@@ -435,6 +440,8 @@ static int sdhci_msm_execute_tuning(struct sdhci_host *host, u32 opcode)
- 	int rc;
- 	struct mmc_host *mmc = host->mmc;
- 	struct mmc_ios ios = host->mmc->ios;
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
- 
- 	/*
- 	 * Tuning is required for SDR104, HS200 and HS400 cards and
-@@ -459,6 +466,7 @@ static int sdhci_msm_execute_tuning(struct sdhci_host *host, u32 opcode)
- 		if (rc)
- 			return rc;
- 
-+		msm_host->saved_tuning_phase = phase;
- 		rc = mmc_send_tuning(mmc, opcode, NULL);
- 		if (!rc) {
- 			/* Tuning is successful at this tuning point */
-@@ -830,6 +838,8 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 
- 	sdhci_get_of_property(pdev);
- 
-+	msm_host->saved_tuning_phase = INVALID_TUNING_PHASE;
-+
- 	/* Setup SDCC bus voter clock. */
- 	msm_host->bus_clk = devm_clk_get(&pdev->dev, "bus");
- 	if (!IS_ERR(msm_host->bus_clk)) {
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
+> 
+> Then, does the mmc changes depend on the clock changes? If so, I can
+> pick them as well, but then I need an ack from Stephen....
+> 
+> Kind regards
+> Uffe
 
+Andy
