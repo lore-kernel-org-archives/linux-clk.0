@@ -1,47 +1,128 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 9 Nov 2016 12:26:46 -0600
-From: Rob Herring <robh@kernel.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v9 1/3] clk: qcom: Add support for SMD-RPM Clocks
-Message-ID: <20161109182646.isqpfbiyxjrjqzdp@rob-hp-laptop>
-References: <20161102155658.32203-1-georgi.djakov@linaro.org>
- <20161102155658.32203-2-georgi.djakov@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 23 Nov 2016 12:18:19 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: bcm: Fix unmet Kconfig dependencies for CLK_BCM_63XX
+Message-ID: <20161123201819.GI25626@codeaurora.org>
+References: <20161122174329.11592-1-f.fainelli@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161102155658.32203-2-georgi.djakov@linaro.org>
+In-Reply-To: <20161122174329.11592-1-f.fainelli@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Nov 02, 2016 at 05:56:56PM +0200, Georgi Djakov wrote:
-> This adds initial support for clocks controlled by the Resource
-> Power Manager (RPM) processor on some Qualcomm SoCs, which use
-> the qcom_smd_rpm driver to communicate with RPM.
-> Such platforms are msm8916, apq8084 and msm8974.
+On 11/22, Florian Fainelli wrote:
+> With commit f4e871509959 ("clk: iproc: Make clocks visible options"),
+> COMMON_CLK_IPROC gained a dependency on ARCH_BCM_IPROC, yet CLK_BCM_63XX
+> also selects that option, this causes the following Kconfig warning:
 > 
-> The RPM is a dedicated hardware engine for managing the shared
-> SoC resources in order to keep the lowest power profile. It
-> communicates with other hardware subsystems via shared memory
-> and accepts clock requests, aggregates the requests and turns
-> the clocks on/off or scales them on demand.
+> warning: (CLK_BCM_63XX) selects COMMON_CLK_IPROC which has unmet direct
+> dependencies ((ARCH_BCM_IPROC || COMPILE_TEST) && COMMON_CLK)
 > 
-> This driver is based on the codeaurora.org driver:
-> https://www.codeaurora.org/cgit/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-rpm.c
+> Fix this by adding proper depends/default for COMMON_CLK_IPROC
 > 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> Fixes: f4e871509959 ("clk: iproc: Make clocks visible options")
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 > ---
->  .../devicetree/bindings/clock/qcom,rpmcc.txt       |  36 ++
+>  drivers/clk/bcm/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+> index f21e9b7afd1a..80de9fc2e833 100644
+> --- a/drivers/clk/bcm/Kconfig
+> +++ b/drivers/clk/bcm/Kconfig
+> @@ -20,9 +20,9 @@ config CLK_BCM_KONA
+>  
+>  config COMMON_CLK_IPROC
+>  	bool "Broadcom iProc clock support"
+> -	depends on ARCH_BCM_IPROC || COMPILE_TEST
+> +	depends on ARCH_BCM_IPROC || ARCH_BCM_63XX || COMPILE_TEST
+>  	depends on COMMON_CLK
+> -	default ARCH_BCM_IPROC
+> +	default ARCH_BCM_IPROC || ARCH_BCM_63XX
+>  	help
+>  	  Enable common clock framework support for Broadcom SoCs
+>  	  based on the iProc architecture
 
-Acked-by: Rob Herring <robh@kernel.org>
+It's confusing that CLK_BCM_63XX selects COMMON_CLK_IPROC and the
+other drivers don't. Also, why are we now defaulting IPROC to be
+true when ARCH_BCM_63XX is there? It will be selected anyway by
+the clk driver on that machine so what's the point?
 
->  drivers/clk/qcom/Kconfig                           |  16 +
->  drivers/clk/qcom/Makefile                          |   1 +
->  drivers/clk/qcom/clk-smd-rpm.c                     | 571 +++++++++++++++++++++
->  include/dt-bindings/clock/qcom,rpmcc.h             |  45 ++
->  5 files changed, 669 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
->  create mode 100644 drivers/clk/qcom/clk-smd-rpm.c
->  create mode 100644 include/dt-bindings/clock/qcom,rpmcc.h
+I'd prefer we handled this one way instead of two. Given that
+COMMON_CLK_IPROC is a symbol for what looks like a library it
+seems that it needs to be a hidden option that gets selected by
+the other three options for the machine specific drivers.
+
+I'd like to drop the default ARCH_BCM_63XX part of your patch,
+merge that for 4.9 and apply this on top for 4.10. Agreed?
+
+----8<----
+
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index f21e9b7afd1a..b5ae5311b0a2 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -1,7 +1,6 @@
+ config CLK_BCM_63XX
+ 	bool "Broadcom BCM63xx clock support"
+ 	depends on ARCH_BCM_63XX || COMPILE_TEST
+-	depends on COMMON_CLK
+ 	select COMMON_CLK_IPROC
+ 	default ARCH_BCM_63XX
+ 	help
+@@ -11,27 +10,22 @@ config CLK_BCM_63XX
+ config CLK_BCM_KONA
+ 	bool "Broadcom Kona CCU clock support"
+ 	depends on ARCH_BCM_MOBILE || COMPILE_TEST
+-	depends on COMMON_CLK
+-	default y
++	default ARCH_BCM_MOBILE
+ 	help
+ 	  Enable common clock framework support for Broadcom SoCs
+ 	  using "Kona" style clock control units, including those
+ 	  in the BCM281xx and BCM21664 families.
+ 
+ config COMMON_CLK_IPROC
+-	bool "Broadcom iProc clock support"
+-	depends on ARCH_BCM_IPROC || COMPILE_TEST
+-	depends on COMMON_CLK
+-	default ARCH_BCM_IPROC
++	bool
+ 	help
+ 	  Enable common clock framework support for Broadcom SoCs
+ 	  based on the iProc architecture
+ 
+-if COMMON_CLK_IPROC
+-
+ config CLK_BCM_CYGNUS
+ 	bool "Broadcom Cygnus clock support"
+ 	depends on ARCH_BCM_CYGNUS || COMPILE_TEST
++	select COMMON_CLK_IPROC
+ 	default ARCH_BCM_CYGNUS
+ 	help
+ 	  Enable common clock framework support for the Broadcom Cygnus SoC
+@@ -39,6 +33,7 @@ config CLK_BCM_CYGNUS
+ config CLK_BCM_NSP
+ 	bool "Broadcom Northstar/Northstar Plus clock support"
+ 	depends on ARCH_BCM_5301X || ARCH_BCM_NSP || COMPILE_TEST
++	select COMMON_CLK_IPROC
+ 	default ARCH_BCM_5301X || ARCH_BCM_NSP
+ 	help
+ 	  Enable common clock framework support for the Broadcom Northstar and
+@@ -47,8 +42,7 @@ config CLK_BCM_NSP
+ config CLK_BCM_NS2
+ 	bool "Broadcom Northstar 2 clock support"
+ 	depends on ARCH_BCM_IPROC || COMPILE_TEST
++	select COMMON_CLK_IPROC
+ 	default ARCH_BCM_IPROC
+ 	help
+ 	  Enable common clock framework support for the Broadcom Northstar 2 SoC
+-
+-endif
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
