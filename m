@@ -1,86 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:39809 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932863AbcKHMUk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Nov 2016 07:20:40 -0500
-Subject: Re: [PATCH v6 06/14] mmc: sdhci-msm: Add get_min_clock() and
- get_max_clock() callback
-To: Ritesh Harjani <riteshh@codeaurora.org>, ulf.hansson@linaro.org,
-        linux-mmc@vger.kernel.org, shawn.lin@rock-chips.com,
-        sboyd@codeaurora.org
-References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
- <1478517877-23733-7-git-send-email-riteshh@codeaurora.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, andy.gross@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org
-From: Adrian Hunter <adrian.hunter@intel.com>
-Message-ID: <a6c48c47-9788-094c-a214-d50627c7a17e@intel.com>
-Date: Tue, 8 Nov 2016 14:15:39 +0200
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1478517877-23733-7-git-send-email-riteshh@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <HK2PR0601MB1329B185751A31F45081132EB7B70@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com>
+ <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com>
+ <CAMuHMdXsE1qH+2aFrmdFjwXpkB9UPy+ot=vHSBQdNdpWkuJ+AQ@mail.gmail.com>
+ <CAMuHMdX9TthO6W0-6LhxY-oWkUoOOCjkNk+UuSmbFejfeZSogw@mail.gmail.com> <HK2PR0601MB1329B185751A31F45081132EB7B70@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Nov 2016 10:26:10 +0100
+Message-ID: <CAMuHMdU7BuiNGsw9WmBz_5TpPBGB=0HnV+t3hQ+gsdy85-H8hQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r8a7796: Add CAN peripheral clock
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/11/16 13:24, Ritesh Harjani wrote:
-> This add get_min_clock() and get_max_clock() callback
-> for sdhci-msm. sdhci-msm min/max clocks may be different
-> hence implement these callbacks.
-> 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Hi Chris,
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+On Wed, Nov 23, 2016 at 9:39 AM, Chris Paterson
+<Chris.Paterson2@renesas.com> wrote:
+>> On Wed, Nov 23, 2016 at 9:03 AM, Geert Uytterhoeven <geert@linux-
+>> m68k.org> wrote:
+>> > On Tue, Nov 22, 2016 at 2:46 PM, Chris Paterson
+>> > <chris.paterson2@renesas.com> wrote:
+>> >> Signed-off-by: Ramesh Shanmugasundaram
+>> >> <ramesh.shanmugasundaram@bp.renesas.com>
+>> >> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+>>
+>> BTW, as all patches in this series were Signed-off-by Ramesh first, does that
+>> mean he's the author, and you should have added his From: line, too?
+>
+> Technically I authored these patches, but they are direct ports from Ramesh's r8a7795 patches [1][2][3].
 
-> ---
->  drivers/mmc/host/sdhci-msm.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index 32b0b79..66ca444 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -68,6 +68,7 @@
->  #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
->  
->  #define TCXO_FREQ		19200000
-> +#define SDHCI_MSM_MIN_CLOCK	400000
->  
->  #define CDR_SELEXT_SHIFT	20
->  #define CDR_SELEXT_MASK		(0xf << CDR_SELEXT_SHIFT)
-> @@ -559,6 +560,19 @@ static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
->  	return IRQ_HANDLED;
->  }
->  
-> +static unsigned int sdhci_msm_get_max_clock(struct sdhci_host *host)
-> +{
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-> +
-> +	return clk_round_rate(msm_host->clk, ULONG_MAX);
-> +}
-> +
-> +static unsigned int sdhci_msm_get_min_clock(struct sdhci_host *host)
-> +{
-> +	return SDHCI_MSM_MIN_CLOCK;
-> +}
-> +
->  static const struct of_device_id sdhci_msm_dt_match[] = {
->  	{ .compatible = "qcom,sdhci-msm-v4" },
->  	{},
-> @@ -570,6 +584,8 @@ static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
->  	.platform_execute_tuning = sdhci_msm_execute_tuning,
->  	.reset = sdhci_reset,
->  	.set_clock = sdhci_set_clock,
-> +	.get_min_clock = sdhci_msm_get_min_clock,
-> +	.get_max_clock = sdhci_msm_get_max_clock,
->  	.set_bus_width = sdhci_set_bus_width,
->  	.set_uhs_signaling = sdhci_msm_set_uhs_signaling,
->  	.voltage_switch = sdhci_msm_voltage_switch,
-> 
+OK, I'll replace his SoB by "based on patches for r8a7795 by Ramesh...".
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
