@@ -1,63 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:34094 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754253AbcKBOnQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Nov 2016 10:43:16 -0400
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20161101174808.GU16026@codeaurora.org>
-References: <1477848637-5151-1-git-send-email-akinobu.mita@gmail.com>
- <20161031181509.GS16026@codeaurora.org> <CAC5umyiVcV_KEL+g=mRL-mGQfJrCU5XrEVNzX=CFFXWNuTMBGQ@mail.gmail.com>
- <20161101174808.GU16026@codeaurora.org>
-From: Akinobu Mita <akinobu.mita@gmail.com>
-Date: Wed, 2 Nov 2016 23:42:54 +0900
-Message-ID: <CAC5umyj+NO7tXEfT4YEGAo6-CRfxufLHPSXQVmCdJjHDYgZiSg@mail.gmail.com>
-Subject: Re: [PATCH] clk: cdce925: add support for CDCE913, CDCE937, and CDCE949
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>,
-        Mike Looijmans <mike.looijmans@topic.nl>,
-        Michael Turquette <mturquette@linaro.org>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1479822362-4749-3-git-send-email-chris.paterson2@renesas.com>
+References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com> <1479822362-4749-3-git-send-email-chris.paterson2@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Nov 2016 09:03:22 +0100
+Message-ID: <CAMuHMdXeGxhBFzcTbpHiUN1T5rYDOU8nFfNA+UfJbmMxKKByiw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: renesas: r8a7796: Add CANFD clock
+To: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-11-02 2:48 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 11/01, Akinobu Mita wrote:
->> 2016-11-01 3:15 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
->> > On 10/31, Akinobu Mita wrote:
->> >> @@ -728,13 +780,19 @@ static int cdce925_probe(struct i2c_client *client,
->> >>  }
->> >>
->> >>  static const struct i2c_device_id cdce925_id[] = {
->> >> -     { "cdce925", 0 },
->> >> +     { "cdce913", CDCE913 },
->> >> +     { "cdce925", CDCE925 },
->> >> +     { "cdce937", CDCE937 },
->> >> +     { "cdce949", CDCE949 },
->> >>       { }
->> >>  };
->> >>  MODULE_DEVICE_TABLE(i2c, cdce925_id);
->> >>
->> >>  static const struct of_device_id clk_cdce925_of_match[] = {
->> >> +     { .compatible = "ti,cdce913" },
->> >>       { .compatible = "ti,cdce925" },
->> >> +     { .compatible = "ti,cdce937" },
->> >> +     { .compatible = "ti,cdce949" },
->> >
->> > Doesn't this need to be updated to point to the correct enum
->> > values?
->>
->> I think it isn't needed. Because the data field in struct of_device_id
->> for this driver is not used even if the device is registered from
->> device tree.  But the driver_data in i2c_device_id is used instead.
->
-> Ok. Have you tested this driver with DT or platform data? Do you
-> prefix the compatible string with "ti," in the DT case?
+On Tue, Nov 22, 2016 at 2:46 PM, Chris Paterson
+<chris.paterson2@renesas.com> wrote:
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-I have tested with DT with compatible = "ti,cdce937" and checked that
-correct i2c_device_id is passed by the caller of cdce925_probe().
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-According to of_i2c_register_device() in drivers/i2c/i2c-core.c,
-the manufacturer prefix like "ti," is stripped from i2c_client->name by
-of_modalias_node().  So i2c_match_id() can find correct i2c_device_id
-entry and ->probe() is called with it.
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
