@@ -1,250 +1,107 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:53720 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932297AbcKPEmv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Nov 2016 23:42:51 -0500
-Subject: Re: [PATCH v7 08/14] mmc: sdhci-msm: Implement set_clock callback for
- sdhci-msm
-To: Stephen Boyd <sboyd@codeaurora.org>, adrian.hunter@intel.com,
-        ulf.hansson@linaro.org
-References: <1479103248-9491-1-git-send-email-riteshh@codeaurora.org>
- <1479103248-9491-9-git-send-email-riteshh@codeaurora.org>
- <20161114193004.GI5177@codeaurora.org>
- <3c1a7c72-0ac1-8ed0-87fc-238331f0645b@codeaurora.org>
-Cc: linux-mmc@vger.kernel.org, shawn.lin@rock-chips.com,
-        andy.gross@linaro.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org
-From: Ritesh Harjani <riteshh@codeaurora.org>
-Message-ID: <d723b9fb-0cfc-e72b-ad78-36c8b996b012@codeaurora.org>
-Date: Wed, 16 Nov 2016 10:12:40 +0530
-MIME-Version: 1.0
-In-Reply-To: <3c1a7c72-0ac1-8ed0-87fc-238331f0645b@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <georgi.djakov@linaro.org>
+Return-Path: <georgi.djakov@linaro.org>
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: sboyd@codeaurora.org
+Cc: mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	michael.scott@linaro.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v2 2/2] clk: qcom: clk-rpm: Fix clk_hw references
+Date: Wed, 23 Nov 2016 16:52:49 +0200
+Message-Id: <20161123145249.14912-2-georgi.djakov@linaro.org>
+In-Reply-To: <20161123145249.14912-1-georgi.djakov@linaro.org>
+References: <20161123145249.14912-1-georgi.djakov@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Fix the clk_hw references to the actual clocks and add a xlate function
+to return the hw pointers from the already existing static array.
 
-On 11/15/2016 10:40 AM, Ritesh Harjani wrote:
-> Hi Stephen/Adrian,
->
-> On 11/15/2016 1:07 AM, Stephen Boyd wrote:
->> On 11/14, Ritesh Harjani wrote:
->>> @@ -577,6 +578,90 @@ static unsigned int
->>> sdhci_msm_get_min_clock(struct sdhci_host *host)
->>>      return SDHCI_MSM_MIN_CLOCK;
->>>  }
->>>
->>> +/**
->>> + * __sdhci_msm_set_clock - sdhci_msm clock control.
->>> + *
->>> + * Description:
->>> + * Implement MSM version of sdhci_set_clock.
->>> + * This is required since MSM controller does not
->>> + * use internal divider and instead directly control
->>> + * the GCC clock as per HW recommendation.
->>> + **/
->>> +void __sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
->>> +{
->>> +    u16 clk;
->>> +    unsigned long timeout;
->>> +
->>> +    /*
->>> +     * Keep actual_clock as zero -
->>> +     * - since there is no divider used so no need of having
->>> actual_clock.
->>> +     * - MSM controller uses SDCLK for data timeout calculation. If
->>> +     *   actual_clock is zero, host->clock is taken for calculation.
->>> +     */
->>> +    host->mmc->actual_clock = 0;
->>> +
->>> +    sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
->>> +
->>> +    if (clock == 0)
->>> +        return;
->>> +
->>> +    /*
->>> +     * MSM controller do not use clock divider.
->>> +     * Thus read SDHCI_CLOCK_CONTROL and only enable
->>> +     * clock with no divider value programmed.
->>> +     */
->>> +    clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
->>> +
->>> +    clk |= SDHCI_CLOCK_INT_EN;
->>> +    sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
->>> +
->>> +    /* Wait max 20 ms */
->>> +    timeout = 20;
->>> +    while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
->>> +        & SDHCI_CLOCK_INT_STABLE)) {
->>> +        if (timeout == 0) {
->>> +            pr_err("%s: Internal clock never stabilised\n",
->>> +                   mmc_hostname(host->mmc));
->>> +            return;
->>> +        }
->>> +        timeout--;
->>> +        mdelay(1);
->>> +    }
->>> +
->>> +    clk |= SDHCI_CLOCK_CARD_EN;
->>> +    sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
->>
->> This is almost a copy/paste of sdhci_set_clock(). Can we make
->> sdhci_set_clock() call a __sdhci_set_clock() function that takes
->> unsigned int clock, and also a flag indicating if we want to set
->> the internal clock divider or not? Then we can call
->> __sdhci_set_clock() from sdhci_set_clock() with (clock, true) as
->> arguments and (clock, false).
-Actually what you may be referring here is some sort of quirks which is 
-not entertained any more for sdhci driver.
-sdhci is tending towards becoming a library and hence such changes are 
-restricted.
+Reported-by: Michael Scott <michael.scott@linaro.org>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/clk/qcom/clk-rpm.c | 36 ++++++++++++++++++++++--------------
+ 1 file changed, 22 insertions(+), 14 deletions(-)
 
-But I think we may do below changes to avoid duplication of code which 
-enables the sdhci internal clock and waits for internal clock to be stable.
-
-Adrian, could you please tell if this should be ok?
-Then we may be able to call for sdhci_set_clock_enable function from
-sdhci_msm_set_clock.
-
-
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 42ef3eb..28e605c 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1343,19 +1343,8 @@ u16 sdhci_calc_clk(struct sdhci_host *host, 
-unsigned int clock,
-  }
-  EXPORT_SYMBOL_GPL(sdhci_calc_clk);
-
--void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
-+void sdhci_set_clock_enable(struct sdhci_host *host, unsigned short clk)
-  {
--       u16 clk;
--       unsigned long timeout;
--
--       host->mmc->actual_clock = 0;
--
--       sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
--
--       if (clock == 0)
--               return;
--
--       clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
-
-         clk |= SDHCI_CLOCK_INT_EN;
-         sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-@@ -1377,6 +1366,24 @@ void sdhci_set_clock(struct sdhci_host *host, 
-unsigned int clock)
-         clk |= SDHCI_CLOCK_CARD_EN;
-         sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-  }
-+EXPORT_SYMBOL_GPL(sdhci_set_clock_enable);
-+
-+void sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
+index 1950a9572624..df3e5fe8442a 100644
+--- a/drivers/clk/qcom/clk-rpm.c
++++ b/drivers/clk/qcom/clk-rpm.c
+@@ -127,8 +127,8 @@ struct clk_rpm {
+ 
+ struct rpm_cc {
+ 	struct qcom_rpm *rpm;
+-	struct clk_hw_onecell_data data;
+-	struct clk_hw *hws[];
++	struct clk_rpm **clks;
++	size_t num_clks;
+ };
+ 
+ struct rpm_clk_desc {
+@@ -391,11 +391,23 @@ static const struct of_device_id rpm_clk_match_table[] = {
+ };
+ MODULE_DEVICE_TABLE(of, rpm_clk_match_table);
+ 
++static struct clk_hw *qcom_rpm_clk_hw_get(struct of_phandle_args *clkspec,
++					  void *data)
 +{
-+       u16 clk;
-+       unsigned long timeout;
++	struct rpm_cc *rcc = data;
++	unsigned int idx = clkspec->args[0];
 +
-+       host->mmc->actual_clock = 0;
++	if (idx >= rcc->num_clks) {
++		pr_err("%s: invalid index %u\n", __func__, idx);
++		return ERR_PTR(-EINVAL);
++	}
 +
-+       sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
-+
-+       if (clock == 0)
-+               return;
-+
-+       clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
-+
-+       sdhci_set_clock_enable(host, clk);
++	return rcc->clks[idx] ? &rcc->clks[idx]->hw : ERR_PTR(-ENOENT);
 +}
-  EXPORT_SYMBOL_GPL(sdhci_set_clock);
-
-  static void sdhci_set_power_reg(struct sdhci_host *host, unsigned char 
-mode,
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index 766df17..43382e1 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -681,6 +681,7 @@ static inline bool sdhci_sdio_irq_enabled(struct 
-sdhci_host *host)
-  u16 sdhci_calc_clk(struct sdhci_host *host, unsigned int clock,
-                    unsigned int *actual_clock);
-  void sdhci_set_clock(struct sdhci_host *host, unsigned int clock);
-+void sdhci_set_clock_enable(struct sdhci_host *host, unsigned short clk);
-  void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
-                      unsigned short vdd);
-  void sdhci_set_power_noreg(struct sdhci_host *host, unsigned char mode,
-
-
-
-> Adrian,
-> Could you please comment here ?
->
->>
->>> +}
->>> +
->>> +/* sdhci_msm_set_clock - Called with (host->lock) spinlock held. */
->>> +static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned
->>> int clock)
->>> +{
->>> +    struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->>> +    struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
->>> +    int rc;
->>> +
->>> +    if (!clock) {
->>> +        msm_host->clk_rate = clock;
->>> +        goto out;
->>> +    }
->>> +
->>> +    spin_unlock_irq(&host->lock);
->>> +    if (clock != msm_host->clk_rate) {
->>
->> Why do we need to check here? Can't we call clk_set_rate()
->> Unconditionally?
-> Since it may so happen that above layers may call for ->set_clock
-> function with same requested clock more than once, hence we cache the
-> host->clock here.
-> Also, since requested clock (host->clock) can be say 400Mhz but the
-> actual pltfm supported clock would be say 384MHz.
->
->
->>
->>> +        rc = clk_set_rate(msm_host->clk, clock);
->>> +        if (rc) {
->>> +            pr_err("%s: Failed to set clock at rate %u\n",
->>> +                   mmc_hostname(host->mmc), clock);
->>> +            spin_lock_irq(&host->lock);
->>> +            goto out;
->>
->> Or replace the above two lines with goto err;
-> Ok, I will have another label out_lock instead of err.
->>
->>> +        }
->>> +        msm_host->clk_rate = clock;
->>> +        pr_debug("%s: Setting clock at rate %lu\n",
->>> +             mmc_hostname(host->mmc), clk_get_rate(msm_host->clk));
->>> +    }
->>
->> And put an err label here.
-> will put the label here as out_lock;
->>
->>> +    spin_lock_irq(&host->lock);
->>> +out:
->>> +    __sdhci_msm_set_clock(host, clock);
->>> +}
->>> +
->>>  static const struct of_device_id sdhci_msm_dt_match[] = {
->>>      { .compatible = "qcom,sdhci-msm-v4" },
->>>      {},
->>
->
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
++
+ static int rpm_clk_probe(struct platform_device *pdev)
+ {
+-	struct clk_hw **hws;
+ 	struct rpm_cc *rcc;
+-	struct clk_hw_onecell_data *data;
+ 	int ret;
+ 	size_t num_clks, i;
+ 	struct qcom_rpm *rpm;
+@@ -415,14 +427,12 @@ static int rpm_clk_probe(struct platform_device *pdev)
+ 	rpm_clks = desc->clks;
+ 	num_clks = desc->num_clks;
+ 
+-	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*hws) * num_clks,
+-			   GFP_KERNEL);
++	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc), GFP_KERNEL);
+ 	if (!rcc)
+ 		return -ENOMEM;
+ 
+-	hws = rcc->hws;
+-	data = &rcc->data;
+-	data->num = num_clks;
++	rcc->clks = rpm_clks;
++	rcc->num_clks = num_clks;
+ 
+ 	for (i = 0; i < num_clks; i++) {
+ 		if (!rpm_clks[i])
+@@ -436,18 +446,16 @@ static int rpm_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	for (i = 0; i < num_clks; i++) {
+-		if (!rpm_clks[i]) {
+-			data->hws[i] = ERR_PTR(-ENOENT);
++		if (!rpm_clks[i])
+ 			continue;
+-		}
+ 
+ 		ret = devm_clk_hw_register(&pdev->dev, &rpm_clks[i]->hw);
+ 		if (ret)
+ 			goto err;
+ 	}
+ 
+-	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
+-				     data);
++	ret = of_clk_add_hw_provider(pdev->dev.of_node, qcom_rpm_clk_hw_get,
++				     rcc);
+ 	if (ret)
+ 		goto err;
+ 
