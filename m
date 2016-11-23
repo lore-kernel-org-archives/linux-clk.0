@@ -1,70 +1,40 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] rockchip clock changes for 4.10
-Date: Sat, 12 Nov 2016 16:30:05 +0100
-Message-ID: <2643672.7kkyv0VVfm@phil>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAMuHMdXsE1qH+2aFrmdFjwXpkB9UPy+ot=vHSBQdNdpWkuJ+AQ@mail.gmail.com>
+References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com>
+ <1479822362-4749-2-git-send-email-chris.paterson2@renesas.com> <CAMuHMdXsE1qH+2aFrmdFjwXpkB9UPy+ot=vHSBQdNdpWkuJ+AQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Nov 2016 09:05:44 +0100
+Message-ID: <CAMuHMdX9TthO6W0-6LhxY-oWkUoOOCjkNk+UuSmbFejfeZSogw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r8a7796: Add CAN peripheral clock
+To: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+Hi Chris,
 
-please find below a pull request for rockchip-related clock changes for 4.1=
-0.
-Nothing really big stands out this time, so if it looks ok please pull.
+On Wed, Nov 23, 2016 at 9:03 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, Nov 22, 2016 at 2:46 PM, Chris Paterson
+> <chris.paterson2@renesas.com> wrote:
+>> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+>> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
+BTW, as all patches in this series were Signed-off-by Ramesh first, does
+that mean he's the author, and you should have added his From: line, too?
 
-Thanks
-Heiko
+Gr{oetje,eeting}s,
 
+                        Geert
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git ta=
-gs/v4.10-rockchip-clk1
-
-for you to fetch changes up to bf92384b6d729b22916ba832b4a225ca196e98ba:
-
-  clk: rockchip: Ignore frac divisor for PLL equivalence when it's unused (=
-2016-11-05 23:16:29 +0100)
-
-=2D---------------------------------------------------------------
-PLL initialization for PLLs having both an integral and fractional mode
-(rk3036, rk3399) does now take into account the mode that the PLL is
-actually running at.
-As always also some additional and optimized PLL rates for rk3066 and
-rk3399, some additional clock ids for rk3066 and some additional clocks
-on rk3399 are now sucessfully handled inside their respective driver.
-
-=2D---------------------------------------------------------------
-Heiko Stuebner (1):
-      Merge branch 'v4.10-shared/clkids' into v4.10-clk/next
-
-Jianqun Xu (1):
-      clk: rockchip: remove more CLK_IGNORE_UNUSED for rk3399 clocktree
-
-Julius Werner (1):
-      clk: rockchip: Ignore frac divisor for PLL equivalence when it's unus=
-ed
-
-Pawe=C5=82 Jarosz (3):
-      clk: rockchip: Add binding ids for cpu and peri clocks on rk3066
-      clk: rockchip: Use clock ids for cpu and peri clocks on rk3066
-      clk: rockchip: add 400MHz to rk3066 clock rates table
-
-Xing Zheng (2):
-      clk: rockchip: add 533.25MHz to rk3399 clock rates table
-      clk: rockchip: optimize 800MHz and 1GHz pll rates on RK3399
-
- drivers/clk/rockchip/clk-pll.c                |  6 ++++--
- drivers/clk/rockchip/clk-rk3188.c             | 13 +++++++------
- drivers/clk/rockchip/clk-rk3399.c             | 27 ++++++++++++++---------=
-=2D---
- include/dt-bindings/clock/rk3188-cru-common.h |  8 +++++++-
- 4 files changed, 32 insertions(+), 22 deletions(-)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
