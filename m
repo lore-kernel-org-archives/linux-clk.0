@@ -1,92 +1,97 @@
-Return-Path: <icenowy@aosc.xyz>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: Jorik Jonker <jorik@kippendief.biz>,
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Icenowy Zheng <icenowy@aosc.xyz>
-Subject: [PATCH 2/2] clk: sunxi-ng: fix up PLL_CPUX adjusting for A23/A33
-Date: Mon,  7 Nov 2016 01:29:32 +0800
-Message-Id: <20161106172932.39478-2-icenowy@aosc.xyz>
-In-Reply-To: <20161106172932.39478-1-icenowy@aosc.xyz>
-References: <20161106172932.39478-1-icenowy@aosc.xyz>
+	bcm-kernel-feedback-list@broadcom.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Ray Jui <ray.jui@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>
+Subject: [PATCH] clk: bcm: Make COMMON_CLK_IPROC into a library
+Date: Wed, 23 Nov 2016 14:41:59 -0800
+Message-Id: <20161123224159.9988-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-When adjusting PLL_CPUX on A23/A33, the PLL is driven too high, and the
-system stucks.
+The broadcom clk driver Kconfig file selects and depends on the
+COMMON_CLK_IPROC config for different SoC specific drivers. Let's
+simplify this by always selecting the COMMON_CLK_IPROC config,
+turning it into a set of library code. We still want to retain
+the SoC specific options, so we leave those in place. Since we're
+here we also drop COMMON_CLK dependency because that's implicitly
+handled by including this file in drivers/clk/Kconfig in the
+right place and also make CLK_BCM_KONA default to y on the
+architecture it exists for instead of plain default y.
 
-Add a notifier to avoid this situation.
-
-The code is ported from ccu-sun6i-a31.c.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Ray Jui <ray.jui@broadcom.com>
+Cc: Jon Mason <jonmason@broadcom.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
-Patch 4.9-rc too.
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c | 10 ++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 10 ++++++++++
- 2 files changed, 20 insertions(+)
+ drivers/clk/bcm/Kconfig | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-index 44c4775..41a8594 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-@@ -709,6 +709,13 @@ static const struct sunxi_ccu_desc sun8i_a23_ccu_desc = {
- 	.num_resets	= ARRAY_SIZE(sun8i_a23_ccu_resets),
- };
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index e3eed5a78404..b5ae5311b0a2 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -1,7 +1,6 @@
+ config CLK_BCM_63XX
+ 	bool "Broadcom BCM63xx clock support"
+ 	depends on ARCH_BCM_63XX || COMPILE_TEST
+-	depends on COMMON_CLK
+ 	select COMMON_CLK_IPROC
+ 	default ARCH_BCM_63XX
+ 	help
+@@ -11,27 +10,22 @@ config CLK_BCM_63XX
+ config CLK_BCM_KONA
+ 	bool "Broadcom Kona CCU clock support"
+ 	depends on ARCH_BCM_MOBILE || COMPILE_TEST
+-	depends on COMMON_CLK
+-	default y
++	default ARCH_BCM_MOBILE
+ 	help
+ 	  Enable common clock framework support for Broadcom SoCs
+ 	  using "Kona" style clock control units, including those
+ 	  in the BCM281xx and BCM21664 families.
  
-+static struct ccu_mux_nb sun8i_a23_cpu_nb = {
-+	.common		= &cpux_clk.common,
-+	.cm		= &cpux_clk.mux,
-+	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
-+	.bypass_index	= 1, /* index of 24 MHz oscillator */
-+};
-+
- static void __init sun8i_a23_ccu_setup(struct device_node *node)
- {
- 	void __iomem *reg;
-@@ -732,6 +739,9 @@ static void __init sun8i_a23_ccu_setup(struct device_node *node)
- 	writel(val, reg + SUN8I_A23_PLL_MIPI_REG);
+ config COMMON_CLK_IPROC
+-	bool "Broadcom iProc clock support"
+-	depends on ARCH_BCM_IPROC || ARCH_BCM_63XX || COMPILE_TEST
+-	depends on COMMON_CLK
+-	default ARCH_BCM_IPROC
++	bool
+ 	help
+ 	  Enable common clock framework support for Broadcom SoCs
+ 	  based on the iProc architecture
  
- 	sunxi_ccu_probe(node, reg, &sun8i_a23_ccu_desc);
-+
-+	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
-+				  &sun8i_a23_cpu_nb);
- }
- CLK_OF_DECLARE(sun8i_a23_ccu, "allwinner,sun8i-a23-ccu",
- 	       sun8i_a23_ccu_setup);
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 59cfdc8..3efbb6e 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -752,6 +752,13 @@ static const struct sunxi_ccu_desc sun8i_a33_ccu_desc = {
- 	.num_resets	= ARRAY_SIZE(sun8i_a33_ccu_resets),
- };
- 
-+static struct ccu_mux_nb sun8i_a33_cpu_nb = {
-+	.common		= &cpux_clk.common,
-+	.cm		= &cpux_clk.mux,
-+	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
-+	.bypass_index	= 1, /* index of 24 MHz oscillator */
-+};
-+
- static void __init sun8i_a33_ccu_setup(struct device_node *node)
- {
- 	void __iomem *reg;
-@@ -775,6 +782,9 @@ static void __init sun8i_a33_ccu_setup(struct device_node *node)
- 	writel(val, reg + SUN8I_A33_PLL_MIPI_REG);
- 
- 	sunxi_ccu_probe(node, reg, &sun8i_a33_ccu_desc);
-+
-+	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
-+				  &sun8i_a33_cpu_nb);
- }
- CLK_OF_DECLARE(sun8i_a33_ccu, "allwinner,sun8i-a33-ccu",
- 	       sun8i_a33_ccu_setup);
+-if COMMON_CLK_IPROC
+-
+ config CLK_BCM_CYGNUS
+ 	bool "Broadcom Cygnus clock support"
+ 	depends on ARCH_BCM_CYGNUS || COMPILE_TEST
++	select COMMON_CLK_IPROC
+ 	default ARCH_BCM_CYGNUS
+ 	help
+ 	  Enable common clock framework support for the Broadcom Cygnus SoC
+@@ -39,6 +33,7 @@ config CLK_BCM_CYGNUS
+ config CLK_BCM_NSP
+ 	bool "Broadcom Northstar/Northstar Plus clock support"
+ 	depends on ARCH_BCM_5301X || ARCH_BCM_NSP || COMPILE_TEST
++	select COMMON_CLK_IPROC
+ 	default ARCH_BCM_5301X || ARCH_BCM_NSP
+ 	help
+ 	  Enable common clock framework support for the Broadcom Northstar and
+@@ -47,8 +42,7 @@ config CLK_BCM_NSP
+ config CLK_BCM_NS2
+ 	bool "Broadcom Northstar 2 clock support"
+ 	depends on ARCH_BCM_IPROC || COMPILE_TEST
++	select COMMON_CLK_IPROC
+ 	default ARCH_BCM_IPROC
+ 	help
+ 	  Enable common clock framework support for the Broadcom Northstar 2 SoC
+-
+-endif
 -- 
-2.10.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
