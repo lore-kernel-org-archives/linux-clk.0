@@ -1,65 +1,34 @@
-Return-Path: <jay.xu@rock-chips.com>
-From: Jianqun Xu <jay.xu@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	heiko@sntech.de,
-	tomeu.vizoso@collabora.com,
-	seanpaul@chromium.org,
-	airlied@linux.ie,
-	yamada.masahiro@socionext.com
-Cc: linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	linux-arm-kernel@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	zhengxing@rock-chips.com,
-	zhangqing@rock-chips.com,
-	wzz@rock-chips.com,
-	Jianqun Xu <jay.xu@rock-chips.com>
-Subject: [PATCH] drm/bridge: analogix_dp: return error if transfer none byte
-Date: Wed, 16 Nov 2016 08:13:39 +0800
-Message-Id: <1479255219-7243-1-git-send-email-jay.xu@rock-chips.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1479822362-4749-4-git-send-email-chris.paterson2@renesas.com>
+References: <1479822362-4749-1-git-send-email-chris.paterson2@renesas.com> <1479822362-4749-4-git-send-email-chris.paterson2@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Nov 2016 09:03:41 +0100
+Message-ID: <CAMuHMdVXDSKPLPxcaUScipkst_Gw_Ks07AH5f1mGhBTEAmd6Kg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: renesas: r8a7796: Add CAN FD peripheral clock
+To: Chris Paterson <chris.paterson2@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Reference from drm_dp_aux description (about transfer):
-Upon success, the implementation should return the number of payload bytes
-that were transferred, or a negative error-code on failure. Helpers
-propagate errors from the .transfer() function, with the exception of
-the -EBUSY error, which causes a transaction to be retried. On a short,
-helpers will return -EPROTO to make it simpler to check for failure.
+On Tue, Nov 22, 2016 at 2:46 PM, Chris Paterson
+<chris.paterson2@renesas.com> wrote:
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
 
-The analogix_dp_transfer will return num_transferred, but if there is none
-byte been transferred, the return value will be 0, which means success, we
-should return error-code if transfer none byte.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-for (retry = 0; retry < 32; retry++) {
-	err = aux->transfer(aux, &msg);
-	if (err < 0) {
-		if (err == -EBUSY)
-			continue;
+Gr{oetje,eeting}s,
 
-		goto unlock;
-	}
-}
+                        Geert
 
-Cc: zain wang <wzz@rock-chips.com>
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
----
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index cd37ac0..303083a 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -1162,5 +1162,5 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 		 (msg->request & ~DP_AUX_I2C_MOT) == DP_AUX_NATIVE_READ)
- 		msg->reply = DP_AUX_NATIVE_REPLY_ACK;
- 
--	return num_transferred;
-+	return num_transferred > 0 ? num_transferred : -EBUSY;
- }
--- 
-1.9.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
