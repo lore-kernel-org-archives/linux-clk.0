@@ -1,74 +1,38 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 8 Nov 2016 19:45:12 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, Jorik Jonker <jorik@kippendief.biz>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
-	Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 1/2] clk: sunxi-ng: Fix CPUX clock for the A23/A33
-Message-ID: <20161108184512.jlln3xyvege6jcnb@lukather>
-References: <20161107173135.Ux5KXCv5@smtp1h.mail.yandex.net>
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Subject: Re: [PATCH] clk: bcm: Make COMMON_CLK_IPROC into a library
+To: Scott Branden <scott.branden@broadcom.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <20161123224159.9988-1-sboyd@codeaurora.org>
+ <d7938d3a-39bb-193e-d792-369786cdc54d@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ bcm-kernel-feedback-list@broadcom.com, Ray Jui <ray.jui@broadcom.com>,
+ Jon Mason <jonmason@broadcom.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <7b05e961-5a30-e690-bce0-4e8df484d42b@gmail.com>
+Date: Wed, 23 Nov 2016 15:01:20 -0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3w7tbgn6ftlie325"
-In-Reply-To: <20161107173135.Ux5KXCv5@smtp1h.mail.yandex.net>
+In-Reply-To: <d7938d3a-39bb-193e-d792-369786cdc54d@broadcom.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Le 23/11/2016 à 14:55, Scott Branden a écrit :
+>>  config COMMON_CLK_IPROC
+>> -    bool "Broadcom iProc clock support"
+>> -    depends on ARCH_BCM_IPROC || ARCH_BCM_63XX || COMPILE_TEST
+>> -    depends on COMMON_CLK
+> I think the depends on COMMON_CLK needs to remain?
 
---3w7tbgn6ftlie325
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That's not necessary; the options are not visible if COMMON_CLK is not
+already defined, see drivers/clk/Kconfig:
 
-On Mon, Nov 07, 2016 at 05:36:03PM +0800, Icenowy Zheng wrote:
-> > And your commit log should explain why it is an issue. Yours is even=20
-> > wrong here, we could definitely change the rate of these clocks=20
-> > already. The only thing that was not allowed was to change the rate of=
-=20
-> > its parents, which is what this patch fixes.=20
-> >
-> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>=20
-> > > ---=20
-> > > Patch 4.9-rc too.=20
-> >
-> > I don't see why it should be part of 4.9. No one uses that code in 4.9.=
-=20
->=20
-> It can be triggered by a modified dt in 4.9, by add operating points.
+menu "Common Clock Framework"
+        depends on COMMON_CLK
 
-Still, there's no reason to fix something that is not used by anyone,
-it can definitely wait until the next release. Linus also said that he
-didn't want patches like that last week.
+...
+source "drivers/clk/bcm/Kconfig"
 
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---3w7tbgn6ftlie325
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYIh04AAoJEBx+YmzsjxAgUK8P/RehGnf4pZGpxzBR24LjMPVV
-SqcbhKMupCJ34P4EiJwjQTyDKvxBBMgFzc+D5ftAK6kG3M5Qi/oYApVUNCjysj4i
-vVgDBHvd19OXM2zHn+ZU1AJCs7yB3KtcawIvtKQJKvVh9YzvxAo/1YAK8ZqscaFe
-9zMc57GQ74uy1Q5+n44ksB1FN4MJrmL8PmC6oDQWdEsPX/MjbOATLhKEmhlma6Fp
-tvo1LHEdonO2Es9KbHI+cQ9evtVTKK3ztv8IIgLgMgi0hXWQBJlUafnPYn8lX3xI
-SaBi0+Dd2wcZvu8CH/HdowEoG+EbRDiX7mgrwFIiiXHYA78pbakf6h4bavCAetOF
-F2FIkWDlHCMSS7llTB9eeHY2o/Bl/aNum8xTvmhTbm/GvkI/Waug5a+nQIXKfUFM
-dFB0/3DjU7uVc5k4aKV8YvjiXL3X0QvLJ4+BZ8rghZ6WydJrkj+YlyQidJyyXhCc
-24t2YtPQw3SOcuI5VbTqLELTkzzDO5cDhWZGpKSzg2dU85BnTrGMJvb+P0pM0REF
-vDwyycUVxeOkMXT+fcsUcpXtY+IeGo6re5cNBt6VV1DNRlMrsoVflUjWN0i9y7tn
-aeicVi3zu9iqN/JPdPLM9M+KG3pL1rrp1QaaR7aVijRyeDi7wmh5VAqL/NgS+AqT
-8ChEUpnMmgOw8GsWMRm+
-=ag8B
------END PGP SIGNATURE-----
-
---3w7tbgn6ftlie325--
+endmenu.
+-- 
+Florian
