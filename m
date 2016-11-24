@@ -1,74 +1,69 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20161118095938.GC22664@verge.net.au>
-References: <1478532904-5604-1-git-send-email-geert+renesas@glider.be>
- <20161117230701.GR25626@codeaurora.org> <CAMuHMdU9TRVWyCFf=auH2qZdW0hDYJW-E2ukruNY8dkn9yarxA@mail.gmail.com>
- <20161118095938.GC22664@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 18 Nov 2016 11:12:40 +0100
-Message-ID: <CAMuHMdW4eSdXqheeDUjT98i+EHd4Nr1Dp0y0nEqThEZ+pwe6DA@mail.gmail.com>
-Subject: Re: [git pull] clk: renesas: Updates for v4.10 (take two)
-To: Simon Horman <horms@verge.net.au>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+In-Reply-To: <20161124000503.GE6095@codeaurora.org>
+References: <1477503088-26508-1-git-send-email-yamada.masahiro@socionext.com>
+ <1477503088-26508-2-git-send-email-yamada.masahiro@socionext.com> <20161124000503.GE6095@codeaurora.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 24 Nov 2016 09:57:32 +0900
+Message-ID: <CAK7LNAQ6XeSHd7DbvD1jWeMfOqk8+R27Q-fNDWtXxpRd=OFgjA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: uniphier: add clock data for cpufreq
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Simon,
+Hi Stephen,
 
-On Fri, Nov 18, 2016 at 10:59 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Fri, Nov 18, 2016 at 10:55:00AM +0100, Geert Uytterhoeven wrote:
->> On Fri, Nov 18, 2016 at 12:07 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> > On 11/07, Geert Uytterhoeven wrote:
->> >> The following changes since commit dbdcc4f996df280eb2758095b4774ea62da8a2a7:
->> >>
->> >>   clk: renesas: r8a7796: Add DU and LVDS clocks (2016-11-02 20:40:08 +0100)
->> >>
->> >> are available in the git repository at:
->> >>
->> >>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag2
->> >>
->> >> for you to fetch changes up to 1936be95e013802291201c1ed193e04fd1ed3d13:
->> >
->> > Ok. Pulled into clk-next. I'm a little wary here as I haven't
->> > seen any indication from arm-soc maintainers (not Simon) that
->> > they'll take this cross tree merge. I guess we'll see how it
->> > goes.
->>
->> Thanks for pulling!
->>
->> Simon: while it's too late in the v4.10 cycle to queue additional cleanups in
->> the platform code on top of this, can you please still pull
->>
->>         git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
->> rcar-rst
->>
->> to resolve the (trivial) merge conflicts between the conversion to the RST
->> driver in that branch, and the addition of PRR and RZ/G support in your tree?
->> This will prevent arm-soc and/or Linus from having to deal with these
->> conflicts.
->>
->> For reference, I've pushed the conflict resolution to branch
+
+2016-11-24 9:05 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+
+>> +#if 1
+>> +     /*
+>> +      * TODO:
+>> +      * The return type of .round_rate() is "long", which is 32 bit wide on
+>> +      * 32 bit systems.  Clock rate greater than LONG_MAX (~ 2.15 GHz) is
+>> +      * treated as an error.  Needs a workaround until the problem is fixed.
+>> +      */
 >
-> Pull where? I've already sent pull-requests to the ARM SoC maintainers
+> Just curious is the problem internal to the clk framework because
+> of the clk_ops::round_rate design? Or does the consumer, cpufreq
+> in this case, have to deal with rates that are larger than
+> unsigned long on a 32 bit system? If it's just a clk_ops problem
+> and we need to support rates up to 32 bits wide (~ 4.3 GHz) on
+> the system then the driver could be changed to use
+> .determine_rate() ops and that would allow us to use all the bits
+> of unsigned long to figure out rates.
+>
+> If the problem is rates even larger than unsigned long on 32 bit
+> systems, then at the least I'd like to see some sort of plan to
+> fix that in the framework before merging code. Hopefully it can
+> be done gradually, but as I start looking at it it seems more and
+> more complicated to support this so this will be a long term
+> project.
+>
+> We can discuss the clk API changes needed as well if those are
+> required, but that is another issue that requires changes in
+> other places outside of clk drivers.
+>
 
-What do you mean with "where"?
+I understand your point, but core frame-work changes
+need more careful review than clk data changes in low-level drivers.
+It is too late to be included in v4.10.
 
-> so I fear this may be too late.
+If I drop 32bit SoC things, and send v2 only for 64bit SoCs,
+is that acceptable for 4.10-rc1?
 
-I know you've already sent pull requests.
-Without a conflict resolution, the arm-soc maintainers and/or Linus will
-face the conflicts, depending on merge order.
+Our ARMv8 SoCs are more actively developed, so
+getting 64bit clk data in first will be helpful.
 
-Gr{oetje,eeting}s,
+I postpone the 32bit SoC data until
+I figure out the root cause of the problem
+(and possible change for the API if necessary).
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Best Regards
+Masahiro Yamada
