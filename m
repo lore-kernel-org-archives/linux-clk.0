@@ -1,78 +1,27 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:51214 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752675AbcKIUnG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2016 15:43:06 -0500
-Date: Wed, 9 Nov 2016 12:43:04 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Ritesh Harjani <riteshh@codeaurora.org>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, andy.gross@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org
-Subject: Re: [PATCH v6 05/14] mmc: sdhci-msm: Update DLL reset sequence
-Message-ID: <20161109204304.GT16026@codeaurora.org>
-References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
- <1478517877-23733-6-git-send-email-riteshh@codeaurora.org>
- <20161108230622.GN16026@codeaurora.org>
- <10d66d21-eebd-45a3-6fb7-72117d860142@codeaurora.org>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: renesas: cpg_mstp: build for R8A774{3,5}
+Date: Thu, 24 Nov 2016 17:42:50 +0100
+Message-ID: <3519250.EUT2N03tcp@wuerfel>
+In-Reply-To: <CAMuHMdUY2S4gXANwGj3fYwtADQyQH-ZFT6EUQrViSYYq-LQ+xw@mail.gmail.com>
+References: <20161124162448.3761610-1-arnd@arndb.de> <CAMuHMdUY2S4gXANwGj3fYwtADQyQH-ZFT6EUQrViSYYq-LQ+xw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <10d66d21-eebd-45a3-6fb7-72117d860142@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/09, Ritesh Harjani wrote:
-> Hi Stephen,
+On Thursday, November 24, 2016 5:38:45 PM CET Geert Uytterhoeven wrote:
 > 
-> On 11/9/2016 4:36 AM, Stephen Boyd wrote:
-> >On 11/07, Ritesh Harjani wrote:
-> >>
-> >>diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> >>index 42f42aa..32b0b79 100644
-> >>--- a/drivers/mmc/host/sdhci-msm.c
-> >>+++ b/drivers/mmc/host/sdhci-msm.c
-> >>@@ -58,11 +58,17 @@
-> >> #define CORE_DLL_CONFIG		0x100
-> >> #define CORE_DLL_STATUS		0x108
-> >>
-> >>+#define CORE_DLL_CONFIG_2	0x1b4
-> >>+#define CORE_FLL_CYCLE_CNT	BIT(18)
-> >>+#define CORE_DLL_CLOCK_DISABLE	BIT(21)
-> >>+
-> >> #define CORE_VENDOR_SPEC	0x10c
-> >> #define CORE_CLK_PWRSAVE	BIT(1)
-> >>
-> >> #define CORE_VENDOR_SPEC_CAPABILITIES0	0x11c
-> >>
-> >>+#define TCXO_FREQ		19200000
-> >
-> >TCXO_FREQ could change based on the board. For example, IPQ has
-> >it as 25 MHz.
-> Actually not sure of the proper way on how to get this freq in driver
-> today. We may use xo_board clock but, it is not available for all boards
-> except 8996/8916 I guess.
+> R8A7745 and R8A7743 don't need the CPG_MSTP driver, they select
+> CLK_RENESAS_CPG_MSSR instead.
 > 
-> Also, there is no sdhc for IPQ board and for all other boards
-> TCXO_FREQ is same where sdhci-msm driver is used. For that purpose
-> this was defined here for sdhci-msm driver.
+> Perhaps you still have your patch "[PATCH] clk: fix link error for rcar-gen2"
+> applied to enable clk-rcar-gen2.o on R8A7745?
 > 
-> Do you think in that case we should keep it this way for now and
-> later change if a need arise to change the TCXO_FREQ ?
+> Gr{oetje,eeting}s,
+> 
 
-We've added xo_board (or cxo_board/pxo_board) to all the qcom
-platforms upstream, so there should always be something to
-reference in the dts and call clk_get_rate() on. So I would add
-it to the binding as another clock and then use that instead of
-hardcoding the value. That's much more flexible in case this
-changes in the future.
+Ah, right. My mistake. I'll drop both then.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+	Arnd
