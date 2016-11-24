@@ -1,165 +1,141 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:39412 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751498AbcKILxP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Nov 2016 06:53:15 -0500
-Subject: Re: [PATCH v6 02/14] clk: qcom: Add rcg ops to return floor value
- closest to the requested rate
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1478517877-23733-1-git-send-email-riteshh@codeaurora.org>
- <1478517877-23733-3-git-send-email-riteshh@codeaurora.org>
- <20161108230217.GM16026@codeaurora.org>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, andy.gross@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        kdorfman@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org
-From: Ritesh Harjani <riteshh@codeaurora.org>
-Message-ID: <723dd8bd-c13c-ebd1-f391-2d9f7d56a852@codeaurora.org>
-Date: Wed, 9 Nov 2016 17:23:04 +0530
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v2 1/9] clk: stm32f4: Update DT bindings documentation
+Date: Thu, 24 Nov 2016 15:45:41 +0100
+Message-ID: <1479998749-20358-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
+References: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20161108230217.GM16026@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Thanks for the review.
+Creation of dt include file for specific stm32f4 clocks.
+These specific clocks are not derived from system clock (SYSCLOCK)
+We should use index 1 to use these clocks in DT.
+e.g. <&rcc 1 CLK_LSI>
 
-On 11/9/2016 4:32 AM, Stephen Boyd wrote:
-> On 11/07, Ritesh Harjani wrote:
->> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
->> index b904c33..1b3e8d2 100644
->> --- a/drivers/clk/qcom/clk-rcg.h
->> +++ b/drivers/clk/qcom/clk-rcg.h
->> @@ -173,6 +173,7 @@ struct clk_rcg2 {
->>  #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
->>
->>  extern const struct clk_ops clk_rcg2_ops;
->> +extern const struct clk_ops clk_rcg2_floor_ops;
->>  extern const struct clk_ops clk_rcg2_shared_ops;
->>  extern const struct clk_ops clk_edp_pixel_ops;
->>  extern const struct clk_ops clk_byte_ops;
->> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
->> index a071bba..04433a6 100644
->> --- a/drivers/clk/qcom/clk-rcg2.c
->> +++ b/drivers/clk/qcom/clk-rcg2.c
->> @@ -47,6 +47,11 @@
->>  #define N_REG			0xc
->>  #define D_REG			0x10
->>
->> +enum {
->> +	FLOOR,
->> +	CEIL,
->> +};
->
-> Give it a name.
-Yes, sure. I will keep it as freq_policy.
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ .../devicetree/bindings/clock/st,stm32-rcc.txt     |  8 ++++++
+ drivers/clk/clk-stm32f4.c                          |  9 +++++--
+ include/dt-bindings/clock/stm32f4-clock.h          | 31 ++++++++++++++++++++++
+ 3 files changed, 46 insertions(+), 2 deletions(-)
+ create mode 100644 include/dt-bindings/clock/stm32f4-clock.h
 
->
->> +
->>  static int clk_rcg2_is_enabled(struct clk_hw *hw)
->>  {
->>  	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
->> @@ -176,15 +181,25 @@ static int clk_rcg2_set_parent(struct clk_hw *hw, u8 index)
->>  	return calc_rate(parent_rate, m, n, mode, hid_div);
->>  }
->>
->> -static int _freq_tbl_determine_rate(struct clk_hw *hw,
->> -		const struct freq_tbl *f, struct clk_rate_request *req)
->> +static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
->> +				    struct clk_rate_request *req, bool match)
->
-> Use the enum please. Also name it something besides match.
-> policy?
-Sure. (freq_policy)
-
->
->>  {
->>  	unsigned long clk_flags, rate = req->rate;
->>  	struct clk_hw *p;
->>  	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
->>  	int index;
->>
->> -	f = qcom_find_freq(f, rate);
->> +	switch (match) {
->> +	case FLOOR:
->> +		f = qcom_find_freq_floor(f, rate);
->> +		break;
->> +	case CEIL:
->> +		f = qcom_find_freq(f, rate);
->> +		break;
->> +	default:
->> +		return -EINVAL;
->> +	};
->> +
->>  	if (!f)
->>  		return -EINVAL;
->>
->> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
->> index fffcbaf..cf6b87f 100644
->> --- a/drivers/clk/qcom/common.c
->> +++ b/drivers/clk/qcom/common.c
->> @@ -46,6 +46,32 @@ struct freq_tbl *qcom_find_freq(const struct freq_tbl *f, unsigned long rate)
->>  }
->>  EXPORT_SYMBOL_GPL(qcom_find_freq);
->>
->> +const
->> +struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
->
-> We can't put const and struct on the same line?
-Ok sure.
-
->
->> +				      unsigned long rate)
->> +{
->> +	int size = 0;
->> +
->> +	if (!f)
->> +		return NULL;
->> +
->> +	/*
->> +	 * The freq table has entries in the ascending order of frequencies
->> +	 * To find the floor for a given frequency, we need to do a reverse
->> +	 * lookup of the table
->> +	 */
->> +	for (; f->freq; f++, size++)
->> +		;
->> +
->> +	for (f--; size; f--, size--)
->> +		if (rate >= f->freq)
->> +			return f;
->
-> I don't understand why we can't do this while iterating through
-> the table. We shouldn't need to size up the frequency table first.
->
-> 	const struct freq_tbl *best = NULL;
->
-> 	for ( ; f->freq; f++) {
-> 		if (rate >= f->freq)
-> 			best = f->freq;
-> 		else
-> 			break;
-> 	}
-> 	
-> 	return best;
->
-Yes, will do above change.
-
->> +
->> +	/* could not find any rates lower than *rate* */
->
->> +	return NULL;
->> +}
->> +EXPORT_SYMBOL_GPL(qcom_find_freq_floor);
->
-
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+index 0532d81..18e05c2 100644
+--- a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
++++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+@@ -17,6 +17,8 @@ Required properties:
+   property, containing a phandle to the clock device node, an index selecting
+   between gated clocks and other clocks and an index specifying the clock to
+   use.
++- clocks: External oscillator clock phandle
++  - high speed external clock signal (HSE)
+ 
+ Example:
+ 
+@@ -25,6 +27,7 @@ Example:
+ 		#clock-cells = <2>
+ 		compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
+ 		reg = <0x40023800 0x400>;
++		clocks = <&clk_hse>;
+ 	};
+ 
+ Specifying gated clocks
+@@ -66,6 +69,11 @@ The secondary index is bound with the following magic numbers:
+ 
+ 	0	SYSTICK
+ 	1	FCLK
++	2	CLK_LSI		(low-power clock source)
++	3	CLK_LSE		(generated from a 32.768 kHz low-speed external
++				 crystal or ceramic resonator)
++	4	CLK_HSE_RTC	(HSE division factor for RTC clock)
++	5	CLK_RTC		(real-time clock)
+ 
+ Example:
+ 
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 5eb05db..39965ab 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -28,6 +28,13 @@
+ #include <linux/regmap.h>
+ #include <linux/mfd/syscon.h>
+ 
++/*
++ * Include list of clocks wich are not derived from system clock (SYSCLOCK)
++ * The index of these clocks is the secondary index of DT bindings
++ *
++ */
++#include <dt-bindings/clock/stm32f4-clock.h>
++
+ #define STM32F4_RCC_PLLCFGR		0x04
+ #define STM32F4_RCC_CFGR		0x08
+ #define STM32F4_RCC_AHB1ENR		0x30
+@@ -208,8 +215,6 @@ struct stm32f4_gate_data {
+ 	{ STM32F4_RCC_APB2ENR, 26,	"ltdc",		"apb2_div" },
+ };
+ 
+-enum { SYSTICK, FCLK, CLK_LSI, CLK_LSE, CLK_HSE_RTC, CLK_RTC, END_PRIMARY_CLK };
+-
+ /*
+  * This bitmask tells us which bit offsets (0..192) on STM32F4[23]xxx
+  * have gate bits associated with them. Its combined hweight is 71.
+diff --git a/include/dt-bindings/clock/stm32f4-clock.h b/include/dt-bindings/clock/stm32f4-clock.h
+new file mode 100644
+index 0000000..3132b6a
+--- /dev/null
++++ b/include/dt-bindings/clock/stm32f4-clock.h
+@@ -0,0 +1,31 @@
++/*
++ * stm32f4-clock.h
++ *
++ * Copyright (C) 2016 STMicroelectronics
++ * Author: Gabriel Fernandez for STMicroelectronics.
++ * License terms:  GNU General Public License (GPL), version 2
++ */
++
++/*
++ * List of clocks wich are not derived from system clock (SYSCLOCK)
++ *
++ * The index of these clocks is the secondary index of DT bindings
++ * (see Documentatoin/devicetree/bindings/clock/st,stm32-rcc.txt)
++ *
++ * e.g:
++	<assigned-clocks = <&rcc 1 CLK_LSE>;
++*/
++
++#ifndef _DT_BINDINGS_CLK_STMF4_H
++#define _DT_BINDINGS_CLK_STMF4_H
++
++#define SYSTICK			0
++#define FCLK			1
++#define CLK_LSI			2
++#define CLK_LSE			3
++#define CLK_HSE_RTC		4
++#define CLK_RTC			5
++
++#define END_PRIMARY_CLK		6
++
++#endif
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
