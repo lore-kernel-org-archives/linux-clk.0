@@ -1,44 +1,72 @@
-Return-Path: <ukl@pengutronix.de>
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	trivial@kernel.org,
-	kernel@pengutronix.de
-Subject: [PATCH] clk: gate: fix coding style
-Date: Wed,  9 Nov 2016 12:00:46 +0100
-Message-Id: <20161109110046.9594-1-u.kleine-koenig@pengutronix.de>
+Return-Path: <yuantian.tang@nxp.com>
+From: <yuantian.tang@nxp.com>
+To: <mturquette@baylibre.com>
+CC: <sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <scott.wood@nxp.com>,
+	<linux-arm-kernel@lists.infradead.org>, Tang Yuantian
+	<Yuantian.Tang@nxp.com>, Tang Yuantian <yuantian.tang@nxp.com>
+Subject: [PATCH v3] clk: qoriq: added ls1012a clock configuration
+Date: Thu, 24 Nov 2016 10:36:55 +0800
+Message-ID: <1479955015-37514-1-git-send-email-yuantian.tang@nxp.com>
+Return-Path: yuantian.tang@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The : of the ?: operator should have a leading space.
+From: Tang Yuantian <Yuantian.Tang@nxp.com>
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
 ---
-Hello,
+v3:
+  - rebased to latest kernel and re-sorted the code
+v2:
+  - remove commit message as it is duplicated to title
+ drivers/clk/clk-qoriq.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-I always wonder if I should send such patches or if they hurt more than
-they are worth. *shrug* ignore at will.
-
-Best regards
-Uwe
-
- drivers/clk/clk-gate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index 4e691e35483a..59e302538d23 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -145,7 +145,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
- 	init.name = name;
- 	init.ops = &clk_gate_ops;
- 	init.flags = flags | CLK_IS_BASIC;
--	init.parent_names = (parent_name ? &parent_name: NULL);
-+	init.parent_names = (parent_name ? &parent_name : NULL);
- 	init.num_parents = (parent_name ? 1 : 0);
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 7dd4351..697310e 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -291,6 +291,14 @@ static const struct clockgen_muxinfo ls1046a_hwa2 = {
+ 	},
+ };
  
- 	/* struct clk_gate assignments */
++static const struct clockgen_muxinfo ls1012a_cmux = {
++	{
++		[0] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
++		{},
++		[2] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
++	}
++};
++
+ static const struct clockgen_muxinfo t1023_hwa1 = {
+ 	{
+ 		{},
+@@ -529,6 +537,16 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.flags = CG_PLL_8BIT,
+ 	},
+ 	{
++		.compat = "fsl,ls1012a-clockgen",
++		.cmux_groups = {
++			&ls1012a_cmux
++		},
++		.cmux_to_group = {
++			0, -1
++		},
++		.pll_mask = 0x03,
++	},
++	{
+ 		.compat = "fsl,ls2080a-clockgen",
+ 		.cmux_groups = {
+ 			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
+@@ -1316,6 +1334,7 @@ CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_ls1012a, "fsl,ls1012a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
+ 
+ /* Legacy nodes */
 -- 
-2.10.1
+2.1.0.27.g96db324
