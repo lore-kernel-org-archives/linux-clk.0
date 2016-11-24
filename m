@@ -1,86 +1,65 @@
-Return-Path: <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 2/6] dt-bindings: clk: max8997: Add DT binding documentation
-To: Rob Herring <robh@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- krzk@kernel.org, javier@osg.samsung.com, kgene@kernel.org,
- thomas.ab@samsung.com, myungjoo.ham@samsung.com,
- Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-From: "pankaj.dubey" <pankaj.dubey@samsung.com>
-Message-id: <873e0495-cc2f-6bef-4a37-a8b9999846d6@samsung.com>
-Date: Thu, 17 Nov 2016 07:47:18 +0530
-MIME-version: 1.0
-In-reply-to: <20161114161546.oitvons6tvlazgsb@rob-hp-laptop>
-Content-type: text/plain; charset=windows-1252
-References: <1478513376-14307-1-git-send-email-pankaj.dubey@samsung.com>
- <1478513376-14307-3-git-send-email-pankaj.dubey@samsung.com>
- <CGME20161114161550epcas1p3a06490b915cff2dffc5af8df54cd6561@epcas1p3.samsung.com>
- <20161114161546.oitvons6tvlazgsb@rob-hp-laptop>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20161124162448.3761610-1-arnd@arndb.de>
+References: <20161124162448.3761610-1-arnd@arndb.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 24 Nov 2016 17:38:45 +0100
+Message-ID: <CAMuHMdUY2S4gXANwGj3fYwtADQyQH-ZFT6EUQrViSYYq-LQ+xw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: cpg_mstp: build for R8A774{3,5}
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+Hi Arnd,
 
-On Monday 14 November 2016 09:45 PM, Rob Herring wrote:
-> On Mon, Nov 07, 2016 at 03:39:32PM +0530, Pankaj Dubey wrote:
->> Add Device Tree binding documentation for the clocks
->> outputs in the Maxim-8997 Power Management IC.
->>
->> CC: Michael Turquette <mturquette@baylibre.com>
->> CC: Rob Herring <robh+dt@kernel.org>
->> CC: devicetree@vger.kernel.org
->> CC: linux-clk@vger.kernel.org
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->>  .../devicetree/bindings/clock/maxim,max8997.txt    | 44 ++++++++++++++++++++++
->>  .../bindings/regulator/max8997-regulator.txt       |  3 ++
->>  2 files changed, 47 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/maxim,max8997.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/maxim,max8997.txt b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
->> new file mode 100644
->> index 0000000..d2e2a74
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/maxim,max8997.txt
->> @@ -0,0 +1,44 @@
->> +Binding for Maxim MAX8997 32k clock generator block
->> +
->> +This is a part of device tree bindings of MAX8997 multi-function device.
->> +More information can be found in bindings/regulator/max8997-regulator.txt file.
->> +
->> +The MAX8997 contains two 32.768khz clock outputs that can be controlled
->> +(gated/ungated) over I2C.
->> +
->> +Following properties should be presend in main device node of the MFD chip.
->> +
->> +Required properties:
->> +
->> +- #clock-cells: from common clock binding; shall be set to 1.
->> +
->> +Optional properties:
->> +- clock-output-names: From common clock binding.
->> +
->> +Each clock is assigned an identifier and client nodes can use this identifier
->> +to specify the clock which they consume. Following indices are allowed:
->> +    - 0: 32khz_ap clock,
->> +    - 1: 32khz_cp clock,
->> +
->> +Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max8997.h
->> +header and can be used in device tree sources.
->> +
->> +Example: Node of the MFD chip
->> +
->> +	max8997: max8997_pmic@66 {
-> 
-> pmic@66 {
-> 
-> With that:
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
-> 
-> 
+On Thu, Nov 24, 2016 at 5:24 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> We get a link failure on R8A7745 and R8A7743 when the other platforms
+> are disabled and nothing selects the clk-rcar-gen2 driver:
+>
+> drivers/clk/renesas/clk-rcar-gen2.o: In function `rcar_gen2_cpg_clocks_init':
+> clk-rcar-gen2.c:(.init.text+0x39c): undefined reference to `cpg_mstp_add_clk_domain'
 
-Thanks for review and ack.
-With above mentioned change I will post v2 soon.
+clk-rcar-gen2  is not used on R8A7745 and R8A7743?
 
-Thanks,
-Pankaj Dubey
+> This adds another 'select' statement to get them to build as well.
+>
+> Fixes: 9127d54bb894 ("clk: renesas: cpg-mssr: Add R8A7745 support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/clk/renesas/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+> index 2586dfa0026b..4ebd9d3d24b7 100644
+> --- a/drivers/clk/renesas/Kconfig
+> +++ b/drivers/clk/renesas/Kconfig
+> @@ -10,6 +10,8 @@ config CLK_RENESAS_CPG_MSTP
+>         default y if ARCH_R7S72100
+>         default y if ARCH_R8A73A4
+>         default y if ARCH_R8A7740
+> +       default y if ARCH_R8A7743
+> +       default y if ARCH_R8A7745
+
+R8A7745 and R8A7743 don't need the CPG_MSTP driver, they select
+CLK_RENESAS_CPG_MSSR instead.
+
+Perhaps you still have your patch "[PATCH] clk: fix link error for rcar-gen2"
+applied to enable clk-rcar-gen2.o on R8A7745?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
