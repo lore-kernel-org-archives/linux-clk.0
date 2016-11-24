@@ -1,49 +1,130 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:49784 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753107AbcKPQDV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Nov 2016 11:03:21 -0500
-From: Ritesh Harjani <riteshh@codeaurora.org>
-To: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, sboyd@codeaurora.org,
-        andy.gross@linaro.org
-Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Subject: [PATCH v8 12/16] arm64: dts: qcom: msm8916: Add ddr support to sdhc1
-Date: Wed, 16 Nov 2016 21:30:48 +0530
-Message-Id: <1479312052-22396-13-git-send-email-riteshh@codeaurora.org>
-In-Reply-To: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
-References: <1479312052-22396-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v2 5/9] clk: stm32f4: Add I2S clock
+Date: Thu, 24 Nov 2016 15:45:45 +0100
+Message-ID: <1479998749-20358-6-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
+References: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds mmc-ddr-1_8v support to DT for sdhc1 of msm8916.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+This patch introduces I2S clock for stm32f4 soc.
+The I2S clock could be derived from an external clock or from pll-i2s
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/clock/st,stm32-rcc.txt |  4 +++-
+ drivers/clk/clk-stm32f4.c                                | 14 +++++++++++++-
+ include/dt-bindings/clock/stm32f4-clock.h                |  3 ++-
+ 3 files changed, 18 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index 6265822..5bc187c 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -515,6 +515,7 @@
- 				 <&gcc GCC_SDCC1_AHB_CLK>,
- 				 <&xo_board 0>;
- 			clock-names = "core", "iface", "xo_clock";
-+			mmc-ddr-1_8v;
- 			bus-width = <8>;
- 			non-removable;
- 			status = "disabled";
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+index 4cd08da6..8c1ca68 100644
+--- a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
++++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+@@ -19,6 +19,7 @@ Required properties:
+   use.
+ - clocks: External oscillator clock phandle
+   - high speed external clock signal (HSE)
++  - external I2S clock (I2S_CKIN)
+ 
+ Example:
+ 
+@@ -27,7 +28,7 @@ Example:
+ 		#clock-cells = <2>
+ 		compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
+ 		reg = <0x40023800 0x400>;
+-		clocks = <&clk_hse>;
++		clocks = <&clk_hse>, <&clk_i2s_ckin>;
+ 	};
+ 
+ Specifying gated clocks
+@@ -77,6 +78,7 @@ The secondary index is bound with the following magic numbers:
+ 	6	PLL_VCO_I2S	(vco frequency of I2S pll)
+ 	7	PLL_VCO_SAI	(vco frequency of SAI pll)
+ 	8	CLK_LCD		(LCD-TFT)
++	9	CLK_I2S		(I2S clocks)
+ 
+ Example:
+ 
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 86244fc..3063b30 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -935,6 +935,8 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
+ 
+ static const char *lcd_parent[1] = { "pllsai-r-div" };
+ 
++static const char *i2s_parents[2] = { "plli2s-r", NULL };
++
+ struct stm32_aux_clk {
+ 	int idx;
+ 	const char *name;
+@@ -969,6 +971,12 @@ struct stm32f4_clk_data {
+ 		STM32F4_RCC_APB2ENR, 26,
+ 		CLK_SET_RATE_PARENT
+ 	},
++	{
++		CLK_I2S, "i2s", i2s_parents, ARRAY_SIZE(i2s_parents),
++		STM32F4_RCC_CFGR, 23, 1,
++		NO_GATE, 0,
++		CLK_SET_RATE_PARENT
++	},
+ };
+ 
+ static const struct stm32f4_clk_data stm32f429_clk_data = {
+@@ -1063,7 +1071,7 @@ static struct clk_hw *stm32_register_aux_clk(const char *name,
+ 
+ static void __init stm32f4_rcc_init(struct device_node *np)
+ {
+-	const char *hse_clk;
++	const char *hse_clk, *i2s_in_clk;
+ 	int n;
+ 	const struct of_device_id *match;
+ 	const struct stm32f4_clk_data *data;
+@@ -1098,6 +1106,10 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 
+ 	hse_clk = of_clk_get_parent_name(np, 0);
+ 
++	i2s_in_clk = of_clk_get_parent_name(np, 1);
++
++	i2s_parents[1] = i2s_in_clk;
++
+ 	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
+ 			16000000, 160000);
+ 	pllcfgr = readl(base + STM32F4_RCC_PLLCFGR);
+diff --git a/include/dt-bindings/clock/stm32f4-clock.h b/include/dt-bindings/clock/stm32f4-clock.h
+index 1be4a3a..b129ab9 100644
+--- a/include/dt-bindings/clock/stm32f4-clock.h
++++ b/include/dt-bindings/clock/stm32f4-clock.h
+@@ -28,7 +28,8 @@
+ #define PLL_VCO_I2S		6
+ #define PLL_VCO_SAI		7
+ #define CLK_LCD			8
++#define CLK_I2S			9
+ 
+-#define END_PRIMARY_CLK		9
++#define END_PRIMARY_CLK		10
+ 
+ #endif
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, 
-a Linux Foundation Collaborative Project.
-
+1.9.1
