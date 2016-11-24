@@ -1,65 +1,81 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH 6/6] arm: dts: stm32f4: Add external I2S clock
-Date: Mon, 7 Nov 2016 14:05:43 +0100
-Message-ID: <1478523943-23142-7-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
-References: <1478523943-23142-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 23 Nov 2016 16:38:33 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+Cc: mturquette@baylibre.com, orson.zhai@spreadtrum.com,
+	baolin.wang@spreadtrum.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ben.li@spreadtrum.com
+Subject: Re: [PATCH] clk: Register clkdev after setup of fixed-rate and
+ fixed-factor clocks
+Message-ID: <20161124003833.GF6095@codeaurora.org>
+References: <1476184424-8528-1-git-send-email-orson.zhai@spreadtrum.com>
+ <20161020230103.GD26139@codeaurora.org>
+ <20161022081448.GB32560@spreadtrum.com>
+ <20161025204008.GE26139@codeaurora.org>
+ <20161112051907.GA8514@spreadtrum.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20161112051907.GA8514@spreadtrum.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 11/12, Xiaolong Zhang wrote:
+> On 二, 10月 25, 2016 at 08:40:08下午 +0000, Stephen Boyd wrote:
+> > On 10/22, Xiaolong Zhang wrote:
+> > > On 四, 10月 20, 2016 at 04:01:03下午 -0700, Stephen Boyd wrote:
+> > > > On 10/11, Orson Zhai wrote:
+> > > > > From: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+> > > > > 
+> > > > > When common kernel setups fixed clock, of_clk_provider will be registerred.
+> > > > > But there is no clkdev being registerred at the same time. This will make
+> > > > > it difficult to get the clock by using clk_get(NULL, con_id).
+> > > > > 
+> > > > > Add clkdev register for fixed-rate and fixed-factor clock and ignore
+> > > > > the error if any.
+> > > > > 
+> > > > > Signed-off-by: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+> > > > > Signed-off-by: Orson Zhai <orson.zhai@spreadtrum.com>
+> > > > > ---
+> > > > 
+> > > > Why are we using clkdev lookups for clks populated from DT?
+> > > > Shouldn't we be able to point to them from the consumers that
+> > > > would also be in DT? I'm a little lost.
+> > > > 
+> > > The clk_get interface allows the first argument as NULL. We just assure
+> > > consumers can get the clock from DT or by clock name.
+> > 
+> > Ok. The first argument to clk_get() really shouldn't be NULL. It
+> > should be the device pointer for the device that is associated
+> > with the clk you want to get. The clock name (second argument to
+> > clk_get()) should be device specific and not some globally unique
+> > identifier. It seems that you're using the clk_get() API
+> > incorrectly.
+> >
+> Sorry for late reply.
+> There are two paths in clk_get:
+> a) dev is not NULL, the calling procedure is as following
+> clk_get(dev, con_id)
+> --->of_clk_get_by_name(dev->of_node, con_id)
+> 
+> b) dev is NULL, the calling procedure is as following
+> clk_dev(NULL, con_id)
+> --->clk_get_sys(NULL, con_id)
+>     --->clk_find(NULL, con_id)
+> 
+> I just cann't understand why you say the first argument shouldn't
+> be NULL. Is there other consideration in CCF?
+> 
 
-This patch adds an external I2S clock in the DT.
-The I2S clock could be derived from an external I2S clock or by I2S pll.
+Passing NULL as the first argument is allowed, but that's mostly
+an artifact of the clk_get() API. If you don't have a device, you
+should be calling clk_get_sys() and then a clkdev lookup should
+have been added with some appropriate dev_id string that is used
+in the clk_get_sys() call. At least this is my understanding of
+the clkdev APIs, but Russell is the authority here.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- arch/arm/boot/dts/stm32f429.dtsi | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+We're really off track now though. Can you please point to some
+code that needs this change? If we're using DT then we should be
+able to use the of_clk_*() path to find the clk.
 
-diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
-index 2700449..14da6ce 100644
---- a/arch/arm/boot/dts/stm32f429.dtsi
-+++ b/arch/arm/boot/dts/stm32f429.dtsi
-@@ -68,6 +68,12 @@
- 			compatible = "fixed-clock";
- 			clock-frequency = <32000>;
- 		};
-+
-+		clk_i2s_ckin: i2s-ckin {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <0>;
-+		};
- 	};
- 
- 	soc {
-@@ -356,7 +362,7 @@
- 			#clock-cells = <2>;
- 			compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
- 			reg = <0x40023800 0x400>;
--			clocks = <&clk_hse>;
-+			clocks = <&clk_hse>, <&clk_i2s_ckin>;
- 			st,syscfg = <&pwrcfg>;
- 		};
- 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
