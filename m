@@ -1,100 +1,64 @@
-Return-Path: <shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH v3 1/3] dt-bindings: add documentation for rk1108 cru
-Date: Wed, 16 Nov 2016 16:49:21 +0800
-Message-Id: <1479286163-34789-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v2 0/9] STM32F4 missing clocks
+Date: Thu, 24 Nov 2016 15:45:40 +0100
+Message-ID: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the dt-binding documentation for the clock and reset unit
-found on Rockchip rk1108 SoCs.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+v2:
+ - Put post divider in config structure
+ - Rework patch-set
+    - add update dt binding documentation
+    - add clock definition file
+ - Use composite for pll vco clocks
+ - For auxiliary clock, allow the possiblity to enable peripheral
+   clocks at same time (sugested by radek)
+ - Add vco_in clock (entry frequency for all pll) to simplify the code and clarify clock tree
+ - Fix missing end of divider tables
 
----
+This patch-set adds:
+ - I2S & SAI PLLs
+ - SDIO & 48 Mhz clocks
+ - LCD-TFT clock
+ - I2S & SAI clocks
 
-Changes in v3:
-- fix mismatch of external clk input name
-- add hdmiphy and usbphy clk input
+Gabriel Fernandez (9):
+  clk: stm32f4: Update DT bindings documentation
+  clk: stm32f4: Add PLL_I2S & PLL_SAI for STM32F429/469 boards
+  clk: stm32f4: Add post divisor for I2S & SAI PLLs
+  clk: stm32f4: Add lcd-tft clock
+  clk: stm32f4: Add I2S clock
+  clk: stm32f4: Add SAI clocks
+  clk: stm32f4: SDIO & 48Mhz clock management for STM32F469 board
+  arm: dts: stm32f4: Add external I2S clock
+  arm: dts: stm32f4: Include auxiliary stm32f4 clock definition
 
-Changes in v2: None
+ .../devicetree/bindings/clock/st,stm32-rcc.txt     |  15 +
+ arch/arm/boot/dts/stm32f429.dtsi                   |   9 +-
+ drivers/clk/clk-stm32f4.c                          | 585 ++++++++++++++++++++-
+ include/dt-bindings/clock/stm32f4-clock.h          |  37 ++
+ 4 files changed, 626 insertions(+), 20 deletions(-)
+ create mode 100644 include/dt-bindings/clock/stm32f4-clock.h
 
- .../bindings/clock/rockchip,rk1108-cru.txt         | 59 ++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt
-new file mode 100644
-index 0000000..4da1261
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt
-@@ -0,0 +1,59 @@
-+* Rockchip RK1108 Clock and Reset Unit
-+
-+The RK1108 clock controller generates and supplies clock to various
-+controllers within the SoC and also implements a reset controller for SoC
-+peripherals.
-+
-+Required Properties:
-+
-+- compatible: should be "rockchip,rk1108-cru"
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+- #clock-cells: should be 1.
-+- #reset-cells: should be 1.
-+
-+Optional Properties:
-+
-+- rockchip,grf: phandle to the syscon managing the "general register files"
-+  If missing pll rates are not changeable, due to the missing pll lock status.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. All available clocks are defined as
-+preprocessor macros in the dt-bindings/clock/rk1108-cru.h headers and can be
-+used in device tree sources. Similar macros exist for the reset sources in
-+these files.
-+
-+External clocks:
-+
-+There are several clocks that are generated outside the SoC. It is expected
-+that they are defined using standard clock bindings with following
-+clock-output-names:
-+ - "xin24m" - crystal input - required,
-+ - "ext_vip" - external VIP clock - optional
-+ - "ext_i2s" - external I2S clock - optional
-+ - "ext_gmac" - external GMAC clock - optional
-+ - "hdmiphy" - external clock input derived from HDMI PHY - optional
-+ - "usbphy" - external clock input derived from USB PHY - optional
-+
-+Example: Clock controller node:
-+
-+	cru: cru@20200000 {
-+		compatible = "rockchip,rk1108-cru";
-+		reg = <0x20200000 0x1000>;
-+		rockchip,grf = <&grf>;
-+
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+Example: UART controller node that consumes the clock generated by the clock
-+  controller:
-+
-+	uart0: serial@10230000 {
-+		compatible = "rockchip,rk1108-uart", "snps,dw-apb-uart";
-+		reg = <0x10230000 0x100>;
-+		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+		clocks = <&cru SCLK_UART0>;
-+	};
 -- 
 1.9.1
