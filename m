@@ -1,86 +1,72 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1477992234.8785.9.camel@mtksdaap41>
-Subject: Re: [PATCH v14 1/4] clk: mediatek: Add MT2701 clock support
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Erin Lo <erin.lo@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	Mike Turquette <mturquette@baylibre.com>, "Rob Herring" <robh@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <kernel@pengutronix.de>, Daniel
- Kurtz <djkurtz@chromium.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-	<ms.chen@mediatek.com>, <robert.chou@mediatek.com>, Shunli Wang
-	<shunli.wang@mediatek.com>
-Date: Tue, 1 Nov 2016 17:23:54 +0800
-In-Reply-To: <20161031180647.GR16026@codeaurora.org>
-References: <1477020742-13889-1-git-send-email-erin.lo@mediatek.com>
-	 <1477020742-13889-2-git-send-email-erin.lo@mediatek.com>
-	 <20161028011753.GS26139@codeaurora.org>
-	 <1477896558.5376.13.camel@mtksdaap41>
-	 <20161031180647.GR16026@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <absahu@codeaurora.org>
 MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Thu, 24 Nov 2016 18:16:02 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+ pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+ mturquette@baylibre.com, galak@codeaurora.org, pradeepb@codeaurora.org,
+ mmcclint@codeaurora.org, varada@codeaurora.org, sricharan@codeaurora.org,
+ architt@codeaurora.org, ntelkar@codeaurora.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 4/7] clk: qcom: ipq4019: Added all the frequencies for
+ apps cpu
+In-Reply-To: <20161102012450.GD16026@codeaurora.org>
+References: <1474460512-31994-1-git-send-email-absahu@codeaurora.org>
+ <1474460512-31994-5-git-send-email-absahu@codeaurora.org>
+ <20161102012450.GD16026@codeaurora.org>
+Message-ID: <356199897fb2022342a76bc872b703d5@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-
-On Mon, 2016-10-31 at 11:06 -0700, Stephen Boyd wrote:
-> On 10/31, James Liao wrote:
-> > On Thu, 2016-10-27 at 18:17 -0700, Stephen Boyd wrote:
-> > > On 10/21, Erin Lo wrote:
-> > > > @@ -244,3 +256,31 @@ void mtk_clk_register_composites(const struct mtk_composite *mcs,
-> > > >  			clk_data->clks[mc->id] = clk;
-> > > >  	}
-> > > >  }
-> > > > +
-> > > > +void mtk_clk_register_dividers(const struct mtk_clk_divider *mcds,
-> > > > +			int num, void __iomem *base, spinlock_t *lock,
-> > > > +				struct clk_onecell_data *clk_data)
-> > > > +{
-> > > > +	struct clk *clk;
-> > > > +	int i;
-> > > > +
-> > > > +	for (i = 0; i <  num; i++) {
-> > > > +		const struct mtk_clk_divider *mcd = &mcds[i];
-> > > > +
-> > > > +		if (clk_data && !IS_ERR_OR_NULL(clk_data->clks[mcd->id]))
-> > > 
-> > > NULL is a valid clk. IS_ERR_OR_NULL is usually wrong.
-> > 
-> > Why NULL is a valid clk?
+On 2016-11-02 06:54, Stephen Boyd wrote:
+> On 09/21, Abhishek Sahu wrote:
+>> The APPS CPU clock does not contain all the frequencies in its
+>> frequency table so this patch adds the same.
+>> 
+>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+>> ---
+>>  drivers/clk/qcom/gcc-ipq4019.c | 12 +++++++++++-
+>>  1 file changed, 11 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/clk/qcom/gcc-ipq4019.c 
+>> b/drivers/clk/qcom/gcc-ipq4019.c
+>> index 211c68c..160e0cf 100644
+>> --- a/drivers/clk/qcom/gcc-ipq4019.c
+>> +++ b/drivers/clk/qcom/gcc-ipq4019.c
+>> @@ -565,10 +565,20 @@ static struct clk_rcg2  sdcc1_apps_clk_src = {
+>>  };
+>> 
+>>  static const struct freq_tbl ftbl_gcc_apps_clk[] = {
+>> -	F(48000000, P_XO,	   1, 0, 0),
+>> +	F(48000000,  P_XO,         1, 0, 0),
+>>  	F(200000000, P_FEPLL200,   1, 0, 0),
+>> +	F(380000000, P_DDRPLLAPSS, 1, 0, 0),
+>> +	F(409000000, P_DDRPLLAPSS, 1, 0, 0),
+>> +	F(444000000, P_DDRPLLAPSS, 1, 0, 0),
+>> +	F(484000000, P_DDRPLLAPSS, 1, 0, 0),
+>>  	F(500000000, P_FEPLL500,   1, 0, 0),
+>> +	F(507000000, P_DDRPLLAPSS, 1, 0, 0),
+>> +	F(532000000, P_DDRPLLAPSS, 1, 0, 0),
+>> +	F(560000000, P_DDRPLLAPSS, 1, 0, 0),
+>> +	F(592000000, P_DDRPLLAPSS, 1, 0, 0),
+>>  	F(626000000, P_DDRPLLAPSS, 1, 0, 0),
+>> +	F(666000000, P_DDRPLLAPSS, 1, 0, 0),
+>> +	F(710000000, P_DDRPLLAPSS, 1, 0, 0),
+>>  	{ }
+>>  };
 > 
-> Perhaps at some point we'll want to return a NULL pointer to
-> clk_get() callers so that they can handle things like optional
-> clocks easily without having any storage requirements. I don't
-> know if we'll ever do that, but that's just a possibility.
-> 
-> > 
-> > clk_data is designed for multiple initialization from different clock
-> > types, such as infra_clk_data in clk-mt2701.c. So it will ignore valid
-> > clocks to avoid duplicated clock registration. Here I assume a clock
-> > pointer with error code or NULL to be an invalid (not initialized)
-> > clock.
-> > 
-> 
-> Ok. Would it be possible to initialize the array with all error
-> pointers? That would make things less error prone, but it
-
-Yes. Current mtk_alloc_clk_data() implementation init all elements with
-ERR_PTR(-ENOENT). 
-
-> probably doesn't matter at all anyway because this is done during
-> registration time. IS_ERR_OR_NULL makes me take a second look
-> each time, because it's usually wrong.
-
-I see. Although currently all Mediatek clk drivers use
-mtk_alloc_clk_data() to allocate clk_data, I would like to keep the
-flexibility to support zero-initialized clk_data such as a static
-structure. So I prefer to treat a NULL pointer as an uninitialized
-clock.
-
-
-Best regards,
-
-James
+> Can't we have the determine_rate callback know the speeds of the
+> "fixed" PLLs and use those first if the rate hits exactly? And
+> then if that doesn't happen go try ddrpllapps and set the rate on
+> it? I'm hoping we can get rid of this frequency table.
+This clock is being registered with QCOM clk_rcg2 operations which
+already has determine_rate callback based on this frequency table.
+Currently all the frequencies are being generated without HID
+divider but in future, we can have some frequency which will use
+dividers also.
+-- 
+Abhishek Sahu
