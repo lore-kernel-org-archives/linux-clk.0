@@ -1,69 +1,122 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Fri, 4 Nov 2016 08:49:40 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: =?iso-8859-1?Q?St=E9phan?= Rafin <stephan@soliotek.com>
-Cc: emilio@elopez.com.ar, mturquette@baylibre.com, sboyd@codeaurora.org,
-	wens@csie.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi: Fix M factor computation for APB1
-Message-ID: <20161104074940.ak46ghzoa3o3xcie@lukather>
-References: <1478217236-12831-1-git-send-email-stephan@soliotek.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v2 7/9] clk: stm32f4: SDIO & 48Mhz clock management for STM32F469 board
+Date: Thu, 24 Nov 2016 15:45:47 +0100
+Message-ID: <1479998749-20358-8-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
+References: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hduxgfhvdeiveyfy"
-In-Reply-To: <1478217236-12831-1-git-send-email-stephan@soliotek.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
---hduxgfhvdeiveyfy
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In the stm32f469 soc, the 48Mhz clock could be derived from pll-q or
+from pll-sai-p.
 
-On Fri, Nov 04, 2016 at 12:53:56AM +0100, St=E9phan Rafin wrote:
-> commit cfa636886033 ("clk: sunxi: factors: Consolidate get_factors
-> parameters into a struct") introduced a regression for m factor
-> computation in sun4i_get_apb1_factors function.
->=20
-> The old code reassigned the "parent_rate" parameter to the targeted
-> divisor value and was buggy for the returned frequency but not for the
-> computed factors. Now, returned frequency is good but m factor is
-> incorrectly computed (its max value 31 is always set resulting in a
-> significantly slower frequency than the requested one...)
->=20
-> This patch simply restores the original proper computation for m while
-> keeping the good changes for returned rate.
->=20
-> Signed-off-by: St=E9phan Rafin <stephan@soliotek.com>
+The SDIO clock could be also derived from 48Mhz or from sys clock.
 
-Applied (added a Fixes tag), thanks
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32f4.c | 49 ++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 46 insertions(+), 3 deletions(-)
 
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---hduxgfhvdeiveyfy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYHD2UAAoJEBx+YmzsjxAggBIP/A6dbJVxtx6GOcZoQacBLZwt
-Bf39nDDeHAwAYhDbb5a84RDFW10pzO+UEweyTA5DUm4OfAUPB3k+9ahknJXQU38r
-FAqPU44vs+sktrwHzrxqBiULTE9cxQHeqWAygpj5QPWGOIyODH9sykzoWVz76fei
-Bo2gvcHja0t5nEN98dHbf6uEXRxqi5QamkmB+U7hZNl//GrivYWI0IMtPUZMWFz0
-yvUGHcEDPL904Cz12UO+47iXaR7Loe6VyQ99Do/SqlQeiQtRlSsJmhMzOS+WHUs4
-GOQngsZVrEOPaOsIKkFjFqcEnDQKuUE5WaW+dboWALlGyndPloj+amRDdSpAPuRV
-57QSvww/pH6OpE89di7U0hAn7Jjr75Wv+B/6uSt9xZJmPV6W2WsCG2V3Bk/MlOJp
-axAdmpOTJDm/wb/I3i65KrmDqVFDdiSUcSC+Ldgq9QxXDs+en393Ck8YyIFvtnOM
-snIB1qBvIsSqQokSfewB8i1u0x/h+LL00UhiGqLLRIpZ2xS6d86fE8O+bgUKu5N/
-6WNZroCbKr+1btTkXMjEYi0sChKt+ahsSecezqiVrSkbYO4kFWIBSj7OEo3wtYTx
-ZV6ALNapTrb9CCTJ9ALGTju5cAQlE7/4ueUZNe89Mwtr2zofnhXNHbWD0ajA9v7d
-VDZKfy7m5/KmijA6DCTL
-=Sity
------END PGP SIGNATURE-----
-
---hduxgfhvdeiveyfy--
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 02339d1..161449d 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -206,7 +206,7 @@ struct stm32f4_gate_data {
+ 	{ STM32F4_RCC_APB2ENR,  8,	"adc1",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR,  9,	"adc2",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR, 10,	"adc3",		"apb2_div" },
+-	{ STM32F4_RCC_APB2ENR, 11,	"sdio",		"pll48" },
++	{ STM32F4_RCC_APB2ENR, 11,	"sdio",		"sdmux" },
+ 	{ STM32F4_RCC_APB2ENR, 12,	"spi1",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR, 13,	"spi4",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR, 14,	"syscfg",	"apb2_div" },
+@@ -940,6 +940,10 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
+ static const char *sai_parents[4] = { "pllsai-q-div", "plli2s-q-div", NULL,
+ 	"no-clock" };
+ 
++static const char *pll48_parents[2] = { "pll-q", "pllsai-p" };
++
++static const char *sdmux_parents[2] = { "pll48", "sys" };
++
+ struct stm32_aux_clk {
+ 	int idx;
+ 	const char *name;
+@@ -994,6 +998,45 @@ struct stm32f4_clk_data {
+ 	},
+ };
+ 
++static const struct stm32_aux_clk stm32f469_aux_clk[] = {
++	{
++		CLK_LCD, "lcd-tft", lcd_parent, ARRAY_SIZE(lcd_parent),
++		NO_MUX, 0, 0,
++		STM32F4_RCC_APB2ENR, 26,
++		CLK_SET_RATE_PARENT
++	},
++	{
++		CLK_I2S, "i2s", i2s_parents, ARRAY_SIZE(i2s_parents),
++		STM32F4_RCC_CFGR, 23, 1,
++		NO_GATE, 0,
++		CLK_SET_RATE_PARENT
++	},
++	{
++		CLK_SAI1, "sai1-a", sai_parents, ARRAY_SIZE(sai_parents),
++		STM32F4_RCC_DCKCFGR, 20, 3,
++		STM32F4_RCC_APB2ENR, 22,
++		CLK_SET_RATE_PARENT
++	},
++	{
++		CLK_SAI2, "sai1-b", sai_parents, ARRAY_SIZE(sai_parents),
++		STM32F4_RCC_DCKCFGR, 22, 3,
++		STM32F4_RCC_APB2ENR, 22,
++		CLK_SET_RATE_PARENT
++	},
++	{
++		NO_IDX, "pll48", pll48_parents, ARRAY_SIZE(pll48_parents),
++		STM32F4_RCC_DCKCFGR, 27, 1,
++		NO_GATE, 0,
++		0
++	},
++	{
++		NO_IDX, "sdmux", sdmux_parents, ARRAY_SIZE(sdmux_parents),
++		STM32F4_RCC_DCKCFGR, 28, 1,
++		NO_GATE, 0,
++		0
++	},
++};
++
+ static const struct stm32f4_clk_data stm32f429_clk_data = {
+ 	.gates_data	= stm32f429_gates,
+ 	.gates_map	= stm32f42xx_gate_map,
+@@ -1008,8 +1051,8 @@ struct stm32f4_clk_data {
+ 	.gates_map	= stm32f46xx_gate_map,
+ 	.gates_num	= ARRAY_SIZE(stm32f469_gates),
+ 	.pll_data	= stm32f469_pll,
+-	.aux_clk	= stm32f429_aux_clk,
+-	.aux_clk_num	= ARRAY_SIZE(stm32f429_aux_clk),
++	.aux_clk	= stm32f469_aux_clk,
++	.aux_clk_num	= ARRAY_SIZE(stm32f469_aux_clk),
+ };
+ 
+ static const struct of_device_id stm32f4_of_match[] = {
+-- 
+1.9.1
