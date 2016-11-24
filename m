@@ -1,58 +1,83 @@
-Return-Path: <mirza.krak@gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, Rob Herring <robh@kernel.org>
+Subject: [GIT PULL] rockchip clock changes for 4.10 part2
+Date: Thu, 24 Nov 2016 16:17:46 +0100
+Message-ID: <2743552.IWmOsK33LT@phil>
 MIME-Version: 1.0
-In-Reply-To: <CALw8SCWyLAw=yZ-W_nAFuDAazpa4HJfZuzqLDKQKYLWjV5JzYw@mail.gmail.com>
-References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
- <1477576872-2665-2-git-send-email-mirza.krak@gmail.com> <df12a1f0-316d-64a4-54fe-f7559742eeca@nvidia.com>
- <CALw8SCWyLAw=yZ-W_nAFuDAazpa4HJfZuzqLDKQKYLWjV5JzYw@mail.gmail.com>
-From: Mirza Krak <mirza.krak@gmail.com>
-Date: Thu, 3 Nov 2016 13:30:23 +0100
-Message-ID: <CALw8SCWC7RmNLVv4vxO9xw3jHVkgCaevbL61sJcpcva9CiaAVQ@mail.gmail.com>
-Subject: Re: [PATCH V3 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>, linux@armlinux.org.uk, pdeschrijver@nvidia.com,
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-2016-11-03 13:26 GMT+01:00 Mirza Krak <mirza.krak@gmail.com>:
-> 2016-11-03 11:06 GMT+01:00 Jon Hunter <jonathanh@nvidia.com>:
->> Hi Mirza,
->>
->> On 27/10/16 15:01, Mirza Krak wrote:
->>>
->>> From: Mirza Krak <mirza.krak@gmail.com>
->>>
->>> Add TEGRA20_CLK_NOR to init table and set default rate to 92 MHz which
->>> is max rate.
->>>
->>> The maximum rate value of 92 MHz is pulled from the downstream L4T
->>> kernel.
->>
->>
->> Thanks for adding this. I assume that this is from an L4T r16 release with a
->> v3.1 kernel. I had a quick poke through the kernel sources for v3.1 but was
->> unable to see where this is set. Obviously v3.1 did not have CCF and so
->> everything seems to be in the arch/arm/mach-tegra directory for setting up
->> clocks. Can you point me to the appropriate sources so I can ACK this?
->
-> I use the kernel sources provided by Toradex, and these sources are
-> based on L4T r16 release.
->
-> http://git.toradex.com/cgit/linux-toradex.git/tree/arch/arm/mach-tegra/tegra2_clocks.c?h=tegra#n2463
+Hi Mike, Stephen,
 
-Ops, pre-mature send.
+here are some more rockchip-specific clock changes, hopefully still in
+time for 4.10.
 
-I also added Marcel from Toradex on CC.
+Apart from some smaller fixes there is one new clock-controller for
+the RK1108 (a soc combining a single-core Cortex-A7 with a DSP).
 
-The link to the source are [1] for Tegra2 and  [2] for Tegra3.
 
-[1]. http://git.toradex.com/cgit/linux-toradex.git/tree/arch/arm/mach-tegra/tegra2_clocks.c?h=tegra#n2463
-[2]. http://git.toradex.com/cgit/linux-toradex.git/tree/arch/arm/mach-tegra/tegra3_clocks.c?h=tegra#n4353
+There was a bit of concern from Rob regarding our softer links to
+circular input clocks which I tried to explain in [0] and [1] but
+haven't heared anything back in nearly a week now from my
+initial reply last friday.
 
-Best Regards
-Mirza
+He did ack bindings with the same behaviour for the rk3036, rk3228
+and rk3399 in the past though, so I can only hope my explanation did
+somehow alleviate his concerns.
+
+I've Cc'ed him on this pull request, so hopefully he'll protest if
+that isn't the case.
+
+
+Heiko
+
+[0] http://www.spinics.net/lists/devicetree/msg151344.html
+[1] http://www.spinics.net/lists/devicetree/msg151658.html
+
+
+
+The following changes since commit bf92384b6d729b22916ba832b4a225ca196e98ba:
+
+  clk: rockchip: Ignore frac divisor for PLL equivalence when it's unused (2016-11-05 23:16:29 +0100)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.10-rockchip-clk2
+
+for you to fetch changes up to e44dde27949254b7da7259ab90864c211c14ade3:
+
+  clk: rockchip: add clock controller for rk1108 (2016-11-16 12:37:37 +0100)
+
+----------------------------------------------------------------
+A new clock controller for the rk1108 soc (single-core Cortex-A7+DSP),
+a fix making sure the cpuclk rate is actually valid, before trying to
+set it and a copy-paste fix for the rk3399's testclk.
+
+----------------------------------------------------------------
+Elaine Zhang (1):
+      clk: rockchip: validity should be checked prior to cpu clock rate change
+
+Heiko Stuebner (1):
+      Merge branch 'v4.10-shared/clkids' into v4.10-clk/next
+
+Jianqun Xu (1):
+      clk: rockchip: fix copy-paste error in rk3399 testclk
+
+Shawn Lin (3):
+      clk: rockchip: add dt-binding header for rk1108
+      dt-bindings: add documentation for rk1108 cru
+      clk: rockchip: add clock controller for rk1108
+
+ .../bindings/clock/rockchip,rk1108-cru.txt         |  59 +++
+ drivers/clk/rockchip/Makefile                      |   1 +
+ drivers/clk/rockchip/clk-cpu.c                     |   9 +
+ drivers/clk/rockchip/clk-rk1108.c                  | 531 +++++++++++++++++++++
+ drivers/clk/rockchip/clk-rk3399.c                  |   4 +-
+ drivers/clk/rockchip/clk.h                         |  15 +
+ include/dt-bindings/clock/rk1108-cru.h             | 269 +++++++++++
+ 7 files changed, 886 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt
+ create mode 100644 drivers/clk/rockchip/clk-rk1108.c
+ create mode 100644 include/dt-bindings/clock/rk1108-cru.h
