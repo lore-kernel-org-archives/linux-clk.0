@@ -1,62 +1,65 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v2 8/9] arm: dts: stm32f4: Add external I2S clock
+Date: Thu, 24 Nov 2016 15:45:48 +0100
+Message-ID: <1479998749-20358-9-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
+References: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <7514228.6CSyDUjs5Q@wasted.cogentembedded.com>
-References: <1737840.BeMyoUTlpl@wasted.cogentembedded.com> <7514228.6CSyDUjs5Q@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 7 Nov 2016 11:09:22 +0100
-Message-ID: <CAMuHMdXmoGoTQP0QdG_1xg7fTyaa8x5ujbVW9XoJ5GQgg+oEpQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] clk: renesas: cpg-mssr: add R8A7743 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sergei,
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-On Wed, Nov 2, 2016 at 10:59 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add RZ/G1M (R8A7743) Clock  Pulse Generator / Module Standby and Software
-> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
-> (and RZ/G) code.
->
-> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
-> <geert+renesas@glider.be>.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> ---
-> Changes in version 5:
-> - describe the Z clock as PLL0/VCO divided by 2.
+This patch adds an external I2S clock in the DT.
+The I2S clock could be derived from an external I2S clock or by I2S pll.
 
-Why did you do that?
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ arch/arm/boot/dts/stm32f429.dtsi | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> --- /dev/null
-> +++ renesas/drivers/clk/renesas/r8a7743-cpg-mssr.c
-> @@ -0,0 +1,270 @@
-
-> +       DEF_FIXED("z",     R8A7743_CLK_Z,       CLK_PLL0,           2, 1),
-
-FTR, previous version had
-
-       DEF_BASE("z",    R8A7743_CLK_Z,    CLK_TYPE_GEN2_Z,     CLK_PLL0),
-
-which made the "z" clock configurable.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
+index e4dae0e..7c7dfbd 100644
+--- a/arch/arm/boot/dts/stm32f429.dtsi
++++ b/arch/arm/boot/dts/stm32f429.dtsi
+@@ -68,6 +68,12 @@
+ 			compatible = "fixed-clock";
+ 			clock-frequency = <32000>;
+ 		};
++
++		clk_i2s_ckin: i2s-ckin {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <0>;
++		};
+ 	};
+ 
+ 	soc {
+@@ -362,7 +368,7 @@
+ 			#clock-cells = <2>;
+ 			compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
+ 			reg = <0x40023800 0x400>;
+-			clocks = <&clk_hse>;
++			clocks = <&clk_hse>, <&clk_i2s_ckin>;
+ 			st,syscfg = <&pwrcfg>;
+ 		};
+ 
+-- 
+1.9.1
