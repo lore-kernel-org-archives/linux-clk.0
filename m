@@ -1,84 +1,112 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 8 Nov 2016 14:33:36 -0800
-From: 'Stephen Boyd' <sboyd@codeaurora.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: Sricharan <sricharan@codeaurora.org>, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stanimir.varbanov@linaro.org
-Subject: Re: [PATCH 3/3] clk: qcom: Set BRANCH_HALT_DELAY flags for venus
- core0/1 clks
-Message-ID: <20161108223336.GK16026@codeaurora.org>
-References: <1477304297-5248-1-git-send-email-sricharan@codeaurora.org>
- <1477304297-5248-4-git-send-email-sricharan@codeaurora.org>
- <20161103203418.GA16026@codeaurora.org>
- <006701d2367b$19a6ba00$4cf42e00$@codeaurora.org>
- <20161104201836.GE16026@codeaurora.org>
- <58201597.6010207@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <58201597.6010207@codeaurora.org>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	varada@codeaurora.org,
+	pradeepb@codeaurora.org,
+	snlakshm@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v4 6/6] clk: qcom: ipq4019: Add the cpu clock frequency change notifier
+Date: Fri, 25 Nov 2016 21:11:33 +0530
+Message-Id: <1480088493-4590-7-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1480088493-4590-1-git-send-email-absahu@codeaurora.org>
+References: <1480088493-4590-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/07, Rajendra Nayak wrote:
-> 
-> 
-> On 11/05/2016 01:48 AM, 'Stephen Boyd' wrote:
-> > Well I'm also curious which case is failing. Does turning on the
-> > clocks work after the gdsc is enabled? Does turning off the
-> > clocks fail because we don't know when the gdsc has turned off? I
-> > would hope that the firmware keeps the gdsc on when it's done
-> > processing things, goes idle, and hands back control to software.
-> > Right now I'm failing to see how the halt bits fail to toggle
-> > assuming that firmware isn't misbehaving and the kernel driver is
-> > power controlling in a coordinated manner with the firmware.
-> 
-> What fails is turning ON the clocks after the gdsc is put under
-> hardware control (by fails I mean the halt checks fail to indicate
-> the clock is running, but register accesses etc thereafter suggest
-> the clocks are actually running)
-> The halt checks seem to work only while the gdsc is put in SW enabled
-> state.
-> 
+The current driver code gives the crash or gets hang while switching
+the CPU frequency some time. The APSS CPU Clock divider is not glitch
+free so it the APPS clock need to be switched for stable clock during
+the change.
 
-Um... that is bad. I don't see how that is possible. It sounds
-like the clocks are not turning on when we're asking for them to
-turn on. The register accesses are always working because these
-subcore clks aren't required for register accesses. Most likely
-the GDSC for the subdomains is off (even after we thought we
-enabled it).
+This patch adds the frequency change notifier for APSS CPU clock. It
+changes the parent of this clock to stable PLL FEPLL500 when it gets
+for PRE_RATE_CHANGE event. This event will be generated before actual
+clock set operations. The clock set operation will again change its
+corresponding parent by getting the same from frequency table.
 
-Let's take a step back. The video hardware has three GDSCs. One
-for the main logic, and two for each subdomain. We're adding hw
-control for the two subdomains here. From what I can tell there
-isn't any hw control for the main domain. I see that there are
-two registers in the video hardware to control those subdomain hw
-enable signals that go to the GDSC. The reset value is OFF (not
-ON like was stated earlier), so it seems that if we switch the
-subdomain GDSCs on in these patches it will turn on for a short
-time, and then turn off when we switch into hw mode (by virtue of
-the way we enable the GDSC). Presumably we can assert these hw
-signal bits regardless of the subdomain power states, because
-otherwise we're in a chicken-egg situation for the firmware
-controlling this stuff.
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq4019.c | 45 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 44 insertions(+), 1 deletion(-)
 
-The proper sequence sounds like it should be:
-	
-	1. Enable GDSC for main domain
-	2. Enable clocks for main domain (video_{core,maxi,ahb,axi}_clk)
-	3. Write the two registers to assert hw signal for subdomains
-	4. Enable GDSCs for two subdomains
-	5. Enable clocks for subdomains (video_subcore{0,1}_clk)
-
-I can only guess that we're not doing this. Probably the sequence
-right now is:
-
-	1. Enable GDSC for main domain and both sub-domains
-	2. Enable clocks for main domain (video_{core,maxi,ahb,axi}_clk)
-	3. Enable clocks for subdomains (video_subcore{0,1}_clk)
-	<clk stuff OFF because hw signal is still deasserted>
-
-Sound right? If so, please fix the sequence in the video driver.
-
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index eeafca2..94df10d 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -22,6 +22,7 @@
+ #include <linux/reset-controller.h>
+ #include <linux/math64.h>
+ #include <linux/delay.h>
++#include <linux/clk.h>
+ 
+ #include <dt-bindings/clock/qcom,gcc-ipq4019.h>
+ 
+@@ -1736,13 +1737,55 @@ static int clk_cpu_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ };
+ MODULE_DEVICE_TABLE(of, gcc_ipq4019_match_table);
+ 
++/* Contains index for safe clock during APSS freq change */
++static int gcc_ipq4019_cpu_safe_parent;
++static int
++gcc_ipq4019_cpu_clk_notifier_fn(struct notifier_block *nb,
++				unsigned long action, void *data)
++{
++	int err = 0;
++
++	if (action == PRE_RATE_CHANGE)
++		err = clk_rcg2_ops.set_parent(&apps_clk_src.clkr.hw,
++					      gcc_ipq4019_cpu_safe_parent);
++
++	return notifier_from_errno(err);
++}
++
++static struct notifier_block gcc_ipq4019_cpu_clk_notifier = {
++	.notifier_call = gcc_ipq4019_cpu_clk_notifier_fn,
++};
++
+ static int gcc_ipq4019_probe(struct platform_device *pdev)
+ {
+-	return qcom_cc_probe(pdev, &gcc_ipq4019_desc);
++	int err;
++
++	err = qcom_cc_probe(pdev, &gcc_ipq4019_desc);
++	if (err)
++		return err;
++
++	gcc_ipq4019_cpu_safe_parent = qcom_find_src_index(&apps_clk_src.clkr.hw,
++						apps_clk_src.parent_map,
++						P_FEPLL500);
++	if (gcc_ipq4019_cpu_safe_parent < 0)
++		err = gcc_ipq4019_cpu_safe_parent;
++
++	if (!err)
++		err = clk_notifier_register(apps_clk_src.clkr.hw.clk,
++				      &gcc_ipq4019_cpu_clk_notifier);
++
++	return err;
++}
++
++static int gcc_ipq4019_remove(struct platform_device *pdev)
++{
++	return clk_notifier_unregister(apps_clk_src.clkr.hw.clk,
++					&gcc_ipq4019_cpu_clk_notifier);
+ }
+ 
+ static struct platform_driver gcc_ipq4019_driver = {
+ 	.probe		= gcc_ipq4019_probe,
++	.remove		= gcc_ipq4019_remove,
+ 	.driver		= {
+ 		.name	= "qcom,gcc-ipq4019",
+ 		.of_match_table = gcc_ipq4019_match_table,
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
