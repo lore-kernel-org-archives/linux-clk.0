@@ -1,64 +1,62 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20161117230701.GR25626@codeaurora.org>
-References: <1478532904-5604-1-git-send-email-geert+renesas@glider.be> <20161117230701.GR25626@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 18 Nov 2016 10:55:00 +0100
-Message-ID: <CAMuHMdU9TRVWyCFf=auH2qZdW0hDYJW-E2ukruNY8dkn9yarxA@mail.gmail.com>
-Subject: Re: [git pull] clk: renesas: Updates for v4.10 (take two)
-To: Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	varada@codeaurora.org,
+	pradeepb@codeaurora.org,
+	snlakshm@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v4 5/6] clk: qcom: ipq4019: Add all the frequencies for apss cpu
+Date: Fri, 25 Nov 2016 21:11:32 +0530
+Message-Id: <1480088493-4590-6-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1480088493-4590-1-git-send-email-absahu@codeaurora.org>
+References: <1480088493-4590-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen, Simon,
+The APSS CPU clock does not contain all the frequencies in its
+frequency table so this patch adds the same.
 
-On Fri, Nov 18, 2016 at 12:07 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 11/07, Geert Uytterhoeven wrote:
->> The following changes since commit dbdcc4f996df280eb2758095b4774ea62da8a2a7:
->>
->>   clk: renesas: r8a7796: Add DU and LVDS clocks (2016-11-02 20:40:08 +0100)
->>
->> are available in the git repository at:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.10-tag2
->>
->> for you to fetch changes up to 1936be95e013802291201c1ed193e04fd1ed3d13:
->
-> Ok. Pulled into clk-next. I'm a little wary here as I haven't
-> seen any indication from arm-soc maintainers (not Simon) that
-> they'll take this cross tree merge. I guess we'll see how it
-> goes.
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq4019.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-Thanks for pulling!
-
-Simon: while it's too late in the v4.10 cycle to queue additional cleanups in
-the platform code on top of this, can you please still pull
-
-        git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
-rcar-rst
-
-to resolve the (trivial) merge conflicts between the conversion to the RST
-driver in that branch, and the addition of PRR and RZ/G support in your tree?
-This will prevent arm-soc and/or Linus from having to deal with these
-conflicts.
-
-For reference, I've pushed the conflict resolution to branch
-
-        renesas-devel-20161117v2-v4.9-rc5+rcar-rst
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 320750c..eeafca2 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -569,10 +569,20 @@ struct clk_fepll {
+ };
+ 
+ static const struct freq_tbl ftbl_gcc_apps_clk[] = {
+-	F(48000000, P_XO,	   1, 0, 0),
++	F(48000000,  P_XO,         1, 0, 0),
+ 	F(200000000, P_FEPLL200,   1, 0, 0),
++	F(384000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(413000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(448000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(488000000, P_DDRPLLAPSS, 1, 0, 0),
+ 	F(500000000, P_FEPLL500,   1, 0, 0),
+-	F(626000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(512000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(537000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(565000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(597000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(632000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(672000000, P_DDRPLLAPSS, 1, 0, 0),
++	F(716000000, P_DDRPLLAPSS, 1, 0, 0),
+ 	{ }
+ };
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
