@@ -1,32 +1,33 @@
 Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <fb266cd536fce7fc7800189f3aa0f8cd73d75ec3.1478123413.git-series.maxime.ripard@free-electrons.com>
-References: <cover.6088b64645bde9b847d2fede5ecb15a0e204a9dd.1478123413.git-series.maxime.ripard@free-electrons.com>
- <fb266cd536fce7fc7800189f3aa0f8cd73d75ec3.1478123413.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <20161125002852.18097-1-megous@megous.com>
+References: <20161125002852.18097-1-megous@megous.com>
 From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 3 Nov 2016 09:52:26 +0800
-Message-ID: <CAGb2v676Ddz1wmRwDGwTd8gGH5AJJBkyAe-WyvZ=D+2OKoRb4w@mail.gmail.com>
-Subject: Re: [PATCH v6 1/4] clk: sunxi-ng: Add A64 clocks
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>, Andre Przywara <andre.przywara@arm.com>
+Date: Fri, 25 Nov 2016 11:22:53 +0800
+Message-ID: <CAGb2v65wC_xjdx6Vk55xUPxkzg+hgi+pNF1tXhJJ53TWWHG+5Q@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH] clk: sunxi-ng: fix PLL_CPUX adjusting on H3
+To: =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megous@megous.com>
+Cc: dev <dev@linux-sunxi.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, Jorik Jonker <jorik@kippendief.biz>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 3, 2016 at 5:50 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Add the A64 CCU clocks set.
+On Fri, Nov 25, 2016 at 8:28 AM,  <megous@megous.com> wrote:
+> From: Ondrej Jirman <megous@megous.com>
 >
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> When adjusting PLL_CPUX on H3, the PLL is temporarily driven
+> too high, and the system becomes unstable (oopses or hangs).
+>
+> Add a notifier to avoid this situation by temporarily switching
+> to a known stable 24 MHz oscillator.
+>
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> Tested-by: Lutz Sammer <johns98@gmx.net>
 
-I thought I acked this one...
-
-Skimming through it again, I think you would want to add CLK_SET_PARENT_RATE
-to the hdmi and mipi dsi module clocks.
-
-Otherwise,
+A Fixes tag would be nice. Otherwise,
 
 Acked-by: Chen-Yu Tsai <wens@csie.org>
