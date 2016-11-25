@@ -1,81 +1,107 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Mon, 7 Nov 2016 08:54:38 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	Jorik Jonker <jorik@kippendief.biz>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/2] clk: sunxi-ng: Fix CPUX clock for the A23/A33
-Message-ID: <20161107075438.gjva4r53q25z2ijb@lukather>
-References: <20161106172932.39478-1-icenowy@aosc.xyz>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7dzb5fimzsix7mzh"
-In-Reply-To: <20161106172932.39478-1-icenowy@aosc.xyz>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	varada@codeaurora.org,
+	pradeepb@codeaurora.org,
+	snlakshm@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v4 3/6] clk: qcom: ipq4019: Add the nodes for pcnoc
+Date: Fri, 25 Nov 2016 21:11:30 +0530
+Message-Id: <1480088493-4590-4-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1480088493-4590-1-git-send-email-absahu@codeaurora.org>
+References: <1480088493-4590-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+The current ipq4019 clock driver does not have the node for
+PCNOC so this patch adds and registers the PCNOC clock nodes.
+This PCNOC clock is critical and should not be turned off so
+setting CRITICAL flag also.
 
---7dzb5fimzsix7mzh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq4019.c               | 39 ++++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-ipq4019.h |  1 +
+ 2 files changed, 40 insertions(+)
 
-Hi,
-
-On Mon, Nov 07, 2016 at 01:29:31AM +0800, Icenowy Zheng wrote:
-> The CPUX clock of A23/33 CCU driver forgot to add CLK_SET_RATE_PARENT
-> flag, which makes its frequency fail to change (as part of cpu thermal
-> throttle).
->=20
-> Fix it by add this flag.
-
-Your commit title and log could be better.
-
-The title usually is more about what is done in the patch itself,
-something like "clk: sunxi-ng: Allow to change the parent rate for the
-CPU clocks" in this case.
-
-And your commit log should explain why it is an issue. Yours is even
-wrong here, we could definitely change the rate of these clocks
-already. The only thing that was not allowed was to change the rate of
-its parents, which is what this patch fixes.
-
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-> ---
-> Patch 4.9-rc too.
-
-I don't see why it should be part of 4.9. No one uses that code in 4.9.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---7dzb5fimzsix7mzh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYIDM6AAoJEBx+YmzsjxAg2u4QAJOMV+afX2JOAD24eWQ69tux
-UNDTyGddSGMegVKycsbwnX2VDBMUUxbSga88VtjpefjrxtmwvE/61HWhrtA93dn4
-s3c0cKaKn9FOk9a8sF735dXCXGIyiHNDucduJ7SGs6HEPZabezTW11/G8wj7eI6W
-zsEh7ygp+GnXe2CaJT/HNYi+RqSQW74BoP/dK2TQGZnpUjBp5yV78el1TifZ4488
-8CogZXi7gvTCH9MnQzD87ui/y8ykzvwD/1P1TK/Cce8orlRt6EfEJ+GL0hBEKsp7
-ZVa8qQgRHkiYrA0Lwbz9WsLA3EV8o90aKNeMOP7tBsJulDztV4IofR/vvDsuS1yT
-iLUfirgixemTnh2mr9D/B0X7RFQ0OHlKzbD2cjrSI23fjieiRrCDjcd6begbI4GH
-/MriI82IkAMaNchsMooVcJlONGHkZ4vFGdQ1+IZV/p4xZ4xlkFOpvXjrDccLd+m0
-H9KWNhHbfJFE7r2IX9nIqKF4jRiEiBNCrqZ3A4zuh4Yaoq5CvNtAigQR5pKpHlbP
-4DFx6FUTykaH0EiO1sq2QLB0Uu1XghTzswJiP7gHs4HMGWByQ0w6V/WL3gTZhIsg
-QNUmTipqcuQTZ9sFk6isBLX4PRroS6ZZl8IfjHcEfLlQ2qZiszjEHWcm8sjwbCXv
-psFwe7wocZPmjSezg/8R
-=OQ6K
------END PGP SIGNATURE-----
-
---7dzb5fimzsix7mzh--
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 000c224..40187ae 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -1521,6 +1521,43 @@ static int clk_cpu_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	.pll_vco = &gcc_fepll_vco,
+ };
+ 
++static const struct freq_tbl ftbl_gcc_pcnoc_ahb_clk[] = {
++	F(48000000,  P_XO,	 1, 0, 0),
++	F(100000000, P_FEPLL200, 2, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 gcc_pcnoc_ahb_clk_src = {
++	.cmd_rcgr = 0x21024,
++	.hid_width = 5,
++	.parent_map = gcc_xo_200_500_map,
++	.freq_tbl = ftbl_gcc_pcnoc_ahb_clk,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gcc_pcnoc_ahb_clk_src",
++		.parent_names = gcc_xo_200_500,
++		.num_parents = 3,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_branch pcnoc_clk_src = {
++	.halt_reg = 0x21030,
++	.clkr = {
++		.enable_reg = 0x21030,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "pcnoc_clk_src",
++			.parent_names = (const char *[]){
++				"gcc_pcnoc_ahb_clk_src",
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++			.flags = CLK_SET_RATE_PARENT |
++				CLK_IS_CRITICAL,
++		},
++	},
++};
++
+ static struct clk_regmap *gcc_ipq4019_clocks[] = {
+ 	[AUDIO_CLK_SRC] = &audio_clk_src.clkr,
+ 	[BLSP1_QUP1_I2C_APPS_CLK_SRC] = &blsp1_qup1_i2c_apps_clk_src.clkr,
+@@ -1589,6 +1626,8 @@ static int clk_cpu_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	[GCC_FEPLL_WCSS2G_CLK] = &gcc_fepllwcss2g_clk.cdiv.clkr,
+ 	[GCC_FEPLL_WCSS5G_CLK] = &gcc_fepllwcss5g_clk.cdiv.clkr,
+ 	[GCC_APSS_CPU_PLLDIV_CLK] = &gcc_apss_cpu_plldiv_clk.cdiv.clkr,
++	[GCC_PCNOC_AHB_CLK_SRC] = &gcc_pcnoc_ahb_clk_src.clkr,
++	[GCC_PCNOC_AHB_CLK] = &pcnoc_clk_src.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_ipq4019_resets[] = {
+diff --git a/include/dt-bindings/clock/qcom,gcc-ipq4019.h b/include/dt-bindings/clock/qcom,gcc-ipq4019.h
+index c629b2b..7e8a7be 100644
+--- a/include/dt-bindings/clock/qcom,gcc-ipq4019.h
++++ b/include/dt-bindings/clock/qcom,gcc-ipq4019.h
+@@ -91,6 +91,7 @@
+ #define GCC_FEPLL_WCSS2G_CLK				72
+ #define GCC_FEPLL_WCSS5G_CLK				73
+ #define GCC_APSS_CPU_PLLDIV_CLK				74
++#define GCC_PCNOC_AHB_CLK_SRC				75
+ 
+ #define WIFI0_CPU_INIT_RESET				0
+ #define WIFI0_RADIO_SRIF_RESET				1
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
