@@ -1,93 +1,66 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] clk: pxa: transfer CPU clock setting from pxa2xx-cpufreq
-References: <1477225170-19019-1-git-send-email-robert.jarzmik@free.fr>
-	<1477225170-19019-6-git-send-email-robert.jarzmik@free.fr>
-	<20161102005637.GV16026@codeaurora.org>
-Date: Wed, 02 Nov 2016 16:49:01 +0100
-In-Reply-To: <20161102005637.GV16026@codeaurora.org> (Stephen Boyd's message
-	of "Tue, 1 Nov 2016 17:56:37 -0700")
-Message-ID: <87y411zxua.fsf@belgarion.home>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 25 Nov 2016 07:35:46 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: megous@megous.com
+Cc: dev@linux-sunxi.org, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jorik Jonker <jorik@kippendief.biz>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: sunxi-ng: fix PLL_CPUX adjusting on H3
+Message-ID: <20161125063546.n3s3dpxdi6ashjtq@lukather>
+References: <20161125002852.18097-1-megous@megous.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="les5wtydnwypwiwv"
+In-Reply-To: <20161125002852.18097-1-megous@megous.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen Boyd <sboyd@codeaurora.org> writes:
 
-> On 10/23, Robert Jarzmik wrote:
->> diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
->> index 29cee9e8d4d9..7184819b7415 100644
->> --- a/drivers/clk/pxa/clk-pxa.c
->> +++ b/drivers/clk/pxa/clk-pxa.c
->> @@ -15,9 +15,18 @@
->>  #include <linux/clkdev.h>
->>  #include <linux/of.h>
->>  
->> +#include <mach/pxa2xx-regs.h>
->> +#include <mach/smemc.h>
->
-> This is unfortunate. It makes compile testing the drivers
-> harder. Can this be fixed in the future?
-Indeed.
+--les5wtydnwypwiwv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I will try to attend to it today evening or tomorrow, and post a v2 for this
-patch only.
+On Fri, Nov 25, 2016 at 01:28:47AM +0100, megous@megous.com wrote:
+> From: Ondrej Jirman <megous@megous.com>
+>=20
+> When adjusting PLL_CPUX on H3, the PLL is temporarily driven
+> too high, and the system becomes unstable (oopses or hangs).
+>=20
+> Add a notifier to avoid this situation by temporarily switching
+> to a known stable 24 MHz oscillator.
+>=20
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> Tested-by: Lutz Sammer <johns98@gmx.net>
 
->> +void pxa2xx_core_turbo_switch(bool on)
->> +{
->> +	unsigned long flags;
->> +	unsigned int unused, clkcfg;
->> +
->> +	local_irq_save(flags);
->> +
->> +	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
->
-> \t is odd style, but I guess this is copied from somewhere?
-Yeah ... and yes, that \t is indeed ugly now I look at it. A space could be more
-welcome ...
+Applied, thanks!
+Maxime
 
-> Should it be volatile? Or is it ok for the clkcfg value to be
-> cached here?
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-I don't see how it could be cached ... The asm statement produces a result used
-afterwards, I don't think the compiler can optimize that out. I would have
-understood if this was in a loop, but here I don't see.
+--les5wtydnwypwiwv
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Note that I'm not reluctant to add it, I just want to check which optimization
-case we're talking about to see if I'm missing something.
+-----BEGIN PGP SIGNATURE-----
 
->> diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
->> index 6a3009eec830..20fd87b36560 100644
->> --- a/drivers/clk/pxa/clk-pxa25x.c
->> +++ b/drivers/clk/pxa/clk-pxa25x.c
->> @@ -18,6 +18,7 @@
->>  #include <linux/io.h>
->>  #include <linux/of.h>
->>  #include <mach/pxa2xx-regs.h>
->> +#include <mach/smemc.h>
->
-> I guess things aren't getting any worse here for mach includes...
-Good question ... I must check what happens when I build a kernel supporting at
-the same time pxa25x, pxa27x and pxa3xx...
+iQIcBAEBCAAGBQJYN9u+AAoJEBx+YmzsjxAgWgIP/2bmarhjizHyNpWPB+iEOC18
+iXNdiubaPWF3tpc5Z0VaR2XOshxT4m7r89p5ICVxYcuhmuU72//vPgOD8xzgE+Wp
+6U6Qy6WTcDu/paFCRR/gpQ2wY89vLHkbkosp5KtBhXg5M4riF/zPPDiDzIWHWOhy
+sEhB1hyFVJBGTrbV4bvDPN0+6XxvhNfOiwOc3uDlVLWUQQQjt9iFC/CVLWQPK592
+h76pMIuZZgWz/O2pwPvfeA1izmagkadQQ2vwhcOwPgEudBEHmw71KkG8MySTnlNI
+xI+BRaTuDfELxFNvyrj9NVLAqbJmwmpIbbrBHo0bkhtQJbLuwir4VJF6Ydwiot5p
+23FMGaCgwLAnNsK9jROx480XnUv6tXY+MU4KWzomdTCTG7JK5hbhcW5PDCveRCiJ
+OTmd2o9T87uiURx05lTcwOoLQ4b/g2CiHOS1j0paRl/APH8uOENd+EP/nUf1Tx+z
+neGywvnCuyNmJgJRvGSBbJqxKupVpUKRrR+9xgXZTmIVd1gqRqOvj/7hnv0KQV+K
+BGDUo8yb5aplKGKNt77oMsWvyWw+VPRfpHI5JvrSOebdmpeH7IkZQUgbjXH4T9sd
+XyPgukHmcfZHA3G3IrWN24JlvsdAk2Dl10ux+fwIIXRsmv6ZKl9Vc7d8jnTOUZ5p
+6kePpNvrsxRZ87nrufpm
+=byEW
+-----END PGP SIGNATURE-----
 
->> +	mdcnfg = __raw_readl(MDCNFG);
->
-> Perhaps it should be readl_relaxed() instead? __raw_readl()
-> doesn't byte-swap for endianess so it's usually wrong.
-Most certainly, no point for a read-only-once register to have any kind of
-barrier, nor is there a point if forcing a byte ordering.
-
->> -	asm("mrc\tp14, 0, %0, c6, c0, 0" : "=r" (clkcfg));
-> Aha, found it.
-:)
-
-I'll rework the patch a bit. Let's hope I'll have it under control in the next
-days so that the review can be done before you make your pull request for -next
-cycle.
-
-Cheers.
-
--- 
-Robert
+--les5wtydnwypwiwv--
