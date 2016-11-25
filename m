@@ -1,24 +1,61 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-Subject: [PATCH v5 0/2] Renesas R8A7743 CPG/MSSR clock support
-Date: Thu, 03 Nov 2016 00:53:53 +0300
-Message-ID: <1737840.BeMyoUTlpl@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <megous@megous.com>
+From: megous@megous.com
+To: dev@linux-sunxi.org
+Cc: Ondrej Jirman <megous@megous.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jorik Jonker <jorik@kippendief.biz>,
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner sunXi SoC support),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] clk: sunxi-ng: fix PLL_CPUX adjusting on H3
+Date: Fri, 25 Nov 2016 01:28:47 +0100
+Message-Id: <20161125002852.18097-1-megous@megous.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello.
+From: Ondrej Jirman <megous@megous.com>
 
-   Here's the set of 2 patches against the 'clk-next' branch of CLK group's
-'linux.git' repo. I've split them from the R-Car gen2 common support patch.
-As the DT patches in the R8A7743/SK-RZG1M board support series depend on the
-patch #1 of this series, it might make sense to merge this patch to the
-'renesas.git' repo as well...
+When adjusting PLL_CPUX on H3, the PLL is temporarily driven
+too high, and the system becomes unstable (oopses or hangs).
 
-[1/2] ARM: shmobile: r8a7743: add CPG clock index macros
-[2/2] clk: renesas: cpg-mssr: add R8A7743 support
+Add a notifier to avoid this situation by temporarily switching
+to a known stable 24 MHz oscillator.
 
-MBR, Sergei
+Signed-off-by: Ondrej Jirman <megous@megous.com>
+Tested-by: Lutz Sammer <johns98@gmx.net>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 614d47c..cf266c9 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -809,6 +809,13 @@ static const struct sunxi_ccu_desc sun8i_h3_ccu_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun8i_h3_ccu_resets),
+ };
+ 
++static struct ccu_mux_nb sun8i_h3_cpu_nb = {
++	.common		= &cpux_clk.common,
++	.cm		= &cpux_clk.mux,
++	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
++	.bypass_index	= 1, /* index of 24 MHz oscillator */
++};
++
+ static void __init sun8i_h3_ccu_setup(struct device_node *node)
+ {
+ 	void __iomem *reg;
+@@ -827,6 +834,9 @@ static void __init sun8i_h3_ccu_setup(struct device_node *node)
+ 	writel(val | (3 << 16), reg + SUN8I_H3_PLL_AUDIO_REG);
+ 
+ 	sunxi_ccu_probe(node, reg, &sun8i_h3_ccu_desc);
++
++	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
++				  &sun8i_h3_cpu_nb);
+ }
+ CLK_OF_DECLARE(sun8i_h3_ccu, "allwinner,sun8i-h3-ccu",
+ 	       sun8i_h3_ccu_setup);
+-- 
+2.10.2
