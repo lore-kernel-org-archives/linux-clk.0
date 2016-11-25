@@ -1,97 +1,38 @@
 Return-Path: <yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+In-Reply-To: <20161124021056.GJ6095@codeaurora.org>
+References: <1477503088-26508-1-git-send-email-yamada.masahiro@socionext.com>
+ <1477503088-26508-2-git-send-email-yamada.masahiro@socionext.com>
+ <20161124000503.GE6095@codeaurora.org> <CAK7LNAQ6XeSHd7DbvD1jWeMfOqk8+R27Q-fNDWtXxpRd=OFgjA@mail.gmail.com>
+ <20161124021056.GJ6095@codeaurora.org>
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+Date: Fri, 25 Nov 2016 20:55:30 +0900
+Message-ID: <CAK7LNASJ7nA7rmJdmF_1xei7qG+3CTd-8UgJoPtAzcvZ0N7ckw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: uniphier: add clock data for cpufreq
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 1/3] clk: uniphier: remove unneeded member name for union
-Date: Thu, 24 Nov 2016 14:57:39 +0900
-Message-Id: <1479967061-25975-1-git-send-email-yamada.masahiro@socionext.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The struct member name of a union is unneeded.  This makes the code
-a bit shorter.
+Hi Stephen,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
 
-Changes in v2:
-  - Newly added
+2016-11-24 11:10 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
 
- drivers/clk/uniphier/clk-uniphier-core.c | 8 ++++----
- drivers/clk/uniphier/clk-uniphier-mio.c  | 2 +-
- drivers/clk/uniphier/clk-uniphier.h      | 6 +++---
- 3 files changed, 8 insertions(+), 8 deletions(-)
+>> If I drop 32bit SoC things, and send v2 only for 64bit SoCs,
+>> is that acceptable for 4.10-rc1?
+>
+> Sure. That sounds fine for now. I'll reply to your other thread
+> with a plan of attack on how to do the framework changes. I think
+> we need to do those regardless of the outcome of your
+> investigation.
 
-diff --git a/drivers/clk/uniphier/clk-uniphier-core.c b/drivers/clk/uniphier/clk-uniphier-core.c
-index 26c53f7..726a10a 100644
---- a/drivers/clk/uniphier/clk-uniphier-core.c
-+++ b/drivers/clk/uniphier/clk-uniphier-core.c
-@@ -29,16 +29,16 @@ static struct clk_hw *uniphier_clk_register(struct device *dev,
- 	switch (data->type) {
- 	case UNIPHIER_CLK_TYPE_FIXED_FACTOR:
- 		return uniphier_clk_register_fixed_factor(dev, data->name,
--							  &data->data.factor);
-+							  &data->factor);
- 	case UNIPHIER_CLK_TYPE_FIXED_RATE:
- 		return uniphier_clk_register_fixed_rate(dev, data->name,
--							&data->data.rate);
-+							&data->rate);
- 	case UNIPHIER_CLK_TYPE_GATE:
- 		return uniphier_clk_register_gate(dev, regmap, data->name,
--						  &data->data.gate);
-+						  &data->gate);
- 	case UNIPHIER_CLK_TYPE_MUX:
- 		return uniphier_clk_register_mux(dev, regmap, data->name,
--						 &data->data.mux);
-+						 &data->mux);
- 	default:
- 		dev_err(dev, "unsupported clock type\n");
- 		return ERR_PTR(-EINVAL);
-diff --git a/drivers/clk/uniphier/clk-uniphier-mio.c b/drivers/clk/uniphier/clk-uniphier-mio.c
-index 218d20f..4974d38 100644
---- a/drivers/clk/uniphier/clk-uniphier-mio.c
-+++ b/drivers/clk/uniphier/clk-uniphier-mio.c
-@@ -30,7 +30,7 @@
- 		.name = "sd" #ch "-sel",				\
- 		.type = UNIPHIER_CLK_TYPE_MUX,				\
- 		.idx = -1,						\
--		.data.mux = {						\
-+		.mux = {						\
- 			.parent_names = {				\
- 				"sd-44m",				\
- 				"sd-33m",				\
-diff --git a/drivers/clk/uniphier/clk-uniphier.h b/drivers/clk/uniphier/clk-uniphier.h
-index 0244dba..4eb4f6d 100644
---- a/drivers/clk/uniphier/clk-uniphier.h
-+++ b/drivers/clk/uniphier/clk-uniphier.h
-@@ -62,7 +62,7 @@ struct uniphier_clk_data {
- 		struct uniphier_clk_fixed_rate_data rate;
- 		struct uniphier_clk_gate_data gate;
- 		struct uniphier_clk_mux_data mux;
--	} data;
-+	};
- };
- 
- #define UNIPHIER_CLK_FACTOR(_name, _idx, _parent, _mult, _div)	\
-@@ -70,7 +70,7 @@ struct uniphier_clk_data {
- 		.name = (_name),				\
- 		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,		\
- 		.idx = (_idx),					\
--		.data.factor = {				\
-+		.factor = {					\
- 			.parent_name = (_parent),		\
- 			.mult = (_mult),			\
- 			.div = (_div),				\
-@@ -83,7 +83,7 @@ struct uniphier_clk_data {
- 		.name = (_name),				\
- 		.type = UNIPHIER_CLK_TYPE_GATE,			\
- 		.idx = (_idx),					\
--		.data.gate = {					\
-+		.gate = {					\
- 			.parent_name = (_parent),		\
- 			.reg = (_reg),				\
- 			.bit = (_bit),				\
+I posted v2 yesterday.
+
+
 -- 
-2.7.4
+Best Regards
+Masahiro Yamada
