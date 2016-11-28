@@ -1,40 +1,112 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:33002 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751797AbcKRORJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Nov 2016 09:17:09 -0500
-Date: Fri, 18 Nov 2016 08:17:06 -0600
-From: Rob Herring <robh@kernel.org>
-To: Ritesh Harjani <riteshh@codeaurora.org>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, sboyd@codeaurora.org,
-        andy.gross@linaro.org, shawn.lin@rock-chips.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, alex.lemberg@sandisk.com,
-        mateusz.nowak@intel.com, Yuliy.Izrailov@sandisk.com,
-        asutoshd@codeaurora.org, david.griego@linaro.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        rnayak@codeaurora.org, pramod.gurav@linaro.org, jeremymc@redhat.com
-Subject: Re: [PATCH v8 05/16] dt-bindings: sdhci-msm: Add xo property
-Message-ID: <20161118141706.syt4gnhf4zur746i@rob-hp-laptop>
-References: <20161116191335.GH25626@codeaurora.org>
- <1479343623-31163-1-git-send-email-riteshh@codeaurora.org>
+Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
+Date: Mon, 28 Nov 2016 09:14:56 +0000
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Linux-DT <devicetree@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linux-Kernel <linux-kernel@vger.kernel.org>,
+	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+	Linux-ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2] clkdev: add devm_of_clk_get()
+Message-ID: <20161128091456.GR14217@n2100.armlinux.org.uk>
+References: <8737icayac.wl%kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1479343623-31163-1-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <8737icayac.wl%kuninori.morimoto.gx@renesas.com>
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Nov 17, 2016 at 06:17:03AM +0530, Ritesh Harjani wrote:
-> Add "xo" property which is tcxo clock.
-
-Technically, xo is not a property, but a value.
-
-Acked-by: Rob Herring <robh@kernel.org>
-
+On Mon, Nov 28, 2016 at 06:56:52AM +0000, Kuninori Morimoto wrote:
+> Current Linux has of_clk_get(), but doesn't have devm_of_clk_get().
+> This patch adds it. This is based on devm_clk_get()
 > 
-> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+Please put this in drivers/clk/clk-devres.c, where you'll find that
+we have devm_clk_release() which is identical to your
+devm_of_clk_release().  It'll also not need the dummy definition of
+devm_of_clk_get().
+
+Thanks.
+
 > ---
->  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 1 +
->  1 file changed, 1 insertion(+)
+> v1 -> v2
+> 
+>  - update git log
+> 
+>  drivers/clk/clkdev.c | 26 ++++++++++++++++++++++++++
+>  include/linux/clk.h  |  7 +++++++
+>  2 files changed, 33 insertions(+)
+> 
+> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+> index 89cc700..93a613b 100644
+> --- a/drivers/clk/clkdev.c
+> +++ b/drivers/clk/clkdev.c
+> @@ -55,6 +55,32 @@ struct clk *of_clk_get(struct device_node *np, int index)
+>  }
+>  EXPORT_SYMBOL(of_clk_get);
+>  
+> +static void devm_of_clk_release(struct device *dev, void *res)
+> +{
+> +	clk_put(*(struct clk **)res);
+> +}
+> +
+> +struct clk *devm_of_clk_get(struct device *dev,
+> +			    struct device_node *np, int index)
+> +{
+> +	struct clk **ptr, *clk;
+> +
+> +	ptr = devres_alloc(devm_of_clk_release, sizeof(*ptr), GFP_KERNEL);
+> +	if (!ptr)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	clk = of_clk_get(np, index);
+> +	if (!IS_ERR(clk)) {
+> +		*ptr = clk;
+> +		devres_add(dev, ptr);
+> +	} else {
+> +		devres_free(ptr);
+> +	}
+> +
+> +	return clk;
+> +}
+> +EXPORT_SYMBOL(devm_of_clk_get);
+> +
+>  static struct clk *__of_clk_get_by_name(struct device_node *np,
+>  					const char *dev_id,
+>  					const char *name)
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index a89ba4e..33cd540 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -502,6 +502,8 @@ struct of_phandle_args;
+>  
+>  #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+>  struct clk *of_clk_get(struct device_node *np, int index);
+> +struct clk *devm_of_clk_get(struct device *dev,
+> +			    struct device_node *np, int index);
+>  struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
+>  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
+>  #else
+> @@ -509,6 +511,11 @@ static inline struct clk *of_clk_get(struct device_node *np, int index)
+>  {
+>  	return ERR_PTR(-ENOENT);
+>  }
+> +static inline struct clk *devm_of_clk_get(struct device *dev,
+> +			    struct device_node *np, int index)
+> +{
+> +	return ERR_PTR(-ENOENT);
+> +}
+>  static inline struct clk *of_clk_get_by_name(struct device_node *np,
+>  					     const char *name)
+>  {
+> -- 
+> 1.9.1
+> 
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
