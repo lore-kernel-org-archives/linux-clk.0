@@ -1,98 +1,42 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, Rob Herring <robh@kernel.org>
-Subject: Re: [GIT PULL] rockchip clock changes for 4.10 part2
-Date: Wed, 30 Nov 2016 22:40:27 +0100
-Message-ID: <2295308.YcyGhdT6at@phil>
-In-Reply-To: <2743552.IWmOsK33LT@phil>
-References: <2743552.IWmOsK33LT@phil>
+Return-Path: <grygorii.strashko@ti.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Tero Kristo
+	<t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Grygorii
+ Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH] clk: ti: dra7: fix "failed to lookup clock node gmac_gmii_ref_clk_div" boot message
+Date: Tue, 29 Nov 2016 17:07:57 -0600
+Message-ID: <20161129230757.29183-1-grygorii.strashko@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 24. November 2016, 16:17:46 CET schrieb Heiko Stuebner:
-> Hi Mike, Stephen,
-> 
-> here are some more rockchip-specific clock changes, hopefully still in
-> time for 4.10.
-> 
-> Apart from some smaller fixes there is one new clock-controller for
-> the RK1108 (a soc combining a single-core Cortex-A7 with a DSP).
-> 
-> 
-> There was a bit of concern from Rob regarding our softer links to
-> circular input clocks which I tried to explain in [0] and [1] but
-> haven't heared anything back in nearly a week now from my
-> initial reply last friday.
-> 
-> He did ack bindings with the same behaviour for the rk3036, rk3228
-> and rk3399 in the past though, so I can only hope my explanation did
-> somehow alleviate his concerns.
-> 
-> I've Cc'ed him on this pull request, so hopefully he'll protest if
-> that isn't the case.
+Prevent creating clk alias for non existing gmac_gmii_ref_clk_div clock and,
+this way, eliminate excessive error message during boot:
 
-I've pinged Rob on IRC, and he is fine with the approach [as long as I'm fine 
-with it :-) ]
+ "ti_dt_clocks_register: failed to lookup clock node gmac_gmii_ref_clk_div"
 
+Fixes: c097338ebd3f ("ARM: dts: dra7: cpsw: fix clocks tree")
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+ drivers/clk/ti/clk-7xx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Heiko
-
-> 
-> 
-> Heiko
-> 
-> [0] http://www.spinics.net/lists/devicetree/msg151344.html
-> [1] http://www.spinics.net/lists/devicetree/msg151658.html
-> 
-> 
-> 
-> The following changes since commit bf92384b6d729b22916ba832b4a225ca196e98ba:
-> 
->   clk: rockchip: Ignore frac divisor for PLL equivalence when it's unused
-> (2016-11-05 23:16:29 +0100)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git
-> tags/v4.10-rockchip-clk2
-> 
-> for you to fetch changes up to e44dde27949254b7da7259ab90864c211c14ade3:
-> 
->   clk: rockchip: add clock controller for rk1108 (2016-11-16 12:37:37 +0100)
-> 
-> ----------------------------------------------------------------
-> A new clock controller for the rk1108 soc (single-core Cortex-A7+DSP),
-> a fix making sure the cpuclk rate is actually valid, before trying to
-> set it and a copy-paste fix for the rk3399's testclk.
-> 
-> ----------------------------------------------------------------
-> Elaine Zhang (1):
->       clk: rockchip: validity should be checked prior to cpu clock rate
-> change
-> 
-> Heiko Stuebner (1):
->       Merge branch 'v4.10-shared/clkids' into v4.10-clk/next
-> 
-> Jianqun Xu (1):
->       clk: rockchip: fix copy-paste error in rk3399 testclk
-> 
-> Shawn Lin (3):
->       clk: rockchip: add dt-binding header for rk1108
->       dt-bindings: add documentation for rk1108 cru
->       clk: rockchip: add clock controller for rk1108
-> 
->  .../bindings/clock/rockchip,rk1108-cru.txt         |  59 +++
->  drivers/clk/rockchip/Makefile                      |   1 +
->  drivers/clk/rockchip/clk-cpu.c                     |   9 +
->  drivers/clk/rockchip/clk-rk1108.c                  | 531
-> +++++++++++++++++++++ drivers/clk/rockchip/clk-rk3399.c                  | 
->  4 +-
->  drivers/clk/rockchip/clk.h                         |  15 +
->  include/dt-bindings/clock/rk1108-cru.h             | 269 +++++++++++
->  7 files changed, 886 insertions(+), 2 deletions(-)
->  create mode 100644
-> Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt create mode
-> 100644 drivers/clk/rockchip/clk-rk1108.c
->  create mode 100644 include/dt-bindings/clock/rk1108-cru.h
+diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+index bfa17d3..9fd6043 100644
+--- a/drivers/clk/ti/clk-7xx.c
++++ b/drivers/clk/ti/clk-7xx.c
+@@ -201,7 +201,6 @@ static struct ti_dt_clk dra7xx_clks[] = {
+ 	DT_CLK(NULL, "atl_dpll_clk_mux", "atl_dpll_clk_mux"),
+ 	DT_CLK(NULL, "atl_gfclk_mux", "atl_gfclk_mux"),
+ 	DT_CLK(NULL, "dcan1_sys_clk_mux", "dcan1_sys_clk_mux"),
+-	DT_CLK(NULL, "gmac_gmii_ref_clk_div", "gmac_gmii_ref_clk_div"),
+ 	DT_CLK(NULL, "gmac_rft_clk_mux", "gmac_rft_clk_mux"),
+ 	DT_CLK(NULL, "gpu_core_gclk_mux", "gpu_core_gclk_mux"),
+ 	DT_CLK(NULL, "gpu_hyd_gclk_mux", "gpu_hyd_gclk_mux"),
+-- 
+2.10.1
