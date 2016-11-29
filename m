@@ -1,61 +1,109 @@
-Return-Path: <megous@megous.com>
-From: megous@megous.com
-To: dev@linux-sunxi.org
-Cc: Ondrej Jirman <megous@megous.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 29 Nov 2016 13:26:00 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
+	Rob Herring <robh@kernel.org>,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Linux-DT <devicetree@vger.kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jorik Jonker <jorik@kippendief.biz>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner sunXi SoC support),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] clk: sunxi-ng: fix PLL_CPUX adjusting on H3
-Date: Fri, 25 Nov 2016 01:28:47 +0100
-Message-Id: <20161125002852.18097-1-megous@megous.com>
+	Linux-Kernel <linux-kernel@vger.kernel.org>,
+	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+	Linux-ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4] clkdev: add devm_of_clk_get()
+Message-ID: <20161129212600.GH6095@codeaurora.org>
+References: <87zikjw08i.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <87zikjw08i.wl%kuninori.morimoto.gx@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Ondrej Jirman <megous@megous.com>
+On 11/29, Kuninori Morimoto wrote:
+> 
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> Current Linux has of_clk_get(), but doesn't have devm_of_clk_get().
+> This patch adds it. It is implemeted in clk-devres.c to share
+> devm_clk_release().
 
-When adjusting PLL_CPUX on H3, the PLL is temporarily driven
-too high, and the system becomes unstable (oopses or hangs).
+Please add an explanation of why we want this sort of API. The
+example you gave for audio sound card is useful. We're not going
+to remember 5 months from now why we did something, so we should
+put that here instead of digging through mailing list archives.
 
-Add a notifier to avoid this situation by temporarily switching
-to a known stable 24 MHz oscillator.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+> index 8f57154..2449b25 100644
+> --- a/drivers/clk/clk-devres.c
+> +++ b/drivers/clk/clk-devres.c
+> @@ -53,3 +53,24 @@ void devm_clk_put(struct device *dev, struct clk *clk)
+>  	WARN_ON(ret);
+>  }
+>  EXPORT_SYMBOL(devm_clk_put);
+> +
+> +struct clk *devm_of_clk_get(struct device *dev,
+> +			    struct device_node *np, int index)
 
-Signed-off-by: Ondrej Jirman <megous@megous.com>
-Tested-by: Lutz Sammer <johns98@gmx.net>
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Please call this devm_get_clk_from_child() instead. Also, replace
+the index argument with a string called con_id. Then call
+of_clk_get_by_name() instead of of_clk_get().
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 614d47c..cf266c9 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -809,6 +809,13 @@ static const struct sunxi_ccu_desc sun8i_h3_ccu_desc = {
- 	.num_resets	= ARRAY_SIZE(sun8i_h3_ccu_resets),
- };
- 
-+static struct ccu_mux_nb sun8i_h3_cpu_nb = {
-+	.common		= &cpux_clk.common,
-+	.cm		= &cpux_clk.mux,
-+	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
-+	.bypass_index	= 1, /* index of 24 MHz oscillator */
-+};
-+
- static void __init sun8i_h3_ccu_setup(struct device_node *node)
- {
- 	void __iomem *reg;
-@@ -827,6 +834,9 @@ static void __init sun8i_h3_ccu_setup(struct device_node *node)
- 	writel(val | (3 << 16), reg + SUN8I_H3_PLL_AUDIO_REG);
- 
- 	sunxi_ccu_probe(node, reg, &sun8i_h3_ccu_desc);
-+
-+	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
-+				  &sun8i_h3_cpu_nb);
- }
- CLK_OF_DECLARE(sun8i_h3_ccu, "allwinner,sun8i-h3-ccu",
- 	       sun8i_h3_ccu_setup);
+> +{
+> +	struct clk **ptr, *clk;
+> +
+> +	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
+> +	if (!ptr)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	clk = of_clk_get(np, index);
+> +	if (!IS_ERR(clk)) {
+> +		*ptr = clk;
+> +		devres_add(dev, ptr);
+> +	} else {
+> +		devres_free(ptr);
+> +	}
+> +
+> +	return clk;
+> +}
+> +EXPORT_SYMBOL(devm_of_clk_get);
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index 123c027..7f50c5f 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -17,8 +17,9 @@
+>  #include <linux/notifier.h>
+>  
+>  struct device;
+> -
+>  struct clk;
+> +struct device_node;
+> +struct of_phandle_args;
+>  
+>  /**
+>   * DOC: clk notifier callback types
+> @@ -249,6 +250,21 @@ static inline void clk_unprepare(struct clk *clk)
+>  struct clk *devm_clk_get(struct device *dev, const char *id);
+>  
+>  /**
+> + * devm_clk_get - lookup and obtain a managed reference to a clock producer.
+
+That doesn't even match the name of the function.
+
+> + * @dev: device for clock "consumer"
+> + * @np: pointer to clock consumer node
+> + * @index: clock index
+> + *
+> + * This function parses the clocks, and uses them to look up the
+> + * struct clk from the registered list of clock providers by using
+> + * @np and @index.
+> + *
+> + * The clock will automatically be freed when the device is unbound
+> + * from the bus.
+> + */
+> +struct clk *devm_of_clk_get(struct device *dev, struct device_node *np, int index);
+
 -- 
-2.10.2
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
