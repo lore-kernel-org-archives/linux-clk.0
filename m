@@ -1,110 +1,118 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 18 Nov 2016 08:03:13 -0600
-From: Rob Herring <robh@kernel.org>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree@vger.kernel.org, Andy Yan <andy.yan@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: add documentation for rk1108 cru
-Message-ID: <20161118140313.5uz56im37nt6qv7x@rob-hp-laptop>
-References: <1479286163-34789-1-git-send-email-shawn.lin@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1479286163-34789-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:45727 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755173AbcK3Adz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Nov 2016 19:33:55 -0500
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Message-id: <583E1E6B.7090703@samsung.com>
+Date: Wed, 30 Nov 2016 09:33:47 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] clk/samsung: exynos-audss: Replace syscore PM with
+ platform device PM
+References: <CGME20161125094012epcas5p49d6feefb149c4bbb9937a43c1562cb72@epcas5p4.samsung.com>
+ <1480066794-18713-1-git-send-email-m.szyprowski@samsung.com>
+In-reply-to: <1480066794-18713-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Nov 16, 2016 at 04:49:21PM +0800, Shawn Lin wrote:
-> This adds the dt-binding documentation for the clock and reset unit
-> found on Rockchip rk1108 SoCs.
+Dear Marek,
+
+Looks good to me. I just proceeded the build test.
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+Best Regards,
+Chanwoo Choi
+
+On 2016년 11월 25일 18:39, Marek Szyprowski wrote:
+> Exynos AUDSS clock driver has beem already converted to platform driver, so
+> remove the dependency on the syscore ops - the last remaining non-platform
+> driver feature. Platform device's system sleep PM provides all needed
+> infrastructure for replacing syscore-based PM, so do it now.
 > 
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
+>  drivers/clk/samsung/clk-exynos-audss.c | 24 ++++++++++--------------
+>  1 file changed, 10 insertions(+), 14 deletions(-)
 > 
-> Changes in v3:
-> - fix mismatch of external clk input name
-> - add hdmiphy and usbphy clk input
+> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+> index 17e68a724945..cb7df358a27d 100644
+> --- a/drivers/clk/samsung/clk-exynos-audss.c
+> +++ b/drivers/clk/samsung/clk-exynos-audss.c
+> @@ -44,7 +44,7 @@
+>  	{ ASS_CLK_GATE, 0 },
+>  };
+>  
+> -static int exynos_audss_clk_suspend(void)
+> +static int exynos_audss_clk_suspend(struct device *dev)
+>  {
+>  	int i;
+>  
+> @@ -54,18 +54,15 @@ static int exynos_audss_clk_suspend(void)
+>  	return 0;
+>  }
+>  
+> -static void exynos_audss_clk_resume(void)
+> +static int exynos_audss_clk_resume(struct device *dev)
+>  {
+>  	int i;
+>  
+>  	for (i = 0; i < ARRAY_SIZE(reg_save); i++)
+>  		writel(reg_save[i][1], reg_base + reg_save[i][0]);
+> -}
+>  
+> -static struct syscore_ops exynos_audss_clk_syscore_ops = {
+> -	.suspend	= exynos_audss_clk_suspend,
+> -	.resume		= exynos_audss_clk_resume,
+> -};
+> +	return 0;
+> +}
+>  #endif /* CONFIG_PM_SLEEP */
+>  
+>  struct exynos_audss_clk_drvdata {
+> @@ -251,9 +248,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  		goto unregister;
+>  	}
+>  
+> -#ifdef CONFIG_PM_SLEEP
+> -	register_syscore_ops(&exynos_audss_clk_syscore_ops);
+> -#endif
+>  	return 0;
+>  
+>  unregister:
+> @@ -267,10 +261,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  
+>  static int exynos_audss_clk_remove(struct platform_device *pdev)
+>  {
+> -#ifdef CONFIG_PM_SLEEP
+> -	unregister_syscore_ops(&exynos_audss_clk_syscore_ops);
+> -#endif
+> -
+>  	of_clk_del_provider(pdev->dev.of_node);
+>  
+>  	exynos_audss_clk_teardown();
+> @@ -281,10 +271,16 @@ static int exynos_audss_clk_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> +static const struct dev_pm_ops exynos_audss_clk_pm_ops = {
+> +	SET_LATE_SYSTEM_SLEEP_PM_OPS(exynos_audss_clk_suspend,
+> +				     exynos_audss_clk_resume)
+> +};
+> +
+>  static struct platform_driver exynos_audss_clk_driver = {
+>  	.driver	= {
+>  		.name = "exynos-audss-clk",
+>  		.of_match_table = exynos_audss_clk_of_match,
+> +		.pm = &exynos_audss_clk_pm_ops,
+>  	},
+>  	.probe = exynos_audss_clk_probe,
+>  	.remove = exynos_audss_clk_remove,
 > 
-> Changes in v2: None
-> 
->  .../bindings/clock/rockchip,rk1108-cru.txt         | 59 ++++++++++++++++++++++
->  1 file changed, 59 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt
-> new file mode 100644
-> index 0000000..4da1261
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt
-> @@ -0,0 +1,59 @@
-> +* Rockchip RK1108 Clock and Reset Unit
-> +
-> +The RK1108 clock controller generates and supplies clock to various
-> +controllers within the SoC and also implements a reset controller for SoC
-> +peripherals.
-> +
-> +Required Properties:
-> +
-> +- compatible: should be "rockchip,rk1108-cru"
-> +- reg: physical base address of the controller and length of memory mapped
-> +  region.
-> +- #clock-cells: should be 1.
-> +- #reset-cells: should be 1.
-> +
-> +Optional Properties:
-> +
-> +- rockchip,grf: phandle to the syscon managing the "general register files"
-> +  If missing pll rates are not changeable, due to the missing pll lock status.
-> +
-> +Each clock is assigned an identifier and client nodes can use this identifier
-> +to specify the clock which they consume. All available clocks are defined as
-> +preprocessor macros in the dt-bindings/clock/rk1108-cru.h headers and can be
-> +used in device tree sources. Similar macros exist for the reset sources in
-> +these files.
-> +
-> +External clocks:
-> +
-> +There are several clocks that are generated outside the SoC. It is expected
-> +that they are defined using standard clock bindings with following
-> +clock-output-names:
 
-This stilll doesn't seem right. These are inputs to the CRU or 
-completely separate? If inputs, then you need a 'clocks' property. If 
-completely separate, then they should be listed in their respective IP 
-block binding (e.g. the USB phy).
-
-> + - "xin24m" - crystal input - required,
-> + - "ext_vip" - external VIP clock - optional
-> + - "ext_i2s" - external I2S clock - optional
-> + - "ext_gmac" - external GMAC clock - optional
-> + - "hdmiphy" - external clock input derived from HDMI PHY - optional
-> + - "usbphy" - external clock input derived from USB PHY - optional
-> +
-> +Example: Clock controller node:
-> +
-> +	cru: cru@20200000 {
-> +		compatible = "rockchip,rk1108-cru";
-> +		reg = <0x20200000 0x1000>;
-> +		rockchip,grf = <&grf>;
-> +
-> +		#clock-cells = <1>;
-> +		#reset-cells = <1>;
-> +	};
-> +
-> +Example: UART controller node that consumes the clock generated by the clock
-> +  controller:
-> +
-> +	uart0: serial@10230000 {
-> +		compatible = "rockchip,rk1108-uart", "snps,dw-apb-uart";
-> +		reg = <0x10230000 0x100>;
-> +		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-> +		reg-shift = <2>;
-> +		reg-io-width = <4>;
-> +		clocks = <&cru SCLK_UART0>;
-> +	};
-> -- 
-> 1.9.1
-> 
-> 
