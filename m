@@ -1,79 +1,51 @@
-Return-Path: <j-keerthy@ti.com>
-From: Keerthy <j-keerthy@ti.com>
-To: <t-kristo@ti.com>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <j-keerthy@ti.com>
-Subject: [PATCH] clk: ti: divider: Add the table parsing to get the best divider value
-Date: Fri, 2 Dec 2016 14:35:43 +0530
-Message-ID: <1480669543-16197-1-git-send-email-j-keerthy@ti.com>
+Return-Path: <eric@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: bcm2835: Avoid overwriting the div info when disabling a pll_div clk
+In-Reply-To: <1480620441-5442-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1480620441-5442-1-git-send-email-boris.brezillon@free-electrons.com>
+Date: Thu, 01 Dec 2016 12:46:23 -0800
+Message-ID: <87shq7fkdc.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently the divider selection logic blindly divides the parent_rate
-by the clk rate and gives the divider value for the divider clocks
-which do not have the CLK_SET_RATE_PARENT flag set. Add the clk divider
-table parsing to get the closest divider available in the table
-provided via Device tree.
+--=-=-=
+Content-Type: text/plain
 
-The code is pretty much taken from: drivers/clk/clk-divider.c.
-and used here to fix up the best divider selection logic.
+Boris Brezillon <boris.brezillon@free-electrons.com> writes:
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Reported-by: Richard Woodruff <r-woodruff2@ti.com>
----
- drivers/clk/ti/divider.c | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
+> bcm2835_pll_divider_off() is resetting the divider field in the A2W reg
+> to zero when disabling the clock.
+>
+> Make sure we preserve this value by reading the previous a2w_reg value
+> first and ORing the result with A2W_PLL_CHANNEL_DISABLE.
+>
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
+> Cc: <stable@vger.kernel.org>
 
-diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-index b4e5de1..6bb8778 100644
---- a/drivers/clk/ti/divider.c
-+++ b/drivers/clk/ti/divider.c
-@@ -140,6 +140,35 @@ static bool _is_valid_div(struct clk_divider *divider, unsigned int div)
- 	return true;
- }
- 
-+static int _div_round_up(const struct clk_div_table *table,
-+			 unsigned long parent_rate, unsigned long rate)
-+{
-+	const struct clk_div_table *clkt;
-+	int up = INT_MAX;
-+	int div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-+
-+	for (clkt = table; clkt->div; clkt++) {
-+		if (clkt->div == div)
-+			return clkt->div;
-+		else if (clkt->div < div)
-+			continue;
-+
-+		if ((clkt->div - div) < (up - div))
-+			up = clkt->div;
-+	}
-+
-+	return up;
-+}
-+
-+static int _div_round(const struct clk_div_table *table,
-+		      unsigned long parent_rate, unsigned long rate)
-+{
-+	if (!table)
-+		return DIV_ROUND_UP(parent_rate, rate);
-+
-+	return _div_round_up(table, parent_rate, rate);
-+}
-+
- static int ti_clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
- 				  unsigned long *best_parent_rate)
- {
-@@ -155,7 +184,7 @@ static int ti_clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
- 
- 	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
- 		parent_rate = *best_parent_rate;
--		bestdiv = DIV_ROUND_UP(parent_rate, rate);
-+		bestdiv = _div_round(divider->table, parent_rate, rate);
- 		bestdiv = bestdiv == 0 ? 1 : bestdiv;
- 		bestdiv = bestdiv > maxdiv ? maxdiv : bestdiv;
- 		return bestdiv;
--- 
-1.9.1
+Reviewed-by: Eric Anholt <eric@anholt.net>
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlhAjB8ACgkQtdYpNtH8
+nuirYQ/6Aj+YvupY0g9WaMjNWa8vxIlQau1z/20fv5df9rk2K5vv4qJY94Vx8tmO
+zTPp3VOHcyoygDsXFD1UHk3OwgMmd8RInS7DEe+b+/Jb8cboLWmBni9ru2PVglry
+eF/TDqqvgogrybWXX/Z+pWPH3gaFUxvJzfxklE5R2uKIH1DyxmJTlHAgv7mzQey/
+xhE+c7lPG0M4n4vVUeVG56Sn4GjNISjt1OfIscOJk0Pu38he+iblz7GPeLPs/bPI
++vGqg6+BXXxy+wvIYalpo878OWjQLLgrFW6uY1GWm2LJfTpoqHlBbXd3YEsq+Ixr
+ezGC0XLVlOqjxtrTWzBihuMTuulYccfbXkQVMVzc+P0BcIRdAdai5whjUzgVzWYj
+elLcHbQr4suj1hJn46QTT2aajX981CZUbC7qE/BDL8VV+j/fODtrXDBwPjhwr2OF
+yExA/CVIVrVKOxrWa0WtkNM5bMdNPz/udJO2IKbilMgOlkGlYr1zFajkfZlbmDRE
+MxWa6gRg/lQcB8zEUhwBFjPcbU5n8RoZmNXh9J7++mu0c5vZ1okCoKv2s8GJskPv
+8txG9nn3hlRQW+Sech5R7nHOZ9C9WbK29mHq4UBQRxRvk3jk4RJKUO91uLtZjwsE
+gofoX72BS7cz6t0rHmql12Wu3fs1igDnudDbPKQKLSyqFmu7i3I=
+=CoBZ
+-----END PGP SIGNATURE-----
+--=-=-=--
