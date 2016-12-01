@@ -1,137 +1,114 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 05/11] drm/vc4: Add support for feeding DSI encoders from the pixel valve.
-Date: Wed, 14 Dec 2016 11:46:15 -0800
-Message-Id: <20161214194621.16499-6-eric@anholt.net>
-In-Reply-To: <20161214194621.16499-1-eric@anholt.net>
-References: <20161214194621.16499-1-eric@anholt.net>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v3 3/9] clk: stm32f4: Add post divisor for I2S & SAI PLLs
+Date: Thu, 1 Dec 2016 16:27:43 +0100
+Message-ID: <1480606069-5178-4-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1480606069-5178-1-git-send-email-gabriel.fernandez@st.com>
+References: <1480606069-5178-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-We have to set a different pixel format, which tells the hardware to
-use the pix_width field that's fed in sideband from the DSI encoder to
-divide the "pixel" clock.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
+This patch adds post dividers of I2S & SAI PLLs.
+These dividers are managed by a dedicated register (RCC_DCKCFGR).
+The PLL should be off before a set rate.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- drivers/gpu/drm/vc4/vc4_crtc.c | 33 +++++++++++++++++++--------------
- drivers/gpu/drm/vc4/vc4_regs.h |  2 ++
- 2 files changed, 21 insertions(+), 14 deletions(-)
+ drivers/clk/clk-stm32f4.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_crtc.c b/drivers/gpu/drm/vc4/vc4_crtc.c
-index a0fd3e66bc4b..cd070e0c79a6 100644
---- a/drivers/gpu/drm/vc4/vc4_crtc.c
-+++ b/drivers/gpu/drm/vc4/vc4_crtc.c
-@@ -349,38 +349,40 @@ static u32 vc4_get_fifo_full_level(u32 format)
- }
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index c2b62cc..98856ac 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -47,6 +47,7 @@
+ #define STM32F4_RCC_CSR			0x74
+ #define STM32F4_RCC_PLLI2SCFGR		0x84
+ #define STM32F4_RCC_PLLSAICFGR		0x88
++#define STM32F4_RCC_DCKCFGR		0x8c
  
- /*
-- * Returns the clock select bit for the connector attached to the
-- * CRTC.
-+ * Returns the encoder attached to the CRTC.
-+ *
-+ * VC4 can only scan out to one encoder at a time, while the DRM core
-+ * allows drivers to push pixels to more than one encoder from the
-+ * same CRTC.
-  */
--static int vc4_get_clock_select(struct drm_crtc *crtc)
-+static struct drm_encoder *vc4_get_crtc_encoder(struct drm_crtc *crtc)
- {
- 	struct drm_connector *connector;
+ struct stm32f4_gate_data {
+ 	u8	offset;
+@@ -357,6 +358,18 @@ struct stm32f4_pll {
  
- 	drm_for_each_connector(connector, crtc->dev) {
- 		if (connector->state->crtc == crtc) {
--			struct drm_encoder *encoder = connector->encoder;
--			struct vc4_encoder *vc4_encoder =
--				to_vc4_encoder(encoder);
--
--			return vc4_encoder->clock_select;
-+			return connector->encoder;
- 		}
- 	}
+ #define to_stm32f4_pll(_gate) container_of(_gate, struct stm32f4_pll, gate)
  
--	return -1;
-+	return NULL;
- }
++struct stm32f4_pll_post_div_data {
++	u8 pll_num;
++	const char *name;
++	const char *parent;
++	u8 flag;
++	u8 offset;
++	u8 shift;
++	u8 width;
++	u8 flag_div;
++	const struct clk_div_table *div_table;
++};
++
+ struct stm32f4_vco_data {
+ 	const char *vco_name;
+ 	u8 offset;
+@@ -370,6 +383,18 @@ struct stm32f4_vco_data {
+ 	{ "vco-sai", STM32F4_RCC_PLLSAICFGR, 28, 29 },
+ };
  
- static void vc4_crtc_mode_set_nofb(struct drm_crtc *crtc)
- {
- 	struct drm_device *dev = crtc->dev;
- 	struct vc4_dev *vc4 = to_vc4_dev(dev);
-+	struct drm_encoder *encoder = vc4_get_crtc_encoder(crtc);
-+	struct vc4_encoder *vc4_encoder = to_vc4_encoder(encoder);
- 	struct vc4_crtc *vc4_crtc = to_vc4_crtc(crtc);
- 	struct drm_crtc_state *state = crtc->state;
- 	struct drm_display_mode *mode = &state->adjusted_mode;
- 	bool interlace = mode->flags & DRM_MODE_FLAG_INTERLACE;
- 	u32 pixel_rep = (mode->flags & DRM_MODE_FLAG_DBLCLK) ? 2 : 1;
--	u32 format = PV_CONTROL_FORMAT_24;
-+	bool is_dsi = (vc4_encoder->type == VC4_ENCODER_TYPE_DSI0 ||
-+		       vc4_encoder->type == VC4_ENCODER_TYPE_DSI1);
-+	u32 format = is_dsi ? PV_CONTROL_FORMAT_DSIV_24 : PV_CONTROL_FORMAT_24;
- 	bool debug_dump_regs = false;
--	int clock_select = vc4_get_clock_select(crtc);
++#define MAX_POST_DIV 3
++static const struct stm32f4_pll_post_div_data  post_div_data[MAX_POST_DIV] = {
++	{ PLL_I2S, "plli2s-q-div", "plli2s-q", CLK_SET_RATE_PARENT,
++		STM32F4_RCC_DCKCFGR, 0, 5, 0, NULL},
++
++	{ PLL_SAI, "pllsai-q-div", "pllsai-q", CLK_SET_RATE_PARENT,
++		STM32F4_RCC_DCKCFGR, 8, 5, 0, NULL },
++
++	{ PLL_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
++		STM32F4_RCC_DCKCFGR, 16, 2, CLK_DIVIDER_POWER_OF_TWO},
++};
++
+ struct stm32f4_div_data {
+ 	u8 shift;
+ 	u8 width;
+@@ -996,6 +1021,23 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 	clks[PLL_VCO_SAI] = stm32f4_rcc_register_pll("vco_in",
+ 			&data->pll_data[2], &stm32f4_clk_lock);
  
- 	if (debug_dump_regs) {
- 		DRM_INFO("CRTC %d regs before:\n", drm_crtc_index(crtc));
-@@ -436,17 +438,19 @@ static void vc4_crtc_mode_set_nofb(struct drm_crtc *crtc)
- 		 */
- 		CRTC_WRITE(PV_V_CONTROL,
- 			   PV_VCONTROL_CONTINUOUS |
-+			   (is_dsi ? PV_VCONTROL_DSI : 0) |
- 			   PV_VCONTROL_INTERLACE |
- 			   VC4_SET_FIELD(mode->htotal * pixel_rep / 2,
- 					 PV_VCONTROL_ODD_DELAY));
- 		CRTC_WRITE(PV_VSYNCD_EVEN, 0);
- 	} else {
--		CRTC_WRITE(PV_V_CONTROL, PV_VCONTROL_CONTINUOUS);
-+		CRTC_WRITE(PV_V_CONTROL,
-+			   PV_VCONTROL_CONTINUOUS |
-+			   (is_dsi ? PV_VCONTROL_DSI : 0));
- 	}
- 
- 	CRTC_WRITE(PV_HACT_ACT, mode->hdisplay * pixel_rep);
- 
--
- 	CRTC_WRITE(PV_CONTROL,
- 		   VC4_SET_FIELD(format, PV_CONTROL_FORMAT) |
- 		   VC4_SET_FIELD(vc4_get_fifo_full_level(format),
-@@ -455,7 +459,8 @@ static void vc4_crtc_mode_set_nofb(struct drm_crtc *crtc)
- 		   PV_CONTROL_CLR_AT_START |
- 		   PV_CONTROL_TRIGGER_UNDERFLOW |
- 		   PV_CONTROL_WAIT_HSTART |
--		   VC4_SET_FIELD(clock_select, PV_CONTROL_CLK_SELECT) |
-+		   VC4_SET_FIELD(vc4_encoder->clock_select,
-+				 PV_CONTROL_CLK_SELECT) |
- 		   PV_CONTROL_FIFO_CLR |
- 		   PV_CONTROL_EN);
- 
-diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
-index b3b297fba709..385405a2df05 100644
---- a/drivers/gpu/drm/vc4/vc4_regs.h
-+++ b/drivers/gpu/drm/vc4/vc4_regs.h
-@@ -190,6 +190,8 @@
- # define PV_VCONTROL_ODD_DELAY_SHIFT		6
- # define PV_VCONTROL_ODD_FIRST			BIT(5)
- # define PV_VCONTROL_INTERLACE			BIT(4)
-+# define PV_VCONTROL_DSI			BIT(3)
-+# define PV_VCONTROL_COMMAND			BIT(2)
- # define PV_VCONTROL_CONTINUOUS			BIT(1)
- # define PV_VCONTROL_VIDEN			BIT(0)
- 
++	for (n = 0; n < MAX_POST_DIV; n++) {
++		const struct stm32f4_pll_post_div_data *post_div;
++
++		post_div = &post_div_data[n];
++
++		clk_register_pll_div(post_div->name,
++				post_div->parent,
++				post_div->flag,
++				base + post_div->offset,
++				post_div->shift,
++				post_div->width,
++				post_div->flag_div,
++				post_div->div_table,
++				clks[post_div->pll_num],
++				&stm32f4_clk_lock);
++	}
++
+ 	sys_parents[1] = hse_clk;
+ 	clk_register_mux_table(
+ 	    NULL, "sys", sys_parents, ARRAY_SIZE(sys_parents), 0,
 -- 
-2.11.0
+1.9.1
