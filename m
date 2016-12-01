@@ -1,41 +1,68 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ladislav Michl <ladis@linux-mips.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, Paul Walmsley <paul@pwsan.com>, Richard Watts <rrw@kynesim.co.uk>, Tony Lindgren <tony@atomide.com>, Alexander Kinzer <a.kinzer@plusoptix.de>, Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
-Date: Thu, 08 Dec 2016 13:40 +0200
-Message-ID: <3225321.q72K2erxPs@avalon>
-In-Reply-To: <20161208071155.GA7530@localhost.localdomain>
-References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com> <20161208001654.GD5423@codeaurora.org> <20161208071155.GA7530@localhost.localdomain>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v3 0/9] STM32F4 missing clocks
+Date: Thu, 1 Dec 2016 16:27:40 +0100
+Message-ID: <1480606069-5178-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ladislav,
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-On Thursday 08 Dec 2016 08:11:55 Ladislav Michl wrote:
-> On Wed, Dec 07, 2016 at 04:16:54PM -0800, Stephen Boyd wrote:
-> > On 12/05, Tero Kristo wrote:
-> > > The compiler should ideally generate same size code for these both.
-> > > Personally, I don't mind which version goes in; I'd say both are as
-> > > readable.
-> > > 
-> > > Stephen, Mike, is one of you going to pick this up? I don't think I
-> > > have anything else to pull due to the ongoing discussion with the
-> > > other pending stuff.
-> > 
-> > I have no problem picking up either version. Please send it with
-> > the appropriate tags added and I can merge it.
-> 
-> Here it is for your convenience. Of course I'd like to see smaller code
-> to go in as exactly those sneaky tiny incremental code size increases
-> made Linux kernel unusable on most of my hardware over time ;-)
-> However, if Laurent is unhappy with changes I made, I will not object
-> merging his version any more.
+v3:
+ - restructure the patch series to have only one patch for all bindings changes.
+   (clk: stm32f4: Update DT bindings documentation)
 
-I'd rather keep my version, thank you. Let's not spend time chasing bytes.
+v2:
+ - Put post divider in config structure
+ - Rework patch-set
+    - add update dt binding documentation
+    - add clock definition file
+ - Use composite for pll vco clocks
+ - For auxiliary clock, allow the possiblity to enable peripheral
+   clocks at same time (sugested by radek)
+ - Add vco_in clock (entry frequency for all pll) to simplify the code and clarify clock tree
+ - Fix missing end of divider tables
+
+This patch-set adds:
+ - I2S & SAI PLLs
+ - SDIO & 48 Mhz clocks
+ - LCD-TFT clock
+ - I2S & SAI clocks
+
+Gabriel Fernandez (9):
+  clk: stm32f4: Update DT bindings documentation
+  clk: stm32f4: Add PLL_I2S & PLL_SAI for STM32F429/469 boards
+  clk: stm32f4: Add post divisor for I2S & SAI PLLs
+  clk: stm32f4: Add lcd-tft clock
+  clk: stm32f4: Add I2S clock
+  clk: stm32f4: Add SAI clocks
+  clk: stm32f4: SDIO & 48Mhz clock management for STM32F469 board
+  ARM: dts: stm32f4: Add external I2S clock
+  ARM: dts: stm32f4: Include auxiliary stm32f4 clock definition
+
+ .../devicetree/bindings/clock/st,stm32-rcc.txt     |  15 +
+ arch/arm/boot/dts/stm32f429.dtsi                   |   9 +-
+ drivers/clk/clk-stm32f4.c                          | 585 ++++++++++++++++++++-
+ include/dt-bindings/clock/stm32f4-clock.h          |  37 ++
+ 4 files changed, 626 insertions(+), 20 deletions(-)
+ create mode 100644 include/dt-bindings/clock/stm32f4-clock.h
 
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
