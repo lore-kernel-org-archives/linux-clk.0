@@ -1,42 +1,45 @@
-Return-Path: <sudeep.holla@arm.com>
-Subject: Re: [PATCH 3/6] ARM: dts: sun8i: add a cpu0 label to cpu@0 node on
- A23/33
-To: Icenowy Zheng <icenowy@aosc.xyz>
-References: <20161213152252.53749-1-icenowy@aosc.xyz>
- <20161213152252.53749-4-icenowy@aosc.xyz>
-Cc: Russell King <linux@armlinux.org.uk>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Jorik Jonker <jorik@kippendief.biz>,
- Hans de Goede <hdegoede@redhat.com>,
- Quentin Schulz <quentin.schulz@free-electrons.com>,
- Sudeep Holla <sudeep.holla@arm.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <139af71f-390a-4023-8f82-71dd80212518@arm.com>
-Date: Tue, 13 Dec 2016 16:09:59 +0000
-MIME-Version: 1.0
-In-Reply-To: <20161213152252.53749-4-icenowy@aosc.xyz>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 0/2] clk: bcm2835: Propage rate change to PLLH
+Date: Thu,  1 Dec 2016 22:00:18 +0100
+Message-Id: <1480626020-20031-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello,
 
+The VEC (Video EnCoder) clock needs to be running at precisely 108Mhz
+for the VEC IP to work properly.
+Unfortunately, the current implementation does not propate peripheral
+clock rate change to their parents, which prevents us from getting
+the 108Mhz rate unless the PLLH and PLLH_AUX clocks are already
+configured (by the bootloader) to a multiple of 108Mhz.
 
-On 13/12/16 15:22, Icenowy Zheng wrote:
-> A "cpu0" label is needed on cpu@0 for cpufreq-dt to work.
-> 
+This series adds support for optional per-periph-clk rate change
+propagation and enables this feature on the VEC clock.
 
-IIUC any label should be fine and I don't see anything in the driver
-looking for such label name. All I see is it looks for cpu0 regulator
-for *legacy* DTs
+Regards,
 
-> Add such a label, in order to prepare for cpufreq support of A23/33.
-> 
+Boris
 
-You need this as you add the same label in the following patches. The
-commit message sounds like cpufreq-dt search for that label by name.
+Boris Brezillon (2):
+  clk: bcm: Support rate change propagation on bcm2835 clocks
+  clk: bcm: Allow rate change propagation to PLLH_AUX on VEC clock
+
+ drivers/clk/bcm/clk-bcm2835.c | 74 ++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 69 insertions(+), 5 deletions(-)
 
 -- 
-Regards,
-Sudeep
+2.7.4
