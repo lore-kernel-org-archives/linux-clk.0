@@ -1,67 +1,69 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH 2/6] arm64: allwinner: Kconfig: add essential pinctrl driver
- for H5
-Date: Tue, 27 Dec 2016 00:25:14 +0800
-Message-Id: <20161226162518.5367-3-icenowy@aosc.xyz>
-In-Reply-To: <20161226162518.5367-1-icenowy@aosc.xyz>
-References: <20161226162518.5367-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [PATCH v2 4/9] clk: stm32f4: Add lcd-tft clock
+To: Rob Herring <robh@kernel.org>
+References: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
+ <1479998749-20358-5-git-send-email-gabriel.fernandez@st.com>
+ <20161130205333.tiukcjbspuqmedgw@rob-hp-laptop>
+CC: Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <ec824a37-b90c-05a1-a4cf-048fb66e8ae8@st.com>
+Date: Thu, 1 Dec 2016 09:58:22 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20161130205333.tiukcjbspuqmedgw@rob-hp-laptop>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-H5 SoC has two pin controllers, one (in user manual called "CPUx") needs
-a slightly advanced driver, and the other (called "CPUs") is just equal
-to the on in H3, and the H3 driver can be just reused.
+Hi Rob,
 
-Select the two necessary pinctrl drivers when building kernel for
-Allwinner SoCs.
+Thanks for reviewing
 
-Also add H5 in the option's description.
+On 11/30/2016 09:53 PM, Rob Herring wrote:
+> On Thu, Nov 24, 2016 at 03:45:44PM +0100, gabriel.fernandez@st.com wrote:
+>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>
+>> This patch introduces lcd-tft clock for stm32f4 soc.
+>>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+>> ---
+>>   .../devicetree/bindings/clock/st,stm32-rcc.txt     |   1 +
+>>   drivers/clk/clk-stm32f4.c                          | 118 +++++++++++++++++++++
+>>   include/dt-bindings/clock/stm32f4-clock.h          |   3 +-
+>>   3 files changed, 121 insertions(+), 1 deletion(-)
+>
+>> diff --git a/include/dt-bindings/clock/stm32f4-clock.h b/include/dt-bindings/clock/stm32f4-clock.h
+>> index 56b8e10..1be4a3a 100644
+>> --- a/include/dt-bindings/clock/stm32f4-clock.h
+>> +++ b/include/dt-bindings/clock/stm32f4-clock.h
+>> @@ -27,7 +27,8 @@
+>>   #define CLK_RTC			5
+>>   #define PLL_VCO_I2S		6
+>>   #define PLL_VCO_SAI		7
+>> +#define CLK_LCD			8
+>>   
+>> -#define END_PRIMARY_CLK		8
+>> +#define END_PRIMARY_CLK		9
+> Do you really need this? Having this change could cause compatibility
+> problems between dtb and kernel versions.
+>
+> Please restructure the patch series and put all of the binding changes
+> including this header into a single patch. Incrementally add s/w
+> features, not h/w.
+>
+> Rob
+Okay
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
- arch/arm64/Kconfig.platforms | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Best Regards
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 715ef1256838..e11523d204b5 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -5,8 +5,11 @@ config ARCH_SUNXI
- 	select GENERIC_IRQ_CHIP
- 	select PINCTRL
- 	select PINCTRL_SUN50I_A64
-+	select PINCTRL_SUN50I_H5
-+	select PINCTRL_SUN8I_H3_R
- 	help
--	  This enables support for Allwinner sunxi based SoCs like the A64.
-+	  This enables support for Allwinner sunxi based SoCs like the A64
-+	  and H5.
- 
- config ARCH_ALPINE
- 	bool "Annapurna Labs Alpine platform"
--- 
-2.11.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Gabriel
