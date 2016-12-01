@@ -1,75 +1,85 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 13 Dec 2016 15:28:35 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jacky Bai <ping.bai@nxp.com>
-Cc: "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"jacky.baip@gmail.com" <jacky.baip@gmail.com>
-Subject: Re: [PATCH 03/11] driver: clk: imx: Add clock driver for imx6sll
-Message-ID: <20161213232835.GR5423@codeaurora.org>
-References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
- <1480660774-25055-4-git-send-email-ping.bai@nxp.com>
- <20161208225257.GP5423@codeaurora.org>
- <AM3PR04MB5302BE33BE1F2C9913FF61587980@AM3PR04MB530.eurprd04.prod.outlook.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v3 5/9] clk: stm32f4: Add I2S clock
+Date: Thu, 1 Dec 2016 16:27:45 +0100
+Message-ID: <1480606069-5178-6-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1480606069-5178-1-git-send-email-gabriel.fernandez@st.com>
+References: <1480606069-5178-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <AM3PR04MB5302BE33BE1F2C9913FF61587980@AM3PR04MB530.eurprd04.prod.outlook.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/12, Jacky Bai wrote:
-> > On 12/02, Bai Ping wrote:
-> > > diff --git a/drivers/clk/imx/clk-imx6sll.c
-> > > b/drivers/clk/imx/clk-imx6sll.c new file mode 100644 index
-> > > 0000000..c5219e1
-> > > --- /dev/null
-> > > +++ b/drivers/clk/imx/clk-imx6sll.c
-> > > +0x20, 16, 1, pll7_bypass_sels, ARRAY_SIZE(pll7_bypass_sels),
-> > > +CLK_SET_RATE_PARENT);
-> > > +
-> > > +	/* Do not bypass PLLs initially */
-> > > +	clk_set_parent(clks[IMX6SLL_PLL1_BYPASS], clks[IMX6SLL_CLK_PLL1]);
-> > > +	clk_set_parent(clks[IMX6SLL_PLL2_BYPASS], clks[IMX6SLL_CLK_PLL2]);
-> > > +	clk_set_parent(clks[IMX6SLL_PLL3_BYPASS], clks[IMX6SLL_CLK_PLL3]);
-> > > +	clk_set_parent(clks[IMX6SLL_PLL4_BYPASS], clks[IMX6SLL_CLK_PLL4]);
-> > > +	clk_set_parent(clks[IMX6SLL_PLL5_BYPASS], clks[IMX6SLL_CLK_PLL5]);
-> > > +	clk_set_parent(clks[IMX6SLL_PLL6_BYPASS], clks[IMX6SLL_CLK_PLL6]);
-> > > +	clk_set_parent(clks[IMX6SLL_PLL7_BYPASS], clks[IMX6SLL_CLK_PLL7]);
-> > 
-> > Can we just put raw register writes here instead? I'd prefer we didn't use clk
-> > consumer APIs to do things to the clk tree from the providers. The problem
-> > there being that:
-> > 
-> >  1) We're trying to move away from using consumer APIs in  provider drivers.
-> > It's ok if they're used during probe, but  inside clk_ops is not preferred.
-> > 
-> >  2) Even if you have a clk pointer, it may be "orphaned" at the  time of
-> > registration and so calling the APIs here works now but  eventually we may
-> > want to return an EPROBE_DEFER error in that  case and this may block that
-> > effort.
-> > 
-> > I suppose if this is the only clk driver on this machine then this last point isn't a
-> > concern and things are probably ok here.
-> > 
-> 
-> Using raw register writing has an issue.  The register is modified, but it seems the clock 'parent-child' relationship can 
-> not match the register setting. The register setting is not bypass the pll, but in debug 'clk_summary', the
-> pll is bypassed.  
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-So program the register settings before registering the clocks
-with the framework?
+This patch introduces I2S clock for stm32f4 soc.
+The I2S clock could be derived from an external clock or from pll-i2s
 
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32f4.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 86244fc..3063b30 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -935,6 +935,8 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
+ 
+ static const char *lcd_parent[1] = { "pllsai-r-div" };
+ 
++static const char *i2s_parents[2] = { "plli2s-r", NULL };
++
+ struct stm32_aux_clk {
+ 	int idx;
+ 	const char *name;
+@@ -969,6 +971,12 @@ struct stm32f4_clk_data {
+ 		STM32F4_RCC_APB2ENR, 26,
+ 		CLK_SET_RATE_PARENT
+ 	},
++	{
++		CLK_I2S, "i2s", i2s_parents, ARRAY_SIZE(i2s_parents),
++		STM32F4_RCC_CFGR, 23, 1,
++		NO_GATE, 0,
++		CLK_SET_RATE_PARENT
++	},
+ };
+ 
+ static const struct stm32f4_clk_data stm32f429_clk_data = {
+@@ -1063,7 +1071,7 @@ static struct clk_hw *stm32_register_aux_clk(const char *name,
+ 
+ static void __init stm32f4_rcc_init(struct device_node *np)
+ {
+-	const char *hse_clk;
++	const char *hse_clk, *i2s_in_clk;
+ 	int n;
+ 	const struct of_device_id *match;
+ 	const struct stm32f4_clk_data *data;
+@@ -1098,6 +1106,10 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 
+ 	hse_clk = of_clk_get_parent_name(np, 0);
+ 
++	i2s_in_clk = of_clk_get_parent_name(np, 1);
++
++	i2s_parents[1] = i2s_in_clk;
++
+ 	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
+ 			16000000, 160000);
+ 	pllcfgr = readl(base + STM32F4_RCC_PLLCFGR);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
