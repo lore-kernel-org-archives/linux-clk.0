@@ -1,224 +1,156 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60250 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751096AbcLEIxP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2016 03:53:15 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ladislav Michl <ladis@linux-mips.org>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
-        Richard Watts <rrw@kynesim.co.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexander Kinzer <a.kinzer@plusoptix.de>
-Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
-Date: Mon, 05 Dec 2016 10:46:43 +0200
-Message-ID: <2239782.MNuANFihMe@avalon>
-In-Reply-To: <20161205082210.GA2901@localhost.localdomain>
-References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com> <20161205082210.GA2901@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 1/2] clk: bcm: Support rate change propagation on bcm2835 clocks
+Date: Thu,  1 Dec 2016 22:00:19 +0100
+Message-Id: <1480626020-20031-2-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1480626020-20031-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1480626020-20031-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ladislav,
+Some peripheral clocks, like the VEC (Video EnCoder) clock need to be set
+to a precise rate (in our case 108MHz). With the current implementation,
+where peripheral clocks are not allowed to forward rate change requests
+to their parents, it is impossible to match this requirement unless the
+bootloader has configured things correctly, or a specific rate has been
+assigned through the DT (with the assigned-clk-rates property).
 
-On Monday 05 Dec 2016 09:22:10 Ladislav Michl wrote:
-> Hi Laurent,
-> 
-> I'm happy someone is stepping into this again :-) Just a few comments bellow
-> (and this thread for more:
-> http://www.spinics.net/lists/linux-omap/msg126591.html)
->
-> On Fri, Dec 02, 2016 at 11:14:38PM +0200, Laurent Pinchart wrote:
-> > From: Richard Watts <rrw@kynesim.co.uk>
-> > 
-> > The OMAP36xx DPLL5, driving EHCI USB, can be subject to a long-term
-> > frequency drift. The frequency drift magnitude depends on the VCO update
-> > rate, which is inversely proportional to the PLL divider. The kernel
-> > DPLL configuration code results in a high value for the divider, leading
-> > to a long term drift high enough to cause USB transmission errors. In
-> > the worst case the USB PHY's ULPI interface can stop responding,
-> > breaking USB operation completely. This manifests itself on the
-> > Beagleboard xM by the LAN9514 reporting 'Cannot enable port 2. Maybe the
-> > cable is bad?' in the kernel log.
-> > 
-> > Errata sprz319 advisory 2.1 documents PLL values that minimize the
-> > drift. Use them automatically when DPLL5 is used for USB operation,
-> > which we detect based on the requested clock rate. The clock framework
-> > will still compute the PLL parameters and resulting rate as usual, but
-> > the PLL M and N values will then be overridden. This can result in the
-> > effective clock rate being slightly different than the rate cached by
-> > the clock framework, but won't cause any adverse effect to USB
-> > operation.
-> > 
-> > Signed-off-by: Richard Watts <rrw@kynesim.co.uk>
-> > [Upported from v3.2 to v4.9]
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > ---
-> > Changes since v2:
-> > 
-> > - Added spaces around +
-> > ---
-> > 
-> >  drivers/clk/ti/clk-3xxx.c | 20 +++++++-------
-> >  drivers/clk/ti/clock.h    |  9 +++++++
-> >  drivers/clk/ti/dpll.c     | 19 +++++++++++++-
-> >  drivers/clk/ti/dpll3xxx.c | 67 ++++++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 104 insertions(+), 11 deletions(-)
+Add a new field to struct bcm2835_clock_data to specify which parent
+clocks accept rate change propagation, and support set rate propagation
+in bcm2835_clock_determine_rate().
 
-[snip]
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+Note: this approach is still fragile, since it does not prevent 2 clock
+users from stepping on each other's toes.
+We could use the clk rate constraints infrastructure, but it's only
+applicable to leaf clocks in the clock tree (when you apply a constraint,
+these constraints are not propagated to the clock tree).
 
-> > diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
-> > index 88f2ce81ba55..4cdd28a25584 100644
-> > --- a/drivers/clk/ti/dpll3xxx.c
-> > +++ b/drivers/clk/ti/dpll3xxx.c
-> > @@ -838,3 +838,70 @@ int omap3_dpll4_set_rate_and_parent(struct clk_hw
-> > *hw, unsigned long rate,
-> >  	return omap3_noncore_dpll_set_rate_and_parent(hw, rate, parent_rate,
-> >  						      index);
-> >  }
-> > +
-> > +/* Apply DM3730 errata sprz319 advisory 2.1. */
-> > +static bool omap3_dpll5_apply_errata(struct clk_hw *hw,
-> > +				     unsigned long parent_rate)
-> > +{
-> > +	struct omap3_dpll5_settings {
-> > +		unsigned int rate, m, n;
-> > +	};
-> > +
-> > +	static const struct omap3_dpll5_settings precomputed[] = {
-> > +		/*
-> > +		 * From DM3730 errata advisory 2.1, table 35 and 36.
-> > +		 * The N value is increased by 1 compared to the tables as the
-> > +		 * errata lists register values while last_rounded_field is
-> > the
-> > +		 * real divider value.
-> > +		 */
-> > +		{ 12000000,  80,  0 + 1 },
-> > +		{ 13000000, 443,  5 + 1 },
-> > +		{ 19200000,  50,  0 + 1 },
-> > +		{ 26000000, 443, 11 + 1 },
-> > +		{ 38400000,  25,  0 + 1 }
-> > +	};
-> 
-> Table 36 list two options with 26MHz clocks: m=443, n=11 and m=480, n=12
-> with a statement: "The choice between these two options with a 26 MHz input
-> should be based on characterization on the end system."
-> 
-> Shall we care about that?
+Another approach would be to lock a rate on a clock, thus preventing
+other users from changing it. Propagating rate locks would be easier than
+propagating rate range constraints (see this patch
+http://code.bulix.org/jwtzf8-107264), but it still requires that really
+care about a specific clock rate explicitly lock the rate (using
+clk_set_and_lock_rate()), and this means checking every drivers that have
+such requirements.
+---
+ drivers/clk/bcm/clk-bcm2835.c | 67 ++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 63 insertions(+), 4 deletions(-)
 
-I'd like to, but at the moment I don't see how. Proposals are welcome :-) I 
-don't think addressing that issue should be a blocker to get this patch merged 
-though.
-
-> > +	const struct omap3_dpll5_settings *d;
-> > +	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-> > +	struct dpll_data *dd;
-> > +	unsigned int i;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(precomputed); ++i) {
-> > +		if (parent_rate == precomputed[i].rate)
-> > +			break;
-> > +	}
-> > +
-> > +	if (i == ARRAY_SIZE(precomputed))
-> > +		return false;
-> > +
-> > +	d = &precomputed[i];
-> > +
-> > +	/* Update the M, N and rounded rate values and program the DPLL. */
-> > +	dd = clk->dpll_data;
-> > +	dd->last_rounded_m = d->m;
-> > +	dd->last_rounded_n = d->n;
-> > +	dd->last_rounded_rate = div_u64((u64)parent_rate * d->m, d->n);
-> > +	omap3_noncore_dpll_program(clk, 0);
-> > +
-> > +	return true;
-> > +}
-> 
-> What about small optimization? Gives a few tens of bytes smaller code...
-> 
-> diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
-> index 88f2ce8..cd22bcc 100644
-> --- a/drivers/clk/ti/dpll3xxx.c
-> +++ b/drivers/clk/ti/dpll3xxx.c
-> @@ -838,3 +838,67 @@ int omap3_dpll4_set_rate_and_parent(struct clk_hw *hw,
-> unsigned long rate, return omap3_noncore_dpll_set_rate_and_parent(hw, rate,
-> parent_rate, index);
->  }
-> +
-> +/* Apply DM3730 errata sprz319 advisory 2.1. */
-> +static bool omap3_dpll5_apply_errata(struct clk_hw *hw,
-> +				     unsigned long parent_rate)
-> +{
-> +	struct omap3_dpll5_settings {
-> +		unsigned int rate, m, n;
-> +	};
-> +
-> +	static const struct omap3_dpll5_settings precomputed[] = {
-> +		/*
-> +		 * From DM3730 errata advisory 2.1, table 35 and 36.
-> +		 * The N value is increased by 1 compared to the tables as the
-> +		 * errata lists register values while last_rounded_field is 
-the
-> +		 * real divider value.
-> +		 */
-> +		{ 12000000,  80,  0 + 1 },
-> +		{ 13000000, 443,  5 + 1 },
-> +		{ 19200000,  50,  0 + 1 },
-> +		{ 26000000, 443, 11 + 1 },
-> +		{ 38400000,  25,  0 + 1 }
-> +	};
-> +
-> +	struct clk_hw_omap *clk;
-> +	struct dpll_data *dd;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(precomputed); i++)
-> +		if (parent_rate == precomputed[i].rate) {
-> +			clk = to_clk_hw_omap(hw);
-> +			/* Update the M, N and rounded rate values */
-> +			dd = clk->dpll_data;
-> +			dd->last_rounded_m = precomputed[i].m;
-> +			dd->last_rounded_n = precomputed[i].n;
-> +			dd->last_rounded_rate =
-> +				div_u64((u64)parent_rate * dd->last_rounded_m,
-> +					dd->last_rounded_n);
-> +			omap3_noncore_dpll_program(clk, 0);
-> +
-> +			return true;
-> +		}
-> +
-> +	return false;
-> +}
-
-I had tried that, but I find the code less readable :-S
-
-(I wish C had a for (...) { ... } else { ... } construct like Python does.)
-
-> > +/**
-> > + * omap3_dpll5_set_rate - set rate for omap3 dpll5
-> > + * @hw: clock to change
-> > + * @rate: target rate for clock
-> > + * @parent_rate: rate of the parent clock
-> > + *
-> > + * Set rate for the DPLL5 clock. Apply the sprz319 advisory 2.1 on
-> > OMAP36xx if
-> > + * the DPLL is used for USB host (detected through the requested rate).
-> > + */
-> > +int omap3_dpll5_set_rate(struct clk_hw *hw, unsigned long rate,
-> > +			 unsigned long parent_rate)
-> > +{
-> > +	if (rate == OMAP3_DPLL5_FREQ_FOR_USBHOST * 8) {
-> > +		if (omap3_dpll5_apply_errata(hw, parent_rate))
-> > +			return 0;
-> > +	}
-> > +
-> > +	return omap3_noncore_dpll_set_rate(hw, rate, parent_rate);
-> > +}
-
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 2acaa77ad482..df96fe6dadab 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -436,6 +436,9 @@ struct bcm2835_clock_data {
+ 	const char *const *parents;
+ 	int num_mux_parents;
+ 
++	/* Bitmap encoding which parents accept rate change propagation. */
++	unsigned int set_rate_parent;
++
+ 	u32 ctl_reg;
+ 	u32 div_reg;
+ 
+@@ -1017,10 +1020,60 @@ bcm2835_clk_is_pllc(struct clk_hw *hw)
+ 	return strncmp(clk_hw_get_name(hw), "pllc", 4) == 0;
+ }
+ 
++static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
++							int parent_idx,
++							unsigned long rate,
++							u32 *div,
++							unsigned long *prate)
++{
++	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
++	struct bcm2835_cprman *cprman = clock->cprman;
++	const struct bcm2835_clock_data *data = clock->data;
++	unsigned long best_rate;
++	u32 curdiv, mindiv, maxdiv;
++	struct clk_hw *parent;
++
++	parent = clk_hw_get_parent_by_index(hw, parent_idx);
++
++	if (!(BIT(parent_idx) & data->set_rate_parent)) {
++		*prate = clk_hw_get_rate(parent);
++		*div = bcm2835_clock_choose_div(hw, rate, *prate, true);
++
++		return bcm2835_clock_rate_from_divisor(clock, *prate,
++						       *div);
++	}
++
++	if (data->frac_bits)
++		dev_warn(cprman->dev,
++			"frac bits are not used when propagating rate change");
++
++	/* clamp to min divider of 2 if we're dealing with a mash clock */
++	mindiv = data->is_mash_clock ? 2 : 1;
++	maxdiv = BIT(data->int_bits) - 1;
++
++	/* TODO: Be smart, and only test a subset of the available divisors. */
++	for (curdiv = mindiv; curdiv <= maxdiv; curdiv++) {
++		unsigned long tmp_rate;
++
++		tmp_rate = clk_hw_round_rate(parent, rate * curdiv);
++		tmp_rate /= curdiv;
++		if (curdiv == mindiv ||
++		    (tmp_rate > best_rate && tmp_rate <= rate))
++			best_rate = tmp_rate;
++
++		if (best_rate == rate)
++			break;
++	}
++
++	*div = curdiv << CM_DIV_FRAC_BITS;
++	*prate = curdiv * best_rate;
++
++	return best_rate;
++}
++
+ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+ 					struct clk_rate_request *req)
+ {
+-	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+ 	struct clk_hw *parent, *best_parent = NULL;
+ 	bool current_parent_is_pllc;
+ 	unsigned long rate, best_rate = 0;
+@@ -1048,9 +1101,8 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
+ 		if (bcm2835_clk_is_pllc(parent) && !current_parent_is_pllc)
+ 			continue;
+ 
+-		prate = clk_hw_get_rate(parent);
+-		div = bcm2835_clock_choose_div(hw, req->rate, prate, true);
+-		rate = bcm2835_clock_rate_from_divisor(clock, prate, div);
++		rate = bcm2835_clock_choose_div_and_prate(hw, i, req->rate,
++							  &div, &prate);
+ 		if (rate > best_rate && rate <= req->rate) {
+ 			best_parent = parent;
+ 			best_prate = prate;
+@@ -1262,6 +1314,13 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	init.name = data->name;
+ 	init.flags = data->flags | CLK_IGNORE_UNUSED;
+ 
++	/*
++	 * Pass the CLK_SET_RATE_PARENT flag if we are allowed to propagate
++	 * rate changes on at least of the parents.
++	 */
++	if (data->set_rate_parent)
++		init.flags |= CLK_SET_RATE_PARENT;
++
+ 	if (data->is_vpu_clock) {
+ 		init.ops = &bcm2835_vpu_clock_clk_ops;
+ 	} else {
 -- 
-Regards,
-
-Laurent Pinchart
-
+2.7.4
