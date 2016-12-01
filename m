@@ -1,120 +1,127 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 12 Dec 2016 17:31:34 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv4 00/15] clk: ti: add support for hwmod clocks
-Message-ID: <20161213013133.GR4920@atomide.com>
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
- <20161028005341.GR26139@codeaurora.org>
- <2cfa10a9-9ea0-23e4-30de-9aece13e47e3@ti.com>
- <20161028233750.GQ16026@codeaurora.org>
- <7371ef35-5d95-bf78-4c97-c61091a1fa4b@ti.com>
- <148156710975.37646.2957511113527634913@resonance>
- <20161213004914.GM5423@codeaurora.org>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v3 1/9] clk: stm32f4: Update DT bindings documentation
+Date: Thu, 1 Dec 2016 16:27:41 +0100
+Message-ID: <1480606069-5178-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1480606069-5178-1-git-send-email-gabriel.fernandez@st.com>
+References: <1480606069-5178-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161213004914.GM5423@codeaurora.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-* Stephen Boyd <sboyd@codeaurora.org> [161212 16:49]:
-> On 12/12, Michael Turquette wrote:
-> > Quoting Tero Kristo (2016-12-02 00:15:53)
-> > > On 29/10/16 02:37, Stephen Boyd wrote:
-> > > > On 10/28, Tero Kristo wrote:
-> > > >> Eventually that should happen. However, we have plenty of legacy
-> > > >> code still in place which depend on clk_get functionality within
-> > > >> kernel. The major contributing factor is the hwmod codebase, for
-> > > >> which we have plans to:
-> > > >>
-> > > >> - get this clock driver merged
-> > > >> - implement a new interconnect driver for OMAP family SoCs
-> > > >> - interconnect driver will use DT handles for fetching clocks,
-> > > >> rather than clock aliases
-> > > >> - reset handling will be implemented as part of the interconnect
-> > > >> driver somehow (no prototype / clear plans for that as of yet)
-> > > >> - all the hwmod stuff can be dropped
-> > > >>
-> > > >> The clock alias handling is still needed as a transition phase until
-> > > >> all the above is done, then we can start dropping them. Basically
-> > > >> anything that is using omap_hwmod depends on the clock aliases right
-> > > >> now.
-> > > >
-> > > > Ok, sounds good. Thanks.
-> > > 
-> > > Stephen, any final comments on this series? I guess its too late to push 
-> > > for 4.10, but I would like to get this merged early for 4.11 window.
-> > 
-> > Hi Tero,
-> > 
-> > No final comments from me. I needed to go back and forth with Tony about
-> > the clockdomain modeling, but it seems sensible to create clock
-> > providers from the clock domains if you want to pass those struct clk
-> > objects down to the drivers.
-> > 
-> > One thing I wasn't able to follow exactly in the code is how the
-> > clockdomains are linking parent clocks from cm1, cm2, etc to the clock
-> > domains. Are the clockdomain providers calling clk_get() on the clocks
-> > that it *consumes*, or are the clockdomain providers never calling
-> > clk_get() on those clocks and just establishing the tree hierarchy at
-> > clk_register() time?
-> > 
-> > Unless Stephen has any more review comments we can merge this into a
-> > clk-next based on v4.10-rc1 when that drops.
-> > 
-> 
-> I spent a bunch of time looking at this again today. From a DT
-> perspective we don't want to have clocks or clockdomains nodes
-> below the cm1/cm2/prm dt nodes. That's getting to the point of
-> describing individual elements of a device that should be
-> described in the driver instead of DT.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-I agree we don't need separate clocks and clockdomain nodes.. But
-I think you're missing something here though. The clockdomains in
-this case are separate devices on the interconnect, not individual
-elements within a device. The outputs of a clockdomain are individual
-elements of a clockdomain and can be just described as indexed
-outputs of the clockdomain.
+Creation of dt include file for specific stm32f4 clocks.
+These specific clocks are not derived from system clock (SYSCLOCK)
+We should use index 1 to use these clocks in DT.
+e.g. <&rcc 1 CLK_LSI>
 
-So we just need the clockdomain clock nodes, then each clock output is
-just offset from that clockdomain. And we can have readable defines
-for the offsets. That's all there should be to it.
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/clock/st,stm32-rcc.txt     | 15 +++++++++
+ include/dt-bindings/clock/stm32f4-clock.h          | 37 ++++++++++++++++++++++
+ 2 files changed, 52 insertions(+)
+ create mode 100644 include/dt-bindings/clock/stm32f4-clock.h
 
-> I'd also prefer we didn't have cm1/cm2/prm nodes and just had one
-> prcm node as the clock provider (#clock-cells) because that's the
-> aligned register address space that's visible on the bus.  From
-> my perspective cm1/cm2/prm look like macros that are put inside
-> the prcm container and they're at least aligned on some register
-> address boundary so I'm not too worried if we keep describing
-> down to the level of these modules in DT. Anything beyond that is
-> not good though.
-
-Having just one prcm node instead of cm1, cm2 and prm is wrong from
-hardware point of view. These are on separate interconnect instances.
-Ideally the clockdomain clock driver works for all these though, just
-separate instances of the same driver.
-
-> Finally we come to using clock providers or genpds for the clock
-> domains. If we don't put clockdomains into DT (because I don't
-> want clockdomain nodes) then this problem almost goes away. At
-> least, I don't really care what happens here because it will be
-> an internal TI prcm driver question of implementation. A clk
-> consumer will just see a provider that outputs some sort of clk.
-> If that happens to go through a clockdomain and we need to toggle
-> some bits inside the domain registers to make the clk actually
-> output a signal, that's fine. The prcm driver can take care of it
-> behind the scenes. Or at a later date we can model the domain as
-> a genpd and have the framework turn on/off genpds attached to
-> certain clocks. There's a lot of freedom here as long as we don't
-> put things in DT.
-
-Yeah totally agree. And this problem also goes away when we just
-assume a clockdomain is just a clock device with multiple outputs.
-Any magic that needs to happen beyond that can be dealt with at
-the interconnect level.
-
-Regards,
-
-Tony
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+index 0532d81..8f93740 100644
+--- a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
++++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+@@ -17,6 +17,9 @@ Required properties:
+   property, containing a phandle to the clock device node, an index selecting
+   between gated clocks and other clocks and an index specifying the clock to
+   use.
++- clocks: External oscillator clock phandle
++  - high speed external clock signal (HSE)
++  - external I2S clock (I2S_CKIN)
+ 
+ Example:
+ 
+@@ -25,6 +28,7 @@ Example:
+ 		#clock-cells = <2>
+ 		compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
+ 		reg = <0x40023800 0x400>;
++		clocks = <&clk_hse>, <&clk_i2s_ckin>;
+ 	};
+ 
+ Specifying gated clocks
+@@ -66,6 +70,17 @@ The secondary index is bound with the following magic numbers:
+ 
+ 	0	SYSTICK
+ 	1	FCLK
++	2	CLK_LSI		(low-power clock source)
++	3	CLK_LSE		(generated from a 32.768 kHz low-speed external
++				 crystal or ceramic resonator)
++	4	CLK_HSE_RTC	(HSE division factor for RTC clock)
++	5	CLK_RTC		(real-time clock)
++	6	PLL_VCO_I2S	(vco frequency of I2S pll)
++	7	PLL_VCO_SAI	(vco frequency of SAI pll)
++	8	CLK_LCD		(LCD-TFT)
++	9	CLK_I2S		(I2S clocks)
++	10	CLK_SAI1	(audio clocks)
++	11	CLK_SAI2
+ 
+ Example:
+ 
+diff --git a/include/dt-bindings/clock/stm32f4-clock.h b/include/dt-bindings/clock/stm32f4-clock.h
+new file mode 100644
+index 0000000..5431f00
+--- /dev/null
++++ b/include/dt-bindings/clock/stm32f4-clock.h
+@@ -0,0 +1,37 @@
++/*
++ * stm32f4-clock.h
++ *
++ * Copyright (C) 2016 STMicroelectronics
++ * Author: Gabriel Fernandez for STMicroelectronics.
++ * License terms:  GNU General Public License (GPL), version 2
++ */
++
++/*
++ * List of clocks wich are not derived from system clock (SYSCLOCK)
++ *
++ * The index of these clocks is the secondary index of DT bindings
++ * (see Documentatoin/devicetree/bindings/clock/st,stm32-rcc.txt)
++ *
++ * e.g:
++	<assigned-clocks = <&rcc 1 CLK_LSE>;
++*/
++
++#ifndef _DT_BINDINGS_CLK_STMF4_H
++#define _DT_BINDINGS_CLK_STMF4_H
++
++#define SYSTICK			0
++#define FCLK			1
++#define CLK_LSI			2
++#define CLK_LSE			3
++#define CLK_HSE_RTC		4
++#define CLK_RTC			5
++#define PLL_VCO_I2S		6
++#define PLL_VCO_SAI		7
++#define CLK_LCD			8
++#define CLK_I2S			9
++#define CLK_SAI1		10
++#define CLK_SAI2		11
++
++#define END_PRIMARY_CLK		12
++
++#endif
+-- 
+1.9.1
