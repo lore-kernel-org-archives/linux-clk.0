@@ -1,69 +1,279 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.9-rc5
-Date: Fri, 11 Nov 2016 17:06:23 -0800
-Message-Id: <20161112010623.28849-1-sboyd@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:23804 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751414AbcLAHaM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Dec 2016 02:30:12 -0500
+Subject: Re: [PATCH] clk: ti: omap36xx: Work around sprz319 advisory 2.1
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        <linux-omap@vger.kernel.org>
+References: <1480550754-17961-1-git-send-email-laurent.pinchart@ideasonboard.com>
+CC: <linux-clk@vger.kernel.org>, Paul Walmsley <paul@pwsan.com>,
+        Richard Watts <rrw@kynesim.co.uk>,
+        Tony Lindgren <tony@atomide.com>,
+        Alexander Kinzer <a.kinzer@plusoptix.de>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <fb71bf40-dee8-6c06-fe52-b1474920a5f3@ti.com>
+Date: Thu, 1 Dec 2016 09:29:48 +0200
+MIME-Version: 1.0
+In-Reply-To: <1480550754-17961-1-git-send-email-laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 91bbc174d45c347aa7aedb2215cc7d2013c06c1f:
+On 01/12/16 02:05, Laurent Pinchart wrote:
+> From: Richard Watts <rrw@kynesim.co.uk>
+>
+> The OMAP36xx DPLL5, driving EHCI USB, can be subject to a long-term
+> frequency drift. The frequency drift magnitude depends on the VCO update
+> rate, which is inversely proportional to the PLL divider. The kernel
+> DPLL configuration code results in a high value for the divider, leading
+> to a long term drift high enough to cause USB transmission errors. In
+> the worst case the USB PHY's ULPI interface can stop responding,
+> breaking USB operation completely. This manifests itself on the
+> Beagleboard xM by the LAN9514 reporting 'Cannot enable port 2. Maybe the
+> cable is bad?' in the kernel log.
+>
+> Errata sprz319 advisory 2.1 documents PLL values that minimize the
+> drift. Use them automatically when DPLL5 is used for USB operation,
+> which we detect based on the requested clock rate. The clock framework
+> will still compute the PLL parameters and resulting rate as usual, but
+> the PLL M and N values will then be overridden. This can result in the
+> effective clock rate being slightly different than the rate cached by
+> the clock framework, but won't cause any adverse effect to USB
+> operation.
 
-  clk: at91: Fix a return value in case of error (2016-10-20 16:37:56 -0700)
+Hi Laurent,
 
-are available in the git repository at:
+Just a minor comment on the documentation; the whole errata document is 
+identified as sprz319, but for the USB purposes you should only refer to 
+the advisory 2.1 to avoid confusion.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+Some small comments to the code itself below.
 
-for you to fetch changes up to 10f2bfb092e3b49000526c02cfe8b2abbbdbb752:
+>
+> Signed-off-by: Richard Watts <rrw@kynesim.co.uk>
+> [Upported from v3.2 to v4.9]
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+>  drivers/clk/ti/clk-3xxx.c | 20 +++++++-------
+>  drivers/clk/ti/clock.h    |  9 +++++++
+>  drivers/clk/ti/dpll.c     | 17 +++++++++++-
+>  drivers/clk/ti/dpll3xxx.c | 69 +++++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 104 insertions(+), 11 deletions(-)
+>
+> Mike, Stephen, I've kept this as non-intrusive as possible from a CCF point of
+> view, and decided not to patch the .round_rate() operation to compute the PLL
+> real output frequency as there is no need to from a USB operation point of
+> view. Please let me know if you see any issue with that.
+>
+> Richard, I've pretty much completely rewritten your patch while porting it to
+> the latest kernel, please let me know if you would like your SoB line and/or
+> authorship to be removed.
+>
+> diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
+> index 8831e1a05367..a9d224ecb120 100644
+> --- a/drivers/clk/ti/clk-3xxx.c
+> +++ b/drivers/clk/ti/clk-3xxx.c
+> @@ -22,13 +22,6 @@
+>
+>  #include "clock.h"
+>
+> -/*
+> - * DPLL5_FREQ_FOR_USBHOST: USBHOST and USBTLL are the only clocks
+> - * that are sourced by DPLL5, and both of these require this clock
+> - * to be at 120 MHz for proper operation.
+> - */
+> -#define DPLL5_FREQ_FOR_USBHOST		120000000
+> -
+>  #define OMAP3430ES2_ST_DSS_IDLE_SHIFT			1
+>  #define OMAP3430ES2_ST_HSOTGUSB_IDLE_SHIFT		5
+>  #define OMAP3430ES2_ST_SSI_IDLE_SHIFT			8
+> @@ -546,14 +539,21 @@ void __init omap3_clk_lock_dpll5(void)
+>  	struct clk *dpll5_clk;
+>  	struct clk *dpll5_m2_clk;
+>
+> +	/*
+> +	 * Errata spr319f documents a USB host clock drift issue that can be
+> +	 * worked around using specially crafted dpll5 settings with a dpll5_m2
+> +	 * divider set to 8. Set the dpll5 rate to 8x the USB host clock rate,
+> +	 * its .set_rate handler() will detect that frequency and use the errata
+> +	 * settings.
+> +	 */
 
-  clk: mmp: pxa910: fix return value check in pxa910_clk_init() (2016-11-01 17:41:20 -0700)
+Refer to advisory 2.1 only here.
 
-----------------------------------------------------------------
-The typical collection of minor bug fixes in clk drivers. We don't have
-anything in the core framework here, just driver fixes. There's a boot fix for
-Samsung devices and a safety measure for qoriq to prevent CPUs from running too
-fast. There's also a fix for i.MX6Q to properly handle audio clock rates. We
-also have some "that's obviously wrong" fixes like bad NULL pointer checks in
-the MPP driver and a poor usage of __pa in the xgene clk driver that are fixed
-here.
+>  	dpll5_clk = clk_get(NULL, "dpll5_ck");
+> -	clk_set_rate(dpll5_clk, DPLL5_FREQ_FOR_USBHOST);
+> +	clk_set_rate(dpll5_clk, OMAP3_DPLL5_FREQ_FOR_USBHOST * 8);
+>  	clk_prepare_enable(dpll5_clk);
+>
+> -	/* Program dpll5_m2_clk divider for no division */
+> +	/* Program dpll5_m2_clk divider */
+>  	dpll5_m2_clk = clk_get(NULL, "dpll5_m2_ck");
+>  	clk_prepare_enable(dpll5_m2_clk);
+> -	clk_set_rate(dpll5_m2_clk, DPLL5_FREQ_FOR_USBHOST);
+> +	clk_set_rate(dpll5_m2_clk, OMAP3_DPLL5_FREQ_FOR_USBHOST);
+>
+>  	clk_disable_unprepare(dpll5_m2_clk);
+>  	clk_disable_unprepare(dpll5_clk);
+> diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+> index 90f3f472ae1c..13c37f48d9d6 100644
+> --- a/drivers/clk/ti/clock.h
+> +++ b/drivers/clk/ti/clock.h
+> @@ -257,11 +257,20 @@ long omap2_dpll_round_rate(struct clk_hw *hw, unsigned long target_rate,
+>  unsigned long omap3_clkoutx2_recalc(struct clk_hw *hw,
+>  				    unsigned long parent_rate);
+>
+> +/*
+> + * OMAP3_DPLL5_FREQ_FOR_USBHOST: USBHOST and USBTLL are the only clocks
+> + * that are sourced by DPLL5, and both of these require this clock
+> + * to be at 120 MHz for proper operation.
+> + */
+> +#define OMAP3_DPLL5_FREQ_FOR_USBHOST	120000000
+> +
+>  unsigned long omap3_dpll_recalc(struct clk_hw *hw, unsigned long parent_rate);
+>  int omap3_dpll4_set_rate(struct clk_hw *clk, unsigned long rate,
+>  			 unsigned long parent_rate);
+>  int omap3_dpll4_set_rate_and_parent(struct clk_hw *hw, unsigned long rate,
+>  				    unsigned long parent_rate, u8 index);
+> +int omap3_dpll5_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			 unsigned long parent_rate);
+>  void omap3_clk_lock_dpll5(void);
+>
+>  unsigned long omap4_dpll_regm4xen_recalc(struct clk_hw *hw,
+> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+> index 9fc8754a6e61..ac8645be9249 100644
+> --- a/drivers/clk/ti/dpll.c
+> +++ b/drivers/clk/ti/dpll.c
+> @@ -114,6 +114,18 @@ static const struct clk_ops omap3_dpll_ck_ops = {
+>  	.round_rate	= &omap2_dpll_round_rate,
+>  };
+>
+> +static const struct clk_ops omap3_dpll5_ck_ops = {
+> +	.enable		= &omap3_noncore_dpll_enable,
+> +	.disable	= &omap3_noncore_dpll_disable,
+> +	.get_parent	= &omap2_init_dpll_parent,
+> +	.recalc_rate	= &omap3_dpll_recalc,
+> +	.set_rate	= &omap3_dpll5_set_rate,
+> +	.set_parent	= &omap3_noncore_dpll_set_parent,
+> +	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
+> +	.determine_rate	= &omap3_noncore_dpll_determine_rate,
+> +	.round_rate	= &omap2_dpll_round_rate,
+> +};
+> +
+>  static const struct clk_ops omap3_dpll_per_ck_ops = {
+>  	.enable		= &omap3_noncore_dpll_enable,
+>  	.disable	= &omap3_noncore_dpll_disable,
+> @@ -474,7 +486,10 @@ static void __init of_ti_omap3_dpll_setup(struct device_node *node)
+>  		.modes = (1 << DPLL_LOW_POWER_BYPASS) | (1 << DPLL_LOCKED),
+>  	};
+>
+> -	of_ti_dpll_setup(node, &omap3_dpll_ck_ops, &dd);
+> +	if (!strcmp(node->name, "dpll5_ck"))
 
-----------------------------------------------------------------
-Emil Lundmark (1):
-      clk: imx: fix integer overflow in AV PLL round rate
+Move the of_machine_is_compatible() checks here also, so you will avoid 
+executing those runtime, and don't need any checks in the 
+omap3_dpll5_set_rate func.
 
-Laura Abbott (1):
-      clk: xgene: Don't call __pa on ioremaped address
+> +		of_ti_dpll_setup(node, &omap3_dpll5_ck_ops, &dd);
+> +	else
+> +		of_ti_dpll_setup(node, &omap3_dpll_ck_ops, &dd);
+>  }
+>  CLK_OF_DECLARE(ti_omap3_dpll_clock, "ti,omap3-dpll-clock",
+>  	       of_ti_omap3_dpll_setup);
+> diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
+> index 88f2ce81ba55..c8395f7c2ff9 100644
+> --- a/drivers/clk/ti/dpll3xxx.c
+> +++ b/drivers/clk/ti/dpll3xxx.c
+> @@ -838,3 +838,72 @@ int omap3_dpll4_set_rate_and_parent(struct clk_hw *hw, unsigned long rate,
+>  	return omap3_noncore_dpll_set_rate_and_parent(hw, rate, parent_rate,
+>  						      index);
+>  }
+> +
+> +static bool omap3_dpll5_apply_sprz319(struct clk_hw *hw,
+> +				      unsigned long parent_rate)
+> +{
 
-Marek Szyprowski (1):
-      clk/samsung: Use CLK_OF_DECLARE_DRIVER initialization method for CLKOUT
+Please rename this to something else, sprz319 can refer to _any_ errata 
+under the document, which is confusing. Maybe just 
+omap3_dpll5_apply_errata(), and add a kerneldoc comment for the function 
+that it applies the advisory 2.1.
 
-Scott Wood (1):
-      clk: qoriq: Don't allow CPU clocks higher than starting value
 
-Shawn Lin (1):
-      clk: rockchip: don't return NULL when failing to register ddrclk branch
+> +	struct omap3_dpll5_settings {
+> +		unsigned int rate, m, n;
+> +	};
+> +
+> +	static const struct omap3_dpll5_settings precomputed[] = {
+> +		/*
+> +		 * From DM3730 errata (sprz319f), table 35 and 36.
 
-Stephen Boyd (1):
-      Merge tag 'v4.9-rockchip-clkfixes1' of git://git.kernel.org/.../mmind/linux-rockchip into clk-fixes
+Drop sprz319f and replace with advisory 2.1.
 
-Wei Yongjun (3):
-      clk: mmp: mmp2: fix return value check in mmp2_clk_init()
-      clk: mmp: pxa168: fix return value check in pxa168_clk_init()
-      clk: mmp: pxa910: fix return value check in pxa910_clk_init()
+> +		 * The N value is increased by 1 compared to the tables as the
+> +		 * errata lists register values while last_rounded_field is the
+> +		 * real divider value.
+> +		 */
+> +		{ 12000000,  80,  0+1 },
+> +		{ 13000000, 443,  5+1 },
+> +		{ 19200000,  50,  0+1 },
+> +		{ 26000000, 443, 11+1 },
+> +		{ 38400000,  25,  0+1 }
+> +	};
+> +
+> +	const struct omap3_dpll5_settings *d;
+> +	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
+> +	struct dpll_data *dd;
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(precomputed); ++i) {
+> +		if (parent_rate == precomputed[i].rate)
+> +			break;
+> +	}
+> +
+> +	if (i == ARRAY_SIZE(precomputed))
+> +		return false;
+> +
+> +	d = &precomputed[i];
+> +
+> +	/* Update the M, N and rounded rate values and program the DPLL. */
+> +	dd = clk->dpll_data;
+> +	dd->last_rounded_m = d->m;
+> +	dd->last_rounded_n = d->n;
+> +	dd->last_rounded_rate = div_u64((u64)parent_rate * d->m, d->n);
+> +	omap3_noncore_dpll_program(clk, 0);
+> +
+> +	return true;
+> +}
+> +
+> +/**
+> + * omap3_dpll5_set_rate - set rate for omap3 dpll5
+> + * @hw: clock to change
+> + * @rate: target rate for clock
+> + * @parent_rate: rate of the parent clock
+> + *
+> + * Set rate for the DPLL5 clock. Apply the sprz319 advisory 2.1 on OMAP36xx if
+> + * the DPLL is used for USB host (detected through the requested rate).
+> + */
+> +int omap3_dpll5_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			 unsigned long parent_rate)
+> +{
+> +	if (of_machine_is_compatible("ti,omap3630") ||
+> +	    of_machine_is_compatible("ti,omap36xx")) {
 
- drivers/clk/clk-qoriq.c                 | 13 ++++++++-----
- drivers/clk/clk-xgene.c                 | 10 ++++------
- drivers/clk/imx/clk-pllv3.c             |  8 ++++++--
- drivers/clk/mmp/clk-of-mmp2.c           |  2 +-
- drivers/clk/mmp/clk-of-pxa168.c         |  2 +-
- drivers/clk/mmp/clk-of-pxa910.c         |  4 ++--
- drivers/clk/rockchip/clk-ddr.c          |  5 +----
- drivers/clk/samsung/clk-exynos-clkout.c | 22 ++++++++++++++--------
- 8 files changed, 37 insertions(+), 29 deletions(-)
+Drop the of_machine_is_compatible checks from here once you do the 
+change proposed during init.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+-Tero
+
+
+> +		if (rate == OMAP3_DPLL5_FREQ_FOR_USBHOST * 8) {
+> +			if (omap3_dpll5_apply_sprz319(hw, parent_rate))
+> +				return 0;
+> +		}
+> +	}
+> +
+> +	return omap3_noncore_dpll_set_rate(hw, rate, parent_rate);
+> +}
+>
+
