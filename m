@@ -1,65 +1,116 @@
-Return-Path: <georgi.djakov@linaro.org>
-Return-Path: <georgi.djakov@linaro.org>
-Subject: Re: [RESEND/PATCH v6 3/3] clk: qcom: Add A53 clock driver
-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <20161019132816.31073-4-georgi.djakov@linaro.org>
- <20161028015438.GG16026@codeaurora.org> <20161102205910.GQ25787@tuxbot>
- <20161102225520.GW16026@codeaurora.org> <20161103182834.GR25787@tuxbot>
- <549f87fe-7be9-14b4-8e34-86f7f8dad94e@linaro.org>
- <20161114203426.GN5177@codeaurora.org> <20161205212644.GB30492@tuxbot>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Message-ID: <8674bc87-4768-ec93-7bf2-18a07df1cb9a@linaro.org>
-Date: Tue, 6 Dec 2016 16:47:55 +0200
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20161205212644.GB30492@tuxbot>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+To: Tony Lindgren <tony@atomide.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20161028235448.57squdf6cu2wxxvm@atomide.com>
+Cc: "Tero Kristo" <t-kristo@ti.com>, linux-omap@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, "Rob Herring" <robh+dt@kernel.org>
+References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+ <1476805568-19264-12-git-send-email-t-kristo@ti.com>
+ <20161028005047.GQ26139@codeaurora.org>
+ <cd32a554-ba0a-33cd-c15c-121524ce679b@ti.com>
+ <20161028125112.xfyrx7l7m64z6cu6@atomide.com>
+ <20161028233617.GP16026@codeaurora.org>
+ <20161028235448.57squdf6cu2wxxvm@atomide.com>
+Message-ID: <148071802182.32158.11479184984645880313@resonance>
+Subject: Re: [PATCHv4 11/15] clk: ti: clockdomain: add clock provider support to
+ clockdomains
+Date: Fri, 02 Dec 2016 14:33:41 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/05/2016 11:26 PM, Bjorn Andersson wrote:
-> On Mon 14 Nov 14:21 PST 2016, Stephen Boyd wrote:
->
->> On 11/11, Georgi Djakov wrote:
->>> On 11/03/2016 08:28 PM, Bjorn Andersson wrote:
-> [..]
->>>> I'm in favour of us inventing a kicker API and it's found outside out
->>>> use cases as well (e.g. virtio/rpmsg).
->>>>
->>
->> I'd rather we did this kicker API as well. That way we don't need
->> to make a syscon and a simple-mfd to get software to work
->> properly. Don't other silicon vendors need a kicker API as well?
->> How are they kicking remote processors in other places? GPIOs?
->>
->
-> In remoteproc I have two of these:
-> 1) da8xx_remoteproc ioremaps a register and writes a bit in it (looks
->    similar to the downstream Qualcomm way)
->
-> 2) omap_remoteproc acquires a mbox channel, in which it writes a
->    virtqueue id to kick the remote.
->
-> So one of the two cases could have used such mechanism.
->
+Quoting Tony Lindgren (2016-10-28 16:54:48)
+> * Stephen Boyd <sboyd@codeaurora.org> [161028 16:37]:
+> > On 10/28, Tony Lindgren wrote:
+> > > * Tero Kristo <t-kristo@ti.com> [161028 00:43]:
+> > > > On 28/10/16 03:50, Stephen Boyd wrote:
+> > > > > I suppose a PRCM is
+> > > > > like an MFD that has clocks and resets under it? On other
+> > > > > platforms we've combined that all into one node and just had
+> > > > > #clock-cells and #reset-cells in that node. Is there any reason
+> > > > > we can't do that here?
+> > > > =
 
-I also see the potential users of such API mostly in the 
-remoteproc/rpmgs subsystems.
+> > > > For OMAPs, there are typically multiple instances of the PRCM aroun=
+d; OMAP4
+> > > > for example has:
+> > > > =
 
-> We could write up a Qualcomm specific "kicker" and probe the mailing
-> list regarding the interest in making that generic (i.e. changing the
-> names in the API and DT binding).
+> > > > cm1 @ 0x4a004000 (clocks + clockdomains)
+> > > > cm2 @ 0x4a008000 (clocks + clockdomains)
+> > > > prm @ 0x4a306000 (few clocks + resets + power state handling)
+> > > > scrm @ 0x4a30a000 (few external clocks + plenty of misc stuff)
+> > > > =
 
-Yes, i am planing to do this.
+> > > > These instances are also under different power/voltage domains whic=
+h means
+> > > > their PM behavior is different.
+> > > > =
 
->
-> The sucky part is that I believe we have most of our kickers in place
-> already so rpm, smd, smp2p, smsm etc would all need to support both
-> mechanisms.
+> > > > The idea behind having a clockdomain as a provider was mostly to ha=
+ve the
+> > > > topology visible : prcm-instance -> clockdomain -> clocks
+> > > =
 
-Agree.. we have to keep compatibility with existing dtbs.
+> > > Yeah that's needed to get the interconnect hierarchy right for
+> > > genpd :)
+> > > =
 
-Thanks,
-Georgi
+> > > > ... but basically I think it would be possible to drop the clockdom=
+ain
+> > > > representation and just mark the prcm-instance as a clock provider.=
+ Tony,
+> > > > any thoughts on that?
+> > > =
+
+> > > No let's not drop the clockdomains as those will be needed when we
+> > > move things into proper hierarchy within the interconnect instances.
+> > > This will then help with getting things right with genpd.
+> > > =
+
+> > > In the long run we just want to specify clockdomain and the offset of
+> > > the clock instance within the clockdomain in the dts files.
+> > > =
+
+> > =
+
+> > Sorry, I have very little idea how OMAP hardware works. Do you
+> > mean that you will have different nodes for each clockdomain so
+> > that genpd can map 1:1 to the node in dts? But in hardware
+> > there's a prcm that allows us to control many clock domains
+> > through register read/writes? How is the interconnect involved?
+> =
+
+> There are multiple clockdomains, at least one for each interconnect
+> instance. Once a clockdomain is idle, the related interconnect can
+> idle too. So yeah genpd pretty much maps 1:1 with the clockdomains.
+> =
+
+> There's more info in for example omap4 TRM section "3.4.1 Device
+> Power-Management Layout" that shows the voltage/power/clock domains.
+> The interconnect instances are mostly named there too looking at
+> the L4/L3 naming.
+
+I'm confused on two points:
+
+1) why are the clkdm's acting as clock providers? I've always hated the
+name "clock domain" since those bits are for managing module state, not
+clock state. The PRM, CM1 and CM2 provide the clocks, not the
+clockdomains.
+
+2) why aren't the clock domains modeled as genpds with their associated
+devices attached to them? Note that it is possible to "nest" genpd
+objects. This would also allow for the "Clockdomain Dependency"
+relationships to be properly modeled (see section 3.1.1.1.7 Clock Domain
+Dependency in the OMAP4 TRM).
+
+Regards,
+Mike
+
+> =
+
+> Regards,
+> =
+
+> Tony
