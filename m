@@ -1,81 +1,132 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	xf@rock-chips.com
-Cc: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	cl@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1 3/3] clk: rockchip: add new pll-type for rk3328 and similar socs
-Date: Tue, 13 Dec 2016 16:47:49 +0800
-Message-Id: <1481618869-1239-4-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1481618869-1239-1-git-send-email-zhangqing@rock-chips.com>
-References: <1481618869-1239-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <ping.bai@nxp.com>
+From: Bai Ping <ping.bai@nxp.com>
+To: <shawnguo@kernel.org>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <linus.walleij@linaro.org>
+CC: <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
+	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>, <p.zabel@pengutronix.de>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<ping.bai@nxp.com>
+Subject: [PATCH 09/11] ARM: imx: correct i.mx6sll dram io low power mode
+Date: Fri, 2 Dec 2016 14:39:32 +0800
+Message-ID: <1480660774-25055-10-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
+References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: ping.bai@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The rk3328's pll and clock are similar with rk3036's,
-it different with pll_mode_mask,there are different
-adjust foctors and control registers,
-so these should be independent and separate from
-the series of rk3328s.
+i.MX6SLL has different DRAM IO offset, and it has no
+CAS/RAS/ODT/RESET pin now, correct the DRAM IO offset.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+To better support all different i.MX6 SoCs and different
+DRAM types, introduce a new column to store the low power
+settings for DRAM IO, then suspend asm code no need to check
+SoC or DRAM type, just get the DRAM IO's low power
+settings from OCRAM pm_info and set to each DRAM IO.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
 ---
- drivers/clk/rockchip/clk-pll.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ arch/arm/mach-imx/pm-imx6.c      | 17 ++++++++++++++++-
+ arch/arm/mach-imx/suspend-imx6.S | 29 +++++++----------------------
+ 2 files changed, 23 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 6ed605776abd..9650c75f61d1 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -29,6 +29,7 @@
- #define PLL_MODE_SLOW		0x0
- #define PLL_MODE_NORM		0x1
- #define PLL_MODE_DEEP		0x2
-+#define PLL_RK3328_MODE_MASK	0x1
+diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
+index 2ed4316..5fb78a9 100644
+--- a/arch/arm/mach-imx/pm-imx6.c
++++ b/arch/arm/mach-imx/pm-imx6.c
+@@ -230,7 +230,7 @@ struct imx6_cpu_pm_info {
+ 	struct imx6_pm_base gpc_base;
+ 	struct imx6_pm_base l2_base;
+ 	u32 mmdc_io_num; /* Number of MMDC IOs which need saved/restored. */
+-	u32 mmdc_io_val[MX6_MAX_MMDC_IO_NUM][2]; /* To save offset and value */
++	u32 mmdc_io_val[MX6_MAX_MMDC_IO_NUM][3]; /* To save offset,value and low power setting */
+ } __aligned(8);
  
- struct rockchip_clk_pll {
- 	struct clk_hw		hw;
-@@ -865,13 +866,17 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
- 	pll_mux = &pll->pll_mux;
- 	pll_mux->reg = ctx->reg_base + mode_offset;
- 	pll_mux->shift = mode_shift;
--	pll_mux->mask = PLL_MODE_MASK;
-+	if (pll_type == pll_rk3328)
-+		pll_mux->mask = PLL_RK3328_MODE_MASK;
-+	else
-+		pll_mux->mask = PLL_MODE_MASK;
- 	pll_mux->flags = 0;
- 	pll_mux->lock = &ctx->lock;
- 	pll_mux->hw.init = &init;
+ void imx6_set_int_mem_clk_lpm(bool enable)
+@@ -570,6 +570,21 @@ static int __init imx6q_suspend_init(const struct imx6_pm_socdata *socdata)
+ 		pm_info->mmdc_io_val[i][1] =
+ 			readl_relaxed(pm_info->iomuxc_base.vbase +
+ 			mmdc_offset_array[i]);
++		pm_info->mmdc_io_val[i][2] = 0;
++
++	}
++
++	/* i.MX6SLL has no DRAM RESET pin */
++	if (cpu_is_imx6sll()) {
++		pm_info->mmdc_io_val[pm_info->mmdc_io_num - 2][2] = 0x1000;
++		pm_info->mmdc_io_val[pm_info->mmdc_io_num - 1][2] = 0x1000;
++	} else {
++		if (pm_info->ddr_type == IMX_DDR_TYPE_LPDDR2) {
++			 /* for LPDDR2, CKE0/1 and RESET pin need special setting */
++			pm_info->mmdc_io_val[pm_info->mmdc_io_num - 3][2] = 0x1000;
++			pm_info->mmdc_io_val[pm_info->mmdc_io_num - 2][2] = 0x1000;
++			pm_info->mmdc_io_val[pm_info->mmdc_io_num - 1][2] = 0x80000;
++		}
+ 	}
  
- 	if (pll_type == pll_rk3036 ||
- 	    pll_type == pll_rk3066 ||
-+	    pll_type == pll_rk3328 ||
- 	    pll_type == pll_rk3399)
- 		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
+ 	imx6_suspend_in_ocram_fn = fncpy(
+diff --git a/arch/arm/mach-imx/suspend-imx6.S b/arch/arm/mach-imx/suspend-imx6.S
+index 76ee2ce..c9a26f4 100644
+--- a/arch/arm/mach-imx/suspend-imx6.S
++++ b/arch/arm/mach-imx/suspend-imx6.S
+@@ -104,7 +104,7 @@
+ 	add	r7, r7, r0
+ 1:
+ 	ldr	r8, [r7], #0x4
+-	ldr	r9, [r7], #0x4
++	ldr	r9, [r7], #0x8
+ 	str	r9, [r11, r8]
+ 	subs	r6, r6, #0x1
+ 	bne	1b
+@@ -179,7 +179,6 @@ ENTRY(imx6_suspend)
+ 	ldr	r11, [r0, #PM_INFO_MX6Q_IOMUXC_V_OFFSET]
+ 	ldr	r6, [r11, #0x0]
  
-@@ -929,6 +934,12 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
- 		else
- 			init.ops = &rockchip_rk3066_pll_clk_ops;
- 		break;
-+	case pll_rk3328:
-+		if (!pll->rate_table || IS_ERR(ctx->grf))
-+			init.ops = &rockchip_rk3036_pll_clk_norate_ops;
-+		else
-+			init.ops = &rockchip_rk3036_pll_clk_ops;
-+		break;
- 	case pll_rk3399:
- 		if (!pll->rate_table)
- 			init.ops = &rockchip_rk3399_pll_clk_norate_ops;
+-	/* use r11 to store the IO address */
+ 	ldr	r11, [r0, #PM_INFO_MX6Q_SRC_V_OFFSET]
+ 	/* store physical resume addr and pm_info address. */
+ 	str	r9, [r11, #MX6Q_SRC_GPR1]
+@@ -207,32 +206,18 @@ poll_dvfs_set:
+ 	ands	r7, r7, #(1 << 25)
+ 	beq	poll_dvfs_set
+ 
++	/* use r11 to store the IO address */
+ 	ldr	r11, [r0, #PM_INFO_MX6Q_IOMUXC_V_OFFSET]
+-	ldr	r6, =0x0
+-	ldr	r7, [r0, #PM_INFO_MMDC_IO_NUM_OFFSET]
++	ldr	r6, [r0, #PM_INFO_MMDC_IO_NUM_OFFSET]
+ 	ldr	r8, =PM_INFO_MMDC_IO_VAL_OFFSET
+ 	add	r8, r8, r0
+-	/* LPDDR2's last 3 IOs need special setting */
+-	cmp	r3, #IMX_DDR_TYPE_LPDDR2
+-	subeq	r7, r7, #0x3
+ set_mmdc_io_lpm:
+-	ldr	r9, [r8], #0x8
+-	str	r6, [r11, r9]
+-	subs	r7, r7, #0x1
++	ldr	r7, [r8], #0x8
++	ldr	r9, [r8], #0x4
++	str	r9, [r11, r7]
++	subs	r6, r6, #0x1
+ 	bne	set_mmdc_io_lpm
+ 
+-	cmp 	r3, #IMX_DDR_TYPE_LPDDR2
+-	bne	set_mmdc_io_lpm_done
+-	ldr	r6, =0x1000
+-	ldr	r9, [r8], #0x8
+-	str	r6, [r11, r9]
+-	ldr	r9, [r8], #0x8
+-	str	r6, [r11, r9]
+-	ldr	r6, =0x80000
+-	ldr	r9, [r8]
+-	str	r6, [r11, r9]
+-set_mmdc_io_lpm_done:
+-
+ 	/*
+ 	 * mask all GPC interrupts before
+ 	 * enabling the RBC counters to
 -- 
 1.9.1
