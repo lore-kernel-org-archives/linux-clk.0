@@ -1,138 +1,63 @@
-Return-Path: <ping.bai@nxp.com>
-From: Jacky Bai <ping.bai@nxp.com>
-To: Rob Herring <robh@kernel.org>
-CC: "shawnguo@kernel.org" <shawnguo@kernel.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>, "linus.walleij@linaro.org"
-	<linus.walleij@linaro.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "p.zabel@pengutronix.de"
-	<p.zabel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com"
-	<jacky.baip@gmail.com>
-Subject: RE: [PATCH 10/11] Document: dt: binding: imx: update doc for imx6sll
-Date: Mon, 12 Dec 2016 02:59:15 +0000
-Message-ID: <AM3PR04MB53011E24DF4E87F87788DB787980@AM3PR04MB530.eurprd04.prod.outlook.com>
-References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
- <1480660774-25055-11-git-send-email-ping.bai@nxp.com>
- <20161209181201.ewcqeqslyf3je7kq@rob-hp-laptop>
-In-Reply-To: <20161209181201.ewcqeqslyf3je7kq@rob-hp-laptop>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <boris.brezillon@free-electrons.com>
+Date: Fri, 2 Dec 2016 20:50:21 +0100
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Eric Anholt <eric@anholt.net>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Florian Fainelli
+ <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden
+ <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Stephen
+ Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: bcm: Support rate change propagation on
+ bcm2835 clocks
+Message-ID: <20161202205021.074fd441@bbrezillon>
+In-Reply-To: <87lgvyf956.fsf@eliezer.anholt.net>
+References: <1480626020-20031-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1480626020-20031-2-git-send-email-boris.brezillon@free-electrons.com>
+	<87lgvyf956.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-> Subject: Re: [PATCH 10/11] Document: dt: binding: imx: update doc for imx=
-6sll
->=20
-> On Fri, Dec 02, 2016 at 02:39:33PM +0800, Bai Ping wrote:
-> > Add necessary document update for i.MX6SLL support.
-> >
-> > Signed-off-by: Bai Ping <ping.bai@nxp.com>
-> > ---
-> >  .../devicetree/bindings/clock/imx6sll-clock.txt    | 13 ++++++++
-> >  .../bindings/pinctrl/fsl,imx6sll-pinctrl.txt       | 37 ++++++++++++++=
-++++++++
-> >  2 files changed, 50 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> >  create mode 100644
-> > Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> > b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> > new file mode 100644
-> > index 0000000..4f52efa
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> > @@ -0,0 +1,13 @@
-> > +* Clock bindings for Freescale i.MX6 UltraLite
->=20
-> I thought UltraLite was MX6UL?
->=20
+On Fri, 02 Dec 2016 11:01:09 -0800
+Eric Anholt <eric@anholt.net> wrote:
 
-Sorry, it is a typo, will fix in V2.
-
-> > +
-> > +Required properties:
-> > +- compatible: Should be "fsl,imx6sll-ccm"
-> > +- reg: Address and length of the register set
-> > +- #clock-cells: Should be <1>
-> > +- clocks: list of clock specifiers, must contain an entry for each
-> > +required
-> > +  entry in clock-names
-> > +- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ip=
-p_di1"
-> > +
-> > +The clock consumer should specify the desired clock by having the
-> > +clock ID in its "clocks" phandle cell.  See
-> > +include/dt-bindings/clock/imx6sll-clock.h
-> > +for the full list of i.MX6 SLL clock IDs.
-> > diff --git
-> > a/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
-> > b/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
-> > new file mode 100644
-> > index 0000000..096e471
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.tx
-> > +++ t
-> > @@ -0,0 +1,37 @@
-> > +* Freescale i.MX6 UltraLite IOMUX Controller
->=20
-> ditto
->=20
-
-Will fix in V2. Thanks for review.
-
-> > +
-> > +Please refer to fsl,imx-pinctrl.txt in this directory for common
-> > +binding part and usage.
-> > +
-> > +Required properties:
-> > +- compatible: "fsl,imx6sll-iomuxc"
-> > +- fsl,pins: each entry consists of 6 integers and represents the mux
-> > +and config
-> > +  setting for one pin.  The first 5 integers <mux_reg conf_reg
-> > +input_reg mux_val
-> > +  input_val> are specified using a PIN_FUNC_ID macro, which can be
-> > +found in
-> > +  imx6ul-pinfunc.h under device tree source folder.  The last integer
-> > +CONFIG is
-> > +  the pad setting value like pull-up on this pin.  Please refer to
-> > +i.MX6SLL
-> > +  Reference Manual for detailed CONFIG settings.
-> > +
-> > +CONFIG bits definition:
-> > +PAD_CTL_LVE			(1 << 22)
-> > +PAD_CTL_HYS                     (1 << 16)
-> > +PAD_CTL_PUS_100K_DOWN           (0 << 14)
-> > +PAD_CTL_PUS_47K_UP              (1 << 14)
-> > +PAD_CTL_PUS_100K_UP             (2 << 14)
-> > +PAD_CTL_PUS_22K_UP              (3 << 14)
-> > +PAD_CTL_PUE                     (1 << 13)
-> > +PAD_CTL_PKE                     (1 << 12)
-> > +PAD_CTL_ODE                     (1 << 11)
-> > +PAD_CTL_SPEED_LOW               (0 << 6)
-> > +PAD_CTL_SPEED_MED               (1 << 6)
-> > +PAD_CTL_SPEED_HIGH              (3 << 6)
-> > +PAD_CTL_DSE_DISABLE             (0 << 3)
-> > +PAD_CTL_DSE_260ohm              (1 << 3)
-> > +PAD_CTL_DSE_130ohm              (2 << 3)
-> > +PAD_CTL_DSE_87ohm               (3 << 3)
-> > +PAD_CTL_DSE_65ohm               (4 << 3)
-> > +PAD_CTL_DSE_52ohm               (5 << 3)
-> > +PAD_CTL_DSE_43ohm               (6 << 3)
-> > +PAD_CTL_DSE_37ohm               (7 << 3)
-> > +PAD_CTL_SRE_FAST                (1 << 0)
-> > +PAD_CTL_SRE_SLOW                (0 << 0)
-> > --
-> > 1.9.1
+> Boris Brezillon <boris.brezillon@free-electrons.com> writes:
+> 
+> > Some peripheral clocks, like the VEC (Video EnCoder) clock need to be set
+> > to a precise rate (in our case 108MHz). With the current implementation,
+> > where peripheral clocks are not allowed to forward rate change requests
+> > to their parents, it is impossible to match this requirement unless the
+> > bootloader has configured things correctly, or a specific rate has been
+> > assigned through the DT (with the assigned-clk-rates property).
 > >
+> > Add a new field to struct bcm2835_clock_data to specify which parent
+> > clocks accept rate change propagation, and support set rate propagation
+> > in bcm2835_clock_determine_rate().
 > >
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>  
+> 
+> A possible simplification would be to limit VEC to only PLLH_AUX, since
+> that was how the HW designers intended it to be used.  Then you could
+> just have SET_RATE_PARENT flag, rather than the bitfield.
+> 
+
+I can rework the patches to do that if you prefer.
+
+This being said, I already had a similar issue with atmel clocks [1],
+where a peripheral requires a specific rate and the periph clk can
+take its source from 2 different PLLs: one that is widely used by other
+peripherals and which cannot be modified and the other which is not so
+widely used and can be customized to generate the rate we need.
+Maybe that's something we should address with a generic solution at
+some point: clk constraint propagation, clk rate lock or something
+else (Mike mentioned another approach here [1]).
+
+In the meantime, the patch here should do the trick for the bcm2835
+platform.
+
+> Still, this seems to be correct and fixes the bug.  Both patches are:
+> 
+> Reviewed-by: Eric Anholt <eric@anholt.net>
+
+[1]https://patchwork.kernel.org/patch/6204221/
