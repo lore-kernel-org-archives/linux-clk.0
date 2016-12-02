@@ -1,64 +1,137 @@
-Return-Path: <Chris.Brandt@renesas.com>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Simon Horman
-	<horms+renesas@verge.net.au>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-Subject: RE: [PATCH] clk: renesas: mstp: Support 8-bit registers for r7s72100
-Date: Thu, 15 Dec 2016 02:58:45 +0000
-Message-ID: <SG2PR06MB116595E38DF9C7E4CE0083CD8A9D0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20161215021134.14902-1-chris.brandt@renesas.com>
- <87bmwdoreh.wl%kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87bmwdoreh.wl%kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH 1/3] Documentation: dt: Add TI SCI clock driver
+To: Rob Herring <robh@kernel.org>
+References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
+ <1477053961-27128-2-git-send-email-t-kristo@ti.com>
+ <20161030204121.qvb5d33dh65awwzx@rob-hp-laptop>
+ <41c58712-bc00-ed05-9d1d-42e31397a70c@ti.com>
+ <CAL_JsqLtSs6ifnMdEOsfXpGoWnmXuGAx83+ziB9yU+zurvob+A@mail.gmail.com>
+ <0fe81866-8bfd-f3a7-d808-9cb23841f504@ti.com>
+CC: linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Santosh
+ Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <8579b123-f214-22f1-0236-e5b98ab51597@ti.com>
+Date: Fri, 2 Dec 2016 10:19:39 +0200
 MIME-Version: 1.0
+In-Reply-To: <0fe81866-8bfd-f3a7-d808-9cb23841f504@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Morimoto-san,
+On 21/11/16 10:14, Tero Kristo wrote:
+> On 18/11/16 19:20, Rob Herring wrote:
+>> On Mon, Oct 31, 2016 at 7:50 AM, Tero Kristo <t-kristo@ti.com> wrote:
+>>> On 30/10/16 22:41, Rob Herring wrote:
+>>>>
+>>>> On Fri, Oct 21, 2016 at 03:45:59PM +0300, Tero Kristo wrote:
+>>>>>
+>>>>> Add a clock implementation, TI SCI clock, that will hook to the common
+>>>>> clock framework, and allow each clock to be controlled via TI SCI
+>>>>> protocol.
+>>>>>
+>>>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>>>>> ---
+>>>>>  .../devicetree/bindings/clock/ti,sci-clk.txt       | 37
+>>>>> ++++++++++++++++++++++
+>>>>>  MAINTAINERS                                        |  1 +
+>>>>>  2 files changed, 38 insertions(+)
+>>>>>  create mode 100644
+>>>>> Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>>>> b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>>>> new file mode 100644
+>>>>> index 0000000..bfc3ca4
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>>>> @@ -0,0 +1,37 @@
+>>>>> +Texas Instruments TI-SCI Clocks
+>>>>> +===============================
+>>>>> +
+>>>>> +All clocks on Texas Instruments' SoCs that contain a System
+>>>>> Controller,
+>>>>> +are only controlled by this entity. Communication between a host
+>>>>> processor
+>>>>> +running an OS and the System Controller happens through a protocol
+>>>>> known
+>>>>> +as TI-SCI[1]. This clock implementation plugs into the common clock
+>>>>> +framework and makes use of the TI-SCI protocol on clock API requests.
+>>>>> +
+>>>>> +[1] Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
+>>>>> +
+>>>>> +Required properties:
+>>>>> +-------------------
+>>>>> +- compatible: Must be "ti,k2g-sci-clk"
+>>>>> +- #clock-cells: Shall be 2.
+>>>>> +  In clock consumers, this cell represents the device ID and clock ID
+>>>>> +  exposed by the PM firmware. The assignments can be found in the
+>>>>> header
+>>>>> +  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
+>>>>> +  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where
+>>>>> <soc>
+>>>>> +  is the SoC involved, for example 'k2g'.
+>>>>> +
+>>>>> +Examples:
+>>>>> +--------
+>>>>> +
+>>>>> +pmmc: pmmc {
+>>>>> +       compatible = "ti,k2g-sci";
+>>>>> +
+>>>>> +       k2g_clks: k2g_clks {
+>>>>
+>>>>
+>>>> Use "clocks" for node name instead.
+>>>>
+>>>>> +               compatible = "ti,k2g-sci-clk";
+>>>>
+>>>>
+>>>> I'm starting to think all these child nodes for SCI are pointless. Is
+>>>> there any reason why the parent node can't be the clock provider (along
+>>>> with all the other providers it acks as)?
+>>>
+>>>
+>>> I believe the only reason to keep them separate is to have kernel
+>>> side of
+>>> things modular. If we have separate nodes, the drivers can be probed
+>>> separately.
+>>>
+>>> If not, we need to build one huge blob with all the features in it,
+>>> so the
+>>> main driver can probe everything in one go, with annoying back-and-forth
+>>> callbacks in place (assuming we still want to keep stuff somehow
+>>> modular.)
+>>
+>> Since when is DT the only way to create a device? The main driver can
+>> create devices for all the sub-functions like clocks. This is the same
+>> as MFDs which have been done both ways.
+>
+> Yes obviously this can be done, my main point was that it will require
+> building some sort of infra within the driver to handle this. With
+> separate nodes, none of this is going to be needed. Also, we will lose
+> any kind of configurability via DT if we don't have separate nodes; now
+> we can select the available clocks / genpds via the compatible string of
+> the clocks/genpd nodes themselves (this isn't clearly evident as of now
+> as we only support a grand total of one device, which is k2g-evm.)
+> Otherwise we need to probe against the main node and add a separate
+> compatible string for every device, and carry this information to the
+> sibling devices also somehow. It is just so much simpler if we can just
+> keep separate nodes for them.
+>
+> Also, plenty of things are doing this kind of stuff already in
+> DT/kernel, having a parent node in place and sub-functions added
+> separately for ease of use, with apparently no visible point for having
+> the nodes within the DT.
 
-On Dec 14, 2016, Kuninori Morimoto wrote:
-> I don't think using global variable is a good idea.
-> For example, how about add reg_width_8bit into mstp_clock_group, and
-> cpg_mstp_read/write requests it, or something like that ?
+Rob, any response on this one? I see you have acked the reset part of 
+the bindings which is doing pretty much the same thing as the clock part 
+is doing here, namely adding child node under the main SCI node. Is it 
+okay to do this same for other parts of the TI SCI?
 
-If I make a separate CLK_OF_DECLARE like this:
-
-static void __init cpg_mstp_clocks_init8(struct device_node *np) {
-	reg_width_8bit =3D true;
-	cpg_mstp_clocks_init(np);
-}
-CLK_OF_DECLARE(cpg_mstp_clks8, "renesas,r7s72100-mstp-clocks",
-	       cpg_mstp_clocks_init8);
-
-
-The only way I can pass the 8-bit/32-bit choice into cpg_mstp_clocks_init()
-is using a global variable.
-
-
-Unless, I change the API to cpg_mstp_clocks_init(np, reg_width_8bit)
-
-But, that means adding another function:
-
-CLK_OF_DECLARE(cpg_mstp_clks32, "renesas,cpg-mstp-clocks",
-               cpg_mstp_clocks_init32);
-
-CLK_OF_DECLARE(cpg_mstp_clks8, "renesas,r7s72100-mstp-clocks",
-               cpg_mstp_clocks_init8);
-
-static void __init cpg_mstp_clocks_init32(struct device_node *np)
-{
-	cpg_mstp_clocks_init(np, false);
-}
-static void __init cpg_mstp_clocks_init8(struct device_node *np)
-{
-	cpg_mstp_clocks_init(np, true);
-}
-
-
-A global variable is much easier, but if no one likes it, I can change to
-mstp_clock_group.reg_width_8bit instead.
-
-
-Chris
+-Tero
