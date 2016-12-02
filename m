@@ -1,241 +1,465 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:40664 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751427AbcLAKLD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Dec 2016 05:11:03 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: linux-omap@vger.kernel.org
-Cc: linux-clk@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
-        Paul Walmsley <paul@pwsan.com>,
-        Richard Watts <rrw@kynesim.co.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexander Kinzer <a.kinzer@plusoptix.de>
-Subject: [PATCH v2] clk: ti: omap36xx: Work around sprz319 advisory 2.1
-Date: Thu,  1 Dec 2016 12:10:45 +0200
-Message-Id: <1480587045-3340-1-git-send-email-laurent.pinchart@ideasonboard.com>
-In-Reply-To: <fb71bf40-dee8-6c06-fe52-b1474920a5f3@ti.com>
-References: <fb71bf40-dee8-6c06-fe52-b1474920a5f3@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ping.bai@nxp.com>
+From: Bai Ping <ping.bai@nxp.com>
+To: <shawnguo@kernel.org>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <linus.walleij@linaro.org>
+CC: <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
+	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>, <p.zabel@pengutronix.de>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<ping.bai@nxp.com>
+Subject: [PATCH 04/11] driver: pinctrl: imx: Add pinctrl driver support for imx6sll
+Date: Fri, 2 Dec 2016 14:39:27 +0800
+Message-ID: <1480660774-25055-5-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
+References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: ping.bai@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Richard Watts <rrw@kynesim.co.uk>
+Add pinctrl driver support for imx6sll.
 
-The OMAP36xx DPLL5, driving EHCI USB, can be subject to a long-term
-frequency drift. The frequency drift magnitude depends on the VCO update
-rate, which is inversely proportional to the PLL divider. The kernel
-DPLL configuration code results in a high value for the divider, leading
-to a long term drift high enough to cause USB transmission errors. In
-the worst case the USB PHY's ULPI interface can stop responding,
-breaking USB operation completely. This manifests itself on the
-Beagleboard xM by the LAN9514 reporting 'Cannot enable port 2. Maybe the
-cable is bad?' in the kernel log.
-
-Errata sprz319 advisory 2.1 documents PLL values that minimize the
-drift. Use them automatically when DPLL5 is used for USB operation,
-which we detect based on the requested clock rate. The clock framework
-will still compute the PLL parameters and resulting rate as usual, but
-the PLL M and N values will then be overridden. This can result in the
-effective clock rate being slightly different than the rate cached by
-the clock framework, but won't cause any adverse effect to USB
-operation.
-
-Signed-off-by: Richard Watts <rrw@kynesim.co.uk>
-[Upported from v3.2 to v4.9]
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
 ---
-Changes since v1:
+ arch/arm/mach-imx/Kconfig                   |   1 +
+ drivers/pinctrl/freescale/Kconfig           |   7 +
+ drivers/pinctrl/freescale/Makefile          |   1 +
+ drivers/pinctrl/freescale/pinctrl-imx6sll.c | 385 ++++++++++++++++++++++++++++
+ 4 files changed, 394 insertions(+)
+ create mode 100644 drivers/pinctrl/freescale/pinctrl-imx6sll.c
 
-- Moved machine compatible checks to init time
-- Explicitly refer to advisory 2.1
----
- drivers/clk/ti/clk-3xxx.c | 20 +++++++-------
- drivers/clk/ti/clock.h    |  9 +++++++
- drivers/clk/ti/dpll.c     | 19 +++++++++++++-
- drivers/clk/ti/dpll3xxx.c | 67 +++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 104 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
-index 8831e1a05367..11d8aa3ec186 100644
---- a/drivers/clk/ti/clk-3xxx.c
-+++ b/drivers/clk/ti/clk-3xxx.c
-@@ -22,13 +22,6 @@
+diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+index 33bcfda..c907d9f 100644
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@ -514,6 +514,7 @@ config SOC_IMX6SL
  
- #include "clock.h"
+ config SOC_IMX6SLL
+ 	bool "i.MX6 SoloLiteLite support"
++	select PINCTRL_IMX6SLL
+ 	select SOC_IMX6
  
--/*
-- * DPLL5_FREQ_FOR_USBHOST: USBHOST and USBTLL are the only clocks
-- * that are sourced by DPLL5, and both of these require this clock
-- * to be at 120 MHz for proper operation.
-- */
--#define DPLL5_FREQ_FOR_USBHOST		120000000
--
- #define OMAP3430ES2_ST_DSS_IDLE_SHIFT			1
- #define OMAP3430ES2_ST_HSOTGUSB_IDLE_SHIFT		5
- #define OMAP3430ES2_ST_SSI_IDLE_SHIFT			8
-@@ -546,14 +539,21 @@ void __init omap3_clk_lock_dpll5(void)
- 	struct clk *dpll5_clk;
- 	struct clk *dpll5_m2_clk;
+ 	help
+diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
+index fc8cbf6..93ca39f 100644
+--- a/drivers/pinctrl/freescale/Kconfig
++++ b/drivers/pinctrl/freescale/Kconfig
+@@ -81,6 +81,13 @@ config PINCTRL_IMX6SL
+ 	help
+ 	  Say Y here to enable the imx6sl pinctrl driver
  
-+	/*
-+	 * Errata sprz319f advisory 2.1 documents a USB host clock drift issue
-+	 * that can be worked around using specially crafted dpll5 settings
-+	 * with a dpll5_m2 divider set to 8. Set the dpll5 rate to 8x the USB
-+	 * host clock rate, its .set_rate handler() will detect that frequency
-+	 * and use the errata settings.
-+	 */
- 	dpll5_clk = clk_get(NULL, "dpll5_ck");
--	clk_set_rate(dpll5_clk, DPLL5_FREQ_FOR_USBHOST);
-+	clk_set_rate(dpll5_clk, OMAP3_DPLL5_FREQ_FOR_USBHOST * 8);
- 	clk_prepare_enable(dpll5_clk);
- 
--	/* Program dpll5_m2_clk divider for no division */
-+	/* Program dpll5_m2_clk divider */
- 	dpll5_m2_clk = clk_get(NULL, "dpll5_m2_ck");
- 	clk_prepare_enable(dpll5_m2_clk);
--	clk_set_rate(dpll5_m2_clk, DPLL5_FREQ_FOR_USBHOST);
-+	clk_set_rate(dpll5_m2_clk, OMAP3_DPLL5_FREQ_FOR_USBHOST);
- 
- 	clk_disable_unprepare(dpll5_m2_clk);
- 	clk_disable_unprepare(dpll5_clk);
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index 90f3f472ae1c..13c37f48d9d6 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -257,11 +257,20 @@ long omap2_dpll_round_rate(struct clk_hw *hw, unsigned long target_rate,
- unsigned long omap3_clkoutx2_recalc(struct clk_hw *hw,
- 				    unsigned long parent_rate);
- 
-+/*
-+ * OMAP3_DPLL5_FREQ_FOR_USBHOST: USBHOST and USBTLL are the only clocks
-+ * that are sourced by DPLL5, and both of these require this clock
-+ * to be at 120 MHz for proper operation.
-+ */
-+#define OMAP3_DPLL5_FREQ_FOR_USBHOST	120000000
++config PINCTRL_IMX6SLL
++	bool "IMX6SL pinctrl driver"
++	depends on SOC_IMX6SLL
++	select PINCTRL_IMX
++	help
++	  Say Y here to enable the imx6sl pinctrl driver
 +
- unsigned long omap3_dpll_recalc(struct clk_hw *hw, unsigned long parent_rate);
- int omap3_dpll4_set_rate(struct clk_hw *clk, unsigned long rate,
- 			 unsigned long parent_rate);
- int omap3_dpll4_set_rate_and_parent(struct clk_hw *hw, unsigned long rate,
- 				    unsigned long parent_rate, u8 index);
-+int omap3_dpll5_set_rate(struct clk_hw *hw, unsigned long rate,
-+			 unsigned long parent_rate);
- void omap3_clk_lock_dpll5(void);
- 
- unsigned long omap4_dpll_regm4xen_recalc(struct clk_hw *hw,
-diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-index 9fc8754a6e61..4b9a419d8e14 100644
---- a/drivers/clk/ti/dpll.c
-+++ b/drivers/clk/ti/dpll.c
-@@ -114,6 +114,18 @@ static const struct clk_ops omap3_dpll_ck_ops = {
- 	.round_rate	= &omap2_dpll_round_rate,
- };
- 
-+static const struct clk_ops omap3_dpll5_ck_ops = {
-+	.enable		= &omap3_noncore_dpll_enable,
-+	.disable	= &omap3_noncore_dpll_disable,
-+	.get_parent	= &omap2_init_dpll_parent,
-+	.recalc_rate	= &omap3_dpll_recalc,
-+	.set_rate	= &omap3_dpll5_set_rate,
-+	.set_parent	= &omap3_noncore_dpll_set_parent,
-+	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
-+	.determine_rate	= &omap3_noncore_dpll_determine_rate,
-+	.round_rate	= &omap2_dpll_round_rate,
+ config PINCTRL_IMX6SX
+ 	bool "IMX6SX pinctrl driver"
+ 	depends on SOC_IMX6SX
+diff --git a/drivers/pinctrl/freescale/Makefile b/drivers/pinctrl/freescale/Makefile
+index d44c9e2..5f23765 100644
+--- a/drivers/pinctrl/freescale/Makefile
++++ b/drivers/pinctrl/freescale/Makefile
+@@ -11,6 +11,7 @@ obj-$(CONFIG_PINCTRL_IMX53)	+= pinctrl-imx53.o
+ obj-$(CONFIG_PINCTRL_IMX6Q)	+= pinctrl-imx6q.o
+ obj-$(CONFIG_PINCTRL_IMX6Q)	+= pinctrl-imx6dl.o
+ obj-$(CONFIG_PINCTRL_IMX6SL)	+= pinctrl-imx6sl.o
++obj-$(CONFIG_PINCTRL_IMX6SLL)	+= pinctrl-imx6sll.o
+ obj-$(CONFIG_PINCTRL_IMX6SX)	+= pinctrl-imx6sx.o
+ obj-$(CONFIG_PINCTRL_IMX6UL)	+= pinctrl-imx6ul.o
+ obj-$(CONFIG_PINCTRL_IMX7D)	+= pinctrl-imx7d.o
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx6sll.c b/drivers/pinctrl/freescale/pinctrl-imx6sll.c
+new file mode 100644
+index 0000000..2f4baff
+--- /dev/null
++++ b/drivers/pinctrl/freescale/pinctrl-imx6sll.c
+@@ -0,0 +1,385 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Author: Bai Ping <ping.bai@nxp.com>
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/pinctrl/pinctrl.h>
++
++#include "pinctrl-imx.h"
++
++enum imx6sll_pads {
++	MX6SLL_PAD_RESERVE0 = 0,
++	MX6SLL_PAD_RESERVE1 = 1,
++	MX6SLL_PAD_RESERVE2 = 2,
++	MX6SLL_PAD_RESERVE3 = 3,
++	MX6SLL_PAD_RESERVE4 = 4,
++	MX6SLL_PAD_WDOG_B = 5,
++	MX6SLL_PAD_REF_CLK_24M = 6,
++	MX6SLL_PAD_REF_CLK_32K = 7,
++	MX6SLL_PAD_PWM1 = 8,
++	MX6SLL_PAD_KEY_COL0 = 9,
++	MX6SLL_PAD_KEY_ROW0 = 10,
++	MX6SLL_PAD_KEY_COL1 = 11,
++	MX6SLL_PAD_KEY_ROW1 = 12,
++	MX6SLL_PAD_KEY_COL2 = 13,
++	MX6SLL_PAD_KEY_ROW2 = 14,
++	MX6SLL_PAD_KEY_COL3 = 15,
++	MX6SLL_PAD_KEY_ROW3 = 16,
++	MX6SLL_PAD_KEY_COL4 = 17,
++	MX6SLL_PAD_KEY_ROW4 = 18,
++	MX6SLL_PAD_KEY_COL5 = 19,
++	MX6SLL_PAD_KEY_ROW5 = 20,
++	MX6SLL_PAD_KEY_COL6 = 21,
++	MX6SLL_PAD_KEY_ROW6 = 22,
++	MX6SLL_PAD_KEY_COL7 = 23,
++	MX6SLL_PAD_KEY_ROW7 = 24,
++	MX6SLL_PAD_EPDC_DATA00 = 25,
++	MX6SLL_PAD_EPDC_DATA01 = 26,
++	MX6SLL_PAD_EPDC_DATA02 = 27,
++	MX6SLL_PAD_EPDC_DATA03 = 28,
++	MX6SLL_PAD_EPDC_DATA04 = 29,
++	MX6SLL_PAD_EPDC_DATA05 = 30,
++	MX6SLL_PAD_EPDC_DATA06 = 31,
++	MX6SLL_PAD_EPDC_DATA07 = 32,
++	MX6SLL_PAD_EPDC_DATA08 = 33,
++	MX6SLL_PAD_EPDC_DATA09 = 34,
++	MX6SLL_PAD_EPDC_DATA10 = 35,
++	MX6SLL_PAD_EPDC_DATA11 = 36,
++	MX6SLL_PAD_EPDC_DATA12 = 37,
++	MX6SLL_PAD_EPDC_DATA13 = 38,
++	MX6SLL_PAD_EPDC_DATA14 = 39,
++	MX6SLL_PAD_EPDC_DATA15 = 40,
++	MX6SLL_PAD_EPDC_SDCLK = 41,
++	MX6SLL_PAD_EPDC_SDLE = 42,
++	MX6SLL_PAD_EPDC_SDOE = 43,
++	MX6SLL_PAD_EPDC_SDSHR = 44,
++	MX6SLL_PAD_EPDC_SDCE0 = 45,
++	MX6SLL_PAD_EPDC_SDCE1 = 46,
++	MX6SLL_PAD_EPDC_SDCE2 = 47,
++	MX6SLL_PAD_EPDC_SDCE3 = 48,
++	MX6SLL_PAD_EPDC_GDCLK = 49,
++	MX6SLL_PAD_EPDC_GDOE = 50,
++	MX6SLL_PAD_EPDC_GDRL = 51,
++	MX6SLL_PAD_EPDC_GDSP = 52,
++	MX6SLL_PAD_EPDC_VCOM0 = 53,
++	MX6SLL_PAD_EPDC_VCOM1 = 54,
++	MX6SLL_PAD_EPDC_BDR0 = 55,
++	MX6SLL_PAD_EPDC_BDR1 = 56,
++	MX6SLL_PAD_EPDC_PWR_CTRL0 = 57,
++	MX6SLL_PAD_EPDC_PWR_CTRL1 = 58,
++	MX6SLL_PAD_EPDC_PWR_CTRL2 = 59,
++	MX6SLL_PAD_EPDC_PWR_CTRL3 = 60,
++	MX6SLL_PAD_EPDC_PWR_COM = 61,
++	MX6SLL_PAD_EPDC_PWR_INT = 62,
++	MX6SLL_PAD_EPDC_PWR_STAT = 63,
++	MX6SLL_PAD_EPDC_PWR_WAKE = 64,
++	MX6SLL_PAD_LCD_CLK = 65,
++	MX6SLL_PAD_LCD_ENABLE = 66,
++	MX6SLL_PAD_LCD_HSYNC = 67,
++	MX6SLL_PAD_LCD_VSYNC = 68,
++	MX6SLL_PAD_LCD_RESET = 69,
++	MX6SLL_PAD_LCD_DATA00 = 70,
++	MX6SLL_PAD_LCD_DATA01 = 71,
++	MX6SLL_PAD_LCD_DATA02 = 72,
++	MX6SLL_PAD_LCD_DATA03 = 73,
++	MX6SLL_PAD_LCD_DATA04 = 74,
++	MX6SLL_PAD_LCD_DATA05 = 75,
++	MX6SLL_PAD_LCD_DATA06 = 76,
++	MX6SLL_PAD_LCD_DATA07 = 77,
++	MX6SLL_PAD_LCD_DATA08 = 78,
++	MX6SLL_PAD_LCD_DATA09 = 79,
++	MX6SLL_PAD_LCD_DATA10 = 80,
++	MX6SLL_PAD_LCD_DATA11 = 81,
++	MX6SLL_PAD_LCD_DATA12 = 82,
++	MX6SLL_PAD_LCD_DATA13 = 83,
++	MX6SLL_PAD_LCD_DATA14 = 84,
++	MX6SLL_PAD_LCD_DATA15 = 85,
++	MX6SLL_PAD_LCD_DATA16 = 86,
++	MX6SLL_PAD_LCD_DATA17 = 87,
++	MX6SLL_PAD_LCD_DATA18 = 88,
++	MX6SLL_PAD_LCD_DATA19 = 89,
++	MX6SLL_PAD_LCD_DATA20 = 90,
++	MX6SLL_PAD_LCD_DATA21 = 91,
++	MX6SLL_PAD_LCD_DATA22 = 92,
++	MX6SLL_PAD_LCD_DATA23 = 93,
++	MX6SLL_PAD_AUD_RXFS = 94,
++	MX6SLL_PAD_AUD_RXC = 95,
++	MX6SLL_PAD_AUD_RXD = 96,
++	MX6SLL_PAD_AUD_TXC = 97,
++	MX6SLL_PAD_AUD_TXFS = 98,
++	MX6SLL_PAD_AUD_TXD = 99,
++	MX6SLL_PAD_AUD_MCLK = 100,
++	MX6SLL_PAD_UART1_RXD = 101,
++	MX6SLL_PAD_UART1_TXD = 102,
++	MX6SLL_PAD_I2C1_SCL = 103,
++	MX6SLL_PAD_I2C1_SDA = 104,
++	MX6SLL_PAD_I2C2_SCL = 105,
++	MX6SLL_PAD_I2C2_SDA = 106,
++	MX6SLL_PAD_ECSPI1_SCLK = 107,
++	MX6SLL_PAD_ECSPI1_MOSI = 108,
++	MX6SLL_PAD_ECSPI1_MISO = 109,
++	MX6SLL_PAD_ECSPI1_SS0 = 110,
++	MX6SLL_PAD_ECSPI2_SCLK = 111,
++	MX6SLL_PAD_ECSPI2_MOSI = 112,
++	MX6SLL_PAD_ECSPI2_MISO = 113,
++	MX6SLL_PAD_ECSPI2_SS0 = 114,
++	MX6SLL_PAD_SD1_CLK = 115,
++	MX6SLL_PAD_SD1_CMD = 116,
++	MX6SLL_PAD_SD1_DATA0 = 117,
++	MX6SLL_PAD_SD1_DATA1 = 118,
++	MX6SLL_PAD_SD1_DATA2 = 119,
++	MX6SLL_PAD_SD1_DATA3 = 120,
++	MX6SLL_PAD_SD1_DATA4 = 121,
++	MX6SLL_PAD_SD1_DATA5 = 122,
++	MX6SLL_PAD_SD1_DATA6 = 123,
++	MX6SLL_PAD_SD1_DATA7 = 124,
++	MX6SLL_PAD_SD2_RESET = 125,
++	MX6SLL_PAD_SD2_CLK = 126,
++	MX6SLL_PAD_SD2_CMD = 127,
++	MX6SLL_PAD_SD2_DATA0 = 128,
++	MX6SLL_PAD_SD2_DATA1 = 129,
++	MX6SLL_PAD_SD2_DATA2 = 130,
++	MX6SLL_PAD_SD2_DATA3 = 131,
++	MX6SLL_PAD_SD2_DATA4 = 132,
++	MX6SLL_PAD_SD2_DATA5 = 133,
++	MX6SLL_PAD_SD2_DATA6 = 134,
++	MX6SLL_PAD_SD2_DATA7 = 135,
++	MX6SLL_PAD_SD3_CLK = 136,
++	MX6SLL_PAD_SD3_CMD = 137,
++	MX6SLL_PAD_SD3_DATA0 = 138,
++	MX6SLL_PAD_SD3_DATA1 = 139,
++	MX6SLL_PAD_SD3_DATA2 = 140,
++	MX6SLL_PAD_SD3_DATA3 = 141,
++	MX6SLL_PAD_GPIO4_IO20 = 142,
++	MX6SLL_PAD_GPIO4_IO21 = 143,
++	MX6SLL_PAD_GPIO4_IO19 = 144,
++	MX6SLL_PAD_GPIO4_IO25 = 145,
++	MX6SLL_PAD_GPIO4_IO18 = 146,
++	MX6SLL_PAD_GPIO4_IO24 = 147,
++	MX6SLL_PAD_GPIO4_IO23 = 148,
++	MX6SLL_PAD_GPIO4_IO17 = 149,
++	MX6SLL_PAD_GPIO4_IO22 = 150,
++	MX6SLL_PAD_GPIO4_IO16 = 151,
++	MX6SLL_PAD_GPIO4_IO26 = 152,
 +};
 +
- static const struct clk_ops omap3_dpll_per_ck_ops = {
- 	.enable		= &omap3_noncore_dpll_enable,
- 	.disable	= &omap3_noncore_dpll_disable,
-@@ -474,7 +486,12 @@ static void __init of_ti_omap3_dpll_setup(struct device_node *node)
- 		.modes = (1 << DPLL_LOW_POWER_BYPASS) | (1 << DPLL_LOCKED),
- 	};
- 
--	of_ti_dpll_setup(node, &omap3_dpll_ck_ops, &dd);
-+	if ((of_machine_is_compatible("ti,omap3630") ||
-+	     of_machine_is_compatible("ti,omap36xx")) &&
-+	    !strcmp(node->name, "dpll5_ck"))
-+		of_ti_dpll_setup(node, &omap3_dpll5_ck_ops, &dd);
-+	else
-+		of_ti_dpll_setup(node, &omap3_dpll_ck_ops, &dd);
- }
- CLK_OF_DECLARE(ti_omap3_dpll_clock, "ti,omap3-dpll-clock",
- 	       of_ti_omap3_dpll_setup);
-diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
-index 88f2ce81ba55..c1a393509a62 100644
---- a/drivers/clk/ti/dpll3xxx.c
-+++ b/drivers/clk/ti/dpll3xxx.c
-@@ -838,3 +838,70 @@ int omap3_dpll4_set_rate_and_parent(struct clk_hw *hw, unsigned long rate,
- 	return omap3_noncore_dpll_set_rate_and_parent(hw, rate, parent_rate,
- 						      index);
- }
++enum imx6sll_lpsr_pads {
++	MX6SLL_PAD_SNVS_TAMPER = 0,
++	MX6SLL_PAD_SNVS_PMIC_ON_REQ = 1,
++	MX6SLL_PAD_SNVS_PMIC_STBY_REQ = 2,
++	MX6SLL_PAD_SNVS_BOOT_MODE0 = 3,
++	MX6SLL_PAD_SNVS_BOOT_MODE1 = 4,
++};
 +
-+/* Apply DM3730 errata sprz319 advisory 2.1. */
-+static bool omap3_dpll5_apply_errata(struct clk_hw *hw,
-+				     unsigned long parent_rate)
++/* Pad names for the pinmux subsystem */
++static const struct pinctrl_pin_desc imx6sll_pinctrl_pads[] = {
++	IMX_PINCTRL_PIN(MX6SLL_PAD_RESERVE0),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_RESERVE1),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_RESERVE2),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_RESERVE3),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_RESERVE4),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_WDOG_B),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_REF_CLK_24M),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_REF_CLK_32K),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_PWM1),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_COL0),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_ROW0),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_COL1),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_ROW1),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_COL2),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_ROW2),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_COL3),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_ROW3),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_COL4),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_ROW4),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_COL5),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_ROW5),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_COL6),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_ROW6),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_COL7),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_KEY_ROW7),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA00),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA01),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA02),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA03),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA04),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA05),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA06),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA07),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA08),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA09),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA10),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA11),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA12),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA13),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA14),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_DATA15),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_SDCLK),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_SDLE),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_SDOE),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_SDSHR),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_SDCE0),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_SDCE1),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_SDCE2),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_SDCE3),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_GDCLK),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_GDOE),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_GDRL),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_GDSP),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_VCOM0),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_VCOM1),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_BDR0),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_BDR1),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_PWR_CTRL0),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_PWR_CTRL1),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_PWR_CTRL2),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_PWR_CTRL3),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_PWR_COM),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_PWR_INT),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_PWR_STAT),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_EPDC_PWR_WAKE),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_CLK),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_ENABLE),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_HSYNC),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_VSYNC),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_RESET),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA00),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA01),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA02),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA03),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA04),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA05),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA06),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA07),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA08),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA09),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA10),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA11),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA12),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA13),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA14),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA15),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA16),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA17),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA18),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA19),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA20),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA21),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA22),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_LCD_DATA23),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_AUD_RXFS),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_AUD_RXC),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_AUD_RXD),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_AUD_TXC),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_AUD_TXFS),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_AUD_TXD),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_AUD_MCLK),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_UART1_RXD),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_UART1_TXD),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_I2C1_SCL),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_I2C1_SDA),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_I2C2_SCL),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_I2C2_SDA),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_ECSPI1_SCLK),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_ECSPI1_MOSI),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_ECSPI1_MISO),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_ECSPI1_SS0),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_ECSPI2_SCLK),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_ECSPI2_MOSI),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_ECSPI2_MISO),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_ECSPI2_SS0),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD1_CLK),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD1_CMD),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD1_DATA0),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD1_DATA1),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD1_DATA2),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD1_DATA3),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD1_DATA4),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD1_DATA5),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD1_DATA6),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD1_DATA7),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD2_RESET),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD2_CLK),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD2_CMD),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD2_DATA0),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD2_DATA1),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD2_DATA2),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD2_DATA3),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD2_DATA4),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD2_DATA5),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD2_DATA6),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD2_DATA7),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD3_CLK),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD3_CMD),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD3_DATA0),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD3_DATA1),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD3_DATA2),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_SD3_DATA3),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_GPIO4_IO20),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_GPIO4_IO21),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_GPIO4_IO19),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_GPIO4_IO25),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_GPIO4_IO18),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_GPIO4_IO24),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_GPIO4_IO23),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_GPIO4_IO17),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_GPIO4_IO22),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_GPIO4_IO16),
++	IMX_PINCTRL_PIN(MX6SLL_PAD_GPIO4_IO26),
++};
++
++static struct imx_pinctrl_soc_info imx6sll_pinctrl_info = {
++	.pins = imx6sll_pinctrl_pads,
++	.npins = ARRAY_SIZE(imx6sll_pinctrl_pads),
++	.gpr_compatible = "fsl,imx6sll-iomuxc-gpr",
++};
++
++static const struct of_device_id imx6sll_pinctrl_of_match[] = {
++	{ .compatible = "fsl,imx6sll-iomuxc", .data = &imx6sll_pinctrl_info, },
++	{ /* sentinel */ }
++};
++
++static int imx6sll_pinctrl_probe(struct platform_device *pdev)
 +{
-+	struct omap3_dpll5_settings {
-+		unsigned int rate, m, n;
-+	};
++	const struct of_device_id *match;
++	struct imx_pinctrl_soc_info *pinctrl_info;
 +
-+	static const struct omap3_dpll5_settings precomputed[] = {
-+		/*
-+		 * From DM3730 errata advisory 2.1, table 35 and 36.
-+		 * The N value is increased by 1 compared to the tables as the
-+		 * errata lists register values while last_rounded_field is the
-+		 * real divider value.
-+		 */
-+		{ 12000000,  80,  0+1 },
-+		{ 13000000, 443,  5+1 },
-+		{ 19200000,  50,  0+1 },
-+		{ 26000000, 443, 11+1 },
-+		{ 38400000,  25,  0+1 }
-+	};
++	match = of_match_device(imx6sll_pinctrl_of_match, &pdev->dev);
 +
-+	const struct omap3_dpll5_settings *d;
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	struct dpll_data *dd;
-+	unsigned int i;
++	if (!match)
++		return -ENODEV;
 +
-+	for (i = 0; i < ARRAY_SIZE(precomputed); ++i) {
-+		if (parent_rate == precomputed[i].rate)
-+			break;
-+	}
++	pinctrl_info = (struct imx_pinctrl_soc_info *) match->data;
 +
-+	if (i == ARRAY_SIZE(precomputed))
-+		return false;
-+
-+	d = &precomputed[i];
-+
-+	/* Update the M, N and rounded rate values and program the DPLL. */
-+	dd = clk->dpll_data;
-+	dd->last_rounded_m = d->m;
-+	dd->last_rounded_n = d->n;
-+	dd->last_rounded_rate = div_u64((u64)parent_rate * d->m, d->n);
-+	omap3_noncore_dpll_program(clk, 0);
-+
-+	return true;
++	return imx_pinctrl_probe(pdev, pinctrl_info);
 +}
 +
-+/**
-+ * omap3_dpll5_set_rate - set rate for omap3 dpll5
-+ * @hw: clock to change
-+ * @rate: target rate for clock
-+ * @parent_rate: rate of the parent clock
-+ *
-+ * Set rate for the DPLL5 clock. Apply the sprz319 advisory 2.1 on OMAP36xx if
-+ * the DPLL is used for USB host (detected through the requested rate).
-+ */
-+int omap3_dpll5_set_rate(struct clk_hw *hw, unsigned long rate,
-+			 unsigned long parent_rate)
-+{
-+	if (rate == OMAP3_DPLL5_FREQ_FOR_USBHOST * 8) {
-+		if (omap3_dpll5_apply_errata(hw, parent_rate))
-+			return 0;
-+	}
++static struct platform_driver imx6sll_pinctrl_driver = {
++	.driver = {
++		.name = "imx6sll-pinctrl",
++		.owner = THIS_MODULE,
++		.of_match_table = of_match_ptr(imx6sll_pinctrl_of_match),
++	},
++	.probe = imx6sll_pinctrl_probe,
++};
 +
-+	return omap3_noncore_dpll_set_rate(hw, rate, parent_rate);
++static int __init imx6sll_pinctrl_init(void)
++{
++	return platform_driver_register(&imx6sll_pinctrl_driver);
 +}
++arch_initcall(imx6sll_pinctrl_init);
++
++static void __exit imx6sll_pinctrl_exit(void)
++{
++	platform_driver_unregister(&imx6sll_pinctrl_driver);
++}
++module_exit(imx6sll_pinctrl_exit);
 -- 
-Regards,
-
-Laurent Pinchart
-
+1.9.1
