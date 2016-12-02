@@ -1,88 +1,188 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Chen-Yu Tsai <wens@csie.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>
-In-Reply-To: <CAGb2v65YWntCrFHtSbxhtTWkt+UwkW3xoY-ae26MpH+-ULLXSQ@mail.gmail.com>
-References: <20161215182754.33921-1-icenowy@aosc.xyz>
- <20161219084652.kiqdkiewu5tujlyd@lukather>
- <CAGb2v65YWntCrFHtSbxhtTWkt+UwkW3xoY-ae26MpH+-ULLXSQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: sun8i: add opp-v2 table for A33
-MIME-Version: 1.0
-Message-Id: <11975791482156406@web2g.yandex.ru>
-Date: Mon, 19 Dec 2016 22:06:46 +0800
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree <devicetree@vger.kernel.org>,
- Quentin Schulz <quentin.schulz@free-electrons.com>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- Hans de Goede <hdegoede@redhat.com>,
- linux-sunxi <linux-sunxi@googlegroups.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Return-Path: <mturquette@baylibre.com>
 Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+MIME-Version: 1.0
+To: Tony Lindgren <tony@atomide.com>, 
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20161202231240.GH4705@atomide.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Tero Kristo" <t-kristo@ti.com>,
+ linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ "Rob Herring" <robh+dt@kernel.org>
+References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+ <1476805568-19264-12-git-send-email-t-kristo@ti.com>
+ <20161028005047.GQ26139@codeaurora.org>
+ <cd32a554-ba0a-33cd-c15c-121524ce679b@ti.com>
+ <20161028125112.xfyrx7l7m64z6cu6@atomide.com>
+ <20161028233617.GP16026@codeaurora.org>
+ <20161028235448.57squdf6cu2wxxvm@atomide.com>
+ <148071802182.32158.11479184984645880313@resonance>
+ <20161202231240.GH4705@atomide.com>
+Message-ID: <148072274164.32158.6012452044533845688@resonance>
+Subject: Re: [PATCHv4 11/15] clk: ti: clockdomain: add clock provider support to
+ clockdomains
+Date: Fri, 02 Dec 2016 15:52:21 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-CgoxOS4xMi4yMDE2LCAxNjo1NCwgIkNoZW4tWXUgVHNhaSIgPHdlbnNAY3NpZS5vcmc+Ogo+IE9u
-IE1vbiwgRGVjIDE5LCAyMDE2IGF0IDQ6NDYgUE0sIE1heGltZSBSaXBhcmQKPiA8bWF4aW1lLnJp
-cGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+IHdyb3RlOgo+PiDCoE9uIEZyaSwgRGVjIDE2LCAyMDE2
-IGF0IDAyOjI3OjU0QU0gKzA4MDAsIEljZW5vd3kgWmhlbmcgd3JvdGU6Cj4+PiDCoEFuIG9wZXJh
-dGluZyBwb2ludCB0YWJsZSBpcyBuZWVkZWQgZm9yIHRoZSBjcHUgZnJlcXVlbmN5IGFkanVzdGlu
-ZyB0bwo+Pj4gwqB3b3JrLgo+Pj4KPj4+IMKgVGhlIG9wZXJhdGluZyBwb2ludCB0YWJsZSBpcyBj
-b252ZXJ0ZWQgZnJvbSB0aGUgY29tbW9uIHZhbHVlIGluCj4+PiDCoGV4dHJhY3RlZCBzY3JpcHQu
-ZmV4IGZyb20gbWFueSBBMzMgYm9hcmQvdGFibGV0cy4KPj4+Cj4+PiDCoFNpZ25lZC1vZmYtYnk6
-IEljZW5vd3kgWmhlbmcgPGljZW5vd3lAYW9zYy54eXo+Cj4+PiDCoC0tLQo+Pj4gwqBDaGFuZ2Vz
-IHNpbmNlIHYxOgo+Pj4gwqAtIEZpeCBmb3JtYXQgcHJvYmxlbSAoYmxhbmsgbGluZXMpLgo+Pj4g
-wqAtIFJlbW92ZWQgdGhlIDEuMzQ0R0h6IG9wZXJhdGluZyBwb2ludCwgYXMgaXQncyBvdmVydm9s
-dGFnZSBhbmQgb3ZlcmNsb2NrZWQuCj4+Pgo+Pj4gwqBUaGlzIHBhdGNoIGRlcGVuZHMgb24gdGhl
-IGZvbGxvd2luZyBwYXRjaHNldDoKPj4+Cj4+PiDCoGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3Jn
-L3BpcGVybWFpbC9saW51eC1hcm0ta2VybmVsLzIwMTYtRGVjZW1iZXIvNDczOTYyLmh0bWwKPj4+
-Cj4+PiDCoEl0J3MgdGhlIHYyIG9mIHRoZSBbUEFUQ0ggNC82XSBpbiB0aGlzIHBhdGNoc2V0Lgo+
-Pj4KPj4+IMKgSSB0aGluayB0aGlzIG9wZXJhdGluZyBwb2ludCB0YWJsZSBtYXkgYWxzbyBhcHBs
-eSB0byBBMjMsIGFzIHRoZXJlJ3Mgbm8KPj4+IMKgZGlmZmVyZW5jZSBleGNlcHQgdGhlIHBvaW50
-cyBvdmVyIDEuMkdIeiBiZXR3ZWVuIEEyMyBhbmQgQTMzJ3Mgc3RvY2sgZHZmcyB0YWJsZS4KPj4+
-Cj4+PiDCoEJ1dCBhcyBBMjMgQ0NVIG1heSBub3QgaGF2ZSB0aGUgbmVjZXNzYXJ5IGZpeGVzLCBJ
-IHdvbid0IGFkZCB0aGUgdGFibGUgdG8gQTIzCj4+PiDCoG5vdy4KPj4+Cj4+PiDCoENoZW4tWXUs
-IGNvdWxkIHlvdSB0ZXN0IHRoZSBDQ1UgZml4ZXMgSSBkZXNjcmliZWQgaW4gdGhlIHBhdGNoc2V0
-IGFib3ZlIG9uIEEyMywKPj4+IMKgdGhlbiB0ZXN0IHRoaXMgb3BlcmF0aW5nIHBvaW50cyB0YWJs
-ZT8KPj4+Cj4+PiDCoElmIGl0J3MgbmVjZXNzYXJ5LCB5b3UgY2FuIHNlbmQgb3V0IHRoZSBDQ1Ug
-Zml4ZXMgYW5kIGFkZCBvbmUgbW9yZSBwYXRjaCB0aGF0Cj4+PiDCoG1vdmVzIHRoaXMgb3BwLXYy
-IHRhYmxlIHRvIHN1bjhpLWEyMy1hMzMuZHRzaSAuCj4+Pgo+Pj4gwqDCoGFyY2gvYXJtL2Jvb3Qv
-ZHRzL3N1bjhpLWEzMy5kdHNpIHwgMzUgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysKPj4+IMKgwqAxIGZpbGUgY2hhbmdlZCwgMzUgaW5zZXJ0aW9ucygrKQo+Pj4KPj4+IMKgZGlm
-ZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bjhpLWEzMy5kdHNpIGIvYXJjaC9hcm0vYm9v
-dC9kdHMvc3VuOGktYTMzLmR0c2kKPj4+IMKgaW5kZXggNTA0OTk2Y2JlZTI5Li4wZjViMmFmNzI5
-ODEgMTAwNjQ0Cj4+PiDCoC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bjhpLWEzMy5kdHNpCj4+
-PiDCoCsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bjhpLWEzMy5kdHNpCj4+PiDCoEBAIC00Niw3
-ICs0Niw0MiBAQAo+Pj4gwqDCoCNpbmNsdWRlIDxkdC1iaW5kaW5ncy9kbWEvc3VuNGktYTEwLmg+
-Cj4+Pgo+Pj4gwqDCoC8gewo+Pj4gwqArIGNwdTBfb3BwX3RhYmxlOiBvcHBfdGFibGUwIHsKPj4+
-IMKgKyBjb21wYXRpYmxlID0gIm9wZXJhdGluZy1wb2ludHMtdjIiOwo+Pj4gwqArIG9wcC1zaGFy
-ZWQ7Cj4+PiDCoCsKPj4+IMKgKyBvcHBANjQ4MDAwMDAwIHsKPj4+IMKgKyBvcHAtaHogPSAvYml0
-cy8gNjQgPDY0ODAwMDAwMD47Cj4+PiDCoCsgb3BwLW1pY3Jvdm9sdCA9IDwxMDQwMDAwPjsKPj4+
-IMKgKyBjbG9jay1sYXRlbmN5LW5zID0gPDI0NDE0ND47IC8qIDggMzJrIHBlcmlvZHMgKi8KPj4+
-IMKgKyB9Owo+Pj4gwqArCj4+PiDCoCsgb3BwQDgxNjAwMDAwMCB7Cj4+PiDCoCsgb3BwLWh6ID0g
-L2JpdHMvIDY0IDw4MTYwMDAwMDA+Owo+Pj4gwqArIG9wcC1taWNyb3ZvbHQgPSA8MTEwMDAwMD47
-Cj4+PiDCoCsgY2xvY2stbGF0ZW5jeS1ucyA9IDwyNDQxNDQ+OyAvKiA4IDMyayBwZXJpb2RzICov
-Cj4+PiDCoCsgfTsKPj4+IMKgKwo+Pj4gwqArIG9wcEAxMDA4MDAwMDAwIHsKPj4+IMKgKyBvcHAt
-aHogPSAvYml0cy8gNjQgPDEwMDgwMDAwMDA+Owo+Pj4gwqArIG9wcC1taWNyb3ZvbHQgPSA8MTIw
-MDAwMD47Cj4+PiDCoCsgY2xvY2stbGF0ZW5jeS1ucyA9IDwyNDQxNDQ+OyAvKiA4IDMyayBwZXJp
-b2RzICovCj4+PiDCoCsgfTsKPj4+IMKgKwo+Pj4gwqArIG9wcEAxMjAwMDAwMDAwIHsKPj4+IMKg
-KyBvcHAtaHogPSAvYml0cy8gNjQgPDEyMDAwMDAwMDA+Owo+Pj4gwqArIG9wcC1taWNyb3ZvbHQg
-PSA8MTMyMDAwMD47Cj4+PiDCoCsgY2xvY2stbGF0ZW5jeS1ucyA9IDwyNDQxNDQ+OyAvKiA4IDMy
-ayBwZXJpb2RzICovCj4+PiDCoCsgfTsKPj4+IMKgKyB9Owo+Pj4gwqArCj4+PiDCoMKgwqDCoMKg
-wqDCoGNwdXMgewo+Pj4gwqArIGNwdTA6IGNwdUAwIHsKPj4KPj4gwqBUaGVyZSdzIG5vIG5lZWQg
-dG8gZHVwbGljYXRlIHRoZSBsYWJlbCBoZXJlLiBJIHJlbW92ZWQgaXQgYW5kIGFwcGxpZWQuCj4K
-PiBJIHRoaW5rIHVzaW5nIHRoZSBsYWJlbCB0byBkaXJlY3RseSByZWZlcmVuY2UgY3B1MCB3b3Vs
-ZCBiZSBiZXR0ZXIsCj4gaW5zdGVhZCBvZiBkdXBsaWNhdGluZyB0aGUgY3B1QDAgYmxvY2suCgpB
-ZnRlciBwcm9wZXIgdGVzdGluZyBvZiBBMjMgY2N1LCB0aGUgb3BlcmF0aW5nIHBvaW50cyBjYW4g
-YWxzbyBhcHBseSB0byBBMjMuCihBY2NvcmRpbmcgdG8gQTIzIGRldmljZXMnIGZleCkKCj4KPiBD
-aGVuWXUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxp
-bnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
-ZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4
-LWFybS1rZXJuZWwK
+Quoting Tony Lindgren (2016-12-02 15:12:40)
+> * Michael Turquette <mturquette@baylibre.com> [161202 14:34]:
+> > Quoting Tony Lindgren (2016-10-28 16:54:48)
+> > > * Stephen Boyd <sboyd@codeaurora.org> [161028 16:37]:
+> > > > On 10/28, Tony Lindgren wrote:
+> > > > > * Tero Kristo <t-kristo@ti.com> [161028 00:43]:
+> > > > > > On 28/10/16 03:50, Stephen Boyd wrote:
+> > > > > > > I suppose a PRCM is
+> > > > > > > like an MFD that has clocks and resets under it? On other
+> > > > > > > platforms we've combined that all into one node and just had
+> > > > > > > #clock-cells and #reset-cells in that node. Is there any reas=
+on
+> > > > > > > we can't do that here?
+> > > > > > =
+
+> > > > > > For OMAPs, there are typically multiple instances of the PRCM a=
+round; OMAP4
+> > > > > > for example has:
+> > > > > > =
+
+> > > > > > cm1 @ 0x4a004000 (clocks + clockdomains)
+> > > > > > cm2 @ 0x4a008000 (clocks + clockdomains)
+> > > > > > prm @ 0x4a306000 (few clocks + resets + power state handling)
+> > > > > > scrm @ 0x4a30a000 (few external clocks + plenty of misc stuff)
+> > > > > > =
+
+> > > > > > These instances are also under different power/voltage domains =
+which means
+> > > > > > their PM behavior is different.
+> > > > > > =
+
+> > > > > > The idea behind having a clockdomain as a provider was mostly t=
+o have the
+> > > > > > topology visible : prcm-instance -> clockdomain -> clocks
+> > > > > =
+
+> > > > > Yeah that's needed to get the interconnect hierarchy right for
+> > > > > genpd :)
+> > > > > =
+
+> > > > > > ... but basically I think it would be possible to drop the cloc=
+kdomain
+> > > > > > representation and just mark the prcm-instance as a clock provi=
+der. Tony,
+> > > > > > any thoughts on that?
+> > > > > =
+
+> > > > > No let's not drop the clockdomains as those will be needed when we
+> > > > > move things into proper hierarchy within the interconnect instanc=
+es.
+> > > > > This will then help with getting things right with genpd.
+> > > > > =
+
+> > > > > In the long run we just want to specify clockdomain and the offse=
+t of
+> > > > > the clock instance within the clockdomain in the dts files.
+> > > > > =
+
+> > > > =
+
+> > > > Sorry, I have very little idea how OMAP hardware works. Do you
+> > > > mean that you will have different nodes for each clockdomain so
+> > > > that genpd can map 1:1 to the node in dts? But in hardware
+> > > > there's a prcm that allows us to control many clock domains
+> > > > through register read/writes? How is the interconnect involved?
+> > > =
+
+> > > There are multiple clockdomains, at least one for each interconnect
+> > > instance. Once a clockdomain is idle, the related interconnect can
+> > > idle too. So yeah genpd pretty much maps 1:1 with the clockdomains.
+> > > =
+
+> > > There's more info in for example omap4 TRM section "3.4.1 Device
+> > > Power-Management Layout" that shows the voltage/power/clock domains.
+> > > The interconnect instances are mostly named there too looking at
+> > > the L4/L3 naming.
+> > =
+
+> > I'm confused on two points:
+> > =
+
+> > 1) why are the clkdm's acting as clock providers? I've always hated the
+> > name "clock domain" since those bits are for managing module state, not
+> > clock state. The PRM, CM1 and CM2 provide the clocks, not the
+> > clockdomains.
+> =
+
+> The clock domains have multiple clock inputs that are routed to multiple
+> child clocks. So it is a clock :)
+> =
+
+> See for example omap4430 TRM "3.6.4 CD_WKUP Clock Domain" on page
+> 393 in my revision here.
+> =
+
+> On that page "Figure 3-48" shows CD_WKUP with the four input clocks.
+> And then "Table 3-84. CD_WKUP Control and Status Parameters" shows
+> the CD_WKUP clock domain specific registers. These registers show
+> the status, I think they are all read-only registers. Then CD_WKUP
+> has multiple child clocks with configurable registers.
+> =
+
+> From hardware register point of view, each clock domain has:
+> =
+
+> - Read-only clockdomain status registers in the beginning of
+>   the address space
+> =
+
+> - Multiple similar clock instances register instances each
+>   mapping to a specific interconnect target module
+> =
+
+> These are documented in "3.11.16.1 WKUP_CM Register Summary".
+
+Oh, this is because you are treating the MODULEMODE bits like gate
+clocks. I never really figured out if this was the best way to model
+those bits since they do more than control a line toggling at a rate.
+For instance this bit will affect the master/slave IDLE protocol between
+the module and the PRCM.
+
+> =
+
+> From hardware point of view, we ideally want to map interconnect
+> target modules to the clock instance offset from the clock domain
+> for that interconnect segment. For example gptimer1 clocks would
+> be just:
+> =
+
+> clocks =3D <&cd_wkup 0x40>;
+> =
+
+> > 2) why aren't the clock domains modeled as genpds with their associated
+> > devices attached to them? Note that it is possible to "nest" genpd
+> > objects. This would also allow for the "Clockdomain Dependency"
+> > relationships to be properly modeled (see section 3.1.1.1.7 Clock Domain
+> > Dependency in the OMAP4 TRM).
+> =
+
+> Clock domains only route clocks to child clocks. Power domains
+> are different registers. The power domains map roughly to
+> interconnect instances, there we have registers to disable the
+> whole interconnect when idle.
+
+I'm not talking about power islands at all, but the genpd object in
+Linux. For instance, if we treat each clock domain like a clock
+provider, how could the functional dependency between clkdm_A and
+clkdm_B be asserted?
+
+There is certainly no API for that in the clock framework, but for genpd
+your runtime_pm_get() callback for clkdm_A could call runtime_pm_get
+against clkdm_B, which would satisfy the requirement. See section
+3.1.1.1.7 Clock Domain Dependency in the OMAP4 TRM, version AB.
+
+Regards,
+Mike
+
+> =
+
+> Regards,
+> =
+
+> Tony
