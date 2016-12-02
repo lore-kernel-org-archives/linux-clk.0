@@ -1,122 +1,143 @@
-Return-Path: <nikita.yoush@cogentembedded.com>
-Return-Path: <nikita.yoush@cogentembedded.com>
-Subject: Re: [PATCH] clk: imx: pllv3: support fractional multiplier on vf610
- PLL1/PLL2
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1481288408-16035-1-git-send-email-nikita.yoush@cogentembedded.com>
- <20161213073858.GO5423@codeaurora.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
- Fabio Estevam <fabio.estevam@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- Chris Healy <cphealy@gmail.com>, linux-kernel@vger.kernel.org,
- Andrey Smirnov <andrew.smirnov@gmail.com>
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Message-ID: <c53ea5f7-c913-ea64-5b7f-3c3ce0b66e82@cogentembedded.com>
-Date: Tue, 13 Dec 2016 10:49:31 +0300
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20161213073858.GO5423@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <8579b123-f214-22f1-0236-e5b98ab51597@ti.com>
+References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
+ <1477053961-27128-2-git-send-email-t-kristo@ti.com> <20161030204121.qvb5d33dh65awwzx@rob-hp-laptop>
+ <41c58712-bc00-ed05-9d1d-42e31397a70c@ti.com> <CAL_JsqLtSs6ifnMdEOsfXpGoWnmXuGAx83+ziB9yU+zurvob+A@mail.gmail.com>
+ <0fe81866-8bfd-f3a7-d808-9cb23841f504@ti.com> <8579b123-f214-22f1-0236-e5b98ab51597@ti.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 2 Dec 2016 12:45:34 -0600
+Message-ID: <CAL_JsqKox9WVXh=i1jSCijJDTACC35uiNtS-bg9fdyDrX0svRQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] Documentation: dt: Add TI SCI clock driver
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Santosh Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
->> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
->> index 19f9b622981a..24a9e914e0d5 100644
->> --- a/drivers/clk/imx/clk-pllv3.c
->> +++ b/drivers/clk/imx/clk-pllv3.c
->> @@ -288,6 +291,87 @@ static const struct clk_ops clk_pllv3_av_ops = {
->>  	.set_rate	= clk_pllv3_av_set_rate,
->>  };
->>  
->> +static unsigned long clk_pllv3_vf610_recalc_rate(struct clk_hw *hw,
->> +					      unsigned long parent_rate)
->> +{
->> +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
->> +	u32 mfn = readl_relaxed(pll->base + PLL_VF610_NUM_OFFSET);
->> +	u32 mfd = readl_relaxed(pll->base + PLL_VF610_DENOM_OFFSET);
->> +	u32 div = (readl_relaxed(pll->base) & pll->div_mask) ? 22 : 20;
->> +	u64 temp64 = (u64)parent_rate;
-> 
-> Useless cast, please remove.
+On Fri, Dec 2, 2016 at 2:19 AM, Tero Kristo <t-kristo@ti.com> wrote:
+> On 21/11/16 10:14, Tero Kristo wrote:
+>>
+>> On 18/11/16 19:20, Rob Herring wrote:
+>>>
+>>> On Mon, Oct 31, 2016 at 7:50 AM, Tero Kristo <t-kristo@ti.com> wrote:
+>>>>
+>>>> On 30/10/16 22:41, Rob Herring wrote:
+>>>>>
+>>>>>
+>>>>> On Fri, Oct 21, 2016 at 03:45:59PM +0300, Tero Kristo wrote:
+>>>>>>
+>>>>>>
+>>>>>> Add a clock implementation, TI SCI clock, that will hook to the common
+>>>>>> clock framework, and allow each clock to be controlled via TI SCI
+>>>>>> protocol.
+>>>>>>
+>>>>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>>>>>> ---
+>>>>>>  .../devicetree/bindings/clock/ti,sci-clk.txt       | 37
+>>>>>> ++++++++++++++++++++++
+>>>>>>  MAINTAINERS                                        |  1 +
+>>>>>>  2 files changed, 38 insertions(+)
+>>>>>>  create mode 100644
+>>>>>> Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>>>>> b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>>>>> new file mode 100644
+>>>>>> index 0000000..bfc3ca4
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>>>>> @@ -0,0 +1,37 @@
+>>>>>> +Texas Instruments TI-SCI Clocks
+>>>>>> +===============================
+>>>>>> +
+>>>>>> +All clocks on Texas Instruments' SoCs that contain a System
+>>>>>> Controller,
+>>>>>> +are only controlled by this entity. Communication between a host
+>>>>>> processor
+>>>>>> +running an OS and the System Controller happens through a protocol
+>>>>>> known
+>>>>>> +as TI-SCI[1]. This clock implementation plugs into the common clock
+>>>>>> +framework and makes use of the TI-SCI protocol on clock API requests.
+>>>>>> +
+>>>>>> +[1] Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
+>>>>>> +
+>>>>>> +Required properties:
+>>>>>> +-------------------
+>>>>>> +- compatible: Must be "ti,k2g-sci-clk"
+>>>>>> +- #clock-cells: Shall be 2.
+>>>>>> +  In clock consumers, this cell represents the device ID and clock ID
+>>>>>> +  exposed by the PM firmware. The assignments can be found in the
+>>>>>> header
+>>>>>> +  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
+>>>>>> +  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where
+>>>>>> <soc>
+>>>>>> +  is the SoC involved, for example 'k2g'.
+>>>>>> +
+>>>>>> +Examples:
+>>>>>> +--------
+>>>>>> +
+>>>>>> +pmmc: pmmc {
+>>>>>> +       compatible = "ti,k2g-sci";
+>>>>>> +
+>>>>>> +       k2g_clks: k2g_clks {
+>>>>>
+>>>>>
+>>>>>
+>>>>> Use "clocks" for node name instead.
+>>>>>
+>>>>>> +               compatible = "ti,k2g-sci-clk";
+>>>>>
+>>>>>
+>>>>>
+>>>>> I'm starting to think all these child nodes for SCI are pointless. Is
+>>>>> there any reason why the parent node can't be the clock provider (along
+>>>>> with all the other providers it acks as)?
+>>>>
+>>>>
+>>>>
+>>>> I believe the only reason to keep them separate is to have kernel
+>>>> side of
+>>>> things modular. If we have separate nodes, the drivers can be probed
+>>>> separately.
+>>>>
+>>>> If not, we need to build one huge blob with all the features in it,
+>>>> so the
+>>>> main driver can probe everything in one go, with annoying back-and-forth
+>>>> callbacks in place (assuming we still want to keep stuff somehow
+>>>> modular.)
+>>>
+>>>
+>>> Since when is DT the only way to create a device? The main driver can
+>>> create devices for all the sub-functions like clocks. This is the same
+>>> as MFDs which have been done both ways.
+>>
+>>
+>> Yes obviously this can be done, my main point was that it will require
+>> building some sort of infra within the driver to handle this. With
+>> separate nodes, none of this is going to be needed. Also, we will lose
+>> any kind of configurability via DT if we don't have separate nodes; now
+>> we can select the available clocks / genpds via the compatible string of
+>> the clocks/genpd nodes themselves (this isn't clearly evident as of now
+>> as we only support a grand total of one device, which is k2g-evm.)
+>> Otherwise we need to probe against the main node and add a separate
+>> compatible string for every device, and carry this information to the
+>> sibling devices also somehow. It is just so much simpler if we can just
+>> keep separate nodes for them.
+>>
+>> Also, plenty of things are doing this kind of stuff already in
+>> DT/kernel, having a parent node in place and sub-functions added
+>> separately for ease of use, with apparently no visible point for having
+>> the nodes within the DT.
+>
+>
+> Rob, any response on this one? I see you have acked the reset part of the
+> bindings which is doing pretty much the same thing as the clock part is
+> doing here, namely adding child node under the main SCI node. Is it okay to
+> do this same for other parts of the TI SCI?
 
-Ok
+Yes. It would be silly to allow for one and not others...
 
->> +
->> +	temp64 *= mfn;
->> +	do_div(temp64, mfd);
->> +
->> +	return (parent_rate * div) + (u32)temp64;
->> +}
->> +
->> +static long clk_pllv3_vf610_round_rate(struct clk_hw *hw, unsigned long rate,
->> +				    unsigned long *prate)
->> +{
->> +	unsigned long parent_rate = *prate;
->> +	unsigned int mfi = (rate >= 22 * parent_rate) ? 22 : 20;
-> 
-> What is the importance of 22 and 20? Hint, at the least it needs
-> a comment.
-
-These come directly from datasheet:
-
-Frequency multipler selection (MFI).
-0: Fout = Fref * 20
-1: Fout = Fref * 22
-
-These numbers (20 / 22) are common among flavours of pllv3 hardware.
-In similar places in the same file (e.g. in clk_pllv3_recalc_rate(), in
-clk_pllv3_set_rate() ,etc) there are no comments explaining them.
-
-Are you sure this place is special and comment is needed here?
-
->> +	u32 mfn, mfd = 0x3fffffff;
->> +	u64 temp64;
->> +
->> +	if (rate <= parent_rate * mfi)
->> +		mfn = 0;
->> +	else if (rate >= parent_rate * (mfi + 1))
->> +		mfn = mfd - 1;
->> +	else {
->> +		/* rate = parent_rate * (mfi + mfn/mfd) */
->> +		temp64 = rate - parent_rate * mfi;
->> +		temp64 *= mfd;
->> +		do_div(temp64, parent_rate);
->> +		mfn = temp64;
->> +	}
->> +
->> +	temp64 = ((u64)mfd * mfi + mfn) * parent_rate;
->> +	do_div(temp64, mfd);
->> +	return (u32)temp64;
-> 
-> Do we need the cast here for some reason?
-
-Just for readability, can remove if it hurts.
-
->> +}
->> +
->> +static int clk_pllv3_vf610_set_rate(struct clk_hw *hw, unsigned long rate,
->> +		unsigned long parent_rate)
->> +{
->> +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
->> +	unsigned int mfi = (rate >= 22 * parent_rate) ? 22 : 20;
->> +	u32 val, mfn, mfd = 0x3fffffff;
->> +	u64 temp64;
->> +
->> +	if (rate <= parent_rate * mfi)
->> +		mfn = 0;
->> +	else if (rate >= parent_rate * (mfi + 1))
->> +		mfn = mfd - 1;
->> +	else {
->> +		/* rate = parent_rate * (mfi + mfn/mfd) */
->> +		temp64 = rate - parent_rate * mfi;
->> +		temp64 *= mfd;
->> +		do_div(temp64, parent_rate);
->> +		mfn = temp64;
->> +	}
->> +
->> +	val = readl_relaxed(pll->base);
->> +	if (mfi == 20)
-> 
-> Presumably this is another place 20 and 22 are special.
-
-See my reply above. Same applies here.
-
-Nikita
+Rob
