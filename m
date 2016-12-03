@@ -1,199 +1,167 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v3 4/9] clk: stm32f4: Add lcd-tft clock
-Date: Thu, 1 Dec 2016 16:27:44 +0100
-Message-ID: <1480606069-5178-5-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1480606069-5178-1-git-send-email-gabriel.fernandez@st.com>
-References: <1480606069-5178-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <tony@atomide.com>
+Date: Fri, 2 Dec 2016 16:18:52 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
+	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCHv4 11/15] clk: ti: clockdomain: add clock provider support
+ to clockdomains
+Message-ID: <20161203001852.GI4705@atomide.com>
+References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+ <1476805568-19264-12-git-send-email-t-kristo@ti.com>
+ <20161028005047.GQ26139@codeaurora.org>
+ <cd32a554-ba0a-33cd-c15c-121524ce679b@ti.com>
+ <20161028125112.xfyrx7l7m64z6cu6@atomide.com>
+ <20161028233617.GP16026@codeaurora.org>
+ <20161028235448.57squdf6cu2wxxvm@atomide.com>
+ <148071802182.32158.11479184984645880313@resonance>
+ <20161202231240.GH4705@atomide.com>
+ <148072274164.32158.6012452044533845688@resonance>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <148072274164.32158.6012452044533845688@resonance>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+* Michael Turquette <mturquette@baylibre.com> [161202 15:52]:
+> Quoting Tony Lindgren (2016-12-02 15:12:40)
+> > * Michael Turquette <mturquette@baylibre.com> [161202 14:34]:
+> > > Quoting Tony Lindgren (2016-10-28 16:54:48)
+> > > > * Stephen Boyd <sboyd@codeaurora.org> [161028 16:37]:
+> > > > > On 10/28, Tony Lindgren wrote:
+> > > > > > * Tero Kristo <t-kristo@ti.com> [161028 00:43]:
+> > > > > > > On 28/10/16 03:50, Stephen Boyd wrote:
+> > > > > > > > I suppose a PRCM is
+> > > > > > > > like an MFD that has clocks and resets under it? On other
+> > > > > > > > platforms we've combined that all into one node and just had
+> > > > > > > > #clock-cells and #reset-cells in that node. Is there any reason
+> > > > > > > > we can't do that here?
+> > > > > > > 
+> > > > > > > For OMAPs, there are typically multiple instances of the PRCM around; OMAP4
+> > > > > > > for example has:
+> > > > > > > 
+> > > > > > > cm1 @ 0x4a004000 (clocks + clockdomains)
+> > > > > > > cm2 @ 0x4a008000 (clocks + clockdomains)
+> > > > > > > prm @ 0x4a306000 (few clocks + resets + power state handling)
+> > > > > > > scrm @ 0x4a30a000 (few external clocks + plenty of misc stuff)
+> > > > > > > 
+> > > > > > > These instances are also under different power/voltage domains which means
+> > > > > > > their PM behavior is different.
+> > > > > > > 
+> > > > > > > The idea behind having a clockdomain as a provider was mostly to have the
+> > > > > > > topology visible : prcm-instance -> clockdomain -> clocks
+> > > > > > 
+> > > > > > Yeah that's needed to get the interconnect hierarchy right for
+> > > > > > genpd :)
+> > > > > > 
+> > > > > > > ... but basically I think it would be possible to drop the clockdomain
+> > > > > > > representation and just mark the prcm-instance as a clock provider. Tony,
+> > > > > > > any thoughts on that?
+> > > > > > 
+> > > > > > No let's not drop the clockdomains as those will be needed when we
+> > > > > > move things into proper hierarchy within the interconnect instances.
+> > > > > > This will then help with getting things right with genpd.
+> > > > > > 
+> > > > > > In the long run we just want to specify clockdomain and the offset of
+> > > > > > the clock instance within the clockdomain in the dts files.
+> > > > > > 
+> > > > > 
+> > > > > Sorry, I have very little idea how OMAP hardware works. Do you
+> > > > > mean that you will have different nodes for each clockdomain so
+> > > > > that genpd can map 1:1 to the node in dts? But in hardware
+> > > > > there's a prcm that allows us to control many clock domains
+> > > > > through register read/writes? How is the interconnect involved?
+> > > > 
+> > > > There are multiple clockdomains, at least one for each interconnect
+> > > > instance. Once a clockdomain is idle, the related interconnect can
+> > > > idle too. So yeah genpd pretty much maps 1:1 with the clockdomains.
+> > > > 
+> > > > There's more info in for example omap4 TRM section "3.4.1 Device
+> > > > Power-Management Layout" that shows the voltage/power/clock domains.
+> > > > The interconnect instances are mostly named there too looking at
+> > > > the L4/L3 naming.
+> > > 
+> > > I'm confused on two points:
+> > > 
+> > > 1) why are the clkdm's acting as clock providers? I've always hated the
+> > > name "clock domain" since those bits are for managing module state, not
+> > > clock state. The PRM, CM1 and CM2 provide the clocks, not the
+> > > clockdomains.
+> > 
+> > The clock domains have multiple clock inputs that are routed to multiple
+> > child clocks. So it is a clock :)
+> > 
+> > See for example omap4430 TRM "3.6.4 CD_WKUP Clock Domain" on page
+> > 393 in my revision here.
+> > 
+> > On that page "Figure 3-48" shows CD_WKUP with the four input clocks.
+> > And then "Table 3-84. CD_WKUP Control and Status Parameters" shows
+> > the CD_WKUP clock domain specific registers. These registers show
+> > the status, I think they are all read-only registers. Then CD_WKUP
+> > has multiple child clocks with configurable registers.
+> > 
+> > From hardware register point of view, each clock domain has:
+> > 
+> > - Read-only clockdomain status registers in the beginning of
+> >   the address space
+> > 
+> > - Multiple similar clock instances register instances each
+> >   mapping to a specific interconnect target module
+> > 
+> > These are documented in "3.11.16.1 WKUP_CM Register Summary".
+> 
+> Oh, this is because you are treating the MODULEMODE bits like gate
+> clocks. I never really figured out if this was the best way to model
+> those bits since they do more than control a line toggling at a rate.
+> For instance this bit will affect the master/slave IDLE protocol between
+> the module and the PRCM.
 
-This patch introduces lcd-tft clock for stm32f4 soc.
+Yes seems like there is some negotiation going on there with the
+target module. But from practical point of view the CLKCTRL
+register is the gate for a module functional clock.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32f4.c | 117 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 117 insertions(+)
+> > From hardware point of view, we ideally want to map interconnect
+> > target modules to the clock instance offset from the clock domain
+> > for that interconnect segment. For example gptimer1 clocks would
+> > be just:
+> > 
+> > clocks = <&cd_wkup 0x40>;
+> > 
+> > > 2) why aren't the clock domains modeled as genpds with their associated
+> > > devices attached to them? Note that it is possible to "nest" genpd
+> > > objects. This would also allow for the "Clockdomain Dependency"
+> > > relationships to be properly modeled (see section 3.1.1.1.7 Clock Domain
+> > > Dependency in the OMAP4 TRM).
+> > 
+> > Clock domains only route clocks to child clocks. Power domains
+> > are different registers. The power domains map roughly to
+> > interconnect instances, there we have registers to disable the
+> > whole interconnect when idle.
+> 
+> I'm not talking about power islands at all, but the genpd object in
+> Linux. For instance, if we treat each clock domain like a clock
+> provider, how could the functional dependency between clkdm_A and
+> clkdm_B be asserted?
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 98856ac..86244fc 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -933,11 +933,42 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
- 	"no-clock", "lse", "lsi", "hse-rtc"
- };
- 
-+static const char *lcd_parent[1] = { "pllsai-r-div" };
-+
-+struct stm32_aux_clk {
-+	int idx;
-+	const char *name;
-+	const char * const *parent_names;
-+	int num_parents;
-+	int offset_mux;
-+	u8 shift;
-+	u8 mask;
-+	int offset_gate;
-+	u8 bit_idx;
-+	unsigned long flags;
-+};
-+
- struct stm32f4_clk_data {
- 	const struct stm32f4_gate_data *gates_data;
- 	const u64 *gates_map;
- 	int gates_num;
- 	const struct stm32f4_pll_data *pll_data;
-+	const struct stm32_aux_clk *aux_clk;
-+	int aux_clk_num;
-+};
-+
-+#define NONE -1
-+#define NO_IDX  NONE
-+#define NO_MUX  NONE
-+#define NO_GATE NONE
-+
-+static const struct stm32_aux_clk stm32f429_aux_clk[] = {
-+	{
-+		CLK_LCD, "lcd-tft", lcd_parent, ARRAY_SIZE(lcd_parent),
-+		NO_MUX, 0, 0,
-+		STM32F4_RCC_APB2ENR, 26,
-+		CLK_SET_RATE_PARENT
-+	},
- };
- 
- static const struct stm32f4_clk_data stm32f429_clk_data = {
-@@ -945,6 +976,8 @@ struct stm32f4_clk_data {
- 	.gates_map	= stm32f42xx_gate_map,
- 	.gates_num	= ARRAY_SIZE(stm32f429_gates),
- 	.pll_data	= stm32f429_pll,
-+	.aux_clk	= stm32f429_aux_clk,
-+	.aux_clk_num	= ARRAY_SIZE(stm32f429_aux_clk),
- };
- 
- static const struct stm32f4_clk_data stm32f469_clk_data = {
-@@ -952,6 +985,8 @@ struct stm32f4_clk_data {
- 	.gates_map	= stm32f46xx_gate_map,
- 	.gates_num	= ARRAY_SIZE(stm32f469_gates),
- 	.pll_data	= stm32f469_pll,
-+	.aux_clk	= stm32f429_aux_clk,
-+	.aux_clk_num	= ARRAY_SIZE(stm32f429_aux_clk),
- };
- 
- static const struct of_device_id stm32f4_of_match[] = {
-@@ -966,6 +1001,66 @@ struct stm32f4_clk_data {
- 	{}
- };
- 
-+static struct clk_hw *stm32_register_aux_clk(const char *name,
-+		const char * const *parent_names, int num_parents,
-+		int offset_mux, u8 shift, u8 mask,
-+		int offset_gate, u8 bit_idx,
-+		unsigned long flags, spinlock_t *lock)
-+{
-+	struct clk_hw *hw;
-+	struct clk_gate *gate;
-+	struct clk_mux *mux = NULL;
-+	struct clk_hw *mux_hw = NULL, *gate_hw = NULL;
-+	const struct clk_ops *mux_ops = NULL, *gate_ops = NULL;
-+
-+	if (offset_gate != NO_GATE) {
-+		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+		if (!gate) {
-+			hw = ERR_PTR(-EINVAL);
-+			goto fail;
-+		}
-+
-+		gate->reg = base + offset_gate;
-+		gate->bit_idx = bit_idx;
-+		gate->flags = 0;
-+		gate->lock = lock;
-+		gate_hw = &gate->hw;
-+		gate_ops = &clk_gate_ops;
-+	}
-+
-+	if (offset_mux != NO_MUX) {
-+		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+		if (!mux) {
-+			kfree(gate);
-+			hw = ERR_PTR(-EINVAL);
-+			goto fail;
-+		}
-+
-+		mux->reg = base + offset_mux;
-+		mux->shift = shift;
-+		mux->mask = mask;
-+		mux->flags = 0;
-+		mux_hw = &mux->hw;
-+		mux_ops = &clk_mux_ops;
-+	}
-+
-+	if (mux_hw == NULL && gate_hw == NULL)
-+		return ERR_PTR(-EINVAL);
-+
-+	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-+			mux_hw, mux_ops,
-+			NULL, NULL,
-+			gate_hw, gate_ops,
-+			flags);
-+
-+	if (IS_ERR(hw)) {
-+		kfree(gate);
-+		kfree(mux);
-+	}
-+fail:
-+	return hw;
-+}
-+
- static void __init stm32f4_rcc_init(struct device_node *np)
- {
- 	const char *hse_clk;
-@@ -1121,6 +1216,28 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 		goto fail;
- 	}
- 
-+	for (n = 0; n < data->aux_clk_num; n++) {
-+		const struct stm32_aux_clk *aux_clk;
-+		struct clk_hw *hw;
-+
-+		aux_clk = &data->aux_clk[n];
-+
-+		hw = stm32_register_aux_clk(aux_clk->name,
-+				aux_clk->parent_names, aux_clk->num_parents,
-+				aux_clk->offset_mux, aux_clk->shift,
-+				aux_clk->mask, aux_clk->offset_gate,
-+				aux_clk->bit_idx, aux_clk->flags,
-+				&stm32f4_clk_lock);
-+
-+		if (IS_ERR(hw)) {
-+			pr_warn("Unable to register %s clk\n", aux_clk->name);
-+			continue;
-+		}
-+
-+		if (aux_clk->idx != NO_IDX)
-+			clks[aux_clk->idx] = hw;
-+	}
-+
- 	of_clk_add_hw_provider(np, stm32f4_rcc_lookup_clk, NULL);
- 	return;
- fail:
--- 
-1.9.1
+To me it seems that some output of a clockdomain is just a input
+of another clockdomain? So it's just the usual parent child
+relationship once we treat a clockdomain just as a clock. Tero
+probably has some input here.
+
+> There is certainly no API for that in the clock framework, but for genpd
+> your runtime_pm_get() callback for clkdm_A could call runtime_pm_get
+> against clkdm_B, which would satisfy the requirement. See section
+> 3.1.1.1.7 Clock Domain Dependency in the OMAP4 TRM, version AB.
+
+To me it seems the API is just clk_get() :) Do you have some
+specific example we can use to check? My guess is that the
+TRM "Clock Domain Dependency" is just the usual parent child
+relationship between clocks that are the clockdomains..
+
+If there is something more magical there certainly that should
+be considered though.
+
+Regards,
+
+Tony
