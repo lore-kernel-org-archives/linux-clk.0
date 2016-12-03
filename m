@@ -1,92 +1,51 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 13 Dec 2016 15:19:00 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: Re: [PATCH] clk: imx: pllv3: support fractional multiplier on vf610
- PLL1/PLL2
-Message-ID: <20161213231900.GP5423@codeaurora.org>
-References: <1481288408-16035-1-git-send-email-nikita.yoush@cogentembedded.com>
- <20161213073858.GO5423@codeaurora.org>
- <c53ea5f7-c913-ea64-5b7f-3c3ce0b66e82@cogentembedded.com>
+Return-Path: <Xiaolong.Zhang@spreadtrum.com>
+Date: Sat, 3 Dec 2016 13:46:00 +0800
+From: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: <mturquette@baylibre.com>, <orson.zhai@spreadtrum.com>,
+        <ben.li@spreadtrum.com>, <baolin.wang@spreadtrum.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: Register clkdev after setup of fixed-rate and
+ fixed-factor clocks
+Message-ID: <20161203054600.GA8463@spreadtrum.com>
+References: <1476184424-8528-1-git-send-email-orson.zhai@spreadtrum.com>
+ <20161020230103.GD26139@codeaurora.org>
+ <20161022081448.GB32560@spreadtrum.com>
+ <20161025204008.GE26139@codeaurora.org>
+ <20161112051907.GA8514@spreadtrum.com>
+ <20161124003833.GF6095@codeaurora.org>
+ <20161124073948.GA12946@spreadtrum.com>
+ <20161129211054.GD6095@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <c53ea5f7-c913-ea64-5b7f-3c3ce0b66e82@cogentembedded.com>
+Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20161129211054.GD6095@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/13, Nikita Yushchenko wrote:
-> >> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-> >> index 19f9b622981a..24a9e914e0d5 100644
-> >> --- a/drivers/clk/imx/clk-pllv3.c
-> >> +++ b/drivers/clk/imx/clk-pllv3.c
-> 
-> >> +
-> >> +	temp64 *= mfn;
-> >> +	do_div(temp64, mfd);
-> >> +
-> >> +	return (parent_rate * div) + (u32)temp64;
-> >> +}
-> >> +
-> >> +static long clk_pllv3_vf610_round_rate(struct clk_hw *hw, unsigned long rate,
-> >> +				    unsigned long *prate)
-> >> +{
-> >> +	unsigned long parent_rate = *prate;
-> >> +	unsigned int mfi = (rate >= 22 * parent_rate) ? 22 : 20;
+On 二, 11月 29, 2016 at 01:10:54下午 -0800, Stephen Boyd wrote:
+> On 11/24, Xiaolong Zhang wrote:
+> > On 三, 11月 23, 2016 at 04:38:33下午 -0800, Stephen Boyd wrote:
 > > 
-> > What is the importance of 22 and 20? Hint, at the least it needs
-> > a comment.
-> 
-> These come directly from datasheet:
-> 
-> Frequency multipler selection (MFI).
-> 0: Fout = Fref * 20
-> 1: Fout = Fref * 22
-> 
-> These numbers (20 / 22) are common among flavours of pllv3 hardware.
-> In similar places in the same file (e.g. in clk_pllv3_recalc_rate(), in
-> clk_pllv3_set_rate() ,etc) there are no comments explaining them.
-> 
-> Are you sure this place is special and comment is needed here?
-
-Probably an oversight when merging the code before. Please add a
-comment, or make some sort of function like
-
-	rate_to_mfi(rate, parent_rate)
-
-And then add a comment above the function to describe what's
-special about 22 and 20.
-
-> 
-> >> +	u32 mfn, mfd = 0x3fffffff;
-> >> +	u64 temp64;
-> >> +
-> >> +	if (rate <= parent_rate * mfi)
-> >> +		mfn = 0;
-> >> +	else if (rate >= parent_rate * (mfi + 1))
-> >> +		mfn = mfd - 1;
-> >> +	else {
-> >> +		/* rate = parent_rate * (mfi + mfn/mfd) */
-> >> +		temp64 = rate - parent_rate * mfi;
-> >> +		temp64 *= mfd;
-> >> +		do_div(temp64, parent_rate);
-> >> +		mfn = temp64;
-> >> +	}
-> >> +
-> >> +	temp64 = ((u64)mfd * mfi + mfn) * parent_rate;
-> >> +	do_div(temp64, mfd);
-> >> +	return (u32)temp64;
+> > > We're really off track now though. Can you please point to some
+> > > code that needs this change? If we're using DT then we should be
+> > > able to use the of_clk_*() path to find the clk.
+> > >
 > > 
-> > Do we need the cast here for some reason?
+> > Actually, the requirement is raised by our GPU driver. In the
+> > early stage of the GPU DT driver, the GPU driver use the
+> > clk_get(NULL, con_id) to get the clock instance for compatible
+> > with non-DT GPU driver. The new driver have used the of_clk_get()
+> > instead of the clk_get. And we reserved the modification in clock.
+> > 
 > 
-> Just for readability, can remove if it hurts.
-
-Please do.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Ok the non-DT version of the GPU driver should be modified to
+> call clk_get() and pass in the device. The con_id argument there
+> should be something specific to the GPU device, and not a global
+> name of a clock on the system. When the clkdev lookup is
+> populated on the non-DT board make sure to set the dev_id string
+> to match the device name of the GPU device.
+>
+Ok, Thanks sBoyd!
+>
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
