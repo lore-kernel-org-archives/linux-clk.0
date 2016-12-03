@@ -1,45 +1,80 @@
-Return-Path: <codekipper@gmail.com>
-Return-Path: <codekipper@gmail.com>
-From: codekipper@gmail.com
-To: maxime.ripard@free-electrons.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	mturquette@baylibre.com,
-	linux-sunxi@googlegroups.com,
-	Marcus Cooper <codekipper@gmail.com>
-Subject: [linux-sunxi][PATCH] clk: sunxi-ng: A31: Fix spdif clock register
-Date: Tue, 20 Dec 2016 11:44:46 +0100
-Message-Id: <20161220104446.22638-1-codekipper@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:53720 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757015AbcLCBYu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Dec 2016 20:24:50 -0500
+MIME-Version: 1.0
+In-Reply-To: <1480725436-9628-1-git-send-email-vlee@freedesktop.org>
+References: <1480725436-9628-1-git-send-email-vlee@freedesktop.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sat, 3 Dec 2016 10:24:43 +0900
+Message-ID: <CAK7LNATeswNhoFsA90k=qF4Jock0ytNT-pPT6j+0b9MJFJwu9Q@mail.gmail.com>
+Subject: Re: [PATCH] clk: uniphier: Fix build with gcc-4.4.
+To: Vinson Lee <vlee@freedesktop.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Marcus Cooper <codekipper@gmail.com>
+Hi Vinson,
 
-As the SPDIF was rarely documented on the earlier Allwinner SoCs
-it was assumed that it had a similar clock register to the one
-described in the H3 User Manual.
+2016-12-03 9:37 GMT+09:00 Vinson Lee <vlee@freedesktop.org>:
+> gcc-4.4 has issues with anonymous unions in initializers.
+>
+>   CC      drivers/clk/uniphier/clk-uniphier-sys.o
+> drivers/clk/uniphier/clk-uniphier-sys.c:45: error: unknown field =E2=80=
+=98factor=E2=80=99 specified in initializer
+>
+> Fixes: 1574d5722636 ("clk: uniphier: remove unneeded member name for unio=
+n")
+> Signed-off-by: Vinson Lee <vlee@freedesktop.org>
 
-However this is not the case and it looks to shares the same setup
-as the I2S clock registers.
 
-Signed-off-by: Marcus Cooper <codekipper@gmail.com>
----
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This driver has COMPILE_TEST option, but kbuild test robot
+did not mention about this.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-index fc75a335a7ce..4c9a920ff4ab 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-@@ -468,8 +468,8 @@ static SUNXI_CCU_MUX_WITH_GATE(daudio0_clk, "daudio0", daudio_parents,
- static SUNXI_CCU_MUX_WITH_GATE(daudio1_clk, "daudio1", daudio_parents,
- 			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
- 
--static SUNXI_CCU_M_WITH_GATE(spdif_clk, "spdif", "pll-audio",
--			     0x0c0, 0, 4, BIT(31), CLK_SET_RATE_PARENT);
-+static SUNXI_CCU_MUX_WITH_GATE(spdif_clk, "spdif", daudio_parents,
-+			       0x0c0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
- 		      0x0cc, BIT(8), 0);
--- 
-2.11.0
+
+
+This is a bad way of fixing, I think.
+(what if a new member is inserted before the union in the future?)
+
+Rather, please revert the bad commit.
+
+
+>                 .name =3D "sd" #ch "-sel",                               =
+ \
+>                 .type =3D UNIPHIER_CLK_TYPE_MUX,                         =
+ \
+>                 .idx =3D -1,                                             =
+ \
+> -               .mux =3D {                                               =
+ \
+> +               { .mux =3D {                                             =
+ \
+>                         .parent_names =3D {                              =
+ \
+>                                 "sd-44m",                               \
+>                                 "sd-33m",                               \
+> @@ -63,7 +63,7 @@
+>                                 0x00001200,                             \
+>                                 0x00001300,                             \
+>                         },                                              \
+> -               },                                                      \
+> +               } },                                                    \
+>         },                                                              \
+
+
+No, please do not do this.
+
+
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
