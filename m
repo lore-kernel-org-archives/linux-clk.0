@@ -1,27 +1,97 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 8 Dec 2016 16:34:46 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: ssantosh@kernel.org, mturquette@baylibre.com,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: keystone: pll: Unmap region obtained by of_iomap
-Message-ID: <20161209003446.GH5423@codeaurora.org>
-References: <1474372015-16301-1-git-send-email-arvind.yadav.cs@gmail.com>
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1474372015-16301-1-git-send-email-arvind.yadav.cs@gmail.com>
+In-Reply-To: <1480660774-25055-7-git-send-email-ping.bai@nxp.com>
+References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com> <1480660774-25055-7-git-send-email-ping.bai@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 5 Dec 2016 08:25:40 -0200
+Message-ID: <CAOMZO5C5-tq-OWTYcmzJt=_57wOyXzNMUes1mctwwyoegwzJyQ@mail.gmail.com>
+Subject: Re: [PATCH 06/11] ARM: dts: imx: Add imx6sll EVK board dts support
+To: Bai Ping <ping.bai@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Thomas Gleixner <tglx@linutronix.de>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/20, Arvind Yadav wrote:
-> From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> 
-> Free memory mapping, if of_pll_div_clk_init is not successful.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
+On Fri, Dec 2, 2016 at 4:39 AM, Bai Ping <ping.bai@nxp.com> wrote:
+> Add basic dts support for imx6sll EVK baoard.
 
-Applied to clk-next
+s/baord/board
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> +       battery: max8903@0 {
+> +               compatible = "fsl,max8903-charger";
+> +               pinctrl-names = "default";
+> +               dok_input = <&gpio4 13 1>;
+> +               uok_input = <&gpio4 13 1>;
+> +               chg_input = <&gpio4 15 1>;
+> +               flt_input = <&gpio4 14 1>;
+> +               fsl,dcm_always_high;
+> +               fsl,dc_valid;
+> +               fsl,adc_disable;
+
+These properties do not exist in mainline, please remove them.
+
+
+> +               status = "okay";
+> +       };
+> +
+> +       pxp_v4l2_out {
+> +               compatible = "fsl,imx6sl-pxp-v4l2";
+> +               status = "okay";
+> +       };
+
+We don't have pxp support in mainline kernel, please remove it.
+
+> +
+> +       regulators {
+> +               compatible = "simple-bus";
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+
+
+Please remove it and place the regulator nodes directly as below:
+
+
+> +
+> +               reg_usb_otg1_vbus: regulator@0 {
+> +                       compatible = "regulator-fixed";
+> +                       reg = <0>;
+> +                       regulator-name = "usb_otg1_vbus";
+> +                       regulator-min-microvolt = <5000000>;
+> +                       regulator-max-microvolt = <5000000>;
+> +                       gpio = <&gpio4 0 GPIO_ACTIVE_HIGH>;
+> +                       enable-active-high;
+> +               };
+
+    reg_usb_otg1_vbus: regulator-usb-otg1-vbus {
+          compatible = "regulator-fixed";
+          regulator-name = "usb_otg1_vbus";
+          regulator-min-microvolt = <5000000>;
+          regulator-max-microvolt = <5000000>;
+          gpio = <&gpio4 0 GPIO_ACTIVE_HIGH>;
+          enable-active-high;
+    };
+
+> +&cpu0 {
+> +       arm-supply = <&sw1a_reg>;
+> +       soc-supply = <&sw1c_reg>;
+> +};
+
+This is only for LDO bypass mode, right? We don't support LDO-bypass
+in mainline.
+
+> +&gpc {
+> +       fsl,ldo-bypass = <1>;
+
+We don't support ldo-bypass in mainline, please remove it.
+
+> +&pxp {
+> +       status = "okay";
+> +};
+
+We don't support PXP in mainline, please remove it.
