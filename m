@@ -1,91 +1,75 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 12 Dec 2016 11:38:02 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com, ssantosh@kernel.org,
-	nm@ti.com, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] clk: keystone: Add sci-clk driver support
-Message-ID: <20161212193800.GL5423@codeaurora.org>
-References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
- <1477053961-27128-4-git-send-email-t-kristo@ti.com>
- <20161208001348.GC5423@codeaurora.org>
- <cb608729-b617-0eab-5ddf-d78ff47b237e@ti.com>
- <20161208211044.GI5423@codeaurora.org>
- <22dacb0c-a3bc-50ce-e4b9-f74a0c706f20@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:33829 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752844AbcLEX7h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2016 18:59:37 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ladislav Michl <ladis@linux-mips.org>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
+        Richard Watts <rrw@kynesim.co.uk>,
+        Tony Lindgren <tony@atomide.com>,
+        Alexander Kinzer <a.kinzer@plusoptix.de>
+Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
+Date: Tue, 06 Dec 2016 01:59:56 +0200
+Message-ID: <3238104.GnrXpa3VZc@avalon>
+In-Reply-To: <20161205093649.GA31898@localhost.localdomain>
+References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com> <2239782.MNuANFihMe@avalon> <20161205093649.GA31898@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <22dacb0c-a3bc-50ce-e4b9-f74a0c706f20@ti.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/09, Tero Kristo wrote:
-> On 08/12/16 23:10, Stephen Boyd wrote:
-> >On 12/08, Tero Kristo wrote:
-> >>On 08/12/16 02:13, Stephen Boyd wrote:
-> >>>On 10/21, Tero Kristo wrote:
-> >>>>diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-> >>>>new file mode 100644
-> >>>>index 0000000..f6af5bd
-> >>>>--- /dev/null
-> >>>>+++ b/drivers/clk/keystone/sci-clk.c
-> >>
-> >>>
-> >>>>+
-> >>>>+	handle = devm_ti_sci_get_handle(dev);
-> >>>>+	if (IS_ERR(handle))
-> >>>>+		return PTR_ERR(handle);
-> >>>>+
-> >>>>+	provider = devm_kzalloc(dev, sizeof(*provider), GFP_KERNEL);
-> >>>>+	if (!provider)
-> >>>>+		return -ENOMEM;
-> >>>>+
-> >>>>+	provider->clocks = data;
-> >>>>+
-> >>>>+	provider->sci = handle;
-> >>>>+	provider->ops = &handle->ops.clk_ops;
-> >>>>+	provider->dev = dev;
-> >>>>+
-> >>>>+	ti_sci_init_clocks(provider);
-> >>>
-> >>>And if this fails?
-> >>
-> >>Yea this is kind of controversial. ti_sci_init_clocks() can fail if
-> >>any of the clocks registered will fail. I decided to have it this
-> >>way so that at least some clocks might work in failure cause, and
-> >>you might have a booting device instead of total lock-up.
-> >>
-> >>Obviously it could be done so that if any clock fails, we would
-> >>de-register all clocks at that point, but personally I think this is
-> >>a worse option.
-> >>
-> >>ti_sci_init_clocks could probably be modified to continue
-> >>registering clocks when a single clock fails though. Currently it
-> >>aborts at first failure.
-> >>
-> >
-> >That sounds like a better approach if we don't care about
-> >failures to register a clock. Returning a value from a function
-> >and not using it isn't really a great design.
-> >
-> >I worry that if we start returning errors from clk_hw_register()
-> >that something will go wrong though, so really I don't know why
-> >we want to ignore errors at all. Just for debugging a boot hang?
-> >Can't we use early console to at least see that this driver is
-> >failing to probe and debug that way?
+Hi Ladislav,
+
+On Monday 05 Dec 2016 10:36:49 Ladislav Michl wrote:
+> On Mon, Dec 05, 2016 at 10:46:43AM +0200, Laurent Pinchart wrote:
+> > On Monday 05 Dec 2016 09:22:10 Ladislav Michl wrote:
+> [snip]
 > 
-> Early console can be used to debug that, but it is kind of annoying
-> to recompile most of the kernel when you suddenly need to use it.
-
-I thought SERIAL_EARLYCON was selected by drivers that support
-it? So there shouldn't be any rebuilding required.
-
+> >> Table 36 list two options with 26MHz clocks: m=443, n=11 and m=480, n=12
+> >> with a statement: "The choice between these two options with a 26 MHz
+> >> input should be based on characterization on the end system."
+> >> 
+> >> Shall we care about that?
+> > 
+> > I'd like to, but at the moment I don't see how. Proposals are welcome :-)
+> > I
 > 
-> How about modifying the ti_sci_init_clocks func to print an error
-> for each failed clock?
+> One of proposals raised earlier was DT property, but that idea was scratched
+> later.
+> 
+> > don't think addressing that issue should be a blocker to get this patch
+> > merged though.
+> 
+> Of course not. I'd like to even see it in stable ;-)
+> 
+> [snip]
+> 
+> > I had tried that, but I find the code less readable :-S
+> 
+> Oh... Please reconsider (I really do not like that extra test and extra
+> assignment to local variables (also I had 'precomputed' as mixed definition,
+> but Tero did not quite like that)) :-)
 
-Ok that's fine too. I'd prefer the function had a return type of
-void if we're not planning on using the return value, that's all.
+I've tested both versions with gcc 4.7.3 [1] and 4.8.5 [2]. With 4.7.3 my 
+version is 4 bytes longer, and with 4.8.5 it's 4 bytes shorter. Interestingly 
+enough the "break + test after loop" pattern doesn't make a difference, it's 
+only the intermediate variable that results in changes to the generated code.
+
+[1] arm-linux-gnueabihf-gcc (crosstool-NG 
+linaro-1.13.1-4.7-2013.02-01-20130221 - Linaro GCC 2013.02) 4.7.3 20130205 
+(prerelease)
+
+[2] arm-buildroot-linux-uclibcgnueabihf-gcc.br_real (Buildroot 2016.08-dirty) 
+4.8.5
+
+> Also, checked if the same values are
+> written to clk as with my patch, so here's my:
+> Tested-by: Ladislav Michl <ladis@linux-mips.org>
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+
+Laurent Pinchart
+
