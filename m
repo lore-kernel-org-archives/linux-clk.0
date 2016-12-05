@@ -1,71 +1,57 @@
-Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
-Date: Fri, 9 Dec 2016 20:31:27 +0000
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Linux-DT <devicetree@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linux-Kernel <linux-kernel@vger.kernel.org>,
-	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-	Linux-ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/3] clkdev: add devm_get_clk_from_child()
-Message-ID: <20161209203127.GR14217@n2100.armlinux.org.uk>
-References: <874m2jvtmw.wl%kuninori.morimoto.gx@renesas.com>
- <8737i3vtl7.wl%kuninori.morimoto.gx@renesas.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 5 Dec 2016 13:26:44 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Georgi Djakov <georgi.djakov@linaro.org>, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [RESEND/PATCH v6 3/3] clk: qcom: Add A53 clock driver
+Message-ID: <20161205212644.GB30492@tuxbot>
+References: <20161019132816.31073-4-georgi.djakov@linaro.org>
+ <20161028015438.GG16026@codeaurora.org>
+ <20161102205910.GQ25787@tuxbot>
+ <20161102225520.GW16026@codeaurora.org>
+ <20161103182834.GR25787@tuxbot>
+ <549f87fe-7be9-14b4-8e34-86f7f8dad94e@linaro.org>
+ <20161114203426.GN5177@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <8737i3vtl7.wl%kuninori.morimoto.gx@renesas.com>
-Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
+In-Reply-To: <20161114203426.GN5177@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Dec 05, 2016 at 05:23:20AM +0000, Kuninori Morimoto wrote:
-> 
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> 
-> Some driver is using this type of DT bindings for clock (more detail,
-> see ${LINUX}/Documentation/devicetree/bindings/sound/simple-card.txt).
-> 
-> 	sound_soc {
-> 		...
-> 		cpu {
-> 			clocks = <&xxx>;
-> 			...
-> 		};
-> 		codec {
-> 			clocks = <&xxx>;
-> 			...
-> 		};
-> 	};
-> 
-> Current driver in this case uses of_clk_get() for each node, but there
-> is no devm_of_clk_get() today.
-> OTOH, the problem of having devm_of_clk_get() is that it encourages the
-> use of of_clk_get() when clk_get() is more desirable.
-> 
-> Thus, this patch adds new devm_get_clk_from_chile() which explicitly
-> reads as get a clock from a child node of this device.
-> By this function, we can also use this type of DT bindings
-> 
-> 	sound_soc {
-> 		clocks = <&xxx>, <&xxx>;
-> 		clock-names = "cpu", "codec";
-> 		...
-> 		cpu {
-> 			...
-> 		};
-> 		codec {
-> 			...
-> 		};
-> 	};
-> 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On Mon 14 Nov 14:21 PST 2016, Stephen Boyd wrote:
 
-This looks lots better, thanks.
+> On 11/11, Georgi Djakov wrote:
+> > On 11/03/2016 08:28 PM, Bjorn Andersson wrote:
+[..]
+> > >I'm in favour of us inventing a kicker API and it's found outside out
+> > >use cases as well (e.g. virtio/rpmsg).
+> > >
+> 
+> I'd rather we did this kicker API as well. That way we don't need
+> to make a syscon and a simple-mfd to get software to work
+> properly. Don't other silicon vendors need a kicker API as well?
+> How are they kicking remote processors in other places? GPIOs?
+> 
 
-Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+In remoteproc I have two of these:
+1) da8xx_remoteproc ioremaps a register and writes a bit in it (looks
+   similar to the downstream Qualcomm way)
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2) omap_remoteproc acquires a mbox channel, in which it writes a
+   virtqueue id to kick the remote.
+
+So one of the two cases could have used such mechanism.
+
+We could write up a Qualcomm specific "kicker" and probe the mailing
+list regarding the interest in making that generic (i.e. changing the
+names in the API and DT binding).
+
+The sucky part is that I believe we have most of our kickers in place
+already so rpm, smd, smp2p, smsm etc would all need to support both
+mechanisms.
+
+Regards,
+Bjorn
