@@ -1,126 +1,62 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 10/11] ARM: bcm2835: dt: Add the DSI module nodes and clocks.
-Date: Wed, 14 Dec 2016 11:46:20 -0800
-Message-Id: <20161214194621.16499-11-eric@anholt.net>
-In-Reply-To: <20161214194621.16499-1-eric@anholt.net>
-References: <20161214194621.16499-1-eric@anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from eddie.linux-mips.org ([148.251.95.138]:49522 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751427AbcLEJgz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2016 04:36:55 -0500
+Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
+        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
+        id S23992009AbcLEJgvRy4L0 (ORCPT <rfc822;linux-clk@vger.kernel.org>
+        + 1 other); Mon, 5 Dec 2016 10:36:51 +0100
+Date: Mon, 5 Dec 2016 10:36:49 +0100
+From: Ladislav Michl <ladis@linux-mips.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
+        Richard Watts <rrw@kynesim.co.uk>,
+        Tony Lindgren <tony@atomide.com>,
+        Alexander Kinzer <a.kinzer@plusoptix.de>
+Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
+Message-ID: <20161205093649.GA31898@localhost.localdomain>
+References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com>
+ <20161205082210.GA2901@localhost.localdomain>
+ <2239782.MNuANFihMe@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2239782.MNuANFihMe@avalon>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The modules stay disabled by default, and if you want to enable DSI
-you'll need an overlay that connects a panel to it.
+Hi Laurent,
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- arch/arm/boot/dts/bcm2835-rpi.dtsi |  8 +++++++
- arch/arm/boot/dts/bcm283x.dtsi     | 49 +++++++++++++++++++++++++++++++++++---
- 2 files changed, 54 insertions(+), 3 deletions(-)
+On Mon, Dec 05, 2016 at 10:46:43AM +0200, Laurent Pinchart wrote:
+> Hi Ladislav,
+> 
+> On Monday 05 Dec 2016 09:22:10 Ladislav Michl wrote:
+[snip]
+> > Table 36 list two options with 26MHz clocks: m=443, n=11 and m=480, n=12
+> > with a statement: "The choice between these two options with a 26 MHz input
+> > should be based on characterization on the end system."
+> > 
+> > Shall we care about that?
+> 
+> I'd like to, but at the moment I don't see how. Proposals are welcome :-) I 
 
-diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-index e9b47b2bbc33..365648898f3a 100644
---- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
-+++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-@@ -84,3 +84,11 @@
- 	power-domains = <&power RPI_POWER_DOMAIN_HDMI>;
- 	status = "okay";
- };
-+
-+&dsi0 {
-+	power-domains = <&power RPI_POWER_DOMAIN_DSI0>;
-+};
-+
-+&dsi1 {
-+	power-domains = <&power RPI_POWER_DOMAIN_DSI1>;
-+};
-diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
-index 46d46d894a44..82a4eccfb3d8 100644
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -93,10 +93,13 @@
- 			#clock-cells = <1>;
- 			reg = <0x7e101000 0x2000>;
- 
--			/* CPRMAN derives everything from the platform's
--			 * oscillator.
-+			/* CPRMAN derives almost everything from the
-+			 * platform's oscillator.  However, the DSI
-+			 * pixel clocks come from the DSI analog PHY.
- 			 */
--			clocks = <&clk_osc>;
-+			clocks = <&clk_osc>,
-+				<&dsi0 0>, <&dsi0 1>, <&dsi0 2>,
-+				<&dsi1 0>, <&dsi1 1>, <&dsi1 2>;
- 		};
- 
- 		rng@7e104000 {
-@@ -187,6 +190,26 @@
- 			interrupts = <2 14>; /* pwa1 */
- 		};
- 
-+		dsi0: dsi@7e209000 {
-+			compatible = "brcm,bcm2835-dsi0";
-+			reg = <0x7e209000 0x78>;
-+			interrupts = <2 4>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&clocks BCM2835_PLLA_DSI0>,
-+				 <&clocks BCM2835_CLOCK_DSI0E>,
-+				 <&clocks BCM2835_CLOCK_DSI0P>;
-+			clock-names = "phy", "escape", "pixel";
-+
-+			clock-output-names = "dsi0_byte",
-+					     "dsi0_ddr2",
-+					     "dsi0_ddr";
-+
-+			status = "disabled";
-+		};
-+
- 		aux: aux@0x7e215000 {
- 			compatible = "brcm,bcm2835-aux";
- 			#clock-cells = <1>;
-@@ -246,6 +269,26 @@
- 			interrupts = <2 1>;
- 		};
- 
-+		dsi1: dsi@7e700000 {
-+			compatible = "brcm,bcm2835-dsi1";
-+			reg = <0x7e700000 0x8c>;
-+			interrupts = <2 12>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&clocks BCM2835_PLLD_DSI1>,
-+				 <&clocks BCM2835_CLOCK_DSI1E>,
-+				 <&clocks BCM2835_CLOCK_DSI1P>;
-+			clock-names = "phy", "escape", "pixel";
-+
-+			clock-output-names = "dsi1_byte",
-+					     "dsi1_ddr2",
-+					     "dsi1_ddr";
-+
-+			status = "disabled";
-+		};
-+
- 		i2c1: i2c@7e804000 {
- 			compatible = "brcm,bcm2835-i2c";
- 			reg = <0x7e804000 0x1000>;
--- 
-2.11.0
+One of proposals raised earlier was DT property, but that idea was scratched
+later.
+
+> don't think addressing that issue should be a blocker to get this patch merged 
+> though.
+
+Of course not. I'd like to even see it in stable ;-)
+
+[snip]
+> I had tried that, but I find the code less readable :-S
+
+Oh... Please reconsider (I really do not like that extra test and extra
+assignment to local variables (also I had 'precomputed' as mixed definition,
+but Tero did not quite like that)) :-) Also, checked if the same values
+are written to clk as with my patch, so here's my:
+Tested-by: Ladislav Michl <ladis@linux-mips.org>
+
+Best regards,
+	ladis
