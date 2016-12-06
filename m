@@ -1,63 +1,66 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-Date: Fri, 2 Dec 2016 20:50:21 +0100
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Eric Anholt <eric@anholt.net>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Florian Fainelli
- <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden
- <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Stephen
- Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] clk: bcm: Support rate change propagation on
- bcm2835 clocks
-Message-ID: <20161202205021.074fd441@bbrezillon>
-In-Reply-To: <87lgvyf956.fsf@eliezer.anholt.net>
-References: <1480626020-20031-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1480626020-20031-2-git-send-email-boris.brezillon@free-electrons.com>
-	<87lgvyf956.fsf@eliezer.anholt.net>
+Return-Path: <nicolas.ferre@atmel.com>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Boris BREZILLON <boris.brezillon@free-electrons.com>,
+	<linux-arm-kernel@lists.infradead.org>, <maxime.ripard@free-electrons.com>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+CC: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Ludovic
+ Desroches <ludovic.desroches@atmel.com>, Songjun Wu <songjun.wu@atmel.com>,
+	<linux-kernel@vger.kernel.org>, Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: [RFC PATCH 3/3] ARM: dts: at91: sama5d2_xplained: add pin muxing and enable classd
+Date: Tue, 6 Dec 2016 11:56:00 +0100
+Message-ID: <80bec63cef3f150a98edd7054d392a96d86af92d.1481021115.git.nicolas.ferre@atmel.com>
+In-Reply-To: <cover.1481021115.git.nicolas.ferre@atmel.com>
+References: <cover.1481021115.git.nicolas.ferre@atmel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+Return-Path: nicolas.ferre@atmel.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 02 Dec 2016 11:01:09 -0800
-Eric Anholt <eric@anholt.net> wrote:
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
-> Boris Brezillon <boris.brezillon@free-electrons.com> writes:
-> 
-> > Some peripheral clocks, like the VEC (Video EnCoder) clock need to be set
-> > to a precise rate (in our case 108MHz). With the current implementation,
-> > where peripheral clocks are not allowed to forward rate change requests
-> > to their parents, it is impossible to match this requirement unless the
-> > bootloader has configured things correctly, or a specific rate has been
-> > assigned through the DT (with the assigned-clk-rates property).
-> >
-> > Add a new field to struct bcm2835_clock_data to specify which parent
-> > clocks accept rate change propagation, and support set rate propagation
-> > in bcm2835_clock_determine_rate().
-> >
-> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>  
-> 
-> A possible simplification would be to limit VEC to only PLLH_AUX, since
-> that was how the HW designers intended it to be used.  Then you could
-> just have SET_RATE_PARENT flag, rather than the bitfield.
-> 
+This patch adds the pin muxing for classd and enables it.
 
-I can rework the patches to do that if you prefer.
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+---
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-This being said, I already had a similar issue with atmel clocks [1],
-where a peripheral requires a specific rate and the periph clk can
-take its source from 2 different PLLs: one that is widely used by other
-peripherals and which cannot be modified and the other which is not so
-widely used and can be customized to generate the rate we need.
-Maybe that's something we should address with a generic solution at
-some point: clk constraint propagation, clk rate lock or something
-else (Mike mentioned another approach here [1]).
-
-In the meantime, the patch here should do the trick for the bcm2835
-platform.
-
-> Still, this seems to be correct and fixes the bug.  Both patches are:
-> 
-> Reviewed-by: Eric Anholt <eric@anholt.net>
-
-[1]https://patchwork.kernel.org/patch/6204221/
+diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+index 0b9a59d5fdac..c9a8939ba1ef 100644
+--- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+@@ -332,6 +332,14 @@
+ 					bias-pull-up;
+ 				};
+ 
++				pinctrl_classd_default: classd_default {
++					pinmux = <PIN_PB1__CLASSD_R0>,
++						 <PIN_PB2__CLASSD_R1>,
++						 <PIN_PB3__CLASSD_R2>,
++						 <PIN_PB4__CLASSD_R3>;
++					bias-pull-up;
++				};
++
+ 				pinctrl_flx0_default: flx0_default {
+ 					pinmux = <PIN_PB28__FLEXCOM0_IO0>,
+ 						 <PIN_PB29__FLEXCOM0_IO1>;
+@@ -464,6 +472,14 @@
+ 				};
+ 
+ 			};
++
++			classd: classd@fc048000 {
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_classd_default>;
++				atmel,pwm-type = "diff";
++				atmel,non-overlap-time = <10>;
++				status = "okay";
++			};
+ 		};
+ 	};
+ 
+-- 
+2.9.0
