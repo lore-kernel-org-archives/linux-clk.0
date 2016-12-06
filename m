@@ -1,102 +1,74 @@
-Return-Path: <zmarkovic@sierrawireless.com>
-From: Zoran Markovic <zmarkovic@sierrawireless.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Zoran Markovic <zmarkovic@sierrawireless.com>, Andy Gross
-	<andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Neil
- Armstrong <narmstrong@baylibre.com>, <linux-arm-msm@vger.kernel.org>,
-	<linux-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [RFC PATCH 2/4] clk: mdm9615: Add EBI2 clock
-Date: Thu, 22 Dec 2016 12:05:37 -0800
-Message-ID: <1482437139-29329-3-git-send-email-zmarkovic@sierrawireless.com>
-In-Reply-To: <1482437139-29329-1-git-send-email-zmarkovic@sierrawireless.com>
-References: <1482437139-29329-1-git-send-email-zmarkovic@sierrawireless.com>
+Return-Path: <Nicolas.FERRE@atmel.com>
+Subject: Re: [RFC PATCH 0/3] clk: at91: audio PLL clock
+To: Boris BREZILLON <boris.brezillon@free-electrons.com>,
+	<linux-arm-kernel@lists.infradead.org>, <maxime.ripard@free-electrons.com>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+References: <cover.1481021115.git.nicolas.ferre@atmel.com>
+CC: Alexandre Belloni <alexandre.belloni@free-electrons.com>, "Ludovic
+ Desroches" <ludovic.desroches@atmel.com>, Songjun Wu <songjun.wu@atmel.com>,
+	<linux-kernel@vger.kernel.org>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Message-ID: <d178db55-751a-329f-d083-d97564637382@atmel.com>
+Date: Tue, 6 Dec 2016 12:14:59 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: zmarkovic@sierrawireless.com
+In-Reply-To: <cover.1481021115.git.nicolas.ferre@atmel.com>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: nicolas.ferre@atmel.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add definition of EBI2 clock used by MDM9615 NAND controller.
+Le 06/12/2016 à 11:55, Nicolas Ferre a écrit :
+> This series covers the addition of the Audio PLL clock found on AT91 SoCs like
+> the SAMA5D2.
+> I also added the use of these clocks by the ClassD audi amplifier in both SoC
+> and board DT.
+> 
+> The Audio PLL is described in the sama5d2 datasheet chapter "29.8 Audio PLL".
+> 
+> Even if "it works" (!), note that I'm not satisfied with the current code and
+> would need some advice from people more accustomed with the CCF and
+> particularly composite audio PLL/clocks like these. For example, I do not take
+> into account the limits of these clocks (as described in the datasheet) and the
+> dependency between the PAD and the PMC child clocks.
+> 
+> Thanks in advance for your inputs.
 
-Cc: Andy Gross <andy.gross@linaro.org>
-Cc: David Brown <david.brown@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-soc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Zoran Markovic <zmarkovic@sierrawireless.com>
----
- drivers/clk/qcom/gcc-mdm9615.c               |   30 ++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-mdm9615.h |    3 +++
- 2 files changed, 33 insertions(+)
+Note as well that Boris already sent me a review of the first posting of
+this patch ("[PATCH] clk: at91: add audio pll clock driver" on 31 Jul.
+2015) and most of his comments are still relevant.
 
-diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
-index 581a17f..e9e98b1 100644
---- a/drivers/clk/qcom/gcc-mdm9615.c
-+++ b/drivers/clk/qcom/gcc-mdm9615.c
-@@ -1563,6 +1563,34 @@ enum {
- 	},
- };
- 
-+static struct clk_branch ebi2_clk = {
-+	.hwcg_reg = 0x2664,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fcc,
-+	.halt_bit = 23,
-+	.clkr = {
-+		.enable_reg = 0x2664,
-+		.enable_mask = BIT(6)|BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ebi2_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch ebi2_aon_clk = {
-+	.halt_reg = 0x2fcc,
-+	.halt_bit = 23,
-+	.clkr = {
-+		.enable_reg = 0x2664,
-+		.enable_mask = BIT(8),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ebi2_always_on_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
- static struct clk_hw *gcc_mdm9615_hws[] = {
- 	&cxo.hw,
- };
-@@ -1637,6 +1665,8 @@ enum {
- 	[PMIC_ARB1_H_CLK] = &pmic_arb1_h_clk.clkr,
- 	[PMIC_SSBI2_CLK] = &pmic_ssbi2_clk.clkr,
- 	[RPM_MSG_RAM_H_CLK] = &rpm_msg_ram_h_clk.clkr,
-+	[EBI2_CLK] = &ebi2_clk.clkr,
-+	[EBI2_AON_CLK] = &ebi2_aon_clk.clkr,
- };
- 
- static const struct qcom_reset_map gcc_mdm9615_resets[] = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-mdm9615.h b/include/dt-bindings/clock/qcom,gcc-mdm9615.h
-index 9ab2c40..57cdca6 100644
---- a/include/dt-bindings/clock/qcom,gcc-mdm9615.h
-+++ b/include/dt-bindings/clock/qcom,gcc-mdm9615.h
-@@ -323,5 +323,8 @@
- #define CE3_H_CLK				305
- #define USB_HS1_SYSTEM_CLK_SRC			306
- #define USB_HS1_SYSTEM_CLK			307
-+#define EBI2_CLK				309
-+#define EBI2_AON_CLK				310
-+
- 
- #endif
+https://patchwork.kernel.org/patch/6910111/
+https://www.spinics.net/lists/arm-kernel/msg436120.html
+
+But I would like some comments about the whole architecture of these
+clocks and how I could rearrange them and maybe use some of the common
+facilities of the CCF (composite with gate + fractionnal? + divider?, etc.)
+
+Regards,
+
+
+> Cyrille Pitchen (2):
+>   ARM: dts: at91: sama5d2: add classd nodes
+>   ARM: dts: at91: sama5d2_xplained: add pin muxing and enable classd
+> 
+> Nicolas Ferre (1):
+>   clk: at91: add audio pll clock driver
+> 
+>  .../devicetree/bindings/clock/at91-clock.txt       |  10 +
+>  arch/arm/boot/dts/at91-sama5d2_xplained.dts        |  16 ++
+>  arch/arm/boot/dts/sama5d2.dtsi                     |  39 +++-
+>  arch/arm/mach-at91/Kconfig                         |   4 +
+>  drivers/clk/at91/Makefile                          |   2 +
+>  drivers/clk/at91/clk-audio-pll-pad.c               | 238 +++++++++++++++++++
+>  drivers/clk/at91/clk-audio-pll-pmc.c               | 184 +++++++++++++++
+>  drivers/clk/at91/clk-audio-pll.c                   | 253 +++++++++++++++++++++
+>  include/linux/clk/at91_pmc.h                       |  25 ++
+>  9 files changed, 770 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/at91/clk-audio-pll-pad.c
+>  create mode 100644 drivers/clk/at91/clk-audio-pll-pmc.c
+>  create mode 100644 drivers/clk/at91/clk-audio-pll.c
+> 
+
+
 -- 
-1.7.9.5
+Nicolas Ferre
