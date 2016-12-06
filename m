@@ -1,85 +1,53 @@
-Return-Path: <shawnguo@kernel.org>
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Jun Nie <jun.nie@linaro.org>,
-	Baoyou Xie <xie.baoyou@zte.com.cn>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Shawn Guo <shawnguo@kernel.org>,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH v2 1/3] clk: zx296718: do not panic on failure
-Date: Fri, 16 Dec 2016 15:26:45 +0800
-Message-Id: <1481873207-22929-2-git-send-email-shawnguo@kernel.org>
-In-Reply-To: <1481873207-22929-1-git-send-email-shawnguo@kernel.org>
-References: <1481873207-22929-1-git-send-email-shawnguo@kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 6 Dec 2016 15:16:42 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Vinson Lee <vlee@freedesktop.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] clk: uniphier: Fix build with gcc-4.4.
+Message-ID: <20161206231642.GA4388@codeaurora.org>
+References: <1480725436-9628-1-git-send-email-vlee@freedesktop.org>
+ <CAK7LNATeswNhoFsA90k=qF4Jock0ytNT-pPT6j+0b9MJFJwu9Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAK7LNATeswNhoFsA90k=qF4Jock0ytNT-pPT6j+0b9MJFJwu9Q@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shawn Guo <shawn.guo@linaro.org>
+On 12/03, Masahiro Yamada wrote:
+> Hi Vinson,
+> 
+> 2016-12-03 9:37 GMT+09:00 Vinson Lee <vlee@freedesktop.org>:
+> > gcc-4.4 has issues with anonymous unions in initializers.
+> >
+> >   CC      drivers/clk/uniphier/clk-uniphier-sys.o
+> > drivers/clk/uniphier/clk-uniphier-sys.c:45: error: unknown field ‘factor’ specified in initializer
+> >
+> > Fixes: 1574d5722636 ("clk: uniphier: remove unneeded member name for union")
+> > Signed-off-by: Vinson Lee <vlee@freedesktop.org>
+> 
+> 
+> This driver has COMPILE_TEST option, but kbuild test robot
+> did not mention about this.
+> 
+> 
+> 
+> This is a bad way of fixing, I think.
+> (what if a new member is inserted before the union in the future?)
+> 
+> Rather, please revert the bad commit.
+> 
 
-Instead of using panic, we should give an error message and return error
-code when of_clk_add_hw_provider() call fails.
+Reverting on top of clk-next will cause build failures though.
+Can you resend the patch series without this first patch please?
+I'll apply them then.
 
-Since we have error prompt for failures, the "init over" pr_info output
-isn't really necessary but becomes a debug noise.  So let's clean it up
-along the way.
+I'll go drop all three patches and wreck Andrew's merge of this
+patch to -mm.
 
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
----
- drivers/clk/zte/clk-zx296718.c | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
-index 707d62956e9b..026310708aea 100644
---- a/drivers/clk/zte/clk-zx296718.c
-+++ b/drivers/clk/zte/clk-zx296718.c
-@@ -610,9 +610,12 @@ static int __init top_clocks_init(struct device_node *np)
- 		}
- 	}
- 
--	if (of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &top_hw_onecell_data))
--		panic("could not register clk provider\n");
--	pr_info("top clk init over, nr:%d\n", TOP_NR_CLKS);
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
-+				     &top_hw_onecell_data);
-+	if (ret) {
-+		pr_err("failed to register top clk provider: %d\n", ret);
-+		return ret;
-+	}
- 
- 	return 0;
- }
-@@ -776,9 +779,12 @@ static int __init lsp0_clocks_init(struct device_node *np)
- 		}
- 	}
- 
--	if (of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &lsp0_hw_onecell_data))
--		panic("could not register clk provider\n");
--	pr_info("lsp0-clk init over:%d\n", LSP0_NR_CLKS);
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
-+				     &lsp0_hw_onecell_data);
-+	if (ret) {
-+		pr_err("failed to register lsp0 clk provider: %d\n", ret);
-+		return ret;
-+	}
- 
- 	return 0;
- }
-@@ -881,9 +887,12 @@ static int __init lsp1_clocks_init(struct device_node *np)
- 		}
- 	}
- 
--	if (of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &lsp1_hw_onecell_data))
--		panic("could not register clk provider\n");
--	pr_info("lsp1-clk init over, nr:%d\n", LSP1_NR_CLKS);
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
-+				     &lsp1_hw_onecell_data);
-+	if (ret) {
-+		pr_err("failed to register lsp1 clk provider: %d\n", ret);
-+		return ret;
-+	}
- 
- 	return 0;
- }
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
