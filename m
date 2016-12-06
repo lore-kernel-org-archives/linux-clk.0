@@ -1,61 +1,103 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 16 Dec 2016 17:33:37 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-	Irina Tirdea <irina.tirdea@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Takashi Iwai <tiwai@suse.com>, platform-driver-x86@vger.kernel.org,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Brown <broonie@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Len Brown <lenb@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>
-Subject: Re: [alsa-devel] [PATCH v6 1/3] clk: x86: Add Atom PMC platform
- clocks
-Message-ID: <20161217013337.GW5423@codeaurora.org>
-References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
- <1481306510-7471-2-git-send-email-irina.tirdea@intel.com>
- <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
- <20161213232524.GQ5423@codeaurora.org>
- <32235fb3-0d54-211d-28f4-4655e4bc7812@linux.intel.com>
+Return-Path: <nicolas.ferre@atmel.com>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Boris BREZILLON <boris.brezillon@free-electrons.com>,
+	<linux-arm-kernel@lists.infradead.org>, <maxime.ripard@free-electrons.com>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+CC: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Ludovic
+ Desroches <ludovic.desroches@atmel.com>, Songjun Wu <songjun.wu@atmel.com>,
+	<linux-kernel@vger.kernel.org>, Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: [RFC PATCH 2/3] ARM: dts: at91: sama5d2: add classd nodes
+Date: Tue, 6 Dec 2016 11:55:59 +0100
+Message-ID: <d3c9b635eced4e76f3c167f2869a32febe473aba.1481021115.git.nicolas.ferre@atmel.com>
+In-Reply-To: <cover.1481021115.git.nicolas.ferre@atmel.com>
+References: <cover.1481021115.git.nicolas.ferre@atmel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <32235fb3-0d54-211d-28f4-4655e4bc7812@linux.intel.com>
+Content-Type: text/plain
+Return-Path: nicolas.ferre@atmel.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/15, Pierre-Louis Bossart wrote:
-> I am not sure I understand this last comment.
-> init.name is not a constant, it's made of the "pmc_plt_clk_" string
-> concatenated with an id which directly maps to which hardware clock
-> is registered.
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
-That's all fine. We need globally unique strings for clk names in
-the framework so things work.
+This patch adds nodes for the classd device and its generated clock.
 
->Clients use devm_clk_get() with a "pmc_plt_clk_<n>"
-> argument.
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+---
+ arch/arm/boot/dts/sama5d2.dtsi | 39 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
 
-This is the problem. Clients should be calling clk_get() like:
-
-	clk_get(dev, "signal name in datasheet")
-
-where the first argument is the device and the second argument is
-some string that is meaningful to the device, not the system as a
-whole. The way clkdev is intended is so that the dev argument's
-dev_name() is combined with the con_id that matches some signale
-name in the datasheet. This way when the same IP is put into some
-other chip, the globally unique name doesn't need to change, just
-the device name that's registered with the lookup. Obviously this
-breaks down quite badly when dev_name() isn't stable. Is that
-happening here?
-
+diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
+index ceb9783ff7e1..d6b8d59a913b 100644
+--- a/arch/arm/boot/dts/sama5d2.dtsi
++++ b/arch/arm/boot/dts/sama5d2.dtsi
+@@ -447,6 +447,24 @@
+ 					clocks = <&plla>;
+ 				};
+ 
++				audio_pll_frac: audiopll_fracck {
++					compatible = "atmel,sama5d2-clk-audio-pll-frac";
++					#clock-cells = <0>;
++					clocks = <&main>;
++				};
++
++				audio_pll_pad: audiopll_padck {
++					compatible = "atmel,sama5d2-clk-audio-pll-pad";
++					#clock-cells = <0>;
++					clocks = <&audio_pll_frac>;
++				};
++
++				audio_pll_pmc: audiopll_pmcck {
++					compatible = "atmel,sama5d2-clk-audio-pll-pmc";
++					#clock-cells = <0>;
++					clocks = <&audio_pll_frac>;
++				};
++
+ 				utmi: utmick {
+ 					compatible = "atmel,at91sam9x5-clk-utmi";
+ 					#clock-cells = <0>;
+@@ -836,7 +854,7 @@
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					interrupt-parent = <&pmc>;
+-					clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>;
++					clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>, <&audio_pll_pmc>;
+ 
+ 					sdmmc0_gclk: sdmmc0_gclk {
+ 						#clock-cells = <0>;
+@@ -880,6 +898,12 @@
+ 						#clock-cells = <0>;
+ 						reg = <55>;
+ 					};
++
++					classd_gclk: classd_gclk {
++						#clock-cells = <0>;
++						reg = <59>;
++						atmel,clk-output-range = <0 100000000>;
++					};
+ 				};
+ 			};
+ 
+@@ -1279,6 +1303,19 @@
+ 				status = "okay";
+ 			};
+ 
++			classd: classd@fc048000 {
++				compatible = "atmel,sama5d2-classd";
++				reg = <0xfc048000 0x100>;
++				interrupts = <59 IRQ_TYPE_LEVEL_HIGH 7>;
++				dmas = <&dma0
++					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++					 AT91_XDMAC_DT_PERID(47))>;
++				dma-names = "tx";
++				clocks = <&classd_clk>, <&classd_gclk>, <&audio_pll_pmc>;
++				clock-names = "pclk", "gclk", "aclk";
++				status = "disabled";
++			};
++
+ 			chipid@fc069000 {
+ 				compatible = "atmel,sama5d2-chipid";
+ 				reg = <0xfc069000 0x8>;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.9.0
