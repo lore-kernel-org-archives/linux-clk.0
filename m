@@ -1,278 +1,219 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:45884 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751277AbcLFTju (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Dec 2016 14:39:50 -0500
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH 2/6] net: ethernet: ti: cpts: add support for ext rftclk
+ selection
+To: Richard Cochran <richardcochran@gmail.com>,
+        Murali Karicheri <m-karicheri2@ti.com>
+References: <20161128230428.6872-1-grygorii.strashko@ti.com>
+ <20161128230428.6872-3-grygorii.strashko@ti.com>
+ <20161130095632.GC28680@localhost.localdomain>
+ <bf207ac4-0f9f-d4a7-14ac-704d93fb7764@ti.com>
+CC: "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        Mugunthan V N <mugunthanvnm@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, Wingman Kwok <w-kwok2@ti.com>,
+        <linux-clk@vger.kernel.org>
+Message-ID: <11994fbc-3713-6ef7-8a44-8a2442106dfc@ti.com>
+Date: Tue, 6 Dec 2016 13:39:40 -0600
 MIME-Version: 1.0
-To: Tony Lindgren <tony@atomide.com>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20161209204015.GL4920@atomide.com>
-Cc: "Tero Kristo" <t-kristo@ti.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
- linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- "Rob Herring" <robh+dt@kernel.org>
-References: <20161028125112.xfyrx7l7m64z6cu6@atomide.com>
- <20161028235448.57squdf6cu2wxxvm@atomide.com>
- <148071802182.32158.11479184984645880313@resonance>
- <20161202231240.GH4705@atomide.com>
- <148072274164.32158.6012452044533845688@resonance>
- <20161203001852.GI4705@atomide.com>
- <ed253013-1f12-9fd8-d007-400a6c6fd427@ti.com>
- <20161205152534.GJ4705@atomide.com>
- <148131376868.16621.16082839810419290638@resonance>
- <20161209204015.GL4920@atomide.com>
-Message-ID: <148131892585.16621.5033331614135070003@resonance>
-Subject: Re: [PATCHv4 11/15] clk: ti: clockdomain: add clock provider support to
- clockdomains
-Date: Fri, 09 Dec 2016 13:28:45 -0800
+In-Reply-To: <bf207ac4-0f9f-d4a7-14ac-704d93fb7764@ti.com>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Tony Lindgren (2016-12-09 12:40:16)
-> * Michael Turquette <mturquette@baylibre.com> [161209 12:02]:
-> > Quoting Tony Lindgren (2016-12-05 07:25:34)
-> > > * Tero Kristo <t-kristo@ti.com> [161205 02:09]:
-> ...
-> <snip>
-> =
 
-> > I had a recent conversation with Kevin Hilman about a related issue
-> > (we were not discussing this thread or this series) and we both agreed
-> > that most drivers don't even need to managed their clocks directly, so
-> > much as they need to manage their on/off resources. Clocks are just one
-> > part of that, and if we can hide that stuff inside of an attached genpd
-> > then it would be better than having the driver manage clocks explicitly.
-> > =
 
-> > Obviously some devices such as audio codec or uart will need to manage
-> > clocks directly, but this is mostly the exception, not the rule.
-> =
+On 11/30/2016 11:35 AM, Grygorii Strashko wrote:
+>
+>
+> On 11/30/2016 03:56 AM, Richard Cochran wrote:
+>> On Mon, Nov 28, 2016 at 05:04:24PM -0600, Grygorii Strashko wrote:
+>>> Some CPTS instances, which can be found on KeyStone 2 1/10G Ethernet
+>>> Switch Subsystems, can control an external multiplexer that selects
+>>> one of up to 32 clocks for time sync reference (RFTCLK). This feature
+>>> can be configured through CPTS_RFTCLK_SEL register (offset: x08).
+>>>
+>>> Hence, introduce optional DT cpts_rftclk_sel poperty wich, if present,
+>>> will specify CPTS reference clock. The cpts_rftclk_sel should be
+>>> omitted in DT if HW doesn't support this feature. The external fixed
+>>> rate clocks can be defined in board files as "fixed-clock".
+>>
+>> Can't you implement this using the clock tree, rather than an ad-hoc
+>> DT property?
+>>
+>
+> I've thought about this, but decided to move forward with this impl
+>  which is pretty simple. I will try.
+>
+>
 
-> Yes. And we do that already for clkctrl clocks via PM runtime where
-> hwmod manages them. Tero's series still has hwmod manage the clocks,
-> but the clock register handling is moved to live under drivers/clock.
-> =
+I come with below RFC patch. if no objection I'll move forward with it.
 
-> > > > > > There is certainly no API for that in the clock framework, but =
-for genpd
-> > > > > > your runtime_pm_get() callback for clkdm_A could call runtime_p=
-m_get
-> > > > > > against clkdm_B, which would satisfy the requirement. See secti=
-on
-> > > > > > 3.1.1.1.7 Clock Domain Dependency in the OMAP4 TRM, version AB.
-> > > > =
+According to Keystone 2 66AK2e DM there are 7 possible ref clocks:
+0000 = SYSCLK2
+0001 = SYSCLK3
+0010 = TIMI0
+0011 = TIMI1
+0100 = TSIPCLKA
+1000 = TSREFCLK
+1100 = TSIPCLKB
+Others = Reserved
 
-> > > > For static dependencies the apis genpd_add/remove_subdomain could p=
-robably
-> > > > be used.
-> > > > =
+2 from above clocks are internal SYSCLK2 and SYSCLK3 - other external
+(board specific). So default definition of cpts_mux will have only two parents.
+If ext clock is going to be use as cpts rftclk then it should be
+defined in board file and  cpts_refclk_mux definition updated to support 
+this ext clock:
 
-> > > > > To me it seems the API is just clk_get() :) Do you have some
-> > > > > specific example we can use to check? My guess is that the
-> > > > > TRM "Clock Domain Dependency" is just the usual parent child
-> > > > > relationship between clocks that are the clockdomains..
-> > =
+timi1clk: timi1clk {
+	#clock-cells = <0>;
+	compatible = "fixed-clock";
+	clock-frequency = <xxxxxxxxxx>;
+	clock-output-names = "timi1";
+};
 
-> > clk_get() only fetches a pointer to the clk. I guess you mean
-> > clk_prepare_enable() to actually increment the use count?
-> =
+&cpts_mux {
+	clocks = <&chipclk12>, <&chipclk13>, <timi1clk>;
+	cpts-mux-tbl = <0>, <1>, <3>;
+	assigned-clocks = <&cpts_mux>;
+	assigned-clock-parents = <&timi1clk>;
+};
 
-> Right, with clocks that's all we should need to do :)
-> =
 
-> > If we used the clk framework here is that it would look something like
-> > this:
-> > =
 
-> > clk_enable(clk_a)
-> > -> .enable(clk_a_hw)
-> >    -> clk_enable(clk_b)
-> > =
+>From ec5c7bed0e021c2ca7e9392173bf67bb9a45d0f4 Mon Sep 17 00:00:00 2001
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Date: Mon, 5 Dec 2016 12:34:45 -0600
+Subject: [PATCH] cpts refclk sel
 
-> > However, clk_a and clk_b do not have a parent-child relationship in the
-> > clock tree. This is purely a functional relationship between IP blocks.
-> > Modeling this sort of thing in the clk framework would be wrong, and
-> > genpd is a much better place to establish these arbitrary relationships.
-> =
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+ arch/arm/boot/dts/keystone-k2e-netcp.dtsi | 10 +++++-
+ drivers/net/ethernet/ti/cpts.c            | 52 ++++++++++++++++++++++++++++++-
+ 2 files changed, 60 insertions(+), 2 deletions(-)
 
-> Hmm yes, and I don't mean the clock framework should do anything more
-> complex beyond what it already does.
-> =
+diff --git a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
+index 919e655..b27aa22 100644
+--- a/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
++++ b/arch/arm/boot/dts/keystone-k2e-netcp.dtsi
+@@ -138,7 +138,7 @@ netcp: netcp@24000000 {
+ 	/* NetCP address range */
+ 	ranges = <0 0x24000000 0x1000000>;
 
-> We just want to represent the clocks as clocks, then have the
-> interconnect code manage those clocks. That's currently hwmod, eventually
-> it will be genpd.
-> =
+-	clocks = <&clkpa>, <&clkcpgmac>, <&chipclk12>;
++	clocks = <&clkpa>, <&clkcpgmac>, <&cpts_mux>;
+ 	clock-names = "pa_clk", "ethss_clk", "cpts";
+ 	dma-coherent;
 
-> > > > > If there is something more magical there certainly that should
-> > > > > be considered though.
-> > > > =
+@@ -162,6 +162,14 @@ netcp: netcp@24000000 {
+ 			cpts-ext-ts-inputs = <6>;
+ 			cpts-ts-comp-length;
 
-> > > > The hwmods could be transformed to individual genpds also I guess. =
-On DT
-> > > > level though, we would still need a clock pointer to the main clock=
- and a
-> > > > genpd pointer in addition to that.
-> > > =
++			cpts_mux: cpts_refclk_mux {
++				#clock-cells = <0>;
++				clocks = <&chipclk12>, <&chipclk13>;
++				cpts-mux-tbl = <0>, <1>;
++				assigned-clocks = <&cpts_mux>;
++				assigned-clock-parents = <&chipclk12>;
++			};
++
+ 			interfaces {
+ 				gbe0: interface-0 {
+ 					slave-port = <0>;
+diff --git a/drivers/net/ethernet/ti/cpts.c b/drivers/net/ethernet/ti/cpts.c
+index 938de22..ef94316 100644
+--- a/drivers/net/ethernet/ti/cpts.c
++++ b/drivers/net/ethernet/ti/cpts.c
+@@ -17,6 +17,7 @@
+  * along with this program; if not, write to the Free Software
+  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA
+  */
++#include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/if.h>
+ #include <linux/hrtimer.h>
+@@ -672,6 +673,7 @@ int cpts_register(struct cpts *cpts)
+ 	cpts->phc_index = ptp_clock_index(cpts->clock);
 
-> > > Hmm a genpd pointer to where exactly? AFAIK each interconnect
-> > > instance should be a genpd provider, and the individual interconnect
-> > > target modules should be consumers for that genpd.
-> > =
+ 	schedule_delayed_work(&cpts->overflow_work, cpts->ov_check_period);
++
+ 	return 0;
 
-> > I was thinking that the clock domains would be modeled as genpd objects
-> > with the interconnect target modules attached as struct devices.
-> =
+ err_ptp:
+@@ -741,6 +743,54 @@ static void cpts_calc_mult_shift(struct cpts *cpts)
+ 		 freq, cpts->cc_mult, cpts->cc.shift, (ns - NSEC_PER_SEC));
+ }
 
-> I think clock domains should be just clocks, then we let the interconnect
-> code and eventually genpd manage them.
-> =
++static int cpts_of_mux_clk_setup(struct cpts *cpts, struct device_node *node)
++{
++	unsigned int num_parents;
++	const char **parent_names;
++	struct device_node *refclk_np;
++	void __iomem *reg;
++	struct clk *clk;
++	u32 *mux_table;
++	int ret;
++
++	refclk_np = of_get_child_by_name(node, "cpts_refclk_mux");
++	if (!refclk_np)
++		return -EINVAL;
++
++	num_parents = of_clk_get_parent_count(refclk_np);
++	if (num_parents < 1) {
++		dev_err(cpts->dev, "mux-clock %s must have parents\n",
++			refclk_np->name);
++		return -EINVAL;
++	}
++	parent_names = devm_kzalloc(cpts->dev, (sizeof(char *) * num_parents),
++				    GFP_KERNEL);
++	if (!parent_names)
++		return -ENOMEM;
++
++	of_clk_parent_fill(refclk_np, parent_names, num_parents);
++
++	mux_table = devm_kzalloc(cpts->dev, sizeof(*mux_table) * (32 + 1),
++				 GFP_KERNEL);
++	if (!mux_table)
++		return -ENOMEM;
++
++	ret = of_property_read_variable_u32_array(refclk_np, "cpts-mux-tbl",
++						  mux_table, 1, 32);
++	if (ret < 0)
++		return ret;
++
++	reg = &cpts->reg->rftclk_sel;
++
++	clk = clk_register_mux_table(cpts->dev, refclk_np->name,
++				     parent_names, num_parents,
++				     0, reg, 0, 0x1F, 0, mux_table, NULL);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	return of_clk_add_provider(refclk_np, of_clk_src_simple_get, clk);
++}
++
+ static int cpts_of_parse(struct cpts *cpts, struct device_node *node)
+ {
+ 	int ret = -EINVAL;
+@@ -787,7 +837,7 @@ static int cpts_of_parse(struct cpts *cpts, struct device_node *node)
+ 	if (!of_property_read_u32(node, "cpts-ext-ts-inputs", &prop))
+ 		cpts->ext_ts_inputs = prop;
 
-> > > > Tony, any thoughts on that? Would this break up the plans for the
-> > > > interconnect completely?
-> > > =
+-	return 0;
++	return cpts_of_mux_clk_setup(cpts, node);
 
-> > > Does using genpd for clockdomains cause issues for using genpd for
-> > > interconnect instances and the target modules?
-> > =
+ of_error:
+ 	dev_err(cpts->dev, "CPTS: Missing property in the DT.\n");
+-- 
+2.10.1
 
-> > Can they be the same object in Linux? If there is a one-to-one mapping
-> > between clock domains and the interconnect port then maybe you can just
-> > model them together.
-> =
 
-> I'm thinking that it should be the interconnect code implementing
-> genpd, and use clk_request_enable().
-> =
 
-> > > The thing I'd be worried about there is that the clockdomains and
-> > > their child clocks are just devices sitting on the interconnect,
-> > > so we could easily end up with genpd modeling something that does
-> > > not represent the hardware.
-> > > =
-
-> > > For example, on 4430 we have:
-> > > =
-
-> > > l4_cfg interconnect
-> > >        ...
-> > >        segment@0
-> > >                 ...
-> > >                 target_module@4000
-> > >                         cm1: cm1@0
-> > =
-
-> > How about:
-> > =
-
-> > l4_cfg interconnect
-> >        ...
-> >        segment@0
-> >                 ...
-> >                 cm1@4000
-> >                       module: foo_module@0
-> =
-
-> That's the wrong way around from hardware point of view. There's
-> a generic interconnect wrapper module with it's own registers,
-> then cm1 (and possibly other devices) are children of that target
-> module.
-> =
-
-> > I don't know much about the segments. Do they map one-to-one with the
-> > clock domains?
-> =
-
-> I need to check, it's been a while, but I recall some interconnects
-> are partioned to segments based on voltages or clocks.
-> =
-
-> > If my quick-and-dirty DT above makes sense, then the target modules
-> > (e.g. io controller) would not get clocks anymore, but just
-> > pm_runtime_get(). The genpd backing object would call clk_enable/disable
-> > as needed.
-> =
-
-> Yeah that's what we already have with hwmod and PM runtime for the
-> clockctrl register. But hwmod currently directly manages the clkctrl
-> register, we just want to move that part to be a clock driver.
-> =
-
-> The children of the interconnect target modules just need to use
-> PM runtime, but the interconnect target module driver needs to know
-> it's clkctrl clock.
-
-OK, that sounds good to me but I'm not quite sure about the difference
-between "children of interconnect target modules" versus just the
-"interconnect target module".
-
-Can you give an example on each? I just want to understand for my own
-curiosity.
-
-> =
-
-> > If fine grained control of a clock is needed (e.g. for clk_set_rate)
-> > then the driver can still clk_get it. Whether or not the clockdomain
-> > provides that clock or if it comes from the clock generator (e.g. cm1,
-> > cm2, prm, etc) isn't as important to me, but I prefer for the
-> > clockdomain to not be a clock provider if possible.
-> =
-
-> Yeah I totally agree with that, and that's already what we mostly
-> have.
-> =
-
-> > > I don't at least yet
-> > > follow what we need to do with the clockdomains with genpd :)
-> > =
-
-> > Use the clockdomain genpd to call clk_enable/disable under the hood.
-> > Don't use them as clock providers to the target modules. Clockdomain
-> > genpds would be the clock consumers.
-> =
-
-> I don't think the clockdomain should be a genpd provider because
-> that creates a genpd network of dependencies instead of a tree
-> structure. If we end up setting the clockdomains with genpd, then
-> only the other clockdomains should use them, but I don't know how
-> we ever keep drivers from directly tinkering with them..
-
-Genpd is set up as an arbitrary graph, not strictly a tree, so these
-types of dependencies should be OK.
-
-> =
-
-> IMO, the clockdomain clock driver should just provides clocks, then
-> we can have the interconnect target module driver deal with the
-> clockdomain dependencies.
-> =
-
-> > > Wouldn't just doing clk_get() from one clockdomain clock to
-> > > another clockdomain clock (or it's output) be enough to
-> > > represent the clockdomain dependencies?
-> > =
-
-> > s/clk_get/clk_prepare_enable/
-> > =
-
-> > Yes, but you're stuffing functional dependencies into the clock tree,
-> > which sucks. genpd was created to model these arbitrary dependencies.
-> =
-
-> Well let's not stuff anything beyond clock framework to the
-> clockdomain clock drivers. We already have the clockdomain
-> dependencies handled by the interconnect code (hwmod), and there
-> should be no problem moving those to be handled by genpd and the
-> interconnect target driver instances.
-> =
-
-> Care to take another look at Tero's patches with the assumption
-> that the clockdomain clocks stay just as a clocks?
-
-Sure.
-
-Regards,
-Mike
-
-> =
-
-> Regards,
-> =
-
-> Tony
+-- 
+regards,
+-grygorii
