@@ -1,62 +1,130 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 20 Dec 2016 20:06:54 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: codekipper@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com, linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi][PATCH] clk: sunxi-ng: A31: Fix spdif clock register
-Message-ID: <20161220190654.jkfzwh6suongevfz@lukather>
-References: <20161220104446.22638-1-codekipper@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from eddie.linux-mips.org ([148.251.95.138]:50854 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752362AbcLGQeP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Dec 2016 11:34:15 -0500
+Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
+        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
+        id S23993376AbcLGQeI04m49 (ORCPT <rfc822;linux-clk@vger.kernel.org>
+        + 1 other); Wed, 7 Dec 2016 17:34:08 +0100
+Date: Wed, 7 Dec 2016 17:34:02 +0100
+From: Ladislav Michl <ladis@linux-mips.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
+        Richard Watts <rrw@kynesim.co.uk>,
+        Tony Lindgren <tony@atomide.com>,
+        Alexander Kinzer <a.kinzer@plusoptix.de>
+Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
+Message-ID: <20161207163402.GA26187@localhost.localdomain>
+References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com>
+ <2239782.MNuANFihMe@avalon>
+ <20161205093649.GA31898@localhost.localdomain>
+ <3238104.GnrXpa3VZc@avalon>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="yqmuarbs6sb4h2zm"
-In-Reply-To: <20161220104446.22638-1-codekipper@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <3238104.GnrXpa3VZc@avalon>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Laurent,
 
---yqmuarbs6sb4h2zm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Dec 06, 2016 at 01:59:56AM +0200, Laurent Pinchart wrote:
+> Hi Ladislav,
+[snip]
+> I've tested both versions with gcc 4.7.3 [1] and 4.8.5 [2]. With 4.7.3 my 
+> version is 4 bytes longer, and with 4.8.5 it's 4 bytes shorter. Interestingly 
+> enough the "break + test after loop" pattern doesn't make a difference, it's 
+> only the intermediate variable that results in changes to the generated code.
 
-On Tue, Dec 20, 2016 at 11:44:46AM +0100, codekipper@gmail.com wrote:
-> From: Marcus Cooper <codekipper@gmail.com>
->=20
-> As the SPDIF was rarely documented on the earlier Allwinner SoCs
-> it was assumed that it had a similar clock register to the one
-> described in the H3 User Manual.
->=20
-> However this is not the case and it looks to shares the same setup
-> as the I2S clock registers.
->=20
-> Signed-off-by: Marcus Cooper <codekipper@gmail.com>
+Interesting exercise... I hereby present 92 bytes shorter version using
+gcc version 5.4.0 (OSELAS.Toolchain-2016.06.0)
+I hope it's still easily readable.
 
-Applied, thanks!
-Maxime
+> [1] arm-linux-gnueabihf-gcc (crosstool-NG 
+> linaro-1.13.1-4.7-2013.02-01-20130221 - Linaro GCC 2013.02) 4.7.3 20130205 
+> (prerelease)
+> 
+> [2] arm-buildroot-linux-uclibcgnueabihf-gcc.br_real (Buildroot 2016.08-dirty) 
+> 4.8.5
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Best regards,
+	ladis
 
---yqmuarbs6sb4h2zm
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
+index 88f2ce8..f7772fc 100644
+--- a/drivers/clk/ti/dpll3xxx.c
++++ b/drivers/clk/ti/dpll3xxx.c
+@@ -838,3 +838,69 @@ int omap3_dpll4_set_rate_and_parent(struct clk_hw *hw, unsigned long rate,
+ 	return omap3_noncore_dpll_set_rate_and_parent(hw, rate, parent_rate,
+ 						      index);
+ }
++
++/* Apply DM3730 errata sprz319 advisory 2.1. */
++static bool omap3_dpll5_apply_errata(struct clk_hw *hw,
++				     unsigned long parent_rate)
++{
++	struct omap3_dpll5_settings {
++		unsigned int rate;
++		unsigned short m, n;
++	};
++
++	int i;
++	struct dpll_data *dd;
++	struct clk_hw_omap *clk;
++	const struct omap3_dpll5_settings *p;
++	static const struct omap3_dpll5_settings precomputed[] = {
++		/*
++		 * From DM3730 errata advisory 2.1, table 35 and 36.
++		 * The N value is increased by 1 compared to the tables as the
++		 * errata lists register values while last_rounded_field is the
++		 * real divider value.
++		 */
++		{ 12000000,  80,  0 + 1 },
++		{ 13000000, 443,  5 + 1 },
++		{ 19200000,  50,  0 + 1 },
++		{ 26000000, 443, 11 + 1 },
++		{ 38400000,  25,  0 + 1 }
++	};
++
++	for (i = 0; i< ARRAY_SIZE(precomputed); i++) {
++		p = precomputed + i;
++		if (parent_rate == p->rate) {
++			clk = to_clk_hw_omap(hw);
++			dd = clk->dpll_data;
++			/* Update the M, N and rounded rate values */
++			dd->last_rounded_m = p->m;
++			dd->last_rounded_n = p->n;
++			dd->last_rounded_rate =
++				div_u64((u64)parent_rate * p->m, p->n);
++			omap3_noncore_dpll_program(clk, 0);
++
++			return true;
++		}
++	}
++
++	return false;
++}
++
++/**
++ * omap3_dpll5_set_rate - set rate for omap3 dpll5
++ * @hw: clock to change
++ * @rate: target rate for clock
++ * @parent_rate: rate of the parent clock
++ *
++ * Set rate for the DPLL5 clock. Apply the sprz319 advisory 2.1 on OMAP36xx if
++ * the DPLL is used for USB host (detected through the requested rate).
++ */
++int omap3_dpll5_set_rate(struct clk_hw *hw, unsigned long rate,
++			 unsigned long parent_rate)
++{
++	if (rate == OMAP3_DPLL5_FREQ_FOR_USBHOST * 8) {
++		if (omap3_dpll5_apply_errata(hw, parent_rate))
++			return 0;
++	}
++
++	return omap3_noncore_dpll_set_rate(hw, rate, parent_rate);
++}
+-- 
+2.1.4
 
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYWYFOAAoJEBx+YmzsjxAgWF8P/i4RRktswx54Uh8viCyrnZeu
-J4tfB3Uzm89TLyXf9dWVooSBoFxEdk+fLvz2j6N888ifnBPmGTF9tLdcxwGnRXJ9
-ruUttawqxBCct2MI/k2Pe5q/WA9MPb8X2kev2rCbH825HpoZrM2ypgaslszNDXB9
-XEWMcuGFsAN5vKfrpaBDVqvymFcqdYqLIEggC3eXz8rIpd2Jw4JTcqm3zipks8lp
-f8CvjaEfIzuAVyOFbBkq2evat9vG653FGVE2radf1dHlUPnMovW24d8YDeZx5qHc
-NpRiOrPX094eyRlN+0CO8HVYG8Y9wUQRpH8RR+9mjzclY8vCFawugXG5p15zZ4hY
-SrjL2GEq6P54Sb+2bHZTgeE/ThilMFvo2wW0tqOkYbNMkGcA4ST1Ft5dzCtgXsbH
-mx5Rz8m6Sgij+ZQTHepYgs/oF0YsIM2S9E0kkg9jWK6FASf1H/fBWoOux1DRZhOO
-DPGDzah2XG5gWSyCBwmcrl8BUtVc6M6lvzuakR3pClvu1svu8YEz2L1+gvBXYs8H
-rVdiIuVNI04O+dc7XmpLj1S74iuzryir5bD93AELM02+VUMw/XYnhF/r5sgqeL41
-8uuS733cGVLfqlxWVxUCz2ceAS4EFLOB8Uueahhih+iXjzlDP32tgT06zFsejxMb
-em49SIFd1vKrjipwHNzq
-=rYp6
------END PGP SIGNATURE-----
-
---yqmuarbs6sb4h2zm--
