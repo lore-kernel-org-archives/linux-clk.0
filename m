@@ -1,53 +1,74 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH] clk: stm32f4: Use CLK_OF_DECLARE_DRIVER initialization method
-Date: Wed, 14 Dec 2016 15:22:28 +0100
-Message-ID: <1481725348-860-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <irina.tirdea@intel.com>
+From: Irina Tirdea <irina.tirdea@intel.com>
+To: linux-clk@vger.kernel.org,
+	x86@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	alsa-devel@alsa-project.org,
+	Mark Brown <broonie@kernel.org>,
+	Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Len Brown <lenb@kernel.org>,
+	Irina Tirdea <irina.tirdea@intel.com>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/2] Add platform clock for BayTrail platforms
+Date: Wed,  7 Dec 2016 17:43:24 +0200
+Message-Id: <1481125406-29097-1-git-send-email-irina.tirdea@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+These patches specifically enable the audio MCLK required by Baytrail CR
+devices. It is the remaining part of a bigger set of patches
+(already merged in Mark's tree) that enable sound for Baytrail CR devices
+(especially Asus T100TAF) [1]. They include the clock driver and a move
+of the non-architectural pmc_atom driver code into drivers/platform/x86.
 
-Clock and reset controller use same compatible strings (same IP).
+[1] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-August/111704.html
 
-Since commit 989eafd0b609 ("clk: core: Avoid double initialization of
-clocks") the OF core flags clock controllers registered with the
-CLK_OF_DECLARE() macro as OF_POPULATED, so platform devices with the same
-compatible string will not be registered.
+Changes from v4:
+ - move the pmc_atom driver from arch/x86/platform/atom to
+drivers/platform/x86
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32f4.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes from v3:
+ - replace devm_kzalloc with devm_kcalloc
+ - add x86 architecture maintainers
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 11174a5..0f5ab9b 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -1325,5 +1325,5 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	kfree(clks);
- 	iounmap(base);
- }
--CLK_OF_DECLARE(stm32f42xx_rcc, "st,stm32f42xx-rcc", stm32f4_rcc_init);
--CLK_OF_DECLARE(stm32f46xx_rcc, "st,stm32f469-rcc", stm32f4_rcc_init);
-+CLK_OF_DECLARE_DRIVER(stm32f42xx_rcc, "st,stm32f42xx-rcc", stm32f4_rcc_init);
-+CLK_OF_DECLARE_DRIVER(stm32f46xx_rcc, "st,stm32f469-rcc", stm32f4_rcc_init);
+Changes from v2:
+ - move clk platform data structures to a separate include file
+ - store clk_hw pointer for the fixed rate clocks
+
+Changes from v1:
+ - register the clk device as child of pmc device
+ - pass iomem pointer from pmc driver to clk driver to avoid using
+pmc_atom_read()/write() and use readl/writel API instead
+ - use devm_clk_hw_register/clkdev_hw_create instead of
+clk_register/clkdev_create
+
+Irina Tirdea (2):
+  arch/x86/platform/atom: Move pmc_atom to drivers/platform/x86
+  clk: x86: Add Atom PMC platform clocks
+
+ arch/x86/Kconfig                                   |   4 -
+ arch/x86/platform/atom/Makefile                    |   1 -
+ drivers/acpi/acpi_lpss.c                           |   2 +-
+ drivers/clk/x86/Makefile                           |   1 +
+ drivers/clk/x86/clk-byt-plt.c                      | 380 +++++++++++++++++++++
+ drivers/platform/x86/Kconfig                       |   6 +
+ drivers/platform/x86/Makefile                      |   1 +
+ .../atom => drivers/platform/x86}/pmc_atom.c       |  81 ++++-
+ include/linux/platform_data/x86/clk-byt-plt.h      |  31 ++
+ .../linux/platform_data/x86}/pmc_atom.h            |   3 +
+ 10 files changed, 499 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/clk/x86/clk-byt-plt.c
+ rename {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c (88%)
+ create mode 100644 include/linux/platform_data/x86/clk-byt-plt.h
+ rename {arch/x86/include/asm => include/linux/platform_data/x86}/pmc_atom.h (98%)
+
 -- 
 1.9.1
