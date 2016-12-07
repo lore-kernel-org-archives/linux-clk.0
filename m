@@ -1,93 +1,67 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Nadav Haklai <nadavh@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCHv2 2/3] clk: mvebu: adjust clock handling for the CP110 system controller
-Date: Wed, 21 Dec 2016 11:26:56 +0100
-Message-Id: <1482316017-22154-3-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+In-Reply-To: <20161206231642.GA4388@codeaurora.org>
+References: <1480725436-9628-1-git-send-email-vlee@freedesktop.org>
+ <CAK7LNATeswNhoFsA90k=qF4Jock0ytNT-pPT6j+0b9MJFJwu9Q@mail.gmail.com> <20161206231642.GA4388@codeaurora.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Wed, 7 Dec 2016 10:34:53 +0900
+Message-ID: <CAK7LNARZvDJnZTVJP8kxvCoGf_HFyGi0A0Y4rBVeLft4Hj19ZA@mail.gmail.com>
+Subject: Re: [PATCH] clk: uniphier: Fix build with gcc-4.4.
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vinson Lee <vlee@freedesktop.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit:
+Hi Stephen,
 
- - makes the GOP_DP (bit 9) gatable clock a child clock of the
-   SD_MMC_GOP (bit 18) clock, as it should have been. The clock for bit
-   18 was just named SD_MMC, but since it also covers the GOP block, it
-   is renamed SD_MMC_GOP.
 
- - makes the MG (bit 5) gatable clock a child clock of the MG_CORE
-   clock (bit 6)
+2016-12-07 8:16 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
+> On 12/03, Masahiro Yamada wrote:
+>> Hi Vinson,
+>>
+>> 2016-12-03 9:37 GMT+09:00 Vinson Lee <vlee@freedesktop.org>:
+>> > gcc-4.4 has issues with anonymous unions in initializers.
+>> >
+>> >   CC      drivers/clk/uniphier/clk-uniphier-sys.o
+>> > drivers/clk/uniphier/clk-uniphier-sys.c:45: error: unknown field =E2=
+=80=98factor=E2=80=99 specified in initializer
+>> >
+>> > Fixes: 1574d5722636 ("clk: uniphier: remove unneeded member name for u=
+nion")
+>> > Signed-off-by: Vinson Lee <vlee@freedesktop.org>
+>>
+>>
+>> This driver has COMPILE_TEST option, but kbuild test robot
+>> did not mention about this.
+>>
+>>
+>>
+>> This is a bad way of fixing, I think.
+>> (what if a new member is inserted before the union in the future?)
+>>
+>> Rather, please revert the bad commit.
+>>
+>
+> Reverting on top of clk-next will cause build failures though.
+> Can you resend the patch series without this first patch please?
+> I'll apply them then.
+>
+> I'll go drop all three patches and wreck Andrew's merge of this
+> patch to -mm.
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
----
- drivers/clk/mvebu/cp110-system-controller.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index f2303da..8038b93 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -64,8 +64,11 @@ enum {
- #define CP110_GATE_NAND			2
- #define CP110_GATE_PPV2			3
- #define CP110_GATE_SDIO			4
-+#define CP110_GATE_MG			5
-+#define CP110_GATE_MG_CORE		6
- #define CP110_GATE_XOR1			7
- #define CP110_GATE_XOR0			8
-+#define CP110_GATE_GOP_DP		9
- #define CP110_GATE_PCIE_X1_0		11
- #define CP110_GATE_PCIE_X1_1		12
- #define CP110_GATE_PCIE_X4		13
-@@ -73,7 +76,7 @@ enum {
- #define CP110_GATE_SATA			15
- #define CP110_GATE_SATA_USB		16
- #define CP110_GATE_MAIN			17
--#define CP110_GATE_SDMMC		18
-+#define CP110_GATE_SDMMC_GOP		18
- #define CP110_GATE_SLOW_IO		21
- #define CP110_GATE_USB3H0		22
- #define CP110_GATE_USB3H1		23
-@@ -302,6 +305,11 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 						      "gate-clock-output-names",
- 						      CP110_GATE_MAIN, &parent);
- 			break;
-+		case CP110_GATE_MG:
-+			of_property_read_string_index(np,
-+						      "gate-clock-output-names",
-+						      CP110_GATE_MG_CORE, &parent);
-+			break;
- 		case CP110_GATE_NAND:
- 			parent = nand_name;
- 			break;
-@@ -309,9 +317,10 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
- 			parent = ppv2_name;
- 			break;
- 		case CP110_GATE_SDIO:
-+		case CP110_GATE_GOP_DP:
- 			of_property_read_string_index(np,
- 						      "gate-clock-output-names",
--						      CP110_GATE_SDMMC, &parent);
-+						      CP110_GATE_SDMMC_GOP, &parent);
- 			break;
- 		case CP110_GATE_XOR1:
- 		case CP110_GATE_XOR0:
--- 
-2.7.4
+I dropped the first one
+and v3 (for the last two) is on the ML now.
+
+Thanks a lot for taking care of this!
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
