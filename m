@@ -18,11 +18,11 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Irina Tirdea <irina.tirdea@intel.com>,
 	linux-acpi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/3] arch/x86/platform/atom: Move pmc_atom to drivers/platform/x86
-Date: Fri,  9 Dec 2016 20:01:49 +0200
-Message-Id: <1481306510-7471-3-git-send-email-irina.tirdea@intel.com>
-In-Reply-To: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
-References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
+Subject: [PATCH v5 1/2] arch/x86/platform/atom: Move pmc_atom to drivers/platform/x86
+Date: Wed,  7 Dec 2016 17:43:25 +0200
+Message-Id: <1481125406-29097-2-git-send-email-irina.tirdea@intel.com>
+In-Reply-To: <1481125406-29097-1-git-send-email-irina.tirdea@intel.com>
+References: <1481125406-29097-1-git-send-email-irina.tirdea@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 The pmc_atom driver does not contain any architecture specific
@@ -37,11 +37,11 @@ Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
  arch/x86/Kconfig                                                     | 4 ----
  arch/x86/platform/atom/Makefile                                      | 1 -
  drivers/acpi/acpi_lpss.c                                             | 2 +-
- drivers/platform/x86/Kconfig                                         | 4 ++++
+ drivers/platform/x86/Kconfig                                         | 5 +++++
  drivers/platform/x86/Makefile                                        | 1 +
  {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c          | 3 +--
  {arch/x86/include/asm => include/linux/platform_data/x86}/pmc_atom.h | 0
- 7 files changed, 7 insertions(+), 8 deletions(-)
+ 7 files changed, 8 insertions(+), 8 deletions(-)
  rename {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c (99%)
  rename {arch/x86/include/asm => include/linux/platform_data/x86}/pmc_atom.h (100%)
 
@@ -88,17 +88,19 @@ index 373657f..3e4c566 100644
  #define LPSS_ADDR(desc) ((unsigned long)&desc)
  
 diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index b8a21d7..21dce1e 100644
+index b8a21d7..7b74c53 100644
 --- a/drivers/platform/x86/Kconfig
 +++ b/drivers/platform/x86/Kconfig
-@@ -1028,3 +1028,7 @@ config INTEL_TELEMETRY
+@@ -1027,4 +1027,9 @@ config INTEL_TELEMETRY
+ 	  used to get various SoC events and parameters
  	  directly via debugfs files. Various tools may use
  	  this interface for SoC state monitoring.
- endif # X86_PLATFORM_DEVICES
 +
 +config PMC_ATOM
 +	def_bool y
 +        depends on PCI
++
+ endif # X86_PLATFORM_DEVICES
 diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
 index 2efa86d..8568d74 100644
 --- a/drivers/platform/x86/Makefile
