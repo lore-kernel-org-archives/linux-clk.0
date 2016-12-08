@@ -1,262 +1,41 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Florian Fainelli <f.fainelli@gmail.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 8 Dec 2016 14:08:24 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
+	Rob Herring <robh@kernel.org>,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Linux-DT <devicetree@vger.kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 02/11] clk: bcm2835: Register the DSI0/DSI1 pixel clocks.
-Date: Wed, 14 Dec 2016 11:46:12 -0800
-Message-Id: <20161214194621.16499-3-eric@anholt.net>
-In-Reply-To: <20161214194621.16499-1-eric@anholt.net>
-References: <20161214194621.16499-1-eric@anholt.net>
+	Linux-Kernel <linux-kernel@vger.kernel.org>,
+	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+	Linux-ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 0/3] clkdev: add devm_get_clk_from_child()
+Message-ID: <20161208220824.GM5423@codeaurora.org>
+References: <874m2jvtmw.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <874m2jvtmw.wl%kuninori.morimoto.gx@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The DSI pixel clocks are muxed from clocks generated in the analog phy
-by the DSI driver.  In order to set them as parents, we need to do the
-same name lookup dance on them as we do for our root oscillator.
+On 12/05, Kuninori Morimoto wrote:
+> 
+> Hi Stephen
+> 
+> This is v5 of "clkdev: add devm_of_clk_get()", but new series.
+> I hope my understanding was correct with your idea.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- .../bindings/clock/brcm,bcm2835-cprman.txt         |  15 ++-
- drivers/clk/bcm/clk-bcm2835.c                      | 120 ++++++++++++++++++---
- include/dt-bindings/clock/bcm2835.h                |   2 +
- 3 files changed, 124 insertions(+), 13 deletions(-)
+Yes this looks good. Given that we're so close to the merge
+window, perhaps I should just merge the first patch into clk-next
+and then it will be ready for anyone who wants to use it? The
+sound patches can be left up to others to handle.
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-index e56a1df3a9d3..dd906db34b32 100644
---- a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-@@ -16,7 +16,20 @@ Required properties:
- - #clock-cells:	Should be <1>. The permitted clock-specifier values can be
- 		  found in include/dt-bindings/clock/bcm2835.h
- - reg:		Specifies base physical address and size of the registers
--- clocks:	The external oscillator clock phandle
-+- clocks:	phandles to the parent clocks used as input to the module, in
-+		  the following order:
-+
-+		  - External oscillator
-+		  - DSI0 byte clock
-+		  - DSI0 DDR2 clock
-+		  - DSI0 DDR clock
-+		  - DSI1 byte clock
-+		  - DSI1 DDR2 clock
-+		  - DSI1 DDR clock
-+
-+		  Only external oscillator is required.  The DSI clocks may
-+		  not be present, in which case their children will be
-+		  unusable.
- 
- Example:
- 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 6641030e8eae..b0a8cd19a30c 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -297,11 +297,32 @@
- #define LOCK_TIMEOUT_NS		100000000
- #define BCM2835_MAX_FB_RATE	1750000000u
- 
-+/*
-+ * Names of clocks used within the driver that need to be replaced
-+ * with an external parent's name.  This array is in the order that
-+ * the clocks node in the DT references external clocks.
-+ */
-+static const char *const cprman_parent_names[] = {
-+	"xosc",
-+	"dsi0_byte",
-+	"dsi0_ddr2",
-+	"dsi0_ddr",
-+	"dsi1_byte",
-+	"dsi1_ddr2",
-+	"dsi1_ddr",
-+};
-+
- struct bcm2835_cprman {
- 	struct device *dev;
- 	void __iomem *regs;
- 	spinlock_t regs_lock; /* spinlock for all clocks */
--	const char *osc_name;
-+
-+	/*
-+	 * Real names of cprman clock parents looked up through
-+	 * of_clk_get_parent_name(), which will be used in the
-+	 * parent_names[] arrays for clock registration.
-+	 */
-+	const char *real_parent_names[ARRAY_SIZE(cprman_parent_names)];
- 
- 	/* Must be last */
- 	struct clk_hw_onecell_data onecell;
-@@ -905,6 +926,9 @@ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
- 	const struct bcm2835_clock_data *data = clock->data;
- 	u64 temp;
- 
-+	if (data->int_bits == 0 && data->frac_bits == 0)
-+		return parent_rate;
-+
- 	/*
- 	 * The divisor is a 12.12 fixed point field, but only some of
- 	 * the bits are populated in any given clock.
-@@ -928,7 +952,12 @@ static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
--	u32 div = cprman_read(cprman, data->div_reg);
-+	u32 div;
-+
-+	if (data->int_bits == 0 && data->frac_bits == 0)
-+		return parent_rate;
-+
-+	div = cprman_read(cprman, data->div_reg);
- 
- 	return bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
- }
-@@ -1158,7 +1187,7 @@ static struct clk_hw *bcm2835_register_pll(struct bcm2835_cprman *cprman,
- 	memset(&init, 0, sizeof(init));
- 
- 	/* All of the PLLs derive from the external oscillator. */
--	init.parent_names = &cprman->osc_name;
-+	init.parent_names = &cprman->real_parent_names[0];
- 	init.num_parents = 1;
- 	init.name = data->name;
- 	init.ops = &bcm2835_pll_clk_ops;
-@@ -1244,18 +1273,22 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
- 	struct bcm2835_clock *clock;
- 	struct clk_init_data init;
- 	const char *parents[1 << CM_SRC_BITS];
--	size_t i;
-+	size_t i, j;
- 	int ret;
- 
- 	/*
--	 * Replace our "xosc" references with the oscillator's
--	 * actual name.
-+	 * Replace our strings referencing parent clocks with the
-+	 * actual clock-output-name of the parent.
- 	 */
- 	for (i = 0; i < data->num_mux_parents; i++) {
--		if (strcmp(data->parents[i], "xosc") == 0)
--			parents[i] = cprman->osc_name;
--		else
--			parents[i] = data->parents[i];
-+		parents[i] = data->parents[i];
-+
-+		for (j = 0; j < ARRAY_SIZE(cprman_parent_names); j++) {
-+			if (strcmp(parents[i], cprman_parent_names[j]) == 0) {
-+				parents[i] = cprman->real_parent_names[j];
-+				break;
-+			}
-+		}
- 	}
- 
- 	memset(&init, 0, sizeof(init));
-@@ -1375,6 +1408,47 @@ static const char *const bcm2835_clock_vpu_parents[] = {
- 	__VA_ARGS__)
- 
- /*
-+ * DSI parent clocks.  The DSI byte/DDR/DDR2 clocks come from the DSI
-+ * analog PHY.  The _inv variants are generated internally to cprman,
-+ * but we don't use them so they aren't hooked up.
-+ */
-+static const char *const bcm2835_clock_dsi0_parents[] = {
-+	"gnd",
-+	"xosc",
-+	"testdebug0",
-+	"testdebug1",
-+	"dsi0_ddr",
-+	"dsi0_ddr_inv",
-+	"dsi0_ddr2",
-+	"dsi0_ddr2_inv",
-+	"dsi0_byte",
-+	"dsi0_byte_inv",
-+};
-+
-+static const char *const bcm2835_clock_dsi1_parents[] = {
-+	"gnd",
-+	"xosc",
-+	"testdebug0",
-+	"testdebug1",
-+	"dsi1_ddr",
-+	"dsi1_ddr_inv",
-+	"dsi1_ddr2",
-+	"dsi1_ddr2_inv",
-+	"dsi1_byte",
-+	"dsi1_byte_inv",
-+};
-+
-+#define REGISTER_DSI0_CLK(...)	REGISTER_CLK(				\
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_dsi0_parents),	\
-+	.parents = bcm2835_clock_dsi0_parents,				\
-+	__VA_ARGS__)
-+
-+#define REGISTER_DSI1_CLK(...)	REGISTER_CLK(				\
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_dsi1_parents),	\
-+	.parents = bcm2835_clock_dsi1_parents,				\
-+	__VA_ARGS__)
-+
-+/*
-  * the real definition of all the pll, pll_dividers and clocks
-  * these make use of the above REGISTER_* macros
-  */
-@@ -1832,6 +1906,18 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.div_reg = CM_DSI1EDIV,
- 		.int_bits = 4,
- 		.frac_bits = 8),
-+	[BCM2835_CLOCK_DSI0P]	= REGISTER_DSI0_CLK(
-+		.name = "dsi0p",
-+		.ctl_reg = CM_DSI0PCTL,
-+		.div_reg = CM_DSI0PDIV,
-+		.int_bits = 0,
-+		.frac_bits = 0),
-+	[BCM2835_CLOCK_DSI1P]	= REGISTER_DSI1_CLK(
-+		.name = "dsi1p",
-+		.ctl_reg = CM_DSI1PCTL,
-+		.div_reg = CM_DSI1PDIV,
-+		.int_bits = 0,
-+		.frac_bits = 0),
- 
- 	/* the gates */
- 
-@@ -1890,8 +1976,18 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
- 	if (IS_ERR(cprman->regs))
- 		return PTR_ERR(cprman->regs);
- 
--	cprman->osc_name = of_clk_get_parent_name(dev->of_node, 0);
--	if (!cprman->osc_name)
-+	for (i = 0; i < ARRAY_SIZE(cprman_parent_names); i++) {
-+		cprman->real_parent_names[i] =
-+			of_clk_get_parent_name(dev->of_node, i);
-+	}
-+	/*
-+	 * Make sure the external oscillator has been registered.
-+	 *
-+	 * The other (DSI) clocks are not present on older device
-+	 * trees, which we still need to support for backwards
-+	 * compatibility.
-+	 */
-+	if (!cprman->real_parent_names[0])
- 		return -ENODEV;
- 
- 	platform_set_drvdata(pdev, cprman);
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index 360e00cefd35..a0c812b0fa39 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -64,3 +64,5 @@
- #define BCM2835_CLOCK_CAM1		46
- #define BCM2835_CLOCK_DSI0E		47
- #define BCM2835_CLOCK_DSI1E		48
-+#define BCM2835_CLOCK_DSI0P		49
-+#define BCM2835_CLOCK_DSI1P		50
+> 
+> Kuninori Morimoto (3):
+>   1) clkdev: add devm_get_clk_from_child()
+>   2) ASoC: simple-card: use devm_get_clk_from_child()
+>   3) ASoC: simple-card-utils: enable clocks/clock-names/clock-ranges
+
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
