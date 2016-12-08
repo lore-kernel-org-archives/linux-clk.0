@@ -1,72 +1,55 @@
-Return-Path: <ping.bai@nxp.com>
-From: Bai Ping <ping.bai@nxp.com>
-To: <shawnguo@kernel.org>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <linus.walleij@linaro.org>
-CC: <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
-	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>, <p.zabel@pengutronix.de>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<jacky.baip@gmail.com>
-Subject: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc for imx6sll
-Date: Tue, 27 Dec 2016 17:47:43 +0800
-Message-ID: <1482832070-22668-6-git-send-email-ping.bai@nxp.com>
-In-Reply-To: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:48556 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932299AbcLHVSd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2016 16:18:33 -0500
+Date: Thu, 8 Dec 2016 13:18:31 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: warnings with clk_disable_unprepare()
+Message-ID: <20161208211831.GL5423@codeaurora.org>
+References: <d755ee65-937f-1581-ac74-347b9e4c8d51@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: ping.bai@nxp.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <d755ee65-937f-1581-ac74-347b9e4c8d51@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add pinctrl binding doc update for imx6sll.
+On 12/05, Pierre-Louis Bossart wrote:
+> Hi,
+> In the modified cht-bsw_rt5645 machine driver for Asus X205TA and
+> T100HA, I disable the audio mclk with a call to
+> clk_disable_unprepare() when I see a SND_SOC_DAPM_EVENT_OFF event in
+> the platform_clock_control hook.
+> 
+> For some reason I seem to get multiple SND_SOC_DAPM_EVENT_OFF events
+> and the clock framework complains with dmesg warnings that the
+> refcount is already zero (which has no functional side effect).
+> 
+> WARNING: CPU: 0 PID: 2002 at drivers/clk/clk.c:476 clk_unprepare+0x1a/0x21
+> 
+> WARNING: CPU: 2 PID: 2095 at drivers/clk/clk.c:594
+> clk_core_disable_lock+0x12/0x1b
+> 
+> I could fix this in three different ways:
+> - remove multiple SND_SOC_DAPM_EVENT_OFF events (not sure what the
+> root cause is, maybe issues with jack detection?)
 
-Signed-off-by: Bai Ping <ping.bai@nxp.com>
----
- .../bindings/pinctrl/fsl,imx6sll-pinctrl.txt       | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
+It would be good to know what the root cause is here before
+thinking about doing anything else.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
-new file mode 100644
-index 0000000..9561c1a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
-@@ -0,0 +1,37 @@
-+* Freescale i.MX6 SLL IOMUX Controller
-+
-+Please refer to fsl,imx-pinctrl.txt in this directory for common binding part
-+and usage.
-+
-+Required properties:
-+- compatible: "fsl,imx6sll-iomuxc"
-+- fsl,pins: each entry consists of 6 integers and represents the mux and config
-+  setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
-+  input_val> are specified using a PIN_FUNC_ID macro, which can be found in
-+  imx6sll-pinfunc.h under device tree source folder.  The last integer CONFIG is
-+  the pad setting value like pull-up on this pin.  Please refer to i.MX6SLL
-+  Reference Manual for detailed CONFIG settings.
-+
-+CONFIG bits definition:
-+PAD_CTL_LVE			(1 << 22)
-+PAD_CTL_HYS                     (1 << 16)
-+PAD_CTL_PUS_100K_DOWN           (0 << 14)
-+PAD_CTL_PUS_47K_UP              (1 << 14)
-+PAD_CTL_PUS_100K_UP             (2 << 14)
-+PAD_CTL_PUS_22K_UP              (3 << 14)
-+PAD_CTL_PUE                     (1 << 13)
-+PAD_CTL_PKE                     (1 << 12)
-+PAD_CTL_ODE                     (1 << 11)
-+PAD_CTL_SPEED_LOW               (0 << 6)
-+PAD_CTL_SPEED_MED               (1 << 6)
-+PAD_CTL_SPEED_HIGH              (3 << 6)
-+PAD_CTL_DSE_DISABLE             (0 << 3)
-+PAD_CTL_DSE_260ohm              (1 << 3)
-+PAD_CTL_DSE_130ohm              (2 << 3)
-+PAD_CTL_DSE_87ohm               (3 << 3)
-+PAD_CTL_DSE_65ohm               (4 << 3)
-+PAD_CTL_DSE_52ohm               (5 << 3)
-+PAD_CTL_DSE_43ohm               (6 << 3)
-+PAD_CTL_DSE_37ohm               (7 << 3)
-+PAD_CTL_SRE_FAST                (1 << 0)
-+PAD_CTL_SRE_SLOW                (0 << 0)
+> - call a clk_is_enabled() or clk_refcount() function before calling
+> clk_disable_unprepare() (but they don't seem to exist in
+> include/linux/clk.h)
+> - count the references myself (which does exactly the same as what
+> the clk framework already does so it's not terribly elegant)
+> 
+
+Both of these sound like hacks around the problem of unbalanced
+off event calls.
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
