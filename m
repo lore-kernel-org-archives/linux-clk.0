@@ -1,48 +1,41 @@
-Return-Path: <icenowy@aosc.xyz>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Russell King <linux@armlinux.org.uk>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jorik Jonker <jorik@kippendief.biz>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 0/6] Allwinner A33 CPU frequency scaling support
-Date: Tue, 13 Dec 2016 23:22:46 +0800
-Message-Id: <20161213152252.53749-1-icenowy@aosc.xyz>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ladislav Michl <ladis@linux-mips.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, Paul Walmsley <paul@pwsan.com>, Richard Watts <rrw@kynesim.co.uk>, Tony Lindgren <tony@atomide.com>, Alexander Kinzer <a.kinzer@plusoptix.de>, Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
+Date: Thu, 08 Dec 2016 13:40 +0200
+Message-ID: <3225321.q72K2erxPs@avalon>
+In-Reply-To: <20161208071155.GA7530@localhost.localdomain>
+References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com> <20161208001654.GD5423@codeaurora.org> <20161208071155.GA7530@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-This series of patch adds frequency scaling support to Allwinner A33 SoC.
+Hi Ladislav,
 
-The first two patches fixes some bugs in the A33 CCU code.
+On Thursday 08 Dec 2016 08:11:55 Ladislav Michl wrote:
+> On Wed, Dec 07, 2016 at 04:16:54PM -0800, Stephen Boyd wrote:
+> > On 12/05, Tero Kristo wrote:
+> > > The compiler should ideally generate same size code for these both.
+> > > Personally, I don't mind which version goes in; I'd say both are as
+> > > readable.
+> > > 
+> > > Stephen, Mike, is one of you going to pick this up? I don't think I
+> > > have anything else to pull due to the ongoing discussion with the
+> > > other pending stuff.
+> > 
+> > I have no problem picking up either version. Please send it with
+> > the appropriate tags added and I can merge it.
+> 
+> Here it is for your convenience. Of course I'd like to see smaller code
+> to go in as exactly those sneaky tiny incremental code size increases
+> made Linux kernel unusable on most of my hardware over time ;-)
+> However, if Laurent is unhappy with changes I made, I will not object
+> merging his version any more.
 
-The patch 3 and 4 is for enabling the cpufreq-dt driver to work.
+I'd rather keep my version, thank you. Let's not spend time chasing bytes.
 
-The patch 5 is for enabling the voltage adjusting on reference design tablets.
-
-The patch 6 is for enabling the "turbo-mode" of A33. (According to the
-"extremity_freq" property in the FEX file. When I tested it with 3.4 BSP, it
-really performs as a turbo mode.)
-
-If there's any doubt of safety, the patch 6 can be ignored.
-
-If there's any problem in patch 3, 4 and 5, they can also be temporarily
-ignored, but finally we need them ;-)
-
-Although there's now currently no thermal support for A33, many A33 devices
-are tablets with battery, and it will be valuable to save some power energy,
-so cpufreq support is also useful.
-
-P.S.
-
-Chen-Yu,
-
-Do you want to test the CCU fix and the operating point table on A23?
-
+-- 
 Regards,
-Icenowy
+
+Laurent Pinchart
