@@ -1,124 +1,62 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:33784 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755198AbcLWRA5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Dec 2016 12:00:57 -0500
-MIME-Version: 1.0
-Reply-To: cwchoi00@gmail.com
-In-Reply-To: <1482399870-18563-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20161222094441epcas5p330bb16763e02149a275c30eb644b0e7c@epcas5p3.samsung.com>
- <1482399870-18563-1-git-send-email-m.szyprowski@samsung.com>
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Date: Sat, 24 Dec 2016 02:00:36 +0900
-Message-ID: <CAGTfZH3CuFNSHwhWzYeU+JE0UyyTqWRA3k2tvCprPcYUMBSYbQ@mail.gmail.com>
-Subject: Re: [PATCH] clk/samsung: exynos542x: mark some clocks as critical
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+Received: from mail-wj0-f193.google.com ([209.85.210.193]:36728 "EHLO
+        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932708AbcLHROD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2016 12:14:03 -0500
+Date: Thu, 8 Dec 2016 19:13:57 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+        Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: dts: exynos: Fix initial clocks configuration
+ on Odroid X/X2/U3 boards
+Message-ID: <20161208171357.GA8082@kozik-lap>
+References: <1481194914-20490-1-git-send-email-m.szyprowski@samsung.com>
+ <1481194914-20490-2-git-send-email-m.szyprowski@samsung.com>
+ <CGME20161208164434epcas4p4a7c6c5045d38140b0dca501276206a2c@epcas4p4.samsung.com>
+ <20161208164421.GC5238@kozik-lap>
+ <864877de-a14b-093a-4127-4ad710299fc2@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <864877de-a14b-093a-4127-4ad710299fc2@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear Marek,
+On Thu, Dec 08, 2016 at 06:07:02PM +0100, Sylwester Nawrocki wrote:
+> On 12/08/2016 05:44 PM, Krzysztof Kozlowski wrote:
+> > On Thu, Dec 08, 2016 at 12:01:54PM +0100, Marek Szyprowski wrote:
+> >> Move assigned clocks properties from sound node to audio subsystem clock
+> >> controller node. This way clocks topology and rates are set just after
+> >> probing audio clocks controller. Leaving those properties under sound
+> >> node doesn't guarantee to configure them before they are being used
+> >> (for example i2s hardware module can be probed in parallel and it also
+> >> require proper audio clocks configuration).
+> >>
+> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >> ---
+> >>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 20 ++++++++++----------
+> >>  1 file changed, 10 insertions(+), 10 deletions(-)
+> >
+> > Looks correct, for the reference:
+> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > 
+> > Does this fixes any encountered issue (real one)? I wonder whether this
+> > should go to fixes or not.
+> 
+> With current code there is no issues, and in fact there should be no
+> such timing dependencies in DT to rely on.  However, the binding convention
+> is to put assigned-clock* properties in a node of a device they belong
+> to and in this case the 'clock_audss' is more appropriate than the 'sound'
+> node.  This patch doesn't fix any bug with current code but it might save
+> us some trouble with future changes.
+>
 
-I have a question. I agree some clocks should be always on with CLK_IS_CRITICAL.
-CLK_ACLK333 is only used on exynos5420.dtsi. So, I understand to add
-CLK_IS_CRITICAL flag to CLK_ACLK333.
+Thanks for explanation. I am not planning any pull requests for this
+cycle so the patch will have to wait till the end of 4.10-rc1
+merge window.
 
-Except for CLK_ACLK333, the remaining clocks with CLK_IS_CRITICAL were
-not used on mainline kernel (arch/arm/boot/dts/*). It means that the
-remaining clocks might be ON before applying this patch. So,
-CLK_IGNORE_UNUSED might be enough to maintain their ON state.
-
-If we don't add the CLK_IGNORE_UNUSED flag to clocks except for
-CLK_ACLK333, are there any problem?
-But, if bootloader don't turn on these clocks, this patch is necessary.
-
-Best Regards,
-Chanwoo Choi
-
-2016-12-22 18:44 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
-> Some parent clocks of the Exynos542x clock blocks, which have separate
-> power domains (like DISP, MFC, MSC, GSC, FSYS and G2D) must be always
-> enabled to access any register related to power management unit or devices
-> connected to it. For the time being, until a proper solution based on
-> runtime PM is applied, mark those clocks as critical (instead of ignore
-> unused or even no flags) to prevent disabling them.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 8c8b495cbf0d..cdc092a1d9ef 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -586,7 +586,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
->         GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
->                                 GATE_BUS_TOP, 24, 0, 0),
->         GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
-> -                               GATE_BUS_TOP, 27, 0, 0),
-> +                               GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
->  };
->
->  static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
-> @@ -956,20 +956,20 @@ static void __init exynos5420_clk_sleep_init(void) {}
->         GATE(CLK_SMMU_G2D, "smmu_g2d", "aclk333_g2d", GATE_IP_G2D, 7, 0, 0),
->
->         GATE(0, "aclk200_fsys", "mout_user_aclk200_fsys",
-> -                       GATE_BUS_FSYS0, 9, CLK_IGNORE_UNUSED, 0),
-> +                       GATE_BUS_FSYS0, 9, CLK_IS_CRITICAL, 0),
->         GATE(0, "aclk200_fsys2", "mout_user_aclk200_fsys2",
->                         GATE_BUS_FSYS0, 10, CLK_IGNORE_UNUSED, 0),
->
->         GATE(0, "aclk333_g2d", "mout_user_aclk333_g2d",
->                         GATE_BUS_TOP, 0, CLK_IGNORE_UNUSED, 0),
->         GATE(0, "aclk266_g2d", "mout_user_aclk266_g2d",
-> -                       GATE_BUS_TOP, 1, CLK_IGNORE_UNUSED, 0),
-> +                       GATE_BUS_TOP, 1, CLK_IS_CRITICAL, 0),
->         GATE(0, "aclk300_jpeg", "mout_user_aclk300_jpeg",
->                         GATE_BUS_TOP, 4, CLK_IGNORE_UNUSED, 0),
->         GATE(0, "aclk333_432_isp0", "mout_user_aclk333_432_isp0",
->                         GATE_BUS_TOP, 5, 0, 0),
->         GATE(0, "aclk300_gscl", "mout_user_aclk300_gscl",
-> -                       GATE_BUS_TOP, 6, CLK_IGNORE_UNUSED, 0),
-> +                       GATE_BUS_TOP, 6, CLK_IS_CRITICAL, 0),
->         GATE(0, "aclk333_432_gscl", "mout_user_aclk333_432_gscl",
->                         GATE_BUS_TOP, 7, CLK_IGNORE_UNUSED, 0),
->         GATE(0, "aclk333_432_isp", "mout_user_aclk333_432_isp",
-> @@ -983,20 +983,20 @@ static void __init exynos5420_clk_sleep_init(void) {}
->         GATE(0, "aclk166", "mout_user_aclk166",
->                         GATE_BUS_TOP, 14, CLK_IGNORE_UNUSED, 0),
->         GATE(CLK_ACLK333, "aclk333", "mout_user_aclk333",
-> -                       GATE_BUS_TOP, 15, CLK_IGNORE_UNUSED, 0),
-> +                       GATE_BUS_TOP, 15, CLK_IS_CRITICAL, 0),
->         GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
->                         GATE_BUS_TOP, 16, 0, 0),
->         GATE(0, "aclk400_mscl", "mout_user_aclk400_mscl",
->                         GATE_BUS_TOP, 17, 0, 0),
->         GATE(0, "aclk200_disp1", "mout_user_aclk200_disp1",
-> -                       GATE_BUS_TOP, 18, 0, 0),
-> +                       GATE_BUS_TOP, 18, CLK_IS_CRITICAL, 0),
->         GATE(CLK_SCLK_MPHY_IXTAL24, "sclk_mphy_ixtal24", "mphy_refclk_ixtal24",
->                         GATE_BUS_TOP, 28, 0, 0),
->         GATE(CLK_SCLK_HSIC_12M, "sclk_hsic_12m", "ff_hsic_12m",
->                         GATE_BUS_TOP, 29, 0, 0),
->
->         GATE(0, "aclk300_disp1", "mout_user_aclk300_disp1",
-> -                       SRC_MASK_TOP2, 24, 0, 0),
-> +                       SRC_MASK_TOP2, 24, CLK_IS_CRITICAL, 0),
->
->         GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
->                         SRC_MASK_TOP7, 20, 0, 0),
-> --
-> 1.9.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Krzysztof
