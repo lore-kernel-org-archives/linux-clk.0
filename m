@@ -1,71 +1,80 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Nadav Haklai <nadavh@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCHv2 1/3] dt-bindings: arm: update Armada CP110 system controller binding
-Date: Wed, 21 Dec 2016 11:26:55 +0100
-Message-Id: <1482316017-22154-2-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 7 Dec 2016 16:16:54 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Ladislav Michl <ladis@linux-mips.org>, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org, Paul Walmsley <paul@pwsan.com>,
+	Richard Watts <rrw@kynesim.co.uk>, Tony Lindgren <tony@atomide.com>,
+	Alexander Kinzer <a.kinzer@plusoptix.de>,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
+Message-ID: <20161208001654.GD5423@codeaurora.org>
+References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com>
+ <2239782.MNuANFihMe@avalon>
+ <20161205093649.GA31898@localhost.localdomain>
+ <3176488.xoM6adFiVO@avalon>
+ <f020ef5f-0f0b-fd4c-d4da-55daa539c3d0@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <f020ef5f-0f0b-fd4c-d4da-55daa539c3d0@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-It turns out that in the CP110 HW block present in Marvell Armada
-7K/8K SoCs, gatable clock n°18 not only controls SD/MMC, but also the
-GOP block. This commit updates the Device Tree binding for this piece
-of hardware accordingly.
+On 12/05, Tero Kristo wrote:
+> On 05/12/16 13:08, Laurent Pinchart wrote:
+> >Hi Ladislav,
+> >
+> >On Monday 05 Dec 2016 10:36:49 Ladislav Michl wrote:
+> >>On Mon, Dec 05, 2016 at 10:46:43AM +0200, Laurent Pinchart wrote:
+> >>>On Monday 05 Dec 2016 09:22:10 Ladislav Michl wrote:
+> >>
+> >>[snip]
+> >>
+> >>>>Table 36 list two options with 26MHz clocks: m=443, n=11 and m=480, n=12
+> >>>>with a statement: "The choice between these two options with a 26 MHz
+> >>>>input should be based on characterization on the end system."
+> >>>>
+> >>>>Shall we care about that?
+> >>>
+> >>>I'd like to, but at the moment I don't see how. Proposals are welcome :-)
+> >>>I
+> >>
+> >>One of proposals raised earlier was DT property, but that idea was scratched
+> >>later.
+> >
+> >It might not be such a bad idea, given that the decision should be made based
+> >on the characterization of the whole system. One could argue that such
+> >platform information could have its place in DT.
+> >
+> >>>don't think addressing that issue should be a blocker to get this patch
+> >>>merged though.
+> >>
+> >>Of course not. I'd like to even see it in stable ;-)
+> >>
+> >>[snip]
+> >>
+> >>>I had tried that, but I find the code less readable :-S
+> >>
+> >>Oh... Please reconsider (I really do not like that extra test and extra
+> >>assignment to local variables (also I had 'precomputed' as mixed definition,
+> >>but Tero did not quite like that)) :-)
+> >
+> >I still like to favour code readability when possible (especially when the
+> >compiler should optimize both versions the same way). I'm not the maintainer
+> >of this driver though, so I'll let Tero decides what he prefers.
+> 
+> The compiler should ideally generate same size code for these both.
+> Personally, I don't mind which version goes in; I'd say both are as
+> readable.
+> 
+> Stephen, Mike, is one of you going to pick this up? I don't think I
+> have anything else to pull due to the ongoing discussion with the
+> other pending stuff.
+> 
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
----
- .../devicetree/bindings/arm/marvell/cp110-system-controller0.txt    | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+I have no problem picking up either version. Please send it with
+the appropriate tags added and I can merge it.
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-index 30c5469..07dbb35 100644
---- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-+++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
-@@ -45,7 +45,7 @@ The following clocks are available:
-    - 1 15	SATA
-    - 1 16	SATA USB
-    - 1 17	Main
--   - 1 18	SD/MMC
-+   - 1 18	SD/MMC/GOP
-    - 1 21	Slow IO (SPI, NOR, BootROM, I2C, UART)
-    - 1 22	USB3H0
-    - 1 23	USB3H1
-@@ -65,7 +65,7 @@ Required properties:
- 	"cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
- 	"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
- 	"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
--	"cpm-sata-usb", "cpm-main", "cpm-sd-mmc", "none", "none", "cpm-slow-io",
-+	"cpm-sata-usb", "cpm-main", "cpm-sd-mmc-gop", "none", "none", "cpm-slow-io",
- 	"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
- 
- Example:
-@@ -78,6 +78,6 @@ Example:
- 		gate-clock-output-names = "cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
- 			"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
- 			"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
--			"cpm-sata-usb", "cpm-main", "cpm-sd-mmc", "none", "none", "cpm-slow-io",
-+			"cpm-sata-usb", "cpm-main", "cpm-sd-mmc-gop", "none", "none", "cpm-slow-io",
- 			"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
- 	};
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
