@@ -1,42 +1,53 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 8 Dec 2016 13:14:35 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ladislav Michl <ladis@linux-mips.org>, Tero Kristo <t-kristo@ti.com>,
+	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	Paul Walmsley <paul@pwsan.com>, Richard Watts <rrw@kynesim.co.uk>,
+	Tony Lindgren <tony@atomide.com>,
+	Alexander Kinzer <a.kinzer@plusoptix.de>,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
+Message-ID: <20161208211435.GJ5423@codeaurora.org>
+References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com>
+ <20161208001654.GD5423@codeaurora.org>
+ <20161208071155.GA7530@localhost.localdomain>
+ <3225321.q72K2erxPs@avalon>
 MIME-Version: 1.0
-In-Reply-To: <1482832070-22668-7-git-send-email-ping.bai@nxp.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com> <1482832070-22668-7-git-send-email-ping.bai@nxp.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 27 Dec 2016 14:01:53 +0100
-Message-ID: <CACRpkdZYH-X=SG7AfCOgKA9U0WL9941e-zo_tgUF74mdns2_7Q@mail.gmail.com>
-Subject: Re: [PATCH v2 06/12] driver: pinctrl: imx: Add pinctrl driver support
- for imx6sll
-To: Bai Ping <ping.bai@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, jacky.baip@gmail.com
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <3225321.q72K2erxPs@avalon>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 27, 2016 at 10:47 AM, Bai Ping <ping.bai@nxp.com> wrote:
+On 12/08, Laurent Pinchart wrote:
+> Hi Ladislav,
+> 
+> On Thursday 08 Dec 2016 08:11:55 Ladislav Michl wrote:
+> > On Wed, Dec 07, 2016 at 04:16:54PM -0800, Stephen Boyd wrote:
+> > > On 12/05, Tero Kristo wrote:
+> > > > The compiler should ideally generate same size code for these both.
+> > > > Personally, I don't mind which version goes in; I'd say both are as
+> > > > readable.
+> > > > 
+> > > > Stephen, Mike, is one of you going to pick this up? I don't think I
+> > > > have anything else to pull due to the ongoing discussion with the
+> > > > other pending stuff.
+> > > 
+> > > I have no problem picking up either version. Please send it with
+> > > the appropriate tags added and I can merge it.
+> > 
+> > Here it is for your convenience. Of course I'd like to see smaller code
+> > to go in as exactly those sneaky tiny incremental code size increases
+> > made Linux kernel unusable on most of my hardware over time ;-)
+> > However, if Laurent is unhappy with changes I made, I will not object
+> > merging his version any more.
+> 
+> I'd rather keep my version, thank you. Let's not spend time chasing bytes.
+> 
 
-> Add pinctrl driver support for imx6sll.
->
-> Signed-off-by: Bai Ping <ping.bai@nxp.com>
-(...)
-> +++ b/arch/arm/mach-imx/Kconfig
-> @@ -514,6 +514,7 @@ config SOC_IMX6SL
->
->  config SOC_IMX6SLL
->         bool "i.MX6 SoloLiteLite support"
-> +       select PINCTRL_IMX6SLL
+Ok so I'll go apply the original patch v3 in this thread and dig
+out the tags myself.
 
-This needs to be separate so I can merge the pure pin control patch
-to my tree.
-
-Apart from that, look into using generic pinconf.
-
-Yours,
-Linus Walleij
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
