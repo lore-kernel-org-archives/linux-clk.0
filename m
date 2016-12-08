@@ -1,31 +1,59 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Dec 2016 15:34:01 -0800
+Date: Thu, 8 Dec 2016 14:54:24 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Jun Nie <jun.nie@linaro.org>, Baoyou Xie <xie.baoyou@zte.com.cn>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH v2 2/3] dt-bindings: zx296718-clk: add compatible for
- audio clock controller
-Message-ID: <20161221233401.GE8288@codeaurora.org>
-References: <1481873207-22929-1-git-send-email-shawnguo@kernel.org>
- <1481873207-22929-3-git-send-email-shawnguo@kernel.org>
+To: Bai Ping <ping.bai@nxp.com>
+Cc: shawnguo@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+	mark.rutland@arm.com, linus.walleij@linaro.org,
+	kernel@pengutronix.de, fabio.estevam@nxp.com,
+	daniel.lezcano@linaro.org, tglx@linutronix.de,
+	p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 10/11] Document: dt: binding: imx: update doc for imx6sll
+Message-ID: <20161208225424.GQ5423@codeaurora.org>
+References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
+ <1480660774-25055-11-git-send-email-ping.bai@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1481873207-22929-3-git-send-email-shawnguo@kernel.org>
+In-Reply-To: <1480660774-25055-11-git-send-email-ping.bai@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/16, Shawn Guo wrote:
-> From: Shawn Guo <shawn.guo@linaro.org>
+On 12/02, Bai Ping wrote:
+> Add necessary document update for i.MX6SLL support.
 > 
-> It adds the compatible string for zx296718 audio clock controller.
-> 
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Bai Ping <ping.bai@nxp.com>
 > ---
+>  .../devicetree/bindings/clock/imx6sll-clock.txt    | 13 ++++++++
+>  .../bindings/pinctrl/fsl,imx6sll-pinctrl.txt       | 37 ++++++++++++++++++++++
 
-Applied to clk-next
+Please split the bindings into different patches and put them
+closer to the drivers that use them in the series.
+
+>  2 files changed, 50 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> new file mode 100644
+> index 0000000..4f52efa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> @@ -0,0 +1,13 @@
+> +* Clock bindings for Freescale i.MX6 UltraLite
+> +
+> +Required properties:
+> +- compatible: Should be "fsl,imx6sll-ccm"
+> +- reg: Address and length of the register set
+> +- #clock-cells: Should be <1>
+> +- clocks: list of clock specifiers, must contain an entry for each required
+> +  entry in clock-names
+> +- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ipp_di1"
+> +
+> +The clock consumer should specify the desired clock by having the clock
+> +ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6sll-clock.h
+> +for the full list of i.MX6 SLL clock IDs.
+
+Can you add an example node here?
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
