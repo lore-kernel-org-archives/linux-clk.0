@@ -1,209 +1,429 @@
-Return-Path: <irina.tirdea@intel.com>
-From: Irina Tirdea <irina.tirdea@intel.com>
-To: linux-clk@vger.kernel.org,
-	x86@kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	alsa-devel@alsa-project.org,
-	Mark Brown <broonie@kernel.org>,
-	Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Len Brown <lenb@kernel.org>,
-	Irina Tirdea <irina.tirdea@intel.com>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [PATCH v6 3/3] platform/x86: Enable Atom PMC platform clocks
-Date: Fri,  9 Dec 2016 20:01:50 +0200
-Message-Id: <1481306510-7471-4-git-send-email-irina.tirdea@intel.com>
-In-Reply-To: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
-References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
+Return-Path: <jun.nie@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <1481189157-8995-2-git-send-email-shawnguo@kernel.org>
+References: <1481189157-8995-1-git-send-email-shawnguo@kernel.org> <1481189157-8995-2-git-send-email-shawnguo@kernel.org>
+From: Jun Nie <jun.nie@linaro.org>
+Date: Thu, 8 Dec 2016 22:55:26 +0800
+Message-ID: <CABymUCO9rpjgOcM5P1ue+Gzhpe3TdXFvKaDO-DU554JZD0CpFA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: zte: add audio clocks for zx296718
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Baoyou Xie <xie.baoyou@zte.com.cn>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Shawn Guo <shawn.guo@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The BayTrail and CherryTrail platforms provide platform clocks
-through their Power Management Controller (PMC).
+2016-12-08 17:25 GMT+08:00 Shawn Guo <shawnguo@kernel.org>:
+> From: Jun Nie <jun.nie@linaro.org>
+>
+> The audio related clock support is missing from the existing zx296718
+> clock driver.  Let's add it, so that the upstream ZX SPDIF driver can
+> work for HDMI audio support.
+>
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> ---
+>  drivers/clk/zte/clk-zx296718.c | 150 +++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/zte/clk.c          | 149 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/zte/clk.h          |  28 ++++++++
+>  3 files changed, 327 insertions(+)
+>
+> diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
+> index 707d62956e9b..eed8581b1b25 100644
+> --- a/drivers/clk/zte/clk-zx296718.c
+> +++ b/drivers/clk/zte/clk-zx296718.c
+> @@ -888,10 +888,160 @@ static int __init lsp1_clocks_init(struct device_node *np)
+>         return 0;
+>  }
+>
+> +PNAME(audio_wclk_common_p) = {
+> +       "audio_99m",
+> +       "audio_24m",
+> +};
+> +
+> +PNAME(audio_timer_p) = {
+> +       "audio_24m",
+> +       "audio_32k",
+> +};
+> +
+> +static struct zx_clk_mux audio_mux_clk[] = {
+> +       MUX(0, "i2s0_wclk_mux", audio_wclk_common_p, AUDIO_I2S0_CLK, 0, 1),
+> +       MUX(0, "i2s1_wclk_mux", audio_wclk_common_p, AUDIO_I2S1_CLK, 0, 1),
+> +       MUX(0, "i2s2_wclk_mux", audio_wclk_common_p, AUDIO_I2S2_CLK, 0, 1),
+> +       MUX(0, "i2s3_wclk_mux", audio_wclk_common_p, AUDIO_I2S3_CLK, 0, 1),
+> +       MUX(0, "i2c0_wclk_mux", audio_wclk_common_p, AUDIO_I2C0_CLK, 0, 1),
+> +       MUX(0, "spdif0_wclk_mux", audio_wclk_common_p, AUDIO_SPDIF0_CLK, 0, 1),
+> +       MUX(0, "spdif1_wclk_mux", audio_wclk_common_p, AUDIO_SPDIF1_CLK, 0, 1),
+> +       MUX(0, "timer_wclk_mux", audio_timer_p, AUDIO_TIMER_CLK, 0, 1),
+> +};
+> +
+> +struct zx_clk_audio_div_table i2s_wclk_div_table[] = {
+> +       {2048000, 0x3000030, 0xffff5700},
+> +       {4096000, 0x3000018, 0xffff2b80},
+> +       {2822400, 0x3000011, 0xffff89cb},
+> +       {3072000, 0x3000010, 0xffff1d00},
+> +       {4096000, 0x300000c, 0xffff15c0},
+> +       {5644800, 0x3000008, 0xffffc4e5},
+> +       {6144000, 0x3000008, 0xffff0e80},
+> +       {11289600, 0x3000004, 0xffff6273},
+> +       {12288000, 0x3000004, 0xffff0740},
+> +       {22579200, 0x3000002, 0xffff3139},
+> +       {24576000, 0x3000002, 0xffff03a0},
+> +};
+> +
+> +struct zx_clk_audio_div_table spdif_wclk_div_table[] = {
+> +       {2822400, 0x00023, 0xffff1397},
+> +       {3072000, 0x00020, 0xffff3a00},
+> +       {4096000, 0x00018, 0xffff2b80},
+> +       {5644800, 0x00011, 0xffff89cb},
+> +       {6144000, 0x00010, 0xffff1d00},
+> +       {11289600, 0x00008, 0xffffc4e5},
+> +       {12288000, 0x00008, 0xffff0e80},
+> +       {22579200, 0x00004, 0xffff6273},
+> +       {24576000, 0x00004, 0xffff0740},
+> +};
 
-The SoC supports up to 6 clocks (PMC_PLT_CLK[5:0]) with a
-frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL) for BayTrail
-an a frequency of 19.2 MHz (XTAL) for CherryTrail. These clocks
-are available for general system use, where appropriate. For example,
-the usage for platform clocks suggested in the datasheet is the
-following:
-  PLT_CLK[2:0] - Camera
-  PLT_CLK[3] - Audio Codec
-  PLT_CLK[4] -
-  PLT_CLK[5] - COMMs
+You can remove these two tables and table pointer member as I already
+removed table pointer assignment in macro AUDIO_DIV in this code. I am
+sorry for not cleaning code properly.
 
-Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- drivers/platform/x86/Kconfig               |  1 +
- drivers/platform/x86/pmc_atom.c            | 78 ++++++++++++++++++++++++++++--
- include/linux/platform_data/x86/pmc_atom.h |  3 ++
- 3 files changed, 79 insertions(+), 3 deletions(-)
+> +
+> +struct clk_zx_audio_divider audio_adiv_clk[] = {
+> +       AUDIO_DIV(0, "i2s0_wclk_div", "i2s0_wclk_mux", AUDIO_I2S0_DIV_CFG1, i2s_wclk_div_table),
+> +       AUDIO_DIV(0, "i2s1_wclk_div", "i2s1_wclk_mux", AUDIO_I2S1_DIV_CFG1, i2s_wclk_div_table),
+> +       AUDIO_DIV(0, "i2s2_wclk_div", "i2s2_wclk_mux", AUDIO_I2S2_DIV_CFG1, i2s_wclk_div_table),
+> +       AUDIO_DIV(0, "i2s3_wclk_div", "i2s3_wclk_mux", AUDIO_I2S3_DIV_CFG1, i2s_wclk_div_table),
+> +       AUDIO_DIV(0, "spdif0_wclk_div", "spdif0_wclk_mux", AUDIO_SPDIF0_DIV_CFG1, spdif_wclk_div_table),
+> +       AUDIO_DIV(0, "spdif1_wclk_div", "spdif1_wclk_mux", AUDIO_SPDIF1_DIV_CFG1, spdif_wclk_div_table),
+> +};
+> +
+> +struct zx_clk_div audio_div_clk[] = {
+> +       DIV_T(0, "tdm_wclk_div", "audio_16m384", AUDIO_TDM_CLK, 8, 4, 0, common_div_table),
+> +};
+> +
+> +struct zx_clk_gate audio_gate_clk[] = {
+> +       GATE(AUDIO_I2S0_WCLK, "i2s0_wclk", "i2s0_wclk_div", AUDIO_I2S0_CLK, 9, CLK_SET_RATE_PARENT, 0),
+> +       GATE(AUDIO_I2S1_WCLK, "i2s1_wclk", "i2s1_wclk_div", AUDIO_I2S1_CLK, 9, CLK_SET_RATE_PARENT, 0),
+> +       GATE(AUDIO_I2S2_WCLK, "i2s2_wclk", "i2s2_wclk_div", AUDIO_I2S2_CLK, 9, CLK_SET_RATE_PARENT, 0),
+> +       GATE(AUDIO_I2S3_WCLK, "i2s3_wclk", "i2s3_wclk_div", AUDIO_I2S3_CLK, 9, CLK_SET_RATE_PARENT, 0),
+> +       GATE(AUDIO_I2C0_WCLK, "i2c0_wclk", "i2c0_wclk_mux", AUDIO_I2C0_CLK, 9, CLK_SET_RATE_PARENT, 0),
+> +       GATE(AUDIO_SPDIF0_WCLK, "spdif0_wclk", "spdif0_wclk_div", AUDIO_SPDIF0_CLK, 9, CLK_SET_RATE_PARENT, 0),
+> +       GATE(AUDIO_SPDIF1_WCLK, "spdif1_wclk", "spdif1_wclk_div", AUDIO_SPDIF1_CLK, 9, CLK_SET_RATE_PARENT, 0),
+> +       GATE(AUDIO_TDM_WCLK, "tdm_wclk", "tdm_wclk_div", AUDIO_TDM_CLK, 17, CLK_SET_RATE_PARENT, 0),
+> +       GATE(AUDIO_TS_PCLK, "tempsensor_pclk", "clk49m5", AUDIO_TS_CLK, 1, 0, 0),
+> +};
+> +
+> +static struct clk_hw_onecell_data audio_hw_onecell_data = {
+> +       .num = AUDIO_NR_CLKS,
+> +       .hws = {
+> +               [AUDIO_NR_CLKS - 1] = NULL,
+> +       },
+> +};
+> +
+> +static int __init audio_clocks_init(struct device_node *np)
+> +{
+> +       void __iomem *reg_base;
+> +       int i, ret;
+> +
+> +       reg_base = of_iomap(np, 0);
+> +       if (!reg_base) {
+> +               pr_err("%s: Unable to map audio clk base\n", __func__);
+> +               return -ENXIO;
+> +       }
+> +
+> +       for (i = 0; i < ARRAY_SIZE(audio_mux_clk); i++) {
+> +               if (audio_mux_clk[i].id)
+> +                       audio_hw_onecell_data.hws[audio_mux_clk[i].id] =
+> +                                       &audio_mux_clk[i].mux.hw;
+> +
+> +               audio_mux_clk[i].mux.reg += (u64)reg_base;
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 21dce1e..c1b07ed 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1032,3 +1032,4 @@ endif # X86_PLATFORM_DEVICES
- config PMC_ATOM
- 	def_bool y
-         depends on PCI
-+	select COMMON_CLK
-diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
-index b53fbc1..324c44f 100644
---- a/drivers/platform/x86/pmc_atom.c
-+++ b/drivers/platform/x86/pmc_atom.c
-@@ -22,6 +22,8 @@
- #include <linux/seq_file.h>
- #include <linux/io.h>
- #include <linux/platform_data/x86/pmc_atom.h>
-+#include <linux/platform_device.h>
-+#include <linux/platform_data/x86/clk-byt-plt.h>
- 
- struct pmc_bit_map {
- 	const char *name;
-@@ -36,6 +38,11 @@ struct pmc_reg_map {
- 	const struct pmc_bit_map *pss;
- };
- 
-+struct pmc_data {
-+	const struct pmc_reg_map *map;
-+	const struct pmc_clk *clks;
-+};
-+
- struct pmc_dev {
- 	u32 base_addr;
- 	void __iomem *regmap;
-@@ -49,6 +56,29 @@ struct pmc_dev {
- static struct pmc_dev pmc_device;
- static u32 acpi_base_addr;
- 
-+static const struct pmc_clk byt_clks[] = {
-+	{
-+		.name = "xtal",
-+		.freq = 25000000,
-+		.parent_name = NULL,
-+	},
-+	{
-+		.name = "pll",
-+		.freq = 19200000,
-+		.parent_name = "xtal",
-+	},
-+	{},
-+};
-+
-+static const struct pmc_clk cht_clks[] = {
-+	{
-+		.name = "xtal",
-+		.freq = 19200000,
-+		.parent_name = NULL,
-+	},
-+	{},
-+};
-+
- static const struct pmc_bit_map d3_sts_0_map[] = {
- 	{"LPSS1_F0_DMA",	BIT_LPSS1_F0_DMA},
- 	{"LPSS1_F1_PWM1",	BIT_LPSS1_F1_PWM1},
-@@ -168,6 +198,16 @@ struct pmc_dev {
- 	.pss		= cht_pss_map,
- };
- 
-+static const struct pmc_data byt_data = {
-+	.map = &byt_reg_map,
-+	.clks = byt_clks,
-+};
-+
-+static const struct pmc_data cht_data = {
-+	.map = &cht_reg_map,
-+	.clks = cht_clks,
-+};
-+
- static inline u32 pmc_reg_read(struct pmc_dev *pmc, int reg_offset)
- {
- 	return readl(pmc->regmap + reg_offset);
-@@ -381,10 +421,36 @@ static int pmc_dbgfs_register(struct pmc_dev *pmc)
- }
- #endif /* CONFIG_DEBUG_FS */
- 
-+static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
-+			  const struct pmc_data *pmc_data)
-+{
-+	struct platform_device *clkdev;
-+	struct pmc_clk_data *clk_data;
-+
-+	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->base = pmc_regmap + PMC_CLK_CTL_0;
-+	clk_data->clks = pmc_data->clks;
-+
-+	clkdev = platform_device_register_data(&pdev->dev, "clk-byt-plt", -1,
-+					       clk_data, sizeof(*clk_data));
-+	if (IS_ERR(clkdev)) {
-+		kfree(clk_data);
-+		return PTR_ERR(clkdev);
-+	}
-+
-+	kfree(clk_data);
-+
-+	return 0;
-+}
-+
- static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
- 	struct pmc_dev *pmc = &pmc_device;
--	const struct pmc_reg_map *map = (struct pmc_reg_map *)ent->driver_data;
-+	const struct pmc_data *data = (struct pmc_data *)ent->driver_data;
-+	const struct pmc_reg_map *map = data->map;
- 	int ret;
- 
- 	/* Obtain ACPI base address */
-@@ -413,6 +479,12 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (ret)
- 		dev_warn(&pdev->dev, "debugfs register failed\n");
- 
-+	/* Register platform clocks - PMC_PLT_CLK [5:0] */
-+	ret = pmc_setup_clks(pdev, pmc->regmap, data);
-+	if (ret)
-+		dev_warn(&pdev->dev, "platform clocks register failed: %d\n",
-+			 ret);
-+
- 	pmc->init = true;
- 	return ret;
- }
-@@ -423,8 +495,8 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
-  * used by pci_match_id() call below.
-  */
- static const struct pci_device_id pmc_pci_ids[] = {
--	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_VLV_PMC), (kernel_ulong_t)&byt_reg_map },
--	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_CHT_PMC), (kernel_ulong_t)&cht_reg_map },
-+	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_VLV_PMC), (kernel_ulong_t)&byt_data },
-+	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_CHT_PMC), (kernel_ulong_t)&cht_data },
- 	{ 0, },
- };
- 
-diff --git a/include/linux/platform_data/x86/pmc_atom.h b/include/linux/platform_data/x86/pmc_atom.h
-index aa8744c..2d310cf 100644
---- a/include/linux/platform_data/x86/pmc_atom.h
-+++ b/include/linux/platform_data/x86/pmc_atom.h
-@@ -50,6 +50,9 @@
- 				BIT_ORED_DEDICATED_IRQ_GPSC | \
- 				BIT_SHARED_IRQ_GPSS)
- 
-+/* Platform clock control registers */
-+#define PMC_CLK_CTL_0		0x60
-+
- /* The timers acumulate time spent in sleep state */
- #define	PMC_S0IR_TMR		0x80
- #define	PMC_S0I1_TMR		0x84
--- 
-1.9.1
+Fix build test failure on 32bit system.
+ audio_mux_clk[i].mux.reg +=  (uintptr_t)reg_base;
+
+> +               ret = clk_hw_register(NULL, &audio_mux_clk[i].mux.hw);
+> +               if (ret) {
+> +                       pr_warn("audio clk %s init error!\n",
+> +                               audio_mux_clk[i].mux.hw.init->name);
+> +               }
+> +       }
+> +
+> +       for (i = 0; i < ARRAY_SIZE(audio_adiv_clk); i++) {
+> +               if (audio_adiv_clk[i].id)
+> +                       audio_hw_onecell_data.hws[audio_adiv_clk[i].id] =
+> +                                       &audio_adiv_clk[i].hw;
+> +
+> +               audio_adiv_clk[i].reg_base += (u64)reg_base;
+
+The same to this line and below cases.
+
+> +               ret = clk_hw_register(NULL, &audio_adiv_clk[i].hw);
+> +               if (ret) {
+> +                       pr_warn("audio clk %s init error!\n",
+> +                               audio_adiv_clk[i].hw.init->name);
+> +               }
+> +       }
+> +
+> +       for (i = 0; i < ARRAY_SIZE(audio_div_clk); i++) {
+> +               if (audio_div_clk[i].id)
+> +                       audio_hw_onecell_data.hws[audio_div_clk[i].id] =
+> +                                       &audio_div_clk[i].div.hw;
+> +
+> +               audio_div_clk[i].div.reg += (u64)reg_base;
+> +               ret = clk_hw_register(NULL, &audio_div_clk[i].div.hw);
+> +               if (ret) {
+> +                       pr_warn("audio clk %s init error!\n",
+> +                               audio_div_clk[i].div.hw.init->name);
+> +               }
+> +       }
+> +
+> +       for (i = 0; i < ARRAY_SIZE(audio_gate_clk); i++) {
+> +               if (audio_gate_clk[i].id)
+> +                       audio_hw_onecell_data.hws[audio_gate_clk[i].id] =
+> +                                       &audio_gate_clk[i].gate.hw;
+> +
+> +               audio_gate_clk[i].gate.reg += (u64)reg_base;
+> +               ret = clk_hw_register(NULL, &audio_gate_clk[i].gate.hw);
+> +               if (ret) {
+> +                       pr_warn("audio clk %s init error!\n",
+> +                               audio_gate_clk[i].gate.hw.init->name);
+> +               }
+> +       }
+> +
+> +       if (of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &audio_hw_onecell_data))
+> +               panic("could not register clk provider\n");
+> +       pr_info("audio-clk init over, nr:%d\n", AUDIO_NR_CLKS);
+> +
+> +       return 0;
+> +}
+> +
+>  static const struct of_device_id zx_clkc_match_table[] = {
+>         { .compatible = "zte,zx296718-topcrm", .data = &top_clocks_init },
+>         { .compatible = "zte,zx296718-lsp0crm", .data = &lsp0_clocks_init },
+>         { .compatible = "zte,zx296718-lsp1crm", .data = &lsp1_clocks_init },
+> +       { .compatible = "zte,zx296718-audiocrm", .data = &audio_clocks_init },
+>         { }
+>  };
+>
+> diff --git a/drivers/clk/zte/clk.c b/drivers/clk/zte/clk.c
+> index c4c1251bc1e7..ea97024b37aa 100644
+> --- a/drivers/clk/zte/clk.c
+> +++ b/drivers/clk/zte/clk.c
+> @@ -9,6 +9,7 @@
+>
+>  #include <linux/clk-provider.h>
+>  #include <linux/err.h>
+> +#include <linux/gcd.h>
+>  #include <linux/io.h>
+>  #include <linux/iopoll.h>
+>  #include <linux/slab.h>
+> @@ -310,3 +311,151 @@ struct clk *clk_register_zx_audio(const char *name,
+>
+>         return clk;
+>  }
+> +
+> +#define CLK_AUDIO_DIV_FRAC     BIT(0)
+> +#define CLK_AUDIO_DIV_INT      BIT(1)
+> +#define CLK_AUDIO_DIV_UNCOMMON BIT(1)
+> +
+> +#define CLK_AUDIO_DIV_FRAC_NSHIFT      16
+> +#define CLK_AUDIO_DIV_INT_FRAC_RE      BIT(16)
+> +#define CLK_AUDIO_DIV_INT_FRAC_MAX     (0xffff)
+> +#define CLK_AUDIO_DIV_INT_FRAC_MIN     (0x2)
+> +#define CLK_AUDIO_DIV_INT_INT_SHIFT    24
+> +#define CLK_AUDIO_DIV_INT_INT_WIDTH    4
+> +
+> +#define to_clk_zx_audio_div(_hw) container_of(_hw, struct clk_zx_audio_divider, hw)
+> +
+> +static unsigned long audio_calc_rate(struct clk_zx_audio_divider *audio_div,
+> +                                    u32 reg_frac, u32 reg_int,
+> +                                    unsigned long parent_rate)
+> +{
+> +       unsigned long rate, m, n;
+> +
+> +       if (audio_div->table) {
+> +               const struct zx_clk_audio_div_table *divt = audio_div->table;
+> +
+> +               for (; divt->rate; divt++) {
+> +                       if ((divt->int_reg == reg_int) && (divt->frac_reg == reg_frac))
+> +                               return divt->rate;
+> +               }
+> +       }
+> +       if (audio_div->table)
+> +               pr_warn("cannot found the config(int_reg:0x%x, frac_reg:0x%x) in table, we will caculate it\n",
+> +                       reg_int, reg_frac);
+
+Logic of register value table can be removed now.
+
+> +
+> +       m = reg_frac & 0xffff;
+> +       n = (reg_frac >> 16) & 0xffff;
+> +
+> +       m = (reg_int & 0xffff) * n + m;
+> +       rate = (parent_rate * n) / m;
+> +
+> +       return rate;
+> +}
+> +
+> +static void audio_calc_reg(struct clk_zx_audio_divider *audio_div,
+> +                          struct zx_clk_audio_div_table *div_table,
+> +                          unsigned long rate, unsigned long parent_rate)
+> +{
+> +       unsigned int reg_int, reg_frac;
+> +       unsigned long m, n, div;
+> +
+> +       if (audio_div->table) {
+> +               const struct zx_clk_audio_div_table *divt = audio_div->table;
+> +
+> +               for (; divt->rate; divt++) {
+> +                       if (divt->rate == rate) {
+> +                               div_table->rate = divt->rate;
+> +                               div_table->int_reg = divt->int_reg;
+> +                               div_table->frac_reg = divt->frac_reg;
+> +                               return;
+> +                       }
+> +               }
+> +       }
+> +       if (audio_div->table)
+> +               pr_warn("cannot found the rate(%ld) in table, we will caculate the config\n",
+> +                       rate);
+
+Table is not used here actually neither.
+
+> +
+> +       reg_int = parent_rate / rate;
+> +
+> +       if (reg_int > CLK_AUDIO_DIV_INT_FRAC_MAX)
+> +               reg_int = CLK_AUDIO_DIV_INT_FRAC_MAX;
+> +       else if (reg_int < CLK_AUDIO_DIV_INT_FRAC_MIN)
+> +               reg_int = 0;
+> +       m = parent_rate - rate * reg_int;
+> +       n = rate;
+> +
+> +       div = gcd(m, n);
+> +       m = m / div;
+> +       n = n / div;
+> +
+> +       if ((m >> 16) || (n >> 16)) {
+> +               if (m > n) {
+> +                       n = n * 0xffff / m;
+> +                       m = 0xffff;
+> +               } else {
+> +                       m = m * 0xffff / n;
+> +                       n = 0xffff;
+> +               }
+> +       }
+> +       reg_frac = m | (n << 16);
+> +
+> +       div_table->rate = (ulong)(parent_rate * n) / ((ulong)reg_int * n + m);
+> +       div_table->int_reg = reg_int;
+> +       div_table->frac_reg = reg_frac;
+> +}
+> +
+> +static unsigned long zx_audio_div_recalc_rate(struct clk_hw *hw,
+> +                                         unsigned long parent_rate)
+> +{
+> +       struct clk_zx_audio_divider *zx_audio_div = to_clk_zx_audio_div(hw);
+> +       u32 reg_frac, reg_int;
+> +
+> +       reg_frac = readl_relaxed(zx_audio_div->reg_base);
+> +       reg_int = readl_relaxed(zx_audio_div->reg_base + 0x4);
+> +
+> +       return audio_calc_rate(zx_audio_div, reg_frac, reg_int, parent_rate);
+> +}
+> +
+> +static long zx_audio_div_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                               unsigned long *prate)
+> +{
+> +       struct clk_zx_audio_divider *zx_audio_div = to_clk_zx_audio_div(hw);
+> +       struct zx_clk_audio_div_table divt;
+> +
+> +       audio_calc_reg(zx_audio_div, &divt, rate, *prate);
+> +
+> +       return audio_calc_rate(zx_audio_div, divt.frac_reg, divt.int_reg, *prate);
+> +}
+> +
+> +static int zx_audio_div_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                                   unsigned long parent_rate)
+> +{
+> +       struct clk_zx_audio_divider *zx_audio_div = to_clk_zx_audio_div(hw);
+> +       struct zx_clk_audio_div_table divt;
+> +       unsigned int val;
+> +
+> +       audio_calc_reg(zx_audio_div, &divt, rate, parent_rate);
+> +       if (divt.rate != rate)
+> +               pr_info("the real rate is:%ld", divt.rate);
+> +
+> +       writel_relaxed(divt.frac_reg, zx_audio_div->reg_base);
+> +
+> +       val = readl_relaxed(zx_audio_div->reg_base + 0x4);
+> +       val &= ~0xffff;
+> +       val |= divt.int_reg | CLK_AUDIO_DIV_INT_FRAC_RE;
+> +       writel_relaxed(val, zx_audio_div->reg_base + 0x4);
+> +
+> +       mdelay(1);
+> +
+> +       val = readl_relaxed(zx_audio_div->reg_base + 0x4);
+> +       val &= ~CLK_AUDIO_DIV_INT_FRAC_RE;
+> +       writel_relaxed(val, zx_audio_div->reg_base + 0x4);
+> +
+> +       return 0;
+> +}
+> +
+> +const struct clk_ops zx_audio_div_ops = {
+> +       .recalc_rate = zx_audio_div_recalc_rate,
+> +       .round_rate = zx_audio_div_round_rate,
+> +       .set_rate = zx_audio_div_set_rate,
+> +};
+> diff --git a/drivers/clk/zte/clk.h b/drivers/clk/zte/clk.h
+> index 0df3474b2cf3..6e7ccb752c24 100644
+> --- a/drivers/clk/zte/clk.h
+> +++ b/drivers/clk/zte/clk.h
+> @@ -153,6 +153,32 @@ struct zx_clk_div {
+>         .id = _id,                                                      \
+>  }
+>
+> +struct zx_clk_audio_div_table {
+> +       unsigned long rate;
+> +       unsigned int int_reg;
+> +       unsigned int frac_reg;
+> +};
+> +
+> +struct clk_zx_audio_divider {
+> +       struct clk_hw                           hw;
+> +       void __iomem                            *reg_base;
+> +       const struct zx_clk_audio_div_table     *table;
+> +       unsigned int                            rate_count;
+> +       spinlock_t                              *lock;
+> +       u16                                     id;
+> +};
+> +
+> +#define AUDIO_DIV(_id, _name, _parent, _reg, _table)                   \
+
+Remove unused table here.
+
+> +{                                                                      \
+> +       .reg_base       = (void __iomem *) _reg,                        \
+> +       .lock           = &clk_lock,                                    \
+> +       .hw.init        = CLK_HW_INIT(_name,                            \
+> +                                     _parent,                          \
+> +                                     &zx_audio_div_ops,                \
+> +                                     0),                               \
+> +       .id = _id,                                                      \
+> +}
+> +
+>  struct clk *clk_register_zx_pll(const char *name, const char *parent_name,
+>         unsigned long flags, void __iomem *reg_base,
+>         const struct zx_pll_config *lookup_table, int count, spinlock_t *lock);
+> @@ -167,4 +193,6 @@ struct clk *clk_register_zx_audio(const char *name,
+>                                   unsigned long flags, void __iomem *reg_base);
+>
+>  extern const struct clk_ops zx_pll_ops;
+> +extern const struct clk_ops zx_audio_div_ops;
+> +
+>  #endif
+> --
+> 1.9.1
+>
