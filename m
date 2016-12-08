@@ -1,57 +1,54 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>,
- Thomas Abraham <thomas.ab@samsung.com>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Ben Gamari <ben@smart-cactus.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- b.zolnierkie@samsung.com
-Subject: [PATCH 0/2] ARM: add Exynos4412 Prime SoC support
-Date: Thu, 29 Dec 2016 14:36:49 +0100
-Message-id: <1483018611-27998-1-git-send-email-b.zolnierkie@samsung.com>
-References: 
- <CGME20161229133722epcas5p1e138af585fea93a42962f3a7414a081f@epcas5p1.samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:47926 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753122AbcLHVQD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2016 16:16:03 -0500
+Date: Thu, 8 Dec 2016 13:16:01 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
+        Richard Watts <rrw@kynesim.co.uk>,
+        Tony Lindgren <tony@atomide.com>,
+        Alexander Kinzer <a.kinzer@plusoptix.de>
+Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
+Message-ID: <20161208211601.GK5423@codeaurora.org>
+References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 12/02, Laurent Pinchart wrote:
+> From: Richard Watts <rrw@kynesim.co.uk>
+> 
+> The OMAP36xx DPLL5, driving EHCI USB, can be subject to a long-term
+> frequency drift. The frequency drift magnitude depends on the VCO update
+> rate, which is inversely proportional to the PLL divider. The kernel
+> DPLL configuration code results in a high value for the divider, leading
+> to a long term drift high enough to cause USB transmission errors. In
+> the worst case the USB PHY's ULPI interface can stop responding,
+> breaking USB operation completely. This manifests itself on the
+> Beagleboard xM by the LAN9514 reporting 'Cannot enable port 2. Maybe the
+> cable is bad?' in the kernel log.
+> 
+> Errata sprz319 advisory 2.1 documents PLL values that minimize the
+> drift. Use them automatically when DPLL5 is used for USB operation,
+> which we detect based on the requested clock rate. The clock framework
+> will still compute the PLL parameters and resulting rate as usual, but
+> the PLL M and N values will then be overridden. This can result in the
+> effective clock rate being slightly different than the rate cached by
+> the clock framework, but won't cause any adverse effect to USB
+> operation.
+> 
+> Signed-off-by: Richard Watts <rrw@kynesim.co.uk>
+> [Upported from v3.2 to v4.9]
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
 
-This patchset adds support for Exynos4412 Prime SoC (it supports
-additional 1704MHz & 1600MHz CPU OPPs and 1500MHz CPU OPP is just
-a regular non-turbo OPP on this SoC).
-
-ODROID-X2/U2/U3 boards use Exynos4412 Prime SoC version so their
-board files are updated accordingly.
-
-This patchset brings 21% CPU performance increase on affected
-boards (as tested on ODROID-U3 board).
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-
-Bartlomiej Zolnierkiewicz (2):
-  clk: samsung: exynos4412: add cpu clock configuration data for
-    Exynos4412 Prime
-  ARM: dts: Add CPU OPPs for Exynos4412 Prime
-
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 +--
- arch/arm/boot/dts/exynos4412-odroidu3.dts       |  5 +--
- arch/arm/boot/dts/exynos4412-odroidx2.dts       |  1 +
- arch/arm/boot/dts/exynos4412-prime.dtsi         | 41 +++++++++++++++++++++++++
- arch/arm/boot/dts/exynos4412.dtsi               |  2 +-
- drivers/clk/samsung/clk-exynos4.c               |  4 +++
- 6 files changed, 52 insertions(+), 5 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos4412-prime.dtsi
+Applied to clk-next
 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
