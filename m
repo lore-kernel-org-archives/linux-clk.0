@@ -1,74 +1,41 @@
-Return-Path: <Nicolas.FERRE@atmel.com>
-Subject: Re: [RFC PATCH 0/3] clk: at91: audio PLL clock
-To: Boris BREZILLON <boris.brezillon@free-electrons.com>,
-	<linux-arm-kernel@lists.infradead.org>, <maxime.ripard@free-electrons.com>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>
-References: <cover.1481021115.git.nicolas.ferre@atmel.com>
-CC: Alexandre Belloni <alexandre.belloni@free-electrons.com>, "Ludovic
- Desroches" <ludovic.desroches@atmel.com>, Songjun Wu <songjun.wu@atmel.com>,
-	<linux-kernel@vger.kernel.org>
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Message-ID: <d178db55-751a-329f-d083-d97564637382@atmel.com>
-Date: Tue, 6 Dec 2016 12:14:59 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 8 Dec 2016 15:06:32 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: bcm: Support rate change propagation on bcm2835
+ clocks
+Message-ID: <20161208230632.GS5423@codeaurora.org>
+References: <1480626020-20031-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1480626020-20031-2-git-send-email-boris.brezillon@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <cover.1481021115.git.nicolas.ferre@atmel.com>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: nicolas.ferre@atmel.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1480626020-20031-2-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Le 06/12/2016 à 11:55, Nicolas Ferre a écrit :
-> This series covers the addition of the Audio PLL clock found on AT91 SoCs like
-> the SAMA5D2.
-> I also added the use of these clocks by the ClassD audi amplifier in both SoC
-> and board DT.
+On 12/01, Boris Brezillon wrote:
+> Some peripheral clocks, like the VEC (Video EnCoder) clock need to be set
+> to a precise rate (in our case 108MHz). With the current implementation,
+> where peripheral clocks are not allowed to forward rate change requests
+> to their parents, it is impossible to match this requirement unless the
+> bootloader has configured things correctly, or a specific rate has been
+> assigned through the DT (with the assigned-clk-rates property).
 > 
-> The Audio PLL is described in the sama5d2 datasheet chapter "29.8 Audio PLL".
+> Add a new field to struct bcm2835_clock_data to specify which parent
+> clocks accept rate change propagation, and support set rate propagation
+> in bcm2835_clock_determine_rate().
 > 
-> Even if "it works" (!), note that I'm not satisfied with the current code and
-> would need some advice from people more accustomed with the CCF and
-> particularly composite audio PLL/clocks like these. For example, I do not take
-> into account the limits of these clocks (as described in the datasheet) and the
-> dependency between the PAD and the PMC child clocks.
-> 
-> Thanks in advance for your inputs.
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> ---
 
-Note as well that Boris already sent me a review of the first posting of
-this patch ("[PATCH] clk: at91: add audio pll clock driver" on 31 Jul.
-2015) and most of his comments are still relevant.
-
-https://patchwork.kernel.org/patch/6910111/
-https://www.spinics.net/lists/arm-kernel/msg436120.html
-
-But I would like some comments about the whole architecture of these
-clocks and how I could rearrange them and maybe use some of the common
-facilities of the CCF (composite with gate + fractionnal? + divider?, etc.)
-
-Regards,
-
-
-> Cyrille Pitchen (2):
->   ARM: dts: at91: sama5d2: add classd nodes
->   ARM: dts: at91: sama5d2_xplained: add pin muxing and enable classd
-> 
-> Nicolas Ferre (1):
->   clk: at91: add audio pll clock driver
-> 
->  .../devicetree/bindings/clock/at91-clock.txt       |  10 +
->  arch/arm/boot/dts/at91-sama5d2_xplained.dts        |  16 ++
->  arch/arm/boot/dts/sama5d2.dtsi                     |  39 +++-
->  arch/arm/mach-at91/Kconfig                         |   4 +
->  drivers/clk/at91/Makefile                          |   2 +
->  drivers/clk/at91/clk-audio-pll-pad.c               | 238 +++++++++++++++++++
->  drivers/clk/at91/clk-audio-pll-pmc.c               | 184 +++++++++++++++
->  drivers/clk/at91/clk-audio-pll.c                   | 253 +++++++++++++++++++++
->  include/linux/clk/at91_pmc.h                       |  25 ++
->  9 files changed, 770 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/at91/clk-audio-pll-pad.c
->  create mode 100644 drivers/clk/at91/clk-audio-pll-pmc.c
->  create mode 100644 drivers/clk/at91/clk-audio-pll.c
-> 
-
+Applied to clk-next
 
 -- 
-Nicolas Ferre
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
