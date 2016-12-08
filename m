@@ -1,115 +1,61 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:46347 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932299AbcLHVYM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2016 16:24:12 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
+        Richard Watts <rrw@kynesim.co.uk>,
+        Tony Lindgren <tony@atomide.com>,
+        Alexander Kinzer <a.kinzer@plusoptix.de>
+Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
+Date: Thu, 08 Dec 2016 23:24:36 +0200
+Message-ID: <6869868.ALm3az2NcY@avalon>
+In-Reply-To: <20161208211601.GK5423@codeaurora.org>
+References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com> <20161208211601.GK5423@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <d70f2809-102c-a3de-c77c-43af27bbcbbc@arm.com>
-References: <d70f2809-102c-a3de-c77c-43af27bbcbbc@arm.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 12 Dec 2016 12:41:21 +0800
-Message-ID: <CAGb2v67kCAr6Ty5=Gg8vOGNC6xhuRM66Wa=H+C3AD=_d_H+N8w@mail.gmail.com>
-Subject: Re: [linux-sunxi] sunxi-ng clocks: leaving certain clocks alone?
-To: =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	=?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Alexander Graf <agraf@suse.de>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Dec 12, 2016 at 7:54 AM, Andr=C3=A9 Przywara <andre.przywara@arm.co=
-m> wrote:
-> Hi,
->
-> I was observing that the new sunxi-ng clock code apparently explicitly
-> turns off _all_ clocks that are not used or needed. I find this rather
-> unfortunate, as I wanted to use the THS temperature sensor from ARM
-> Trusted Firmware to implement emergency shutdown or DVFS throttling.
-> That works until the clock framework finds the clock (as enumerated in
-> ccu-sun50i-a64.c) and obviously explicitly clears bit 31 in the THS mod
-> clock register and bit 8 in the respective clock gate register.
-> Turning them manually back on via /dev/mem or removing the THS clock
-> from the sunxi-ng driver fixes this for me.
->
-> This was not happening with the old Allwinner clocks, since the kernel
-> wouldn't even know about it if there was no driver and the clock wasn't
-> mentioned in the DT.
->
-> Now with sunxi-ng even though the THS clock is not actually referenced
-> or used in the DT, the kernel turns it off. I would expect that upon
-> entering the kernel all unneeded clocks are turned off anyway, so there
-> is no need to mess with clocks that have no user, but are enumerated in
-> the ccu driver.
+Hi Stephen,
 
-I can't say that's absolutely true (wink).
+On Thursday 08 Dec 2016 13:16:01 Stephen Boyd wrote:
+> On 12/02, Laurent Pinchart wrote:
+> > From: Richard Watts <rrw@kynesim.co.uk>
+> > 
+> > The OMAP36xx DPLL5, driving EHCI USB, can be subject to a long-term
+> > frequency drift. The frequency drift magnitude depends on the VCO update
+> > rate, which is inversely proportional to the PLL divider. The kernel
+> > DPLL configuration code results in a high value for the divider, leading
+> > to a long term drift high enough to cause USB transmission errors. In
+> > the worst case the USB PHY's ULPI interface can stop responding,
+> > breaking USB operation completely. This manifests itself on the
+> > Beagleboard xM by the LAN9514 reporting 'Cannot enable port 2. Maybe the
+> > cable is bad?' in the kernel log.
+> > 
+> > Errata sprz319 advisory 2.1 documents PLL values that minimize the
+> > drift. Use them automatically when DPLL5 is used for USB operation,
+> > which we detect based on the requested clock rate. The clock framework
+> > will still compute the PLL parameters and resulting rate as usual, but
+> > the PLL M and N values will then be overridden. This can result in the
+> > effective clock rate being slightly different than the rate cached by
+> > the clock framework, but won't cause any adverse effect to USB
+> > operation.
+> > 
+> > Signed-off-by: Richard Watts <rrw@kynesim.co.uk>
+> > [Upported from v3.2 to v4.9]
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > ---
+> 
+> Applied to clk-next
 
->
-> I wonder if this kills simplefb as well, for instance, since I believe
-> that U-Boot needs to turn on certain clocks and relies on them staying up=
-.
+Thank you.
 
-The simplefb bindings takes clocks and regulators expressly for the
-purpose of keeping them enabled.
+-- 
+Regards,
 
->
-> So my questions:
-> 1) Is this expected behaviour?
+Laurent Pinchart
 
-Yes.
-
-> 2) If yes, should it really be?
-> 3) If yes, shouldn't there be way to explicitly tell Linux to leave that
-> clock alone, preferably via DT? Although the sunxi-ng clocks take
-> control over the whole CCU unit, I wonder if it should really mess with
-> clocks there are not referenced in the DT.
-
-As it owns the whole CCU unit, why not? And how would it know if some
-clock is referenced or not, unless going through the whole device tree?
-
-Furthermore, nothing prevents another device driver from referencing
-said clock and turning it off when it's not in use. Think THS driver
-with runtime PM.
-
-Are you also mapping the THS to secure only? Otherwise nothing would
-prevent Linux from also claiming it.
-
->
-> Maybe there is some way to reference those clocks via some dummy driver
-> or DT node to avoid this behaviour? Is there any prior art in this respec=
-t?
-
-If you want a clock to not be disabled by anyone, adding CLK_IS_CRITICAL
-to its flags is the proper option. This is done in the clk driver though.
-
-If you just don't want the clk subsystem to disable unused clks at boot
-time, you can add "clk_ignore_unused" to the kernel boot parameters.
-I think this is more of a hack and debugging tool though.
-
-About dummy drivers, simplefb comes to mind again. But simplefb disables
-them when it gets kicked out by the drm driver. Maybe there are other
-examples.
-
-Regards
-ChenYu
-
-> I think this issue will affect more future users (thinking of EFI RTC,
-> EFI graphics, etc.), so I wanted to start a discussion on this.
->
-> Any input welcome.
->
-> Cheers,
-> Andre.
->
-> P.S. For reference my use case: ARM Trusted Firmware (ATF) enables the
-> temperature sensor (THS) and programs a shutdown value. It programs the
-> respective interrupt as secure and registers an IRQ handler in ATF to
-> shutdown the system or take other appropriate matters to avoid
-> overheating. Additionally the sensor is exported via the generic SCPI
-> interface, so the existing scpi-hwmon driver picks it up and reports it
-> to whoever is interested in Linux land via the normal interfaces.
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
