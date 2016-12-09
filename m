@@ -1,95 +1,83 @@
-Return-Path: <shawn.lin@rock-chips.com>
-Subject: Re: [PATCH v1 2/3] clk: rockchip: add clock controller for rk3328
-To: Elaine Zhang <zhangqing@rock-chips.com>
-References: <1481618869-1239-1-git-send-email-zhangqing@rock-chips.com>
- <1481618869-1239-3-git-send-email-zhangqing@rock-chips.com>
-Cc: heiko@sntech.de, mturquette@baylibre.com, sboyd@codeaurora.org,
- xf@rock-chips.com, shawn.lin@rock-chips.com, mark.rutland@arm.com,
- devicetree@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- robh+dt@kernel.org, cl@rock-chips.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <acc7fa12-07ee-eab0-c8e8-b8bba00d9b00@rock-chips.com>
-Date: Tue, 13 Dec 2016 17:38:44 +0800
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 8 Dec 2016 16:20:41 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [v2] clk:mmp:clk-of-mmp2: Free memory and Unmap region obtained
+ by kzalloc and of_iomap
+Message-ID: <20161209002041.GB5423@codeaurora.org>
+References: <1474369738-16140-1-git-send-email-arvind.yadav.cs@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1481618869-1239-3-git-send-email-zhangqing@rock-chips.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1474369738-16140-1-git-send-email-arvind.yadav.cs@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi, Elaine,
-
-I always only keep an eye for mmc stuff here. :)
-
-On 2016/12/13 16:47, Elaine Zhang wrote:
-> Add the clock tree definition for the new rk3328 SoC.
->
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+On 09/20, Arvind Yadav wrote:
+> From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> 
+> Free memory and memory mapping , if mmp2_clk_init is not successful.
+> 
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 > ---
+>  drivers/clk/mmp/clk-of-mmp2.c |   15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+> index 3a51fff..2376d28 100644
+> --- a/drivers/clk/mmp/clk-of-mmp2.c
+> +++ b/drivers/clk/mmp/clk-of-mmp2.c
+> @@ -309,21 +309,23 @@ static void __init mmp2_clk_init(struct device_node *np)
+>  	pxa_unit->mpmu_base = of_iomap(np, 0);
+>  	if (!pxa_unit->mpmu_base) {
+>  		pr_err("failed to map mpmu registers\n");
+> -		return;
+> +		goto free_memory;
+>  	}
+>  
+>  	pxa_unit->apmu_base = of_iomap(np, 1);
+>  	if (!pxa_unit->mpmu_base) {
+>  		pr_err("failed to map apmu registers\n");
+> -		return;
+> +		goto unmap_mpmu_region;
+>  	}
+>  
+>  	pxa_unit->apbc_base = of_iomap(np, 2);
+>  	if (!pxa_unit->apbc_base) {
+>  		pr_err("failed to map apbc registers\n");
+> -		return;
+> +		goto unmap_apmu_region;
+>  	}
+>  
+> +	return;
 
-----8<--------------
-
-> +
-> +	/* PD_MMC */
-> +	MMC(SCLK_SDMMC_DRV, "sdmmc_drv", "sclk_sdmmc",
-> +	    RK3328_SDMMC_CON0, 1),
-> +	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "sclk_sdmmc",
-> +	    RK3328_SDMMC_CON1, 0),
-> +
-
-All of offset for these *_sample are wrong, and they should be 1
-, the same as *_drv. You could refer to P565 of TRM instead the
-section of CRU for these details.
-
-> +	MMC(SCLK_SDIO_DRV, "sdio_drv", "sclk_sdio",
-> +	    RK3328_SDIO_CON0, 1),
-> +	MMC(SCLK_SDIO_SAMPLE, "sdio_sample", "sclk_sdio",
-> +	    RK3328_SDIO_CON1, 0),
-> +
-> +	MMC(SCLK_EMMC_DRV, "emmc_drv", "sclk_emmc",
-> +	    RK3328_EMMC_CON0, 1),
-> +	MMC(SCLK_EMMC_SAMPLE, "emmc_sample", "sclk_emmc",
-> +	    RK3328_EMMC_CON1, 0),
-> +
-> +	MMC(SCLK_SDMMC_EXT_DRV, "sdmmc_ext_drv", "sclk_sdmmc_ext",
-> +	    RK3328_SDMMC_EXT_CON0, 1),
-> +	MMC(SCLK_SDMMC_EXT_SAMPLE, "sdmmc_ext_sample", "sclk_sdmmc_ext",
-> +	    RK3328_SDMMC_EXT_CON1, 0),
-> +};
-> +
-
-----8<--------
-
-
-> +#define RK3328_SDMMC_CON0		0x380
-> +#define RK3328_SDMMC_CON1		0x384
-> +#define RK3328_SDIO_CON0		0x388
-> +#define RK3328_SDIO_CON1		0x38c
-> +#define RK3328_EMMC_CON0		0x390
-> +#define RK3328_EMMC_CON1		0x394
-> +#define RK3328_SDMMC_EXT_CON0		0x398
-> +#define RK3328_SDMMC_EXT_CON1		0x39C
-
-
-Just wondering is it worth, but this uppercase 'C' isn't
-consistent with the former lowercase
-
+That doesn't seem right. I moved the return...
 
 > +
->  #define RK3368_PLL_CON(x)		RK2928_PLL_CON(x)
->  #define RK3368_CLKSEL_CON(x)		((x) * 0x4 + 0x100)
->  #define RK3368_CLKGATE_CON(x)		((x) * 0x4 + 0x200)
-> @@ -130,6 +152,7 @@
->  enum rockchip_pll_type {
->  	pll_rk3036,
->  	pll_rk3066,
-> +	pll_rk3328,
->  	pll_rk3399,
->  };
->
->
+>  	mmp_clk_init(np, &pxa_unit->unit, MMP2_NR_CLKS);
+>  
+>  	mmp2_pll_init(pxa_unit);
+> @@ -333,6 +335,13 @@ static void __init mmp2_clk_init(struct device_node *np)
+>  	mmp2_axi_periph_clk_init(pxa_unit);
+>  
+>  	mmp2_clk_reset_init(np, pxa_unit);
 
+To here.
+
+> +
+> +unmap_apmu_region:
+> +	iounmap(pxa_unit->apmu_base);
+> +unmap_mpmu_region:
+> +	iounmap(pxa_unit->mpmu_base);
+> +free_memory:
+> +	kfree(pxa_unit);
+>  }
+>  
+>  CLK_OF_DECLARE(mmp2_clk, "marvell,mmp2-clock", mmp2_clk_init);
+> -- 
+> 1.7.9.5
+> 
 
 -- 
-Best Regards
-Shawn Lin
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
