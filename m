@@ -1,40 +1,80 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Dec 2016 16:14:53 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Nadav Haklai <nadavh@marvell.com>, Hanna Hawa <hannah@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 1/3] dt-bindings: arm: update Armada CP110 system
- controller binding
-Message-ID: <20161222001453.GW8288@codeaurora.org>
-References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1482316017-22154-2-git-send-email-thomas.petazzoni@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1482316017-22154-2-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <irina.tirdea@intel.com>
+From: Irina Tirdea <irina.tirdea@intel.com>
+To: linux-clk@vger.kernel.org,
+	x86@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	alsa-devel@alsa-project.org,
+	Mark Brown <broonie@kernel.org>,
+	Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Len Brown <lenb@kernel.org>,
+	Irina Tirdea <irina.tirdea@intel.com>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/3] Add platform clock for BayTrail platforms
+Date: Fri,  9 Dec 2016 20:01:47 +0200
+Message-Id: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/21, Thomas Petazzoni wrote:
-> It turns out that in the CP110 HW block present in Marvell Armada
-> 7K/8K SoCs, gatable clock n°18 not only controls SD/MMC, but also the
-> GOP block. This commit updates the Device Tree binding for this piece
-> of hardware accordingly.
-> 
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> ---
+These patches specifically enable the audio MCLK required by Baytrail CR
+devices. It is the remaining part of a bigger set of patches
+(already merged in Mark's tree) that enable sound for Baytrail CR devices
+(especially Asus T100TAF) [1]. They include the clock driver and enabling
+the clock in the pmc_atom code (along with moving of the non-architectural
+pmc_atom driver code into drivers/platform/x86).
 
-Applied to clk-next
+[1] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-August/111704.html
+
+Changes from v5:
+ - fix build error reported by kbuild test robot
+ - split the clk driver code from x86 platform changes
+
+Changes from v4:
+ - move the pmc_atom driver from arch/x86/platform/atom to
+drivers/platform/x86
+
+Changes from v3:
+ - replace devm_kzalloc with devm_kcalloc
+ - add x86 architecture maintainers
+
+Changes from v2:
+ - move clk platform data structures to a separate include file
+ - store clk_hw pointer for the fixed rate clocks
+
+Changes from v1:
+ - register the clk device as child of pmc device
+ - pass iomem pointer from pmc driver to clk driver to avoid using
+pmc_atom_read()/write() and use readl/writel API instead
+ - use devm_clk_hw_register/clkdev_hw_create instead of
+clk_register/clkdev_create
+
+Irina Tirdea (3):
+  clk: x86: Add Atom PMC platform clocks
+  arch/x86/platform/atom: Move pmc_atom to drivers/platform/x86
+  platform/x86: Enable Atom PMC platform clocks
+
+ arch/x86/Kconfig                                   |   4 -
+ arch/x86/platform/atom/Makefile                    |   1 -
+ drivers/acpi/acpi_lpss.c                           |   2 +-
+ drivers/clk/x86/Makefile                           |   3 +
+ drivers/clk/x86/clk-byt-plt.c                      | 380 +++++++++++++++++++++
+ drivers/platform/x86/Kconfig                       |   5 +
+ drivers/platform/x86/Makefile                      |   1 +
+ .../atom => drivers/platform/x86}/pmc_atom.c       |  81 ++++-
+ include/linux/platform_data/x86/clk-byt-plt.h      |  31 ++
+ .../linux/platform_data/x86}/pmc_atom.h            |   3 +
+ 10 files changed, 500 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/clk/x86/clk-byt-plt.c
+ rename {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c (88%)
+ create mode 100644 include/linux/platform_data/x86/clk-byt-plt.h
+ rename {arch/x86/include/asm => include/linux/platform_data/x86}/pmc_atom.h (98%)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
