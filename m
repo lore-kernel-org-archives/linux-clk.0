@@ -1,101 +1,71 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 22 Dec 2016 12:39:08 -0600
-From: Rob Herring <robh@kernel.org>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: heiko@sntech.de, mturquette@baylibre.com, sboyd@codeaurora.org,
-	xf@rock-chips.com, mark.rutland@arm.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	huangtao@rock-chips.com, xxx@rock-chips.com, cl@rock-chips.com,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] dt-bindings: add bindings for rk3328 clock
- controller
-Message-ID: <20161222183908.gjrajbfxgrwwb4vn@rob-hp-laptop>
-References: <1482112573-11613-1-git-send-email-zhangqing@rock-chips.com>
- <1482112573-11613-3-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
+Date: Fri, 9 Dec 2016 20:31:27 +0000
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Linux-DT <devicetree@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linux-Kernel <linux-kernel@vger.kernel.org>,
+	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+	Linux-ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/3] clkdev: add devm_get_clk_from_child()
+Message-ID: <20161209203127.GR14217@n2100.armlinux.org.uk>
+References: <874m2jvtmw.wl%kuninori.morimoto.gx@renesas.com>
+ <8737i3vtl7.wl%kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1482112573-11613-3-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <8737i3vtl7.wl%kuninori.morimoto.gx@renesas.com>
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Dec 19, 2016 at 09:56:11AM +0800, Elaine Zhang wrote:
-> Add devicetree bindings for Rockchip cru which found on
-> Rockchip SoCs.
+On Mon, Dec 05, 2016 at 05:23:20AM +0000, Kuninori Morimoto wrote:
 > 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->  .../bindings/clock/rockchip,rk3328-cru.txt         | 57 ++++++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
-> new file mode 100644
-> index 000000000000..20053494d49f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
-> @@ -0,0 +1,57 @@
-> +* Rockchip RK3328 Clock and Reset Unit
-> +
-> +The RK3328 clock controller generates and supplies clock to various
-> +controllers within the SoC and also implements a reset controller for SoC
-> +peripherals.
-> +
-> +Required Properties:
-> +
-> +- compatible: should be "rockchip,rk3328-cru"
+> Some driver is using this type of DT bindings for clock (more detail,
+> see ${LINUX}/Documentation/devicetree/bindings/sound/simple-card.txt).
+> 
+> 	sound_soc {
+> 		...
+> 		cpu {
+> 			clocks = <&xxx>;
+> 			...
+> 		};
+> 		codec {
+> 			clocks = <&xxx>;
+> 			...
+> 		};
+> 	};
+> 
+> Current driver in this case uses of_clk_get() for each node, but there
+> is no devm_of_clk_get() today.
+> OTOH, the problem of having devm_of_clk_get() is that it encourages the
+> use of of_clk_get() when clk_get() is more desirable.
+> 
+> Thus, this patch adds new devm_get_clk_from_chile() which explicitly
+> reads as get a clock from a child node of this device.
+> By this function, we can also use this type of DT bindings
+> 
+> 	sound_soc {
+> 		clocks = <&xxx>, <&xxx>;
+> 		clock-names = "cpu", "codec";
+> 		...
+> 		cpu {
+> 			...
+> 		};
+> 		codec {
+> 			...
+> 		};
+> 	};
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-The example shows other compatibles. IMO, I would drop them rather than 
-add them here.
+This looks lots better, thanks.
 
-> +- reg: physical base address of the controller and length of memory mapped
-> +  region.
-> +- #clock-cells: should be 1.
-> +- #reset-cells: should be 1.
-> +
-> +Optional Properties:
-> +
-> +- rockchip,grf: phandle to the syscon managing the "general register files"
-> +  If missing pll rates are not changeable, due to the missing pll lock status.
-> +
-> +Each clock is assigned an identifier and client nodes can use this identifier
-> +to specify the clock which they consume. All available clocks are defined as
-> +preprocessor macros in the dt-bindings/clock/rk3328-cru.h headers and can be
-> +used in device tree sources. Similar macros exist for the reset sources in
-> +these files.
-> +
-> +External clocks:
-> +
-> +There are several clocks that are generated outside the SoC. It is expected
-> +that they are defined using standard clock bindings with following
-> +clock-output-names:
-> + - "xin24m" - crystal input - required,
-> + - "clkin_i2s" - external I2S clock - optional,
-> + - "gmac_clkin" - external GMAC clock - optional
-> + - "phy_50m_out" - output clock of the pll in the mac phy
-> +
-> +Example: Clock controller node:
-> +
-> +	cru: clock-controller@ff440000 {
-> +		compatible = "rockchip,rk3328-cru", "rockchip,cru", "syscon";
-> +		reg = <0x0 0xff440000 0x0 0x1000>;
-> +		rockchip,grf = <&grf>;
-> +
-> +		#clock-cells = <1>;
-> +		#reset-cells = <1>;
-> +	};
-> +
-> +Example: UART controller node that consumes the clock generated by the clock
-> +  controller:
-> +
-> +	uart0: serial@ff120000 {
-> +		compatible = "snps,dw-apb-uart";
-> +		reg = <0xff120000 0x100>;
-> +		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-> +		reg-shift = <2>;
-> +		reg-io-width = <4>;
-> +		clocks = <&cru SCLK_UART0>;
-> +	};
-> -- 
-> 1.9.1
-> 
-> 
+Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
