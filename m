@@ -1,63 +1,107 @@
-Return-Path: <andy.shevchenko@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 9 Dec 2016 12:12:01 -0600
+From: Rob Herring <robh@kernel.org>
+To: Bai Ping <ping.bai@nxp.com>
+Cc: shawnguo@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org,
+	mark.rutland@arm.com, linus.walleij@linaro.org,
+	devicetree@vger.kernel.org, kernel@pengutronix.de,
+	daniel.lezcano@linaro.org, linux-gpio@vger.kernel.org,
+	p.zabel@pengutronix.de, fabio.estevam@nxp.com, tglx@linutronix.de,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 10/11] Document: dt: binding: imx: update doc for imx6sll
+Message-ID: <20161209181201.ewcqeqslyf3je7kq@rob-hp-laptop>
+References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
+ <1480660774-25055-11-git-send-email-ping.bai@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <32235fb3-0d54-211d-28f4-4655e4bc7812@linux.intel.com>
-References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
- <1481306510-7471-2-git-send-email-irina.tirdea@intel.com> <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
- <20161213232524.GQ5423@codeaurora.org> <32235fb3-0d54-211d-28f4-4655e4bc7812@linux.intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 16 Dec 2016 10:46:11 +0200
-Message-ID: <CAHp75Vf7Sfq3_mSb6xf0NHutq8tO1y7Rhi7opDkomu+-vQZCYw@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH v6 1/3] clk: x86: Add Atom PMC platform clocks
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	ALSA Development Mailing List <alsa-devel@alsa-project.org>, Irina Tirdea <irina.tirdea@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	"x86@kernel.org" <x86@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Takashi Iwai <tiwai@suse.com>,
-	platform-driver-x86@vger.kernel.org,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Mark Brown <broonie@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Darren Hart <dvhart@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Len Brown <lenb@kernel.org>, linux-clk@vger.kernel.org,
-	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1480660774-25055-11-git-send-email-ping.bai@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Dec 16, 2016 at 7:15 AM, Pierre-Louis Bossart
-<pierre-louis.bossart@linux.intel.com> wrote:
-> Hi Stephen,
->
-> can you elaborate on the last comment?
+On Fri, Dec 02, 2016 at 02:39:33PM +0800, Bai Ping wrote:
+> Add necessary document update for i.MX6SLL support.
+> 
+> Signed-off-by: Bai Ping <ping.bai@nxp.com>
+> ---
+>  .../devicetree/bindings/clock/imx6sll-clock.txt    | 13 ++++++++
+>  .../bindings/pinctrl/fsl,imx6sll-pinctrl.txt       | 37 ++++++++++++++++++++++
+>  2 files changed, 50 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> new file mode 100644
+> index 0000000..4f52efa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> @@ -0,0 +1,13 @@
+> +* Clock bindings for Freescale i.MX6 UltraLite
 
-Please don't do top posting.
+I thought UltraLite was MX6UL?
 
->>> devm_kasprintf()
->>
->> Please no.
+> +
+> +Required properties:
+> +- compatible: Should be "fsl,imx6sll-ccm"
+> +- reg: Address and length of the register set
+> +- #clock-cells: Should be <1>
+> +- clocks: list of clock specifiers, must contain an entry for each required
+> +  entry in clock-names
+> +- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ipp_di1"
+> +
+> +The clock consumer should specify the desired clock by having the clock
+> +ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6sll-clock.h
+> +for the full list of i.MX6 SLL clock IDs.
+> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
+> new file mode 100644
+> index 0000000..096e471
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
+> @@ -0,0 +1,37 @@
+> +* Freescale i.MX6 UltraLite IOMUX Controller
 
-That's why I used modal verb "might" instead of "would".
+ditto
 
->> It's all local to this function, devm isn't helping anything.
->> Having one kfree() would be good though. And using init.name for
->> the clkdev lookup is probably wrong and should be replaced with
->> something more generic along with an associated device name.
->
-> I am not sure I understand this last comment.
-> init.name is not a constant, it's made of the "pmc_plt_clk_" string
-> concatenated with an id which directly maps to which hardware clock is
-> registered. Clients use devm_clk_get() with a "pmc_plt_clk_<n>" argument.
-
-Giving more thoughts about design and use of this I would propose to
-do the following.
-
-1. Create under clock framework something like clk-pmc-atom clock
-driver (see, for example, clk-fractional-divider, though this one
-should indeed go under x86 folder).
-2. In real provider, i.e. pmc_atom, create the necessary clock tree
-with *names*.
-
-Scheme with ID is fragile, imagine another version of PMC where
-ordering would be mixed up? It's not hypothetical since we used to
-have this already in pmc_atom for some registers and bits.
-
--- 
-With Best Regards,
-Andy Shevchenko
+> +
+> +Please refer to fsl,imx-pinctrl.txt in this directory for common binding part
+> +and usage.
+> +
+> +Required properties:
+> +- compatible: "fsl,imx6sll-iomuxc"
+> +- fsl,pins: each entry consists of 6 integers and represents the mux and config
+> +  setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
+> +  input_val> are specified using a PIN_FUNC_ID macro, which can be found in
+> +  imx6ul-pinfunc.h under device tree source folder.  The last integer CONFIG is
+> +  the pad setting value like pull-up on this pin.  Please refer to i.MX6SLL
+> +  Reference Manual for detailed CONFIG settings.
+> +
+> +CONFIG bits definition:
+> +PAD_CTL_LVE			(1 << 22)
+> +PAD_CTL_HYS                     (1 << 16)
+> +PAD_CTL_PUS_100K_DOWN           (0 << 14)
+> +PAD_CTL_PUS_47K_UP              (1 << 14)
+> +PAD_CTL_PUS_100K_UP             (2 << 14)
+> +PAD_CTL_PUS_22K_UP              (3 << 14)
+> +PAD_CTL_PUE                     (1 << 13)
+> +PAD_CTL_PKE                     (1 << 12)
+> +PAD_CTL_ODE                     (1 << 11)
+> +PAD_CTL_SPEED_LOW               (0 << 6)
+> +PAD_CTL_SPEED_MED               (1 << 6)
+> +PAD_CTL_SPEED_HIGH              (3 << 6)
+> +PAD_CTL_DSE_DISABLE             (0 << 3)
+> +PAD_CTL_DSE_260ohm              (1 << 3)
+> +PAD_CTL_DSE_130ohm              (2 << 3)
+> +PAD_CTL_DSE_87ohm               (3 << 3)
+> +PAD_CTL_DSE_65ohm               (4 << 3)
+> +PAD_CTL_DSE_52ohm               (5 << 3)
+> +PAD_CTL_DSE_43ohm               (6 << 3)
+> +PAD_CTL_DSE_37ohm               (7 << 3)
+> +PAD_CTL_SRE_FAST                (1 << 0)
+> +PAD_CTL_SRE_SLOW                (0 << 0)
+> -- 
+> 1.9.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
