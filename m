@@ -1,122 +1,74 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v4 7/9] clk: stm32f4: SDIO & 48Mhz clock management for STM32F469 board
-Date: Tue, 13 Dec 2016 15:20:18 +0100
-Message-ID: <1481638820-29324-8-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
-References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <tony@atomide.com>
+Date: Fri, 9 Dec 2016 13:58:55 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCHv4 11/15] clk: ti: clockdomain: add clock provider support
+ to clockdomains
+Message-ID: <20161209215854.GM4920@atomide.com>
+References: <20161028235448.57squdf6cu2wxxvm@atomide.com>
+ <148071802182.32158.11479184984645880313@resonance>
+ <20161202231240.GH4705@atomide.com>
+ <148072274164.32158.6012452044533845688@resonance>
+ <20161203001852.GI4705@atomide.com>
+ <ed253013-1f12-9fd8-d007-400a6c6fd427@ti.com>
+ <20161205152534.GJ4705@atomide.com>
+ <148131376868.16621.16082839810419290638@resonance>
+ <20161209204015.GL4920@atomide.com>
+ <148131892585.16621.5033331614135070003@resonance>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <148131892585.16621.5033331614135070003@resonance>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+* Michael Turquette <mturquette@baylibre.com> [161209 13:28]:
+> Quoting Tony Lindgren (2016-12-09 12:40:16)
+> > Yeah that's what we already have with hwmod and PM runtime for the
+> > clockctrl register. But hwmod currently directly manages the clkctrl
+> > register, we just want to move that part to be a clock driver.
+> > 
+> > The children of the interconnect target modules just need to use
+> > PM runtime, but the interconnect target module driver needs to know
+> > it's clkctrl clock.
+> 
+> OK, that sounds good to me but I'm not quite sure about the difference
+> between "children of interconnect target modules" versus just the
+> "interconnect target module".
 
-In the stm32f469 soc, the 48Mhz clock could be derived from pll-q or
-from pll-sai-p.
+The interconnect target module specific registers are "sysc", "syss"
+and "revision". Those are usually stuffed to random addresses, and
+currently managed by hwmod. Each interconnect target module has a
+module gate clock "clkctrl" in some clockdomain. Each clockdomain
+has multiple similar "clckctrl" clocks.
 
-The SDIO clock could be also derived from 48Mhz or from sys clock.
+> Can you give an example on each? I just want to understand for my own
+> curiosity.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32f4.c | 49 ++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 46 insertions(+), 3 deletions(-)
+For example, musb on am335x has these as children of a single
+interconnect target module:
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 2bff436..11174a5 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -211,7 +211,7 @@ struct stm32f4_gate_data {
- 	{ STM32F4_RCC_APB2ENR,  8,	"adc1",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR,  9,	"adc2",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR, 10,	"adc3",		"apb2_div" },
--	{ STM32F4_RCC_APB2ENR, 11,	"sdio",		"pll48" },
-+	{ STM32F4_RCC_APB2ENR, 11,	"sdio",		"sdmux" },
- 	{ STM32F4_RCC_APB2ENR, 12,	"spi1",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR, 13,	"spi4",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR, 14,	"syscfg",	"apb2_div" },
-@@ -951,6 +951,10 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
- static const char *sai_parents[4] = { "pllsai-q-div", "plli2s-q-div", NULL,
- 	"no-clock" };
- 
-+static const char *pll48_parents[2] = { "pll-q", "pllsai-p" };
-+
-+static const char *sdmux_parents[2] = { "pll48", "sys" };
-+
- struct stm32_aux_clk {
- 	int idx;
- 	const char *name;
-@@ -1000,6 +1004,45 @@ struct stm32f4_clk_data {
- 	},
- };
- 
-+static const struct stm32_aux_clk stm32f469_aux_clk[] = {
-+	{
-+		CLK_LCD, "lcd-tft", lcd_parent, ARRAY_SIZE(lcd_parent),
-+		NO_MUX, 0, 0,
-+		STM32F4_RCC_APB2ENR, 26,
-+		CLK_SET_RATE_PARENT
-+	},
-+	{
-+		CLK_I2S, "i2s", i2s_parents, ARRAY_SIZE(i2s_parents),
-+		STM32F4_RCC_CFGR, 23, 1,
-+		NO_GATE, 0,
-+		CLK_SET_RATE_PARENT
-+	},
-+	{
-+		CLK_SAI1, "sai1-a", sai_parents, ARRAY_SIZE(sai_parents),
-+		STM32F4_RCC_DCKCFGR, 20, 3,
-+		STM32F4_RCC_APB2ENR, 22,
-+		CLK_SET_RATE_PARENT
-+	},
-+	{
-+		CLK_SAI2, "sai1-b", sai_parents, ARRAY_SIZE(sai_parents),
-+		STM32F4_RCC_DCKCFGR, 22, 3,
-+		STM32F4_RCC_APB2ENR, 22,
-+		CLK_SET_RATE_PARENT
-+	},
-+	{
-+		NO_IDX, "pll48", pll48_parents, ARRAY_SIZE(pll48_parents),
-+		STM32F4_RCC_DCKCFGR, 27, 1,
-+		NO_GATE, 0,
-+		0
-+	},
-+	{
-+		NO_IDX, "sdmux", sdmux_parents, ARRAY_SIZE(sdmux_parents),
-+		STM32F4_RCC_DCKCFGR, 28, 1,
-+		NO_GATE, 0,
-+		0
-+	},
-+};
-+
- static const struct stm32f4_clk_data stm32f429_clk_data = {
- 	.gates_data	= stm32f429_gates,
- 	.gates_map	= stm32f42xx_gate_map,
-@@ -1014,8 +1057,8 @@ struct stm32f4_clk_data {
- 	.gates_map	= stm32f46xx_gate_map,
- 	.gates_num	= ARRAY_SIZE(stm32f469_gates),
- 	.pll_data	= stm32f469_pll,
--	.aux_clk	= stm32f429_aux_clk,
--	.aux_clk_num	= ARRAY_SIZE(stm32f429_aux_clk),
-+	.aux_clk	= stm32f469_aux_clk,
-+	.aux_clk_num	= ARRAY_SIZE(stm32f469_aux_clk),
- };
- 
- static const struct of_device_id stm32f4_of_match[] = {
--- 
-1.9.1
+- Two instances of musb wrapper IP
+- Two instances of musb IP
+- One instance of CPP41 DMA
+
+The on omap4, the whole system control module is just a single
+interconnect target module with tens of devices in it like padconf,
+clocks, pbias regulator and whatever random devices.
+
+> > I don't think the clockdomain should be a genpd provider because
+> > that creates a genpd network of dependencies instead of a tree
+> > structure. If we end up setting the clockdomains with genpd, then
+> > only the other clockdomains should use them, but I don't know how
+> > we ever keep drivers from directly tinkering with them..
+> 
+> Genpd is set up as an arbitrary graph, not strictly a tree, so these
+> types of dependencies should be OK.
+
+Well maybe that works then, worth checking for sure.
+
+Regards,
+
+Tony
