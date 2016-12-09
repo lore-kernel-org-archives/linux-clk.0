@@ -3,179 +3,269 @@ Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 To: Tony Lindgren <tony@atomide.com>, 
 From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20161202231240.GH4705@atomide.com>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Tero Kristo" <t-kristo@ti.com>,
+In-Reply-To: <20161209204015.GL4920@atomide.com>
+Cc: "Tero Kristo" <t-kristo@ti.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
  linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
  "Rob Herring" <robh+dt@kernel.org>
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
- <1476805568-19264-12-git-send-email-t-kristo@ti.com>
- <20161028005047.GQ26139@codeaurora.org>
- <cd32a554-ba0a-33cd-c15c-121524ce679b@ti.com>
- <20161028125112.xfyrx7l7m64z6cu6@atomide.com>
- <20161028233617.GP16026@codeaurora.org>
+References: <20161028125112.xfyrx7l7m64z6cu6@atomide.com>
  <20161028235448.57squdf6cu2wxxvm@atomide.com>
  <148071802182.32158.11479184984645880313@resonance>
  <20161202231240.GH4705@atomide.com>
-Message-ID: <148072274164.32158.6012452044533845688@resonance>
+ <148072274164.32158.6012452044533845688@resonance>
+ <20161203001852.GI4705@atomide.com>
+ <ed253013-1f12-9fd8-d007-400a6c6fd427@ti.com>
+ <20161205152534.GJ4705@atomide.com>
+ <148131376868.16621.16082839810419290638@resonance>
+ <20161209204015.GL4920@atomide.com>
+Message-ID: <148131892585.16621.5033331614135070003@resonance>
 Subject: Re: [PATCHv4 11/15] clk: ti: clockdomain: add clock provider support to
  clockdomains
-Date: Fri, 02 Dec 2016 15:52:21 -0800
+Date: Fri, 09 Dec 2016 13:28:45 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Tony Lindgren (2016-12-02 15:12:40)
-> * Michael Turquette <mturquette@baylibre.com> [161202 14:34]:
-> > Quoting Tony Lindgren (2016-10-28 16:54:48)
-> > > * Stephen Boyd <sboyd@codeaurora.org> [161028 16:37]:
-> > > > On 10/28, Tony Lindgren wrote:
-> > > > > * Tero Kristo <t-kristo@ti.com> [161028 00:43]:
-> > > > > > On 28/10/16 03:50, Stephen Boyd wrote:
-> > > > > > > I suppose a PRCM is
-> > > > > > > like an MFD that has clocks and resets under it? On other
-> > > > > > > platforms we've combined that all into one node and just had
-> > > > > > > #clock-cells and #reset-cells in that node. Is there any reas=
+Quoting Tony Lindgren (2016-12-09 12:40:16)
+> * Michael Turquette <mturquette@baylibre.com> [161209 12:02]:
+> > Quoting Tony Lindgren (2016-12-05 07:25:34)
+> > > * Tero Kristo <t-kristo@ti.com> [161205 02:09]:
+> ...
+> <snip>
+> =
+
+> > I had a recent conversation with Kevin Hilman about a related issue
+> > (we were not discussing this thread or this series) and we both agreed
+> > that most drivers don't even need to managed their clocks directly, so
+> > much as they need to manage their on/off resources. Clocks are just one
+> > part of that, and if we can hide that stuff inside of an attached genpd
+> > then it would be better than having the driver manage clocks explicitly.
+> > =
+
+> > Obviously some devices such as audio codec or uart will need to manage
+> > clocks directly, but this is mostly the exception, not the rule.
+> =
+
+> Yes. And we do that already for clkctrl clocks via PM runtime where
+> hwmod manages them. Tero's series still has hwmod manage the clocks,
+> but the clock register handling is moved to live under drivers/clock.
+> =
+
+> > > > > > There is certainly no API for that in the clock framework, but =
+for genpd
+> > > > > > your runtime_pm_get() callback for clkdm_A could call runtime_p=
+m_get
+> > > > > > against clkdm_B, which would satisfy the requirement. See secti=
 on
-> > > > > > > we can't do that here?
-> > > > > > =
-
-> > > > > > For OMAPs, there are typically multiple instances of the PRCM a=
-round; OMAP4
-> > > > > > for example has:
-> > > > > > =
-
-> > > > > > cm1 @ 0x4a004000 (clocks + clockdomains)
-> > > > > > cm2 @ 0x4a008000 (clocks + clockdomains)
-> > > > > > prm @ 0x4a306000 (few clocks + resets + power state handling)
-> > > > > > scrm @ 0x4a30a000 (few external clocks + plenty of misc stuff)
-> > > > > > =
-
-> > > > > > These instances are also under different power/voltage domains =
-which means
-> > > > > > their PM behavior is different.
-> > > > > > =
-
-> > > > > > The idea behind having a clockdomain as a provider was mostly t=
-o have the
-> > > > > > topology visible : prcm-instance -> clockdomain -> clocks
-> > > > > =
-
-> > > > > Yeah that's needed to get the interconnect hierarchy right for
-> > > > > genpd :)
-> > > > > =
-
-> > > > > > ... but basically I think it would be possible to drop the cloc=
-kdomain
-> > > > > > representation and just mark the prcm-instance as a clock provi=
-der. Tony,
-> > > > > > any thoughts on that?
-> > > > > =
-
-> > > > > No let's not drop the clockdomains as those will be needed when we
-> > > > > move things into proper hierarchy within the interconnect instanc=
-es.
-> > > > > This will then help with getting things right with genpd.
-> > > > > =
-
-> > > > > In the long run we just want to specify clockdomain and the offse=
-t of
-> > > > > the clock instance within the clockdomain in the dts files.
-> > > > > =
-
+> > > > > > 3.1.1.1.7 Clock Domain Dependency in the OMAP4 TRM, version AB.
 > > > > =
 
-> > > > Sorry, I have very little idea how OMAP hardware works. Do you
-> > > > mean that you will have different nodes for each clockdomain so
-> > > > that genpd can map 1:1 to the node in dts? But in hardware
-> > > > there's a prcm that allows us to control many clock domains
-> > > > through register read/writes? How is the interconnect involved?
-> > > =
+> > > > For static dependencies the apis genpd_add/remove_subdomain could p=
+robably
+> > > > be used.
+> > > > =
 
-> > > There are multiple clockdomains, at least one for each interconnect
-> > > instance. Once a clockdomain is idle, the related interconnect can
-> > > idle too. So yeah genpd pretty much maps 1:1 with the clockdomains.
-> > > =
-
-> > > There's more info in for example omap4 TRM section "3.4.1 Device
-> > > Power-Management Layout" that shows the voltage/power/clock domains.
-> > > The interconnect instances are mostly named there too looking at
-> > > the L4/L3 naming.
+> > > > > To me it seems the API is just clk_get() :) Do you have some
+> > > > > specific example we can use to check? My guess is that the
+> > > > > TRM "Clock Domain Dependency" is just the usual parent child
+> > > > > relationship between clocks that are the clockdomains..
 > > =
 
-> > I'm confused on two points:
+> > clk_get() only fetches a pointer to the clk. I guess you mean
+> > clk_prepare_enable() to actually increment the use count?
+> =
+
+> Right, with clocks that's all we should need to do :)
+> =
+
+> > If we used the clk framework here is that it would look something like
+> > this:
 > > =
 
-> > 1) why are the clkdm's acting as clock providers? I've always hated the
-> > name "clock domain" since those bits are for managing module state, not
-> > clock state. The PRM, CM1 and CM2 provide the clocks, not the
-> > clockdomains.
+> > clk_enable(clk_a)
+> > -> .enable(clk_a_hw)
+> >    -> clk_enable(clk_b)
+> > =
+
+> > However, clk_a and clk_b do not have a parent-child relationship in the
+> > clock tree. This is purely a functional relationship between IP blocks.
+> > Modeling this sort of thing in the clk framework would be wrong, and
+> > genpd is a much better place to establish these arbitrary relationships.
 > =
 
-> The clock domains have multiple clock inputs that are routed to multiple
-> child clocks. So it is a clock :)
+> Hmm yes, and I don't mean the clock framework should do anything more
+> complex beyond what it already does.
 > =
 
-> See for example omap4430 TRM "3.6.4 CD_WKUP Clock Domain" on page
-> 393 in my revision here.
+> We just want to represent the clocks as clocks, then have the
+> interconnect code manage those clocks. That's currently hwmod, eventually
+> it will be genpd.
 > =
 
-> On that page "Figure 3-48" shows CD_WKUP with the four input clocks.
-> And then "Table 3-84. CD_WKUP Control and Status Parameters" shows
-> the CD_WKUP clock domain specific registers. These registers show
-> the status, I think they are all read-only registers. Then CD_WKUP
-> has multiple child clocks with configurable registers.
+> > > > > If there is something more magical there certainly that should
+> > > > > be considered though.
+> > > > =
+
+> > > > The hwmods could be transformed to individual genpds also I guess. =
+On DT
+> > > > level though, we would still need a clock pointer to the main clock=
+ and a
+> > > > genpd pointer in addition to that.
+> > > =
+
+> > > Hmm a genpd pointer to where exactly? AFAIK each interconnect
+> > > instance should be a genpd provider, and the individual interconnect
+> > > target modules should be consumers for that genpd.
+> > =
+
+> > I was thinking that the clock domains would be modeled as genpd objects
+> > with the interconnect target modules attached as struct devices.
 > =
 
-> From hardware register point of view, each clock domain has:
+> I think clock domains should be just clocks, then we let the interconnect
+> code and eventually genpd manage them.
 > =
 
-> - Read-only clockdomain status registers in the beginning of
->   the address space
+> > > > Tony, any thoughts on that? Would this break up the plans for the
+> > > > interconnect completely?
+> > > =
+
+> > > Does using genpd for clockdomains cause issues for using genpd for
+> > > interconnect instances and the target modules?
+> > =
+
+> > Can they be the same object in Linux? If there is a one-to-one mapping
+> > between clock domains and the interconnect port then maybe you can just
+> > model them together.
 > =
 
-> - Multiple similar clock instances register instances each
->   mapping to a specific interconnect target module
+> I'm thinking that it should be the interconnect code implementing
+> genpd, and use clk_request_enable().
 > =
 
-> These are documented in "3.11.16.1 WKUP_CM Register Summary".
+> > > The thing I'd be worried about there is that the clockdomains and
+> > > their child clocks are just devices sitting on the interconnect,
+> > > so we could easily end up with genpd modeling something that does
+> > > not represent the hardware.
+> > > =
 
-Oh, this is because you are treating the MODULEMODE bits like gate
-clocks. I never really figured out if this was the best way to model
-those bits since they do more than control a line toggling at a rate.
-For instance this bit will affect the master/slave IDLE protocol between
-the module and the PRCM.
+> > > For example, on 4430 we have:
+> > > =
+
+> > > l4_cfg interconnect
+> > >        ...
+> > >        segment@0
+> > >                 ...
+> > >                 target_module@4000
+> > >                         cm1: cm1@0
+> > =
+
+> > How about:
+> > =
+
+> > l4_cfg interconnect
+> >        ...
+> >        segment@0
+> >                 ...
+> >                 cm1@4000
+> >                       module: foo_module@0
+> =
+
+> That's the wrong way around from hardware point of view. There's
+> a generic interconnect wrapper module with it's own registers,
+> then cm1 (and possibly other devices) are children of that target
+> module.
+> =
+
+> > I don't know much about the segments. Do they map one-to-one with the
+> > clock domains?
+> =
+
+> I need to check, it's been a while, but I recall some interconnects
+> are partioned to segments based on voltages or clocks.
+> =
+
+> > If my quick-and-dirty DT above makes sense, then the target modules
+> > (e.g. io controller) would not get clocks anymore, but just
+> > pm_runtime_get(). The genpd backing object would call clk_enable/disable
+> > as needed.
+> =
+
+> Yeah that's what we already have with hwmod and PM runtime for the
+> clockctrl register. But hwmod currently directly manages the clkctrl
+> register, we just want to move that part to be a clock driver.
+> =
+
+> The children of the interconnect target modules just need to use
+> PM runtime, but the interconnect target module driver needs to know
+> it's clkctrl clock.
+
+OK, that sounds good to me but I'm not quite sure about the difference
+between "children of interconnect target modules" versus just the
+"interconnect target module".
+
+Can you give an example on each? I just want to understand for my own
+curiosity.
 
 > =
 
-> From hardware point of view, we ideally want to map interconnect
-> target modules to the clock instance offset from the clock domain
-> for that interconnect segment. For example gptimer1 clocks would
-> be just:
+> > If fine grained control of a clock is needed (e.g. for clk_set_rate)
+> > then the driver can still clk_get it. Whether or not the clockdomain
+> > provides that clock or if it comes from the clock generator (e.g. cm1,
+> > cm2, prm, etc) isn't as important to me, but I prefer for the
+> > clockdomain to not be a clock provider if possible.
 > =
 
-> clocks =3D <&cd_wkup 0x40>;
+> Yeah I totally agree with that, and that's already what we mostly
+> have.
 > =
 
-> > 2) why aren't the clock domains modeled as genpds with their associated
-> > devices attached to them? Note that it is possible to "nest" genpd
-> > objects. This would also allow for the "Clockdomain Dependency"
-> > relationships to be properly modeled (see section 3.1.1.1.7 Clock Domain
-> > Dependency in the OMAP4 TRM).
+> > > I don't at least yet
+> > > follow what we need to do with the clockdomains with genpd :)
+> > =
+
+> > Use the clockdomain genpd to call clk_enable/disable under the hood.
+> > Don't use them as clock providers to the target modules. Clockdomain
+> > genpds would be the clock consumers.
 > =
 
-> Clock domains only route clocks to child clocks. Power domains
-> are different registers. The power domains map roughly to
-> interconnect instances, there we have registers to disable the
-> whole interconnect when idle.
+> I don't think the clockdomain should be a genpd provider because
+> that creates a genpd network of dependencies instead of a tree
+> structure. If we end up setting the clockdomains with genpd, then
+> only the other clockdomains should use them, but I don't know how
+> we ever keep drivers from directly tinkering with them..
 
-I'm not talking about power islands at all, but the genpd object in
-Linux. For instance, if we treat each clock domain like a clock
-provider, how could the functional dependency between clkdm_A and
-clkdm_B be asserted?
+Genpd is set up as an arbitrary graph, not strictly a tree, so these
+types of dependencies should be OK.
 
-There is certainly no API for that in the clock framework, but for genpd
-your runtime_pm_get() callback for clkdm_A could call runtime_pm_get
-against clkdm_B, which would satisfy the requirement. See section
-3.1.1.1.7 Clock Domain Dependency in the OMAP4 TRM, version AB.
+> =
+
+> IMO, the clockdomain clock driver should just provides clocks, then
+> we can have the interconnect target module driver deal with the
+> clockdomain dependencies.
+> =
+
+> > > Wouldn't just doing clk_get() from one clockdomain clock to
+> > > another clockdomain clock (or it's output) be enough to
+> > > represent the clockdomain dependencies?
+> > =
+
+> > s/clk_get/clk_prepare_enable/
+> > =
+
+> > Yes, but you're stuffing functional dependencies into the clock tree,
+> > which sucks. genpd was created to model these arbitrary dependencies.
+> =
+
+> Well let's not stuff anything beyond clock framework to the
+> clockdomain clock drivers. We already have the clockdomain
+> dependencies handled by the interconnect code (hwmod), and there
+> should be no problem moving those to be handled by genpd and the
+> interconnect target driver instances.
+> =
+
+> Care to take another look at Tero's patches with the assumption
+> that the clockdomain clocks stay just as a clocks?
+
+Sure.
 
 Regards,
 Mike
