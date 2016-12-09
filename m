@@ -1,64 +1,79 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Subject: Re: [PATCH v2] ARM: dts: sun8i: add opp-v2 table for A33
-To: Icenowy Zheng <icenowy@aosc.xyz>, Chen-Yu Tsai <wens@csie.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <20161215182754.33921-1-icenowy@aosc.xyz>
- <20161219084652.kiqdkiewu5tujlyd@lukather>
- <CAGb2v65YWntCrFHtSbxhtTWkt+UwkW3xoY-ae26MpH+-ULLXSQ@mail.gmail.com>
- <11975791482156406@web2g.yandex.ru>
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-Message-ID: <8af4327f-b779-9d97-347f-bfe4b8303a60@free-electrons.com>
-Date: Mon, 19 Dec 2016 15:18:03 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 8 Dec 2016 16:26:35 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
+	Rob Herring <robh@kernel.org>,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Linux-DT <devicetree@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linux-Kernel <linux-kernel@vger.kernel.org>,
+	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+	Linux-ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/3] ASoC: simple-card-utils: enable
+ clocks/clock-names/clock-ranges
+Message-ID: <20161209002635.GD5423@codeaurora.org>
+References: <874m2jvtmw.wl%kuninori.morimoto.gx@renesas.com>
+ <87zikbuezr.wl%kuninori.morimoto.gx@renesas.com>
+ <20161208220901.GN5423@codeaurora.org>
+ <874m2eymu3.wl%kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <11975791482156406@web2g.yandex.ru>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree <devicetree@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- Hans de Goede <hdegoede@redhat.com>,
- linux-sunxi <linux-sunxi@googlegroups.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <874m2eymu3.wl%kuninori.morimoto.gx@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On 19/12/2016 15:06, Icenowy Zheng wrote:
+On 12/09, Kuninori Morimoto wrote:
 > 
-> After proper testing of A23 ccu, the operating points can also apply to A23.
-> (According to A23 devices' fex)
+> Hi Stephen
+> 
+> > > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > > 
+> > > Current simple-card is supporting this style for clocks
+> > > 
+> > > 	sound {
+> > > 		...
+> > > 		simple-audio-card,cpu {
+> > > 			sound-dai = <&xxx>;
+> > > 			clocks = <&cpu_clock>;
+> > > 		};
+> > > 		simple-audio-card,codec {
+> > > 			sound-dai = <&xxx>;
+> > > 			clocks = <&codec_clock>;
+> > > 		};
+> > > 	};
+> > > 
+> > > Now, it can support this style too, because we can use
+> > > devm_get_clk_from_child() now.
+> > > 
+> > > 	sound {
+> > > 		...
+> > > 		clocks = <&cpu_clock>, <&codec_clock>;
+> > > 		clock-names = "cpu", "codec";
+> > > 		clock-ranges;
+> > > 		...
+> > > 		simple-audio-card,cpu {
+> > > 			sound-dai = <&xxx>;
+> > > 		};
+> > > 		simple-audio-card,codec {
+> > > 			sound-dai = <&xxx>;
+> > > 		};
+> > > 	};
+> > > 
+> > > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > 
+> > I don't see any reason why we need this patch though. The binding
+> > works as is, so supporting different styles doesn't seem like a
+> > good idea to me. Let's just keep what we have? Even if a sub-node
+> > like cpu or codec gets more than one element in the clocks list
+> > property, we can make that work by passing a clock-name then
+> > based on some sort of other knowledge.
+> 
+> OK, thanks. Let's skip this patch.
+> But I believe this idea/method itself is not wrong (?)
 > 
 
-I disagree. I've looked into using the same operating points for A23 and
-A33 for CPUfreq and I came to the conclusion that not all A23-based
-boards share the same operating points. You can find the fex files for
-the different boards here:
-https://github.com/linux-sunxi/sunxi-boards/tree/master/sys_config/a23
-
-After gathering all supported frequencies/voltages for each A23-based
-boards, I found that only the following frequencies and voltages are
-supported by all A23-based boards:
-
- - 1008 MHz, 1220 mV
- - 816 MHz, 1120 mV
- - 600 MHz, 1040 mV
-
-Quentin
+Right it's not wrong, just seems confusing to have two methods.
 
 -- 
-Quentin Schulz, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
