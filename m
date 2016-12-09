@@ -1,190 +1,176 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Tony Lindgren <tony@atomide.com>, "Tero Kristo" <t-kristo@ti.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20161213153724.GT4920@atomide.com>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, linux-omap@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
- <2cfa10a9-9ea0-23e4-30de-9aece13e47e3@ti.com>
- <20161028233750.GQ16026@codeaurora.org>
- <7371ef35-5d95-bf78-4c97-c61091a1fa4b@ti.com>
- <148156710975.37646.2957511113527634913@resonance>
- <20161213004914.GM5423@codeaurora.org> <20161213013133.GR4920@atomide.com>
- <148160402543.37646.6019420188689675769@resonance>
- <4b016883-e7c9-94d8-d964-3c8dfee6ee13@ti.com>
- <20161213153724.GT4920@atomide.com>
-Message-ID: <148166654419.37646.7680435609801736363@resonance>
-Subject: Re: [PATCHv4 00/15] clk: ti: add support for hwmod clocks
-Date: Tue, 13 Dec 2016 14:02:24 -0800
+Return-Path: <nikita.yoush@cogentembedded.com>
+Return-Path: <nikita.yoush@cogentembedded.com>
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Chris Healy <cphealy@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Andrey Smirnov <andrew.smirnov@gmail.com>,
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: [PATCH] clk: imx: pllv3: support fractional multiplier on vf610 PLL1/PLL2
+Date: Fri,  9 Dec 2016 16:00:08 +0300
+Message-Id: <1481288408-16035-1-git-send-email-nikita.yoush@cogentembedded.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Tony Lindgren (2016-12-13 07:37:24)
-> * Tero Kristo <t-kristo@ti.com> [161213 00:31]:
-> > On 13/12/16 06:40, Michael Turquette wrote:
-> > > Quoting Tony Lindgren (2016-12-12 17:31:34)
-> > > > * Stephen Boyd <sboyd@codeaurora.org> [161212 16:49]:
-> > > > > I spent a bunch of time looking at this again today. From a DT
-> > > > > perspective we don't want to have clocks or clockdomains nodes
-> > > > > below the cm1/cm2/prm dt nodes. That's getting to the point of
-> > > > > describing individual elements of a device that should be
-> > > > > described in the driver instead of DT.
-> > > > =
+On vf610, PLL1 and PLL2 have registers to configure fractional part of
+frequency multiplier.
 
-> > > > I agree we don't need separate clocks and clockdomain nodes.. But
-> > > > I think you're missing something here though. The clockdomains in
-> > > > this case are separate devices on the interconnect, not individual
-> > > > elements within a device. The outputs of a clockdomain are individu=
-al
-> > > > elements of a clockdomain and can be just described as indexed
-> > > > outputs of the clockdomain.
-> > > =
+This patch adds support for these registers.
 
-> > > Is the goal to describe this hardware topology in DT? Is that right
-> > > thing to do? I think it's cool to have this modeled *somehow* in Linu=
-x,
-> > > but I'm not sure DT is the right place to model the interconnect and
-> > > every device hanging off of it.
-> =
+This fixes "fast system clock" issue on boards where bootloader sets
+fractional multiplier for PLL1.
 
-> Well struct device is what we should use, the DT nodes pretty much
-> map with that :)
-> =
+Suggested-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+CC: Chris Healy <cphealy@gmail.com>
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+---
+ drivers/clk/imx/clk-pllv3.c | 87 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk-vf610.c |  4 +--
+ drivers/clk/imx/clk.h       |  1 +
+ 3 files changed, 90 insertions(+), 2 deletions(-)
 
-> > > I don't want to put words in Stephen's mouth, but I think the issue o=
-ver
-> > > whether clockdomains are CCF clock providers or some genpd thing is
-> > > probably less important to him than the fact that the DT bindings are
-> > > super detailed to inner workings of the SoC.
-> > =
-
-> > Ok, so your preference would be to reduce the data under DT, and the id=
-eal
-> > approach would be a single prcm node. I think we still need to keep the=
- prm
-> > / cm1 / cm2 as separate nodes, as they are pretty individual from hardw=
-are
-> > point of view, provide quite different features, and they reside in some
-> > cases in quite different address spaces also. Anyway, here's what I gat=
-her
-> > we should probably have in DT:
-> > =
-
-> > - reset provider
-> >   * example: resets =3D <&prm OMAP4_IVA2_RESET>;
-> >   * only from 'prm' node
-> > =
-
-> > - genpd provider (for the hwmods, clockdomains, powerdomains, voltage
-> > domains)
-> >   * examples: power-domains =3D <&cm2 OMAP4_DSS_CORE_MOD>;
-> >               power-domains =3D <&cm2 OMAP4_DSS_CLKDM>;
-> >               power-domains =3D <&prm OMAP4_DSS_PWRDM>;
-> >               power-domains =3D <&prm OMAP4_CORE_VOLTDM>;
-> >   * from all 'prm', 'cm1' and 'cm2' nodes, though 'prm' would be the on=
-ly
-> > one providing _CLKDM, _PWRDM, _VOLTDM genpds.
-> > =
-
-> > - clock provider (for anything that requires clocks)
-> >   * example: clocks =3D <&cm1 OMAP4_DPLL_MPU_CK>;
-> >   * from all 'prm', 'cm1' and 'cm2' nodes
-> =
-
-> Makes sense to me in general.
-> =
-
-> For the clkctrl clocks, here's what I'd like to see. The driver should be
-> just a regular device driver along the lines we did with the ADPLL as in
-> Documentation/devicetree/bindings/clock/ti/adpll.txt.
-> =
-
-> For the binding, something like the following should work as a minimal
-> example, this follows what we have in the hardware:
-> =
-
-> &prm {
->         ...
-> =
-
->         /* See "CD_WKUP Clock Domain" in 4430 TRM page 393 */
->         wkup_cm: clock@1800 {
->                 compatible =3D "ti,clkctrl";
->                 reg =3D <0x1800 0x100>;
->                 #clock-cells =3D <1>;
->                 clocks =3D <&wkup_l4_iclk2 &wkup_32k_fclk
->                           &32k_fclk &gp1_fclk>;
->                 clock-output-names =3D
->                         "sysctrl_padconf_wkup",
->                         "badgap",
->                         "sysctrl_general_wkup",
->                         "gpio1",
->                         "keyboard",
->                         "sar_ram",
->                         "32ktimer",
->                         "gptimer1";
-
-Is there a technical reason to use clock-output-names? If you share a
-header between the clock provider driver and DT with the phandle offsets
-then we should be able to avoid this property altogether. Stephen and I
-are trying to phase this one out as much as possible.
-
-Regards,
-Mike
-
->         };
->         ...
-> =
-
->         /* See "CD_EMU Clock Domain" in 4430 TRM page 424 */
->         emu_cm: clock@1a00 {
->                 compatible =3D "ti,clkctrl";
->                 reg =3D <0x1a00 0x100>;
->                 #clock-cells =3D <1>;
->                 clocks =3D <&emu_sys_clk &core_dpll_emu_clk>;
->                 clock-output-names =3D "debug";
->         };
->         ...
-> };
-> =
-
-> So the device tree nodes could be minimal as above and the rest can
-> be taken care of by the driver. We may need separate compatible strings
-> for the various instances, not sure about that.
-> =
-
-> Note that the clkctrl hardware manages multiple clocks for each
-> interconnect target module. AFAIK we don't need to care about that from
-> the consumer device driver point of view as it can't separately manage
-> functional and interface clock.
-> =
-
-> We need few clockctrl clocks early for system timers, but those can
-> be registered earlier in the driver.
-> =
-
-> Then some clkctrl clocks have optional aux clocks. I think those can
-> be just be regular child clocks of the module clocks.
-> =
-
-> > This would eventually cause an ABI breakage for the clock handles, if we
-> > transfer the existing clocks to this format, and remove the existing cl=
-ock
-> > handles from DT. Otherwise, I think we could just transition the existi=
-ng
-> > hwmod data to this new format only, and add the clockdomain / powerdoma=
-in /
-> > voltagedomain support a bit later.
-> =
-
-> Let's not break anything while doing this.. And let's not mess with the
-> hwmod except where it helps moving that into regular device drivers.
-> If necessary we can maybe first register the new clock instances, then
-> register the old clocks if new clock is not found?
-> =
-
-> Regards,
-> =
-
-> Tony
+diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+index 19f9b622981a..24a9e914e0d5 100644
+--- a/drivers/clk/imx/clk-pllv3.c
++++ b/drivers/clk/imx/clk-pllv3.c
+@@ -21,6 +21,9 @@
+ #define PLL_NUM_OFFSET		0x10
+ #define PLL_DENOM_OFFSET	0x20
+ 
++#define PLL_VF610_NUM_OFFSET	0x20
++#define PLL_VF610_DENOM_OFFSET	0x30
++
+ #define BM_PLL_POWER		(0x1 << 12)
+ #define BM_PLL_LOCK		(0x1 << 31)
+ #define IMX7_ENET_PLL_POWER	(0x1 << 5)
+@@ -288,6 +291,87 @@ static const struct clk_ops clk_pllv3_av_ops = {
+ 	.set_rate	= clk_pllv3_av_set_rate,
+ };
+ 
++static unsigned long clk_pllv3_vf610_recalc_rate(struct clk_hw *hw,
++					      unsigned long parent_rate)
++{
++	struct clk_pllv3 *pll = to_clk_pllv3(hw);
++	u32 mfn = readl_relaxed(pll->base + PLL_VF610_NUM_OFFSET);
++	u32 mfd = readl_relaxed(pll->base + PLL_VF610_DENOM_OFFSET);
++	u32 div = (readl_relaxed(pll->base) & pll->div_mask) ? 22 : 20;
++	u64 temp64 = (u64)parent_rate;
++
++	temp64 *= mfn;
++	do_div(temp64, mfd);
++
++	return (parent_rate * div) + (u32)temp64;
++}
++
++static long clk_pllv3_vf610_round_rate(struct clk_hw *hw, unsigned long rate,
++				    unsigned long *prate)
++{
++	unsigned long parent_rate = *prate;
++	unsigned int mfi = (rate >= 22 * parent_rate) ? 22 : 20;
++	u32 mfn, mfd = 0x3fffffff;
++	u64 temp64;
++
++	if (rate <= parent_rate * mfi)
++		mfn = 0;
++	else if (rate >= parent_rate * (mfi + 1))
++		mfn = mfd - 1;
++	else {
++		/* rate = parent_rate * (mfi + mfn/mfd) */
++		temp64 = rate - parent_rate * mfi;
++		temp64 *= mfd;
++		do_div(temp64, parent_rate);
++		mfn = temp64;
++	}
++
++	temp64 = ((u64)mfd * mfi + mfn) * parent_rate;
++	do_div(temp64, mfd);
++	return (u32)temp64;
++}
++
++static int clk_pllv3_vf610_set_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long parent_rate)
++{
++	struct clk_pllv3 *pll = to_clk_pllv3(hw);
++	unsigned int mfi = (rate >= 22 * parent_rate) ? 22 : 20;
++	u32 val, mfn, mfd = 0x3fffffff;
++	u64 temp64;
++
++	if (rate <= parent_rate * mfi)
++		mfn = 0;
++	else if (rate >= parent_rate * (mfi + 1))
++		mfn = mfd - 1;
++	else {
++		/* rate = parent_rate * (mfi + mfn/mfd) */
++		temp64 = rate - parent_rate * mfi;
++		temp64 *= mfd;
++		do_div(temp64, parent_rate);
++		mfn = temp64;
++	}
++
++	val = readl_relaxed(pll->base);
++	if (mfi == 20)
++		val &= ~pll->div_mask;
++	else
++		val |= pll->div_mask;
++	writel_relaxed(val, pll->base);
++	writel_relaxed(mfn, pll->base + PLL_VF610_NUM_OFFSET);
++	writel_relaxed(mfd, pll->base + PLL_VF610_DENOM_OFFSET);
++
++	return clk_pllv3_wait_lock(pll);
++}
++
++static const struct clk_ops clk_pllv3_vf610_ops = {
++	.prepare	= clk_pllv3_prepare,
++	.unprepare	= clk_pllv3_unprepare,
++	.is_prepared	= clk_pllv3_is_prepared,
++	.recalc_rate	= clk_pllv3_vf610_recalc_rate,
++	.round_rate	= clk_pllv3_vf610_round_rate,
++	.set_rate	= clk_pllv3_vf610_set_rate,
++};
++
+ static unsigned long clk_pllv3_enet_recalc_rate(struct clk_hw *hw,
+ 						unsigned long parent_rate)
+ {
+@@ -322,6 +406,9 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
+ 	case IMX_PLLV3_SYS:
+ 		ops = &clk_pllv3_sys_ops;
+ 		break;
++	case IMX_PLLV3_SYS_VF610:
++		ops = &clk_pllv3_vf610_ops;
++		break;
+ 	case IMX_PLLV3_USB_VF610:
+ 		pll->div_shift = 1;
+ 	case IMX_PLLV3_USB:
+diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+index 0476353ab423..59b1863deb88 100644
+--- a/drivers/clk/imx/clk-vf610.c
++++ b/drivers/clk/imx/clk-vf610.c
+@@ -219,8 +219,8 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
+ 	clk[VF610_CLK_PLL6_BYPASS_SRC] = imx_clk_mux("pll6_bypass_src", PLL6_CTRL, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
+ 	clk[VF610_CLK_PLL7_BYPASS_SRC] = imx_clk_mux("pll7_bypass_src", PLL7_CTRL, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
+ 
+-	clk[VF610_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll1", "pll1_bypass_src", PLL1_CTRL, 0x1);
+-	clk[VF610_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "pll2_bypass_src", PLL2_CTRL, 0x1);
++	clk[VF610_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS_VF610, "pll1", "pll1_bypass_src", PLL1_CTRL, 0x1);
++	clk[VF610_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_SYS_VF610, "pll2", "pll2_bypass_src", PLL2_CTRL, 0x1);
+ 	clk[VF610_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB_VF610,     "pll3", "pll3_bypass_src", PLL3_CTRL, 0x2);
+ 	clk[VF610_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll4", "pll4_bypass_src", PLL4_CTRL, 0x7f);
+ 	clk[VF610_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_ENET,    "pll5", "pll5_bypass_src", PLL5_CTRL, 0x3);
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 3799ff82a9b4..99a617897831 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -34,6 +34,7 @@ enum imx_pllv3_type {
+ 	IMX_PLLV3_AV,
+ 	IMX_PLLV3_ENET,
+ 	IMX_PLLV3_ENET_IMX7,
++	IMX_PLLV3_SYS_VF610,
+ };
+ 
+ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
+-- 
+2.1.4
