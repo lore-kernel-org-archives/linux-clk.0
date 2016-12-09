@@ -1,59 +1,63 @@
-Return-Path: <nicolas.ferre@atmel.com>
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-To: Boris BREZILLON <boris.brezillon@free-electrons.com>,
-	<linux-arm-kernel@lists.infradead.org>, <maxime.ripard@free-electrons.com>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>
-CC: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Ludovic
- Desroches <ludovic.desroches@atmel.com>, Songjun Wu <songjun.wu@atmel.com>,
-	<linux-kernel@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: [RFC PATCH 0/3] clk: at91: audio PLL clock
-Date: Tue, 6 Dec 2016 11:55:57 +0100
-Message-ID: <cover.1481021115.git.nicolas.ferre@atmel.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 8 Dec 2016 16:28:37 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
+	Rob Herring <robh@kernel.org>,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Linux-DT <devicetree@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linux-Kernel <linux-kernel@vger.kernel.org>,
+	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+	Linux-ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/3] ASoC: simple-card: use devm_get_clk_from_child()
+Message-ID: <20161209002837.GE5423@codeaurora.org>
+References: <874m2jvtmw.wl%kuninori.morimoto.gx@renesas.com>
+ <871sxnvtkp.wl%kuninori.morimoto.gx@renesas.com>
+ <20161208220942.GO5423@codeaurora.org>
+ <877f7aymxu.wl%kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: nicolas.ferre@atmel.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <877f7aymxu.wl%kuninori.morimoto.gx@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series covers the addition of the Audio PLL clock found on AT91 SoCs like
-the SAMA5D2.
-I also added the use of these clocks by the ClassD audi amplifier in both SoC
-and board DT.
+On 12/09, Kuninori Morimoto wrote:
+> 
+> Hi Stephen
+> 
+> > > @@ -111,14 +112,13 @@ int asoc_simple_card_parse_clk(struct device_node *node,
+> > >  	 *  or "system-clock-frequency = <xxx>"
+> > >  	 *  or device's module clock.
+> > >  	 */
+> > > -	clk = of_clk_get(node, 0);
+> > > +	clk = devm_get_clk_from_child(dev, node, NULL);
+> > >  	if (!IS_ERR(clk)) {
+> > >  		simple_dai->sysclk = clk_get_rate(clk);
+> > > -		simple_dai->clk = clk;
+> > >  	} else if (!of_property_read_u32(node, "system-clock-frequency", &val)) {
+> > >  		simple_dai->sysclk = val;
+> > >  	} else {
+> > > -		clk = of_clk_get(dai_of_node, 0);
+> > > +		clk = devm_get_clk_from_child(dev, dai_of_node, NULL);
+> > 
+> > 
+> > I was confused for a minute about how the second of_clk_get()
+> > call with the dai_link node could work. Is that documented
+> > anywhere or used by anyone? It seems like it's at least another
+> > child node of the sound node (which is dev here) so it seems ok.
+> 
+> Documentation/devicetree/bindings/sound/simple-card.txt
+> explains 1st of_clk_get will be used as "if needed",
+> 2nd of_clk_get will be used as "not needed pattern".
+> 1st pattern will use specific clock, 2nd pattern will use
+> "cpu" or "codec" clock.
+> 2nd one was added by someone (I forgot), and many driver is
+> based on this feature.
+> 
 
-The Audio PLL is described in the sama5d2 datasheet chapter "29.8 Audio PLL".
-
-Even if "it works" (!), note that I'm not satisfied with the current code and
-would need some advice from people more accustomed with the CCF and
-particularly composite audio PLL/clocks like these. For example, I do not take
-into account the limits of these clocks (as described in the datasheet) and the
-dependency between the PAD and the PMC child clocks.
-
-Thanks in advance for your inputs.
-
-Best regards,
-  Nicolas
-
-
-Cyrille Pitchen (2):
-  ARM: dts: at91: sama5d2: add classd nodes
-  ARM: dts: at91: sama5d2_xplained: add pin muxing and enable classd
-
-Nicolas Ferre (1):
-  clk: at91: add audio pll clock driver
-
- .../devicetree/bindings/clock/at91-clock.txt       |  10 +
- arch/arm/boot/dts/at91-sama5d2_xplained.dts        |  16 ++
- arch/arm/boot/dts/sama5d2.dtsi                     |  39 +++-
- arch/arm/mach-at91/Kconfig                         |   4 +
- drivers/clk/at91/Makefile                          |   2 +
- drivers/clk/at91/clk-audio-pll-pad.c               | 238 +++++++++++++++++++
- drivers/clk/at91/clk-audio-pll-pmc.c               | 184 +++++++++++++++
- drivers/clk/at91/clk-audio-pll.c                   | 253 +++++++++++++++++++++
- include/linux/clk/at91_pmc.h                       |  25 ++
- 9 files changed, 770 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/at91/clk-audio-pll-pad.c
- create mode 100644 drivers/clk/at91/clk-audio-pll-pmc.c
- create mode 100644 drivers/clk/at91/clk-audio-pll.c
+Can you point to some dts file in the kernel that falls into the
+devm_get_clk_from_child(dev, dai_of_node, NULL) part?
 
 -- 
-2.9.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
