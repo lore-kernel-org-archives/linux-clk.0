@@ -1,96 +1,23 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 13 Dec 2016 15:25:24 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Irina Tirdea <irina.tirdea@intel.com>, linux-clk@vger.kernel.org,
-	"x86@kernel.org" <x86@kernel.org>,
-	platform-driver-x86@vger.kernel.org,
-	Darren Hart <dvhart@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Len Brown <lenb@kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [PATCH v6 1/3] clk: x86: Add Atom PMC platform clocks
-Message-ID: <20161213232524.GQ5423@codeaurora.org>
-References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
- <1481306510-7471-2-git-send-email-irina.tirdea@intel.com>
- <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Stephen Warren <swarren@wwwdotorg.org>, Ray Jui <rjui@broadcom.com>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: bcm: Fix 'maybe-uninitialized' warning in bcm2835_clock_choose_div_and_prate()
+Date: Mon, 12 Dec 2016 09:12:36 +0100
+Message-ID: <3107859.uaKLk6DMRd@wuerfel>
+In-Reply-To: <1481529653-28133-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1481529653-28133-1-git-send-email-boris.brezillon@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/13, Andy Shevchenko wrote:
-> On Fri, Dec 9, 2016 at 8:01 PM, Irina Tirdea <irina.tirdea@intel.com> wrote:
+On Monday, December 12, 2016 9:00:53 AM CET Boris Brezillon wrote:
+> best_rate is reported as potentially uninitialized by gcc.
 > 
-> > --- a/drivers/clk/x86/Makefile
-> > +++ b/drivers/clk/x86/Makefile
-> > @@ -1,2 +1,5 @@
-> >  clk-x86-lpss-objs              := clk-lpt.o
-> >  obj-$(CONFIG_X86_INTEL_LPSS)   += clk-x86-lpss.o
-> 
-> > +ifeq ($(CONFIG_COMMON_CLK), y)
-> 
-> Hmm... I think (I didn't check) we don't go here otherwise.
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Fixes: 155e8b3b0ee3 ("clk: bcm: Support rate change propagation on bcm2835 clocks")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-We should move this statement to drivers/clk/Makefile around the
-x86 line.
+I wonder why I didn't get that. Which compiler version did you use?
 
-> > +                                       void __iomem *base,
-> > +                                       const char **parent_names,
-> > +                                       int num_parents)
-> > +{
-> > +       struct clk_plt *pclk;
-> > +       struct clk_init_data init;
-> > +       int ret;
-> > +
-> > +       pclk = devm_kzalloc(&pdev->dev, sizeof(*pclk), GFP_KERNEL);
-> > +       if (!pclk)
-> > +               return ERR_PTR(-ENOMEM);
-> > +
-> > +       init.name =  kasprintf(GFP_KERNEL, "%s%d", PLT_CLK_NAME_BASE, id);
-> 
-> devm_kasprintf()
-
-Please no.
-
-> 
-> > +       init.ops = &plt_clk_ops;
-> > +       init.flags = 0;
-> > +       init.parent_names = parent_names;
-> > +       init.num_parents = num_parents;
-> > +
-> > +       pclk->hw.init = &init;
-> > +       pclk->reg = base + id * PMC_CLK_CTL_SIZE;
-> > +       spin_lock_init(&pclk->lock);
-> > +
-> > +       ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
-> > +       if (ret)
-> > +               goto err_free_init;
-> > +
-> > +       pclk->lookup = clkdev_hw_create(&pclk->hw, init.name, NULL);
-> > +       if (!pclk->lookup) {
-> > +               ret = -ENOMEM;
-> > +               goto err_free_init;
-> > +       }
-> > +
-> 
-> > +       kfree(init.name);
-> 
-> devm_kfree();
-
-It's all local to this function, devm isn't helping anything.
-Having one kfree() would be good though. And using init.name for
-the clkdev lookup is probably wrong and should be replaced with
-something more generic along with an associated device name.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+	Arnd
