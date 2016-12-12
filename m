@@ -1,85 +1,59 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v4 5/9] clk: stm32f4: Add I2S clock
-Date: Tue, 13 Dec 2016 15:20:16 +0100
-Message-ID: <1481638820-29324-6-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
-References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Jose Abreu <Jose.Abreu@synopsys.com>,  linux-clk@vger.kernel.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <040cc9afdfa0e95ce7a01c406ff427ef7dc0c0fd.1481540717.git.joabreu@synopsys.com>
+Cc: "Jose Abreu" <Jose.Abreu@synopsys.com>,
+ "Carlos Palminha" <CARLOS.PALMINHA@synopsys.com>,
+ "Stephen Boyd" <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org
+References: <040cc9afdfa0e95ce7a01c406ff427ef7dc0c0fd.1481540717.git.joabreu@synopsys.com>
+Message-ID: <148156941210.37646.9887321843077068242@resonance>
+Subject: Re: [PATCH] clk/axs10x: Clear init field in driver probe
+Date: Mon, 12 Dec 2016 11:03:32 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Quoting Jose Abreu (2016-12-12 03:08:55)
+> Init field must be cleared in driver probe as this structure is not dinam=
+ically allocated. If not, wrong flags can be passed to core.
+> =
 
-This patch introduces I2S clock for stm32f4 soc.
-The I2S clock could be derived from an external clock or from pll-i2s
+> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32f4.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+Applied to clk-next. You can find this patch merged after v4.10-rc1 is
+released in a couple of weeks.
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 076a063..a7a6a16 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -946,6 +946,8 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
- 
- static const char *lcd_parent[1] = { "pllsai-r-div" };
- 
-+static const char *i2s_parents[2] = { "plli2s-r", NULL };
-+
- struct stm32_aux_clk {
- 	int idx;
- 	const char *name;
-@@ -975,6 +977,12 @@ struct stm32f4_clk_data {
- 		STM32F4_RCC_APB2ENR, 26,
- 		CLK_SET_RATE_PARENT
- 	},
-+	{
-+		CLK_I2S, "i2s", i2s_parents, ARRAY_SIZE(i2s_parents),
-+		STM32F4_RCC_CFGR, 23, 1,
-+		NO_GATE, 0,
-+		CLK_SET_RATE_PARENT
-+	},
- };
- 
- static const struct stm32f4_clk_data stm32f429_clk_data = {
-@@ -1069,7 +1077,7 @@ static struct clk_hw *stm32_register_aux_clk(const char *name,
- 
- static void __init stm32f4_rcc_init(struct device_node *np)
- {
--	const char *hse_clk;
-+	const char *hse_clk, *i2s_in_clk;
- 	int n;
- 	const struct of_device_id *match;
- 	const struct stm32f4_clk_data *data;
-@@ -1104,6 +1112,10 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 
- 	hse_clk = of_clk_get_parent_name(np, 0);
- 
-+	i2s_in_clk = of_clk_get_parent_name(np, 1);
-+
-+	i2s_parents[1] = i2s_in_clk;
-+
- 	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
- 			16000000, 160000);
- 	pllcfgr = readl(base + STM32F4_RCC_PLLCFGR);
--- 
-1.9.1
+Regards,
+Mike
+
+> Cc: Carlos Palminha <palminha@synopsys.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/clk/axs10x/i2s_pll_clock.c | 1 +
+>  1 file changed, 1 insertion(+)
+> =
+
+> diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_=
+pll_clock.c
+> index 411310d..02d3bcd 100644
+> --- a/drivers/clk/axs10x/i2s_pll_clock.c
+> +++ b/drivers/clk/axs10x/i2s_pll_clock.c
+> @@ -182,6 +182,7 @@ static int i2s_pll_clk_probe(struct platform_device *=
+pdev)
+>         if (IS_ERR(pll_clk->base))
+>                 return PTR_ERR(pll_clk->base);
+>  =
+
+> +       memset(&init, 0, sizeof(init));
+>         clk_name =3D node->name;
+>         init.name =3D clk_name;
+>         init.ops =3D &i2s_pll_ops;
+> -- =
+
+> 1.9.1
+> =
+
+>=20
