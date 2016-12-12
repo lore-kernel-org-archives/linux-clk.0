@@ -1,166 +1,115 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>,
- Thomas Abraham <thomas.ab@samsung.com>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Ben Gamari <ben@smart-cactus.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- b.zolnierkie@samsung.com
-Subject: [PATCH 2/2] ARM: dts: Add CPU OPPs for Exynos4412 Prime
-Date: Thu, 29 Dec 2016 14:36:51 +0100
-Message-id: <1483018611-27998-3-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1483018611-27998-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1483018611-27998-1-git-send-email-b.zolnierkie@samsung.com>
- <CGME20161229133734epcas5p1e893904353c23170e82ece54a06aebed@epcas5p1.samsung.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <d70f2809-102c-a3de-c77c-43af27bbcbbc@arm.com>
+References: <d70f2809-102c-a3de-c77c-43af27bbcbbc@arm.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 12 Dec 2016 12:41:21 +0800
+Message-ID: <CAGb2v67kCAr6Ty5=Gg8vOGNC6xhuRM66Wa=H+C3AD=_d_H+N8w@mail.gmail.com>
+Subject: Re: [linux-sunxi] sunxi-ng clocks: leaving certain clocks alone?
+To: =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	=?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Alexander Graf <agraf@suse.de>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add CPU operating points for Exynos4412 Prime (it supports
-additional 1704MHz & 1600MHz OPPs and 1500MHz OPP is just
-a regular non-turbo OPP on this SoC).  Also update relevant
-cooling maps to account for new OPPs.
+On Mon, Dec 12, 2016 at 7:54 AM, Andr=C3=A9 Przywara <andre.przywara@arm.co=
+m> wrote:
+> Hi,
+>
+> I was observing that the new sunxi-ng clock code apparently explicitly
+> turns off _all_ clocks that are not used or needed. I find this rather
+> unfortunate, as I wanted to use the THS temperature sensor from ARM
+> Trusted Firmware to implement emergency shutdown or DVFS throttling.
+> That works until the clock framework finds the clock (as enumerated in
+> ccu-sun50i-a64.c) and obviously explicitly clears bit 31 in the THS mod
+> clock register and bit 8 in the respective clock gate register.
+> Turning them manually back on via /dev/mem or removing the THS clock
+> from the sunxi-ng driver fixes this for me.
+>
+> This was not happening with the old Allwinner clocks, since the kernel
+> wouldn't even know about it if there was no driver and the clock wasn't
+> mentioned in the DT.
+>
+> Now with sunxi-ng even though the THS clock is not actually referenced
+> or used in the DT, the kernel turns it off. I would expect that upon
+> entering the kernel all unneeded clocks are turned off anyway, so there
+> is no need to mess with clocks that have no user, but are enumerated in
+> the ccu driver.
 
-ODROID-X2/U2/U3 boards use Exynos4412 Prime SoC version so
-update their board files accordingly.
+I can't say that's absolutely true (wink).
 
-Based on Hardkernel's kernel for ODROID-X2/U2/U3 boards.
+>
+> I wonder if this kills simplefb as well, for instance, since I believe
+> that U-Boot needs to turn on certain clocks and relies on them staying up=
+.
 
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Andreas Faerber <afaerber@suse.de>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Ben Gamari <ben@smart-cactus.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 +--
- arch/arm/boot/dts/exynos4412-odroidu3.dts       |  5 +--
- arch/arm/boot/dts/exynos4412-odroidx2.dts       |  1 +
- arch/arm/boot/dts/exynos4412-prime.dtsi         | 41 +++++++++++++++++++++++++
- arch/arm/boot/dts/exynos4412.dtsi               |  2 +-
- 5 files changed, 48 insertions(+), 5 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos4412-prime.dtsi
+The simplefb bindings takes clocks and regulators expressly for the
+purpose of keeping them enabled.
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 8aa19ba..5282d69e 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -97,11 +97,11 @@
- 	thermal-zones {
- 		cpu_thermal: cpu-thermal {
- 			cooling-maps {
--				map0 {
-+				cooling_map0: map0 {
- 				     /* Corresponds to 800MHz at freq_table */
- 				     cooling-device = <&cpu0 7 7>;
- 				};
--				map1 {
-+				cooling_map1: map1 {
- 				     /* Corresponds to 200MHz at freq_table */
- 				     cooling-device = <&cpu0 13 13>;
- 			       };
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index 99634c5..7504a5a 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -13,6 +13,7 @@
- 
- /dts-v1/;
- #include "exynos4412-odroid-common.dtsi"
-+#include "exynos4412-prime.dtsi"
- 
- / {
- 	model = "Hardkernel ODROID-U3 board based on Exynos4412";
-@@ -47,11 +48,11 @@
- 			cooling-maps {
- 				map0 {
- 				     trip = <&cpu_alert1>;
--				     cooling-device = <&cpu0 7 7>;
-+				     cooling-device = <&cpu0 9 9>;
- 				};
- 				map1 {
- 				     trip = <&cpu_alert2>;
--				     cooling-device = <&cpu0 13 13>;
-+				     cooling-device = <&cpu0 15 15>;
- 				};
- 				map2 {
- 				     trip = <&cpu_alert0>;
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx2.dts b/arch/arm/boot/dts/exynos4412-odroidx2.dts
-index 4d22885..d6e92ebc 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx2.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx2.dts
-@@ -12,6 +12,7 @@
- */
- 
- #include "exynos4412-odroidx.dts"
-+#include "exynos4412-prime.dtsi"
- 
- / {
- 	model = "Hardkernel ODROID-X2 board based on Exynos4412";
-diff --git a/arch/arm/boot/dts/exynos4412-prime.dtsi b/arch/arm/boot/dts/exynos4412-prime.dtsi
-new file mode 100644
-index 0000000..e75bc17
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos4412-prime.dtsi
-@@ -0,0 +1,41 @@
-+/*
-+ * Samsung's Exynos4412 Prime SoC device tree source
-+ *
-+ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+/*
-+ * Exynos4412 Prime SoC revision supports higher CPU frequencies than
-+ * non-Prime version.  Therefore we need to update OPPs table and
-+ * thermal maps accordingly.
-+ */
-+
-+&cpu0_opp_1500 {
-+	/delete-property/turbo-mode;
-+};
-+
-+&cpu0_opp_table {
-+	opp@1600000000 {
-+		opp-hz = /bits/ 64 <1600000000>;
-+		opp-microvolt = <1350000>;
-+		clock-latency-ns = <200000>;
-+	};
-+	opp@1704000000 {
-+		opp-hz = /bits/ 64 <1704000000>;
-+		opp-microvolt = <1350000>;
-+		clock-latency-ns = <200000>;
-+	};
-+};
-+
-+&cooling_map0 {
-+	cooling-device = <&cpu0 9 9>;
-+};
-+
-+&cooling_map1 {
-+	cooling-device = <&cpu0 15 15>;
-+};
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index 40beede..3ebdf01 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -130,7 +130,7 @@
- 			opp-microvolt = <1287500>;
- 			clock-latency-ns = <200000>;
- 		};
--		opp@1500000000 {
-+		cpu0_opp_1500: opp@1500000000 {
- 			opp-hz = /bits/ 64 <1500000000>;
- 			opp-microvolt = <1350000>;
- 			clock-latency-ns = <200000>;
--- 
-1.9.1
+>
+> So my questions:
+> 1) Is this expected behaviour?
+
+Yes.
+
+> 2) If yes, should it really be?
+> 3) If yes, shouldn't there be way to explicitly tell Linux to leave that
+> clock alone, preferably via DT? Although the sunxi-ng clocks take
+> control over the whole CCU unit, I wonder if it should really mess with
+> clocks there are not referenced in the DT.
+
+As it owns the whole CCU unit, why not? And how would it know if some
+clock is referenced or not, unless going through the whole device tree?
+
+Furthermore, nothing prevents another device driver from referencing
+said clock and turning it off when it's not in use. Think THS driver
+with runtime PM.
+
+Are you also mapping the THS to secure only? Otherwise nothing would
+prevent Linux from also claiming it.
+
+>
+> Maybe there is some way to reference those clocks via some dummy driver
+> or DT node to avoid this behaviour? Is there any prior art in this respec=
+t?
+
+If you want a clock to not be disabled by anyone, adding CLK_IS_CRITICAL
+to its flags is the proper option. This is done in the clk driver though.
+
+If you just don't want the clk subsystem to disable unused clks at boot
+time, you can add "clk_ignore_unused" to the kernel boot parameters.
+I think this is more of a hack and debugging tool though.
+
+About dummy drivers, simplefb comes to mind again. But simplefb disables
+them when it gets kicked out by the drm driver. Maybe there are other
+examples.
+
+Regards
+ChenYu
+
+> I think this issue will affect more future users (thinking of EFI RTC,
+> EFI graphics, etc.), so I wanted to start a discussion on this.
+>
+> Any input welcome.
+>
+> Cheers,
+> Andre.
+>
+> P.S. For reference my use case: ARM Trusted Firmware (ATF) enables the
+> temperature sensor (THS) and programs a shutdown value. It programs the
+> respective interrupt as secure and registers an IRQ handler in ATF to
+> shutdown the system or take other appropriate matters to avoid
+> overheating. Additionally the sensor is exported via the generic SCPI
+> interface, so the existing scpi-hwmon driver picks it up and reports it
+> to whoever is interested in Linux land via the normal interfaces.
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
