@@ -1,50 +1,39 @@
-Return-Path: <icenowy@aosc.xyz>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Russell King <linux@armlinux.org.uk>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <Jose.Abreu@synopsys.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+To: linux-clk@vger.kernel.org
+Cc: Jose Abreu <Jose.Abreu@synopsys.com>,
+	Carlos Palminha <CARLOS.PALMINHA@synopsys.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Jorik Jonker <jorik@kippendief.biz>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-In-Reply-To: <20161213154451.y4wcrqhtcc5sqli7@lukather>
-References: <20161213152252.53749-1-icenowy@aosc.xyz>
-	 <20161213152252.53749-3-icenowy@aosc.xyz> <20161213154451.y4wcrqhtcc5sqli7@lukather>
-Subject: Re: [PATCH 2/6] clk: sunxi-ng: set the parent rate when adjustin CPUX clock on A33
-MIME-Version: 1.0
-Message-Id: <306991481662454@web33j.yandex.ru>
-Date: Wed, 14 Dec 2016 04:54:14 +0800
-Content-Type: text/plain; charset=utf-8
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk/axs10x: Clear init field in driver probe
+Date: Mon, 12 Dec 2016 11:08:55 +0000
+Message-Id: <040cc9afdfa0e95ce7a01c406ff427ef7dc0c0fd.1481540717.git.joabreu@synopsys.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Init field must be cleared in driver probe as this structure is not dinamically allocated. If not, wrong flags can be passed to core.
 
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Cc: Carlos Palminha <palminha@synopsys.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/clk/axs10x/i2s_pll_clock.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-13.12.2016, 23:44, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
-> On Tue, Dec 13, 2016 at 11:22:48PM +0800, Icenowy Zheng wrote:
->>  The CPUX clock on A33, which is for the Cortex-A7 cores, is designed to
->>  be changeable by changing the rate of PLL_CPUX.
->>
->>  Add CLK_SET_RATE_PARENT flag to this clock.
->>
->>  Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
->
-> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-Excuse me, have you merged this patch?
-
-If merged, I won't contain it in my PATCH v2, thus the PATCH v2 will contain
-only an updated OPP patch.
-
->
-> Thanks!
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
+diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_pll_clock.c
+index 411310d..02d3bcd 100644
+--- a/drivers/clk/axs10x/i2s_pll_clock.c
++++ b/drivers/clk/axs10x/i2s_pll_clock.c
+@@ -182,6 +182,7 @@ static int i2s_pll_clk_probe(struct platform_device *pdev)
+ 	if (IS_ERR(pll_clk->base))
+ 		return PTR_ERR(pll_clk->base);
+ 
++	memset(&init, 0, sizeof(init));
+ 	clk_name = node->name;
+ 	init.name = clk_name;
+ 	init.ops = &i2s_pll_ops;
+-- 
+1.9.1
