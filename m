@@ -1,62 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wj0-f193.google.com ([209.85.210.193]:36728 "EHLO
-        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932708AbcLHROD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2016 12:14:03 -0500
-Date: Thu, 8 Dec 2016 19:13:57 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: dts: exynos: Fix initial clocks configuration
- on Odroid X/X2/U3 boards
-Message-ID: <20161208171357.GA8082@kozik-lap>
-References: <1481194914-20490-1-git-send-email-m.szyprowski@samsung.com>
- <1481194914-20490-2-git-send-email-m.szyprowski@samsung.com>
- <CGME20161208164434epcas4p4a7c6c5045d38140b0dca501276206a2c@epcas4p4.samsung.com>
- <20161208164421.GC5238@kozik-lap>
- <864877de-a14b-093a-4127-4ad710299fc2@samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 12 Dec 2016 11:26:49 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>, linux-rpi-kernel@lists.infradead.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: bcm: Fix 'maybe-uninitialized' warning in
+ bcm2835_clock_choose_div_and_prate()
+Message-ID: <20161212192649.GK5423@codeaurora.org>
+References: <1481529653-28133-1-git-send-email-boris.brezillon@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <864877de-a14b-093a-4127-4ad710299fc2@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1481529653-28133-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Dec 08, 2016 at 06:07:02PM +0100, Sylwester Nawrocki wrote:
-> On 12/08/2016 05:44 PM, Krzysztof Kozlowski wrote:
-> > On Thu, Dec 08, 2016 at 12:01:54PM +0100, Marek Szyprowski wrote:
-> >> Move assigned clocks properties from sound node to audio subsystem clock
-> >> controller node. This way clocks topology and rates are set just after
-> >> probing audio clocks controller. Leaving those properties under sound
-> >> node doesn't guarantee to configure them before they are being used
-> >> (for example i2s hardware module can be probed in parallel and it also
-> >> require proper audio clocks configuration).
-> >>
-> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >> ---
-> >>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 20 ++++++++++----------
-> >>  1 file changed, 10 insertions(+), 10 deletions(-)
-> >
-> > Looks correct, for the reference:
-> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > 
-> > Does this fixes any encountered issue (real one)? I wonder whether this
-> > should go to fixes or not.
+On 12/12, Boris Brezillon wrote:
+> best_rate is reported as potentially uninitialized by gcc.
 > 
-> With current code there is no issues, and in fact there should be no
-> such timing dependencies in DT to rely on.  However, the binding convention
-> is to put assigned-clock* properties in a node of a device they belong
-> to and in this case the 'clock_audss' is more appropriate than the 'sound'
-> node.  This patch doesn't fix any bug with current code but it might save
-> us some trouble with future changes.
->
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Fixes: 155e8b3b0ee3 ("clk: bcm: Support rate change propagation on bcm2835 clocks")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
 
-Thanks for explanation. I am not planning any pull requests for this
-cycle so the patch will have to wait till the end of 4.10-rc1
-merge window.
+Applied to clk-next
 
-Best regards,
-Krzysztof
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
