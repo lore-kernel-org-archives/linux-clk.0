@@ -1,61 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:46347 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932299AbcLHVYM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2016 16:24:12 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
-        Richard Watts <rrw@kynesim.co.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexander Kinzer <a.kinzer@plusoptix.de>
-Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
-Date: Thu, 08 Dec 2016 23:24:36 +0200
-Message-ID: <6869868.ALm3az2NcY@avalon>
-In-Reply-To: <20161208211601.GK5423@codeaurora.org>
-References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com> <20161208211601.GK5423@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	Eric Anholt <eric@anholt.net>,
+	linux-rpi-kernel@lists.infradead.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH] clk: bcm: Fix 'maybe-uninitialized' warning in bcm2835_clock_choose_div_and_prate()
+Date: Mon, 12 Dec 2016 09:00:53 +0100
+Message-Id: <1481529653-28133-1-git-send-email-boris.brezillon@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+best_rate is reported as potentially uninitialized by gcc.
 
-On Thursday 08 Dec 2016 13:16:01 Stephen Boyd wrote:
-> On 12/02, Laurent Pinchart wrote:
-> > From: Richard Watts <rrw@kynesim.co.uk>
-> > 
-> > The OMAP36xx DPLL5, driving EHCI USB, can be subject to a long-term
-> > frequency drift. The frequency drift magnitude depends on the VCO update
-> > rate, which is inversely proportional to the PLL divider. The kernel
-> > DPLL configuration code results in a high value for the divider, leading
-> > to a long term drift high enough to cause USB transmission errors. In
-> > the worst case the USB PHY's ULPI interface can stop responding,
-> > breaking USB operation completely. This manifests itself on the
-> > Beagleboard xM by the LAN9514 reporting 'Cannot enable port 2. Maybe the
-> > cable is bad?' in the kernel log.
-> > 
-> > Errata sprz319 advisory 2.1 documents PLL values that minimize the
-> > drift. Use them automatically when DPLL5 is used for USB operation,
-> > which we detect based on the requested clock rate. The clock framework
-> > will still compute the PLL parameters and resulting rate as usual, but
-> > the PLL M and N values will then be overridden. This can result in the
-> > effective clock rate being slightly different than the rate cached by
-> > the clock framework, but won't cause any adverse effect to USB
-> > operation.
-> > 
-> > Signed-off-by: Richard Watts <rrw@kynesim.co.uk>
-> > [Upported from v3.2 to v4.9]
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > ---
-> 
-> Applied to clk-next
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Fixes: 155e8b3b0ee3 ("clk: bcm: Support rate change propagation on bcm2835 clocks")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you.
-
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index eaf82f49dede..0d14409097e7 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1029,7 +1029,7 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
+ 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+ 	struct bcm2835_cprman *cprman = clock->cprman;
+ 	const struct bcm2835_clock_data *data = clock->data;
+-	unsigned long best_rate;
++	unsigned long best_rate = 0;
+ 	u32 curdiv, mindiv, maxdiv;
+ 	struct clk_hw *parent;
+ 
 -- 
-Regards,
-
-Laurent Pinchart
-
+2.7.4
