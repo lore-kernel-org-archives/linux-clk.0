@@ -1,39 +1,91 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33299 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750813AbcLFU0h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Dec 2016 15:26:37 -0500
-Date: Tue, 6 Dec 2016 21:25:59 +0100
-From: Richard Cochran <richardcochran@gmail.com>
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Murali Karicheri <m-karicheri2@ti.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Mugunthan V N <mugunthanvnm@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, Wingman Kwok <w-kwok2@ti.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/6] net: ethernet: ti: cpts: add support for ext rftclk
- selection
-Message-ID: <20161206202558.GB23605@localhost.localdomain>
-References: <20161128230428.6872-1-grygorii.strashko@ti.com>
- <20161128230428.6872-3-grygorii.strashko@ti.com>
- <20161130095632.GC28680@localhost.localdomain>
- <bf207ac4-0f9f-d4a7-14ac-704d93fb7764@ti.com>
- <11994fbc-3713-6ef7-8a44-8a2442106dfc@ti.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 12 Dec 2016 11:38:02 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com, ssantosh@kernel.org,
+	nm@ti.com, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/3] clk: keystone: Add sci-clk driver support
+Message-ID: <20161212193800.GL5423@codeaurora.org>
+References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
+ <1477053961-27128-4-git-send-email-t-kristo@ti.com>
+ <20161208001348.GC5423@codeaurora.org>
+ <cb608729-b617-0eab-5ddf-d78ff47b237e@ti.com>
+ <20161208211044.GI5423@codeaurora.org>
+ <22dacb0c-a3bc-50ce-e4b9-f74a0c706f20@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <11994fbc-3713-6ef7-8a44-8a2442106dfc@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <22dacb0c-a3bc-50ce-e4b9-f74a0c706f20@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 06, 2016 at 01:39:40PM -0600, Grygorii Strashko wrote:
-> I come with below RFC patch. if no objection I'll move forward with it.
+On 12/09, Tero Kristo wrote:
+> On 08/12/16 23:10, Stephen Boyd wrote:
+> >On 12/08, Tero Kristo wrote:
+> >>On 08/12/16 02:13, Stephen Boyd wrote:
+> >>>On 10/21, Tero Kristo wrote:
+> >>>>diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+> >>>>new file mode 100644
+> >>>>index 0000000..f6af5bd
+> >>>>--- /dev/null
+> >>>>+++ b/drivers/clk/keystone/sci-clk.c
+> >>
+> >>>
+> >>>>+
+> >>>>+	handle = devm_ti_sci_get_handle(dev);
+> >>>>+	if (IS_ERR(handle))
+> >>>>+		return PTR_ERR(handle);
+> >>>>+
+> >>>>+	provider = devm_kzalloc(dev, sizeof(*provider), GFP_KERNEL);
+> >>>>+	if (!provider)
+> >>>>+		return -ENOMEM;
+> >>>>+
+> >>>>+	provider->clocks = data;
+> >>>>+
+> >>>>+	provider->sci = handle;
+> >>>>+	provider->ops = &handle->ops.clk_ops;
+> >>>>+	provider->dev = dev;
+> >>>>+
+> >>>>+	ti_sci_init_clocks(provider);
+> >>>
+> >>>And if this fails?
+> >>
+> >>Yea this is kind of controversial. ti_sci_init_clocks() can fail if
+> >>any of the clocks registered will fail. I decided to have it this
+> >>way so that at least some clocks might work in failure cause, and
+> >>you might have a booting device instead of total lock-up.
+> >>
+> >>Obviously it could be done so that if any clock fails, we would
+> >>de-register all clocks at that point, but personally I think this is
+> >>a worse option.
+> >>
+> >>ti_sci_init_clocks could probably be modified to continue
+> >>registering clocks when a single clock fails though. Currently it
+> >>aborts at first failure.
+> >>
+> >
+> >That sounds like a better approach if we don't care about
+> >failures to register a clock. Returning a value from a function
+> >and not using it isn't really a great design.
+> >
+> >I worry that if we start returning errors from clk_hw_register()
+> >that something will go wrong though, so really I don't know why
+> >we want to ignore errors at all. Just for debugging a boot hang?
+> >Can't we use early console to at least see that this driver is
+> >failing to probe and debug that way?
+> 
+> Early console can be used to debug that, but it is kind of annoying
+> to recompile most of the kernel when you suddenly need to use it.
 
-Thanks for following through with this!
+I thought SERIAL_EARLYCON was selected by drivers that support
+it? So there shouldn't be any rebuilding required.
 
-The am335x will also need the MUX in its clock tree, won't it?
+> 
+> How about modifying the ti_sci_init_clocks func to print an error
+> for each failed clock?
 
+Ok that's fine too. I'd prefer the function had a return type of
+void if we're not planning on using the return value, that's all.
 
-Thanks,
-Richard
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
