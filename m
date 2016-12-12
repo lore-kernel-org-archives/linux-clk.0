@@ -1,31 +1,69 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Dec 2016 15:27:26 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Nicholas Mc Guire <hofrat@osadl.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Mark Brown <broonie@opensource.wolfsonmicro.com>,
-	patches@opensource.wolfsonmicro.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] clk: wm831x: fix usleep_range with bad range
-Message-ID: <20161221232726.GC8288@codeaurora.org>
-References: <1481528409-5182-1-git-send-email-hofrat@osadl.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1481528409-5182-1-git-send-email-hofrat@osadl.org>
+To: Tero Kristo <t-kristo@ti.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <7371ef35-5d95-bf78-4c97-c61091a1fa4b@ti.com>
+Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, tony@atomide.com,
+ linux-arm-kernel@lists.infradead.org
+References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+ <20161028005341.GR26139@codeaurora.org>
+ <2cfa10a9-9ea0-23e4-30de-9aece13e47e3@ti.com>
+ <20161028233750.GQ16026@codeaurora.org>
+ <7371ef35-5d95-bf78-4c97-c61091a1fa4b@ti.com>
+Message-ID: <148156710975.37646.2957511113527634913@resonance>
+Subject: Re: [PATCHv4 00/15] clk: ti: add support for hwmod clocks
+Date: Mon, 12 Dec 2016 10:25:09 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/12, Nicholas Mc Guire wrote:
-> The delay here is not in atomic context and does not seem critical with
-> respect to precision, but usleep_range(min,max) with min==max results in 
-> giving the timer subsystem no room to optimize uncritical delays. Fix 
-> this by setting the range to 2000,3000 us.
-> 
-> Fixes: commit f05259a6ffa4 ("clk: wm831x: Add initial WM831x clock driver")
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> ---
+Quoting Tero Kristo (2016-12-02 00:15:53)
+> On 29/10/16 02:37, Stephen Boyd wrote:
+> > On 10/28, Tero Kristo wrote:
+> >> Eventually that should happen. However, we have plenty of legacy
+> >> code still in place which depend on clk_get functionality within
+> >> kernel. The major contributing factor is the hwmod codebase, for
+> >> which we have plans to:
+> >>
+> >> - get this clock driver merged
+> >> - implement a new interconnect driver for OMAP family SoCs
+> >> - interconnect driver will use DT handles for fetching clocks,
+> >> rather than clock aliases
+> >> - reset handling will be implemented as part of the interconnect
+> >> driver somehow (no prototype / clear plans for that as of yet)
+> >> - all the hwmod stuff can be dropped
+> >>
+> >> The clock alias handling is still needed as a transition phase until
+> >> all the above is done, then we can start dropping them. Basically
+> >> anything that is using omap_hwmod depends on the clock aliases right
+> >> now.
+> >
+> > Ok, sounds good. Thanks.
+> =
 
-Applied to clk-next
+> Stephen, any final comments on this series? I guess its too late to push =
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> for 4.10, but I would like to get this merged early for 4.11 window.
+
+Hi Tero,
+
+No final comments from me. I needed to go back and forth with Tony about
+the clockdomain modeling, but it seems sensible to create clock
+providers from the clock domains if you want to pass those struct clk
+objects down to the drivers.
+
+One thing I wasn't able to follow exactly in the code is how the
+clockdomains are linking parent clocks from cm1, cm2, etc to the clock
+domains. Are the clockdomain providers calling clk_get() on the clocks
+that it *consumes*, or are the clockdomain providers never calling
+clk_get() on those clocks and just establishing the tree hierarchy at
+clk_register() time?
+
+Unless Stephen has any more review comments we can merge this into a
+clk-next based on v4.10-rc1 when that drops.
+
+Regards,
+Mike
+
+> =
+
+> -Tero
