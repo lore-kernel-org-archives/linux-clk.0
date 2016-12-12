@@ -1,55 +1,301 @@
-Return-Path: <andy.shevchenko@gmail.com>
+Return-Path: <ping.bai@nxp.com>
+From: Jacky Bai <ping.bai@nxp.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: "shawnguo@kernel.org" <shawnguo@kernel.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>, "linus.walleij@linaro.org"
+	<linus.walleij@linaro.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, "daniel.lezcano@linaro.org"
+	<daniel.lezcano@linaro.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com"
+	<jacky.baip@gmail.com>
+Subject: RE: [PATCH 03/11] driver: clk: imx: Add clock driver for imx6sll
+Date: Mon, 12 Dec 2016 02:58:01 +0000
+Message-ID: <AM3PR04MB5302BE33BE1F2C9913FF61587980@AM3PR04MB530.eurprd04.prod.outlook.com>
+References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
+ <1480660774-25055-4-git-send-email-ping.bai@nxp.com>
+ <20161208225257.GP5423@codeaurora.org>
+In-Reply-To: <20161208225257.GP5423@codeaurora.org>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <1481306510-7471-3-git-send-email-irina.tirdea@intel.com>
-References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com> <1481306510-7471-3-git-send-email-irina.tirdea@intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Dec 2016 01:43:31 +0200
-Message-ID: <CAHp75VfCgTgWnNmgcY9mp9n-1e_mSci=3dGyrtDquMtTT3OoYw@mail.gmail.com>
-Subject: Re: [PATCH v6 2/3] arch/x86/platform/atom: Move pmc_atom to drivers/platform/x86
-To: Irina Tirdea <irina.tirdea@intel.com>
-Cc: linux-clk@vger.kernel.org, "x86@kernel.org" <x86@kernel.org>,
-	platform-driver-x86@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-	Darren Hart <dvhart@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>, Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Len Brown <lenb@kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-I have been told I have to send my comments here instead of our
-internal ML. I didn't fast enough to comment that during v5. So do it
-right now.
+> Subject: Re: [PATCH 03/11] driver: clk: imx: Add clock driver for imx6sll
+>=20
+> On 12/02, Bai Ping wrote:
+> > diff --git a/drivers/clk/imx/clk-imx6sll.c
+> > b/drivers/clk/imx/clk-imx6sll.c new file mode 100644 index
+> > 0000000..c5219e1
+> > --- /dev/null
+> > +++ b/drivers/clk/imx/clk-imx6sll.c
+> > @@ -0,0 +1,366 @@
+> > +/*
+> > + * Copyright (C) 2016 Freescale Semiconductor, Inc.
+> > + *
+> > + * The code contained herein is licensed under the GNU General Public
+> > + * License. You may obtain a copy of the GNU General Public License
+> > + * Version 2 or later at the following locations:
+> > + *
+> > + * http://www.opensource.org/licenses/gpl-license.html
+> > + * http://www.gnu.org/copyleft/gpl.html
+> > + */
+> > +
+> > +#include <dt-bindings/clock/imx6sll-clock.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/clkdev.h>
+>=20
+> Is this include used?
+>=20
 
-On Fri, Dec 9, 2016 at 8:01 PM, Irina Tirdea <irina.tirdea@intel.com> wrote:
-> The pmc_atom driver does not contain any architecture specific
-> code. It only enables the SOC Power Management Controller Driver
+It seems no use, I will remove it in V2.
 
-SOC -> SoC
-Driver -> driver
+> > +#include <linux/err.h>
+> > +#include <linux/init.h>
+> > +#include <linux/io.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/of_irq.h>
+> > +#include <linux/types.h>
+>=20
+> Is there an include of clk_provider.h missing?
+>=20
 
-> for BayTrail and CherryTrail platforms.
->
-> Move the pmc_atom driver from arch/x86/platform/atom to
-> drivers/platform/x86.
->
-> Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
-> ---
->  arch/x86/Kconfig                                                     | 4 ----
->  arch/x86/platform/atom/Makefile                                      | 1 -
->  drivers/acpi/acpi_lpss.c                                             | 2 +-
->  drivers/platform/x86/Kconfig                                         | 4 ++++
->  drivers/platform/x86/Makefile                                        | 1 +
->  {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c          | 3 +--
+clk_provider.h is included in below "clk.h".
 
->  {arch/x86/include/asm => include/linux/platform_data/x86}/pmc_atom.h | 0
+> > +
+> > +#include "clk.h"
+> > +
+> > +#define BM_CCM_CCDR_MMDC_CH0_MASK	(0x2 << 16)
+> > +#define CCDR	0x4
+> > +
+> > +static const char *pll_bypass_src_sels[] =3D { "osc", "dummy", };
+>=20
+> const char * const? For all of these names.
+>=20
 
-No, it's not a *platform data*.
+ok, I will fix in V2.
 
-Other that that looks good to me.
+> > +static const char *pll1_bypass_sels[] =3D { "pll1", "pll1_bypass_src",
+> > +}; static const char *pll2_bypass_sels[] =3D { "pll2",
+> > +"pll2_bypass_src", }; static const char *pll3_bypass_sels[] =3D {
+> > +"pll3", "pll3_bypass_src", }; static const char *pll4_bypass_sels[] =
+=3D
+> > +{ "pll4", "pll4_bypass_src", }; static const char *pll5_bypass_sels[]
+> > +=3D { "pll5", "pll5_bypass_src", }; static const char
+> > +*pll6_bypass_sels[] =3D { "pll6", "pll6_bypass_src", }; static const
+> > +char *pll7_bypass_sels[] =3D { "pll7", "pll7_bypass_src", }; static
+> > +const char *step_sels[] =3D { "osc", "pll2_pfd2_396m", }; static const
+> > +char *pll1_sw_sels[] =3D { "pll1_sys", "step", }; static const char
+> > +*axi_alt_sels[] =3D { "pll2_pfd2_396m", "pll3_pfd1_540m", }; static
+> > +const char *axi_sels[] =3D {"periph", "axi_alt_sel", }; static const
+> > +char *periph_pre_sels[] =3D { "pll2_bus", "pll2_pfd2_396m",
+> > +"pll2_pfd0_352m", "pll2_198m", }; static const char
+> > +*periph2_pre_sels[] =3D { "pll2_bus", "pll2_pfd2_396m",
+> > +"pll2_pfd0_352m", "pll4_audio_div", }; static const char
+> > +*periph_clk2_sels[] =3D { "pll3_usb_otg", "osc", "osc", }; static cons=
+t
+> > +char *periph2_clk2_sels[] =3D { "pll3_usb_otg", "osc", }; static const
+> > +char *periph_sels[] =3D { "periph_pre", "periph_clk2", }; static const
+> > +char *periph2_sels[] =3D { "periph2_pre", "periph2_clk2", }; static
+> > +const char *usdhc_sels[] =3D { "pll2_pfd2_396m", "pll2_pfd0_352m", };
+> > +static const char *ssi_sels[] =3D {"pll3_pfd2_508m", "pll3_pfd3_454m",
+> > +"pll4_audio_div", "dummy",}; static const char *spdif_sels[] =3D {
+> > +"pll4_audio_div", "pll3_pfd2_508m", "pll5_video_div", "pll3_usb_otg",
+> > +}; static const char *ldb_di0_div_sels[] =3D { "ldb_di0_div_3_5",
+> > +"ldb_di0_div_7", }; static const char *ldb_di1_div_sels[] =3D {
+> > +"ldb_di1_div_3_5", "ldb_di1_div_7", }; static const char
+> > +*ldb_di0_sels[] =3D { "pll5_video_div", "pll2_pfd0_352m",
+> > +"pll2_pfd2_396m", "pll2_pfd3_594m", "pll2_pfd1_594m",
+> > +"pll3_pfd3_454m", }; static const char *ldb_di1_sels[] =3D {
+> > +"pll3_usb_otg", "pll2_pfd0_352m", "pll2_pfd2_396m", "pll2_bus",
+> > +"pll3_pfd3_454m", "pll3_pfd2_508m", }; static const char
+> > +*lcdif_pre_sels[] =3D { "pll2_bus", "pll3_pfd3_454m", "pll5_video_div"=
+,
+> > +"pll2_pfd0_352m", "pll2_pfd1_594m", "pll3_pfd1_540m", }; static const
+> > +char *ecspi_sels[] =3D { "pll3_60m", "osc", }; static const char
+> > +*uart_sels[] =3D { "pll3_80m", "osc", }; static const char
+> > +*perclk_sels[] =3D { "ipg", "osc", }; static const char *lcdif_sels[] =
+=3D
+> > +{ "lcdif_podf", "ipp_di0", "ipp_di1", "ldb_di0", "ldb_di1", };
+> > +
+> > +static const char *epdc_pre_sels[] =3D { "pll2_bus", "pll3_usb_otg",
+> > +"pll5_video_div", "pll2_pfd0_352m", "pll2_pfd2_396m",
+> > +"pll3_pfd2_508m", }; static const char *epdc_sels[] =3D { "epdc_podf",
+> > +"ipp_di0", "ipp_di1", "ldb_di0", "ldb_di1", };
+> > +
+> > +static struct clk *clks[IMX6SLL_CLK_END]; static struct
+> > +clk_onecell_data clk_data;
+> > +
+> > +static int const clks_init_on[] __initconst =3D {
+>=20
+> static const int is more preferred style.
+>=20
 
--- 
-With Best Regards,
-Andy Shevchenko
+ok, will fix in V2.
+
+> > +	IMX6SLL_CLK_AIPSTZ1, IMX6SLL_CLK_AIPSTZ2,
+> > +	IMX6SLL_CLK_OCRAM, IMX6SLL_CLK_ARM, IMX6SLL_CLK_ROM,
+> > +	IMX6SLL_CLK_MMDC_P0_FAST, IMX6SLL_CLK_MMDC_P0_IPG, };
+> > +
+> > +static struct clk_div_table post_div_table[] =3D {
+>=20
+> const?
+>=20
+
+ok, will fix in V2.
+
+> > +	{ .val =3D 2, .div =3D 1, },
+> > +	{ .val =3D 1, .div =3D 2, },
+> > +	{ .val =3D 0, .div =3D 4, },
+> > +	{ }
+> > +};
+> > +
+> > +static struct clk_div_table video_div_table[] =3D {
+>=20
+> const?
+>=20
+
+ok. will fix in V2.
+
+> > +	{ .val =3D 0, .div =3D 1, },
+> > +	{ .val =3D 1, .div =3D 2, },
+> > +	{ .val =3D 2, .div =3D 1, },
+> > +	{ .val =3D 3, .div =3D 4, },
+> > +	{ }
+> > +};
+> > +
+> > +static u32 share_count_audio;
+> > +static u32 share_count_ssi1;
+> > +static u32 share_count_ssi2;
+> > +static u32 share_count_ssi3;
+> > +
+> > +static void __init imx6sll_clocks_init(struct device_node *ccm_node)
+> > +{
+> > +	struct device_node *np;
+> > +	void __iomem *base;
+> > +	int i;
+> > +
+> > +	clks[IMX6SLL_CLK_DUMMY] =3D imx_clk_fixed("dummy", 0);
+> > +
+> > +	clks[IMX6SLL_CLK_CKIL] =3D of_clk_get_by_name(ccm_node, "ckil");
+> > +	clks[IMX6SLL_CLK_OSC] =3D of_clk_get_by_name(ccm_node, "osc");
+> > +
+> > +	/* ipp_di clock is external input */
+> > +	clks[IMX6SLL_CLK_IPP_DI0] =3D of_clk_get_by_name(ccm_node,
+> "ipp_di0");
+> > +	clks[IMX6SLL_CLK_IPP_DI1] =3D of_clk_get_by_name(ccm_node,
+> "ipp_di1");
+> > +
+> > +	np =3D of_find_compatible_node(NULL, NULL, "fsl,imx6sll-anatop");
+> > +	base =3D of_iomap(np, 0);
+> > +	WARN_ON(!base);
+> > +
+> > +	clks[IMX6SLL_PLL1_BYPASS_SRC] =3D imx_clk_mux("pll1_bypass_src",
+> base + 0x00, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels))=
+;
+> > +	clks[IMX6SLL_PLL2_BYPASS_SRC] =3D imx_clk_mux("pll2_bypass_src",
+> base + 0x30, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels))=
+;
+> > +	clks[IMX6SLL_PLL3_BYPASS_SRC] =3D imx_clk_mux("pll3_bypass_src",
+> base + 0x10, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels))=
+;
+> > +	clks[IMX6SLL_PLL4_BYPASS_SRC] =3D imx_clk_mux("pll4_bypass_src",
+> base + 0x70, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels))=
+;
+> > +	clks[IMX6SLL_PLL5_BYPASS_SRC] =3D imx_clk_mux("pll5_bypass_src",
+> base + 0xa0, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels))=
+;
+> > +	clks[IMX6SLL_PLL6_BYPASS_SRC] =3D imx_clk_mux("pll6_bypass_src",
+> base + 0xe0, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels))=
+;
+> > +	clks[IMX6SLL_PLL7_BYPASS_SRC] =3D imx_clk_mux("pll7_bypass_src",
+> base
+> > ++ 0x20, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
+> > +
+> > +	clks[IMX6SLL_CLK_PLL1] =3D imx_clk_pllv3(IMX_PLLV3_SYS,	 "pll1",
+> "pll1_bypass_src", base + 0x00, 0x7f);
+> > +	clks[IMX6SLL_CLK_PLL2] =3D imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2",
+> "pll2_bypass_src", base + 0x30, 0x1);
+> > +	clks[IMX6SLL_CLK_PLL3] =3D imx_clk_pllv3(IMX_PLLV3_USB,	 "pll3",
+> "pll3_bypass_src", base + 0x10, 0x3);
+> > +	clks[IMX6SLL_CLK_PLL4] =3D imx_clk_pllv3(IMX_PLLV3_AV,	 "pll4",
+> "pll4_bypass_src", base + 0x70, 0x7f);
+> > +	clks[IMX6SLL_CLK_PLL5] =3D imx_clk_pllv3(IMX_PLLV3_AV,	 "pll5",
+> "pll5_bypass_src", base + 0xa0, 0x7f);
+> > +	clks[IMX6SLL_CLK_PLL6] =3D imx_clk_pllv3(IMX_PLLV3_ENET,	 "pll6",
+> "pll6_bypass_src", base + 0xe0, 0x3);
+> > +	clks[IMX6SLL_CLK_PLL7] =3D imx_clk_pllv3(IMX_PLLV3_USB,	 "pll7",
+> "pll7_bypass_src", base + 0x20, 0x3);
+> > +
+> > +	clks[IMX6SLL_PLL1_BYPASS] =3D imx_clk_mux_flags("pll1_bypass", base
+> + 0x00, 16, 1, pll1_bypass_sels, ARRAY_SIZE(pll1_bypass_sels),
+> CLK_SET_RATE_PARENT);
+> > +	clks[IMX6SLL_PLL2_BYPASS] =3D imx_clk_mux_flags("pll2_bypass", base
+> + 0x30, 16, 1, pll2_bypass_sels, ARRAY_SIZE(pll2_bypass_sels),
+> CLK_SET_RATE_PARENT);
+> > +	clks[IMX6SLL_PLL3_BYPASS] =3D imx_clk_mux_flags("pll3_bypass", base
+> + 0x10, 16, 1, pll3_bypass_sels, ARRAY_SIZE(pll3_bypass_sels),
+> CLK_SET_RATE_PARENT);
+> > +	clks[IMX6SLL_PLL4_BYPASS] =3D imx_clk_mux_flags("pll4_bypass", base
+> + 0x70, 16, 1, pll4_bypass_sels, ARRAY_SIZE(pll4_bypass_sels),
+> CLK_SET_RATE_PARENT);
+> > +	clks[IMX6SLL_PLL5_BYPASS] =3D imx_clk_mux_flags("pll5_bypass", base
+> + 0xa0, 16, 1, pll5_bypass_sels, ARRAY_SIZE(pll5_bypass_sels),
+> CLK_SET_RATE_PARENT);
+> > +	clks[IMX6SLL_PLL6_BYPASS] =3D imx_clk_mux_flags("pll6_bypass", base
+> + 0xe0, 16, 1, pll6_bypass_sels, ARRAY_SIZE(pll6_bypass_sels),
+> CLK_SET_RATE_PARENT);
+> > +	clks[IMX6SLL_PLL7_BYPASS] =3D imx_clk_mux_flags("pll7_bypass", base
+> +
+> > +0x20, 16, 1, pll7_bypass_sels, ARRAY_SIZE(pll7_bypass_sels),
+> > +CLK_SET_RATE_PARENT);
+> > +
+> > +	/* Do not bypass PLLs initially */
+> > +	clk_set_parent(clks[IMX6SLL_PLL1_BYPASS], clks[IMX6SLL_CLK_PLL1]);
+> > +	clk_set_parent(clks[IMX6SLL_PLL2_BYPASS], clks[IMX6SLL_CLK_PLL2]);
+> > +	clk_set_parent(clks[IMX6SLL_PLL3_BYPASS], clks[IMX6SLL_CLK_PLL3]);
+> > +	clk_set_parent(clks[IMX6SLL_PLL4_BYPASS], clks[IMX6SLL_CLK_PLL4]);
+> > +	clk_set_parent(clks[IMX6SLL_PLL5_BYPASS], clks[IMX6SLL_CLK_PLL5]);
+> > +	clk_set_parent(clks[IMX6SLL_PLL6_BYPASS], clks[IMX6SLL_CLK_PLL6]);
+> > +	clk_set_parent(clks[IMX6SLL_PLL7_BYPASS], clks[IMX6SLL_CLK_PLL7]);
+>=20
+> Can we just put raw register writes here instead? I'd prefer we didn't us=
+e clk
+> consumer APIs to do things to the clk tree from the providers. The proble=
+m
+> there being that:
+>=20
+>  1) We're trying to move away from using consumer APIs in  provider drive=
+rs.
+> It's ok if they're used during probe, but  inside clk_ops is not preferre=
+d.
+>=20
+>  2) Even if you have a clk pointer, it may be "orphaned" at the  time of
+> registration and so calling the APIs here works now but  eventually we ma=
+y
+> want to return an EPROBE_DEFER error in that  case and this may block tha=
+t
+> effort.
+>=20
+> I suppose if this is the only clk driver on this machine then this last p=
+oint isn't a
+> concern and things are probably ok here.
+>=20
+
+Using raw register writing has an issue.  The register is modified, but it =
+seems the clock 'parent-child' relationship can=20
+not match the register setting. The register setting is not bypass the pll,=
+ but in debug 'clk_summary', the
+pll is bypassed. =20
+
+BR
+
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linu=
+x
+> Foundation Collaborative Project
