@@ -1,69 +1,39 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [PATCH v2 4/9] clk: stm32f4: Add lcd-tft clock
-To: Rob Herring <robh@kernel.org>
-References: <1479998749-20358-1-git-send-email-gabriel.fernandez@st.com>
- <1479998749-20358-5-git-send-email-gabriel.fernandez@st.com>
- <20161130205333.tiukcjbspuqmedgw@rob-hp-laptop>
-CC: Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd
- Bergmann <arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <ec824a37-b90c-05a1-a4cf-048fb66e8ae8@st.com>
-Date: Thu, 1 Dec 2016 09:58:22 +0100
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Stephen Warren <swarren@wwwdotorg.org>, Ray Jui <rjui@broadcom.com>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: bcm: Fix 'maybe-uninitialized' warning in bcm2835_clock_choose_div_and_prate()
+Date: Mon, 12 Dec 2016 09:34:28 +0100
+Message-ID: <2237053.NkkLiYIyzc@wuerfel>
+In-Reply-To: <20161212093130.6e348a61@bbrezillon>
+References: <1481529653-28133-1-git-send-email-boris.brezillon@free-electrons.com> <3107859.uaKLk6DMRd@wuerfel> <20161212093130.6e348a61@bbrezillon>
 MIME-Version: 1.0
-In-Reply-To: <20161130205333.tiukcjbspuqmedgw@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+On Monday, December 12, 2016 9:31:30 AM CET Boris Brezillon wrote:
+> On Mon, 12 Dec 2016 09:12:36 +0100
+> Arnd Bergmann <arnd@arndb.de> wrote:
+> 
+> > On Monday, December 12, 2016 9:00:53 AM CET Boris Brezillon wrote:
+> > > best_rate is reported as potentially uninitialized by gcc.
+> > > 
+> > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > > Fixes: 155e8b3b0ee3 ("clk: bcm: Support rate change propagation on bcm2835 clocks")
+> > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>  
+> > 
+> > I wonder why I didn't get that. Which compiler version did you use?
+> > 
+> 
+> In case you're interested, my gcc [1] failed to detect it as well, and
+> this is not the first time it happens :-/.
+> 
+> [1]gcc (Ubuntu 5.4.0-6ubuntu1~16.04.4) 5.4.0 20160609
 
-Thanks for reviewing
+No, I see it now with gcc-7, it only just turned up in linux-next.
 
-On 11/30/2016 09:53 PM, Rob Herring wrote:
-> On Thu, Nov 24, 2016 at 03:45:44PM +0100, gabriel.fernandez@st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->>
->> This patch introduces lcd-tft clock for stm32f4 soc.
->>
->> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
->> ---
->>   .../devicetree/bindings/clock/st,stm32-rcc.txt     |   1 +
->>   drivers/clk/clk-stm32f4.c                          | 118 +++++++++++++++++++++
->>   include/dt-bindings/clock/stm32f4-clock.h          |   3 +-
->>   3 files changed, 121 insertions(+), 1 deletion(-)
->
->> diff --git a/include/dt-bindings/clock/stm32f4-clock.h b/include/dt-bindings/clock/stm32f4-clock.h
->> index 56b8e10..1be4a3a 100644
->> --- a/include/dt-bindings/clock/stm32f4-clock.h
->> +++ b/include/dt-bindings/clock/stm32f4-clock.h
->> @@ -27,7 +27,8 @@
->>   #define CLK_RTC			5
->>   #define PLL_VCO_I2S		6
->>   #define PLL_VCO_SAI		7
->> +#define CLK_LCD			8
->>   
->> -#define END_PRIMARY_CLK		8
->> +#define END_PRIMARY_CLK		9
-> Do you really need this? Having this change could cause compatibility
-> problems between dtb and kernel versions.
->
-> Please restructure the patch series and put all of the binding changes
-> including this header into a single patch. Incrementally add s/w
-> features, not h/w.
->
-> Rob
-Okay
+I ran into it right away with an allmodconfig build. You were
+probably testing based on an earlier v4.9-rc release that had
+the warning globally disabled.
 
-Best Regards
-
-Gabriel
+	Arnd
