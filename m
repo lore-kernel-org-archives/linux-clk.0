@@ -1,57 +1,203 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Date: Fri, 30 Dec 2016 16:47:19 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Doug Anderson <dianders@chromium.org>,
-	Andreas Faerber <afaerber@suse.de>,
-	Thomas Abraham <thomas.ab@samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Ben Gamari <ben@smart-cactus.org>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: dts: Add CPU OPPs for Exynos4412 Prime
-Message-ID: <20161230144719.amcn3q4vn6wgxnon@kozik-lap>
-References: <1483018611-27998-1-git-send-email-b.zolnierkie@samsung.com>
- <1483018611-27998-3-git-send-email-b.zolnierkie@samsung.com>
- <20161229144908.6gkvjpso7ikdmfp7@kozik-lap>
- <CGME20161229150623epcas1p2b2f0fbb6f9ddd11caffdc93487e2cf77@epcas1p2.samsung.com>
- <1840714.lHhVv9oNko@amdc3058>
- <6892749a-a8bd-cfb3-551c-f0b1ca6d2b84@samsung.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v4 4/9] clk: stm32f4: Add lcd-tft clock
+Date: Tue, 13 Dec 2016 15:20:15 +0100
+Message-ID: <1481638820-29324-5-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <6892749a-a8bd-cfb3-551c-f0b1ca6d2b84@samsung.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Dec 29, 2016 at 05:23:34PM +0100, Sylwester Nawrocki wrote:
-> On 12/29/2016 04:06 PM, Bartlomiej Zolnierkiewicz wrote:
-> >>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> >>> ---
-> >>>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 +--
-> >>>  arch/arm/boot/dts/exynos4412-odroidu3.dts       |  5 +--
-> >>>  arch/arm/boot/dts/exynos4412-odroidx2.dts       |  1 +
-> >>>  arch/arm/boot/dts/exynos4412-prime.dtsi         | 41 +++++++++++++++++++++++++
-> >>>  arch/arm/boot/dts/exynos4412.dtsi               |  2 +-
-> >>>  5 files changed, 48 insertions(+), 5 deletions(-)
-> >>>  create mode 100644 arch/arm/boot/dts/exynos4412-prime.dtsi
-> >>>
-> >> Looks okay. Is the clock patch needed for this?
-> > Yep.
-> 
-> I applied the clock patch and here is a stable tag if it needs
-> to be pulled as a dependency.
->
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Thanks, merged!
+This patch introduces lcd-tft clock for stm32f4 soc.
 
-BR,
-Krzysztof
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32f4.c | 114 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 114 insertions(+)
+
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 70ca93c..076a063 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -51,6 +51,8 @@
+ 
+ #define NONE -1
+ #define NO_IDX  NONE
++#define NO_MUX  NONE
++#define NO_GATE NONE
+ 
+ struct stm32f4_gate_data {
+ 	u8	offset;
+@@ -942,11 +944,37 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
+ 	"no-clock", "lse", "lsi", "hse-rtc"
+ };
+ 
++static const char *lcd_parent[1] = { "pllsai-r-div" };
++
++struct stm32_aux_clk {
++	int idx;
++	const char *name;
++	const char * const *parent_names;
++	int num_parents;
++	int offset_mux;
++	u8 shift;
++	u8 mask;
++	int offset_gate;
++	u8 bit_idx;
++	unsigned long flags;
++};
++
+ struct stm32f4_clk_data {
+ 	const struct stm32f4_gate_data *gates_data;
+ 	const u64 *gates_map;
+ 	int gates_num;
+ 	const struct stm32f4_pll_data *pll_data;
++	const struct stm32_aux_clk *aux_clk;
++	int aux_clk_num;
++};
++
++static const struct stm32_aux_clk stm32f429_aux_clk[] = {
++	{
++		CLK_LCD, "lcd-tft", lcd_parent, ARRAY_SIZE(lcd_parent),
++		NO_MUX, 0, 0,
++		STM32F4_RCC_APB2ENR, 26,
++		CLK_SET_RATE_PARENT
++	},
+ };
+ 
+ static const struct stm32f4_clk_data stm32f429_clk_data = {
+@@ -954,6 +982,8 @@ struct stm32f4_clk_data {
+ 	.gates_map	= stm32f42xx_gate_map,
+ 	.gates_num	= ARRAY_SIZE(stm32f429_gates),
+ 	.pll_data	= stm32f429_pll,
++	.aux_clk	= stm32f429_aux_clk,
++	.aux_clk_num	= ARRAY_SIZE(stm32f429_aux_clk),
+ };
+ 
+ static const struct stm32f4_clk_data stm32f469_clk_data = {
+@@ -961,6 +991,8 @@ struct stm32f4_clk_data {
+ 	.gates_map	= stm32f46xx_gate_map,
+ 	.gates_num	= ARRAY_SIZE(stm32f469_gates),
+ 	.pll_data	= stm32f469_pll,
++	.aux_clk	= stm32f429_aux_clk,
++	.aux_clk_num	= ARRAY_SIZE(stm32f429_aux_clk),
+ };
+ 
+ static const struct of_device_id stm32f4_of_match[] = {
+@@ -975,6 +1007,66 @@ struct stm32f4_clk_data {
+ 	{}
+ };
+ 
++static struct clk_hw *stm32_register_aux_clk(const char *name,
++		const char * const *parent_names, int num_parents,
++		int offset_mux, u8 shift, u8 mask,
++		int offset_gate, u8 bit_idx,
++		unsigned long flags, spinlock_t *lock)
++{
++	struct clk_hw *hw;
++	struct clk_gate *gate;
++	struct clk_mux *mux = NULL;
++	struct clk_hw *mux_hw = NULL, *gate_hw = NULL;
++	const struct clk_ops *mux_ops = NULL, *gate_ops = NULL;
++
++	if (offset_gate != NO_GATE) {
++		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++		if (!gate) {
++			hw = ERR_PTR(-EINVAL);
++			goto fail;
++		}
++
++		gate->reg = base + offset_gate;
++		gate->bit_idx = bit_idx;
++		gate->flags = 0;
++		gate->lock = lock;
++		gate_hw = &gate->hw;
++		gate_ops = &clk_gate_ops;
++	}
++
++	if (offset_mux != NO_MUX) {
++		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++		if (!mux) {
++			kfree(gate);
++			hw = ERR_PTR(-EINVAL);
++			goto fail;
++		}
++
++		mux->reg = base + offset_mux;
++		mux->shift = shift;
++		mux->mask = mask;
++		mux->flags = 0;
++		mux_hw = &mux->hw;
++		mux_ops = &clk_mux_ops;
++	}
++
++	if (mux_hw == NULL && gate_hw == NULL)
++		return ERR_PTR(-EINVAL);
++
++	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
++			mux_hw, mux_ops,
++			NULL, NULL,
++			gate_hw, gate_ops,
++			flags);
++
++	if (IS_ERR(hw)) {
++		kfree(gate);
++		kfree(mux);
++	}
++fail:
++	return hw;
++}
++
+ static void __init stm32f4_rcc_init(struct device_node *np)
+ {
+ 	const char *hse_clk;
+@@ -1134,6 +1226,28 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 		goto fail;
+ 	}
+ 
++	for (n = 0; n < data->aux_clk_num; n++) {
++		const struct stm32_aux_clk *aux_clk;
++		struct clk_hw *hw;
++
++		aux_clk = &data->aux_clk[n];
++
++		hw = stm32_register_aux_clk(aux_clk->name,
++				aux_clk->parent_names, aux_clk->num_parents,
++				aux_clk->offset_mux, aux_clk->shift,
++				aux_clk->mask, aux_clk->offset_gate,
++				aux_clk->bit_idx, aux_clk->flags,
++				&stm32f4_clk_lock);
++
++		if (IS_ERR(hw)) {
++			pr_warn("Unable to register %s clk\n", aux_clk->name);
++			continue;
++		}
++
++		if (aux_clk->idx != NO_IDX)
++			clks[aux_clk->idx] = hw;
++	}
++
+ 	of_clk_add_hw_provider(np, stm32f4_rcc_lookup_clk, NULL);
+ 	return;
+ fail:
+-- 
+1.9.1
