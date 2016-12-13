@@ -1,35 +1,74 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Dec 2016 15:57:50 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org, mturquette@baylibre.com,
-	robh+dt@kernel.org, mark.rutland@arm.com, varada@codeaurora.org,
-	pradeepb@codeaurora.org, snlakshm@codeaurora.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] clk: qcom: ipq4019: Add the apss cpu pll divider
- clock node
-Message-ID: <20161221235750.GK8288@codeaurora.org>
-References: <1480088493-4590-1-git-send-email-absahu@codeaurora.org>
- <1480088493-4590-3-git-send-email-absahu@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1480088493-4590-3-git-send-email-absahu@codeaurora.org>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Marcin Wojtas <mw@semihalf.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH 2/3] clk: mvebu: adjust clock handling for the CP110 system controller
+Date: Tue, 13 Dec 2016 13:41:19 +0100
+Message-Id: <1481632880-9198-3-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1481632880-9198-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1481632880-9198-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/25, Abhishek Sahu wrote:
-> The current ipq4019 clock driver does not have support for all
-> the frequency supported by APSS CPU. APSS CPU frequency is
-> provided with APSS CPU PLL divider which divides down the VCO
-> frequency. This divider is nonlinear and specific to IPQ4019
-> so the standard divider code cannot be used for this.
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
+This commit adds support for the GOP_DP gatable clock found in the
+CP110 system controller. This clock is controlled by bit 9, and has
+clock 18 as its parent. Therefore, clock 18 is in fact not only
+controlling SD/MMC, but also GOP, but it is renamed as SD_MMC_GOP
+accordingly.
 
-Applied to clk-ipq4019 and merged into clk-next.
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ drivers/clk/mvebu/cp110-system-controller.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index f2303da..3c91cab 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -66,6 +66,7 @@ enum {
+ #define CP110_GATE_SDIO			4
+ #define CP110_GATE_XOR1			7
+ #define CP110_GATE_XOR0			8
++#define CP110_GATE_GOP_DP		9
+ #define CP110_GATE_PCIE_X1_0		11
+ #define CP110_GATE_PCIE_X1_1		12
+ #define CP110_GATE_PCIE_X4		13
+@@ -73,7 +74,7 @@ enum {
+ #define CP110_GATE_SATA			15
+ #define CP110_GATE_SATA_USB		16
+ #define CP110_GATE_MAIN			17
+-#define CP110_GATE_SDMMC		18
++#define CP110_GATE_SDMMC_GOP		18
+ #define CP110_GATE_SLOW_IO		21
+ #define CP110_GATE_USB3H0		22
+ #define CP110_GATE_USB3H1		23
+@@ -309,9 +310,10 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 			parent = ppv2_name;
+ 			break;
+ 		case CP110_GATE_SDIO:
++		case CP110_GATE_GOP_DP:
+ 			of_property_read_string_index(np,
+ 						      "gate-clock-output-names",
+-						      CP110_GATE_SDMMC, &parent);
++						      CP110_GATE_SDMMC_GOP, &parent);
+ 			break;
+ 		case CP110_GATE_XOR1:
+ 		case CP110_GATE_XOR0:
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
