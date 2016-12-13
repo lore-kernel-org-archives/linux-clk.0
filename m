@@ -1,69 +1,92 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 13 Dec 2016 15:19:00 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Andrey Smirnov <andrew.smirnov@gmail.com>
+Subject: Re: [PATCH] clk: imx: pllv3: support fractional multiplier on vf610
+ PLL1/PLL2
+Message-ID: <20161213231900.GP5423@codeaurora.org>
+References: <1481288408-16035-1-git-send-email-nikita.yoush@cogentembedded.com>
+ <20161213073858.GO5423@codeaurora.org>
+ <c53ea5f7-c913-ea64-5b7f-3c3ce0b66e82@cogentembedded.com>
 MIME-Version: 1.0
-To: Tero Kristo <t-kristo@ti.com>, "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <7371ef35-5d95-bf78-4c97-c61091a1fa4b@ti.com>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, tony@atomide.com,
- linux-arm-kernel@lists.infradead.org
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
- <20161028005341.GR26139@codeaurora.org>
- <2cfa10a9-9ea0-23e4-30de-9aece13e47e3@ti.com>
- <20161028233750.GQ16026@codeaurora.org>
- <7371ef35-5d95-bf78-4c97-c61091a1fa4b@ti.com>
-Message-ID: <148156710975.37646.2957511113527634913@resonance>
-Subject: Re: [PATCHv4 00/15] clk: ti: add support for hwmod clocks
-Date: Mon, 12 Dec 2016 10:25:09 -0800
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <c53ea5f7-c913-ea64-5b7f-3c3ce0b66e82@cogentembedded.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Tero Kristo (2016-12-02 00:15:53)
-> On 29/10/16 02:37, Stephen Boyd wrote:
-> > On 10/28, Tero Kristo wrote:
-> >> Eventually that should happen. However, we have plenty of legacy
-> >> code still in place which depend on clk_get functionality within
-> >> kernel. The major contributing factor is the hwmod codebase, for
-> >> which we have plans to:
-> >>
-> >> - get this clock driver merged
-> >> - implement a new interconnect driver for OMAP family SoCs
-> >> - interconnect driver will use DT handles for fetching clocks,
-> >> rather than clock aliases
-> >> - reset handling will be implemented as part of the interconnect
-> >> driver somehow (no prototype / clear plans for that as of yet)
-> >> - all the hwmod stuff can be dropped
-> >>
-> >> The clock alias handling is still needed as a transition phase until
-> >> all the above is done, then we can start dropping them. Basically
-> >> anything that is using omap_hwmod depends on the clock aliases right
-> >> now.
-> >
-> > Ok, sounds good. Thanks.
-> =
+On 12/13, Nikita Yushchenko wrote:
+> >> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+> >> index 19f9b622981a..24a9e914e0d5 100644
+> >> --- a/drivers/clk/imx/clk-pllv3.c
+> >> +++ b/drivers/clk/imx/clk-pllv3.c
+> 
+> >> +
+> >> +	temp64 *= mfn;
+> >> +	do_div(temp64, mfd);
+> >> +
+> >> +	return (parent_rate * div) + (u32)temp64;
+> >> +}
+> >> +
+> >> +static long clk_pllv3_vf610_round_rate(struct clk_hw *hw, unsigned long rate,
+> >> +				    unsigned long *prate)
+> >> +{
+> >> +	unsigned long parent_rate = *prate;
+> >> +	unsigned int mfi = (rate >= 22 * parent_rate) ? 22 : 20;
+> > 
+> > What is the importance of 22 and 20? Hint, at the least it needs
+> > a comment.
+> 
+> These come directly from datasheet:
+> 
+> Frequency multipler selection (MFI).
+> 0: Fout = Fref * 20
+> 1: Fout = Fref * 22
+> 
+> These numbers (20 / 22) are common among flavours of pllv3 hardware.
+> In similar places in the same file (e.g. in clk_pllv3_recalc_rate(), in
+> clk_pllv3_set_rate() ,etc) there are no comments explaining them.
+> 
+> Are you sure this place is special and comment is needed here?
 
-> Stephen, any final comments on this series? I guess its too late to push =
+Probably an oversight when merging the code before. Please add a
+comment, or make some sort of function like
 
-> for 4.10, but I would like to get this merged early for 4.11 window.
+	rate_to_mfi(rate, parent_rate)
 
-Hi Tero,
+And then add a comment above the function to describe what's
+special about 22 and 20.
 
-No final comments from me. I needed to go back and forth with Tony about
-the clockdomain modeling, but it seems sensible to create clock
-providers from the clock domains if you want to pass those struct clk
-objects down to the drivers.
+> 
+> >> +	u32 mfn, mfd = 0x3fffffff;
+> >> +	u64 temp64;
+> >> +
+> >> +	if (rate <= parent_rate * mfi)
+> >> +		mfn = 0;
+> >> +	else if (rate >= parent_rate * (mfi + 1))
+> >> +		mfn = mfd - 1;
+> >> +	else {
+> >> +		/* rate = parent_rate * (mfi + mfn/mfd) */
+> >> +		temp64 = rate - parent_rate * mfi;
+> >> +		temp64 *= mfd;
+> >> +		do_div(temp64, parent_rate);
+> >> +		mfn = temp64;
+> >> +	}
+> >> +
+> >> +	temp64 = ((u64)mfd * mfi + mfn) * parent_rate;
+> >> +	do_div(temp64, mfd);
+> >> +	return (u32)temp64;
+> > 
+> > Do we need the cast here for some reason?
+> 
+> Just for readability, can remove if it hurts.
 
-One thing I wasn't able to follow exactly in the code is how the
-clockdomains are linking parent clocks from cm1, cm2, etc to the clock
-domains. Are the clockdomain providers calling clk_get() on the clocks
-that it *consumes*, or are the clockdomain providers never calling
-clk_get() on those clocks and just establishing the tree hierarchy at
-clk_register() time?
+Please do.
 
-Unless Stephen has any more review comments we can merge this into a
-clk-next based on v4.10-rc1 when that drops.
-
-Regards,
-Mike
-
-> =
-
-> -Tero
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
