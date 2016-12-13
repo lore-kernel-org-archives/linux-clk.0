@@ -1,66 +1,75 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>
-Cc: Nadav Haklai <nadavh@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCHv2 3/3] arm64: dts: marvell: adjust name of sd-mmc-gop clock in syscon
-Date: Wed, 21 Dec 2016 11:26:57 +0100
-Message-Id: <1482316017-22154-4-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 13 Dec 2016 15:28:35 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jacky Bai <ping.bai@nxp.com>
+Cc: "shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"jacky.baip@gmail.com" <jacky.baip@gmail.com>
+Subject: Re: [PATCH 03/11] driver: clk: imx: Add clock driver for imx6sll
+Message-ID: <20161213232835.GR5423@codeaurora.org>
+References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
+ <1480660774-25055-4-git-send-email-ping.bai@nxp.com>
+ <20161208225257.GP5423@codeaurora.org>
+ <AM3PR04MB5302BE33BE1F2C9913FF61587980@AM3PR04MB530.eurprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <AM3PR04MB5302BE33BE1F2C9913FF61587980@AM3PR04MB530.eurprd04.prod.outlook.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adjusts the names of gatable clock #18 of the Marvell Armada
-CP110 system controller. This clock not only controls SD/MMC, but also
-the GOP (Group Of Ports) used for networking. So the clock is renamed to
-{cpm,cps}-sd-mmc-gop instead of {cpm,cps}-sd-mmc.
+On 12/12, Jacky Bai wrote:
+> > On 12/02, Bai Ping wrote:
+> > > diff --git a/drivers/clk/imx/clk-imx6sll.c
+> > > b/drivers/clk/imx/clk-imx6sll.c new file mode 100644 index
+> > > 0000000..c5219e1
+> > > --- /dev/null
+> > > +++ b/drivers/clk/imx/clk-imx6sll.c
+> > > +0x20, 16, 1, pll7_bypass_sels, ARRAY_SIZE(pll7_bypass_sels),
+> > > +CLK_SET_RATE_PARENT);
+> > > +
+> > > +	/* Do not bypass PLLs initially */
+> > > +	clk_set_parent(clks[IMX6SLL_PLL1_BYPASS], clks[IMX6SLL_CLK_PLL1]);
+> > > +	clk_set_parent(clks[IMX6SLL_PLL2_BYPASS], clks[IMX6SLL_CLK_PLL2]);
+> > > +	clk_set_parent(clks[IMX6SLL_PLL3_BYPASS], clks[IMX6SLL_CLK_PLL3]);
+> > > +	clk_set_parent(clks[IMX6SLL_PLL4_BYPASS], clks[IMX6SLL_CLK_PLL4]);
+> > > +	clk_set_parent(clks[IMX6SLL_PLL5_BYPASS], clks[IMX6SLL_CLK_PLL5]);
+> > > +	clk_set_parent(clks[IMX6SLL_PLL6_BYPASS], clks[IMX6SLL_CLK_PLL6]);
+> > > +	clk_set_parent(clks[IMX6SLL_PLL7_BYPASS], clks[IMX6SLL_CLK_PLL7]);
+> > 
+> > Can we just put raw register writes here instead? I'd prefer we didn't use clk
+> > consumer APIs to do things to the clk tree from the providers. The problem
+> > there being that:
+> > 
+> >  1) We're trying to move away from using consumer APIs in  provider drivers.
+> > It's ok if they're used during probe, but  inside clk_ops is not preferred.
+> > 
+> >  2) Even if you have a clk pointer, it may be "orphaned" at the  time of
+> > registration and so calling the APIs here works now but  eventually we may
+> > want to return an EPROBE_DEFER error in that  case and this may block that
+> > effort.
+> > 
+> > I suppose if this is the only clk driver on this machine then this last point isn't a
+> > concern and things are probably ok here.
+> > 
+> 
+> Using raw register writing has an issue.  The register is modified, but it seems the clock 'parent-child' relationship can 
+> not match the register setting. The register setting is not bypass the pll, but in debug 'clk_summary', the
+> pll is bypassed.  
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
----
- arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 2 +-
- arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+So program the register settings before registering the clocks
+with the framework?
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-index 602e2c2..895babc 100644
---- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-@@ -74,7 +74,7 @@
- 					"cpm-gop-dp", "none", "cpm-pcie_x10",
- 					"cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor",
- 					"cpm-sata", "cpm-sata-usb", "cpm-main",
--					"cpm-sd-mmc", "none", "none",
-+					"cpm-sd-mmc-gop", "none", "none",
- 					"cpm-slow-io", "cpm-usb3h0", "cpm-usb3h1",
- 					"cpm-usb3dev", "cpm-eip150", "cpm-eip197";
- 			};
-diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-index 6bf9e24..db99646 100644
---- a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
-@@ -74,7 +74,7 @@
- 					"cps-gop-dp", "none", "cps-pcie_x10",
- 					"cps-pcie_x11", "cps-pcie_x4", "cps-pcie-xor",
- 					"cps-sata", "cps-sata-usb", "cps-main",
--					"cps-sd-mmc", "none", "none",
-+					"cps-sd-mmc-gop", "none", "none",
- 					"cps-slow-io", "cps-usb3h0", "cps-usb3h1",
- 					"cps-usb3dev", "cps-eip150", "cps-eip197";
- 			};
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
