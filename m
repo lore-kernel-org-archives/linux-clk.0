@@ -1,207 +1,62 @@
-Return-Path: <ping.bai@nxp.com>
-From: Bai Ping <ping.bai@nxp.com>
-To: <shawnguo@kernel.org>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <linus.walleij@linaro.org>
-CC: <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
-	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>, <p.zabel@pengutronix.de>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<ping.bai@nxp.com>
-Subject: [PATCH 01/11] ARM: imx: Add basic msl support for imx6sll
-Date: Fri, 2 Dec 2016 14:39:24 +0800
-Message-ID: <1480660774-25055-2-git-send-email-ping.bai@nxp.com>
-In-Reply-To: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
-References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
+Return-Path: <icenowy@aosc.xyz>
+Message-Id: <20161213233713.b7GuI4qV@smtp1h.mail.yandex.net>
+Date: Wed, 14 Dec 2016 04:36:36 +0800
+Subject: Re: [PATCH 4/6] ARM: dts: sun8i: add opp-v2 table for A33
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jorik Jonker <jorik@kippendief.biz>,
+ devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Quentin
+ Schulz <quentin.schulz@free-electrons.com>, Hans de Goede
+ <hdegoede@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: ping.bai@nxp.com
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add basic MSL support for i.MX6SLL.
-
-The i.MX 6SoloLiteLite application processors are NXP's latest
-additions to a growing family of multimedia-focused products
-offering high-performance processing optimized for lowest power
-consumption. The i.MX 6SoloLiteLite processors feature NXP's advanced
-implementation of the ARM Cortex-A9 core, which can be interfaced
-with LPDDR3 and LPDDR2 DRAM memory devices.
-
-Signed-off-by: Bai Ping <ping.bai@nxp.com>
----
- arch/arm/mach-imx/Kconfig          |  7 +++++++
- arch/arm/mach-imx/Makefile         |  1 +
- arch/arm/mach-imx/cpu.c            |  3 +++
- arch/arm/mach-imx/cpuidle-imx6sl.c |  7 +++++--
- arch/arm/mach-imx/gpc.c            |  8 ++++++++
- arch/arm/mach-imx/mach-imx6sl.c    | 10 ++++++++--
- arch/arm/mach-imx/mxc.h            |  6 ++++++
- 7 files changed, 38 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
-index 936c59d..33bcfda 100644
---- a/arch/arm/mach-imx/Kconfig
-+++ b/arch/arm/mach-imx/Kconfig
-@@ -512,6 +512,13 @@ config SOC_IMX6SL
- 	help
- 	  This enables support for Freescale i.MX6 SoloLite processor.
- 
-+config SOC_IMX6SLL
-+	bool "i.MX6 SoloLiteLite support"
-+	select SOC_IMX6
-+
-+	help
-+	  This enables support for Freescale i.MX6 SoloLiteLite processor.
-+
- config SOC_IMX6SX
- 	bool "i.MX6 SoloX support"
- 	select PINCTRL_IMX6SX
-diff --git a/arch/arm/mach-imx/Makefile b/arch/arm/mach-imx/Makefile
-index cab1289..f2bf650 100644
---- a/arch/arm/mach-imx/Makefile
-+++ b/arch/arm/mach-imx/Makefile
-@@ -77,6 +77,7 @@ obj-$(CONFIG_HOTPLUG_CPU) += hotplug.o
- endif
- obj-$(CONFIG_SOC_IMX6Q) += mach-imx6q.o
- obj-$(CONFIG_SOC_IMX6SL) += mach-imx6sl.o
-+obj-$(CONFIG_SOC_IMX6SLL) += mach-imx6sl.o
- obj-$(CONFIG_SOC_IMX6SX) += mach-imx6sx.o
- obj-$(CONFIG_SOC_IMX6UL) += mach-imx6ul.o
- obj-$(CONFIG_SOC_IMX7D) += mach-imx7d.o
-diff --git a/arch/arm/mach-imx/cpu.c b/arch/arm/mach-imx/cpu.c
-index b3347d3..62e8c0f 100644
---- a/arch/arm/mach-imx/cpu.c
-+++ b/arch/arm/mach-imx/cpu.c
-@@ -131,6 +131,9 @@ struct device * __init imx_soc_device_init(void)
- 	case MXC_CPU_IMX6UL:
- 		soc_id = "i.MX6UL";
- 		break;
-+	case MXC_CPU_IMX6SLL:
-+		soc_id = "i.MX6SLL";
-+		break;
- 	case MXC_CPU_IMX7D:
- 		soc_id = "i.MX7D";
- 		break;
-diff --git a/arch/arm/mach-imx/cpuidle-imx6sl.c b/arch/arm/mach-imx/cpuidle-imx6sl.c
-index 8d866fb..124f982 100644
---- a/arch/arm/mach-imx/cpuidle-imx6sl.c
-+++ b/arch/arm/mach-imx/cpuidle-imx6sl.c
-@@ -11,6 +11,7 @@
- #include <asm/cpuidle.h>
- 
- #include "common.h"
-+#include "hardware.h"
- #include "cpuidle.h"
- 
- static int imx6sl_enter_wait(struct cpuidle_device *dev,
-@@ -21,9 +22,11 @@ static int imx6sl_enter_wait(struct cpuidle_device *dev,
- 	 * Software workaround for ERR005311, see function
- 	 * description for details.
- 	 */
--	imx6sl_set_wait_clk(true);
-+	if (cpu_is_imx6sl())
-+		imx6sl_set_wait_clk(true);
- 	cpu_do_idle();
--	imx6sl_set_wait_clk(false);
-+	if (cpu_is_imx6sl())
-+		imx6sl_set_wait_clk(false);
- 	imx6_set_lpm(WAIT_CLOCKED);
- 
- 	return index;
-diff --git a/arch/arm/mach-imx/gpc.c b/arch/arm/mach-imx/gpc.c
-index 1dc2a34..4ed8a63 100644
---- a/arch/arm/mach-imx/gpc.c
-+++ b/arch/arm/mach-imx/gpc.c
-@@ -26,6 +26,7 @@
- #include "hardware.h"
- 
- #define GPC_CNTR		0x000
-+#define GPC_CNTR_L2_PGE		22
- #define GPC_IMR1		0x008
- #define GPC_PGC_GPU_PDN		0x260
- #define GPC_PGC_GPU_PUPSCR	0x264
-@@ -243,6 +244,7 @@ static int __init imx_gpc_init(struct device_node *node,
- {
- 	struct irq_domain *parent_domain, *domain;
- 	int i;
-+	u32 val;
- 
- 	if (!parent) {
- 		pr_err("%s: no parent, giving up\n", node->full_name);
-@@ -271,6 +273,12 @@ static int __init imx_gpc_init(struct device_node *node,
- 	for (i = 0; i < IMR_NUM; i++)
- 		writel_relaxed(~0, gpc_base + GPC_IMR1 + i * 4);
- 
-+	/* clear the L2_PGE bit on i.MX6SLL */
-+	if (cpu_is_imx6sll()) {
-+		val = readl_relaxed(gpc_base + GPC_CNTR);
-+		val &= ~(1 << GPC_CNTR_L2_PGE);
-+		writel_relaxed(val, gpc_base + GPC_CNTR);
-+	}
- 	/*
- 	 * Clear the OF_POPULATED flag set in of_irq_init so that
- 	 * later the GPC power domain driver will not be skipped.
-diff --git a/arch/arm/mach-imx/mach-imx6sl.c b/arch/arm/mach-imx/mach-imx6sl.c
-index 0408490..462ed9c 100644
---- a/arch/arm/mach-imx/mach-imx6sl.c
-+++ b/arch/arm/mach-imx/mach-imx6sl.c
-@@ -17,6 +17,7 @@
- #include <asm/mach/map.h>
- 
- #include "common.h"
-+#include "hardware.h"
- #include "cpuidle.h"
- 
- static void __init imx6sl_fec_init(void)
-@@ -54,7 +55,8 @@ static void __init imx6sl_init_machine(void)
- 
- 	of_platform_default_populate(NULL, NULL, parent);
- 
--	imx6sl_fec_init();
-+	if (cpu_is_imx6sl())
-+		imx6sl_fec_init();
- 	imx_anatop_init();
- 	imx6sl_pm_init();
- }
-@@ -66,11 +68,15 @@ static void __init imx6sl_init_irq(void)
- 	imx_init_l2cache();
- 	imx_src_init();
- 	irqchip_init();
--	imx6_pm_ccm_init("fsl,imx6sl-ccm");
-+	if (cpu_is_imx6sl())
-+		imx6_pm_ccm_init("fsl,imx6sl-ccm");
-+	else
-+		imx6_pm_ccm_init("fsl,imx6sll-ccm");
- }
- 
- static const char * const imx6sl_dt_compat[] __initconst = {
- 	"fsl,imx6sl",
-+	"fsl,imx6sll",
- 	NULL,
- };
- 
-diff --git a/arch/arm/mach-imx/mxc.h b/arch/arm/mach-imx/mxc.h
-index 34f2ff6..e047611 100644
---- a/arch/arm/mach-imx/mxc.h
-+++ b/arch/arm/mach-imx/mxc.h
-@@ -39,6 +39,7 @@
- #define MXC_CPU_IMX6SX		0x62
- #define MXC_CPU_IMX6Q		0x63
- #define MXC_CPU_IMX6UL		0x64
-+#define MXC_CPU_IMX6SLL		0x67
- #define MXC_CPU_IMX7D		0x72
- 
- #define IMX_DDR_TYPE_LPDDR2		1
-@@ -73,6 +74,11 @@ static inline bool cpu_is_imx6ul(void)
- 	return __mxc_cpu_type == MXC_CPU_IMX6UL;
- }
- 
-+static inline bool cpu_is_imx6sll(void)
-+{
-+	return __mxc_cpu_type == MXC_CPU_IMX6SLL;
-+}
-+
- static inline bool cpu_is_imx6q(void)
- {
- 	return __mxc_cpu_type == MXC_CPU_IMX6Q;
--- 
-1.9.1
+CjIwMTblubQxMuaciDE05pelIDAzOjEy5LqOIE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRA
+ZnJlZS1lbGVjdHJvbnMuY29tPuWGmemBk++8mgo+Cj4gT24gVHVlLCBEZWMgMTMsIDIwMTYgYXQg
+MTE6MjI6NTBQTSArMDgwMCwgSWNlbm93eSBaaGVuZyB3cm90ZTogCj4gPiBBbiBvcGVyYXRpbmcg
+cG9pbnQgdGFibGUgaXMgbmVlZGVkIGZvciB0aGUgY3B1IGZyZXF1ZW5jeSBhZGp1c3RpbmcgdG8g
+Cj4gPiB3b3JrLiAKPiA+IAo+ID4gVGhlIG9wZXJhdGluZyBwb2ludCB0YWJsZSBpcyBjb252ZXJ0
+ZWQgZnJvbSB0aGUgY29tbW9uIHZhbHVlIGluIAo+ID4gZXh0cmFjdGVkIHNjcmlwdC5mZXggZnJv
+bSBtYW55IEEzMyBib2FyZC90YWJsZXRzLiAKPiA+IAo+ID4gMS4zNDRHSHogaXMgc2V0IGFzIGEg
+dHVyYm8tbW9kZSBvcGVyYXRpbmcgcG9pbnQsIGFzIGl0J3MgZGVzY3JpYmVkIGFzIAo+ID4gImV4
+dHJlbWl0eV9mcmVxIiBpbiB0aGUgRkVYIGZpbGUuICh0aGUgIm1heF9mcmVxIiBpcyAxLjJHSHop
+IAo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBJY2Vub3d5IFpoZW5nIDxpY2Vub3d5QGFvc2MueHl6
+PiAKPiA+IC0tLSAKPiA+wqAgYXJjaC9hcm0vYm9vdC9kdHMvc3VuOGktYTMzLmR0c2kgfCAzOCAr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKyAKPiA+wqAgMSBmaWxlIGNoYW5n
+ZWQsIDM4IGluc2VydGlvbnMoKykgCj4gPiAKPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290
+L2R0cy9zdW44aS1hMzMuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bjhpLWEzMy5kdHNpIAo+
+ID4gaW5kZXggNTA0OTk2Y2JlZTI5Li4wMzVjMDU4MzI0YjggMTAwNjQ0IAo+ID4gLS0tIGEvYXJj
+aC9hcm0vYm9vdC9kdHMvc3VuOGktYTMzLmR0c2kgCj4gPiArKysgYi9hcmNoL2FybS9ib290L2R0
+cy9zdW44aS1hMzMuZHRzaSAKPiA+IEBAIC00Niw3ICs0Niw0NSBAQCAKPiA+wqAgI2luY2x1ZGUg
+PGR0LWJpbmRpbmdzL2RtYS9zdW40aS1hMTAuaD4gCj4gPsKgIAo+ID7CoCAvIHsgCj4gPiArIGNw
+dTBfb3BwX3RhYmxlOiBvcHBfdGFibGUwIHsgCj4gPiArIGNvbXBhdGlibGUgPSAib3BlcmF0aW5n
+LXBvaW50cy12MiI7IAo+ID4gKyBvcHAtc2hhcmVkOyAKPiA+ICsgCj4gPiArIG9wcEA2NDgwMDAw
+MDAgeyAKPiA+ICsgb3BwLWh6ID0gL2JpdHMvIDY0IDw2NDgwMDAwMDA+OyAKPiA+ICsgb3BwLW1p
+Y3Jvdm9sdCA9IDwxMDQwMDAwPjsgCj4gPiArIGNsb2NrLWxhdGVuY3ktbnMgPSA8MjQ0MTQ0Pjsg
+LyogOCAzMmsgcGVyaW9kcyAqLyAKPiA+ICsgfTsgCj4KPiBQbGVhc2UgYWRkIG5ldyBsaW5lcyBi
+ZXR3ZWVuIHRoZSBub2Rlcy4gCj4KPiA+ICsgb3BwQDgxNjAwMDAwMCB7IAo+ID4gKyBvcHAtaHog
+PSAvYml0cy8gNjQgPDgxNjAwMDAwMD47IAo+ID4gKyBvcHAtbWljcm92b2x0ID0gPDExMDAwMDA+
+OyAKPiA+ICsgY2xvY2stbGF0ZW5jeS1ucyA9IDwyNDQxNDQ+OyAvKiA4IDMyayBwZXJpb2RzICov
+IAo+ID4gKyB9OyAKPiA+ICsgb3BwQDEwMDgwMDAwMDAgeyAKPiA+ICsgb3BwLWh6ID0gL2JpdHMv
+IDY0IDwxMDA4MDAwMDAwPjsgCj4gPiArIG9wcC1taWNyb3ZvbHQgPSA8MTIwMDAwMD47IAo+ID4g
+KyBjbG9jay1sYXRlbmN5LW5zID0gPDI0NDE0ND47IC8qIDggMzJrIHBlcmlvZHMgKi8gCj4gPiAr
+IH07IAo+ID4gKyBvcHBAMTIwMDAwMDAwMCB7IAo+ID4gKyBvcHAtaHogPSAvYml0cy8gNjQgPDEy
+MDAwMDAwMDA+OyAKPiA+ICsgb3BwLW1pY3Jvdm9sdCA9IDwxMzIwMDAwPjsgCj4gPiArIGNsb2Nr
+LWxhdGVuY3ktbnMgPSA8MjQ0MTQ0PjsgLyogOCAzMmsgcGVyaW9kcyAqLyAKPiA+ICsgfTsgCj4g
+PiArIG9wcEAxMzQ0MDAwMDAwIHsgCj4gPiArIG9wcC1oeiA9IC9iaXRzLyA2NCA8MTM0NDAwMDAw
+MD47IAo+ID4gKyBvcHAtbWljcm92b2x0ID0gPDE0NjAwMDA+OyAKPiA+ICsgY2xvY2stbGF0ZW5j
+eS1ucyA9IDwyNDQxNDQ+OyAvKiA4IDMyayBwZXJpb2RzICovIAo+ID4gKyB0dXJiby1tb2RlOyAK
+PiA+ICsgfTsgCj4KPiBBcyBmYXIgYXMgSSBrbm93LCB0aGlzIE9QUCBpcyBub3QgdXNlZCBieSBB
+bGx3aW5uZXIsIGlzIG5vdCB1c2FibGUgaW4gCj4gYW55IEEzMyBib2FyZCBzbyBmYXIgKGJvdGgg
+dGhlIEEzMy1vbGludXhpbm8gYW5kIHRoZSBTaW5BMzMgZG8gbm90IAo+IGFsbG93IHN1Y2ggYSB2
+b2x0YWdlIG9uIHRoZWlyIENQVSByZWd1bGF0b3IpLCBhbmQgb3ZlcnZvbHRpbmcgYW5kIAo+IG92
+ZXJjbG9ja2luZyBpcyBzb21ldGhpbmcgdGhhdCBpcyB2ZXJ5IHJpc2t5LCBhbmQgbWlnaHQgbGVh
+ZCB0byAKPiBzdGFiaWxpdHkgaXNzdWVzLiAKCkl0IGNhbiBiZSB1c2VkIG9uIG15IEEzMyB0YWJs
+ZXQsIGFsdGhvdWdoIG5vdCBmb3IgbG9uZy10ZXJtIHJ1bi4KCkFuZCBpdCdzIGRlc2lnbmVkIHRv
+IGJlICJ0dXJiby1tb2RlIiwgd2hpY2ggaXMgdGhlIHJlYXNvbiB0aGF0IEkgYWRkIHRoaXMgcHJv
+cGVydHkuCgo+Cj4gUGxlYXNlIHJlbW92ZSB0aGlzIE9QUC4gCj4KPiBNYXhpbWUgCj4KPiAtLSAK
+PiBNYXhpbWUgUmlwYXJkLCBGcmVlIEVsZWN0cm9ucyAKPiBFbWJlZGRlZCBMaW51eCBhbmQgS2Vy
+bmVsIGVuZ2luZWVyaW5nIAo+IGh0dHA6Ly9mcmVlLWVsZWN0cm9ucy5jb20gCg==
