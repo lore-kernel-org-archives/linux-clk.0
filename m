@@ -1,63 +1,72 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>,
- Thomas Abraham <thomas.ab@samsung.com>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Ben Gamari <ben@smart-cactus.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- b.zolnierkie@samsung.com
-Subject: [PATCH 1/2] clk: samsung: exynos4412: add cpu clock configuration data
- for Exynos4412 Prime
-Date: Thu, 29 Dec 2016 14:36:50 +0100
-Message-id: <1483018611-27998-2-git-send-email-b.zolnierkie@samsung.com>
-In-reply-to: <1483018611-27998-1-git-send-email-b.zolnierkie@samsung.com>
-References: <1483018611-27998-1-git-send-email-b.zolnierkie@samsung.com>
- <CGME20161229133728epcas5p1e7d700c4404684f9574e2251d836061c@epcas5p1.samsung.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Marcin Wojtas <mw@semihalf.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH 1/3] dt-bindings: arm: update Armada CP110 system controller binding
+Date: Tue, 13 Dec 2016 13:41:18 +0100
+Message-Id: <1481632880-9198-2-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1481632880-9198-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1481632880-9198-1-git-send-email-thomas.petazzoni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add cpu clock configuration data for Exynos4412 Prime SoC
-(it supports additional PLL rates & CPU frequencies).
+It turns out that in the CP110 HW block present in Marvell Armada
+7K/8K SoCs, gatable clock n°18 not only controls SD/MMC, but also the
+GOP block. This commit updates the Device Tree binding for this piece
+of hardware accordingly.
 
-Based on Hardkernel's kernel for ODROID-X2/U2/U3 boards.
-
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Andreas Faerber <afaerber@suse.de>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Cc: Ben Gamari <ben@smart-cactus.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 ---
- drivers/clk/samsung/clk-exynos4.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../devicetree/bindings/arm/marvell/cp110-system-controller0.txt    | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index faab9b3..e40b775 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -1298,6 +1298,8 @@ static void __init exynos4_clk_register_finpll(struct samsung_clk_provider *ctx)
- };
+diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+index 30c5469..07dbb35 100644
+--- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
++++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+@@ -45,7 +45,7 @@ The following clocks are available:
+    - 1 15	SATA
+    - 1 16	SATA USB
+    - 1 17	Main
+-   - 1 18	SD/MMC
++   - 1 18	SD/MMC/GOP
+    - 1 21	Slow IO (SPI, NOR, BootROM, I2C, UART)
+    - 1 22	USB3H0
+    - 1 23	USB3H1
+@@ -65,7 +65,7 @@ Required properties:
+ 	"cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
+ 	"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
+ 	"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
+-	"cpm-sata-usb", "cpm-main", "cpm-sd-mmc", "none", "none", "cpm-slow-io",
++	"cpm-sata-usb", "cpm-main", "cpm-sd-mmc-gop", "none", "none", "cpm-slow-io",
+ 	"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
  
- static const struct samsung_pll_rate_table exynos4x12_apll_rates[] __initconst = {
-+	PLL_35XX_RATE(1704000000, 213, 3, 0),
-+	PLL_35XX_RATE(1600000000, 200, 3, 0),
- 	PLL_35XX_RATE(1500000000, 250, 4, 0),
- 	PLL_35XX_RATE(1400000000, 175, 3, 0),
- 	PLL_35XX_RATE(1300000000, 325, 6, 0),
-@@ -1421,6 +1423,8 @@ static void __init exynos4x12_core_down_clock(void)
- 		(((cores) << 8) | ((hpm) << 4) | ((copy) << 0))
- 
- static const struct exynos_cpuclk_cfg_data e4412_armclk_d[] __initconst = {
-+	{ 1704000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(7, 0, 7), },
-+	{ 1600000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(7, 0, 6), },
- 	{ 1500000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(7, 0, 6), },
- 	{ 1400000, E4210_CPU_DIV0(2, 1, 6, 0, 7, 3), E4412_CPU_DIV1(6, 0, 6), },
- 	{ 1300000, E4210_CPU_DIV0(2, 1, 5, 0, 7, 3), E4412_CPU_DIV1(6, 0, 5), },
+ Example:
+@@ -78,6 +78,6 @@ Example:
+ 		gate-clock-output-names = "cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
+ 			"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
+ 			"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
+-			"cpm-sata-usb", "cpm-main", "cpm-sd-mmc", "none", "none", "cpm-slow-io",
++			"cpm-sata-usb", "cpm-main", "cpm-sd-mmc-gop", "none", "none", "cpm-slow-io",
+ 			"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
+ 	};
 -- 
-1.9.1
+2.7.4
