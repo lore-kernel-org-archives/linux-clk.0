@@ -1,206 +1,120 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 8 Dec 2016 14:52:57 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Bai Ping <ping.bai@nxp.com>
-Cc: shawnguo@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
-	mark.rutland@arm.com, linus.walleij@linaro.org,
-	kernel@pengutronix.de, fabio.estevam@nxp.com,
-	daniel.lezcano@linaro.org, tglx@linutronix.de,
-	p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 03/11] driver: clk: imx: Add clock driver for imx6sll
-Message-ID: <20161208225257.GP5423@codeaurora.org>
-References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
- <1480660774-25055-4-git-send-email-ping.bai@nxp.com>
+Return-Path: <tony@atomide.com>
+Date: Mon, 12 Dec 2016 17:31:34 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv4 00/15] clk: ti: add support for hwmod clocks
+Message-ID: <20161213013133.GR4920@atomide.com>
+References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+ <20161028005341.GR26139@codeaurora.org>
+ <2cfa10a9-9ea0-23e4-30de-9aece13e47e3@ti.com>
+ <20161028233750.GQ16026@codeaurora.org>
+ <7371ef35-5d95-bf78-4c97-c61091a1fa4b@ti.com>
+ <148156710975.37646.2957511113527634913@resonance>
+ <20161213004914.GM5423@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1480660774-25055-4-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <20161213004914.GM5423@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/02, Bai Ping wrote:
-> diff --git a/drivers/clk/imx/clk-imx6sll.c b/drivers/clk/imx/clk-imx6sll.c
-> new file mode 100644
-> index 0000000..c5219e1
-> --- /dev/null
-> +++ b/drivers/clk/imx/clk-imx6sll.c
-> @@ -0,0 +1,366 @@
-> +/*
-> + * Copyright (C) 2016 Freescale Semiconductor, Inc.
-> + *
-> + * The code contained herein is licensed under the GNU General Public
-> + * License. You may obtain a copy of the GNU General Public License
-> + * Version 2 or later at the following locations:
-> + *
-> + * http://www.opensource.org/licenses/gpl-license.html
-> + * http://www.gnu.org/copyleft/gpl.html
-> + */
-> +
-> +#include <dt-bindings/clock/imx6sll-clock.h>
-> +#include <linux/clk.h>
-> +#include <linux/clkdev.h>
+* Stephen Boyd <sboyd@codeaurora.org> [161212 16:49]:
+> On 12/12, Michael Turquette wrote:
+> > Quoting Tero Kristo (2016-12-02 00:15:53)
+> > > On 29/10/16 02:37, Stephen Boyd wrote:
+> > > > On 10/28, Tero Kristo wrote:
+> > > >> Eventually that should happen. However, we have plenty of legacy
+> > > >> code still in place which depend on clk_get functionality within
+> > > >> kernel. The major contributing factor is the hwmod codebase, for
+> > > >> which we have plans to:
+> > > >>
+> > > >> - get this clock driver merged
+> > > >> - implement a new interconnect driver for OMAP family SoCs
+> > > >> - interconnect driver will use DT handles for fetching clocks,
+> > > >> rather than clock aliases
+> > > >> - reset handling will be implemented as part of the interconnect
+> > > >> driver somehow (no prototype / clear plans for that as of yet)
+> > > >> - all the hwmod stuff can be dropped
+> > > >>
+> > > >> The clock alias handling is still needed as a transition phase until
+> > > >> all the above is done, then we can start dropping them. Basically
+> > > >> anything that is using omap_hwmod depends on the clock aliases right
+> > > >> now.
+> > > >
+> > > > Ok, sounds good. Thanks.
+> > > 
+> > > Stephen, any final comments on this series? I guess its too late to push 
+> > > for 4.10, but I would like to get this merged early for 4.11 window.
+> > 
+> > Hi Tero,
+> > 
+> > No final comments from me. I needed to go back and forth with Tony about
+> > the clockdomain modeling, but it seems sensible to create clock
+> > providers from the clock domains if you want to pass those struct clk
+> > objects down to the drivers.
+> > 
+> > One thing I wasn't able to follow exactly in the code is how the
+> > clockdomains are linking parent clocks from cm1, cm2, etc to the clock
+> > domains. Are the clockdomain providers calling clk_get() on the clocks
+> > that it *consumes*, or are the clockdomain providers never calling
+> > clk_get() on those clocks and just establishing the tree hierarchy at
+> > clk_register() time?
+> > 
+> > Unless Stephen has any more review comments we can merge this into a
+> > clk-next based on v4.10-rc1 when that drops.
+> > 
+> 
+> I spent a bunch of time looking at this again today. From a DT
+> perspective we don't want to have clocks or clockdomains nodes
+> below the cm1/cm2/prm dt nodes. That's getting to the point of
+> describing individual elements of a device that should be
+> described in the driver instead of DT.
 
-Is this include used?
+I agree we don't need separate clocks and clockdomain nodes.. But
+I think you're missing something here though. The clockdomains in
+this case are separate devices on the interconnect, not individual
+elements within a device. The outputs of a clockdomain are individual
+elements of a clockdomain and can be just described as indexed
+outputs of the clockdomain.
 
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/types.h>
+So we just need the clockdomain clock nodes, then each clock output is
+just offset from that clockdomain. And we can have readable defines
+for the offsets. That's all there should be to it.
 
-Is there an include of clk_provider.h missing?
+> I'd also prefer we didn't have cm1/cm2/prm nodes and just had one
+> prcm node as the clock provider (#clock-cells) because that's the
+> aligned register address space that's visible on the bus.  From
+> my perspective cm1/cm2/prm look like macros that are put inside
+> the prcm container and they're at least aligned on some register
+> address boundary so I'm not too worried if we keep describing
+> down to the level of these modules in DT. Anything beyond that is
+> not good though.
 
-> +
-> +#include "clk.h"
-> +
-> +#define BM_CCM_CCDR_MMDC_CH0_MASK	(0x2 << 16)
-> +#define CCDR	0x4
-> +
-> +static const char *pll_bypass_src_sels[] = { "osc", "dummy", };
+Having just one prcm node instead of cm1, cm2 and prm is wrong from
+hardware point of view. These are on separate interconnect instances.
+Ideally the clockdomain clock driver works for all these though, just
+separate instances of the same driver.
 
-const char * const? For all of these names.
+> Finally we come to using clock providers or genpds for the clock
+> domains. If we don't put clockdomains into DT (because I don't
+> want clockdomain nodes) then this problem almost goes away. At
+> least, I don't really care what happens here because it will be
+> an internal TI prcm driver question of implementation. A clk
+> consumer will just see a provider that outputs some sort of clk.
+> If that happens to go through a clockdomain and we need to toggle
+> some bits inside the domain registers to make the clk actually
+> output a signal, that's fine. The prcm driver can take care of it
+> behind the scenes. Or at a later date we can model the domain as
+> a genpd and have the framework turn on/off genpds attached to
+> certain clocks. There's a lot of freedom here as long as we don't
+> put things in DT.
 
-> +static const char *pll1_bypass_sels[] = { "pll1", "pll1_bypass_src", };
-> +static const char *pll2_bypass_sels[] = { "pll2", "pll2_bypass_src", };
-> +static const char *pll3_bypass_sels[] = { "pll3", "pll3_bypass_src", };
-> +static const char *pll4_bypass_sels[] = { "pll4", "pll4_bypass_src", };
-> +static const char *pll5_bypass_sels[] = { "pll5", "pll5_bypass_src", };
-> +static const char *pll6_bypass_sels[] = { "pll6", "pll6_bypass_src", };
-> +static const char *pll7_bypass_sels[] = { "pll7", "pll7_bypass_src", };
-> +static const char *step_sels[] = { "osc", "pll2_pfd2_396m", };
-> +static const char *pll1_sw_sels[] = { "pll1_sys", "step", };
-> +static const char *axi_alt_sels[] = { "pll2_pfd2_396m", "pll3_pfd1_540m", };
-> +static const char *axi_sels[] = {"periph", "axi_alt_sel", };
-> +static const char *periph_pre_sels[] = { "pll2_bus", "pll2_pfd2_396m", "pll2_pfd0_352m", "pll2_198m", };
-> +static const char *periph2_pre_sels[] = { "pll2_bus", "pll2_pfd2_396m", "pll2_pfd0_352m", "pll4_audio_div", };
-> +static const char *periph_clk2_sels[] = { "pll3_usb_otg", "osc", "osc", };
-> +static const char *periph2_clk2_sels[] = { "pll3_usb_otg", "osc", };
-> +static const char *periph_sels[] = { "periph_pre", "periph_clk2", };
-> +static const char *periph2_sels[] = { "periph2_pre", "periph2_clk2", };
-> +static const char *usdhc_sels[] = { "pll2_pfd2_396m", "pll2_pfd0_352m", };
-> +static const char *ssi_sels[] = {"pll3_pfd2_508m", "pll3_pfd3_454m", "pll4_audio_div", "dummy",};
-> +static const char *spdif_sels[] = { "pll4_audio_div", "pll3_pfd2_508m", "pll5_video_div", "pll3_usb_otg", };
-> +static const char *ldb_di0_div_sels[] = { "ldb_di0_div_3_5", "ldb_di0_div_7", };
-> +static const char *ldb_di1_div_sels[] = { "ldb_di1_div_3_5", "ldb_di1_div_7", };
-> +static const char *ldb_di0_sels[] = { "pll5_video_div", "pll2_pfd0_352m", "pll2_pfd2_396m", "pll2_pfd3_594m", "pll2_pfd1_594m", "pll3_pfd3_454m", };
-> +static const char *ldb_di1_sels[] = { "pll3_usb_otg", "pll2_pfd0_352m", "pll2_pfd2_396m", "pll2_bus", "pll3_pfd3_454m", "pll3_pfd2_508m", };
-> +static const char *lcdif_pre_sels[] = { "pll2_bus", "pll3_pfd3_454m", "pll5_video_div", "pll2_pfd0_352m", "pll2_pfd1_594m", "pll3_pfd1_540m", };
-> +static const char *ecspi_sels[] = { "pll3_60m", "osc", };
-> +static const char *uart_sels[] = { "pll3_80m", "osc", };
-> +static const char *perclk_sels[] = { "ipg", "osc", };
-> +static const char *lcdif_sels[] = { "lcdif_podf", "ipp_di0", "ipp_di1", "ldb_di0", "ldb_di1", };
-> +
-> +static const char *epdc_pre_sels[] = { "pll2_bus", "pll3_usb_otg", "pll5_video_div", "pll2_pfd0_352m", "pll2_pfd2_396m", "pll3_pfd2_508m", };
-> +static const char *epdc_sels[] = { "epdc_podf", "ipp_di0", "ipp_di1", "ldb_di0", "ldb_di1", };
-> +
-> +static struct clk *clks[IMX6SLL_CLK_END];
-> +static struct clk_onecell_data clk_data;
-> +
-> +static int const clks_init_on[] __initconst = {
+Yeah totally agree. And this problem also goes away when we just
+assume a clockdomain is just a clock device with multiple outputs.
+Any magic that needs to happen beyond that can be dealt with at
+the interconnect level.
 
-static const int is more preferred style.
+Regards,
 
-> +	IMX6SLL_CLK_AIPSTZ1, IMX6SLL_CLK_AIPSTZ2,
-> +	IMX6SLL_CLK_OCRAM, IMX6SLL_CLK_ARM, IMX6SLL_CLK_ROM,
-> +	IMX6SLL_CLK_MMDC_P0_FAST, IMX6SLL_CLK_MMDC_P0_IPG,
-> +};
-> +
-> +static struct clk_div_table post_div_table[] = {
-
-const?
-
-> +	{ .val = 2, .div = 1, },
-> +	{ .val = 1, .div = 2, },
-> +	{ .val = 0, .div = 4, },
-> +	{ }
-> +};
-> +
-> +static struct clk_div_table video_div_table[] = {
-
-const?
-
-> +	{ .val = 0, .div = 1, },
-> +	{ .val = 1, .div = 2, },
-> +	{ .val = 2, .div = 1, },
-> +	{ .val = 3, .div = 4, },
-> +	{ }
-> +};
-> +
-> +static u32 share_count_audio;
-> +static u32 share_count_ssi1;
-> +static u32 share_count_ssi2;
-> +static u32 share_count_ssi3;
-> +
-> +static void __init imx6sll_clocks_init(struct device_node *ccm_node)
-> +{
-> +	struct device_node *np;
-> +	void __iomem *base;
-> +	int i;
-> +
-> +	clks[IMX6SLL_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
-> +
-> +	clks[IMX6SLL_CLK_CKIL] = of_clk_get_by_name(ccm_node, "ckil");
-> +	clks[IMX6SLL_CLK_OSC] = of_clk_get_by_name(ccm_node, "osc");
-> +
-> +	/* ipp_di clock is external input */
-> +	clks[IMX6SLL_CLK_IPP_DI0] = of_clk_get_by_name(ccm_node, "ipp_di0");
-> +	clks[IMX6SLL_CLK_IPP_DI1] = of_clk_get_by_name(ccm_node, "ipp_di1");
-> +
-> +	np = of_find_compatible_node(NULL, NULL, "fsl,imx6sll-anatop");
-> +	base = of_iomap(np, 0);
-> +	WARN_ON(!base);
-> +
-> +	clks[IMX6SLL_PLL1_BYPASS_SRC] = imx_clk_mux("pll1_bypass_src", base + 0x00, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-> +	clks[IMX6SLL_PLL2_BYPASS_SRC] = imx_clk_mux("pll2_bypass_src", base + 0x30, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-> +	clks[IMX6SLL_PLL3_BYPASS_SRC] = imx_clk_mux("pll3_bypass_src", base + 0x10, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-> +	clks[IMX6SLL_PLL4_BYPASS_SRC] = imx_clk_mux("pll4_bypass_src", base + 0x70, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-> +	clks[IMX6SLL_PLL5_BYPASS_SRC] = imx_clk_mux("pll5_bypass_src", base + 0xa0, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-> +	clks[IMX6SLL_PLL6_BYPASS_SRC] = imx_clk_mux("pll6_bypass_src", base + 0xe0, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-> +	clks[IMX6SLL_PLL7_BYPASS_SRC] = imx_clk_mux("pll7_bypass_src", base + 0x20, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-> +
-> +	clks[IMX6SLL_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS,	 "pll1", "pll1_bypass_src", base + 0x00, 0x7f);
-> +	clks[IMX6SLL_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "pll2_bypass_src", base + 0x30, 0x1);
-> +	clks[IMX6SLL_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB,	 "pll3", "pll3_bypass_src", base + 0x10, 0x3);
-> +	clks[IMX6SLL_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,	 "pll4", "pll4_bypass_src", base + 0x70, 0x7f);
-> +	clks[IMX6SLL_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_AV,	 "pll5", "pll5_bypass_src", base + 0xa0, 0x7f);
-> +	clks[IMX6SLL_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_ENET,	 "pll6", "pll6_bypass_src", base + 0xe0, 0x3);
-> +	clks[IMX6SLL_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB,	 "pll7", "pll7_bypass_src", base + 0x20, 0x3);
-> +
-> +	clks[IMX6SLL_PLL1_BYPASS] = imx_clk_mux_flags("pll1_bypass", base + 0x00, 16, 1, pll1_bypass_sels, ARRAY_SIZE(pll1_bypass_sels), CLK_SET_RATE_PARENT);
-> +	clks[IMX6SLL_PLL2_BYPASS] = imx_clk_mux_flags("pll2_bypass", base + 0x30, 16, 1, pll2_bypass_sels, ARRAY_SIZE(pll2_bypass_sels), CLK_SET_RATE_PARENT);
-> +	clks[IMX6SLL_PLL3_BYPASS] = imx_clk_mux_flags("pll3_bypass", base + 0x10, 16, 1, pll3_bypass_sels, ARRAY_SIZE(pll3_bypass_sels), CLK_SET_RATE_PARENT);
-> +	clks[IMX6SLL_PLL4_BYPASS] = imx_clk_mux_flags("pll4_bypass", base + 0x70, 16, 1, pll4_bypass_sels, ARRAY_SIZE(pll4_bypass_sels), CLK_SET_RATE_PARENT);
-> +	clks[IMX6SLL_PLL5_BYPASS] = imx_clk_mux_flags("pll5_bypass", base + 0xa0, 16, 1, pll5_bypass_sels, ARRAY_SIZE(pll5_bypass_sels), CLK_SET_RATE_PARENT);
-> +	clks[IMX6SLL_PLL6_BYPASS] = imx_clk_mux_flags("pll6_bypass", base + 0xe0, 16, 1, pll6_bypass_sels, ARRAY_SIZE(pll6_bypass_sels), CLK_SET_RATE_PARENT);
-> +	clks[IMX6SLL_PLL7_BYPASS] = imx_clk_mux_flags("pll7_bypass", base + 0x20, 16, 1, pll7_bypass_sels, ARRAY_SIZE(pll7_bypass_sels), CLK_SET_RATE_PARENT);
-> +
-> +	/* Do not bypass PLLs initially */
-> +	clk_set_parent(clks[IMX6SLL_PLL1_BYPASS], clks[IMX6SLL_CLK_PLL1]);
-> +	clk_set_parent(clks[IMX6SLL_PLL2_BYPASS], clks[IMX6SLL_CLK_PLL2]);
-> +	clk_set_parent(clks[IMX6SLL_PLL3_BYPASS], clks[IMX6SLL_CLK_PLL3]);
-> +	clk_set_parent(clks[IMX6SLL_PLL4_BYPASS], clks[IMX6SLL_CLK_PLL4]);
-> +	clk_set_parent(clks[IMX6SLL_PLL5_BYPASS], clks[IMX6SLL_CLK_PLL5]);
-> +	clk_set_parent(clks[IMX6SLL_PLL6_BYPASS], clks[IMX6SLL_CLK_PLL6]);
-> +	clk_set_parent(clks[IMX6SLL_PLL7_BYPASS], clks[IMX6SLL_CLK_PLL7]);
-
-Can we just put raw register writes here instead? I'd prefer we
-didn't use clk consumer APIs to do things to the clk tree from
-the providers. The problem there being that:
-
- 1) We're trying to move away from using consumer APIs in
- provider drivers. It's ok if they're used during probe, but
- inside clk_ops is not preferred.
-
- 2) Even if you have a clk pointer, it may be "orphaned" at the
- time of registration and so calling the APIs here works now but
- eventually we may want to return an EPROBE_DEFER error in that
- case and this may block that effort.
-
-I suppose if this is the only clk driver on this machine then
-this last point isn't a concern and things are probably ok here.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Tony
