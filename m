@@ -1,145 +1,127 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 2/2] clk: uniphier: add cpufreq data for LD11, LD20 SoCs
-Date: Wed,  7 Dec 2016 10:32:33 +0900
-Message-Id: <1481074353-31535-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1481074353-31535-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1481074353-31535-1-git-send-email-yamada.masahiro@socionext.com>
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v4 3/9] clk: stm32f4: Add post divisor for I2S & SAI PLLs
+Date: Tue, 13 Dec 2016 15:20:14 +0100
+Message-ID: <1481638820-29324-4-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add more data to 64bit SoCs for the cpufreq support.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+This patch adds post dividers of I2S & SAI PLLs.
+These dividers are managed by a dedicated register (RCC_DCKCFGR).
+The PLL should be off before a set rate.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
+ drivers/clk/clk-stm32f4.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-Changes in v3:
-  - Do not use anonymous union
-
-Changes in v2:
-  - Drop clock data of 32 bit SoCs. Add 64 bit SoC data for now.
-
- drivers/clk/uniphier/clk-uniphier-sys.c | 32 ++++++++++++++++++++++++++++++++
- drivers/clk/uniphier/clk-uniphier.h     | 30 +++++++++++++++++++++++++++++-
- 2 files changed, 61 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
-index 5d02999..d049316 100644
---- a/drivers/clk/uniphier/clk-uniphier-sys.c
-+++ b/drivers/clk/uniphier/clk-uniphier-sys.c
-@@ -125,16 +125,35 @@ const struct uniphier_clk_data uniphier_pxs2_sys_clk_data[] = {
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index cab2014..70ca93c 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -47,6 +47,10 @@
+ #define STM32F4_RCC_CSR			0x74
+ #define STM32F4_RCC_PLLI2SCFGR		0x84
+ #define STM32F4_RCC_PLLSAICFGR		0x88
++#define STM32F4_RCC_DCKCFGR		0x8c
++
++#define NONE -1
++#define NO_IDX  NONE
+ 
+ struct stm32f4_gate_data {
+ 	u8	offset;
+@@ -357,6 +361,19 @@ struct stm32f4_pll {
+ 
+ #define to_stm32f4_pll(_gate) container_of(_gate, struct stm32f4_pll, gate)
+ 
++struct stm32f4_pll_post_div_data {
++	int idx;
++	u8 pll_num;
++	const char *name;
++	const char *parent;
++	u8 flag;
++	u8 offset;
++	u8 shift;
++	u8 width;
++	u8 flag_div;
++	const struct clk_div_table *div_table;
++};
++
+ struct stm32f4_vco_data {
+ 	const char *vco_name;
+ 	u8 offset;
+@@ -370,6 +387,23 @@ struct stm32f4_vco_data {
+ 	{ "vco-sai", STM32F4_RCC_PLLSAICFGR, 28, 29 },
  };
  
- const struct uniphier_clk_data uniphier_ld11_sys_clk_data[] = {
-+	UNIPHIER_CLK_FACTOR("cpll", -1, "ref", 392, 5),		/* 1960 MHz */
-+	UNIPHIER_CLK_FACTOR("mpll", -1, "ref", 64, 1),		/* 1600 MHz */
- 	UNIPHIER_CLK_FACTOR("spll", -1, "ref", 80, 1),		/* 2000 MHz */
-+	UNIPHIER_CLK_FACTOR("vspll", -1, "ref", 80, 1),		/* 2000 MHz */
- 	UNIPHIER_CLK_FACTOR("uart", 0, "spll", 1, 34),
- 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 40),
- 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC, MIO */
- 	UNIPHIER_CLK_FACTOR("usb2", -1, "ref", 24, 25),
-+	/* CPU gears */
-+	UNIPHIER_CLK_DIV4("cpll", 2, 3, 4, 8),
-+	UNIPHIER_CLK_DIV4("mpll", 2, 3, 4, 8),
-+	UNIPHIER_CLK_DIV3("spll", 3, 4, 8),
-+	/* Note: both gear1 and gear4 are spll/4.  This is not a bug. */
-+	UNIPHIER_CLK_CPUGEAR("cpu-ca53", 33, 0x8080, 0xf, 8,
-+			     "cpll/2", "spll/4", "cpll/3", "spll/3",
-+			     "spll/4", "spll/8", "cpll/4", "cpll/8"),
-+	UNIPHIER_CLK_CPUGEAR("cpu-ipp", 34, 0x8100, 0xf, 8,
-+			     "mpll/2", "spll/4", "mpll/3", "spll/3",
-+			     "spll/4", "spll/8", "mpll/4", "mpll/8"),
- 	{ /* sentinel */ }
- };
++
++static const struct clk_div_table post_divr_table[] = {
++	{ 0, 2 }, { 1, 4 }, { 2, 8 }, { 3, 16 }, { 0 }
++};
++
++#define MAX_POST_DIV 3
++static const struct stm32f4_pll_post_div_data  post_div_data[MAX_POST_DIV] = {
++	{ CLK_I2SQ_PDIV, PLL_I2S, "plli2s-q-div", "plli2s-q",
++		CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 0, 5, 0, NULL},
++
++	{ CLK_SAIQ_PDIV, PLL_SAI, "pllsai-q-div", "pllsai-q",
++		CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 8, 5, 0, NULL },
++
++	{ NO_IDX, PLL_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
++		STM32F4_RCC_DCKCFGR, 16, 2, 0, post_divr_table },
++};
++
+ struct stm32f4_div_data {
+ 	u8 shift;
+ 	u8 width;
+@@ -996,6 +1030,27 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 	clks[PLL_VCO_SAI] = stm32f4_rcc_register_pll("vco_in",
+ 			&data->pll_data[2], &stm32f4_clk_lock);
  
- const struct uniphier_clk_data uniphier_ld20_sys_clk_data[] = {
-+	UNIPHIER_CLK_FACTOR("cpll", -1, "ref", 88, 1),		/* ARM: 2200 MHz */
-+	UNIPHIER_CLK_FACTOR("gppll", -1, "ref", 52, 1),		/* Mali: 1300 MHz */
-+	UNIPHIER_CLK_FACTOR("mpll", -1, "ref", 64, 1),		/* Codec: 1600 MHz */
- 	UNIPHIER_CLK_FACTOR("spll", -1, "ref", 80, 1),		/* 2000 MHz */
-+	UNIPHIER_CLK_FACTOR("s2pll", -1, "ref", 88, 1),		/* IPP: 2200 MHz */
-+	UNIPHIER_CLK_FACTOR("vppll", -1, "ref", 504, 5),	/* 2520 MHz */
- 	UNIPHIER_CLK_FACTOR("uart", 0, "spll", 1, 34),
- 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 40),
- 	UNIPHIER_LD20_SYS_CLK_SD,
-@@ -147,5 +166,18 @@ const struct uniphier_clk_data uniphier_ld20_sys_clk_data[] = {
- 	UNIPHIER_CLK_GATE("usb30", 14, NULL, 0x210c, 14),
- 	UNIPHIER_CLK_GATE("usb30-phy0", 16, NULL, 0x210c, 12),
- 	UNIPHIER_CLK_GATE("usb30-phy1", 17, NULL, 0x210c, 13),
-+	/* CPU gears */
-+	UNIPHIER_CLK_DIV4("cpll", 2, 3, 4, 8),
-+	UNIPHIER_CLK_DIV4("spll", 2, 3, 4, 8),
-+	UNIPHIER_CLK_DIV4("s2pll", 2, 3, 4, 8),
-+	UNIPHIER_CLK_CPUGEAR("cpu-ca72", 32, 0x8000, 0xf, 8,
-+			     "cpll/2", "spll/2", "cpll/3", "spll/3",
-+			     "spll/4", "spll/8", "cpll/4", "cpll/8"),
-+	UNIPHIER_CLK_CPUGEAR("cpu-ca53", 33, 0x8080, 0xf, 8,
-+			     "cpll/2", "spll/2", "cpll/3", "spll/3",
-+			     "spll/4", "spll/8", "cpll/4", "cpll/8"),
-+	UNIPHIER_CLK_CPUGEAR("cpu-ipp", 34, 0x8100, 0xf, 8,
-+			     "s2pll/2", "spll/2", "s2pll/3", "spll/3",
-+			     "spll/4", "spll/8", "s2pll/4", "s2pll/8"),
- 	{ /* sentinel */ }
- };
-diff --git a/drivers/clk/uniphier/clk-uniphier.h b/drivers/clk/uniphier/clk-uniphier.h
-index 9707b0f..01c16ec 100644
---- a/drivers/clk/uniphier/clk-uniphier.h
-+++ b/drivers/clk/uniphier/clk-uniphier.h
-@@ -75,6 +75,20 @@ struct uniphier_clk_data {
- 	} data;
- };
- 
-+#define UNIPHIER_CLK_CPUGEAR(_name, _idx, _regbase, _mask,	\
-+			     _num_parents, ...)			\
-+	{							\
-+		.name = (_name),				\
-+		.type = UNIPHIER_CLK_TYPE_CPUGEAR,		\
-+		.idx = (_idx),					\
-+		.data.cpugear = {				\
-+			.parent_names = { __VA_ARGS__ },	\
-+			.num_parents = (_num_parents),		\
-+			.regbase = (_regbase),			\
-+			.mask = (_mask)				\
-+		 },						\
++	for (n = 0; n < MAX_POST_DIV; n++) {
++		const struct stm32f4_pll_post_div_data *post_div;
++		struct clk_hw *hw;
++
++		post_div = &post_div_data[n];
++
++		hw = clk_register_pll_div(post_div->name,
++				post_div->parent,
++				post_div->flag,
++				base + post_div->offset,
++				post_div->shift,
++				post_div->width,
++				post_div->flag_div,
++				post_div->div_table,
++				clks[post_div->pll_num],
++				&stm32f4_clk_lock);
++
++		if (post_div->idx != NO_IDX)
++			clks[post_div->idx] = hw;
 +	}
 +
- #define UNIPHIER_CLK_FACTOR(_name, _idx, _parent, _mult, _div)	\
- 	{							\
- 		.name = (_name),				\
-@@ -87,7 +101,6 @@ struct uniphier_clk_data {
- 		},						\
- 	}
- 
--
- #define UNIPHIER_CLK_GATE(_name, _idx, _parent, _reg, _bit)	\
- 	{							\
- 		.name = (_name),				\
-@@ -100,6 +113,21 @@ struct uniphier_clk_data {
- 		},						\
- 	}
- 
-+#define UNIPHIER_CLK_DIV(parent, div)				\
-+	UNIPHIER_CLK_FACTOR(parent "/" #div, -1, parent, 1, div)
-+
-+#define UNIPHIER_CLK_DIV2(parent, div0, div1)			\
-+	UNIPHIER_CLK_DIV(parent, div0),				\
-+	UNIPHIER_CLK_DIV(parent, div1)
-+
-+#define UNIPHIER_CLK_DIV3(parent, div0, div1, div2)		\
-+	UNIPHIER_CLK_DIV2(parent, div0, div1),			\
-+	UNIPHIER_CLK_DIV(parent, div2)
-+
-+#define UNIPHIER_CLK_DIV4(parent, div0, div1, div2, div3)	\
-+	UNIPHIER_CLK_DIV2(parent, div0, div1),			\
-+	UNIPHIER_CLK_DIV2(parent, div2, div3)
-+
- struct clk_hw *uniphier_clk_register_cpugear(struct device *dev,
- 					     struct regmap *regmap,
- 					     const char *name,
+ 	sys_parents[1] = hse_clk;
+ 	clk_register_mux_table(
+ 	    NULL, "sys", sys_parents, ARRAY_SIZE(sys_parents), 0,
 -- 
-2.7.4
+1.9.1
