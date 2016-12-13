@@ -1,86 +1,85 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 08/11] dt-bindings: Document the Raspberry Pi Touchscreen nodes.
-Date: Wed, 14 Dec 2016 11:46:18 -0800
-Message-Id: <20161214194621.16499-9-eric@anholt.net>
-In-Reply-To: <20161214194621.16499-1-eric@anholt.net>
-References: <20161214194621.16499-1-eric@anholt.net>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v4 5/9] clk: stm32f4: Add I2S clock
+Date: Tue, 13 Dec 2016 15:20:16 +0100
+Message-ID: <1481638820-29324-6-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This doesn't yet cover input, but the driver does get the display
-working when the firmware is disabled from talking to our I2C lines.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
+This patch introduces I2S clock for stm32f4 soc.
+The I2S clock could be derived from an external clock or from pll-i2s
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- .../display/panel/raspberrypi,touchscreen.txt      | 45 ++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/raspberrypi,touchscreen.txt
+ drivers/clk/clk-stm32f4.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/raspberrypi,touchscreen.txt b/Documentation/devicetree/bindings/display/panel/raspberrypi,touchscreen.txt
-new file mode 100644
-index 000000000000..fd328c52706b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/raspberrypi,touchscreen.txt
-@@ -0,0 +1,45 @@
-+This binding covers the official 7" (800x480) Raspberry Pi touchscreen
-+panel.
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 076a063..a7a6a16 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -946,6 +946,8 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
+ 
+ static const char *lcd_parent[1] = { "pllsai-r-div" };
+ 
++static const char *i2s_parents[2] = { "plli2s-r", NULL };
 +
-+This DSI panel contains:
+ struct stm32_aux_clk {
+ 	int idx;
+ 	const char *name;
+@@ -975,6 +977,12 @@ struct stm32f4_clk_data {
+ 		STM32F4_RCC_APB2ENR, 26,
+ 		CLK_SET_RATE_PARENT
+ 	},
++	{
++		CLK_I2S, "i2s", i2s_parents, ARRAY_SIZE(i2s_parents),
++		STM32F4_RCC_CFGR, 23, 1,
++		NO_GATE, 0,
++		CLK_SET_RATE_PARENT
++	},
+ };
+ 
+ static const struct stm32f4_clk_data stm32f429_clk_data = {
+@@ -1069,7 +1077,7 @@ static struct clk_hw *stm32_register_aux_clk(const char *name,
+ 
+ static void __init stm32f4_rcc_init(struct device_node *np)
+ {
+-	const char *hse_clk;
++	const char *hse_clk, *i2s_in_clk;
+ 	int n;
+ 	const struct of_device_id *match;
+ 	const struct stm32f4_clk_data *data;
+@@ -1104,6 +1112,10 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 
+ 	hse_clk = of_clk_get_parent_name(np, 0);
+ 
++	i2s_in_clk = of_clk_get_parent_name(np, 1);
 +
-+- TC358762 DSI->DPI bridge
-+- Atmel microcontroller on I2C for power sequencing the DSI bridge and
-+  controlling backlight
-+- Touchscreen controller on I2C for touch input
++	i2s_parents[1] = i2s_in_clk;
 +
-+and the binding currently covers the DSI display parts but not its
-+touch input.
-+
-+Required properties:
-+- compatible:	Must be "raspberrypi,touchscreen"
-+- raspberrypi,touchscreen-bridge:
-+		Handle to the I2C device for Atmel microcontroller
-+
-+Example:
-+
-+dsi1: dsi@7e700000 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	<...>
-+
-+	pitouchscreen: panel@0 {
-+		compatible = "raspberrypi,touchscreen";
-+		reg = <0>;
-+
-+		raspberrypi,touchscreen-bridge = <&pitouchscreen_bridge>;
-+	};
-+};
-+
-+i2c_dsi: i2c {
-+	compatible = "i2c-gpio";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	gpios = <&gpio 28 0
-+		 &gpio 29 0>;
-+
-+	pitouchscreen_bridge: bridge@45 {
-+		compatible = "raspberrypi,touchscreen-bridge-i2c";
-+		reg = <0x45>;
-+	};
-+};
+ 	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
+ 			16000000, 160000);
+ 	pllcfgr = readl(base + STM32F4_RCC_PLLCFGR);
 -- 
-2.11.0
+1.9.1
