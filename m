@@ -1,39 +1,100 @@
-Return-Path: <Jose.Abreu@synopsys.com>
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-To: linux-clk@vger.kernel.org
-Cc: Jose Abreu <Jose.Abreu@synopsys.com>,
-	Carlos Palminha <CARLOS.PALMINHA@synopsys.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk/axs10x: Clear init field in driver probe
-Date: Mon, 12 Dec 2016 11:08:55 +0000
-Message-Id: <040cc9afdfa0e95ce7a01c406ff427ef7dc0c0fd.1481540717.git.joabreu@synopsys.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH 3/3] clk: keystone: Add sci-clk driver support
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
+ <1477053961-27128-4-git-send-email-t-kristo@ti.com>
+ <20161208001348.GC5423@codeaurora.org>
+ <cb608729-b617-0eab-5ddf-d78ff47b237e@ti.com>
+ <20161208211044.GI5423@codeaurora.org>
+ <22dacb0c-a3bc-50ce-e4b9-f74a0c706f20@ti.com>
+ <20161212193800.GL5423@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>,
+        <ssantosh@kernel.org>, <nm@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <53ca4fc2-04a3-5260-e0de-2d2f9abbee2c@ti.com>
+Date: Tue, 13 Dec 2016 11:01:53 +0200
+MIME-Version: 1.0
+In-Reply-To: <20161212193800.GL5423@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Init field must be cleared in driver probe as this structure is not dinamically allocated. If not, wrong flags can be passed to core.
+On 12/12/16 21:38, Stephen Boyd wrote:
+> On 12/09, Tero Kristo wrote:
+>> On 08/12/16 23:10, Stephen Boyd wrote:
+>>> On 12/08, Tero Kristo wrote:
+>>>> On 08/12/16 02:13, Stephen Boyd wrote:
+>>>>> On 10/21, Tero Kristo wrote:
+>>>>>> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+>>>>>> new file mode 100644
+>>>>>> index 0000000..f6af5bd
+>>>>>> --- /dev/null
+>>>>>> +++ b/drivers/clk/keystone/sci-clk.c
+>>>>
+>>>>>
+>>>>>> +
+>>>>>> +	handle = devm_ti_sci_get_handle(dev);
+>>>>>> +	if (IS_ERR(handle))
+>>>>>> +		return PTR_ERR(handle);
+>>>>>> +
+>>>>>> +	provider = devm_kzalloc(dev, sizeof(*provider), GFP_KERNEL);
+>>>>>> +	if (!provider)
+>>>>>> +		return -ENOMEM;
+>>>>>> +
+>>>>>> +	provider->clocks = data;
+>>>>>> +
+>>>>>> +	provider->sci = handle;
+>>>>>> +	provider->ops = &handle->ops.clk_ops;
+>>>>>> +	provider->dev = dev;
+>>>>>> +
+>>>>>> +	ti_sci_init_clocks(provider);
+>>>>>
+>>>>> And if this fails?
+>>>>
+>>>> Yea this is kind of controversial. ti_sci_init_clocks() can fail if
+>>>> any of the clocks registered will fail. I decided to have it this
+>>>> way so that at least some clocks might work in failure cause, and
+>>>> you might have a booting device instead of total lock-up.
+>>>>
+>>>> Obviously it could be done so that if any clock fails, we would
+>>>> de-register all clocks at that point, but personally I think this is
+>>>> a worse option.
+>>>>
+>>>> ti_sci_init_clocks could probably be modified to continue
+>>>> registering clocks when a single clock fails though. Currently it
+>>>> aborts at first failure.
+>>>>
+>>>
+>>> That sounds like a better approach if we don't care about
+>>> failures to register a clock. Returning a value from a function
+>>> and not using it isn't really a great design.
+>>>
+>>> I worry that if we start returning errors from clk_hw_register()
+>>> that something will go wrong though, so really I don't know why
+>>> we want to ignore errors at all. Just for debugging a boot hang?
+>>> Can't we use early console to at least see that this driver is
+>>> failing to probe and debug that way?
+>>
+>> Early console can be used to debug that, but it is kind of annoying
+>> to recompile most of the kernel when you suddenly need to use it.
+>
+> I thought SERIAL_EARLYCON was selected by drivers that support
+> it? So there shouldn't be any rebuilding required.
 
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Cc: Carlos Palminha <palminha@synopsys.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/axs10x/i2s_pll_clock.c | 1 +
- 1 file changed, 1 insertion(+)
+Actually you can probably ignore my comment, I was just speaking out of 
+OMAP experience where the clocks are initialized very early, but this 
+doesn't apply to keystone. Sci-clock is a proper driver now with proper 
+probe etc. in place so my comment here is invalid.
 
-diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_pll_clock.c
-index 411310d..02d3bcd 100644
---- a/drivers/clk/axs10x/i2s_pll_clock.c
-+++ b/drivers/clk/axs10x/i2s_pll_clock.c
-@@ -182,6 +182,7 @@ static int i2s_pll_clk_probe(struct platform_device *pdev)
- 	if (IS_ERR(pll_clk->base))
- 		return PTR_ERR(pll_clk->base);
- 
-+	memset(&init, 0, sizeof(init));
- 	clk_name = node->name;
- 	init.name = clk_name;
- 	init.ops = &i2s_pll_ops;
--- 
-1.9.1
+>
+>>
+>> How about modifying the ti_sci_init_clocks func to print an error
+>> for each failed clock?
+>
+> Ok that's fine too. I'd prefer the function had a return type of
+> void if we're not planning on using the return value, that's all.
+
+Ok, I'll see which way I go in v2 of the series, but seems I can pick 
+either your original proposal or mine.
+
+-Tero
