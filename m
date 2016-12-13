@@ -1,62 +1,131 @@
-Return-Path: <icenowy@aosc.xyz>
-Message-Id: <20161213233713.b7GuI4qV@smtp1h.mail.yandex.net>
-Date: Wed, 14 Dec 2016 04:36:36 +0800
-Subject: Re: [PATCH 4/6] ARM: dts: sun8i: add opp-v2 table for A33
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jorik Jonker <jorik@kippendief.biz>,
- devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Quentin
- Schulz <quentin.schulz@free-electrons.com>, Hans de Goede
- <hdegoede@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v4 1/9] clk: stm32f4: Update DT bindings documentation
+Date: Tue, 13 Dec 2016 15:20:12 +0100
+Message-ID: <1481638820-29324-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-CjIwMTblubQxMuaciDE05pelIDAzOjEy5LqOIE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRA
-ZnJlZS1lbGVjdHJvbnMuY29tPuWGmemBk++8mgo+Cj4gT24gVHVlLCBEZWMgMTMsIDIwMTYgYXQg
-MTE6MjI6NTBQTSArMDgwMCwgSWNlbm93eSBaaGVuZyB3cm90ZTogCj4gPiBBbiBvcGVyYXRpbmcg
-cG9pbnQgdGFibGUgaXMgbmVlZGVkIGZvciB0aGUgY3B1IGZyZXF1ZW5jeSBhZGp1c3RpbmcgdG8g
-Cj4gPiB3b3JrLiAKPiA+IAo+ID4gVGhlIG9wZXJhdGluZyBwb2ludCB0YWJsZSBpcyBjb252ZXJ0
-ZWQgZnJvbSB0aGUgY29tbW9uIHZhbHVlIGluIAo+ID4gZXh0cmFjdGVkIHNjcmlwdC5mZXggZnJv
-bSBtYW55IEEzMyBib2FyZC90YWJsZXRzLiAKPiA+IAo+ID4gMS4zNDRHSHogaXMgc2V0IGFzIGEg
-dHVyYm8tbW9kZSBvcGVyYXRpbmcgcG9pbnQsIGFzIGl0J3MgZGVzY3JpYmVkIGFzIAo+ID4gImV4
-dHJlbWl0eV9mcmVxIiBpbiB0aGUgRkVYIGZpbGUuICh0aGUgIm1heF9mcmVxIiBpcyAxLjJHSHop
-IAo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBJY2Vub3d5IFpoZW5nIDxpY2Vub3d5QGFvc2MueHl6
-PiAKPiA+IC0tLSAKPiA+wqAgYXJjaC9hcm0vYm9vdC9kdHMvc3VuOGktYTMzLmR0c2kgfCAzOCAr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKyAKPiA+wqAgMSBmaWxlIGNoYW5n
-ZWQsIDM4IGluc2VydGlvbnMoKykgCj4gPiAKPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290
-L2R0cy9zdW44aS1hMzMuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bjhpLWEzMy5kdHNpIAo+
-ID4gaW5kZXggNTA0OTk2Y2JlZTI5Li4wMzVjMDU4MzI0YjggMTAwNjQ0IAo+ID4gLS0tIGEvYXJj
-aC9hcm0vYm9vdC9kdHMvc3VuOGktYTMzLmR0c2kgCj4gPiArKysgYi9hcmNoL2FybS9ib290L2R0
-cy9zdW44aS1hMzMuZHRzaSAKPiA+IEBAIC00Niw3ICs0Niw0NSBAQCAKPiA+wqAgI2luY2x1ZGUg
-PGR0LWJpbmRpbmdzL2RtYS9zdW40aS1hMTAuaD4gCj4gPsKgIAo+ID7CoCAvIHsgCj4gPiArIGNw
-dTBfb3BwX3RhYmxlOiBvcHBfdGFibGUwIHsgCj4gPiArIGNvbXBhdGlibGUgPSAib3BlcmF0aW5n
-LXBvaW50cy12MiI7IAo+ID4gKyBvcHAtc2hhcmVkOyAKPiA+ICsgCj4gPiArIG9wcEA2NDgwMDAw
-MDAgeyAKPiA+ICsgb3BwLWh6ID0gL2JpdHMvIDY0IDw2NDgwMDAwMDA+OyAKPiA+ICsgb3BwLW1p
-Y3Jvdm9sdCA9IDwxMDQwMDAwPjsgCj4gPiArIGNsb2NrLWxhdGVuY3ktbnMgPSA8MjQ0MTQ0Pjsg
-LyogOCAzMmsgcGVyaW9kcyAqLyAKPiA+ICsgfTsgCj4KPiBQbGVhc2UgYWRkIG5ldyBsaW5lcyBi
-ZXR3ZWVuIHRoZSBub2Rlcy4gCj4KPiA+ICsgb3BwQDgxNjAwMDAwMCB7IAo+ID4gKyBvcHAtaHog
-PSAvYml0cy8gNjQgPDgxNjAwMDAwMD47IAo+ID4gKyBvcHAtbWljcm92b2x0ID0gPDExMDAwMDA+
-OyAKPiA+ICsgY2xvY2stbGF0ZW5jeS1ucyA9IDwyNDQxNDQ+OyAvKiA4IDMyayBwZXJpb2RzICov
-IAo+ID4gKyB9OyAKPiA+ICsgb3BwQDEwMDgwMDAwMDAgeyAKPiA+ICsgb3BwLWh6ID0gL2JpdHMv
-IDY0IDwxMDA4MDAwMDAwPjsgCj4gPiArIG9wcC1taWNyb3ZvbHQgPSA8MTIwMDAwMD47IAo+ID4g
-KyBjbG9jay1sYXRlbmN5LW5zID0gPDI0NDE0ND47IC8qIDggMzJrIHBlcmlvZHMgKi8gCj4gPiAr
-IH07IAo+ID4gKyBvcHBAMTIwMDAwMDAwMCB7IAo+ID4gKyBvcHAtaHogPSAvYml0cy8gNjQgPDEy
-MDAwMDAwMDA+OyAKPiA+ICsgb3BwLW1pY3Jvdm9sdCA9IDwxMzIwMDAwPjsgCj4gPiArIGNsb2Nr
-LWxhdGVuY3ktbnMgPSA8MjQ0MTQ0PjsgLyogOCAzMmsgcGVyaW9kcyAqLyAKPiA+ICsgfTsgCj4g
-PiArIG9wcEAxMzQ0MDAwMDAwIHsgCj4gPiArIG9wcC1oeiA9IC9iaXRzLyA2NCA8MTM0NDAwMDAw
-MD47IAo+ID4gKyBvcHAtbWljcm92b2x0ID0gPDE0NjAwMDA+OyAKPiA+ICsgY2xvY2stbGF0ZW5j
-eS1ucyA9IDwyNDQxNDQ+OyAvKiA4IDMyayBwZXJpb2RzICovIAo+ID4gKyB0dXJiby1tb2RlOyAK
-PiA+ICsgfTsgCj4KPiBBcyBmYXIgYXMgSSBrbm93LCB0aGlzIE9QUCBpcyBub3QgdXNlZCBieSBB
-bGx3aW5uZXIsIGlzIG5vdCB1c2FibGUgaW4gCj4gYW55IEEzMyBib2FyZCBzbyBmYXIgKGJvdGgg
-dGhlIEEzMy1vbGludXhpbm8gYW5kIHRoZSBTaW5BMzMgZG8gbm90IAo+IGFsbG93IHN1Y2ggYSB2
-b2x0YWdlIG9uIHRoZWlyIENQVSByZWd1bGF0b3IpLCBhbmQgb3ZlcnZvbHRpbmcgYW5kIAo+IG92
-ZXJjbG9ja2luZyBpcyBzb21ldGhpbmcgdGhhdCBpcyB2ZXJ5IHJpc2t5LCBhbmQgbWlnaHQgbGVh
-ZCB0byAKPiBzdGFiaWxpdHkgaXNzdWVzLiAKCkl0IGNhbiBiZSB1c2VkIG9uIG15IEEzMyB0YWJs
-ZXQsIGFsdGhvdWdoIG5vdCBmb3IgbG9uZy10ZXJtIHJ1bi4KCkFuZCBpdCdzIGRlc2lnbmVkIHRv
-IGJlICJ0dXJiby1tb2RlIiwgd2hpY2ggaXMgdGhlIHJlYXNvbiB0aGF0IEkgYWRkIHRoaXMgcHJv
-cGVydHkuCgo+Cj4gUGxlYXNlIHJlbW92ZSB0aGlzIE9QUC4gCj4KPiBNYXhpbWUgCj4KPiAtLSAK
-PiBNYXhpbWUgUmlwYXJkLCBGcmVlIEVsZWN0cm9ucyAKPiBFbWJlZGRlZCBMaW51eCBhbmQgS2Vy
-bmVsIGVuZ2luZWVyaW5nIAo+IGh0dHA6Ly9mcmVlLWVsZWN0cm9ucy5jb20gCg==
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+
+Creation of dt include file for specific stm32f4 clocks.
+These specific clocks are not derived from system clock (SYSCLOCK)
+We should use index 1 to use these clocks in DT.
+e.g. <&rcc 1 CLK_LSI>
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/clock/st,stm32-rcc.txt     | 17 ++++++++++
+ include/dt-bindings/clock/stm32fx-clock.h          | 39 ++++++++++++++++++++++
+ 2 files changed, 56 insertions(+)
+ create mode 100644 include/dt-bindings/clock/stm32fx-clock.h
+
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+index 0532d81..8f19d87 100644
+--- a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
++++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+@@ -17,6 +17,9 @@ Required properties:
+   property, containing a phandle to the clock device node, an index selecting
+   between gated clocks and other clocks and an index specifying the clock to
+   use.
++- clocks: External oscillator clock phandle
++  - high speed external clock signal (HSE)
++  - external I2S clock (I2S_CKIN)
+ 
+ Example:
+ 
+@@ -25,6 +28,7 @@ Example:
+ 		#clock-cells = <2>
+ 		compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
+ 		reg = <0x40023800 0x400>;
++		clocks = <&clk_hse>, <&clk_i2s_ckin>;
+ 	};
+ 
+ Specifying gated clocks
+@@ -66,6 +70,19 @@ The secondary index is bound with the following magic numbers:
+ 
+ 	0	SYSTICK
+ 	1	FCLK
++	2	CLK_LSI		(low-power clock source)
++	3	CLK_LSE		(generated from a 32.768 kHz low-speed external
++				 crystal or ceramic resonator)
++	4	CLK_HSE_RTC	(HSE division factor for RTC clock)
++	5	CLK_RTC		(real-time clock)
++	6	PLL_VCO_I2S	(vco frequency of I2S pll)
++	7	PLL_VCO_SAI	(vco frequency of SAI pll)
++	8	CLK_LCD		(LCD-TFT)
++	9	CLK_I2S		(I2S clocks)
++	10	CLK_SAI1	(audio clocks)
++	11	CLK_SAI2
++	12	CLK_I2SQ_PDIV	(post divisor of pll i2s q divisor)
++	13	CLK_SAIQ_PDIV	(post divisor of pll sai q divisor)
+ 
+ Example:
+ 
+diff --git a/include/dt-bindings/clock/stm32fx-clock.h b/include/dt-bindings/clock/stm32fx-clock.h
+new file mode 100644
+index 0000000..08bcab6
+--- /dev/null
++++ b/include/dt-bindings/clock/stm32fx-clock.h
+@@ -0,0 +1,39 @@
++/*
++ * stm32fx-clock.h
++ *
++ * Copyright (C) 2016 STMicroelectronics
++ * Author: Gabriel Fernandez for STMicroelectronics.
++ * License terms:  GNU General Public License (GPL), version 2
++ */
++
++/*
++ * List of clocks wich are not derived from system clock (SYSCLOCK)
++ *
++ * The index of these clocks is the secondary index of DT bindings
++ * (see Documentatoin/devicetree/bindings/clock/st,stm32-rcc.txt)
++ *
++ * e.g:
++	<assigned-clocks = <&rcc 1 CLK_LSE>;
++*/
++
++#ifndef _DT_BINDINGS_CLK_STMFX_H
++#define _DT_BINDINGS_CLK_STMFX_H
++
++#define SYSTICK			0
++#define FCLK			1
++#define CLK_LSI			2
++#define CLK_LSE			3
++#define CLK_HSE_RTC		4
++#define CLK_RTC			5
++#define PLL_VCO_I2S		6
++#define PLL_VCO_SAI		7
++#define CLK_LCD			8
++#define CLK_I2S			9
++#define CLK_SAI1		10
++#define CLK_SAI2		11
++#define CLK_I2SQ_PDIV		12
++#define CLK_SAIQ_PDIV		13
++
++#define END_PRIMARY_CLK		14
++
++#endif
+-- 
+1.9.1
