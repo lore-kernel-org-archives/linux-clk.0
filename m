@@ -1,63 +1,63 @@
-Return-Path: <icenowy@aosc.xyz>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Russell King <linux@armlinux.org.uk>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Jorik Jonker <jorik@kippendief.biz>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Marcin Wojtas <mw@semihalf.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Icenowy Zheng <icenowy@aosc.xyz>
-Subject: [PATCH 1/6] clk: sunxi-ng: fix PLL_CPUX adjusting on A33
-Date: Tue, 13 Dec 2016 23:22:47 +0800
-Message-Id: <20161213152252.53749-2-icenowy@aosc.xyz>
-In-Reply-To: <20161213152252.53749-1-icenowy@aosc.xyz>
-References: <20161213152252.53749-1-icenowy@aosc.xyz>
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH 0/3] arm64/clk: update Marvell Armada CP110 system controller driver
+Date: Tue, 13 Dec 2016 13:41:17 +0100
+Message-Id: <1481632880-9198-1-git-send-email-thomas.petazzoni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-When adjusting PLL_CPUX on A33, the PLL is temporarily driven too high,
-and the system hangs.
+Hello,
 
-Add a notifier to avoid this situation by temporarily switching to a
-known stable 24 MHz oscillator.
+This small set of commits updates the Marvell Armada CP110 system
+controller driver, its Device Tree binding, and Device Tree
+representation, to take into account two new things:
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ - The clock driver now handles clock n°9 (GOP) as a child of clock
+   n°18 (controls SD/MMC and GOP)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 3cd4190ccd59..0f3e7d2dc19a 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -752,6 +752,13 @@ static const struct sunxi_ccu_desc sun8i_a33_ccu_desc = {
- 	.num_resets	= ARRAY_SIZE(sun8i_a33_ccu_resets),
- };
- 
-+static struct ccu_mux_nb sun8i_a33_cpu_nb = {
-+	.common		= &cpux_clk.common,
-+	.cm		= &cpux_clk.mux,
-+	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
-+	.bypass_index	= 1, /* index of 24 MHz oscillator */
-+};
-+
- static void __init sun8i_a33_ccu_setup(struct device_node *node)
- {
- 	void __iomem *reg;
-@@ -775,6 +782,9 @@ static void __init sun8i_a33_ccu_setup(struct device_node *node)
- 	writel(val, reg + SUN8I_A33_PLL_MIPI_REG);
- 
- 	sunxi_ccu_probe(node, reg, &sun8i_a33_ccu_desc);
-+
-+	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
-+				  &sun8i_a33_cpu_nb);
- }
- CLK_OF_DECLARE(sun8i_a33_ccu, "allwinner,sun8i-a33-ccu",
- 	       sun8i_a33_ccu_setup);
+ - The DT representation is adjusted to name clock n°18 "sd-mmc-gop"
+   instead of just "sd-mmc".
+
+This set of commits is some preparation work to add networking support
+for Marvell Armada 7K/8K.
+
+I would expect patches 1 and 2 to be taken by the clock maintainers,
+and patch 3 be taken by the Marvell EBU maintainers.
+
+Thanks,
+
+Thomas
+
+Thomas Petazzoni (3):
+  dt-bindings: arm: update Armada CP110 system controller binding
+  clk: mvebu: adjust clock handling for the CP110 system controller
+  arm64: dts: marvell: adjust name of sd-mmc-gop clock in syscon
+
+ .../devicetree/bindings/arm/marvell/cp110-system-controller0.txt    | 6 +++---
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                | 2 +-
+ arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                 | 2 +-
+ drivers/clk/mvebu/cp110-system-controller.c                         | 6 ++++--
+ 4 files changed, 9 insertions(+), 7 deletions(-)
+
 -- 
-2.11.0
+2.7.4
