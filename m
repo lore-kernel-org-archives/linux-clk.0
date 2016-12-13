@@ -1,65 +1,88 @@
-Return-Path: <scott.wood@nxp.com>
-From: Scott Wood <scott.wood@nxp.com>
-To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "Y.T. Tang"
-	<yuantian.tang@nxp.com>
-CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3] clk: qoriq: added ls1012a clock configuration
-Date: Thu, 8 Dec 2016 23:19:12 +0000
-Message-ID: <DB5PR0401MB1928E67508686321F92863AB91840@DB5PR0401MB1928.eurprd04.prod.outlook.com>
-References: <1479955015-37514-1-git-send-email-yuantian.tang@nxp.com>
- <DB5PR0401MB1928925ACE6E6E066961C64A91B60@DB5PR0401MB1928.eurprd04.prod.outlook.com>
- <DB6PR0402MB2837A0811DDF5A5DC9E82EF7F0890@DB6PR0402MB2837.eurprd04.prod.outlook.com>
- <20161208231010.GV5423@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Russell King <linux@armlinux.org.uk>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jorik Jonker <jorik@kippendief.biz>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Icenowy Zheng <icenowy@aosc.xyz>
+Subject: [PATCH 4/6] ARM: dts: sun8i: add opp-v2 table for A33
+Date: Tue, 13 Dec 2016 23:22:50 +0800
+Message-Id: <20161213152252.53749-5-icenowy@aosc.xyz>
+In-Reply-To: <20161213152252.53749-1-icenowy@aosc.xyz>
+References: <20161213152252.53749-1-icenowy@aosc.xyz>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/08/2016 05:10 PM, sboyd@codeaurora.org wrote:=0A=
-> On 11/25, Y.T. Tang wrote:=0A=
->> Hi Scott,=0A=
->>=0A=
->>> -----Original Message-----=0A=
->>> From: Scott Wood=0A=
->>> Sent: Thursday, November 24, 2016 4:21 PM=0A=
->>> To: Y.T. Tang <yuantian.tang@nxp.com>; mturquette@baylibre.com=0A=
->>> Cc: sboyd@codeaurora.org; linux-clk@vger.kernel.org; linux-=0A=
->>> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org=0A=
->>> Subject: Re: [PATCH v3] clk: qoriq: added ls1012a clock configuration=
-=0A=
->>>=0A=
->>> On 11/23/2016 08:50 PM, yuantian.tang@nxp.com wrote:=0A=
->>>> From: Tang Yuantian <Yuantian.Tang@nxp.com>=0A=
->>>>=0A=
->>>> Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>=0A=
->>>> ---=0A=
->>>> v3:=0A=
->>>>   - rebased to latest kernel and re-sorted the code=0A=
->>> [snip]=0A=
->>>> @@ -1316,6 +1334,7 @@ CLK_OF_DECLARE(qoriq_clockgen_2,=0A=
->>>> "fsl,qoriq-clockgen-2.0", clockgen_init);=0A=
->>>> CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen",=0A=
->>>> clockgen_init);  CLK_OF_DECLARE(qoriq_clockgen_ls1043a,=0A=
->>>> "fsl,ls1043a-clockgen", clockgen_init);=0A=
->>>> CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen",=0A=
->>>> clockgen_init);=0A=
->>>> +CLK_OF_DECLARE(qoriq_clockgen_ls1012a, "fsl,ls1012a-clockgen",=0A=
->>>> +clockgen_init);=0A=
->>>>  CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen",=0A=
->>>> clockgen_init);=0A=
->>>=0A=
->>> You need a better sorting algorithm. :-P=0A=
->>>=0A=
->> I don't think so. This time, each code snip goes right after ls1046a.=0A=
->> The sorting 'algorithm' is best ever. :)=0A=
->>=0A=
-> =0A=
-> I will sort it and apply it? Ack Scott?=0A=
-> =0A=
-=0A=
-Acked-by: Scott Wood <oss@buserror.net>=0A=
-=0A=
--Scott=0A=
-=0A=
+An operating point table is needed for the cpu frequency adjusting to
+work.
+
+The operating point table is converted from the common value in
+extracted script.fex from many A33 board/tablets.
+
+1.344GHz is set as a turbo-mode operating point, as it's described as
+"extremity_freq" in the FEX file. (the "max_freq" is 1.2GHz)
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ arch/arm/boot/dts/sun8i-a33.dtsi | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
+index 504996cbee29..035c058324b8 100644
+--- a/arch/arm/boot/dts/sun8i-a33.dtsi
++++ b/arch/arm/boot/dts/sun8i-a33.dtsi
+@@ -46,7 +46,45 @@
+ #include <dt-bindings/dma/sun4i-a10.h>
+ 
+ / {
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@648000000 {
++			opp-hz = /bits/ 64 <648000000>;
++			opp-microvolt = <1040000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++		};
++		opp@816000000 {
++			opp-hz = /bits/ 64 <816000000>;
++			opp-microvolt = <1100000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++		};
++		opp@1008000000 {
++			opp-hz = /bits/ 64 <1008000000>;
++			opp-microvolt = <1200000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++		};
++		opp@1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <1320000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++		};
++		opp@1344000000 {
++			opp-hz = /bits/ 64 <1344000000>;
++			opp-microvolt = <1460000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++			turbo-mode;
++		};
++	};
++
+ 	cpus {
++		cpu0: cpu@0 {
++			clocks = <&ccu CLK_CPUX>;
++			clock-names = "cpu";
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++
+ 		cpu@2 {
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+-- 
+2.11.0
