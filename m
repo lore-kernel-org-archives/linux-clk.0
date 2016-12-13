@@ -1,63 +1,45 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kumar Gala <galak@codeaurora.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Marcin Wojtas <mw@semihalf.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH 0/3] arm64/clk: update Marvell Armada CP110 system controller driver
-Date: Tue, 13 Dec 2016 13:41:17 +0100
-Message-Id: <1481632880-9198-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
+In-Reply-To: <139af71f-390a-4023-8f82-71dd80212518@arm.com>
+References: <20161213152252.53749-1-icenowy@aosc.xyz> <20161213152252.53749-4-icenowy@aosc.xyz>
+ <139af71f-390a-4023-8f82-71dd80212518@arm.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 14 Dec 2016 00:31:38 +0800
+Message-ID: <CAGb2v65=Sh-WMEVk0Db48sgUcV6d7-wF_Yh0yJAHANMkGUzFwQ@mail.gmail.com>
+Subject: Re: [PATCH 3/6] ARM: dts: sun8i: add a cpu0 label to cpu@0 node on A23/33
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Icenowy Zheng <icenowy@aosc.xyz>, Russell King <linux@armlinux.org.uk>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Jorik Jonker <jorik@kippendief.biz>, Hans de Goede <hdegoede@redhat.com>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>, devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+On Wed, Dec 14, 2016 at 12:09 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+>
+> On 13/12/16 15:22, Icenowy Zheng wrote:
+>> A "cpu0" label is needed on cpu@0 for cpufreq-dt to work.
+>>
+>
+> IIUC any label should be fine and I don't see anything in the driver
+> looking for such label name. All I see is it looks for cpu0 regulator
+> for *legacy* DTs
+>
+>> Add such a label, in order to prepare for cpufreq support of A23/33.
+>>
+>
+> You need this as you add the same label in the following patches. The
+> commit message sounds like cpufreq-dt search for that label by name.
 
-This small set of commits updates the Marvell Armada CP110 system
-controller driver, its Device Tree binding, and Device Tree
-representation, to take into account two new things:
+I think a more proper explanation would be:
 
- - The clock driver now handles clock n°9 (GOP) as a child of clock
-   n°18 (controls SD/MMC and GOP)
+The cpu's supply regulator is specified at the board level, hence we
+need to add a label to it to reference it without replicating the whole
+tree structure.
 
- - The DT representation is adjusted to name clock n°18 "sd-mmc-gop"
-   instead of just "sd-mmc".
-
-This set of commits is some preparation work to add networking support
-for Marvell Armada 7K/8K.
-
-I would expect patches 1 and 2 to be taken by the clock maintainers,
-and patch 3 be taken by the Marvell EBU maintainers.
-
-Thanks,
-
-Thomas
-
-Thomas Petazzoni (3):
-  dt-bindings: arm: update Armada CP110 system controller binding
-  clk: mvebu: adjust clock handling for the CP110 system controller
-  arm64: dts: marvell: adjust name of sd-mmc-gop clock in syscon
-
- .../devicetree/bindings/arm/marvell/cp110-system-controller0.txt    | 6 +++---
- arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                | 2 +-
- arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                 | 2 +-
- drivers/clk/mvebu/cp110-system-controller.c                         | 6 ++++--
- 4 files changed, 9 insertions(+), 7 deletions(-)
-
--- 
-2.7.4
+ChenYu
