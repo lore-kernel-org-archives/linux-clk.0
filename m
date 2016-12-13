@@ -1,60 +1,122 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 8 Dec 2016 14:54:24 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Bai Ping <ping.bai@nxp.com>
-Cc: shawnguo@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
-	mark.rutland@arm.com, linus.walleij@linaro.org,
-	kernel@pengutronix.de, fabio.estevam@nxp.com,
-	daniel.lezcano@linaro.org, tglx@linutronix.de,
-	p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 10/11] Document: dt: binding: imx: update doc for imx6sll
-Message-ID: <20161208225424.GQ5423@codeaurora.org>
-References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
- <1480660774-25055-11-git-send-email-ping.bai@nxp.com>
+Return-Path: <nikita.yoush@cogentembedded.com>
+Return-Path: <nikita.yoush@cogentembedded.com>
+Subject: Re: [PATCH] clk: imx: pllv3: support fractional multiplier on vf610
+ PLL1/PLL2
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1481288408-16035-1-git-send-email-nikita.yoush@cogentembedded.com>
+ <20161213073858.GO5423@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+ Fabio Estevam <fabio.estevam@nxp.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ Chris Healy <cphealy@gmail.com>, linux-kernel@vger.kernel.org,
+ Andrey Smirnov <andrew.smirnov@gmail.com>
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Message-ID: <c53ea5f7-c913-ea64-5b7f-3c3ce0b66e82@cogentembedded.com>
+Date: Tue, 13 Dec 2016 10:49:31 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1480660774-25055-11-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <20161213073858.GO5423@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/02, Bai Ping wrote:
-> Add necessary document update for i.MX6SLL support.
+>> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+>> index 19f9b622981a..24a9e914e0d5 100644
+>> --- a/drivers/clk/imx/clk-pllv3.c
+>> +++ b/drivers/clk/imx/clk-pllv3.c
+>> @@ -288,6 +291,87 @@ static const struct clk_ops clk_pllv3_av_ops = {
+>>  	.set_rate	= clk_pllv3_av_set_rate,
+>>  };
+>>  
+>> +static unsigned long clk_pllv3_vf610_recalc_rate(struct clk_hw *hw,
+>> +					      unsigned long parent_rate)
+>> +{
+>> +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+>> +	u32 mfn = readl_relaxed(pll->base + PLL_VF610_NUM_OFFSET);
+>> +	u32 mfd = readl_relaxed(pll->base + PLL_VF610_DENOM_OFFSET);
+>> +	u32 div = (readl_relaxed(pll->base) & pll->div_mask) ? 22 : 20;
+>> +	u64 temp64 = (u64)parent_rate;
 > 
-> Signed-off-by: Bai Ping <ping.bai@nxp.com>
-> ---
->  .../devicetree/bindings/clock/imx6sll-clock.txt    | 13 ++++++++
->  .../bindings/pinctrl/fsl,imx6sll-pinctrl.txt       | 37 ++++++++++++++++++++++
+> Useless cast, please remove.
 
-Please split the bindings into different patches and put them
-closer to the drivers that use them in the series.
+Ok
 
->  2 files changed, 50 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imx6sll-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
+>> +
+>> +	temp64 *= mfn;
+>> +	do_div(temp64, mfd);
+>> +
+>> +	return (parent_rate * div) + (u32)temp64;
+>> +}
+>> +
+>> +static long clk_pllv3_vf610_round_rate(struct clk_hw *hw, unsigned long rate,
+>> +				    unsigned long *prate)
+>> +{
+>> +	unsigned long parent_rate = *prate;
+>> +	unsigned int mfi = (rate >= 22 * parent_rate) ? 22 : 20;
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> new file mode 100644
-> index 0000000..4f52efa
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> @@ -0,0 +1,13 @@
-> +* Clock bindings for Freescale i.MX6 UltraLite
-> +
-> +Required properties:
-> +- compatible: Should be "fsl,imx6sll-ccm"
-> +- reg: Address and length of the register set
-> +- #clock-cells: Should be <1>
-> +- clocks: list of clock specifiers, must contain an entry for each required
-> +  entry in clock-names
-> +- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ipp_di1"
-> +
-> +The clock consumer should specify the desired clock by having the clock
-> +ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6sll-clock.h
-> +for the full list of i.MX6 SLL clock IDs.
+> What is the importance of 22 and 20? Hint, at the least it needs
+> a comment.
 
-Can you add an example node here?
+These come directly from datasheet:
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Frequency multipler selection (MFI).
+0: Fout = Fref * 20
+1: Fout = Fref * 22
+
+These numbers (20 / 22) are common among flavours of pllv3 hardware.
+In similar places in the same file (e.g. in clk_pllv3_recalc_rate(), in
+clk_pllv3_set_rate() ,etc) there are no comments explaining them.
+
+Are you sure this place is special and comment is needed here?
+
+>> +	u32 mfn, mfd = 0x3fffffff;
+>> +	u64 temp64;
+>> +
+>> +	if (rate <= parent_rate * mfi)
+>> +		mfn = 0;
+>> +	else if (rate >= parent_rate * (mfi + 1))
+>> +		mfn = mfd - 1;
+>> +	else {
+>> +		/* rate = parent_rate * (mfi + mfn/mfd) */
+>> +		temp64 = rate - parent_rate * mfi;
+>> +		temp64 *= mfd;
+>> +		do_div(temp64, parent_rate);
+>> +		mfn = temp64;
+>> +	}
+>> +
+>> +	temp64 = ((u64)mfd * mfi + mfn) * parent_rate;
+>> +	do_div(temp64, mfd);
+>> +	return (u32)temp64;
+> 
+> Do we need the cast here for some reason?
+
+Just for readability, can remove if it hurts.
+
+>> +}
+>> +
+>> +static int clk_pllv3_vf610_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +		unsigned long parent_rate)
+>> +{
+>> +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+>> +	unsigned int mfi = (rate >= 22 * parent_rate) ? 22 : 20;
+>> +	u32 val, mfn, mfd = 0x3fffffff;
+>> +	u64 temp64;
+>> +
+>> +	if (rate <= parent_rate * mfi)
+>> +		mfn = 0;
+>> +	else if (rate >= parent_rate * (mfi + 1))
+>> +		mfn = mfd - 1;
+>> +	else {
+>> +		/* rate = parent_rate * (mfi + mfn/mfd) */
+>> +		temp64 = rate - parent_rate * mfi;
+>> +		temp64 *= mfd;
+>> +		do_div(temp64, parent_rate);
+>> +		mfn = temp64;
+>> +	}
+>> +
+>> +	val = readl_relaxed(pll->base);
+>> +	if (mfi == 20)
+> 
+> Presumably this is another place 20 and 22 are special.
+
+See my reply above. Same applies here.
+
+Nikita
