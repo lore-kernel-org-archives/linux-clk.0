@@ -1,44 +1,61 @@
-Return-Path: <zhengxing@rock-chips.com>
-From: Xing Zheng <zhengxing@rock-chips.com>
-To: linux-rockchip@lists.infradead.org
-Cc: dianders@google.com,
-	heiko@sntech.de,
-	Xing Zheng <zhengxing@rock-chips.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] clk: rockchip: rk3399: export 480M_SRC clocks id for usbphy0/usbphy1
-Date: Wed, 14 Dec 2016 18:11:40 +0800
-Message-Id: <1481710301-1454-3-git-send-email-zhengxing@rock-chips.com>
-In-Reply-To: <1481710301-1454-1-git-send-email-zhengxing@rock-chips.com>
-References: <1481710301-1454-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <icenowy@aosc.xyz>
+Message-Id: <20161213234737.lV4WFnE8@smtp1o.mail.yandex.net>
+Date: Wed, 14 Dec 2016 04:47:26 +0800
+Subject: Re: [PATCH 4/6] ARM: dts: sun8i: add opp-v2 table for A33
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jorik Jonker <jorik@kippendief.biz>,
+ devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Quentin
+ Schulz <quentin.schulz@free-electrons.com>, Hans de Goede
+ <hdegoede@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch exports USBPHYx_480M_SRC clocks for usbphy.
-
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
----
-
- drivers/clk/rockchip/clk-rk3399.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 3490887..cf2af4c 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -411,9 +411,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 	GATE(SCLK_USB2PHY1_REF, "clk_usb2phy1_ref", "xin24m", CLK_IGNORE_UNUSED,
- 			RK3399_CLKGATE_CON(6), 6, GFLAGS),
- 
--	GATE(0, "clk_usbphy0_480m_src", "clk_usbphy0_480m", 0,
-+	GATE(SCLK_USBPHY0_480M_SRC, "clk_usbphy0_480m_src", "clk_usbphy0_480m", 0,
- 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
--	GATE(0, "clk_usbphy1_480m_src", "clk_usbphy1_480m", 0,
-+	GATE(SCLK_USBPHY1_480M_SRC, "clk_usbphy1_480m_src", "clk_usbphy1_480m", 0,
- 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
- 	MUX(0, "clk_usbphy_480m", mux_usbphy_480m_p, 0,
- 			RK3399_CLKSEL_CON(14), 6, 1, MFLAGS),
--- 
-2.7.4
+CjIwMTblubQxMuaciDE05pelIDAzOjEy5LqOIE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRA
+ZnJlZS1lbGVjdHJvbnMuY29tPuWGmemBk++8mgo+Cj4gT24gVHVlLCBEZWMgMTMsIDIwMTYgYXQg
+MTE6MjI6NTBQTSArMDgwMCwgSWNlbm93eSBaaGVuZyB3cm90ZTogCj4gPiBBbiBvcGVyYXRpbmcg
+cG9pbnQgdGFibGUgaXMgbmVlZGVkIGZvciB0aGUgY3B1IGZyZXF1ZW5jeSBhZGp1c3RpbmcgdG8g
+Cj4gPiB3b3JrLiAKPiA+IAo+ID4gVGhlIG9wZXJhdGluZyBwb2ludCB0YWJsZSBpcyBjb252ZXJ0
+ZWQgZnJvbSB0aGUgY29tbW9uIHZhbHVlIGluIAo+ID4gZXh0cmFjdGVkIHNjcmlwdC5mZXggZnJv
+bSBtYW55IEEzMyBib2FyZC90YWJsZXRzLiAKPiA+IAo+ID4gMS4zNDRHSHogaXMgc2V0IGFzIGEg
+dHVyYm8tbW9kZSBvcGVyYXRpbmcgcG9pbnQsIGFzIGl0J3MgZGVzY3JpYmVkIGFzIAo+ID4gImV4
+dHJlbWl0eV9mcmVxIiBpbiB0aGUgRkVYIGZpbGUuICh0aGUgIm1heF9mcmVxIiBpcyAxLjJHSHop
+IAo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBJY2Vub3d5IFpoZW5nIDxpY2Vub3d5QGFvc2MueHl6
+PiAKPiA+IC0tLSAKPiA+wqAgYXJjaC9hcm0vYm9vdC9kdHMvc3VuOGktYTMzLmR0c2kgfCAzOCAr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKyAKPiA+wqAgMSBmaWxlIGNoYW5n
+ZWQsIDM4IGluc2VydGlvbnMoKykgCj4gPiAKPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290
+L2R0cy9zdW44aS1hMzMuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bjhpLWEzMy5kdHNpIAo+
+ID4gaW5kZXggNTA0OTk2Y2JlZTI5Li4wMzVjMDU4MzI0YjggMTAwNjQ0IAo+ID4gLS0tIGEvYXJj
+aC9hcm0vYm9vdC9kdHMvc3VuOGktYTMzLmR0c2kgCj4gPiArKysgYi9hcmNoL2FybS9ib290L2R0
+cy9zdW44aS1hMzMuZHRzaSAKPiA+IEBAIC00Niw3ICs0Niw0NSBAQCAKPiA+wqAgI2luY2x1ZGUg
+PGR0LWJpbmRpbmdzL2RtYS9zdW40aS1hMTAuaD4gCj4gPsKgIAo+ID7CoCAvIHsgCj4gPiArIGNw
+dTBfb3BwX3RhYmxlOiBvcHBfdGFibGUwIHsgCj4gPiArIGNvbXBhdGlibGUgPSAib3BlcmF0aW5n
+LXBvaW50cy12MiI7IAo+ID4gKyBvcHAtc2hhcmVkOyAKPiA+ICsgCj4gPiArIG9wcEA2NDgwMDAw
+MDAgeyAKPiA+ICsgb3BwLWh6ID0gL2JpdHMvIDY0IDw2NDgwMDAwMDA+OyAKPiA+ICsgb3BwLW1p
+Y3Jvdm9sdCA9IDwxMDQwMDAwPjsgCj4gPiArIGNsb2NrLWxhdGVuY3ktbnMgPSA8MjQ0MTQ0Pjsg
+LyogOCAzMmsgcGVyaW9kcyAqLyAKPiA+ICsgfTsgCj4KPiBQbGVhc2UgYWRkIG5ldyBsaW5lcyBi
+ZXR3ZWVuIHRoZSBub2Rlcy4gCj4KPiA+ICsgb3BwQDgxNjAwMDAwMCB7IAo+ID4gKyBvcHAtaHog
+PSAvYml0cy8gNjQgPDgxNjAwMDAwMD47IAo+ID4gKyBvcHAtbWljcm92b2x0ID0gPDExMDAwMDA+
+OyAKPiA+ICsgY2xvY2stbGF0ZW5jeS1ucyA9IDwyNDQxNDQ+OyAvKiA4IDMyayBwZXJpb2RzICov
+IAo+ID4gKyB9OyAKPiA+ICsgb3BwQDEwMDgwMDAwMDAgeyAKPiA+ICsgb3BwLWh6ID0gL2JpdHMv
+IDY0IDwxMDA4MDAwMDAwPjsgCj4gPiArIG9wcC1taWNyb3ZvbHQgPSA8MTIwMDAwMD47IAo+ID4g
+KyBjbG9jay1sYXRlbmN5LW5zID0gPDI0NDE0ND47IC8qIDggMzJrIHBlcmlvZHMgKi8gCj4gPiAr
+IH07IAo+ID4gKyBvcHBAMTIwMDAwMDAwMCB7IAo+ID4gKyBvcHAtaHogPSAvYml0cy8gNjQgPDEy
+MDAwMDAwMDA+OyAKPiA+ICsgb3BwLW1pY3Jvdm9sdCA9IDwxMzIwMDAwPjsgCj4gPiArIGNsb2Nr
+LWxhdGVuY3ktbnMgPSA8MjQ0MTQ0PjsgLyogOCAzMmsgcGVyaW9kcyAqLyAKPiA+ICsgfTsgCj4g
+PiArIG9wcEAxMzQ0MDAwMDAwIHsgCj4gPiArIG9wcC1oeiA9IC9iaXRzLyA2NCA8MTM0NDAwMDAw
+MD47IAo+ID4gKyBvcHAtbWljcm92b2x0ID0gPDE0NjAwMDA+OyAKPiA+ICsgY2xvY2stbGF0ZW5j
+eS1ucyA9IDwyNDQxNDQ+OyAvKiA4IDMyayBwZXJpb2RzICovIAo+ID4gKyB0dXJiby1tb2RlOyAK
+PiA+ICsgfTsgCj4KPiBBcyBmYXIgYXMgSSBrbm93LCB0aGlzIE9QUCBpcyBub3QgdXNlZCBieSBB
+bGx3aW5uZXIsIGlzIG5vdCB1c2FibGUgaW4gCj4gYW55IEEzMyBib2FyZCBzbyBmYXIgKGJvdGgg
+dGhlIEEzMy1vbGludXhpbm8gYW5kIHRoZSBTaW5BMzMgZG8gbm90IAo+IGFsbG93IHN1Y2ggYSB2
+b2x0YWdlIG9uIHRoZWlyIENQVSByZWd1bGF0b3IpLCBhbmQgb3ZlcnZvbHRpbmcgYW5kIAo+IG92
+ZXJjbG9ja2luZyBpcyBzb21ldGhpbmcgdGhhdCBpcyB2ZXJ5IHJpc2t5LCBhbmQgbWlnaHQgbGVh
+ZCB0byAKPiBzdGFiaWxpdHkgaXNzdWVzLiAKPgo+IFBsZWFzZSByZW1vdmUgdGhpcyBPUFAuIAoK
+U29ycnksIHJlY2hlY2tlZCB1bmRlciBBbmRyb2lkIGFuZCBmb3VuZCB0aGlzIGZyZXFlbmN5IG5v
+dCB1c2FibGUgd2hpbGUgZXhpc3RzLgoKV2lsbCByZW1vdmUgdGhpcyBPUFAuCgo+Cj4gTWF4aW1l
+IAo+Cj4gLS0gCj4gTWF4aW1lIFJpcGFyZCwgRnJlZSBFbGVjdHJvbnMgCj4gRW1iZWRkZWQgTGlu
+dXggYW5kIEtlcm5lbCBlbmdpbmVlcmluZyAKPiBodHRwOi8vZnJlZS1lbGVjdHJvbnMuY29tIAo=
