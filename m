@@ -1,127 +1,66 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v4 3/9] clk: stm32f4: Add post divisor for I2S & SAI PLLs
-Date: Tue, 13 Dec 2016 15:20:14 +0100
-Message-ID: <1481638820-29324-4-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
-References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 13 Dec 2016 16:44:26 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jorik Jonker <jorik@kippendief.biz>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/6] clk: sunxi-ng: fix PLL_CPUX adjusting on A33
+Message-ID: <20161213154426.gnuohez6seeu7kso@lukather>
+References: <20161213152252.53749-1-icenowy@aosc.xyz>
+ <20161213152252.53749-2-icenowy@aosc.xyz>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ojgty3q2jzipajqo"
+In-Reply-To: <20161213152252.53749-2-icenowy@aosc.xyz>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-This patch adds post dividers of I2S & SAI PLLs.
-These dividers are managed by a dedicated register (RCC_DCKCFGR).
-The PLL should be off before a set rate.
+--ojgty3q2jzipajqo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32f4.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+On Tue, Dec 13, 2016 at 11:22:47PM +0800, Icenowy Zheng wrote:
+> When adjusting PLL_CPUX on A33, the PLL is temporarily driven too high,
+> and the system hangs.
+>=20
+> Add a notifier to avoid this situation by temporarily switching to a
+> known stable 24 MHz oscillator.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index cab2014..70ca93c 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -47,6 +47,10 @@
- #define STM32F4_RCC_CSR			0x74
- #define STM32F4_RCC_PLLI2SCFGR		0x84
- #define STM32F4_RCC_PLLSAICFGR		0x88
-+#define STM32F4_RCC_DCKCFGR		0x8c
-+
-+#define NONE -1
-+#define NO_IDX  NONE
- 
- struct stm32f4_gate_data {
- 	u8	offset;
-@@ -357,6 +361,19 @@ struct stm32f4_pll {
- 
- #define to_stm32f4_pll(_gate) container_of(_gate, struct stm32f4_pll, gate)
- 
-+struct stm32f4_pll_post_div_data {
-+	int idx;
-+	u8 pll_num;
-+	const char *name;
-+	const char *parent;
-+	u8 flag;
-+	u8 offset;
-+	u8 shift;
-+	u8 width;
-+	u8 flag_div;
-+	const struct clk_div_table *div_table;
-+};
-+
- struct stm32f4_vco_data {
- 	const char *vco_name;
- 	u8 offset;
-@@ -370,6 +387,23 @@ struct stm32f4_vco_data {
- 	{ "vco-sai", STM32F4_RCC_PLLSAICFGR, 28, 29 },
- };
- 
-+
-+static const struct clk_div_table post_divr_table[] = {
-+	{ 0, 2 }, { 1, 4 }, { 2, 8 }, { 3, 16 }, { 0 }
-+};
-+
-+#define MAX_POST_DIV 3
-+static const struct stm32f4_pll_post_div_data  post_div_data[MAX_POST_DIV] = {
-+	{ CLK_I2SQ_PDIV, PLL_I2S, "plli2s-q-div", "plli2s-q",
-+		CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 0, 5, 0, NULL},
-+
-+	{ CLK_SAIQ_PDIV, PLL_SAI, "pllsai-q-div", "pllsai-q",
-+		CLK_SET_RATE_PARENT, STM32F4_RCC_DCKCFGR, 8, 5, 0, NULL },
-+
-+	{ NO_IDX, PLL_SAI, "pllsai-r-div", "pllsai-r", CLK_SET_RATE_PARENT,
-+		STM32F4_RCC_DCKCFGR, 16, 2, 0, post_divr_table },
-+};
-+
- struct stm32f4_div_data {
- 	u8 shift;
- 	u8 width;
-@@ -996,6 +1030,27 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	clks[PLL_VCO_SAI] = stm32f4_rcc_register_pll("vco_in",
- 			&data->pll_data[2], &stm32f4_clk_lock);
- 
-+	for (n = 0; n < MAX_POST_DIV; n++) {
-+		const struct stm32f4_pll_post_div_data *post_div;
-+		struct clk_hw *hw;
-+
-+		post_div = &post_div_data[n];
-+
-+		hw = clk_register_pll_div(post_div->name,
-+				post_div->parent,
-+				post_div->flag,
-+				base + post_div->offset,
-+				post_div->shift,
-+				post_div->width,
-+				post_div->flag_div,
-+				post_div->div_table,
-+				clks[post_div->pll_num],
-+				&stm32f4_clk_lock);
-+
-+		if (post_div->idx != NO_IDX)
-+			clks[post_div->idx] = hw;
-+	}
-+
- 	sys_parents[1] = hse_clk;
- 	clk_register_mux_table(
- 	    NULL, "sys", sys_parents, ARRAY_SIZE(sys_parents), 0,
--- 
-1.9.1
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--ojgty3q2jzipajqo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYUBdaAAoJEBx+YmzsjxAgmJsP/1HoxynJxrMQmGBDwOkekI9U
+u6sB7LQY/tnb3AiwJF5FeFf0Ko1OK27iUxa3rZdYUFMX4xned0qjJZikfDATA9Y1
+T/xG7UicAiZjGZ4xn5Nkwq5r5It2tA106oR/PQq2i04PI/jie+RTl26qvH/5TY03
+Ou2bnRC8u334gxgv7zZ4XxLSexlxIajWwX4By9vZ3oBDc0dXldyJBQ+wPAbW8FRi
+JFNMfUKxi8gpnQeAheH0I+IONQoqFAhG6WHw6LPsbIAZa3XJFjVcYI2wotEXZAy8
+xR+dFg+3Ty15HfO26tGWGeZw0s1Z8BYgnciiblQifr7nPjvQVnNIc1R1IQxP6Lry
+K1HHhZEbuJO1I/+11GA/z6sEKmAQ/xphYUbu3kig1Y4ellcXr5R+fJLJxRXrRaR8
+csY2dfGjnBT6BUT/Vt3qDVo+RsXEOzhMKcgio/uHuh4C6l8iP6qW0R0tiJUvToqX
+TwTJ4mrm/i27aoyYb/35Zib9T0eicQUQNrYEPGUg4M1NbAPC8omWQB9GHli29rV5
+6sWQG+Drp4LWtQ9Rl13IPSfHPth5ZNN14nJnZ23PybXgJDLh6K6S6bJVImgqGCGN
+2Fg438i0pO5Rv0oojasdIHNunNvcJym9bd5Xi3A3PPKMSCTNfnYfUfZTiW2Zlrnh
+I/EbUg4AQOXoKAw3hu7i
+=TL+T
+-----END PGP SIGNATURE-----
+
+--ojgty3q2jzipajqo--
