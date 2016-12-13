@@ -1,45 +1,46 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Dec 2016 15:14:46 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Eric Anholt <eric@anholt.net>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Russell King <linux@armlinux.org.uk>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 02/11] clk: bcm2835: Register the DSI0/DSI1 pixel clocks.
-Message-ID: <20161221231446.GA8288@codeaurora.org>
-References: <20161214194621.16499-1-eric@anholt.net>
- <20161214194621.16499-3-eric@anholt.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161214194621.16499-3-eric@anholt.net>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jorik Jonker <jorik@kippendief.biz>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Icenowy Zheng <icenowy@aosc.xyz>
+Subject: [PATCH 3/6] ARM: dts: sun8i: add a cpu0 label to cpu@0 node on A23/33
+Date: Tue, 13 Dec 2016 23:22:49 +0800
+Message-Id: <20161213152252.53749-4-icenowy@aosc.xyz>
+In-Reply-To: <20161213152252.53749-1-icenowy@aosc.xyz>
+References: <20161213152252.53749-1-icenowy@aosc.xyz>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/14, Eric Anholt wrote:
->  
->  	/* the gates */
->  
-> @@ -1890,8 +1976,18 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
->  	if (IS_ERR(cprman->regs))
->  		return PTR_ERR(cprman->regs);
->  
-> -	cprman->osc_name = of_clk_get_parent_name(dev->of_node, 0);
-> -	if (!cprman->osc_name)
-> +	for (i = 0; i < ARRAY_SIZE(cprman_parent_names); i++) {
-> +		cprman->real_parent_names[i] =
-> +			of_clk_get_parent_name(dev->of_node, i);
-> +	}
+A "cpu0" label is needed on cpu@0 for cpufreq-dt to work.
 
-Can we use of_clk_parent_fill() here? Or do we need to support
-holes in the parent array? If it's the latter please add a
-comment so we don't mistakenly change this later.
+Add such a label, in order to prepare for cpufreq support of A23/33.
 
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ arch/arm/boot/dts/sun8i-a23-a33.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+index 817747f41288..5931cc4d1567 100644
+--- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
++++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
+@@ -84,7 +84,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+ 			reg = <0>;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
