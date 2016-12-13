@@ -1,44 +1,65 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	xf@rock-chips.com
-Cc: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	cl@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 0/4] clk: rockchip: support clk controller for rk3328 SoC
-Date: Mon, 19 Dec 2016 09:56:09 +0800
-Message-Id: <1482112573-11613-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v4 8/9] ARM: dts: stm32f4: Add external I2S clock
+Date: Tue, 13 Dec 2016 15:20:19 +0100
+Message-ID: <1481638820-29324-9-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Changes in v2:
-  add bindings for rk3328 clock controller
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Elaine Zhang (4):
-  clk: rockchip: add dt-binding header for rk3328
-  dt-bindings: add bindings for rk3328 clock controller
-  clk: rockchip: add clock controller for rk3328
-  clk: rockchip: add new pll-type for rk3328
+This patch adds an external I2S clock in the DT.
+The I2S clock could be derived from an external I2S clock or by I2S pll.
 
- .../bindings/clock/rockchip,rk3328-cru.txt         |   57 ++
- drivers/clk/rockchip/Makefile                      |    1 +
- drivers/clk/rockchip/clk-pll.c                     |   13 +-
- drivers/clk/rockchip/clk-rk3328.c                  | 1068 ++++++++++++++++++++
- drivers/clk/rockchip/clk.h                         |   23 +
- include/dt-bindings/clock/rk3328-cru.h             |  403 ++++++++
- 6 files changed, 1564 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
- create mode 100644 drivers/clk/rockchip/clk-rk3328.c
- create mode 100644 include/dt-bindings/clock/rk3328-cru.h
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ arch/arm/boot/dts/stm32f429.dtsi | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
+index e4dae0e..7c7dfbd 100644
+--- a/arch/arm/boot/dts/stm32f429.dtsi
++++ b/arch/arm/boot/dts/stm32f429.dtsi
+@@ -68,6 +68,12 @@
+ 			compatible = "fixed-clock";
+ 			clock-frequency = <32000>;
+ 		};
++
++		clk_i2s_ckin: i2s-ckin {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <0>;
++		};
+ 	};
+ 
+ 	soc {
+@@ -362,7 +368,7 @@
+ 			#clock-cells = <2>;
+ 			compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
+ 			reg = <0x40023800 0x400>;
+-			clocks = <&clk_hse>;
++			clocks = <&clk_hse>, <&clk_i2s_ckin>;
+ 			st,syscfg = <&pwrcfg>;
+ 		};
+ 
 -- 
 1.9.1
