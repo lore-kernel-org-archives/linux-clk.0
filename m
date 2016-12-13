@@ -1,67 +1,81 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Mon, 19 Dec 2016 11:04:04 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Darren Hart <dvhart@infradead.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Irina Tirdea <irina.tirdea@intel.com>, linux-clk@vger.kernel.org,
-	"x86@kernel.org" <x86@kernel.org>,
-	platform-driver-x86@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-	Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Len Brown <lenb@kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Message-ID: <20161219110404.cnk43zqenn2m7ib2@sirena.org.uk>
-References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
- <1481306510-7471-2-git-send-email-irina.tirdea@intel.com>
- <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
- <1a98dcda-a662-958e-307f-5fe3f281ed9f@linux.intel.com>
- <CAHp75VccDyiLhWxZYg+d0usrwhfa_hiZAJCKPXXVRod=tB803g@mail.gmail.com>
- <20161216183607.GB44199@f23x64.localdomain>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="exmomhpvdqifvrc4"
-In-Reply-To: <20161216183607.GB44199@f23x64.localdomain>
-Subject: Re: [PATCH v6 1/3] clk: x86: Add Atom PMC platform clocks
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	xf@rock-chips.com
+Cc: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	cl@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v1 3/3] clk: rockchip: add new pll-type for rk3328 and similar socs
+Date: Tue, 13 Dec 2016 16:47:49 +0800
+Message-Id: <1481618869-1239-4-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1481618869-1239-1-git-send-email-zhangqing@rock-chips.com>
+References: <1481618869-1239-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+The rk3328's pll and clock are similar with rk3036's,
+it different with pll_mode_mask,there are different
+adjust foctors and control registers,
+so these should be independent and separate from
+the series of rk3328s.
 
---exmomhpvdqifvrc4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-pll.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-On Fri, Dec 16, 2016 at 10:36:07AM -0800, Darren Hart wrote:
-
-> My understanding is include/linux should be more generic, rather than platform
-> specific headers. So while platform_data may refer specifically to the platform
-> bus drivers, it's the closest thing we have to include/platform, which would be
-> ideal. I would prefer to stick with include/platform_data because:
-
-It's not specific to the platform bus, it's for use with the platform_data
-pointer embedded in struct device that all buses can have - it's
-extensively used for things like I2C and SPI for example.  But really it
-doesn't matter *that* much.
-
---exmomhpvdqifvrc4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlhXvqAACgkQJNaLcl1U
-h9BxzQf/c8nqU+66S2miVJyYdJbh8d9Ed+afKoeeTozs1u6KcCMaigFS1hyUKSk1
-ZKyGQy32B5iSGauGTYwbRJnz39qUg2d4Jay9XK8IEZoZLw/IiZ90CaXFkvtX2YVn
-61P9OcYJE3eq57I6i8dhLD7bR9uI9CxIXS8fRbf7RaZd1wRb/z4s6z7YMFVJYvIS
-zkzw0KrmIb+4AQfvWFuXw51xujERcnfBHnjHq1JX/yxqihmSJYg4/wi3pgNdKjEl
-4AQc+r37wMLWO1LU7XP6H7TRKagVzriXtyap9zi/YtHoewnyrKkzVjcJMduOaEmf
-OVSJefChGjkkQUUcAgaG/SVwRJH+RA==
-=CT+F
------END PGP SIGNATURE-----
-
---exmomhpvdqifvrc4--
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 6ed605776abd..9650c75f61d1 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -29,6 +29,7 @@
+ #define PLL_MODE_SLOW		0x0
+ #define PLL_MODE_NORM		0x1
+ #define PLL_MODE_DEEP		0x2
++#define PLL_RK3328_MODE_MASK	0x1
+ 
+ struct rockchip_clk_pll {
+ 	struct clk_hw		hw;
+@@ -865,13 +866,17 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 	pll_mux = &pll->pll_mux;
+ 	pll_mux->reg = ctx->reg_base + mode_offset;
+ 	pll_mux->shift = mode_shift;
+-	pll_mux->mask = PLL_MODE_MASK;
++	if (pll_type == pll_rk3328)
++		pll_mux->mask = PLL_RK3328_MODE_MASK;
++	else
++		pll_mux->mask = PLL_MODE_MASK;
+ 	pll_mux->flags = 0;
+ 	pll_mux->lock = &ctx->lock;
+ 	pll_mux->hw.init = &init;
+ 
+ 	if (pll_type == pll_rk3036 ||
+ 	    pll_type == pll_rk3066 ||
++	    pll_type == pll_rk3328 ||
+ 	    pll_type == pll_rk3399)
+ 		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
+ 
+@@ -929,6 +934,12 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 		else
+ 			init.ops = &rockchip_rk3066_pll_clk_ops;
+ 		break;
++	case pll_rk3328:
++		if (!pll->rate_table || IS_ERR(ctx->grf))
++			init.ops = &rockchip_rk3036_pll_clk_norate_ops;
++		else
++			init.ops = &rockchip_rk3036_pll_clk_ops;
++		break;
+ 	case pll_rk3399:
+ 		if (!pll->rate_table)
+ 			init.ops = &rockchip_rk3399_pll_clk_norate_ops;
+-- 
+1.9.1
