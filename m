@@ -1,49 +1,96 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vinson Lee <vlee@freedesktop.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: uniphier: Fix build with gcc-4.4.
-Date: Wed, 07 Dec 2016 23:48:45 +0100
-Message-ID: <13497466.7JOeCiPKAN@wuerfel>
-In-Reply-To: <20161206231642.GA4388@codeaurora.org>
-References: <1480725436-9628-1-git-send-email-vlee@freedesktop.org> <CAK7LNATeswNhoFsA90k=qF4Jock0ytNT-pPT6j+0b9MJFJwu9Q@mail.gmail.com> <20161206231642.GA4388@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 13 Dec 2016 15:25:24 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Irina Tirdea <irina.tirdea@intel.com>, linux-clk@vger.kernel.org,
+	"x86@kernel.org" <x86@kernel.org>,
+	platform-driver-x86@vger.kernel.org,
+	Darren Hart <dvhart@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Len Brown <lenb@kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [PATCH v6 1/3] clk: x86: Add Atom PMC platform clocks
+Message-ID: <20161213232524.GQ5423@codeaurora.org>
+References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
+ <1481306510-7471-2-git-send-email-irina.tirdea@intel.com>
+ <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday, December 6, 2016 3:16:42 PM CET Stephen Boyd wrote:
-> On 12/03, Masahiro Yamada wrote:
-> > 2016-12-03 9:37 GMT+09:00 Vinson Lee <vlee@freedesktop.org>:
-> > > gcc-4.4 has issues with anonymous unions in initializers.
-> > >
-> > >   CC      drivers/clk/uniphier/clk-uniphier-sys.o
-> > > drivers/clk/uniphier/clk-uniphier-sys.c:45: error: unknown field ‘factor’ specified in initializer
-> > > 
-> I'll go drop all three patches and wreck Andrew's merge of this
-> patch to -mm.
+On 12/13, Andy Shevchenko wrote:
+> On Fri, Dec 9, 2016 at 8:01 PM, Irina Tirdea <irina.tirdea@intel.com> wrote:
+> 
+> > --- a/drivers/clk/x86/Makefile
+> > +++ b/drivers/clk/x86/Makefile
+> > @@ -1,2 +1,5 @@
+> >  clk-x86-lpss-objs              := clk-lpt.o
+> >  obj-$(CONFIG_X86_INTEL_LPSS)   += clk-x86-lpss.o
+> 
+> > +ifeq ($(CONFIG_COMMON_CLK), y)
+> 
+> Hmm... I think (I didn't check) we don't go here otherwise.
 
-While the specific bug is resolved now, I'm curious about the
-motivation for the first fix: Vinson, are you actually using
-a seven year old compiler to build modern kernels in order
-to run them on real systems, or is this for the purpose of
-build testing only?
+We should move this statement to drivers/clk/Makefile around the
+x86 line.
 
-It would be good to know if there are actual requirements
-for using compilers this old (or even older, as according
-to the README file, we theoretically support building even
-with gcc-3.2 from 2002), in case we ever want to officially
-raise the minimum required versions.
+> > +                                       void __iomem *base,
+> > +                                       const char **parent_names,
+> > +                                       int num_parents)
+> > +{
+> > +       struct clk_plt *pclk;
+> > +       struct clk_init_data init;
+> > +       int ret;
+> > +
+> > +       pclk = devm_kzalloc(&pdev->dev, sizeof(*pclk), GFP_KERNEL);
+> > +       if (!pclk)
+> > +               return ERR_PTR(-ENOMEM);
+> > +
+> > +       init.name =  kasprintf(GFP_KERNEL, "%s%d", PLT_CLK_NAME_BASE, id);
+> 
+> devm_kasprintf()
 
-I see that gcc-4.3 builds an ARM defconfig kernel 17% faster than
-gcc-7.0, which may be nice for build testing, but it also produces
-thousands of false-positive warnings, which makes it rather
-useless for actually finding bugs in build testing.
+Please no.
 
-	Arnd
+> 
+> > +       init.ops = &plt_clk_ops;
+> > +       init.flags = 0;
+> > +       init.parent_names = parent_names;
+> > +       init.num_parents = num_parents;
+> > +
+> > +       pclk->hw.init = &init;
+> > +       pclk->reg = base + id * PMC_CLK_CTL_SIZE;
+> > +       spin_lock_init(&pclk->lock);
+> > +
+> > +       ret = devm_clk_hw_register(&pdev->dev, &pclk->hw);
+> > +       if (ret)
+> > +               goto err_free_init;
+> > +
+> > +       pclk->lookup = clkdev_hw_create(&pclk->hw, init.name, NULL);
+> > +       if (!pclk->lookup) {
+> > +               ret = -ENOMEM;
+> > +               goto err_free_init;
+> > +       }
+> > +
+> 
+> > +       kfree(init.name);
+> 
+> devm_kfree();
+
+It's all local to this function, devm isn't helping anything.
+Having one kfree() would be good though. And using init.name for
+the clkdev lookup is probably wrong and should be replaced with
+something more generic along with an associated device name.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
