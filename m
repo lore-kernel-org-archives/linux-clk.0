@@ -1,33 +1,51 @@
-Return-Path: <dianders@google.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v4 9/9] ARM: dts: stm32f4: Include auxiliary stm32fx clock definition
+Date: Tue, 13 Dec 2016 15:20:20 +0100
+Message-ID: <1481638820-29324-10-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <1481710301-1454-3-git-send-email-zhengxing@rock-chips.com>
-References: <1481710301-1454-1-git-send-email-zhengxing@rock-chips.com> <1481710301-1454-3-git-send-email-zhengxing@rock-chips.com>
-From: Doug Anderson <dianders@google.com>
-Date: Wed, 14 Dec 2016 16:28:05 -0800
-Message-ID: <CAD=FV=XYH_7nFrOCmXXyb6JM4L4SrPcasOayDACZmhjs3tg-pQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: rockchip: rk3399: export 480M_SRC clocks id for usbphy0/usbphy1
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-On Wed, Dec 14, 2016 at 2:11 AM, Xing Zheng <zhengxing@rock-chips.com> wrote:
-> This patch exports USBPHYx_480M_SRC clocks for usbphy.
->
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> ---
->
->  drivers/clk/rockchip/clk-rk3399.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+This patch include auxiliary clock definition (clocks which are not derived
+from system clock.
 
-As mentioned in the dts patch, I don't think you need these since I'm
-under the impression that nobody gets this clock.  I think the USB
-Controller get the ungated version of this clock.
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ arch/arm/boot/dts/stm32f429.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
--Doug
+diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
+index 7c7dfbd..041e3fc 100644
+--- a/arch/arm/boot/dts/stm32f429.dtsi
++++ b/arch/arm/boot/dts/stm32f429.dtsi
+@@ -48,6 +48,7 @@
+ #include "skeleton.dtsi"
+ #include "armv7-m.dtsi"
+ #include <dt-bindings/pinctrl/stm32f429-pinfunc.h>
++#include <dt-bindings/clock/stm32fx-clock.h>
+ 
+ / {
+ 	clocks {
+-- 
+1.9.1
