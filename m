@@ -1,100 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44352 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751674AbcLHRHJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2016 12:07:09 -0500
-Subject: Re: [PATCH 2/2] ARM: dts: exynos: Fix initial clocks configuration on
- Odroid X/X2/U3 boards
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <1481194914-20490-1-git-send-email-m.szyprowski@samsung.com>
- <1481194914-20490-2-git-send-email-m.szyprowski@samsung.com>
- <CGME20161208164434epcas4p4a7c6c5045d38140b0dca501276206a2c@epcas4p4.samsung.com>
- <20161208164421.GC5238@kozik-lap>
-Cc: linux-samsung-soc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <864877de-a14b-093a-4127-4ad710299fc2@samsung.com>
-Date: Thu, 08 Dec 2016 18:07:02 +0100
-MIME-version: 1.0
-In-reply-to: <20161208164421.GC5238@kozik-lap>
-Content-type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <icenowy@aosc.xyz>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Russell King <linux@armlinux.org.uk>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jorik Jonker <jorik@kippendief.biz>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Icenowy Zheng <icenowy@aosc.xyz>
+Subject: [PATCH 5/6] ARM: dts: sun8i: set cpu-supply in reference tablet DTSI
+Date: Tue, 13 Dec 2016 23:22:51 +0800
+Message-Id: <20161213152252.53749-6-icenowy@aosc.xyz>
+In-Reply-To: <20161213152252.53749-1-icenowy@aosc.xyz>
+References: <20161213152252.53749-1-icenowy@aosc.xyz>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/08/2016 05:44 PM, Krzysztof Kozlowski wrote:
-> On Thu, Dec 08, 2016 at 12:01:54PM +0100, Marek Szyprowski wrote:
->> Move assigned clocks properties from sound node to audio subsystem clock
->> controller node. This way clocks topology and rates are set just after
->> probing audio clocks controller. Leaving those properties under sound
->> node doesn't guarantee to configure them before they are being used
->> (for example i2s hardware module can be probed in parallel and it also
->> require proper audio clocks configuration).
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 20 ++++++++++----------
->>  1 file changed, 10 insertions(+), 10 deletions(-)
->
-> Looks correct, for the reference:
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> Does this fixes any encountered issue (real one)? I wonder whether this
-> should go to fixes or not.
+All reference design A33 tablets uses DCDC2 of AXP223 as the power
+supply of the Cortex-A7 cores.
 
-With current code there is no issues, and in fact there should be no
-such timing dependencies in DT to rely on.  However, the binding convention
-is to put assigned-clock* properties in a node of a device they belong
-to and in this case the 'clock_audss' is more appropriate than the 'sound'
-node.  This patch doesn't fix any bug with current code but it might save
-us some trouble with future changes.
+Set the cpu-supply in the DTSI of sun8i reference tablets.
 
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi b/arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi
+index 08cd00143635..7ac8bb4bc95a 100644
+--- a/arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi
++++ b/arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi
+@@ -213,6 +213,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&cpu0 {
++	cpu-supply = <&reg_dcdc2>;
++};
++
+ &r_uart {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&r_uart_pins_a>;
 -- 
-Thanks,
-Sylwester
-
-> ---
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> index 7815efd..b6b0f50 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> @@ -43,16 +43,6 @@
->
->  	sound: sound {
->  		compatible = "simple-audio-card";
-> -		assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
-> -				<&clock_audss EXYNOS_MOUT_I2S>,
-> -				<&clock_audss EXYNOS_DOUT_SRP>,
-> -				<&clock_audss EXYNOS_DOUT_AUD_BUS>;
-> -		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
-> -				<&clock_audss EXYNOS_MOUT_AUDSS>;
-> -		assigned-clock-rates = <0>,
-> -				<0>,
-> -				<192000000>,
-> -				<19200000>;
->
->  		simple-audio-card,format = "i2s";
->  		simple-audio-card,bitclock-master = <&link0_codec>;
-> @@ -157,6 +147,16 @@
->  	status = "okay";
->  };
->
-> +&clock_audss {
-> +	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
-> +			<&clock_audss EXYNOS_MOUT_I2S>,
-> +			<&clock_audss EXYNOS_DOUT_SRP>,
-> +			<&clock_audss EXYNOS_DOUT_AUD_BUS>;
-> +	assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
-> +			<&clock_audss EXYNOS_MOUT_AUDSS>;
-> +	assigned-clock-rates = <0>, <0>, <192000000>, <19200000>;
-> +};
-> +
->  &cpu0 {
->  	cpu0-supply = <&buck2_reg>;
->  };
->
+2.11.0
