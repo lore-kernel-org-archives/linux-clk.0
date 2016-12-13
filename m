@@ -1,79 +1,67 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v4 6/9] clk: stm32f4: Add SAI clocks
-Date: Tue, 13 Dec 2016 15:20:17 +0100
-Message-ID: <1481638820-29324-7-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
-References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Marcin Wojtas <mw@semihalf.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH 3/3] arm64: dts: marvell: adjust name of sd-mmc-gop clock in syscon
+Date: Tue, 13 Dec 2016 13:41:20 +0100
+Message-Id: <1481632880-9198-4-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1481632880-9198-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1481632880-9198-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+This commit adjusts the names of gatable clock #18 of the Marvell Armada
+CP110 system controller. This clock not only controls SD/MMC, but also
+the GOP (Group Of Ports) used for networking. So the clock is renamed to
+{cpm,cps}-sd-mmc-gop instead of {cpm,cps}-sd-mmc.
 
-This patch introduces SAI clocks for stm32f4 socs.
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 ---
- drivers/clk/clk-stm32f4.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 2 +-
+ arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index a7a6a16..2bff436 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -948,6 +948,9 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
- 
- static const char *i2s_parents[2] = { "plli2s-r", NULL };
- 
-+static const char *sai_parents[4] = { "pllsai-q-div", "plli2s-q-div", NULL,
-+	"no-clock" };
-+
- struct stm32_aux_clk {
- 	int idx;
- 	const char *name;
-@@ -983,6 +986,18 @@ struct stm32f4_clk_data {
- 		NO_GATE, 0,
- 		CLK_SET_RATE_PARENT
- 	},
-+	{
-+		CLK_SAI1, "sai1-a", sai_parents, ARRAY_SIZE(sai_parents),
-+		STM32F4_RCC_DCKCFGR, 20, 3,
-+		STM32F4_RCC_APB2ENR, 22,
-+		CLK_SET_RATE_PARENT
-+	},
-+	{
-+		CLK_SAI2, "sai1-b", sai_parents, ARRAY_SIZE(sai_parents),
-+		STM32F4_RCC_DCKCFGR, 22, 3,
-+		STM32F4_RCC_APB2ENR, 22,
-+		CLK_SET_RATE_PARENT
-+	},
- };
- 
- static const struct stm32f4_clk_data stm32f429_clk_data = {
-@@ -1115,6 +1130,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	i2s_in_clk = of_clk_get_parent_name(np, 1);
- 
- 	i2s_parents[1] = i2s_in_clk;
-+	sai_parents[2] = i2s_in_clk;
- 
- 	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
- 			16000000, 160000);
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+index 602e2c2..895babc 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+@@ -74,7 +74,7 @@
+ 					"cpm-gop-dp", "none", "cpm-pcie_x10",
+ 					"cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor",
+ 					"cpm-sata", "cpm-sata-usb", "cpm-main",
+-					"cpm-sd-mmc", "none", "none",
++					"cpm-sd-mmc-gop", "none", "none",
+ 					"cpm-slow-io", "cpm-usb3h0", "cpm-usb3h1",
+ 					"cpm-usb3dev", "cpm-eip150", "cpm-eip197";
+ 			};
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+index 6bf9e24..db99646 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+@@ -74,7 +74,7 @@
+ 					"cps-gop-dp", "none", "cps-pcie_x10",
+ 					"cps-pcie_x11", "cps-pcie_x4", "cps-pcie-xor",
+ 					"cps-sata", "cps-sata-usb", "cps-main",
+-					"cps-sd-mmc", "none", "none",
++					"cps-sd-mmc-gop", "none", "none",
+ 					"cps-slow-io", "cps-usb3h0", "cps-usb3h1",
+ 					"cps-usb3dev", "cps-eip150", "cps-eip197";
+ 			};
 -- 
-1.9.1
+2.7.4
