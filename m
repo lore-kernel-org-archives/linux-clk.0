@@ -1,212 +1,83 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH 5/6] arm64: dts: allwinner: add Allwinner H5 .dtsi
-Date: Tue, 27 Dec 2016 01:11:55 +0800
-Message-Id: <20161226171156.11605-2-icenowy@aosc.xyz>
-In-Reply-To: <20161226171156.11605-1-icenowy@aosc.xyz>
-References: <20161226171156.11605-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 13 Dec 2016 20:14:59 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jorik Jonker <jorik@kippendief.biz>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 6/6] ARM: dts: sun8i: raise the max voltage of DCDC2 in
+ sun8i reference tablets
+Message-ID: <20161213191459.mmoejcmf26qqtyze@lukather>
+References: <20161213152252.53749-1-icenowy@aosc.xyz>
+ <20161213152252.53749-7-icenowy@aosc.xyz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ijclrd4p6cdc7ons"
+In-Reply-To: <20161213152252.53749-7-icenowy@aosc.xyz>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andre Przywara <andre.przywara@arm.com>
 
-The Allwinner H5 SoC is pin-compatible to the H3 SoC, but uses
-Cortex-A53 cores instead.
-Based on the now shared base .dtsi describing the common peripherals
-describe the H5 specific nodes on top of that.
-That symlinks in the sun8i-h3-h5.dtsi from the arch/arm tree.
+--ijclrd4p6cdc7ons
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-[Icenowy: remove H5 mmc compatible (seems equal to A64), add H5 pinctrl
- compatible, and changes for my h3-h5 dtsi refactor, commit message
- change to met new arm64 naming scheme]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
- arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi   | 143 +++++++++++++++++++++++++
- arch/arm64/boot/dts/allwinner/sun8i-h3-h5.dtsi |   1 +
- 2 files changed, 144 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
- create mode 120000 arch/arm64/boot/dts/allwinner/sun8i-h3-h5.dtsi
+On Tue, Dec 13, 2016 at 11:22:52PM +0800, Icenowy Zheng wrote:
+> The "extremity_freq" frequency described in the original FEX files uses
+> a voltage of 1.46v, which is beyond the current maximum voltage value of
+> DCDC2 (Cortex-A7 supply) in the sun8i reference tablet DTSI file.
+>=20
+> Raise the maximum value to 1.46v.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+> ---
+>  arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi b/arch/=
+arm/boot/dts/sun8i-reference-design-tablet.dtsi
+> index 7ac8bb4bc95a..325ca5bd67a5 100644
+> --- a/arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi
+> @@ -180,7 +180,7 @@
+>  &reg_dcdc2 {
+>  	regulator-always-on;
+>  	regulator-min-microvolt =3D <900000>;
+> -	regulator-max-microvolt =3D <1400000>;
+> +	regulator-max-microvolt =3D <1460000>;
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-new file mode 100644
-index 000000000000..2cc372121f60
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-@@ -0,0 +1,143 @@
-+/*
-+ * Copyright (C) 2016 ARM Ltd.
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#include <dt-bindings/clock/sun50i-h5-ccu.h>
-+#include <dt-bindings/reset/sun50i-h5-ccu.h>
-+#include "sun8i-h3-h5.dtsi"
-+
-+/ {
-+	interrupt-parent = <&gic>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <0>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@1 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <1>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@2 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <2>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@3 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <3>;
-+			enable-method = "psci";
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	soc {
-+		mmc@01c0f000 {
-+			compatible = "allwinner,sun50i-a64-mmc",
-+				     "allwinner,sun5i-a13-mmc";
-+			clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
-+			clock-names = "ahb", "mmc";
-+		};
-+
-+		mmc@01c10000 {
-+			compatible = "allwinner,sun50i-a64-mmc",
-+				     "allwinner,sun5i-a13-mmc";
-+			clocks = <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;
-+			clock-names = "ahb", "mmc";
-+		};
-+
-+		mmc@01c11000 {
-+			compatible = "allwinner,sun50i-a64-mmc",
-+				     "allwinner,sun5i-a13-mmc";
-+			clocks = <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;
-+			clock-names = "ahb", "mmc";
-+		};
-+
-+		clock@01c20000 {
-+			compatible = "allwinner,sun50i-h5-ccu",
-+				     "allwinner,sun8i-h3-ccu";
-+		};
-+
-+		pinctrl@01c20800 {
-+			compatible = "allwinner,sun50i-h5-pinctrl",
-+				     "allwinner,sun8i-h3-pinctrl";
-+		};
-+
-+		gic: interrupt-controller@1c81000 {
-+			compatible = "arm,gic-400";
-+			reg = <0x01c81000 0x1000>,
-+			      <0x01c82000 0x2000>,
-+			      <0x01c84000 0x2000>,
-+			      <0x01c86000 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/allwinner/sun8i-h3-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun8i-h3-h5.dtsi
-new file mode 120000
-index 000000000000..74f3ce9358a5
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun8i-h3-h5.dtsi
-@@ -0,0 +1 @@
-+../../../../arm/boot/dts/sun8i-h3-h5.dtsi
-\ No newline at end of file
--- 
-2.11.0
+This is outside of the voltage range tolerated by the CPU. NAK.
 
+Maxime
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--ijclrd4p6cdc7ons
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYUEizAAoJEBx+YmzsjxAgMhIQAIirUYJInF3vD+4lzUqERJdk
+niEDUJrZP/QZXcGOEDEiK0c+d0qvSHjrsnyfTwf+f8psnUWuhgPyfDVZBP2Za9du
+azlcABzWGCD/GptkDOxHrmSKu6gNNuc9Q9RVACraSCMexUluHt7Bk+I4zhsTqkMS
+mZiMgHLyAYZxUCm6fHUaKNQRJRFN24hKcGTtS+OobOlqmJtkGnAcUBF3P1lRxtho
+4l0cw5oFUv2TJ9ImHWwAp7NPt8IC4g5hh+yl9QpzDQv0yTLKy3iTi62nRD7hOkdf
+PniSEj7+MTHPqSLQdpLg7tfDP3V6L28opNATfDUTGwJB20VUvZnGy/hXXnQo6slz
+Lc99/AWRFB1TSVEXYhu9ewKRp98me3NPYT9jHu7IGdKLNCDeHd+h02KYVRjmJ4jJ
+s3HADUVnqe0ZG/8MQP96ZB5MWWL3beu01QvOl/kRJbveZKxvoMmhbDQSdJUNPJmY
+mkc2nDQpskHjqtidr3MZY0ZYm2FOEOYlopBkqyyNM0MRdzjvJqhRyPq/4XepZjH5
+KPVgFcHirj9udSZUQiLY5GPAsXzFwq0xoOHfbocxarzV11p0K0DxNKXMJMmksr1Y
+z1sAyNNtf09cTy0sbEzWliIqPzHQmX0Jt7k4zSXWbvwaX+H77VLVZlfvjNoI6H1N
+PU5tMVivDxS3K163NXRI
+=PZLc
+-----END PGP SIGNATURE-----
+
+--ijclrd4p6cdc7ons--
