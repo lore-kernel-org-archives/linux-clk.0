@@ -1,127 +1,35 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v3 1/9] clk: stm32f4: Update DT bindings documentation
-Date: Thu, 1 Dec 2016 16:27:41 +0100
-Message-ID: <1480606069-5178-2-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1480606069-5178-1-git-send-email-gabriel.fernandez@st.com>
-References: <1480606069-5178-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <ckeepax@opensource.wolfsonmicro.com>
+Date: Tue, 13 Dec 2016 09:16:37 +0000
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: Nicholas Mc Guire <hofrat@osadl.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Mark Brown
+	<broonie@opensource.wolfsonmicro.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        <patches@opensource.wolfsonmicro.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC] clk: wm831x: fix usleep_range with bad range
+Message-ID: <20161213091637.GM1867@localhost.localdomain>
+References: <1481528409-5182-1-git-send-email-hofrat@osadl.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1481528409-5182-1-git-send-email-hofrat@osadl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Mon, Dec 12, 2016 at 08:40:09AM +0100, Nicholas Mc Guire wrote:
+> The delay here is not in atomic context and does not seem critical with
+> respect to precision, but usleep_range(min,max) with min==max results in 
+> giving the timer subsystem no room to optimize uncritical delays. Fix 
+> this by setting the range to 2000,3000 us.
+> 
+> Fixes: commit f05259a6ffa4 ("clk: wm831x: Add initial WM831x clock driver")
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> ---
 
-Creation of dt include file for specific stm32f4 clocks.
-These specific clocks are not derived from system clock (SYSCLOCK)
-We should use index 1 to use these clocks in DT.
-e.g. <&rcc 1 CLK_LSI>
+Yeah looks fine waiting longer for the FLL to lock won't cause
+any issues.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/clock/st,stm32-rcc.txt     | 15 +++++++++
- include/dt-bindings/clock/stm32f4-clock.h          | 37 ++++++++++++++++++++++
- 2 files changed, 52 insertions(+)
- create mode 100644 include/dt-bindings/clock/stm32f4-clock.h
+Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-index 0532d81..8f93740 100644
---- a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-+++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
-@@ -17,6 +17,9 @@ Required properties:
-   property, containing a phandle to the clock device node, an index selecting
-   between gated clocks and other clocks and an index specifying the clock to
-   use.
-+- clocks: External oscillator clock phandle
-+  - high speed external clock signal (HSE)
-+  - external I2S clock (I2S_CKIN)
- 
- Example:
- 
-@@ -25,6 +28,7 @@ Example:
- 		#clock-cells = <2>
- 		compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
- 		reg = <0x40023800 0x400>;
-+		clocks = <&clk_hse>, <&clk_i2s_ckin>;
- 	};
- 
- Specifying gated clocks
-@@ -66,6 +70,17 @@ The secondary index is bound with the following magic numbers:
- 
- 	0	SYSTICK
- 	1	FCLK
-+	2	CLK_LSI		(low-power clock source)
-+	3	CLK_LSE		(generated from a 32.768 kHz low-speed external
-+				 crystal or ceramic resonator)
-+	4	CLK_HSE_RTC	(HSE division factor for RTC clock)
-+	5	CLK_RTC		(real-time clock)
-+	6	PLL_VCO_I2S	(vco frequency of I2S pll)
-+	7	PLL_VCO_SAI	(vco frequency of SAI pll)
-+	8	CLK_LCD		(LCD-TFT)
-+	9	CLK_I2S		(I2S clocks)
-+	10	CLK_SAI1	(audio clocks)
-+	11	CLK_SAI2
- 
- Example:
- 
-diff --git a/include/dt-bindings/clock/stm32f4-clock.h b/include/dt-bindings/clock/stm32f4-clock.h
-new file mode 100644
-index 0000000..5431f00
---- /dev/null
-+++ b/include/dt-bindings/clock/stm32f4-clock.h
-@@ -0,0 +1,37 @@
-+/*
-+ * stm32f4-clock.h
-+ *
-+ * Copyright (C) 2016 STMicroelectronics
-+ * Author: Gabriel Fernandez for STMicroelectronics.
-+ * License terms:  GNU General Public License (GPL), version 2
-+ */
-+
-+/*
-+ * List of clocks wich are not derived from system clock (SYSCLOCK)
-+ *
-+ * The index of these clocks is the secondary index of DT bindings
-+ * (see Documentatoin/devicetree/bindings/clock/st,stm32-rcc.txt)
-+ *
-+ * e.g:
-+	<assigned-clocks = <&rcc 1 CLK_LSE>;
-+*/
-+
-+#ifndef _DT_BINDINGS_CLK_STMF4_H
-+#define _DT_BINDINGS_CLK_STMF4_H
-+
-+#define SYSTICK			0
-+#define FCLK			1
-+#define CLK_LSI			2
-+#define CLK_LSE			3
-+#define CLK_HSE_RTC		4
-+#define CLK_RTC			5
-+#define PLL_VCO_I2S		6
-+#define PLL_VCO_SAI		7
-+#define CLK_LCD			8
-+#define CLK_I2S			9
-+#define CLK_SAI1		10
-+#define CLK_SAI2		11
-+
-+#define END_PRIMARY_CLK		12
-+
-+#endif
--- 
-1.9.1
+Thanks,
+Charles
