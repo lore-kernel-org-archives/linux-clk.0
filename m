@@ -1,32 +1,95 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:36500 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752311AbcL2PSP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Dec 2016 10:18:15 -0500
-Subject: Re: [PATCH] clk/samsung: exynos-audss: Replace syscore PM with
- platform device PM
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <9b4c95cf-4f8b-8b70-a609-4c487fe36bb8@samsung.com>
-Date: Thu, 29 Dec 2016 16:18:02 +0100
-MIME-version: 1.0
-In-reply-to: <1480066794-18713-1-git-send-email-m.szyprowski@samsung.com>
-Content-type: text/plain; charset=windows-1252
-References: <CGME20161125095119epcas2p1d9f9ba31fbb556ff714f4330ad746ed5@epcas2p1.samsung.com>
- <1480066794-18713-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <shawn.lin@rock-chips.com>
+Subject: Re: [PATCH v1 2/3] clk: rockchip: add clock controller for rk3328
+To: Elaine Zhang <zhangqing@rock-chips.com>
+References: <1481618869-1239-1-git-send-email-zhangqing@rock-chips.com>
+ <1481618869-1239-3-git-send-email-zhangqing@rock-chips.com>
+Cc: heiko@sntech.de, mturquette@baylibre.com, sboyd@codeaurora.org,
+ xf@rock-chips.com, shawn.lin@rock-chips.com, mark.rutland@arm.com,
+ devicetree@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ robh+dt@kernel.org, cl@rock-chips.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <acc7fa12-07ee-eab0-c8e8-b8bba00d9b00@rock-chips.com>
+Date: Tue, 13 Dec 2016 17:38:44 +0800
+MIME-Version: 1.0
+In-Reply-To: <1481618869-1239-3-git-send-email-zhangqing@rock-chips.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/25/2016 10:39 AM, Marek Szyprowski wrote:
-> Exynos AUDSS clock driver has beem already converted to platform driver, so
-> remove the dependency on the syscore ops - the last remaining non-platform
-> driver feature. Platform device's system sleep PM provides all needed
-> infrastructure for replacing syscore-based PM, so do it now.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Hi, Elaine,
 
-Applied, thanks.
+I always only keep an eye for mmc stuff here. :)
+
+On 2016/12/13 16:47, Elaine Zhang wrote:
+> Add the clock tree definition for the new rk3328 SoC.
+>
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+
+----8<--------------
+
+> +
+> +	/* PD_MMC */
+> +	MMC(SCLK_SDMMC_DRV, "sdmmc_drv", "sclk_sdmmc",
+> +	    RK3328_SDMMC_CON0, 1),
+> +	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "sclk_sdmmc",
+> +	    RK3328_SDMMC_CON1, 0),
+> +
+
+All of offset for these *_sample are wrong, and they should be 1
+, the same as *_drv. You could refer to P565 of TRM instead the
+section of CRU for these details.
+
+> +	MMC(SCLK_SDIO_DRV, "sdio_drv", "sclk_sdio",
+> +	    RK3328_SDIO_CON0, 1),
+> +	MMC(SCLK_SDIO_SAMPLE, "sdio_sample", "sclk_sdio",
+> +	    RK3328_SDIO_CON1, 0),
+> +
+> +	MMC(SCLK_EMMC_DRV, "emmc_drv", "sclk_emmc",
+> +	    RK3328_EMMC_CON0, 1),
+> +	MMC(SCLK_EMMC_SAMPLE, "emmc_sample", "sclk_emmc",
+> +	    RK3328_EMMC_CON1, 0),
+> +
+> +	MMC(SCLK_SDMMC_EXT_DRV, "sdmmc_ext_drv", "sclk_sdmmc_ext",
+> +	    RK3328_SDMMC_EXT_CON0, 1),
+> +	MMC(SCLK_SDMMC_EXT_SAMPLE, "sdmmc_ext_sample", "sclk_sdmmc_ext",
+> +	    RK3328_SDMMC_EXT_CON1, 0),
+> +};
+> +
+
+----8<--------
+
+
+> +#define RK3328_SDMMC_CON0		0x380
+> +#define RK3328_SDMMC_CON1		0x384
+> +#define RK3328_SDIO_CON0		0x388
+> +#define RK3328_SDIO_CON1		0x38c
+> +#define RK3328_EMMC_CON0		0x390
+> +#define RK3328_EMMC_CON1		0x394
+> +#define RK3328_SDMMC_EXT_CON0		0x398
+> +#define RK3328_SDMMC_EXT_CON1		0x39C
+
+
+Just wondering is it worth, but this uppercase 'C' isn't
+consistent with the former lowercase
+
+
+> +
+>  #define RK3368_PLL_CON(x)		RK2928_PLL_CON(x)
+>  #define RK3368_CLKSEL_CON(x)		((x) * 0x4 + 0x100)
+>  #define RK3368_CLKGATE_CON(x)		((x) * 0x4 + 0x200)
+> @@ -130,6 +152,7 @@
+>  enum rockchip_pll_type {
+>  	pll_rk3036,
+>  	pll_rk3066,
+> +	pll_rk3328,
+>  	pll_rk3399,
+>  };
+>
+>
+
+
+-- 
+Best Regards
+Shawn Lin
