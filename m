@@ -1,36 +1,122 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 8 Dec 2016 15:17:49 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Harvey Hunt <harvey.hunt@imgtec.com>,
-	Paul Burton <paul.burton@imgtec.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Maarten ter Huurne <maarten@treewalker.org>
-Subject: Re: [PATCH] clk: ingenic: Fix recalc_rate for clocks with fixed
- divider
-Message-ID: <20161208231749.GY5423@codeaurora.org>
-References: <20161101095836.22210-1-paul@crapouillou.net>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH v4 7/9] clk: stm32f4: SDIO & 48Mhz clock management for STM32F469 board
+Date: Tue, 13 Dec 2016 15:20:18 +0100
+Message-ID: <1481638820-29324-8-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161101095836.22210-1-paul@crapouillou.net>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/01, Paul Cercueil wrote:
-> Previously, the clocks with a fixed divider would report their rate
-> as being the same as the one of their parent, independently of the
-> divider in use. This commit fixes this behaviour.
-> 
-> This went unnoticed as neither the jz4740 nor the jz4780 CGU code
-> have clocks with fixed dividers yet.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Nobody replied or reviewed it so I'll bite. Do we have a user of
-this code path? If not, please reserve this patch until such a
-time and then include it in the series.
+In the stm32f469 soc, the 48Mhz clock could be derived from pll-q or
+from pll-sai-p.
 
+The SDIO clock could be also derived from 48Mhz or from sys clock.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32f4.c | 49 ++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 46 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 2bff436..11174a5 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -211,7 +211,7 @@ struct stm32f4_gate_data {
+ 	{ STM32F4_RCC_APB2ENR,  8,	"adc1",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR,  9,	"adc2",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR, 10,	"adc3",		"apb2_div" },
+-	{ STM32F4_RCC_APB2ENR, 11,	"sdio",		"pll48" },
++	{ STM32F4_RCC_APB2ENR, 11,	"sdio",		"sdmux" },
+ 	{ STM32F4_RCC_APB2ENR, 12,	"spi1",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR, 13,	"spi4",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR, 14,	"syscfg",	"apb2_div" },
+@@ -951,6 +951,10 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
+ static const char *sai_parents[4] = { "pllsai-q-div", "plli2s-q-div", NULL,
+ 	"no-clock" };
+ 
++static const char *pll48_parents[2] = { "pll-q", "pllsai-p" };
++
++static const char *sdmux_parents[2] = { "pll48", "sys" };
++
+ struct stm32_aux_clk {
+ 	int idx;
+ 	const char *name;
+@@ -1000,6 +1004,45 @@ struct stm32f4_clk_data {
+ 	},
+ };
+ 
++static const struct stm32_aux_clk stm32f469_aux_clk[] = {
++	{
++		CLK_LCD, "lcd-tft", lcd_parent, ARRAY_SIZE(lcd_parent),
++		NO_MUX, 0, 0,
++		STM32F4_RCC_APB2ENR, 26,
++		CLK_SET_RATE_PARENT
++	},
++	{
++		CLK_I2S, "i2s", i2s_parents, ARRAY_SIZE(i2s_parents),
++		STM32F4_RCC_CFGR, 23, 1,
++		NO_GATE, 0,
++		CLK_SET_RATE_PARENT
++	},
++	{
++		CLK_SAI1, "sai1-a", sai_parents, ARRAY_SIZE(sai_parents),
++		STM32F4_RCC_DCKCFGR, 20, 3,
++		STM32F4_RCC_APB2ENR, 22,
++		CLK_SET_RATE_PARENT
++	},
++	{
++		CLK_SAI2, "sai1-b", sai_parents, ARRAY_SIZE(sai_parents),
++		STM32F4_RCC_DCKCFGR, 22, 3,
++		STM32F4_RCC_APB2ENR, 22,
++		CLK_SET_RATE_PARENT
++	},
++	{
++		NO_IDX, "pll48", pll48_parents, ARRAY_SIZE(pll48_parents),
++		STM32F4_RCC_DCKCFGR, 27, 1,
++		NO_GATE, 0,
++		0
++	},
++	{
++		NO_IDX, "sdmux", sdmux_parents, ARRAY_SIZE(sdmux_parents),
++		STM32F4_RCC_DCKCFGR, 28, 1,
++		NO_GATE, 0,
++		0
++	},
++};
++
+ static const struct stm32f4_clk_data stm32f429_clk_data = {
+ 	.gates_data	= stm32f429_gates,
+ 	.gates_map	= stm32f42xx_gate_map,
+@@ -1014,8 +1057,8 @@ struct stm32f4_clk_data {
+ 	.gates_map	= stm32f46xx_gate_map,
+ 	.gates_num	= ARRAY_SIZE(stm32f469_gates),
+ 	.pll_data	= stm32f469_pll,
+-	.aux_clk	= stm32f429_aux_clk,
+-	.aux_clk_num	= ARRAY_SIZE(stm32f429_aux_clk),
++	.aux_clk	= stm32f469_aux_clk,
++	.aux_clk_num	= ARRAY_SIZE(stm32f469_aux_clk),
+ };
+ 
+ static const struct of_device_id stm32f4_of_match[] = {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
