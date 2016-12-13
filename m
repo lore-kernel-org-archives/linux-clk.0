@@ -1,119 +1,67 @@
-Return-Path: <dvhart@infradead.org>
-Date: Fri, 16 Dec 2016 11:19:51 -0800
-From: Darren Hart <dvhart@infradead.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Irina Tirdea <irina.tirdea@intel.com>, linux-clk@vger.kernel.org,
-	"x86@kernel.org" <x86@kernel.org>,
-	platform-driver-x86@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 13 Dec 2016 20:13:50 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Len Brown <lenb@kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 1/3] clk: x86: Add Atom PMC platform clocks
-Message-ID: <20161216191951.GC44199@f23x64.localdomain>
-References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
- <1481306510-7471-2-git-send-email-irina.tirdea@intel.com>
- <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
- <1a98dcda-a662-958e-307f-5fe3f281ed9f@linux.intel.com>
- <CAHp75VccDyiLhWxZYg+d0usrwhfa_hiZAJCKPXXVRod=tB803g@mail.gmail.com>
- <20161216183607.GB44199@f23x64.localdomain>
- <CAHp75Ve-3WXr05uvPQDfFDzxLc09+1ZSYpsuw02ab+x0enJtQg@mail.gmail.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jorik Jonker <jorik@kippendief.biz>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 5/6] ARM: dts: sun8i: set cpu-supply in reference tablet
+ DTSI
+Message-ID: <20161213191350.dsybyjfuocrvx4zj@lukather>
+References: <20161213152252.53749-1-icenowy@aosc.xyz>
+ <20161213152252.53749-6-icenowy@aosc.xyz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAHp75Ve-3WXr05uvPQDfFDzxLc09+1ZSYpsuw02ab+x0enJtQg@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="uv2vtn7agm7c5d3p"
+In-Reply-To: <20161213152252.53749-6-icenowy@aosc.xyz>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Dec 16, 2016 at 08:49:13PM +0200, Andy Shevchenko wrote:
-> On Fri, Dec 16, 2016 at 8:36 PM, Darren Hart <dvhart@infradead.org> wrote:
-> > On Tue, Dec 13, 2016 at 02:26:21AM +0200, Andy Shevchenko wrote:
-> >> On Tue, Dec 13, 2016 at 2:15 AM, Pierre-Louis Bossart
-> >> <pierre-louis.bossart@linux.intel.com> wrote:
-> 
-> >> For clock I would suggest include/linux/clk/ with x86_ prefix.
-> >> For the rest I have no strong opinion except trying to avoid
-> >> platform_data wording in the path as much as possible.
-> >>
-> >> As an example I could recall DMA engine subsystem where we have
-> >>
-> >> include/linux/platform_data/dma-*.h
-> >>
-> >> and
-> >>
-> >> include/linux/dma/*.h
-> >>
-> >> So, this sounds more to me as
-> >>
-> >> include/linux/x86/pmc_atom.h
-> >
-> > There should really be some Documentation about how to choose an include
-> > directory :-)
-> 
-> So true!
-> 
-> > My understanding is include/linux should be more generic, rather than platform
-> > specific headers. So while platform_data may refer specifically to the platform
-> > bus drivers, it's the closest thing we have to include/platform, which would be
-> > ideal. I would prefer to stick with include/platform_data because:
-> >
-> > 1) Semantically, it's the closest thing there is
-> > 2) include/linux should be for more generic headers related to the OS or
-> >    subsystems
 
-Scratch #2 from the arguments since it's include/linux/platform_data that we're
-talking about here.
+--uv2vtn7agm7c5d3p
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > 3) It doesn't make sense to create a separate include/platform directory for a
-> >    single header.
-> > 4) We don't want to rename platform_data to platform now and change all the
-> >    drivers, but it could be changed later.
-> 
-> My understanding that part like P-Unit, PMIC, PMC, SCU, whatever we
-> have inside SoC is platform from hardware prospective, but from
-> software (driver) it doesn't use platform data since it's quite SoC
-> specific (like CPU model to differentiate). That's why something in
-> the middle between arch/x86/include/asm and
-> include/linux/platform_data.
-> 
-> I assume I would be not good in naming schemes, though platform_data
-> for file which doesn't contain platform data for platform device
-> sounds a bit confusing to me. Like someone already noticed
-> include/platform_data is already messy. This might just add another
-> level of it.
-> 
-> So, what is exactly confuses me is mixing data for *platform devices*
-> (as represented via *platform driver* -- struct platform_driver)  and
-> for SoC devices (no struct platform_driver per se).
-> Maybe I misunderstood something...
+On Tue, Dec 13, 2016 at 11:22:51PM +0800, Icenowy Zheng wrote:
+> All reference design A33 tablets uses DCDC2 of AXP223 as the power
+> supply of the Cortex-A7 cores.
+>=20
+> Set the cpu-supply in the DTSI of sun8i reference tablets.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 
-You're understanding is correct. We're just applying different values to the
-respective merits of each argument.
+Applied, thanks
 
-The options are:
+Maxime
 
-a) include/linux/x86
-b) include/linux/platform_data/x86
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-In my opinion, a) looks like architecture and would be difficult to distinguish
-from arch/x86/include. b) on the other hand clearly notes that it is for
-platform specific information. If it was platform instead of platform_data, that
-would be even better, but that could be a later change. But I think the
-confusion over x86 arch in a) is worse than the more subtle (in my opinion)
-distinction between "platform" and "platform_data".
+--uv2vtn7agm7c5d3p
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I would want x86 maintainer approval before adding a), while b) I'm happy to add
-ourselves - and we already have agreement from tglx on that.
+-----BEGIN PGP SIGNATURE-----
 
-To move forward, let's go with b). The new x86 directory clearly separates out
-content which will make it trivial to move later if the need arises.
+iQIcBAEBCAAGBQJYUEhuAAoJEBx+YmzsjxAgQ54QAIRKLQJFblVSZ6AfhLN8vSMI
+DUzceHqS2McEFLpS/oseTIfugkHSqfgHA3Hn4RRHIanWQnh8oz/ldQfBPA3lj0sf
+WoqFWJh1wnWftwP2kw8Rs4EjV4F5kOaszUsWEFPGH8QNDh9FpWu17xr9dLM+b9Ns
+PVi0tzV0OttXznu6i2GpodiqSP9yCtAVJr3v6irZ3+pL8KwEwKQm4jcknEybMHbW
+I9ewrK5r2kJwHTB5G76wPIEoQvuV3mDW7TQHWVRUbfMILr6h/NVSdp5hZqe4sL+v
+FMhyp6iUnp90Xav3mkl1PpwD64/XMHkrYNqesYn6KJz8PM5EzroCAU1uC4nqBUV7
+mNLg5LrKNcqOaUiSbC7HDBgvvvDDFLAvEc3mdJ3SbcRd7/XhNqqdGJ30myrX6Rla
+EC8nnwgDY/jl6Et1zC6jG76juJ9KzOdLIrP2M++bespvG1t2vm+SBwO2QTVPPxB9
+j0ryuLHhlCrojIOGfdqifLHX2DDr/7fmealMsDq9NprOKPrEMSr0KOWCKPmwJUb0
+hkfV1IRYwU6+DiiOEIvGtNs3JocN+aPKBZ3MTBsOYAH+INgfT+arI9m0zONgOzdO
+xszwBjuVHWZ4oiFJr3JaVszu2KktFjiY8yfhxj2NF28sGYgj5EToIHIKZevkjAGl
+4khVMF+geLUSEJyq9kVq
+=tilk
+-----END PGP SIGNATURE-----
 
--- 
-Darren Hart
-Intel Open Source Technology Center
+--uv2vtn7agm7c5d3p--
