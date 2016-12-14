@@ -1,62 +1,63 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Date: Thu, 29 Dec 2016 16:49:08 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Doug Anderson <dianders@chromium.org>,
-	Andreas Faerber <afaerber@suse.de>,
-	Thomas Abraham <thomas.ab@samsung.com>,
-	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	Ben Gamari <ben@smart-cactus.org>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: dts: Add CPU OPPs for Exynos4412 Prime
-Message-ID: <20161229144908.6gkvjpso7ikdmfp7@kozik-lap>
-References: <1483018611-27998-1-git-send-email-b.zolnierkie@samsung.com>
- <CGME20161229133734epcas5p1e893904353c23170e82ece54a06aebed@epcas5p1.samsung.com>
- <1483018611-27998-3-git-send-email-b.zolnierkie@samsung.com>
+Return-Path: <tony@atomide.com>
+Date: Tue, 13 Dec 2016 16:43:34 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv4 00/15] clk: ti: add support for hwmod clocks
+Message-ID: <20161214004334.GU4920@atomide.com>
+References: <2cfa10a9-9ea0-23e4-30de-9aece13e47e3@ti.com>
+ <20161028233750.GQ16026@codeaurora.org>
+ <7371ef35-5d95-bf78-4c97-c61091a1fa4b@ti.com>
+ <148156710975.37646.2957511113527634913@resonance>
+ <20161213004914.GM5423@codeaurora.org>
+ <20161213013133.GR4920@atomide.com>
+ <148160402543.37646.6019420188689675769@resonance>
+ <4b016883-e7c9-94d8-d964-3c8dfee6ee13@ti.com>
+ <20161213153724.GT4920@atomide.com>
+ <148166654419.37646.7680435609801736363@resonance>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1483018611-27998-3-git-send-email-b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <148166654419.37646.7680435609801736363@resonance>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Dec 29, 2016 at 02:36:51PM +0100, Bartlomiej Zolnierkiewicz wrote:
-> Add CPU operating points for Exynos4412 Prime (it supports
-> additional 1704MHz & 1600MHz OPPs and 1500MHz OPP is just
-> a regular non-turbo OPP on this SoC).  Also update relevant
-> cooling maps to account for new OPPs.
+* Michael Turquette <mturquette@baylibre.com> [161213 14:02]:
+> Quoting Tony Lindgren (2016-12-13 07:37:24)
+> > For the clkctrl clocks, here's what I'd like to see. The driver should be
+> > just a regular device driver along the lines we did with the ADPLL as in
+> > Documentation/devicetree/bindings/clock/ti/adpll.txt.
+> > 
+> > For the binding, something like the following should work as a minimal
+> > example, this follows what we have in the hardware:
+> > 
+> > &prm {
+> >         ...
+> > 
+> >         /* See "CD_WKUP Clock Domain" in 4430 TRM page 393 */
+> >         wkup_cm: clock@1800 {
+> >                 compatible = "ti,clkctrl";
+> >                 reg = <0x1800 0x100>;
+> >                 #clock-cells = <1>;
+> >                 clocks = <&wkup_l4_iclk2 &wkup_32k_fclk
+> >                           &32k_fclk &gp1_fclk>;
+> >                 clock-output-names =
+> >                         "sysctrl_padconf_wkup",
+> >                         "badgap",
+> >                         "sysctrl_general_wkup",
+> >                         "gpio1",
+> >                         "keyboard",
+> >                         "sar_ram",
+> >                         "32ktimer",
+> >                         "gptimer1";
 > 
-> ODROID-X2/U2/U3 boards use Exynos4412 Prime SoC version so
-> update their board files accordingly.
-> 
-> Based on Hardkernel's kernel for ODROID-X2/U2/U3 boards.
-> 
-> Cc: Doug Anderson <dianders@chromium.org>
-> Cc: Andreas Faerber <afaerber@suse.de>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Cc: Ben Gamari <ben@smart-cactus.org>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 +--
->  arch/arm/boot/dts/exynos4412-odroidu3.dts       |  5 +--
->  arch/arm/boot/dts/exynos4412-odroidx2.dts       |  1 +
->  arch/arm/boot/dts/exynos4412-prime.dtsi         | 41 +++++++++++++++++++++++++
->  arch/arm/boot/dts/exynos4412.dtsi               |  2 +-
->  5 files changed, 48 insertions(+), 5 deletions(-)
->  create mode 100644 arch/arm/boot/dts/exynos4412-prime.dtsi
-> 
+> Is there a technical reason to use clock-output-names? If you share a
+> header between the clock provider driver and DT with the phandle offsets
+> then we should be able to avoid this property altogether. Stephen and I
+> are trying to phase this one out as much as possible.
 
-Looks okay. Is the clock patch needed for this?
+Oh OK no reason for names, defines for the offsets will work just fine.
 
-BR,
-Krzysztof
+Regards,
+
+Tony
