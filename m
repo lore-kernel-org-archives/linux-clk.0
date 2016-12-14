@@ -1,39 +1,83 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Stephen Warren <swarren@wwwdotorg.org>, Ray Jui <rjui@broadcom.com>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: bcm: Fix 'maybe-uninitialized' warning in bcm2835_clock_choose_div_and_prate()
-Date: Mon, 12 Dec 2016 09:34:28 +0100
-Message-ID: <2237053.NkkLiYIyzc@wuerfel>
-In-Reply-To: <20161212093130.6e348a61@bbrezillon>
-References: <1481529653-28133-1-git-send-email-boris.brezillon@free-electrons.com> <3107859.uaKLk6DMRd@wuerfel> <20161212093130.6e348a61@bbrezillon>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Florian Fainelli <f.fainelli@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	dri-devel@lists.freedesktop.org,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-clk@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH 04/11] drm/vc4: Set up SCALER_DISPCTRL at boot.
+Date: Wed, 14 Dec 2016 11:46:14 -0800
+Message-Id: <20161214194621.16499-5-eric@anholt.net>
+In-Reply-To: <20161214194621.16499-1-eric@anholt.net>
+References: <20161214194621.16499-1-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, December 12, 2016 9:31:30 AM CET Boris Brezillon wrote:
-> On Mon, 12 Dec 2016 09:12:36 +0100
-> Arnd Bergmann <arnd@arndb.de> wrote:
-> 
-> > On Monday, December 12, 2016 9:00:53 AM CET Boris Brezillon wrote:
-> > > best_rate is reported as potentially uninitialized by gcc.
-> > > 
-> > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > > Fixes: 155e8b3b0ee3 ("clk: bcm: Support rate change propagation on bcm2835 clocks")
-> > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>  
-> > 
-> > I wonder why I didn't get that. Which compiler version did you use?
-> > 
-> 
-> In case you're interested, my gcc [1] failed to detect it as well, and
-> this is not the first time it happens :-/.
-> 
-> [1]gcc (Ubuntu 5.4.0-6ubuntu1~16.04.4) 5.4.0 20160609
+We want the HVS on, obviously, and we also want DSP3 (PV1's source) to
+be muxed from HVS channel 2 like we expect in vc4_crtc.c.  The
+firmware wasn't setting the DSP3 mux up when both the LCD and HDMI
+were disabled.
 
-No, I see it now with gcc-7, it only just turned up in linux-next.
+Signed-off-by: Eric Anholt <eric@anholt.net>
+---
+ drivers/gpu/drm/vc4/vc4_hvs.c  | 14 ++++++++++++++
+ drivers/gpu/drm/vc4/vc4_regs.h |  3 +++
+ 2 files changed, 17 insertions(+)
 
-I ran into it right away with an allmodconfig build. You were
-probably testing based on an earlier v4.9-rc release that had
-the warning globally disabled.
-
-	Arnd
+diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
+index 6fbab1c82cb1..fc68b1b4da52 100644
+--- a/drivers/gpu/drm/vc4/vc4_hvs.c
++++ b/drivers/gpu/drm/vc4/vc4_hvs.c
+@@ -170,6 +170,7 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
+ 	struct vc4_dev *vc4 = drm->dev_private;
+ 	struct vc4_hvs *hvs = NULL;
+ 	int ret;
++	u32 dispctrl;
+ 
+ 	hvs = devm_kzalloc(&pdev->dev, sizeof(*hvs), GFP_KERNEL);
+ 	if (!hvs)
+@@ -211,6 +212,19 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
+ 		return ret;
+ 
+ 	vc4->hvs = hvs;
++
++	dispctrl = HVS_READ(SCALER_DISPCTRL);
++
++	dispctrl |= SCALER_DISPCTRL_ENABLE;
++
++	/* Set DSP3 (PV1) to use HVS channel 2, which would otherwise
++	 * be unused.
++	 */
++	dispctrl &= ~SCALER_DISPCTRL_DSP3_MUX_MASK;
++	dispctrl |= VC4_SET_FIELD(2, SCALER_DISPCTRL_DSP3_MUX);
++
++	HVS_WRITE(SCALER_DISPCTRL, dispctrl);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
+index 39f6886b2410..b3b297fba709 100644
+--- a/drivers/gpu/drm/vc4/vc4_regs.h
++++ b/drivers/gpu/drm/vc4/vc4_regs.h
+@@ -244,6 +244,9 @@
+ # define SCALER_DISPCTRL_ENABLE			BIT(31)
+ # define SCALER_DISPCTRL_DSP2EISLUR		BIT(15)
+ # define SCALER_DISPCTRL_DSP1EISLUR		BIT(14)
++# define SCALER_DISPCTRL_DSP3_MUX_MASK		VC4_MASK(19, 18)
++# define SCALER_DISPCTRL_DSP3_MUX_SHIFT		18
++
+ /* Enables Display 0 short line and underrun contribution to
+  * SCALER_DISPSTAT_IRQDISP0.  Note that short frame contributions are
+  * always enabled.
+-- 
+2.11.0
