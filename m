@@ -1,74 +1,44 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:60472 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751096AbcLELIC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Dec 2016 06:08:02 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ladislav Michl <ladis@linux-mips.org>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
-        Richard Watts <rrw@kynesim.co.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexander Kinzer <a.kinzer@plusoptix.de>
-Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
-Date: Mon, 05 Dec 2016 13:08:20 +0200
-Message-ID: <3176488.xoM6adFiVO@avalon>
-In-Reply-To: <20161205093649.GA31898@localhost.localdomain>
-References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com> <2239782.MNuANFihMe@avalon> <20161205093649.GA31898@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: linux-rockchip@lists.infradead.org
+Cc: dianders@google.com,
+	heiko@sntech.de,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] clk: rockchip: rk3399: export 480M_SRC clocks id for usbphy0/usbphy1
+Date: Wed, 14 Dec 2016 18:11:40 +0800
+Message-Id: <1481710301-1454-3-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1481710301-1454-1-git-send-email-zhengxing@rock-chips.com>
+References: <1481710301-1454-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ladislav,
+This patch exports USBPHYx_480M_SRC clocks for usbphy.
 
-On Monday 05 Dec 2016 10:36:49 Ladislav Michl wrote:
-> On Mon, Dec 05, 2016 at 10:46:43AM +0200, Laurent Pinchart wrote:
-> > On Monday 05 Dec 2016 09:22:10 Ladislav Michl wrote:
->
-> [snip]
-> 
-> >> Table 36 list two options with 26MHz clocks: m=443, n=11 and m=480, n=12
-> >> with a statement: "The choice between these two options with a 26 MHz
-> >> input should be based on characterization on the end system."
-> >> 
-> >> Shall we care about that?
-> > 
-> > I'd like to, but at the moment I don't see how. Proposals are welcome :-)
-> > I
-> 
-> One of proposals raised earlier was DT property, but that idea was scratched
-> later.
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-It might not be such a bad idea, given that the decision should be made based 
-on the characterization of the whole system. One could argue that such 
-platform information could have its place in DT.
+ drivers/clk/rockchip/clk-rk3399.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> > don't think addressing that issue should be a blocker to get this patch
-> > merged though.
-> 
-> Of course not. I'd like to even see it in stable ;-)
-> 
-> [snip]
-> 
-> > I had tried that, but I find the code less readable :-S
-> 
-> Oh... Please reconsider (I really do not like that extra test and extra
-> assignment to local variables (also I had 'precomputed' as mixed definition,
-> but Tero did not quite like that)) :-)
-
-I still like to favour code readability when possible (especially when the 
-compiler should optimize both versions the same way). I'm not the maintainer 
-of this driver though, so I'll let Tero decides what he prefers.
-
-> Also, checked if the same values are written to clk as with my patch, so
-> here's my:
-> Tested-by: Ladislav Michl <ladis@linux-mips.org>
-
-Thank you.
-
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 3490887..cf2af4c 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -411,9 +411,9 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 	GATE(SCLK_USB2PHY1_REF, "clk_usb2phy1_ref", "xin24m", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(6), 6, GFLAGS),
+ 
+-	GATE(0, "clk_usbphy0_480m_src", "clk_usbphy0_480m", 0,
++	GATE(SCLK_USBPHY0_480M_SRC, "clk_usbphy0_480m_src", "clk_usbphy0_480m", 0,
+ 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
+-	GATE(0, "clk_usbphy1_480m_src", "clk_usbphy1_480m", 0,
++	GATE(SCLK_USBPHY1_480M_SRC, "clk_usbphy1_480m_src", "clk_usbphy1_480m", 0,
+ 			RK3399_CLKGATE_CON(13), 12, GFLAGS),
+ 	MUX(0, "clk_usbphy_480m", mux_usbphy_480m_p, 0,
+ 			RK3399_CLKSEL_CON(14), 6, 1, MFLAGS),
 -- 
-Regards,
-
-Laurent Pinchart
-
+2.7.4
