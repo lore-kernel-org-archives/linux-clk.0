@@ -1,100 +1,83 @@
-Return-Path: <zmarkovic@sierrawireless.com>
-From: Zoran Markovic <zmarkovic@sierrawireless.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Zoran Markovic <zmarkovic@sierrawireless.com>, Andy Gross
-	<andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Neil
- Armstrong <narmstrong@baylibre.com>, <linux-arm-msm@vger.kernel.org>,
-	<linux-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [RFC PATCHv2 2/4] clk: mdm9615: Add EBI2 clock
-Date: Thu, 22 Dec 2016 20:54:44 -0800
-Message-ID: <1482468884-31027-1-git-send-email-zmarkovic@sierrawireless.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: zmarkovic@sierrawireless.com
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Florian Fainelli <f.fainelli@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	dri-devel@lists.freedesktop.org,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-clk@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH 11/11] ARM: bcm2835: Enable the Raspberry Pi touchscreen panel.
+Date: Wed, 14 Dec 2016 11:46:21 -0800
+Message-Id: <20161214194621.16499-12-eric@anholt.net>
+In-Reply-To: <20161214194621.16499-1-eric@anholt.net>
+References: <20161214194621.16499-1-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add definition of EBI2 clock used by MDM9615 NAND controller.
+This commit is not intended to be merged.  Instead we will use
+overlays to enable the panel, and this commit is just a demo of how
+things get wired up.
 
-Cc: Andy Gross <andy.gross@linaro.org>
-Cc: David Brown <david.brown@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-soc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Zoran Markovic <zmarkovic@sierrawireless.com>
+Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- drivers/clk/qcom/gcc-mdm9615.c               |   30 ++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-mdm9615.h |    3 +++
- 2 files changed, 33 insertions(+)
+ arch/arm/boot/dts/bcm283x.dtsi | 30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
-index 581a17f..e9e98b1 100644
---- a/drivers/clk/qcom/gcc-mdm9615.c
-+++ b/drivers/clk/qcom/gcc-mdm9615.c
-@@ -1563,6 +1563,34 @@ enum {
- 	},
- };
+diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
+index 82a4eccfb3d8..e96d0f29759a 100644
+--- a/arch/arm/boot/dts/bcm283x.dtsi
++++ b/arch/arm/boot/dts/bcm283x.dtsi
+@@ -286,7 +286,12 @@
+ 					     "dsi1_ddr2",
+ 					     "dsi1_ddr";
  
-+static struct clk_branch ebi2_clk = {
-+	.hwcg_reg = 0x2664,
-+	.hwcg_bit = 6,
-+	.halt_reg = 0x2fcc,
-+	.halt_bit = 23,
-+	.clkr = {
-+		.enable_reg = 0x2664,
-+		.enable_mask = BIT(6) | BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ebi2_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
+-			status = "disabled";
++			pitouchscreen: panel@0 {
++				compatible = "raspberrypi,touchscreen";
++				reg = <0>;
 +
-+static struct clk_branch ebi2_aon_clk = {
-+	.halt_reg = 0x2fcc,
-+	.halt_bit = 23,
-+	.clkr = {
-+		.enable_reg = 0x2664,
-+		.enable_mask = BIT(8),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ebi2_aon_clk",
-+			.ops = &clk_branch_ops,
-+		},
-+	},
-+};
-+
- static struct clk_hw *gcc_mdm9615_hws[] = {
- 	&cxo.hw,
- };
-@@ -1637,6 +1665,8 @@ enum {
- 	[PMIC_ARB1_H_CLK] = &pmic_arb1_h_clk.clkr,
- 	[PMIC_SSBI2_CLK] = &pmic_ssbi2_clk.clkr,
- 	[RPM_MSG_RAM_H_CLK] = &rpm_msg_ram_h_clk.clkr,
-+	[EBI2_CLK] = &ebi2_clk.clkr,
-+	[EBI2_AON_CLK] = &ebi2_aon_clk.clkr,
- };
++				raspberrypi,touchscreen-bridge = <&pitouchscreen_bridge>;
++			};
+ 		};
  
- static const struct qcom_reset_map gcc_mdm9615_resets[] = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-mdm9615.h b/include/dt-bindings/clock/qcom,gcc-mdm9615.h
-index 9ab2c40..57cdca6 100644
---- a/include/dt-bindings/clock/qcom,gcc-mdm9615.h
-+++ b/include/dt-bindings/clock/qcom,gcc-mdm9615.h
-@@ -323,5 +323,8 @@
- #define CE3_H_CLK				305
- #define USB_HS1_SYSTEM_CLK_SRC			306
- #define USB_HS1_SYSTEM_CLK			307
-+#define EBI2_CLK				308
-+#define EBI2_AON_CLK				309
+ 		i2c1: i2c@7e804000 {
+@@ -346,6 +351,29 @@
+ 		vc4: gpu {
+ 			compatible = "brcm,bcm2835-vc4";
+ 		};
 +
++		i2c_dsi: i2c {
++			/* We have to use i2c-gpio because the
++			 * firmware is also polling another device
++			 * using the only hardware I2C bus that could
++			 * connect to these pins.
++			 */
++			compatible = "i2c-gpio";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			gpios = <&gpio 28 0
++				 &gpio 29 0>;
++
++			pitouchscreen_bridge: bridge@45 {
++				compatible = "raspberrypi,touchscreen-bridge-i2c";
++				reg = <0x45>;
++			};
++
++			pitouchscreen_touch: bridge@38 {
++				compatible = "raspberrypi,touchscreen-ts-i2c";
++				reg = <0x38>;
++			};
++		};
+ 	};
  
- #endif
+ 	clocks {
 -- 
-1.7.9.5
+2.11.0
