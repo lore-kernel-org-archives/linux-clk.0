@@ -1,98 +1,86 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	xf@rock-chips.com
-Cc: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	cl@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Florian Fainelli <f.fainelli@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	dri-devel@lists.freedesktop.org,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v3 2/4] dt-bindings: add bindings for rk3328 clock controller
-Date: Mon, 26 Dec 2016 11:45:28 +0800
-Message-Id: <1482723930-5876-3-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1482723930-5876-1-git-send-email-zhangqing@rock-chips.com>
-References: <1482723930-5876-1-git-send-email-zhangqing@rock-chips.com>
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-clk@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH 06/11] dt-bindings: Document the VC4 DSI module nodes.
+Date: Wed, 14 Dec 2016 11:46:16 -0800
+Message-Id: <20161214194621.16499-7-eric@anholt.net>
+In-Reply-To: <20161214194621.16499-1-eric@anholt.net>
+References: <20161214194621.16499-1-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add devicetree bindings for Rockchip cru which found on
-Rockchip SoCs.
+These are part of the vc4 display pipeline.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- .../bindings/clock/rockchip,rk3328-cru.txt         | 57 ++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+ .../devicetree/bindings/display/brcm,bcm-vc4.txt   | 35 ++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
-new file mode 100644
-index 000000000000..20053494d49f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
-@@ -0,0 +1,57 @@
-+* Rockchip RK3328 Clock and Reset Unit
+diff --git a/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt b/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
+index e2768703ac2b..34c7fddcea39 100644
+--- a/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
++++ b/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
+@@ -56,6 +56,18 @@ Required properties for V3D:
+ - interrupts:	The interrupt number
+ 		  See bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
+ 
++Required properties for DSI:
++- compatible:	Should be "brcm,bcm2835-dsi0" or "brcm,bcm2835-dsi1"
++- reg:		Physical base address and length of the DSI block's registers
++- interrupts:	The interrupt number
++		  See bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
++- clocks:	a) phy: The DSI PLL clock feeding the DSI analog PHY
++		b) escape: The DSI ESC clock from CPRMAN
++		c) pixel: The DSI pixel clock from CPRMAN
++- clock-output-names:
++		The 3 clocks output from the DSI analog PHY: dsi[01]_byte,
++		dsi[01]_ddr2, and dsi[01]_ddr
 +
-+The RK3328 clock controller generates and supplies clock to various
-+controllers within the SoC and also implements a reset controller for SoC
-+peripherals.
+ [1] Documentation/devicetree/bindings/media/video-interfaces.txt
+ 
+ Example:
+@@ -99,6 +111,29 @@ dpi: dpi@7e208000 {
+ 	};
+ };
+ 
++dsi1: dsi@7e700000 {
++	compatible = "brcm,bcm2835-dsi1";
++	reg = <0x7e700000 0x8c>;
++	interrupts = <2 12>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++	#clock-cells = <1>;
 +
-+Required Properties:
++	clocks = <&clocks BCM2835_PLLD_DSI1>,
++		 <&clocks BCM2835_CLOCK_DSI1E>,
++		 <&clocks BCM2835_CLOCK_DSI1P>;
++	clock-names = "phy", "escape", "pixel";
 +
-+- compatible: should be "rockchip,rk3328-cru"
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+- #clock-cells: should be 1.
-+- #reset-cells: should be 1.
++	clock-output-names = "dsi1_byte", "dsi1_ddr2", "dsi1_ddr";
 +
-+Optional Properties:
++	pitouchscreen: panel@0 {
++		compatible = "raspberrypi,touchscreen";
++		reg = <0>;
 +
-+- rockchip,grf: phandle to the syscon managing the "general register files"
-+  If missing pll rates are not changeable, due to the missing pll lock status.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. All available clocks are defined as
-+preprocessor macros in the dt-bindings/clock/rk3328-cru.h headers and can be
-+used in device tree sources. Similar macros exist for the reset sources in
-+these files.
-+
-+External clocks:
-+
-+There are several clocks that are generated outside the SoC. It is expected
-+that they are defined using standard clock bindings with following
-+clock-output-names:
-+ - "xin24m" - crystal input - required,
-+ - "clkin_i2s" - external I2S clock - optional,
-+ - "gmac_clkin" - external GMAC clock - optional
-+ - "phy_50m_out" - output clock of the pll in the mac phy
-+
-+Example: Clock controller node:
-+
-+	cru: clock-controller@ff440000 {
-+		compatible = "rockchip,rk3328-cru", "rockchip,cru", "syscon";
-+		reg = <0x0 0xff440000 0x0 0x1000>;
-+		rockchip,grf = <&grf>;
-+
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
++		<...>
 +	};
++};
 +
-+Example: UART controller node that consumes the clock generated by the clock
-+  controller:
-+
-+	uart0: serial@ff120000 {
-+		compatible = "snps,dw-apb-uart";
-+		reg = <0xff120000 0x100>;
-+		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+		clocks = <&cru SCLK_UART0>;
-+	};
+ vec: vec@7e806000 {
+ 	compatible = "brcm,bcm2835-vec";
+ 	reg = <0x7e806000 0x1000>;
 -- 
-1.9.1
+2.11.0
