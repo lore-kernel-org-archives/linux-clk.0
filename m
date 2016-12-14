@@ -1,73 +1,262 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: Add CPU OPPs for Exynos4412 Prime
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>,
- Kukjin Kim <kgene@kernel.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>,
- Thomas Abraham <thomas.ab@samsung.com>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Ben Gamari <ben@smart-cactus.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <6892749a-a8bd-cfb3-551c-f0b1ca6d2b84@samsung.com>
-Date: Thu, 29 Dec 2016 17:23:34 +0100
-MIME-version: 1.0
-In-reply-to: <1840714.lHhVv9oNko@amdc3058>
-Content-type: text/plain; charset=windows-1252
-References: <1483018611-27998-1-git-send-email-b.zolnierkie@samsung.com>
- <1483018611-27998-3-git-send-email-b.zolnierkie@samsung.com>
- <20161229144908.6gkvjpso7ikdmfp7@kozik-lap>
- <CGME20161229150623epcas1p2b2f0fbb6f9ddd11caffdc93487e2cf77@epcas1p2.samsung.com>
- <1840714.lHhVv9oNko@amdc3058>
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Florian Fainelli <f.fainelli@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	dri-devel@lists.freedesktop.org,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-clk@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH 02/11] clk: bcm2835: Register the DSI0/DSI1 pixel clocks.
+Date: Wed, 14 Dec 2016 11:46:12 -0800
+Message-Id: <20161214194621.16499-3-eric@anholt.net>
+In-Reply-To: <20161214194621.16499-1-eric@anholt.net>
+References: <20161214194621.16499-1-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/29/2016 04:06 PM, Bartlomiej Zolnierkiewicz wrote:
->>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->>> ---
->>>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 +--
->>>  arch/arm/boot/dts/exynos4412-odroidu3.dts       |  5 +--
->>>  arch/arm/boot/dts/exynos4412-odroidx2.dts       |  1 +
->>>  arch/arm/boot/dts/exynos4412-prime.dtsi         | 41 +++++++++++++++++++++++++
->>>  arch/arm/boot/dts/exynos4412.dtsi               |  2 +-
->>>  5 files changed, 48 insertions(+), 5 deletions(-)
->>>  create mode 100644 arch/arm/boot/dts/exynos4412-prime.dtsi
->>>
->> Looks okay. Is the clock patch needed for this?
-> Yep.
+The DSI pixel clocks are muxed from clocks generated in the analog phy
+by the DSI driver.  In order to set them as parents, we need to do the
+same name lookup dance on them as we do for our root oscillator.
 
-I applied the clock patch and here is a stable tag if it needs
-to be pulled as a dependency.
+Signed-off-by: Eric Anholt <eric@anholt.net>
+---
+ .../bindings/clock/brcm,bcm2835-cprman.txt         |  15 ++-
+ drivers/clk/bcm/clk-bcm2835.c                      | 120 ++++++++++++++++++---
+ include/dt-bindings/clock/bcm2835.h                |   2 +
+ 3 files changed, 124 insertions(+), 13 deletions(-)
 
-
-The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
-
-  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
-
-are available in the git repository at:
-
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-exynos4-pll
-
-for you to fetch changes up to c369596f895be88d09f4165b223fa31c64aaefd4:
-
-  clk: samsung: Add CPU clk configuration data for Exynos4412 Prime (2016-12-29
-16:34:06 +0100)
-
-----------------------------------------------------------------
-Addition of the CPU clock configuration data for Exynos4412
-Prime SoC variant.
-
-----------------------------------------------------------------
-Bartlomiej Zolnierkiewicz (1):
-      clk: samsung: Add CPU clk configuration data for Exynos4412 Prime
-
- drivers/clk/samsung/clk-exynos4.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
+index e56a1df3a9d3..dd906db34b32 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
++++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
+@@ -16,7 +16,20 @@ Required properties:
+ - #clock-cells:	Should be <1>. The permitted clock-specifier values can be
+ 		  found in include/dt-bindings/clock/bcm2835.h
+ - reg:		Specifies base physical address and size of the registers
+-- clocks:	The external oscillator clock phandle
++- clocks:	phandles to the parent clocks used as input to the module, in
++		  the following order:
++
++		  - External oscillator
++		  - DSI0 byte clock
++		  - DSI0 DDR2 clock
++		  - DSI0 DDR clock
++		  - DSI1 byte clock
++		  - DSI1 DDR2 clock
++		  - DSI1 DDR clock
++
++		  Only external oscillator is required.  The DSI clocks may
++		  not be present, in which case their children will be
++		  unusable.
+ 
+ Example:
+ 
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 6641030e8eae..b0a8cd19a30c 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -297,11 +297,32 @@
+ #define LOCK_TIMEOUT_NS		100000000
+ #define BCM2835_MAX_FB_RATE	1750000000u
+ 
++/*
++ * Names of clocks used within the driver that need to be replaced
++ * with an external parent's name.  This array is in the order that
++ * the clocks node in the DT references external clocks.
++ */
++static const char *const cprman_parent_names[] = {
++	"xosc",
++	"dsi0_byte",
++	"dsi0_ddr2",
++	"dsi0_ddr",
++	"dsi1_byte",
++	"dsi1_ddr2",
++	"dsi1_ddr",
++};
++
+ struct bcm2835_cprman {
+ 	struct device *dev;
+ 	void __iomem *regs;
+ 	spinlock_t regs_lock; /* spinlock for all clocks */
+-	const char *osc_name;
++
++	/*
++	 * Real names of cprman clock parents looked up through
++	 * of_clk_get_parent_name(), which will be used in the
++	 * parent_names[] arrays for clock registration.
++	 */
++	const char *real_parent_names[ARRAY_SIZE(cprman_parent_names)];
+ 
+ 	/* Must be last */
+ 	struct clk_hw_onecell_data onecell;
+@@ -905,6 +926,9 @@ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
+ 	const struct bcm2835_clock_data *data = clock->data;
+ 	u64 temp;
+ 
++	if (data->int_bits == 0 && data->frac_bits == 0)
++		return parent_rate;
++
+ 	/*
+ 	 * The divisor is a 12.12 fixed point field, but only some of
+ 	 * the bits are populated in any given clock.
+@@ -928,7 +952,12 @@ static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
+ 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+ 	struct bcm2835_cprman *cprman = clock->cprman;
+ 	const struct bcm2835_clock_data *data = clock->data;
+-	u32 div = cprman_read(cprman, data->div_reg);
++	u32 div;
++
++	if (data->int_bits == 0 && data->frac_bits == 0)
++		return parent_rate;
++
++	div = cprman_read(cprman, data->div_reg);
+ 
+ 	return bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
+ }
+@@ -1158,7 +1187,7 @@ static struct clk_hw *bcm2835_register_pll(struct bcm2835_cprman *cprman,
+ 	memset(&init, 0, sizeof(init));
+ 
+ 	/* All of the PLLs derive from the external oscillator. */
+-	init.parent_names = &cprman->osc_name;
++	init.parent_names = &cprman->real_parent_names[0];
+ 	init.num_parents = 1;
+ 	init.name = data->name;
+ 	init.ops = &bcm2835_pll_clk_ops;
+@@ -1244,18 +1273,22 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	struct bcm2835_clock *clock;
+ 	struct clk_init_data init;
+ 	const char *parents[1 << CM_SRC_BITS];
+-	size_t i;
++	size_t i, j;
+ 	int ret;
+ 
+ 	/*
+-	 * Replace our "xosc" references with the oscillator's
+-	 * actual name.
++	 * Replace our strings referencing parent clocks with the
++	 * actual clock-output-name of the parent.
+ 	 */
+ 	for (i = 0; i < data->num_mux_parents; i++) {
+-		if (strcmp(data->parents[i], "xosc") == 0)
+-			parents[i] = cprman->osc_name;
+-		else
+-			parents[i] = data->parents[i];
++		parents[i] = data->parents[i];
++
++		for (j = 0; j < ARRAY_SIZE(cprman_parent_names); j++) {
++			if (strcmp(parents[i], cprman_parent_names[j]) == 0) {
++				parents[i] = cprman->real_parent_names[j];
++				break;
++			}
++		}
+ 	}
+ 
+ 	memset(&init, 0, sizeof(init));
+@@ -1375,6 +1408,47 @@ static const char *const bcm2835_clock_vpu_parents[] = {
+ 	__VA_ARGS__)
+ 
+ /*
++ * DSI parent clocks.  The DSI byte/DDR/DDR2 clocks come from the DSI
++ * analog PHY.  The _inv variants are generated internally to cprman,
++ * but we don't use them so they aren't hooked up.
++ */
++static const char *const bcm2835_clock_dsi0_parents[] = {
++	"gnd",
++	"xosc",
++	"testdebug0",
++	"testdebug1",
++	"dsi0_ddr",
++	"dsi0_ddr_inv",
++	"dsi0_ddr2",
++	"dsi0_ddr2_inv",
++	"dsi0_byte",
++	"dsi0_byte_inv",
++};
++
++static const char *const bcm2835_clock_dsi1_parents[] = {
++	"gnd",
++	"xosc",
++	"testdebug0",
++	"testdebug1",
++	"dsi1_ddr",
++	"dsi1_ddr_inv",
++	"dsi1_ddr2",
++	"dsi1_ddr2_inv",
++	"dsi1_byte",
++	"dsi1_byte_inv",
++};
++
++#define REGISTER_DSI0_CLK(...)	REGISTER_CLK(				\
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_dsi0_parents),	\
++	.parents = bcm2835_clock_dsi0_parents,				\
++	__VA_ARGS__)
++
++#define REGISTER_DSI1_CLK(...)	REGISTER_CLK(				\
++	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_dsi1_parents),	\
++	.parents = bcm2835_clock_dsi1_parents,				\
++	__VA_ARGS__)
++
++/*
+  * the real definition of all the pll, pll_dividers and clocks
+  * these make use of the above REGISTER_* macros
+  */
+@@ -1832,6 +1906,18 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.div_reg = CM_DSI1EDIV,
+ 		.int_bits = 4,
+ 		.frac_bits = 8),
++	[BCM2835_CLOCK_DSI0P]	= REGISTER_DSI0_CLK(
++		.name = "dsi0p",
++		.ctl_reg = CM_DSI0PCTL,
++		.div_reg = CM_DSI0PDIV,
++		.int_bits = 0,
++		.frac_bits = 0),
++	[BCM2835_CLOCK_DSI1P]	= REGISTER_DSI1_CLK(
++		.name = "dsi1p",
++		.ctl_reg = CM_DSI1PCTL,
++		.div_reg = CM_DSI1PDIV,
++		.int_bits = 0,
++		.frac_bits = 0),
+ 
+ 	/* the gates */
+ 
+@@ -1890,8 +1976,18 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
+ 	if (IS_ERR(cprman->regs))
+ 		return PTR_ERR(cprman->regs);
+ 
+-	cprman->osc_name = of_clk_get_parent_name(dev->of_node, 0);
+-	if (!cprman->osc_name)
++	for (i = 0; i < ARRAY_SIZE(cprman_parent_names); i++) {
++		cprman->real_parent_names[i] =
++			of_clk_get_parent_name(dev->of_node, i);
++	}
++	/*
++	 * Make sure the external oscillator has been registered.
++	 *
++	 * The other (DSI) clocks are not present on older device
++	 * trees, which we still need to support for backwards
++	 * compatibility.
++	 */
++	if (!cprman->real_parent_names[0])
+ 		return -ENODEV;
+ 
+ 	platform_set_drvdata(pdev, cprman);
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index 360e00cefd35..a0c812b0fa39 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -64,3 +64,5 @@
+ #define BCM2835_CLOCK_CAM1		46
+ #define BCM2835_CLOCK_DSI0E		47
+ #define BCM2835_CLOCK_DSI1E		48
++#define BCM2835_CLOCK_DSI0P		49
++#define BCM2835_CLOCK_DSI1P		50
 -- 
-Regards,
-Sylwester
+2.11.0
