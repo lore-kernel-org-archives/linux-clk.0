@@ -1,80 +1,115 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <chris.brandt@renesas.com>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Nadav Haklai <nadavh@marvell.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH] clk: mvebu: adjust AP806 CPU clock frequencies to production chip
-Date: Thu, 22 Dec 2016 13:08:14 +0100
-Message-Id: <1482408494-7429-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2] clk: renesas: mstp: Support 8-bit registers for r7s72100
+Date: Thu, 15 Dec 2016 12:00:27 -0500
+Message-Id: <20161215170027.28411-1-chris.brandt@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adjusts the list of possible "Sample At Reset" values that
-define the CPU clock frequency of the AP806 (part of Marvell Armada
-7K/8K) to the values that have been validated with the production
-chip. Earlier values were preliminary.
+The RZ/A1 is different than the other Renesas SOCs because the MSTP
+registers are 8-bit instead of 32-bit and if you try writing values as
+32-bit nothing happens...meaning this driver never worked for r7s72100.
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Fixes: b6face404f38 ("ARM: shmobile: r7s72100: add essential clock nodes to dtsi")
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
- drivers/clk/mvebu/ap806-system-controller.c | 28 +++++++++++++++++++++++-----
- 1 file changed, 23 insertions(+), 5 deletions(-)
+v2:
+* move r7s72100 detection inside cpg_mstp_clocks_init()
+* change width_8bit flag from global to inside group struct
+---
+ drivers/clk/renesas/clk-mstp.c | 27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
-index 02023ba..962e0c5 100644
---- a/drivers/clk/mvebu/ap806-system-controller.c
-+++ b/drivers/clk/mvebu/ap806-system-controller.c
-@@ -55,21 +55,39 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 9375777..b533f99 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -37,12 +37,14 @@
+  * @smstpcr: module stop control register
+  * @mstpsr: module stop status register (optional)
+  * @lock: protects writes to SMSTPCR
++ * @width_8bit: registers are 8-bit, not 32-bit
+  */
+ struct mstp_clock_group {
+ 	struct clk_onecell_data data;
+ 	void __iomem *smstpcr;
+ 	void __iomem *mstpsr;
+ 	spinlock_t lock;
++	bool width_8bit;
+ };
  
- 	freq_mode = reg & AP806_SAR_CLKFREQ_MODE_MASK;
- 	switch (freq_mode) {
--	case 0x0 ... 0x5:
-+	case 0x0:
-+	case 0x1:
- 		cpuclk_freq = 2000;
- 		break;
--	case 0x6 ... 0xB:
-+	case 0x6:
-+	case 0x7:
- 		cpuclk_freq = 1800;
- 		break;
--	case 0xC ... 0x11:
-+	case 0x4:
-+	case 0xB:
-+	case 0xD:
- 		cpuclk_freq = 1600;
- 		break;
--	case 0x12 ... 0x16:
-+	case 0x1a:
- 		cpuclk_freq = 1400;
- 		break;
--	case 0x17 ... 0x19:
-+	case 0x14:
-+	case 0x17:
- 		cpuclk_freq = 1300;
- 		break;
-+	case 0x19:
-+		cpuclk_freq = 1200;
-+		break;
-+	case 0x13:
-+	case 0x1d:
-+		cpuclk_freq = 1000;
-+		break;
-+	case 0x1c:
-+		cpuclk_freq = 800;
-+		break;
-+	case 0x1b:
-+		cpuclk_freq = 600;
-+		break;
- 	default:
- 		dev_err(&pdev->dev, "invalid SAR value\n");
- 		return -EINVAL;
+ /**
+@@ -59,6 +61,18 @@ struct mstp_clock {
+ 
+ #define to_mstp_clock(_hw) container_of(_hw, struct mstp_clock, hw)
+ 
++static inline u32 cpg_mstp_read(struct mstp_clock_group *group,
++				u32 __iomem *reg)
++{
++	return group->width_8bit ? readb(reg) : clk_readl(reg);
++}
++
++static inline void cpg_mstp_write(struct mstp_clock_group *group, u32 val,
++				  u32 __iomem *reg)
++{
++	group->width_8bit ? writeb(val, reg) : clk_writel(val, reg);
++}
++
+ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ {
+ 	struct mstp_clock *clock = to_mstp_clock(hw);
+@@ -70,12 +84,12 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ 
+ 	spin_lock_irqsave(&group->lock, flags);
+ 
+-	value = clk_readl(group->smstpcr);
++	value = cpg_mstp_read(group, group->smstpcr);
+ 	if (enable)
+ 		value &= ~bitmask;
+ 	else
+ 		value |= bitmask;
+-	clk_writel(value, group->smstpcr);
++	cpg_mstp_write(group, value, group->smstpcr);
+ 
+ 	spin_unlock_irqrestore(&group->lock, flags);
+ 
+@@ -83,7 +97,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ 		return 0;
+ 
+ 	for (i = 1000; i > 0; --i) {
+-		if (!(clk_readl(group->mstpsr) & bitmask))
++		if (!(cpg_mstp_read(group, group->mstpsr) & bitmask))
+ 			break;
+ 		cpu_relax();
+ 	}
+@@ -114,9 +128,9 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
+ 	u32 value;
+ 
+ 	if (group->mstpsr)
+-		value = clk_readl(group->mstpsr);
++		value = cpg_mstp_read(group, group->mstpsr);
+ 	else
+-		value = clk_readl(group->smstpcr);
++		value = cpg_mstp_read(group, group->smstpcr);
+ 
+ 	return !(value & BIT(clock->bit_index));
+ }
+@@ -188,6 +202,9 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
+ 		return;
+ 	}
+ 
++	if (of_device_is_compatible(np, "renesas,r7s72100-mstp-clocks"))
++		group->width_8bit = true;
++
+ 	for (i = 0; i < MSTP_MAX_CLOCKS; ++i)
+ 		clks[i] = ERR_PTR(-ENOENT);
+ 
 -- 
-2.7.4
+2.10.1
