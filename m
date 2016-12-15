@@ -1,33 +1,33 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Dec 2016 15:57:54 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org, mturquette@baylibre.com,
-	robh+dt@kernel.org, mark.rutland@arm.com, varada@codeaurora.org,
-	pradeepb@codeaurora.org, snlakshm@codeaurora.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 3/6] clk: qcom: ipq4019: Add the nodes for pcnoc
-Message-ID: <20161221235754.GL8288@codeaurora.org>
-References: <1480088493-4590-1-git-send-email-absahu@codeaurora.org>
- <1480088493-4590-4-git-send-email-absahu@codeaurora.org>
+Return-Path: <dianders@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1480088493-4590-4-git-send-email-absahu@codeaurora.org>
+In-Reply-To: <1481710301-1454-3-git-send-email-zhengxing@rock-chips.com>
+References: <1481710301-1454-1-git-send-email-zhengxing@rock-chips.com> <1481710301-1454-3-git-send-email-zhengxing@rock-chips.com>
+From: Doug Anderson <dianders@google.com>
+Date: Wed, 14 Dec 2016 16:28:05 -0800
+Message-ID: <CAD=FV=XYH_7nFrOCmXXyb6JM4L4SrPcasOayDACZmhjs3tg-pQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: rockchip: rk3399: export 480M_SRC clocks id for usbphy0/usbphy1
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/25, Abhishek Sahu wrote:
-> The current ipq4019 clock driver does not have the node for
-> PCNOC so this patch adds and registers the PCNOC clock nodes.
-> This PCNOC clock is critical and should not be turned off so
-> setting CRITICAL flag also.
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Hi,
+
+On Wed, Dec 14, 2016 at 2:11 AM, Xing Zheng <zhengxing@rock-chips.com> wrote:
+> This patch exports USBPHYx_480M_SRC clocks for usbphy.
+>
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 > ---
+>
+>  drivers/clk/rockchip/clk-rk3399.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to clk-ipq4019 and merged into clk-next.
+As mentioned in the dts patch, I don't think you need these since I'm
+under the impression that nobody gets this clock.  I think the USB
+Controller get the ungated version of this clock.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+-Doug
