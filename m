@@ -1,68 +1,112 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [PATCH v6 1/3] clk: x86: Add Atom PMC platform clocks
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
- Irina Tirdea <irina.tirdea@intel.com>
-References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
- <1481306510-7471-2-git-send-email-irina.tirdea@intel.com>
- <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
-Cc: linux-clk@vger.kernel.org, "x86@kernel.org" <x86@kernel.org>,
- platform-driver-x86@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
- Darren Hart <dvhart@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Michael Turquette <mturquette@baylibre.com>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- ALSA Development Mailing List <alsa-devel@alsa-project.org>,
- Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <1a98dcda-a662-958e-307f-5fe3f281ed9f@linux.intel.com>
-Date: Mon, 12 Dec 2016 18:15:09 -0600
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+ Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH v2] ARM: dts: sun8i: add opp-v2 table for A33
+Date: Fri, 16 Dec 2016 02:27:54 +0800
+Message-Id: <20161215182754.33921-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+An operating point table is needed for the cpu frequency adjusting to
+work.
 
-> Thanks for an update I will comment all the patches.
-> Here we start.
+The operating point table is converted from the common value in
+extracted script.fex from many A33 board/tablets.
 
-Thanks Andy for the review. Two quick comments before going further in 
-the details later.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+Changes since v1:
+- Fix format problem (blank lines).
+- Removed the 1.344GHz operating point, as it's overvoltage and overclocked.
 
->
->> The BayTrail and CherryTrail platforms provide platform clocks
->> through their Power Management Controller (PMC).
->>
->> The SoC supports up to 6 clocks (PMC_PLT_CLK[5:0]) with a
->> frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL) for BayTrail
->> and a frequency of 19.2 MHz (XTAL) for CherryTrail. These clocks
->> are available for general system use, where appropriate, and each
->> have Control & Frequency register fields associated with them.
->>
->> Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
->> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
->
-> Who is the actual author? SoB I guess should be either the author, or
-> 1st, 2nd, ..., last one who is submitter.
+This patch depends on the following patchset:
 
-I ported the initial code from Android legacy stuff and Irina ported the 
-functionality to the clk framework. It seems appropriate to have both 
-signed-offs?
+http://lists.infradead.org/pipermail/linux-arm-kernel/2016-December/473962.html
 
-[snip]
->
->> +#include <linux/platform_data/x86/clk-byt-plt.h>
+It's the v2 of the [PATCH 4/6] in this patchset.
 
-This was a suggestion of Darren Hart in agreement with Thomas Gleixner.
-see 
-http://mailman.alsa-project.org/pipermail/alsa-devel/2016-October/113936.html
+I think this operating point table may also apply to A23, as there's no
+difference except the points over 1.2GHz between A23 and A33's stock dvfs table.
 
-Darren, did we get your proposal right?
+But as A23 CCU may not have the necessary fixes, I won't add the table to A23
+now.
 
->
-> Is it indeed platform data? I would not create platform_data/x86
-> without strong argument.
-> Perhaps include/linux/clk/x86_pmc.h? (Yes, I know about clk-lpss.h
-> which is old enough and was basically first try of clk stuff on x86)
+Chen-Yu, could you test the CCU fixes I described in the patchset above on A23,
+then test this operating points table?
+
+If it's necessary, you can send out the CCU fixes and add one more patch that
+moves this opp-v2 table to sun8i-a23-a33.dtsi .
+
+ arch/arm/boot/dts/sun8i-a33.dtsi | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
+index 504996cbee29..0f5b2af72981 100644
+--- a/arch/arm/boot/dts/sun8i-a33.dtsi
++++ b/arch/arm/boot/dts/sun8i-a33.dtsi
+@@ -46,7 +46,42 @@
+ #include <dt-bindings/dma/sun4i-a10.h>
+ 
+ / {
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp@648000000 {
++			opp-hz = /bits/ 64 <648000000>;
++			opp-microvolt = <1040000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++		};
++
++		opp@816000000 {
++			opp-hz = /bits/ 64 <816000000>;
++			opp-microvolt = <1100000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++		};
++
++		opp@1008000000 {
++			opp-hz = /bits/ 64 <1008000000>;
++			opp-microvolt = <1200000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++		};
++
++		opp@1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <1320000>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
++		};
++	};
++
+ 	cpus {
++		cpu0: cpu@0 {
++			clocks = <&ccu CLK_CPUX>;
++			clock-names = "cpu";
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++
+ 		cpu@2 {
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+-- 
+2.11.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
