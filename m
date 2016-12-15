@@ -1,123 +1,103 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 13 Dec 2016 20:12:54 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
+Return-Path: <chris.brandt@renesas.com>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jorik Jonker <jorik@kippendief.biz>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 4/6] ARM: dts: sun8i: add opp-v2 table for A33
-Message-ID: <20161213191254.pgcuvrpnebgw666g@lukather>
-References: <20161213152252.53749-1-icenowy@aosc.xyz>
- <20161213152252.53749-5-icenowy@aosc.xyz>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nkhll3tmoidspbu2"
-In-Reply-To: <20161213152252.53749-5-icenowy@aosc.xyz>
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH] clk: renesas: mstp: Support 8-bit registers for r7s72100
+Date: Wed, 14 Dec 2016 21:11:34 -0500
+Message-Id: <20161215021134.14902-1-chris.brandt@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+The RZ/A1 is different than the other Renesas SOCs because the MSTP
+registers are 8-bit instead of 32-bit and if you try writing values as
+32-bit nothing happens...meaning this driver never worked for r7s72100.
 
---nkhll3tmoidspbu2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: b6face404f38 ("ARM: shmobile: r7s72100: add essential clock nodes to dtsi")
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ drivers/clk/renesas/clk-mstp.c | 33 ++++++++++++++++++++++++++++-----
+ 1 file changed, 28 insertions(+), 5 deletions(-)
 
-On Tue, Dec 13, 2016 at 11:22:50PM +0800, Icenowy Zheng wrote:
-> An operating point table is needed for the cpu frequency adjusting to
-> work.
->=20
-> The operating point table is converted from the common value in
-> extracted script.fex from many A33 board/tablets.
->=20
-> 1.344GHz is set as a turbo-mode operating point, as it's described as
-> "extremity_freq" in the FEX file. (the "max_freq" is 1.2GHz)
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-> ---
->  arch/arm/boot/dts/sun8i-a33.dtsi | 38 ++++++++++++++++++++++++++++++++++=
-++++
->  1 file changed, 38 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a=
-33.dtsi
-> index 504996cbee29..035c058324b8 100644
-> --- a/arch/arm/boot/dts/sun8i-a33.dtsi
-> +++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-> @@ -46,7 +46,45 @@
->  #include <dt-bindings/dma/sun4i-a10.h>
-> =20
->  / {
-> +	cpu0_opp_table: opp_table0 {
-> +		compatible =3D "operating-points-v2";
-> +		opp-shared;
-> +
-> +		opp@648000000 {
-> +			opp-hz =3D /bits/ 64 <648000000>;
-> +			opp-microvolt =3D <1040000>;
-> +			clock-latency-ns =3D <244144>; /* 8 32k periods */
-> +		};
-
-Please add new lines between the nodes.
-
-> +		opp@816000000 {
-> +			opp-hz =3D /bits/ 64 <816000000>;
-> +			opp-microvolt =3D <1100000>;
-> +			clock-latency-ns =3D <244144>; /* 8 32k periods */
-> +		};
-> +		opp@1008000000 {
-> +			opp-hz =3D /bits/ 64 <1008000000>;
-> +			opp-microvolt =3D <1200000>;
-> +			clock-latency-ns =3D <244144>; /* 8 32k periods */
-> +		};
-> +		opp@1200000000 {
-> +			opp-hz =3D /bits/ 64 <1200000000>;
-> +			opp-microvolt =3D <1320000>;
-> +			clock-latency-ns =3D <244144>; /* 8 32k periods */
-> +		};
-> +		opp@1344000000 {
-> +			opp-hz =3D /bits/ 64 <1344000000>;
-> +			opp-microvolt =3D <1460000>;
-> +			clock-latency-ns =3D <244144>; /* 8 32k periods */
-> +			turbo-mode;
-> +		};
-
-As far as I know, this OPP is not used by Allwinner, is not usable in
-any A33 board so far (both the A33-olinuxino and the SinA33 do not
-allow such a voltage on their CPU regulator), and overvolting and
-overclocking is something that is very risky, and might lead to
-stability issues.
-
-Please remove this OPP.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---nkhll3tmoidspbu2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYUEgyAAoJEBx+YmzsjxAgiF8P/0yVm5s6rvegpYfOz9HdGGZr
-RZPI5n89Gwmirr9HzSm/mnYo4bXfO6LLmsAGJxIqz/wkIkF3xONfx8paprsmOHSd
-V/J0Pqvn3oiyXFBqskCqCSsZw7voge8aM8lja0/ymPlzloNMV5GmPRH2Hdi/8Org
-d3THl+8GMwpW23lzCWcoZuwLQpvqL4KJPZEe33/z7J1JQu1tFFN8Pa1OoQlXLl90
-tQR7+YqhTZJsZM3af6GFZOzw+8XEt1UpHmtps5bpWV9cts+fDGfP8OXSbblLn/j1
-Crs4TTpNw2v0VYNp4Q9imOnzgSDYZIbrOU4xtf2HAIMTbmVWurmnNK8DumgpmcC1
-se5hG0TLr+oHdk7w1RVBviE/cK+X4bc5bSZ5jEMjwa7C6xpxWyTD7e73TKJE38IT
-8XgZTGfoj0K5BlDWADHI9zS5e8m2SqK+0U2J8lR/8Cu+T1eU/4W7QQLMb84zSUkO
-5sRts33y9Pehlf8Ueg7rP6uyxxy00AoEhqcpUpl9RIG73qsaY49V8LzUvvO8qpQT
-fprY3MF+Snq3RmXR1a3xxP5U76ZdrFj3e6dHE+JhtWqL2R9QORPMBJ6sYo/XWJNy
-1SPqIbP0CuTYci9A0kmuACRsT6XyozqXESpSUNFXwMOFUwwmFPmRms6tylCcN0n1
-QJEmXU7jHrwJQLVRyQ8k
-=S7WT
------END PGP SIGNATURE-----
-
---nkhll3tmoidspbu2--
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 9375777..69c3604 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -59,6 +59,21 @@ struct mstp_clock {
+ 
+ #define to_mstp_clock(_hw) container_of(_hw, struct mstp_clock, hw)
+ 
++/**
++ * Some devices only have 8-bit registers
++ */
++bool reg_width_8bit;
++
++static inline u32 cpg_mstp_read(u32 __iomem *reg)
++{
++	return reg_width_8bit ? readb(reg) : clk_readl(reg);
++}
++
++static inline void cpg_mstp_write(u32 val, u32 __iomem *reg)
++{
++	reg_width_8bit ? writeb(val, reg) : clk_writel(val, reg);
++}
++
+ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ {
+ 	struct mstp_clock *clock = to_mstp_clock(hw);
+@@ -70,12 +85,12 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ 
+ 	spin_lock_irqsave(&group->lock, flags);
+ 
+-	value = clk_readl(group->smstpcr);
++	value = cpg_mstp_read(group->smstpcr);
+ 	if (enable)
+ 		value &= ~bitmask;
+ 	else
+ 		value |= bitmask;
+-	clk_writel(value, group->smstpcr);
++	cpg_mstp_write(value, group->smstpcr);
+ 
+ 	spin_unlock_irqrestore(&group->lock, flags);
+ 
+@@ -83,7 +98,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ 		return 0;
+ 
+ 	for (i = 1000; i > 0; --i) {
+-		if (!(clk_readl(group->mstpsr) & bitmask))
++		if (!(cpg_mstp_read(group->mstpsr) & bitmask))
+ 			break;
+ 		cpu_relax();
+ 	}
+@@ -114,9 +129,9 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
+ 	u32 value;
+ 
+ 	if (group->mstpsr)
+-		value = clk_readl(group->mstpsr);
++		value = cpg_mstp_read(group->mstpsr);
+ 	else
+-		value = clk_readl(group->smstpcr);
++		value = cpg_mstp_read(group->smstpcr);
+ 
+ 	return !(value & BIT(clock->bit_index));
+ }
+@@ -243,6 +258,14 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
+ }
+ CLK_OF_DECLARE(cpg_mstp_clks, "renesas,cpg-mstp-clocks", cpg_mstp_clocks_init);
+ 
++static void __init cpg_mstp_clocks_init8(struct device_node *np)
++{
++	reg_width_8bit = true;
++	cpg_mstp_clocks_init(np);
++}
++CLK_OF_DECLARE(cpg_mstp_clks8, "renesas,r7s72100-mstp-clocks",
++	       cpg_mstp_clocks_init8);
++
+ int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev)
+ {
+ 	struct device_node *np = dev->of_node;
+-- 
+2.10.1
