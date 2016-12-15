@@ -1,41 +1,53 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Dec 2016 16:10:51 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
+Return-Path: <broonie@sirena.org.uk>
+Date: Thu, 15 Dec 2016 12:21:15 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King - ARM Linux <linux@armlinux.org.uk>,
+	Rob Herring <robh@kernel.org>,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Linux-DT <devicetree@vger.kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, kernel@stlinux.com, ludovic.barre@st.com,
-	olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [PATCH v4 1/9] clk: stm32f4: Update DT bindings documentation
-Message-ID: <20161222001051.GP8288@codeaurora.org>
-References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
- <1481638820-29324-2-git-send-email-gabriel.fernandez@st.com>
+	Linux-Kernel <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org,
+	Linux-ARM <linux-arm-kernel@lists.infradead.org>
+Message-ID: <20161215122115.zpxawc2xdc45rczf@sirena.org.uk>
+References: <874m2jvtmw.wl%kuninori.morimoto.gx@renesas.com>
+ <20161208220824.GM5423@codeaurora.org>
+ <8737hyymo9.wl%kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1481638820-29324-2-git-send-email-gabriel.fernandez@st.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="eoumllemmyfv2hgm"
+In-Reply-To: <8737hyymo9.wl%kuninori.morimoto.gx@renesas.com>
+Subject: Re: [PATCH 0/3] clkdev: add devm_get_clk_from_child()
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/13, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> Creation of dt include file for specific stm32f4 clocks.
-> These specific clocks are not derived from system clock (SYSCLOCK)
-> We should use index 1 to use these clocks in DT.
-> e.g. <&rcc 1 CLK_LSI>
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
 
-Applied to clk-stm32f4 and merged into clk-next.
+--eoumllemmyfv2hgm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On Fri, Dec 09, 2016 at 12:25:48AM +0000, Kuninori Morimoto wrote:
+
+> Mark, I think I should re-post 2nd patch (3rd will be dropped) after
+> merge window ? There will be no branch dependency
+
+Should be fine without but obviously if it looks like it's gone AWOL
+then reposting would be good.
+
+--eoumllemmyfv2hgm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlhSirsACgkQJNaLcl1U
+h9DJ2Qf+PnRfUeFgE7kn755ufmOqtC1Hwq+qO1h+5mCNU57wBZJhx7Way15NSKn2
+p9pUUuDf7CK2GeOLicbHEDHW7Wxow96+gfD+CjSPFutpiU9KB1re6HwXB6a6l1YZ
+dYity7pJc1G3AtWOJSD9LqIuu9TsxbqXW81323lO0Kk8opXEzthTQIVeYK9Wl0r+
+1RbnW/N5iVqxnByjmE678pk7jxO7W5Guaz3ytpyDInvoksjL3Xf0GN3kWrKCr6Zs
+qoU/2dErHcSo4yjrZ2clCcU7rkIZXPf8OV2JTxGK7XQDvDd06Ik5esiLQnElkM3M
+lDSeZYl7KJPccMUia+3jGxZLPf/4Bg==
+=LWmD
+-----END PGP SIGNATURE-----
+
+--eoumllemmyfv2hgm--
