@@ -1,31 +1,97 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 8 Dec 2016 15:14:44 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] clk: cdce925: Fix limit check
-Message-ID: <20161208231444.GX5423@codeaurora.org>
-References: <20161111214905.29481-1-christophe.jaillet@wanadoo.fr>
+Return-Path: <shawnguo@kernel.org>
+Date: Fri, 16 Dec 2016 14:40:41 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Baoyou Xie <xie.baoyou@zte.com.cn>, Jun Nie <jun.nie@linaro.org>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH 2/2] clk: zte: add audio clocks for zx296718
+Message-ID: <20161216064039.GB8787@dragon>
+References: <1481189157-8995-1-git-send-email-shawnguo@kernel.org>
+ <1481189157-8995-2-git-send-email-shawnguo@kernel.org>
+ <20161208210453.GH5423@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161111214905.29481-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20161208210453.GH5423@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11/11, Christophe JAILLET wrote:
-> It is likely that instead of '1>64', 'q>64' was expected.
+On Thu, Dec 08, 2016 at 01:04:53PM -0800, Stephen Boyd wrote:
+> > +	if (of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &audio_hw_onecell_data))
+> > +		panic("could not register clk provider\n");
 > 
-> Moreover, according to datasheet,
->    http://www.ti.com/lit/ds/symlink/cdce925.pdf
->    SCAS847I - JULY 2007 - REVISED OCTOBER 2016
-> PLL settings limits are: 16 <= q <= 63
-> So change the upper limit check from 64 to 63.
+> Why don't we return error? We returned errors before if we
+> couldn't map the ioregion.
+
+Yes.  Rather than panic, we should check return and give an error
+message in case of failure.
+
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+> > +	pr_info("audio-clk init over, nr:%d\n", AUDIO_NR_CLKS);
+> 
+> debug noise?
 
-Applied to clk-next
+Agreed.  I will just clean it up.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+<snip>
+
+> > +static unsigned long audio_calc_rate(struct clk_zx_audio_divider *audio_div,
+> > +				     u32 reg_frac, u32 reg_int,
+> > +				     unsigned long parent_rate)
+> > +{
+> > +	unsigned long rate, m, n;
+> > +
+> > +	if (audio_div->table) {
+> > +		const struct zx_clk_audio_div_table *divt = audio_div->table;
+> > +
+> > +		for (; divt->rate; divt++) {
+> > +			if ((divt->int_reg == reg_int) && (divt->frac_reg == reg_frac))
+> 
+> Please remove extra parenthesis here.
+
+The whole hunk of the code will be dropped, since the divider lookup
+table is not actually used.
+
+> 
+> > +				return divt->rate;
+> > +		}
+> > +	}
+> > +	if (audio_div->table)
+> > +		pr_warn("cannot found the config(int_reg:0x%x, frac_reg:0x%x) in table, we will caculate it\n",
+> > +			reg_int, reg_frac);
+
+<snip>
+
+> > +	div_table->rate = (ulong)(parent_rate * n) / ((ulong)reg_int * n + m);
+> 
+> Please don't use ulong, use unsigned long. Also consider using
+> local variables so the line isn't overly long.
+
+It seems to me that none of the type casts is really necessary.  So I
+will just drop them.
+
+> 
+> > +	div_table->int_reg = reg_int;
+> > +	div_table->frac_reg = reg_frac;
+> > +}
+> [...]
+> > +
+> > +static int zx_audio_div_set_rate(struct clk_hw *hw, unsigned long rate,
+> > +				    unsigned long parent_rate)
+> > +{
+> > +	struct clk_zx_audio_divider *zx_audio_div = to_clk_zx_audio_div(hw);
+> > +	struct zx_clk_audio_div_table divt;
+> > +	unsigned int val;
+> > +
+> > +	audio_calc_reg(zx_audio_div, &divt, rate, parent_rate);
+> > +	if (divt.rate != rate)
+> > +		pr_info("the real rate is:%ld", divt.rate);
+> 
+> Debug noise?
+
+I will change it to pr_debug.
+
+Shawn
