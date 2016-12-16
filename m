@@ -1,55 +1,43 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:48556 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932299AbcLHVSd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Dec 2016 16:18:33 -0500
-Date: Thu, 8 Dec 2016 13:18:31 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: warnings with clk_disable_unprepare()
-Message-ID: <20161208211831.GL5423@codeaurora.org>
-References: <d755ee65-937f-1581-ac74-347b9e4c8d51@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <d755ee65-937f-1581-ac74-347b9e4c8d51@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <shawnguo@kernel.org>
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Jun Nie <jun.nie@linaro.org>,
+	Baoyou Xie <xie.baoyou@zte.com.cn>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Shawn Guo <shawnguo@kernel.org>,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH v2 2/3] dt-bindings: zx296718-clk: add compatible for audio clock controller
+Date: Fri, 16 Dec 2016 15:26:46 +0800
+Message-Id: <1481873207-22929-3-git-send-email-shawnguo@kernel.org>
+In-Reply-To: <1481873207-22929-1-git-send-email-shawnguo@kernel.org>
+References: <1481873207-22929-1-git-send-email-shawnguo@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/05, Pierre-Louis Bossart wrote:
-> Hi,
-> In the modified cht-bsw_rt5645 machine driver for Asus X205TA and
-> T100HA, I disable the audio mclk with a call to
-> clk_disable_unprepare() when I see a SND_SOC_DAPM_EVENT_OFF event in
-> the platform_clock_control hook.
-> 
-> For some reason I seem to get multiple SND_SOC_DAPM_EVENT_OFF events
-> and the clock framework complains with dmesg warnings that the
-> refcount is already zero (which has no functional side effect).
-> 
-> WARNING: CPU: 0 PID: 2002 at drivers/clk/clk.c:476 clk_unprepare+0x1a/0x21
-> 
-> WARNING: CPU: 2 PID: 2095 at drivers/clk/clk.c:594
-> clk_core_disable_lock+0x12/0x1b
-> 
-> I could fix this in three different ways:
-> - remove multiple SND_SOC_DAPM_EVENT_OFF events (not sure what the
-> root cause is, maybe issues with jack detection?)
+From: Shawn Guo <shawn.guo@linaro.org>
 
-It would be good to know what the root cause is here before
-thinking about doing anything else.
+It adds the compatible string for zx296718 audio clock controller.
 
-> - call a clk_is_enabled() or clk_refcount() function before calling
-> clk_disable_unprepare() (but they don't seem to exist in
-> include/linux/clk.h)
-> - count the references myself (which does exactly the same as what
-> the clk framework already does so it's not terribly elegant)
-> 
+Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/zx296718-clk.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Both of these sound like hacks around the problem of unbalanced
-off event calls.
-
+diff --git a/Documentation/devicetree/bindings/clock/zx296718-clk.txt b/Documentation/devicetree/bindings/clock/zx296718-clk.txt
+index 8c18b7b237bf..4ad703808407 100644
+--- a/Documentation/devicetree/bindings/clock/zx296718-clk.txt
++++ b/Documentation/devicetree/bindings/clock/zx296718-clk.txt
+@@ -13,6 +13,9 @@ Required properties:
+ 	"zte,zx296718-lsp1crm":
+ 		zx296718 device level clock selection and gating
+ 
++	"zte,zx296718-audiocrm":
++		zx296718 audio clock selection, divider and gating
++
+ - reg: Address and length of the register set
+ 
+ The clock consumer should specify the desired clock by having the clock
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
