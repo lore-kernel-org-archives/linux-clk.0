@@ -1,97 +1,138 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv4 00/15] clk: ti: add support for hwmod clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
- <20161028005341.GR26139@codeaurora.org>
- <2cfa10a9-9ea0-23e4-30de-9aece13e47e3@ti.com>
- <20161028233750.GQ16026@codeaurora.org>
- <7371ef35-5d95-bf78-4c97-c61091a1fa4b@ti.com>
- <148156710975.37646.2957511113527634913@resonance>
- <20161213004914.GM5423@codeaurora.org> <20161213013133.GR4920@atomide.com>
- <148160402543.37646.6019420188689675769@resonance>
- <4b016883-e7c9-94d8-d964-3c8dfee6ee13@ti.com>
- <20161217014626.GX5423@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Tony Lindgren
-	<tony@atomide.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <88baee5e-48c3-f0d3-de5e-8e578fab0aa4@ti.com>
-Date: Mon, 19 Dec 2016 08:22:07 +0200
+Return-Path: <dvhart@infradead.org>
+Date: Fri, 16 Dec 2016 10:36:07 -0800
+From: Darren Hart <dvhart@infradead.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Irina Tirdea <irina.tirdea@intel.com>, linux-clk@vger.kernel.org,
+	"x86@kernel.org" <x86@kernel.org>,
+	platform-driver-x86@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Len Brown <lenb@kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 1/3] clk: x86: Add Atom PMC platform clocks
+Message-ID: <20161216183607.GB44199@f23x64.localdomain>
+References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
+ <1481306510-7471-2-git-send-email-irina.tirdea@intel.com>
+ <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
+ <1a98dcda-a662-958e-307f-5fe3f281ed9f@linux.intel.com>
+ <CAHp75VccDyiLhWxZYg+d0usrwhfa_hiZAJCKPXXVRod=tB803g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20161217014626.GX5423@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAHp75VccDyiLhWxZYg+d0usrwhfa_hiZAJCKPXXVRod=tB803g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 17/12/16 03:46, Stephen Boyd wrote:
-> On 12/13, Tero Kristo wrote:
->> On 13/12/16 06:40, Michael Turquette wrote:
->>>>> On 12/12, Michael Turquette wrote:
->>>
->>> Is the goal to describe this hardware topology in DT? Is that right
->>> thing to do? I think it's cool to have this modeled *somehow* in Linux,
->>> but I'm not sure DT is the right place to model the interconnect and
->>> every device hanging off of it.
->>>
->>> I don't want to put words in Stephen's mouth, but I think the issue over
->>> whether clockdomains are CCF clock providers or some genpd thing is
->>> probably less important to him than the fact that the DT bindings are
->>> super detailed to inner workings of the SoC.
->>
->> Ok, so your preference would be to reduce the data under DT, and the
->> ideal approach would be a single prcm node. I think we still need to
->> keep the prm / cm1 / cm2 as separate nodes, as they are pretty
->> individual from hardware point of view, provide quite different
->> features, and they reside in some cases in quite different address
->> spaces also. Anyway, here's what I gather we should probably have in
->> DT:
->>
->> - reset provider
->>   * example: resets = <&prm OMAP4_IVA2_RESET>;
->>   * only from 'prm' node
->>
->> - genpd provider (for the hwmods, clockdomains, powerdomains,
->> voltage domains)
->>   * examples: power-domains = <&cm2 OMAP4_DSS_CORE_MOD>;
->> 		power-domains = <&cm2 OMAP4_DSS_CLKDM>;
->> 		power-domains = <&prm OMAP4_DSS_PWRDM>;
->> 		power-domains = <&prm OMAP4_CORE_VOLTDM>;
->>   * from all 'prm', 'cm1' and 'cm2' nodes, though 'prm' would be the
->> only one providing _CLKDM, _PWRDM, _VOLTDM genpds.
->>
->> - clock provider (for anything that requires clocks)
->>   * example: clocks = <&cm1 OMAP4_DPLL_MPU_CK>;
->>   * from all 'prm', 'cm1' and 'cm2' nodes
->>
->> This would eventually cause an ABI breakage for the clock handles,
->> if we transfer the existing clocks to this format, and remove the
->> existing clock handles from DT. Otherwise, I think we could just
->> transition the existing hwmod data to this new format only, and add
->> the clockdomain / powerdomain / voltagedomain support a bit later.
->>
->
-> This sounds about right. Is the ABI break because we get rid of
-> clock nodes and just have a few big nodes?
+On Tue, Dec 13, 2016 at 02:26:21AM +0200, Andy Shevchenko wrote:
+> On Tue, Dec 13, 2016 at 2:15 AM, Pierre-Louis Bossart
+> <pierre-louis.bossart@linux.intel.com> wrote:
+> >
+> >> Thanks for an update I will comment all the patches.
+> >> Here we start.
+> >
+> >
+> > Thanks Andy for the review. Two quick comments before going further in the
+> > details later.
+> >
+> >>
+> >>> The BayTrail and CherryTrail platforms provide platform clocks
+> >>> through their Power Management Controller (PMC).
+> >>>
+> >>> The SoC supports up to 6 clocks (PMC_PLT_CLK[5:0]) with a
+> >>> frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL) for BayTrail
+> >>> and a frequency of 19.2 MHz (XTAL) for CherryTrail. These clocks
+> >>> are available for general system use, where appropriate, and each
+> >>> have Control & Frequency register fields associated with them.
+> >>>
+> >>> Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
+> >>> Signed-off-by: Pierre-Louis Bossart
+> >>> <pierre-louis.bossart@linux.intel.com>
+> >>
+> >>
+> >> Who is the actual author? SoB I guess should be either the author, or
+> >> 1st, 2nd, ..., last one who is submitter.
+> >
+> >
+> > I ported the initial code from Android legacy stuff and Irina ported the
+> > functionality to the clk framework. It seems appropriate to have both
+> > signed-offs?
+> 
+> Yes, but as I mentioned:
+> 1) submitter goes last;
+> 2) SoB lines and Author(s) should reflect actual state of the sources.
+> If patch has 2 SoBs I'm expecting see different names of Authors in
+> the source code. *Or* in some cases it's possible to explain in the
+> commit message why you have former SoB and for what the credit that
+> person(s) get.
+> 
+> >>> +#include <linux/platform_data/x86/clk-byt-plt.h>
+> >
+> >
+> > This was a suggestion of Darren Hart in agreement with Thomas Gleixner.
+> > see
+> > http://mailman.alsa-project.org/pipermail/alsa-devel/2016-October/113936.html
+> 
+> Hmm... Thanks for pointing to this I didn't aware about such details.
+> 
+> But... I still insist that is not a platform data at all in both cases.
+> 
+> For clock I would suggest include/linux/clk/ with x86_ prefix.
+> For the rest I have no strong opinion except trying to avoid
+> platform_data wording in the path as much as possible.
+> 
+> As an example I could recall DMA engine subsystem where we have
+> 
+> include/linux/platform_data/dma-*.h
+> 
+> and
+> 
+> include/linux/dma/*.h
+> 
+> So, this sounds more to me as
+> 
+> include/linux/x86/pmc_atom.h
 
-In the above plan, the ABI breakage is because we get rid of the 
-existing clock nodes and replace everything with a single (or few) clock 
-provider nodes.
+There should really be some Documentation about how to choose an include
+directory :-)
 
-> I thought we had
-> already broken DT ABI here but if we didn't then that isn't
-> great. Perhaps to make things keep working we can detect the old
-> style one node per clock design and register a bunch of providers
-> individually from the single driver probe?  It would have to match
-> up the registers with a clk_hw pointer somewhere, but it should
-> be possible. Alternatively, we keep both designs around for some
-> time and have different compatibles and different driver entry
-> points.
+My understanding is include/linux should be more generic, rather than platform
+specific headers. So while platform_data may refer specifically to the platform
+bus drivers, it's the closest thing we have to include/platform, which would be
+ideal. I would prefer to stick with include/platform_data because:
 
-Keeping both around for a while should be okay, the design for this 
-series was done with that in mind. I didn't address the scrapping of old 
-clock data yet though, but that would be a step taken in the future.
+1) Semantically, it's the closest thing there is
+2) include/linux should be for more generic headers related to the OS or
+   subsystems
+3) It doesn't make sense to create a separate include/platform directory for a
+   single header.
+4) We don't want to rename platform_data to platform now and change all the
+   drivers, but it could be changed later.
 
-First thing to do here would be to implement the hwmod genpds, rest can 
-follow later, but we need an agreement if this is the way we want to go.
+Thomas, do you disagree with any of the above?
 
--Tero
+> 
+> > Darren, did we get your proposal right?
+> 
+
+Yes, your submission matches the intent from Thomas and I as I understand it.
+
+> >>
+> >> Is it indeed platform data? I would not create platform_data/x86
+> >> without strong argument.
+> >> Perhaps include/linux/clk/x86_pmc.h? (Yes, I know about clk-lpss.h
+> >> which is old enough and was basically first try of clk stuff on x86)
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+
+-- 
+Darren Hart
+Intel Open Source Technology Center
