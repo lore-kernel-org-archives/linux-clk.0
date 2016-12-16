@@ -1,143 +1,69 @@
-Return-Path: <robh@kernel.org>
+Return-Path: <dvhart@infradead.org>
+Date: Fri, 16 Dec 2016 10:20:45 -0800
+From: Darren Hart <dvhart@infradead.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Irina Tirdea <irina.tirdea@intel.com>, linux-clk@vger.kernel.org,
+	"x86@kernel.org" <x86@kernel.org>,
+	platform-driver-x86@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Len Brown <lenb@kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 2/3] arch/x86/platform/atom: Move pmc_atom to
+ drivers/platform/x86
+Message-ID: <20161216182045.GA44199@f23x64.localdomain>
+References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
+ <1481306510-7471-3-git-send-email-irina.tirdea@intel.com>
+ <CAHp75VfCgTgWnNmgcY9mp9n-1e_mSci=3dGyrtDquMtTT3OoYw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <8579b123-f214-22f1-0236-e5b98ab51597@ti.com>
-References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
- <1477053961-27128-2-git-send-email-t-kristo@ti.com> <20161030204121.qvb5d33dh65awwzx@rob-hp-laptop>
- <41c58712-bc00-ed05-9d1d-42e31397a70c@ti.com> <CAL_JsqLtSs6ifnMdEOsfXpGoWnmXuGAx83+ziB9yU+zurvob+A@mail.gmail.com>
- <0fe81866-8bfd-f3a7-d808-9cb23841f504@ti.com> <8579b123-f214-22f1-0236-e5b98ab51597@ti.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 2 Dec 2016 12:45:34 -0600
-Message-ID: <CAL_JsqKox9WVXh=i1jSCijJDTACC35uiNtS-bg9fdyDrX0svRQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] Documentation: dt: Add TI SCI clock driver
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Santosh Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAHp75VfCgTgWnNmgcY9mp9n-1e_mSci=3dGyrtDquMtTT3OoYw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Dec 2, 2016 at 2:19 AM, Tero Kristo <t-kristo@ti.com> wrote:
-> On 21/11/16 10:14, Tero Kristo wrote:
->>
->> On 18/11/16 19:20, Rob Herring wrote:
->>>
->>> On Mon, Oct 31, 2016 at 7:50 AM, Tero Kristo <t-kristo@ti.com> wrote:
->>>>
->>>> On 30/10/16 22:41, Rob Herring wrote:
->>>>>
->>>>>
->>>>> On Fri, Oct 21, 2016 at 03:45:59PM +0300, Tero Kristo wrote:
->>>>>>
->>>>>>
->>>>>> Add a clock implementation, TI SCI clock, that will hook to the common
->>>>>> clock framework, and allow each clock to be controlled via TI SCI
->>>>>> protocol.
->>>>>>
->>>>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->>>>>> ---
->>>>>>  .../devicetree/bindings/clock/ti,sci-clk.txt       | 37
->>>>>> ++++++++++++++++++++++
->>>>>>  MAINTAINERS                                        |  1 +
->>>>>>  2 files changed, 38 insertions(+)
->>>>>>  create mode 100644
->>>>>> Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->>>>>> b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->>>>>> new file mode 100644
->>>>>> index 0000000..bfc3ca4
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->>>>>> @@ -0,0 +1,37 @@
->>>>>> +Texas Instruments TI-SCI Clocks
->>>>>> +===============================
->>>>>> +
->>>>>> +All clocks on Texas Instruments' SoCs that contain a System
->>>>>> Controller,
->>>>>> +are only controlled by this entity. Communication between a host
->>>>>> processor
->>>>>> +running an OS and the System Controller happens through a protocol
->>>>>> known
->>>>>> +as TI-SCI[1]. This clock implementation plugs into the common clock
->>>>>> +framework and makes use of the TI-SCI protocol on clock API requests.
->>>>>> +
->>>>>> +[1] Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
->>>>>> +
->>>>>> +Required properties:
->>>>>> +-------------------
->>>>>> +- compatible: Must be "ti,k2g-sci-clk"
->>>>>> +- #clock-cells: Shall be 2.
->>>>>> +  In clock consumers, this cell represents the device ID and clock ID
->>>>>> +  exposed by the PM firmware. The assignments can be found in the
->>>>>> header
->>>>>> +  files <dt-bindings/genpd/<soc>.h> (which covers the device IDs) and
->>>>>> +  <dt-bindings/clock/<soc>.h> (which covers the clock IDs), where
->>>>>> <soc>
->>>>>> +  is the SoC involved, for example 'k2g'.
->>>>>> +
->>>>>> +Examples:
->>>>>> +--------
->>>>>> +
->>>>>> +pmmc: pmmc {
->>>>>> +       compatible = "ti,k2g-sci";
->>>>>> +
->>>>>> +       k2g_clks: k2g_clks {
->>>>>
->>>>>
->>>>>
->>>>> Use "clocks" for node name instead.
->>>>>
->>>>>> +               compatible = "ti,k2g-sci-clk";
->>>>>
->>>>>
->>>>>
->>>>> I'm starting to think all these child nodes for SCI are pointless. Is
->>>>> there any reason why the parent node can't be the clock provider (along
->>>>> with all the other providers it acks as)?
->>>>
->>>>
->>>>
->>>> I believe the only reason to keep them separate is to have kernel
->>>> side of
->>>> things modular. If we have separate nodes, the drivers can be probed
->>>> separately.
->>>>
->>>> If not, we need to build one huge blob with all the features in it,
->>>> so the
->>>> main driver can probe everything in one go, with annoying back-and-forth
->>>> callbacks in place (assuming we still want to keep stuff somehow
->>>> modular.)
->>>
->>>
->>> Since when is DT the only way to create a device? The main driver can
->>> create devices for all the sub-functions like clocks. This is the same
->>> as MFDs which have been done both ways.
->>
->>
->> Yes obviously this can be done, my main point was that it will require
->> building some sort of infra within the driver to handle this. With
->> separate nodes, none of this is going to be needed. Also, we will lose
->> any kind of configurability via DT if we don't have separate nodes; now
->> we can select the available clocks / genpds via the compatible string of
->> the clocks/genpd nodes themselves (this isn't clearly evident as of now
->> as we only support a grand total of one device, which is k2g-evm.)
->> Otherwise we need to probe against the main node and add a separate
->> compatible string for every device, and carry this information to the
->> sibling devices also somehow. It is just so much simpler if we can just
->> keep separate nodes for them.
->>
->> Also, plenty of things are doing this kind of stuff already in
->> DT/kernel, having a parent node in place and sub-functions added
->> separately for ease of use, with apparently no visible point for having
->> the nodes within the DT.
->
->
-> Rob, any response on this one? I see you have acked the reset part of the
-> bindings which is doing pretty much the same thing as the clock part is
-> doing here, namely adding child node under the main SCI node. Is it okay to
-> do this same for other parts of the TI SCI?
+On Tue, Dec 13, 2016 at 01:43:31AM +0200, Andy Shevchenko wrote:
+> I have been told I have to send my comments here instead of our
+> internal ML. I didn't fast enough to comment that during v5. So do it
+> right now.
+> 
+> On Fri, Dec 9, 2016 at 8:01 PM, Irina Tirdea <irina.tirdea@intel.com> wrote:
+> > The pmc_atom driver does not contain any architecture specific
+> > code. It only enables the SOC Power Management Controller Driver
+> 
+> SOC -> SoC
+> Driver -> driver
+> 
+> > for BayTrail and CherryTrail platforms.
+> >
+> > Move the pmc_atom driver from arch/x86/platform/atom to
+> > drivers/platform/x86.
+> >
+> > Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
+> > ---
+> >  arch/x86/Kconfig                                                     | 4 ----
+> >  arch/x86/platform/atom/Makefile                                      | 1 -
+> >  drivers/acpi/acpi_lpss.c                                             | 2 +-
+> >  drivers/platform/x86/Kconfig                                         | 4 ++++
+> >  drivers/platform/x86/Makefile                                        | 1 +
+> >  {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c          | 3 +--
+> 
+> >  {arch/x86/include/asm => include/linux/platform_data/x86}/pmc_atom.h | 0
+> 
+> No, it's not a *platform data*.
+> 
+> Other that that looks good to me.
 
-Yes. It would be silly to allow for one and not others...
+Where would you recommend instead? It needs a place to serve both acpi_lpss.c
+and pmc_atom.c. The include/linux/platform_data/x86 location doesn't seem too
+strange as it supports a "platform" driver in the sense that pmc_atom is a
+platform driver.
 
-Rob
+-- 
+Darren Hart
+Intel Open Source Technology Center
