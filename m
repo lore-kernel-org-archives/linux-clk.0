@@ -1,56 +1,45 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH] dt-bindings: mfd: stm32f429: Add QSPI & DSI constants into DT include file
-Date: Wed, 14 Dec 2016 15:23:17 +0100
-Message-ID: <1481725397-941-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <andy.shevchenko@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20161216182045.GA44199@f23x64.localdomain>
+References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
+ <1481306510-7471-3-git-send-email-irina.tirdea@intel.com> <CAHp75VfCgTgWnNmgcY9mp9n-1e_mSci=3dGyrtDquMtTT3OoYw@mail.gmail.com>
+ <20161216182045.GA44199@f23x64.localdomain>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 16 Dec 2016 20:39:01 +0200
+Message-ID: <CAHp75Vc9qkaHkpvcH+24ivF=5HsuKwSbRggo7ZC_3=ckJLMzcQ@mail.gmail.com>
+Subject: Re: [PATCH v6 2/3] arch/x86/platform/atom: Move pmc_atom to drivers/platform/x86
+To: Darren Hart <dvhart@infradead.org>
+Cc: Irina Tirdea <irina.tirdea@intel.com>, linux-clk@vger.kernel.org,
+	"x86@kernel.org" <x86@kernel.org>, platform-driver-x86@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>, Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Len Brown <lenb@kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Fri, Dec 16, 2016 at 8:20 PM, Darren Hart <dvhart@infradead.org> wrote:
+> On Tue, Dec 13, 2016 at 01:43:31AM +0200, Andy Shevchenko wrote:
+>> I have been told I have to send my comments here instead of our
+>> internal ML. I didn't fast enough to comment that during v5. So do it
+>> right now.
 
-It will be used by clock and reset drivers, and DT bindings.
+>> >  {arch/x86/include/asm => include/linux/platform_data/x86}/pmc_atom.h | 0
+>>
+>> No, it's not a *platform data*.
+>>
+>> Other that that looks good to me.
+>
+> Where would you recommend instead? It needs a place to serve both acpi_lpss.c
+> and pmc_atom.c. The include/linux/platform_data/x86 location doesn't seem too
+> strange as it supports a "platform" driver in the sense that pmc_atom is a
+> platform driver.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- include/dt-bindings/mfd/stm32f4-rcc.h | 2 ++
- 1 file changed, 2 insertions(+)
+include/linux/x86 ?
 
-diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
-index e98942d..315f6c3 100644
---- a/include/dt-bindings/mfd/stm32f4-rcc.h
-+++ b/include/dt-bindings/mfd/stm32f4-rcc.h
-@@ -40,6 +40,7 @@
- 
- /* AHB3 */
- #define STM32F4_RCC_AHB3_FMC	0
-+#define STM32F4_RCC_AHB3_QSPI	1
- 
- #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
- #define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + (0x38 * 8))
-@@ -91,6 +92,7 @@
- #define STM32F4_RCC_APB2_SPI6	21
- #define STM32F4_RCC_APB2_SAI1	22
- #define STM32F4_RCC_APB2_LTDC	26
-+#define STM32F4_RCC_APB2_DSI	27
- 
- #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
- #define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + (0x44 * 8))
 -- 
-1.9.1
+With Best Regards,
+Andy Shevchenko
