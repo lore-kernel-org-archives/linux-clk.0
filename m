@@ -1,69 +1,85 @@
-Return-Path: <dvhart@infradead.org>
-Date: Fri, 16 Dec 2016 10:20:45 -0800
-From: Darren Hart <dvhart@infradead.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Irina Tirdea <irina.tirdea@intel.com>, linux-clk@vger.kernel.org,
-	"x86@kernel.org" <x86@kernel.org>,
-	platform-driver-x86@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Len Brown <lenb@kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 2/3] arch/x86/platform/atom: Move pmc_atom to
- drivers/platform/x86
-Message-ID: <20161216182045.GA44199@f23x64.localdomain>
-References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
- <1481306510-7471-3-git-send-email-irina.tirdea@intel.com>
- <CAHp75VfCgTgWnNmgcY9mp9n-1e_mSci=3dGyrtDquMtTT3OoYw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAHp75VfCgTgWnNmgcY9mp9n-1e_mSci=3dGyrtDquMtTT3OoYw@mail.gmail.com>
+Return-Path: <shawnguo@kernel.org>
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Jun Nie <jun.nie@linaro.org>,
+	Baoyou Xie <xie.baoyou@zte.com.cn>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Shawn Guo <shawnguo@kernel.org>,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH v2 1/3] clk: zx296718: do not panic on failure
+Date: Fri, 16 Dec 2016 15:26:45 +0800
+Message-Id: <1481873207-22929-2-git-send-email-shawnguo@kernel.org>
+In-Reply-To: <1481873207-22929-1-git-send-email-shawnguo@kernel.org>
+References: <1481873207-22929-1-git-send-email-shawnguo@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 13, 2016 at 01:43:31AM +0200, Andy Shevchenko wrote:
-> I have been told I have to send my comments here instead of our
-> internal ML. I didn't fast enough to comment that during v5. So do it
-> right now.
-> 
-> On Fri, Dec 9, 2016 at 8:01 PM, Irina Tirdea <irina.tirdea@intel.com> wrote:
-> > The pmc_atom driver does not contain any architecture specific
-> > code. It only enables the SOC Power Management Controller Driver
-> 
-> SOC -> SoC
-> Driver -> driver
-> 
-> > for BayTrail and CherryTrail platforms.
-> >
-> > Move the pmc_atom driver from arch/x86/platform/atom to
-> > drivers/platform/x86.
-> >
-> > Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
-> > ---
-> >  arch/x86/Kconfig                                                     | 4 ----
-> >  arch/x86/platform/atom/Makefile                                      | 1 -
-> >  drivers/acpi/acpi_lpss.c                                             | 2 +-
-> >  drivers/platform/x86/Kconfig                                         | 4 ++++
-> >  drivers/platform/x86/Makefile                                        | 1 +
-> >  {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c          | 3 +--
-> 
-> >  {arch/x86/include/asm => include/linux/platform_data/x86}/pmc_atom.h | 0
-> 
-> No, it's not a *platform data*.
-> 
-> Other that that looks good to me.
+From: Shawn Guo <shawn.guo@linaro.org>
 
-Where would you recommend instead? It needs a place to serve both acpi_lpss.c
-and pmc_atom.c. The include/linux/platform_data/x86 location doesn't seem too
-strange as it supports a "platform" driver in the sense that pmc_atom is a
-platform driver.
+Instead of using panic, we should give an error message and return error
+code when of_clk_add_hw_provider() call fails.
 
+Since we have error prompt for failures, the "init over" pr_info output
+isn't really necessary but becomes a debug noise.  So let's clean it up
+along the way.
+
+Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+---
+ drivers/clk/zte/clk-zx296718.c | 27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
+index 707d62956e9b..026310708aea 100644
+--- a/drivers/clk/zte/clk-zx296718.c
++++ b/drivers/clk/zte/clk-zx296718.c
+@@ -610,9 +610,12 @@ static int __init top_clocks_init(struct device_node *np)
+ 		}
+ 	}
+ 
+-	if (of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &top_hw_onecell_data))
+-		panic("could not register clk provider\n");
+-	pr_info("top clk init over, nr:%d\n", TOP_NR_CLKS);
++	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
++				     &top_hw_onecell_data);
++	if (ret) {
++		pr_err("failed to register top clk provider: %d\n", ret);
++		return ret;
++	}
+ 
+ 	return 0;
+ }
+@@ -776,9 +779,12 @@ static int __init lsp0_clocks_init(struct device_node *np)
+ 		}
+ 	}
+ 
+-	if (of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &lsp0_hw_onecell_data))
+-		panic("could not register clk provider\n");
+-	pr_info("lsp0-clk init over:%d\n", LSP0_NR_CLKS);
++	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
++				     &lsp0_hw_onecell_data);
++	if (ret) {
++		pr_err("failed to register lsp0 clk provider: %d\n", ret);
++		return ret;
++	}
+ 
+ 	return 0;
+ }
+@@ -881,9 +887,12 @@ static int __init lsp1_clocks_init(struct device_node *np)
+ 		}
+ 	}
+ 
+-	if (of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &lsp1_hw_onecell_data))
+-		panic("could not register clk provider\n");
+-	pr_info("lsp1-clk init over, nr:%d\n", LSP1_NR_CLKS);
++	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
++				     &lsp1_hw_onecell_data);
++	if (ret) {
++		pr_err("failed to register lsp1 clk provider: %d\n", ret);
++		return ret;
++	}
+ 
+ 	return 0;
+ }
 -- 
-Darren Hart
-Intel Open Source Technology Center
+1.9.1
