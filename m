@@ -1,83 +1,84 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 11/11] ARM: bcm2835: Enable the Raspberry Pi touchscreen panel.
-Date: Wed, 14 Dec 2016 11:46:21 -0800
-Message-Id: <20161214194621.16499-12-eric@anholt.net>
-In-Reply-To: <20161214194621.16499-1-eric@anholt.net>
-References: <20161214194621.16499-1-eric@anholt.net>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 16 Dec 2016 17:46:26 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv4 00/15] clk: ti: add support for hwmod clocks
+Message-ID: <20161217014626.GX5423@codeaurora.org>
+References: <1476805568-19264-1-git-send-email-t-kristo@ti.com>
+ <20161028005341.GR26139@codeaurora.org>
+ <2cfa10a9-9ea0-23e4-30de-9aece13e47e3@ti.com>
+ <20161028233750.GQ16026@codeaurora.org>
+ <7371ef35-5d95-bf78-4c97-c61091a1fa4b@ti.com>
+ <148156710975.37646.2957511113527634913@resonance>
+ <20161213004914.GM5423@codeaurora.org>
+ <20161213013133.GR4920@atomide.com>
+ <148160402543.37646.6019420188689675769@resonance>
+ <4b016883-e7c9-94d8-d964-3c8dfee6ee13@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <4b016883-e7c9-94d8-d964-3c8dfee6ee13@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit is not intended to be merged.  Instead we will use
-overlays to enable the panel, and this commit is just a demo of how
-things get wired up.
+On 12/13, Tero Kristo wrote:
+> On 13/12/16 06:40, Michael Turquette wrote:
+> >>>On 12/12, Michael Turquette wrote:
+> >
+> >Is the goal to describe this hardware topology in DT? Is that right
+> >thing to do? I think it's cool to have this modeled *somehow* in Linux,
+> >but I'm not sure DT is the right place to model the interconnect and
+> >every device hanging off of it.
+> >
+> >I don't want to put words in Stephen's mouth, but I think the issue over
+> >whether clockdomains are CCF clock providers or some genpd thing is
+> >probably less important to him than the fact that the DT bindings are
+> >super detailed to inner workings of the SoC.
+> 
+> Ok, so your preference would be to reduce the data under DT, and the
+> ideal approach would be a single prcm node. I think we still need to
+> keep the prm / cm1 / cm2 as separate nodes, as they are pretty
+> individual from hardware point of view, provide quite different
+> features, and they reside in some cases in quite different address
+> spaces also. Anyway, here's what I gather we should probably have in
+> DT:
+> 
+> - reset provider
+>   * example: resets = <&prm OMAP4_IVA2_RESET>;
+>   * only from 'prm' node
+> 
+> - genpd provider (for the hwmods, clockdomains, powerdomains,
+> voltage domains)
+>   * examples: power-domains = <&cm2 OMAP4_DSS_CORE_MOD>;
+> 		power-domains = <&cm2 OMAP4_DSS_CLKDM>;
+> 		power-domains = <&prm OMAP4_DSS_PWRDM>;
+> 		power-domains = <&prm OMAP4_CORE_VOLTDM>;
+>   * from all 'prm', 'cm1' and 'cm2' nodes, though 'prm' would be the
+> only one providing _CLKDM, _PWRDM, _VOLTDM genpds.
+> 
+> - clock provider (for anything that requires clocks)
+>   * example: clocks = <&cm1 OMAP4_DPLL_MPU_CK>;
+>   * from all 'prm', 'cm1' and 'cm2' nodes
+> 
+> This would eventually cause an ABI breakage for the clock handles,
+> if we transfer the existing clocks to this format, and remove the
+> existing clock handles from DT. Otherwise, I think we could just
+> transition the existing hwmod data to this new format only, and add
+> the clockdomain / powerdomain / voltagedomain support a bit later.
+> 
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- arch/arm/boot/dts/bcm283x.dtsi | 30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+This sounds about right. Is the ABI break because we get rid of
+clock nodes and just have a few big nodes? I thought we had
+already broken DT ABI here but if we didn't then that isn't
+great. Perhaps to make things keep working we can detect the old
+style one node per clock design and register a bunch of providers
+individually from the single driver probe? It would have to match
+up the registers with a clk_hw pointer somewhere, but it should
+be possible. Alternatively, we keep both designs around for some
+time and have different compatibles and different driver entry
+points.
 
-diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
-index 82a4eccfb3d8..e96d0f29759a 100644
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -286,7 +286,12 @@
- 					     "dsi1_ddr2",
- 					     "dsi1_ddr";
- 
--			status = "disabled";
-+			pitouchscreen: panel@0 {
-+				compatible = "raspberrypi,touchscreen";
-+				reg = <0>;
-+
-+				raspberrypi,touchscreen-bridge = <&pitouchscreen_bridge>;
-+			};
- 		};
- 
- 		i2c1: i2c@7e804000 {
-@@ -346,6 +351,29 @@
- 		vc4: gpu {
- 			compatible = "brcm,bcm2835-vc4";
- 		};
-+
-+		i2c_dsi: i2c {
-+			/* We have to use i2c-gpio because the
-+			 * firmware is also polling another device
-+			 * using the only hardware I2C bus that could
-+			 * connect to these pins.
-+			 */
-+			compatible = "i2c-gpio";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			gpios = <&gpio 28 0
-+				 &gpio 29 0>;
-+
-+			pitouchscreen_bridge: bridge@45 {
-+				compatible = "raspberrypi,touchscreen-bridge-i2c";
-+				reg = <0x45>;
-+			};
-+
-+			pitouchscreen_touch: bridge@38 {
-+				compatible = "raspberrypi,touchscreen-ts-i2c";
-+				reg = <0x38>;
-+			};
-+		};
- 	};
- 
- 	clocks {
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
