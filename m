@@ -1,36 +1,60 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Dec 2016 16:11:15 -0800
+Date: Fri, 16 Dec 2016 17:33:37 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+	Irina Tirdea <irina.tirdea@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, kernel@stlinux.com, ludovic.barre@st.com,
-	olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [PATCH v4 6/9] clk: stm32f4: Add SAI clocks
-Message-ID: <20161222001115.GU8288@codeaurora.org>
-References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
- <1481638820-29324-7-git-send-email-gabriel.fernandez@st.com>
+	"x86@kernel.org" <x86@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Takashi Iwai <tiwai@suse.com>, platform-driver-x86@vger.kernel.org,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Brown <broonie@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Len Brown <lenb@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>
+Subject: Re: [alsa-devel] [PATCH v6 1/3] clk: x86: Add Atom PMC platform
+ clocks
+Message-ID: <20161217013337.GW5423@codeaurora.org>
+References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
+ <1481306510-7471-2-git-send-email-irina.tirdea@intel.com>
+ <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
+ <20161213232524.GQ5423@codeaurora.org>
+ <32235fb3-0d54-211d-28f4-4655e4bc7812@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1481638820-29324-7-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <32235fb3-0d54-211d-28f4-4655e4bc7812@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/13, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> This patch introduces SAI clocks for stm32f4 socs.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
+On 12/15, Pierre-Louis Bossart wrote:
+> I am not sure I understand this last comment.
+> init.name is not a constant, it's made of the "pmc_plt_clk_" string
+> concatenated with an id which directly maps to which hardware clock
+> is registered.
 
-Applied to clk-stm32f4 and merged into clk-next
+That's all fine. We need globally unique strings for clk names in
+the framework so things work.
+
+>Clients use devm_clk_get() with a "pmc_plt_clk_<n>"
+> argument.
+
+This is the problem. Clients should be calling clk_get() like:
+
+	clk_get(dev, "signal name in datasheet")
+
+where the first argument is the device and the second argument is
+some string that is meaningful to the device, not the system as a
+whole. The way clkdev is intended is so that the dev argument's
+dev_name() is combined with the con_id that matches some signale
+name in the datasheet. This way when the same IP is put into some
+other chip, the globally unique name doesn't need to change, just
+the device name that's registered with the lookup. Obviously this
+breaks down quite badly when dev_name() isn't stable. Is that
+happening here?
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
