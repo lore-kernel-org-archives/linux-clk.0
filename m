@@ -1,67 +1,49 @@
-Return-Path: <b.zolnierkie@samsung.com>
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>,
- Kukjin Kim <kgene@kernel.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>,
- Thomas Abraham <thomas.ab@samsung.com>,
- Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
- Ben Gamari <ben@smart-cactus.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: dts: Add CPU OPPs for Exynos4412 Prime
-Date: Thu, 29 Dec 2016 16:06:20 +0100
-Message-id: <1840714.lHhVv9oNko@amdc3058>
-In-reply-to: <20161229144908.6gkvjpso7ikdmfp7@kozik-lap>
-MIME-version: 1.0
-Content-type: text/plain; charset=us-ascii
-References: <1483018611-27998-1-git-send-email-b.zolnierkie@samsung.com>
- <1483018611-27998-3-git-send-email-b.zolnierkie@samsung.com>
- <20161229144908.6gkvjpso7ikdmfp7@kozik-lap>
- <CGME20161229150623epcas1p2b2f0fbb6f9ddd11caffdc93487e2cf77@epcas1p2.samsung.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20161215170027.28411-1-chris.brandt@renesas.com>
+References: <20161215170027.28411-1-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Dec 2016 11:47:07 +0100
+Message-ID: <CAMuHMdXxiH5ryerpCnDirOXf=b-Gw5R8gJrj4Kk8NmM_3FYBqw@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: mstp: Support 8-bit registers for r7s72100
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Chris, Mike, Stephen,
 
-Hi,
+On Thu, Dec 15, 2016 at 6:00 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> The RZ/A1 is different than the other Renesas SOCs because the MSTP
+> registers are 8-bit instead of 32-bit and if you try writing values as
+> 32-bit nothing happens...meaning this driver never worked for r7s72100.
 
-On Thursday, December 29, 2016 04:49:08 PM Krzysztof Kozlowski wrote:
-> On Thu, Dec 29, 2016 at 02:36:51PM +0100, Bartlomiej Zolnierkiewicz wrote:
-> > Add CPU operating points for Exynos4412 Prime (it supports
-> > additional 1704MHz & 1600MHz OPPs and 1500MHz OPP is just
-> > a regular non-turbo OPP on this SoC).  Also update relevant
-> > cooling maps to account for new OPPs.
-> > 
-> > ODROID-X2/U2/U3 boards use Exynos4412 Prime SoC version so
-> > update their board files accordingly.
-> > 
-> > Based on Hardkernel's kernel for ODROID-X2/U2/U3 boards.
-> > 
-> > Cc: Doug Anderson <dianders@chromium.org>
-> > Cc: Andreas Faerber <afaerber@suse.de>
-> > Cc: Thomas Abraham <thomas.ab@samsung.com>
-> > Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> > Cc: Ben Gamari <ben@smart-cactus.org>
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> >  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 +--
-> >  arch/arm/boot/dts/exynos4412-odroidu3.dts       |  5 +--
-> >  arch/arm/boot/dts/exynos4412-odroidx2.dts       |  1 +
-> >  arch/arm/boot/dts/exynos4412-prime.dtsi         | 41 +++++++++++++++++++++++++
-> >  arch/arm/boot/dts/exynos4412.dtsi               |  2 +-
-> >  5 files changed, 48 insertions(+), 5 deletions(-)
-> >  create mode 100644 arch/arm/boot/dts/exynos4412-prime.dtsi
-> > 
-> 
-> Looks okay. Is the clock patch needed for this?
+Thanks for your patch!
 
-Yep.
+The only reason it ever worked was that almost all module clocks are
+enabled at boot time...
 
-Best regards,
+> Fixes: b6face404f38 ("ARM: shmobile: r7s72100: add essential clock nodes to dtsi")
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Mike/Stephen: as this is a fix for stable (v3.16+), can you please take it
+directly?
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 --
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
