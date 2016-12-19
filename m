@@ -1,111 +1,111 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Message-ID: <585D8013.50707@baylibre.com>
-Date: Fri, 23 Dec 2016 20:50:43 +0100
-From: Neil Armstrong <narmstrong@baylibre.com>
+Return-Path: <andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-To: Zoran Markovic <zmarkovic@sierrawireless.com>,
- linux-kernel@vger.kernel.org
-CC: Andy Gross <andy.gross@linaro.org>,
- David Brown <david.brown@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [RFC PATCHv2 2/4] clk: mdm9615: Add EBI2 clock
-References: <1482468884-31027-1-git-send-email-zmarkovic@sierrawireless.com>
-In-Reply-To: <1482468884-31027-1-git-send-email-zmarkovic@sierrawireless.com>
-Content-Type: text/plain; charset=ISO-8859-1
+In-Reply-To: <1481703262-16668-1-git-send-email-nikita.yoush@cogentembedded.com>
+References: <1481703262-16668-1-git-send-email-nikita.yoush@cogentembedded.com>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Date: Sun, 18 Dec 2016 23:07:50 -0800
+Message-ID: <CAHQ1cqE-wF0ceMHwgRpUonkbpoCpnk8Z+8aS6rH8igsPQfxF-Q@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: imx: pllv3: support fractional multiplier on
+ vf610 PLL1/PLL2
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	Chris Healy <cphealy@gmail.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Le 23/12/2016 05:54, Zoran Markovic a écrit :
-> Add definition of EBI2 clock used by MDM9615 NAND controller.
-> 
-> Cc: Andy Gross <andy.gross@linaro.org>
-> Cc: David Brown <david.brown@linaro.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: linux-soc@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Zoran Markovic <zmarkovic@sierrawireless.com>
+On Wed, Dec 14, 2016 at 12:14 AM, Nikita Yushchenko
+<nikita.yoush@cogentembedded.com> wrote:
+> On vf610, PLL1 and PLL2 have registers to configure fractional part of
+> frequency multiplier.
+>
+> This patch adds support for these registers.
+>
+> This fixes "fast system clock" issue on boards where bootloader sets
+> fractional multiplier for PLL1.
+>
+> Suggested-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> CC: Chris Healy <cphealy@gmail.com>
+> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 > ---
->  drivers/clk/qcom/gcc-mdm9615.c               |   30 ++++++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,gcc-mdm9615.h |    3 +++
->  2 files changed, 33 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
-> index 581a17f..e9e98b1 100644
-> --- a/drivers/clk/qcom/gcc-mdm9615.c
-> +++ b/drivers/clk/qcom/gcc-mdm9615.c
-> @@ -1563,6 +1563,34 @@ enum {
->  	},
->  };
->  
-> +static struct clk_branch ebi2_clk = {
-> +	.hwcg_reg = 0x2664,
-> +	.hwcg_bit = 6,
-> +	.halt_reg = 0x2fcc,
-> +	.halt_bit = 23,
-> +	.clkr = {
-> +		.enable_reg = 0x2664,
-> +		.enable_mask = BIT(6) | BIT(4),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "ebi2_clk",
-> +			.ops = &clk_branch_ops,
-> +		},
-> +	},
-> +};
+> This version restructures the patch:
+> - introduce explicit structure to store mf (multiply factor) consisting of
+>   integer part, numenator and denumenator;
+
+Spelling. See my comments in the actual code below.
+
+> - provides routines that:
+>   - calculate rate based on parent rate and mf,
+>   - read mf from hw,
+>   - write mf to hw,
+>   - calculate best mf for wanted rate;
+
+I do see the benefit of having calculation routines since those get to
+be reused in multiple places, read/write subroutines, OTOH, are used
+only once, so I'd encourage you to drop them and move that code back
+to where it was in v1.
+
+If you are going to make changes to this patch, I also would like to
+urge you to consider naming you calculation routines in a more
+consistent fashion. Right now what you have is
+clk_pllv3_vf610_mf_for_rate and clk_pllv3_vf610_calc_rate, those two
+functions are symmetric in what they do, but, IMHO, that symmetricity
+is not very obvious in their names. I'd suggest converting it as such
+(and yes, the second one does return struct clk_pllv3_vf610_mf by
+value):
+
+static unsigned long clk_pllv3_vf610_mf_to_rate(unsigned long
+parent_rate, const struct clk_pllv3_vf610_mf *mf)
+
+and
+
+struct clk_pllv3_vf610_mf clk_pllv3_vf610_rate_to_mf(unsigned long
+parent_rate, unsigned long rate)
+
+
+That all being said, those all are just my personal preferences, so
+take them with a grain of salt.
+
+
+> - implement recalc_rate() / round_rate() / set_rate() based on these.
+>
+>  drivers/clk/imx/clk-pllv3.c | 110 ++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk-vf610.c |   4 +-
+>  drivers/clk/imx/clk.h       |   1 +
+>  3 files changed, 113 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+> index 7a6acc3e4a92..89ab42e7d6c0 100644
+> --- a/drivers/clk/imx/clk-pllv3.c
+> +++ b/drivers/clk/imx/clk-pllv3.c
+> @@ -21,6 +21,9 @@
+>  #define PLL_NUM_OFFSET         0x10
+>  #define PLL_DENOM_OFFSET       0x20
+>
+> +#define PLL_VF610_NUM_OFFSET   0x20
+> +#define PLL_VF610_DENOM_OFFSET 0x30
 > +
-> +static struct clk_branch ebi2_aon_clk = {
-> +	.halt_reg = 0x2fcc,
-> +	.halt_bit = 23,
-> +	.clkr = {
-> +		.enable_reg = 0x2664,
-> +		.enable_mask = BIT(8),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "ebi2_aon_clk",
-> +			.ops = &clk_branch_ops,
-> +		},
-> +	},
-> +};
-> +
->  static struct clk_hw *gcc_mdm9615_hws[] = {
->  	&cxo.hw,
+>  #define BM_PLL_POWER           (0x1 << 12)
+>  #define BM_PLL_LOCK            (0x1 << 31)
+>  #define IMX7_ENET_PLL_POWER    (0x1 << 5)
+> @@ -292,6 +295,110 @@ static const struct clk_ops clk_pllv3_av_ops = {
+>         .set_rate       = clk_pllv3_av_set_rate,
 >  };
-> @@ -1637,6 +1665,8 @@ enum {
->  	[PMIC_ARB1_H_CLK] = &pmic_arb1_h_clk.clkr,
->  	[PMIC_SSBI2_CLK] = &pmic_ssbi2_clk.clkr,
->  	[RPM_MSG_RAM_H_CLK] = &rpm_msg_ram_h_clk.clkr,
-> +	[EBI2_CLK] = &ebi2_clk.clkr,
-> +	[EBI2_AON_CLK] = &ebi2_aon_clk.clkr,
->  };
->  
->  static const struct qcom_reset_map gcc_mdm9615_resets[] = {
-> diff --git a/include/dt-bindings/clock/qcom,gcc-mdm9615.h b/include/dt-bindings/clock/qcom,gcc-mdm9615.h
-> index 9ab2c40..57cdca6 100644
-> --- a/include/dt-bindings/clock/qcom,gcc-mdm9615.h
-> +++ b/include/dt-bindings/clock/qcom,gcc-mdm9615.h
-> @@ -323,5 +323,8 @@
->  #define CE3_H_CLK				305
->  #define USB_HS1_SYSTEM_CLK_SRC			306
->  #define USB_HS1_SYSTEM_CLK			307
-> +#define EBI2_CLK				308
-> +#define EBI2_AON_CLK				309
-> +
->  
->  #endif
-> 
+>
+> +struct clk_pllv3_vf610_mf {
+> +       u32 mfi;        /* integer part, can be 20 or 22 */
+> +       u32 mfn;        /* numinator, 30-bit value */
 
-Hi Zoran,
+s/numinator/numerator/
 
-Thanks for this patch, we did not found the definition for these clocks at all !
+> +       u32 mfd;        /* denomenator, 30-bit value, must be less than mfn */
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+s/denomenator/denominator/
 
-Neil
+Anyway, regardless of my comments above:
+
+Teseted-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+
+Regards,
+Andrey Smirnov
