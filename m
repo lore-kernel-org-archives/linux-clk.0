@@ -1,156 +1,88 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 1/2] clk: bcm: Support rate change propagation on bcm2835 clocks
-Date: Thu,  1 Dec 2016 22:00:19 +0100
-Message-Id: <1480626020-20031-2-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1480626020-20031-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1480626020-20031-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+In-Reply-To: <CAGb2v65YWntCrFHtSbxhtTWkt+UwkW3xoY-ae26MpH+-ULLXSQ@mail.gmail.com>
+References: <20161215182754.33921-1-icenowy@aosc.xyz>
+ <20161219084652.kiqdkiewu5tujlyd@lukather>
+ <CAGb2v65YWntCrFHtSbxhtTWkt+UwkW3xoY-ae26MpH+-ULLXSQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: sun8i: add opp-v2 table for A33
+MIME-Version: 1.0
+Message-Id: <11975791482156406@web2g.yandex.ru>
+Date: Mon, 19 Dec 2016 22:06:46 +0800
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree <devicetree@vger.kernel.org>,
+ Quentin Schulz <quentin.schulz@free-electrons.com>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+ linux-sunxi <linux-sunxi@googlegroups.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some peripheral clocks, like the VEC (Video EnCoder) clock need to be set
-to a precise rate (in our case 108MHz). With the current implementation,
-where peripheral clocks are not allowed to forward rate change requests
-to their parents, it is impossible to match this requirement unless the
-bootloader has configured things correctly, or a specific rate has been
-assigned through the DT (with the assigned-clk-rates property).
-
-Add a new field to struct bcm2835_clock_data to specify which parent
-clocks accept rate change propagation, and support set rate propagation
-in bcm2835_clock_determine_rate().
-
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
-Note: this approach is still fragile, since it does not prevent 2 clock
-users from stepping on each other's toes.
-We could use the clk rate constraints infrastructure, but it's only
-applicable to leaf clocks in the clock tree (when you apply a constraint,
-these constraints are not propagated to the clock tree).
-
-Another approach would be to lock a rate on a clock, thus preventing
-other users from changing it. Propagating rate locks would be easier than
-propagating rate range constraints (see this patch
-http://code.bulix.org/jwtzf8-107264), but it still requires that really
-care about a specific clock rate explicitly lock the rate (using
-clk_set_and_lock_rate()), and this means checking every drivers that have
-such requirements.
----
- drivers/clk/bcm/clk-bcm2835.c | 67 ++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 63 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 2acaa77ad482..df96fe6dadab 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -436,6 +436,9 @@ struct bcm2835_clock_data {
- 	const char *const *parents;
- 	int num_mux_parents;
- 
-+	/* Bitmap encoding which parents accept rate change propagation. */
-+	unsigned int set_rate_parent;
-+
- 	u32 ctl_reg;
- 	u32 div_reg;
- 
-@@ -1017,10 +1020,60 @@ bcm2835_clk_is_pllc(struct clk_hw *hw)
- 	return strncmp(clk_hw_get_name(hw), "pllc", 4) == 0;
- }
- 
-+static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
-+							int parent_idx,
-+							unsigned long rate,
-+							u32 *div,
-+							unsigned long *prate)
-+{
-+	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
-+	struct bcm2835_cprman *cprman = clock->cprman;
-+	const struct bcm2835_clock_data *data = clock->data;
-+	unsigned long best_rate;
-+	u32 curdiv, mindiv, maxdiv;
-+	struct clk_hw *parent;
-+
-+	parent = clk_hw_get_parent_by_index(hw, parent_idx);
-+
-+	if (!(BIT(parent_idx) & data->set_rate_parent)) {
-+		*prate = clk_hw_get_rate(parent);
-+		*div = bcm2835_clock_choose_div(hw, rate, *prate, true);
-+
-+		return bcm2835_clock_rate_from_divisor(clock, *prate,
-+						       *div);
-+	}
-+
-+	if (data->frac_bits)
-+		dev_warn(cprman->dev,
-+			"frac bits are not used when propagating rate change");
-+
-+	/* clamp to min divider of 2 if we're dealing with a mash clock */
-+	mindiv = data->is_mash_clock ? 2 : 1;
-+	maxdiv = BIT(data->int_bits) - 1;
-+
-+	/* TODO: Be smart, and only test a subset of the available divisors. */
-+	for (curdiv = mindiv; curdiv <= maxdiv; curdiv++) {
-+		unsigned long tmp_rate;
-+
-+		tmp_rate = clk_hw_round_rate(parent, rate * curdiv);
-+		tmp_rate /= curdiv;
-+		if (curdiv == mindiv ||
-+		    (tmp_rate > best_rate && tmp_rate <= rate))
-+			best_rate = tmp_rate;
-+
-+		if (best_rate == rate)
-+			break;
-+	}
-+
-+	*div = curdiv << CM_DIV_FRAC_BITS;
-+	*prate = curdiv * best_rate;
-+
-+	return best_rate;
-+}
-+
- static int bcm2835_clock_determine_rate(struct clk_hw *hw,
- 					struct clk_rate_request *req)
- {
--	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct clk_hw *parent, *best_parent = NULL;
- 	bool current_parent_is_pllc;
- 	unsigned long rate, best_rate = 0;
-@@ -1048,9 +1101,8 @@ static int bcm2835_clock_determine_rate(struct clk_hw *hw,
- 		if (bcm2835_clk_is_pllc(parent) && !current_parent_is_pllc)
- 			continue;
- 
--		prate = clk_hw_get_rate(parent);
--		div = bcm2835_clock_choose_div(hw, req->rate, prate, true);
--		rate = bcm2835_clock_rate_from_divisor(clock, prate, div);
-+		rate = bcm2835_clock_choose_div_and_prate(hw, i, req->rate,
-+							  &div, &prate);
- 		if (rate > best_rate && rate <= req->rate) {
- 			best_parent = parent;
- 			best_prate = prate;
-@@ -1262,6 +1314,13 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
- 	init.name = data->name;
- 	init.flags = data->flags | CLK_IGNORE_UNUSED;
- 
-+	/*
-+	 * Pass the CLK_SET_RATE_PARENT flag if we are allowed to propagate
-+	 * rate changes on at least of the parents.
-+	 */
-+	if (data->set_rate_parent)
-+		init.flags |= CLK_SET_RATE_PARENT;
-+
- 	if (data->is_vpu_clock) {
- 		init.ops = &bcm2835_vpu_clock_clk_ops;
- 	} else {
--- 
-2.7.4
+CgoxOS4xMi4yMDE2LCAxNjo1NCwgIkNoZW4tWXUgVHNhaSIgPHdlbnNAY3NpZS5vcmc+Ogo+IE9u
+IE1vbiwgRGVjIDE5LCAyMDE2IGF0IDQ6NDYgUE0sIE1heGltZSBSaXBhcmQKPiA8bWF4aW1lLnJp
+cGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+IHdyb3RlOgo+PiDCoE9uIEZyaSwgRGVjIDE2LCAyMDE2
+IGF0IDAyOjI3OjU0QU0gKzA4MDAsIEljZW5vd3kgWmhlbmcgd3JvdGU6Cj4+PiDCoEFuIG9wZXJh
+dGluZyBwb2ludCB0YWJsZSBpcyBuZWVkZWQgZm9yIHRoZSBjcHUgZnJlcXVlbmN5IGFkanVzdGlu
+ZyB0bwo+Pj4gwqB3b3JrLgo+Pj4KPj4+IMKgVGhlIG9wZXJhdGluZyBwb2ludCB0YWJsZSBpcyBj
+b252ZXJ0ZWQgZnJvbSB0aGUgY29tbW9uIHZhbHVlIGluCj4+PiDCoGV4dHJhY3RlZCBzY3JpcHQu
+ZmV4IGZyb20gbWFueSBBMzMgYm9hcmQvdGFibGV0cy4KPj4+Cj4+PiDCoFNpZ25lZC1vZmYtYnk6
+IEljZW5vd3kgWmhlbmcgPGljZW5vd3lAYW9zYy54eXo+Cj4+PiDCoC0tLQo+Pj4gwqBDaGFuZ2Vz
+IHNpbmNlIHYxOgo+Pj4gwqAtIEZpeCBmb3JtYXQgcHJvYmxlbSAoYmxhbmsgbGluZXMpLgo+Pj4g
+wqAtIFJlbW92ZWQgdGhlIDEuMzQ0R0h6IG9wZXJhdGluZyBwb2ludCwgYXMgaXQncyBvdmVydm9s
+dGFnZSBhbmQgb3ZlcmNsb2NrZWQuCj4+Pgo+Pj4gwqBUaGlzIHBhdGNoIGRlcGVuZHMgb24gdGhl
+IGZvbGxvd2luZyBwYXRjaHNldDoKPj4+Cj4+PiDCoGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3Jn
+L3BpcGVybWFpbC9saW51eC1hcm0ta2VybmVsLzIwMTYtRGVjZW1iZXIvNDczOTYyLmh0bWwKPj4+
+Cj4+PiDCoEl0J3MgdGhlIHYyIG9mIHRoZSBbUEFUQ0ggNC82XSBpbiB0aGlzIHBhdGNoc2V0Lgo+
+Pj4KPj4+IMKgSSB0aGluayB0aGlzIG9wZXJhdGluZyBwb2ludCB0YWJsZSBtYXkgYWxzbyBhcHBs
+eSB0byBBMjMsIGFzIHRoZXJlJ3Mgbm8KPj4+IMKgZGlmZmVyZW5jZSBleGNlcHQgdGhlIHBvaW50
+cyBvdmVyIDEuMkdIeiBiZXR3ZWVuIEEyMyBhbmQgQTMzJ3Mgc3RvY2sgZHZmcyB0YWJsZS4KPj4+
+Cj4+PiDCoEJ1dCBhcyBBMjMgQ0NVIG1heSBub3QgaGF2ZSB0aGUgbmVjZXNzYXJ5IGZpeGVzLCBJ
+IHdvbid0IGFkZCB0aGUgdGFibGUgdG8gQTIzCj4+PiDCoG5vdy4KPj4+Cj4+PiDCoENoZW4tWXUs
+IGNvdWxkIHlvdSB0ZXN0IHRoZSBDQ1UgZml4ZXMgSSBkZXNjcmliZWQgaW4gdGhlIHBhdGNoc2V0
+IGFib3ZlIG9uIEEyMywKPj4+IMKgdGhlbiB0ZXN0IHRoaXMgb3BlcmF0aW5nIHBvaW50cyB0YWJs
+ZT8KPj4+Cj4+PiDCoElmIGl0J3MgbmVjZXNzYXJ5LCB5b3UgY2FuIHNlbmQgb3V0IHRoZSBDQ1Ug
+Zml4ZXMgYW5kIGFkZCBvbmUgbW9yZSBwYXRjaCB0aGF0Cj4+PiDCoG1vdmVzIHRoaXMgb3BwLXYy
+IHRhYmxlIHRvIHN1bjhpLWEyMy1hMzMuZHRzaSAuCj4+Pgo+Pj4gwqDCoGFyY2gvYXJtL2Jvb3Qv
+ZHRzL3N1bjhpLWEzMy5kdHNpIHwgMzUgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysKPj4+IMKgwqAxIGZpbGUgY2hhbmdlZCwgMzUgaW5zZXJ0aW9ucygrKQo+Pj4KPj4+IMKgZGlm
+ZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bjhpLWEzMy5kdHNpIGIvYXJjaC9hcm0vYm9v
+dC9kdHMvc3VuOGktYTMzLmR0c2kKPj4+IMKgaW5kZXggNTA0OTk2Y2JlZTI5Li4wZjViMmFmNzI5
+ODEgMTAwNjQ0Cj4+PiDCoC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bjhpLWEzMy5kdHNpCj4+
+PiDCoCsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3N1bjhpLWEzMy5kdHNpCj4+PiDCoEBAIC00Niw3
+ICs0Niw0MiBAQAo+Pj4gwqDCoCNpbmNsdWRlIDxkdC1iaW5kaW5ncy9kbWEvc3VuNGktYTEwLmg+
+Cj4+Pgo+Pj4gwqDCoC8gewo+Pj4gwqArIGNwdTBfb3BwX3RhYmxlOiBvcHBfdGFibGUwIHsKPj4+
+IMKgKyBjb21wYXRpYmxlID0gIm9wZXJhdGluZy1wb2ludHMtdjIiOwo+Pj4gwqArIG9wcC1zaGFy
+ZWQ7Cj4+PiDCoCsKPj4+IMKgKyBvcHBANjQ4MDAwMDAwIHsKPj4+IMKgKyBvcHAtaHogPSAvYml0
+cy8gNjQgPDY0ODAwMDAwMD47Cj4+PiDCoCsgb3BwLW1pY3Jvdm9sdCA9IDwxMDQwMDAwPjsKPj4+
+IMKgKyBjbG9jay1sYXRlbmN5LW5zID0gPDI0NDE0ND47IC8qIDggMzJrIHBlcmlvZHMgKi8KPj4+
+IMKgKyB9Owo+Pj4gwqArCj4+PiDCoCsgb3BwQDgxNjAwMDAwMCB7Cj4+PiDCoCsgb3BwLWh6ID0g
+L2JpdHMvIDY0IDw4MTYwMDAwMDA+Owo+Pj4gwqArIG9wcC1taWNyb3ZvbHQgPSA8MTEwMDAwMD47
+Cj4+PiDCoCsgY2xvY2stbGF0ZW5jeS1ucyA9IDwyNDQxNDQ+OyAvKiA4IDMyayBwZXJpb2RzICov
+Cj4+PiDCoCsgfTsKPj4+IMKgKwo+Pj4gwqArIG9wcEAxMDA4MDAwMDAwIHsKPj4+IMKgKyBvcHAt
+aHogPSAvYml0cy8gNjQgPDEwMDgwMDAwMDA+Owo+Pj4gwqArIG9wcC1taWNyb3ZvbHQgPSA8MTIw
+MDAwMD47Cj4+PiDCoCsgY2xvY2stbGF0ZW5jeS1ucyA9IDwyNDQxNDQ+OyAvKiA4IDMyayBwZXJp
+b2RzICovCj4+PiDCoCsgfTsKPj4+IMKgKwo+Pj4gwqArIG9wcEAxMjAwMDAwMDAwIHsKPj4+IMKg
+KyBvcHAtaHogPSAvYml0cy8gNjQgPDEyMDAwMDAwMDA+Owo+Pj4gwqArIG9wcC1taWNyb3ZvbHQg
+PSA8MTMyMDAwMD47Cj4+PiDCoCsgY2xvY2stbGF0ZW5jeS1ucyA9IDwyNDQxNDQ+OyAvKiA4IDMy
+ayBwZXJpb2RzICovCj4+PiDCoCsgfTsKPj4+IMKgKyB9Owo+Pj4gwqArCj4+PiDCoMKgwqDCoMKg
+wqDCoGNwdXMgewo+Pj4gwqArIGNwdTA6IGNwdUAwIHsKPj4KPj4gwqBUaGVyZSdzIG5vIG5lZWQg
+dG8gZHVwbGljYXRlIHRoZSBsYWJlbCBoZXJlLiBJIHJlbW92ZWQgaXQgYW5kIGFwcGxpZWQuCj4K
+PiBJIHRoaW5rIHVzaW5nIHRoZSBsYWJlbCB0byBkaXJlY3RseSByZWZlcmVuY2UgY3B1MCB3b3Vs
+ZCBiZSBiZXR0ZXIsCj4gaW5zdGVhZCBvZiBkdXBsaWNhdGluZyB0aGUgY3B1QDAgYmxvY2suCgpB
+ZnRlciBwcm9wZXIgdGVzdGluZyBvZiBBMjMgY2N1LCB0aGUgb3BlcmF0aW5nIHBvaW50cyBjYW4g
+YWxzbyBhcHBseSB0byBBMjMuCihBY2NvcmRpbmcgdG8gQTIzIGRldmljZXMnIGZleCkKCj4KPiBD
+aGVuWXUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxp
+bnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
+ZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4
+LWFybS1rZXJuZWwK
