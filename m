@@ -1,38 +1,64 @@
-Return-Path: <ping.bai@nxp.com>
-From: Bai Ping <ping.bai@nxp.com>
-To: <shawnguo@kernel.org>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <linus.walleij@linaro.org>
-CC: <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
-	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>, <p.zabel@pengutronix.de>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<jacky.baip@gmail.com>
-Subject: [PATCH v2 02/12] driver: clocksource: add gpt timer for imx6sll
-Date: Tue, 27 Dec 2016 17:47:40 +0800
-Message-ID: <1482832070-22668-3-git-send-email-ping.bai@nxp.com>
-In-Reply-To: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Subject: Re: [PATCH v2] ARM: dts: sun8i: add opp-v2 table for A33
+To: Icenowy Zheng <icenowy@aosc.xyz>, Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <20161215182754.33921-1-icenowy@aosc.xyz>
+ <20161219084652.kiqdkiewu5tujlyd@lukather>
+ <CAGb2v65YWntCrFHtSbxhtTWkt+UwkW3xoY-ae26MpH+-ULLXSQ@mail.gmail.com>
+ <11975791482156406@web2g.yandex.ru>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+Message-ID: <8af4327f-b779-9d97-347f-bfe4b8303a60@free-electrons.com>
+Date: Mon, 19 Dec 2016 15:18:03 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: ping.bai@nxp.com
+In-Reply-To: <11975791482156406@web2g.yandex.ru>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree <devicetree@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+ linux-sunxi <linux-sunxi@googlegroups.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add gpt timer support for i.MX6SLL.
+Hi,
 
-Signed-off-by: Bai Ping <ping.bai@nxp.com>
----
- drivers/clocksource/timer-imx-gpt.c | 1 +
- 1 file changed, 1 insertion(+)
+On 19/12/2016 15:06, Icenowy Zheng wrote:
+> 
+> After proper testing of A23 ccu, the operating points can also apply to A23.
+> (According to A23 devices' fex)
+> 
 
-diff --git a/drivers/clocksource/timer-imx-gpt.c b/drivers/clocksource/timer-imx-gpt.c
-index f595460..f71822d 100644
---- a/drivers/clocksource/timer-imx-gpt.c
-+++ b/drivers/clocksource/timer-imx-gpt.c
-@@ -556,4 +556,5 @@ static int __init imx6dl_timer_init_dt(struct device_node *np)
- CLOCKSOURCE_OF_DECLARE(imx6q_timer, "fsl,imx6q-gpt", imx31_timer_init_dt);
- CLOCKSOURCE_OF_DECLARE(imx6dl_timer, "fsl,imx6dl-gpt", imx6dl_timer_init_dt);
- CLOCKSOURCE_OF_DECLARE(imx6sl_timer, "fsl,imx6sl-gpt", imx6dl_timer_init_dt);
-+CLOCKSOURCE_OF_DECLARE(imx6sll_timer, "fsl,imx6sll-gpt", imx6dl_timer_init_dt);
- CLOCKSOURCE_OF_DECLARE(imx6sx_timer, "fsl,imx6sx-gpt", imx6dl_timer_init_dt);
+I disagree. I've looked into using the same operating points for A23 and
+A33 for CPUfreq and I came to the conclusion that not all A23-based
+boards share the same operating points. You can find the fex files for
+the different boards here:
+https://github.com/linux-sunxi/sunxi-boards/tree/master/sys_config/a23
+
+After gathering all supported frequencies/voltages for each A23-based
+boards, I found that only the following frequencies and voltages are
+supported by all A23-based boards:
+
+ - 1008 MHz, 1220 mV
+ - 816 MHz, 1120 mV
+ - 600 MHz, 1040 mV
+
+Quentin
+
 -- 
-1.9.1
+Quentin Schulz, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
