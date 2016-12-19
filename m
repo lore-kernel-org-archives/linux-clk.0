@@ -1,90 +1,98 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Dec 2016 15:05:57 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-	linux-clk@vger.kernel.org, Irina Tirdea <irina.tirdea@intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Brown <broonie@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Darren Hart <dvhart@infradead.org>, Takashi Iwai <tiwai@suse.com>,
-	platform-driver-x86@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>, Len Brown <lenb@kernel.org>
-Subject: Re: [alsa-devel] [PATCH v6 1/3] clk: x86: Add Atom PMC platform
- clocks
-Message-ID: <20161221230557.GK5423@codeaurora.org>
-References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
- <1481306510-7471-2-git-send-email-irina.tirdea@intel.com>
- <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
- <20161213232524.GQ5423@codeaurora.org>
- <32235fb3-0d54-211d-28f4-4655e4bc7812@linux.intel.com>
- <20161217013337.GW5423@codeaurora.org>
- <CAHp75Vdn_8_fCQzkG7CPrnDZzhC7WUpGM1cyvfNRz0u_sc7RKA@mail.gmail.com>
- <7f3d03dc-24fe-ec3f-4a3b-926c28f0ac86@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7f3d03dc-24fe-ec3f-4a3b-926c28f0ac86@linux.intel.com>
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	xf@rock-chips.com
+Cc: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	cl@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2 2/4] dt-bindings: add bindings for rk3328 clock controller
+Date: Mon, 19 Dec 2016 09:56:11 +0800
+Message-Id: <1482112573-11613-3-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1482112573-11613-1-git-send-email-zhangqing@rock-chips.com>
+References: <1482112573-11613-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/19, Pierre-Louis Bossart wrote:
-> On 12/17/16 7:57 AM, Andy Shevchenko wrote:
-> >On Sat, Dec 17, 2016 at 3:33 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> >>On 12/15, Pierre-Louis Bossart wrote:
-> >
-> >>>Clients use devm_clk_get() with a "pmc_plt_clk_<n>"
-> >>>argument.
-> >>
-> >>This is the problem. Clients should be calling clk_get() like:
-> >>
-> >>        clk_get(dev, "signal name in datasheet")
-> >>
-> >>where the first argument is the device and the second argument is
-> >>some string that is meaningful to the device, not the system as a
-> >>whole. The way clkdev is intended is so that the dev argument's
-> >>dev_name() is combined with the con_id that matches some signale
-> >>name in the datasheet. This way when the same IP is put into some
-> >>other chip, the globally unique name doesn't need to change, just
-> >>the device name that's registered with the lookup. Obviously this
-> >>breaks down quite badly when dev_name() isn't stable. Is that
-> >>happening here?
-> >
-> >PMC Atom is a PCI device and thus each platform would have different
-> >dev_name(). Do you want to list all in each consumer if consumer wants
-> >to work on all of them or I missed something?
-> >
-> >So, the question is how clock getting will look like to work on
-> >currently both CherryTrail and BayTrail.
-> 
-> The name pmc_plt_clk_<n> follows the data sheet specification, where
-> this convention is suggested:
->   PLT_CLK[2:0] - Camera
->   PLT_CLK[3] - Audio Codec
->   PLT_CLK[4] -
->   PLT_CLK[5] - COMMs
-> 
-> These clocks are not internal but are made available to external
-> components through dedicated physical pins on the package, this
-> external visibility limits the scope for confusions, variations. I
-> have not seen any skews where these clocks and pins were changed at
-> all.
+Add devicetree bindings for Rockchip cru which found on
+Rockchip SoCs.
 
-Ok, by clkdev design if a device is passed but there isn't a
-match in the lookup table it allows it to match based solely on
-the connection id. Given that the connection id is globally
-unique this will work.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ .../bindings/clock/rockchip,rk3328-cru.txt         | 57 ++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
 
-Hopefully we don't have two of these devices with pmc_plt_clk_<n>
-signals in a single system though. Then having the device name
-would help differentiate between the two. And then it may make
-sense to have some sort of ACPI lookup system, similar to how we
-have lookups for clks in DT.
-
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+new file mode 100644
+index 000000000000..20053494d49f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+@@ -0,0 +1,57 @@
++* Rockchip RK3328 Clock and Reset Unit
++
++The RK3328 clock controller generates and supplies clock to various
++controllers within the SoC and also implements a reset controller for SoC
++peripherals.
++
++Required Properties:
++
++- compatible: should be "rockchip,rk3328-cru"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- #clock-cells: should be 1.
++- #reset-cells: should be 1.
++
++Optional Properties:
++
++- rockchip,grf: phandle to the syscon managing the "general register files"
++  If missing pll rates are not changeable, due to the missing pll lock status.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. All available clocks are defined as
++preprocessor macros in the dt-bindings/clock/rk3328-cru.h headers and can be
++used in device tree sources. Similar macros exist for the reset sources in
++these files.
++
++External clocks:
++
++There are several clocks that are generated outside the SoC. It is expected
++that they are defined using standard clock bindings with following
++clock-output-names:
++ - "xin24m" - crystal input - required,
++ - "clkin_i2s" - external I2S clock - optional,
++ - "gmac_clkin" - external GMAC clock - optional
++ - "phy_50m_out" - output clock of the pll in the mac phy
++
++Example: Clock controller node:
++
++	cru: clock-controller@ff440000 {
++		compatible = "rockchip,rk3328-cru", "rockchip,cru", "syscon";
++		reg = <0x0 0xff440000 0x0 0x1000>;
++		rockchip,grf = <&grf>;
++
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++Example: UART controller node that consumes the clock generated by the clock
++  controller:
++
++	uart0: serial@ff120000 {
++		compatible = "snps,dw-apb-uart";
++		reg = <0xff120000 0x100>;
++		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++		reg-shift = <2>;
++		reg-io-width = <4>;
++		clocks = <&cru SCLK_UART0>;
++	};
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
