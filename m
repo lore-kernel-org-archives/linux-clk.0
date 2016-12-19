@@ -1,59 +1,81 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Jose Abreu <Jose.Abreu@synopsys.com>,  linux-clk@vger.kernel.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <040cc9afdfa0e95ce7a01c406ff427ef7dc0c0fd.1481540717.git.joabreu@synopsys.com>
-Cc: "Jose Abreu" <Jose.Abreu@synopsys.com>,
- "Carlos Palminha" <CARLOS.PALMINHA@synopsys.com>,
- "Stephen Boyd" <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org
-References: <040cc9afdfa0e95ce7a01c406ff427ef7dc0c0fd.1481540717.git.joabreu@synopsys.com>
-Message-ID: <148156941210.37646.9887321843077068242@resonance>
-Subject: Re: [PATCH] clk/axs10x: Clear init field in driver probe
-Date: Mon, 12 Dec 2016 11:03:32 -0800
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	xf@rock-chips.com
+Cc: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	cl@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2 4/4] clk: rockchip: add new pll-type for rk3328
+Date: Mon, 19 Dec 2016 09:56:13 +0800
+Message-Id: <1482112573-11613-5-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1482112573-11613-1-git-send-email-zhangqing@rock-chips.com>
+References: <1482112573-11613-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jose Abreu (2016-12-12 03:08:55)
-> Init field must be cleared in driver probe as this structure is not dinam=
-ically allocated. If not, wrong flags can be passed to core.
-> =
+The rk3328's pll and clock are similar with rk3036's,
+it different with pll_mode_mask,there are different
+control registers bit,
+so these should be independent and separate from
+the series of rk3328s.
 
-> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-pll.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-Applied to clk-next. You can find this patch merged after v4.10-rc1 is
-released in a couple of weeks.
-
-Regards,
-Mike
-
-> Cc: Carlos Palminha <palminha@synopsys.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  drivers/clk/axs10x/i2s_pll_clock.c | 1 +
->  1 file changed, 1 insertion(+)
-> =
-
-> diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_=
-pll_clock.c
-> index 411310d..02d3bcd 100644
-> --- a/drivers/clk/axs10x/i2s_pll_clock.c
-> +++ b/drivers/clk/axs10x/i2s_pll_clock.c
-> @@ -182,6 +182,7 @@ static int i2s_pll_clk_probe(struct platform_device *=
-pdev)
->         if (IS_ERR(pll_clk->base))
->                 return PTR_ERR(pll_clk->base);
->  =
-
-> +       memset(&init, 0, sizeof(init));
->         clk_name =3D node->name;
->         init.name =3D clk_name;
->         init.ops =3D &i2s_pll_ops;
-> -- =
-
-> 1.9.1
-> =
-
->=20
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 6ed605776abd..9650c75f61d1 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -29,6 +29,7 @@
+ #define PLL_MODE_SLOW		0x0
+ #define PLL_MODE_NORM		0x1
+ #define PLL_MODE_DEEP		0x2
++#define PLL_RK3328_MODE_MASK	0x1
+ 
+ struct rockchip_clk_pll {
+ 	struct clk_hw		hw;
+@@ -865,13 +866,17 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 	pll_mux = &pll->pll_mux;
+ 	pll_mux->reg = ctx->reg_base + mode_offset;
+ 	pll_mux->shift = mode_shift;
+-	pll_mux->mask = PLL_MODE_MASK;
++	if (pll_type == pll_rk3328)
++		pll_mux->mask = PLL_RK3328_MODE_MASK;
++	else
++		pll_mux->mask = PLL_MODE_MASK;
+ 	pll_mux->flags = 0;
+ 	pll_mux->lock = &ctx->lock;
+ 	pll_mux->hw.init = &init;
+ 
+ 	if (pll_type == pll_rk3036 ||
+ 	    pll_type == pll_rk3066 ||
++	    pll_type == pll_rk3328 ||
+ 	    pll_type == pll_rk3399)
+ 		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
+ 
+@@ -929,6 +934,12 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 		else
+ 			init.ops = &rockchip_rk3066_pll_clk_ops;
+ 		break;
++	case pll_rk3328:
++		if (!pll->rate_table || IS_ERR(ctx->grf))
++			init.ops = &rockchip_rk3036_pll_clk_norate_ops;
++		else
++			init.ops = &rockchip_rk3036_pll_clk_ops;
++		break;
+ 	case pll_rk3399:
+ 		if (!pll->rate_table)
+ 			init.ops = &rockchip_rk3399_pll_clk_norate_ops;
+-- 
+1.9.1
