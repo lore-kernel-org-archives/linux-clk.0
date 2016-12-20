@@ -1,67 +1,45 @@
-Return-Path: <andre.przywara@arm.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
- linux-clk <linux-clk@vger.kernel.org>, Alexander Graf <agraf@suse.de>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
-Subject: sunxi-ng clocks: leaving certain clocks alone?
-Message-ID: <d70f2809-102c-a3de-c77c-43af27bbcbbc@arm.com>
-Date: Sun, 11 Dec 2016 23:54:06 +0000
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <codekipper@gmail.com>
+Return-Path: <codekipper@gmail.com>
+From: codekipper@gmail.com
+To: maxime.ripard@free-electrons.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	mturquette@baylibre.com,
+	linux-sunxi@googlegroups.com,
+	Marcus Cooper <codekipper@gmail.com>
+Subject: [linux-sunxi][PATCH] clk: sunxi-ng: A31: Fix spdif clock register
+Date: Tue, 20 Dec 2016 11:44:46 +0100
+Message-Id: <20161220104446.22638-1-codekipper@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: Marcus Cooper <codekipper@gmail.com>
 
-I was observing that the new sunxi-ng clock code apparently explicitly
-turns off _all_ clocks that are not used or needed. I find this rather
-unfortunate, as I wanted to use the THS temperature sensor from ARM
-Trusted Firmware to implement emergency shutdown or DVFS throttling.
-That works until the clock framework finds the clock (as enumerated in
-ccu-sun50i-a64.c) and obviously explicitly clears bit 31 in the THS mod
-clock register and bit 8 in the respective clock gate register.
-Turning them manually back on via /dev/mem or removing the THS clock
-from the sunxi-ng driver fixes this for me.
+As the SPDIF was rarely documented on the earlier Allwinner SoCs
+it was assumed that it had a similar clock register to the one
+described in the H3 User Manual.
 
-This was not happening with the old Allwinner clocks, since the kernel
-wouldn't even know about it if there was no driver and the clock wasn't
-mentioned in the DT.
+However this is not the case and it looks to shares the same setup
+as the I2S clock registers.
 
-Now with sunxi-ng even though the THS clock is not actually referenced
-or used in the DT, the kernel turns it off. I would expect that upon
-entering the kernel all unneeded clocks are turned off anyway, so there
-is no need to mess with clocks that have no user, but are enumerated in
-the ccu driver.
+Signed-off-by: Marcus Cooper <codekipper@gmail.com>
+---
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I wonder if this kills simplefb as well, for instance, since I believe
-that U-Boot needs to turn on certain clocks and relies on them staying up.
-
-So my questions:
-1) Is this expected behaviour?
-2) If yes, should it really be?
-3) If yes, shouldn't there be way to explicitly tell Linux to leave that
-clock alone, preferably via DT? Although the sunxi-ng clocks take
-control over the whole CCU unit, I wonder if it should really mess with
-clocks there are not referenced in the DT.
-
-Maybe there is some way to reference those clocks via some dummy driver
-or DT node to avoid this behaviour? Is there any prior art in this respect?
-
-I think this issue will affect more future users (thinking of EFI RTC,
-EFI graphics, etc.), so I wanted to start a discussion on this.
-
-Any input welcome.
-
-Cheers,
-Andre.
-
-P.S. For reference my use case: ARM Trusted Firmware (ATF) enables the
-temperature sensor (THS) and programs a shutdown value. It programs the
-respective interrupt as secure and registers an IRQ handler in ATF to
-shutdown the system or take other appropriate matters to avoid
-overheating. Additionally the sensor is exported via the generic SCPI
-interface, so the existing scpi-hwmon driver picks it up and reports it
-to whoever is interested in Linux land via the normal interfaces.
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index fc75a335a7ce..4c9a920ff4ab 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -468,8 +468,8 @@ static SUNXI_CCU_MUX_WITH_GATE(daudio0_clk, "daudio0", daudio_parents,
+ static SUNXI_CCU_MUX_WITH_GATE(daudio1_clk, "daudio1", daudio_parents,
+ 			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+ 
+-static SUNXI_CCU_M_WITH_GATE(spdif_clk, "spdif", "pll-audio",
+-			     0x0c0, 0, 4, BIT(31), CLK_SET_RATE_PARENT);
++static SUNXI_CCU_MUX_WITH_GATE(spdif_clk, "spdif", daudio_parents,
++			       0x0c0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
+ 		      0x0cc, BIT(8), 0);
+-- 
+2.11.0
