@@ -1,115 +1,31 @@
-Return-Path: <chris.brandt@renesas.com>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2] clk: renesas: mstp: Support 8-bit registers for r7s72100
-Date: Thu, 15 Dec 2016 12:00:27 -0500
-Message-Id: <20161215170027.28411-1-chris.brandt@renesas.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Dec 2016 15:27:26 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Nicholas Mc Guire <hofrat@osadl.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Mark Brown <broonie@opensource.wolfsonmicro.com>,
+	patches@opensource.wolfsonmicro.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] clk: wm831x: fix usleep_range with bad range
+Message-ID: <20161221232726.GC8288@codeaurora.org>
+References: <1481528409-5182-1-git-send-email-hofrat@osadl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1481528409-5182-1-git-send-email-hofrat@osadl.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The RZ/A1 is different than the other Renesas SOCs because the MSTP
-registers are 8-bit instead of 32-bit and if you try writing values as
-32-bit nothing happens...meaning this driver never worked for r7s72100.
+On 12/12, Nicholas Mc Guire wrote:
+> The delay here is not in atomic context and does not seem critical with
+> respect to precision, but usleep_range(min,max) with min==max results in 
+> giving the timer subsystem no room to optimize uncritical delays. Fix 
+> this by setting the range to 2000,3000 us.
+> 
+> Fixes: commit f05259a6ffa4 ("clk: wm831x: Add initial WM831x clock driver")
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> ---
 
-Fixes: b6face404f38 ("ARM: shmobile: r7s72100: add essential clock nodes to dtsi")
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
-* move r7s72100 detection inside cpg_mstp_clocks_init()
-* change width_8bit flag from global to inside group struct
----
- drivers/clk/renesas/clk-mstp.c | 27 ++++++++++++++++++++++-----
- 1 file changed, 22 insertions(+), 5 deletions(-)
+Applied to clk-next
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 9375777..b533f99 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -37,12 +37,14 @@
-  * @smstpcr: module stop control register
-  * @mstpsr: module stop status register (optional)
-  * @lock: protects writes to SMSTPCR
-+ * @width_8bit: registers are 8-bit, not 32-bit
-  */
- struct mstp_clock_group {
- 	struct clk_onecell_data data;
- 	void __iomem *smstpcr;
- 	void __iomem *mstpsr;
- 	spinlock_t lock;
-+	bool width_8bit;
- };
- 
- /**
-@@ -59,6 +61,18 @@ struct mstp_clock {
- 
- #define to_mstp_clock(_hw) container_of(_hw, struct mstp_clock, hw)
- 
-+static inline u32 cpg_mstp_read(struct mstp_clock_group *group,
-+				u32 __iomem *reg)
-+{
-+	return group->width_8bit ? readb(reg) : clk_readl(reg);
-+}
-+
-+static inline void cpg_mstp_write(struct mstp_clock_group *group, u32 val,
-+				  u32 __iomem *reg)
-+{
-+	group->width_8bit ? writeb(val, reg) : clk_writel(val, reg);
-+}
-+
- static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- {
- 	struct mstp_clock *clock = to_mstp_clock(hw);
-@@ -70,12 +84,12 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 
- 	spin_lock_irqsave(&group->lock, flags);
- 
--	value = clk_readl(group->smstpcr);
-+	value = cpg_mstp_read(group, group->smstpcr);
- 	if (enable)
- 		value &= ~bitmask;
- 	else
- 		value |= bitmask;
--	clk_writel(value, group->smstpcr);
-+	cpg_mstp_write(group, value, group->smstpcr);
- 
- 	spin_unlock_irqrestore(&group->lock, flags);
- 
-@@ -83,7 +97,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 		return 0;
- 
- 	for (i = 1000; i > 0; --i) {
--		if (!(clk_readl(group->mstpsr) & bitmask))
-+		if (!(cpg_mstp_read(group, group->mstpsr) & bitmask))
- 			break;
- 		cpu_relax();
- 	}
-@@ -114,9 +128,9 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
- 	u32 value;
- 
- 	if (group->mstpsr)
--		value = clk_readl(group->mstpsr);
-+		value = cpg_mstp_read(group, group->mstpsr);
- 	else
--		value = clk_readl(group->smstpcr);
-+		value = cpg_mstp_read(group, group->smstpcr);
- 
- 	return !(value & BIT(clock->bit_index));
- }
-@@ -188,6 +202,9 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
- 		return;
- 	}
- 
-+	if (of_device_is_compatible(np, "renesas,r7s72100-mstp-clocks"))
-+		group->width_8bit = true;
-+
- 	for (i = 0; i < MSTP_MAX_CLOCKS; ++i)
- 		clks[i] = ERR_PTR(-ENOENT);
- 
 -- 
-2.10.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
