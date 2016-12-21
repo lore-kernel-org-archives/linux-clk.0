@@ -1,37 +1,93 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH 0/6] Allwinner H5 and Xunlong Orange Pi PC 2 support
-Date: Tue, 27 Dec 2016 00:25:12 +0800
-Message-Id: <20161226162518.5367-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Nadav Haklai <nadavh@marvell.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCHv2 2/3] clk: mvebu: adjust clock handling for the CP110 system controller
+Date: Wed, 21 Dec 2016 11:26:56 +0100
+Message-Id: <1482316017-22154-3-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset imports two necessary patches for Allwinner H5: CCU driver and
-the pinctrl driver, both are based on the H3 ones.
+This commit:
 
-Some patches of H5 dtsi file are directly taken from Andre Przywara's kernel
-tree, but did more cleanup.
+ - makes the GOP_DP (bit 9) gatable clock a child clock of the
+   SD_MMC_GOP (bit 18) clock, as it should have been. The clock for bit
+   18 was just named SD_MMC, but since it also covers the GOP block, it
+   is renamed SD_MMC_GOP.
 
-The Orange Pi PC 2 dtsi file is also taken there.
+ - makes the MG (bit 5) gatable clock a child clock of the MG_CORE
+   clock (bit 6)
 
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ drivers/clk/mvebu/cp110-system-controller.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index f2303da..8038b93 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -64,8 +64,11 @@ enum {
+ #define CP110_GATE_NAND			2
+ #define CP110_GATE_PPV2			3
+ #define CP110_GATE_SDIO			4
++#define CP110_GATE_MG			5
++#define CP110_GATE_MG_CORE		6
+ #define CP110_GATE_XOR1			7
+ #define CP110_GATE_XOR0			8
++#define CP110_GATE_GOP_DP		9
+ #define CP110_GATE_PCIE_X1_0		11
+ #define CP110_GATE_PCIE_X1_1		12
+ #define CP110_GATE_PCIE_X4		13
+@@ -73,7 +76,7 @@ enum {
+ #define CP110_GATE_SATA			15
+ #define CP110_GATE_SATA_USB		16
+ #define CP110_GATE_MAIN			17
+-#define CP110_GATE_SDMMC		18
++#define CP110_GATE_SDMMC_GOP		18
+ #define CP110_GATE_SLOW_IO		21
+ #define CP110_GATE_USB3H0		22
+ #define CP110_GATE_USB3H1		23
+@@ -302,6 +305,11 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 						      "gate-clock-output-names",
+ 						      CP110_GATE_MAIN, &parent);
+ 			break;
++		case CP110_GATE_MG:
++			of_property_read_string_index(np,
++						      "gate-clock-output-names",
++						      CP110_GATE_MG_CORE, &parent);
++			break;
+ 		case CP110_GATE_NAND:
+ 			parent = nand_name;
+ 			break;
+@@ -309,9 +317,10 @@ static int cp110_syscon_clk_probe(struct platform_device *pdev)
+ 			parent = ppv2_name;
+ 			break;
+ 		case CP110_GATE_SDIO:
++		case CP110_GATE_GOP_DP:
+ 			of_property_read_string_index(np,
+ 						      "gate-clock-output-names",
+-						      CP110_GATE_SDMMC, &parent);
++						      CP110_GATE_SDMMC_GOP, &parent);
+ 			break;
+ 		case CP110_GATE_XOR1:
+ 		case CP110_GATE_XOR0:
+-- 
+2.7.4
