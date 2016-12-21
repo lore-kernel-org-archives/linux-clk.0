@@ -1,60 +1,71 @@
-Return-Path: <eric@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH 1/2] clk: bcm: Support rate change propagation on bcm2835 clocks
-In-Reply-To: <1480626020-20031-2-git-send-email-boris.brezillon@free-electrons.com>
-References: <1480626020-20031-1-git-send-email-boris.brezillon@free-electrons.com> <1480626020-20031-2-git-send-email-boris.brezillon@free-electrons.com>
-Date: Fri, 02 Dec 2016 11:01:09 -0800
-Message-ID: <87lgvyf956.fsf@eliezer.anholt.net>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Nadav Haklai <nadavh@marvell.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCHv2 1/3] dt-bindings: arm: update Armada CP110 system controller binding
+Date: Wed, 21 Dec 2016 11:26:55 +0100
+Message-Id: <1482316017-22154-2-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+It turns out that in the CP110 HW block present in Marvell Armada
+7K/8K SoCs, gatable clock n°18 not only controls SD/MMC, but also the
+GOP block. This commit updates the Device Tree binding for this piece
+of hardware accordingly.
 
-Boris Brezillon <boris.brezillon@free-electrons.com> writes:
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ .../devicetree/bindings/arm/marvell/cp110-system-controller0.txt    | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> Some peripheral clocks, like the VEC (Video EnCoder) clock need to be set
-> to a precise rate (in our case 108MHz). With the current implementation,
-> where peripheral clocks are not allowed to forward rate change requests
-> to their parents, it is impossible to match this requirement unless the
-> bootloader has configured things correctly, or a specific rate has been
-> assigned through the DT (with the assigned-clk-rates property).
->
-> Add a new field to struct bcm2835_clock_data to specify which parent
-> clocks accept rate change propagation, and support set rate propagation
-> in bcm2835_clock_determine_rate().
->
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
-A possible simplification would be to limit VEC to only PLLH_AUX, since
-that was how the HW designers intended it to be used.  Then you could
-just have SET_RATE_PARENT flag, rather than the bitfield.
-
-Still, this seems to be correct and fixes the bug.  Both patches are:
-
-Reviewed-by: Eric Anholt <eric@anholt.net>
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlhBxPUACgkQtdYpNtH8
-nuj2CRAApeHXicEG/F5cchyCcUoMsNlELcGnwrwfOKDkspYXyYixCamihW4/dd+V
-pl9hnCxhKM8RZPzxNcKawj5J35oZa7EGIQKf2qBlAX9nWt+C3lzdZjEeWeyzbKuE
-Urni3tAg1M7Spcg4iYDrrUhGomgjqYlnW0/R5zNAKlNAdoSjjWbY/t7g9LuHSRNN
-ve4W0NIQnH/jw9ZmgqBoPilHvpXFpf3ivx7U2k0FKeGzj8C0dh3/ckeyZi5A/8Cc
-N0brcM2B1TKPMNkGBpyLRVrGpdbC7pVd/Hr9jPjUuqwyLfTKctn7lkEuxuTs308u
-rppe6jeyJz3dyRAWl1nvOZ6GhRCS/+hJlzrqFGQGDXLXLJJKbGVXTr+2ulK2LF/8
-kFedACqtxVkSdAD/s1paUQ1xuUm4fwyoES5llRdLAK+ZnbEzNfW7FhdBaimmZ+eg
-wt7RXDXnxbAJwlnMRU31iltIDc882HQJnCn7bbm/xPEANDo/LNvrjW9YuNwbNKEO
-f9YfO4h3XpDstbj8ljK4mDbjeau/sAymYnlLWzWbMLQNstlJRNoFZS1owc967+Wf
-xoFyys0iL4pie9FgmEhhm1ba6elQ/r48yZR/lnCPjgtymy+dyDV+q9/Bqx7mXWIU
-xFlLpRaFtNVMsYUcWnEI+9WhXq1zJ5czaQSMrZW7pU+0vfLcE7Q=
-=ROYh
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+index 30c5469..07dbb35 100644
+--- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
++++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+@@ -45,7 +45,7 @@ The following clocks are available:
+    - 1 15	SATA
+    - 1 16	SATA USB
+    - 1 17	Main
+-   - 1 18	SD/MMC
++   - 1 18	SD/MMC/GOP
+    - 1 21	Slow IO (SPI, NOR, BootROM, I2C, UART)
+    - 1 22	USB3H0
+    - 1 23	USB3H1
+@@ -65,7 +65,7 @@ Required properties:
+ 	"cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
+ 	"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
+ 	"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
+-	"cpm-sata-usb", "cpm-main", "cpm-sd-mmc", "none", "none", "cpm-slow-io",
++	"cpm-sata-usb", "cpm-main", "cpm-sd-mmc-gop", "none", "none", "cpm-slow-io",
+ 	"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
+ 
+ Example:
+@@ -78,6 +78,6 @@ Example:
+ 		gate-clock-output-names = "cpm-audio", "cpm-communit", "cpm-nand", "cpm-ppv2", "cpm-sdio",
+ 			"cpm-mg-domain", "cpm-mg-core", "cpm-xor1", "cpm-xor0", "cpm-gop-dp", "none",
+ 			"cpm-pcie_x10", "cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor", "cpm-sata",
+-			"cpm-sata-usb", "cpm-main", "cpm-sd-mmc", "none", "none", "cpm-slow-io",
++			"cpm-sata-usb", "cpm-main", "cpm-sd-mmc-gop", "none", "none", "cpm-slow-io",
+ 			"cpm-usb3h0", "cpm-usb3h1", "cpm-usb3dev", "cpm-eip150", "cpm-eip197";
+ 	};
+-- 
+2.7.4
