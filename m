@@ -1,91 +1,33 @@
-Return-Path: <ping.bai@nxp.com>
-From: Bai Ping <ping.bai@nxp.com>
-To: <shawnguo@kernel.org>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <linus.walleij@linaro.org>
-CC: <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
-	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>, <p.zabel@pengutronix.de>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<ping.bai@nxp.com>
-Subject: [PATCH 07/11] ARM: debug: Add low level debug support for imx6sll
-Date: Fri, 2 Dec 2016 14:39:30 +0800
-Message-ID: <1480660774-25055-8-git-send-email-ping.bai@nxp.com>
-In-Reply-To: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
-References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Dec 2016 15:34:14 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Jun Nie <jun.nie@linaro.org>, Baoyou Xie <xie.baoyou@zte.com.cn>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH v2 3/3] clk: zte: add audio clocks for zx296718
+Message-ID: <20161221233414.GF8288@codeaurora.org>
+References: <1481873207-22929-1-git-send-email-shawnguo@kernel.org>
+ <1481873207-22929-4-git-send-email-shawnguo@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: ping.bai@nxp.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1481873207-22929-4-git-send-email-shawnguo@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add low level debug support for i.MX6SLL.
+On 12/16, Shawn Guo wrote:
+> From: Jun Nie <jun.nie@linaro.org>
+> 
+> The audio related clock support is missing from the existing zx296718
+> clock driver.  Let's add it, so that the upstream ZX SPDIF driver can
+> work for HDMI audio support.
+> 
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> ---
 
-Signed-off-by: Bai Ping <ping.bai@nxp.com>
----
- arch/arm/Kconfig.debug            |  9 +++++++++
- arch/arm/include/debug/imx-uart.h | 10 ++++++++++
- 2 files changed, 19 insertions(+)
+Applied to clk-next + I added static to some more structures.
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index 408540f..d52d48c 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -405,6 +405,13 @@ choice
- 		  Say Y here if you want kernel low-level debugging support
- 		  on i.MX6SL.
- 
-+	config DEBUG_IMX6SLL_UART
-+		bool "i.MX6SLL Debug UART"
-+		depends on SOC_IMX6SLL
-+		help
-+		  Say Y here if you want kernel low-level debugging support
-+		  on i.MX6SLL.
-+
- 	config DEBUG_IMX6SX_UART
- 		bool "i.MX6SX Debug UART"
- 		depends on SOC_IMX6SX
-@@ -1374,6 +1381,7 @@ config DEBUG_IMX_UART_PORT
- 						DEBUG_IMX53_UART || \
- 						DEBUG_IMX6Q_UART || \
- 						DEBUG_IMX6SL_UART || \
-+						DEBUG_IMX6SLL_UART || \
- 						DEBUG_IMX6SX_UART || \
- 						DEBUG_IMX6UL_UART || \
- 						DEBUG_IMX7D_UART
-@@ -1428,6 +1436,7 @@ config DEBUG_LL_INCLUDE
- 				 DEBUG_IMX53_UART ||\
- 				 DEBUG_IMX6Q_UART || \
- 				 DEBUG_IMX6SL_UART || \
-+				 DEBUG_IMX6SLL_UART || \
- 				 DEBUG_IMX6SX_UART || \
- 				 DEBUG_IMX6UL_UART || \
- 				 DEBUG_IMX7D_UART
-diff --git a/arch/arm/include/debug/imx-uart.h b/arch/arm/include/debug/imx-uart.h
-index bce58e9..24e60ce 100644
---- a/arch/arm/include/debug/imx-uart.h
-+++ b/arch/arm/include/debug/imx-uart.h
-@@ -81,6 +81,14 @@
- #define IMX6SL_UART_BASE_ADDR(n) IMX6SL_UART##n##_BASE_ADDR
- #define IMX6SL_UART_BASE(n)	IMX6SL_UART_BASE_ADDR(n)
- 
-+#define IMX6SLL_UART1_BASE_ADDR 0x02020000
-+#define IMX6SLL_UART2_BASE_ADDR 0x02024000
-+#define IMX6SLL_UART3_BASE_ADDR 0x02034000
-+#define IMX6SLL_UART4_BASE_ADDR 0x02018000
-+#define IMX6SLL_UART5_BASE_ADDR 0x021f4000
-+#define IMX6SLL_UART_BASE_ADDR(n) IMX6SLL_UART##n##_BASE_ADDR
-+#define IMX6SLL_UART_BASE(n)	IMX6SLL_UART_BASE_ADDR(n)
-+
- #define IMX6SX_UART1_BASE_ADDR	0x02020000
- #define IMX6SX_UART2_BASE_ADDR	0x021e8000
- #define IMX6SX_UART3_BASE_ADDR	0x021ec000
-@@ -133,6 +141,8 @@
- #define UART_PADDR	IMX_DEBUG_UART_BASE(IMX6Q)
- #elif defined(CONFIG_DEBUG_IMX6SL_UART)
- #define UART_PADDR	IMX_DEBUG_UART_BASE(IMX6SL)
-+#elif defined(CONFIG_DEBUG_IMX6SLL_UART)
-+#define UART_PADDR	IMX_DEBUG_UART_BASE(IMX6SLL)
- #elif defined(CONFIG_DEBUG_IMX6SX_UART)
- #define UART_PADDR	IMX_DEBUG_UART_BASE(IMX6SX)
- #elif defined(CONFIG_DEBUG_IMX6UL_UART)
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
