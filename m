@@ -1,51 +1,32 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: bcm2835: Avoid overwriting the div info when disabling a pll_div clk
-Date: Thu,  1 Dec 2016 20:27:21 +0100
-Message-Id: <1480620441-5442-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Dec 2016 15:34:01 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Jun Nie <jun.nie@linaro.org>, Baoyou Xie <xie.baoyou@zte.com.cn>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH v2 2/3] dt-bindings: zx296718-clk: add compatible for
+ audio clock controller
+Message-ID: <20161221233401.GE8288@codeaurora.org>
+References: <1481873207-22929-1-git-send-email-shawnguo@kernel.org>
+ <1481873207-22929-3-git-send-email-shawnguo@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1481873207-22929-3-git-send-email-shawnguo@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-bcm2835_pll_divider_off() is resetting the divider field in the A2W reg
-to zero when disabling the clock.
+On 12/16, Shawn Guo wrote:
+> From: Shawn Guo <shawn.guo@linaro.org>
+> 
+> It adds the compatible string for zx296718 audio clock controller.
+> 
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
-Make sure we preserve this value by reading the previous a2w_reg value
-first and ORing the result with A2W_PLL_CHANNEL_DISABLE.
+Applied to clk-next
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
-Cc: <stable@vger.kernel.org>
----
- drivers/clk/bcm/clk-bcm2835.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 836d07550be3..2acaa77ad482 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -751,7 +751,9 @@ static void bcm2835_pll_divider_off(struct clk_hw *hw)
- 	cprman_write(cprman, data->cm_reg,
- 		     (cprman_read(cprman, data->cm_reg) &
- 		      ~data->load_mask) | data->hold_mask);
--	cprman_write(cprman, data->a2w_reg, A2W_PLL_CHANNEL_DISABLE);
-+	cprman_write(cprman, data->a2w_reg,
-+		     cprman_read(cprman, data->a2w_reg) |
-+		     A2W_PLL_CHANNEL_DISABLE);
- 	spin_unlock(&cprman->regs_lock);
- }
- 
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
