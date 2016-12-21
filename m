@@ -1,65 +1,45 @@
-Return-Path: <absahu@codeaurora.org>
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	varada@codeaurora.org,
-	snlakshm@codeaurora.org,
-	pradeepb@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v5] Patches for QCOM IPQ4019 clock driver
-Date: Thu, 22 Dec 2016 20:10:53 +0530
-Message-Id: <1482417654-2998-1-git-send-email-absahu@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Dec 2016 15:14:46 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	dri-devel@lists.freedesktop.org,
+	Thierry Reding <thierry.reding@gmail.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 02/11] clk: bcm2835: Register the DSI0/DSI1 pixel clocks.
+Message-ID: <20161221231446.GA8288@codeaurora.org>
+References: <20161214194621.16499-1-eric@anholt.net>
+ <20161214194621.16499-3-eric@anholt.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161214194621.16499-3-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-These patches are related to Qualcomm IPQ4019 GCC (Global Clock
-Controller) driver code mainly adding the nodes for clock marked
-as fixed in current IPQ4019 clock driver and support for multiple
-CPU frequencies.
+On 12/14, Eric Anholt wrote:
+>  
+>  	/* the gates */
+>  
+> @@ -1890,8 +1976,18 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
+>  	if (IS_ERR(cprman->regs))
+>  		return PTR_ERR(cprman->regs);
+>  
+> -	cprman->osc_name = of_clk_get_parent_name(dev->of_node, 0);
+> -	if (!cprman->osc_name)
+> +	for (i = 0; i < ARRAY_SIZE(cprman_parent_names); i++) {
+> +		cprman->real_parent_names[i] =
+> +			of_clk_get_parent_name(dev->of_node, i);
+> +	}
 
-[v5]
-
-   1. Hardcoded the safe parent index for APSS CPU frequency
-      change notifier
-   2. Removed all other patches which are already reviewed and
-      applied
-
-[V4]
-
-   1. Addressed the review comments given in v3 patches.
-   2. Removed the intermediate VCO clocks and make VCO as
-      part of final divider clock.
-   3. Changed some variable and structure names.
-   4. Removed intermediate frequency change patch and merged
-      in the main patch itself.
-   5. Added the APSS CPU frequency change notifier patch
-   6. Removed i2c node frequency table which is already reviewed.
-
-[V3]
-
-   1. Addressed the review comments given in v2 patches.
-   2. Replaced the do_div with normal division.
-   3. Marked the PCNOC node as critical.
-   4. Modified the frequency values for the recent change done
-      in IPQ4019 bootloader.
-   5. Changed the i2c node frequency table for 19.05 MHz clock.
-
-[V2]
-
-   1. Removed the fixed clock references and add the same as clock nodes
-   with recalc_rate operation.
-
-Abhishek Sahu (1):
-  clk: qcom: ipq4019: Add the cpu clock frequency change notifier
-
- drivers/clk/qcom/gcc-ipq4019.c | 40 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 39 insertions(+), 1 deletion(-)
+Can we use of_clk_parent_fill() here? Or do we need to support
+holes in the parent array? If it's the latter please add a
+comment so we don't mistakenly change this later.
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
