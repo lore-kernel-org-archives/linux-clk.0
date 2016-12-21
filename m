@@ -1,52 +1,34 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 8 Dec 2016 13:14:35 -0800
+Date: Wed, 21 Dec 2016 15:57:50 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Ladislav Michl <ladis@linux-mips.org>, Tero Kristo <t-kristo@ti.com>,
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	Paul Walmsley <paul@pwsan.com>, Richard Watts <rrw@kynesim.co.uk>,
-	Tony Lindgren <tony@atomide.com>,
-	Alexander Kinzer <a.kinzer@plusoptix.de>,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
-Message-ID: <20161208211435.GJ5423@codeaurora.org>
-References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com>
- <20161208001654.GD5423@codeaurora.org>
- <20161208071155.GA7530@localhost.localdomain>
- <3225321.q72K2erxPs@avalon>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org, mturquette@baylibre.com,
+	robh+dt@kernel.org, mark.rutland@arm.com, varada@codeaurora.org,
+	pradeepb@codeaurora.org, snlakshm@codeaurora.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/6] clk: qcom: ipq4019: Add the apss cpu pll divider
+ clock node
+Message-ID: <20161221235750.GK8288@codeaurora.org>
+References: <1480088493-4590-1-git-send-email-absahu@codeaurora.org>
+ <1480088493-4590-3-git-send-email-absahu@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3225321.q72K2erxPs@avalon>
+In-Reply-To: <1480088493-4590-3-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/08, Laurent Pinchart wrote:
-> Hi Ladislav,
+On 11/25, Abhishek Sahu wrote:
+> The current ipq4019 clock driver does not have support for all
+> the frequency supported by APSS CPU. APSS CPU frequency is
+> provided with APSS CPU PLL divider which divides down the VCO
+> frequency. This divider is nonlinear and specific to IPQ4019
+> so the standard divider code cannot be used for this.
 > 
-> On Thursday 08 Dec 2016 08:11:55 Ladislav Michl wrote:
-> > On Wed, Dec 07, 2016 at 04:16:54PM -0800, Stephen Boyd wrote:
-> > > On 12/05, Tero Kristo wrote:
-> > > > The compiler should ideally generate same size code for these both.
-> > > > Personally, I don't mind which version goes in; I'd say both are as
-> > > > readable.
-> > > > 
-> > > > Stephen, Mike, is one of you going to pick this up? I don't think I
-> > > > have anything else to pull due to the ongoing discussion with the
-> > > > other pending stuff.
-> > > 
-> > > I have no problem picking up either version. Please send it with
-> > > the appropriate tags added and I can merge it.
-> > 
-> > Here it is for your convenience. Of course I'd like to see smaller code
-> > to go in as exactly those sneaky tiny incremental code size increases
-> > made Linux kernel unusable on most of my hardware over time ;-)
-> > However, if Laurent is unhappy with changes I made, I will not object
-> > merging his version any more.
-> 
-> I'd rather keep my version, thank you. Let's not spend time chasing bytes.
-> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
 
-Ok so I'll go apply the original patch v3 in this thread and dig
-out the tags myself.
+Applied to clk-ipq4019 and merged into clk-next.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
