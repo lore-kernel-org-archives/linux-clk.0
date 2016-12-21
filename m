@@ -1,34 +1,41 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 21 Dec 2016 15:33:52 -0800
+Date: Wed, 21 Dec 2016 15:34:57 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Jun Nie <jun.nie@linaro.org>, Baoyou Xie <xie.baoyou@zte.com.cn>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH v2 1/3] clk: zx296718: do not panic on failure
-Message-ID: <20161221233352.GD8288@codeaurora.org>
-References: <1481873207-22929-1-git-send-email-shawnguo@kernel.org>
- <1481873207-22929-2-git-send-email-shawnguo@kernel.org>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, kernel@stlinux.com, ludovic.barre@st.com,
+	olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [PATCH] clk: stm32f4: Use CLK_OF_DECLARE_DRIVER initialization
+ method
+Message-ID: <20161221233457.GG8288@codeaurora.org>
+References: <1481725348-860-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1481873207-22929-2-git-send-email-shawnguo@kernel.org>
+In-Reply-To: <1481725348-860-1-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/16, Shawn Guo wrote:
-> From: Shawn Guo <shawn.guo@linaro.org>
+On 12/14, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
 > 
-> Instead of using panic, we should give an error message and return error
-> code when of_clk_add_hw_provider() call fails.
+> Clock and reset controller use same compatible strings (same IP).
 > 
-> Since we have error prompt for failures, the "init over" pr_info output
-> isn't really necessary but becomes a debug noise.  So let's clean it up
-> along the way.
+> Since commit 989eafd0b609 ("clk: core: Avoid double initialization of
+> clocks") the OF core flags clock controllers registered with the
+> CLK_OF_DECLARE() macro as OF_POPULATED, so platform devices with the same
+> compatible string will not be registered.
 > 
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 > ---
 
-Applied to clk-next
+Applied to clk-fixes
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
