@@ -1,108 +1,41 @@
-Return-Path: <ping.bai@nxp.com>
-From: Bai Ping <ping.bai@nxp.com>
-To: <shawnguo@kernel.org>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <linus.walleij@linaro.org>
-CC: <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
-	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>, <p.zabel@pengutronix.de>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<ping.bai@nxp.com>
-Subject: [PATCH 08/11] ARM: imx: Add suspend/resume support for imx6sll
-Date: Fri, 2 Dec 2016 14:39:31 +0800
-Message-ID: <1480660774-25055-9-git-send-email-ping.bai@nxp.com>
-In-Reply-To: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
-References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
+Return-Path: <Chris.Brandt@renesas.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Boyd
+	<sboyd@codeaurora.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Kuninori Morimoto
+	<kuninori.morimoto.gx@renesas.com>, Simon Horman
+	<horms+renesas@verge.net.au>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v2] clk: renesas: mstp: Support 8-bit registers for
+ r7s72100
+Date: Wed, 21 Dec 2016 15:32:52 +0000
+Message-ID: <SG2PR06MB116559EE20D18336D26392D38A930@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20161215170027.28411-1-chris.brandt@renesas.com>
+ <CAMuHMdXxiH5ryerpCnDirOXf=b-Gw5R8gJrj4Kk8NmM_3FYBqw@mail.gmail.com>
+ <20161220225552.GE5423@codeaurora.org>
+ <CAMuHMdWR7NE4zkN6eyR9=OZT6Bh63QtRmsnd-Xeoc4+7xaLJQg@mail.gmail.com>
+In-Reply-To: <CAMuHMdWR7NE4zkN6eyR9=OZT6Bh63QtRmsnd-Xeoc4+7xaLJQg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: ping.bai@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add suspend/resume support for imx6sll.
-
-Signed-off-by: Bai Ping <ping.bai@nxp.com>
----
- arch/arm/mach-imx/pm-imx6.c | 32 +++++++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-index 1515e49..2ed4316 100644
---- a/arch/arm/mach-imx/pm-imx6.c
-+++ b/arch/arm/mach-imx/pm-imx6.c
-@@ -145,6 +145,13 @@ struct imx6_pm_socdata {
- 	0x494, 0x4b0,	            /* MODE_CTL, MODE, */
- };
- 
-+static const u32 imx6sll_mmdc_io_offset[] __initconst = {
-+	0x294, 0x298, 0x29c, 0x2a0, /* DQM0 ~ DQM3 */
-+	0x544, 0x54c, 0x554, 0x558, /* GPR_B0DS ~ GPR_B3DS */
-+	0x530, 0x540, 0x2ac, 0x52c, /* MODE_CTL, MODE, SDCLK_0, GPR_ADDDS */
-+	0x2a4, 0x2a8,		    /* SDCKE0, SDCKE1*/
-+};
-+
- static const struct imx6_pm_socdata imx6q_pm_data __initconst = {
- 	.mmdc_compat = "fsl,imx6q-mmdc",
- 	.src_compat = "fsl,imx6q-src",
-@@ -195,6 +202,15 @@ struct imx6_pm_socdata {
- 	.mmdc_io_offset = imx6ul_mmdc_io_offset,
- };
- 
-+static const struct imx6_pm_socdata imx6sll_pm_data __initconst = {
-+	.mmdc_compat = "fsl,imx6sll-mmdc",
-+	.src_compat = "fsl,imx6sll-src",
-+	.iomuxc_compat = "fsl,imx6sll-iomuxc",
-+	.gpc_compat = "fsl,imx6sll-gpc",
-+	.pl310_compat = "arm,pl310-cache",
-+	.mmdc_io_num = ARRAY_SIZE(imx6sll_mmdc_io_offset),
-+	.mmdc_io_offset = imx6sll_mmdc_io_offset,
-+};
- /*
-  * This structure is for passing necessary data for low level ocram
-  * suspend code(arch/arm/mach-imx/suspend-imx6.S), if this struct
-@@ -293,9 +309,10 @@ int imx6_set_lpm(enum mxc_cpu_pwr_mode mode)
- 		val |= 0x2 << BP_CLPCR_LPM;
- 		val &= ~BM_CLPCR_VSTBY;
- 		val &= ~BM_CLPCR_SBYOS;
--		if (cpu_is_imx6sl())
-+		if (cpu_is_imx6sl() || cpu_is_imx6sll())
- 			val |= BM_CLPCR_BYPASS_PMIC_READY;
--		if (cpu_is_imx6sl() || cpu_is_imx6sx() || cpu_is_imx6ul())
-+		if (cpu_is_imx6sl() || cpu_is_imx6sx() || cpu_is_imx6ul() ||
-+			cpu_is_imx6sll())
- 			val |= BM_CLPCR_BYP_MMDC_CH0_LPM_HS;
- 		else
- 			val |= BM_CLPCR_BYP_MMDC_CH1_LPM_HS;
-@@ -310,9 +327,10 @@ int imx6_set_lpm(enum mxc_cpu_pwr_mode mode)
- 		val |= 0x3 << BP_CLPCR_STBY_COUNT;
- 		val |= BM_CLPCR_VSTBY;
- 		val |= BM_CLPCR_SBYOS;
--		if (cpu_is_imx6sl() || cpu_is_imx6sx())
-+		if (cpu_is_imx6sl() || cpu_is_imx6sx() || cpu_is_imx6sll())
- 			val |= BM_CLPCR_BYPASS_PMIC_READY;
--		if (cpu_is_imx6sl() || cpu_is_imx6sx() || cpu_is_imx6ul())
-+		if (cpu_is_imx6sl() || cpu_is_imx6sx() ||
-+		    cpu_is_imx6ul() || cpu_is_imx6sll())
- 			val |= BM_CLPCR_BYP_MMDC_CH0_LPM_HS;
- 		else
- 			val |= BM_CLPCR_BYP_MMDC_CH1_LPM_HS;
-@@ -373,6 +391,7 @@ static int imx6q_pm_enter(suspend_state_t state)
- 			imx6sl_set_wait_clk(true);
- 		/* Zzz ... */
- 		cpu_do_idle();
-+
- 		if (cpu_is_imx6sl())
- 			imx6sl_set_wait_clk(false);
- 		imx_gpc_post_resume();
-@@ -632,7 +651,10 @@ void __init imx6dl_pm_init(void)
- 
- void __init imx6sl_pm_init(void)
- {
--	imx6_pm_common_init(&imx6sl_pm_data);
-+	if (cpu_is_imx6sl())
-+		imx6_pm_common_init(&imx6sl_pm_data);
-+	else
-+		imx6_pm_common_init(&imx6sll_pm_data);
- }
- 
- void __init imx6sx_pm_init(void)
--- 
-1.9.1
+T24gRGVjZW1iZXIgMjEsIDIwMTYsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90ZToNCj4gPj4gTWlr
+ZS9TdGVwaGVuOiBhcyB0aGlzIGlzIGEgZml4IGZvciBzdGFibGUgKHYzLjE2KyksIGNhbiB5b3Ug
+cGxlYXNlDQo+ID4+IHRha2UgaXQgZGlyZWN0bHk/DQo+ID4NCj4gPiBTdXJlLCBpcyBpdCBhIGZp
+eCBmb3Igc29tZXRoaW5nIHRoYXQgaGFzIGJlZW4gZXhwb3NlZCBhcyBhIHByb2JsZW0gaW4NCj4g
+PiB0aGlzIG1lcmdlIHdpbmRvdz8gSnVzdCB0cnlpbmcgdG8gZ2F1Z2UgdGhlIHVyZ2VuY3kgb2Yg
+bWVyZ2luZyB0aGlzLg0KPiANCj4gTm8sIEkgZG9uJ3QgdGhpbmsgaXQgaGFzIGJlZW4gZXhwb3Nl
+ZCBieSBjaGFuZ2VzIGluIHRoaXMgbWVyZ2Ugd2luZG93ICh0aGUNCj4gb25seSBSWi9BMSBjaGFu
+Z2VzIHdlcmUgdGhlIGVuYWJsZW1lbnQgb2YgU0RISSBhbmQgTU1DKS4NCj4gQ2hyaXMsIGNhbiB5
+b3UgcGxlYXNlIGNvbmZpcm0/DQoNClRoYXQncyBjb3JyZWN0LiBJbiByZWFsaXR5LCBub25lIG9m
+IHRoZSBleGlzdGluZyBSWi9BMSBkcml2ZXJzIGluIHRoZSBrZXJuZWwNCnNob3VsZCBoYXZlIGV2
+ZXIgd29ya2VkIChFVEgsIFNQSSwgSTJDLCBNVFUyLCBldGMuLi4pIGJlY2F1c2Ugb24gY2hpcCBy
+ZXNldA0KYWxsIHRoZSBwZXJpcGhlcmFsIGNsb2NrcyBhcmUgdHVybmVkIG9mZi4NCg0KSG93ZXZl
+ci4uLmxpa2UgR2VlcnQgbWVudGlvbmVkLi4udGhlIGJvb3QgbG9hZGVyIHdhcyB0dXJuaW5nIGV2
+ZXJ5dGhpbmcgb24NCnNob3J0bHkgYWZ0ZXIgcmVzZXQgc28gZXZlbiB0aG91Z2ggdGhlIGNsb2Nr
+IGRyaXZlciBuZXZlciB3b3JrZWQsIGl0IG1hZGUNCml0IHNlZW1zIHNvLiBPb3BzLg0KDQpPZiBj
+b3Vyc2Ugbm93IGdvaW5nIGZvcndhcmQsIEkgdXNlIGEgbW9kaWZpZWQgYm9vdCBsb2FkZXIgdG8g
+dHVybiBldmVyeXRoaW5nDQpiYWNrIG9mZiAoZXhjZXB0IHRoZSBzZXJpYWwgY29uc29sZSkgc28g
+SSBjYW4gY29uZmlybSB0aGF0IGNsb2NrIGdhdGluZyBpcw0KcmVhbGx5IHdvcmtpbmcuDQoNCg0K
+Q2hyaXMNCg==
