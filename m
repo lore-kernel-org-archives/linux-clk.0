@@ -1,67 +1,90 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 13 Dec 2016 20:13:50 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Dec 2016 15:05:57 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+	linux-clk@vger.kernel.org, Irina Tirdea <irina.tirdea@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jorik Jonker <jorik@kippendief.biz>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 5/6] ARM: dts: sun8i: set cpu-supply in reference tablet
- DTSI
-Message-ID: <20161213191350.dsybyjfuocrvx4zj@lukather>
-References: <20161213152252.53749-1-icenowy@aosc.xyz>
- <20161213152252.53749-6-icenowy@aosc.xyz>
+	"x86@kernel.org" <x86@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Brown <broonie@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Darren Hart <dvhart@infradead.org>, Takashi Iwai <tiwai@suse.com>,
+	platform-driver-x86@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>, Len Brown <lenb@kernel.org>
+Subject: Re: [alsa-devel] [PATCH v6 1/3] clk: x86: Add Atom PMC platform
+ clocks
+Message-ID: <20161221230557.GK5423@codeaurora.org>
+References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
+ <1481306510-7471-2-git-send-email-irina.tirdea@intel.com>
+ <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
+ <20161213232524.GQ5423@codeaurora.org>
+ <32235fb3-0d54-211d-28f4-4655e4bc7812@linux.intel.com>
+ <20161217013337.GW5423@codeaurora.org>
+ <CAHp75Vdn_8_fCQzkG7CPrnDZzhC7WUpGM1cyvfNRz0u_sc7RKA@mail.gmail.com>
+ <7f3d03dc-24fe-ec3f-4a3b-926c28f0ac86@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uv2vtn7agm7c5d3p"
-In-Reply-To: <20161213152252.53749-6-icenowy@aosc.xyz>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <7f3d03dc-24fe-ec3f-4a3b-926c28f0ac86@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 12/19, Pierre-Louis Bossart wrote:
+> On 12/17/16 7:57 AM, Andy Shevchenko wrote:
+> >On Sat, Dec 17, 2016 at 3:33 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> >>On 12/15, Pierre-Louis Bossart wrote:
+> >
+> >>>Clients use devm_clk_get() with a "pmc_plt_clk_<n>"
+> >>>argument.
+> >>
+> >>This is the problem. Clients should be calling clk_get() like:
+> >>
+> >>        clk_get(dev, "signal name in datasheet")
+> >>
+> >>where the first argument is the device and the second argument is
+> >>some string that is meaningful to the device, not the system as a
+> >>whole. The way clkdev is intended is so that the dev argument's
+> >>dev_name() is combined with the con_id that matches some signale
+> >>name in the datasheet. This way when the same IP is put into some
+> >>other chip, the globally unique name doesn't need to change, just
+> >>the device name that's registered with the lookup. Obviously this
+> >>breaks down quite badly when dev_name() isn't stable. Is that
+> >>happening here?
+> >
+> >PMC Atom is a PCI device and thus each platform would have different
+> >dev_name(). Do you want to list all in each consumer if consumer wants
+> >to work on all of them or I missed something?
+> >
+> >So, the question is how clock getting will look like to work on
+> >currently both CherryTrail and BayTrail.
+> 
+> The name pmc_plt_clk_<n> follows the data sheet specification, where
+> this convention is suggested:
+>   PLT_CLK[2:0] - Camera
+>   PLT_CLK[3] - Audio Codec
+>   PLT_CLK[4] -
+>   PLT_CLK[5] - COMMs
+> 
+> These clocks are not internal but are made available to external
+> components through dedicated physical pins on the package, this
+> external visibility limits the scope for confusions, variations. I
+> have not seen any skews where these clocks and pins were changed at
+> all.
 
---uv2vtn7agm7c5d3p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, by clkdev design if a device is passed but there isn't a
+match in the lookup table it allows it to match based solely on
+the connection id. Given that the connection id is globally
+unique this will work.
 
-On Tue, Dec 13, 2016 at 11:22:51PM +0800, Icenowy Zheng wrote:
-> All reference design A33 tablets uses DCDC2 of AXP223 as the power
-> supply of the Cortex-A7 cores.
->=20
-> Set the cpu-supply in the DTSI of sun8i reference tablets.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Hopefully we don't have two of these devices with pmc_plt_clk_<n>
+signals in a single system though. Then having the device name
+would help differentiate between the two. And then it may make
+sense to have some sort of ACPI lookup system, similar to how we
+have lookups for clks in DT.
 
-Applied, thanks
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---uv2vtn7agm7c5d3p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYUEhuAAoJEBx+YmzsjxAgQ54QAIRKLQJFblVSZ6AfhLN8vSMI
-DUzceHqS2McEFLpS/oseTIfugkHSqfgHA3Hn4RRHIanWQnh8oz/ldQfBPA3lj0sf
-WoqFWJh1wnWftwP2kw8Rs4EjV4F5kOaszUsWEFPGH8QNDh9FpWu17xr9dLM+b9Ns
-PVi0tzV0OttXznu6i2GpodiqSP9yCtAVJr3v6irZ3+pL8KwEwKQm4jcknEybMHbW
-I9ewrK5r2kJwHTB5G76wPIEoQvuV3mDW7TQHWVRUbfMILr6h/NVSdp5hZqe4sL+v
-FMhyp6iUnp90Xav3mkl1PpwD64/XMHkrYNqesYn6KJz8PM5EzroCAU1uC4nqBUV7
-mNLg5LrKNcqOaUiSbC7HDBgvvvDDFLAvEc3mdJ3SbcRd7/XhNqqdGJ30myrX6Rla
-EC8nnwgDY/jl6Et1zC6jG76juJ9KzOdLIrP2M++bespvG1t2vm+SBwO2QTVPPxB9
-j0ryuLHhlCrojIOGfdqifLHX2DDr/7fmealMsDq9NprOKPrEMSr0KOWCKPmwJUb0
-hkfV1IRYwU6+DiiOEIvGtNs3JocN+aPKBZ3MTBsOYAH+INgfT+arI9m0zONgOzdO
-xszwBjuVHWZ4oiFJr3JaVszu2KktFjiY8yfhxj2NF28sGYgj5EToIHIKZevkjAGl
-4khVMF+geLUSEJyq9kVq
-=tilk
------END PGP SIGNATURE-----
-
---uv2vtn7agm7c5d3p--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
