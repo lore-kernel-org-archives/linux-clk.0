@@ -1,52 +1,66 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-rpi-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>
+Cc: Nadav Haklai <nadavh@marvell.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 2/2] clk: bcm: Allow rate change propagation to PLLH_AUX on VEC clock
-Date: Thu,  1 Dec 2016 22:00:20 +0100
-Message-Id: <1480626020-20031-3-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1480626020-20031-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1480626020-20031-1-git-send-email-boris.brezillon@free-electrons.com>
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCHv2 3/3] arm64: dts: marvell: adjust name of sd-mmc-gop clock in syscon
+Date: Wed, 21 Dec 2016 11:26:57 +0100
+Message-Id: <1482316017-22154-4-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The VEC clock requires needs to be set at exactly 108MHz. Allow rate
-change propagation on PLLH_AUX to match this requirement wihtout
-impacting other IPs (PLLH is currently only used by the HDMI encoder,
-which cannot be enabled when the VEC encoder is enabled).
+This commit adjusts the names of gatable clock #18 of the Marvell Armada
+CP110 system controller. This clock not only controls SD/MMC, but also
+the GOP (Group Of Ports) used for networking. So the clock is renamed to
+{cpm,cps}-sd-mmc-gop instead of {cpm,cps}-sd-mmc.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 2 +-
+ arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index df96fe6dadab..eaf82f49dede 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1861,7 +1861,12 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.ctl_reg = CM_VECCTL,
- 		.div_reg = CM_VECDIV,
- 		.int_bits = 4,
--		.frac_bits = 0),
-+		.frac_bits = 0,
-+		/*
-+		 * Allow rate change propagation only on PLLH_AUX which is
-+		 * assigned index 7 in the parent array.
-+		 */
-+		.set_rate_parent = BIT(7)),
- 
- 	/* dsi clocks */
- 	[BCM2835_CLOCK_DSI0E]	= REGISTER_PER_CLK(
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+index 602e2c2..895babc 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+@@ -74,7 +74,7 @@
+ 					"cpm-gop-dp", "none", "cpm-pcie_x10",
+ 					"cpm-pcie_x11", "cpm-pcie_x4", "cpm-pcie-xor",
+ 					"cpm-sata", "cpm-sata-usb", "cpm-main",
+-					"cpm-sd-mmc", "none", "none",
++					"cpm-sd-mmc-gop", "none", "none",
+ 					"cpm-slow-io", "cpm-usb3h0", "cpm-usb3h1",
+ 					"cpm-usb3dev", "cpm-eip150", "cpm-eip197";
+ 			};
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+index 6bf9e24..db99646 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi
+@@ -74,7 +74,7 @@
+ 					"cps-gop-dp", "none", "cps-pcie_x10",
+ 					"cps-pcie_x11", "cps-pcie_x4", "cps-pcie-xor",
+ 					"cps-sata", "cps-sata-usb", "cps-main",
+-					"cps-sd-mmc", "none", "none",
++					"cps-sd-mmc-gop", "none", "none",
+ 					"cps-slow-io", "cps-usb3h0", "cps-usb3h1",
+ 					"cps-usb3dev", "cps-eip150", "cps-eip197";
+ 			};
 -- 
 2.7.4
