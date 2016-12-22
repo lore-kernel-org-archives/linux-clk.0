@@ -1,83 +1,41 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Florian Fainelli <f.fainelli@gmail.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Dec 2016 16:10:51 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 04/11] drm/vc4: Set up SCALER_DISPCTRL at boot.
-Date: Wed, 14 Dec 2016 11:46:14 -0800
-Message-Id: <20161214194621.16499-5-eric@anholt.net>
-In-Reply-To: <20161214194621.16499-1-eric@anholt.net>
-References: <20161214194621.16499-1-eric@anholt.net>
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, kernel@stlinux.com, ludovic.barre@st.com,
+	olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [PATCH v4 1/9] clk: stm32f4: Update DT bindings documentation
+Message-ID: <20161222001051.GP8288@codeaurora.org>
+References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+ <1481638820-29324-2-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1481638820-29324-2-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We want the HVS on, obviously, and we also want DSP3 (PV1's source) to
-be muxed from HVS channel 2 like we expect in vc4_crtc.c.  The
-firmware wasn't setting the DSP3 mux up when both the LCD and HDMI
-were disabled.
+On 12/13, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> Creation of dt include file for specific stm32f4 clocks.
+> These specific clocks are not derived from system clock (SYSCLOCK)
+> We should use index 1 to use these clocks in DT.
+> e.g. <&rcc 1 CLK_LSI>
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- drivers/gpu/drm/vc4/vc4_hvs.c  | 14 ++++++++++++++
- drivers/gpu/drm/vc4/vc4_regs.h |  3 +++
- 2 files changed, 17 insertions(+)
+Applied to clk-stm32f4 and merged into clk-next.
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
-index 6fbab1c82cb1..fc68b1b4da52 100644
---- a/drivers/gpu/drm/vc4/vc4_hvs.c
-+++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-@@ -170,6 +170,7 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
- 	struct vc4_dev *vc4 = drm->dev_private;
- 	struct vc4_hvs *hvs = NULL;
- 	int ret;
-+	u32 dispctrl;
- 
- 	hvs = devm_kzalloc(&pdev->dev, sizeof(*hvs), GFP_KERNEL);
- 	if (!hvs)
-@@ -211,6 +212,19 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
- 		return ret;
- 
- 	vc4->hvs = hvs;
-+
-+	dispctrl = HVS_READ(SCALER_DISPCTRL);
-+
-+	dispctrl |= SCALER_DISPCTRL_ENABLE;
-+
-+	/* Set DSP3 (PV1) to use HVS channel 2, which would otherwise
-+	 * be unused.
-+	 */
-+	dispctrl &= ~SCALER_DISPCTRL_DSP3_MUX_MASK;
-+	dispctrl |= VC4_SET_FIELD(2, SCALER_DISPCTRL_DSP3_MUX);
-+
-+	HVS_WRITE(SCALER_DISPCTRL, dispctrl);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
-index 39f6886b2410..b3b297fba709 100644
---- a/drivers/gpu/drm/vc4/vc4_regs.h
-+++ b/drivers/gpu/drm/vc4/vc4_regs.h
-@@ -244,6 +244,9 @@
- # define SCALER_DISPCTRL_ENABLE			BIT(31)
- # define SCALER_DISPCTRL_DSP2EISLUR		BIT(15)
- # define SCALER_DISPCTRL_DSP1EISLUR		BIT(14)
-+# define SCALER_DISPCTRL_DSP3_MUX_MASK		VC4_MASK(19, 18)
-+# define SCALER_DISPCTRL_DSP3_MUX_SHIFT		18
-+
- /* Enables Display 0 short line and underrun contribution to
-  * SCALER_DISPSTAT_IRQDISP0.  Note that short frame contributions are
-  * always enabled.
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
