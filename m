@@ -1,81 +1,102 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	xf@rock-chips.com
-Cc: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	cl@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 4/4] clk: rockchip: add new pll-type for rk3328
-Date: Mon, 19 Dec 2016 09:56:13 +0800
-Message-Id: <1482112573-11613-5-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1482112573-11613-1-git-send-email-zhangqing@rock-chips.com>
-References: <1482112573-11613-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <zmarkovic@sierrawireless.com>
+From: Zoran Markovic <zmarkovic@sierrawireless.com>
+To: <linux-kernel@vger.kernel.org>
+CC: Zoran Markovic <zmarkovic@sierrawireless.com>, Andy Gross
+	<andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Neil
+ Armstrong <narmstrong@baylibre.com>, <linux-arm-msm@vger.kernel.org>,
+	<linux-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: [RFC PATCH 2/4] clk: mdm9615: Add EBI2 clock
+Date: Thu, 22 Dec 2016 12:05:37 -0800
+Message-ID: <1482437139-29329-3-git-send-email-zmarkovic@sierrawireless.com>
+In-Reply-To: <1482437139-29329-1-git-send-email-zmarkovic@sierrawireless.com>
+References: <1482437139-29329-1-git-send-email-zmarkovic@sierrawireless.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: zmarkovic@sierrawireless.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The rk3328's pll and clock are similar with rk3036's,
-it different with pll_mode_mask,there are different
-control registers bit,
-so these should be independent and separate from
-the series of rk3328s.
+Add definition of EBI2 clock used by MDM9615 NAND controller.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: Andy Gross <andy.gross@linaro.org>
+Cc: David Brown <david.brown@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-soc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Zoran Markovic <zmarkovic@sierrawireless.com>
 ---
- drivers/clk/rockchip/clk-pll.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/gcc-mdm9615.c               |   30 ++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-mdm9615.h |    3 +++
+ 2 files changed, 33 insertions(+)
 
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 6ed605776abd..9650c75f61d1 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -29,6 +29,7 @@
- #define PLL_MODE_SLOW		0x0
- #define PLL_MODE_NORM		0x1
- #define PLL_MODE_DEEP		0x2
-+#define PLL_RK3328_MODE_MASK	0x1
+diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
+index 581a17f..e9e98b1 100644
+--- a/drivers/clk/qcom/gcc-mdm9615.c
++++ b/drivers/clk/qcom/gcc-mdm9615.c
+@@ -1563,6 +1563,34 @@ enum {
+ 	},
+ };
  
- struct rockchip_clk_pll {
- 	struct clk_hw		hw;
-@@ -865,13 +866,17 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
- 	pll_mux = &pll->pll_mux;
- 	pll_mux->reg = ctx->reg_base + mode_offset;
- 	pll_mux->shift = mode_shift;
--	pll_mux->mask = PLL_MODE_MASK;
-+	if (pll_type == pll_rk3328)
-+		pll_mux->mask = PLL_RK3328_MODE_MASK;
-+	else
-+		pll_mux->mask = PLL_MODE_MASK;
- 	pll_mux->flags = 0;
- 	pll_mux->lock = &ctx->lock;
- 	pll_mux->hw.init = &init;
++static struct clk_branch ebi2_clk = {
++	.hwcg_reg = 0x2664,
++	.hwcg_bit = 6,
++	.halt_reg = 0x2fcc,
++	.halt_bit = 23,
++	.clkr = {
++		.enable_reg = 0x2664,
++		.enable_mask = BIT(6)|BIT(4),
++		.hw.init = &(struct clk_init_data){
++			.name = "ebi2_clk",
++			.ops = &clk_branch_ops,
++		},
++	},
++};
++
++static struct clk_branch ebi2_aon_clk = {
++	.halt_reg = 0x2fcc,
++	.halt_bit = 23,
++	.clkr = {
++		.enable_reg = 0x2664,
++		.enable_mask = BIT(8),
++		.hw.init = &(struct clk_init_data){
++			.name = "ebi2_always_on_clk",
++			.ops = &clk_branch_ops,
++		},
++	},
++};
++
+ static struct clk_hw *gcc_mdm9615_hws[] = {
+ 	&cxo.hw,
+ };
+@@ -1637,6 +1665,8 @@ enum {
+ 	[PMIC_ARB1_H_CLK] = &pmic_arb1_h_clk.clkr,
+ 	[PMIC_SSBI2_CLK] = &pmic_ssbi2_clk.clkr,
+ 	[RPM_MSG_RAM_H_CLK] = &rpm_msg_ram_h_clk.clkr,
++	[EBI2_CLK] = &ebi2_clk.clkr,
++	[EBI2_AON_CLK] = &ebi2_aon_clk.clkr,
+ };
  
- 	if (pll_type == pll_rk3036 ||
- 	    pll_type == pll_rk3066 ||
-+	    pll_type == pll_rk3328 ||
- 	    pll_type == pll_rk3399)
- 		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
+ static const struct qcom_reset_map gcc_mdm9615_resets[] = {
+diff --git a/include/dt-bindings/clock/qcom,gcc-mdm9615.h b/include/dt-bindings/clock/qcom,gcc-mdm9615.h
+index 9ab2c40..57cdca6 100644
+--- a/include/dt-bindings/clock/qcom,gcc-mdm9615.h
++++ b/include/dt-bindings/clock/qcom,gcc-mdm9615.h
+@@ -323,5 +323,8 @@
+ #define CE3_H_CLK				305
+ #define USB_HS1_SYSTEM_CLK_SRC			306
+ #define USB_HS1_SYSTEM_CLK			307
++#define EBI2_CLK				309
++#define EBI2_AON_CLK				310
++
  
-@@ -929,6 +934,12 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
- 		else
- 			init.ops = &rockchip_rk3066_pll_clk_ops;
- 		break;
-+	case pll_rk3328:
-+		if (!pll->rate_table || IS_ERR(ctx->grf))
-+			init.ops = &rockchip_rk3036_pll_clk_norate_ops;
-+		else
-+			init.ops = &rockchip_rk3036_pll_clk_ops;
-+		break;
- 	case pll_rk3399:
- 		if (!pll->rate_table)
- 			init.ops = &rockchip_rk3399_pll_clk_norate_ops;
+ #endif
 -- 
-1.9.1
+1.7.9.5
