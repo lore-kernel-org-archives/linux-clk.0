@@ -1,53 +1,32 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Thu, 15 Dec 2016 12:21:15 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King - ARM Linux <linux@armlinux.org.uk>,
-	Rob Herring <robh@kernel.org>,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Linux-DT <devicetree@vger.kernel.org>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Dec 2016 16:04:47 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Linux-Kernel <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org,
-	Linux-ARM <linux-arm-kernel@lists.infradead.org>
-Message-ID: <20161215122115.zpxawc2xdc45rczf@sirena.org.uk>
-References: <874m2jvtmw.wl%kuninori.morimoto.gx@renesas.com>
- <20161208220824.GM5423@codeaurora.org>
- <8737hyymo9.wl%kuninori.morimoto.gx@renesas.com>
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v2] clk: qcom: smd-rpmcc: Add msm8974 clocks
+Message-ID: <20161222000447.GO8288@codeaurora.org>
+References: <1479486805-21853-1-git-send-email-bjorn.andersson@linaro.org>
+ <20161121161808.5kebw6r5lxnepqau@rob-hp-laptop>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="eoumllemmyfv2hgm"
-In-Reply-To: <8737hyymo9.wl%kuninori.morimoto.gx@renesas.com>
-Subject: Re: [PATCH 0/3] clkdev: add devm_get_clk_from_child()
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161121161808.5kebw6r5lxnepqau@rob-hp-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 11/21, Rob Herring wrote:
+> On Fri, Nov 18, 2016 at 08:33:25AM -0800, Bjorn Andersson wrote:
+> > This adds all RPM based clocks for msm8974, except cxo and
+> > gfx3d_clk_src.
+> > 
+> > Tested-by: Georgi Djakov <georgi.djakov@linaro.org>
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
 
---eoumllemmyfv2hgm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to clk-qcom-rpm8974 and merged into clk-next
 
-On Fri, Dec 09, 2016 at 12:25:48AM +0000, Kuninori Morimoto wrote:
-
-> Mark, I think I should re-post 2nd patch (3rd will be dropped) after
-> merge window ? There will be no branch dependency
-
-Should be fine without but obviously if it looks like it's gone AWOL
-then reposting would be good.
-
---eoumllemmyfv2hgm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlhSirsACgkQJNaLcl1U
-h9DJ2Qf+PnRfUeFgE7kn755ufmOqtC1Hwq+qO1h+5mCNU57wBZJhx7Way15NSKn2
-p9pUUuDf7CK2GeOLicbHEDHW7Wxow96+gfD+CjSPFutpiU9KB1re6HwXB6a6l1YZ
-dYity7pJc1G3AtWOJSD9LqIuu9TsxbqXW81323lO0Kk8opXEzthTQIVeYK9Wl0r+
-1RbnW/N5iVqxnByjmE678pk7jxO7W5Guaz3ytpyDInvoksjL3Xf0GN3kWrKCr6Zs
-qoU/2dErHcSo4yjrZ2clCcU7rkIZXPf8OV2JTxGK7XQDvDd06Ik5esiLQnElkM3M
-lDSeZYl7KJPccMUia+3jGxZLPf/4Bg==
-=LWmD
------END PGP SIGNATURE-----
-
---eoumllemmyfv2hgm--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
