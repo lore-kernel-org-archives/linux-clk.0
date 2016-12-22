@@ -1,292 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 7 Dec 2016 16:13:48 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com, ssantosh@kernel.org,
-	nm@ti.com, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] clk: keystone: Add sci-clk driver support
-Message-ID: <20161208001348.GC5423@codeaurora.org>
-References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
- <1477053961-27128-4-git-send-email-t-kristo@ti.com>
+Return-Path: <andy.shevchenko@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1477053961-27128-4-git-send-email-t-kristo@ti.com>
+In-Reply-To: <cd6044f5-6c79-b2d6-902d-52e27c217e78@linux.intel.com>
+References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
+ <1481306510-7471-2-git-send-email-irina.tirdea@intel.com> <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
+ <20161213232524.GQ5423@codeaurora.org> <32235fb3-0d54-211d-28f4-4655e4bc7812@linux.intel.com>
+ <20161217013337.GW5423@codeaurora.org> <CAHp75Vdn_8_fCQzkG7CPrnDZzhC7WUpGM1cyvfNRz0u_sc7RKA@mail.gmail.com>
+ <7f3d03dc-24fe-ec3f-4a3b-926c28f0ac86@linux.intel.com> <20161221230557.GK5423@codeaurora.org>
+ <cd6044f5-6c79-b2d6-902d-52e27c217e78@linux.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 22 Dec 2016 20:42:37 +0200
+Message-ID: <CAHp75VfJU3613euahjW-s92_XEz8hK70ZgRi53Lpo+2TWqPscA@mail.gmail.com>
+Subject: Re: [alsa-devel] [PATCH v6 1/3] clk: x86: Add Atom PMC platform clocks
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	ALSA Development Mailing List <alsa-devel@alsa-project.org>, linux-clk@vger.kernel.org,
+	Irina Tirdea <irina.tirdea@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
+	Michael Turquette <mturquette@baylibre.com>, "x86@kernel.org" <x86@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Mark Brown <broonie@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Darren Hart <dvhart@infradead.org>,
+	Takashi Iwai <tiwai@suse.com>, platform-driver-x86@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/21, Tero Kristo wrote:
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 6a8ac04..dce08a7 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -169,6 +169,15 @@ config COMMON_CLK_NXP
->  	---help---
->  	  Support for clock providers on NXP platforms.
->  
-> +config TI_SCI_CLK
-> +	tristate "TI System Control Interface clock drivers"
-> +	depends on (TI_SCI_PROTOCOL && COMMON_CLK_KEYSTONE) || COMPILE_TEST
+On Thu, Dec 22, 2016 at 3:07 AM, Pierre-Louis Bossart
+<pierre-louis.bossart@linux.intel.com> wrote:
+> On 12/21/16 5:05 PM, Stephen Boyd wrote:
 
-Given that we depend on COMMON_CLK_KEYSTONE (just for the
-Makefile dependency?) this should be moved to right below the
-COMMON_CLK_KEYSTONE config. And we should consider making a
-Kconfig file in drivers/clk/keystone/ to hold both those configs
-instead of having them at the toplevel.
+>>> The name pmc_plt_clk_<n> follows the data sheet specification, where
+>>> this convention is suggested:
+>>>   PLT_CLK[2:0] - Camera
+>>>   PLT_CLK[3] - Audio Codec
+>>>   PLT_CLK[4] -
+>>>   PLT_CLK[5] - COMMs
 
-> +	default TI_SCI_PROTOCOL
-> +	---help---
-> +	  This adds the clock driver support over TI System Control Interface.
-> +	  If you wish to use clock resources from the PMMC firmware, say Y.
-> +	  Otherwise, say N.
-> +
->  config COMMON_CLK_PALMAS
->  	tristate "Clock driver for TI Palmas devices"
->  	depends on MFD_PALMAS
-> diff --git a/drivers/clk/keystone/Makefile b/drivers/clk/keystone/Makefile
-> index 0477cf6..0e7993d 100644
-> --- a/drivers/clk/keystone/Makefile
-> +++ b/drivers/clk/keystone/Makefile
-> @@ -1 +1,2 @@
->  obj-y			+= pll.o gate.o
-> +obj-$(CONFIG_TI_SCI_CLK)	+= sci-clk.o
-> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-> new file mode 100644
-> index 0000000..f6af5bd
-> --- /dev/null
-> +++ b/drivers/clk/keystone/sci-clk.c
-> @@ -0,0 +1,589 @@
-[...]
-> +
-> +/**
-> + * sci_clk_recalc_rate - Get clock rate for a TI SCI clock
-> + * @hw: clock to get rate for
-> + * @parent_rate: parent rate provided by common clock framework, not used
-> + *
-> + * Gets the current clock rate of a TI SCI clock. Returns the current
-> + * clock rate, or zero in failure.
-> + */
-> +static unsigned long sci_clk_recalc_rate(struct clk_hw *hw,
-> +					 unsigned long parent_rate)
-> +{
-> +	struct sci_clk *clk = to_sci_clk(hw);
-> +	u64 freq;
-> +	int ret;
-> +
-> +	ret = clk->provider->ops->get_freq(clk->provider->sci, clk->dev_id,
-> +					   clk->clk_id, &freq);
-> +	if (ret) {
-> +		dev_err(clk->provider->dev,
-> +			"recalc-rate failed for dev=%d, clk=%d, ret=%d\n",
-> +			clk->dev_id, clk->clk_id, ret);
-> +		return 0;
-> +	}
-> +
-> +	return (u32)freq;
-
-Do we need the cast? sizeof(u32) doesn't always equal
-sizeof(unsigned long).
-
-> +
-> +/**
-> + * _sci_clk_get - Gets a handle for an SCI clock
-> + * @provider: Handle to SCI clock provider
-> + * @dev_id: device ID for the clock to register
-> + * @clk_id: clock ID for the clock to register
-> + *
-> + * Gets a handle to an existing TI SCI hw clock, or builds a new clock
-> + * entry and registers it with the common clock framework. Called from
-> + * the common clock framework, when a corresponding of_clk_get call is
-> + * executed, or recursively from itself when parsing parent clocks.
-> + * Returns a pointer to the hw clock struct, or ERR_PTR value in failure.
-> + */
-> +static struct clk_hw *_sci_clk_build(struct sci_clk_provider *provider,
-> +				     u16 dev_id, u8 clk_id)
-> +{
-> +	struct clk_init_data init = { NULL };
-> +	struct sci_clk *sci_clk = NULL;
-> +	char *name = NULL;
-> +	char **parent_names = NULL;
-> +	int i;
-> +	int ret;
-> +
-> +	sci_clk = devm_kzalloc(provider->dev, sizeof(*sci_clk), GFP_KERNEL);
-> +	if (!sci_clk)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	sci_clk->dev_id = dev_id;
-> +	sci_clk->clk_id = clk_id;
-> +	sci_clk->provider = provider;
-> +
-> +	ret = provider->ops->get_num_parents(provider->sci, dev_id,
-> +					     clk_id,
-> +					     &init.num_parents);
-> +	if (ret)
-> +		goto err;
-> +
-> +	name = kasprintf(GFP_KERNEL, "%s:%d:%d", dev_name(provider->dev),
-> +			 sci_clk->dev_id, sci_clk->clk_id);
-> +
-> +	init.name = name;
-> +
-> +	if (init.num_parents < 2)
-> +		init.num_parents = 0;
-
-This deserves a comment. Why is num_parents == 1 the same as
-num_parents == 0?
-
-> +
-> +	if (init.num_parents) {
-> +		parent_names = devm_kcalloc(provider->dev, init.num_parents,
-> +					    sizeof(char *), GFP_KERNEL);
-> +
-> +		if (!parent_names) {
-> +			ret = -ENOMEM;
-> +			goto err;
-> +		}
-> +
-> +		for (i = 0; i < init.num_parents; i++) {
-> +			char *parent_name;
-> +
-> +			parent_name = kasprintf(GFP_KERNEL, "%s:%d:%d",
-> +						dev_name(provider->dev),
-> +						sci_clk->dev_id,
-> +						sci_clk->clk_id + 1 + i);
-> +			if (!parent_name) {
-> +				ret = -ENOMEM;
-> +				goto err;
-> +			}
-> +			parent_names[i] = parent_name;
-> +		}
-> +		init.parent_names = (const char * const *)parent_names;
-
-Does that really need a cast?
-
-> +	}
-> +
-> +	init.ops = &sci_clk_ops;
-> +	sci_clk->hw.init = &init;
-> +
-> +	ret = devm_clk_hw_register(provider->dev, &sci_clk->hw);
-> +	if (ret) {
-> +		dev_err(provider->dev, "failed clk register with %d\n", ret);
-> +		goto err;
-> +	}
-> +	kfree(name);
-> +
-> +	return &sci_clk->hw;
-> +
-> +err:
-> +	if (parent_names) {
-> +		for (i = 0; i < init.num_parents; i++)
-> +			devm_kfree(provider->dev, parent_names[i]);
-> +
-> +		devm_kfree(provider->dev, parent_names);
-
-Shouldn't we be freeing the parent names all the time? It should
-be deep copied in the framework.
-
-> +	}
-> +
-> +	devm_kfree(provider->dev, sci_clk);
-> +
-> +	kfree(name);
-> +
-> +	return ERR_PTR(ret);
-> +}
-[..]
-> +
-> +static int ti_sci_init_clocks(struct sci_clk_provider *p)
-> +{
-> +	struct sci_clk_data *data = p->clocks;
-> +	struct clk_hw *hw;
-> +	int i;
-> +
-> +	while (data->num_clks) {
-> +		data->clocks = devm_kcalloc(p->dev, data->num_clks,
-> +					    sizeof(struct sci_clk),
-> +					    GFP_KERNEL);
-> +		if (!data->clocks)
-> +			return -ENOMEM;
-> +
-> +		for (i = 0; i < data->num_clks; i++) {
-> +			hw = _sci_clk_build(p, data->dev, i);
-> +			if (!IS_ERR(hw)) {
-> +				data->clocks[i] = hw;
-> +				continue;
-> +			}
-> +
-> +			/* Skip any holes in the clock lists */
-> +			if (PTR_ERR(hw) == -ENODEV)
-
-Does this happen? I don't see where _sci_clk_build() returns
--ENODEV.
-
-> +				continue;
-> +
-> +			return PTR_ERR(hw);
-> +		}
-> +		data++;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-
-> +
-> +/**
-> + * ti_sci_clk_probe - Probe function for the TI SCI clock driver
-> + * @pdev: platform device pointer to be probed
-> + *
-> + * Probes the TI SCI clock device. Allocates a new clock provider
-> + * and registers this to the common clock framework. Also applies
-> + * any required flags to the identified clocks via clock lists
-> + * supplied from DT. Returns 0 for success, negative error value
-> + * for failure.
-> + */
-> +static int ti_sci_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct sci_clk_provider *provider;
-> +	const struct ti_sci_handle *handle;
-> +	struct sci_clk_data *data;
-> +	int ret;
-> +
-> +	data = (struct sci_clk_data *)
-> +		of_match_node(ti_sci_clk_of_match, np)->data;
-
-Just use of_device_get_match_data() instead.
-
-> +
-> +	handle = devm_ti_sci_get_handle(dev);
-> +	if (IS_ERR(handle))
-> +		return PTR_ERR(handle);
-> +
-> +	provider = devm_kzalloc(dev, sizeof(*provider), GFP_KERNEL);
-> +	if (!provider)
-> +		return -ENOMEM;
-> +
-> +	provider->clocks = data;
-> +
-> +	provider->sci = handle;
-> +	provider->ops = &handle->ops.clk_ops;
-> +	provider->dev = dev;
-> +
-> +	ti_sci_init_clocks(provider);
-
-And if this fails?
-
-> +
-> +	ret = of_clk_add_hw_provider(np, sci_clk_get, provider);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-
-Just "return of_clk_add_hw_provider()" please.
-
-> +}
+By the way, would I suggest to use same prefix as provider, i.e.
+pmc_atom_plt_clk_%d ?
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+With Best Regards,
+Andy Shevchenko
