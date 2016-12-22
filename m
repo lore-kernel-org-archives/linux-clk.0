@@ -1,57 +1,65 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Mon, 5 Dec 2016 13:26:44 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Georgi Djakov <georgi.djakov@linaro.org>, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RESEND/PATCH v6 3/3] clk: qcom: Add A53 clock driver
-Message-ID: <20161205212644.GB30492@tuxbot>
-References: <20161019132816.31073-4-georgi.djakov@linaro.org>
- <20161028015438.GG16026@codeaurora.org>
- <20161102205910.GQ25787@tuxbot>
- <20161102225520.GW16026@codeaurora.org>
- <20161103182834.GR25787@tuxbot>
- <549f87fe-7be9-14b4-8e34-86f7f8dad94e@linaro.org>
- <20161114203426.GN5177@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161114203426.GN5177@codeaurora.org>
+Return-Path: <absahu@codeaurora.org>
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: andy.gross@linaro.org,
+	david.brown@linaro.org,
+	varada@codeaurora.org,
+	snlakshm@codeaurora.org,
+	pradeepb@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v5] Patches for QCOM IPQ4019 clock driver
+Date: Thu, 22 Dec 2016 20:10:53 +0530
+Message-Id: <1482417654-2998-1-git-send-email-absahu@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon 14 Nov 14:21 PST 2016, Stephen Boyd wrote:
+These patches are related to Qualcomm IPQ4019 GCC (Global Clock
+Controller) driver code mainly adding the nodes for clock marked
+as fixed in current IPQ4019 clock driver and support for multiple
+CPU frequencies.
 
-> On 11/11, Georgi Djakov wrote:
-> > On 11/03/2016 08:28 PM, Bjorn Andersson wrote:
-[..]
-> > >I'm in favour of us inventing a kicker API and it's found outside out
-> > >use cases as well (e.g. virtio/rpmsg).
-> > >
-> 
-> I'd rather we did this kicker API as well. That way we don't need
-> to make a syscon and a simple-mfd to get software to work
-> properly. Don't other silicon vendors need a kicker API as well?
-> How are they kicking remote processors in other places? GPIOs?
-> 
+[v5]
 
-In remoteproc I have two of these:
-1) da8xx_remoteproc ioremaps a register and writes a bit in it (looks
-   similar to the downstream Qualcomm way)
+   1. Hardcoded the safe parent index for APSS CPU frequency
+      change notifier
+   2. Removed all other patches which are already reviewed and
+      applied
 
-2) omap_remoteproc acquires a mbox channel, in which it writes a
-   virtqueue id to kick the remote.
+[V4]
 
-So one of the two cases could have used such mechanism.
+   1. Addressed the review comments given in v3 patches.
+   2. Removed the intermediate VCO clocks and make VCO as
+      part of final divider clock.
+   3. Changed some variable and structure names.
+   4. Removed intermediate frequency change patch and merged
+      in the main patch itself.
+   5. Added the APSS CPU frequency change notifier patch
+   6. Removed i2c node frequency table which is already reviewed.
 
-We could write up a Qualcomm specific "kicker" and probe the mailing
-list regarding the interest in making that generic (i.e. changing the
-names in the API and DT binding).
+[V3]
 
-The sucky part is that I believe we have most of our kickers in place
-already so rpm, smd, smp2p, smsm etc would all need to support both
-mechanisms.
+   1. Addressed the review comments given in v2 patches.
+   2. Replaced the do_div with normal division.
+   3. Marked the PCNOC node as critical.
+   4. Modified the frequency values for the recent change done
+      in IPQ4019 bootloader.
+   5. Changed the i2c node frequency table for 19.05 MHz clock.
 
-Regards,
-Bjorn
+[V2]
+
+   1. Removed the fixed clock references and add the same as clock nodes
+   with recalc_rate operation.
+
+Abhishek Sahu (1):
+  clk: qcom: ipq4019: Add the cpu clock frequency change notifier
+
+ drivers/clk/qcom/gcc-ipq4019.c | 40 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 39 insertions(+), 1 deletion(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
