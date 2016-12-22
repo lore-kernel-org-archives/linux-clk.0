@@ -1,176 +1,63 @@
-Return-Path: <nikita.yoush@cogentembedded.com>
-Return-Path: <nikita.yoush@cogentembedded.com>
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Chris Healy <cphealy@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH] clk: imx: pllv3: support fractional multiplier on vf610 PLL1/PLL2
-Date: Fri,  9 Dec 2016 16:00:08 +0300
-Message-Id: <1481288408-16035-1-git-send-email-nikita.yoush@cogentembedded.com>
+Return-Path: <eric@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 02/11] clk: bcm2835: Register the DSI0/DSI1 pixel clocks.
+In-Reply-To: <20161221231446.GA8288@codeaurora.org>
+References: <20161214194621.16499-1-eric@anholt.net> <20161214194621.16499-3-eric@anholt.net> <20161221231446.GA8288@codeaurora.org>
+Date: Wed, 21 Dec 2016 17:23:18 -0800
+Message-ID: <871sx069kp.fsf@eliezer.anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-On vf610, PLL1 and PLL2 have registers to configure fractional part of
-frequency multiplier.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds support for these registers.
+Stephen Boyd <sboyd@codeaurora.org> writes:
 
-This fixes "fast system clock" issue on boards where bootloader sets
-fractional multiplier for PLL1.
+> On 12/14, Eric Anholt wrote:
+>>=20=20
+>>  	/* the gates */
+>>=20=20
+>> @@ -1890,8 +1976,18 @@ static int bcm2835_clk_probe(struct platform_devi=
+ce *pdev)
+>>  	if (IS_ERR(cprman->regs))
+>>  		return PTR_ERR(cprman->regs);
+>>=20=20
+>> -	cprman->osc_name =3D of_clk_get_parent_name(dev->of_node, 0);
+>> -	if (!cprman->osc_name)
+>> +	for (i =3D 0; i < ARRAY_SIZE(cprman_parent_names); i++) {
+>> +		cprman->real_parent_names[i] =3D
+>> +			of_clk_get_parent_name(dev->of_node, i);
+>> +	}
+>
+> Can we use of_clk_parent_fill() here? Or do we need to support
+> holes in the parent array? If it's the latter please add a
+> comment so we don't mistakenly change this later.
 
-Suggested-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-CC: Chris Healy <cphealy@gmail.com>
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
----
- drivers/clk/imx/clk-pllv3.c | 87 +++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk-vf610.c |  4 +--
- drivers/clk/imx/clk.h       |  1 +
- 3 files changed, 90 insertions(+), 2 deletions(-)
+It looks like that will work fine.  We'll only be missing parents from
+the end of the array.
 
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index 19f9b622981a..24a9e914e0d5 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -21,6 +21,9 @@
- #define PLL_NUM_OFFSET		0x10
- #define PLL_DENOM_OFFSET	0x20
- 
-+#define PLL_VF610_NUM_OFFSET	0x20
-+#define PLL_VF610_DENOM_OFFSET	0x30
-+
- #define BM_PLL_POWER		(0x1 << 12)
- #define BM_PLL_LOCK		(0x1 << 31)
- #define IMX7_ENET_PLL_POWER	(0x1 << 5)
-@@ -288,6 +291,87 @@ static const struct clk_ops clk_pllv3_av_ops = {
- 	.set_rate	= clk_pllv3_av_set_rate,
- };
- 
-+static unsigned long clk_pllv3_vf610_recalc_rate(struct clk_hw *hw,
-+					      unsigned long parent_rate)
-+{
-+	struct clk_pllv3 *pll = to_clk_pllv3(hw);
-+	u32 mfn = readl_relaxed(pll->base + PLL_VF610_NUM_OFFSET);
-+	u32 mfd = readl_relaxed(pll->base + PLL_VF610_DENOM_OFFSET);
-+	u32 div = (readl_relaxed(pll->base) & pll->div_mask) ? 22 : 20;
-+	u64 temp64 = (u64)parent_rate;
-+
-+	temp64 *= mfn;
-+	do_div(temp64, mfd);
-+
-+	return (parent_rate * div) + (u32)temp64;
-+}
-+
-+static long clk_pllv3_vf610_round_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long *prate)
-+{
-+	unsigned long parent_rate = *prate;
-+	unsigned int mfi = (rate >= 22 * parent_rate) ? 22 : 20;
-+	u32 mfn, mfd = 0x3fffffff;
-+	u64 temp64;
-+
-+	if (rate <= parent_rate * mfi)
-+		mfn = 0;
-+	else if (rate >= parent_rate * (mfi + 1))
-+		mfn = mfd - 1;
-+	else {
-+		/* rate = parent_rate * (mfi + mfn/mfd) */
-+		temp64 = rate - parent_rate * mfi;
-+		temp64 *= mfd;
-+		do_div(temp64, parent_rate);
-+		mfn = temp64;
-+	}
-+
-+	temp64 = ((u64)mfd * mfi + mfn) * parent_rate;
-+	do_div(temp64, mfd);
-+	return (u32)temp64;
-+}
-+
-+static int clk_pllv3_vf610_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct clk_pllv3 *pll = to_clk_pllv3(hw);
-+	unsigned int mfi = (rate >= 22 * parent_rate) ? 22 : 20;
-+	u32 val, mfn, mfd = 0x3fffffff;
-+	u64 temp64;
-+
-+	if (rate <= parent_rate * mfi)
-+		mfn = 0;
-+	else if (rate >= parent_rate * (mfi + 1))
-+		mfn = mfd - 1;
-+	else {
-+		/* rate = parent_rate * (mfi + mfn/mfd) */
-+		temp64 = rate - parent_rate * mfi;
-+		temp64 *= mfd;
-+		do_div(temp64, parent_rate);
-+		mfn = temp64;
-+	}
-+
-+	val = readl_relaxed(pll->base);
-+	if (mfi == 20)
-+		val &= ~pll->div_mask;
-+	else
-+		val |= pll->div_mask;
-+	writel_relaxed(val, pll->base);
-+	writel_relaxed(mfn, pll->base + PLL_VF610_NUM_OFFSET);
-+	writel_relaxed(mfd, pll->base + PLL_VF610_DENOM_OFFSET);
-+
-+	return clk_pllv3_wait_lock(pll);
-+}
-+
-+static const struct clk_ops clk_pllv3_vf610_ops = {
-+	.prepare	= clk_pllv3_prepare,
-+	.unprepare	= clk_pllv3_unprepare,
-+	.is_prepared	= clk_pllv3_is_prepared,
-+	.recalc_rate	= clk_pllv3_vf610_recalc_rate,
-+	.round_rate	= clk_pllv3_vf610_round_rate,
-+	.set_rate	= clk_pllv3_vf610_set_rate,
-+};
-+
- static unsigned long clk_pllv3_enet_recalc_rate(struct clk_hw *hw,
- 						unsigned long parent_rate)
- {
-@@ -322,6 +406,9 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
- 	case IMX_PLLV3_SYS:
- 		ops = &clk_pllv3_sys_ops;
- 		break;
-+	case IMX_PLLV3_SYS_VF610:
-+		ops = &clk_pllv3_vf610_ops;
-+		break;
- 	case IMX_PLLV3_USB_VF610:
- 		pll->div_shift = 1;
- 	case IMX_PLLV3_USB:
-diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
-index 0476353ab423..59b1863deb88 100644
---- a/drivers/clk/imx/clk-vf610.c
-+++ b/drivers/clk/imx/clk-vf610.c
-@@ -219,8 +219,8 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
- 	clk[VF610_CLK_PLL6_BYPASS_SRC] = imx_clk_mux("pll6_bypass_src", PLL6_CTRL, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
- 	clk[VF610_CLK_PLL7_BYPASS_SRC] = imx_clk_mux("pll7_bypass_src", PLL7_CTRL, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
- 
--	clk[VF610_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll1", "pll1_bypass_src", PLL1_CTRL, 0x1);
--	clk[VF610_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "pll2_bypass_src", PLL2_CTRL, 0x1);
-+	clk[VF610_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS_VF610, "pll1", "pll1_bypass_src", PLL1_CTRL, 0x1);
-+	clk[VF610_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_SYS_VF610, "pll2", "pll2_bypass_src", PLL2_CTRL, 0x1);
- 	clk[VF610_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB_VF610,     "pll3", "pll3_bypass_src", PLL3_CTRL, 0x2);
- 	clk[VF610_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll4", "pll4_bypass_src", PLL4_CTRL, 0x7f);
- 	clk[VF610_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_ENET,    "pll5", "pll5_bypass_src", PLL5_CTRL, 0x3);
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 3799ff82a9b4..99a617897831 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -34,6 +34,7 @@ enum imx_pllv3_type {
- 	IMX_PLLV3_AV,
- 	IMX_PLLV3_ENET,
- 	IMX_PLLV3_ENET_IMX7,
-+	IMX_PLLV3_SYS_VF610,
- };
- 
- struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
--- 
-2.1.4
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlhbKwYACgkQtdYpNtH8
+nujGORAAieBRc84uzJWcshq20Wy/Q77M6dVgqDhggs/J13l2Lx6LpgAo9VbwUPsk
+PWW7UeOvxp0nG0R8FZW4xFQcz5A9gR9PwG4h+o78fAh+57PQpS51uWZBxsFX6B7O
+4J6Bo7OLD9+FMawWr6huLXoEL8c3w8Sno74DqvOlBo703QNRSgNqbIEZWRvJd8xy
+2VnY+laB+HvBlRVCdlrNi/3ZpGhKuyVP0mVqD8+qdemV/iqJ85pw/G+5m6rS+0bG
+ilEJWOSlYjxPI1VWG08W+2D61y9CHQiiaWfhuySm1o7u30qeiTpEyVGpl55oln5U
+Pcu7lZNsLhdak7ZUqj1URkP3nzbpNhyOQKEMnBMYjsIOG/VuOZekKIVAWmfph3Ri
+jUDJYMOE5udOUWDaax86358UXbQIGg7HlJIitJPcJbPYxHyyBUDavYJVhHwNMEvs
+zZSbRyWUyxbXlzKv+gzze0bDyiG0L6XcSCk18n7bpzSS4fjouG0tqHRUFEoIeTag
+AQ546FIgNDE2Yk0IQxawE2HDRPBuo7WlN6Obo06km0p76aRczmL2Jtbx2XjE/VTt
+NPxkbNxaDK9qBUcfknqf+eWrc5WErPN1+DKjkJ5CNSA43nyZ1XvNQL/s5QwVgiAG
+ooPTs3GzfZoCEfuk17X2kXwt8Dxsbh27448qsbYVIIMyf+vEk1M=
+=rmEP
+-----END PGP SIGNATURE-----
+--=-=-=--
