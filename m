@@ -1,68 +1,80 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v3 0/9] STM32F4 missing clocks
-Date: Thu, 1 Dec 2016 16:27:40 +0100
-Message-ID: <1480606069-5178-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org
+Cc: Nadav Haklai <nadavh@marvell.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH] clk: mvebu: adjust AP806 CPU clock frequencies to production chip
+Date: Thu, 22 Dec 2016 13:08:14 +0100
+Message-Id: <1482408494-7429-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+This commit adjusts the list of possible "Sample At Reset" values that
+define the CPU clock frequency of the AP806 (part of Marvell Armada
+7K/8K) to the values that have been validated with the production
+chip. Earlier values were preliminary.
 
-v3:
- - restructure the patch series to have only one patch for all bindings changes.
-   (clk: stm32f4: Update DT bindings documentation)
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ drivers/clk/mvebu/ap806-system-controller.c | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
 
-v2:
- - Put post divider in config structure
- - Rework patch-set
-    - add update dt binding documentation
-    - add clock definition file
- - Use composite for pll vco clocks
- - For auxiliary clock, allow the possiblity to enable peripheral
-   clocks at same time (sugested by radek)
- - Add vco_in clock (entry frequency for all pll) to simplify the code and clarify clock tree
- - Fix missing end of divider tables
-
-This patch-set adds:
- - I2S & SAI PLLs
- - SDIO & 48 Mhz clocks
- - LCD-TFT clock
- - I2S & SAI clocks
-
-Gabriel Fernandez (9):
-  clk: stm32f4: Update DT bindings documentation
-  clk: stm32f4: Add PLL_I2S & PLL_SAI for STM32F429/469 boards
-  clk: stm32f4: Add post divisor for I2S & SAI PLLs
-  clk: stm32f4: Add lcd-tft clock
-  clk: stm32f4: Add I2S clock
-  clk: stm32f4: Add SAI clocks
-  clk: stm32f4: SDIO & 48Mhz clock management for STM32F469 board
-  ARM: dts: stm32f4: Add external I2S clock
-  ARM: dts: stm32f4: Include auxiliary stm32f4 clock definition
-
- .../devicetree/bindings/clock/st,stm32-rcc.txt     |  15 +
- arch/arm/boot/dts/stm32f429.dtsi                   |   9 +-
- drivers/clk/clk-stm32f4.c                          | 585 ++++++++++++++++++++-
- include/dt-bindings/clock/stm32f4-clock.h          |  37 ++
- 4 files changed, 626 insertions(+), 20 deletions(-)
- create mode 100644 include/dt-bindings/clock/stm32f4-clock.h
-
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index 02023ba..962e0c5 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -55,21 +55,39 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 
+ 	freq_mode = reg & AP806_SAR_CLKFREQ_MODE_MASK;
+ 	switch (freq_mode) {
+-	case 0x0 ... 0x5:
++	case 0x0:
++	case 0x1:
+ 		cpuclk_freq = 2000;
+ 		break;
+-	case 0x6 ... 0xB:
++	case 0x6:
++	case 0x7:
+ 		cpuclk_freq = 1800;
+ 		break;
+-	case 0xC ... 0x11:
++	case 0x4:
++	case 0xB:
++	case 0xD:
+ 		cpuclk_freq = 1600;
+ 		break;
+-	case 0x12 ... 0x16:
++	case 0x1a:
+ 		cpuclk_freq = 1400;
+ 		break;
+-	case 0x17 ... 0x19:
++	case 0x14:
++	case 0x17:
+ 		cpuclk_freq = 1300;
+ 		break;
++	case 0x19:
++		cpuclk_freq = 1200;
++		break;
++	case 0x13:
++	case 0x1d:
++		cpuclk_freq = 1000;
++		break;
++	case 0x1c:
++		cpuclk_freq = 800;
++		break;
++	case 0x1b:
++		cpuclk_freq = 600;
++		break;
+ 	default:
+ 		dev_err(&pdev->dev, "invalid SAR value\n");
+ 		return -EINVAL;
 -- 
-1.9.1
+2.7.4
