@@ -1,79 +1,101 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v3 6/9] clk: stm32f4: Add SAI clocks
-Date: Thu, 1 Dec 2016 16:27:46 +0100
-Message-ID: <1480606069-5178-7-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1480606069-5178-1-git-send-email-gabriel.fernandez@st.com>
-References: <1480606069-5178-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 22 Dec 2016 12:39:08 -0600
+From: Rob Herring <robh@kernel.org>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: heiko@sntech.de, mturquette@baylibre.com, sboyd@codeaurora.org,
+	xf@rock-chips.com, mark.rutland@arm.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	huangtao@rock-chips.com, xxx@rock-chips.com, cl@rock-chips.com,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] dt-bindings: add bindings for rk3328 clock
+ controller
+Message-ID: <20161222183908.gjrajbfxgrwwb4vn@rob-hp-laptop>
+References: <1482112573-11613-1-git-send-email-zhangqing@rock-chips.com>
+ <1482112573-11613-3-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1482112573-11613-3-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Mon, Dec 19, 2016 at 09:56:11AM +0800, Elaine Zhang wrote:
+> Add devicetree bindings for Rockchip cru which found on
+> Rockchip SoCs.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  .../bindings/clock/rockchip,rk3328-cru.txt         | 57 ++++++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+> new file mode 100644
+> index 000000000000..20053494d49f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+> @@ -0,0 +1,57 @@
+> +* Rockchip RK3328 Clock and Reset Unit
+> +
+> +The RK3328 clock controller generates and supplies clock to various
+> +controllers within the SoC and also implements a reset controller for SoC
+> +peripherals.
+> +
+> +Required Properties:
+> +
+> +- compatible: should be "rockchip,rk3328-cru"
 
-This patch introduces SAI clocks for stm32f4 socs.
+The example shows other compatibles. IMO, I would drop them rather than 
+add them here.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32f4.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 3063b30..02339d1 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -937,6 +937,9 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
- 
- static const char *i2s_parents[2] = { "plli2s-r", NULL };
- 
-+static const char *sai_parents[4] = { "pllsai-q-div", "plli2s-q-div", NULL,
-+	"no-clock" };
-+
- struct stm32_aux_clk {
- 	int idx;
- 	const char *name;
-@@ -977,6 +980,18 @@ struct stm32f4_clk_data {
- 		NO_GATE, 0,
- 		CLK_SET_RATE_PARENT
- 	},
-+	{
-+		CLK_SAI1, "sai1-a", sai_parents, ARRAY_SIZE(sai_parents),
-+		STM32F4_RCC_DCKCFGR, 20, 3,
-+		STM32F4_RCC_APB2ENR, 22,
-+		CLK_SET_RATE_PARENT
-+	},
-+	{
-+		CLK_SAI2, "sai1-b", sai_parents, ARRAY_SIZE(sai_parents),
-+		STM32F4_RCC_DCKCFGR, 22, 3,
-+		STM32F4_RCC_APB2ENR, 22,
-+		CLK_SET_RATE_PARENT
-+	},
- };
- 
- static const struct stm32f4_clk_data stm32f429_clk_data = {
-@@ -1109,6 +1124,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	i2s_in_clk = of_clk_get_parent_name(np, 1);
- 
- 	i2s_parents[1] = i2s_in_clk;
-+	sai_parents[2] = i2s_in_clk;
- 
- 	clk_register_fixed_rate_with_accuracy(NULL, "hsi", NULL, 0,
- 			16000000, 160000);
--- 
-1.9.1
+> +- reg: physical base address of the controller and length of memory mapped
+> +  region.
+> +- #clock-cells: should be 1.
+> +- #reset-cells: should be 1.
+> +
+> +Optional Properties:
+> +
+> +- rockchip,grf: phandle to the syscon managing the "general register files"
+> +  If missing pll rates are not changeable, due to the missing pll lock status.
+> +
+> +Each clock is assigned an identifier and client nodes can use this identifier
+> +to specify the clock which they consume. All available clocks are defined as
+> +preprocessor macros in the dt-bindings/clock/rk3328-cru.h headers and can be
+> +used in device tree sources. Similar macros exist for the reset sources in
+> +these files.
+> +
+> +External clocks:
+> +
+> +There are several clocks that are generated outside the SoC. It is expected
+> +that they are defined using standard clock bindings with following
+> +clock-output-names:
+> + - "xin24m" - crystal input - required,
+> + - "clkin_i2s" - external I2S clock - optional,
+> + - "gmac_clkin" - external GMAC clock - optional
+> + - "phy_50m_out" - output clock of the pll in the mac phy
+> +
+> +Example: Clock controller node:
+> +
+> +	cru: clock-controller@ff440000 {
+> +		compatible = "rockchip,rk3328-cru", "rockchip,cru", "syscon";
+> +		reg = <0x0 0xff440000 0x0 0x1000>;
+> +		rockchip,grf = <&grf>;
+> +
+> +		#clock-cells = <1>;
+> +		#reset-cells = <1>;
+> +	};
+> +
+> +Example: UART controller node that consumes the clock generated by the clock
+> +  controller:
+> +
+> +	uart0: serial@ff120000 {
+> +		compatible = "snps,dw-apb-uart";
+> +		reg = <0xff120000 0x100>;
+> +		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg-shift = <2>;
+> +		reg-io-width = <4>;
+> +		clocks = <&cru SCLK_UART0>;
+> +	};
+> -- 
+> 1.9.1
+> 
+> 
