@@ -1,75 +1,37 @@
-Return-Path: <ping.bai@nxp.com>
-From: Jacky Bai <ping.bai@nxp.com>
-To: Fabio Estevam <festevam@gmail.com>
-CC: Shawn Guo <shawnguo@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sascha Hauer
-	<kernel@pengutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "Thomas
- Gleixner" <tglx@linutronix.de>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 06/11] ARM: dts: imx: Add imx6sll EVK board dts support
-Date: Tue, 6 Dec 2016 08:39:06 +0000
-Message-ID: <AM3PR04MB5302514027B9CA75B15253287820@AM3PR04MB530.eurprd04.prod.outlook.com>
-References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
- <1480660774-25055-7-git-send-email-ping.bai@nxp.com>
- <CAOMZO5C5-tq-OWTYcmzJt=_57wOyXzNMUes1mctwwyoegwzJyQ@mail.gmail.com>
-In-Reply-To: <CAOMZO5C5-tq-OWTYcmzJt=_57wOyXzNMUes1mctwwyoegwzJyQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 21 Dec 2016 16:11:05 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, kernel@stlinux.com, ludovic.barre@st.com,
+	olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [PATCH v4 4/9] clk: stm32f4: Add lcd-tft clock
+Message-ID: <20161222001105.GS8288@codeaurora.org>
+References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
+ <1481638820-29324-5-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1481638820-29324-5-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgRmFiaW8sDQoNClBsZWFzZSBzZWUgYmVsb3cuDQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCAw
-Ni8xMV0gQVJNOiBkdHM6IGlteDogQWRkIGlteDZzbGwgRVZLIGJvYXJkIGR0cyBzdXBwb3J0DQo+
-IA0KPiBPbiBGcmksIERlYyAyLCAyMDE2IGF0IDQ6MzkgQU0sIEJhaSBQaW5nIDxwaW5nLmJhaUBu
-eHAuY29tPiB3cm90ZToNCj4gPiBBZGQgYmFzaWMgZHRzIHN1cHBvcnQgZm9yIGlteDZzbGwgRVZL
-IGJhb2FyZC4NCj4gDQo+IHMvYmFvcmQvYm9hcmQNCg0Kb2ssIEkgd2lsbCBmaXggdGhpcyB0eXBv
-Lg0KDQo+IA0KPiA+ICsgICAgICAgYmF0dGVyeTogbWF4ODkwM0AwIHsNCj4gPiArICAgICAgICAg
-ICAgICAgY29tcGF0aWJsZSA9ICJmc2wsbWF4ODkwMy1jaGFyZ2VyIjsNCj4gPiArICAgICAgICAg
-ICAgICAgcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsNCj4gPiArICAgICAgICAgICAgICAgZG9r
-X2lucHV0ID0gPCZncGlvNCAxMyAxPjsNCj4gPiArICAgICAgICAgICAgICAgdW9rX2lucHV0ID0g
-PCZncGlvNCAxMyAxPjsNCj4gPiArICAgICAgICAgICAgICAgY2hnX2lucHV0ID0gPCZncGlvNCAx
-NSAxPjsNCj4gPiArICAgICAgICAgICAgICAgZmx0X2lucHV0ID0gPCZncGlvNCAxNCAxPjsNCj4g
-PiArICAgICAgICAgICAgICAgZnNsLGRjbV9hbHdheXNfaGlnaDsNCj4gPiArICAgICAgICAgICAg
-ICAgZnNsLGRjX3ZhbGlkOw0KPiA+ICsgICAgICAgICAgICAgICBmc2wsYWRjX2Rpc2FibGU7DQo+
-IA0KPiBUaGVzZSBwcm9wZXJ0aWVzIGRvIG5vdCBleGlzdCBpbiBtYWlubGluZSwgcGxlYXNlIHJl
-bW92ZSB0aGVtLg0KDQpvaywgdGhhbmtzIGZvciB5b3UgY29tbWVudC4NCj4gDQo+IA0KPiA+ICsg
-ICAgICAgICAgICAgICBzdGF0dXMgPSAib2theSI7DQo+ID4gKyAgICAgICB9Ow0KPiA+ICsNCj4g
-PiArICAgICAgIHB4cF92NGwyX291dCB7DQo+ID4gKyAgICAgICAgICAgICAgIGNvbXBhdGlibGUg
-PSAiZnNsLGlteDZzbC1weHAtdjRsMiI7DQo+ID4gKyAgICAgICAgICAgICAgIHN0YXR1cyA9ICJv
-a2F5IjsNCj4gPiArICAgICAgIH07DQo+IA0KPiBXZSBkb24ndCBoYXZlIHB4cCBzdXBwb3J0IGlu
-IG1haW5saW5lIGtlcm5lbCwgcGxlYXNlIHJlbW92ZSBpdC4NCg0KT2ssIEkgd2lsbCByZW1vdmUg
-aXQuDQoNCj4gDQo+ID4gKw0KPiA+ICsgICAgICAgcmVndWxhdG9ycyB7DQo+ID4gKyAgICAgICAg
-ICAgICAgIGNvbXBhdGlibGUgPSAic2ltcGxlLWJ1cyI7DQo+ID4gKyAgICAgICAgICAgICAgICNh
-ZGRyZXNzLWNlbGxzID0gPDE+Ow0KPiA+ICsgICAgICAgICAgICAgICAjc2l6ZS1jZWxscyA9IDww
-PjsNCj4gDQo+IA0KPiBQbGVhc2UgcmVtb3ZlIGl0IGFuZCBwbGFjZSB0aGUgcmVndWxhdG9yIG5v
-ZGVzIGRpcmVjdGx5IGFzIGJlbG93Og0KDQpvaywgSSB3aWxsIGZpeCBpdC4NCg0KPiANCj4gDQo+
-ID4gKw0KPiA+ICsgICAgICAgICAgICAgICByZWdfdXNiX290ZzFfdmJ1czogcmVndWxhdG9yQDAg
-ew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAicmVndWxhdG9yLWZp
-eGVkIjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICByZWcgPSA8MD47DQo+ID4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgcmVndWxhdG9yLW5hbWUgPSAidXNiX290ZzFfdmJ1cyI7DQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8NTAwMDAw
-MD47DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgcmVndWxhdG9yLW1heC1taWNyb3ZvbHQg
-PSA8NTAwMDAwMD47DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgZ3BpbyA9IDwmZ3BpbzQg
-MCBHUElPX0FDVElWRV9ISUdIPjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBlbmFibGUt
-YWN0aXZlLWhpZ2g7DQo+ID4gKyAgICAgICAgICAgICAgIH07DQo+IA0KPiAgICAgcmVnX3VzYl9v
-dGcxX3ZidXM6IHJlZ3VsYXRvci11c2Itb3RnMS12YnVzIHsNCj4gICAgICAgICAgIGNvbXBhdGli
-bGUgPSAicmVndWxhdG9yLWZpeGVkIjsNCj4gICAgICAgICAgIHJlZ3VsYXRvci1uYW1lID0gInVz
-Yl9vdGcxX3ZidXMiOw0KPiAgICAgICAgICAgcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8NTAw
-MDAwMD47DQo+ICAgICAgICAgICByZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDw1MDAwMDAwPjsN
-Cj4gICAgICAgICAgIGdwaW8gPSA8JmdwaW80IDAgR1BJT19BQ1RJVkVfSElHSD47DQo+ICAgICAg
-ICAgICBlbmFibGUtYWN0aXZlLWhpZ2g7DQo+ICAgICB9Ow0KPiANCj4gPiArJmNwdTAgew0KPiA+
-ICsgICAgICAgYXJtLXN1cHBseSA9IDwmc3cxYV9yZWc+Ow0KPiA+ICsgICAgICAgc29jLXN1cHBs
-eSA9IDwmc3cxY19yZWc+Ow0KPiA+ICt9Ow0KPiANCj4gVGhpcyBpcyBvbmx5IGZvciBMRE8gYnlw
-YXNzIG1vZGUsIHJpZ2h0PyBXZSBkb24ndCBzdXBwb3J0IExETy1ieXBhc3MgaW4NCj4gbWFpbmxp
-bmUuDQo+IA0KDQpPbiBpLk1YNlNMTCwgbm8gaW50ZXJuYWwgTERPIGZvciBBUk0gYW5kIFNPQy4g
-IFdlIGNhbiBvbmx5IHVzZSBleHRlcm5hbCByZWd1bGF0b3IgZm9yIERWRlMuDQoNCj4gPiArJmdw
-YyB7DQo+ID4gKyAgICAgICBmc2wsbGRvLWJ5cGFzcyA9IDwxPjsNCj4gDQo+IFdlIGRvbid0IHN1
-cHBvcnQgbGRvLWJ5cGFzcyBpbiBtYWlubGluZSwgcGxlYXNlIHJlbW92ZSBpdC4NCj4gDQo+ID4g
-KyZweHAgew0KPiA+ICsgICAgICAgc3RhdHVzID0gIm9rYXkiOw0KPiA+ICt9Ow0KPiANCj4gV2Ug
-ZG9uJ3Qgc3VwcG9ydCBQWFAgaW4gbWFpbmxpbmUsIHBsZWFzZSByZW1vdmUgaXQuDQoNCm9rIEkg
-d2lsbCByZW1vdmUgaXQuDQoNCkJSDQpKYWNreSBCYWkNCg==
+On 12/13, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> This patch introduces lcd-tft clock for stm32f4 soc.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> ---
+
+Applied to clk-stm32f4 and merged into clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
