@@ -1,63 +1,57 @@
-Return-Path: <tony@atomide.com>
-Date: Tue, 13 Dec 2016 16:43:34 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv4 00/15] clk: ti: add support for hwmod clocks
-Message-ID: <20161214004334.GU4920@atomide.com>
-References: <2cfa10a9-9ea0-23e4-30de-9aece13e47e3@ti.com>
- <20161028233750.GQ16026@codeaurora.org>
- <7371ef35-5d95-bf78-4c97-c61091a1fa4b@ti.com>
- <148156710975.37646.2957511113527634913@resonance>
- <20161213004914.GM5423@codeaurora.org>
- <20161213013133.GR4920@atomide.com>
- <148160402543.37646.6019420188689675769@resonance>
- <4b016883-e7c9-94d8-d964-3c8dfee6ee13@ti.com>
- <20161213153724.GT4920@atomide.com>
- <148166654419.37646.7680435609801736363@resonance>
+Return-Path: <sboyd@codeaurora.org>
+Subject: Re: [alsa-devel] [PATCH v6 1/3] clk: x86: Add Atom PMC platform
+ clocks
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
+ <1481306510-7471-2-git-send-email-irina.tirdea@intel.com>
+ <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
+ <20161213232524.GQ5423@codeaurora.org>
+ <32235fb3-0d54-211d-28f4-4655e4bc7812@linux.intel.com>
+ <20161217013337.GW5423@codeaurora.org>
+ <CAHp75Vdn_8_fCQzkG7CPrnDZzhC7WUpGM1cyvfNRz0u_sc7RKA@mail.gmail.com>
+ <7f3d03dc-24fe-ec3f-4a3b-926c28f0ac86@linux.intel.com>
+ <20161221230557.GK5423@codeaurora.org>
+ <cd6044f5-6c79-b2d6-902d-52e27c217e78@linux.intel.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+ linux-clk@vger.kernel.org, Irina Tirdea <irina.tirdea@intel.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
+ Michael Turquette <mturquette@baylibre.com>, "x86@kernel.org"
+ <x86@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Mark Brown <broonie@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Darren Hart <dvhart@infradead.org>,
+ Takashi Iwai <tiwai@suse.com>, platform-driver-x86@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Len Brown <lenb@kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Message-ID: <08b66c14-eb0d-4b3e-7b10-906e10bc1454@codeaurora.org>
+Date: Thu, 22 Dec 2016 10:29:07 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <148166654419.37646.7680435609801736363@resonance>
+In-Reply-To: <cd6044f5-6c79-b2d6-902d-52e27c217e78@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-* Michael Turquette <mturquette@baylibre.com> [161213 14:02]:
-> Quoting Tony Lindgren (2016-12-13 07:37:24)
-> > For the clkctrl clocks, here's what I'd like to see. The driver should be
-> > just a regular device driver along the lines we did with the ADPLL as in
-> > Documentation/devicetree/bindings/clock/ti/adpll.txt.
-> > 
-> > For the binding, something like the following should work as a minimal
-> > example, this follows what we have in the hardware:
-> > 
-> > &prm {
-> >         ...
-> > 
-> >         /* See "CD_WKUP Clock Domain" in 4430 TRM page 393 */
-> >         wkup_cm: clock@1800 {
-> >                 compatible = "ti,clkctrl";
-> >                 reg = <0x1800 0x100>;
-> >                 #clock-cells = <1>;
-> >                 clocks = <&wkup_l4_iclk2 &wkup_32k_fclk
-> >                           &32k_fclk &gp1_fclk>;
-> >                 clock-output-names =
-> >                         "sysctrl_padconf_wkup",
-> >                         "badgap",
-> >                         "sysctrl_general_wkup",
-> >                         "gpio1",
-> >                         "keyboard",
-> >                         "sar_ram",
-> >                         "32ktimer",
-> >                         "gptimer1";
-> 
-> Is there a technical reason to use clock-output-names? If you share a
-> header between the clock provider driver and DT with the phandle offsets
-> then we should be able to avoid this property altogether. Stephen and I
-> are trying to phase this one out as much as possible.
+On 12/21/2016 05:07 PM, Pierre-Louis Bossart wrote:
+> On 12/21/16 5:05 PM, Stephen Boyd wrote:
+>>
+>> Ok, by clkdev design if a device is passed but there isn't a
+>> match in the lookup table it allows it to match based solely on
+>> the connection id. Given that the connection id is globally
+>> unique this will work.
+>>
+>> Hopefully we don't have two of these devices with pmc_plt_clk_<n>
+>> signals in a single system though. Then having the device name
+>> would help differentiate between the two. And then it may make
+>> sense to have some sort of ACPI lookup system, similar to how we
+>> have lookups for clks in DT.
+>
+> So in short we keep the existing solution for now and will only use
+> the device name if and when the pmc_plt_clk_<n> identifier is no
+> longer unique due to hardware changes. Did I get this right?
 
-Oh OK no reason for names, defines for the offsets will work just fine.
+Ok.
 
-Regards,
-
-Tony
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
