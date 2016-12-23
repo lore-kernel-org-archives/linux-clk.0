@@ -1,77 +1,124 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 00/11] drm/vc4: DSI panel support + Raspberry Pi touchscreen
-Date: Wed, 14 Dec 2016 11:46:10 -0800
-Message-Id: <20161214194621.16499-1-eric@anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:33784 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755198AbcLWRA5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Dec 2016 12:00:57 -0500
 MIME-Version: 1.0
+Reply-To: cwchoi00@gmail.com
+In-Reply-To: <1482399870-18563-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20161222094441epcas5p330bb16763e02149a275c30eb644b0e7c@epcas5p3.samsung.com>
+ <1482399870-18563-1-git-send-email-m.szyprowski@samsung.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Date: Sat, 24 Dec 2016 02:00:36 +0900
+Message-ID: <CAGTfZH3CuFNSHwhWzYeU+JE0UyyTqWRA3k2tvCprPcYUMBSYbQ@mail.gmail.com>
+Subject: Re: [PATCH] clk/samsung: exynos542x: mark some clocks as critical
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-After 9 months of development, I finally got the DSI panel to light up
-from poweron, and this is the series for enabling it.  I've included
-the whole thing Cced to all the subsystems, as there are some
-interesting choices we have to make (how the analog PHY clocks are
-represented in common clocks¸ and how the touchscreen panel is
-represented in DT).
+Dear Marek,
 
-There's one commit left out of the series, which is the fix to allow
-bcm2835_dma.c's poll-for-completion from IRQ handlers for the DSI1
-register write workaround.  However, with the panel's DSI transaction
-workaround, we're not triggering our IRQ handler anyway.
+I have a question. I agree some clocks should be always on with CLK_IS_CRITICAL.
+CLK_ACLK333 is only used on exynos5420.dtsi. So, I understand to add
+CLK_IS_CRITICAL flag to CLK_ACLK333.
 
-Note that patch #11 is not intended to be pushed, it's just a demo.
+Except for CLK_ACLK333, the remaining clocks with CLK_IS_CRITICAL were
+not used on mainline kernel (arch/arm/boot/dts/*). It means that the
+remaining clocks might be ON before applying this patch. So,
+CLK_IGNORE_UNUSED might be enough to maintain their ON state.
 
-Eric Anholt (11):
-  clk: bcm2835: Don't rate change PLLs on behalf of DSI PLL dividers.
-  clk: bcm2835: Register the DSI0/DSI1 pixel clocks.
-  clk: bcm2835: Add leaf clock measurement support, disabled by default
-  drm/vc4: Set up SCALER_DISPCTRL at boot.
-  drm/vc4: Add support for feeding DSI encoders from the pixel valve.
-  dt-bindings: Document the VC4 DSI module nodes.
-  drm/vc4: Add DSI driver
-  dt-bindings: Document the Raspberry Pi Touchscreen nodes.
-  drm/panel: Add support for the Raspberry Pi 7" Touchscreen.
-  ARM: bcm2835: dt: Add the DSI module nodes and clocks.
-  ARM: bcm2835: Enable the Raspberry Pi touchscreen panel.
+If we don't add the CLK_IGNORE_UNUSED flag to clocks except for
+CLK_ACLK333, are there any problem?
+But, if bootloader don't turn on these clocks, this patch is necessary.
 
- .../bindings/clock/brcm,bcm2835-cprman.txt         |   15 +-
- .../devicetree/bindings/display/brcm,bcm-vc4.txt   |   35 +
- .../display/panel/raspberrypi,touchscreen.txt      |   45 +
- arch/arm/boot/dts/bcm2835-rpi.dtsi                 |    8 +
- arch/arm/boot/dts/bcm283x.dtsi                     |   77 +-
- drivers/clk/bcm/clk-bcm2835.c                      |  302 +++-
- drivers/gpu/drm/panel/Kconfig                      |    8 +
- drivers/gpu/drm/panel/Makefile                     |    1 +
- .../gpu/drm/panel/panel-raspberrypi-touchscreen.c  |  509 ++++++
- drivers/gpu/drm/vc4/Kconfig                        |    2 +
- drivers/gpu/drm/vc4/Makefile                       |    1 +
- drivers/gpu/drm/vc4/vc4_crtc.c                     |   33 +-
- drivers/gpu/drm/vc4/vc4_debugfs.c                  |    1 +
- drivers/gpu/drm/vc4/vc4_drv.c                      |    1 +
- drivers/gpu/drm/vc4/vc4_drv.h                      |    5 +
- drivers/gpu/drm/vc4/vc4_dsi.c                      | 1725 ++++++++++++++++++++
- drivers/gpu/drm/vc4/vc4_hvs.c                      |   14 +
- drivers/gpu/drm/vc4/vc4_regs.h                     |    5 +
- include/dt-bindings/clock/bcm2835.h                |    2 +
- 19 files changed, 2722 insertions(+), 67 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/panel/raspberrypi,touchscreen.txt
- create mode 100644 drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
- create mode 100644 drivers/gpu/drm/vc4/vc4_dsi.c
+Best Regards,
+Chanwoo Choi
 
--- 
-2.11.0
+2016-12-22 18:44 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+> Some parent clocks of the Exynos542x clock blocks, which have separate
+> power domains (like DISP, MFC, MSC, GSC, FSYS and G2D) must be always
+> enabled to access any register related to power management unit or devices
+> connected to it. For the time being, until a proper solution based on
+> runtime PM is applied, mark those clocks as critical (instead of ignore
+> unused or even no flags) to prevent disabling them.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 8c8b495cbf0d..cdc092a1d9ef 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -586,7 +586,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
+>         GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
+>                                 GATE_BUS_TOP, 24, 0, 0),
+>         GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
+> -                               GATE_BUS_TOP, 27, 0, 0),
+> +                               GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
+>  };
+>
+>  static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+> @@ -956,20 +956,20 @@ static void __init exynos5420_clk_sleep_init(void) {}
+>         GATE(CLK_SMMU_G2D, "smmu_g2d", "aclk333_g2d", GATE_IP_G2D, 7, 0, 0),
+>
+>         GATE(0, "aclk200_fsys", "mout_user_aclk200_fsys",
+> -                       GATE_BUS_FSYS0, 9, CLK_IGNORE_UNUSED, 0),
+> +                       GATE_BUS_FSYS0, 9, CLK_IS_CRITICAL, 0),
+>         GATE(0, "aclk200_fsys2", "mout_user_aclk200_fsys2",
+>                         GATE_BUS_FSYS0, 10, CLK_IGNORE_UNUSED, 0),
+>
+>         GATE(0, "aclk333_g2d", "mout_user_aclk333_g2d",
+>                         GATE_BUS_TOP, 0, CLK_IGNORE_UNUSED, 0),
+>         GATE(0, "aclk266_g2d", "mout_user_aclk266_g2d",
+> -                       GATE_BUS_TOP, 1, CLK_IGNORE_UNUSED, 0),
+> +                       GATE_BUS_TOP, 1, CLK_IS_CRITICAL, 0),
+>         GATE(0, "aclk300_jpeg", "mout_user_aclk300_jpeg",
+>                         GATE_BUS_TOP, 4, CLK_IGNORE_UNUSED, 0),
+>         GATE(0, "aclk333_432_isp0", "mout_user_aclk333_432_isp0",
+>                         GATE_BUS_TOP, 5, 0, 0),
+>         GATE(0, "aclk300_gscl", "mout_user_aclk300_gscl",
+> -                       GATE_BUS_TOP, 6, CLK_IGNORE_UNUSED, 0),
+> +                       GATE_BUS_TOP, 6, CLK_IS_CRITICAL, 0),
+>         GATE(0, "aclk333_432_gscl", "mout_user_aclk333_432_gscl",
+>                         GATE_BUS_TOP, 7, CLK_IGNORE_UNUSED, 0),
+>         GATE(0, "aclk333_432_isp", "mout_user_aclk333_432_isp",
+> @@ -983,20 +983,20 @@ static void __init exynos5420_clk_sleep_init(void) {}
+>         GATE(0, "aclk166", "mout_user_aclk166",
+>                         GATE_BUS_TOP, 14, CLK_IGNORE_UNUSED, 0),
+>         GATE(CLK_ACLK333, "aclk333", "mout_user_aclk333",
+> -                       GATE_BUS_TOP, 15, CLK_IGNORE_UNUSED, 0),
+> +                       GATE_BUS_TOP, 15, CLK_IS_CRITICAL, 0),
+>         GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
+>                         GATE_BUS_TOP, 16, 0, 0),
+>         GATE(0, "aclk400_mscl", "mout_user_aclk400_mscl",
+>                         GATE_BUS_TOP, 17, 0, 0),
+>         GATE(0, "aclk200_disp1", "mout_user_aclk200_disp1",
+> -                       GATE_BUS_TOP, 18, 0, 0),
+> +                       GATE_BUS_TOP, 18, CLK_IS_CRITICAL, 0),
+>         GATE(CLK_SCLK_MPHY_IXTAL24, "sclk_mphy_ixtal24", "mphy_refclk_ixtal24",
+>                         GATE_BUS_TOP, 28, 0, 0),
+>         GATE(CLK_SCLK_HSIC_12M, "sclk_hsic_12m", "ff_hsic_12m",
+>                         GATE_BUS_TOP, 29, 0, 0),
+>
+>         GATE(0, "aclk300_disp1", "mout_user_aclk300_disp1",
+> -                       SRC_MASK_TOP2, 24, 0, 0),
+> +                       SRC_MASK_TOP2, 24, CLK_IS_CRITICAL, 0),
+>
+>         GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
+>                         SRC_MASK_TOP7, 20, 0, 0),
+> --
+> 1.9.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
