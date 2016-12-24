@@ -1,209 +1,192 @@
-Return-Path: <nikita.yoush@cogentembedded.com>
-Return-Path: <nikita.yoush@cogentembedded.com>
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Chris Healy <cphealy@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH v2] clk: imx: pllv3: support fractional multiplier on vf610 PLL1/PLL2
-Date: Wed, 14 Dec 2016 11:14:22 +0300
-Message-Id: <1481703262-16668-1-git-send-email-nikita.yoush@cogentembedded.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, xf@rock-chips.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com, cl@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] clk: rockchip: add new pll-type for rk3328
+Date: Sat, 24 Dec 2016 03:18:29 +0100
+Message-ID: <1864774.VdbssDBMbY@phil>
+In-Reply-To: <1482112573-11613-5-git-send-email-zhangqing@rock-chips.com>
+References: <1482112573-11613-1-git-send-email-zhangqing@rock-chips.com> <1482112573-11613-5-git-send-email-zhangqing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On vf610, PLL1 and PLL2 have registers to configure fractional part of
-frequency multiplier.
+Hi Elaine,
 
-This patch adds support for these registers.
+Am Montag, 19. Dezember 2016, 09:56:13 CET schrieb Elaine Zhang:
+> The rk3328's pll and clock are similar with rk3036's,
+> it different with pll_mode_mask,there are different
+> control registers bit,
+> so these should be independent and separate from
+> the series of rk3328s.
 
-This fixes "fast system clock" issue on boards where bootloader sets
-fractional multiplier for PLL1.
+not sure I understand this description. In the patch (and TRM excerpt) I see
+that the number of parents is down to only xin24m but the general handling is
+similar to the rk3036 and thus reuses its operations.
 
-Suggested-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-CC: Chris Healy <cphealy@gmail.com>
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+The description makes it sound like there are operational differences (the
+"different control register bit" part), so could you clarify this a bit
+please?
+
+Also, please move the pll addition before the addition of the clock-controller
+in the series and move the pll-type addition also here from the controller
+patch.
+
+Some more below:
+
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  drivers/clk/rockchip/clk-pll.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+> index 6ed605776abd..9650c75f61d1 100644
+> --- a/drivers/clk/rockchip/clk-pll.c
+> +++ b/drivers/clk/rockchip/clk-pll.c
+> @@ -29,6 +29,7 @@
+>  #define PLL_MODE_SLOW		0x0
+>  #define PLL_MODE_NORM		0x1
+>  #define PLL_MODE_DEEP		0x2
+> +#define PLL_RK3328_MODE_MASK	0x1
+> 
+>  struct rockchip_clk_pll {
+>  	struct clk_hw		hw;
+> @@ -865,13 +866,17 @@ struct clk *rockchip_clk_register_pll(struct
+> rockchip_clk_provider *ctx, pll_mux = &pll->pll_mux;
+>  	pll_mux->reg = ctx->reg_base + mode_offset;
+>  	pll_mux->shift = mode_shift;
+> -	pll_mux->mask = PLL_MODE_MASK;
+> +	if (pll_type == pll_rk3328)
+> +		pll_mux->mask = PLL_RK3328_MODE_MASK;
+> +	else
+> +		pll_mux->mask = PLL_MODE_MASK;
+
+you're missing the other parts handling parents, like num_parents check
+and the init.num_parents parameter.
+
+The pll really has only one parent, xin24m, so we should handle this
+correctly in the code, instead of having 2 times xin24m in the parent
+array coming from the clock controller.
+
+>  	pll_mux->flags = 0;
+>  	pll_mux->lock = &ctx->lock;
+>  	pll_mux->hw.init = &init;
+> 
+>  	if (pll_type == pll_rk3036 ||
+>  	    pll_type == pll_rk3066 ||
+> +	    pll_type == pll_rk3328 ||
+>  	    pll_type == pll_rk3399)
+>  		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
+> 
+> @@ -929,6 +934,12 @@ struct clk *rockchip_clk_register_pll(struct
+> rockchip_clk_provider *ctx, else
+>  			init.ops = &rockchip_rk3066_pll_clk_ops;
+>  		break;
+> +	case pll_rk3328:
+> +		if (!pll->rate_table || IS_ERR(ctx->grf))
+> +			init.ops = &rockchip_rk3036_pll_clk_norate_ops;
+> +		else
+> +			init.ops = &rockchip_rk3036_pll_clk_ops;
+> +		break;
+
+please don't duplicate the rk3036-ops assignment, when adding the
+pll_rk3328 option to the rk3036 part suffices.
+
+I'd think the pll-patch should look something like the
+following (untested, so please test):
+--------------- 8< -----------------
+Subject: [PATCH] clk: rockchip: add new pll-type for rk3328
+
+The rk3328's pll and clock are similar with rk3036's,
+it different with pll_mode_mask,there are different
+control registers bit,
+so these should be independent and separate from
+the series of rk3328s.
+
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
-This version restructures the patch:
-- introduce explicit structure to store mf (multiply factor) consisting of
-  integer part, numenator and denumenator;
-- provides routines that:
-  - calculate rate based on parent rate and mf,
-  - read mf from hw,
-  - write mf to hw,
-  - calculate best mf for wanted rate;
-- implement recalc_rate() / round_rate() / set_rate() based on these.
+ drivers/clk/rockchip/clk-pll.c | 18 ++++++++++++++----
+ drivers/clk/rockchip/clk.h     |  1 +
+ 2 files changed, 15 insertions(+), 4 deletions(-)
 
- drivers/clk/imx/clk-pllv3.c | 110 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk-vf610.c |   4 +-
- drivers/clk/imx/clk.h       |   1 +
- 3 files changed, 113 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index 7a6acc3e4a92..89ab42e7d6c0 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -21,6 +21,9 @@
- #define PLL_NUM_OFFSET		0x10
- #define PLL_DENOM_OFFSET	0x20
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 6ed6057..99ce483 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -29,6 +29,7 @@
+ #define PLL_MODE_SLOW		0x0
+ #define PLL_MODE_NORM		0x1
+ #define PLL_MODE_DEEP		0x2
++#define PLL_RK3328_MODE_MASK	0x1
  
-+#define PLL_VF610_NUM_OFFSET	0x20
-+#define PLL_VF610_DENOM_OFFSET	0x30
-+
- #define BM_PLL_POWER		(0x1 << 12)
- #define BM_PLL_LOCK		(0x1 << 31)
- #define IMX7_ENET_PLL_POWER	(0x1 << 5)
-@@ -292,6 +295,110 @@ static const struct clk_ops clk_pllv3_av_ops = {
- 	.set_rate	= clk_pllv3_av_set_rate,
- };
+ struct rockchip_clk_pll {
+ 	struct clk_hw		hw;
+@@ -848,8 +849,9 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 	struct clk *pll_clk, *mux_clk;
+ 	char pll_name[20];
  
-+struct clk_pllv3_vf610_mf {
-+	u32 mfi;	/* integer part, can be 20 or 22 */
-+	u32 mfn;	/* numinator, 30-bit value */
-+	u32 mfd;	/* denomenator, 30-bit value, must be less than mfn */
-+};
-+
-+static unsigned long clk_pllv3_vf610_calc_rate(unsigned long parent_rate,
-+		struct clk_pllv3_vf610_mf *mf)
-+{
-+	u64 temp64;
-+
-+	temp64 = parent_rate;
-+	temp64 *= mf->mfn;
-+	do_div(temp64, mf->mfd);
-+
-+	return (parent_rate * mf->mfi) + temp64;
-+}
-+
-+static void clk_pllv3_vf610_mf_from_hw(struct clk_hw *hw,
-+		struct clk_pllv3_vf610_mf *mf)
-+{
-+	struct clk_pllv3 *pll = to_clk_pllv3(hw);
-+
-+	mf->mfn = readl_relaxed(pll->base + PLL_VF610_NUM_OFFSET);
-+	mf->mfd = readl_relaxed(pll->base + PLL_VF610_DENOM_OFFSET);
-+	mf->mfi = (readl_relaxed(pll->base) & pll->div_mask) ? 22 : 20;
-+}
-+
-+static void clk_pllv3_vf610_mf_to_hw(struct clk_hw *hw,
-+		struct clk_pllv3_vf610_mf *mf)
-+{
-+	struct clk_pllv3 *pll = to_clk_pllv3(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base);
-+	if (mf->mfi == 20)
-+		val &= ~pll->div_mask;	/* clear bit for mfi=20 */
+-	if (num_parents != 2) {
+-		pr_err("%s: needs two parent clocks\n", __func__);
++	if ((pll_type != pll_rk3328 && num_parents != 2) ||
++	    (pll_type == pll_rk3328 && num_parents != 1)) {
++		pr_err("%s: missing parent clocks\n", __func__);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+@@ -865,13 +867,17 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 	pll_mux = &pll->pll_mux;
+ 	pll_mux->reg = ctx->reg_base + mode_offset;
+ 	pll_mux->shift = mode_shift;
+-	pll_mux->mask = PLL_MODE_MASK;
++	if (pll_type == pll_rk3328)
++		pll_mux->mask = PLL_RK3328_MODE_MASK;
 +	else
-+		val |= pll->div_mask;	/* set bit for mfi=22 */
-+	writel_relaxed(val, pll->base);
-+
-+	writel_relaxed(mf->mfn, pll->base + PLL_VF610_NUM_OFFSET);
-+	writel_relaxed(mf->mfd, pll->base + PLL_VF610_DENOM_OFFSET);
-+}
-+
-+static void clk_pllv3_vf610_mf_for_rate(unsigned long rate,
-+		unsigned long parent_rate, struct clk_pllv3_vf610_mf *mf)
-+{
-+	u64 temp64;
-+
-+	mf->mfi = (rate >= 22 * parent_rate) ? 22 : 20;
-+	mf->mfd = 0x3fffffff;	/* use max supported value for best accuracy */
-+
-+	if (rate <= parent_rate * mf->mfi)
-+		mf->mfn = 0;
-+	else if (rate >= parent_rate * (mf->mfi + 1))
-+		mf->mfn = mf->mfd - 1;
-+	else {
-+		/* rate = parent_rate * (mfi + mfn/mfd) */
-+		temp64 = rate - parent_rate * mf->mfi;
-+		temp64 *= mf->mfd;
-+		do_div(temp64, parent_rate);
-+		mf->mfn = temp64;
-+	}
-+}
-+
-+static unsigned long clk_pllv3_vf610_recalc_rate(struct clk_hw *hw,
-+					      unsigned long parent_rate)
-+{
-+	struct clk_pllv3_vf610_mf mf;
-+
-+	clk_pllv3_vf610_mf_from_hw(hw, &mf);
-+	return clk_pllv3_vf610_calc_rate(parent_rate, &mf);
-+}
-+
-+static long clk_pllv3_vf610_round_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long *prate)
-+{
-+	struct clk_pllv3_vf610_mf mf;
-+
-+	clk_pllv3_vf610_mf_for_rate(rate, *prate, &mf);
-+	return clk_pllv3_vf610_calc_rate(*prate, &mf);
-+}
-+
-+static int clk_pllv3_vf610_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct clk_pllv3_vf610_mf mf;
-+
-+	clk_pllv3_vf610_mf_for_rate(rate, parent_rate, &mf);
-+	clk_pllv3_vf610_mf_to_hw(hw, &mf);
-+
-+	return clk_pllv3_wait_lock(to_clk_pllv3(hw));
-+}
-+
-+static const struct clk_ops clk_pllv3_vf610_ops = {
-+	.prepare	= clk_pllv3_prepare,
-+	.unprepare	= clk_pllv3_unprepare,
-+	.is_prepared	= clk_pllv3_is_prepared,
-+	.recalc_rate	= clk_pllv3_vf610_recalc_rate,
-+	.round_rate	= clk_pllv3_vf610_round_rate,
-+	.set_rate	= clk_pllv3_vf610_set_rate,
-+};
-+
- static unsigned long clk_pllv3_enet_recalc_rate(struct clk_hw *hw,
- 						unsigned long parent_rate)
- {
-@@ -326,6 +433,9 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
- 	case IMX_PLLV3_SYS:
- 		ops = &clk_pllv3_sys_ops;
- 		break;
-+	case IMX_PLLV3_SYS_VF610:
-+		ops = &clk_pllv3_vf610_ops;
-+		break;
- 	case IMX_PLLV3_USB_VF610:
- 		pll->div_shift = 1;
- 	case IMX_PLLV3_USB:
-diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
-index 0476353ab423..59b1863deb88 100644
---- a/drivers/clk/imx/clk-vf610.c
-+++ b/drivers/clk/imx/clk-vf610.c
-@@ -219,8 +219,8 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
- 	clk[VF610_CLK_PLL6_BYPASS_SRC] = imx_clk_mux("pll6_bypass_src", PLL6_CTRL, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
- 	clk[VF610_CLK_PLL7_BYPASS_SRC] = imx_clk_mux("pll7_bypass_src", PLL7_CTRL, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
++		pll_mux->mask = PLL_MODE_MASK;
+ 	pll_mux->flags = 0;
+ 	pll_mux->lock = &ctx->lock;
+ 	pll_mux->hw.init = &init;
  
--	clk[VF610_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll1", "pll1_bypass_src", PLL1_CTRL, 0x1);
--	clk[VF610_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "pll2_bypass_src", PLL2_CTRL, 0x1);
-+	clk[VF610_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS_VF610, "pll1", "pll1_bypass_src", PLL1_CTRL, 0x1);
-+	clk[VF610_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_SYS_VF610, "pll2", "pll2_bypass_src", PLL2_CTRL, 0x1);
- 	clk[VF610_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB_VF610,     "pll3", "pll3_bypass_src", PLL3_CTRL, 0x2);
- 	clk[VF610_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,      "pll4", "pll4_bypass_src", PLL4_CTRL, 0x7f);
- 	clk[VF610_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_ENET,    "pll5", "pll5_bypass_src", PLL5_CTRL, 0x3);
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 3799ff82a9b4..99a617897831 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -34,6 +34,7 @@ enum imx_pllv3_type {
- 	IMX_PLLV3_AV,
- 	IMX_PLLV3_ENET,
- 	IMX_PLLV3_ENET_IMX7,
-+	IMX_PLLV3_SYS_VF610,
+ 	if (pll_type == pll_rk3036 ||
+ 	    pll_type == pll_rk3066 ||
++	    pll_type == pll_rk3328 ||
+ 	    pll_type == pll_rk3399)
+ 		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
+ 
+@@ -884,7 +890,10 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 	init.flags = CLK_SET_RATE_PARENT;
+ 	init.ops = pll->pll_mux_ops;
+ 	init.parent_names = pll_parents;
+-	init.num_parents = ARRAY_SIZE(pll_parents);
++	if (pll_type == pll_rk3328)
++		init.num_parents = 2;
++	else
++		init.num_parents = ARRAY_SIZE(pll_parents);
+ 
+ 	mux_clk = clk_register(NULL, &pll_mux->hw);
+ 	if (IS_ERR(mux_clk))
+@@ -918,6 +927,7 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 
+ 	switch (pll_type) {
+ 	case pll_rk3036:
++	case pll_rk3328:
+ 		if (!pll->rate_table || IS_ERR(ctx->grf))
+ 			init.ops = &rockchip_rk3036_pll_clk_norate_ops;
+ 		else
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index d67eecc..06acb7e 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -130,6 +130,7 @@ struct clk;
+ enum rockchip_pll_type {
+ 	pll_rk3036,
+ 	pll_rk3066,
++	pll_rk3328,
+ 	pll_rk3399,
  };
  
- struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
 -- 
-2.1.4
+2.10.2
+
+--------------- 8< -----------------
