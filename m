@@ -1,237 +1,255 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 1/2] clk: uniphier: add CPU-gear change (cpufreq) support
-Date: Wed,  7 Dec 2016 10:32:32 +0900
-Message-Id: <1481074353-31535-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH 6/6] arm64: dts: sunxi: add support for the Orange Pi PC 2
+ board
+Date: Tue, 27 Dec 2016 01:11:56 +0800
+Message-Id: <20161226171156.11605-3-icenowy@aosc.xyz>
+In-Reply-To: <20161226171156.11605-1-icenowy@aosc.xyz>
+References: <20161226171156.11605-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Core support code for CPU frequency changes, which will be used by
-the generic cpufreq driver.
+From: Andre Przywara <andre.przywara@arm.com>
 
-The register view is different from the generic clk-mux; it has
-a separate status register, and an update bit to load the register
-setting.
+The Orange Pi PC 2 is a typical single board computer using the
+Allwinner H5 SoC. Apart from the usual suspects it features three
+separately driven USB ports and a Gigabit Ethernet port.
+Also it has a SPI NOR flash soldered, from which the board can boot
+from. This enables the SBC to behave like a "real computer" with
+built-in firmware.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Add the board specific .dts file, which includes the H5 .dtsi and
+enables the peripherals that we support so far.
+
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
+ arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+ .../boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 183 +++++++++++++++++++++
+ 2 files changed, 184 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
 
-Changes in v3:
-  - Do not use anonymous union.
-
-Changes in v2: None
-
- drivers/clk/uniphier/Makefile               |   3 +
- drivers/clk/uniphier/clk-uniphier-core.c    |   3 +
- drivers/clk/uniphier/clk-uniphier-cpugear.c | 115 ++++++++++++++++++++++++++++
- drivers/clk/uniphier/clk-uniphier.h         |  17 +++-
- 4 files changed, 136 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/uniphier/clk-uniphier-cpugear.c
-
-diff --git a/drivers/clk/uniphier/Makefile b/drivers/clk/uniphier/Makefile
-index f27b3603..665d1d6 100644
---- a/drivers/clk/uniphier/Makefile
-+++ b/drivers/clk/uniphier/Makefile
-@@ -1,8 +1,11 @@
- obj-y	+= clk-uniphier-core.o
-+
-+obj-y	+= clk-uniphier-cpugear.o
- obj-y	+= clk-uniphier-fixed-factor.o
- obj-y	+= clk-uniphier-fixed-rate.o
- obj-y	+= clk-uniphier-gate.o
- obj-y	+= clk-uniphier-mux.o
-+
- obj-y	+= clk-uniphier-sys.o
- obj-y	+= clk-uniphier-mio.o
- obj-y	+= clk-uniphier-peri.o
-diff --git a/drivers/clk/uniphier/clk-uniphier-core.c b/drivers/clk/uniphier/clk-uniphier-core.c
-index 26c53f7..0007218 100644
---- a/drivers/clk/uniphier/clk-uniphier-core.c
-+++ b/drivers/clk/uniphier/clk-uniphier-core.c
-@@ -27,6 +27,9 @@ static struct clk_hw *uniphier_clk_register(struct device *dev,
- 					const struct uniphier_clk_data *data)
- {
- 	switch (data->type) {
-+	case UNIPHIER_CLK_TYPE_CPUGEAR:
-+		return uniphier_clk_register_cpugear(dev, regmap, data->name,
-+						     &data->data.cpugear);
- 	case UNIPHIER_CLK_TYPE_FIXED_FACTOR:
- 		return uniphier_clk_register_fixed_factor(dev, data->name,
- 							  &data->data.factor);
-diff --git a/drivers/clk/uniphier/clk-uniphier-cpugear.c b/drivers/clk/uniphier/clk-uniphier-cpugear.c
+diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+index 1e29a5ae8282..b26bb46b934c 100644
+--- a/arch/arm64/boot/dts/allwinner/Makefile
++++ b/arch/arm64/boot/dts/allwinner/Makefile
+@@ -1,4 +1,5 @@
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
++dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-pc2.dtb
+ 
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
 new file mode 100644
-index 0000000..9bff26e
+index 000000000000..a29ca6b274bb
 --- /dev/null
-+++ b/drivers/clk/uniphier/clk-uniphier-cpugear.c
-@@ -0,0 +1,115 @@
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
+@@ -0,0 +1,183 @@
 +/*
-+ * Copyright (C) 2016 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ * Copyright (C) 2016 ARM Ltd.
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
 + *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
 + */
 +
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/regmap.h>
++/dts-v1/;
++#include "sun50i-h5.dtsi"
 +
-+#include "clk-uniphier.h"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/pinctrl/sun4i-a10.h>
 +
-+#define UNIPHIER_CLK_CPUGEAR_STAT	0	/* status */
-+#define UNIPHIER_CLK_CPUGEAR_SET	4	/* set */
-+#define UNIPHIER_CLK_CPUGEAR_UPD	8	/* update */
-+#define   UNIPHIER_CLK_CPUGEAR_UPD_BIT	BIT(0)
++/ {
++	model = "Xunlong Orange Pi PC 2";
++	compatible = "xunlong,orangepi-pc2", "allwinner,sun50i-h5";
 +
-+struct uniphier_clk_cpugear {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	unsigned int regbase;
-+	unsigned int mask;
++	reg_vcc3v3: vcc3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc3v3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&leds_opc>, <&leds_r_opc>;
++
++		pwr_led {
++			label = "orangepi:green:pwr";
++			gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++		};
++
++		status_led {
++			label = "orangepi:red:status";
++			gpios = <&pio 0 15 GPIO_ACTIVE_HIGH>;
++		};
++	};
++
++	r_gpio_keys {
++		compatible = "gpio-keys";
++		pinctrl-names = "default";
++		pinctrl-0 = <&sw_r_opc>;
++
++		sw4 {
++			label = "sw4";
++			linux,code = <BTN_0>;
++			gpios = <&r_pio 0 3 GPIO_ACTIVE_LOW>;
++		};
++	};
 +};
 +
-+#define to_uniphier_clk_cpugear(_hw) \
-+			container_of(_hw, struct uniphier_clk_cpugear, hw)
-+
-+static int uniphier_clk_cpugear_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct uniphier_clk_cpugear *gear = to_uniphier_clk_cpugear(hw);
-+	int ret;
-+	unsigned int val;
-+
-+	ret = regmap_write_bits(gear->regmap,
-+				gear->regbase + UNIPHIER_CLK_CPUGEAR_SET,
-+				gear->mask, index);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write_bits(gear->regmap,
-+				gear->regbase + UNIPHIER_CLK_CPUGEAR_SET,
-+				UNIPHIER_CLK_CPUGEAR_UPD_BIT,
-+				UNIPHIER_CLK_CPUGEAR_UPD_BIT);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_read_poll_timeout(gear->regmap,
-+				gear->regbase + UNIPHIER_CLK_CPUGEAR_UPD,
-+				val, !(val & UNIPHIER_CLK_CPUGEAR_UPD_BIT),
-+				0, 1);
-+}
-+
-+static u8 uniphier_clk_cpugear_get_parent(struct clk_hw *hw)
-+{
-+	struct uniphier_clk_cpugear *gear = to_uniphier_clk_cpugear(hw);
-+	int num_parents = clk_hw_get_num_parents(hw);
-+	int ret;
-+	unsigned int val;
-+
-+	ret = regmap_read(gear->regmap,
-+			  gear->regbase + UNIPHIER_CLK_CPUGEAR_STAT, &val);
-+	if (ret)
-+		return ret;
-+
-+	val &= gear->mask;
-+
-+	return val < num_parents ? val : -EINVAL;
-+}
-+
-+static const struct clk_ops uniphier_clk_cpugear_ops = {
-+	.determine_rate = __clk_mux_determine_rate,
-+	.set_parent = uniphier_clk_cpugear_set_parent,
-+	.get_parent = uniphier_clk_cpugear_get_parent,
++&ehci1 {
++	status = "okay";
 +};
 +
-+struct clk_hw *uniphier_clk_register_cpugear(struct device *dev,
-+					 struct regmap *regmap,
-+					 const char *name,
-+				const struct uniphier_clk_cpugear_data *data)
-+{
-+	struct uniphier_clk_cpugear *gear;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	gear = devm_kzalloc(dev, sizeof(*gear), GFP_KERNEL);
-+	if (!gear)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &uniphier_clk_cpugear_ops;
-+	init.flags = CLK_SET_RATE_PARENT;
-+	init.parent_names = data->parent_names;
-+	init.num_parents = data->num_parents,
-+
-+	gear->regmap = regmap;
-+	gear->regbase = data->regbase;
-+	gear->mask = data->mask;
-+	gear->hw.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &gear->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return &gear->hw;
-+}
-diff --git a/drivers/clk/uniphier/clk-uniphier.h b/drivers/clk/uniphier/clk-uniphier.h
-index 0244dba..9707b0f 100644
---- a/drivers/clk/uniphier/clk-uniphier.h
-+++ b/drivers/clk/uniphier/clk-uniphier.h
-@@ -20,15 +20,24 @@ struct clk_hw;
- struct device;
- struct regmap;
- 
--#define UNIPHIER_CLK_MUX_MAX_PARENTS	8
-+#define UNIPHIER_CLK_CPUGEAR_MAX_PARENTS	16
-+#define UNIPHIER_CLK_MUX_MAX_PARENTS		8
- 
- enum uniphier_clk_type {
-+	UNIPHIER_CLK_TYPE_CPUGEAR,
- 	UNIPHIER_CLK_TYPE_FIXED_FACTOR,
- 	UNIPHIER_CLK_TYPE_FIXED_RATE,
- 	UNIPHIER_CLK_TYPE_GATE,
- 	UNIPHIER_CLK_TYPE_MUX,
- };
- 
-+struct uniphier_clk_cpugear_data {
-+	const char *parent_names[UNIPHIER_CLK_CPUGEAR_MAX_PARENTS];
-+	unsigned int num_parents;
-+	unsigned int regbase;
-+	unsigned int mask;
++&ehci2 {
++	status = "okay";
 +};
 +
- struct uniphier_clk_fixed_factor_data {
- 	const char *parent_name;
- 	unsigned int mult;
-@@ -58,6 +67,7 @@ struct uniphier_clk_data {
- 	enum uniphier_clk_type type;
- 	int idx;
- 	union {
-+		struct uniphier_clk_cpugear_data cpugear;
- 		struct uniphier_clk_fixed_factor_data factor;
- 		struct uniphier_clk_fixed_rate_data rate;
- 		struct uniphier_clk_gate_data gate;
-@@ -90,7 +100,10 @@ struct uniphier_clk_data {
- 		},						\
- 	}
- 
--
-+struct clk_hw *uniphier_clk_register_cpugear(struct device *dev,
-+					     struct regmap *regmap,
-+					     const char *name,
-+				const struct uniphier_clk_cpugear_data *data);
- struct clk_hw *uniphier_clk_register_fixed_factor(struct device *dev,
- 						  const char *name,
- 			const struct uniphier_clk_fixed_factor_data *data);
++&ehci3 {
++	status = "okay";
++};
++
++&ir {
++	pinctrl-names = "default";
++	pinctrl-0 = <&ir_pins_a>;
++	status = "okay";
++};
++
++&mmc0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin>;
++	vmmc-supply = <&reg_vcc3v3>;
++	bus-width = <4>;
++	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
++	cd-inverted;
++	status = "okay";
++};
++
++&ohci1 {
++	status = "okay";
++};
++
++&ohci2 {
++	status = "okay";
++};
++
++&ohci3 {
++	status = "okay";
++};
++
++&pio {
++	leds_opc: led_pins@0 {
++		allwinner,pins = "PA15";
++		allwinner,function = "gpio_out";
++		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
++	};
++};
++
++&r_pio {
++	leds_r_opc: led_pins@0 {
++		allwinner,pins = "PL10";
++		allwinner,function = "gpio_out";
++		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
++	};
++
++	sw_r_opc: key_pins@0 {
++		allwinner,pins = "PL3";
++		allwinner,function = "gpio_in";
++		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
++	};
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins_a>;
++	status = "okay";
++};
++
++&uart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart1_pins>;
++};
++
++&uart2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart2_pins>;
++};
++
++&usbphy {
++	/* USB VBUS is always on */
++	status = "okay";
++};
 -- 
-2.7.4
+2.11.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
