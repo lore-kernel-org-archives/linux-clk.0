@@ -1,45 +1,45 @@
-Return-Path: <boris.brezillon@free-electrons.com>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-rpi-kernel@lists.infradead.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH] clk: bcm: Fix 'maybe-uninitialized' warning in bcm2835_clock_choose_div_and_prate()
-Date: Mon, 12 Dec 2016 09:00:53 +0100
-Message-Id: <1481529653-28133-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, xf@rock-chips.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com, cl@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 4/4] clk: rockchip: add new pll-type for rk3328
+Date: Mon, 26 Dec 2016 12:17:06 +0100
+Message-ID: <30891453.yaZWColTmb@phil>
+In-Reply-To: <1482723930-5876-5-git-send-email-zhangqing@rock-chips.com>
+References: <1482723930-5876-1-git-send-email-zhangqing@rock-chips.com> <1482723930-5876-5-git-send-email-zhangqing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-best_rate is reported as potentially uninitialized by gcc.
+Am Montag, 26. Dezember 2016, 11:45:30 CET schrieb Elaine Zhang:
+> The rk3328's pll and clock are similar with rk3036's,
+> it different with pll_mode_mask, the rk3328 soc
+> pll mode only one bit(rk3036 soc have two bits)
+> so these should be independent and separate from
+> the series of rk3328s.
+> 
+> Changes in v3:
+>   fix up the pll type pll_rk3328 description and use
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Fixes: 155e8b3b0ee3 ("clk: bcm: Support rate change propagation on bcm2835 clocks")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/clk/bcm/clk-bcm2835.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+pll-specific code looks good now, but please make this patch before the clock 
+controller in the series and move the 
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index eaf82f49dede..0d14409097e7 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1029,7 +1029,7 @@ static unsigned long bcm2835_clock_choose_div_and_prate(struct clk_hw *hw,
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
--	unsigned long best_rate;
-+	unsigned long best_rate = 0;
- 	u32 curdiv, mindiv, maxdiv;
- 	struct clk_hw *parent;
+@@ -130,6 +152,7 @@
+ enum rockchip_pll_type {
+        pll_rk3036,
+        pll_rk3066,
++       pll_rk3328,
+        pll_rk3399,
+ };
  
--- 
-2.7.4
+from patch3 into this one.
+
+
+Thanks
+Heiko
+
+PS: I will have some comments for the clock controller patch, but it's xmas, 
+so that may take bit still.
