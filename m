@@ -1,138 +1,212 @@
-Return-Path: <dvhart@infradead.org>
-Date: Fri, 16 Dec 2016 10:36:07 -0800
-From: Darren Hart <dvhart@infradead.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Irina Tirdea <irina.tirdea@intel.com>, linux-clk@vger.kernel.org,
-	"x86@kernel.org" <x86@kernel.org>,
-	platform-driver-x86@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Len Brown <lenb@kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 1/3] clk: x86: Add Atom PMC platform clocks
-Message-ID: <20161216183607.GB44199@f23x64.localdomain>
-References: <1481306510-7471-1-git-send-email-irina.tirdea@intel.com>
- <1481306510-7471-2-git-send-email-irina.tirdea@intel.com>
- <CAHp75Vdaw4yvTPP2JZc+ti-AVNsisRQ+WG=JxPQ1jv-r7DADQA@mail.gmail.com>
- <1a98dcda-a662-958e-307f-5fe3f281ed9f@linux.intel.com>
- <CAHp75VccDyiLhWxZYg+d0usrwhfa_hiZAJCKPXXVRod=tB803g@mail.gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH 5/6] arm64: dts: allwinner: add Allwinner H5 .dtsi
+Date: Tue, 27 Dec 2016 01:11:55 +0800
+Message-Id: <20161226171156.11605-2-icenowy@aosc.xyz>
+In-Reply-To: <20161226171156.11605-1-icenowy@aosc.xyz>
+References: <20161226171156.11605-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAHp75VccDyiLhWxZYg+d0usrwhfa_hiZAJCKPXXVRod=tB803g@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 13, 2016 at 02:26:21AM +0200, Andy Shevchenko wrote:
-> On Tue, Dec 13, 2016 at 2:15 AM, Pierre-Louis Bossart
-> <pierre-louis.bossart@linux.intel.com> wrote:
-> >
-> >> Thanks for an update I will comment all the patches.
-> >> Here we start.
-> >
-> >
-> > Thanks Andy for the review. Two quick comments before going further in the
-> > details later.
-> >
-> >>
-> >>> The BayTrail and CherryTrail platforms provide platform clocks
-> >>> through their Power Management Controller (PMC).
-> >>>
-> >>> The SoC supports up to 6 clocks (PMC_PLT_CLK[5:0]) with a
-> >>> frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL) for BayTrail
-> >>> and a frequency of 19.2 MHz (XTAL) for CherryTrail. These clocks
-> >>> are available for general system use, where appropriate, and each
-> >>> have Control & Frequency register fields associated with them.
-> >>>
-> >>> Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
-> >>> Signed-off-by: Pierre-Louis Bossart
-> >>> <pierre-louis.bossart@linux.intel.com>
-> >>
-> >>
-> >> Who is the actual author? SoB I guess should be either the author, or
-> >> 1st, 2nd, ..., last one who is submitter.
-> >
-> >
-> > I ported the initial code from Android legacy stuff and Irina ported the
-> > functionality to the clk framework. It seems appropriate to have both
-> > signed-offs?
-> 
-> Yes, but as I mentioned:
-> 1) submitter goes last;
-> 2) SoB lines and Author(s) should reflect actual state of the sources.
-> If patch has 2 SoBs I'm expecting see different names of Authors in
-> the source code. *Or* in some cases it's possible to explain in the
-> commit message why you have former SoB and for what the credit that
-> person(s) get.
-> 
-> >>> +#include <linux/platform_data/x86/clk-byt-plt.h>
-> >
-> >
-> > This was a suggestion of Darren Hart in agreement with Thomas Gleixner.
-> > see
-> > http://mailman.alsa-project.org/pipermail/alsa-devel/2016-October/113936.html
-> 
-> Hmm... Thanks for pointing to this I didn't aware about such details.
-> 
-> But... I still insist that is not a platform data at all in both cases.
-> 
-> For clock I would suggest include/linux/clk/ with x86_ prefix.
-> For the rest I have no strong opinion except trying to avoid
-> platform_data wording in the path as much as possible.
-> 
-> As an example I could recall DMA engine subsystem where we have
-> 
-> include/linux/platform_data/dma-*.h
-> 
-> and
-> 
-> include/linux/dma/*.h
-> 
-> So, this sounds more to me as
-> 
-> include/linux/x86/pmc_atom.h
+From: Andre Przywara <andre.przywara@arm.com>
 
-There should really be some Documentation about how to choose an include
-directory :-)
+The Allwinner H5 SoC is pin-compatible to the H3 SoC, but uses
+Cortex-A53 cores instead.
+Based on the now shared base .dtsi describing the common peripherals
+describe the H5 specific nodes on top of that.
+That symlinks in the sun8i-h3-h5.dtsi from the arch/arm tree.
 
-My understanding is include/linux should be more generic, rather than platform
-specific headers. So while platform_data may refer specifically to the platform
-bus drivers, it's the closest thing we have to include/platform, which would be
-ideal. I would prefer to stick with include/platform_data because:
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+[Icenowy: remove H5 mmc compatible (seems equal to A64), add H5 pinctrl
+ compatible, and changes for my h3-h5 dtsi refactor, commit message
+ change to met new arm64 naming scheme]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi   | 143 +++++++++++++++++++++++++
+ arch/arm64/boot/dts/allwinner/sun8i-h3-h5.dtsi |   1 +
+ 2 files changed, 144 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+ create mode 120000 arch/arm64/boot/dts/allwinner/sun8i-h3-h5.dtsi
 
-1) Semantically, it's the closest thing there is
-2) include/linux should be for more generic headers related to the OS or
-   subsystems
-3) It doesn't make sense to create a separate include/platform directory for a
-   single header.
-4) We don't want to rename platform_data to platform now and change all the
-   drivers, but it could be changed later.
-
-Thomas, do you disagree with any of the above?
-
-> 
-> > Darren, did we get your proposal right?
-> 
-
-Yes, your submission matches the intent from Thomas and I as I understand it.
-
-> >>
-> >> Is it indeed platform data? I would not create platform_data/x86
-> >> without strong argument.
-> >> Perhaps include/linux/clk/x86_pmc.h? (Yes, I know about clk-lpss.h
-> >> which is old enough and was basically first try of clk stuff on x86)
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+new file mode 100644
+index 000000000000..2cc372121f60
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+@@ -0,0 +1,143 @@
++/*
++ * Copyright (C) 2016 ARM Ltd.
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#include <dt-bindings/clock/sun50i-h5-ccu.h>
++#include <dt-bindings/reset/sun50i-h5-ccu.h>
++#include "sun8i-h3-h5.dtsi"
++
++/ {
++	interrupt-parent = <&gic>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <0>;
++			enable-method = "psci";
++		};
++
++		cpu@1 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <1>;
++			enable-method = "psci";
++		};
++
++		cpu@2 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <2>;
++			enable-method = "psci";
++		};
++
++		cpu@3 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <3>;
++			enable-method = "psci";
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 13
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
++	soc {
++		mmc@01c0f000 {
++			compatible = "allwinner,sun50i-a64-mmc",
++				     "allwinner,sun5i-a13-mmc";
++			clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
++			clock-names = "ahb", "mmc";
++		};
++
++		mmc@01c10000 {
++			compatible = "allwinner,sun50i-a64-mmc",
++				     "allwinner,sun5i-a13-mmc";
++			clocks = <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;
++			clock-names = "ahb", "mmc";
++		};
++
++		mmc@01c11000 {
++			compatible = "allwinner,sun50i-a64-mmc",
++				     "allwinner,sun5i-a13-mmc";
++			clocks = <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;
++			clock-names = "ahb", "mmc";
++		};
++
++		clock@01c20000 {
++			compatible = "allwinner,sun50i-h5-ccu",
++				     "allwinner,sun8i-h3-ccu";
++		};
++
++		pinctrl@01c20800 {
++			compatible = "allwinner,sun50i-h5-pinctrl",
++				     "allwinner,sun8i-h3-pinctrl";
++		};
++
++		gic: interrupt-controller@1c81000 {
++			compatible = "arm,gic-400";
++			reg = <0x01c81000 0x1000>,
++			      <0x01c82000 0x2000>,
++			      <0x01c84000 0x2000>,
++			      <0x01c86000 0x2000>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++			interrupt-controller;
++			#interrupt-cells = <3>;
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/allwinner/sun8i-h3-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun8i-h3-h5.dtsi
+new file mode 120000
+index 000000000000..74f3ce9358a5
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun8i-h3-h5.dtsi
+@@ -0,0 +1 @@
++../../../../arm/boot/dts/sun8i-h3-h5.dtsi
+\ No newline at end of file
 -- 
-Darren Hart
-Intel Open Source Technology Center
+2.11.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
