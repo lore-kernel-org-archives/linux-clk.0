@@ -1,109 +1,67 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 12 Dec 2016 23:38:58 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: Re: [PATCH] clk: imx: pllv3: support fractional multiplier on vf610
- PLL1/PLL2
-Message-ID: <20161213073858.GO5423@codeaurora.org>
-References: <1481288408-16035-1-git-send-email-nikita.yoush@cogentembedded.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH 2/6] arm64: allwinner: Kconfig: add essential pinctrl driver
+ for H5
+Date: Tue, 27 Dec 2016 00:25:14 +0800
+Message-Id: <20161226162518.5367-3-icenowy@aosc.xyz>
+In-Reply-To: <20161226162518.5367-1-icenowy@aosc.xyz>
+References: <20161226162518.5367-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1481288408-16035-1-git-send-email-nikita.yoush@cogentembedded.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/09, Nikita Yushchenko wrote:
-> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-> index 19f9b622981a..24a9e914e0d5 100644
-> --- a/drivers/clk/imx/clk-pllv3.c
-> +++ b/drivers/clk/imx/clk-pllv3.c
-> @@ -288,6 +291,87 @@ static const struct clk_ops clk_pllv3_av_ops = {
->  	.set_rate	= clk_pllv3_av_set_rate,
->  };
->  
-> +static unsigned long clk_pllv3_vf610_recalc_rate(struct clk_hw *hw,
-> +					      unsigned long parent_rate)
-> +{
-> +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
-> +	u32 mfn = readl_relaxed(pll->base + PLL_VF610_NUM_OFFSET);
-> +	u32 mfd = readl_relaxed(pll->base + PLL_VF610_DENOM_OFFSET);
-> +	u32 div = (readl_relaxed(pll->base) & pll->div_mask) ? 22 : 20;
-> +	u64 temp64 = (u64)parent_rate;
+H5 SoC has two pin controllers, one (in user manual called "CPUx") needs
+a slightly advanced driver, and the other (called "CPUs") is just equal
+to the on in H3, and the H3 driver can be just reused.
 
-Useless cast, please remove.
+Select the two necessary pinctrl drivers when building kernel for
+Allwinner SoCs.
 
-> +
-> +	temp64 *= mfn;
-> +	do_div(temp64, mfd);
-> +
-> +	return (parent_rate * div) + (u32)temp64;
-> +}
-> +
-> +static long clk_pllv3_vf610_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				    unsigned long *prate)
-> +{
-> +	unsigned long parent_rate = *prate;
-> +	unsigned int mfi = (rate >= 22 * parent_rate) ? 22 : 20;
+Also add H5 in the option's description.
 
-What is the importance of 22 and 20? Hint, at the least it needs
-a comment.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ arch/arm64/Kconfig.platforms | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> +	u32 mfn, mfd = 0x3fffffff;
-> +	u64 temp64;
-> +
-> +	if (rate <= parent_rate * mfi)
-> +		mfn = 0;
-> +	else if (rate >= parent_rate * (mfi + 1))
-> +		mfn = mfd - 1;
-> +	else {
-> +		/* rate = parent_rate * (mfi + mfn/mfd) */
-> +		temp64 = rate - parent_rate * mfi;
-> +		temp64 *= mfd;
-> +		do_div(temp64, parent_rate);
-> +		mfn = temp64;
-> +	}
-> +
-> +	temp64 = ((u64)mfd * mfi + mfn) * parent_rate;
-> +	do_div(temp64, mfd);
-> +	return (u32)temp64;
-
-Do we need the cast here for some reason?
-
-> +}
-> +
-> +static int clk_pllv3_vf610_set_rate(struct clk_hw *hw, unsigned long rate,
-> +		unsigned long parent_rate)
-> +{
-> +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
-> +	unsigned int mfi = (rate >= 22 * parent_rate) ? 22 : 20;
-> +	u32 val, mfn, mfd = 0x3fffffff;
-> +	u64 temp64;
-> +
-> +	if (rate <= parent_rate * mfi)
-> +		mfn = 0;
-> +	else if (rate >= parent_rate * (mfi + 1))
-> +		mfn = mfd - 1;
-> +	else {
-> +		/* rate = parent_rate * (mfi + mfn/mfd) */
-> +		temp64 = rate - parent_rate * mfi;
-> +		temp64 *= mfd;
-> +		do_div(temp64, parent_rate);
-> +		mfn = temp64;
-> +	}
-> +
-> +	val = readl_relaxed(pll->base);
-> +	if (mfi == 20)
-
-Presumably this is another place 20 and 22 are special.
-
-> +		val &= ~pll->div_mask;
-> +	else
-> +		val |= pll->div_mask;
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 715ef1256838..e11523d204b5 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -5,8 +5,11 @@ config ARCH_SUNXI
+ 	select GENERIC_IRQ_CHIP
+ 	select PINCTRL
+ 	select PINCTRL_SUN50I_A64
++	select PINCTRL_SUN50I_H5
++	select PINCTRL_SUN8I_H3_R
+ 	help
+-	  This enables support for Allwinner sunxi based SoCs like the A64.
++	  This enables support for Allwinner sunxi based SoCs like the A64
++	  and H5.
+ 
+ config ARCH_ALPINE
+ 	bool "Annapurna Labs Alpine platform"
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
