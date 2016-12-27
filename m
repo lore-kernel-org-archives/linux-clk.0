@@ -1,51 +1,78 @@
-Return-Path: <Xiaolong.Zhang@spreadtrum.com>
-Date: Sat, 3 Dec 2016 13:46:00 +0800
-From: Xiaolong Zhang <xiaolong.zhang@spreadtrum.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: <mturquette@baylibre.com>, <orson.zhai@spreadtrum.com>,
-        <ben.li@spreadtrum.com>, <baolin.wang@spreadtrum.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: Register clkdev after setup of fixed-rate and
- fixed-factor clocks
-Message-ID: <20161203054600.GA8463@spreadtrum.com>
-References: <1476184424-8528-1-git-send-email-orson.zhai@spreadtrum.com>
- <20161020230103.GD26139@codeaurora.org>
- <20161022081448.GB32560@spreadtrum.com>
- <20161025204008.GE26139@codeaurora.org>
- <20161112051907.GA8514@spreadtrum.com>
- <20161124003833.GF6095@codeaurora.org>
- <20161124073948.GA12946@spreadtrum.com>
- <20161129211054.GD6095@codeaurora.org>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-In-Reply-To: <20161129211054.GD6095@codeaurora.org>
+In-Reply-To: <1482832070-22668-6-git-send-email-ping.bai@nxp.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com> <1482832070-22668-6-git-send-email-ping.bai@nxp.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 27 Dec 2016 13:59:23 +0100
+Message-ID: <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
+Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
+ for imx6sll
+To: Bai Ping <ping.bai@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, jacky.baip@gmail.com
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 二, 11月 29, 2016 at 01:10:54下午 -0800, Stephen Boyd wrote:
-> On 11/24, Xiaolong Zhang wrote:
-> > On 三, 11月 23, 2016 at 04:38:33下午 -0800, Stephen Boyd wrote:
-> > 
-> > > We're really off track now though. Can you please point to some
-> > > code that needs this change? If we're using DT then we should be
-> > > able to use the of_clk_*() path to find the clk.
-> > >
-> > 
-> > Actually, the requirement is raised by our GPU driver. In the
-> > early stage of the GPU DT driver, the GPU driver use the
-> > clk_get(NULL, con_id) to get the clock instance for compatible
-> > with non-DT GPU driver. The new driver have used the of_clk_get()
-> > instead of the clk_get. And we reserved the modification in clock.
-> > 
-> 
-> Ok the non-DT version of the GPU driver should be modified to
-> call clk_get() and pass in the device. The con_id argument there
-> should be something specific to the GPU device, and not a global
-> name of a clock on the system. When the clkdev lookup is
-> populated on the non-DT board make sure to set the dev_id string
-> to match the device name of the GPU device.
+On Tue, Dec 27, 2016 at 10:47 AM, Bai Ping <ping.bai@nxp.com> wrote:
+
+> Add pinctrl binding doc update for imx6sll.
 >
-Ok, Thanks sBoyd!
->
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> Signed-off-by: Bai Ping <ping.bai@nxp.com>
+
+I have to push back on this a bit.
+
+> +Please refer to fsl,imx-pinctrl.txt in this directory for common binding part
+> +and usage.
+
+I understand that it is building on top of the old i.MX bindings and that
+it has some kind of "tradition" coming with it.
+
+At the same time, the i.MX bindings came about before we had the
+generic pin control bindings defined.
+
+> +CONFIG bits definition:
+> +PAD_CTL_LVE                    (1 << 22)
+> +PAD_CTL_HYS                     (1 << 16)
+> +PAD_CTL_PUS_100K_DOWN           (0 << 14)
+> +PAD_CTL_PUS_47K_UP              (1 << 14)
+> +PAD_CTL_PUS_100K_UP             (2 << 14)
+> +PAD_CTL_PUS_22K_UP              (3 << 14)
+> +PAD_CTL_PUE                     (1 << 13)
+> +PAD_CTL_PKE                     (1 << 12)
+> +PAD_CTL_ODE                     (1 << 11)
+> +PAD_CTL_SPEED_LOW               (0 << 6)
+> +PAD_CTL_SPEED_MED               (1 << 6)
+> +PAD_CTL_SPEED_HIGH              (3 << 6)
+> +PAD_CTL_DSE_DISABLE             (0 << 3)
+> +PAD_CTL_DSE_260ohm              (1 << 3)
+> +PAD_CTL_DSE_130ohm              (2 << 3)
+> +PAD_CTL_DSE_87ohm               (3 << 3)
+> +PAD_CTL_DSE_65ohm               (4 << 3)
+> +PAD_CTL_DSE_52ohm               (5 << 3)
+> +PAD_CTL_DSE_43ohm               (6 << 3)
+> +PAD_CTL_DSE_37ohm               (7 << 3)
+> +PAD_CTL_SRE_FAST                (1 << 0)
+> +PAD_CTL_SRE_SLOW                (0 << 0)
+
+A whole slew of these if not all correspond to the generic bindings.
+
+I would consider augmenting the code in the driver to handle the generic
+bindings *in addition* to the old legacy bindings, and use those over these
+random custom bits.
+
+Read drivers using CONFIG_GENERIC_PINCONF as an inspiration.
+
+For example see commit
+cefbf1a1b29531a970bc2908a50a75d6474fcc38
+"pinctrl: sunxi: Support generic binding"
+from Maxime Ripard, where he does a similar thing for sunxi.
+
+Yours,
+Linus Walleij
