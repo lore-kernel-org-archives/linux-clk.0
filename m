@@ -1,50 +1,101 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:35808
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S935190AbcLVNHf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Dec 2016 08:07:35 -0500
-Subject: Re: [PATCH] clk/samsung: exynos542x: mark some clocks as critical
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <CGME20161222094441epcas5p330bb16763e02149a275c30eb644b0e7c@epcas5p3.samsung.com>
- <1482399870-18563-1-git-send-email-m.szyprowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <f9860a1a-139d-ea76-371d-ddfb4eb09ef1@osg.samsung.com>
-Date: Thu, 22 Dec 2016 10:07:26 -0300
-MIME-Version: 1.0
-In-Reply-To: <1482399870-18563-1-git-send-email-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	xf@rock-chips.com
+Cc: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux-clk@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	cl@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v4 2/4] dt-bindings: add bindings for rk3328 clock controller
+Date: Tue, 27 Dec 2016 14:32:51 +0800
+Message-Id: <1482820373-10186-3-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1482820373-10186-1-git-send-email-zhangqing@rock-chips.com>
+References: <1482820373-10186-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Marek,
+Add devicetree bindings for Rockchip cru which found on
+Rockchip SoCs.
 
-On 12/22/2016 06:44 AM, Marek Szyprowski wrote:
-> Some parent clocks of the Exynos542x clock blocks, which have separate
-> power domains (like DISP, MFC, MSC, GSC, FSYS and G2D) must be always
-> enabled to access any register related to power management unit or devices
-> connected to it. For the time being, until a proper solution based on
-> runtime PM is applied, mark those clocks as critical (instead of ignore
-> unused or even no flags) to prevent disabling them.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
+Changes in v4:
+  dropping the "rockchip,cru" and "syscon" properties for bindings of rk3328
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ .../bindings/clock/rockchip,rk3328-cru.txt         | 57 ++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
 
-And on an Exynos5800 Peach Pi Chromebook:
-
-Tested-by: Javier Martinez Canillas <javier@osg.samsung.com>
- 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+new file mode 100644
+index 000000000000..e71c675ba5da
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+@@ -0,0 +1,57 @@
++* Rockchip RK3328 Clock and Reset Unit
++
++The RK3328 clock controller generates and supplies clock to various
++controllers within the SoC and also implements a reset controller for SoC
++peripherals.
++
++Required Properties:
++
++- compatible: should be "rockchip,rk3328-cru"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- #clock-cells: should be 1.
++- #reset-cells: should be 1.
++
++Optional Properties:
++
++- rockchip,grf: phandle to the syscon managing the "general register files"
++  If missing pll rates are not changeable, due to the missing pll lock status.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. All available clocks are defined as
++preprocessor macros in the dt-bindings/clock/rk3328-cru.h headers and can be
++used in device tree sources. Similar macros exist for the reset sources in
++these files.
++
++External clocks:
++
++There are several clocks that are generated outside the SoC. It is expected
++that they are defined using standard clock bindings with following
++clock-output-names:
++ - "xin24m" - crystal input - required,
++ - "clkin_i2s" - external I2S clock - optional,
++ - "gmac_clkin" - external GMAC clock - optional
++ - "phy_50m_out" - output clock of the pll in the mac phy
++
++Example: Clock controller node:
++
++	cru: clock-controller@ff440000 {
++		compatible = "rockchip,rk3328-cru";
++		reg = <0x0 0xff440000 0x0 0x1000>;
++		rockchip,grf = <&grf>;
++
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++Example: UART controller node that consumes the clock generated by the clock
++  controller:
++
++	uart0: serial@ff120000 {
++		compatible = "snps,dw-apb-uart";
++		reg = <0xff120000 0x100>;
++		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++		reg-shift = <2>;
++		reg-io-width = <4>;
++		clocks = <&cru SCLK_UART0>;
++	};
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
