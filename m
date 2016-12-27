@@ -1,34 +1,72 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 12 Dec 2016 11:26:49 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>, linux-rpi-kernel@lists.infradead.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: bcm: Fix 'maybe-uninitialized' warning in
- bcm2835_clock_choose_div_and_prate()
-Message-ID: <20161212192649.GK5423@codeaurora.org>
-References: <1481529653-28133-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-Path: <ping.bai@nxp.com>
+From: Bai Ping <ping.bai@nxp.com>
+To: <shawnguo@kernel.org>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <linus.walleij@linaro.org>
+CC: <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
+	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>, <p.zabel@pengutronix.de>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<jacky.baip@gmail.com>
+Subject: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc for imx6sll
+Date: Tue, 27 Dec 2016 17:47:43 +0800
+Message-ID: <1482832070-22668-6-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1481529653-28133-1-git-send-email-boris.brezillon@free-electrons.com>
+Content-Type: text/plain
+Return-Path: ping.bai@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/12, Boris Brezillon wrote:
-> best_rate is reported as potentially uninitialized by gcc.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Fixes: 155e8b3b0ee3 ("clk: bcm: Support rate change propagation on bcm2835 clocks")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
+Add pinctrl binding doc update for imx6sll.
 
-Applied to clk-next
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
+---
+ .../bindings/pinctrl/fsl,imx6sll-pinctrl.txt       | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
 
+diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
+new file mode 100644
+index 0000000..9561c1a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
+@@ -0,0 +1,37 @@
++* Freescale i.MX6 SLL IOMUX Controller
++
++Please refer to fsl,imx-pinctrl.txt in this directory for common binding part
++and usage.
++
++Required properties:
++- compatible: "fsl,imx6sll-iomuxc"
++- fsl,pins: each entry consists of 6 integers and represents the mux and config
++  setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
++  input_val> are specified using a PIN_FUNC_ID macro, which can be found in
++  imx6sll-pinfunc.h under device tree source folder.  The last integer CONFIG is
++  the pad setting value like pull-up on this pin.  Please refer to i.MX6SLL
++  Reference Manual for detailed CONFIG settings.
++
++CONFIG bits definition:
++PAD_CTL_LVE			(1 << 22)
++PAD_CTL_HYS                     (1 << 16)
++PAD_CTL_PUS_100K_DOWN           (0 << 14)
++PAD_CTL_PUS_47K_UP              (1 << 14)
++PAD_CTL_PUS_100K_UP             (2 << 14)
++PAD_CTL_PUS_22K_UP              (3 << 14)
++PAD_CTL_PUE                     (1 << 13)
++PAD_CTL_PKE                     (1 << 12)
++PAD_CTL_ODE                     (1 << 11)
++PAD_CTL_SPEED_LOW               (0 << 6)
++PAD_CTL_SPEED_MED               (1 << 6)
++PAD_CTL_SPEED_HIGH              (3 << 6)
++PAD_CTL_DSE_DISABLE             (0 << 3)
++PAD_CTL_DSE_260ohm              (1 << 3)
++PAD_CTL_DSE_130ohm              (2 << 3)
++PAD_CTL_DSE_87ohm               (3 << 3)
++PAD_CTL_DSE_65ohm               (4 << 3)
++PAD_CTL_DSE_52ohm               (5 << 3)
++PAD_CTL_DSE_43ohm               (6 << 3)
++PAD_CTL_DSE_37ohm               (7 << 3)
++PAD_CTL_SRE_FAST                (1 << 0)
++PAD_CTL_SRE_SLOW                (0 << 0)
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
