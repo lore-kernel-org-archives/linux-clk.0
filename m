@@ -1,78 +1,57 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <1482832070-22668-6-git-send-email-ping.bai@nxp.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com> <1482832070-22668-6-git-send-email-ping.bai@nxp.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 27 Dec 2016 13:59:23 +0100
-Message-ID: <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
-Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
- for imx6sll
-To: Bai Ping <ping.bai@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, jacky.baip@gmail.com
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org
+Cc: linux-clk@vger.kernel.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	zhangqing@rock-chips.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 2/2] clk: rockchip: describe aclk_vcodec using the new muxgrf type on rk3288
+Date: Tue, 27 Dec 2016 14:43:03 +0100
+Message-Id: <20161227134303.23492-2-heiko@sntech.de>
+In-Reply-To: <20161227134303.23492-1-heiko@sntech.de>
+References: <20161227134303.23492-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 27, 2016 at 10:47 AM, Bai Ping <ping.bai@nxp.com> wrote:
+With the newly introduced clk type for muxes in the grf we now can
+describe some missing clocks, like the aclk_vcodec that selects between
+aclk_vdpu and aclk_vepu based on a bit set in the general register files.
 
-> Add pinctrl binding doc update for imx6sll.
->
-> Signed-off-by: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk-rk3288.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-I have to push back on this a bit.
-
-> +Please refer to fsl,imx-pinctrl.txt in this directory for common binding part
-> +and usage.
-
-I understand that it is building on top of the old i.MX bindings and that
-it has some kind of "tradition" coming with it.
-
-At the same time, the i.MX bindings came about before we had the
-generic pin control bindings defined.
-
-> +CONFIG bits definition:
-> +PAD_CTL_LVE                    (1 << 22)
-> +PAD_CTL_HYS                     (1 << 16)
-> +PAD_CTL_PUS_100K_DOWN           (0 << 14)
-> +PAD_CTL_PUS_47K_UP              (1 << 14)
-> +PAD_CTL_PUS_100K_UP             (2 << 14)
-> +PAD_CTL_PUS_22K_UP              (3 << 14)
-> +PAD_CTL_PUE                     (1 << 13)
-> +PAD_CTL_PKE                     (1 << 12)
-> +PAD_CTL_ODE                     (1 << 11)
-> +PAD_CTL_SPEED_LOW               (0 << 6)
-> +PAD_CTL_SPEED_MED               (1 << 6)
-> +PAD_CTL_SPEED_HIGH              (3 << 6)
-> +PAD_CTL_DSE_DISABLE             (0 << 3)
-> +PAD_CTL_DSE_260ohm              (1 << 3)
-> +PAD_CTL_DSE_130ohm              (2 << 3)
-> +PAD_CTL_DSE_87ohm               (3 << 3)
-> +PAD_CTL_DSE_65ohm               (4 << 3)
-> +PAD_CTL_DSE_52ohm               (5 << 3)
-> +PAD_CTL_DSE_43ohm               (6 << 3)
-> +PAD_CTL_DSE_37ohm               (7 << 3)
-> +PAD_CTL_SRE_FAST                (1 << 0)
-> +PAD_CTL_SRE_SLOW                (0 << 0)
-
-A whole slew of these if not all correspond to the generic bindings.
-
-I would consider augmenting the code in the driver to handle the generic
-bindings *in addition* to the old legacy bindings, and use those over these
-random custom bits.
-
-Read drivers using CONFIG_GENERIC_PINCONF as an inspiration.
-
-For example see commit
-cefbf1a1b29531a970bc2908a50a75d6474fcc38
-"pinctrl: sunxi: Support generic binding"
-from Maxime Ripard, where he does a similar thing for sunxi.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 39af05a..fbd7ac9 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -198,6 +198,7 @@ PNAME(mux_hsadcout_p)	= { "hsadc_src", "ext_hsadc" };
+ PNAME(mux_edp_24m_p)	= { "ext_edp_24m", "xin24m" };
+ PNAME(mux_tspout_p)	= { "cpll", "gpll", "npll", "xin27m" };
+ 
++PNAME(mux_aclk_vcodec_pre_p)	= { "aclk_vepu", "aclk_vdpu" };
+ PNAME(mux_usbphy480m_p)		= { "sclk_otgphy1_480m", "sclk_otgphy2_480m",
+ 				    "sclk_otgphy0_480m" };
+ PNAME(mux_hsicphy480m_p)	= { "cpll", "gpll", "usbphy480m_src" };
+@@ -398,14 +399,12 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	COMPOSITE(0, "aclk_vdpu", mux_pll_src_cpll_gpll_usb480m_p, 0,
+ 			RK3288_CLKSEL_CON(32), 14, 2, MFLAGS, 8, 5, DFLAGS,
+ 			RK3288_CLKGATE_CON(3), 11, GFLAGS),
+-	/*
+-	 * We use aclk_vdpu by default GRF_SOC_CON0[7] setting in system,
+-	 * so we ignore the mux and make clocks nodes as following,
+-	 */
+-	GATE(ACLK_VCODEC, "aclk_vcodec", "aclk_vdpu", 0,
++	MUXGRF(0, "aclk_vcodec_pre", mux_aclk_vcodec_pre_p, 0,
++			RK3288_GRF_SOC_CON(0), 7, 1, MFLAGS),
++	GATE(ACLK_VCODEC, "aclk_vcodec", "aclk_vcodec_pre", 0,
+ 		RK3288_CLKGATE_CON(9), 0, GFLAGS),
+ 
+-	FACTOR_GATE(0, "hclk_vcodec_pre", "aclk_vdpu", 0, 1, 4,
++	FACTOR_GATE(0, "hclk_vcodec_pre", "aclk_vcodec_pre", 0, 1, 4,
+ 		RK3288_CLKGATE_CON(3), 10, GFLAGS),
+ 
+ 	GATE(HCLK_VCODEC, "hclk_vcodec", "hclk_vcodec_pre", 0,
+-- 
+2.10.2
