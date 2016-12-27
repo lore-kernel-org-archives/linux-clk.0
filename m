@@ -1,84 +1,38 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Ladislav Michl
-	<ladis@linux-mips.org>
-References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com>
- <2239782.MNuANFihMe@avalon> <20161205093649.GA31898@localhost.localdomain>
- <3176488.xoM6adFiVO@avalon>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Paul Walmsley
-	<paul@pwsan.com>, Richard Watts <rrw@kynesim.co.uk>,
-        Tony Lindgren
-	<tony@atomide.com>,
-        Alexander Kinzer <a.kinzer@plusoptix.de>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <f020ef5f-0f0b-fd4c-d4da-55daa539c3d0@ti.com>
-Date: Mon, 5 Dec 2016 14:24:05 +0200
+Return-Path: <ping.bai@nxp.com>
+From: Bai Ping <ping.bai@nxp.com>
+To: <shawnguo@kernel.org>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <linus.walleij@linaro.org>
+CC: <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
+	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>, <p.zabel@pengutronix.de>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<jacky.baip@gmail.com>
+Subject: [PATCH v2 02/12] driver: clocksource: add gpt timer for imx6sll
+Date: Tue, 27 Dec 2016 17:47:40 +0800
+Message-ID: <1482832070-22668-3-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <3176488.xoM6adFiVO@avalon>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain
+Return-Path: ping.bai@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/12/16 13:08, Laurent Pinchart wrote:
-> Hi Ladislav,
->
-> On Monday 05 Dec 2016 10:36:49 Ladislav Michl wrote:
->> On Mon, Dec 05, 2016 at 10:46:43AM +0200, Laurent Pinchart wrote:
->>> On Monday 05 Dec 2016 09:22:10 Ladislav Michl wrote:
->>
->> [snip]
->>
->>>> Table 36 list two options with 26MHz clocks: m=443, n=11 and m=480, n=12
->>>> with a statement: "The choice between these two options with a 26 MHz
->>>> input should be based on characterization on the end system."
->>>>
->>>> Shall we care about that?
->>>
->>> I'd like to, but at the moment I don't see how. Proposals are welcome :-)
->>> I
->>
->> One of proposals raised earlier was DT property, but that idea was scratched
->> later.
->
-> It might not be such a bad idea, given that the decision should be made based
-> on the characterization of the whole system. One could argue that such
-> platform information could have its place in DT.
->
->>> don't think addressing that issue should be a blocker to get this patch
->>> merged though.
->>
->> Of course not. I'd like to even see it in stable ;-)
->>
->> [snip]
->>
->>> I had tried that, but I find the code less readable :-S
->>
->> Oh... Please reconsider (I really do not like that extra test and extra
->> assignment to local variables (also I had 'precomputed' as mixed definition,
->> but Tero did not quite like that)) :-)
->
-> I still like to favour code readability when possible (especially when the
-> compiler should optimize both versions the same way). I'm not the maintainer
-> of this driver though, so I'll let Tero decides what he prefers.
+Add gpt timer support for i.MX6SLL.
 
-The compiler should ideally generate same size code for these both. 
-Personally, I don't mind which version goes in; I'd say both are as 
-readable.
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
+---
+ drivers/clocksource/timer-imx-gpt.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Stephen, Mike, is one of you going to pick this up? I don't think I have 
-anything else to pull due to the ongoing discussion with the other 
-pending stuff.
-
--Tero
-
->
->> Also, checked if the same values are written to clk as with my patch, so
->> here's my:
->> Tested-by: Ladislav Michl <ladis@linux-mips.org>
->
-> Thank you.
->
+diff --git a/drivers/clocksource/timer-imx-gpt.c b/drivers/clocksource/timer-imx-gpt.c
+index f595460..f71822d 100644
+--- a/drivers/clocksource/timer-imx-gpt.c
++++ b/drivers/clocksource/timer-imx-gpt.c
+@@ -556,4 +556,5 @@ static int __init imx6dl_timer_init_dt(struct device_node *np)
+ CLOCKSOURCE_OF_DECLARE(imx6q_timer, "fsl,imx6q-gpt", imx31_timer_init_dt);
+ CLOCKSOURCE_OF_DECLARE(imx6dl_timer, "fsl,imx6dl-gpt", imx6dl_timer_init_dt);
+ CLOCKSOURCE_OF_DECLARE(imx6sl_timer, "fsl,imx6sl-gpt", imx6dl_timer_init_dt);
++CLOCKSOURCE_OF_DECLARE(imx6sll_timer, "fsl,imx6sll-gpt", imx6dl_timer_init_dt);
+ CLOCKSOURCE_OF_DECLARE(imx6sx_timer, "fsl,imx6sx-gpt", imx6dl_timer_init_dt);
+-- 
+1.9.1
