@@ -1,782 +1,523 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v4 3/4] clk: samsung: exynos5433: Add runtime PM support
-Date: Fri, 30 Dec 2016 14:33:35 +0100
-Message-id: <1483104816-20885-4-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: <1483104816-20885-1-git-send-email-m.szyprowski@samsung.com>
-References: <1483104816-20885-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161230133346eucas1p2995539e9fee2867739c5d5608c72802e@eucas1p2.samsung.com>
+Return-Path: <ping.bai@nxp.com>
+From: Bai Ping <ping.bai@nxp.com>
+To: <shawnguo@kernel.org>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <linus.walleij@linaro.org>
+CC: <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
+	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>, <p.zabel@pengutronix.de>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<jacky.baip@gmail.com>
+Subject: [PATCH v2 08/12] ARM: dts: imx: Add imx6sll EVK board dts support
+Date: Tue, 27 Dec 2016 17:47:46 +0800
+Message-ID: <1482832070-22668-9-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: ping.bai@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add runtime pm support for all clock controller units (CMU), which belongs
-to power domains and require special handling during on/off operations.
-Typically special values has to be written to MUX registers to change
-internal clocks parents to OSC clock before turning power off. During such
-operation all clocks, which enters CMU has to be enabled to let MUX to
-stabilize. Also for each CMU there is one special parent clock, which has
-to be enabled all the time when any access to CMU registers is done.
+Add basic dts support for imx6sll EVK board.
 
-This patch solves most of the mysterious external abort and freeze issues
-caused by a lack of proper parent CMU clock enabled or incorrect turn off
-procedure.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
 ---
- .../devicetree/bindings/clock/exynos5433-clock.txt |  16 +
- drivers/clk/samsung/clk-exynos5433.c               | 415 ++++++++++++++++-----
- drivers/clk/samsung/clk.h                          |   6 +
- 3 files changed, 352 insertions(+), 85 deletions(-)
+ arch/arm/boot/dts/Makefile        |   2 +
+ arch/arm/boot/dts/imx6sll-evk.dts | 474 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 476 insertions(+)
+ create mode 100644 arch/arm/boot/dts/imx6sll-evk.dts
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-index 1dc80f8811fe..5c7dd12e667a 100644
---- a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-@@ -168,6 +168,11 @@ Required Properties:
- 		- aclk_cam1_400
- 		- aclk_cam1_552
- 
-+Optional properties:
-+  - power-domains: a phandle to respective power domain node as described by
-+	generic PM domain bindings (see power/power_domain.txt for more
-+	information).
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 38c595d..24eb4bd 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -416,6 +416,8 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+ dtb-$(CONFIG_SOC_IMX6SL) += \
+ 	imx6sl-evk.dtb \
+ 	imx6sl-warp.dtb
++dtb-$(CONFIG_SOC_IMX6SLL) += \
++	imx6sll-evk.dtb
+ dtb-$(CONFIG_SOC_IMX6SX) += \
+ 	imx6sx-nitrogen6sx.dtb \
+ 	imx6sx-sabreauto.dtb \
+diff --git a/arch/arm/boot/dts/imx6sll-evk.dts b/arch/arm/boot/dts/imx6sll-evk.dts
+new file mode 100644
+index 0000000..7b8264b
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6sll-evk.dts
+@@ -0,0 +1,474 @@
++/*
++ * Copyright 2016 Freescale Semiconductor, Inc.
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
 +
- Each clock is assigned an identifier and client nodes can use this identifier
- to specify the clock which they consume.
- 
-@@ -270,6 +275,7 @@ Example 2: Examples of clock controller nodes are listed below.
- 		clocks = <&xxti>,
- 		       <&cmu_top CLK_ACLK_G2D_266>,
- 		       <&cmu_top CLK_ACLK_G2D_400>;
-+		power-domains = <&pd_g2d>;
- 	};
- 
- 	cmu_disp: clock-controller@13b90000 {
-@@ -295,6 +301,7 @@ Example 2: Examples of clock controller nodes are listed below.
- 		       <&cmu_mif CLK_SCLK_DECON_ECLK_DISP>,
- 		       <&cmu_mif CLK_SCLK_DECON_TV_VCLK_DISP>,
- 		       <&cmu_mif CLK_ACLK_DISP_333>;
-+		power-domains = <&pd_disp>;
- 	};
- 
- 	cmu_aud: clock-controller@114c0000 {
-@@ -304,6 +311,7 @@ Example 2: Examples of clock controller nodes are listed below.
- 
- 		clock-names = "oscclk", "fout_aud_pll";
- 		clocks = <&xxti>, <&cmu_top CLK_FOUT_AUD_PLL>;
-+		power-domains = <&pd_aud>;
- 	};
- 
- 	cmu_bus0: clock-controller@13600000 {
-@@ -340,6 +348,7 @@ Example 2: Examples of clock controller nodes are listed below.
- 
- 		clock-names = "oscclk", "aclk_g3d_400";
- 		clocks = <&xxti>, <&cmu_top CLK_ACLK_G3D_400>;
-+		power-domains = <&pd_g3d>;
- 	};
- 
- 	cmu_gscl: clock-controller@13cf0000 {
-@@ -353,6 +362,7 @@ Example 2: Examples of clock controller nodes are listed below.
- 		clocks = <&xxti>,
- 			<&cmu_top CLK_ACLK_GSCL_111>,
- 			<&cmu_top CLK_ACLK_GSCL_333>;
-+		power-domains = <&pd_gscl>;
- 	};
- 
- 	cmu_apollo: clock-controller@11900000 {
-@@ -384,6 +394,7 @@ Example 2: Examples of clock controller nodes are listed below.
- 		clocks = <&xxti>,
- 		       <&cmu_top CLK_SCLK_JPEG_MSCL>,
- 		       <&cmu_top CLK_ACLK_MSCL_400>;
-+		power-domains = <&pd_mscl>;
- 	};
- 
- 	cmu_mfc: clock-controller@15280000 {
-@@ -393,6 +404,7 @@ Example 2: Examples of clock controller nodes are listed below.
- 
- 		clock-names = "oscclk", "aclk_mfc_400";
- 		clocks = <&xxti>, <&cmu_top CLK_ACLK_MFC_400>;
-+		power-domains = <&pd_mfc>;
- 	};
- 
- 	cmu_hevc: clock-controller@14f80000 {
-@@ -402,6 +414,7 @@ Example 2: Examples of clock controller nodes are listed below.
- 
- 		clock-names = "oscclk", "aclk_hevc_400";
- 		clocks = <&xxti>, <&cmu_top CLK_ACLK_HEVC_400>;
-+		power-domains = <&pd_hevc>;
- 	};
- 
- 	cmu_isp: clock-controller@146d0000 {
-@@ -415,6 +428,7 @@ Example 2: Examples of clock controller nodes are listed below.
- 		clocks = <&xxti>,
- 		       <&cmu_top CLK_ACLK_ISP_DIS_400>,
- 		       <&cmu_top CLK_ACLK_ISP_400>;
-+		power-domains = <&pd_isp>;
- 	};
- 
- 	cmu_cam0: clock-controller@120d0000 {
-@@ -430,6 +444,7 @@ Example 2: Examples of clock controller nodes are listed below.
- 		       <&cmu_top CLK_ACLK_CAM0_333>,
- 		       <&cmu_top CLK_ACLK_CAM0_400>,
- 		       <&cmu_top CLK_ACLK_CAM0_552>;
-+		power-domains = <&pd_cam0>;
- 	};
- 
- 	cmu_cam1: clock-controller@145d0000 {
-@@ -451,6 +466,7 @@ Example 2: Examples of clock controller nodes are listed below.
- 		       <&cmu_top CLK_ACLK_CAM1_333>,
- 		       <&cmu_top CLK_ACLK_CAM1_400>,
- 		       <&cmu_top CLK_ACLK_CAM1_552>;
-+		power-domains = <&pd_cam1>;
- 	};
- 
- Example 3: UART controller node that consumes the clock generated by the clock
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index f096bd7df40c..9b12bc20c455 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -9,9 +9,14 @@
-  * Common Clock Framework support for Exynos5443 SoC.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/slab.h>
- 
- #include <dt-bindings/clock/exynos5433.h>
- 
-@@ -1989,6 +1994,14 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
- 	ENABLE_IP_FSYS1,
- };
- 
-+static const struct samsung_clk_reg_dump fsys_suspend_regs[] = {
-+	{ MUX_SEL_FSYS0, 0 },
-+	{ MUX_SEL_FSYS1, 0 },
-+	{ MUX_SEL_FSYS2, 0 },
-+	{ MUX_SEL_FSYS3, 0 },
-+	{ MUX_SEL_FSYS4, 0 },
++/dts-v1/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include "imx6sll.dtsi"
++
++/ {
++	model = "Freescale i.MX6SLL EVK Board";
++	compatible = "fsl,imx6sll-evk", "fsl,imx6sll";
++
++	memory {
++		reg = <0x80000000 0x80000000>;
++	};
++
++	backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pwm1 0 5000000>;
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <6>;
++		status = "okay";
++	};
++
++	reg_usb_otg1_vbus: reg-usb-otg1-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "usb_otg1_vbus";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gpio4 0 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	reg_usb_otg2_vbus: reg-usb-otg2-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "usb_otg2_vbus";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gpio4 2 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	reg_aud3v: reg-aud3v {
++		compatible = "regulator-fixed";
++		regulator-name = "wm8962-supply-3v15";
++		regulator-min-microvolt = <3150000>;
++		regulator-max-microvolt = <3150000>;
++		regulator-boot-on;
++	};
++
++	reg_aud4v: reg-aud4v {
++		compatible = "regulator-fixed";
++		regulator-name = "wm8962-supply-4v2";
++		regulator-min-microvolt = <4325000>;
++		regulator-max-microvolt = <4325000>;
++		regulator-boot-on;
++	};
++
++	reg_lcd: reg-lcd {
++		compatible = "regulator-fixed";
++		regulator-name = "lcd-pwr";
++		gpio = <&gpio4 8 0>;
++		enable-active-high;
++	};
++
++	reg_sd1_vmmc: reg-sd1-vmmc {
++		compatible = "regulator-fixed";
++		regulator-name = "SD1_SPWR";
++		regulator-min-microvolt = <3000000>;
++		regulator-max-microvolt = <3000000>;
++		gpio = <&gpio3 30 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
 +};
 +
- static const struct samsung_fixed_rate_clock fsys_fixed_clks[] __initconst = {
- 	/* PHY clocks from USBDRD30_PHY */
- 	FRATE(CLK_PHYCLK_USBDRD30_UDRD30_PHYCLOCK_PHY,
-@@ -2294,16 +2307,11 @@ static void __init exynos5433_cmu_peris_init(struct device_node *np)
- 	.nr_clk_ids		= FSYS_NR_CLK,
- 	.clk_regs		= fsys_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(fsys_clk_regs),
-+	.suspend_regs		= fsys_suspend_regs,
-+	.nr_suspend_regs	= ARRAY_SIZE(fsys_suspend_regs),
-+	.clk_name		= "aclk_fsys_200",
- };
- 
--static void __init exynos5433_cmu_fsys_init(struct device_node *np)
--{
--	samsung_cmu_register_one(np, &fsys_cmu_info);
--}
--
--CLK_OF_DECLARE(exynos5433_cmu_fsys, "samsung,exynos5433-cmu-fsys",
--		exynos5433_cmu_fsys_init);
--
- /*
-  * Register offset definitions for CMU_G2D
-  */
-@@ -2333,6 +2341,10 @@ static void __init exynos5433_cmu_fsys_init(struct device_node *np)
- 	DIV_ENABLE_IP_G2D_SECURE_SMMU_G2D,
- };
- 
-+static const struct samsung_clk_reg_dump g2d_suspend_regs[] = {
-+	{ MUX_SEL_G2D0, 0 },
++&cpu0 {
++	arm-supply = <&sw1a_reg>;
++	soc-supply = <&sw1c_reg>;
 +};
 +
- /* list of all parent clock list */
- PNAME(mout_aclk_g2d_266_user_p)		= { "oscclk", "aclk_g2d_266", };
- PNAME(mout_aclk_g2d_400_user_p)		= { "oscclk", "aclk_g2d_400", };
-@@ -2418,16 +2430,11 @@ static void __init exynos5433_cmu_fsys_init(struct device_node *np)
- 	.nr_clk_ids		= G2D_NR_CLK,
- 	.clk_regs		= g2d_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(g2d_clk_regs),
-+	.suspend_regs		= g2d_suspend_regs,
-+	.nr_suspend_regs	= ARRAY_SIZE(g2d_suspend_regs),
-+	.clk_name		= "aclk_g2d_400",
- };
- 
--static void __init exynos5433_cmu_g2d_init(struct device_node *np)
--{
--	samsung_cmu_register_one(np, &g2d_cmu_info);
--}
--
--CLK_OF_DECLARE(exynos5433_cmu_g2d, "samsung,exynos5433-cmu-g2d",
--		exynos5433_cmu_g2d_init);
--
- /*
-  * Register offset definitions for CMU_DISP
-  */
-@@ -2492,6 +2499,16 @@ static void __init exynos5433_cmu_g2d_init(struct device_node *np)
- 	CLKOUT_CMU_DISP_DIV_STAT,
- };
- 
-+static const struct samsung_clk_reg_dump disp_suspend_regs[] = {
-+	/* ignore status of external PHY muxes during suspend to avoid hangs */
-+	{ MUX_IGNORE_DISP2, 0x00111111 },
-+	{ MUX_SEL_DISP0, 0 },
-+	{ MUX_SEL_DISP1, 0 },
-+	{ MUX_SEL_DISP2, 0 },
-+	{ MUX_SEL_DISP3, 0 },
-+	{ MUX_SEL_DISP4, 0 },
++&i2c1 {
++	clock-frequency = <100000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_i2c1>;
++	status = "okay";
++
++	pmic: pfuze100@08 {
++		compatible = "fsl,pfuze100";
++		reg = <0x08>;
++
++		regulators {
++			sw1a_reg: sw1ab {
++				regulator-min-microvolt = <300000>;
++				regulator-max-microvolt = <1875000>;
++				regulator-boot-on;
++				regulator-always-on;
++				regulator-ramp-delay = <6250>;
++			};
++
++			sw1c_reg: sw1c {
++				regulator-min-microvolt = <300000>;
++				regulator-max-microvolt = <1875000>;
++				regulator-boot-on;
++				regulator-always-on;
++				regulator-ramp-delay = <6250>;
++			};
++
++			sw2_reg: sw2 {
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			sw3a_reg: sw3a {
++				regulator-min-microvolt = <400000>;
++				regulator-max-microvolt = <1975000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			sw3b_reg: sw3b {
++				regulator-min-microvolt = <400000>;
++				regulator-max-microvolt = <1975000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			sw4_reg: sw4 {
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <3300000>;
++			};
++
++			swbst_reg: swbst {
++				regulator-min-microvolt = <5000000>;
++				regulator-max-microvolt = <5150000>;
++			};
++
++			snvs_reg: vsnvs {
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <3000000>;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			vref_reg: vrefddr {
++				regulator-boot-on;
++				regulator-always-on;
++			};
++
++			vgen1_reg: vgen1 {
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <1550000>;
++				regulator-always-on;
++			};
++
++			vgen2_reg: vgen2 {
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <1550000>;
++			};
++
++			vgen3_reg: vgen3 {
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++			};
++
++			vgen4_reg: vgen4 {
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-always-on;
++			};
++
++			vgen5_reg: vgen5 {
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-always-on;
++			};
++
++			vgen6_reg: vgen6 {
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-always-on;
++			};
++		};
++	};
 +};
 +
- /* list of all parent clock list */
- PNAME(mout_disp_pll_p)			= { "oscclk", "fout_disp_pll", };
- PNAME(mout_sclk_dsim1_user_p)		= { "oscclk", "sclk_dsim1_disp", };
-@@ -2837,16 +2854,11 @@ static void __init exynos5433_cmu_g2d_init(struct device_node *np)
- 	.nr_clk_ids		= DISP_NR_CLK,
- 	.clk_regs		= disp_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(disp_clk_regs),
-+	.suspend_regs		= disp_suspend_regs,
-+	.nr_suspend_regs	= ARRAY_SIZE(disp_suspend_regs),
-+	.clk_name		= "aclk_disp_333",
- };
- 
--static void __init exynos5433_cmu_disp_init(struct device_node *np)
--{
--	samsung_cmu_register_one(np, &disp_cmu_info);
--}
--
--CLK_OF_DECLARE(exynos5433_cmu_disp, "samsung,exynos5433-cmu-disp",
--		exynos5433_cmu_disp_init);
--
- /*
-  * Register offset definitions for CMU_AUD
-  */
-@@ -2881,6 +2893,11 @@ static void __init exynos5433_cmu_disp_init(struct device_node *np)
- 	ENABLE_IP_AUD1,
- };
- 
-+static const struct samsung_clk_reg_dump aud_suspend_regs[] = {
-+	{ MUX_SEL_AUD0, 0 },
-+	{ MUX_SEL_AUD1, 0 },
++&iomuxc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_hog>;
++
++	pinctrl_hog: hoggrp {
++		fsl,pins = <
++			MX6SLL_PAD_KEY_ROW7__GPIO4_IO07 0x17059
++			MX6SLL_PAD_GPIO4_IO22__GPIO4_IO22 0x17059
++			MX6SLL_PAD_KEY_COL3__GPIO3_IO30	0x17059
++			/*
++			 * Must set the LVE of pad SD2_RESET, otherwise current
++			 * leakage through eMMC chip will pull high the VCCQ to
++			 * 2.6v, which will impact SD1 and SD3 SD3.0 voltage switch.
++			 */
++			MX6SLL_PAD_SD2_RESET__GPIO4_IO27 0x417059
++			MX6SLL_PAD_KEY_COL4__GPIO4_IO00 0x17059
++			MX6SLL_PAD_REF_CLK_32K__GPIO3_IO22 0x17059 /* SD3 CD */
++			MX6SLL_PAD_KEY_COL6__GPIO4_IO04 0x17059 /*SD3 RESET */
++			MX6SLL_PAD_KEY_COL5__GPIO4_IO02 0x17059
++			MX6SLL_PAD_GPIO4_IO24__GPIO4_IO24 0x17059 /* HP DETECT */
++			/* CHG_FLT, CHG_UOK/DOK, CHG_STATUS */
++			MX6SLL_PAD_ECSPI2_MISO__GPIO4_IO14 0x17000
++			MX6SLL_PAD_ECSPI2_MOSI__GPIO4_IO13 0x17000
++			MX6SLL_PAD_ECSPI2_SS0__GPIO4_IO15  0x17000
++		>;
++	};
++
++	pinctrl_audmux3: audmux3grp {
++		fsl,pins = <
++			MX6SLL_PAD_AUD_TXC__AUD3_TXC		0x4130b0
++			MX6SLL_PAD_AUD_TXFS__AUD3_TXFS		0x4130b0
++			MX6SLL_PAD_AUD_TXD__AUD3_TXD		0x4110b0
++			MX6SLL_PAD_AUD_RXD__AUD3_RXD		0x4130b0
++			MX6SLL_PAD_AUD_MCLK__AUDIO_CLK_OUT	0x4130b0
++		>;
++	};
++
++	pinctrl_csi1: csi1grp {
++		fsl,pins = <
++			MX6SLL_PAD_EPDC_GDRL__CSI_MCLK		0x1b088
++			MX6SLL_PAD_EPDC_GDCLK__CSI_PIXCLK	0x1b088
++			MX6SLL_PAD_EPDC_GDSP__CSI_VSYNC		0x1b088
++			MX6SLL_PAD_EPDC_GDOE__CSI_HSYNC		0x1b088
++			MX6SLL_PAD_EPDC_DATA02__CSI_DATA02	0x1b088
++			MX6SLL_PAD_EPDC_DATA03__CSI_DATA03	0x1b088
++			MX6SLL_PAD_EPDC_DATA04__CSI_DATA04	0x1b088
++			MX6SLL_PAD_EPDC_DATA05__CSI_DATA05	0x1b088
++			MX6SLL_PAD_EPDC_DATA06__CSI_DATA06	0x1b088
++			MX6SLL_PAD_EPDC_DATA07__CSI_DATA07	0x1b088
++			MX6SLL_PAD_EPDC_SDCLK__CSI_DATA08	0x1b088
++			MX6SLL_PAD_EPDC_SDLE__CSI_DATA09	0x1b088
++			MX6SLL_PAD_EPDC_SDSHR__GPIO1_IO26	0x80000000
++			MX6SLL_PAD_EPDC_SDOE__GPIO1_IO25	0x80000000
++		>;
++	};
++
++	pinctrl_lcdif_dat: lcdifdatgrp {
++		fsl,pins = <
++			MX6SLL_PAD_LCD_DATA00__LCD_DATA00	0x79
++			MX6SLL_PAD_LCD_DATA01__LCD_DATA01	0x79
++			MX6SLL_PAD_LCD_DATA02__LCD_DATA02	0x79
++			MX6SLL_PAD_LCD_DATA03__LCD_DATA03	0x79
++			MX6SLL_PAD_LCD_DATA04__LCD_DATA04	0x79
++			MX6SLL_PAD_LCD_DATA05__LCD_DATA05	0x79
++			MX6SLL_PAD_LCD_DATA06__LCD_DATA06	0x79
++			MX6SLL_PAD_LCD_DATA07__LCD_DATA07	0x79
++			MX6SLL_PAD_LCD_DATA08__LCD_DATA08	0x79
++			MX6SLL_PAD_LCD_DATA09__LCD_DATA09	0x79
++			MX6SLL_PAD_LCD_DATA10__LCD_DATA10	0x79
++			MX6SLL_PAD_LCD_DATA11__LCD_DATA11	0x79
++			MX6SLL_PAD_LCD_DATA12__LCD_DATA12	0x79
++			MX6SLL_PAD_LCD_DATA13__LCD_DATA13	0x79
++			MX6SLL_PAD_LCD_DATA14__LCD_DATA14	0x79
++			MX6SLL_PAD_LCD_DATA15__LCD_DATA15	0x79
++			MX6SLL_PAD_LCD_DATA16__LCD_DATA16	0x79
++			MX6SLL_PAD_LCD_DATA17__LCD_DATA17	0x79
++			MX6SLL_PAD_LCD_DATA18__LCD_DATA18	0x79
++			MX6SLL_PAD_LCD_DATA19__LCD_DATA19	0x79
++			MX6SLL_PAD_LCD_DATA20__LCD_DATA20	0x79
++			MX6SLL_PAD_LCD_DATA21__LCD_DATA21	0x79
++			MX6SLL_PAD_LCD_DATA22__LCD_DATA22	0x79
++			MX6SLL_PAD_LCD_DATA23__LCD_DATA23	0x79
++		>;
++	};
++
++	pinctrl_lcdif_ctrl: lcdifctrlgrp {
++		fsl,pins = <
++			MX6SLL_PAD_LCD_CLK__LCD_CLK		0x79
++			MX6SLL_PAD_LCD_ENABLE__LCD_ENABLE	0x79
++			MX6SLL_PAD_LCD_HSYNC__LCD_HSYNC		0x79
++			MX6SLL_PAD_LCD_VSYNC__LCD_VSYNC		0x79
++			MX6SLL_PAD_LCD_RESET__LCD_RESET		0x79
++			MX6SLL_PAD_ECSPI1_SCLK__GPIO4_IO08	0x79
++		>;
++	};
++
++	pinctrl_max17135: max17135grp-1 {
++		fsl,pins = <
++			MX6SLL_PAD_EPDC_PWR_STAT__GPIO2_IO13	0x80000000  /* pwrgood */
++			MX6SLL_PAD_EPDC_VCOM0__GPIO2_IO03	0x80000000  /* vcom_ctrl */
++			MX6SLL_PAD_EPDC_PWR_WAKE__GPIO2_IO14	0x80000000  /* wakeup */
++			MX6SLL_PAD_EPDC_PWR_CTRL0__GPIO2_IO07	0x80000000  /* v3p3 */
++			MX6SLL_PAD_EPDC_PWR_IRQ__GPIO2_IO12	0x80000000  /* pwr int */
++		>;
++	};
++
++	pinctrl_spdif: spdifgrp {
++		fsl,pins = <
++			MX6SLL_PAD_SD2_DATA4__SPDIF_OUT 0x4130b0
++		>;
++	};
++
++	pinctrl_uart1: uart1grp {
++		fsl,pins = <
++			MX6SLL_PAD_UART1_TXD__UART1_DCE_TX 0x1b0b1
++			MX6SLL_PAD_UART1_RXD__UART1_DCE_RX 0x1b0b1
++		>;
++	};
++
++	pinctrl_usdhc1: usdhc1grp {
++		fsl,pins = <
++			MX6SLL_PAD_SD1_CMD__SD1_CMD	0x17059
++			MX6SLL_PAD_SD1_CLK__SD1_CLK	0x13059
++			MX6SLL_PAD_SD1_DATA0__SD1_DATA0	0x17059
++			MX6SLL_PAD_SD1_DATA1__SD1_DATA1	0x17059
++			MX6SLL_PAD_SD1_DATA2__SD1_DATA2	0x17059
++			MX6SLL_PAD_SD1_DATA3__SD1_DATA3	0x17059
++		>;
++	};
++
++	pinctrl_usdhc1_100mhz: usdhc1grp_100mhz {
++		fsl,pins = <
++			MX6SLL_PAD_SD1_CMD__SD1_CMD	0x170b9
++			MX6SLL_PAD_SD1_CLK__SD1_CLK	0x130b9
++			MX6SLL_PAD_SD1_DATA0__SD1_DATA0	0x170b9
++			MX6SLL_PAD_SD1_DATA1__SD1_DATA1	0x170b9
++			MX6SLL_PAD_SD1_DATA2__SD1_DATA2	0x170b9
++			MX6SLL_PAD_SD1_DATA3__SD1_DATA3	0x170b9
++		>;
++	};
++
++	pinctrl_usdhc1_200mhz: usdhc1grp_200mhz {
++		fsl,pins = <
++			MX6SLL_PAD_SD1_CMD__SD1_CMD	0x170f9
++			MX6SLL_PAD_SD1_CLK__SD1_CLK	0x130f9
++			MX6SLL_PAD_SD1_DATA0__SD1_DATA0	0x170f9
++			MX6SLL_PAD_SD1_DATA1__SD1_DATA1	0x170f9
++			MX6SLL_PAD_SD1_DATA2__SD1_DATA2	0x170f9
++			MX6SLL_PAD_SD1_DATA3__SD1_DATA3	0x170f9
++		>;
++	};
++
++	pinctrl_usbotg1: usbotg1grp {
++		fsl,pins = <
++			MX6SLL_PAD_EPDC_PWR_COM__USB_OTG1_ID 0x17059
++		>;
++	};
++
++	pinctrl_i2c1: i2c1grp {
++		fsl,pins = <
++			MX6SLL_PAD_I2C1_SCL__I2C1_SCL	 0x4001b8b1
++			MX6SLL_PAD_I2C1_SDA__I2C1_SDA	 0x4001b8b1
++		>;
++	};
++
++	pinctrl_pwm1: pmw1grp {
++		fsl,pins = <
++			MX6SLL_PAD_PWM1__PWM1_OUT   0x110b0
++		>;
++	};
 +};
 +
- /* list of all parent clock list */
- PNAME(mout_aud_pll_user_aud_p)	= { "oscclk", "fout_aud_pll", };
- PNAME(mout_sclk_aud_pcm_p)	= { "mout_aud_pll_user", "ioclk_audiocdclk0",};
-@@ -3007,16 +3024,11 @@ static void __init exynos5433_cmu_disp_init(struct device_node *np)
- 	.nr_clk_ids		= AUD_NR_CLK,
- 	.clk_regs		= aud_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(aud_clk_regs),
-+	.suspend_regs		= aud_suspend_regs,
-+	.nr_suspend_regs	= ARRAY_SIZE(aud_suspend_regs),
-+	.clk_name		= "fout_aud_pll",
- };
- 
--static void __init exynos5433_cmu_aud_init(struct device_node *np)
--{
--	samsung_cmu_register_one(np, &aud_cmu_info);
--}
--CLK_OF_DECLARE(exynos5433_cmu_aud, "samsung,exynos5433-cmu-aud",
--		exynos5433_cmu_aud_init);
--
--
- /*
-  * Register offset definitions for CMU_BUS{0|1|2}
-  */
-@@ -3218,6 +3230,10 @@ static void __init exynos5433_cmu_aud_init(struct device_node *np)
- 	CLK_STOPCTRL,
- };
- 
-+static const struct samsung_clk_reg_dump g3d_suspend_regs[] = {
-+	{ MUX_SEL_G3D, 0 },
++&lcdif {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_lcdif_dat
++		     &pinctrl_lcdif_ctrl>;
++	lcd-supply = <&reg_lcd>;
++	display = <&display>;
++	status = "okay";
++
++	display: display {
++		bits-per-pixel = <16>;
++		bus-width = <24>;
++
++		display-timings {
++			native-mode = <&timing0>;
++			timing0: timing0 {
++				clock-frequency = <33500000>;
++				hactive = <800>;
++				vactive = <480>;
++				hback-porch = <89>;
++				hfront-porch = <164>;
++				vback-porch = <23>;
++				vfront-porch = <10>;
++				hsync-len = <10>;
++				vsync-len = <10>;
++				hsync-active = <0>;
++				vsync-active = <0>;
++				de-active = <1>;
++				pixelclk-active = <0>;
++			};
++		};
++	};
 +};
 +
- /* list of all parent clock list */
- PNAME(mout_aclk_g3d_400_p)	= { "mout_g3d_pll", "aclk_g3d_400", };
- PNAME(mout_g3d_pll_p)		= { "oscclk", "fout_g3d_pll", };
-@@ -3291,15 +3307,11 @@ static void __init exynos5433_cmu_aud_init(struct device_node *np)
- 	.nr_clk_ids		= G3D_NR_CLK,
- 	.clk_regs		= g3d_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(g3d_clk_regs),
-+	.suspend_regs		= g3d_suspend_regs,
-+	.nr_suspend_regs	= ARRAY_SIZE(g3d_suspend_regs),
-+	.clk_name		= "aclk_g3d_400",
- };
- 
--static void __init exynos5433_cmu_g3d_init(struct device_node *np)
--{
--	samsung_cmu_register_one(np, &g3d_cmu_info);
--}
--CLK_OF_DECLARE(exynos5433_cmu_g3d, "samsung,exynos5433-cmu-g3d",
--		exynos5433_cmu_g3d_init);
--
- /*
-  * Register offset definitions for CMU_GSCL
-  */
-@@ -3338,6 +3350,12 @@ static void __init exynos5433_cmu_g3d_init(struct device_node *np)
- 	ENABLE_IP_GSCL_SECURE_SMMU_GSCL2,
- };
- 
-+static const struct samsung_clk_reg_dump gscl_suspend_regs[] = {
-+	{ MUX_SEL_GSCL, 0 },
-+	{ ENABLE_ACLK_GSCL, 0xfff },
-+	{ ENABLE_PCLK_GSCL, 0xff },
++&pwm1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_pwm1>;
++	status = "okay";
 +};
 +
- /* list of all parent clock list */
- PNAME(aclk_gscl_111_user_p)	= { "oscclk", "aclk_gscl_111", };
- PNAME(aclk_gscl_333_user_p)	= { "oscclk", "aclk_gscl_333", };
-@@ -3432,15 +3450,11 @@ static void __init exynos5433_cmu_g3d_init(struct device_node *np)
- 	.nr_clk_ids		= GSCL_NR_CLK,
- 	.clk_regs		= gscl_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(gscl_clk_regs),
-+	.suspend_regs		= gscl_suspend_regs,
-+	.nr_suspend_regs	= ARRAY_SIZE(gscl_suspend_regs),
-+	.clk_name		= "aclk_gscl_111",
- };
- 
--static void __init exynos5433_cmu_gscl_init(struct device_node *np)
--{
--	samsung_cmu_register_one(np, &gscl_cmu_info);
--}
--CLK_OF_DECLARE(exynos5433_cmu_gscl, "samsung,exynos5433-cmu-gscl",
--		exynos5433_cmu_gscl_init);
--
- /*
-  * Register offset definitions for CMU_APOLLO
-  */
-@@ -3966,6 +3980,11 @@ static void __init exynos5433_cmu_atlas_init(struct device_node *np)
- 	ENABLE_IP_MSCL_SECURE_SMMU_JPEG,
- };
- 
-+static const struct samsung_clk_reg_dump mscl_suspend_regs[] = {
-+	{ MUX_SEL_MSCL0, 0 },
-+	{ MUX_SEL_MSCL1, 0 },
++&uart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart1>;
++	status = "okay";
 +};
 +
- /* list of all parent clock list */
- PNAME(mout_sclk_jpeg_user_p)		= { "oscclk", "sclk_jpeg_mscl", };
- PNAME(mout_aclk_mscl_400_user_p)	= { "oscclk", "aclk_mscl_400", };
-@@ -4078,15 +4097,11 @@ static void __init exynos5433_cmu_atlas_init(struct device_node *np)
- 	.nr_clk_ids		= MSCL_NR_CLK,
- 	.clk_regs		= mscl_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(mscl_clk_regs),
-+	.suspend_regs		= mscl_suspend_regs,
-+	.nr_suspend_regs	= ARRAY_SIZE(mscl_suspend_regs),
-+	.clk_name		= "aclk_mscl_400",
- };
- 
--static void __init exynos5433_cmu_mscl_init(struct device_node *np)
--{
--	samsung_cmu_register_one(np, &mscl_cmu_info);
--}
--CLK_OF_DECLARE(exynos5433_cmu_mscl, "samsung,exynos5433-cmu-mscl",
--		exynos5433_cmu_mscl_init);
--
- /*
-  * Register offset definitions for CMU_MFC
-  */
-@@ -4116,6 +4131,10 @@ static void __init exynos5433_cmu_mscl_init(struct device_node *np)
- 	ENABLE_IP_MFC_SECURE_SMMU_MFC,
- };
- 
-+static const struct samsung_clk_reg_dump mfc_suspend_regs[] = {
-+	{ MUX_SEL_MFC, 0 },
++&usdhc1 {
++	pinctrl-names = "default", "state_100mhz", "state_200mhz";
++	pinctrl-0 = <&pinctrl_usdhc1>;
++	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
++	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
++	cd-gpios = <&gpio4 7 GPIO_ACTIVE_LOW>;
++	wp-gpios = <&gpio4 22 GPIO_ACTIVE_HIGH>;
++	keep-power-in-suspend;
++	enable-sdio-wakeup;
++	vmmc-supply = <&reg_sd1_vmmc>;
++	status = "okay";
 +};
 +
- PNAME(mout_aclk_mfc_400_user_p)		= { "oscclk", "aclk_mfc_400", };
- 
- static const struct samsung_mux_clock mfc_mux_clks[] __initconst = {
-@@ -4186,15 +4205,11 @@ static void __init exynos5433_cmu_mscl_init(struct device_node *np)
- 	.nr_clk_ids		= MFC_NR_CLK,
- 	.clk_regs		= mfc_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(mfc_clk_regs),
-+	.suspend_regs		= mfc_suspend_regs,
-+	.nr_suspend_regs	= ARRAY_SIZE(mfc_suspend_regs),
-+	.clk_name		= "aclk_mfc_400",
- };
- 
--static void __init exynos5433_cmu_mfc_init(struct device_node *np)
--{
--	samsung_cmu_register_one(np, &mfc_cmu_info);
--}
--CLK_OF_DECLARE(exynos5433_cmu_mfc, "samsung,exynos5433-cmu-mfc",
--		exynos5433_cmu_mfc_init);
--
- /*
-  * Register offset definitions for CMU_HEVC
-  */
-@@ -4224,6 +4239,10 @@ static void __init exynos5433_cmu_mfc_init(struct device_node *np)
- 	ENABLE_IP_HEVC_SECURE_SMMU_HEVC,
- };
- 
-+static const struct samsung_clk_reg_dump hevc_suspend_regs[] = {
-+	{ MUX_SEL_HEVC, 0 },
++&usbotg1 {
++	vbus-supply = <&reg_usb_otg1_vbus>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_usbotg1>;
++	disable-over-current;
++	srp-disable;
++	hnp-disable;
++	adp-disable;
++	status = "okay";
 +};
 +
- PNAME(mout_aclk_hevc_400_user_p)	= { "oscclk", "aclk_hevc_400", };
- 
- static const struct samsung_mux_clock hevc_mux_clks[] __initconst = {
-@@ -4296,15 +4315,11 @@ static void __init exynos5433_cmu_mfc_init(struct device_node *np)
- 	.nr_clk_ids		= HEVC_NR_CLK,
- 	.clk_regs		= hevc_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(hevc_clk_regs),
-+	.suspend_regs		= hevc_suspend_regs,
-+	.nr_suspend_regs	= ARRAY_SIZE(hevc_suspend_regs),
-+	.clk_name		= "aclk_hevc_400",
- };
- 
--static void __init exynos5433_cmu_hevc_init(struct device_node *np)
--{
--	samsung_cmu_register_one(np, &hevc_cmu_info);
--}
--CLK_OF_DECLARE(exynos5433_cmu_hevc, "samsung,exynos5433-cmu-hevc",
--		exynos5433_cmu_hevc_init);
--
- /*
-  * Register offset definitions for CMU_ISP
-  */
-@@ -4338,6 +4353,10 @@ static void __init exynos5433_cmu_hevc_init(struct device_node *np)
- 	ENABLE_IP_ISP3,
- };
- 
-+static const struct samsung_clk_reg_dump isp_suspend_regs[] = {
-+	{ MUX_SEL_ISP, 0 },
++&usbotg2 {
++	vbus-supply = <&reg_usb_otg2_vbus>;
++	dr_mode = "host";
++	disable-over-current;
++	status = "okay";
 +};
-+
- PNAME(mout_aclk_isp_dis_400_user_p)	= { "oscclk", "aclk_isp_dis_400", };
- PNAME(mout_aclk_isp_400_user_p)		= { "oscclk", "aclk_isp_400", };
- 
-@@ -4549,15 +4568,11 @@ static void __init exynos5433_cmu_hevc_init(struct device_node *np)
- 	.nr_clk_ids		= ISP_NR_CLK,
- 	.clk_regs		= isp_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(isp_clk_regs),
-+	.suspend_regs		= isp_suspend_regs,
-+	.nr_suspend_regs	= ARRAY_SIZE(isp_suspend_regs),
-+	.clk_name		= "aclk_isp_400",
- };
- 
--static void __init exynos5433_cmu_isp_init(struct device_node *np)
--{
--	samsung_cmu_register_one(np, &isp_cmu_info);
--}
--CLK_OF_DECLARE(exynos5433_cmu_isp, "samsung,exynos5433-cmu-isp",
--		exynos5433_cmu_isp_init);
--
- /*
-  * Register offset definitions for CMU_CAM0
-  */
-@@ -4621,6 +4636,15 @@ static void __init exynos5433_cmu_isp_init(struct device_node *np)
- 	ENABLE_IP_CAM02,
- 	ENABLE_IP_CAM03,
- };
-+
-+static const struct samsung_clk_reg_dump cam0_suspend_regs[] = {
-+	{ MUX_SEL_CAM00, 0 },
-+	{ MUX_SEL_CAM01, 0 },
-+	{ MUX_SEL_CAM02, 0 },
-+	{ MUX_SEL_CAM03, 0 },
-+	{ MUX_SEL_CAM04, 0 },
-+};
-+
- PNAME(mout_aclk_cam0_333_user_p)	= { "oscclk", "aclk_cam0_333", };
- PNAME(mout_aclk_cam0_400_user_p)	= { "oscclk", "aclk_cam0_400", };
- PNAME(mout_aclk_cam0_552_user_p)	= { "oscclk", "aclk_cam0_552", };
-@@ -5026,15 +5050,11 @@ static void __init exynos5433_cmu_isp_init(struct device_node *np)
- 	.nr_clk_ids		= CAM0_NR_CLK,
- 	.clk_regs		= cam0_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(cam0_clk_regs),
-+	.suspend_regs		= cam0_suspend_regs,
-+	.nr_suspend_regs	= ARRAY_SIZE(cam0_suspend_regs),
-+	.clk_name		= "aclk_cam0_400",
- };
- 
--static void __init exynos5433_cmu_cam0_init(struct device_node *np)
--{
--	samsung_cmu_register_one(np, &cam0_cmu_info);
--}
--CLK_OF_DECLARE(exynos5433_cmu_cam0, "samsung,exynos5433-cmu-cam0",
--		exynos5433_cmu_cam0_init);
--
- /*
-  * Register offset definitions for CMU_CAM1
-  */
-@@ -5081,6 +5101,12 @@ static void __init exynos5433_cmu_cam0_init(struct device_node *np)
- 	ENABLE_IP_CAM12,
- };
- 
-+static const struct samsung_clk_reg_dump cam1_suspend_regs[] = {
-+	{ MUX_SEL_CAM10, 0 },
-+	{ MUX_SEL_CAM11, 0 },
-+	{ MUX_SEL_CAM12, 0 },
-+};
-+
- PNAME(mout_sclk_isp_uart_user_p)	= { "oscclk", "sclk_isp_uart_cam1", };
- PNAME(mout_sclk_isp_spi1_user_p)	= { "oscclk", "sclk_isp_spi1_cam1", };
- PNAME(mout_sclk_isp_spi0_user_p)	= { "oscclk", "sclk_isp_spi0_cam1", };
-@@ -5399,11 +5425,230 @@ static void __init exynos5433_cmu_cam0_init(struct device_node *np)
- 	.nr_clk_ids		= CAM1_NR_CLK,
- 	.clk_regs		= cam1_clk_regs,
- 	.nr_clk_regs		= ARRAY_SIZE(cam1_clk_regs),
-+	.suspend_regs		= cam1_suspend_regs,
-+	.nr_suspend_regs	= ARRAY_SIZE(cam1_suspend_regs),
-+	.clk_name		= "aclk_cam1_400",
-+};
-+
-+
-+struct exynos5433_cmu_data {
-+	struct samsung_clk_provider ctx;
-+
-+	struct samsung_clk_reg_dump *clk_save;
-+	unsigned int nr_clk_save;
-+	const struct samsung_clk_reg_dump *clk_suspend;
-+	unsigned int nr_clk_suspend;
-+
-+	struct clk *clk;
-+	struct clk **pclks;
-+	int nr_pclks;
-+};
-+
-+static int exynos5433_cmu_suspend(struct device *dev)
-+{
-+	struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
-+	int i;
-+
-+	samsung_clk_save(data->ctx.reg_base, data->clk_save,
-+			 data->nr_clk_save);
-+
-+	for (i = 0; i < data->nr_pclks; i++)
-+		clk_enable(data->pclks[i]);
-+
-+	samsung_clk_restore(data->ctx.reg_base, data->clk_suspend,
-+			    data->nr_clk_suspend);
-+
-+	for (i = 0; i < data->nr_pclks; i++)
-+		clk_disable(data->pclks[i]);
-+
-+	clk_disable(data->clk);
-+
-+	return 0;
-+}
-+
-+static int exynos5433_cmu_resume(struct device *dev)
-+{
-+	struct exynos5433_cmu_data *data = dev_get_drvdata(dev);
-+	int i;
-+
-+	clk_enable(data->clk);
-+
-+	for (i = 0; i < data->nr_pclks; i++)
-+		clk_enable(data->pclks[i]);
-+
-+	samsung_clk_restore(data->ctx.reg_base, data->clk_save,
-+			    data->nr_clk_save);
-+
-+	for (i = 0; i < data->nr_pclks; i++)
-+		clk_disable(data->pclks[i]);
-+
-+	return 0;
-+}
-+
-+static int __init exynos5433_cmu_probe(struct platform_device *pdev)
-+{
-+	const struct samsung_cmu_info *info;
-+	struct exynos5433_cmu_data *data;
-+	struct samsung_clk_provider *ctx;
-+	struct device *dev = &pdev->dev;
-+	struct resource *res;
-+	void __iomem *reg_base;
-+	struct clk **clk_table;
-+	int i;
-+
-+	info = of_device_get_match_data(dev);
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+	ctx = &data->ctx;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	reg_base = devm_ioremap_resource(dev, res);
-+	if (!reg_base) {
-+		dev_err(dev, "failed to map registers\n");
-+		return -ENOMEM;
-+	}
-+
-+	clk_table = devm_kcalloc(dev, info->nr_clk_ids, sizeof(struct clk *),
-+				 GFP_KERNEL);
-+	if (!clk_table)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < info->nr_clk_ids; ++i)
-+		clk_table[i] = ERR_PTR(-ENOENT);
-+
-+	ctx->clk_data.clks = clk_table;
-+	ctx->clk_data.clk_num = info->nr_clk_ids;
-+	ctx->reg_base = reg_base;
-+	ctx->dev = dev;
-+	spin_lock_init(&ctx->lock);
-+
-+	data->clk_save = samsung_clk_alloc_reg_dump(info->clk_regs,
-+						    info->nr_clk_regs);
-+	data->nr_clk_save = info->nr_clk_regs;
-+	data->clk_suspend = info->suspend_regs;
-+	data->nr_clk_suspend = info->nr_suspend_regs;
-+	data->nr_pclks = of_count_phandle_with_args(dev->of_node, "clocks",
-+						    "#clock-cells");
-+	if (data->nr_pclks > 0) {
-+		data->pclks = devm_kcalloc(dev, sizeof(struct clk *),
-+					   data->nr_pclks, GFP_KERNEL);
-+
-+		for (i = 0; i < data->nr_pclks; i++) {
-+			struct clk *clk = of_clk_get(dev->of_node, i);
-+
-+			if (IS_ERR(clk))
-+				return PTR_ERR(clk);
-+			data->pclks[i] = clk;
-+		}
-+	}
-+
-+	/*
-+	 * Prepare all parent clocks here to avoid potential deadlock caused
-+	 * by global clock "prepare lock" grabbed by runtime pm callbacks
-+	 * from pm workers.
-+	 */
-+	for (i = 0; i < data->nr_pclks; i++)
-+		clk_prepare(data->pclks[i]);
-+
-+	if (info->clk_name)
-+		data->clk = clk_get(dev, info->clk_name);
-+	clk_prepare_enable(data->clk);
-+
-+	platform_set_drvdata(pdev, data);
-+
-+	/*
-+	 * Enable runtime pm here, so clock core with use runtime pm for all
-+	 * registered clocks.
-+	 */
-+	pm_runtime_set_active(dev);
-+	pm_runtime_enable(dev);
-+
-+	if (info->pll_clks)
-+		samsung_clk_register_pll(ctx, info->pll_clks, info->nr_pll_clks,
-+					 reg_base);
-+	if (info->mux_clks)
-+		samsung_clk_register_mux(ctx, info->mux_clks,
-+					 info->nr_mux_clks);
-+	if (info->div_clks)
-+		samsung_clk_register_div(ctx, info->div_clks,
-+					 info->nr_div_clks);
-+	if (info->gate_clks)
-+		samsung_clk_register_gate(ctx, info->gate_clks,
-+					  info->nr_gate_clks);
-+	if (info->fixed_clks)
-+		samsung_clk_register_fixed_rate(ctx, info->fixed_clks,
-+						info->nr_fixed_clks);
-+	if (info->fixed_factor_clks)
-+		samsung_clk_register_fixed_factor(ctx, info->fixed_factor_clks,
-+						  info->nr_fixed_factor_clks);
-+
-+	samsung_clk_of_add_provider(dev->of_node, ctx);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id exynos5433_cmu_of_match[] = {
-+	{
-+		.compatible = "samsung,exynos5433-cmu-aud",
-+		.data = &aud_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynos5433-cmu-cam0",
-+		.data = &cam0_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynos5433-cmu-cam1",
-+		.data = &cam1_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynos5433-cmu-disp",
-+		.data = &disp_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynos5433-cmu-g2d",
-+		.data = &g2d_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynos5433-cmu-g3d",
-+		.data = &g3d_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynos5433-cmu-fsys",
-+		.data = &fsys_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynos5433-cmu-gscl",
-+		.data = &gscl_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynos5433-cmu-mfc",
-+		.data = &mfc_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynos5433-cmu-hevc",
-+		.data = &hevc_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynos5433-cmu-isp",
-+		.data = &isp_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynos5433-cmu-mscl",
-+		.data = &mscl_cmu_info,
-+	}, {
-+	},
-+};
-+
-+static const struct dev_pm_ops exynos5433_cmu_pm_ops = {
-+	SET_RUNTIME_PM_OPS(exynos5433_cmu_suspend, exynos5433_cmu_resume,
-+			   NULL)
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				     pm_runtime_force_resume)
-+};
-+
-+static struct platform_driver exynos5433_cmu_driver __refdata = {
-+	.driver	= {
-+		.name = "exynos5433-cmu",
-+		.of_match_table = exynos5433_cmu_of_match,
-+		.suppress_bind_attrs = true,
-+		.pm = &exynos5433_cmu_pm_ops,
-+	},
-+	.probe = exynos5433_cmu_probe,
- };
- 
--static void __init exynos5433_cmu_cam1_init(struct device_node *np)
-+static int __init exynos5433_cmu_init(void)
- {
--	samsung_cmu_register_one(np, &cam1_cmu_info);
-+	return platform_driver_register(&exynos5433_cmu_driver);
- }
--CLK_OF_DECLARE(exynos5433_cmu_cam1, "samsung,exynos5433-cmu-cam1",
--		exynos5433_cmu_cam1_init);
-+core_initcall(exynos5433_cmu_init);
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index 9263d8a27c6b..664020cb4794 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -354,6 +354,12 @@ struct samsung_cmu_info {
- 	/* list and number of clocks registers */
- 	const unsigned long *clk_regs;
- 	unsigned int nr_clk_regs;
-+
-+	/* list and number of clocks registers to set before suspend */
-+	const struct samsung_clk_reg_dump *suspend_regs;
-+	unsigned int nr_suspend_regs;
-+	/* name of the parent clock needed for CMU register access */
-+	const char *clk_name;
- };
- 
- extern struct samsung_clk_provider *__init samsung_clk_init(
 -- 
 1.9.1
