@@ -1,207 +1,117 @@
-Return-Path: <tony@atomide.com>
-Date: Fri, 9 Dec 2016 12:40:16 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCHv4 11/15] clk: ti: clockdomain: add clock provider support
- to clockdomains
-Message-ID: <20161209204015.GL4920@atomide.com>
-References: <20161028125112.xfyrx7l7m64z6cu6@atomide.com>
- <20161028233617.GP16026@codeaurora.org>
- <20161028235448.57squdf6cu2wxxvm@atomide.com>
- <148071802182.32158.11479184984645880313@resonance>
- <20161202231240.GH4705@atomide.com>
- <148072274164.32158.6012452044533845688@resonance>
- <20161203001852.GI4705@atomide.com>
- <ed253013-1f12-9fd8-d007-400a6c6fd427@ti.com>
- <20161205152534.GJ4705@atomide.com>
- <148131376868.16621.16082839810419290638@resonance>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <148131376868.16621.16082839810419290638@resonance>
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	xf@rock-chips.com
+Cc: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux-clk@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	cl@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v4 3/4] clk: rockchip: add new pll-type for rk3328
+Date: Tue, 27 Dec 2016 14:32:52 +0800
+Message-Id: <1482820373-10186-4-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1482820373-10186-1-git-send-email-zhangqing@rock-chips.com>
+References: <1482820373-10186-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Michael Turquette <mturquette@baylibre.com> [161209 12:02]:
-> Quoting Tony Lindgren (2016-12-05 07:25:34)
-> > * Tero Kristo <t-kristo@ti.com> [161205 02:09]:
-...
-<snip>
+The rk3328's pll and clock are similar with rk3036's,
+it different with pll_mode_mask, the rk3328 soc
+pll mode only one bit(rk3036 soc have two bits)
+so these should be independent and separate from
+the series of rk3328s.
 
-> I had a recent conversation with Kevin Hilman about a related issue
-> (we were not discussing this thread or this series) and we both agreed
-> that most drivers don't even need to managed their clocks directly, so
-> much as they need to manage their on/off resources. Clocks are just one
-> part of that, and if we can hide that stuff inside of an attached genpd
-> then it would be better than having the driver manage clocks explicitly.
-> 
-> Obviously some devices such as audio codec or uart will need to manage
-> clocks directly, but this is mostly the exception, not the rule.
+Changes in v4:
+  adjust the pacth 3 and 4 order.
+  move pll_rk3328 to patch 3.
+Changes in v3:
+  fix up the pll type pll_rk3328 description and use
 
-Yes. And we do that already for clkctrl clocks via PM runtime where
-hwmod manages them. Tero's series still has hwmod manage the clocks,
-but the clock register handling is moved to live under drivers/clock.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-pll.c | 16 +++++++++++++---
+ drivers/clk/rockchip/clk.h     |  1 +
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
-> > > > > There is certainly no API for that in the clock framework, but for genpd
-> > > > > your runtime_pm_get() callback for clkdm_A could call runtime_pm_get
-> > > > > against clkdm_B, which would satisfy the requirement. See section
-> > > > > 3.1.1.1.7 Clock Domain Dependency in the OMAP4 TRM, version AB.
-> > > 
-> > > For static dependencies the apis genpd_add/remove_subdomain could probably
-> > > be used.
-> > > 
-> > > > To me it seems the API is just clk_get() :) Do you have some
-> > > > specific example we can use to check? My guess is that the
-> > > > TRM "Clock Domain Dependency" is just the usual parent child
-> > > > relationship between clocks that are the clockdomains..
-> 
-> clk_get() only fetches a pointer to the clk. I guess you mean
-> clk_prepare_enable() to actually increment the use count?
-
-Right, with clocks that's all we should need to do :)
-
-> If we used the clk framework here is that it would look something like
-> this:
-> 
-> clk_enable(clk_a)
-> -> .enable(clk_a_hw)
->    -> clk_enable(clk_b)
-> 
-> However, clk_a and clk_b do not have a parent-child relationship in the
-> clock tree. This is purely a functional relationship between IP blocks.
-> Modeling this sort of thing in the clk framework would be wrong, and
-> genpd is a much better place to establish these arbitrary relationships.
-
-Hmm yes, and I don't mean the clock framework should do anything more
-complex beyond what it already does.
-
-We just want to represent the clocks as clocks, then have the
-interconnect code manage those clocks. That's currently hwmod, eventually
-it will be genpd.
-
-> > > > If there is something more magical there certainly that should
-> > > > be considered though.
-> > > 
-> > > The hwmods could be transformed to individual genpds also I guess. On DT
-> > > level though, we would still need a clock pointer to the main clock and a
-> > > genpd pointer in addition to that.
-> > 
-> > Hmm a genpd pointer to where exactly? AFAIK each interconnect
-> > instance should be a genpd provider, and the individual interconnect
-> > target modules should be consumers for that genpd.
-> 
-> I was thinking that the clock domains would be modeled as genpd objects
-> with the interconnect target modules attached as struct devices.
-
-I think clock domains should be just clocks, then we let the interconnect
-code and eventually genpd manage them.
-
-> > > Tony, any thoughts on that? Would this break up the plans for the
-> > > interconnect completely?
-> > 
-> > Does using genpd for clockdomains cause issues for using genpd for
-> > interconnect instances and the target modules?
-> 
-> Can they be the same object in Linux? If there is a one-to-one mapping
-> between clock domains and the interconnect port then maybe you can just
-> model them together.
-
-I'm thinking that it should be the interconnect code implementing
-genpd, and use clk_request_enable().
-
-> > The thing I'd be worried about there is that the clockdomains and
-> > their child clocks are just devices sitting on the interconnect,
-> > so we could easily end up with genpd modeling something that does
-> > not represent the hardware.
-> > 
-> > For example, on 4430 we have:
-> > 
-> > l4_cfg interconnect
-> >        ...
-> >        segment@0
-> >                 ...
-> >                 target_module@4000
-> >                         cm1: cm1@0
-> 
-> How about:
-> 
-> l4_cfg interconnect
->        ...
->        segment@0
->                 ...
->                 cm1@4000
->                 	module: foo_module@0
-
-That's the wrong way around from hardware point of view. There's
-a generic interconnect wrapper module with it's own registers,
-then cm1 (and possibly other devices) are children of that target
-module.
-
-> I don't know much about the segments. Do they map one-to-one with the
-> clock domains?
-
-I need to check, it's been a while, but I recall some interconnects
-are partioned to segments based on voltages or clocks.
-
-> If my quick-and-dirty DT above makes sense, then the target modules
-> (e.g. io controller) would not get clocks anymore, but just
-> pm_runtime_get(). The genpd backing object would call clk_enable/disable
-> as needed.
-
-Yeah that's what we already have with hwmod and PM runtime for the
-clockctrl register. But hwmod currently directly manages the clkctrl
-register, we just want to move that part to be a clock driver.
-
-The children of the interconnect target modules just need to use
-PM runtime, but the interconnect target module driver needs to know
-it's clkctrl clock.
-
-> If fine grained control of a clock is needed (e.g. for clk_set_rate)
-> then the driver can still clk_get it. Whether or not the clockdomain
-> provides that clock or if it comes from the clock generator (e.g. cm1,
-> cm2, prm, etc) isn't as important to me, but I prefer for the
-> clockdomain to not be a clock provider if possible.
-
-Yeah I totally agree with that, and that's already what we mostly
-have.
-
-> > I don't at least yet
-> > follow what we need to do with the clockdomains with genpd :)
-> 
-> Use the clockdomain genpd to call clk_enable/disable under the hood.
-> Don't use them as clock providers to the target modules. Clockdomain
-> genpds would be the clock consumers.
-
-I don't think the clockdomain should be a genpd provider because
-that creates a genpd network of dependencies instead of a tree
-structure. If we end up setting the clockdomains with genpd, then
-only the other clockdomains should use them, but I don't know how
-we ever keep drivers from directly tinkering with them..
-
-IMO, the clockdomain clock driver should just provides clocks, then
-we can have the interconnect target module driver deal with the
-clockdomain dependencies.
-
-> > Wouldn't just doing clk_get() from one clockdomain clock to
-> > another clockdomain clock (or it's output) be enough to
-> > represent the clockdomain dependencies?
-> 
-> s/clk_get/clk_prepare_enable/
-> 
-> Yes, but you're stuffing functional dependencies into the clock tree,
-> which sucks. genpd was created to model these arbitrary dependencies.
-
-Well let's not stuff anything beyond clock framework to the
-clockdomain clock drivers. We already have the clockdomain
-dependencies handled by the interconnect code (hwmod), and there
-should be no problem moving those to be handled by genpd and the
-interconnect target driver instances.
-
-Care to take another look at Tero's patches with the assumption
-that the clockdomain clocks stay just as a clocks?
-
-Regards,
-
-Tony
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 6ed605776abd..eec51893a7e6 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -29,6 +29,7 @@
+ #define PLL_MODE_SLOW		0x0
+ #define PLL_MODE_NORM		0x1
+ #define PLL_MODE_DEEP		0x2
++#define PLL_RK3328_MODE_MASK	0x1
+ 
+ struct rockchip_clk_pll {
+ 	struct clk_hw		hw;
+@@ -848,7 +849,8 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 	struct clk *pll_clk, *mux_clk;
+ 	char pll_name[20];
+ 
+-	if (num_parents != 2) {
++	if ((pll_type != pll_rk3328 && num_parents != 2) ||
++	    (pll_type == pll_rk3328 && num_parents != 1)) {
+ 		pr_err("%s: needs two parent clocks\n", __func__);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+@@ -865,13 +867,17 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 	pll_mux = &pll->pll_mux;
+ 	pll_mux->reg = ctx->reg_base + mode_offset;
+ 	pll_mux->shift = mode_shift;
+-	pll_mux->mask = PLL_MODE_MASK;
++	if (pll_type == pll_rk3328)
++		pll_mux->mask = PLL_RK3328_MODE_MASK;
++	else
++		pll_mux->mask = PLL_MODE_MASK;
+ 	pll_mux->flags = 0;
+ 	pll_mux->lock = &ctx->lock;
+ 	pll_mux->hw.init = &init;
+ 
+ 	if (pll_type == pll_rk3036 ||
+ 	    pll_type == pll_rk3066 ||
++	    pll_type == pll_rk3328 ||
+ 	    pll_type == pll_rk3399)
+ 		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
+ 
+@@ -884,7 +890,10 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 	init.flags = CLK_SET_RATE_PARENT;
+ 	init.ops = pll->pll_mux_ops;
+ 	init.parent_names = pll_parents;
+-	init.num_parents = ARRAY_SIZE(pll_parents);
++	if (pll_type == pll_rk3328)
++		init.num_parents = 2;
++	else
++		init.num_parents = ARRAY_SIZE(pll_parents);
+ 
+ 	mux_clk = clk_register(NULL, &pll_mux->hw);
+ 	if (IS_ERR(mux_clk))
+@@ -918,6 +927,7 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 
+ 	switch (pll_type) {
+ 	case pll_rk3036:
++	case pll_rk3328:
+ 		if (!pll->rate_table || IS_ERR(ctx->grf))
+ 			init.ops = &rockchip_rk3036_pll_clk_norate_ops;
+ 		else
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index d67eecc4ade9..06acb7e0911f 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -130,6 +130,7 @@
+ enum rockchip_pll_type {
+ 	pll_rk3036,
+ 	pll_rk3066,
++	pll_rk3328,
+ 	pll_rk3399,
+ };
+ 
+-- 
+1.9.1
