@@ -1,48 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38741 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751983AbcLLIW4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 12 Dec 2016 03:22:56 -0500
-Date: Mon, 12 Dec 2016 19:22:52 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Ray Jui <rjui@broadcom.com>, Lee Jones <lee@kernel.org>,
-        Eric Anholt <eric@anholt.net>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: bcm: Fix 'maybe-uninitialized' warning in
- bcm2835_clock_choose_div_and_prate()
-Message-ID: <20161212192252.56e6ac99@canb.auug.org.au>
-In-Reply-To: <3107859.uaKLk6DMRd@wuerfel>
-References: <1481529653-28133-1-git-send-email-boris.brezillon@free-electrons.com>
-        <3107859.uaKLk6DMRd@wuerfel>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Date: Thu, 29 Dec 2016 16:49:08 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Doug Anderson <dianders@chromium.org>,
+	Andreas Faerber <afaerber@suse.de>,
+	Thomas Abraham <thomas.ab@samsung.com>,
+	Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+	Ben Gamari <ben@smart-cactus.org>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: dts: Add CPU OPPs for Exynos4412 Prime
+Message-ID: <20161229144908.6gkvjpso7ikdmfp7@kozik-lap>
+References: <1483018611-27998-1-git-send-email-b.zolnierkie@samsung.com>
+ <CGME20161229133734epcas5p1e893904353c23170e82ece54a06aebed@epcas5p1.samsung.com>
+ <1483018611-27998-3-git-send-email-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1483018611-27998-3-git-send-email-b.zolnierkie@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Arnd,
-
-On Mon, 12 Dec 2016 09:12:36 +0100 Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Monday, December 12, 2016 9:00:53 AM CET Boris Brezillon wrote:
-> > best_rate is reported as potentially uninitialized by gcc.
-> > 
-> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > Fixes: 155e8b3b0ee3 ("clk: bcm: Support rate change propagation on bcm2835 clocks")
-> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>  
+On Thu, Dec 29, 2016 at 02:36:51PM +0100, Bartlomiej Zolnierkiewicz wrote:
+> Add CPU operating points for Exynos4412 Prime (it supports
+> additional 1704MHz & 1600MHz OPPs and 1500MHz OPP is just
+> a regular non-turbo OPP on this SoC).  Also update relevant
+> cooling maps to account for new OPPs.
 > 
-> I wonder why I didn't get that. Which compiler version did you use?
+> ODROID-X2/U2/U3 boards use Exynos4412 Prime SoC version so
+> update their board files accordingly.
+> 
+> Based on Hardkernel's kernel for ODROID-X2/U2/U3 boards.
+> 
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Andreas Faerber <afaerber@suse.de>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> Cc: Ben Gamari <ben@smart-cactus.org>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 +--
+>  arch/arm/boot/dts/exynos4412-odroidu3.dts       |  5 +--
+>  arch/arm/boot/dts/exynos4412-odroidx2.dts       |  1 +
+>  arch/arm/boot/dts/exynos4412-prime.dtsi         | 41 +++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos4412.dtsi               |  2 +-
+>  5 files changed, 48 insertions(+), 5 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/exynos4412-prime.dtsi
+> 
 
-Gcc-5.2.0 powerpc-le hosted cross compiler.
+Looks okay. Is the clock patch needed for this?
 
--- 
-Cheers,
-Stephen Rothwell
+BR,
+Krzysztof
