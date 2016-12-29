@@ -1,98 +1,57 @@
-Return-Path: <vlee@freedesktop.org>
-From: Vinson Lee <vlee@freedesktop.org>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: uniphier: Fix build with gcc-4.4.
-Date: Sat,  3 Dec 2016 00:37:16 +0000
-Message-Id: <1480725436-9628-1-git-send-email-vlee@freedesktop.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>,
+ Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>,
+ Thomas Abraham <thomas.ab@samsung.com>,
+ Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+ Ben Gamari <ben@smart-cactus.org>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ b.zolnierkie@samsung.com
+Subject: [PATCH 0/2] ARM: add Exynos4412 Prime SoC support
+Date: Thu, 29 Dec 2016 14:36:49 +0100
+Message-id: <1483018611-27998-1-git-send-email-b.zolnierkie@samsung.com>
+References: 
+ <CGME20161229133722epcas5p1e138af585fea93a42962f3a7414a081f@epcas5p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-gcc-4.4 has issues with anonymous unions in initializers.
+Hi,
 
-  CC      drivers/clk/uniphier/clk-uniphier-sys.o
-drivers/clk/uniphier/clk-uniphier-sys.c:45: error: unknown field ‘factor’ specified in initializer
+This patchset adds support for Exynos4412 Prime SoC (it supports
+additional 1704MHz & 1600MHz CPU OPPs and 1500MHz CPU OPP is just
+a regular non-turbo OPP on this SoC).
 
-Fixes: 1574d5722636 ("clk: uniphier: remove unneeded member name for union")
-Signed-off-by: Vinson Lee <vlee@freedesktop.org>
----
- drivers/clk/uniphier/clk-uniphier-mio.c |  4 ++--
- drivers/clk/uniphier/clk-uniphier.h     | 12 ++++++------
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ODROID-X2/U2/U3 boards use Exynos4412 Prime SoC version so their
+board files are updated accordingly.
 
-diff --git a/drivers/clk/uniphier/clk-uniphier-mio.c b/drivers/clk/uniphier/clk-uniphier-mio.c
-index 4974d38..7441eeb 100644
---- a/drivers/clk/uniphier/clk-uniphier-mio.c
-+++ b/drivers/clk/uniphier/clk-uniphier-mio.c
-@@ -30,7 +30,7 @@
- 		.name = "sd" #ch "-sel",				\
- 		.type = UNIPHIER_CLK_TYPE_MUX,				\
- 		.idx = -1,						\
--		.mux = {						\
-+		{ .mux = {						\
- 			.parent_names = {				\
- 				"sd-44m",				\
- 				"sd-33m",				\
-@@ -63,7 +63,7 @@
- 				0x00001200,				\
- 				0x00001300,				\
- 			},						\
--		},							\
-+		} },							\
- 	},								\
- 	UNIPHIER_CLK_GATE("sd" #ch, (_idx), "sd" #ch "-sel", 0x20 + 0x200 * (ch), 8)
- 
-diff --git a/drivers/clk/uniphier/clk-uniphier.h b/drivers/clk/uniphier/clk-uniphier.h
-index 81d7e5c..8735a7d 100644
---- a/drivers/clk/uniphier/clk-uniphier.h
-+++ b/drivers/clk/uniphier/clk-uniphier.h
-@@ -81,12 +81,12 @@ struct uniphier_clk_data {
- 		.name = (_name),				\
- 		.type = UNIPHIER_CLK_TYPE_CPUGEAR,		\
- 		.idx = (_idx),					\
--		.cpugear = {					\
-+		{ .cpugear = {					\
- 			.parent_names = { __VA_ARGS__ },	\
- 			.num_parents = (_num_parents),		\
- 			.regbase = (_regbase),			\
- 			.mask = (_mask)				\
--		 },						\
-+		 } },						\
- 	}
- 
- #define UNIPHIER_CLK_FACTOR(_name, _idx, _parent, _mult, _div)	\
-@@ -94,11 +94,11 @@ struct uniphier_clk_data {
- 		.name = (_name),				\
- 		.type = UNIPHIER_CLK_TYPE_FIXED_FACTOR,		\
- 		.idx = (_idx),					\
--		.factor = {					\
-+		{ .factor = {					\
- 			.parent_name = (_parent),		\
- 			.mult = (_mult),			\
- 			.div = (_div),				\
--		},						\
-+		} },						\
- 	}
- 
- #define UNIPHIER_CLK_GATE(_name, _idx, _parent, _reg, _bit)	\
-@@ -106,11 +106,11 @@ struct uniphier_clk_data {
- 		.name = (_name),				\
- 		.type = UNIPHIER_CLK_TYPE_GATE,			\
- 		.idx = (_idx),					\
--		.gate = {					\
-+		{ .gate = {					\
- 			.parent_name = (_parent),		\
- 			.reg = (_reg),				\
- 			.bit = (_bit),				\
--		},						\
-+		} },						\
- 	}
- 
- #define UNIPHIER_CLK_DIV(parent, div)				\
+This patchset brings 21% CPU performance increase on affected
+boards (as tested on ODROID-U3 board).
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (2):
+  clk: samsung: exynos4412: add cpu clock configuration data for
+    Exynos4412 Prime
+  ARM: dts: Add CPU OPPs for Exynos4412 Prime
+
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 +--
+ arch/arm/boot/dts/exynos4412-odroidu3.dts       |  5 +--
+ arch/arm/boot/dts/exynos4412-odroidx2.dts       |  1 +
+ arch/arm/boot/dts/exynos4412-prime.dtsi         | 41 +++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4412.dtsi               |  2 +-
+ drivers/clk/samsung/clk-exynos4.c               |  4 +++
+ 6 files changed, 52 insertions(+), 5 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4412-prime.dtsi
+
 -- 
-2.7.4
+1.9.1
