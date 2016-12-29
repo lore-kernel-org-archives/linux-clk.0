@@ -1,65 +1,32 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH v4 8/9] ARM: dts: stm32f4: Add external I2S clock
-Date: Tue, 13 Dec 2016 15:20:19 +0100
-Message-ID: <1481638820-29324-9-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
-References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:36500 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752311AbcL2PSP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Dec 2016 10:18:15 -0500
+Subject: Re: [PATCH] clk/samsung: exynos-audss: Replace syscore PM with
+ platform device PM
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <9b4c95cf-4f8b-8b70-a609-4c487fe36bb8@samsung.com>
+Date: Thu, 29 Dec 2016 16:18:02 +0100
+MIME-version: 1.0
+In-reply-to: <1480066794-18713-1-git-send-email-m.szyprowski@samsung.com>
+Content-type: text/plain; charset=windows-1252
+References: <CGME20161125095119epcas2p1d9f9ba31fbb556ff714f4330ad746ed5@epcas2p1.samsung.com>
+ <1480066794-18713-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 11/25/2016 10:39 AM, Marek Szyprowski wrote:
+> Exynos AUDSS clock driver has beem already converted to platform driver, so
+> remove the dependency on the syscore ops - the last remaining non-platform
+> driver feature. Platform device's system sleep PM provides all needed
+> infrastructure for replacing syscore-based PM, so do it now.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-This patch adds an external I2S clock in the DT.
-The I2S clock could be derived from an external I2S clock or by I2S pll.
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- arch/arm/boot/dts/stm32f429.dtsi | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
-index e4dae0e..7c7dfbd 100644
---- a/arch/arm/boot/dts/stm32f429.dtsi
-+++ b/arch/arm/boot/dts/stm32f429.dtsi
-@@ -68,6 +68,12 @@
- 			compatible = "fixed-clock";
- 			clock-frequency = <32000>;
- 		};
-+
-+		clk_i2s_ckin: i2s-ckin {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <0>;
-+		};
- 	};
- 
- 	soc {
-@@ -362,7 +368,7 @@
- 			#clock-cells = <2>;
- 			compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
- 			reg = <0x40023800 0x400>;
--			clocks = <&clk_hse>;
-+			clocks = <&clk_hse>, <&clk_i2s_ckin>;
- 			st,syscfg = <&pwrcfg>;
- 		};
- 
--- 
-1.9.1
+Applied, thanks.
