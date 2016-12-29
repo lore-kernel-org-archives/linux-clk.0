@@ -1,74 +1,117 @@
-Return-Path: <irina.tirdea@intel.com>
-From: Irina Tirdea <irina.tirdea@intel.com>
-To: linux-clk@vger.kernel.org,
-	x86@kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	alsa-devel@alsa-project.org,
-	Mark Brown <broonie@kernel.org>,
-	Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@intel.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Len Brown <lenb@kernel.org>,
-	Irina Tirdea <irina.tirdea@intel.com>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 0/2] Add platform clock for BayTrail platforms
-Date: Wed,  7 Dec 2016 17:43:24 +0200
-Message-Id: <1481125406-29097-1-git-send-email-irina.tirdea@intel.com>
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	xf@rock-chips.com
+Cc: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux-clk@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	cl@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v5 3/4] clk: rockchip: add new pll-type for rk3328
+Date: Thu, 29 Dec 2016 10:45:10 +0800
+Message-Id: <1482979511-6847-4-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1482979511-6847-1-git-send-email-zhangqing@rock-chips.com>
+References: <1482979511-6847-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-These patches specifically enable the audio MCLK required by Baytrail CR
-devices. It is the remaining part of a bigger set of patches
-(already merged in Mark's tree) that enable sound for Baytrail CR devices
-(especially Asus T100TAF) [1]. They include the clock driver and a move
-of the non-architectural pmc_atom driver code into drivers/platform/x86.
+The rk3328's pll and clock are similar with rk3036's,
+it different with pll_mode_mask, the rk3328 soc
+pll mode only one bit(rk3036 soc have two bits)
+so these should be independent and separate from
+the series of rk3328s.
 
-[1] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-August/111704.html
+Changes in v4:
+  adjust the pacth 3 and 4 order.
+  move pll_rk3328 to patch 3.
+Changes in v3:
+  fix up the pll type pll_rk3328 description and use
 
-Changes from v4:
- - move the pmc_atom driver from arch/x86/platform/atom to
-drivers/platform/x86
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-pll.c | 16 +++++++++++++---
+ drivers/clk/rockchip/clk.h     |  1 +
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
-Changes from v3:
- - replace devm_kzalloc with devm_kcalloc
- - add x86 architecture maintainers
-
-Changes from v2:
- - move clk platform data structures to a separate include file
- - store clk_hw pointer for the fixed rate clocks
-
-Changes from v1:
- - register the clk device as child of pmc device
- - pass iomem pointer from pmc driver to clk driver to avoid using
-pmc_atom_read()/write() and use readl/writel API instead
- - use devm_clk_hw_register/clkdev_hw_create instead of
-clk_register/clkdev_create
-
-Irina Tirdea (2):
-  arch/x86/platform/atom: Move pmc_atom to drivers/platform/x86
-  clk: x86: Add Atom PMC platform clocks
-
- arch/x86/Kconfig                                   |   4 -
- arch/x86/platform/atom/Makefile                    |   1 -
- drivers/acpi/acpi_lpss.c                           |   2 +-
- drivers/clk/x86/Makefile                           |   1 +
- drivers/clk/x86/clk-byt-plt.c                      | 380 +++++++++++++++++++++
- drivers/platform/x86/Kconfig                       |   6 +
- drivers/platform/x86/Makefile                      |   1 +
- .../atom => drivers/platform/x86}/pmc_atom.c       |  81 ++++-
- include/linux/platform_data/x86/clk-byt-plt.h      |  31 ++
- .../linux/platform_data/x86}/pmc_atom.h            |   3 +
- 10 files changed, 499 insertions(+), 11 deletions(-)
- create mode 100644 drivers/clk/x86/clk-byt-plt.c
- rename {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c (88%)
- create mode 100644 include/linux/platform_data/x86/clk-byt-plt.h
- rename {arch/x86/include/asm => include/linux/platform_data/x86}/pmc_atom.h (98%)
-
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 6ed605776abd..eec51893a7e6 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -29,6 +29,7 @@
+ #define PLL_MODE_SLOW		0x0
+ #define PLL_MODE_NORM		0x1
+ #define PLL_MODE_DEEP		0x2
++#define PLL_RK3328_MODE_MASK	0x1
+ 
+ struct rockchip_clk_pll {
+ 	struct clk_hw		hw;
+@@ -848,7 +849,8 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 	struct clk *pll_clk, *mux_clk;
+ 	char pll_name[20];
+ 
+-	if (num_parents != 2) {
++	if ((pll_type != pll_rk3328 && num_parents != 2) ||
++	    (pll_type == pll_rk3328 && num_parents != 1)) {
+ 		pr_err("%s: needs two parent clocks\n", __func__);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+@@ -865,13 +867,17 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 	pll_mux = &pll->pll_mux;
+ 	pll_mux->reg = ctx->reg_base + mode_offset;
+ 	pll_mux->shift = mode_shift;
+-	pll_mux->mask = PLL_MODE_MASK;
++	if (pll_type == pll_rk3328)
++		pll_mux->mask = PLL_RK3328_MODE_MASK;
++	else
++		pll_mux->mask = PLL_MODE_MASK;
+ 	pll_mux->flags = 0;
+ 	pll_mux->lock = &ctx->lock;
+ 	pll_mux->hw.init = &init;
+ 
+ 	if (pll_type == pll_rk3036 ||
+ 	    pll_type == pll_rk3066 ||
++	    pll_type == pll_rk3328 ||
+ 	    pll_type == pll_rk3399)
+ 		pll_mux->flags |= CLK_MUX_HIWORD_MASK;
+ 
+@@ -884,7 +890,10 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 	init.flags = CLK_SET_RATE_PARENT;
+ 	init.ops = pll->pll_mux_ops;
+ 	init.parent_names = pll_parents;
+-	init.num_parents = ARRAY_SIZE(pll_parents);
++	if (pll_type == pll_rk3328)
++		init.num_parents = 2;
++	else
++		init.num_parents = ARRAY_SIZE(pll_parents);
+ 
+ 	mux_clk = clk_register(NULL, &pll_mux->hw);
+ 	if (IS_ERR(mux_clk))
+@@ -918,6 +927,7 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 
+ 	switch (pll_type) {
+ 	case pll_rk3036:
++	case pll_rk3328:
+ 		if (!pll->rate_table || IS_ERR(ctx->grf))
+ 			init.ops = &rockchip_rk3036_pll_clk_norate_ops;
+ 		else
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index d67eecc4ade9..06acb7e0911f 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -130,6 +130,7 @@
+ enum rockchip_pll_type {
+ 	pll_rk3036,
+ 	pll_rk3066,
++	pll_rk3328,
+ 	pll_rk3399,
+ };
+ 
 -- 
 1.9.1
