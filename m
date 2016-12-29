@@ -1,58 +1,101 @@
-Return-Path: <irina.tirdea@intel.com>
-From: "Tirdea, Irina" <irina.tirdea@intel.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "x86@kernel.org"
-	<x86@kernel.org>, "platform-driver-x86@vger.kernel.org"
-	<platform-driver-x86@vger.kernel.org>, Darren Hart <dvhart@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Michael Turquette
-	<mturquette@baylibre.com>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
-	<hpa@zytor.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>, "Bossart,
- Pierre-louis" <pierre-louis.bossart@intel.com>, "Rafael J. Wysocki"
-	<rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Pierre-Louis
- Bossart" <pierre-louis.bossart@linux.intel.com>
-Subject: RE: [PATCH v5 2/2] clk: x86: Add Atom PMC platform clocks
-Date: Fri, 9 Dec 2016 18:09:03 +0000
-Message-ID: <1F3AC3675D538145B1661F571FE1805F2F3B77FA@irsmsx105.ger.corp.intel.com>
-References: <1481125406-29097-1-git-send-email-irina.tirdea@intel.com>
- <1481125406-29097-3-git-send-email-irina.tirdea@intel.com>
- <20161209002523.GC5423@codeaurora.org>
-In-Reply-To: <20161209002523.GC5423@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	xf@rock-chips.com
+Cc: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux-clk@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	cl@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v5 2/4] dt-bindings: add bindings for rk3328 clock controller
+Date: Thu, 29 Dec 2016 10:45:09 +0800
+Message-Id: <1482979511-6847-3-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1482979511-6847-1-git-send-email-zhangqing@rock-chips.com>
+References: <1482979511-6847-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2016-12-09 02:25, Stephen Boyd wrote:
-> On 12/07, Irina Tirdea wrote:
->> The BayTrail and CherryTrail platforms provide platform clocks
->> through their Power Management Controller (PMC).
->>=20
->> The SoC supports up to 6 clocks (PMC_PLT_CLK[5:0]) with a
->> frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL) for BayTrail
->> an a frequency of 19.2 MHz (XTAL) for CherryTrail. These clocks
->> are available for general system use, where appropriate, and each
->> have Control & Frequency register fields associated with them.
->>=20
->> For example, the usage for platform clocks suggested in the datasheet
->> is the following:
->>   PLT_CLK[2:0] - Camera
->>   PLT_CLK[3] - Audio Codec
->>   PLT_CLK[4] -
->>   PLT_CLK[5] - COMMs
->> Signed-off-by: Irina Tirdea <irina.tirdea@intel.com> Signed-off-by:
->> Pierre-Louis Bossart <pierre- louis.bossart@linux.intel.com> ---
->>  drivers/clk/x86/Makefile                      |   1 +
->>  drivers/clk/x86/clk-byt-plt.c                 | 380
-> ++++++++++++++++++++++++++
->=20
-> Is it possible to split the clk part from the platform part? I'd
-> like to merge just the clk part if possible into the clk tree.
->
+Add devicetree bindings for Rockchip cru which found on
+Rockchip SoCs.
 
-It would be great to have the clk part merged. I'll put the code in a
-separate patch.
+Changes in v4:
+  dropping the "rockchip,cru" and "syscon" properties for bindings of rk3328
 
-Thanks,
-Irina
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ .../bindings/clock/rockchip,rk3328-cru.txt         | 57 ++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+new file mode 100644
+index 000000000000..e71c675ba5da
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+@@ -0,0 +1,57 @@
++* Rockchip RK3328 Clock and Reset Unit
++
++The RK3328 clock controller generates and supplies clock to various
++controllers within the SoC and also implements a reset controller for SoC
++peripherals.
++
++Required Properties:
++
++- compatible: should be "rockchip,rk3328-cru"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- #clock-cells: should be 1.
++- #reset-cells: should be 1.
++
++Optional Properties:
++
++- rockchip,grf: phandle to the syscon managing the "general register files"
++  If missing pll rates are not changeable, due to the missing pll lock status.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. All available clocks are defined as
++preprocessor macros in the dt-bindings/clock/rk3328-cru.h headers and can be
++used in device tree sources. Similar macros exist for the reset sources in
++these files.
++
++External clocks:
++
++There are several clocks that are generated outside the SoC. It is expected
++that they are defined using standard clock bindings with following
++clock-output-names:
++ - "xin24m" - crystal input - required,
++ - "clkin_i2s" - external I2S clock - optional,
++ - "gmac_clkin" - external GMAC clock - optional
++ - "phy_50m_out" - output clock of the pll in the mac phy
++
++Example: Clock controller node:
++
++	cru: clock-controller@ff440000 {
++		compatible = "rockchip,rk3328-cru";
++		reg = <0x0 0xff440000 0x0 0x1000>;
++		rockchip,grf = <&grf>;
++
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++Example: UART controller node that consumes the clock generated by the clock
++  controller:
++
++	uart0: serial@ff120000 {
++		compatible = "snps,dw-apb-uart";
++		reg = <0xff120000 0x100>;
++		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++		reg-shift = <2>;
++		reg-io-width = <4>;
++		clocks = <&cru SCLK_UART0>;
++	};
+-- 
+1.9.1
