@@ -1,83 +1,52 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH 3/3] clk: keystone: Add sci-clk driver support
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1477053961-27128-1-git-send-email-t-kristo@ti.com>
- <1477053961-27128-4-git-send-email-t-kristo@ti.com>
- <20161208001348.GC5423@codeaurora.org>
- <cb608729-b617-0eab-5ddf-d78ff47b237e@ti.com>
- <20161208211044.GI5423@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>,
-        <ssantosh@kernel.org>, <nm@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <22dacb0c-a3bc-50ce-e4b9-f74a0c706f20@ti.com>
-Date: Fri, 9 Dec 2016 10:05:01 +0200
-MIME-Version: 1.0
-In-Reply-To: <20161208211044.GI5423@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.137]:40055 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752133AbcL2CpN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Dec 2016 21:45:13 -0500
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de, mturquette@baylibre.com, sboyd@codeaurora.org,
+        xf@rock-chips.com
+Cc: robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-clk@vger.kernel.org, huangtao@rock-chips.com,
+        xxx@rock-chips.com, cl@rock-chips.com,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v5 0/4] clk: rockchip: support clk controller for rk3328 SoC
+Date: Thu, 29 Dec 2016 10:45:07 +0800
+Message-Id: <1482979511-6847-1-git-send-email-zhangqing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/12/16 23:10, Stephen Boyd wrote:
-> On 12/08, Tero Kristo wrote:
->> On 08/12/16 02:13, Stephen Boyd wrote:
->>> On 10/21, Tero Kristo wrote:
->>>> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
->>>> new file mode 100644
->>>> index 0000000..f6af5bd
->>>> --- /dev/null
->>>> +++ b/drivers/clk/keystone/sci-clk.c
->>
->>>
->>>> +
->>>> +	handle = devm_ti_sci_get_handle(dev);
->>>> +	if (IS_ERR(handle))
->>>> +		return PTR_ERR(handle);
->>>> +
->>>> +	provider = devm_kzalloc(dev, sizeof(*provider), GFP_KERNEL);
->>>> +	if (!provider)
->>>> +		return -ENOMEM;
->>>> +
->>>> +	provider->clocks = data;
->>>> +
->>>> +	provider->sci = handle;
->>>> +	provider->ops = &handle->ops.clk_ops;
->>>> +	provider->dev = dev;
->>>> +
->>>> +	ti_sci_init_clocks(provider);
->>>
->>> And if this fails?
->>
->> Yea this is kind of controversial. ti_sci_init_clocks() can fail if
->> any of the clocks registered will fail. I decided to have it this
->> way so that at least some clocks might work in failure cause, and
->> you might have a booting device instead of total lock-up.
->>
->> Obviously it could be done so that if any clock fails, we would
->> de-register all clocks at that point, but personally I think this is
->> a worse option.
->>
->> ti_sci_init_clocks could probably be modified to continue
->> registering clocks when a single clock fails though. Currently it
->> aborts at first failure.
->>
->
-> That sounds like a better approach if we don't care about
-> failures to register a clock. Returning a value from a function
-> and not using it isn't really a great design.
->
-> I worry that if we start returning errors from clk_hw_register()
-> that something will go wrong though, so really I don't know why
-> we want to ignore errors at all. Just for debugging a boot hang?
-> Can't we use early console to at least see that this driver is
-> failing to probe and debug that way?
+Changes in v5:
+  fix up some code style, remove grf clk init and cru dump.
+Changes in v4:
+  dropping the "rockchip,cru" and "syscon" properties for bindings of rk3328
+  adjust the pacth 3 and 4 order.
+  move pll_rk3328 to patch 3.
+Changes in v3:
+  fix up the pll type pll_rk3328 description and use.
+Changes in v2:
+  add bindings for rk3328 clock controller
 
-Early console can be used to debug that, but it is kind of annoying to 
-recompile most of the kernel when you suddenly need to use it.
+Elaine Zhang (4):
+  clk: rockchip: add dt-binding header for rk3328
+  dt-bindings: add bindings for rk3328 clock controller
+  clk: rockchip: add new pll-type for rk3328
+  clk: rockchip: add clock controller for rk3328
 
-How about modifying the ti_sci_init_clocks func to print an error for 
-each failed clock?
+ .../bindings/clock/rockchip,rk3328-cru.txt         |  57 ++
+ drivers/clk/rockchip/Makefile                      |   1 +
+ drivers/clk/rockchip/clk-pll.c                     |  16 +-
+ drivers/clk/rockchip/clk-rk3328.c                  | 896 +++++++++++++++++++++
+ drivers/clk/rockchip/clk.h                         |  19 +
+ include/dt-bindings/clock/rk3328-cru.h             | 403 +++++++++
+ 6 files changed, 1389 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+ create mode 100644 drivers/clk/rockchip/clk-rk3328.c
+ create mode 100644 include/dt-bindings/clock/rk3328-cru.h
 
-If you insist on aborting the probe though if a single clock fails, I 
-can do that also.
+-- 
+1.9.1
 
--Tero
+
