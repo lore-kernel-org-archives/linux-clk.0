@@ -1,86 +1,34 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 06/11] dt-bindings: Document the VC4 DSI module nodes.
-Date: Wed, 14 Dec 2016 11:46:16 -0800
-Message-Id: <20161214194621.16499-7-eric@anholt.net>
-In-Reply-To: <20161214194621.16499-1-eric@anholt.net>
-References: <20161214194621.16499-1-eric@anholt.net>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, xf@rock-chips.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com, cl@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 3/4] clk: rockchip: add new pll-type for rk3328
+Date: Sat, 31 Dec 2016 13:53:51 +0100
+Message-ID: <2438805.XRRMBVrdEM@phil>
+In-Reply-To: <1482979511-6847-4-git-send-email-zhangqing@rock-chips.com>
+References: <1482979511-6847-1-git-send-email-zhangqing@rock-chips.com> <1482979511-6847-4-git-send-email-zhangqing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-These are part of the vc4 display pipeline.
+Am Donnerstag, 29. Dezember 2016, 10:45:10 CET schrieb Elaine Zhang:
+> The rk3328's pll and clock are similar with rk3036's,
+> it different with pll_mode_mask, the rk3328 soc
+> pll mode only one bit(rk3036 soc have two bits)
+> so these should be independent and separate from
+> the series of rk3328s.
+> 
+> Changes in v4:
+>   adjust the pacth 3 and 4 order.
+>   move pll_rk3328 to patch 3.
+> Changes in v3:
+>   fix up the pll type pll_rk3328 description and use
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- .../devicetree/bindings/display/brcm,bcm-vc4.txt   | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+applied to my clk-branch for 4.11
 
-diff --git a/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt b/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
-index e2768703ac2b..34c7fddcea39 100644
---- a/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
-+++ b/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
-@@ -56,6 +56,18 @@ Required properties for V3D:
- - interrupts:	The interrupt number
- 		  See bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
- 
-+Required properties for DSI:
-+- compatible:	Should be "brcm,bcm2835-dsi0" or "brcm,bcm2835-dsi1"
-+- reg:		Physical base address and length of the DSI block's registers
-+- interrupts:	The interrupt number
-+		  See bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
-+- clocks:	a) phy: The DSI PLL clock feeding the DSI analog PHY
-+		b) escape: The DSI ESC clock from CPRMAN
-+		c) pixel: The DSI pixel clock from CPRMAN
-+- clock-output-names:
-+		The 3 clocks output from the DSI analog PHY: dsi[01]_byte,
-+		dsi[01]_ddr2, and dsi[01]_ddr
-+
- [1] Documentation/devicetree/bindings/media/video-interfaces.txt
- 
- Example:
-@@ -99,6 +111,29 @@ dpi: dpi@7e208000 {
- 	};
- };
- 
-+dsi1: dsi@7e700000 {
-+	compatible = "brcm,bcm2835-dsi1";
-+	reg = <0x7e700000 0x8c>;
-+	interrupts = <2 12>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	#clock-cells = <1>;
-+
-+	clocks = <&clocks BCM2835_PLLD_DSI1>,
-+		 <&clocks BCM2835_CLOCK_DSI1E>,
-+		 <&clocks BCM2835_CLOCK_DSI1P>;
-+	clock-names = "phy", "escape", "pixel";
-+
-+	clock-output-names = "dsi1_byte", "dsi1_ddr2", "dsi1_ddr";
-+
-+	pitouchscreen: panel@0 {
-+		compatible = "raspberrypi,touchscreen";
-+		reg = <0>;
-+
-+		<...>
-+	};
-+};
-+
- vec: vec@7e806000 {
- 	compatible = "brcm,bcm2835-vec";
- 	reg = <0x7e806000 0x1000>;
--- 
-2.11.0
+The clock controller itself also looks good now, I'll just give Rob or someone 
+else a bit of time for eventual comments after new years :-)
+
+Heiko
