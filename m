@@ -1,109 +1,69 @@
-Return-Path: <jamesjj.liao@mediatek.com>
-Message-ID: <1484015574.26901.6.camel@mtksdaap41>
-Subject: Re: [PATCH] clk: mediatek: Fix MT2701 dependencies
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Jean Delvare <jdelvare@suse.de>
-CC: <linux-clk@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	"Shunli Wang" <shunli.wang@mediatek.com>, Erin Lo <erin.lo@mediatek.com>,
-	"Stephen Boyd" <sboyd@codeaurora.org>, Michael Turquette
-	<mturquette@baylibre.com>, Matthias Brugger <matthias.bgg@gmail.com>
-Date: Tue, 10 Jan 2017 10:32:54 +0800
-In-Reply-To: <20170109113621.31d384c9@endymion>
-References: <20170109113621.31d384c9@endymion>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 0/5] add support for Allwinner V3s SoC
+Date: Tue,  3 Jan 2017 23:16:24 +0800
+Message-Id: <20170103151629.19447-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Return-Path: jamesjj.liao@mediatek.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jean,
+Allwinner produced a single-core Cortex-A7 SoC, V3s, with integrated 64MiB DDR2
+DRAM, and in LQFP package. With such a package, it has been easier for hackers
+to DIY a board (no BGA needed, and no DRAM wiring needed).
 
-On Mon, 2017-01-09 at 11:36 +0100, Jean Delvare wrote:
-> If I say "no" to "Clock driver for Mediatek MT2701", I don't want to
-> be asked individually about each sub-driver. No means no.
-> 
-> Additionally, this driver shouldn't be proposed at all on non-mediatek
-> builds, unless build-testing.
-> 
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
-> Cc: Shunli Wang <shunli.wang@mediatek.com>
-> Cc: James Liao <jamesjj.liao@mediatek.com>
-> Cc: Erin Lo <erin.lo@mediatek.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Add support for this SoC, as well as one board with it (Lichee Pi Zero).
 
-Reviewed-by: James Liao <jamesjj.liao@mediatek.com>
+Icenowy Zheng (5):
+  arm: sunxi: add support for V3s SoC
+  clk: sunxi-ng: add support for V3s CCU
+  pinctrl: sunxi: add driver for V3s SoC
+  ARM: dts: sunxi: add dtsi file for V3s SoC
+  ARM: dts: sunxi: add support for Lichee Pi Zero board
 
-> ---
-> As a side note, is there any rationale for splitting this driver into
-> that many small sub-drivers? Looks overengineered to me.
+ Documentation/arm/sunxi/README                |   4 +
+ arch/arm/boot/dts/Makefile                    |   3 +-
+ arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts |  73 ++++
+ arch/arm/boot/dts/sun8i-v3s.dtsi              | 257 +++++++++++
+ arch/arm/mach-sunxi/sunxi.c                   |   1 +
+ drivers/clk/sunxi-ng/Kconfig                  |  11 +
+ drivers/clk/sunxi-ng/Makefile                 |   1 +
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c          | 590 ++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.h          |  63 +++
+ drivers/pinctrl/sunxi/Kconfig                 |   4 +
+ drivers/pinctrl/sunxi/Makefile                |   1 +
+ drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c     | 321 ++++++++++++++
+ include/dt-bindings/clock/sun8i-v3s-ccu.h     | 107 +++++
+ include/dt-bindings/reset/sun8i-v3s-ccu.h     |  78 ++++
+ 14 files changed, 1513 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+ create mode 100644 arch/arm/boot/dts/sun8i-v3s.dtsi
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-v3s.h
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
+ create mode 100644 include/dt-bindings/clock/sun8i-v3s-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun8i-v3s-ccu.h
 
-These are 'subsystem' clocks and can be controlled only if their
-corresponding drivers are ready to control power domains and clocks.
+-- 
+2.11.0
 
-> As another side note, I wonder why so many clock drivers have
-> "COMMON" in their symbol names. Looks wrong to me.
 
-CCF (Common Clock Framework) uses option 'COMMON_CLK', so CCF platform
-drivers use 'COMMON_CLK_' to be their option prefix.
-
->  drivers/clk/mediatek/Kconfig |   13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> --- linux-4.10-rc2.orig/drivers/clk/mediatek/Kconfig	2017-01-01 23:31:53.000000000 +0100
-> +++ linux-4.10-rc2/drivers/clk/mediatek/Kconfig	2017-01-09 11:17:37.542344083 +0100
-> @@ -8,6 +8,7 @@ config COMMON_CLK_MEDIATEK
->  
->  config COMMON_CLK_MT2701
->  	bool "Clock driver for Mediatek MT2701"
-> +	depends on ARCH_MEDIATEK || COMPILE_TEST
->  	select COMMON_CLK_MEDIATEK
->  	default ARCH_MEDIATEK
->  	---help---
-> @@ -15,37 +16,37 @@ config COMMON_CLK_MT2701
->  
->  config COMMON_CLK_MT2701_MMSYS
->  	bool "Clock driver for Mediatek MT2701 mmsys"
-> -	select COMMON_CLK_MT2701
-> +	depends on COMMON_CLK_MT2701
->  	---help---
->  	  This driver supports Mediatek MT2701 mmsys clocks.
->  
->  config COMMON_CLK_MT2701_IMGSYS
->  	bool "Clock driver for Mediatek MT2701 imgsys"
-> -	select COMMON_CLK_MT2701
-> +	depends on COMMON_CLK_MT2701
->  	---help---
->  	  This driver supports Mediatek MT2701 imgsys clocks.
->  
->  config COMMON_CLK_MT2701_VDECSYS
->  	bool "Clock driver for Mediatek MT2701 vdecsys"
-> -	select COMMON_CLK_MT2701
-> +	depends on COMMON_CLK_MT2701
->  	---help---
->  	  This driver supports Mediatek MT2701 vdecsys clocks.
->  
->  config COMMON_CLK_MT2701_HIFSYS
->  	bool "Clock driver for Mediatek MT2701 hifsys"
-> -	select COMMON_CLK_MT2701
-> +	depends on COMMON_CLK_MT2701
->  	---help---
->  	  This driver supports Mediatek MT2701 hifsys clocks.
->  
->  config COMMON_CLK_MT2701_ETHSYS
->  	bool "Clock driver for Mediatek MT2701 ethsys"
-> -	select COMMON_CLK_MT2701
-> +	depends on COMMON_CLK_MT2701
->  	---help---
->  	  This driver supports Mediatek MT2701 ethsys clocks.
->  
->  config COMMON_CLK_MT2701_BDPSYS
->  	bool "Clock driver for Mediatek MT2701 bdpsys"
-> -	select COMMON_CLK_MT2701
-> +	depends on COMMON_CLK_MT2701
->  	---help---
->  	  This driver supports Mediatek MT2701 bdpsys clocks.
->  
-> 
-> 
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
