@@ -1,405 +1,90 @@
-Return-Path: <alexandre.torgue@st.com>
-Subject: Re: [PATCH 4/4] dt-bindings: mfd: Add STM32F7 RCC numeric constants
- into DT include file
-To: <gabriel.fernandez@st.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd
- Bergmann <arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-References: <1483711165-17149-1-git-send-email-gabriel.fernandez@st.com>
- <1483711165-17149-5-git-send-email-gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <59ec2422-b892-3f36-196f-1ec2ee11b3cc@st.com>
-Date: Tue, 10 Jan 2017 11:21:25 +0100
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 3 Jan 2017 11:48:25 -0600
+From: Rob Herring <robh@kernel.org>
+To: Bai Ping <ping.bai@nxp.com>
+Cc: shawnguo@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org,
+	mark.rutland@arm.com, linus.walleij@linaro.org,
+	kernel@pengutronix.de, fabio.estevam@nxp.com,
+	daniel.lezcano@linaro.org, tglx@linutronix.de,
+	p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, jacky.baip@gmail.com
+Subject: Re: [PATCH v2 03/12] Document: dt: binding: imx: update clock doc
+ for imx6sll
+Message-ID: <20170103174825.sbw5pjvejjm46mbm@rob-hp-laptop>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-4-git-send-email-ping.bai@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1483711165-17149-5-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1482832070-22668-4-git-send-email-ping.bai@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Gabriel
+On Tue, Dec 27, 2016 at 05:47:41PM +0800, Bai Ping wrote:
+> Add clock binding doc uppdate for imx6sll.
 
-On 01/06/2017 02:59 PM, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->
-> This patch lists STM32F7's RCC numeric constants.
-> It will be used by clock and reset drivers, and DT bindings.
->
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+s/uppdate/update/
 
-can you please split this commit ? (one part for binding and another for DT)
-
-Thanks in advance
-Alex
-
-
+> 
+> Signed-off-by: Bai Ping <ping.bai@nxp.com>
 > ---
->  arch/arm/boot/dts/stm32f746.dtsi      |  51 ++++++++--------
->  include/dt-bindings/mfd/stm32f7-rcc.h | 112 ++++++++++++++++++++++++++++++++++
->  2 files changed, 138 insertions(+), 25 deletions(-)
->  create mode 100644 include/dt-bindings/mfd/stm32f7-rcc.h
->
-> diff --git a/arch/arm/boot/dts/stm32f746.dtsi b/arch/arm/boot/dts/stm32f746.dtsi
-> index e05e131..09d6649 100644
-> --- a/arch/arm/boot/dts/stm32f746.dtsi
-> +++ b/arch/arm/boot/dts/stm32f746.dtsi
-> @@ -44,6 +44,7 @@
->  #include "armv7-m.dtsi"
->  #include <dt-bindings/pinctrl/stm32f746-pinfunc.h>
->  #include <dt-bindings/clock/stm32fx-clock.h>
-> +#include <dt-bindings/mfd/stm32f7-rcc.h>
->
->  / {
->  	clocks {
-> @@ -77,7 +78,7 @@
->  			compatible = "st,stm32-timer";
->  			reg = <0x40000000 0x400>;
->  			interrupts = <28>;
-> -			clocks = <&rcc 0 128>;
-> +			clocks = <&rcc 0 STM32F7_APB1_CLOCK(TIM2)>;
->  			status = "disabled";
->  		};
->
-> @@ -85,7 +86,7 @@
->  			compatible = "st,stm32-timer";
->  			reg = <0x40000400 0x400>;
->  			interrupts = <29>;
-> -			clocks = <&rcc 0 129>;
-> +			clocks = <&rcc 0 STM32F7_APB1_CLOCK(TIM3)>;
->  			status = "disabled";
->  		};
->
-> @@ -93,7 +94,7 @@
->  			compatible = "st,stm32-timer";
->  			reg = <0x40000800 0x400>;
->  			interrupts = <30>;
-> -			clocks = <&rcc 0 130>;
-> +			clocks = <&rcc 0 STM32F7_APB1_CLOCK(TIM4)>;
->  			status = "disabled";
->  		};
->
-> @@ -101,14 +102,14 @@
->  			compatible = "st,stm32-timer";
->  			reg = <0x40000c00 0x400>;
->  			interrupts = <50>;
-> -			clocks = <&rcc 0 131>;
-> +			clocks = <&rcc 0 STM32F7_APB1_CLOCK(TIM5)>;
->  		};
->
->  		timer6: timer@40001000 {
->  			compatible = "st,stm32-timer";
->  			reg = <0x40001000 0x400>;
->  			interrupts = <54>;
-> -			clocks = <&rcc 0 132>;
-> +			clocks = <&rcc 0 STM32F7_APB1_CLOCK(TIM6)>;
->  			status = "disabled";
->  		};
->
-> @@ -116,7 +117,7 @@
->  			compatible = "st,stm32-timer";
->  			reg = <0x40001400 0x400>;
->  			interrupts = <55>;
-> -			clocks = <&rcc 0 133>;
-> +			clocks = <&rcc 0 STM32F7_APB1_CLOCK(TIM7)>;
->  			status = "disabled";
->  		};
->
-> @@ -124,7 +125,7 @@
->  			compatible = "st,stm32f7-usart", "st,stm32f7-uart";
->  			reg = <0x40004400 0x400>;
->  			interrupts = <38>;
-> -			clocks =  <&rcc 0 145>;
-> +			clocks = <&rcc 1 CLK_USART2>;
->  			status = "disabled";
->  		};
->
-> @@ -132,7 +133,7 @@
->  			compatible = "st,stm32f7-usart", "st,stm32f7-uart";
->  			reg = <0x40004800 0x400>;
->  			interrupts = <39>;
-> -			clocks = <&rcc 0 146>;
-> +			clocks = <&rcc 1 CLK_USART3>;
->  			status = "disabled";
->  		};
->
-> @@ -140,7 +141,7 @@
->  			compatible = "st,stm32f7-uart";
->  			reg = <0x40004c00 0x400>;
->  			interrupts = <52>;
-> -			clocks = <&rcc 0 147>;
-> +			clocks = <&rcc 1 CLK_UART4>;
->  			status = "disabled";
->  		};
->
-> @@ -148,7 +149,7 @@
->  			compatible = "st,stm32f7-uart";
->  			reg = <0x40005000 0x400>;
->  			interrupts = <53>;
-> -			clocks = <&rcc 0 148>;
-> +			clocks = <&rcc 1 CLK_UART5>;
->  			status = "disabled";
->  		};
->
-> @@ -156,7 +157,7 @@
->  			compatible = "st,stm32f7-usart", "st,stm32f7-uart";
->  			reg = <0x40007800 0x400>;
->  			interrupts = <82>;
-> -			clocks = <&rcc 0 158>;
-> +			clocks = <&rcc 1 CLK_UART7>;
->  			status = "disabled";
->  		};
->
-> @@ -164,7 +165,7 @@
->  			compatible = "st,stm32f7-usart", "st,stm32f7-uart";
->  			reg = <0x40007c00 0x400>;
->  			interrupts = <83>;
-> -			clocks = <&rcc 0 159>;
-> +			clocks = <&rcc 1 CLK_UART8>;
->  			status = "disabled";
->  		};
->
-> @@ -172,7 +173,7 @@
->  			compatible = "st,stm32f7-usart", "st,stm32f7-uart";
->  			reg = <0x40011000 0x400>;
->  			interrupts = <37>;
-> -			clocks = <&rcc 0 164>;
-> +			clocks = <&rcc 1 CLK_USART1>;
->  			status = "disabled";
->  		};
->
-> @@ -180,7 +181,7 @@
->  			compatible = "st,stm32f7-usart", "st,stm32f7-uart";
->  			reg = <0x40011400 0x400>;
->  			interrupts = <71>;
-> -			clocks = <&rcc 0 165>;
-> +			clocks = <&rcc 1 CLK_USART6>;
->  			status = "disabled";
->  		};
->
-> @@ -215,7 +216,7 @@
->  				gpio-controller;
->  				#gpio-cells = <2>;
->  				reg = <0x0 0x400>;
-> -				clocks = <&rcc 0 256>;
-> +				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOA)>;
->  				st,bank-name = "GPIOA";
->  			};
->
-> @@ -223,7 +224,7 @@
->  				gpio-controller;
->  				#gpio-cells = <2>;
->  				reg = <0x400 0x400>;
-> -				clocks = <&rcc 0 257>;
-> +				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOB)>;
->  				st,bank-name = "GPIOB";
->  			};
->
-> @@ -231,7 +232,7 @@
->  				gpio-controller;
->  				#gpio-cells = <2>;
->  				reg = <0x800 0x400>;
-> -				clocks = <&rcc 0 258>;
-> +				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOC)>;
->  				st,bank-name = "GPIOC";
->  			};
->
-> @@ -239,7 +240,7 @@
->  				gpio-controller;
->  				#gpio-cells = <2>;
->  				reg = <0xc00 0x400>;
-> -				clocks = <&rcc 0 259>;
-> +				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOD)>;
->  				st,bank-name = "GPIOD";
->  			};
->
-> @@ -247,7 +248,7 @@
->  				gpio-controller;
->  				#gpio-cells = <2>;
->  				reg = <0x1000 0x400>;
-> -				clocks = <&rcc 0 260>;
-> +				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOE)>;
->  				st,bank-name = "GPIOE";
->  			};
->
-> @@ -255,7 +256,7 @@
->  				gpio-controller;
->  				#gpio-cells = <2>;
->  				reg = <0x1400 0x400>;
-> -				clocks = <&rcc 0 261>;
-> +				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOF)>;
->  				st,bank-name = "GPIOF";
->  			};
->
-> @@ -263,7 +264,7 @@
->  				gpio-controller;
->  				#gpio-cells = <2>;
->  				reg = <0x1800 0x400>;
-> -				clocks = <&rcc 0 262>;
-> +				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOG)>;
->  				st,bank-name = "GPIOG";
->  			};
->
-> @@ -271,7 +272,7 @@
->  				gpio-controller;
->  				#gpio-cells = <2>;
->  				reg = <0x1c00 0x400>;
-> -				clocks = <&rcc 0 263>;
-> +				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOH)>;
->  				st,bank-name = "GPIOH";
->  			};
->
-> @@ -279,7 +280,7 @@
->  				gpio-controller;
->  				#gpio-cells = <2>;
->  				reg = <0x2000 0x400>;
-> -				clocks = <&rcc 0 264>;
-> +				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOI)>;
->  				st,bank-name = "GPIOI";
->  			};
->
-> @@ -287,7 +288,7 @@
->  				gpio-controller;
->  				#gpio-cells = <2>;
->  				reg = <0x2400 0x400>;
-> -				clocks = <&rcc 0 265>;
-> +				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOJ)>;
->  				st,bank-name = "GPIOJ";
->  			};
->
-> @@ -295,7 +296,7 @@
->  				gpio-controller;
->  				#gpio-cells = <2>;
->  				reg = <0x2800 0x400>;
-> -				clocks = <&rcc 0 266>;
-> +				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOK)>;
->  				st,bank-name = "GPIOK";
->  			};
->
-> diff --git a/include/dt-bindings/mfd/stm32f7-rcc.h b/include/dt-bindings/mfd/stm32f7-rcc.h
+>  .../devicetree/bindings/clock/imx6sll-clock.txt    | 37 ++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
 > new file mode 100644
-> index 0000000..e36cc69
+> index 0000000..3a46787
 > --- /dev/null
-> +++ b/include/dt-bindings/mfd/stm32f7-rcc.h
-> @@ -0,0 +1,112 @@
-> +/*
-> + * This header provides constants for the STM32F7 RCC IP
-> + */
+> +++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> @@ -0,0 +1,37 @@
+> +* Clock bindings for Freescale i.MX6 SLL
 > +
-> +#ifndef _DT_BINDINGS_MFD_STM32F7_RCC_H
-> +#define _DT_BINDINGS_MFD_STM32F7_RCC_H
+> +Required properties:
+> +- compatible: Should be "fsl,imx6sll-ccm"
+> +- reg: Address and length of the register set
+> +- #clock-cells: Should be <1>
+> +- clocks: list of clock specifiers, must contain an entry for each required
+> +  entry in clock-names
+> +- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ipp_di1"
 > +
-> +/* AHB1 */
-> +#define STM32F7_RCC_AHB1_GPIOA		0
-> +#define STM32F7_RCC_AHB1_GPIOB		1
-> +#define STM32F7_RCC_AHB1_GPIOC		2
-> +#define STM32F7_RCC_AHB1_GPIOD		3
-> +#define STM32F7_RCC_AHB1_GPIOE		4
-> +#define STM32F7_RCC_AHB1_GPIOF		5
-> +#define STM32F7_RCC_AHB1_GPIOG		6
-> +#define STM32F7_RCC_AHB1_GPIOH		7
-> +#define STM32F7_RCC_AHB1_GPIOI		8
-> +#define STM32F7_RCC_AHB1_GPIOJ		9
-> +#define STM32F7_RCC_AHB1_GPIOK		10
-> +#define STM32F7_RCC_AHB1_CRC		12
-> +#define STM32F7_RCC_AHB1_BKPSRAM	18
-> +#define STM32F7_RCC_AHB1_DTCMRAM	20
-> +#define STM32F7_RCC_AHB1_DMA1		21
-> +#define STM32F7_RCC_AHB1_DMA2		22
-> +#define STM32F7_RCC_AHB1_DMA2D		23
-> +#define STM32F7_RCC_AHB1_ETHMAC		25
-> +#define STM32F7_RCC_AHB1_ETHMACTX	26
-> +#define STM32F7_RCC_AHB1_ETHMACRX	27
-> +#define STM32FF_RCC_AHB1_ETHMACPTP	28
-> +#define STM32F7_RCC_AHB1_OTGHS		29
-> +#define STM32F7_RCC_AHB1_OTGHSULPI	30
+> +The clock consumer should specify the desired clock by having the clock
+> +ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6sll-clock.h
+> +for the full list of i.MX6 SLL clock IDs.
 > +
-> +#define STM32F7_AHB1_RESET(bit) (STM32F7_RCC_AHB1_##bit + (0x10 * 8))
-> +#define STM32F7_AHB1_CLOCK(bit) (STM32F7_RCC_AHB1_##bit)
+> +Examples:
 > +
+> +#include <dt-bindings/clock/imx6sll-clock.h>
 > +
-> +/* AHB2 */
-> +#define STM32F7_RCC_AHB2_DCMI		0
-> +#define STM32F7_RCC_AHB2_CRYP		4
-> +#define STM32F7_RCC_AHB2_HASH		5
-> +#define STM32F7_RCC_AHB2_RNG		6
-> +#define STM32F7_RCC_AHB2_OTGFS		7
+> +clks: ccm@020c4000 {
+
+Drop leading 0s.
+
+> +		compatible = "fsl,imx6sll-ccm";
+> +		reg = <0x020c4000 0x4000>;
+> +		interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
+> +		#clock-cells = <1>;
+> +		clocks = <&ckil>, <&osc>, <&ipp_di0>, <&ipp_di1>;
+> +		clock-names = "ckil", "osc", "ipp_di0", "ipp_di1";
+> +};
 > +
-> +#define STM32F7_AHB2_RESET(bit)	(STM32F7_RCC_AHB2_##bit + (0x14 * 8))
-> +#define STM32F7_AHB2_CLOCK(bit)	(STM32F7_RCC_AHB2_##bit + 0x20)
-> +
-> +/* AHB3 */
-> +#define STM32F7_RCC_AHB3_FMC		0
-> +#define STM32F7_RCC_AHB3_QSPI		1
-> +
-> +#define STM32F7_AHB3_RESET(bit)	(STM32F7_RCC_AHB3_##bit + (0x18 * 8))
-> +#define STM32F7_AHB3_CLOCK(bit)	(STM32F7_RCC_AHB3_##bit + 0x40)
-> +
-> +/* APB1 */
-> +#define STM32F7_RCC_APB1_TIM2		0
-> +#define STM32F7_RCC_APB1_TIM3		1
-> +#define STM32F7_RCC_APB1_TIM4		2
-> +#define STM32F7_RCC_APB1_TIM5		3
-> +#define STM32F7_RCC_APB1_TIM6		4
-> +#define STM32F7_RCC_APB1_TIM7		5
-> +#define STM32F7_RCC_APB1_TIM12		6
-> +#define STM32F7_RCC_APB1_TIM13		7
-> +#define STM32F7_RCC_APB1_TIM14		8
-> +#define STM32F7_RCC_APB1_LPTIM1		9
-> +#define STM32F7_RCC_APB1_WWDG		11
-> +#define STM32F7_RCC_APB1_SPI2		14
-> +#define STM32F7_RCC_APB1_SPI3		15
-> +#define STM32F7_RCC_APB1_SPDIFRX	16
-> +#define STM32F7_RCC_APB1_UART2		17
-> +#define STM32F7_RCC_APB1_UART3		18
-> +#define STM32F7_RCC_APB1_UART4		19
-> +#define STM32F7_RCC_APB1_UART5		20
-> +#define STM32F7_RCC_APB1_I2C1		21
-> +#define STM32F7_RCC_APB1_I2C2		22
-> +#define STM32F7_RCC_APB1_I2C3		23
-> +#define STM32F7_RCC_APB1_I2C4		24
-> +#define STM32F7_RCC_APB1_CAN1		25
-> +#define STM32F7_RCC_APB1_CAN2		26
-> +#define STM32F7_RCC_APB1_CEC		27
-> +#define STM32F7_RCC_APB1_PWR		28
-> +#define STM32F7_RCC_APB1_DAC		29
-> +#define STM32F7_RCC_APB1_UART7		30
-> +#define STM32F7_RCC_APB1_UART8		31
-> +
-> +#define STM32F7_APB1_RESET(bit)	(STM32F7_RCC_APB1_##bit + (0x20 * 8))
-> +#define STM32F7_APB1_CLOCK(bit)	(STM32F7_RCC_APB1_##bit + 0x80)
-> +
-> +/* APB2 */
-> +#define STM32F7_RCC_APB2_TIM1		0
-> +#define STM32F7_RCC_APB2_TIM8		1
-> +#define STM32F7_RCC_APB2_USART1		4
-> +#define STM32F7_RCC_APB2_USART6		5
-> +#define STM32F7_RCC_APB2_ADC1		8
-> +#define STM32F7_RCC_APB2_ADC2		9
-> +#define STM32F7_RCC_APB2_ADC3		10
-> +#define STM32F7_RCC_APB2_SDMMC1		11
-> +#define STM32F7_RCC_APB2_SPI1		12
-> +#define STM32F7_RCC_APB2_SPI4		13
-> +#define STM32F7_RCC_APB2_SYSCFG		14
-> +#define STM32F7_RCC_APB2_TIM9		16
-> +#define STM32F7_RCC_APB2_TIM10		17
-> +#define STM32F7_RCC_APB2_TIM11		18
-> +#define STM32F7_RCC_APB2_SPI5		20
-> +#define STM32F7_RCC_APB2_SPI6		21
-> +#define STM32F7_RCC_APB2_SAI1		22
-> +#define STM32F7_RCC_APB2_SAI2		23
-> +#define STM32F7_RCC_APB2_LTDC		26
-> +
-> +#define STM32F7_APB2_RESET(bit)	(STM32F7_RCC_APB2_##bit + (0x24 * 8))
-> +#define STM32F7_APB2_CLOCK(bit)	(STM32F7_RCC_APB2_##bit + 0xA0)
-> +
-> +#endif /* _DT_BINDINGS_MFD_STM32F7_RCC_H */
->
+> +uart1: serial@02020000 {
+
+ditto.
+
+> +		compatible = "fsl,imx6sl-uart", "fsl,imx6q-uart", "fsl,imx21-uart";
+> +		reg = <0x02020000 0x4000>;
+> +		interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&clks IMX6SLL_CLK_UART1_IPG>,
+> +			 <&clks IMX6SLL_CLK_UART1_SERIAL>;
+> +		clock-names = "ipg", "per";
+> +		status = "disabled";
+> +};
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
