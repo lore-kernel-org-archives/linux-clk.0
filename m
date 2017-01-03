@@ -1,32 +1,34 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: dianders@google.com, linux-rockchip@lists.infradead.org, Douglas Anderson <dianders@chromium.org>, David Wu <david.wu@rock-chips.com>, Jianqun Xu <jay.xu@rock-chips.com>, devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Elaine Zhang <zhangqing@rock-chips.com>, Brian Norris <briannorris@chromium.org>, Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh+dt@kernel.org>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, Caesar Wang <wxt@rock-chips.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 0/2] Add support rockchip,grf property for RK3399 PMU/GRU
-Date: Fri, 13 Jan 2017 20:10:54 +0100
-Message-ID: <3210111.1N6x2AkRMx@phil>
-In-Reply-To: <1484028930-20305-1-git-send-email-zhengxing@rock-chips.com>
-References: <1484028930-20305-1-git-send-email-zhengxing@rock-chips.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 3 Jan 2017 14:41:21 -0600
+From: Rob Herring <robh@kernel.org>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: heiko@sntech.de, mturquette@baylibre.com, sboyd@codeaurora.org,
+	xf@rock-chips.com, mark.rutland@arm.com, linux-clk@vger.kernel.org,
+	huangtao@rock-chips.com, xxx@rock-chips.com, cl@rock-chips.com,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 2/4] dt-bindings: add bindings for rk3328 clock
+ controller
+Message-ID: <20170103204121.cmbtttx5oogfmm5y@rob-hp-laptop>
+References: <1482979511-6847-1-git-send-email-zhangqing@rock-chips.com>
+ <1482979511-6847-3-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1482979511-6847-3-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 10. Januar 2017, 14:15:28 CET schrieb Xing Zheng:
-> Hi,
->   The structure rockchip_clk_provider needs to refer the GRF regmap
-> in somewhere, if the CRU node has not "rockchip,grf" property,
-> calling syscon_regmap_lookup_by_phandle will return an invalid GRF
-> regmap, and the MUXGRF type clock will be not supported.
+On Thu, Dec 29, 2016 at 10:45:09AM +0800, Elaine Zhang wrote:
+> Add devicetree bindings for Rockchip cru which found on
+> Rockchip SoCs.
 > 
-> Therefore, we need to add them.
+> Changes in v4:
+>   dropping the "rockchip,cru" and "syscon" properties for bindings of rk3328
 > 
-> Thanks.
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  .../bindings/clock/rockchip,rk3328-cru.txt         | 57 ++++++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
 
-applied both for 4.11
-
-binding-change is in my clock-branch (so that dt-binding doc changes stay 
-together) and the dts change is of course in the dts64 branch.
-
-
-Thanks
-Heiko
+Acked-by: Rob Herring <robh@kernel.org>
