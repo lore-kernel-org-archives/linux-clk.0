@@ -1,51 +1,39 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-Subject: Re: [PATCH V6 2/2] clk: vc5: Add support for IDT VersaClock 5P49V5923
- and 5P49V5933
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <20170112010324.28068-1-marek.vasut@gmail.com>
- <20170112010324.28068-2-marek.vasut@gmail.com>
- <20170121001237.GI20800@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-renesas-soc@vger.kernel.org
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <cdad28de-e45b-8a2d-f023-45a18e165599@gmail.com>
-Date: Sat, 21 Jan 2017 01:14:32 +0100
+Return-Path: <ping.bai@nxp.com>
+From: Jacky Bai <ping.bai@nxp.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Shawn Guo <shawnguo@kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer
+	<kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "Daniel
+ Lezcano" <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk
+	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com"
+	<jacky.baip@gmail.com>
+Subject: RE: [PATCH v2 06/12] driver: pinctrl: imx: Add pinctrl driver support
+ for imx6sll
+Date: Tue, 3 Jan 2017 01:00:52 +0000
+Message-ID: <AM3PR04MB530275E01245160E8A441E5876E0@AM3PR04MB530.eurprd04.prod.outlook.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-7-git-send-email-ping.bai@nxp.com>
+ <CACRpkdZYH-X=SG7AfCOgKA9U0WL9941e-zo_tgUF74mdns2_7Q@mail.gmail.com>
+In-Reply-To: <CACRpkdZYH-X=SG7AfCOgKA9U0WL9941e-zo_tgUF74mdns2_7Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20170121001237.GI20800@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/21/2017 01:12 AM, Stephen Boyd wrote:
-> On 01/12, Marek Vasut wrote:
->> Add driver for IDT VersaClock 5 5P49V5923 and 5P49V5933 chips. These
->> chips have two clock inputs, XTAL or CLK, which are muxed into single
->> PLL/VCO input. In case of 5P49V5923, the XTAL in built into the chip
->> while the 5P49V5923 requires external XTAL.
->>
->> The PLL feeds two fractional dividers. Each fractional divider feeds
->> output mux, which allows selecting between clock from the fractional
->> divider itself or from output mux on output N-1. In case of output
->> mux 0, the output N-1 is instead connected to the output from the mux
->> feeding the PLL.
->>
->> The driver thus far supports only the 5P49V5923 and 5P49V5933, while
->> it should be easily extensible to the whole 5P49V59xx family of chips
->> as they are all pretty similar.
->>
->> Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
->> Cc: Michael Turquette <mturquette@baylibre.com>
->> Cc: Stephen Boyd <sboyd@codeaurora.org>
->> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->> Cc: linux-renesas-soc@vger.kernel.org
->> ---
-> 
-> Applied to clk-next
-> 
-Thank you :)
-
--- 
-Best regards,
-Marek Vasut
+PiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDA2LzEyXSBkcml2ZXI6IHBpbmN0cmw6IGlteDogQWRk
+IHBpbmN0cmwgZHJpdmVyIHN1cHBvcnQgZm9yDQo+IGlteDZzbGwNCj4gDQo+IE9uIFR1ZSwgRGVj
+IDI3LCAyMDE2IGF0IDEwOjQ3IEFNLCBCYWkgUGluZyA8cGluZy5iYWlAbnhwLmNvbT4gd3JvdGU6
+DQo+IA0KPiA+IEFkZCBwaW5jdHJsIGRyaXZlciBzdXBwb3J0IGZvciBpbXg2c2xsLg0KPiA+DQo+
+ID4gU2lnbmVkLW9mZi1ieTogQmFpIFBpbmcgPHBpbmcuYmFpQG54cC5jb20+DQo+ICguLi4pDQo+
+ID4gKysrIGIvYXJjaC9hcm0vbWFjaC1pbXgvS2NvbmZpZw0KPiA+IEBAIC01MTQsNiArNTE0LDcg
+QEAgY29uZmlnIFNPQ19JTVg2U0wNCj4gPg0KPiA+ICBjb25maWcgU09DX0lNWDZTTEwNCj4gPiAg
+ICAgICAgIGJvb2wgImkuTVg2IFNvbG9MaXRlTGl0ZSBzdXBwb3J0Ig0KPiA+ICsgICAgICAgc2Vs
+ZWN0IFBJTkNUUkxfSU1YNlNMTA0KPiANCj4gVGhpcyBuZWVkcyB0byBiZSBzZXBhcmF0ZSBzbyBJ
+IGNhbiBtZXJnZSB0aGUgcHVyZSBwaW4gY29udHJvbCBwYXRjaCB0byBteSB0cmVlLg0KPiANCj4g
+QXBhcnQgZnJvbSB0aGF0LCBsb29rIGludG8gdXNpbmcgZ2VuZXJpYyBwaW5jb25mLg0KPiANCg0K
+VGhhbmtzIGZvciByZXZpZXcsIEkgd2lsbCB0cnkgdG8gdXNlIGdlbmVyaWMgcGluY29uZg0KDQoN
+Cj4gWW91cnMsDQo+IExpbnVzIFdhbGxlaWoNCg==
