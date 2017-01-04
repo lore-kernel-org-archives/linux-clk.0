@@ -1,964 +1,423 @@
 Return-Path: <gregory.clement@free-electrons.com>
 From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: [PATCH v5 07/12] mmc: sdhci-xenon: Add support to PHYs of Marvell Xenon SDHC.
-Date: Wed, 11 Jan 2017 18:19:10 +0100
-Message-Id: <130ccd5a0fe4f822b954e0256c9dccec0b6ca523.1484154449.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: linux-arm-kernel@lists.infradead.org,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  Russell King <rmk+kernel@arm.linux.org.uk>,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/5] clk: mvebu: support for 98DX3236 SoC
+References: <20161222041328.3303-1-chris.packham@alliedtelesis.co.nz>
+	<20161222041328.3303-2-chris.packham@alliedtelesis.co.nz>
+Date: Wed, 04 Jan 2017 18:32:08 +0100
+In-Reply-To: <20161222041328.3303-2-chris.packham@alliedtelesis.co.nz> (Chris
+	Packham's message of "Thu, 22 Dec 2016 17:13:24 +1300")
+Message-ID: <87o9zmenon.fsf@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Hu Ziji <huziji@marvell.com>
+Hi Chris,
+=20
+ On jeu., d=C3=A9c. 22 2016, Chris Packham <chris.packham@alliedtelesis.co.=
+nz> wrote:
 
-Marvell Xenon eMMC/SD/SDIO Host Controller contains PHY.
-Multiple types of PHYs are supported.
+> The 98DX3236, 98DX3336, 98DX4521 and variants have a different TCLK from
+> the Armada XP (200MHz vs 250MHz). The CPU core clock is fixed at 800MHz.
+>
+> The clock gating options are a subset of those on the Armada XP.
+>
+> The core clock divider is different to the Armada XP also.
 
-Add support to multiple types of PHYs init and configuration.
-Add register definitions of PHYs.
+This patch looks good, however you should update the device tree binding
+documentation too.
 
-Xenon PHY cannot fit in kernel common PHY framework.
-Xenon SDHC PHY register is a part of Xenon SDHC register set.
-Besides, MMC initialization has to call several PHY functions to
-complete timing setting.
-Those PHY setting functions have to access SDHC registers and know
-current MMC setting, such as bus width, clock frequency and
-speed mode.
-As a result, implement Xenon PHY in MMC host directory.
+Thanks,
 
-Signed-off-by: Hu Ziji <huziji@marvell.com>
-Tested-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/mmc/host/Makefile          |   2 +-
- drivers/mmc/host/sdhci-xenon-phy.c | 790 ++++++++++++++++++++++++++++++-
- drivers/mmc/host/sdhci-xenon.c     |   3 +-
- drivers/mmc/host/sdhci-xenon.h     |  37 +-
- 4 files changed, 830 insertions(+), 2 deletions(-)
- create mode 100644 drivers/mmc/host/sdhci-xenon-phy.c
+Gregory
 
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index b0a2ab4b256e..893b48db5513 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -84,4 +84,4 @@ ifeq ($(CONFIG_CB710_DEBUG),y)
- endif
- 
- obj-$(CONFIG_MMC_SDHCI_XENON)	+= sdhci-xenon-driver.o
--sdhci-xenon-driver-y		+= sdhci-xenon.o
-+sdhci-xenon-driver-y		+= sdhci-xenon.o sdhci-xenon-phy.o
-diff --git a/drivers/mmc/host/sdhci-xenon-phy.c b/drivers/mmc/host/sdhci-xenon-phy.c
-new file mode 100644
-index 000000000000..f410712d24ea
---- /dev/null
-+++ b/drivers/mmc/host/sdhci-xenon-phy.c
-@@ -0,0 +1,790 @@
-+/*
-+ * PHY support for Xenon SDHC
-+ *
-+ * Copyright (C) 2016 Marvell, All Rights Reserved.
-+ *
-+ * Author:	Hu Ziji <huziji@marvell.com>
-+ * Date:	2016-8-24
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation version 2.
-+ */
-+
-+#include <linux/slab.h>
-+#include <linux/delay.h>
-+#include <linux/of_address.h>
-+
-+#include "sdhci-pltfm.h"
-+#include "sdhci-xenon.h"
-+
-+/* Register base for eMMC PHY 5.0 Version */
-+#define XENON_EMMC_5_0_PHY_REG_BASE		0x0160
-+/* Register base for eMMC PHY 5.1 Version */
-+#define XENON_EMMC_PHY_REG_BASE			0x0170
-+
-+#define XENON_EMMC_PHY_TIMING_ADJUST		XENON_EMMC_PHY_REG_BASE
-+#define XENON_EMMC_5_0_PHY_TIMING_ADJUST	XENON_EMMC_5_0_PHY_REG_BASE
-+#define XENON_TIMING_ADJUST_SLOW_MODE		BIT(29)
-+#define XENON_TIMING_ADJUST_SDIO_MODE		BIT(28)
-+#define XENON_OUTPUT_QSN_PHASE_SELECT		BIT(17)
-+#define XENON_SAMPL_INV_QSP_PHASE_SELECT	BIT(18)
-+#define XENON_SAMPL_INV_QSP_PHASE_SELECT_SHIFT	18
-+#define XENON_PHY_INITIALIZAION			BIT(31)
-+#define XENON_WAIT_CYCLE_BEFORE_USING_MASK	0xF
-+#define XENON_WAIT_CYCLE_BEFORE_USING_SHIFT	12
-+#define XENON_FC_SYNC_EN_DURATION_MASK		0xF
-+#define XENON_FC_SYNC_EN_DURATION_SHIFT		8
-+#define XENON_FC_SYNC_RST_EN_DURATION_MASK	0xF
-+#define XENON_FC_SYNC_RST_EN_DURATION_SHIFT	4
-+#define XENON_FC_SYNC_RST_DURATION_MASK		0xF
-+#define XENON_FC_SYNC_RST_DURATION_SHIFT	0
-+
-+#define XENON_EMMC_PHY_FUNC_CONTROL		(XENON_EMMC_PHY_REG_BASE + 0x4)
-+#define XENON_EMMC_5_0_PHY_FUNC_CONTROL		\
-+	(XENON_EMMC_5_0_PHY_REG_BASE + 0x4)
-+#define XENON_ASYNC_DDRMODE_MASK		BIT(23)
-+#define XENON_ASYNC_DDRMODE_SHIFT		23
-+#define XENON_CMD_DDR_MODE			BIT(16)
-+#define XENON_DQ_DDR_MODE_SHIFT			8
-+#define XENON_DQ_DDR_MODE_MASK			0xFF
-+#define XENON_DQ_ASYNC_MODE			BIT(4)
-+
-+#define XENON_EMMC_PHY_PAD_CONTROL		(XENON_EMMC_PHY_REG_BASE + 0x8)
-+#define XENON_EMMC_5_0_PHY_PAD_CONTROL		\
-+	(XENON_EMMC_5_0_PHY_REG_BASE + 0x8)
-+#define XENON_REC_EN_SHIFT			24
-+#define XENON_REC_EN_MASK			0xF
-+#define XENON_FC_DQ_RECEN			BIT(24)
-+#define XENON_FC_CMD_RECEN			BIT(25)
-+#define XENON_FC_QSP_RECEN			BIT(26)
-+#define XENON_FC_QSN_RECEN			BIT(27)
-+#define XENON_OEN_QSN				BIT(28)
-+#define XENON_AUTO_RECEN_CTRL			BIT(30)
-+#define XENON_FC_ALL_CMOS_RECEIVER		0xF000
-+
-+#define XENON_EMMC5_FC_QSP_PD			BIT(18)
-+#define XENON_EMMC5_FC_QSP_PU			BIT(22)
-+#define XENON_EMMC5_FC_CMD_PD			BIT(17)
-+#define XENON_EMMC5_FC_CMD_PU			BIT(21)
-+#define XENON_EMMC5_FC_DQ_PD			BIT(16)
-+#define XENON_EMMC5_FC_DQ_PU			BIT(20)
-+
-+#define XENON_EMMC_PHY_PAD_CONTROL1		(XENON_EMMC_PHY_REG_BASE + 0xC)
-+#define XENON_EMMC5_1_FC_QSP_PD			BIT(9)
-+#define XENON_EMMC5_1_FC_QSP_PU			BIT(25)
-+#define XENON_EMMC5_1_FC_CMD_PD			BIT(8)
-+#define XENON_EMMC5_1_FC_CMD_PU			BIT(24)
-+#define XENON_EMMC5_1_FC_DQ_PD			0xFF
-+#define XENON_EMMC5_1_FC_DQ_PU			(0xFF << 16)
-+
-+#define XENON_EMMC_PHY_PAD_CONTROL2		(XENON_EMMC_PHY_REG_BASE + 0x10)
-+#define XENON_EMMC_5_0_PHY_PAD_CONTROL2		\
-+	(XENON_EMMC_5_0_PHY_REG_BASE + 0xC)
-+#define XENON_ZNR_MASK				0x1F
-+#define XENON_ZNR_SHIFT				8
-+#define XENON_ZPR_MASK				0x1F
-+/* Perferred ZNR and ZPR value vary between different boards.
-+ * The specific ZNR and ZPR value should be defined here
-+ * according to board actual timing.
-+ */
-+#define XENON_ZNR_DEF_VALUE			0xF
-+#define XENON_ZPR_DEF_VALUE			0xF
-+
-+#define XENON_EMMC_PHY_DLL_CONTROL		(XENON_EMMC_PHY_REG_BASE + 0x14)
-+#define XENON_EMMC_5_0_PHY_DLL_CONTROL		\
-+	(XENON_EMMC_5_0_PHY_REG_BASE + 0x10)
-+#define XENON_DLL_ENABLE			BIT(31)
-+#define XENON_DLL_UPDATE_STROBE_5_0		BIT(30)
-+#define XENON_DLL_REFCLK_SEL			BIT(30)
-+#define XENON_DLL_UPDATE			BIT(23)
-+#define XENON_DLL_PHSEL1_SHIFT			24
-+#define XENON_DLL_PHSEL0_SHIFT			16
-+#define XENON_DLL_PHASE_MASK			0x3F
-+#define XENON_DLL_PHASE_90_DEGREE		0x1F
-+#define XENON_DLL_FAST_LOCK			BIT(5)
-+#define XENON_DLL_GAIN2X			BIT(3)
-+#define XENON_DLL_BYPASS_EN			BIT(0)
-+
-+#define XENON_EMMC_5_0_PHY_LOGIC_TIMING_ADJUST	\
-+	(XENON_EMMC_5_0_PHY_REG_BASE + 0x14)
-+#define XENON_EMMC_PHY_LOGIC_TIMING_ADJUST	(XENON_EMMC_PHY_REG_BASE + 0x18)
-+#define XENON_LOGIC_TIMING_VALUE		0x00AA8977
-+
-+/*
-+ * List offset of PHY registers and some special register values
-+ * in eMMC PHY 5.0 or eMMC PHY 5.1
-+ */
-+struct xenon_emmc_phy_regs {
-+	/* Offset of Timing Adjust register */
-+	u16 timing_adj;
-+	/* Offset of Func Control register */
-+	u16 func_ctrl;
-+	/* Offset of Pad Control register */
-+	u16 pad_ctrl;
-+	/* Offset of Pad Control register 2 */
-+	u16 pad_ctrl2;
-+	/* Offset of DLL Control register */
-+	u16 dll_ctrl;
-+	/* Offset of Logic Timing Adjust register */
-+	u16 logic_timing_adj;
-+	/* DLL Update Enable bit */
-+	u32 dll_update;
-+};
-+
-+static const char * const phy_types[] = {
-+	"emmc 5.0 phy",
-+	"emmc 5.1 phy"
-+};
-+
-+enum phy_type_enum {
-+	EMMC_5_0_PHY,
-+	EMMC_5_1_PHY,
-+	NR_PHY_TYPES
-+};
-+
-+static struct xenon_emmc_phy_regs xenon_emmc_5_0_phy_regs = {
-+	.timing_adj	= XENON_EMMC_5_0_PHY_TIMING_ADJUST,
-+	.func_ctrl	= XENON_EMMC_5_0_PHY_FUNC_CONTROL,
-+	.pad_ctrl	= XENON_EMMC_5_0_PHY_PAD_CONTROL,
-+	.pad_ctrl2	= XENON_EMMC_5_0_PHY_PAD_CONTROL2,
-+	.dll_ctrl	= XENON_EMMC_5_0_PHY_DLL_CONTROL,
-+	.logic_timing_adj = XENON_EMMC_5_0_PHY_LOGIC_TIMING_ADJUST,
-+	.dll_update	= XENON_DLL_UPDATE_STROBE_5_0,
-+};
-+
-+static struct xenon_emmc_phy_regs xenon_emmc_5_1_phy_regs = {
-+	.timing_adj	= XENON_EMMC_PHY_TIMING_ADJUST,
-+	.func_ctrl	= XENON_EMMC_PHY_FUNC_CONTROL,
-+	.pad_ctrl	= XENON_EMMC_PHY_PAD_CONTROL,
-+	.pad_ctrl2	= XENON_EMMC_PHY_PAD_CONTROL2,
-+	.dll_ctrl	= XENON_EMMC_PHY_DLL_CONTROL,
-+	.logic_timing_adj = XENON_EMMC_PHY_LOGIC_TIMING_ADJUST,
-+	.dll_update	= XENON_DLL_UPDATE,
-+};
-+
-+/*
-+ * eMMC PHY configuration and operations
-+ */
-+struct emmc_phy_params {
-+	bool	slow_mode;
-+
-+	u8	znr;
-+	u8	zpr;
-+
-+	/* Nr of consecutive Sampling Points of a Valid Sampling Window */
-+	u8	nr_tun_times;
-+	/* Divider for calculating Tuning Step */
-+	u8	tun_step_divider;
-+};
-+
-+static int alloc_emmc_phy(struct sdhci_xenon_priv *priv)
-+{
-+	struct emmc_phy_params *params;
-+
-+	params = kzalloc(sizeof(*params), GFP_KERNEL);
-+	if (!params)
-+		return -ENOMEM;
-+
-+	priv->phy_params = params;
-+	if (priv->phy_type == EMMC_5_0_PHY)
-+		priv->emmc_phy_regs = &xenon_emmc_5_0_phy_regs;
-+	else
-+		priv->emmc_phy_regs = &xenon_emmc_5_1_phy_regs;
-+
-+	return 0;
-+}
-+
-+/*
-+ * eMMC 5.0/5.1 PHY init/re-init.
-+ * eMMC PHY init should be executed after:
-+ * 1. SDCLK frequecny changes.
-+ * 2. SDCLK is stopped and re-enabled.
-+ * 3. config in emmc_phy_regs->timing_adj and emmc_phy_regs->func_ctrl
-+ * are changed
-+ */
-+static int emmc_phy_init(struct sdhci_host *host)
-+{
-+	u32 reg;
-+	u32 wait, clock;
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	struct xenon_emmc_phy_regs *phy_regs = priv->emmc_phy_regs;
-+
-+	reg = sdhci_readl(host, phy_regs->timing_adj);
-+	reg |= XENON_PHY_INITIALIZAION;
-+	sdhci_writel(host, reg, phy_regs->timing_adj);
-+
-+	/* Add duration of FC_SYNC_RST */
-+	wait = ((reg >> XENON_FC_SYNC_RST_DURATION_SHIFT) &
-+			XENON_FC_SYNC_RST_DURATION_MASK);
-+	/* Add interval between FC_SYNC_EN and FC_SYNC_RST */
-+	wait += ((reg >> XENON_FC_SYNC_RST_EN_DURATION_SHIFT) &
-+			XENON_FC_SYNC_RST_EN_DURATION_MASK);
-+	/* Add duration of asserting FC_SYNC_EN */
-+	wait += ((reg >> XENON_FC_SYNC_EN_DURATION_SHIFT) &
-+			XENON_FC_SYNC_EN_DURATION_MASK);
-+	/* Add duration of waiting for PHY */
-+	wait += ((reg >> XENON_WAIT_CYCLE_BEFORE_USING_SHIFT) &
-+			XENON_WAIT_CYCLE_BEFORE_USING_MASK);
-+	/* 4 addtional bus clock and 4 AXI bus clock are required */
-+	wait += 8;
-+	wait <<= 20;
-+
-+	clock = host->clock;
-+	if (!clock)
-+		/* Use the possibly slowest bus frequency value */
-+		clock = XENON_LOWEST_SDCLK_FREQ;
-+	/* get the wait time */
-+	wait /= clock;
-+	wait++;
-+	/* wait for host eMMC PHY init completes */
-+	udelay(wait);
-+
-+	reg = sdhci_readl(host, phy_regs->timing_adj);
-+	reg &= XENON_PHY_INITIALIZAION;
-+	if (reg) {
-+		dev_err(mmc_dev(host->mmc), "eMMC PHY init cannot complete after %d us\n",
-+			wait);
-+		return -ETIMEDOUT;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Enable eMMC PHY HW DLL
-+ * DLL should be enabled and stable before HS200/SDR104 tuning,
-+ * and before HS400 data strobe setting.
-+ */
-+static int emmc_phy_enable_dll(struct sdhci_host *host)
-+{
-+	u32 reg;
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	struct xenon_emmc_phy_regs *phy_regs = priv->emmc_phy_regs;
-+	u8 timeout;
-+
-+	if (WARN_ON(host->clock <= MMC_HIGH_52_MAX_DTR))
-+		return -EINVAL;
-+
-+	reg = sdhci_readl(host, phy_regs->dll_ctrl);
-+	if (reg & XENON_DLL_ENABLE)
-+		return 0;
-+
-+	/* Enable DLL */
-+	reg = sdhci_readl(host, phy_regs->dll_ctrl);
-+	reg |= (XENON_DLL_ENABLE | XENON_DLL_FAST_LOCK);
-+
-+	/*
-+	 * Set Phase as 90 degree, which is most common value.
-+	 * Might set another value if necessary.
-+	 * The granularity is 1 degree.
-+	 */
-+	reg &= ~((XENON_DLL_PHASE_MASK << XENON_DLL_PHSEL0_SHIFT) |
-+		 (XENON_DLL_PHASE_MASK << XENON_DLL_PHSEL1_SHIFT));
-+	reg |= ((XENON_DLL_PHASE_90_DEGREE << XENON_DLL_PHSEL0_SHIFT) |
-+		(XENON_DLL_PHASE_90_DEGREE << XENON_DLL_PHSEL1_SHIFT));
-+
-+	reg &= ~XENON_DLL_BYPASS_EN;
-+	reg |= phy_regs->dll_update;
-+	if (priv->phy_type == EMMC_5_1_PHY)
-+		reg &= ~XENON_DLL_REFCLK_SEL;
-+	sdhci_writel(host, reg, phy_regs->dll_ctrl);
-+
-+	/* Wait max 32 ms */
-+	timeout = 32;
-+	while (!(sdhci_readw(host, XENON_SLOT_EXT_PRESENT_STATE) &
-+		XENON_DLL_LOCK_STATE)) {
-+		if (!timeout) {
-+			dev_err(mmc_dev(host->mmc), "Wait for DLL Lock time-out\n");
-+			return -ETIMEDOUT;
-+		}
-+		timeout--;
-+		mdelay(1);
-+	}
-+	return 0;
-+}
-+
-+/*
-+ * Config to eMMC PHY to prepare for tuning.
-+ * Enable HW DLL and set the TUNING_STEP
-+ */
-+static int emmc_phy_config_tuning(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	struct emmc_phy_params *params = priv->phy_params;
-+	u32 reg, tuning_step;
-+	int ret;
-+	unsigned long flags;
-+
-+	if (WARN_ON(host->clock <= MMC_HIGH_52_MAX_DTR))
-+		return -EINVAL;
-+
-+	spin_lock_irqsave(&host->lock, flags);
-+
-+	ret = emmc_phy_enable_dll(host);
-+	if (ret) {
-+		spin_unlock_irqrestore(&host->lock, flags);
-+		return ret;
-+	}
-+
-+	/* Achieve TUNGING_STEP with HW DLL help */
-+	reg = sdhci_readl(host, XENON_SLOT_DLL_CUR_DLY_VAL);
-+	tuning_step = reg / params->tun_step_divider;
-+	if (unlikely(tuning_step > XENON_TUNING_STEP_MASK)) {
-+		dev_warn(mmc_dev(host->mmc),
-+			 "HS200 TUNING_STEP %d is larger than MAX value\n",
-+			 tuning_step);
-+		tuning_step = XENON_TUNING_STEP_MASK;
-+	}
-+
-+	/* Set TUNING_STEP for later tuning */
-+	reg = sdhci_readl(host, XENON_SLOT_OP_STATUS_CTRL);
-+	reg &= ~(XENON_TUN_CONSECUTIVE_TIMES_MASK <<
-+		 XENON_TUN_CONSECUTIVE_TIMES_SHIFT);
-+	reg |= (params->nr_tun_times << XENON_TUN_CONSECUTIVE_TIMES_SHIFT);
-+	reg &= ~(XENON_TUNING_STEP_MASK << XENON_TUNING_STEP_SHIFT);
-+	reg |= (tuning_step << XENON_TUNING_STEP_SHIFT);
-+	sdhci_writel(host, reg, XENON_SLOT_OP_STATUS_CTRL);
-+
-+	spin_unlock_irqrestore(&host->lock, flags);
-+	return 0;
-+}
-+
-+static void __emmc_phy_disable_data_strobe(struct sdhci_host *host)
-+{
-+	u32 reg;
-+
-+	/* Disable SDHC Data Strobe */
-+	reg = sdhci_readl(host, XENON_SLOT_EMMC_CTRL);
-+	reg &= ~XENON_ENABLE_DATA_STROBE;
-+	sdhci_writel(host, reg, XENON_SLOT_EMMC_CTRL);
-+}
-+
-+/* Set HS400 Data Strobe */
-+static void emmc_phy_strobe_delay_adj(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	unsigned long flags;
-+	u32 reg;
-+
-+	if (WARN_ON(host->timing != MMC_TIMING_MMC_HS400))
-+		return;
-+
-+	if (host->clock <= MMC_HIGH_52_MAX_DTR)
-+		return;
-+
-+	dev_dbg(mmc_dev(host->mmc), "starts HS400 strobe delay adjustment\n");
-+
-+	spin_lock_irqsave(&host->lock, flags);
-+
-+	emmc_phy_enable_dll(host);
-+
-+	/* Enable SDHC Data Strobe */
-+	reg = sdhci_readl(host, XENON_SLOT_EMMC_CTRL);
-+	reg |= XENON_ENABLE_DATA_STROBE;
-+	sdhci_writel(host, reg, XENON_SLOT_EMMC_CTRL);
-+
-+	/* Set Data Strobe Pull down */
-+	if (priv->phy_type == EMMC_5_0_PHY) {
-+		reg = sdhci_readl(host, XENON_EMMC_5_0_PHY_PAD_CONTROL);
-+		reg |= XENON_EMMC5_FC_QSP_PD;
-+		reg &= ~XENON_EMMC5_FC_QSP_PU;
-+		sdhci_writel(host, reg, XENON_EMMC_5_0_PHY_PAD_CONTROL);
-+	} else {
-+		reg = sdhci_readl(host, XENON_EMMC_PHY_PAD_CONTROL1);
-+		reg |= XENON_EMMC5_1_FC_QSP_PD;
-+		reg &= ~XENON_EMMC5_1_FC_QSP_PU;
-+		sdhci_writel(host, reg, XENON_EMMC_PHY_PAD_CONTROL1);
-+	}
-+	spin_unlock_irqrestore(&host->lock, flags);
-+}
-+
-+static inline bool temp_stage_hs200_to_hs400(struct sdhci_host *host,
-+					     struct sdhci_xenon_priv *priv)
-+{
-+	/*
-+	 * Tmep stages from HS200 to HS400
-+	 * from HS200 to HS in 200MHz
-+	 * from 200MHz to 52MHz
-+	 */
-+	if (((priv->timing == MMC_TIMING_MMC_HS200) &&
-+	     (host->timing == MMC_TIMING_MMC_HS)) ||
-+	    ((host->timing == MMC_TIMING_MMC_HS) &&
-+	     (priv->clock > host->clock)))
-+		return true;
-+
-+	return false;
-+}
-+
-+static inline bool temp_stage_hs400_to_h200(struct sdhci_host *host,
-+					    struct sdhci_xenon_priv *priv)
-+{
-+	/*
-+	 * Temp stages from HS400 t0 HS200:
-+	 * from 200MHz to 52MHz in HS400
-+	 * from HS400 to HS DDR in 52MHz
-+	 * from HS DDR to HS in 52MHz
-+	 * from HS to HS200 in 52MHz
-+	 */
-+	if (((priv->timing == MMC_TIMING_MMC_HS400) &&
-+	     ((host->clock == MMC_HIGH_52_MAX_DTR) ||
-+	      (host->timing == MMC_TIMING_MMC_DDR52))) ||
-+	    ((priv->timing == MMC_TIMING_MMC_DDR52) &&
-+	     (host->timing == MMC_TIMING_MMC_HS)) ||
-+	    ((host->timing == MMC_TIMING_MMC_HS200) &&
-+	     (host->clock == MMC_HIGH_52_MAX_DTR)))
-+		return true;
-+
-+	return false;
-+}
-+
-+/*
-+ * If eMMC PHY Slow Mode is required in lower speed mode in SDR mode
-+ * (SDLCK < 55MHz), enable Slow Mode to bypass eMMC PHY.
-+ * SDIO slower SDR mode also requires Slow Mode.
-+ *
-+ * If Slow Mode is enabled, return true.
-+ * Otherwise, return false.
-+ */
-+static bool emmc_phy_slow_mode(struct sdhci_host *host,
-+			       unsigned char timing)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	struct emmc_phy_params *params = priv->phy_params;
-+	struct xenon_emmc_phy_regs *phy_regs = priv->emmc_phy_regs;
-+	u32 reg;
-+
-+	/* Skip temp stages from HS200 to HS400 */
-+	if (temp_stage_hs200_to_hs400(host, priv))
-+		return false;
-+
-+	/* Skip temp stages from HS400 t0 HS200 */
-+	if (temp_stage_hs400_to_h200(host, priv))
-+		return false;
-+
-+	reg = sdhci_readl(host, phy_regs->timing_adj);
-+	/* Enable Slow Mode for SDIO in slower SDR mode */
-+	if ((priv->init_card_type == MMC_TYPE_SDIO) &&
-+	    ((timing == MMC_TIMING_UHS_SDR25) ||
-+	     (timing == MMC_TIMING_UHS_SDR12) ||
-+	     (timing == MMC_TIMING_SD_HS) ||
-+	     (timing == MMC_TIMING_LEGACY))) {
-+		reg |= XENON_TIMING_ADJUST_SLOW_MODE;
-+		sdhci_writel(host, reg, phy_regs->timing_adj);
-+		return true;
-+	}
-+
-+	/* Check if Slow Mode is required in lower speed mode in SDR mode */
-+	if (((timing == MMC_TIMING_UHS_SDR50) ||
-+	     (timing == MMC_TIMING_UHS_SDR25) ||
-+	     (timing == MMC_TIMING_UHS_SDR12) ||
-+	     (timing == MMC_TIMING_SD_HS) ||
-+	     (timing == MMC_TIMING_MMC_HS) ||
-+	     (timing == MMC_TIMING_LEGACY)) && params->slow_mode) {
-+		reg |= XENON_TIMING_ADJUST_SLOW_MODE;
-+		sdhci_writel(host, reg, phy_regs->timing_adj);
-+		return true;
-+	}
-+
-+	reg &= ~XENON_TIMING_ADJUST_SLOW_MODE;
-+	sdhci_writel(host, reg, phy_regs->timing_adj);
-+	return false;
-+}
-+
-+/*
-+ * Set-up eMMC 5.0/5.1 PHY.
-+ * Specific onfiguration depends on the current speed mode in use.
-+ */
-+static void emmc_phy_set(struct sdhci_host *host,
-+			 unsigned char timing)
-+{
-+	u32 reg;
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	struct emmc_phy_params *params = priv->phy_params;
-+	struct xenon_emmc_phy_regs *phy_regs = priv->emmc_phy_regs;
-+	unsigned long flags;
-+
-+	dev_dbg(mmc_dev(host->mmc), "eMMC PHY setting starts\n");
-+
-+	spin_lock_irqsave(&host->lock, flags);
-+
-+	/* Setup pad, set bit[28] and bits[26:24] */
-+	reg = sdhci_readl(host, phy_regs->pad_ctrl);
-+	reg |= (XENON_FC_DQ_RECEN | XENON_FC_CMD_RECEN |
-+		XENON_FC_QSP_RECEN | XENON_OEN_QSN);
-+	/* All FC_XX_RECEIVCE should be set as CMOS Type */
-+	reg |= XENON_FC_ALL_CMOS_RECEIVER;
-+	sdhci_writel(host, reg, phy_regs->pad_ctrl);
-+
-+	/* Set CMD and DQ Pull Up */
-+	if (priv->phy_type == EMMC_5_0_PHY) {
-+		reg = sdhci_readl(host, XENON_EMMC_5_0_PHY_PAD_CONTROL);
-+		reg |= (XENON_EMMC5_FC_CMD_PU | XENON_EMMC5_FC_DQ_PU);
-+		reg &= ~(XENON_EMMC5_FC_CMD_PD | XENON_EMMC5_FC_DQ_PD);
-+		sdhci_writel(host, reg, XENON_EMMC_5_0_PHY_PAD_CONTROL);
-+	} else {
-+		reg = sdhci_readl(host, XENON_EMMC_PHY_PAD_CONTROL1);
-+		reg |= (XENON_EMMC5_1_FC_CMD_PU | XENON_EMMC5_1_FC_DQ_PU);
-+		reg &= ~(XENON_EMMC5_1_FC_CMD_PD | XENON_EMMC5_1_FC_DQ_PD);
-+		sdhci_writel(host, reg, XENON_EMMC_PHY_PAD_CONTROL1);
-+	}
-+
-+	if (timing == MMC_TIMING_LEGACY)
-+		goto phy_init;
-+
-+	/*
-+	 * FIXME: should depends on the specific board timing.
-+	 */
-+	if ((timing == MMC_TIMING_MMC_HS400) ||
-+	    (timing == MMC_TIMING_MMC_HS200) ||
-+	    (timing == MMC_TIMING_UHS_SDR50) ||
-+	    (timing == MMC_TIMING_UHS_SDR104) ||
-+	    (timing == MMC_TIMING_UHS_DDR50) ||
-+	    (timing == MMC_TIMING_UHS_SDR25) ||
-+	    (timing == MMC_TIMING_MMC_DDR52)) {
-+		reg = sdhci_readl(host, phy_regs->timing_adj);
-+		reg &= ~XENON_OUTPUT_QSN_PHASE_SELECT;
-+		sdhci_writel(host, reg, phy_regs->timing_adj);
-+	}
-+
-+	/*
-+	 * If SDIO card, set SDIO Mode
-+	 * Otherwise, clear SDIO Mode
-+	 */
-+	reg = sdhci_readl(host, phy_regs->timing_adj);
-+	if (priv->init_card_type == MMC_TYPE_SDIO)
-+		reg |= XENON_TIMING_ADJUST_SDIO_MODE;
-+	else
-+		reg &= ~XENON_TIMING_ADJUST_SDIO_MODE;
-+	sdhci_writel(host, reg, phy_regs->timing_adj);
-+
-+	if (emmc_phy_slow_mode(host, timing))
-+		goto phy_init;
-+
-+	/*
-+	 * Set preferred ZNR and ZPR value
-+	 * The ZNR and ZPR value vary between different boards.
-+	 * Define them both in sdhci-xenon-emmc-phy.h.
-+	 */
-+	reg = sdhci_readl(host, phy_regs->pad_ctrl2);
-+	reg &= ~((XENON_ZNR_MASK << XENON_ZNR_SHIFT) | XENON_ZPR_MASK);
-+	reg |= ((params->znr << XENON_ZNR_SHIFT) | params->zpr);
-+	sdhci_writel(host, reg, phy_regs->pad_ctrl2);
-+
-+	/*
-+	 * When setting EMMC_PHY_FUNC_CONTROL register,
-+	 * SD clock should be disabled
-+	 */
-+	reg = sdhci_readl(host, SDHCI_CLOCK_CONTROL);
-+	reg &= ~SDHCI_CLOCK_CARD_EN;
-+	sdhci_writew(host, reg, SDHCI_CLOCK_CONTROL);
-+
-+	reg = sdhci_readl(host, phy_regs->func_ctrl);
-+	if ((timing == MMC_TIMING_UHS_DDR50) ||
-+	    (timing == MMC_TIMING_MMC_HS400) ||
-+	    (timing == MMC_TIMING_MMC_DDR52))
-+		reg |= (XENON_DQ_DDR_MODE_MASK << XENON_DQ_DDR_MODE_SHIFT) |
-+		       XENON_CMD_DDR_MODE;
-+	else
-+		reg &= ~((XENON_DQ_DDR_MODE_MASK << XENON_DQ_DDR_MODE_SHIFT) |
-+			 XENON_CMD_DDR_MODE);
-+
-+	if (timing == MMC_TIMING_MMC_HS400)
-+		reg &= ~XENON_DQ_ASYNC_MODE;
-+	else
-+		reg |= XENON_DQ_ASYNC_MODE;
-+	sdhci_writel(host, reg, phy_regs->func_ctrl);
-+
-+	/* Enable bus clock */
-+	reg = sdhci_readl(host, SDHCI_CLOCK_CONTROL);
-+	reg |= SDHCI_CLOCK_CARD_EN;
-+	sdhci_writew(host, reg, SDHCI_CLOCK_CONTROL);
-+
-+	if (timing == MMC_TIMING_MMC_HS400)
-+		/* Hardware team recommend a value for HS400 */
-+		sdhci_writel(host, XENON_LOGIC_TIMING_VALUE,
-+			     phy_regs->logic_timing_adj);
-+	else
-+		__emmc_phy_disable_data_strobe(host);
-+
-+phy_init:
-+	emmc_phy_init(host);
-+
-+	spin_unlock_irqrestore(&host->lock, flags);
-+
-+	dev_dbg(mmc_dev(host->mmc), "eMMC PHY setting completes\n");
-+}
-+
-+static int emmc_phy_parse_param_dt(struct sdhci_host *host,
-+				   struct device_node *np,
-+				   struct emmc_phy_params *params)
-+{
-+	u32 value;
-+
-+	if (of_property_read_bool(np, "marvell,xenon-phy-slow-mode"))
-+		params->slow_mode = true;
-+	else
-+		params->slow_mode = false;
-+
-+	if (!of_property_read_u32(np, "marvell,xenon-phy-znr", &value))
-+		params->znr = value & XENON_ZNR_MASK;
-+	else
-+		params->znr = XENON_ZNR_DEF_VALUE;
-+
-+	if (!of_property_read_u32(np, "marvell,xenon-phy-zpr", &value))
-+		params->zpr = value & XENON_ZPR_MASK;
-+	else
-+		params->zpr = XENON_ZPR_DEF_VALUE;
-+
-+	if (!of_property_read_u32(np, "marvell,xenon-phy-nr-success-tun",
-+				  &value))
-+		params->nr_tun_times = value & XENON_TUN_CONSECUTIVE_TIMES_MASK;
-+	else
-+		params->nr_tun_times = XENON_TUN_CONSECUTIVE_TIMES;
-+
-+	if (!of_property_read_u32(np, "marvell,xenon-phy-tun-step-divider",
-+				  &value))
-+		params->tun_step_divider = value & 0xFF;
-+	else
-+		params->tun_step_divider = XENON_TUNING_STEP_DIVIDER;
-+
-+	return 0;
-+}
-+
-+/*
-+ * Setting PHY when card is working in High Speed Mode.
-+ * HS400 set data strobe line.
-+ * HS200/SDR104 set tuning config to prepare for tuning.
-+ */
-+static int xenon_hs_delay_adj(struct sdhci_host *host)
-+{
-+	int ret = 0;
-+
-+	if (WARN_ON(host->clock <= XENON_DEFAULT_SDCLK_FREQ))
-+		return -EINVAL;
-+
-+	if (host->timing == MMC_TIMING_MMC_HS400) {
-+		emmc_phy_strobe_delay_adj(host);
-+		return 0;
-+	}
-+
-+	if ((host->timing == MMC_TIMING_MMC_HS200) ||
-+	    (host->timing == MMC_TIMING_UHS_SDR104)) {
-+		ret = emmc_phy_config_tuning(host);
-+		if (!ret)
-+			return 0;
-+	}
-+
-+	/*
-+	 * DDR Mode requires driver to scan Sampling Fixed Delay Line,
-+	 * to find out a perfect operation sampling point.
-+	 * It is hard to implement such a scan in host driver since initiating
-+	 * commands by host driver is not safe.
-+	 * Thus so far just keep PHY Sampling Fixed Delay in default value
-+	 * in DDR mode.
-+	 *
-+	 * If any timing issue occrus in DDR mode on Marvell products,
-+	 * please contact maintainer to ask for internal support in Marvell.
-+	 */
-+	if ((host->timing == MMC_TIMING_MMC_DDR52) ||
-+	    (host->timing == MMC_TIMING_UHS_DDR50))
-+		dev_warn(mmc_dev(host->mmc), "Timing issue might occur in DDR mode\n");
-+	return ret;
-+}
-+
-+/*
-+ * Adjust PHY setting.
-+ * PHY setting should be adjusted when SDCLK frequency, Bus Width
-+ * or Speed Mode is changed.
-+ * Addtional config are required when card is working in High Speed mode,
-+ * after leaving Legacy Mode.
-+ */
-+int xenon_phy_adj(struct sdhci_host *host, struct mmc_ios *ios)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	int ret = 0;
-+
-+	if (!host->clock) {
-+		priv->clock = 0;
-+		return 0;
-+	}
-+
-+	/*
-+	 * The timing, frequency or bus width is changed,
-+	 * better to set eMMC PHY based on current setting
-+	 * and adjust Xenon SDHC delay.
-+	 */
-+	if ((host->clock == priv->clock) &&
-+	    (ios->bus_width == priv->bus_width) &&
-+	    (ios->timing == priv->timing))
-+		return 0;
-+
-+	emmc_phy_set(host, ios->timing);
-+
-+	/* Update the record */
-+	priv->bus_width = ios->bus_width;
-+
-+	/* Skip temp stages from HS200 to HS400 */
-+	if (temp_stage_hs200_to_hs400(host, priv))
-+		return 0;
-+
-+	/* Skip temp stages from HS400 t0 HS200 */
-+	if (temp_stage_hs400_to_h200(host, priv))
-+		return 0;
-+
-+	priv->timing = ios->timing;
-+	priv->clock = host->clock;
-+
-+	/* Legacy mode is a special case */
-+	if (ios->timing == MMC_TIMING_LEGACY)
-+		return 0;
-+
-+	if (host->clock > XENON_DEFAULT_SDCLK_FREQ)
-+		ret = xenon_hs_delay_adj(host);
-+	return ret;
-+}
-+
-+static int add_xenon_phy(struct device_node *np, struct sdhci_host *host,
-+			 const char *phy_name)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	int i, ret;
-+
-+	for (i = 0; i < NR_PHY_TYPES; i++) {
-+		if (!strcmp(phy_name, phy_types[i])) {
-+			priv->phy_type = i;
-+			break;
-+		}
-+	}
-+	if (i == NR_PHY_TYPES) {
-+		dev_err(mmc_dev(host->mmc),
-+			"Unable to determine PHY name %s. Use default eMMC 5.1 PHY\n",
-+			phy_name);
-+		priv->phy_type = EMMC_5_1_PHY;
-+	}
-+
-+	ret = alloc_emmc_phy(priv);
-+	if (ret)
-+		return ret;
-+
-+	return emmc_phy_parse_param_dt(host, np, priv->phy_params);
-+}
-+
-+int xenon_phy_parse_dt(struct device_node *np, struct sdhci_host *host)
-+{
-+	const char *phy_type = NULL;
-+
-+	if (!of_property_read_string(np, "marvell,xenon-phy-type", &phy_type))
-+		return add_xenon_phy(np, host, phy_type);
-+
-+	dev_info(mmc_dev(host->mmc), "Fail to get Xenon PHY type. Use default eMMC 5.1 PHY\n");
-+	return add_xenon_phy(np, host, "emmc 5.1 phy");
-+}
-diff --git a/drivers/mmc/host/sdhci-xenon.c b/drivers/mmc/host/sdhci-xenon.c
-index 0e0c60892f72..e51079b2d01c 100644
---- a/drivers/mmc/host/sdhci-xenon.c
-+++ b/drivers/mmc/host/sdhci-xenon.c
-@@ -257,6 +257,7 @@ static void xenon_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 	spin_unlock_irqrestore(&host->lock, flags);
- 
- 	sdhci_set_ios(mmc, ios);
-+	xenon_phy_adj(host, ios);
- 
- 	if (host->clock > XENON_DEFAULT_SDCLK_FREQ) {
- 		spin_lock_irqsave(&host->lock, flags);
-@@ -502,7 +503,7 @@ static int xenon_probe_dt(struct platform_device *pdev)
- 	}
- 	priv->tuning_count = tuning_count;
- 
--	return err;
-+	return xenon_phy_parse_dt(np, host);
- }
- 
- static int xenon_sdhc_probe(struct sdhci_host *host)
-diff --git a/drivers/mmc/host/sdhci-xenon.h b/drivers/mmc/host/sdhci-xenon.h
-index 69de711db9eb..e87639774bca 100644
---- a/drivers/mmc/host/sdhci-xenon.h
-+++ b/drivers/mmc/host/sdhci-xenon.h
-@@ -24,7 +24,17 @@
- #define XENON_SYS_EXT_OP_CTRL			0x010C
- #define XENON_MASK_CMD_CONFLICT_ERR		BIT(8)
- 
-+#define XENON_SLOT_OP_STATUS_CTRL		0x0128
-+
-+#define XENON_TUN_CONSECUTIVE_TIMES_SHIFT	16
-+#define XENON_TUN_CONSECUTIVE_TIMES_MASK	0x7
-+#define XENON_TUN_CONSECUTIVE_TIMES		0x4
-+#define XENON_TUNING_STEP_SHIFT			12
-+#define XENON_TUNING_STEP_MASK			0xF
-+#define XENON_TUNING_STEP_DIVIDER		BIT(6)
-+
- #define XENON_SLOT_EMMC_CTRL			0x0130
-+#define XENON_ENABLE_DATA_STROBE		BIT(24)
- #define XENON_EMMC_VCCQ_MASK			0x3
- #define XENON_EMMC_VCCQ_1_8V			0x1
- #define XENON_EMMC_VCCQ_3_3V			0x3
-@@ -33,11 +43,17 @@
- /* retuning compatible */
- #define XENON_RETUNING_COMPATIBLE		0x1
- 
-+#define XENON_SLOT_EXT_PRESENT_STATE		0x014C
-+#define XENON_DLL_LOCK_STATE			0x1
-+
-+#define XENON_SLOT_DLL_CUR_DLY_VAL		0x0150
-+
- /* Tuning Parameter */
- #define XENON_TMR_RETUN_NO_PRESENT		0xF
- #define XENON_DEF_TUNING_COUNT			0x9
- 
- #define XENON_DEFAULT_SDCLK_FREQ		400000
-+#define XENON_LOWEST_SDCLK_FREQ			100000
- 
- /* Xenon specific Mode Select value */
- #define XENON_CTRL_HS200			0x5
-@@ -65,6 +81,27 @@ struct sdhci_xenon_priv {
- 	 * initialization completes.
- 	 */
- 	unsigned int	init_card_type;
-+
-+	/*
-+	 * The bus_width, timing, and clock fields in below
-+	 * record the current ios setting of Xenon SDHC.
-+	 * Driver will adjust PHY setting if any change to
-+	 * ios affects PHY timing.
-+	 */
-+	unsigned char	bus_width;
-+	unsigned char	timing;
-+	unsigned int	clock;
-+
-+	int		phy_type;
-+	/*
-+	 * Contains board-specific PHY parameters
-+	 * passed from device tree.
-+	 */
-+	void		*phy_params;
-+	struct xenon_emmc_phy_regs *emmc_phy_regs;
- };
- 
-+int xenon_phy_adj(struct sdhci_host *host, struct mmc_ios *ios);
-+int xenon_phy_parse_dt(struct device_node *np,
-+		       struct sdhci_host *host);
- #endif
--- 
-git-series 0.9.1
+>
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+>  drivers/clk/mvebu/Makefile             |   2 +-
+>  drivers/clk/mvebu/armada-xp.c          |  42 +++++++
+>  drivers/clk/mvebu/clk-cpu.c            |  33 +++++-
+>  drivers/clk/mvebu/mv98dx3236-corediv.c | 207 +++++++++++++++++++++++++++=
+++++++
+>  4 files changed, 280 insertions(+), 4 deletions(-)
+>  create mode 100644 drivers/clk/mvebu/mv98dx3236-corediv.c
+>
+> diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
+> index d9ae97fb43c4..6a3681e3d6db 100644
+> --- a/drivers/clk/mvebu/Makefile
+> +++ b/drivers/clk/mvebu/Makefile
+> @@ -9,7 +9,7 @@ obj-$(CONFIG_ARMADA_39X_CLK)	+=3D armada-39x.o
+>  obj-$(CONFIG_ARMADA_37XX_CLK)	+=3D armada-37xx-xtal.o
+>  obj-$(CONFIG_ARMADA_37XX_CLK)	+=3D armada-37xx-tbg.o
+>  obj-$(CONFIG_ARMADA_37XX_CLK)	+=3D armada-37xx-periph.o
+> -obj-$(CONFIG_ARMADA_XP_CLK)	+=3D armada-xp.o
+> +obj-$(CONFIG_ARMADA_XP_CLK)	+=3D armada-xp.o mv98dx3236-corediv.o
+>  obj-$(CONFIG_ARMADA_AP806_SYSCON) +=3D ap806-system-controller.o
+>  obj-$(CONFIG_ARMADA_CP110_SYSCON) +=3D cp110-system-controller.o
+>  obj-$(CONFIG_DOVE_CLK)		+=3D dove.o dove-divider.o
+> diff --git a/drivers/clk/mvebu/armada-xp.c b/drivers/clk/mvebu/armada-xp.c
+> index b3094315a3c0..0413bf8284e0 100644
+> --- a/drivers/clk/mvebu/armada-xp.c
+> +++ b/drivers/clk/mvebu/armada-xp.c
+> @@ -52,6 +52,12 @@ static u32 __init axp_get_tclk_freq(void __iomem *sar)
+>  	return 250000000;
+>  }
+>=20=20
+> +/* MV98DX3236 TCLK frequency is fixed to 200MHz */
+> +static u32 __init mv98dx3236_get_tclk_freq(void __iomem *sar)
+> +{
+> +	return 200000000;
+> +}
+> +
+>  static const u32 axp_cpu_freqs[] __initconst =3D {
+>  	1000000000,
+>  	1066000000,
+> @@ -89,6 +95,12 @@ static u32 __init axp_get_cpu_freq(void __iomem *sar)
+>  	return cpu_freq;
+>  }
+>=20=20
+> +/* MV98DX3236 CLK frequency is fixed to 800MHz */
+> +static u32 __init mv98dx3236_get_cpu_freq(void __iomem *sar)
+> +{
+> +	return 800000000;
+> +}
+> +
+>  static const int axp_nbclk_ratios[32][2] __initconst =3D {
+>  	{0, 1}, {1, 2}, {2, 2}, {2, 2},
+>  	{1, 2}, {1, 2}, {1, 1}, {2, 3},
+> @@ -158,6 +170,14 @@ static const struct coreclk_soc_desc axp_coreclks =
+=3D {
+>  	.num_ratios =3D ARRAY_SIZE(axp_coreclk_ratios),
+>  };
+>=20=20
+> +static const struct coreclk_soc_desc mv98dx3236_coreclks =3D {
+> +	.get_tclk_freq =3D mv98dx3236_get_tclk_freq,
+> +	.get_cpu_freq =3D mv98dx3236_get_cpu_freq,
+> +	.get_clk_ratio =3D NULL,
+> +	.ratios =3D NULL,
+> +	.num_ratios =3D 0,
+> +};
+> +
+>  /*
+>   * Clock Gating Control
+>   */
+> @@ -195,6 +215,15 @@ static const struct clk_gating_soc_desc axp_gating_d=
+esc[] __initconst =3D {
+>  	{ }
+>  };
+>=20=20
+> +static const struct clk_gating_soc_desc mv98dx3236_gating_desc[] __initc=
+onst =3D {
+> +	{ "ge1", NULL, 3, 0 },
+> +	{ "ge0", NULL, 4, 0 },
+> +	{ "pex00", NULL, 5, 0 },
+> +	{ "sdio", NULL, 17, 0 },
+> +	{ "xor0", NULL, 22, 0 },
+> +	{ }
+> +};
+> +
+>  static void __init axp_clk_init(struct device_node *np)
+>  {
+>  	struct device_node *cgnp =3D
+> @@ -206,3 +235,16 @@ static void __init axp_clk_init(struct device_node *=
+np)
+>  		mvebu_clk_gating_setup(cgnp, axp_gating_desc);
+>  }
+>  CLK_OF_DECLARE(axp_clk, "marvell,armada-xp-core-clock", axp_clk_init);
+> +
+> +static void __init mv98dx3236_clk_init(struct device_node *np)
+> +{
+> +	struct device_node *cgnp =3D
+> +		of_find_compatible_node(NULL, NULL, "marvell,armada-xp-gating-clock");
+> +
+> +	mvebu_coreclk_setup(np, &mv98dx3236_coreclks);
+> +
+> +	if (cgnp)
+> +		mvebu_clk_gating_setup(cgnp, mv98dx3236_gating_desc);
+> +}
+> +CLK_OF_DECLARE(mv98dx3236_clk, "marvell,mv98dx3236-core-clock",
+> +	       mv98dx3236_clk_init);
+> diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
+> index 5837eb8a212f..29f295e7a36b 100644
+> --- a/drivers/clk/mvebu/clk-cpu.c
+> +++ b/drivers/clk/mvebu/clk-cpu.c
+> @@ -165,7 +165,9 @@ static const struct clk_ops cpu_ops =3D {
+>  	.set_rate =3D clk_cpu_set_rate,
+>  };
+>=20=20
+> -static void __init of_cpu_clk_setup(struct device_node *node)
+> +/* Add parameter to allow this to support different clock operations. */
+> +static void __init _of_cpu_clk_setup(struct device_node *node,
+> +			const struct clk_ops *cpu_clk_ops)
+>  {
+>  	struct cpu_clk *cpuclk;
+>  	void __iomem *clock_complex_base =3D of_iomap(node, 0);
+> @@ -218,7 +220,7 @@ static void __init of_cpu_clk_setup(struct device_nod=
+e *node)
+>  		cpuclk[cpu].hw.init =3D &init;
+>=20=20
+>  		init.name =3D cpuclk[cpu].clk_name;
+> -		init.ops =3D &cpu_ops;
+> +		init.ops =3D cpu_clk_ops;
+>  		init.flags =3D 0;
+>  		init.parent_names =3D &cpuclk[cpu].parent_name;
+>  		init.num_parents =3D 1;
+> @@ -243,5 +245,30 @@ static void __init of_cpu_clk_setup(struct device_no=
+de *node)
+>  	iounmap(clock_complex_base);
+>  }
+>=20=20
+> +/* Use this function to call the generic setup with the correct
+> + * clock operation
+> + */
+> +static void __init of_cpu_clk_setup(struct device_node *node)
+> +{
+> +	_of_cpu_clk_setup(node, &cpu_ops);
+> +}
+> +
+>  CLK_OF_DECLARE(armada_xp_cpu_clock, "marvell,armada-xp-cpu-clock",
+> -					 of_cpu_clk_setup);
+> +					of_cpu_clk_setup);
+> +
+> +/* Define the clock and operations for the mv98dx3236 - it cannot perform
+> + * any operations.
+> + */
+> +static const struct clk_ops mv98dx3236_cpu_ops =3D {
+> +	.recalc_rate =3D NULL,
+> +	.round_rate =3D NULL,
+> +	.set_rate =3D NULL,
+> +};
+> +
+> +static void __init of_mv98dx3236_cpu_clk_setup(struct device_node *node)
+> +{
+> +	_of_cpu_clk_setup(node, &mv98dx3236_cpu_ops);
+> +}
+> +
+> +CLK_OF_DECLARE(mv98dx3236_cpu_clock, "marvell,mv98dx3236-cpu-clock",
+> +					 of_mv98dx3236_cpu_clk_setup);
+> diff --git a/drivers/clk/mvebu/mv98dx3236-corediv.c b/drivers/clk/mvebu/m=
+v98dx3236-corediv.c
+> new file mode 100644
+> index 000000000000..3060764a8e5d
+> --- /dev/null
+> +++ b/drivers/clk/mvebu/mv98dx3236-corediv.c
+> @@ -0,0 +1,207 @@
+> +/*
+> + * MV98DX3236 Core divider clock
+> + *
+> + * Copyright (C) 2015 Allied Telesis Labs
+> + *
+> + * Based on armada-xp-corediv.c
+> + * Copyright (C) 2015 Marvell
+> + *
+> + * John Thompson <john.thompson@alliedtelesis.co.nz>
+> + *
+> + * This file is licensed under the terms of the GNU General Public
+> + * License version 2.  This program is licensed "as is" without any
+> + * warranty of any kind, whether express or implied.
+> + */
+> +#include <linux/kernel.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +#include <linux/delay.h>
+> +#include "common.h"
+> +
+> +#define CORE_CLK_DIV_RATIO_MASK		0xff
+> +
+> +#define CLK_DIV_RATIO_NAND_MASK 0x0f
+> +#define CLK_DIV_RATIO_NAND_OFFSET 6
+> +#define CLK_DIV_RATIO_NAND_FORCE_RELOAD_BIT 26
+> +
+> +#define RATIO_RELOAD_BIT BIT(10)
+> +#define RATIO_REG_OFFSET 0x08
+> +
+> +/*
+> + * This structure represents one core divider clock for the clock
+> + * framework, and is dynamically allocated for each core divider clock
+> + * existing in the current SoC.
+> + */
+> +struct clk_corediv {
+> +	struct clk_hw hw;
+> +	void __iomem *reg;
+> +	spinlock_t lock;
+> +};
+> +
+> +static struct clk_onecell_data clk_data;
+> +
+> +
+> +#define to_corediv_clk(p) container_of(p, struct clk_corediv, hw)
+> +
+> +static int mv98dx3236_corediv_is_enabled(struct clk_hw *hwclk)
+> +{
+> +	/* Core divider is always active */
+> +	return 1;
+> +}
+> +
+> +static int mv98dx3236_corediv_enable(struct clk_hw *hwclk)
+> +{
+> +	/* always succeeds */
+> +	return 0;
+> +}
+> +
+> +static void mv98dx3236_corediv_disable(struct clk_hw *hwclk)
+> +{
+> +	/* can't be disabled so is left alone */
+> +}
+> +
+> +static unsigned long mv98dx3236_corediv_recalc_rate(struct clk_hw *hwclk,
+> +					 unsigned long parent_rate)
+> +{
+> +	struct clk_corediv *corediv =3D to_corediv_clk(hwclk);
+> +	u32 reg, div;
+> +
+> +	reg =3D readl(corediv->reg + RATIO_REG_OFFSET);
+> +	div =3D (reg >> CLK_DIV_RATIO_NAND_OFFSET) & CLK_DIV_RATIO_NAND_MASK;
+> +	return parent_rate / div;
+> +}
+> +
+> +static long mv98dx3236_corediv_round_rate(struct clk_hw *hwclk,
+> +			       unsigned long rate, unsigned long *parent_rate)
+> +{
+> +	/* Valid ratio are 1:4, 1:5, 1:6 and 1:8 */
+> +	u32 div;
+> +
+> +	div =3D *parent_rate / rate;
+> +	if (div < 4)
+> +		div =3D 4;
+> +	else if (div > 6)
+> +		div =3D 8;
+> +
+> +	return *parent_rate / div;
+> +}
+> +
+> +static int mv98dx3236_corediv_set_rate(struct clk_hw *hwclk, unsigned lo=
+ng rate,
+> +			    unsigned long parent_rate)
+> +{
+> +	struct clk_corediv *corediv =3D to_corediv_clk(hwclk);
+> +	unsigned long flags =3D 0;
+> +	u32 reg, div;
+> +
+> +	div =3D parent_rate / rate;
+> +
+> +	spin_lock_irqsave(&corediv->lock, flags);
+> +
+> +	/* Write new divider to the divider ratio register */
+> +	reg =3D readl(corediv->reg + RATIO_REG_OFFSET);
+> +	reg &=3D ~(CLK_DIV_RATIO_NAND_MASK << CLK_DIV_RATIO_NAND_OFFSET);
+> +	reg |=3D (div & CLK_DIV_RATIO_NAND_MASK) << CLK_DIV_RATIO_NAND_OFFSET;
+> +	writel(reg, corediv->reg + RATIO_REG_OFFSET);
+> +
+> +	/* Set reload-force for this clock */
+> +	reg =3D readl(corediv->reg) | BIT(CLK_DIV_RATIO_NAND_FORCE_RELOAD_BIT);
+> +	writel(reg, corediv->reg);
+> +
+> +	/* Now trigger the clock update */
+> +	reg =3D readl(corediv->reg + RATIO_REG_OFFSET) | RATIO_RELOAD_BIT;
+> +	writel(reg, corediv->reg + RATIO_REG_OFFSET);
+> +
+> +	/*
+> +	 * Wait for clocks to settle down, and then clear all the
+> +	 * ratios request and the reload request.
+> +	 */
+> +	udelay(1000);
+> +	reg &=3D ~(CORE_CLK_DIV_RATIO_MASK | RATIO_RELOAD_BIT);
+> +	writel(reg, corediv->reg + RATIO_REG_OFFSET);
+> +	udelay(1000);
+> +
+> +	spin_unlock_irqrestore(&corediv->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct clk_ops ops =3D {
+> +	.enable =3D mv98dx3236_corediv_enable,
+> +	.disable =3D mv98dx3236_corediv_disable,
+> +	.is_enabled =3D mv98dx3236_corediv_is_enabled,
+> +	.recalc_rate =3D mv98dx3236_corediv_recalc_rate,
+> +	.round_rate =3D mv98dx3236_corediv_round_rate,
+> +	.set_rate =3D mv98dx3236_corediv_set_rate,
+> +};
+> +
+> +static void __init mv98dx3236_corediv_clk_init(struct device_node *node)
+> +{
+> +	struct clk_init_data init;
+> +	struct clk_corediv *corediv;
+> +	struct clk **clks;
+> +	void __iomem *base;
+> +	const __be32 *off;
+> +	const char *parent_name;
+> +	const char *clk_name;
+> +	int len;
+> +	struct device_node *dfx_node;
+> +
+> +	dfx_node =3D of_parse_phandle(node, "base", 0);
+> +	if (WARN_ON(!dfx_node))
+> +		return;
+> +
+> +	off =3D of_get_property(node, "reg", &len);
+> +	if (WARN_ON(!off))
+> +		return;
+> +
+> +	base =3D of_iomap(dfx_node, 0);
+> +	if (WARN_ON(!base))
+> +		return;
+> +
+> +	of_node_put(dfx_node);
+> +
+> +	parent_name =3D of_clk_get_parent_name(node, 0);
+> +
+> +	clk_data.clk_num =3D 1;
+> +
+> +	/* clks holds the clock array */
+> +	clks =3D kcalloc(clk_data.clk_num, sizeof(struct clk *),
+> +				GFP_KERNEL);
+> +	if (WARN_ON(!clks))
+> +		goto err_unmap;
+> +	/* corediv holds the clock specific array */
+> +	corediv =3D kcalloc(clk_data.clk_num, sizeof(struct clk_corediv),
+> +				GFP_KERNEL);
+> +	if (WARN_ON(!corediv))
+> +		goto err_free_clks;
+> +
+> +	spin_lock_init(&corediv->lock);
+> +
+> +	of_property_read_string_index(node, "clock-output-names",
+> +					  0, &clk_name);
+> +
+> +	init.num_parents =3D 1;
+> +	init.parent_names =3D &parent_name;
+> +	init.name =3D clk_name;
+> +	init.ops =3D &ops;
+> +	init.flags =3D 0;
+> +
+> +	corediv[0].reg =3D (void *)((int)base + be32_to_cpu(*off));
+> +	corediv[0].hw.init =3D &init;
+> +
+> +	clks[0] =3D clk_register(NULL, &corediv[0].hw);
+> +	WARN_ON(IS_ERR(clks[0]));
+> +
+> +	clk_data.clks =3D clks;
+> +	of_clk_add_provider(node, of_clk_src_onecell_get, &clk_data);
+> +	return;
+> +
+> +err_free_clks:
+> +	kfree(clks);
+> +err_unmap:
+> +	iounmap(base);
+> +}
+> +
+> +CLK_OF_DECLARE(mv98dx3236_corediv_clk, "marvell,mv98dx3236-corediv-clock=
+",
+> +	       mv98dx3236_corediv_clk_init);
+> --=20
+> 2.11.0.24.ge6920cf
+>
+
+--=20
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
