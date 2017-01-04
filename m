@@ -1,52 +1,120 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-MIME-Version: 1.0
-In-Reply-To: <20170127200532.pemk36hwyzkun3i5@lukather>
-References: <20170126154859.55855-1-icenowy@aosc.xyz>
- <20170126154859.55855-9-icenowy@aosc.xyz>
- <20170127200532.pemk36hwyzkun3i5@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 28 Jan 2017 20:46:39 +0800
-Message-ID: <CAGb2v669B=uYO4HkdHJ=3LdoGEWJxO8y+kmA+X35LYnuDqWL1Q@mail.gmail.com>
-Subject: Re: [PATCH v2 8/9] ASoC: sunxi: allow the analog codec driver to be
- built on ARM64
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree <devicetree@vger.kernel.org>,
- Linux-ALSA <alsa-devel@alsa-project.org>, Vinod Koul <vinod.koul@intel.com>,
- Andre Przywara <andre.przywara@arm.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- linux-sunxi <linux-sunxi@googlegroups.com>,
- linux-kernel <linux-kernel@vger.kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
- Icenowy Zheng <icenowy@aosc.xyz>, dmaengine@vger.kernel.org,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v4 0/4] Add runtime PM support for clocks (on Exynos SoC
+ example)
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Message-id: <ab1080b8-dfa4-77c5-226b-18e11bf557e8@samsung.com>
+Date: Wed, 04 Jan 2017 14:25:51 +0900
+In-reply-to: <1483104816-20885-1-git-send-email-m.szyprowski@samsung.com>
+References: 
+ <CGME20161230133344eucas1p21d107e1cf3096916aad1944f7e002bf9@eucas1p2.samsung.com>
+ <1483104816-20885-1-git-send-email-m.szyprowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jan 28, 2017 at 4:05 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Thu, Jan 26, 2017 at 11:48:58PM +0800, Icenowy Zheng wrote:
->> As the 64-bit Allwinner H5 SoC has the same analog codec part (also the
->> same digital part) as H3, enable the driver to be built on ARM64
->> Allwinner platform, so that it can be used on H5.
->>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
->
-> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Dear Marek,
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+I like these patches because as you already said, the some clocks are included in the specific power domain such as exynos5433. I want to test these patches on Exynos5433-TM2 board. But, this series don't include the Device-Tree binding patches. Could you give the additional patches for test?
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Best Regards,
+Chanwoo Choi
+
+On 2016년 12월 30일 22:33, Marek Szyprowski wrote:
+> Dear All,
+> 
+> This patchset adds runtime PM support to common clock framework. This is an
+> attempt to implement support for clock controllers, which belongs to a power
+> domain. This approach works surprisingly well on Exynos 5433 SoC, what allowed
+> us to solve various freeze/crash issues related to power management.
+> 
+> The main idea behind this patchset is to keep clock's controller power domain
+> enabled every time when at least one of its clock is enabled or access to its
+> registers is being made. Clock controller driver (clock provider) can
+> supply a struct device pointer, which is the used by clock core for tracking and
+> managing clock's controller runtime pm state. Each clk_prepare() operation will
+> first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
+> will do pm_runtime_put() at the end.
+> 
+> This runtime PM feature has been tested with Exynos4412 (not included in this
+> patchset) and Exynos5433 clocks drivers. Both have some clocks, which belongs to
+> respective power domains and need special handling during power on/off
+> procedures. Till now it wasn't handled at all, what caused various problems.
+> 
+> Patches for clocks drivers change the way the clock provider is initialized.
+> Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
+> infrastructure is being used. This is needed to let driver to use runtime PM
+> feature and integrate with generic power domains. The side-effect of this change
+> is a delay in clock provider registeration during system boot, so early
+> initialized drivers might get EPROBEDEFER error when requesting their clocks.
+> This is an issue for IOMMU drivers, so this patchset will be fully functional
+> once the deferred probe for IOMMU will be merged.
+> 
+> Patches are based on vanilla v4.10-rc1 kernel.
+> 
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> 
+> Changelog:
+> 
+> v4:
+> - Removed patch for Exynos4412 clocks from the patchset. DT bindings for power
+>   domain for ISP sub-controller needs more discussion. It will be handled
+>   separately when the runtime PM for clocks feature gets merged.
+> - Added patch with runtime PM support for Exynos AudioSS clock controller driver
+>   (needed to enable audio power domain on Exynos5 series).
+> - Fixes in Exynos5433 driver:
+> 	1. added missing clock for Audio CMU
+> 	2. added support for FSYS CMU
+> 	3. improved support for DISP CMU (thanks to Andrzej Hajda for
+> 	   investigating that).
+> - Rebased onto v4.10-rc1
+> - Waiting for a review...
+> 
+> v3: http://www.spinics.net/lists/arm-kernel/msg538122.html
+> - Removed CLK_RUNTIME_PM flag, core now simply checks if runtime pm is enabled
+>   for the provided device during clock registration as suggested by Ulf
+> - Simplified code for exynos4412 isp clock driver registration
+> - Resolved some other minor issues pointed by Ulf clk core code
+> - Rebased onto v4.9-rc1 and new version of IOMMU deferred probe patchset
+> 
+> v2: https://www.spinics.net/lists/arm-kernel/msg532798.html
+> - Simplified clk_pm_runtime_get/put functions, removed workaround for devices
+>   with disabled runtime pm. Such workaround is no longer needed since commit
+>   4d23a5e84806b202d9231929c9507ef7cf7a0185 ("PM / Domains: Allow runtime PM
+>   during system PM phases").
+> - Added CLK_RUNTIME_PM flag to indicate clocks, for which clock core should
+>   call runtime pm functions. This solves problem with clocks, for which struct
+>   device is already registered, but no runtime pm is enabled.
+> - Extended commit messages according to Ulf suggestions.
+> - Fixed some style issues pointed by Barlomiej.
+> 
+> v1: http://www.spinics.net/lists/arm-kernel/msg528128.html
+> - initial version
+> 
+> 
+> Marek Szyprowski (4):
+>   clk: Add support for runtime PM
+>   clk: samsung: Add support for runtime PM
+>   clk: samsung: exynos5433: Add runtime PM support
+>   clk: samsung: exynos-audss: Use runtime PM
+> 
+>  .../devicetree/bindings/clock/clk-exynos-audss.txt |   6 +
+>  .../devicetree/bindings/clock/exynos5433-clock.txt |  16 +
+>  drivers/clk/clk.c                                  | 111 +++++-
+>  drivers/clk/samsung/clk-exynos-audss.c             |  62 +--
+>  drivers/clk/samsung/clk-exynos5433.c               | 415 ++++++++++++++++-----
+>  drivers/clk/samsung/clk-pll.c                      |   2 +-
+>  drivers/clk/samsung/clk.c                          |  12 +-
+>  drivers/clk/samsung/clk.h                          |   7 +
+>  8 files changed, 504 insertions(+), 127 deletions(-)
+> 
