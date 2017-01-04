@@ -1,57 +1,80 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+Subject: Re: [PATCH] clk: clk-conf: Do not print error messages if
+ EPROBE_DEFER
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <1483524753-32213-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <b8883314-c166-e904-dcb2-dc62d7200997@gmail.com>
+Date: Wed, 4 Jan 2017 13:39:38 +0100
 MIME-Version: 1.0
-In-Reply-To: <20170126154859.55855-2-icenowy@aosc.xyz>
-References: <20170126154859.55855-1-icenowy@aosc.xyz>
- <20170126154859.55855-2-icenowy@aosc.xyz>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 30 Jan 2017 16:13:50 +0100
-Message-ID: <CACRpkdY=+wAVZtWjeW+jKq_s+YX17L7xUeZ14_sAyd8KCm6+kg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/9] drivers: pinctrl: add driver for Allwinner H5 SoC
-To: Icenowy Zheng <icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
- Vinod Koul <vinod.koul@intel.com>, Andre Przywara <andre.przywara@arm.com>,
- linux-sunxi <linux-sunxi@googlegroups.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Jaroslav Kysela <perex@perex.cz>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
- dmaengine@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <1483524753-32213-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 26, 2017 at 4:48 PM, Icenowy Zheng <icenowy@aosc.xyz> wrote:
+On 01/04/2017 11:12 AM, Geert Uytterhoeven wrote:
+> EPROBE_DEFER is not an error, hence printing an error message like
+> 
+> 	clk: couldn't get clock 0 for /soc/display@feb00000
+> 
+> may confuse the user.
+> 
+> Suppress error messages in case of probe deferral to fix this.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> Based on the Allwinner H5 datasheet and the pinctrl driver of the
-> backward-compatible H3 this introduces the pin multiplex assignments for
-> the H5 SoC.
->
-> H5 introduced some more pin functions (e.g. three more groups of TS
-> pins, and one more groups of SIM pins) than H3.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+
 > ---
-> Changes in v2:
-> - Fixed interrupt banks. (There's one more GPIO banks (PF) that can do
->   interrupt handling on H5)
+>  drivers/clk/clk-conf.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
+> index 674785d968a3e1c5..e0e02a6e59009e7a 100644
+> --- a/drivers/clk/clk-conf.c
+> +++ b/drivers/clk/clk-conf.c
+> @@ -40,8 +40,9 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+>  			return 0;
+>  		pclk = of_clk_get_from_provider(&clkspec);
+>  		if (IS_ERR(pclk)) {
+> -			pr_warn("clk: couldn't get parent clock %d for %s\n",
+> -				index, node->full_name);
+> +			if (PTR_ERR(pclk) != -EPROBE_DEFER)
+> +				pr_warn("clk: couldn't get parent clock %d for %s\n",
+> +					index, node->full_name);
+>  			return PTR_ERR(pclk);
+>  		}
+>  
+> @@ -55,8 +56,9 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+>  		}
+>  		clk = of_clk_get_from_provider(&clkspec);
+>  		if (IS_ERR(clk)) {
+> -			pr_warn("clk: couldn't get assigned clock %d for %s\n",
+> -				index, node->full_name);
+> +			if (PTR_ERR(clk) != -EPROBE_DEFER)
+> +				pr_warn("clk: couldn't get assigned clock %d for %s\n",
+> +					index, node->full_name);
+>  			rc = PTR_ERR(clk);
+>  			goto err;
+>  		}
+> @@ -99,8 +101,9 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
+>  
+>  			clk = of_clk_get_from_provider(&clkspec);
+>  			if (IS_ERR(clk)) {
+> -				pr_warn("clk: couldn't get clock %d for %s\n",
+> -					index, node->full_name);
+> +				if (PTR_ERR(clk) != -EPROBE_DEFER)
+> +					pr_warn("clk: couldn't get clock %d for %s\n",
+> +						index, node->full_name);
+>  				return PTR_ERR(clk);
+>  			}
+>  
+> 
 
-Patch applied with Maxime's ACK.
 
-Yours,
-Linus Walleij
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+Best regards,
+Marek Vasut
