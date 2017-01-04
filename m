@@ -1,97 +1,67 @@
-Return-Path: <jdelvare@suse.de>
-Date: Mon, 9 Jan 2017 11:36:21 +0100
-From: Jean Delvare <jdelvare@suse.de>
-To: linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org
-Cc: Shunli Wang <shunli.wang@mediatek.com>, James Liao
- <jamesjj.liao@mediatek.com>, Erin Lo <erin.lo@mediatek.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Subject: [PATCH] clk: mediatek: Fix MT2701 dependencies
-Message-ID: <20170109113621.31d384c9@endymion>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: clk-conf: Do not print error messages if EPROBE_DEFER
+Date: Wed,  4 Jan 2017 11:12:33 +0100
+Message-Id: <1483524753-32213-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-If I say "no" to "Clock driver for Mediatek MT2701", I don't want to
-be asked individually about each sub-driver. No means no.
+EPROBE_DEFER is not an error, hence printing an error message like
 
-Additionally, this driver shouldn't be proposed at all on non-mediatek
-builds, unless build-testing.
+	clk: couldn't get clock 0 for /soc/display@feb00000
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
-Cc: Shunli Wang <shunli.wang@mediatek.com>
-Cc: James Liao <jamesjj.liao@mediatek.com>
-Cc: Erin Lo <erin.lo@mediatek.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
+may confuse the user.
+
+Suppress error messages in case of probe deferral to fix this.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-As a side note, is there any rationale for splitting this driver into
-that many small sub-drivers? Looks overengineered to me.
+ drivers/clk/clk-conf.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-As another side note, I wonder why so many clock drivers have
-"COMMON" in their symbol names. Looks wrong to me.
-
- drivers/clk/mediatek/Kconfig |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
---- linux-4.10-rc2.orig/drivers/clk/mediatek/Kconfig	2017-01-01 23:31:53.000000000 +0100
-+++ linux-4.10-rc2/drivers/clk/mediatek/Kconfig	2017-01-09 11:17:37.542344083 +0100
-@@ -8,6 +8,7 @@ config COMMON_CLK_MEDIATEK
+diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
+index 674785d968a3e1c5..e0e02a6e59009e7a 100644
+--- a/drivers/clk/clk-conf.c
++++ b/drivers/clk/clk-conf.c
+@@ -40,8 +40,9 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+ 			return 0;
+ 		pclk = of_clk_get_from_provider(&clkspec);
+ 		if (IS_ERR(pclk)) {
+-			pr_warn("clk: couldn't get parent clock %d for %s\n",
+-				index, node->full_name);
++			if (PTR_ERR(pclk) != -EPROBE_DEFER)
++				pr_warn("clk: couldn't get parent clock %d for %s\n",
++					index, node->full_name);
+ 			return PTR_ERR(pclk);
+ 		}
  
- config COMMON_CLK_MT2701
- 	bool "Clock driver for Mediatek MT2701"
-+	depends on ARCH_MEDIATEK || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
- 	default ARCH_MEDIATEK
- 	---help---
-@@ -15,37 +16,37 @@ config COMMON_CLK_MT2701
+@@ -55,8 +56,9 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+ 		}
+ 		clk = of_clk_get_from_provider(&clkspec);
+ 		if (IS_ERR(clk)) {
+-			pr_warn("clk: couldn't get assigned clock %d for %s\n",
+-				index, node->full_name);
++			if (PTR_ERR(clk) != -EPROBE_DEFER)
++				pr_warn("clk: couldn't get assigned clock %d for %s\n",
++					index, node->full_name);
+ 			rc = PTR_ERR(clk);
+ 			goto err;
+ 		}
+@@ -99,8 +101,9 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
  
- config COMMON_CLK_MT2701_MMSYS
- 	bool "Clock driver for Mediatek MT2701 mmsys"
--	select COMMON_CLK_MT2701
-+	depends on COMMON_CLK_MT2701
- 	---help---
- 	  This driver supports Mediatek MT2701 mmsys clocks.
+ 			clk = of_clk_get_from_provider(&clkspec);
+ 			if (IS_ERR(clk)) {
+-				pr_warn("clk: couldn't get clock %d for %s\n",
+-					index, node->full_name);
++				if (PTR_ERR(clk) != -EPROBE_DEFER)
++					pr_warn("clk: couldn't get clock %d for %s\n",
++						index, node->full_name);
+ 				return PTR_ERR(clk);
+ 			}
  
- config COMMON_CLK_MT2701_IMGSYS
- 	bool "Clock driver for Mediatek MT2701 imgsys"
--	select COMMON_CLK_MT2701
-+	depends on COMMON_CLK_MT2701
- 	---help---
- 	  This driver supports Mediatek MT2701 imgsys clocks.
- 
- config COMMON_CLK_MT2701_VDECSYS
- 	bool "Clock driver for Mediatek MT2701 vdecsys"
--	select COMMON_CLK_MT2701
-+	depends on COMMON_CLK_MT2701
- 	---help---
- 	  This driver supports Mediatek MT2701 vdecsys clocks.
- 
- config COMMON_CLK_MT2701_HIFSYS
- 	bool "Clock driver for Mediatek MT2701 hifsys"
--	select COMMON_CLK_MT2701
-+	depends on COMMON_CLK_MT2701
- 	---help---
- 	  This driver supports Mediatek MT2701 hifsys clocks.
- 
- config COMMON_CLK_MT2701_ETHSYS
- 	bool "Clock driver for Mediatek MT2701 ethsys"
--	select COMMON_CLK_MT2701
-+	depends on COMMON_CLK_MT2701
- 	---help---
- 	  This driver supports Mediatek MT2701 ethsys clocks.
- 
- config COMMON_CLK_MT2701_BDPSYS
- 	bool "Clock driver for Mediatek MT2701 bdpsys"
--	select COMMON_CLK_MT2701
-+	depends on COMMON_CLK_MT2701
- 	---help---
- 	  This driver supports Mediatek MT2701 bdpsys clocks.
- 
-
-
 -- 
-Jean Delvare
-SUSE L3 Support
+1.9.1
