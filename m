@@ -1,45 +1,57 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Leo Yan <leo.yan@linaro.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>
-Subject: [PATCH] clk: hisilicon: fix lock assignment
-Date: Wed, 18 Jan 2017 16:13:38 +0800
-Message-Id: <1484727218-3499-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <andy.gross@linaro.org>
+Return-Path: <andy.gross@linaro.org>
+Date: Thu, 5 Jan 2017 08:20:02 -0600
+From: Andy Gross <andy.gross@linaro.org>
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, david.brown@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH] clk: qcom: Fix a possible NULL pointer dereferencing
+Message-ID: <20170105142002.GB5710@hector.attlocal.net>
+References: <1483606525-27709-1-git-send-email-vivek.gautam@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1483606525-27709-1-git-send-email-vivek.gautam@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-In clock driver initialize phase the spinlock is missed to assignment
-to struct clkgate_separated, finally there have no locking to protect
-exclusive accessing for clock registers.
+On Thu, Jan 05, 2017 at 02:25:25PM +0530, Vivek Gautam wrote:
+> Assign num_parents as 0 while registering fixed rate clocks
+> in _qcom_cc_register_board_clk(), to make sure the clk framework
+> doesn't dereference parent.
+> 
+> Fixes: ee15faffef11 ("clk: qcom: common: Add API to register board clocks backwards compatibly")
+> 
+> Cc: Georgi Djakov <georgi.djakov@linaro.org>
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> ---
+> 
+> Based on 'clk-next'. Build tested.
+> 
+>  drivers/clk/qcom/common.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index cfab7b400381..df004ead1bef 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -157,6 +157,7 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+>  
+>  		init_data.name = path;
+>  		init_data.ops = &clk_fixed_rate_ops;
+> +		init_data.num_parents = 0;
 
-This bug introduces the console has no output after enable coresight
-driver on 96borads Hikey; this is because console using UART3, which
-has shared the same register with coresight clock enabling bit. After
-applied this patch it can assign lock properly to protect exclusive
-accessing, and console can work well after enabled coresight modules.
+It seems like there was a initializer in the declaration but it was { } instead
+of { 0 }.
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- drivers/clk/hisilicon/clkgate-separated.c | 1 +
- 1 file changed, 1 insertion(+)
+Was the original intent to make this structure initialized to 0?  If so, perhaps
+it should be fixed above in the initializer.
 
-diff --git a/drivers/clk/hisilicon/clkgate-separated.c b/drivers/clk/hisilicon/clkgate-separated.c
-index a47812f..7908bc3 100644
---- a/drivers/clk/hisilicon/clkgate-separated.c
-+++ b/drivers/clk/hisilicon/clkgate-separated.c
-@@ -120,6 +120,7 @@ struct clk *hisi_register_clkgate_sep(struct device *dev, const char *name,
- 	sclk->bit_idx = bit_idx;
- 	sclk->flags = clk_gate_flags;
- 	sclk->hw.init = &init;
-+	sclk->lock = lock;
- 
- 	clk = clk_register(dev, &sclk->hw);
- 	if (IS_ERR(clk))
--- 
-2.7.4
+>  
+>  		ret = devm_clk_hw_register(dev, &fixed->hw);
+>  		if (ret)
+
+
+Regards,
+
+Andy
