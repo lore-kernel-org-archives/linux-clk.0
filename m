@@ -1,43 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 27 Jan 2017 11:52:42 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [git pull] clk: renesas: Updates for v4.11 (take two)
-Message-ID: <20170127195242.GF8801@codeaurora.org>
-References: <1485508898-22923-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <mw@semihalf.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1485508898-22923-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <20170105130945.GA18033@lunn.ch>
+References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
+ <6c6795d3-06ab-a4f0-78ad-5ecc78c1aa2f@gmail.com> <185147a37cab4d7eaea5f79d86cc9451@svr-chch-ex1.atlnz.lc>
+ <20170105130945.GA18033@lunn.ch>
+From: Marcin Wojtas <mw@semihalf.com>
+Date: Thu, 5 Jan 2017 15:07:02 +0100
+Message-ID: <CAPv3WKdsiGis6gG0SmLT1mg+LYA8i5p4u9KJiYJxng8jrLsj+w@mail.gmail.com>
+Subject: Re: [PATCHv2 0/5] Support for Marvell switches with integrated CPUs
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Chris Packham <Chris.Packham@alliedtelesis.co.nz>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
+	Juri Lelli <juri.lelli@arm.com>, Russell King <linux@armlinux.org.uk>,
+	Thierry Reding <treding@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+	Arnd Bergmann <arnd@arndb.de>, Kalyan Kinthada <Kalyan.Kinthada@alliedtelesis.co.nz>,
+	Rob Herring <robh+dt@kernel.org>, Gregory Clement <gregory.clement@free-electrons.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sudeep Holla <sudeep.holla@arm.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/27, Geert Uytterhoeven wrote:
-> 	Hi Mike, Stephen,
-> 
-> The following changes since commit e6bdf28eff475a026b922abe78ae710e7179bdf7:
-> 
->   clk: renesas: r8a7796: Add MSIOF controller clocks (2016-12-27 10:56:08 +0100)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.11-tag2
-> 
-> for you to fetch changes up to d963654e109565cf73399815d7585917f2d69a30:
-> 
->   clk: renesas: r8a7796: Add IIC-DVFS clock (2017-01-27 08:59:24 +0100)
-> 
-> ----------------------------------------------------------------
-> clk: renesas: Updates for v4.11 (take two)
-> 
->   - Use CLK_IS_CRITICAL to handle critical clocks,
->   - Add Reset Control Support for R-Car Gen2 and Gen3, and RZ/G1,
->   - Add IIC-DVFS clocks for R-Car H3 and M3-W,
->   - Minor cleanups.
-> 
+Hi Andrew,
 
-Thanks. Pulled into clk-next.
+2017-01-05 14:09 GMT+01:00 Andrew Lunn <andrew@lunn.ch>:
+>> I'd love to see a switchdev driver but it's a huge task (and no I'm not
+>> committing to writing it). As it stands Marvell ship a switch SDK
+>> largely executes in userspace with a small kernel module providing some
+>> linkage to the underlying hardware.
+>
+> Is there any similarity to the mv88e6xxx family?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Prestera switches (they are sold as standalone devices and with
+integrated CPU's, like ones submitted) are as far from mv88e6xxx as
+possible. There are various mix of 1/2.5/10/40G ports, depending on
+model.
+
+>
+> If it was similar registers, just a different access mechanising, we
+> could probably extend the mv88e6xxx to support MMIO as well as MDIO.
+>
+
+The difference is huge, nothing existing in the mainline can fit. The
+driver, that exposes resources to the userspace SDK (called CPSS, it's
+huge and complex piece of code) is existing in Marvell internal
+branches (kernel v4.4 is the latest one), but I doubt such solution
+(despite it's really small) is upstreamable. I believe it can be
+shipped to the customers along with the SDK as a kernel module. Having
+the CPU's support in the mainline is IMO sufficient.
+
+Best regards,
+Marcin
