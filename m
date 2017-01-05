@@ -1,44 +1,79 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: mstp: Reformat cpg_mstp_clock_register() for git diff
-Date: Mon, 23 Jan 2017 11:06:10 +0100
-Message-Id: <1485165970-25149-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 5 Jan 2017 14:39:57 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, mturquette@baylibre.com,
+	david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH] clk: qcom: Fix a possible NULL pointer dereferencing
+Message-ID: <20170105223957.GK17126@codeaurora.org>
+References: <1483606525-27709-1-git-send-email-vivek.gautam@codeaurora.org>
+ <20170105142002.GB5710@hector.attlocal.net>
+ <9b590296-6e3a-9079-08e5-48b4af8f8f22@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <9b590296-6e3a-9079-08e5-48b4af8f8f22@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-As the function header of cpg_mstp_clock_register() is split in an
-unusual way, "git diff" gets confused when changes to the body of
-the function are made, and attributes them to the wrong function.
+On 01/05, Vivek Gautam wrote:
+> 
+> On 01/05/2017 07:50 PM, Andy Gross wrote:
+> >On Thu, Jan 05, 2017 at 02:25:25PM +0530, Vivek Gautam wrote:
+> >>Assign num_parents as 0 while registering fixed rate clocks
+> >>in _qcom_cc_register_board_clk(), to make sure the clk framework
+> >>doesn't dereference parent.
+> >>
+> >>Fixes: ee15faffef11 ("clk: qcom: common: Add API to register board clocks backwards compatibly")
+> >>
+> >>Cc: Georgi Djakov<georgi.djakov@linaro.org>
+> >>Signed-off-by: Vivek Gautam<vivek.gautam@codeaurora.org>
+> >>---
+> >>
+> >>Based on 'clk-next'. Build tested.
+> >>
+> >>  drivers/clk/qcom/common.c | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >>
+> >>diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> >>index cfab7b400381..df004ead1bef 100644
+> >>--- a/drivers/clk/qcom/common.c
+> >>+++ b/drivers/clk/qcom/common.c
+> >>@@ -157,6 +157,7 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+> >>  		init_data.name = path;
+> >>  		init_data.ops = &clk_fixed_rate_ops;
+> >>+		init_data.num_parents = 0;
+> >It seems like there was a initializer in the declaration but it was { } instead
+> >of { 0 }.
+> >
+> >Was the original intent to make this structure initialized to 0?  If so, perhaps
+> >it should be fixed above in the initializer.
+> 
+> yes, i think we intend to initialize the clock init data to 0, and thus
+> we should do that during declaration.
+> Will modify and re-spin the patch.
+> 
 
-Reformat the function header to fix this.
+What's the error exactly? Do you have some call stack/crash that
+could be put in the commit text?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in clk-renesas-for-v4.11.
----
- drivers/clk/renesas/clk-mstp.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+It was my understanding that GCC allows braces without anything
+inside to initialize structures to 0, so I'm confused what's
+wrong here. If this is actually a problem then we have other
+places to fix this.
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index c0319b8acf3521a2..93506251f7edcd13 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -127,9 +127,9 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
- 	.is_enabled = cpg_mstp_clock_is_enabled,
- };
- 
--static struct clk * __init
--cpg_mstp_clock_register(const char *name, const char *parent_name,
--			unsigned int index, struct mstp_clock_group *group)
-+static struct clk * __init cpg_mstp_clock_register(const char *name,
-+	const char *parent_name, unsigned int index,
-+	struct mstp_clock_group *group)
- {
- 	struct clk_init_data init;
- 	struct mstp_clock *clock;
+ $ git grep "clk_init_data.*{ *}"
+ drivers/clk/bcm/clk-bcm53573-ilp.c:     struct clk_init_data init = { };
+ drivers/clk/clk-gpio.c: struct clk_init_data init = {};
+ drivers/clk/clk-qoriq.c:        struct clk_init_data init = {};
+ drivers/clk/clk-rk808.c:        struct clk_init_data init = {};
+ drivers/clk/mediatek/clk-apmixed.c:     struct clk_init_data init = {};
+ drivers/clk/mediatek/clk-gate.c:        struct clk_init_data init = {};
+ drivers/clk/mediatek/clk-pll.c: struct clk_init_data init = {};
+ drivers/clk/qcom/common.c:      struct clk_init_data init_data = { };
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm_8960.c:        struct clk_init_data bytediv_init = { };
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
