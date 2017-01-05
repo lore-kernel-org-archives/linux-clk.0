@@ -1,108 +1,88 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Thu, 5 Jan 2017 23:04:40 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH 3/6] clk: sunxi-ng: Add H5 clocks
+Message-ID: <20170105220440.x5gfw3z7axlrxwxh@lukather>
+References: <20161226162518.5367-1-icenowy@aosc.xyz>
+ <20161226162518.5367-4-icenowy@aosc.xyz>
 MIME-Version: 1.0
-In-Reply-To: <00e8d2dc-bc07-addc-a5d9-8604f143627f@intel.com>
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
- <3546f143091c121face8ecbcbf7f6a4c41d2cec7.1484154449.git-series.gregory.clement@free-electrons.com>
- <CAPDyKFrwxix4zY4a1x9u6jh_gPfKTsaLnD8b8crum=pc5CN3AA@mail.gmail.com>
- <2e67332d-d8c3-fd24-1f81-72675a09927a@intel.com> <CAPDyKFqbjeKCHp40PALydquxdF-qBk156+iOS9TYYsquJ7fK7w@mail.gmail.com>
- <00e8d2dc-bc07-addc-a5d9-8604f143627f@intel.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 30 Jan 2017 10:10:05 +0100
-Message-ID: <CAPDyKFoF2QsTxKC7=PjHqOk106USQ-j9MtiyfC=Sqks8DnPDYQ@mail.gmail.com>
-Subject: Re: [PATCH v5 06/12] mmc: sdhci-xenon: Add Marvell Xenon SDHC core functionality
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>, Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>, "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20161226162518.5367-4-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============8386222420957140128=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28 January 2017 at 09:16, Adrian Hunter <adrian.hunter@intel.com> wrote:
-> On 27/01/2017 5:12 p.m., Ulf Hansson wrote:
->>
->> On 26 January 2017 at 13:39, Adrian Hunter <adrian.hunter@intel.com>
->> wrote:
->>>
->>> On 26/01/17 12:50, Ulf Hansson wrote:
->>>>
->>>> On 11 January 2017 at 18:19, Gregory CLEMENT
->>>> <gregory.clement@free-electrons.com> wrote:
->>>>>
->>>>> +                       priv->init_card_type = MMC_TYPE_MMC;
->>>>> +                       mmc->caps |= MMC_CAP_NONREMOVABLE;
->>>>> +
->>>>> +                       /*
->>>>> +                        * Force to clear BUS_TEST to
->>>>> +                        * skip bus_test_pre and bus_test_post
->>>>> +                        */
->>>>> +                       mmc->caps &= ~MMC_CAP_BUS_WIDTH_TEST;
->>>>> +                       mmc->caps2 |= MMC_CAP2_HC_ERASE_SZ |
->>>>
->>>>
->>>> This cap is a bit strange. It was added several years ago by Adrian
->>>> Hunter, but I am wondering about the reason to why it's needed.
->>>>
->>>
->>> MMC_CAP2_HC_ERASE_SZ relates to EXT-CSD ERASE_GROUP_DEF.
->>>
->>> I think it was added to enable people to choose whether they wanted a
->>> large
->>> or small erase granularity.  That probably doesn't matter if the card
->>> supports TRIM.
->>>
->>
->> Huh, the erase/trim/discard code in the mmc core is really hairy. :-)
->>
->> In mmc_calc_max_discard() the following code/comment exists:
->>
->> /*
->>  * Without erase_group_def set, MMC erase timeout depends on clock
->>  * frequence which can change.  In that case, the best choice is
->>  * just the preferred erase size.
->>  */
->> if (mmc_card_mmc(card) && !(card->ext_csd.erase_group_def & 1))
->>      return card->pref_erase;
->>
->>
->> This makes me wonder.
->>
->> So, when we haven't enabled the high capacity erase groups in the
->> EXT_CSD register (ext_csd.erase_group_def), we will use the pref_erase
->> size.
->>
->> In the other case, as when having MMC_CAP2_HC_ERASE_SZ set (which will
->> set ext_csd.erase_group_def),  we will instead  do some calculations
->> to find out the max discards.
->>
->> Are you saying that these calculations doesn't matter much - or are
->> you saying that we always want to do them?
->
->
-> No, I was saying that if you have TRIM then TRIM is preferred to ERASE so
-> the erase group size does not come into play when discarding, since ERASE
-> granularity is erase groups whereas TRIM granularity is sectors.
 
-Right. Thanks for clarifying.
+--===============8386222420957140128==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wa43b3sxhjdpx6uo"
+Content-Disposition: inline
 
->
-> However ERASE_GROUP_DEF also affects the size of write protect groups.
 
-In either case.
+--wa43b3sxhjdpx6uo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-What do you think of removing MMC_CAP2_HC_ERASE_SZ? I don't like these
-kind of soft polices, it's better if we can decide on a common
-behaviour - whatever that is.
+On Tue, Dec 27, 2016 at 12:25:15AM +0800, Icenowy Zheng wrote:
+> Add the H5 CCU clocks set based on the H3 one.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 
-Kind regards
-Uffe
+Is there any difference with H3's?
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--wa43b3sxhjdpx6uo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYbsL4AAoJEBx+YmzsjxAgdOsP+wdbkP7FCgtcEFfjFoaiDWdI
+VaAgGEZ860GbGUUQRSplxLimGXHOnnJ2FL+CsIVnoaJ4fJjCiZG4d/9k1QzPksRV
+2UcR3EXzNGIVaNiZ7UYD3L7dZPp8NQtlYM04YpIKr52OemQlE6OlNAnAfTgr8I1N
+pvFRXoKcfwHn+rStFOIE5E848iDIWgl9lcVvY112dtNT5SCy65HV4EAP/+b37vNj
+S90LYDaJsMyA8nvyB6SsW+Z/5TAQfl81G6ukoPfQfhghjn1dRYb4WhLHTkDTG/Zt
+QuHEUtOhquKDJCdjecJAgaQXs4aN/fy1afXSCiW+OOIuUKsPevoXnh0RM53O2ZDy
+RVSE/frdqLxDw3e10PA/opQP7c2QqrwqcKyOzBJO+oFaaYgf1X3qF1zxZ38WDSqk
+YlKJMY+mPm9kK5b6NqTPSjkMq+WlaeGyTd4/wpNp3ZfBjUZ1AsZObqUoebUh1FZh
+na87iixPvrn12wCd/xKW11eeQGWDUvLCGql7QoU/lCvozoQmvrxtQbiuK7YpCRvc
+sJAdKpkVJsBLDIIg+YVtFKsFzzL3GQ2jNkU2iryZJSGrJnOrPqwPp9FRf7OSMota
+gJxyhFHLXUaH6XpDWA5XyJsO6mOJEWV4QoBFRqbuNeL9UszlIE4OAbLyTPV3xsS5
+iVIJ0kL4wklGg/wlWMCa
+=Tk+w
+-----END PGP SIGNATURE-----
+
+--wa43b3sxhjdpx6uo--
+
+
+--===============8386222420957140128==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============8386222420957140128==--
