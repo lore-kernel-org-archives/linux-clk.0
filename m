@@ -1,90 +1,35 @@
-Return-Path: <robh+dt@kernel.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, xf@rock-chips.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com, cl@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 4/4] clk: rockchip: add clock controller for rk3328
+Date: Thu, 05 Jan 2017 13:53:44 +0100
+Message-ID: <2499480.rhkWDTFgrm@phil>
+In-Reply-To: <1482979511-6847-5-git-send-email-zhangqing@rock-chips.com>
+References: <1482979511-6847-1-git-send-email-zhangqing@rock-chips.com> <1482979511-6847-5-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <20170124003853.16418-2-eric@anholt.net>
-References: <20170124003853.16418-1-eric@anholt.net> <20170124003853.16418-2-eric@anholt.net>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Fri, 27 Jan 2017 16:34:18 -0600
-Message-ID: <CAL_JsqJ=VQSUO5MeHJSCB=_SnmOnA7G1=GhmWYKhjm-47kYV-w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: Document the VC4 DSI module nodes.
-To: Eric Anholt <eric@anholt.net>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
-	dri-devel <dri-devel@lists.freedesktop.org>, linux-rpi-kernel@lists.infradead.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	"bcm-kernel-feedback-list@broadcom.com" <bcm-kernel-feedback-list@broadcom.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Need to cc DT list if you want it in my queue.
+Am Donnerstag, 29. Dezember 2016, 10:45:11 CET schrieb Elaine Zhang:
+> Add the clock tree definition for the new rk3328 SoC.
+> 
+> Changes in v5:
+>   fix up some code style, remove grf clk init and cru dump.
+> Changes in v4:
+>   adjust the pacth 3 and 4 order.
+> Changes in v3:
+>   fix up the pll parent only xin24m.
+> Changes in v2:
+>   fix up these *_sample error description.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 
-On Mon, Jan 23, 2017 at 6:38 PM, Eric Anholt <eric@anholt.net> wrote:
-> These are part of the vc4 display pipeline.
->
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> ---
->  .../devicetree/bindings/display/brcm,bcm-vc4.txt   | 35 ++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt b/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
-> index e2768703ac2b..34c7fddcea39 100644
-> --- a/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
-> +++ b/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
-> @@ -56,6 +56,18 @@ Required properties for V3D:
->  - interrupts:  The interrupt number
->                   See bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
->
-> +Required properties for DSI:
-> +- compatible:  Should be "brcm,bcm2835-dsi0" or "brcm,bcm2835-dsi1"
+applied for 4.11.
 
-Are the blocks different?
+You might also want to readd your mac2phy grf clocks via the newly
+introduced muxgrf clock-type [0] in a follow-up-patch.
 
-> +- reg:         Physical base address and length of the DSI block's registers
-> +- interrupts:  The interrupt number
-> +                 See bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
-> +- clocks:      a) phy: The DSI PLL clock feeding the DSI analog PHY
-> +               b) escape: The DSI ESC clock from CPRMAN
-> +               c) pixel: The DSI pixel clock from CPRMAN
-> +- clock-output-names:
-> +               The 3 clocks output from the DSI analog PHY: dsi[01]_byte,
-> +               dsi[01]_ddr2, and dsi[01]_ddr
-> +
->  [1] Documentation/devicetree/bindings/media/video-interfaces.txt
->
->  Example:
-> @@ -99,6 +111,29 @@ dpi: dpi@7e208000 {
->         };
->  };
->
-> +dsi1: dsi@7e700000 {
-> +       compatible = "brcm,bcm2835-dsi1";
-> +       reg = <0x7e700000 0x8c>;
-> +       interrupts = <2 12>;
-> +       #address-cells = <1>;
-> +       #size-cells = <0>;
-> +       #clock-cells = <1>;
-> +
-> +       clocks = <&clocks BCM2835_PLLD_DSI1>,
-> +                <&clocks BCM2835_CLOCK_DSI1E>,
-> +                <&clocks BCM2835_CLOCK_DSI1P>;
-> +       clock-names = "phy", "escape", "pixel";
-> +
-> +       clock-output-names = "dsi1_byte", "dsi1_ddr2", "dsi1_ddr";
-> +
-> +       pitouchscreen: panel@0 {
-> +               compatible = "raspberrypi,touchscreen";
-> +               reg = <0>;
-> +
-> +               <...>
-> +       };
-> +};
-> +
->  vec: vec@7e806000 {
->         compatible = "brcm,bcm2835-vec";
->         reg = <0x7e806000 0x1000>;
-> --
-> 2.11.0
->
+Heiko
+
+[0] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?id=cb1d9f6ddaa436f2dce2710740b7a3546700949c
