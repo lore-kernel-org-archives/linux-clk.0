@@ -1,55 +1,106 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 30 Jan 2017 10:55:51 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: add more managed APIs
-Message-ID: <20170130185551.GM8801@codeaurora.org>
-References: <20170128184047.GA24957@dtor-ws>
- <20170128190309.GN27312@n2100.armlinux.org.uk>
- <20170128192207.GA38136@dtor-ws>
- <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
- <20170128233911.GO27312@n2100.armlinux.org.uk>
- <20170129180743.GA10917@dtor-ws>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f47.google.com ([209.85.214.47]:36040 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937018AbdAEOJZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Jan 2017 09:09:25 -0500
+Received: by mail-it0-f47.google.com with SMTP id 192so2914986itl.1
+        for <linux-clk@vger.kernel.org>; Thu, 05 Jan 2017 06:09:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170129180743.GA10917@dtor-ws>
+In-Reply-To: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
+References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
+From: Marcin Wojtas <mw@semihalf.com>
+Date: Thu, 5 Jan 2017 15:09:24 +0100
+Message-ID: <CAPv3WKcT8MxX+g12C1o81MmQJWRt7Rpd-hgBh8rTpLOS3vdtqA@mail.gmail.com>
+Subject: Re: [PATCHv2 0/5] Support for Marvell switches with integrated CPUs
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        linux-clk@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Juri Lelli <juri.lelli@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <treding@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>,
+        Rob Herring <robh+dt@kernel.org>,
+        Chris Brand <chris.brand@broadcom.com>,
+        Gregory Clement <gregory.clement@free-electrons.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        linux-gpio@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        nadavh@marvell.com
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/29, Dmitry Torokhov wrote:
-> When converting a driver to managed resources it is desirable to be able to
-> manage all resources in the same fashion. This change allows managing
-> clocks in the same way we manage many other resources.
+Hi Chris,
 
-Can you please add 'managing clock prepared and enabled state in
-the same way'?
+Thanks a lot for your work and v2. Can you please add changelog
+between patchset versions in your cover letter?
 
-The current wording makes it sound like we don't have
-devm_clk_get() when we do.
+Best regards,
+Marcin
 
-> 
-> This adds the following managed APIs:
-> 
-> - devm_clk_prepare()/devm_clk_unprepare();
-> - devm_clk_prepare_enable()/devm_clk_disable_unprepare().
-
-Wouldn't this be preceded by a devm_clk_get() call? Wouldn't it
-be even shorter to have the APIs
-
-  devm_clk_get_and_prepare()/devm_clk_unprepare_and_put()
-  devm_clk_get_and_prepare_enable()/devm_clk_disable_unprepare_and_put()
-
-instead?
-
-Is there any other subsystem that has similar functionality?
-Regulators? GPIOs? Resets? I'm just curious if those subsystems
-also need similar changes.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2017-01-05 4:36 GMT+01:00 Chris Packham <chris.packham@alliedtelesis.co.nz>:
+> The 98DX3236, 98DX3336 and 98DX4251 are a set of switch ASICs with
+> integrated CPUs. They CPU block is common within these product lines and
+> (as far as I can tell/have been told) is based on the Armada XP. There
+> are a few differences due to the fact they have to squeeze the CPU into
+> the same package as the switch.
+>
+> Chris Packham (4):
+>   clk: mvebu: support for 98DX3236 SoC
+>   arm: mvebu: support for SMP on 98DX3336 SoC
+>   arm: mvebu: Add device tree for 98DX3236 SoCs
+>   arm: mvebu: Add device tree for db-dxbc2 and db-xc3-24g4xg boards
+>
+> Kalyan Kinthada (1):
+>   pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
+>
+>  Documentation/devicetree/bindings/arm/cpus.txt     |   1 +
+>  .../bindings/arm/marvell/98dx3236-resume-ctrl.txt  |  18 ++
+>  .../devicetree/bindings/arm/marvell/98dx3236.txt   |  23 ++
+>  .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |   1 +
+>  .../pinctrl/marvell,armada-98dx3236-pinctrl.txt    |  46 ++++
+>  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 247 +++++++++++++++++++++
+>  arch/arm/boot/dts/armada-xp-98dx3336.dtsi          |  78 +++++++
+>  arch/arm/boot/dts/armada-xp-98dx4251.dtsi          |  92 ++++++++
+>  arch/arm/boot/dts/db-dxbc2.dts                     | 159 +++++++++++++
+>  arch/arm/boot/dts/db-xc3-24g4xg.dts                | 155 +++++++++++++
+>  arch/arm/mach-mvebu/Makefile                       |   1 +
+>  arch/arm/mach-mvebu/common.h                       |   1 +
+>  arch/arm/mach-mvebu/platsmp.c                      |  43 ++++
+>  arch/arm/mach-mvebu/pmsu-98dx3236.c                |  69 ++++++
+>  drivers/clk/mvebu/Makefile                         |   2 +-
+>  drivers/clk/mvebu/armada-xp.c                      |  42 ++++
+>  drivers/clk/mvebu/clk-cpu.c                        |  33 ++-
+>  drivers/clk/mvebu/mv98dx3236-corediv.c             | 207 +++++++++++++++++
+>  drivers/pinctrl/mvebu/pinctrl-armada-xp.c          | 155 +++++++++++++
+>  19 files changed, 1369 insertions(+), 4 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236-resume-ctrl.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
+>  create mode 100644 arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+>  create mode 100644 arch/arm/boot/dts/armada-xp-98dx3336.dtsi
+>  create mode 100644 arch/arm/boot/dts/armada-xp-98dx4251.dtsi
+>  create mode 100644 arch/arm/boot/dts/db-dxbc2.dts
+>  create mode 100644 arch/arm/boot/dts/db-xc3-24g4xg.dts
+>  create mode 100644 arch/arm/mach-mvebu/pmsu-98dx3236.c
+>  create mode 100644 drivers/clk/mvebu/mv98dx3236-corediv.c
+>
+> --
+> 2.11.0.24.ge6920cf
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
