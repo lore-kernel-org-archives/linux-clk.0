@@ -1,367 +1,154 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v3 5/6] ARM: dts: sunxi: add dtsi file for V3s SoC
-Date: Fri, 20 Jan 2017 01:54:47 +0800
-Message-Id: <20170119175448.11445-5-icenowy@aosc.xyz>
-In-Reply-To: <20170119175448.11445-1-icenowy@aosc.xyz>
-References: <20170119175448.11445-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
+Return-Path: <Chris.Packham@alliedtelesis.co.nz>
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Mark Rutland <mark.rutland@arm.com>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh+dt@kernel.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv2 1/5] clk: mvebu: support for 98DX3236 SoC
+Date: Thu, 5 Jan 2017 23:05:50 +0000
+Message-ID: <b04de1109e7c4c25b4c54aae54f641e2@svr-chch-ex1.atlnz.lc>
+References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
+ <20170105033641.6212-2-chris.packham@alliedtelesis.co.nz>
+ <20170105135302.GB25333@leverpostej>
 Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-As we have the pinctrl and clock support for the V3s SoC, it's now to
-run a mainline Linux on it.
-
-So add a .dtsi file for it.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
-Changes in v3:
-- Add USB nodes. (The PHY and MUSB patches are merged now)
-Changes in v2:
-- Added I2C here.
- arch/arm/boot/dts/sun8i-v3s.dtsi | 312 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 312 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun8i-v3s.dtsi
-
-diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
-new file mode 100644
-index 000000000000..d4628f4fa7f1
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
-@@ -0,0 +1,312 @@
-+/*
-+ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#include <dt-bindings/clock/sun8i-v3s-ccu.h>
-+#include <dt-bindings/reset/sun8i-v3s-ccu.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/pinctrl/sun4i-a10.h>
-+
-+/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	interrupt-parent = <&gic>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			compatible = "arm,cortex-a7";
-+			device_type = "cpu";
-+			reg = <0>;
-+			clocks = <&ccu CLK_CPU>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	clocks {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		osc24M: osc24M_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <24000000>;
-+			clock-output-names = "osc24M";
-+		};
-+
-+		osc32k: osc32k_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <32768>;
-+			clock-output-names = "osc32k";
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mmc0: mmc@01c0f000 {
-+			compatible = "allwinner,sun7i-a20-mmc";
-+			reg = <0x01c0f000 0x1000>;
-+			clocks = <&ccu CLK_BUS_MMC0>,
-+				 <&ccu CLK_MMC0>,
-+				 <&ccu CLK_MMC0_OUTPUT>,
-+				 <&ccu CLK_MMC0_SAMPLE>;
-+			clock-names = "ahb",
-+				      "mmc",
-+				      "output",
-+				      "sample";
-+			resets = <&ccu RST_BUS_MMC0>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		mmc1: mmc@01c10000 {
-+			compatible = "allwinner,sun7i-a20-mmc";
-+			reg = <0x01c10000 0x1000>;
-+			clocks = <&ccu CLK_BUS_MMC1>,
-+				 <&ccu CLK_MMC1>,
-+				 <&ccu CLK_MMC1_OUTPUT>,
-+				 <&ccu CLK_MMC1_SAMPLE>;
-+			clock-names = "ahb",
-+				      "mmc",
-+				      "output",
-+				      "sample";
-+			resets = <&ccu RST_BUS_MMC1>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		mmc2: mmc@01c11000 {
-+			compatible = "allwinner,sun7i-a20-mmc";
-+			reg = <0x01c11000 0x1000>;
-+			clocks = <&ccu CLK_BUS_MMC2>,
-+				 <&ccu CLK_MMC2>,
-+				 <&ccu CLK_MMC2_OUTPUT>,
-+				 <&ccu CLK_MMC2_SAMPLE>;
-+			clock-names = "ahb",
-+				      "mmc",
-+				      "output",
-+				      "sample";
-+			resets = <&ccu RST_BUS_MMC2>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		usb_otg: usb@01c19000 {
-+			compatible = "allwinner,sun8i-h3-musb";
-+			reg = <0x01c19000 0x0400>;
-+			clocks = <&ccu CLK_BUS_OTG>;
-+			resets = <&ccu RST_BUS_OTG>;
-+			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "mc";
-+			phys = <&usbphy 0>;
-+			phy-names = "usb";
-+			extcon = <&usbphy 0>;
-+			status = "disabled";
-+		};
-+
-+		usbphy: phy@01c19400 {
-+			compatible = "allwinner,sun8i-v3s-usb-phy";
-+			reg = <0x01c19400 0x2c>,
-+			      <0x01c1a800 0x4>;
-+			reg-names = "phy_ctrl",
-+				    "pmu0";
-+			clocks = <&ccu CLK_USB_PHY0>;
-+			clock-names = "usb0_phy";
-+			resets = <&ccu RST_USB_PHY0>;
-+			reset-names = "usb0_reset";
-+			status = "disabled";
-+			#phy-cells = <1>;
-+		};
-+
-+		ccu: clock@01c20000 {
-+			compatible = "allwinner,sun8i-v3s-ccu";
-+			reg = <0x01c20000 0x400>;
-+			clocks = <&osc24M>, <&osc32k>;
-+			clock-names = "hosc", "losc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rtc: rtc@01c20400 {
-+			compatible = "allwinner,sun6i-a31-rtc";
-+			reg = <0x01c20400 0x54>;
-+			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		pio: pinctrl@01c20800 {
-+			compatible = "allwinner,sun8i-v3s-pinctrl";
-+			reg = <0x01c20800 0x400>;
-+			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
-+			gpio-controller;
-+			#gpio-cells = <3>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+
-+			i2c0_pins: i2c0 {
-+				pins = "PB6", "PB7";
-+				function = "i2c0";
-+			};
-+
-+			uart0_pins_a: uart0@0 {
-+				pins = "PB8", "PB9";
-+				function = "uart0";
-+			};
-+
-+			mmc0_pins_a: mmc0@0 {
-+				pins = "PF0", "PF1", "PF2", "PF3",
-+				       "PF4", "PF5";
-+				function = "mmc0";
-+				drive-strength = <30>;
-+				bias-pull-up;
-+			};
-+		};
-+
-+		timer@01c20c00 {
-+			compatible = "allwinner,sun4i-a10-timer";
-+			reg = <0x01c20c00 0xa0>;
-+			interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&osc24M>;
-+		};
-+
-+		wdt0: watchdog@01c20ca0 {
-+			compatible = "allwinner,sun6i-a31-wdt";
-+			reg = <0x01c20ca0 0x20>;
-+			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		uart0: serial@01c28000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c28000 0x400>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART0>;
-+			resets = <&ccu RST_BUS_UART0>;
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@01c28400 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c28400 0x400>;
-+			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART1>;
-+			resets = <&ccu RST_BUS_UART1>;
-+			status = "disabled";
-+		};
-+
-+		uart2: serial@01c28800 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c28800 0x400>;
-+			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART2>;
-+			resets = <&ccu RST_BUS_UART2>;
-+			status = "disabled";
-+		};
-+
-+		i2c0: i2c@01c2ac00 {
-+			compatible = "allwinner,sun6i-a31-i2c";
-+			reg = <0x01c2ac00 0x400>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_I2C0>;
-+			resets = <&ccu RST_BUS_I2C0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&i2c0_pins>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		i2c1: i2c@01c2b000 {
-+			compatible = "allwinner,sun6i-a31-i2c";
-+			reg = <0x01c2b000 0x400>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_I2C1>;
-+			resets = <&ccu RST_BUS_I2C1>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		gic: interrupt-controller@01c81000 {
-+			compatible = "arm,cortex-a7-gic", "arm,cortex-a15-gic";
-+			reg = <0x01c81000 0x1000>,
-+			      <0x01c82000 0x1000>,
-+			      <0x01c84000 0x2000>,
-+			      <0x01c86000 0x2000>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+	};
-+};
--- 
-2.11.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+On 06/01/17 03:01, Mark Rutland wrote:=0A=
+> On Thu, Jan 05, 2017 at 04:36:37PM +1300, Chris Packham wrote:=0A=
+>> The 98DX3236, 98DX3336, 98DX4521 and variants have a different TCLK from=
+=0A=
+>> the Armada XP (200MHz vs 250MHz). The CPU core clock is fixed at 800MHz.=
+=0A=
+>>=0A=
+>> The clock gating options are a subset of those on the Armada XP.=0A=
+>>=0A=
+>> The core clock divider is different to the Armada XP also.=0A=
+>>=0A=
+>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
+>> ---=0A=
+>> Changes in v2:=0A=
+>> - Update devicetree binding documentation for new compatible string=0A=
+>>=0A=
+>>  .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |   1 +=0A=
+>>  drivers/clk/mvebu/Makefile                         |   2 +-=0A=
+>>  drivers/clk/mvebu/armada-xp.c                      |  42 +++++=0A=
+>>  drivers/clk/mvebu/clk-cpu.c                        |  33 +++-=0A=
+>>  drivers/clk/mvebu/mv98dx3236-corediv.c             | 207 ++++++++++++++=
++++++++=0A=
+>>  5 files changed, 281 insertions(+), 4 deletions(-)=0A=
+>>  create mode 100644 drivers/clk/mvebu/mv98dx3236-corediv.c=0A=
+>=0A=
+>=0A=
+> It looks like you also need to update=0A=
+> Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt for the=
+=0A=
+> addition of "marvell,mv98dx3236-corediv-clock".=0A=
+=0A=
+Will do.=0A=
+=0A=
+>=0A=
+>>=0A=
+>> diff --git a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt=
+ b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt=0A=
+>> index 99c214660bdc..7f28506eaee7 100644=0A=
+>> --- a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt=0A=
+>> +++ b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt=0A=
+>> @@ -3,6 +3,7 @@ Device Tree Clock bindings for cpu clock of Marvell EBU =
+platforms=0A=
+>>  Required properties:=0A=
+>>  - compatible : shall be one of the following:=0A=
+>>  	"marvell,armada-xp-cpu-clock" - cpu clocks for Armada XP=0A=
+>> +	"marvell,mv98dx3236-cpu-clock" - cpu clocks for 98DX3236 SoC=0A=
+>>  - reg : Address and length of the clock complex register set, followed=
+=0A=
+>>          by address and length of the PMU DFS registers=0A=
+>>  - #clock-cells : should be set to 1.=0A=
+>=0A=
+> [...]=0A=
+>=0A=
+>> +static void __init mv98dx3236_corediv_clk_init(struct device_node *node=
+)=0A=
+>> +{=0A=
+>> +	struct clk_init_data init;=0A=
+>> +	struct clk_corediv *corediv;=0A=
+>> +	struct clk **clks;=0A=
+>> +	void __iomem *base;=0A=
+>> +	const __be32 *off;=0A=
+>> +	const char *parent_name;=0A=
+>> +	const char *clk_name;=0A=
+>> +	int len;=0A=
+>> +	struct device_node *dfx_node;=0A=
+>> +=0A=
+>> +	dfx_node =3D of_parse_phandle(node, "base", 0);=0A=
+>> +	if (WARN_ON(!dfx_node))=0A=
+>=0A=
+> What's going on here? The existing bingings don't mention a "base"=0A=
+> phandle, and nothing was added to describe it.=0A=
+>=0A=
+>> +		return;=0A=
+>> +=0A=
+>> +	off =3D of_get_property(node, "reg", &len);=0A=
+>> +	if (WARN_ON(!off))=0A=
+>> +		return;=0A=
+>=0A=
+> Please don't use of_get_property directly; generally you should use the=
+=0A=
+> existing higher-level helpers like of_proeprty_read_u32().=0A=
+>=0A=
+>> +=0A=
+>> +	base =3D of_iomap(dfx_node, 0);=0A=
+>> +	if (WARN_ON(!base))=0A=
+>> +		return;=0A=
+>> +=0A=
+>> +	of_node_put(dfx_node);=0A=
+>> +=0A=
+>> +	parent_name =3D of_clk_get_parent_name(node, 0);=0A=
+>> +=0A=
+>> +	clk_data.clk_num =3D 1;=0A=
+>> +=0A=
+>> +	/* clks holds the clock array */=0A=
+>> +	clks =3D kcalloc(clk_data.clk_num, sizeof(struct clk *),=0A=
+>> +				GFP_KERNEL);=0A=
+>> +	if (WARN_ON(!clks))=0A=
+>> +		goto err_unmap;=0A=
+>> +	/* corediv holds the clock specific array */=0A=
+>> +	corediv =3D kcalloc(clk_data.clk_num, sizeof(struct clk_corediv),=0A=
+>> +				GFP_KERNEL);=0A=
+>> +	if (WARN_ON(!corediv))=0A=
+>> +		goto err_free_clks;=0A=
+>> +=0A=
+>> +	spin_lock_init(&corediv->lock);=0A=
+>> +=0A=
+>> +	of_property_read_string_index(node, "clock-output-names",=0A=
+>> +					  0, &clk_name);=0A=
+>> +=0A=
+>> +	init.num_parents =3D 1;=0A=
+>> +	init.parent_names =3D &parent_name;=0A=
+>> +	init.name =3D clk_name;=0A=
+>> +	init.ops =3D &ops;=0A=
+>> +	init.flags =3D 0;=0A=
+>> +=0A=
+>> +	corediv[0].reg =3D (void *)((int)base + be32_to_cpu(*off));=0A=
+>=0A=
+> I don't understand this, but I guess this has something to do with that=
+=0A=
+> base phandle. Is the corediv clock a sub-component of some "base" clock?=
+=0A=
+> I don't think this binding is the best way of describing that.=0A=
+=0A=
+Actually once I've got things setup correctly via the dts I only need =0A=
+some minor modification to mvebu/clk-corediv.c to handle the differences =
+=0A=
+in the bit fields used.=0A=
+=0A=
+>=0A=
+> Thanks,=0A=
+> Mark.=0A=
+>=0A=
+=0A=
