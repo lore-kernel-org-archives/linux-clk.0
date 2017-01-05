@@ -1,28 +1,72 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: linux-rockchip@lists.infradead.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: Remove useless init of "grf" to -EPROBE_DEFER
-Date: Fri, 06 Jan 2017 20:32:02 +0100
-Message-ID: <3165407.VSLAtN8Q2L@phil>
-In-Reply-To: <20170106163101.32048-1-dianders@chromium.org>
-References: <20170106163101.32048-1-dianders@chromium.org>
+Return-Path: <vivek.gautam@codeaurora.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: Re: [PATCH] clk: qcom: Fix a possible NULL pointer dereferencing
+To: Andy Gross <andy.gross@linaro.org>
+References: <1483606525-27709-1-git-send-email-vivek.gautam@codeaurora.org>
+ <20170105142002.GB5710@hector.attlocal.net>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, david.brown@linaro.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <9b590296-6e3a-9079-08e5-48b4af8f8f22@codeaurora.org>
+Date: Thu, 5 Jan 2017 23:48:00 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20170105142002.GB5710@hector.attlocal.net>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Freitag, 6. Januar 2017, 08:31:01 CET schrieb Douglas Anderson:
-> When we used to defer setting the "grf" member to
-> rockchip_clk_get_grf() it was important to init the "grf" member to an
-> error value in rockchip_clk_init().  With recent changes, we now set
-> "grf" right in rockchip_clk_init() (two lines below the place where we
-> initted it).  That makes the old init useless.  Get rid of it.
-> 
-> Fixes: 6f339dc2719e ("clk: rockchip: lookup General Register Files in
-> rockchip_clk_init") Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-thanks for the catch, applied for 4.11
+On 01/05/2017 07:50 PM, Andy Gross wrote:
+> On Thu, Jan 05, 2017 at 02:25:25PM +0530, Vivek Gautam wrote:
+>> Assign num_parents as 0 while registering fixed rate clocks
+>> in _qcom_cc_register_board_clk(), to make sure the clk framework
+>> doesn't dereference parent.
+>>
+>> Fixes: ee15faffef11 ("clk: qcom: common: Add API to register board clocks backwards compatibly")
+>>
+>> Cc: Georgi Djakov<georgi.djakov@linaro.org>
+>> Signed-off-by: Vivek Gautam<vivek.gautam@codeaurora.org>
+>> ---
+>>
+>> Based on 'clk-next'. Build tested.
+>>
+>>   drivers/clk/qcom/common.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+>> index cfab7b400381..df004ead1bef 100644
+>> --- a/drivers/clk/qcom/common.c
+>> +++ b/drivers/clk/qcom/common.c
+>> @@ -157,6 +157,7 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+>>   
+>>   		init_data.name = path;
+>>   		init_data.ops = &clk_fixed_rate_ops;
+>> +		init_data.num_parents = 0;
+> It seems like there was a initializer in the declaration but it was { } instead
+> of { 0 }.
+>
+> Was the original intent to make this structure initialized to 0?  If so, perhaps
+> it should be fixed above in the initializer.
+
+yes, i think we intend to initialize the clock init data to 0, and thus
+we should do that during declaration.
+Will modify and re-spin the patch.
 
 
-Thanks
-Heiko
+Regards
+Vivek
+
+>>   
+>>   		ret = devm_clk_hw_register(dev, &fixed->hw);
+>>   		if (ret)
+> Regards,
+>
+> Andy
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message tomajordomo@vger.kernel.org
+> More majordomo info athttp://vger.kernel.org/majordomo-info.html
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
