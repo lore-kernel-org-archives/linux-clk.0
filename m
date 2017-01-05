@@ -1,50 +1,47 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Sat, 21 Jan 2017 10:16:18 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>
-Subject: Re: [PATCH] clk: hisilicon: fix lock assignment
-Message-ID: <20170121021617.GA30253@leoy-linaro>
-References: <1484727218-3499-1-git-send-email-leo.yan@linaro.org>
- <20170120225827.GB8009@codeaurora.org>
+Return-Path: <Chris.Packham@alliedtelesis.co.nz>
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Florian Fainelli <f.fainelli@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij
+	<linus.walleij@linaro.org>, Jason Cooper <jason@lakedaemon.net>, "Gregory
+ Clement" <gregory.clement@free-electrons.com>, Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Arnd Bergmann <arnd@arndb.de>,
+	Thierry Reding <treding@nvidia.com>, Sudeep Holla <sudeep.holla@arm.com>,
+	Juri Lelli <juri.lelli@arm.com>, Thomas Petazzoni
+	<thomas.petazzoni@free-electrons.com>, Laxman Dewangan
+	<ldewangan@nvidia.com>, Kalyan Kinthada
+	<Kalyan.Kinthada@alliedtelesis.co.nz>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>
+Subject: Re: [PATCHv2 0/5] Support for Marvell switches with integrated CPUs
+Date: Thu, 5 Jan 2017 19:46:43 +0000
+Message-ID: <059c78eaa7dd40c9a46cb08616bae2eb@svr-chch-ex1.atlnz.lc>
+References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
+ <6c6795d3-06ab-a4f0-78ad-5ecc78c1aa2f@gmail.com>
+ <185147a37cab4d7eaea5f79d86cc9451@svr-chch-ex1.atlnz.lc>
+ <20170105130945.GA18033@lunn.ch>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170120225827.GB8009@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 20, 2017 at 02:58:27PM -0800, Stephen Boyd wrote:
-> On 01/18, Leo Yan wrote:
-> > In clock driver initialize phase the spinlock is missed to assignment
-> > to struct clkgate_separated, finally there have no locking to protect
-> > exclusive accessing for clock registers.
-> > 
-> > This bug introduces the console has no output after enable coresight
-> > driver on 96borads Hikey; this is because console using UART3, which
-> 
-> s/borads/boards/
-> 
-> > has shared the same register with coresight clock enabling bit. After
-> > applied this patch it can assign lock properly to protect exclusive
-> > accessing, and console can work well after enabled coresight modules.
-> > 
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> 
-> Is there a Fixes: tag needed?
-
-Thanks for reviewing, will send new patch for upper comments.
-
-> Is coresight support merged into Linus' tree? I want to know if
-> this needs to be applied for v4.10 or can wait until v4.11.
-
-No, Coresight patch has not been merged. Should meantion one thing is:
-this issue impacts all gate clocks if they share same register, there
-have many such kind clocks for Hi6220. So it's not only for coresight
-and uart clocks.
-
-Thanks,
-Leo Yan
+On 06/01/17 02:10, Andrew Lunn wrote:=0A=
+>> I'd love to see a switchdev driver but it's a huge task (and no I'm not=
+=0A=
+>> committing to writing it). As it stands Marvell ship a switch SDK=0A=
+>> largely executes in userspace with a small kernel module providing some=
+=0A=
+>> linkage to the underlying hardware.=0A=
+>=0A=
+> Is there any similarity to the mv88e6xxx family?=0A=
+>=0A=
+> If it was similar registers, just a different access mechanising, we=0A=
+> could probably extend the mv88e6xxx to support MMIO as well as MDIO.=0A=
+=0A=
+No the prestera family of devices are considerably more powerful (and =0A=
+complex) than the linkstreet devices.=0A=
