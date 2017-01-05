@@ -1,56 +1,81 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] clk: renesas: Use CLK_IS_CRITICAL to handle critical clocks
-Date: Tue, 17 Jan 2017 13:46:28 +0100
-Message-Id: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <chrisp@alliedtelesis.co.nz>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Chris Brand <chris.brand@broadcom.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Thierry Reding <treding@nvidia.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Juri Lelli <juri.lelli@arm.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: [PATCHv2 0/5] Support for Marvell switches with integrated CPUs
+Date: Thu,  5 Jan 2017 16:36:36 +1300
+Message-Id: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+The 98DX3236, 98DX3336 and 98DX4251 are a set of switch ASICs with
+integrated CPUs. They CPU block is common within these product lines and
+(as far as I can tell/have been told) is based on the Armada XP. There
+are a few differences due to the fact they have to squeeze the CPU into
+the same package as the switch.
 
-This patch series adds support for the CLK_IS_CRITICAL flag to drivers
-for module clocks on Renesas ARM SoCs.  For now, this is used to prevent
-disabling of the ARM GIC module clock, which would lead to a system
-lock-up when accessing the GIC's registers.
+Chris Packham (4):
+  clk: mvebu: support for 98DX3236 SoC
+  arm: mvebu: support for SMP on 98DX3336 SoC
+  arm: mvebu: Add device tree for 98DX3236 SoCs
+  arm: mvebu: Add device tree for db-dxbc2 and db-xc3-24g4xg boards
 
-  1. The first patch migrates the Renesas CPG/MSSR driver from the
-     never merged CLK_ENABLE_HAND_OFF flag to the CLK_IS_CRITICAL flag.
-     Note that as the driver already handled critical clocks (i.e. it
-     ignored them :-), this is not a prerequisite for linking the GIC to
-     its module clock in DT.
+Kalyan Kinthada (1):
+  pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
 
-  2. The second patch makes sure the CLK_IS_CRITICAL flag is set for the
-     INTC-SYS clock on SoCs not (yet) using the Renesas CPG/MSSR driver.
-     Note that this is a hard dependency for describing the INTC-SYS
-     clock in DT on R-Mobile APE6 and R-Car Gen2.
-
-I plan to queue these patches in my clk-renesas-for-v4.11 branch, if
-you agree.
-
-Thanks!
-        
-Geert Uytterhoeven (2):
-  clk: renesas: cpg-mssr: Migrate to CLK_IS_CRITICAL
-  clk: renesas: mstp: Make INTC-SYS a critical clock
-
- drivers/clk/renesas/clk-mstp.c         |  5 +++++
- drivers/clk/renesas/renesas-cpg-mssr.c | 11 ++---------
- 2 files changed, 7 insertions(+), 9 deletions(-)
+ Documentation/devicetree/bindings/arm/cpus.txt     |   1 +
+ .../bindings/arm/marvell/98dx3236-resume-ctrl.txt  |  18 ++
+ .../devicetree/bindings/arm/marvell/98dx3236.txt   |  23 ++
+ .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |   1 +
+ .../pinctrl/marvell,armada-98dx3236-pinctrl.txt    |  46 ++++
+ arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 247 +++++++++++++++++++++
+ arch/arm/boot/dts/armada-xp-98dx3336.dtsi          |  78 +++++++
+ arch/arm/boot/dts/armada-xp-98dx4251.dtsi          |  92 ++++++++
+ arch/arm/boot/dts/db-dxbc2.dts                     | 159 +++++++++++++
+ arch/arm/boot/dts/db-xc3-24g4xg.dts                | 155 +++++++++++++
+ arch/arm/mach-mvebu/Makefile                       |   1 +
+ arch/arm/mach-mvebu/common.h                       |   1 +
+ arch/arm/mach-mvebu/platsmp.c                      |  43 ++++
+ arch/arm/mach-mvebu/pmsu-98dx3236.c                |  69 ++++++
+ drivers/clk/mvebu/Makefile                         |   2 +-
+ drivers/clk/mvebu/armada-xp.c                      |  42 ++++
+ drivers/clk/mvebu/clk-cpu.c                        |  33 ++-
+ drivers/clk/mvebu/mv98dx3236-corediv.c             | 207 +++++++++++++++++
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c          | 155 +++++++++++++
+ 19 files changed, 1369 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236-resume-ctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
+ create mode 100644 arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+ create mode 100644 arch/arm/boot/dts/armada-xp-98dx3336.dtsi
+ create mode 100644 arch/arm/boot/dts/armada-xp-98dx4251.dtsi
+ create mode 100644 arch/arm/boot/dts/db-dxbc2.dts
+ create mode 100644 arch/arm/boot/dts/db-xc3-24g4xg.dts
+ create mode 100644 arch/arm/mach-mvebu/pmsu-98dx3236.c
+ create mode 100644 drivers/clk/mvebu/mv98dx3236-corediv.c
 
 -- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.11.0.24.ge6920cf
