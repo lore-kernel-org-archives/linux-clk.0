@@ -1,54 +1,131 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:51740 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750902AbdAYIaf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 25 Jan 2017 03:30:35 -0500
+Return-Path: <mark.rutland@arm.com>
+Date: Thu, 5 Jan 2017 13:53:02 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 1/5] clk: mvebu: support for 98DX3236 SoC
+Message-ID: <20170105135302.GB25333@leverpostej>
+References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
+ <20170105033641.6212-2-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
-In-Reply-To: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
-References: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 25 Jan 2017 10:30:30 +0200
-Message-ID: <CAJKOXPfwj3v2cVU_WieqFFcMBkawuRUr-v4mDNG-FMg0A8=OgA@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: mark s3c...._clk_sleep_init() as __init
-To: Martin Kaiser <martin@kaiser.cx>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170105033641.6212-2-chris.packham@alliedtelesis.co.nz>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 24, 2017 at 11:33 PM, Martin Kaiser <martin@kaiser.cx> wrote:
-> These functions are called only by other __init functions.
-> Compiling for s3c2410 with CONFIG_DEBUG_SECTION_MISMATCH=y,
-> I get warnings like
->
-> WARNING: vmlinux.o(.text+0x198350):
-> Section mismatch in reference from the function s3c2410_clk_sleep_init()
-> to the (unknown reference) .init.data:(unknown)
->
-
-The code looks okay but the description is not accurate. First, indeed
-the functions are referenced only from other __init. However the real
-problem is - pointed by section mismatch - that non-init functions are
-referencing __initdata. Exactly this is mentioned in the error above.
-Please, refactor the commit message to reflect the real problem.
-
-Best regards,
-Krzysztof
-
-> Marking the s3c...._clk_sleep() functions as __init fixes this.
->
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+On Thu, Jan 05, 2017 at 04:36:37PM +1300, Chris Packham wrote:
+> The 98DX3236, 98DX3336, 98DX4521 and variants have a different TCLK from
+> the Armada XP (200MHz vs 250MHz). The CPU core clock is fixed at 800MHz.
+> 
+> The clock gating options are a subset of those on the Armada XP.
+> 
+> The core clock divider is different to the Armada XP also.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 > ---
->  drivers/clk/samsung/clk-s3c2410.c | 4 ++--
->  drivers/clk/samsung/clk-s3c2412.c | 4 ++--
->  drivers/clk/samsung/clk-s3c2443.c | 4 ++--
->  drivers/clk/samsung/clk-s3c64xx.c | 4 ++--
->  4 files changed, 8 insertions(+), 8 deletions(-)
->
+> Changes in v2:
+> - Update devicetree binding documentation for new compatible string
+> 
+>  .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |   1 +
+>  drivers/clk/mvebu/Makefile                         |   2 +-
+>  drivers/clk/mvebu/armada-xp.c                      |  42 +++++
+>  drivers/clk/mvebu/clk-cpu.c                        |  33 +++-
+>  drivers/clk/mvebu/mv98dx3236-corediv.c             | 207 +++++++++++++++++++++
+>  5 files changed, 281 insertions(+), 4 deletions(-)
+>  create mode 100644 drivers/clk/mvebu/mv98dx3236-corediv.c
+
+
+It looks like you also need to update
+Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt for the
+addition of "marvell,mv98dx3236-corediv-clock".
+
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
+> index 99c214660bdc..7f28506eaee7 100644
+> --- a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
+> @@ -3,6 +3,7 @@ Device Tree Clock bindings for cpu clock of Marvell EBU platforms
+>  Required properties:
+>  - compatible : shall be one of the following:
+>  	"marvell,armada-xp-cpu-clock" - cpu clocks for Armada XP
+> +	"marvell,mv98dx3236-cpu-clock" - cpu clocks for 98DX3236 SoC
+>  - reg : Address and length of the clock complex register set, followed
+>          by address and length of the PMU DFS registers
+>  - #clock-cells : should be set to 1.
+
+[...]
+
+> +static void __init mv98dx3236_corediv_clk_init(struct device_node *node)
+> +{
+> +	struct clk_init_data init;
+> +	struct clk_corediv *corediv;
+> +	struct clk **clks;
+> +	void __iomem *base;
+> +	const __be32 *off;
+> +	const char *parent_name;
+> +	const char *clk_name;
+> +	int len;
+> +	struct device_node *dfx_node;
+> +
+> +	dfx_node = of_parse_phandle(node, "base", 0);
+> +	if (WARN_ON(!dfx_node))
+
+What's going on here? The existing bingings don't mention a "base"
+phandle, and nothing was added to describe it.
+
+> +		return;
+> +
+> +	off = of_get_property(node, "reg", &len);
+> +	if (WARN_ON(!off))
+> +		return;
+
+Please don't use of_get_property directly; generally you should use the
+existing higher-level helpers like of_proeprty_read_u32().
+
+> +
+> +	base = of_iomap(dfx_node, 0);
+> +	if (WARN_ON(!base))
+> +		return;
+> +
+> +	of_node_put(dfx_node);
+> +
+> +	parent_name = of_clk_get_parent_name(node, 0);
+> +
+> +	clk_data.clk_num = 1;
+> +
+> +	/* clks holds the clock array */
+> +	clks = kcalloc(clk_data.clk_num, sizeof(struct clk *),
+> +				GFP_KERNEL);
+> +	if (WARN_ON(!clks))
+> +		goto err_unmap;
+> +	/* corediv holds the clock specific array */
+> +	corediv = kcalloc(clk_data.clk_num, sizeof(struct clk_corediv),
+> +				GFP_KERNEL);
+> +	if (WARN_ON(!corediv))
+> +		goto err_free_clks;
+> +
+> +	spin_lock_init(&corediv->lock);
+> +
+> +	of_property_read_string_index(node, "clock-output-names",
+> +					  0, &clk_name);
+> +
+> +	init.num_parents = 1;
+> +	init.parent_names = &parent_name;
+> +	init.name = clk_name;
+> +	init.ops = &ops;
+> +	init.flags = 0;
+> +
+> +	corediv[0].reg = (void *)((int)base + be32_to_cpu(*off));
+
+I don't understand this, but I guess this has something to do with that
+base phandle. Is the corediv clock a sub-component of some "base" clock?
+I don't think this binding is the best way of describing that.
+
+Thanks,
+Mark.
