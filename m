@@ -1,262 +1,395 @@
-Return-Path: <anholt@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v2 2/3] clk: bcm2835: Register the DSI0/DSI1 pixel clocks.
-Date: Wed, 18 Jan 2017 07:31:56 +1100
-Message-Id: <20170117203157.23822-2-eric@anholt.net>
-In-Reply-To: <20170117203157.23822-1-eric@anholt.net>
-References: <20170117203157.23822-1-eric@anholt.net>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH 4/4] dt-bindings: mfd: Add STM32F7 RCC numeric constants into DT include file
+Date: Fri, 6 Jan 2017 14:59:25 +0100
+Message-ID: <1483711165-17149-5-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1483711165-17149-1-git-send-email-gabriel.fernandez@st.com>
+References: <1483711165-17149-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The DSI pixel clocks are muxed from clocks generated in the analog phy
-by the DSI driver.  In order to set them as parents, we need to do the
-same name lookup dance on them as we do for our root oscillator.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
+This patch lists STM32F7's RCC numeric constants.
+It will be used by clock and reset drivers, and DT bindings.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
+ arch/arm/boot/dts/stm32f746.dtsi      |  51 ++++++++--------
+ include/dt-bindings/mfd/stm32f7-rcc.h | 112 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 138 insertions(+), 25 deletions(-)
+ create mode 100644 include/dt-bindings/mfd/stm32f7-rcc.h
 
-v2: now with of_clk_parent_fill().
-
- .../bindings/clock/brcm,bcm2835-cprman.txt         |  15 ++-
- drivers/clk/bcm/clk-bcm2835.c                      | 121 +++++++++++++++++++--
- include/dt-bindings/clock/bcm2835.h                |   2 +
- 3 files changed, 125 insertions(+), 13 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-index e56a1df3a9d3..dd906db34b32 100644
---- a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-@@ -16,7 +16,20 @@ Required properties:
- - #clock-cells:	Should be <1>. The permitted clock-specifier values can be
- 		  found in include/dt-bindings/clock/bcm2835.h
- - reg:		Specifies base physical address and size of the registers
--- clocks:	The external oscillator clock phandle
-+- clocks:	phandles to the parent clocks used as input to the module, in
-+		  the following order:
-+
-+		  - External oscillator
-+		  - DSI0 byte clock
-+		  - DSI0 DDR2 clock
-+		  - DSI0 DDR clock
-+		  - DSI1 byte clock
-+		  - DSI1 DDR2 clock
-+		  - DSI1 DDR clock
-+
-+		  Only external oscillator is required.  The DSI clocks may
-+		  not be present, in which case their children will be
-+		  unusable.
+diff --git a/arch/arm/boot/dts/stm32f746.dtsi b/arch/arm/boot/dts/stm32f746.dtsi
+index e05e131..09d6649 100644
+--- a/arch/arm/boot/dts/stm32f746.dtsi
++++ b/arch/arm/boot/dts/stm32f746.dtsi
+@@ -44,6 +44,7 @@
+ #include "armv7-m.dtsi"
+ #include <dt-bindings/pinctrl/stm32f746-pinfunc.h>
+ #include <dt-bindings/clock/stm32fx-clock.h>
++#include <dt-bindings/mfd/stm32f7-rcc.h>
  
- Example:
+ / {
+ 	clocks {
+@@ -77,7 +78,7 @@
+ 			compatible = "st,stm32-timer";
+ 			reg = <0x40000000 0x400>;
+ 			interrupts = <28>;
+-			clocks = <&rcc 0 128>;
++			clocks = <&rcc 0 STM32F7_APB1_CLOCK(TIM2)>;
+ 			status = "disabled";
+ 		};
  
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 3d0848d535d7..2e7423d8f5bb 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -297,11 +297,32 @@
- #define LOCK_TIMEOUT_NS		100000000
- #define BCM2835_MAX_FB_RATE	1750000000u
+@@ -85,7 +86,7 @@
+ 			compatible = "st,stm32-timer";
+ 			reg = <0x40000400 0x400>;
+ 			interrupts = <29>;
+-			clocks = <&rcc 0 129>;
++			clocks = <&rcc 0 STM32F7_APB1_CLOCK(TIM3)>;
+ 			status = "disabled";
+ 		};
  
+@@ -93,7 +94,7 @@
+ 			compatible = "st,stm32-timer";
+ 			reg = <0x40000800 0x400>;
+ 			interrupts = <30>;
+-			clocks = <&rcc 0 130>;
++			clocks = <&rcc 0 STM32F7_APB1_CLOCK(TIM4)>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -101,14 +102,14 @@
+ 			compatible = "st,stm32-timer";
+ 			reg = <0x40000c00 0x400>;
+ 			interrupts = <50>;
+-			clocks = <&rcc 0 131>;
++			clocks = <&rcc 0 STM32F7_APB1_CLOCK(TIM5)>;
+ 		};
+ 
+ 		timer6: timer@40001000 {
+ 			compatible = "st,stm32-timer";
+ 			reg = <0x40001000 0x400>;
+ 			interrupts = <54>;
+-			clocks = <&rcc 0 132>;
++			clocks = <&rcc 0 STM32F7_APB1_CLOCK(TIM6)>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -116,7 +117,7 @@
+ 			compatible = "st,stm32-timer";
+ 			reg = <0x40001400 0x400>;
+ 			interrupts = <55>;
+-			clocks = <&rcc 0 133>;
++			clocks = <&rcc 0 STM32F7_APB1_CLOCK(TIM7)>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -124,7 +125,7 @@
+ 			compatible = "st,stm32f7-usart", "st,stm32f7-uart";
+ 			reg = <0x40004400 0x400>;
+ 			interrupts = <38>;
+-			clocks =  <&rcc 0 145>;
++			clocks = <&rcc 1 CLK_USART2>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -132,7 +133,7 @@
+ 			compatible = "st,stm32f7-usart", "st,stm32f7-uart";
+ 			reg = <0x40004800 0x400>;
+ 			interrupts = <39>;
+-			clocks = <&rcc 0 146>;
++			clocks = <&rcc 1 CLK_USART3>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -140,7 +141,7 @@
+ 			compatible = "st,stm32f7-uart";
+ 			reg = <0x40004c00 0x400>;
+ 			interrupts = <52>;
+-			clocks = <&rcc 0 147>;
++			clocks = <&rcc 1 CLK_UART4>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -148,7 +149,7 @@
+ 			compatible = "st,stm32f7-uart";
+ 			reg = <0x40005000 0x400>;
+ 			interrupts = <53>;
+-			clocks = <&rcc 0 148>;
++			clocks = <&rcc 1 CLK_UART5>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -156,7 +157,7 @@
+ 			compatible = "st,stm32f7-usart", "st,stm32f7-uart";
+ 			reg = <0x40007800 0x400>;
+ 			interrupts = <82>;
+-			clocks = <&rcc 0 158>;
++			clocks = <&rcc 1 CLK_UART7>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -164,7 +165,7 @@
+ 			compatible = "st,stm32f7-usart", "st,stm32f7-uart";
+ 			reg = <0x40007c00 0x400>;
+ 			interrupts = <83>;
+-			clocks = <&rcc 0 159>;
++			clocks = <&rcc 1 CLK_UART8>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -172,7 +173,7 @@
+ 			compatible = "st,stm32f7-usart", "st,stm32f7-uart";
+ 			reg = <0x40011000 0x400>;
+ 			interrupts = <37>;
+-			clocks = <&rcc 0 164>;
++			clocks = <&rcc 1 CLK_USART1>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -180,7 +181,7 @@
+ 			compatible = "st,stm32f7-usart", "st,stm32f7-uart";
+ 			reg = <0x40011400 0x400>;
+ 			interrupts = <71>;
+-			clocks = <&rcc 0 165>;
++			clocks = <&rcc 1 CLK_USART6>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -215,7 +216,7 @@
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				reg = <0x0 0x400>;
+-				clocks = <&rcc 0 256>;
++				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOA)>;
+ 				st,bank-name = "GPIOA";
+ 			};
+ 
+@@ -223,7 +224,7 @@
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				reg = <0x400 0x400>;
+-				clocks = <&rcc 0 257>;
++				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOB)>;
+ 				st,bank-name = "GPIOB";
+ 			};
+ 
+@@ -231,7 +232,7 @@
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				reg = <0x800 0x400>;
+-				clocks = <&rcc 0 258>;
++				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOC)>;
+ 				st,bank-name = "GPIOC";
+ 			};
+ 
+@@ -239,7 +240,7 @@
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				reg = <0xc00 0x400>;
+-				clocks = <&rcc 0 259>;
++				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOD)>;
+ 				st,bank-name = "GPIOD";
+ 			};
+ 
+@@ -247,7 +248,7 @@
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				reg = <0x1000 0x400>;
+-				clocks = <&rcc 0 260>;
++				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOE)>;
+ 				st,bank-name = "GPIOE";
+ 			};
+ 
+@@ -255,7 +256,7 @@
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				reg = <0x1400 0x400>;
+-				clocks = <&rcc 0 261>;
++				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOF)>;
+ 				st,bank-name = "GPIOF";
+ 			};
+ 
+@@ -263,7 +264,7 @@
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				reg = <0x1800 0x400>;
+-				clocks = <&rcc 0 262>;
++				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOG)>;
+ 				st,bank-name = "GPIOG";
+ 			};
+ 
+@@ -271,7 +272,7 @@
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				reg = <0x1c00 0x400>;
+-				clocks = <&rcc 0 263>;
++				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOH)>;
+ 				st,bank-name = "GPIOH";
+ 			};
+ 
+@@ -279,7 +280,7 @@
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				reg = <0x2000 0x400>;
+-				clocks = <&rcc 0 264>;
++				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOI)>;
+ 				st,bank-name = "GPIOI";
+ 			};
+ 
+@@ -287,7 +288,7 @@
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				reg = <0x2400 0x400>;
+-				clocks = <&rcc 0 265>;
++				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOJ)>;
+ 				st,bank-name = "GPIOJ";
+ 			};
+ 
+@@ -295,7 +296,7 @@
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				reg = <0x2800 0x400>;
+-				clocks = <&rcc 0 266>;
++				clocks = <&rcc 0 STM32F7_AHB1_CLOCK(GPIOK)>;
+ 				st,bank-name = "GPIOK";
+ 			};
+ 
+diff --git a/include/dt-bindings/mfd/stm32f7-rcc.h b/include/dt-bindings/mfd/stm32f7-rcc.h
+new file mode 100644
+index 0000000..e36cc69
+--- /dev/null
++++ b/include/dt-bindings/mfd/stm32f7-rcc.h
+@@ -0,0 +1,112 @@
 +/*
-+ * Names of clocks used within the driver that need to be replaced
-+ * with an external parent's name.  This array is in the order that
-+ * the clocks node in the DT references external clocks.
++ * This header provides constants for the STM32F7 RCC IP
 + */
-+static const char *const cprman_parent_names[] = {
-+	"xosc",
-+	"dsi0_byte",
-+	"dsi0_ddr2",
-+	"dsi0_ddr",
-+	"dsi1_byte",
-+	"dsi1_ddr2",
-+	"dsi1_ddr",
-+};
 +
- struct bcm2835_cprman {
- 	struct device *dev;
- 	void __iomem *regs;
- 	spinlock_t regs_lock; /* spinlock for all clocks */
--	const char *osc_name;
++#ifndef _DT_BINDINGS_MFD_STM32F7_RCC_H
++#define _DT_BINDINGS_MFD_STM32F7_RCC_H
 +
-+	/*
-+	 * Real names of cprman clock parents looked up through
-+	 * of_clk_get_parent_name(), which will be used in the
-+	 * parent_names[] arrays for clock registration.
-+	 */
-+	const char *real_parent_names[ARRAY_SIZE(cprman_parent_names)];
- 
- 	/* Must be last */
- 	struct clk_hw_onecell_data onecell;
-@@ -907,6 +928,9 @@ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
- 	const struct bcm2835_clock_data *data = clock->data;
- 	u64 temp;
- 
-+	if (data->int_bits == 0 && data->frac_bits == 0)
-+		return parent_rate;
++/* AHB1 */
++#define STM32F7_RCC_AHB1_GPIOA		0
++#define STM32F7_RCC_AHB1_GPIOB		1
++#define STM32F7_RCC_AHB1_GPIOC		2
++#define STM32F7_RCC_AHB1_GPIOD		3
++#define STM32F7_RCC_AHB1_GPIOE		4
++#define STM32F7_RCC_AHB1_GPIOF		5
++#define STM32F7_RCC_AHB1_GPIOG		6
++#define STM32F7_RCC_AHB1_GPIOH		7
++#define STM32F7_RCC_AHB1_GPIOI		8
++#define STM32F7_RCC_AHB1_GPIOJ		9
++#define STM32F7_RCC_AHB1_GPIOK		10
++#define STM32F7_RCC_AHB1_CRC		12
++#define STM32F7_RCC_AHB1_BKPSRAM	18
++#define STM32F7_RCC_AHB1_DTCMRAM	20
++#define STM32F7_RCC_AHB1_DMA1		21
++#define STM32F7_RCC_AHB1_DMA2		22
++#define STM32F7_RCC_AHB1_DMA2D		23
++#define STM32F7_RCC_AHB1_ETHMAC		25
++#define STM32F7_RCC_AHB1_ETHMACTX	26
++#define STM32F7_RCC_AHB1_ETHMACRX	27
++#define STM32FF_RCC_AHB1_ETHMACPTP	28
++#define STM32F7_RCC_AHB1_OTGHS		29
++#define STM32F7_RCC_AHB1_OTGHSULPI	30
 +
- 	/*
- 	 * The divisor is a 12.12 fixed point field, but only some of
- 	 * the bits are populated in any given clock.
-@@ -930,7 +954,12 @@ static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
--	u32 div = cprman_read(cprman, data->div_reg);
-+	u32 div;
++#define STM32F7_AHB1_RESET(bit) (STM32F7_RCC_AHB1_##bit + (0x10 * 8))
++#define STM32F7_AHB1_CLOCK(bit) (STM32F7_RCC_AHB1_##bit)
 +
-+	if (data->int_bits == 0 && data->frac_bits == 0)
-+		return parent_rate;
 +
-+	div = cprman_read(cprman, data->div_reg);
- 
- 	return bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
- }
-@@ -1209,7 +1238,7 @@ static struct clk_hw *bcm2835_register_pll(struct bcm2835_cprman *cprman,
- 	memset(&init, 0, sizeof(init));
- 
- 	/* All of the PLLs derive from the external oscillator. */
--	init.parent_names = &cprman->osc_name;
-+	init.parent_names = &cprman->real_parent_names[0];
- 	init.num_parents = 1;
- 	init.name = data->name;
- 	init.ops = &bcm2835_pll_clk_ops;
-@@ -1295,18 +1324,22 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
- 	struct bcm2835_clock *clock;
- 	struct clk_init_data init;
- 	const char *parents[1 << CM_SRC_BITS];
--	size_t i;
-+	size_t i, j;
- 	int ret;
- 
- 	/*
--	 * Replace our "xosc" references with the oscillator's
--	 * actual name.
-+	 * Replace our strings referencing parent clocks with the
-+	 * actual clock-output-name of the parent.
- 	 */
- 	for (i = 0; i < data->num_mux_parents; i++) {
--		if (strcmp(data->parents[i], "xosc") == 0)
--			parents[i] = cprman->osc_name;
--		else
--			parents[i] = data->parents[i];
-+		parents[i] = data->parents[i];
++/* AHB2 */
++#define STM32F7_RCC_AHB2_DCMI		0
++#define STM32F7_RCC_AHB2_CRYP		4
++#define STM32F7_RCC_AHB2_HASH		5
++#define STM32F7_RCC_AHB2_RNG		6
++#define STM32F7_RCC_AHB2_OTGFS		7
 +
-+		for (j = 0; j < ARRAY_SIZE(cprman_parent_names); j++) {
-+			if (strcmp(parents[i], cprman_parent_names[j]) == 0) {
-+				parents[i] = cprman->real_parent_names[j];
-+				break;
-+			}
-+		}
- 	}
- 
- 	memset(&init, 0, sizeof(init));
-@@ -1433,6 +1466,47 @@ static const char *const bcm2835_clock_vpu_parents[] = {
- 	__VA_ARGS__)
- 
- /*
-+ * DSI parent clocks.  The DSI byte/DDR/DDR2 clocks come from the DSI
-+ * analog PHY.  The _inv variants are generated internally to cprman,
-+ * but we don't use them so they aren't hooked up.
-+ */
-+static const char *const bcm2835_clock_dsi0_parents[] = {
-+	"gnd",
-+	"xosc",
-+	"testdebug0",
-+	"testdebug1",
-+	"dsi0_ddr",
-+	"dsi0_ddr_inv",
-+	"dsi0_ddr2",
-+	"dsi0_ddr2_inv",
-+	"dsi0_byte",
-+	"dsi0_byte_inv",
-+};
++#define STM32F7_AHB2_RESET(bit)	(STM32F7_RCC_AHB2_##bit + (0x14 * 8))
++#define STM32F7_AHB2_CLOCK(bit)	(STM32F7_RCC_AHB2_##bit + 0x20)
 +
-+static const char *const bcm2835_clock_dsi1_parents[] = {
-+	"gnd",
-+	"xosc",
-+	"testdebug0",
-+	"testdebug1",
-+	"dsi1_ddr",
-+	"dsi1_ddr_inv",
-+	"dsi1_ddr2",
-+	"dsi1_ddr2_inv",
-+	"dsi1_byte",
-+	"dsi1_byte_inv",
-+};
++/* AHB3 */
++#define STM32F7_RCC_AHB3_FMC		0
++#define STM32F7_RCC_AHB3_QSPI		1
 +
-+#define REGISTER_DSI0_CLK(...)	REGISTER_CLK(				\
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_dsi0_parents),	\
-+	.parents = bcm2835_clock_dsi0_parents,				\
-+	__VA_ARGS__)
++#define STM32F7_AHB3_RESET(bit)	(STM32F7_RCC_AHB3_##bit + (0x18 * 8))
++#define STM32F7_AHB3_CLOCK(bit)	(STM32F7_RCC_AHB3_##bit + 0x40)
 +
-+#define REGISTER_DSI1_CLK(...)	REGISTER_CLK(				\
-+	.num_mux_parents = ARRAY_SIZE(bcm2835_clock_dsi1_parents),	\
-+	.parents = bcm2835_clock_dsi1_parents,				\
-+	__VA_ARGS__)
++/* APB1 */
++#define STM32F7_RCC_APB1_TIM2		0
++#define STM32F7_RCC_APB1_TIM3		1
++#define STM32F7_RCC_APB1_TIM4		2
++#define STM32F7_RCC_APB1_TIM5		3
++#define STM32F7_RCC_APB1_TIM6		4
++#define STM32F7_RCC_APB1_TIM7		5
++#define STM32F7_RCC_APB1_TIM12		6
++#define STM32F7_RCC_APB1_TIM13		7
++#define STM32F7_RCC_APB1_TIM14		8
++#define STM32F7_RCC_APB1_LPTIM1		9
++#define STM32F7_RCC_APB1_WWDG		11
++#define STM32F7_RCC_APB1_SPI2		14
++#define STM32F7_RCC_APB1_SPI3		15
++#define STM32F7_RCC_APB1_SPDIFRX	16
++#define STM32F7_RCC_APB1_UART2		17
++#define STM32F7_RCC_APB1_UART3		18
++#define STM32F7_RCC_APB1_UART4		19
++#define STM32F7_RCC_APB1_UART5		20
++#define STM32F7_RCC_APB1_I2C1		21
++#define STM32F7_RCC_APB1_I2C2		22
++#define STM32F7_RCC_APB1_I2C3		23
++#define STM32F7_RCC_APB1_I2C4		24
++#define STM32F7_RCC_APB1_CAN1		25
++#define STM32F7_RCC_APB1_CAN2		26
++#define STM32F7_RCC_APB1_CEC		27
++#define STM32F7_RCC_APB1_PWR		28
++#define STM32F7_RCC_APB1_DAC		29
++#define STM32F7_RCC_APB1_UART7		30
++#define STM32F7_RCC_APB1_UART8		31
 +
-+/*
-  * the real definition of all the pll, pll_dividers and clocks
-  * these make use of the above REGISTER_* macros
-  */
-@@ -1895,6 +1969,18 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.div_reg = CM_DSI1EDIV,
- 		.int_bits = 4,
- 		.frac_bits = 8),
-+	[BCM2835_CLOCK_DSI0P]	= REGISTER_DSI0_CLK(
-+		.name = "dsi0p",
-+		.ctl_reg = CM_DSI0PCTL,
-+		.div_reg = CM_DSI0PDIV,
-+		.int_bits = 0,
-+		.frac_bits = 0),
-+	[BCM2835_CLOCK_DSI1P]	= REGISTER_DSI1_CLK(
-+		.name = "dsi1p",
-+		.ctl_reg = CM_DSI1PCTL,
-+		.div_reg = CM_DSI1PDIV,
-+		.int_bits = 0,
-+		.frac_bits = 0),
- 
- 	/* the gates */
- 
-@@ -1953,8 +2039,19 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
- 	if (IS_ERR(cprman->regs))
- 		return PTR_ERR(cprman->regs);
- 
--	cprman->osc_name = of_clk_get_parent_name(dev->of_node, 0);
--	if (!cprman->osc_name)
-+	memcpy(cprman->real_parent_names, cprman_parent_names,
-+	       sizeof(cprman_parent_names));
-+	of_clk_parent_fill(dev->of_node, cprman->real_parent_names,
-+			   ARRAY_SIZE(cprman_parent_names));
++#define STM32F7_APB1_RESET(bit)	(STM32F7_RCC_APB1_##bit + (0x20 * 8))
++#define STM32F7_APB1_CLOCK(bit)	(STM32F7_RCC_APB1_##bit + 0x80)
 +
-+	/*
-+	 * Make sure the external oscillator has been registered.
-+	 *
-+	 * The other (DSI) clocks are not present on older device
-+	 * trees, which we still need to support for backwards
-+	 * compatibility.
-+	 */
-+	if (!cprman->real_parent_names[0])
- 		return -ENODEV;
- 
- 	platform_set_drvdata(pdev, cprman);
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
-index 360e00cefd35..a0c812b0fa39 100644
---- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -64,3 +64,5 @@
- #define BCM2835_CLOCK_CAM1		46
- #define BCM2835_CLOCK_DSI0E		47
- #define BCM2835_CLOCK_DSI1E		48
-+#define BCM2835_CLOCK_DSI0P		49
-+#define BCM2835_CLOCK_DSI1P		50
++/* APB2 */
++#define STM32F7_RCC_APB2_TIM1		0
++#define STM32F7_RCC_APB2_TIM8		1
++#define STM32F7_RCC_APB2_USART1		4
++#define STM32F7_RCC_APB2_USART6		5
++#define STM32F7_RCC_APB2_ADC1		8
++#define STM32F7_RCC_APB2_ADC2		9
++#define STM32F7_RCC_APB2_ADC3		10
++#define STM32F7_RCC_APB2_SDMMC1		11
++#define STM32F7_RCC_APB2_SPI1		12
++#define STM32F7_RCC_APB2_SPI4		13
++#define STM32F7_RCC_APB2_SYSCFG		14
++#define STM32F7_RCC_APB2_TIM9		16
++#define STM32F7_RCC_APB2_TIM10		17
++#define STM32F7_RCC_APB2_TIM11		18
++#define STM32F7_RCC_APB2_SPI5		20
++#define STM32F7_RCC_APB2_SPI6		21
++#define STM32F7_RCC_APB2_SAI1		22
++#define STM32F7_RCC_APB2_SAI2		23
++#define STM32F7_RCC_APB2_LTDC		26
++
++#define STM32F7_APB2_RESET(bit)	(STM32F7_RCC_APB2_##bit + (0x24 * 8))
++#define STM32F7_APB2_CLOCK(bit)	(STM32F7_RCC_APB2_##bit + 0xA0)
++
++#endif /* _DT_BINDINGS_MFD_STM32F7_RCC_H */
 -- 
-2.11.0
+1.9.1
