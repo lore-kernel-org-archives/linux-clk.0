@@ -1,112 +1,106 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH v5 01/12] clk: apn806: Add eMMC clock to system controller driver
-Date: Wed, 11 Jan 2017 18:19:04 +0100
-Message-Id: <e84d52dfbd9f7d2a14a5ec9d53918119fdc90404.1484154449.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+Subject: [PATCH 1/4] clk: stm32f7: Add stm32f7 clock DT bindings for STM32F746 boards
+Date: Fri, 6 Jan 2017 14:59:22 +0100
+Message-ID: <1483711165-17149-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1483711165-17149-1-git-send-email-gabriel.fernandez@st.com>
+References: <1483711165-17149-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Konstantin Porotchkin <kostap@marvell.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Add fixed clock of 400MHz to system controller driver.  This clock is
-used as SD/eMMC clock source.
+This patch introduces the stm32f7 clock DT bindings.
 
-Signed-off-by: Konstantin Porotchkin <kostap@marvell.com>
-Reviewed-by: Omri Itach <omrii@marvell.com>
-Reviewed-by: Hanna Hawa <hannah@marvell.com>
-[fixed up conflicts, added error handling --rmk]
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi |  3 ++-
- drivers/clk/mvebu/ap806-system-controller.c   | 15 ++++++++++++++-
- 2 files changed, 16 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/clock/st,stm32-rcc.txt       | 20 ++++++++++++++++++++
+ include/dt-bindings/clock/stm32fx-clock.h            | 20 ++++++++++++++++++++
+ 2 files changed, 40 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-index a749ba2edec4..5019c8f4acd0 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -235,7 +235,8 @@
- 				#clock-cells = <1>;
- 				clock-output-names = "ap-cpu-cluster-0",
- 						     "ap-cpu-cluster-1",
--						     "ap-fixed", "ap-mss";
-+						     "ap-fixed", "ap-mss",
-+						     "ap-emmc";
- 				reg = <0x6f4000 0x1000>;
- 			};
- 		};
-diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
-index 8181b919f062..0a785076b0c6 100644
---- a/drivers/clk/mvebu/ap806-system-controller.c
-+++ b/drivers/clk/mvebu/ap806-system-controller.c
-@@ -23,7 +23,7 @@
- #define AP806_SAR_REG			0x400
- #define AP806_SAR_CLKFREQ_MODE_MASK	0x1f
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+index 8f19d87..b240121 100644
+--- a/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
++++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+@@ -10,6 +10,7 @@ Required properties:
+ - compatible: Should be:
+   "st,stm32f42xx-rcc"
+   "st,stm32f469-rcc"
++  "st,stm32f746-rcc"
+ - reg: should be register base and length as documented in the
+   datasheet
+ - #reset-cells: 1, see below
+@@ -84,6 +85,25 @@ The secondary index is bound with the following magic numbers:
+ 	12	CLK_I2SQ_PDIV	(post divisor of pll i2s q divisor)
+ 	13	CLK_SAIQ_PDIV	(post divisor of pll sai q divisor)
  
--#define AP806_CLK_NUM			4
-+#define AP806_CLK_NUM			5
- 
- static struct clk *ap806_clks[AP806_CLK_NUM];
- 
-@@ -117,6 +117,17 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 		goto fail3;
- 	}
- 
-+	/* eMMC Clock is fixed clock divided by 3 */
-+	of_property_read_string_index(np, "clock-output-names",
-+				      4, &name);
-+	ap806_clks[4] = clk_register_fixed_factor(NULL, name, fixedclk_name,
-+						  0, 1, 3);
-+	if (IS_ERR(ap806_clks[4])) {
-+		ret = PTR_ERR(ap806_clks[4]);
-+		goto fail4;
-+	}
++	14	CLK_HSI		(Internal ocscillator clock)
++	15	CLK_SYSCLK	(System Clock)
++	16	CLK_HDMI_CEC	(HDMI-CEC clock)
++	17	CLK_SPDIF	(SPDIF-Rx clock)
++	18	CLK_USART1	(U(s)arts clocks)
++	19	CLK_USART2
++	20	CLK_USART3
++	21	CLK_UART4
++	22	CLK_UART5
++	23	CLK_USART6
++	24	CLK_UART7
++	25	CLK_UART8
++	26	CLK_I2C1	(I2S clocks)
++	27	CLK_I2C2
++	28	CLK_I2C3
++	29	CLK_I2C4
++	30	CLK_LPTIMER	(LPTimer1 clock)
++)
 +
-+	of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_clk_data);
- 	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_clk_data);
- 	if (ret)
- 		goto fail_clk_add;
-@@ -124,6 +135,8 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 	return 0;
+ Example:
  
- fail_clk_add:
-+	clk_unregister_fixed_factor(ap806_clks[4]);
-+fail4:
- 	clk_unregister_fixed_factor(ap806_clks[3]);
- fail3:
- 	clk_unregister_fixed_rate(ap806_clks[2]);
+ 	/* Misc clock, FCLK */
+diff --git a/include/dt-bindings/clock/stm32fx-clock.h b/include/dt-bindings/clock/stm32fx-clock.h
+index 08bcab6..49bb3c2 100644
+--- a/include/dt-bindings/clock/stm32fx-clock.h
++++ b/include/dt-bindings/clock/stm32fx-clock.h
+@@ -36,4 +36,24 @@
+ 
+ #define END_PRIMARY_CLK		14
+ 
++#define CLK_HSI			14
++#define CLK_SYSCLK		15
++#define CLK_HDMI_CEC		16
++#define CLK_SPDIF		17
++#define CLK_USART1		18
++#define CLK_USART2		19
++#define CLK_USART3		20
++#define CLK_UART4		21
++#define CLK_UART5		22
++#define CLK_USART6		23
++#define CLK_UART7		24
++#define CLK_UART8		25
++#define CLK_I2C1		26
++#define CLK_I2C2		27
++#define CLK_I2C3		28
++#define CLK_I2C4		29
++#define CLK_LPTIMER		30
++
++#define END_PRIMARY_CLK_F7	31
++
+ #endif
 -- 
-git-series 0.9.1
+1.9.1
