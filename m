@@ -1,106 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f47.google.com ([209.85.214.47]:36040 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937018AbdAEOJZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Jan 2017 09:09:25 -0500
-Received: by mail-it0-f47.google.com with SMTP id 192so2914986itl.1
-        for <linux-clk@vger.kernel.org>; Thu, 05 Jan 2017 06:09:25 -0800 (PST)
+Return-Path: <vivek.gautam@codeaurora.org>
+Subject: Re: [PATCH] clk: qcom: Fix a possible NULL pointer dereferencing
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1483606525-27709-1-git-send-email-vivek.gautam@codeaurora.org>
+ <20170105142002.GB5710@hector.attlocal.net>
+ <9b590296-6e3a-9079-08e5-48b4af8f8f22@codeaurora.org>
+ <20170105223957.GK17126@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, mturquette@baylibre.com,
+ david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Georgi Djakov <georgi.djakov@linaro.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <8c052627-0659-b24b-4086-00bbf4676843@codeaurora.org>
+Date: Fri, 6 Jan 2017 10:28:58 +0530
 MIME-Version: 1.0
-In-Reply-To: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
-References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
-From: Marcin Wojtas <mw@semihalf.com>
-Date: Thu, 5 Jan 2017 15:09:24 +0100
-Message-ID: <CAPv3WKcT8MxX+g12C1o81MmQJWRt7Rpd-hgBh8rTpLOS3vdtqA@mail.gmail.com>
-Subject: Re: [PATCHv2 0/5] Support for Marvell switches with integrated CPUs
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        linux-clk@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thierry Reding <treding@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Chris Brand <chris.brand@broadcom.com>,
-        Gregory Clement <gregory.clement@free-electrons.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        linux-gpio@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        nadavh@marvell.com
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170105223957.GK17126@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chris,
+Hi,
 
-Thanks a lot for your work and v2. Can you please add changelog
-between patchset versions in your cover letter?
+On 01/06/2017 04:09 AM, Stephen Boyd wrote:
+> On 01/05, Vivek Gautam wrote:
+>> On 01/05/2017 07:50 PM, Andy Gross wrote:
+>>> On Thu, Jan 05, 2017 at 02:25:25PM +0530, Vivek Gautam wrote:
+>>>> Assign num_parents as 0 while registering fixed rate clocks
+>>>> in _qcom_cc_register_board_clk(), to make sure the clk framework
+>>>> doesn't dereference parent.
+>>>>
+>>>> Fixes: ee15faffef11 ("clk: qcom: common: Add API to register board clocks backwards compatibly")
+>>>>
+>>>> Cc: Georgi Djakov<georgi.djakov@linaro.org>
+>>>> Signed-off-by: Vivek Gautam<vivek.gautam@codeaurora.org>
+>>>> ---
+>>>>
+>>>> Based on 'clk-next'. Build tested.
+>>>>
+>>>>   drivers/clk/qcom/common.c | 1 +
+>>>>   1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+>>>> index cfab7b400381..df004ead1bef 100644
+>>>> --- a/drivers/clk/qcom/common.c
+>>>> +++ b/drivers/clk/qcom/common.c
+>>>> @@ -157,6 +157,7 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+>>>>   		init_data.name = path;
+>>>>   		init_data.ops = &clk_fixed_rate_ops;
+>>>> +		init_data.num_parents = 0;
+>>> It seems like there was a initializer in the declaration but it was { } instead
+>>> of { 0 }.
+>>>
+>>> Was the original intent to make this structure initialized to 0?  If so, perhaps
+>>> it should be fixed above in the initializer.
+>> yes, i think we intend to initialize the clock init data to 0, and thus
+>> we should do that during declaration.
+>> Will modify and re-spin the patch.
+>>
+> What's the error exactly? Do you have some call stack/crash that
+> could be put in the commit text?
 
-Best regards,
-Marcin
+I got a crash dump from clk_register, when i was working on qmp phy
+driver patches. This came when clk_init_data was not initilized.
+So i had to explicitly assign num_parents to 0.
 
-2017-01-05 4:36 GMT+01:00 Chris Packham <chris.packham@alliedtelesis.co.nz>:
-> The 98DX3236, 98DX3336 and 98DX4251 are a set of switch ASICs with
-> integrated CPUs. They CPU block is common within these product lines and
-> (as far as I can tell/have been told) is based on the Armada XP. There
-> are a few differences due to the fact they have to squeeze the CPU into
-> the same package as the switch.
+> It was my understanding that GCC allows braces without anything
+> inside to initialize structures to 0, so I'm confused what's
+> wrong here.
+
+You are right. My understanding, that we need to initialize a structure
+with {0}, was incomplete.
+We don't need this patch.
+
+> If this is actually a problem then we have other
+> places to fix this.
 >
-> Chris Packham (4):
->   clk: mvebu: support for 98DX3236 SoC
->   arm: mvebu: support for SMP on 98DX3336 SoC
->   arm: mvebu: Add device tree for 98DX3236 SoCs
->   arm: mvebu: Add device tree for db-dxbc2 and db-xc3-24g4xg boards
+>   $ git grep "clk_init_data.*{ *}"
+>   drivers/clk/bcm/clk-bcm53573-ilp.c:     struct clk_init_data init = { };
+>   drivers/clk/clk-gpio.c: struct clk_init_data init = {};
+>   drivers/clk/clk-qoriq.c:        struct clk_init_data init = {};
+>   drivers/clk/clk-rk808.c:        struct clk_init_data init = {};
+>   drivers/clk/mediatek/clk-apmixed.c:     struct clk_init_data init = {};
+>   drivers/clk/mediatek/clk-gate.c:        struct clk_init_data init = {};
+>   drivers/clk/mediatek/clk-pll.c: struct clk_init_data init = {};
+>   drivers/clk/qcom/common.c:      struct clk_init_data init_data = { };
+>   drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm_8960.c:        struct clk_init_data bytediv_init = { };
 >
-> Kalyan Kinthada (1):
->   pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
->
->  Documentation/devicetree/bindings/arm/cpus.txt     |   1 +
->  .../bindings/arm/marvell/98dx3236-resume-ctrl.txt  |  18 ++
->  .../devicetree/bindings/arm/marvell/98dx3236.txt   |  23 ++
->  .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |   1 +
->  .../pinctrl/marvell,armada-98dx3236-pinctrl.txt    |  46 ++++
->  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 247 +++++++++++++++++++++
->  arch/arm/boot/dts/armada-xp-98dx3336.dtsi          |  78 +++++++
->  arch/arm/boot/dts/armada-xp-98dx4251.dtsi          |  92 ++++++++
->  arch/arm/boot/dts/db-dxbc2.dts                     | 159 +++++++++++++
->  arch/arm/boot/dts/db-xc3-24g4xg.dts                | 155 +++++++++++++
->  arch/arm/mach-mvebu/Makefile                       |   1 +
->  arch/arm/mach-mvebu/common.h                       |   1 +
->  arch/arm/mach-mvebu/platsmp.c                      |  43 ++++
->  arch/arm/mach-mvebu/pmsu-98dx3236.c                |  69 ++++++
->  drivers/clk/mvebu/Makefile                         |   2 +-
->  drivers/clk/mvebu/armada-xp.c                      |  42 ++++
->  drivers/clk/mvebu/clk-cpu.c                        |  33 ++-
->  drivers/clk/mvebu/mv98dx3236-corediv.c             | 207 +++++++++++++++++
->  drivers/pinctrl/mvebu/pinctrl-armada-xp.c          | 155 +++++++++++++
->  19 files changed, 1369 insertions(+), 4 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236-resume-ctrl.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
->  create mode 100644 arch/arm/boot/dts/armada-xp-98dx3236.dtsi
->  create mode 100644 arch/arm/boot/dts/armada-xp-98dx3336.dtsi
->  create mode 100644 arch/arm/boot/dts/armada-xp-98dx4251.dtsi
->  create mode 100644 arch/arm/boot/dts/db-dxbc2.dts
->  create mode 100644 arch/arm/boot/dts/db-xc3-24g4xg.dts
->  create mode 100644 arch/arm/mach-mvebu/pmsu-98dx3236.c
->  create mode 100644 drivers/clk/mvebu/mv98dx3236-corediv.c
->
-> --
-> 2.11.0.24.ge6920cf
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+Regards
+Vivek
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
