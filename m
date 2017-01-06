@@ -1,163 +1,247 @@
-Return-Path: <megous@megous.com>
-Subject: Re: [linux-sunxi] [PATCH] clk: sunxi-ng: fix PLL_CPUX adjusting on H3
-To: dev@linux-sunxi.org
-References: <20161125002852.18097-1-megous@megous.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Jorik Jonker <jorik@kippendief.biz>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- "moderated list:ARM/Allwinner sunXi SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-From: =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megous@megous.com>
-Message-ID: <0985b1ec-ba95-1505-cc59-adec4b88238f@megous.com>
-Date: Sat, 7 Jan 2017 16:49:18 +0100
-MIME-Version: 1.0
-In-Reply-To: <20161125002852.18097-1-megous@megous.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="bj355qxPVXAo5du2TdUpl28PqKw8O3OU3"
+Return-Path: <chrisp@alliedtelesis.co.nz>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv3 1/5] clk: mvebu: support for 98DX3236 SoC
+Date: Fri,  6 Jan 2017 17:14:58 +1300
+Message-Id: <20170106041517.9589-2-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20170106041517.9589-1-chris.packham@alliedtelesis.co.nz>
+References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
+ <20170106041517.9589-1-chris.packham@alliedtelesis.co.nz>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---bj355qxPVXAo5du2TdUpl28PqKw8O3OU3
-Content-Type: multipart/mixed; boundary="G2x79Cfh3LbH2gdSHUSbEve23dOwU5DA4";
- protected-headers="v1"
-From: =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megous@megous.com>
-To: dev@linux-sunxi.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Jorik Jonker <jorik@kippendief.biz>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- "moderated list:ARM/Allwinner sunXi SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-Message-ID: <0985b1ec-ba95-1505-cc59-adec4b88238f@megous.com>
-Subject: Re: [linux-sunxi] [PATCH] clk: sunxi-ng: fix PLL_CPUX adjusting on H3
-References: <20161125002852.18097-1-megous@megous.com>
-In-Reply-To: <20161125002852.18097-1-megous@megous.com>
+The 98DX3236, 98DX3336, 98DX4521 and variants have a different TCLK from
+the Armada XP (200MHz vs 250MHz). The CPU core clock is fixed at 800MHz.
 
---G2x79Cfh3LbH2gdSHUSbEve23dOwU5DA4
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+The clock gating options are a subset of those on the Armada XP.
 
-Maxime,
+The core clock divider is different to the Armada XP also.
 
-Dne 25.11.2016 v 01:28 megous@megous.com napsal(a):
-> From: Ondrej Jirman <megous@megous.com>
->=20
-> When adjusting PLL_CPUX on H3, the PLL is temporarily driven
-> too high, and the system becomes unstable (oopses or hangs).
->=20
-> Add a notifier to avoid this situation by temporarily switching
-> to a known stable 24 MHz oscillator.
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
+    Changes in v2:
+    - Update devicetree binding documentation for new compatible string
+    
+    Changes in v3:
+    - Add 98dx3236 support to mvebu/clk-corediv.c rather than creating a new
+      driver.
+    - Document mv98dx3236-corediv-clock binding
 
-I have done more thorough testing on H3 and this approach with switching
-to 24MHz oscillator does not work. Motivation being that my Orange Pi
-One still gets lockups even with this patch under certain circumstances.
+ .../bindings/clock/mvebu-corediv-clock.txt         |  1 +
+ .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |  1 +
+ drivers/clk/mvebu/armada-xp.c                      | 42 ++++++++++++++++++++++
+ drivers/clk/mvebu/clk-corediv.c                    | 23 ++++++++++++
+ drivers/clk/mvebu/clk-cpu.c                        | 31 ++++++++++++++--
+ 5 files changed, 96 insertions(+), 2 deletions(-)
 
-So I have created a small test program for CPUS (additional OpenRISC CPU
-on the SoC) which randomly changes PLL_CPUX settings while main CPU is
-running a loop that sends messages to CPUS via msgbox.
-
-Assumption being that while CPUS is successfully receiving messages via
-msgbox, the main CPU didn't lock up, yet.
-
-With this I am able to quickly and thoroughly test various PLL_CPUX
-change and factor selection algorithms.
-
-Results are that bypassing CPUX clock by switching to 24 MHz oscillator
-does not work at all. Main CPU locks up in about 1 second into the test.
-Don't ask me why.
-
-What works is selecting NKMP factors so that M is always 1 and P is
-anything other than /1 only for frequencies under 288MHz. As mandated by
-the H3 datasheet. Mainline ccu_nkmp_find_best doesn't respect these
-conditions. With that I can change CPUX frequencies randomly 20x a
-second so far indefinitely without the main CPU ever locking up.
-
-Please drop or revert this patch. It is not a correct approach to the
-problem. I'd suggest dropping the entire clock notifier mechanism, too,
-unless it can be proven to work reliably. The bypass makes some
-intuitive sense, but for some reason it doesn't work in practice (on H3
-at least).
-
-Aside from this, uboot also needs to be changed to set that it uses M
-and P factors correctly.
-
-Whatever else I try, I always hit lockups sooner or later with the test
-program. I tried 24MHz bypass and staged application of multipliers and
-dividers as discussed before.
-
-I'll send a proper patch for nkmp clock driver and u-boot later.
-
-regards,
-  o.
-
-> Signed-off-by: Ondrej Jirman <megous@megous.com>
-> Tested-by: Lutz Sammer <johns98@gmx.net>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->=20
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng=
-/ccu-sun8i-h3.c
-> index 614d47c..cf266c9 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-> @@ -809,6 +809,13 @@ static const struct sunxi_ccu_desc sun8i_h3_ccu_de=
-sc =3D {
->  	.num_resets	=3D ARRAY_SIZE(sun8i_h3_ccu_resets),
->  };
-> =20
-> +static struct ccu_mux_nb sun8i_h3_cpu_nb =3D {
-> +	.common		=3D &cpux_clk.common,
-> +	.cm		=3D &cpux_clk.mux,
-> +	.delay_us	=3D 1, /* > 8 clock cycles at 24 MHz */
-> +	.bypass_index	=3D 1, /* index of 24 MHz oscillator */
-> +};
-> +
->  static void __init sun8i_h3_ccu_setup(struct device_node *node)
->  {
->  	void __iomem *reg;
-> @@ -827,6 +834,9 @@ static void __init sun8i_h3_ccu_setup(struct device=
-_node *node)
->  	writel(val | (3 << 16), reg + SUN8I_H3_PLL_AUDIO_REG);
-> =20
->  	sunxi_ccu_probe(node, reg, &sun8i_h3_ccu_desc);
-> +
-> +	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
-> +				  &sun8i_h3_cpu_nb);
->  }
->  CLK_OF_DECLARE(sun8i_h3_ccu, "allwinner,sun8i-h3-ccu",
->  	       sun8i_h3_ccu_setup);
->=20
-
-
---G2x79Cfh3LbH2gdSHUSbEve23dOwU5DA4--
-
---bj355qxPVXAo5du2TdUpl28PqKw8O3OU3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEmrE4sgaRYhzUz5ICbmQmxnfP7/EFAlhxDgIACgkQbmQmxnfP
-7/GucA//WHTNRB7d5+MWhRpmGwHFb26+BcNIbH/3SAXNQxCpCaMPhwVoi5mjPtce
-zey7weVpKQKvZjzmjGL7J46r2mjFGQ8p+lW0ax/QSESh5aojhorZOpWSfFaz2R3z
-QahTFlk1ZmwIaprQ90he7kVahZc88xNffZkz31fqgwH71G8Wk5yc0h8/7dE386jO
-pY41zR20BYBhJSP3COkNgsaokYoPF7r5av6Hq6oJd3Ec5pmR84dtuHnuUP7x6Bkc
-CCHlotvLRS8RgO6wBNXQQlHVTOuauz/IpiauZcOtYQlmxmipU/4wA+hhnjKIEoaB
-seSjD+c9z+qcFvUfo8K3wnGxLVCaiPaJjL+28a8RfJfE1QUymPX57t/RkM6LmkSl
-Hv6J1LrCAJmxjmdDGaiVkNXAt9pyth8z6k/8K4uh5bBdXnAhFJIj6JfbtIrLuEhk
-a78rQD4V8OTyOgPYhXsIXXU6rRNKvt5FcO0eLx53B56kgi8vhASxBrn8vp334UZa
-RFpzbSsHf8iuhbo+G26BJpG1du0MftZau9wnj0d7/YDbiO3Q2vyueYDHzPqx/F7z
-Yeb36ERLHGiEL3SCwuimEuFCIImrhpjnKPvlj2DcesnRmaqDEDSFEBKB6KQ+h3eg
-nfne7KTwJpJlXIPCHdCM+1FEJZ4FH7w536dINsKHfcuzsu2VADI=
-=sPos
------END PGP SIGNATURE-----
-
---bj355qxPVXAo5du2TdUpl28PqKw8O3OU3--
+diff --git a/Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt
+index 520562a7dc2a..c7b4e3a6b2c6 100644
+--- a/Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt
++++ b/Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt
+@@ -7,6 +7,7 @@ Required properties:
+ - compatible : must be "marvell,armada-370-corediv-clock",
+ 		       "marvell,armada-375-corediv-clock",
+ 		       "marvell,armada-380-corediv-clock",
++                       "marvell,mv98dx3236-corediv-clock",
+ 
+ - reg : must be the register address of Core Divider control register
+ - #clock-cells : from common clock binding; shall be set to 1
+diff --git a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
+index 99c214660bdc..7f28506eaee7 100644
+--- a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
++++ b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
+@@ -3,6 +3,7 @@ Device Tree Clock bindings for cpu clock of Marvell EBU platforms
+ Required properties:
+ - compatible : shall be one of the following:
+ 	"marvell,armada-xp-cpu-clock" - cpu clocks for Armada XP
++	"marvell,mv98dx3236-cpu-clock" - cpu clocks for 98DX3236 SoC
+ - reg : Address and length of the clock complex register set, followed
+         by address and length of the PMU DFS registers
+ - #clock-cells : should be set to 1.
+diff --git a/drivers/clk/mvebu/armada-xp.c b/drivers/clk/mvebu/armada-xp.c
+index b3094315a3c0..0413bf8284e0 100644
+--- a/drivers/clk/mvebu/armada-xp.c
++++ b/drivers/clk/mvebu/armada-xp.c
+@@ -52,6 +52,12 @@ static u32 __init axp_get_tclk_freq(void __iomem *sar)
+ 	return 250000000;
+ }
+ 
++/* MV98DX3236 TCLK frequency is fixed to 200MHz */
++static u32 __init mv98dx3236_get_tclk_freq(void __iomem *sar)
++{
++	return 200000000;
++}
++
+ static const u32 axp_cpu_freqs[] __initconst = {
+ 	1000000000,
+ 	1066000000,
+@@ -89,6 +95,12 @@ static u32 __init axp_get_cpu_freq(void __iomem *sar)
+ 	return cpu_freq;
+ }
+ 
++/* MV98DX3236 CLK frequency is fixed to 800MHz */
++static u32 __init mv98dx3236_get_cpu_freq(void __iomem *sar)
++{
++	return 800000000;
++}
++
+ static const int axp_nbclk_ratios[32][2] __initconst = {
+ 	{0, 1}, {1, 2}, {2, 2}, {2, 2},
+ 	{1, 2}, {1, 2}, {1, 1}, {2, 3},
+@@ -158,6 +170,14 @@ static const struct coreclk_soc_desc axp_coreclks = {
+ 	.num_ratios = ARRAY_SIZE(axp_coreclk_ratios),
+ };
+ 
++static const struct coreclk_soc_desc mv98dx3236_coreclks = {
++	.get_tclk_freq = mv98dx3236_get_tclk_freq,
++	.get_cpu_freq = mv98dx3236_get_cpu_freq,
++	.get_clk_ratio = NULL,
++	.ratios = NULL,
++	.num_ratios = 0,
++};
++
+ /*
+  * Clock Gating Control
+  */
+@@ -195,6 +215,15 @@ static const struct clk_gating_soc_desc axp_gating_desc[] __initconst = {
+ 	{ }
+ };
+ 
++static const struct clk_gating_soc_desc mv98dx3236_gating_desc[] __initconst = {
++	{ "ge1", NULL, 3, 0 },
++	{ "ge0", NULL, 4, 0 },
++	{ "pex00", NULL, 5, 0 },
++	{ "sdio", NULL, 17, 0 },
++	{ "xor0", NULL, 22, 0 },
++	{ }
++};
++
+ static void __init axp_clk_init(struct device_node *np)
+ {
+ 	struct device_node *cgnp =
+@@ -206,3 +235,16 @@ static void __init axp_clk_init(struct device_node *np)
+ 		mvebu_clk_gating_setup(cgnp, axp_gating_desc);
+ }
+ CLK_OF_DECLARE(axp_clk, "marvell,armada-xp-core-clock", axp_clk_init);
++
++static void __init mv98dx3236_clk_init(struct device_node *np)
++{
++	struct device_node *cgnp =
++		of_find_compatible_node(NULL, NULL, "marvell,armada-xp-gating-clock");
++
++	mvebu_coreclk_setup(np, &mv98dx3236_coreclks);
++
++	if (cgnp)
++		mvebu_clk_gating_setup(cgnp, mv98dx3236_gating_desc);
++}
++CLK_OF_DECLARE(mv98dx3236_clk, "marvell,mv98dx3236-core-clock",
++	       mv98dx3236_clk_init);
+diff --git a/drivers/clk/mvebu/clk-corediv.c b/drivers/clk/mvebu/clk-corediv.c
+index d1e5863d3375..8491979f4096 100644
+--- a/drivers/clk/mvebu/clk-corediv.c
++++ b/drivers/clk/mvebu/clk-corediv.c
+@@ -71,6 +71,10 @@ static const struct clk_corediv_desc mvebu_corediv_desc[] = {
+ 	{ .mask = 0x3f, .offset = 8, .fieldbit = 1 }, /* NAND clock */
+ };
+ 
++static const struct clk_corediv_desc mv98dx3236_corediv_desc[] = {
++	{ .mask = 0x0f, .offset = 6, .fieldbit = 26 }, /* NAND clock */
++};
++
+ #define to_corediv_clk(p) container_of(p, struct clk_corediv, hw)
+ 
+ static int clk_corediv_is_enabled(struct clk_hw *hwclk)
+@@ -232,6 +236,18 @@ static const struct clk_corediv_soc_desc armada375_corediv_soc = {
+ 	.ratio_offset = 0x4,
+ };
+ 
++static const struct clk_corediv_soc_desc mv98dx3236_corediv_soc = {
++	.descs = mv98dx3236_corediv_desc,
++	.ndescs = ARRAY_SIZE(mv98dx3236_corediv_desc),
++	.ops = {
++		.recalc_rate = clk_corediv_recalc_rate,
++		.round_rate = clk_corediv_round_rate,
++		.set_rate = clk_corediv_set_rate,
++	},
++	.ratio_reload = BIT(10),
++	.ratio_offset = 0x8,
++};
++
+ static void __init
+ mvebu_corediv_clk_init(struct device_node *node,
+ 		       const struct clk_corediv_soc_desc *soc_desc)
+@@ -313,3 +329,10 @@ static void __init armada380_corediv_clk_init(struct device_node *node)
+ }
+ CLK_OF_DECLARE(armada380_corediv_clk, "marvell,armada-380-corediv-clock",
+ 	       armada380_corediv_clk_init);
++
++static void __init mv98dx3236_corediv_clk_init(struct device_node *node)
++{
++	return mvebu_corediv_clk_init(node, &mv98dx3236_corediv_soc);
++}
++CLK_OF_DECLARE(mv98dx3236_corediv_clk, "marvell,mv98dx3236-corediv-clock",
++	       mv98dx3236_corediv_clk_init);
+diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
+index 5837eb8a212f..3b8f0e14fa01 100644
+--- a/drivers/clk/mvebu/clk-cpu.c
++++ b/drivers/clk/mvebu/clk-cpu.c
+@@ -165,7 +165,9 @@ static const struct clk_ops cpu_ops = {
+ 	.set_rate = clk_cpu_set_rate,
+ };
+ 
+-static void __init of_cpu_clk_setup(struct device_node *node)
++/* Add parameter to allow this to support different clock operations. */
++static void __init _of_cpu_clk_setup(struct device_node *node,
++			const struct clk_ops *cpu_clk_ops)
+ {
+ 	struct cpu_clk *cpuclk;
+ 	void __iomem *clock_complex_base = of_iomap(node, 0);
+@@ -218,7 +220,7 @@ static void __init of_cpu_clk_setup(struct device_node *node)
+ 		cpuclk[cpu].hw.init = &init;
+ 
+ 		init.name = cpuclk[cpu].clk_name;
+-		init.ops = &cpu_ops;
++		init.ops = cpu_clk_ops;
+ 		init.flags = 0;
+ 		init.parent_names = &cpuclk[cpu].parent_name;
+ 		init.num_parents = 1;
+@@ -243,5 +245,30 @@ static void __init of_cpu_clk_setup(struct device_node *node)
+ 	iounmap(clock_complex_base);
+ }
+ 
++/* Use this function to call the generic setup with the correct
++ * clock operation
++ */
++static void __init of_cpu_clk_setup(struct device_node *node)
++{
++	_of_cpu_clk_setup(node, &cpu_ops);
++}
++
+ CLK_OF_DECLARE(armada_xp_cpu_clock, "marvell,armada-xp-cpu-clock",
+ 					 of_cpu_clk_setup);
++
++/* Define the clock and operations for the mv98dx3236 - it cannot perform
++ * any operations.
++ */
++static const struct clk_ops mv98dx3236_cpu_ops = {
++	.recalc_rate = NULL,
++	.round_rate = NULL,
++	.set_rate = NULL,
++};
++
++static void __init of_mv98dx3236_cpu_clk_setup(struct device_node *node)
++{
++	_of_cpu_clk_setup(node, &mv98dx3236_cpu_ops);
++}
++
++CLK_OF_DECLARE(mv98dx3236_cpu_clock, "marvell,mv98dx3236-cpu-clock",
++					 of_mv98dx3236_cpu_clk_setup);
+-- 
+2.11.0.24.ge6920cf
