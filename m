@@ -1,244 +1,113 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
- Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v2 9/9] arm64: dts: sunxi: add support for the Orange Pi PC 2
- board
-Date: Thu, 26 Jan 2017 23:48:59 +0800
-Message-Id: <20170126154859.55855-10-icenowy@aosc.xyz>
-In-Reply-To: <20170126154859.55855-1-icenowy@aosc.xyz>
-References: <20170126154859.55855-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <webczat_200@poczta.onet.pl>
+Subject: Re: [PATCH] clk: scpi: don't add cpufreq device if the scpi dvfs node
+ is disabled
+To: Sudeep Holla <sudeep.holla@arm.com>, linux-clk@vger.kernel.org,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Neil Armstrong <narmstrong@baylibre.com>
+From: =?UTF-8?Q?Micha=c5=82_Zegan?= <webczat_200@poczta.onet.pl>
+Message-ID: <d51628d1-c930-ec13-990c-97cc47d80472@poczta.onet.pl>
+Date: Sat, 7 Jan 2017 01:44:08 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="uWE6BCvLJbUHDPIVRXm88Ht8Mrm9rVDIX"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andre Przywara <andre.przywara@arm.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--uWE6BCvLJbUHDPIVRXm88Ht8Mrm9rVDIX
+Content-Type: multipart/mixed; boundary="BM4KFiPFFdPP2cPk6P4waiDPaVluPV7Kp";
+ protected-headers="v1"
+From: =?UTF-8?Q?Micha=c5=82_Zegan?= <webczat_200@poczta.onet.pl>
+To: Sudeep Holla <sudeep.holla@arm.com>, linux-clk@vger.kernel.org,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <d51628d1-c930-ec13-990c-97cc47d80472@poczta.onet.pl>
+Subject: Re: [PATCH] clk: scpi: don't add cpufreq device if the scpi dvfs node
+ is disabled
+References: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
+In-Reply-To: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
 
-The Orange Pi PC 2 is a typical single board computer using the
-Allwinner H5 SoC. Apart from the usual suspects it features three
-separately driven USB ports and a Gigabit Ethernet port.
-Also it has a SPI NOR flash soldered, from which the board can boot
-from. This enables the SBC to behave like a "real computer" with
-built-in firmware.
+--BM4KFiPFFdPP2cPk6P4waiDPaVluPV7Kp
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Add the board specific .dts file, which includes the H5 .dtsi and
-enables the peripherals that we support so far.
+seems the patch works as intended.
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-[Icenowy: dropped all GPIO pinctrl nodes, change red LED gpio]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
-Changes in v2:
-- Dropped all GPIO pinctrl nodes.
-- Changed red LED gpio to the correct one.
-- Added audio codec configuration copied from Orange Pi PC.
+W dniu 06.01.2017 o 13:34, Sudeep Holla pisze:
+> Currently we add the virtual cpufreq device unconditionally even when
+> the SCPI DVFS clock provider node is disabled. This will cause cpufreq
+> driver to throw errors when it gets initailised on boot/modprobe and
+> also when the CPUs are hot-plugged back in.
+>=20
+> This patch fixes the issue by adding the virtual cpufreq device only if=
 
- arch/arm64/boot/dts/allwinner/Makefile             |   1 +
- .../boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 164 +++++++++++++++++++++
- 2 files changed, 165 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-
-diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-index 1e29a5ae8282..b26bb46b934c 100644
---- a/arch/arm64/boot/dts/allwinner/Makefile
-+++ b/arch/arm64/boot/dts/allwinner/Makefile
-@@ -1,4 +1,5 @@
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
-+dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-pc2.dtb
- 
- always		:= $(dtb-y)
- subdir-y	:= $(dts-dirs)
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-new file mode 100644
-index 000000000000..79784cba806c
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-@@ -0,0 +1,164 @@
-+/*
-+ * Copyright (C) 2016 ARM Ltd.
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+/dts-v1/;
-+#include "sun50i-h5.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/pinctrl/sun4i-a10.h>
-+
-+/ {
-+	model = "Xunlong Orange Pi PC 2";
-+	compatible = "xunlong,orangepi-pc2", "allwinner,sun50i-h5";
-+
-+	reg_vcc3v3: vcc3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		pwr_led {
-+			label = "orangepi:green:pwr";
-+			gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>;
-+			default-state = "on";
-+		};
-+
-+		status_led {
-+			label = "orangepi:red:status";
-+			gpios = <&pio 0 20 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	r_gpio_keys {
-+		compatible = "gpio-keys";
-+
-+		sw4 {
-+			label = "sw4";
-+			linux,code = <BTN_0>;
-+			gpios = <&r_pio 0 3 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+};
-+
-+&codec {
-+	allwinner,audio-routing =
-+		"Line Out", "LINEOUT",
-+		"MIC1", "Mic",
-+		"Mic",  "MBIAS";
-+	status = "okay";
-+};
-+
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+&ehci2 {
-+	status = "okay";
-+};
-+
-+&ehci3 {
-+	status = "okay";
-+};
-+
-+&ir {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ir_pins_a>;
-+	status = "okay";
-+};
-+
-+&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin>;
-+	vmmc-supply = <&reg_vcc3v3>;
-+	bus-width = <4>;
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-+	cd-inverted;
-+	status = "okay";
-+};
-+
-+&ohci1 {
-+	status = "okay";
-+};
-+
-+&ohci2 {
-+	status = "okay";
-+};
-+
-+&ohci3 {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins_a>;
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_pins>;
-+	status = "disabled";
-+};
-+
-+&uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart2_pins>;
-+	status = "disabled";
-+};
-+
-+&usbphy {
-+	/* USB VBUS is always on */
-+	status = "okay";
-+};
--- 
-2.11.0
+> the SCPI DVFS clock provider is available and registered.
+>=20
+> Fixes: 9490f01e2471 ("clk: scpi: add support for cpufreq virtual device=
+")
+> Reported-by: Micha=C5=82 Zegan <webczat_200@poczta.onet.pl>
+> Cc: Neil Armstrong <narmstrong@baylibre.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>  drivers/clk/clk-scpi.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
+> index 2a3e9d8e88b0..96d37175d0ad 100644
+> --- a/drivers/clk/clk-scpi.c
+> +++ b/drivers/clk/clk-scpi.c
+> @@ -290,13 +290,15 @@ static int scpi_clocks_probe(struct platform_devi=
+ce *pdev)
+>  			of_node_put(child);
+>  			return ret;
+>  		}
+> -	}
+> -	/* Add the virtual cpufreq device */
+> -	cpufreq_dev =3D platform_device_register_simple("scpi-cpufreq",
+> -						      -1, NULL, 0);
+> -	if (IS_ERR(cpufreq_dev))
+> -		pr_warn("unable to register cpufreq device");
+> =20
+> +		if (match->data !=3D &scpi_dvfs_ops)
+> +			continue;
+> +		/* Add the virtual cpufreq device if it's DVFS clock provider */
+> +		cpufreq_dev =3D platform_device_register_simple("scpi-cpufreq",
+> +							      -1, NULL, 0);
+> +		if (IS_ERR(cpufreq_dev))
+> +			pr_warn("unable to register cpufreq device");
+> +	}
+>  	return 0;
+>  }
+> =20
+>=20
 
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--BM4KFiPFFdPP2cPk6P4waiDPaVluPV7Kp--
+
+--uWE6BCvLJbUHDPIVRXm88Ht8Mrm9rVDIX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFPBAEBCAA5FiEE8PeJXyv9t1Bfiq63mRxoPZnIFPkFAlhwOdkbHHdlYmN6YXRf
+MjAwQHBvY3p0YS5vbmV0LnBsAAoJEJkcaD2ZyBT51zgIAIXPE0I9BvTwzOeSChpy
+X2kbHMCsxifxPP+08O+24G47TUUuAHp92ZxyEjSzg02V/cL6LuQv9SrvBvpSS6NE
+7tKXKby2sC31byLyuX49hRhHH6XiuVmqdyS44f8t9aUfNpdtupFM1yhy+KeiqGOJ
+yQUkUHm+OTbY+xYgzOlCka0Alu+dqsmPBVPy481ss+rVywY+ml1cgG5gaz+Ehaqo
+s7owYQyvTXjcLRVDSwOppSwqH01i9UQMmCdCxu0iGB6U+tMJa+7WySsTP1aYWQBu
+0eQY3pxGIeUJ+q0wKVIT/yn8btHzyjgkm8h3t8FHdtBeLTRUckfOnwDN72VRqtCU
+iLo=
+=jqqe
+-----END PGP SIGNATURE-----
+
+--uWE6BCvLJbUHDPIVRXm88Ht8Mrm9rVDIX--
