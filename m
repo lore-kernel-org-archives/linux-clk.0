@@ -1,54 +1,117 @@
-Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
-Date: Mon, 30 Jan 2017 21:42:28 +0000
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: add more managed APIs
-Message-ID: <20170130214227.GI27312@n2100.armlinux.org.uk>
-References: <20170128184047.GA24957@dtor-ws>
- <20170128190309.GN27312@n2100.armlinux.org.uk>
- <20170128192207.GA38136@dtor-ws>
- <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
- <20170128233911.GO27312@n2100.armlinux.org.uk>
- <20170129180743.GA10917@dtor-ws>
- <20170130185551.GM8801@codeaurora.org>
- <20170130192214.GC11199@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170130192214.GC11199@roeck-us.net>
-Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
+Return-Path: <tony@atomide.com>
+From: Tony Lindgren <tony@atomide.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Tero Kristo <t-kristo@ti.com>
+Cc: devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	Paul Walmsley <paul@pwsan.com>,
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH] Documentation: dt-bindings: Add binding documentation for TI clkctrl clocks
+Date: Mon,  9 Jan 2017 15:42:26 -0800
+Message-Id: <20170109234226.9449-1-tony@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jan 30, 2017 at 11:22:14AM -0800, Guenter Roeck wrote:
-> Maybe the additional calls make sense; I can imagine they would.
-> However, I personally would be a bit wary of changing the initialization
-> order of multi-clock initializations, and I am not sure how a single call
-> could address setting the rate ([devm_]clk_get_setrate_prepare_enable()
-> seems like a bit too much).
-> 
-> [ On a side note, why is there no clk_get_prepare_enable() and
->   clk_get_prepare() ? Maybe it would be better to introduce those
->   together with the matching devm_ functions in a separate patch
->   if they are useful. ]
+Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
+clock controller instance for each interconnect target module. The clkctrl
+controls functional and interface clocks for the module.
 
-If you take the view that trying to keep clocks disabled is a good way
-to save power, then you'd have the clk_prepare() or maybe
-clk_prepare_enable() in your runtime PM resume handler, or maybe even
-deeper in the driver... the original design goal of the clk API was to
-allow power saving and clock control.
+The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
+With this binding and a related clock device driver we can start moving the
+clkctrl clock handling to live in drivers/clk/ti.
 
-With that in mind, getting and enabling the clock together in the
-probe function didn't make sense.
+For hardware reference, see omap4430 TRM "Table 3-1312. L4PER_CM2 Registers
+Mapping Summary" for example. It show one instance of a clkctrl clock
+controller with multiple clkctrl registers.
 
-I feel that aspect has been somewhat lost, and people now regard much
-of the clk API as a bit of a probe-time nusience.
+Note that this binding allows keeping the clockdomain related parts out of
+drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
+using a separate driver in drivers/soc/ti and genpd. If the clockdomain
+driver needs to know it's clocks, we can just set the the clkctrl device
+instances to be children of the related clockdomain device.
 
+On omap4 CM_L3INIT_USB_HOST_HS_CLKCTRL on omap5 has eight OPTFCLKEN bits.
+So we need to shift the clock index to avoid index conflict for the clock
+consumer binding with the next clkctrl offset on omap4.
+
+Cc: Paul Walmsley <paul@pwsan.com>
+Cc: Rob Herring <robh@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+
+So here's what I was able to come up for the clkctr binding based on
+all we've discussed so far. Can you guys please take a look and see
+if it looks OK to you before we do the device driver?
+
+Also, does anybody have better suggestions for addressing the optional
+clocks in each clkctrl register?
+
+---
+ .../devicetree/bindings/clock/ti-clkctrl.txt       | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+new file mode 100644
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+@@ -0,0 +1,56 @@
++Texas Instruments clkctrl clock binding
++
++Texas Instruments SoCs can have a clkctrl clock controller for each
++interconnect target module. The clkctrl clock controller manages functional
++and interface clocks for each module. Each clkctrl controller can also
++gate one or more optional functional clocks for a module. The clkctrl
++clock controller is typical for omap3 and later variants.
++
++The clock consumers can specify the index of the clkctrl clock using
++the hardware offset from the clkctrl instance register space. The optional
++functional clocks can be specified by clkctrl hardware offset plus the
++index of the optional clock. Please see the Linux clock framework binding
++at Documentation/devicetree/bindings/clock/clock-bindings.txt.
++
++Required properties :
++- compatible : shall be "ti,clkctrl"
++- #clock-cells : shall contain 1
++
++Optional properties :
++- "ti,modulemode-auto" : list of clkctrl offsets using automatic gating
++
++Example: Clock controller node:
++
++&cm_l4per {
++	cm_l4per_clkctrl: clk@20 {
++		compatible = "ti,clkctrl";
++		reg = <0x20 0x1b0>;
++		#clock-cells = 1;
++		ti,modulemode-auto = <OMAP4_GPIO2_CLKCTRL>;
++	};
++};
++
++Example: Preprocessor helper macros in dt-bindings/ti-clkctrl.h
++
++#define OMAP4_CLKCTRL_OFFSET		0x20
++
++#define OMAP_CLKCTRL_INDEX(offset)		\
++	(((offset) - OMAP4_CLKCTRL_OFFSET) << 8)
++
++#define OMAP_CLKCTRL_OPT_INDEX(offset, optclk)	\
++	(OMAP_CLKCTRL_INDEX(offset) + (optclk))
++
++#define OMAP4_GPTIMER10_CLKTRL		OMAP_CLKCTRL_INDEX(0x28)
++#define OMAP4_GPTIMER11_CLKTRL		OMAP_CLKCTRL_INDEX(0x30)
++#define OMAP4_GPTIMER2_CLKTRL		OMAP_CLKCTRL_INDEX(0x38)
++...
++#define OMAP4_GPIO2_CLKCTRL		OMAP_CLKCTRL_INDEX(0x60)
++#define OMAP4_GPIO2_CLKCTRL_DBCLK	OMAP_CLKCTRL_OPT_INDEX(0x60, 1)
++...
++
++Example: Clock consumer node for GPIO2:
++
++&gpio2 {
++       clocks = <&cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL
++		 &cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL_DBCLK>;
++};
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.11.0
