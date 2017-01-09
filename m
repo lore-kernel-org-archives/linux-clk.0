@@ -1,113 +1,105 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-Subject: Re: [PATCH v2 03/10] dt-bindings: sound: Add new reset compatible for
- sun4i-i2s
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
- <20170117140230.23142-4-mylene.josserand@free-electrons.com>
- <20170117164636.qhkxvqcs7l732wxk@lukather>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
- wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org,
- mark.rutland@arm.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
- linux-sunxi@googlegroups.com, thomas.petazzoni@free-electrons.com,
- alexandre.belloni@free-electrons.com
-From: Mylene Josserand <mylene.josserand@free-electrons.com>
-Message-ID: <1f318cd1-6a50-5b33-01aa-e11e7e925e88@free-electrons.com>
-Date: Wed, 18 Jan 2017 09:23:10 +0100
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 9 Jan 2017 10:59:46 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+Cc: dev@linux-sunxi.org, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jorik Jonker <jorik@kippendief.biz>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [linux-sunxi] [PATCH] clk: sunxi-ng: fix PLL_CPUX adjusting on H3
+Message-ID: <20170109095946.6esbfx6pafega5cd@lukather>
+References: <20161125002852.18097-1-megous@megous.com>
+ <0985b1ec-ba95-1505-cc59-adec4b88238f@megous.com>
 MIME-Version: 1.0
-In-Reply-To: <20170117164636.qhkxvqcs7l732wxk@lukather>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wdyexf75nukvhbdl"
+In-Reply-To: <0985b1ec-ba95-1505-cc59-adec4b88238f@megous.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-On 17/01/2017 17:46, Maxime Ripard wrote:
-> On Tue, Jan 17, 2017 at 03:02:23PM +0100, Mylène Josserand wrote:
->> Add a new compatible for sun4i-i2s driver to handle some
->> SoCs that have a reset line that must be asserted/deasserted.
->>
->> This new compatible, "allwinner,sun6i-a31-i2s", requires two
->> properties:
->> 	- resets: phandle to the reset line
->> 	- reset-names: the name of the reset line ("rst").
->> Except these differences, the compatible is identical to previous one
->> which will not handle a reset line.
->>
->> Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
->> ---
->>  .../devicetree/bindings/sound/sun4i-i2s.txt        | 23 ++++++++++++++++++++++
->>  1 file changed, 23 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/sound/sun4i-i2s.txt b/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
->> index 7a2c0945fd22..f673206e309b 100644
->> --- a/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
->> +++ b/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
->> @@ -7,6 +7,7 @@ Required properties:
->>
->>  - compatible: should be one of the following:
->>     - "allwinner,sun4i-a10-i2s"
->> +   - "allwinner,sun6i-a31-i2s" for controller with reset lines
->
-> That's not only for controllers with reset lines, but for the
-> controllers found in the A31 (and later). I'd simply drop the last
-> part of that line.
+--wdyexf75nukvhbdl
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-ACK
+On Sat, Jan 07, 2017 at 04:49:18PM +0100, Ond=C5=99ej Jirman wrote:
+> Maxime,
+>=20
+> Dne 25.11.2016 v 01:28 megous@megous.com napsal(a):
+> > From: Ondrej Jirman <megous@megous.com>
+> >=20
+> > When adjusting PLL_CPUX on H3, the PLL is temporarily driven
+> > too high, and the system becomes unstable (oopses or hangs).
+> >=20
+> > Add a notifier to avoid this situation by temporarily switching
+> > to a known stable 24 MHz oscillator.
+>=20
+> I have done more thorough testing on H3 and this approach with switching
+> to 24MHz oscillator does not work. Motivation being that my Orange Pi
+> One still gets lockups even with this patch under certain circumstances.
+>=20
+> So I have created a small test program for CPUS (additional OpenRISC CPU
+> on the SoC) which randomly changes PLL_CPUX settings while main CPU is
+> running a loop that sends messages to CPUS via msgbox.
+>=20
+> Assumption being that while CPUS is successfully receiving messages via
+> msgbox, the main CPU didn't lock up, yet.
+>=20
+> With this I am able to quickly and thoroughly test various PLL_CPUX
+> change and factor selection algorithms.
+>=20
+> Results are that bypassing CPUX clock by switching to 24 MHz oscillator
+> does not work at all. Main CPU locks up in about 1 second into the test.
+> Don't ask me why.
 
->
->>  - reg: physical base address of the controller and length of memory mapped
->>    region.
->>  - interrupts: should contain the I2S interrupt.
->> @@ -19,7 +20,13 @@ Required properties:
->>     - "mod" : module clock for the I2S controller
->>  - #sound-dai-cells : Must be equal to 0
->>
->> +Required properties for the following compatibles:
->> +		- "allwinner,sun6i-a31-i2s"
->> +- resets: phandle to the reset line for this codec
->> +- reset-names: Contains the reset signal name "rst"
->
-> You don't need reset-names if there's a single reset line.
->
+You mean that you are changing the frequency behind Linux' back? That
+won't work. There's more to cpufreq than just changing the frequency,
+but also adusting the number of loops per jiffy for the new frequency
+for example. I don't really expect that setup to work even on a
+perfectly stable system. CPUFreq *has* to be involved, otherwise, that
+alone might introduce bugs, and you cannot draw any conclusions
+anymore.
 
-ACK
+> What works is selecting NKMP factors so that M is always 1 and P is
+> anything other than /1 only for frequencies under 288MHz. As mandated by
+> the H3 datasheet. Mainline ccu_nkmp_find_best doesn't respect these
+> conditions. With that I can change CPUX frequencies randomly 20x a
+> second so far indefinitely without the main CPU ever locking up.
+>=20
+> Please drop or revert this patch. It is not a correct approach to the
+> problem. I'd suggest dropping the entire clock notifier mechanism, too,
+> unless it can be proven to work reliably.
 
->> +
->>  Example:
->> +For "allwinner,sun4i-a10-i2s":
->>
->>  i2s0: i2s@01c22400 {
->>  	#sound-dai-cells = <0>;
->> @@ -32,3 +39,19 @@ i2s0: i2s@01c22400 {
->>  	       <&dma SUN4I_DMA_NORMAL 3>;
->>  	dma-names = "rx", "tx";
->>  };
->> +
->> +For "allwinner,sun6i-a31-i2s":
->> +
->> +dai: dai@01c22c00 {
->> +	#sound-dai-cells = <0>;
->> +	compatible = "allwinner,sun6i-a31-i2s";
->> +	reg = <0x01c22c00 0x200>;
->> +	interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
->> +	clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
->> +	clock-names = "apb", "mod";
->> +	resets = <&ccu RST_BUS_CODEC>;
->> +	reset-names = "rst";
->> +	dmas = <&dma 15>, /* AUDIO_CODEC port */
->> +		<&dma 15>; /* AUDIO_CODEC port */
->> +	dma-names = "rx", "tx";
->> +};
->
-> And we already have an example, so there's no need to add a new one
-> either.
+It has been proven to work reliably on a number of other SoCs.
 
-I will remove it on a V3.
+Thanks!
+Maxime
 
-Thank you the review!
-
--- 
-Mylène Josserand, Free Electrons
+--=20
+Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
+
+--wdyexf75nukvhbdl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYc18OAAoJEBx+YmzsjxAgtLYP+gMJkEWqKHg84aIHnL+OtOGD
+Hfkl+AGTvanHcwPxapcr6M8RADi92BltPtyEJJOSf25ArRaazKdEUxkymuwslqnB
+cUNw3imWWEyE4ZchqKd03+vBfxzYFgVR2ytPo7g7wGRGgQsi07+CtyJFC2y0H1aH
+t4XdC/F39B8//ZKAl9YgAp5h9vz4CnUqJF14Lhz0dcaBeaU9CoMtzjZ8MBJ+WJ54
+mWAMVDWuxpwkJW9h5b6ympGOR3TkCKPckQndQ6jomgb152UHB6TLkDhoRpkO03ql
+Zuxjw68jTPa7WLnoop2qebUO1K1WekR/ylw0Z+LnXebp8yJgLzeINAifs123qq94
+QDYmdOwXIi+aw0WALNgOIXIRHJkU76E3Gtg6BZ8aRdCX7IOdIevkUn65NG5AGDmP
+KgvOu0lxHKk8VM682RVoK22HVN9HQBVf8NeFRWPuPC79zGMuDXMIvk3xxvrEkAIK
+RDEK6TkNwseqQ4+lWEaDEWwIe/lGRZ0RA8v3C7W9KZE3J8tKHL44oz8bLR5zNevr
+QLQlLdET+lRPn1ZrqPKq3P+u8ylLLCnPVM+oar4Ji8nsThShTVHs1/N9ZfIC9/Po
+IFARij8iMXyGZJTmJfvYRDX628sJS6CsYA/DGvJlvUcyByqth/K+br0atZXn57C+
+EX6/L/rUDPhI13PaRqpp
+=ZREn
+-----END PGP SIGNATURE-----
+
+--wdyexf75nukvhbdl--
