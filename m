@@ -1,61 +1,47 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Thu, 26 Jan 2017 15:54:25 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH 2/2] clk: imx7d: Add the IPG root clock
-Message-ID: <20170126235425.GH8801@codeaurora.org>
-References: <1484762037-10737-1-git-send-email-fabio.estevam@nxp.com>
- <1484762037-10737-2-git-send-email-fabio.estevam@nxp.com>
- <CAOi56cUrAyqV3e1zW+UGNRfGaueJr9yH1md3DPJT6vVM_zfpTA@mail.gmail.com>
- <CAOMZO5CTrO2kEgxg=-KamZb5HXEoy18T0yDDxGQ4b9oscjU2_A@mail.gmail.com>
+Return-Path: <sudeep.holla@arm.com>
+Subject: Re: [PATCH] clk: scpi: don't add cpufreq device if the scpi dvfs node
+ is disabled
+To: =?UTF-8?Q?Micha=c5=82_Zegan?= <webczat_200@poczta.onet.pl>
+References: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
+ <d51628d1-c930-ec13-990c-97cc47d80472@poczta.onet.pl>
+Cc: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Neil Armstrong <narmstrong@baylibre.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <d1cccb6b-e938-6522-c45f-5b613567cb4e@arm.com>
+Date: Mon, 9 Jan 2017 09:58:37 +0000
 MIME-Version: 1.0
-In-Reply-To: <CAOMZO5CTrO2kEgxg=-KamZb5HXEoy18T0yDDxGQ4b9oscjU2_A@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Kevin Hilman <khilman@baylibre.com>, Sascha Hauer <kernel@pengutronix.de>,
- Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- linux-clk@vger.kernel.org,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <d51628d1-c930-ec13-990c-97cc47d80472@poczta.onet.pl>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/26, Fabio Estevam wrote:
-> Hi Kevin,
-> 
-> On Thu, Jan 26, 2017 at 3:24 AM, Kevin Hilman <khilman@baylibre.com> wrote:
-> > Hi Fabio,
-> >
-> > On Wed, Jan 18, 2017 at 9:53 AM, Fabio Estevam <fabio.estevam@nxp.com> wrote:
-> >> Add an entry for the IMX7D_IPG_ROOT clock.
-> >>
-> >> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-> >
-> > kernelci.org started detecting boot failures on imx7s-warp in
-> > next-20160124[1], and I bisected it down to this patch, which is in
-> > linux-next as commit dde08302c083.
-> >
-> > I verified that reverting that commit on top of next-20160124 gets
-> > imx7s-warp booting again.
-> 
-> Thanks for the report.
-> 
-> Stephen, could you please drop this patch from your tree? I will
-> investigate the issue.
 
-Sure. I've dropped this patch.
+
+On 07/01/17 00:44, Michał Zegan wrote:
+> seems the patch works as intended.
+> 
+
+So, can we take this as
+Tested-by: Michał Zegan <webczat_200@poczta.onet.pl> ?
+
+> W dniu 06.01.2017 o 13:34, Sudeep Holla pisze:
+>> Currently we add the virtual cpufreq device unconditionally even when
+>> the SCPI DVFS clock provider node is disabled. This will cause cpufreq
+>> driver to throw errors when it gets initailised on boot/modprobe and
+>> also when the CPUs are hot-plugged back in.
+>>
+>> This patch fixes the issue by adding the virtual cpufreq device only if
+>> the SCPI DVFS clock provider is available and registered.
+>>
+>> Fixes: 9490f01e2471 ("clk: scpi: add support for cpufreq virtual device")
+>> Reported-by: Michał Zegan <webczat_200@poczta.onet.pl>
+>> Cc: Neil Armstrong <narmstrong@baylibre.com>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Stephen Boyd <sboyd@codeaurora.org>
+>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Regards,
+Sudeep
