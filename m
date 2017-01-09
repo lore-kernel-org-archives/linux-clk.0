@@ -1,70 +1,89 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 26 Jan 2017 11:15:29 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 10/11] arm64: dts: allwinner: Remove no longer used
- pinctrl/sun4i-a10.h header
-Message-ID: <20170126101529.j3fuku4hyy3pbge3@lukather>
-References: <20170124023230.3990-1-wens@csie.org>
- <20170124023230.3990-11-wens@csie.org>
+Return-Path: <stanimir.varbanov@linaro.org>
+Return-Path: <stanimir.varbanov@linaro.org>
+Subject: Re: [PATCH V2 1/2] clk: qcom: gdsc: Add support for gdscs with HW
+ control
+To: Sricharan R <sricharan@codeaurora.org>, sboyd@codeaurora.org,
+ mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rnayak@codeaurora.org, stanimir.varbanov@linaro.org
+References: <1479472107-18472-1-git-send-email-sricharan@codeaurora.org>
+ <1479472107-18472-2-git-send-email-sricharan@codeaurora.org>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <a0fc11d9-49de-33d1-0cea-bed4e6b0765c@linaro.org>
+Date: Mon, 9 Jan 2017 11:45:24 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6cimiexpexa5m2q4"
-In-Reply-To: <20170124023230.3990-11-wens@csie.org>
+In-Reply-To: <1479472107-18472-2-git-send-email-sricharan@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Sricharan,
 
---6cimiexpexa5m2q4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 11/18/2016 02:28 PM, Sricharan R wrote:
+> From: Rajendra Nayak <rnayak@codeaurora.org>
+> 
+> Some GDSCs might support a HW control mode, where in the power
+> domain (gdsc) is brought in and out of low power state (while
+> unsued) without any SW assistance, saving power.
+> Such GDSCs can be configured in a HW control mode when powered on
+> until they are explicitly requested to be powered off by software.
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> ---
+> [V2] Fixed to take care of the return value of gdsc_hwctrl
+> 
+>  drivers/clk/qcom/gdsc.c | 19 +++++++++++++++++++
+>  drivers/clk/qcom/gdsc.h |  1 +
+>  2 files changed, 20 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index f12d7b2..57c7c1b 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -55,6 +55,13 @@ static int gdsc_is_enabled(struct gdsc *sc, unsigned int reg)
+>  	return !!(val & PWR_ON_MASK);
+>  }
+>  
+> +static int gdsc_hwctrl(struct gdsc *sc, bool en)
+> +{
+> +	u32 val = en ? HW_CONTROL_MASK : 0;
+> +
+> +	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
+> +}
+> +
+>  static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+>  {
+>  	int ret;
+> @@ -164,16 +171,28 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+>  	 */
+>  	udelay(1);
+>  
+> +	/* Turn on HW trigger mode if supported */
+> +	if (sc->flags & HW_CTRL)
+> +		return gdsc_hwctrl(sc, true);
+> +
+>  	return 0;
+>  }
+>  
+>  static int gdsc_disable(struct generic_pm_domain *domain)
+>  {
+>  	struct gdsc *sc = domain_to_gdsc(domain);
+> +	int ret;
+>  
+>  	if (sc->pwrsts == PWRSTS_ON)
+>  		return gdsc_assert_reset(sc);
+>  
+> +	/* Turn off HW trigger mode if supported */
+> +	if (sc->flags & HW_CTRL) {
+> +		ret = gdsc_hwctrl(sc, false);
 
-On Tue, Jan 24, 2017 at 10:32:29AM +0800, Chen-Yu Tsai wrote:
-> All dts files for the sunxi platform have been switched to the generic
-> pinconf bindings. As a result, the sunxi specific pinctrl macros are
-> no longer used.
->=20
-> Remove the #include entry with the following command:
->=20
->     sed -i -e '/pinctrl\/sun4i-a10.h/D' \
-> 	arch/arm64/boot/dts/allwinner/*.dts?
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Looking in the downstream implementation the disabling of the hw control
+bit shouldn't be enough.
 
-Applied, thanks!
+After disabling hw control bit we must have a 1us delay and polling for
+enabled PWR_ON bit with timeout of 100us, only then we should continue
+with disabling the GDSC in software controlled mode.
 
-Maybe we should also remove the header entirely?
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---6cimiexpexa5m2q4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYicxBAAoJEBx+YmzsjxAg/0wP/jFWpobbF6UDUxzv8x32eMDk
-R6veMEe1yFJ/AaArFLAiIFVgP52QPB5JR4jOLBh8eLL9B3JDN8g4EkmSJQ6Cc3AT
-xv5dUPXelEIbq17ij79p7Y74lCOTMINd0ni1DH0hr+HLBvRsW2Ls05nKVgQsTL9n
-LgtVrihsxAKtykrBEpLGKuIXrm9GfN4svHiCukLEOFcnzsc2M4jZ8vPl1Dm096XR
-x7fewDVKSrH6b14Xm9tuQ634uX9Brq20lytbS06u6e5ta+ju5lP4DLh00rUmfnB2
-yKp3JsJU+XjZuCSSSddO4M6QLsO18HKTAtLwQtNjvbAfEwNiMSpM0JlBYem0b9cQ
-zEmWOOWGGAwfH4nE9JaiLecJzattxSY7Yms+oPgKRV9UHGul5kPhO9E+NOg0crVn
-itsxZ8rF9qDI1b1eVn+K2RYIZMeQhxWxmsPaXa4ENmYQrfTM4R5mUIxlcgoHbd4W
-/DoSUkWFgl4lwKy+kM/QvBVNryrXvl+EkaogBkAdf9lUsLSb0JCo0BgsgjC1Qfp3
-Zo4GneY4kS2Gd2uuvQGwL+1pwOsaytGxP84qRJv6b3y7sBnUcqxO4f2zk47KRT/A
-M5gYMyqDixqZ3izer/i2pqGjc97he4nd9tldgkDdDeN/wFpUr/Bz84jCqblBm6C0
-AoR2BmyCf1IfwWWoO3PH
-=A6P1
------END PGP SIGNATURE-----
-
---6cimiexpexa5m2q4--
+-- 
+regards,
+Stan
