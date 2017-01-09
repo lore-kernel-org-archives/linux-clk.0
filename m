@@ -1,114 +1,87 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 23 Jan 2017 10:38:51 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	Paul Walmsley <paul@pwsan.com>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCHv2] Documentation: dt-bindings: Add binding documentation
- for TI clkctrl clocks
-Message-ID: <20170123183851.GT7403@atomide.com>
-References: <20170117225302.10844-1-tony@atomide.com>
- <40b1f6a8-fc5c-b619-9570-bc2f9731af89@ti.com>
- <20170123162828.GR7403@atomide.com>
- <f3c4154d-09d0-3930-4452-1f7d61622f3d@ti.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+Subject: [PATCH v2 1/3] dt-bindings: mfd: stm32f4: Fix STM32F4_X_CLOCK() macro
+Date: Mon, 9 Jan 2017 10:07:11 +0100
+Message-ID: <1483952833-14704-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1483952833-14704-1-git-send-email-gabriel.fernandez@st.com>
+References: <1483952833-14704-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <f3c4154d-09d0-3930-4452-1f7d61622f3d@ti.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [170123 10:30]:
-> On 23/01/17 18:28, Tony Lindgren wrote:
-> > * Tero Kristo <t-kristo@ti.com> [170123 06:45]:
-> > > On 18/01/17 00:53, Tony Lindgren wrote:
-> > > > Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
-> > > > clock controller instance for each interconnect target module. The clkctrl
-> > > > controls functional and interface clocks for the module.
-> > > > 
-> > > > The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
-> > > > With this binding and a related clock device driver we can start moving the
-> > > > clkctrl clock handling to live in drivers/clk/ti.
-> > > > 
-> > > > Note that this binding allows keeping the clockdomain related parts out of
-> > > > drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
-> > > > a separate driver in drivers/soc/ti and genpd. If the clockdomain driver
-> > > > needs to know it's clocks, we can just set the the clkctrl device
-> > > > instances to be children of the related clockdomain device.
-> > > > 
-> > > > Each clkctrl clock can have multiple optional gate clocks, and multiple
-> > > > optional mux clocks. To represent this in device tree, it seems that
-> > > > it is best done using four clock cells #clock-cells = <4> property.
-> > > > 
-> > > > The reasons for using #clock-cells = <4> are:
-> > > > 
-> > > > 1. We need to specify the clkctrl offset from the instance base. Otherwise
-> > > >    we end up with a large number of device tree nodes that need to be
-> > > >    patched when new clocks are discovered in a clkctrl clock with minor
-> > > >    hardware revision changes for example
-> > > > 
-> > > > 2. On omap5 CM_L3INIT_USB_HOST_HS_CLKCTRL has ten OPTFCLKEN bits. So we
-> > > >    need to use a separate cell for optional gate clocks to avoid address
-> > > >    space conflicts
-> > > > 
-> > > > 3. Some clkctrl instances can also also optional mux clocks. To address
-> > > >    them properly we need also a separate cell for the optional mux
-> > > >    clock index
-> > > > 
-> > > > 4. The modulemode clock needs a flag passed to it for hardware or
-> > > >    software controlled mode
-> > > 
-> > > Hi Tony,
-> > > 
-> > > I think #clock-cells = <4> is too much. I believe we only need 2:
-> > > 
-> > > - one entry for clkctrl offset
-> > > - one entry for clock offset within the clkctrl entry (0 = module clock, 8+
-> > > = opt-clocks / mux clocks / dividers)
-> > 
-> > OK the less #clock-cells the better as long as it's enough :)
-> > 
-> > > Fields 2 / 3 in your proposal are mutually exclusive, if either field is
-> > > non-zero, the other one must be zero. And, the opt clocks / mux / divs
-> > > always have different values for these.
-> > 
-> > OK. Just to confirm the assumptions then:
-> > 
-> > 1. The optional mux clock the consumer needs to select the right
-> >    source clock with with clk_set_parent()
-> 
-> Yes. And for this you need to fetch a clock handle via some mechanism
-> (of_clk_get, clk_get...) Clock consumers can't directly use parent IDs.
-> 
-> > 
-> > 2. The optional divider clock rate must be set by the consumer
-> >    using clk_set_rate()
-> 
-> Yes again.
-> 
-> > 
-> > And in that case we again don't need to define any artificial
-> > clock indexes, which is good if new clocks are discovered between
-> > various SoC revisions.
-> > 
-> > > Field 4 is kind of redundant also, as the module clock must be registered at
-> > > the clkctrl probe time, it is too late for the clock consumer to provide the
-> > > proper setting for the clock during its own probe. It seems I need to add
-> > > static data to driver which basically has this information in place already.
-> > 
-> > OK yeah good point, the "clocks" is a consumer property.
-> > 
-> > So in that case we must also assume that if any clock consumer needs
-> > to change between HWSUP or SWSUP, it needs to be done with some yet
-> > to be determined API. We have not needed that so far AFAIK though.
-> > 
-> > If there are no issues with the above, I'm naturally fine using the
-> > #clock-cells = <2> :)
-> 
-> Yeah, clock-cells = <2>; seems to work just fine in the WIP codebase I have.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-OK thanks for confirming, will post v3 of the binding.
+Macro to select a clock was not correct.
 
-Regards,
+Offset of enable register starts at 0x30, then calculation to select a bit is:
+(@enable_reg - 0x30) / 4 * 32 + bit_to_select
 
-Tony
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Tested-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
+---
+ include/dt-bindings/mfd/stm32f4-rcc.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
+index e98942d..f662b19 100644
+--- a/include/dt-bindings/mfd/stm32f4-rcc.h
++++ b/include/dt-bindings/mfd/stm32f4-rcc.h
+@@ -25,7 +25,7 @@
+ #define STM32F4_RCC_AHB1_OTGHS	29
+ 
+ #define STM32F4_AHB1_RESET(bit) (STM32F4_RCC_AHB1_##bit + (0x10 * 8))
+-#define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit + (0x30 * 8))
++#define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit)
+ 
+ 
+ /* AHB2 */
+@@ -36,13 +36,13 @@
+ #define STM32F4_RCC_AHB2_OTGFS	7
+ 
+ #define STM32F4_AHB2_RESET(bit)	(STM32F4_RCC_AHB2_##bit + (0x14 * 8))
+-#define STM32F4_AHB2_CLOCK(bit)	(STM32F4_RCC_AHB2_##bit + (0x34 * 8))
++#define STM32F4_AHB2_CLOCK(bit)	(STM32F4_RCC_AHB2_##bit + 0x20)
+ 
+ /* AHB3 */
+ #define STM32F4_RCC_AHB3_FMC	0
+ 
+ #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
+-#define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + (0x38 * 8))
++#define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + 0x40)
+ 
+ /* APB1 */
+ #define STM32F4_RCC_APB1_TIM2	0
+@@ -72,7 +72,7 @@
+ #define STM32F4_RCC_APB1_UART8	31
+ 
+ #define STM32F4_APB1_RESET(bit)	(STM32F4_RCC_APB1_##bit + (0x20 * 8))
+-#define STM32F4_APB1_CLOCK(bit)	(STM32F4_RCC_APB1_##bit + (0x40 * 8))
++#define STM32F4_APB1_CLOCK(bit)	(STM32F4_RCC_APB1_##bit + 0x80)
+ 
+ /* APB2 */
+ #define STM32F4_RCC_APB2_TIM1	0
+@@ -93,6 +93,6 @@
+ #define STM32F4_RCC_APB2_LTDC	26
+ 
+ #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
+-#define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + (0x44 * 8))
++#define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + 0xA0)
+ 
+ #endif /* _DT_BINDINGS_MFD_STM32F4_RCC_H */
+-- 
+1.9.1
