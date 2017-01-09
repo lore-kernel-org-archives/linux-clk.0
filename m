@@ -1,58 +1,110 @@
-Return-Path: <mw@semihalf.com>
+Return-Path: <megous@megous.com>
+Subject: Re: [linux-sunxi] [PATCH] clk: sunxi-ng: fix PLL_CPUX adjusting on H3
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <20161125002852.18097-1-megous@megous.com>
+ <0985b1ec-ba95-1505-cc59-adec4b88238f@megous.com>
+ <20170109095946.6esbfx6pafega5cd@lukather>
+Cc: dev@linux-sunxi.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jorik Jonker <jorik@kippendief.biz>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ "moderated list:ARM/Allwinner sunXi SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+From: =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megous@megous.com>
+Message-ID: <557330d0-2dcd-2211-8538-51c4d6b68834@megous.com>
+Date: Mon, 9 Jan 2017 15:50:42 +0100
 MIME-Version: 1.0
-In-Reply-To: <20170105130945.GA18033@lunn.ch>
-References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
- <6c6795d3-06ab-a4f0-78ad-5ecc78c1aa2f@gmail.com> <185147a37cab4d7eaea5f79d86cc9451@svr-chch-ex1.atlnz.lc>
- <20170105130945.GA18033@lunn.ch>
-From: Marcin Wojtas <mw@semihalf.com>
-Date: Thu, 5 Jan 2017 15:07:02 +0100
-Message-ID: <CAPv3WKdsiGis6gG0SmLT1mg+LYA8i5p4u9KJiYJxng8jrLsj+w@mail.gmail.com>
-Subject: Re: [PATCHv2 0/5] Support for Marvell switches with integrated CPUs
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Chris Packham <Chris.Packham@alliedtelesis.co.nz>, Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
-	Juri Lelli <juri.lelli@arm.com>, Russell King <linux@armlinux.org.uk>,
-	Thierry Reding <treding@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
-	Arnd Bergmann <arnd@arndb.de>, Kalyan Kinthada <Kalyan.Kinthada@alliedtelesis.co.nz>,
-	Rob Herring <robh+dt@kernel.org>, Gregory Clement <gregory.clement@free-electrons.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sudeep Holla <sudeep.holla@arm.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170109095946.6esbfx6pafega5cd@lukather>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andrew,
 
-2017-01-05 14:09 GMT+01:00 Andrew Lunn <andrew@lunn.ch>:
->> I'd love to see a switchdev driver but it's a huge task (and no I'm not
->> committing to writing it). As it stands Marvell ship a switch SDK
->> largely executes in userspace with a small kernel module providing some
->> linkage to the underlying hardware.
->
-> Is there any similarity to the mv88e6xxx family?
 
-Prestera switches (they are sold as standalone devices and with
-integrated CPU's, like ones submitted) are as far from mv88e6xxx as
-possible. There are various mix of 1/2.5/10/40G ports, depending on
-model.
+Dne 9.1.2017 v 10:59 Maxime Ripard napsal(a):
+> On Sat, Jan 07, 2017 at 04:49:18PM +0100, Ondřej Jirman wrote:
+>> Maxime,
+>>
+>> Dne 25.11.2016 v 01:28 megous@megous.com napsal(a):
+>>> From: Ondrej Jirman <megous@megous.com>
+>>>
+>>> When adjusting PLL_CPUX on H3, the PLL is temporarily driven
+>>> too high, and the system becomes unstable (oopses or hangs).
+>>>
+>>> Add a notifier to avoid this situation by temporarily switching
+>>> to a known stable 24 MHz oscillator.
+>>
+>> I have done more thorough testing on H3 and this approach with switching
+>> to 24MHz oscillator does not work. Motivation being that my Orange Pi
+>> One still gets lockups even with this patch under certain circumstances.
+>>
+>> So I have created a small test program for CPUS (additional OpenRISC CPU
+>> on the SoC) which randomly changes PLL_CPUX settings while main CPU is
+>> running a loop that sends messages to CPUS via msgbox.
+>>
+>> Assumption being that while CPUS is successfully receiving messages via
+>> msgbox, the main CPU didn't lock up, yet.
+>>
+>> With this I am able to quickly and thoroughly test various PLL_CPUX
+>> change and factor selection algorithms.
+>>
+>> Results are that bypassing CPUX clock by switching to 24 MHz oscillator
+>> does not work at all. Main CPU locks up in about 1 second into the test.
+>> Don't ask me why.
+> 
+> You mean that you are changing the frequency behind Linux' back? That
+> won't work. There's more to cpufreq than just changing the frequency,
+> but also adusting the number of loops per jiffy for the new frequency
+> for example. I don't really expect that setup to work even on a
+> perfectly stable system. CPUFreq *has* to be involved, otherwise, that
+> alone might introduce bugs, and you cannot draw any conclusions
+> anymore.
 
->
-> If it was similar registers, just a different access mechanising, we
-> could probably extend the mv88e6xxx to support MMIO as well as MDIO.
->
+No, this has nothing to do with linux. I'm not running linux for this
+test. I'm running a small program on CPUS (Open RISC CPU) on the SoC
+loaded using FEL from USB.
 
-The difference is huge, nothing existing in the mainline can fit. The
-driver, that exposes resources to the userspace SDK (called CPSS, it's
-huge and complex piece of code) is existing in Marvell internal
-branches (kernel v4.4 is the latest one), but I doubt such solution
-(despite it's really small) is upstreamable. I believe it can be
-shipped to the customers along with the SDK as a kernel module. Having
-the CPU's support in the mainline is IMO sufficient.
+The main cpu is just pushing messages into msgbox in a loop, so that
+CPUS can determine that the main CPU is still running ok and give
+feedback to me over UART. Not even DRAM is involved. The programs are
+running from SRAM.
 
-Best regards,
-Marcin
+This is the most direct test of PLL change stability that can be done on
+this SoC regardless of the OS. Not even CPU voltage switching is
+involved. I just set the maximum voltage and fiddle with CPU_PLL
+frequencies randomly, while waiting for the main CPU to lock up.
+
+It does lock up quickly with mainline ccu_nkmp_find_best algorithm for
+finding factors.
+
+Even with linux kernel, it breaks. It's just more difficult to hit the
+right conditions. I got oops only right after boot when running cpuburn
+to trigger thermal_zone issued OPP change, if I first run some cpupower
+commands. That's why I wrote this program to stress test various CPU_PLL
+change/factor selection algorithms independently of everything else, to
+get more predictable and quicker testing results.
+
+>> What works is selecting NKMP factors so that M is always 1 and P is
+>> anything other than /1 only for frequencies under 288MHz. As mandated by
+>> the H3 datasheet. Mainline ccu_nkmp_find_best doesn't respect these
+>> conditions. With that I can change CPUX frequencies randomly 20x a
+>> second so far indefinitely without the main CPU ever locking up.
+>>
+>> Please drop or revert this patch. It is not a correct approach to the
+>> problem. I'd suggest dropping the entire clock notifier mechanism, too,
+>> unless it can be proven to work reliably.
+> 
+> It has been proven to work reliably on a number of other SoCs.
+
+Unless it was stress tested like this with randomy changed settings, I
+doubt you can call it reliable. It may just be very hard to hit the
+issue on linux with particular OPP/thermal zone configuration. That's
+because the issue is dependent on before and after NKMP values. People
+may have just been lucky so far.
+
+regards,
+  o.
+
+> Thanks!
+> Maxime
+> 
