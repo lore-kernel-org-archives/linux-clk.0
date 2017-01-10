@@ -1,66 +1,89 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 01/11] clk: sunxi-ng: mux: Fix determine_rate for mux clocks with pre-dividers
-Date: Tue, 24 Jan 2017 10:32:20 +0800
-Message-Id: <20170124023230.3990-2-wens@csie.org>
-In-Reply-To: <20170124023230.3990-1-wens@csie.org>
-References: <20170124023230.3990-1-wens@csie.org>
+Return-Path: <jdelvare@suse.de>
+Date: Tue, 10 Jan 2017 13:03:00 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: Andreas =?UTF-8?B?RsOkcmJlcg==?= <afaerber@suse.de>
+Cc: linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias
+ Brugger <matthias.bgg@gmail.com>, James Liao <jamesjj.liao@mediatek.com>,
+ Erin Lo <erin.lo@mediatek.com>, Stephen Boyd <sboyd@codeaurora.org>, Shunli
+ Wang <shunli.wang@mediatek.com>, Michael Turquette
+ <mturquette@baylibre.com>
+Subject: Re: [PATCH] clk: mediatek: Fix MT2701 dependencies
+Message-ID: <20170110130300.167d215b@endymion>
+In-Reply-To: <c3da261a-eb85-9b30-d5e2-05863d2efad2@suse.de>
+References: <20170109113621.31d384c9@endymion>
+	<c3da261a-eb85-9b30-d5e2-05863d2efad2@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The determine_rate helper used ccu_mux_helper_adjust_parent_for_prediv()
-to adjust the parent_rate to account for pre-dividers, but then passed
-the pristine parent clock rate from clk_hw_get_rate() to the round()
-callback, thereby ignoring the pre-divider adjustment. In addition,
-it was saving the adjusted parent rate back into struct
-clk_rate_request.
+On Mon, 9 Jan 2017 21:08:50 +0100, Andreas F=C3=A4rber wrote:
+> Hi Jean,
+>=20
+> Am 09.01.2017 um 11:36 schrieb Jean Delvare:
+> > If I say "no" to "Clock driver for Mediatek MT2701", I don't want to
+> > be asked individually about each sub-driver. No means no.
+> >=20
+> > Additionally, this driver shouldn't be proposed at all on non-mediatek
+> > builds, unless build-testing.
+> >=20
+> > Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> > Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
+> > Cc: Shunli Wang <shunli.wang@mediatek.com>
+> > Cc: James Liao <jamesjj.liao@mediatek.com>
+> > Cc: Erin Lo <erin.lo@mediatek.com>
+> > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> > ---
+> [...]
+> > As another side note, I wonder why so many clock drivers have
+> > "COMMON" in their symbol names. Looks wrong to me.
+>=20
+> It refers to the Common Clock Framework:
+> https://www.kernel.org/doc/Documentation/clk.txt
 
-This patch fixes this by saving the pristine parent clock rate, and
-adding a copy that is adjusted and passed to the round() callback.
-The pristine copy, if it is the best solution, would be saved back
-to struct clk_rate_request.
+OK, thanks for the explanation. Still seems overkill to me to prefix
+everything with COMMON_CLK when the drivers live under drivers/clk, but
+oh well :-)
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu_mux.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+> > --- linux-4.10-rc2.orig/drivers/clk/mediatek/Kconfig	2017-01-01 23:31:5=
+3.000000000 +0100
+> > +++ linux-4.10-rc2/drivers/clk/mediatek/Kconfig	2017-01-09 11:17:37.542=
+344083 +0100
+> > @@ -8,6 +8,7 @@ config COMMON_CLK_MEDIATEK
+> > =20
+> >  config COMMON_CLK_MT2701
+> >  	bool "Clock driver for Mediatek MT2701"
+> > +	depends on ARCH_MEDIATEK || COMPILE_TEST
+> >  	select COMMON_CLK_MEDIATEK
+> >  	default ARCH_MEDIATEK
+>=20
+> Should the default then become y for simplicity?
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index 858a48621631..3445041894e7 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -71,7 +71,7 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
- 	unsigned int i;
- 
- 	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
--		unsigned long tmp_rate, parent_rate;
-+		unsigned long tmp_rate, parent_rate, adj_parent_rate;
- 		struct clk_hw *parent;
- 
- 		parent = clk_hw_get_parent_by_index(hw, i);
-@@ -79,10 +79,11 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
- 			continue;
- 
- 		parent_rate = clk_hw_get_rate(parent);
-+		adj_parent_rate = parent_rate;
- 		ccu_mux_helper_adjust_parent_for_prediv(common, cm, i,
--							&parent_rate);
-+							&adj_parent_rate);
- 
--		tmp_rate = round(cm, clk_hw_get_rate(parent), req->rate, data);
-+		tmp_rate = round(cm, parent_rate, req->rate, data);
- 		if (tmp_rate == req->rate) {
- 			best_parent = parent;
- 			best_parent_rate = parent_rate;
--- 
-2.11.0
+I left it as is as it is the same already done in other drivers in the
+same directory. I agree "default y" would do the same in practice.
+
+> Another aspect here is that this is a 32-bit SoC but it propagates into
+> the arm64 configs, so maybe (ARCH_MEDIATEK && !ARM64) || COMPILE_TEST?
+>=20
+> Same for mt2701 pinctrl.
+>=20
+> http://kernel.opensuse.org/cgit/kernel-source/plain/config/arm64/default?=
+id=3Dff90e915117c5d7a8bb00dc0bc1d3145ebe985ec
+
+Actually I thought the driver was needed primarily on arm64 because of
+this configuration file. If that's not the case then I can resubmit
+with the suggested change, no problem.
+
+What about MT8135 and MT8173, are they 32-bit SoCs as well?
+
+> (...)
+> Anyway, a step forward,
+>=20
+> Reviewed-by: Andreas F=C3=A4rber <afaerber@suse.de>
+
+Thanks for the review.
+
+--=20
+Jean Delvare
+SUSE L3 Support
