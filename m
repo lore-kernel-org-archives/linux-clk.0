@@ -1,71 +1,55 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 1/5] arm: sunxi: add support for V3s SoC
-Date: Tue,  3 Jan 2017 23:16:25 +0800
-Message-Id: <20170103151629.19447-2-icenowy@aosc.xyz>
-In-Reply-To: <20170103151629.19447-1-icenowy@aosc.xyz>
-References: <20170103151629.19447-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: dianders@google.com,
+	linux-rockchip@lists.infradead.org,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 2/2] dt-bindings: clk: add rockchip,grf property for RK3399
+Date: Tue, 10 Jan 2017 14:15:30 +0800
+Message-Id: <1484028930-20305-3-git-send-email-zhengxing@rock-chips.com>
+In-Reply-To: <1484028930-20305-1-git-send-email-zhengxing@rock-chips.com>
+References: <1484028930-20305-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s is a low-end single-core Cortex-A7 SoC, with 64MB
-integrated DRAM, and several peripherals.
+Add support for rockchip,grf property which is used for GRF muxes
+on RK3399.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 ---
- Documentation/arm/sunxi/README | 4 ++++
- arch/arm/mach-sunxi/sunxi.c    | 1 +
- 2 files changed, 5 insertions(+)
 
-diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
-index cd0243302bc1..91ec8f2055be 100644
---- a/Documentation/arm/sunxi/README
-+++ b/Documentation/arm/sunxi/README
-@@ -67,6 +67,10 @@ SunXi family
-         + Datasheet
-           http://dl.linux-sunxi.org/H3/Allwinner_H3_Datasheet_V1.0.pdf
+Changes in v4:
+- update the decription for rockchip,grf property
+
+Changes in v3: None
+Changes in v2: None
+
+ Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
+index 3888dd3..3bc56fa 100644
+--- a/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
+@@ -13,6 +13,12 @@ Required Properties:
+ - #clock-cells: should be 1.
+ - #reset-cells: should be 1.
  
-+      - Allwinner V3s (sun8i)
-+        + Datasheet
-+          https://www.goprawn.com/forum/allwinner-cams/783-allwinner-v3s-soc-datasheet
++Optional Properties:
 +
-     * Quad ARM Cortex-A15, Quad ARM Cortex-A7 based SoCs
-       - Allwinner A80
-         + Datasheet
-diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-index 2e2bde271205..f246bfc6cfe4 100644
---- a/arch/arm/mach-sunxi/sunxi.c
-+++ b/arch/arm/mach-sunxi/sunxi.c
-@@ -64,6 +64,7 @@ static const char * const sun8i_board_dt_compat[] = {
- 	"allwinner,sun8i-a33",
- 	"allwinner,sun8i-a83t",
- 	"allwinner,sun8i-h3",
-+	"allwinner,sun8i-v3s",
- 	NULL,
- };
- 
++- rockchip,grf: phandle to the syscon managing the "general register files".
++  It is used for GRF muxes, if missing any muxes present in the GRF will not
++  be available.
++
+ Each clock is assigned an identifier and client nodes can use this identifier
+ to specify the clock which they consume. All available clocks are defined as
+ preprocessor macros in the dt-bindings/clock/rk3399-cru.h headers and can be
 -- 
-2.11.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.7.4
