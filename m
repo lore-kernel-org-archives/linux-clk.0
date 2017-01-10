@@ -1,230 +1,338 @@
 Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 26 Jan 2017 11:39:28 +0100
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 07/11] clk: sunxi-ng: Add A80 Display Engine CCU
-Message-ID: <20170126103928.3kmvymoafsz5jfjm@lukather>
-References: <20170124023230.3990-1-wens@csie.org>
- <20170124023230.3990-8-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="sy5xlgwixv43i2gc"
-In-Reply-To: <20170124023230.3990-8-wens@csie.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 2/7] clk: sunxi-ng: Implement factors offsets
+Date: Tue, 10 Jan 2017 08:57:24 +0100
+Message-Id: <2cec4b406a220763208125cde184aee01b27e7e8.1484035021.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
+References: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
+References: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+The factors we've seen so far all had an offset of one. However, on the
+earlier Allwinner SoCs, some factors could have no offset at all, meaning
+that the value computed to reach the rate we want to use was the one we had
+to program in the registers.
 
---sy5xlgwixv43i2gc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Implement an additional field for the factors that can have such an offset
+(linears, not based on a power of two) to specify that offset.
 
-Hi,
+This offset is not linked to the extremums that can be specified in those
+structures too. The minimum and maximum are representing the range of
+values we can use to try to compute the best rate. The offset comes later
+on when we want to set the best value in the registers.
 
-On Tue, Jan 24, 2017 at 10:32:26AM +0800, Chen-Yu Tsai wrote:
-> Add support for the display engine clock controls found on the A80.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  .../devicetree/bindings/clock/sun9i-de.txt         |  28 ++
->  drivers/clk/sunxi-ng/Makefile                      |   1 +
->  drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c            | 283 +++++++++++++++=
-++++++
->  drivers/clk/sunxi-ng/ccu-sun9i-a80-de.h            |  33 +++
->  include/dt-bindings/clock/sun9i-a80-de.h           |  80 ++++++
->  include/dt-bindings/reset/sun9i-a80-de.h           |  58 +++++
->  6 files changed, 483 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sun9i-de.txt
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-de.h
->  create mode 100644 include/dt-bindings/clock/sun9i-a80-de.h
->  create mode 100644 include/dt-bindings/reset/sun9i-a80-de.h
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/sun9i-de.txt b/Docum=
-entation/devicetree/bindings/clock/sun9i-de.txt
-> new file mode 100644
-> index 000000000000..3a5e6df70677
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/sun9i-de.txt
-> @@ -0,0 +1,28 @@
-> +Allwinner A80 Display Engine Clock Control Binding
-> +------------------------------------
-> +
-> +Required properties :
-> +- compatible: must contain one of the following compatibles:
-> +		- "allwinner,sun9i-a80-de-clocks"
-> +
-> +- reg: Must contain the registers base address and length
-> +- clocks: phandle to the clocks feeding the display engine subsystem.
-> +	  Three are needed:
-> +  - "mod": the display engine module clock
-> +  - "dram": the DRAM bus clock for the system
-> +  - "bus": the bus clock for the whole display engine subsystem
-> +- clock-names: Must contain the clock names described just above
-> +- resets: phandle to the reset control for the display engine subsystem.
-> +- #clock-cells : must contain 1
-> +- #reset-cells : must contain 1
-> +
-> +Example:
-> +de_clocks: clock@03000000 {
-> +	compatible =3D "allwinner,sun9i-a80-de-clks";
-> +	reg =3D <0x03000000 0x30>;
-> +	clocks =3D <&ccu CLK_DE>, <&ccu CLK_SDRAM>, <&ccu CLK_BUS_DE>;
-> +	clock-names =3D "mod", "dram", "bus";
-> +	resets =3D <&ccu RST_BUS_DE>;
-> +	#clock-cells =3D <1>;
-> +	#reset-cells =3D <1>;
-> +};
-> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-> index 8f37ef7fb67d..6feaac0c5600 100644
-> --- a/drivers/clk/sunxi-ng/Makefile
-> +++ b/drivers/clk/sunxi-ng/Makefile
-> @@ -26,4 +26,5 @@ obj-$(CONFIG_SUN8I_A33_CCU)	+=3D ccu-sun8i-a33.o
->  obj-$(CONFIG_SUN8I_H3_CCU)	+=3D ccu-sun8i-h3.o
->  obj-$(CONFIG_SUN8I_V3S_CCU)	+=3D ccu-sun8i-v3s.o
->  obj-$(CONFIG_SUN9I_A80_CCU)	+=3D ccu-sun9i-a80.o
-> +obj-$(CONFIG_SUN9I_A80_CCU)	+=3D ccu-sun9i-a80-de.o
->  obj-$(CONFIG_SUN9I_A80_CCU)	+=3D ccu-sun9i-a80-usb.o
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c b/drivers/clk/sunxi-=
-ng/ccu-sun9i-a80-de.c
-> new file mode 100644
-> index 000000000000..3fc27db0a49a
-> --- /dev/null
-> +++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
-> @@ -0,0 +1,283 @@
-> +/*
-> + * Copyright (c) 2016 Chen-Yu Tsai. All rights reserved.
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset.h>
-> +
-> +#include "ccu_common.h"
-> +#include "ccu_div.h"
-> +#include "ccu_gate.h"
-> +#include "ccu_reset.h"
-> +
-> +#include "ccu-sun9i-a80-de.h"
-> +
-> +static SUNXI_CCU_GATE(fe0_clk,		"fe0",		"fe0-div",
-> +		      0x00, BIT(0), 0);
-> +static SUNXI_CCU_GATE(fe1_clk,		"fe1",		"fe1-div",
-> +		      0x00, BIT(1), 0);
-> +static SUNXI_CCU_GATE(fe2_clk,		"fe2",		"fe2-div",
-> +		      0x00, BIT(2), 0);
-> +static SUNXI_CCU_GATE(iep_deu0_clk,	"iep-deu0",	"de",
-> +		      0x00, BIT(4), 0);
-> +static SUNXI_CCU_GATE(iep_deu1_clk,	"iep-deu1",	"de",
-> +		      0x00, BIT(5), 0);
-> +static SUNXI_CCU_GATE(be0_clk,		"be0",		"be0-div",
-> +		      0x00, BIT(8), 0);
-> +static SUNXI_CCU_GATE(be1_clk,		"be1",		"be1-div",
-> +		      0x00, BIT(9), 0);
-> +static SUNXI_CCU_GATE(be2_clk,		"be2",		"be2-div",
-> +		      0x00, BIT(10), 0);
-> +static SUNXI_CCU_GATE(iep_drc0_clk,	"iep-drc0",	"de",
-> +		      0x00, BIT(12), 0);
-> +static SUNXI_CCU_GATE(iep_drc1_clk,	"iep-drc1",	"de",
-> +		      0x00, BIT(13), 0);
-> +static SUNXI_CCU_GATE(merge_clk,	"merge",	"de",
-> +		      0x00, BIT(20), 0);
-> +
-> +static SUNXI_CCU_GATE(dram_fe0_clk,	"dram-fe0",	"sdram",
-> +		      0x04, BIT(0), 0);
-> +static SUNXI_CCU_GATE(dram_fe1_clk,	"dram-fe1",	"sdram",
-> +		      0x04, BIT(1), 0);
-> +static SUNXI_CCU_GATE(dram_fe2_clk,	"dram-fe2",	"sdram",
-> +		      0x04, BIT(2), 0);
-> +static SUNXI_CCU_GATE(dram_deu0_clk,	"dram-deu0",	"sdram",
-> +		      0x04, BIT(4), 0);
-> +static SUNXI_CCU_GATE(dram_deu1_clk,	"dram-deu1",	"sdram",
-> +		      0x04, BIT(5), 0);
-> +static SUNXI_CCU_GATE(dram_be0_clk,	"dram-be0",	"sdram",
-> +		      0x04, BIT(8), 0);
-> +static SUNXI_CCU_GATE(dram_be1_clk,	"dram-be1",	"sdram",
-> +		      0x04, BIT(9), 0);
-> +static SUNXI_CCU_GATE(dram_be2_clk,	"dram-be2",	"sdram",
-> +		      0x04, BIT(10), 0);
-> +static SUNXI_CCU_GATE(dram_drc0_clk,	"dram-drc0",	"sdram",
-> +		      0x04, BIT(12), 0);
-> +static SUNXI_CCU_GATE(dram_drc1_clk,	"dram-drc1",	"sdram",
-> +		      0x04, BIT(13), 0);
-> +
-> +static SUNXI_CCU_GATE(bus_fe0_clk,	"bus-fe0",	"bus-de",
-> +		      0x08, BIT(0), 0);
-> +static SUNXI_CCU_GATE(bus_fe1_clk,	"bus-fe1",	"bus-de",
-> +		      0x08, BIT(1), 0);
-> +static SUNXI_CCU_GATE(bus_fe2_clk,	"bus-fe2",	"bus-de",
-> +		      0x08, BIT(2), 0);
-> +static SUNXI_CCU_GATE(bus_deu0_clk,	"bus-deu0",	"bus-de",
-> +		      0x08, BIT(4), 0);
-> +static SUNXI_CCU_GATE(bus_deu1_clk,	"bus-deu1",	"bus-de",
-> +		      0x08, BIT(5), 0);
-> +static SUNXI_CCU_GATE(bus_be0_clk,	"bus-be0",	"bus-de",
-> +		      0x08, BIT(8), 0);
-> +static SUNXI_CCU_GATE(bus_be1_clk,	"bus-be1",	"bus-de",
-> +		      0x08, BIT(9), 0);
-> +static SUNXI_CCU_GATE(bus_be2_clk,	"bus-be2",	"bus-de",
-> +		      0x08, BIT(10), 0);
-> +static SUNXI_CCU_GATE(bus_drc0_clk,	"bus-drc0",	"bus-de",
-> +		      0x08, BIT(12), 0);
-> +static SUNXI_CCU_GATE(bus_drc1_clk,	"bus-drc1",	"bus-de",
-> +		      0x08, BIT(13), 0);
-> +
-> +static SUNXI_CCU_M(fe0_div_clk, "fe0-div", "de", 0x20, 0, 4, 0);
-> +static SUNXI_CCU_M(fe1_div_clk, "fe1-div", "de", 0x20, 4, 4, 0);
-> +static SUNXI_CCU_M(fe2_div_clk, "fe2-div", "de", 0x20, 8, 4, 0);
-> +static SUNXI_CCU_M(be0_div_clk, "be0-div", "de", 0x20, 16, 4, 0);
-> +static SUNXI_CCU_M(be1_div_clk, "be1-div", "de", 0x20, 20, 4, 0);
-> +static SUNXI_CCU_M(be2_div_clk, "be2-div", "de", 0x20, 24, 4, 0);
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/ccu_div.h  | 10 +++++++++-
+ drivers/clk/sunxi-ng/ccu_mp.c   | 10 +++++++---
+ drivers/clk/sunxi-ng/ccu_mult.c |  4 ++--
+ drivers/clk/sunxi-ng/ccu_mult.h | 20 ++++++++++++++------
+ drivers/clk/sunxi-ng/ccu_nk.c   | 14 ++++++++++----
+ drivers/clk/sunxi-ng/ccu_nkm.c  | 18 +++++++++++++-----
+ drivers/clk/sunxi-ng/ccu_nkmp.c | 17 +++++++++++++----
+ drivers/clk/sunxi-ng/ccu_nm.c   | 13 ++++++++++---
+ 8 files changed, 78 insertions(+), 28 deletions(-)
 
-I couldn't find any documentation for this CCU.
-
-What are those clocks for, and how the display engine should be using
-(ie, which one is it expecting to drive / ungate / etc.)
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---sy5xlgwixv43i2gc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYidHfAAoJEBx+YmzsjxAgiqQQAL6f/8m+Xr+FAdG1596VKYnD
-UoejW2eY3dQwXXzyALixfkaElAsef8Hcbm+l/suomJTH7FNGEzVNGUoqsXP1x7ii
-bF08EHCFy9S2M5XKLa9AxD+u+gWKhFzkzzw8d8k2jgY3qS4PGJE/lrRIxNlMJdQH
-N2p+bsNNlMXSkqNcBD0niXoOJF+q/g9v787PSl5crph3AbFd1K3Lr6Wp4UlS4FB9
-f7s7nL4wRxbA8gTzSzNLyP4FQBZ+LKbLsAUPa7/csYTzeUi7rvhIiPvPOkxdphYu
-XDWlTrSU/xq6aVl0e1AUmDRrGrVu2d1TNaiGDVG1WUs1UECQgi57GyDbPw3LvtBR
-ruGcF6J0V4oa2xHtWJs2TT/FTzNyn3fJB78Qq6urCxatRHDgWTIqLYvg09LZUxKj
-WknpXvwxYfQFASOx3YBg8yBZ6B3l5Q5Q9EAyAoyufYtvaJ0J+/7SiDUvecGLf3Hv
-+sih9LgJyrUnOHlg1kjlJDvcDyPHuTIX77Az31VMrOodjmn6M+NzbBSm4Es9vHlO
-x6EoVL46S7iYTVjms3ZAHz4O/mJnpBg+peevwNddc4vHSXcSrTIs+xRnp76HSqm6
-hu2awNywb3pJt3q7E+WtwMeRSrXk6znXkqipNTxDvqKRz/y/+emB9w9q3K7VhBXL
-EwVqpnw1hOYzZUPaeMwc
-=qJXQ
------END PGP SIGNATURE-----
-
---sy5xlgwixv43i2gc--
+diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
+index 06540f7cf41c..08d074451204 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.h
++++ b/drivers/clk/sunxi-ng/ccu_div.h
+@@ -41,6 +41,7 @@ struct ccu_div_internal {
+ 	u8			width;
+ 
+ 	u32			max;
++	u32			offset;
+ 
+ 	u32			flags;
+ 
+@@ -58,20 +59,27 @@ struct ccu_div_internal {
+ #define _SUNXI_CCU_DIV_TABLE(_shift, _width, _table)			\
+ 	_SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, _table, 0)
+ 
+-#define _SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, _max, _flags) \
++#define _SUNXI_CCU_DIV_OFFSET_MAX_FLAGS(_shift, _width, _off, _max, _flags) \
+ 	{								\
+ 		.shift	= _shift,					\
+ 		.width	= _width,					\
+ 		.flags	= _flags,					\
+ 		.max	= _max,						\
++		.offset	= _off,						\
+ 	}
+ 
++#define _SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, _max, _flags)		\
++	_SUNXI_CCU_DIV_OFFSET_MAX_FLAGS(_shift, _width, 1, _max, _flags)
++
+ #define _SUNXI_CCU_DIV_FLAGS(_shift, _width, _flags)			\
+ 	_SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, 0, _flags)
+ 
+ #define _SUNXI_CCU_DIV_MAX(_shift, _width, _max)			\
+ 	_SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, _max, 0)
+ 
++#define _SUNXI_CCU_DIV_OFFSET(_shift, _width, _offset)			\
++	_SUNXI_CCU_DIV_OFFSET_MAX_FLAGS(_shift, _width, _offset, 0, 0)
++
+ #define _SUNXI_CCU_DIV(_shift, _width)					\
+ 	_SUNXI_CCU_DIV_FLAGS(_shift, _width, 0)
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
+index ebb1b31568a5..22c2ca7a2a22 100644
+--- a/drivers/clk/sunxi-ng/ccu_mp.c
++++ b/drivers/clk/sunxi-ng/ccu_mp.c
+@@ -89,11 +89,14 @@ static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
+ 
+ 	m = reg >> cmp->m.shift;
+ 	m &= (1 << cmp->m.width) - 1;
++	m += cmp->m.offset;
++	if (!m)
++		m++;
+ 
+ 	p = reg >> cmp->p.shift;
+ 	p &= (1 << cmp->p.width) - 1;
+ 
+-	return (parent_rate >> p) / (m + 1);
++	return (parent_rate >> p) / m;
+ }
+ 
+ static int ccu_mp_determine_rate(struct clk_hw *hw,
+@@ -124,9 +127,10 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	reg = readl(cmp->common.base + cmp->common.reg);
+ 	reg &= ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m.shift);
+ 	reg &= ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shift);
++	reg |= (m - cmp->m.offset) << cmp->m.shift;
++	reg |= ilog2(p) << cmp->p.shift;
+ 
+-	writel(reg | (ilog2(p) << cmp->p.shift) | ((m - 1) << cmp->m.shift),
+-	       cmp->common.base + cmp->common.reg);
++	writel(reg, cmp->common.base + cmp->common.reg);
+ 
+ 	spin_unlock_irqrestore(cmp->common.lock, flags);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+index 826302464650..bf5e11c803f9 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.c
++++ b/drivers/clk/sunxi-ng/ccu_mult.c
+@@ -85,7 +85,7 @@ static unsigned long ccu_mult_recalc_rate(struct clk_hw *hw,
+ 	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
+ 						&parent_rate);
+ 
+-	return parent_rate * (val + 1);
++	return parent_rate * (val + cm->mult.offset);
+ }
+ 
+ static int ccu_mult_determine_rate(struct clk_hw *hw,
+@@ -122,7 +122,7 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	reg = readl(cm->common.base + cm->common.reg);
+ 	reg &= ~GENMASK(cm->mult.width + cm->mult.shift - 1, cm->mult.shift);
+ 
+-	writel(reg | ((_cm.mult - 1) << cm->mult.shift),
++	writel(reg | ((_cm.mult - cm->mult.offset) << cm->mult.shift),
+ 	       cm->common.base + cm->common.reg);
+ 
+ 	spin_unlock_irqrestore(cm->common.lock, flags);
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
+index bd2e38b5a32a..84839641dfdf 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.h
++++ b/drivers/clk/sunxi-ng/ccu_mult.h
+@@ -6,20 +6,28 @@
+ #include "ccu_mux.h"
+ 
+ struct ccu_mult_internal {
++	u8	offset;
+ 	u8	shift;
+ 	u8	width;
+ 	u8	min;
+ };
+ 
+-#define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)	\
+-	{						\
+-		.shift	= _shift,			\
+-		.width	= _width,			\
+-		.min	= _min,				\
++#define _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, _min)	\
++	{								\
++		.min	= _min,						\
++		.offset	= _offset,					\
++		.shift	= _shift,					\
++		.width	= _width,					\
+ 	}
+ 
++#define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)	\
++	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, _min)
++
++#define _SUNXI_CCU_MULT_OFFSET(_shift, _width, _offset)	\
++	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, 1)
++
+ #define _SUNXI_CCU_MULT(_shift, _width)		\
+-	_SUNXI_CCU_MULT_MIN(_shift, _width, 1)
++	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, 1)
+ 
+ struct ccu_mult {
+ 	u32			enable;
+diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
+index eaf0fdf78d2b..90117d3ead8c 100644
+--- a/drivers/clk/sunxi-ng/ccu_nk.c
++++ b/drivers/clk/sunxi-ng/ccu_nk.c
+@@ -76,12 +76,17 @@ static unsigned long ccu_nk_recalc_rate(struct clk_hw *hw,
+ 
+ 	n = reg >> nk->n.shift;
+ 	n &= (1 << nk->n.width) - 1;
++	n += nk->n.offset;
++	if (!n)
++		n++;
+ 
+ 	k = reg >> nk->k.shift;
+ 	k &= (1 << nk->k.width) - 1;
++	k += nk->k.offset;
++	if (!k)
++		k++;
+ 
+-	rate = parent_rate * (n + 1) * (k + 1);
+-
++	rate = parent_rate * n * k;
+ 	if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate /= nk->fixed_post_div;
+ 
+@@ -135,8 +140,9 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	reg &= ~GENMASK(nk->n.width + nk->n.shift - 1, nk->n.shift);
+ 	reg &= ~GENMASK(nk->k.width + nk->k.shift - 1, nk->k.shift);
+ 
+-	writel(reg | ((_nk.k - 1) << nk->k.shift) | ((_nk.n - 1) << nk->n.shift),
+-	       nk->common.base + nk->common.reg);
++	reg |= (_nk.k - nk->k.offset) << nk->k.shift;
++	reg |= (_nk.n - nk->n.offset) << nk->n.shift;
++	writel(reg, nk->common.base + nk->common.reg);
+ 
+ 	spin_unlock_irqrestore(nk->common.lock, flags);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+index 9b840a47a94d..3caaf9d603e2 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.c
++++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+@@ -82,14 +82,23 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
+ 
+ 	n = reg >> nkm->n.shift;
+ 	n &= (1 << nkm->n.width) - 1;
++	n += nkm->n.offset;
++	if (!n)
++		n++;
+ 
+ 	k = reg >> nkm->k.shift;
+ 	k &= (1 << nkm->k.width) - 1;
++	k += nkm->k.offset;
++	if (!k)
++		k++;
+ 
+ 	m = reg >> nkm->m.shift;
+ 	m &= (1 << nkm->m.width) - 1;
++	m += nkm->m.offset;
++	if (!m)
++		m++;
+ 
+-	return parent_rate * (n + 1) * (k + 1) / (m + 1);
++	return parent_rate * n  * k / m;
+ }
+ 
+ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+@@ -145,10 +154,9 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	reg &= ~GENMASK(nkm->k.width + nkm->k.shift - 1, nkm->k.shift);
+ 	reg &= ~GENMASK(nkm->m.width + nkm->m.shift - 1, nkm->m.shift);
+ 
+-	reg |= (_nkm.n - 1) << nkm->n.shift;
+-	reg |= (_nkm.k - 1) << nkm->k.shift;
+-	reg |= (_nkm.m - 1) << nkm->m.shift;
+-
++	reg |= (_nkm.n - nkm->n.offset) << nkm->n.shift;
++	reg |= (_nkm.k - nkm->k.offset) << nkm->k.shift;
++	reg |= (_nkm.m - nkm->m.offset) << nkm->m.shift;
+ 	writel(reg, nkm->common.base + nkm->common.reg);
+ 
+ 	spin_unlock_irqrestore(nkm->common.lock, flags);
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index 684c42da3ebb..da2bba02b845 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -88,17 +88,26 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
+ 
+ 	n = reg >> nkmp->n.shift;
+ 	n &= (1 << nkmp->n.width) - 1;
++	n += nkmp->n.offset;
++	if (!n)
++		n++;
+ 
+ 	k = reg >> nkmp->k.shift;
+ 	k &= (1 << nkmp->k.width) - 1;
++	k += nkmp->k.offset;
++	if (!k)
++		k++;
+ 
+ 	m = reg >> nkmp->m.shift;
+ 	m &= (1 << nkmp->m.width) - 1;
++	m += nkmp->m.offset;
++	if (!m)
++		m++;
+ 
+ 	p = reg >> nkmp->p.shift;
+ 	p &= (1 << nkmp->p.width) - 1;
+ 
+-	return (parent_rate * (n + 1) * (k + 1) >> p) / (m + 1);
++	return parent_rate * n * k >> p / m;
+ }
+ 
+ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -148,9 +157,9 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
+ 	reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
+ 
+-	reg |= (_nkmp.n - 1) << nkmp->n.shift;
+-	reg |= (_nkmp.k - 1) << nkmp->k.shift;
+-	reg |= (_nkmp.m - 1) << nkmp->m.shift;
++	reg |= (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
++	reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
++	reg |= (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
+ 	reg |= ilog2(_nkmp.p) << nkmp->p.shift;
+ 
+ 	writel(reg, nkmp->common.base + nkmp->common.reg);
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index c9f3b6c982f0..158d74e0215f 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -80,11 +80,17 @@ static unsigned long ccu_nm_recalc_rate(struct clk_hw *hw,
+ 
+ 	n = reg >> nm->n.shift;
+ 	n &= (1 << nm->n.width) - 1;
++	n += nm->n.offset;
++	if (!n)
++		n++;
+ 
+ 	m = reg >> nm->m.shift;
+ 	m &= (1 << nm->m.width) - 1;
++	m += nm->m.offset;
++	if (!m)
++		m++;
+ 
+-	return parent_rate * (n + 1) / (m + 1);
++	return parent_rate * n / m;
+ }
+ 
+ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -129,8 +135,9 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	reg &= ~GENMASK(nm->n.width + nm->n.shift - 1, nm->n.shift);
+ 	reg &= ~GENMASK(nm->m.width + nm->m.shift - 1, nm->m.shift);
+ 
+-	writel(reg | ((_nm.m - 1) << nm->m.shift) | ((_nm.n - 1) << nm->n.shift),
+-	       nm->common.base + nm->common.reg);
++	reg |= (_nm.n - nm->n.offset) << nm->n.shift;
++	reg |= (_nm.m - nm->m.offset) << nm->m.shift;
++	writel(reg, nm->common.base + nm->common.reg);
+ 
+ 	spin_unlock_irqrestore(nm->common.lock, flags);
+ 
+-- 
+git-series 0.8.11
