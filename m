@@ -1,189 +1,177 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: jic23@kernel.org,
-	knaack.h@gmx.de,
-	lars@metafoo.de,
-	pmeerw@pmeerw.net,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	khilman@baylibre.com,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: carlo@caione.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	narmstrong@baylibre.com,
-	linux-arm-kernel@lists.infradead.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 2/4] clk: gxbb: add the SAR ADC clocks and expose them
-Date: Wed, 11 Jan 2017 18:43:32 +0100
-Message-Id: <20170111174334.24343-3-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20170111174334.24343-1-martin.blumenstingl@googlemail.com>
-References: <20170111174334.24343-1-martin.blumenstingl@googlemail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 4/7] clk: sunxi-ng: Add clocks and resets indices for sun5i
+Date: Tue, 10 Jan 2017 08:57:26 +0100
+Message-Id: <b58205e51f84da9a59ca617906b4524d7e976f58.1484035021.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
+References: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
+References: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The HHI_SAR_CLK_CNTL contains three SAR ADC specific clocks:
-- a mux clock to choose between different ADC reference clocks (this is
-  2-bit wide, but the datasheet only lists the parents for the first
-  bit)
-- a divider for the input/reference clock
-- a gate which enables the ADC clock
+The SoCs part of the sun5i family share the DTs, so we need consistant
+indices in order to still share the DTs.
 
-Additionally this exposes the ADC core clock (CLKID_SAR_ADC) and
-CLKID_SANA (which seems to enable the analog inputs, but unfortunately
-there is no documentation for this - we just mimic what the vendor
-driver does).
-
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/meson/gxbb.c              | 48 +++++++++++++++++++++++++++++++++++
- drivers/clk/meson/gxbb.h              |  9 ++++---
- include/dt-bindings/clock/gxbb-clkc.h |  4 +++
- 3 files changed, 58 insertions(+), 3 deletions(-)
+ include/dt-bindings/clock/sun5i-ccu.h | 103 +++++++++++++++++++++++++++-
+ include/dt-bindings/reset/sun5i-ccu.h |  32 ++++++++-
+ 2 files changed, 135 insertions(+), 0 deletions(-)
+ create mode 100644 include/dt-bindings/clock/sun5i-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun5i-ccu.h
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 9d9af446bafc..1c1ec137a3cc 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -564,6 +564,46 @@ static struct clk_gate gxbb_clk81 = {
- 	},
- };
- 
-+static struct clk_mux gxbb_sar_adc_clk_sel = {
-+	.reg = (void *)HHI_SAR_CLK_CNTL,
-+	.mask = 0x3,
-+	.shift = 9,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "sar_adc_clk_sel",
-+		.ops = &clk_mux_ops,
-+		/* NOTE: The datasheet doesn't list the parents for bit 10 */
-+		.parent_names = (const char *[]){ "xtal", "clk81", },
-+		.num_parents = 2,
-+	},
-+};
+diff --git a/include/dt-bindings/clock/sun5i-ccu.h b/include/dt-bindings/clock/sun5i-ccu.h
+new file mode 100644
+index 000000000000..792ebd9c30e6
+--- /dev/null
++++ b/include/dt-bindings/clock/sun5i-ccu.h
+@@ -0,0 +1,103 @@
++/*
++ * Copyright 2016 Maxime Ripard
++ *
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+static struct clk_divider gxbb_sar_adc_clk_div = {
-+	.reg = (void *)HHI_SAR_CLK_CNTL,
-+	.shift = 0,
-+	.width = 8,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "sar_adc_clk_div",
-+		.ops = &clk_divider_ops,
-+		.parent_names = (const char *[]){ "sar_adc_clk_sel" },
-+		.num_parents = 1,
-+	},
-+};
++#ifndef _DT_BINDINGS_CLK_SUN5I_H_
++#define _DT_BINDINGS_CLK_SUN5I_H_
 +
-+static struct clk_gate gxbb_sar_adc_clk = {
-+	.reg = (void *)HHI_SAR_CLK_CNTL,
-+	.bit_idx = 8,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "sar_adc_clk",
-+		.ops = &clk_gate_ops,
-+		.parent_names = (const char *[]){ "sar_adc_clk_div" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
++#define CLK_HOSC		1
 +
- /* Everything Else (EE) domain gates */
- static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
- static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
-@@ -754,6 +794,9 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
- 		[CLKID_SD_EMMC_A]	    = &gxbb_emmc_a.hw,
- 		[CLKID_SD_EMMC_B]	    = &gxbb_emmc_b.hw,
- 		[CLKID_SD_EMMC_C]	    = &gxbb_emmc_c.hw,
-+		[CLKID_SAR_ADC_CLK]	    = &gxbb_sar_adc_clk.hw,
-+		[CLKID_SAR_ADC_SEL]	    = &gxbb_sar_adc_clk_sel.hw,
-+		[CLKID_SAR_ADC_DIV]	    = &gxbb_sar_adc_clk_div.hw,
- 	},
- 	.num = NR_CLKS,
- };
-@@ -856,6 +899,7 @@ static struct clk_gate *gxbb_clk_gates[] = {
- 	&gxbb_emmc_a,
- 	&gxbb_emmc_b,
- 	&gxbb_emmc_c,
-+	&gxbb_sar_adc_clk,
- };
- 
- static int gxbb_clkc_probe(struct platform_device *pdev)
-@@ -888,6 +932,10 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	gxbb_mpeg_clk_sel.reg = clk_base + (u64)gxbb_mpeg_clk_sel.reg;
- 	gxbb_mpeg_clk_div.reg = clk_base + (u64)gxbb_mpeg_clk_div.reg;
- 
-+	/* Populate the base address for the SAR ADC clks */
-+	gxbb_sar_adc_clk_sel.reg = clk_base + (u64)gxbb_sar_adc_clk_sel.reg;
-+	gxbb_sar_adc_clk_div.reg = clk_base + (u64)gxbb_sar_adc_clk_div.reg;
++#define CLK_CPU			18
 +
- 	/* Populate base address for gates */
- 	for (i = 0; i < ARRAY_SIZE(gxbb_clk_gates); i++)
- 		gxbb_clk_gates[i]->reg = clk_base +
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 0252939ba58f..d90052d74abd 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -191,7 +191,7 @@
- #define CLKID_PERIPHS		  20
- #define CLKID_SPICC		  21
- /* CLKID_I2C */
--#define CLKID_SAR_ADC		  23
-+/* #define CLKID_SAR_ADC */
- #define CLKID_SMART_CARD	  24
- #define CLKID_RNG0		  25
- #define CLKID_UART0		  26
-@@ -237,7 +237,7 @@
- #define CLKID_MMC_PCLK		  66
- #define CLKID_DVIN		  67
- #define CLKID_UART2		  68
--#define CLKID_SANA		  69
-+/* #define CLKID_SANA */
- #define CLKID_VPU_INTR		  70
- #define CLKID_SEC_AHB_AHB3_BRIDGE 71
- #define CLKID_CLK81_A53		  72
-@@ -265,8 +265,11 @@
- /* CLKID_SD_EMMC_A */
- /* CLKID_SD_EMMC_B */
- /* CLKID_SD_EMMC_C */
-+/* CLKID_SAR_ADC_CLK */
-+/* CLKID_SAR_ADC_SEL */
-+#define CLKID_SAR_ADC_DIV	  99
- 
--#define NR_CLKS			  97
-+#define NR_CLKS			  100
- 
- /* include the CLKIDs that have been made part of the stable DT binding */
- #include <dt-bindings/clock/gxbb-clkc.h>
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index baade6f429d0..c2e93676010d 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -14,15 +14,19 @@
- #define CLKID_MPLL2		15
- #define CLKID_SPI		34
- #define CLKID_I2C		22
-+#define CLKID_SAR_ADC		23
- #define CLKID_ETH		36
- #define CLKID_USB0		50
- #define CLKID_USB1		51
- #define CLKID_USB		55
- #define CLKID_USB1_DDR_BRIDGE	64
- #define CLKID_USB0_DDR_BRIDGE	65
-+#define CLKID_SANA		69
- #define CLKID_AO_I2C		93
- #define CLKID_SD_EMMC_A		94
- #define CLKID_SD_EMMC_B		95
- #define CLKID_SD_EMMC_C		96
-+#define CLKID_SAR_ADC_CLK	97
-+#define CLKID_SAR_ADC_SEL	98
- 
- #endif /* __GXBB_CLKC_H */
++#define CLK_AHB_OTG		24
++#define CLK_AHB_EHCI		25
++#define CLK_AHB_OHCI		26
++#define CLK_AHB_SS		27
++#define CLK_AHB_DMA		28
++#define CLK_AHB_BIST		29
++#define CLK_AHB_MMC0		30
++#define CLK_AHB_MMC1		31
++#define CLK_AHB_MMC2		32
++#define CLK_AHB_NAND		33
++#define CLK_AHB_SDRAM		34
++#define CLK_AHB_EMAC		35
++#define CLK_AHB_TS		36
++#define CLK_AHB_SPI0		37
++#define CLK_AHB_SPI1		38
++#define CLK_AHB_SPI2		39
++#define CLK_AHB_GPS		40
++#define CLK_AHB_HSTIMER		41
++#define CLK_AHB_VE		42
++#define CLK_AHB_TVE		43
++#define CLK_AHB_LCD		44
++#define CLK_AHB_CSI		45
++#define CLK_AHB_HDMI		46
++#define CLK_AHB_DE_BE		47
++#define CLK_AHB_DE_FE		48
++#define CLK_AHB_IEP		49
++#define CLK_AHB_GPU		50
++#define CLK_APB0_CODEC		51
++#define CLK_APB0_SPDIF		52
++#define CLK_APB0_I2S		53
++#define CLK_APB0_PIO		54
++#define CLK_APB0_IR		55
++#define CLK_APB0_KEYPAD		56
++#define CLK_APB1_I2C0		57
++#define CLK_APB1_I2C1		58
++#define CLK_APB1_I2C2		59
++#define CLK_APB1_UART0		60
++#define CLK_APB1_UART1		61
++#define CLK_APB1_UART2		62
++#define CLK_APB1_UART3		63
++#define CLK_NAND		64
++#define CLK_MMC0		65
++#define CLK_MMC1		66
++#define CLK_MMC2		67
++#define CLK_TS			68
++#define CLK_SS			69
++#define CLK_SPI0		70
++#define CLK_SPI1		71
++#define CLK_SPI2		72
++#define CLK_IR			73
++#define CLK_I2S			74
++#define CLK_SPDIF		75
++#define CLK_KEYPAD		76
++#define CLK_USB_OHCI		77
++#define CLK_USB_PHY0		78
++#define CLK_USB_PHY1		79
++#define CLK_GPS			80
++#define CLK_DRAM_VE		81
++#define CLK_DRAM_CSI		82
++#define CLK_DRAM_TS		83
++#define CLK_DRAM_TVE		84
++#define CLK_DRAM_DE_FE		85
++#define CLK_DRAM_DE_BE		86
++#define CLK_DRAM_ACE		87
++#define CLK_DRAM_IEP		88
++#define CLK_DE_BE		89
++#define CLK_DE_FE		90
++#define CLK_TCON_CH0		91
++
++#define CLK_TCON_CH1		93
++#define CLK_CSI			94
++#define CLK_VE			95
++#define CLK_CODEC		96
++#define CLK_AVS			97
++#define CLK_HDMI		98
++#define CLK_GPU			99
++
++#define CLK_IEP			101
++
++#endif /* _DT_BINDINGS_CLK_SUN5I_H_ */
+diff --git a/include/dt-bindings/reset/sun5i-ccu.h b/include/dt-bindings/reset/sun5i-ccu.h
+new file mode 100644
+index 000000000000..c2b9726b5026
+--- /dev/null
++++ b/include/dt-bindings/reset/sun5i-ccu.h
+@@ -0,0 +1,32 @@
++/*
++ * Copyright 2016 Maxime Ripard
++ *
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _RST_SUN5I_H_
++#define _RST_SUN5I_H_
++
++#define RST_USB_PHY0	0
++#define RST_USB_PHY1	1
++#define RST_GPS		2
++#define RST_DE_BE	3
++#define RST_DE_FE	4
++#define RST_TVE		5
++#define RST_LCD		6
++#define RST_CSI		7
++#define RST_VE		8
++#define RST_GPU		9
++#define RST_IEP		10
++
++#endif /* _RST_SUN5I_H_ */
 -- 
-2.11.0
+git-series 0.8.11
