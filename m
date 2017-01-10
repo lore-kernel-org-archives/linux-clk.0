@@ -1,108 +1,132 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To: linux-clk@vger.kernel.org,
-	x86@kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: alsa-devel@alsa-project.org,
-	Irina Tirdea <irina.tirdea@intel.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Mark Brown <broonie@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [PATCH v7 0/5] Add platform clock for BayTrail platforms
-Date: Tue, 17 Jan 2017 15:57:45 -0600
-Message-Id: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 9 Jan 2017 16:37:53 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Bai Ping <ping.bai@nxp.com>
+Cc: shawnguo@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+	mark.rutland@arm.com, linus.walleij@linaro.org,
+	kernel@pengutronix.de, fabio.estevam@nxp.com,
+	daniel.lezcano@linaro.org, tglx@linutronix.de,
+	p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, jacky.baip@gmail.com
+Subject: Re: [PATCH v2 04/12] driver: clk: imx: Add clock driver for imx6sll
+Message-ID: <20170110003753.GM17126@codeaurora.org>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-5-git-send-email-ping.bai@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1482832070-22668-5-git-send-email-ping.bai@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-These patches specifically enable the audio MCLK required by Baytrail
-CR devices. It is the remaining part of a bigger set of patches
-(already merged in Mark Brown's tree) that enable sound for Baytrail CR
-devices (especially Asus T100TAF) [1]. They include the clock driver
-and clock enabling in the pmc_atom code (along with moving of the
-non-architectural pmc_atom driver code into drivers/platform/x86 as
-suggested by Thomas Gleixner [2]). This move includes a new header in
-include/linux/platform_data/x86/. While there is an agreement that the
-definitions for PMC clocks are not really platform data this location
-is seen as a good-enough compromise with an agreement between Darren
-Hart and Andy Shevchenko [3]
+On 12/27, Bai Ping wrote:
+> diff --git a/drivers/clk/imx/clk-imx6sll.c b/drivers/clk/imx/clk-imx6sll.c
+> new file mode 100644
+> index 0000000..73758fe1
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-imx6sll.c
+> @@ -0,0 +1,369 @@
+> +/*
+> + * Copyright (C) 2016 Freescale Semiconductor, Inc.
+> + *
+> + * The code contained herein is licensed under the GNU General Public
+> + * License. You may obtain a copy of the GNU General Public License
+> + * Version 2 or later at the following locations:
+> + *
+> + * http://www.opensource.org/licenses/gpl-license.html
+> + * http://www.gnu.org/copyleft/gpl.html
+> + */
+> +
+> +#include <dt-bindings/clock/imx6sll-clock.h>
+> +#include <linux/clk.h>
+> +#include <linux/clkdev.h>
 
-[1] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-August/111704.html
-[2] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-October/113936.html
-[3] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-December/115892.html
+Is this used?
 
-Changes from v6:
- - Addressed comments from Stephen Boyd, Andy Shevchenko and Vinod Koul
- - Renamed clk-byt-plt to clk-pmc-atom
- - Rebase to 4.10-rc3 (broonie/for-next)
- - Added helper functions to make error handling more compact
- - Removed module-related code since it's not possible/supported
- - Removed useless tests on remove
- - PMC_CLK_OFFSET move to clk-pcm-atom (more logical)
- - Split typo correction and makefile fix in separate patches
- - small fixes (spaces, defaults in switches, alphabetical order, use of
-clk_writel/readl and no test on write, simpler error handling, use of
-while(i--), unsigned loop variables, kernel doc fields, format-patch -M
- -C -D, use of PLATFORM_DEVID_NONE)
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
 
-Changes from v5:
- - fix build error reported by kbuild test robot
- - split the clk driver code from x86 platform changes
+Is this used?
 
-Changes from v4:
- - move the pmc_atom driver from arch/x86/platform/atom to
-drivers/platform/x86
+> +#include <linux/types.h>
+> +
+> +#include "clk.h"
+> +
+> +#define CCM_ANALOG_PLL_BYPASS		(0x1 << 16)
+> +#define BM_CCM_CCDR_MMDC_CH0_MASK	(0x2 << 16)
+> +#define CCDR	0x4
+> +#define xPLL_CLR(offset)		 (offset + 0x8)
+> +
+> +static const char *pll_bypass_src_sels[] = { "osc", "dummy", };
 
-Changes from v3:
- - replace devm_kzalloc with devm_kcalloc
- - add x86 architecture maintainers
+All these should be const char * const unless something is wrong.
 
-Changes from v2:
- - move clk platform data structures to a separate include file
- - store clk_hw pointer for the fixed rate clocks
+> +static const char *pll1_bypass_sels[] = { "pll1", "pll1_bypass_src", };
+> +static const char *pll2_bypass_sels[] = { "pll2", "pll2_bypass_src", };
+> +static const char *pll3_bypass_sels[] = { "pll3", "pll3_bypass_src", };
+> +static const char *pll4_bypass_sels[] = { "pll4", "pll4_bypass_src", };
+> +static const char *pll5_bypass_sels[] = { "pll5", "pll5_bypass_src", };
+> +static const char *pll6_bypass_sels[] = { "pll6", "pll6_bypass_src", };
+[...]
+> +	clks[IMX6SLL_CLK_USDHC3]	= imx_clk_gate2("usdhc3",	"usdhc3_podf",	 base + 0x80,	6);
+> +
+> +	/* mask handshake of mmdc */
+> +	writel_relaxed(BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
+> +
+> +	for (i = 0; i < ARRAY_SIZE(clks); i++)
+> +		if (IS_ERR(clks[i]))
+> +			pr_err("i.MX6SLL clk %d: register failed with %ld\n", i, PTR_ERR(clks[i]));
+> +
+> +	clk_data.clks = clks;
+> +	clk_data.clk_num = ARRAY_SIZE(clks);
+> +	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+> +
+> +	/* set perclk to from OSC */
+> +	clk_set_parent(clks[IMX6SLL_CLK_PERCLK_SEL], clks[IMX6SLL_CLK_OSC]);
 
-Changes from v1:
- - register the clk device as child of pmc device
- - pass iomem pointer from pmc driver to clk driver to avoid using
-pmc_atom_read()/write() and use readl/writel API instead
- - use devm_clk_hw_register/clkdev_hw_create instead of
-clk_register/clkdev_create
+Can this be done with assigned-clocks in DT?
 
-Irina Tirdea (3):
-  clk: x86: Add Atom PMC platform clocks
-  arch/x86/platform/atom: Move pmc_atom to drivers/platform/x86
-  platform/x86: Enable Atom PMC platform clocks
+> +
+> +	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
+> +		clk_prepare_enable(clks[clks_init_on[i]]);
 
-Pierre-Louis Bossart (2):
-  clk: Make x86/ conditional on CONFIG_COMMON_CLK
-  platform/x86: fix typo in comment
+Critical clocks?
 
- arch/x86/Kconfig                                   |   4 -
- arch/x86/platform/atom/Makefile                    |   1 -
- drivers/acpi/acpi_lpss.c                           |   2 +-
- drivers/clk/Makefile                               |   2 +
- drivers/clk/x86/Makefile                           |   1 +
- drivers/clk/x86/clk-pmc-atom.c                     | 373 +++++++++++++++++++++
- drivers/platform/x86/Kconfig                       |   5 +
- drivers/platform/x86/Makefile                      |   1 +
- .../atom => drivers/platform/x86}/pmc_atom.c       |  88 ++++-
- include/linux/platform_data/x86/clk-pmc-atom.h     |  44 +++
- .../linux/platform_data/x86}/pmc_atom.h            |   2 +-
- 11 files changed, 508 insertions(+), 15 deletions(-)
- create mode 100644 drivers/clk/x86/clk-pmc-atom.c
- rename {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c (87%)
- create mode 100644 include/linux/platform_data/x86/clk-pmc-atom.h
- rename {arch/x86/include/asm => include/linux/platform_data/x86}/pmc_atom.h (98%)
+> +
+> +	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
+> +		clk_prepare_enable(clks[IMX6SLL_CLK_USBPHY1_GATE]);
+> +		clk_prepare_enable(clks[IMX6SLL_CLK_USBPHY2_GATE]);
+
+The phy driver can't enable these?
+
+> +	}
+> +
+> +	/* Lower the AHB clock rate before changing the clock source. */
+> +	clk_set_rate(clks[IMX6SLL_CLK_AHB], 99000000);
+> +
+> +	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz */
+> +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH_CLK2_SEL], clks[IMX6SLL_CLK_PLL3_USB_OTG]);
+> +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH], clks[IMX6SLL_CLK_PERIPH_CLK2]);
+> +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH_PRE], clks[IMX6SLL_CLK_PLL2_BUS]);
+> +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH], clks[IMX6SLL_CLK_PERIPH_PRE]);
+> +
+> +	clk_set_rate(clks[IMX6SLL_CLK_AHB], 132000000);
+
+assigned-clocks for rates now? Or perhaps we shouldn't be
+exposing these as clks if they have some sort of complicated rate
+sequence switch that we can't guarantee with the clk_ops we have
+today.
+
+> +}
+> +
+> +CLK_OF_DECLARE(imx6sll, "fsl,imx6sll-ccm", imx6sll_clocks_init);
+> +
+
+Please drop this extra newline.
 
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
