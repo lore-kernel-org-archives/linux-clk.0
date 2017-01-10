@@ -1,33 +1,54 @@
-Return-Path: <javier@dowhile0.org>
-MIME-Version: 1.0
-In-Reply-To: <1483524753-32213-1-git-send-email-geert+renesas@glider.be>
-References: <1483524753-32213-1-git-send-email-geert+renesas@glider.be>
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Date: Wed, 4 Jan 2017 17:43:11 -0300
-Message-ID: <CABxcv=ng-EHsL8d3B1OhRGRNRSw88H7e8Wb_NSF13rSS_RxMrQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: clk-conf: Do not print error messages if EPROBE_DEFER
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <jacobchen110@gmail.com>
+Return-Path: <jacobchen110@gmail.com>
+From: Jacob Chen <jacob-chen@iotwrt.com>
+To: heiko@sntech.de,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	zhangqing@rock-chips.com,
+	zhengxing@rock-chips.com,
+	Jacob Chen <jacob-chen@iotwrt.com>
+Subject: [PATCH 4/4] clk: rockchip: add rk3288 cif_out clock
+Date: Tue, 10 Jan 2017 19:59:20 +0800
+Message-Id: <1484049560-14820-4-git-send-email-jacob-chen@iotwrt.com>
+In-Reply-To: <1484049560-14820-1-git-send-email-jacob-chen@iotwrt.com>
+References: <1484049560-14820-1-git-send-email-jacob-chen@iotwrt.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Geert,
+Add the clocks for the cif block of the rk3288
 
-On Wed, Jan 4, 2017 at 7:12 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> EPROBE_DEFER is not an error, hence printing an error message like
->
->         clk: couldn't get clock 0 for /soc/display@feb00000
->
-> may confuse the user.
->
-> Suppress error messages in case of probe deferral to fix this.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
+---
+ drivers/clk/rockchip/clk-rk3288.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
-Best regards,
-Javier
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 8047cea..f071c24 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -192,6 +192,7 @@ PNAME(mux_uart1_p)	= { "uart1_src", "uart1_frac", "xin24m" };
+ PNAME(mux_uart2_p)	= { "uart2_src", "uart2_frac", "xin24m" };
+ PNAME(mux_uart3_p)	= { "uart3_src", "uart3_frac", "xin24m" };
+ PNAME(mux_uart4_p)	= { "uart4_src", "uart4_frac", "xin24m" };
++PNAME(mux_cif_out_p)	= { "cif_src", "xin24m" };
+ PNAME(mux_vip_out_p)	= { "vip_src", "xin24m" };
+ PNAME(mux_mac_p)	= { "mac_pll_src", "ext_gmac" };
+ PNAME(mux_hsadcout_p)	= { "hsadc_src", "ext_hsadc" };
+@@ -448,6 +449,12 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 			RK3288_CLKSEL_CON(6), 14, 2, MFLAGS, 8, 6, DFLAGS,
+ 			RK3288_CLKGATE_CON(3), 15, GFLAGS),
+ 
++	COMPOSITE_NOGATE(0, "cif_src", mux_pll_src_cpll_gpll_p, 0,
++			RK3288_CLKSEL_CON(26), 8, 1, MFLAGS, 9, 5, DFLAGS),
++	COMPOSITE_NODIV(SCLK_CIF_OUT, "sclk_cif_out", mux_cif_out_p, 0,
++			RK3288_CLKSEL_CON(26), 15, 1, MFLAGS,
++			RK3288_CLKGATE_CON(3), 7, GFLAGS),
++
+ 	GATE(SCLK_HDMI_HDCP, "sclk_hdmi_hdcp", "xin24m", 0,
+ 			RK3288_CLKGATE_CON(5), 12, GFLAGS),
+ 	GATE(SCLK_HDMI_CEC, "sclk_hdmi_cec", "xin32k", 0,
+-- 
+2.7.4
