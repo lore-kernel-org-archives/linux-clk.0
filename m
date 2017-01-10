@@ -1,71 +1,109 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 17 Jan 2017 17:44:15 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org,
-	mark.rutland@arm.com, robh+dt@kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: Re: [PATCH v2 02/10] clk: ccu-sun8i-a33: Add CLK_SET_RATE_PARENT to
- ac-dig
-Message-ID: <20170117164415.4qseqbqkdx3e6bvt@lukather>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
- <20170117140230.23142-3-mylene.josserand@free-electrons.com>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1484015574.26901.6.camel@mtksdaap41>
+Subject: Re: [PATCH] clk: mediatek: Fix MT2701 dependencies
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Jean Delvare <jdelvare@suse.de>
+CC: <linux-clk@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	"Shunli Wang" <shunli.wang@mediatek.com>, Erin Lo <erin.lo@mediatek.com>,
+	"Stephen Boyd" <sboyd@codeaurora.org>, Michael Turquette
+	<mturquette@baylibre.com>, Matthias Brugger <matthias.bgg@gmail.com>
+Date: Tue, 10 Jan 2017 10:32:54 +0800
+In-Reply-To: <20170109113621.31d384c9@endymion>
+References: <20170109113621.31d384c9@endymion>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pmqdesejeydvn5wu"
-In-Reply-To: <20170117140230.23142-3-mylene.josserand@free-electrons.com>
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Jean,
 
---pmqdesejeydvn5wu
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2017-01-09 at 11:36 +0100, Jean Delvare wrote:
+> If I say "no" to "Clock driver for Mediatek MT2701", I don't want to
+> be asked individually about each sub-driver. No means no.
+> 
+> Additionally, this driver shouldn't be proposed at all on non-mediatek
+> builds, unless build-testing.
+> 
+> Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
+> Cc: Shunli Wang <shunli.wang@mediatek.com>
+> Cc: James Liao <jamesjj.liao@mediatek.com>
+> Cc: Erin Lo <erin.lo@mediatek.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
 
-Hi,
+Reviewed-by: James Liao <jamesjj.liao@mediatek.com>
 
-On Tue, Jan 17, 2017 at 03:02:22PM +0100, Myl=E8ne Josserand wrote:
-> The audio DAI needs to set the clock rates of the ac-dig clock.
-> To make it possible, the parent PLL audio clock rates should
-> also be changed. This is possible via "CLK_SET_RATE_PARENT" flag.
->=20
-> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
+> ---
+> As a side note, is there any rationale for splitting this driver into
+> that many small sub-drivers? Looks overengineered to me.
 
-Please make sure to look at the prefixes usually used in the commit
-titles of the area you're working on. In this case that would have
-been "clk: sunxi-ng:". I fixed it, and applied.
+These are 'subsystem' clocks and can be controlled only if their
+corresponding drivers are ready to control power domains and clocks.
 
-Thanks!
-Maxime
+> As another side note, I wonder why so many clock drivers have
+> "COMMON" in their symbol names. Looks wrong to me.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+CCF (Common Clock Framework) uses option 'COMMON_CLK', so CCF platform
+drivers use 'COMMON_CLK_' to be their option prefix.
 
---pmqdesejeydvn5wu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYfknfAAoJEBx+YmzsjxAgod0P/iLJ4CE330NecTUFveMfjllK
-4vMqgy3dk0q4bHjEkwf08C5leqCmNCc0w34eXMp3NbCWn2xxvGlsRvBgvXK1Gykj
-Y9Fj4Mo1mWENQjgePb1HG8uNfxb77nsq5txtBHEukZXJTyCgoQ6KeroFX8bAkcMX
-lwQngZ4WDNOpB7MqINSyFQu8jU+PQU3pai0hxnI5mZeqkpSLhYS/tDBSzlr8qFwv
-xPDqX41KQKPhxpUBMF0D3d5auZS/fL2cg0ny5VXFdmMlbPzvsEduEkP5twBEQP4D
-PZlMYtoZ9ynk1Nv6SSw8GTCblHRGSDPaXhSCz3zw8RMoWrNZ/Jt5cUlPm6WjMz2x
-okrDyZxbydkXmQMTHRyJqzEIfUEtP3bOXabdqgWuai7KHAdDn6Bk9+GmKfKFqt+a
-VpHRyoD80homLb/T7EMO5Ce8CRlw2KDrB4q0AwrLoYtCVs3GaimK4LXJG7myXDMr
-bzqjZC98zY9vIFmUQ8vramSKzSvG/+EfLt2ATTehWwXzDCC5u6hMJrR3fJi69v7/
-UzTg9YtcZ6dV4PwpaRAQkoDjvnxCEL4/LW59vKmFg4R+lWdkHooRkFFb5fL9+qwM
-BSrWlgsYBw5itfEwrK6frU14yLwkuFL+gAn8aLSSjhIXx5zC3FWIGdPurd95VYeM
-Xi/mRrfsbCwHibR/bfWY
-=c6v5
------END PGP SIGNATURE-----
-
---pmqdesejeydvn5wu--
+>  drivers/clk/mediatek/Kconfig |   13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> --- linux-4.10-rc2.orig/drivers/clk/mediatek/Kconfig	2017-01-01 23:31:53.000000000 +0100
+> +++ linux-4.10-rc2/drivers/clk/mediatek/Kconfig	2017-01-09 11:17:37.542344083 +0100
+> @@ -8,6 +8,7 @@ config COMMON_CLK_MEDIATEK
+>  
+>  config COMMON_CLK_MT2701
+>  	bool "Clock driver for Mediatek MT2701"
+> +	depends on ARCH_MEDIATEK || COMPILE_TEST
+>  	select COMMON_CLK_MEDIATEK
+>  	default ARCH_MEDIATEK
+>  	---help---
+> @@ -15,37 +16,37 @@ config COMMON_CLK_MT2701
+>  
+>  config COMMON_CLK_MT2701_MMSYS
+>  	bool "Clock driver for Mediatek MT2701 mmsys"
+> -	select COMMON_CLK_MT2701
+> +	depends on COMMON_CLK_MT2701
+>  	---help---
+>  	  This driver supports Mediatek MT2701 mmsys clocks.
+>  
+>  config COMMON_CLK_MT2701_IMGSYS
+>  	bool "Clock driver for Mediatek MT2701 imgsys"
+> -	select COMMON_CLK_MT2701
+> +	depends on COMMON_CLK_MT2701
+>  	---help---
+>  	  This driver supports Mediatek MT2701 imgsys clocks.
+>  
+>  config COMMON_CLK_MT2701_VDECSYS
+>  	bool "Clock driver for Mediatek MT2701 vdecsys"
+> -	select COMMON_CLK_MT2701
+> +	depends on COMMON_CLK_MT2701
+>  	---help---
+>  	  This driver supports Mediatek MT2701 vdecsys clocks.
+>  
+>  config COMMON_CLK_MT2701_HIFSYS
+>  	bool "Clock driver for Mediatek MT2701 hifsys"
+> -	select COMMON_CLK_MT2701
+> +	depends on COMMON_CLK_MT2701
+>  	---help---
+>  	  This driver supports Mediatek MT2701 hifsys clocks.
+>  
+>  config COMMON_CLK_MT2701_ETHSYS
+>  	bool "Clock driver for Mediatek MT2701 ethsys"
+> -	select COMMON_CLK_MT2701
+> +	depends on COMMON_CLK_MT2701
+>  	---help---
+>  	  This driver supports Mediatek MT2701 ethsys clocks.
+>  
+>  config COMMON_CLK_MT2701_BDPSYS
+>  	bool "Clock driver for Mediatek MT2701 bdpsys"
+> -	select COMMON_CLK_MT2701
+> +	depends on COMMON_CLK_MT2701
+>  	---help---
+>  	  This driver supports Mediatek MT2701 bdpsys clocks.
+>  
+> 
+> 
