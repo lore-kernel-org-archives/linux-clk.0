@@ -1,50 +1,96 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 26 Jan 2017 16:22:30 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: linux-clk@vger.kernel.org, x86@kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Darren Hart <dvhart@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, alsa-devel@alsa-project.org,
-	Irina Tirdea <irina.tirdea@intel.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Mark Brown <broonie@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH v8 2/5] clk: x86: Add Atom PMC platform clocks
-Message-ID: <20170127002230.GX8801@codeaurora.org>
-References: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
- <1485194865-10400-3-git-send-email-pierre-louis.bossart@linux.intel.com>
+Return-Path: <shawn.lin@rock-chips.com>
+Subject: Re: [PATCH v3] arm64: dts: rockchip: add "rockchip, grf" property for
+ RK3399 PMUCRU/CRU
+To: Xing Zheng <zhengxing@rock-chips.com>, heiko@sntech.de
+References: <1484011661-13474-1-git-send-email-zhengxing@rock-chips.com>
+Cc: shawn.lin@rock-chips.com, Mark Rutland <mark.rutland@arm.com>,
+ devicetree@vger.kernel.org, Elaine Zhang <zhangqing@rock-chips.com>,
+ linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Brian Norris <briannorris@chromium.org>, Stephen Boyd
+ <sboyd@codeaurora.org>, Douglas Anderson <dianders@chromium.org>,
+ Will Deacon <will.deacon@arm.com>, dianders@google.com,
+ linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ Rob Herring <robh+dt@kernel.org>, David Wu <david.wu@rock-chips.com>,
+ Jianqun Xu <jay.xu@rock-chips.com>, linux-arm-kernel@lists.infradead.org,
+ Caesar Wang <wxt@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <7c0ebe60-ac6e-0f82-bb5f-97919f812a56@rock-chips.com>
+Date: Tue, 10 Jan 2017 10:37:25 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1485194865-10400-3-git-send-email-pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <1484011661-13474-1-git-send-email-zhengxing@rock-chips.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/23, Pierre-Louis Bossart wrote:
-> From: Irina Tirdea <irina.tirdea@intel.com>
-> 
-> The BayTrail and CherryTrail platforms provide platform clocks
-> through their Power Management Controller (PMC).
-> 
-> The SoC supports up to 6 clocks (PMC_PLT_CLK[0..5]) with a
-> frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL) for BayTrail
-> and a frequency of 19.2 MHz (XTAL) for CherryTrail. These clocks
-> are available for general system use, where appropriate, and each
-> have Control & Frequency register fields associated with them.
-> 
-> Port from legacy by Pierre Bossart, integration in clock framework
-> by Irina Tirdea
-> 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
+On 2017/1/10 9:27, Xing Zheng wrote:
+> The structure rockchip_clk_provider needs to refer the GRF regmap
+> in somewhere, if the CRU node has not "rockchip,grf" property,
+> calling syscon_regmap_lookup_by_phandle will return an invalid GRF
+> regmap, and the MUXGRF type clock will be not supported.
+>
+> Therefore, we need to add them.
+>
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 > ---
+>
+> Changes in v3:
+> - add optional roperty rockchip,grf in rockchip,rk3399-cru.txt
+>
+> Changes in v2:
+> - referring pmugrf for PMUGRU
+> - fix the typo "invaild" in COMMIT message
+>
+>  Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt | 5 +++++
+>  arch/arm64/boot/dts/rockchip/rk3399.dtsi                        | 2 ++
+>  2 files changed, 7 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
+> index 3888dd3..f476b3d 100644
+> --- a/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
+> @@ -13,6 +13,11 @@ Required Properties:
+>  - #clock-cells: should be 1.
+>  - #reset-cells: should be 1.
+>
+> +Optional Properties:
+> +
+> +- rockchip,grf: phandle to the syscon managing the "general register files"
+> +  If missing pll rates are not changable, due to the missing pll lock status.
+> +
 
-Applied to clk-next
+It twists my tongue w/o proper punctuation:)
+
+- rockchip,grf: phandle to the syscon managing the "general register 
+files". If missing, pll rates are not changable due to the missing pll
+lock status.
+
+
+>  Each clock is assigned an identifier and client nodes can use this identifier
+>  to specify the clock which they consume. All available clocks are defined as
+>  preprocessor macros in the dt-bindings/clock/rk3399-cru.h headers and can be
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> index c928015..081621b 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> @@ -1077,6 +1077,7 @@
+>  	pmucru: pmu-clock-controller@ff750000 {
+>  		compatible = "rockchip,rk3399-pmucru";
+>  		reg = <0x0 0xff750000 0x0 0x1000>;
+> +		rockchip,grf = <&pmugrf>;
+>  		#clock-cells = <1>;
+>  		#reset-cells = <1>;
+>  		assigned-clocks = <&pmucru PLL_PPLL>;
+> @@ -1086,6 +1087,7 @@
+>  	cru: clock-controller@ff760000 {
+>  		compatible = "rockchip,rk3399-cru";
+>  		reg = <0x0 0xff760000 0x0 0x1000>;
+> +		rockchip,grf = <&grf>;
+>  		#clock-cells = <1>;
+>  		#reset-cells = <1>;
+>  		assigned-clocks =
+>
+
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best Regards
+Shawn Lin
