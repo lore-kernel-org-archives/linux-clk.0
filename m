@@ -1,61 +1,111 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Subject: Re: [PATCH v2] clk: samsung: mark s3c...._clk_sleep_init() as __init
-To: Stephen Boyd <sboyd@codeaurora.org>, martin@kaiser.cx
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <2825cb23-0922-c950-f18f-7b9077831e33@samsung.com>
-Date: Fri, 27 Jan 2017 11:08:32 +0100
-MIME-version: 1.0
-In-reply-to: <20170127002750.GC8801@codeaurora.org>
-References: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
- <1485380545-24815-1-git-send-email-martin@kaiser.cx>
- <CGME20170127003627epcas3p3dc6a50295e915679c346a6f32cc3c664@epcas3p3.samsung.com>
- <20170127002750.GC8801@codeaurora.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
- Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <alexandre.torgue@st.com>
+Subject: Re: [PATCH 3/4] ARM: dts: stm32: stm32f7: Enable clocks for STM32F746
+ boards
+To: <gabriel.fernandez@st.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+References: <1483711165-17149-1-git-send-email-gabriel.fernandez@st.com>
+ <1483711165-17149-4-git-send-email-gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <2c699f28-f554-e48a-34a0-e356f0bf7e2c@st.com>
+Date: Tue, 10 Jan 2017 11:14:30 +0100
+MIME-Version: 1.0
+In-Reply-To: <1483711165-17149-4-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/27/2017 01:27 AM, Stephen Boyd wrote:
-> On 01/25, martin@kaiser.cx wrote:
->> From: Martin Kaiser <martin@kaiser.cx>
->>
->> These functions are referencing s3c...._clk_regs[], which are marked as
->> __initdata. When compiling with CONFIG_DEBUG_SECTION_MISMATCH=y, this
->> produces warnings like
->>
->> WARNING: vmlinux.o(.text+0x198350):
->> Section mismatch in reference from the function s3c2410_clk_sleep_init()
->> to the (unknown reference) .init.data:(unknown)
->>
->> Mark the s3c...._clk_sleep_init() functions as __init in
->> order to fix this.
->>
->> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+Hi Gabriel
+
+On 01/06/2017 02:59 PM, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
 >
-> Fixes tag?
+> This patch enables clocks for STM32F746 boards.
+>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> ---
 
-The patch fixes the very first commit adding the driver:
-"ca2e90a clk: samsung: add clock controller driver for s3c2412"
-and it doesn't apply cleanly on top of that commit.
-Still it applies cleanly up to v3.15 so I'll add the tag when
-applying.
+In commit header, "stm32f7" is not usefull.
 
--- 
-Thanks,
-Sylwester
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>  arch/arm/boot/dts/stm32f746.dtsi | 29 +++++++++++++++++++++++++++--
+>  1 file changed, 27 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/stm32f746.dtsi b/arch/arm/boot/dts/stm32f746.dtsi
+> index f321ffe..e05e131 100644
+> --- a/arch/arm/boot/dts/stm32f746.dtsi
+> +++ b/arch/arm/boot/dts/stm32f746.dtsi
+> @@ -43,6 +43,7 @@
+>  #include "skeleton.dtsi"
+>  #include "armv7-m.dtsi"
+>  #include <dt-bindings/pinctrl/stm32f746-pinfunc.h>
+> +#include <dt-bindings/clock/stm32fx-clock.h>
+
+This patch depends on another series not yet merged (maybe "[PATCH-next 
+... is a better header ?
+
+>
+>  / {
+>  	clocks {
+> @@ -51,6 +52,24 @@
+>  			compatible = "fixed-clock";
+>  			clock-frequency = <0>;
+>  		};
+> +
+> +		clk-lse {
+> +			#clock-cells = <0>;
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <32768>;
+> +		};
+> +
+> +		clk-lsi {
+> +			#clock-cells = <0>;
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <32000>;
+> +		};
+> +
+> +		clk_i2s_ckin: clk-i2s-ckin {
+> +			#clock-cells = <0>;
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <48000000>;
+> +		};
+>  	};
+>
+>  	soc {
+> @@ -178,6 +197,11 @@
+>  			interrupts = <1>, <2>, <3>, <6>, <7>, <8>, <9>, <10>, <23>, <40>, <41>, <42>, <62>, <76>;
+>  		};
+>
+> +		pwrcfg: power-config@40007000 {
+> +			compatible = "syscon";
+> +			reg = <0x40007000 0x400>;
+> +		};
+> +
+>  		pin-controller {
+>  			#address-cells = <1>;
+>  			#size-cells = <1>;
+> @@ -291,9 +315,10 @@
+>
+>  		rcc: rcc@40023800 {
+>  			#clock-cells = <2>;
+> -			compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
+> +			compatible = "st,stm32f746-rcc", "st,stm32-rcc";
+>  			reg = <0x40023800 0x400>;
+> -			clocks = <&clk_hse>;
+> +			clocks = <&clk_hse>, <&clk_i2s_ckin>;
+> +			st,syscfg = <&pwrcfg>;
+>  		};
+>  	};
+>  };
+>
