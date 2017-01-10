@@ -1,96 +1,66 @@
-Return-Path: <shawn.lin@rock-chips.com>
-Subject: Re: [PATCH v3] arm64: dts: rockchip: add "rockchip, grf" property for
- RK3399 PMUCRU/CRU
-To: Xing Zheng <zhengxing@rock-chips.com>, heiko@sntech.de
-References: <1484011661-13474-1-git-send-email-zhengxing@rock-chips.com>
-Cc: shawn.lin@rock-chips.com, Mark Rutland <mark.rutland@arm.com>,
- devicetree@vger.kernel.org, Elaine Zhang <zhangqing@rock-chips.com>,
- linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Brian Norris <briannorris@chromium.org>, Stephen Boyd
- <sboyd@codeaurora.org>, Douglas Anderson <dianders@chromium.org>,
- Will Deacon <will.deacon@arm.com>, dianders@google.com,
- linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
- Rob Herring <robh+dt@kernel.org>, David Wu <david.wu@rock-chips.com>,
- Jianqun Xu <jay.xu@rock-chips.com>, linux-arm-kernel@lists.infradead.org,
- Caesar Wang <wxt@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <7c0ebe60-ac6e-0f82-bb5f-97919f812a56@rock-chips.com>
-Date: Tue, 10 Jan 2017 10:37:25 +0800
-MIME-Version: 1.0
-In-Reply-To: <1484011661-13474-1-git-send-email-zhengxing@rock-chips.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.138]:55876 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756438AbdAJGQY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Jan 2017 01:16:24 -0500
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: dianders@google.com, linux-rockchip@lists.infradead.org,
+        Xing Zheng <zhengxing@rock-chips.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        David Wu <david.wu@rock-chips.com>,
+        Jianqun Xu <jay.xu@rock-chips.com>, devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Caesar Wang <wxt@rock-chips.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 0/2] Add support rockchip,grf property for RK3399 PMU/GRU
+Date: Tue, 10 Jan 2017 14:15:28 +0800
+Message-Id: <1484028930-20305-1-git-send-email-zhengxing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2017/1/10 9:27, Xing Zheng wrote:
-> The structure rockchip_clk_provider needs to refer the GRF regmap
-> in somewhere, if the CRU node has not "rockchip,grf" property,
-> calling syscon_regmap_lookup_by_phandle will return an invalid GRF
-> regmap, and the MUXGRF type clock will be not supported.
->
-> Therefore, we need to add them.
->
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> ---
->
-> Changes in v3:
-> - add optional roperty rockchip,grf in rockchip,rk3399-cru.txt
->
-> Changes in v2:
-> - referring pmugrf for PMUGRU
-> - fix the typo "invaild" in COMMIT message
->
->  Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt | 5 +++++
->  arch/arm64/boot/dts/rockchip/rk3399.dtsi                        | 2 ++
->  2 files changed, 7 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
-> index 3888dd3..f476b3d 100644
-> --- a/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt
-> @@ -13,6 +13,11 @@ Required Properties:
->  - #clock-cells: should be 1.
->  - #reset-cells: should be 1.
->
-> +Optional Properties:
-> +
-> +- rockchip,grf: phandle to the syscon managing the "general register files"
-> +  If missing pll rates are not changable, due to the missing pll lock status.
-> +
 
-It twists my tongue w/o proper punctuation:)
+Hi,
+  The structure rockchip_clk_provider needs to refer the GRF regmap
+in somewhere, if the CRU node has not "rockchip,grf" property,
+calling syscon_regmap_lookup_by_phandle will return an invalid GRF
+regmap, and the MUXGRF type clock will be not supported.
 
-- rockchip,grf: phandle to the syscon managing the "general register 
-files". If missing, pll rates are not changable due to the missing pll
-lock status.
+Therefore, we need to add them.
+
+Thanks.
 
 
->  Each clock is assigned an identifier and client nodes can use this identifier
->  to specify the clock which they consume. All available clocks are defined as
->  preprocessor macros in the dt-bindings/clock/rk3399-cru.h headers and can be
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> index c928015..081621b 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> @@ -1077,6 +1077,7 @@
->  	pmucru: pmu-clock-controller@ff750000 {
->  		compatible = "rockchip,rk3399-pmucru";
->  		reg = <0x0 0xff750000 0x0 0x1000>;
-> +		rockchip,grf = <&pmugrf>;
->  		#clock-cells = <1>;
->  		#reset-cells = <1>;
->  		assigned-clocks = <&pmucru PLL_PPLL>;
-> @@ -1086,6 +1087,7 @@
->  	cru: clock-controller@ff760000 {
->  		compatible = "rockchip,rk3399-cru";
->  		reg = <0x0 0xff760000 0x0 0x1000>;
-> +		rockchip,grf = <&grf>;
->  		#clock-cells = <1>;
->  		#reset-cells = <1>;
->  		assigned-clocks =
->
+Changes in v4:
+- separte the binding patch
+- update the decription for rockchip,grf property
 
+Changes in v3:
+- add optional roperty rockchip,grf in rockchip,rk3399-cru.txt
+
+Changes in v2:
+- referring pmugrf for PMUGRU
+- fix the typo "invaild" in COMMIT message
+
+Xing Zheng (2):
+  arm64: dts: rockchip: add "rockchip, grf" property for RK3399
+    PMUCRU/CRU
+  dt-bindings: clk: add rockchip,grf property for RK3399
+
+ Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt | 6 ++++++
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi                        | 2 ++
+ 2 files changed, 8 insertions(+)
 
 -- 
-Best Regards
-Shawn Lin
+2.7.4
+
+
