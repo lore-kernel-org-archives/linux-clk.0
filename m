@@ -1,51 +1,71 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To: linux-clk@vger.kernel.org,
-	x86@kernel.org,
-	platform-driver-x86@vger.kernel.org,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: alsa-devel@alsa-project.org,
-	Irina Tirdea <irina.tirdea@intel.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Mark Brown <broonie@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [PATCH v8 5/5] platform/x86: fix typo in comment
-Date: Mon, 23 Jan 2017 12:07:45 -0600
-Message-Id: <1485194865-10400-6-git-send-email-pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
-References: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/7] ARM: sun5i: Convert sun5i SoCs to sunxi-ng
+Date: Tue, 10 Jan 2017 08:57:22 +0100
+Message-Id: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-s/Acumulate/Accumulate/
+Hi,
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- include/linux/platform_data/x86/pmc_atom.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is yet another serie bringing more SoCs into the sunxi-ng world.
 
-diff --git a/include/linux/platform_data/x86/pmc_atom.h b/include/linux/platform_data/x86/pmc_atom.h
-index aa8744c..e4905fe 100644
---- a/include/linux/platform_data/x86/pmc_atom.h
-+++ b/include/linux/platform_data/x86/pmc_atom.h
-@@ -50,7 +50,7 @@
- 				BIT_ORED_DEDICATED_IRQ_GPSC | \
- 				BIT_SHARED_IRQ_GPSS)
- 
--/* The timers acumulate time spent in sleep state */
-+/* The timers accumulate time spent in sleep state */
- #define	PMC_S0IR_TMR		0x80
- #define	PMC_S0I1_TMR		0x84
- #define	PMC_S0I2_TMR		0x88
+This is pretty common stuff. Dealing with more corner cases, and adding the
+drivers for the SoCs. The A10 and A20 should be pretty close, and pretty
+easy to support after that.
+
+Let me know what you think,
+Maxime
+
+Changes from v1:
+  - Rebased on top of 4.10
+  - Dropped post divider patch
+  - Merged all the CCU drivers in a single one
+  - Added the code to deal with multiplier maximum
+  - Added a comment for the PLL audio offset
+  - Added CLK_IS_CRITICAL to the DDR PLL
+  - Added the fixed pre-divider to the AHB clock
+  - Added a bunch of CLK_SET_RATE_PARENT
+
+Maxime Ripard (7):
+  clk: sunxi-ng: multiplier: Add fractional support
+  clk: sunxi-ng: Implement factors offsets
+  clk: sunxi-ng: Implement multiplier maximum
+  clk: sunxi-ng: Add clocks and resets indices for sun5i
+  clk: sunxi-ng: Add sun5i CCU driver
+  ARM: sun5i: Convert to CCU
+  ARM: gr8: Convert to CCU
+
+ arch/arm/boot/dts/sun5i-a10s.dtsi     |   85 +--
+ arch/arm/boot/dts/sun5i-a13.dtsi      |  140 +----
+ arch/arm/boot/dts/sun5i-gr8.dtsi      |  520 +------------
+ arch/arm/boot/dts/sun5i-r8.dtsi       |   10 +-
+ arch/arm/boot/dts/sun5i.dtsi          |  353 +---------
+ drivers/clk/sunxi-ng/Kconfig          |   10 +-
+ drivers/clk/sunxi-ng/Makefile         |    1 +-
+ drivers/clk/sunxi-ng/ccu-sun5i.c      | 1008 ++++++++++++++++++++++++++-
+ drivers/clk/sunxi-ng/ccu-sun5i.h      |   68 ++-
+ drivers/clk/sunxi-ng/ccu_div.h        |   10 +-
+ drivers/clk/sunxi-ng/ccu_mp.c         |   10 +-
+ drivers/clk/sunxi-ng/ccu_mult.c       |   16 +-
+ drivers/clk/sunxi-ng/ccu_mult.h       |   24 +-
+ drivers/clk/sunxi-ng/ccu_nk.c         |   22 +-
+ drivers/clk/sunxi-ng/ccu_nkm.c        |   26 +-
+ drivers/clk/sunxi-ng/ccu_nkmp.c       |   25 +-
+ drivers/clk/sunxi-ng/ccu_nm.c         |   17 +-
+ include/dt-bindings/clock/sun5i-ccu.h |  103 +++-
+ include/dt-bindings/reset/sun5i-ccu.h |   32 +-
+ 19 files changed, 1459 insertions(+), 1021 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun5i.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun5i.h
+ create mode 100644 include/dt-bindings/clock/sun5i-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun5i-ccu.h
+
+base-commit: f9ca9b952ee139fbb9cd4d354a33f440bc1049cd
 -- 
-2.7.4
+git-series 0.8.11
