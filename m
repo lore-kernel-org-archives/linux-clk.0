@@ -1,103 +1,133 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,  "linux-mmc\@vger.kernel.org" <linux-mmc@vger.kernel.org>,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  "linux-arm-kernel\@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,  Mike Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  linux-clk <linux-clk@vger.kernel.org>,  "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,  Rob Herring <robh+dt@kernel.org>,  "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,  Ziji Hu <huziji@marvell.com>,  Jimmy Xu <zmxu@marvell.com>,  Jisheng Zhang <jszhang@marvell.com>,  Nadav Haklai <nadavh@marvell.com>,  Ryan Gao <ygao@marvell.com>,  Doug Jones <dougj@marvell.com>,  Victor Gu <xigu@marvell.com>,  "Wei\(SOCP\) Liu" <liuw@marvell.com>,  Wilson Ding <dingwei@marvell.com>,  Yehuda Yitschak <yehuday@marvell.com>,  Ma
- rcin Wojtas <mw@semihalf.com>,  Hanna Hawa <hannah@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>
-Subject: Re: [PATCH v5 05/12] dt: bindings: Add bindings for Marvell Xenon SD Host Controller
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
-	<89c95d0084da6ad7132caa54ca66eb619d8a5090.1484154449.git-series.gregory.clement@free-electrons.com>
-	<CAPDyKFrCxk37uVZ4wM-=iwX3-Cn9j+uh1KneJoopVzia2nKTVA@mail.gmail.com>
-Date: Fri, 27 Jan 2017 11:04:57 +0100
-In-Reply-To: <CAPDyKFrCxk37uVZ4wM-=iwX3-Cn9j+uh1KneJoopVzia2nKTVA@mail.gmail.com>
-	(Ulf Hansson's message of "Thu, 26 Jan 2017 11:49:52 +0100")
-Message-ID: <87fuk4yg1i.fsf@free-electrons.com>
+Return-Path: <sricharan@codeaurora.org>
+From: "Sricharan" <sricharan@codeaurora.org>
+To: "'Stanimir Varbanov'" <stanimir.varbanov@linaro.org>,
+	"'Rajendra Nayak'" <rnayak@codeaurora.org>,
+	<sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>
+Cc: <linux-clk@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <1484027679-18397-1-git-send-email-rnayak@codeaurora.org> <db0b904e-4d28-b404-802b-7c2bcf0801e9@linaro.org>
+In-Reply-To: <db0b904e-4d28-b404-802b-7c2bcf0801e9@linaro.org>
+Subject: RE: [PATCH] clk: qcom: gdsc: Fix handling of hw control enable/disable
+Date: Wed, 11 Jan 2017 00:59:23 +0530
+Message-ID: <006e01d26b77$dceaa090$96bfe1b0$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+	charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ulf,
- 
- On jeu., janv. 26 2017, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+Hi stan,
 
-> On 11 January 2017 at 18:19, Gregory CLEMENT
-> <gregory.clement@free-electrons.com> wrote:
->> From: Hu Ziji <huziji@marvell.com>
+>-----Original Message-----
+>From: linux-arm-msm-owner@vger.kernel.org [mailto:linux-arm-msm-owner@vger.kernel.org] On Behalf Of Stanimir Varbanov
+>Sent: Tuesday, January 10, 2017 10:14 PM
+>To: Rajendra Nayak <rnayak@codeaurora.org>; sboyd@codeaurora.org; mturquette@baylibre.com
+>Cc: linux-clk@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-kernel@vger.kernel.org; sricharan@codeaurora.org
+>Subject: Re: [PATCH] clk: qcom: gdsc: Fix handling of hw control enable/disable
+>
+>Hi Rajendra,
+>
+>On 01/10/2017 07:54 AM, Rajendra Nayak wrote:
+>> Once a gdsc is brought in and out of HW control, there is a
+>> power down and up cycle which can take upto 1us. Polling on
+>> the gdsc status immediately after the hw control enable/disable
+>> can mislead software/firmware to belive the gdsc is already either on
+>> or off, while its yet to complete the power cycle.
+>> To avoid this add a 1us delay post a enable/disable of HW control
+>> mode.
 >>
->> Marvell Xenon SDHC can support eMMC/SD/SDIO.
->> Add Xenon-specific properties.
->> Also add properties for Xenon PHY setting.
+>> Also after the HW control mode is disabled, poll on the status to
+>> check gdsc status reflects its 'on' before force disabling it
+>> in software.
 >>
->> Signed-off-by: Hu Ziji <huziji@marvell.com>
->> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>> Reported-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+>> ---
+>>
+>> Stan,
+>> If there was a specific issue you saw with venus because of the missing
+>> delay and poll, can you check if this fixes any of that.
 >
-> An overall comment. Please run a spell-checking as I noticed some
-> simple errors that needs to be fixed.
-
-I though I already run a spell-checking before submitting the patch, but
-I will do it again.
-
+>Something more about the issue.
 >
-> Optional Properties:
->> +- mmccard:
->> +  mmccard child node must be provided when current SDHC is for eMMC.
->> +  Xenon SDHC often can support both SD and eMMC. This child node indicates that
->> +  current SDHC is for eMMC card. Thus Xenon eMMC specific configuration and
->> +  operations can be enabled prior to eMMC init sequence.
->> +  Please refer to Documentation/devicetree/bindings/mmc/mmc-card.txt.
->> +  This child node should not be set if current Xenon SDHC is for SD/SDIO.
->> +
->> +- bus-width:
->> +  When 8-bit data bus width is in use for eMMC, this property should be
->> +  explicitly provided and set as 8.
->> +  It is optional when data bus width is 4-bit or 1-bit.
->> +
->> +- mmc-ddr-1_8v:
->> +  Select this property when eMMC HS DDR is supported on SDHC side.
->> +
->> +- mmc-hs400-1_8v:
->> +  Select this property when eMMC HS400 is supported on SDHC side.
+>I had re-designed venus driver on three platform drivers venus-core,
+>venus-dec and venus-enc in order to be able to control those three
+>power-domains (VENUS_GDSC, VENUS_CORE0_GDSC and VENUS_CORE1_GDSC).
 >
-> All the above properties is already specified as common mmc bindings.
-> Let's not do that again, but instead just refer to mmc.txt as how
-> other documentations looks like.
-
-OK, but maybe we could keep the part about the mmcard for the eMMC to
-emphasize that we need to setup this option for the controller.
-
->> +
->> +- no-1-8-v:
->> +  Select this property when 1.8V signaling voltage supply is unavailable.
->> +  When this property is enabled, both mmc-ddr-1_8v and mmc-hs400-1_8v should be
->> +  cleared.
+>After that I abstracted MMAGIC hw on a separate mmagic driver. This
+>driver just controls mmagic clocks and GDSC in its runtime_suspend and
+>runtime_resume methods.
 >
-> Please don't use this sdhci property, unless really needed.
-
-Actually this is a mmc property, at least it is described in this the
-mmc binding:
-Documentation/devicetree/bindings/mmc/mmc.txt
-
-The description of this optional property is:
-"no-1-8-v: when present, denotes that 1.8v card voltage is not supported on
-  this system, even if the controller claims it is."
-
-So as it is also part of the mmc binding we can remove it from our
-bindings as we are going to do it for the other mmc property.
-
-But I am curious to know why do you think we could use it without any
-need. Are you aware of some abuse of this property?
-
+>The DT nodes looks like:
 >
-> Perhaps you can elaborate exactly why it makes sense for your case. Or
-> perhaps we already discussed this, in either case, please re-fresh my
-> mind.
+>mmagic_video {
+>	compatible = "qcom,msm8996-mmagic";
+>	clocks = <&rpmcc MSM8996_RPM_SMD_MMAXI_CLK>,
+>		 <&mmcc MMSS_MMAGIC_AHB_CLK>,
+>		 <&mmcc MMSS_MMAGIC_CFG_AHB_CLK>,
+>		 <&mmcc MMAGIC_VIDEO_NOC_CFG_AHB_CLK>,
+>		 <&mmcc MMSS_MMAGIC_MAXI_CLK>,
+>		 <&mmcc MMAGIC_VIDEO_AXI_CLK>,
+>		 <&mmcc SMMU_VIDEO_AHB_CLK>,
+>		 <&mmcc SMMU_VIDEO_AXI_CLK>;
+>	power-domains = <&mmcc MMAGIC_VIDEO_GDSC>;
+>
+>	video-codec {
+>		compatible = "qcom,msm8996-venus";
+>		clocks = <&mmcc VIDEO_CORE_CLK>,
+>			 <&mmcc VIDEO_AHB_CLK>,
+>			 <&mmcc VIDEO_AXI_CLK>,
+>			 <&mmcc VIDEO_MAXI_CLK>;
+>		power-domains = <&mmcc VENUS_GDSC>;
+>		...
+>
+>		video-decoder {
+>			compatible = "venus-decoder";
+>			clocks = "subcore0";
+>			clock-names = <&mmcc VIDEO_SUBCORE0_CLK>;
+>			power-domains = <&mmcc VENUS_CORE0_GDSC>;
+>		};
+>
+>		video-encoder {
+>			compatible = "venus-encoder";
+>			clocks = "subcore1";
+>			clock-names = <&mmcc VIDEO_SUBCORE1_CLK>;
+>			power-domains = <&mmcc VENUS_CORE1_GDSC>;
+>		};
+>	};
+>};
+>
+>Note that mmagic_video is a parent dt node for smmu_video DT node so
+>that clocks and mmagic_video gdsc will be enabled once smmu driver is
+>instantiated by venus-core diriver.
+>
 
-For instance we need it now on the 7040DB board which does not have the
-1.8V signal voltage available.
+mmagic_video is a parent DT for smmu_video ? , so there are no clocks
+populated for the smmu node as such ?
 
-Gregory
+>Now when video-dec driver calls pm_runtime_get_sync() the sequence of
+>enabling is:
+>
+>MMAGIC_VIDEO_GDSC -> MMAGIC clocks and SMMU clocks -> VENUS_GDSC ->
+>VIDEO clocks -> VENUS_CORE0_GDSC -> VIDEO subcore0 clock
+>
+>When video-dec platform driver calls pm_runtime_put_sync() we should
+>disabling of GDSC and clocks in the reversed oder.
+>
+>The issue comes when I have ran video decoder, the decoder hw finish
+>stream decoding and we want to suspend venus core. The issue is that
+>when I start disabling SMMU_VIDEO_AXI_CLK and/or MMAGIC_VIDEO_AXI_CLK
+>the system reboots.
+>
+>I have added a delay (200ms) before disabling mmagic clocks and then
+>everything is fine again.
+>
+>Any idea?
+>
 
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Can you share me a branch, i can have a quick check with a t32
+if there is any crash logged in the TZ buffer when the system reboots.
+
+Regards,
+ Sricharan
