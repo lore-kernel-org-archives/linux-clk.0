@@ -1,50 +1,192 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=UTF-8
-Message-id: <587C446C.4090002@samsung.com>
-Date: Mon, 16 Jan 2017 12:56:28 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>,
- Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 1/4] ARM: EXYNOS: Remove Exynos4415 driver (SoC not
- supported anymore)
-In-reply-to: <20170114123642.15581-2-krzk@kernel.org>
-References: <20170114123642.15581-1-krzk@kernel.org>
- <CGME20170114123711epcas1p382a72a6edbe757ca66eb370421e3f1e5@epcas1p3.samsung.com>
- <20170114123642.15581-2-krzk@kernel.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 3/7] clk: sunxi-ng: Implement multiplier maximum
+Date: Tue, 10 Jan 2017 08:57:25 +0100
+Message-Id: <ab8ef79d63fc09c3eaa556d299832ec06e9869cf.1484035021.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
+References: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
+References: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2017년 01월 14일 21:36, Krzysztof Kozlowski wrote:
-> Support for Exynos4415 is going away because there are no internal nor
-> external users.
-> 
-> Since commit 46dcf0ff0de3 ("ARM: dts: exynos: Remove exynos4415.dtsi"),
-> the platform cannot be instantiated so remove also the mach code.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/mach-exynos/Kconfig   | 5 -----
->  arch/arm/mach-exynos/exynos.c  | 1 -
->  arch/arm/mach-exynos/suspend.c | 1 -
->  3 files changed, 7 deletions(-)
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/ccu_mult.c |  4 ++--
+ drivers/clk/sunxi-ng/ccu_mult.h | 10 ++++++----
+ drivers/clk/sunxi-ng/ccu_nk.c   |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_nkm.c  |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_nkmp.c |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_nm.c   |  4 ++--
+ 6 files changed, 22 insertions(+), 20 deletions(-)
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-[snip]
-
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+index bf5e11c803f9..fccfe1e1961a 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.c
++++ b/drivers/clk/sunxi-ng/ccu_mult.c
+@@ -41,7 +41,7 @@ static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
+ 	struct _ccu_mult _cm;
+ 
+ 	_cm.min = 1;
+-	_cm.max = 1 << cm->mult.width;
++	_cm.max = cm->mult.max ?: 1 << cm->mult.width;
+ 	ccu_mult_find_best(parent_rate, rate, &_cm);
+ 
+ 	return parent_rate * _cm.mult;
+@@ -114,7 +114,7 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
+ 						&parent_rate);
+ 
+ 	_cm.min = cm->mult.min;
+-	_cm.max = 1 << cm->mult.width;
++	_cm.max = cm->mult.max ?: 1 << cm->mult.width;
+ 	ccu_mult_find_best(parent_rate, rate, &_cm);
+ 
+ 	spin_lock_irqsave(cm->common.lock, flags);
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
+index 84839641dfdf..524acddfcb2e 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.h
++++ b/drivers/clk/sunxi-ng/ccu_mult.h
+@@ -10,24 +10,26 @@ struct ccu_mult_internal {
+ 	u8	shift;
+ 	u8	width;
+ 	u8	min;
++	u8	max;
+ };
+ 
+-#define _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, _min)	\
++#define _SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, _offset, _min, _max) \
+ 	{								\
+ 		.min	= _min,						\
++		.max	= _max,						\
+ 		.offset	= _offset,					\
+ 		.shift	= _shift,					\
+ 		.width	= _width,					\
+ 	}
+ 
+ #define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)	\
+-	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, _min)
++	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, 1, _min, 0)
+ 
+ #define _SUNXI_CCU_MULT_OFFSET(_shift, _width, _offset)	\
+-	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, 1)
++	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, _offset, 1, 0)
+ 
+ #define _SUNXI_CCU_MULT(_shift, _width)		\
+-	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, 1)
++	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, 1, 1, 0)
+ 
+ struct ccu_mult {
+ 	u32			enable;
+diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
+index 90117d3ead8c..b9e9b8a9d1b4 100644
+--- a/drivers/clk/sunxi-ng/ccu_nk.c
++++ b/drivers/clk/sunxi-ng/ccu_nk.c
+@@ -103,9 +103,9 @@ static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		rate *= nk->fixed_post_div;
+ 
+ 	_nk.min_n = nk->n.min;
+-	_nk.max_n = 1 << nk->n.width;
++	_nk.max_n = nk->n.max ?: 1 << nk->n.width;
+ 	_nk.min_k = nk->k.min;
+-	_nk.max_k = 1 << nk->k.width;
++	_nk.max_k = nk->k.max ?: 1 << nk->k.width;
+ 
+ 	ccu_nk_find_best(*parent_rate, rate, &_nk);
+ 	rate = *parent_rate * _nk.n * _nk.k;
+@@ -128,9 +128,9 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		rate = rate * nk->fixed_post_div;
+ 
+ 	_nk.min_n = nk->n.min;
+-	_nk.max_n = 1 << nk->n.width;
++	_nk.max_n = nk->n.max ?: 1 << nk->n.width;
+ 	_nk.min_k = nk->k.min;
+-	_nk.max_k = 1 << nk->k.width;
++	_nk.max_k = nk->k.max ?: 1 << nk->k.width;
+ 
+ 	ccu_nk_find_best(parent_rate, rate, &_nk);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+index 3caaf9d603e2..71f81e95a061 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.c
++++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+@@ -110,9 +110,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+ 	struct _ccu_nkm _nkm;
+ 
+ 	_nkm.min_n = nkm->n.min;
+-	_nkm.max_n = 1 << nkm->n.width;
++	_nkm.max_n = nkm->n.max ?: 1 << nkm->n.width;
+ 	_nkm.min_k = nkm->k.min;
+-	_nkm.max_k = 1 << nkm->k.width;
++	_nkm.max_k = nkm->k.max ?: 1 << nkm->k.width;
+ 	_nkm.min_m = 1;
+ 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+ 
+@@ -139,9 +139,9 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 reg;
+ 
+ 	_nkm.min_n = nkm->n.min;
+-	_nkm.max_n = 1 << nkm->n.width;
++	_nkm.max_n = nkm->n.max ?: 1 << nkm->n.width;
+ 	_nkm.min_k = nkm->k.min;
+-	_nkm.max_k = 1 << nkm->k.width;
++	_nkm.max_k = nkm->k.max ?: 1 << nkm->k.width;
+ 	_nkm.min_m = 1;
+ 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index da2bba02b845..a2b40a000157 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -117,9 +117,9 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct _ccu_nkmp _nkmp;
+ 
+ 	_nkmp.min_n = nkmp->n.min;
+-	_nkmp.max_n = 1 << nkmp->n.width;
++	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
+ 	_nkmp.min_k = nkmp->k.min;
+-	_nkmp.max_k = 1 << nkmp->k.width;
++	_nkmp.max_k = nkmp->k.max ?: 1 << nkmp->k.width;
+ 	_nkmp.min_m = 1;
+ 	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
+ 	_nkmp.min_p = 1;
+@@ -139,9 +139,9 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 reg;
+ 
+ 	_nkmp.min_n = 1;
+-	_nkmp.max_n = 1 << nkmp->n.width;
++	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
+ 	_nkmp.min_k = 1;
+-	_nkmp.max_k = 1 << nkmp->k.width;
++	_nkmp.max_k = nkmp->k.max ?: 1 << nkmp->k.width;
+ 	_nkmp.min_m = 1;
+ 	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
+ 	_nkmp.min_p = 1;
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index 158d74e0215f..af71b1909cd9 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -100,7 +100,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct _ccu_nm _nm;
+ 
+ 	_nm.min_n = nm->n.min;
+-	_nm.max_n = 1 << nm->n.width;
++	_nm.max_n = nm->n.max ?: 1 << nm->n.width;
+ 	_nm.min_m = 1;
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+ 
+@@ -123,7 +123,7 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		ccu_frac_helper_disable(&nm->common, &nm->frac);
+ 
+ 	_nm.min_n = 1;
+-	_nm.max_n = 1 << nm->n.width;
++	_nm.max_n = nm->n.max ?: 1 << nm->n.width;
+ 	_nm.min_m = 1;
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+ 
 -- 
-Best Regards,
-Chanwoo Choi
-S/W Center, Samsung Electronics
+git-series 0.8.11
