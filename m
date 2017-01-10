@@ -1,67 +1,42 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 18 Jan 2017 17:09:48 -0600
-From: Rob Herring <robh@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 2/3] clk: ux500: Add device tree bindings for ABx500
- clocks
-Message-ID: <20170118230948.hplhmyp6hyu3olzd@rob-hp-laptop>
-References: <20170113150826.30202-1-linus.walleij@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170113150826.30202-1-linus.walleij@linaro.org>
+Return-Path: <jacobchen110@gmail.com>
+Return-Path: <jacobchen110@gmail.com>
+From: Jacob Chen <jacob-chen@iotwrt.com>
+To: heiko@sntech.de,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	zhangqing@rock-chips.com,
+	zhengxing@rock-chips.com,
+	Jacob Chen <jacob-chen@iotwrt.com>
+Subject: [PATCH 3/4] clk: rockchip: add rk3288 cif_out clock ids
+Date: Tue, 10 Jan 2017 19:59:19 +0800
+Message-Id: <1484049560-14820-3-git-send-email-jacob-chen@iotwrt.com>
+In-Reply-To: <1484049560-14820-1-git-send-email-jacob-chen@iotwrt.com>
+References: <1484049560-14820-1-git-send-email-jacob-chen@iotwrt.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 13, 2017 at 04:08:26PM +0100, Linus Walleij wrote:
-> This adds device tree bindings for the ABx500 clocks on the
-> ST-Ericsson platforms.
-> 
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  .../devicetree/bindings/clock/stericsson,abx500.txt         | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/stericsson,abx500.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/stericsson,abx500.txt b/Documentation/devicetree/bindings/clock/stericsson,abx500.txt
-> new file mode 100644
-> index 000000000000..8764d80e3412
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/stericsson,abx500.txt
-> @@ -0,0 +1,13 @@
-> +Clock bindings for ST-Ericsson ABx500 clocks
-> +
-> +Required properties :
-> +- compatible : shall contain the following:
-> +  "stericsson,ab8500-clk"
-> +- #clock-cells should be <1>
+Add clock-ids for the cif block of the rk3288
 
-Header for clock numbers?
 
-> +
-> +Example:
-> +
-> +ab8500_clock: ab8500-clock {
+Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
+---
+ include/dt-bindings/clock/rk3288-cru.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-clock-controller {
-
-or 
-
-clocks {
-
-> +	compatible = "stericsson,ab8500-clk";
-
-No reg, they're all just fixed?
-
-> +	#clock-cells = <1>;
-> +};
-> -- 
-> 2.9.3
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/include/dt-bindings/clock/rk3288-cru.h b/include/dt-bindings/clock/rk3288-cru.h
+index 08de7de..128b191 100644
+--- a/include/dt-bindings/clock/rk3288-cru.h
++++ b/include/dt-bindings/clock/rk3288-cru.h
+@@ -88,6 +88,7 @@
+ #define SCLK_PVTM_GPU		124
+ #define SCLK_CRYPTO		125
+ #define SCLK_MIPIDSI_24M	126
++#define SCLK_CIF_OUT		127
+ 
+ #define SCLK_MAC		151
+ #define SCLK_MACREF_OUT		152
+-- 
+2.7.4
