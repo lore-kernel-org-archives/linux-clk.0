@@ -1,42 +1,92 @@
-Return-Path: <jacobchen110@gmail.com>
-Return-Path: <jacobchen110@gmail.com>
-From: Jacob Chen <jacob-chen@iotwrt.com>
-To: heiko@sntech.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	zhangqing@rock-chips.com,
-	zhengxing@rock-chips.com,
-	Jacob Chen <jacob-chen@iotwrt.com>
-Subject: [PATCH 3/4] clk: rockchip: add rk3288 cif_out clock ids
-Date: Tue, 10 Jan 2017 19:59:19 +0800
-Message-Id: <1484049560-14820-3-git-send-email-jacob-chen@iotwrt.com>
-In-Reply-To: <1484049560-14820-1-git-send-email-jacob-chen@iotwrt.com>
-References: <1484049560-14820-1-git-send-email-jacob-chen@iotwrt.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Tue, 10 Jan 2017 19:10:06 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH 2/5] clk: sunxi-ng: add support for V3s CCU
+Message-ID: <20170110181006.yrd6moy2mctzoc4c@lukather>
+References: <20170103151629.19447-1-icenowy@aosc.xyz>
+ <20170103151629.19447-3-icenowy@aosc.xyz>
+MIME-Version: 1.0
+In-Reply-To: <20170103151629.19447-3-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============0215250191688981419=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock-ids for the cif block of the rk3288
+
+--===============0215250191688981419==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="lqelbqhf667falss"
+Content-Disposition: inline
 
 
-Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
----
- include/dt-bindings/clock/rk3288-cru.h | 1 +
- 1 file changed, 1 insertion(+)
+--lqelbqhf667falss
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/dt-bindings/clock/rk3288-cru.h b/include/dt-bindings/clock/rk3288-cru.h
-index 08de7de..128b191 100644
---- a/include/dt-bindings/clock/rk3288-cru.h
-+++ b/include/dt-bindings/clock/rk3288-cru.h
-@@ -88,6 +88,7 @@
- #define SCLK_PVTM_GPU		124
- #define SCLK_CRYPTO		125
- #define SCLK_MIPIDSI_24M	126
-+#define SCLK_CIF_OUT		127
- 
- #define SCLK_MAC		151
- #define SCLK_MACREF_OUT		152
--- 
-2.7.4
+On Tue, Jan 03, 2017 at 11:16:26PM +0800, Icenowy Zheng wrote:
+> V3s has a similar but cut-down CCU to H3.
+>=20
+> Add support for it.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+
+It looks like there's nothing different but the clocks that you
+register with the H3, please just use the H3 driver.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--lqelbqhf667falss
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYdSN+AAoJEBx+YmzsjxAg/ncP/2xw4p/1hWzBEYiGKqu4pzOw
+Z8yEXhDdMCjGh2Ymx4PGblOVpKV+PsBxseOFpywPA/8DAC1jPQ7mYZiGxPNl15MJ
+EszfX9XFFy2cUy8qZg1Q756KKFHdTgrqKcJ3MXYP4/1sFw3J7cpv0lRPuKixecGJ
+fwyIgmzIHa26BUM7SIBshzCHZAb3Wkj/bvzQ7BrL+oVPjGGyYaqu/nAzxiZVcct7
+8X66aIIYr1lY7NQhPm5EARLry33PyEHcPXRTGnprUGArkZXgkrkgiac2YYf9ggKr
+bbUDChXgQKdEIe+jRTJTSLa020OrWbHFiHSCtr2ZvLTE4PAj929/Fm1yfC/8hJqF
+DXdfylvGlu7O9B6cJ3qCOTFkDZmlmFskJt54ivZTn+itpRkEfIl8y3MwlfWTXX5U
+dAxKzW5Tsx69RFBaE+saDuIrfamQPoMN3C8UP27X/N9Lrjg3Iiq0g97PEcqN4tLm
+2R2TrJf45RqEbqbkmc4K1/sbelN9kjjKev+cb5E9NoG7dQvIWifDaAPuo+LAOUnj
+AJs2cFeS/ziLARm4gjjoRrUA1Z2vJEHr1Yg0EtFEjwWWWEPRUbgxa/b0MK0GVNvy
+aORFVJApum4gn+I+0Ihq98w0/p5yErxq4MeKJFQxWeERItg7bicoA/dlHhT2wj5G
+C2r9WYgBn8+wZOlZxM+x
+=OjAd
+-----END PGP SIGNATURE-----
+
+--lqelbqhf667falss--
+
+
+--===============0215250191688981419==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0215250191688981419==--
