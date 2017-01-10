@@ -1,29 +1,39 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, xf@rock-chips.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com, cl@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 1/4] clk: rockchip: add dt-binding header for rk3328
-Date: Thu, 05 Jan 2017 13:39:38 +0100
-Message-ID: <6625105.hZYF0iglUL@phil>
-In-Reply-To: <1482979511-6847-2-git-send-email-zhangqing@rock-chips.com>
-References: <1482979511-6847-1-git-send-email-zhangqing@rock-chips.com> <1482979511-6847-2-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 9 Jan 2017 16:08:43 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	webczat_200@poczta.onet.pl,
+	Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH] clk: scpi: don't add cpufreq device if the scpi dvfs
+ node is disabled
+Message-ID: <20170110000843.GC17126@codeaurora.org>
+References: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 29. Dezember 2016, 10:45:08 CET schrieb Elaine Zhang:
-> Add the dt-bindings header for the rk3328, that gets shared between
-> the clock controller and the clock references in the dts.
-> Add softreset ID for rk3328.
+On 01/06, Sudeep Holla wrote:
+> Currently we add the virtual cpufreq device unconditionally even when
+> the SCPI DVFS clock provider node is disabled. This will cause cpufreq
+> driver to throw errors when it gets initailised on boot/modprobe and
+> also when the CPUs are hot-plugged back in.
 > 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> This patch fixes the issue by adding the virtual cpufreq device only if
+> the SCPI DVFS clock provider is available and registered.
+> 
+> Fixes: 9490f01e2471 ("clk: scpi: add support for cpufreq virtual device")
+> Reported-by: Michał Zegan <webczat_200@poczta.onet.pl>
+> Cc: Neil Armstrong <narmstrong@baylibre.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
 
-applied, after moving the clock-ids a bit more together [0],
-as limiting the number of empty entries in the clk-id array saves us a bit of
-space. But please double check and shout if something looks wrong :-)
+Applied to clk-next
 
-
-Thanks
-Heiko
-
-[0] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?id=6cc1aef0ad0daea0c6ba5432a8a6fe1c30661e4c
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
