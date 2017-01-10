@@ -1,40 +1,72 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 2/2] clk: sunxi-ng: a33: Set CLK_SET_RATE_PARENT for the GPU
-Date: Tue, 24 Jan 2017 10:41:19 +0100
-Message-Id: <1914af84712092019181807ddb72adfc5b40c6f4.1485250845.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <53c56d23af099d8a41460d5ac59a2c792c8d050c.1485250845.git-series.maxime.ripard@free-electrons.com>
-References: <53c56d23af099d8a41460d5ac59a2c792c8d050c.1485250845.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <53c56d23af099d8a41460d5ac59a2c792c8d050c.1485250845.git-series.maxime.ripard@free-electrons.com>
-References: <53c56d23af099d8a41460d5ac59a2c792c8d050c.1485250845.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+Subject: Re: [PATCH] clk: vc5: Add support for IDT VersaClock 5P49V5923B
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <20161228000045.4540-1-marek.vasut@gmail.com>
+ <2015482.2Xx0FSfo4q@avalon> <a94799ce-0030-ee4b-3d07-b3c190d79ba5@gmail.com>
+ <7398143.JfNZUDgVyk@avalon> <69c22af5-717c-ce9d-5f4c-c1751894b885@gmail.com>
+ <20170110002327.GI17126@codeaurora.org>
+ <71b654d2-e24e-f09b-ca61-03dd7a27a24b@gmail.com>
+ <20170110004427.GO17126@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <c96d1de3-07cf-f78f-618e-e0e16f9d80c8@gmail.com>
+Date: Tue, 10 Jan 2017 18:42:25 +0100
+MIME-Version: 1.0
+In-Reply-To: <20170110004427.GO17126@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-In order to achieve all the rates asked by the GPU, we might need to change
-the parent frequency.
+On 01/10/2017 01:44 AM, Stephen Boyd wrote:
+> On 01/10, Marek Vasut wrote:
+>> On 01/10/2017 01:23 AM, Stephen Boyd wrote:
+>>> On 01/05, Marek Vasut wrote:
+>>>> On 01/05/2017 03:13 PM, Laurent Pinchart wrote:
+>>>>> Hi Marek,
+>>>>
+>>>> Hi!
+>>>>
+>>>> [...]
+>>>>
+>>>>>>>>> +static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
+>>>>>>>>> +                                        unsigned long parent_rate)
+>>>>>>>>> +{
+>>>>>>>>> +       struct vc5_driver_data *vc5 =
+>>>>>>>>> +               container_of(hw, struct vc5_driver_data, clk_mux);
+>>>>>>>>> +       unsigned long idiv;
+>>>>>>>>> +       u8 div;
+>>>>>>>>> +
+>>>>>>>>> +       /* FIXME: Needs locking ? */
+>>>>>>>
+>>>>>>> Let's fix it then :-)
+>>>>>>
+>>>>>> I would like to get feedback on this one, does it ?
+>>>>>
+>>>>> That's a question for Mike or Stephen I believe.
+>>>>
+>>>> OK
+>>>
+>>> What's the question?
+>>
+>> Whether or not I need a lock around the code in vc5_mux_recalc_rate(),
+>> since I am also tweaking the predivider bits there to assure the
+>> (downstream) PLL supplied from the mux always gets clock in range it can
+>> handle. This tweaking is mostly inspired by clk-si5351.c driver.
+> 
+> Don't rely on locking in the core for register locking within a
+> device. That makes a dependency headache if we want to rework the
+> locking scheme in the core, which we want to do eventually.
+> 
+> Also, please don't cause side effects during recalc_rate(). The
+> callback is meant to calculate the rate of the clock, not adjust
+> hardware based on what arguments are passed to it.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Got it and fixed. I'll send V3 now.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 0d513d2674cb..a7b3c08ed0e2 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -468,7 +468,7 @@ static SUNXI_CCU_M_WITH_MUX_TABLE_GATE(drc_clk, "drc",
- 				       0x180, 0, 4, 24, 3, BIT(31), 0);
- 
- static SUNXI_CCU_M_WITH_GATE(gpu_clk, "gpu", "pll-gpu",
--			     0x1a0, 0, 3, BIT(31), 0);
-+			     0x1a0, 0, 3, BIT(31), CLK_SET_RATE_PARENT);
- 
- static const char * const ats_parents[] = { "osc24M", "pll-periph" };
- static SUNXI_CCU_M_WITH_MUX_GATE(ats_clk, "ats", ats_parents,
 -- 
-git-series 0.8.11
+Best regards,
+Marek Vasut
