@@ -1,58 +1,34 @@
-Return-Path: <yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] clk: uniphier: add eMMC clock for LD11 and LD20 SoCs
-Date: Sat, 28 Jan 2017 22:27:01 +0900
-Message-Id: <1485610021-9905-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1485610021-9905-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1485610021-9905-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 9 Jan 2017 16:26:43 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Nadav Haklai <nadavh@marvell.com>, Hanna Hawa <hannah@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: mvebu: adjust AP806 CPU clock frequencies to
+ production chip
+Message-ID: <20170110002643.GJ17126@codeaurora.org>
+References: <1482408494-7429-1-git-send-email-thomas.petazzoni@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1482408494-7429-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock for the Cadence eMMC controller on LD11/LD20.
-For the other SoCs, the clock for the eMMC controller is included
-in the MIO/SD control block.
+On 12/22, Thomas Petazzoni wrote:
+> This commit adjusts the list of possible "Sample At Reset" values that
+> define the CPU clock frequency of the AP806 (part of Marvell Armada
+> 7K/8K) to the values that have been validated with the production
+> chip. Earlier values were preliminary.
+> 
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> ---
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Applied to clk-next
 
- drivers/clk/uniphier/clk-uniphier-sys.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
-index b1aaf77..c8027d9 100644
---- a/drivers/clk/uniphier/clk-uniphier-sys.c
-+++ b/drivers/clk/uniphier/clk-uniphier-sys.c
-@@ -35,6 +35,9 @@
- #define UNIPHIER_LD11_SYS_CLK_NAND(idx)					\
- 	UNIPHIER_CLK_GATE("nand", (idx), NULL, 0x210c, 0)
- 
-+#define UNIPHIER_LD11_SYS_CLK_EMMC(idx)					\
-+	UNIPHIER_CLK_GATE("emmc", (idx), NULL, 0x210c, 2)
-+
- #define UNIPHIER_SLD3_SYS_CLK_STDMAC(idx)				\
- 	UNIPHIER_CLK_GATE("stdmac", (idx), NULL, 0x2104, 10)
- 
-@@ -144,6 +147,8 @@ const struct uniphier_clk_data uniphier_ld11_sys_clk_data[] = {
- 	UNIPHIER_CLK_FACTOR("uart", 0, "spll", 1, 34),
- 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 40),
- 	UNIPHIER_LD11_SYS_CLK_NAND(2),
-+	UNIPHIER_LD11_SYS_CLK_EMMC(4),
-+	/* Index 5 reserved for eMMC PHY */
- 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC, MIO */
- 	UNIPHIER_CLK_FACTOR("usb2", -1, "ref", 24, 25),
- 	/* CPU gears */
-@@ -170,6 +175,8 @@ const struct uniphier_clk_data uniphier_ld20_sys_clk_data[] = {
- 	UNIPHIER_CLK_FACTOR("uart", 0, "spll", 1, 34),
- 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 40),
- 	UNIPHIER_LD11_SYS_CLK_NAND(2),
-+	UNIPHIER_LD11_SYS_CLK_EMMC(4),
-+	/* Index 5 reserved for eMMC PHY */
- 	UNIPHIER_LD20_SYS_CLK_SD,
- 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC */
- 	/* GIO is always clock-enabled: no function for 0x210c bit5 */
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
