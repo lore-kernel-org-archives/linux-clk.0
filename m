@@ -1,43 +1,78 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 9 Jan 2017 16:10:18 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] clk/samsung: exynos542x: mark some clocks as critical
-Message-ID: <20170110001018.GE17126@codeaurora.org>
-References: <CGME20161222094441epcas5p330bb16763e02149a275c30eb644b0e7c@epcas5p3.samsung.com>
- <1482399870-18563-1-git-send-email-m.szyprowski@samsung.com>
- <1f51a603-b345-2c93-f4e1-9617dca387d0@samsung.com>
+Return-Path: <zhengxing@rock-chips.com>
+Subject: Re: [PATCH v3] arm64: dts: rockchip: add "rockchip, grf" property for
+ RK3399 PMUCRU/CRU
+To: Doug Anderson <dianders@google.com>
+References: <1484011661-13474-1-git-send-email-zhengxing@rock-chips.com>
+ <CAD=FV=UsMR=HD5799N7ny_Ce8XXCkcd3R3tpX34AEC6UmGkXtA@mail.gmail.com>
+Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+ "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will.deacon@arm.com>, Caesar Wang <wxt@rock-chips.com>,
+ Shawn Lin <shawn.lin@rock-chips.com>, Brian Norris
+ <briannorris@chromium.org>, Jianqun Xu <jay.xu@rock-chips.com>,
+ Elaine Zhang <zhangqing@rock-chips.com>, David Wu <david.wu@rock-chips.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Xing Zheng <zhengxing@rock-chips.com>
+Message-ID: <58745576.4010105@rock-chips.com>
+Date: Tue, 10 Jan 2017 11:31:02 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1f51a603-b345-2c93-f4e1-9617dca387d0@samsung.com>
+In-Reply-To: <CAD=FV=UsMR=HD5799N7ny_Ce8XXCkcd3R3tpX34AEC6UmGkXtA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/09, Sylwester Nawrocki wrote:
-> On 12/22/2016 10:44 AM, Marek Szyprowski wrote:
-> > Some parent clocks of the Exynos542x clock blocks, which have separate
-> > power domains (like DISP, MFC, MSC, GSC, FSYS and G2D) must be always
-> > enabled to access any register related to power management unit or devices
-> > connected to it. For the time being, until a proper solution based on
-> > runtime PM is applied, mark those clocks as critical (instead of ignore
-> > unused or even no flags) to prevent disabling them.
-> >
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
-> Stephen, Mike, could you apply the $subject patch directly? Due to recent
-> Exynos IOMMU related changes that patch is needed as a regression fix
-> for v4.10.
-> 
+Hi, Doug
 
-Sure, no problem.
+On 2017年01月10日 11:06, Doug Anderson wrote:
+> Hi,
+>
+> On Mon, Jan 9, 2017 at 5:27 PM, Xing Zheng <zhengxing@rock-chips.com> wrote:
+>> The structure rockchip_clk_provider needs to refer the GRF regmap
+>> in somewhere, if the CRU node has not "rockchip,grf" property,
+>> calling syscon_regmap_lookup_by_phandle will return an invalid GRF
+>> regmap, and the MUXGRF type clock will be not supported.
+>>
+>> Therefore, we need to add them.
+>>
+>> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+>> ---
+>>
+>> Changes in v3:
+>> - add optional roperty rockchip,grf in rockchip,rk3399-cru.txt
+>>
+>> Changes in v2:
+>> - referring pmugrf for PMUGRU
+>> - fix the typo "invaild" in COMMIT message
+>>
+>>   Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt | 5 +++++
+>>   arch/arm64/boot/dts/rockchip/rk3399.dtsi                        | 2 ++
+> "dts" and bindings shouldn't change in the same patch since they go
+> through different trees.  This is why I said:
+>
+>> This looks sane to me, but before you land it you need to first send
+>> up a (separate) patch that adjusts:
+>>        --------
+> AKA: you need a two patch series here.
+>
+> Sometimes it's OK to include bindings together with code changes
+> (depends on the maintainer), but never with dts changes.
+>
+> -Doug
+For little lazy, I did refer other SoC platform to using "dts" and 
+bindings in the same patch...
+
+OK, I will use a two patch series.
+
+Thanks
+
+>
+>
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+- Xing Zheng
