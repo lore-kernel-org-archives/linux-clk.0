@@ -1,163 +1,44 @@
-Return-Path: <daniel@ffwll.ch>
-Return-Path: <daniel@ffwll.ch>
-Sender: Daniel Vetter <daniel.vetter@ffwll.ch>
-Date: Tue, 31 Jan 2017 20:39:01 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Eric Anholt <eric@anholt.net>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 05/11] drm/vc4: Add support for feeding DSI encoders from
- the pixel valve.
-Message-ID: <20170131193901.dz7o5g36hqwcsmgt@phenom.ffwll.local>
-References: <20161214194621.16499-1-eric@anholt.net>
- <20161214194621.16499-6-eric@anholt.net>
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [PATCH] clk: stm32f4: avoid uninitialized variable access
+To: Arnd Bergmann <arnd@arndb.de>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <20170111134107.3821564-1-arnd@arndb.de>
+CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@st.com>,
+        Rob Herring <robh@kernel.org>,
+        Christophe JAILLET
+	<christophe.jaillet@wanadoo.fr>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <a3c0ae24-0289-b008-ebdb-9c9ea289fec3@st.com>
+Date: Wed, 11 Jan 2017 17:08:55 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20161214194621.16499-6-eric@anholt.net>
+In-Reply-To: <20170111134107.3821564-1-arnd@arndb.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Dec 14, 2016 at 11:46:15AM -0800, Eric Anholt wrote:
-> We have to set a different pixel format, which tells the hardware to
-> use the pix_width field that's fed in sideband from the DSI encoder to
-> divide the "pixel" clock.
-> 
-> Signed-off-by: Eric Anholt <eric@anholt.net>
+On 01/11/2017 02:40 PM, Arnd Bergmann wrote:
+> The failure path in the newly added function tries to free an
+> uninitialized pointer:
+>
+> drivers/clk/clk-stm32f4.c: In function 'stm32f4_rcc_init':
+> drivers/clk/clk-stm32f4.c:1106:4: error: 'gate' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+>
+> I'm adding an initialization to NULL here to make the kfree()
+> succeed, and I'm also rearranging the cleanup so that the
+> same kfree() is used for any error path, making the function
+> slightly more robust against newly introduced bugs in the
+> error handling.
+>
+> Fixes: daf2d117cbca ("clk: stm32f4: Add lcd-tft clock")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/gpu/drm/vc4/vc4_crtc.c | 33 +++++++++++++++++++--------------
->  drivers/gpu/drm/vc4/vc4_regs.h |  2 ++
->  2 files changed, 21 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vc4/vc4_crtc.c b/drivers/gpu/drm/vc4/vc4_crtc.c
-> index a0fd3e66bc4b..cd070e0c79a6 100644
-> --- a/drivers/gpu/drm/vc4/vc4_crtc.c
-> +++ b/drivers/gpu/drm/vc4/vc4_crtc.c
-> @@ -349,38 +349,40 @@ static u32 vc4_get_fifo_full_level(u32 format)
->  }
->  
->  /*
-> - * Returns the clock select bit for the connector attached to the
-> - * CRTC.
-> + * Returns the encoder attached to the CRTC.
-> + *
-> + * VC4 can only scan out to one encoder at a time, while the DRM core
-> + * allows drivers to push pixels to more than one encoder from the
-> + * same CRTC.
->   */
-> -static int vc4_get_clock_select(struct drm_crtc *crtc)
-> +static struct drm_encoder *vc4_get_crtc_encoder(struct drm_crtc *crtc)
->  {
->  	struct drm_connector *connector;
->  
->  	drm_for_each_connector(connector, crtc->dev) {
->  		if (connector->state->crtc == crtc) {
-> -			struct drm_encoder *encoder = connector->encoder;
-> -			struct vc4_encoder *vc4_encoder =
-> -				to_vc4_encoder(encoder);
-> -
-> -			return vc4_encoder->clock_select;
-> +			return connector->encoder;
->  		}
->  	}
->  
-> -	return -1;
-> +	return NULL;
->  }
->  
->  static void vc4_crtc_mode_set_nofb(struct drm_crtc *crtc)
->  {
->  	struct drm_device *dev = crtc->dev;
->  	struct vc4_dev *vc4 = to_vc4_dev(dev);
-> +	struct drm_encoder *encoder = vc4_get_crtc_encoder(crtc);
-> +	struct vc4_encoder *vc4_encoder = to_vc4_encoder(encoder);
->  	struct vc4_crtc *vc4_crtc = to_vc4_crtc(crtc);
->  	struct drm_crtc_state *state = crtc->state;
->  	struct drm_display_mode *mode = &state->adjusted_mode;
->  	bool interlace = mode->flags & DRM_MODE_FLAG_INTERLACE;
->  	u32 pixel_rep = (mode->flags & DRM_MODE_FLAG_DBLCLK) ? 2 : 1;
-> -	u32 format = PV_CONTROL_FORMAT_24;
-> +	bool is_dsi = (vc4_encoder->type == VC4_ENCODER_TYPE_DSI0 ||
-> +		       vc4_encoder->type == VC4_ENCODER_TYPE_DSI1);
-> +	u32 format = is_dsi ? PV_CONTROL_FORMAT_DSIV_24 : PV_CONTROL_FORMAT_24;
->  	bool debug_dump_regs = false;
-> -	int clock_select = vc4_get_clock_select(crtc);
->  
->  	if (debug_dump_regs) {
->  		DRM_INFO("CRTC %d regs before:\n", drm_crtc_index(crtc));
-> @@ -436,17 +438,19 @@ static void vc4_crtc_mode_set_nofb(struct drm_crtc *crtc)
->  		 */
->  		CRTC_WRITE(PV_V_CONTROL,
->  			   PV_VCONTROL_CONTINUOUS |
-> +			   (is_dsi ? PV_VCONTROL_DSI : 0) |
->  			   PV_VCONTROL_INTERLACE |
->  			   VC4_SET_FIELD(mode->htotal * pixel_rep / 2,
->  					 PV_VCONTROL_ODD_DELAY));
->  		CRTC_WRITE(PV_VSYNCD_EVEN, 0);
->  	} else {
-> -		CRTC_WRITE(PV_V_CONTROL, PV_VCONTROL_CONTINUOUS);
-> +		CRTC_WRITE(PV_V_CONTROL,
-> +			   PV_VCONTROL_CONTINUOUS |
-> +			   (is_dsi ? PV_VCONTROL_DSI : 0));
->  	}
->  
->  	CRTC_WRITE(PV_HACT_ACT, mode->hdisplay * pixel_rep);
->  
-> -
->  	CRTC_WRITE(PV_CONTROL,
->  		   VC4_SET_FIELD(format, PV_CONTROL_FORMAT) |
->  		   VC4_SET_FIELD(vc4_get_fifo_full_level(format),
-> @@ -455,7 +459,8 @@ static void vc4_crtc_mode_set_nofb(struct drm_crtc *crtc)
->  		   PV_CONTROL_CLR_AT_START |
->  		   PV_CONTROL_TRIGGER_UNDERFLOW |
->  		   PV_CONTROL_WAIT_HSTART |
-> -		   VC4_SET_FIELD(clock_select, PV_CONTROL_CLK_SELECT) |
-> +		   VC4_SET_FIELD(vc4_encoder->clock_select,
-> +				 PV_CONTROL_CLK_SELECT) |
-
-Hm, so the usual way we solve the "crtc needs information from the encoder
-problem" is to add bits to the crtc state, and then fill those out in the
-encoders ->atomic_check function. In your case ->clock_select and is_dsi.
-
-The benefit is mostly when you start doing hw readout (which is great even
-just to cross-check your modeset code), or when you need that information
-to check limits (which sooner or later tends to happen ime).
-
-Anyway, this works too, just an idea for the future.
-
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
->  		   PV_CONTROL_FIFO_CLR |
->  		   PV_CONTROL_EN);
->  
-> diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
-> index b3b297fba709..385405a2df05 100644
-> --- a/drivers/gpu/drm/vc4/vc4_regs.h
-> +++ b/drivers/gpu/drm/vc4/vc4_regs.h
-> @@ -190,6 +190,8 @@
->  # define PV_VCONTROL_ODD_DELAY_SHIFT		6
->  # define PV_VCONTROL_ODD_FIRST			BIT(5)
->  # define PV_VCONTROL_INTERLACE			BIT(4)
-> +# define PV_VCONTROL_DSI			BIT(3)
-> +# define PV_VCONTROL_COMMAND			BIT(2)
->  # define PV_VCONTROL_CONTINUOUS			BIT(1)
->  # define PV_VCONTROL_VIDEN			BIT(0)
->  
-> -- 
-> 2.11.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+>   drivers/clk/clk-stm32f4.c | 12 +++++++-----
+>   1 file changed, 7 insertions(+), 5 deletions(-)
+>
+>
+Acked-by: Gabriel Fernandez <gabriel.fernandez@st.com>
