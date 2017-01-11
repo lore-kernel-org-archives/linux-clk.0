@@ -1,38 +1,115 @@
-Return-Path: <sboyd@codeaurora.org>
-Subject: Re: [PATCHv4 1/5] clk: mvebu: support for 98DX3236 SoC
-To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-References: <20170113091222.7132-1-chris.packham@alliedtelesis.co.nz>
- <20170113091222.7132-2-chris.packham@alliedtelesis.co.nz>
- <20170121004819.GA8801@codeaurora.org>
- <be295fd327674a2ca91437456db7a047@svr-chch-ex1.atlnz.lc>
-Cc: "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring
- <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <bf402123-52f5-51ee-32df-276ed7a7e832@codeaurora.org>
-Date: Mon, 23 Jan 2017 15:53:47 -0800
-MIME-Version: 1.0
-In-Reply-To: <be295fd327674a2ca91437456db7a047@svr-chch-ex1.atlnz.lc>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v5 11/12] arm64: dts: marvell: add sdhci support for Armada 7K/8K
+Date: Wed, 11 Jan 2017 18:19:14 +0100
+Message-Id: <b8c9916218b3bd92cbac52164209bbe5feb378a5.1484154449.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/22/2017 11:53 PM, Chris Packham wrote:
-> Not 100% sure what you mean. Something like this?
->
-> +static void __init of_mv98dx3236_cpu_clk_setup(struct device_node *node)
-> +{
-> +       of_clk_add_provider(node, of_clk_src_simple_get, NULL);
-> +}
->
-> Seems to work as expected (i.e. does nothing, kernel boots/runs).
->
+Also enable it on the Armada 7040 DB board
 
-Yep that's what I mean.
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ arch/arm64/boot/dts/marvell/armada-7040-db.dts       | 14 +++++++++++++-
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi        | 10 +++++++++-
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 11 ++++++++++-
+ 3 files changed, 35 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/marvell/armada-7040-db.dts b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
+index 070b589680c5..6adbfcd26369 100644
+--- a/arch/arm64/boot/dts/marvell/armada-7040-db.dts
++++ b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
+@@ -146,3 +146,17 @@
+ &cpm_usb3_1 {
+ 	status = "okay";
+ };
++
++&ap_sdhci0 {
++	status = "okay";
++	bus-width = <4>;
++	no-1-8-v;
++	non-removable;
++};
++
++&cpm_sdhci0 {
++	status = "okay";
++	bus-width = <4>;
++	no-1-8-v;
++	non-removable;
++};
+diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+index 5019c8f4acd0..0b49cbda8539 100644
+--- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+@@ -229,6 +229,16 @@
+ 
+ 			};
+ 
++			ap_sdhci0: sdhci@6e0000 {
++				compatible = "marvell,armada-8k-sdhci";
++				reg = <0x6e0000 0x300>;
++				interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
++				clock-names = "core";
++				clocks = <&ap_syscon 4>;
++				dma-coherent;
++				status = "disabled";
++			};
++
+ 			ap_syscon: system-controller@6f4000 {
+ 				compatible = "marvell,ap806-system-controller",
+ 					     "syscon";
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+index 05222f749a45..421e91049cf7 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+@@ -172,6 +172,17 @@
+ 				clocks = <&cpm_syscon0 1 25>;
+ 				status = "okay";
+ 			};
++
++			cpm_sdhci0: sdhci@780000 {
++				compatible = "marvell,armada-8k-sdhci";
++				reg = <0x780000 0x300>;
++				interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++				clock-names = "core";
++				clocks = <&cpm_syscon0 1 4>;
++				dma-coherent;
++				status = "disabled";
++			};
++
+ 		};
+ 
+ 		cpm_pcie0: pcie@f2600000 {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+git-series 0.9.1
