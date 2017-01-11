@@ -1,44 +1,81 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 27 Jan 2017 15:13:48 -0600
-From: Rob Herring <robh@kernel.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 05/11] clk: sunxi-ng: Add A80 CCU
-Message-ID: <20170127211348.quf2mfjf7bp37sqs@rob-hp-laptop>
-References: <20170124023230.3990-1-wens@csie.org>
- <20170124023230.3990-6-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170124023230.3990-6-wens@csie.org>
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: jic23@kernel.org,
+	knaack.h@gmx.de,
+	lars@metafoo.de,
+	pmeerw@pmeerw.net,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	khilman@baylibre.com,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: carlo@caione.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	narmstrong@baylibre.com,
+	linux-arm-kernel@lists.infradead.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/4] Amlogic Meson SAR ADC support
+Date: Wed, 11 Jan 2017 18:43:30 +0100
+Message-Id: <20170111174334.24343-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 24, 2017 at 10:32:24AM +0800, Chen-Yu Tsai wrote:
-> Add support for the main clock unit found in the A80.
-> 
-> Note that on the A80, some subsystems have separate clock controllers
-> downstream of the main clock unit. These include the MMC, USB, and
-> display engine subsystems.
-> 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  .../devicetree/bindings/clock/sunxi-ccu.txt        |    1 +
+This series add support for the SAR ADC on Amlogic Meson GXBB, GXL and
+GXM SoCs.
+The hardware on GXBB provides 10-bit ADC results, while GXL and GXM are
+providing 12-bit results. Support for older SoCs (Meson8b and Meson8)
+can be added with little effort, most of which is testing I guess (I
+don't have any pre-GXBB hardware so I can't say).
 
-Acked-by: Rob Herring <robh@kernel.org>
+A new set of clocks had to be added to the GXBB clock controller (used
+by the GXBB/GXL/GXM SoCs) which are required to get the ADC working.
 
->  drivers/clk/sunxi-ng/Kconfig                       |   10 +
->  drivers/clk/sunxi-ng/Makefile                      |    1 +
->  drivers/clk/sunxi-ng/ccu-sun9i-a80.c               | 1223 ++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu-sun9i-a80.h               |   57 +
->  include/dt-bindings/clock/sun9i-a80-ccu.h          |  162 +++
->  include/dt-bindings/reset/sun9i-a80-ccu.h          |  102 ++
->  7 files changed, 1556 insertions(+)
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80.h
->  create mode 100644 include/dt-bindings/clock/sun9i-a80-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun9i-a80-ccu.h
+The ADC itself can sample multiple channels at the same time and allows
+capturing multiple samples (which can be used for filtering/averaging).
+The ADC results are stored inside a FIFO register. More details on what
+the driver supports (or doesn't) can be found in the description of
+patch #3.
+
+The code is based on the public S805 (Meson8b) and S905 (GXBB)
+datasheets, as well as by reading (various versions of) the vendor
+driver and by inspecting the registers on the vendor kernels of my
+testing-hardware.
+
+Typical use-cases for the ADC on the Meson GX SoCs are:
+- adc-keys ("ADC attached resistor ladder buttons")
+- SoC temperature measurement (not supported by this driver yet as
+  the system firmware does this already and provides the values via the
+  SCPI protocol)
+- "version-strapping" (different resistor values are used to indicate
+  the board-revision)
+- and of course typical ADC measurements
+
+
+Martin Blumenstingl (4):
+  Documentation: dt-bindings: add the Amlogic Meson SAR ADC
+    documentation
+  clk: gxbb: add the SAR ADC clocks and expose them
+  iio: adc: add a driver for the SAR ADC found in Amlogic Meson SoCs
+  ARM64: dts: meson: meson-gx: add the SAR ADC
+
+ .../bindings/iio/adc/amlogic,meson-saradc.txt      |  31 +
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi          |   8 +
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        |  10 +
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi         |  10 +
+ drivers/clk/meson/gxbb.c                           |  48 ++
+ drivers/clk/meson/gxbb.h                           |   9 +-
+ drivers/iio/adc/Kconfig                            |  12 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/iio/adc/meson_saradc.c                     | 860 +++++++++++++++++++++
+ include/dt-bindings/clock/gxbb-clkc.h              |   4 +
+ 10 files changed, 990 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+ create mode 100644 drivers/iio/adc/meson_saradc.c
+
+-- 
+2.11.0
