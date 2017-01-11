@@ -1,90 +1,237 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Fri, 27 Jan 2017 16:55:30 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: Re: [PATCH v2 4/9] arm: dts: sun8i: split Allwinner H3 .dtsi
-Message-ID: <20170127155530.co72bqdx4fdhvy4g@lukather>
-References: <20170126154859.55855-1-icenowy@aosc.xyz>
- <20170126154859.55855-5-icenowy@aosc.xyz>
-MIME-Version: 1.0
-In-Reply-To: <20170126154859.55855-5-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
- Vinod Koul <vinod.koul@intel.com>, Andre Przywara <andre.przywara@arm.com>,
- Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com,
- linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
- linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
- Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============6850147887687936464=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v5 08/12] mmc: sdhci-xenon: Add SoC PHY PAD voltage control
+Date: Wed, 11 Jan 2017 18:19:11 +0100
+Message-Id: <09eb14b06f2745c155202b694289c22b495809fb.1484154449.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Hu Ziji <huziji@marvell.com>
 
---===============6850147887687936464==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="f4ls6hajlsfz6iar"
-Content-Disposition: inline
+Some SoCs have PHY PAD outside Xenon IP.
+PHY PAD voltage should match signalling voltage in use.
 
+Add generic SoC PHY PAD voltage control interface.
+Implement Aramda-3700 SoC PHY PAD voltage control.
 
---f4ls6hajlsfz6iar
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Hu Ziji <huziji@marvell.com>
+Tested-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ drivers/mmc/host/sdhci-xenon-phy.c | 116 +++++++++++++++++++++++++++++-
+ drivers/mmc/host/sdhci-xenon.c     |   2 +-
+ drivers/mmc/host/sdhci-xenon.h     |   2 +-
+ 3 files changed, 119 insertions(+), 1 deletion(-)
 
-On Thu, Jan 26, 2017 at 11:48:54PM +0800, Icenowy Zheng wrote:
-> -		mmc0: mmc@01c0f000 {
-> +		mmc@01c0f000 {
-
-There's no point in removing the labels, and you can even use the
-label-based syntax to reference them, instead of using the path.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---f4ls6hajlsfz6iar
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYi21xAAoJEBx+YmzsjxAgIasQAMIsEbIPus9slcpkocYUCMQf
-0ng0EM68Q0Q4E+rCSNWGXw3MjXs0XAYWp+2tM7K+CZnZ2eGFrmssuLtt9mgEE9N6
-UfP7epCuCc7k0oPBsdAmNTXBZO49x4ZWAswvHdU5VSSiWyJUEzQm0+HqeXRYzsFi
-2TQZKyGnPL4wFJT8R8AY8hzPZ/6u4aOdk52TTOOebf/4BDgxw1o939pGo1gQ9qhL
-5daXa8FlGhJNzMDFCSDMI72oCrnXVDXrpbMCCzvsCTh1rdkZydKcLapEgc80fQW+
-AWWwvuRM76u4xOJLO9WBdJisTxQw5cSf2hhMzV8DNfCAqfVEzN555TgA9R4Y8uqs
-NPUYcVWzlAsdm6C+ujt3+7dMCX9Xsjeb5T0QG60IUxj9OcqiT7PZRJOf1cbNufgr
-mrotVQcFd4q93p0PTSO/93NQYVJKtEdg6Vv/p0YKfbdWch6kILu/br2gq4TJSA60
-D7VJREh+SSgqmPlinqTj2/qQPRJFyf3kkcajGOhJjtRSGGsPpcYR9E5dByrdT2Dw
-+lMK/d756ZAwmKriNiK+4FHU5oGxbEiZiHQCHKFiPjuMIK2Z7Uu7OitTgck7Lm4V
-kK+xOlU3uE6SmoFLC3VMPsHy/PkHTcZXdC9o/c4w45E0/PDuquFkqhcq1LFCBmui
-CoFH8so1dvq8k9XFvL2x
-=Yscw
------END PGP SIGNATURE-----
-
---f4ls6hajlsfz6iar--
-
-
---===============6850147887687936464==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============6850147887687936464==--
+diff --git a/drivers/mmc/host/sdhci-xenon-phy.c b/drivers/mmc/host/sdhci-xenon-phy.c
+index f410712d24ea..1221754b7a3d 100644
+--- a/drivers/mmc/host/sdhci-xenon-phy.c
++++ b/drivers/mmc/host/sdhci-xenon-phy.c
+@@ -143,6 +143,27 @@ enum phy_type_enum {
+ 	NR_PHY_TYPES
+ };
+ 
++enum soc_pad_ctrl_type {
++	SOC_PAD_SD,
++	SOC_PAD_FIXED_1_8V,
++};
++
++struct soc_pad_ctrl_table {
++	const char *soc;
++	void (*set_soc_pad)(struct sdhci_host *host,
++			    unsigned char signal_voltage);
++};
++
++struct soc_pad_ctrl {
++	/* Register address of SOC PHY PAD ctrl */
++	void __iomem	*reg;
++	/* SOC PHY PAD ctrl type */
++	enum soc_pad_ctrl_type pad_type;
++	/* SOC specific operation to set SOC PHY PAD */
++	void (*set_soc_pad)(struct sdhci_host *host,
++			    unsigned char signal_voltage);
++};
++
+ static struct xenon_emmc_phy_regs xenon_emmc_5_0_phy_regs = {
+ 	.timing_adj	= XENON_EMMC_5_0_PHY_TIMING_ADJUST,
+ 	.func_ctrl	= XENON_EMMC_5_0_PHY_FUNC_CONTROL,
+@@ -176,6 +197,8 @@ struct emmc_phy_params {
+ 	u8	nr_tun_times;
+ 	/* Divider for calculating Tuning Step */
+ 	u8	tun_step_divider;
++
++	struct soc_pad_ctrl pad_ctrl;
+ };
+ 
+ static int alloc_emmc_phy(struct sdhci_xenon_priv *priv)
+@@ -252,6 +275,45 @@ static int emmc_phy_init(struct sdhci_host *host)
+ 	return 0;
+ }
+ 
++#define ARMADA_3700_SOC_PAD_1_8V	0x1
++#define ARMADA_3700_SOC_PAD_3_3V	0x0
++
++static void armada_3700_soc_pad_voltage_set(struct sdhci_host *host,
++					    unsigned char signal_voltage)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
++	struct emmc_phy_params *params = priv->phy_params;
++
++	if (params->pad_ctrl.pad_type == SOC_PAD_FIXED_1_8V) {
++		writel(ARMADA_3700_SOC_PAD_1_8V, params->pad_ctrl.reg);
++	} else if (params->pad_ctrl.pad_type == SOC_PAD_SD) {
++		if (signal_voltage == MMC_SIGNAL_VOLTAGE_180)
++			writel(ARMADA_3700_SOC_PAD_1_8V, params->pad_ctrl.reg);
++		else if (signal_voltage == MMC_SIGNAL_VOLTAGE_330)
++			writel(ARMADA_3700_SOC_PAD_3_3V, params->pad_ctrl.reg);
++	}
++}
++
++/*
++ * Set SOC PHY voltage PAD control register,
++ * according to the operation voltage on PAD.
++ * The detailed operation depends on SOC implementaion.
++ */
++static void emmc_phy_set_soc_pad(struct sdhci_host *host,
++				 unsigned char signal_voltage)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
++	struct emmc_phy_params *params = priv->phy_params;
++
++	if (!params->pad_ctrl.reg)
++		return;
++
++	if (params->pad_ctrl.set_soc_pad)
++		params->pad_ctrl.set_soc_pad(host, signal_voltage);
++}
++
+ /*
+  * Enable eMMC PHY HW DLL
+  * DLL should be enabled and stable before HS200/SDR104 tuning,
+@@ -621,6 +683,51 @@ static void emmc_phy_set(struct sdhci_host *host,
+ 	dev_dbg(mmc_dev(host->mmc), "eMMC PHY setting completes\n");
+ }
+ 
++static int get_dt_pad_ctrl_data(struct sdhci_host *host,
++				struct device_node *np,
++				struct emmc_phy_params *params)
++{
++	int ret = 0;
++	const char *name;
++	struct resource iomem;
++
++	if (of_device_is_compatible(np, "marvell,armada-3700-sdhci"))
++		params->pad_ctrl.set_soc_pad = armada_3700_soc_pad_voltage_set;
++	else
++		return 0;
++
++	if (of_address_to_resource(np, 1, &iomem)) {
++		dev_err(mmc_dev(host->mmc), "Unable to find SOC PAD ctrl register address for %s\n",
++			np->name);
++		return -EINVAL;
++	}
++
++	params->pad_ctrl.reg = devm_ioremap_resource(mmc_dev(host->mmc),
++						     &iomem);
++	if (IS_ERR(params->pad_ctrl.reg)) {
++		dev_err(mmc_dev(host->mmc), "Unable to get SOC PHY PAD ctrl regiser for %s\n",
++			np->name);
++		return PTR_ERR(params->pad_ctrl.reg);
++	}
++
++	ret = of_property_read_string(np, "marvell,pad-type", &name);
++	if (ret) {
++		dev_err(mmc_dev(host->mmc), "Unable to determine SOC PHY PAD ctrl type\n");
++		return ret;
++	}
++	if (!strcmp(name, "sd")) {
++		params->pad_ctrl.pad_type = SOC_PAD_SD;
++	} else if (!strcmp(name, "fixed-1-8v")) {
++		params->pad_ctrl.pad_type = SOC_PAD_FIXED_1_8V;
++	} else {
++		dev_err(mmc_dev(host->mmc), "Unsupported SOC PHY PAD ctrl type %s\n",
++			name);
++		return -EINVAL;
++	}
++
++	return ret;
++}
++
+ static int emmc_phy_parse_param_dt(struct sdhci_host *host,
+ 				   struct device_node *np,
+ 				   struct emmc_phy_params *params)
+@@ -654,7 +761,14 @@ static int emmc_phy_parse_param_dt(struct sdhci_host *host,
+ 	else
+ 		params->tun_step_divider = XENON_TUNING_STEP_DIVIDER;
+ 
+-	return 0;
++	return get_dt_pad_ctrl_data(host, np, params);
++}
++
++/* Set SOC PHY Voltage PAD */
++void xenon_soc_pad_ctrl(struct sdhci_host *host,
++			unsigned char signal_voltage)
++{
++	emmc_phy_set_soc_pad(host, signal_voltage);
+ }
+ 
+ /*
+diff --git a/drivers/mmc/host/sdhci-xenon.c b/drivers/mmc/host/sdhci-xenon.c
+index e51079b2d01c..be93af56c348 100644
+--- a/drivers/mmc/host/sdhci-xenon.c
++++ b/drivers/mmc/host/sdhci-xenon.c
+@@ -335,6 +335,8 @@ static int xenon_start_signal_voltage_switch(struct mmc_host *mmc,
+ 	 */
+ 	enable_xenon_internal_clk(host);
+ 
++	xenon_soc_pad_ctrl(host, ios->signal_voltage);
++
+ 	if (priv->init_card_type == MMC_TYPE_MMC)
+ 		return xenon_emmc_signal_voltage_switch(mmc, ios);
+ 
+diff --git a/drivers/mmc/host/sdhci-xenon.h b/drivers/mmc/host/sdhci-xenon.h
+index e87639774bca..57e7cb463413 100644
+--- a/drivers/mmc/host/sdhci-xenon.h
++++ b/drivers/mmc/host/sdhci-xenon.h
+@@ -104,4 +104,6 @@ struct sdhci_xenon_priv {
+ int xenon_phy_adj(struct sdhci_host *host, struct mmc_ios *ios);
+ int xenon_phy_parse_dt(struct device_node *np,
+ 		       struct sdhci_host *host);
++void xenon_soc_pad_ctrl(struct sdhci_host *host,
++			unsigned char signal_voltage);
+ #endif
+-- 
+git-series 0.9.1
