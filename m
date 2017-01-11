@@ -1,213 +1,88 @@
-Return-Path: <wens@csie.org>
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1484099788.26901.8.camel@mtksdaap41>
+Subject: Re: [PATCH] clk: mediatek: Fix MT2701 dependencies
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Jean Delvare <jdelvare@suse.de>
+CC: Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	<linux-clk@vger.kernel.org>, <linux-mediatek@lists.infradead.org>, "Matthias
+ Brugger" <matthias.bgg@gmail.com>, Erin Lo <erin.lo@mediatek.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Shunli Wang <shunli.wang@mediatek.com>, Michael
+ Turquette <mturquette@baylibre.com>
+Date: Wed, 11 Jan 2017 09:56:28 +0800
+In-Reply-To: <20170110130300.167d215b@endymion>
+References: <20170109113621.31d384c9@endymion>
+	 <c3da261a-eb85-9b30-d5e2-05863d2efad2@suse.de>
+	 <20170110130300.167d215b@endymion>
+Content-Type: text/plain; charset="ISO-8859-1"
 MIME-Version: 1.0
-In-Reply-To: <20170126103928.3kmvymoafsz5jfjm@lukather>
-References: <20170124023230.3990-1-wens@csie.org> <20170124023230.3990-8-wens@csie.org>
- <20170126103928.3kmvymoafsz5jfjm@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 26 Jan 2017 19:20:22 +0800
-Message-ID: <CAGb2v65QLAD4C27NoRHALO=2WzW=DC6OxwCCMhes-N+kWO3_kg@mail.gmail.com>
-Subject: Re: [PATCH 07/11] clk: sunxi-ng: Add A80 Display Engine CCU
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 26, 2017 at 6:39 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi,
->
-> On Tue, Jan 24, 2017 at 10:32:26AM +0800, Chen-Yu Tsai wrote:
->> Add support for the display engine clock controls found on the A80.
->>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->>  .../devicetree/bindings/clock/sun9i-de.txt         |  28 ++
->>  drivers/clk/sunxi-ng/Makefile                      |   1 +
->>  drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c            | 283 +++++++++++++++++++++
->>  drivers/clk/sunxi-ng/ccu-sun9i-a80-de.h            |  33 +++
->>  include/dt-bindings/clock/sun9i-a80-de.h           |  80 ++++++
->>  include/dt-bindings/reset/sun9i-a80-de.h           |  58 +++++
->>  6 files changed, 483 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/sun9i-de.txt
->>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
->>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-de.h
->>  create mode 100644 include/dt-bindings/clock/sun9i-a80-de.h
->>  create mode 100644 include/dt-bindings/reset/sun9i-a80-de.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/sun9i-de.txt b/Documentation/devicetree/bindings/clock/sun9i-de.txt
->> new file mode 100644
->> index 000000000000..3a5e6df70677
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/sun9i-de.txt
->> @@ -0,0 +1,28 @@
->> +Allwinner A80 Display Engine Clock Control Binding
->> +------------------------------------
->> +
->> +Required properties :
->> +- compatible: must contain one of the following compatibles:
->> +             - "allwinner,sun9i-a80-de-clocks"
->> +
->> +- reg: Must contain the registers base address and length
->> +- clocks: phandle to the clocks feeding the display engine subsystem.
->> +       Three are needed:
->> +  - "mod": the display engine module clock
->> +  - "dram": the DRAM bus clock for the system
->> +  - "bus": the bus clock for the whole display engine subsystem
->> +- clock-names: Must contain the clock names described just above
->> +- resets: phandle to the reset control for the display engine subsystem.
->> +- #clock-cells : must contain 1
->> +- #reset-cells : must contain 1
->> +
->> +Example:
->> +de_clocks: clock@03000000 {
->> +     compatible = "allwinner,sun9i-a80-de-clks";
->> +     reg = <0x03000000 0x30>;
->> +     clocks = <&ccu CLK_DE>, <&ccu CLK_SDRAM>, <&ccu CLK_BUS_DE>;
->> +     clock-names = "mod", "dram", "bus";
->> +     resets = <&ccu RST_BUS_DE>;
->> +     #clock-cells = <1>;
->> +     #reset-cells = <1>;
->> +};
->> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
->> index 8f37ef7fb67d..6feaac0c5600 100644
->> --- a/drivers/clk/sunxi-ng/Makefile
->> +++ b/drivers/clk/sunxi-ng/Makefile
->> @@ -26,4 +26,5 @@ obj-$(CONFIG_SUN8I_A33_CCU) += ccu-sun8i-a33.o
->>  obj-$(CONFIG_SUN8I_H3_CCU)   += ccu-sun8i-h3.o
->>  obj-$(CONFIG_SUN8I_V3S_CCU)  += ccu-sun8i-v3s.o
->>  obj-$(CONFIG_SUN9I_A80_CCU)  += ccu-sun9i-a80.o
->> +obj-$(CONFIG_SUN9I_A80_CCU)  += ccu-sun9i-a80-de.o
->>  obj-$(CONFIG_SUN9I_A80_CCU)  += ccu-sun9i-a80-usb.o
->> diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
->> new file mode 100644
->> index 000000000000..3fc27db0a49a
->> --- /dev/null
->> +++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
->> @@ -0,0 +1,283 @@
->> +/*
->> + * Copyright (c) 2016 Chen-Yu Tsai. All rights reserved.
->> + *
->> + * This software is licensed under the terms of the GNU General Public
->> + * License version 2, as published by the Free Software Foundation, and
->> + * may be copied, distributed, and modified under those terms.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/of_address.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/reset.h>
->> +
->> +#include "ccu_common.h"
->> +#include "ccu_div.h"
->> +#include "ccu_gate.h"
->> +#include "ccu_reset.h"
->> +
->> +#include "ccu-sun9i-a80-de.h"
->> +
->> +static SUNXI_CCU_GATE(fe0_clk,               "fe0",          "fe0-div",
->> +                   0x00, BIT(0), 0);
->> +static SUNXI_CCU_GATE(fe1_clk,               "fe1",          "fe1-div",
->> +                   0x00, BIT(1), 0);
->> +static SUNXI_CCU_GATE(fe2_clk,               "fe2",          "fe2-div",
->> +                   0x00, BIT(2), 0);
->> +static SUNXI_CCU_GATE(iep_deu0_clk,  "iep-deu0",     "de",
->> +                   0x00, BIT(4), 0);
->> +static SUNXI_CCU_GATE(iep_deu1_clk,  "iep-deu1",     "de",
->> +                   0x00, BIT(5), 0);
->> +static SUNXI_CCU_GATE(be0_clk,               "be0",          "be0-div",
->> +                   0x00, BIT(8), 0);
->> +static SUNXI_CCU_GATE(be1_clk,               "be1",          "be1-div",
->> +                   0x00, BIT(9), 0);
->> +static SUNXI_CCU_GATE(be2_clk,               "be2",          "be2-div",
->> +                   0x00, BIT(10), 0);
->> +static SUNXI_CCU_GATE(iep_drc0_clk,  "iep-drc0",     "de",
->> +                   0x00, BIT(12), 0);
->> +static SUNXI_CCU_GATE(iep_drc1_clk,  "iep-drc1",     "de",
->> +                   0x00, BIT(13), 0);
->> +static SUNXI_CCU_GATE(merge_clk,     "merge",        "de",
->> +                   0x00, BIT(20), 0);
->> +
->> +static SUNXI_CCU_GATE(dram_fe0_clk,  "dram-fe0",     "sdram",
->> +                   0x04, BIT(0), 0);
->> +static SUNXI_CCU_GATE(dram_fe1_clk,  "dram-fe1",     "sdram",
->> +                   0x04, BIT(1), 0);
->> +static SUNXI_CCU_GATE(dram_fe2_clk,  "dram-fe2",     "sdram",
->> +                   0x04, BIT(2), 0);
->> +static SUNXI_CCU_GATE(dram_deu0_clk, "dram-deu0",    "sdram",
->> +                   0x04, BIT(4), 0);
->> +static SUNXI_CCU_GATE(dram_deu1_clk, "dram-deu1",    "sdram",
->> +                   0x04, BIT(5), 0);
->> +static SUNXI_CCU_GATE(dram_be0_clk,  "dram-be0",     "sdram",
->> +                   0x04, BIT(8), 0);
->> +static SUNXI_CCU_GATE(dram_be1_clk,  "dram-be1",     "sdram",
->> +                   0x04, BIT(9), 0);
->> +static SUNXI_CCU_GATE(dram_be2_clk,  "dram-be2",     "sdram",
->> +                   0x04, BIT(10), 0);
->> +static SUNXI_CCU_GATE(dram_drc0_clk, "dram-drc0",    "sdram",
->> +                   0x04, BIT(12), 0);
->> +static SUNXI_CCU_GATE(dram_drc1_clk, "dram-drc1",    "sdram",
->> +                   0x04, BIT(13), 0);
->> +
->> +static SUNXI_CCU_GATE(bus_fe0_clk,   "bus-fe0",      "bus-de",
->> +                   0x08, BIT(0), 0);
->> +static SUNXI_CCU_GATE(bus_fe1_clk,   "bus-fe1",      "bus-de",
->> +                   0x08, BIT(1), 0);
->> +static SUNXI_CCU_GATE(bus_fe2_clk,   "bus-fe2",      "bus-de",
->> +                   0x08, BIT(2), 0);
->> +static SUNXI_CCU_GATE(bus_deu0_clk,  "bus-deu0",     "bus-de",
->> +                   0x08, BIT(4), 0);
->> +static SUNXI_CCU_GATE(bus_deu1_clk,  "bus-deu1",     "bus-de",
->> +                   0x08, BIT(5), 0);
->> +static SUNXI_CCU_GATE(bus_be0_clk,   "bus-be0",      "bus-de",
->> +                   0x08, BIT(8), 0);
->> +static SUNXI_CCU_GATE(bus_be1_clk,   "bus-be1",      "bus-de",
->> +                   0x08, BIT(9), 0);
->> +static SUNXI_CCU_GATE(bus_be2_clk,   "bus-be2",      "bus-de",
->> +                   0x08, BIT(10), 0);
->> +static SUNXI_CCU_GATE(bus_drc0_clk,  "bus-drc0",     "bus-de",
->> +                   0x08, BIT(12), 0);
->> +static SUNXI_CCU_GATE(bus_drc1_clk,  "bus-drc1",     "bus-de",
->> +                   0x08, BIT(13), 0);
->> +
->> +static SUNXI_CCU_M(fe0_div_clk, "fe0-div", "de", 0x20, 0, 4, 0);
->> +static SUNXI_CCU_M(fe1_div_clk, "fe1-div", "de", 0x20, 4, 4, 0);
->> +static SUNXI_CCU_M(fe2_div_clk, "fe2-div", "de", 0x20, 8, 4, 0);
->> +static SUNXI_CCU_M(be0_div_clk, "be0-div", "de", 0x20, 16, 4, 0);
->> +static SUNXI_CCU_M(be1_div_clk, "be1-div", "de", 0x20, 20, 4, 0);
->> +static SUNXI_CCU_M(be2_div_clk, "be2-div", "de", 0x20, 24, 4, 0);
->
-> I couldn't find any documentation for this CCU.
+On Tue, 2017-01-10 at 13:03 +0100, Jean Delvare wrote:
+> On Mon, 9 Jan 2017 21:08:50 +0100, Andreas Färber wrote:
+> > Hi Jean,
+> > 
+> > Am 09.01.2017 um 11:36 schrieb Jean Delvare:
+> > > If I say "no" to "Clock driver for Mediatek MT2701", I don't want to
+> > > be asked individually about each sub-driver. No means no.
+> > > 
+> > > Additionally, this driver shouldn't be proposed at all on non-mediatek
+> > > builds, unless build-testing.
+> > > 
+> > > Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> > > Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
+> > > Cc: Shunli Wang <shunli.wang@mediatek.com>
+> > > Cc: James Liao <jamesjj.liao@mediatek.com>
+> > > Cc: Erin Lo <erin.lo@mediatek.com>
+> > > Cc: Stephen Boyd <sboyd@codeaurora.org>
+> > > Cc: Michael Turquette <mturquette@baylibre.com>
+> > > Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> > > ---
+> > [...]
+> > > As another side note, I wonder why so many clock drivers have
+> > > "COMMON" in their symbol names. Looks wrong to me.
+> > 
+> > It refers to the Common Clock Framework:
+> > https://www.kernel.org/doc/Documentation/clk.txt
+> 
+> OK, thanks for the explanation. Still seems overkill to me to prefix
+> everything with COMMON_CLK when the drivers live under drivers/clk, but
+> oh well :-)
+> 
+> > > --- linux-4.10-rc2.orig/drivers/clk/mediatek/Kconfig	2017-01-01 23:31:53.000000000 +0100
+> > > +++ linux-4.10-rc2/drivers/clk/mediatek/Kconfig	2017-01-09 11:17:37.542344083 +0100
+> > > @@ -8,6 +8,7 @@ config COMMON_CLK_MEDIATEK
+> > >  
+> > >  config COMMON_CLK_MT2701
+> > >  	bool "Clock driver for Mediatek MT2701"
+> > > +	depends on ARCH_MEDIATEK || COMPILE_TEST
+> > >  	select COMMON_CLK_MEDIATEK
+> > >  	default ARCH_MEDIATEK
+> > 
+> > Should the default then become y for simplicity?
+> 
+> I left it as is as it is the same already done in other drivers in the
+> same directory. I agree "default y" would do the same in practice.
+> 
+> > Another aspect here is that this is a 32-bit SoC but it propagates into
+> > the arm64 configs, so maybe (ARCH_MEDIATEK && !ARM64) || COMPILE_TEST?
+> > 
+> > Same for mt2701 pinctrl.
+> > 
+> > http://kernel.opensuse.org/cgit/kernel-source/plain/config/arm64/default?id=ff90e915117c5d7a8bb00dc0bc1d3145ebe985ec
+> 
+> Actually I thought the driver was needed primarily on arm64 because of
+> this configuration file. If that's not the case then I can resubmit
+> with the suggested change, no problem.
+> 
+> What about MT8135 and MT8173, are they 32-bit SoCs as well?
 
-I dug this up in the released Allwinner kernel.
+MT8135 is a 32-bit SoC and MT8173 is a 64-bit SoC.
 
-> What are those clocks for, and how the display engine should be using
-> (ie, which one is it expecting to drive / ungate / etc.)
-
-Allwinner basically put all DE-related clock controls into a
-separate module. In here, as the names above suggest, we have
-bus gates, dram gates, and module clocks for each part of the
-display pipeline. As with older SoCs that have DE 1.0, each
-module should ungate and use the clocks related to them.
-
-I'll put something like the above in the commit message.
-
-ChenYu
-
-> Thanks!
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
+> > (...)
+> > Anyway, a step forward,
+> > 
+> > Reviewed-by: Andreas Färber <afaerber@suse.de>
+> 
+> Thanks for the review.
+> 
