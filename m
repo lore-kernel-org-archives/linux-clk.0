@@ -1,44 +1,84 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <AM3PR04MB530A88C5C0E7C6AD2C59B9E87790@AM3PR04MB530.eurprd04.prod.outlook.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
- <AM3PR04MB5304992095753B761E66A9A87640@AM3PR04MB530.eurprd04.prod.outlook.com>
- <CACRpkdYTpEHyzBY-mA4YUsj=xt46Pibka3-4VHwUXosfgbgp1Q@mail.gmail.com> <AM3PR04MB530A88C5C0E7C6AD2C59B9E87790@AM3PR04MB530.eurprd04.prod.outlook.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 13 Jan 2017 16:22:19 +0100
-Message-ID: <CACRpkda1a4+yOrzBnKs6J84PS0StwQ68gHxDub_u7i5ofU9s7w@mail.gmail.com>
-Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
- for imx6sll
-To: Jacky Bai <ping.bai@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"jacky.baip@gmail.com" <jacky.baip@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/2] clk: vc5: Add bindings for IDT VersaClock 5P49V5923 and 5P49V5933
+Date: Wed, 11 Jan 2017 17:16:02 +0100
+Message-Id: <20170111161603.18905-1-marek.vasut@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 12, 2017 at 3:57 AM, Jacky Bai <ping.bai@nxp.com> wrote:
+Add bindings for IDT VersaClock 5 5P49V5923 and 5P49V5933 chips.
+These are I2C clock generators with optional clock source from
+either XTal or dedicated clock generator and, depending on the
+model, two or more clock outputs.
 
-> Another thing is that we can use a pins-tool program developed by NXP to
->  generate the pinctrl configuration code that can be used directly in dts. This
-> tiny program can avoid pin function conflict. As on i.MX, there are so may pins,
-> each pin can be used for up 8  function. Configuring the pins is a time-consuming
-> work.  This tools is very useful for customer to generate the dts code.
+Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ .../devicetree/bindings/clock/idt,versaclock5.txt  | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/idt,versaclock5.txt
 
-I understand, but every silicon vendor has such a tool, all are different,
-proprietary and unfriendly to programmers and open source developers, who
-need to understand how the hardware is working without magic tools
-and secret data sheets to fix bugs.
-
-For the people working with maintaining the code it is paramount that
-DTS files are self-descriptive.
-
-Yours,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+new file mode 100644
+index 000000000000..82ebed9a8a15
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+@@ -0,0 +1,43 @@
++Binding for IDT VersaClock5 programmable i2c clock generator.
++
++The IDT VersaClock5 are programmable i2c clock generators providing
++from 3 to 12 output clocks.
++
++==I2C device node==
++
++Required properties:
++- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933".
++- reg:		i2c device address, shall be 0x68 or 0x6a.
++- #clock-cells:	from common clock binding; shall be set to 1.
++- clocks:	from common clock binding; list of parent clock handles,
++		- 5p49v5923: (required) either or both of XTAL or CLKIN
++					reference clock.
++		- 5p49v5933: (optional) property not present (internal
++					Xtal used) or CLKIN reference
++					clock.
++- clock-names:	from common clock binding; clock input names, can be
++		- 5p49v5923: (required) either or both of "xin", "clkin".
++		- 5p49v5933: (optional) property not present or "clkin".
++
++==Example==
++
++/* 25MHz reference crystal */
++ref25: ref25m {
++	compatible = "fixed-clock";
++	#clock-cells = <0>;
++	clock-frequency = <25000000>;
++};
++
++i2c-master-node {
++
++	/* IDT 5P49V5923 i2c clock generator */
++	vc5: clock-generator@6a {
++		compatible = "idt,5p49v5923";
++		reg = <0x6a>;
++		#clock-cells = <1>;
++
++		/* Connect XIN input to 25MHz reference */
++		clocks = <&ref25m>;
++		clock-names = "xin";
++	};
++};
+-- 
+2.11.0
