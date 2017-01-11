@@ -1,39 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 9 Jan 2017 16:08:43 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	webczat_200@poczta.onet.pl,
-	Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH] clk: scpi: don't add cpufreq device if the scpi dvfs
- node is disabled
-Message-ID: <20170110000843.GC17126@codeaurora.org>
-References: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
+Return-Path: <jacobchen110@gmail.com>
+Return-Path: <jacobchen110@gmail.com>
+From: Jacob Chen <jacob-chen@iotwrt.com>
+To: heiko@sntech.de,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	zhangqing@rock-chips.com,
+	zhengxing@rock-chips.com,
+	Jacob Chen <jacob-chen@iotwrt.com>
+Subject: [PATCH] clk: rockchip: rk3288: make aclk_vio1_niu a critical clock
+Date: Wed, 11 Jan 2017 09:26:32 +0800
+Message-Id: <1484097992-9118-1-git-send-email-jacob-chen@iotwrt.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/06, Sudeep Holla wrote:
-> Currently we add the virtual cpufreq device unconditionally even when
-> the SCPI DVFS clock provider node is disabled. This will cause cpufreq
-> driver to throw errors when it gets initailised on boot/modprobe and
-> also when the CPUs are hot-plugged back in.
-> 
-> This patch fixes the issue by adding the virtual cpufreq device only if
-> the SCPI DVFS clock provider is available and registered.
-> 
-> Fixes: 9490f01e2471 ("clk: scpi: add support for cpufreq virtual device")
-> Reported-by: Michał Zegan <webczat_200@poczta.onet.pl>
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
+According to the pd blocks, VIO1_NIU is required by RGA,ISP and VOP1.
+Then at least one VIO_NIU should be turned on to supply eDP, HDMI, MIPI.
 
-Applied to clk-next
+If eDP,HDMI,MIPI is inited early than VOP or RGA is inited early than VOP1,
+system will hang.
 
+So make aclk_vio1_niu a critical clock and turn it on at all times.
+
+Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
+---
+ drivers/clk/rockchip/clk-rk3288.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index f071c24..59ee244 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -815,6 +815,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ static const char *const rk3288_critical_clocks[] __initconst = {
+ 	"aclk_cpu",
+ 	"aclk_peri",
++	"aclk_vio1_niu",
+ 	"hclk_peri",
+ 	"pclk_pd_pmu",
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
