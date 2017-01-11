@@ -1,88 +1,90 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Thu, 5 Jan 2017 23:04:40 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: Re: [PATCH 3/6] clk: sunxi-ng: Add H5 clocks
-Message-ID: <20170105220440.x5gfw3z7axlrxwxh@lukather>
-References: <20161226162518.5367-1-icenowy@aosc.xyz>
- <20161226162518.5367-4-icenowy@aosc.xyz>
-MIME-Version: 1.0
-In-Reply-To: <20161226162518.5367-4-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
- Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============8386222420957140128=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v5 03/12] mmc: sdhci: Export sdhci_start_signal_voltage_switch() in sdhci.c
+Date: Wed, 11 Jan 2017 18:19:06 +0100
+Message-Id: <2873669b64ab2a992b7c286195c0c7941b09c5a3.1484154449.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Hu Ziji <huziji@marvell.com>
 
---===============8386222420957140128==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wa43b3sxhjdpx6uo"
-Content-Disposition: inline
+Export sdhci_start_signal_voltage_switch() from sdhci.c.
+Thus vendor sdhci driver can implement its own signal voltage
+switch routine.
 
+Signed-off-by: Hu Ziji <huziji@marvell.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ drivers/mmc/host/sdhci.c | 5 +++--
+ drivers/mmc/host/sdhci.h | 2 ++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
---wa43b3sxhjdpx6uo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Dec 27, 2016 at 12:25:15AM +0800, Icenowy Zheng wrote:
-> Add the H5 CCU clocks set based on the H3 one.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-
-Is there any difference with H3's?
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---wa43b3sxhjdpx6uo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYbsL4AAoJEBx+YmzsjxAgdOsP+wdbkP7FCgtcEFfjFoaiDWdI
-VaAgGEZ860GbGUUQRSplxLimGXHOnnJ2FL+CsIVnoaJ4fJjCiZG4d/9k1QzPksRV
-2UcR3EXzNGIVaNiZ7UYD3L7dZPp8NQtlYM04YpIKr52OemQlE6OlNAnAfTgr8I1N
-pvFRXoKcfwHn+rStFOIE5E848iDIWgl9lcVvY112dtNT5SCy65HV4EAP/+b37vNj
-S90LYDaJsMyA8nvyB6SsW+Z/5TAQfl81G6ukoPfQfhghjn1dRYb4WhLHTkDTG/Zt
-QuHEUtOhquKDJCdjecJAgaQXs4aN/fy1afXSCiW+OOIuUKsPevoXnh0RM53O2ZDy
-RVSE/frdqLxDw3e10PA/opQP7c2QqrwqcKyOzBJO+oFaaYgf1X3qF1zxZ38WDSqk
-YlKJMY+mPm9kK5b6NqTPSjkMq+WlaeGyTd4/wpNp3ZfBjUZ1AsZObqUoebUh1FZh
-na87iixPvrn12wCd/xKW11eeQGWDUvLCGql7QoU/lCvozoQmvrxtQbiuK7YpCRvc
-sJAdKpkVJsBLDIIg+YVtFKsFzzL3GQ2jNkU2iryZJSGrJnOrPqwPp9FRf7OSMota
-gJxyhFHLXUaH6XpDWA5XyJsO6mOJEWV4QoBFRqbuNeL9UszlIE4OAbLyTPV3xsS5
-iVIJ0kL4wklGg/wlWMCa
-=Tk+w
------END PGP SIGNATURE-----
-
---wa43b3sxhjdpx6uo--
-
-
---===============8386222420957140128==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============8386222420957140128==--
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 0e9ed0fadff9..d2338dc362f4 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1839,8 +1839,8 @@ static void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable)
+ 	spin_unlock_irqrestore(&host->lock, flags);
+ }
+ 
+-static int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+-					     struct mmc_ios *ios)
++int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
++				      struct mmc_ios *ios)
+ {
+ 	struct sdhci_host *host = mmc_priv(mmc);
+ 	u16 ctrl;
+@@ -1932,6 +1932,7 @@ static int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+ 		return 0;
+ 	}
+ }
++EXPORT_SYMBOL_GPL(sdhci_start_signal_voltage_switch);
+ 
+ static int sdhci_card_busy(struct mmc_host *mmc)
+ {
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 3563c0c384ca..e4a07543a12b 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -692,6 +692,8 @@ void sdhci_reset(struct sdhci_host *host, u8 mask);
+ void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
+ int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
+ void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios);
++int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
++				      struct mmc_ios *ios);
+ 
+ #ifdef CONFIG_PM
+ extern int sdhci_suspend_host(struct sdhci_host *host);
+-- 
+git-series 0.9.1
