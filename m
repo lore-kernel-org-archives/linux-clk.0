@@ -1,105 +1,152 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Thu, 12 Jan 2017 18:13:45 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: Re: [linux-sunxi] Re: [PATCH 2/5] clk: sunxi-ng: add support for V3s
- CCU
-Message-ID: <20170112171345.nzkgg6jjyz6ywb54@lukather>
-References: <20170111065524.tILSH8cS@smtp1p.mail.yandex.net>
-MIME-Version: 1.0
-In-Reply-To: <20170111065524.tILSH8cS@smtp1p.mail.yandex.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org,
- linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============4529201150131795672=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v5 00/12] mmc: Add support to Marvell Xenon SD Host Controller
+Date: Wed, 11 Jan 2017 18:19:03 +0100
+Message-Id: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello,
 
---===============4529201150131795672==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xtl6ajsohtdxdgqk"
-Content-Disposition: inline
+This the fifth version of the series adding support for the SDHCI
+Xenon controller. It can be currently found on the Armada 37xx and the
+Armada 7K/8K but will be also used in more Marvell SoC (and not only
+the mvebu ones actually).
 
+v4->v5:
 
---xtl6ajsohtdxdgqk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+- Remove the patch to export sdhci_execute_tuning(). It is already
+  exported in v4.10.
 
-Hi,
+- Introduce a patch adding a missing clock for the sdhci controller
+  present on the CP master for A7K/A8K. There is no build dependency
+  but obviously this patch is need to use the sdhci controller present
+  on the CP part.
 
-On Wed, Jan 11, 2017 at 11:55:16AM +0800, Icenowy Zheng wrote:
->=20
-> 2017=E5=B9=B41=E6=9C=8811=E6=97=A5 02:10=E4=BA=8E Maxime Ripard <maxime.r=
-ipard@free-electrons.com>=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On Tue, Jan 03, 2017 at 11:16:26PM +0800, Icenowy Zheng wrote:=20
-> > > V3s has a similar but cut-down CCU to H3.=20
-> > >=20
-> > > Add support for it.=20
-> > >=20
-> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>=20
-> >
-> > It looks like there's nothing different but the clocks that you=20
-> > register with the H3, please just use the H3 driver.=20
->=20
-> USB gate part is different, and many things have gone.
+- Adjust Xenon return setup, to avoid being overwritten by
+   sdhci_add_host().
 
-As far as I can see, you're only adding a few clocks, and removing a
-bunch. This is definitely something that can be dealt with by simply
-registering a slightly different set of clocks, like we're doing on
-sun5i.
+- Change Xenon register definition prefix to "XENON_".
 
-Maxime
+-  Fix typos in Xenon driver and dt-binding docs.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+- Change compatible string "marvell,armada-7000-sdhci" to
+  "marvell,armada-8k-sdhci". Actually the Armada 7K SoCs are a subset
+  of the Armada 8K SoCs. Moreover, the use of the '000' is not
+  consistent with all the other compatible string already used for the
+  Armada 7K/8K family.
 
---xtl6ajsohtdxdgqk
-Content-Type: application/pgp-signature; name="signature.asc"
+- Added the Tested-by from Russell King on an Armada 8K based board.
 
------BEGIN PGP SIGNATURE-----
+v3 -> v4:
+For this version a few change have been done:
+- fixes 2 bug  reported by kbuild-bot
+  - remove extra of_node_put()
+  - convert 0 in false for function returning boolean
 
-iQIcBAEBCAAGBQJYd7lEAAoJEBx+YmzsjxAgcUMP/03z4B5xu2ltdotMrezeOC0K
-PHB7Wq8Rrfqzu2ZwcUieC5PsDZmRdhW13M7C56iFyvnG6sIWuD1qbCCcLVh0ZhAd
-5woJrj5g9nZsc2aNEKGmMjbtrCu6qFJFM7ZxGavjUJvepuxwyg3Ftxup75erakAd
-5fdRJ5eE/+nxzN4ywDp2IhxLFAx8G5y/1KnPnK4bZw10yPOiytAzKBxddOK6MkJW
-qI3qOK3HCU++5VU262uHUy2/3EpDDP1KWvH6+SRLbcvmWAI8h34HB9S7f1NXrQFf
-r/DYPG6e7T2Q/DAj9j0W72vCHIU9QecobSrWUolUUgfEgdpjkYbiREEAhl4qutB4
-G5IqTcBuNDxfUQ7J9Jb3JwtMgJN8+Jc309nELDDF/2aoHegMrKwpVc8fcRO2kGBy
-mTBbBufvPlFU30pT26ut2pbTKSqpE9vxcb84vAR7tRCwPsFFyP435tKZSGQiMQFm
-8Q4/nK/130l0Wc0re8Kk3fgNg49KQ1QEgrgc9IipzvAm2412qkFuDUVmmLbqmfZs
-DWwsBvH41DJvk0EF76FttHmOe5pD/korDuEKcawxi50iw3tim63yE9Hpl6mRcEI9
-7YB7sEVQMhzM0QSrjz26ngj4+95C839LR35FjC2vRZByIE/B6GZSB7uHh9rLAbMy
-OqHnBbDZACZb5Gj1voTr
-=R7Qx
------END PGP SIGNATURE-----
+- add a device tree node for the sdhci controller present on the CP
+  master for A7K/A8K. It also led to rename the sdhci0 node on AP to
+  ap_sdhci0 to make a distinction with the one present on CP master.
 
---xtl6ajsohtdxdgqk--
+v2 -> v3
+I think that now most (if not all) the remarks had been taking into
+account since the second version. According to Ziji Hu, here are the
+following changes:
+" Changes in V3:
+  Adjust and improve Xenon DT bindings. Move some caps setting from driver into
+  DT. Use mmc-card sub-node to represent eMMC type.
+  Remove PHY Sampling Fixed Delay Line scan in lower speed mode.
+  Improve Xenon probe and ->init_card() functions.
+  Export sdhci_enable_sdio_irq() and implement own SDIO IRQ control.
+  Split PHY patch into two smaller patches.
+  Temporarily remove AXI clock before its implementation is improved."
 
+Besides this changes I also
+- Removed the sdhci-xenon-phy.h and moved its content in the
+shc-xenon-phy.c file.
+- Fixed the tuning-count usage
+- Managed the error case for clk_prepare_enable
 
---===============4529201150131795672==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+For the record the change from v1 was:
+" Changes in V2:
+  rebase on v4.9-rc2.
+  Re-write Xenon bindings. Ajust Xenon DT property naming.
+  Add a new DT property to indicate eMMC card type, instead of using
+  variable card_candidate.
+  Clear quirks SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12 in Xenon platform data
+  Add support to HS400 retuning."
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thanks,
 
---===============4529201150131795672==--
+Gregory
+
+Gregory CLEMENT (3):
+  arm64: dts: marvell: add eMMC support for Armada 37xx
+  arm64: dts: marvell: add sdhci support for Armada 7K/8K
+  arm64: configs: enable SDHCI driver for Xenon
+
+Hu Ziji (8):
+  mmc: sdhci: Export sdhci_set_ios() from sdhci.c
+  mmc: sdhci: Export sdhci_start_signal_voltage_switch() in sdhci.c
+  mmc: sdhci: Export sdhci_enable_sdio_irq() from sdhci.c
+  dt: bindings: Add bindings for Marvell Xenon SD Host Controller
+  mmc: sdhci-xenon: Add Marvell Xenon SDHC core functionality
+  mmc: sdhci-xenon: Add support to PHYs of Marvell Xenon SDHC.
+  mmc: sdhci-xenon: Add SoC PHY PAD voltage control
+  MAINTAINERS: add entry for Marvell Xenon MMC Host Controller drivers
+
+Konstantin Porotchkin (1):
+  clk: apn806: Add eMMC clock to system controller driver
+
+ Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt | 197 ++-
+ MAINTAINERS                                                   |   7 +-
+ arch/arm64/boot/dts/marvell/armada-3720-db.dts                |  16 +-
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi                  |  11 +-
+ arch/arm64/boot/dts/marvell/armada-7040-db.dts                |  14 +-
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi                 |  13 +-
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi          |  11 +-
+ arch/arm64/configs/defconfig                                  |   1 +-
+ drivers/clk/mvebu/ap806-system-controller.c                   |  15 +-
+ drivers/mmc/host/Kconfig                                      |   9 +-
+ drivers/mmc/host/Makefile                                     |   3 +-
+ drivers/mmc/host/sdhci-xenon-phy.c                            | 904 +++++++-
+ drivers/mmc/host/sdhci-xenon.c                                | 634 +++++-
+ drivers/mmc/host/sdhci-xenon.h                                | 109 +-
+ drivers/mmc/host/sdhci.c                                      |  11 +-
+ drivers/mmc/host/sdhci.h                                      |   4 +-
+ 16 files changed, 1953 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
+ create mode 100644 drivers/mmc/host/sdhci-xenon-phy.c
+ create mode 100644 drivers/mmc/host/sdhci-xenon.c
+ create mode 100644 drivers/mmc/host/sdhci-xenon.h
+
+base-commit: 0c744ea4f77d72b3dcebb7a8f2684633ec79be88
+-- 
+git-series 0.9.1
