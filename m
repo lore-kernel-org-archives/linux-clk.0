@@ -1,87 +1,86 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
- Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v2 0/9] Allwinner H5 and Orange Pi PC2 support
-Date: Thu, 26 Jan 2017 23:48:50 +0800
-Message-Id: <20170126154859.55855-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v5 02/12] mmc: sdhci: Export sdhci_set_ios() from sdhci.c
+Date: Wed, 11 Jan 2017 18:19:05 +0100
+Message-Id: <0963475695aab0f33fc999314b9a533524432340.1484154449.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H5 is a 64-bit SoC with a design like the 32-bit
-H3.
+From: Hu Ziji <huziji@marvell.com>
 
-This patch adds support for it, along with the first available
-board -- Orange Pi PC2.
+Export sdhci_set_ios() in sdhci.c.
+Thus vendor sdhci driver can implement its own set_ios() routine.
 
-P.S. Some patches are sent wrongly, please ignore them. Sorry.
+Signed-off-by: Hu Ziji <huziji@marvell.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ drivers/mmc/host/sdhci.c | 3 ++-
+ drivers/mmc/host/sdhci.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-Andre Przywara (3):
-  arm: dts: sun8i: split Allwinner H3 .dtsi
-  arm64: dts: allwinner: add Allwinner H5 .dtsi
-  arm64: dts: sunxi: add support for the Orange Pi PC 2 board
-
-Icenowy Zheng (6):
-  drivers: pinctrl: add driver for Allwinner H5 SoC
-  arm64: allwinner: Kconfig: add essential pinctrl driver for H5
-  clk: sunxi-ng: add support for Allwinner H5 SoC
-  clk: sunxi-ng: remove transitional headers for dt-bindings
-  dmaengine: sun6i: allow build on ARM64 platforms (sun50i)
-  ASoC: sunxi: allow the analog codec driver to be built on ARM64
-
- .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
- arch/arm/boot/dts/sun8i-h3.dtsi                    | 501 +-----------------
- arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 557 ++++++++++++++++++++
- arch/arm64/Kconfig.platforms                       |   5 +-
- arch/arm64/boot/dts/allwinner/Makefile             |   1 +
- .../boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 164 ++++++
- arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       | 140 ++++++
- arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi     |   1 +
- drivers/clk/sunxi-ng/Kconfig                       |   6 +-
- drivers/clk/sunxi-ng/Makefile                      |   2 +-
- .../sunxi-ng/{ccu-sun8i-h3.c => ccu-sunxi-h3-h5.c} | 179 ++++++-
- .../sunxi-ng/{ccu-sun8i-h3.h => ccu-sunxi-h3-h5.h} |  15 +-
- drivers/dma/Kconfig                                |   2 +-
- drivers/pinctrl/sunxi/Kconfig                      |   4 +
- drivers/pinctrl/sunxi/Makefile                     |   1 +
- drivers/pinctrl/sunxi/pinctrl-sun50i-h5.c          | 558 +++++++++++++++++++++
- .../clock/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h}    |  11 +-
- .../reset/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h}    |  11 +-
- sound/soc/sunxi/Kconfig                            |   2 +-
- 20 files changed, 1628 insertions(+), 534 deletions(-)
- create mode 100644 arch/arm/boot/dts/sunxi-h3-h5.dtsi
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
- create mode 120000 arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
- rename drivers/clk/sunxi-ng/{ccu-sun8i-h3.c => ccu-sunxi-h3-h5.c} (80%)
- rename drivers/clk/sunxi-ng/{ccu-sun8i-h3.h => ccu-sunxi-h3-h5.h} (82%)
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h5.c
- rename include/dt-bindings/clock/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h} (95%)
- rename include/dt-bindings/reset/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h} (94%)
-
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 23909804ffb8..0e9ed0fadff9 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1570,7 +1570,7 @@ void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing)
+ }
+ EXPORT_SYMBOL_GPL(sdhci_set_uhs_signaling);
+ 
+-static void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
++void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ {
+ 	struct sdhci_host *host = mmc_priv(mmc);
+ 	unsigned long flags;
+@@ -1730,6 +1730,7 @@ static void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	mmiowb();
+ 	spin_unlock_irqrestore(&host->lock, flags);
+ }
++EXPORT_SYMBOL_GPL(sdhci_set_ios);
+ 
+ static int sdhci_get_cd(struct mmc_host *mmc)
+ {
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 0b66f210ae82..3563c0c384ca 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -691,6 +691,7 @@ void sdhci_set_bus_width(struct sdhci_host *host, int width);
+ void sdhci_reset(struct sdhci_host *host, u8 mask);
+ void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
+ int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
++void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios);
+ 
+ #ifdef CONFIG_PM
+ extern int sdhci_suspend_host(struct sdhci_host *host);
 -- 
-2.11.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+git-series 0.9.1
