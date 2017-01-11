@@ -1,35 +1,147 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, xf@rock-chips.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com, cl@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 4/4] clk: rockchip: add clock controller for rk3328
-Date: Thu, 05 Jan 2017 13:53:44 +0100
-Message-ID: <2499480.rhkWDTFgrm@phil>
-In-Reply-To: <1482979511-6847-5-git-send-email-zhangqing@rock-chips.com>
-References: <1482979511-6847-1-git-send-email-zhangqing@rock-chips.com> <1482979511-6847-5-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <stanimir.varbanov@linaro.org>
+Return-Path: <stanimir.varbanov@linaro.org>
+Subject: Re: [PATCH] clk: qcom: gdsc: Fix handling of hw control
+ enable/disable
+To: Sricharan <sricharan@codeaurora.org>,
+ 'Stanimir Varbanov' <stanimir.varbanov@linaro.org>,
+ 'Rajendra Nayak' <rnayak@codeaurora.org>, sboyd@codeaurora.org,
+ mturquette@baylibre.com
+References: <1484027679-18397-1-git-send-email-rnayak@codeaurora.org>
+ <db0b904e-4d28-b404-802b-7c2bcf0801e9@linaro.org>
+ <006e01d26b77$dceaa090$96bfe1b0$@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <df75bf26-2c10-d99f-330e-fdcbf68e97b3@linaro.org>
+Date: Wed, 11 Jan 2017 10:55:00 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <006e01d26b77$dceaa090$96bfe1b0$@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 29. Dezember 2016, 10:45:11 CET schrieb Elaine Zhang:
-> Add the clock tree definition for the new rk3328 SoC.
+Hi Sricharan,
+
+On 01/10/2017 09:29 PM, Sricharan wrote:
+> Hi stan,
 > 
-> Changes in v5:
->   fix up some code style, remove grf clk init and cru dump.
-> Changes in v4:
->   adjust the pacth 3 and 4 order.
-> Changes in v3:
->   fix up the pll parent only xin24m.
-> Changes in v2:
->   fix up these *_sample error description.
+>> -----Original Message-----
+>> From: linux-arm-msm-owner@vger.kernel.org [mailto:linux-arm-msm-owner@vger.kernel.org] On Behalf Of Stanimir Varbanov
+>> Sent: Tuesday, January 10, 2017 10:14 PM
+>> To: Rajendra Nayak <rnayak@codeaurora.org>; sboyd@codeaurora.org; mturquette@baylibre.com
+>> Cc: linux-clk@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-kernel@vger.kernel.org; sricharan@codeaurora.org
+>> Subject: Re: [PATCH] clk: qcom: gdsc: Fix handling of hw control enable/disable
+>>
+>> Hi Rajendra,
+>>
+>> On 01/10/2017 07:54 AM, Rajendra Nayak wrote:
+>>> Once a gdsc is brought in and out of HW control, there is a
+>>> power down and up cycle which can take upto 1us. Polling on
+>>> the gdsc status immediately after the hw control enable/disable
+>>> can mislead software/firmware to belive the gdsc is already either on
+>>> or off, while its yet to complete the power cycle.
+>>> To avoid this add a 1us delay post a enable/disable of HW control
+>>> mode.
+>>>
+>>> Also after the HW control mode is disabled, poll on the status to
+>>> check gdsc status reflects its 'on' before force disabling it
+>>> in software.
+>>>
+>>> Reported-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+>>> ---
+>>>
+>>> Stan,
+>>> If there was a specific issue you saw with venus because of the missing
+>>> delay and poll, can you check if this fixes any of that.
+>>
+>> Something more about the issue.
+>>
+>> I had re-designed venus driver on three platform drivers venus-core,
+>> venus-dec and venus-enc in order to be able to control those three
+>> power-domains (VENUS_GDSC, VENUS_CORE0_GDSC and VENUS_CORE1_GDSC).
+>>
+>> After that I abstracted MMAGIC hw on a separate mmagic driver. This
+>> driver just controls mmagic clocks and GDSC in its runtime_suspend and
+>> runtime_resume methods.
+>>
+>> The DT nodes looks like:
+>>
+>> mmagic_video {
+>> 	compatible = "qcom,msm8996-mmagic";
+>> 	clocks = <&rpmcc MSM8996_RPM_SMD_MMAXI_CLK>,
+>> 		 <&mmcc MMSS_MMAGIC_AHB_CLK>,
+>> 		 <&mmcc MMSS_MMAGIC_CFG_AHB_CLK>,
+>> 		 <&mmcc MMAGIC_VIDEO_NOC_CFG_AHB_CLK>,
+>> 		 <&mmcc MMSS_MMAGIC_MAXI_CLK>,
+>> 		 <&mmcc MMAGIC_VIDEO_AXI_CLK>,
+>> 		 <&mmcc SMMU_VIDEO_AHB_CLK>,
+>> 		 <&mmcc SMMU_VIDEO_AXI_CLK>;
+>> 	power-domains = <&mmcc MMAGIC_VIDEO_GDSC>;
+>>
+>> 	video-codec {
+>> 		compatible = "qcom,msm8996-venus";
+>> 		clocks = <&mmcc VIDEO_CORE_CLK>,
+>> 			 <&mmcc VIDEO_AHB_CLK>,
+>> 			 <&mmcc VIDEO_AXI_CLK>,
+>> 			 <&mmcc VIDEO_MAXI_CLK>;
+>> 		power-domains = <&mmcc VENUS_GDSC>;
+>> 		...
+>>
+>> 		video-decoder {
+>> 			compatible = "venus-decoder";
+>> 			clocks = "subcore0";
+>> 			clock-names = <&mmcc VIDEO_SUBCORE0_CLK>;
+>> 			power-domains = <&mmcc VENUS_CORE0_GDSC>;
+>> 		};
+>>
+>> 		video-encoder {
+>> 			compatible = "venus-encoder";
+>> 			clocks = "subcore1";
+>> 			clock-names = <&mmcc VIDEO_SUBCORE1_CLK>;
+>> 			power-domains = <&mmcc VENUS_CORE1_GDSC>;
+>> 		};
+>> 	};
+>> };
+>>
+>> Note that mmagic_video is a parent dt node for smmu_video DT node so
+>> that clocks and mmagic_video gdsc will be enabled once smmu driver is
+>> instantiated by venus-core diriver.
+>>
 > 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> mmagic_video is a parent DT for smmu_video ? , so there are no clocks
+> populated for the smmu node as such ?
 
-applied for 4.11.
+Yes, I completely disabled runtime pm in the arm-smmu driver.
 
-You might also want to readd your mac2phy grf clocks via the newly
-introduced muxgrf clock-type [0] in a follow-up-patch.
+> 
+>> Now when video-dec driver calls pm_runtime_get_sync() the sequence of
+>> enabling is:
+>>
+>> MMAGIC_VIDEO_GDSC -> MMAGIC clocks and SMMU clocks -> VENUS_GDSC ->
+>> VIDEO clocks -> VENUS_CORE0_GDSC -> VIDEO subcore0 clock
+>>
+>> When video-dec platform driver calls pm_runtime_put_sync() we should
+>> disabling of GDSC and clocks in the reversed oder.
+>>
+>> The issue comes when I have ran video decoder, the decoder hw finish
+>> stream decoding and we want to suspend venus core. The issue is that
+>> when I start disabling SMMU_VIDEO_AXI_CLK and/or MMAGIC_VIDEO_AXI_CLK
+>> the system reboots.
+>>
+>> I have added a delay (200ms) before disabling mmagic clocks and then
+>> everything is fine again.
+>>
+>> Any idea?
+>>
+> 
+> Can you share me a branch, i can have a quick check with a t32
+> if there is any crash logged in the TZ buffer when the system reboots.
 
-Heiko
+I can share a branch but you will need my initramfs too.
 
-[0] https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commit/?id=cb1d9f6ddaa436f2dce2710740b7a3546700949c
+I don't think it is tz related, most probably it is MMAGIC sequence
+issue or something in GDSC/MMCC.
+
+-- 
+regards,
+Stan
