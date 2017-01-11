@@ -1,53 +1,61 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Jacob Chen <jacob-chen@iotwrt.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, zhangqing@rock-chips.com, zhengxing@rock-chips.com
-Subject: Re: [PATCH] clk: rockchip: rk3288: make aclk_vio1_niu a critical clock
-Date: Sat, 14 Jan 2017 12:19:45 +0100
-Message-ID: <2173949.kdqYFWM6te@phil>
-In-Reply-To: <1484097992-9118-1-git-send-email-jacob-chen@iotwrt.com>
-References: <1484097992-9118-1-git-send-email-jacob-chen@iotwrt.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v5 12/12] arm64: configs: enable SDHCI driver for Xenon
+Date: Wed, 11 Jan 2017 18:19:15 +0100
+Message-Id: <cfd5aee4adf7f27e77263f7aa99a7accf05ac3ba.1484154449.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jacob,
+This patch enables the driver for the SDHCI controller found on the
+Marvell Armada 3700 and 7K/8K ARM64 SoCs.
 
-Am Mittwoch, 11. Januar 2017, 09:26:32 CET schrieb Jacob Chen:
-> According to the pd blocks, VIO1_NIU is required by RGA,ISP and VOP1.
-> Then at least one VIO_NIU should be turned on to supply eDP, HDMI, MIPI.
-> 
-> If eDP,HDMI,MIPI is inited early than VOP or RGA is inited early than VOP1,
-> system will hang.
-> 
-> So make aclk_vio1_niu a critical clock and turn it on at all times.
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-NIU clocks are part of the interconnect, which we do not model at all yet,
-so I guess all of those should never be turned off (until an interconnect 
-driver handles them).
-
-Could you just make all of them critical in one go please, so that we don't 
-have to each clock on its own once things break?
-
-
-Thanks
-Heiko
-
-> 
-> Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
-> ---
->  drivers/clk/rockchip/clk-rk3288.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3288.c
-> b/drivers/clk/rockchip/clk-rk3288.c index f071c24..59ee244 100644
-> --- a/drivers/clk/rockchip/clk-rk3288.c
-> +++ b/drivers/clk/rockchip/clk-rk3288.c
-> @@ -815,6 +815,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[]
-> __initdata = { static const char *const rk3288_critical_clocks[]
-> __initconst = { "aclk_cpu",
->  	"aclk_peri",
-> +	"aclk_vio1_niu",
->  	"hclk_peri",
->  	"pclk_pd_pmu",
->  };
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 869dded0f09f..341fc631f598 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -390,6 +390,7 @@ CONFIG_MMC_DW_EXYNOS=y
+ CONFIG_MMC_DW_K3=y
+ CONFIG_MMC_DW_ROCKCHIP=y
+ CONFIG_MMC_SUNXI=y
++CONFIG_MMC_SDHCI_XENON=y
+ CONFIG_NEW_LEDS=y
+ CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_GPIO=y
+-- 
+git-series 0.9.1
