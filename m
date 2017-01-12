@@ -1,86 +1,105 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Thu, 12 Jan 2017 18:13:45 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [linux-sunxi] Re: [PATCH 2/5] clk: sunxi-ng: add support for V3s
+ CCU
+Message-ID: <20170112171345.nzkgg6jjyz6ywb54@lukather>
+References: <20170111065524.tILSH8cS@smtp1p.mail.yandex.net>
 MIME-Version: 1.0
-In-Reply-To: <87fuk4yg1i.fsf@free-electrons.com>
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
- <89c95d0084da6ad7132caa54ca66eb619d8a5090.1484154449.git-series.gregory.clement@free-electrons.com>
- <CAPDyKFrCxk37uVZ4wM-=iwX3-Cn9j+uh1KneJoopVzia2nKTVA@mail.gmail.com> <87fuk4yg1i.fsf@free-electrons.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 27 Jan 2017 16:36:36 +0100
-Message-ID: <CAPDyKFo-hpLd3W0zWykdg0swuciBeL=Cy9cur_0RoG8jApOh3w@mail.gmail.com>
-Subject: Re: [PATCH v5 05/12] dt: bindings: Add bindings for Marvell Xenon SD
- Host Controller
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>, Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>, "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>, Ma rcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170111065524.tILSH8cS@smtp1p.mail.yandex.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============4529201150131795672=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
->
-> OK, but maybe we could keep the part about the mmcard for the eMMC to
-> emphasize that we need to setup this option for the controller.
 
-Right!
+--===============4529201150131795672==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="xtl6ajsohtdxdgqk"
+Content-Disposition: inline
 
->
->>> +
->>> +- no-1-8-v:
->>> +  Select this property when 1.8V signaling voltage supply is unavailable.
->>> +  When this property is enabled, both mmc-ddr-1_8v and mmc-hs400-1_8v should be
->>> +  cleared.
->>
->> Please don't use this sdhci property, unless really needed.
->
-> Actually this is a mmc property, at least it is described in this the
-> mmc binding:
-> Documentation/devicetree/bindings/mmc/mmc.txt
 
-Yes, the documentation is wrong. It should we be moved into the docs for sdhci.
+--xtl6ajsohtdxdgqk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I will send a patch updating it. Apologize for the misleading information.
+Hi,
 
->
-> The description of this optional property is:
-> "no-1-8-v: when present, denotes that 1.8v card voltage is not supported on
->   this system, even if the controller claims it is."
->
-> So as it is also part of the mmc binding we can remove it from our
-> bindings as we are going to do it for the other mmc property.
+On Wed, Jan 11, 2017 at 11:55:16AM +0800, Icenowy Zheng wrote:
+>=20
+> 2017=E5=B9=B41=E6=9C=8811=E6=97=A5 02:10=E4=BA=8E Maxime Ripard <maxime.r=
+ipard@free-electrons.com>=E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > On Tue, Jan 03, 2017 at 11:16:26PM +0800, Icenowy Zheng wrote:=20
+> > > V3s has a similar but cut-down CCU to H3.=20
+> > >=20
+> > > Add support for it.=20
+> > >=20
+> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>=20
+> >
+> > It looks like there's nothing different but the clocks that you=20
+> > register with the H3, please just use the H3 driver.=20
+>=20
+> USB gate part is different, and many things have gone.
 
-Nope.
+As far as I can see, you're only adding a few clocks, and removing a
+bunch. This is definitely something that can be dealt with by simply
+registering a slightly different set of clocks, like we're doing on
+sun5i.
 
->
-> But I am curious to know why do you think we could use it without any
-> need. Are you aware of some abuse of this property?
+Maxime
 
-Yes.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
->
->>
->> Perhaps you can elaborate exactly why it makes sense for your case. Or
->> perhaps we already discussed this, in either case, please re-fresh my
->> mind.
->
-> For instance we need it now on the 7040DB board which does not have the
-> 1.8V signal voltage available.
+--xtl6ajsohtdxdgqk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-It it's better to describe what the controller/board support, instead
-of what it doesn't.
+-----BEGIN PGP SIGNATURE-----
 
-I think you should be able to use other existing mmc DT bindings
-(perhaps also you need the brand new "mmc-ddr-3_3v"), instead of the
-"no-1-8-v".
+iQIcBAEBCAAGBQJYd7lEAAoJEBx+YmzsjxAgcUMP/03z4B5xu2ltdotMrezeOC0K
+PHB7Wq8Rrfqzu2ZwcUieC5PsDZmRdhW13M7C56iFyvnG6sIWuD1qbCCcLVh0ZhAd
+5woJrj5g9nZsc2aNEKGmMjbtrCu6qFJFM7ZxGavjUJvepuxwyg3Ftxup75erakAd
+5fdRJ5eE/+nxzN4ywDp2IhxLFAx8G5y/1KnPnK4bZw10yPOiytAzKBxddOK6MkJW
+qI3qOK3HCU++5VU262uHUy2/3EpDDP1KWvH6+SRLbcvmWAI8h34HB9S7f1NXrQFf
+r/DYPG6e7T2Q/DAj9j0W72vCHIU9QecobSrWUolUUgfEgdpjkYbiREEAhl4qutB4
+G5IqTcBuNDxfUQ7J9Jb3JwtMgJN8+Jc309nELDDF/2aoHegMrKwpVc8fcRO2kGBy
+mTBbBufvPlFU30pT26ut2pbTKSqpE9vxcb84vAR7tRCwPsFFyP435tKZSGQiMQFm
+8Q4/nK/130l0Wc0re8Kk3fgNg49KQ1QEgrgc9IipzvAm2412qkFuDUVmmLbqmfZs
+DWwsBvH41DJvk0EF76FttHmOe5pD/korDuEKcawxi50iw3tim63yE9Hpl6mRcEI9
+7YB7sEVQMhzM0QSrjz26ngj4+95C839LR35FjC2vRZByIE/B6GZSB7uHh9rLAbMy
+OqHnBbDZACZb5Gj1voTr
+=R7Qx
+-----END PGP SIGNATURE-----
 
-Kind regards
-Uffe
+--xtl6ajsohtdxdgqk--
+
+
+--===============4529201150131795672==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============4529201150131795672==--
