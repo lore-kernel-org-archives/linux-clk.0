@@ -1,76 +1,164 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,  Linus Walleij <linus.walleij@linaro.org>,  "linux\@armlinux.org.uk" <linux@armlinux.org.uk>,  "linux-arm-kernel\@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,  Rob Herring <robh+dt@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,  Michael Turquette <mturquette@baylibre.com>,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Geert Uytterhoeven <geert+renesas@glider.be>,  Chris Brand <chris.brand@broadcom.com>,  Florian Fainelli <f.fainelli@gmail.com>,  "Arnd Bergmann" <arnd@arndb.de>,  Thierry Reding <treding@nvidia.com>,  Sudeep Holla <sudeep.holla@arm.com>,  Juri Lelli <juri.lelli@arm.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  Laxman Dewangan <ldewangan@nvidia.com>,  Kalyan Kinthada <Kalyan.Kinthada@alliedtelesis.co.nz>,  "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,  "linux-kernel\@vger.kernel.org" <linux-kernel@
- vger.kernel.org>,  "linux-clk\@vger.kernel.org" <linux-clk@vger.kernel.org>,  "linux-gpio\@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCHv5 0/5] Support for Marvell switches with integrated CPUs
-References: <20170127032546.14657-1-chris.packham@alliedtelesis.co.nz>
-	<87wpdgwj72.fsf@free-electrons.com>
-	<20170127184745.GD8801@codeaurora.org>
-	<f8f6e8db585147d3adb025bed29694ab@svr-chch-ex1.atlnz.lc>
-Date: Mon, 30 Jan 2017 15:40:31 +0100
-In-Reply-To: <f8f6e8db585147d3adb025bed29694ab@svr-chch-ex1.atlnz.lc> (Chris
-	Packham's message of "Sun, 29 Jan 2017 20:30:34 +0000")
-Message-ID: <87o9yotxuo.fsf@free-electrons.com>
+Return-Path: <sricharan@codeaurora.org>
+From: "Sricharan" <sricharan@codeaurora.org>
+To: "'Stanimir Varbanov'" <stanimir.varbanov@linaro.org>,
+	"'Rajendra Nayak'" <rnayak@codeaurora.org>,
+	<sboyd@codeaurora.org>,
+	<mturquette@baylibre.com>
+Cc: <linux-clk@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <1484027679-18397-1-git-send-email-rnayak@codeaurora.org> <db0b904e-4d28-b404-802b-7c2bcf0801e9@linaro.org> <006e01d26b77$dceaa090$96bfe1b0$@codeaurora.org> <df75bf26-2c10-d99f-330e-fdcbf68e97b3@linaro.org>
+In-Reply-To: <df75bf26-2c10-d99f-330e-fdcbf68e97b3@linaro.org>
+Subject: RE: [PATCH] clk: qcom: gdsc: Fix handling of hw control enable/disable
+Date: Thu, 12 Jan 2017 14:17:08 +0530
+Message-ID: <00c201d26cb0$7990eab0$6cb2c010$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+	charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chris,
- 
- On dim., janv. 29 2017, Chris Packham <Chris.Packham@alliedtelesis.co.nz> wrote:
+Hi Stan,
 
-> On 28/01/17 07:47, Stephen Boyd wrote:
->> On 01/27, Gregory CLEMENT wrote:
->>> Hi all,
+>-----Original Message-----
+>From: Stanimir Varbanov [mailto:stanimir.varbanov@linaro.org]
+>Sent: Wednesday, January 11, 2017 2:25 PM
+>To: Sricharan <sricharan@codeaurora.org>; 'Stanimir Varbanov' <stanimir.varbanov@linaro.org>; 'Rajendra Nayak'
+><rnayak@codeaurora.org>; sboyd@codeaurora.org; mturquette@baylibre.com
+>Cc: linux-clk@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-kernel@vger.kernel.org
+>Subject: Re: [PATCH] clk: qcom: gdsc: Fix handling of hw control enable/disable
+>
+>Hi Sricharan,
+>
+>On 01/10/2017 09:29 PM, Sricharan wrote:
+>> Hi stan,
+>>
+>>> -----Original Message-----
+>>> From: linux-arm-msm-owner@vger.kernel.org [mailto:linux-arm-msm-owner@vger.kernel.org] On Behalf Of Stanimir Varbanov
+>>> Sent: Tuesday, January 10, 2017 10:14 PM
+>>> To: Rajendra Nayak <rnayak@codeaurora.org>; sboyd@codeaurora.org; mturquette@baylibre.com
+>>> Cc: linux-clk@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-kernel@vger.kernel.org; sricharan@codeaurora.org
+>>> Subject: Re: [PATCH] clk: qcom: gdsc: Fix handling of hw control enable/disable
 >>>
->>>  On ven., janv. 27 2017, Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
+>>> Hi Rajendra,
 >>>
->>>> The 98DX3236, 98DX3336 and 98DX4251 are a set of switch ASICs with
->>>> integrated CPUs. They CPU block is common within these product lines and
->>>> (as far as I can tell/have been told) is based on the Armada XP. There
->>>> are a few differences due to the fact they have to squeeze the CPU into
->>>> the same package as the switch.
+>>> On 01/10/2017 07:54 AM, Rajendra Nayak wrote:
+>>>> Once a gdsc is brought in and out of HW control, there is a
+>>>> power down and up cycle which can take upto 1us. Polling on
+>>>> the gdsc status immediately after the hw control enable/disable
+>>>> can mislead software/firmware to belive the gdsc is already either on
+>>>> or off, while its yet to complete the power cycle.
+>>>> To avoid this add a 1us delay post a enable/disable of HW control
+>>>> mode.
 >>>>
->>>> I've rebased this series against linux-pinctrl/devel to get access to
->>>> mvebu_mmio_mpp_ctrl. Everything else still applies cleanly to
->>>> v4.10.0-rc5.
+>>>> Also after the HW control mode is disabled, poll on the status to
+>>>> check gdsc status reflects its 'on' before force disabling it
+>>>> in software.
+>>>>
+>>>> Reported-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>>>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+>>>> ---
+>>>>
+>>>> Stan,
+>>>> If there was a specific issue you saw with venus because of the missing
+>>>> delay and poll, can you check if this fixes any of that.
 >>>
->>> Just to let you know that I plan to apply the 3 arm patch once Chris
->>> will have sent the new series with the minor fixes I asked on patch 3.
+>>> Something more about the issue.
 >>>
->>> I already applied them in the for-next branch to benefit of some build
->>> test coverage.
+>>> I had re-designed venus driver on three platform drivers venus-core,
+>>> venus-dec and venus-enc in order to be able to control those three
+>>> power-domains (VENUS_GDSC, VENUS_CORE0_GDSC and VENUS_CORE1_GDSC).
 >>>
->>> Stephen,
+>>> After that I abstracted MMAGIC hw on a separate mmagic driver. This
+>>> driver just controls mmagic clocks and GDSC in its runtime_suspend and
+>>> runtime_resume methods.
 >>>
->>> you gave your Acked-by on the first patch, but don't you plan to apply
->>> it on the clk branch?
+>>> The DT nodes looks like:
+>>>
+>>> mmagic_video {
+>>> 	compatible = "qcom,msm8996-mmagic";
+>>> 	clocks = <&rpmcc MSM8996_RPM_SMD_MMAXI_CLK>,
+>>> 		 <&mmcc MMSS_MMAGIC_AHB_CLK>,
+>>> 		 <&mmcc MMSS_MMAGIC_CFG_AHB_CLK>,
+>>> 		 <&mmcc MMAGIC_VIDEO_NOC_CFG_AHB_CLK>,
+>>> 		 <&mmcc MMSS_MMAGIC_MAXI_CLK>,
+>>> 		 <&mmcc MMAGIC_VIDEO_AXI_CLK>,
+>>> 		 <&mmcc SMMU_VIDEO_AHB_CLK>,
+>>> 		 <&mmcc SMMU_VIDEO_AXI_CLK>;
+>>> 	power-domains = <&mmcc MMAGIC_VIDEO_GDSC>;
+>>>
+>>> 	video-codec {
+>>> 		compatible = "qcom,msm8996-venus";
+>>> 		clocks = <&mmcc VIDEO_CORE_CLK>,
+>>> 			 <&mmcc VIDEO_AHB_CLK>,
+>>> 			 <&mmcc VIDEO_AXI_CLK>,
+>>> 			 <&mmcc VIDEO_MAXI_CLK>;
+>>> 		power-domains = <&mmcc VENUS_GDSC>;
+>>> 		...
+>>>
+>>> 		video-decoder {
+>>> 			compatible = "venus-decoder";
+>>> 			clocks = "subcore0";
+>>> 			clock-names = <&mmcc VIDEO_SUBCORE0_CLK>;
+>>> 			power-domains = <&mmcc VENUS_CORE0_GDSC>;
+>>> 		};
+>>>
+>>> 		video-encoder {
+>>> 			compatible = "venus-encoder";
+>>> 			clocks = "subcore1";
+>>> 			clock-names = <&mmcc VIDEO_SUBCORE1_CLK>;
+>>> 			power-domains = <&mmcc VENUS_CORE1_GDSC>;
+>>> 		};
+>>> 	};
+>>> };
+>>>
+>>> Note that mmagic_video is a parent dt node for smmu_video DT node so
+>>> that clocks and mmagic_video gdsc will be enabled once smmu driver is
+>>> instantiated by venus-core diriver.
+>>>
 >>
->> It must have not been clear if I should apply it, hence the ack.
->> I'll apply it now.
+>> mmagic_video is a parent DT for smmu_video ? , so there are no clocks
+>> populated for the smmu node as such ?
+>
+>Yes, I completely disabled runtime pm in the arm-smmu driver.
+>
+
+So completely disabling runtime pm in smmu has a downside because,
+when the smmu is accessed standalone like, say in case of a fault,
+would then fail. Anyways i think this is experimental probably.
+
 >>
+>>> Now when video-dec driver calls pm_runtime_get_sync() the sequence of
+>>> enabling is:
+>>>
+>>> MMAGIC_VIDEO_GDSC -> MMAGIC clocks and SMMU clocks -> VENUS_GDSC ->
+>>> VIDEO clocks -> VENUS_CORE0_GDSC -> VIDEO subcore0 clock
+>>>
+>>> When video-dec platform driver calls pm_runtime_put_sync() we should
+>>> disabling of GDSC and clocks in the reversed oder.
+>>>
+>>> The issue comes when I have ran video decoder, the decoder hw finish
+>>> stream decoding and we want to suspend venus core. The issue is that
+>>> when I start disabling SMMU_VIDEO_AXI_CLK and/or MMAGIC_VIDEO_AXI_CLK
+>>> the system reboots.
+>>>
+>>> I have added a delay (200ms) before disabling mmagic clocks and then
+>>> everything is fine again.
+>>>
+>>> Any idea?
+>>>
+>>
+>> Can you share me a branch, i can have a quick check with a t32
+>> if there is any crash logged in the TZ buffer when the system reboots.
 >
-> Sorry my bad. I need all 5 together in one place to actually test the 
-> series.
-
-The 5 patches should be available soon (if it is not already the case),
-in the linux-next branch.
-
-The clk patch is already there, the 3 arm patch have been merged in my
-mvebu/for-next branch, and the pinctrl patch is about to be merged in
-the pinctrl/for-next branch.
-
-Gregory
-
+>I can share a branch but you will need my initramfs too.
 >
-> I wasn't sure whether the series should go through mvebu with Acks from 
-> clk and pinctrl or if things should go to the separate maintainers and 
-> come together when they hit the main linux repo. Up until the latest 
-> pinctrl change either approach would have worked.
+>I don't think it is tz related, most probably it is MMAGIC sequence
+>issue or something in GDSC/MMCC.
+>
 
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+I was not suspecting a TZ issue, but some crash because of which the board reboots and
+debug msgs getting logged in the TZ log buffer.  Not sure if you already proceeded
+further on this.
+
+Regards,
+ Sricharan
