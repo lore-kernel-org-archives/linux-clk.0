@@ -1,48 +1,108 @@
-Return-Path: <daniel.lezcano@linaro.org>
-Return-Path: <daniel.lezcano@linaro.org>
-Date: Mon, 9 Jan 2017 11:30:04 +0100
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Bai Ping <ping.bai@nxp.com>
-Cc: shawnguo@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org,
-	robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org,
-	kernel@pengutronix.de, fabio.estevam@nxp.com, tglx@linutronix.de,
-	p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, jacky.baip@gmail.com
-Subject: Re: [PATCH v2 02/12] driver: clocksource: add gpt timer for imx6sll
-Message-ID: <20170109103004.GA30688@mai>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-3-git-send-email-ping.bai@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1482832070-22668-3-git-send-email-ping.bai@nxp.com>
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V2 1/2] clk: vc5: Add bindings for IDT VersaClock 5P49V5923 and 5P49V5933
+Date: Thu, 12 Jan 2017 02:03:23 +0100
+Message-Id: <20170112010324.28068-1-marek.vasut@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 27, 2016 at 05:47:40PM +0800, Bai Ping wrote:
-> Add gpt timer support for i.MX6SLL.
-> 
-> Signed-off-by: Bai Ping <ping.bai@nxp.com>
-> ---
->  drivers/clocksource/timer-imx-gpt.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clocksource/timer-imx-gpt.c b/drivers/clocksource/timer-imx-gpt.c
-> index f595460..f71822d 100644
-> --- a/drivers/clocksource/timer-imx-gpt.c
-> +++ b/drivers/clocksource/timer-imx-gpt.c
-> @@ -556,4 +556,5 @@ static int __init imx6dl_timer_init_dt(struct device_node *np)
->  CLOCKSOURCE_OF_DECLARE(imx6q_timer, "fsl,imx6q-gpt", imx31_timer_init_dt);
->  CLOCKSOURCE_OF_DECLARE(imx6dl_timer, "fsl,imx6dl-gpt", imx6dl_timer_init_dt);
->  CLOCKSOURCE_OF_DECLARE(imx6sl_timer, "fsl,imx6sl-gpt", imx6dl_timer_init_dt);
-> +CLOCKSOURCE_OF_DECLARE(imx6sll_timer, "fsl,imx6sll-gpt", imx6dl_timer_init_dt);
->  CLOCKSOURCE_OF_DECLARE(imx6sx_timer, "fsl,imx6sx-gpt", imx6dl_timer_init_dt);
+Add bindings for IDT VersaClock 5 5P49V5923 and 5P49V5933 chips.
+These are I2C clock generators with optional clock source from
+either XTal or dedicated clock generator and, depending on the
+model, two or more clock outputs.
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V2: Add mapping between the clock specifier and physical pins of the chip
+---
+ .../devicetree/bindings/clock/idt,versaclock5.txt  | 65 ++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/idt,versaclock5.txt
 
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+new file mode 100644
+index 000000000000..87e9c47a89a3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+@@ -0,0 +1,65 @@
++Binding for IDT VersaClock5 programmable i2c clock generator.
++
++The IDT VersaClock5 are programmable i2c clock generators providing
++from 3 to 12 output clocks.
++
++==I2C device node==
++
++Required properties:
++- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933".
++- reg:		i2c device address, shall be 0x68 or 0x6a.
++- #clock-cells:	from common clock binding; shall be set to 1.
++- clocks:	from common clock binding; list of parent clock handles,
++		- 5p49v5923: (required) either or both of XTAL or CLKIN
++					reference clock.
++		- 5p49v5933: (optional) property not present (internal
++					Xtal used) or CLKIN reference
++					clock.
++- clock-names:	from common clock binding; clock input names, can be
++		- 5p49v5923: (required) either or both of "xin", "clkin".
++		- 5p49v5933: (optional) property not present or "clkin".
++
++==Mapping between clock specifier and physical pins==
++
++When referencing the provided clock in the DT using phandle and
++clock specifier, the following mapping applies:
++
++5P49V5923:
++	0 -- OUT0_SEL_I2CB
++	1 -- OUT1
++	2 -- OUT2
++
++5P49V5933:
++	0 -- OUT0_SEL_I2CB
++	1 -- OUT1
++	2 -- OUT4
++
++==Example==
++
++/* 25MHz reference crystal */
++ref25: ref25m {
++	compatible = "fixed-clock";
++	#clock-cells = <0>;
++	clock-frequency = <25000000>;
++};
++
++i2c-master-node {
++
++	/* IDT 5P49V5923 i2c clock generator */
++	vc5: clock-generator@6a {
++		compatible = "idt,5p49v5923";
++		reg = <0x6a>;
++		#clock-cells = <1>;
++
++		/* Connect XIN input to 25MHz reference */
++		clocks = <&ref25m>;
++		clock-names = "xin";
++	};
++};
++
++/* Consumer referencing the 5P49V5923 pin OUT1 */
++consumer {
++	...
++	clocks = <&vc5 1>;
++	...
++}
 -- 
-
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.11.0
