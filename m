@@ -1,157 +1,86 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:33557 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752587AbdAYXrY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2017 18:47:24 -0500
-MIME-version: 1.0
-Content-type: text/plain; charset=UTF-8
-Message-id: <588938F9.9070907@samsung.com>
-Date: Thu, 26 Jan 2017 08:47:05 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: martin@kaiser.cx, Krzysztof Kozlowski <krzk@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: samsung: mark s3c...._clk_sleep_init() as __init
-In-reply-to: <1485380545-24815-1-git-send-email-martin@kaiser.cx>
-References: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
- <CGME20170125214354epcas3p2715bf71d3c8d56aefe881f95fb4aef1d@epcas3p2.samsung.com>
- <1485380545-24815-1-git-send-email-martin@kaiser.cx>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V6 2/2] clk: vc5: Add support for IDT VersaClock 5P49V5923 and 5P49V5933
+Date: Thu, 12 Jan 2017 03:35:24 +0200
+Message-ID: <134945773.YyTahTmPIX@avalon>
+In-Reply-To: <20170112010324.28068-2-marek.vasut@gmail.com>
+References: <20170112010324.28068-1-marek.vasut@gmail.com> <20170112010324.28068-2-marek.vasut@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Martin,
+Hi Marek,
 
-The v2 patch is missing my reviewed-by tag[1].
-[1] https://patchwork.kernel.org/patch/9535993/
+Thank you for the patch.
 
-Again, I add my reviewed-by tag.
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-
-On 2017년 01월 26일 06:42, martin@kaiser.cx wrote:
-> From: Martin Kaiser <martin@kaiser.cx>
+On Thursday 12 Jan 2017 02:03:24 Marek Vasut wrote:
+> Add driver for IDT VersaClock 5 5P49V5923 and 5P49V5933 chips. These
+> chips have two clock inputs, XTAL or CLK, which are muxed into single
+> PLL/VCO input. In case of 5P49V5923, the XTAL in built into the chip
+> while the 5P49V5923 requires external XTAL.
 > 
-> These functions are referencing s3c...._clk_regs[], which are marked as
-> __initdata. When compiling with CONFIG_DEBUG_SECTION_MISMATCH=y, this
-> produces warnings like
+> The PLL feeds two fractional dividers. Each fractional divider feeds
+> output mux, which allows selecting between clock from the fractional
+> divider itself or from output mux on output N-1. In case of output
+> mux 0, the output N-1 is instead connected to the output from the mux
+> feeding the PLL.
 > 
-> WARNING: vmlinux.o(.text+0x198350):
-> Section mismatch in reference from the function s3c2410_clk_sleep_init()
-> to the (unknown reference) .init.data:(unknown)
+> The driver thus far supports only the 5P49V5923 and 5P49V5933, while
+> it should be easily extensible to the whole 5P49V59xx family of chips
+> as they are all pretty similar.
 > 
-> Mark the s3c...._clk_sleep_init() functions as __init in
-> order to fix this.
-> 
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 > ---
-> v2:
-> Fix the commit message, describe what the problem really is.
-> (Thanks, Krzysztof)
-> 
->  drivers/clk/samsung/clk-s3c2410.c |    4 ++--
->  drivers/clk/samsung/clk-s3c2412.c |    4 ++--
->  drivers/clk/samsung/clk-s3c2443.c |    4 ++--
->  drivers/clk/samsung/clk-s3c64xx.c |    4 ++--
->  4 files changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
-> index d7a1e77..e0650c3 100644
-> --- a/drivers/clk/samsung/clk-s3c2410.c
-> +++ b/drivers/clk/samsung/clk-s3c2410.c
-> @@ -76,7 +76,7 @@ static void s3c2410_clk_resume(void)
->  	.resume = s3c2410_clk_resume,
->  };
->  
-> -static void s3c2410_clk_sleep_init(void)
-> +static void __init s3c2410_clk_sleep_init(void)
->  {
->  	s3c2410_save = samsung_clk_alloc_reg_dump(s3c2410_clk_regs,
->  						ARRAY_SIZE(s3c2410_clk_regs));
-> @@ -90,7 +90,7 @@ static void s3c2410_clk_sleep_init(void)
->  	return;
->  }
->  #else
-> -static void s3c2410_clk_sleep_init(void) {}
-> +static void __init s3c2410_clk_sleep_init(void) {}
->  #endif
->  
->  PNAME(fclk_p) = { "mpll", "div_slow" };
-> diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
-> index ec873ee..b8340a4 100644
-> --- a/drivers/clk/samsung/clk-s3c2412.c
-> +++ b/drivers/clk/samsung/clk-s3c2412.c
-> @@ -69,7 +69,7 @@ static void s3c2412_clk_resume(void)
->  	.resume = s3c2412_clk_resume,
->  };
->  
-> -static void s3c2412_clk_sleep_init(void)
-> +static void __init s3c2412_clk_sleep_init(void)
->  {
->  	s3c2412_save = samsung_clk_alloc_reg_dump(s3c2412_clk_regs,
->  						ARRAY_SIZE(s3c2412_clk_regs));
-> @@ -83,7 +83,7 @@ static void s3c2412_clk_sleep_init(void)
->  	return;
->  }
->  #else
-> -static void s3c2412_clk_sleep_init(void) {}
-> +static void __init s3c2412_clk_sleep_init(void) {}
->  #endif
->  
->  static struct clk_div_table divxti_d[] = {
-> diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-> index 5e24a17..abb935c 100644
-> --- a/drivers/clk/samsung/clk-s3c2443.c
-> +++ b/drivers/clk/samsung/clk-s3c2443.c
-> @@ -89,7 +89,7 @@ static void s3c2443_clk_resume(void)
->  	.resume = s3c2443_clk_resume,
->  };
->  
-> -static void s3c2443_clk_sleep_init(void)
-> +static void __init s3c2443_clk_sleep_init(void)
->  {
->  	s3c2443_save = samsung_clk_alloc_reg_dump(s3c2443_clk_regs,
->  						ARRAY_SIZE(s3c2443_clk_regs));
-> @@ -103,7 +103,7 @@ static void s3c2443_clk_sleep_init(void)
->  	return;
->  }
->  #else
-> -static void s3c2443_clk_sleep_init(void) {}
-> +static void __init s3c2443_clk_sleep_init(void) {}
->  #endif
->  
->  PNAME(epllref_p) = { "mpllref", "mpllref", "xti", "ext" };
-> diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
-> index a48bd5f..7306867 100644
-> --- a/drivers/clk/samsung/clk-s3c64xx.c
-> +++ b/drivers/clk/samsung/clk-s3c64xx.c
-> @@ -121,7 +121,7 @@ static void s3c64xx_clk_resume(void)
->  	.resume = s3c64xx_clk_resume,
->  };
->  
-> -static void s3c64xx_clk_sleep_init(void)
-> +static void __init s3c64xx_clk_sleep_init(void)
->  {
->  	s3c64xx_save_common = samsung_clk_alloc_reg_dump(s3c64xx_clk_regs,
->  						ARRAY_SIZE(s3c64xx_clk_regs));
-> @@ -145,7 +145,7 @@ static void s3c64xx_clk_sleep_init(void)
->  		__func__);
->  }
->  #else
-> -static void s3c64xx_clk_sleep_init(void) {}
-> +static void __init s3c64xx_clk_sleep_init(void) {}
->  #endif
->  
->  /* List of parent clocks common for all S3C64xx SoCs. */
-> 
-
+> V2: - Drop address-cells and size-cells from the binding
+>     - Add clock-names to the binding
+>     - Drop vc5_input_names
+>     - Fix assortment of spelling mistakes
+>     - Switch div_frc and div_int datatype to uXX
+>     - Switch f_in to u32
+>     - Add missing remove
+>     - Define macros for handling XIN and CLKIN
+>     - Rework the FOD fractional divider calculation, this was wrong
+>       and made the output clock be off considerably under certain
+>       circumstances (when the fractional part was large).
+> V3: - Rework the MUX frequency recalculation and divider configration
+>       so that it fits into the clock framework
+>     - Add support for 5P49V5933 chip to lay groundwork for adding more
+>       chips easily.
+>     - Export the OUT0_SEL_I2CB output into the clock framework, so it
+>       can be accessed from DT as well. WARNING: This does change the
+>       bindings, clock0 is now the OUT0_SEL_I2CB, clock1 is OUT1 and
+>       clock2 is OUT2 (or OUT4 on the 5P49V5933).
+>     - Drop unnecessary caching of pin_*_name clock name and clk_hw
+> structures in driver data.
+>     - Add missing MAINTAINERS entry
+> V4: - Support also 5P49V5923A by dropping the B from the bindings and
+>       code. According to the update notice, the chips are identical
+>       except for disabling the VCO monitoring, which is internal
+>       factory-defined bit and has no impact on silicon performance.
+> V5: - Make the CCF handle upstream clock enabling and disabling
+>     - Drop test for unsigned value reg being less than zero
+>     - Streamline vc5_map_index_to_output
+> V6: - Drop the error message from vc5_of_clk_get(), this will be
+>       reported by the core
+> ---
+>  MAINTAINERS                   |   5 +
+>  drivers/clk/Kconfig           |  10 +
+>  drivers/clk/Makefile          |   1 +
+>  drivers/clk/clk-versaclock5.c | 793 +++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 809 insertions(+)
+>  create mode 100644 drivers/clk/clk-versaclock5.c
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Regards,
+
+Laurent Pinchart
