@@ -1,197 +1,115 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 00/11] clk: sunxi-ng: Add support for A80 CCUs
-Date: Tue, 24 Jan 2017 10:32:19 +0800
-Message-Id: <20170124023230.3990-1-wens@csie.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Thu, 12 Jan 2017 18:19:54 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH 2/5] clk: sunxi-ng: add support for V3s CCU
+Message-ID: <20170112171954.mj45su57fixzo6og@lukather>
+References: <20170103151629.19447-1-icenowy@aosc.xyz>
+ <20170103151629.19447-3-icenowy@aosc.xyz>
+ <20170110181006.yrd6moy2mctzoc4c@lukather>
+ <2705031484163593@web1g.yandex.ru>
+ <2714901484163893@web1g.yandex.ru>
+MIME-Version: 1.0
+In-Reply-To: <2714901484163893@web1g.yandex.ru>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
+ Chen-Yu Tsai <wens@csie.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/mixed; boundary="===============1170309148742643837=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
 
-This series adds new "sunxi-ng" style drivers for the CCUs found in the
-Allwinner A80 SoC. The A80 contains 1 main clock control unit, and some
-subsystem specific clock control units at separate addresses. These
-include the USB, display engine, and MMC.
-
-  - The MMC clocks can be supported by the old clock drivers,
-    hence here we do not add a new driver for it.
-
-  - The old USB clock driver is intertwined with other SoCs,
-    requires old style bindings with clock-output-names and
-    CLK_OF_DECLARE for its parents. It is easier to switch
-    to a new binding and driver.
-
-  - The display engine (DE) CCU was not supported in the past.
-
-The A80 CCU also has some quirks about its design. It has
-
-  - Separate registers for PLL lock status
-
-  - P1, P2 dividers, which are power-of-2 and only 1 bit wide
-
-The first 3 patches fix and extend the behavior of sunxi-ng's
-mux clock type, based on the behavior of the clk subsystem's
-basic mux clock.
-
-The fourth patch adds support for checking PLL lock status
-bits in separate registers, as opposed to within the PLL's
-config register.
-
-Patches 5 through 7 add drivers for the CCU blocks.
-
-Patches 8 through 10 do some cleanup of the sunxi/allwinner dts
-files prior to switching sun9i dts to the new sunxi-ng clock
-bindings. These are independent of the clk stuff, but touch the
-same lines for sun9i. Including them should make it easier to
-apply and test patches.
-
-Patch 11 has sun9i switch over to the new clock bindings.
-
-Please take a look and let me know what you think.
-
-I also have a series adding support for the first display pipeline
-of the A80 with RGB LCD panel output which I will send out later
-on.
+--===============1170309148742643837==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="uxcid5gza52osl6z"
+Content-Disposition: inline
 
 
-Regards
-ChenYu
+--uxcid5gza52osl6z
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Chen-Yu Tsai (11):
-  clk: sunxi-ng: mux: Fix determine_rate for mux clocks with
-    pre-dividers
-  clk: sunxi-ng: mux: honor CLK_SET_RATE_NO_REPARENT flag
-  clk: sunxi-ng: mux: Get closest parent rate possible with
-    CLK_SET_RATE_PARENT
-  clk: sunxi-ng: Support separately grouped PLL lock status register
-  clk: sunxi-ng: Add A80 CCU
-  clk: sunxi-ng: Add A80 USB CCU
-  clk: sunxi-ng: Add A80 Display Engine CCU
-  ARM: dts: sun8i-a23-q8-tablet: Drop pinmux setting for codec PA gpio
-  ARM: dts: sunxi: Remove no longer used pinctrl/sun4i-a10.h header
-  arm64: dts: allwinner: Remove no longer used pinctrl/sun4i-a10.h
-    header
-  ARM: dts: sun9i: Switch to new clock bindings
+On Thu, Jan 12, 2017 at 03:44:53AM +0800, Icenowy Zheng wrote:
+>=20
+>=20
+> 12.01.2017, 03:40, "Icenowy Zheng" <icenowy@aosc.xyz>:
+> > 11.01.2017, 02:10, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
+> >> =A0On Tue, Jan 03, 2017 at 11:16:26PM +0800, Icenowy Zheng wrote:
+> >>> =A0=A0V3s has a similar but cut-down CCU to H3.
+> >>>
+> >>> =A0=A0Add support for it.
+> >>>
+> >>> =A0=A0Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+> >>
+> >> =A0It looks like there's nothing different but the clocks that you
+> >> =A0register with the H3, please just use the H3 driver.
+> >
+> > Nope.
+> >
+> > It has a different PLL (PLL_ISP) at different address, and some
+> > different muxes.
+>=20
+> Forgot to mention the missing of PLL_DE and related misses.
 
- .../devicetree/bindings/clock/sun9i-de.txt         |   28 +
- .../devicetree/bindings/clock/sun9i-usb.txt        |   24 +
- .../devicetree/bindings/clock/sunxi-ccu.txt        |    1 +
- arch/arm/boot/dts/sun4i-a10-a1000.dts              |    1 -
- arch/arm/boot/dts/sun4i-a10-cubieboard.dts         |    1 -
- arch/arm/boot/dts/sun4i-a10-dserve-dsrv9703c.dts   |    1 -
- arch/arm/boot/dts/sun4i-a10-hackberry.dts          |    1 -
- arch/arm/boot/dts/sun4i-a10-inet1.dts              |    1 -
- arch/arm/boot/dts/sun4i-a10-inet9f-rev03.dts       |    1 -
- arch/arm/boot/dts/sun4i-a10-jesurun-q5.dts         |    1 -
- arch/arm/boot/dts/sun4i-a10-marsboard.dts          |    1 -
- arch/arm/boot/dts/sun4i-a10-mini-xplus.dts         |    1 -
- arch/arm/boot/dts/sun4i-a10-mk802.dts              |    1 -
- arch/arm/boot/dts/sun4i-a10-olinuxino-lime.dts     |    1 -
- arch/arm/boot/dts/sun4i-a10-pcduino.dts            |    1 -
- arch/arm/boot/dts/sun4i-a10-pov-protab2-ips9.dts   |    1 -
- arch/arm/boot/dts/sun4i-a10.dtsi                   |    1 -
- arch/arm/boot/dts/sun5i-a10s-auxtek-t003.dts       |    1 -
- arch/arm/boot/dts/sun5i-a10s-auxtek-t004.dts       |    1 -
- arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts   |    1 -
- arch/arm/boot/dts/sun5i-a10s-r7-tv-dongle.dts      |    1 -
- arch/arm/boot/dts/sun5i-a10s-wobo-i5.dts           |    1 -
- arch/arm/boot/dts/sun5i-a10s.dtsi                  |    1 -
- .../boot/dts/sun5i-a13-empire-electronix-d709.dts  |    1 -
- arch/arm/boot/dts/sun5i-a13-hsg-h702.dts           |    1 -
- arch/arm/boot/dts/sun5i-a13-olinuxino-micro.dts    |    1 -
- arch/arm/boot/dts/sun5i-a13-olinuxino.dts          |    1 -
- arch/arm/boot/dts/sun5i-a13.dtsi                   |    1 -
- arch/arm/boot/dts/sun5i-gr8.dtsi                   |    1 -
- arch/arm/boot/dts/sun5i.dtsi                       |    1 -
- arch/arm/boot/dts/sun6i-a31-app4-evb1.dts          |    1 -
- arch/arm/boot/dts/sun6i-a31-colombus.dts           |    1 -
- arch/arm/boot/dts/sun6i-a31-hummingbird.dts        |    1 -
- arch/arm/boot/dts/sun6i-a31-i7.dts                 |    1 -
- arch/arm/boot/dts/sun6i-a31-m9.dts                 |    1 -
- arch/arm/boot/dts/sun6i-a31-mele-a1000g-quad.dts   |    1 -
- arch/arm/boot/dts/sun6i-a31.dtsi                   |    1 -
- arch/arm/boot/dts/sun6i-a31s-cs908.dts             |    2 -
- arch/arm/boot/dts/sun6i-a31s-primo81.dts           |    1 -
- arch/arm/boot/dts/sun6i-a31s-sina31s-core.dtsi     |    1 -
- .../dts/sun6i-a31s-yones-toptech-bs1078-v2.dts     |    1 -
- .../boot/dts/sun6i-reference-design-tablet.dtsi    |    1 -
- arch/arm/boot/dts/sun7i-a20-bananapi.dts           |    1 -
- arch/arm/boot/dts/sun7i-a20-cubieboard2.dts        |    1 -
- arch/arm/boot/dts/sun7i-a20-cubietruck.dts         |    1 -
- arch/arm/boot/dts/sun7i-a20-hummingbird.dts        |    1 -
- arch/arm/boot/dts/sun7i-a20-i12-tvbox.dts          |    1 -
- arch/arm/boot/dts/sun7i-a20-icnova-swac.dts        |    1 -
- arch/arm/boot/dts/sun7i-a20-lamobo-r1.dts          |    1 -
- arch/arm/boot/dts/sun7i-a20-m3.dts                 |    1 -
- arch/arm/boot/dts/sun7i-a20-mk808c.dts             |    1 -
- arch/arm/boot/dts/sun7i-a20-olimex-som-evb.dts     |    1 -
- arch/arm/boot/dts/sun7i-a20-olinuxino-lime.dts     |    1 -
- arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts    |    1 -
- arch/arm/boot/dts/sun7i-a20-olinuxino-micro.dts    |    1 -
- arch/arm/boot/dts/sun7i-a20-orangepi-mini.dts      |    1 -
- arch/arm/boot/dts/sun7i-a20-orangepi.dts           |    1 -
- arch/arm/boot/dts/sun7i-a20-pcduino3.dts           |    1 -
- arch/arm/boot/dts/sun7i-a20.dtsi                   |    1 -
- arch/arm/boot/dts/sun8i-a23-a33.dtsi               |    1 -
- arch/arm/boot/dts/sun8i-a23-evb.dts                |    1 -
- arch/arm/boot/dts/sun8i-a23-q8-tablet.dts          |   10 -
- arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts     |    1 -
- arch/arm/boot/dts/sun8i-a83t.dtsi                  |    2 -
- arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    |    1 -
- arch/arm/boot/dts/sun8i-h3-nanopi.dtsi             |    1 -
- arch/arm/boot/dts/sun8i-h3-orangepi-2.dts          |    1 -
- arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       |    1 -
- arch/arm/boot/dts/sun8i-h3-orangepi-one.dts        |    1 -
- arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         |    1 -
- arch/arm/boot/dts/sun8i-h3.dtsi                    |    1 -
- arch/arm/boot/dts/sun9i-a80-cubieboard4.dts        |    1 -
- arch/arm/boot/dts/sun9i-a80-optimus.dts            |    1 -
- arch/arm/boot/dts/sun9i-a80.dtsi                   |  404 ++-----
- arch/arm/boot/dts/sunxi-common-regulators.dtsi     |    1 -
- .../boot/dts/sunxi-reference-design-tablet.dtsi    |    1 -
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      |    1 -
- drivers/clk/sunxi-ng/Kconfig                       |   10 +
- drivers/clk/sunxi-ng/Makefile                      |    3 +
- drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c            |  283 +++++
- drivers/clk/sunxi-ng/ccu-sun9i-a80-de.h            |   33 +
- drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c           |  144 +++
- drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.h           |   25 +
- drivers/clk/sunxi-ng/ccu-sun9i-a80.c               | 1223 ++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun9i-a80.h               |   57 +
- drivers/clk/sunxi-ng/ccu_common.c                  |    8 +-
- drivers/clk/sunxi-ng/ccu_common.h                  |    2 +
- drivers/clk/sunxi-ng/ccu_mux.c                     |   35 +-
- include/dt-bindings/clock/sun9i-a80-ccu.h          |  162 +++
- .../dt-bindings/clock/sun9i-a80-de.h               |   73 +-
- .../dt-bindings/clock/sun9i-a80-usb.h              |   44 +-
- .../dt-bindings/reset/sun9i-a80-ccu.h              |   91 +-
- .../dt-bindings/reset/sun9i-a80-de.h               |   45 +-
- .../dt-bindings/reset/sun9i-a80-usb.h              |   41 +-
- 94 files changed, 2270 insertions(+), 550 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/sun9i-de.txt
- create mode 100644 Documentation/devicetree/bindings/clock/sun9i-usb.txt
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-de.h
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.h
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80.h
- create mode 100644 include/dt-bindings/clock/sun9i-a80-ccu.h
- copy arch/arm/boot/dts/sunxi-reference-design-tablet.dtsi => include/dt-bindings/clock/sun9i-a80-de.h (67%)
- copy arch/arm/boot/dts/sun8i-a23-q8-tablet.dts => include/dt-bindings/clock/sun9i-a80-usb.h (73%)
- copy arch/arm/boot/dts/sunxi-reference-design-tablet.dtsi => include/dt-bindings/reset/sun9i-a80-ccu.h (56%)
- copy arch/arm/boot/dts/sun8i-a23-q8-tablet.dts => include/dt-bindings/reset/sun9i-a80-de.h (73%)
- copy arch/arm/boot/dts/sun8i-a23-q8-tablet.dts => include/dt-bindings/reset/sun9i-a80-usb.h (73%)
+Those are not conflicting, it's just a slightly different set of
+clocks.
 
--- 
-2.11.0
+So there's really nothing undoable.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--uxcid5gza52osl6z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYd7q5AAoJEBx+YmzsjxAgJg8P/R+Kr62ig8qc8xTnzxVUaHSU
+/A4fMOCsBt1v36t9YvyMGAxSnrqDdDRyIBtPOybEDuqMEfUc8m9cUDdH0DiFNY7U
+3qCwmhK51ZRM/aoyOyLE2emYu4w3f31bRCpV/6mEKC8AlsOSeOpyCclh3bTB/Mfm
+GPm9dDvfk04t+Q9DUTp5610zAR9A7kyndeK1hAABmZzFchxKW5b12FvQRMQJNNRb
+t5WiRI7rS9X7zwr0yAT1wAd4bDXrkv13OeNhOfF9TpgbY9k59iqj3xPuDoLUXYoA
+Sn8vpW7CgNQ5+Dj+Tqa7riRcxPyDlxFLPWHr150iT+kuADfQIPfxssv3sfvnHbBh
+/XzgHZkfWTp856cPGZlGY4ZSqm0hfSOnS1JS2H+QRK+DPrAKl+O8pdgCHt/7FHFE
+vsJFuaS4FJPvxaJKivX2vwUerSWvQih6wI+OInu7qkehjZTmmKgVStbDPkJF4cO8
+Zs4oCzDkAMzpWd7FulAqOClnk9l+1//TeySY4ohObn8PWeGn8UZSUiFK2Siv1W5B
+szJdiM4rKzBb6zzJSAIUbvZj4S86XJ+hCpg8McFix23dsI/p5T/bWJzx4dhTv7Rq
+OFmh7M+8jO9FAo7Gm+rnhyIYTXLXnc0MMNpIx8v3aTcbrqUm6cNIVrNYfHz7JCWI
+O96q+/slF3xe7BwL9K4M
+=UJOe
+-----END PGP SIGNATURE-----
+
+--uxcid5gza52osl6z--
+
+
+--===============1170309148742643837==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============1170309148742643837==--
