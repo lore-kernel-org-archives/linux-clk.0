@@ -1,56 +1,81 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v3 4/6] dt-bindings: add device binding for the CCU of
- Allwinner V3s
-Date: Fri, 20 Jan 2017 01:54:46 +0800
-Message-Id: <20170119175448.11445-4-icenowy@aosc.xyz>
-In-Reply-To: <20170119175448.11445-1-icenowy@aosc.xyz>
-References: <20170119175448.11445-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170112010324.28068-1-marek.vasut@gmail.com>
+References: <20170112010324.28068-1-marek.vasut@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jan 2017 09:25:23 +0100
+Message-ID: <CAMuHMdWTGyRc82fPZ-k28=-2PzpkQooKPcB9OF0BctDuw7qbZA@mail.gmail.com>
+Subject: Re: [PATCH V2 1/2] clk: vc5: Add bindings for IDT VersaClock
+ 5P49V5923 and 5P49V5933
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Rob Herring <robh@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s is now driven by sunxi-ng CCU driver.
+Hi Marek,
 
-Add devicetree binding for it.
+On Thu, Jan 12, 2017 at 2:03 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> Add bindings for IDT VersaClock 5 5P49V5923 and 5P49V5933 chips.
+> These are I2C clock generators with optional clock source from
+> either XTal or dedicated clock generator and, depending on the
+> model, two or more clock outputs.
+>
+> Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V2: Add mapping between the clock specifier and physical pins of the chip
+> ---
+>  .../devicetree/bindings/clock/idt,versaclock5.txt  | 65 ++++++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+>
+> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> new file mode 100644
+> index 000000000000..87e9c47a89a3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> @@ -0,0 +1,65 @@
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
- Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 1 +
- 1 file changed, 1 insertion(+)
+> +==Mapping between clock specifier and physical pins==
+> +
+> +When referencing the provided clock in the DT using phandle and
+> +clock specifier, the following mapping applies:
+> +
+> +5P49V5923:
+> +       0 -- OUT0_SEL_I2CB
+> +       1 -- OUT1
+> +       2 -- OUT2
+> +
+> +5P49V5933:
+> +       0 -- OUT0_SEL_I2CB
+> +       1 -- OUT1
+> +       2 -- OUT4
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index 74d44a4273f2..f6032cf63f12 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -7,6 +7,7 @@ Required properties :
- 		- "allwinner,sun8i-a23-ccu"
- 		- "allwinner,sun8i-a33-ccu"
- 		- "allwinner,sun8i-h3-ccu"
-+		- "allwinner,sun8i-v3s-ccu"
- 		- "allwinner,sun50i-a64-ccu"
- 
- - reg: Must contain the registers base address and length
--- 
-2.11.0
+I'm a bit puzzled by the use of "OUT4".
+According to the datasheets, both '5923 and '5933 have OUT1 and OUT2.
+The '5933 datasheet has a single reference to OUT4 ("The OUT1 to OUT4 clock
+outputs"), but that may be a copy and paste error from a datasheet for a part
+with 4 outputs.
 
+Apart from that:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
