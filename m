@@ -1,136 +1,30 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1484927830.2897.51.camel@pengutronix.de>
-Subject: Re: [PATCH 4/8] clk: renesas: cpg-mssr: Add support for reset
- control
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,  Mark Rutland
- <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org,  linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org
-Date: Fri, 20 Jan 2017 16:57:10 +0100
-In-Reply-To: <1484921306-9967-5-git-send-email-geert+renesas@glider.be>
-References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
-	 <1484921306-9967-5-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <arndbergmann@gmail.com>
+MIME-Version: 1.0
+Sender: arndbergmann@gmail.com
+In-Reply-To: <20170112220627.GQ17126@codeaurora.org>
+References: <20170111134107.3821564-1-arnd@arndb.de> <20170112220627.GQ17126@codeaurora.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 12 Jan 2017 23:42:30 +0100
+Message-ID: <CAK8P3a3ieV29jgh0jhioN3KjZCfP2drPAQme_+1oMuTTSiA4NQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: stm32f4: avoid uninitialized variable access
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>, Gabriel Fernandez <gabriel.fernandez@st.com>,
+	Rob Herring <robh@kernel.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+On Thu, Jan 12, 2017 at 11:06 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>
+> Applied to clk-next. Seems I need to update my compiler to find
+> these warnings.
 
-On Fri, 2017-01-20 at 15:08 +0100, Geert Uytterhoeven wrote:
-> Add optional support for the Reset Control feature of the Renesas Clock
-> Pulse Generator / Module Standby and Software Reset module on R-Car
-> Gen2, R-Car Gen3, and RZ/G1 SoCs.
+I'm currently playing with gcc-7, which adds a lot of new warnings
+(including many false positives). gcc-6 was supposed to have better
+warnings than 5, but I didn't find the difference that noticeable. 5
+or 6 is probably best at the moment, and if you have at least 4.9
+there is no urgent need to upgrade.
 
-Is there a reason to make this optional?
-
-> This allows to reset SoC devices using the Reset Controller API.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Looks good to me,
-
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-
-Just a small issue below,
-
-> ---
->  drivers/clk/renesas/renesas-cpg-mssr.c | 122 +++++++++++++++++++++++++++++++++
->  1 file changed, 122 insertions(+)
-> 
-> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-> index f1161a585c57e433..ea4af714ac14603a 100644
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-[...]
-> +static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
-> +			  unsigned long id)
-> +{
-> +	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-> +	unsigned int reg = id / 32;
-> +	unsigned int bit = id % 32;
-> +	u32 bitmask = BIT(bit);
-
-Here you have a bitmask = BIT(bit) variable.
-
-> +	unsigned long flags;
-> +	u32 value;
-> +
-> +	dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
-> +
-> +	/* Reset module */
-> +	spin_lock_irqsave(&priv->rmw_lock, flags);
-> +	value = readl(priv->base + SRCR(reg));
-> +	value |= bitmask;
-
-Here you use it.
-
-> +	writel(value, priv->base + SRCR(reg));
-> +	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-> +
-> +	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
-> +	udelay(35);
-> +
-> +	/* Release module from reset state */
-> +	writel(bitmask, priv->base + SRSTCLR(reg));
-> +
-> +	return 0;
-> +}
-> +
-> +static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
-> +{
-> +	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-> +	unsigned int reg = id / 32;
-> +	unsigned int bit = id % 32;
-
-Here you haven't.
-
-> +	unsigned long flags;
-> +	u32 value;
-> +
-> +	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
-> +
-> +	spin_lock_irqsave(&priv->rmw_lock, flags);
-> +	value = readl(priv->base + SRCR(reg));
-> +	writel(value | BIT(bit), priv->base + SRCR(reg));
-
-Here you don't.
-
-> +	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-> +	return 0;
-> +}
-> +
-> +static int cpg_mssr_deassert(struct reset_controller_dev *rcdev,
-> +			     unsigned long id)
-> +{
-> +	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-> +	unsigned int reg = id / 32;
-> +	unsigned int bit = id % 32;
-> +
-> +	dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
-> +
-> +	writel(BIT(bit), priv->base + SRSTCLR(reg));
-
-And here ...
-
-> +	return 0;
-> +}
-> +
-> +static int cpg_mssr_status(struct reset_controller_dev *rcdev,
-> +			   unsigned long id)
-> +{
-> +	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-> +	unsigned int reg = id / 32;
-> +	unsigned int bit = id % 32;
-> +
-> +	return !!(readl(priv->base + SRCR(reg)) & BIT(bit));
-
-And here neither.
-
-I'd choose one variant over the other for consistency.
-
-regards
-Philipp
+    Arnd
