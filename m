@@ -1,54 +1,72 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 03/10] clk: sunxi-ng: mux: Get closest parent rate possible with CLK_SET_RATE_PARENT
-Date: Sat, 28 Jan 2017 20:22:32 +0800
-Message-Id: <20170128122239.4480-4-wens@csie.org>
-In-Reply-To: <20170128122239.4480-1-wens@csie.org>
-References: <20170128122239.4480-1-wens@csie.org>
+Return-Path: <ping.bai@nxp.com>
+From: Jacky Bai <ping.bai@nxp.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Shawn Guo <shawnguo@kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer
+	<kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "Daniel
+ Lezcano" <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk
+	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com"
+	<jacky.baip@gmail.com>
+Subject: RE: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
+ for imx6sll
+Date: Thu, 12 Jan 2017 02:57:20 +0000
+Message-ID: <AM3PR04MB530A88C5C0E7C6AD2C59B9E87790@AM3PR04MB530.eurprd04.prod.outlook.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-6-git-send-email-ping.bai@nxp.com>
+ <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
+ <AM3PR04MB5304992095753B761E66A9A87640@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <CACRpkdYTpEHyzBY-mA4YUsj=xt46Pibka3-4VHwUXosfgbgp1Q@mail.gmail.com>
+In-Reply-To: <CACRpkdYTpEHyzBY-mA4YUsj=xt46Pibka3-4VHwUXosfgbgp1Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-If the CLK_SET_RATE_PARENT flag is set, we want to try getting the
-closest parent rate.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu_mux.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index d0d69c7eb516..c6bb1f523232 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -93,7 +93,18 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
- 		if (!parent)
- 			continue;
- 
--		parent_rate = clk_hw_get_rate(parent);
-+		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
-+			struct clk_rate_request parent_req = *req;
-+			int ret = __clk_determine_rate(parent, &parent_req);
-+
-+			if (ret)
-+				continue;
-+
-+			parent_rate = parent_req.rate;
-+		} else {
-+			parent_rate = clk_hw_get_rate(parent);
-+		}
-+
- 		adj_parent_rate = parent_rate;
- 		ccu_mux_helper_adjust_parent_for_prediv(common, cm, i,
- 							&adj_parent_rate);
--- 
-2.11.0
+PiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDA1LzEyXSBEb2N1bWVudDogZHQ6IGJpbmRpbmc6IGlt
+eDogdXBkYXRlIHBpbmN0cmwgZG9jDQo+IGZvciBpbXg2c2xsDQo+IA0KPiBPbiBNb24sIEphbiA5
+LCAyMDE3IGF0IDM6MzIgQU0sIEphY2t5IEJhaSA8cGluZy5iYWlAbnhwLmNvbT4gd3JvdGU6DQo+
+IA0KPiA+IEkgaGF2ZSBsb29rIGludG8gdGhlIGFib3ZlIGNvbW1pdCBvbiB1c2luZyBnZW5lcmlj
+IGJpbmRpbmcuIEJ1dCBJDQo+ID4gdGhpbmsgdGhlIGdlbmVyaWMgcGluY29uZiBpcyBub3QgdmVy
+eSBlYXN5IHRvIGFkZCBpbiBpbXggcGluY3RybCBEcml2ZXIuIGlteA0KPiBwaW5jdHJsIHVzZSBh
+IGRpZmZlcmVudCB3YXkgdG8gcGFyc2UgdGhlIHBpbiBjb25maWd1cmUuDQo+IA0KPiBPSyBhdGxl
+YXN0IEkgbmVlZCBhbiBpbmRpY2F0aW9uIGZyb20gb25lIG9mIHRoZSBpLk1YIG1haW50YWluZXJz
+IGhvdyB0aGV5DQo+IHdhbnQgdG8gcHJvY2VlZC4NCj4gDQo+ID4gRWFjaCBmc2wscGluIGVudHJ5
+ICBsb29rcyBsaWtlIDxQSU5fRlVOQ19JRCAgQ09ORklHPiBpbiBkdHMsIHRoZQ0KPiA+IENPTkZJ
+RyBpcyB0aGUgcGFkIHNldHRpbmcgdmFsdWUgbGlrZSBwdWxsLXVwLCBvcGVuLWRyYWluLCBkcml2
+ZSBzdHJlbmd0aCBldGMuDQo+IFRoZSBhYm92ZSBjb25maWcgYml0IGRlZmluaXRpb24gaXMgc3Bl
+Y2lmaWMgdG8gZWFjaCBTT0MgaW4gdGhlIFBBRCBDVEwgcmVnaXN0ZXIuDQo+ID4NCj4gPiBJZiB3
+ZSB3YW50IHNldCB0aGUgcGluIGNvbmZpZyB0byBlbmFibGUgaHlzdGVyZXNpcywgNDdLT2htIFB1
+bGwgVXAsDQo+ID4gNTBNaHogc3BlZWQsIDgwT2htIGRyaXZlciBzdHJlbmd0aCBhbmQgRmFzdCBT
+bGV3IFJhdGUsIHRoZW4gdGhlIENPTkZJRw0KPiB2YWx1ZSBzaG91bGQgYmUgMHgxNzA1OSggT1Jz
+IGNvcnJlc3BvbmRpbmcgYml0IGRlZmluaXRpb24pLg0KPiANCj4gSHlzdGVyZXNpcyBpcyBhbiBp
+bnB1dCBwcm9wZXJ0eSBhbmQgZG9lcyBub3QgbWFrZSBzZW5zZSBvbiBzb21ldGhpbmcgdGhhdA0K
+PiBuZWVkIGRyaXZlIHN0cmVuZ3RoIGFuZCBzbGV3IHJhdGUgY29uZmlndXJhdGlvbiB3aGljaCBh
+cmUgb3V0cHV0IHByb3BlcnRpZXMuDQo+IChJIGd1ZXNzIHlvdSBtZWFuIDgwbUEgZHJpdmUgc3Ry
+ZW5ndGguKQ0KPiANCg0KRm9yIHNvbWUgYmktZGlyZWN0aW9uIHBpbnMsIGxpa2UgU0QgREFUQSBw
+aW4sIHdlIG1heSBuZWVkIHRvIGVuYWJsZSB0aGUgaHlzdGVyZXNpcyBjb25maWd1cmF0aW9uLg0K
+DQo+IEFjdHVhbGx5IHN1Y2ggb3h5bW9yb25pYyBzZXR0aW5ncyBpcyBhIGdvb2QgcmVhc29uIHRv
+IG1pZ3JhdGUgdG8gZ2VuZXJpYw0KPiBiaW5kaW5ncyBiZWNhdXNlIHdoZW4geW91IGRlc2NyaWJl
+IHN0dWZmIHdpdGggZ2VuZXJpYyBzdHJpbmdzIHlvdSBzZWUgYmV0dGVyDQo+IHdoYXQgaXMgZ29p
+bmcgb24sIGFuZCB3ZSBjYW4gYWRkIHNhbml0eSBjaGVja3MgdG8gY2FzZXMgbGlrZSB0aGlzIGlu
+IHRoZSBnZW5lcmljDQo+IGNvZGUgd2hlcmUgaXQgd291bGQgaW5kZWVkIGJlIHZhbGlkIHRvIGFz
+ayB3aHkgdGhpcyBjb21iaW5hdGlvbiBvZiBzZXR0aW5ncyBpcw0KPiBiZWluZyBtYWRlLg0KPiAN
+Cg0KQW5vdGhlciB0aGluZyBpcyB0aGF0IHdlIGNhbiB1c2UgYSBwaW5zLXRvb2wgcHJvZ3JhbSBk
+ZXZlbG9wZWQgYnkgTlhQIHRvIGdlbmVyYXRlIHRoZSBwaW5jdHJsIGNvbmZpZ3VyYXRpb24gY29k
+ZSB0aGF0IGNhbg0KYmUgdXNlZCBkaXJlY3RseSBpbiBkdHMuIFRoaXMgdGlueSBwcm9ncmFtIGNh
+biBhdm9pZCBwaW4gZnVuY3Rpb24gY29uZmxpY3QuIEFzIG9uIGkuTVgsIHRoZXJlIGFyZSBzbyBt
+YXkgcGlucywgZWFjaCBwaW4gY2FuIGJlIHVzZWQNCmZvciB1cCA4ICBmdW5jdGlvbi4gQ29uZmln
+dXJpbmcgdGhlIHBpbnMgaXMgYSB0aW1lLWNvbnN1bWluZyB3b3JrLiAgVGhpcyB0b29scyBpcyB2
+ZXJ5IHVzZWZ1bCBmb3IgY3VzdG9tZXIgdG8gZ2VuZXJhdGUgdGhlIGR0cyBjb2RlLiAgDQoNClVz
+aW5nIGdlbmVyaWMgcGluY29uZiBpcyBhbm90aGVyIG9wdGlvbiwgYnV0IGl0IG1heSBuZWVkIG1v
+cmUgdGltZSB0byBhZGQgaXQgYW5kIG1vcmUgd29yayB0byBkby4gIEZvciBub3csIEkgdGhpbmsg
+d2UgY2FuIHN0aWxsIGtlZXAgdGhlIGxlZ2FjeSBtZXRob2Q/DQogDQo+ID4gVGhpcyB2YWx1ZSB3
+aWxsIGJlIHNldCBpbg0KPiA+IFBBRCBDVEwgcmVnaXN0ZXIgdG8gY29uZmlnIHRoZSBjb3JyZXNw
+b25kaW5nIHBpbi4NCj4gDQo+IFllcz8gVGhhdCBpcyBjb21tb24uIEl0IGxvb2tzIGxpa2UgdGhh
+dCBpbiBEVDoNCj4gDQo+IHsNCj4gICAgaW5wdXQtc2NobWl0dC1lbmFibGU7DQo+ICAgIGJpYXMt
+cHVsbC11cCA9IDw0NzAwMD47DQo+ICAgIHNsZXctcmF0ZSA9IDw1MDAwMDAwMD47DQo+ICAgIGRy
+aXZlLXN0cmVuZ3RoID0gPDgwMDAwPjsNCj4gfTsNCj4gDQo+IFlvdXJzLA0KPiBMaW51cyBXYWxs
+ZWlqDQo=
