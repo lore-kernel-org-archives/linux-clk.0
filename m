@@ -1,51 +1,37 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To: linux-clk@vger.kernel.org,
-	x86@kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: alsa-devel@alsa-project.org,
-	Irina Tirdea <irina.tirdea@intel.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Mark Brown <broonie@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [PATCH v7 5/5] platform/x86: fix typo in comment
-Date: Tue, 17 Jan 2017 15:57:50 -0600
-Message-Id: <1484690270-28425-6-git-send-email-pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
-References: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+Return-Path: <sboyd@codeaurora.org>
+Subject: Re: [PATCH] clk: stm32f4: avoid uninitialized variable access
+To: Arnd Bergmann <arnd@arndb.de>
+References: <20170111134107.3821564-1-arnd@arndb.de>
+ <20170112220627.GQ17126@codeaurora.org>
+ <CAK8P3a3ieV29jgh0jhioN3KjZCfP2drPAQme_+1oMuTTSiA4NQ@mail.gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@st.com>,
+ Gabriel Fernandez <gabriel.fernandez@st.com>, Rob Herring <robh@kernel.org>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Message-ID: <3436f495-1c2b-b80b-2c0c-6956391bd43f@codeaurora.org>
+Date: Thu, 12 Jan 2017 14:56:12 -0800
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a3ieV29jgh0jhioN3KjZCfP2drPAQme_+1oMuTTSiA4NQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-s/Acumulate/Accumulate/
+On 01/12/2017 02:42 PM, Arnd Bergmann wrote:
+> On Thu, Jan 12, 2017 at 11:06 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> Applied to clk-next. Seems I need to update my compiler to find
+>> these warnings.
+> I'm currently playing with gcc-7, which adds a lot of new warnings
+> (including many false positives). gcc-6 was supposed to have better
+> warnings than 5, but I didn't find the difference that noticeable. 5
+> or 6 is probably best at the moment, and if you have at least 4.9
+> there is no urgent need to upgrade.
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- include/linux/platform_data/x86/pmc_atom.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks. I'm on gcc-4.7. It's been a long time since I upgraded my cross
+compiler.
 
-diff --git a/include/linux/platform_data/x86/pmc_atom.h b/include/linux/platform_data/x86/pmc_atom.h
-index aa8744c..e4905fe 100644
---- a/include/linux/platform_data/x86/pmc_atom.h
-+++ b/include/linux/platform_data/x86/pmc_atom.h
-@@ -50,7 +50,7 @@
- 				BIT_ORED_DEDICATED_IRQ_GPSC | \
- 				BIT_SHARED_IRQ_GPSS)
- 
--/* The timers acumulate time spent in sleep state */
-+/* The timers accumulate time spent in sleep state */
- #define	PMC_S0IR_TMR		0x80
- #define	PMC_S0I1_TMR		0x84
- #define	PMC_S0I2_TMR		0x88
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
