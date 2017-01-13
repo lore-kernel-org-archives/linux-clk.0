@@ -1,40 +1,67 @@
 Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <AM3PR04MB530E214A598B06ECFFE551487720@AM3PR04MB530.eurprd04.prod.outlook.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
- <AM3PR04MB5304992095753B761E66A9A87640@AM3PR04MB530.eurprd04.prod.outlook.com>
- <CACRpkdYTpEHyzBY-mA4YUsj=xt46Pibka3-4VHwUXosfgbgp1Q@mail.gmail.com>
- <AM3PR04MB530A88C5C0E7C6AD2C59B9E87790@AM3PR04MB530.eurprd04.prod.outlook.com>
- <CACRpkda1a4+yOrzBnKs6J84PS0StwQ68gHxDub_u7i5ofU9s7w@mail.gmail.com>
- <AM3PR04MB530F532D867C08824DADDC9877C0@AM3PR04MB530.eurprd04.prod.outlook.com>
- <CACRpkdaxvf6eHujfvKuOsRb69aL8+4jTE-aR3a6ywhytTEu6Hw@mail.gmail.com>
- <20170123060454.GD5662@dragon> <AM3PR04MB530E214A598B06ECFFE551487720@AM3PR04MB530.eurprd04.prod.outlook.com>
+Return-Path: <linus.walleij@linaro.org>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 26 Jan 2017 15:05:20 +0100
-Message-ID: <CACRpkdY_dvUDytrwwPv9CXNu1wXEKFHKyjQQKR-Acu6=WAHZnA@mail.gmail.com>
-Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
- for imx6sll
-To: Jacky Bai <ping.bai@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"jacky.baip@gmail.com" <jacky.baip@gmail.com>, Anson Huang <anson.huang@nxp.com>
-Content-Type: text/plain; charset=UTF-8
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 1/3] clk: ux500: move AB8500 sysclk over to PRCMU clk driver
+Date: Fri, 13 Jan 2017 16:07:47 +0100
+Message-Id: <20170113150747.30105-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jan 23, 2017 at 8:17 AM, Jacky Bai <ping.bai@nxp.com> wrote:
+The AB8500 sysclk is just another PRCMU-controlled clock, there
+is no reason why it should be in the ABx500-controlled part of
+the clock implementation. Doing this and the corresponding device
+tree changes makes USB work on the Ux500 again.
 
-> i.MX8 kernel support is in development stage. The code has not been finalized.
-> For now, i.MX8 shares most of the pinctrl code with i.MX6 and use the same pinconfig method.
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/clk/ux500/abx500-clk.c   | 8 --------
+ drivers/clk/ux500/u8500_of_clk.c | 3 +++
+ 2 files changed, 3 insertions(+), 8 deletions(-)
 
-Please switch to generic bindings already.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/ux500/abx500-clk.c b/drivers/clk/ux500/abx500-clk.c
+index a07c31e6f26d..0467fcae3b0e 100644
+--- a/drivers/clk/ux500/abx500-clk.c
++++ b/drivers/clk/ux500/abx500-clk.c
+@@ -15,7 +15,6 @@
+ #include <linux/mfd/abx500/ab8500-sysctrl.h>
+ #include <linux/clkdev.h>
+ #include <linux/clk-provider.h>
+-#include <linux/mfd/dbx500-prcmu.h>
+ #include "clk.h"
+ 
+ /* Clock definitions for ab8500 */
+@@ -39,13 +38,6 @@ static int ab8500_reg_clks(struct device *dev)
+ 	if (ret)
+ 		return ret;
+ 
+-	/* ab8500_sysclk */
+-	clk = clk_reg_prcmu_gate("ab8500_sysclk", NULL, PRCMU_SYSCLK, 0);
+-	clk_register_clkdev(clk, "sysclk", "ab8500-usb.0");
+-	clk_register_clkdev(clk, "sysclk", "ab-iddet.0");
+-	clk_register_clkdev(clk, "sysclk", "snd-soc-mop500.0");
+-	clk_register_clkdev(clk, "sysclk", "shrm_bus");
+-
+ 	/* ab8500_sysclk2 */
+ 	clk = clk_reg_sysctrl_gate(dev , "ab8500_sysclk2", "ab8500_sysclk",
+ 		AB8500_SYSULPCLKCTRL1, AB8500_SYSULPCLKCTRL1_SYSCLKBUF2REQ,
+diff --git a/drivers/clk/ux500/u8500_of_clk.c b/drivers/clk/ux500/u8500_of_clk.c
+index e960d686d9db..d5888591e1a9 100644
+--- a/drivers/clk/ux500/u8500_of_clk.c
++++ b/drivers/clk/ux500/u8500_of_clk.c
+@@ -206,6 +206,9 @@ static void u8500_clk_init(struct device_node *np)
+ 	clk = clk_reg_prcmu_gate("timclk", NULL, PRCMU_TIMCLK, 0);
+ 	prcmu_clk[PRCMU_TIMCLK] = clk;
+ 
++	clk = clk_reg_prcmu_gate("ab8500_sysclk", NULL, PRCMU_SYSCLK, 0);
++	prcmu_clk[PRCMU_SYSCLK] = clk;
++
+ 	clk = clk_reg_prcmu_opp_volt_scalable("sdmmcclk", NULL, PRCMU_SDMMCCLK,
+ 					100000000, CLK_SET_RATE_GATE);
+ 	prcmu_clk[PRCMU_SDMMCCLK] = clk;
+-- 
+2.9.3
