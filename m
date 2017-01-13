@@ -1,299 +1,122 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
- Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v3 04/10] clk: sunxi-ng: add support for Allwinner H5 SoC
-Date: Sun, 29 Jan 2017 10:33:25 +0800
-Message-Id: <20170129023331.62106-5-icenowy@aosc.xyz>
-In-Reply-To: <20170129023331.62106-1-icenowy@aosc.xyz>
-References: <20170129023331.62106-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
+Return-Path: <ping.bai@nxp.com>
+From: Jacky Bai <ping.bai@nxp.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: "shawnguo@kernel.org" <shawnguo@kernel.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>, "linus.walleij@linaro.org"
+	<linus.walleij@linaro.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, "daniel.lezcano@linaro.org"
+	<daniel.lezcano@linaro.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com"
+	<jacky.baip@gmail.com>
+Subject: RE: [PATCH v2 04/12] driver: clk: imx: Add clock driver for imx6sll
+Date: Fri, 13 Jan 2017 03:04:37 +0000
+Message-ID: <AM3PR04MB53027B627AE8CEC6D7D0D1B87780@AM3PR04MB530.eurprd04.prod.outlook.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-5-git-send-email-ping.bai@nxp.com>
+ <20170110003753.GM17126@codeaurora.org>
+ <AM3PR04MB5307CB38AA904535AF8D80D87670@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <20170112220536.GP17126@codeaurora.org>
+In-Reply-To: <20170112220536.GP17126@codeaurora.org>
 Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H5 is a SoC that features a CCU like H3, but with MMC phase
-clocks removed (for new MMC controller) and a new bus gate/reset
-imported.
+> Subject: Re: [PATCH v2 04/12] driver: clk: imx: Add clock driver for imx6=
+sll
+>=20
+> > > > +
+> > > > +static const char *pll_bypass_src_sels[] =3D { "osc", "dummy", };
+> > >
+> > > All these should be const char * const unless something is wrong.
+> >
+> > If changed to 'const char * const', it vill has argument type mismatch
+> > error, as imx_clk_* wrapper function has argument type 'const char *'.
+>=20
+> Hmm that's unfortunate.
+>=20
+> >
+> > >
+> > > > +
+> > > > +	for (i =3D 0; i < ARRAY_SIZE(clks_init_on); i++)
+> > > > +		clk_prepare_enable(clks[clks_init_on[i]]);
+> > >
+> > > Critical clocks?
+> >
+> > Yes, these clocks must be always on.
+> >
+> > >
+> > > > +
+> > > > +	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
+> > > > +		clk_prepare_enable(clks[IMX6SLL_CLK_USBPHY1_GATE]);
+> > > > +		clk_prepare_enable(clks[IMX6SLL_CLK_USBPHY2_GATE]);
+> > >
+> > > The phy driver can't enable these?
+> >
+> > The reason why we enable these two clks here is in below commit commit
+> > a5120e89e7e187a91852896f586876c7a2030804
+> > Author: Peter Chen <peter.chen@freescale.com>
+> > Date:   Fri Jan 18 10:38:05 2013 +0800
+> >       ARM i.MX6: change mxs usbphy clock usage
+> >
+>=20
+> So can we mark these clks with CLK_IS_CRITICAL flag then instead?
+> Or are they disabled out of the bootloader?
+>=20
 
-Add support for it.
+Sure, using 'CLK_IS_CRITICAL'  should be ok for clks_init_on clocks.  But f=
+or  USBPHY*_GATE, it is
+only enabled when CONIG_USB_MXC_PHY is true.  And another concern is if we =
+need to add CLK_IS_CRITICAL
+flag to clks_init_on clocks, we may need to add new wrapper function to reg=
+ister these critical clock. It is not very good.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
-See the comments of the previous patch.
+ > >
+> > > > +	}
+> > > > +
+> > > > +	/* Lower the AHB clock rate before changing the clock source. */
+> > > > +	clk_set_rate(clks[IMX6SLL_CLK_AHB], 99000000);
+> > > > +
+> > > > +	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264M=
+Hz */
+> > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH_CLK2_SEL],
+> > > clks[IMX6SLL_CLK_PLL3_USB_OTG]);
+> > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH],
+> > > clks[IMX6SLL_CLK_PERIPH_CLK2]);
+> > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH_PRE],
+> > > clks[IMX6SLL_CLK_PLL2_BUS]);
+> > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH],
+> > > > +clks[IMX6SLL_CLK_PERIPH_PRE]);
+> > > > +
+> > > > +	clk_set_rate(clks[IMX6SLL_CLK_AHB], 132000000);
+> > >
+> > > assigned-clocks for rates now? Or perhaps we shouldn't be exposing
+> > > these as clks if they have some sort of complicated rate sequence
+> > > switch that we can't guarantee with the clk_ops we have today.
+> >
+> > These clks will be used by some peripherals, so we need to expose these
+> clocks.
+> > And the above parent and rate swith sequence is not very easy to be
+> > handled in assigned-clocks, So we leave it in this place.
+> >
+>=20
+> How do we guarantee that the rate switch doesn't happen later on, requiri=
+ng
+> this coordinated sequence of clk operations?
+>=20
 
- .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
- drivers/clk/sunxi-ng/Kconfig                       |   2 +-
- drivers/clk/sunxi-ng/ccu-sunxi-h3-h5.c             | 137 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sunxi-h3-h5.h             |   5 +-
- include/dt-bindings/clock/sunxi-h3-h5-ccu.h        |   3 +
- include/dt-bindings/reset/sunxi-h3-h5-ccu.h        |   3 +
- 6 files changed, 149 insertions(+), 2 deletions(-)
+This clock sequence is used for increasing the AXI and AHB bus clock rate. =
+In normal
+use, it is very rarely that we need to change them again. If we really need=
+ to change
+AXI and AHB bus clock later, a similar sequence must be used to do this.
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-index f6032cf63f12..a33a4a5ecffa 100644
---- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-@@ -9,6 +9,7 @@ Required properties :
- 		- "allwinner,sun8i-h3-ccu"
- 		- "allwinner,sun8i-v3s-ccu"
- 		- "allwinner,sun50i-a64-ccu"
-+		- "allwinner,sun50i-h5-ccu"
- 
- - reg: Must contain the registers base address and length
- - clocks: phandle to the oscillators feeding the CCU. Two are needed:
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index 4be083ae717f..bdf18e846731 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -117,7 +117,7 @@ config SUNXI_H3_H5_CCU
- 	select SUNXI_CCU_NM
- 	select SUNXI_CCU_MP
- 	select SUNXI_CCU_PHASE
--	default MACH_SUN8I
-+	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
- 
- config SUN8I_V3S_CCU
- 	bool "Support for the Allwinner V3s CCU"
-diff --git a/drivers/clk/sunxi-ng/ccu-sunxi-h3-h5.c b/drivers/clk/sunxi-ng/ccu-sunxi-h3-h5.c
-index be63b56315f5..b7b9f85f5c9f 100644
---- a/drivers/clk/sunxi-ng/ccu-sunxi-h3-h5.c
-+++ b/drivers/clk/sunxi-ng/ccu-sunxi-h3-h5.c
-@@ -302,6 +302,8 @@ static SUNXI_CCU_GATE(bus_uart3_clk,	"bus-uart3",	"apb2",
- 		      0x06c, BIT(19), 0);
- static SUNXI_CCU_GATE(bus_scr0_clk,	"bus-scr0",	"apb2",
- 		      0x06c, BIT(20), 0);
-+static SUNXI_CCU_GATE(bus_scr1_clk,	"bus-scr1",	"apb2",
-+		      0x06c, BIT(21), 0);
- 
- static SUNXI_CCU_GATE(bus_ephy_clk,	"bus-ephy",	"ahb1",
- 		      0x070, BIT(0), 0);
-@@ -547,6 +549,7 @@ static struct ccu_common *sunxi_h3_h5_ccu_clks[] = {
- 	&bus_uart2_clk.common,
- 	&bus_uart3_clk.common,
- 	&bus_scr0_clk.common,
-+	&bus_scr1_clk.common,
- 	&bus_ephy_clk.common,
- 	&bus_dbg_clk.common,
- 	&ths_clk.common,
-@@ -730,6 +733,122 @@ static struct clk_hw_onecell_data sun8i_h3_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
-+static struct clk_hw_onecell_data sun50i_h5_hw_clks = {
-+	.hws	= {
-+		[CLK_PLL_CPUX]		= &pll_cpux_clk.common.hw,
-+		[CLK_PLL_AUDIO_BASE]	= &pll_audio_base_clk.common.hw,
-+		[CLK_PLL_AUDIO]		= &pll_audio_clk.hw,
-+		[CLK_PLL_AUDIO_2X]	= &pll_audio_2x_clk.hw,
-+		[CLK_PLL_AUDIO_4X]	= &pll_audio_4x_clk.hw,
-+		[CLK_PLL_AUDIO_8X]	= &pll_audio_8x_clk.hw,
-+		[CLK_PLL_VIDEO]		= &pll_video_clk.common.hw,
-+		[CLK_PLL_VE]		= &pll_ve_clk.common.hw,
-+		[CLK_PLL_DDR]		= &pll_ddr_clk.common.hw,
-+		[CLK_PLL_PERIPH0]	= &pll_periph0_clk.common.hw,
-+		[CLK_PLL_PERIPH0_2X]	= &pll_periph0_2x_clk.hw,
-+		[CLK_PLL_GPU]		= &pll_gpu_clk.common.hw,
-+		[CLK_PLL_PERIPH1]	= &pll_periph1_clk.common.hw,
-+		[CLK_PLL_DE]		= &pll_de_clk.common.hw,
-+		[CLK_CPUX]		= &cpux_clk.common.hw,
-+		[CLK_AXI]		= &axi_clk.common.hw,
-+		[CLK_AHB1]		= &ahb1_clk.common.hw,
-+		[CLK_APB1]		= &apb1_clk.common.hw,
-+		[CLK_APB2]		= &apb2_clk.common.hw,
-+		[CLK_AHB2]		= &ahb2_clk.common.hw,
-+		[CLK_BUS_CE]		= &bus_ce_clk.common.hw,
-+		[CLK_BUS_DMA]		= &bus_dma_clk.common.hw,
-+		[CLK_BUS_MMC0]		= &bus_mmc0_clk.common.hw,
-+		[CLK_BUS_MMC1]		= &bus_mmc1_clk.common.hw,
-+		[CLK_BUS_MMC2]		= &bus_mmc2_clk.common.hw,
-+		[CLK_BUS_NAND]		= &bus_nand_clk.common.hw,
-+		[CLK_BUS_DRAM]		= &bus_dram_clk.common.hw,
-+		[CLK_BUS_EMAC]		= &bus_emac_clk.common.hw,
-+		[CLK_BUS_TS]		= &bus_ts_clk.common.hw,
-+		[CLK_BUS_HSTIMER]	= &bus_hstimer_clk.common.hw,
-+		[CLK_BUS_SPI0]		= &bus_spi0_clk.common.hw,
-+		[CLK_BUS_SPI1]		= &bus_spi1_clk.common.hw,
-+		[CLK_BUS_OTG]		= &bus_otg_clk.common.hw,
-+		[CLK_BUS_EHCI0]		= &bus_ehci0_clk.common.hw,
-+		[CLK_BUS_EHCI1]		= &bus_ehci1_clk.common.hw,
-+		[CLK_BUS_EHCI2]		= &bus_ehci2_clk.common.hw,
-+		[CLK_BUS_EHCI3]		= &bus_ehci3_clk.common.hw,
-+		[CLK_BUS_OHCI0]		= &bus_ohci0_clk.common.hw,
-+		[CLK_BUS_OHCI1]		= &bus_ohci1_clk.common.hw,
-+		[CLK_BUS_OHCI2]		= &bus_ohci2_clk.common.hw,
-+		[CLK_BUS_OHCI3]		= &bus_ohci3_clk.common.hw,
-+		[CLK_BUS_VE]		= &bus_ve_clk.common.hw,
-+		[CLK_BUS_TCON0]		= &bus_tcon0_clk.common.hw,
-+		[CLK_BUS_TCON1]		= &bus_tcon1_clk.common.hw,
-+		[CLK_BUS_DEINTERLACE]	= &bus_deinterlace_clk.common.hw,
-+		[CLK_BUS_CSI]		= &bus_csi_clk.common.hw,
-+		[CLK_BUS_TVE]		= &bus_tve_clk.common.hw,
-+		[CLK_BUS_HDMI]		= &bus_hdmi_clk.common.hw,
-+		[CLK_BUS_DE]		= &bus_de_clk.common.hw,
-+		[CLK_BUS_GPU]		= &bus_gpu_clk.common.hw,
-+		[CLK_BUS_MSGBOX]	= &bus_msgbox_clk.common.hw,
-+		[CLK_BUS_SPINLOCK]	= &bus_spinlock_clk.common.hw,
-+		[CLK_BUS_CODEC]		= &bus_codec_clk.common.hw,
-+		[CLK_BUS_SPDIF]		= &bus_spdif_clk.common.hw,
-+		[CLK_BUS_PIO]		= &bus_pio_clk.common.hw,
-+		[CLK_BUS_THS]		= &bus_ths_clk.common.hw,
-+		[CLK_BUS_I2S0]		= &bus_i2s0_clk.common.hw,
-+		[CLK_BUS_I2S1]		= &bus_i2s1_clk.common.hw,
-+		[CLK_BUS_I2S2]		= &bus_i2s2_clk.common.hw,
-+		[CLK_BUS_I2C0]		= &bus_i2c0_clk.common.hw,
-+		[CLK_BUS_I2C1]		= &bus_i2c1_clk.common.hw,
-+		[CLK_BUS_I2C2]		= &bus_i2c2_clk.common.hw,
-+		[CLK_BUS_UART0]		= &bus_uart0_clk.common.hw,
-+		[CLK_BUS_UART1]		= &bus_uart1_clk.common.hw,
-+		[CLK_BUS_UART2]		= &bus_uart2_clk.common.hw,
-+		[CLK_BUS_UART3]		= &bus_uart3_clk.common.hw,
-+		[CLK_BUS_SCR0]		= &bus_scr0_clk.common.hw,
-+		[CLK_BUS_SCR1]		= &bus_scr1_clk.common.hw,
-+		[CLK_BUS_EPHY]		= &bus_ephy_clk.common.hw,
-+		[CLK_BUS_DBG]		= &bus_dbg_clk.common.hw,
-+		[CLK_THS]		= &ths_clk.common.hw,
-+		[CLK_NAND]		= &nand_clk.common.hw,
-+		[CLK_MMC0]		= &mmc0_clk.common.hw,
-+		[CLK_MMC1]		= &mmc1_clk.common.hw,
-+		[CLK_MMC2]		= &mmc2_clk.common.hw,
-+		[CLK_TS]		= &ts_clk.common.hw,
-+		[CLK_CE]		= &ce_clk.common.hw,
-+		[CLK_SPI0]		= &spi0_clk.common.hw,
-+		[CLK_SPI1]		= &spi1_clk.common.hw,
-+		[CLK_I2S0]		= &i2s0_clk.common.hw,
-+		[CLK_I2S1]		= &i2s1_clk.common.hw,
-+		[CLK_I2S2]		= &i2s2_clk.common.hw,
-+		[CLK_SPDIF]		= &spdif_clk.common.hw,
-+		[CLK_USB_PHY0]		= &usb_phy0_clk.common.hw,
-+		[CLK_USB_PHY1]		= &usb_phy1_clk.common.hw,
-+		[CLK_USB_PHY2]		= &usb_phy2_clk.common.hw,
-+		[CLK_USB_PHY3]		= &usb_phy3_clk.common.hw,
-+		[CLK_USB_OHCI0]		= &usb_ohci0_clk.common.hw,
-+		[CLK_USB_OHCI1]		= &usb_ohci1_clk.common.hw,
-+		[CLK_USB_OHCI2]		= &usb_ohci2_clk.common.hw,
-+		[CLK_USB_OHCI3]		= &usb_ohci3_clk.common.hw,
-+		[CLK_DRAM]		= &dram_clk.common.hw,
-+		[CLK_DRAM_VE]		= &dram_ve_clk.common.hw,
-+		[CLK_DRAM_CSI]		= &dram_csi_clk.common.hw,
-+		[CLK_DRAM_DEINTERLACE]	= &dram_deinterlace_clk.common.hw,
-+		[CLK_DRAM_TS]		= &dram_ts_clk.common.hw,
-+		[CLK_DE]		= &de_clk.common.hw,
-+		[CLK_TCON0]		= &tcon_clk.common.hw,
-+		[CLK_TVE]		= &tve_clk.common.hw,
-+		[CLK_DEINTERLACE]	= &deinterlace_clk.common.hw,
-+		[CLK_CSI_MISC]		= &csi_misc_clk.common.hw,
-+		[CLK_CSI_SCLK]		= &csi_sclk_clk.common.hw,
-+		[CLK_CSI_MCLK]		= &csi_mclk_clk.common.hw,
-+		[CLK_VE]		= &ve_clk.common.hw,
-+		[CLK_AC_DIG]		= &ac_dig_clk.common.hw,
-+		[CLK_AVS]		= &avs_clk.common.hw,
-+		[CLK_HDMI]		= &hdmi_clk.common.hw,
-+		[CLK_HDMI_DDC]		= &hdmi_ddc_clk.common.hw,
-+		[CLK_MBUS]		= &mbus_clk.common.hw,
-+		[CLK_GPU]		= &gpu_clk.common.hw,
-+	},
-+	.num	= CLK_NUMBER,
-+};
-+
- static struct ccu_reset_map sunxi_h3_h5_ccu_resets[] = {
- 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
- 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
-@@ -791,6 +910,7 @@ static struct ccu_reset_map sunxi_h3_h5_ccu_resets[] = {
- 	[RST_BUS_UART2]		=  { 0x2d8, BIT(18) },
- 	[RST_BUS_UART3]		=  { 0x2d8, BIT(19) },
- 	[RST_BUS_SCR0]		=  { 0x2d8, BIT(20) },
-+	[RST_BUS_SCR1]		=  { 0x2d8, BIT(21) },
- };
- 
- static const struct sunxi_ccu_desc sun8i_h3_ccu_desc = {
-@@ -803,6 +923,16 @@ static const struct sunxi_ccu_desc sun8i_h3_ccu_desc = {
- 	.num_resets	= ARRAY_SIZE(sunxi_h3_h5_ccu_resets),
- };
- 
-+static const struct sunxi_ccu_desc sun50i_h5_ccu_desc = {
-+	.ccu_clks	= sunxi_h3_h5_ccu_clks,
-+	.num_ccu_clks	= ARRAY_SIZE(sunxi_h3_h5_ccu_clks),
-+
-+	.hw_clks	= &sun50i_h5_hw_clks,
-+
-+	.resets		= sunxi_h3_h5_ccu_resets,
-+	.num_resets	= ARRAY_SIZE(sunxi_h3_h5_ccu_resets),
-+};
-+
- static struct ccu_mux_nb sunxi_h3_h5_cpu_nb = {
- 	.common		= &cpux_clk.common,
- 	.cm		= &cpux_clk.mux,
-@@ -840,3 +970,10 @@ static void __init sun8i_h3_ccu_setup(struct device_node *node)
- }
- CLK_OF_DECLARE(sun8i_h3_ccu, "allwinner,sun8i-h3-ccu",
- 	       sun8i_h3_ccu_setup);
-+
-+static void __init sun50i_h5_ccu_setup(struct device_node *node)
-+{
-+	sunxi_h3_h5_ccu_init(node, &sun50i_h5_ccu_desc);
-+}
-+CLK_OF_DECLARE(sun50i_h5_ccu, "allwinner,sun50i-h5-ccu",
-+	       sun50i_h5_ccu_setup);
-diff --git a/drivers/clk/sunxi-ng/ccu-sunxi-h3-h5.h b/drivers/clk/sunxi-ng/ccu-sunxi-h3-h5.h
-index e2a4656d2cf3..e5a78cc66d6b 100644
---- a/drivers/clk/sunxi-ng/ccu-sunxi-h3-h5.h
-+++ b/drivers/clk/sunxi-ng/ccu-sunxi-h3-h5.h
-@@ -57,6 +57,9 @@
- 
- /* And the GPU module clock is exported */
- 
--#define CLK_NUMBER		(CLK_GPU + 1)
-+/* New clocks imported in H5 */
-+/* The SCR1 bus gate is exported */
-+
-+#define CLK_NUMBER		(CLK_BUS_SCR1 + 1)
- 
- #endif /* _CCU_SUNXI_H3_H5_H_ */
-diff --git a/include/dt-bindings/clock/sunxi-h3-h5-ccu.h b/include/dt-bindings/clock/sunxi-h3-h5-ccu.h
-index 1715a5e12525..4899eacef71d 100644
---- a/include/dt-bindings/clock/sunxi-h3-h5-ccu.h
-+++ b/include/dt-bindings/clock/sunxi-h3-h5-ccu.h
-@@ -142,4 +142,7 @@
- 
- #define CLK_GPU			114
- 
-+/* New clocks imported in H5 */
-+#define CLK_BUS_SCR1		115
-+
- #endif /* _DT_BINDINGS_CLK_SUNXI_H3_H5_H_ */
-diff --git a/include/dt-bindings/reset/sunxi-h3-h5-ccu.h b/include/dt-bindings/reset/sunxi-h3-h5-ccu.h
-index 7a5de896cf1f..1084c157c062 100644
---- a/include/dt-bindings/reset/sunxi-h3-h5-ccu.h
-+++ b/include/dt-bindings/reset/sunxi-h3-h5-ccu.h
-@@ -100,4 +100,7 @@
- #define RST_BUS_UART3		52
- #define RST_BUS_SCR0		53
- 
-+/* New resets imported in H5 */
-+#define RST_BUS_SCR1		54
-+
- #endif /* _DT_BINDINGS_RST_SUNXI_H3_H5_H_ */
--- 
-2.11.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linu=
+x
+> Foundation Collaborative Project
