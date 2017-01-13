@@ -1,35 +1,26 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:47814 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751518AbdA0Vd6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Jan 2017 16:33:58 -0500
-Date: Fri, 27 Jan 2017 13:33:56 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jeremy McNicoll <jeremymc@redhat.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-clk@vger.kernel.org, andy.gross@linaro.org, robh@kernel.org,
-        arnd@arndb.de, bjorn.andersson@linaro.org, riteshh@codeaurora.org,
-        git@kchr.de, ulf.hansson@linaro.org, jszhang@marvell.com
-Subject: Re: [PATCH V4 1/6] clk: qcom: SDHCI enablement on Nexus 5X / 6P
-Message-ID: <20170127213356.GK8801@codeaurora.org>
-References: <1485508205-1904-1-git-send-email-jeremymc@redhat.com>
- <1485508205-1904-2-git-send-email-jeremymc@redhat.com>
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1485508205-1904-2-git-send-email-jeremymc@redhat.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170113173943.23677-1-l.stach@pengutronix.de>
+References: <20170113173943.23677-1-l.stach@pengutronix.de>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Fri, 13 Jan 2017 21:16:32 -0200
+Message-ID: <CAOMZO5C3917JYzknLqmTBTR7Vs1EM3Dv=wQb2Xe6QnjWpvDn+Q@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx6: don't restrict LDB mux changes on QuadPlus
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	patchwork-lst@pengutronix.de, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/27, Jeremy McNicoll wrote:
-> Add missing clock branch to enable onboard storage
-> for msm899(2/4).
-> 
-> Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
-> ---
+On Fri, Jan 13, 2017 at 3:39 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
+> The LDB mux/gate layout has been fixed on QuadPlus, so there is no need
+> to restrict the LDB mux changes on this hardware, as the erratum
+> preventing this from working properly is gone.
+>
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 
-Applied to clk-next
+That's correct: mx6qp does not suffer from the LDB clock glitch issue:
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
