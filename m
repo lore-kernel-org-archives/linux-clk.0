@@ -1,61 +1,59 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
- Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v2 7/9] dmaengine: sun6i: allow build on ARM64 platforms
- (sun50i)
-Date: Thu, 26 Jan 2017 23:48:57 +0800
-Message-Id: <20170126154859.55855-8-icenowy@aosc.xyz>
-In-Reply-To: <20170126154859.55855-1-icenowy@aosc.xyz>
-References: <20170126154859.55855-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	kernel@pengutronix.de,
+	patchwork-lst@pengutronix.de
+Subject: [PATCH] clk: imx6: don't restrict LDB mux changes on QuadPlus
+Date: Fri, 13 Jan 2017 18:39:43 +0100
+Message-Id: <20170113173943.23677-1-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-As 64-bot Allwinner H5 SoC has the same DMA engine with H3, the DMA
-driver should be allowed to be built for ARM64, in order to make it work on H5.
+The LDB mux/gate layout has been fixed on QuadPlus, so there is no need
+to restrict the LDB mux changes on this hardware, as the erratum
+preventing this from working properly is gone.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 ---
-New patch in v2, as H3 codec support is added between v1 and v2.
+ drivers/clk/imx/clk-imx6q.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
- drivers/dma/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-index 0d6a96ee9fc7..d01d59812cf3 100644
---- a/drivers/dma/Kconfig
-+++ b/drivers/dma/Kconfig
-@@ -157,7 +157,7 @@ config DMA_SUN4I
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 42ffc1c92bab..c07df719b8a3 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -592,15 +592,20 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
  
- config DMA_SUN6I
- 	tristate "Allwinner A31 SoCs DMA support"
--	depends on MACH_SUN6I || MACH_SUN8I || COMPILE_TEST
-+	depends on MACH_SUN6I || MACH_SUN8I || (ARM64 && ARCH_SUNXI) || COMPILE_TEST
- 	depends on RESET_CONTROLLER
- 	select DMA_ENGINE
- 	select DMA_VIRTUAL_CHANNELS
+ 	imx6q_mmdc_ch1_mask_handshake(base);
+ 
+-	/*
+-	 * The LDB_DI0/1_SEL muxes are registered read-only due to a hardware
+-	 * bug. Set the muxes to the requested values before registering the
+-	 * ldb_di_sel clocks.
+-	 */
+-	init_ldb_clks(np, base);
++	if (clk_on_imx6qp()) {
++		clk[IMX6QDL_CLK_LDB_DI0_SEL]      = imx_clk_mux_flags("ldb_di0_sel", base + 0x2c, 9,  3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels), CLK_SET_RATE_PARENT);
++		clk[IMX6QDL_CLK_LDB_DI1_SEL]      = imx_clk_mux_flags("ldb_di1_sel", base + 0x2c, 12, 3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels), CLK_SET_RATE_PARENT);
++	} else {
++		/*
++		 * The LDB_DI0/1_SEL muxes are registered read-only due to a hardware
++		 * bug. Set the muxes to the requested values before registering the
++		 * ldb_di_sel clocks.
++		 */
++		init_ldb_clks(np, base);
+ 
+-	clk[IMX6QDL_CLK_LDB_DI0_SEL]      = imx_clk_mux_ldb("ldb_di0_sel", base + 0x2c, 9,  3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels));
+-	clk[IMX6QDL_CLK_LDB_DI1_SEL]      = imx_clk_mux_ldb("ldb_di1_sel", base + 0x2c, 12, 3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels));
++		clk[IMX6QDL_CLK_LDB_DI0_SEL]      = imx_clk_mux_ldb("ldb_di0_sel", base + 0x2c, 9,  3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels));
++		clk[IMX6QDL_CLK_LDB_DI1_SEL]      = imx_clk_mux_ldb("ldb_di1_sel", base + 0x2c, 12, 3, ldb_di_sels,      ARRAY_SIZE(ldb_di_sels));
++	}
+ 	clk[IMX6QDL_CLK_IPU1_DI0_PRE_SEL] = imx_clk_mux_flags("ipu1_di0_pre_sel", base + 0x34, 6,  3, ipu_di_pre_sels,   ARRAY_SIZE(ipu_di_pre_sels), CLK_SET_RATE_PARENT);
+ 	clk[IMX6QDL_CLK_IPU1_DI1_PRE_SEL] = imx_clk_mux_flags("ipu1_di1_pre_sel", base + 0x34, 15, 3, ipu_di_pre_sels,   ARRAY_SIZE(ipu_di_pre_sels), CLK_SET_RATE_PARENT);
+ 	clk[IMX6QDL_CLK_IPU2_DI0_PRE_SEL] = imx_clk_mux_flags("ipu2_di0_pre_sel", base + 0x38, 6,  3, ipu_di_pre_sels,   ARRAY_SIZE(ipu_di_pre_sels), CLK_SET_RATE_PARENT);
 -- 
 2.11.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
