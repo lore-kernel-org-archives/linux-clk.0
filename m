@@ -1,44 +1,96 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH 0/3] STM32F4 Clock binding fix & update
-Date: Fri, 6 Jan 2017 16:52:11 +0100
-Message-ID: <1483717934-21415-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 13 Jan 2017 10:36:47 -0600
+From: Rob Herring <robh@kernel.org>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, Paul Walmsley <paul@pwsan.com>
+Subject: Re: [PATCH] Documentation: dt-bindings: Add binding documentation
+ for TI clkctrl clocks
+Message-ID: <20170113163647.6xbhoafb5xddtvnz@rob-hp-laptop>
+References: <20170109234226.9449-1-tony@atomide.com>
+ <20170110154400.GT2630@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170110154400.GT2630@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Tue, Jan 10, 2017 at 07:44:01AM -0800, Tony Lindgren wrote:
+> * Tony Lindgren <tony@atomide.com> [170109 15:43]:
+> > Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
+> > clock controller instance for each interconnect target module. The clkctrl
+> > controls functional and interface clocks for the module.
+> > 
+> > The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
+> > With this binding and a related clock device driver we can start moving the
+> > clkctrl clock handling to live in drivers/clk/ti.
+> > 
+> > For hardware reference, see omap4430 TRM "Table 3-1312. L4PER_CM2 Registers
+> > Mapping Summary" for example. It show one instance of a clkctrl clock
+> > controller with multiple clkctrl registers.
+> > 
+> > Note that this binding allows keeping the clockdomain related parts out of
+> > drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
+> > using a separate driver in drivers/soc/ti and genpd. If the clockdomain
+> > driver needs to know it's clocks, we can just set the the clkctrl device
+> > instances to be children of the related clockdomain device.
+> > 
+> > On omap4 CM_L3INIT_USB_HOST_HS_CLKCTRL on omap5 has eight OPTFCLKEN bits.
+> > So we need to shift the clock index to avoid index conflict for the clock
+> > consumer binding with the next clkctrl offset on omap4.
+> > 
+> > Cc: Paul Walmsley <paul@pwsan.com>
+> > Cc: Rob Herring <robh@kernel.org>
+> > Signed-off-by: Tony Lindgren <tony@atomide.com>
+> > ---
+> > 
+> > So here's what I was able to come up for the clkctr binding based on
+> > all we've discussed so far. Can you guys please take a look and see
+> > if it looks OK to you before we do the device driver?
+> > 
+> > Also, does anybody have better suggestions for addressing the optional
+> > clocks in each clkctrl register?
+> 
+> The other option that might be worth considering is to make use of the
+> #clock-cells property. Then the index of any optional clock could be passed
+> in the second cell.
+> 
+> The third cell could be used to set the modulemode for the clock (software
+> controlled or hardware controlled) instead of using a custom property
+> at the clock controllel level.
 
-This patch-set includes:
- - a fix to STM32F4_XXXX_CLOCK() macro
- - an update of missing binding definition
- - a patch to use STM32F4_XXXX_CLOCK() macro
+I guess I prefer this way. Or you could do a mixture of both proposals 
+with 2 cells. The first being the clock id and the 2nd flags. 
 
-Gabriel Fernandez (3):
-  dt-bindings: mfd: stm32f4: Fix STM32F4_XXXX_CLOCK() macro
-  dt-bindings: mfd: stm32f4: Add missing binding definition
-  ARM: dts: stm32: Use clock DT binding definition on stm32f429 family
+What's the max optional clocks in theory? B picked from the current 
+worst case seems a bit worrying. Why not 16? Upper half is offset, lower 
+half is index. 
 
- arch/arm/boot/dts/stm32429i-eval.dts  |  2 +-
- arch/arm/boot/dts/stm32f429.dtsi      | 66 +++++++++++++++++++----------------
- include/dt-bindings/mfd/stm32f4-rcc.h | 24 +++++++++----
- 3 files changed, 53 insertions(+), 39 deletions(-)
+> In that case clock consume usage would look like the following using
+> #clock-cells = <3>:
+> 
+> #define OMAP4_CLKCTRL_OFFSET		0x20
+> #define MODULEMODE_HWCTRL		1
+> #define MODULEMODE_SWCTRL		2
 
--- 
-1.9.1
+Can you make one of these 0 instead or is both being set valid?
+
+> 
+> #define OMAP_CLKCTRL_INDEX(offset)	((offset) - OMAP4_CLKCTRL_OFFSET)
+> 
+> #define OMAP4_GPTIMER10_CLKTRL		OMAP_CLKCTRL_INDEX(0x28)
+> #define OMAP4_GPTIMER11_CLKTRL		OMAP_CLKCTRL_INDEX(0x30)
+> #define OMAP4_GPTIMER2_CLKTRL		OMAP_CLKCTRL_INDEX(0x38)
+> ...
+> #define OMAP4_GPIO2_CLKCTRL		OMAP_CLKCTRL_INDEX(0x60)
+> ...
+> 
+> &gpio2 {
+> 	clocks = <&cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 0 MODULEMODE_HWCTRL
+> 		  &cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL_DBCLK 1 0>;
+
+Drop the _DBCLK here, right?
+
+Rob
