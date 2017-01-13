@@ -1,110 +1,44 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv2] Documentation: dt-bindings: Add binding documentation
- for TI clkctrl clocks
-To: Tony Lindgren <tony@atomide.com>
-References: <20170117225302.10844-1-tony@atomide.com>
- <40b1f6a8-fc5c-b619-9570-bc2f9731af89@ti.com>
- <20170123162828.GR7403@atomide.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        Paul Walmsley
-	<paul@pwsan.com>, Rob Herring <robh@kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <f3c4154d-09d0-3930-4452-1f7d61622f3d@ti.com>
-Date: Mon, 23 Jan 2017 20:29:38 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170123162828.GR7403@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 2/3] clk: ux500: Add device tree bindings for ABx500 clocks
+Date: Fri, 13 Jan 2017 16:08:03 +0100
+Message-Id: <20170113150803.30154-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 23/01/17 18:28, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [170123 06:45]:
->> On 18/01/17 00:53, Tony Lindgren wrote:
->>> Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
->>> clock controller instance for each interconnect target module. The clkctrl
->>> controls functional and interface clocks for the module.
->>>
->>> The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
->>> With this binding and a related clock device driver we can start moving the
->>> clkctrl clock handling to live in drivers/clk/ti.
->>>
->>> Note that this binding allows keeping the clockdomain related parts out of
->>> drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
->>> a separate driver in drivers/soc/ti and genpd. If the clockdomain driver
->>> needs to know it's clocks, we can just set the the clkctrl device
->>> instances to be children of the related clockdomain device.
->>>
->>> Each clkctrl clock can have multiple optional gate clocks, and multiple
->>> optional mux clocks. To represent this in device tree, it seems that
->>> it is best done using four clock cells #clock-cells = <4> property.
->>>
->>> The reasons for using #clock-cells = <4> are:
->>>
->>> 1. We need to specify the clkctrl offset from the instance base. Otherwise
->>>    we end up with a large number of device tree nodes that need to be
->>>    patched when new clocks are discovered in a clkctrl clock with minor
->>>    hardware revision changes for example
->>>
->>> 2. On omap5 CM_L3INIT_USB_HOST_HS_CLKCTRL has ten OPTFCLKEN bits. So we
->>>    need to use a separate cell for optional gate clocks to avoid address
->>>    space conflicts
->>>
->>> 3. Some clkctrl instances can also also optional mux clocks. To address
->>>    them properly we need also a separate cell for the optional mux
->>>    clock index
->>>
->>> 4. The modulemode clock needs a flag passed to it for hardware or
->>>    software controlled mode
->>
->> Hi Tony,
->>
->> I think #clock-cells = <4> is too much. I believe we only need 2:
->>
->> - one entry for clkctrl offset
->> - one entry for clock offset within the clkctrl entry (0 = module clock, 8+
->> = opt-clocks / mux clocks / dividers)
->
-> OK the less #clock-cells the better as long as it's enough :)
->
->> Fields 2 / 3 in your proposal are mutually exclusive, if either field is
->> non-zero, the other one must be zero. And, the opt clocks / mux / divs
->> always have different values for these.
->
-> OK. Just to confirm the assumptions then:
->
-> 1. The optional mux clock the consumer needs to select the right
->    source clock with with clk_set_parent()
+This adds device tree bindings for the ABx500 clocks on the
+ST-Ericsson platforms.
 
-Yes. And for this you need to fetch a clock handle via some mechanism 
-(of_clk_get, clk_get...) Clock consumers can't directly use parent IDs.
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ .../devicetree/bindings/clock/stericsson,abx500.txt         | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/stericsson,abx500.txt
 
->
-> 2. The optional divider clock rate must be set by the consumer
->    using clk_set_rate()
-
-Yes again.
-
->
-> And in that case we again don't need to define any artificial
-> clock indexes, which is good if new clocks are discovered between
-> various SoC revisions.
->
->> Field 4 is kind of redundant also, as the module clock must be registered at
->> the clkctrl probe time, it is too late for the clock consumer to provide the
->> proper setting for the clock during its own probe. It seems I need to add
->> static data to driver which basically has this information in place already.
->
-> OK yeah good point, the "clocks" is a consumer property.
->
-> So in that case we must also assume that if any clock consumer needs
-> to change between HWSUP or SWSUP, it needs to be done with some yet
-> to be determined API. We have not needed that so far AFAIK though.
->
-> If there are no issues with the above, I'm naturally fine using the
-> #clock-cells = <2> :)
-
-Yeah, clock-cells = <2>; seems to work just fine in the WIP codebase I have.
-
--Tero
+diff --git a/Documentation/devicetree/bindings/clock/stericsson,abx500.txt b/Documentation/devicetree/bindings/clock/stericsson,abx500.txt
+new file mode 100644
+index 000000000000..8764d80e3412
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/stericsson,abx500.txt
+@@ -0,0 +1,13 @@
++Clock bindings for ST-Ericsson ABx500 clocks
++
++Required properties :
++- compatible : shall contain the following:
++  "stericsson,ab8500-clk"
++- #clock-cells should be <1>
++
++Example:
++
++ab8500_clock: ab8500-clock {
++	compatible = "stericsson,ab8500-clk";
++	#clock-cells = <1>;
++};
+-- 
+2.9.3
