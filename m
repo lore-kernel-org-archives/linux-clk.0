@@ -1,50 +1,45 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <a51d856e896b7fe59a1a544a7de3081688e377ff.1484897383.git-series.maxime.ripard@free-electrons.com>
-References: <cover.5df5469d9c7a6233e225a875dca513a03b05e871.1484897383.git-series.maxime.ripard@free-electrons.com>
- <a51d856e896b7fe59a1a544a7de3081688e377ff.1484897383.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 21 Jan 2017 09:34:15 +0800
-Message-ID: <CAGb2v65uzxu7P3AcnhJJ_rEvT5OL8=d9-jVjU5sWNNqJpkpSRw@mail.gmail.com>
-Subject: Re: [PATCH v3 5/7] clk: sunxi-ng: Add sun5i CCU driver
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 2/3] clk: ux500: Add device tree bindings for ABx500 clocks
+Date: Fri, 13 Jan 2017 16:08:26 +0100
+Message-Id: <20170113150826.30202-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 20, 2017 at 3:29 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The Allwinner A10s, A13, R8 and NextThing GR8 are all based on the same
-> silicon, and all share the same clocks.
->
-> However, they're not packaged in the same way, and therefore not all the
-> controllers are actually available on all these SoCs.
->
-> Introduce a clock controller driver for all these SoCs with different
-> compatibles to take that into account.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+This adds device tree bindings for the ABx500 clocks on the
+ST-Ericsson platforms.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ .../devicetree/bindings/clock/stericsson,abx500.txt         | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/stericsson,abx500.txt
 
-> ---
->  drivers/clk/sunxi-ng/Kconfig          |   10 +-
->  drivers/clk/sunxi-ng/Makefile         |    1 +-
->  drivers/clk/sunxi-ng/ccu-sun5i.c      | 1008 ++++++++++++++++++++++++++-
->  drivers/clk/sunxi-ng/ccu-sun5i.h      |   67 ++-
->  include/dt-bindings/clock/sun5i-ccu.h |  103 +++-
->  include/dt-bindings/reset/sun5i-ccu.h |   32 +-
-
-I thought having these 2 in a separate patch would be better for
-cross tree merges?
-
->  6 files changed, 1221 insertions(+), 0 deletions(-)
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun5i.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun5i.h
->  create mode 100644 include/dt-bindings/clock/sun5i-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun5i-ccu.h
->
-
-ChenYu
+diff --git a/Documentation/devicetree/bindings/clock/stericsson,abx500.txt b/Documentation/devicetree/bindings/clock/stericsson,abx500.txt
+new file mode 100644
+index 000000000000..8764d80e3412
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/stericsson,abx500.txt
+@@ -0,0 +1,13 @@
++Clock bindings for ST-Ericsson ABx500 clocks
++
++Required properties :
++- compatible : shall contain the following:
++  "stericsson,ab8500-clk"
++- #clock-cells should be <1>
++
++Example:
++
++ab8500_clock: ab8500-clock {
++	compatible = "stericsson,ab8500-clk";
++	#clock-cells = <1>;
++};
+-- 
+2.9.3
