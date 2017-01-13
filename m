@@ -1,142 +1,32 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 17 Jan 2017 17:58:47 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org,
-	mark.rutland@arm.com, robh+dt@kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: Re: [PATCH v2 08/10] ARM: dts: sun8i: Add audio codec, dai and card
- for A33
-Message-ID: <20170117165847.olotkisojwgtdzrz@lukather>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
- <20170117140230.23142-9-mylene.josserand@free-electrons.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: dianders@google.com, linux-rockchip@lists.infradead.org, Douglas Anderson <dianders@chromium.org>, David Wu <david.wu@rock-chips.com>, Jianqun Xu <jay.xu@rock-chips.com>, devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Elaine Zhang <zhangqing@rock-chips.com>, Brian Norris <briannorris@chromium.org>, Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh+dt@kernel.org>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, Caesar Wang <wxt@rock-chips.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 0/2] Add support rockchip,grf property for RK3399 PMU/GRU
+Date: Fri, 13 Jan 2017 20:10:54 +0100
+Message-ID: <3210111.1N6x2AkRMx@phil>
+In-Reply-To: <1484028930-20305-1-git-send-email-zhengxing@rock-chips.com>
+References: <1484028930-20305-1-git-send-email-zhengxing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hdnkyjgi3kxrstdg"
-In-Reply-To: <20170117140230.23142-9-mylene.josserand@free-electrons.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
+Am Dienstag, 10. Januar 2017, 14:15:28 CET schrieb Xing Zheng:
+> Hi,
+>   The structure rockchip_clk_provider needs to refer the GRF regmap
+> in somewhere, if the CRU node has not "rockchip,grf" property,
+> calling syscon_regmap_lookup_by_phandle will return an invalid GRF
+> regmap, and the MUXGRF type clock will be not supported.
+> 
+> Therefore, we need to add them.
+> 
+> Thanks.
 
---hdnkyjgi3kxrstdg
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+applied both for 4.11
 
-Hi,
+binding-change is in my clock-branch (so that dt-binding doc changes stay 
+together) and the dts change is of course in the dts64 branch.
 
-On Tue, Jan 17, 2017 at 03:02:28PM +0100, Myl=E8ne Josserand wrote:
-> Add the audio codec, dai and a simple card to be able to use the
-> audio stream of the builtin codec on sun8i SoC.
->=20
-> This commit adds also an audio-routing for the sound card node to link
-> the analog DAPM widgets (Right/Left DAC) and the digital one's as they
-> are created in different drivers.
->=20
-> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
-> ---
->  arch/arm/boot/dts/sun8i-a33.dtsi | 47 ++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 47 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a=
-33.dtsi
-> index 63d5181ffff8..fe8a4f4760d2 100644
-> --- a/arch/arm/boot/dts/sun8i-a33.dtsi
-> +++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-> @@ -43,6 +43,7 @@
->   */
-> =20
->  #include "sun8i-a23-a33.dtsi"
-> +#include <dt-bindings/dma/sun4i-a10.h>
-> =20
->  / {
->  	cpus {
-> @@ -69,6 +70,27 @@
->  		reg =3D <0x40000000 0x80000000>;
->  	};
-> =20
-> +	sound {
-> +		compatible =3D "simple-audio-card";
-> +		simple-audio-card,name =3D "Sun8i Audio Card";
 
-You might have several of them if you're using an internal i2s DAI
-with a codec too. What about "a33-codec" or something alike?
-
-> +		simple-audio-card,format =3D "i2s";
-> +		simple-audio-card,frame-master =3D <&link_codec>;
-> +		simple-audio-card,bitclock-master =3D <&link_codec>;
-> +		simple-audio-card,mclk-fs =3D <512>;
-> +		simple-audio-card,aux-devs =3D <&codec_analog>;
-> +		simple-audio-card,routing =3D
-> +				"Left DAC", "Digital Left DAC",
-> +				"Right DAC", "Digital Right DAC";
-
-This will be enabled all the time (even if your DAI and codec are
-not), which means that the driver will probe and.. do nothing. You
-probably want to disable it here.
-
-> +
-> +		simple-audio-card,cpu {
-> +			sound-dai =3D <&dai>;
-> +		};
-> +
-> +		link_codec: simple-audio-card,codec {
-> +			sound-dai =3D <&codec>;
-> +		};
-> +	};
-> +
->  	soc@01c00000 {
->  		tcon0: lcd-controller@01c0c000 {
->  			compatible =3D "allwinner,sun8i-a33-tcon";
-> @@ -116,6 +138,31 @@
->  			reset-names =3D "ahb";
->  		};
-> =20
-> +		dai: dai@01c22c00 {
-> +			#sound-dai-cells =3D <0>;
-> +			compatible =3D "allwinner,sun6i-a31-i2s";
-> +			reg =3D <0x01c22c00 0x200>;
-> +			interrupts =3D <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks =3D <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
-> +			clock-names =3D "apb", "mod";
-> +			resets =3D <&ccu RST_BUS_CODEC>;
-> +			reset-names =3D "rst";
-> +			dmas =3D <&dma 15>, /* AUDIO_CODEC port */
-> +				<&dma 15>; /* AUDIO_CODEC port */
-
-There's no need for those comments.
-
-Thanks!
-Maxime=20
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---hdnkyjgi3kxrstdg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYfk1DAAoJEBx+YmzsjxAg82kP/0EzT6oyELoukKksMxcS9DUF
-3vn80J+BDgKjtkfBKqhzt4fRJD4nYu4WEPu3NYtFC+TTFj8U9sv/hVbxXLJhDKb/
-2QjSCFszx/Yp7zsQOXXaVW7+p6AN2EjKgR2UgOpOfM8ujJn8WAUEW52qZ1EvWG3w
-Ug/NA9LEvyYxcoSrFWEp95OHiZsTzFR4566sivfCf6bJKEfXFdh83kKmDZHvFwIm
-9xdlCAkd29zWfDPKQwVTzmr7VXw22RRXO4V2VRepZZJ/O/bO7MemRZlqemB3Qj5G
-nCZlyCJXxEVYiPPXQSZOlArp2fb/oMmVE29B+y97vXjqCMkDNisAzi+EzS6D+jCh
-fgKKBxdtsx7IVaCc+tHH4a3YxaPDK8BSvRRCyqy7pQRFM+zJkdyeEVyJnlWZqqXq
-CUO222n0+Uo+cEP53enblizlvHmOzmgLKfaKhfzodh9eqf4mr8p1FUYSckpyJdnd
-rpXXsTVA0xzNpL1np4mttNMx4lezsUSDI0Ih9rThHsrQvzDoIbJaJXia22wPfA8g
-ONXvJRvp7+p8pXosqj652qe74jNa+sYMJ0ZsTWWQq643e6beWxi+3yPBA1HgL5lN
-mW379oPqI1blJTAjDzeliHzXfJg/BN/xLZ3k/en2UzymnaUVwNTerXMtIHEfm3iw
-seUU/L5VQvb/XcnYdoaI
-=inQh
------END PGP SIGNATURE-----
-
---hdnkyjgi3kxrstdg--
+Thanks
+Heiko
