@@ -1,78 +1,193 @@
-Return-Path: <javier@osg.samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-To: linux-kernel@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>,
-	Andi Shyti <andi.shyti@samsung.com>,
-	Shuah Khan <shuahkh@osg.samsung.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: samsung: exynos5420: Mark CLK_ACLK432_SCALER as CLK_IS_CRITICAL
-Date: Fri, 20 Jan 2017 07:41:30 -0300
-Message-Id: <1484908891-11820-1-git-send-email-javier@osg.samsung.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 13 Jan 2017 14:16:26 -0600
+From: Rob Herring <robh@kernel.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>, Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: Re: [PATCH v5 05/12] dt: bindings: Add bindings for Marvell Xenon SD
+ Host Controller
+Message-ID: <20170113201626.rt2ces26ra6rot75@rob-hp-laptop>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+ <89c95d0084da6ad7132caa54ca66eb619d8a5090.1484154449.git-series.gregory.clement@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <89c95d0084da6ad7132caa54ca66eb619d8a5090.1484154449.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Exynos5800 SoC the SCALER block uses 2 input clocks: CLK_ACLK_300_GSCL
-and CLK_ACLK432_SCALER, so both needs to be ungated in order to access it.
+On Wed, Jan 11, 2017 at 06:19:08PM +0100, Gregory CLEMENT wrote:
+> From: Hu Ziji <huziji@marvell.com>
+> 
+> Marvell Xenon SDHC can support eMMC/SD/SDIO.
+> Add Xenon-specific properties.
+> Also add properties for Xenon PHY setting.
+> 
+> Signed-off-by: Hu Ziji <huziji@marvell.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> ---
+>  Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt | 197 +++++++-
+>  1 file changed, 197 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt b/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
+> new file mode 100644
+> index 000000000000..a3876d2cc616
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
+> @@ -0,0 +1,197 @@
+> +Marvell Xenon SDHCI Controller device tree bindings
+> +This file documents differences between the core mmc properties
+> +described by mmc.txt and the properties used by the Xenon implementation.
+> +
+> +Multiple SDHCs might be put into a single Xenon IP, to save size and cost.
+> +Each SDHC is independent and owns independent resources, such as register sets,
+> +clock and PHY.
+> +Each SDHC should have an independent device tree node.
+> +
+> +Required Properties:
+> +- compatible: should be one of the following
+> +  - "marvell,armada-3700-sdhci": For controllers on Armada-3700 SoC.
+> +  Must provide a second register area and marvell,pad-type.
+> +  - "marvell,armada-8k-sdhci": For controllers on Armada 7K/8K SoC
+> +
+> +- clocks:
+> +  Array of clocks required for SDHC.
+> +  Require at least input clock for Xenon IP core.
+> +
+> +- clock-names:
+> +  Array of names corresponding to clocks property.
+> +  The input clock for Xenon IP core should be named as "core".
+> +
+> +- reg:
+> +  * For "marvell,armada-3700-sdhci", two register areas.
+> +    The first one for Xenon IP register. The second one for the Armada 3700 SoC
+> +    PHY PAD Voltage Control register.
+> +    Please follow the examples with compatible "marvell,armada-3700-sdhci"
+> +    in below.
+> +    Please also check property marvell,pad-type in below.
+> +
+> +  * For other compatible strings, one register area for Xenon IP.
+> +
+> +Optional Properties:
+> +- mmccard:
+> +  mmccard child node must be provided when current SDHC is for eMMC.
+> +  Xenon SDHC often can support both SD and eMMC. This child node indicates that
+> +  current SDHC is for eMMC card. Thus Xenon eMMC specific configuration and
+> +  operations can be enabled prior to eMMC init sequence.
+> +  Please refer to Documentation/devicetree/bindings/mmc/mmc-card.txt.
+> +  This child node should not be set if current Xenon SDHC is for SD/SDIO.
+> +
+> +- bus-width:
+> +  When 8-bit data bus width is in use for eMMC, this property should be
+> +  explicitly provided and set as 8.
+> +  It is optional when data bus width is 4-bit or 1-bit.
+> +
+> +- mmc-ddr-1_8v:
+> +  Select this property when eMMC HS DDR is supported on SDHC side.
+> +
+> +- mmc-hs400-1_8v:
+> +  Select this property when eMMC HS400 is supported on SDHC side.
+> +
+> +- no-1-8-v:
+> +  Select this property when 1.8V signaling voltage supply is unavailable.
+> +  When this property is enabled, both mmc-ddr-1_8v and mmc-hs400-1_8v should be
+> +  cleared.
+> +
+> +- marvell,xenon-sdhc-id:
+> +  Indicate the corresponding bit index of current SDHC in
+> +  SDHC System Operation Control Register Bit[7:0].
+> +  Set/clear the corresponding bit to enable/disable current SDHC.
+> +  If Xenon IP contains only one SDHC, this property is optional.
+> +
+> +- marvell,xenon-phy-type:
+> +  Xenon support mutilple types of PHYs.
+> +  To select eMMC 5.1 PHY, set:
+> +  marvell,xenon-phy-type = "emmc 5.1 phy"
+> +  eMMC 5.1 PHY is the default choice if this property is not provided.
+> +  To select eMMC 5.0 PHY, set:
+> +  marvell,xenon-phy-type = "emmc 5.0 phy"
+> +
+> +  All those types of PHYs can support eMMC, SD and SDIO.
+> +  Please note that this property only presents the type of PHY.
+> +  It doesn't stand for the entire SDHC type or property.
+> +  For example, "emmc 5.1 phy" doesn't mean that this Xenon SDHC only supports
+> +  eMMC 5.1.
+> +
+> +- marvell,xenon-phy-znr:
+> +  Set PHY ZNR value.
+> +  Only available for eMMC PHY 5.1 and eMMC PHY 5.0.
+> +  Valid range = [0:0x1F].
+> +  ZNR is set as 0xF by default if this property is not provided.
+> +
+> +- marvell,xenon-phy-zpr:
+> +  Set PHY ZPR value.
+> +  Only available for eMMC PHY 5.1 and eMMC PHY 5.0.
+> +  Valid range = [0:0x1F].
+> +  ZPR is set as 0xF by default if this property is not provided.
+> +
+> +- marvell,xenon-phy-nr-success-tun:
+> +  Set the number of required consecutive successful sampling points used to
+> +  identify a valid sampling window, in tuning process.
+> +  Valid range = [1:7].
+> +  Set as 0x4 by default if this property is not provided.
+> +
+> +- marvell,xenon-phy-tun-step-divider:
+> +  Set the divider for calculating TUN_STEP.
+> +  Set as 64 by default if this property is not provided.
+> +
+> +- marvell,xenon-phy-slow-mode:
+> +  If this property is selected, transfers will bypass PHY.
+> +  Only available when bus frequency lower than 55MHz in SDR mde.
+> +  Disabled by default. Please only try this property if timing issues always
+> +  occur with PHY enabled in eMMC HS SDR, SD SDR12, SD SDR25, SD SDR50 mode.
+> +
+> +- marvell,xenon-tun-count:
+> +  Xenon SDHC SoC usually doesn't provide re-tuning counter in
+> +  Capabilities Register 3 Bit[11:8].
+> +  This property provides the re-tuning counter.
+> +  If this property is not set, default re-tuning counter will
+> +  be set as 0x9 in driver.
+> +
+> +- marvell,pad-type:
+> +  Type of Armada 3700 SoC PHY PAD Voltage Controller register.
+> +  Only valid when "marvell,armada-3700-sdhci" is selected.
+> +  Two types: "sd" and "fixed-1-8v".
+> +  If "sd" is slected, SoC PHY PAD is set as 3.3V at the beginning and is
+> +  switched to 1.8V when SD in UHS-I.
+> +  If "fixed-1-8v" is slected, SoC PHY PAD is fixed 1.8V, such as for eMMC.
+> +  Please follow the examples with compatible "marvell,armada-3700-sdhci"
+> +  in below.
+> +
+> +Example:
+> +- For eMMC:
+> +
+> +	sdhci@aa0000 {
+> +		compatible = "marvell,armada-8k-sdhci";
+> +		reg = <0xaa0000 0x1000>;
+> +		interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>
+> +		clocks = <&emmc_clk>;
+> +		clock-names = "core";
+> +		bus-width = <8>;
+> +		mmc-ddr-1_8v;
+> +		mmc-hs400-1_8v;
+> +		marvell,xenon-sdhc-id = <0>;
 
-But Exynos5420 only has the CLK_ACLK_300_GSCL as gsc_pd clk. So just using
-this definition from exynos5420.dtsi in Exynos5800 leads to the following:
+Should be dropped? With that,
 
-    [  227.008559] Unhandled fault: imprecise external abort (0x1c06) at 0x00048e14
-    [  227.015116] pgd = ed5dc000
-    [  227.017213] [00048e14] *pgd=b17c6835
-    [  227.020889] Internal error: : 1c06 [#1] PREEMPT SMP ARM
-    ...
-    [  227.241585] [<bf2429bc>] (gsc_wait_reset [exynos_gsc]) from [<bf24009c>] (gsc_runtime_resume+0x9c/0xec [exynos_gsc])
-    [  227.252331] [<bf24009c>] (gsc_runtime_resume [exynos_gsc]) from [<c042e488>] (genpd_runtime_resume+0x120/0x1d4)
-    [  227.262294] [<c042e488>] (genpd_runtime_resume) from [<c04241c0>] (__rpm_callback+0xc8/0x218)
-
-    domain                          status          slaves
-        /device                                             runtime status
-    ----------------------------------------------------------------------
-    power-domain@100440C0           on
-        /devices/platform/soc/14450000.mixer                active
-        /devices/platform/soc/14530000.hdmi                 active
-    power-domain@10044120           on
-    power-domain@10044060           off-0
-    power-domain@10044020           on
-    power-domain@10044000           on
-        /devices/platform/soc/13e00000.video-scaler         suspended
-        /devices/platform/soc/13e10000.video-scaler         resuming
-
-So until a proper solution based on runtime PM gets merged, mark the clock
-as critical to prevent it to be gated.
-
-Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
----
-
- drivers/clk/samsung/clk-exynos5420.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 8c8b495cbf0d..9876ec28b94c 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -586,7 +586,7 @@ static const struct samsung_gate_clock exynos5800_gate_clks[] __initconst = {
- 	GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
- 				GATE_BUS_TOP, 24, 0, 0),
- 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
--				GATE_BUS_TOP, 27, 0, 0),
-+				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
- };
- 
- static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
--- 
-2.7.4
+Acked-by: Rob Herring <robh@kernel.org>
