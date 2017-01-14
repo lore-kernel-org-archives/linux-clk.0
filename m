@@ -1,43 +1,157 @@
-Return-Path: <valentinrothberg@gmail.com>
-Return-Path: <valentinrothberg@gmail.com>
-From: Valentin Rothberg <valentinrothberg@gmail.com>
-To: krzk@kernel.org,
-	s.nawrocki@samsung.com,
-	cw00.choi@samsung.com,
-	tomasz.figa@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Valentin Rothberg <valentinrothberg@gmail.com>,
-	Valentin Rothberg <valetinrothberg@gmail.com>
-Subject: [PATCH] ARM: Exynos4415: remove dead build rule
-Date: Thu, 19 Jan 2017 10:11:53 +0100
-Message-Id: <20170119091153.8439-1-valentinrothberg@gmail.com>
+	dri-devel@lists.freedesktop.org,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH 3/4] pinctrl: samsung: Remove support for Exynos4415 (SoC not supported anymore)
+Date: Sat, 14 Jan 2017 14:36:41 +0200
+Message-Id: <20170114123642.15581-4-krzk@kernel.org>
+In-Reply-To: <20170114123642.15581-1-krzk@kernel.org>
+References: <20170114123642.15581-1-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit 22dfab102cfa ("ARM: EXYNOS: Remove Exynos4415 arch code (SoC not
-supported anymore)") removed the Kconfig option SOC_EXYNOS4415.  Thus,
-we are safe to remove the last reference in the Makefile.
+Support for Exynos4415 is going away because there are no internal nor
+external users.
 
-Signed-off-by: Valentin Rothberg <valetinrothberg@gmail.com>
+Since commit 46dcf0ff0de3 ("ARM: dts: exynos: Remove exynos4415.dtsi"),
+the platform cannot be instantiated so remove also the drivers.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
-Detected by using ./scripts/checkkconfigsymbols.py
+ drivers/pinctrl/samsung/pinctrl-exynos.c  | 75 -------------------------------
+ drivers/pinctrl/samsung/pinctrl-samsung.c |  2 -
+ drivers/pinctrl/samsung/pinctrl-samsung.h |  1 -
+ 3 files changed, 78 deletions(-)
 
- drivers/clk/samsung/Makefile | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index 57f4dc6dc447..7afc21dc374e 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -5,7 +5,6 @@
- obj-$(CONFIG_COMMON_CLK)	+= clk.o clk-pll.o clk-cpu.o
- obj-$(CONFIG_SOC_EXYNOS3250)	+= clk-exynos3250.o
- obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4.o
--obj-$(CONFIG_SOC_EXYNOS4415)	+= clk-exynos4415.o
- obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
- obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
- obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index 07409fde02b2..24814db251a7 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -919,81 +919,6 @@ const struct samsung_pin_ctrl exynos4x12_pin_ctrl[] __initconst = {
+ 	},
+ };
+ 
+-/* pin banks of exynos4415 pin-controller 0 */
+-static const struct samsung_pin_bank_data exynos4415_pin_banks0[] = {
+-	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
+-	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpa1", 0x04),
+-	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpb", 0x08),
+-	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpc0", 0x0c),
+-	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpc1", 0x10),
+-	EXYNOS_PIN_BANK_EINTG(4, 0x0A0, "gpd0", 0x14),
+-	EXYNOS_PIN_BANK_EINTG(4, 0x0C0, "gpd1", 0x18),
+-	EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpf0", 0x30),
+-	EXYNOS_PIN_BANK_EINTG(8, 0x1A0, "gpf1", 0x34),
+-	EXYNOS_PIN_BANK_EINTG(1, 0x1C0, "gpf2", 0x38),
+-};
+-
+-/* pin banks of exynos4415 pin-controller 1 */
+-static const struct samsung_pin_bank_data exynos4415_pin_banks1[] = {
+-	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpk0", 0x08),
+-	EXYNOS_PIN_BANK_EINTG(7, 0x060, "gpk1", 0x0c),
+-	EXYNOS_PIN_BANK_EINTG(7, 0x080, "gpk2", 0x10),
+-	EXYNOS_PIN_BANK_EINTG(7, 0x0A0, "gpk3", 0x14),
+-	EXYNOS_PIN_BANK_EINTG(4, 0x0C0, "gpl0", 0x18),
+-	EXYNOS_PIN_BANK_EINTN(6, 0x120, "mp00"),
+-	EXYNOS_PIN_BANK_EINTN(4, 0x140, "mp01"),
+-	EXYNOS_PIN_BANK_EINTN(6, 0x160, "mp02"),
+-	EXYNOS_PIN_BANK_EINTN(8, 0x180, "mp03"),
+-	EXYNOS_PIN_BANK_EINTN(8, 0x1A0, "mp04"),
+-	EXYNOS_PIN_BANK_EINTN(8, 0x1C0, "mp05"),
+-	EXYNOS_PIN_BANK_EINTN(8, 0x1E0, "mp06"),
+-	EXYNOS_PIN_BANK_EINTG(8, 0x260, "gpm0", 0x24),
+-	EXYNOS_PIN_BANK_EINTG(7, 0x280, "gpm1", 0x28),
+-	EXYNOS_PIN_BANK_EINTG(5, 0x2A0, "gpm2", 0x2c),
+-	EXYNOS_PIN_BANK_EINTG(8, 0x2C0, "gpm3", 0x30),
+-	EXYNOS_PIN_BANK_EINTG(8, 0x2E0, "gpm4", 0x34),
+-	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00),
+-	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04),
+-	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08),
+-	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c),
+-};
+-
+-/* pin banks of exynos4415 pin-controller 2 */
+-static const struct samsung_pin_bank_data exynos4415_pin_banks2[] = {
+-	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz", 0x00),
+-	EXYNOS_PIN_BANK_EINTN(2, 0x000, "etc1"),
+-};
+-
+-/*
+- * Samsung pinctrl driver data for Exynos4415 SoC. Exynos4415 SoC includes
+- * three gpio/pin-mux/pinconfig controllers.
+- */
+-const struct samsung_pin_ctrl exynos4415_pin_ctrl[] = {
+-	{
+-		/* pin-controller instance 0 data */
+-		.pin_banks	= exynos4415_pin_banks0,
+-		.nr_banks	= ARRAY_SIZE(exynos4415_pin_banks0),
+-		.eint_gpio_init = exynos_eint_gpio_init,
+-		.suspend	= exynos_pinctrl_suspend,
+-		.resume		= exynos_pinctrl_resume,
+-	}, {
+-		/* pin-controller instance 1 data */
+-		.pin_banks	= exynos4415_pin_banks1,
+-		.nr_banks	= ARRAY_SIZE(exynos4415_pin_banks1),
+-		.eint_gpio_init = exynos_eint_gpio_init,
+-		.eint_wkup_init = exynos_eint_wkup_init,
+-		.suspend	= exynos_pinctrl_suspend,
+-		.resume		= exynos_pinctrl_resume,
+-	}, {
+-		/* pin-controller instance 2 data */
+-		.pin_banks	= exynos4415_pin_banks2,
+-		.nr_banks	= ARRAY_SIZE(exynos4415_pin_banks2),
+-		.eint_gpio_init = exynos_eint_gpio_init,
+-		.suspend	= exynos_pinctrl_suspend,
+-		.resume		= exynos_pinctrl_resume,
+-	},
+-};
+-
+ /* pin banks of exynos5250 pin-controller 0 */
+ static const struct samsung_pin_bank_data exynos5250_pin_banks0[] __initconst = {
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index 41e62391c33c..3bc925f61b71 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -1238,8 +1238,6 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+ 		.data = (void *)exynos4210_pin_ctrl },
+ 	{ .compatible = "samsung,exynos4x12-pinctrl",
+ 		.data = (void *)exynos4x12_pin_ctrl },
+-	{ .compatible = "samsung,exynos4415-pinctrl",
+-		.data = (void *)exynos4415_pin_ctrl },
+ 	{ .compatible = "samsung,exynos5250-pinctrl",
+ 		.data = (void *)exynos5250_pin_ctrl },
+ 	{ .compatible = "samsung,exynos5260-pinctrl",
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+index 043cb6c11180..6f7ce7539a00 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.h
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+@@ -273,7 +273,6 @@ struct samsung_pmx_func {
+ extern const struct samsung_pin_ctrl exynos3250_pin_ctrl[];
+ extern const struct samsung_pin_ctrl exynos4210_pin_ctrl[];
+ extern const struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
+-extern const struct samsung_pin_ctrl exynos4415_pin_ctrl[];
+ extern const struct samsung_pin_ctrl exynos5250_pin_ctrl[];
+ extern const struct samsung_pin_ctrl exynos5260_pin_ctrl[];
+ extern const struct samsung_pin_ctrl exynos5410_pin_ctrl[];
 -- 
-2.11.0
+2.9.3
