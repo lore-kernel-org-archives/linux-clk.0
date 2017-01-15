@@ -1,53 +1,83 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To: linux-clk@vger.kernel.org,
-	x86@kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: alsa-devel@alsa-project.org,
-	Irina Tirdea <irina.tirdea@intel.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Mark Brown <broonie@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [PATCH v7 1/5] clk: Make x86/ conditional on CONFIG_COMMON_CLK
-Date: Tue, 17 Jan 2017 15:57:46 -0600
-Message-Id: <1484690270-28425-2-git-send-email-pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
-References: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+Return-Path: <kgene.kim@gmail.com>
+Return-Path: <kgene.kim@gmail.com>
+Content-Type: text/plain;
+	charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 0/4] Drop drivers for Exynos4415
+From: Kukjin Kim <kgene.kim@gmail.com>
+In-Reply-To: <20170114123642.15581-1-krzk@kernel.org>
+Date: Sun, 15 Jan 2017 10:00:45 +0800
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-gpio@vger.kernel.org
+Message-Id: <16B68D3F-5D33-41D5-A2FE-218422E16AB3@gmail.com>
+References: <20170114123642.15581-1-krzk@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Fix Makefile for x86 support, dependency on CONFIG_COMMON_CLK
-was not explicit
+Hi Krzk,
 
-Fixes: 701190fd7419 ('clk: x86: add support for Lynxpoint LPSS clocks')
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- drivers/clk/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+2017. 1. 14. PM 8:36 Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 925081e..42042c0 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -87,6 +87,8 @@ obj-y					+= ti/
- obj-$(CONFIG_CLK_UNIPHIER)		+= uniphier/
- obj-$(CONFIG_ARCH_U8500)		+= ux500/
- obj-$(CONFIG_COMMON_CLK_VERSATILE)	+= versatile/
-+ifeq ($(CONFIG_COMMON_CLK), y)
- obj-$(CONFIG_X86)			+= x86/
-+endif
- obj-$(CONFIG_ARCH_ZX)			+= zte/
- obj-$(CONFIG_ARCH_ZYNQ)			+= zynq/
--- 
-2.7.4
+> Hi,
+>=20
+> Support for Exynos4415 is being removed because:
+> 1. There are no upstream users,
+> 2. There are no known downstream users,
+> 3. Except compile testing, you cannot build working kernel
+>   for Exynos4415 anymore.
+>=20
+> Patches are rebased on current next and are independent.
+> Please pick up as you wish.
+>=20
+> Best regards,
+> Krzysztof
+
+Agreed,
+
+Acked-by: Kukjin Kim <kgene@kernel.org>
+
+k-gene
+>=20
+> Krzysztof Kozlowski (4):
+>  ARM: EXYNOS: Remove Exynos4415 driver (SoC not supported anymore)
+>  clk: samsung: Remove Exynos4415 driver (SoC not supported anymore)
+>  pinctrl: samsung: Remove support for Exynos4415 (SoC not supported
+>    anymore)
+>  drm: exynos: Remove support for Exynos4415 (SoC not supported anymore)
+>=20
+> .../devicetree/bindings/clock/exynos4415-clock.txt |   38 -
+> .../bindings/display/exynos/exynos_dsim.txt        |    1 -
+> .../bindings/display/exynos/samsung-fimd.txt       |    1 -
+> arch/arm/mach-exynos/Kconfig                       |    5 -
+> arch/arm/mach-exynos/exynos.c                      |    1 -
+> arch/arm/mach-exynos/suspend.c                     |    1 -
+> drivers/clk/samsung/Makefile                       |    1 -
+> drivers/clk/samsung/clk-exynos4415.c               | 1022 ----------------=
+----
+> drivers/gpu/drm/exynos/exynos_drm_dsi.c            |   15 +-
+> drivers/gpu/drm/exynos/exynos_drm_fimd.c           |   18 +-
+> drivers/pinctrl/samsung/pinctrl-exynos.c           |   75 --
+> drivers/pinctrl/samsung/pinctrl-samsung.c          |    2 -
+> drivers/pinctrl/samsung/pinctrl-samsung.h          |    1 -
+> include/dt-bindings/clock/exynos4415.h             |  360 -------
+> 14 files changed, 3 insertions(+), 1538 deletions(-)
+> delete mode 100644 Documentation/devicetree/bindings/clock/exynos4415-cloc=
+k.txt
+> delete mode 100644 drivers/clk/samsung/clk-exynos4415.c
+> delete mode 100644 include/dt-bindings/clock/exynos4415.h
+>=20
+> --=20
+> 2.9.3
+>=20
