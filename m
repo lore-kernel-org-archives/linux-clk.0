@@ -1,73 +1,190 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 5/8] clk: sunxi-ng: Implement global pre-divider
-Date: Sat, 21 Jan 2017 23:50:54 +0100
-Message-Id: <10a00258fc227a775a52a4d6de79ba3c76fbc19e.1485039043.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
-References: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
-References: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: jic23@kernel.org,
+	knaack.h@gmx.de,
+	lars@metafoo.de,
+	pmeerw@pmeerw.net,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	khilman@baylibre.com,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: carlo@caione.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	narmstrong@baylibre.com,
+	linux-arm-kernel@lists.infradead.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 2/4] clk: gxbb: add the SAR ADC clocks and expose them
+Date: Sun, 15 Jan 2017 23:42:19 +0100
+Message-Id: <20170115224221.15510-3-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
+References: <20170111174334.24343-1-martin.blumenstingl@googlemail.com>
+ <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks have a global pre-divider that applies to all their parents.
+The HHI_SAR_CLK_CNTL contains three SAR ADC specific clocks:
+- a mux clock to choose between different ADC reference clocks (this is
+  2-bit wide, but the datasheet only lists the parents for the first
+  bit)
+- a divider for the input/reference clock
+- a gate which enables the ADC clock
 
-Since it might also apply to clocks that have a single parent, this is
-merged in the ccu_common structure, unlike the other pre-divider settings
-that are tied to a specific index, and thus a specific parent.
+Additionally this exposes the ADC core clock (CLKID_SAR_ADC) and
+CLKID_SANA (which seems to enable the analog inputs, but unfortunately
+there is no documentation for this - we just mimic what the vendor
+driver does).
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/sunxi-ng/ccu_common.h | 2 ++
- drivers/clk/sunxi-ng/ccu_mux.c    | 8 +++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ drivers/clk/meson/gxbb.c              | 48 +++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h              |  9 ++++---
+ include/dt-bindings/clock/gxbb-clkc.h |  4 +++
+ 3 files changed, 58 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
-index b3d9abfbd721..cdd69eb2e0b9 100644
---- a/drivers/clk/sunxi-ng/ccu_common.h
-+++ b/drivers/clk/sunxi-ng/ccu_common.h
-@@ -21,6 +21,7 @@
- #define CCU_FEATURE_VARIABLE_PREDIV	BIT(1)
- #define CCU_FEATURE_FIXED_PREDIV	BIT(2)
- #define CCU_FEATURE_FIXED_POSTDIV	BIT(3)
-+#define CCU_FEATURE_ALL_PREDIV		BIT(4)
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 9d9af446bafc..1c1ec137a3cc 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -564,6 +564,46 @@ static struct clk_gate gxbb_clk81 = {
+ 	},
+ };
  
- struct device_node;
- 
-@@ -56,6 +57,7 @@ struct device_node;
- struct ccu_common {
- 	void __iomem	*base;
- 	u16		reg;
-+	u32		prediv;
- 
- 	unsigned long	features;
- 	spinlock_t	*lock;
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index a43ad52a957d..858a48621631 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -25,9 +25,15 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
- 	int i;
- 
- 	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
--	      (common->features & CCU_FEATURE_VARIABLE_PREDIV)))
-+	      (common->features & CCU_FEATURE_VARIABLE_PREDIV) ||
-+	      (common->features & CCU_FEATURE_ALL_PREDIV)))
- 		return;
- 
-+	if (common->features & CCU_FEATURE_ALL_PREDIV) {
-+		*parent_rate = *parent_rate / common->prediv;
-+		return;
-+	}
++static struct clk_mux gxbb_sar_adc_clk_sel = {
++	.reg = (void *)HHI_SAR_CLK_CNTL,
++	.mask = 0x3,
++	.shift = 9,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "sar_adc_clk_sel",
++		.ops = &clk_mux_ops,
++		/* NOTE: The datasheet doesn't list the parents for bit 10 */
++		.parent_names = (const char *[]){ "xtal", "clk81", },
++		.num_parents = 2,
++	},
++};
 +
- 	reg = readl(common->base + common->reg);
- 	if (parent_index < 0) {
- 		parent_index = reg >> cm->shift;
++static struct clk_divider gxbb_sar_adc_clk_div = {
++	.reg = (void *)HHI_SAR_CLK_CNTL,
++	.shift = 0,
++	.width = 8,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "sar_adc_clk_div",
++		.ops = &clk_divider_ops,
++		.parent_names = (const char *[]){ "sar_adc_clk_sel" },
++		.num_parents = 1,
++	},
++};
++
++static struct clk_gate gxbb_sar_adc_clk = {
++	.reg = (void *)HHI_SAR_CLK_CNTL,
++	.bit_idx = 8,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "sar_adc_clk",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "sar_adc_clk_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ /* Everything Else (EE) domain gates */
+ static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
+ static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
+@@ -754,6 +794,9 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ 		[CLKID_SD_EMMC_A]	    = &gxbb_emmc_a.hw,
+ 		[CLKID_SD_EMMC_B]	    = &gxbb_emmc_b.hw,
+ 		[CLKID_SD_EMMC_C]	    = &gxbb_emmc_c.hw,
++		[CLKID_SAR_ADC_CLK]	    = &gxbb_sar_adc_clk.hw,
++		[CLKID_SAR_ADC_SEL]	    = &gxbb_sar_adc_clk_sel.hw,
++		[CLKID_SAR_ADC_DIV]	    = &gxbb_sar_adc_clk_div.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -856,6 +899,7 @@ static struct clk_gate *gxbb_clk_gates[] = {
+ 	&gxbb_emmc_a,
+ 	&gxbb_emmc_b,
+ 	&gxbb_emmc_c,
++	&gxbb_sar_adc_clk,
+ };
+ 
+ static int gxbb_clkc_probe(struct platform_device *pdev)
+@@ -888,6 +932,10 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	gxbb_mpeg_clk_sel.reg = clk_base + (u64)gxbb_mpeg_clk_sel.reg;
+ 	gxbb_mpeg_clk_div.reg = clk_base + (u64)gxbb_mpeg_clk_div.reg;
+ 
++	/* Populate the base address for the SAR ADC clks */
++	gxbb_sar_adc_clk_sel.reg = clk_base + (u64)gxbb_sar_adc_clk_sel.reg;
++	gxbb_sar_adc_clk_div.reg = clk_base + (u64)gxbb_sar_adc_clk_div.reg;
++
+ 	/* Populate base address for gates */
+ 	for (i = 0; i < ARRAY_SIZE(gxbb_clk_gates); i++)
+ 		gxbb_clk_gates[i]->reg = clk_base +
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 0252939ba58f..d90052d74abd 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -191,7 +191,7 @@
+ #define CLKID_PERIPHS		  20
+ #define CLKID_SPICC		  21
+ /* CLKID_I2C */
+-#define CLKID_SAR_ADC		  23
++/* #define CLKID_SAR_ADC */
+ #define CLKID_SMART_CARD	  24
+ #define CLKID_RNG0		  25
+ #define CLKID_UART0		  26
+@@ -237,7 +237,7 @@
+ #define CLKID_MMC_PCLK		  66
+ #define CLKID_DVIN		  67
+ #define CLKID_UART2		  68
+-#define CLKID_SANA		  69
++/* #define CLKID_SANA */
+ #define CLKID_VPU_INTR		  70
+ #define CLKID_SEC_AHB_AHB3_BRIDGE 71
+ #define CLKID_CLK81_A53		  72
+@@ -265,8 +265,11 @@
+ /* CLKID_SD_EMMC_A */
+ /* CLKID_SD_EMMC_B */
+ /* CLKID_SD_EMMC_C */
++/* CLKID_SAR_ADC_CLK */
++/* CLKID_SAR_ADC_SEL */
++#define CLKID_SAR_ADC_DIV	  99
+ 
+-#define NR_CLKS			  97
++#define NR_CLKS			  100
+ 
+ /* include the CLKIDs that have been made part of the stable DT binding */
+ #include <dt-bindings/clock/gxbb-clkc.h>
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index baade6f429d0..c2e93676010d 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -14,15 +14,19 @@
+ #define CLKID_MPLL2		15
+ #define CLKID_SPI		34
+ #define CLKID_I2C		22
++#define CLKID_SAR_ADC		23
+ #define CLKID_ETH		36
+ #define CLKID_USB0		50
+ #define CLKID_USB1		51
+ #define CLKID_USB		55
+ #define CLKID_USB1_DDR_BRIDGE	64
+ #define CLKID_USB0_DDR_BRIDGE	65
++#define CLKID_SANA		69
+ #define CLKID_AO_I2C		93
+ #define CLKID_SD_EMMC_A		94
+ #define CLKID_SD_EMMC_B		95
+ #define CLKID_SD_EMMC_C		96
++#define CLKID_SAR_ADC_CLK	97
++#define CLKID_SAR_ADC_SEL	98
+ 
+ #endif /* __GXBB_CLKC_H */
 -- 
-git-series 0.8.11
+2.11.0
