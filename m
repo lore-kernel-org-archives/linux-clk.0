@@ -1,108 +1,204 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: jic23@kernel.org,
-	knaack.h@gmx.de,
-	lars@metafoo.de,
-	pmeerw@pmeerw.net,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	khilman@baylibre.com,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: carlo@caione.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	narmstrong@baylibre.com,
-	linux-arm-kernel@lists.infradead.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 4/4] ARM64: dts: meson: meson-gx: add the SAR ADC
-Date: Sun, 15 Jan 2017 23:42:21 +0100
-Message-Id: <20170115224221.15510-5-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
-References: <20170111174334.24343-1-martin.blumenstingl@googlemail.com>
- <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <ab8ef79d63fc09c3eaa556d299832ec06e9869cf.1484035021.git-series.maxime.ripard@free-electrons.com>
+References: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
+ <ab8ef79d63fc09c3eaa556d299832ec06e9869cf.1484035021.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 16 Jan 2017 13:58:18 +0800
+Message-ID: <CAGb2v65K8zQvHbhwZ6b6VhO6egXVQN4agHQ1JT8rkHzNsAEUtw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] clk: sunxi-ng: Implement multiplier maximum
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the SAR ADC to meson-gxbb.dtsi and meson-gxl.dtsi. GXBB provides a
-10-bit ADC while GXL (and GXM, which uses the same ADC as GXL) provides
-a 12-bit ADC.
-Some boards use resistor ladder buttons connected through one of the ADC
-channels. On newer devices (GXL and GXM) some boards use pull-ups/downs
-to change the resistance (and thus the ADC value) on of the ADC channels
-to indicate the board revision.
+On Tue, Jan 10, 2017 at 3:57 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/sunxi-ng/ccu_mult.c |  4 ++--
+>  drivers/clk/sunxi-ng/ccu_mult.h | 10 ++++++----
+>  drivers/clk/sunxi-ng/ccu_nk.c   |  8 ++++----
+>  drivers/clk/sunxi-ng/ccu_nkm.c  |  8 ++++----
+>  drivers/clk/sunxi-ng/ccu_nkmp.c |  8 ++++----
+>  drivers/clk/sunxi-ng/ccu_nm.c   |  4 ++--
+>  6 files changed, 22 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+> index bf5e11c803f9..fccfe1e1961a 100644
+> --- a/drivers/clk/sunxi-ng/ccu_mult.c
+> +++ b/drivers/clk/sunxi-ng/ccu_mult.c
+> @@ -41,7 +41,7 @@ static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
+>         struct _ccu_mult _cm;
+>
+>         _cm.min = 1;
+> -       _cm.max = 1 << cm->mult.width;
+> +       _cm.max = cm->mult.max ?: 1 << cm->mult.width;
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- arch/arm64/boot/dts/amlogic/meson-gx.dtsi   |  8 ++++++++
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 10 ++++++++++
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 10 ++++++++++
- 3 files changed, 28 insertions(+)
+Should you also factor in the offset when providing the default
+value for max? Otherwise you might end up with a value that is
+actually not progammable?
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-index cddad8c795ec..041e4f0ed7d7 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-@@ -237,6 +237,14 @@
- 				status = "disabled";
- 			};
- 
-+			saradc: adc@8680 {
-+				compatible = "amlogic,meson-saradc";
-+				#io-channel-cells = <1>;
-+				status = "disabled";
-+				reg = <0x0 0x8680 0x0 0x34>;
-+				interrupts = <GIC_SPI 79 IRQ_TYPE_EDGE_RISING>;
-+			};
-+
- 			pwm_ef: pwm@86c0 {
- 				compatible = "amlogic,meson-gx-pwm", "amlogic,meson-gxbb-pwm";
- 				reg = <0x0 0x086c0 0x0 0x10>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index 5d686334f692..114d7e1c9fc0 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -429,6 +429,16 @@
- 	clocks = <&clkc CLKID_I2C>;
- };
- 
-+&saradc {
-+	compatible = "amlogic,meson-gxbb-saradc", "amlogic,meson-saradc";
-+	clocks = <&xtal>,
-+		 <&clkc CLKID_SAR_ADC>,
-+		 <&clkc CLKID_SANA>,
-+		 <&clkc CLKID_SAR_ADC_CLK>,
-+		 <&clkc CLKID_SAR_ADC_SEL>;
-+	clock-names = "clkin", "core", "sana", "adc_clk", "adc_sel";
-+};
-+
- &sd_emmc_a {
- 	clocks = <&clkc CLKID_SD_EMMC_A>,
- 		 <&xtal>,
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index bb2842f8a08f..6b63296b6c60 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-@@ -273,6 +273,16 @@
- 	clocks = <&clkc CLKID_I2C>;
- };
- 
-+&saradc {
-+	compatible = "amlogic,meson-gxl-saradc", "amlogic,meson-saradc";
-+	clocks = <&xtal>,
-+		 <&clkc CLKID_SAR_ADC>,
-+		 <&clkc CLKID_SANA>,
-+		 <&clkc CLKID_SAR_ADC_CLK>,
-+		 <&clkc CLKID_SAR_ADC_SEL>;
-+	clock-names = "clkin", "core", "sana", "adc_clk", "adc_sel";
-+};
-+
- &sd_emmc_a {
- 	clocks = <&clkc CLKID_SD_EMMC_A>,
- 		 <&xtal>,
--- 
-2.11.0
+Say if offset is 1, then max would be 1 << width.
+But if offset is 0, then max would have to be (1 << width) - 1,
+as (1 << width) is not valid.
+
+ChenYu
+
+>         ccu_mult_find_best(parent_rate, rate, &_cm);
+>
+>         return parent_rate * _cm.mult;
+> @@ -114,7 +114,7 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
+>                                                 &parent_rate);
+>
+>         _cm.min = cm->mult.min;
+> -       _cm.max = 1 << cm->mult.width;
+> +       _cm.max = cm->mult.max ?: 1 << cm->mult.width;
+>         ccu_mult_find_best(parent_rate, rate, &_cm);
+>
+>         spin_lock_irqsave(cm->common.lock, flags);
+> diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
+> index 84839641dfdf..524acddfcb2e 100644
+> --- a/drivers/clk/sunxi-ng/ccu_mult.h
+> +++ b/drivers/clk/sunxi-ng/ccu_mult.h
+> @@ -10,24 +10,26 @@ struct ccu_mult_internal {
+>         u8      shift;
+>         u8      width;
+>         u8      min;
+> +       u8      max;
+>  };
+>
+> -#define _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, _min)      \
+> +#define _SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, _offset, _min, _max) \
+>         {                                                               \
+>                 .min    = _min,                                         \
+> +               .max    = _max,                                         \
+>                 .offset = _offset,                                      \
+>                 .shift  = _shift,                                       \
+>                 .width  = _width,                                       \
+>         }
+>
+>  #define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)      \
+> -       _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, _min)
+> +       _SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, 1, _min, 0)
+>
+>  #define _SUNXI_CCU_MULT_OFFSET(_shift, _width, _offset)        \
+> -       _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, 1)
+> +       _SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, _offset, 1, 0)
+>
+>  #define _SUNXI_CCU_MULT(_shift, _width)                \
+> -       _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, 1)
+> +       _SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, 1, 1, 0)
+>
+>  struct ccu_mult {
+>         u32                     enable;
+> diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
+> index 90117d3ead8c..b9e9b8a9d1b4 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nk.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nk.c
+> @@ -103,9 +103,9 @@ static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
+>                 rate *= nk->fixed_post_div;
+>
+>         _nk.min_n = nk->n.min;
+> -       _nk.max_n = 1 << nk->n.width;
+> +       _nk.max_n = nk->n.max ?: 1 << nk->n.width;
+>         _nk.min_k = nk->k.min;
+> -       _nk.max_k = 1 << nk->k.width;
+> +       _nk.max_k = nk->k.max ?: 1 << nk->k.width;
+>
+>         ccu_nk_find_best(*parent_rate, rate, &_nk);
+>         rate = *parent_rate * _nk.n * _nk.k;
+> @@ -128,9 +128,9 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
+>                 rate = rate * nk->fixed_post_div;
+>
+>         _nk.min_n = nk->n.min;
+> -       _nk.max_n = 1 << nk->n.width;
+> +       _nk.max_n = nk->n.max ?: 1 << nk->n.width;
+>         _nk.min_k = nk->k.min;
+> -       _nk.max_k = 1 << nk->k.width;
+> +       _nk.max_k = nk->k.max ?: 1 << nk->k.width;
+>
+>         ccu_nk_find_best(parent_rate, rate, &_nk);
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+> index 3caaf9d603e2..71f81e95a061 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> @@ -110,9 +110,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+>         struct _ccu_nkm _nkm;
+>
+>         _nkm.min_n = nkm->n.min;
+> -       _nkm.max_n = 1 << nkm->n.width;
+> +       _nkm.max_n = nkm->n.max ?: 1 << nkm->n.width;
+>         _nkm.min_k = nkm->k.min;
+> -       _nkm.max_k = 1 << nkm->k.width;
+> +       _nkm.max_k = nkm->k.max ?: 1 << nkm->k.width;
+>         _nkm.min_m = 1;
+>         _nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+>
+> @@ -139,9 +139,9 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
+>         u32 reg;
+>
+>         _nkm.min_n = nkm->n.min;
+> -       _nkm.max_n = 1 << nkm->n.width;
+> +       _nkm.max_n = nkm->n.max ?: 1 << nkm->n.width;
+>         _nkm.min_k = nkm->k.min;
+> -       _nkm.max_k = 1 << nkm->k.width;
+> +       _nkm.max_k = nkm->k.max ?: 1 << nkm->k.width;
+>         _nkm.min_m = 1;
+>         _nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+> index da2bba02b845..a2b40a000157 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkmp.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+> @@ -117,9 +117,9 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+>         struct _ccu_nkmp _nkmp;
+>
+>         _nkmp.min_n = nkmp->n.min;
+> -       _nkmp.max_n = 1 << nkmp->n.width;
+> +       _nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
+>         _nkmp.min_k = nkmp->k.min;
+> -       _nkmp.max_k = 1 << nkmp->k.width;
+> +       _nkmp.max_k = nkmp->k.max ?: 1 << nkmp->k.width;
+>         _nkmp.min_m = 1;
+>         _nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
+>         _nkmp.min_p = 1;
+> @@ -139,9 +139,9 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+>         u32 reg;
+>
+>         _nkmp.min_n = 1;
+> -       _nkmp.max_n = 1 << nkmp->n.width;
+> +       _nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
+>         _nkmp.min_k = 1;
+> -       _nkmp.max_k = 1 << nkmp->k.width;
+> +       _nkmp.max_k = nkmp->k.max ?: 1 << nkmp->k.width;
+>         _nkmp.min_m = 1;
+>         _nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
+>         _nkmp.min_p = 1;
+> diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+> index 158d74e0215f..af71b1909cd9 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nm.c
+> @@ -100,7 +100,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+>         struct _ccu_nm _nm;
+>
+>         _nm.min_n = nm->n.min;
+> -       _nm.max_n = 1 << nm->n.width;
+> +       _nm.max_n = nm->n.max ?: 1 << nm->n.width;
+>         _nm.min_m = 1;
+>         _nm.max_m = nm->m.max ?: 1 << nm->m.width;
+>
+> @@ -123,7 +123,7 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+>                 ccu_frac_helper_disable(&nm->common, &nm->frac);
+>
+>         _nm.min_n = 1;
+> -       _nm.max_n = 1 << nm->n.width;
+> +       _nm.max_n = nm->n.max ?: 1 << nm->n.width;
+>         _nm.min_m = 1;
+>         _nm.max_m = nm->m.max ?: 1 << nm->m.width;
+>
+> --
+> git-series 0.8.11
