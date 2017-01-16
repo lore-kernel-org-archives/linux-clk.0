@@ -1,122 +1,50 @@
-Return-Path: <ping.bai@nxp.com>
-From: Jacky Bai <ping.bai@nxp.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: "shawnguo@kernel.org" <shawnguo@kernel.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>, "linus.walleij@linaro.org"
-	<linus.walleij@linaro.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com"
-	<jacky.baip@gmail.com>
-Subject: RE: [PATCH v2 04/12] driver: clk: imx: Add clock driver for imx6sll
-Date: Fri, 13 Jan 2017 03:04:37 +0000
-Message-ID: <AM3PR04MB53027B627AE8CEC6D7D0D1B87780@AM3PR04MB530.eurprd04.prod.outlook.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-5-git-send-email-ping.bai@nxp.com>
- <20170110003753.GM17126@codeaurora.org>
- <AM3PR04MB5307CB38AA904535AF8D80D87670@AM3PR04MB530.eurprd04.prod.outlook.com>
- <20170112220536.GP17126@codeaurora.org>
-In-Reply-To: <20170112220536.GP17126@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Message-id: <587C4458.7020804@samsung.com>
+Date: Mon, 16 Jan 2017 12:56:08 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
+ Javier Martinez Canillas <javier@osg.samsung.com>,
+ Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 3/4] pinctrl: samsung: Remove support for Exynos4415 (SoC
+ not supported anymore)
+In-reply-to: <20170114123642.15581-4-krzk@kernel.org>
+References: <20170114123642.15581-1-krzk@kernel.org>
+ <CGME20170114123733epcas4p20d5ea05c5d705528138ebdefc56be69a@epcas4p2.samsung.com>
+ <20170114123642.15581-4-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-> Subject: Re: [PATCH v2 04/12] driver: clk: imx: Add clock driver for imx6=
-sll
->=20
-> > > > +
-> > > > +static const char *pll_bypass_src_sels[] =3D { "osc", "dummy", };
-> > >
-> > > All these should be const char * const unless something is wrong.
-> >
-> > If changed to 'const char * const', it vill has argument type mismatch
-> > error, as imx_clk_* wrapper function has argument type 'const char *'.
->=20
-> Hmm that's unfortunate.
->=20
-> >
-> > >
-> > > > +
-> > > > +	for (i =3D 0; i < ARRAY_SIZE(clks_init_on); i++)
-> > > > +		clk_prepare_enable(clks[clks_init_on[i]]);
-> > >
-> > > Critical clocks?
-> >
-> > Yes, these clocks must be always on.
-> >
-> > >
-> > > > +
-> > > > +	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
-> > > > +		clk_prepare_enable(clks[IMX6SLL_CLK_USBPHY1_GATE]);
-> > > > +		clk_prepare_enable(clks[IMX6SLL_CLK_USBPHY2_GATE]);
-> > >
-> > > The phy driver can't enable these?
-> >
-> > The reason why we enable these two clks here is in below commit commit
-> > a5120e89e7e187a91852896f586876c7a2030804
-> > Author: Peter Chen <peter.chen@freescale.com>
-> > Date:   Fri Jan 18 10:38:05 2013 +0800
-> >       ARM i.MX6: change mxs usbphy clock usage
-> >
->=20
-> So can we mark these clks with CLK_IS_CRITICAL flag then instead?
-> Or are they disabled out of the bootloader?
->=20
+On 2017년 01월 14일 21:36, Krzysztof Kozlowski wrote:
+> Support for Exynos4415 is going away because there are no internal nor
+> external users.
+> 
+> Since commit 46dcf0ff0de3 ("ARM: dts: exynos: Remove exynos4415.dtsi"),
+> the platform cannot be instantiated so remove also the drivers.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-exynos.c  | 75 -------------------------------
+>  drivers/pinctrl/samsung/pinctrl-samsung.c |  2 -
+>  drivers/pinctrl/samsung/pinctrl-samsung.h |  1 -
+>  3 files changed, 78 deletions(-)
 
-Sure, using 'CLK_IS_CRITICAL'  should be ok for clks_init_on clocks.  But f=
-or  USBPHY*_GATE, it is
-only enabled when CONIG_USB_MXC_PHY is true.  And another concern is if we =
-need to add CLK_IS_CRITICAL
-flag to clks_init_on clocks, we may need to add new wrapper function to reg=
-ister these critical clock. It is not very good.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
- > >
-> > > > +	}
-> > > > +
-> > > > +	/* Lower the AHB clock rate before changing the clock source. */
-> > > > +	clk_set_rate(clks[IMX6SLL_CLK_AHB], 99000000);
-> > > > +
-> > > > +	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264M=
-Hz */
-> > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH_CLK2_SEL],
-> > > clks[IMX6SLL_CLK_PLL3_USB_OTG]);
-> > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH],
-> > > clks[IMX6SLL_CLK_PERIPH_CLK2]);
-> > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH_PRE],
-> > > clks[IMX6SLL_CLK_PLL2_BUS]);
-> > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH],
-> > > > +clks[IMX6SLL_CLK_PERIPH_PRE]);
-> > > > +
-> > > > +	clk_set_rate(clks[IMX6SLL_CLK_AHB], 132000000);
-> > >
-> > > assigned-clocks for rates now? Or perhaps we shouldn't be exposing
-> > > these as clks if they have some sort of complicated rate sequence
-> > > switch that we can't guarantee with the clk_ops we have today.
-> >
-> > These clks will be used by some peripherals, so we need to expose these
-> clocks.
-> > And the above parent and rate swith sequence is not very easy to be
-> > handled in assigned-clocks, So we leave it in this place.
-> >
->=20
-> How do we guarantee that the rate switch doesn't happen later on, requiri=
-ng
-> this coordinated sequence of clk operations?
->=20
+[snip]
 
-This clock sequence is used for increasing the AXI and AHB bus clock rate. =
-In normal
-use, it is very rarely that we need to change them again. If we really need=
- to change
-AXI and AHB bus clock later, a similar sequence must be used to do this.
-
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linu=
-x
-> Foundation Collaborative Project
+-- 
+Best Regards,
+Chanwoo Choi
+S/W Center, Samsung Electronics
