@@ -1,69 +1,61 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Jan 2017 16:48:19 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 1/5] clk: mvebu: support for 98DX3236 SoC
-Message-ID: <20170121004819.GA8801@codeaurora.org>
-References: <20170113091222.7132-1-chris.packham@alliedtelesis.co.nz>
- <20170113091222.7132-2-chris.packham@alliedtelesis.co.nz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170113091222.7132-2-chris.packham@alliedtelesis.co.nz>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Message-id: <587C4446.5040802@samsung.com>
+Date: Mon, 16 Jan 2017 12:55:50 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 2/4] clk: samsung: Remove Exynos4415 driver (SoC not
+ supported anymore)
+In-reply-to: <20170114123642.15581-3-krzk@kernel.org>
+References: <20170114123642.15581-1-krzk@kernel.org>
+ <CGME20170114123726epcas1p3fd30d91d4101297a65acf45f76f85790@epcas1p3.samsung.com>
+ <20170114123642.15581-3-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/13, Chris Packham wrote:
-> @@ -158,6 +170,14 @@ static const struct coreclk_soc_desc axp_coreclks = {
->  	.num_ratios = ARRAY_SIZE(axp_coreclk_ratios),
->  };
->  
-> +static const struct coreclk_soc_desc mv98dx3236_coreclks = {
-> +	.get_tclk_freq = mv98dx3236_get_tclk_freq,
-> +	.get_cpu_freq = mv98dx3236_get_cpu_freq,
-> +	.get_clk_ratio = NULL,
-> +	.ratios = NULL,
-> +	.num_ratios = 0,
+Hi,
 
-Are these intentionally initialized to 0 explicitly? Otherwise we
-could leave them out and it's all the same.
+On 2017년 01월 14일 21:36, Krzysztof Kozlowski wrote:
+> Support for Exynos4415 is going away because there are no internal nor
+> external users.
+> 
+> Since commit 46dcf0ff0de3 ("ARM: dts: exynos: Remove exynos4415.dtsi"),
+> the platform cannot be instantiated so remove also the drivers.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  .../devicetree/bindings/clock/exynos4415-clock.txt |   38 -
+>  drivers/clk/samsung/Makefile                       |    1 -
+>  drivers/clk/samsung/clk-exynos4415.c               | 1022 --------------------
+>  include/dt-bindings/clock/exynos4415.h             |  360 -------
+>  4 files changed, 1421 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/exynos4415-clock.txt
+>  delete mode 100644 drivers/clk/samsung/clk-exynos4415.c
+>  delete mode 100644 include/dt-bindings/clock/exynos4415.h
 
-> +};
-> +
->  /*
->   * Clock Gating Control
->   */
-[..]
-> @@ -243,5 +245,30 @@ static void __init of_cpu_clk_setup(struct device_node *node)
->  	iounmap(clock_complex_base);
->  }
->  
-> +/* Use this function to call the generic setup with the correct
-> + * clock operation
-> + */
-> +static void __init of_cpu_clk_setup(struct device_node *node)
-> +{
-> +	_of_cpu_clk_setup(node, &cpu_ops);
-> +}
-> +
->  CLK_OF_DECLARE(armada_xp_cpu_clock, "marvell,armada-xp-cpu-clock",
->  					 of_cpu_clk_setup);
-> +
-> +/* Define the clock and operations for the mv98dx3236 - it cannot perform
-> + * any operations.
-> + */
-> +static const struct clk_ops mv98dx3236_cpu_ops = {
-> +	.recalc_rate = NULL,
-> +	.round_rate = NULL,
-> +	.set_rate = NULL,
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-But clk_set_rate() works silently? Why not just register a clk
-provider that returns a NULL pointer? Then there isn't any
-structure to maintain?
+[snip]
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best Regards,
+Chanwoo Choi
+S/W Center, Samsung Electronics
