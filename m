@@ -1,342 +1,346 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: linux-arm-kernel@lists.infradead.org,  Rob Herring <robh+dt@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Linus Walleij <linus.walleij@linaro.org>,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Russell King <linux@armlinux.org.uk>,  Geert Uytterhoeven <geert+renesas@glider.be>,  Chris Brand <chris.brand@broadcom.com>,  Florian Fainelli <f.fainelli@gmail.com>,  Arnd Bergmann <arnd@arndb.de>,  Thierry Reding <treding@nvidia.com>,  Sudeep Holla <sudeep.holla@arm.com>,  Juri Lelli <juri.lelli@arm.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  Laxman Dewangan <ldewangan@nvidia.com>,  Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>,  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,  linux-gpio@vger.kernel.org
-Subject: Re: [PATCHv4 0/5] Support for Marvell switches with integrated CPUs
-References: <20170113091222.7132-1-chris.packham@alliedtelesis.co.nz>
-Date: Thu, 26 Jan 2017 16:17:09 +0100
-In-Reply-To: <20170113091222.7132-1-chris.packham@alliedtelesis.co.nz> (Chris
-	Packham's message of "Fri, 13 Jan 2017 22:12:15 +1300")
-Message-ID: <87a8adzw96.fsf@free-electrons.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <2cec4b406a220763208125cde184aee01b27e7e8.1484035021.git-series.maxime.ripard@free-electrons.com>
+References: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
+ <2cec4b406a220763208125cde184aee01b27e7e8.1484035021.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 16 Jan 2017 13:45:56 +0800
+Message-ID: <CAGb2v66cjf0k8RvSCMXA6TjhDEj7dacyfwnkxpgnf7LL_JVF3Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] clk: sunxi-ng: Implement factors offsets
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chris,
- 
- On ven., janv. 13 2017, Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
-
-> The 98DX3236, 98DX3336 and 98DX4251 are a set of switch ASICs with
-> integrated CPUs. They CPU block is common within these product lines and
-> (as far as I can tell/have been told) is based on the Armada XP. There
-> are a few differences due to the fact they have to squeeze the CPU into
-> the same package as the switch.
+On Tue, Jan 10, 2017 at 3:57 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The factors we've seen so far all had an offset of one. However, on the
+> earlier Allwinner SoCs, some factors could have no offset at all, meaning
+> that the value computed to reach the rate we want to use was the one we had
+> to program in the registers.
 >
-> This series is starting to settle down now. The only major change is in
-> "arm: mvebu: support for SMP on 98DX3336 SoC" the other changes are
-> generally cosmetic or collecting acks.
+> Implement an additional field for the factors that can have such an offset
+> (linears, not based on a power of two) to specify that offset.
 >
-> Chris Packham (4):
->   clk: mvebu: support for 98DX3236 SoC
->     Changes in v2:
->     - Update devicetree binding documentation for new compatible string
->     Changes in v3:
->     - Add 98dx3236 support to mvebu/clk-corediv.c rather than creating a new
->       driver.
->     - Document mv98dx3236-corediv-clock binding
->     Changes in v4:
->     - None
->   arm: mvebu: support for SMP on 98DX3336 SoC
->     Changes in v2:
->     - Document new enable-method value
->     - Correct some references from 98DX4521 to 98DX3236
->     Changes in v3:
->     - Simplify mv98dx3236_resume_init by using of_io_request_and_map()
->     Changes in v4:
->     - integrate changes into platsmp.c instead of new init call
->     - avoid duplicated code.
->     - fix error return
->     - Collect ack from Rob
->   arm: mvebu: Add device tree for 98DX3236 SoCs
->     Changes in v2:
->     - Update devicetree binding documentation to reflect that 98DX3336 and
->       984251 are supersets of 98DX3236.
->     - disable crypto block
->     - disable sdio for 98DX3236, enable for 98DX4251
->     Changes in v3:
->     - fix typo 4521 -> 4251
->     - document prestera bindings
->     - rework corediv-clock binding
->     - add label to packet processor node
->     - add new compatible string for DFX server
->     Changes in v4:
->     - Collect ack from Rob
->   arm: mvebu: Add device tree for db-dxbc2 and db-xc3-24g4xg boards
+> This offset is not linked to the extremums that can be specified in those
+> structures too. The minimum and maximum are representing the range of
+> values we can use to try to compute the best rate. The offset comes later
+> on when we want to set the best value in the registers.
 >
-
-I made some comments on device tree patches, but on the v3 instead on
-the v4. However the comments still apply as the patches didn't change
-between v3 and v4.
-
-Gregory
-
-> Kalyan Kinthada (1):
->   pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
->     Changes in v2:
->     - include sdio support for the 98DX4251
->     Changes in v3:
->     - None
->     Changes in v4:
->     - Correct some discrepencies between binding and driver.
->     - Collect acks from Rob and Sebastian
->     
->  Documentation/devicetree/bindings/arm/cpus.txt     |   1 +
->  .../bindings/arm/marvell/98dx3236-resume-ctrl.txt  |  18 ++
->  .../devicetree/bindings/arm/marvell/98dx3236.txt   |  23 ++
->  .../bindings/clock/mvebu-corediv-clock.txt         |   1 +
->  .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |   1 +
->  .../devicetree/bindings/net/marvell,prestera.txt   |  50 ++++
->  .../pinctrl/marvell,armada-98dx3236-pinctrl.txt    |  46 ++++
->  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 254 +++++++++++++++++++++
->  arch/arm/boot/dts/armada-xp-98dx3336.dtsi          |  76 ++++++
->  arch/arm/boot/dts/armada-xp-98dx4251.dtsi          |  90 ++++++++
->  arch/arm/boot/dts/db-dxbc2.dts                     | 159 +++++++++++++
->  arch/arm/boot/dts/db-xc3-24g4xg.dts                | 155 +++++++++++++
->  arch/arm/mach-mvebu/platsmp.c                      |  86 +++++++
->  drivers/clk/mvebu/armada-xp.c                      |  42 ++++
->  drivers/clk/mvebu/clk-corediv.c                    |  23 ++
->  drivers/clk/mvebu/clk-cpu.c                        |  31 ++-
->  drivers/pinctrl/mvebu/pinctrl-armada-xp.c          | 156 +++++++++++++
->  17 files changed, 1210 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236-resume-ctrl.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236.txt
->  create mode 100644 Documentation/devicetree/bindings/net/marvell,prestera.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
->  create mode 100644 arch/arm/boot/dts/armada-xp-98dx3236.dtsi
->  create mode 100644 arch/arm/boot/dts/armada-xp-98dx3336.dtsi
->  create mode 100644 arch/arm/boot/dts/armada-xp-98dx4251.dtsi
->  create mode 100644 arch/arm/boot/dts/db-dxbc2.dts
->  create mode 100644 arch/arm/boot/dts/db-xc3-24g4xg.dts
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/sunxi-ng/ccu_div.h  | 10 +++++++++-
+>  drivers/clk/sunxi-ng/ccu_mp.c   | 10 +++++++---
+>  drivers/clk/sunxi-ng/ccu_mult.c |  4 ++--
+>  drivers/clk/sunxi-ng/ccu_mult.h | 20 ++++++++++++++------
+>  drivers/clk/sunxi-ng/ccu_nk.c   | 14 ++++++++++----
+>  drivers/clk/sunxi-ng/ccu_nkm.c  | 18 +++++++++++++-----
+>  drivers/clk/sunxi-ng/ccu_nkmp.c | 17 +++++++++++++----
+>  drivers/clk/sunxi-ng/ccu_nm.c   | 13 ++++++++++---
+>  8 files changed, 78 insertions(+), 28 deletions(-)
 >
-> inter-diff to v3:
+> diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_div.h
+> index 06540f7cf41c..08d074451204 100644
+> --- a/drivers/clk/sunxi-ng/ccu_div.h
+> +++ b/drivers/clk/sunxi-ng/ccu_div.h
+> @@ -41,6 +41,7 @@ struct ccu_div_internal {
+>         u8                      width;
 >
-> diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
-> index d4e6ecdfc853..b5bd23992fdf 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
-> @@ -28,10 +28,10 @@ mpp13         13       gpio, intr(out), dev(ad15)
->  mpp14         14       gpio, i2c0(sck)
->  mpp15         15       gpio, i2c0(sda)
->  mpp16         16       gpio, dev(oe)
-> -mpp17         17       gpio, dev(clk)
-> +mpp17         17       gpio, dev(clkout)
->  mpp18         18       gpio, uart1(txd)
->  mpp19         19       gpio, uart1(rxd), dev(rb)
-> -mpp20         20       gpio, dev(we)
-> +mpp20         20       gpio, dev(we0)
->  mpp21         21       gpio, dev(ad0)
->  mpp22         22       gpio, dev(ad1)
->  mpp23         23       gpio, dev(ad2)
-> diff --git a/arch/arm/mach-mvebu/Makefile b/arch/arm/mach-mvebu/Makefile
-> index 2a2dd8324fb8..6c6497e80a7b 100644
-> --- a/arch/arm/mach-mvebu/Makefile
-> +++ b/arch/arm/mach-mvebu/Makefile
-> @@ -7,7 +7,6 @@ obj-$(CONFIG_MACH_MVEBU_ANY)	 += system-controller.o mvebu-soc-id.o
->  
->  ifeq ($(CONFIG_MACH_MVEBU_V7),y)
->  obj-y				 += cpu-reset.o board-v7.o coherency.o coherency_ll.o pmsu.o pmsu_ll.o
-> -obj-y				 += pmsu-98dx3236.o
->  
->  obj-$(CONFIG_PM)		 += pm.o pm-board.o
->  obj-$(CONFIG_SMP)		 += platsmp.o headsmp.o platsmp-a9.o headsmp-a9.o
-> diff --git a/arch/arm/mach-mvebu/common.h b/arch/arm/mach-mvebu/common.h
-> index 099dabf23461..6b775492cfad 100644
-> --- a/arch/arm/mach-mvebu/common.h
-> +++ b/arch/arm/mach-mvebu/common.h
-> @@ -27,5 +27,4 @@ void __iomem *mvebu_get_scu_base(void);
->  
->  int mvebu_pm_suspend_init(void (*board_pm_enter)(void __iomem *sdram_reg,
->  							u32 srcmd));
-> -void mv98dx3236_resume_set_cpu_boot_addr(int hw_cpu, void *boot_addr);
->  #endif
-> diff --git a/arch/arm/mach-mvebu/platsmp.c b/arch/arm/mach-mvebu/platsmp.c
-> index 3c9ab9a008ad..59be3ca0464f 100644
-> --- a/arch/arm/mach-mvebu/platsmp.c
-> +++ b/arch/arm/mach-mvebu/platsmp.c
-> @@ -182,12 +182,57 @@ const struct smp_operations armada_xp_smp_ops __initconst = {
->  #endif
->  };
->  
-> +CPU_METHOD_OF_DECLARE(armada_xp_smp, "marvell,armada-xp-smp",
-> +		      &armada_xp_smp_ops);
+>         u32                     max;
+> +       u32                     offset;
+>
+>         u32                     flags;
+>
+> @@ -58,20 +59,27 @@ struct ccu_div_internal {
+>  #define _SUNXI_CCU_DIV_TABLE(_shift, _width, _table)                   \
+>         _SUNXI_CCU_DIV_TABLE_FLAGS(_shift, _width, _table, 0)
+>
+> -#define _SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, _max, _flags) \
+> +#define _SUNXI_CCU_DIV_OFFSET_MAX_FLAGS(_shift, _width, _off, _max, _flags) \
+>         {                                                               \
+>                 .shift  = _shift,                                       \
+>                 .width  = _width,                                       \
+>                 .flags  = _flags,                                       \
+>                 .max    = _max,                                         \
+> +               .offset = _off,                                         \
+>         }
+>
+> +#define _SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, _max, _flags)         \
+> +       _SUNXI_CCU_DIV_OFFSET_MAX_FLAGS(_shift, _width, 1, _max, _flags)
 > +
-> +struct resume_controller {
-> +	u32 resume_control;
-> +	u32 resume_boot_addr;
-> +};
+>  #define _SUNXI_CCU_DIV_FLAGS(_shift, _width, _flags)                   \
+>         _SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, 0, _flags)
+>
+>  #define _SUNXI_CCU_DIV_MAX(_shift, _width, _max)                       \
+>         _SUNXI_CCU_DIV_MAX_FLAGS(_shift, _width, _max, 0)
+>
+> +#define _SUNXI_CCU_DIV_OFFSET(_shift, _width, _offset)                 \
+> +       _SUNXI_CCU_DIV_OFFSET_MAX_FLAGS(_shift, _width, _offset, 0, 0)
 > +
-> +static const struct resume_controller mv98dx3336_resume_controller = {
-> +	.resume_control = 0x08,
-> +	.resume_boot_addr = 0x04,
-> +};
-> +
-> +static const struct of_device_id of_mv98dx3236_resume_table[] = {
-> +	{
-> +		.compatible = "marvell,98dx3336-resume-ctrl",
-> +		.data = (void *)&mv98dx3336_resume_controller,
-> +	},
-> +	{ /* end of list */ },
-> +};
-> +
-> +static int mv98dx3236_resume_set_cpu_boot_addr(int hw_cpu, void *boot_addr)
-> +{
-> +	const struct of_device_id *match;
-> +	struct device_node *np;
-> +	void __iomem *base;
-> +	struct resume_controller *rc;
-> +
-> +	WARN_ON(hw_cpu != 1);
-> +
-> +	np = of_find_matching_node_and_match(NULL, of_mv98dx3236_resume_table,
-> +					     &match);
-> +	if (!np)
-> +		return -ENODEV;
-> +
-> +	base = of_io_request_and_map(np, 0, of_node_full_name(np));
-> +	rc = (struct resume_controller *)match->data;
-> +	of_node_put(np);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	writel(0, base + rc->resume_control);
-> +	writel(virt_to_phys(boot_addr), base + rc->resume_boot_addr);
-> +
-> +	return 0;
-> +}
-> +
->  static int mv98dx3236_boot_secondary(unsigned int cpu, struct task_struct *idle)
->  {
->  	int ret, hw_cpu;
->  
-> -	pr_info("Booting CPU %d\n", cpu);
-> -
->  	hw_cpu = cpu_logical_map(cpu);
->  	set_secondary_cpu_clock(hw_cpu);
->  	mv98dx3236_resume_set_cpu_boot_addr(hw_cpu,
-> @@ -212,7 +257,7 @@ static int mv98dx3236_boot_secondary(unsigned int cpu, struct task_struct *idle)
->  	return 0;
+>  #define _SUNXI_CCU_DIV(_shift, _width)                                 \
+>         _SUNXI_CCU_DIV_FLAGS(_shift, _width, 0)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
+> index ebb1b31568a5..22c2ca7a2a22 100644
+> --- a/drivers/clk/sunxi-ng/ccu_mp.c
+> +++ b/drivers/clk/sunxi-ng/ccu_mp.c
+> @@ -89,11 +89,14 @@ static unsigned long ccu_mp_recalc_rate(struct clk_hw *hw,
+>
+>         m = reg >> cmp->m.shift;
+>         m &= (1 << cmp->m.width) - 1;
+> +       m += cmp->m.offset;
+> +       if (!m)
+> +               m++;
+>
+>         p = reg >> cmp->p.shift;
+>         p &= (1 << cmp->p.width) - 1;
+>
+> -       return (parent_rate >> p) / (m + 1);
+> +       return (parent_rate >> p) / m;
 >  }
->  
-> -struct smp_operations mv98dx3236_smp_ops __initdata = {
-> +static const struct smp_operations mv98dx3236_smp_ops __initconst = {
->  	.smp_init_cpus		= armada_xp_smp_init_cpus,
->  	.smp_prepare_cpus	= armada_xp_smp_prepare_cpus,
->  	.smp_boot_secondary	= mv98dx3236_boot_secondary,
-> @@ -223,7 +268,5 @@ struct smp_operations mv98dx3236_smp_ops __initdata = {
->  #endif
->  };
->  
-> -CPU_METHOD_OF_DECLARE(armada_xp_smp, "marvell,armada-xp-smp",
-> -		      &armada_xp_smp_ops);
->  CPU_METHOD_OF_DECLARE(mv98dx3236_smp, "marvell,98dx3236-smp",
->  		      &mv98dx3236_smp_ops);
-> diff --git a/arch/arm/mach-mvebu/pmsu-98dx3236.c b/arch/arm/mach-mvebu/pmsu-98dx3236.c
-> deleted file mode 100644
-> index 1052674dd439..000000000000
-> --- a/arch/arm/mach-mvebu/pmsu-98dx3236.c
-> +++ /dev/null
-> @@ -1,52 +0,0 @@
-> -/**
-> - * CPU resume support for 98DX3236 internal CPU (a.k.a. MSYS).
-> - */
-> -
-> -#define pr_fmt(fmt) "mv98dx3236-resume: " fmt
-> -
-> -#include <linux/kernel.h>
-> -#include <linux/init.h>
-> -#include <linux/of_address.h>
-> -#include <linux/io.h>
-> -#include "common.h"
-> -
-> -static void __iomem *mv98dx3236_resume_base;
-> -#define MV98DX3236_CPU_RESUME_CTRL_OFFSET	0x08
-> -#define MV98DX3236_CPU_RESUME_ADDR_OFFSET	0x04
-> -
-> -static const struct of_device_id of_mv98dx3236_resume_table[] = {
-> -	{.compatible = "marvell,98dx3336-resume-ctrl",},
-> -	{ /* end of list */ },
-> -};
-> -
-> -void mv98dx3236_resume_set_cpu_boot_addr(int hw_cpu, void *boot_addr)
-> -{
-> -	WARN_ON(hw_cpu != 1);
-> -
-> -	writel(0, mv98dx3236_resume_base + MV98DX3236_CPU_RESUME_CTRL_OFFSET);
-> -	writel(virt_to_phys(boot_addr), mv98dx3236_resume_base +
-> -	       MV98DX3236_CPU_RESUME_ADDR_OFFSET);
-> -}
-> -
-> -static int __init mv98dx3236_resume_init(void)
-> -{
-> -	struct device_node *np;
-> -	void __iomem *base;
-> -
-> -	np = of_find_matching_node(NULL, of_mv98dx3236_resume_table);
-> -	if (!np)
-> -		return 0;
-> -
-> -	base = of_io_request_and_map(np, 0, of_node_full_name(np));
-> -	if (IS_ERR(base)) {
-> -		pr_err("unable to map registers\n");
-> -		of_node_put(np);
-> -		return PTR_ERR(mv98dx3236_resume_base);
-> -	}
-> -
-> -	mv98dx3236_resume_base = base;
-> -	of_node_put(np);
-> -	return 0;
-> -}
-> -
-> -early_initcall(mv98dx3236_resume_init);
-> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-> index 554eeae8cd21..9601d662c7f5 100644
-> --- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-> @@ -374,8 +374,8 @@ static struct mvebu_mpp_mode mv98dx3236_mpp_modes[] = {
->  		 MPP_VAR_FUNCTION(0x2, "spi0", "miso",       V_98DX3236_PLUS),
->  		 MPP_VAR_FUNCTION(0x4, "dev", "ad9",         V_98DX3236_PLUS)),
->  	MPP_MODE(2,
-> -		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
-> -		 MPP_VAR_FUNCTION(0x2, "spi0", "csk",        V_98DX3236_PLUS),
-> +		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
-> +		 MPP_VAR_FUNCTION(0x2, "spi0", "sck",        V_98DX3236_PLUS),
->  		 MPP_VAR_FUNCTION(0x4, "dev", "ad10",        V_98DX3236_PLUS)),
->  	MPP_MODE(3,
->  		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
-> @@ -390,7 +390,7 @@ static struct mvebu_mpp_mode mv98dx3236_mpp_modes[] = {
->  		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
->  		 MPP_VAR_FUNCTION(0x1, "pex", "rsto",        V_98DX3236_PLUS),
->  		 MPP_VAR_FUNCTION(0x2, "sd0", "cmd",         V_98DX4251),
-> -		 MPP_VAR_FUNCTION(0x4, "dev", "bootcs0",     V_98DX3236_PLUS)),
-> +		 MPP_VAR_FUNCTION(0x4, "dev", "bootcs",      V_98DX3236_PLUS)),
->  	MPP_MODE(6,
->  		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
->  		 MPP_VAR_FUNCTION(0x2, "sd0", "clk",         V_98DX4251),
-> @@ -442,7 +442,8 @@ static struct mvebu_mpp_mode mv98dx3236_mpp_modes[] = {
->  		 MPP_VAR_FUNCTION(0x3, "uart1", "txd",       V_98DX3236_PLUS)),
->  	MPP_MODE(19,
->  		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
-> -		 MPP_VAR_FUNCTION(0x3, "uart1", "rxd",       V_98DX3236_PLUS)),
-> +		 MPP_VAR_FUNCTION(0x3, "uart1", "rxd",       V_98DX3236_PLUS),
-> +		 MPP_VAR_FUNCTION(0x4, "dev", "rb",          V_98DX3236_PLUS)),
->  	MPP_MODE(20,
->  		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
->  		 MPP_VAR_FUNCTION(0x4, "dev", "we0",         V_98DX3236_PLUS)),
-> @@ -548,7 +549,7 @@ static struct mvebu_mpp_ctrl mv98dx3236_mpp_controls[] = {
->  };
->  
->  static struct pinctrl_gpio_range mv98dx3236_mpp_gpio_ranges[] = {
-> -	MPP_GPIO_RANGE(0,   0,  0, 32),
-> +	MPP_GPIO_RANGE(0, 0, 0, 32),
->  };
->  
->  static int armada_xp_pinctrl_suspend(struct platform_device *pdev,
-> -- 
-> 2.11.0.24.ge6920cf
 >
+>  static int ccu_mp_determine_rate(struct clk_hw *hw,
+> @@ -124,9 +127,10 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
+>         reg = readl(cmp->common.base + cmp->common.reg);
+>         reg &= ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m.shift);
+>         reg &= ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shift);
+> +       reg |= (m - cmp->m.offset) << cmp->m.shift;
+> +       reg |= ilog2(p) << cmp->p.shift;
+>
+> -       writel(reg | (ilog2(p) << cmp->p.shift) | ((m - 1) << cmp->m.shift),
+> -              cmp->common.base + cmp->common.reg);
+> +       writel(reg, cmp->common.base + cmp->common.reg);
+>
+>         spin_unlock_irqrestore(cmp->common.lock, flags);
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+> index 826302464650..bf5e11c803f9 100644
+> --- a/drivers/clk/sunxi-ng/ccu_mult.c
+> +++ b/drivers/clk/sunxi-ng/ccu_mult.c
+> @@ -85,7 +85,7 @@ static unsigned long ccu_mult_recalc_rate(struct clk_hw *hw,
+>         ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
+>                                                 &parent_rate);
+>
+> -       return parent_rate * (val + 1);
+> +       return parent_rate * (val + cm->mult.offset);
+>  }
+>
+>  static int ccu_mult_determine_rate(struct clk_hw *hw,
+> @@ -122,7 +122,7 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
+>         reg = readl(cm->common.base + cm->common.reg);
+>         reg &= ~GENMASK(cm->mult.width + cm->mult.shift - 1, cm->mult.shift);
+>
+> -       writel(reg | ((_cm.mult - 1) << cm->mult.shift),
+> +       writel(reg | ((_cm.mult - cm->mult.offset) << cm->mult.shift),
 
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Nit, might be worth splitting out the "or" to a separate line.
+
+>                cm->common.base + cm->common.reg);
+>
+>         spin_unlock_irqrestore(cm->common.lock, flags);
+> diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
+> index bd2e38b5a32a..84839641dfdf 100644
+> --- a/drivers/clk/sunxi-ng/ccu_mult.h
+> +++ b/drivers/clk/sunxi-ng/ccu_mult.h
+> @@ -6,20 +6,28 @@
+>  #include "ccu_mux.h"
+>
+>  struct ccu_mult_internal {
+> +       u8      offset;
+>         u8      shift;
+>         u8      width;
+>         u8      min;
+>  };
+>
+> -#define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)      \
+> -       {                                               \
+> -               .shift  = _shift,                       \
+> -               .width  = _width,                       \
+> -               .min    = _min,                         \
+> +#define _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, _min)      \
+> +       {                                                               \
+> +               .min    = _min,                                         \
+> +               .offset = _offset,                                      \
+> +               .shift  = _shift,                                       \
+> +               .width  = _width,                                       \
+>         }
+>
+> +#define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)      \
+> +       _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, _min)
+> +
+> +#define _SUNXI_CCU_MULT_OFFSET(_shift, _width, _offset)        \
+> +       _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, 1)
+> +
+>  #define _SUNXI_CCU_MULT(_shift, _width)                \
+> -       _SUNXI_CCU_MULT_MIN(_shift, _width, 1)
+> +       _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, 1)
+>
+>  struct ccu_mult {
+>         u32                     enable;
+> diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
+> index eaf0fdf78d2b..90117d3ead8c 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nk.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nk.c
+> @@ -76,12 +76,17 @@ static unsigned long ccu_nk_recalc_rate(struct clk_hw *hw,
+>
+>         n = reg >> nk->n.shift;
+>         n &= (1 << nk->n.width) - 1;
+> +       n += nk->n.offset;
+> +       if (!n)
+> +               n++;
+>
+>         k = reg >> nk->k.shift;
+>         k &= (1 << nk->k.width) - 1;
+> +       k += nk->k.offset;
+> +       if (!k)
+> +               k++;
+>
+> -       rate = parent_rate * (n + 1) * (k + 1);
+> -
+> +       rate = parent_rate * n * k;
+>         if (nk->common.features & CCU_FEATURE_FIXED_POSTDIV)
+>                 rate /= nk->fixed_post_div;
+>
+> @@ -135,8 +140,9 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
+>         reg &= ~GENMASK(nk->n.width + nk->n.shift - 1, nk->n.shift);
+>         reg &= ~GENMASK(nk->k.width + nk->k.shift - 1, nk->k.shift);
+>
+> -       writel(reg | ((_nk.k - 1) << nk->k.shift) | ((_nk.n - 1) << nk->n.shift),
+> -              nk->common.base + nk->common.reg);
+> +       reg |= (_nk.k - nk->k.offset) << nk->k.shift;
+> +       reg |= (_nk.n - nk->n.offset) << nk->n.shift;
+> +       writel(reg, nk->common.base + nk->common.reg);
+>
+>         spin_unlock_irqrestore(nk->common.lock, flags);
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+> index 9b840a47a94d..3caaf9d603e2 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> @@ -82,14 +82,23 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
+>
+>         n = reg >> nkm->n.shift;
+>         n &= (1 << nkm->n.width) - 1;
+> +       n += nkm->n.offset;
+> +       if (!n)
+> +               n++;
+>
+>         k = reg >> nkm->k.shift;
+>         k &= (1 << nkm->k.width) - 1;
+> +       k += nkm->k.offset;
+> +       if (!k)
+> +               k++;
+>
+>         m = reg >> nkm->m.shift;
+>         m &= (1 << nkm->m.width) - 1;
+> +       m += nkm->m.offset;
+> +       if (!m)
+> +               m++;
+>
+> -       return parent_rate * (n + 1) * (k + 1) / (m + 1);
+> +       return parent_rate * n  * k / m;
+>  }
+>
+>  static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+> @@ -145,10 +154,9 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
+>         reg &= ~GENMASK(nkm->k.width + nkm->k.shift - 1, nkm->k.shift);
+>         reg &= ~GENMASK(nkm->m.width + nkm->m.shift - 1, nkm->m.shift);
+>
+> -       reg |= (_nkm.n - 1) << nkm->n.shift;
+> -       reg |= (_nkm.k - 1) << nkm->k.shift;
+> -       reg |= (_nkm.m - 1) << nkm->m.shift;
+> -
+> +       reg |= (_nkm.n - nkm->n.offset) << nkm->n.shift;
+> +       reg |= (_nkm.k - nkm->k.offset) << nkm->k.shift;
+> +       reg |= (_nkm.m - nkm->m.offset) << nkm->m.shift;
+>         writel(reg, nkm->common.base + nkm->common.reg);
+>
+>         spin_unlock_irqrestore(nkm->common.lock, flags);
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+> index 684c42da3ebb..da2bba02b845 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkmp.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+> @@ -88,17 +88,26 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
+>
+>         n = reg >> nkmp->n.shift;
+>         n &= (1 << nkmp->n.width) - 1;
+> +       n += nkmp->n.offset;
+> +       if (!n)
+> +               n++;
+>
+>         k = reg >> nkmp->k.shift;
+>         k &= (1 << nkmp->k.width) - 1;
+> +       k += nkmp->k.offset;
+> +       if (!k)
+> +               k++;
+>
+>         m = reg >> nkmp->m.shift;
+>         m &= (1 << nkmp->m.width) - 1;
+> +       m += nkmp->m.offset;
+> +       if (!m)
+> +               m++;
+>
+>         p = reg >> nkmp->p.shift;
+>         p &= (1 << nkmp->p.width) - 1;
+>
+> -       return (parent_rate * (n + 1) * (k + 1) >> p) / (m + 1);
+> +       return parent_rate * n * k >> p / m;
+>  }
+>
+>  static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+> @@ -148,9 +157,9 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+>         reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
+>         reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
+>
+> -       reg |= (_nkmp.n - 1) << nkmp->n.shift;
+> -       reg |= (_nkmp.k - 1) << nkmp->k.shift;
+> -       reg |= (_nkmp.m - 1) << nkmp->m.shift;
+> +       reg |= (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
+> +       reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
+> +       reg |= (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
+>         reg |= ilog2(_nkmp.p) << nkmp->p.shift;
+>
+>         writel(reg, nkmp->common.base + nkmp->common.reg);
+> diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+> index c9f3b6c982f0..158d74e0215f 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nm.c
+> @@ -80,11 +80,17 @@ static unsigned long ccu_nm_recalc_rate(struct clk_hw *hw,
+>
+>         n = reg >> nm->n.shift;
+>         n &= (1 << nm->n.width) - 1;
+> +       n += nm->n.offset;
+> +       if (!n)
+> +               n++;
+>
+>         m = reg >> nm->m.shift;
+>         m &= (1 << nm->m.width) - 1;
+> +       m += nm->m.offset;
+> +       if (!m)
+> +               m++;
+>
+> -       return parent_rate * (n + 1) / (m + 1);
+> +       return parent_rate * n / m;
+>  }
+>
+>  static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+> @@ -129,8 +135,9 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+>         reg &= ~GENMASK(nm->n.width + nm->n.shift - 1, nm->n.shift);
+>         reg &= ~GENMASK(nm->m.width + nm->m.shift - 1, nm->m.shift);
+>
+> -       writel(reg | ((_nm.m - 1) << nm->m.shift) | ((_nm.n - 1) << nm->n.shift),
+> -              nm->common.base + nm->common.reg);
+> +       reg |= (_nm.n - nm->n.offset) << nm->n.shift;
+> +       reg |= (_nm.m - nm->m.offset) << nm->m.shift;
+> +       writel(reg, nm->common.base + nm->common.reg);
+>
+>         spin_unlock_irqrestore(nm->common.lock, flags);
+>
+> --
+> git-series 0.8.11
+
+Otherwise,
+
+Acked-by: Chen-Yu Tsai <wens@csie.org>
