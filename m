@@ -1,84 +1,75 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:17412 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934396AbdA0LnK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Jan 2017 06:43:10 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OKF00HNQQZB8V80@mailout1.w1.samsung.com> for
- linux-clk@vger.kernel.org; Fri, 27 Jan 2017 11:09:11 +0000 (GMT)
-Received: from eusmges2.samsung.com (unknown [203.254.199.241])
- by     eucas1p2.samsung.com (KnoxPortal)
- with ESMTP id  20170127110911eucas1p26f4ef7b93d7957bc9d1f3d7f1f3ca145~dnFdkw7450986409864eucas1p2f
-        for <linux-clk@vger.kernel.org>; Fri, 27 Jan 2017 11:09:11 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180])
- by     eucas1p2.samsung.com (KnoxPortal)
- with ESMTP id  20170127110910eucas1p257e5cb0582f58f98ff1f2c1b502f8037~dnFcpoQX40375603756eucas1p2A
-        for <linux-clk@vger.kernel.org>; Fri, 27 Jan 2017 11:09:10 +0000 (GMT)
-Received: from AMDC2765.digital.local ([106.116.147.25])
- by     eusync1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit  (built May  5 2014))
- with ESMTPA id <0OKF001FRQZ1L520@eusync1.samsung.com>  for
- linux-clk@vger.kernel.org; Fri, 27 Jan 2017 11:09:09 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org
-Subject: [PATCH v2 RESEND 1/3] clk: samsung: exynos5433: Add IDs for
- PHYCLK_MIPIDPHY0_* clocks
-Date: Fri, 27 Jan 2017 12:09:00 +0100
-Message-id: <1485515341-29911-2-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: <1485515341-29911-1-git-send-email-m.szyprowski@samsung.com>
-References: <1485515341-29911-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170127110910eucas1p257e5cb0582f58f98ff1f2c1b502f8037@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Jonathan Corbet <corbet@lwn.net>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ Zepan <715805855@qq.com>
+Subject: [PATCH v2 1/4] arm: sunxi: add support for V3s SoC
+Date: Tue, 17 Jan 2017 02:01:13 +0800
+Message-Id: <20170116180116.36729-2-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add missing identifiers for phyclk_mipidphy0_bitclkdiv8_phy and
-phyclk_mipidphy0_rxclkesc0_phy clocks. Access to those clocks is needed
-to setup initial clock configuration for display subsystem in device tree
-in order to avoid dependency on the configuration left by the bootloader.
+Allwinner V3s is a low-end single-core Cortex-A7 SoC, with 64MB
+integrated DRAM, and several peripherals.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Chanwoo Choi <cw00.choi@samsugn.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- drivers/clk/samsung/clk-exynos5433.c   | 6 ++++--
- include/dt-bindings/clock/exynos5433.h | 5 ++++-
- 2 files changed, 8 insertions(+), 3 deletions(-)
+Changes in v2:
+- Used linux-sunxi.org wiki hosted address of V3s datasheet.
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 8fd7f6e88e3c..6ee91ae875c3 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -2559,8 +2559,10 @@ static void __init exynos5433_cmu_g2d_init(struct device_node *np)
- 	FRATE(0, "phyclk_mipidphy1_bitclkdiv8_phy", NULL, 0, 188000000),
- 	FRATE(0, "phyclk_mipidphy1_rxclkesc0_phy", NULL, 0, 100000000),
- 	/* PHY clocks from MIPI_DPHY0 */
--	FRATE(0, "phyclk_mipidphy0_bitclkdiv8_phy", NULL, 0, 188000000),
--	FRATE(0, "phyclk_mipidphy0_rxclkesc0_phy", NULL, 0, 100000000),
-+	FRATE(CLK_PHYCLK_MIPIDPHY0_BITCLKDIV8_PHY, "phyclk_mipidphy0_bitclkdiv8_phy",
-+			NULL, 0, 188000000),
-+	FRATE(CLK_PHYCLK_MIPIDPHY0_RXCLKESC0_PHY, "phyclk_mipidphy0_rxclkesc0_phy",
-+			NULL, 0, 100000000),
- 	/* PHY clocks from HDMI_PHY */
- 	FRATE(CLK_PHYCLK_HDMIPHY_TMDS_CLKO_PHY, "phyclk_hdmiphy_tmds_clko_phy",
- 			NULL, 0, 300000000),
-diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index 4fa6bb2136e3..be39d23e6a32 100644
---- a/include/dt-bindings/clock/exynos5433.h
-+++ b/include/dt-bindings/clock/exynos5433.h
-@@ -771,7 +771,10 @@
+Note: the V3s datasheet contains its user manual.
+
+ Documentation/arm/sunxi/README | 4 ++++
+ arch/arm/mach-sunxi/sunxi.c    | 1 +
+ 2 files changed, 5 insertions(+)
+
+diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
+index cd0243302bc1..a455b305c62c 100644
+--- a/Documentation/arm/sunxi/README
++++ b/Documentation/arm/sunxi/README
+@@ -67,6 +67,10 @@ SunXi family
+         + Datasheet
+           http://dl.linux-sunxi.org/H3/Allwinner_H3_Datasheet_V1.0.pdf
  
- #define CLK_PCLK_DECON					113
- 
--#define DISP_NR_CLK					114
-+#define CLK_PHYCLK_MIPIDPHY0_BITCLKDIV8_PHY		114
-+#define CLK_PHYCLK_MIPIDPHY0_RXCLKESC0_PHY		115
++      - Allwinner V3s (sun8i)
++        + Datasheet
++          http://linux-sunxi.org/File:Allwinner_V3s_Datasheet_V1.0.pdf
 +
-+#define DISP_NR_CLK					116
+     * Quad ARM Cortex-A15, Quad ARM Cortex-A7 based SoCs
+       - Allwinner A80
+         + Datasheet
+diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+index 2e2bde271205..f246bfc6cfe4 100644
+--- a/arch/arm/mach-sunxi/sunxi.c
++++ b/arch/arm/mach-sunxi/sunxi.c
+@@ -64,6 +64,7 @@ static const char * const sun8i_board_dt_compat[] = {
+ 	"allwinner,sun8i-a33",
+ 	"allwinner,sun8i-a83t",
+ 	"allwinner,sun8i-h3",
++	"allwinner,sun8i-v3s",
+ 	NULL,
+ };
  
- /* CMU_AUD */
- #define CLK_MOUT_AUD_PLL_USER				1
 -- 
-1.9.1
+2.11.0
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
