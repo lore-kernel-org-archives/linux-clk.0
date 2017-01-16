@@ -1,127 +1,134 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Mon, 30 Jan 2017 08:42:10 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 00/10] clk: sunxi-ng: Add support for A80 CCUs
-Message-ID: <20170130074210.6pxvenwdtynyyzyt@lukather>
-References: <20170128122239.4480-1-wens@csie.org>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH] Documentation: dt-bindings: Add binding documentation for
+ TI clkctrl clocks
+To: Tony Lindgren <tony@atomide.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <20170109234226.9449-1-tony@atomide.com>
+CC: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, Paul Walmsley <paul@pwsan.com>,
+        Rob Herring
+	<robh@kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <7acb6824-0e64-960b-1490-9b7a8b867b3b@ti.com>
+Date: Mon, 16 Jan 2017 17:19:33 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zf4y3f3u3v63kcnj"
-In-Reply-To: <20170128122239.4480-1-wens@csie.org>
+In-Reply-To: <20170109234226.9449-1-tony@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-
---zf4y3f3u3v63kcnj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Sat, Jan 28, 2017 at 08:22:29PM +0800, Chen-Yu Tsai wrote:
-> Hi everyone,
->=20
-> This is v2 of my A80 CCU clk patches. Changes since v1:
->=20
->   - Use pre-divider adjusted parent rate for rounding.
->=20
->   - Use else statement for the case where the PLL lock status bit is
->     in same register.
->=20
->   - Add a more detailed description of the main CCU and DE CCU to the
->     commit messages.
->=20
->   - Fix DE CCU compatible string in DT binding example.
->=20
->   - Fix incorrectly squashed patch hunk.
->=20
->   - Drop leading zeros from device tree node name in DT examples.
->=20
->   - Expanded commit message for "ARM: dts: sun8i-a23-q8-tablet: Drop
->     pinmux setting for codec PA gpio".
->=20
-> This series adds new "sunxi-ng" style drivers for the CCUs found in the
-> Allwinner A80 SoC. The A80 contains 1 main clock control unit, and some
-> subsystem specific clock control units at separate addresses. These
-> include the USB, display engine, and MMC.
->=20
->   - The MMC clocks can be supported by the old clock drivers,
->     hence here we do not add a new driver for it.
->=20
->   - The old USB clock driver is intertwined with other SoCs,
->     requires old style bindings with clock-output-names and
->     CLK_OF_DECLARE for its parents. It is easier to switch
->     to a new binding and driver.
->=20
->   - The display engine (DE) CCU was not supported in the past.
->=20
-> The A80 CCU also has some quirks about its design. It has
->=20
->   - Separate registers for PLL lock status
->=20
->   - P1, P2 dividers, which are power-of-2 and only 1 bit wide
->=20
-> The first 3 patches fix and extend the behavior of sunxi-ng's
-> mux clock type, based on the behavior of the clk subsystem's
-> basic mux clock.
->=20
-> The fourth patch adds support for checking PLL lock status
-> bits in separate registers, as opposed to within the PLL's
-> config register.
->=20
-> Patches 5 through 7 add drivers for the CCU blocks.
+On 10/01/17 01:42, Tony Lindgren wrote:
+> Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
+> clock controller instance for each interconnect target module. The clkctrl
+> controls functional and interface clocks for the module.
 >
-> Patch 8 and 9 do some cleanup of the sunxi/allwinner dts files
-> prior to switching sun9i dts to the new sunxi-ng clock bindings.
-> These are independent of the clk stuff, but touch the same lines
-> for sun9i. Including them should make it easier to apply and test
-> patches.
->=20
-> Patch 10 has sun9i switch over to the new clock bindings.
->=20
-> Please take a look and let me know what you think.
+> The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
+> With this binding and a related clock device driver we can start moving the
+> clkctrl clock handling to live in drivers/clk/ti.
+>
+> For hardware reference, see omap4430 TRM "Table 3-1312. L4PER_CM2 Registers
+> Mapping Summary" for example. It show one instance of a clkctrl clock
+> controller with multiple clkctrl registers.
+>
+> Note that this binding allows keeping the clockdomain related parts out of
+> drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
+> using a separate driver in drivers/soc/ti and genpd. If the clockdomain
+> driver needs to know it's clocks, we can just set the the clkctrl device
+> instances to be children of the related clockdomain device.
+>
+> On omap4 CM_L3INIT_USB_HOST_HS_CLKCTRL on omap5 has eight OPTFCLKEN bits.
+> So we need to shift the clock index to avoid index conflict for the clock
+> consumer binding with the next clkctrl offset on omap4.
+>
+> Cc: Paul Walmsley <paul@pwsan.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>
+> So here's what I was able to come up for the clkctr binding based on
+> all we've discussed so far. Can you guys please take a look and see
+> if it looks OK to you before we do the device driver?
+>
+> Also, does anybody have better suggestions for addressing the optional
+> clocks in each clkctrl register?
+>
+> ---
+>  .../devicetree/bindings/clock/ti-clkctrl.txt       | 56 ++++++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+>
+> diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+> new file mode 100644
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+> @@ -0,0 +1,56 @@
+> +Texas Instruments clkctrl clock binding
+> +
+> +Texas Instruments SoCs can have a clkctrl clock controller for each
+> +interconnect target module. The clkctrl clock controller manages functional
+> +and interface clocks for each module. Each clkctrl controller can also
+> +gate one or more optional functional clocks for a module. The clkctrl
+> +clock controller is typical for omap3 and later variants.
+> +
+> +The clock consumers can specify the index of the clkctrl clock using
+> +the hardware offset from the clkctrl instance register space. The optional
+> +functional clocks can be specified by clkctrl hardware offset plus the
+> +index of the optional clock. Please see the Linux clock framework binding
+> +at Documentation/devicetree/bindings/clock/clock-bindings.txt.
+> +
+> +Required properties :
+> +- compatible : shall be "ti,clkctrl"
+> +- #clock-cells : shall contain 1
+> +
+> +Optional properties :
+> +- "ti,modulemode-auto" : list of clkctrl offsets using automatic gating
+> +
+> +Example: Clock controller node:
+> +
+> +&cm_l4per {
+> +	cm_l4per_clkctrl: clk@20 {
+> +		compatible = "ti,clkctrl";
+> +		reg = <0x20 0x1b0>;
+> +		#clock-cells = 1;
+> +		ti,modulemode-auto = <OMAP4_GPIO2_CLKCTRL>;
+> +	};
+> +};
 
+So, in this example, what would cm_l4per be? Is it a clockdomain? Or is 
+it just an arbitrary interconnect instance, and the clockdomain would 
+also be a separate node under cm_l4per?
 
-This is a bit late, but I took it in anyway.
+Shall we add power-domains = <&cm_l4per_clkdm>; entry under the 
+cm_l4per_clkctrl in this example? (My thinking is that we will represent 
+both OMAP clock and power domains as generic power domains within kernel 
+/ DT.)
 
-Note that I only applied the patches about the CCU. The pinctrl header
-stuff is quite conflict heavy, and not really a big deal anyway.
+-Tero
 
-(and I really would have liked to have it as a separate series. This
-has nothing to do with the A80 CCU).
-
-Thanks,
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---zf4y3f3u3v63kcnj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYju5OAAoJEBx+YmzsjxAgQdQP/A1k0lcD0egBocxczkVmlsVG
-qW8UPwqAJgKkFToB//HmJeWBNH30IzGfqsiarxg8yJ4Vq3n8PsAHT+e99Lt0EHBD
-pkBelxncGbvvWawPoWaijjzs85mHGtG3TotMM+lSeBH9dFmg35XxxdTV3O3aQxxN
-opRb/JNa+5veWD5qtkJJU5Qo3tTlYkTMr1Aao0HJCiYTqH1XTFs/gBx6fEng2i9t
-D4/FUSeZDnPd5vyO+fcywY19ff2oGJQFMb9GcOkguVZ92zUndDsMFVpoQYono6qO
-kzvr1/T70F7Z9k7IkLeayxCXfFztSlN33jj77fhD4gO0AnMpDPBxSa4/WBLa9naM
-faQDEpbdHNpd/artgsGmh+HC0bB276/WfRCNfnMDfpYcMGgcI6SL6I1Nw9LCnL0+
-d+SMvf9heExb/FjUv24njiKDhZxbWXRquOAAeB42f+jDWN489G8WBEvrQnqHX9iu
-IASKPQ2em0n3jwHzjPvokEr7J5Ilel8zdn4x927x3HOm0nuDKib6lzyMp/qrBk4T
-GDAbgTvGsXCtIHkZcKXHT8yfWpv5PHqNd6XIKTibk4tP4LK+35iFSoOn5g2/x5bD
-KAhSiqzy3D5UZSlROfSoI5GBVdM5ut2F5auM1+ijkTIdba1oVBipar+i4PzxizuZ
-xNvFscw6Av8MzsBc/nCC
-=ogSG
------END PGP SIGNATURE-----
-
---zf4y3f3u3v63kcnj--
+> +
+> +Example: Preprocessor helper macros in dt-bindings/ti-clkctrl.h
+> +
+> +#define OMAP4_CLKCTRL_OFFSET		0x20
+> +
+> +#define OMAP_CLKCTRL_INDEX(offset)		\
+> +	(((offset) - OMAP4_CLKCTRL_OFFSET) << 8)
+> +
+> +#define OMAP_CLKCTRL_OPT_INDEX(offset, optclk)	\
+> +	(OMAP_CLKCTRL_INDEX(offset) + (optclk))
+> +
+> +#define OMAP4_GPTIMER10_CLKTRL		OMAP_CLKCTRL_INDEX(0x28)
+> +#define OMAP4_GPTIMER11_CLKTRL		OMAP_CLKCTRL_INDEX(0x30)
+> +#define OMAP4_GPTIMER2_CLKTRL		OMAP_CLKCTRL_INDEX(0x38)
+> +...
+> +#define OMAP4_GPIO2_CLKCTRL		OMAP_CLKCTRL_INDEX(0x60)
+> +#define OMAP4_GPIO2_CLKCTRL_DBCLK	OMAP_CLKCTRL_OPT_INDEX(0x60, 1)
+> +...
+> +
+> +Example: Clock consumer node for GPIO2:
+> +
+> +&gpio2 {
+> +       clocks = <&cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL
+> +		 &cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL_DBCLK>;
+> +};
+>
