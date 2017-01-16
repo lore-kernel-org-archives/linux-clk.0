@@ -1,136 +1,341 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v5 0/4] Add runtime PM support for clocks (on Exynos SoC
- example)
-Date: Wed, 25 Jan 2017 12:53:10 +0100
-Message-id: <1485345194-3196-1-git-send-email-m.szyprowski@samsung.com>
-References: 
- <CGME20170125115327eucas1p172866fa87417f59f1dea60185d6d8b60@eucas1p1.samsung.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Jonathan Corbet <corbet@lwn.net>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ Zepan <715805855@qq.com>
+Subject: [PATCH v2 3/4] ARM: dts: sunxi: add dtsi file for V3s SoC
+Date: Tue, 17 Jan 2017 02:01:15 +0800
+Message-Id: <20170116180116.36729-4-icenowy@aosc.xyz>
+In-Reply-To: <20170116180116.36729-2-icenowy@aosc.xyz>
+References: <20170116180116.36729-2-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear All,
+As we have the pinctrl and clock support for the V3s SoC, it's now to
+run a mainline Linux on it.
 
-This patchset adds runtime PM support to common clock framework. This is an
-attempt to implement support for clock controllers, which belongs to a power
-domain. This approach works surprisingly well on Exynos 5433 SoC, what allowed
-us to solve various freeze/crash issues related to power management.
+So add a .dtsi file for it.
 
-The main idea behind this patchset is to keep clock's controller power domain
-enabled every time when at least one of its clock is enabled or access to its
-registers is being made. Clock controller driver (clock provider) can
-supply a struct device pointer, which is the used by clock core for tracking and
-managing clock's controller runtime pm state. Each clk_prepare() operation will
-first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
-will do pm_runtime_put() at the end.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+Changes in v2:
+- Added I2C here.
 
-This runtime PM feature has been tested with Exynos4412 (not included in this
-patchset) and Exynos5433 clocks drivers. Both have some clocks, which belongs to
-respective power domains and need special handling during power on/off
-procedures. Till now it wasn't handled at all, what caused various problems.
+ arch/arm/boot/dts/sun8i-v3s.dtsi | 285 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 285 insertions(+)
+ create mode 100644 arch/arm/boot/dts/sun8i-v3s.dtsi
 
-Patches for clocks drivers change the way the clock provider is initialized.
-Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
-infrastructure is being used. This is needed to let driver to use runtime PM
-feature and integrate with generic power domains. The side-effect of this change
-is a delay in clock provider registeration during system boot, so early
-initialized drivers might get EPROBEDEFER error when requesting their clocks.
-This is an issue for IOMMU drivers, so this patchset will be fully functional
-once the deferred probe for IOMMU will be merged. v7 of the IOMMU deferred probe
-support has been posted two days ago:
-https://www.spinics.net/lists/arm-kernel/msg557110.html
-
-Patches are based on linux-next from 25th January 2017.
-
-This is a part of a larger task, which goal is to add support for power
-domains on Exynos5433 SoCs / TM2 boards. All patches needed to get it
-working have been pushed to the following git repo:
-https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.10-next-tm2-pd
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Changelog:
-
-v5:
-- rebased onto next-20170125 kernel release
-- added two more calls to runtime PM in clock's core:
-	1. clk_recalc() should ensure active runtime pm state, because it might
-	   read registers (in case of dividers) to calculate the rate
-	2. clk_register() also needs to ensure active runtime pm state to read
-	   initial rate and status of the clocks
-- more fixes in Exynos5433 clocks drivers:
-	1. PLL in DISP CMU must be enabled for suspend
-	2. guard clocks registration with pm_runtime_get_sync/pm_runtime_put to
-	   avoid turning the power domain on and off many times for no good
-	   reason (registering each clock will call pm_runtime_get_sync(), then
-	   pm_runtime_put, what in turn might disable power domain)
-- still waiting for a review...
-
-v4: http://www.spinics.net/lists/arm-kernel/msg550747.html
-- Removed patch for Exynos4412 clocks from the patchset. DT bindings for power
-  domain for ISP sub-controller needs more discussion. It will be handled
-  separately when the runtime PM for clocks feature gets merged.
-- Added patch with runtime PM support for Exynos AudioSS clock controller driver
-  (needed to enable audio power domain on Exynos5 series).
-- Fixes in Exynos5433 driver:
-	1. added missing clock for Audio CMU
-	2. added support for FSYS CMU
-	3. improved support for DISP CMU (thanks to Andrzej Hajda for
-	   investigating that).
-- Rebased onto v4.10-rc1
-- Waiting for a review...
-
-v3: http://www.spinics.net/lists/arm-kernel/msg538122.html
-- Removed CLK_RUNTIME_PM flag, core now simply checks if runtime pm is enabled
-  for the provided device during clock registration as suggested by Ulf
-- Simplified code for exynos4412 isp clock driver registration
-- Resolved some other minor issues pointed by Ulf clk core code
-- Rebased onto v4.9-rc1 and new version of IOMMU deferred probe patchset
-
-v2: https://www.spinics.net/lists/arm-kernel/msg532798.html
-- Simplified clk_pm_runtime_get/put functions, removed workaround for devices
-  with disabled runtime pm. Such workaround is no longer needed since commit
-  4d23a5e84806b202d9231929c9507ef7cf7a0185 ("PM / Domains: Allow runtime PM
-  during system PM phases").
-- Added CLK_RUNTIME_PM flag to indicate clocks, for which clock core should
-  call runtime pm functions. This solves problem with clocks, for which struct
-  device is already registered, but no runtime pm is enabled.
-- Extended commit messages according to Ulf suggestions.
-- Fixed some style issues pointed by Barlomiej.
-
-v1: http://www.spinics.net/lists/arm-kernel/msg528128.html
-- initial version
-
-
-Patch summary:
-
-Marek Szyprowski (4):
-  clk: Add support for runtime PM
-  clk: samsung: Add support for runtime PM
-  clk: samsung: exynos5433: Add runtime PM support
-  clk: samsung: exynos-audss: Use runtime PM
-
- .../devicetree/bindings/clock/clk-exynos-audss.txt |   6 +
- .../devicetree/bindings/clock/exynos5433-clock.txt |  16 +
- drivers/clk/clk.c                                  | 132 ++++++-
- drivers/clk/samsung/clk-exynos-audss.c             |  62 +--
- drivers/clk/samsung/clk-exynos5433.c               | 422 ++++++++++++++++-----
- drivers/clk/samsung/clk-pll.c                      |   2 +-
- drivers/clk/samsung/clk.c                          |  12 +-
- drivers/clk/samsung/clk.h                          |   7 +
- 8 files changed, 527 insertions(+), 132 deletions(-)
-
+diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
+new file mode 100644
+index 000000000000..a9711fa8a82e
+--- /dev/null
++++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
+@@ -0,0 +1,285 @@
++/*
++ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#include <dt-bindings/clock/sun8i-v3s-ccu.h>
++#include <dt-bindings/reset/sun8i-v3s-ccu.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/pinctrl/sun4i-a10.h>
++
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	interrupt-parent = <&gic>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			compatible = "arm,cortex-a7";
++			device_type = "cpu";
++			reg = <0>;
++			clocks = <&ccu CLK_CPU>;
++		};
++	};
++
++	timer {
++		compatible = "arm,armv7-timer";
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
++	clocks {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		osc24M: osc24M_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <24000000>;
++			clock-output-names = "osc24M";
++		};
++
++		osc32k: osc32k_clk {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <32768>;
++			clock-output-names = "osc32k";
++		};
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		mmc0: mmc@01c0f000 {
++			compatible = "allwinner,sun7i-a20-mmc";
++			reg = <0x01c0f000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC0>,
++				 <&ccu CLK_MMC0>,
++				 <&ccu CLK_MMC0_OUTPUT>,
++				 <&ccu CLK_MMC0_SAMPLE>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ccu RST_BUS_MMC0>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		mmc1: mmc@01c10000 {
++			compatible = "allwinner,sun7i-a20-mmc";
++			reg = <0x01c10000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC1>,
++				 <&ccu CLK_MMC1>,
++				 <&ccu CLK_MMC1_OUTPUT>,
++				 <&ccu CLK_MMC1_SAMPLE>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ccu RST_BUS_MMC1>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		mmc2: mmc@01c11000 {
++			compatible = "allwinner,sun7i-a20-mmc";
++			reg = <0x01c11000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC2>,
++				 <&ccu CLK_MMC2>,
++				 <&ccu CLK_MMC2_OUTPUT>,
++				 <&ccu CLK_MMC2_SAMPLE>;
++			clock-names = "ahb",
++				      "mmc",
++				      "output",
++				      "sample";
++			resets = <&ccu RST_BUS_MMC2>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		ccu: clock@01c20000 {
++			compatible = "allwinner,sun8i-v3s-ccu";
++			reg = <0x01c20000 0x400>;
++			clocks = <&osc24M>, <&osc32k>;
++			clock-names = "hosc", "losc";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
++		rtc: rtc@01c20400 {
++			compatible = "allwinner,sun6i-a31-rtc";
++			reg = <0x01c20400 0x54>;
++			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		pio: pinctrl@01c20800 {
++			compatible = "allwinner,sun8i-v3s-pinctrl";
++			reg = <0x01c20800 0x400>;
++			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc32k>;
++			clock-names = "apb", "hosc", "losc";
++			gpio-controller;
++			#gpio-cells = <3>;
++			interrupt-controller;
++			#interrupt-cells = <3>;
++
++			i2c0_pins: i2c0 {
++				pins = "PB6", "PB7";
++				function = "i2c0";
++			};
++
++			uart0_pins_a: uart0@0 {
++				pins = "PB8", "PB9";
++				function = "uart0";
++			};
++
++			mmc0_pins_a: mmc0@0 {
++				pins = "PF0", "PF1", "PF2", "PF3",
++				       "PF4", "PF5";
++				function = "mmc0";
++				drive-strength = <30>;
++				bias-pull-up;
++			};
++		};
++
++		timer@01c20c00 {
++			compatible = "allwinner,sun4i-a10-timer";
++			reg = <0x01c20c00 0xa0>;
++			interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&osc24M>;
++		};
++
++		wdt0: watchdog@01c20ca0 {
++			compatible = "allwinner,sun6i-a31-wdt";
++			reg = <0x01c20ca0 0x20>;
++			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		uart0: serial@01c28000 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x01c28000 0x400>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&ccu CLK_BUS_UART0>;
++			resets = <&ccu RST_BUS_UART0>;
++			status = "disabled";
++		};
++
++		uart1: serial@01c28400 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x01c28400 0x400>;
++			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&ccu CLK_BUS_UART1>;
++			resets = <&ccu RST_BUS_UART1>;
++			status = "disabled";
++		};
++
++		uart2: serial@01c28800 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x01c28800 0x400>;
++			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&ccu CLK_BUS_UART2>;
++			resets = <&ccu RST_BUS_UART2>;
++			status = "disabled";
++		};
++
++		i2c0: i2c@01c2ac00 {
++			compatible = "allwinner,sun6i-a31-i2c";
++			reg = <0x01c2ac00 0x400>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_I2C0>;
++			resets = <&ccu RST_BUS_I2C0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&i2c0_pins>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		i2c1: i2c@01c2b000 {
++			compatible = "allwinner,sun6i-a31-i2c";
++			reg = <0x01c2b000 0x400>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_I2C1>;
++			resets = <&ccu RST_BUS_I2C1>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		gic: interrupt-controller@01c81000 {
++			compatible = "arm,cortex-a7-gic", "arm,cortex-a15-gic";
++			reg = <0x01c81000 0x1000>,
++			      <0x01c82000 0x1000>,
++			      <0x01c84000 0x2000>,
++			      <0x01c86000 0x2000>;
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++		};
++	};
++};
 -- 
-1.9.1
+2.11.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
