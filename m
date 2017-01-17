@@ -1,43 +1,56 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Tue, 31 Jan 2017 11:44:18 +0100
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Jason Cooper
- <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Gregory Clement
- <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob
- Herring <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
- Gala <galak@codeaurora.org>
-Cc: Nadav Haklai <nadavh@marvell.com>, Hanna Hawa <hannah@marvell.com>,
- Yehuda Yitschak <yehuday@marvell.com>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 3/3] arm64: dts: marvell: adjust name of sd-mmc-gop
- clock in syscon
-Message-ID: <20170131114418.46e23bd4@free-electrons.com>
-In-Reply-To: <1482316017-22154-4-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1482316017-22154-4-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <broonie@sirena.org.uk>
+Date: Tue, 17 Jan 2017 16:50:29 +0000
+From: Mark Brown <broonie@kernel.org>
+To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+	maxime.ripard@free-electrons.com, wens@csie.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
+	robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+	linux-sunxi@googlegroups.com, thomas.petazzoni@free-electrons.com,
+	alexandre.belloni@free-electrons.com
+Message-ID: <20170117165029.wu4m6flhdwxk5e3q@sirena.org.uk>
+References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
+ <20170117140230.23142-8-mylene.josserand@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="26moeumsfrj3zbto"
+In-Reply-To: <20170117140230.23142-8-mylene.josserand@free-electrons.com>
+Subject: Re: [PATCH v2 07/10] dt-bindings: sound: Add sun8i audio
+ documentation
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
 
-On Wed, 21 Dec 2016 11:26:57 +0100, Thomas Petazzoni wrote:
-> This commit adjusts the names of gatable clock #18 of the Marvell Armada
-> CP110 system controller. This clock not only controls SD/MMC, but also
-> the GOP (Group Of Ports) used for networking. So the clock is renamed to
-> {cpm,cps}-sd-mmc-gop instead of {cpm,cps}-sd-mmc.
->=20
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+--26moeumsfrj3zbto
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Gr=C3=A9gory, since patches 1/3 and 2/3 of this series have been applied,
-could you take this PATCH 3/3 ?
+On Tue, Jan 17, 2017 at 03:02:27PM +0100, Myl=E8ne Josserand wrote:
+> Add the documentation for dt-binding of the digital audio codec driver
+> and the audio card driver for Sun8i SoCs.
 
-Thanks!
 
-Thomas
---=20
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Please submit patches using subject lines reflecting the style for the
+subsystem.  This makes it easier for people to identify relevant
+patches.  Look at what existing commits in the area you're changing are
+doing and make sure your subject lines visually resemble what they're
+doing.
+
+--26moeumsfrj3zbto
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlh+S1QACgkQJNaLcl1U
+h9AjGgf/ZLfWgYKxtb5X5Rw1ZlK/GxRpISV8ZJKP06OD1nzQIpZYPifqPp61zkiL
+xMEK7ljJEmEM43CzYgf7rlmEBi50VZTYzgQ+IRPhn30VSjxTAM5EYTYVib49LfqY
+Dm5aDgLLSv8JHumrP0I4xcJ33IbjKgLtGc9y7bpH5rY4VAaJk6bN0LkuBWJcodO7
++vnBGFPtga5LUgAbq89l2eWadhdQBZRbYwJ1bpoS6tJDdzOYQyUtJ8qFFe+VEGpb
+6sjeOR56CtqRgL6QUUZ4hlxqQaMxorO0VPgWViOFjxGyoyZgwyq1Xgwf9ZGN/Z7N
+ZxFYm/QHSvCa3vNHG7KG/VRSh3IiMw==
+=N85U
+-----END PGP SIGNATURE-----
+
+--26moeumsfrj3zbto--
