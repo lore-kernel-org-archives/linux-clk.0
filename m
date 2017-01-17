@@ -1,105 +1,51 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+In-Reply-To: <20170117090549.uqwsiwmclzhx7456@lukather>
+References: <20170116180116.36729-2-icenowy@aosc.xyz>
+ <20170117090549.uqwsiwmclzhx7456@lukather>
+Subject: Re: [PATCH v2 1/4] arm: sunxi: add support for V3s SoC
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20170110174740.16223-1-marek.vasut@gmail.com>
-References: <20170110174740.16223-1-marek.vasut@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Jan 2017 19:19:29 +0100
-Message-ID: <CAMuHMdW4itFCtVsRk6t1xj7KLmTbRwR8gMGhALa4kd09XF4F6A@mail.gmail.com>
-Subject: Re: [PATCH V3] clk: vc5: Add support for IDT VersaClock 5P49V5923B
- and 5P49V5933
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8
+Message-Id: <3856551484671977@web20j.yandex.ru>
+Date: Wed, 18 Jan 2017 00:52:57 +0800
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Zepan <715805855@qq.com>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marek,
-
-On Tue, Jan 10, 2017 at 6:47 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> Add driver for IDT VersaClock 5 5P49V5923B and 5P49V5933 chips. These
-> chips have two clock inputs, XTAL or CLK, which are muxed into single
-> PLL/VCO input. In case of 5P49V5923B, the XTAL in built into the chip
-> while the 5P49V5923B requires external XTAL.
->
-> The PLL feeds two fractional dividers. Each fractional divider feeds
-> output mux, which allows selecting between clock from the fractional
-> divider itself or from output mux on output N-1. In case of output
-> mux 0, the output N-1 is instead connected to the output from the mux
-> feeding the PLL.
->
-> The driver thus far supports only the 5P49V5923B and 5P49V5933, while
-> it should be easily extensible to the whole 5P49V59xx family of chips
-> as they are all pretty similar.
-
-According to the datasheet, r8a7795/salvator-x has '5923A, while
-r8a7796-salvator-x has '5923B. I guess the driver is supposed to work with
-both, as the first version was tested on r8a7795/salvator-x?
-Shouldn't that be reflected in the bindings and compatible value?
-
-Do you know what's the difference between the '5923A and '5923B
-variants?
-
-> --- /dev/null
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -0,0 +1,823 @@
-
-> +static int vc5_probe(struct i2c_client *client,
-> +                    const struct i2c_device_id *id)
-> +{
-> +       const struct of_device_id *of_id =
-> +               of_match_device(clk_vc5_of_match, &client->dev);
-> +       struct vc5_driver_data *vc5;
-> +       struct clk_init_data init;
-> +       const char *parent_names[2];
-> +       unsigned int n, idx;
-> +       int ret;
-> +
-> +       vc5 = devm_kzalloc(&client->dev, sizeof(*vc5), GFP_KERNEL);
-> +       if (vc5 == NULL)
-> +               return -ENOMEM;
-> +
-> +       i2c_set_clientdata(client, vc5);
-> +       vc5->client = client;
-> +       vc5->model = (enum vc5_model)of_id->data;
-> +
-> +       vc5->pin_xin = devm_clk_get(&client->dev, "xin");
-> +       if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
-> +               return -EPROBE_DEFER;
-> +
-> +       vc5->pin_clkin = devm_clk_get(&client->dev, "clkin");
-> +       if (PTR_ERR(vc5->pin_clkin) == -EPROBE_DEFER)
-> +               return -EPROBE_DEFER;
-> +
-> +       vc5->regmap = devm_regmap_init_i2c(client, &vc5_regmap_config);
-> +       if (IS_ERR(vc5->regmap)) {
-> +               dev_err(&client->dev, "failed to allocate register map\n");
-> +               return PTR_ERR(vc5->regmap);
-> +       }
-> +
-> +       /* Register clock input mux */
-> +       memset(&init, 0, sizeof(init));
-> +
-> +       if (!IS_ERR(vc5->pin_xin)) {
-> +               clk_prepare_enable(vc5->pin_xin);
-> +               vc5->clk_mux_ins |= VC5_MUX_IN_XIN;
-> +               parent_names[init.num_parents++] = __clk_get_name(vc5->pin_xin);
-> +       } else if (vc5->model == IDT_VC5_5P49V5933) {
-> +               /* IDT VC5 5P49V5933 has built-in oscilator. */
-> +               vc5->pin_xin = clk_register_fixed_rate(&client->dev,
-> +                                                      "internal-xtal", NULL,
-> +                                                      0, 25000000);
-
-What happens if you have two VC5 instances, each creating their own
-"internal-xtal" using the same clock name?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+CgoxNy4wMS4yMDE3LCAxNzowNiwgIk1heGltZSBSaXBhcmQiIDxtYXhpbWUucmlwYXJkQGZyZWUt
+ZWxlY3Ryb25zLmNvbT46Cj4gT24gVHVlLCBKYW4gMTcsIDIwMTcgYXQgMDI6MDE6MTNBTSArMDgw
+MCwgSWNlbm93eSBaaGVuZyB3cm90ZToKPj4gwqBBbGx3aW5uZXIgVjNzIGlzIGEgbG93LWVuZCBz
+aW5nbGUtY29yZSBDb3J0ZXgtQTcgU29DLCB3aXRoIDY0TUIKPj4gwqBpbnRlZ3JhdGVkIERSQU0s
+IGFuZCBzZXZlcmFsIHBlcmlwaGVyYWxzLgo+Pgo+PiDCoFNpZ25lZC1vZmYtYnk6IEljZW5vd3kg
+WmhlbmcgPGljZW5vd3lAYW9zYy54eXo+Cj4+IMKgLS0tCj4+IMKgQ2hhbmdlcyBpbiB2MjoKPj4g
+wqAtIFVzZWQgbGludXgtc3VueGkub3JnIHdpa2kgaG9zdGVkIGFkZHJlc3Mgb2YgVjNzIGRhdGFz
+aGVldC4KPj4KPj4gwqBOb3RlOiB0aGUgVjNzIGRhdGFzaGVldCBjb250YWlucyBpdHMgdXNlciBt
+YW51YWwuCj4KPiBUaGF0IHdvdWxkIGJlIGdyZWF0IHRvIHVzZSBVc2VyIE1hbnVhbCBpbiB0aGUg
+ZmlsZW5hbWUgcmF0aGVyIHRoYW4KPiBkYXRhc2hlZXQgdGhlbi4gVGhlIGRhdGFzaGVldCBpcyBz
+b21ldGhpbmcgZGlmZmVyZW50LgoKQWxsd2lubmVyIG5hbWVkIGl0IGRhdGFzaGVldC4KCkZvciBw
+cmV2aW91cyBTb0NzLCBkYXRhc2hlZXQgd2lsbCBjb250YWluIGluZm8gYWJvdXQgcGlucywgYW5k
+IHVzZXIgbWFudWFsCmFib3V0IHJlZ2lzdGVycy4KCkJ1dCBmb3IgSDMgYW5kIFYzcywgZGF0YXNo
+ZWV0IG5vdyBjb250YWlucyBib3RoIHBpbnMnIGluZm8gYW5kIHJlZ2lzdGVycycgaW5mby4KCj4K
+PiBNYXhpbWUKPgo+IC0tCj4gTWF4aW1lIFJpcGFyZCwgRnJlZSBFbGVjdHJvbnMKPiBFbWJlZGRl
+ZCBMaW51eCBhbmQgS2VybmVsIGVuZ2luZWVyaW5nCj4gaHR0cDovL2ZyZWUtZWxlY3Ryb25zLmNv
+bQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgt
+YXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
+b3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJt
+LWtlcm5lbAo=
