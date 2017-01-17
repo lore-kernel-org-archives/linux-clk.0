@@ -1,309 +1,186 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4/5] ARM: dts: sunxi: add dtsi file for V3s SoC
-Date: Tue,  3 Jan 2017 23:16:28 +0800
-Message-Id: <20170103151629.19447-5-icenowy@aosc.xyz>
-In-Reply-To: <20170103151629.19447-1-icenowy@aosc.xyz>
-References: <20170103151629.19447-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Florian Fainelli <f.fainelli@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-clk@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH v2 1/3] clk: bcm2835: Don't rate change PLLs on behalf of DSI PLL dividers.
+Date: Wed, 18 Jan 2017 07:31:55 +1100
+Message-Id: <20170117203157.23822-1-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-As we have the pinctrl and clock support for the V3s SoC, it's now to
-run a mainline Linux on it.
+Our core PLLs are intended to be configured once and left alone.  With
+the SET_RATE_PARENT, asking to set the PLLD_DSI1 clock rate would
+change PLLD just to get closer to the requested DSI clock, thus
+changing PLLD_PER, the UART and ethernet PHY clock rates downstream of
+it, and breaking ethernet.
 
-So add a .dtsi file for it.
+We *do* want PLLH to change so that PLLH_AUX can be exactly the value
+we want, though.  Thus, we need to have a per-divider policy of
+whether to pass rate changes up.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- arch/arm/boot/dts/sun8i-v3s.dtsi | 257 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 257 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun8i-v3s.dtsi
+ drivers/clk/bcm/clk-bcm2835.c | 42 ++++++++++++++++++++++++++++--------------
+ 1 file changed, 28 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
-new file mode 100644
-index 000000000000..084da7474afb
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
-@@ -0,0 +1,257 @@
-+/*
-+ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#include <dt-bindings/clock/sun8i-v3s-ccu.h>
-+#include <dt-bindings/reset/sun8i-v3s-ccu.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/pinctrl/sun4i-a10.h>
-+
-+/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	interrupt-parent = <&gic>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			compatible = "arm,cortex-a7";
-+			device_type = "cpu";
-+			reg = <0>;
-+			clocks = <&ccu CLK_CPU>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	clocks {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		osc24M: osc24M_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <24000000>;
-+			clock-output-names = "osc24M";
-+		};
-+
-+		osc32k: osc32k_clk {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <32768>;
-+			clock-output-names = "osc32k";
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mmc0: mmc@01c0f000 {
-+			compatible = "allwinner,sun7i-a20-mmc";
-+			reg = <0x01c0f000 0x1000>;
-+			clocks = <&ccu CLK_BUS_MMC0>,
-+				 <&ccu CLK_MMC0>,
-+				 <&ccu CLK_MMC0_OUTPUT>,
-+				 <&ccu CLK_MMC0_SAMPLE>;
-+			clock-names = "ahb",
-+				      "mmc",
-+				      "output",
-+				      "sample";
-+			resets = <&ccu RST_BUS_MMC0>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		mmc1: mmc@01c10000 {
-+			compatible = "allwinner,sun7i-a20-mmc";
-+			reg = <0x01c10000 0x1000>;
-+			clocks = <&ccu CLK_BUS_MMC1>,
-+				 <&ccu CLK_MMC1>,
-+				 <&ccu CLK_MMC1_OUTPUT>,
-+				 <&ccu CLK_MMC1_SAMPLE>;
-+			clock-names = "ahb",
-+				      "mmc",
-+				      "output",
-+				      "sample";
-+			resets = <&ccu RST_BUS_MMC1>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		mmc2: mmc@01c11000 {
-+			compatible = "allwinner,sun7i-a20-mmc";
-+			reg = <0x01c11000 0x1000>;
-+			clocks = <&ccu CLK_BUS_MMC2>,
-+				 <&ccu CLK_MMC2>,
-+				 <&ccu CLK_MMC2_OUTPUT>,
-+				 <&ccu CLK_MMC2_SAMPLE>;
-+			clock-names = "ahb",
-+				      "mmc",
-+				      "output",
-+				      "sample";
-+			resets = <&ccu RST_BUS_MMC2>;
-+			reset-names = "ahb";
-+			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		ccu: clock@01c20000 {
-+			compatible = "allwinner,sun8i-v3s-ccu";
-+			reg = <0x01c20000 0x400>;
-+			clocks = <&osc24M>, <&osc32k>;
-+			clock-names = "hosc", "losc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rtc: rtc@01c20400 {
-+			compatible = "allwinner,sun6i-a31-rtc";
-+			reg = <0x01c20400 0x54>;
-+			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		pio: pinctrl@01c20800 {
-+			compatible = "allwinner,sun8i-v3s-pinctrl";
-+			reg = <0x01c20800 0x400>;
-+			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
-+			gpio-controller;
-+			#gpio-cells = <3>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+
-+			uart0_pins_a: uart0@0 {
-+				pins = "PB8", "PB9";
-+				function = "uart0";
-+				bias-pull-up;
-+			};
-+
-+			mmc0_pins_a: mmc0@0 {
-+				pins = "PF0", "PF1", "PF2", "PF3",
-+				       "PF4", "PF5";
-+				function = "mmc0";
-+				drive-strength = <30>;
-+				bias-pull-up;
-+			};
-+		};
-+
-+		timer@01c20c00 {
-+			compatible = "allwinner,sun4i-a10-timer";
-+			reg = <0x01c20c00 0xa0>;
-+			interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&osc24M>;
-+		};
-+
-+		wdt0: watchdog@01c20ca0 {
-+			compatible = "allwinner,sun6i-a31-wdt";
-+			reg = <0x01c20ca0 0x20>;
-+			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		uart0: serial@01c28000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c28000 0x400>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART0>;
-+			resets = <&ccu RST_BUS_UART0>;
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@01c28400 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c28400 0x400>;
-+			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART1>;
-+			resets = <&ccu RST_BUS_UART1>;
-+			status = "disabled";
-+		};
-+
-+		uart2: serial@01c28800 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c28800 0x400>;
-+			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu CLK_BUS_UART2>;
-+			resets = <&ccu RST_BUS_UART2>;
-+			status = "disabled";
-+		};
-+
-+		gic: interrupt-controller@01c81000 {
-+			compatible = "arm,cortex-a7-gic", "arm,cortex-a15-gic";
-+			reg = <0x01c81000 0x1000>,
-+			      <0x01c82000 0x1000>,
-+			      <0x01c84000 0x2000>,
-+			      <0x01c86000 0x2000>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+	};
-+};
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 0d14409097e7..3d0848d535d7 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -428,6 +428,7 @@ struct bcm2835_pll_divider_data {
+ 	u32 load_mask;
+ 	u32 hold_mask;
+ 	u32 fixed_divider;
++	u32 flags;
+ };
+ 
+ struct bcm2835_clock_data {
+@@ -1252,7 +1253,7 @@ bcm2835_register_pll_divider(struct bcm2835_cprman *cprman,
+ 	init.num_parents = 1;
+ 	init.name = divider_name;
+ 	init.ops = &bcm2835_pll_divider_clk_ops;
+-	init.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED;
++	init.flags = data->flags | CLK_IGNORE_UNUSED;
+ 
+ 	divider = devm_kzalloc(cprman->dev, sizeof(*divider), GFP_KERNEL);
+ 	if (!divider)
+@@ -1466,7 +1467,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.a2w_reg = A2W_PLLA_CORE,
+ 		.load_mask = CM_PLLA_LOADCORE,
+ 		.hold_mask = CM_PLLA_HOLDCORE,
+-		.fixed_divider = 1),
++		.fixed_divider = 1,
++		.flags = CLK_SET_RATE_PARENT),
+ 	[BCM2835_PLLA_PER]	= REGISTER_PLL_DIV(
+ 		.name = "plla_per",
+ 		.source_pll = "plla",
+@@ -1474,7 +1476,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.a2w_reg = A2W_PLLA_PER,
+ 		.load_mask = CM_PLLA_LOADPER,
+ 		.hold_mask = CM_PLLA_HOLDPER,
+-		.fixed_divider = 1),
++		.fixed_divider = 1,
++		.flags = CLK_SET_RATE_PARENT),
+ 	[BCM2835_PLLA_DSI0]	= REGISTER_PLL_DIV(
+ 		.name = "plla_dsi0",
+ 		.source_pll = "plla",
+@@ -1490,7 +1493,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.a2w_reg = A2W_PLLA_CCP2,
+ 		.load_mask = CM_PLLA_LOADCCP2,
+ 		.hold_mask = CM_PLLA_HOLDCCP2,
+-		.fixed_divider = 1),
++		.fixed_divider = 1,
++		.flags = CLK_SET_RATE_PARENT),
+ 
+ 	/* PLLB is used for the ARM's clock. */
+ 	[BCM2835_PLLB]		= REGISTER_PLL(
+@@ -1514,7 +1518,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.a2w_reg = A2W_PLLB_ARM,
+ 		.load_mask = CM_PLLB_LOADARM,
+ 		.hold_mask = CM_PLLB_HOLDARM,
+-		.fixed_divider = 1),
++		.fixed_divider = 1,
++		.flags = CLK_SET_RATE_PARENT),
+ 
+ 	/*
+ 	 * PLLC is the core PLL, used to drive the core VPU clock.
+@@ -1543,7 +1548,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.a2w_reg = A2W_PLLC_CORE0,
+ 		.load_mask = CM_PLLC_LOADCORE0,
+ 		.hold_mask = CM_PLLC_HOLDCORE0,
+-		.fixed_divider = 1),
++		.fixed_divider = 1,
++		.flags = CLK_SET_RATE_PARENT),
+ 	[BCM2835_PLLC_CORE1]	= REGISTER_PLL_DIV(
+ 		.name = "pllc_core1",
+ 		.source_pll = "pllc",
+@@ -1551,7 +1557,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.a2w_reg = A2W_PLLC_CORE1,
+ 		.load_mask = CM_PLLC_LOADCORE1,
+ 		.hold_mask = CM_PLLC_HOLDCORE1,
+-		.fixed_divider = 1),
++		.fixed_divider = 1,
++		.flags = CLK_SET_RATE_PARENT),
+ 	[BCM2835_PLLC_CORE2]	= REGISTER_PLL_DIV(
+ 		.name = "pllc_core2",
+ 		.source_pll = "pllc",
+@@ -1559,7 +1566,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.a2w_reg = A2W_PLLC_CORE2,
+ 		.load_mask = CM_PLLC_LOADCORE2,
+ 		.hold_mask = CM_PLLC_HOLDCORE2,
+-		.fixed_divider = 1),
++		.fixed_divider = 1,
++		.flags = CLK_SET_RATE_PARENT),
+ 	[BCM2835_PLLC_PER]	= REGISTER_PLL_DIV(
+ 		.name = "pllc_per",
+ 		.source_pll = "pllc",
+@@ -1567,7 +1575,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.a2w_reg = A2W_PLLC_PER,
+ 		.load_mask = CM_PLLC_LOADPER,
+ 		.hold_mask = CM_PLLC_HOLDPER,
+-		.fixed_divider = 1),
++		.fixed_divider = 1,
++		.flags = CLK_SET_RATE_PARENT),
+ 
+ 	/*
+ 	 * PLLD is the display PLL, used to drive DSI display panels.
+@@ -1596,7 +1605,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.a2w_reg = A2W_PLLD_CORE,
+ 		.load_mask = CM_PLLD_LOADCORE,
+ 		.hold_mask = CM_PLLD_HOLDCORE,
+-		.fixed_divider = 1),
++		.fixed_divider = 1,
++		.flags = CLK_SET_RATE_PARENT),
+ 	[BCM2835_PLLD_PER]	= REGISTER_PLL_DIV(
+ 		.name = "plld_per",
+ 		.source_pll = "plld",
+@@ -1604,7 +1614,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.a2w_reg = A2W_PLLD_PER,
+ 		.load_mask = CM_PLLD_LOADPER,
+ 		.hold_mask = CM_PLLD_HOLDPER,
+-		.fixed_divider = 1),
++		.fixed_divider = 1,
++		.flags = CLK_SET_RATE_PARENT),
+ 	[BCM2835_PLLD_DSI0]	= REGISTER_PLL_DIV(
+ 		.name = "plld_dsi0",
+ 		.source_pll = "plld",
+@@ -1649,7 +1660,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.a2w_reg = A2W_PLLH_RCAL,
+ 		.load_mask = CM_PLLH_LOADRCAL,
+ 		.hold_mask = 0,
+-		.fixed_divider = 10),
++		.fixed_divider = 10,
++		.flags = CLK_SET_RATE_PARENT),
+ 	[BCM2835_PLLH_AUX]	= REGISTER_PLL_DIV(
+ 		.name = "pllh_aux",
+ 		.source_pll = "pllh",
+@@ -1657,7 +1669,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.a2w_reg = A2W_PLLH_AUX,
+ 		.load_mask = CM_PLLH_LOADAUX,
+ 		.hold_mask = 0,
+-		.fixed_divider = 1),
++		.fixed_divider = 1,
++		.flags = CLK_SET_RATE_PARENT),
+ 	[BCM2835_PLLH_PIX]	= REGISTER_PLL_DIV(
+ 		.name = "pllh_pix",
+ 		.source_pll = "pllh",
+@@ -1665,7 +1678,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.a2w_reg = A2W_PLLH_PIX,
+ 		.load_mask = CM_PLLH_LOADPIX,
+ 		.hold_mask = 0,
+-		.fixed_divider = 10),
++		.fixed_divider = 10,
++		.flags = CLK_SET_RATE_PARENT),
+ 
+ 	/* the clocks */
+ 
 -- 
 2.11.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
