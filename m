@@ -1,41 +1,199 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <20170126101529.j3fuku4hyy3pbge3@lukather>
-References: <20170124023230.3990-1-wens@csie.org> <20170124023230.3990-11-wens@csie.org>
- <20170126101529.j3fuku4hyy3pbge3@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 26 Jan 2017 19:23:25 +0800
-Message-ID: <CAGb2v66cQoPQzd6W1D8bZ5hSURfGP3icJjeoo1mNk2ccG9B2vw@mail.gmail.com>
-Subject: Re: [PATCH 10/11] arm64: dts: allwinner: Remove no longer used
- pinctrl/sun4i-a10.h header
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <pierre-louis.bossart@linux.intel.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To: linux-clk@vger.kernel.org,
+	x86@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: alsa-devel@alsa-project.org,
+	Irina Tirdea <irina.tirdea@intel.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Mark Brown <broonie@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v7 4/5] platform/x86: Enable Atom PMC platform clocks
+Date: Tue, 17 Jan 2017 15:57:49 -0600
+Message-Id: <1484690270-28425-5-git-send-email-pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+References: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 26, 2017 at 6:15 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Tue, Jan 24, 2017 at 10:32:29AM +0800, Chen-Yu Tsai wrote:
->> All dts files for the sunxi platform have been switched to the generic
->> pinconf bindings. As a result, the sunxi specific pinctrl macros are
->> no longer used.
->>
->> Remove the #include entry with the following command:
->>
->>     sed -i -e '/pinctrl\/sun4i-a10.h/D' \
->>       arch/arm64/boot/dts/allwinner/*.dts?
->>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->
-> Applied, thanks!
->
-> Maybe we should also remove the header entirely?
+From: Irina Tirdea <irina.tirdea@intel.com>
 
-I don't know. What do we do about deprecated bindings?
+The BayTrail and CherryTrail platforms provide platform clocks
+through their Power Management Controller (PMC).
 
-ChenYu
+The SoC supports up to 6 clocks (PMC_PLT_CLK[0..5]) with a
+frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL) for BayTrail
+and a frequency of 19.2 MHz (XTAL) for CherryTrail. These clocks
+are available for general system use, where appropriate. For example,
+the usage for platform clocks suggested in the datasheet is the
+following:
+  PLT_CLK[0..2] - Camera
+  PLT_CLK[3] - Audio Codec
+  PLT_CLK[4] -
+  PLT_CLK[5] - COMMs
+
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
+---
+ drivers/platform/x86/Kconfig    |  1 +
+ drivers/platform/x86/pmc_atom.c | 79 +++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 77 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 8b1988a..2c95f77 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1081,3 +1081,4 @@ endif # X86_PLATFORM_DEVICES
+ config PMC_ATOM
+        def_bool y
+        depends on PCI
++       select COMMON_CLK
+diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
+index e1dfb1b..28105dd 100644
+--- a/drivers/platform/x86/pmc_atom.c
++++ b/drivers/platform/x86/pmc_atom.c
+@@ -19,7 +19,9 @@
+ #include <linux/device.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
++#include <linux/platform_data/x86/clk-pmc-atom.h>
+ #include <linux/platform_data/x86/pmc_atom.h>
++#include <linux/platform_device.h>
+ #include <linux/pci.h>
+ #include <linux/seq_file.h>
+ 
+@@ -36,6 +38,11 @@ struct pmc_reg_map {
+ 	const struct pmc_bit_map *pss;
+ };
+ 
++struct pmc_data {
++	const struct pmc_reg_map *map;
++	const struct pmc_clk *clks;
++};
++
+ struct pmc_dev {
+ 	u32 base_addr;
+ 	void __iomem *regmap;
+@@ -49,6 +56,29 @@ struct pmc_dev {
+ static struct pmc_dev pmc_device;
+ static u32 acpi_base_addr;
+ 
++static const struct pmc_clk byt_clks[] = {
++	{
++		.name = "xtal",
++		.freq = 25000000,
++		.parent_name = NULL,
++	},
++	{
++		.name = "pll",
++		.freq = 19200000,
++		.parent_name = "xtal",
++	},
++	{},
++};
++
++static const struct pmc_clk cht_clks[] = {
++	{
++		.name = "xtal",
++		.freq = 19200000,
++		.parent_name = NULL,
++	},
++	{},
++};
++
+ static const struct pmc_bit_map d3_sts_0_map[] = {
+ 	{"LPSS1_F0_DMA",	BIT_LPSS1_F0_DMA},
+ 	{"LPSS1_F1_PWM1",	BIT_LPSS1_F1_PWM1},
+@@ -168,6 +198,16 @@ static const struct pmc_reg_map cht_reg_map = {
+ 	.pss		= cht_pss_map,
+ };
+ 
++static const struct pmc_data byt_data = {
++	.map = &byt_reg_map,
++	.clks = byt_clks,
++};
++
++static const struct pmc_data cht_data = {
++	.map = &cht_reg_map,
++	.clks = cht_clks,
++};
++
+ static inline u32 pmc_reg_read(struct pmc_dev *pmc, int reg_offset)
+ {
+ 	return readl(pmc->regmap + reg_offset);
+@@ -381,10 +421,37 @@ static int pmc_dbgfs_register(struct pmc_dev *pmc)
+ }
+ #endif /* CONFIG_DEBUG_FS */
+ 
++static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
++			  const struct pmc_data *pmc_data)
++{
++	struct platform_device *clkdev;
++	struct pmc_clk_data *clk_data;
++
++	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
++
++	clk_data->base = pmc_regmap; /* offset is added by client */
++	clk_data->clks = pmc_data->clks;
++
++	clkdev = platform_device_register_data(&pdev->dev, "clk-pmc-atom",
++					       PLATFORM_DEVID_NONE,
++					       clk_data, sizeof(*clk_data));
++	if (IS_ERR(clkdev)) {
++		kfree(clk_data);
++		return PTR_ERR(clkdev);
++	}
++
++	kfree(clk_data);
++
++	return 0;
++}
++
+ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+ 	struct pmc_dev *pmc = &pmc_device;
+-	const struct pmc_reg_map *map = (struct pmc_reg_map *)ent->driver_data;
++	const struct pmc_data *data = (struct pmc_data *)ent->driver_data;
++	const struct pmc_reg_map *map = data->map;
+ 	int ret;
+ 
+ 	/* Obtain ACPI base address */
+@@ -413,6 +480,12 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (ret)
+ 		dev_warn(&pdev->dev, "debugfs register failed\n");
+ 
++	/* Register platform clocks - PMC_PLT_CLK [5:0] */
++	ret = pmc_setup_clks(pdev, pmc->regmap, data);
++	if (ret)
++		dev_warn(&pdev->dev, "platform clocks register failed: %d\n",
++			 ret);
++
+ 	pmc->init = true;
+ 	return ret;
+ }
+@@ -423,8 +496,8 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+  * used by pci_match_id() call below.
+  */
+ static const struct pci_device_id pmc_pci_ids[] = {
+-	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_VLV_PMC), (kernel_ulong_t)&byt_reg_map },
+-	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_CHT_PMC), (kernel_ulong_t)&cht_reg_map },
++	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_VLV_PMC), (kernel_ulong_t)&byt_data },
++	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_CHT_PMC), (kernel_ulong_t)&cht_data },
+ 	{ 0, },
+ };
+ 
+-- 
+2.7.4
