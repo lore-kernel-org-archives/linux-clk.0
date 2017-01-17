@@ -1,110 +1,76 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 17 Jan 2017 17:46:36 +0100
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Tue, 17 Jan 2017 10:04:56 +0100
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org,
-	mark.rutland@arm.com, robh+dt@kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: Re: [PATCH v2 03/10] dt-bindings: sound: Add new reset compatible
- for sun4i-i2s
-Message-ID: <20170117164636.qhkxvqcs7l732wxk@lukather>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
- <20170117140230.23142-4-mylene.josserand@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH v2 2/4] clk: sunxi-ng: add support for V3s CCU
+Message-ID: <20170117090456.fgw6lpqgurwwcczj@lukather>
+References: <20170116180116.36729-2-icenowy@aosc.xyz>
+ <20170116180116.36729-3-icenowy@aosc.xyz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cfzbmitlkifb4uic"
-In-Reply-To: <20170117140230.23142-4-mylene.josserand@free-electrons.com>
+In-Reply-To: <20170116180116.36729-3-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Zepan <715805855@qq.com>,
+ linux-doc@vger.kernel.org, linux-sunxi@googlegroups.com,
+ Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============0162904541052099102=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---cfzbmitlkifb4uic
-Content-Type: text/plain; charset=iso-8859-1
+--===============0162904541052099102==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="kydoof46rcmptsw3"
+Content-Disposition: inline
+
+
+--kydoof46rcmptsw3
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 17, 2017 at 03:02:23PM +0100, Myl=E8ne Josserand wrote:
-> Add a new compatible for sun4i-i2s driver to handle some
-> SoCs that have a reset line that must be asserted/deasserted.
+Hi,
+
+On Tue, Jan 17, 2017 at 02:01:14AM +0800, Icenowy Zheng wrote:
+> V3s has a similar but cut-down CCU to H3.
 >=20
-> This new compatible, "allwinner,sun6i-a31-i2s", requires two
-> properties:
-> 	- resets: phandle to the reset line
-> 	- reset-names: the name of the reset line ("rst").
-> Except these differences, the compatible is identical to previous one
-> which will not handle a reset line.
+> Add support for it.
 >=20
-> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 > ---
->  .../devicetree/bindings/sound/sun4i-i2s.txt        | 23 ++++++++++++++++=
-++++++
->  1 file changed, 23 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/sound/sun4i-i2s.txt b/Docu=
-mentation/devicetree/bindings/sound/sun4i-i2s.txt
-> index 7a2c0945fd22..f673206e309b 100644
-> --- a/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
-> +++ b/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
-> @@ -7,6 +7,7 @@ Required properties:
-> =20
->  - compatible: should be one of the following:
->     - "allwinner,sun4i-a10-i2s"
-> +   - "allwinner,sun6i-a31-i2s" for controller with reset lines
 
-That's not only for controllers with reset lines, but for the
-controllers found in the A31 (and later). I'd simply drop the last
-part of that line.
+Output from checkpatch:
+total: 5 errors, 2 warnings, 3 checks, 857 lines checked
 
->  - reg: physical base address of the controller and length of memory mapp=
-ed
->    region.
->  - interrupts: should contain the I2S interrupt.
-> @@ -19,7 +20,13 @@ Required properties:
->     - "mod" : module clock for the I2S controller
->  - #sound-dai-cells : Must be equal to 0
-> =20
-> +Required properties for the following compatibles:
-> +		- "allwinner,sun6i-a31-i2s"
-> +- resets: phandle to the reset line for this codec
-> +- reset-names: Contains the reset signal name "rst"
+> I think I should make a comparsion between V3s and H3 CCU here:
+> (I won't mention the missing/added clocks here, only list conflicting clo=
+cks)
 
-You don't need reset-names if there's a single reset line.
+That should be in your commit log.
 
-> +
->  Example:
-> +For "allwinner,sun4i-a10-i2s":
-> =20
->  i2s0: i2s@01c22400 {
->  	#sound-dai-cells =3D <0>;
-> @@ -32,3 +39,19 @@ i2s0: i2s@01c22400 {
->  	       <&dma SUN4I_DMA_NORMAL 3>;
->  	dma-names =3D "rx", "tx";
->  };
-> +
-> +For "allwinner,sun6i-a31-i2s":
-> +
-> +dai: dai@01c22c00 {
-> +	#sound-dai-cells =3D <0>;
-> +	compatible =3D "allwinner,sun6i-a31-i2s";
-> +	reg =3D <0x01c22c00 0x200>;
-> +	interrupts =3D <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-> +	clocks =3D <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
-> +	clock-names =3D "apb", "mod";
-> +	resets =3D <&ccu RST_BUS_CODEC>;
-> +	reset-names =3D "rst";
-> +	dmas =3D <&dma 15>, /* AUDIO_CODEC port */
-> +		<&dma 15>; /* AUDIO_CODEC port */
-> +	dma-names =3D "rx", "tx";
-> +};
+> - "bus-ehci0" is at different bit (The bit that is "bus-ehci0" on V3s is
+>   "bus-ehci2" on H3)
+> - The mux of "ce" is different. (According the view at V3s datasheet by t=
+he
+>   author of sun4i-ss, V3s may have sun4i-ss, not sun8i-ce)
+> - The mux of "de" is different. (V3s do not have "pll-de", but it can mux=
+ "de"
+>   to "pll-video")
+> - Clocks about CSI largely differs. (As V3s is designed as a camera SoC, =
+and
+>   it have an extra "pll-isp")
 
-And we already have an example, so there's no need to add a new one
-either.
+OK.
 
-Thanks!
+Thanks,
 Maxime
 
 --=20
@@ -112,24 +78,38 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---cfzbmitlkifb4uic
+--kydoof46rcmptsw3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBCAAGBQJYfkpsAAoJEBx+YmzsjxAg3i4QAIeSP1QjdxbRrXzNFADo00Nz
-vT1DqDV/M+JelnUIlz4Tbd5iszDnAbn61gp0qoXyq4VsB65dq3O+q+GIfdEd9G9g
-mgQd6KgzMYTVxtCEAhrditQEKLiHHirRS+0HHaiMAKODAD6cMNYXQpt3HZf2/95d
-0CBt+rgzt1XMfc/QhQpnwmI44LfcTUSQpg0y/Tuz6HcRsYJu94gnVLP2Sbf2y7HH
-kgb18/H5tEtlsQZeo7maeEcOTJi5hAIF60uaG/xoTngfdPce2r3mKanuNQU5CQEN
-UkWcMx/uQXy/doFAhrzMDCsQIwL+Qo2aC+RUn+HRfEuKSDRv3Pe3jQxnRljlW5HP
-xTeeoZv+tIvU15bt310T3ODRQPaOA/2r5+mLEqBoWg+xx5oih+7WHDI4NwHOmDCS
-Ix6kMPJHwdzT3FVgpMr9CqklKSh6Yz4QmEmyCeADIGrPnrX2PKCsNL5qQ2207vdc
-augKIQvDpJmxFJTHQaPVxm3xQEcGu+DUhqTlQNrpa3iewosc7HeJuKMpqtwVRLmk
-WKhEzpMbChKaQrsHyBiu8fDMC88nxbt41OnFtmkrCdd7SuWs1IT6R3m3ioJ7KzMn
-6L4oz/xZ2ko4TKlAX+NSs4OgaVdgTYs003oxbAl6PZtsiB6yZ4DBKywnc9GcgYTI
-ZNRD7K2x43UlMDkjZ+LR
-=lqJ0
+iQIcBAEBCAAGBQJYfd40AAoJEBx+YmzsjxAg2v8QAIA259BtpZ5c6JgZtfrwAUjn
+po37fnkE5KXBzetxBh+HfaLUGOhwiwcfh4kCLL3Ob3BjXBpsY3zENRQxPEzP+Shj
+dcv5lZ7OtbS8fXc6NdLaMo0jidzsSsSFqhGL76VzkKmaZqIeuHzp2IevCdwb3R8o
+4M58uMyz0ipD1RI9SFogH3X4IXF4zGMXhjSDXuwIzTfXvxR2Ly8IX4YhfQb9ZsMj
+dzl2VGxyi4yS2lkTh7xhN4D2GnDSpH1fXFfA4VJ8xXVgqsplMiGvD7g4/c/ORgLF
+5RbHnXZMXOMPN7gMIoPU3rKuNh6Iiho9Q6zElpy2prA3pLjz2s3YCsvXV6u8Lq34
+LHfAFzqc/YwQ15H14kPicokXdW3mznfZyLXohgWjEwtFp5lhEV1IJSncg59r3CDc
+ULCOiCkILbtESPxTU5AX25iMr3j/cH1zt3I2GlIrIC1BegAiqAAHytLowBFhKiQe
+6Z2k4w4NN9QmyHY4yQ2I1MkYxzQAFJR84DzGeQ6MJbfSe4apHqPhVXqpo6AZqsz1
+R+broUn7n1yKxu+BWGXVcYCWW6X3UGtFMJmPkJr/ltJgABAccSTaSpd2b5gL3Gb/
+5Zg+DNpWKHEgPpyK4US9FyzILzQOhPt329CBh2iWrHg4/rdele/8sRGD/atsDhVe
+d31tYGCbALUXn1nevDI/
+=AX7x
 -----END PGP SIGNATURE-----
 
---cfzbmitlkifb4uic--
+--kydoof46rcmptsw3--
+
+
+--===============0162904541052099102==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0162904541052099102==--
