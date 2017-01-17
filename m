@@ -1,36 +1,174 @@
-Return-Path: <wens@csie.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 17 Jan 2017 17:51:24 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+	wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org,
+	mark.rutland@arm.com, robh+dt@kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+	thomas.petazzoni@free-electrons.com,
+	alexandre.belloni@free-electrons.com
+Subject: Re: [PATCH v2 07/10] dt-bindings: sound: Add sun8i audio
+ documentation
+Message-ID: <20170117165124.h5rbx3qhvdzwbqup@lukather>
+References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
+ <20170117140230.23142-8-mylene.josserand@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <20170127001250.GQ8801@codeaurora.org>
-References: <53c56d23af099d8a41460d5ac59a2c792c8d050c.1485250845.git-series.maxime.ripard@free-electrons.com>
- <20170127001250.GQ8801@codeaurora.org>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 27 Jan 2017 11:30:05 +0800
-Message-ID: <CAGb2v67pdKYW5jaa1jA5+QbEV50iPNt-9Z7MNE90P+vUYVocNQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: sunxi-ng: Call divider_round_rate if we only
- have a single parent
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="3xbl5lavzcfdzlle"
+In-Reply-To: <20170117140230.23142-8-mylene.josserand@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 27, 2017 at 8:12 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 01/24, Maxime Ripard wrote:
->> The divider_get_val function that is used in our determine_rate callback
->> doesn't try to change the parent rate at all, while clk_divider_bestdiv,
->> used in divider_round_rate, does.
->>
->> If we have a single parent, call divider_round_rate.
 
-I guess my "clk: sunxi-ng: mux: Get closest parent rate possible with
-CLK_SET_RATE_PARENT" patch somewhat takes care of the multi-parent
-case? Still, the underlying clock type doesn't get to specify what
-is considers to be the best parent rate.
+--3xbl5lavzcfdzlle
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->> ---
->
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Hi,
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+On Tue, Jan 17, 2017 at 03:02:27PM +0100, Myl=E8ne Josserand wrote:
+> Add the documentation for dt-binding of the digital audio codec driver
+> and the audio card driver for Sun8i SoCs.
+>=20
+> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
+
+One small comment below,
+
+> ---
+>  .../devicetree/bindings/sound/sun8i-codec.txt      | 76 ++++++++++++++++=
+++++++
+>  1 file changed, 76 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/sun8i-codec.t=
+xt
+>=20
+> diff --git a/Documentation/devicetree/bindings/sound/sun8i-codec.txt b/Do=
+cumentation/devicetree/bindings/sound/sun8i-codec.txt
+> new file mode 100644
+> index 000000000000..ce3c05219e33
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/sun8i-codec.txt
+> @@ -0,0 +1,76 @@
+> +Allwinner SUN8I audio codec
+> +------------------------------------
+> +
+> +On Sun8i SoCs, and particularly on A33, the audio is separated in
+
+Technically that's not true on all the SoCs of the sun8i family, but
+only a few of them (A33 and H3 iirc).
+
+This driver is only made for the A33 at the moment, so you should only
+mention it (and you should rename that file as well).
+
+Once done,
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+
+Thanks,
+Maxime
+
+
+> +different parts:
+> +	  - A DAI driver. It uses the "sun4i-i2s" driver which is
+> +	  documented here:
+> +	  Documentation/devicetree/bindings/sound/sun4i-i2s.txt
+> +	  - An analog part of the codec which is handled as PRCM registers.
+> +	  See Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
+> +	  - An digital part of the codec which is documented in this current
+> +	  binding documentation.
+> +	  - And finally, an audio card which links all the above components.
+> +	  The simple-audio card will be used.
+> +	  See Documentation/devicetree/bindings/sound/simple-card.txt
+> +
+> +This bindings documentation exposes Sun8i codec (digital part).
+> +
+> +Required properties:
+> +- compatible: must be "allwinner,sun8i-a33-codec"
+> +- reg: must contain the registers location and length
+> +- interrupts: must contain the codec interrupt
+> +- clocks: a list of phandle + clock-specifer pairs, one for each entry
+> +  in clock-names.
+> +- clock-names: should contain followings:
+> +   - "bus": the parent APB clock for this controller
+> +   - "mod": the parent module clock
+> +
+> +Example:
+> +codec: codec@01c22e00 {
+> +	#sound-dai-cells =3D <0>;
+> +	compatible =3D "allwinner,sun8i-a33-codec";
+> +	reg =3D <0x01c22e00 0x400>;
+> +	interrupts =3D <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+> +	clocks =3D <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
+> +	clock-names =3D "bus", "mod";
+> +	status =3D "disabled";
+> +};
+> +
+> +Here is an example to add a sound card and the codec binding on sun8i So=
+Cs that
+> +are similar to A33 using simple-card:
+> +
+> +	sound {
+> +		compatible =3D "simple-audio-card";
+> +		simple-audio-card,name =3D "Sun8i Audio Card";
+> +		simple-audio-card,format =3D "i2s";
+> +		simple-audio-card,frame-master =3D <&link_codec>;
+> +		simple-audio-card,bitclock-master =3D <&link_codec>;
+> +		simple-audio-card,mclk-fs =3D <512>;
+> +		simple-audio-card,aux-devs =3D <&codec_analog>;
+> +		simple-audio-card,routing =3D
+> +				"Left DAC", "Digital Left DAC",
+> +				"Right DAC", "Digital Right DAC";
+> +
+> +		simple-audio-card,cpu {
+> +			sound-dai =3D <&dai>;
+> +		};
+> +
+> +		link_codec: simple-audio-card,codec {
+> +			sound-dai =3D <&codec>;
+> +		};
+> +
+> +	soc@01c00000 {
+> +		[...]
+> +
+> +		codec: codec@01c22e00 {
+> +			#sound-dai-cells =3D <0>;
+> +			compatible =3D "allwinner,sun8i-a33-codec";
+> +			reg =3D <0x01c22e00 0x400>;
+> +			interrupts =3D <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks =3D <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
+> +			clock-names =3D "bus", "mod";
+> +			status =3D "disabled";
+> +		};
+> +	};
+> +
+> --=20
+> 2.11.0
+>=20
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--3xbl5lavzcfdzlle
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYfkuLAAoJEBx+YmzsjxAguJcQAJmodPGhZfbeLb4IaSjSMByU
+nscg5v6R7XNCebSxhcJcQEquyhKnj0gCIxvwGWwe7ZOXKRjo4R3pbChCdfCZ0reB
+y1099d6KjXgz4MG+YZ8k0xFa+tVh5cOnai7SCLe1R7zTFqJ3WvEnS2LbhygN+7vD
+Cy52d2dVDYNsFgGeK4OoE0ljV7VjACnYGovzeRf7j32cElXZNhrbXXYjX/qGOheG
+WrbRXhDfGOWG4bOxBKctoIj1WWsGE0/NqPObbTKbykWecbl9MX1N1/lQ9nTtgR4j
+gcOaAwcG4hU3hTqPJ/bDuLydI/lkvBaXDqPbaqNolAPKx4LIAWqd/za9ahO3R4rA
+fLB4XFAWBUnPeA4GrT2laiN/4fpnAfQ8awpyg60eCt3uYCgJsk20MlRAlW1JCR5p
+NpBvxy2/3SOlkkWvGDWKzHk3gbYlFHdhuzU3ZAzdj7V4brqlpe5M+4WpME13SHaU
+kBAUKwC6Ir7Yo3LI7srvMb9sc96tT6uTunwujzsftxJaNYgHTvWttXqtzEQDfk46
+UBgksgJXYl2zNGY2JUg1h6UuEkJjp7ucoyy4sAylxM7IA4hHKsgynYsx1FM45hEI
+dBK7d2ylqNmtYCyzSM8flVtS7gyQ3ZCAeU2IcJanpC3A03oM6cHz1CdYGuHqSdtU
+iwB9dl75wn/IGTQp8guF
+=0eLG
+-----END PGP SIGNATURE-----
+
+--3xbl5lavzcfdzlle--
