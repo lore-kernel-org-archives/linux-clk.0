@@ -1,99 +1,65 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	khilman@baylibre.com,
+	carlo@caione.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
 	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: [PATCH v5 10/12] arm64: dts: marvell: add eMMC support for Armada 37xx
-Date: Wed, 11 Jan 2017 18:19:13 +0100
-Message-Id: <7af8ed182e2e5dd962dc14f7295ca87d5d115fef.1484154449.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+	devicetree@vger.kernel.org
+Subject: [PATCH] clk: meson-gxbb: Export HDMI clocks
+Date: Tue, 17 Jan 2017 13:08:48 +0100
+Message-Id: <1484654928-5640-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the eMMC support for Armada 37xx SoC and enable it in the Armada 3720
-DB board.
+Export HDMI clock from internal to dt-bindings.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- arch/arm64/boot/dts/marvell/armada-3720-db.dts | 16 ++++++++++++++++
- arch/arm64/boot/dts/marvell/armada-37xx.dtsi   | 11 +++++++++++
- 2 files changed, 27 insertions(+)
+ drivers/clk/meson/gxbb.h              | 4 ++--
+ include/dt-bindings/clock/gxbb-clkc.h | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-3720-db.dts b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
-index 89de0a751093..118796b325e5 100644
---- a/arch/arm64/boot/dts/marvell/armada-3720-db.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
-@@ -72,6 +72,22 @@
- 	status = "okay";
- };
- 
-+&sdhci0 {
-+	non-removable;
-+	bus-width = <8>;
-+	mmc-ddr-1_8v;
-+	mmc-hs400-1_8v;
-+	marvell,pad-type = "fixed-1-8v";
-+	status = "okay";
-+
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	mmccard: mmccard@0 {
-+		compatible = "mmc-card";
-+		reg = <0>;
-+	};
-+};
-+
- /* CON31 */
- &usb3 {
- 	status = "okay";
-diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-index bab5c6ff5745..966b6f030bfa 100644
---- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-@@ -184,6 +184,17 @@
- 				};
- 			};
- 
-+			sdhci0: sdhci@d8000 {
-+				compatible = "marvell,armada-3700-sdhci",
-+				"marvell,sdhci-xenon";
-+				reg = <0xd8000 0x300
-+				       0x17808 0x4>;
-+				interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&nb_periph_clk 0>;
-+				clock-names = "core";
-+				status = "disabled";
-+			};
-+
- 			sata: sata@e0000 {
- 				compatible = "marvell,armada-3700-ahci";
- 				reg = <0xe0000 0x2000>;
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 0252939..2139e97 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -231,7 +231,7 @@
+ #define CLKID_AHB_DATA_BUS	  60
+ #define CLKID_AHB_CTRL_BUS	  61
+ #define CLKID_HDMI_INTR_SYNC	  62
+-#define CLKID_HDMI_PCLK		  63
++/* CLKID_HDMI_PCLK */
+ /* CLKID_USB1_DDR_BRIDGE */
+ /* CLKID_USB0_DDR_BRIDGE */
+ #define CLKID_MMC_PCLK		  66
+@@ -245,7 +245,7 @@
+ #define CLKID_VCLK2_VENCI1	  74
+ #define CLKID_VCLK2_VENCP0	  75
+ #define CLKID_VCLK2_VENCP1	  76
+-#define CLKID_GCLK_VENCI_INT0	  77
++/* CLKID_GCLK_VENCI_INT0 */
+ #define CLKID_GCLK_VENCI_INT	  78
+ #define CLKID_DAC_CLK		  79
+ #define CLKID_AOCLK_GATE	  80
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index baade6f..da1d473 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -18,8 +18,10 @@
+ #define CLKID_USB0		50
+ #define CLKID_USB1		51
+ #define CLKID_USB		55
++#define CLKID_HDMI_PCLK		63
+ #define CLKID_USB1_DDR_BRIDGE	64
+ #define CLKID_USB0_DDR_BRIDGE	65
++#define CLKID_GCLK_VENCI_INT0	77
+ #define CLKID_AO_I2C		93
+ #define CLKID_SD_EMMC_A		94
+ #define CLKID_SD_EMMC_B		95
 -- 
-git-series 0.9.1
+1.9.1
