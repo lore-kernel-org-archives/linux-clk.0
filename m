@@ -1,86 +1,135 @@
-Return-Path: <linux@roeck-us.net>
-Date: Mon, 30 Jan 2017 14:51:38 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: add more managed APIs
-Message-ID: <20170130225138.GA14987@roeck-us.net>
-References: <20170128184047.GA24957@dtor-ws>
- <20170128190309.GN27312@n2100.armlinux.org.uk>
- <20170128192207.GA38136@dtor-ws>
- <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
- <20170128233911.GO27312@n2100.armlinux.org.uk>
- <20170129180743.GA10917@dtor-ws>
- <20170130185551.GM8801@codeaurora.org>
- <20170130192214.GC11199@roeck-us.net>
- <20170130214227.GI27312@n2100.armlinux.org.uk>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 17 Jan 2017 17:46:36 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+	wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org,
+	mark.rutland@arm.com, robh+dt@kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+	thomas.petazzoni@free-electrons.com,
+	alexandre.belloni@free-electrons.com
+Subject: Re: [PATCH v2 03/10] dt-bindings: sound: Add new reset compatible
+ for sun4i-i2s
+Message-ID: <20170117164636.qhkxvqcs7l732wxk@lukather>
+References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
+ <20170117140230.23142-4-mylene.josserand@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170130214227.GI27312@n2100.armlinux.org.uk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="cfzbmitlkifb4uic"
+In-Reply-To: <20170117140230.23142-4-mylene.josserand@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jan 30, 2017 at 09:42:28PM +0000, Russell King - ARM Linux wrote:
-> On Mon, Jan 30, 2017 at 11:22:14AM -0800, Guenter Roeck wrote:
-> > Maybe the additional calls make sense; I can imagine they would.
-> > However, I personally would be a bit wary of changing the initialization
-> > order of multi-clock initializations, and I am not sure how a single call
-> > could address setting the rate ([devm_]clk_get_setrate_prepare_enable()
-> > seems like a bit too much).
-> > 
-> > [ On a side note, why is there no clk_get_prepare_enable() and
-> >   clk_get_prepare() ? Maybe it would be better to introduce those
-> >   together with the matching devm_ functions in a separate patch
-> >   if they are useful. ]
-> 
-> If you take the view that trying to keep clocks disabled is a good way
-> to save power, then you'd have the clk_prepare() or maybe
-> clk_prepare_enable() in your runtime PM resume handler, or maybe even
-> deeper in the driver... the original design goal of the clk API was to
-> allow power saving and clock control.
-> 
-> With that in mind, getting and enabling the clock together in the
-> probe function didn't make sense.
-> 
-> I feel that aspect has been somewhat lost, and people now regard much
-> of the clk API as a bit of a probe-time nusience.
-> 
 
-While I understand what you are saying, I think just focusing on power
-savings paints a bit of a simplistic view of the clock API and its use.
-Power saving is not its only use case. In a system where power saving isn't
-the highest priority (say, in a high end switch), it is still extremely
-valuable, providing a unified API to the clocks in the system (and there
-are lots of clocks in a high end switch). Having seen what happens if there
-is _no_ unified API (ie a complete mess of per-clock-driver calls all over
-the place), I consider this as at least as or even more important than its
-power savings potential. In this use case, one would normally both get and
-enable the clock (or, much more likely, clocks) in the probe function.
-One would also need remove functions, since interfaces in a high end switch
-are typically OIR capable.
+--cfzbmitlkifb4uic
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For my part, I stumbled over the lack of devm functions for clock APIs recently
-when trying to convert watchdog drivers to use devm functions where possible.
-Many watchdog drivers do use the clock API to only enable the clock when the
-watchdog is actually running. However, there are several which prepare and
-enable the clock at probe time, and disable/unprepare on remove. Would it be
-possible to convert those to only prepare/enable the clocks if the watchdog
-is actually enabled ? Possibly, but I am sure that there are cases where that
-is not possible, or feasible. Either way, watchdog drivers are usually only
-loaded when actually used, so trying to optimize clock usage would often be
-more pain than it is worth.
+On Tue, Jan 17, 2017 at 03:02:23PM +0100, Myl=E8ne Josserand wrote:
+> Add a new compatible for sun4i-i2s driver to handle some
+> SoCs that have a reset line that must be asserted/deasserted.
+>=20
+> This new compatible, "allwinner,sun6i-a31-i2s", requires two
+> properties:
+> 	- resets: phandle to the reset line
+> 	- reset-names: the name of the reset line ("rst").
+> Except these differences, the compatible is identical to previous one
+> which will not handle a reset line.
+>=20
+> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
+> ---
+>  .../devicetree/bindings/sound/sun4i-i2s.txt        | 23 ++++++++++++++++=
+++++++
+>  1 file changed, 23 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/sound/sun4i-i2s.txt b/Docu=
+mentation/devicetree/bindings/sound/sun4i-i2s.txt
+> index 7a2c0945fd22..f673206e309b 100644
+> --- a/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
+> +++ b/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
+> @@ -7,6 +7,7 @@ Required properties:
+> =20
+>  - compatible: should be one of the following:
+>     - "allwinner,sun4i-a10-i2s"
+> +   - "allwinner,sun6i-a31-i2s" for controller with reset lines
 
-When I did that conversion, I started out using devm_add_action_or_reset().
-While that does work, it was pointed out that using devm functions for the
-clock APIs would be a much better solution. As it turns out, devm_add_action()
-and devm_add_action_or_reset() is already being used by various drivers to
-work around the lack of devm functions for the clock API. With that in mind,
-have a choice to make - we can continue forcing people to do that, or we can
-introduce devm functions. My vote is for the latter.
+That's not only for controllers with reset lines, but for the
+controllers found in the A31 (and later). I'd simply drop the last
+part of that line.
 
-Thanks,
-Guenter
+>  - reg: physical base address of the controller and length of memory mapp=
+ed
+>    region.
+>  - interrupts: should contain the I2S interrupt.
+> @@ -19,7 +20,13 @@ Required properties:
+>     - "mod" : module clock for the I2S controller
+>  - #sound-dai-cells : Must be equal to 0
+> =20
+> +Required properties for the following compatibles:
+> +		- "allwinner,sun6i-a31-i2s"
+> +- resets: phandle to the reset line for this codec
+> +- reset-names: Contains the reset signal name "rst"
+
+You don't need reset-names if there's a single reset line.
+
+> +
+>  Example:
+> +For "allwinner,sun4i-a10-i2s":
+> =20
+>  i2s0: i2s@01c22400 {
+>  	#sound-dai-cells =3D <0>;
+> @@ -32,3 +39,19 @@ i2s0: i2s@01c22400 {
+>  	       <&dma SUN4I_DMA_NORMAL 3>;
+>  	dma-names =3D "rx", "tx";
+>  };
+> +
+> +For "allwinner,sun6i-a31-i2s":
+> +
+> +dai: dai@01c22c00 {
+> +	#sound-dai-cells =3D <0>;
+> +	compatible =3D "allwinner,sun6i-a31-i2s";
+> +	reg =3D <0x01c22c00 0x200>;
+> +	interrupts =3D <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+> +	clocks =3D <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
+> +	clock-names =3D "apb", "mod";
+> +	resets =3D <&ccu RST_BUS_CODEC>;
+> +	reset-names =3D "rst";
+> +	dmas =3D <&dma 15>, /* AUDIO_CODEC port */
+> +		<&dma 15>; /* AUDIO_CODEC port */
+> +	dma-names =3D "rx", "tx";
+> +};
+
+And we already have an example, so there's no need to add a new one
+either.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--cfzbmitlkifb4uic
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYfkpsAAoJEBx+YmzsjxAg3i4QAIeSP1QjdxbRrXzNFADo00Nz
+vT1DqDV/M+JelnUIlz4Tbd5iszDnAbn61gp0qoXyq4VsB65dq3O+q+GIfdEd9G9g
+mgQd6KgzMYTVxtCEAhrditQEKLiHHirRS+0HHaiMAKODAD6cMNYXQpt3HZf2/95d
+0CBt+rgzt1XMfc/QhQpnwmI44LfcTUSQpg0y/Tuz6HcRsYJu94gnVLP2Sbf2y7HH
+kgb18/H5tEtlsQZeo7maeEcOTJi5hAIF60uaG/xoTngfdPce2r3mKanuNQU5CQEN
+UkWcMx/uQXy/doFAhrzMDCsQIwL+Qo2aC+RUn+HRfEuKSDRv3Pe3jQxnRljlW5HP
+xTeeoZv+tIvU15bt310T3ODRQPaOA/2r5+mLEqBoWg+xx5oih+7WHDI4NwHOmDCS
+Ix6kMPJHwdzT3FVgpMr9CqklKSh6Yz4QmEmyCeADIGrPnrX2PKCsNL5qQ2207vdc
+augKIQvDpJmxFJTHQaPVxm3xQEcGu+DUhqTlQNrpa3iewosc7HeJuKMpqtwVRLmk
+WKhEzpMbChKaQrsHyBiu8fDMC88nxbt41OnFtmkrCdd7SuWs1IT6R3m3ioJ7KzMn
+6L4oz/xZ2ko4TKlAX+NSs4OgaVdgTYs003oxbAl6PZtsiB6yZ4DBKywnc9GcgYTI
+ZNRD7K2x43UlMDkjZ+LR
+=lqJ0
+-----END PGP SIGNATURE-----
+
+--cfzbmitlkifb4uic--
