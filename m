@@ -1,59 +1,92 @@
-Return-Path: <jacobchen110@gmail.com>
+Return-Path: <mylene.josserand@free-electrons.com>
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	mark.rutland@arm.com,
+	robh+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	thomas.petazzoni@free-electrons.com,
+	mylene.josserand@free-electrons.com,
+	alexandre.belloni@free-electrons.com
+Subject: [PATCH v2 06/10] ASoC: sun8i-codec-analog: Add amplifier event to fix first delay
+Date: Tue, 17 Jan 2017 15:02:26 +0100
+Message-Id: <20170117140230.23142-7-mylene.josserand@free-electrons.com>
+In-Reply-To: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
+References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <1484718161-27702-3-git-send-email-jacob-chen@iotwrt.com>
-References: <1484718161-27702-1-git-send-email-jacob-chen@iotwrt.com> <1484718161-27702-3-git-send-email-jacob-chen@iotwrt.com>
-From: Jacob Chen <jacobchen110@gmail.com>
-Date: Sun, 22 Jan 2017 17:02:17 +0800
-Message-ID: <CAFLEztTwyjqz0-2LriDp2WAyPR-g28RZT3VPA5vfSK5SSHTx8Q@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] clk: rockchip: rk3288: make all niu clocks critical
-To: Heiko Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org
-Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	zhangqing@rock-chips.com, Xing Zheng <zhengxing@rock-chips.com>,
-	Jacob Chen <jacob-chen@iotwrt.com>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-2017-01-18 13:42 GMT+08:00 Jacob Chen <jacob-chen@iotwrt.com>:
-> NIU clocks are related to the interconnect and it's important to other blocks.
-> Since we don't have a driver to handle it, we should always enable it to avoid
-> casually close.
->
-> Make all of them critical,so that we don't have to each clock on its own
-> once things break.
->
-> Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
-> ---
->  drivers/clk/rockchip/clk-rk3288.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-> index 3d02aa2..c50386c 100644
-> --- a/drivers/clk/rockchip/clk-rk3288.c
-> +++ b/drivers/clk/rockchip/clk-rk3288.c
-> @@ -808,8 +808,15 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
->  static const char *const rk3288_critical_clocks[] __initconst = {
->         "aclk_cpu",
->         "aclk_peri",
-> +       "aclk_peri_niu",
-> +       "aclk_vio0_niu",
-> +       "aclk_vio1_niu",
-> +       "aclk_rga_niu",
->         "hclk_peri",
-> +       "hclk_vio_niu",
-> +       "pclk_alive_niu",
->         "pclk_pd_pmu",
-> +       "pclk_pmu_niu",
->  };
->
->  static void __iomem *rk3288_cru_base;
-> --
-> 2.7.4
->
+When playing a sound for the first time, a short delay, where the audio
+file is not played, can be noticed.
+On a second play (right after), the sound is played correctly.
+If we wait a short time (~5 sec which corresponds to the aplay
+timeout), the delay is back.
 
-I just got an another bug that caused by closed niu clock.
-Making niu clock always enabled is really useful, it could save me a
-lot of time.....
+This patch fixes it by using an event on headphone amplifier.
+It allows to keep the amplifier enable while playing a sound.
+A delay of 700ms allows to wait that the amplifier is powered-up
+before playing the sound.
 
-I just wonder why we don't do that before.  Would it have great impact
-on power consumption?
+Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+---
+ sound/soc/sunxi/sun8i-codec-analog.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/sunxi/sun8i-codec-analog.c b/sound/soc/sunxi/sun8i-codec-analog.c
+index af02290ebe49..72331332b72e 100644
+--- a/sound/soc/sunxi/sun8i-codec-analog.c
++++ b/sound/soc/sunxi/sun8i-codec-analog.c
+@@ -398,11 +398,37 @@ static const struct snd_kcontrol_new sun8i_codec_hp_src[] = {
+ 		      sun8i_codec_hp_src_enum),
+ };
+ 
++static int sun8i_headphone_amp_event(struct snd_soc_dapm_widget *w,
++				     struct snd_kcontrol *k, int event)
++{
++	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
++
++	if (SND_SOC_DAPM_EVENT_ON(event)) {
++		snd_soc_component_update_bits(component, SUN8I_ADDA_PAEN_HP_CTRL,
++					      BIT(SUN8I_ADDA_PAEN_HP_CTRL_HPPAEN),
++					      BIT(SUN8I_ADDA_PAEN_HP_CTRL_HPPAEN));
++		/*
++		 * Need a delay to have the amplifier up. 700ms seems the best
++		 * compromise between the time to let the amplifier up and the
++		 * time not to feel this delay while playing a sound.
++		 */
++		msleep(700);
++	} else if (SND_SOC_DAPM_EVENT_OFF(event)) {
++		snd_soc_component_update_bits(component, SUN8I_ADDA_PAEN_HP_CTRL,
++					      BIT(SUN8I_ADDA_PAEN_HP_CTRL_HPPAEN),
++					      0x0);
++	}
++
++	return 0;
++}
++
+ static const struct snd_soc_dapm_widget sun8i_codec_headphone_widgets[] = {
+ 	SND_SOC_DAPM_MUX("Headphone Source Playback Route",
+ 			 SND_SOC_NOPM, 0, 0, sun8i_codec_hp_src),
+-	SND_SOC_DAPM_OUT_DRV("Headphone Amp", SUN8I_ADDA_PAEN_HP_CTRL,
+-			     SUN8I_ADDA_PAEN_HP_CTRL_HPPAEN, 0, NULL, 0),
++	SND_SOC_DAPM_OUT_DRV_E("Headphone Amp", SUN8I_ADDA_PAEN_HP_CTRL,
++			       SUN8I_ADDA_PAEN_HP_CTRL_HPPAEN, 0, NULL, 0,
++			       sun8i_headphone_amp_event,
++			       SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_PRE_PMD),
+ 	SND_SOC_DAPM_SUPPLY("HPCOM Protection", SUN8I_ADDA_PAEN_HP_CTRL,
+ 			    SUN8I_ADDA_PAEN_HP_CTRL_COMPTEN, 0, NULL, 0),
+ 	SND_SOC_DAPM_REG(snd_soc_dapm_supply, "HPCOM", SUN8I_ADDA_PAEN_HP_CTRL,
+-- 
+2.11.0
