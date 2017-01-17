@@ -1,108 +1,362 @@
-Return-Path: <linux@roeck-us.net>
-Date: Tue, 31 Jan 2017 11:34:37 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King - ARM Linux <linux@armlinux.org.uk>,
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Florian Fainelli <f.fainelli@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-clk@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] clk: add more managed APIs
-Message-ID: <20170131193437.GA7903@roeck-us.net>
-References: <20170128190309.GN27312@n2100.armlinux.org.uk>
- <20170128192207.GA38136@dtor-ws>
- <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
- <20170128233911.GO27312@n2100.armlinux.org.uk>
- <20170129180743.GA10917@dtor-ws>
- <20170130185551.GM8801@codeaurora.org>
- <20170130192214.GC11199@roeck-us.net>
- <20170131005957.GB35974@dtor-ws>
- <20170131172058.GA15184@roeck-us.net>
- <CAKdAkRT7iPdw877GxZCxa5h+mnczgksmLnpuuF+MuLPwP6zBkw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAKdAkRT7iPdw877GxZCxa5h+mnczgksmLnpuuF+MuLPwP6zBkw@mail.gmail.com>
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-clk@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH v2 3/3] clk: bcm2835: Add leaf clock measurement support, disabled by default
+Date: Wed, 18 Jan 2017 07:31:57 +1100
+Message-Id: <20170117203157.23822-3-eric@anholt.net>
+In-Reply-To: <20170117203157.23822-1-eric@anholt.net>
+References: <20170117203157.23822-1-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 31, 2017 at 10:26:29AM -0800, Dmitry Torokhov wrote:
-> On Tue, Jan 31, 2017 at 9:20 AM, Guenter Roeck <linux@roeck-us.net> wrote:
-> > On Mon, Jan 30, 2017 at 04:59:57PM -0800, Dmitry Torokhov wrote:
-> >> On Mon, Jan 30, 2017 at 11:22:14AM -0800, Guenter Roeck wrote:
-> >> > On Mon, Jan 30, 2017 at 10:55:51AM -0800, Stephen Boyd wrote:
-> >> > > On 01/29, Dmitry Torokhov wrote:
-> >> > > > When converting a driver to managed resources it is desirable to be able to
-> >> > > > manage all resources in the same fashion. This change allows managing
-> >> > > > clocks in the same way we manage many other resources.
-> >> > >
-> >> > > Can you please add 'managing clock prepared and enabled state in
-> >> > > the same way'?
-> >> > >
-> >> > > The current wording makes it sound like we don't have
-> >> > > devm_clk_get() when we do.
-> >> > >
-> >> > > >
-> >> > > > This adds the following managed APIs:
-> >> > > >
-> >> > > > - devm_clk_prepare()/devm_clk_unprepare();
-> >> > > > - devm_clk_prepare_enable()/devm_clk_disable_unprepare().
-> >> > >
-> >> > > Wouldn't this be preceded by a devm_clk_get() call? Wouldn't it
-> >> > > be even shorter to have the APIs
-> >> > >
-> >> > >   devm_clk_get_and_prepare()/devm_clk_unprepare_and_put()
-> >> > >   devm_clk_get_and_prepare_enable()/devm_clk_disable_unprepare_and_put()
-> >> > >
-> >> > > instead?
-> >> > >
-> >> > In many cases I see
-> >> >
-> >> >     devm_clk_get(clk1);
-> >> >     devm_clk_get(clk2);
-> >> >     clk_prepare_enable(clk1);
-> >> >     clk_prepare_enable(clk2);
-> >> >
-> >> > Sometimes the calls are intertwined with setting the clock rates.
-> >> >
-> >> >     devm_clk_get(clk);
-> >> >     clk_set_rate(clk, rate);
-> >> >     clk_prepare_enable(clk);
-> >> >
-> >> > Maybe the additional calls make sense; I can imagine they would.
-> >> > However, I personally would be a bit wary of changing the initialization
-> >> > order of multi-clock initializations, and I am not sure how a single call
-> >> > could address setting the rate ([devm_]clk_get_setrate_prepare_enable()
-> >> > seems like a bit too much).
-> >> >
-> >> > [ On a side note, why is there no clk_get_prepare_enable() and
-> >> >   clk_get_prepare() ? Maybe it would be better to introduce those
-> >> >   together with the matching devm_ functions in a separate patch
-> >> >   if they are useful. ]
-> >> >
-> >> > > Is there any other subsystem that has similar functionality?
-> >> > > Regulators? GPIOs? Resets? I'm just curious if those subsystems
-> >> > > also need similar changes.
-> >> > >
-> >> > Ultimately yes, and most already do. If I recall correctly, I tried to
-> >> > introduce devm_ functions for regulators some time ago, but that was
-> >> > rejected with the comment that it would invite misuse.  At the time
-> >> > I accepted that; today my reaction would be to counter that pretty much
-> >> > everything can be misused, and that the potential for misuse should not
-> >> > penaltize all the valid use cases.
-> >>
-> >> I think we should ping Mark again. The only thing we are achieving is
-> >> that everyone is using devm_add_action_or_reset() with wrappers around
-> >> regulator_put().
-> >>
-> > regulator_get() has an equivalent devm_regulator_get(). Maybe it was since
-> > added, or I was thinking about a different function.
-> 
-> I think we also need devm_regulator_enable().
-> 
-Ah, yes, that was it [1]. And, yes, I do see some devm_add_action() calls
-around regulator_enable().
+This proved incredibly useful during debugging of the DSI driver, to
+see if our clocks were running at rate we requested.  Let's leave it
+here for the next person interacting with clocks on the platform (and
+so that hopefully we can just hook it up to debugfs some day).
 
-Guenter
-
+Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
-[1] https://lkml.org/lkml/2014/2/1/131
+ drivers/clk/bcm/clk-bcm2835.c | 144 ++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 119 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 2e7423d8f5bb..025853870619 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -39,6 +39,7 @@
+ #include <linux/clk.h>
+ #include <linux/clk/bcm2835.h>
+ #include <linux/debugfs.h>
++#include <linux/delay.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+@@ -98,7 +99,8 @@
+ #define CM_SMIDIV		0x0b4
+ /* no definition for 0x0b8  and 0x0bc */
+ #define CM_TCNTCTL		0x0c0
+-#define CM_TCNTDIV		0x0c4
++# define CM_TCNT_SRC1_SHIFT		12
++#define CM_TCNTCNT		0x0c4
+ #define CM_TECCTL		0x0c8
+ #define CM_TECDIV		0x0cc
+ #define CM_TD0CTL		0x0d0
+@@ -338,6 +340,61 @@ static inline u32 cprman_read(struct bcm2835_cprman *cprman, u32 reg)
+ 	return readl(cprman->regs + reg);
+ }
+ 
++/* Does a cycle of measuring a clock through the TCNT clock, which may
++ * source from many other clocks in the system.
++ */
++static unsigned long bcm2835_measure_tcnt_mux(struct bcm2835_cprman *cprman,
++					      u32 tcnt_mux)
++{
++	u32 osccount = 19200; /* 1ms */
++	u32 count;
++	ktime_t timeout;
++
++	spin_lock(&cprman->regs_lock);
++
++	cprman_write(cprman, CM_TCNTCTL, CM_KILL);
++
++	cprman_write(cprman, CM_TCNTCTL,
++		     (tcnt_mux & CM_SRC_MASK) |
++		     (tcnt_mux >> CM_SRC_BITS) << CM_TCNT_SRC1_SHIFT);
++
++	cprman_write(cprman, CM_OSCCOUNT, osccount);
++
++	/* do a kind delay at the start */
++	mdelay(1);
++
++	/* Finish off whatever is left of OSCCOUNT */
++	timeout = ktime_add_ns(ktime_get(), LOCK_TIMEOUT_NS);
++	while (cprman_read(cprman, CM_OSCCOUNT)) {
++		if (ktime_after(ktime_get(), timeout)) {
++			dev_err(cprman->dev, "timeout waiting for OSCCOUNT\n");
++			count = 0;
++			goto out;
++		}
++		cpu_relax();
++	}
++
++	/* Wait for BUSY to clear. */
++	timeout = ktime_add_ns(ktime_get(), LOCK_TIMEOUT_NS);
++	while (cprman_read(cprman, CM_TCNTCTL) & CM_BUSY) {
++		if (ktime_after(ktime_get(), timeout)) {
++			dev_err(cprman->dev, "timeout waiting for !BUSY\n");
++			count = 0;
++			goto out;
++		}
++		cpu_relax();
++	}
++
++	count = cprman_read(cprman, CM_TCNTCNT);
++
++	cprman_write(cprman, CM_TCNTCTL, 0);
++
++out:
++	spin_unlock(&cprman->regs_lock);
++
++	return count * 1000;
++}
++
+ static int bcm2835_debugfs_regset(struct bcm2835_cprman *cprman, u32 base,
+ 				  struct debugfs_reg32 *regs, size_t nregs,
+ 				  struct dentry *dentry)
+@@ -473,6 +530,8 @@ struct bcm2835_clock_data {
+ 
+ 	bool is_vpu_clock;
+ 	bool is_mash_clock;
++
++	u32 tcnt_mux;
+ };
+ 
+ struct bcm2835_gate_data {
+@@ -1008,6 +1067,17 @@ static int bcm2835_clock_on(struct clk_hw *hw)
+ 		     CM_GATE);
+ 	spin_unlock(&cprman->regs_lock);
+ 
++	/* Debug code to measure the clock once it's turned on to see
++	 * if it's ticking at the rate we expect.
++	 */
++	if (data->tcnt_mux && false) {
++		dev_info(cprman->dev,
++			 "clk %s: rate %ld, measure %ld\n",
++			 data->name,
++			 clk_hw_get_rate(hw),
++			 bcm2835_measure_tcnt_mux(cprman, data->tcnt_mux));
++	}
++
+ 	return 0;
+ }
+ 
+@@ -1765,7 +1835,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.ctl_reg = CM_OTPCTL,
+ 		.div_reg = CM_OTPDIV,
+ 		.int_bits = 4,
+-		.frac_bits = 0),
++		.frac_bits = 0,
++		.tcnt_mux = 6),
+ 	/*
+ 	 * Used for a 1Mhz clock for the system clocksource, and also used
+ 	 * bythe watchdog timer and the camera pulse generator.
+@@ -1799,13 +1870,15 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.ctl_reg = CM_H264CTL,
+ 		.div_reg = CM_H264DIV,
+ 		.int_bits = 4,
+-		.frac_bits = 8),
++		.frac_bits = 8,
++		.tcnt_mux = 1),
+ 	[BCM2835_CLOCK_ISP]	= REGISTER_VPU_CLK(
+ 		.name = "isp",
+ 		.ctl_reg = CM_ISPCTL,
+ 		.div_reg = CM_ISPDIV,
+ 		.int_bits = 4,
+-		.frac_bits = 8),
++		.frac_bits = 8,
++		.tcnt_mux = 2),
+ 
+ 	/*
+ 	 * Secondary SDRAM clock.  Used for low-voltage modes when the PLL
+@@ -1816,13 +1889,15 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.ctl_reg = CM_SDCCTL,
+ 		.div_reg = CM_SDCDIV,
+ 		.int_bits = 6,
+-		.frac_bits = 0),
++		.frac_bits = 0,
++		.tcnt_mux = 3),
+ 	[BCM2835_CLOCK_V3D]	= REGISTER_VPU_CLK(
+ 		.name = "v3d",
+ 		.ctl_reg = CM_V3DCTL,
+ 		.div_reg = CM_V3DDIV,
+ 		.int_bits = 4,
+-		.frac_bits = 8),
++		.frac_bits = 8,
++		.tcnt_mux = 4),
+ 	/*
+ 	 * VPU clock.  This doesn't have an enable bit, since it drives
+ 	 * the bus for everything else, and is special so it doesn't need
+@@ -1836,7 +1911,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.int_bits = 12,
+ 		.frac_bits = 8,
+ 		.flags = CLK_IS_CRITICAL,
+-		.is_vpu_clock = true),
++		.is_vpu_clock = true,
++		.tcnt_mux = 5),
+ 
+ 	/* clocks with per parent mux */
+ 	[BCM2835_CLOCK_AVEO]	= REGISTER_PER_CLK(
+@@ -1844,19 +1920,22 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.ctl_reg = CM_AVEOCTL,
+ 		.div_reg = CM_AVEODIV,
+ 		.int_bits = 4,
+-		.frac_bits = 0),
++		.frac_bits = 0,
++		.tcnt_mux = 38),
+ 	[BCM2835_CLOCK_CAM0]	= REGISTER_PER_CLK(
+ 		.name = "cam0",
+ 		.ctl_reg = CM_CAM0CTL,
+ 		.div_reg = CM_CAM0DIV,
+ 		.int_bits = 4,
+-		.frac_bits = 8),
++		.frac_bits = 8,
++		.tcnt_mux = 14),
+ 	[BCM2835_CLOCK_CAM1]	= REGISTER_PER_CLK(
+ 		.name = "cam1",
+ 		.ctl_reg = CM_CAM1CTL,
+ 		.div_reg = CM_CAM1DIV,
+ 		.int_bits = 4,
+-		.frac_bits = 8),
++		.frac_bits = 8,
++		.tcnt_mux = 15),
+ 	[BCM2835_CLOCK_DFT]	= REGISTER_PER_CLK(
+ 		.name = "dft",
+ 		.ctl_reg = CM_DFTCTL,
+@@ -1868,7 +1947,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.ctl_reg = CM_DPICTL,
+ 		.div_reg = CM_DPIDIV,
+ 		.int_bits = 4,
+-		.frac_bits = 8),
++		.frac_bits = 8,
++		.tcnt_mux = 17),
+ 
+ 	/* Arasan EMMC clock */
+ 	[BCM2835_CLOCK_EMMC]	= REGISTER_PER_CLK(
+@@ -1876,7 +1956,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.ctl_reg = CM_EMMCCTL,
+ 		.div_reg = CM_EMMCDIV,
+ 		.int_bits = 4,
+-		.frac_bits = 8),
++		.frac_bits = 8,
++		.tcnt_mux = 39),
+ 
+ 	/* General purpose (GPIO) clocks */
+ 	[BCM2835_CLOCK_GP0]	= REGISTER_PER_CLK(
+@@ -1885,7 +1966,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.div_reg = CM_GP0DIV,
+ 		.int_bits = 12,
+ 		.frac_bits = 12,
+-		.is_mash_clock = true),
++		.is_mash_clock = true,
++		.tcnt_mux = 20),
+ 	[BCM2835_CLOCK_GP1]	= REGISTER_PER_CLK(
+ 		.name = "gp1",
+ 		.ctl_reg = CM_GP1CTL,
+@@ -1893,7 +1975,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.int_bits = 12,
+ 		.frac_bits = 12,
+ 		.flags = CLK_IS_CRITICAL,
+-		.is_mash_clock = true),
++		.is_mash_clock = true,
++		.tcnt_mux = 21),
+ 	[BCM2835_CLOCK_GP2]	= REGISTER_PER_CLK(
+ 		.name = "gp2",
+ 		.ctl_reg = CM_GP2CTL,
+@@ -1908,40 +1991,46 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.ctl_reg = CM_HSMCTL,
+ 		.div_reg = CM_HSMDIV,
+ 		.int_bits = 4,
+-		.frac_bits = 8),
++		.frac_bits = 8,
++		.tcnt_mux = 22),
+ 	[BCM2835_CLOCK_PCM]	= REGISTER_PER_CLK(
+ 		.name = "pcm",
+ 		.ctl_reg = CM_PCMCTL,
+ 		.div_reg = CM_PCMDIV,
+ 		.int_bits = 12,
+ 		.frac_bits = 12,
+-		.is_mash_clock = true),
++		.is_mash_clock = true,
++		.tcnt_mux = 23),
+ 	[BCM2835_CLOCK_PWM]	= REGISTER_PER_CLK(
+ 		.name = "pwm",
+ 		.ctl_reg = CM_PWMCTL,
+ 		.div_reg = CM_PWMDIV,
+ 		.int_bits = 12,
+ 		.frac_bits = 12,
+-		.is_mash_clock = true),
++		.is_mash_clock = true,
++		.tcnt_mux = 24),
+ 	[BCM2835_CLOCK_SLIM]	= REGISTER_PER_CLK(
+ 		.name = "slim",
+ 		.ctl_reg = CM_SLIMCTL,
+ 		.div_reg = CM_SLIMDIV,
+ 		.int_bits = 12,
+ 		.frac_bits = 12,
+-		.is_mash_clock = true),
++		.is_mash_clock = true,
++		.tcnt_mux = 25),
+ 	[BCM2835_CLOCK_SMI]	= REGISTER_PER_CLK(
+ 		.name = "smi",
+ 		.ctl_reg = CM_SMICTL,
+ 		.div_reg = CM_SMIDIV,
+ 		.int_bits = 4,
+-		.frac_bits = 8),
++		.frac_bits = 8,
++		.tcnt_mux = 27),
+ 	[BCM2835_CLOCK_UART]	= REGISTER_PER_CLK(
+ 		.name = "uart",
+ 		.ctl_reg = CM_UARTCTL,
+ 		.div_reg = CM_UARTDIV,
+ 		.int_bits = 10,
+-		.frac_bits = 12),
++		.frac_bits = 12,
++		.tcnt_mux = 28),
+ 
+ 	/* TV encoder clock.  Only operating frequency is 108Mhz.  */
+ 	[BCM2835_CLOCK_VEC]	= REGISTER_PER_CLK(
+@@ -1954,7 +2043,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		 * Allow rate change propagation only on PLLH_AUX which is
+ 		 * assigned index 7 in the parent array.
+ 		 */
+-		.set_rate_parent = BIT(7)),
++		.set_rate_parent = BIT(7),
++		.tcnt_mux = 29),
+ 
+ 	/* dsi clocks */
+ 	[BCM2835_CLOCK_DSI0E]	= REGISTER_PER_CLK(
+@@ -1962,25 +2052,29 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.ctl_reg = CM_DSI0ECTL,
+ 		.div_reg = CM_DSI0EDIV,
+ 		.int_bits = 4,
+-		.frac_bits = 8),
++		.frac_bits = 8,
++		.tcnt_mux = 18),
+ 	[BCM2835_CLOCK_DSI1E]	= REGISTER_PER_CLK(
+ 		.name = "dsi1e",
+ 		.ctl_reg = CM_DSI1ECTL,
+ 		.div_reg = CM_DSI1EDIV,
+ 		.int_bits = 4,
+-		.frac_bits = 8),
++		.frac_bits = 8,
++		.tcnt_mux = 19),
+ 	[BCM2835_CLOCK_DSI0P]	= REGISTER_DSI0_CLK(
+ 		.name = "dsi0p",
+ 		.ctl_reg = CM_DSI0PCTL,
+ 		.div_reg = CM_DSI0PDIV,
+ 		.int_bits = 0,
+-		.frac_bits = 0),
++		.frac_bits = 0,
++		.tcnt_mux = 12),
+ 	[BCM2835_CLOCK_DSI1P]	= REGISTER_DSI1_CLK(
+ 		.name = "dsi1p",
+ 		.ctl_reg = CM_DSI1PCTL,
+ 		.div_reg = CM_DSI1PDIV,
+ 		.int_bits = 0,
+-		.frac_bits = 0),
++		.frac_bits = 0,
++		.tcnt_mux = 13),
+ 
+ 	/* the gates */
+ 
+-- 
+2.11.0
