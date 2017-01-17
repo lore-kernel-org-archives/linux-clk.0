@@ -1,52 +1,108 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [GIT PULL] clk/samsung updates for v4.11, part 2
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <380eea9f-401b-f83f-4420-f89810086278@samsung.com>
-Date: Mon, 30 Jan 2017 18:05:32 +0100
-MIME-version: 1.0
-In-reply-to: <20170127195537.GG8801@codeaurora.org>
-Content-type: text/plain; charset=windows-1252
-References: 
- <CGME20170127172254epcas1p41085b7154dba751e0c19d4f92a8558a7@epcas1p4.samsung.com>
- <3297ef21-a1d6-51b0-4d99-70c9a041c952@samsung.com>
- <20170127195537.GG8801@codeaurora.org>
+Return-Path: <pierre-louis.bossart@linux.intel.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To: linux-clk@vger.kernel.org,
+	x86@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: alsa-devel@alsa-project.org,
+	Irina Tirdea <irina.tirdea@intel.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Mark Brown <broonie@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v7 0/5] Add platform clock for BayTrail platforms
+Date: Tue, 17 Jan 2017 15:57:45 -0600
+Message-Id: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/27/2017 08:55 PM, Stephen Boyd wrote:
-> On 01/27, Sylwester Nawrocki wrote:
->> Hi Stephen, Mike,
->>
->> The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
->>
->>   Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
->>
->> are available in the git repository at:
->>
->>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-samsung-2
->>
->> for you to fetch changes up to 02c952c8f95fd0adf1835704db95215f57cfc8e6:
->>
->>   clk: samsung: mark s3c...._clk_sleep_init() as __init (2017-01-27 13:30:00 +0100)
->>
->> ----------------------------------------------------------------
->> Exporting clock IDs for Exynos5433 SoC MIPI DSI DPHY,
->> Exynos PLL code updates and overall minor clean-ups.
->>
-> Thanks. Pulled into clk-next.
-> 
-> Can you get your key signed by more people? Maybe others at
-> Samsung?
+These patches specifically enable the audio MCLK required by Baytrail
+CR devices. It is the remaining part of a bigger set of patches
+(already merged in Mark Brown's tree) that enable sound for Baytrail CR
+devices (especially Asus T100TAF) [1]. They include the clock driver
+and clock enabling in the pmc_atom code (along with moving of the
+non-architectural pmc_atom driver code into drivers/platform/x86 as
+suggested by Thomas Gleixner [2]). This move includes a new header in
+include/linux/platform_data/x86/. While there is an agreement that the
+definitions for PMC clocks are not really platform data this location
+is seen as a good-enough compromise with an agreement between Darren
+Hart and Andy Shevchenko [3]
 
-That has been on my todo list for quite long time, thanks for
-reminding.  My key got signed already by one more person and
-there should be two more before I'm sending next pull request.
+[1] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-August/111704.html
+[2] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-October/113936.html
+[3] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-December/115892.html
+
+Changes from v6:
+ - Addressed comments from Stephen Boyd, Andy Shevchenko and Vinod Koul
+ - Renamed clk-byt-plt to clk-pmc-atom
+ - Rebase to 4.10-rc3 (broonie/for-next)
+ - Added helper functions to make error handling more compact
+ - Removed module-related code since it's not possible/supported
+ - Removed useless tests on remove
+ - PMC_CLK_OFFSET move to clk-pcm-atom (more logical)
+ - Split typo correction and makefile fix in separate patches
+ - small fixes (spaces, defaults in switches, alphabetical order, use of
+clk_writel/readl and no test on write, simpler error handling, use of
+while(i--), unsigned loop variables, kernel doc fields, format-patch -M
+ -C -D, use of PLATFORM_DEVID_NONE)
+
+Changes from v5:
+ - fix build error reported by kbuild test robot
+ - split the clk driver code from x86 platform changes
+
+Changes from v4:
+ - move the pmc_atom driver from arch/x86/platform/atom to
+drivers/platform/x86
+
+Changes from v3:
+ - replace devm_kzalloc with devm_kcalloc
+ - add x86 architecture maintainers
+
+Changes from v2:
+ - move clk platform data structures to a separate include file
+ - store clk_hw pointer for the fixed rate clocks
+
+Changes from v1:
+ - register the clk device as child of pmc device
+ - pass iomem pointer from pmc driver to clk driver to avoid using
+pmc_atom_read()/write() and use readl/writel API instead
+ - use devm_clk_hw_register/clkdev_hw_create instead of
+clk_register/clkdev_create
+
+Irina Tirdea (3):
+  clk: x86: Add Atom PMC platform clocks
+  arch/x86/platform/atom: Move pmc_atom to drivers/platform/x86
+  platform/x86: Enable Atom PMC platform clocks
+
+Pierre-Louis Bossart (2):
+  clk: Make x86/ conditional on CONFIG_COMMON_CLK
+  platform/x86: fix typo in comment
+
+ arch/x86/Kconfig                                   |   4 -
+ arch/x86/platform/atom/Makefile                    |   1 -
+ drivers/acpi/acpi_lpss.c                           |   2 +-
+ drivers/clk/Makefile                               |   2 +
+ drivers/clk/x86/Makefile                           |   1 +
+ drivers/clk/x86/clk-pmc-atom.c                     | 373 +++++++++++++++++++++
+ drivers/platform/x86/Kconfig                       |   5 +
+ drivers/platform/x86/Makefile                      |   1 +
+ .../atom => drivers/platform/x86}/pmc_atom.c       |  88 ++++-
+ include/linux/platform_data/x86/clk-pmc-atom.h     |  44 +++
+ .../linux/platform_data/x86}/pmc_atom.h            |   2 +-
+ 11 files changed, 508 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/clk/x86/clk-pmc-atom.c
+ rename {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c (87%)
+ create mode 100644 include/linux/platform_data/x86/clk-pmc-atom.h
+ rename {arch/x86/include/asm => include/linux/platform_data/x86}/pmc_atom.h (98%)
 
 -- 
-Regards,
-Sylwester
+2.7.4
