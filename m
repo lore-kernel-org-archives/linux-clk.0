@@ -1,39 +1,183 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 18 Jan 2017 15:28:13 -0600
-From: Rob Herring <robh@kernel.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] clk: vc5: Add bindings for IDT VersaClock
- 5P49V5923 and 5P49V5933
-Message-ID: <20170118212813.fhvzntoxxppfuyp2@rob-hp-laptop>
-References: <20170112010324.28068-1-marek.vasut@gmail.com>
+Return-Path: <mylene.josserand@free-electrons.com>
+Subject: Re: [PATCH v2 05/10] ASoC: Add sun8i digital audio codec
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+ maxime.ripard@free-electrons.com, wens@csie.org, mturquette@baylibre.com,
+ sboyd@codeaurora.org, mark.rutland@arm.com, robh+dt@kernel.org
+References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
+ <20170117140230.23142-6-mylene.josserand@free-electrons.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
+ devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+ thomas.petazzoni@free-electrons.com, alexandre.belloni@free-electrons.com
+From: Mylene Josserand <mylene.josserand@free-electrons.com>
+Message-ID: <c1800916-5373-50a8-1b36-0ba5bb69641a@free-electrons.com>
+Date: Tue, 17 Jan 2017 17:20:29 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170112010324.28068-1-marek.vasut@gmail.com>
+In-Reply-To: <20170117140230.23142-6-mylene.josserand@free-electrons.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 12, 2017 at 02:03:23AM +0100, Marek Vasut wrote:
-> Add bindings for IDT VersaClock 5 5P49V5923 and 5P49V5933 chips.
-> These are I2C clock generators with optional clock source from
-> either XTal or dedicated clock generator and, depending on the
-> model, two or more clock outputs.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V2: Add mapping between the clock specifier and physical pins of the chip
-> ---
->  .../devicetree/bindings/clock/idt,versaclock5.txt  | 65 ++++++++++++++++++++++
->  1 file changed, 65 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+Hello everyone,
 
-Acked-by: Rob Herring <robh@kernel.org>
+On 17/01/2017 15:02, Mylène Josserand wrote:
+> Add the sun8i audio codec which handles the digital register of
+> A33 codec.
+> The driver handles only the basic playback from the DAC to headphones.
+> All other features (microphone, capture, etc) will be added later.
+>
+> Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+
+[...]
+
+> +static int sun8i_codec_get_hw_rate(struct snd_pcm_hw_params *params)
+> +{
+> +	unsigned int rate = params_rate(params);
+> +
+> +	switch (rate) {
+> +	case 8000:
+> +	case 7350:
+> +		return 0x0;
+> +	case 11025:
+> +		return 0x1;
+> +	case 12000:
+> +		return 0x2;
+> +	case 16000:
+> +		return 0x3;
+> +	case 22050:
+> +		return 0x4;
+> +	case 24000:
+> +		return 0x5;
+> +	case 32000:
+> +		return 0x6;
+> +	case 44100:
+> +		return 0x7;
+> +	case 48000:
+> +		return 0x8;
+> +	case 96000:
+> +		return 0x9;
+> +	case 192000:
+> +		return 0xa;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static u32 sun8i_codec_get_mod_freq(struct snd_pcm_hw_params *params)
+> +{
+> +	unsigned int rate = params_rate(params);
+> +
+> +	switch (rate) {
+> +	case 176400:
+> +	case 88200:
+> +	case 44100:
+> +	case 22050:
+> +	case 11025:
+> +		return 22579200;
+> +
+> +	case 192000:
+> +	case 128000:
+> +	case 96000:
+> +	case 64000:
+> +	case 48000:
+> +	case 32000:
+> +	case 24000:
+> +	case 16000:
+> +	case 12000:
+> +	case 8000:
+> +		return 24576000;
+> +
+> +	default:
+> +		return 0;
+> +	}
+> +}
+
+This function is not used anymore, I will remove it in v3 (once I will 
+get some reviews).
+
+> +
+> +static int sun8i_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+> +{
+> +	struct sun8i_codec *scodec = snd_soc_codec_get_drvdata(dai->codec);
+> +	u32 value;
+> +
+> +	/* clock masters */
+> +	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+> +	case SND_SOC_DAIFMT_CBS_CFS: /* DAI Slave */
+> +		value = 0x0; /* Codec Master */
+> +		break;
+> +	case SND_SOC_DAIFMT_CBM_CFM: /* DAI Master */
+> +		value = 0x1; /* Codec Slave */
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
+> +			   BIT(SUN8I_AIF1CLK_CTRL_AIF1_MSTR_MOD),
+> +			   value << SUN8I_AIF1CLK_CTRL_AIF1_MSTR_MOD);
+> +
+> +	/* clock inversion */
+> +	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
+> +	case SND_SOC_DAIFMT_NB_NF: /* Normal */
+> +		value = 0x0;
+> +		break;
+> +	case SND_SOC_DAIFMT_IB_IF: /* Inversion */
+> +		value = 0x1;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
+> +			   BIT(SUN8I_AIF1CLK_CTRL_AIF1_BCLK_INV),
+> +			   value << SUN8I_AIF1CLK_CTRL_AIF1_BCLK_INV);
+> +	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
+> +			   BIT(SUN8I_AIF1CLK_CTRL_AIF1_LRCK_INV),
+> +			   value << SUN8I_AIF1CLK_CTRL_AIF1_LRCK_INV);
+> +
+> +	/* DAI format */
+> +	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+> +	case SND_SOC_DAIFMT_I2S:
+> +		value = 0x0;
+> +		break;
+> +	case SND_SOC_DAIFMT_LEFT_J:
+> +		value = 0x1;
+> +		break;
+> +	case SND_SOC_DAIFMT_RIGHT_J:
+> +		value = 0x2;
+> +		break;
+> +	case SND_SOC_DAIFMT_DSP_A:
+> +	case SND_SOC_DAIFMT_DSP_B:
+> +		value = 0x3;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
+> +			   BIT(SUN8I_AIF1CLK_CTRL_AIF1_DATA_FMT),
+> +			   value << SUN8I_AIF1CLK_CTRL_AIF1_DATA_FMT);
+> +
+> +	return 0;
+> +}
+> +
+> +static int sun8i_codec_hw_params(struct snd_pcm_substream *substream,
+> +				 struct snd_pcm_hw_params *params,
+> +				 struct snd_soc_dai *dai)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+
+Same things for these variables.
+
+> +	struct sun8i_codec *scodec = snd_soc_codec_get_drvdata(dai->codec);
+> +	u32 clk_freq;
+> +	int sample_rate, err;
+
+ditto for "clk_freq" and "err" ones.
+
+Sorry about that.
+
+Best regards,
+
+-- 
+Mylène Josserand, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
