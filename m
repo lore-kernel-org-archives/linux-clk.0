@@ -1,51 +1,74 @@
 Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 17 Jan 2017 17:49:04 +0100
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 1/2] clk: sunxi-ng: Call divider_round_rate if we only have a single parent
-Date: Tue, 24 Jan 2017 10:41:18 +0100
-Message-Id: <53c56d23af099d8a41460d5ac59a2c792c8d050c.1485250845.git-series.maxime.ripard@free-electrons.com>
+To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+	wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org,
+	mark.rutland@arm.com, robh+dt@kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+	thomas.petazzoni@free-electrons.com,
+	alexandre.belloni@free-electrons.com
+Subject: Re: [PATCH v2 06/10] ASoC: sun8i-codec-analog: Add amplifier event
+ to fix first delay
+Message-ID: <20170117164904.c22f7tmtu67l23dd@lukather>
+References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
+ <20170117140230.23142-7-mylene.josserand@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="sh5nscmqg2dbm6ci"
+In-Reply-To: <20170117140230.23142-7-mylene.josserand@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The divider_get_val function that is used in our determine_rate callback
-doesn't try to change the parent rate at all, while clk_divider_bestdiv,
-used in divider_round_rate, does.
 
-If we have a single parent, call divider_round_rate.
+--sh5nscmqg2dbm6ci
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_div.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+), 0 deletions(-)
+On Tue, Jan 17, 2017 at 03:02:26PM +0100, Myl=E8ne Josserand wrote:
+> When playing a sound for the first time, a short delay, where the audio
+> file is not played, can be noticed.
+> On a second play (right after), the sound is played correctly.
+> If we wait a short time (~5 sec which corresponds to the aplay
+> timeout), the delay is back.
+>=20
+> This patch fixes it by using an event on headphone amplifier.
+> It allows to keep the amplifier enable while playing a sound.
+> A delay of 700ms allows to wait that the amplifier is powered-up
+> before playing the sound.
+>=20
+> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
 
-diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
-index 8659b4cb6c20..4057e6021aa9 100644
---- a/drivers/clk/sunxi-ng/ccu_div.c
-+++ b/drivers/clk/sunxi-ng/ccu_div.c
-@@ -77,6 +77,18 @@ static int ccu_div_determine_rate(struct clk_hw *hw,
- {
- 	struct ccu_div *cd = hw_to_ccu_div(hw);
- 
-+	if (clk_hw_get_num_parents(hw) == 1) {
-+		req->rate = divider_round_rate(hw, req->rate,
-+					       &req->best_parent_rate,
-+					       cd->div.table,
-+					       cd->div.width,
-+					       cd->div.flags);
-+
-+		req->best_parent_hw = clk_hw_get_parent(hw);
-+
-+		return 0;
-+	}
-+
- 	return ccu_mux_helper_determine_rate(&cd->common, &cd->mux,
- 					     req, ccu_div_round_rate, cd);
- }
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-base-commit: 9181f40cede22bff9bc7f26830a4562373f30d73
--- 
-git-series 0.8.11
+Thanks,
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--sh5nscmqg2dbm6ci
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYfksAAAoJEBx+YmzsjxAgmvcP/iyTTH7UECcmmXmjr8IurRLT
+wziep6YhieePCllWYnYj97xEfXsQ2h6ydb7Iiwfy82vCCZL9+KV/qmMIYEPZDMZu
+22cJa304UchxUFiYRyEBEvnU8UqC59m7T7KnSK3XWnFfil3zWcMbAhf43n+Yn2C2
+imd/fsl1hpEV5GMpGV4qh63OKNrBiQrgNPEBf/qFE8rXe58iAbkN46J73hA8NBaf
+eyp59QmRGD0ISKODuZX7StX6Pw/LL27OXV27LUxsYCMiFZVdY4M+AODabZZkwAB1
+4DT2l4Cnhrat5JsTAma02w6Q1qD1Q/I9nO6g2WiKtr6a8Ua7OxuYnFHpjIDLBqKV
++RPNRaGIF5e49y5r4RyZEwfsqQm3TfOdFBGmvtMOnJgaFUm9Z2QdTUMb4Y8HakEL
+yDd/2iyfG+6tyPBRWZ7t3/pCNxHKYzpIqlsD0twFO6y2l8OIeQKLSTYdYLlWwx50
+qJaAJ2dCFjSt+OVSn8dgWESp3RskuvDrdZVGHOLnTqA51ciIPPVDDv2df/aS+j2Q
+E49QuRk2BodC048+jrD/lbLjJaBtx2onbP2tnFXrcfUSqVcdaiY2BeW1naQLC77J
+JpDuhCa/uc3MtH90l62ABOduq6ustoQPJgBRJOdB/emJYgwh0D/Git9Wm8RItMP+
+egdkzqfxBHhsz2Uxa69V
+=nhSU
+-----END PGP SIGNATURE-----
+
+--sh5nscmqg2dbm6ci--
