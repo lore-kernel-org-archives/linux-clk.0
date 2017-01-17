@@ -1,131 +1,70 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-Subject: Re: [PATCH V4] clk: vc5: Add support for IDT VersaClock 5P49V5923 and
- 5P49V5933
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20170110185020.20645-1-marek.vasut@gmail.com>
- <8755535.oe5AAjKalT@avalon> <f1a287f5-6050-2e19-99c9-e17972e4db88@gmail.com>
- <1574466.IP68Wc09dt@avalon>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <26a25281-f80b-438c-817e-7e27a217767e@gmail.com>
-Date: Wed, 11 Jan 2017 23:05:32 +0100
-MIME-Version: 1.0
-In-Reply-To: <1574466.IP68Wc09dt@avalon>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] clk: renesas: mstp: Make INTC-SYS a critical clock
+Date: Tue, 17 Jan 2017 13:46:30 +0100
+Message-Id: <1484657190-12838-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
+References: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/11/2017 05:42 PM, Laurent Pinchart wrote:
-> Hi Marek,
+INTC-SYS is the module clock for the GIC.  Accessing the GIC while it is
+disabled causes:
 
-Hi!
+    Unhandled fault: asynchronous external abort (0x1211) at 0x00000000
 
-> On Wednesday 11 Jan 2017 16:53:53 Marek Vasut wrote:
->> On 01/11/2017 04:41 PM, Laurent Pinchart wrote:
->>> On Wednesday 11 Jan 2017 15:37:11 Marek Vasut wrote:
->>>> On 01/10/2017 07:50 PM, Marek Vasut wrote:
->>>>> Add driver for IDT VersaClock 5 5P49V5923 and 5P49V5933 chips. These
->>>>> chips have two clock inputs, XTAL or CLK, which are muxed into single
->>>>> PLL/VCO input. In case of 5P49V5923, the XTAL in built into the chip
->>>>> while the 5P49V5923 requires external XTAL.
->>>>>
->>>>> The PLL feeds two fractional dividers. Each fractional divider feeds
->>>>> output mux, which allows selecting between clock from the fractional
->>>>> divider itself or from output mux on output N-1. In case of output
->>>>> mux 0, the output N-1 is instead connected to the output from the mux
->>>>> feeding the PLL.
->>>>>
->>>>> The driver thus far supports only the 5P49V5923 and 5P49V5933, while
->>>>> it should be easily extensible to the whole 5P49V59xx family of chips
->>>>> as they are all pretty similar.
->>>>>
->>>>> Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
->>>>> Cc: Michael Turquette <mturquette@baylibre.com>
->>>>> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> 
-> [snip]
-> 
->>>>> diff --git a/drivers/clk/clk-versaclock5.c
->>>>> b/drivers/clk/clk-versaclock5.c
->>>>> new file mode 100644
->>>>> index 000000000000..14f518e84d6d
->>>>> --- /dev/null
->>>>> +++ b/drivers/clk/clk-versaclock5.c
-> 
-> [snip]
-> 
->>>>> +static long vc5_mux_round_rate(struct clk_hw *hw, unsigned long rate,
->>>>> +			       unsigned long *parent_rate)
->>>>> +{
->>>>> +	unsigned long idiv;
->>>>> +
->>>>> +	/* PLL cannot operate with input clock above 50 MHz. */
->>>>> +	if (rate > 50000000)
->>>>> +		return -EINVAL;
->>>
->>> As this is a PLL constraint, shouldn't it be enforced by
->>> vc5_pll_round_rate() instead ?
->>
->> vc5_pll_round_rate can only enforce PLL output frequency, not input
->> frequency AFAICT .
-> 
-> vc5_pll_round_rate() can modify the parent rate, that seems a good way to 
-> enforce the requirement to me :-) On the other hand I've just realized that 
-> there's an output directly wired to the mux, in which case the mux output rate 
-> can be configured without taking the PLL into account. This probably calls for 
-> enforcing the 50MHz requirement here.
-> 
-> How do you envision this all to work ? If the user modifies the OUT0_I2C_SELB 
-> frequency, the mux divisor will be modified. Does the PLL then automatically 
-> recalculate its divisor to keep the same output frequency ? Doesn't the PLL 
-> input frequency get modified at least temporarily ?
+Currently, the GIC-400 driver cannot enable its module clock for several
+reasons:
+  - It does not use a platform device, so Runtime PM is not an option,
+  - gic_of_init() runs before any clocks are registered, so it cannot
+    enable the clock explicitly,
+  - gic_of_init() cannot return -EPROBE_DEFER, as IRQCHIP_DECLARE()
+    doesn't support deferred probing.
 
-This has to trigger the PLL rate recalculation (to keep in in the bounds
-of supported frequencies) and propagate that down the clock
-tree (to the FODs), yes.
+Hence we have to keep on relying on the boot loader for enabling the
+module clock.
 
->>>>> +	/* CLKIN within range of PLL input, feed directly to PLL. */
->>>>> +	if (*parent_rate <= 50000000)
->>>>> +		return *parent_rate;
->>>>> +
->>>>> +	idiv = DIV_ROUND_UP(*parent_rate, rate);
->>>>> +	if (idiv > 127)
->>>>> +		return -EINVAL;
->>>>> +
->>>>> +	return *parent_rate / idiv;
->>>>> +}
->>
->> [...]
->>
->>>>> +static struct clk_hw *
->>>>> +vc5_of_clk_get(struct of_phandle_args *clkspec, void *data)
->>>>> +{
->>>>> +	struct vc5_driver_data *vc5 = data;
->>>>> +	unsigned int idx = clkspec->args[0];
->>>>> +
->>>>> +	if (idx > 2) {
->>>>> +		pr_err("%s: invalid index %u\n", __func__, idx);
->>>
->>> Does this deserve an error message ?
->>
->> I think it does, the driver will yell if you use incorrect index in the
->> bindings.
-> 
-> Shouldn't it be the caller that complains ? I'd rather have an error message 
-> in the CCF core than duplicating it in all clock drivers.
+To prevent the module clock from being disabled when the CCF core thinks
+it is unused, and thus causing a system lock-up, add a check to the MSTP
+clock driver and enable CLK_IS_CRITICAL. This will make sure the module
+clock is never disabled.
 
-Good point, dropped.
+This is a hard dependency for describing the INTC-SYS clock in DT on
+R-Mobile APE6 and R-Car Gen2.
 
->>>>> +		return ERR_PTR(-EINVAL);
->>>>> +	}
->>>>> +
->>>>> +	return &vc5->clk_out[idx].hw;
->>>>> +}
-> 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This is v2 of "[PATCH/RFC 1/5] clk: renesas: mstp: Never disable
+INTC-SYS".
 
+v2:
+  - Use the new CLK_ENABLE_HAND_OFF flag instead of adding a quirk to
+    cpg_mstp_clock_endisable(),
+  - drivers/clk/shmobile/ was renamed to drivers/clk/renesas/,
+  - Migrate from CLK_ENABLE_HAND_OFF to CLK_IS_CRITICAL.
+---
+ drivers/clk/renesas/clk-mstp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 9375777776d99407..c0319b8acf3521a2 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -144,6 +144,11 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
+ 	init.name = name;
+ 	init.ops = &cpg_mstp_clock_ops;
+ 	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
++	/* INTC-SYS is the module clock of the GIC, and must not be disabled */
++	if (!strcmp(name, "intc-sys")) {
++		pr_debug("MSTP %s setting CLK_IS_CRITICAL\n", name);
++		init.flags |= CLK_IS_CRITICAL;
++	}
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+ 
 -- 
-Best regards,
-Marek Vasut
+1.9.1
