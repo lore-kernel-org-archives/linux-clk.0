@@ -1,29 +1,65 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Jan 2017 16:30:00 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: uniphier: continue probing even if some clocks fail
- to register
-Message-ID: <20170121003000.GR20800@codeaurora.org>
-References: <1484742679-8373-1-git-send-email-yamada.masahiro@socionext.com>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: mturquette@baylibre.com,  sboyd@codeaurora.org,  carlo@caione.org,  linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
+Subject: Re: [PATCH] clk: meson-gxbb: Export HDMI clocks
+References: <1484654928-5640-1-git-send-email-narmstrong@baylibre.com>
+Date: Tue, 17 Jan 2017 08:54:06 -0800
+In-Reply-To: <1484654928-5640-1-git-send-email-narmstrong@baylibre.com> (Neil
+	Armstrong's message of "Tue, 17 Jan 2017 13:08:48 +0100")
+Message-ID: <m2d1fl4ogh.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1484742679-8373-1-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/18, Masahiro Yamada wrote:
-> Do not let the entire probe function fail even if some clocks fail
-> to register.  Let's continue with succeeded clocks.  This will give
-> the system more chances to boot and allow us to investigate the
-> cause of the failure.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Neil Armstrong <narmstrong@baylibre.com> writes:
+
+> Export HDMI clock from internal to dt-bindings.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+
+Acked-by: Kevin Hilman <khilman@baylibre.com>
+
 > ---
-
-Applied to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>  drivers/clk/meson/gxbb.h              | 4 ++--
+>  include/dt-bindings/clock/gxbb-clkc.h | 2 ++
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+> index 0252939..2139e97 100644
+> --- a/drivers/clk/meson/gxbb.h
+> +++ b/drivers/clk/meson/gxbb.h
+> @@ -231,7 +231,7 @@
+>  #define CLKID_AHB_DATA_BUS	  60
+>  #define CLKID_AHB_CTRL_BUS	  61
+>  #define CLKID_HDMI_INTR_SYNC	  62
+> -#define CLKID_HDMI_PCLK		  63
+> +/* CLKID_HDMI_PCLK */
+>  /* CLKID_USB1_DDR_BRIDGE */
+>  /* CLKID_USB0_DDR_BRIDGE */
+>  #define CLKID_MMC_PCLK		  66
+> @@ -245,7 +245,7 @@
+>  #define CLKID_VCLK2_VENCI1	  74
+>  #define CLKID_VCLK2_VENCP0	  75
+>  #define CLKID_VCLK2_VENCP1	  76
+> -#define CLKID_GCLK_VENCI_INT0	  77
+> +/* CLKID_GCLK_VENCI_INT0 */
+>  #define CLKID_GCLK_VENCI_INT	  78
+>  #define CLKID_DAC_CLK		  79
+>  #define CLKID_AOCLK_GATE	  80
+> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+> index baade6f..da1d473 100644
+> --- a/include/dt-bindings/clock/gxbb-clkc.h
+> +++ b/include/dt-bindings/clock/gxbb-clkc.h
+> @@ -18,8 +18,10 @@
+>  #define CLKID_USB0		50
+>  #define CLKID_USB1		51
+>  #define CLKID_USB		55
+> +#define CLKID_HDMI_PCLK		63
+>  #define CLKID_USB1_DDR_BRIDGE	64
+>  #define CLKID_USB0_DDR_BRIDGE	65
+> +#define CLKID_GCLK_VENCI_INT0	77
+>  #define CLKID_AO_I2C		93
+>  #define CLKID_SD_EMMC_A		94
+>  #define CLKID_SD_EMMC_B		95
