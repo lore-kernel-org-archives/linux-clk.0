@@ -1,70 +1,94 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Tue, 17 Jan 2017 10:05:49 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH v2 1/4] arm: sunxi: add support for V3s SoC
+Message-ID: <20170117090549.uqwsiwmclzhx7456@lukather>
+References: <20170116180116.36729-2-icenowy@aosc.xyz>
 MIME-Version: 1.0
-In-Reply-To: <20170120132539.3013-1-linus.walleij@linaro.org>
-References: <20170120132539.3013-1-linus.walleij@linaro.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 20 Jan 2017 16:56:27 +0100
-Message-ID: <CAPDyKFrLfR7Z=B=d76J7kcnhYmhxSpni_gzZYxE6VxAdHYXx=g@mail.gmail.com>
-Subject: Re: [PATCH 2/3 v2] clk: ux500: Add device tree bindings for ABx500 clocks
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170116180116.36729-2-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Zepan <715805855@qq.com>,
+ linux-doc@vger.kernel.org, linux-sunxi@googlegroups.com,
+ Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============2072468263035632966=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20 January 2017 at 14:25, Linus Walleij <linus.walleij@linaro.org> wrote:
-> This adds device tree bindings for the ABx500 clocks on the
-> ST-Ericsson platforms.
->
-> Cc: devicetree@vger.kernel.org
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Stephen, can pick this up once Rob acked it?
-
-Kind regards
-Uffe
+--===============2072468263035632966==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dctuwbv46e3jpg3o"
+Content-Disposition: inline
 
 
+--dctuwbv46e3jpg3o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jan 17, 2017 at 02:01:13AM +0800, Icenowy Zheng wrote:
+> Allwinner V3s is a low-end single-core Cortex-A7 SoC, with 64MB
+> integrated DRAM, and several peripherals.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 > ---
-> ChangeLog v1->v2:
-> - Indicate that the abx500 clocks need to be in a device tree
->   node under an ABx500 MFD device.
-> - Rename the example node to clock-controller.
-> ---
->  .../devicetree/bindings/clock/stericsson,abx500.txt  | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/stericsson,abx500.txt
->
-> diff --git a/Documentation/devicetree/bindings/clock/stericsson,abx500.txt b/Documentation/devicetree/bindings/clock/stericsson,abx500.txt
-> new file mode 100644
-> index 000000000000..dbaa886b223e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/stericsson,abx500.txt
-> @@ -0,0 +1,20 @@
-> +Clock bindings for ST-Ericsson ABx500 clocks
-> +
-> +Required properties :
-> +- compatible : shall contain the following:
-> +  "stericsson,ab8500-clk"
-> +- #clock-cells should be <1>
-> +
-> +The ABx500 clocks need to be placed as a subnode of an AB8500
-> +device node, see mfd/ab8500.txt
-> +
-> +All available clocks are defined as preprocessor macros in
-> +dt-bindings/clock/ste-ab8500.h header and can be used in device
-> +tree sources.
-> +
-> +Example:
-> +
-> +clock-controller {
-> +       compatible = "stericsson,ab8500-clk";
-> +       #clock-cells = <1>;
-> +};
-> --
-> 2.9.3
->
+> Changes in v2:
+> - Used linux-sunxi.org wiki hosted address of V3s datasheet.
+>=20
+> Note: the V3s datasheet contains its user manual.
+
+That would be great to use User Manual in the filename rather than
+datasheet then. The datasheet is something different.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--dctuwbv46e3jpg3o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYfd5tAAoJEBx+YmzsjxAg8XsQALZGuB73kAyxf01CoC+QE7xl
+n1/Snxyu+u1MIwJNNEkgERxbBXutVLJT20XAe7WUFS8D0vcGwig2/r4ejmQkbE/r
+MxSkKcwomiU/w3FTvsHZTNgFRWvbpvZNfLpEG1jPU0uMJn/mp03siGERWZaWdfEI
+CxIQ8Pk2lF3CTtnEq+aQwDDta14U8bLvFHjEJ/xTsU/G8CpqCD8hBEBxNpaytuJm
+E9/YJLi0xQoTsMsp6pmG7Xqz8ugcUGv+n5iSU9oOrZubPxNTeHqFSPcMY3piLRaJ
+aj/TQnZG0CmcdVHGc7MUSHsqblEpQ47ncjCe0Z6dEhW/kPEPbBenqsoKf62GOwIG
+RaxQI4lN4Bu+V/KURO4CT5CoV0WAybuiEeIsGnm/QVs0qNQ3WRZaF4qK6NcXXDoK
+nA/Jjj8yoRSpsdEBVaj8Mp46f1HfA6wh2IWH4l+hsNWV7T/uu0AFiNMOddhoFyT5
+UKixblNRkLPlhJOwytkvENxgPDEti2UQ8h8qE3NiPSerF3FomB7as+5yEqdR7Y9N
+oJLI6ZiZ9H6mXeAC6oVRMbgXncNSNJoFuhugZwcwirqNRYTDQEEDrCxVzpUt/FM4
+ibRSOHqm4WGI75dSTtQslmrdBbG96LdkoyRG51CoWaKYo84q+hC8PUPdqBygD39P
+vzzNxAS2i8I5aKt/nEtI
+=67pK
+-----END PGP SIGNATURE-----
+
+--dctuwbv46e3jpg3o--
+
+
+--===============2072468263035632966==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============2072468263035632966==--
