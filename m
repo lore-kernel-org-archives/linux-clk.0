@@ -1,106 +1,101 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: jic23@kernel.org,
-	knaack.h@gmx.de,
-	lars@metafoo.de,
-	pmeerw@pmeerw.net,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	khilman@baylibre.com,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: carlo@caione.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	narmstrong@baylibre.com,
-	linux-arm-kernel@lists.infradead.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 0/4] Amlogic Meson SAR ADC support
-Date: Sun, 15 Jan 2017 23:42:17 +0100
-Message-Id: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20170111174334.24343-1-martin.blumenstingl@googlemail.com>
-References: <20170111174334.24343-1-martin.blumenstingl@googlemail.com>
+Return-Path: <icenowy@aosc.xyz>
+Message-Id: <20170117201444.EZDei40D@smtp2h.mail.yandex.net>
+Date: Wed, 18 Jan 2017 01:14:30 +0800
+Subject: Re: [PATCH v2 07/10] dt-bindings: sound: Add sun8i audio
+ documentation
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: =?ISO-8859-1?Q?Myl=E8ne_Josserand?=
+ <mylene.josserand@free-electrons.com>, mturquette@baylibre.com,
+ lgirdwood@gmail.com, broonie@kernel.org,
+ thomas.petazzoni@free-electrons.com, perex@perex.cz, sboyd@codeaurora.org,
+ tiwai@suse.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ mark.rutland@arm.com, devicetree@vger.kernel.org,
+ alsa-devel@alsa-project.org, alexandre.belloni@free-electrons.com,
+ linux-arm-kernel@lists.infradead.org, wens@csie.org,
+ linux-sunxi@googlegroups.com, robh+dt@kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This series add support for the SAR ADC on Amlogic Meson GXBB, GXL and
-GXM SoCs.
-The hardware on GXBB provides 10-bit ADC results, while GXL and GXM are
-providing 12-bit results. Support for older SoCs (Meson8b and Meson8)
-can be added with little effort, most of which is testing I guess (I
-don't have any pre-GXBB hardware so I can't say).
-
-A new set of clocks had to be added to the GXBB clock controller (used
-by the GXBB/GXL/GXM SoCs) which are required to get the ADC working.
-
-The ADC itself can sample multiple channels at the same time and allows
-capturing multiple samples (which can be used for filtering/averaging).
-The ADC results are stored inside a FIFO register. More details on what
-the driver supports (or doesn't) can be found in the description of
-patch #3.
-
-The code is based on the public S805 (Meson8b) and S905 (GXBB)
-datasheets, as well as by reading (various versions of) the vendor
-driver and by inspecting the registers on the vendor kernels of my
-testing-hardware.
-
-Typical use-cases for the ADC on the Meson GX SoCs are:
-- adc-keys ("ADC attached resistor ladder buttons")
-- SoC temperature measurement (not supported by this driver yet as
-  the system firmware does this already and provides the values via the
-  SCPI protocol)
-- "version-strapping" (different resistor values are used to indicate
-  the board-revision)
-- and of course typical ADC measurements
-
-Thanks to Heiner Kallweit, Jonathan Cameron and Lars-Peter Clausen for
-reviewing this series and providing valuable input!
-
-Changes since v1 (all changes are for patch #3, except where noted):
-- fix IRQ number in meson-gx.dtsi (thanks to Heiner Kallweit for
-  providing the correct value), affects patch #4
-- move the most used members of meson_saradc_priv to the beginning
-- remove unused struct member "completion" from meson_saradc_priv
-- use devm_kasprintf() instead of snprintf() + devm_kstrdup()
-- initialize indio_dev->dev.parent earlier in meson_saradc_probe()
-- moved meson_saradc_clear_fifo() logic to a separate function
-- add comment why a do ... while loop is required in
-  meson_saradc_wait_busy_clear()
-- remove SAR_ADC_NUM_CHANNELS and SAR_ADC_VALUE_MASK macros (each of them
-  was only used once and it's an unneeded level of abstraction)
-- fixed multiline comment syntax violations
-- dropped unneeded log messages during initialization
-- set iio_dev name to "meson-gxbb-saradc" or "meson-gxl-saradc"
-- use "indio_dev->dev.parent" in all kernel log calls (dev_warn/err/etc)
-  to make it show the OF node name (instead of the iio device name)
-- introduce struct meson_saradc_data to hold platform-specific
-  information (such as resolution in bits and the iio_dev name)
-
-
-Martin Blumenstingl (4):
-  Documentation: dt-bindings: add the Amlogic Meson SAR ADC
-    documentation
-  clk: gxbb: add the SAR ADC clocks and expose them
-  iio: adc: add a driver for the SAR ADC found in Amlogic Meson SoCs
-  ARM64: dts: meson: meson-gx: add the SAR ADC
-
- .../bindings/iio/adc/amlogic,meson-saradc.txt      |  31 +
- arch/arm64/boot/dts/amlogic/meson-gx.dtsi          |   8 +
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        |  10 +
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi         |  10 +
- drivers/clk/meson/gxbb.c                           |  48 ++
- drivers/clk/meson/gxbb.h                           |   9 +-
- drivers/iio/adc/Kconfig                            |  12 +
- drivers/iio/adc/Makefile                           |   1 +
- drivers/iio/adc/meson_saradc.c                     | 893 +++++++++++++++++++++
- include/dt-bindings/clock/gxbb-clkc.h              |   4 +
- 10 files changed, 1023 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
- create mode 100644 drivers/iio/adc/meson_saradc.c
-
--- 
-2.11.0
+CjIwMTflubQx5pyIMTjml6UgMDA6NTHkuo4gTWF4aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBm
+cmVlLWVsZWN0cm9ucy5jb20+5YaZ6YGT77yaCj4KPiBIaSwgCj4KPiBPbiBUdWUsIEphbiAxNywg
+MjAxNyBhdCAwMzowMjoyN1BNICswMTAwLCBNeWzDqG5lIEpvc3NlcmFuZCB3cm90ZTogCj4gPiBB
+ZGQgdGhlIGRvY3VtZW50YXRpb24gZm9yIGR0LWJpbmRpbmcgb2YgdGhlIGRpZ2l0YWwgYXVkaW8g
+Y29kZWMgZHJpdmVyIAo+ID4gYW5kIHRoZSBhdWRpbyBjYXJkIGRyaXZlciBmb3IgU3VuOGkgU29D
+cy4gCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IE15bMOobmUgSm9zc2VyYW5kIDxteWxlbmUuam9z
+c2VyYW5kQGZyZWUtZWxlY3Ryb25zLmNvbT4gCj4KPiBPbmUgc21hbGwgY29tbWVudCBiZWxvdywg
+Cj4KPiA+IC0tLSAKPiA+wqAgLi4uL2RldmljZXRyZWUvYmluZGluZ3Mvc291bmQvc3VuOGktY29k
+ZWMudHh0wqDCoMKgwqDCoCB8IDc2ICsrKysrKysrKysrKysrKysrKysrKysgCj4gPsKgIDEgZmls
+ZSBjaGFuZ2VkLCA3NiBpbnNlcnRpb25zKCspIAo+ID7CoCBjcmVhdGUgbW9kZSAxMDA2NDQgRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NvdW5kL3N1bjhpLWNvZGVjLnR4dCAKPiA+
+IAo+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9zb3Vu
+ZC9zdW44aS1jb2RlYy50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc291
+bmQvc3VuOGktY29kZWMudHh0IAo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQgCj4gPiBpbmRleCAw
+MDAwMDAwMDAwMDAuLmNlM2MwNTIxOWUzMyAKPiA+IC0tLSAvZGV2L251bGwgCj4gPiArKysgYi9E
+b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc291bmQvc3VuOGktY29kZWMudHh0IAo+
+ID4gQEAgLTAsMCArMSw3NiBAQCAKPiA+ICtBbGx3aW5uZXIgU1VOOEkgYXVkaW8gY29kZWMgCj4g
+PiArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIAo+ID4gKyAKPiA+ICtPbiBT
+dW44aSBTb0NzLCBhbmQgcGFydGljdWxhcmx5IG9uIEEzMywgdGhlIGF1ZGlvIGlzIHNlcGFyYXRl
+ZCBpbiAKPgo+IFRlY2huaWNhbGx5IHRoYXQncyBub3QgdHJ1ZSBvbiBhbGwgdGhlIFNvQ3Mgb2Yg
+dGhlIHN1bjhpIGZhbWlseSwgYnV0IAo+IG9ubHkgYSBmZXcgb2YgdGhlbSAoQTMzIGFuZCBIMyBp
+aXJjKS4gCgpIMyBpcyBzdGlsbCB0aGUgb2xkLXN0eWxlIHN1bnhpIGNvZGVjLgoKSSB0aGluayBB
+NjQgaGFzIHRoZSBzYW1lIGRpZ2l0YWwgY29kZWMgcGFydCAoYnV0IEE2NCdzIGFuYWxvZyBwYXJ0
+IGlzIGRpZmZlcmVudCkKCj4KPiBUaGlzIGRyaXZlciBpcyBvbmx5IG1hZGUgZm9yIHRoZSBBMzMg
+YXQgdGhlIG1vbWVudCwgc28geW91IHNob3VsZCBvbmx5IAo+IG1lbnRpb24gaXQgKGFuZCB5b3Ug
+c2hvdWxkIHJlbmFtZSB0aGF0IGZpbGUgYXMgd2VsbCkuIAo+Cj4gT25jZSBkb25lLCAKPiBBY2tl
+ZC1ieTogTWF4aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+IAo+
+Cj4gVGhhbmtzLCAKPiBNYXhpbWUgCj4KPgo+ID4gK2RpZmZlcmVudCBwYXJ0czogCj4gPiArIMKg
+IC0gQSBEQUkgZHJpdmVyLiBJdCB1c2VzIHRoZSAic3VuNGktaTJzIiBkcml2ZXIgd2hpY2ggaXMg
+Cj4gPiArIMKgIGRvY3VtZW50ZWQgaGVyZTogCj4gPiArIMKgIERvY3VtZW50YXRpb24vZGV2aWNl
+dHJlZS9iaW5kaW5ncy9zb3VuZC9zdW40aS1pMnMudHh0IAo+ID4gKyDCoCAtIEFuIGFuYWxvZyBw
+YXJ0IG9mIHRoZSBjb2RlYyB3aGljaCBpcyBoYW5kbGVkIGFzIFBSQ00gcmVnaXN0ZXJzLiAKPiA+
+ICsgwqAgU2VlIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9zb3VuZC9zdW44aS1j
+b2RlYy1hbmFsb2cudHh0IAo+ID4gKyDCoCAtIEFuIGRpZ2l0YWwgcGFydCBvZiB0aGUgY29kZWMg
+d2hpY2ggaXMgZG9jdW1lbnRlZCBpbiB0aGlzIGN1cnJlbnQgCj4gPiArIMKgIGJpbmRpbmcgZG9j
+dW1lbnRhdGlvbi4gCj4gPiArIMKgIC0gQW5kIGZpbmFsbHksIGFuIGF1ZGlvIGNhcmQgd2hpY2gg
+bGlua3MgYWxsIHRoZSBhYm92ZSBjb21wb25lbnRzLiAKPiA+ICsgwqAgVGhlIHNpbXBsZS1hdWRp
+byBjYXJkIHdpbGwgYmUgdXNlZC4gCj4gPiArIMKgIFNlZSBEb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3Mvc291bmQvc2ltcGxlLWNhcmQudHh0IAo+ID4gKyAKPiA+ICtUaGlzIGJpbmRp
+bmdzIGRvY3VtZW50YXRpb24gZXhwb3NlcyBTdW44aSBjb2RlYyAoZGlnaXRhbCBwYXJ0KS4gCj4g
+PiArIAo+ID4gK1JlcXVpcmVkIHByb3BlcnRpZXM6IAo+ID4gKy0gY29tcGF0aWJsZTogbXVzdCBi
+ZSAiYWxsd2lubmVyLHN1bjhpLWEzMy1jb2RlYyIgCj4gPiArLSByZWc6IG11c3QgY29udGFpbiB0
+aGUgcmVnaXN0ZXJzIGxvY2F0aW9uIGFuZCBsZW5ndGggCj4gPiArLSBpbnRlcnJ1cHRzOiBtdXN0
+IGNvbnRhaW4gdGhlIGNvZGVjIGludGVycnVwdCAKPiA+ICstIGNsb2NrczogYSBsaXN0IG9mIHBo
+YW5kbGUgKyBjbG9jay1zcGVjaWZlciBwYWlycywgb25lIGZvciBlYWNoIGVudHJ5IAo+ID4gK8Kg
+IGluIGNsb2NrLW5hbWVzLiAKPiA+ICstIGNsb2NrLW5hbWVzOiBzaG91bGQgY29udGFpbiBmb2xs
+b3dpbmdzOiAKPiA+ICvCoMKgIC0gImJ1cyI6IHRoZSBwYXJlbnQgQVBCIGNsb2NrIGZvciB0aGlz
+IGNvbnRyb2xsZXIgCj4gPiArwqDCoCAtICJtb2QiOiB0aGUgcGFyZW50IG1vZHVsZSBjbG9jayAK
+PiA+ICsgCj4gPiArRXhhbXBsZTogCj4gPiArY29kZWM6IGNvZGVjQDAxYzIyZTAwIHsgCj4gPiAr
+ICNzb3VuZC1kYWktY2VsbHMgPSA8MD47IAo+ID4gKyBjb21wYXRpYmxlID0gImFsbHdpbm5lcixz
+dW44aS1hMzMtY29kZWMiOyAKPiA+ICsgcmVnID0gPDB4MDFjMjJlMDAgMHg0MDA+OyAKPiA+ICsg
+aW50ZXJydXB0cyA9IDxHSUNfU1BJIDI5IElSUV9UWVBFX0xFVkVMX0hJR0g+OyAKPiA+ICsgY2xv
+Y2tzID0gPCZjY3UgQ0xLX0JVU19DT0RFQz4sIDwmY2N1IENMS19BQ19ESUc+OyAKPiA+ICsgY2xv
+Y2stbmFtZXMgPSAiYnVzIiwgIm1vZCI7IAo+ID4gKyBzdGF0dXMgPSAiZGlzYWJsZWQiOyAKPiA+
+ICt9OyAKPiA+ICsgCj4gPiArSGVyZSBpcyBhbiBleGFtcGxlIHRvIGFkZCBhIHNvdW5kIGNhcmQg
+YW5kIHRoZSBjb2RlYyBiaW5kaW5nIG9uIHN1bjhpIFNvQ3MgdGhhdCAKPiA+ICthcmUgc2ltaWxh
+ciB0byBBMzMgdXNpbmcgc2ltcGxlLWNhcmQ6IAo+ID4gKyAKPiA+ICsgc291bmQgeyAKPiA+ICsg
+Y29tcGF0aWJsZSA9ICJzaW1wbGUtYXVkaW8tY2FyZCI7IAo+ID4gKyBzaW1wbGUtYXVkaW8tY2Fy
+ZCxuYW1lID0gIlN1bjhpIEF1ZGlvIENhcmQiOyAKPiA+ICsgc2ltcGxlLWF1ZGlvLWNhcmQsZm9y
+bWF0ID0gImkycyI7IAo+ID4gKyBzaW1wbGUtYXVkaW8tY2FyZCxmcmFtZS1tYXN0ZXIgPSA8Jmxp
+bmtfY29kZWM+OyAKPiA+ICsgc2ltcGxlLWF1ZGlvLWNhcmQsYml0Y2xvY2stbWFzdGVyID0gPCZs
+aW5rX2NvZGVjPjsgCj4gPiArIHNpbXBsZS1hdWRpby1jYXJkLG1jbGstZnMgPSA8NTEyPjsgCj4g
+PiArIHNpbXBsZS1hdWRpby1jYXJkLGF1eC1kZXZzID0gPCZjb2RlY19hbmFsb2c+OyAKPiA+ICsg
+c2ltcGxlLWF1ZGlvLWNhcmQscm91dGluZyA9IAo+ID4gKyAiTGVmdCBEQUMiLCAiRGlnaXRhbCBM
+ZWZ0IERBQyIsIAo+ID4gKyAiUmlnaHQgREFDIiwgIkRpZ2l0YWwgUmlnaHQgREFDIjsgCj4gPiAr
+IAo+ID4gKyBzaW1wbGUtYXVkaW8tY2FyZCxjcHUgeyAKPiA+ICsgc291bmQtZGFpID0gPCZkYWk+
+OyAKPiA+ICsgfTsgCj4gPiArIAo+ID4gKyBsaW5rX2NvZGVjOiBzaW1wbGUtYXVkaW8tY2FyZCxj
+b2RlYyB7IAo+ID4gKyBzb3VuZC1kYWkgPSA8JmNvZGVjPjsgCj4gPiArIH07IAo+ID4gKyAKPiA+
+ICsgc29jQDAxYzAwMDAwIHsgCj4gPiArIFsuLi5dIAo+ID4gKyAKPiA+ICsgY29kZWM6IGNvZGVj
+QDAxYzIyZTAwIHsgCj4gPiArICNzb3VuZC1kYWktY2VsbHMgPSA8MD47IAo+ID4gKyBjb21wYXRp
+YmxlID0gImFsbHdpbm5lcixzdW44aS1hMzMtY29kZWMiOyAKPiA+ICsgcmVnID0gPDB4MDFjMjJl
+MDAgMHg0MDA+OyAKPiA+ICsgaW50ZXJydXB0cyA9IDxHSUNfU1BJIDI5IElSUV9UWVBFX0xFVkVM
+X0hJR0g+OyAKPiA+ICsgY2xvY2tzID0gPCZjY3UgQ0xLX0JVU19DT0RFQz4sIDwmY2N1IENMS19B
+Q19ESUc+OyAKPiA+ICsgY2xvY2stbmFtZXMgPSAiYnVzIiwgIm1vZCI7IAo+ID4gKyBzdGF0dXMg
+PSAiZGlzYWJsZWQiOyAKPiA+ICsgfTsgCj4gPiArIH07IAo+ID4gKyAKPiA+IC0tIAo+ID4gMi4x
+MS4wIAo+ID4gCj4KPiAtLSAKPiBNYXhpbWUgUmlwYXJkLCBGcmVlIEVsZWN0cm9ucyAKPiBFbWJl
+ZGRlZCBMaW51eCBhbmQgS2VybmVsIGVuZ2luZWVyaW5nIAo+IGh0dHA6Ly9mcmVlLWVsZWN0cm9u
+cy5jb20KPgo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+IAo+IGxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0IAo+IGxpbnV4LWFybS1rZXJuZWxAbGlz
+dHMuaW5mcmFkZWFkLm9yZyAKPiBodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2xpbnV4LWFybS1rZXJuZWwgCg==
