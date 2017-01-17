@@ -1,54 +1,61 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.11
-Date: Fri, 13 Jan 2017 14:59:59 +0100
-Message-Id: <1484315999-25110-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+In-Reply-To: <20170117090456.fgw6lpqgurwwcczj@lukather>
+References: <20170116180116.36729-2-icenowy@aosc.xyz>
+ <20170116180116.36729-3-icenowy@aosc.xyz>
+ <20170117090456.fgw6lpqgurwwcczj@lukather>
+Subject: Re: [PATCH v2 2/4] clk: sunxi-ng: add support for V3s CCU
+MIME-Version: 1.0
+Message-Id: <5926181484672894@web12g.yandex.ru>
+Date: Wed, 18 Jan 2017 01:08:14 +0800
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Zepan <715805855@qq.com>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
-
-The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
-
-  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.11-tag1
-
-for you to fetch changes up to e6bdf28eff475a026b922abe78ae710e7179bdf7:
-
-  clk: renesas: r8a7796: Add MSIOF controller clocks (2016-12-27 10:56:08 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v4.11
-
-  - Add CAN and MSIOF related clocks for R-Car M3-W.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Chris Paterson (3):
-      clk: renesas: r8a7796: Add CAN peripheral clock
-      clk: renesas: r8a7796: Add CANFD clock
-      clk: renesas: r8a7796: Add CAN FD peripheral clock
-
-Hiromitsu Yamasaki (1):
-      clk: renesas: r8a7796: Add MSIOF controller clocks
-
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+CgoxNy4wMS4yMDE3LCAxNzowNSwgIk1heGltZSBSaXBhcmQiIDxtYXhpbWUucmlwYXJkQGZyZWUt
+ZWxlY3Ryb25zLmNvbT46Cj4gSGksCj4KPiBPbiBUdWUsIEphbiAxNywgMjAxNyBhdCAwMjowMTox
+NEFNICswODAwLCBJY2Vub3d5IFpoZW5nIHdyb3RlOgo+PiDCoFYzcyBoYXMgYSBzaW1pbGFyIGJ1
+dCBjdXQtZG93biBDQ1UgdG8gSDMuCj4+Cj4+IMKgQWRkIHN1cHBvcnQgZm9yIGl0Lgo+Pgo+PiDC
+oFNpZ25lZC1vZmYtYnk6IEljZW5vd3kgWmhlbmcgPGljZW5vd3lAYW9zYy54eXo+Cj4+IMKgLS0t
+Cj4KPiBPdXRwdXQgZnJvbSBjaGVja3BhdGNoOgo+IHRvdGFsOiA1IGVycm9ycywgMiB3YXJuaW5n
+cywgMyBjaGVja3MsIDg1NyBsaW5lcyBjaGVja2VkCgpJIHJlbWVtYmVyZWQgc29tZSBlcnJvcnMn
+IGNvZGUgaXMgZGlyZWN0bHkgZGVyaXZlZCBmcm9tIGNjdS1zdW44aS1oMy5jLApzbyBJIGdlbmVy
+YXRlZCBhIHBhdGNoIGZpbGUgZm9yICJjbGs6IHN1bnhpLW5nOiBBZGQgSDMgY2xvY2tzIiBhbmQg
+cnVuCmNoZWNrcGF0Y2ggb24gaXQ6CnRvdGFsOiA0IGVycm9ycywgNSB3YXJuaW5ncywgMTE1OSBs
+aW5lcyBjaGVja2VkCgpTaG91bGQgSSBzdGlsbCBnZXQgYWxsIGVycm9ycyBmaXhlZD8KCj4KPj4g
+wqBJIHRoaW5rIEkgc2hvdWxkIG1ha2UgYSBjb21wYXJzaW9uIGJldHdlZW4gVjNzIGFuZCBIMyBD
+Q1UgaGVyZToKPj4gwqAoSSB3b24ndCBtZW50aW9uIHRoZSBtaXNzaW5nL2FkZGVkIGNsb2NrcyBo
+ZXJlLCBvbmx5IGxpc3QgY29uZmxpY3RpbmcgY2xvY2tzKQo+Cj4gVGhhdCBzaG91bGQgYmUgaW4g
+eW91ciBjb21taXQgbG9nLgo+Cj4+IMKgLSAiYnVzLWVoY2kwIiBpcyBhdCBkaWZmZXJlbnQgYml0
+IChUaGUgYml0IHRoYXQgaXMgImJ1cy1laGNpMCIgb24gVjNzIGlzCj4+IMKgwqDCoCJidXMtZWhj
+aTIiIG9uIEgzKQo+PiDCoC0gVGhlIG11eCBvZiAiY2UiIGlzIGRpZmZlcmVudC4gKEFjY29yZGlu
+ZyB0aGUgdmlldyBhdCBWM3MgZGF0YXNoZWV0IGJ5IHRoZQo+PiDCoMKgwqBhdXRob3Igb2Ygc3Vu
+NGktc3MsIFYzcyBtYXkgaGF2ZSBzdW40aS1zcywgbm90IHN1bjhpLWNlKQo+PiDCoC0gVGhlIG11
+eCBvZiAiZGUiIGlzIGRpZmZlcmVudC4gKFYzcyBkbyBub3QgaGF2ZSAicGxsLWRlIiwgYnV0IGl0
+IGNhbiBtdXggImRlIgo+PiDCoMKgwqB0byAicGxsLXZpZGVvIikKPj4gwqAtIENsb2NrcyBhYm91
+dCBDU0kgbGFyZ2VseSBkaWZmZXJzLiAoQXMgVjNzIGlzIGRlc2lnbmVkIGFzIGEgY2FtZXJhIFNv
+QywgYW5kCj4+IMKgwqDCoGl0IGhhdmUgYW4gZXh0cmEgInBsbC1pc3AiKQo+Cj4gT0suCj4KPiBU
+aGFua3MsCj4gTWF4aW1lCj4KPiAtLQo+IE1heGltZSBSaXBhcmQsIEZyZWUgRWxlY3Ryb25zCj4g
+RW1iZWRkZWQgTGludXggYW5kIEtlcm5lbCBlbmdpbmVlcmluZwo+IGh0dHA6Ly9mcmVlLWVsZWN0
+cm9ucy5jb20KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5m
+cmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xp
+bnV4LWFybS1rZXJuZWwK
