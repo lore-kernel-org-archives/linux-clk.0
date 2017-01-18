@@ -1,172 +1,67 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v3 6/6] ARM: dts: sunxi: add support for Lichee Pi Zero board
-Date: Fri, 20 Jan 2017 01:54:48 +0800
-Message-Id: <20170119175448.11445-6-icenowy@aosc.xyz>
-In-Reply-To: <20170119175448.11445-1-icenowy@aosc.xyz>
-References: <20170119175448.11445-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 18 Jan 2017 17:09:48 -0600
+From: Rob Herring <robh@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 2/3] clk: ux500: Add device tree bindings for ABx500
+ clocks
+Message-ID: <20170118230948.hplhmyp6hyu3olzd@rob-hp-laptop>
+References: <20170113150826.30202-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170113150826.30202-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Lichee Pi Zero is a small-sized V3s board, which is
-breadboard-compatible, and with a MicroUSB port with both OTG function
-and power function.
+On Fri, Jan 13, 2017 at 04:08:26PM +0100, Linus Walleij wrote:
+> This adds device tree bindings for the ABx500 clocks on the
+> ST-Ericsson platforms.
+> 
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/stericsson,abx500.txt         | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/stericsson,abx500.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/stericsson,abx500.txt b/Documentation/devicetree/bindings/clock/stericsson,abx500.txt
+> new file mode 100644
+> index 000000000000..8764d80e3412
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/stericsson,abx500.txt
+> @@ -0,0 +1,13 @@
+> +Clock bindings for ST-Ericsson ABx500 clocks
+> +
+> +Required properties :
+> +- compatible : shall contain the following:
+> +  "stericsson,ab8500-clk"
+> +- #clock-cells should be <1>
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
-Changes in v3:
-- Add LEDs.
-- Add USB-related nodes.
+Header for clock numbers?
 
- arch/arm/boot/dts/Makefile                    |   3 +-
- arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts | 103 ++++++++++++++++++++++++++
- 2 files changed, 105 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+> +
+> +Example:
+> +
+> +ab8500_clock: ab8500-clock {
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index cccdbcb557b6..3e099e9b1ad7 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -853,7 +853,8 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-h3-orangepi-pc-plus.dtb \
- 	sun8i-h3-orangepi-plus.dtb \
- 	sun8i-h3-orangepi-plus2e.dtb \
--	sun8i-r16-parrot.dtb
-+	sun8i-r16-parrot.dtb \
-+	sun8i-v3s-licheepi-zero.dtb
- dtb-$(CONFIG_MACH_SUN9I) += \
- 	sun9i-a80-optimus.dtb \
- 	sun9i-a80-cubieboard4.dtb
-diff --git a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-new file mode 100644
-index 000000000000..387fc2aa546d
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-@@ -0,0 +1,103 @@
-+/*
-+ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+/dts-v1/;
-+#include "sun8i-v3s.dtsi"
-+#include "sunxi-common-regulators.dtsi"
-+
-+/ {
-+	model = "Lichee Pi Zero";
-+	compatible = "licheepi,licheepi-zero", "allwinner,sun8i-v3s";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		blue_led {
-+			label = "licheepi:blue:usr";
-+			gpios = <&pio 6 1 GPIO_ACTIVE_LOW>; /* PG1 */
-+		};
-+
-+		green_led {
-+			label = "licheepi:green:usr";
-+			gpios = <&pio 6 0 GPIO_ACTIVE_LOW>; /* PG0 */
-+			default-state = "on";
-+		};
-+
-+		red_led {
-+			label = "licheepi:red:usr";
-+			gpios = <&pio 6 2 GPIO_ACTIVE_LOW>; /* PG2 */
-+		};
-+	};
-+};
-+
-+&mmc0 {
-+	pinctrl-0 = <&mmc0_pins_a>;
-+	pinctrl-names = "default";
-+	broken-cd;
-+	bus-width = <4>;
-+	vmmc-supply = <&reg_vcc3v3>;
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-0 = <&uart0_pins_a>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&usb_otg {
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	usb0_id_det-gpio = <&pio 5 6 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+};
--- 
-2.11.0
+clock-controller {
 
+or 
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+clocks {
+
+> +	compatible = "stericsson,ab8500-clk";
+
+No reg, they're all just fixed?
+
+> +	#clock-cells = <1>;
+> +};
+> -- 
+> 2.9.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
