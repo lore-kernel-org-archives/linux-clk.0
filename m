@@ -1,78 +1,44 @@
-Return-Path: <zhengxing@rock-chips.com>
-Subject: Re: [PATCH v3] arm64: dts: rockchip: add "rockchip, grf" property for
- RK3399 PMUCRU/CRU
-To: Doug Anderson <dianders@google.com>
-References: <1484011661-13474-1-git-send-email-zhengxing@rock-chips.com>
- <CAD=FV=UsMR=HD5799N7ny_Ce8XXCkcd3R3tpX34AEC6UmGkXtA@mail.gmail.com>
-Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
- "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will.deacon@arm.com>, Caesar Wang <wxt@rock-chips.com>,
- Shawn Lin <shawn.lin@rock-chips.com>, Brian Norris
- <briannorris@chromium.org>, Jianqun Xu <jay.xu@rock-chips.com>,
- Elaine Zhang <zhangqing@rock-chips.com>, David Wu <david.wu@rock-chips.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Xing Zheng <zhengxing@rock-chips.com>
-Message-ID: <58745576.4010105@rock-chips.com>
-Date: Tue, 10 Jan 2017 11:31:02 +0800
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=UsMR=HD5799N7ny_Ce8XXCkcd3R3tpX34AEC6UmGkXtA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20170114123642.15581-4-krzk@kernel.org>
+References: <20170114123642.15581-1-krzk@kernel.org> <20170114123642.15581-4-krzk@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 18 Jan 2017 11:37:04 +0100
+Message-ID: <CACRpkdZh+kPUwf56XskzCUPh89h5a_2_-=EFw=NFKYY_zD4jfw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] pinctrl: samsung: Remove support for Exynos4415 (SoC
+ not supported anymore)
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi, Doug
+On Sat, Jan 14, 2017 at 1:36 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-On 2017年01月10日 11:06, Doug Anderson wrote:
-> Hi,
+> Support for Exynos4415 is going away because there are no internal nor
+> external users.
 >
-> On Mon, Jan 9, 2017 at 5:27 PM, Xing Zheng <zhengxing@rock-chips.com> wrote:
->> The structure rockchip_clk_provider needs to refer the GRF regmap
->> in somewhere, if the CRU node has not "rockchip,grf" property,
->> calling syscon_regmap_lookup_by_phandle will return an invalid GRF
->> regmap, and the MUXGRF type clock will be not supported.
->>
->> Therefore, we need to add them.
->>
->> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
->> ---
->>
->> Changes in v3:
->> - add optional roperty rockchip,grf in rockchip,rk3399-cru.txt
->>
->> Changes in v2:
->> - referring pmugrf for PMUGRU
->> - fix the typo "invaild" in COMMIT message
->>
->>   Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt | 5 +++++
->>   arch/arm64/boot/dts/rockchip/rk3399.dtsi                        | 2 ++
-> "dts" and bindings shouldn't change in the same patch since they go
-> through different trees.  This is why I said:
+> Since commit 46dcf0ff0de3 ("ARM: dts: exynos: Remove exynos4415.dtsi"),
+> the platform cannot be instantiated so remove also the drivers.
 >
->> This looks sane to me, but before you land it you need to first send
->> up a (separate) patch that adjusts:
->>        --------
-> AKA: you need a two patch series here.
->
-> Sometimes it's OK to include bindings together with code changes
-> (depends on the maintainer), but never with dts changes.
->
-> -Doug
-For little lazy, I did refer other SoC platform to using "dts" and 
-bindings in the same patch...
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-OK, I will use a two patch series.
+It can certainly be instantiated (from old DTBs...) but has
+no DTS upstream. But I get what you mean.
 
-Thanks
+Patch applied, if someone is unhappy they can always start
+sending reverts.
 
->
->
-
--- 
-- Xing Zheng
+Yours,
+Linus Walleij
