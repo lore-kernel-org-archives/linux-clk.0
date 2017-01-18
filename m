@@ -1,78 +1,41 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: jic23@kernel.org,
-	knaack.h@gmx.de,
-	lars@metafoo.de,
-	pmeerw@pmeerw.net,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	khilman@baylibre.com,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: carlo@caione.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	narmstrong@baylibre.com,
+Return-Path: <zhengxing@rock-chips.com>
+From: Xing Zheng <zhengxing@rock-chips.com>
+To: heiko@sntech.de
+Cc: dianders@google.com,
+	linux-rockchip@lists.infradead.org,
+	hl@rock-chips.com,
+	Xing Zheng <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/4] Documentation: dt-bindings: add the Amlogic Meson SAR ADC documentation
-Date: Wed, 11 Jan 2017 18:43:31 +0100
-Message-Id: <20170111174334.24343-2-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20170111174334.24343-1-martin.blumenstingl@googlemail.com>
-References: <20170111174334.24343-1-martin.blumenstingl@googlemail.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: rockchip: fix the incorrect pclk_edp div width for RK3399
+Date: Wed, 18 Jan 2017 12:20:56 +0800
+Message-Id: <1484713256-3005-1-git-send-email-zhengxing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the devicetree binding documentation for the SAR ADC found in
-Amlogic Meson SoCs.
-Currently only the GXBB, GXL and GXM SoCs are supported.
+The range of the  pclk_edp_div_con is [13:8] and 6 bits, not 5.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reported-by: Lin Huang <hl@rock-chips.com>
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 ---
- .../bindings/iio/adc/amlogic,meson-saradc.txt      | 31 ++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
-new file mode 100644
-index 000000000000..9a0bec7afc63
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
-@@ -0,0 +1,31 @@
-+* Amlogic Meson SAR (Successive Approximation Register) A/D converter
-+
-+Required properties:
-+- compatible:	depending on the SoC this should be one of:
-+			- "amlogic,meson-gxbb-saradc" for GXBB
-+			- "amlogic,meson-gxl-saradc" for GXL and GXM
-+		along with the generic "amlogic,meson-saradc"
-+- reg:		the physical base address and length of the registers
-+- clocks:	phandle and clock identifier (see clock-names)
-+- clock-names:	mandatory clocks:
-+			- "clkin" for the reference clock (typically XTAL)
-+			- "core" for the SAR ADC core clock
-+		optional clocks:
-+			- "sana" for the analog clock
-+			- "adc_clk" for the ADC (sampling) clock
-+			- "adc_sel" for the ADC (sampling) clock mux
-+- vref-supply:	the regulator supply for the ADC reference voltage
-+- #io-channel-cells: must be 1, see ../iio-bindings.txt
-+
-+Example:
-+	saradc: adc@8680 {
-+		compatible = "amlogic,meson-gxl-saradc", "amlogic,meson-saradc";
-+		#io-channel-cells = <1>;
-+		reg = <0x0 0x8680 0x0 0x34>;
-+		clocks = <&xtal>,
-+			 <&clkc CLKID_SAR_ADC>,
-+			 <&clkc CLKID_SANA>,
-+			 <&clkc CLKID_SAR_ADC_CLK>,
-+			 <&clkc CLKID_SAR_ADC_SEL>;
-+		clock-names = "clkin", "core", "sana", "adc_clk", "adc_sel";
-+	};
+ drivers/clk/rockchip/clk-rk3399.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 3490887..73121b14 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -1132,7 +1132,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKGATE_CON(11), 8, GFLAGS),
+ 
+ 	COMPOSITE(PCLK_EDP, "pclk_edp", mux_pll_src_cpll_gpll_p, 0,
+-			RK3399_CLKSEL_CON(44), 15, 1, MFLAGS, 8, 5, DFLAGS,
++			RK3399_CLKSEL_CON(44), 15, 1, MFLAGS, 8, 6, DFLAGS,
+ 			RK3399_CLKGATE_CON(11), 11, GFLAGS),
+ 	GATE(PCLK_EDP_NOC, "pclk_edp_noc", "pclk_edp", CLK_IGNORE_UNUSED,
+ 			RK3399_CLKGATE_CON(32), 12, GFLAGS),
 -- 
-2.11.0
+2.7.4
