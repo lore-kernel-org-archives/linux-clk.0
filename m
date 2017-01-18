@@ -1,78 +1,40 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Sat, 21 Jan 2017 14:56:35 -0600
-From: Rob Herring <robh@kernel.org>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-	mark.rutland@arm.com, khilman@baylibre.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	carlo@caione.org, catalin.marinas@arm.com, will.deacon@arm.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	narmstrong@baylibre.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/4] Documentation: dt-bindings: add the Amlogic Meson
- SAR ADC documentation
-Message-ID: <20170121205635.4qeiqyeyjrweryrh@rob-hp-laptop>
-References: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
- <20170119145822.26239-1-martin.blumenstingl@googlemail.com>
- <20170119145822.26239-2-martin.blumenstingl@googlemail.com>
+Return-Path: <tglx@linutronix.de>
+Date: Wed, 18 Jan 2017 10:28:09 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+cc: linux-clk@vger.kernel.org, x86@kernel.org,
+    platform-driver-x86@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+    Darren Hart <dvhart@infradead.org>, alsa-devel@alsa-project.org,
+    Irina Tirdea <irina.tirdea@intel.com>,
+    Michael Turquette <mturquette@baylibre.com>,
+    "Rafael J . Wysocki" <rjw@rjwysocki.net>, Takashi Iwai <tiwai@suse.com>,
+    linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+    Ingo Molnar <mingo@redhat.com>, Mark Brown <broonie@kernel.org>,
+    "H . Peter Anvin" <hpa@zytor.com>, Len Brown <lenb@kernel.org>,
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+    Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH v7 3/5] arch/x86/platform/atom: Move pmc_atom to
+ drivers/platform/x86
+In-Reply-To: <1484690270-28425-4-git-send-email-pierre-louis.bossart@linux.intel.com>
+Message-ID: <alpine.DEB.2.20.1701181027490.3464@nanos>
+References: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com> <1484690270-28425-4-git-send-email-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170119145822.26239-2-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 19, 2017 at 03:58:19PM +0100, Martin Blumenstingl wrote:
-> This adds the devicetree binding documentation for the SAR ADC found in
-> Amlogic Meson SoCs.
-> Currently only the GXBB, GXL and GXM SoCs are supported.
-> 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  .../bindings/iio/adc/amlogic,meson-saradc.txt      | 31 ++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
-> new file mode 100644
-> index 000000000000..9a0bec7afc63
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
-> @@ -0,0 +1,31 @@
-> +* Amlogic Meson SAR (Successive Approximation Register) A/D converter
-> +
-> +Required properties:
-> +- compatible:	depending on the SoC this should be one of:
-> +			- "amlogic,meson-gxbb-saradc" for GXBB
-> +			- "amlogic,meson-gxl-saradc" for GXL and GXM
+On Tue, 17 Jan 2017, Pierre-Louis Bossart wrote:
 
-GXL and GXM should probably be 2 compatibles.
-
-> +		along with the generic "amlogic,meson-saradc"
-> +- reg:		the physical base address and length of the registers
-> +- clocks:	phandle and clock identifier (see clock-names)
-> +- clock-names:	mandatory clocks:
-> +			- "clkin" for the reference clock (typically XTAL)
-> +			- "core" for the SAR ADC core clock
-> +		optional clocks:
-> +			- "sana" for the analog clock
-> +			- "adc_clk" for the ADC (sampling) clock
-> +			- "adc_sel" for the ADC (sampling) clock mux
-> +- vref-supply:	the regulator supply for the ADC reference voltage
-> +- #io-channel-cells: must be 1, see ../iio-bindings.txt
-> +
-> +Example:
-> +	saradc: adc@8680 {
-> +		compatible = "amlogic,meson-gxl-saradc", "amlogic,meson-saradc";
-> +		#io-channel-cells = <1>;
-> +		reg = <0x0 0x8680 0x0 0x34>;
-> +		clocks = <&xtal>,
-> +			 <&clkc CLKID_SAR_ADC>,
-> +			 <&clkc CLKID_SANA>,
-> +			 <&clkc CLKID_SAR_ADC_CLK>,
-> +			 <&clkc CLKID_SAR_ADC_SEL>;
-> +		clock-names = "clkin", "core", "sana", "adc_clk", "adc_sel";
-> +	};
-> -- 
-> 2.11.0
+> From: Irina Tirdea <irina.tirdea@intel.com>
 > 
+> The pmc_atom driver does not contain any architecture specific
+> code. It only enables the SoC Power Management Controller driver
+> for BayTrail and CherryTrail platforms.
+> 
+> Move the pmc_atom driver from arch/x86/platform/atom to
+> drivers/platform/x86. Also clean-up and reorder include files by
+> alphabetical order in pmc_atom.h
+> 
+> Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
