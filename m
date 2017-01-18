@@ -1,38 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:35856 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752703AbdA0AQ0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2017 19:16:26 -0500
-Date: Thu, 26 Jan 2017 16:04:44 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH] clk: mediatek: Fix MT8135 dependencies
-Message-ID: <20170127000444.GL8801@codeaurora.org>
-References: <20170124130912.14375a32@endymion>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20170124130912.14375a32@endymion>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jacobchen110@gmail.com>
+Return-Path: <jacobchen110@gmail.com>
+From: Jacob Chen <jacob-chen@iotwrt.com>
+To: heiko@sntech.de,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	zhangqing@rock-chips.com,
+	zhengxing@rock-chips.com,
+	Jacob Chen <jacob-chen@iotwrt.com>
+Subject: [PATCH v2 3/3] clk: rockchip: rk3288: make all niu clocks critical
+Date: Wed, 18 Jan 2017 13:42:40 +0800
+Message-Id: <1484718161-27702-3-git-send-email-jacob-chen@iotwrt.com>
+In-Reply-To: <1484718161-27702-1-git-send-email-jacob-chen@iotwrt.com>
+References: <1484718161-27702-1-git-send-email-jacob-chen@iotwrt.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/24, Jean Delvare wrote:
-> The MT8135 is a 32-bit SoC, so only propose it on ARM architecture,
-> not ARM64.
-> 
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Fixes: 234d511d8c15 ("clk: mediatek: Add hardware dependency")
-> Cc: Andreas Färber <afaerber@suse.de>
-> Cc: James Liao <jamesjj.liao@mediatek.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> ---
+NIU clocks are related to the interconnect and it's important to other blocks.
+Since we don't have a driver to handle it, we should always enable it to avoid
+casually close.
 
-Applied to clk-next
+Make all of them critical,so that we don't have to each clock on its own
+once things break.
 
+Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
+---
+ drivers/clk/rockchip/clk-rk3288.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 3d02aa2..c50386c 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -808,8 +808,15 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ static const char *const rk3288_critical_clocks[] __initconst = {
+ 	"aclk_cpu",
+ 	"aclk_peri",
++	"aclk_peri_niu",
++	"aclk_vio0_niu",
++	"aclk_vio1_niu",
++	"aclk_rga_niu",
+ 	"hclk_peri",
++	"hclk_vio_niu",
++	"pclk_alive_niu",
+ 	"pclk_pd_pmu",
++	"pclk_pmu_niu",
+ };
+ 
+ static void __iomem *rk3288_cru_base;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
