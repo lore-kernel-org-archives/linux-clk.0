@@ -1,57 +1,24 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 02/10] clk: sunxi-ng: mux: honor CLK_SET_RATE_NO_REPARENT flag
-Date: Sat, 28 Jan 2017 20:22:31 +0800
-Message-Id: <20170128122239.4480-3-wens@csie.org>
-In-Reply-To: <20170128122239.4480-1-wens@csie.org>
-References: <20170128122239.4480-1-wens@csie.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Xing Zheng <zhengxing@rock-chips.com>
+Cc: dianders@google.com, linux-rockchip@lists.infradead.org, hl@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: fix the incorrect pclk_edp div width for RK3399
+Date: Wed, 18 Jan 2017 11:25:21 +0100
+Message-ID: <1739624.bC7E8g3lgy@diego>
+In-Reply-To: <1484713256-3005-1-git-send-email-zhengxing@rock-chips.com>
+References: <1484713256-3005-1-git-send-email-zhengxing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds support for the CLK_SET_RATE_NO_REPARENT flag to the
-mux determine_rate helper, based on examples from clk-composite and
-clk-mux.
+Am Mittwoch, 18. Januar 2017, 12:20:56 CET schrieb Xing Zheng:
+> The range of the  pclk_edp_div_con is [13:8] and 6 bits, not 5.
+> 
+> Reported-by: Lin Huang <hl@rock-chips.com>
+> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu_mux.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+applied for 4.11 with Lin's test tag
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index eb66adb28807..d0d69c7eb516 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -70,6 +70,21 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
- 	struct clk_hw *best_parent, *hw = &common->hw;
- 	unsigned int i;
- 
-+	if (clk_hw_get_flags(hw) & CLK_SET_RATE_NO_REPARENT) {
-+		unsigned long adj_parent_rate;
-+
-+		best_parent = clk_hw_get_parent(hw);
-+		best_parent_rate = clk_hw_get_rate(best_parent);
-+
-+		adj_parent_rate = best_parent_rate;
-+		ccu_mux_helper_adjust_parent_for_prediv(common, cm, -1,
-+							&adj_parent_rate);
-+
-+		best_rate = round(cm, adj_parent_rate, req->rate, data);
-+
-+		goto out;
-+	}
-+
- 	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
- 		unsigned long tmp_rate, parent_rate, adj_parent_rate;
- 		struct clk_hw *parent;
--- 
-2.11.0
+
+Thanks
+Heiko
