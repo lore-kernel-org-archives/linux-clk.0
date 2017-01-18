@@ -1,70 +1,48 @@
-Return-Path: <ping.bai@nxp.com>
-From: Jacky Bai <ping.bai@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>
-CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "robh+dt@kernel.org"
-	<robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "p.zabel@pengutronix.de"
-	<p.zabel@pengutronix.de>, "jacky.baip@gmail.com" <jacky.baip@gmail.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v2 00/12] Add basic code support for imx6sll
-Date: Mon, 23 Jan 2017 07:18:51 +0000
-Message-ID: <AM3PR04MB530E1929B64CEE28B3DFCE587720@AM3PR04MB530.eurprd04.prod.outlook.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <20170123061034.GE5662@dragon>
-In-Reply-To: <20170123061034.GE5662@dragon>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <mylene.josserand@free-electrons.com>
+Subject: Re: [PATCH v2 07/10] dt-bindings: sound: Add sun8i audio
+ documentation
+To: Mark Brown <broonie@kernel.org>
+References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
+ <20170117140230.23142-8-mylene.josserand@free-electrons.com>
+ <20170117165029.wu4m6flhdwxk5e3q@sirena.org.uk>
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+ maxime.ripard@free-electrons.com, wens@csie.org, mturquette@baylibre.com,
+ sboyd@codeaurora.org, mark.rutland@arm.com, robh+dt@kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
+ devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+ thomas.petazzoni@free-electrons.com, alexandre.belloni@free-electrons.com
+From: Mylene Josserand <mylene.josserand@free-electrons.com>
+Message-ID: <bc022ae2-d766-891f-9626-189fb6834c03@free-electrons.com>
+Date: Wed, 18 Jan 2017 09:25:47 +0100
 MIME-Version: 1.0
+In-Reply-To: <20170117165029.wu4m6flhdwxk5e3q@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-> From: Shawn Guo [mailto:shawnguo@kernel.org]
->=20
-> On Tue, Dec 27, 2016 at 05:47:38PM +0800, Bai Ping wrote:
-> > The i.MX 6SoloLiteLite application processors are NXP's latest
-> > additions to a growing family of multimedia-focused products offering
-> > high-performance processing optimized for lowest power consumption.
-> > The i.MX 6SoloLiteLite processors feature NXP's advanced
-> > implementation of the ARM Cortex-A9 core, which can be interfaced with
-> > LPDDR3 and LPDDR2 DRAM memory devices.
-> >
-> > i.MX6SLL is a new SOC of the i.MX6 family, shares many common modules,
-> > so most of the MSL code can be resued from i.MX6 serious SOC.
-> >
-> >
-> > change for V2:
-> >     -  address comments in dts and dtsi from Fabio.
-> >     -  split the doc update into two patch, fix typo.
-> >     -  address comments in clock driver, add necessary 'const'qualifier=
-.
-> >
-> > Bai Ping (12):
-> >   ARM: imx: Add basic msl support for imx6sll
-> >   driver: clocksource: add gpt timer for imx6sll
-> >   Document: dt: binding: imx: update clock doc for imx6sll
-> >   driver: clk: imx: Add clock driver for imx6sll
-> >   Document: dt: binding: imx: update pinctrl doc for imx6sll
-> >   driver: pinctrl: imx: Add pinctrl driver support for imx6sll
-> >   ARM: dts: imx: Add basic dtsi for imx6sll
-> >   ARM: dts: imx: Add imx6sll EVK board dts support
-> >   ARM: debug: Add low level debug support for imx6sll
-> >   ARM: imx: Add suspend/resume support for imx6sll
-> >   ARM: imx: correct i.mx6sll dram io low power mode
-> >   ARM: configs: enable imx6sll support in defconfig
->=20
-> I do not think you need to necessarily put them into a series, since they=
- will go
-> through different sub-system maintainers.  If there are dependencies
-> between them, you should manage to get the prerequisite parts get merged
-> first.
+Hi,
 
-ok, got it.=20
+On 17/01/2017 17:50, Mark Brown wrote:
+> On Tue, Jan 17, 2017 at 03:02:27PM +0100, Mylène Josserand wrote:
+>> Add the documentation for dt-binding of the digital audio codec driver
+>> and the audio card driver for Sun8i SoCs.
+>
+>
+> Please submit patches using subject lines reflecting the style for the
+> subsystem.  This makes it easier for people to identify relevant
+> patches.  Look at what existing commits in the area you're changing are
+> doing and make sure your subject lines visually resemble what they're
+> doing.
+>
 
->=20
-> Shawn
+Yeah, sorry about that. Maxime indicated it in another patch. I will 
+keep it in mind for next times.
+
+Anyway, thank you for the review!
+
+Best regards,
+
+-- 
+Mylène Josserand, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
