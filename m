@@ -1,44 +1,124 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-Subject: Re: [PATCH v2] clk: qcom: gdsc: Fix handling of hw control
- enable/disable
-To: Rajendra Nayak <rnayak@codeaurora.org>, sboyd@codeaurora.org,
- mturquette@baylibre.com
-References: <1485145581-517-1-git-send-email-rnayak@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, sricharan@codeaurora.org
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <e92f172f-c24c-cf37-4e7f-be70a6191aeb@linaro.org>
-Date: Thu, 26 Jan 2017 23:31:03 +0200
-MIME-Version: 1.0
-In-Reply-To: <1485145581-517-1-git-send-email-rnayak@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <andriy.shevchenko@linux.intel.com>
+Message-ID: <1484736630.2133.184.camel@linux.intel.com>
+Subject: Re: [PATCH v7 0/5] Add platform clock for BayTrail platforms
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+ linux-clk@vger.kernel.org, x86@kernel.org,
+ platform-driver-x86@vger.kernel.org,  Stephen Boyd <sboyd@codeaurora.org>,
+ Darren Hart <dvhart@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: alsa-devel@alsa-project.org, Irina Tirdea <irina.tirdea@intel.com>,
+ Michael Turquette <mturquette@baylibre.com>, "Rafael J . Wysocki"
+ <rjw@rjwysocki.net>, Takashi Iwai <tiwai@suse.com>,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, Ingo Molnar
+ <mingo@redhat.com>, Mark Brown <broonie@kernel.org>, "H . Peter Anvin"
+ <hpa@zytor.com>, Len Brown <lenb@kernel.org>, Vinod Koul
+ <vinod.koul@intel.com>
+Date: Wed, 18 Jan 2017 12:50:30 +0200
+In-Reply-To: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+References: 
+	<1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Tue, 2017-01-17 at 15:57 -0600, Pierre-Louis Bossart wrote:
+> These patches specifically enable the audio MCLK required by Baytrail
+> CR devices. It is the remaining part of a bigger set of patches
+> (already merged in Mark Brown's tree) that enable sound for Baytrail
+> CR
+> devices (especially Asus T100TAF) [1]. They include the clock driver
+> and clock enabling in the pmc_atom code (along with moving of the
+> non-architectural pmc_atom driver code into drivers/platform/x86 as
+> suggested by Thomas Gleixner [2]). This move includes a new header in
+> include/linux/platform_data/x86/. While there is an agreement that the
+> definitions for PMC clocks are not really platform data this location
+> is seen as a good-enough compromise with an agreement between Darren
+> Hart and Andy Shevchenko [3]
+> 
+> [1] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-August/1
+> 11704.html
+> [2] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-October/
+> 113936.html
+> [3] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-December
+> /115892.html
+> 
 
-Thanks for the patch!
+Stephen, I see no issues with the patches. If you want to push them
+through your tree, take a tag from PDx86 subsystem point of view:
 
-On 23.01.2017 06:26, Rajendra Nayak wrote:
-> Once a gdsc is brought in and out of HW control, there is a
-> power down and up cycle which can take upto 1us. Polling on
-> the gdsc status immediately after the hw control enable/disable
-> can mislead software/firmware to belive the gdsc is already either on
-> or off, while its yet to complete the power cycle.
-> To avoid this add a 1us delay post a enable/disable of HW control
-> mode.
->
-> Also after the HW control mode is disabled, poll on the status to
-> check gdsc status reflects its 'on' before force disabling it
-> in software.
->
-> Reported-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  drivers/clk/qcom/gdsc.c | 58 ++++++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 45 insertions(+), 13 deletions(-)
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Reviewed and Tested-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 
-regards,
-Stan
+> Changes from v6:
+>  - Addressed comments from Stephen Boyd, Andy Shevchenko and Vinod
+> Koul
+>  - Renamed clk-byt-plt to clk-pmc-atom
+>  - Rebase to 4.10-rc3 (broonie/for-next)
+>  - Added helper functions to make error handling more compact
+>  - Removed module-related code since it's not possible/supported
+>  - Removed useless tests on remove
+>  - PMC_CLK_OFFSET move to clk-pcm-atom (more logical)
+>  - Split typo correction and makefile fix in separate patches
+>  - small fixes (spaces, defaults in switches, alphabetical order, use
+> of
+> clk_writel/readl and no test on write, simpler error handling, use of
+> while(i--), unsigned loop variables, kernel doc fields, format-patch
+> -M
+>  -C -D, use of PLATFORM_DEVID_NONE)
+> 
+> Changes from v5:
+>  - fix build error reported by kbuild test robot
+>  - split the clk driver code from x86 platform changes
+> 
+> Changes from v4:
+>  - move the pmc_atom driver from arch/x86/platform/atom to
+> drivers/platform/x86
+> 
+> Changes from v3:
+>  - replace devm_kzalloc with devm_kcalloc
+>  - add x86 architecture maintainers
+> 
+> Changes from v2:
+>  - move clk platform data structures to a separate include file
+>  - store clk_hw pointer for the fixed rate clocks
+> 
+> Changes from v1:
+>  - register the clk device as child of pmc device
+>  - pass iomem pointer from pmc driver to clk driver to avoid using
+> pmc_atom_read()/write() and use readl/writel API instead
+>  - use devm_clk_hw_register/clkdev_hw_create instead of
+> clk_register/clkdev_create
+> 
+> Irina Tirdea (3):
+>   clk: x86: Add Atom PMC platform clocks
+>   arch/x86/platform/atom: Move pmc_atom to drivers/platform/x86
+>   platform/x86: Enable Atom PMC platform clocks
+> 
+> Pierre-Louis Bossart (2):
+>   clk: Make x86/ conditional on CONFIG_COMMON_CLK
+>   platform/x86: fix typo in comment
+> 
+>  arch/x86/Kconfig                                   |   4 -
+>  arch/x86/platform/atom/Makefile                    |   1 -
+>  drivers/acpi/acpi_lpss.c                           |   2 +-
+>  drivers/clk/Makefile                               |   2 +
+>  drivers/clk/x86/Makefile                           |   1 +
+>  drivers/clk/x86/clk-pmc-atom.c                     | 373
+> +++++++++++++++++++++
+>  drivers/platform/x86/Kconfig                       |   5 +
+>  drivers/platform/x86/Makefile                      |   1 +
+>  .../atom => drivers/platform/x86}/pmc_atom.c       |  88 ++++-
+>  include/linux/platform_data/x86/clk-pmc-atom.h     |  44 +++
+>  .../linux/platform_data/x86}/pmc_atom.h            |   2 +-
+>  11 files changed, 508 insertions(+), 15 deletions(-)
+>  create mode 100644 drivers/clk/x86/clk-pmc-atom.c
+>  rename {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c
+> (87%)
+>  create mode 100644 include/linux/platform_data/x86/clk-pmc-atom.h
+>  rename {arch/x86/include/asm =>
+> include/linux/platform_data/x86}/pmc_atom.h (98%)
+> 
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
