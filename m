@@ -1,838 +1,458 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20161228000045.4540-1-marek.vasut@gmail.com>
-References: <20161228000045.4540-1-marek.vasut@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 2 Jan 2017 14:46:29 +0100
-Message-ID: <CAMuHMdXjTMpqXc-XRNhQ=052W9fTbGF0XwOWmpZvBuNa-JL0Yw@mail.gmail.com>
-Subject: Re: [PATCH] clk: vc5: Add support for IDT VersaClock 5P49V5923B
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <mmayer@mmayer.net>
+From: Markus Mayer <code@mmayer.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Markus Mayer <mmayer@broadcom.com>,
+	Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
+	Linux Clock List <linux-clk@vger.kernel.org>,
+	Power Management List <linux-pm@vger.kernel.org>,
+	Device Tree List <devicetree@vger.kernel.org>,
+	ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5 2/2] cpufreq: brcmstb-cpufreq: CPUfreq driver for older Broadcom STB SoCs
+Date: Wed, 18 Jan 2017 16:29:33 -0800
+Message-Id: <20170119002933.7529-3-code@mmayer.net>
+In-Reply-To: <20170119002933.7529-1-code@mmayer.net>
+References: <20170119002933.7529-1-code@mmayer.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-CC linux-renesas-soc, as this driver is used for a device on the
-Renesas Salvator-X board.
+From: Markus Mayer <mmayer@broadcom.com>
 
-On Wed, Dec 28, 2016 at 1:00 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> Add driver for IDT VersaClock 5 5P49V5923B chip. This chip has two
-> clock inputs, XTAL or CLK, which are muxed into single PLL/VCO input.
-> The PLL feeds two fractional dividers. Each fractional divider feeds
-> output mux, which allows selecting between clock from the fractional
-> divider itself or from output mux on output N-1. In case of output
-> mux 0, the output N-1 is instead connected to the output from the mux
-> feeding the PLL.
->
-> The driver thus far supports only the 5P49V5923B, while it should be
-> easily extensible to the whole 5P49V59xx family of chips as they are
-> all pretty similar.
->
-> Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  .../devicetree/bindings/clock/idt,versaclock5.txt  |  41 ++
->  drivers/clk/Kconfig                                |  10 +
->  drivers/clk/Makefile                               |   1 +
->  drivers/clk/clk-versaclock5.c                      | 696 +++++++++++++++++++++
->  4 files changed, 748 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/idt,versaclock5.txt
->  create mode 100644 drivers/clk/clk-versaclock5.c
->
-> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> new file mode 100644
-> index 0000000..cbe5bc8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> @@ -0,0 +1,41 @@
-> +Binding for IDT VersaClock5 programmable i2c clock generator.
-> +
-> +The IDT VersaClock5 are programmable i2c clock generators providing
-> +from 3 to 12 output clocks.
-> +
-> +==I2C device node==
-> +
-> +Required properties:
-> +- compatible:  shall be one of "idt,5p49v5923b".
-> +- reg:         i2c device address, shall be 0x68 or 0x6a.
-> +- #clock-cells:        from common clock binding; shall be set to 1.
-> +- clocks:      from common clock binding; list of parent clock handles,
-> +               shall be XTAL or CLKIN reference clock. Corresponding
-> +               clock input names are "xin" and "clkin" respectively.
-> +- #address-cells: shall be set to 1.
-> +- #size-cells: shall be set to 0.
-> +
-> +==Example==
-> +
-> +/* 25MHz reference crystal */
-> +ref25: ref25m {
-> +       compatible = "fixed-clock";
-> +       #clock-cells = <0>;
-> +       clock-frequency = <25000000>;
-> +};
-> +
-> +i2c-master-node {
-> +
-> +       /* IDT 5P49V5923B i2c clock generator */
-> +       vc5: clock-generator@6a {
-> +               compatible = "idt,5p49v5923b";
-> +               reg = <0x6a>;
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               #clock-cells = <1>;
-> +
-> +               /* Connect XIN input to 25MHz reference */
-> +               clocks = <&ref25m>;
-> +               clock-names = "xin";
-> +       };
-> +};
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 6a8ac04..9160e67 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -198,6 +198,16 @@ config COMMON_CLK_OXNAS
->         ---help---
->           Support for the OXNAS SoC Family clocks.
->
-> +config COMMON_CLK_VC5
-> +       tristate "Clock driver for IDT VersaClock5 devices"
-> +       depends on I2C
-> +       depends on OF
-> +       select REGMAP_I2C
-> +       help
-> +       ---help---
-> +         This driver supports the IDT VersaClock5 programmable clock
-> +         generator.
-> +
->  source "drivers/clk/bcm/Kconfig"
->  source "drivers/clk/hisilicon/Kconfig"
->  source "drivers/clk/mediatek/Kconfig"
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index 925081e..e0754d9 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -46,6 +46,7 @@ obj-$(CONFIG_ARCH_TANGO)              += clk-tango4.o
->  obj-$(CONFIG_CLK_TWL6040)              += clk-twl6040.o
->  obj-$(CONFIG_ARCH_U300)                        += clk-u300.o
->  obj-$(CONFIG_ARCH_VT8500)              += clk-vt8500.o
-> +obj-$(CONFIG_COMMON_CLK_VC5)           += clk-versaclock5.o
->  obj-$(CONFIG_COMMON_CLK_WM831X)                += clk-wm831x.o
->  obj-$(CONFIG_COMMON_CLK_XGENE)         += clk-xgene.o
->
-> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-> new file mode 100644
-> index 0000000..286689d
-> --- /dev/null
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -0,0 +1,696 @@
-> +/*
-> + * Driver for IDT Versaclock 5
-> + *
-> + * Copyright (C) 2016 Marek Vasut <marek.vasut@gmail.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +/*
-> + * Possible optimizations:
-> + * - Support other chips but 5P49V5923B
-> + * - Use spread spectrum
-> + * - Use integer divider in FOD if applicable
-> + * - register OUT0_SEL_I2CB
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/delay.h>
-> +#include <linux/i2c.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/rational.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +
-> +/* VersaClock5 registers */
-> +#define VC5_OTP_CONTROL                                0x00
-> +
-> +/* Factory-reserved register block */
-> +#define VC5_RSVD_DEVICE_ID                     0x01
-> +#define VC5_RSVD_ADC_GAIN_7_0                  0x02
-> +#define VC5_RSVD_ADC_GAIN_15_8                 0x03
-> +#define VC5_RSVD_ADC_OFFSET_7_0                        0x04
-> +#define VC5_RSVD_ADC_OFFSET_15_8               0x05
-> +#define VC5_RSVD_TEMPY                         0x06
-> +#define VC5_RSVD_OFFSET_TBIN                   0x07
-> +#define VC5_RSVD_GAIN                          0x08
-> +#define VC5_RSVD_TEST_NP                       0x09
-> +#define VC5_RSVD_UNUSED                                0x0a
-> +#define VC5_RSVD_BANDGAP_TRIM_UP               0x0b
-> +#define VC5_RSVD_BANDGAP_TRIM_DN               0x0c
-> +#define VC5_RSVD_CLK_R_12_CLK_AMP_4            0x0d
-> +#define VC5_RSVD_CLK_R_34_CLK_AMP_4            0x0e
-> +#define VC5_RSVD_CLK_AMP_123                   0x0f
-> +
-> +/* Configuration register block */
-> +#define VC5_PRIM_SRC_SHDN                      0x10
-> +#define VC5_PRIM_SRC_SHDN_EN_XTAL              BIT(7)
-> +#define VC5_PRIM_SRC_SHDN_EN_CLKIN             BIT(6)
-> +#define VC5_PRIM_SRC_SHDN_SP                   BIT(1)
-> +#define VC5_PRIM_SRC_SHDN_EN_GBL_SHDN          BIT(0)
-> +
-> +#define VC5_VCO_BAND                           0x11
-> +#define VC5_XTAL_X1_LOAD_CAP                   0x12
-> +#define VC5_XTAL_X2_LOAD_CAP                   0x13
-> +#define VC5_REF_DIVIDER                                0x15
-> +#define VC5_REF_DIVIDER_SEL_PREDIV2            BIT(7)
-> +#define VC5_REF_DIVIDER_REF_DIV(n)             ((n) & 0x3f)
-> +
-> +#define VC5_VCO_CTRL_AND_PREDIV                        0x16
-> +#define VC5_VCO_CTRL_AND_PREDIV_BYPASS_PREDIV  BIT(7)
-> +
-> +#define VC5_FEEDBACK_INT_DIV                   0x17
-> +#define VC5_FEEDBACK_INT_DIV_BITS              0x18
-> +#define VC5_FEEDBACK_FRAC_DIV(n)               (0x19 + (n))
-> +#define VC5_RC_CONTROL0                                0x1e
-> +#define VC5_RC_CONTROL1                                0x1f
-> +/* Register 0x20 is factory reserved */
-> +
-> +/* Output divider control for divider 1,2,3,4 */
-> +#define VC5_OUT_DIV_CONTROL(idx)       (0x21 + ((idx) * 0x10))
-> +#define VC5_OUT_DIV_CONTROL_RESET      BIT(7)
-> +#define VC5_OUT_DIV_CONTROL_SELB_NORM  BIT(3)
-> +#define VC5_OUT_DIV_CONTROL_SEL_EXT    BIT(2)
-> +#define VC5_OUT_DIV_CONTROL_INT_MODE   BIT(1)
-> +#define VC5_OUT_DIV_CONTROL_EN_FOD     BIT(0)
-> +
-> +#define VC5_OUT_DIV_FRAC(idx, n)       (0x22 + ((idx) * 0x10) + (n))
-> +#define VC5_OUT_DIV_FRAC4_OD_SCEE      BIT(1)
-> +
-> +#define VC5_OUT_DIV_STEP_SPREAD(idx, n)        (0x26 + ((idx) * 0x10) + (n))
-> +#define VC5_OUT_DIV_SPREAD_MOD(idx, n) (0x29 + ((idx) * 0x10) + (n))
-> +#define VC5_OUT_DIV_SKEW_INT(idx, n)   (0x2b + ((idx) * 0x10) + (n))
-> +#define VC5_OUT_DIV_INT(idx, n)                (0x2d + ((idx) * 0x10) + (n))
-> +#define VC5_OUT_DIV_SKEW_FRAC(idx)     (0x2f + ((idx) * 0x10))
-> +/* Register 0x30, 0x40, 0x50 is factory reserved */
-> +
-> +/* Clock control register for clock 1,2 */
-> +#define VC5_CLK_OUTPUT_CFG(idx, n)     (0x60 + ((idx) * 0x2) + (n))
-> +#define VC5_CLK_OUTPUT_CFG1_EN_CLKBUF  BIT(0)
-> +
-> +#define VC5_CLK_OE_SHDN                                0x68
-> +#define VC5_CLK_OS_SHDN                                0x69
-> +
-> +/* PLL/VCO runs between 2.5 GHz and 3.0 GHz */
-> +#define VC5_PLL_VCO_MIN                                2500000000
-> +#define VC5_PLL_VCO_MAX                                3000000000
-> +
-> +struct vc5_driver_data;
-> +
-> +struct vc5_hw_data {
-> +       struct clk_hw           hw;
-> +       struct vc5_driver_data  *vc5;
-> +       unsigned long           div_int;
-> +       unsigned long           div_frc;
-> +       unsigned char           num;
-> +};
-> +
-> +struct vc5_driver_data {
-> +       struct i2c_client       *client;
-> +       struct regmap           *regmap;
-> +
-> +       struct clk              *pin_xin;
-> +       const char              *pin_xin_name;
-> +       struct clk_hw           clk_xin;
-> +       struct clk              *pin_clkin;
-> +       const char              *pin_clkin_name;
-> +       struct clk_hw           clk_clkin;
-> +       unsigned char           clk_mux_ins;
-> +       struct clk_hw           clk_mux;
-> +       struct vc5_hw_data      clk_pll;
-> +       struct vc5_hw_data      clk_fod[2];
-> +       struct vc5_hw_data      clk_out[3];
-> +};
-> +
-> +static const char * const vc5_input_names[] = {
-> +       "xin", "clkin"
-> +};
-> +
-> +static const char * const vc5_pll_names[] = {
-> +       "pll"
-> +};
-> +
-> +static const char * const vc5_mux_names[] = {
-> +       "mux"
-> +};
-> +
-> +static const char * const vc5_fod_names[] = {
-> +       "fod0", "fod1"
-> +};
-> +
-> +static const char * const vc5_clk_out_names[] = {
-> +       "out0_sel_i2cb", "out1", "out2"
-> +};
-> +
-> +/*
-> + * VersaClock5 i2c regmap
-> + */
-> +static bool vc5_regmap_is_writeable(struct device *dev, unsigned int reg)
-> +{
-> +       /* Factory reserved regs, make them read-only */
-> +       if (reg >= 0 && reg <= 0xf)
-> +               return false;
-> +
-> +       /* Factory reserved regs, make them read-only */
-> +       if (reg == 0x14 || reg == 0x1c || reg == 0x1d)
-> +               return false;
-> +
-> +       return true;
-> +}
-> +
-> +static const struct regmap_config vc5_regmap_config = {
-> +       .reg_bits = 8,
-> +       .val_bits = 8,
-> +       .cache_type = REGCACHE_RBTREE,
-> +       .max_register = 0x69,
-> +       .writeable_reg = vc5_regmap_is_writeable,
-> +};
-> +
-> +/*
-> + * VersaClock5 input multiplexer between XTAL and CLKIN divider
-> + */
-> +static unsigned char vc5_mux_get_parent(struct clk_hw *hw)
-> +{
-> +       struct vc5_driver_data *vc5 =
-> +               container_of(hw, struct vc5_driver_data, clk_mux);
-> +       const u8 mask = VC5_PRIM_SRC_SHDN_EN_XTAL | VC5_PRIM_SRC_SHDN_EN_CLKIN;
-> +       unsigned int src;
-> +
-> +       regmap_read(vc5->regmap, VC5_PRIM_SRC_SHDN, &src);
-> +       src &= mask;
-> +
-> +       if (src == VC5_PRIM_SRC_SHDN_EN_XTAL)
-> +               return 0;
-> +
-> +       if (src == VC5_PRIM_SRC_SHDN_EN_CLKIN)
-> +               return 1;
-> +
-> +       dev_warn(&vc5->client->dev,
-> +                "Invalid clock input configuration (%02x)\n", src);
-> +       return 0;
-> +}
-> +
-> +static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +       struct vc5_driver_data *vc5 =
-> +               container_of(hw, struct vc5_driver_data, clk_mux);
-> +       const u8 mask = VC5_PRIM_SRC_SHDN_EN_XTAL | VC5_PRIM_SRC_SHDN_EN_CLKIN;
-> +       u8 src;
-> +
-> +       if ((index > 1) || !vc5->clk_mux_ins)
-> +               return -EINVAL;
-> +
-> +       if (vc5->clk_mux_ins == (BIT(0) | BIT(1))) {
-> +               if (index == 0)
-> +                       src = VC5_PRIM_SRC_SHDN_EN_XTAL;
-> +               if (index == 1)
-> +                       src = VC5_PRIM_SRC_SHDN_EN_CLKIN;
-> +       } else {
-> +               if (index != 0)
-> +                       return -EINVAL;
-> +
-> +               if (vc5->clk_mux_ins == BIT(0))
-> +                       src = VC5_PRIM_SRC_SHDN_EN_XTAL;
-> +               if (vc5->clk_mux_ins == BIT(1))
-> +                       src = VC5_PRIM_SRC_SHDN_EN_CLKIN;
-> +       }
-> +
-> +       return regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN, mask, src);
-> +}
-> +
-> +static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
-> +                                        unsigned long parent_rate)
-> +{
-> +       struct vc5_driver_data *vc5 =
-> +               container_of(hw, struct vc5_driver_data, clk_mux);
-> +       unsigned long idiv;
-> +       u8 div;
-> +
-> +       /* FIXME: Needs locking ? */
-> +
-> +       /* CLKIN within range of PLL input, feed directly to PLL. */
-> +       if (parent_rate <= 50000000) {
-> +               regmap_update_bits(vc5->regmap, VC5_VCO_CTRL_AND_PREDIV,
-> +                                  VC5_VCO_CTRL_AND_PREDIV_BYPASS_PREDIV,
-> +                                  VC5_VCO_CTRL_AND_PREDIV_BYPASS_PREDIV);
-> +               regmap_update_bits(vc5->regmap, VC5_REF_DIVIDER, 0xff, 0x00);
-> +               return parent_rate;
-> +       }
-> +
-> +       idiv = DIV_ROUND_UP(parent_rate, 50000000);
-> +       if (idiv > 127)
-> +               return -EINVAL;
-> +
-> +       /* We have dedicated div-2 predivider. */
-> +       if (idiv == 2)
-> +               div = VC5_REF_DIVIDER_SEL_PREDIV2;
-> +       else
-> +               div = VC5_REF_DIVIDER_REF_DIV(idiv);
-> +
-> +       regmap_update_bits(vc5->regmap, VC5_REF_DIVIDER, 0xff, div);
-> +       regmap_update_bits(vc5->regmap, VC5_VCO_CTRL_AND_PREDIV,
-> +                          VC5_VCO_CTRL_AND_PREDIV_BYPASS_PREDIV, 0);
-> +
-> +       return parent_rate / idiv;
-> +}
-> +
-> +static const struct clk_ops vc5_mux_ops = {
-> +       .set_parent     = vc5_mux_set_parent,
-> +       .get_parent     = vc5_mux_get_parent,
-> +       .recalc_rate    = vc5_mux_recalc_rate,
-> +};
-> +
-> +/*
-> + * VersaClock5 PLL/VCO
-> + */
-> +static unsigned long vc5_pll_recalc_rate(struct clk_hw *hw,
-> +                                        unsigned long parent_rate)
-> +{
-> +       struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
-> +       struct vc5_driver_data *vc5 = hwdata->vc5;
-> +       u32 div_int, div_frc;
-> +       u8 fb[5];
-> +
-> +       regmap_bulk_read(vc5->regmap, VC5_FEEDBACK_INT_DIV, fb, 5);
-> +
-> +       div_int = (fb[0] << 4) | (fb[1] >> 4);
-> +       div_frc = (fb[2] << 16) | (fb[3] << 8) | fb[4];
-> +
-> +       /* The PLL divider has 12 integer bits and 24 fractional bits */
-> +       return (parent_rate * div_int) + ((parent_rate * div_frc) >> 24);
-> +}
-> +
-> +static long vc5_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                              unsigned long *parent_rate)
-> +{
-> +       struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
-> +       unsigned long div_int;
-> +       unsigned long long div_frc;
-> +
-> +       if (rate < VC5_PLL_VCO_MIN)
-> +               rate = VC5_PLL_VCO_MIN;
-> +       if (rate > VC5_PLL_VCO_MAX)
-> +               rate = VC5_PLL_VCO_MAX;
-> +
-> +       /* Determine integer part, which is 12 bit wide */
-> +       div_int = rate / *parent_rate;
-> +       if (div_int > 0xfff)
-> +               rate = *parent_rate * 0xfff;
-> +
-> +       /* Determine best fractional part, which is 24 bit wide */
-> +       div_frc = rate % *parent_rate;
-> +       div_frc *= BIT(24) - 1;
-> +       do_div(div_frc, *parent_rate);
-> +
-> +       hwdata->div_int = div_int;
-> +       hwdata->div_frc = (unsigned long)div_frc;
-> +
-> +       return (*parent_rate * div_int) + ((*parent_rate * div_frc) >> 24);
-> +}
-> +
-> +static int vc5_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                           unsigned long parent_rate)
-> +{
-> +       struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
-> +       struct vc5_driver_data *vc5 = hwdata->vc5;
-> +       u8 fb[5];
-> +
-> +       fb[0] = hwdata->div_int >> 4;
-> +       fb[1] = hwdata->div_int << 4;
-> +       fb[2] = hwdata->div_frc >> 16;
-> +       fb[3] = hwdata->div_frc >> 8;
-> +       fb[4] = hwdata->div_frc;
-> +
-> +       return regmap_bulk_write(vc5->regmap, VC5_FEEDBACK_INT_DIV, fb, 5);
-> +}
-> +
-> +static const struct clk_ops vc5_pll_ops = {
-> +       .recalc_rate    = vc5_pll_recalc_rate,
-> +       .round_rate     = vc5_pll_round_rate,
-> +       .set_rate       = vc5_pll_set_rate,
-> +};
-> +
-> +static unsigned long vc5_fod_recalc_rate(struct clk_hw *hw,
-> +                                        unsigned long parent_rate)
-> +{
-> +       struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
-> +       struct vc5_driver_data *vc5 = hwdata->vc5;
-> +       /* VCO frequency is divided by two before entering FOD */
-> +       u64 f_in = parent_rate / 2;
-> +       u64 div_int, div_frc;
-> +       u8 od_int[2];
-> +       u8 od_frc[4];
-> +
-> +       regmap_bulk_read(vc5->regmap, VC5_OUT_DIV_INT(hwdata->num, 0),
-> +                        od_int, 2);
-> +       regmap_bulk_read(vc5->regmap, VC5_OUT_DIV_FRAC(hwdata->num, 0),
-> +                        od_frc, 4);
-> +
-> +       div_int = (od_int[0] << 4) | (od_int[1] >> 4);
-> +       div_frc = (od_frc[0] << 22) | (od_frc[1] << 14) |
-> +                 (od_frc[2] << 6) | (od_frc[3] >> 2);
-> +
-> +       /* The PLL divider has 12 integer bits and 30 fractional bits */
-> +       return div64_u64(f_in << 30ULL, (div_int << 30ULL) + div_frc);
-> +}
-> +
-> +static long vc5_fod_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                              unsigned long *parent_rate)
-> +{
-> +       struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
-> +       /* VCO frequency is divided by two before entering FOD */
-> +       unsigned long long f_in = *parent_rate / 2;
-> +       unsigned long div_int;
-> +       unsigned long long div_frc;
-> +
-> +       /* Determine integer part, which is 12 bit wide */
-> +       div_int = f_in / rate;
-> +       /*
-> +        * WARNING: The clock chip does not output signal if the integer part
-> +        *          of the divider is 0xfff and fractional part is non-zero.
-> +        *          Clamp the divider at 0xffe to keep the code simple.
-> +        */
-> +       if (div_int > 0xffe) {
-> +               div_int = 0xffe;
-> +               rate = f_in / div_int;
-> +       }
-> +
-> +       /* Determine best fractional part, which is 30 bit wide */
-> +       div_frc = f_in % rate;
-> +       div_frc *= BIT(30) - 1;
-> +       do_div(div_frc, rate);
-> +
-> +       hwdata->div_int = div_int;
-> +       hwdata->div_frc = (unsigned long)div_frc;
-> +
-> +       return div64_u64(f_in << 30ULL, (div_int << 30ULL) + div_frc);
-> +}
-> +
-> +static int vc5_fod_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                           unsigned long parent_rate)
-> +{
-> +       struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
-> +       struct vc5_driver_data *vc5 = hwdata->vc5;
-> +       u8 od_int[2];
-> +       u8 od_frc[4];
-> +
-> +       od_int[0] = hwdata->div_int >> 4;
-> +       od_int[1] = hwdata->div_int << 4;
-> +       od_frc[0] = hwdata->div_frc >> 22;
-> +       od_frc[1] = hwdata->div_frc >> 14;
-> +       od_frc[2] = hwdata->div_frc >> 6;
-> +       od_frc[3] = hwdata->div_frc << 2;
-> +
-> +       regmap_bulk_write(vc5->regmap, VC5_OUT_DIV_INT(hwdata->num, 0),
-> +                         od_int, 2);
-> +       regmap_bulk_write(vc5->regmap, VC5_OUT_DIV_FRAC(hwdata->num, 0),
-> +                         od_frc, 4);
-> +       return 0;
-> +}
-> +
-> +static const struct clk_ops vc5_fod_ops = {
-> +       .recalc_rate    = vc5_fod_recalc_rate,
-> +       .round_rate     = vc5_fod_round_rate,
-> +       .set_rate       = vc5_fod_set_rate,
-> +};
-> +
-> +static int vc5_clk_out_prepare(struct clk_hw *hw)
-> +{
-> +       struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
-> +       struct vc5_driver_data *vc5 = hwdata->vc5;
-> +
-> +       /* Enable the clock buffer */
-> +       regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
-> +                          VC5_CLK_OUTPUT_CFG1_EN_CLKBUF,
-> +                          VC5_CLK_OUTPUT_CFG1_EN_CLKBUF);
-> +       return 0;
-> +}
-> +
-> +static void vc5_clk_out_unprepare(struct clk_hw *hw)
-> +{
-> +       struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
-> +       struct vc5_driver_data *vc5 = hwdata->vc5;
-> +
-> +       /* Enable the clock buffer */
-> +       regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
-> +                          VC5_CLK_OUTPUT_CFG1_EN_CLKBUF, 0);
-> +}
-> +
-> +static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
-> +{
-> +       struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
-> +       struct vc5_driver_data *vc5 = hwdata->vc5;
-> +       const u8 mask = VC5_OUT_DIV_CONTROL_SELB_NORM |
-> +                       VC5_OUT_DIV_CONTROL_SEL_EXT |
-> +                       VC5_OUT_DIV_CONTROL_EN_FOD;
-> +       const u8 fodclkmask = VC5_OUT_DIV_CONTROL_SELB_NORM |
-> +                             VC5_OUT_DIV_CONTROL_EN_FOD;
-> +       const u8 extclk = VC5_OUT_DIV_CONTROL_SELB_NORM |
-> +                         VC5_OUT_DIV_CONTROL_SEL_EXT;
-> +       unsigned int src;
-> +
-> +       regmap_read(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num), &src);
-> +       src &= mask;
-> +
-> +       if ((src & fodclkmask) == VC5_OUT_DIV_CONTROL_EN_FOD)
-> +               return 0;
-> +
-> +       if (src == extclk)
-> +               return 1;
-> +
-> +       dev_warn(&vc5->client->dev,
-> +                "Invalid clock output configuration (%02x)\n", src);
-> +       return 0;
-> +}
-> +
-> +static int vc5_clk_out_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +       struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
-> +       struct vc5_driver_data *vc5 = hwdata->vc5;
-> +       const u8 mask = VC5_OUT_DIV_CONTROL_RESET |
-> +                       VC5_OUT_DIV_CONTROL_SELB_NORM |
-> +                       VC5_OUT_DIV_CONTROL_SEL_EXT |
-> +                       VC5_OUT_DIV_CONTROL_EN_FOD;
-> +       const u8 extclk = VC5_OUT_DIV_CONTROL_SELB_NORM |
-> +                         VC5_OUT_DIV_CONTROL_SEL_EXT;
-> +       u8 src = VC5_OUT_DIV_CONTROL_RESET;
-> +
-> +       if (index == 0)
-> +               src |= VC5_OUT_DIV_CONTROL_EN_FOD;
-> +       else if (index == 1)
-> +               src |= extclk;
-> +       else
-> +               return -EINVAL;
-> +
-> +       return regmap_update_bits(vc5->regmap, VC5_OUT_DIV_CONTROL(hwdata->num),
-> +                                 mask, src);
-> +}
-> +
-> +static const struct clk_ops vc5_clk_out_ops = {
-> +       .prepare        = vc5_clk_out_prepare,
-> +       .unprepare      = vc5_clk_out_unprepare,
-> +       .set_parent     = vc5_clk_out_set_parent,
-> +       .get_parent     = vc5_clk_out_get_parent,
-> +};
-> +
-> +static struct clk_hw *
-> +vc5_of_clk_get(struct of_phandle_args *clkspec, void *data)
-> +{
-> +       struct vc5_driver_data *vc5 = data;
-> +       unsigned int idx = clkspec->args[0];
-> +
-> +       if (idx >= 2) {
-> +               pr_err("%s: invalid index %u\n", __func__, idx);
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       return &vc5->clk_out[idx].hw;
-> +}
-> +
-> +static int vc5_probe(struct i2c_client *client,
-> +                           const struct i2c_device_id *id)
-> +{
-> +       struct vc5_driver_data *vc5;
-> +       struct clk_init_data init;
-> +       const char *parent_names[2];
-> +       int ret, n;
-> +
-> +       vc5 = devm_kzalloc(&client->dev, sizeof(*vc5), GFP_KERNEL);
-> +       if (vc5 == NULL)
-> +               return -ENOMEM;
-> +
-> +       i2c_set_clientdata(client, vc5);
-> +       vc5->client = client;
-> +
-> +       vc5->pin_xin = devm_clk_get(&client->dev, "xin");
-> +       if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
-> +               return -EPROBE_DEFER;
-> +
-> +       vc5->pin_clkin = devm_clk_get(&client->dev, "clkin");
-> +       if (PTR_ERR(vc5->pin_clkin) == -EPROBE_DEFER)
-> +               return -EPROBE_DEFER;
-> +
-> +       vc5->regmap = devm_regmap_init_i2c(client, &vc5_regmap_config);
-> +       if (IS_ERR(vc5->regmap)) {
-> +               dev_err(&client->dev, "failed to allocate register map\n");
-> +               return PTR_ERR(vc5->regmap);
-> +       }
-> +
-> +       if (!IS_ERR(vc5->pin_xin)) {
-> +               clk_prepare_enable(vc5->pin_xin);
-> +               vc5->pin_xin_name = __clk_get_name(vc5->pin_xin);
-> +               vc5->clk_mux_ins |= BIT(0);
-> +       }
-> +
-> +       if (!IS_ERR(vc5->pin_clkin)) {
-> +               clk_prepare_enable(vc5->pin_clkin);
-> +               vc5->pin_clkin_name = __clk_get_name(vc5->pin_clkin);
-> +               vc5->clk_mux_ins |= BIT(1);
-> +       }
-> +
-> +       if (!vc5->clk_mux_ins) {
-> +               dev_err(&client->dev, "no input clock specified!\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       /* Register clock input mux */
-> +       memset(&init, 0, sizeof(init));
-> +       if (vc5->clk_mux_ins == (BIT(0) | BIT(1))) {
-> +               parent_names[0] = vc5->pin_xin_name;
-> +               parent_names[1] = vc5->pin_clkin_name;
-> +               init.num_parents = 2;
-> +       } else if (vc5->clk_mux_ins == BIT(0)) {
-> +               parent_names[0] = vc5->pin_xin_name;
-> +               init.num_parents = 1;
-> +       } else {
-> +               parent_names[0] = vc5->pin_clkin_name;
-> +               init.num_parents = 1;
-> +       }
-> +       init.name = vc5_mux_names[0];
-> +       init.ops = &vc5_mux_ops;
-> +       init.flags = 0;
-> +       init.parent_names = parent_names;
-> +       vc5->clk_mux.init = &init;
-> +       ret = devm_clk_hw_register(&client->dev, &vc5->clk_mux);
-> +       if (ret) {
-> +               dev_err(&client->dev, "unable to register %s\n", init.name);
-> +               goto err_clk;
-> +       }
-> +
-> +       /* Register PLL */
-> +       memset(&init, 0, sizeof(init));
-> +       init.name = vc5_pll_names[0];
-> +       init.ops = &vc5_pll_ops;
-> +       init.flags = CLK_SET_RATE_PARENT;
-> +       init.parent_names = vc5_mux_names;
-> +       init.num_parents = 1;
-> +       vc5->clk_pll.num = 0;
-> +       vc5->clk_pll.vc5 = vc5;
-> +       vc5->clk_pll.hw.init = &init;
-> +       ret = devm_clk_hw_register(&client->dev, &vc5->clk_pll.hw);
-> +       if (ret) {
-> +               dev_err(&client->dev, "unable to register %s\n", init.name);
-> +               goto err_clk;
-> +       }
-> +
-> +       /* Register FODs */
-> +       for (n = 0; n < 2; n++) {
-> +               memset(&init, 0, sizeof(init));
-> +               init.name = vc5_fod_names[n];
-> +               init.ops = &vc5_fod_ops;
-> +               init.flags = CLK_SET_RATE_PARENT;
-> +               init.parent_names = vc5_pll_names;
-> +               init.num_parents = 1;
-> +               vc5->clk_fod[n].num = n;
-> +               vc5->clk_fod[n].vc5 = vc5;
-> +               vc5->clk_fod[n].hw.init = &init;
-> +               ret = devm_clk_hw_register(&client->dev, &vc5->clk_fod[n].hw);
-> +               if (ret) {
-> +                       dev_err(&client->dev, "unable to register %s\n",
-> +                               init.name);
-> +                       goto err_clk;
-> +               }
-> +       }
-> +
-> +       /* Register OUT1 and OUT2 */
-> +       for (n = 0; n < 2; n++) {
-> +               parent_names[0] = vc5_fod_names[n];
-> +               if (n == 0)
-> +                       parent_names[1] = vc5_mux_names[0];
-> +               else
-> +                       parent_names[1] = vc5_clk_out_names[n];
-> +
-> +               memset(&init, 0, sizeof(init));
-> +               init.name = vc5_clk_out_names[n + 1];
-> +               init.ops = &vc5_clk_out_ops;
-> +               init.flags = CLK_SET_RATE_PARENT;
-> +               init.parent_names = parent_names;
-> +               init.num_parents = 2;
-> +               vc5->clk_out[n].num = n;
-> +               vc5->clk_out[n].vc5 = vc5;
-> +               vc5->clk_out[n].hw.init = &init;
-> +               ret = devm_clk_hw_register(&client->dev,
-> +                                          &vc5->clk_out[n].hw);
-> +               if (ret) {
-> +                       dev_err(&client->dev, "unable to register %s\n",
-> +                               init.name);
-> +                       goto err_clk;
-> +               }
-> +       }
-> +
-> +       ret = of_clk_add_hw_provider(client->dev.of_node, vc5_of_clk_get, vc5);
-> +       if (ret) {
-> +               dev_err(&client->dev, "unable to add clk provider\n");
-> +               goto err_clk;
-> +       }
-> +
-> +       return 0;
-> +
-> +err_clk:
-> +       if (!IS_ERR(vc5->pin_xin))
-> +               clk_disable_unprepare(vc5->pin_xin);
-> +       if (!IS_ERR(vc5->pin_clkin))
-> +               clk_disable_unprepare(vc5->pin_clkin);
-> +       return ret;
-> +}
-> +
-> +
-> +static const struct i2c_device_id vc5_id[] = {
-> +       { "5p49v5923b", 0 },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, vc5_id);
-> +
-> +static const struct of_device_id clk_vc5_of_match[] = {
-> +       { .compatible = "idt,5p49v5923b" },
-> +       { },
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
-> +
-> +static struct i2c_driver vc5_driver = {
-> +       .driver = {
-> +               .name = "vc5",
-> +               .of_match_table = clk_vc5_of_match,
-> +       },
-> +       .probe          = vc5_probe,
-> +       .id_table       = vc5_id,
-> +};
-> +
-> +module_i2c_driver(vc5_driver);
-> +
-> +MODULE_AUTHOR("Marek Vasut <marek.vasut@gmail.com>");
-> +MODULE_DESCRIPTION("IDT VersaClock 5 driver");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.10.2
+This CPUfreq driver provides basic frequency scaling for older Broadcom
+STB SoCs that do not use AVS firmware with DVFS support. There is no
+support for voltage scaling.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Markus Mayer <mmayer@broadcom.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/cpufreq/Kconfig.arm       |  12 ++
+ drivers/cpufreq/Makefile          |   1 +
+ drivers/cpufreq/brcmstb-cpufreq.c | 377 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 390 insertions(+)
+ create mode 100644 drivers/cpufreq/brcmstb-cpufreq.c
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 920c469..36422af 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -33,6 +33,18 @@ config ARM_BRCMSTB_AVS_CPUFREQ_DEBUG
+ 
+ 	  If in doubt, say N.
+ 
++config ARM_BRCMSTB_CPUFREQ
++	tristate "Broadcom STB CPUfreq driver"
++	depends on ARCH_BRCMSTB || COMPILE_TEST
++	default y
++	help
++	  Some Broadcom SoCs offer multiple operating frequencies that CPUfreq
++	  can take advantage of to improve energy efficiency.
++
++	  Say Y, if you have a supported Broadcom SoC. If your Broadcom SoC
++	  has AVS firmware with support for frequency and voltage scaling,
++	  say N here and enable ARM_BRCMSTB_AVS_CPUFREQ instead.
++
+ config ARM_DT_BL_CPUFREQ
+ 	tristate "Generic probing via DT for ARM big LITTLE CPUfreq driver"
+ 	depends on ARM_BIG_LITTLE_CPUFREQ && OF
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 1e46c39..23700aa 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -52,6 +52,7 @@ obj-$(CONFIG_ARM_BIG_LITTLE_CPUFREQ)	+= arm_big_little.o
+ obj-$(CONFIG_ARM_DT_BL_CPUFREQ)		+= arm_big_little_dt.o
+ 
+ obj-$(CONFIG_ARM_BRCMSTB_AVS_CPUFREQ)	+= brcmstb-avs-cpufreq.o
++obj-$(CONFIG_ARM_BRCMSTB_CPUFREQ)	+= brcmstb-cpufreq.o
+ obj-$(CONFIG_ARCH_DAVINCI)		+= davinci-cpufreq.o
+ obj-$(CONFIG_UX500_SOC_DB8500)		+= dbx500-cpufreq.o
+ obj-$(CONFIG_ARM_EXYNOS5440_CPUFREQ)	+= exynos5440-cpufreq.o
+diff --git a/drivers/cpufreq/brcmstb-cpufreq.c b/drivers/cpufreq/brcmstb-cpufreq.c
+new file mode 100644
+index 0000000..8849d56
+--- /dev/null
++++ b/drivers/cpufreq/brcmstb-cpufreq.c
+@@ -0,0 +1,377 @@
++/*
++ * CPU frequency scaling for Broadcom set top box SoCs
++ *
++ * Copyright (c) 2016-17 Broadcom
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation version 2.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/cpufreq.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++
++#define BRCMSTB_CPUFREQ_PREFIX	"brcmstb"
++#define BRCMSTB_CPUFREQ_NAME	BRCMSTB_CPUFREQ_PREFIX "-cpufreq"
++
++/* We search for these compatible strings. */
++#define BRCMSTB_DT_CPU_CLK_CTRL	"brcm,brcmstb-cpu-clk-div"
++#define BRCMSTB_DT_MEMC_DDR	"brcm,brcmstb-memc-ddr"
++#define BRCM_AVS_CPU_DATA	"brcm,avs-cpu-data-mem"
++
++/*
++ * We also need a few clocks in device tree. They are referenced in the
++ * brcm,brcmstb-cpu-clk-div node in device tree, so we can look them up.
++ */
++#define BRCMSTB_CLK_MDIV_CH0	"cpu_mdiv_ch0"
++#define BRCMSTB_CLK_NDIV_INT	"cpu_ndiv_int"
++#define BRCMSTB_CLK_SW_SCB	"sw_scb"
++
++#define BRCMSTB_TBL_SAFE_MODE	BIT(0)
++#define BRCMSTB_REG_SAFE_MODE	BIT(4)
++
++#define TRANSITION_LATENCY	(25 * 1000)	/* 25 us */
++
++/* This is as low as we'll go in the frequency table. */
++#define MIN_CPU_FREQ		(100 * 1000)	/* in kHz */
++
++struct private_data {
++	void __iomem *cpu_clk_ctrl_reg;
++	struct clk *mdiv_clk;
++	struct clk *ndiv_clk;
++	struct clk *sw_scb_clk;
++	struct device *dev;
++};
++
++/* Count the active memory controllers in the system. */
++static int count_memory_controllers(void)
++{
++	struct device_node *np = NULL;
++	int i = 0;
++
++	do {
++		np = of_find_compatible_node(np, NULL, BRCMSTB_DT_MEMC_DDR);
++		if (of_device_is_available(np))
++			i++;
++		of_node_put(np);
++	} while (np);
++
++	return i;
++}
++
++static void get_frequencies(const struct cpufreq_policy *policy,
++			   unsigned int *vco_freq, unsigned int *cpu_freq,
++			   unsigned int *scb_freq)
++{
++	struct private_data *priv = policy->driver_data;
++
++	/* return frequencies in kHz */
++	*vco_freq = clk_get_rate(priv->ndiv_clk) / 1000;
++	*cpu_freq = clk_get_rate(priv->mdiv_clk) / 1000;
++	*scb_freq = clk_get_rate(priv->sw_scb_clk) / 1000;
++}
++
++/*
++ * Safe mode: When set, the CPU's bus unit is being throttled. This is done to
++ * avoid buffer overflows when the CPU-to-bus-clock ratio is low.
++ *
++ * The formula as to what constitutes a low CPU-to-bus-clock ratio takes into
++ * account the number of memory controllers active in the system and the SCB
++ * frequency. More memory controllers means safe mode is required starting at
++ * higher frequencies.
++ *
++ * For 1 memory controller, cpu_freq/scb_freq must be greater than or equal to
++ * 2 to not require safe mode.
++ *
++ * For 2 or 3 memory controllers, cpu_freq/scb_freq must be greater than or
++ * equal 3 to not require safe mode.
++ */
++
++static int freq_requires_safe_mode(unsigned int cpu_freq, unsigned int scb_freq,
++				   int num_memc)
++{
++	unsigned int safe_ratio;
++
++	switch (num_memc) {
++	case 1:
++		safe_ratio = 2;
++		break;
++	case 2:
++	case 3:
++		safe_ratio = 3;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return ((cpu_freq / scb_freq) < safe_ratio);
++}
++
++static struct cpufreq_frequency_table *
++brcmstb_get_freq_table(const struct cpufreq_policy *policy)
++{
++	unsigned int cpu_freq, vco_freq, scb_freq, mdiv, init_mdiv, f;
++	struct cpufreq_frequency_table *table;
++	struct private_data *priv;
++	int num_memc, ret;
++	unsigned int i = 0;
++
++	priv = policy->driver_data;
++	num_memc = count_memory_controllers();
++	get_frequencies(policy, &vco_freq, &cpu_freq, &scb_freq);
++
++	/* Calculate the initial mdiv value. We'll increment mdiv from here. */
++	init_mdiv = vco_freq / cpu_freq;
++
++	/* Count how many frequencies we'll offer. */
++	f = cpu_freq;
++	for (mdiv = init_mdiv; f >= MIN_CPU_FREQ; mdiv++, f = vco_freq / mdiv) {
++		/* We only want to use "whole" MHz. */
++		if ((f % 1000) == 0)
++			i++;
++	}
++
++	table = devm_kzalloc(priv->dev, (i + 1) * sizeof(*table), GFP_KERNEL);
++	if (!table)
++		return ERR_PTR(-ENOMEM);
++
++	/* Now, fill the table. */
++	f = cpu_freq;
++	i = 0;
++	for (mdiv = init_mdiv; f >= MIN_CPU_FREQ; mdiv++, f = vco_freq / mdiv) {
++		if ((f % 1000) == 0) {
++			table[i].frequency = f;
++			ret = freq_requires_safe_mode(f, scb_freq, num_memc);
++			if (ret < 0)
++				return ERR_PTR(ret);
++			if (ret > 0)
++				table[i].driver_data |= BRCMSTB_TBL_SAFE_MODE;
++			i++;
++		}
++	}
++	table[i].frequency = CPUFREQ_TABLE_END;
++
++	return table;
++}
++
++static int brcmstb_target_index(struct cpufreq_policy *policy,
++				unsigned int index)
++{
++	struct cpufreq_frequency_table *entry;
++	struct private_data *priv;
++	int ret, safe_mode_needed;
++	u32 reg;
++
++	priv = policy->driver_data;
++	entry = &policy->freq_table[index];
++	safe_mode_needed = entry->driver_data & BRCMSTB_TBL_SAFE_MODE;
++
++	reg = readl(priv->cpu_clk_ctrl_reg);
++	if (safe_mode_needed && !(reg & BRCMSTB_REG_SAFE_MODE)) {
++		reg |= BRCMSTB_REG_SAFE_MODE;
++		writel(reg, priv->cpu_clk_ctrl_reg);
++	}
++	ret = clk_set_rate(policy->clk, entry->frequency * 1000);
++	if (!ret && !safe_mode_needed && (reg & BRCMSTB_REG_SAFE_MODE)) {
++		reg &= ~BRCMSTB_REG_SAFE_MODE;
++		writel(reg, priv->cpu_clk_ctrl_reg);
++	}
++
++	return ret;
++}
++
++/*
++ * All initialization code that we only want to execute once goes here. Setup
++ * code that can be re-tried on every core (if it failed before) can go into
++ * brcmstb_cpufreq_init().
++ */
++static int brcmstb_prepare_init(struct platform_device *pdev)
++{
++	struct private_data *priv;
++	struct resource *res;
++	struct device *dev;
++
++	/*
++	 * If the BRCM STB AVS CPUfreq driver is supported, we bail, so that
++	 * the more modern approach implementing DVFS in firmware can be used.
++	 */
++	if (IS_ENABLED(CONFIG_ARM_BRCMSTB_AVS_CPUFREQ)) {
++		struct device_node *np;
++
++		np = of_find_compatible_node(NULL, NULL, BRCM_AVS_CPU_DATA);
++		if (np) {
++			of_node_put(np);
++			return -ENXIO;
++		}
++	}
++
++	dev = &pdev->dev;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	priv->cpu_clk_ctrl_reg = devm_ioremap_resource(dev, res);
++	if (IS_ERR(priv->cpu_clk_ctrl_reg)) {
++		dev_err(dev, "couldn't map DT entry %s\n",
++			BRCMSTB_DT_CPU_CLK_CTRL);
++		return -ENODEV;
++	}
++
++	priv->mdiv_clk = devm_clk_get(dev, BRCMSTB_CLK_MDIV_CH0);
++	priv->ndiv_clk = devm_clk_get(dev, BRCMSTB_CLK_NDIV_INT);
++	priv->sw_scb_clk = devm_clk_get(dev, BRCMSTB_CLK_SW_SCB);
++
++	if (IS_ERR(priv->mdiv_clk))
++		return PTR_ERR(priv->mdiv_clk);
++	if (IS_ERR(priv->ndiv_clk))
++		return PTR_ERR(priv->ndiv_clk);
++	if (IS_ERR(priv->sw_scb_clk))
++		return PTR_ERR(priv->sw_scb_clk);
++
++	priv->dev = dev;
++	platform_set_drvdata(pdev, priv);
++
++	return 0;
++}
++
++static int brcmstb_cpufreq_init(struct cpufreq_policy *policy)
++{
++	struct cpufreq_frequency_table *freq_table;
++	struct platform_device *pdev;
++	struct private_data *priv;
++	struct device *dev;
++	int ret;
++
++	pdev = cpufreq_get_driver_data();
++	priv = platform_get_drvdata(pdev);
++	dev = &pdev->dev;
++
++	policy->clk = priv->mdiv_clk;
++	policy->driver_data = priv;
++
++	freq_table = brcmstb_get_freq_table(policy);
++	if (IS_ERR(freq_table)) {
++		ret = PTR_ERR(freq_table);
++		dev_err(dev, "Couldn't determine frequency table (%d).\n", ret);
++		if (ret == -EINVAL)
++			dev_emerg(dev,
++				"Invalid number of memory controllers -- %d!\n",
++				count_memory_controllers());
++		return ret;
++	}
++
++	ret = cpufreq_generic_init(policy, freq_table, TRANSITION_LATENCY);
++	if (!ret)
++		dev_info(dev, "registered\n");
++
++	return ret;
++}
++
++/* Shows the number of memory controllers. */
++static ssize_t show_brcmstb_num_memc(struct cpufreq_policy *policy, char *buf)
++{
++	return sprintf(buf, "%u\n", count_memory_controllers());
++}
++
++/* Shows vco_freq, cpu_freq, and scb_freq in kHz. */
++static ssize_t show_brcmstb_freqs(struct cpufreq_policy *policy, char *buf)
++{
++	unsigned int vco_freq, cpu_freq, scb_freq;
++
++	get_frequencies(policy, &vco_freq, &cpu_freq, &scb_freq);
++
++	return sprintf(buf, "%u %u %u\n", vco_freq, cpu_freq, scb_freq);
++}
++
++/* Shows the lowest frequency (in kHz) that can be used without "safe mode". */
++static ssize_t show_brcmstb_safe_freq(struct cpufreq_policy *policy, char *buf)
++{
++	struct cpufreq_frequency_table *entry;
++	unsigned int safe_freq = 0;
++
++	cpufreq_for_each_valid_entry(entry, policy->freq_table) {
++		if (!(entry->driver_data & BRCMSTB_TBL_SAFE_MODE))
++			safe_freq = entry->frequency;
++	}
++
++	return sprintf(buf, "%u\n", safe_freq);
++}
++
++cpufreq_freq_attr_ro(brcmstb_num_memc);
++cpufreq_freq_attr_ro(brcmstb_freqs);
++cpufreq_freq_attr_ro(brcmstb_safe_freq);
++
++static struct freq_attr *brcmstb_cpufreq_attr[] = {
++	&cpufreq_freq_attr_scaling_available_freqs,
++	&brcmstb_num_memc,
++	&brcmstb_freqs,
++	&brcmstb_safe_freq,
++	NULL
++};
++
++static struct cpufreq_driver brcmstb_driver = {
++	.flags		= CPUFREQ_NEED_INITIAL_FREQ_CHECK,
++	.verify		= cpufreq_generic_frequency_table_verify,
++	.target_index	= brcmstb_target_index,
++	.get		= cpufreq_generic_get,
++	.init		= brcmstb_cpufreq_init,
++	.attr		= brcmstb_cpufreq_attr,
++	.name		= BRCMSTB_CPUFREQ_PREFIX,
++};
++
++static int brcmstb_cpufreq_probe(struct platform_device *pdev)
++{
++	int ret;
++
++	ret = brcmstb_prepare_init(pdev);
++	if (ret)
++		return ret;
++
++	brcmstb_driver.driver_data = pdev;
++
++	return cpufreq_register_driver(&brcmstb_driver);
++}
++
++static int brcmstb_cpufreq_remove(struct platform_device *pdev)
++{
++	int ret;
++
++	ret = cpufreq_unregister_driver(&brcmstb_driver);
++	if (ret)
++		return ret;
++
++	platform_set_drvdata(pdev, NULL);
++
++	return 0;
++}
++
++static const struct of_device_id brcmstb_cpufreq_match[] = {
++	{ .compatible = BRCMSTB_DT_CPU_CLK_CTRL },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, brcmstb_cpufreq_match);
++
++static struct platform_driver brcmstb_cpufreq_platdrv = {
++	.driver = {
++		.name	= BRCMSTB_CPUFREQ_NAME,
++		.of_match_table = brcmstb_cpufreq_match,
++	},
++	.probe		= brcmstb_cpufreq_probe,
++	.remove		= brcmstb_cpufreq_remove,
++};
++module_platform_driver(brcmstb_cpufreq_platdrv);
++
++MODULE_AUTHOR("Markus Mayer <mmayer@broadcom.com>");
++MODULE_DESCRIPTION("CPUfreq driver for Broadcom STB SoCs");
++MODULE_LICENSE("GPL");
+-- 
+2.7.4
