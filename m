@@ -1,116 +1,80 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH v2 08/10] ARM: dts: sun8i: Add audio codec, dai and card for A33
-Date: Tue, 17 Jan 2017 15:02:28 +0100
-Message-Id: <20170117140230.23142-9-mylene.josserand@free-electrons.com>
-In-Reply-To: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 19 Jan 2017 13:28:13 -0600
+From: Rob Herring <robh@kernel.org>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, Paul Walmsley <paul@pwsan.com>
+Subject: Re: [PATCHv2] Documentation: dt-bindings: Add binding documentation
+ for TI clkctrl clocks
+Message-ID: <20170119192813.xdt5jahffcdzmucu@rob-hp-laptop>
+References: <20170117225302.10844-1-tony@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170117225302.10844-1-tony@atomide.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the audio codec, dai and a simple card to be able to use the
-audio stream of the builtin codec on sun8i SoC.
+On Tue, Jan 17, 2017 at 02:53:02PM -0800, Tony Lindgren wrote:
+> Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
+> clock controller instance for each interconnect target module. The clkctrl
+> controls functional and interface clocks for the module.
+> 
+> The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
+> With this binding and a related clock device driver we can start moving the
+> clkctrl clock handling to live in drivers/clk/ti.
+> 
+> Note that this binding allows keeping the clockdomain related parts out of
+> drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
+> a separate driver in drivers/soc/ti and genpd. If the clockdomain driver
+> needs to know it's clocks, we can just set the the clkctrl device
+> instances to be children of the related clockdomain device.
+> 
+> Each clkctrl clock can have multiple optional gate clocks, and multiple
+> optional mux clocks. To represent this in device tree, it seems that
+> it is best done using four clock cells #clock-cells = <4> property.
+> 
+> The reasons for using #clock-cells = <4> are:
+> 
+> 1. We need to specify the clkctrl offset from the instance base. Otherwise
+>    we end up with a large number of device tree nodes that need to be
+>    patched when new clocks are discovered in a clkctrl clock with minor
+>    hardware revision changes for example
+> 
+> 2. On omap5 CM_L3INIT_USB_HOST_HS_CLKCTRL has ten OPTFCLKEN bits. So we
+>    need to use a separate cell for optional gate clocks to avoid address
+>    space conflicts
+> 
+> 3. Some clkctrl instances can also also optional mux clocks. To address
+>    them properly we need also a separate cell for the optional mux
+>    clock index
+> 
+> 4. The modulemode clock needs a flag passed to it for hardware or
+>    software controlled mode
+> 
+> There is probably no need to list input clocks for each clkctrl clock
+> instance in the binding. If we want to add them, the standard clocks
+> binding can be used for that.
+> 
+> For hardware reference, see omap4430 TRM "Table 3-1312. L4PER_CM2 Registers
+> Mapping Summary" for example. It shows one instance of a clkctrl clock
+> controller with multiple clkctrl registers.
+> 
+> Cc: Paul Walmsley <paul@pwsan.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+> 
+> Changes from v1:
+> 
+> - Use #clock-cells to avoid address space conflicts
+> 
+> - Consider also optional mux clocks as pointed out by Tero
+> 
+> ---
+>  .../devicetree/bindings/clock/ti-clkctrl.txt       | 57 ++++++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti-clkctrl.txt
 
-This commit adds also an audio-routing for the sound card node to link
-the analog DAPM widgets (Right/Left DAC) and the digital one's as they
-are created in different drivers.
-
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
----
- arch/arm/boot/dts/sun8i-a33.dtsi | 47 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
-index 63d5181ffff8..fe8a4f4760d2 100644
---- a/arch/arm/boot/dts/sun8i-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-@@ -43,6 +43,7 @@
-  */
- 
- #include "sun8i-a23-a33.dtsi"
-+#include <dt-bindings/dma/sun4i-a10.h>
- 
- / {
- 	cpus {
-@@ -69,6 +70,27 @@
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
-+	sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "Sun8i Audio Card";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,frame-master = <&link_codec>;
-+		simple-audio-card,bitclock-master = <&link_codec>;
-+		simple-audio-card,mclk-fs = <512>;
-+		simple-audio-card,aux-devs = <&codec_analog>;
-+		simple-audio-card,routing =
-+				"Left DAC", "Digital Left DAC",
-+				"Right DAC", "Digital Right DAC";
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&dai>;
-+		};
-+
-+		link_codec: simple-audio-card,codec {
-+			sound-dai = <&codec>;
-+		};
-+	};
-+
- 	soc@01c00000 {
- 		tcon0: lcd-controller@01c0c000 {
- 			compatible = "allwinner,sun8i-a33-tcon";
-@@ -116,6 +138,31 @@
- 			reset-names = "ahb";
- 		};
- 
-+		dai: dai@01c22c00 {
-+			#sound-dai-cells = <0>;
-+			compatible = "allwinner,sun6i-a31-i2s";
-+			reg = <0x01c22c00 0x200>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
-+			clock-names = "apb", "mod";
-+			resets = <&ccu RST_BUS_CODEC>;
-+			reset-names = "rst";
-+			dmas = <&dma 15>, /* AUDIO_CODEC port */
-+				<&dma 15>; /* AUDIO_CODEC port */
-+			dma-names = "rx", "tx";
-+			status = "disabled";
-+		};
-+
-+		codec: codec@01c22e00 {
-+			#sound-dai-cells = <0>;
-+			compatible = "allwinner,sun8i-a33-codec";
-+			reg = <0x01c22e00 0x400>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
-+			clock-names = "bus", "mod";
-+			status = "disabled";
-+		};
-+
- 		fe0: display-frontend@01e00000 {
- 			compatible = "allwinner,sun8i-a33-display-frontend";
- 			reg = <0x01e00000 0x20000>;
--- 
-2.11.0
+Acked-by: Rob Herring <robh@kernel.org>
