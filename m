@@ -1,69 +1,109 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
- Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v3 02/10] arm64: allwinner: Kconfig: add essential pinctrl
- driver for H5
-Date: Sun, 29 Jan 2017 10:33:23 +0800
-Message-Id: <20170129023331.62106-3-icenowy@aosc.xyz>
-In-Reply-To: <20170129023331.62106-1-icenowy@aosc.xyz>
-References: <20170129023331.62106-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: jic23@kernel.org,
+	knaack.h@gmx.de,
+	lars@metafoo.de,
+	pmeerw@pmeerw.net,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	khilman@baylibre.com,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: carlo@caione.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	narmstrong@baylibre.com,
+	linux-arm-kernel@lists.infradead.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v3 4/4] ARM64: dts: meson: meson-gx: add the SAR ADC
+Date: Thu, 19 Jan 2017 15:58:22 +0100
+Message-Id: <20170119145822.26239-5-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170119145822.26239-1-martin.blumenstingl@googlemail.com>
+References: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
+ <20170119145822.26239-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-H5 SoC has two pin controllers, one (in user manual called "CPUx") needs
-a slightly advanced driver, and the other (called "CPUs") is just equal
-to the on in H3, and the H3 driver can be just reused.
+Add the SAR ADC to meson-gxbb.dtsi and meson-gxl.dtsi. GXBB provides a
+10-bit ADC while GXL (and GXM, which uses the same ADC as GXL) provides
+a 12-bit ADC.
+Some boards use resistor ladder buttons connected through one of the ADC
+channels. On newer devices (GXL and GXM) some boards use pull-ups/downs
+to change the resistance (and thus the ADC value) on of the ADC channels
+to indicate the board revision.
 
-Select the two necessary pinctrl drivers when building kernel for
-Allwinner SoCs.
-
-Also add H5 in the option's description.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Tested-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- arch/arm64/Kconfig.platforms | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi   |  8 ++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 10 ++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 10 ++++++++++
+ 3 files changed, 28 insertions(+)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 715ef1256838..e11523d204b5 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -5,8 +5,11 @@ config ARCH_SUNXI
- 	select GENERIC_IRQ_CHIP
- 	select PINCTRL
- 	select PINCTRL_SUN50I_A64
-+	select PINCTRL_SUN50I_H5
-+	select PINCTRL_SUN8I_H3_R
- 	help
--	  This enables support for Allwinner sunxi based SoCs like the A64.
-+	  This enables support for Allwinner sunxi based SoCs like the A64
-+	  and H5.
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 99e6a8d5cb9e..55abfb74aab2 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -255,6 +255,14 @@
+ 				status = "disabled";
+ 			};
  
- config ARCH_ALPINE
- 	bool "Annapurna Labs Alpine platform"
++			saradc: adc@8680 {
++				compatible = "amlogic,meson-saradc";
++				#io-channel-cells = <1>;
++				status = "disabled";
++				reg = <0x0 0x8680 0x0 0x34>;
++				interrupts = <GIC_SPI 73 IRQ_TYPE_EDGE_RISING>;
++			};
++
+ 			pwm_ef: pwm@86c0 {
+ 				compatible = "amlogic,meson-gx-pwm", "amlogic,meson-gxbb-pwm";
+ 				reg = <0x0 0x086c0 0x0 0x10>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 39a774ad83ce..04b3324bc132 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -490,6 +490,16 @@
+ 	clocks = <&clkc CLKID_I2C>;
+ };
+ 
++&saradc {
++	compatible = "amlogic,meson-gxbb-saradc", "amlogic,meson-saradc";
++	clocks = <&xtal>,
++		 <&clkc CLKID_SAR_ADC>,
++		 <&clkc CLKID_SANA>,
++		 <&clkc CLKID_SAR_ADC_CLK>,
++		 <&clkc CLKID_SAR_ADC_SEL>;
++	clock-names = "clkin", "core", "sana", "adc_clk", "adc_sel";
++};
++
+ &sd_emmc_a {
+ 	clocks = <&clkc CLKID_SD_EMMC_A>,
+ 		 <&xtal>,
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index bdf2305a2e25..7c72dbcef1ba 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -340,6 +340,16 @@
+ 	clocks = <&clkc CLKID_I2C>;
+ };
+ 
++&saradc {
++	compatible = "amlogic,meson-gxl-saradc", "amlogic,meson-saradc";
++	clocks = <&xtal>,
++		 <&clkc CLKID_SAR_ADC>,
++		 <&clkc CLKID_SANA>,
++		 <&clkc CLKID_SAR_ADC_CLK>,
++		 <&clkc CLKID_SAR_ADC_SEL>;
++	clock-names = "clkin", "core", "sana", "adc_clk", "adc_sel";
++};
++
+ &sd_emmc_a {
+ 	clocks = <&clkc CLKID_SD_EMMC_A>,
+ 		 <&xtal>,
 -- 
 2.11.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
