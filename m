@@ -1,233 +1,56 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 7/8] ARM: dts: r8a7743: Add reset control properties
-Date: Fri, 20 Jan 2017 15:08:25 +0100
-Message-Id: <1484921306-9967-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
-References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v3 4/6] dt-bindings: add device binding for the CCU of
+ Allwinner V3s
+Date: Fri, 20 Jan 2017 01:54:46 +0800
+Message-Id: <20170119175448.11445-4-icenowy@aosc.xyz>
+In-Reply-To: <20170119175448.11445-1-icenowy@aosc.xyz>
+References: <20170119175448.11445-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add properties to describe the reset topology for on-SoC devices:
-  - Add the "#reset-cells" property to the CPG/MSSR device node,
-  - Add resets and reset-names properties to the various device nodes.
+Allwinner V3s is now driven by sunxi-ng CCU driver.
 
-This allows to reset SoC devices using the Reset Controller API.
+Add devicetree binding for it.
 
-Note that all resets added match the corresponding module clocks.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 40d2cdede7022ff6..5f2287ea00922ee0 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -63,6 +63,7 @@
- 			clocks = <&cpg CPG_MOD 408>;
- 			clock-names = "clk";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 408>;
- 		};
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index 74d44a4273f2..f6032cf63f12 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -7,6 +7,7 @@ Required properties :
+ 		- "allwinner,sun8i-a23-ccu"
+ 		- "allwinner,sun8i-a33-ccu"
+ 		- "allwinner,sun8i-h3-ccu"
++		- "allwinner,sun8i-v3s-ccu"
+ 		- "allwinner,sun50i-a64-ccu"
  
- 		irqc: interrupt-controller@e61c0000 {
-@@ -82,6 +83,7 @@
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 407>;
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 407>;
- 		};
- 
- 		timer {
-@@ -103,6 +105,7 @@
- 			clock-names = "extal", "usb_extal";
- 			#clock-cells = <2>;
- 			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
- 		};
- 
- 		prr: chipid@ff000044 {
-@@ -149,6 +152,7 @@
- 			clocks = <&cpg CPG_MOD 219>;
- 			clock-names = "fck";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 219>;
- 			#dma-cells = <1>;
- 			dma-channels = <15>;
- 		};
-@@ -181,6 +185,7 @@
- 			clocks = <&cpg CPG_MOD 218>;
- 			clock-names = "fck";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 218>;
- 			#dma-cells = <1>;
- 			dma-channels = <15>;
- 		};
-@@ -196,6 +201,7 @@
- 			       <&dmac1 0x21>, <&dmac1 0x22>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 204>;
- 			status = "disabled";
- 		};
- 
-@@ -210,6 +216,7 @@
- 			       <&dmac1 0x25>, <&dmac1 0x26>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 203>;
- 			status = "disabled";
- 		};
- 
-@@ -224,6 +231,7 @@
- 			       <&dmac1 0x27>, <&dmac1 0x28>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 202>;
- 			status = "disabled";
- 		};
- 
-@@ -238,6 +246,7 @@
- 			       <&dmac1 0x1b>, <&dmac1 0x1c>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 1106>;
- 			status = "disabled";
- 		};
- 
-@@ -252,6 +261,7 @@
- 			       <&dmac1 0x1f>, <&dmac1 0x20>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 1107>;
- 			status = "disabled";
- 		};
- 
-@@ -266,6 +276,7 @@
- 			       <&dmac1 0x23>, <&dmac1 0x24>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 1108>;
- 			status = "disabled";
- 		};
- 
-@@ -280,6 +291,7 @@
- 		       <&dmac1 0x3d>, <&dmac1 0x3e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 206>;
- 			status = "disabled";
- 		};
- 
-@@ -294,6 +306,7 @@
- 			       <&dmac1 0x19>, <&dmac1 0x1a>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 207>;
- 			status = "disabled";
- 		};
- 
-@@ -308,6 +321,7 @@
- 			       <&dmac1 0x1d>, <&dmac1 0x1e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 216>;
- 			status = "disabled";
- 		};
- 
-@@ -323,6 +337,7 @@
- 			       <&dmac1 0x29>, <&dmac1 0x2a>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 721>;
- 			status = "disabled";
- 		};
- 
-@@ -338,6 +353,7 @@
- 			       <&dmac1 0x2d>, <&dmac1 0x2e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 720>;
- 			status = "disabled";
- 		};
- 
-@@ -353,6 +369,7 @@
- 			       <&dmac1 0x2b>, <&dmac1 0x2c>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 719>;
- 			status = "disabled";
- 		};
- 
-@@ -368,6 +385,7 @@
- 			       <&dmac1 0x2f>, <&dmac1 0x30>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 718>;
- 			status = "disabled";
- 		};
- 
-@@ -383,6 +401,7 @@
- 			       <&dmac1 0xfb>, <&dmac1 0xfc>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 715>;
- 			status = "disabled";
- 		};
- 
-@@ -398,6 +417,7 @@
- 			       <&dmac1 0xfd>, <&dmac1 0xfe>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 714>;
- 			status = "disabled";
- 		};
- 
-@@ -413,6 +433,7 @@
- 			       <&dmac1 0x39>, <&dmac1 0x3a>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 717>;
- 			status = "disabled";
- 		};
- 
-@@ -428,6 +449,7 @@
- 			       <&dmac1 0x4d>, <&dmac1 0x4e>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
- 			status = "disabled";
- 		};
- 
-@@ -443,6 +465,7 @@
- 			       <&dmac1 0x3b>, <&dmac1 0x3c>;
- 			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 713>;
- 			status = "disabled";
- 		};
- 
-@@ -452,6 +475,7 @@
- 			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 813>;
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 813>;
- 			phy-mode = "rmii";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+ - reg: Must contain the registers base address and length
 -- 
-1.9.1
+2.11.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
