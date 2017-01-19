@@ -1,109 +1,43 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: jic23@kernel.org,
-	knaack.h@gmx.de,
-	lars@metafoo.de,
-	pmeerw@pmeerw.net,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	khilman@baylibre.com,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: carlo@caione.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
+Return-Path: <valentinrothberg@gmail.com>
+Return-Path: <valentinrothberg@gmail.com>
+From: Valentin Rothberg <valentinrothberg@gmail.com>
+To: krzk@kernel.org,
+	s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	tomasz.figa@gmail.com,
 	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	narmstrong@baylibre.com,
-	linux-arm-kernel@lists.infradead.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v3 4/4] ARM64: dts: meson: meson-gx: add the SAR ADC
-Date: Thu, 19 Jan 2017 15:58:22 +0100
-Message-Id: <20170119145822.26239-5-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20170119145822.26239-1-martin.blumenstingl@googlemail.com>
-References: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
- <20170119145822.26239-1-martin.blumenstingl@googlemail.com>
+	sboyd@codeaurora.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Valentin Rothberg <valentinrothberg@gmail.com>,
+	Valentin Rothberg <valetinrothberg@gmail.com>
+Subject: [PATCH] ARM: Exynos4415: remove dead build rule
+Date: Thu, 19 Jan 2017 10:11:53 +0100
+Message-Id: <20170119091153.8439-1-valentinrothberg@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the SAR ADC to meson-gxbb.dtsi and meson-gxl.dtsi. GXBB provides a
-10-bit ADC while GXL (and GXM, which uses the same ADC as GXL) provides
-a 12-bit ADC.
-Some boards use resistor ladder buttons connected through one of the ADC
-channels. On newer devices (GXL and GXM) some boards use pull-ups/downs
-to change the resistance (and thus the ADC value) on of the ADC channels
-to indicate the board revision.
+Commit 22dfab102cfa ("ARM: EXYNOS: Remove Exynos4415 arch code (SoC not
+supported anymore)") removed the Kconfig option SOC_EXYNOS4415.  Thus,
+we are safe to remove the last reference in the Makefile.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Valentin Rothberg <valetinrothberg@gmail.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-gx.dtsi   |  8 ++++++++
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 10 ++++++++++
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 10 ++++++++++
- 3 files changed, 28 insertions(+)
+Detected by using ./scripts/checkkconfigsymbols.py
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-index 99e6a8d5cb9e..55abfb74aab2 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-@@ -255,6 +255,14 @@
- 				status = "disabled";
- 			};
- 
-+			saradc: adc@8680 {
-+				compatible = "amlogic,meson-saradc";
-+				#io-channel-cells = <1>;
-+				status = "disabled";
-+				reg = <0x0 0x8680 0x0 0x34>;
-+				interrupts = <GIC_SPI 73 IRQ_TYPE_EDGE_RISING>;
-+			};
-+
- 			pwm_ef: pwm@86c0 {
- 				compatible = "amlogic,meson-gx-pwm", "amlogic,meson-gxbb-pwm";
- 				reg = <0x0 0x086c0 0x0 0x10>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index 39a774ad83ce..04b3324bc132 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -490,6 +490,16 @@
- 	clocks = <&clkc CLKID_I2C>;
- };
- 
-+&saradc {
-+	compatible = "amlogic,meson-gxbb-saradc", "amlogic,meson-saradc";
-+	clocks = <&xtal>,
-+		 <&clkc CLKID_SAR_ADC>,
-+		 <&clkc CLKID_SANA>,
-+		 <&clkc CLKID_SAR_ADC_CLK>,
-+		 <&clkc CLKID_SAR_ADC_SEL>;
-+	clock-names = "clkin", "core", "sana", "adc_clk", "adc_sel";
-+};
-+
- &sd_emmc_a {
- 	clocks = <&clkc CLKID_SD_EMMC_A>,
- 		 <&xtal>,
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index bdf2305a2e25..7c72dbcef1ba 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-@@ -340,6 +340,16 @@
- 	clocks = <&clkc CLKID_I2C>;
- };
- 
-+&saradc {
-+	compatible = "amlogic,meson-gxl-saradc", "amlogic,meson-saradc";
-+	clocks = <&xtal>,
-+		 <&clkc CLKID_SAR_ADC>,
-+		 <&clkc CLKID_SANA>,
-+		 <&clkc CLKID_SAR_ADC_CLK>,
-+		 <&clkc CLKID_SAR_ADC_SEL>;
-+	clock-names = "clkin", "core", "sana", "adc_clk", "adc_sel";
-+};
-+
- &sd_emmc_a {
- 	clocks = <&clkc CLKID_SD_EMMC_A>,
- 		 <&xtal>,
+ drivers/clk/samsung/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+index 57f4dc6dc447..7afc21dc374e 100644
+--- a/drivers/clk/samsung/Makefile
++++ b/drivers/clk/samsung/Makefile
+@@ -5,7 +5,6 @@
+ obj-$(CONFIG_COMMON_CLK)	+= clk.o clk-pll.o clk-cpu.o
+ obj-$(CONFIG_SOC_EXYNOS3250)	+= clk-exynos3250.o
+ obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4.o
+-obj-$(CONFIG_SOC_EXYNOS4415)	+= clk-exynos4415.o
+ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
+ obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
+ obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
 -- 
 2.11.0
