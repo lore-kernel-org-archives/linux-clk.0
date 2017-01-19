@@ -1,72 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58921 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752900AbdACWQx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2017 17:16:53 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Adam Ford <aford173@gmail.com>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Walmsley <paul@pwsan.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Richard Watts <rrw@kynesim.co.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexander Kinzer <a.kinzer@plusoptix.de>
-Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
-Date: Wed, 04 Jan 2017 00:16:55 +0200
-Message-ID: <8244231.MVTltJ04HJ@avalon>
-In-Reply-To: <20170103184956.GJ17126@codeaurora.org>
-References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com> <CAHCN7x+O6Y+pMhaWNZ+pPkjZqoF_SOckhzsfVG9c3xBKTG2MKw@mail.gmail.com> <20170103184956.GJ17126@codeaurora.org>
+Return-Path: <krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CAJKOXPd7UDhn0oxyFsYAtD4zKfOoZA0LP-CNdXmhCzjOs6Le=A@mail.gmail.com>
+References: <20170119091153.8439-1-valentinrothberg@gmail.com> <CAJKOXPd7UDhn0oxyFsYAtD4zKfOoZA0LP-CNdXmhCzjOs6Le=A@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 19 Jan 2017 11:20:17 +0200
+Message-ID: <CAJKOXPdX2YhSf0T8zoZ_i=AxbNjWLy=jVF_zhj-b_kGX2x7zPA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: Exynos4415: remove dead build rule
+To: Valentin Rothberg <valentinrothberg@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Valentin Rothberg <valetinrothberg@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday 03 Jan 2017 10:49:56 Stephen Boyd wrote:
-> On 01/03, Adam Ford wrote:
-> > On Thu, Dec 8, 2016 at 3:24 PM, Laurent Pinchart wrote:
-> >> On Thursday 08 Dec 2016 13:16:01 Stephen Boyd wrote:
-> >>> On 12/02, Laurent Pinchart wrote:
-> >>>> From: Richard Watts <rrw@kynesim.co.uk>
-> >>>> 
-> >>>> The OMAP36xx DPLL5, driving EHCI USB, can be subject to a long-term
-> >>>> frequency drift. The frequency drift magnitude depends on the VCO
-> >>>> update rate, which is inversely proportional to the PLL divider. The
-> >>>> kernel DPLL configuration code results in a high value for the divider,
-> >>>> leading to a long term drift high enough to cause USB transmission
-> >>>> errors. In the worst case the USB PHY's ULPI interface can stop
-> >>>> responding, breaking USB operation completely. This manifests itself on
-> >>>> the Beagleboard xM by the LAN9514 reporting 'Cannot enable port 2.
-> >>>> Maybe the cable is bad?' in the kernel log.
-> >>>> 
-> >>>> Errata sprz319 advisory 2.1 documents PLL values that minimize the
-> >>>> drift. Use them automatically when DPLL5 is used for USB operation,
-> >>>> which we detect based on the requested clock rate. The clock
-> >>>> framework will still compute the PLL parameters and resulting rate as
-> >>>> usual, but the PLL M and N values will then be overridden. This can
-> >>>> result in the effective clock rate being slightly different than the
-> >>>> rate cached by the clock framework, but won't cause any adverse effect
-> >>>> to USB operation.
-> >>>> 
-> >>>> Signed-off-by: Richard Watts <rrw@kynesim.co.uk>
-> >>>> [Upported from v3.2 to v4.9]
-> >>>> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>>> ---
-> >>> 
-> >>> Applied to clk-next
-> > 
-> > Since this fixes an errata issue, is there any way we can get this
-> > patch applied to the older LTS kernels?  (4.4 seems to apply cleanly,
-> > but I didn't try any older than that)
-> 
-> Sure. Just follow the stable kernel rules. See
-> Documentation/process/stable-kernel-rules.rst, specifically
-> option #2.
+On Thu, Jan 19, 2017 at 11:18 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Thu, Jan 19, 2017 at 11:11 AM, Valentin Rothberg
+> <valentinrothberg@gmail.com> wrote:
+>> Commit 22dfab102cfa ("ARM: EXYNOS: Remove Exynos4415 arch code (SoC not
+>> supported anymore)") removed the Kconfig option SOC_EXYNOS4415.  Thus,
+>> we are safe to remove the last reference in the Makefile.
+>>
+>> Signed-off-by: Valentin Rothberg <valetinrothberg@gmail.com>
+>> ---
+>> Detected by using ./scripts/checkkconfigsymbols.py
+>>
+>>  drivers/clk/samsung/Makefile | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+>> index 57f4dc6dc447..7afc21dc374e 100644
+>> --- a/drivers/clk/samsung/Makefile
+>> +++ b/drivers/clk/samsung/Makefile
+>> @@ -5,7 +5,6 @@
+>>  obj-$(CONFIG_COMMON_CLK)       += clk.o clk-pll.o clk-cpu.o
+>>  obj-$(CONFIG_SOC_EXYNOS3250)   += clk-exynos3250.o
+>>  obj-$(CONFIG_ARCH_EXYNOS4)     += clk-exynos4.o
+>> -obj-$(CONFIG_SOC_EXYNOS4415)   += clk-exynos4415.o
+>
+> It is already removed. Which tree are you using?
 
-And needless to say, please test the backported patch before requesting it to 
-be included in stable kernels :-)
+BTW, please fix your own mail/name etc in from and Signed-off-by. One
+of them is wrong and bounces.
 
--- 
-Regards,
-
-Laurent Pinchart
-
+Best regards,
+Krzysztof
