@@ -1,53 +1,55 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:54846 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933616AbdA0LF6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Jan 2017 06:05:58 -0500
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5433: Add IDs for
- PHYCLK_MIPIDPHY0_* clocks
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <45f50263-6c5f-bbc6-1e24-a386dbabb496@samsung.com>
-Date: Fri, 27 Jan 2017 12:05:39 +0100
-MIME-version: 1.0
-In-reply-to: <20170125200631.ubt3x6jhoi367ex6@kozik-lap>
-Content-type: text/plain; charset=utf-8
-References: <1485345118-3082-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125115214eucas1p1517ce7ca8fe88e4742a1306630b91d09@eucas1p1.samsung.com>
- <1485345118-3082-2-git-send-email-m.szyprowski@samsung.com>
- <20170125200631.ubt3x6jhoi367ex6@kozik-lap>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Chris.Packham@alliedtelesis.co.nz>
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Rob Herring <robh@kernel.org>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland
+	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv4 1/5] clk: mvebu: support for 98DX3236 SoC
+Date: Thu, 19 Jan 2017 03:24:35 +0000
+Message-ID: <e9cd1318dfe04d7ca3bad0e2073587d8@svr-chch-ex1.atlnz.lc>
+References: <20170113091222.7132-1-chris.packham@alliedtelesis.co.nz>
+ <20170113091222.7132-2-chris.packham@alliedtelesis.co.nz>
+ <20170118222508.prn5xk63nuc3ocr7@rob-hp-laptop>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Cc: linux-clk@vger.kernel.org
-
-On 01/25/2017 09:06 PM, Krzysztof Kozlowski wrote:
-> On Wed, Jan 25, 2017 at 12:51:57PM +0100, Marek Szyprowski wrote:
->> Add missing identifiers for phyclk_mipidphy0_bitclkdiv8_phy and
->> phyclk_mipidphy0_rxclkesc0_phy clocks. Access to those clocks is needed
->> to setup initial clock configuration for display subsystem in device tree
->> in order to avoid dependency on the configuration left by the bootloader.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-exynos5433.c   | 6 ++++--
->>  include/dt-bindings/clock/exynos5433.h | 5 ++++-
->>  2 files changed, 8 insertions(+), 3 deletions(-)
->>
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> Sylwester,
-> Could you provide a tag with this?
-
-I have the tag prepared already, but please resend the patch to
-linux-clk@vger.kernel.org and I will reply there.
-The patches were sent only to the linux-samsung-soc mailing list.
-
--- 
-Thanks,
-Sylwester
+On 19/01/17 11:25, Rob Herring wrote:=0A=
+> On Fri, Jan 13, 2017 at 10:12:16PM +1300, Chris Packham wrote:=0A=
+>> The 98DX3236, 98DX3336, 98DX4521 and variants have a different TCLK from=
+=0A=
+>> the Armada XP (200MHz vs 250MHz). The CPU core clock is fixed at 800MHz.=
+=0A=
+>>=0A=
+>> The clock gating options are a subset of those on the Armada XP.=0A=
+>>=0A=
+>> The core clock divider is different to the Armada XP also.=0A=
+>>=0A=
+>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
+>> ---=0A=
+>>=0A=
+>> Notes:=0A=
+>>     Changes in v2:=0A=
+>>     - Update devicetree binding documentation for new compatible string=
+=0A=
+>>     Changes in v3:=0A=
+>>     - Add 98dx3236 support to mvebu/clk-corediv.c rather than creating a=
+ new=0A=
+>>       driver.=0A=
+>>     - Document mv98dx3236-corediv-clock binding=0A=
+>>     Changes in v4:=0A=
+>>     - None=0A=
+>>=0A=
+>>  .../bindings/clock/mvebu-corediv-clock.txt         |  1 +=0A=
+>>  .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |  1 +=0A=
+>=0A=
+> Please add acks when posting new versions.=0A=
+>=0A=
+> Acked-by: Rob Herring <robh@kernel.org>=0A=
+>=0A=
+=0A=
+Thanks Rob. I must have missed the earlier ack. Will be in v5.=0A=
