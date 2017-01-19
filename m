@@ -1,90 +1,81 @@
-Return-Path: <j-keerthy@ti.com>
-Subject: Re: [PATCH] clk: ti: divider: Add the table parsing to get the best
- divider value
-To: <t-kristo@ti.com>
-References: <1480669543-16197-1-git-send-email-j-keerthy@ti.com>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Keerthy <j-keerthy@ti.com>
-Message-ID: <98780c76-0ba8-85ec-ca01-392f36fa91ad@ti.com>
-Date: Wed, 25 Jan 2017 16:07:35 +0530
-MIME-Version: 1.0
-In-Reply-To: <1480669543-16197-1-git-send-email-j-keerthy@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <mmayer@mmayer.net>
+From: Markus Mayer <code@mmayer.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Markus Mayer <mmayer@broadcom.com>,
+	Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
+	Linux Clock List <linux-clk@vger.kernel.org>,
+	Power Management List <linux-pm@vger.kernel.org>,
+	Device Tree List <devicetree@vger.kernel.org>,
+	ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5 1/2] dt-bindings: brcm: clocks: add binding for brcmstb-cpu-clk-div
+Date: Wed, 18 Jan 2017 16:29:32 -0800
+Message-Id: <20170119002933.7529-2-code@mmayer.net>
+In-Reply-To: <20170119002933.7529-1-code@mmayer.net>
+References: <20170119002933.7529-1-code@mmayer.net>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Markus Mayer <mmayer@broadcom.com>
 
+Add binding document for brcm,brcmstb-cpu-clk-div.
 
-On Friday 02 December 2016 02:35 PM, Keerthy wrote:
-> Currently the divider selection logic blindly divides the parent_rate
-> by the clk rate and gives the divider value for the divider clocks
-> which do not have the CLK_SET_RATE_PARENT flag set. Add the clk divider
-> table parsing to get the closest divider available in the table
-> provided via Device tree.
->
-> The code is pretty much taken from: drivers/clk/clk-divider.c.
-> and used here to fix up the best divider selection logic.
+Signed-off-by: Markus Mayer <mmayer@broadcom.com>
+---
+ .../bindings/clock/brcm,brcmstb-cpu-clk-div.txt    | 27 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ 2 files changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
 
-A gentle ping on this patch. This applies cleanly on the next branch as 
-on today. Let me know if this needs to be rebased.
-
-- Keerthy
-
->
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> Reported-by: Richard Woodruff <r-woodruff2@ti.com>
-> ---
->  drivers/clk/ti/divider.c | 31 ++++++++++++++++++++++++++++++-
->  1 file changed, 30 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-> index b4e5de1..6bb8778 100644
-> --- a/drivers/clk/ti/divider.c
-> +++ b/drivers/clk/ti/divider.c
-> @@ -140,6 +140,35 @@ static bool _is_valid_div(struct clk_divider *divider, unsigned int div)
->  	return true;
->  }
->
-> +static int _div_round_up(const struct clk_div_table *table,
-> +			 unsigned long parent_rate, unsigned long rate)
-> +{
-> +	const struct clk_div_table *clkt;
-> +	int up = INT_MAX;
-> +	int div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-> +
-> +	for (clkt = table; clkt->div; clkt++) {
-> +		if (clkt->div == div)
-> +			return clkt->div;
-> +		else if (clkt->div < div)
-> +			continue;
-> +
-> +		if ((clkt->div - div) < (up - div))
-> +			up = clkt->div;
-> +	}
-> +
-> +	return up;
-> +}
-> +
-> +static int _div_round(const struct clk_div_table *table,
-> +		      unsigned long parent_rate, unsigned long rate)
-> +{
-> +	if (!table)
-> +		return DIV_ROUND_UP(parent_rate, rate);
-> +
-> +	return _div_round_up(table, parent_rate, rate);
-> +}
-> +
->  static int ti_clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
->  				  unsigned long *best_parent_rate)
->  {
-> @@ -155,7 +184,7 @@ static int ti_clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
->
->  	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
->  		parent_rate = *best_parent_rate;
-> -		bestdiv = DIV_ROUND_UP(parent_rate, rate);
-> +		bestdiv = _div_round(divider->table, parent_rate, rate);
->  		bestdiv = bestdiv == 0 ? 1 : bestdiv;
->  		bestdiv = bestdiv > maxdiv ? maxdiv : bestdiv;
->  		return bestdiv;
->
+diff --git a/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt b/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
+new file mode 100644
+index 0000000..c4acb53
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
+@@ -0,0 +1,27 @@
++The CPU divider node serves as the sole clock for the CPU complex. It supports
++power-of-2 clock division, with a divider of "1" as the default highest-speed
++setting.
++
++Required properties:
++- compatible: shall be "brcm,brcmstb-cpu-clk-div"
++- reg: address and width of the divider configuration register
++- #clock-cells: shall be set to 0
++- clocks: phandle of clock provider which provides the source clock
++          (this would typically be a "fixed-clock" type PLL)
++- div-table: list of (raw_value,divider) ordered pairs that correspond to the
++             allowed clock divider settings
++- div-shift-width: least-significant bit position and width of divider value
++
++Optional properties:
++- clock-names: the clock may be named
++
++Example:
++	cpuclkdiv: cpu-clk-div@f03e257c {
++		compatible = "brcm,brcmstb-cpu-clk-div";
++		reg = <0xf03e257c 0x4>;
++		div-table = <0x00 1>;
++		div-shift-width = <0 5>;
++		#clock-cells = <0>;
++		clocks = <&cpupll>;
++		clock-names = "cpupll";
++	};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cfff2c9..690761d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2786,6 +2786,7 @@ M:	bcm-kernel-feedback-list@broadcom.com
+ L:	linux-pm@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/cpufreq/brcm,stb-avs-cpu-freq.txt
++F:	Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
+ F:	drivers/cpufreq/brcmstb*
+ 
+ BROADCOM SPECIFIC AMBA DRIVER (BCMA)
+-- 
+2.7.4
