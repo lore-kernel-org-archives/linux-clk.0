@@ -1,93 +1,113 @@
-Return-Path: <vivek.gautam@codeaurora.org>
-Subject: Re: [PATCH] clk: qcom: Fix a possible NULL pointer dereferencing
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1483606525-27709-1-git-send-email-vivek.gautam@codeaurora.org>
- <20170105142002.GB5710@hector.attlocal.net>
- <9b590296-6e3a-9079-08e5-48b4af8f8f22@codeaurora.org>
- <20170105223957.GK17126@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, mturquette@baylibre.com,
- david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Georgi Djakov <georgi.djakov@linaro.org>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <8c052627-0659-b24b-4086-00bbf4676843@codeaurora.org>
-Date: Fri, 6 Jan 2017 10:28:58 +0530
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Thu, 19 Jan 2017 16:41:28 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [linux-sunxi] Re: [PATCH v2 2/4] clk: sunxi-ng: add support for
+ V3s CCU
+Message-ID: <20170119154128.hzhggymgg7uczpfo@lukather>
+References: <20170117200213.27eGY8hi@smtp3h.mail.yandex.net>
 MIME-Version: 1.0
-In-Reply-To: <20170105223957.GK17126@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <20170117200213.27eGY8hi@smtp3h.mail.yandex.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Zepan <715805855@qq.com>,
+ linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+ Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============5450601095262999357=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-On 01/06/2017 04:09 AM, Stephen Boyd wrote:
-> On 01/05, Vivek Gautam wrote:
->> On 01/05/2017 07:50 PM, Andy Gross wrote:
->>> On Thu, Jan 05, 2017 at 02:25:25PM +0530, Vivek Gautam wrote:
->>>> Assign num_parents as 0 while registering fixed rate clocks
->>>> in _qcom_cc_register_board_clk(), to make sure the clk framework
->>>> doesn't dereference parent.
->>>>
->>>> Fixes: ee15faffef11 ("clk: qcom: common: Add API to register board clocks backwards compatibly")
->>>>
->>>> Cc: Georgi Djakov<georgi.djakov@linaro.org>
->>>> Signed-off-by: Vivek Gautam<vivek.gautam@codeaurora.org>
->>>> ---
->>>>
->>>> Based on 'clk-next'. Build tested.
->>>>
->>>>   drivers/clk/qcom/common.c | 1 +
->>>>   1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
->>>> index cfab7b400381..df004ead1bef 100644
->>>> --- a/drivers/clk/qcom/common.c
->>>> +++ b/drivers/clk/qcom/common.c
->>>> @@ -157,6 +157,7 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
->>>>   		init_data.name = path;
->>>>   		init_data.ops = &clk_fixed_rate_ops;
->>>> +		init_data.num_parents = 0;
->>> It seems like there was a initializer in the declaration but it was { } instead
->>> of { 0 }.
->>>
->>> Was the original intent to make this structure initialized to 0?  If so, perhaps
->>> it should be fixed above in the initializer.
->> yes, i think we intend to initialize the clock init data to 0, and thus
->> we should do that during declaration.
->> Will modify and re-spin the patch.
->>
-> What's the error exactly? Do you have some call stack/crash that
-> could be put in the commit text?
+--===============5450601095262999357==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="psx5bck5e4wnn5kr"
+Content-Disposition: inline
 
-I got a crash dump from clk_register, when i was working on qmp phy
-driver patches. This came when clk_init_data was not initilized.
-So i had to explicitly assign num_parents to 0.
 
-> It was my understanding that GCC allows braces without anything
-> inside to initialize structures to 0, so I'm confused what's
-> wrong here.
+--psx5bck5e4wnn5kr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You are right. My understanding, that we need to initialize a structure
-with {0}, was incomplete.
-We don't need this patch.
+On Wed, Jan 18, 2017 at 01:02:03AM +0800, Icenowy Zheng wrote:
+>=20
+> 2017=E5=B9=B41=E6=9C=8817=E6=97=A5 17:04=E4=BA=8E Maxime Ripard <maxime.r=
+ipard@free-electrons.com>=E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > Hi,=20
+> >
+> > On Tue, Jan 17, 2017 at 02:01:14AM +0800, Icenowy Zheng wrote:=20
+> > > V3s has a similar but cut-down CCU to H3.=20
+> > >=20
+> > > Add support for it.=20
+> > >=20
+> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>=20
+> > > ---=20
+> >
+> > Output from checkpatch:=20
+> > total: 5 errors, 2 warnings, 3 checks, 857 lines checked=20
+> >
+> > > I think I should make a comparsion between V3s and H3 CCU here:=20
+> > > (I won't mention the missing/added clocks here, only list conflicting=
+ clocks)=20
+> >
+> > That should be in your commit log.=20
+>=20
+> I think it can be easily get by a diff command :-)
+>=20
+> And we do not have the tradition to describe clock difference in
+> commit log, is it right?
 
-> If this is actually a problem then we have other
-> places to fix this.
->
->   $ git grep "clk_init_data.*{ *}"
->   drivers/clk/bcm/clk-bcm53573-ilp.c:     struct clk_init_data init = { };
->   drivers/clk/clk-gpio.c: struct clk_init_data init = {};
->   drivers/clk/clk-qoriq.c:        struct clk_init_data init = {};
->   drivers/clk/clk-rk808.c:        struct clk_init_data init = {};
->   drivers/clk/mediatek/clk-apmixed.c:     struct clk_init_data init = {};
->   drivers/clk/mediatek/clk-gate.c:        struct clk_init_data init = {};
->   drivers/clk/mediatek/clk-pll.c: struct clk_init_data init = {};
->   drivers/clk/qcom/common.c:      struct clk_init_data init_data = { };
->   drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm_8960.c:        struct clk_init_data bytediv_init = { };
->
+In very low details, no, but still having the big picture is a good
+idea.
 
-Regards
-Vivek
+Maxime
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--psx5bck5e4wnn5kr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYgN4oAAoJEBx+YmzsjxAg3LsP/2Gfax1B4rYAprxZ2k92kUeq
+wwE7NdXjEzCoW8RV59RKKAJELxJq+It0+a7byjKqnuxes+kTE7+KvRDCpoWYYf2U
+RLy3IHgHnFgoKEgHt54HX3/9OqryQek3CeE5LwuzPSrrrTLC8ENMCDzEdlDWqaqa
+o32vr9qu8gy/E725xR7/jfsRgQva10UEUa83kQmGum9nuK2C3Cq2MNPRxxUDaJoN
+5POapjpxOF1UZqMAA3Z//6MRbgz8uiyr6TJZzAupW9oCMSQ07PmiG80oUztVhisv
+FjPCUq5qTlDsCWj8pWKbOIM27dTqFEoJ4ICM2RLj650Ukb4nkBABnYsDWWFwsDjA
+Pm/j0cdehwvWUemiT7hZ/qhacU38Z3azU1ZYF9UK86Pdrr++Zv4AzE79LfHORwd3
+eBPGMGA/ZZ8oslgD4vY02WSoyYewBtjQqh7A6HUyTPThWYKvynyfmVhiwLTLQMN/
+woG3AnbK2JQ490zDb0wVsOYS2Zp3rEDnbL3uUiuIONStfqySggk1+GZvUiXTfRbs
+7+JVwhCAV7YYe0uKP2YpPoEVV/BujReNOTNmQBnGQGZ9yg8CxwBsaGLN+BMuNBZZ
+h8dy0JmH9fva8lDYdLy0dR6S9tMiJAGJdCgfTp33d5wsb/ZPFWSviOSdIYN1EzlO
+NZbrelb1FhrrU4X76QYC
+=zGlR
+-----END PGP SIGNATURE-----
+
+--psx5bck5e4wnn5kr--
+
+
+--===============5450601095262999357==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============5450601095262999357==--
