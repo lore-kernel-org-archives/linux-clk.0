@@ -1,57 +1,33 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33344 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750901AbdAXXqi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Jan 2017 18:46:38 -0500
-Received: by mail-wm0-f67.google.com with SMTP id r144so38497147wme.0
-        for <linux-clk@vger.kernel.org>; Tue, 24 Jan 2017 15:46:37 -0800 (PST)
-Subject: Re: [PATCH] clk: mediatek: Fix MT8135 dependencies
-To: Jean Delvare <jdelvare@suse.de>, linux-clk@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-References: <20170124130912.14375a32@endymion>
-Cc: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <dda838f6-ba77-b3f9-7567-3cdfb4a6ccd7@gmail.com>
-Date: Wed, 25 Jan 2017 00:46:35 +0100
-MIME-Version: 1.0
-In-Reply-To: <20170124130912.14375a32@endymion>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] ARM: Exynos4415: remove dead build rule
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Valentin Rothberg <valentinrothberg@gmail.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <d80a8587-56eb-8b30-91b7-fba89f47a309@samsung.com>
+Date: Thu, 19 Jan 2017 10:44:47 +0100
+MIME-version: 1.0
+In-reply-to: 
+ <CAJKOXPdGZtpwJpX4mZJfwGQkhwiBWWyCx5_KXgRUX0ap1R2ZJQ@mail.gmail.com>
+Content-type: text/plain; charset=utf-8
+References: <20170119091153.8439-1-valentinrothberg@gmail.com>
+ <CAJKOXPd7UDhn0oxyFsYAtD4zKfOoZA0LP-CNdXmhCzjOs6Le=A@mail.gmail.com>
+ <CAJKOXPdX2YhSf0T8zoZ_i=AxbNjWLy=jVF_zhj-b_kGX2x7zPA@mail.gmail.com>
+ <3c181bf8-7861-5197-f423-03e36bc440c5@gmail.com>
+ <CGME20170119093055epcas2p1c27509fae2ad6c32cc31186934fc9af0@epcas2p1.samsung.com>
+ <CAJKOXPdGZtpwJpX4mZJfwGQkhwiBWWyCx5_KXgRUX0ap1R2ZJQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 01/19/2017 10:28 AM, Krzysztof Kozlowski wrote:
+> Is your tree included in linux-next? I see my patch here:
+> https://git.linuxtv.org/snawrocki/samsung.git/log/?h=for-v4.11/clk/next
+> so maybe something in linux-next is missing?
 
+No, it's not included. I will be sending a pull request to the clk
+maintainers this week so the patches should end up in linux-next soon.
 
-On 01/24/2017 01:09 PM, Jean Delvare wrote:
-> The MT8135 is a 32-bit SoC, so only propose it on ARM architecture,
-> not ARM64.
->
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Fixes: 234d511d8c15 ("clk: mediatek: Add hardware dependency")
-> Cc: Andreas Färber <afaerber@suse.de>
-> Cc: James Liao <jamesjj.liao@mediatek.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> ---
->  drivers/clk/mediatek/Kconfig |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
-> --- linux-4.10-rc4.orig/drivers/clk/mediatek/Kconfig	2017-01-24 12:55:50.192100713 +0100
-> +++ linux-4.10-rc4/drivers/clk/mediatek/Kconfig	2017-01-24 12:59:08.703066604 +0100
-> @@ -52,9 +52,9 @@ config COMMON_CLK_MT2701_BDPSYS
->
->  config COMMON_CLK_MT8135
->  	bool "Clock driver for Mediatek MT8135"
-> -	depends on ARCH_MEDIATEK || COMPILE_TEST
-> +	depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
->  	select COMMON_CLK_MEDIATEK
-> -	default ARCH_MEDIATEK
-> +	default ARCH_MEDIATEK && ARM
->  	---help---
->  	  This driver supports Mediatek MT8135 clocks.
->
->
+-- 
+Thanks,
+Sylwester
