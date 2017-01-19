@@ -1,43 +1,193 @@
-Return-Path: <krzk@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20170119091153.8439-1-valentinrothberg@gmail.com>
-References: <20170119091153.8439-1-valentinrothberg@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Thu, 19 Jan 2017 11:18:41 +0200
-Message-ID: <CAJKOXPd7UDhn0oxyFsYAtD4zKfOoZA0LP-CNdXmhCzjOs6Le=A@mail.gmail.com>
-Subject: Re: [PATCH] ARM: Exynos4415: remove dead build rule
-To: Valentin Rothberg <valentinrothberg@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Valentin Rothberg <valetinrothberg@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: jic23@kernel.org,
+	knaack.h@gmx.de,
+	lars@metafoo.de,
+	pmeerw@pmeerw.net,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	khilman@baylibre.com,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: carlo@caione.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	narmstrong@baylibre.com,
+	linux-arm-kernel@lists.infradead.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v3 2/4] clk: gxbb: add the SAR ADC clocks and expose them
+Date: Thu, 19 Jan 2017 15:58:20 +0100
+Message-Id: <20170119145822.26239-3-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170119145822.26239-1-martin.blumenstingl@googlemail.com>
+References: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
+ <20170119145822.26239-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 19, 2017 at 11:11 AM, Valentin Rothberg
-<valentinrothberg@gmail.com> wrote:
-> Commit 22dfab102cfa ("ARM: EXYNOS: Remove Exynos4415 arch code (SoC not
-> supported anymore)") removed the Kconfig option SOC_EXYNOS4415.  Thus,
-> we are safe to remove the last reference in the Makefile.
->
-> Signed-off-by: Valentin Rothberg <valetinrothberg@gmail.com>
-> ---
-> Detected by using ./scripts/checkkconfigsymbols.py
->
->  drivers/clk/samsung/Makefile | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index 57f4dc6dc447..7afc21dc374e 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -5,7 +5,6 @@
->  obj-$(CONFIG_COMMON_CLK)       += clk.o clk-pll.o clk-cpu.o
->  obj-$(CONFIG_SOC_EXYNOS3250)   += clk-exynos3250.o
->  obj-$(CONFIG_ARCH_EXYNOS4)     += clk-exynos4.o
-> -obj-$(CONFIG_SOC_EXYNOS4415)   += clk-exynos4415.o
+The HHI_SAR_CLK_CNTL contains three SAR ADC specific clocks:
+- a mux clock to choose between different ADC reference clocks (this is
+  2-bit wide, but the datasheet only lists the parents for the first
+  bit)
+- a divider for the input/reference clock
+- a gate which enables the ADC clock
 
-It is already removed. Which tree are you using?
+Additionally this exposes the ADC core clock (CLKID_SAR_ADC) and
+CLKID_SANA (which seems to enable the analog inputs, but unfortunately
+there is no documentation for this - we just mimic what the vendor
+driver does).
 
-Best regards,
-Krzysztof
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/gxbb.c              | 48 +++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h              |  9 ++++---
+ include/dt-bindings/clock/gxbb-clkc.h |  4 +++
+ 3 files changed, 58 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 9d9af446bafc..1c1ec137a3cc 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -564,6 +564,46 @@ static struct clk_gate gxbb_clk81 = {
+ 	},
+ };
+ 
++static struct clk_mux gxbb_sar_adc_clk_sel = {
++	.reg = (void *)HHI_SAR_CLK_CNTL,
++	.mask = 0x3,
++	.shift = 9,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "sar_adc_clk_sel",
++		.ops = &clk_mux_ops,
++		/* NOTE: The datasheet doesn't list the parents for bit 10 */
++		.parent_names = (const char *[]){ "xtal", "clk81", },
++		.num_parents = 2,
++	},
++};
++
++static struct clk_divider gxbb_sar_adc_clk_div = {
++	.reg = (void *)HHI_SAR_CLK_CNTL,
++	.shift = 0,
++	.width = 8,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "sar_adc_clk_div",
++		.ops = &clk_divider_ops,
++		.parent_names = (const char *[]){ "sar_adc_clk_sel" },
++		.num_parents = 1,
++	},
++};
++
++static struct clk_gate gxbb_sar_adc_clk = {
++	.reg = (void *)HHI_SAR_CLK_CNTL,
++	.bit_idx = 8,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "sar_adc_clk",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "sar_adc_clk_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ /* Everything Else (EE) domain gates */
+ static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
+ static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
+@@ -754,6 +794,9 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ 		[CLKID_SD_EMMC_A]	    = &gxbb_emmc_a.hw,
+ 		[CLKID_SD_EMMC_B]	    = &gxbb_emmc_b.hw,
+ 		[CLKID_SD_EMMC_C]	    = &gxbb_emmc_c.hw,
++		[CLKID_SAR_ADC_CLK]	    = &gxbb_sar_adc_clk.hw,
++		[CLKID_SAR_ADC_SEL]	    = &gxbb_sar_adc_clk_sel.hw,
++		[CLKID_SAR_ADC_DIV]	    = &gxbb_sar_adc_clk_div.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -856,6 +899,7 @@ static struct clk_gate *gxbb_clk_gates[] = {
+ 	&gxbb_emmc_a,
+ 	&gxbb_emmc_b,
+ 	&gxbb_emmc_c,
++	&gxbb_sar_adc_clk,
+ };
+ 
+ static int gxbb_clkc_probe(struct platform_device *pdev)
+@@ -888,6 +932,10 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	gxbb_mpeg_clk_sel.reg = clk_base + (u64)gxbb_mpeg_clk_sel.reg;
+ 	gxbb_mpeg_clk_div.reg = clk_base + (u64)gxbb_mpeg_clk_div.reg;
+ 
++	/* Populate the base address for the SAR ADC clks */
++	gxbb_sar_adc_clk_sel.reg = clk_base + (u64)gxbb_sar_adc_clk_sel.reg;
++	gxbb_sar_adc_clk_div.reg = clk_base + (u64)gxbb_sar_adc_clk_div.reg;
++
+ 	/* Populate base address for gates */
+ 	for (i = 0; i < ARRAY_SIZE(gxbb_clk_gates); i++)
+ 		gxbb_clk_gates[i]->reg = clk_base +
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 2139e97f5e39..dc487180f847 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -191,7 +191,7 @@
+ #define CLKID_PERIPHS		  20
+ #define CLKID_SPICC		  21
+ /* CLKID_I2C */
+-#define CLKID_SAR_ADC		  23
++/* #define CLKID_SAR_ADC */
+ #define CLKID_SMART_CARD	  24
+ #define CLKID_RNG0		  25
+ #define CLKID_UART0		  26
+@@ -237,7 +237,7 @@
+ #define CLKID_MMC_PCLK		  66
+ #define CLKID_DVIN		  67
+ #define CLKID_UART2		  68
+-#define CLKID_SANA		  69
++/* #define CLKID_SANA */
+ #define CLKID_VPU_INTR		  70
+ #define CLKID_SEC_AHB_AHB3_BRIDGE 71
+ #define CLKID_CLK81_A53		  72
+@@ -265,8 +265,11 @@
+ /* CLKID_SD_EMMC_A */
+ /* CLKID_SD_EMMC_B */
+ /* CLKID_SD_EMMC_C */
++/* CLKID_SAR_ADC_CLK */
++/* CLKID_SAR_ADC_SEL */
++#define CLKID_SAR_ADC_DIV	  99
+ 
+-#define NR_CLKS			  97
++#define NR_CLKS			  100
+ 
+ /* include the CLKIDs that have been made part of the stable DT binding */
+ #include <dt-bindings/clock/gxbb-clkc.h>
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index da1d473a5a3a..692846c7941b 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -14,6 +14,7 @@
+ #define CLKID_MPLL2		15
+ #define CLKID_SPI		34
+ #define CLKID_I2C		22
++#define CLKID_SAR_ADC		23
+ #define CLKID_ETH		36
+ #define CLKID_USB0		50
+ #define CLKID_USB1		51
+@@ -21,10 +22,13 @@
+ #define CLKID_HDMI_PCLK		63
+ #define CLKID_USB1_DDR_BRIDGE	64
+ #define CLKID_USB0_DDR_BRIDGE	65
++#define CLKID_SANA		69
+ #define CLKID_GCLK_VENCI_INT0	77
+ #define CLKID_AO_I2C		93
+ #define CLKID_SD_EMMC_A		94
+ #define CLKID_SD_EMMC_B		95
+ #define CLKID_SD_EMMC_C		96
++#define CLKID_SAR_ADC_CLK	97
++#define CLKID_SAR_ADC_SEL	98
+ 
+ #endif /* __GXBB_CLKC_H */
+-- 
+2.11.0
