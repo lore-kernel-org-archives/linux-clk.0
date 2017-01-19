@@ -1,52 +1,70 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=UTF-8
-Message-id: <5880836E.80006@samsung.com>
-Date: Thu, 19 Jan 2017 18:14:22 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Valentin Rothberg <valentinrothberg@gmail.com>, krzk@kernel.org,
- s.nawrocki@samsung.com, tomasz.figa@gmail.com, mturquette@baylibre.com,
- sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Valentin Rothberg <valetinrothberg@gmail.com>
-Subject: Re: [PATCH] ARM: Exynos4415: remove dead build rule
-In-reply-to: <20170119091153.8439-1-valentinrothberg@gmail.com>
-References: 
- <CGME20170119091246epcas2p3b647c978e26c99baaa4cab3d757fd59d@epcas2p3.samsung.com>
- <20170119091153.8439-1-valentinrothberg@gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v3 2/6] arm: sunxi: add support for V3s SoC
+Date: Fri, 20 Jan 2017 01:54:44 +0800
+Message-Id: <20170119175448.11445-2-icenowy@aosc.xyz>
+In-Reply-To: <20170119175448.11445-1-icenowy@aosc.xyz>
+References: <20170119175448.11445-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Allwinner V3s is a low-end single-core Cortex-A7 SoC, with 64MB
+integrated DRAM, and several peripherals.
 
-On 2017년 01월 19일 18:11, Valentin Rothberg wrote:
-> Commit 22dfab102cfa ("ARM: EXYNOS: Remove Exynos4415 arch code (SoC not
-> supported anymore)") removed the Kconfig option SOC_EXYNOS4415.  Thus,
-> we are safe to remove the last reference in the Makefile.
-> 
-> Signed-off-by: Valentin Rothberg <valetinrothberg@gmail.com>
-> ---
-> Detected by using ./scripts/checkkconfigsymbols.py
-> 
->  drivers/clk/samsung/Makefile | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index 57f4dc6dc447..7afc21dc374e 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -5,7 +5,6 @@
->  obj-$(CONFIG_COMMON_CLK)	+= clk.o clk-pll.o clk-cpu.o
->  obj-$(CONFIG_SOC_EXYNOS3250)	+= clk-exynos3250.o
->  obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4.o
-> -obj-$(CONFIG_SOC_EXYNOS4415)	+= clk-exynos4415.o
->  obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
->  obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
->  obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
-> 
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ Documentation/arm/sunxi/README | 4 ++++
+ arch/arm/mach-sunxi/sunxi.c    | 1 +
+ 2 files changed, 5 insertions(+)
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
+diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
+index cd0243302bc1..a455b305c62c 100644
+--- a/Documentation/arm/sunxi/README
++++ b/Documentation/arm/sunxi/README
+@@ -67,6 +67,10 @@ SunXi family
+         + Datasheet
+           http://dl.linux-sunxi.org/H3/Allwinner_H3_Datasheet_V1.0.pdf
+ 
++      - Allwinner V3s (sun8i)
++        + Datasheet
++          http://linux-sunxi.org/File:Allwinner_V3s_Datasheet_V1.0.pdf
++
+     * Quad ARM Cortex-A15, Quad ARM Cortex-A7 based SoCs
+       - Allwinner A80
+         + Datasheet
+diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+index 2e2bde271205..f246bfc6cfe4 100644
+--- a/arch/arm/mach-sunxi/sunxi.c
++++ b/arch/arm/mach-sunxi/sunxi.c
+@@ -64,6 +64,7 @@ static const char * const sun8i_board_dt_compat[] = {
+ 	"allwinner,sun8i-a33",
+ 	"allwinner,sun8i-a83t",
+ 	"allwinner,sun8i-h3",
++	"allwinner,sun8i-v3s",
+ 	NULL,
+ };
+ 
 -- 
-Best Regards,
-Chanwoo Choi
-S/W Center, Samsung Electronics
+2.11.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
