@@ -1,210 +1,107 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:45692 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754770AbdA0JKd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Jan 2017 04:10:33 -0500
-From: Jeremy McNicoll <jeremymc@redhat.com>
-To: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc: andy.gross@linaro.org, sboyd@codeaurora.org, robh@kernel.org,
-        arnd@arndb.de, bjorn.andersson@linaro.org, riteshh@codeaurora.org,
-        git@kchr.de, ulf.hansson@linaro.org, jszhang@marvell.com,
-        jeremymc@redhat.com
-Subject: [PATCH V4 6/6] dts: doc: rename rpm_requests to respect DT naming conventions
-Date: Fri, 27 Jan 2017 01:10:05 -0800
-Message-Id: <1485508205-1904-7-git-send-email-jeremymc@redhat.com>
-In-Reply-To: <1485508205-1904-1-git-send-email-jeremymc@redhat.com>
-References: <1485508205-1904-1-git-send-email-jeremymc@redhat.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 19 Jan 2017 16:45:38 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+Cc: dev@linux-sunxi.org, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jorik Jonker <jorik@kippendief.biz>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [linux-sunxi] [PATCH] clk: sunxi-ng: fix PLL_CPUX adjusting on H3
+Message-ID: <20170119154538.4ge5vez36kvmase6@lukather>
+References: <20161125002852.18097-1-megous@megous.com>
+ <0985b1ec-ba95-1505-cc59-adec4b88238f@megous.com>
+ <20170109095946.6esbfx6pafega5cd@lukather>
+ <557330d0-2dcd-2211-8538-51c4d6b68834@megous.com>
+ <20170116164300.j2zvjkxr7c5h5hyo@lukather>
+ <f1ccd8ce-df6c-8204-71ab-2f774ac269d5@megous.com>
+ <20170118165612.zkjaj36kedg64rjw@lukather>
+ <c4152a9b-9b31-5ed7-39cd-da1a3489bc89@megous.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="hjiqiomaziqsqnk5"
+In-Reply-To: <c4152a9b-9b31-5ed7-39cd-da1a3489bc89@megous.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Node names cannot have an underscore '_' in the name.
-Simply rename 'rpm_request' nodes to 'rpm-request' and
-adjust associated documentation to reflect reality.
 
-Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
----
+--hjiqiomaziqsqnk5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- Note:
-   Kept bindings and dts together as this is a simple search
-   and replace.
+On Wed, Jan 18, 2017 at 06:48:35PM +0100, Ond=C5=99ej Jirman wrote:
+> Dne 18.1.2017 v 17:56 Maxime Ripard napsal(a):
+> >>> What's your current plan to fix that? I guess the easiest (and most
+> >>> likely to be reusable) would be to allow for clock tables, instead of
+> >>> using the generic approach. We might have some other clocks (like
+> >>> audio or video) that would need such a precise tuning in the future
+> >>> too.
+> >>
+> >> My proposed solution is this for M factor (H3 specific solution):
+> >>
+> >> https://github.com/megous/linux/commit/88be3d421e958579026135d8acec4b3=
+983958738
+> >=20
+> > This one is fine.
+> >=20
+> >> and this for P factor:
+> >>
+> >> https://github.com/megous/linux/commit/d7f274ed0c13fa9b4099445cb6bf9b2=
+f8f2cfa8a
+> >>
+> >> Perhaps it should be configurable if the P limitation is not universal
+> >> for all NKMP clocks. But I haven't read all the datasheets.
+> >=20
+> > And this is exactly what I wanted to avoid, for the reason you're
+> > giving :)
+> >=20
+> > This is some generic code, and yet you're putting a clock and SoC
+> > specific limit in there. You have two ways to deal with that. Either
+> > come up with some generic throttling mecanism to force a particular
+> > value above or below a given threshold, but that might be tedious to
+> > do, and require some significant rework.
+> >=20
+> > Or you can use a table, which is generic and should be relatively
+> > easy. I really think this is the most straightforward solution, and
+> > even more so since we just want to support a limited number of
+> > frequencies in this case.
+>=20
+> So I would add a pointer to a table to struct ccu_nkmp and define the
+> table itself in ccu-sun8i-h3.c?
+>=20
+> If struct ccu_nkmp would have non-NULL pointer to a table, it would be
+> used instead of the math in ccu_nkmp.c.
+>=20
+> Sounds ok?
 
+Yep, sounds perfect!
 
- Documentation/devicetree/bindings/clock/qcom,rpmcc.txt              | 2 +-
- .../devicetree/bindings/regulator/qcom,smd-rpm-regulator.txt        | 2 +-
- Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt         | 6 +++---
- Documentation/devicetree/bindings/soc/qcom/qcom,smd.txt             | 2 +-
- arch/arm/boot/dts/qcom-apq8074-dragonboard.dts                      | 2 +-
- arch/arm/boot/dts/qcom-apq8084.dtsi                                 | 2 +-
- arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts            | 2 +-
- arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dts               | 2 +-
- arch/arm/boot/dts/qcom-msm8974.dtsi                                 | 2 +-
- arch/arm64/boot/dts/qcom/msm8916.dtsi                               | 2 +-
- arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi                       | 2 +-
- 11 files changed, 13 insertions(+), 13 deletions(-)
+Maxime
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-index 87d3714..7154858 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -24,7 +24,7 @@ Example:
- 			qcom,ipc = <&apcs 8 0>;
- 			qcom,smd-edge = <15>;
- 
--			rpm_requests {
-+			rpm-requests {
- 				compatible = "qcom,rpm-msm8916";
- 				qcom,smd-channels = "rpm_requests";
- 
-diff --git a/Documentation/devicetree/bindings/regulator/qcom,smd-rpm-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,smd-rpm-regulator.txt
-index 4e3dfb5..6b984cc 100644
---- a/Documentation/devicetree/bindings/regulator/qcom,smd-rpm-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/qcom,smd-rpm-regulator.txt
-@@ -187,7 +187,7 @@ see regulator.txt.
- 			qcom,ipc = <&apcs 8 0>;
- 			qcom,smd-edge = <15>;
- 
--			rpm_requests {
-+			rpm-requests {
- 				compatible = "qcom,rpm-msm8974";
- 				qcom,smd-channels = "rpm_requests";
- 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-index a48049c..30e1c75 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-@@ -11,7 +11,7 @@ RPM node itself.
- 
- = SUBDEVICES
- 
--The RPM exposes resources to its subnodes.  The rpm_requests node must be
-+The RPM exposes resources to its subnodes.  The rpm-requests node must be
- present and this subnode may contain children that designate regulator
- resources.
- 
-@@ -29,7 +29,7 @@ resources.
- 	Definition: must be "rpm_requests"
- 
- Refer to Documentation/devicetree/bindings/regulator/qcom,smd-rpm-regulator.txt
--for information on the regulator subnodes that can exist under the rpm_requests.
-+for information on the regulator subnodes that can exist under the rpm-requests.
- 
- Example:
- 
-@@ -48,7 +48,7 @@ Example:
- 			qcom,ipc = <&apcs 8 0>;
- 			qcom,smd-edge = <15>;
- 
--			rpm_requests {
-+			rpm-requests {
- 				compatible = "qcom,rpm-msm8974";
- 				qcom,smd-channels = "rpm_requests";
- 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,smd.txt
-index ea1dc75..3d4a61c 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd.txt
-@@ -82,7 +82,7 @@ The following example represents a smd node, with one edge representing the
- 			qcom,ipc = <&apcs 8 0>;
- 			qcom,smd-edge = <15>;
- 
--			rpm_requests {
-+			rpm-requests {
- 				compatible = "qcom,rpm-msm8974";
- 				qcom,smd-channels = "rpm_requests";
- 
-diff --git a/arch/arm/boot/dts/qcom-apq8074-dragonboard.dts b/arch/arm/boot/dts/qcom-apq8074-dragonboard.dts
-index ad51df2..ccae434 100644
---- a/arch/arm/boot/dts/qcom-apq8074-dragonboard.dts
-+++ b/arch/arm/boot/dts/qcom-apq8074-dragonboard.dts
-@@ -126,7 +126,7 @@
- 
- 	smd {
- 		rpm {
--			rpm_requests {
-+			rpm-requests {
- 				pm8841-regulators {
- 					s1 {
- 						regulator-min-microvolt = <675000>;
-diff --git a/arch/arm/boot/dts/qcom-apq8084.dtsi b/arch/arm/boot/dts/qcom-apq8084.dtsi
-index 80d4886..002fd69 100644
---- a/arch/arm/boot/dts/qcom-apq8084.dtsi
-+++ b/arch/arm/boot/dts/qcom-apq8084.dtsi
-@@ -461,7 +461,7 @@
- 			qcom,ipc = <&apcs 8 0>;
- 			qcom,smd-edge = <15>;
- 
--			rpm_requests {
-+			rpm-requests {
- 				compatible = "qcom,rpm-apq8084";
- 				qcom,smd-channels = "rpm_requests";
- 
-diff --git a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-index 382bcc3..a24c6b4 100644
---- a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-+++ b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-@@ -19,7 +19,7 @@
- 
- 	smd {
- 		rpm {
--			rpm_requests {
-+			rpm-requests {
- 				pm8841-regulators {
- 					s1 {
- 						regulator-min-microvolt = <675000>;
-diff --git a/arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dts b/arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dts
-index e7c1577..ec937c9 100644
---- a/arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dts
-+++ b/arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dts
-@@ -60,7 +60,7 @@
- 
- 	smd {
- 		rpm {
--			rpm_requests {
-+			rpm-requests {
- 				pm8841-regulators {
- 					s1 {
- 						regulator-min-microvolt = <675000>;
-diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-index 49d579f..0c09049 100644
---- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-@@ -672,7 +672,7 @@
- 			qcom,ipc = <&apcs 8 0>;
- 			qcom,smd-edge = <15>;
- 
--			rpm_requests {
-+			rpm-requests {
- 				compatible = "qcom,rpm-msm8974";
- 				qcom,smd-channels = "rpm_requests";
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index f8ff327..69eb846 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -866,7 +866,7 @@
- 			qcom,ipc = <&apcs 8 0>;
- 			qcom,smd-edge = <15>;
- 
--			rpm_requests {
-+			rpm-requests {
- 				compatible = "qcom,rpm-msm8916";
- 				qcom,smd-channels = "rpm_requests";
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi b/arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi
-index 47ebd16..0a8d7e4 100644
---- a/arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi
-@@ -13,7 +13,7 @@
- 
- &smd_rpm {
- 	rpm {
--		rpm_requests {
-+		rpm-requests {
- 			pm8994-regulators {
- 
- 				vdd_l1-supply = <&pm8994_s1>;
--- 
-2.6.1
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
+--hjiqiomaziqsqnk5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYgN8iAAoJEBx+YmzsjxAgGsoP/1SoVMZ8jEN0BH1LLjOLgxIj
+JdRVlOt0yVVpAV2ZnyP3hCDutcKAgbalix4WwAEuywfgStJTP63QkEjZgfopDowj
+YiJpmB2L2KnuikApSSX5P0wydWyQqFE2gotywu7QOuuKdxIagmh/78jz9ogXgQXG
+30FKaBtkNUvndmyAa+aCs+jockIql+7zqh4mMarR1Ow84FZTBhtb6NsRx37ZkNrR
+o5oVgFlIi2n2t7+sP9M38V3EYexOk6VqFkV3913qVxK07kAMiVadnZE8Bd6Fqyet
+SgzSJnNDVAuIxW0E+fvFVZL+eyqRf/CImUe6AcObttdIJmb6lfm5ci3OHNI5gyv6
+ky/m7gSomMsYrYVRCOunLVPvcDaTIgbiDnxCc3cBteVEN/uGlowpbxaeQ6odgI+A
+r1MaJ5Gg3gmbAaCs3wjMRSsl5UC4KdS2oS4i8AGI9266kr6ESYP484FJIgM/Bxf3
+4wnNkV5+ANmbSet+nL8rsUe4X8nj5RNC8b2PxKJiaRGNiM7FD81/7OdYWMPi7Qpo
+cpH9UZ8CBxIw3KJECC8rb8esgRgPuaUnI+7eSFAkZUq0pP3a8O3yCRb8FuPyUAY9
+QuWRx96Mdn9iIa8f0vtcIQ9ihVnbvFLfxgq/EV/VUhWnp7U7Gn+Q8vz4eKapuHhL
+piSrZPDdvCC1KPb7RYpx
+=hicu
+-----END PGP SIGNATURE-----
+
+--hjiqiomaziqsqnk5--
