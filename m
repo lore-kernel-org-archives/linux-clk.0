@@ -1,199 +1,136 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To: linux-clk@vger.kernel.org,
-	x86@kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: alsa-devel@alsa-project.org,
-	Irina Tirdea <irina.tirdea@intel.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Mark Brown <broonie@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [PATCH v8 4/5] platform/x86: Enable Atom PMC platform clocks
-Date: Mon, 23 Jan 2017 12:07:44 -0600
-Message-Id: <1485194865-10400-5-git-send-email-pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
-References: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: jic23@kernel.org,
+	knaack.h@gmx.de,
+	lars@metafoo.de,
+	pmeerw@pmeerw.net,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	khilman@baylibre.com,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: carlo@caione.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	narmstrong@baylibre.com,
+	linux-arm-kernel@lists.infradead.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v3 0/4] Amlogic Meson SAR ADC support
+Date: Thu, 19 Jan 2017 15:58:18 +0100
+Message-Id: <20170119145822.26239-1-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
+References: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Irina Tirdea <irina.tirdea@intel.com>
+This series add support for the SAR ADC on Amlogic Meson GXBB, GXL and
+GXM SoCs.
+The hardware on GXBB provides 10-bit ADC results, while GXL and GXM are
+providing 12-bit results. Support for older SoCs (Meson8b and Meson8)
+can be added with little effort, most of which is testing I guess (I
+don't have any pre-GXBB hardware so I can't say).
 
-The BayTrail and CherryTrail platforms provide platform clocks
-through their Power Management Controller (PMC).
+A new set of clocks had to be added to the GXBB clock controller (used
+by the GXBB/GXL/GXM SoCs) which are required to get the ADC working.
 
-The SoC supports up to 6 clocks (PMC_PLT_CLK[0..5]) with a
-frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL) for BayTrail
-and a frequency of 19.2 MHz (XTAL) for CherryTrail. These clocks
-are available for general system use, where appropriate. For example,
-the usage for platform clocks suggested in the datasheet is the
-following:
-  PLT_CLK[0..2] - Camera
-  PLT_CLK[3] - Audio Codec
-  PLT_CLK[4] -
-  PLT_CLK[5] - COMMs
+The ADC itself can sample multiple channels at the same time and allows
+capturing multiple samples (which can be used for filtering/averaging).
+The ADC results are stored inside a FIFO register. More details on what
+the driver supports (or doesn't) can be found in the description of
+patch #3.
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
----
- drivers/platform/x86/Kconfig    |  1 +
- drivers/platform/x86/pmc_atom.c | 79 +++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 77 insertions(+), 3 deletions(-)
+The code is based on the public S805 (Meson8b) and S905 (GXBB)
+datasheets, as well as by reading (various versions of) the vendor
+driver and by inspecting the registers on the vendor kernels of my
+testing-hardware.
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 8b1988a..2c95f77 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1081,3 +1081,4 @@ endif # X86_PLATFORM_DEVICES
- config PMC_ATOM
-        def_bool y
-        depends on PCI
-+       select COMMON_CLK
-diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
-index e1dfb1b..77bac85 100644
---- a/drivers/platform/x86/pmc_atom.c
-+++ b/drivers/platform/x86/pmc_atom.c
-@@ -19,7 +19,9 @@
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/io.h>
-+#include <linux/platform_data/x86/clk-pmc-atom.h>
- #include <linux/platform_data/x86/pmc_atom.h>
-+#include <linux/platform_device.h>
- #include <linux/pci.h>
- #include <linux/seq_file.h>
- 
-@@ -36,6 +38,11 @@ struct pmc_reg_map {
- 	const struct pmc_bit_map *pss;
- };
- 
-+struct pmc_data {
-+	const struct pmc_reg_map *map;
-+	const struct pmc_clk *clks;
-+};
-+
- struct pmc_dev {
- 	u32 base_addr;
- 	void __iomem *regmap;
-@@ -49,6 +56,29 @@ struct pmc_dev {
- static struct pmc_dev pmc_device;
- static u32 acpi_base_addr;
- 
-+static const struct pmc_clk byt_clks[] = {
-+	{
-+		.name = "xtal",
-+		.freq = 25000000,
-+		.parent_name = NULL,
-+	},
-+	{
-+		.name = "pll",
-+		.freq = 19200000,
-+		.parent_name = "xtal",
-+	},
-+	{},
-+};
-+
-+static const struct pmc_clk cht_clks[] = {
-+	{
-+		.name = "xtal",
-+		.freq = 19200000,
-+		.parent_name = NULL,
-+	},
-+	{},
-+};
-+
- static const struct pmc_bit_map d3_sts_0_map[] = {
- 	{"LPSS1_F0_DMA",	BIT_LPSS1_F0_DMA},
- 	{"LPSS1_F1_PWM1",	BIT_LPSS1_F1_PWM1},
-@@ -168,6 +198,16 @@ static const struct pmc_reg_map cht_reg_map = {
- 	.pss		= cht_pss_map,
- };
- 
-+static const struct pmc_data byt_data = {
-+	.map = &byt_reg_map,
-+	.clks = byt_clks,
-+};
-+
-+static const struct pmc_data cht_data = {
-+	.map = &cht_reg_map,
-+	.clks = cht_clks,
-+};
-+
- static inline u32 pmc_reg_read(struct pmc_dev *pmc, int reg_offset)
- {
- 	return readl(pmc->regmap + reg_offset);
-@@ -381,10 +421,37 @@ static int pmc_dbgfs_register(struct pmc_dev *pmc)
- }
- #endif /* CONFIG_DEBUG_FS */
- 
-+static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
-+			  const struct pmc_data *pmc_data)
-+{
-+	struct platform_device *clkdev;
-+	struct pmc_clk_data *clk_data;
-+
-+	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->base = pmc_regmap; /* offset is added by client */
-+	clk_data->clks = pmc_data->clks;
-+
-+	clkdev = platform_device_register_data(&pdev->dev, "clk-pmc-atom",
-+					       PLATFORM_DEVID_NONE,
-+					       clk_data, sizeof(*clk_data));
-+	if (IS_ERR(clkdev)) {
-+		kfree(clk_data);
-+		return PTR_ERR(clkdev);
-+	}
-+
-+	kfree(clk_data);
-+
-+	return 0;
-+}
-+
- static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
- 	struct pmc_dev *pmc = &pmc_device;
--	const struct pmc_reg_map *map = (struct pmc_reg_map *)ent->driver_data;
-+	const struct pmc_data *data = (struct pmc_data *)ent->driver_data;
-+	const struct pmc_reg_map *map = data->map;
- 	int ret;
- 
- 	/* Obtain ACPI base address */
-@@ -413,6 +480,12 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (ret)
- 		dev_warn(&pdev->dev, "debugfs register failed\n");
- 
-+	/* Register platform clocks - PMC_PLT_CLK [0..5] */
-+	ret = pmc_setup_clks(pdev, pmc->regmap, data);
-+	if (ret)
-+		dev_warn(&pdev->dev, "platform clocks register failed: %d\n",
-+			 ret);
-+
- 	pmc->init = true;
- 	return ret;
- }
-@@ -423,8 +496,8 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
-  * used by pci_match_id() call below.
-  */
- static const struct pci_device_id pmc_pci_ids[] = {
--	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_VLV_PMC), (kernel_ulong_t)&byt_reg_map },
--	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_CHT_PMC), (kernel_ulong_t)&cht_reg_map },
-+	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_VLV_PMC), (kernel_ulong_t)&byt_data },
-+	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_CHT_PMC), (kernel_ulong_t)&cht_data },
- 	{ 0, },
- };
- 
+Typical use-cases for the ADC on the Meson GX SoCs are:
+- adc-keys ("ADC attached resistor ladder buttons")
+- SoC temperature measurement (not supported by this driver yet as
+  the system firmware does this already and provides the values via the
+  SCPI protocol)
+- "version-strapping" (different resistor values are used to indicate
+  the board-revision)
+- and of course typical ADC measurements
+
+Thanks to Heiner Kallweit, Jonathan Cameron, Lars-Peter Clausen and
+Peter Meerwald-Stadler for reviewing this series and providing valuable
+input!
+
+Changes since v2 (all changes are for patch #3, except where noted):
+- fixed another typo in the interrupt (patch #4, thanks again Heiner
+  Kallweit)
+- change namespace of all register #defines to MESON_SAR_ADC (I
+  intentionally decided to keep SAR_ADC in it because that's the way
+  registers are named in the datasheet, thus making it easy to match the
+  registers without having to look up the offset all the time)
+- added additional parenthesis around MACRO parameters  for extra safety
+- removed unused definition for SAR_ADC_REG3_ADC_CLK_DIV_MASK (as we
+  already have SAR_ADC_REG3_ADC_CLK_DIV_SHIFT and
+  SAR_ADC_REG3_ADC_CLK_DIV_WIDTH which are used instead)
+- change value of "indexed" from "true" to "1"
+- remove type parameter from MESON_SAR_ADC_CHAN macro as all channels are
+  currently IIO_VOLTAGE channels
+- fixed another multi-line comment style violation
+- added timeout to meson_saradc_lock() (unlikely to be triggered, but
+  better safe then sorry - which would mean that we'd be keeping one core
+  busy infinitely)
+- fixed meson_saradc_remove() call order (first unregister the iio_dev,
+  then disable the hardware instead of the other way around)
+- use "consistent prefixing", which means that all #defines now use
+  MESON_SAR_ADC_ as prefix, while all enums, static global variables,
+  structs and functions use meson_sar_adc_ as prefix
+- rebased .dts and clk patches to apply to khilman's latest v4.11/dt64
+  (a minor  conflict had to be resolved in the clk patch due to
+  "clk: meson-gxbb: Export HDMI clocks")
+- added Tested-by: Neil Armstrong <narmstrong@baylibre.com> to all
+  patches (thanks for testing!)
+
+Changes since v1 (all changes are for patch #3, except where noted):
+- fix IRQ number in meson-gx.dtsi (thanks to Heiner Kallweit for
+  providing the correct value), affects patch #4
+- move the most used members of meson_saradc_priv to the beginning
+- remove unused struct member "completion" from meson_saradc_priv
+- use devm_kasprintf() instead of snprintf() + devm_kstrdup()
+- initialize indio_dev->dev.parent earlier in meson_saradc_probe()
+- moved meson_saradc_clear_fifo() logic to a separate function
+- add comment why a do ... while loop is required in
+  meson_saradc_wait_busy_clear()
+- remove SAR_ADC_NUM_CHANNELS and SAR_ADC_VALUE_MASK macros (each of them
+  was only used once and it's an unneeded level of abstraction)
+- fixed multiline comment syntax violations
+- dropped unneeded log messages during initialization
+- set iio_dev name to "meson-gxbb-saradc" or "meson-gxl-saradc"
+- use "indio_dev->dev.parent" in all kernel log calls (dev_warn/err/etc)
+  to make it show the OF node name (instead of the iio device name)
+- introduce struct meson_saradc_data to hold platform-specific
+  information (such as resolution in bits and the iio_dev name)
+
+
+Martin Blumenstingl (4):
+  Documentation: dt-bindings: add the Amlogic Meson SAR ADC
+    documentation
+  clk: gxbb: add the SAR ADC clocks and expose them
+  iio: adc: add a driver for the SAR ADC found in Amlogic Meson SoCs
+  ARM64: dts: meson: meson-gx: add the SAR ADC
+
+ .../bindings/iio/adc/amlogic,meson-saradc.txt      |  31 +
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi          |   8 +
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        |  10 +
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi         |  10 +
+ drivers/clk/meson/gxbb.c                           |  48 ++
+ drivers/clk/meson/gxbb.h                           |   9 +-
+ drivers/iio/adc/Kconfig                            |  12 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/iio/adc/meson_saradc.c                     | 916 +++++++++++++++++++++
+ include/dt-bindings/clock/gxbb-clkc.h              |   4 +
+ 10 files changed, 1046 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+ create mode 100644 drivers/iio/adc/meson_saradc.c
+
 -- 
-2.7.4
+2.11.0
