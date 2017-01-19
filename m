@@ -1,322 +1,172 @@
-Return-Path: <dmitry.torokhov@gmail.com>
-Return-Path: <dmitry.torokhov@gmail.com>
-Date: Sat, 28 Jan 2017 10:40:47 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Russell King <linux@armlinux.org.uk>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: add more managed APIs
-Message-ID: <20170128184047.GA24957@dtor-ws>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v3 6/6] ARM: dts: sunxi: add support for Lichee Pi Zero board
+Date: Fri, 20 Jan 2017 01:54:48 +0800
+Message-Id: <20170119175448.11445-6-icenowy@aosc.xyz>
+In-Reply-To: <20170119175448.11445-1-icenowy@aosc.xyz>
+References: <20170119175448.11445-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-When converting a driver to managed resources it is desirable to be able to
-manage all resources in the same fashion. This change allows managing
-clocks in the same way we manage many other resources.
+Lichee Pi Zero is a small-sized V3s board, which is
+breadboard-compatible, and with a MicroUSB port with both OTG function
+and power function.
 
-This adds the following managed APIs:
-
-- devm_clk_prepare()/devm_clk_unprepare();
-- devm_clk_enable()/devm_clk_disable();
-- devm_clk_prepare_enable()/devm_clk_disable_unprepare().
-
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
+Changes in v3:
+- Add LEDs.
+- Add USB-related nodes.
 
-This is a resend from about 5 years ago ;) At that time I also tried
-uninlining clk_prepare_enable() and clk_disable_unprepare(), but got
-lost in the maze of COMMON_CLK/HAVE_CLK/HAVE_CLK_PREPARE. This time
-around I left these 2 fucntions alone (inline) and simply adding devm*
-equivalents.
+ arch/arm/boot/dts/Makefile                    |   3 +-
+ arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts | 103 ++++++++++++++++++++++++++
+ 2 files changed, 105 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
 
-Thanks!
-
- drivers/clk/clk-devres.c |  99 +++++++++++++++++++++++++++++++---------------
- include/linux/clk.h      | 101 +++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 168 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index 3a218c3a06ae..ef59eb4f3bc8 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -9,30 +9,20 @@
- #include <linux/export.h>
- #include <linux/gfp.h>
- 
--static void devm_clk_release(struct device *dev, void *res)
-+static int devm_clk_create_devres(struct device *dev, struct clk *clk,
-+				  void (*release)(struct device *, void *))
- {
--	clk_put(*(struct clk **)res);
--}
-+	struct clk **ptr;
- 
--struct clk *devm_clk_get(struct device *dev, const char *id)
--{
--	struct clk **ptr, *clk;
--
--	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
-+	ptr = devres_alloc(release, sizeof(*ptr), GFP_KERNEL);
- 	if (!ptr)
--		return ERR_PTR(-ENOMEM);
-+		return -ENOMEM;
- 
--	clk = clk_get(dev, id);
--	if (!IS_ERR(clk)) {
--		*ptr = clk;
--		devres_add(dev, ptr);
--	} else {
--		devres_free(ptr);
--	}
-+	*ptr = clk;
-+	devres_add(dev, ptr);
- 
--	return clk;
-+	return 0;
- }
--EXPORT_SYMBOL(devm_clk_get);
- 
- static int devm_clk_match(struct device *dev, void *res, void *data)
- {
-@@ -44,31 +34,76 @@ static int devm_clk_match(struct device *dev, void *res, void *data)
- 	return *c == data;
- }
- 
--void devm_clk_put(struct device *dev, struct clk *clk)
-+#define DEFINE_DEVM_CLK_DESTROY_OP(destroy_op)				\
-+static void devm_##destroy_op##_release(struct device *dev, void *res)	\
-+{									\
-+	destroy_op(*(struct clk **)res);				\
-+}									\
-+									\
-+void devm_##destroy_op(struct device *dev, struct clk *clk)		\
-+{									\
-+	WARN_ON(devres_release(dev, devm_##destroy_op##_release,	\
-+				devm_clk_match, clk));			\
-+}									\
-+EXPORT_SYMBOL(devm_##destroy_op)
-+
-+#define DEFINE_DEVM_CLK_OP(create_op, destroy_op)			\
-+DEFINE_DEVM_CLK_DESTROY_OP(destroy_op);					\
-+int devm_##create_op(struct device *dev, struct clk *clk)		\
-+{									\
-+	int error;							\
-+									\
-+	error = create_op(clk);						\
-+	if (error)							\
-+		return error;						\
-+									\
-+	error = devm_clk_create_devres(dev, clk,			\
-+					devm_##destroy_op##_release);	\
-+	if (error) {							\
-+		destroy_op(clk);					\
-+		return error;						\
-+	}								\
-+									\
-+	return 0;							\
-+}									\
-+EXPORT_SYMBOL(devm_##create_op)
-+
-+DEFINE_DEVM_CLK_DESTROY_OP(clk_put);
-+DEFINE_DEVM_CLK_OP(clk_prepare, clk_unprepare);
-+DEFINE_DEVM_CLK_OP(clk_enable, clk_disable);
-+DEFINE_DEVM_CLK_OP(clk_prepare_enable, clk_disable_unprepare);
-+
-+struct clk *devm_clk_get(struct device *dev, const char *id)
- {
--	int ret;
-+	struct clk *clk;
-+	int error;
- 
--	ret = devres_release(dev, devm_clk_release, devm_clk_match, clk);
-+	clk = clk_get(dev, id);
-+	if (!IS_ERR(clk)) {
-+		error = devm_clk_create_devres(dev, clk, devm_clk_put_release);
-+		if (error) {
-+			clk_put(clk);
-+			return ERR_PTR(error);
-+		}
-+	}
- 
--	WARN_ON(ret);
-+	return clk;
- }
--EXPORT_SYMBOL(devm_clk_put);
-+EXPORT_SYMBOL(devm_clk_get);
- 
- struct clk *devm_get_clk_from_child(struct device *dev,
- 				    struct device_node *np, const char *con_id)
- {
--	struct clk **ptr, *clk;
--
--	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
--	if (!ptr)
--		return ERR_PTR(-ENOMEM);
-+	struct clk *clk;
-+	int error;
- 
- 	clk = of_clk_get_by_name(np, con_id);
- 	if (!IS_ERR(clk)) {
--		*ptr = clk;
--		devres_add(dev, ptr);
--	} else {
--		devres_free(ptr);
-+		error = devm_clk_create_devres(dev, clk, devm_clk_put_release);
-+		if (error) {
-+			clk_put(clk);
-+			return ERR_PTR(error);
-+		}
- 	}
- 
- 	return clk;
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index e9d36b3e49de..03c21c5fee4c 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -267,6 +267,29 @@ struct clk *devm_get_clk_from_child(struct device *dev,
- 				    struct device_node *np, const char *con_id);
- 
- /**
-+ * devm_clk_prepare - prepare clock source as a managed resource
-+ * @dev: device owning the resource
-+ * @clk: clock source
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index cccdbcb557b6..3e099e9b1ad7 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -853,7 +853,8 @@ dtb-$(CONFIG_MACH_SUN8I) += \
+ 	sun8i-h3-orangepi-pc-plus.dtb \
+ 	sun8i-h3-orangepi-plus.dtb \
+ 	sun8i-h3-orangepi-plus2e.dtb \
+-	sun8i-r16-parrot.dtb
++	sun8i-r16-parrot.dtb \
++	sun8i-v3s-licheepi-zero.dtb
+ dtb-$(CONFIG_MACH_SUN9I) += \
+ 	sun9i-a80-optimus.dtb \
+ 	sun9i-a80-cubieboard4.dtb
+diff --git a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+new file mode 100644
+index 000000000000..387fc2aa546d
+--- /dev/null
++++ b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+@@ -0,0 +1,103 @@
++/*
++ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
 + *
-+ * This prepares the clock source for use.
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
 + *
-+ * Must not be called from within atomic context.
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
 + */
-+int devm_clk_prepare(struct device *dev, struct clk *clk);
 +
-+/**
-+ * devm_clk_unprepare - undo preparation of a managed clock source
-+ * @dev: device used to prepare the clock
-+ * @clk: clock source
-+ *
-+ * This undoes preparation of a clock, previously prepared with a call
-+ * to devm_clk_pepare().
-+ *
-+ * Must not be called from within atomic context.
-+ */
-+void devm_clk_unprepare(struct device *dev, struct clk *clk);
++/dts-v1/;
++#include "sun8i-v3s.dtsi"
++#include "sunxi-common-regulators.dtsi"
 +
-+/**
-  * clk_enable - inform the system when the clock source should be running.
-  * @clk: clock source
-  *
-@@ -279,6 +302,19 @@ struct clk *devm_get_clk_from_child(struct device *dev,
- int clk_enable(struct clk *clk);
- 
- /**
-+ * devm_clk_enable - enable clock source as a managed resource
-+ * @dev: device owning the resource
-+ * @clk: clock source
-+ *
-+ * If the clock can not be enabled/disabled, this should return success.
-+ *
-+ * May be not called from atomic contexts.
-+ *
-+ * Returns success (0) or negative errno.
-+ */
-+int devm_clk_enable(struct device *dev, struct clk *clk);
++/ {
++	model = "Lichee Pi Zero";
++	compatible = "licheepi,licheepi-zero", "allwinner,sun8i-v3s";
 +
-+/**
-  * clk_disable - inform the system when the clock source is no longer required.
-  * @clk: clock source
-  *
-@@ -295,6 +331,40 @@ int clk_enable(struct clk *clk);
- void clk_disable(struct clk *clk);
- 
- /**
-+ * devm_clk_disable - disable managed clock source resource
-+ * @dev: device owning the clock source
-+ * @clk: clock source
-+ *
-+ * Inform the system that a clock source is no longer required by
-+ * a driver and may be shut down.
-+ *
-+ * Must not be called from atomic contexts.
-+ */
-+void devm_clk_disable(struct device *dev, struct clk *clk);
++	aliases {
++		serial0 = &uart0;
++	};
 +
-+/**
-+ * devm_clk_prepare_enable - prepare and enable a managed clock source
-+ * @dev: device owning the clock source
-+ * @clk: clock source
-+ *
-+ * This prepares the clock source for use and enables it.
-+ *
-+ * Must not be called from within atomic context.
-+ */
-+int devm_clk_prepare_enable(struct device *dev, struct clk *clk);
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
 +
-+/**
-+ * devm_clk_disable_unprepare - disable and undo preparation of a managed clock source
-+ * @dev: device used to prepare and enable the clock
-+ * @clk: clock source
-+ *
-+ * This disables and undoes a previously prepared clock.
-+ *
-+ * Must not be called from within atomic context.
-+ */
-+void devm_clk_disable_unprepare(struct device *dev, struct clk *clk);
++	leds {
++		compatible = "gpio-leds";
 +
-+/**
-  * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
-  *		  This is only valid once the clock source has been enabled.
-  * @clk: clock source
-@@ -460,6 +530,17 @@ static inline void clk_put(struct clk *clk) {}
- 
- static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
- 
-+static inline int devm_clk_prepare(struct device *dev, struct clk *clk)
-+{
-+	might_sleep();
-+	return 0;
-+}
++		blue_led {
++			label = "licheepi:blue:usr";
++			gpios = <&pio 6 1 GPIO_ACTIVE_LOW>; /* PG1 */
++		};
 +
-+static inline void devm_clk_unprepare(struct device *dev, struct clk *clk)
-+{
-+	might_sleep();
-+}
++		green_led {
++			label = "licheepi:green:usr";
++			gpios = <&pio 6 0 GPIO_ACTIVE_LOW>; /* PG0 */
++			default-state = "on";
++		};
 +
- static inline int clk_enable(struct clk *clk)
- {
- 	return 0;
-@@ -467,6 +548,26 @@ static inline int clk_enable(struct clk *clk)
- 
- static inline void clk_disable(struct clk *clk) {}
- 
-+static inline int devm_clk_enable(struct device *dev, struct clk *clk)
-+{
-+	might_sleep();
-+	return 0;
-+}
++		red_led {
++			label = "licheepi:red:usr";
++			gpios = <&pio 6 2 GPIO_ACTIVE_LOW>; /* PG2 */
++		};
++	};
++};
 +
-+static inline void devm_clk_disable(struct device *dev, struct clk *clk) {}
++&mmc0 {
++	pinctrl-0 = <&mmc0_pins_a>;
++	pinctrl-names = "default";
++	broken-cd;
++	bus-width = <4>;
++	vmmc-supply = <&reg_vcc3v3>;
++	status = "okay";
++};
 +
-+static inline int devm_clk_prepare_enable(struct device *dev, struct clk *clk)
-+{
-+	might_sleep();
-+	return 0;
-+}
++&uart0 {
++	pinctrl-0 = <&uart0_pins_a>;
++	pinctrl-names = "default";
++	status = "okay";
++};
 +
-+static inline void devm_clk_disable_unprepare(struct device *dev,
-+					      struct clk *clk)
-+{
-+	might_sleep();
-+}
++&usb_otg {
++	dr_mode = "otg";
++	status = "okay";
++};
 +
- static inline unsigned long clk_get_rate(struct clk *clk)
- {
- 	return 0;
++&usbphy {
++	usb0_id_det-gpio = <&pio 5 6 GPIO_ACTIVE_HIGH>;
++	status = "okay";
++};
 -- 
-2.11.0.483.g087da7b7c-goog
+2.11.0
 
 
--- 
-Dmitry
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
