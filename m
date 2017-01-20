@@ -1,23 +1,63 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Jacob Chen <jacob-chen@iotwrt.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, zhangqing@rock-chips.com, zhengxing@rock-chips.com
-Subject: Re: [PATCH 2/4] clk: rockchip: use rk3288 isp_in clock ids
-Date: Fri, 13 Jan 2017 19:58:37 +0100
-Message-ID: <7899598.bklBhBYNcf@phil>
-In-Reply-To: <1484049560-14820-2-git-send-email-jacob-chen@iotwrt.com>
-References: <1484049560-14820-1-git-send-email-jacob-chen@iotwrt.com> <1484049560-14820-2-git-send-email-jacob-chen@iotwrt.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/8] clk: renesas: cpg-mssr: Document reset control support
+Date: Fri, 20 Jan 2017 15:08:19 +0100
+Message-Id: <1484921306-9967-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
+References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 10. Januar 2017, 19:59:18 CET schrieb Jacob Chen:
-> Reference the newly added isp clock-ids in the clock-tree.
-> 
-> 
-> Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
+Document properties needed to use the Reset Control feature of the
+Renesas Clock Pulse Generator / Module Standby and Software Reset
+module.
 
-applied for 4.11
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Thanks
-Heiko
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+index c469194129536332..f4f944d813081857 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -42,6 +42,10 @@ Required Properties:
+ 	Domain bindings in
+ 	Documentation/devicetree/bindings/power/power_domain.txt.
+ 
++  - #reset-cells: Must be 1
++      - The single reset specifier cell must be the module number, as defined
++	in the datasheet.
++
+ 
+ Examples
+ --------
+@@ -55,6 +59,7 @@ Examples
+ 		clock-names = "extal", "extalr";
+ 		#clock-cells = <2>;
+ 		#power-domain-cells = <0>;
++		#reset-cells = <1>;
+ 	};
+ 
+ 
+@@ -69,5 +74,6 @@ Examples
+ 		dmas = <&dmac1 0x13>, <&dmac1 0x12>;
+ 		dma-names = "tx", "rx";
+ 		power-domains = <&cpg>;
++		resets = <&cpg 310>;
+ 		status = "disabled";
+ 	};
+-- 
+1.9.1
