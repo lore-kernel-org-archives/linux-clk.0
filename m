@@ -1,52 +1,46 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 9 Jan 2017 16:23:27 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] clk: vc5: Add support for IDT VersaClock 5P49V5923B
-Message-ID: <20170110002327.GI17126@codeaurora.org>
-References: <20161228000045.4540-1-marek.vasut@gmail.com>
- <2015482.2Xx0FSfo4q@avalon>
- <a94799ce-0030-ee4b-3d07-b3c190d79ba5@gmail.com>
- <7398143.JfNZUDgVyk@avalon>
- <69c22af5-717c-ce9d-5f4c-c1751894b885@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <69c22af5-717c-ce9d-5f4c-c1751894b885@gmail.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/8] clk: renesas: cpg-mssr: Document suitability for RZ/G1
+Date: Fri, 20 Jan 2017 15:08:20 +0100
+Message-Id: <1484921306-9967-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
+References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/05, Marek Vasut wrote:
-> On 01/05/2017 03:13 PM, Laurent Pinchart wrote:
-> > Hi Marek,
-> 
-> Hi!
-> 
-> [...]
-> 
-> >>>>> +static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
-> >>>>> +                                        unsigned long parent_rate)
-> >>>>> +{
-> >>>>> +       struct vc5_driver_data *vc5 =
-> >>>>> +               container_of(hw, struct vc5_driver_data, clk_mux);
-> >>>>> +       unsigned long idiv;
-> >>>>> +       u8 div;
-> >>>>> +
-> >>>>> +       /* FIXME: Needs locking ? */
-> >>>
-> >>> Let's fix it then :-)
-> >>
-> >> I would like to get feedback on this one, does it ?
-> > 
-> > That's a question for Mike or Stephen I believe.
-> 
-> OK
+The Renesas CPG/MSSR driver is already in active use for RZ/G1 since
+commits c0b2d75d2a4bf6a3 ("clk: renesas: cpg-mssr: Add R8A7743 support")
+and 9127d54bb8947159 ("clk: renesas: cpg-mssr: Add R8A7745 support").
 
-What's the question?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 6947482d48a55094..eb8534e5ebf3007d 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -43,7 +43,7 @@
+  * Module Standby and Software Reset register offets.
+  *
+  * If the registers exist, these are valid for SH-Mobile, R-Mobile,
+- * R-Car Gen 2, and R-Car Gen 3.
++ * R-Car Gen2, R-Car Gen3, and RZ/G1.
+  * These are NOT valid for R-Car Gen1 and RZ/A1!
+  */
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
