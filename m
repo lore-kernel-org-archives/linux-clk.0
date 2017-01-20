@@ -1,810 +1,177 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 8/8] ARM: gr8: Convert to CCU
-Date: Sat, 21 Jan 2017 23:50:57 +0100
-Message-Id: <5f022771c3cb939843213b083a7e89686e215bc6.1485039043.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
-References: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
-References: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <ulf.hansson@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20170113150842.30250-1-linus.walleij@linaro.org>
+References: <20170113150842.30250-1-linus.walleij@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 20 Jan 2017 16:55:43 +0100
+Message-ID: <CAPDyKFosic9UBb01dQ1kpHTSbt6ASeZ54ktkAwBZ2S=7WrajjQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: ux500: Convert ABx500 clocks to use OF probing
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have a driver for the GR8, we can convert our DT to it.
+On 13 January 2017 at 16:08, Linus Walleij <linus.walleij@linaro.org> wrote:
+> These clocks have been broken for a long time unfortunately, a
+> hurdle of misc problems made them stop working at some point
+> breaking USB and audio on Ux500.
+>
+> The platform as such and all "regular" clocks are migrated to
+> OF/device tree, so let's migrate also this driver.
+>
+> With this patch and the corresponding DTS fixes, and a bunch
+> of probe deferral fixes, audio starts working again on Ux500.
+>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- arch/arm/boot/dts/sun5i-gr8.dtsi | 520 +++-----------------------------
- 1 file changed, 56 insertions(+), 464 deletions(-)
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-diff --git a/arch/arm/boot/dts/sun5i-gr8.dtsi b/arch/arm/boot/dts/sun5i-gr8.dtsi
-index f83ae3fc6329..cb9b2aaf7297 100644
---- a/arch/arm/boot/dts/sun5i-gr8.dtsi
-+++ b/arch/arm/boot/dts/sun5i-gr8.dtsi
-@@ -42,9 +42,10 @@
-  *     OTHER DEALINGS IN THE SOFTWARE.
-  */
- 
--#include <dt-bindings/clock/sun4i-a10-pll2.h>
-+#include <dt-bindings/clock/sun5i-ccu.h>
- #include <dt-bindings/dma/sun4i-a10.h>
- #include <dt-bindings/pinctrl/sun4i-a10.h>
-+#include <dt-bindings/reset/sun5i-ccu.h>
- 
- / {
- 	interrupt-parent = <&intc>;
-@@ -59,7 +60,7 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a8";
- 			reg = <0x0>;
--			clocks = <&cpu>;
-+			clocks = <&ccu CLK_CPU>;
- 		};
- 	};
- 
-@@ -68,419 +69,19 @@
- 		#size-cells = <1>;
- 		ranges;
- 
--		/*
--		 * This is a dummy clock, to be used as placeholder on
--		 * other mux clocks when a specific parent clock is not
--		 * yet implemented. It should be dropped when the driver
--		 * is complete.
--		 */
--		dummy: dummy {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <0>;
--		};
--
- 		osc24M: clk@01c20050 {
- 			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-osc-clk";
--			reg = <0x01c20050 0x4>;
-+			compatible = "fixed-clock";
- 			clock-frequency = <24000000>;
- 			clock-output-names = "osc24M";
- 		};
- 
--		osc3M: osc3M-clk {
--			compatible = "fixed-factor-clock";
--			#clock-cells = <0>;
--			clock-div = <8>;
--			clock-mult = <1>;
--			clocks = <&osc24M>;
--			clock-output-names = "osc3M";
--		};
--
- 		osc32k: clk@0 {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
- 			clock-frequency = <32768>;
- 			clock-output-names = "osc32k";
- 		};
--
--		pll1: clk@01c20000 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-pll1-clk";
--			reg = <0x01c20000 0x4>;
--			clocks = <&osc24M>;
--			clock-output-names = "pll1";
--		};
--
--		pll2: clk@01c20008 {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun5i-a13-pll2-clk";
--			reg = <0x01c20008 0x8>;
--			clocks = <&osc24M>;
--			clock-output-names = "pll2-1x", "pll2-2x",
--					     "pll2-4x", "pll2-8x";
--		};
--
--		pll3: clk@01c20010 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-pll3-clk";
--			reg = <0x01c20010 0x4>;
--			clocks = <&osc3M>;
--			clock-output-names = "pll3";
--		};
--
--		pll3x2: pll3x2-clk {
--			compatible = "allwinner,sun4i-a10-pll3-2x-clk";
--			#clock-cells = <0>;
--			clock-div = <1>;
--			clock-mult = <2>;
--			clocks = <&pll3>;
--			clock-output-names = "pll3-2x";
--		};
--
--		pll4: clk@01c20018 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-pll1-clk";
--			reg = <0x01c20018 0x4>;
--			clocks = <&osc24M>;
--			clock-output-names = "pll4";
--		};
--
--		pll5: clk@01c20020 {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun4i-a10-pll5-clk";
--			reg = <0x01c20020 0x4>;
--			clocks = <&osc24M>;
--			clock-output-names = "pll5_ddr", "pll5_other";
--		};
--
--		pll6: clk@01c20028 {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun4i-a10-pll6-clk";
--			reg = <0x01c20028 0x4>;
--			clocks = <&osc24M>;
--			clock-output-names = "pll6_sata", "pll6_other", "pll6";
--		};
--
--		pll7: clk@01c20030 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-pll3-clk";
--			reg = <0x01c20030 0x4>;
--			clocks = <&osc3M>;
--			clock-output-names = "pll7";
--		};
--
--		pll7x2: pll7x2-clk {
--			compatible = "allwinner,sun4i-a10-pll3-2x-clk";
--			#clock-cells = <0>;
--			clock-div = <1>;
--			clock-mult = <2>;
--			clocks = <&pll7>;
--			clock-output-names = "pll7-2x";
--		};
--
--		/* dummy is 200M */
--		cpu: cpu@01c20054 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-cpu-clk";
--			reg = <0x01c20054 0x4>;
--			clocks = <&osc32k>, <&osc24M>, <&pll1>, <&dummy>;
--			clock-output-names = "cpu";
--		};
--
--		axi: axi@01c20054 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-axi-clk";
--			reg = <0x01c20054 0x4>;
--			clocks = <&cpu>;
--			clock-output-names = "axi";
--		};
--
--		ahb: ahb@01c20054 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun5i-a13-ahb-clk";
--			reg = <0x01c20054 0x4>;
--			clocks = <&axi>, <&cpu>, <&pll6 1>;
--			clock-output-names = "ahb";
--			/*
--			 * Use PLL6 as parent, instead of CPU/AXI
--			 * which has rate changes due to cpufreq
--			 */
--			assigned-clocks = <&ahb>;
--			assigned-clock-parents = <&pll6 1>;
--		};
--
--		apb0: apb0@01c20054 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-apb0-clk";
--			reg = <0x01c20054 0x4>;
--			clocks = <&ahb>;
--			clock-output-names = "apb0";
--		};
--
--		apb1: clk@01c20058 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-apb1-clk";
--			reg = <0x01c20058 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&osc32k>;
--			clock-output-names = "apb1";
--		};
--
--		axi_gates: clk@01c2005c {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun4i-a10-gates-clk";
--			reg = <0x01c2005c 0x4>;
--			clocks = <&axi>;
--			clock-indices = <0>;
--			clock-output-names = "axi_dram";
--		};
--
--		ahb_gates: clk@01c20060 {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun5i-a13-ahb-gates-clk";
--			reg = <0x01c20060 0x8>;
--			clocks = <&ahb>;
--			clock-indices = <0>, <1>,
--					<2>, <5>, <6>,
--					<7>, <8>, <9>,
--					<10>, <13>,
--					<14>, <17>, <20>,
--					<21>, <22>,
--					<28>, <32>, <34>,
--					<36>, <40>, <44>,
--					<46>, <51>,
--					<52>;
--			clock-output-names = "ahb_usbotg", "ahb_ehci",
--					     "ahb_ohci", "ahb_ss", "ahb_dma",
--					     "ahb_bist", "ahb_mmc0", "ahb_mmc1",
--					     "ahb_mmc2", "ahb_nand",
--					     "ahb_sdram", "ahb_emac", "ahb_spi0",
--					     "ahb_spi1", "ahb_spi2",
--					     "ahb_hstimer", "ahb_ve", "ahb_tve",
--					     "ahb_lcd", "ahb_csi", "ahb_de_be",
--					     "ahb_de_fe", "ahb_iep",
--					     "ahb_mali400";
--		};
--
--		apb0_gates: clk@01c20068 {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun4i-a10-gates-clk";
--			reg = <0x01c20068 0x4>;
--			clocks = <&apb0>;
--			clock-indices = <0>, <3>,
--					<5>, <6>;
--			clock-output-names = "apb0_codec", "apb0_i2s0",
--					     "apb0_pio", "apb0_ir";
--		};
--
--		apb1_gates: clk@01c2006c {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun4i-a10-gates-clk";
--			reg = <0x01c2006c 0x4>;
--			clocks = <&apb1>;
--			clock-indices = <0>, <1>,
--					<2>, <17>,
--					<18>, <19>;
--			clock-output-names = "apb1_i2c0", "apb1_i2c1",
--					     "apb1_i2c2", "apb1_uart1",
--					     "apb1_uart2", "apb1_uart3";
--		};
--
--		nand_clk: clk@01c20080 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-mod0-clk";
--			reg = <0x01c20080 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
--			clock-output-names = "nand";
--		};
--
--		ms_clk: clk@01c20084 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-mod0-clk";
--			reg = <0x01c20084 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
--			clock-output-names = "ms";
--		};
--
--		mmc0_clk: clk@01c20088 {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun4i-a10-mmc-clk";
--			reg = <0x01c20088 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
--			clock-output-names = "mmc0",
--					     "mmc0_output",
--					     "mmc0_sample";
--		};
--
--		mmc1_clk: clk@01c2008c {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun4i-a10-mmc-clk";
--			reg = <0x01c2008c 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
--			clock-output-names = "mmc1",
--					     "mmc1_output",
--					     "mmc1_sample";
--		};
--
--		mmc2_clk: clk@01c20090 {
--			#clock-cells = <1>;
--			compatible = "allwinner,sun4i-a10-mmc-clk";
--			reg = <0x01c20090 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
--			clock-output-names = "mmc2",
--					     "mmc2_output",
--					     "mmc2_sample";
--		};
--
--		ts_clk: clk@01c20098 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-mod0-clk";
--			reg = <0x01c20098 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
--			clock-output-names = "ts";
--		};
--
--		ss_clk: clk@01c2009c {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-mod0-clk";
--			reg = <0x01c2009c 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
--			clock-output-names = "ss";
--		};
--
--		spi0_clk: clk@01c200a0 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-mod0-clk";
--			reg = <0x01c200a0 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
--			clock-output-names = "spi0";
--		};
--
--		spi1_clk: clk@01c200a4 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-mod0-clk";
--			reg = <0x01c200a4 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
--			clock-output-names = "spi1";
--		};
--
--		spi2_clk: clk@01c200a8 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-mod0-clk";
--			reg = <0x01c200a8 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
--			clock-output-names = "spi2";
--		};
--
--		ir0_clk: clk@01c200b0 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-mod0-clk";
--			reg = <0x01c200b0 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
--			clock-output-names = "ir0";
--		};
--
--		i2s0_clk: clk@01c200b8 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-mod1-clk";
--			reg = <0x01c200b8 0x4>;
--			clocks = <&pll2 SUN4I_A10_PLL2_8X>,
--				 <&pll2 SUN4I_A10_PLL2_4X>,
--				 <&pll2 SUN4I_A10_PLL2_2X>,
--				 <&pll2 SUN4I_A10_PLL2_1X>;
--			clock-output-names = "i2s0";
--		};
--
--		spdif_clk: clk@01c200c0 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-mod1-clk";
--			reg = <0x01c200c0 0x4>;
--			clocks = <&pll2 SUN4I_A10_PLL2_8X>,
--				 <&pll2 SUN4I_A10_PLL2_4X>,
--				 <&pll2 SUN4I_A10_PLL2_2X>,
--				 <&pll2 SUN4I_A10_PLL2_1X>;
--			clock-output-names = "spdif";
--		};
--
--		usb_clk: clk@01c200cc {
--			#clock-cells = <1>;
--			#reset-cells = <1>;
--			compatible = "allwinner,sun5i-a13-usb-clk";
--			reg = <0x01c200cc 0x4>;
--			clocks = <&pll6 1>;
--			clock-output-names = "usb_ohci0", "usb_phy";
--		};
--
--		dram_gates: clk@01c20100 {
--			#clock-cells = <1>;
--			compatible = "nextthing,gr8-dram-gates-clk",
--				     "allwinner,sun4i-a10-gates-clk";
--			reg = <0x01c20100 0x4>;
--			clocks = <&pll5 0>;
--			clock-indices = <0>,
--					<1>,
--					<25>,
--					<26>,
--					<29>,
--					<31>;
--			clock-output-names = "dram_ve",
--					     "dram_csi",
--					     "dram_de_fe",
--					     "dram_de_be",
--					     "dram_ace",
--					     "dram_iep";
--		};
--
--		de_be_clk: clk@01c20104 {
--			#clock-cells = <0>;
--			#reset-cells = <0>;
--			compatible = "allwinner,sun4i-a10-display-clk";
--			reg = <0x01c20104 0x4>;
--			clocks = <&pll3>, <&pll7>, <&pll5 1>;
--			clock-output-names = "de-be";
--		};
--
--		de_fe_clk: clk@01c2010c {
--			#clock-cells = <0>;
--			#reset-cells = <0>;
--			compatible = "allwinner,sun4i-a10-display-clk";
--			reg = <0x01c2010c 0x4>;
--			clocks = <&pll3>, <&pll7>, <&pll5 1>;
--			clock-output-names = "de-fe";
--		};
--
--		tcon_ch0_clk: clk@01c20118 {
--			#clock-cells = <0>;
--			#reset-cells = <1>;
--			compatible = "allwinner,sun4i-a10-tcon-ch0-clk";
--			reg = <0x01c20118 0x4>;
--			clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
--			clock-output-names = "tcon-ch0-sclk";
--		};
--
--		tcon_ch1_clk: clk@01c2012c {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-tcon-ch1-clk";
--			reg = <0x01c2012c 0x4>;
--			clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
--			clock-output-names = "tcon-ch1-sclk";
--		};
--
--		codec_clk: clk@01c20140 {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun4i-a10-codec-clk";
--			reg = <0x01c20140 0x4>;
--			clocks = <&pll2 SUN4I_A10_PLL2_1X>;
--			clock-output-names = "codec";
--		};
--
--		mbus_clk: clk@01c2015c {
--			#clock-cells = <0>;
--			compatible = "allwinner,sun5i-a13-mbus-clk";
--			reg = <0x01c2015c 0x4>;
--			clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
--			clock-output-names = "mbus";
--		};
- 	};
- 
- 	display-engine {
-@@ -528,7 +129,7 @@
- 			compatible = "allwinner,sun4i-a10-dma";
- 			reg = <0x01c02000 0x1000>;
- 			interrupts = <27>;
--			clocks = <&ahb_gates 6>;
-+			clocks = <&ccu CLK_AHB_DMA>;
- 			#dma-cells = <2>;
- 		};
- 
-@@ -536,7 +137,7 @@
- 			compatible = "allwinner,sun4i-a10-nand";
- 			reg = <0x01c03000 0x1000>;
- 			interrupts = <37>;
--			clocks = <&ahb_gates 13>, <&nand_clk>;
-+			clocks = <&ccu CLK_AHB_NAND>, <&ccu CLK_NAND>;
- 			clock-names = "ahb", "mod";
- 			dmas = <&dma SUN4I_DMA_DEDICATED 3>;
- 			dma-names = "rxtx";
-@@ -549,7 +150,7 @@
- 			compatible = "allwinner,sun4i-a10-spi";
- 			reg = <0x01c05000 0x1000>;
- 			interrupts = <10>;
--			clocks = <&ahb_gates 20>, <&spi0_clk>;
-+			clocks = <&ccu CLK_AHB_SPI0>, <&ccu CLK_SPI0>;
- 			clock-names = "ahb", "mod";
- 			dmas = <&dma SUN4I_DMA_DEDICATED 27>,
- 			       <&dma SUN4I_DMA_DEDICATED 26>;
-@@ -563,7 +164,7 @@
- 			compatible = "allwinner,sun4i-a10-spi";
- 			reg = <0x01c06000 0x1000>;
- 			interrupts = <11>;
--			clocks = <&ahb_gates 21>, <&spi1_clk>;
-+			clocks = <&ccu CLK_AHB_SPI1>, <&ccu CLK_SPI1>;
- 			clock-names = "ahb", "mod";
- 			dmas = <&dma SUN4I_DMA_DEDICATED 9>,
- 			       <&dma SUN4I_DMA_DEDICATED 8>;
-@@ -576,8 +177,8 @@
- 		tve0: tv-encoder@01c0a000 {
- 			compatible = "allwinner,sun4i-a10-tv-encoder";
- 			reg = <0x01c0a000 0x1000>;
--			clocks = <&ahb_gates 34>;
--			resets = <&tcon_ch0_clk 0>;
-+			clocks = <&ccu CLK_AHB_TVE>;
-+			resets = <&ccu RST_TVE>;
- 			status = "disabled";
- 
- 			port {
-@@ -595,11 +196,11 @@
- 			compatible = "allwinner,sun5i-a13-tcon";
- 			reg = <0x01c0c000 0x1000>;
- 			interrupts = <44>;
--			resets = <&tcon_ch0_clk 1>;
-+			resets = <&ccu RST_LCD>;
- 			reset-names = "lcd";
--			clocks = <&ahb_gates 36>,
--				 <&tcon_ch0_clk>,
--				 <&tcon_ch1_clk>;
-+			clocks = <&ccu CLK_AHB_LCD>,
-+				 <&ccu CLK_TCON_CH0>,
-+				 <&ccu CLK_TCON_CH1>;
- 			clock-names = "ahb",
- 				      "tcon-ch0",
- 				      "tcon-ch1";
-@@ -637,14 +238,8 @@
- 		mmc0: mmc@01c0f000 {
- 			compatible = "allwinner,sun5i-a13-mmc";
- 			reg = <0x01c0f000 0x1000>;
--			clocks = <&ahb_gates 8>,
--				 <&mmc0_clk 0>,
--				 <&mmc0_clk 1>,
--				 <&mmc0_clk 2>;
--			clock-names = "ahb",
--				      "mmc",
--				      "output",
--				      "sample";
-+			clocks = <&ccu CLK_AHB_MMC0>, <&ccu CLK_MMC0>;
-+			clock-names = "ahb", "mmc";
- 			interrupts = <32>;
- 			status = "disabled";
- 			#address-cells = <1>;
-@@ -654,14 +249,8 @@
- 		mmc1: mmc@01c10000 {
- 			compatible = "allwinner,sun5i-a13-mmc";
- 			reg = <0x01c10000 0x1000>;
--			clocks = <&ahb_gates 9>,
--				 <&mmc1_clk 0>,
--				 <&mmc1_clk 1>,
--				 <&mmc1_clk 2>;
--			clock-names = "ahb",
--				      "mmc",
--				      "output",
--				      "sample";
-+			clocks = <&ccu CLK_AHB_MMC1>, <&ccu CLK_MMC1>;
-+			clock-names = "ahb", "mmc";
- 			interrupts = <33>;
- 			status = "disabled";
- 			#address-cells = <1>;
-@@ -671,14 +260,8 @@
- 		mmc2: mmc@01c11000 {
- 			compatible = "allwinner,sun5i-a13-mmc";
- 			reg = <0x01c11000 0x1000>;
--			clocks = <&ahb_gates 10>,
--				 <&mmc2_clk 0>,
--				 <&mmc2_clk 1>,
--				 <&mmc2_clk 2>;
--			clock-names = "ahb",
--				      "mmc",
--				      "output",
--				      "sample";
-+			clocks = <&ccu CLK_AHB_MMC2>, <&ccu CLK_MMC2>;
-+			clock-names = "ahb", "mmc";
- 			interrupts = <34>;
- 			status = "disabled";
- 			#address-cells = <1>;
-@@ -688,7 +271,7 @@
- 		usb_otg: usb@01c13000 {
- 			compatible = "allwinner,sun4i-a10-musb";
- 			reg = <0x01c13000 0x0400>;
--			clocks = <&ahb_gates 0>;
-+			clocks = <&ccu CLK_AHB_OTG>;
- 			interrupts = <38>;
- 			interrupt-names = "mc";
- 			phys = <&usbphy 0>;
-@@ -705,9 +288,9 @@
- 			compatible = "allwinner,sun5i-a13-usb-phy";
- 			reg = <0x01c13400 0x10 0x01c14800 0x4>;
- 			reg-names = "phy_ctrl", "pmu1";
--			clocks = <&usb_clk 8>;
-+			clocks = <&ccu CLK_USB_PHY0>;
- 			clock-names = "usb_phy";
--			resets = <&usb_clk 0>, <&usb_clk 1>;
-+			resets = <&ccu RST_USB_PHY0>, <&ccu RST_USB_PHY1>;
- 			reset-names = "usb0_reset", "usb1_reset";
- 			status = "disabled";
- 		};
-@@ -716,7 +299,7 @@
- 			compatible = "allwinner,sun5i-a13-ehci", "generic-ehci";
- 			reg = <0x01c14000 0x100>;
- 			interrupts = <39>;
--			clocks = <&ahb_gates 1>;
-+			clocks = <&ccu CLK_AHB_EHCI>;
- 			phys = <&usbphy 1>;
- 			phy-names = "usb";
- 			status = "disabled";
-@@ -726,7 +309,7 @@
- 			compatible = "allwinner,sun5i-a13-ohci", "generic-ohci";
- 			reg = <0x01c14400 0x100>;
- 			interrupts = <40>;
--			clocks = <&usb_clk 6>, <&ahb_gates 2>;
-+			clocks = <&ccu CLK_USB_OHCI>, <&ccu CLK_AHB_OHCI>;
- 			phys = <&usbphy 1>;
- 			phy-names = "usb";
- 			status = "disabled";
-@@ -736,7 +319,7 @@
- 			compatible = "allwinner,sun4i-a10-spi";
- 			reg = <0x01c17000 0x1000>;
- 			interrupts = <12>;
--			clocks = <&ahb_gates 22>, <&spi2_clk>;
-+			clocks = <&ccu CLK_AHB_SPI2>, <&ccu CLK_SPI2>;
- 			clock-names = "ahb", "mod";
- 			dmas = <&dma SUN4I_DMA_DEDICATED 29>,
- 			       <&dma SUN4I_DMA_DEDICATED 28>;
-@@ -746,6 +329,15 @@
- 			#size-cells = <0>;
- 		};
- 
-+		ccu: clock@01c20000 {
-+			compatible = "nextthing,gr8-ccu";
-+			reg = <0x01c20000 0x400>;
-+			clocks = <&osc24M>, <&osc32k>;
-+			clock-names = "hosc", "losc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		intc: interrupt-controller@01c20400 {
- 			compatible = "allwinner,sun4i-a10-ic";
- 			reg = <0x01c20400 0x400>;
-@@ -757,7 +349,7 @@
- 			compatible = "nextthing,gr8-pinctrl";
- 			reg = <0x01c20800 0x400>;
- 			interrupts = <28>;
--			clocks = <&apb0_gates 5>;
-+			clocks = <&ccu CLK_APB0_PIO>;
- 			gpio-controller;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-@@ -876,7 +468,7 @@
- 		pwm: pwm@01c20e00 {
- 			compatible = "allwinner,sun5i-a10s-pwm";
- 			reg = <0x01c20e00 0xc>;
--			clocks = <&osc24M>;
-+			clocks = <&ccu CLK_HOSC>;
- 			#pwm-cells = <3>;
- 			status = "disabled";
- 		};
-@@ -885,7 +477,7 @@
- 			compatible = "allwinner,sun4i-a10-timer";
- 			reg = <0x01c20c00 0x90>;
- 			interrupts = <22>;
--			clocks = <&osc24M>;
-+			clocks = <&ccu CLK_HOSC>;
- 		};
- 
- 		wdt: watchdog@01c20c90 {
-@@ -898,7 +490,7 @@
- 			compatible = "allwinner,sun4i-a10-spdif";
- 			reg = <0x01c21000 0x400>;
- 			interrupts = <13>;
--			clocks = <&apb0_gates 1>, <&spdif_clk>;
-+			clocks = <&ccu CLK_APB0_SPDIF>, <&ccu CLK_SPDIF>;
- 			clock-names = "apb", "spdif";
- 			dmas = <&dma SUN4I_DMA_NORMAL 2>,
- 			       <&dma SUN4I_DMA_NORMAL 2>;
-@@ -908,7 +500,7 @@
- 
- 		ir0: ir@01c21800 {
- 			compatible = "allwinner,sun4i-a10-ir";
--			clocks = <&apb0_gates 6>, <&ir0_clk>;
-+			clocks = <&ccu CLK_APB0_IR>, <&ccu CLK_IR>;
- 			clock-names = "apb", "ir";
- 			interrupts = <5>;
- 			reg = <0x01c21800 0x40>;
-@@ -920,7 +512,7 @@
- 			compatible = "allwinner,sun4i-a10-i2s";
- 			reg = <0x01c22400 0x400>;
- 			interrupts = <16>;
--			clocks = <&apb0_gates 3>, <&i2s0_clk>;
-+			clocks = <&ccu CLK_APB0_I2S>, <&ccu CLK_I2S>;
- 			clock-names = "apb", "mod";
- 			dmas = <&dma SUN4I_DMA_NORMAL 3>,
- 			       <&dma SUN4I_DMA_NORMAL 3>;
-@@ -940,7 +532,7 @@
- 			compatible = "allwinner,sun4i-a10-codec";
- 			reg = <0x01c22c00 0x40>;
- 			interrupts = <30>;
--			clocks = <&apb0_gates 0>, <&codec_clk>;
-+			clocks = <&ccu CLK_APB0_CODEC>, <&ccu CLK_CODEC>;
- 			clock-names = "apb", "codec";
- 			dmas = <&dma SUN4I_DMA_NORMAL 19>,
- 			       <&dma SUN4I_DMA_NORMAL 19>;
-@@ -961,7 +553,7 @@
- 			interrupts = <2>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&apb1_gates 17>;
-+			clocks = <&ccu CLK_APB1_UART1>;
- 			status = "disabled";
- 		};
- 
-@@ -971,7 +563,7 @@
- 			interrupts = <3>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&apb1_gates 18>;
-+			clocks = <&ccu CLK_APB1_UART2>;
- 			status = "disabled";
- 		};
- 
-@@ -981,7 +573,7 @@
- 			interrupts = <4>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&apb1_gates 19>;
-+			clocks = <&ccu CLK_APB1_UART3>;
- 			status = "disabled";
- 		};
- 
-@@ -989,7 +581,7 @@
- 			compatible = "allwinner,sun4i-a10-i2c";
- 			reg = <0x01c2ac00 0x400>;
- 			interrupts = <7>;
--			clocks = <&apb1_gates 0>;
-+			clocks = <&ccu CLK_APB1_I2C0>;
- 			status = "disabled";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -999,7 +591,7 @@
- 			compatible = "allwinner,sun4i-a10-i2c";
- 			reg = <0x01c2b000 0x400>;
- 			interrupts = <8>;
--			clocks = <&apb1_gates 1>;
-+			clocks = <&ccu CLK_APB1_I2C1>;
- 			status = "disabled";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -1009,7 +601,7 @@
- 			compatible = "allwinner,sun4i-a10-i2c";
- 			reg = <0x01c2b400 0x400>;
- 			interrupts = <9>;
--			clocks = <&apb1_gates 2>;
-+			clocks = <&ccu CLK_APB1_I2C2>;
- 			status = "disabled";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -1019,18 +611,18 @@
- 			compatible = "allwinner,sun5i-a13-hstimer";
- 			reg = <0x01c60000 0x1000>;
- 			interrupts = <82>, <83>;
--			clocks = <&ahb_gates 28>;
-+			clocks = <&ccu CLK_AHB_HSTIMER>;
- 		};
- 
- 		fe0: display-frontend@01e00000 {
- 			compatible = "allwinner,sun5i-a13-display-frontend";
- 			reg = <0x01e00000 0x20000>;
- 			interrupts = <47>;
--			clocks = <&ahb_gates 46>, <&de_fe_clk>,
--				 <&dram_gates 25>;
-+			clocks = <&ccu CLK_AHB_DE_FE>, <&ccu CLK_DE_FE>,
-+				 <&ccu CLK_DRAM_DE_FE>;
- 			clock-names = "ahb", "mod",
- 				      "ram";
--			resets = <&de_fe_clk>;
-+			resets = <&ccu RST_DE_FE>;
- 			status = "disabled";
- 
- 			ports {
-@@ -1053,14 +645,14 @@
- 		be0: display-backend@01e60000 {
- 			compatible = "allwinner,sun5i-a13-display-backend";
- 			reg = <0x01e60000 0x10000>;
--			clocks = <&ahb_gates 44>, <&de_be_clk>,
--				 <&dram_gates 26>;
-+			clocks = <&ccu CLK_AHB_DE_BE>, <&ccu CLK_DE_BE>,
-+				 <&ccu CLK_DRAM_DE_BE>;
- 			clock-names = "ahb", "mod",
- 				      "ram";
--			resets = <&de_be_clk>;
-+			resets = <&ccu RST_DE_BE>;
- 			status = "disabled";
- 
--			assigned-clocks = <&de_be_clk>;
-+			assigned-clocks = <&ccu CLK_DE_BE>;
- 			assigned-clock-rates = <300000000>;
- 
- 			ports {
--- 
-git-series 0.8.11
+Stephen, can pick this up once Rob acked the DT change?
+
+Kind regards
+Uffe
+
+
+> ---
+>  drivers/clk/ux500/abx500-clk.c         | 36 ++++++++++++++++++++++++----------
+>  include/dt-bindings/clock/ste-ab8500.h | 11 +++++++++++
+>  2 files changed, 37 insertions(+), 10 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/ste-ab8500.h
+>
+> diff --git a/drivers/clk/ux500/abx500-clk.c b/drivers/clk/ux500/abx500-clk.c
+> index 0467fcae3b0e..2257d12ba988 100644
+> --- a/drivers/clk/ux500/abx500-clk.c
+> +++ b/drivers/clk/ux500/abx500-clk.c
+> @@ -10,19 +10,26 @@
+>  #include <linux/err.h>
+>  #include <linux/module.h>
+>  #include <linux/device.h>
+> +#include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/mfd/abx500/ab8500.h>
+>  #include <linux/mfd/abx500/ab8500-sysctrl.h>
+>  #include <linux/clkdev.h>
+>  #include <linux/clk-provider.h>
+> +#include <dt-bindings/clock/ste-ab8500.h>
+>  #include "clk.h"
+>
+> +#define AB8500_NUM_CLKS 6
+> +
+> +static struct clk *ab8500_clks[AB8500_NUM_CLKS];
+> +static struct clk_onecell_data ab8500_clk_data;
+> +
+>  /* Clock definitions for ab8500 */
+>  static int ab8500_reg_clks(struct device *dev)
+>  {
+>         int ret;
+>         struct clk *clk;
+> -
+> +       struct device_node *np = dev->of_node;
+>         const char *intclk_parents[] = {"ab8500_sysclk", "ulpclk"};
+>         u16 intclk_reg_sel[] = {0 , AB8500_SYSULPCLKCTRL1};
+>         u8 intclk_reg_mask[] = {0 , AB8500_SYSULPCLKCTRL1_SYSULPCLKINTSEL_MASK};
+> @@ -31,8 +38,6 @@ static int ab8500_reg_clks(struct device *dev)
+>                 (1 << AB8500_SYSULPCLKCTRL1_SYSULPCLKINTSEL_SHIFT)
+>         };
+>
+> -       dev_info(dev, "register clocks for ab850x\n");
+> -
+>         /* Enable SWAT */
+>         ret = ab8500_sysctrl_set(AB8500_SWATCTRL, AB8500_SWATCTRL_SWATENABLE);
+>         if (ret)
+> @@ -42,37 +47,43 @@ static int ab8500_reg_clks(struct device *dev)
+>         clk = clk_reg_sysctrl_gate(dev , "ab8500_sysclk2", "ab8500_sysclk",
+>                 AB8500_SYSULPCLKCTRL1, AB8500_SYSULPCLKCTRL1_SYSCLKBUF2REQ,
+>                 AB8500_SYSULPCLKCTRL1_SYSCLKBUF2REQ, 0, 0);
+> -       clk_register_clkdev(clk, "sysclk", "0-0070");
+> +       ab8500_clks[AB8500_SYSCLK_BUF2] = clk;
+>
+>         /* ab8500_sysclk3 */
+>         clk = clk_reg_sysctrl_gate(dev , "ab8500_sysclk3", "ab8500_sysclk",
+>                 AB8500_SYSULPCLKCTRL1, AB8500_SYSULPCLKCTRL1_SYSCLKBUF3REQ,
+>                 AB8500_SYSULPCLKCTRL1_SYSCLKBUF3REQ, 0, 0);
+> -       clk_register_clkdev(clk, "sysclk", "cg1960_core.0");
+> +       ab8500_clks[AB8500_SYSCLK_BUF3] = clk;
+>
+>         /* ab8500_sysclk4 */
+>         clk = clk_reg_sysctrl_gate(dev , "ab8500_sysclk4", "ab8500_sysclk",
+>                 AB8500_SYSULPCLKCTRL1, AB8500_SYSULPCLKCTRL1_SYSCLKBUF4REQ,
+>                 AB8500_SYSULPCLKCTRL1_SYSCLKBUF4REQ, 0, 0);
+> +       ab8500_clks[AB8500_SYSCLK_BUF4] = clk;
+>
+>         /* ab_ulpclk */
+>         clk = clk_reg_sysctrl_gate_fixed_rate(dev, "ulpclk", NULL,
+>                 AB8500_SYSULPCLKCTRL1, AB8500_SYSULPCLKCTRL1_ULPCLKREQ,
+>                 AB8500_SYSULPCLKCTRL1_ULPCLKREQ,
+>                 38400000, 9000, 0);
+> -       clk_register_clkdev(clk, "ulpclk", "snd-soc-mop500.0");
+> +       ab8500_clks[AB8500_SYSCLK_ULP] = clk;
+>
+>         /* ab8500_intclk */
+>         clk = clk_reg_sysctrl_set_parent(dev , "intclk", intclk_parents, 2,
+>                 intclk_reg_sel, intclk_reg_mask, intclk_reg_bits, 0);
+> -       clk_register_clkdev(clk, "intclk", "snd-soc-mop500.0");
+> -       clk_register_clkdev(clk, NULL, "ab8500-pwm.1");
+> +       ab8500_clks[AB8500_SYSCLK_INT] = clk;
+>
+>         /* ab8500_audioclk */
+>         clk = clk_reg_sysctrl_gate(dev , "audioclk", "intclk",
+>                 AB8500_SYSULPCLKCTRL1, AB8500_SYSULPCLKCTRL1_AUDIOCLKENA,
+>                 AB8500_SYSULPCLKCTRL1_AUDIOCLKENA, 0, 0);
+> -       clk_register_clkdev(clk, "audioclk", "ab8500-codec.0");
+> +       ab8500_clks[AB8500_SYSCLK_AUDIO] = clk;
+> +
+> +       ab8500_clk_data.clks = ab8500_clks;
+> +       ab8500_clk_data.clk_num = ARRAY_SIZE(ab8500_clks);
+> +       of_clk_add_provider(np, of_clk_src_onecell_get, &ab8500_clk_data);
+> +
+> +       dev_info(dev, "registered clocks for ab850x\n");
+>
+>         return 0;
+>  }
+> @@ -108,9 +119,15 @@ static int abx500_clk_probe(struct platform_device *pdev)
+>         return ret;
+>  }
+>
+> +static const struct of_device_id abx500_clk_match[] = {
+> +       { .compatible = "stericsson,ab8500-clk", },
+> +       {}
+> +};
+> +
+>  static struct platform_driver abx500_clk_driver = {
+>         .driver = {
+>                 .name = "abx500-clk",
+> +               .of_match_table = abx500_clk_match,
+>         },
+>         .probe  = abx500_clk_probe,
+>  };
+> @@ -119,7 +136,6 @@ static int __init abx500_clk_init(void)
+>  {
+>         return platform_driver_register(&abx500_clk_driver);
+>  }
+> -
+>  arch_initcall(abx500_clk_init);
+>
+>  MODULE_AUTHOR("Ulf Hansson <ulf.hansson@linaro.org");
+> diff --git a/include/dt-bindings/clock/ste-ab8500.h b/include/dt-bindings/clock/ste-ab8500.h
+> new file mode 100644
+> index 000000000000..6731f1f00a84
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/ste-ab8500.h
+> @@ -0,0 +1,11 @@
+> +#ifndef __STE_CLK_AB8500_H__
+> +#define __STE_CLK_AB8500_H__
+> +
+> +#define AB8500_SYSCLK_BUF2     0
+> +#define AB8500_SYSCLK_BUF3     1
+> +#define AB8500_SYSCLK_BUF4     2
+> +#define AB8500_SYSCLK_ULP      3
+> +#define AB8500_SYSCLK_INT      4
+> +#define AB8500_SYSCLK_AUDIO    5
+> +
+> +#endif
+> --
+> 2.9.3
+>
