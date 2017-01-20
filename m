@@ -1,35 +1,53 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, xf@rock-chips.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com, cl@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 1/4] clk: rockchip: add dt-binding header for rk3328
-Date: Thu, 05 Jan 2017 13:54:53 +0100
-Message-ID: <2865934.UftZdpvg1Y@phil>
-In-Reply-To: <6625105.hZYF0iglUL@phil>
-References: <1482979511-6847-1-git-send-email-zhangqing@rock-chips.com> <1482979511-6847-2-git-send-email-zhangqing@rock-chips.com> <6625105.hZYF0iglUL@phil>
+Return-Path: <javier@osg.samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5420: Mark CLK_ACLK432_SCALER as
+ CLK_IS_CRITICAL
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <CGME20170120104148epcas5p11af0e630f0881092a9b3b43e8b5b1aac@epcas5p1.samsung.com>
+ <1484908891-11820-1-git-send-email-javier@osg.samsung.com>
+ <551ac156-0cfa-29be-335f-d8a1f171cd8a@samsung.com>
+ <0ffa0d28-1086-887c-dcfc-590b6146b03e@samsung.com>
+ <48a2f141-4275-cb79-aafd-62191d747107@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
+ Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Message-ID: <6af43673-85eb-7b7d-a7f9-a7bac5070bdb@osg.samsung.com>
+Date: Fri, 20 Jan 2017 11:07:00 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <48a2f141-4275-cb79-aafd-62191d747107@osg.samsung.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 5. Januar 2017, 13:39:38 CET schrieb Heiko Stuebner:
-> Am Donnerstag, 29. Dezember 2016, 10:45:08 CET schrieb Elaine Zhang:
-> > Add the dt-bindings header for the rk3328, that gets shared between
-> > the clock controller and the clock references in the dts.
-> > Add softreset ID for rk3328.
-> > 
-> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+On 01/20/2017 11:00 AM, Javier Martinez Canillas wrote:
+> On 01/20/2017 10:55 AM, Sylwester Nawrocki wrote:
+
+[snip]
+
+>>
+>> Oops, the $subject patch can be dropped since as Marek just pointed out
+>> to me the changes introduced by that patch are already included in a patch
+>> which is already in the v4.10 fixes queue:
+>>
+>> https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=318fa46cc60d37fec1e87dbf03a82aca0f5ce695
+>>
 > 
-> applied, after moving the clock-ids a bit more together [0],
-> as limiting the number of empty entries in the clk-id array saves us a bit
-> of space. But please double check and shout if something looks wrong :-)
+> Yes, I just answered to Marek in the other thread saying the same.
+> He did mention the patch could fix the issue but for some reason I
+> didn't see the CLK_ACLK_300_GSCL in the clocks marked as critical...
+>
 
-forgot to add, that I also moved your mac2phy clock-ids into the regular sclk-
-area, as we want to add them via the muxgrf clktype.
+err, I meant s/CLK_ACLK_300_GSCL/CLK_ACLK432_SCALER
 
-
-> Thanks
-> Heiko
-> 
-> [0]
-> https://git.kernel.org/cgit/linux/kernel/git/mmind/linux-rockchip.git/commi
-> t/?id=6cc1aef0ad0daea0c6ba5432a8a6fe1c30661e4c
+I should just stop writing emails today since clearly didn't get enough coffee.
+ 
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
