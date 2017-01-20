@@ -1,53 +1,44 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:41512 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754769AbdA0JKa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Jan 2017 04:10:30 -0500
-From: Jeremy McNicoll <jeremymc@redhat.com>
-To: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc: andy.gross@linaro.org, sboyd@codeaurora.org, robh@kernel.org,
-        arnd@arndb.de, bjorn.andersson@linaro.org, riteshh@codeaurora.org,
-        git@kchr.de, ulf.hansson@linaro.org, jszhang@marvell.com,
-        jeremymc@redhat.com
-Subject: [PATCH V4 3/6] arm64: dts: msm8992 add fixed regulator
-Date: Fri, 27 Jan 2017 01:10:02 -0800
-Message-Id: <1485508205-1904-4-git-send-email-jeremymc@redhat.com>
-In-Reply-To: <1485508205-1904-1-git-send-email-jeremymc@redhat.com>
-References: <1485508205-1904-1-git-send-email-jeremymc@redhat.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  jic23@kernel.org,  knaack.h@gmx.de,  lars@metafoo.de,  pmeerw@pmeerw.net,  robh+dt@kernel.org,  mark.rutland@arm.com,  linux-iio@vger.kernel.org,  devicetree@vger.kernel.org,  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,  carlo@caione.org,  catalin.marinas@arm.com,  will.deacon@arm.com,  mturquette@baylibre.com,  narmstrong@baylibre.com,  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 2/4] clk: gxbb: add the SAR ADC clocks and expose them
+References: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
+	<20170119145822.26239-1-martin.blumenstingl@googlemail.com>
+	<20170119145822.26239-3-martin.blumenstingl@googlemail.com>
+	<20170119191332.GA7829@codeaurora.org>
+Date: Fri, 20 Jan 2017 07:46:00 -0800
+In-Reply-To: <20170119191332.GA7829@codeaurora.org> (Stephen Boyd's message of
+	"Thu, 19 Jan 2017 11:13:32 -0800")
+Message-ID: <m27f5p4tvr.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This regulator is not moving anywhere.  Sit, stay...
+Stephen Boyd <sboyd@codeaurora.org> writes:
 
-Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
----
- arch/arm64/boot/dts/qcom/msm8992.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+> On 01/19, Martin Blumenstingl wrote:
+>> The HHI_SAR_CLK_CNTL contains three SAR ADC specific clocks:
+>> - a mux clock to choose between different ADC reference clocks (this is
+>>   2-bit wide, but the datasheet only lists the parents for the first
+>>   bit)
+>> - a divider for the input/reference clock
+>> - a gate which enables the ADC clock
+>> 
+>> Additionally this exposes the ADC core clock (CLKID_SAR_ADC) and
+>> CLKID_SANA (which seems to enable the analog inputs, but unfortunately
+>> there is no documentation for this - we just mimic what the vendor
+>> driver does).
+>> 
+>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+>
+> This should go through arm-soc along with the other patch to dts.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
-index 44b2d37..13fb6f7 100644
---- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
-@@ -68,6 +68,17 @@
- 		clock-frequency = <32768>;
- 	};
- 
-+	vreg_vph_pwr: vreg-vph-pwr {
-+		compatible = "regulator-fixed";
-+		status = "okay";
-+		regulator-name = "vph-pwr";
-+
-+		regulator-min-microvolt = <3600000>;
-+		regulator-max-microvolt = <3600000>;
-+
-+		regulator-always-on;
-+	};
-+
- 	soc {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
--- 
-2.6.1
+Applied to v4.11/dt64 of the amlogic tree.
 
+Kevin
