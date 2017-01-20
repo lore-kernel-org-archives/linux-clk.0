@@ -1,65 +1,233 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,  "linux-mmc\@vger.kernel.org" <linux-mmc@vger.kernel.org>,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  "linux-arm-kernel\@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,  Mike Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  linux-clk <linux-clk@vger.kernel.org>,  "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,  Rob Herring <robh+dt@kernel.org>,  "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,  Ziji Hu <huziji@marvell.com>,  Jimmy Xu <zmxu@marvell.com>,  Jisheng Zhang <jszhang@marvell.com>,  Nadav Haklai <nadavh@marvell.com>,  Ryan Gao <ygao@marvell.com>,  Doug Jones <dougj@marvell.com>,  Victor Gu <xigu@marvell.com>,  "Wei\(SOCP\) Liu" <liuw@marvell.com>,  Wilson Ding <dingwei@marvell.com>,  Yehuda Yitschak <yehuday@marvell.com>,  Ma
-  rcin Wojtas <mw@semihalf.com>,  Hanna Hawa <hannah@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>
-Subject: Re: [PATCH v5 05/12] dt: bindings: Add bindings for Marvell Xenon SD Host Controller
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
-	<89c95d0084da6ad7132caa54ca66eb619d8a5090.1484154449.git-series.gregory.clement@free-electrons.com>
-	<CAPDyKFrCxk37uVZ4wM-=iwX3-Cn9j+uh1KneJoopVzia2nKTVA@mail.gmail.com>
-	<87fuk4yg1i.fsf@free-electrons.com>
-	<CAPDyKFo-hpLd3W0zWykdg0swuciBeL=Cy9cur_0RoG8jApOh3w@mail.gmail.com>
-Date: Fri, 27 Jan 2017 18:25:56 +0100
-In-Reply-To: <CAPDyKFo-hpLd3W0zWykdg0swuciBeL=Cy9cur_0RoG8jApOh3w@mail.gmail.com>
-	(Ulf Hansson's message of "Fri, 27 Jan 2017 16:36:36 +0100")
-Message-ID: <87bmuswh23.fsf@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 7/8] ARM: dts: r8a7743: Add reset control properties
+Date: Fri, 20 Jan 2017 15:08:25 +0100
+Message-Id: <1484921306-9967-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
+References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ulf,
+Add properties to describe the reset topology for on-SoC devices:
+  - Add the "#reset-cells" property to the CPG/MSSR device node,
+  - Add resets and reset-names properties to the various device nodes.
+
+This allows to reset SoC devices using the Reset Controller API.
+
+Note that all resets added match the corresponding module clocks.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7743.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 40d2cdede7022ff6..5f2287ea00922ee0 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -63,6 +63,7 @@
+ 			clocks = <&cpg CPG_MOD 408>;
+ 			clock-names = "clk";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 408>;
+ 		};
  
- On ven., janv. 27 2017, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-
->>
->> But I am curious to know why do you think we could use it without any
->> need. Are you aware of some abuse of this property?
->
-> Yes.
->
-
-Actually I was hopping that you point some examples :)
-
-But as you point mmc-ddr-3_3v I found my answers here:
-http://www.spinics.net/lists/linux-mmc/msg38602.html
-
->>
->>>
->>> Perhaps you can elaborate exactly why it makes sense for your case. Or
->>> perhaps we already discussed this, in either case, please re-fresh my
->>> mind.
->>
->> For instance we need it now on the 7040DB board which does not have the
->> 1.8V signal voltage available.
->
-> It it's better to describe what the controller/board support, instead
-> of what it doesn't.
->
-> I think you should be able to use other existing mmc DT bindings
-> (perhaps also you need the brand new "mmc-ddr-3_3v"), instead of the
-> "no-1-8-v".
-
-OK I will try with this one. And if it works, I wonder if it worth
-mentioning it as it is also part of the mmc binding.
-
-Gregory
-
->
-> Kind regards
-> Uffe
-
+ 		irqc: interrupt-controller@e61c0000 {
+@@ -82,6 +83,7 @@
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 407>;
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 407>;
+ 		};
+ 
+ 		timer {
+@@ -103,6 +105,7 @@
+ 			clock-names = "extal", "usb_extal";
+ 			#clock-cells = <2>;
+ 			#power-domain-cells = <0>;
++			#reset-cells = <1>;
+ 		};
+ 
+ 		prr: chipid@ff000044 {
+@@ -149,6 +152,7 @@
+ 			clocks = <&cpg CPG_MOD 219>;
+ 			clock-names = "fck";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 219>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <15>;
+ 		};
+@@ -181,6 +185,7 @@
+ 			clocks = <&cpg CPG_MOD 218>;
+ 			clock-names = "fck";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 218>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <15>;
+ 		};
+@@ -196,6 +201,7 @@
+ 			       <&dmac1 0x21>, <&dmac1 0x22>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 204>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -210,6 +216,7 @@
+ 			       <&dmac1 0x25>, <&dmac1 0x26>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 203>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -224,6 +231,7 @@
+ 			       <&dmac1 0x27>, <&dmac1 0x28>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 202>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -238,6 +246,7 @@
+ 			       <&dmac1 0x1b>, <&dmac1 0x1c>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 1106>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -252,6 +261,7 @@
+ 			       <&dmac1 0x1f>, <&dmac1 0x20>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 1107>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -266,6 +276,7 @@
+ 			       <&dmac1 0x23>, <&dmac1 0x24>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 1108>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -280,6 +291,7 @@
+ 		       <&dmac1 0x3d>, <&dmac1 0x3e>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 206>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -294,6 +306,7 @@
+ 			       <&dmac1 0x19>, <&dmac1 0x1a>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 207>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -308,6 +321,7 @@
+ 			       <&dmac1 0x1d>, <&dmac1 0x1e>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 216>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -323,6 +337,7 @@
+ 			       <&dmac1 0x29>, <&dmac1 0x2a>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 721>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -338,6 +353,7 @@
+ 			       <&dmac1 0x2d>, <&dmac1 0x2e>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 720>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -353,6 +369,7 @@
+ 			       <&dmac1 0x2b>, <&dmac1 0x2c>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 719>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -368,6 +385,7 @@
+ 			       <&dmac1 0x2f>, <&dmac1 0x30>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 718>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -383,6 +401,7 @@
+ 			       <&dmac1 0xfb>, <&dmac1 0xfc>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 715>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -398,6 +417,7 @@
+ 			       <&dmac1 0xfd>, <&dmac1 0xfe>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 714>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -413,6 +433,7 @@
+ 			       <&dmac1 0x39>, <&dmac1 0x3a>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 717>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -428,6 +449,7 @@
+ 			       <&dmac1 0x4d>, <&dmac1 0x4e>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 716>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -443,6 +465,7 @@
+ 			       <&dmac1 0x3b>, <&dmac1 0x3c>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 713>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -452,6 +475,7 @@
+ 			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 813>;
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			resets = <&cpg 813>;
+ 			phy-mode = "rmii";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+1.9.1
