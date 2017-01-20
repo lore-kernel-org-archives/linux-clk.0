@@ -1,67 +1,204 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
 Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: clk-conf: Do not print error messages if EPROBE_DEFER
-Date: Wed,  4 Jan 2017 11:12:33 +0100
-Message-Id: <1483524753-32213-1-git-send-email-geert+renesas@glider.be>
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 3/7] clk: sunxi-ng: Implement multiplier maximum
+Date: Fri, 20 Jan 2017 08:29:43 +0100
+Message-Id: <8e38914c705c32f3f0daa4a16979cbb9cae5e689.1484897383.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.5df5469d9c7a6233e225a875dca513a03b05e871.1484897383.git-series.maxime.ripard@free-electrons.com>
+References: <cover.5df5469d9c7a6233e225a875dca513a03b05e871.1484897383.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.5df5469d9c7a6233e225a875dca513a03b05e871.1484897383.git-series.maxime.ripard@free-electrons.com>
+References: <cover.5df5469d9c7a6233e225a875dca513a03b05e871.1484897383.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-EPROBE_DEFER is not an error, hence printing an error message like
-
-	clk: couldn't get clock 0 for /soc/display@feb00000
-
-may confuse the user.
-
-Suppress error messages in case of probe deferral to fix this.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/clk-conf.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/clk/sunxi-ng/ccu_mult.c | 16 +++++++++++++---
+ drivers/clk/sunxi-ng/ccu_mult.h | 10 ++++++----
+ drivers/clk/sunxi-ng/ccu_nk.c   |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_nkm.c  |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_nkmp.c |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_nm.c   |  4 ++--
+ 6 files changed, 33 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-index 674785d968a3e1c5..e0e02a6e59009e7a 100644
---- a/drivers/clk/clk-conf.c
-+++ b/drivers/clk/clk-conf.c
-@@ -40,8 +40,9 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
- 			return 0;
- 		pclk = of_clk_get_from_provider(&clkspec);
- 		if (IS_ERR(pclk)) {
--			pr_warn("clk: couldn't get parent clock %d for %s\n",
--				index, node->full_name);
-+			if (PTR_ERR(pclk) != -EPROBE_DEFER)
-+				pr_warn("clk: couldn't get parent clock %d for %s\n",
-+					index, node->full_name);
- 			return PTR_ERR(pclk);
- 		}
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+index 8b7ee7baa85b..8724c01171b1 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.c
++++ b/drivers/clk/sunxi-ng/ccu_mult.c
+@@ -40,8 +40,13 @@ static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
+ 	struct ccu_mult *cm = data;
+ 	struct _ccu_mult _cm;
  
-@@ -55,8 +56,9 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
- 		}
- 		clk = of_clk_get_from_provider(&clkspec);
- 		if (IS_ERR(clk)) {
--			pr_warn("clk: couldn't get assigned clock %d for %s\n",
--				index, node->full_name);
-+			if (PTR_ERR(clk) != -EPROBE_DEFER)
-+				pr_warn("clk: couldn't get assigned clock %d for %s\n",
-+					index, node->full_name);
- 			rc = PTR_ERR(clk);
- 			goto err;
- 		}
-@@ -99,8 +101,9 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
+-	_cm.min = 1;
+-	_cm.max = 1 << cm->mult.width;
++	_cm.min = cm->mult.min;
++
++	if (cm->mult.max)
++		_cm.max = cm->mult.max;
++	else
++		_cm.max = (1 << cm->mult.width) + cm->mult.offset - 1;
++
+ 	ccu_mult_find_best(parent_rate, rate, &_cm);
  
- 			clk = of_clk_get_from_provider(&clkspec);
- 			if (IS_ERR(clk)) {
--				pr_warn("clk: couldn't get clock %d for %s\n",
--					index, node->full_name);
-+				if (PTR_ERR(clk) != -EPROBE_DEFER)
-+					pr_warn("clk: couldn't get clock %d for %s\n",
-+						index, node->full_name);
- 				return PTR_ERR(clk);
- 			}
+ 	return parent_rate * _cm.mult;
+@@ -114,7 +119,12 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
+ 						&parent_rate);
+ 
+ 	_cm.min = cm->mult.min;
+-	_cm.max = 1 << cm->mult.width;
++
++	if (cm->mult.max)
++		_cm.max = cm->mult.max;
++	else
++		_cm.max = (1 << cm->mult.width) + cm->mult.offset - 1;
++
+ 	ccu_mult_find_best(parent_rate, rate, &_cm);
+ 
+ 	spin_lock_irqsave(cm->common.lock, flags);
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
+index 84839641dfdf..524acddfcb2e 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.h
++++ b/drivers/clk/sunxi-ng/ccu_mult.h
+@@ -10,24 +10,26 @@ struct ccu_mult_internal {
+ 	u8	shift;
+ 	u8	width;
+ 	u8	min;
++	u8	max;
+ };
+ 
+-#define _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, _min)	\
++#define _SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, _offset, _min, _max) \
+ 	{								\
+ 		.min	= _min,						\
++		.max	= _max,						\
+ 		.offset	= _offset,					\
+ 		.shift	= _shift,					\
+ 		.width	= _width,					\
+ 	}
+ 
+ #define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)	\
+-	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, _min)
++	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, 1, _min, 0)
+ 
+ #define _SUNXI_CCU_MULT_OFFSET(_shift, _width, _offset)	\
+-	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, 1)
++	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, _offset, 1, 0)
+ 
+ #define _SUNXI_CCU_MULT(_shift, _width)		\
+-	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, 1)
++	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, 1, 1, 0)
+ 
+ struct ccu_mult {
+ 	u32			enable;
+diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
+index 90117d3ead8c..b9e9b8a9d1b4 100644
+--- a/drivers/clk/sunxi-ng/ccu_nk.c
++++ b/drivers/clk/sunxi-ng/ccu_nk.c
+@@ -103,9 +103,9 @@ static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		rate *= nk->fixed_post_div;
+ 
+ 	_nk.min_n = nk->n.min;
+-	_nk.max_n = 1 << nk->n.width;
++	_nk.max_n = nk->n.max ?: 1 << nk->n.width;
+ 	_nk.min_k = nk->k.min;
+-	_nk.max_k = 1 << nk->k.width;
++	_nk.max_k = nk->k.max ?: 1 << nk->k.width;
+ 
+ 	ccu_nk_find_best(*parent_rate, rate, &_nk);
+ 	rate = *parent_rate * _nk.n * _nk.k;
+@@ -128,9 +128,9 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		rate = rate * nk->fixed_post_div;
+ 
+ 	_nk.min_n = nk->n.min;
+-	_nk.max_n = 1 << nk->n.width;
++	_nk.max_n = nk->n.max ?: 1 << nk->n.width;
+ 	_nk.min_k = nk->k.min;
+-	_nk.max_k = 1 << nk->k.width;
++	_nk.max_k = nk->k.max ?: 1 << nk->k.width;
+ 
+ 	ccu_nk_find_best(parent_rate, rate, &_nk);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+index 3caaf9d603e2..71f81e95a061 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.c
++++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+@@ -110,9 +110,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+ 	struct _ccu_nkm _nkm;
+ 
+ 	_nkm.min_n = nkm->n.min;
+-	_nkm.max_n = 1 << nkm->n.width;
++	_nkm.max_n = nkm->n.max ?: 1 << nkm->n.width;
+ 	_nkm.min_k = nkm->k.min;
+-	_nkm.max_k = 1 << nkm->k.width;
++	_nkm.max_k = nkm->k.max ?: 1 << nkm->k.width;
+ 	_nkm.min_m = 1;
+ 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+ 
+@@ -139,9 +139,9 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 reg;
+ 
+ 	_nkm.min_n = nkm->n.min;
+-	_nkm.max_n = 1 << nkm->n.width;
++	_nkm.max_n = nkm->n.max ?: 1 << nkm->n.width;
+ 	_nkm.min_k = nkm->k.min;
+-	_nkm.max_k = 1 << nkm->k.width;
++	_nkm.max_k = nkm->k.max ?: 1 << nkm->k.width;
+ 	_nkm.min_m = 1;
+ 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index da2bba02b845..a2b40a000157 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -117,9 +117,9 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct _ccu_nkmp _nkmp;
+ 
+ 	_nkmp.min_n = nkmp->n.min;
+-	_nkmp.max_n = 1 << nkmp->n.width;
++	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
+ 	_nkmp.min_k = nkmp->k.min;
+-	_nkmp.max_k = 1 << nkmp->k.width;
++	_nkmp.max_k = nkmp->k.max ?: 1 << nkmp->k.width;
+ 	_nkmp.min_m = 1;
+ 	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
+ 	_nkmp.min_p = 1;
+@@ -139,9 +139,9 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 reg;
+ 
+ 	_nkmp.min_n = 1;
+-	_nkmp.max_n = 1 << nkmp->n.width;
++	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
+ 	_nkmp.min_k = 1;
+-	_nkmp.max_k = 1 << nkmp->k.width;
++	_nkmp.max_k = nkmp->k.max ?: 1 << nkmp->k.width;
+ 	_nkmp.min_m = 1;
+ 	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
+ 	_nkmp.min_p = 1;
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index 158d74e0215f..af71b1909cd9 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -100,7 +100,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct _ccu_nm _nm;
+ 
+ 	_nm.min_n = nm->n.min;
+-	_nm.max_n = 1 << nm->n.width;
++	_nm.max_n = nm->n.max ?: 1 << nm->n.width;
+ 	_nm.min_m = 1;
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+ 
+@@ -123,7 +123,7 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		ccu_frac_helper_disable(&nm->common, &nm->frac);
+ 
+ 	_nm.min_n = 1;
+-	_nm.max_n = 1 << nm->n.width;
++	_nm.max_n = nm->n.max ?: 1 << nm->n.width;
+ 	_nm.min_m = 1;
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
  
 -- 
-1.9.1
+git-series 0.8.11
