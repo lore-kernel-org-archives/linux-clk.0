@@ -1,79 +1,81 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 04/10] clk: sunxi-ng: Support separately grouped PLL lock status register
-Date: Sat, 28 Jan 2017 20:22:33 +0800
-Message-Id: <20170128122239.4480-5-wens@csie.org>
-In-Reply-To: <20170128122239.4480-1-wens@csie.org>
-References: <20170128122239.4480-1-wens@csie.org>
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/8] clk: renesas: cpg-mssr: Rename cpg_mssr_priv.mstp_lock
+Date: Fri, 20 Jan 2017 15:08:21 +0100
+Message-Id: <1484921306-9967-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
+References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On the Allwinner A80 SoC, the PLL lock status indicators are grouped
-together in a separate register, as opposed to being scattered in each
-PLL's configuration register.
+The spinlock is used to protect Read-Modify-Write register accesses,
+which won't be limited to SMSTPCR register accesses.
 
-Add a flag to support this.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/sunxi-ng/ccu_common.c | 9 +++++++--
- drivers/clk/sunxi-ng/ccu_common.h | 2 ++
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ drivers/clk/renesas/renesas-cpg-mssr.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
-index 51d4bac97ab3..6986e11e91b0 100644
---- a/drivers/clk/sunxi-ng/ccu_common.c
-+++ b/drivers/clk/sunxi-ng/ccu_common.c
-@@ -25,13 +25,18 @@ static DEFINE_SPINLOCK(ccu_lock);
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index eb8534e5ebf3007d..f1161a585c57e433 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -98,7 +98,7 @@
+  *
+  * @dev: CPG/MSSR device
+  * @base: CPG/MSSR register block base address
+- * @mstp_lock: protects writes to SMSTPCR
++ * @rmw_lock: protects RMW register accesses
+  * @clks: Array containing all Core and Module Clocks
+  * @num_core_clks: Number of Core Clocks in clks[]
+  * @num_mod_clks: Number of Module Clocks in clks[]
+@@ -107,7 +107,7 @@
+ struct cpg_mssr_priv {
+ 	struct device *dev;
+ 	void __iomem *base;
+-	spinlock_t mstp_lock;
++	spinlock_t rmw_lock;
  
- void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock)
- {
-+	void __iomem *addr;
- 	u32 reg;
+ 	struct clk **clks;
+ 	unsigned int num_core_clks;
+@@ -144,7 +144,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
  
- 	if (!lock)
- 		return;
+ 	dev_dbg(dev, "MSTP %u%02u/%pC %s\n", reg, bit, hw->clk,
+ 		enable ? "ON" : "OFF");
+-	spin_lock_irqsave(&priv->mstp_lock, flags);
++	spin_lock_irqsave(&priv->rmw_lock, flags);
  
--	WARN_ON(readl_relaxed_poll_timeout(common->base + common->reg, reg,
--					   reg & lock, 100, 70000));
-+	if (common->features & CCU_FEATURE_LOCK_REG)
-+		addr = common->base + common->lock_reg;
-+	else
-+		addr = common->base + common->reg;
-+
-+	WARN_ON(readl_relaxed_poll_timeout(addr, reg, reg & lock, 100, 70000));
- }
+ 	value = readl(priv->base + SMSTPCR(reg));
+ 	if (enable)
+@@ -153,7 +153,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ 		value |= bitmask;
+ 	writel(value, priv->base + SMSTPCR(reg));
  
- int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
-diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
-index cdd69eb2e0b9..73d81dc58fc5 100644
---- a/drivers/clk/sunxi-ng/ccu_common.h
-+++ b/drivers/clk/sunxi-ng/ccu_common.h
-@@ -22,6 +22,7 @@
- #define CCU_FEATURE_FIXED_PREDIV	BIT(2)
- #define CCU_FEATURE_FIXED_POSTDIV	BIT(3)
- #define CCU_FEATURE_ALL_PREDIV		BIT(4)
-+#define CCU_FEATURE_LOCK_REG		BIT(5)
+-	spin_unlock_irqrestore(&priv->mstp_lock, flags);
++	spin_unlock_irqrestore(&priv->rmw_lock, flags);
  
- struct device_node;
+ 	if (!enable)
+ 		return 0;
+@@ -550,7 +550,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
-@@ -57,6 +58,7 @@ struct device_node;
- struct ccu_common {
- 	void __iomem	*base;
- 	u16		reg;
-+	u16		lock_reg;
- 	u32		prediv;
+ 	priv->dev = dev;
+-	spin_lock_init(&priv->mstp_lock);
++	spin_lock_init(&priv->rmw_lock);
  
- 	unsigned long	features;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	priv->base = devm_ioremap_resource(dev, res);
 -- 
-2.11.0
+1.9.1
