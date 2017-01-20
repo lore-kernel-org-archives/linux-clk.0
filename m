@@ -1,55 +1,53 @@
-Return-Path: <robh+dt@kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Jan 2017 15:22:14 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: James Liao <jamesjj.liao@mediatek.com>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Erin Lo <erin.lo@mediatek.com>,
+	Shunli Wang <shunli.wang@mediatek.com>,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH] clk: mediatek: Fix MT2701 dependencies
+Message-ID: <20170120232214.GC20800@codeaurora.org>
+References: <20170109113621.31d384c9@endymion>
+ <c3da261a-eb85-9b30-d5e2-05863d2efad2@suse.de>
+ <20170110130300.167d215b@endymion>
+ <1484099788.26901.8.camel@mtksdaap41>
+ <20170111134146.36878e01@endymion>
+ <1484192392.26901.12.camel@mtksdaap41>
+ <20170112094011.0e0a32e6@endymion>
 MIME-Version: 1.0
-In-Reply-To: <87ziibaota.fsf@eliezer.anholt.net>
-References: <20170124003853.16418-1-eric@anholt.net> <20170124003853.16418-2-eric@anholt.net>
- <CAL_JsqJ=VQSUO5MeHJSCB=_SnmOnA7G1=GhmWYKhjm-47kYV-w@mail.gmail.com> <87ziibaota.fsf@eliezer.anholt.net>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Mon, 30 Jan 2017 10:51:52 -0600
-Message-ID: <CAL_JsqJSXEjVPHx-2R69qmg1vrjT66MiYwnpD4Ki6gfqNYcTrg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: Document the VC4 DSI module nodes.
-To: Eric Anholt <eric@anholt.net>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
-	dri-devel <dri-devel@lists.freedesktop.org>, linux-rpi-kernel@lists.infradead.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	"bcm-kernel-feedback-list@broadcom.com" <bcm-kernel-feedback-list@broadcom.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170112094011.0e0a32e6@endymion>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 27, 2017 at 8:41 PM, Eric Anholt <eric@anholt.net> wrote:
-> Rob Herring <robh+dt@kernel.org> writes:
->
->> Need to cc DT list if you want it in my queue.
->>
->> On Mon, Jan 23, 2017 at 6:38 PM, Eric Anholt <eric@anholt.net> wrote:
->>> These are part of the vc4 display pipeline.
->>>
->>> Signed-off-by: Eric Anholt <eric@anholt.net>
->>> ---
->>>  .../devicetree/bindings/display/brcm,bcm-vc4.txt   | 35 ++++++++++++++++++++++
->>>  1 file changed, 35 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt b/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
->>> index e2768703ac2b..34c7fddcea39 100644
->>> --- a/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
->>> +++ b/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
->>> @@ -56,6 +56,18 @@ Required properties for V3D:
->>>  - interrupts:  The interrupt number
->>>                   See bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
->>>
->>> +Required properties for DSI:
->>> +- compatible:  Should be "brcm,bcm2835-dsi0" or "brcm,bcm2835-dsi1"
->>
->> Are the blocks different?
->
-> They are from the same lineage, but very different (old dsi0 is 1 lane,
-> dsi1 is 4 lanes).  You can see how much the registers move around and
-> change in the dsi->port conditional blocks in the driver code.
+On 01/12, Jean Delvare wrote:
+> Hi James,
+> 
+> On Thu, 12 Jan 2017 11:39:52 +0800, James Liao wrote:
+> > On Wed, 2017-01-11 at 13:41 +0100, Jean Delvare wrote:
+> > >  config COMMON_CLK_MT8173
+> > >  	bool "Clock driver for Mediatek MT8173"
+> > > -	depends on ARCH_MEDIATEK || COMPILE_TEST
+> > > +	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
+> > >  	select COMMON_CLK_MEDIATEK
+> > > -	default ARCH_MEDIATEK
+> > > +	default y
+> > >  	---help---
+> > >  	  This driver supports Mediatek MT8173 clocks.
+> > 
+> > Although MT8173 is a 64-bit SoC, but 32-bit kernel can run on it. So I
+> > think it no need to limit COMMON_CLK_MT8173 only be enabled on ARM64
+> > platform.
+> 
+> OK, I'll leave that one alone then, thanks for the information.
+> 
 
-Okay, can you add a note here with this detail. With that,
+Is this patch going another round? I haven't seen anything on the
+list so far.
 
-Acked-by: Rob Herring <robh@kernel.org>
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
