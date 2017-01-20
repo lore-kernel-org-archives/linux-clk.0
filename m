@@ -1,123 +1,136 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH v2 07/10] dt-bindings: sound: Add sun8i audio documentation
-Date: Tue, 17 Jan 2017 15:02:27 +0100
-Message-Id: <20170117140230.23142-8-mylene.josserand@free-electrons.com>
-In-Reply-To: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1484927830.2897.51.camel@pengutronix.de>
+Subject: Re: [PATCH 4/8] clk: renesas: cpg-mssr: Add support for reset
+ control
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,  Mark Rutland
+ <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org,  linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org
+Date: Fri, 20 Jan 2017 16:57:10 +0100
+In-Reply-To: <1484921306-9967-5-git-send-email-geert+renesas@glider.be>
+References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
+	 <1484921306-9967-5-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the documentation for dt-binding of the digital audio codec driver
-and the audio card driver for Sun8i SoCs.
+Hi Geert,
 
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
----
- .../devicetree/bindings/sound/sun8i-codec.txt      | 76 ++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/sun8i-codec.txt
+On Fri, 2017-01-20 at 15:08 +0100, Geert Uytterhoeven wrote:
+> Add optional support for the Reset Control feature of the Renesas Clock
+> Pulse Generator / Module Standby and Software Reset module on R-Car
+> Gen2, R-Car Gen3, and RZ/G1 SoCs.
 
-diff --git a/Documentation/devicetree/bindings/sound/sun8i-codec.txt b/Documentation/devicetree/bindings/sound/sun8i-codec.txt
-new file mode 100644
-index 000000000000..ce3c05219e33
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/sun8i-codec.txt
-@@ -0,0 +1,76 @@
-+Allwinner SUN8I audio codec
-+------------------------------------
-+
-+On Sun8i SoCs, and particularly on A33, the audio is separated in
-+different parts:
-+	  - A DAI driver. It uses the "sun4i-i2s" driver which is
-+	  documented here:
-+	  Documentation/devicetree/bindings/sound/sun4i-i2s.txt
-+	  - An analog part of the codec which is handled as PRCM registers.
-+	  See Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
-+	  - An digital part of the codec which is documented in this current
-+	  binding documentation.
-+	  - And finally, an audio card which links all the above components.
-+	  The simple-audio card will be used.
-+	  See Documentation/devicetree/bindings/sound/simple-card.txt
-+
-+This bindings documentation exposes Sun8i codec (digital part).
-+
-+Required properties:
-+- compatible: must be "allwinner,sun8i-a33-codec"
-+- reg: must contain the registers location and length
-+- interrupts: must contain the codec interrupt
-+- clocks: a list of phandle + clock-specifer pairs, one for each entry
-+  in clock-names.
-+- clock-names: should contain followings:
-+   - "bus": the parent APB clock for this controller
-+   - "mod": the parent module clock
-+
-+Example:
-+codec: codec@01c22e00 {
-+	#sound-dai-cells = <0>;
-+	compatible = "allwinner,sun8i-a33-codec";
-+	reg = <0x01c22e00 0x400>;
-+	interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+	clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
-+	clock-names = "bus", "mod";
-+	status = "disabled";
-+};
-+
-+Here is an example to add a sound card and the codec binding on sun8i SoCs that
-+are similar to A33 using simple-card:
-+
-+	sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "Sun8i Audio Card";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,frame-master = <&link_codec>;
-+		simple-audio-card,bitclock-master = <&link_codec>;
-+		simple-audio-card,mclk-fs = <512>;
-+		simple-audio-card,aux-devs = <&codec_analog>;
-+		simple-audio-card,routing =
-+				"Left DAC", "Digital Left DAC",
-+				"Right DAC", "Digital Right DAC";
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&dai>;
-+		};
-+
-+		link_codec: simple-audio-card,codec {
-+			sound-dai = <&codec>;
-+		};
-+
-+	soc@01c00000 {
-+		[...]
-+
-+		codec: codec@01c22e00 {
-+			#sound-dai-cells = <0>;
-+			compatible = "allwinner,sun8i-a33-codec";
-+			reg = <0x01c22e00 0x400>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
-+			clock-names = "bus", "mod";
-+			status = "disabled";
-+		};
-+	};
-+
--- 
-2.11.0
+Is there a reason to make this optional?
+
+> This allows to reset SoC devices using the Reset Controller API.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Looks good to me,
+
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+Just a small issue below,
+
+> ---
+>  drivers/clk/renesas/renesas-cpg-mssr.c | 122 +++++++++++++++++++++++++++++++++
+>  1 file changed, 122 insertions(+)
+> 
+> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+> index f1161a585c57e433..ea4af714ac14603a 100644
+> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+[...]
+> +static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
+> +			  unsigned long id)
+> +{
+> +	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
+> +	unsigned int reg = id / 32;
+> +	unsigned int bit = id % 32;
+> +	u32 bitmask = BIT(bit);
+
+Here you have a bitmask = BIT(bit) variable.
+
+> +	unsigned long flags;
+> +	u32 value;
+> +
+> +	dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
+> +
+> +	/* Reset module */
+> +	spin_lock_irqsave(&priv->rmw_lock, flags);
+> +	value = readl(priv->base + SRCR(reg));
+> +	value |= bitmask;
+
+Here you use it.
+
+> +	writel(value, priv->base + SRCR(reg));
+> +	spin_unlock_irqrestore(&priv->rmw_lock, flags);
+> +
+> +	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
+> +	udelay(35);
+> +
+> +	/* Release module from reset state */
+> +	writel(bitmask, priv->base + SRSTCLR(reg));
+> +
+> +	return 0;
+> +}
+> +
+> +static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
+> +{
+> +	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
+> +	unsigned int reg = id / 32;
+> +	unsigned int bit = id % 32;
+
+Here you haven't.
+
+> +	unsigned long flags;
+> +	u32 value;
+> +
+> +	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
+> +
+> +	spin_lock_irqsave(&priv->rmw_lock, flags);
+> +	value = readl(priv->base + SRCR(reg));
+> +	writel(value | BIT(bit), priv->base + SRCR(reg));
+
+Here you don't.
+
+> +	spin_unlock_irqrestore(&priv->rmw_lock, flags);
+> +	return 0;
+> +}
+> +
+> +static int cpg_mssr_deassert(struct reset_controller_dev *rcdev,
+> +			     unsigned long id)
+> +{
+> +	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
+> +	unsigned int reg = id / 32;
+> +	unsigned int bit = id % 32;
+> +
+> +	dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
+> +
+> +	writel(BIT(bit), priv->base + SRSTCLR(reg));
+
+And here ...
+
+> +	return 0;
+> +}
+> +
+> +static int cpg_mssr_status(struct reset_controller_dev *rcdev,
+> +			   unsigned long id)
+> +{
+> +	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
+> +	unsigned int reg = id / 32;
+> +	unsigned int bit = id % 32;
+> +
+> +	return !!(readl(priv->base + SRCR(reg)) & BIT(bit));
+
+And here neither.
+
+I'd choose one variant over the other for consistency.
+
+regards
+Philipp
