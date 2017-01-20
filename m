@@ -1,49 +1,217 @@
-Return-Path: <Chris.Packham@alliedtelesis.co.nz>
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-CC: Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij
-	<linus.walleij@linaro.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette
-	<mturquette@baylibre.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn
-	<andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Chris Brand
-	<chris.brand@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, "Arnd
- Bergmann" <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Juri Lelli <juri.lelli@arm.com>, Thomas Petazzoni
-	<thomas.petazzoni@free-electrons.com>, Laxman Dewangan
-	<ldewangan@nvidia.com>, Kalyan Kinthada
-	<Kalyan.Kinthada@alliedtelesis.co.nz>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>
-Subject: Re: [PATCHv5 0/5] Support for Marvell switches with integrated CPUs
-Date: Mon, 30 Jan 2017 20:27:58 +0000
-Message-ID: <3e0e797ad5bd4747b33f631fcecd3933@svr-chch-ex1.atlnz.lc>
-References: <20170127032546.14657-1-chris.packham@alliedtelesis.co.nz>
- <87wpdgwj72.fsf@free-electrons.com> <20170127184745.GD8801@codeaurora.org>
- <f8f6e8db585147d3adb025bed29694ab@svr-chch-ex1.atlnz.lc>
- <87o9yotxuo.fsf@free-electrons.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <niklas.soderlund@ragnatech.se>
+Return-Path: <niklas.soderlund@ragnatech.se>
+Date: Fri, 20 Jan 2017 23:03:02 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/8] clk: renesas: cpg-mssr: Add support for reset control
+Message-ID: <20170120220302.GA20610@bigcity.dyn.berto.se>
+References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
+ <1484921306-9967-5-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1484921306-9967-5-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 31/01/17 03:40, Gregory CLEMENT wrote:=0A=
-> Hi Chris,=0A=
->=0A=
-> The 5 patches should be available soon (if it is not already the case),=
-=0A=
-> in the linux-next branch.=0A=
->=0A=
-> The clk patch is already there, the 3 arm patch have been merged in my=0A=
-> mvebu/for-next branch, and the pinctrl patch is about to be merged in=0A=
-> the pinctrl/for-next branch.=0A=
->=0A=
-> Gregory=0A=
->=0A=
-=0A=
-Gregory, Stephen, Linus W, thanks for applying the patches. Numerous =0A=
-reviewers thanks for your feedback.=0A=
-=0A=
+Hi Geert,
+
+Nice patch! It took me a while to understand why you didn't need to read 
+the register before writing to it in cpg_mssr_deassert() :-) 
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+On 2017-01-20 15:08:22 +0100, Geert Uytterhoeven wrote:
+> Add optional support for the Reset Control feature of the Renesas Clock
+> Pulse Generator / Module Standby and Software Reset module on R-Car
+> Gen2, R-Car Gen3, and RZ/G1 SoCs.
+> 
+> This allows to reset SoC devices using the Reset Controller API.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/clk/renesas/renesas-cpg-mssr.c | 122 +++++++++++++++++++++++++++++++++
+>  1 file changed, 122 insertions(+)
+> 
+> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+> index f1161a585c57e433..ea4af714ac14603a 100644
+> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/clk/renesas.h>
+> +#include <linux/delay.h>
+>  #include <linux/device.h>
+>  #include <linux/init.h>
+>  #include <linux/mod_devicetable.h>
+> @@ -25,6 +26,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_clock.h>
+>  #include <linux/pm_domain.h>
+> +#include <linux/reset-controller.h>
+>  #include <linux/slab.h>
+>  
+>  #include <dt-bindings/clock/renesas-cpg-mssr.h>
+> @@ -96,6 +98,7 @@
+>  /**
+>   * Clock Pulse Generator / Module Standby and Software Reset Private Data
+>   *
+> + * @rcdev: Optional reset controller entity
+>   * @dev: CPG/MSSR device
+>   * @base: CPG/MSSR register block base address
+>   * @rmw_lock: protects RMW register accesses
+> @@ -105,6 +108,9 @@
+>   * @last_dt_core_clk: ID of the last Core Clock exported to DT
+>   */
+>  struct cpg_mssr_priv {
+> +#ifdef CONFIG_RESET_CONTROLLER
+> +	struct reset_controller_dev rcdev;
+> +#endif
+>  	struct device *dev;
+>  	void __iomem *base;
+>  	spinlock_t rmw_lock;
+> @@ -494,6 +500,118 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_RESET_CONTROLLER
+> +
+> +#define rcdev_to_priv(x)	container_of(x, struct cpg_mssr_priv, rcdev)
+> +
+> +static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
+> +			  unsigned long id)
+> +{
+> +	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
+> +	unsigned int reg = id / 32;
+> +	unsigned int bit = id % 32;
+> +	u32 bitmask = BIT(bit);
+> +	unsigned long flags;
+> +	u32 value;
+> +
+> +	dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
+> +
+> +	/* Reset module */
+> +	spin_lock_irqsave(&priv->rmw_lock, flags);
+> +	value = readl(priv->base + SRCR(reg));
+> +	value |= bitmask;
+> +	writel(value, priv->base + SRCR(reg));
+> +	spin_unlock_irqrestore(&priv->rmw_lock, flags);
+> +
+> +	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
+> +	udelay(35);
+> +
+> +	/* Release module from reset state */
+> +	writel(bitmask, priv->base + SRSTCLR(reg));
+> +
+> +	return 0;
+> +}
+> +
+> +static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
+> +{
+> +	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
+> +	unsigned int reg = id / 32;
+> +	unsigned int bit = id % 32;
+> +	unsigned long flags;
+> +	u32 value;
+> +
+> +	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
+> +
+> +	spin_lock_irqsave(&priv->rmw_lock, flags);
+> +	value = readl(priv->base + SRCR(reg));
+> +	writel(value | BIT(bit), priv->base + SRCR(reg));
+> +	spin_unlock_irqrestore(&priv->rmw_lock, flags);
+> +	return 0;
+> +}
+> +
+> +static int cpg_mssr_deassert(struct reset_controller_dev *rcdev,
+> +			     unsigned long id)
+> +{
+> +	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
+> +	unsigned int reg = id / 32;
+> +	unsigned int bit = id % 32;
+> +
+> +	dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
+> +
+> +	writel(BIT(bit), priv->base + SRSTCLR(reg));
+> +	return 0;
+> +}
+> +
+> +static int cpg_mssr_status(struct reset_controller_dev *rcdev,
+> +			   unsigned long id)
+> +{
+> +	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
+> +	unsigned int reg = id / 32;
+> +	unsigned int bit = id % 32;
+> +
+> +	return !!(readl(priv->base + SRCR(reg)) & BIT(bit));
+> +}
+> +
+> +static const struct reset_control_ops cpg_mssr_reset_ops = {
+> +	.reset = cpg_mssr_reset,
+> +	.assert = cpg_mssr_assert,
+> +	.deassert = cpg_mssr_deassert,
+> +	.status = cpg_mssr_status,
+> +};
+> +
+> +static int cpg_mssr_reset_xlate(struct reset_controller_dev *rcdev,
+> +				const struct of_phandle_args *reset_spec)
+> +{
+> +	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
+> +	unsigned int unpacked = reset_spec->args[0];
+> +	unsigned int idx = MOD_CLK_PACK(unpacked);
+> +
+> +	if (unpacked % 100 > 31 || idx >= rcdev->nr_resets) {
+> +		dev_err(priv->dev, "Invalid reset index %u\n", unpacked);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return idx;
+> +}
+> +
+> +static int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
+> +{
+> +	priv->rcdev.ops = &cpg_mssr_reset_ops;
+> +	priv->rcdev.of_node = priv->dev->of_node;
+> +	priv->rcdev.of_reset_n_cells = 1;
+> +	priv->rcdev.of_xlate = cpg_mssr_reset_xlate;
+> +	priv->rcdev.nr_resets = priv->num_mod_clks;
+> +	return devm_reset_controller_register(priv->dev, &priv->rcdev);
+> +}
+> +
+> +#else /* !CONFIG_RESET_CONTROLLER */
+> +static inline int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
+> +{
+> +	return 0;
+> +}
+> +#endif /* !CONFIG_RESET_CONTROLLER */
+> +
+> +
+>  static const struct of_device_id cpg_mssr_match[] = {
+>  #ifdef CONFIG_ARCH_R8A7743
+>  	{
+> @@ -591,6 +709,10 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+>  	if (error)
+>  		return error;
+>  
+> +	error = cpg_mssr_reset_controller_register(priv);
+> +	if (error)
+> +		return error;
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 1.9.1
+> 
+
+-- 
+Regards,
+Niklas Söderlund
