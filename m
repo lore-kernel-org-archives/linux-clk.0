@@ -1,39 +1,41 @@
-Return-Path: <s.nawrocki@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Subject: Re: [PATCH 2/4] clk: samsung: Remove Exynos4415 driver (SoC not
- supported anymore)
-To: cwchoi00@gmail.com
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-clk@vger.kernel.org,
- linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Seung-Woo Kim <sw0312.kim@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <5a1bd63a-2246-a0dc-9f13-2ffcd5f28efa@samsung.com>
-Date: Sat, 21 Jan 2017 08:42:48 +0100
-In-reply-to: 
- <CAGTfZH2Eh67iMb7bBY2ostNUbxmOtQxy=P7ZRSEDzS4=enyMKg@mail.gmail.com>
-References: <20170114123642.15581-1-krzk@kernel.org>
- <CGME20170114123727epcas2p296aae6459c8575d7e5def74f18e5c64d@epcas2p2.samsung.com>
- <20170114123642.15581-3-krzk@kernel.org>
- <c9b51cb6-f798-d41e-afff-f779b963345c@samsung.com>
- <CAGTfZH2Eh67iMb7bBY2ostNUbxmOtQxy=P7ZRSEDzS4=enyMKg@mail.gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Jan 2017 14:58:27 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>
+Subject: Re: [PATCH] clk: hisilicon: fix lock assignment
+Message-ID: <20170120225827.GB8009@codeaurora.org>
+References: <1484727218-3499-1-git-send-email-leo.yan@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1484727218-3499-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chanwoo,
+On 01/18, Leo Yan wrote:
+> In clock driver initialize phase the spinlock is missed to assignment
+> to struct clkgate_separated, finally there have no locking to protect
+> exclusive accessing for clock registers.
+> 
+> This bug introduces the console has no output after enable coresight
+> driver on 96borads Hikey; this is because console using UART3, which
 
-On 01/21/2017 06:08 AM, Chanwoo Choi wrote:
-> I add reveiwed-by tag from this patch. But, on you tree, this patch[1] doesn’t
-> include the my reviewed-by tag.
+s/borads/boards/
 
-My apologies for this omission, I'll make sure I use patchwork in future
-so no tags are lost. It's already pulled and that commit can't be edited.
+> has shared the same register with coresight clock enabling bit. After
+> applied this patch it can assign lock properly to protect exclusive
+> accessing, and console can work well after enabled coresight modules.
+> 
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+
+Is there a Fixes: tag needed?
+
+Is coresight support merged into Linus' tree? I want to know if
+this needs to be applied for v4.10 or can wait until v4.11.
 
 -- 
-Thanks,
-Sylwester
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
