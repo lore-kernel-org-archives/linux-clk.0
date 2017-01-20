@@ -1,78 +1,106 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20170113150747.30105-1-linus.walleij@linaro.org>
-References: <20170113150747.30105-1-linus.walleij@linaro.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 20 Jan 2017 16:55:16 +0100
-Message-ID: <CAPDyKFp-PTmDKqLKbuuZpCDUPav5mQcTRReMjF3Bq5auQ--_5A@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: ux500: move AB8500 sysclk over to PRCMU clk driver
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/8] Renesas CPG/MSSR Reset Control Support
+Date: Fri, 20 Jan 2017 15:08:18 +0100
+Message-Id: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 13 January 2017 at 16:07, Linus Walleij <linus.walleij@linaro.org> wrote:
-> The AB8500 sysclk is just another PRCMU-controlled clock, there
-> is no reason why it should be in the ABx500-controlled part of
-> the clock implementation. Doing this and the corresponding device
-> tree changes makes USB work on the Ux500 again.
->
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+	Hi all,
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+This patch series adds reset control support to the Renesas Clock Pulse
+Generator / Module Standby and Software Reset module, on the R-Car H3
+and M3-W, RZ/G1M, and RZ/G1E SoCs.
 
-Stephen, can pick this up once Rob acked the DT change?
+  - Patch 1 amends the Renesas CPG/MSSR DT bindings for reset control,
+  - Patches 2-4 add reset control to the Renesas CPG/MSSR driver,
+  - Patches 5-8 add reset control properties to the R-Car H3 and M3-W,
+    RZ/G1M, and RZ/G1E DTSes.
 
-Kind regards
-Uffe
+Note that this patch series implements reset functionality only.
+Actual reset policy is to be defined and implemented separately.
 
-> ---
->  drivers/clk/ux500/abx500-clk.c   | 8 --------
->  drivers/clk/ux500/u8500_of_clk.c | 3 +++
->  2 files changed, 3 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/ux500/abx500-clk.c b/drivers/clk/ux500/abx500-clk.c
-> index a07c31e6f26d..0467fcae3b0e 100644
-> --- a/drivers/clk/ux500/abx500-clk.c
-> +++ b/drivers/clk/ux500/abx500-clk.c
-> @@ -15,7 +15,6 @@
->  #include <linux/mfd/abx500/ab8500-sysctrl.h>
->  #include <linux/clkdev.h>
->  #include <linux/clk-provider.h>
-> -#include <linux/mfd/dbx500-prcmu.h>
->  #include "clk.h"
->
->  /* Clock definitions for ab8500 */
-> @@ -39,13 +38,6 @@ static int ab8500_reg_clks(struct device *dev)
->         if (ret)
->                 return ret;
->
-> -       /* ab8500_sysclk */
-> -       clk = clk_reg_prcmu_gate("ab8500_sysclk", NULL, PRCMU_SYSCLK, 0);
-> -       clk_register_clkdev(clk, "sysclk", "ab8500-usb.0");
-> -       clk_register_clkdev(clk, "sysclk", "ab-iddet.0");
-> -       clk_register_clkdev(clk, "sysclk", "snd-soc-mop500.0");
-> -       clk_register_clkdev(clk, "sysclk", "shrm_bus");
-> -
->         /* ab8500_sysclk2 */
->         clk = clk_reg_sysctrl_gate(dev , "ab8500_sysclk2", "ab8500_sysclk",
->                 AB8500_SYSULPCLKCTRL1, AB8500_SYSULPCLKCTRL1_SYSCLKBUF2REQ,
-> diff --git a/drivers/clk/ux500/u8500_of_clk.c b/drivers/clk/ux500/u8500_of_clk.c
-> index e960d686d9db..d5888591e1a9 100644
-> --- a/drivers/clk/ux500/u8500_of_clk.c
-> +++ b/drivers/clk/ux500/u8500_of_clk.c
-> @@ -206,6 +206,9 @@ static void u8500_clk_init(struct device_node *np)
->         clk = clk_reg_prcmu_gate("timclk", NULL, PRCMU_TIMCLK, 0);
->         prcmu_clk[PRCMU_TIMCLK] = clk;
->
-> +       clk = clk_reg_prcmu_gate("ab8500_sysclk", NULL, PRCMU_SYSCLK, 0);
-> +       prcmu_clk[PRCMU_SYSCLK] = clk;
-> +
->         clk = clk_reg_prcmu_opp_volt_scalable("sdmmcclk", NULL, PRCMU_SDMMCCLK,
->                                         100000000, CLK_SET_RATE_GATE);
->         prcmu_clk[PRCMU_SDMMCCLK] = clk;
-> --
-> 2.9.3
->
+This is an optional feature, to be enabled explicitly using
+CONFIG_RESET_CONTROLLER=y.  When enabled, an on-SoC device can be reset
+easily using device_reset(), or by using the reset_control_*() API when
+more fine-grained control is desired.
+
+Possible use cases are (not exhaustive):
+  - Reset a device before use, to make sure it's in a predefined state, and
+    doesn't depend on earlier configuration by e.g. the boot loader,
+  - Reset a device after detecting an anomaly,
+  - Reset a device to verify suspend/resume is handled correctly by the
+    driver in case the device would be part of a power domain on a
+    different/future SoC.
+
+Dependencies and upstreaming:
+  - As patches 1-4 touch a driver under drivers/clk/renesas/, I think
+    it's best if they go in through a pull request to the clock
+    maintainers, like other Renesas clock driver changes,
+  - Patches 5-8 have no dependencies nor impact as long as
+    CONFIG_RESET_CONTROLLER=n.
+    However, if CONFIG_RESET_CONTROLLER=y and resets properties are
+    prsesent in DTS, the EHCI and OHCI drivers already deassert reset as
+    part of their initialization sequences, and put the devices back
+    into reset state in case initialization failed, or on unbind.
+    Hence it's best to apply the DTS patches after the driver support
+    has landed upstream.  Else USB on R-Car H3 will fail to initialize
+    when booting a kernel with CONFIG_RESET_CONTROLLER=y.
+    I'm not aware of other relevant drivers already using reset control.
+
+For your convenience, the driver and DTS changes (incl. dependencies) are
+available in the topic/renesas-cpg-mssr-reset-driver-v1 resp.
+topic/renesas-cpg-mssr-reset-dts-v1 branches of my topic/rcar-rst-v4 branch of
+my renesas-drivers git repository at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+
+This has been tested on the R-Car Gen3 Salvator-X (H3 and M3-W) and the
+R-Car M2-W (using out-of-tree driver modifications) Koelsch development
+boards, by inspecting device register contents before and after reset,
+and by comparing them with their documented reset values.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (8):
+  clk: renesas: cpg-mssr: Document reset control support
+  clk: renesas: cpg-mssr: Document suitability for RZ/G1
+  clk: renesas: cpg-mssr: Rename cpg_mssr_priv.mstp_lock
+  clk: renesas: cpg-mssr: Add support for reset control
+  arm64: dts: r8a7795: Add reset control properties
+  arm64: dts: r8a7796: Add reset control properties
+  ARM: dts: r8a7743: Add reset control properties
+  ARM: dts: r8a7745: Add reset control properties
+
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   6 +
+ arch/arm/boot/dts/r8a7743.dtsi                     |  24 ++++
+ arch/arm/boot/dts/r8a7745.dtsi                     |  24 ++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 103 ++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  34 ++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             | 134 ++++++++++++++++++++-
+ 6 files changed, 319 insertions(+), 6 deletions(-)
+
+-- 
+1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
