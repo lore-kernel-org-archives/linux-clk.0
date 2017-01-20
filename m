@@ -1,70 +1,68 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v3 2/6] arm: sunxi: add support for V3s SoC
-Date: Fri, 20 Jan 2017 01:54:44 +0800
-Message-Id: <20170119175448.11445-2-icenowy@aosc.xyz>
-In-Reply-To: <20170119175448.11445-1-icenowy@aosc.xyz>
-References: <20170119175448.11445-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Jan 2017 15:12:43 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: renesas: mstp: Make INTC-SYS a critical clock
+Message-ID: <20170120231243.GE8009@codeaurora.org>
+References: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
+ <1484657190-12838-3-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1484657190-12838-3-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s is a low-end single-core Cortex-A7 SoC, with 64MB
-integrated DRAM, and several peripherals.
+On 01/17, Geert Uytterhoeven wrote:
+> INTC-SYS is the module clock for the GIC.  Accessing the GIC while it is
+> disabled causes:
+> 
+>     Unhandled fault: asynchronous external abort (0x1211) at 0x00000000
+> 
+> Currently, the GIC-400 driver cannot enable its module clock for several
+> reasons:
+>   - It does not use a platform device, so Runtime PM is not an option,
+>   - gic_of_init() runs before any clocks are registered, so it cannot
+>     enable the clock explicitly,
+>   - gic_of_init() cannot return -EPROBE_DEFER, as IRQCHIP_DECLARE()
+>     doesn't support deferred probing.
+> 
+> Hence we have to keep on relying on the boot loader for enabling the
+> module clock.
+> 
+> To prevent the module clock from being disabled when the CCF core thinks
+> it is unused, and thus causing a system lock-up, add a check to the MSTP
+> clock driver and enable CLK_IS_CRITICAL. This will make sure the module
+> clock is never disabled.
+> 
+> This is a hard dependency for describing the INTC-SYS clock in DT on
+> R-Mobile APE6 and R-Car Gen2.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
- Documentation/arm/sunxi/README | 4 ++++
- arch/arm/mach-sunxi/sunxi.c    | 1 +
- 2 files changed, 5 insertions(+)
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
-index cd0243302bc1..a455b305c62c 100644
---- a/Documentation/arm/sunxi/README
-+++ b/Documentation/arm/sunxi/README
-@@ -67,6 +67,10 @@ SunXi family
-         + Datasheet
-           http://dl.linux-sunxi.org/H3/Allwinner_H3_Datasheet_V1.0.pdf
- 
-+      - Allwinner V3s (sun8i)
-+        + Datasheet
-+          http://linux-sunxi.org/File:Allwinner_V3s_Datasheet_V1.0.pdf
-+
-     * Quad ARM Cortex-A15, Quad ARM Cortex-A7 based SoCs
-       - Allwinner A80
-         + Datasheet
-diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-index 2e2bde271205..f246bfc6cfe4 100644
---- a/arch/arm/mach-sunxi/sunxi.c
-+++ b/arch/arm/mach-sunxi/sunxi.c
-@@ -64,6 +64,7 @@ static const char * const sun8i_board_dt_compat[] = {
- 	"allwinner,sun8i-a33",
- 	"allwinner,sun8i-a83t",
- 	"allwinner,sun8i-h3",
-+	"allwinner,sun8i-v3s",
- 	NULL,
- };
- 
+> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+> index 9375777776d99407..c0319b8acf3521a2 100644
+> --- a/drivers/clk/renesas/clk-mstp.c
+> +++ b/drivers/clk/renesas/clk-mstp.c
+> @@ -144,6 +144,11 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
+
+Sad that git gets confused about which function this is in.
+
+>  	init.name = name;
+>  	init.ops = &cpg_mstp_clock_ops;
+>  	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
+> +	/* INTC-SYS is the module clock of the GIC, and must not be disabled */
+> +	if (!strcmp(name, "intc-sys")) {
+> +		pr_debug("MSTP %s setting CLK_IS_CRITICAL\n", name);
+> +		init.flags |= CLK_IS_CRITICAL;
+> +	}
+>  	init.parent_names = &parent_name;
+>  	init.num_parents = 1;
+>  
+
 -- 
-2.11.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
