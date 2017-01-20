@@ -1,42 +1,50 @@
-Return-Path: <jacobchen110@gmail.com>
-Return-Path: <jacobchen110@gmail.com>
-From: Jacob Chen <jacob-chen@iotwrt.com>
-To: heiko@sntech.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	zhangqing@rock-chips.com,
-	zhengxing@rock-chips.com,
-	Jacob Chen <jacob-chen@iotwrt.com>
-Subject: [PATCH v2 2/3] clk: rockchip: use rk3288 vip_out clock ids
-Date: Wed, 18 Jan 2017 13:42:39 +0800
-Message-Id: <1484718161-27702-2-git-send-email-jacob-chen@iotwrt.com>
-In-Reply-To: <1484718161-27702-1-git-send-email-jacob-chen@iotwrt.com>
-References: <1484718161-27702-1-git-send-email-jacob-chen@iotwrt.com>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5420: Mark CLK_ACLK432_SCALER as
+ CLK_IS_CRITICAL
+To: Javier Martinez Canillas <javier@osg.samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
+ Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <0ffa0d28-1086-887c-dcfc-590b6146b03e@samsung.com>
+Date: Fri, 20 Jan 2017 14:55:13 +0100
+MIME-version: 1.0
+In-reply-to: <551ac156-0cfa-29be-335f-d8a1f171cd8a@samsung.com>
+Content-type: text/plain; charset=windows-1252
+References: 
+ <CGME20170120104148epcas5p11af0e630f0881092a9b3b43e8b5b1aac@epcas5p1.samsung.com>
+ <1484908891-11820-1-git-send-email-javier@osg.samsung.com>
+ <551ac156-0cfa-29be-335f-d8a1f171cd8a@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Reference the newly added vip clock-ids in the clock-tree.
+On 01/20/2017 01:32 PM, Sylwester Nawrocki wrote:
+> On 01/20/2017 11:41 AM, Javier Martinez Canillas wrote:
+>> On Exynos5800 SoC the SCALER block uses 2 input clocks: CLK_ACLK_300_GSCL
+>> and CLK_ACLK432_SCALER, so both needs to be ungated in order to access it.
+>>
+>> But Exynos5420 only has the CLK_ACLK_300_GSCL as gsc_pd clk. So just using
+>> this definition from exynos5420.dtsi in Exynos5800 leads to the following:
+> [...]
+>> So until a proper solution based on runtime PM gets merged, mark the clock
+>> as critical to prevent it to be gated.
+>>
+>> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
----
- drivers/clk/rockchip/clk-rk3288.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Oops, the $subject patch can be dropped since as Marek just pointed out
+to me the changes introduced by that patch are already included in a patch
+which is already in the v4.10 fixes queue:
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 39af05a..3d02aa2 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -469,7 +469,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	COMPOSITE_NODIV(0, "vip_src", mux_pll_src_cpll_gpll_p, 0,
- 			RK3288_CLKSEL_CON(26), 8, 1, MFLAGS,
- 			RK3288_CLKGATE_CON(3), 7, GFLAGS),
--	COMPOSITE_NOGATE(0, "sclk_vip_out", mux_vip_out_p, 0,
-+	COMPOSITE_NOGATE(SCLK_VIP_OUT, "sclk_vip_out", mux_vip_out_p, 0,
- 			RK3288_CLKSEL_CON(26), 15, 1, MFLAGS, 9, 5, DFLAGS),
- 
- 	DIV(0, "pclk_pd_alive", "gpll", 0,
+https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=318fa46cc60d37fec1e87dbf03a82aca0f5ce695
+
 -- 
-2.7.4
+Thanks,
+Sylwester
