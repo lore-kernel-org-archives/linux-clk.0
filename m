@@ -1,94 +1,78 @@
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: vc5: Add bindings for IDT VersaClock 5P49V5923 and 5P49V5933
-Date: Wed, 11 Jan 2017 18:33:35 +0200
-Message-ID: <3509171.4UDVg95MWF@avalon>
-In-Reply-To: <20170111161603.18905-1-marek.vasut@gmail.com>
-References: <20170111161603.18905-1-marek.vasut@gmail.com>
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20170113150747.30105-1-linus.walleij@linaro.org>
+References: <20170113150747.30105-1-linus.walleij@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 20 Jan 2017 16:55:16 +0100
+Message-ID: <CAPDyKFp-PTmDKqLKbuuZpCDUPav5mQcTRReMjF3Bq5auQ--_5A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: ux500: move AB8500 sysclk over to PRCMU clk driver
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marek,
+On 13 January 2017 at 16:07, Linus Walleij <linus.walleij@linaro.org> wrote:
+> The AB8500 sysclk is just another PRCMU-controlled clock, there
+> is no reason why it should be in the ABx500-controlled part of
+> the clock implementation. Doing this and the corresponding device
+> tree changes makes USB work on the Ux500 again.
+>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Thank you for the patch.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-On Wednesday 11 Jan 2017 17:16:02 Marek Vasut wrote:
-> Add bindings for IDT VersaClock 5 5P49V5923 and 5P49V5933 chips.
-> These are I2C clock generators with optional clock source from
-> either XTal or dedicated clock generator and, depending on the
-> model, two or more clock outputs.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
+Stephen, can pick this up once Rob acked the DT change?
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Kind regards
+Uffe
 
 > ---
->  .../devicetree/bindings/clock/idt,versaclock5.txt  | 43 +++++++++++++++++++
->  1 file changed, 43 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt new file mode
-> 100644
-> index 000000000000..82ebed9a8a15
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> @@ -0,0 +1,43 @@
-> +Binding for IDT VersaClock5 programmable i2c clock generator.
+>  drivers/clk/ux500/abx500-clk.c   | 8 --------
+>  drivers/clk/ux500/u8500_of_clk.c | 3 +++
+>  2 files changed, 3 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/clk/ux500/abx500-clk.c b/drivers/clk/ux500/abx500-clk.c
+> index a07c31e6f26d..0467fcae3b0e 100644
+> --- a/drivers/clk/ux500/abx500-clk.c
+> +++ b/drivers/clk/ux500/abx500-clk.c
+> @@ -15,7 +15,6 @@
+>  #include <linux/mfd/abx500/ab8500-sysctrl.h>
+>  #include <linux/clkdev.h>
+>  #include <linux/clk-provider.h>
+> -#include <linux/mfd/dbx500-prcmu.h>
+>  #include "clk.h"
+>
+>  /* Clock definitions for ab8500 */
+> @@ -39,13 +38,6 @@ static int ab8500_reg_clks(struct device *dev)
+>         if (ret)
+>                 return ret;
+>
+> -       /* ab8500_sysclk */
+> -       clk = clk_reg_prcmu_gate("ab8500_sysclk", NULL, PRCMU_SYSCLK, 0);
+> -       clk_register_clkdev(clk, "sysclk", "ab8500-usb.0");
+> -       clk_register_clkdev(clk, "sysclk", "ab-iddet.0");
+> -       clk_register_clkdev(clk, "sysclk", "snd-soc-mop500.0");
+> -       clk_register_clkdev(clk, "sysclk", "shrm_bus");
+> -
+>         /* ab8500_sysclk2 */
+>         clk = clk_reg_sysctrl_gate(dev , "ab8500_sysclk2", "ab8500_sysclk",
+>                 AB8500_SYSULPCLKCTRL1, AB8500_SYSULPCLKCTRL1_SYSCLKBUF2REQ,
+> diff --git a/drivers/clk/ux500/u8500_of_clk.c b/drivers/clk/ux500/u8500_of_clk.c
+> index e960d686d9db..d5888591e1a9 100644
+> --- a/drivers/clk/ux500/u8500_of_clk.c
+> +++ b/drivers/clk/ux500/u8500_of_clk.c
+> @@ -206,6 +206,9 @@ static void u8500_clk_init(struct device_node *np)
+>         clk = clk_reg_prcmu_gate("timclk", NULL, PRCMU_TIMCLK, 0);
+>         prcmu_clk[PRCMU_TIMCLK] = clk;
+>
+> +       clk = clk_reg_prcmu_gate("ab8500_sysclk", NULL, PRCMU_SYSCLK, 0);
+> +       prcmu_clk[PRCMU_SYSCLK] = clk;
 > +
-> +The IDT VersaClock5 are programmable i2c clock generators providing
-> +from 3 to 12 output clocks.
-> +
-> +==I2C device node==
-> +
-> +Required properties:
-> +- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933".
-> +- reg:		i2c device address, shall be 0x68 or 0x6a.
-> +- #clock-cells:	from common clock binding; shall be set to 1.
-> +- clocks:	from common clock binding; list of parent clock handles,
-> +		- 5p49v5923: (required) either or both of XTAL or CLKIN
-> +					reference clock.
-> +		- 5p49v5933: (optional) property not present (internal
-> +					Xtal used) or CLKIN reference
-> +					clock.
-> +- clock-names:	from common clock binding; clock input names, can be
-> +		- 5p49v5923: (required) either or both of "xin", "clkin".
-> +		- 5p49v5933: (optional) property not present or "clkin".
-> +
-> +==Example==
-> +
-> +/* 25MHz reference crystal */
-> +ref25: ref25m {
-> +	compatible = "fixed-clock";
-> +	#clock-cells = <0>;
-> +	clock-frequency = <25000000>;
-> +};
-> +
-> +i2c-master-node {
-> +
-> +	/* IDT 5P49V5923 i2c clock generator */
-> +	vc5: clock-generator@6a {
-> +		compatible = "idt,5p49v5923";
-> +		reg = <0x6a>;
-> +		#clock-cells = <1>;
-> +
-> +		/* Connect XIN input to 25MHz reference */
-> +		clocks = <&ref25m>;
-> +		clock-names = "xin";
-> +	};
-> +};
-
--- 
-Regards,
-
-Laurent Pinchart
+>         clk = clk_reg_prcmu_opp_volt_scalable("sdmmcclk", NULL, PRCMU_SDMMCCLK,
+>                                         100000000, CLK_SET_RATE_GATE);
+>         prcmu_clk[PRCMU_SDMMCCLK] = clk;
+> --
+> 2.9.3
+>
