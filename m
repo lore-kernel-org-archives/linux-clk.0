@@ -1,58 +1,78 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <jic23@kernel.org>
+Subject: Re: [PATCH v3 1/4] Documentation: dt-bindings: add the Amlogic Meson
+ SAR ADC documentation
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, robh+dt@kernel.org,
+ mark.rutland@arm.com, khilman@baylibre.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
+ <20170119145822.26239-1-martin.blumenstingl@googlemail.com>
+ <20170119145822.26239-2-martin.blumenstingl@googlemail.com>
+Cc: carlo@caione.org, catalin.marinas@arm.com, will.deacon@arm.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, narmstrong@baylibre.com,
+ linux-arm-kernel@lists.infradead.org
+From: Jonathan Cameron <jic23@kernel.org>
+Message-ID: <264b4c52-6298-22b0-35db-3318a05b5b93@kernel.org>
+Date: Sat, 21 Jan 2017 12:39:39 +0000
 MIME-Version: 1.0
-In-Reply-To: <AM3PR04MB530F532D867C08824DADDC9877C0@AM3PR04MB530.eurprd04.prod.outlook.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
- <AM3PR04MB5304992095753B761E66A9A87640@AM3PR04MB530.eurprd04.prod.outlook.com>
- <CACRpkdYTpEHyzBY-mA4YUsj=xt46Pibka3-4VHwUXosfgbgp1Q@mail.gmail.com>
- <AM3PR04MB530A88C5C0E7C6AD2C59B9E87790@AM3PR04MB530.eurprd04.prod.outlook.com>
- <CACRpkda1a4+yOrzBnKs6J84PS0StwQ68gHxDub_u7i5ofU9s7w@mail.gmail.com> <AM3PR04MB530F532D867C08824DADDC9877C0@AM3PR04MB530.eurprd04.prod.outlook.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 18 Jan 2017 13:24:30 +0100
-Message-ID: <CACRpkdaxvf6eHujfvKuOsRb69aL8+4jTE-aR3a6ywhytTEu6Hw@mail.gmail.com>
-Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
- for imx6sll
-To: Jacky Bai <ping.bai@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"jacky.baip@gmail.com" <jacky.baip@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170119145822.26239-2-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 17, 2017 at 7:35 AM, Jacky Bai <ping.bai@nxp.com> wrote:
->> Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
->> On Thu, Jan 12, 2017 at 3:57 AM, Jacky Bai <ping.bai@nxp.com> wrote:
->>
->> > Another thing is that we can use a pins-tool program developed by NXP
->> > to  generate the pinctrl configuration code that can be used directly
->> > in dts. This tiny program can avoid pin function conflict. As on i.MX,
->> > there are so may pins, each pin can be used for up 8  function.
->> > Configuring the pins is a time-consuming work.  This tools is very useful for
->> customer to generate the dts code.
->>
->> I understand, but every silicon vendor has such a tool, all are different,
->> proprietary and unfriendly to programmers and open source developers, who
->> need to understand how the hardware is working without magic tools and
->> secret data sheets to fix bugs.
->>
->> For the people working with maintaining the code it is paramount that DTS files
->> are self-descriptive.
->
-> OK.  Thanks for your comments.  Adding generic-pinconf in imx pinctrl needs some time
-> to finish and the legacy method still need be here even if generic-pinconf is added.
-> Do you plan to pick this legacy binding patch for now?
+On 19/01/17 14:58, Martin Blumenstingl wrote:
+> This adds the devicetree binding documentation for the SAR ADC found in
+> Amlogic Meson SoCs.
+> Currently only the GXBB, GXL and GXM SoCs are supported.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+Looks straight forward to me, but there is just enough here that I'm looking
+for an Ack from Rob or Mark.
 
-As I said earlier:
+Thanks,
 
-> atleast I need an indication from one of the i.MX maintainers how they
-> want to proceed.
-
-Yours,
-Linus Walleij
+Jonathan
+> ---
+>  .../bindings/iio/adc/amlogic,meson-saradc.txt      | 31 ++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+> new file mode 100644
+> index 000000000000..9a0bec7afc63
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+> @@ -0,0 +1,31 @@
+> +* Amlogic Meson SAR (Successive Approximation Register) A/D converter
+> +
+> +Required properties:
+> +- compatible:	depending on the SoC this should be one of:
+> +			- "amlogic,meson-gxbb-saradc" for GXBB
+> +			- "amlogic,meson-gxl-saradc" for GXL and GXM
+> +		along with the generic "amlogic,meson-saradc"
+> +- reg:		the physical base address and length of the registers
+> +- clocks:	phandle and clock identifier (see clock-names)
+> +- clock-names:	mandatory clocks:
+> +			- "clkin" for the reference clock (typically XTAL)
+> +			- "core" for the SAR ADC core clock
+> +		optional clocks:
+> +			- "sana" for the analog clock
+> +			- "adc_clk" for the ADC (sampling) clock
+> +			- "adc_sel" for the ADC (sampling) clock mux
+> +- vref-supply:	the regulator supply for the ADC reference voltage
+> +- #io-channel-cells: must be 1, see ../iio-bindings.txt
+> +
+> +Example:
+> +	saradc: adc@8680 {
+> +		compatible = "amlogic,meson-gxl-saradc", "amlogic,meson-saradc";
+> +		#io-channel-cells = <1>;
+> +		reg = <0x0 0x8680 0x0 0x34>;
+> +		clocks = <&xtal>,
+> +			 <&clkc CLKID_SAR_ADC>,
+> +			 <&clkc CLKID_SANA>,
+> +			 <&clkc CLKID_SAR_ADC_CLK>,
+> +			 <&clkc CLKID_SAR_ADC_SEL>;
+> +		clock-names = "clkin", "core", "sana", "adc_clk", "adc_sel";
+> +	};
+> 
