@@ -1,34 +1,30 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Jan 2017 16:21:50 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	kernel@pengutronix.de, patchwork-lst@pengutronix.de
+Subject: Re: [PATCH] clk: imx6: don't restrict LDB mux changes on QuadPlus
+Message-ID: <20170121002150.GL20800@codeaurora.org>
+References: <20170113173943.23677-1-l.stach@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFp_32VjpLqfpoOtWBgtFS=4i_=xv6SN-X13O8mMesca7g@mail.gmail.com>
-References: <20170113150747.30105-1-linus.walleij@linaro.org> <CAPDyKFp_32VjpLqfpoOtWBgtFS=4i_=xv6SN-X13O8mMesca7g@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 20 Jan 2017 16:12:32 +0100
-Message-ID: <CACRpkdbKNP+kVg8BhbfM+T=OYftd0QfHwP-1uYFdBR_=DcozNQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: ux500: move AB8500 sysclk over to PRCMU clk driver
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170113173943.23677-1-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 20, 2017 at 3:08 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+On 01/13, Lucas Stach wrote:
+> The LDB mux/gate layout has been fixed on QuadPlus, so there is no need
+> to restrict the LDB mux changes on this hardware, as the erratum
+> preventing this from working properly is gone.
+> 
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> ---
 
->> -       /* ab8500_sysclk */
->> -       clk = clk_reg_prcmu_gate("ab8500_sysclk", NULL, PRCMU_SYSCLK, 0);
->> -       clk_register_clkdev(clk, "sysclk", "ab8500-usb.0");
->> -       clk_register_clkdev(clk, "sysclk", "ab-iddet.0");
->> -       clk_register_clkdev(clk, "sysclk", "snd-soc-mop500.0");
->> -       clk_register_clkdev(clk, "sysclk", "shrm_bus");
->
-> These lookups are removed in this change. Are there already existing
-> name lookups already defined in the DTS?
+Applied to clk-next
 
-The USB PHY and snd-soc-mop500 lookup are added in
-a DTS patch in a separate series.
-
-The ID detection and SHRM drivers are not upstream,
-but can easily be bound in the device tree the day they are.
-
-Yours,
-Linus Walleij
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
