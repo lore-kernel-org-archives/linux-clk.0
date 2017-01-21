@@ -1,26 +1,34 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Jacob Chen <jacob-chen@iotwrt.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, zhangqing@rock-chips.com, zhengxing@rock-chips.com
-Subject: Re: [PATCH v2 1/3] clk: rockchip: add rk3288 vip_out clock ids
-Date: Mon, 23 Jan 2017 01:26:04 +0100
-Message-ID: <1826150.hujBsPdyRR@phil>
-In-Reply-To: <1484718161-27702-1-git-send-email-jacob-chen@iotwrt.com>
-References: <1484718161-27702-1-git-send-email-jacob-chen@iotwrt.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Jan 2017 16:19:51 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon <horms@verge.net.au>, Michael Turquette <mturquette@baylibre.com>,
+	Magnus <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+	Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Subject: Re: [PATCH] clk: cs2000: add Suspend/Redume feature
+Message-ID: <20170121001951.GK20800@codeaurora.org>
+References: <87pojvxve9.wl%kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <87pojvxve9.wl%kuninori.morimoto.gx@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 18. Januar 2017, 13:42:38 CET schrieb Jacob Chen:
-> Add clock-ids for the vip block of the rk3288
+On 01/10, Kuninori Morimoto wrote:
+> From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
 > 
-> Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
+> CS2000 needs re-setup when redume, otherwise, it can't
+> handle correct clock rate.
+> 
+> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+> [Kuninori: cleanup original patch]
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
 
-applied all 3 for 4.11 .
+Applied to clk-next
 
-I've fixed the indentation below (missing one additional tab)
-and adapted patch3 to also remove the CLK_IGNORE_UNUSED flags for the clocks we 
-now moved to the critical clocks.
-
-
-Heiko
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
