@@ -1,53 +1,46 @@
-Return-Path: <javier@osg.samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos5420: Mark CLK_ACLK432_SCALER as
- CLK_IS_CRITICAL
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <CGME20170120104148epcas5p11af0e630f0881092a9b3b43e8b5b1aac@epcas5p1.samsung.com>
- <1484908891-11820-1-git-send-email-javier@osg.samsung.com>
- <551ac156-0cfa-29be-335f-d8a1f171cd8a@samsung.com>
- <0ffa0d28-1086-887c-dcfc-590b6146b03e@samsung.com>
- <48a2f141-4275-cb79-aafd-62191d747107@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
- Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Message-ID: <6af43673-85eb-7b7d-a7f9-a7bac5070bdb@osg.samsung.com>
-Date: Fri, 20 Jan 2017 11:07:00 -0300
-MIME-Version: 1.0
-In-Reply-To: <48a2f141-4275-cb79-aafd-62191d747107@osg.samsung.com>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Leo Yan <leo.yan@linaro.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	John Stultz <john.stultz@linaro.org>
+Subject: [PATCH v2] clk: hisilicon: fix lock assignment
+Date: Sat, 21 Jan 2017 10:26:31 +0800
+Message-Id: <1484965591-743-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/20/2017 11:00 AM, Javier Martinez Canillas wrote:
-> On 01/20/2017 10:55 AM, Sylwester Nawrocki wrote:
+In clock driver initialize phase the spinlock is missed to assignment
+to struct clkgate_separated, finally there have no locking to protect
+exclusive accessing for clock registers.
 
-[snip]
+This bug introduces the console has no output after enable coresight
+driver on 96boards Hikey; this is because console using UART3, which
+has shared the same register with coresight clock enabling bit. After
+applied this patch it can assign lock properly to protect exclusive
+accessing, and console can work well after enabled coresight modules.
 
->>
->> Oops, the $subject patch can be dropped since as Marek just pointed out
->> to me the changes introduced by that patch are already included in a patch
->> which is already in the v4.10 fixes queue:
->>
->> https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=318fa46cc60d37fec1e87dbf03a82aca0f5ce695
->>
-> 
-> Yes, I just answered to Marek in the other thread saying the same.
-> He did mention the patch could fix the issue but for some reason I
-> didn't see the CLK_ACLK_300_GSCL in the clocks marked as critical...
->
+Fixes: 0aa0c95f743a ("clk: hisilicon: add common clock support")
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ drivers/clk/hisilicon/clkgate-separated.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-err, I meant s/CLK_ACLK_300_GSCL/CLK_ACLK432_SCALER
-
-I should just stop writing emails today since clearly didn't get enough coffee.
+diff --git a/drivers/clk/hisilicon/clkgate-separated.c b/drivers/clk/hisilicon/clkgate-separated.c
+index a47812f..7908bc3 100644
+--- a/drivers/clk/hisilicon/clkgate-separated.c
++++ b/drivers/clk/hisilicon/clkgate-separated.c
+@@ -120,6 +120,7 @@ struct clk *hisi_register_clkgate_sep(struct device *dev, const char *name,
+ 	sclk->bit_idx = bit_idx;
+ 	sclk->flags = clk_gate_flags;
+ 	sclk->hw.init = &init;
++	sclk->lock = lock;
  
-Best regards,
+ 	clk = clk_register(dev, &sclk->hw);
+ 	if (IS_ERR(clk))
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+2.7.4
