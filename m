@@ -1,208 +1,207 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <3546f143091c121face8ecbcbf7f6a4c41d2cec7.1484154449.git-series.gregory.clement@free-electrons.com>
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
- <3546f143091c121face8ecbcbf7f6a4c41d2cec7.1484154449.git-series.gregory.clement@free-electrons.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 26 Jan 2017 11:50:38 +0100
-Message-ID: <CAPDyKFrwxix4zY4a1x9u6jh_gPfKTsaLnD8b8crum=pc5CN3AA@mail.gmail.com>
-Subject: Re: [PATCH v5 06/12] mmc: sdhci-xenon: Add Marvell Xenon SDHC core functionality
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Adrian Hunter <adrian.hunter@intel.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>, Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>, "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 4/8] clk: sunxi-ng: Implement multiplier maximum
+Date: Sat, 21 Jan 2017 23:50:53 +0100
+Message-Id: <7a5f5e18402332c89e83a9aad634991a6baa89d5.1485039043.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
+References: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
+References: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11 January 2017 at 18:19, Gregory CLEMENT
-<gregory.clement@free-electrons.com> wrote:
-> From: Hu Ziji <huziji@marvell.com>
->
-> Add Xenon eMMC/SD/SDIO host controller core functionality.
-> Add Xenon specific intialization process.
-> Add Xenon specific mmc_host_ops APIs.
-> Add Xenon specific register definitions.
->
-> Add CONFIG_MMC_SDHCI_XENON support in drivers/mmc/host/Kconfig.
->
-> Marvell Xenon SDHC conforms to SD Physical Layer Specification
-> Version 3.01 and is designed according to the guidelines provided
-> in the SD Host Controller Standard Specification Version 3.00.
->
-> Signed-off-by: Hu Ziji <huziji@marvell.com>
-> Tested-by: Russell King <rmk+kernel@armlinux.org.uk>
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  drivers/mmc/host/Kconfig       |   9 +-
->  drivers/mmc/host/Makefile      |   3 +-
->  drivers/mmc/host/sdhci-xenon.c | 631 ++++++++++++++++++++++++++++++++++-
->  drivers/mmc/host/sdhci-xenon.h |  70 ++++-
->  4 files changed, 713 insertions(+)
->  create mode 100644 drivers/mmc/host/sdhci-xenon.c
->  create mode 100644 drivers/mmc/host/sdhci-xenon.h
->
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 2eb97014dc3f..8d2d08de14a0 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -819,3 +819,12 @@ config MMC_SDHCI_BRCMSTB
->           Broadcom STB SoCs.
->
->           If unsure, say Y.
-> +
-> +config MMC_SDHCI_XENON
-> +       tristate "Marvell Xenon eMMC/SD/SDIO SDHCI driver"
-> +       depends on MMC_SDHCI && MMC_SDHCI_PLTFM
+Some multipliers have a maximum rate that is lower than what the register
+width allows to. Add a field in the multiplier structure to allow CCU
+driver to set that maximum.
 
-Depending on MMC_SDHCI_PLTFM is enough.
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/ccu_mult.c | 14 ++++++++++++--
+ drivers/clk/sunxi-ng/ccu_mult.h | 10 ++++++----
+ drivers/clk/sunxi-ng/ccu_nk.c   |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_nkm.c  |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_nkmp.c |  8 ++++----
+ drivers/clk/sunxi-ng/ccu_nm.c   |  4 ++--
+ 6 files changed, 32 insertions(+), 20 deletions(-)
 
-[...]
-
-> +
-> +static int xenon_start_signal_voltage_switch(struct mmc_host *mmc,
-> +                                            struct mmc_ios *ios)
-> +{
-> +       struct sdhci_host *host = mmc_priv(mmc);
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-> +
-> +       /*
-> +        * Before SD/SDIO set signal voltage, SD bus clock should be
-> +        * disabled. However, sdhci_set_clock will also disable the Internal
-> +        * clock in mmc_set_signal_voltage().
-> +        * If Internal clock is disabled, the 3.3V/1.8V bit can not be updated.
-> +        * Thus here manually enable internal clock.
-> +        *
-> +        * After switch completes, it is unnecessary to disable internal clock,
-> +        * since keeping internal clock active obeys SD spec.
-> +        */
-> +       enable_xenon_internal_clk(host);
-> +
-> +       if (priv->init_card_type == MMC_TYPE_MMC)
-
-So, you need a specific voltage switch for eMMC.
-
-For that, I don't think you need to implement ->init_card(), as to set
-priv->init_card_type and then check it here.
-
-Instead you should be able to find out whether the card is an eMMC,
-only by the parsing of the child node for the "mmc-card" compatible.
-More about this below.
-
-> +               return xenon_emmc_signal_voltage_switch(mmc, ios);
-> +
-> +       return sdhci_start_signal_voltage_switch(mmc, ios);
-> +}
-> +
-> +/*
-
-[...]
-
-> + */
-> +static int xenon_child_node_of_parse(struct platform_device *pdev)
-> +{
-> +       struct device_node *np = pdev->dev.of_node;
-> +       struct sdhci_host *host = platform_get_drvdata(pdev);
-> +       struct mmc_host *mmc = host->mmc;
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-> +       struct device_node *child;
-> +       int nr_child;
-> +
-> +       priv->init_card_type = XENON_CARD_TYPE_UNKNOWN;
-> +
-> +       nr_child = of_get_child_count(np);
-> +       if (!nr_child)
-> +               return 0;
-> +
-> +       for_each_child_of_node(np, child) {
-> +               if (of_device_is_compatible(child, "mmc-card")) {
-
-To avoid code from being duplicated, I would rather see the DT parsing
-of the child nodes for "mmc-card", to be done by the mmc core.
-
-As a matter of fact it is already being done, but perhaps we need to
-change that a bit as to fit your case.
-
-I suggest you have a look and see how to update this in the core,
-instead of doing it here in the host driver.
-
-> +                       priv->init_card_type = MMC_TYPE_MMC;
-> +                       mmc->caps |= MMC_CAP_NONREMOVABLE;
-> +
-> +                       /*
-> +                        * Force to clear BUS_TEST to
-> +                        * skip bus_test_pre and bus_test_post
-> +                        */
-> +                       mmc->caps &= ~MMC_CAP_BUS_WIDTH_TEST;
-> +                       mmc->caps2 |= MMC_CAP2_HC_ERASE_SZ |
-
-This cap is a bit strange. It was added several years ago by Adrian
-Hunter, but I am wondering about the reason to why it's needed.
-
-Should it be removed and instead enabled per default? If not, should
-we invent a new specific DT binding for it?
-
-I need Adrian's help here to understand the options.
-
-> +                                     MMC_CAP2_PACKED_CMD |
-
-The MMC_CAP2_PACKED_CMD cap has be removed.
-
-> +                                     MMC_CAP2_NO_SD |
-> +                                     MMC_CAP2_NO_SDIO;
-
-I think we need to update the DT documentation for mmc-card.
-Typically, we should explicitly state what kind of other existing mmc
-DT properties that will be automatically selected, when the mmc-card
-is specified.
-
-Can you please look into updating this DT doc as well.
-
-[...]
-
-> +       priv->sdhc_id = 0x0;
-> +       if (!of_property_read_u32(np, "marvell,xenon-sdhc-id", &sdhc_id)) {
-> +               nr_sdhc = sdhci_readl(host, XENON_SYS_CFG_INFO);
-> +               nr_sdhc &= XENON_NR_SUPPORTED_SLOT_MASK;
-> +               if (unlikely(sdhc_id > nr_sdhc)) {
-> +                       dev_err(mmc_dev(mmc), "SDHC Index %d exceeds Number of SDHCs %d\n",
-> +                               sdhc_id, nr_sdhc);
-> +                       return -EINVAL;
-> +               }
-> +       }
-> +
-> +       tuning_count = XENON_DEF_TUNING_COUNT;
-> +       if (!of_property_read_u32(np, "marvell,xenon-tun-count",
-> +                                 &tuning_count)) {
-> +               if (unlikely(tuning_count >= XENON_TMR_RETUN_NO_PRESENT)) {
-> +                       dev_err(mmc_dev(mmc), "Wrong Re-tuning Count. Set default value %d\n",
-> +                               XENON_DEF_TUNING_COUNT);
-> +                       tuning_count = XENON_DEF_TUNING_COUNT;
-> +               }
-> +       }
-
-I suggest you move the parsing of the xenon specific bindings into a
-separate function.
-
-> +       priv->tuning_count = tuning_count;
-> +
-> +       return err;
-> +}
-> +
-
-[...]
-
-Kind regards
-Uffe
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+index a52162195e07..8724c01171b1 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.c
++++ b/drivers/clk/sunxi-ng/ccu_mult.c
+@@ -41,7 +41,12 @@ static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
+ 	struct _ccu_mult _cm;
+ 
+ 	_cm.min = cm->mult.min;
+-	_cm.max = 1 << cm->mult.width;
++
++	if (cm->mult.max)
++		_cm.max = cm->mult.max;
++	else
++		_cm.max = (1 << cm->mult.width) + cm->mult.offset - 1;
++
+ 	ccu_mult_find_best(parent_rate, rate, &_cm);
+ 
+ 	return parent_rate * _cm.mult;
+@@ -114,7 +119,12 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
+ 						&parent_rate);
+ 
+ 	_cm.min = cm->mult.min;
+-	_cm.max = 1 << cm->mult.width;
++
++	if (cm->mult.max)
++		_cm.max = cm->mult.max;
++	else
++		_cm.max = (1 << cm->mult.width) + cm->mult.offset - 1;
++
+ 	ccu_mult_find_best(parent_rate, rate, &_cm);
+ 
+ 	spin_lock_irqsave(cm->common.lock, flags);
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
+index 84839641dfdf..524acddfcb2e 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.h
++++ b/drivers/clk/sunxi-ng/ccu_mult.h
+@@ -10,24 +10,26 @@ struct ccu_mult_internal {
+ 	u8	shift;
+ 	u8	width;
+ 	u8	min;
++	u8	max;
+ };
+ 
+-#define _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, _min)	\
++#define _SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, _offset, _min, _max) \
+ 	{								\
+ 		.min	= _min,						\
++		.max	= _max,						\
+ 		.offset	= _offset,					\
+ 		.shift	= _shift,					\
+ 		.width	= _width,					\
+ 	}
+ 
+ #define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)	\
+-	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, _min)
++	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, 1, _min, 0)
+ 
+ #define _SUNXI_CCU_MULT_OFFSET(_shift, _width, _offset)	\
+-	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, 1)
++	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, _offset, 1, 0)
+ 
+ #define _SUNXI_CCU_MULT(_shift, _width)		\
+-	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, 1)
++	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, 1, 1, 0)
+ 
+ struct ccu_mult {
+ 	u32			enable;
+diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
+index 90117d3ead8c..b9e9b8a9d1b4 100644
+--- a/drivers/clk/sunxi-ng/ccu_nk.c
++++ b/drivers/clk/sunxi-ng/ccu_nk.c
+@@ -103,9 +103,9 @@ static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		rate *= nk->fixed_post_div;
+ 
+ 	_nk.min_n = nk->n.min;
+-	_nk.max_n = 1 << nk->n.width;
++	_nk.max_n = nk->n.max ?: 1 << nk->n.width;
+ 	_nk.min_k = nk->k.min;
+-	_nk.max_k = 1 << nk->k.width;
++	_nk.max_k = nk->k.max ?: 1 << nk->k.width;
+ 
+ 	ccu_nk_find_best(*parent_rate, rate, &_nk);
+ 	rate = *parent_rate * _nk.n * _nk.k;
+@@ -128,9 +128,9 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		rate = rate * nk->fixed_post_div;
+ 
+ 	_nk.min_n = nk->n.min;
+-	_nk.max_n = 1 << nk->n.width;
++	_nk.max_n = nk->n.max ?: 1 << nk->n.width;
+ 	_nk.min_k = nk->k.min;
+-	_nk.max_k = 1 << nk->k.width;
++	_nk.max_k = nk->k.max ?: 1 << nk->k.width;
+ 
+ 	ccu_nk_find_best(parent_rate, rate, &_nk);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+index 3caaf9d603e2..71f81e95a061 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.c
++++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+@@ -110,9 +110,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+ 	struct _ccu_nkm _nkm;
+ 
+ 	_nkm.min_n = nkm->n.min;
+-	_nkm.max_n = 1 << nkm->n.width;
++	_nkm.max_n = nkm->n.max ?: 1 << nkm->n.width;
+ 	_nkm.min_k = nkm->k.min;
+-	_nkm.max_k = 1 << nkm->k.width;
++	_nkm.max_k = nkm->k.max ?: 1 << nkm->k.width;
+ 	_nkm.min_m = 1;
+ 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+ 
+@@ -139,9 +139,9 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 reg;
+ 
+ 	_nkm.min_n = nkm->n.min;
+-	_nkm.max_n = 1 << nkm->n.width;
++	_nkm.max_n = nkm->n.max ?: 1 << nkm->n.width;
+ 	_nkm.min_k = nkm->k.min;
+-	_nkm.max_k = 1 << nkm->k.width;
++	_nkm.max_k = nkm->k.max ?: 1 << nkm->k.width;
+ 	_nkm.min_m = 1;
+ 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index da2bba02b845..a2b40a000157 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -117,9 +117,9 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct _ccu_nkmp _nkmp;
+ 
+ 	_nkmp.min_n = nkmp->n.min;
+-	_nkmp.max_n = 1 << nkmp->n.width;
++	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
+ 	_nkmp.min_k = nkmp->k.min;
+-	_nkmp.max_k = 1 << nkmp->k.width;
++	_nkmp.max_k = nkmp->k.max ?: 1 << nkmp->k.width;
+ 	_nkmp.min_m = 1;
+ 	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
+ 	_nkmp.min_p = 1;
+@@ -139,9 +139,9 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 reg;
+ 
+ 	_nkmp.min_n = 1;
+-	_nkmp.max_n = 1 << nkmp->n.width;
++	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
+ 	_nkmp.min_k = 1;
+-	_nkmp.max_k = 1 << nkmp->k.width;
++	_nkmp.max_k = nkmp->k.max ?: 1 << nkmp->k.width;
+ 	_nkmp.min_m = 1;
+ 	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
+ 	_nkmp.min_p = 1;
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index 158d74e0215f..af71b1909cd9 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -100,7 +100,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct _ccu_nm _nm;
+ 
+ 	_nm.min_n = nm->n.min;
+-	_nm.max_n = 1 << nm->n.width;
++	_nm.max_n = nm->n.max ?: 1 << nm->n.width;
+ 	_nm.min_m = 1;
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+ 
+@@ -123,7 +123,7 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		ccu_frac_helper_disable(&nm->common, &nm->frac);
+ 
+ 	_nm.min_n = 1;
+-	_nm.max_n = 1 << nm->n.width;
++	_nm.max_n = nm->n.max ?: 1 << nm->n.width;
+ 	_nm.min_m = 1;
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+ 
+-- 
+git-series 0.8.11
