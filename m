@@ -1,54 +1,78 @@
-Return-Path: <jacobchen110@gmail.com>
-Return-Path: <jacobchen110@gmail.com>
-From: Jacob Chen <jacob-chen@iotwrt.com>
-To: heiko@sntech.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	zhangqing@rock-chips.com,
-	zhengxing@rock-chips.com,
-	Jacob Chen <jacob-chen@iotwrt.com>
-Subject: [PATCH 4/4] clk: rockchip: add rk3288 cif_out clock
-Date: Tue, 10 Jan 2017 19:59:20 +0800
-Message-Id: <1484049560-14820-4-git-send-email-jacob-chen@iotwrt.com>
-In-Reply-To: <1484049560-14820-1-git-send-email-jacob-chen@iotwrt.com>
-References: <1484049560-14820-1-git-send-email-jacob-chen@iotwrt.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Sat, 21 Jan 2017 14:56:35 -0600
+From: Rob Herring <robh@kernel.org>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+	mark.rutland@arm.com, khilman@baylibre.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	carlo@caione.org, catalin.marinas@arm.com, will.deacon@arm.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	narmstrong@baylibre.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/4] Documentation: dt-bindings: add the Amlogic Meson
+ SAR ADC documentation
+Message-ID: <20170121205635.4qeiqyeyjrweryrh@rob-hp-laptop>
+References: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
+ <20170119145822.26239-1-martin.blumenstingl@googlemail.com>
+ <20170119145822.26239-2-martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170119145822.26239-2-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the clocks for the cif block of the rk3288
+On Thu, Jan 19, 2017 at 03:58:19PM +0100, Martin Blumenstingl wrote:
+> This adds the devicetree binding documentation for the SAR ADC found in
+> Amlogic Meson SoCs.
+> Currently only the GXBB, GXL and GXM SoCs are supported.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  .../bindings/iio/adc/amlogic,meson-saradc.txt      | 31 ++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+> new file mode 100644
+> index 000000000000..9a0bec7afc63
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+> @@ -0,0 +1,31 @@
+> +* Amlogic Meson SAR (Successive Approximation Register) A/D converter
+> +
+> +Required properties:
+> +- compatible:	depending on the SoC this should be one of:
+> +			- "amlogic,meson-gxbb-saradc" for GXBB
+> +			- "amlogic,meson-gxl-saradc" for GXL and GXM
 
-Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
----
- drivers/clk/rockchip/clk-rk3288.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+GXL and GXM should probably be 2 compatibles.
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 8047cea..f071c24 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -192,6 +192,7 @@ PNAME(mux_uart1_p)	= { "uart1_src", "uart1_frac", "xin24m" };
- PNAME(mux_uart2_p)	= { "uart2_src", "uart2_frac", "xin24m" };
- PNAME(mux_uart3_p)	= { "uart3_src", "uart3_frac", "xin24m" };
- PNAME(mux_uart4_p)	= { "uart4_src", "uart4_frac", "xin24m" };
-+PNAME(mux_cif_out_p)	= { "cif_src", "xin24m" };
- PNAME(mux_vip_out_p)	= { "vip_src", "xin24m" };
- PNAME(mux_mac_p)	= { "mac_pll_src", "ext_gmac" };
- PNAME(mux_hsadcout_p)	= { "hsadc_src", "ext_hsadc" };
-@@ -448,6 +449,12 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 			RK3288_CLKSEL_CON(6), 14, 2, MFLAGS, 8, 6, DFLAGS,
- 			RK3288_CLKGATE_CON(3), 15, GFLAGS),
- 
-+	COMPOSITE_NOGATE(0, "cif_src", mux_pll_src_cpll_gpll_p, 0,
-+			RK3288_CLKSEL_CON(26), 8, 1, MFLAGS, 9, 5, DFLAGS),
-+	COMPOSITE_NODIV(SCLK_CIF_OUT, "sclk_cif_out", mux_cif_out_p, 0,
-+			RK3288_CLKSEL_CON(26), 15, 1, MFLAGS,
-+			RK3288_CLKGATE_CON(3), 7, GFLAGS),
-+
- 	GATE(SCLK_HDMI_HDCP, "sclk_hdmi_hdcp", "xin24m", 0,
- 			RK3288_CLKGATE_CON(5), 12, GFLAGS),
- 	GATE(SCLK_HDMI_CEC, "sclk_hdmi_cec", "xin32k", 0,
--- 
-2.7.4
+> +		along with the generic "amlogic,meson-saradc"
+> +- reg:		the physical base address and length of the registers
+> +- clocks:	phandle and clock identifier (see clock-names)
+> +- clock-names:	mandatory clocks:
+> +			- "clkin" for the reference clock (typically XTAL)
+> +			- "core" for the SAR ADC core clock
+> +		optional clocks:
+> +			- "sana" for the analog clock
+> +			- "adc_clk" for the ADC (sampling) clock
+> +			- "adc_sel" for the ADC (sampling) clock mux
+> +- vref-supply:	the regulator supply for the ADC reference voltage
+> +- #io-channel-cells: must be 1, see ../iio-bindings.txt
+> +
+> +Example:
+> +	saradc: adc@8680 {
+> +		compatible = "amlogic,meson-gxl-saradc", "amlogic,meson-saradc";
+> +		#io-channel-cells = <1>;
+> +		reg = <0x0 0x8680 0x0 0x34>;
+> +		clocks = <&xtal>,
+> +			 <&clkc CLKID_SAR_ADC>,
+> +			 <&clkc CLKID_SANA>,
+> +			 <&clkc CLKID_SAR_ADC_CLK>,
+> +			 <&clkc CLKID_SAR_ADC_SEL>;
+> +		clock-names = "clkin", "core", "sana", "adc_clk", "adc_sel";
+> +	};
+> -- 
+> 2.11.0
+> 
