@@ -1,162 +1,85 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-Subject: Re: [PATCH] clk: qcom: gdsc: Fix handling of hw control
- enable/disable
-To: Rajendra Nayak <rnayak@codeaurora.org>, sboyd@codeaurora.org,
- mturquette@baylibre.com
-References: <1484027679-18397-1-git-send-email-rnayak@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, sricharan@codeaurora.org
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <3164de46-a251-3b3f-e6f5-5c3699bb4df8@linaro.org>
-Date: Tue, 10 Jan 2017 11:31:31 +0200
+Return-Path: <martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-In-Reply-To: <1484027679-18397-1-git-send-email-rnayak@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20170121205635.4qeiqyeyjrweryrh@rob-hp-laptop>
+References: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
+ <20170119145822.26239-1-martin.blumenstingl@googlemail.com>
+ <20170119145822.26239-2-martin.blumenstingl@googlemail.com> <20170121205635.4qeiqyeyjrweryrh@rob-hp-laptop>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sun, 22 Jan 2017 00:10:13 +0100
+Message-ID: <CAFBinCDghzRXnzdBd0qh=LYDTpkQg7r2zdj1QE7cRKAU0fAFPQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] Documentation: dt-bindings: add the Amlogic Meson
+ SAR ADC documentation
+To: Rob Herring <robh@kernel.org>
+Cc: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+	mark.rutland@arm.com, khilman@baylibre.com, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org, carlo@caione.org, catalin.marinas@arm.com,
+	will.deacon@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	narmstrong@baylibre.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rajendra,
+Hi Rob,
 
-Thanks for the patch!
+thanks for reviewing this!
 
-On 01/10/2017 07:54 AM, Rajendra Nayak wrote:
-> Once a gdsc is brought in and out of HW control, there is a
-> power down and up cycle which can take upto 1us. Polling on
-> the gdsc status immediately after the hw control enable/disable
-> can mislead software/firmware to belive the gdsc is already either on
-> or off, while its yet to complete the power cycle.
-> To avoid this add a 1us delay post a enable/disable of HW control
-> mode.
-> 
-> Also after the HW control mode is disabled, poll on the status to
-> check gdsc status reflects its 'on' before force disabling it
-> in software.
-> 
-> Reported-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
-> 
-> Stan,
-> If there was a specific issue you saw with venus because of the missing
-> delay and poll, can you check if this fixes any of that.
-> 
->  drivers/clk/qcom/gdsc.c | 58 ++++++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 45 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index 288186c..6fbd6df 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -63,11 +63,26 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
->  	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
->  }
->  
-> +static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool val)
+On Sat, Jan 21, 2017 at 9:56 PM, Rob Herring <robh@kernel.org> wrote:
+> On Thu, Jan 19, 2017 at 03:58:19PM +0100, Martin Blumenstingl wrote:
+>> This adds the devicetree binding documentation for the SAR ADC found in
+>> Amlogic Meson SoCs.
+>> Currently only the GXBB, GXL and GXM SoCs are supported.
+>>
+>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>>  .../bindings/iio/adc/amlogic,meson-saradc.txt      | 31 ++++++++++++++++++++++
+>>  1 file changed, 31 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+>> new file mode 100644
+>> index 000000000000..9a0bec7afc63
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+>> @@ -0,0 +1,31 @@
+>> +* Amlogic Meson SAR (Successive Approximation Register) A/D converter
+>> +
+>> +Required properties:
+>> +- compatible:        depending on the SoC this should be one of:
+>> +                     - "amlogic,meson-gxbb-saradc" for GXBB
+>> +                     - "amlogic,meson-gxl-saradc" for GXL and GXM
+>
+> GXL and GXM should probably be 2 compatibles.
+Amlogic's ADC driver does not differentiate between GXL and GXM
+(because both SoCs are identical except the CPU and GPU cores).
+I can still introduce a separate binding for GXM if you want (better
+safe than sorry and takes less than 5 minutes) - just let me know
 
-Could you rename 'val' to 'en'.
-
-> +{
-> +	ktime_t start;
-> +
-> +	start = ktime_get();
-> +	do {
-> +		if (gdsc_is_enabled(sc, reg) == val)
-> +			return 0;
-> +	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
-> +
-> +	if (gdsc_is_enabled(sc, reg) == val)
-> +		return 0;
-> +
-> +	return -ETIMEDOUT;
-> +}
-> +
->  static int gdsc_toggle_logic(struct gdsc *sc, bool en)
->  {
->  	int ret;
->  	u32 val = en ? 0 : SW_COLLAPSE_MASK;
-> -	ktime_t start;
->  	unsigned int status_reg = sc->gdscr;
->  
->  	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
-> @@ -100,16 +115,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
->  		udelay(1);
->  	}
->  
-> -	start = ktime_get();
-> -	do {
-> -		if (gdsc_is_enabled(sc, status_reg) == en)
-> -			return 0;
-> -	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
-> -
-> -	if (gdsc_is_enabled(sc, status_reg) == en)
-> -		return 0;
-> -
-> -	return -ETIMEDOUT;
-> +	return gdsc_poll_status(sc, status_reg, en);
->  }
->  
->  static inline int gdsc_deassert_reset(struct gdsc *sc)
-> @@ -188,8 +194,19 @@ static int gdsc_enable(struct generic_pm_domain *domain)
->  	udelay(1);
->  
->  	/* Turn on HW trigger mode if supported */
-> -	if (sc->flags & HW_CTRL)
-> -		return gdsc_hwctrl(sc, true);
-> +	if (sc->flags & HW_CTRL) {
-> +		ret = gdsc_hwctrl(sc, true);
-> +		/*
-> +		 * Wait for the GDSC to go through a power down and
-> +		 * up cycle.  In case a firmware ends up polling status
-> +		 * bits for the gdsc, it might read an 'on' status before
-> +		 * the GDSC can finish the power cycle.
-> +		 * We wait 1us before returning to ensure the firmware
-> +		 * can't immediately poll the status bits.
-> +		 */
-> +		mb();
-
-Missing comment for this memory barrier, although I think it is
-pointless because regmap-mmio using readl and writel.
-
-
-> +		udelay(1);
-> +	}
->  
->  	return 0;
->  }
-> @@ -204,9 +221,24 @@ static int gdsc_disable(struct generic_pm_domain *domain)
->  
->  	/* Turn off HW trigger mode if supported */
->  	if (sc->flags & HW_CTRL) {
-> +		unsigned int reg;
-> +
->  		ret = gdsc_hwctrl(sc, false);
->  		if (ret < 0)
->  			return ret;
-> +		/*
-> +		 * Wait for the GDSC to go through a power down and
-> +		 * up cycle.  In case we end up polling status
-> +		 * bits for the gdsc before the power cycle is completed
-> +		 * it might read an 'on' status wrongly.
-> +		 */
-> +		mb();
-
-Same comment as above one.
-
-> +		udelay(1);
-> +
-> +		reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
-> +		ret = gdsc_poll_status(sc, reg, 0);
-
-This should be gdsc_poll_status(sc, reg, true) because after disabling
-hw_control we expect that the GDSC is in power_on state.
-
-> +		if (ret)
-> +			return ret;
->  	}
->  
->  	if (sc->pwrsts & PWRSTS_OFF)
-> 
-
--- 
-regards,
-Stan
+>> +             along with the generic "amlogic,meson-saradc"
+>> +- reg:               the physical base address and length of the registers
+>> +- clocks:    phandle and clock identifier (see clock-names)
+>> +- clock-names:       mandatory clocks:
+>> +                     - "clkin" for the reference clock (typically XTAL)
+>> +                     - "core" for the SAR ADC core clock
+>> +             optional clocks:
+>> +                     - "sana" for the analog clock
+>> +                     - "adc_clk" for the ADC (sampling) clock
+>> +                     - "adc_sel" for the ADC (sampling) clock mux
+>> +- vref-supply:       the regulator supply for the ADC reference voltage
+>> +- #io-channel-cells: must be 1, see ../iio-bindings.txt
+>> +
+>> +Example:
+>> +     saradc: adc@8680 {
+>> +             compatible = "amlogic,meson-gxl-saradc", "amlogic,meson-saradc";
+>> +             #io-channel-cells = <1>;
+>> +             reg = <0x0 0x8680 0x0 0x34>;
+>> +             clocks = <&xtal>,
+>> +                      <&clkc CLKID_SAR_ADC>,
+>> +                      <&clkc CLKID_SANA>,
+>> +                      <&clkc CLKID_SAR_ADC_CLK>,
+>> +                      <&clkc CLKID_SAR_ADC_SEL>;
+>> +             clock-names = "clkin", "core", "sana", "adc_clk", "adc_sel";
+>> +     };
+>> --
+>> 2.11.0
+>>
