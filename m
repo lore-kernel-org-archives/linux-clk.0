@@ -1,70 +1,66 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 17 Jan 2017 17:47:22 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org,
-	mark.rutland@arm.com, robh+dt@kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: Re: [PATCH v2 04/10] ASoC: sun4i-i2s: Add quirks to handle new
- compatible for reset
-Message-ID: <20170117164722.yohrxvlempkjldu3@lukather>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
- <20170117140230.23142-5-mylene.josserand@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Jan 2017 16:16:48 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org, Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>
+Subject: Re: [PATCH v5 01/12] clk: apn806: Add eMMC clock to system
+ controller driver
+Message-ID: <20170121001648.GJ20800@codeaurora.org>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+ <e84d52dfbd9f7d2a14a5ec9d53918119fdc90404.1484154449.git-series.gregory.clement@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bsjsst4jgd4saubz"
-In-Reply-To: <20170117140230.23142-5-mylene.josserand@free-electrons.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <e84d52dfbd9f7d2a14a5ec9d53918119fdc90404.1484154449.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 01/11, Gregory CLEMENT wrote:
+> From: Konstantin Porotchkin <kostap@marvell.com>
+> 
+> Add fixed clock of 400MHz to system controller driver.  This clock is
+> used as SD/eMMC clock source.
+> 
+> Signed-off-by: Konstantin Porotchkin <kostap@marvell.com>
+> Reviewed-by: Omri Itach <omrii@marvell.com>
+> Reviewed-by: Hanna Hawa <hannah@marvell.com>
+> [fixed up conflicts, added error handling --rmk]
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> ---
 
---bsjsst4jgd4saubz
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-On Tue, Jan 17, 2017 at 03:02:24PM +0100, Myl=E8ne Josserand wrote:
-> Some SoCs have a reset line that must be asserted/deasserted.
-> This patch adds a quirk to handle the new compatible
-> "allwinner,sun6i-a31-i2s" which will deassert the reset
-> line on probe function and assert it on remove's one.
->=20
-> This new compatible is useful in case of A33 codec driver, for example.
->=20
-> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
+> diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+> index 8181b919f062..0a785076b0c6 100644
+> --- a/drivers/clk/mvebu/ap806-system-controller.c
+> +++ b/drivers/clk/mvebu/ap806-system-controller.c
+> @@ -117,6 +117,17 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+>  		goto fail3;
+>  	}
+>  
+> +	/* eMMC Clock is fixed clock divided by 3 */
+> +	of_property_read_string_index(np, "clock-output-names",
+> +				      4, &name);
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+This could check for failure and not register the clk if the name
+isn't there? Then dts can be backwards compatible.
 
-Thanks,
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---bsjsst4jgd4saubz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYfkqZAAoJEBx+YmzsjxAgXG8P/2tSaQNI7pYK5hKBqBy+DXKF
-wgiyEJJfvFSNXL6+kHgY/iUzraZuzitMqiJsGat+VX0vvB5Kh6QsPGq9u/YuOoeA
-WQZG3kszPlaMnkLSsKoAyFClESAZrV0P/kwSc6p/aJYzXWiLlVH/tfmmlelmJf9i
-YxqOp05yG/ADeSubiIVDdMspn0huuz2aUiT5PPfWqy0kNABD0rKPOefqvPstHIHQ
-RBXQhVu+JpjqlmxcascAee4KJuQWTp3NbDDCtDUi7HBXTF2zPEcg8T45BHV07mat
-WIQrbsOp0SY5nHWHgxailcb74D7iLnp/U630qgVbz6EsGqn4pb0568xhDCN8Zc2I
-ErrMpEMHo/f02V47TeBeAqTMuRE9cjVxWa7wnnfu3LK8BcSn482xo7cRm6awzNtM
-p09JwPbzF3X1TePDQn/F+/28Hmek9DuiguvlHver7dc38JVV+aNzofu3h7HEGv5/
-hdd9WM9s5Jh/zAHfqD7ueKov9BeS1b37s4zkkVJk39R/VMtnQPkHCzMPqIizUwl8
-u44c+MGEUIMvXcq1XxEBDkWNbLit/x4XZgPSPNHcxjyEdyvdU3nWscCuXYcYo6Pv
-QXLFG2EtwAIX2z096JRbHGey5K/Hhm+dh8KXi9yHOgSjOhvKoqNaeCv9BMSRZ2Gf
-finOAdgqDqtqQDFQ0Bn3
-=/Zyc
------END PGP SIGNATURE-----
-
---bsjsst4jgd4saubz--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
