@@ -1,90 +1,39 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH 1/3] dt-bindings: mfd: stm32f4: Fix STM32F4_XXXX_CLOCK() macro
-Date: Fri, 6 Jan 2017 16:52:12 +0100
-Message-ID: <1483717934-21415-2-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1483717934-21415-1-git-send-email-gabriel.fernandez@st.com>
-References: <1483717934-21415-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <afaerber@suse.de>
+Subject: Re: [PATCH v3 1/4] Documentation: dt-bindings: add the Amlogic Meson
+ SAR ADC documentation
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+ robh+dt@kernel.org, mark.rutland@arm.com, khilman@baylibre.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
+ <20170119145822.26239-1-martin.blumenstingl@googlemail.com>
+ <20170119145822.26239-2-martin.blumenstingl@googlemail.com>
+Cc: narmstrong@baylibre.com, catalin.marinas@arm.com,
+ mturquette@baylibre.com, will.deacon@arm.com, carlo@caione.org,
+ sboyd@codeaurora.org, linux-arm-kernel@lists.infradead.org
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Message-ID: <8cf82ccb-0b40-5b8d-d40b-9e53c24264fa@suse.de>
+Date: Sat, 21 Jan 2017 14:21:44 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20170119145822.26239-2-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Am 19.01.2017 um 15:58 schrieb Martin Blumenstingl:
+> This adds the devicetree binding documentation for the SAR ADC found in
+> Amlogic Meson SoCs.
+> Currently only the GXBB, GXL and GXM SoCs are supported.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Macro to select a clock was not correct.
+Reviewed-by: Andreas Färber <afaerber@suse.de>
 
-Offset of enable register starts at 0x30, then calculation to select
-a bit is:
+Regards,
+Andreas
 
-(@enable_reg - 0x30) / 4 * 32 + bit_to_select
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Tested-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
----
- include/dt-bindings/mfd/stm32f4-rcc.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
-index e98942d..f662b19 100644
---- a/include/dt-bindings/mfd/stm32f4-rcc.h
-+++ b/include/dt-bindings/mfd/stm32f4-rcc.h
-@@ -25,7 +25,7 @@
- #define STM32F4_RCC_AHB1_OTGHS	29
- 
- #define STM32F4_AHB1_RESET(bit) (STM32F4_RCC_AHB1_##bit + (0x10 * 8))
--#define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit + (0x30 * 8))
-+#define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit)
- 
- 
- /* AHB2 */
-@@ -36,13 +36,13 @@
- #define STM32F4_RCC_AHB2_OTGFS	7
- 
- #define STM32F4_AHB2_RESET(bit)	(STM32F4_RCC_AHB2_##bit + (0x14 * 8))
--#define STM32F4_AHB2_CLOCK(bit)	(STM32F4_RCC_AHB2_##bit + (0x34 * 8))
-+#define STM32F4_AHB2_CLOCK(bit)	(STM32F4_RCC_AHB2_##bit + 0x20)
- 
- /* AHB3 */
- #define STM32F4_RCC_AHB3_FMC	0
- 
- #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
--#define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + (0x38 * 8))
-+#define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + 0x40)
- 
- /* APB1 */
- #define STM32F4_RCC_APB1_TIM2	0
-@@ -72,7 +72,7 @@
- #define STM32F4_RCC_APB1_UART8	31
- 
- #define STM32F4_APB1_RESET(bit)	(STM32F4_RCC_APB1_##bit + (0x20 * 8))
--#define STM32F4_APB1_CLOCK(bit)	(STM32F4_RCC_APB1_##bit + (0x40 * 8))
-+#define STM32F4_APB1_CLOCK(bit)	(STM32F4_RCC_APB1_##bit + 0x80)
- 
- /* APB2 */
- #define STM32F4_RCC_APB2_TIM1	0
-@@ -93,6 +93,6 @@
- #define STM32F4_RCC_APB2_LTDC	26
- 
- #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
--#define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + (0x44 * 8))
-+#define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + 0xA0)
- 
- #endif /* _DT_BINDINGS_MFD_STM32F4_RCC_H */
 -- 
-1.9.1
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
