@@ -1,89 +1,37 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH 2/3] dt-bindings: mfd: stm32f4: Add missing binding definition
-Date: Fri, 6 Jan 2017 16:52:13 +0100
-Message-ID: <1483717934-21415-3-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1483717934-21415-1-git-send-email-gabriel.fernandez@st.com>
-References: <1483717934-21415-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Jan 2017 16:12:34 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V2 1/2] clk: vc5: Add bindings for IDT VersaClock
+ 5P49V5923 and 5P49V5933
+Message-ID: <20170121001234.GH20800@codeaurora.org>
+References: <20170112010324.28068-1-marek.vasut@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170112010324.28068-1-marek.vasut@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 01/12, Marek Vasut wrote:
+> Add bindings for IDT VersaClock 5 5P49V5923 and 5P49V5933 chips.
+> These are I2C clock generators with optional clock source from
+> either XTal or dedicated clock generator and, depending on the
+> model, two or more clock outputs.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
 
-This patch adds missing binding definition (backupram, ethernet, otg,
-qspi, adc & dsi)
+Applied to clk-next
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- include/dt-bindings/mfd/stm32f4-rcc.h | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
-index f662b19..082a81c 100644
---- a/include/dt-bindings/mfd/stm32f4-rcc.h
-+++ b/include/dt-bindings/mfd/stm32f4-rcc.h
-@@ -18,11 +18,17 @@
- #define STM32F4_RCC_AHB1_GPIOJ	9
- #define STM32F4_RCC_AHB1_GPIOK	10
- #define STM32F4_RCC_AHB1_CRC	12
-+#define STM32F4_RCC_AHB1_BKPSRAM	18
-+#define STM32F4_RCC_AHB1_CCMDATARAM	20
- #define STM32F4_RCC_AHB1_DMA1	21
- #define STM32F4_RCC_AHB1_DMA2	22
- #define STM32F4_RCC_AHB1_DMA2D	23
- #define STM32F4_RCC_AHB1_ETHMAC	25
--#define STM32F4_RCC_AHB1_OTGHS	29
-+#define STM32F4_RCC_AHB1_ETHMACTX	26
-+#define STM32F4_RCC_AHB1_ETHMACRX	27
-+#define STM32F4_RCC_AHB1_ETHMACPTP	28
-+#define STM32F4_RCC_AHB1_OTGHS		29
-+#define STM32F4_RCC_AHB1_OTGHSULPI	30
- 
- #define STM32F4_AHB1_RESET(bit) (STM32F4_RCC_AHB1_##bit + (0x10 * 8))
- #define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit)
-@@ -40,6 +46,7 @@
- 
- /* AHB3 */
- #define STM32F4_RCC_AHB3_FMC	0
-+#define STM32F4_RCC_AHB3_QSPI	1
- 
- #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
- #define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + 0x40)
-@@ -79,7 +86,9 @@
- #define STM32F4_RCC_APB2_TIM8	1
- #define STM32F4_RCC_APB2_USART1	4
- #define STM32F4_RCC_APB2_USART6	5
--#define STM32F4_RCC_APB2_ADC	8
-+#define STM32F4_RCC_APB2_ADC1	8
-+#define STM32F4_RCC_APB2_ADC2	9
-+#define STM32F4_RCC_APB2_ADC3	10
- #define STM32F4_RCC_APB2_SDIO	11
- #define STM32F4_RCC_APB2_SPI1	12
- #define STM32F4_RCC_APB2_SPI4	13
-@@ -91,6 +100,7 @@
- #define STM32F4_RCC_APB2_SPI6	21
- #define STM32F4_RCC_APB2_SAI1	22
- #define STM32F4_RCC_APB2_LTDC	26
-+#define STM32F4_RCC_APB2_DSI	27
- 
- #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
- #define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + 0xA0)
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
