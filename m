@@ -1,38 +1,50 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Jan 2017 16:37:57 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, kernel@stlinux.com, ludovic.barre@st.com,
-	olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [PATCH 1/4] clk: stm32f7: Add stm32f7 clock DT bindings for
- STM32F746 boards
-Message-ID: <20170121003757.GX20800@codeaurora.org>
-References: <1483711165-17149-1-git-send-email-gabriel.fernandez@st.com>
- <1483711165-17149-2-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Sat, 21 Jan 2017 10:16:18 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>
+Subject: Re: [PATCH] clk: hisilicon: fix lock assignment
+Message-ID: <20170121021617.GA30253@leoy-linaro>
+References: <1484727218-3499-1-git-send-email-leo.yan@linaro.org>
+ <20170120225827.GB8009@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1483711165-17149-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <20170120225827.GB8009@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/06, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Fri, Jan 20, 2017 at 02:58:27PM -0800, Stephen Boyd wrote:
+> On 01/18, Leo Yan wrote:
+> > In clock driver initialize phase the spinlock is missed to assignment
+> > to struct clkgate_separated, finally there have no locking to protect
+> > exclusive accessing for clock registers.
+> > 
+> > This bug introduces the console has no output after enable coresight
+> > driver on 96borads Hikey; this is because console using UART3, which
 > 
-> This patch introduces the stm32f7 clock DT bindings.
+> s/borads/boards/
 > 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
+> > has shared the same register with coresight clock enabling bit. After
+> > applied this patch it can assign lock properly to protect exclusive
+> > accessing, and console can work well after enabled coresight modules.
+> > 
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> 
+> Is there a Fixes: tag needed?
 
-Applied to clk-stm32f4 because why not
+Thanks for reviewing, will send new patch for upper comments.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Is coresight support merged into Linus' tree? I want to know if
+> this needs to be applied for v4.10 or can wait until v4.11.
+
+No, Coresight patch has not been merged. Should meantion one thing is:
+this issue impacts all gate clocks if they share same register, there
+have many such kind clocks for Hi6220. So it's not only for coresight
+and uart clocks.
+
+Thanks,
+Leo Yan
