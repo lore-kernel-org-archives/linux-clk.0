@@ -1,124 +1,68 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 16 Jan 2017 09:07:47 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	Paul Walmsley <paul@pwsan.com>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] Documentation: dt-bindings: Add binding documentation
- for TI clkctrl clocks
-Message-ID: <20170116170746.GA7403@atomide.com>
-References: <20170109234226.9449-1-tony@atomide.com>
- <7acb6824-0e64-960b-1490-9b7a8b867b3b@ti.com>
+Return-Path: <andy.shevchenko@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7acb6824-0e64-960b-1490-9b7a8b867b3b@ti.com>
+In-Reply-To: <20170121000028.GG20800@codeaurora.org>
+References: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+ <1484736630.2133.184.camel@linux.intel.com> <20170121000028.GG20800@codeaurora.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 21 Jan 2017 12:53:54 +0200
+Message-ID: <CAHp75VeSYLHg0ugrYYsBhs=_wDD+0j1jkk0LvY4ws3qdbHkL8w@mail.gmail.com>
+Subject: Re: [PATCH v7 0/5] Add platform clock for BayTrail platforms
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, linux-clk@vger.kernel.org,
+	"x86@kernel.org" <x86@kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>,
+	Darren Hart <dvhart@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+	ALSA Development Mailing List <alsa-devel@alsa-project.org>, Irina Tirdea <irina.tirdea@intel.com>,
+	Michael Turquette <mturquette@baylibre.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Takashi Iwai <tiwai@suse.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Mark Brown <broonie@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Len Brown <lenb@kernel.org>,
+	Vinod Koul <vinod.koul@intel.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [170116 07:20]:
-> On 10/01/17 01:42, Tony Lindgren wrote:
-> > +Example: Clock controller node:
-> > +
-> > +&cm_l4per {
-> > +	cm_l4per_clkctrl: clk@20 {
-> > +		compatible = "ti,clkctrl";
-> > +		reg = <0x20 0x1b0>;
-> > +		#clock-cells = 1;
-> > +		ti,modulemode-auto = <OMAP4_GPIO2_CLKCTRL>;
-> > +	};
-> > +};
-> 
-> So, in this example, what would cm_l4per be? Is it a clockdomain? Or is it
-> just an arbitrary interconnect instance, and the clockdomain would also be a
-> separate node under cm_l4per?
+On Sat, Jan 21, 2017 at 2:00 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 01/18, Andy Shevchenko wrote:
+>> On Tue, 2017-01-17 at 15:57 -0600, Pierre-Louis Bossart wrote:
+>> > These patches specifically enable the audio MCLK required by Baytrail
+>> > CR devices. It is the remaining part of a bigger set of patches
+>> > (already merged in Mark Brown's tree) that enable sound for Baytrail
+>> > CR
+>> > devices (especially Asus T100TAF) [1]. They include the clock driver
+>> > and clock enabling in the pmc_atom code (along with moving of the
+>> > non-architectural pmc_atom driver code into drivers/platform/x86 as
+>> > suggested by Thomas Gleixner [2]). This move includes a new header in
+>> > include/linux/platform_data/x86/. While there is an agreement that the
+>> > definitions for PMC clocks are not really platform data this location
+>> > is seen as a good-enough compromise with an agreement between Darren
+>> > Hart and Andy Shevchenko [3]
+>> >
+>> > [1] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-August/1
+>> > 11704.html
+>> > [2] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-October/
+>> > 113936.html
+>> > [3] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-December
+>> > /115892.html
+>> >
+>>
+>> Stephen, I see no issues with the patches. If you want to push them
+>> through your tree, take a tag from PDx86 subsystem point of view:
+>
+> Does PDx86 == platform device x86?
 
-Good question. It's not a clockdomain, those are the CLKSTCTRL registers.
-And for example "3.11.33.1 CORE_CM2 Register Summary" for core_cm2 has
-multiple clockdomains under it.
+Yes.
 
-Looking at the interconnect target module for cm2, it's range is from
-0x4a008000 - 0x4a009fff as listed in "Table 2-3. L4_CFG Memory Space
-Mapping". So that's the cm2 parent module, and whatever we can clearly
-set up as separate devices under that will make things easier to
-understand.
+> I can provide a stable branch
+> in clk tree for platform tree, or platform x86 maintainer can ack
+> the platform/x86 patches and I can take the whole batch through
+> clk tree.
 
-The various device instances under cm2 can be seen in "3.11.29 CM2
-Instance Summary".
+That's what I did. Do you need Darren's one?
 
-So how about the following would describe that hardware using the
-#clock-cells = <3> as discussed:
+>>
+>> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-&cm2 {	/* 0x4a008000 */
-	compatible = "ti,interconnect-socket-cm", "simple-pm-bus";
-	reg = <0 0x2000>;
-	ranges;
-	...
-
-	ckgen_cm2: cm@100 {
-		reg = <0x100 0x100>;
-		compatible = <"ti,clockmanager", "simple-pm-bus">;
-		ranges;
-		...
-	};
-
-	always_on_cm2: cm@600 {
-		reg = <0x100 0x100>;
-		compatible = <"ti,clockmanager", "simple-pm-bus">;
-		ranges;
-		...
-	};
-
-	...
-
-	l4per: cm@1400 {
-		reg = <0x1400 0x200>;
-		compatible = <"ti,clockmanager", "simple-pm-bus">;
-		ranges;
-		...
-
-		/* drivers/soc/ti/clockdomain.c */
-		cm_l4per@0 {
-			compatible = "ti,clockdomain";
-			reg = <0 0x200>;
-			ranges;
-			...
-
-			/* drivers/clk/ti/clkctrl.c */
-			cm_l4per_clkctrl: clk@20 {
-				compatible = "ti,clkctrl";
-				reg = <0x20 0x1b0>;
-				#clock-cells = <3>;
-			};
-
-			...
-
-		}
-
-		...
-	};
-
-	...
-};
-
-Then on am335x we need to set the ranges at the "ti,clockmanager" level
-as the registers are partially sorted and most of the CLKSTCTRL registers
-are at the beginning for all the clockdomains. With the ranges we can
-have each clkctrl instance be a child of the related clockdomain.
-
-> Shall we add power-domains = <&cm_l4per_clkdm>; entry under the
-> cm_l4per_clkctrl in this example? (My thinking is that we will represent
-> both OMAP clock and power domains as generic power domains within kernel /
-> DT.)
-
-Yeah it seems we can represent both the clock and power domains with just
-a single "power-domains" property.
-
-To me it seems the "power-domains" property would then belong to the
-"ti,clockdomain" node above. As the clkctrl clock instances are children
-of each clockdomain then "simple-pm-bus" should automatically manage
-PM runtime usecount for each clockdomain.
-
-Regards,
-
-Tony
+-- 
+With Best Regards,
+Andy Shevchenko
