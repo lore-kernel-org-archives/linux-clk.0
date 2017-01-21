@@ -1,67 +1,41 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Jan 2017 15:12:43 -0800
+Date: Fri, 20 Jan 2017 16:34:58 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: renesas: mstp: Make INTC-SYS a critical clock
-Message-ID: <20170120231243.GE8009@codeaurora.org>
-References: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
- <1484657190-12838-3-git-send-email-geert+renesas@glider.be>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, ludovic.barre@st.com,
+	olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [PATCH v2 1/3] dt-bindings: mfd: stm32f4: Fix STM32F4_X_CLOCK()
+ macro
+Message-ID: <20170121003458.GW20800@codeaurora.org>
+References: <1483952833-14704-1-git-send-email-gabriel.fernandez@st.com>
+ <1483952833-14704-2-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1484657190-12838-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1483952833-14704-2-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/17, Geert Uytterhoeven wrote:
-> INTC-SYS is the module clock for the GIC.  Accessing the GIC while it is
-> disabled causes:
+On 01/09, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
 > 
->     Unhandled fault: asynchronous external abort (0x1211) at 0x00000000
+> Macro to select a clock was not correct.
 > 
-> Currently, the GIC-400 driver cannot enable its module clock for several
-> reasons:
->   - It does not use a platform device, so Runtime PM is not an option,
->   - gic_of_init() runs before any clocks are registered, so it cannot
->     enable the clock explicitly,
->   - gic_of_init() cannot return -EPROBE_DEFER, as IRQCHIP_DECLARE()
->     doesn't support deferred probing.
+> Offset of enable register starts at 0x30, then calculation to select a bit is:
+> (@enable_reg - 0x30) / 4 * 32 + bit_to_select
 > 
-> Hence we have to keep on relying on the boot loader for enabling the
-> module clock.
-> 
-> To prevent the module clock from being disabled when the CCF core thinks
-> it is unused, and thus causing a system lock-up, add a check to the MSTP
-> clock driver and enable CLK_IS_CRITICAL. This will make sure the module
-> clock is never disabled.
-> 
-> This is a hard dependency for describing the INTC-SYS clock in DT on
-> R-Mobile APE6 and R-Car Gen2.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Tested-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
 > ---
 
 Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-
-> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-> index 9375777776d99407..c0319b8acf3521a2 100644
-> --- a/drivers/clk/renesas/clk-mstp.c
-> +++ b/drivers/clk/renesas/clk-mstp.c
-> @@ -144,6 +144,11 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
-
-Sad that git gets confused about which function this is in.
-
->  	init.name = name;
->  	init.ops = &cpg_mstp_clock_ops;
->  	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
-> +	/* INTC-SYS is the module clock of the GIC, and must not be disabled */
-> +	if (!strcmp(name, "intc-sys")) {
-> +		pr_debug("MSTP %s setting CLK_IS_CRITICAL\n", name);
-> +		init.flags |= CLK_IS_CRITICAL;
-> +	}
->  	init.parent_names = &parent_name;
->  	init.num_parents = 1;
->  
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
