@@ -1,47 +1,73 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Dien Pham <dien.pham.ry@rvc.renesas.com>,
-	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] clk: renesas: r8a7796: Add IIC-DVFS clock
-Date: Wed, 25 Jan 2017 12:19:34 +0100
-Message-Id: <1485343174-16973-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1485343174-16973-1-git-send-email-geert+renesas@glider.be>
-References: <1485343174-16973-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 5/8] clk: sunxi-ng: Implement global pre-divider
+Date: Sat, 21 Jan 2017 23:50:54 +0100
+Message-Id: <10a00258fc227a775a52a4d6de79ba3c76fbc19e.1485039043.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
+References: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
+References: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Some clocks have a global pre-divider that applies to all their parents.
 
-This patch adds DVFS clock for R8A7796 SoC.
+Since it might also apply to clocks that have a single parent, this is
+merged in the ccu_common structure, unlike the other pre-divider settings
+that are tied to a specific index, and thus a specific parent.
 
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
-Khiem: I've updated your email address, and added your missing SoB.
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/sunxi-ng/ccu_common.h | 2 ++
+ drivers/clk/sunxi-ng/ccu_mux.c    | 8 +++++++-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 3bc36ef3aebf4108..11e084a56b0d9005 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -192,6 +192,7 @@ enum clk_ids {
- 	DEF_MOD("can-if0",		 916,	R8A7796_CLK_S3D4),
- 	DEF_MOD("i2c6",			 918,	R8A7796_CLK_S0D6),
- 	DEF_MOD("i2c5",			 919,	R8A7796_CLK_S0D6),
-+	DEF_MOD("i2c-dvfs",		 926,	R8A7796_CLK_CP),
- 	DEF_MOD("i2c4",			 927,	R8A7796_CLK_S0D6),
- 	DEF_MOD("i2c3",			 928,	R8A7796_CLK_S0D6),
- 	DEF_MOD("i2c2",			 929,	R8A7796_CLK_S3D2),
+diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
+index b3d9abfbd721..cdd69eb2e0b9 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.h
++++ b/drivers/clk/sunxi-ng/ccu_common.h
+@@ -21,6 +21,7 @@
+ #define CCU_FEATURE_VARIABLE_PREDIV	BIT(1)
+ #define CCU_FEATURE_FIXED_PREDIV	BIT(2)
+ #define CCU_FEATURE_FIXED_POSTDIV	BIT(3)
++#define CCU_FEATURE_ALL_PREDIV		BIT(4)
+ 
+ struct device_node;
+ 
+@@ -56,6 +57,7 @@ struct device_node;
+ struct ccu_common {
+ 	void __iomem	*base;
+ 	u16		reg;
++	u32		prediv;
+ 
+ 	unsigned long	features;
+ 	spinlock_t	*lock;
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+index a43ad52a957d..858a48621631 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.c
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -25,9 +25,15 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
+ 	int i;
+ 
+ 	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
+-	      (common->features & CCU_FEATURE_VARIABLE_PREDIV)))
++	      (common->features & CCU_FEATURE_VARIABLE_PREDIV) ||
++	      (common->features & CCU_FEATURE_ALL_PREDIV)))
+ 		return;
+ 
++	if (common->features & CCU_FEATURE_ALL_PREDIV) {
++		*parent_rate = *parent_rate / common->prediv;
++		return;
++	}
++
+ 	reg = readl(common->base + common->reg);
+ 	if (parent_index < 0) {
+ 		parent_index = reg >> cm->shift;
 -- 
-1.9.1
+git-series 0.8.11
