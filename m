@@ -1,31 +1,36 @@
-Return-Path: <plaes@plaes.org>
-Message-ID: <1485237829.10979.1.camel@plaes.org>
-Subject: Re: [linux-sunxi] [PATCH 00/11] clk: sunxi-ng: Add support for A80
- CCUs
-From: Priit Laes <plaes@plaes.org>
-To: wens@csie.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Rob
- Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Date: Tue, 24 Jan 2017 08:03:49 +0200
-In-Reply-To: <20170124023230.3990-1-wens@csie.org>
-References: <20170124023230.3990-1-wens@csie.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Jan 2017 16:33:15 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/8] clk: renesas: cpg-mssr: Add support for reset control
+Message-ID: <20170121003315.GV20800@codeaurora.org>
+References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
+ <1484921306-9967-5-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1484921306-9967-5-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-01-24 at 10:32 +0800, Chen-Yu Tsai wrote:
-> Hi everyone,
+On 01/20, Geert Uytterhoeven wrote:
+> Add optional support for the Reset Control feature of the Renesas Clock
+> Pulse Generator / Module Standby and Software Reset module on R-Car
+> Gen2, R-Car Gen3, and RZ/G1 SoCs.
+> 
+> This allows to reset SoC devices using the Reset Controller API.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Hi!
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Thanks for working on that!
-
-You might want to bump the copyright year starting from patch 5.=20
-
-[...]
-
-P=C3=A4ikest,
-Priit Laes
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
