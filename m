@@ -1,48 +1,35 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms@verge.net.au>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Jan 2017 16:32:35 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] clk: renesas: r8a7795/r8a7796: Add IIC-DVFS clock
-Date: Wed, 25 Jan 2017 12:19:32 +0100
-Message-Id: <1485343174-16973-1-git-send-email-geert+renesas@glider.be>
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/8] clk: renesas: cpg-mssr: Document suitability for
+ RZ/G1
+Message-ID: <20170121003235.GT20800@codeaurora.org>
+References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
+ <1484921306-9967-3-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1484921306-9967-3-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi all,
+On 01/20, Geert Uytterhoeven wrote:
+> The Renesas CPG/MSSR driver is already in active use for RZ/G1 since
+> commits c0b2d75d2a4bf6a3 ("clk: renesas: cpg-mssr: Add R8A7743 support")
+> and 9127d54bb8947159 ("clk: renesas: cpg-mssr: Add R8A7745 support").
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-This patch series, pulled from the rcar-3.5.1 BSP, adds the module
-clocks for IIC-DVFS on the R-Car H3 and M3-W SoCs.
-
-As this is a dependency for Suspend-to-RAM, I plan to queue this in
-clk-renesas-for-v4.11.
-
-Thanks for your comments!
-
-Keita Kobayashi (1):
-  clk: renesas: r8a7795: Add IIC-DVFS clock
-
-Khiem Nguyen (1):
-  clk: renesas: r8a7796: Add IIC-DVFS clock
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
- 2 files changed, 2 insertions(+)
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
 -- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
