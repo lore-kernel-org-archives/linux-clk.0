@@ -1,94 +1,78 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Sat, 21 Jan 2017 14:39:20 -0600
-From: Rob Herring <robh@kernel.org>
-To: Markus Mayer <code@mmayer.net>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Arnd Bergmann <arnd@arndb.de>, Markus Mayer <mmayer@broadcom.com>,
-	Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
-	Linux Clock List <linux-clk@vger.kernel.org>,
-	Power Management List <linux-pm@vger.kernel.org>,
-	Device Tree List <devicetree@vger.kernel.org>,
-	ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 1/2] dt-bindings: brcm: clocks: add binding for
- brcmstb-cpu-clk-div
-Message-ID: <20170121203920.ijtrpdsff24rcjgs@rob-hp-laptop>
-References: <20170119002933.7529-1-code@mmayer.net>
- <20170119002933.7529-2-code@mmayer.net>
+Return-Path: <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [alsa-devel] [PATCH v7 2/5] clk: x86: Add Atom PMC platform
+ clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+ <1484690270-28425-3-git-send-email-pierre-louis.bossart@linux.intel.com>
+ <20170120235856.GF20800@codeaurora.org>
+Cc: alsa-devel@alsa-project.org, Irina Tirdea <irina.tirdea@intel.com>,
+ Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>, x86@kernel.org,
+ "Rafael J . Wysocki" <rjw@rjwysocki.net>, Takashi Iwai <tiwai@suse.com>,
+ platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, Mark Brown <broonie@kernel.org>,
+ "H . Peter Anvin" <hpa@zytor.com>, Darren Hart <dvhart@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-clk@vger.kernel.org, Len Brown <lenb@kernel.org>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <e201d2f3-6a14-f00f-3de0-1a68a2816f42@linux.intel.com>
+Date: Sat, 21 Jan 2017 10:28:17 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170119002933.7529-2-code@mmayer.net>
+In-Reply-To: <20170120235856.GF20800@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 18, 2017 at 04:29:32PM -0800, Markus Mayer wrote:
-> From: Markus Mayer <mmayer@broadcom.com>
-> 
-> Add binding document for brcm,brcmstb-cpu-clk-div.
-> 
-> Signed-off-by: Markus Mayer <mmayer@broadcom.com>
-> ---
->  .../bindings/clock/brcm,brcmstb-cpu-clk-div.txt    | 27 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt b/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
-> new file mode 100644
-> index 0000000..c4acb53
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
-> @@ -0,0 +1,27 @@
-> +The CPU divider node serves as the sole clock for the CPU complex. It supports
-> +power-of-2 clock division, with a divider of "1" as the default highest-speed
-> +setting.
-> +
-> +Required properties:
-> +- compatible: shall be "brcm,brcmstb-cpu-clk-div"
-> +- reg: address and width of the divider configuration register
-> +- #clock-cells: shall be set to 0
-> +- clocks: phandle of clock provider which provides the source clock
-> +          (this would typically be a "fixed-clock" type PLL)
-> +- div-table: list of (raw_value,divider) ordered pairs that correspond to the
-> +             allowed clock divider settings
+Thanks for the review Stephen.
 
-Why do you need 2 values? Can't you use the index or calculate the 
-register value from the divider value?
+On 1/20/17 5:58 PM, Stephen Boyd wrote:
+> On 01/17, Pierre-Louis Bossart wrote:
+>> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+>> new file mode 100644
+>> index 0000000..312d4e9
+>> --- /dev/null
+>> +++ b/drivers/clk/x86/clk-pmc-atom.c
+> [...]
+>> +
+>> +static void plt_clk_reg_update(struct clk_plt *clk, u32 mask, u32 val)
+>> +{
+>> +	u32 tmp;
+>> +	unsigned long flags;
+>> +
+>> +	spin_lock_irqsave(&clk->lock, flags);
+>> +
+>> +	tmp = clk_readl(clk->reg);
+>
+> Do you need to use clk_readl? I'd prefer we deleted that
+> function/macro because it's just confusing. Please don't use it
+> unless you need it for some reason.
 
-> +- div-shift-width: least-significant bit position and width of divider value
-> +
-> +Optional properties:
-> +- clock-names: the clock may be named
-> +
-> +Example:
-> +	cpuclkdiv: cpu-clk-div@f03e257c {
+I just followed Andy's recommendation and will revert to readl/writel, 
+as well as fix the nitpicks below
+>
+>> +	tmp = (tmp & ~mask) | (val & mask);
+>> +	clk_writel(tmp, clk->reg);
+>> +
+>> +	spin_unlock_irqrestore(&clk->lock, flags);
+>> +}
+>> +
+> [..]
+>> +
+>> +static void plt_clk_unregister_parents(struct clk_plt_data *data)
+>> +{
+>> +	plt_clk_unregister_fixed_rate_loop(data, data->nparents);
+>> +}
+>> +
+>> +
+>
+> Nitpick: Single newline please
 
-clock-controller@...
+ok
 
-> +		compatible = "brcm,brcmstb-cpu-clk-div";
-> +		reg = <0xf03e257c 0x4>;
-> +		div-table = <0x00 1>;
-> +		div-shift-width = <0 5>;
-> +		#clock-cells = <0>;
-> +		clocks = <&cpupll>;
-> +		clock-names = "cpupll";
-> +	};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index cfff2c9..690761d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2786,6 +2786,7 @@ M:	bcm-kernel-feedback-list@broadcom.com
->  L:	linux-pm@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/cpufreq/brcm,stb-avs-cpu-freq.txt
-> +F:	Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
->  F:	drivers/cpufreq/brcmstb*
->  
->  BROADCOM SPECIFIC AMBA DRIVER (BCMA)
-> -- 
-> 2.7.4
-> 
+>> +static struct platform_driver plt_clk_driver = {
+>> +	.driver = {
+>> +		.name = PLT_CLK_DRIVER_NAME,
+>
+> Nitpick: Just put the string here
+
+ok
