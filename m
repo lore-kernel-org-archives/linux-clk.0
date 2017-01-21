@@ -1,88 +1,97 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
-Subject: [PATCH v2 2/3] dt-bindings: mfd: stm32f4: Add missing binding definition
-Date: Mon, 9 Jan 2017 10:07:12 +0100
-Message-ID: <1483952833-14704-3-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1483952833-14704-1-git-send-email-gabriel.fernandez@st.com>
-References: <1483952833-14704-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 20 Jan 2017 17:00:09 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jacky Bai <ping.bai@nxp.com>
+Cc: "shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"jacky.baip@gmail.com" <jacky.baip@gmail.com>
+Subject: Re: [PATCH v2 04/12] driver: clk: imx: Add clock driver for imx6sll
+Message-ID: <20170121010009.GC8801@codeaurora.org>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-5-git-send-email-ping.bai@nxp.com>
+ <20170110003753.GM17126@codeaurora.org>
+ <AM3PR04MB5307CB38AA904535AF8D80D87670@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <20170112220536.GP17126@codeaurora.org>
+ <AM3PR04MB53027B627AE8CEC6D7D0D1B87780@AM3PR04MB530.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <AM3PR04MB53027B627AE8CEC6D7D0D1B87780@AM3PR04MB530.eurprd04.prod.outlook.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 01/13, Jacky Bai wrote:
+> > >
+> > > The reason why we enable these two clks here is in below commit commit
+> > > a5120e89e7e187a91852896f586876c7a2030804
+> > > Author: Peter Chen <peter.chen@freescale.com>
+> > > Date:   Fri Jan 18 10:38:05 2013 +0800
+> > >       ARM i.MX6: change mxs usbphy clock usage
+> > >
+> > 
+> > So can we mark these clks with CLK_IS_CRITICAL flag then instead?
+> > Or are they disabled out of the bootloader?
+> > 
+> 
+> Sure, using 'CLK_IS_CRITICAL'  should be ok for clks_init_on clocks.  But for  USBPHY*_GATE, it is
+> only enabled when CONIG_USB_MXC_PHY is true.  And another concern is if we need to add CLK_IS_CRITICAL
+> flag to clks_init_on clocks, we may need to add new wrapper function to register these critical clock. It is not very good.
 
-This patch adds missing binding definition (backupram, ethernet, otg,
-qspi, adc & dsi)
+Ok so set the critical flag when CONFIG_USB_MXC_PHY is enabled?
+That isn't too hard to do.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- include/dt-bindings/mfd/stm32f4-rcc.h | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+>  > >
+> > > > > +	}
+> > > > > +
+> > > > > +	/* Lower the AHB clock rate before changing the clock source. */
+> > > > > +	clk_set_rate(clks[IMX6SLL_CLK_AHB], 99000000);
+> > > > > +
+> > > > > +	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz */
+> > > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH_CLK2_SEL],
+> > > > clks[IMX6SLL_CLK_PLL3_USB_OTG]);
+> > > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH],
+> > > > clks[IMX6SLL_CLK_PERIPH_CLK2]);
+> > > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH_PRE],
+> > > > clks[IMX6SLL_CLK_PLL2_BUS]);
+> > > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH],
+> > > > > +clks[IMX6SLL_CLK_PERIPH_PRE]);
+> > > > > +
+> > > > > +	clk_set_rate(clks[IMX6SLL_CLK_AHB], 132000000);
+> > > >
+> > > > assigned-clocks for rates now? Or perhaps we shouldn't be exposing
+> > > > these as clks if they have some sort of complicated rate sequence
+> > > > switch that we can't guarantee with the clk_ops we have today.
+> > >
+> > > These clks will be used by some peripherals, so we need to expose these
+> > clocks.
+> > > And the above parent and rate swith sequence is not very easy to be
+> > > handled in assigned-clocks, So we leave it in this place.
+> > >
+> > 
+> > How do we guarantee that the rate switch doesn't happen later on, requiring
+> > this coordinated sequence of clk operations?
+> > 
+> 
+> This clock sequence is used for increasing the AXI and AHB bus clock rate. In normal
+> use, it is very rarely that we need to change them again. If we really need to change
+> AXI and AHB bus clock later, a similar sequence must be used to do this.
+> 
 
-diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
-index f662b19..082a81c 100644
---- a/include/dt-bindings/mfd/stm32f4-rcc.h
-+++ b/include/dt-bindings/mfd/stm32f4-rcc.h
-@@ -18,11 +18,17 @@
- #define STM32F4_RCC_AHB1_GPIOJ	9
- #define STM32F4_RCC_AHB1_GPIOK	10
- #define STM32F4_RCC_AHB1_CRC	12
-+#define STM32F4_RCC_AHB1_BKPSRAM	18
-+#define STM32F4_RCC_AHB1_CCMDATARAM	20
- #define STM32F4_RCC_AHB1_DMA1	21
- #define STM32F4_RCC_AHB1_DMA2	22
- #define STM32F4_RCC_AHB1_DMA2D	23
- #define STM32F4_RCC_AHB1_ETHMAC	25
--#define STM32F4_RCC_AHB1_OTGHS	29
-+#define STM32F4_RCC_AHB1_ETHMACTX	26
-+#define STM32F4_RCC_AHB1_ETHMACRX	27
-+#define STM32F4_RCC_AHB1_ETHMACPTP	28
-+#define STM32F4_RCC_AHB1_OTGHS		29
-+#define STM32F4_RCC_AHB1_OTGHSULPI	30
- 
- #define STM32F4_AHB1_RESET(bit) (STM32F4_RCC_AHB1_##bit + (0x10 * 8))
- #define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit)
-@@ -40,6 +46,7 @@
- 
- /* AHB3 */
- #define STM32F4_RCC_AHB3_FMC	0
-+#define STM32F4_RCC_AHB3_QSPI	1
- 
- #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
- #define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + 0x40)
-@@ -79,7 +86,9 @@
- #define STM32F4_RCC_APB2_TIM8	1
- #define STM32F4_RCC_APB2_USART1	4
- #define STM32F4_RCC_APB2_USART6	5
--#define STM32F4_RCC_APB2_ADC	8
-+#define STM32F4_RCC_APB2_ADC1	8
-+#define STM32F4_RCC_APB2_ADC2	9
-+#define STM32F4_RCC_APB2_ADC3	10
- #define STM32F4_RCC_APB2_SDIO	11
- #define STM32F4_RCC_APB2_SPI1	12
- #define STM32F4_RCC_APB2_SPI4	13
-@@ -91,6 +100,7 @@
- #define STM32F4_RCC_APB2_SPI6	21
- #define STM32F4_RCC_APB2_SAI1	22
- #define STM32F4_RCC_APB2_LTDC	26
-+#define STM32F4_RCC_APB2_DSI	27
- 
- #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
- #define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + 0xA0)
+Ok. It feels unsafe, so please make sure no child clocks have the
+CLK_SET_RATE_PARENT flag set so we can't randomly change the rate
+of this clk outside of this init code.
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
