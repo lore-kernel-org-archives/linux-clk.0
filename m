@@ -1,89 +1,72 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
- Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v3 00/10] Allwinner H5 and Orange Pi PC2 support
-Date: Sun, 29 Jan 2017 10:33:21 +0800
-Message-Id: <20170129023331.62106-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga03-in.huawei.com ([119.145.14.66]:52768 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751080AbdAVJfH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Jan 2017 04:35:07 -0500
+Subject: Re: [PATCH 3/3] dts: hisi: add dts files for Hi3516CV300 demo board
+To: Pan Wen <wenpan@hisilicon.com>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
+        <xuwei5@hisilicon.com>
+References: <20161017120705.3726-1-wenpan@hisilicon.com>
+ <20161017120705.3726-4-wenpan@hisilicon.com>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <howell.yang@hisilicon.com>, <xuejiancheng@hisilicon.com>,
+        <jalen.hsu@hisilicon.com>, <lvkuanliang@hisilicon.com>,
+        <suwenping@hisilicon.com>, <raojun@hisilicon.com>,
+        <kevin.lixu@hisilicon.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+Message-ID: <48bb201b-a443-13de-72ed-66a2b4982734@huawei.com>
+Date: Sun, 22 Jan 2017 17:33:03 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20161017120705.3726-4-wenpan@hisilicon.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H5 is a 64-bit SoC with a design like the 32-bit
-H3.
-
-This patchset adds support for it, along with the first available
-board -- Orange Pi PC2.
-
-Some drivers are also enabled to be built on ARM64 ARCH_SUNXI
-platform, in order to make the internal audio codec work.
-
-Andre Przywara (3):
-  arm: dts: sun8i: split Allwinner H3 .dtsi
-  arm64: dts: allwinner: add Allwinner H5 .dtsi
-  arm64: dts: sunxi: add support for the Orange Pi PC 2 board
-
-Icenowy Zheng (7):
-  drivers: pinctrl: add driver for Allwinner H5 SoC
-  arm64: allwinner: Kconfig: add essential pinctrl driver for H5
-  clk: sunxi-ng: rename sun8i-h3 driver to sunxi-h3-h5
-  clk: sunxi-ng: add support for Allwinner H5 SoC
-  clk: sunxi-ng: remove transitional headers for dt-bindings
-  dmaengine: sun6i: allow build on ARM64 platforms (sun50i)
-  ASoC: sunxi: allow the analog codec driver to be built on ARM64
-
- .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
- arch/arm/boot/dts/sun8i-h3.dtsi                    | 571 ++-------------------
- arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 557 ++++++++++++++++++++
- arch/arm64/Kconfig.platforms                       |   5 +-
- arch/arm64/boot/dts/allwinner/Makefile             |   1 +
- .../boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 164 ++++++
- arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       | 139 +++++
- arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi     |   1 +
- drivers/clk/sunxi-ng/Kconfig                       |   6 +-
- drivers/clk/sunxi-ng/Makefile                      |   2 +-
- .../sunxi-ng/{ccu-sun8i-h3.c => ccu-sunxi-h3-h5.c} | 179 ++++++-
- .../sunxi-ng/{ccu-sun8i-h3.h => ccu-sunxi-h3-h5.h} |  15 +-
- drivers/dma/Kconfig                                |   2 +-
- drivers/pinctrl/sunxi/Kconfig                      |   4 +
- drivers/pinctrl/sunxi/Makefile                     |   1 +
- drivers/pinctrl/sunxi/pinctrl-sun50i-h5.c          | 558 ++++++++++++++++++++
- .../clock/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h}    |  11 +-
- .../reset/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h}    |  11 +-
- sound/soc/sunxi/Kconfig                            |   2 +-
- 20 files changed, 1662 insertions(+), 569 deletions(-)
- create mode 100644 arch/arm/boot/dts/sunxi-h3-h5.dtsi
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
- create mode 120000 arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
- rename drivers/clk/sunxi-ng/{ccu-sun8i-h3.c => ccu-sunxi-h3-h5.c} (80%)
- rename drivers/clk/sunxi-ng/{ccu-sun8i-h3.h => ccu-sunxi-h3-h5.h} (82%)
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h5.c
- rename include/dt-bindings/clock/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h} (95%)
- rename include/dt-bindings/reset/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h} (94%)
-
--- 
-2.11.0
 
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+On 2016/10/17 20:07, Pan Wen wrote:
+> Add dts files for Hi3516CV300 demo board.
+> 
+> Signed-off-by: Pan Wen <wenpan@hisilicon.com>
+> ---
+>  arch/arm/boot/dts/Makefile             |   1 +
+
+[...]
+
+> diff --git a/arch/arm/boot/dts/hi3516cv300.dtsi b/arch/arm/boot/dts/hi3516cv300.dtsi
+> new file mode 100644
+> index 0000000..1da41ab
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/hi3516cv300.dtsi
+> @@ -0,0 +1,397 @@
+> +/*
+> + * Copyright (c) 2016 HiSilicon Technologies Co., Ltd.
+> + *
+> + * This program is free software; you can redistribute  it and/or modify it
+> + * under  the terms of  the GNU General Public License as published by the
+> + * Free Software Foundation;  either version 2 of the  License, or (at your
+> + * option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + *
+> + */
+> +
+> +#include "skeleton.dtsi"
+
+please drop this include due to commit 9c0da3cc61f1233c ("ARM: dts: explicitly mark skeleton.dtsi as deprecated")
+
+Thanks
+Kefeng
+
+
+
