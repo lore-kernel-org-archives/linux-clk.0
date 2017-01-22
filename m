@@ -1,69 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ot0-f174.google.com ([74.125.82.174]:33751 "EHLO
-        mail-ot0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752734AbdAZFY2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2017 00:24:28 -0500
-Received: by mail-ot0-f174.google.com with SMTP id 73so168427071otj.0
-        for <linux-clk@vger.kernel.org>; Wed, 25 Jan 2017 21:24:28 -0800 (PST)
+Return-Path: <jic23@kernel.org>
+Subject: Re: [PATCH v3 1/4] Documentation: dt-bindings: add the Amlogic Meson
+ SAR ADC documentation
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Rob Herring <robh@kernel.org>
+References: <20170115224221.15510-1-martin.blumenstingl@googlemail.com>
+ <20170119145822.26239-1-martin.blumenstingl@googlemail.com>
+ <20170119145822.26239-2-martin.blumenstingl@googlemail.com>
+ <20170121205635.4qeiqyeyjrweryrh@rob-hp-laptop>
+ <CAFBinCDghzRXnzdBd0qh=LYDTpkQg7r2zdj1QE7cRKAU0fAFPQ@mail.gmail.com>
+Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+ mark.rutland@arm.com, khilman@baylibre.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, carlo@caione.org, catalin.marinas@arm.com,
+ will.deacon@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+ narmstrong@baylibre.com, linux-arm-kernel@lists.infradead.org
+From: Jonathan Cameron <jic23@kernel.org>
+Message-ID: <4d5361a2-1343-14b9-d269-2c1b86eabb19@kernel.org>
+Date: Sun, 22 Jan 2017 12:30:26 +0000
 MIME-Version: 1.0
-In-Reply-To: <1484762037-10737-2-git-send-email-fabio.estevam@nxp.com>
-References: <1484762037-10737-1-git-send-email-fabio.estevam@nxp.com> <1484762037-10737-2-git-send-email-fabio.estevam@nxp.com>
-From: Kevin Hilman <khilman@baylibre.com>
-Date: Wed, 25 Jan 2017 21:24:27 -0800
-Message-ID: <CAOi56cUrAyqV3e1zW+UGNRfGaueJr9yH1md3DPJT6vVM_zfpTA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: imx7d: Add the IPG root clock
-To: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
-        Sascha Hauer <kernel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CAFBinCDghzRXnzdBd0qh=LYDTpkQg7r2zdj1QE7cRKAU0fAFPQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Fabio,
+On 21/01/17 23:10, Martin Blumenstingl wrote:
+> Hi Rob,
+> 
+> thanks for reviewing this!
+> 
+> On Sat, Jan 21, 2017 at 9:56 PM, Rob Herring <robh@kernel.org> wrote:
+>> On Thu, Jan 19, 2017 at 03:58:19PM +0100, Martin Blumenstingl wrote:
+>>> This adds the devicetree binding documentation for the SAR ADC found in
+>>> Amlogic Meson SoCs.
+>>> Currently only the GXBB, GXL and GXM SoCs are supported.
+>>>
+>>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>>> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+>>> ---
+>>>  .../bindings/iio/adc/amlogic,meson-saradc.txt      | 31 ++++++++++++++++++++++
+>>>  1 file changed, 31 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+>>> new file mode 100644
+>>> index 000000000000..9a0bec7afc63
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+>>> @@ -0,0 +1,31 @@
+>>> +* Amlogic Meson SAR (Successive Approximation Register) A/D converter
+>>> +
+>>> +Required properties:
+>>> +- compatible:        depending on the SoC this should be one of:
+>>> +                     - "amlogic,meson-gxbb-saradc" for GXBB
+>>> +                     - "amlogic,meson-gxl-saradc" for GXL and GXM
+>>
+>> GXL and GXM should probably be 2 compatibles.
+> Amlogic's ADC driver does not differentiate between GXL and GXM
+> (because both SoCs are identical except the CPU and GPU cores).
+> I can still introduce a separate binding for GXM if you want (better
+> safe than sorry and takes less than 5 minutes) - just let me know
+Probably best to do so as it's just conceivable there will be a hardware
+bug in the the silicon or similar.  Also makes things a little more
+'obviously correct'.
 
-On Wed, Jan 18, 2017 at 9:53 AM, Fabio Estevam <fabio.estevam@nxp.com> wrote:
-> Add an entry for the IMX7D_IPG_ROOT clock.
->
-> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-
-kernelci.org started detecting boot failures on imx7s-warp in
-next-20160124[1], and I bisected it down to this patch, which is in
-linux-next as commit dde08302c083.
-
-I verified that reverting that commit on top of next-20160124 gets
-imx7s-warp booting again.
-
-Kevin
-
-P.S.  Thanks for the donation of the imx7s-warp board, which allows us
-to catch these failures early.  :)
-
-[1] https://kernelci.org/boot/id/588747e959b514e08213d106/
-
-> ---
->  drivers/clk/imx/clk-imx7d.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-> index ae1d31b..1705f44 100644
-> --- a/drivers/clk/imx/clk-imx7d.c
-> +++ b/drivers/clk/imx/clk-imx7d.c
-> @@ -788,7 +788,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
->         clks[IMX7D_WRCLK_ROOT_DIV] = imx_clk_divider2("wrclk_post_div", "wrclk_pre_div", base + 0xbd00, 0, 6);
->         clks[IMX7D_CLKO1_ROOT_DIV] = imx_clk_divider2("clko1_post_div", "clko1_pre_div", base + 0xbd80, 0, 6);
->         clks[IMX7D_CLKO2_ROOT_DIV] = imx_clk_divider2("clko2_post_div", "clko2_pre_div", base + 0xbe00, 0, 6);
-> -
-> +       clks[IMX7D_IPG_ROOT_CLK] = imx_clk_divider2("ipg_root_clk", "ahb_root_clk", base + 0x9080, 0, 2);
->         clks[IMX7D_ARM_A7_ROOT_CLK] = imx_clk_gate4("arm_a7_root_clk", "arm_a7_div", base + 0x4000, 0);
->         clks[IMX7D_ARM_M4_ROOT_CLK] = imx_clk_gate4("arm_m4_root_clk", "arm_m4_div", base + 0x4010, 0);
->         clks[IMX7D_ARM_M0_ROOT_CLK] = imx_clk_gate4("arm_m0_root_clk", "arm_m0_div", base + 0x4020, 0);
-> --
-> 2.7.4
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Jonathan
+> 
+>>> +             along with the generic "amlogic,meson-saradc"
+>>> +- reg:               the physical base address and length of the registers
+>>> +- clocks:    phandle and clock identifier (see clock-names)
+>>> +- clock-names:       mandatory clocks:
+>>> +                     - "clkin" for the reference clock (typically XTAL)
+>>> +                     - "core" for the SAR ADC core clock
+>>> +             optional clocks:
+>>> +                     - "sana" for the analog clock
+>>> +                     - "adc_clk" for the ADC (sampling) clock
+>>> +                     - "adc_sel" for the ADC (sampling) clock mux
+>>> +- vref-supply:       the regulator supply for the ADC reference voltage
+>>> +- #io-channel-cells: must be 1, see ../iio-bindings.txt
+>>> +
+>>> +Example:
+>>> +     saradc: adc@8680 {
+>>> +             compatible = "amlogic,meson-gxl-saradc", "amlogic,meson-saradc";
+>>> +             #io-channel-cells = <1>;
+>>> +             reg = <0x0 0x8680 0x0 0x34>;
+>>> +             clocks = <&xtal>,
+>>> +                      <&clkc CLKID_SAR_ADC>,
+>>> +                      <&clkc CLKID_SANA>,
+>>> +                      <&clkc CLKID_SAR_ADC_CLK>,
+>>> +                      <&clkc CLKID_SAR_ADC_SEL>;
+>>> +             clock-names = "clkin", "core", "sana", "adc_clk", "adc_sel";
+>>> +     };
+>>> --
+>>> 2.11.0
+>>>
