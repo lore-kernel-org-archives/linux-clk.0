@@ -1,62 +1,26 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] clk: renesas: cpg-mssr: Migrate to CLK_IS_CRITICAL
-Date: Tue, 17 Jan 2017 13:46:29 +0100
-Message-Id: <1484657190-12838-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
-References: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Jacob Chen <jacob-chen@iotwrt.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, zhangqing@rock-chips.com, zhengxing@rock-chips.com
+Subject: Re: [PATCH v2 1/3] clk: rockchip: add rk3288 vip_out clock ids
+Date: Mon, 23 Jan 2017 01:26:04 +0100
+Message-ID: <1826150.hujBsPdyRR@phil>
+In-Reply-To: <1484718161-27702-1-git-send-email-jacob-chen@iotwrt.com>
+References: <1484718161-27702-1-git-send-email-jacob-chen@iotwrt.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-When the Renesas CPG/MSSR driver was introduced, it was anticipated that
-critical clocks would be handled through a new CLK_ENABLE_HAND_OFF flag
-soon.  However, CLK_ENABLE_HAND_OFF never made it upstream.
+Am Mittwoch, 18. Januar 2017, 13:42:38 CET schrieb Jacob Chen:
+> Add clock-ids for the vip block of the rk3288
+> 
+> Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
 
-Instead, commit 32b9b10961860860 ("clk: Allow clocks to be marked as
-CRITICAL") introduced CLK_IS_CRITICAL, a flag with slightly differing
-semantics.  Still, it can be used to prevent e.g. the GIC module clock
-from being turned off, until the GIC-400 driver has full support for
-Runtime PM.
+applied all 3 for 4.11 .
 
-Hence migrate the Renesas CPG/MSSR driver from CLK_ENABLE_HAND_OFF to
-CLK_IS_CRITICAL.
+I've fixed the indentation below (missing one additional tab)
+and adapted patch3 to also remove the CLK_IGNORE_UNUSED flags for the clocks we 
+now moved to the critical clocks.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Should this have a Fixes tag? ;-)
 
-Fixes: 32b9b10961860860 ("clk: Allow clocks to be marked as CRITICAL")
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 8359ce75db7aa4fb..6947482d48a55094 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -346,17 +346,10 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
- 	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
- 	for (i = 0; i < info->num_crit_mod_clks; i++)
- 		if (id == info->crit_mod_clks[i]) {
--#ifdef CLK_ENABLE_HAND_OFF
--			dev_dbg(dev, "MSTP %s setting CLK_ENABLE_HAND_OFF\n",
-+			dev_dbg(dev, "MSTP %s setting CLK_IS_CRITICAL\n",
- 				mod->name);
--			init.flags |= CLK_ENABLE_HAND_OFF;
-+			init.flags |= CLK_IS_CRITICAL;
- 			break;
--#else
--			dev_dbg(dev, "Ignoring MSTP %s to prevent disabling\n",
--				mod->name);
--			kfree(clock);
--			return;
--#endif
- 		}
- 
- 	parent_name = __clk_get_name(parent);
--- 
-1.9.1
+Heiko
