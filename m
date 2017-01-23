@@ -1,47 +1,127 @@
-Return-Path: <andrew@lunn.ch>
-Date: Thu, 5 Jan 2017 14:09:45 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Juri Lelli <juri.lelli@arm.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Kalyan Kinthada <Kalyan.Kinthada@alliedtelesis.co.nz>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCHv2 0/5] Support for Marvell switches with integrated CPUs
-Message-ID: <20170105130945.GA18033@lunn.ch>
-References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
- <6c6795d3-06ab-a4f0-78ad-5ecc78c1aa2f@gmail.com>
- <185147a37cab4d7eaea5f79d86cc9451@svr-chch-ex1.atlnz.lc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <185147a37cab4d7eaea5f79d86cc9451@svr-chch-ex1.atlnz.lc>
+Return-Path: <andriy.shevchenko@linux.intel.com>
+Message-ID: <1485208041.2133.293.camel@linux.intel.com>
+Subject: Re: [PATCH v8 0/5] Add platform clock for BayTrail platforms
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+ linux-clk@vger.kernel.org, x86@kernel.org,
+ platform-driver-x86@vger.kernel.org,  Stephen Boyd <sboyd@codeaurora.org>,
+ Darren Hart <dvhart@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: alsa-devel@alsa-project.org, Irina Tirdea <irina.tirdea@intel.com>,
+ Michael Turquette <mturquette@baylibre.com>, "Rafael J . Wysocki"
+ <rjw@rjwysocki.net>, Takashi Iwai <tiwai@suse.com>,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, Ingo Molnar
+ <mingo@redhat.com>, Mark Brown <broonie@kernel.org>, "H . Peter Anvin"
+ <hpa@zytor.com>, Len Brown <lenb@kernel.org>, Vinod Koul
+ <vinod.koul@intel.com>
+Date: Mon, 23 Jan 2017 23:47:21 +0200
+In-Reply-To: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+References: 
+	<1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-> I'd love to see a switchdev driver but it's a huge task (and no I'm not 
-> committing to writing it). As it stands Marvell ship a switch SDK 
-> largely executes in userspace with a small kernel module providing some 
-> linkage to the underlying hardware.
+On Mon, 2017-01-23 at 12:07 -0600, Pierre-Louis Bossart wrote:
+> These patches specifically enable the audio MCLK required by Baytrail
+> CR devices. It is the remaining part of a bigger set of patches
+> (already merged in Mark Brown's tree) that enable sound for Baytrail
+> CR
+> devices (especially Asus T100TAF) [1]. They include the clock driver
+> and clock enabling in the pmc_atom code (along with moving of the
+> non-architectural pmc_atom driver code into drivers/platform/x86 as
+> suggested by Thomas Gleixner [2]). This move includes a new header in
+> include/linux/platform_data/x86/. While there is an agreement that the
+> definitions for PMC clocks are not really platform data this location
+> is seen as a good-enough compromise with an agreement between Darren
+> Hart and Andy Shevchenko [3]
+> 
 
-Is there any similarity to the mv88e6xxx family?
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-If it was similar registers, just a different access mechanising, we
-could probably extend the mv88e6xxx to support MMIO as well as MDIO.
+> [1] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-
+> August/111704.html
+> [2] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-October/
+> 113936.html
+> [3] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-December
+> /115892.html
+> 
+> Changes from v7:
+>  - Replaced clk-readl/writel by regular readl/writel
+>  - Fixed two nitpick comments (newline and driver name string)
+>  - Fixed [5:0] to [0..5] in comment (missed in v6)
+> 
+> Changes from v6:
+>  - Addressed comments from Stephen Boyd, Andy Shevchenko and Vinod
+> Koul
+>  - Renamed clk-byt-plt to clk-pmc-atom
+>  - Rebase to 4.10-rc3 (broonie/for-next)
+>  - Added helper functions to make error handling more compact
+>  - Removed module-related code since it's not possible/supported
+>  - Removed useless tests on remove
+>  - PMC_CLK_OFFSET move to clk-pcm-atom (more logical)
+>  - Split typo correction and makefile fix in separate patches
+>  - small fixes (spaces, defaults in switches, alphabetical order, use
+> of
+> clk_writel/readl and no test on write, simpler error handling, use of
+> while(i--), unsigned loop variables, kernel doc fields, format-patch
+> -M
+>  -C -D, use of PLATFORM_DEVID_NONE)
+> 
 
-   Andrew
+
+> Changes from v5:
+>  - fix build error reported by kbuild test robot
+>  - split the clk driver code from x86 platform changes
+> 
+> Changes from v4:
+>  - move the pmc_atom driver from arch/x86/platform/atom to
+> drivers/platform/x86
+> 
+> Changes from v3:
+>  - replace devm_kzalloc with devm_kcalloc
+>  - add x86 architecture maintainers
+> 
+> Changes from v2:
+>  - move clk platform data structures to a separate include file
+>  - store clk_hw pointer for the fixed rate clocks
+> 
+> Changes from v1:
+>  - register the clk device as child of pmc device
+>  - pass iomem pointer from pmc driver to clk driver to avoid using
+> pmc_atom_read()/write() and use readl/writel API instead
+>  - use devm_clk_hw_register/clkdev_hw_create instead of
+> clk_register/clkdev_create
+> 
+> Irina Tirdea (3):
+>   clk: x86: Add Atom PMC platform clocks
+>   arch/x86/platform/atom: Move pmc_atom to drivers/platform/x86
+>   platform/x86: Enable Atom PMC platform clocks
+> 
+> Pierre-Louis Bossart (2):
+>   clk: Make x86/ conditional on CONFIG_COMMON_CLK
+>   platform/x86: fix typo in comment
+> 
+>  arch/x86/Kconfig                                   |   4 -
+>  arch/x86/platform/atom/Makefile                    |   1 -
+>  drivers/acpi/acpi_lpss.c                           |   2 +-
+>  drivers/clk/Makefile                               |   2 +
+>  drivers/clk/x86/Makefile                           |   1 +
+>  drivers/clk/x86/clk-pmc-atom.c                     | 371
+> +++++++++++++++++++++
+>  drivers/platform/x86/Kconfig                       |   5 +
+>  drivers/platform/x86/Makefile                      |   1 +
+>  .../atom => drivers/platform/x86}/pmc_atom.c       |  88 ++++-
+>  include/linux/platform_data/x86/clk-pmc-atom.h     |  44 +++
+>  .../linux/platform_data/x86}/pmc_atom.h            |   2 +-
+>  11 files changed, 506 insertions(+), 15 deletions(-)
+>  create mode 100644 drivers/clk/x86/clk-pmc-atom.c
+>  rename {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c
+> (87%)
+>  create mode 100644 include/linux/platform_data/x86/clk-pmc-atom.h
+>  rename {arch/x86/include/asm =>
+> include/linux/platform_data/x86}/pmc_atom.h (98%)
+> 
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
