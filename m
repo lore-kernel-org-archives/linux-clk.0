@@ -1,82 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:23658 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933618AbdA0LnK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Jan 2017 06:43:10 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0OKF00JN6QZBLS80@mailout2.w1.samsung.com> for
- linux-clk@vger.kernel.org; Fri, 27 Jan 2017 11:09:11 +0000 (GMT)
-Received: from eusmges1.samsung.com (unknown [203.254.199.239])
- by     eucas1p2.samsung.com (KnoxPortal)
- with ESMTP id  20170127110910eucas1p211091bf21c9652186cad7a06512978c8~dnFc-U3Xj1629316293eucas1p2Q
-        for <linux-clk@vger.kernel.org>; Fri, 27 Jan 2017 11:09:10 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179])
- by     eucas1p1.samsung.com (KnoxPortal)
- with ESMTP id  20170127110909eucas1p1d54aa2d78332ede8250cee784e70e844~dnFcPXE4E0721107211eucas1p1i
-        for <linux-clk@vger.kernel.org>; Fri, 27 Jan 2017 11:09:09 +0000 (GMT)
-Received: from AMDC2765.digital.local ([106.116.147.25])
- by     eusync1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
- 64bit  (built May  5 2014))
- with ESMTPA id <0OKF001FRQZ1L520@eusync1.samsung.com>  for
- linux-clk@vger.kernel.org; Fri, 27 Jan 2017 11:09:09 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org
-Subject: [PATCH v2 RESEND 0/3] Exynos5433/TM2: add clocks configuration for
- display subsystem
-Date: Fri, 27 Jan 2017 12:08:59 +0100
-Message-id: <1485515341-29911-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170127110909eucas1p1d54aa2d78332ede8250cee784e70e844@eucas1p1.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170120230000.GC8009@codeaurora.org>
+References: <1484657190-12838-1-git-send-email-geert+renesas@glider.be> <20170120230000.GC8009@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 23 Jan 2017 10:34:43 +0100
+Message-ID: <CAMuHMdUG40hrefKvu5HSRv0rTEo68kTcEh4JMLb5jyY3pmn-bQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] clk: renesas: Use CLK_IS_CRITICAL to handle critical clocks
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Hi Stephen,
 
-This patchset is a next step to add support for all power domains on
-Exynos5433 SoCs. This patchset contains patches for initial clocks
-configuration on TM2/TM2e boards. Till now display subsystem worked only
-because the clock hierarchy has been configured by the bootloader.
-However when power domains are added, such configuration might be lost
-if the display power domain get turned off before display clock
-controller's probe.
+On Sat, Jan 21, 2017 at 12:00 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 01/17, Geert Uytterhoeven wrote:
+>> This patch series adds support for the CLK_IS_CRITICAL flag to drivers
+>> for module clocks on Renesas ARM SoCs.  For now, this is used to prevent
+>> disabling of the ARM GIC module clock, which would lead to a system
+>> lock-up when accessing the GIC's registers.
+>>
+>>   1. The first patch migrates the Renesas CPG/MSSR driver from the
+>>      never merged CLK_ENABLE_HAND_OFF flag to the CLK_IS_CRITICAL flag.
+>>      Note that as the driver already handled critical clocks (i.e. it
+>>      ignored them :-), this is not a prerequisite for linking the GIC to
+>>      its module clock in DT.
+>>
+>>   2. The second patch makes sure the CLK_IS_CRITICAL flag is set for the
+>>      INTC-SYS clock on SoCs not (yet) using the Renesas CPG/MSSR driver.
+>>      Note that this is a hard dependency for describing the INTC-SYS
+>>      clock in DT on R-Mobile APE6 and R-Car Gen2.
+>>
+>> I plan to queue these patches in my clk-renesas-for-v4.11 branch, if
+>> you agree.
+>
+> Would the runtime PM patches for ccf make things any better here?
 
-Patches have been generated on top of linux-next from 25th January 2017.
+It won't make much of a difference, as typically you'll want the GIC running
+all the time anyway, also for wake-up sources.
+We just have to make sure it's not disabled indefinitely.
 
-This is a part of a larger task, which goal is to add support for power
-domains on Exynos5433 SoCs and TM2/TM2e boards. All patches needed to get it
-working have been pushed to the following git repo:
-https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.10-next-tm2-pd
+As such it's different from a real critical clock that kills the system
+immediately (e.g. some secret core clock): you can disable the GIC clock,
+just make sure to enable it again (and have a means to re-enable it, without
+relying on interrupts ;-)
 
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
+The only difference with a real critical clock is that you
+> I still plan to support CLK_ENABLE_HAND_OFF somehow, but it's not
+> at the top of my priority list right now.
 
+Good, we can convert back later, perhaps when the GIC driver is ready to
+support PM for non-secondary GICs...
 
-Changelog:
-v2:
- - corrected DISP PLL rate from 266MHz to 250MHz (TM2) and 278MHz (TM2e)
- - added a patch with PLL data for 250MHZ and 278MHz rates
+Gr{oetje,eeting}s,
 
-v1:
- - initial version
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Patch summary:
-
-Marek Szyprowski (3):
-  clk: samsung: exynos5433: Add IDs for PHYCLK_MIPIDPHY0_* clocks
-  clk: samsung: exynos5433: Add data for 250MHz and 278MHz PLL rates
-  arm64: dts: exynos: Add initial configuration for DISP clocks for
-    TM2/TM2e
-
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 12 ---------
- arch/arm64/boot/dts/exynos/exynos5433-tm2.dts      | 29 ++++++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos5433-tm2e.dts     | 29 ++++++++++++++++++++++
- drivers/clk/samsung/clk-exynos5433.c               |  8 ++++--
- include/dt-bindings/clock/exynos5433.h             |  5 +++-
- 5 files changed, 68 insertions(+), 15 deletions(-)
-
--- 
-1.9.1
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
