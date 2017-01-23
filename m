@@ -1,117 +1,150 @@
-Return-Path: <afaerber@suse.de>
-Subject: Re: [PATCH] clk: mediatek: Fix MT2701 dependencies
-To: Jean Delvare <jdelvare@suse.de>, linux-clk@vger.kernel.org,
- linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>
-References: <20170109113621.31d384c9@endymion>
-Cc: James Liao <jamesjj.liao@mediatek.com>, Erin Lo <erin.lo@mediatek.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Shunli Wang <shunli.wang@mediatek.com>,
- Michael Turquette <mturquette@baylibre.com>
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Message-ID: <c3da261a-eb85-9b30-d5e2-05863d2efad2@suse.de>
-Date: Mon, 9 Jan 2017 21:08:50 +0100
-MIME-Version: 1.0
-In-Reply-To: <20170109113621.31d384c9@endymion>
-Content-Type: text/plain; charset=windows-1252
+Return-Path: <pierre-louis.bossart@linux.intel.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To: linux-clk@vger.kernel.org,
+	x86@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: alsa-devel@alsa-project.org,
+	Irina Tirdea <irina.tirdea@intel.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Mark Brown <broonie@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v8 3/5] arch/x86/platform/atom: Move pmc_atom to drivers/platform/x86
+Date: Mon, 23 Jan 2017 12:07:43 -0600
+Message-Id: <1485194865-10400-4-git-send-email-pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+References: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jean,
+From: Irina Tirdea <irina.tirdea@intel.com>
 
-Am 09.01.2017 um 11:36 schrieb Jean Delvare:
-> If I say "no" to "Clock driver for Mediatek MT2701", I don't want to
-> be asked individually about each sub-driver. No means no.
-> 
-> Additionally, this driver shouldn't be proposed at all on non-mediatek
-> builds, unless build-testing.
-> 
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
-> Cc: Shunli Wang <shunli.wang@mediatek.com>
-> Cc: James Liao <jamesjj.liao@mediatek.com>
-> Cc: Erin Lo <erin.lo@mediatek.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> ---
-[...]
-> As another side note, I wonder why so many clock drivers have
-> "COMMON" in their symbol names. Looks wrong to me.
+The pmc_atom driver does not contain any architecture specific
+code. It only enables the SoC Power Management Controller driver
+for BayTrail and CherryTrail platforms.
 
-It refers to the Common Clock Framework:
-https://www.kernel.org/doc/Documentation/clk.txt
+Move the pmc_atom driver from arch/x86/platform/atom to
+drivers/platform/x86. Also clean-up and reorder include files by
+alphabetical order in pmc_atom.h
 
-> --- linux-4.10-rc2.orig/drivers/clk/mediatek/Kconfig	2017-01-01 23:31:53.000000000 +0100
-> +++ linux-4.10-rc2/drivers/clk/mediatek/Kconfig	2017-01-09 11:17:37.542344083 +0100
-> @@ -8,6 +8,7 @@ config COMMON_CLK_MEDIATEK
->  
->  config COMMON_CLK_MT2701
->  	bool "Clock driver for Mediatek MT2701"
-> +	depends on ARCH_MEDIATEK || COMPILE_TEST
->  	select COMMON_CLK_MEDIATEK
->  	default ARCH_MEDIATEK
+Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+---
+ arch/x86/Kconfig                                                 | 4 ----
+ arch/x86/platform/atom/Makefile                                  | 1 -
+ drivers/acpi/acpi_lpss.c                                         | 2 +-
+ drivers/platform/x86/Kconfig                                     | 4 ++++
+ drivers/platform/x86/Makefile                                    | 1 +
+ {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c      | 9 ++++-----
+ .../include/asm => include/linux/platform_data/x86}/pmc_atom.h   | 0
+ 7 files changed, 10 insertions(+), 11 deletions(-)
+ rename {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c (99%)
+ rename {arch/x86/include/asm => include/linux/platform_data/x86}/pmc_atom.h (100%)
 
-Should the default then become y for simplicity?
-
-Another aspect here is that this is a 32-bit SoC but it propagates into
-the arm64 configs, so maybe (ARCH_MEDIATEK && !ARM64) || COMPILE_TEST?
-
-Same for mt2701 pinctrl.
-
-http://kernel.opensuse.org/cgit/kernel-source/plain/config/arm64/default?id=ff90e915117c5d7a8bb00dc0bc1d3145ebe985ec
-
->  	---help---
-> @@ -15,37 +16,37 @@ config COMMON_CLK_MT2701
->  
->  config COMMON_CLK_MT2701_MMSYS
->  	bool "Clock driver for Mediatek MT2701 mmsys"
-> -	select COMMON_CLK_MT2701
-> +	depends on COMMON_CLK_MT2701
->  	---help---
->  	  This driver supports Mediatek MT2701 mmsys clocks.
->  
->  config COMMON_CLK_MT2701_IMGSYS
->  	bool "Clock driver for Mediatek MT2701 imgsys"
-> -	select COMMON_CLK_MT2701
-> +	depends on COMMON_CLK_MT2701
->  	---help---
->  	  This driver supports Mediatek MT2701 imgsys clocks.
->  
->  config COMMON_CLK_MT2701_VDECSYS
->  	bool "Clock driver for Mediatek MT2701 vdecsys"
-> -	select COMMON_CLK_MT2701
-> +	depends on COMMON_CLK_MT2701
->  	---help---
->  	  This driver supports Mediatek MT2701 vdecsys clocks.
->  
->  config COMMON_CLK_MT2701_HIFSYS
->  	bool "Clock driver for Mediatek MT2701 hifsys"
-> -	select COMMON_CLK_MT2701
-> +	depends on COMMON_CLK_MT2701
->  	---help---
->  	  This driver supports Mediatek MT2701 hifsys clocks.
->  
->  config COMMON_CLK_MT2701_ETHSYS
->  	bool "Clock driver for Mediatek MT2701 ethsys"
-> -	select COMMON_CLK_MT2701
-> +	depends on COMMON_CLK_MT2701
->  	---help---
->  	  This driver supports Mediatek MT2701 ethsys clocks.
->  
->  config COMMON_CLK_MT2701_BDPSYS
->  	bool "Clock driver for Mediatek MT2701 bdpsys"
-> -	select COMMON_CLK_MT2701
-> +	depends on COMMON_CLK_MT2701
->  	---help---
->  	  This driver supports Mediatek MT2701 bdpsys clocks.
->  
-
-Anyway, a step forward,
-
-Reviewed-by: Andreas Färber <afaerber@suse.de>
-
-Thanks,
-Andreas
-
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index e487493..7b4f178 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2789,10 +2789,6 @@ config X86_DMA_REMAP
+ 	bool
+ 	depends on STA2X11
+ 
+-config PMC_ATOM
+-	def_bool y
+-        depends on PCI
+-
+ source "net/Kconfig"
+ 
+ source "drivers/Kconfig"
+diff --git a/arch/x86/platform/atom/Makefile b/arch/x86/platform/atom/Makefile
+index 40983f5..57be88f 100644
+--- a/arch/x86/platform/atom/Makefile
++++ b/arch/x86/platform/atom/Makefile
+@@ -1,2 +1 @@
+-obj-$(CONFIG_PMC_ATOM)		+= pmc_atom.o
+ obj-$(CONFIG_PUNIT_ATOM_DEBUG)	+= punit_atom_debug.o
+diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
+index 8ea836c..90d112a 100644
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -18,6 +18,7 @@
+ #include <linux/mutex.h>
+ #include <linux/platform_device.h>
+ #include <linux/platform_data/clk-lpss.h>
++#include <linux/platform_data/x86/pmc_atom.h>
+ #include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/delay.h>
+@@ -31,7 +32,6 @@ ACPI_MODULE_NAME("acpi_lpss");
+ #include <asm/cpu_device_id.h>
+ #include <asm/intel-family.h>
+ #include <asm/iosf_mbi.h>
+-#include <asm/pmc_atom.h>
+ 
+ #define LPSS_ADDR(desc) ((unsigned long)&desc)
+ 
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 59aa8e3..8b1988a 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1077,3 +1077,7 @@ config MLX_CPLD_PLATFORM
+ 	  cables and fans on the wide range Mellanox IB and Ethernet systems.
+ 
+ endif # X86_PLATFORM_DEVICES
++
++config PMC_ATOM
++       def_bool y
++       depends on PCI
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+index d4111f0..49ee7ef 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -74,5 +74,6 @@ obj-$(CONFIG_INTEL_TELEMETRY)	+= intel_telemetry_core.o \
+ 				   intel_telemetry_pltdrv.o \
+ 				   intel_telemetry_debugfs.o
+ obj-$(CONFIG_INTEL_PMC_CORE)    += intel_pmc_core.o
++obj-$(CONFIG_PMC_ATOM)		+= pmc_atom.o
+ obj-$(CONFIG_MLX_PLATFORM)	+= mlx-platform.o
+ obj-$(CONFIG_MLX_CPLD_PLATFORM)	+= mlxcpld-hotplug.o
+diff --git a/arch/x86/platform/atom/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
+similarity index 99%
+rename from arch/x86/platform/atom/pmc_atom.c
+rename to drivers/platform/x86/pmc_atom.c
+index 964ff4f..e1dfb1b 100644
+--- a/arch/x86/platform/atom/pmc_atom.c
++++ b/drivers/platform/x86/pmc_atom.c
+@@ -15,14 +15,13 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
++#include <linux/debugfs.h>
++#include <linux/device.h>
+ #include <linux/init.h>
++#include <linux/io.h>
++#include <linux/platform_data/x86/pmc_atom.h>
+ #include <linux/pci.h>
+-#include <linux/device.h>
+-#include <linux/debugfs.h>
+ #include <linux/seq_file.h>
+-#include <linux/io.h>
+-
+-#include <asm/pmc_atom.h>
+ 
+ struct pmc_bit_map {
+ 	const char *name;
+diff --git a/arch/x86/include/asm/pmc_atom.h b/include/linux/platform_data/x86/pmc_atom.h
+similarity index 100%
+rename from arch/x86/include/asm/pmc_atom.h
+rename to include/linux/platform_data/x86/pmc_atom.h
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+2.7.4
