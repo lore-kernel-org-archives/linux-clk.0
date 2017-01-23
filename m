@@ -1,74 +1,30 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:47138 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753228AbdACSt7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jan 2017 13:49:59 -0500
-Date: Tue, 3 Jan 2017 10:49:56 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Adam Ford <aford173@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        Paul Walmsley <paul@pwsan.com>, Tero Kristo <t-kristo@ti.com>,
-        Richard Watts <rrw@kynesim.co.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexander Kinzer <a.kinzer@plusoptix.de>
-Subject: Re: [PATCH v3] clk: ti: omap36xx: Work around sprz319 advisory 2.1
-Message-ID: <20170103184956.GJ17126@codeaurora.org>
-References: <1480713278-6884-1-git-send-email-laurent.pinchart@ideasonboard.com>
- <20161208211601.GK5423@codeaurora.org>
- <6869868.ALm3az2NcY@avalon>
- <CAHCN7x+O6Y+pMhaWNZ+pPkjZqoF_SOckhzsfVG9c3xBKTG2MKw@mail.gmail.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAHCN7x+O6Y+pMhaWNZ+pPkjZqoF_SOckhzsfVG9c3xBKTG2MKw@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <9c11bbe550b3e4918eb70b58d1bc59bdd540c851.1485039043.git-series.maxime.ripard@free-electrons.com>
+References: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
+ <9c11bbe550b3e4918eb70b58d1bc59bdd540c851.1485039043.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 23 Jan 2017 16:01:06 +0800
+Message-ID: <CAGb2v67GKTa6BV6nisBPmnHnx+X0mFFr6hQZ_-kYGtDVXzAJbQ@mail.gmail.com>
+Subject: Re: [PATCH v4 6/8] clk: sunxi-ng: Add sun5i CCU driver
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/03, Adam Ford wrote:
-> On Thu, Dec 8, 2016 at 3:24 PM, Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
-> > Hi Stephen,
-> >
-> > On Thursday 08 Dec 2016 13:16:01 Stephen Boyd wrote:
-> >> On 12/02, Laurent Pinchart wrote:
-> >> > From: Richard Watts <rrw@kynesim.co.uk>
-> >> >
-> >> > The OMAP36xx DPLL5, driving EHCI USB, can be subject to a long-term
-> >> > frequency drift. The frequency drift magnitude depends on the VCO update
-> >> > rate, which is inversely proportional to the PLL divider. The kernel
-> >> > DPLL configuration code results in a high value for the divider, leading
-> >> > to a long term drift high enough to cause USB transmission errors. In
-> >> > the worst case the USB PHY's ULPI interface can stop responding,
-> >> > breaking USB operation completely. This manifests itself on the
-> >> > Beagleboard xM by the LAN9514 reporting 'Cannot enable port 2. Maybe the
-> >> > cable is bad?' in the kernel log.
-> >> >
-> >> > Errata sprz319 advisory 2.1 documents PLL values that minimize the
-> >> > drift. Use them automatically when DPLL5 is used for USB operation,
-> >> > which we detect based on the requested clock rate. The clock framework
-> >> > will still compute the PLL parameters and resulting rate as usual, but
-> >> > the PLL M and N values will then be overridden. This can result in the
-> >> > effective clock rate being slightly different than the rate cached by
-> >> > the clock framework, but won't cause any adverse effect to USB
-> >> > operation.
-> >> >
-> >> > Signed-off-by: Richard Watts <rrw@kynesim.co.uk>
-> >> > [Upported from v3.2 to v4.9]
-> >> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >> > ---
-> >>
-> >> Applied to clk-next
-> >
-> 
-> Since this fixes an errata issue, is there any way we can get this
-> patch applied to the older LTS kernels?  (4.4 seems to apply cleanly,
-> but I didn't try any older than that)
-> 
+On Sun, Jan 22, 2017 at 6:50 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The Allwinner A10s, A13, R8 and NextThing GR8 are all based on the same
+> silicon, and all share the same clocks.
+>
+> However, they're not packaged in the same way, and therefore not all the
+> controllers are actually available on all these SoCs.
+>
+> Introduce a clock controller driver for all these SoCs with different
+> compatibles to take that into account.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Sure. Just follow the stable kernel rules. See
-Documentation/process/stable-kernel-rules.rst, specifically
-option #2.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Acked-by: Chen-Yu Tsai <wens@csie.org>
