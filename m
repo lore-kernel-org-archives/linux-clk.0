@@ -1,47 +1,53 @@
-Return-Path: <vivek.gautam@codeaurora.org>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: andy.gross@linaro.org,
-	david.brown@linaro.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vivek Gautam <vivek.gautam@codeaurora.org>,
-	Georgi Djakov <georgi.djakov@linaro.org>
-Subject: [PATCH] clk: qcom: Fix a possible NULL pointer dereferencing
-Date: Thu,  5 Jan 2017 14:25:25 +0530
-Message-Id: <1483606525-27709-1-git-send-email-vivek.gautam@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170120220302.GA20610@bigcity.dyn.berto.se>
+References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
+ <1484921306-9967-5-git-send-email-geert+renesas@glider.be> <20170120220302.GA20610@bigcity.dyn.berto.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 23 Jan 2017 11:14:11 +0100
+Message-ID: <CAMuHMdUu=FwygW168GLVp2JtKbbB_R2wQLzq_3_TxLiu5ww6kA@mail.gmail.com>
+Subject: Re: [PATCH 4/8] clk: renesas: cpg-mssr: Add support for reset control
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Assign num_parents as 0 while registering fixed rate clocks
-in _qcom_cc_register_board_clk(), to make sure the clk framework
-doesn't dereference parent.
+Hi Niklas,
 
-Fixes: ee15faffef11 ("clk: qcom: common: Add API to register board clocks backwards compatibly")
+On Fri, Jan 20, 2017 at 11:03 PM, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+> Nice patch! It took me a while to understand why you didn't need to read
+> the register before writing to it in cpg_mssr_deassert() :-)
 
-Cc: Georgi Djakov <georgi.djakov@linaro.org>
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
----
+Yeah, deassertion and assertion are asymmetrical.
 
-Based on 'clk-next'. Build tested.
+Note that on older (not yet supported) SH/R-Mobile parts, there are no
+reset clear registers, and deassertion is symmetrical.
 
- drivers/clk/qcom/common.c | 1 +
- 1 file changed, 1 insertion(+)
+> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se=
+>
 
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index cfab7b400381..df004ead1bef 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -157,6 +157,7 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
- 
- 		init_data.name = path;
- 		init_data.ops = &clk_fixed_rate_ops;
-+		init_data.num_parents = 0;
- 
- 		ret = devm_clk_hw_register(dev, &fixed->hw);
- 		if (ret)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
