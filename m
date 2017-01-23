@@ -1,139 +1,35 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from botnar.kaiser.cx ([176.28.20.183]:52248 "EHLO botnar.kaiser.cx"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752297AbdAYVpC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 25 Jan 2017 16:45:02 -0500
-From: martin@kaiser.cx
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH v2] clk: samsung: mark s3c...._clk_sleep_init() as __init
-Date: Wed, 25 Jan 2017 22:42:25 +0100
-Message-Id: <1485380545-24815-1-git-send-email-martin@kaiser.cx>
-In-Reply-To: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
-References: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 23 Jan 2017 10:01:25 -0600
+From: Rob Herring <robh@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 2/3 v2] clk: ux500: Add device tree bindings for ABx500
+ clocks
+Message-ID: <20170123160125.ba4c54gin3vky6vq@rob-hp-laptop>
+References: <20170120132539.3013-1-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170120132539.3013-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Kaiser <martin@kaiser.cx>
+On Fri, Jan 20, 2017 at 02:25:39PM +0100, Linus Walleij wrote:
+> This adds device tree bindings for the ABx500 clocks on the
+> ST-Ericsson platforms.
+> 
+> Cc: devicetree@vger.kernel.org
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - Indicate that the abx500 clocks need to be in a device tree
+>   node under an ABx500 MFD device.
+> - Rename the example node to clock-controller.
+> ---
+>  .../devicetree/bindings/clock/stericsson,abx500.txt  | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/stericsson,abx500.txt
 
-These functions are referencing s3c...._clk_regs[], which are marked as
-__initdata. When compiling with CONFIG_DEBUG_SECTION_MISMATCH=y, this
-produces warnings like
-
-WARNING: vmlinux.o(.text+0x198350):
-Section mismatch in reference from the function s3c2410_clk_sleep_init()
-to the (unknown reference) .init.data:(unknown)
-
-Mark the s3c...._clk_sleep_init() functions as __init in
-order to fix this.
-
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
----
-v2:
-Fix the commit message, describe what the problem really is.
-(Thanks, Krzysztof)
-
- drivers/clk/samsung/clk-s3c2410.c |    4 ++--
- drivers/clk/samsung/clk-s3c2412.c |    4 ++--
- drivers/clk/samsung/clk-s3c2443.c |    4 ++--
- drivers/clk/samsung/clk-s3c64xx.c |    4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
-index d7a1e77..e0650c3 100644
---- a/drivers/clk/samsung/clk-s3c2410.c
-+++ b/drivers/clk/samsung/clk-s3c2410.c
-@@ -76,7 +76,7 @@ static void s3c2410_clk_resume(void)
- 	.resume = s3c2410_clk_resume,
- };
- 
--static void s3c2410_clk_sleep_init(void)
-+static void __init s3c2410_clk_sleep_init(void)
- {
- 	s3c2410_save = samsung_clk_alloc_reg_dump(s3c2410_clk_regs,
- 						ARRAY_SIZE(s3c2410_clk_regs));
-@@ -90,7 +90,7 @@ static void s3c2410_clk_sleep_init(void)
- 	return;
- }
- #else
--static void s3c2410_clk_sleep_init(void) {}
-+static void __init s3c2410_clk_sleep_init(void) {}
- #endif
- 
- PNAME(fclk_p) = { "mpll", "div_slow" };
-diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
-index ec873ee..b8340a4 100644
---- a/drivers/clk/samsung/clk-s3c2412.c
-+++ b/drivers/clk/samsung/clk-s3c2412.c
-@@ -69,7 +69,7 @@ static void s3c2412_clk_resume(void)
- 	.resume = s3c2412_clk_resume,
- };
- 
--static void s3c2412_clk_sleep_init(void)
-+static void __init s3c2412_clk_sleep_init(void)
- {
- 	s3c2412_save = samsung_clk_alloc_reg_dump(s3c2412_clk_regs,
- 						ARRAY_SIZE(s3c2412_clk_regs));
-@@ -83,7 +83,7 @@ static void s3c2412_clk_sleep_init(void)
- 	return;
- }
- #else
--static void s3c2412_clk_sleep_init(void) {}
-+static void __init s3c2412_clk_sleep_init(void) {}
- #endif
- 
- static struct clk_div_table divxti_d[] = {
-diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-index 5e24a17..abb935c 100644
---- a/drivers/clk/samsung/clk-s3c2443.c
-+++ b/drivers/clk/samsung/clk-s3c2443.c
-@@ -89,7 +89,7 @@ static void s3c2443_clk_resume(void)
- 	.resume = s3c2443_clk_resume,
- };
- 
--static void s3c2443_clk_sleep_init(void)
-+static void __init s3c2443_clk_sleep_init(void)
- {
- 	s3c2443_save = samsung_clk_alloc_reg_dump(s3c2443_clk_regs,
- 						ARRAY_SIZE(s3c2443_clk_regs));
-@@ -103,7 +103,7 @@ static void s3c2443_clk_sleep_init(void)
- 	return;
- }
- #else
--static void s3c2443_clk_sleep_init(void) {}
-+static void __init s3c2443_clk_sleep_init(void) {}
- #endif
- 
- PNAME(epllref_p) = { "mpllref", "mpllref", "xti", "ext" };
-diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
-index a48bd5f..7306867 100644
---- a/drivers/clk/samsung/clk-s3c64xx.c
-+++ b/drivers/clk/samsung/clk-s3c64xx.c
-@@ -121,7 +121,7 @@ static void s3c64xx_clk_resume(void)
- 	.resume = s3c64xx_clk_resume,
- };
- 
--static void s3c64xx_clk_sleep_init(void)
-+static void __init s3c64xx_clk_sleep_init(void)
- {
- 	s3c64xx_save_common = samsung_clk_alloc_reg_dump(s3c64xx_clk_regs,
- 						ARRAY_SIZE(s3c64xx_clk_regs));
-@@ -145,7 +145,7 @@ static void s3c64xx_clk_sleep_init(void)
- 		__func__);
- }
- #else
--static void s3c64xx_clk_sleep_init(void) {}
-+static void __init s3c64xx_clk_sleep_init(void) {}
- #endif
- 
- /* List of parent clocks common for all S3C64xx SoCs. */
--- 
-1.7.10.4
-
+Acked-by: Rob Herring <robh@kernel.org>
