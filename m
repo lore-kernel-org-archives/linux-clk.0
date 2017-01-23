@@ -1,53 +1,99 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-version: 1.0
-Content-type: text/plain; charset=UTF-8
-Message-id: <5887F2E6.7060205@samsung.com>
-Date: Wed, 25 Jan 2017 09:35:50 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Martin Kaiser <martin@kaiser.cx>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: samsung: mark s3c...._clk_sleep_init() as __init
-In-reply-to: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
-References: <CGME20170124213354epcas2p48cd7596378462562c66017fe39774bb0@epcas2p4.samsung.com>
- <1485293599-23581-1-git-send-email-martin@kaiser.cx>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <tony@atomide.com>
+Date: Mon, 23 Jan 2017 08:28:29 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	Paul Walmsley <paul@pwsan.com>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCHv2] Documentation: dt-bindings: Add binding documentation
+ for TI clkctrl clocks
+Message-ID: <20170123162828.GR7403@atomide.com>
+References: <20170117225302.10844-1-tony@atomide.com>
+ <40b1f6a8-fc5c-b619-9570-bc2f9731af89@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <40b1f6a8-fc5c-b619-9570-bc2f9731af89@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Martin,
-
-On 2017년 01월 25일 06:33, Martin Kaiser wrote:
-> These functions are called only by other __init functions.
-> Compiling for s3c2410 with CONFIG_DEBUG_SECTION_MISMATCH=y,
-> I get warnings like
+* Tero Kristo <t-kristo@ti.com> [170123 06:45]:
+> On 18/01/17 00:53, Tony Lindgren wrote:
+> > Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
+> > clock controller instance for each interconnect target module. The clkctrl
+> > controls functional and interface clocks for the module.
+> > 
+> > The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
+> > With this binding and a related clock device driver we can start moving the
+> > clkctrl clock handling to live in drivers/clk/ti.
+> > 
+> > Note that this binding allows keeping the clockdomain related parts out of
+> > drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
+> > a separate driver in drivers/soc/ti and genpd. If the clockdomain driver
+> > needs to know it's clocks, we can just set the the clkctrl device
+> > instances to be children of the related clockdomain device.
+> > 
+> > Each clkctrl clock can have multiple optional gate clocks, and multiple
+> > optional mux clocks. To represent this in device tree, it seems that
+> > it is best done using four clock cells #clock-cells = <4> property.
+> > 
+> > The reasons for using #clock-cells = <4> are:
+> > 
+> > 1. We need to specify the clkctrl offset from the instance base. Otherwise
+> >    we end up with a large number of device tree nodes that need to be
+> >    patched when new clocks are discovered in a clkctrl clock with minor
+> >    hardware revision changes for example
+> > 
+> > 2. On omap5 CM_L3INIT_USB_HOST_HS_CLKCTRL has ten OPTFCLKEN bits. So we
+> >    need to use a separate cell for optional gate clocks to avoid address
+> >    space conflicts
+> > 
+> > 3. Some clkctrl instances can also also optional mux clocks. To address
+> >    them properly we need also a separate cell for the optional mux
+> >    clock index
+> > 
+> > 4. The modulemode clock needs a flag passed to it for hardware or
+> >    software controlled mode
 > 
-> WARNING: vmlinux.o(.text+0x198350):
-> Section mismatch in reference from the function s3c2410_clk_sleep_init()
-> to the (unknown reference) .init.data:(unknown)
+> Hi Tony,
 > 
-> Marking the s3c...._clk_sleep() functions as __init fixes this.
+> I think #clock-cells = <4> is too much. I believe we only need 2:
 > 
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-> ---
->  drivers/clk/samsung/clk-s3c2410.c | 4 ++--
->  drivers/clk/samsung/clk-s3c2412.c | 4 ++--
->  drivers/clk/samsung/clk-s3c2443.c | 4 ++--
->  drivers/clk/samsung/clk-s3c64xx.c | 4 ++--
->  4 files changed, 8 insertions(+), 8 deletions(-)
+> - one entry for clkctrl offset
+> - one entry for clock offset within the clkctrl entry (0 = module clock, 8+
+> = opt-clocks / mux clocks / dividers)
 
+OK the less #clock-cells the better as long as it's enough :)
 
-Looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Fields 2 / 3 in your proposal are mutually exclusive, if either field is
+> non-zero, the other one must be zero. And, the opt clocks / mux / divs
+> always have different values for these.
 
-[snip]
+OK. Just to confirm the assumptions then:
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+1. The optional mux clock the consumer needs to select the right
+   source clock with with clk_set_parent()
+
+2. The optional divider clock rate must be set by the consumer
+   using clk_set_rate()
+
+And in that case we again don't need to define any artificial
+clock indexes, which is good if new clocks are discovered between
+various SoC revisions.
+
+> Field 4 is kind of redundant also, as the module clock must be registered at
+> the clkctrl probe time, it is too late for the clock consumer to provide the
+> proper setting for the clock during its own probe. It seems I need to add
+> static data to driver which basically has this information in place already.
+
+OK yeah good point, the "clocks" is a consumer property.
+
+So in that case we must also assume that if any clock consumer needs
+to change between HWSUP or SWSUP, it needs to be done with some yet
+to be determined API. We have not needed that so far AFAIK though.
+
+If there are no issues with the above, I'm naturally fine using the
+#clock-cells = <2> :)
+
+Regards,
+
+Tony
