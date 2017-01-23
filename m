@@ -1,93 +1,99 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Fri, 27 Jan 2017 16:59:14 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: Re: [PATCH v2 7/9] dmaengine: sun6i: allow build on ARM64 platforms
- (sun50i)
-Message-ID: <20170127155914.fwbssmehlgwf5q7j@lukather>
-References: <20170126154859.55855-1-icenowy@aosc.xyz>
- <20170126154859.55855-8-icenowy@aosc.xyz>
-MIME-Version: 1.0
-In-Reply-To: <20170126154859.55855-8-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
- Vinod Koul <vinod.koul@intel.com>, Andre Przywara <andre.przywara@arm.com>,
- Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com,
- linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
- linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
- Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============1169428816459833012=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
-List-ID: <linux-clk.vger.kernel.org>
-
-
---===============1169428816459833012==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ogvszedoamq4z6gj"
-Content-Disposition: inline
-
-
---ogvszedoamq4z6gj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jan 26, 2017 at 11:48:57PM +0800, Icenowy Zheng wrote:
-> As 64-bot Allwinner H5 SoC has the same DMA engine with H3, the DMA
-> driver should be allowed to be built for ARM64, in order to make it work =
-on H5.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Thanks,
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---ogvszedoamq4z6gj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYi25SAAoJEBx+YmzsjxAgcLIQAIK9OBWPs/lZ+XHaJA9Rg0eM
-drnCp6rcGkrAiMbhz3qNLLyZgBJY5DqHwe6HGt5EF/mukAHFv3VgnsckgFGvw8wa
-TOd0dmka7lDkNMZboID0W/QVZwSgyso6X88hFhPAjoZP7zTHi/KSu6ylAb7/0iiW
-MJh1u890NhSDMm4k5fUArdsNBstrTF+bfOeEQNqucTqUva42j19JRO03dRMfXXRH
-/bQGgwjGHgRRyTyaWSiL/l8JPyT/TB8BeAaNmELjeIcbxjlA1IJbfJnqdJDq0uI4
-iIpMdeuM+2ToUZGu+4ftq4jxqVvpSnVUlLUr2HXIFQ43DptLgSGVtQwZ3IiWxHOa
-6Qu/h4gnhbBKdrrjFZxLlKCoPAeK0pQ+F2lgVTpW2Bbgq1gqRp9kQvTmuYiL1rzl
-EYpsKtzZjyNMjK87TLmwb6ST6QT+Spfph2KcQPeYRqu5E+5r0orWrOWCLD5/UDNK
-6tbh5lhICzTv+MOIUfnXT2FCqxob9sq36kyqBNqVXVZzvcf5Gy32kKK56ZSl0LQ1
-PFGLct0Dsjo7C6lpc2Ii/gmDKuNbKbSq5rO8o5Xjy0NsnFyHTtYeT0ZMD5tRep1H
-XAm04muuJCFu/y5+m3/8cmgvA1p3Y0rC4xHViX3Lnf5CxFtIrKwCb2vJJWb6OMZk
-BHIC7LufIPpe0ByFpQOi
-=qCeg
------END PGP SIGNATURE-----
-
---ogvszedoamq4z6gj--
-
-
---===============1169428816459833012==
+Return-Path: <ping.bai@nxp.com>
+From: Jacky Bai <ping.bai@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam
+	<fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com"
+	<jacky.baip@gmail.com>, Anson Huang <anson.huang@nxp.com>
+Subject: RE: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
+ for imx6sll
+Date: Mon, 23 Jan 2017 07:17:30 +0000
+Message-ID: <AM3PR04MB530E214A598B06ECFFE551487720@AM3PR04MB530.eurprd04.prod.outlook.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-6-git-send-email-ping.bai@nxp.com>
+ <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
+ <AM3PR04MB5304992095753B761E66A9A87640@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <CACRpkdYTpEHyzBY-mA4YUsj=xt46Pibka3-4VHwUXosfgbgp1Q@mail.gmail.com>
+ <AM3PR04MB530A88C5C0E7C6AD2C59B9E87790@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <CACRpkda1a4+yOrzBnKs6J84PS0StwQ68gHxDub_u7i5ofU9s7w@mail.gmail.com>
+ <AM3PR04MB530F532D867C08824DADDC9877C0@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <CACRpkdaxvf6eHujfvKuOsRb69aL8+4jTE-aR3a6ywhytTEu6Hw@mail.gmail.com>
+ <20170123060454.GD5662@dragon>
+In-Reply-To: <20170123060454.GD5662@dragon>
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+List-ID: <linux-clk.vger.kernel.org>
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> From: Shawn Guo [mailto:shawnguo@kernel.org]
+> > >>
+> > >> > Another thing is that we can use a pins-tool program developed by
+> > >> > NXP to  generate the pinctrl configuration code that can be used
+> > >> > directly in dts. This tiny program can avoid pin function
+> > >> > conflict. As on i.MX, there are so may pins, each pin can be used =
+for up 8
+> function.
+> > >> > Configuring the pins is a time-consuming work.  This tools is
+> > >> > very useful for
+> > >> customer to generate the dts code.
+> > >>
+> > >> I understand, but every silicon vendor has such a tool, all are
+> > >> different, proprietary and unfriendly to programmers and open
+> > >> source developers, who need to understand how the hardware is
+> > >> working without magic tools and secret data sheets to fix bugs.
+> > >>
+> > >> For the people working with maintaining the code it is paramount
+> > >> that DTS files are self-descriptive.
+> > >
+> > > OK.  Thanks for your comments.  Adding generic-pinconf in imx
+> > > pinctrl needs some time to finish and the legacy method still need be=
+ here
+> even if generic-pinconf is added.
+> > > Do you plan to pick this legacy binding patch for now?
+> >
+> > As I said earlier:
+> >
+> > > atleast I need an indication from one of the i.MX maintainers how
+> > > they want to proceed.
+>=20
+> Sorry for being late for the discussion.
+>=20
+> To be honest, I did not really expect so many i.MX6 variants coming to us=
+.  Just
+> out of curiosity, are there any more in the pipeline to come, or is this =
+the last
+> known one?
+>=20
 
---===============1169428816459833012==--
+AFAIK, this should be the last variant of i.MX6. But not the last one of i.=
+MX family.
+
+> I understand that there are now more generic support available at pinctrl=
+ core
+> level for us to use than the time we initial designed i.MX pinctrl driver=
+.  But I
+> intend to agree with Jacky that imx6sll can be supported by the existing =
+driver,
+> since it doesn't require any additional driver changes.
+>=20
+> If any new generation of i.MX family require changes on the existing pinc=
+trl
+> driver, we should probably push back for a redesign to use generic suppor=
+t as
+> much as possible.  @Jacky, how does i.MX8 pinctrl look like?  How same or
+> different as/from i.MX6 pinctrl?
+>=20
+
+i.MX8 kernel support is in development stage. The code has not been finaliz=
+ed.
+For now, i.MX8 shares most of the pinctrl code with i.MX6 and use the same =
+pinconfig method.
+
+> Just my opinion.
+>=20
+> Shawn
