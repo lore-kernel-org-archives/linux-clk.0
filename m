@@ -1,94 +1,199 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Tue, 17 Jan 2017 10:05:49 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: Re: [PATCH v2 1/4] arm: sunxi: add support for V3s SoC
-Message-ID: <20170117090549.uqwsiwmclzhx7456@lukather>
-References: <20170116180116.36729-2-icenowy@aosc.xyz>
-MIME-Version: 1.0
-In-Reply-To: <20170116180116.36729-2-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Zepan <715805855@qq.com>,
- linux-doc@vger.kernel.org, linux-sunxi@googlegroups.com,
- Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============2072468263035632966=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <pierre-louis.bossart@linux.intel.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To: linux-clk@vger.kernel.org,
+	x86@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: alsa-devel@alsa-project.org,
+	Irina Tirdea <irina.tirdea@intel.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Mark Brown <broonie@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v8 4/5] platform/x86: Enable Atom PMC platform clocks
+Date: Mon, 23 Jan 2017 12:07:44 -0600
+Message-Id: <1485194865-10400-5-git-send-email-pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+References: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Irina Tirdea <irina.tirdea@intel.com>
 
---===============2072468263035632966==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dctuwbv46e3jpg3o"
-Content-Disposition: inline
+The BayTrail and CherryTrail platforms provide platform clocks
+through their Power Management Controller (PMC).
 
+The SoC supports up to 6 clocks (PMC_PLT_CLK[0..5]) with a
+frequency of either 19.2 MHz (PLL) or 25 MHz (XTAL) for BayTrail
+and a frequency of 19.2 MHz (XTAL) for CherryTrail. These clocks
+are available for general system use, where appropriate. For example,
+the usage for platform clocks suggested in the datasheet is the
+following:
+  PLT_CLK[0..2] - Camera
+  PLT_CLK[3] - Audio Codec
+  PLT_CLK[4] -
+  PLT_CLK[5] - COMMs
 
---dctuwbv46e3jpg3o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
+---
+ drivers/platform/x86/Kconfig    |  1 +
+ drivers/platform/x86/pmc_atom.c | 79 +++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 77 insertions(+), 3 deletions(-)
 
-On Tue, Jan 17, 2017 at 02:01:13AM +0800, Icenowy Zheng wrote:
-> Allwinner V3s is a low-end single-core Cortex-A7 SoC, with 64MB
-> integrated DRAM, and several peripherals.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-> ---
-> Changes in v2:
-> - Used linux-sunxi.org wiki hosted address of V3s datasheet.
->=20
-> Note: the V3s datasheet contains its user manual.
-
-That would be great to use User Manual in the filename rather than
-datasheet then. The datasheet is something different.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---dctuwbv46e3jpg3o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYfd5tAAoJEBx+YmzsjxAg8XsQALZGuB73kAyxf01CoC+QE7xl
-n1/Snxyu+u1MIwJNNEkgERxbBXutVLJT20XAe7WUFS8D0vcGwig2/r4ejmQkbE/r
-MxSkKcwomiU/w3FTvsHZTNgFRWvbpvZNfLpEG1jPU0uMJn/mp03siGERWZaWdfEI
-CxIQ8Pk2lF3CTtnEq+aQwDDta14U8bLvFHjEJ/xTsU/G8CpqCD8hBEBxNpaytuJm
-E9/YJLi0xQoTsMsp6pmG7Xqz8ugcUGv+n5iSU9oOrZubPxNTeHqFSPcMY3piLRaJ
-aj/TQnZG0CmcdVHGc7MUSHsqblEpQ47ncjCe0Z6dEhW/kPEPbBenqsoKf62GOwIG
-RaxQI4lN4Bu+V/KURO4CT5CoV0WAybuiEeIsGnm/QVs0qNQ3WRZaF4qK6NcXXDoK
-nA/Jjj8yoRSpsdEBVaj8Mp46f1HfA6wh2IWH4l+hsNWV7T/uu0AFiNMOddhoFyT5
-UKixblNRkLPlhJOwytkvENxgPDEti2UQ8h8qE3NiPSerF3FomB7as+5yEqdR7Y9N
-oJLI6ZiZ9H6mXeAC6oVRMbgXncNSNJoFuhugZwcwirqNRYTDQEEDrCxVzpUt/FM4
-ibRSOHqm4WGI75dSTtQslmrdBbG96LdkoyRG51CoWaKYo84q+hC8PUPdqBygD39P
-vzzNxAS2i8I5aKt/nEtI
-=67pK
------END PGP SIGNATURE-----
-
---dctuwbv46e3jpg3o--
-
-
---===============2072468263035632966==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============2072468263035632966==--
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 8b1988a..2c95f77 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1081,3 +1081,4 @@ endif # X86_PLATFORM_DEVICES
+ config PMC_ATOM
+        def_bool y
+        depends on PCI
++       select COMMON_CLK
+diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
+index e1dfb1b..77bac85 100644
+--- a/drivers/platform/x86/pmc_atom.c
++++ b/drivers/platform/x86/pmc_atom.c
+@@ -19,7 +19,9 @@
+ #include <linux/device.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
++#include <linux/platform_data/x86/clk-pmc-atom.h>
+ #include <linux/platform_data/x86/pmc_atom.h>
++#include <linux/platform_device.h>
+ #include <linux/pci.h>
+ #include <linux/seq_file.h>
+ 
+@@ -36,6 +38,11 @@ struct pmc_reg_map {
+ 	const struct pmc_bit_map *pss;
+ };
+ 
++struct pmc_data {
++	const struct pmc_reg_map *map;
++	const struct pmc_clk *clks;
++};
++
+ struct pmc_dev {
+ 	u32 base_addr;
+ 	void __iomem *regmap;
+@@ -49,6 +56,29 @@ struct pmc_dev {
+ static struct pmc_dev pmc_device;
+ static u32 acpi_base_addr;
+ 
++static const struct pmc_clk byt_clks[] = {
++	{
++		.name = "xtal",
++		.freq = 25000000,
++		.parent_name = NULL,
++	},
++	{
++		.name = "pll",
++		.freq = 19200000,
++		.parent_name = "xtal",
++	},
++	{},
++};
++
++static const struct pmc_clk cht_clks[] = {
++	{
++		.name = "xtal",
++		.freq = 19200000,
++		.parent_name = NULL,
++	},
++	{},
++};
++
+ static const struct pmc_bit_map d3_sts_0_map[] = {
+ 	{"LPSS1_F0_DMA",	BIT_LPSS1_F0_DMA},
+ 	{"LPSS1_F1_PWM1",	BIT_LPSS1_F1_PWM1},
+@@ -168,6 +198,16 @@ static const struct pmc_reg_map cht_reg_map = {
+ 	.pss		= cht_pss_map,
+ };
+ 
++static const struct pmc_data byt_data = {
++	.map = &byt_reg_map,
++	.clks = byt_clks,
++};
++
++static const struct pmc_data cht_data = {
++	.map = &cht_reg_map,
++	.clks = cht_clks,
++};
++
+ static inline u32 pmc_reg_read(struct pmc_dev *pmc, int reg_offset)
+ {
+ 	return readl(pmc->regmap + reg_offset);
+@@ -381,10 +421,37 @@ static int pmc_dbgfs_register(struct pmc_dev *pmc)
+ }
+ #endif /* CONFIG_DEBUG_FS */
+ 
++static int pmc_setup_clks(struct pci_dev *pdev, void __iomem *pmc_regmap,
++			  const struct pmc_data *pmc_data)
++{
++	struct platform_device *clkdev;
++	struct pmc_clk_data *clk_data;
++
++	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
++
++	clk_data->base = pmc_regmap; /* offset is added by client */
++	clk_data->clks = pmc_data->clks;
++
++	clkdev = platform_device_register_data(&pdev->dev, "clk-pmc-atom",
++					       PLATFORM_DEVID_NONE,
++					       clk_data, sizeof(*clk_data));
++	if (IS_ERR(clkdev)) {
++		kfree(clk_data);
++		return PTR_ERR(clkdev);
++	}
++
++	kfree(clk_data);
++
++	return 0;
++}
++
+ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+ 	struct pmc_dev *pmc = &pmc_device;
+-	const struct pmc_reg_map *map = (struct pmc_reg_map *)ent->driver_data;
++	const struct pmc_data *data = (struct pmc_data *)ent->driver_data;
++	const struct pmc_reg_map *map = data->map;
+ 	int ret;
+ 
+ 	/* Obtain ACPI base address */
+@@ -413,6 +480,12 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (ret)
+ 		dev_warn(&pdev->dev, "debugfs register failed\n");
+ 
++	/* Register platform clocks - PMC_PLT_CLK [0..5] */
++	ret = pmc_setup_clks(pdev, pmc->regmap, data);
++	if (ret)
++		dev_warn(&pdev->dev, "platform clocks register failed: %d\n",
++			 ret);
++
+ 	pmc->init = true;
+ 	return ret;
+ }
+@@ -423,8 +496,8 @@ static int pmc_setup_dev(struct pci_dev *pdev, const struct pci_device_id *ent)
+  * used by pci_match_id() call below.
+  */
+ static const struct pci_device_id pmc_pci_ids[] = {
+-	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_VLV_PMC), (kernel_ulong_t)&byt_reg_map },
+-	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_CHT_PMC), (kernel_ulong_t)&cht_reg_map },
++	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_VLV_PMC), (kernel_ulong_t)&byt_data },
++	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_CHT_PMC), (kernel_ulong_t)&cht_data },
+ 	{ 0, },
+ };
+ 
+-- 
+2.7.4
