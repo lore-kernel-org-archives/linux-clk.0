@@ -1,48 +1,53 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <pierre-louis.bossart@linux.intel.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To: linux-clk@vger.kernel.org,
+	x86@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: alsa-devel@alsa-project.org,
+	Irina Tirdea <irina.tirdea@intel.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Takashi Iwai <tiwai@suse.com>,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 10/11] arm64: dts: allwinner: Remove no longer used pinctrl/sun4i-a10.h header
-Date: Tue, 24 Jan 2017 10:32:29 +0800
-Message-Id: <20170124023230.3990-11-wens@csie.org>
-In-Reply-To: <20170124023230.3990-1-wens@csie.org>
-References: <20170124023230.3990-1-wens@csie.org>
+	linux-acpi@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Mark Brown <broonie@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v8 1/5] clk: Make x86/ conditional on CONFIG_COMMON_CLK
+Date: Mon, 23 Jan 2017 12:07:41 -0600
+Message-Id: <1485194865-10400-2-git-send-email-pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+References: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-All dts files for the sunxi platform have been switched to the generic
-pinconf bindings. As a result, the sunxi specific pinctrl macros are
-no longer used.
+Fix Makefile for x86 support, dependency on CONFIG_COMMON_CLK
+was not explicit
 
-Remove the #include entry with the following command:
-
-    sed -i -e '/pinctrl\/sun4i-a10.h/D' \
-	arch/arm64/boot/dts/allwinner/*.dts?
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Fixes: 701190fd7419 ('clk: x86: add support for Lynxpoint LPSS clocks')
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/clk/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 99b6bb1e141c..6ec831177b22 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -44,7 +44,6 @@
- 
- #include <dt-bindings/clock/sun50i-a64-ccu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
--#include <dt-bindings/pinctrl/sun4i-a10.h>
- #include <dt-bindings/reset/sun50i-a64-ccu.h>
- 
- / {
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 925081e..42042c0 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -87,6 +87,8 @@ obj-y					+= ti/
+ obj-$(CONFIG_CLK_UNIPHIER)		+= uniphier/
+ obj-$(CONFIG_ARCH_U8500)		+= ux500/
+ obj-$(CONFIG_COMMON_CLK_VERSATILE)	+= versatile/
++ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-$(CONFIG_X86)			+= x86/
++endif
+ obj-$(CONFIG_ARCH_ZX)			+= zte/
+ obj-$(CONFIG_ARCH_ZYNQ)			+= zynq/
 -- 
-2.11.0
+2.7.4
