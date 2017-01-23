@@ -1,237 +1,99 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: [PATCH v5 08/12] mmc: sdhci-xenon: Add SoC PHY PAD voltage control
-Date: Wed, 11 Jan 2017 18:19:11 +0100
-Message-Id: <09eb14b06f2745c155202b694289c22b495809fb.1484154449.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20170121221309.rf6tpidpipoe2tfj@lukather>
+References: <cover.5df5469d9c7a6233e225a875dca513a03b05e871.1484897383.git-series.maxime.ripard@free-electrons.com>
+ <8e38914c705c32f3f0daa4a16979cbb9cae5e689.1484897383.git-series.maxime.ripard@free-electrons.com>
+ <CAGb2v65p9rQv+AQqTVs=wtJbesQNF36YNdeTSSGp=c9SSyjViw@mail.gmail.com> <20170121221309.rf6tpidpipoe2tfj@lukather>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 23 Jan 2017 13:24:26 +0800
+Message-ID: <CAGb2v64ANkw1B=o6pSLv_jv_j0+TAsr9F9mUfPXNkL-QKj5HUA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/7] clk: sunxi-ng: Implement multiplier maximum
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Hu Ziji <huziji@marvell.com>
+On Sun, Jan 22, 2017 at 6:13 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Sat, Jan 21, 2017 at 09:27:42AM +0800, Chen-Yu Tsai wrote:
+>> On Fri, Jan 20, 2017 at 3:29 PM, Maxime Ripard
+>> <maxime.ripard@free-electrons.com> wrote:
+>> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>> > ---
+>> >  drivers/clk/sunxi-ng/ccu_mult.c | 16 +++++++++++++---
+>> >  drivers/clk/sunxi-ng/ccu_mult.h | 10 ++++++----
+>> >  drivers/clk/sunxi-ng/ccu_nk.c   |  8 ++++----
+>> >  drivers/clk/sunxi-ng/ccu_nkm.c  |  8 ++++----
+>> >  drivers/clk/sunxi-ng/ccu_nkmp.c |  8 ++++----
+>> >  drivers/clk/sunxi-ng/ccu_nm.c   |  4 ++--
+>> >  6 files changed, 33 insertions(+), 21 deletions(-)
+>> >
+>> > diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+>> > index 8b7ee7baa85b..8724c01171b1 100644
+>> > --- a/drivers/clk/sunxi-ng/ccu_mult.c
+>> > +++ b/drivers/clk/sunxi-ng/ccu_mult.c
+>> > @@ -40,8 +40,13 @@ static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
+>> >         struct ccu_mult *cm = data;
+>> >         struct _ccu_mult _cm;
+>> >
+>> > -       _cm.min = 1;
+>> > -       _cm.max = 1 << cm->mult.width;
+>> > +       _cm.min = cm->mult.min;
+>>
+>> This particular line should probably be in a separate patch fixing
+>> commit 2beaa601c849 ("clk: sunxi-ng: Implement minimum for multipliers")?
+>> It kind of sticks out, and doesn't match the commit message.
+>
+> Indeed (also because there's no commit message, I'll fix that.)
+>
+>> > +
+>> > +       if (cm->mult.max)
+>> > +               _cm.max = cm->mult.max;
+>> > +       else
+>> > +               _cm.max = (1 << cm->mult.width) + cm->mult.offset - 1;
+>> > +
+>> >         ccu_mult_find_best(parent_rate, rate, &_cm);
+>> >
+>> >         return parent_rate * _cm.mult;
+>> > @@ -114,7 +119,12 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
+>> >                                                 &parent_rate);
+>> >
+>> >         _cm.min = cm->mult.min;
+>> > -       _cm.max = 1 << cm->mult.width;
+>> > +
+>> > +       if (cm->mult.max)
+>> > +               _cm.max = cm->mult.max;
+>> > +       else
+>> > +               _cm.max = (1 << cm->mult.width) + cm->mult.offset - 1;
+>>
+>> The changes look good. Thinking about this more, you might need to
+>> adjust the default minimum to account for the offset as well? At
+>> the moment it doesn't really affect us, as the offset is either
+>> 1 or 0, which means a minimum of 1 is equally good. But leaving
+>> a potential error in there doesn't feel right.
+>
+> I'm not sure we should really care, I'm not aware of any SoC that
+> would have such a clock, either in the "old" or "new" ones. I'm not
+> sure we should fix that isn't broken.
 
-Some SoCs have PHY PAD outside Xenon IP.
-PHY PAD voltage should match signalling voltage in use.
+Indeed. Here's hoping Allwinner doesn't try anything "smart".
+What I'm concerned about is that we are leaving gaps in the clk
+driver that will make it harder to understand for newcomers.
 
-Add generic SoC PHY PAD voltage control interface.
-Implement Aramda-3700 SoC PHY PAD voltage control.
+ChenYu
 
-Signed-off-by: Hu Ziji <huziji@marvell.com>
-Tested-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/mmc/host/sdhci-xenon-phy.c | 116 +++++++++++++++++++++++++++++-
- drivers/mmc/host/sdhci-xenon.c     |   2 +-
- drivers/mmc/host/sdhci-xenon.h     |   2 +-
- 3 files changed, 119 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/sdhci-xenon-phy.c b/drivers/mmc/host/sdhci-xenon-phy.c
-index f410712d24ea..1221754b7a3d 100644
---- a/drivers/mmc/host/sdhci-xenon-phy.c
-+++ b/drivers/mmc/host/sdhci-xenon-phy.c
-@@ -143,6 +143,27 @@ enum phy_type_enum {
- 	NR_PHY_TYPES
- };
- 
-+enum soc_pad_ctrl_type {
-+	SOC_PAD_SD,
-+	SOC_PAD_FIXED_1_8V,
-+};
-+
-+struct soc_pad_ctrl_table {
-+	const char *soc;
-+	void (*set_soc_pad)(struct sdhci_host *host,
-+			    unsigned char signal_voltage);
-+};
-+
-+struct soc_pad_ctrl {
-+	/* Register address of SOC PHY PAD ctrl */
-+	void __iomem	*reg;
-+	/* SOC PHY PAD ctrl type */
-+	enum soc_pad_ctrl_type pad_type;
-+	/* SOC specific operation to set SOC PHY PAD */
-+	void (*set_soc_pad)(struct sdhci_host *host,
-+			    unsigned char signal_voltage);
-+};
-+
- static struct xenon_emmc_phy_regs xenon_emmc_5_0_phy_regs = {
- 	.timing_adj	= XENON_EMMC_5_0_PHY_TIMING_ADJUST,
- 	.func_ctrl	= XENON_EMMC_5_0_PHY_FUNC_CONTROL,
-@@ -176,6 +197,8 @@ struct emmc_phy_params {
- 	u8	nr_tun_times;
- 	/* Divider for calculating Tuning Step */
- 	u8	tun_step_divider;
-+
-+	struct soc_pad_ctrl pad_ctrl;
- };
- 
- static int alloc_emmc_phy(struct sdhci_xenon_priv *priv)
-@@ -252,6 +275,45 @@ static int emmc_phy_init(struct sdhci_host *host)
- 	return 0;
- }
- 
-+#define ARMADA_3700_SOC_PAD_1_8V	0x1
-+#define ARMADA_3700_SOC_PAD_3_3V	0x0
-+
-+static void armada_3700_soc_pad_voltage_set(struct sdhci_host *host,
-+					    unsigned char signal_voltage)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	struct emmc_phy_params *params = priv->phy_params;
-+
-+	if (params->pad_ctrl.pad_type == SOC_PAD_FIXED_1_8V) {
-+		writel(ARMADA_3700_SOC_PAD_1_8V, params->pad_ctrl.reg);
-+	} else if (params->pad_ctrl.pad_type == SOC_PAD_SD) {
-+		if (signal_voltage == MMC_SIGNAL_VOLTAGE_180)
-+			writel(ARMADA_3700_SOC_PAD_1_8V, params->pad_ctrl.reg);
-+		else if (signal_voltage == MMC_SIGNAL_VOLTAGE_330)
-+			writel(ARMADA_3700_SOC_PAD_3_3V, params->pad_ctrl.reg);
-+	}
-+}
-+
-+/*
-+ * Set SOC PHY voltage PAD control register,
-+ * according to the operation voltage on PAD.
-+ * The detailed operation depends on SOC implementaion.
-+ */
-+static void emmc_phy_set_soc_pad(struct sdhci_host *host,
-+				 unsigned char signal_voltage)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	struct emmc_phy_params *params = priv->phy_params;
-+
-+	if (!params->pad_ctrl.reg)
-+		return;
-+
-+	if (params->pad_ctrl.set_soc_pad)
-+		params->pad_ctrl.set_soc_pad(host, signal_voltage);
-+}
-+
- /*
-  * Enable eMMC PHY HW DLL
-  * DLL should be enabled and stable before HS200/SDR104 tuning,
-@@ -621,6 +683,51 @@ static void emmc_phy_set(struct sdhci_host *host,
- 	dev_dbg(mmc_dev(host->mmc), "eMMC PHY setting completes\n");
- }
- 
-+static int get_dt_pad_ctrl_data(struct sdhci_host *host,
-+				struct device_node *np,
-+				struct emmc_phy_params *params)
-+{
-+	int ret = 0;
-+	const char *name;
-+	struct resource iomem;
-+
-+	if (of_device_is_compatible(np, "marvell,armada-3700-sdhci"))
-+		params->pad_ctrl.set_soc_pad = armada_3700_soc_pad_voltage_set;
-+	else
-+		return 0;
-+
-+	if (of_address_to_resource(np, 1, &iomem)) {
-+		dev_err(mmc_dev(host->mmc), "Unable to find SOC PAD ctrl register address for %s\n",
-+			np->name);
-+		return -EINVAL;
-+	}
-+
-+	params->pad_ctrl.reg = devm_ioremap_resource(mmc_dev(host->mmc),
-+						     &iomem);
-+	if (IS_ERR(params->pad_ctrl.reg)) {
-+		dev_err(mmc_dev(host->mmc), "Unable to get SOC PHY PAD ctrl regiser for %s\n",
-+			np->name);
-+		return PTR_ERR(params->pad_ctrl.reg);
-+	}
-+
-+	ret = of_property_read_string(np, "marvell,pad-type", &name);
-+	if (ret) {
-+		dev_err(mmc_dev(host->mmc), "Unable to determine SOC PHY PAD ctrl type\n");
-+		return ret;
-+	}
-+	if (!strcmp(name, "sd")) {
-+		params->pad_ctrl.pad_type = SOC_PAD_SD;
-+	} else if (!strcmp(name, "fixed-1-8v")) {
-+		params->pad_ctrl.pad_type = SOC_PAD_FIXED_1_8V;
-+	} else {
-+		dev_err(mmc_dev(host->mmc), "Unsupported SOC PHY PAD ctrl type %s\n",
-+			name);
-+		return -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
- static int emmc_phy_parse_param_dt(struct sdhci_host *host,
- 				   struct device_node *np,
- 				   struct emmc_phy_params *params)
-@@ -654,7 +761,14 @@ static int emmc_phy_parse_param_dt(struct sdhci_host *host,
- 	else
- 		params->tun_step_divider = XENON_TUNING_STEP_DIVIDER;
- 
--	return 0;
-+	return get_dt_pad_ctrl_data(host, np, params);
-+}
-+
-+/* Set SOC PHY Voltage PAD */
-+void xenon_soc_pad_ctrl(struct sdhci_host *host,
-+			unsigned char signal_voltage)
-+{
-+	emmc_phy_set_soc_pad(host, signal_voltage);
- }
- 
- /*
-diff --git a/drivers/mmc/host/sdhci-xenon.c b/drivers/mmc/host/sdhci-xenon.c
-index e51079b2d01c..be93af56c348 100644
---- a/drivers/mmc/host/sdhci-xenon.c
-+++ b/drivers/mmc/host/sdhci-xenon.c
-@@ -335,6 +335,8 @@ static int xenon_start_signal_voltage_switch(struct mmc_host *mmc,
- 	 */
- 	enable_xenon_internal_clk(host);
- 
-+	xenon_soc_pad_ctrl(host, ios->signal_voltage);
-+
- 	if (priv->init_card_type == MMC_TYPE_MMC)
- 		return xenon_emmc_signal_voltage_switch(mmc, ios);
- 
-diff --git a/drivers/mmc/host/sdhci-xenon.h b/drivers/mmc/host/sdhci-xenon.h
-index e87639774bca..57e7cb463413 100644
---- a/drivers/mmc/host/sdhci-xenon.h
-+++ b/drivers/mmc/host/sdhci-xenon.h
-@@ -104,4 +104,6 @@ struct sdhci_xenon_priv {
- int xenon_phy_adj(struct sdhci_host *host, struct mmc_ios *ios);
- int xenon_phy_parse_dt(struct device_node *np,
- 		       struct sdhci_host *host);
-+void xenon_soc_pad_ctrl(struct sdhci_host *host,
-+			unsigned char signal_voltage);
- #endif
--- 
-git-series 0.9.1
+>> Said change would be against patch 2, so
+>>
+>> Acked-by: Chen-Yu Tsai <wens@csie.org>
+>>
+>> for this patch once the first comment is addressed.
+>
+> I'll do that change and respin the serie, thanks!
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
