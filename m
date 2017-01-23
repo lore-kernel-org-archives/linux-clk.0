@@ -1,79 +1,38 @@
-Return-Path: <ping.bai@nxp.com>
-From: Jacky Bai <ping.bai@nxp.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: Shawn Guo <shawnguo@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer
-	<kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "Daniel
- Lezcano" <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk
-	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com"
-	<jacky.baip@gmail.com>
-Subject: RE: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
- for imx6sll
-Date: Mon, 9 Jan 2017 02:32:36 +0000
-Message-ID: <AM3PR04MB5304992095753B761E66A9A87640@AM3PR04MB530.eurprd04.prod.outlook.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-6-git-send-email-ping.bai@nxp.com>
- <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
-In-Reply-To: <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sboyd@codeaurora.org>
+Subject: Re: [PATCHv4 1/5] clk: mvebu: support for 98DX3236 SoC
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+References: <20170113091222.7132-1-chris.packham@alliedtelesis.co.nz>
+ <20170113091222.7132-2-chris.packham@alliedtelesis.co.nz>
+ <20170121004819.GA8801@codeaurora.org>
+ <be295fd327674a2ca91437456db7a047@svr-chch-ex1.atlnz.lc>
+Cc: "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring
+ <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Message-ID: <bf402123-52f5-51ee-32df-276ed7a7e832@codeaurora.org>
+Date: Mon, 23 Jan 2017 15:53:47 -0800
 MIME-Version: 1.0
+In-Reply-To: <be295fd327674a2ca91437456db7a047@svr-chch-ex1.atlnz.lc>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-PiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDA1LzEyXSBEb2N1bWVudDogZHQ6IGJpbmRpbmc6IGlt
-eDogdXBkYXRlIHBpbmN0cmwgZG9jDQo+IGZvciBpbXg2c2xsDQo+IA0KPiBPbiBUdWUsIERlYyAy
-NywgMjAxNiBhdCAxMDo0NyBBTSwgQmFpIFBpbmcgPHBpbmcuYmFpQG54cC5jb20+IHdyb3RlOg0K
-PiANCj4gPiBBZGQgcGluY3RybCBiaW5kaW5nIGRvYyB1cGRhdGUgZm9yIGlteDZzbGwuDQo+ID4N
-Cj4gPiBTaWduZWQtb2ZmLWJ5OiBCYWkgUGluZyA8cGluZy5iYWlAbnhwLmNvbT4NCj4gDQo+IEkg
-aGF2ZSB0byBwdXNoIGJhY2sgb24gdGhpcyBhIGJpdC4NCj4gDQo+ID4gK1BsZWFzZSByZWZlciB0
-byBmc2wsaW14LXBpbmN0cmwudHh0IGluIHRoaXMgZGlyZWN0b3J5IGZvciBjb21tb24NCj4gPiAr
-YmluZGluZyBwYXJ0IGFuZCB1c2FnZS4NCj4gDQo+IEkgdW5kZXJzdGFuZCB0aGF0IGl0IGlzIGJ1
-aWxkaW5nIG9uIHRvcCBvZiB0aGUgb2xkIGkuTVggYmluZGluZ3MgYW5kIHRoYXQgaXQgaGFzDQo+
-IHNvbWUga2luZCBvZiAidHJhZGl0aW9uIiBjb21pbmcgd2l0aCBpdC4NCj4gDQo+IEF0IHRoZSBz
-YW1lIHRpbWUsIHRoZSBpLk1YIGJpbmRpbmdzIGNhbWUgYWJvdXQgYmVmb3JlIHdlIGhhZCB0aGUg
-Z2VuZXJpYyBwaW4NCj4gY29udHJvbCBiaW5kaW5ncyBkZWZpbmVkLg0KPiANCj4gPiArQ09ORklH
-IGJpdHMgZGVmaW5pdGlvbjoNCj4gPiArUEFEX0NUTF9MVkUgICAgICAgICAgICAgICAgICAgICgx
-IDw8IDIyKQ0KPiA+ICtQQURfQ1RMX0hZUyAgICAgICAgICAgICAgICAgICAgICgxIDw8IDE2KQ0K
-PiA+ICtQQURfQ1RMX1BVU18xMDBLX0RPV04gICAgICAgICAgICgwIDw8IDE0KQ0KPiA+ICtQQURf
-Q1RMX1BVU180N0tfVVAgICAgICAgICAgICAgICgxIDw8IDE0KQ0KPiA+ICtQQURfQ1RMX1BVU18x
-MDBLX1VQICAgICAgICAgICAgICgyIDw8IDE0KQ0KPiA+ICtQQURfQ1RMX1BVU18yMktfVVAgICAg
-ICAgICAgICAgICgzIDw8IDE0KQ0KPiA+ICtQQURfQ1RMX1BVRSAgICAgICAgICAgICAgICAgICAg
-ICgxIDw8IDEzKQ0KPiA+ICtQQURfQ1RMX1BLRSAgICAgICAgICAgICAgICAgICAgICgxIDw8IDEy
-KQ0KPiA+ICtQQURfQ1RMX09ERSAgICAgICAgICAgICAgICAgICAgICgxIDw8IDExKQ0KPiA+ICtQ
-QURfQ1RMX1NQRUVEX0xPVyAgICAgICAgICAgICAgICgwIDw8IDYpDQo+ID4gK1BBRF9DVExfU1BF
-RURfTUVEICAgICAgICAgICAgICAgKDEgPDwgNikNCj4gPiArUEFEX0NUTF9TUEVFRF9ISUdIICAg
-ICAgICAgICAgICAoMyA8PCA2KQ0KPiA+ICtQQURfQ1RMX0RTRV9ESVNBQkxFICAgICAgICAgICAg
-ICgwIDw8IDMpDQo+ID4gK1BBRF9DVExfRFNFXzI2MG9obSAgICAgICAgICAgICAgKDEgPDwgMykN
-Cj4gPiArUEFEX0NUTF9EU0VfMTMwb2htICAgICAgICAgICAgICAoMiA8PCAzKQ0KPiA+ICtQQURf
-Q1RMX0RTRV84N29obSAgICAgICAgICAgICAgICgzIDw8IDMpDQo+ID4gK1BBRF9DVExfRFNFXzY1
-b2htICAgICAgICAgICAgICAgKDQgPDwgMykNCj4gPiArUEFEX0NUTF9EU0VfNTJvaG0gICAgICAg
-ICAgICAgICAoNSA8PCAzKQ0KPiA+ICtQQURfQ1RMX0RTRV80M29obSAgICAgICAgICAgICAgICg2
-IDw8IDMpDQo+ID4gK1BBRF9DVExfRFNFXzM3b2htICAgICAgICAgICAgICAgKDcgPDwgMykNCj4g
-PiArUEFEX0NUTF9TUkVfRkFTVCAgICAgICAgICAgICAgICAoMSA8PCAwKQ0KPiA+ICtQQURfQ1RM
-X1NSRV9TTE9XICAgICAgICAgICAgICAgICgwIDw8IDApDQo+IA0KPiBBIHdob2xlIHNsZXcgb2Yg
-dGhlc2UgaWYgbm90IGFsbCBjb3JyZXNwb25kIHRvIHRoZSBnZW5lcmljIGJpbmRpbmdzLg0KPiAN
-Cj4gSSB3b3VsZCBjb25zaWRlciBhdWdtZW50aW5nIHRoZSBjb2RlIGluIHRoZSBkcml2ZXIgdG8g
-aGFuZGxlIHRoZSBnZW5lcmljDQo+IGJpbmRpbmdzICppbiBhZGRpdGlvbiogdG8gdGhlIG9sZCBs
-ZWdhY3kgYmluZGluZ3MsIGFuZCB1c2UgdGhvc2Ugb3ZlciB0aGVzZQ0KPiByYW5kb20gY3VzdG9t
-IGJpdHMuDQo+IA0KPiBSZWFkIGRyaXZlcnMgdXNpbmcgQ09ORklHX0dFTkVSSUNfUElOQ09ORiBh
-cyBhbiBpbnNwaXJhdGlvbi4NCj4gDQo+IEZvciBleGFtcGxlIHNlZSBjb21taXQNCj4gY2VmYmYx
-YTFiMjk1MzFhOTcwYmMyOTA4YTUwYTc1ZDY0NzRmY2MzOA0KPiAicGluY3RybDogc3VueGk6IFN1
-cHBvcnQgZ2VuZXJpYyBiaW5kaW5nIg0KPiBmcm9tIE1heGltZSBSaXBhcmQsIHdoZXJlIGhlIGRv
-ZXMgYSBzaW1pbGFyIHRoaW5nIGZvciBzdW54aS4NCg0KSSBoYXZlIGxvb2sgaW50byB0aGUgYWJv
-dmUgY29tbWl0IG9uIHVzaW5nIGdlbmVyaWMgYmluZGluZy4gQnV0IEkgdGhpbmsgdGhlIGdlbmVy
-aWMgcGluY29uZg0KaXMgbm90IHZlcnkgZWFzeSB0byBhZGQgaW4gaW14IHBpbmN0cmwgRHJpdmVy
-LiBpbXggcGluY3RybCB1c2UgYSBkaWZmZXJlbnQgd2F5IHRvIHBhcnNlIHRoZSBwaW4gY29uZmln
-dXJlLg0KIA0KRWFjaCBmc2wscGluIGVudHJ5ICBsb29rcyBsaWtlIDxQSU5fRlVOQ19JRCAgQ09O
-RklHPiBpbiBkdHMsIHRoZSBDT05GSUcgaXMgdGhlIHBhZCBzZXR0aW5nIHZhbHVlIGxpa2UNCnB1
-bGwtdXAsIG9wZW4tZHJhaW4sIGRyaXZlIHN0cmVuZ3RoIGV0Yy4gVGhlIGFib3ZlIGNvbmZpZyBi
-aXQgZGVmaW5pdGlvbiBpcyBzcGVjaWZpYyB0byBlYWNoIFNPQyBpbiB0aGUgUEFEIENUTCByZWdp
-c3Rlci4NCg0KSWYgd2Ugd2FudCBzZXQgdGhlIHBpbiBjb25maWcgdG8gZW5hYmxlIGh5c3RlcmVz
-aXMsIDQ3S09obSBQdWxsIFVwLCA1ME1oeiBzcGVlZCwgODBPaG0gZHJpdmVyIHN0cmVuZ3RoDQph
-bmQgRmFzdCBTbGV3IFJhdGUsIHRoZW4gdGhlIENPTkZJRyB2YWx1ZSBzaG91bGQgYmUgMHgxNzA1
-OSggT1JzIGNvcnJlc3BvbmRpbmcgYml0IGRlZmluaXRpb24pLiBUaGlzIHZhbHVlIHdpbGwgYmUg
-c2V0IGluDQpQQUQgQ1RMIHJlZ2lzdGVyIHRvIGNvbmZpZyB0aGUgY29ycmVzcG9uZGluZyBwaW4u
-DQoNCkJSDQpKYWNreSBCYWkNCg0KPiANCj4gWW91cnMsDQo+IExpbnVzIFdhbGxlaWoNCg==
+On 01/22/2017 11:53 PM, Chris Packham wrote:
+> Not 100% sure what you mean. Something like this?
+>
+> +static void __init of_mv98dx3236_cpu_clk_setup(struct device_node *node)
+> +{
+> +       of_clk_add_provider(node, of_clk_src_simple_get, NULL);
+> +}
+>
+> Seems to work as expected (i.e. does nothing, kernel boots/runs).
+>
+
+Yep that's what I mean.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
