@@ -1,90 +1,57 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 3 Jan 2017 11:48:25 -0600
-From: Rob Herring <robh@kernel.org>
-To: Bai Ping <ping.bai@nxp.com>
-Cc: shawnguo@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org,
-	mark.rutland@arm.com, linus.walleij@linaro.org,
-	kernel@pengutronix.de, fabio.estevam@nxp.com,
-	daniel.lezcano@linaro.org, tglx@linutronix.de,
-	p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, jacky.baip@gmail.com
-Subject: Re: [PATCH v2 03/12] Document: dt: binding: imx: update clock doc
- for imx6sll
-Message-ID: <20170103174825.sbw5pjvejjm46mbm@rob-hp-laptop>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-4-git-send-email-ping.bai@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33344 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750901AbdAXXqi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Jan 2017 18:46:38 -0500
+Received: by mail-wm0-f67.google.com with SMTP id r144so38497147wme.0
+        for <linux-clk@vger.kernel.org>; Tue, 24 Jan 2017 15:46:37 -0800 (PST)
+Subject: Re: [PATCH] clk: mediatek: Fix MT8135 dependencies
+To: Jean Delvare <jdelvare@suse.de>, linux-clk@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+References: <20170124130912.14375a32@endymion>
+Cc: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <dda838f6-ba77-b3f9-7567-3cdfb4a6ccd7@gmail.com>
+Date: Wed, 25 Jan 2017 00:46:35 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1482832070-22668-4-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <20170124130912.14375a32@endymion>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Dec 27, 2016 at 05:47:41PM +0800, Bai Ping wrote:
-> Add clock binding doc uppdate for imx6sll.
 
-s/uppdate/update/
 
-> 
-> Signed-off-by: Bai Ping <ping.bai@nxp.com>
+On 01/24/2017 01:09 PM, Jean Delvare wrote:
+> The MT8135 is a 32-bit SoC, so only propose it on ARM architecture,
+> not ARM64.
+>
+> Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> Fixes: 234d511d8c15 ("clk: mediatek: Add hardware dependency")
+> Cc: Andreas Färber <afaerber@suse.de>
+> Cc: James Liao <jamesjj.liao@mediatek.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
 > ---
->  .../devicetree/bindings/clock/imx6sll-clock.txt    | 37 ++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> new file mode 100644
-> index 0000000..3a46787
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> @@ -0,0 +1,37 @@
-> +* Clock bindings for Freescale i.MX6 SLL
-> +
-> +Required properties:
-> +- compatible: Should be "fsl,imx6sll-ccm"
-> +- reg: Address and length of the register set
-> +- #clock-cells: Should be <1>
-> +- clocks: list of clock specifiers, must contain an entry for each required
-> +  entry in clock-names
-> +- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ipp_di1"
-> +
-> +The clock consumer should specify the desired clock by having the clock
-> +ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6sll-clock.h
-> +for the full list of i.MX6 SLL clock IDs.
-> +
-> +Examples:
-> +
-> +#include <dt-bindings/clock/imx6sll-clock.h>
-> +
-> +clks: ccm@020c4000 {
+>  drivers/clk/mediatek/Kconfig |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
 
-Drop leading 0s.
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-> +		compatible = "fsl,imx6sll-ccm";
-> +		reg = <0x020c4000 0x4000>;
-> +		interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-> +		#clock-cells = <1>;
-> +		clocks = <&ckil>, <&osc>, <&ipp_di0>, <&ipp_di1>;
-> +		clock-names = "ckil", "osc", "ipp_di0", "ipp_di1";
-> +};
-> +
-> +uart1: serial@02020000 {
-
-ditto.
-
-> +		compatible = "fsl,imx6sl-uart", "fsl,imx6q-uart", "fsl,imx21-uart";
-> +		reg = <0x02020000 0x4000>;
-> +		interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks = <&clks IMX6SLL_CLK_UART1_IPG>,
-> +			 <&clks IMX6SLL_CLK_UART1_SERIAL>;
-> +		clock-names = "ipg", "per";
-> +		status = "disabled";
-> +};
-> -- 
-> 1.9.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --- linux-4.10-rc4.orig/drivers/clk/mediatek/Kconfig	2017-01-24 12:55:50.192100713 +0100
+> +++ linux-4.10-rc4/drivers/clk/mediatek/Kconfig	2017-01-24 12:59:08.703066604 +0100
+> @@ -52,9 +52,9 @@ config COMMON_CLK_MT2701_BDPSYS
+>
+>  config COMMON_CLK_MT8135
+>  	bool "Clock driver for Mediatek MT8135"
+> -	depends on ARCH_MEDIATEK || COMPILE_TEST
+> +	depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
+>  	select COMMON_CLK_MEDIATEK
+> -	default ARCH_MEDIATEK
+> +	default ARCH_MEDIATEK && ARM
+>  	---help---
+>  	  This driver supports Mediatek MT8135 clocks.
+>
+>
