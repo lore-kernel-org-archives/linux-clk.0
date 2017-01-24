@@ -1,109 +1,168 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:54312 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751604AbdA3Foy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 30 Jan 2017 00:44:54 -0500
-From: Jeremy McNicoll <jeremymc@redhat.com>
-To: sboyd@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-clk@vger.kernel.org, andy.gross@linaro.org, robh@kernel.org,
-        arnd@arndb.de, bjorn.andersson@linaro.org, riteshh@codeaurora.org,
-        git@kchr.de, ulf.hansson@linaro.org, jszhang@marvell.com
-Subject: [PATCH V4 4/6] arm64: dts: smem enablement for msm8992
-Date: Sun, 29 Jan 2017 21:44:33 -0800
-Message-Id: <1485755073-6416-1-git-send-email-jeremymc@redhat.com>
-In-Reply-To: <20170127195831.GH8801@codeaurora.org>
-References: <20170127195831.GH8801@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 08/11] ARM: dts: sun8i-a23-q8-tablet: Drop pinmux setting for codec PA gpio
+Date: Tue, 24 Jan 2017 10:32:27 +0800
+Message-Id: <20170124023230.3990-9-wens@csie.org>
+In-Reply-To: <20170124023230.3990-1-wens@csie.org>
+References: <20170124023230.3990-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-SMEM allows various subsystems/processors to share
-memory/data (heap format) in order to enable various
-peripherals.
+We are moving towards handling GPIO pinmux settings that don't require
+extra bias or drive strength settings to use the GPIO bindings only.
 
-Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
+ arch/arm/boot/dts/sun8i-a23-q8-tablet.dts | 10 ----------
+ drivers/clk/sunxi-ng/ccu-sun9i-a80.c      | 24 ++++++++++++------------
+ 2 files changed, 12 insertions(+), 22 deletions(-)
 
- [ Moved sfpb_mutex and smem outside sock as they didn't have
-  'reg' entries.  Everything else is exactly the same. ]
-
- arch/arm64/boot/dts/qcom/msm8992.dtsi | 42 +++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
-index 13fb6f7..1715787 100644
---- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
-@@ -79,6 +79,19 @@
- 		regulator-always-on;
- 	};
- 
-+	sfpb_mutex: hwmutex {
-+		compatible = "qcom,sfpb-mutex";
-+		syscon = <&sfpb_mutex_regs 0x0 0x100>;
-+		#hwlock-cells = <1>;
-+	};
-+
-+	smem {
-+		compatible = "qcom,smem";
-+		memory-region = <&smem_region>;
-+		qcom,rpm-msg-ram = <&rpm_msg_ram>;
-+		hwlocks = <&sfpb_mutex 3>;
-+	};
-+
- 	soc {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-@@ -93,6 +106,11 @@
- 				<0xf9002000 0x1000>;
- 		};
- 
-+		apcs: syscon@f900d000 {
-+			compatible = "syscon";
-+			reg = <0xf900d000 0x2000>;
-+		};
-+
- 		timer@f9020000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
-@@ -183,12 +201,36 @@
- 			#power-domain-cells = <1>;
- 			reg = <0xfc400000 0x2000>;
- 		};
-+
-+		rpm_msg_ram: memory@fc428000 {
-+			compatible = "qcom,rpm-msg-ram";
-+			reg = <0xfc428000 0x4000>;
-+		};
-+
-+		sfpb_mutex_regs: syscon@fd484000 {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			compatible = "syscon";
-+			reg = <0xfd484000 0x400>;
-+		};
- 	};
- 
- 	memory {
- 		device_type = "memory";
- 		reg = <0 0 0 0>; // bootloader will update
- 	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		smem_region: smem@6a00000 {
-+			reg = <0x0 0x6a00000 0x0 0x200000>;
-+			no-map;
-+		};
-+	};
-+
+diff --git a/arch/arm/boot/dts/sun8i-a23-q8-tablet.dts b/arch/arm/boot/dts/sun8i-a23-q8-tablet.dts
+index 3ab5c0c09d93..b6958e8f2f01 100644
+--- a/arch/arm/boot/dts/sun8i-a23-q8-tablet.dts
++++ b/arch/arm/boot/dts/sun8i-a23-q8-tablet.dts
+@@ -50,7 +50,6 @@
  };
  
- 
+ &codec {
+-	pinctrl-0 = <&codec_pa_pin>;
+ 	allwinner,pa-gpios = <&pio 7 9 GPIO_ACTIVE_HIGH>; /* PH9 */
+ 	allwinner,audio-routing =
+ 		"Headphone", "HP",
+@@ -62,12 +61,3 @@
+ 		"Headset Mic", "HBIAS";
+ 	status = "okay";
+ };
+-
+-&pio {
+-	codec_pa_pin: codec_pa_pin@0 {
+-		allwinner,pins = "PH9";
+-		allwinner,function = "gpio_out";
+-		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+-		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+-	};
+-};
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+index 5626e4674f48..e13e313ce4f5 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+@@ -42,7 +42,7 @@ static struct clk_div_table pll_cpux_p_div_table[] = {
+ static struct ccu_nm pll_c0cpux_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(0),
+-	.n		= _SUNXI_CCU_MULT_OFFSET_MIN(8, 8, 0, 12),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.m		= _SUNXI_CCU_DIV_TABLE(16, 1, pll_cpux_p_div_table),
+ 	.common		= {
+ 		.reg		= 0x000,
+@@ -56,7 +56,7 @@ static struct ccu_nm pll_c0cpux_clk = {
+ static struct ccu_nm pll_c1cpux_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(1),
+-	.n		= _SUNXI_CCU_MULT_OFFSET_MIN(8, 8, 0, 12),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.m		= _SUNXI_CCU_DIV_TABLE(16, 1, pll_cpux_p_div_table),
+ 	.common		= {
+ 		.reg		= 0x004,
+@@ -78,7 +78,7 @@ static struct ccu_nm pll_c1cpux_clk = {
+ static struct ccu_nm pll_audio_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(2),
+-	.n		= _SUNXI_CCU_MULT_OFFSET_MIN(8, 8, 0, 12),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.m		= _SUNXI_CCU_DIV_OFFSET(0, 6, 0),
+ 	.common		= {
+ 		.reg		= 0x008,
+@@ -93,7 +93,7 @@ static struct ccu_nm pll_audio_clk = {
+ static struct ccu_nkmp pll_periph0_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(3),
+-	.n		= _SUNXI_CCU_MULT_OFFSET_MIN(8, 8, 0, 12),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.m		= _SUNXI_CCU_DIV(16, 1), /* input divider */
+ 	.p		= _SUNXI_CCU_DIV(18, 1), /* output divider */
+ 	.common		= {
+@@ -109,7 +109,7 @@ static struct ccu_nkmp pll_periph0_clk = {
+ static struct ccu_nkmp pll_ve_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(4),
+-	.n		= _SUNXI_CCU_MULT_OFFSET_MIN(8, 8, 0, 12),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.m		= _SUNXI_CCU_DIV(16, 1), /* input divider */
+ 	.p		= _SUNXI_CCU_DIV(18, 1), /* output divider */
+ 	.common		= {
+@@ -125,7 +125,7 @@ static struct ccu_nkmp pll_ve_clk = {
+ static struct ccu_nkmp pll_ddr_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(5),
+-	.n		= _SUNXI_CCU_MULT_OFFSET_MIN(8, 8, 0, 12),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.m		= _SUNXI_CCU_DIV(16, 1), /* input divider */
+ 	.p		= _SUNXI_CCU_DIV(18, 1), /* output divider */
+ 	.common		= {
+@@ -141,7 +141,7 @@ static struct ccu_nkmp pll_ddr_clk = {
+ static struct ccu_nm pll_video0_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(6),
+-	.n		= _SUNXI_CCU_MULT_OFFSET_MIN(8, 8, 0, 12),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.m		= _SUNXI_CCU_DIV(16, 1), /* input divider */
+ 	.common		= {
+ 		.reg		= 0x018,
+@@ -156,7 +156,7 @@ static struct ccu_nm pll_video0_clk = {
+ static struct ccu_nkmp pll_video1_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(7),
+-	.n		= _SUNXI_CCU_MULT_OFFSET_MIN(8, 8, 0, 12),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.m		= _SUNXI_CCU_DIV(16, 1), /* input divider */
+ 	.p		= _SUNXI_CCU_DIV(0, 2), /* external divider p */
+ 	.common		= {
+@@ -172,7 +172,7 @@ static struct ccu_nkmp pll_video1_clk = {
+ static struct ccu_nkmp pll_gpu_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(8),
+-	.n		= _SUNXI_CCU_MULT_OFFSET_MIN(8, 8, 0, 12),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.m		= _SUNXI_CCU_DIV(16, 1), /* input divider */
+ 	.p		= _SUNXI_CCU_DIV(18, 1), /* output divider */
+ 	.common		= {
+@@ -188,7 +188,7 @@ static struct ccu_nkmp pll_gpu_clk = {
+ static struct ccu_nkmp pll_de_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(9),
+-	.n		= _SUNXI_CCU_MULT_OFFSET_MIN(8, 8, 0, 12),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.m		= _SUNXI_CCU_DIV(16, 1), /* input divider */
+ 	.p		= _SUNXI_CCU_DIV(18, 1), /* output divider */
+ 	.common		= {
+@@ -204,7 +204,7 @@ static struct ccu_nkmp pll_de_clk = {
+ static struct ccu_nkmp pll_isp_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(10),
+-	.n		= _SUNXI_CCU_MULT_OFFSET_MIN(8, 8, 0, 12),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.m		= _SUNXI_CCU_DIV(16, 1), /* input divider */
+ 	.p		= _SUNXI_CCU_DIV(18, 1), /* output divider */
+ 	.common		= {
+@@ -220,7 +220,7 @@ static struct ccu_nkmp pll_isp_clk = {
+ static struct ccu_nkmp pll_periph1_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(11),
+-	.n		= _SUNXI_CCU_MULT_OFFSET_MIN(8, 8, 0, 12),
++	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.m		= _SUNXI_CCU_DIV(16, 1), /* input divider */
+ 	.p		= _SUNXI_CCU_DIV(18, 1), /* output divider */
+ 	.common		= {
 -- 
-2.6.1
-
+2.11.0
