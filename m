@@ -1,54 +1,54 @@
-Return-Path: <jacobchen110@gmail.com>
-Return-Path: <jacobchen110@gmail.com>
-From: Jacob Chen <jacob-chen@iotwrt.com>
-To: heiko@sntech.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
 	linux-clk@vger.kernel.org,
-	zhangqing@rock-chips.com,
-	zhengxing@rock-chips.com,
-	Jacob Chen <jacob-chen@iotwrt.com>
-Subject: [PATCH v2 3/3] clk: rockchip: rk3288: make all niu clocks critical
-Date: Wed, 18 Jan 2017 13:42:40 +0800
-Message-Id: <1484718161-27702-3-git-send-email-jacob-chen@iotwrt.com>
-In-Reply-To: <1484718161-27702-1-git-send-email-jacob-chen@iotwrt.com>
-References: <1484718161-27702-1-git-send-email-jacob-chen@iotwrt.com>
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 03/11] clk: sunxi-ng: mux: Get closest parent rate possible with CLK_SET_RATE_PARENT
+Date: Tue, 24 Jan 2017 10:32:22 +0800
+Message-Id: <20170124023230.3990-4-wens@csie.org>
+In-Reply-To: <20170124023230.3990-1-wens@csie.org>
+References: <20170124023230.3990-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-NIU clocks are related to the interconnect and it's important to other blocks.
-Since we don't have a driver to handle it, we should always enable it to avoid
-casually close.
+If the CLK_SET_RATE_PARENT flag is set, we want to try getting the
+closest parent rate.
 
-Make all of them critical,so that we don't have to each clock on its own
-once things break.
-
-Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/rockchip/clk-rk3288.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/sunxi-ng/ccu_mux.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 3d02aa2..c50386c 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -808,8 +808,15 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- static const char *const rk3288_critical_clocks[] __initconst = {
- 	"aclk_cpu",
- 	"aclk_peri",
-+	"aclk_peri_niu",
-+	"aclk_vio0_niu",
-+	"aclk_vio1_niu",
-+	"aclk_rga_niu",
- 	"hclk_peri",
-+	"hclk_vio_niu",
-+	"pclk_alive_niu",
- 	"pclk_pd_pmu",
-+	"pclk_pmu_niu",
- };
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+index 7cee17cf9c19..c6e83ba47fa4 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.c
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -93,7 +93,18 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+ 		if (!parent)
+ 			continue;
  
- static void __iomem *rk3288_cru_base;
+-		parent_rate = clk_hw_get_rate(parent);
++		if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) {
++			struct clk_rate_request parent_req = *req;
++			int ret = __clk_determine_rate(parent, &parent_req);
++
++			if (ret)
++				continue;
++
++			parent_rate = parent_req.rate;
++		} else {
++			parent_rate = clk_hw_get_rate(parent);
++		}
++
+ 		adj_parent_rate = parent_rate;
+ 		ccu_mux_helper_adjust_parent_for_prediv(common, cm, i,
+ 							&adj_parent_rate);
 -- 
-2.7.4
+2.11.0
