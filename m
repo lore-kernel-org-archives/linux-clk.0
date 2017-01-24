@@ -1,70 +1,54 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
- Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v3 06/10] clk: sunxi-ng: remove transitional headers for
- dt-bindings
-Date: Sun, 29 Jan 2017 10:33:27 +0800
-Message-Id: <20170129023331.62106-7-icenowy@aosc.xyz>
-In-Reply-To: <20170129023331.62106-1-icenowy@aosc.xyz>
-References: <20170129023331.62106-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <jdelvare@suse.de>
+Date: Tue, 24 Jan 2017 10:46:28 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: James Liao <jamesjj.liao@mediatek.com>, Andreas =?UTF-8?B?RsOkcmJlcg==?=
+ <afaerber@suse.de>, linux-clk@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, Matthias Brugger
+ <matthias.bgg@gmail.com>, Erin Lo <erin.lo@mediatek.com>, Shunli Wang
+ <shunli.wang@mediatek.com>, Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH] clk: mediatek: Fix MT2701 dependencies
+Message-ID: <20170124104628.40678047@endymion>
+In-Reply-To: <20170120232214.GC20800@codeaurora.org>
+References: <20170109113621.31d384c9@endymion>
+	<c3da261a-eb85-9b30-d5e2-05863d2efad2@suse.de>
+	<20170110130300.167d215b@endymion>
+	<1484099788.26901.8.camel@mtksdaap41>
+	<20170111134146.36878e01@endymion>
+	<1484192392.26901.12.camel@mtksdaap41>
+	<20170112094011.0e0a32e6@endymion>
+	<20170120232214.GC20800@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-As we have already changed the DTSI file, the trnasitional dt-bindings
-header sun8i-h3-ccu.h will not be needed any more.
+On Fri, 20 Jan 2017 15:22:14 -0800, Stephen Boyd wrote:
+> On 01/12, Jean Delvare wrote:
+> > Hi James,
+> > 
+> > On Thu, 12 Jan 2017 11:39:52 +0800, James Liao wrote:
+> > > On Wed, 2017-01-11 at 13:41 +0100, Jean Delvare wrote:
+> > > >  config COMMON_CLK_MT8173
+> > > >  	bool "Clock driver for Mediatek MT8173"
+> > > > -	depends on ARCH_MEDIATEK || COMPILE_TEST
+> > > > +	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
+> > > >  	select COMMON_CLK_MEDIATEK
+> > > > -	default ARCH_MEDIATEK
+> > > > +	default y
+> > > >  	---help---
+> > > >  	  This driver supports Mediatek MT8173 clocks.
+> > > 
+> > > Although MT8173 is a 64-bit SoC, but 32-bit kernel can run on it. So I
+> > > think it no need to limit COMMON_CLK_MT8173 only be enabled on ARM64
+> > > platform.
+> > 
+> > OK, I'll leave that one alone then, thanks for the information.
+> 
+> Is this patch going another round? I haven't seen anything on the
+> list so far.
 
-Remove them.
+Sorry for the delay, I'll send an update later today.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
-It's a patch which intends to keep the bisectbility of the kernel source
-tree introduced in v2.
-
- include/dt-bindings/clock/sun8i-h3-ccu.h | 1 -
- include/dt-bindings/reset/sun8i-h3-ccu.h | 1 -
- 2 files changed, 2 deletions(-)
- delete mode 120000 include/dt-bindings/clock/sun8i-h3-ccu.h
- delete mode 120000 include/dt-bindings/reset/sun8i-h3-ccu.h
-
-diff --git a/include/dt-bindings/clock/sun8i-h3-ccu.h b/include/dt-bindings/clock/sun8i-h3-ccu.h
-deleted file mode 120000
-index ef38232141e4..000000000000
---- a/include/dt-bindings/clock/sun8i-h3-ccu.h
-+++ /dev/null
-@@ -1 +0,0 @@
--sunxi-h3-h5-ccu.h
-\ No newline at end of file
-diff --git a/include/dt-bindings/reset/sun8i-h3-ccu.h b/include/dt-bindings/reset/sun8i-h3-ccu.h
-deleted file mode 120000
-index ef38232141e4..000000000000
---- a/include/dt-bindings/reset/sun8i-h3-ccu.h
-+++ /dev/null
-@@ -1 +0,0 @@
--sunxi-h3-h5-ccu.h
-\ No newline at end of file
 -- 
-2.11.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Jean Delvare
+SUSE L3 Support
