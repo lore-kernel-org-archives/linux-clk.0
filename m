@@ -1,86 +1,42 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
+Return-Path: <anholt@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Florian Fainelli <f.fainelli@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Cc: linux-rpi-kernel@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH 1/4] ARM: EXYNOS: Remove Exynos4415 driver (SoC not supported anymore)
-Date: Sat, 14 Jan 2017 14:36:39 +0200
-Message-Id: <20170114123642.15581-2-krzk@kernel.org>
-In-Reply-To: <20170114123642.15581-1-krzk@kernel.org>
-References: <20170114123642.15581-1-krzk@kernel.org>
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Lee Jones <lee@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-clk@vger.kernel.org,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH 0/2] drm/vc4: DSI display output support
+Date: Mon, 23 Jan 2017 16:38:51 -0800
+Message-Id: <20170124003853.16418-1-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Support for Exynos4415 is going away because there are no internal nor
-external users.
+This is a resend from a month ago of just two of the patches (several
+are accepted at this point) from the DSI series, hoping to collect an
+ack from DT.  Ccing the clock folks as well, since this ends up being
+a clock provider.
 
-Since commit 46dcf0ff0de3 ("ARM: dts: exynos: Remove exynos4415.dtsi"),
-the platform cannot be instantiated so remove also the mach code.
+Eric Anholt (2):
+  dt-bindings: Document the VC4 DSI module nodes.
+  drm/vc4: Add DSI driver
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/mach-exynos/Kconfig   | 5 -----
- arch/arm/mach-exynos/exynos.c  | 1 -
- arch/arm/mach-exynos/suspend.c | 1 -
- 3 files changed, 7 deletions(-)
+ .../devicetree/bindings/display/brcm,bcm-vc4.txt   |   35 +
+ drivers/gpu/drm/vc4/Kconfig                        |    2 +
+ drivers/gpu/drm/vc4/Makefile                       |    1 +
+ drivers/gpu/drm/vc4/vc4_debugfs.c                  |    1 +
+ drivers/gpu/drm/vc4/vc4_drv.c                      |    1 +
+ drivers/gpu/drm/vc4/vc4_drv.h                      |    5 +
+ drivers/gpu/drm/vc4/vc4_dsi.c                      | 1725 ++++++++++++++++++++
+ 7 files changed, 1770 insertions(+)
+ create mode 100644 drivers/gpu/drm/vc4/vc4_dsi.c
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 0bb63b8d21e7..0a99140b6ba2 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -95,11 +95,6 @@ config SOC_EXYNOS4412
- 	default y
- 	depends on ARCH_EXYNOS4
- 
--config SOC_EXYNOS4415
--	bool "SAMSUNG EXYNOS4415"
--	default y
--	depends on ARCH_EXYNOS4
--
- config SOC_EXYNOS5250
- 	bool "SAMSUNG EXYNOS5250"
- 	default y
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 35b832f4bc7e..c404c15ad07f 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -210,7 +210,6 @@ static char const *const exynos_dt_compat[] __initconst = {
- 	"samsung,exynos4210",
- 	"samsung,exynos4212",
- 	"samsung,exynos4412",
--	"samsung,exynos4415",
- 	"samsung,exynos5",
- 	"samsung,exynos5250",
- 	"samsung,exynos5260",
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 518420241062..25e7c5326259 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -270,7 +270,6 @@ EXYNOS_PMU_IRQ(exynos3250_pmu_irq, "samsung,exynos3250-pmu");
- EXYNOS_PMU_IRQ(exynos4210_pmu_irq, "samsung,exynos4210-pmu");
- EXYNOS_PMU_IRQ(exynos4212_pmu_irq, "samsung,exynos4212-pmu");
- EXYNOS_PMU_IRQ(exynos4412_pmu_irq, "samsung,exynos4412-pmu");
--EXYNOS_PMU_IRQ(exynos4415_pmu_irq, "samsung,exynos4415-pmu");
- EXYNOS_PMU_IRQ(exynos5250_pmu_irq, "samsung,exynos5250-pmu");
- EXYNOS_PMU_IRQ(exynos5420_pmu_irq, "samsung,exynos5420-pmu");
- 
 -- 
-2.9.3
+2.11.0
