@@ -1,139 +1,50 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 5/5] ARM: dts: sunxi: add support for Lichee Pi Zero board
-Date: Tue,  3 Jan 2017 23:16:29 +0800
-Message-Id: <20170103151629.19447-6-icenowy@aosc.xyz>
-In-Reply-To: <20170103151629.19447-1-icenowy@aosc.xyz>
-References: <20170103151629.19447-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mx2.suse.de ([195.135.220.15]:34638 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750721AbdAXMJS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Jan 2017 07:09:18 -0500
+Date: Tue, 24 Jan 2017 13:09:12 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org
+Cc: "Andreas =?UTF-8?B?RsOkcmJlcg==?=" <afaerber@suse.de>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Subject: [PATCH] clk: mediatek: Fix MT8135 dependencies
+Message-ID: <20170124130912.14375a32@endymion>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Lichee Pi Zero is a small-sized V3s board, which is
-breadboard-compatible, and with a MicroUSB port with both OTG function
-and power function.
+The MT8135 is a 32-bit SoC, so only propose it on ARM architecture,
+not ARM64.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Fixes: 234d511d8c15 ("clk: mediatek: Add hardware dependency")
+Cc: Andreas Färber <afaerber@suse.de>
+Cc: James Liao <jamesjj.liao@mediatek.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
 ---
- arch/arm/boot/dts/Makefile                    |  3 +-
- arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts | 73 +++++++++++++++++++++++++++
- 2 files changed, 75 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+ drivers/clk/mediatek/Kconfig |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index cccdbcb557b6..3e099e9b1ad7 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -853,7 +853,8 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-h3-orangepi-pc-plus.dtb \
- 	sun8i-h3-orangepi-plus.dtb \
- 	sun8i-h3-orangepi-plus2e.dtb \
--	sun8i-r16-parrot.dtb
-+	sun8i-r16-parrot.dtb \
-+	sun8i-v3s-licheepi-zero.dtb
- dtb-$(CONFIG_MACH_SUN9I) += \
- 	sun9i-a80-optimus.dtb \
- 	sun9i-a80-cubieboard4.dtb
-diff --git a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-new file mode 100644
-index 000000000000..0099affc6ce3
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-@@ -0,0 +1,73 @@
-+/*
-+ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+/dts-v1/;
-+#include "sun8i-v3s.dtsi"
-+#include "sunxi-common-regulators.dtsi"
-+
-+/ {
-+	model = "Lichee Pi Zero";
-+	compatible = "licheepi,licheepi-zero", "allwinner,sun8i-v3s";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&mmc0 {
-+	pinctrl-0 = <&mmc0_pins_a>;
-+	pinctrl-names = "default";
-+	broken-cd;
-+	bus-width = <4>;
-+	vmmc-supply = <&reg_vcc3v3>;
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-0 = <&uart0_pins_a>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
+--- linux-4.10-rc4.orig/drivers/clk/mediatek/Kconfig	2017-01-24 12:55:50.192100713 +0100
++++ linux-4.10-rc4/drivers/clk/mediatek/Kconfig	2017-01-24 12:59:08.703066604 +0100
+@@ -52,9 +52,9 @@ config COMMON_CLK_MT2701_BDPSYS
+ 
+ config COMMON_CLK_MT8135
+ 	bool "Clock driver for Mediatek MT8135"
+-	depends on ARCH_MEDIATEK || COMPILE_TEST
++	depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
+ 	select COMMON_CLK_MEDIATEK
+-	default ARCH_MEDIATEK
++	default ARCH_MEDIATEK && ARM
+ 	---help---
+ 	  This driver supports Mediatek MT8135 clocks.
+ 
+
 -- 
-2.11.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Jean Delvare
+SUSE L3 Support
