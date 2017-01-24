@@ -1,221 +1,643 @@
-Return-Path: <huziji@marvell.com>
-Subject: Re: [PATCH v5 07/12] mmc: sdhci-xenon: Add support to PHYs of Marvell
- Xenon SDHC.
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Gregory CLEMENT
-	<gregory.clement@free-electrons.com>
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
- <130ccd5a0fe4f822b954e0256c9dccec0b6ca523.1484154449.git-series.gregory.clement@free-electrons.com>
- <CAPDyKFpx23wio-QmDrx277+YO2Jt2S0ZrokZ2E4K+oVURSR1Hg@mail.gmail.com>
-CC: Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org"
-	<linux-mmc@vger.kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>, Andrew Lunn
-	<andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        Mike Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk
-	<linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Jimmy Xu
-	<zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
-        Nadav Haklai
-	<nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
-        Doug Jones
-	<dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
-        "Wei(SOCP) Liu"
-	<liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
-        Yehuda Yitschak
-	<yehuday@marvell.com>,
-        Marcin Wojtas <mw@semihalf.com>, Hanna Hawa
-	<hannah@marvell.com>,
-        Kostya Porotchkin <kostap@marvell.com>
-From: Ziji Hu <huziji@marvell.com>
-Message-ID: <1f174462-7644-1d02-9216-01c1fa3b402b@marvell.com>
-Date: Sat, 28 Jan 2017 01:10:54 +0800
-MIME-Version: 1.0
-In-Reply-To: <CAPDyKFpx23wio-QmDrx277+YO2Jt2S0ZrokZ2E4K+oVURSR1Hg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 11/11] ARM: dts: sun9i: Switch to new clock bindings
+Date: Tue, 24 Jan 2017 10:32:30 +0800
+Message-Id: <20170124023230.3990-12-wens@csie.org>
+In-Reply-To: <20170124023230.3990-1-wens@csie.org>
+References: <20170124023230.3990-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ulf,
+Now that we have a full clock driver for sun9i, switch to it.
 
-On 2017/1/26 19:29, Ulf Hansson wrote:
-> [...]
-> 
->> +
->> +static inline bool temp_stage_hs200_to_hs400(struct sdhci_host *host,
->> +                                            struct sdhci_xenon_priv *priv)
->> +{
->> +       /*
->> +        * Tmep stages from HS200 to HS400
->> +        * from HS200 to HS in 200MHz
->> +        * from 200MHz to 52MHz
->> +        */
->> +       if (((priv->timing == MMC_TIMING_MMC_HS200) &&
->> +            (host->timing == MMC_TIMING_MMC_HS)) ||
->> +           ((host->timing == MMC_TIMING_MMC_HS) &&
->> +            (priv->clock > host->clock)))
->> +               return true;
->> +
->> +       return false;
->> +}
->> +
->> +static inline bool temp_stage_hs400_to_h200(struct sdhci_host *host,
->> +                                           struct sdhci_xenon_priv *priv)
->> +{
->> +       /*
->> +        * Temp stages from HS400 t0 HS200:
->> +        * from 200MHz to 52MHz in HS400
->> +        * from HS400 to HS DDR in 52MHz
->> +        * from HS DDR to HS in 52MHz
->> +        * from HS to HS200 in 52MHz
->> +        */
->> +       if (((priv->timing == MMC_TIMING_MMC_HS400) &&
->> +            ((host->clock == MMC_HIGH_52_MAX_DTR) ||
->> +             (host->timing == MMC_TIMING_MMC_DDR52))) ||
->> +           ((priv->timing == MMC_TIMING_MMC_DDR52) &&
->> +            (host->timing == MMC_TIMING_MMC_HS)) ||
->> +           ((host->timing == MMC_TIMING_MMC_HS200) &&
->> +            (host->clock == MMC_HIGH_52_MAX_DTR)))
->> +               return true;
->> +
->> +       return false;
->> +}
-> 
-> Both the above functions seems to be really fragile to use. If
-> anything changes in the core layer related to these sequences, you may
-> end up getting a wrong validated expression.
-> 
-> Perhaps an option would be to add one or two new mmc host ops, which
-> could be called during the related hs200/400 sequences that could make
-> this less fragile for you? What do you think?
-> 
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun9i-a80.dtsi | 404 +++++++++++----------------------------
+ 1 file changed, 107 insertions(+), 297 deletions(-)
 
-    Yes, they both look fragile to use.
-    In my own opinion, hs200->hs400 sequence might be safe since it has been
-    defined and fixed by eMMC spec. I personally think it is unlikely to be
-    adjusted again. Please correct me if I am wrong.
-    However, as you said, hs400->hs200 sequence will have issue if it is
-    changed in core layer, since such a sequence is not from eMMC spec.
-
-    But, in my opinion, adding additional mmc host ops might not be helpful.
-    The above two functions are part of Xenon PHY adjustment. Those two
-    functions help save some PHY setting steps in hs200->hs400/hs400->hs200
-    sequence. But other PHY settings are still necessary,
-    which should be executed each time when mmc core layer set ios.
-    Neither of them can be extracted out and put into another mmc host ops.
-
-    Instead, it will helps us improve the above two if we can add a flag to
-    indicate that eMMC is in a temporary status in hs200->hs400 or hs400->hs200
-    sequence.
-
->> +
->> +/*
->> + * If eMMC PHY Slow Mode is required in lower speed mode in SDR mode
->> + * (SDLCK < 55MHz), enable Slow Mode to bypass eMMC PHY.
->> + * SDIO slower SDR mode also requires Slow Mode.
->> + *
->> + * If Slow Mode is enabled, return true.
->> + * Otherwise, return false.
->> + */
->> +static bool emmc_phy_slow_mode(struct sdhci_host *host,
->> +                              unsigned char timing)
->> +{
->> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->> +       struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
->> +       struct emmc_phy_params *params = priv->phy_params;
->> +       struct xenon_emmc_phy_regs *phy_regs = priv->emmc_phy_regs;
->> +       u32 reg;
->> +
->> +       /* Skip temp stages from HS200 to HS400 */
->> +       if (temp_stage_hs200_to_hs400(host, priv))
->> +               return false;
->> +
->> +       /* Skip temp stages from HS400 t0 HS200 */
->> +       if (temp_stage_hs400_to_h200(host, priv))
->> +               return false;
->> +
->> +       reg = sdhci_readl(host, phy_regs->timing_adj);
->> +       /* Enable Slow Mode for SDIO in slower SDR mode */
->> +       if ((priv->init_card_type == MMC_TYPE_SDIO) &&
-> 
-> Ah, noticed that there is some specific things going on here for SDIO
-> here as well. So perhaps you do need to implement the ->init_card()
-> ops anyway. Which I suggested not to, for patch6. :-)
-> 
-> Although, there is one problem with using ->init_card(). That is
-> particularly for removable cards, as mmc_rescan() doesn't invoke
-> ->init_card() when it removes a card, which means, you may use old and
-> thus wrong information about what kind of card in the next card
-> detection attempt. So perhaps ->init_card() needs to be called from
-> the core before it even figured out what kind of card it is trying to
-> detect, as to allow the callbacks to reset some data.
-> 
-> Or perhaps you can think of another clever way!?
->
-
-    It is a good question.
-
-    Our Xenon requires to set SDIO Mode and PHY Slow Mode for SDIO card.
-    Both of them are configed in function emmc_phy_set(). In emmc_phy_set(),
-    we will skip setting those two configs if current timing is
-    MMC_TIMING_LEGACY.
-    It seems that card structure can be updated before switching into
-    higher speed mode from MMC_TIMING_LEGACY. Thus I personally believe we
-    can get updated card type in ->init_card().
-
-    Hope my above answer can satisfy you. If there is any issue, please kindly
-    let me know.
-    I will also ask my teammates to do more tests, to make sure no corner case.
-
-    Thank you.
-
-Best regards,
-Hu Ziji
-
-> 
->> +           ((timing == MMC_TIMING_UHS_SDR25) ||
->> +            (timing == MMC_TIMING_UHS_SDR12) ||
->> +            (timing == MMC_TIMING_SD_HS) ||
->> +            (timing == MMC_TIMING_LEGACY))) {
->> +               reg |= XENON_TIMING_ADJUST_SLOW_MODE;
->> +               sdhci_writel(host, reg, phy_regs->timing_adj);
->> +               return true;
->> +       }
->> +
->> +       /* Check if Slow Mode is required in lower speed mode in SDR mode */
->> +       if (((timing == MMC_TIMING_UHS_SDR50) ||
->> +            (timing == MMC_TIMING_UHS_SDR25) ||
->> +            (timing == MMC_TIMING_UHS_SDR12) ||
->> +            (timing == MMC_TIMING_SD_HS) ||
->> +            (timing == MMC_TIMING_MMC_HS) ||
->> +            (timing == MMC_TIMING_LEGACY)) && params->slow_mode) {
->> +               reg |= XENON_TIMING_ADJUST_SLOW_MODE;
->> +               sdhci_writel(host, reg, phy_regs->timing_adj);
->> +               return true;
->> +       }
->> +
->> +       reg &= ~XENON_TIMING_ADJUST_SLOW_MODE;
->> +       sdhci_writel(host, reg, phy_regs->timing_adj);
->> +       return false;
->> +}
->> +
-> 
-> [...]
-> 
-> Kind regards
-> Uffe
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
+index 18b35fc23f46..b763c61cacba 100644
+--- a/arch/arm/boot/dts/sun9i-a80.dtsi
++++ b/arch/arm/boot/dts/sun9i-a80.dtsi
+@@ -46,6 +46,13 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
++#include <dt-bindings/clock/sun9i-a80-ccu.h>
++#include <dt-bindings/clock/sun9i-a80-de.h>
++#include <dt-bindings/clock/sun9i-a80-usb.h>
++#include <dt-bindings/reset/sun9i-a80-ccu.h>
++#include <dt-bindings/reset/sun9i-a80-de.h>
++#include <dt-bindings/reset/sun9i-a80-usb.h>
++
+ / {
+ 	interrupt-parent = <&gic>;
+ 
+@@ -157,228 +164,13 @@
+ 			clock-output-names = "osc32k";
+ 		};
+ 
+-		usb_mod_clk: clk@00a08000 {
+-			#clock-cells = <1>;
+-			#reset-cells = <1>;
+-			compatible = "allwinner,sun9i-a80-usb-mod-clk";
+-			reg = <0x00a08000 0x4>;
+-			clocks = <&ahb1_gates 1>;
+-			clock-output-names = "usb0_ahb", "usb_ohci0",
+-					     "usb1_ahb", "usb_ohci1",
+-					     "usb2_ahb", "usb_ohci2";
+-		};
+-
+-		usb_phy_clk: clk@00a08004 {
+-			#clock-cells = <1>;
+-			#reset-cells = <1>;
+-			compatible = "allwinner,sun9i-a80-usb-phy-clk";
+-			reg = <0x00a08004 0x4>;
+-			clocks = <&ahb1_gates 1>;
+-			clock-output-names = "usb_phy0", "usb_hsic1_480M",
+-					     "usb_phy1", "usb_hsic2_480M",
+-					     "usb_phy2", "usb_hsic_12M";
+-		};
+-
+-		pll3: clk@06000008 {
+-			/* placeholder until implemented */
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-rate = <0>;
+-			clock-output-names = "pll3";
+-		};
+-
+-		pll4: clk@0600000c {
+-			#clock-cells = <0>;
+-			compatible = "allwinner,sun9i-a80-pll4-clk";
+-			reg = <0x0600000c 0x4>;
+-			clocks = <&osc24M>;
+-			clock-output-names = "pll4";
+-		};
+-
+-		pll12: clk@0600002c {
+-			#clock-cells = <0>;
+-			compatible = "allwinner,sun9i-a80-pll4-clk";
+-			reg = <0x0600002c 0x4>;
+-			clocks = <&osc24M>;
+-			clock-output-names = "pll12";
+-		};
+-
+-		gt_clk: clk@0600005c {
+-			#clock-cells = <0>;
+-			compatible = "allwinner,sun9i-a80-gt-clk";
+-			reg = <0x0600005c 0x4>;
+-			clocks = <&osc24M>, <&pll4>, <&pll12>, <&pll12>;
+-			clock-output-names = "gt";
+-		};
+-
+-		ahb0: clk@06000060 {
+-			#clock-cells = <0>;
+-			compatible = "allwinner,sun9i-a80-ahb-clk";
+-			reg = <0x06000060 0x4>;
+-			clocks = <&gt_clk>, <&pll4>, <&pll12>, <&pll12>;
+-			clock-output-names = "ahb0";
+-		};
+-
+-		ahb1: clk@06000064 {
+-			#clock-cells = <0>;
+-			compatible = "allwinner,sun9i-a80-ahb-clk";
+-			reg = <0x06000064 0x4>;
+-			clocks = <&gt_clk>, <&pll4>, <&pll12>, <&pll12>;
+-			clock-output-names = "ahb1";
+-		};
+-
+-		ahb2: clk@06000068 {
+-			#clock-cells = <0>;
+-			compatible = "allwinner,sun9i-a80-ahb-clk";
+-			reg = <0x06000068 0x4>;
+-			clocks = <&gt_clk>, <&pll4>, <&pll12>, <&pll12>;
+-			clock-output-names = "ahb2";
+-		};
+-
+-		apb0: clk@06000070 {
+-			#clock-cells = <0>;
+-			compatible = "allwinner,sun9i-a80-apb0-clk";
+-			reg = <0x06000070 0x4>;
+-			clocks = <&osc24M>, <&pll4>;
+-			clock-output-names = "apb0";
+-		};
+-
+-		apb1: clk@06000074 {
+-			#clock-cells = <0>;
+-			compatible = "allwinner,sun9i-a80-apb1-clk";
+-			reg = <0x06000074 0x4>;
+-			clocks = <&osc24M>, <&pll4>;
+-			clock-output-names = "apb1";
+-		};
+-
+-		cci400_clk: clk@06000078 {
+-			#clock-cells = <0>;
+-			compatible = "allwinner,sun9i-a80-gt-clk";
+-			reg = <0x06000078 0x4>;
+-			clocks = <&osc24M>, <&pll4>, <&pll12>, <&pll12>;
+-			clock-output-names = "cci400";
+-		};
+-
+-		mmc0_clk: clk@06000410 {
+-			#clock-cells = <1>;
+-			compatible = "allwinner,sun9i-a80-mmc-clk";
+-			reg = <0x06000410 0x4>;
+-			clocks = <&osc24M>, <&pll4>;
+-			clock-output-names = "mmc0", "mmc0_output",
+-					     "mmc0_sample";
+-		};
+-
+-		mmc1_clk: clk@06000414 {
+-			#clock-cells = <1>;
+-			compatible = "allwinner,sun9i-a80-mmc-clk";
+-			reg = <0x06000414 0x4>;
+-			clocks = <&osc24M>, <&pll4>;
+-			clock-output-names = "mmc1", "mmc1_output",
+-					     "mmc1_sample";
+-		};
+-
+-		mmc2_clk: clk@06000418 {
+-			#clock-cells = <1>;
+-			compatible = "allwinner,sun9i-a80-mmc-clk";
+-			reg = <0x06000418 0x4>;
+-			clocks = <&osc24M>, <&pll4>;
+-			clock-output-names = "mmc2", "mmc2_output",
+-					     "mmc2_sample";
+-		};
+-
+-		mmc3_clk: clk@0600041c {
+-			#clock-cells = <1>;
+-			compatible = "allwinner,sun9i-a80-mmc-clk";
+-			reg = <0x0600041c 0x4>;
+-			clocks = <&osc24M>, <&pll4>;
+-			clock-output-names = "mmc3", "mmc3_output",
+-					     "mmc3_sample";
+-		};
+-
+-		ahb0_gates: clk@06000580 {
+-			#clock-cells = <1>;
+-			compatible = "allwinner,sun9i-a80-ahb0-gates-clk";
+-			reg = <0x06000580 0x4>;
+-			clocks = <&ahb0>;
+-			clock-indices = <0>, <1>, <3>,
+-					<5>, <8>, <12>,
+-					<13>, <14>,
+-					<15>, <16>, <18>,
+-					<20>, <21>, <22>,
+-					<23>;
+-			clock-output-names = "ahb0_fd", "ahb0_ve", "ahb0_gpu",
+-					"ahb0_ss", "ahb0_sd", "ahb0_nand1",
+-					"ahb0_nand0", "ahb0_sdram",
+-					"ahb0_mipi_hsi", "ahb0_sata", "ahb0_ts",
+-					"ahb0_spi0", "ahb0_spi1", "ahb0_spi2",
+-					"ahb0_spi3";
+-		};
+-
+-		ahb1_gates: clk@06000584 {
+-			#clock-cells = <1>;
+-			compatible = "allwinner,sun9i-a80-ahb1-gates-clk";
+-			reg = <0x06000584 0x4>;
+-			clocks = <&ahb1>;
+-			clock-indices = <0>, <1>,
+-					<17>, <21>,
+-					<22>, <23>,
+-					<24>;
+-			clock-output-names = "ahb1_usbotg", "ahb1_usbhci",
+-					"ahb1_gmac", "ahb1_msgbox",
+-					"ahb1_spinlock", "ahb1_hstimer",
+-					"ahb1_dma";
+-		};
+-
+-		ahb2_gates: clk@06000588 {
+-			#clock-cells = <1>;
+-			compatible = "allwinner,sun9i-a80-ahb2-gates-clk";
+-			reg = <0x06000588 0x4>;
+-			clocks = <&ahb2>;
+-			clock-indices = <0>, <1>,
+-					<2>, <4>, <5>,
+-					<7>, <8>, <11>;
+-			clock-output-names = "ahb2_lcd0", "ahb2_lcd1",
+-					"ahb2_edp", "ahb2_csi", "ahb2_hdmi",
+-					"ahb2_de", "ahb2_mp", "ahb2_mipi_dsi";
+-		};
+-
+-		apb0_gates: clk@06000590 {
+-			#clock-cells = <1>;
+-			compatible = "allwinner,sun9i-a80-apb0-gates-clk";
+-			reg = <0x06000590 0x4>;
+-			clocks = <&apb0>;
+-			clock-indices = <1>, <5>,
+-					<11>, <12>, <13>,
+-					<15>, <17>, <18>,
+-					<19>;
+-			clock-output-names = "apb0_spdif", "apb0_pio",
+-					"apb0_ac97", "apb0_i2s0", "apb0_i2s1",
+-					"apb0_lradc", "apb0_gpadc", "apb0_twd",
+-					"apb0_cirtx";
+-		};
+-
+-		apb1_gates: clk@06000594 {
+-			#clock-cells = <1>;
+-			compatible = "allwinner,sun9i-a80-apb1-gates-clk";
+-			reg = <0x06000594 0x4>;
+-			clocks = <&apb1>;
+-			clock-indices = <0>, <1>,
+-					<2>, <3>, <4>,
+-					<16>, <17>,
+-					<18>, <19>,
+-					<20>, <21>;
+-			clock-output-names = "apb1_i2c0", "apb1_i2c1",
+-					"apb1_i2c2", "apb1_i2c3", "apb1_i2c4",
+-					"apb1_uart0", "apb1_uart1",
+-					"apb1_uart2", "apb1_uart3",
+-					"apb1_uart4", "apb1_uart5";
+-		};
+-
+ 		cpus_clk: clk@08001410 {
+ 			compatible = "allwinner,sun9i-a80-cpus-clk";
+ 			reg = <0x08001410 0x4>;
+ 			#clock-cells = <0>;
+-			clocks = <&osc32k>, <&osc24M>, <&pll4>, <&pll3>;
++			clocks = <&osc32k>, <&osc24M>,
++				 <&ccu CLK_PLL_PERIPH0>,
++				 <&ccu CLK_PLL_AUDIO>;
+ 			clock-output-names = "cpus";
+ 		};
+ 
+@@ -451,8 +243,8 @@
+ 			compatible = "allwinner,sun9i-a80-ehci", "generic-ehci";
+ 			reg = <0x00a00000 0x100>;
+ 			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&usb_mod_clk 1>;
+-			resets = <&usb_mod_clk 17>;
++			clocks = <&usb_clocks CLK_BUS_HCI0>;
++			resets = <&usb_clocks RST_USB0_HCI>;
+ 			phys = <&usbphy1>;
+ 			phy-names = "usb";
+ 			status = "disabled";
+@@ -462,8 +254,9 @@
+ 			compatible = "allwinner,sun9i-a80-ohci", "generic-ohci";
+ 			reg = <0x00a00400 0x100>;
+ 			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&usb_mod_clk 1>, <&usb_mod_clk 2>;
+-			resets = <&usb_mod_clk 17>;
++			clocks = <&usb_clocks CLK_BUS_HCI0>,
++				 <&usb_clocks CLK_USB_OHCI0>;
++			resets = <&usb_clocks RST_USB0_HCI>;
+ 			phys = <&usbphy1>;
+ 			phy-names = "usb";
+ 			status = "disabled";
+@@ -472,9 +265,9 @@
+ 		usbphy1: phy@00a00800 {
+ 			compatible = "allwinner,sun9i-a80-usb-phy";
+ 			reg = <0x00a00800 0x4>;
+-			clocks = <&usb_phy_clk 1>;
++			clocks = <&usb_clocks CLK_USB0_PHY>;
+ 			clock-names = "phy";
+-			resets = <&usb_phy_clk 17>;
++			resets = <&usb_clocks RST_USB0_PHY>;
+ 			reset-names = "phy";
+ 			status = "disabled";
+ 			#phy-cells = <0>;
+@@ -484,8 +277,8 @@
+ 			compatible = "allwinner,sun9i-a80-ehci", "generic-ehci";
+ 			reg = <0x00a01000 0x100>;
+ 			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&usb_mod_clk 3>;
+-			resets = <&usb_mod_clk 18>;
++			clocks = <&usb_clocks CLK_BUS_HCI1>;
++			resets = <&usb_clocks RST_USB1_HCI>;
+ 			phys = <&usbphy2>;
+ 			phy-names = "usb";
+ 			status = "disabled";
+@@ -494,11 +287,16 @@
+ 		usbphy2: phy@00a01800 {
+ 			compatible = "allwinner,sun9i-a80-usb-phy";
+ 			reg = <0x00a01800 0x4>;
+-			clocks = <&usb_phy_clk 2>, <&usb_phy_clk 10>,
+-				 <&usb_phy_clk 3>;
+-			clock-names = "hsic_480M", "hsic_12M", "phy";
+-			resets = <&usb_phy_clk 18>, <&usb_phy_clk 19>;
+-			reset-names = "hsic", "phy";
++			clocks = <&usb_clocks CLK_USB1_HSIC>,
++				 <&usb_clocks CLK_USB_HSIC>,
++				 <&usb_clocks CLK_USB1_PHY>;
++			clock-names = "hsic_480M",
++				      "hsic_12M",
++				      "phy";
++			resets = <&usb_clocks RST_USB1_HSIC>,
++				 <&usb_clocks RST_USB1_PHY>;
++			reset-names = "hsic",
++				      "phy";
+ 			status = "disabled";
+ 			#phy-cells = <0>;
+ 			/* usb1 is always used with HSIC */
+@@ -509,8 +307,8 @@
+ 			compatible = "allwinner,sun9i-a80-ehci", "generic-ehci";
+ 			reg = <0x00a02000 0x100>;
+ 			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&usb_mod_clk 5>;
+-			resets = <&usb_mod_clk 19>;
++			clocks = <&usb_clocks CLK_BUS_HCI2>;
++			resets = <&usb_clocks RST_USB2_HCI>;
+ 			phys = <&usbphy3>;
+ 			phy-names = "usb";
+ 			status = "disabled";
+@@ -520,8 +318,9 @@
+ 			compatible = "allwinner,sun9i-a80-ohci", "generic-ohci";
+ 			reg = <0x00a02400 0x100>;
+ 			interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&usb_mod_clk 5>, <&usb_mod_clk 6>;
+-			resets = <&usb_mod_clk 19>;
++			clocks = <&usb_clocks CLK_BUS_HCI2>,
++				 <&usb_clocks CLK_USB_OHCI2>;
++			resets = <&usb_clocks RST_USB2_HCI>;
+ 			phys = <&usbphy3>;
+ 			phy-names = "usb";
+ 			status = "disabled";
+@@ -530,20 +329,35 @@
+ 		usbphy3: phy@00a02800 {
+ 			compatible = "allwinner,sun9i-a80-usb-phy";
+ 			reg = <0x00a02800 0x4>;
+-			clocks = <&usb_phy_clk 4>, <&usb_phy_clk 10>,
+-				 <&usb_phy_clk 5>;
+-			clock-names = "hsic_480M", "hsic_12M", "phy";
+-			resets = <&usb_phy_clk 20>, <&usb_phy_clk 21>;
+-			reset-names = "hsic", "phy";
++			clocks = <&usb_clocks CLK_USB2_HSIC>,
++				 <&usb_clocks CLK_USB_HSIC>,
++				 <&usb_clocks CLK_USB2_PHY>;
++			clock-names = "hsic_480M",
++				      "hsic_12M",
++				      "phy";
++			resets = <&usb_clocks RST_USB2_HSIC>,
++				 <&usb_clocks RST_USB2_PHY>;
++			reset-names = "hsic",
++				      "phy";
+ 			status = "disabled";
+ 			#phy-cells = <0>;
+ 		};
+ 
++		usb_clocks: clock@00a08000 {
++			compatible = "allwinner,sun9i-a80-usb-clks";
++			reg = <0x00a08000 0x8>;
++			clocks = <&ccu CLK_BUS_USB>, <&osc24M>;
++			clock-names = "bus", "hosc";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
+ 		mmc0: mmc@01c0f000 {
+ 			compatible = "allwinner,sun9i-a80-mmc";
+ 			reg = <0x01c0f000 0x1000>;
+-			clocks = <&mmc_config_clk 0>, <&mmc0_clk 0>,
+-				 <&mmc0_clk 1>, <&mmc0_clk 2>;
++			clocks = <&mmc_config_clk 0>, <&ccu CLK_MMC0>,
++				 <&ccu CLK_MMC0_OUTPUT>,
++				 <&ccu CLK_MMC0_SAMPLE>;
+ 			clock-names = "ahb", "mmc", "output", "sample";
+ 			resets = <&mmc_config_clk 0>;
+ 			reset-names = "ahb";
+@@ -556,8 +370,9 @@
+ 		mmc1: mmc@01c10000 {
+ 			compatible = "allwinner,sun9i-a80-mmc";
+ 			reg = <0x01c10000 0x1000>;
+-			clocks = <&mmc_config_clk 1>, <&mmc1_clk 0>,
+-				 <&mmc1_clk 1>, <&mmc1_clk 2>;
++			clocks = <&mmc_config_clk 1>, <&ccu CLK_MMC1>,
++				 <&ccu CLK_MMC1_OUTPUT>,
++				 <&ccu CLK_MMC1_SAMPLE>;
+ 			clock-names = "ahb", "mmc", "output", "sample";
+ 			resets = <&mmc_config_clk 1>;
+ 			reset-names = "ahb";
+@@ -570,8 +385,9 @@
+ 		mmc2: mmc@01c11000 {
+ 			compatible = "allwinner,sun9i-a80-mmc";
+ 			reg = <0x01c11000 0x1000>;
+-			clocks = <&mmc_config_clk 2>, <&mmc2_clk 0>,
+-				 <&mmc2_clk 1>, <&mmc2_clk 2>;
++			clocks = <&mmc_config_clk 2>, <&ccu CLK_MMC2>,
++				 <&ccu CLK_MMC2_OUTPUT>,
++				 <&ccu CLK_MMC2_SAMPLE>;
+ 			clock-names = "ahb", "mmc", "output", "sample";
+ 			resets = <&mmc_config_clk 2>;
+ 			reset-names = "ahb";
+@@ -584,8 +400,9 @@
+ 		mmc3: mmc@01c12000 {
+ 			compatible = "allwinner,sun9i-a80-mmc";
+ 			reg = <0x01c12000 0x1000>;
+-			clocks = <&mmc_config_clk 3>, <&mmc3_clk 0>,
+-				 <&mmc3_clk 1>, <&mmc3_clk 2>;
++			clocks = <&mmc_config_clk 3>, <&ccu CLK_MMC3>,
++				 <&ccu CLK_MMC3_OUTPUT>,
++				 <&ccu CLK_MMC3_SAMPLE>;
+ 			clock-names = "ahb", "mmc", "output", "sample";
+ 			resets = <&mmc_config_clk 3>;
+ 			reset-names = "ahb";
+@@ -598,9 +415,9 @@
+ 		mmc_config_clk: clk@01c13000 {
+ 			compatible = "allwinner,sun9i-a80-mmc-config-clk";
+ 			reg = <0x01c13000 0x10>;
+-			clocks = <&ahb0_gates 8>;
++			clocks = <&ccu CLK_BUS_MMC>;
+ 			clock-names = "ahb";
+-			resets = <&ahb0_resets 8>;
++			resets = <&ccu RST_BUS_MMC>;
+ 			reset-names = "ahb";
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+@@ -619,34 +436,27 @@
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
+ 
+-		ahb0_resets: reset@060005a0 {
+-			#reset-cells = <1>;
+-			compatible = "allwinner,sun6i-a31-clock-reset";
+-			reg = <0x060005a0 0x4>;
+-		};
+-
+-		ahb1_resets: reset@060005a4 {
+-			#reset-cells = <1>;
+-			compatible = "allwinner,sun6i-a31-clock-reset";
+-			reg = <0x060005a4 0x4>;
+-		};
+-
+-		ahb2_resets: reset@060005a8 {
+-			#reset-cells = <1>;
+-			compatible = "allwinner,sun6i-a31-clock-reset";
+-			reg = <0x060005a8 0x4>;
+-		};
+-
+-		apb0_resets: reset@060005b0 {
++		de_clocks: clock@03000000 {
++			compatible = "allwinner,sun9i-a80-de-clks";
++			reg = <0x03000000 0x30>;
++			clocks = <&ccu CLK_DE>,
++				 <&ccu CLK_SDRAM>,
++				 <&ccu CLK_BUS_DE>;
++			clock-names = "mod",
++				      "dram",
++				      "bus";
++			resets = <&ccu RST_BUS_DE>;
++			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+-			compatible = "allwinner,sun6i-a31-clock-reset";
+-			reg = <0x060005b0 0x4>;
+ 		};
+ 
+-		apb1_resets: reset@060005b4 {
++		ccu: clock@06000000 {
++			compatible = "allwinner,sun9i-a80-ccu";
++			reg = <0x06000000 0x800>;
++			clocks = <&osc24M>, <&osc32k>;
++			clock-names = "hosc", "losc";
++			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+-			compatible = "allwinner,sun6i-a31-clock-reset";
+-			reg = <0x060005b4 0x4>;
+ 		};
+ 
+ 		timer@06000c00 {
+@@ -676,7 +486,7 @@
+ 				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&apb0_gates 5>, <&osc24M>, <&osc32k>;
++			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc32k>;
+ 			clock-names = "apb", "hosc", "losc";
+ 			gpio-controller;
+ 			interrupt-controller;
+@@ -732,8 +542,8 @@
+ 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&apb1_gates 16>;
+-			resets = <&apb1_resets 16>;
++			clocks = <&ccu CLK_BUS_UART0>;
++			resets = <&ccu RST_BUS_UART0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -743,8 +553,8 @@
+ 			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&apb1_gates 17>;
+-			resets = <&apb1_resets 17>;
++			clocks = <&ccu CLK_BUS_UART1>;
++			resets = <&ccu RST_BUS_UART1>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -754,8 +564,8 @@
+ 			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&apb1_gates 18>;
+-			resets = <&apb1_resets 18>;
++			clocks = <&ccu CLK_BUS_UART2>;
++			resets = <&ccu RST_BUS_UART2>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -765,8 +575,8 @@
+ 			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&apb1_gates 19>;
+-			resets = <&apb1_resets 19>;
++			clocks = <&ccu CLK_BUS_UART3>;
++			resets = <&ccu RST_BUS_UART3>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -776,8 +586,8 @@
+ 			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&apb1_gates 20>;
+-			resets = <&apb1_resets 20>;
++			clocks = <&ccu CLK_BUS_UART4>;
++			resets = <&ccu RST_BUS_UART4>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -787,8 +597,8 @@
+ 			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&apb1_gates 21>;
+-			resets = <&apb1_resets 21>;
++			clocks = <&ccu CLK_BUS_UART5>;
++			resets = <&ccu RST_BUS_UART5>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -796,8 +606,8 @@
+ 			compatible = "allwinner,sun6i-a31-i2c";
+ 			reg = <0x07002800 0x400>;
+ 			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&apb1_gates 0>;
+-			resets = <&apb1_resets 0>;
++			clocks = <&ccu CLK_BUS_I2C0>;
++			resets = <&ccu RST_BUS_I2C0>;
+ 			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -807,8 +617,8 @@
+ 			compatible = "allwinner,sun6i-a31-i2c";
+ 			reg = <0x07002c00 0x400>;
+ 			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&apb1_gates 1>;
+-			resets = <&apb1_resets 1>;
++			clocks = <&ccu CLK_BUS_I2C1>;
++			resets = <&ccu RST_BUS_I2C1>;
+ 			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -818,8 +628,8 @@
+ 			compatible = "allwinner,sun6i-a31-i2c";
+ 			reg = <0x07003000 0x400>;
+ 			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&apb1_gates 2>;
+-			resets = <&apb1_resets 2>;
++			clocks = <&ccu CLK_BUS_I2C2>;
++			resets = <&ccu RST_BUS_I2C2>;
+ 			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -829,8 +639,8 @@
+ 			compatible = "allwinner,sun6i-a31-i2c";
+ 			reg = <0x07003400 0x400>;
+ 			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&apb1_gates 3>;
+-			resets = <&apb1_resets 3>;
++			clocks = <&ccu CLK_BUS_I2C3>;
++			resets = <&ccu RST_BUS_I2C3>;
+ 			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -840,8 +650,8 @@
+ 			compatible = "allwinner,sun6i-a31-i2c";
+ 			reg = <0x07003800 0x400>;
+ 			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&apb1_gates 4>;
+-			resets = <&apb1_resets 4>;
++			clocks = <&ccu CLK_BUS_I2C4>;
++			resets = <&ccu RST_BUS_I2C4>;
+ 			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-- 
+2.11.0
