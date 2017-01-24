@@ -1,58 +1,54 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH v2 10/10] ARM: dts: sun8i: sinlinx: Enable audio nodes
-Date: Tue, 17 Jan 2017 15:02:30 +0100
-Message-Id: <20170117140230.23142-11-mylene.josserand@free-electrons.com>
-In-Reply-To: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
+Return-Path: <jdelvare@suse.de>
+Date: Tue, 24 Jan 2017 13:58:36 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: Andreas =?UTF-8?B?RsOkcmJlcg==?= <afaerber@suse.de>
+Cc: linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias
+ Brugger <matthias.bgg@gmail.com>, James Liao <jamesjj.liao@mediatek.com>,
+ Erin Lo <erin.lo@mediatek.com>, Stephen Boyd <sboyd@codeaurora.org>, Shunli
+ Wang <shunli.wang@mediatek.com>, Michael Turquette
+ <mturquette@baylibre.com>
+Subject: Re: [PATCH] clk: mediatek: Fix MT2701 dependencies
+Message-ID: <20170124135836.17f32ade@endymion>
+In-Reply-To: <c3da261a-eb85-9b30-d5e2-05863d2efad2@suse.de>
+References: <20170109113621.31d384c9@endymion>
+	<c3da261a-eb85-9b30-d5e2-05863d2efad2@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable the audio codec and the audio dai for the sun8i A33 sinlinx board.
+Hallo Andreas,
 
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
----
- arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Mon, 9 Jan 2017 21:08:50 +0100, Andreas F=C3=A4rber wrote:
+> Another aspect here is that this is a 32-bit SoC but it propagates into
+> the arm64 configs, so maybe (ARCH_MEDIATEK && !ARM64) || COMPILE_TEST?
+>=20
+> Same for mt2701 pinctrl.
 
-diff --git a/arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts b/arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts
-index 370ee82882de..b08811007f44 100644
---- a/arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts
-+++ b/arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts
-@@ -63,6 +63,14 @@
- 	};
- };
- 
-+&codec {
-+	status = "okay";
-+};
-+
-+&dai {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
--- 
-2.11.0
+I took a look and the pinctrl situation is different:
+
+config PINCTRL_MT2701
+	bool "Mediatek MT2701 pin control" if COMPILE_TEST && !MACH_MT2701
+	(...)
+	default MACH_MT2701
+
+So the user will not be prompt about it on ARM64 (unless build-testing)
+because MACH_MT2701 isn't set on ARM64. The only issue with this
+construct is that you end up with useless symbols defined in the
+configuration file (they can only be "n".) So I would argue that the
+following is preferred:
+
+config PINCTRL_MT2701
+	bool "Mediatek MT2701 pin control"
+	(...)
+	depends on MACH_MT2701 || COMPILE_TEST
+	default MACH_MT2701
+
+And same for the other 3 PINCTRL_MT* options. Yes, that means the user
+will be asked about the options on Mediatek kernels, but actually I
+believe this is desirable, as advanced users should be allowed to
+disable specific drivers if they know what they are doing. Other users
+can just stick to the default.
+
+--=20
+Jean Delvare
+SUSE L3 Support
