@@ -1,67 +1,54 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Jonathan Corbet <corbet@lwn.net>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- Zepan <715805855@qq.com>
-Subject: [PATCH v2 0/4] Add support for Allwinner V3s SoC
-Date: Tue, 17 Jan 2017 01:43:50 +0800
-Message-Id: <20170116174354.34593-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:51740 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750902AbdAYIaf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 25 Jan 2017 03:30:35 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
+References: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Wed, 25 Jan 2017 10:30:30 +0200
+Message-ID: <CAJKOXPfwj3v2cVU_WieqFFcMBkawuRUr-v4mDNG-FMg0A8=OgA@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: mark s3c...._clk_sleep_init() as __init
+To: Martin Kaiser <martin@kaiser.cx>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner produced a single-core Cortex-A7 SoC, V3s, with integrated 64MiB DDR2
-DRAM, and in LQFP package. With such a package, it has been easier for hackers
-to DIY a board (no BGA needed, and no DRAM wiring needed).
+On Tue, Jan 24, 2017 at 11:33 PM, Martin Kaiser <martin@kaiser.cx> wrote:
+> These functions are called only by other __init functions.
+> Compiling for s3c2410 with CONFIG_DEBUG_SECTION_MISMATCH=y,
+> I get warnings like
+>
+> WARNING: vmlinux.o(.text+0x198350):
+> Section mismatch in reference from the function s3c2410_clk_sleep_init()
+> to the (unknown reference) .init.data:(unknown)
+>
 
-Add support for this SoC, as well as one board with it (Lichee Pi Zero).
+The code looks okay but the description is not accurate. First, indeed
+the functions are referenced only from other __init. However the real
+problem is - pointed by section mismatch - that non-init functions are
+referencing __initdata. Exactly this is mentioned in the error above.
+Please, refactor the commit message to reflect the real problem.
 
-Pinctrl driver have already been merged when v1. It's now removed in the patchset.
+Best regards,
+Krzysztof
 
-Icenowy Zheng (4):
-  arm: sunxi: add support for V3s SoC
-  clk: sunxi-ng: add support for V3s CCU
-  ARM: dts: sunxi: add dtsi file for V3s SoC
-  ARM: dts: sunxi: add support for Lichee Pi Zero board
-
- Documentation/arm/sunxi/README                |   4 +
- arch/arm/boot/dts/Makefile                    |   3 +-
- arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts |  73 ++++
- arch/arm/boot/dts/sun8i-v3s.dtsi              | 285 +++++++++++++
- arch/arm/mach-sunxi/sunxi.c                   |   1 +
- drivers/clk/sunxi-ng/Kconfig                  |  11 +
- drivers/clk/sunxi-ng/Makefile                 |   1 +
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c          | 590 ++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.h          |  63 +++
- include/dt-bindings/clock/sun8i-v3s-ccu.h     | 107 +++++
- include/dt-bindings/reset/sun8i-v3s-ccu.h     |  78 ++++
- 11 files changed, 1215 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
- create mode 100644 arch/arm/boot/dts/sun8i-v3s.dtsi
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-v3s.h
- create mode 100644 include/dt-bindings/clock/sun8i-v3s-ccu.h
- create mode 100644 include/dt-bindings/reset/sun8i-v3s-ccu.h
-
--- 
-2.11.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Marking the s3c...._clk_sleep() functions as __init fixes this.
+>
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> ---
+>  drivers/clk/samsung/clk-s3c2410.c | 4 ++--
+>  drivers/clk/samsung/clk-s3c2412.c | 4 ++--
+>  drivers/clk/samsung/clk-s3c2443.c | 4 ++--
+>  drivers/clk/samsung/clk-s3c64xx.c | 4 ++--
+>  4 files changed, 8 insertions(+), 8 deletions(-)
+>
