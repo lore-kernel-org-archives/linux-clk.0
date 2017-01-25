@@ -1,108 +1,48 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V2 1/2] clk: vc5: Add bindings for IDT VersaClock 5P49V5923 and 5P49V5933
-Date: Thu, 12 Jan 2017 02:03:23 +0100
-Message-Id: <20170112010324.28068-1-marek.vasut@gmail.com>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
+	Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+	Dien Pham <dien.pham.ry@rvc.renesas.com>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] clk: renesas: r8a7795: Add IIC-DVFS clock
+Date: Wed, 25 Jan 2017 12:19:33 +0100
+Message-Id: <1485343174-16973-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1485343174-16973-1-git-send-email-geert+renesas@glider.be>
+References: <1485343174-16973-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add bindings for IDT VersaClock 5 5P49V5923 and 5P49V5933 chips.
-These are I2C clock generators with optional clock source from
-either XTal or dedicated clock generator and, depending on the
-model, two or more clock outputs.
+From: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
 
-Signed-off-by: Marek Vasut <marek.vasut@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Add mapping between the clock specifier and physical pins of the chip
----
- .../devicetree/bindings/clock/idt,versaclock5.txt  | 65 ++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+This patch adds DVFS clock for R8A7795 SoC.
 
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-new file mode 100644
-index 000000000000..87e9c47a89a3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-@@ -0,0 +1,65 @@
-+Binding for IDT VersaClock5 programmable i2c clock generator.
-+
-+The IDT VersaClock5 are programmable i2c clock generators providing
-+from 3 to 12 output clocks.
-+
-+==I2C device node==
-+
-+Required properties:
-+- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933".
-+- reg:		i2c device address, shall be 0x68 or 0x6a.
-+- #clock-cells:	from common clock binding; shall be set to 1.
-+- clocks:	from common clock binding; list of parent clock handles,
-+		- 5p49v5923: (required) either or both of XTAL or CLKIN
-+					reference clock.
-+		- 5p49v5933: (optional) property not present (internal
-+					Xtal used) or CLKIN reference
-+					clock.
-+- clock-names:	from common clock binding; clock input names, can be
-+		- 5p49v5923: (required) either or both of "xin", "clkin".
-+		- 5p49v5933: (optional) property not present or "clkin".
-+
-+==Mapping between clock specifier and physical pins==
-+
-+When referencing the provided clock in the DT using phandle and
-+clock specifier, the following mapping applies:
-+
-+5P49V5923:
-+	0 -- OUT0_SEL_I2CB
-+	1 -- OUT1
-+	2 -- OUT2
-+
-+5P49V5933:
-+	0 -- OUT0_SEL_I2CB
-+	1 -- OUT1
-+	2 -- OUT4
-+
-+==Example==
-+
-+/* 25MHz reference crystal */
-+ref25: ref25m {
-+	compatible = "fixed-clock";
-+	#clock-cells = <0>;
-+	clock-frequency = <25000000>;
-+};
-+
-+i2c-master-node {
-+
-+	/* IDT 5P49V5923 i2c clock generator */
-+	vc5: clock-generator@6a {
-+		compatible = "idt,5p49v5923";
-+		reg = <0x6a>;
-+		#clock-cells = <1>;
-+
-+		/* Connect XIN input to 25MHz reference */
-+		clocks = <&ref25m>;
-+		clock-names = "xin";
-+	};
-+};
-+
-+/* Consumer referencing the 5P49V5923 pin OUT1 */
-+consumer {
-+	...
-+	clocks = <&vc5 1>;
-+	...
-+}
+Signed-off-by: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
+Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 50698a7d90745447..bfffdb00df972547 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -221,6 +221,7 @@ enum clk_ids {
+ 	DEF_MOD("can-if0",		 916,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("i2c6",			 918,	R8A7795_CLK_S3D2),
+ 	DEF_MOD("i2c5",			 919,	R8A7795_CLK_S3D2),
++	DEF_MOD("i2c-dvfs",		 926,	R8A7795_CLK_CP),
+ 	DEF_MOD("i2c4",			 927,	R8A7795_CLK_S3D2),
+ 	DEF_MOD("i2c3",			 928,	R8A7795_CLK_S3D2),
+ 	DEF_MOD("i2c2",			 929,	R8A7795_CLK_S3D2),
 -- 
-2.11.0
+1.9.1
