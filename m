@@ -1,52 +1,66 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Wed, 18 Jan 2017 08:20:34 +1100
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: =?UTF-8?B?TXlsw6huZQ==?= Josserand
- <mylene.josserand@free-electrons.com>, mturquette@baylibre.com,
- lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
- sboyd@codeaurora.org, maxime.ripard@free-electrons.com, tiwai@suse.com,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- mark.rutland@arm.com, devicetree@vger.kernel.org,
- alsa-devel@alsa-project.org, alexandre.belloni@free-electrons.com,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
- wens@csie.org, robh+dt@kernel.org
-Subject: Re: [PATCH v2 03/10] dt-bindings: sound: Add new reset compatible
- for sun4i-i2s
-Message-ID: <20170118082034.62a6be25@free-electrons.com>
-In-Reply-To: <20170117201016.A5fiHT0P@smtp2p.mail.yandex.net>
-References: <20170117201016.A5fiHT0P@smtp2p.mail.yandex.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/4] dt-bindings: clock: renesas: cpg-mssr: Document reset control support
+Date: Wed, 25 Jan 2017 10:15:00 +0100
+Message-Id: <1485335703-27184-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
+References: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Document properties needed to use the Reset Control feature of the
+Renesas Clock Pulse Generator / Module Standby and Software Reset
+module.
 
-On Wed, 18 Jan 2017 01:10:00 +0800, Icenowy Zheng wrote:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Change oneline summary to refer to dt-bindings.
+---
+ Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> > Add a new compatible for sun4i-i2s driver to handle some
-> > SoCs that have a reset line that must be asserted/deasserted.
-> >
-> > This new compatible, "allwinner,sun6i-a31-i2s", requires two
-> > properties:
-> > - resets: phandle to the reset line
-> > - reset-names: the name of the reset line ("rst").
-> > Except these differences, the compatible is identical to previous one
-> > which will not handle a reset line.  
-> 
-> But I think the IP block is identical, right?
-> 
-> Should a new compatible be added only for reset-line?
-
-Having a different compatible in this case allows to make some stricter
-error checking: the driver can make sure that if the compatible string
-is sun6i-a31-i2s there *IS* a reset line specified in the DT. Without a
-separate compatible value, such a check is not possible, and the reset
-line is just optional. This can lead to people being confused if they
-forget to specify the reset line.
-
-Thomas
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+index c469194129536332..f4f944d813081857 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -42,6 +42,10 @@ Required Properties:
+ 	Domain bindings in
+ 	Documentation/devicetree/bindings/power/power_domain.txt.
+ 
++  - #reset-cells: Must be 1
++      - The single reset specifier cell must be the module number, as defined
++	in the datasheet.
++
+ 
+ Examples
+ --------
+@@ -55,6 +59,7 @@ Examples
+ 		clock-names = "extal", "extalr";
+ 		#clock-cells = <2>;
+ 		#power-domain-cells = <0>;
++		#reset-cells = <1>;
+ 	};
+ 
+ 
+@@ -69,5 +74,6 @@ Examples
+ 		dmas = <&dmac1 0x13>, <&dmac1 0x12>;
+ 		dma-names = "tx", "rx";
+ 		power-domains = <&cpg>;
++		resets = <&cpg 310>;
+ 		status = "disabled";
+ 	};
 -- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+1.9.1
