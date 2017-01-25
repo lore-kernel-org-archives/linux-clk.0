@@ -1,124 +1,136 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sat, 21 Jan 2017 23:13:09 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 3/7] clk: sunxi-ng: Implement multiplier maximum
-Message-ID: <20170121221309.rf6tpidpipoe2tfj@lukather>
-References: <cover.5df5469d9c7a6233e225a875dca513a03b05e871.1484897383.git-series.maxime.ripard@free-electrons.com>
- <8e38914c705c32f3f0daa4a16979cbb9cae5e689.1484897383.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v65p9rQv+AQqTVs=wtJbesQNF36YNdeTSSGp=c9SSyjViw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5vnyqbkxsuimbhk3"
-In-Reply-To: <CAGb2v65p9rQv+AQqTVs=wtJbesQNF36YNdeTSSGp=c9SSyjViw@mail.gmail.com>
+Return-Path: <m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v5 0/4] Add runtime PM support for clocks (on Exynos SoC
+ example)
+Date: Wed, 25 Jan 2017 12:53:10 +0100
+Message-id: <1485345194-3196-1-git-send-email-m.szyprowski@samsung.com>
+References: 
+ <CGME20170125115327eucas1p172866fa87417f59f1dea60185d6d8b60@eucas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Dear All,
 
---5vnyqbkxsuimbhk3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patchset adds runtime PM support to common clock framework. This is an
+attempt to implement support for clock controllers, which belongs to a power
+domain. This approach works surprisingly well on Exynos 5433 SoC, what allowed
+us to solve various freeze/crash issues related to power management.
 
-On Sat, Jan 21, 2017 at 09:27:42AM +0800, Chen-Yu Tsai wrote:
-> On Fri, Jan 20, 2017 at 3:29 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  drivers/clk/sunxi-ng/ccu_mult.c | 16 +++++++++++++---
-> >  drivers/clk/sunxi-ng/ccu_mult.h | 10 ++++++----
-> >  drivers/clk/sunxi-ng/ccu_nk.c   |  8 ++++----
-> >  drivers/clk/sunxi-ng/ccu_nkm.c  |  8 ++++----
-> >  drivers/clk/sunxi-ng/ccu_nkmp.c |  8 ++++----
-> >  drivers/clk/sunxi-ng/ccu_nm.c   |  4 ++--
-> >  6 files changed, 33 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu=
-_mult.c
-> > index 8b7ee7baa85b..8724c01171b1 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_mult.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_mult.c
-> > @@ -40,8 +40,13 @@ static unsigned long ccu_mult_round_rate(struct ccu_=
-mux_internal *mux,
-> >         struct ccu_mult *cm =3D data;
-> >         struct _ccu_mult _cm;
-> >
-> > -       _cm.min =3D 1;
-> > -       _cm.max =3D 1 << cm->mult.width;
-> > +       _cm.min =3D cm->mult.min;
->=20
-> This particular line should probably be in a separate patch fixing
-> commit 2beaa601c849 ("clk: sunxi-ng: Implement minimum for multipliers")?
-> It kind of sticks out, and doesn't match the commit message.
+The main idea behind this patchset is to keep clock's controller power domain
+enabled every time when at least one of its clock is enabled or access to its
+registers is being made. Clock controller driver (clock provider) can
+supply a struct device pointer, which is the used by clock core for tracking and
+managing clock's controller runtime pm state. Each clk_prepare() operation will
+first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
+will do pm_runtime_put() at the end.
 
-Indeed (also because there's no commit message, I'll fix that.)
+This runtime PM feature has been tested with Exynos4412 (not included in this
+patchset) and Exynos5433 clocks drivers. Both have some clocks, which belongs to
+respective power domains and need special handling during power on/off
+procedures. Till now it wasn't handled at all, what caused various problems.
 
-> > +
-> > +       if (cm->mult.max)
-> > +               _cm.max =3D cm->mult.max;
-> > +       else
-> > +               _cm.max =3D (1 << cm->mult.width) + cm->mult.offset - 1;
-> > +
-> >         ccu_mult_find_best(parent_rate, rate, &_cm);
-> >
-> >         return parent_rate * _cm.mult;
-> > @@ -114,7 +119,12 @@ static int ccu_mult_set_rate(struct clk_hw *hw, un=
-signed long rate,
-> >                                                 &parent_rate);
-> >
-> >         _cm.min =3D cm->mult.min;
-> > -       _cm.max =3D 1 << cm->mult.width;
-> > +
-> > +       if (cm->mult.max)
-> > +               _cm.max =3D cm->mult.max;
-> > +       else
-> > +               _cm.max =3D (1 << cm->mult.width) + cm->mult.offset - 1;
->=20
-> The changes look good. Thinking about this more, you might need to
-> adjust the default minimum to account for the offset as well? At
-> the moment it doesn't really affect us, as the offset is either
-> 1 or 0, which means a minimum of 1 is equally good. But leaving
-> a potential error in there doesn't feel right.
+Patches for clocks drivers change the way the clock provider is initialized.
+Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
+infrastructure is being used. This is needed to let driver to use runtime PM
+feature and integrate with generic power domains. The side-effect of this change
+is a delay in clock provider registeration during system boot, so early
+initialized drivers might get EPROBEDEFER error when requesting their clocks.
+This is an issue for IOMMU drivers, so this patchset will be fully functional
+once the deferred probe for IOMMU will be merged. v7 of the IOMMU deferred probe
+support has been posted two days ago:
+https://www.spinics.net/lists/arm-kernel/msg557110.html
 
-I'm not sure we should really care, I'm not aware of any SoC that
-would have such a clock, either in the "old" or "new" ones. I'm not
-sure we should fix that isn't broken.
+Patches are based on linux-next from 25th January 2017.
 
-> Said change would be against patch 2, so
->=20
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
->=20
-> for this patch once the first comment is addressed.
+This is a part of a larger task, which goal is to add support for power
+domains on Exynos5433 SoCs / TM2 boards. All patches needed to get it
+working have been pushed to the following git repo:
+https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.10-next-tm2-pd
 
-I'll do that change and respin the serie, thanks!
-Maxime
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
 
---5vnyqbkxsuimbhk3
-Content-Type: application/pgp-signature; name="signature.asc"
+Changelog:
 
------BEGIN PGP SIGNATURE-----
+v5:
+- rebased onto next-20170125 kernel release
+- added two more calls to runtime PM in clock's core:
+	1. clk_recalc() should ensure active runtime pm state, because it might
+	   read registers (in case of dividers) to calculate the rate
+	2. clk_register() also needs to ensure active runtime pm state to read
+	   initial rate and status of the clocks
+- more fixes in Exynos5433 clocks drivers:
+	1. PLL in DISP CMU must be enabled for suspend
+	2. guard clocks registration with pm_runtime_get_sync/pm_runtime_put to
+	   avoid turning the power domain on and off many times for no good
+	   reason (registering each clock will call pm_runtime_get_sync(), then
+	   pm_runtime_put, what in turn might disable power domain)
+- still waiting for a review...
 
-iQIcBAEBCAAGBQJYg9zwAAoJEBx+YmzsjxAg2qwP/RZaqwnQ8iWBgbBS4uJP7Ptp
-kV+eTA8fk+PmykJqRO0TKKVo/+Y2f9uwh7DVgm2ixpX7BZucZWpljNfNlKbJ7kmE
-RySGAtuf2RsBTBza8t7hnYHRHHTQoRPL0gi5ZRx7Vml46iMVNEmGWgIzC6MLUO+O
-Q/u6rTAjORJ2f0Akp3/B0d046a4rUkkqmuotogCIXOOjGGspU1zCSHyfRZdqwabl
-4wQgeAlFO9DWPL66DjgxevgCeYmzme0YLeID7tFirX+hlNKRQ0wgaODzwLicG6BN
-9IKI3qQ/Ov//8QhYWg08bc7gF/Xtp+opHCg8jnj4BDlNEUv6N1nkFyojcD2MGXEr
-if4B+t61ykrTiuVbZM5EJH72EqdWG7R+Ys797UIbtI2VroLVEt6LPenzLukjARDd
-XP2+A0rk7HuL5VwoRqHMqGWfIYnqDHZfrcOmtlI0ANlBvo0LS8IfQWEGQNfpEX6i
-zlvyt1lSTrK4d3kqWQT+Rb6MFGxj3RVnUXUBZ0Kw+GrgOWGfG+NSljObQsWXmPMl
-NnUeLQ+sRDqrRrmSCk4zGIXLDjDZm8JAhRVftw4jeWS/nbN5+T8NMS9dRVFoR2Af
-VfQYirKsgN/m7B8HV7p/X2oJMKjl0mn2nsZTqfVrpvdFQl1pHPdNP4PUELZQfyOc
-Cjfl3ZNiv7E1JiUe2u/m
-=QkEp
------END PGP SIGNATURE-----
+v4: http://www.spinics.net/lists/arm-kernel/msg550747.html
+- Removed patch for Exynos4412 clocks from the patchset. DT bindings for power
+  domain for ISP sub-controller needs more discussion. It will be handled
+  separately when the runtime PM for clocks feature gets merged.
+- Added patch with runtime PM support for Exynos AudioSS clock controller driver
+  (needed to enable audio power domain on Exynos5 series).
+- Fixes in Exynos5433 driver:
+	1. added missing clock for Audio CMU
+	2. added support for FSYS CMU
+	3. improved support for DISP CMU (thanks to Andrzej Hajda for
+	   investigating that).
+- Rebased onto v4.10-rc1
+- Waiting for a review...
 
---5vnyqbkxsuimbhk3--
+v3: http://www.spinics.net/lists/arm-kernel/msg538122.html
+- Removed CLK_RUNTIME_PM flag, core now simply checks if runtime pm is enabled
+  for the provided device during clock registration as suggested by Ulf
+- Simplified code for exynos4412 isp clock driver registration
+- Resolved some other minor issues pointed by Ulf clk core code
+- Rebased onto v4.9-rc1 and new version of IOMMU deferred probe patchset
+
+v2: https://www.spinics.net/lists/arm-kernel/msg532798.html
+- Simplified clk_pm_runtime_get/put functions, removed workaround for devices
+  with disabled runtime pm. Such workaround is no longer needed since commit
+  4d23a5e84806b202d9231929c9507ef7cf7a0185 ("PM / Domains: Allow runtime PM
+  during system PM phases").
+- Added CLK_RUNTIME_PM flag to indicate clocks, for which clock core should
+  call runtime pm functions. This solves problem with clocks, for which struct
+  device is already registered, but no runtime pm is enabled.
+- Extended commit messages according to Ulf suggestions.
+- Fixed some style issues pointed by Barlomiej.
+
+v1: http://www.spinics.net/lists/arm-kernel/msg528128.html
+- initial version
+
+
+Patch summary:
+
+Marek Szyprowski (4):
+  clk: Add support for runtime PM
+  clk: samsung: Add support for runtime PM
+  clk: samsung: exynos5433: Add runtime PM support
+  clk: samsung: exynos-audss: Use runtime PM
+
+ .../devicetree/bindings/clock/clk-exynos-audss.txt |   6 +
+ .../devicetree/bindings/clock/exynos5433-clock.txt |  16 +
+ drivers/clk/clk.c                                  | 132 ++++++-
+ drivers/clk/samsung/clk-exynos-audss.c             |  62 +--
+ drivers/clk/samsung/clk-exynos5433.c               | 422 ++++++++++++++++-----
+ drivers/clk/samsung/clk-pll.c                      |   2 +-
+ drivers/clk/samsung/clk.c                          |  12 +-
+ drivers/clk/samsung/clk.h                          |   7 +
+ 8 files changed, 527 insertions(+), 132 deletions(-)
+
+-- 
+1.9.1
