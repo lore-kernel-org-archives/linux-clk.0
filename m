@@ -1,49 +1,204 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <CAPDyKFqy1BkAFCQ8S9HdoPyNh1SsSPvM8TmU3RR0jJx8xcvxEA@mail.gmail.com>
-References: <20170113150842.30250-1-linus.walleij@linaro.org> <CAPDyKFqy1BkAFCQ8S9HdoPyNh1SsSPvM8TmU3RR0jJx8xcvxEA@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 20 Jan 2017 16:10:13 +0100
-Message-ID: <CACRpkdaC+JwtmsJbaNN0nC3d4C5TuOxmp0PxgXWq60AEqa_8aA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: ux500: Convert ABx500 clocks to use OF probing
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <oss@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Shawn Guo <shawnguo@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	"Y.B. Lu" <yangbo.lu@nxp.com>,
+	"Z.Q. Hou" <zhiqiang.hou@nxp.com>,
+	"Y.T. Tang" <yuantian.tang@nxp.com>,
+	Scott Wood <oss@buserror.net>
+Date: Wed, 25 Jan 2017 02:19:23 -0600
+Message-Id: <1485332363-8434-3-git-send-email-oss@buserror.net>
+In-Reply-To: <1485332363-8434-1-git-send-email-oss@buserror.net>
+References: <1485332363-8434-1-git-send-email-oss@buserror.net>
+Subject: [PATCH 3/3] clk: qoriq: Separate root input clock for core PLLs on ls1012a
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jan 20, 2017 at 3:18 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 13 January 2017 at 16:08, Linus Walleij <linus.walleij@linaro.org> wrote:
->> These clocks have been broken for a long time unfortunately, a
->> hurdle of misc problems made them stop working at some point
->> breaking USB and audio on Ux500.
->>
->> The platform as such and all "regular" clocks are migrated to
->> OF/device tree, so let's migrate also this driver.
->>
->> With this patch and the corresponding DTS fixes, and a bunch
->> of probe deferral fixes, audio starts working again on Ux500.
->
-> Nice!
->
-> [...]
->
->>
->>         /* ab8500_sysclk3 */
->>         clk = clk_reg_sysctrl_gate(dev , "ab8500_sysclk3", "ab8500_sysclk",
->>                 AB8500_SYSULPCLKCTRL1, AB8500_SYSULPCLKCTRL1_SYSCLKBUF3REQ,
->>                 AB8500_SYSULPCLKCTRL1_SYSCLKBUF3REQ, 0, 0);
->> -       clk_register_clkdev(clk, "sysclk", "cg1960_core.0");
->> +       ab8500_clks[AB8500_SYSCLK_BUF3] = clk;
->
-> The lookup is removed in this change, is it already described in the DTS?
+ls1012a has separate input root clocks for core PLLs versus the
+platform PLL, with the latter described as sysclk in the hw docs.
 
-The cg1960 GPS and the AV8100 HDMI encoder (referred to
-as I2C device 0-0070) does not have upstream drivers or device
-tree bindings, so they were never referenced anywhere actually.
+If a second input clock, named "coreclk", is present, this clock will be
+used for the core PLLs.
 
-But both are trivial to add to the DTS the day they have an upstream
-driver.
+Signed-off-by: Scott Wood <oss@buserror.net>
+---
+ drivers/clk/clk-qoriq.c | 91 +++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 77 insertions(+), 14 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index d0bf8b1..f3931e3 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -87,7 +87,7 @@ struct clockgen {
+ 	struct device_node *node;
+ 	void __iomem *regs;
+ 	struct clockgen_chipinfo info; /* mutable copy */
+-	struct clk *sysclk;
++	struct clk *sysclk, *coreclk;
+ 	struct clockgen_pll pll[6];
+ 	struct clk *cmux[NUM_CMUX];
+ 	struct clk *hwaccel[NUM_HWACCEL];
+@@ -904,7 +904,12 @@ static void __init create_muxes(struct clockgen *cg)
+ 
+ static void __init clockgen_init(struct device_node *np);
+ 
+-/* Legacy nodes may get probed before the parent clockgen node */
++/*
++ * Legacy nodes may get probed before the parent clockgen node.
++ * It is assumed that device trees with legacy nodes will not
++ * contain a "clocks" property -- otherwise the input clocks may
++ * not be initialized at this point.
++ */
+ static void __init legacy_init_clockgen(struct device_node *np)
+ {
+ 	if (!clockgen.node)
+@@ -945,18 +950,13 @@ static struct clk __init
+ 	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
+ }
+ 
+-static struct clk *sysclk_from_parent(const char *name)
++static struct clk __init *input_clock(const char *name, struct clk *clk)
+ {
+-	struct clk *clk;
+-	const char *parent_name;
+-
+-	clk = of_clk_get(clockgen.node, 0);
+-	if (IS_ERR(clk))
+-		return clk;
++	const char *input_name;
+ 
+ 	/* Register the input clock under the desired name. */
+-	parent_name = __clk_get_name(clk);
+-	clk = clk_register_fixed_factor(NULL, name, parent_name,
++	input_name = __clk_get_name(clk);
++	clk = clk_register_fixed_factor(NULL, name, input_name,
+ 					0, 1, 1);
+ 	if (IS_ERR(clk))
+ 		pr_err("%s: Couldn't register %s: %ld\n", __func__, name,
+@@ -965,6 +965,29 @@ static struct clk *sysclk_from_parent(const char *name)
+ 	return clk;
+ }
+ 
++static struct clk __init *input_clock_by_name(const char *name,
++					      const char *dtname)
++{
++	struct clk *clk;
++
++	clk = of_clk_get_by_name(clockgen.node, dtname);
++	if (IS_ERR(clk))
++		return clk;
++
++	return input_clock(name, clk);
++}
++
++static struct clk __init *input_clock_by_index(const char *name, int idx)
++{
++	struct clk *clk;
++
++	clk = of_clk_get(clockgen.node, 0);
++	if (IS_ERR(clk))
++		return clk;
++
++	return input_clock(name, clk);
++}
++
+ static struct clk * __init create_sysclk(const char *name)
+ {
+ 	struct device_node *sysclk;
+@@ -974,7 +997,11 @@ static struct clk * __init create_sysclk(const char *name)
+ 	if (!IS_ERR(clk))
+ 		return clk;
+ 
+-	clk = sysclk_from_parent(name);
++	clk = input_clock_by_name(name, "sysclk");
++	if (!IS_ERR(clk))
++		return clk;
++
++	clk = input_clock_by_index(name, 0);
+ 	if (!IS_ERR(clk))
+ 		return clk;
+ 
+@@ -985,7 +1012,27 @@ static struct clk * __init create_sysclk(const char *name)
+ 			return clk;
+ 	}
+ 
+-	pr_err("%s: No input clock\n", __func__);
++	pr_err("%s: No input sysclk\n", __func__);
++	return NULL;
++}
++
++static struct clk * __init create_coreclk(const char *name)
++{
++	struct clk *clk;
++
++	clk = input_clock_by_name(name, "coreclk");
++	if (!IS_ERR(clk))
++		return clk;
++
++	/*
++	 * This indicates a mix of legacy nodes with the new coreclk
++	 * mechanism, which should never happen.  If this error occurs,
++	 * don't use the wrong input clock just because coreclk isn't
++	 * ready yet.
++	 */
++	if (WARN_ON(PTR_ERR(clk) == -EPROBE_DEFER))
++		return clk;
++
+ 	return NULL;
+ }
+ 
+@@ -1008,11 +1055,19 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
+ 	u32 __iomem *reg;
+ 	u32 mult;
+ 	struct clockgen_pll *pll = &cg->pll[idx];
++	const char *input = "cg-sysclk";
+ 	int i;
+ 
+ 	if (!(cg->info.pll_mask & (1 << idx)))
+ 		return;
+ 
++	if (cg->coreclk && idx != PLATFORM_PLL) {
++		if (IS_ERR(cg->coreclk))
++			return;
++
++		input = "cg-coreclk";
++	}
++
+ 	if (cg->info.flags & CG_VER3) {
+ 		switch (idx) {
+ 		case PLATFORM_PLL:
+@@ -1063,7 +1118,7 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
+ 			 "cg-pll%d-div%d", idx, i + 1);
+ 
+ 		clk = clk_register_fixed_factor(NULL,
+-				pll->div[i].name, "cg-sysclk", 0, mult, i + 1);
++				pll->div[i].name, input, 0, mult, i + 1);
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: %s: register failed %ld\n",
+ 			       __func__, pll->div[i].name, PTR_ERR(clk));
+@@ -1200,6 +1255,13 @@ static struct clk *clockgen_clk_get(struct of_phandle_args *clkspec, void *data)
+ 			goto bad_args;
+ 		clk = pll->div[idx].clk;
+ 		break;
++	case 5:
++		if (idx != 0)
++			goto bad_args;
++		clk = cg->coreclk;
++		if (IS_ERR(clk))
++			clk = NULL;
++		break;
+ 	default:
+ 		goto bad_args;
+ 	}
+@@ -1311,6 +1373,7 @@ static void __init clockgen_init(struct device_node *np)
+ 		clockgen.info.flags |= CG_CMUX_GE_PLAT;
+ 
+ 	clockgen.sysclk = create_sysclk("cg-sysclk");
++	clockgen.coreclk = create_coreclk("cg-coreclk");
+ 	create_plls(&clockgen);
+ 	create_muxes(&clockgen);
+ 
+-- 
+2.7.4
