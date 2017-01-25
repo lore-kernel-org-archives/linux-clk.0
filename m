@@ -1,82 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:46136 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754536AbdA0JKP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Jan 2017 04:10:15 -0500
-From: Jeremy McNicoll <jeremymc@redhat.com>
-To: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc: andy.gross@linaro.org, sboyd@codeaurora.org, robh@kernel.org,
-        arnd@arndb.de, bjorn.andersson@linaro.org, riteshh@codeaurora.org,
-        git@kchr.de, ulf.hansson@linaro.org, jszhang@marvell.com,
-        jeremymc@redhat.com
-Subject: [PATCH V4 0/6] Enable onboard SDHCI for Nexus 5X (msm8992)
-Date: Fri, 27 Jan 2017 01:09:59 -0800
-Message-Id: <1485508205-1904-1-git-send-email-jeremymc@redhat.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Dien Pham <dien.pham.ry@rvc.renesas.com>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] clk: renesas: r8a7796: Add IIC-DVFS clock
+Date: Wed, 25 Jan 2017 12:19:34 +0100
+Message-Id: <1485343174-16973-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1485343174-16973-1-git-send-email-geert+renesas@glider.be>
+References: <1485343174-16973-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Here links to previous versions:
+From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
 
-[V1]
-   https://www.spinics.net/lists/devicetree/msg151845.html
+This patch adds DVFS clock for R8A7796 SoC.
 
-[V2]
-  http://www.spinics.net/lists/devicetree/msg158808.html 
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Khiem: I've updated your email address, and added your missing SoB.
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-[V3]
-  http://www.spinics.net/lists/devicetree/msg160644.html
- 
-What changed V3->V4:
-
-  * Dropped [V3] (2/6) Add quirk for delayed IRQ ACK as this
-    workaround was improving detection time but masking another
-    issue with rpm-smd specific to msm899(2/4).  
-
-  * Including the C code to enable/add missing clock branch.
-    In V3 this change was split up between dt-bindings and C
-    but the C part didn't get sent to the mailing list.
-    Its in my inbox and tree ;-)
-
-Note:
-  -only the AHB clock was added for SDCC1 as it was tested.
-   SDCC[2->4] ADB_CLK will be added once these branches are
-   investigated against downstream.  ie) are they all clock
-   branches the same as SDCC1_AHB ?
-
-  6/6 was not separated out into dt-bindings and devicetree
-      as it was just a simple search and replace.
-
-
-Jeremy McNicoll (6):
-  clk: qcom: SDHCI enablement on Nexus 5X / 6P
-  dt-bindings: qcom: clk: Add missing binding for SDCHI enablement on
-    Nexus 5X/6P
-  arm64: dts: msm8992 add fixed regulator
-  arm64: dts: smem enablement for msm8992
-  dts: arm64: Enable onboard SDHCI on msm8992
-  dts: doc: rename rpm_requests to respect DT naming conventions
-
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |   2 +-
- .../bindings/regulator/qcom,smd-rpm-regulator.txt  |   2 +-
- .../devicetree/bindings/soc/qcom/qcom,smd-rpm.txt  |   6 +-
- .../devicetree/bindings/soc/qcom/qcom,smd.txt      |   2 +-
- arch/arm/boot/dts/qcom-apq8074-dragonboard.dts     |   2 +-
- arch/arm/boot/dts/qcom-apq8084.dtsi                |   2 +-
- .../dts/qcom-msm8974-lge-nexus5-hammerhead.dts     |   2 +-
- .../boot/dts/qcom-msm8974-sony-xperia-honami.dts   |   2 +-
- arch/arm/boot/dts/qcom-msm8974.dtsi                |   2 +-
- arch/arm64/boot/dts/qcom/msm8916.dtsi              |   2 +-
- .../boot/dts/qcom/msm8992-bullhead-rev-101.dts     |   2 +
- arch/arm64/boot/dts/qcom/msm8992-pins.dtsi         |  60 +++++
- arch/arm64/boot/dts/qcom/msm8992.dtsi              | 143 ++++++++++-
- arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi      | 276 +++++++++++++++++++++
- drivers/clk/qcom/gcc-msm8994.c                     |  18 ++
- include/dt-bindings/clock/qcom,gcc-msm8994.h       |   1 +
- 16 files changed, 511 insertions(+), 13 deletions(-)
- create mode 100644 arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi
-
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 3bc36ef3aebf4108..11e084a56b0d9005 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -192,6 +192,7 @@ enum clk_ids {
+ 	DEF_MOD("can-if0",		 916,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("i2c6",			 918,	R8A7796_CLK_S0D6),
+ 	DEF_MOD("i2c5",			 919,	R8A7796_CLK_S0D6),
++	DEF_MOD("i2c-dvfs",		 926,	R8A7796_CLK_CP),
+ 	DEF_MOD("i2c4",			 927,	R8A7796_CLK_S0D6),
+ 	DEF_MOD("i2c3",			 928,	R8A7796_CLK_S0D6),
+ 	DEF_MOD("i2c2",			 929,	R8A7796_CLK_S3D2),
 -- 
-2.6.1
-
+1.9.1
