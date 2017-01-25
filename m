@@ -1,113 +1,50 @@
-Return-Path: <webczat_200@poczta.onet.pl>
-Subject: Re: [PATCH] clk: scpi: don't add cpufreq device if the scpi dvfs node
- is disabled
-To: Sudeep Holla <sudeep.holla@arm.com>, linux-clk@vger.kernel.org,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-References: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Neil Armstrong <narmstrong@baylibre.com>
-From: =?UTF-8?Q?Micha=c5=82_Zegan?= <webczat_200@poczta.onet.pl>
-Message-ID: <d51628d1-c930-ec13-990c-97cc47d80472@poczta.onet.pl>
-Date: Sat, 7 Jan 2017 01:44:08 +0100
-MIME-Version: 1.0
-In-Reply-To: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="uWE6BCvLJbUHDPIVRXm88Ht8Mrm9rVDIX"
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: meson8b: fix clk81 register address
+Date: Wed, 25 Jan 2017 11:53:06 +0100
+Message-Id: <1485341586-2929-1-git-send-email-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---uWE6BCvLJbUHDPIVRXm88Ht8Mrm9rVDIX
-Content-Type: multipart/mixed; boundary="BM4KFiPFFdPP2cPk6P4waiDPaVluPV7Kp";
- protected-headers="v1"
-From: =?UTF-8?Q?Micha=c5=82_Zegan?= <webczat_200@poczta.onet.pl>
-To: Sudeep Holla <sudeep.holla@arm.com>, linux-clk@vger.kernel.org,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <d51628d1-c930-ec13-990c-97cc47d80472@poczta.onet.pl>
-Subject: Re: [PATCH] clk: scpi: don't add cpufreq device if the scpi dvfs node
- is disabled
-References: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
+During meson8b clock probe, clk81 register address is fixed twice.
+First using the meson8b_clk_gates array, then by directly changing
+meson8b_clk81 register.
 
---BM4KFiPFFdPP2cPk6P4waiDPaVluPV7Kp
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+As a result meson8b_clk81.reg = HHI_MPEG_CLK_CNTL + clk_base + clk_base.
 
-seems the patch works as intended.
+Fixed by just removing the second fixup.
 
-W dniu 06.01.2017 o 13:34, Sudeep Holla pisze:
-> Currently we add the virtual cpufreq device unconditionally even when
-> the SCPI DVFS clock provider node is disabled. This will cause cpufreq
-> driver to throw errors when it gets initailised on boot/modprobe and
-> also when the CPUs are hot-plugged back in.
->=20
-> This patch fixes the issue by adding the virtual cpufreq device only if=
+Fixes: e31a1900c1ff ("meson: clk: Add support for clock gates")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ Patch based on khilman/linux-amlogic.git master branch.
 
-> the SCPI DVFS clock provider is available and registered.
->=20
-> Fixes: 9490f01e2471 ("clk: scpi: add support for cpufreq virtual device=
-")
-> Reported-by: Micha=C5=82 Zegan <webczat_200@poczta.onet.pl>
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  drivers/clk/clk-scpi.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
-> index 2a3e9d8e88b0..96d37175d0ad 100644
-> --- a/drivers/clk/clk-scpi.c
-> +++ b/drivers/clk/clk-scpi.c
-> @@ -290,13 +290,15 @@ static int scpi_clocks_probe(struct platform_devi=
-ce *pdev)
->  			of_node_put(child);
->  			return ret;
->  		}
-> -	}
-> -	/* Add the virtual cpufreq device */
-> -	cpufreq_dev =3D platform_device_register_simple("scpi-cpufreq",
-> -						      -1, NULL, 0);
-> -	if (IS_ERR(cpufreq_dev))
-> -		pr_warn("unable to register cpufreq device");
-> =20
-> +		if (match->data !=3D &scpi_dvfs_ops)
-> +			continue;
-> +		/* Add the virtual cpufreq device if it's DVFS clock provider */
-> +		cpufreq_dev =3D platform_device_register_simple("scpi-cpufreq",
-> +							      -1, NULL, 0);
-> +		if (IS_ERR(cpufreq_dev))
-> +			pr_warn("unable to register cpufreq device");
-> +	}
->  	return 0;
->  }
-> =20
->=20
+ I don't have a meson8b HW so this patch so this patch has not been
+ tested on real HW.
 
+ drivers/clk/meson/meson8b.c | 1 -
+ 1 file changed, 1 deletion(-)
 
---BM4KFiPFFdPP2cPk6P4waiDPaVluPV7Kp--
-
---uWE6BCvLJbUHDPIVRXm88Ht8Mrm9rVDIX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQFPBAEBCAA5FiEE8PeJXyv9t1Bfiq63mRxoPZnIFPkFAlhwOdkbHHdlYmN6YXRf
-MjAwQHBvY3p0YS5vbmV0LnBsAAoJEJkcaD2ZyBT51zgIAIXPE0I9BvTwzOeSChpy
-X2kbHMCsxifxPP+08O+24G47TUUuAHp92ZxyEjSzg02V/cL6LuQv9SrvBvpSS6NE
-7tKXKby2sC31byLyuX49hRhHH6XiuVmqdyS44f8t9aUfNpdtupFM1yhy+KeiqGOJ
-yQUkUHm+OTbY+xYgzOlCka0Alu+dqsmPBVPy481ss+rVywY+ml1cgG5gaz+Ehaqo
-s7owYQyvTXjcLRVDSwOppSwqH01i9UQMmCdCxu0iGB6U+tMJa+7WySsTP1aYWQBu
-0eQY3pxGIeUJ+q0wKVIT/yn8btHzyjgkm8h3t8FHdtBeLTRUckfOnwDN72VRqtCU
-iLo=
-=jqqe
------END PGP SIGNATURE-----
-
---uWE6BCvLJbUHDPIVRXm88Ht8Mrm9rVDIX--
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 3f1be46cbb33..888494d4fb8a 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -607,7 +607,6 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
+ 	/* Populate the base address for the MPEG clks */
+ 	meson8b_mpeg_clk_sel.reg = clk_base + (u32)meson8b_mpeg_clk_sel.reg;
+ 	meson8b_mpeg_clk_div.reg = clk_base + (u32)meson8b_mpeg_clk_div.reg;
+-	meson8b_clk81.reg = clk_base + (u32)meson8b_clk81.reg;
+ 
+ 	/* Populate base address for gates */
+ 	for (i = 0; i < ARRAY_SIZE(meson8b_clk_gates); i++)
+-- 
+2.7.4
