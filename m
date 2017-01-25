@@ -1,101 +1,101 @@
-Return-Path: <icenowy@aosc.xyz>
-Message-Id: <20170117201444.EZDei40D@smtp2h.mail.yandex.net>
-Date: Wed, 18 Jan 2017 01:14:30 +0800
-Subject: Re: [PATCH v2 07/10] dt-bindings: sound: Add sun8i audio
- documentation
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: =?ISO-8859-1?Q?Myl=E8ne_Josserand?=
- <mylene.josserand@free-electrons.com>, mturquette@baylibre.com,
- lgirdwood@gmail.com, broonie@kernel.org,
- thomas.petazzoni@free-electrons.com, perex@perex.cz, sboyd@codeaurora.org,
- tiwai@suse.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- mark.rutland@arm.com, devicetree@vger.kernel.org,
- alsa-devel@alsa-project.org, alexandre.belloni@free-electrons.com,
- linux-arm-kernel@lists.infradead.org, wens@csie.org,
- linux-sunxi@googlegroups.com, robh+dt@kernel.org
+Return-Path: <jamesjj.liao@mediatek.com>
+Message-ID: <1485313281.1348.1.camel@mtksdaap41>
+Subject: Re: [PATCH v2] clk: mediatek: Fix MT2701 dependencies
+From: James Liao <jamesjj.liao@mediatek.com>
+To: Jean Delvare <jdelvare@suse.de>
+CC: <linux-clk@vger.kernel.org>, <linux-mediatek@lists.infradead.org>, Andreas
+ =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Shunli Wang
+	<shunli.wang@mediatek.com>, Erin Lo <erin.lo@mediatek.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Matthias
+ Brugger <matthias.bgg@gmail.com>
+Date: Wed, 25 Jan 2017 11:01:21 +0800
+In-Reply-To: <20170124130704.14015da3@endymion>
+References: <20170124130704.14015da3@endymion>
+Content-Type: text/plain; charset="ISO-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: jamesjj.liao@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-CjIwMTflubQx5pyIMTjml6UgMDA6NTHkuo4gTWF4aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBm
-cmVlLWVsZWN0cm9ucy5jb20+5YaZ6YGT77yaCj4KPiBIaSwgCj4KPiBPbiBUdWUsIEphbiAxNywg
-MjAxNyBhdCAwMzowMjoyN1BNICswMTAwLCBNeWzDqG5lIEpvc3NlcmFuZCB3cm90ZTogCj4gPiBB
-ZGQgdGhlIGRvY3VtZW50YXRpb24gZm9yIGR0LWJpbmRpbmcgb2YgdGhlIGRpZ2l0YWwgYXVkaW8g
-Y29kZWMgZHJpdmVyIAo+ID4gYW5kIHRoZSBhdWRpbyBjYXJkIGRyaXZlciBmb3IgU3VuOGkgU29D
-cy4gCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IE15bMOobmUgSm9zc2VyYW5kIDxteWxlbmUuam9z
-c2VyYW5kQGZyZWUtZWxlY3Ryb25zLmNvbT4gCj4KPiBPbmUgc21hbGwgY29tbWVudCBiZWxvdywg
-Cj4KPiA+IC0tLSAKPiA+wqAgLi4uL2RldmljZXRyZWUvYmluZGluZ3Mvc291bmQvc3VuOGktY29k
-ZWMudHh0wqDCoMKgwqDCoCB8IDc2ICsrKysrKysrKysrKysrKysrKysrKysgCj4gPsKgIDEgZmls
-ZSBjaGFuZ2VkLCA3NiBpbnNlcnRpb25zKCspIAo+ID7CoCBjcmVhdGUgbW9kZSAxMDA2NDQgRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NvdW5kL3N1bjhpLWNvZGVjLnR4dCAKPiA+
-IAo+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9zb3Vu
-ZC9zdW44aS1jb2RlYy50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc291
-bmQvc3VuOGktY29kZWMudHh0IAo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQgCj4gPiBpbmRleCAw
-MDAwMDAwMDAwMDAuLmNlM2MwNTIxOWUzMyAKPiA+IC0tLSAvZGV2L251bGwgCj4gPiArKysgYi9E
-b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc291bmQvc3VuOGktY29kZWMudHh0IAo+
-ID4gQEAgLTAsMCArMSw3NiBAQCAKPiA+ICtBbGx3aW5uZXIgU1VOOEkgYXVkaW8gY29kZWMgCj4g
-PiArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIAo+ID4gKyAKPiA+ICtPbiBT
-dW44aSBTb0NzLCBhbmQgcGFydGljdWxhcmx5IG9uIEEzMywgdGhlIGF1ZGlvIGlzIHNlcGFyYXRl
-ZCBpbiAKPgo+IFRlY2huaWNhbGx5IHRoYXQncyBub3QgdHJ1ZSBvbiBhbGwgdGhlIFNvQ3Mgb2Yg
-dGhlIHN1bjhpIGZhbWlseSwgYnV0IAo+IG9ubHkgYSBmZXcgb2YgdGhlbSAoQTMzIGFuZCBIMyBp
-aXJjKS4gCgpIMyBpcyBzdGlsbCB0aGUgb2xkLXN0eWxlIHN1bnhpIGNvZGVjLgoKSSB0aGluayBB
-NjQgaGFzIHRoZSBzYW1lIGRpZ2l0YWwgY29kZWMgcGFydCAoYnV0IEE2NCdzIGFuYWxvZyBwYXJ0
-IGlzIGRpZmZlcmVudCkKCj4KPiBUaGlzIGRyaXZlciBpcyBvbmx5IG1hZGUgZm9yIHRoZSBBMzMg
-YXQgdGhlIG1vbWVudCwgc28geW91IHNob3VsZCBvbmx5IAo+IG1lbnRpb24gaXQgKGFuZCB5b3Ug
-c2hvdWxkIHJlbmFtZSB0aGF0IGZpbGUgYXMgd2VsbCkuIAo+Cj4gT25jZSBkb25lLCAKPiBBY2tl
-ZC1ieTogTWF4aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+IAo+
-Cj4gVGhhbmtzLCAKPiBNYXhpbWUgCj4KPgo+ID4gK2RpZmZlcmVudCBwYXJ0czogCj4gPiArIMKg
-IC0gQSBEQUkgZHJpdmVyLiBJdCB1c2VzIHRoZSAic3VuNGktaTJzIiBkcml2ZXIgd2hpY2ggaXMg
-Cj4gPiArIMKgIGRvY3VtZW50ZWQgaGVyZTogCj4gPiArIMKgIERvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9zb3VuZC9zdW40aS1pMnMudHh0IAo+ID4gKyDCoCAtIEFuIGFuYWxvZyBw
-YXJ0IG9mIHRoZSBjb2RlYyB3aGljaCBpcyBoYW5kbGVkIGFzIFBSQ00gcmVnaXN0ZXJzLiAKPiA+
-ICsgwqAgU2VlIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9zb3VuZC9zdW44aS1j
-b2RlYy1hbmFsb2cudHh0IAo+ID4gKyDCoCAtIEFuIGRpZ2l0YWwgcGFydCBvZiB0aGUgY29kZWMg
-d2hpY2ggaXMgZG9jdW1lbnRlZCBpbiB0aGlzIGN1cnJlbnQgCj4gPiArIMKgIGJpbmRpbmcgZG9j
-dW1lbnRhdGlvbi4gCj4gPiArIMKgIC0gQW5kIGZpbmFsbHksIGFuIGF1ZGlvIGNhcmQgd2hpY2gg
-bGlua3MgYWxsIHRoZSBhYm92ZSBjb21wb25lbnRzLiAKPiA+ICsgwqAgVGhlIHNpbXBsZS1hdWRp
-byBjYXJkIHdpbGwgYmUgdXNlZC4gCj4gPiArIMKgIFNlZSBEb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3Mvc291bmQvc2ltcGxlLWNhcmQudHh0IAo+ID4gKyAKPiA+ICtUaGlzIGJpbmRp
-bmdzIGRvY3VtZW50YXRpb24gZXhwb3NlcyBTdW44aSBjb2RlYyAoZGlnaXRhbCBwYXJ0KS4gCj4g
-PiArIAo+ID4gK1JlcXVpcmVkIHByb3BlcnRpZXM6IAo+ID4gKy0gY29tcGF0aWJsZTogbXVzdCBi
-ZSAiYWxsd2lubmVyLHN1bjhpLWEzMy1jb2RlYyIgCj4gPiArLSByZWc6IG11c3QgY29udGFpbiB0
-aGUgcmVnaXN0ZXJzIGxvY2F0aW9uIGFuZCBsZW5ndGggCj4gPiArLSBpbnRlcnJ1cHRzOiBtdXN0
-IGNvbnRhaW4gdGhlIGNvZGVjIGludGVycnVwdCAKPiA+ICstIGNsb2NrczogYSBsaXN0IG9mIHBo
-YW5kbGUgKyBjbG9jay1zcGVjaWZlciBwYWlycywgb25lIGZvciBlYWNoIGVudHJ5IAo+ID4gK8Kg
-IGluIGNsb2NrLW5hbWVzLiAKPiA+ICstIGNsb2NrLW5hbWVzOiBzaG91bGQgY29udGFpbiBmb2xs
-b3dpbmdzOiAKPiA+ICvCoMKgIC0gImJ1cyI6IHRoZSBwYXJlbnQgQVBCIGNsb2NrIGZvciB0aGlz
-IGNvbnRyb2xsZXIgCj4gPiArwqDCoCAtICJtb2QiOiB0aGUgcGFyZW50IG1vZHVsZSBjbG9jayAK
-PiA+ICsgCj4gPiArRXhhbXBsZTogCj4gPiArY29kZWM6IGNvZGVjQDAxYzIyZTAwIHsgCj4gPiAr
-ICNzb3VuZC1kYWktY2VsbHMgPSA8MD47IAo+ID4gKyBjb21wYXRpYmxlID0gImFsbHdpbm5lcixz
-dW44aS1hMzMtY29kZWMiOyAKPiA+ICsgcmVnID0gPDB4MDFjMjJlMDAgMHg0MDA+OyAKPiA+ICsg
-aW50ZXJydXB0cyA9IDxHSUNfU1BJIDI5IElSUV9UWVBFX0xFVkVMX0hJR0g+OyAKPiA+ICsgY2xv
-Y2tzID0gPCZjY3UgQ0xLX0JVU19DT0RFQz4sIDwmY2N1IENMS19BQ19ESUc+OyAKPiA+ICsgY2xv
-Y2stbmFtZXMgPSAiYnVzIiwgIm1vZCI7IAo+ID4gKyBzdGF0dXMgPSAiZGlzYWJsZWQiOyAKPiA+
-ICt9OyAKPiA+ICsgCj4gPiArSGVyZSBpcyBhbiBleGFtcGxlIHRvIGFkZCBhIHNvdW5kIGNhcmQg
-YW5kIHRoZSBjb2RlYyBiaW5kaW5nIG9uIHN1bjhpIFNvQ3MgdGhhdCAKPiA+ICthcmUgc2ltaWxh
-ciB0byBBMzMgdXNpbmcgc2ltcGxlLWNhcmQ6IAo+ID4gKyAKPiA+ICsgc291bmQgeyAKPiA+ICsg
-Y29tcGF0aWJsZSA9ICJzaW1wbGUtYXVkaW8tY2FyZCI7IAo+ID4gKyBzaW1wbGUtYXVkaW8tY2Fy
-ZCxuYW1lID0gIlN1bjhpIEF1ZGlvIENhcmQiOyAKPiA+ICsgc2ltcGxlLWF1ZGlvLWNhcmQsZm9y
-bWF0ID0gImkycyI7IAo+ID4gKyBzaW1wbGUtYXVkaW8tY2FyZCxmcmFtZS1tYXN0ZXIgPSA8Jmxp
-bmtfY29kZWM+OyAKPiA+ICsgc2ltcGxlLWF1ZGlvLWNhcmQsYml0Y2xvY2stbWFzdGVyID0gPCZs
-aW5rX2NvZGVjPjsgCj4gPiArIHNpbXBsZS1hdWRpby1jYXJkLG1jbGstZnMgPSA8NTEyPjsgCj4g
-PiArIHNpbXBsZS1hdWRpby1jYXJkLGF1eC1kZXZzID0gPCZjb2RlY19hbmFsb2c+OyAKPiA+ICsg
-c2ltcGxlLWF1ZGlvLWNhcmQscm91dGluZyA9IAo+ID4gKyAiTGVmdCBEQUMiLCAiRGlnaXRhbCBM
-ZWZ0IERBQyIsIAo+ID4gKyAiUmlnaHQgREFDIiwgIkRpZ2l0YWwgUmlnaHQgREFDIjsgCj4gPiAr
-IAo+ID4gKyBzaW1wbGUtYXVkaW8tY2FyZCxjcHUgeyAKPiA+ICsgc291bmQtZGFpID0gPCZkYWk+
-OyAKPiA+ICsgfTsgCj4gPiArIAo+ID4gKyBsaW5rX2NvZGVjOiBzaW1wbGUtYXVkaW8tY2FyZCxj
-b2RlYyB7IAo+ID4gKyBzb3VuZC1kYWkgPSA8JmNvZGVjPjsgCj4gPiArIH07IAo+ID4gKyAKPiA+
-ICsgc29jQDAxYzAwMDAwIHsgCj4gPiArIFsuLi5dIAo+ID4gKyAKPiA+ICsgY29kZWM6IGNvZGVj
-QDAxYzIyZTAwIHsgCj4gPiArICNzb3VuZC1kYWktY2VsbHMgPSA8MD47IAo+ID4gKyBjb21wYXRp
-YmxlID0gImFsbHdpbm5lcixzdW44aS1hMzMtY29kZWMiOyAKPiA+ICsgcmVnID0gPDB4MDFjMjJl
-MDAgMHg0MDA+OyAKPiA+ICsgaW50ZXJydXB0cyA9IDxHSUNfU1BJIDI5IElSUV9UWVBFX0xFVkVM
-X0hJR0g+OyAKPiA+ICsgY2xvY2tzID0gPCZjY3UgQ0xLX0JVU19DT0RFQz4sIDwmY2N1IENMS19B
-Q19ESUc+OyAKPiA+ICsgY2xvY2stbmFtZXMgPSAiYnVzIiwgIm1vZCI7IAo+ID4gKyBzdGF0dXMg
-PSAiZGlzYWJsZWQiOyAKPiA+ICsgfTsgCj4gPiArIH07IAo+ID4gKyAKPiA+IC0tIAo+ID4gMi4x
-MS4wIAo+ID4gCj4KPiAtLSAKPiBNYXhpbWUgUmlwYXJkLCBGcmVlIEVsZWN0cm9ucyAKPiBFbWJl
-ZGRlZCBMaW51eCBhbmQgS2VybmVsIGVuZ2luZWVyaW5nIAo+IGh0dHA6Ly9mcmVlLWVsZWN0cm9u
-cy5jb20KPgo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-IAo+IGxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0IAo+IGxpbnV4LWFybS1rZXJuZWxAbGlz
-dHMuaW5mcmFkZWFkLm9yZyAKPiBodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2xpbnV4LWFybS1rZXJuZWwgCg==
+On Tue, 2017-01-24 at 13:07 +0100, Jean Delvare wrote:
+> If I say "no" to "Clock driver for Mediatek MT2701", I don't want to
+> be asked individually about each sub-driver. No means no.
+> 
+> Additionally, this driver shouldn't be proposed at all on non-mediatek
+> builds, unless build-testing.
+> 
+> Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
+> Reviewed-by: Andreas Färber <afaerber@suse.de>
+> Reviewed-by: James Liao <jamesjj.liao@mediatek.com>
+> Cc: Shunli Wang <shunli.wang@mediatek.com>
+> Cc: Erin Lo <erin.lo@mediatek.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+
+Acked-by: James Liao <jamesjj.liao@mediatek.com>
+
+> ---
+> Changes since v1:
+>  * Restrict to 32-bit ARM.
+> 
+>  drivers/clk/mediatek/Kconfig |   15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> --- linux-4.10-rc4.orig/drivers/clk/mediatek/Kconfig	2017-01-16 11:13:07.146675028 +0100
+> +++ linux-4.10-rc4/drivers/clk/mediatek/Kconfig	2017-01-24 12:55:50.192100713 +0100
+> @@ -8,44 +8,45 @@ config COMMON_CLK_MEDIATEK
+>  
+>  config COMMON_CLK_MT2701
+>  	bool "Clock driver for Mediatek MT2701"
+> +	depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
+>  	select COMMON_CLK_MEDIATEK
+> -	default ARCH_MEDIATEK
+> +	default ARCH_MEDIATEK && ARM
+>  	---help---
+>  	  This driver supports Mediatek MT2701 basic clocks.
+>  
+>  config COMMON_CLK_MT2701_MMSYS
+>  	bool "Clock driver for Mediatek MT2701 mmsys"
+> -	select COMMON_CLK_MT2701
+> +	depends on COMMON_CLK_MT2701
+>  	---help---
+>  	  This driver supports Mediatek MT2701 mmsys clocks.
+>  
+>  config COMMON_CLK_MT2701_IMGSYS
+>  	bool "Clock driver for Mediatek MT2701 imgsys"
+> -	select COMMON_CLK_MT2701
+> +	depends on COMMON_CLK_MT2701
+>  	---help---
+>  	  This driver supports Mediatek MT2701 imgsys clocks.
+>  
+>  config COMMON_CLK_MT2701_VDECSYS
+>  	bool "Clock driver for Mediatek MT2701 vdecsys"
+> -	select COMMON_CLK_MT2701
+> +	depends on COMMON_CLK_MT2701
+>  	---help---
+>  	  This driver supports Mediatek MT2701 vdecsys clocks.
+>  
+>  config COMMON_CLK_MT2701_HIFSYS
+>  	bool "Clock driver for Mediatek MT2701 hifsys"
+> -	select COMMON_CLK_MT2701
+> +	depends on COMMON_CLK_MT2701
+>  	---help---
+>  	  This driver supports Mediatek MT2701 hifsys clocks.
+>  
+>  config COMMON_CLK_MT2701_ETHSYS
+>  	bool "Clock driver for Mediatek MT2701 ethsys"
+> -	select COMMON_CLK_MT2701
+> +	depends on COMMON_CLK_MT2701
+>  	---help---
+>  	  This driver supports Mediatek MT2701 ethsys clocks.
+>  
+>  config COMMON_CLK_MT2701_BDPSYS
+>  	bool "Clock driver for Mediatek MT2701 bdpsys"
+> -	select COMMON_CLK_MT2701
+> +	depends on COMMON_CLK_MT2701
+>  	---help---
+>  	  This driver supports Mediatek MT2701 bdpsys clocks.
+>  
+> 
+> 
