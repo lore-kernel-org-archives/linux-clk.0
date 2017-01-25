@@ -1,99 +1,157 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 27 Jan 2017 12:04:36 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Eric Anholt <eric@anholt.net>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/2] drm/vc4: Add DSI driver
-Message-ID: <20170127200436.GI8801@codeaurora.org>
-References: <20170124003853.16418-1-eric@anholt.net>
- <20170124003853.16418-3-eric@anholt.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170124003853.16418-3-eric@anholt.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:33557 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752587AbdAYXrY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jan 2017 18:47:24 -0500
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Message-id: <588938F9.9070907@samsung.com>
+Date: Thu, 26 Jan 2017 08:47:05 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: martin@kaiser.cx, Krzysztof Kozlowski <krzk@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: samsung: mark s3c...._clk_sleep_init() as __init
+In-reply-to: <1485380545-24815-1-git-send-email-martin@kaiser.cx>
+References: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
+ <CGME20170125214354epcas3p2715bf71d3c8d56aefe881f95fb4aef1d@epcas3p2.samsung.com>
+ <1485380545-24815-1-git-send-email-martin@kaiser.cx>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/23, Eric Anholt wrote:
-> +static int
-> +vc4_dsi_init_phy_clocks(struct vc4_dsi *dsi)
-> +{
-> +	struct device *dev = &dsi->pdev->dev;
-> +	const char *parent_name = __clk_get_name(dsi->pll_phy_clock);
-> +	static const struct {
-> +		const char *dsi0_name, *dsi1_name;
-> +		int div;
-> +	} phy_clocks[] = {
-> +		{ "dsi0_byte", "dsi1_byte", 8 },
-> +		{ "dsi0_ddr2", "dsi1_ddr2", 4 },
-> +		{ "dsi0_ddr", "dsi1_ddr", 2 },
-> +	};
-> +	int i;
-> +
-> +	dsi->clk_onecell.clk_num = ARRAY_SIZE(phy_clocks);
-> +	dsi->clk_onecell.clks = devm_kcalloc(dev,
-> +					     dsi->clk_onecell.clk_num,
-> +					     sizeof(*dsi->clk_onecell.clks),
-> +					     GFP_KERNEL);
-> +	if (!dsi->clk_onecell.clks)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(phy_clocks); i++) {
-> +		struct clk_fixed_factor *fix = &dsi->phy_clocks[i];
-> +		struct clk_init_data init;
-> +		struct clk *clk;
-> +
-> +		/* We just use core fixed factor clock ops for the PHY
-> +		 * clocks.  The clocks are actually gated by the
-> +		 * PHY_AFEC0_DDRCLK_EN bits, which we should be
-> +		 * setting if we use the DDR/DDR2 clocks.  However,
-> +		 * vc4_dsi_encoder_enable() is setting up both AFEC0,
-> +		 * setting both our parent DSI PLL's rate and this
-> +		 * clock's rate, so it knows if DDR/DDR2 are going to
-> +		 * be used and could enable the gates itself.
-> +		 */
-> +		fix->mult = 1;
-> +		fix->div = phy_clocks[i].div;
-> +		fix->hw.init = &init;
-> +
-> +		memset(&init, 0, sizeof(init));
-> +		init.parent_names = &parent_name;
-> +		init.num_parents = 1;
-> +		if (dsi->port == 1)
-> +			init.name = phy_clocks[i].dsi1_name;
-> +		else
-> +			init.name = phy_clocks[i].dsi0_name;
-> +		init.ops = &clk_fixed_factor_ops;
-> +		init.flags = CLK_IS_BASIC;
+Hi Martin,
 
-Please don't use this flag unless you need it for something.
+The v2 patch is missing my reviewed-by tag[1].
+[1] https://patchwork.kernel.org/patch/9535993/
 
-> +
-> +		clk = devm_clk_register(dev, &fix->hw);
+Again, I add my reviewed-by tag.
 
-Can you use devm_clk_hw_register() instead please?
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-> +		if (IS_ERR(clk))
-> +			return PTR_ERR(clk);
-> +
-> +		dsi->clk_onecell.clks[i] = clk;
-> +	}
-> +
-> +	return of_clk_add_provider(dev->of_node,
 
-And the of_clk_add_hw_provider() API too.
+On 2017년 01월 26일 06:42, martin@kaiser.cx wrote:
+> From: Martin Kaiser <martin@kaiser.cx>
+> 
+> These functions are referencing s3c...._clk_regs[], which are marked as
+> __initdata. When compiling with CONFIG_DEBUG_SECTION_MISMATCH=y, this
+> produces warnings like
+> 
+> WARNING: vmlinux.o(.text+0x198350):
+> Section mismatch in reference from the function s3c2410_clk_sleep_init()
+> to the (unknown reference) .init.data:(unknown)
+> 
+> Mark the s3c...._clk_sleep_init() functions as __init in
+> order to fix this.
+> 
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> ---
+> v2:
+> Fix the commit message, describe what the problem really is.
+> (Thanks, Krzysztof)
+> 
+>  drivers/clk/samsung/clk-s3c2410.c |    4 ++--
+>  drivers/clk/samsung/clk-s3c2412.c |    4 ++--
+>  drivers/clk/samsung/clk-s3c2443.c |    4 ++--
+>  drivers/clk/samsung/clk-s3c64xx.c |    4 ++--
+>  4 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
+> index d7a1e77..e0650c3 100644
+> --- a/drivers/clk/samsung/clk-s3c2410.c
+> +++ b/drivers/clk/samsung/clk-s3c2410.c
+> @@ -76,7 +76,7 @@ static void s3c2410_clk_resume(void)
+>  	.resume = s3c2410_clk_resume,
+>  };
+>  
+> -static void s3c2410_clk_sleep_init(void)
+> +static void __init s3c2410_clk_sleep_init(void)
+>  {
+>  	s3c2410_save = samsung_clk_alloc_reg_dump(s3c2410_clk_regs,
+>  						ARRAY_SIZE(s3c2410_clk_regs));
+> @@ -90,7 +90,7 @@ static void s3c2410_clk_sleep_init(void)
+>  	return;
+>  }
+>  #else
+> -static void s3c2410_clk_sleep_init(void) {}
+> +static void __init s3c2410_clk_sleep_init(void) {}
+>  #endif
+>  
+>  PNAME(fclk_p) = { "mpll", "div_slow" };
+> diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
+> index ec873ee..b8340a4 100644
+> --- a/drivers/clk/samsung/clk-s3c2412.c
+> +++ b/drivers/clk/samsung/clk-s3c2412.c
+> @@ -69,7 +69,7 @@ static void s3c2412_clk_resume(void)
+>  	.resume = s3c2412_clk_resume,
+>  };
+>  
+> -static void s3c2412_clk_sleep_init(void)
+> +static void __init s3c2412_clk_sleep_init(void)
+>  {
+>  	s3c2412_save = samsung_clk_alloc_reg_dump(s3c2412_clk_regs,
+>  						ARRAY_SIZE(s3c2412_clk_regs));
+> @@ -83,7 +83,7 @@ static void s3c2412_clk_sleep_init(void)
+>  	return;
+>  }
+>  #else
+> -static void s3c2412_clk_sleep_init(void) {}
+> +static void __init s3c2412_clk_sleep_init(void) {}
+>  #endif
+>  
+>  static struct clk_div_table divxti_d[] = {
+> diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+> index 5e24a17..abb935c 100644
+> --- a/drivers/clk/samsung/clk-s3c2443.c
+> +++ b/drivers/clk/samsung/clk-s3c2443.c
+> @@ -89,7 +89,7 @@ static void s3c2443_clk_resume(void)
+>  	.resume = s3c2443_clk_resume,
+>  };
+>  
+> -static void s3c2443_clk_sleep_init(void)
+> +static void __init s3c2443_clk_sleep_init(void)
+>  {
+>  	s3c2443_save = samsung_clk_alloc_reg_dump(s3c2443_clk_regs,
+>  						ARRAY_SIZE(s3c2443_clk_regs));
+> @@ -103,7 +103,7 @@ static void s3c2443_clk_sleep_init(void)
+>  	return;
+>  }
+>  #else
+> -static void s3c2443_clk_sleep_init(void) {}
+> +static void __init s3c2443_clk_sleep_init(void) {}
+>  #endif
+>  
+>  PNAME(epllref_p) = { "mpllref", "mpllref", "xti", "ext" };
+> diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
+> index a48bd5f..7306867 100644
+> --- a/drivers/clk/samsung/clk-s3c64xx.c
+> +++ b/drivers/clk/samsung/clk-s3c64xx.c
+> @@ -121,7 +121,7 @@ static void s3c64xx_clk_resume(void)
+>  	.resume = s3c64xx_clk_resume,
+>  };
+>  
+> -static void s3c64xx_clk_sleep_init(void)
+> +static void __init s3c64xx_clk_sleep_init(void)
+>  {
+>  	s3c64xx_save_common = samsung_clk_alloc_reg_dump(s3c64xx_clk_regs,
+>  						ARRAY_SIZE(s3c64xx_clk_regs));
+> @@ -145,7 +145,7 @@ static void s3c64xx_clk_sleep_init(void)
+>  		__func__);
+>  }
+>  #else
+> -static void s3c64xx_clk_sleep_init(void) {}
+> +static void __init s3c64xx_clk_sleep_init(void) {}
+>  #endif
+>  
+>  /* List of parent clocks common for all S3C64xx SoCs. */
+> 
 
-> +				   of_clk_src_onecell_get,
-> +				   &dsi->clk_onecell);
-> +}
-> +
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
