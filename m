@@ -1,47 +1,99 @@
-Return-Path: <krzk@kernel.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/4] Renesas CPG/MSSR Reset Control Support
+Date: Wed, 25 Jan 2017 10:14:59 +0100
+Message-Id: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPd7UDhn0oxyFsYAtD4zKfOoZA0LP-CNdXmhCzjOs6Le=A@mail.gmail.com>
-References: <20170119091153.8439-1-valentinrothberg@gmail.com> <CAJKOXPd7UDhn0oxyFsYAtD4zKfOoZA0LP-CNdXmhCzjOs6Le=A@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Thu, 19 Jan 2017 11:20:17 +0200
-Message-ID: <CAJKOXPdX2YhSf0T8zoZ_i=AxbNjWLy=jVF_zhj-b_kGX2x7zPA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: Exynos4415: remove dead build rule
-To: Valentin Rothberg <valentinrothberg@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Valentin Rothberg <valetinrothberg@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 19, 2017 at 11:18 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Thu, Jan 19, 2017 at 11:11 AM, Valentin Rothberg
-> <valentinrothberg@gmail.com> wrote:
->> Commit 22dfab102cfa ("ARM: EXYNOS: Remove Exynos4415 arch code (SoC not
->> supported anymore)") removed the Kconfig option SOC_EXYNOS4415.  Thus,
->> we are safe to remove the last reference in the Makefile.
->>
->> Signed-off-by: Valentin Rothberg <valetinrothberg@gmail.com>
->> ---
->> Detected by using ./scripts/checkkconfigsymbols.py
->>
->>  drivers/clk/samsung/Makefile | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
->> index 57f4dc6dc447..7afc21dc374e 100644
->> --- a/drivers/clk/samsung/Makefile
->> +++ b/drivers/clk/samsung/Makefile
->> @@ -5,7 +5,6 @@
->>  obj-$(CONFIG_COMMON_CLK)       += clk.o clk-pll.o clk-cpu.o
->>  obj-$(CONFIG_SOC_EXYNOS3250)   += clk-exynos3250.o
->>  obj-$(CONFIG_ARCH_EXYNOS4)     += clk-exynos4.o
->> -obj-$(CONFIG_SOC_EXYNOS4415)   += clk-exynos4415.o
->
-> It is already removed. Which tree are you using?
+	Hi all,
 
-BTW, please fix your own mail/name etc in from and Signed-off-by. One
-of them is wrong and bounces.
+This patch series adds reset control support to the Renesas Clock Pulse
+Generator / Module Standby and Software Reset module, on the R-Car H3
+and M3-W, RZ/G1M, and RZ/G1E SoCs.
 
-Best regards,
-Krzysztof
+  - Patch 1 amends the Renesas CPG/MSSR DT bindings for reset control,
+  - Patches 2-4 add reset control to the Renesas CPG/MSSR driver.
+
+Note that this patch series implements reset functionality only.
+Actual reset policy is to be defined and implemented separately.
+
+This is an optional feature, to be enabled explicitly using
+CONFIG_RESET_CONTROLLER=y.  When enabled, an on-SoC device can be reset
+easily using device_reset(), or by using the reset_control_*() API when
+more fine-grained control is desired.
+
+Possible use cases are (not exhaustive):
+  - Reset a device before use, to make sure it's in a predefined state, and
+    doesn't depend on earlier configuration by e.g. the boot loader,
+  - Reset a device after detecting an anomaly,
+  - Reset a device to verify suspend/resume is handled correctly by the
+    driver in case the device would be part of a power domain on a
+    different/future SoC.
+
+Changes compared to v1:
+  - Change oneline summary for binding update to refer to dt-bindings.
+  - Add Acked-by, Reviewed-by,
+  - Use variable bitmask in all reset operations, to make them more
+    similar,
+  - Dropped the DTS changes:
+      - If CONFIG_RESET_CONTROLLER=y, they have a hard dependency on the
+	driver patches (at least for USB on R-Car Gen3), so they can
+	only go upstream in a later cycle,
+      - The DTS changes will have to be respun anyway, to accommodate
+	for changes in the DTS files between now and final upstreaming.
+
+For your convenience, the driver and DTS changes (incl. dependencies)
+are available in the topic/renesas-cpg-mssr-reset-driver-v2 resp.
+topic/renesas-cpg-mssr-reset-dts-v1 branches of my topic/rcar-rst-v4
+branch of my renesas-drivers git repository at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+
+This has been tested on the R-Car Gen3 Salvator-X (H3 and M3-W) and the
+R-Car M2-W (using out-of-tree driver modifications) Koelsch development
+boards, by inspecting device register contents before and after reset,
+and by comparing them with their documented reset values.
+
+As this modifies a Renesas clock driver, I'll queue this up in my
+clk-renesas-for-v4.11 branch, and will send a pull request later this
+week.  
+
+Thanks!
+
+Geert Uytterhoeven (4):
+  dt-bindings: clock: renesas: cpg-mssr: Document reset control support
+  clk: renesas: cpg-mssr: Document suitability for RZ/G1
+  clk: renesas: cpg-mssr: Rename cpg_mssr_priv.mstp_lock
+  clk: renesas: cpg-mssr: Add support for reset control
+
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.c             | 138 ++++++++++++++++++++-
+ 2 files changed, 138 insertions(+), 6 deletions(-)
+
+-- 
+1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
