@@ -1,23 +1,87 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Jacob Chen <jacob-chen@iotwrt.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, zhangqing@rock-chips.com, zhengxing@rock-chips.com
-Subject: Re: [PATCH 1/4] clk: rockchip: add rk3288 isp_in clock ids
-Date: Fri, 13 Jan 2017 19:57:52 +0100
-Message-ID: <2449565.hTUeJeJ7Db@phil>
-In-Reply-To: <1484049560-14820-1-git-send-email-jacob-chen@iotwrt.com>
-References: <1484049560-14820-1-git-send-email-jacob-chen@iotwrt.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v2 0/9] Allwinner H5 and Orange Pi PC2 support
+Date: Thu, 26 Jan 2017 23:48:50 +0800
+Message-Id: <20170126154859.55855-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 10. Januar 2017, 19:59:17 CET schrieb Jacob Chen:
-> Add clock-ids for the isp block of the rk3288.
-> 
-> 
-> Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
+Allwinner H5 is a 64-bit SoC with a design like the 32-bit
+H3.
 
-applied for 4.11
+This patch adds support for it, along with the first available
+board -- Orange Pi PC2.
 
-Thanks
-Heiko
+P.S. Some patches are sent wrongly, please ignore them. Sorry.
+
+Andre Przywara (3):
+  arm: dts: sun8i: split Allwinner H3 .dtsi
+  arm64: dts: allwinner: add Allwinner H5 .dtsi
+  arm64: dts: sunxi: add support for the Orange Pi PC 2 board
+
+Icenowy Zheng (6):
+  drivers: pinctrl: add driver for Allwinner H5 SoC
+  arm64: allwinner: Kconfig: add essential pinctrl driver for H5
+  clk: sunxi-ng: add support for Allwinner H5 SoC
+  clk: sunxi-ng: remove transitional headers for dt-bindings
+  dmaengine: sun6i: allow build on ARM64 platforms (sun50i)
+  ASoC: sunxi: allow the analog codec driver to be built on ARM64
+
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+ arch/arm/boot/dts/sun8i-h3.dtsi                    | 501 +-----------------
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 557 ++++++++++++++++++++
+ arch/arm64/Kconfig.platforms                       |   5 +-
+ arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+ .../boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 164 ++++++
+ arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       | 140 ++++++
+ arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi     |   1 +
+ drivers/clk/sunxi-ng/Kconfig                       |   6 +-
+ drivers/clk/sunxi-ng/Makefile                      |   2 +-
+ .../sunxi-ng/{ccu-sun8i-h3.c => ccu-sunxi-h3-h5.c} | 179 ++++++-
+ .../sunxi-ng/{ccu-sun8i-h3.h => ccu-sunxi-h3-h5.h} |  15 +-
+ drivers/dma/Kconfig                                |   2 +-
+ drivers/pinctrl/sunxi/Kconfig                      |   4 +
+ drivers/pinctrl/sunxi/Makefile                     |   1 +
+ drivers/pinctrl/sunxi/pinctrl-sun50i-h5.c          | 558 +++++++++++++++++++++
+ .../clock/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h}    |  11 +-
+ .../reset/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h}    |  11 +-
+ sound/soc/sunxi/Kconfig                            |   2 +-
+ 20 files changed, 1628 insertions(+), 534 deletions(-)
+ create mode 100644 arch/arm/boot/dts/sunxi-h3-h5.dtsi
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+ create mode 120000 arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
+ rename drivers/clk/sunxi-ng/{ccu-sun8i-h3.c => ccu-sunxi-h3-h5.c} (80%)
+ rename drivers/clk/sunxi-ng/{ccu-sun8i-h3.h => ccu-sunxi-h3-h5.h} (82%)
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h5.c
+ rename include/dt-bindings/clock/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h} (95%)
+ rename include/dt-bindings/reset/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h} (94%)
+
+-- 
+2.11.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
