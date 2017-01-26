@@ -1,58 +1,58 @@
-Return-Path: <valentinrothberg@gmail.com>
-Return-Path: <valentinrothberg@gmail.com>
-Subject: Re: [PATCH] ARM: Exynos4415: remove dead build rule
-To: Krzysztof Kozlowski <krzk@kernel.org>
-References: <20170119091153.8439-1-valentinrothberg@gmail.com>
- <CAJKOXPd7UDhn0oxyFsYAtD4zKfOoZA0LP-CNdXmhCzjOs6Le=A@mail.gmail.com>
- <CAJKOXPdX2YhSf0T8zoZ_i=AxbNjWLy=jVF_zhj-b_kGX2x7zPA@mail.gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Valentin Rothberg <valentinrothberg@gmail.com>
-From: Valentin Rothberg <valentinrothberg@gmail.com>
-Message-ID: <3c181bf8-7861-5197-f423-03e36bc440c5@gmail.com>
-Date: Thu, 19 Jan 2017 10:25:58 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36571 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751598AbdAZF6P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2017 00:58:15 -0500
+Date: Thu, 26 Jan 2017 07:58:09 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: martin@kaiser.cx
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: samsung: mark s3c...._clk_sleep_init() as __init
+Message-ID: <20170126055809.fa2vgn54b7uk7wy5@kozik-lap>
+References: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
+ <1485380545-24815-1-git-send-email-martin@kaiser.cx>
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPdX2YhSf0T8zoZ_i=AxbNjWLy=jVF_zhj-b_kGX2x7zPA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1485380545-24815-1-git-send-email-martin@kaiser.cx>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Krzysztof,
+On Wed, Jan 25, 2017 at 10:42:25PM +0100, martin@kaiser.cx wrote:
+> From: Martin Kaiser <martin@kaiser.cx>
+> 
+> These functions are referencing s3c...._clk_regs[], which are marked as
+> __initdata. When compiling with CONFIG_DEBUG_SECTION_MISMATCH=y, this
+> produces warnings like
+> 
+> WARNING: vmlinux.o(.text+0x198350):
+> Section mismatch in reference from the function s3c2410_clk_sleep_init()
+> to the (unknown reference) .init.data:(unknown)
+> 
+> Mark the s3c...._clk_sleep_init() functions as __init in
+> order to fix this.
+> 
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> ---
+> v2:
+> Fix the commit message, describe what the problem really is.
+> (Thanks, Krzysztof)
+> 
+>  drivers/clk/samsung/clk-s3c2410.c |    4 ++--
+>  drivers/clk/samsung/clk-s3c2412.c |    4 ++--
+>  drivers/clk/samsung/clk-s3c2443.c |    4 ++--
+>  drivers/clk/samsung/clk-s3c64xx.c |    4 ++--
+>  4 files changed, 8 insertions(+), 8 deletions(-)
+> 
 
-On 19/01/2017 10:20, Krzysztof Kozlowski wrote:
-> On Thu, Jan 19, 2017 at 11:18 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> On Thu, Jan 19, 2017 at 11:11 AM, Valentin Rothberg
->> <valentinrothberg@gmail.com> wrote:
->>> Commit 22dfab102cfa ("ARM: EXYNOS: Remove Exynos4415 arch code (SoC not
->>> supported anymore)") removed the Kconfig option SOC_EXYNOS4415.  Thus,
->>> we are safe to remove the last reference in the Makefile.
->>>
->>> Signed-off-by: Valentin Rothberg <valetinrothberg@gmail.com>
->>> ---
->>> Detected by using ./scripts/checkkconfigsymbols.py
->>>
->>>  drivers/clk/samsung/Makefile | 1 -
->>>  1 file changed, 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
->>> index 57f4dc6dc447..7afc21dc374e 100644
->>> --- a/drivers/clk/samsung/Makefile
->>> +++ b/drivers/clk/samsung/Makefile
->>> @@ -5,7 +5,6 @@
->>>  obj-$(CONFIG_COMMON_CLK)       += clk.o clk-pll.o clk-cpu.o
->>>  obj-$(CONFIG_SOC_EXYNOS3250)   += clk-exynos3250.o
->>>  obj-$(CONFIG_ARCH_EXYNOS4)     += clk-exynos4.o
->>> -obj-$(CONFIG_SOC_EXYNOS4415)   += clk-exynos4415.o
->>
->> It is already removed. Which tree are you using?
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-I'm on today's linux-next.  Please excuse the noise, I did not see your
-other patch on lkml.
+Best regards,
+Krzysztof
 
-> BTW, please fix your own mail/name etc in from and Signed-off-by. One
-> of them is wrong and bounces.
-
-Thanks for the hint.
-
-Kind regards,
- Valentin
