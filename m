@@ -1,79 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:36696 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932924AbdA0Lgw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Jan 2017 06:36:52 -0500
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5433: Add IDs for
- PHYCLK_MIPIDPHY0_* clocks
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <fa7f7ac4-5ac7-435e-a076-b18bf332388b@samsung.com>
-Date: Fri, 27 Jan 2017 12:34:57 +0100
-MIME-version: 1.0
-In-reply-to: <45f50263-6c5f-bbc6-1e24-a386dbabb496@samsung.com>
-Content-type: text/plain; charset=utf-8
-References: <1485345118-3082-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125115214eucas1p1517ce7ca8fe88e4742a1306630b91d09@eucas1p1.samsung.com>
- <1485345118-3082-2-git-send-email-m.szyprowski@samsung.com>
- <20170125200631.ubt3x6jhoi367ex6@kozik-lap>
- <45f50263-6c5f-bbc6-1e24-a386dbabb496@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v2 8/9] ASoC: sunxi: allow the analog codec driver to be built
+ on ARM64
+Date: Thu, 26 Jan 2017 23:48:58 +0800
+Message-Id: <20170126154859.55855-9-icenowy@aosc.xyz>
+In-Reply-To: <20170126154859.55855-1-icenowy@aosc.xyz>
+References: <20170126154859.55855-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/27/2017 12:05 PM, Sylwester Nawrocki wrote:
-> Cc: linux-clk@vger.kernel.org
-> 
-> On 01/25/2017 09:06 PM, Krzysztof Kozlowski wrote:
->> On Wed, Jan 25, 2017 at 12:51:57PM +0100, Marek Szyprowski wrote:
->>> Add missing identifiers for phyclk_mipidphy0_bitclkdiv8_phy and
->>> phyclk_mipidphy0_rxclkesc0_phy clocks. Access to those clocks is needed
->>> to setup initial clock configuration for display subsystem in device tree
->>> in order to avoid dependency on the configuration left by the bootloader.
->>>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> ---
->>>  drivers/clk/samsung/clk-exynos5433.c   | 6 ++++--
->>>  include/dt-bindings/clock/exynos5433.h | 5 ++++-
->>>  2 files changed, 8 insertions(+), 3 deletions(-)
->>>
->> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
->>
->> Sylwester,
->> Could you provide a tag with this?
-> 
-> I have the tag prepared already, but please resend the patch to
-> linux-clk@vger.kernel.org and I will reply there.
-> The patches were sent only to the linux-samsung-soc mailing list.
+As the 64-bit Allwinner H5 SoC has the same analog codec part (also the
+same digital part) as H3, enable the driver to be built on ARM64
+Allwinner platform, so that it can be used on H5.
 
-Krzysztof, if you need this patch series as a dependency here is the tag:
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+New patch in v2.
 
- The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
+ sound/soc/sunxi/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
+diff --git a/sound/soc/sunxi/Kconfig b/sound/soc/sunxi/Kconfig
+index 6c344e16aca4..49b71719c9b9 100644
+--- a/sound/soc/sunxi/Kconfig
++++ b/sound/soc/sunxi/Kconfig
+@@ -11,7 +11,7 @@ config SND_SUN4I_CODEC
+ 
+ config SND_SUN8I_CODEC_ANALOG
+ 	tristate "Allwinner sun8i Codec Analog Controls Support"
+-	depends on MACH_SUN8I || COMPILE_TEST
++	depends on MACH_SUN8I || (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+ 	select REGMAP
+ 	help
+ 	  Say Y or M if you want to add support for the analog controls for
+-- 
+2.11.0
 
-are available in the git repository at:
 
-  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-samsung-dphy
-
-for you to fetch changes up to 698e0d1d22346ef03d7a13fcd9c2cc86a24bf317:
-
-  clk: samsung: exynos5433: Add data for 250MHz and 278MHz PLL rates
-(2017-01-27 11:34:00 +0100)
-
-----------------------------------------------------------------
-Exporting clocks for MIPI DSI DPHY and the display PLL
-frequency list update for Exynos5433 SoC.
-
-----------------------------------------------------------------
-Marek Szyprowski (2):
-      clk: samsung: exynos5433: Add IDs for PHYCLK_MIPIDPHY0_* clocks
-      clk: samsung: exynos5433: Add data for 250MHz and 278MHz PLL rates
-
- drivers/clk/samsung/clk-exynos5433.c   | 8 ++++++--
- include/dt-bindings/clock/exynos5433.h | 5 ++++-
- 2 files changed, 10 insertions(+), 3 deletions(-)
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
