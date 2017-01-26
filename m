@@ -1,343 +1,161 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <gabriel.fernandez@st.com>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-Subject: [PATCH 3/3] ARM: dts: stm32: Use clock DT binding definition on stm32f429 family
-Date: Fri, 6 Jan 2017 16:52:14 +0100
-Message-ID: <1483717934-21415-4-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1483717934-21415-1-git-send-email-gabriel.fernandez@st.com>
-References: <1483717934-21415-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 26 Jan 2017 11:14:05 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 06/11] clk: sunxi-ng: Add A80 USB CCU
+Message-ID: <20170126101405.npxzp2bmto5oeyex@lukather>
+References: <20170124023230.3990-1-wens@csie.org>
+ <20170124023230.3990-7-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dzto6hprgehagboz"
+In-Reply-To: <20170124023230.3990-7-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-This patch uses clock DT binding definition instead numerical values
-for stm32f429 board.
+--dzto6hprgehagboz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- arch/arm/boot/dts/stm32429i-eval.dts |  2 +-
- arch/arm/boot/dts/stm32f429.dtsi     | 66 +++++++++++++++++++-----------------
- 2 files changed, 36 insertions(+), 32 deletions(-)
+Hi,
 
-diff --git a/arch/arm/boot/dts/stm32429i-eval.dts b/arch/arm/boot/dts/stm32429i-eval.dts
-index 76f7206..4e31881 100644
---- a/arch/arm/boot/dts/stm32429i-eval.dts
-+++ b/arch/arm/boot/dts/stm32429i-eval.dts
-@@ -107,7 +107,7 @@
- 	usbotg_hs_phy: usbphy {
- 		#phy-cells = <0>;
- 		compatible = "usb-nop-xceiv";
--		clocks = <&rcc 0 30>;
-+		clocks = <&rcc 0 STM32F4_AHB1_CLOCK(OTGHSULPI)>;
- 		clock-names = "main_clk";
- 	};
- };
-diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
-index 041e3fc..1bacdfb 100644
---- a/arch/arm/boot/dts/stm32f429.dtsi
-+++ b/arch/arm/boot/dts/stm32f429.dtsi
-@@ -49,6 +49,7 @@
- #include "armv7-m.dtsi"
- #include <dt-bindings/pinctrl/stm32f429-pinfunc.h>
- #include <dt-bindings/clock/stm32fx-clock.h>
-+#include <dt-bindings/mfd/stm32f4-rcc.h>
- 
- / {
- 	clocks {
-@@ -82,7 +83,7 @@
- 			compatible = "st,stm32-timer";
- 			reg = <0x40000000 0x400>;
- 			interrupts = <28>;
--			clocks = <&rcc 0 128>;
-+			clocks = <&rcc 0 STM32F4_APB1_CLOCK(TIM2)>;
- 			status = "disabled";
- 		};
- 
-@@ -90,7 +91,7 @@
- 			compatible = "st,stm32-timer";
- 			reg = <0x40000400 0x400>;
- 			interrupts = <29>;
--			clocks = <&rcc 0 129>;
-+			clocks = <&rcc 0 STM32F4_APB1_CLOCK(TIM3)>;
- 			status = "disabled";
- 		};
- 
-@@ -98,7 +99,7 @@
- 			compatible = "st,stm32-timer";
- 			reg = <0x40000800 0x400>;
- 			interrupts = <30>;
--			clocks = <&rcc 0 130>;
-+			clocks = <&rcc 0 STM32F4_APB1_CLOCK(TIM4)>;
- 			status = "disabled";
- 		};
- 
-@@ -106,14 +107,14 @@
- 			compatible = "st,stm32-timer";
- 			reg = <0x40000c00 0x400>;
- 			interrupts = <50>;
--			clocks = <&rcc 0 131>;
-+			clocks = <&rcc 0 STM32F4_APB1_CLOCK(TIM5)>;
- 		};
- 
- 		timer6: timer@40001000 {
- 			compatible = "st,stm32-timer";
- 			reg = <0x40001000 0x400>;
- 			interrupts = <54>;
--			clocks = <&rcc 0 132>;
-+			clocks = <&rcc 0 STM32F4_APB1_CLOCK(TIM6)>;
- 			status = "disabled";
- 		};
- 
-@@ -121,7 +122,7 @@
- 			compatible = "st,stm32-timer";
- 			reg = <0x40001400 0x400>;
- 			interrupts = <55>;
--			clocks = <&rcc 0 133>;
-+			clocks = <&rcc 0 STM32F4_APB1_CLOCK(TIM7)>;
- 			status = "disabled";
- 		};
- 
-@@ -129,7 +130,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40004400 0x400>;
- 			interrupts = <38>;
--			clocks =  <&rcc 0 145>;
-+			clocks = <&rcc 0 STM32F4_APB1_CLOCK(UART2)>;
- 			status = "disabled";
- 		};
- 
-@@ -137,7 +138,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40004800 0x400>;
- 			interrupts = <39>;
--			clocks = <&rcc 0 146>;
-+			clocks = <&rcc 0 STM32F4_APB1_CLOCK(UART3)>;
- 			status = "disabled";
- 			dmas = <&dma1 1 4 0x400 0x0>,
- 			       <&dma1 3 4 0x400 0x0>;
-@@ -148,7 +149,7 @@
- 			compatible = "st,stm32-uart";
- 			reg = <0x40004c00 0x400>;
- 			interrupts = <52>;
--			clocks = <&rcc 0 147>;
-+			clocks = <&rcc 0 STM32F4_APB1_CLOCK(UART4)>;
- 			status = "disabled";
- 		};
- 
-@@ -156,7 +157,7 @@
- 			compatible = "st,stm32-uart";
- 			reg = <0x40005000 0x400>;
- 			interrupts = <53>;
--			clocks = <&rcc 0 148>;
-+			clocks = <&rcc 0 STM32F4_APB1_CLOCK(UART5)>;
- 			status = "disabled";
- 		};
- 
-@@ -164,7 +165,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40007800 0x400>;
- 			interrupts = <82>;
--			clocks = <&rcc 0 158>;
-+			clocks = <&rcc 0 STM32F4_APB1_CLOCK(UART7)>;
- 			status = "disabled";
- 		};
- 
-@@ -172,7 +173,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40007c00 0x400>;
- 			interrupts = <83>;
--			clocks = <&rcc 0 159>;
-+			clocks = <&rcc 0 STM32F4_APB1_CLOCK(UART8)>;
- 			status = "disabled";
- 		};
- 
-@@ -180,7 +181,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40011000 0x400>;
- 			interrupts = <37>;
--			clocks = <&rcc 0 164>;
-+			clocks = <&rcc 0 STM32F4_APB2_CLOCK(USART1)>;
- 			status = "disabled";
- 			dmas = <&dma2 2 4 0x400 0x0>,
- 			       <&dma2 7 4 0x400 0x0>;
-@@ -191,7 +192,7 @@
- 			compatible = "st,stm32-usart", "st,stm32-uart";
- 			reg = <0x40011400 0x400>;
- 			interrupts = <71>;
--			clocks = <&rcc 0 165>;
-+			clocks = <&rcc 0 STM32F4_APB2_CLOCK(USART6)>;
- 			status = "disabled";
- 		};
- 
-@@ -226,7 +227,7 @@
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				reg = <0x0 0x400>;
--				clocks = <&rcc 0 0>;
-+				clocks = <&rcc 0 STM32F4_AHB1_CLOCK(GPIOA)>;
- 				st,bank-name = "GPIOA";
- 			};
- 
-@@ -234,7 +235,7 @@
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				reg = <0x400 0x400>;
--				clocks = <&rcc 0 1>;
-+				clocks = <&rcc 0 STM32F4_AHB1_CLOCK(GPIOB)>;
- 				st,bank-name = "GPIOB";
- 			};
- 
-@@ -242,7 +243,7 @@
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				reg = <0x800 0x400>;
--				clocks = <&rcc 0 2>;
-+				clocks = <&rcc 0 STM32F4_AHB1_CLOCK(GPIOC)>;
- 				st,bank-name = "GPIOC";
- 			};
- 
-@@ -250,7 +251,7 @@
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				reg = <0xc00 0x400>;
--				clocks = <&rcc 0 3>;
-+				clocks = <&rcc 0 STM32F4_AHB1_CLOCK(GPIOD)>;
- 				st,bank-name = "GPIOD";
- 			};
- 
-@@ -258,7 +259,7 @@
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				reg = <0x1000 0x400>;
--				clocks = <&rcc 0 4>;
-+				clocks = <&rcc 0 STM32F4_AHB1_CLOCK(GPIOE)>;
- 				st,bank-name = "GPIOE";
- 			};
- 
-@@ -266,7 +267,7 @@
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				reg = <0x1400 0x400>;
--				clocks = <&rcc 0 5>;
-+				clocks = <&rcc 0 STM32F4_AHB1_CLOCK(GPIOF)>;
- 				st,bank-name = "GPIOF";
- 			};
- 
-@@ -274,7 +275,7 @@
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				reg = <0x1800 0x400>;
--				clocks = <&rcc 0 6>;
-+				clocks = <&rcc 0 STM32F4_AHB1_CLOCK(GPIOG)>;
- 				st,bank-name = "GPIOG";
- 			};
- 
-@@ -282,7 +283,7 @@
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				reg = <0x1c00 0x400>;
--				clocks = <&rcc 0 7>;
-+				clocks = <&rcc 0 STM32F4_AHB1_CLOCK(GPIOH)>;
- 				st,bank-name = "GPIOH";
- 			};
- 
-@@ -290,7 +291,7 @@
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				reg = <0x2000 0x400>;
--				clocks = <&rcc 0 8>;
-+				clocks = <&rcc 0 STM32F4_AHB1_CLOCK(GPIOI)>;
- 				st,bank-name = "GPIOI";
- 			};
- 
-@@ -298,7 +299,7 @@
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				reg = <0x2400 0x400>;
--				clocks = <&rcc 0 9>;
-+				clocks = <&rcc 0 STM32F4_AHB1_CLOCK(GPIOJ)>;
- 				st,bank-name = "GPIOJ";
- 			};
- 
-@@ -306,7 +307,7 @@
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				reg = <0x2800 0x400>;
--				clocks = <&rcc 0 10>;
-+				clocks = <&rcc 0 STM32F4_AHB1_CLOCK(GPIOK)>;
- 				st,bank-name = "GPIOK";
- 			};
- 
-@@ -384,7 +385,7 @@
- 				     <16>,
- 				     <17>,
- 				     <47>;
--			clocks = <&rcc 0 21>;
-+			clocks = <&rcc 0 STM32F4_AHB1_CLOCK(DMA1)>;
- 			#dma-cells = <4>;
- 		};
- 
-@@ -399,7 +400,7 @@
- 				     <68>,
- 				     <69>,
- 				     <70>;
--			clocks = <&rcc 0 22>;
-+			clocks = <&rcc 0 STM32F4_AHB1_CLOCK(DMA2)>;
- 			#dma-cells = <4>;
- 			st,mem2mem;
- 		};
-@@ -411,7 +412,9 @@
- 			interrupts = <61>;
- 			interrupt-names = "macirq";
- 			clock-names = "stmmaceth", "mac-clk-tx", "mac-clk-rx";
--			clocks = <&rcc 0 25>, <&rcc 0 26>, <&rcc 0 27>;
-+			clocks = <&rcc 0 STM32F4_AHB1_CLOCK(ETHMAC)>,
-+					<&rcc 0 STM32F4_AHB1_CLOCK(ETHMACTX)>,
-+					<&rcc 0 STM32F4_AHB1_CLOCK(ETHMACRX)>;
- 			st,syscon = <&syscfg 0x4>;
- 			snps,pbl = <8>;
- 			snps,mixed-burst;
-@@ -422,7 +425,7 @@
- 			compatible = "snps,dwc2";
- 			reg = <0x40040000 0x40000>;
- 			interrupts = <77>;
--			clocks = <&rcc 0 29>;
-+			clocks = <&rcc 0 STM32F4_AHB1_CLOCK(OTGHS)>;
- 			clock-names = "otg";
- 			status = "disabled";
- 		};
-@@ -431,12 +434,13 @@
- 			compatible = "st,stm32-rng";
- 			reg = <0x50060800 0x400>;
- 			interrupts = <80>;
--			clocks = <&rcc 0 38>;
-+			clocks = <&rcc 0 STM32F4_AHB2_CLOCK(RNG)>;
-+
- 		};
- 	};
- };
- 
- &systick {
--	clocks = <&rcc 1 0>;
-+	clocks = <&rcc 1 SYSTICK>;
- 	status = "okay";
- };
--- 
-1.9.1
+On Tue, Jan 24, 2017 at 10:32:25AM +0800, Chen-Yu Tsai wrote:
+> Add support for the USB clock controls found on the A80.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  .../devicetree/bindings/clock/sun9i-usb.txt        |  24 ++++
+>  drivers/clk/sunxi-ng/Makefile                      |   1 +
+>  drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c           | 144 +++++++++++++++=
+++++++
+>  drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.h           |  25 ++++
+>  include/dt-bindings/clock/sun9i-a80-usb.h          |  59 +++++++++
+>  include/dt-bindings/reset/sun9i-a80-usb.h          |  56 ++++++++
+>  6 files changed, 309 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sun9i-usb.txt
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.h
+>  create mode 100644 include/dt-bindings/clock/sun9i-a80-usb.h
+>  create mode 100644 include/dt-bindings/reset/sun9i-a80-usb.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/sun9i-usb.txt b/Docu=
+mentation/devicetree/bindings/clock/sun9i-usb.txt
+> new file mode 100644
+> index 000000000000..c2d38626eaaa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sun9i-usb.txt
+> @@ -0,0 +1,24 @@
+> +Allwinner A80 USB Clock Control Binding
+> +------------------------------------
+> +
+> +Required properties :
+> +- compatible: must contain one of the following compatibles:
+> +		- "allwinner,sun9i-a80-usb-clocks"
+> +
+> +- reg: Must contain the registers base address and length
+> +- clocks: phandle to the clocks feeding the USB subsystem. Two are neede=
+d:
+> +  - "bus": the bus clock for the whole USB subsystem
+> +  - "hosc": the high frequency oscillator (usually at 24MHz)
+> +- clock-names: Must contain the clock names described just above
+> +- #clock-cells : must contain 1
+> +- #reset-cells : must contain 1
+> +
+> +Example:
+> +usb_clocks: clock@00a08000 {
+> +	compatible =3D "allwinner,sun9i-a80-usb-clks";
+> +	reg =3D <0x00a08000 0x8>;
+> +	clocks =3D <&ccu CLK_BUS_USB>, <&osc24M>;
+> +	clock-names =3D "bus", "hosc";
+> +	#clock-cells =3D <1>;
+> +	#reset-cells =3D <1>;
+> +};
+> diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+> index 126bb7c1c3f7..8f37ef7fb67d 100644
+> --- a/drivers/clk/sunxi-ng/Makefile
+> +++ b/drivers/clk/sunxi-ng/Makefile
+> @@ -26,3 +26,4 @@ obj-$(CONFIG_SUN8I_A33_CCU)	+=3D ccu-sun8i-a33.o
+>  obj-$(CONFIG_SUN8I_H3_CCU)	+=3D ccu-sun8i-h3.o
+>  obj-$(CONFIG_SUN8I_V3S_CCU)	+=3D ccu-sun8i-v3s.o
+>  obj-$(CONFIG_SUN9I_A80_CCU)	+=3D ccu-sun9i-a80.o
+> +obj-$(CONFIG_SUN9I_A80_CCU)	+=3D ccu-sun9i-a80-usb.o
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c b/drivers/clk/sunxi=
+-ng/ccu-sun9i-a80-usb.c
+> new file mode 100644
+> index 000000000000..1d76f24f7df3
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
+> @@ -0,0 +1,144 @@
+> +/*
+> + * Copyright (c) 2016 Chen-Yu Tsai. All rights reserved.
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "ccu_common.h"
+> +#include "ccu_gate.h"
+> +#include "ccu_reset.h"
+> +
+> +#include "ccu-sun9i-a80-usb.h"
+> +
+> +static SUNXI_CCU_GATE(bus_hci0_clk, "bus-hci0", "bus-usb", 0x0, BIT(1), =
+0);
+> +static SUNXI_CCU_GATE(usb_ohci0_clk, "usb-ohci0", "osc24M", 0x0, BIT(2),=
+ 0);
+> +static SUNXI_CCU_GATE(bus_hci1_clk, "bus-hci1", "bus-usb", 0x0, BIT(3), =
+0);
+> +static SUNXI_CCU_GATE(bus_hci2_clk, "bus-hci2", "bus-usb", 0x0, BIT(5), =
+0);
+> +static SUNXI_CCU_GATE(usb_ohci2_clk, "usb-ohci2", "osc24M", 0x0, BIT(6),=
+ 0);
+
+In the current !sunxi-ng driver, there's a clock at offset 4, did you
+forget it?
+
+Thanks,
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--dzto6hprgehagboz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYicvpAAoJEBx+YmzsjxAgWdoP/Rz8OmNJGbC5G/rP4TAZuUPQ
+Xa5dlPJ9X/wr0wxj6LdNIn/JizuCOmgYSmcheXaIfAGZBUR2KhVcAH/VQpYsa6h7
+dLa4XS5Ay3uZcCaH2/e+3qY1Lim11Cgr9FbiVWyD9Fco6/kY3sMBqzxzYm5ASi+U
+63VydG3YuUepFXE7XXF3RLYUMaeIMuxo+3KL0iM0lH54N7YK8e+w+A7yRdQWWy9/
+WkJj/8pgY0heZRNnD0c6Al1gNtSrRBnUDKuAFkqm9IN8hsbJmgYYI5zpfH9SDFa2
+t4++/DXDBB9bwX2il5z5wb4hUq0aWTnXX/T0mUc4gxTVt6/xuWHeuFvrzhlJl46A
+yqzjdh4bIEKwpft0mlLGiuPz0O7K5Lbh2iH2ClGpWvzgmB30Rrvxg6vrOBf8gxfg
+CWPZ4QXDtNcuEVPKUI0er76nexwbNfvUVGY9o/fl+GYyb3VWe98nrBKPWoFcqurl
+HIZzzd1ryoO+uFIp3J/ykpLdUzXmeFhW90m/hzvg4L+3xamD+Et2XfNFW+ZDt1Ef
+L+B76xNaYQH9S5egrMveq6Z8VPbkTcS8gYTEbiJO4N5eOpySMHv8WPWSF/UP8NtE
+TVim+N330LxScX2R2YNEzIB9FWSyUcmRJZvbP8+JNXMwY9TDabXtbH4sywuL7iVq
++OvWQU06VRUEZOxUkGRx
+=ziQo
+-----END PGP SIGNATURE-----
+
+--dzto6hprgehagboz--
