@@ -1,87 +1,41 @@
-Return-Path: <linux@roeck-us.net>
-Date: Mon, 30 Jan 2017 11:22:14 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Russell King - ARM Linux <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: add more managed APIs
-Message-ID: <20170130192214.GC11199@roeck-us.net>
-References: <20170128184047.GA24957@dtor-ws>
- <20170128190309.GN27312@n2100.armlinux.org.uk>
- <20170128192207.GA38136@dtor-ws>
- <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
- <20170128233911.GO27312@n2100.armlinux.org.uk>
- <20170129180743.GA10917@dtor-ws>
- <20170130185551.GM8801@codeaurora.org>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170130185551.GM8801@codeaurora.org>
+In-Reply-To: <20170126101529.j3fuku4hyy3pbge3@lukather>
+References: <20170124023230.3990-1-wens@csie.org> <20170124023230.3990-11-wens@csie.org>
+ <20170126101529.j3fuku4hyy3pbge3@lukather>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 26 Jan 2017 19:23:25 +0800
+Message-ID: <CAGb2v66cQoPQzd6W1D8bZ5hSURfGP3icJjeoo1mNk2ccG9B2vw@mail.gmail.com>
+Subject: Re: [PATCH 10/11] arm64: dts: allwinner: Remove no longer used
+ pinctrl/sun4i-a10.h header
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jan 30, 2017 at 10:55:51AM -0800, Stephen Boyd wrote:
-> On 01/29, Dmitry Torokhov wrote:
-> > When converting a driver to managed resources it is desirable to be able to
-> > manage all resources in the same fashion. This change allows managing
-> > clocks in the same way we manage many other resources.
-> 
-> Can you please add 'managing clock prepared and enabled state in
-> the same way'?
-> 
-> The current wording makes it sound like we don't have
-> devm_clk_get() when we do.
-> 
-> > 
-> > This adds the following managed APIs:
-> > 
-> > - devm_clk_prepare()/devm_clk_unprepare();
-> > - devm_clk_prepare_enable()/devm_clk_disable_unprepare().
-> 
-> Wouldn't this be preceded by a devm_clk_get() call? Wouldn't it
-> be even shorter to have the APIs
-> 
->   devm_clk_get_and_prepare()/devm_clk_unprepare_and_put()
->   devm_clk_get_and_prepare_enable()/devm_clk_disable_unprepare_and_put()
-> 
-> instead?
-> 
-In many cases I see
+On Thu, Jan 26, 2017 at 6:15 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Tue, Jan 24, 2017 at 10:32:29AM +0800, Chen-Yu Tsai wrote:
+>> All dts files for the sunxi platform have been switched to the generic
+>> pinconf bindings. As a result, the sunxi specific pinctrl macros are
+>> no longer used.
+>>
+>> Remove the #include entry with the following command:
+>>
+>>     sed -i -e '/pinctrl\/sun4i-a10.h/D' \
+>>       arch/arm64/boot/dts/allwinner/*.dts?
+>>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>
+> Applied, thanks!
+>
+> Maybe we should also remove the header entirely?
 
-	devm_clk_get(clk1);
-	devm_clk_get(clk2);
-	clk_prepare_enable(clk1);
-	clk_prepare_enable(clk2);
+I don't know. What do we do about deprecated bindings?
 
-Sometimes the calls are intertwined with setting the clock rates.
-
-	devm_clk_get(clk);
-	clk_set_rate(clk, rate);
-	clk_prepare_enable(clk);
-
-Maybe the additional calls make sense; I can imagine they would.
-However, I personally would be a bit wary of changing the initialization
-order of multi-clock initializations, and I am not sure how a single call
-could address setting the rate ([devm_]clk_get_setrate_prepare_enable()
-seems like a bit too much).
-
-[ On a side note, why is there no clk_get_prepare_enable() and
-  clk_get_prepare() ? Maybe it would be better to introduce those
-  together with the matching devm_ functions in a separate patch
-  if they are useful. ]
-
-> Is there any other subsystem that has similar functionality?
-> Regulators? GPIOs? Resets? I'm just curious if those subsystems
-> also need similar changes.
-> 
-Ultimately yes, and most already do. If I recall correctly, I tried to
-introduce devm_ functions for regulators some time ago, but that was
-rejected with the comment that it would invite misuse.  At the time
-I accepted that; today my reaction would be to counter that pretty much
-everything can be misused, and that the potential for misuse should not
-penaltize all the valid use cases.
-
-Thanks,
-Guenter
+ChenYu
