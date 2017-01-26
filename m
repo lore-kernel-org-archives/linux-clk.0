@@ -1,192 +1,68 @@
 Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 26 Jan 2017 11:38:13 +0100
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 3/7] clk: sunxi-ng: Implement multiplier maximum
-Date: Tue, 10 Jan 2017 08:57:25 +0100
-Message-Id: <ab8ef79d63fc09c3eaa556d299832ec06e9869cf.1484035021.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
-References: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
-References: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 08/11] ARM: dts: sun8i-a23-q8-tablet: Drop pinmux setting
+ for codec PA gpio
+Message-ID: <20170126103813.6k6zqnjvguiphs5s@lukather>
+References: <20170124023230.3990-1-wens@csie.org>
+ <20170124023230.3990-9-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="hsn76sg75gdelhb2"
+In-Reply-To: <20170124023230.3990-9-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_mult.c |  4 ++--
- drivers/clk/sunxi-ng/ccu_mult.h | 10 ++++++----
- drivers/clk/sunxi-ng/ccu_nk.c   |  8 ++++----
- drivers/clk/sunxi-ng/ccu_nkm.c  |  8 ++++----
- drivers/clk/sunxi-ng/ccu_nkmp.c |  8 ++++----
- drivers/clk/sunxi-ng/ccu_nm.c   |  4 ++--
- 6 files changed, 22 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
-index bf5e11c803f9..fccfe1e1961a 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.c
-+++ b/drivers/clk/sunxi-ng/ccu_mult.c
-@@ -41,7 +41,7 @@ static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
- 	struct _ccu_mult _cm;
- 
- 	_cm.min = 1;
--	_cm.max = 1 << cm->mult.width;
-+	_cm.max = cm->mult.max ?: 1 << cm->mult.width;
- 	ccu_mult_find_best(parent_rate, rate, &_cm);
- 
- 	return parent_rate * _cm.mult;
-@@ -114,7 +114,7 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
- 						&parent_rate);
- 
- 	_cm.min = cm->mult.min;
--	_cm.max = 1 << cm->mult.width;
-+	_cm.max = cm->mult.max ?: 1 << cm->mult.width;
- 	ccu_mult_find_best(parent_rate, rate, &_cm);
- 
- 	spin_lock_irqsave(cm->common.lock, flags);
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
-index 84839641dfdf..524acddfcb2e 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.h
-+++ b/drivers/clk/sunxi-ng/ccu_mult.h
-@@ -10,24 +10,26 @@ struct ccu_mult_internal {
- 	u8	shift;
- 	u8	width;
- 	u8	min;
-+	u8	max;
- };
- 
--#define _SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, _min)	\
-+#define _SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, _offset, _min, _max) \
- 	{								\
- 		.min	= _min,						\
-+		.max	= _max,						\
- 		.offset	= _offset,					\
- 		.shift	= _shift,					\
- 		.width	= _width,					\
- 	}
- 
- #define _SUNXI_CCU_MULT_MIN(_shift, _width, _min)	\
--	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, _min)
-+	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, 1, _min, 0)
- 
- #define _SUNXI_CCU_MULT_OFFSET(_shift, _width, _offset)	\
--	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, _offset, 1)
-+	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, _offset, 1, 0)
- 
- #define _SUNXI_CCU_MULT(_shift, _width)		\
--	_SUNXI_CCU_MULT_OFFSET_MIN(_shift, _width, 1, 1)
-+	_SUNXI_CCU_MULT_OFFSET_MIN_MAX(_shift, _width, 1, 1, 0)
- 
- struct ccu_mult {
- 	u32			enable;
-diff --git a/drivers/clk/sunxi-ng/ccu_nk.c b/drivers/clk/sunxi-ng/ccu_nk.c
-index 90117d3ead8c..b9e9b8a9d1b4 100644
---- a/drivers/clk/sunxi-ng/ccu_nk.c
-+++ b/drivers/clk/sunxi-ng/ccu_nk.c
-@@ -103,9 +103,9 @@ static long ccu_nk_round_rate(struct clk_hw *hw, unsigned long rate,
- 		rate *= nk->fixed_post_div;
- 
- 	_nk.min_n = nk->n.min;
--	_nk.max_n = 1 << nk->n.width;
-+	_nk.max_n = nk->n.max ?: 1 << nk->n.width;
- 	_nk.min_k = nk->k.min;
--	_nk.max_k = 1 << nk->k.width;
-+	_nk.max_k = nk->k.max ?: 1 << nk->k.width;
- 
- 	ccu_nk_find_best(*parent_rate, rate, &_nk);
- 	rate = *parent_rate * _nk.n * _nk.k;
-@@ -128,9 +128,9 @@ static int ccu_nk_set_rate(struct clk_hw *hw, unsigned long rate,
- 		rate = rate * nk->fixed_post_div;
- 
- 	_nk.min_n = nk->n.min;
--	_nk.max_n = 1 << nk->n.width;
-+	_nk.max_n = nk->n.max ?: 1 << nk->n.width;
- 	_nk.min_k = nk->k.min;
--	_nk.max_k = 1 << nk->k.width;
-+	_nk.max_k = nk->k.max ?: 1 << nk->k.width;
- 
- 	ccu_nk_find_best(parent_rate, rate, &_nk);
- 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-index 3caaf9d603e2..71f81e95a061 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-@@ -110,9 +110,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
- 	struct _ccu_nkm _nkm;
- 
- 	_nkm.min_n = nkm->n.min;
--	_nkm.max_n = 1 << nkm->n.width;
-+	_nkm.max_n = nkm->n.max ?: 1 << nkm->n.width;
- 	_nkm.min_k = nkm->k.min;
--	_nkm.max_k = 1 << nkm->k.width;
-+	_nkm.max_k = nkm->k.max ?: 1 << nkm->k.width;
- 	_nkm.min_m = 1;
- 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
- 
-@@ -139,9 +139,9 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	u32 reg;
- 
- 	_nkm.min_n = nkm->n.min;
--	_nkm.max_n = 1 << nkm->n.width;
-+	_nkm.max_n = nkm->n.max ?: 1 << nkm->n.width;
- 	_nkm.min_k = nkm->k.min;
--	_nkm.max_k = 1 << nkm->k.width;
-+	_nkm.max_k = nkm->k.max ?: 1 << nkm->k.width;
- 	_nkm.min_m = 1;
- 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
- 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index da2bba02b845..a2b40a000157 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -117,9 +117,9 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct _ccu_nkmp _nkmp;
- 
- 	_nkmp.min_n = nkmp->n.min;
--	_nkmp.max_n = 1 << nkmp->n.width;
-+	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
- 	_nkmp.min_k = nkmp->k.min;
--	_nkmp.max_k = 1 << nkmp->k.width;
-+	_nkmp.max_k = nkmp->k.max ?: 1 << nkmp->k.width;
- 	_nkmp.min_m = 1;
- 	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
- 	_nkmp.min_p = 1;
-@@ -139,9 +139,9 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
- 	u32 reg;
- 
- 	_nkmp.min_n = 1;
--	_nkmp.max_n = 1 << nkmp->n.width;
-+	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
- 	_nkmp.min_k = 1;
--	_nkmp.max_k = 1 << nkmp->k.width;
-+	_nkmp.max_k = nkmp->k.max ?: 1 << nkmp->k.width;
- 	_nkmp.min_m = 1;
- 	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
- 	_nkmp.min_p = 1;
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-index 158d74e0215f..af71b1909cd9 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nm.c
-@@ -100,7 +100,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct _ccu_nm _nm;
- 
- 	_nm.min_n = nm->n.min;
--	_nm.max_n = 1 << nm->n.width;
-+	_nm.max_n = nm->n.max ?: 1 << nm->n.width;
- 	_nm.min_m = 1;
- 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
- 
-@@ -123,7 +123,7 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
- 		ccu_frac_helper_disable(&nm->common, &nm->frac);
- 
- 	_nm.min_n = 1;
--	_nm.max_n = 1 << nm->n.width;
-+	_nm.max_n = nm->n.max ?: 1 << nm->n.width;
- 	_nm.min_m = 1;
- 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
- 
--- 
-git-series 0.8.11
+--hsn76sg75gdelhb2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jan 24, 2017 at 10:32:27AM +0800, Chen-Yu Tsai wrote:
+> We are moving towards handling GPIO pinmux settings that don't require
+> extra bias or drive strength settings to use the GPIO bindings only.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  arch/arm/boot/dts/sun8i-a23-q8-tablet.dts | 10 ----------
+>  drivers/clk/sunxi-ng/ccu-sun9i-a80.c      | 24 ++++++++++++------------
+
+That diff looks suspicious :)
+
+(and the patch for which you wrote a commit log for
+doesn't have anything to do in this serie)
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--hsn76sg75gdelhb2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYidGRAAoJEBx+YmzsjxAgW7AP/0PFazcUL+yvdX+HZPhtz3Vf
+XjFoEwkxhRLL5JYGw9WwEzQvmdnh0JHT1b9vIQt20pEefIKHApQVV+XnDn6mW28N
+BSw10HqHLHr8GK6WYu+EcphZ14xi+rrEPfi4KVjUKwE3NhCe4I+jxcVR7r1rrIe0
+paTFUyIAGNDFo3DJtHn69DXeeW73XQOrznXUKdIFwzLGTSgFXNmqVxv3XlqlOgiE
+BXN55MExnakTzSvYenIIGzOiL/1C3KV1sutlSonwWjgNJQg7+grdiJfcFsc6ZoMW
+6Fpbz6HMegUj03/rwdBHfd2XqPB0/l/70ZrEk9gCwPsSOmdtpLpOaPLCWAfYGmPI
+jW9ppO+iGYfT3Ssf9FRim4MhcBFuF+l4ge9MvfPmqIb1bCul1GKmF9HpAFofkGgz
+qySDmhZRccPlp+w7+noYJ6b4Q/FHVXZTfQ1OiZF59RoKOkI8NSpqxxqA61faPOYY
+OE27GJQWz2nR56bG3gsBBMNduWepKdbqNMdXBDrZCy20/cdRprNW/UX1Hk1YovNF
+PvbzjyoLjWYR9Ptc8W5zRWUPipWmhznNJVFwwHfRVI5ejSYI0dSjHxhoUtCJQSPn
+JtlW1MVlvSPqFAoccvSxitcpVIn5I1ytxZL8g8HAeJI8OFxDMGzJJeGGgDLLooSI
+h9r2yaoM7TmLU3WjfWo8
+=kVNJ
+-----END PGP SIGNATURE-----
+
+--hsn76sg75gdelhb2--
