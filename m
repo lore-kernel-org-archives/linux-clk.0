@@ -1,79 +1,46 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 5 Jan 2017 14:39:57 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, mturquette@baylibre.com,
-	david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH] clk: qcom: Fix a possible NULL pointer dereferencing
-Message-ID: <20170105223957.GK17126@codeaurora.org>
-References: <1483606525-27709-1-git-send-email-vivek.gautam@codeaurora.org>
- <20170105142002.GB5710@hector.attlocal.net>
- <9b590296-6e3a-9079-08e5-48b4af8f8f22@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:34274 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752183AbdAZOuc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2017 09:50:32 -0500
+Received: by mail-ot0-f194.google.com with SMTP id 73so27582136otj.1
+        for <linux-clk@vger.kernel.org>; Thu, 26 Jan 2017 06:50:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <9b590296-6e3a-9079-08e5-48b4af8f8f22@codeaurora.org>
+In-Reply-To: <CAOi56cUrAyqV3e1zW+UGNRfGaueJr9yH1md3DPJT6vVM_zfpTA@mail.gmail.com>
+References: <1484762037-10737-1-git-send-email-fabio.estevam@nxp.com>
+ <1484762037-10737-2-git-send-email-fabio.estevam@nxp.com> <CAOi56cUrAyqV3e1zW+UGNRfGaueJr9yH1md3DPJT6vVM_zfpTA@mail.gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 26 Jan 2017 12:50:31 -0200
+Message-ID: <CAOMZO5CTrO2kEgxg=-KamZb5HXEoy18T0yDDxGQ4b9oscjU2_A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: imx7d: Add the IPG root clock
+To: Kevin Hilman <khilman@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+        Sascha Hauer <kernel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/05, Vivek Gautam wrote:
-> 
-> On 01/05/2017 07:50 PM, Andy Gross wrote:
-> >On Thu, Jan 05, 2017 at 02:25:25PM +0530, Vivek Gautam wrote:
-> >>Assign num_parents as 0 while registering fixed rate clocks
-> >>in _qcom_cc_register_board_clk(), to make sure the clk framework
-> >>doesn't dereference parent.
-> >>
-> >>Fixes: ee15faffef11 ("clk: qcom: common: Add API to register board clocks backwards compatibly")
-> >>
-> >>Cc: Georgi Djakov<georgi.djakov@linaro.org>
-> >>Signed-off-by: Vivek Gautam<vivek.gautam@codeaurora.org>
-> >>---
-> >>
-> >>Based on 'clk-next'. Build tested.
-> >>
-> >>  drivers/clk/qcom/common.c | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >>
-> >>diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> >>index cfab7b400381..df004ead1bef 100644
-> >>--- a/drivers/clk/qcom/common.c
-> >>+++ b/drivers/clk/qcom/common.c
-> >>@@ -157,6 +157,7 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
-> >>  		init_data.name = path;
-> >>  		init_data.ops = &clk_fixed_rate_ops;
-> >>+		init_data.num_parents = 0;
-> >It seems like there was a initializer in the declaration but it was { } instead
-> >of { 0 }.
-> >
-> >Was the original intent to make this structure initialized to 0?  If so, perhaps
-> >it should be fixed above in the initializer.
-> 
-> yes, i think we intend to initialize the clock init data to 0, and thus
-> we should do that during declaration.
-> Will modify and re-spin the patch.
-> 
+Hi Kevin,
 
-What's the error exactly? Do you have some call stack/crash that
-could be put in the commit text?
+On Thu, Jan 26, 2017 at 3:24 AM, Kevin Hilman <khilman@baylibre.com> wrote:
+> Hi Fabio,
+>
+> On Wed, Jan 18, 2017 at 9:53 AM, Fabio Estevam <fabio.estevam@nxp.com> wrote:
+>> Add an entry for the IMX7D_IPG_ROOT clock.
+>>
+>> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+>
+> kernelci.org started detecting boot failures on imx7s-warp in
+> next-20160124[1], and I bisected it down to this patch, which is in
+> linux-next as commit dde08302c083.
+>
+> I verified that reverting that commit on top of next-20160124 gets
+> imx7s-warp booting again.
 
-It was my understanding that GCC allows braces without anything
-inside to initialize structures to 0, so I'm confused what's
-wrong here. If this is actually a problem then we have other
-places to fix this.
+Thanks for the report.
 
- $ git grep "clk_init_data.*{ *}"
- drivers/clk/bcm/clk-bcm53573-ilp.c:     struct clk_init_data init = { };
- drivers/clk/clk-gpio.c: struct clk_init_data init = {};
- drivers/clk/clk-qoriq.c:        struct clk_init_data init = {};
- drivers/clk/clk-rk808.c:        struct clk_init_data init = {};
- drivers/clk/mediatek/clk-apmixed.c:     struct clk_init_data init = {};
- drivers/clk/mediatek/clk-gate.c:        struct clk_init_data init = {};
- drivers/clk/mediatek/clk-pll.c: struct clk_init_data init = {};
- drivers/clk/qcom/common.c:      struct clk_init_data init_data = { };
- drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm_8960.c:        struct clk_init_data bytediv_init = { };
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Stephen, could you please drop this patch from your tree? I will
+investigate the issue.
