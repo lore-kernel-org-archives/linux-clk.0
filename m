@@ -1,50 +1,93 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 26 Jan 2017 10:57:33 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/4] clk: renesas: cpg-mssr: Document suitability for RZ/G1
-Date: Wed, 25 Jan 2017 10:15:01 +0100
-Message-Id: <1485335703-27184-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
-References: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 04/11] clk: sunxi-ng: Support separately grouped PLL lock
+ status register
+Message-ID: <20170126095733.azlzxmz63vxajlen@lukather>
+References: <20170124023230.3990-1-wens@csie.org>
+ <20170124023230.3990-5-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="3psekbt6p5pgqzqx"
+In-Reply-To: <20170124023230.3990-5-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Renesas CPG/MSSR driver is already in active use for RZ/G1 since
-commits c0b2d75d2a4bf6a3 ("clk: renesas: cpg-mssr: Add R8A7743 support")
-and 9127d54bb8947159 ("clk: renesas: cpg-mssr: Add R8A7745 support").
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
-v2:
-  - Add Acked-by.
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--3psekbt6p5pgqzqx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 6947482d48a55094..eb8534e5ebf3007d 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -43,7 +43,7 @@
-  * Module Standby and Software Reset register offets.
-  *
-  * If the registers exist, these are valid for SH-Mobile, R-Mobile,
-- * R-Car Gen 2, and R-Car Gen 3.
-+ * R-Car Gen2, R-Car Gen3, and RZ/G1.
-  * These are NOT valid for R-Car Gen1 and RZ/A1!
-  */
- 
--- 
-1.9.1
+Hi,
+
+On Tue, Jan 24, 2017 at 10:32:23AM +0800, Chen-Yu Tsai wrote:
+> On the Allwinner A80 SoC, the PLL lock status indicators are grouped
+> together in a separate register, as opposed to being scattered in each
+> PLL's configuration register.
+>=20
+> Add a flag to support this.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  drivers/clk/sunxi-ng/ccu_common.c | 8 ++++++--
+>  drivers/clk/sunxi-ng/ccu_common.h | 2 ++
+>  2 files changed, 8 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu=
+_common.c
+> index 51d4bac97ab3..3fd0c3331aff 100644
+> --- a/drivers/clk/sunxi-ng/ccu_common.c
+> +++ b/drivers/clk/sunxi-ng/ccu_common.c
+> @@ -25,13 +25,17 @@ static DEFINE_SPINLOCK(ccu_lock);
+> =20
+>  void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock)
+>  {
+> +	void __iomem *addr;
+>  	u32 reg;
+> =20
+>  	if (!lock)
+>  		return;
+> =20
+> -	WARN_ON(readl_relaxed_poll_timeout(common->base + common->reg, reg,
+> -					   reg & lock, 100, 70000));
+> +	addr =3D common->base + common->reg;
+> +	if (common->features & CCU_FEATURE_LOCK_REG)
+> +		addr =3D common->base + common->lock_reg;
+
+I'd rather have an else here (but it's really just a nitpick).
+
+Thanks,
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--3psekbt6p5pgqzqx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYicgNAAoJEBx+YmzsjxAgP10P/jCWBqzRG2wZ4YYJSzysmrEz
+3ay9nJ1k9AZBW3JpqdQ6qWhPnedlNbBxkV1lvneihpiwrapSoHGkCyrccwLpYXSp
+SiqBylPObXTkbQ6nLuI3S2ql7ubus9rY3eODkJIpoi/sDx/sIzAFQiNx80UrpDEA
+lOseucMvRekn++YLrnl+nf0h4Hx8tXsplUNHrV0DnDlZNenyI83AzdGZN8RN98Yp
+vrjvhSTqLnQ1fNSsaYR99c6qutZJZbu6dsEKjmM+/sgnmkxYueMcztISaSdZj0lV
+/L+HjUIfT2ziv/6vo4S68r0Mp3qia3mabkiiES1a+JJC6fbQBjas+yMS7Her00zS
+vBe1+SYq9Hif4kH6uoqeRplURozoe2RC9ZUUhXZ8oK9dGH0RV5QqO9mj9+/IVrS0
++XtHqpafxOpBRlm848WL1n7tpsauYihkcuGQrBl2VUjXMRjE31ettegtcCEWia6L
+ehcgbBAUaS8HUpx6tRQHukdIntA3x4aezvfiGrD4AHEGfbLQYemRARqioLBc93Ek
+/141HPccvaQX8mxM9IwLarXfy5RGBaUH3u/0q3pt3YclKxSPlHTHZuZSBNX5xnfk
+Q+FRm9FlHvj3IyMgQ79Drwh7ybZta8oKF3DMzw/r8d38hAEOeE4KQd9UvQPDZoKN
+TK+QvifTfEcRthsnfgMJ
+=Vznr
+-----END PGP SIGNATURE-----
+
+--3psekbt6p5pgqzqx--
