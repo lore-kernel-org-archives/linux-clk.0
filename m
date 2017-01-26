@@ -1,73 +1,82 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 17 Jan 2017 17:41:11 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org,
-	mark.rutland@arm.com, robh+dt@kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: Re: [PATCH v2 01/10] ASoC: sun4i-i2s: Increase DMA max burst to 8
-Message-ID: <20170117164111.76mefaj32fy64f7o@lukather>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
- <20170117140230.23142-2-mylene.josserand@free-electrons.com>
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2gweboskz7ujobya"
-In-Reply-To: <20170117140230.23142-2-mylene.josserand@free-electrons.com>
+In-Reply-To: <89c95d0084da6ad7132caa54ca66eb619d8a5090.1484154449.git-series.gregory.clement@free-electrons.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+ <89c95d0084da6ad7132caa54ca66eb619d8a5090.1484154449.git-series.gregory.clement@free-electrons.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 26 Jan 2017 11:49:52 +0100
+Message-ID: <CAPDyKFrCxk37uVZ4wM-=iwX3-Cn9j+uh1KneJoopVzia2nKTVA@mail.gmail.com>
+Subject: Re: [PATCH v5 05/12] dt: bindings: Add bindings for Marvell Xenon SD
+ Host Controller
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>, Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>, "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On 11 January 2017 at 18:19, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
+> From: Hu Ziji <huziji@marvell.com>
+>
+> Marvell Xenon SDHC can support eMMC/SD/SDIO.
+> Add Xenon-specific properties.
+> Also add properties for Xenon PHY setting.
+>
+> Signed-off-by: Hu Ziji <huziji@marvell.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
---2gweboskz7ujobya
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+An overall comment. Please run a spell-checking as I noticed some
+simple errors that needs to be fixed.
 
-On Tue, Jan 17, 2017 at 03:02:21PM +0100, Myl=E8ne Josserand wrote:
-> As done previously for sun4i-codec, the DMA maxburst of 4
-> is not supported by every SoCs so the DMA controller engine
-> returns "unsupported value".
->=20
-> As a maxburst of 8 is supported by all variants, this patch
-> increases it to 8.
->=20
-> For more details, see commit from Chen-Yu Tsai:
-> commit 730e2dd0cbc7 ("ASoC: sun4i-codec: Increase DMA max burst to 8")
+Optional Properties:
+> +- mmccard:
+> +  mmccard child node must be provided when current SDHC is for eMMC.
+> +  Xenon SDHC often can support both SD and eMMC. This child node indicates that
+> +  current SDHC is for eMMC card. Thus Xenon eMMC specific configuration and
+> +  operations can be enabled prior to eMMC init sequence.
+> +  Please refer to Documentation/devicetree/bindings/mmc/mmc-card.txt.
+> +  This child node should not be set if current Xenon SDHC is for SD/SDIO.
+> +
+> +- bus-width:
+> +  When 8-bit data bus width is in use for eMMC, this property should be
+> +  explicitly provided and set as 8.
+> +  It is optional when data bus width is 4-bit or 1-bit.
+> +
+> +- mmc-ddr-1_8v:
+> +  Select this property when eMMC HS DDR is supported on SDHC side.
+> +
+> +- mmc-hs400-1_8v:
+> +  Select this property when eMMC HS400 is supported on SDHC side.
 
-Those details could have been included directly in the commit log.
+All the above properties is already specified as common mmc bindings.
+Let's not do that again, but instead just refer to mmc.txt as how
+other documentations looks like.
 
-Otherwise,
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> +
+> +- no-1-8-v:
+> +  Select this property when 1.8V signaling voltage supply is unavailable.
+> +  When this property is enabled, both mmc-ddr-1_8v and mmc-hs400-1_8v should be
+> +  cleared.
 
-Thanks!
-Maxime
+Please don't use this sdhci property, unless really needed.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Perhaps you can elaborate exactly why it makes sense for your case. Or
+perhaps we already discussed this, in either case, please re-fresh my
+mind.
 
---2gweboskz7ujobya
-Content-Type: application/pgp-signature; name="signature.asc"
+[...]
 
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYfkknAAoJEBx+YmzsjxAgPaIQAIK/zBjeQja/p8TCOIYY/Q5P
-k6tBGE8os+KjiXv9tJq+MX8p+8423SGlQ0VsRhMb1dNwyr7Qs95HBdBwFv4GyAj2
-Zo7EXeR8s5VQiNTYWxYA+d5VCwgAvByhMDffchYa0/3IiEb1VnBpeuASOvWxmk5J
-9+eeT3ozYi7gRgvCdZ9ZQpX/itG7sIFaydmrc/NfEz9WfyWGXx0JHz/8a4f6+h/i
-NsXEJplTf8mtAFyDnPYZ9xoCzPBvvfeAP680zACN8lR+fvq9qlZcSYei84QnvGHn
-tLy5iZeaF5g6MhHS9B88ImfBEQC3lzkEFBio539yKlR2yCQNv1Ogh5qmnzWFpc5E
-YNOcIy5mtiwREY+Si+qG1exO8CXOsCNM6ny1CI+xcVBSBvW5Jk4gvMaOpwAZqRmQ
-2af8htLvl63gThRRy4nKcncDPQPXDoigTQdVfrhk2TECduEU5o7kUXzS5Qk0HGI0
-9HFtZ//U/S6sRlRuYXtl8ey9PNk4KfAnVMExj9nrfW1H38togDxpLQi8C5Pp4M72
-iQkkOOv7noWqlPcIKm0YeotLJ3iya75/cHst3+7jNmdAPqCnd3yWkqizzA8mxuZI
-4gm9JC3BfcRws218k2Icm8aBVUqolYnRzxZp/Tkv4U2pqpveFx1dHsNoFFIUNMIt
-iE7xdIM/mUO6jW83Qc8G
-=3lxr
------END PGP SIGNATURE-----
-
---2gweboskz7ujobya--
+Kind regards
+Uffe
