@@ -1,78 +1,42 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [alsa-devel] [PATCH v7 2/5] clk: x86: Add Atom PMC platform
- clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
- <1484690270-28425-3-git-send-email-pierre-louis.bossart@linux.intel.com>
- <20170120235856.GF20800@codeaurora.org>
-Cc: alsa-devel@alsa-project.org, Irina Tirdea <irina.tirdea@intel.com>,
- Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>, x86@kernel.org,
- "Rafael J . Wysocki" <rjw@rjwysocki.net>, Takashi Iwai <tiwai@suse.com>,
- platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
- Ingo Molnar <mingo@redhat.com>, Mark Brown <broonie@kernel.org>,
- "H . Peter Anvin" <hpa@zytor.com>, Darren Hart <dvhart@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-clk@vger.kernel.org, Len Brown <lenb@kernel.org>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <e201d2f3-6a14-f00f-3de0-1a68a2816f42@linux.intel.com>
-Date: Sat, 21 Jan 2017 10:28:17 -0600
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 26 Jan 2017 15:57:45 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>, linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: meson8b: fix clk81 register address
+Message-ID: <20170126235745.GI8801@codeaurora.org>
+References: <1485341586-2929-1-git-send-email-jbrunet@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20170120235856.GF20800@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1485341586-2929-1-git-send-email-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Thanks for the review Stephen.
+On 01/25, Jerome Brunet wrote:
+> During meson8b clock probe, clk81 register address is fixed twice.
+> First using the meson8b_clk_gates array, then by directly changing
+> meson8b_clk81 register.
+> 
+> As a result meson8b_clk81.reg = HHI_MPEG_CLK_CNTL + clk_base + clk_base.
+> 
+> Fixed by just removing the second fixup.
+> 
+> Fixes: e31a1900c1ff ("meson: clk: Add support for clock gates")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  Patch based on khilman/linux-amlogic.git master branch.
 
-On 1/20/17 5:58 PM, Stephen Boyd wrote:
-> On 01/17, Pierre-Louis Bossart wrote:
->> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
->> new file mode 100644
->> index 0000000..312d4e9
->> --- /dev/null
->> +++ b/drivers/clk/x86/clk-pmc-atom.c
-> [...]
->> +
->> +static void plt_clk_reg_update(struct clk_plt *clk, u32 mask, u32 val)
->> +{
->> +	u32 tmp;
->> +	unsigned long flags;
->> +
->> +	spin_lock_irqsave(&clk->lock, flags);
->> +
->> +	tmp = clk_readl(clk->reg);
->
-> Do you need to use clk_readl? I'd prefer we deleted that
-> function/macro because it's just confusing. Please don't use it
-> unless you need it for some reason.
+The problem isn't introduced there though?
 
-I just followed Andy's recommendation and will revert to readl/writel, 
-as well as fix the nitpicks below
->
->> +	tmp = (tmp & ~mask) | (val & mask);
->> +	clk_writel(tmp, clk->reg);
->> +
->> +	spin_unlock_irqrestore(&clk->lock, flags);
->> +}
->> +
-> [..]
->> +
->> +static void plt_clk_unregister_parents(struct clk_plt_data *data)
->> +{
->> +	plt_clk_unregister_fixed_rate_loop(data, data->nparents);
->> +}
->> +
->> +
->
-> Nitpick: Single newline please
+> 
+>  I don't have a meson8b HW so this patch so this patch has not been
+>  tested on real HW.
 
-ok
+Applied to clk-next.
 
->> +static struct platform_driver plt_clk_driver = {
->> +	.driver = {
->> +		.name = PLT_CLK_DRIVER_NAME,
->
-> Nitpick: Just put the string here
-
-ok
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
