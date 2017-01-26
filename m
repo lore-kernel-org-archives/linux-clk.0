@@ -1,28 +1,74 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 26 Jan 2017 16:12:54 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] clk: sunxi-ng: a33: Set CLK_SET_RATE_PARENT for the
- GPU
-Message-ID: <20170127001254.GR8801@codeaurora.org>
-References: <53c56d23af099d8a41460d5ac59a2c792c8d050c.1485250845.git-series.maxime.ripard@free-electrons.com>
- <1914af84712092019181807ddb72adfc5b40c6f4.1485250845.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:42558 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750749AbdA0A7N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 26 Jan 2017 19:59:13 -0500
+Subject: Re: [PATCH V3 1/6] dt-bindings: qcom: clk: Add missing binding for
+ SDCHI enablement on Nexus 5X/6P
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Jeremy McNicoll <jeremymc@redhat.com>
+References: <1485250588-24698-1-git-send-email-jeremymc@redhat.com>
+ <1485250588-24698-2-git-send-email-jeremymc@redhat.com>
+ <20170127002448.GB8801@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        andy.gross@linaro.org, robh@kernel.org, arnd@arndb.de,
+        bjorn.andersson@linaro.org, riteshh@codeaurora.org, git@kchr.de,
+        ulf.hansson@linaro.org, jszhang@marvell.com,
+        linux-clk@vger.kernel.org
+From: Jeremy McNicoll <jmcnicol@redhat.com>
+Message-ID: <32dcb31c-d102-3ea5-0951-835a3275df40@redhat.com>
+Date: Thu, 26 Jan 2017 16:58:14 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1914af84712092019181807ddb72adfc5b40c6f4.1485250845.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <20170127002448.GB8801@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/24, Maxime Ripard wrote:
-> In order to achieve all the rates asked by the GPU, we might need to change
-> the parent frequency.
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
+On 2017-01-26 7:24 PM, Stephen Boyd wrote:
+> On 01/24, Jeremy McNicoll wrote:
+>> AHB clock branch is needed in order to enable SDHCI
+>> on msm899(2/4).
+>>
+>> Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
+>> ---
+>
+> Please cc linux-clk on clk patches (it helps my filters).
+>
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+duly noted and added!
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+>
+>>  include/dt-bindings/clock/qcom,gcc-msm8994.h | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/include/dt-bindings/clock/qcom,gcc-msm8994.h b/include/dt-bindings/clock/qcom,gcc-msm8994.h
+>> index 8fa535b..df47da0 100644
+>> --- a/include/dt-bindings/clock/qcom,gcc-msm8994.h
+>> +++ b/include/dt-bindings/clock/qcom,gcc-msm8994.h
+>> @@ -133,5 +133,6 @@
+>>  #define GCC_USB30_MOCK_UTMI_CLK			115
+>>  #define GCC_USB3_PHY_AUX_CLK			116
+>>  #define GCC_USB_HS_SYSTEM_CLK			117
+>> +#define GCC_SDCC1_AHB_CLK			118
+>>
+>
+> Is there a driver patch too? Or just the #define addition.
+>
+
+This was split up as I believe I was told that we need to separate
+the dt-bindings from the other code.  Or should we combine them when
+dealing with clocks?
+
+The other part of this change looks just fine in my inbox.
+Unfortunately that is the only place it got sent to. My bad.....
+NAK.
+
+Remember kids, cut twice measure once.
+
+I'll send a V4 shortly.
+
+
+
+-jeremy
