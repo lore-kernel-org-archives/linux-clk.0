@@ -1,134 +1,154 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] Documentation: dt-bindings: Add binding documentation for
- TI clkctrl clocks
-To: Tony Lindgren <tony@atomide.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <20170109234226.9449-1-tony@atomide.com>
-CC: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, Paul Walmsley <paul@pwsan.com>,
-        Rob Herring
-	<robh@kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <7acb6824-0e64-960b-1490-9b7a8b867b3b@ti.com>
-Date: Mon, 16 Jan 2017 17:19:33 +0200
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20170109234226.9449-1-tony@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <130ccd5a0fe4f822b954e0256c9dccec0b6ca523.1484154449.git-series.gregory.clement@free-electrons.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+ <130ccd5a0fe4f822b954e0256c9dccec0b6ca523.1484154449.git-series.gregory.clement@free-electrons.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 26 Jan 2017 12:29:33 +0100
+Message-ID: <CAPDyKFpx23wio-QmDrx277+YO2Jt2S0ZrokZ2E4K+oVURSR1Hg@mail.gmail.com>
+Subject: Re: [PATCH v5 07/12] mmc: sdhci-xenon: Add support to PHYs of Marvell
+ Xenon SDHC.
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>, Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>, "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/01/17 01:42, Tony Lindgren wrote:
-> Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
-> clock controller instance for each interconnect target module. The clkctrl
-> controls functional and interface clocks for the module.
->
-> The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
-> With this binding and a related clock device driver we can start moving the
-> clkctrl clock handling to live in drivers/clk/ti.
->
-> For hardware reference, see omap4430 TRM "Table 3-1312. L4PER_CM2 Registers
-> Mapping Summary" for example. It show one instance of a clkctrl clock
-> controller with multiple clkctrl registers.
->
-> Note that this binding allows keeping the clockdomain related parts out of
-> drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
-> using a separate driver in drivers/soc/ti and genpd. If the clockdomain
-> driver needs to know it's clocks, we can just set the the clkctrl device
-> instances to be children of the related clockdomain device.
->
-> On omap4 CM_L3INIT_USB_HOST_HS_CLKCTRL on omap5 has eight OPTFCLKEN bits.
-> So we need to shift the clock index to avoid index conflict for the clock
-> consumer binding with the next clkctrl offset on omap4.
->
-> Cc: Paul Walmsley <paul@pwsan.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
->
-> So here's what I was able to come up for the clkctr binding based on
-> all we've discussed so far. Can you guys please take a look and see
-> if it looks OK to you before we do the device driver?
->
-> Also, does anybody have better suggestions for addressing the optional
-> clocks in each clkctrl register?
->
-> ---
->  .../devicetree/bindings/clock/ti-clkctrl.txt       | 56 ++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/ti-clkctrl.txt
->
-> diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-> new file mode 100644
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-> @@ -0,0 +1,56 @@
-> +Texas Instruments clkctrl clock binding
-> +
-> +Texas Instruments SoCs can have a clkctrl clock controller for each
-> +interconnect target module. The clkctrl clock controller manages functional
-> +and interface clocks for each module. Each clkctrl controller can also
-> +gate one or more optional functional clocks for a module. The clkctrl
-> +clock controller is typical for omap3 and later variants.
-> +
-> +The clock consumers can specify the index of the clkctrl clock using
-> +the hardware offset from the clkctrl instance register space. The optional
-> +functional clocks can be specified by clkctrl hardware offset plus the
-> +index of the optional clock. Please see the Linux clock framework binding
-> +at Documentation/devicetree/bindings/clock/clock-bindings.txt.
-> +
-> +Required properties :
-> +- compatible : shall be "ti,clkctrl"
-> +- #clock-cells : shall contain 1
-> +
-> +Optional properties :
-> +- "ti,modulemode-auto" : list of clkctrl offsets using automatic gating
-> +
-> +Example: Clock controller node:
-> +
-> +&cm_l4per {
-> +	cm_l4per_clkctrl: clk@20 {
-> +		compatible = "ti,clkctrl";
-> +		reg = <0x20 0x1b0>;
-> +		#clock-cells = 1;
-> +		ti,modulemode-auto = <OMAP4_GPIO2_CLKCTRL>;
-> +	};
-> +};
-
-So, in this example, what would cm_l4per be? Is it a clockdomain? Or is 
-it just an arbitrary interconnect instance, and the clockdomain would 
-also be a separate node under cm_l4per?
-
-Shall we add power-domains = <&cm_l4per_clkdm>; entry under the 
-cm_l4per_clkctrl in this example? (My thinking is that we will represent 
-both OMAP clock and power domains as generic power domains within kernel 
-/ DT.)
-
--Tero
+[...]
 
 > +
-> +Example: Preprocessor helper macros in dt-bindings/ti-clkctrl.h
+> +static inline bool temp_stage_hs200_to_hs400(struct sdhci_host *host,
+> +                                            struct sdhci_xenon_priv *priv)
+> +{
+> +       /*
+> +        * Tmep stages from HS200 to HS400
+> +        * from HS200 to HS in 200MHz
+> +        * from 200MHz to 52MHz
+> +        */
+> +       if (((priv->timing == MMC_TIMING_MMC_HS200) &&
+> +            (host->timing == MMC_TIMING_MMC_HS)) ||
+> +           ((host->timing == MMC_TIMING_MMC_HS) &&
+> +            (priv->clock > host->clock)))
+> +               return true;
 > +
-> +#define OMAP4_CLKCTRL_OFFSET		0x20
+> +       return false;
+> +}
 > +
-> +#define OMAP_CLKCTRL_INDEX(offset)		\
-> +	(((offset) - OMAP4_CLKCTRL_OFFSET) << 8)
+> +static inline bool temp_stage_hs400_to_h200(struct sdhci_host *host,
+> +                                           struct sdhci_xenon_priv *priv)
+> +{
+> +       /*
+> +        * Temp stages from HS400 t0 HS200:
+> +        * from 200MHz to 52MHz in HS400
+> +        * from HS400 to HS DDR in 52MHz
+> +        * from HS DDR to HS in 52MHz
+> +        * from HS to HS200 in 52MHz
+> +        */
+> +       if (((priv->timing == MMC_TIMING_MMC_HS400) &&
+> +            ((host->clock == MMC_HIGH_52_MAX_DTR) ||
+> +             (host->timing == MMC_TIMING_MMC_DDR52))) ||
+> +           ((priv->timing == MMC_TIMING_MMC_DDR52) &&
+> +            (host->timing == MMC_TIMING_MMC_HS)) ||
+> +           ((host->timing == MMC_TIMING_MMC_HS200) &&
+> +            (host->clock == MMC_HIGH_52_MAX_DTR)))
+> +               return true;
 > +
-> +#define OMAP_CLKCTRL_OPT_INDEX(offset, optclk)	\
-> +	(OMAP_CLKCTRL_INDEX(offset) + (optclk))
+> +       return false;
+> +}
+
+Both the above functions seems to be really fragile to use. If
+anything changes in the core layer related to these sequences, you may
+end up getting a wrong validated expression.
+
+Perhaps an option would be to add one or two new mmc host ops, which
+could be called during the related hs200/400 sequences that could make
+this less fragile for you? What do you think?
+
 > +
-> +#define OMAP4_GPTIMER10_CLKTRL		OMAP_CLKCTRL_INDEX(0x28)
-> +#define OMAP4_GPTIMER11_CLKTRL		OMAP_CLKCTRL_INDEX(0x30)
-> +#define OMAP4_GPTIMER2_CLKTRL		OMAP_CLKCTRL_INDEX(0x38)
-> +...
-> +#define OMAP4_GPIO2_CLKCTRL		OMAP_CLKCTRL_INDEX(0x60)
-> +#define OMAP4_GPIO2_CLKCTRL_DBCLK	OMAP_CLKCTRL_OPT_INDEX(0x60, 1)
-> +...
+> +/*
+> + * If eMMC PHY Slow Mode is required in lower speed mode in SDR mode
+> + * (SDLCK < 55MHz), enable Slow Mode to bypass eMMC PHY.
+> + * SDIO slower SDR mode also requires Slow Mode.
+> + *
+> + * If Slow Mode is enabled, return true.
+> + * Otherwise, return false.
+> + */
+> +static bool emmc_phy_slow_mode(struct sdhci_host *host,
+> +                              unsigned char timing)
+> +{
+> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +       struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
+> +       struct emmc_phy_params *params = priv->phy_params;
+> +       struct xenon_emmc_phy_regs *phy_regs = priv->emmc_phy_regs;
+> +       u32 reg;
 > +
-> +Example: Clock consumer node for GPIO2:
+> +       /* Skip temp stages from HS200 to HS400 */
+> +       if (temp_stage_hs200_to_hs400(host, priv))
+> +               return false;
 > +
-> +&gpio2 {
-> +       clocks = <&cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL
-> +		 &cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL_DBCLK>;
-> +};
->
+> +       /* Skip temp stages from HS400 t0 HS200 */
+> +       if (temp_stage_hs400_to_h200(host, priv))
+> +               return false;
+> +
+> +       reg = sdhci_readl(host, phy_regs->timing_adj);
+> +       /* Enable Slow Mode for SDIO in slower SDR mode */
+> +       if ((priv->init_card_type == MMC_TYPE_SDIO) &&
+
+Ah, noticed that there is some specific things going on here for SDIO
+here as well. So perhaps you do need to implement the ->init_card()
+ops anyway. Which I suggested not to, for patch6. :-)
+
+Although, there is one problem with using ->init_card(). That is
+particularly for removable cards, as mmc_rescan() doesn't invoke
+->init_card() when it removes a card, which means, you may use old and
+thus wrong information about what kind of card in the next card
+detection attempt. So perhaps ->init_card() needs to be called from
+the core before it even figured out what kind of card it is trying to
+detect, as to allow the callbacks to reset some data.
+
+Or perhaps you can think of another clever way!?
+
+
+> +           ((timing == MMC_TIMING_UHS_SDR25) ||
+> +            (timing == MMC_TIMING_UHS_SDR12) ||
+> +            (timing == MMC_TIMING_SD_HS) ||
+> +            (timing == MMC_TIMING_LEGACY))) {
+> +               reg |= XENON_TIMING_ADJUST_SLOW_MODE;
+> +               sdhci_writel(host, reg, phy_regs->timing_adj);
+> +               return true;
+> +       }
+> +
+> +       /* Check if Slow Mode is required in lower speed mode in SDR mode */
+> +       if (((timing == MMC_TIMING_UHS_SDR50) ||
+> +            (timing == MMC_TIMING_UHS_SDR25) ||
+> +            (timing == MMC_TIMING_UHS_SDR12) ||
+> +            (timing == MMC_TIMING_SD_HS) ||
+> +            (timing == MMC_TIMING_MMC_HS) ||
+> +            (timing == MMC_TIMING_LEGACY)) && params->slow_mode) {
+> +               reg |= XENON_TIMING_ADJUST_SLOW_MODE;
+> +               sdhci_writel(host, reg, phy_regs->timing_adj);
+> +               return true;
+> +       }
+> +
+> +       reg &= ~XENON_TIMING_ADJUST_SLOW_MODE;
+> +       sdhci_writel(host, reg, phy_regs->timing_adj);
+> +       return false;
+> +}
+> +
+
+[...]
+
+Kind regards
+Uffe
