@@ -1,34 +1,46 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Jan 2017 16:32:39 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/8] clk: renesas: cpg-mssr: Rename
- cpg_mssr_priv.mstp_lock
-Message-ID: <20170121003239.GU20800@codeaurora.org>
-References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
- <1484921306-9967-4-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1484921306-9967-4-git-send-email-geert+renesas@glider.be>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1485506633.2442.9.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson8b: fix clk81 register address
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Kevin Hilman
+	 <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+	linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Fri, 27 Jan 2017 09:43:53 +0100
+In-Reply-To: <20170126235745.GI8801@codeaurora.org>
+References: <1485341586-2929-1-git-send-email-jbrunet@baylibre.com>
+	 <20170126235745.GI8801@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/20, Geert Uytterhoeven wrote:
-> The spinlock is used to protect Read-Modify-Write register accesses,
-> which won't be limited to SMSTPCR register accesses.
+On Thu, 2017-01-26 at 15:57 -0800, Stephen Boyd wrote:
+> On 01/25, Jerome Brunet wrote:
+> > 
+> > During meson8b clock probe, clk81 register address is fixed twice.
+> > First using the meson8b_clk_gates array, then by directly changing
+> > meson8b_clk81 register.
+> > 
+> > As a result meson8b_clk81.reg = HHI_MPEG_CLK_CNTL + clk_base +
+> > clk_base.
+> > 
+> > Fixed by just removing the second fixup.
+> > 
+> > Fixes: e31a1900c1ff ("meson: clk: Add support for clock gates")
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> >  Patch based on khilman/linux-amlogic.git master branch.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+> The problem isn't introduced there though?
+Indeed, I should have based my patch on clk-next. Will do next time.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> 
+> > 
+> > 
+> >  I don't have a meson8b HW so this patch so this patch has not been
+> >  tested on real HW.
+> 
+> Applied to clk-next.
+> 
