@@ -1,58 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36571 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751598AbdAZF6P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jan 2017 00:58:15 -0500
-Date: Thu, 26 Jan 2017 07:58:09 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: martin@kaiser.cx
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: samsung: mark s3c...._clk_sleep_init() as __init
-Message-ID: <20170126055809.fa2vgn54b7uk7wy5@kozik-lap>
-References: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
- <1485380545-24815-1-git-send-email-martin@kaiser.cx>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1485380545-24815-1-git-send-email-martin@kaiser.cx>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <chris.brandt@renesas.com>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH] clk: renesas: mstp: disable runtime pm for r7s72100
+Date: Fri, 27 Jan 2017 13:20:40 -0500
+Message-Id: <20170127182040.22240-1-chris.brandt@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 25, 2017 at 10:42:25PM +0100, martin@kaiser.cx wrote:
-> From: Martin Kaiser <martin@kaiser.cx>
-> 
-> These functions are referencing s3c...._clk_regs[], which are marked as
-> __initdata. When compiling with CONFIG_DEBUG_SECTION_MISMATCH=y, this
-> produces warnings like
-> 
-> WARNING: vmlinux.o(.text+0x198350):
-> Section mismatch in reference from the function s3c2410_clk_sleep_init()
-> to the (unknown reference) .init.data:(unknown)
-> 
-> Mark the s3c...._clk_sleep_init() functions as __init in
-> order to fix this.
-> 
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-> ---
-> v2:
-> Fix the commit message, describe what the problem really is.
-> (Thanks, Krzysztof)
-> 
->  drivers/clk/samsung/clk-s3c2410.c |    4 ++--
->  drivers/clk/samsung/clk-s3c2412.c |    4 ++--
->  drivers/clk/samsung/clk-s3c2443.c |    4 ++--
->  drivers/clk/samsung/clk-s3c64xx.c |    4 ++--
->  4 files changed, 8 insertions(+), 8 deletions(-)
-> 
+Due to the lack of clock status bits, we need to disable runtime pm
+for all RZ/A1 peripherals. Otherwise, it is possible that a driver
+will start using a peripheral before it is fully ready.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+By using pm_clk_resume immediately after we add the clock we ensure the
+usage counter will never get back down to 0, and hence will always keep
+the clock enabled.
 
-Best regards,
-Krzysztof
+In order for dis_runtime_pm to be accessible for all relevant functions
+in this file, it needed to be a global.
 
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ drivers/clk/renesas/clk-mstp.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 69cfdb9..3c91555 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -59,6 +59,8 @@ struct mstp_clock {
+ 	struct mstp_clock_group *group;
+ };
+ 
++static bool dis_runtime_pm;
++
+ #define to_mstp_clock(_hw) container_of(_hw, struct mstp_clock, hw)
+ 
+ static inline u32 cpg_mstp_read(struct mstp_clock_group *group,
+@@ -216,6 +218,13 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
+ 	if (of_device_is_compatible(np, "renesas,r7s72100-mstp-clocks"))
+ 		group->width_8bit = true;
+ 
++	/*
++	 * Due to the lack of clock status bits, we need to disable runtime pm
++	 * for all RZ/A1 peripherals.
++	 */
++	if (of_device_is_compatible(np, "renesas,r7s72100-mstp-clocks"))
++		dis_runtime_pm = true;
++
+ 	for (i = 0; i < MSTP_MAX_CLOCKS; ++i)
+ 		clks[i] = ERR_PTR(-ENOENT);
+ 
+@@ -314,6 +323,9 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev)
+ 		goto fail_destroy;
+ 	}
+ 
++	if (dis_runtime_pm)
++		pm_clk_resume(dev);
++
+ 	return 0;
+ 
+ fail_destroy:
+@@ -325,8 +337,11 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev)
+ 
+ void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev)
+ {
+-	if (!list_empty(&dev->power.subsys_data->clock_list))
++	if (!list_empty(&dev->power.subsys_data->clock_list)) {
++		if (dis_runtime_pm)
++			pm_clk_suspend(dev);
+ 		pm_clk_destroy(dev);
++	}
+ }
+ 
+ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+@@ -344,7 +359,8 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+ 		return;
+ 
+ 	pd->name = np->name;
+-	pd->flags = GENPD_FLAG_PM_CLK;
++	if (!dis_runtime_pm)
++		pd->flags = GENPD_FLAG_PM_CLK;
+ 	pd->attach_dev = cpg_mstp_attach_dev;
+ 	pd->detach_dev = cpg_mstp_detach_dev;
+ 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
+-- 
+2.10.1
