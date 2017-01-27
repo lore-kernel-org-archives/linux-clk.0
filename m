@@ -1,150 +1,53 @@
-Return-Path: <broonie@sirena.org.uk>
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Russell King - ARM Linux <linux@armlinux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>, Linux-ALSA <alsa-devel@alsa-project.org>, Linux-DT <devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linux-Kernel <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org, Linux-ARM <linux-arm-kernel@lists.infradead.org>, alsa-devel@alsa-project.org
-In-Reply-To: <871sxnvtkp.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1cW604-0006bZ-7m@debutante>
-Date: Tue, 24 Jan 2017 18:39:24 +0000
-Subject: Applied "ASoC: simple-card: use devm_get_clk_from_child()" to the asoc tree
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:41512 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754769AbdA0JKa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Jan 2017 04:10:30 -0500
+From: Jeremy McNicoll <jeremymc@redhat.com>
+To: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc: andy.gross@linaro.org, sboyd@codeaurora.org, robh@kernel.org,
+        arnd@arndb.de, bjorn.andersson@linaro.org, riteshh@codeaurora.org,
+        git@kchr.de, ulf.hansson@linaro.org, jszhang@marvell.com,
+        jeremymc@redhat.com
+Subject: [PATCH V4 3/6] arm64: dts: msm8992 add fixed regulator
+Date: Fri, 27 Jan 2017 01:10:02 -0800
+Message-Id: <1485508205-1904-4-git-send-email-jeremymc@redhat.com>
+In-Reply-To: <1485508205-1904-1-git-send-email-jeremymc@redhat.com>
+References: <1485508205-1904-1-git-send-email-jeremymc@redhat.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch
+This regulator is not moving anywhere.  Sit, stay...
 
-   ASoC: simple-card: use devm_get_clk_from_child()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From e984fd61e860ce3c45e79d69cf214b8cc6cae7d9 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 23 Jan 2017 07:29:42 +0000
-Subject: [PATCH] ASoC: simple-card: use devm_get_clk_from_child()
-
-Current simple-card-utils is getting clk by of_clk_get(), but didn't call
-clk_free(). Now we can use devm_get_clk_from_child() for this purpose.
-Let's use it.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
 ---
- include/sound/simple_card_utils.h     | 11 ++++++-----
- sound/soc/generic/simple-card-utils.c |  8 ++++----
- sound/soc/generic/simple-card.c       |  4 ++--
- sound/soc/generic/simple-scu-card.c   |  4 ++--
- 4 files changed, 14 insertions(+), 13 deletions(-)
+ arch/arm64/boot/dts/qcom/msm8992.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
-index 64e90ca9ad32..af58d2362975 100644
---- a/include/sound/simple_card_utils.h
-+++ b/include/sound/simple_card_utils.h
-@@ -34,11 +34,12 @@ int asoc_simple_card_set_dailink_name(struct device *dev,
- int asoc_simple_card_parse_card_name(struct snd_soc_card *card,
- 				     char *prefix);
+diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+index 44b2d37..13fb6f7 100644
+--- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+@@ -68,6 +68,17 @@
+ 		clock-frequency = <32768>;
+ 	};
  
--#define asoc_simple_card_parse_clk_cpu(node, dai_link, simple_dai)		\
--	asoc_simple_card_parse_clk(node, dai_link->cpu_of_node, simple_dai)
--#define asoc_simple_card_parse_clk_codec(node, dai_link, simple_dai)		\
--	asoc_simple_card_parse_clk(node, dai_link->codec_of_node, simple_dai)
--int asoc_simple_card_parse_clk(struct device_node *node,
-+#define asoc_simple_card_parse_clk_cpu(dev, node, dai_link, simple_dai)		\
-+	asoc_simple_card_parse_clk(dev, node, dai_link->cpu_of_node, simple_dai)
-+#define asoc_simple_card_parse_clk_codec(dev, node, dai_link, simple_dai)	\
-+	asoc_simple_card_parse_clk(dev, node, dai_link->codec_of_node, simple_dai)
-+int asoc_simple_card_parse_clk(struct device *dev,
-+			       struct device_node *node,
- 			       struct device_node *dai_of_node,
- 			       struct asoc_simple_dai *simple_dai);
- 
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-index cf026252cd4a..4924575d2e95 100644
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -98,7 +98,8 @@ int asoc_simple_card_parse_card_name(struct snd_soc_card *card,
- }
- EXPORT_SYMBOL_GPL(asoc_simple_card_parse_card_name);
- 
--int asoc_simple_card_parse_clk(struct device_node *node,
-+int asoc_simple_card_parse_clk(struct device *dev,
-+			       struct device_node *node,
- 			       struct device_node *dai_of_node,
- 			       struct asoc_simple_dai *simple_dai)
- {
-@@ -111,14 +112,13 @@ int asoc_simple_card_parse_clk(struct device_node *node,
- 	 *  or "system-clock-frequency = <xxx>"
- 	 *  or device's module clock.
- 	 */
--	clk = of_clk_get(node, 0);
-+	clk = devm_get_clk_from_child(dev, node, NULL);
- 	if (!IS_ERR(clk)) {
- 		simple_dai->sysclk = clk_get_rate(clk);
--		simple_dai->clk = clk;
- 	} else if (!of_property_read_u32(node, "system-clock-frequency", &val)) {
- 		simple_dai->sysclk = val;
- 	} else {
--		clk = of_clk_get(dai_of_node, 0);
-+		clk = devm_get_clk_from_child(dev, dai_of_node, NULL);
- 		if (!IS_ERR(clk))
- 			simple_dai->sysclk = clk_get_rate(clk);
- 	}
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index a385ff6bfa4b..85b4f1806514 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -278,11 +278,11 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
--	ret = asoc_simple_card_parse_clk_cpu(cpu, dai_link, cpu_dai);
-+	ret = asoc_simple_card_parse_clk_cpu(dev, cpu, dai_link, cpu_dai);
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
--	ret = asoc_simple_card_parse_clk_codec(codec, dai_link, codec_dai);
-+	ret = asoc_simple_card_parse_clk_codec(dev, codec, dai_link, codec_dai);
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
-diff --git a/sound/soc/generic/simple-scu-card.c b/sound/soc/generic/simple-scu-card.c
-index bb86ee042490..308ff4c11a8d 100644
---- a/sound/soc/generic/simple-scu-card.c
-+++ b/sound/soc/generic/simple-scu-card.c
-@@ -128,7 +128,7 @@ static int asoc_simple_card_dai_link_of(struct device_node *np,
- 		if (ret)
- 			return ret;
- 
--		ret = asoc_simple_card_parse_clk_cpu(np, dai_link, dai_props);
-+		ret = asoc_simple_card_parse_clk_cpu(dev, np, dai_link, dai_props);
- 		if (ret < 0)
- 			return ret;
- 
-@@ -153,7 +153,7 @@ static int asoc_simple_card_dai_link_of(struct device_node *np,
- 		if (ret < 0)
- 			return ret;
- 
--		ret = asoc_simple_card_parse_clk_codec(np, dai_link, dai_props);
-+		ret = asoc_simple_card_parse_clk_codec(dev, np, dai_link, dai_props);
- 		if (ret < 0)
- 			return ret;
- 
++	vreg_vph_pwr: vreg-vph-pwr {
++		compatible = "regulator-fixed";
++		status = "okay";
++		regulator-name = "vph-pwr";
++
++		regulator-min-microvolt = <3600000>;
++		regulator-max-microvolt = <3600000>;
++
++		regulator-always-on;
++	};
++
+ 	soc {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
 -- 
-2.11.0
+2.6.1
+
