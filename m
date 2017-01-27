@@ -1,113 +1,81 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Thu, 19 Jan 2017 16:41:28 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: Re: [linux-sunxi] Re: [PATCH v2 2/4] clk: sunxi-ng: add support for
- V3s CCU
-Message-ID: <20170119154128.hzhggymgg7uczpfo@lukather>
-References: <20170117200213.27eGY8hi@smtp3h.mail.yandex.net>
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20170117200213.27eGY8hi@smtp3h.mail.yandex.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Zepan <715805855@qq.com>,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
- Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============5450601095262999357=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <2e67332d-d8c3-fd24-1f81-72675a09927a@intel.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+ <3546f143091c121face8ecbcbf7f6a4c41d2cec7.1484154449.git-series.gregory.clement@free-electrons.com>
+ <CAPDyKFrwxix4zY4a1x9u6jh_gPfKTsaLnD8b8crum=pc5CN3AA@mail.gmail.com> <2e67332d-d8c3-fd24-1f81-72675a09927a@intel.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 27 Jan 2017 16:12:24 +0100
+Message-ID: <CAPDyKFqbjeKCHp40PALydquxdF-qBk156+iOS9TYYsquJ7fK7w@mail.gmail.com>
+Subject: Re: [PATCH v5 06/12] mmc: sdhci-xenon: Add Marvell Xenon SDHC core functionality
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>, Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>, "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On 26 January 2017 at 13:39, Adrian Hunter <adrian.hunter@intel.com> wrote:
+> On 26/01/17 12:50, Ulf Hansson wrote:
+>> On 11 January 2017 at 18:19, Gregory CLEMENT
+>> <gregory.clement@free-electrons.com> wrote:
+>>> +                       priv->init_card_type = MMC_TYPE_MMC;
+>>> +                       mmc->caps |= MMC_CAP_NONREMOVABLE;
+>>> +
+>>> +                       /*
+>>> +                        * Force to clear BUS_TEST to
+>>> +                        * skip bus_test_pre and bus_test_post
+>>> +                        */
+>>> +                       mmc->caps &= ~MMC_CAP_BUS_WIDTH_TEST;
+>>> +                       mmc->caps2 |= MMC_CAP2_HC_ERASE_SZ |
+>>
+>> This cap is a bit strange. It was added several years ago by Adrian
+>> Hunter, but I am wondering about the reason to why it's needed.
+>>
+>
+> MMC_CAP2_HC_ERASE_SZ relates to EXT-CSD ERASE_GROUP_DEF.
+>
+> I think it was added to enable people to choose whether they wanted a large
+> or small erase granularity.  That probably doesn't matter if the card
+> supports TRIM.
+>
 
---===============5450601095262999357==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="psx5bck5e4wnn5kr"
-Content-Disposition: inline
+Huh, the erase/trim/discard code in the mmc core is really hairy. :-)
 
+In mmc_calc_max_discard() the following code/comment exists:
 
---psx5bck5e4wnn5kr
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jan 18, 2017 at 01:02:03AM +0800, Icenowy Zheng wrote:
->=20
-> 2017=E5=B9=B41=E6=9C=8817=E6=97=A5 17:04=E4=BA=8E Maxime Ripard <maxime.r=
-ipard@free-electrons.com>=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > Hi,=20
-> >
-> > On Tue, Jan 17, 2017 at 02:01:14AM +0800, Icenowy Zheng wrote:=20
-> > > V3s has a similar but cut-down CCU to H3.=20
-> > >=20
-> > > Add support for it.=20
-> > >=20
-> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>=20
-> > > ---=20
-> >
-> > Output from checkpatch:=20
-> > total: 5 errors, 2 warnings, 3 checks, 857 lines checked=20
-> >
-> > > I think I should make a comparsion between V3s and H3 CCU here:=20
-> > > (I won't mention the missing/added clocks here, only list conflicting=
- clocks)=20
-> >
-> > That should be in your commit log.=20
->=20
-> I think it can be easily get by a diff command :-)
->=20
-> And we do not have the tradition to describe clock difference in
-> commit log, is it right?
-
-In very low details, no, but still having the big picture is a good
-idea.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---psx5bck5e4wnn5kr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYgN4oAAoJEBx+YmzsjxAg3LsP/2Gfax1B4rYAprxZ2k92kUeq
-wwE7NdXjEzCoW8RV59RKKAJELxJq+It0+a7byjKqnuxes+kTE7+KvRDCpoWYYf2U
-RLy3IHgHnFgoKEgHt54HX3/9OqryQek3CeE5LwuzPSrrrTLC8ENMCDzEdlDWqaqa
-o32vr9qu8gy/E725xR7/jfsRgQva10UEUa83kQmGum9nuK2C3Cq2MNPRxxUDaJoN
-5POapjpxOF1UZqMAA3Z//6MRbgz8uiyr6TJZzAupW9oCMSQ07PmiG80oUztVhisv
-FjPCUq5qTlDsCWj8pWKbOIM27dTqFEoJ4ICM2RLj650Ukb4nkBABnYsDWWFwsDjA
-Pm/j0cdehwvWUemiT7hZ/qhacU38Z3azU1ZYF9UK86Pdrr++Zv4AzE79LfHORwd3
-eBPGMGA/ZZ8oslgD4vY02WSoyYewBtjQqh7A6HUyTPThWYKvynyfmVhiwLTLQMN/
-woG3AnbK2JQ490zDb0wVsOYS2Zp3rEDnbL3uUiuIONStfqySggk1+GZvUiXTfRbs
-7+JVwhCAV7YYe0uKP2YpPoEVV/BujReNOTNmQBnGQGZ9yg8CxwBsaGLN+BMuNBZZ
-h8dy0JmH9fva8lDYdLy0dR6S9tMiJAGJdCgfTp33d5wsb/ZPFWSviOSdIYN1EzlO
-NZbrelb1FhrrU4X76QYC
-=zGlR
------END PGP SIGNATURE-----
-
---psx5bck5e4wnn5kr--
+/*
+ * Without erase_group_def set, MMC erase timeout depends on clock
+ * frequence which can change.  In that case, the best choice is
+ * just the preferred erase size.
+ */
+if (mmc_card_mmc(card) && !(card->ext_csd.erase_group_def & 1))
+     return card->pref_erase;
 
 
---===============5450601095262999357==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+This makes me wonder.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+So, when we haven't enabled the high capacity erase groups in the
+EXT_CSD register (ext_csd.erase_group_def), we will use the pref_erase
+size.
 
---===============5450601095262999357==--
+In the other case, as when having MMC_CAP2_HC_ERASE_SZ set (which will
+set ext_csd.erase_group_def),  we will instead  do some calculations
+to find out the max discards.
+
+Are you saying that these calculations doesn't matter much - or are
+you saying that we always want to do them?
+
+Kind regards
+Uffe
