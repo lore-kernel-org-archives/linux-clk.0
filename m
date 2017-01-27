@@ -1,55 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:63935 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751183AbdAYDB4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Jan 2017 22:01:56 -0500
-Message-ID: <1485313240.1348.0.camel@mtksdaap41>
-Subject: Re: [PATCH] clk: mediatek: Fix MT8135 dependencies
-From: James Liao <jamesjj.liao@mediatek.com>
-To: Jean Delvare <jdelvare@suse.de>
-CC: <linux-clk@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        "Andreas =?ISO-8859-1?Q?F=E4rber?=" <afaerber@suse.de>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Date: Wed, 25 Jan 2017 11:00:40 +0800
-In-Reply-To: <20170124130912.14375a32@endymion>
-References: <20170124130912.14375a32@endymion>
-Content-Type: text/plain; charset="ISO-8859-1"
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,  "linux-mmc\@vger.kernel.org" <linux-mmc@vger.kernel.org>,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  "linux-arm-kernel\@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,  Mike Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  linux-clk <linux-clk@vger.kernel.org>,  "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,  Rob Herring <robh+dt@kernel.org>,  "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,  Ziji Hu <huziji@marvell.com>,  Jimmy Xu <zmxu@marvell.com>,  Jisheng Zhang <jszhang@marvell.com>,  Nadav Haklai <nadavh@marvell.com>,  Ryan Gao <ygao@marvell.com>,  Doug Jones <dougj@marvell.com>,  Victor Gu <xigu@marvell.com>,  "Wei\(SOCP\) Liu" <liuw@marvell.com>,  Wilson Ding <dingwei@marvell.com>,  Yehuda Yitschak <yehuday@marvell.com>,  Ma
+  rcin Wojtas <mw@semihalf.com>,  Hanna Hawa <hannah@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>
+Subject: Re: [PATCH v5 05/12] dt: bindings: Add bindings for Marvell Xenon SD Host Controller
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+	<89c95d0084da6ad7132caa54ca66eb619d8a5090.1484154449.git-series.gregory.clement@free-electrons.com>
+	<CAPDyKFrCxk37uVZ4wM-=iwX3-Cn9j+uh1KneJoopVzia2nKTVA@mail.gmail.com>
+	<87fuk4yg1i.fsf@free-electrons.com>
+	<CAPDyKFo-hpLd3W0zWykdg0swuciBeL=Cy9cur_0RoG8jApOh3w@mail.gmail.com>
+Date: Fri, 27 Jan 2017 18:25:56 +0100
+In-Reply-To: <CAPDyKFo-hpLd3W0zWykdg0swuciBeL=Cy9cur_0RoG8jApOh3w@mail.gmail.com>
+	(Ulf Hansson's message of "Fri, 27 Jan 2017 16:36:36 +0100")
+Message-ID: <87bmuswh23.fsf@free-electrons.com>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-01-24 at 13:09 +0100, Jean Delvare wrote:
-> The MT8135 is a 32-bit SoC, so only propose it on ARM architecture,
-> not ARM64.
-> 
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Fixes: 234d511d8c15 ("clk: mediatek: Add hardware dependency")
-> Cc: Andreas Färber <afaerber@suse.de>
-> Cc: James Liao <jamesjj.liao@mediatek.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Hi Ulf,
+ 
+ On ven., janv. 27 2017, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 
-Acked-by: James Liao <jamesjj.liao@mediatek.com>
+>>
+>> But I am curious to know why do you think we could use it without any
+>> need. Are you aware of some abuse of this property?
+>
+> Yes.
+>
 
-> ---
->  drivers/clk/mediatek/Kconfig |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> --- linux-4.10-rc4.orig/drivers/clk/mediatek/Kconfig	2017-01-24 12:55:50.192100713 +0100
-> +++ linux-4.10-rc4/drivers/clk/mediatek/Kconfig	2017-01-24 12:59:08.703066604 +0100
-> @@ -52,9 +52,9 @@ config COMMON_CLK_MT2701_BDPSYS
->  
->  config COMMON_CLK_MT8135
->  	bool "Clock driver for Mediatek MT8135"
-> -	depends on ARCH_MEDIATEK || COMPILE_TEST
-> +	depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
->  	select COMMON_CLK_MEDIATEK
-> -	default ARCH_MEDIATEK
-> +	default ARCH_MEDIATEK && ARM
->  	---help---
->  	  This driver supports Mediatek MT8135 clocks.
->  
-> 
+Actually I was hopping that you point some examples :)
 
+But as you point mmc-ddr-3_3v I found my answers here:
+http://www.spinics.net/lists/linux-mmc/msg38602.html
 
+>>
+>>>
+>>> Perhaps you can elaborate exactly why it makes sense for your case. Or
+>>> perhaps we already discussed this, in either case, please re-fresh my
+>>> mind.
+>>
+>> For instance we need it now on the 7040DB board which does not have the
+>> 1.8V signal voltage available.
+>
+> It it's better to describe what the controller/board support, instead
+> of what it doesn't.
+>
+> I think you should be able to use other existing mmc DT bindings
+> (perhaps also you need the brand new "mmc-ddr-3_3v"), instead of the
+> "no-1-8-v".
+
+OK I will try with this one. And if it works, I wonder if it worth
+mentioning it as it is also part of the mmc binding.
+
+Gregory
+
+>
+> Kind regards
+> Uffe
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
