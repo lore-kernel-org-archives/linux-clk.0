@@ -1,38 +1,39 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos5420: Mark CLK_ACLK432_SCALER as
- CLK_IS_CRITICAL
-To: Javier Martinez Canillas <javier@osg.samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
- Andi Shyti <andi.shyti@samsung.com>, Shuah Khan <shuahkh@osg.samsung.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <551ac156-0cfa-29be-335f-d8a1f171cd8a@samsung.com>
-Date: Fri, 20 Jan 2017 13:32:18 +0100
-MIME-version: 1.0
-In-reply-to: <1484908891-11820-1-git-send-email-javier@osg.samsung.com>
-Content-type: text/plain; charset=windows-1252
-References: 
- <CGME20170120104148epcas5p11af0e630f0881092a9b3b43e8b5b1aac@epcas5p1.samsung.com>
- <1484908891-11820-1-git-send-email-javier@osg.samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 26 Jan 2017 16:22:27 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: linux-clk@vger.kernel.org, x86@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Darren Hart <dvhart@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, alsa-devel@alsa-project.org,
+	Irina Tirdea <irina.tirdea@intel.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Mark Brown <broonie@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+	Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH v8 1/5] clk: Make x86/ conditional on CONFIG_COMMON_CLK
+Message-ID: <20170127002227.GW8801@codeaurora.org>
+References: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+ <1485194865-10400-2-git-send-email-pierre-louis.bossart@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1485194865-10400-2-git-send-email-pierre-louis.bossart@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/20/2017 11:41 AM, Javier Martinez Canillas wrote:
-> On Exynos5800 SoC the SCALER block uses 2 input clocks: CLK_ACLK_300_GSCL
-> and CLK_ACLK432_SCALER, so both needs to be ungated in order to access it.
+On 01/23, Pierre-Louis Bossart wrote:
+> Fix Makefile for x86 support, dependency on CONFIG_COMMON_CLK
+> was not explicit
 > 
-> But Exynos5420 only has the CLK_ACLK_300_GSCL as gsc_pd clk. So just using
-> this definition from exynos5420.dtsi in Exynos5800 leads to the following:
-[...]
-> So until a proper solution based on runtime PM gets merged, mark the clock
-> as critical to prevent it to be gated.
-> 
-> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Fixes: 701190fd7419 ('clk: x86: add support for Lynxpoint LPSS clocks')
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> ---
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
