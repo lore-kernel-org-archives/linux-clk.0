@@ -1,159 +1,75 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 27 Jan 2017 15:15:59 -0600
+From: Rob Herring <robh@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 06/11] clk: sunxi-ng: Add A80 USB CCU
+Message-ID: <20170127211559.ztsauntipyiheopu@rob-hp-laptop>
+References: <20170124023230.3990-1-wens@csie.org>
+ <20170124023230.3990-7-wens@csie.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1484927830.2897.51.camel@pengutronix.de>
-References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
- <1484921306-9967-5-git-send-email-geert+renesas@glider.be> <1484927830.2897.51.camel@pengutronix.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 20 Jan 2017 19:03:38 +0100
-Message-ID: <CAMuHMdUrtTPKjAnFNkbBJeCaHTvJkOvWRXQM4j38dAqnxA0mLw@mail.gmail.com>
-Subject: Re: [PATCH 4/8] clk: renesas: cpg-mssr: Add support for reset control
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170124023230.3990-7-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Philipp,
+On Tue, Jan 24, 2017 at 10:32:25AM +0800, Chen-Yu Tsai wrote:
+> Add support for the USB clock controls found on the A80.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  .../devicetree/bindings/clock/sun9i-usb.txt        |  24 ++++
+>  drivers/clk/sunxi-ng/Makefile                      |   1 +
+>  drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c           | 144 +++++++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.h           |  25 ++++
+>  include/dt-bindings/clock/sun9i-a80-usb.h          |  59 +++++++++
+>  include/dt-bindings/reset/sun9i-a80-usb.h          |  56 ++++++++
+>  6 files changed, 309 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sun9i-usb.txt
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.h
+>  create mode 100644 include/dt-bindings/clock/sun9i-a80-usb.h
+>  create mode 100644 include/dt-bindings/reset/sun9i-a80-usb.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/sun9i-usb.txt b/Documentation/devicetree/bindings/clock/sun9i-usb.txt
+> new file mode 100644
+> index 000000000000..c2d38626eaaa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sun9i-usb.txt
+> @@ -0,0 +1,24 @@
+> +Allwinner A80 USB Clock Control Binding
+> +------------------------------------
+> +
+> +Required properties :
+> +- compatible: must contain one of the following compatibles:
+> +		- "allwinner,sun9i-a80-usb-clocks"
+> +
+> +- reg: Must contain the registers base address and length
+> +- clocks: phandle to the clocks feeding the USB subsystem. Two are needed:
+> +  - "bus": the bus clock for the whole USB subsystem
+> +  - "hosc": the high frequency oscillator (usually at 24MHz)
+> +- clock-names: Must contain the clock names described just above
+> +- #clock-cells : must contain 1
+> +- #reset-cells : must contain 1
+> +
+> +Example:
+> +usb_clocks: clock@00a08000 {
 
-On Fri, Jan 20, 2017 at 4:57 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> On Fri, 2017-01-20 at 15:08 +0100, Geert Uytterhoeven wrote:
->> Add optional support for the Reset Control feature of the Renesas Clock
->> Pulse Generator / Module Standby and Software Reset module on R-Car
->> Gen2, R-Car Gen3, and RZ/G1 SoCs.
->
-> Is there a reason to make this optional?
+Drop leading 0s.
 
-With "optional", I mean that I don't select CONFIG_RESET_CONTROLLER, and
-make the reset controller code depend on CONFIG_RESET_CONTROLLER.
-So far we don't have any mandatory users.
+With that, for the binding:
 
->> This allows to reset SoC devices using the Reset Controller API.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Looks good to me,
->
-> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Acked-by: Rob Herring <robh@kernel.org>
 
-Thanks!
-
-> Just a small issue below,
->
->> ---
->>  drivers/clk/renesas/renesas-cpg-mssr.c | 122 +++++++++++++++++++++++++++++++++
->>  1 file changed, 122 insertions(+)
->>
->> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
->> index f1161a585c57e433..ea4af714ac14603a 100644
->> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
->> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> [...]
->> +static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
->> +                       unsigned long id)
->> +{
->> +     struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
->> +     unsigned int reg = id / 32;
->> +     unsigned int bit = id % 32;
->> +     u32 bitmask = BIT(bit);
->
-> Here you have a bitmask = BIT(bit) variable.
-
-Because there are two users in the function.
-
->> +     unsigned long flags;
->> +     u32 value;
->> +
->> +     dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
->> +
->> +     /* Reset module */
->> +     spin_lock_irqsave(&priv->rmw_lock, flags);
->> +     value = readl(priv->base + SRCR(reg));
->> +     value |= bitmask;
->
-> Here you use it.
->
->> +     writel(value, priv->base + SRCR(reg));
->> +     spin_unlock_irqrestore(&priv->rmw_lock, flags);
->> +
->> +     /* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
->> +     udelay(35);
->> +
->> +     /* Release module from reset state */
->> +     writel(bitmask, priv->base + SRSTCLR(reg));
->> +
->> +     return 0;
->> +}
->> +
->> +static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
->> +{
->> +     struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
->> +     unsigned int reg = id / 32;
->> +     unsigned int bit = id % 32;
->
-> Here you haven't.
->
->> +     unsigned long flags;
->> +     u32 value;
->> +
->> +     dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
->> +
->> +     spin_lock_irqsave(&priv->rmw_lock, flags);
->> +     value = readl(priv->base + SRCR(reg));
->> +     writel(value | BIT(bit), priv->base + SRCR(reg));
->
-> Here you don't.
-
-Because there's a single user in the function.
-
->> +     spin_unlock_irqrestore(&priv->rmw_lock, flags);
->> +     return 0;
->> +}
->> +
->> +static int cpg_mssr_deassert(struct reset_controller_dev *rcdev,
->> +                          unsigned long id)
->> +{
->> +     struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
->> +     unsigned int reg = id / 32;
->> +     unsigned int bit = id % 32;
->> +
->> +     dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
->> +
->> +     writel(BIT(bit), priv->base + SRSTCLR(reg));
->
-> And here ...
->
->> +     return 0;
->> +}
->> +
->> +static int cpg_mssr_status(struct reset_controller_dev *rcdev,
->> +                        unsigned long id)
->> +{
->> +     struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
->> +     unsigned int reg = id / 32;
->> +     unsigned int bit = id % 32;
->> +
->> +     return !!(readl(priv->base + SRCR(reg)) & BIT(bit));
->
-> And here neither.
->
-> I'd choose one variant over the other for consistency.
-
-OK, I'll use the "bitmask" variable in all functions.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +	compatible = "allwinner,sun9i-a80-usb-clks";
+> +	reg = <0x00a08000 0x8>;
+> +	clocks = <&ccu CLK_BUS_USB>, <&osc24M>;
+> +	clock-names = "bus", "hosc";
+> +	#clock-cells = <1>;
+> +	#reset-cells = <1>;
+> +};
