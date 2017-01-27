@@ -1,43 +1,55 @@
-Return-Path: <jacobchen110@gmail.com>
-Return-Path: <jacobchen110@gmail.com>
-From: Jacob Chen <jacob-chen@iotwrt.com>
-To: heiko@sntech.de,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	zhangqing@rock-chips.com,
-	zhengxing@rock-chips.com,
-	Jacob Chen <jacob-chen@iotwrt.com>
-Subject: [PATCH 2/4] clk: rockchip: use rk3288 isp_in clock ids
-Date: Tue, 10 Jan 2017 19:59:18 +0800
-Message-Id: <1484049560-14820-2-git-send-email-jacob-chen@iotwrt.com>
-In-Reply-To: <1484049560-14820-1-git-send-email-jacob-chen@iotwrt.com>
-References: <1484049560-14820-1-git-send-email-jacob-chen@iotwrt.com>
+Return-Path: <oss@buserror.net>
+Message-ID: <1485561102.9266.8.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>, Shawn Guo <shawnguo@kernel.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "Y.B. Lu"
+	 <yangbo.lu@nxp.com>, "Z.Q. Hou" <zhiqiang.hou@nxp.com>, "Y.T. Tang"
+	 <yuantian.tang@nxp.com>, devicetree@vger.kernel.org
+Date: Fri, 27 Jan 2017 17:51:42 -0600
+In-Reply-To: <20170127223819.mzovhnnpths5t5w2@rob-hp-laptop>
+References: <1485332363-8434-1-git-send-email-oss@buserror.net>
+	 <20170127223819.mzovhnnpths5t5w2@rob-hp-laptop>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: Re: [PATCH 1/3] dt-bindings: qoriq-clock: Add coreclk
 List-ID: <linux-clk.vger.kernel.org>
 
-Reference the newly added isp clock-ids in the clock-tree.
+On Fri, 2017-01-27 at 16:38 -0600, Rob Herring wrote:
+> On Wed, Jan 25, 2017 at 02:19:21AM -0600, Scott Wood wrote:
+> > 
+> > ls1012a has separate input root clocks for core PLLs versus the platform
+> > PLL, with the latter described as sysclk in the hw docs.
+> > 
+> > Update the qoriq-clock binding to allow a second input clock, named
+> > "coreclk".  If present, this clock will be used for the core PLLs.
+> > 
+> > Signed-off-by: Scott Wood <oss@buserror.net>
+> > Cc: devicetree@vger.kernel.org
+> > ---
+> >  Documentation/devicetree/bindings/clock/qoriq-clock.txt | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> > b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> > index df9cb5a..97a9666 100644
+> > --- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> > +++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> > @@ -55,6 +55,11 @@ Optional properties:
+> >  - clocks: If clock-frequency is not specified, sysclk may be provided
+> >  	as an input clock.  Either clock-frequency or clocks must be
+> >  	provided.
+> > +	A second input clock, called "coreclk", may be provided if
+> > +	core PLLs are based on a different input clock from the
+> > +	platform PLL.
+> > +- clock-names: Required if a coreclk is present.  Valid names are
+> > +	"sysclk" and "coreclk".
+> 'clk' part is redundant.
 
+"sysclk" is a term used by the hardware documentation and I'd rather leave it
+intact.  "coreclk" isn't named (only described) by the hardware documentation
+but it is a special variant of sysclk and having similar naming helps make
+that clear.
 
-Signed-off-by: Jacob Chen <jacob-chen@iotwrt.com>
----
- drivers/clk/rockchip/clk-rk3288.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 39af05a..8047cea 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -801,7 +801,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 
- 	GATE(0, "pclk_vip_in", "ext_vip", 0, RK3288_CLKGATE_CON(16), 0, GFLAGS),
- 	INVERTER(0, "pclk_vip", "pclk_vip_in", RK3288_CLKSEL_CON(29), 4, IFLAGS),
--	GATE(0, "pclk_isp_in", "ext_isp", 0, RK3288_CLKGATE_CON(16), 3, GFLAGS),
-+	GATE(PCLK_ISP_IN, "pclk_isp_in", "ext_isp", 0, RK3288_CLKGATE_CON(16), 3, GFLAGS),
- 	INVERTER(0, "pclk_isp", "pclk_isp_in", RK3288_CLKSEL_CON(29), 3, IFLAGS),
- };
- 
--- 
-2.7.4
+-Scott
