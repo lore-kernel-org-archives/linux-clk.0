@@ -1,63 +1,82 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Jan 2017 16:00:28 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	linux-clk@vger.kernel.org, x86@kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Darren Hart <dvhart@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, alsa-devel@alsa-project.org,
-	Irina Tirdea <irina.tirdea@intel.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Mark Brown <broonie@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	Len Brown <lenb@kernel.org>, Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH v7 0/5] Add platform clock for BayTrail platforms
-Message-ID: <20170121000028.GG20800@codeaurora.org>
-References: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
- <1484736630.2133.184.camel@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1484736630.2133.184.camel@linux.intel.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:46136 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754536AbdA0JKP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Jan 2017 04:10:15 -0500
+From: Jeremy McNicoll <jeremymc@redhat.com>
+To: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc: andy.gross@linaro.org, sboyd@codeaurora.org, robh@kernel.org,
+        arnd@arndb.de, bjorn.andersson@linaro.org, riteshh@codeaurora.org,
+        git@kchr.de, ulf.hansson@linaro.org, jszhang@marvell.com,
+        jeremymc@redhat.com
+Subject: [PATCH V4 0/6] Enable onboard SDHCI for Nexus 5X (msm8992)
+Date: Fri, 27 Jan 2017 01:09:59 -0800
+Message-Id: <1485508205-1904-1-git-send-email-jeremymc@redhat.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/18, Andy Shevchenko wrote:
-> On Tue, 2017-01-17 at 15:57 -0600, Pierre-Louis Bossart wrote:
-> > These patches specifically enable the audio MCLK required by Baytrail
-> > CR devices. It is the remaining part of a bigger set of patches
-> > (already merged in Mark Brown's tree) that enable sound for Baytrail
-> > CR
-> > devices (especially Asus T100TAF) [1]. They include the clock driver
-> > and clock enabling in the pmc_atom code (along with moving of the
-> > non-architectural pmc_atom driver code into drivers/platform/x86 as
-> > suggested by Thomas Gleixner [2]). This move includes a new header in
-> > include/linux/platform_data/x86/. While there is an agreement that the
-> > definitions for PMC clocks are not really platform data this location
-> > is seen as a good-enough compromise with an agreement between Darren
-> > Hart and Andy Shevchenko [3]
-> > 
-> > [1] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-August/1
-> > 11704.html
-> > [2] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-October/
-> > 113936.html
-> > [3] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-December
-> > /115892.html
-> > 
-> 
-> Stephen, I see no issues with the patches. If you want to push them
-> through your tree, take a tag from PDx86 subsystem point of view:
+Here links to previous versions:
 
-Does PDx86 == platform device x86? I can provide a stable branch
-in clk tree for platform tree, or platform x86 maintainer can ack
-the platform/x86 patches and I can take the whole batch through
-clk tree.
+[V1]
+   https://www.spinics.net/lists/devicetree/msg151845.html
 
-> 
-> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
+[V2]
+  http://www.spinics.net/lists/devicetree/msg158808.html 
+
+[V3]
+  http://www.spinics.net/lists/devicetree/msg160644.html
+ 
+What changed V3->V4:
+
+  * Dropped [V3] (2/6) Add quirk for delayed IRQ ACK as this
+    workaround was improving detection time but masking another
+    issue with rpm-smd specific to msm899(2/4).  
+
+  * Including the C code to enable/add missing clock branch.
+    In V3 this change was split up between dt-bindings and C
+    but the C part didn't get sent to the mailing list.
+    Its in my inbox and tree ;-)
+
+Note:
+  -only the AHB clock was added for SDCC1 as it was tested.
+   SDCC[2->4] ADB_CLK will be added once these branches are
+   investigated against downstream.  ie) are they all clock
+   branches the same as SDCC1_AHB ?
+
+  6/6 was not separated out into dt-bindings and devicetree
+      as it was just a simple search and replace.
+
+
+Jeremy McNicoll (6):
+  clk: qcom: SDHCI enablement on Nexus 5X / 6P
+  dt-bindings: qcom: clk: Add missing binding for SDCHI enablement on
+    Nexus 5X/6P
+  arm64: dts: msm8992 add fixed regulator
+  arm64: dts: smem enablement for msm8992
+  dts: arm64: Enable onboard SDHCI on msm8992
+  dts: doc: rename rpm_requests to respect DT naming conventions
+
+ .../devicetree/bindings/clock/qcom,rpmcc.txt       |   2 +-
+ .../bindings/regulator/qcom,smd-rpm-regulator.txt  |   2 +-
+ .../devicetree/bindings/soc/qcom/qcom,smd-rpm.txt  |   6 +-
+ .../devicetree/bindings/soc/qcom/qcom,smd.txt      |   2 +-
+ arch/arm/boot/dts/qcom-apq8074-dragonboard.dts     |   2 +-
+ arch/arm/boot/dts/qcom-apq8084.dtsi                |   2 +-
+ .../dts/qcom-msm8974-lge-nexus5-hammerhead.dts     |   2 +-
+ .../boot/dts/qcom-msm8974-sony-xperia-honami.dts   |   2 +-
+ arch/arm/boot/dts/qcom-msm8974.dtsi                |   2 +-
+ arch/arm64/boot/dts/qcom/msm8916.dtsi              |   2 +-
+ .../boot/dts/qcom/msm8992-bullhead-rev-101.dts     |   2 +
+ arch/arm64/boot/dts/qcom/msm8992-pins.dtsi         |  60 +++++
+ arch/arm64/boot/dts/qcom/msm8992.dtsi              | 143 ++++++++++-
+ arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi      | 276 +++++++++++++++++++++
+ drivers/clk/qcom/gcc-msm8994.c                     |  18 ++
+ include/dt-bindings/clock/qcom,gcc-msm8994.h       |   1 +
+ 16 files changed, 511 insertions(+), 13 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.1
+
