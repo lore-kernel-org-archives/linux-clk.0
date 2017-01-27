@@ -1,33 +1,40 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] ARM: Exynos4415: remove dead build rule
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Valentin Rothberg <valentinrothberg@gmail.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <d80a8587-56eb-8b30-91b7-fba89f47a309@samsung.com>
-Date: Thu, 19 Jan 2017 10:44:47 +0100
-MIME-version: 1.0
-In-reply-to: 
- <CAJKOXPdGZtpwJpX4mZJfwGQkhwiBWWyCx5_KXgRUX0ap1R2ZJQ@mail.gmail.com>
-Content-type: text/plain; charset=utf-8
-References: <20170119091153.8439-1-valentinrothberg@gmail.com>
- <CAJKOXPd7UDhn0oxyFsYAtD4zKfOoZA0LP-CNdXmhCzjOs6Le=A@mail.gmail.com>
- <CAJKOXPdX2YhSf0T8zoZ_i=AxbNjWLy=jVF_zhj-b_kGX2x7zPA@mail.gmail.com>
- <3c181bf8-7861-5197-f423-03e36bc440c5@gmail.com>
- <CGME20170119093055epcas2p1c27509fae2ad6c32cc31186934fc9af0@epcas2p1.samsung.com>
- <CAJKOXPdGZtpwJpX4mZJfwGQkhwiBWWyCx5_KXgRUX0ap1R2ZJQ@mail.gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 26 Jan 2017 16:00:20 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stanimir.varbanov@linaro.org, sricharan@codeaurora.org
+Subject: Re: [PATCH v2] clk: qcom: gdsc: Fix handling of hw control
+ enable/disable
+Message-ID: <20170127000020.GJ8801@codeaurora.org>
+References: <1485145581-517-1-git-send-email-rnayak@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1485145581-517-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/19/2017 10:28 AM, Krzysztof Kozlowski wrote:
-> Is your tree included in linux-next? I see my patch here:
-> https://git.linuxtv.org/snawrocki/samsung.git/log/?h=for-v4.11/clk/next
-> so maybe something in linux-next is missing?
+On 01/23, Rajendra Nayak wrote:
+> Once a gdsc is brought in and out of HW control, there is a
+> power down and up cycle which can take upto 1us. Polling on
+> the gdsc status immediately after the hw control enable/disable
+> can mislead software/firmware to belive the gdsc is already either on
+> or off, while its yet to complete the power cycle.
+> To avoid this add a 1us delay post a enable/disable of HW control
+> mode.
+> 
+> Also after the HW control mode is disabled, poll on the status to
+> check gdsc status reflects its 'on' before force disabling it
+> in software.
+> 
+> Reported-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
 
-No, it's not included. I will be sending a pull request to the clk
-maintainers this week so the patches should end up in linux-next soon.
+Applied to clk-next + I added a fixes tag. I don't think any
+driver is affected by this problem in mainline, hence the punt to
+v4.11.
 
 -- 
-Thanks,
-Sylwester
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
