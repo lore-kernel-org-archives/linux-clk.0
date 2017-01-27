@@ -1,69 +1,99 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 9 Jan 2017 16:44:27 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] clk: vc5: Add support for IDT VersaClock 5P49V5923B
-Message-ID: <20170110004427.GO17126@codeaurora.org>
-References: <20161228000045.4540-1-marek.vasut@gmail.com>
- <2015482.2Xx0FSfo4q@avalon>
- <a94799ce-0030-ee4b-3d07-b3c190d79ba5@gmail.com>
- <7398143.JfNZUDgVyk@avalon>
- <69c22af5-717c-ce9d-5f4c-c1751894b885@gmail.com>
- <20170110002327.GI17126@codeaurora.org>
- <71b654d2-e24e-f09b-ca61-03dd7a27a24b@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <71b654d2-e24e-f09b-ca61-03dd7a27a24b@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:60258 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754767AbdA0JK1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Jan 2017 04:10:27 -0500
+From: Jeremy McNicoll <jeremymc@redhat.com>
+To: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc: andy.gross@linaro.org, sboyd@codeaurora.org, robh@kernel.org,
+        arnd@arndb.de, bjorn.andersson@linaro.org, riteshh@codeaurora.org,
+        git@kchr.de, ulf.hansson@linaro.org, jszhang@marvell.com,
+        jeremymc@redhat.com
+Subject: [PATCH V4 4/6] arm64: dts: smem enablement for msm8992
+Date: Fri, 27 Jan 2017 01:10:03 -0800
+Message-Id: <1485508205-1904-5-git-send-email-jeremymc@redhat.com>
+In-Reply-To: <1485508205-1904-1-git-send-email-jeremymc@redhat.com>
+References: <1485508205-1904-1-git-send-email-jeremymc@redhat.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/10, Marek Vasut wrote:
-> On 01/10/2017 01:23 AM, Stephen Boyd wrote:
-> > On 01/05, Marek Vasut wrote:
-> >> On 01/05/2017 03:13 PM, Laurent Pinchart wrote:
-> >>> Hi Marek,
-> >>
-> >> Hi!
-> >>
-> >> [...]
-> >>
-> >>>>>>> +static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
-> >>>>>>> +                                        unsigned long parent_rate)
-> >>>>>>> +{
-> >>>>>>> +       struct vc5_driver_data *vc5 =
-> >>>>>>> +               container_of(hw, struct vc5_driver_data, clk_mux);
-> >>>>>>> +       unsigned long idiv;
-> >>>>>>> +       u8 div;
-> >>>>>>> +
-> >>>>>>> +       /* FIXME: Needs locking ? */
-> >>>>>
-> >>>>> Let's fix it then :-)
-> >>>>
-> >>>> I would like to get feedback on this one, does it ?
-> >>>
-> >>> That's a question for Mike or Stephen I believe.
-> >>
-> >> OK
-> > 
-> > What's the question?
-> 
-> Whether or not I need a lock around the code in vc5_mux_recalc_rate(),
-> since I am also tweaking the predivider bits there to assure the
-> (downstream) PLL supplied from the mux always gets clock in range it can
-> handle. This tweaking is mostly inspired by clk-si5351.c driver.
+SMEM allows various subsystems/processors to share
+memory/data (heap format) in order to enable various
+peripherals.
 
-Don't rely on locking in the core for register locking within a
-device. That makes a dependency headache if we want to rework the
-locking scheme in the core, which we want to do eventually.
+Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
+---
+ arch/arm64/boot/dts/qcom/msm8992.dtsi | 42 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-Also, please don't cause side effects during recalc_rate(). The
-callback is meant to calculate the rate of the clock, not adjust
-hardware based on what arguments are passed to it.
-
+diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+index 13fb6f7..2c05ec7 100644
+--- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+@@ -93,6 +93,11 @@
+ 				<0xf9002000 0x1000>;
+ 		};
+ 
++		apcs: syscon@f900d000 {
++			compatible = "syscon";
++			reg = <0xf900d000 0x2000>;
++		};
++
+ 		timer@f9020000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+@@ -183,12 +188,49 @@
+ 			#power-domain-cells = <1>;
+ 			reg = <0xfc400000 0x2000>;
+ 		};
++
++		rpm_msg_ram: memory@fc428000 {
++			compatible = "qcom,rpm-msg-ram";
++			reg = <0xfc428000 0x4000>;
++		};
++
++		sfpb_mutex_regs: syscon@fd484000 {
++			#address-cells = <1>;
++			#size-cells = <1>;
++			compatible = "syscon";
++			reg = <0xfd484000 0x400>;
++		};
++
++		sfpb_mutex: hwmutex {
++			compatible = "qcom,sfpb-mutex";
++			syscon = <&sfpb_mutex_regs 0x0 0x100>;
++			#hwlock-cells = <1>;
++		};
++
++		smem {
++			compatible = "qcom,smem";
++			memory-region = <&smem_region>;
++			qcom,rpm-msg-ram = <&rpm_msg_ram>;
++			hwlocks = <&sfpb_mutex 3>;
++		};
+ 	};
+ 
+ 	memory {
+ 		device_type = "memory";
+ 		reg = <0 0 0 0>; // bootloader will update
+ 	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		smem_region: smem@6a00000 {
++			reg = <0x0 0x6a00000 0x0 0x200000>;
++			no-map;
++		};
++	};
++
+ };
+ 
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.6.1
+
