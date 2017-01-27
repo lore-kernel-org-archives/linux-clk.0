@@ -1,613 +1,868 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH v2 05/10] ASoC: Add sun8i digital audio codec
-Date: Tue, 17 Jan 2017 15:02:25 +0100
-Message-Id: <20170117140230.23142-6-mylene.josserand@free-electrons.com>
-In-Reply-To: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,  Linus Walleij <linus.walleij@linaro.org>, Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: linux@armlinux.org.uk,  linux-arm-kernel@lists.infradead.org,  Rob Herring <robh+dt@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,  Michael Turquette <mturquette@baylibre.com>,    Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Geert Uytterhoeven <geert+renesas@glider.be>,  Chris Brand <chris.brand@broadcom.com>,  Florian Fainelli <f.fainelli@gmail.com>,  Arnd Bergmann <arnd@arndb.de>,  Thierry Reding <treding@nvidia.com>,  Sudeep Holla <sudeep.holla@arm.com>,  Juri Lelli <juri.lelli@arm.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  Laxman Dewangan <ldewangan@nvidia.com>,  Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>,  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,  linux-gpio@vger.kernel.org
+Subject: Re: [PATCHv5 0/5] Support for Marvell switches with integrated CPUs
+References: <20170127032546.14657-1-chris.packham@alliedtelesis.co.nz>
+Date: Fri, 27 Jan 2017 17:39:45 +0100
+In-Reply-To: <20170127032546.14657-1-chris.packham@alliedtelesis.co.nz> (Chris
+	Packham's message of "Fri, 27 Jan 2017 16:25:41 +1300")
+Message-ID: <87wpdgwj72.fsf@free-electrons.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the sun8i audio codec which handles the digital register of
-A33 codec.
-The driver handles only the basic playback from the DAC to headphones.
-All other features (microphone, capture, etc) will be added later.
-
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
----
- sound/soc/sunxi/Kconfig       |  11 +
- sound/soc/sunxi/Makefile      |   1 +
- sound/soc/sunxi/sun8i-codec.c | 531 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 543 insertions(+)
- create mode 100644 sound/soc/sunxi/sun8i-codec.c
-
-diff --git a/sound/soc/sunxi/Kconfig b/sound/soc/sunxi/Kconfig
-index 6c344e16aca4..13a8267f17c7 100644
---- a/sound/soc/sunxi/Kconfig
-+++ b/sound/soc/sunxi/Kconfig
-@@ -9,6 +9,17 @@ config SND_SUN4I_CODEC
- 	  Select Y or M to add support for the Codec embedded in the Allwinner
- 	  A10 and affiliated SoCs.
+Hi all,
  
-+config SND_SUN8I_CODEC
-+	tristate "Allwinner SUN8I audio codec"
-+	depends on OF
-+	depends on MACH_SUN8I || COMPILE_TEST
-+	select REGMAP_MMIO
-+	help
-+	  This option enables the digital part of the internal audio codec for
-+	  Allwinner sun8i SoC (and particularly A33).
-+
-+	  Say Y or M if you want to add sun8i digital audio codec support.
-+
- config SND_SUN8I_CODEC_ANALOG
- 	tristate "Allwinner sun8i Codec Analog Controls Support"
- 	depends on MACH_SUN8I || COMPILE_TEST
-diff --git a/sound/soc/sunxi/Makefile b/sound/soc/sunxi/Makefile
-index 241c0df9ca0c..1f1af6271731 100644
---- a/sound/soc/sunxi/Makefile
-+++ b/sound/soc/sunxi/Makefile
-@@ -2,3 +2,4 @@ obj-$(CONFIG_SND_SUN4I_CODEC) += sun4i-codec.o
- obj-$(CONFIG_SND_SUN4I_I2S) += sun4i-i2s.o
- obj-$(CONFIG_SND_SUN4I_SPDIF) += sun4i-spdif.o
- obj-$(CONFIG_SND_SUN8I_CODEC_ANALOG) += sun8i-codec-analog.o
-+obj-$(CONFIG_SND_SUN8I_CODEC) += sun8i-codec.o
-diff --git a/sound/soc/sunxi/sun8i-codec.c b/sound/soc/sunxi/sun8i-codec.c
-new file mode 100644
-index 000000000000..66378c9e7794
---- /dev/null
-+++ b/sound/soc/sunxi/sun8i-codec.c
-@@ -0,0 +1,531 @@
-+/*
-+ * This driver supports the digital controls for the internal codec
-+ * found in Allwinner's A33 SoCs.
-+ *
-+ * (C) Copyright 2010-2016
-+ * Reuuimlla Technology Co., Ltd. <www.reuuimllatech.com>
-+ * huangxin <huangxin@Reuuimllatech.com>
-+ * Mylène Josserand <mylene.josserand@free-electrons.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/delay.h>
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+
-+#include <sound/pcm_params.h>
-+#include <sound/soc.h>
-+#include <sound/soc-dapm.h>
-+
-+#define SUN8I_SYSCLK_CTL				0x00c
-+#define SUN8I_SYSCLK_CTL_AIF1CLK_ENA			11
-+#define SUN8I_SYSCLK_CTL_AIF1CLK_SRC_PLL		9
-+#define SUN8I_SYSCLK_CTL_AIF1CLK_SRC			8
-+#define SUN8I_SYSCLK_CTL_SYSCLK_ENA			3
-+#define SUN8I_SYSCLK_CTL_SYSCLK_SRC			0
-+#define SUN8I_MOD_CLK_ENA				0x010
-+#define SUN8I_MOD_CLK_ENA_AIF1				15
-+#define SUN8I_MOD_CLK_ENA_DAC				2
-+#define SUN8I_MOD_RST_CTL				0x014
-+#define SUN8I_MOD_RST_CTL_AIF1				15
-+#define SUN8I_MOD_RST_CTL_DAC				2
-+#define SUN8I_SYS_SR_CTRL				0x018
-+#define SUN8I_SYS_SR_CTRL_AIF1_FS			12
-+#define SUN8I_SYS_SR_CTRL_AIF2_FS			8
-+#define SUN8I_AIF1CLK_CTRL				0x040
-+#define SUN8I_AIF1CLK_CTRL_AIF1_MSTR_MOD		15
-+#define SUN8I_AIF1CLK_CTRL_AIF1_BCLK_INV		14
-+#define SUN8I_AIF1CLK_CTRL_AIF1_LRCK_INV		13
-+#define SUN8I_AIF1CLK_CTRL_AIF1_BCLK_DIV		9
-+#define SUN8I_AIF1CLK_CTRL_AIF1_LRCK_DIV		6
-+#define SUN8I_AIF1CLK_CTRL_AIF1_LRCK_DIV_16		(1 << 6)
-+#define SUN8I_AIF1CLK_CTRL_AIF1_WORD_SIZ		4
-+#define SUN8I_AIF1CLK_CTRL_AIF1_WORD_SIZ_16		(1 << 4)
-+#define SUN8I_AIF1CLK_CTRL_AIF1_DATA_FMT		2
-+#define SUN8I_AIF1_DACDAT_CTRL				0x048
-+#define SUN8I_AIF1_DACDAT_CTRL_AIF1_DA0L_ENA		15
-+#define SUN8I_AIF1_DACDAT_CTRL_AIF1_DA0R_ENA		14
-+#define SUN8I_DAC_DIG_CTRL				0x120
-+#define SUN8I_DAC_DIG_CTRL_ENDA			15
-+#define SUN8I_DAC_MXR_SRC				0x130
-+#define SUN8I_DAC_MXR_SRC_DACL_MXR_SRC_AIF1DA0L	15
-+#define SUN8I_DAC_MXR_SRC_DACL_MXR_SRC_AIF1DA1L	14
-+#define SUN8I_DAC_MXR_SRC_DACL_MXR_SRC_AIF2DACL	13
-+#define SUN8I_DAC_MXR_SRC_DACL_MXR_SRC_ADCL		12
-+#define SUN8I_DAC_MXR_SRC_DACR_MXR_SRC_AIF1DA0R	11
-+#define SUN8I_DAC_MXR_SRC_DACR_MXR_SRC_AIF1DA1R	10
-+#define SUN8I_DAC_MXR_SRC_DACR_MXR_SRC_AIF2DACR	9
-+#define SUN8I_DAC_MXR_SRC_DACR_MXR_SRC_ADCR		8
-+
-+#define SUN8I_SYS_SR_CTRL_AIF1_FS_MASK		GENMASK(15, 12)
-+#define SUN8I_SYS_SR_CTRL_AIF2_FS_MASK		GENMASK(11, 8)
-+#define SUN8I_AIF1CLK_CTRL_AIF1_WORD_SIZ_MASK	GENMASK(5, 4)
-+#define SUN8I_AIF1CLK_CTRL_AIF1_LRCK_DIV_MASK	GENMASK(8, 6)
-+
-+struct sun8i_codec {
-+	struct device	*dev;
-+	struct regmap	*regmap;
-+	struct clk	*clk_module;
-+	struct clk	*clk_bus;
-+};
-+
-+static int sun8i_codec_runtime_resume(struct device *dev)
-+{
-+	struct sun8i_codec *scodec = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = clk_prepare_enable(scodec->clk_module);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable the module clock\n");
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(scodec->clk_bus);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable the bus clock\n");
-+		goto err_disable_modclk;
-+	}
-+
-+	regcache_cache_only(scodec->regmap, false);
-+
-+	ret = regcache_sync(scodec->regmap);
-+	if (ret) {
-+		dev_err(dev, "Failed to sync regmap cache\n");
-+		goto err_disable_clk;
-+	}
-+
-+	return 0;
-+
-+err_disable_clk:
-+	clk_disable_unprepare(scodec->clk_bus);
-+
-+err_disable_modclk:
-+	clk_disable_unprepare(scodec->clk_module);
-+
-+	return ret;
-+}
-+
-+static int sun8i_codec_runtime_suspend(struct device *dev)
-+{
-+	struct sun8i_codec *scodec = dev_get_drvdata(dev);
-+
-+	regcache_cache_only(scodec->regmap, true);
-+	regcache_mark_dirty(scodec->regmap);
-+
-+	clk_disable_unprepare(scodec->clk_module);
-+	clk_disable_unprepare(scodec->clk_bus);
-+
-+	return 0;
-+}
-+
-+static int sun8i_codec_get_hw_rate(struct snd_pcm_hw_params *params)
-+{
-+	unsigned int rate = params_rate(params);
-+
-+	switch (rate) {
-+	case 8000:
-+	case 7350:
-+		return 0x0;
-+	case 11025:
-+		return 0x1;
-+	case 12000:
-+		return 0x2;
-+	case 16000:
-+		return 0x3;
-+	case 22050:
-+		return 0x4;
-+	case 24000:
-+		return 0x5;
-+	case 32000:
-+		return 0x6;
-+	case 44100:
-+		return 0x7;
-+	case 48000:
-+		return 0x8;
-+	case 96000:
-+		return 0x9;
-+	case 192000:
-+		return 0xa;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static u32 sun8i_codec_get_mod_freq(struct snd_pcm_hw_params *params)
-+{
-+	unsigned int rate = params_rate(params);
-+
-+	switch (rate) {
-+	case 176400:
-+	case 88200:
-+	case 44100:
-+	case 22050:
-+	case 11025:
-+		return 22579200;
-+
-+	case 192000:
-+	case 128000:
-+	case 96000:
-+	case 64000:
-+	case 48000:
-+	case 32000:
-+	case 24000:
-+	case 16000:
-+	case 12000:
-+	case 8000:
-+		return 24576000;
-+
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static int sun8i_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
-+{
-+	struct sun8i_codec *scodec = snd_soc_codec_get_drvdata(dai->codec);
-+	u32 value;
-+
-+	/* clock masters */
-+	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
-+	case SND_SOC_DAIFMT_CBS_CFS: /* DAI Slave */
-+		value = 0x0; /* Codec Master */
-+		break;
-+	case SND_SOC_DAIFMT_CBM_CFM: /* DAI Master */
-+		value = 0x1; /* Codec Slave */
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
-+			   BIT(SUN8I_AIF1CLK_CTRL_AIF1_MSTR_MOD),
-+			   value << SUN8I_AIF1CLK_CTRL_AIF1_MSTR_MOD);
-+
-+	/* clock inversion */
-+	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
-+	case SND_SOC_DAIFMT_NB_NF: /* Normal */
-+		value = 0x0;
-+		break;
-+	case SND_SOC_DAIFMT_IB_IF: /* Inversion */
-+		value = 0x1;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
-+			   BIT(SUN8I_AIF1CLK_CTRL_AIF1_BCLK_INV),
-+			   value << SUN8I_AIF1CLK_CTRL_AIF1_BCLK_INV);
-+	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
-+			   BIT(SUN8I_AIF1CLK_CTRL_AIF1_LRCK_INV),
-+			   value << SUN8I_AIF1CLK_CTRL_AIF1_LRCK_INV);
-+
-+	/* DAI format */
-+	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
-+	case SND_SOC_DAIFMT_I2S:
-+		value = 0x0;
-+		break;
-+	case SND_SOC_DAIFMT_LEFT_J:
-+		value = 0x1;
-+		break;
-+	case SND_SOC_DAIFMT_RIGHT_J:
-+		value = 0x2;
-+		break;
-+	case SND_SOC_DAIFMT_DSP_A:
-+	case SND_SOC_DAIFMT_DSP_B:
-+		value = 0x3;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
-+			   BIT(SUN8I_AIF1CLK_CTRL_AIF1_DATA_FMT),
-+			   value << SUN8I_AIF1CLK_CTRL_AIF1_DATA_FMT);
-+
-+	return 0;
-+}
-+
-+static int sun8i_codec_hw_params(struct snd_pcm_substream *substream,
-+				 struct snd_pcm_hw_params *params,
-+				 struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-+	struct sun8i_codec *scodec = snd_soc_codec_get_drvdata(dai->codec);
-+	u32 clk_freq;
-+	int sample_rate, err;
-+
-+	/*
-+	 * The CPU DAI handles only a sample of 16 bits. Configure the
-+	 * codec to handle this type of sample resolution.
-+	 */
-+	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
-+			   SUN8I_AIF1CLK_CTRL_AIF1_WORD_SIZ_MASK,
-+			   SUN8I_AIF1CLK_CTRL_AIF1_WORD_SIZ_16);
-+
-+	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
-+			   SUN8I_AIF1CLK_CTRL_AIF1_LRCK_DIV_MASK,
-+			   SUN8I_AIF1CLK_CTRL_AIF1_LRCK_DIV_16);
-+
-+	sample_rate = sun8i_codec_get_hw_rate(params);
-+	if (sample_rate < 0)
-+		return sample_rate;
-+
-+	regmap_update_bits(scodec->regmap, SUN8I_SYS_SR_CTRL,
-+			   SUN8I_SYS_SR_CTRL_AIF1_FS_MASK,
-+			   sample_rate << SUN8I_SYS_SR_CTRL_AIF1_FS);
-+	regmap_update_bits(scodec->regmap, SUN8I_SYS_SR_CTRL,
-+			   SUN8I_SYS_SR_CTRL_AIF2_FS_MASK,
-+			   sample_rate << SUN8I_SYS_SR_CTRL_AIF2_FS);
-+
-+	return 0;
-+}
-+
-+static const struct snd_kcontrol_new sun8i_output_left_mixer_controls[] = {
-+	SOC_DAPM_SINGLE("LSlot 0", SUN8I_DAC_MXR_SRC,
-+			SUN8I_DAC_MXR_SRC_DACL_MXR_SRC_AIF1DA0L, 1, 0),
-+	SOC_DAPM_SINGLE("LSlot 1", SUN8I_DAC_MXR_SRC,
-+			SUN8I_DAC_MXR_SRC_DACL_MXR_SRC_AIF1DA1L, 1, 0),
-+	SOC_DAPM_SINGLE("DACL", SUN8I_DAC_MXR_SRC,
-+			SUN8I_DAC_MXR_SRC_DACL_MXR_SRC_AIF2DACL, 1, 0),
-+	SOC_DAPM_SINGLE("ADCL", SUN8I_DAC_MXR_SRC,
-+			SUN8I_DAC_MXR_SRC_DACL_MXR_SRC_ADCL, 1, 0),
-+};
-+
-+static const struct snd_kcontrol_new sun8i_output_right_mixer_controls[] = {
-+	SOC_DAPM_SINGLE("RSlot 0", SUN8I_DAC_MXR_SRC,
-+			SUN8I_DAC_MXR_SRC_DACR_MXR_SRC_AIF1DA0R, 1, 0),
-+	SOC_DAPM_SINGLE("RSlot 1", SUN8I_DAC_MXR_SRC,
-+			SUN8I_DAC_MXR_SRC_DACR_MXR_SRC_AIF1DA1R, 1, 0),
-+	SOC_DAPM_SINGLE("DACR", SUN8I_DAC_MXR_SRC,
-+			SUN8I_DAC_MXR_SRC_DACR_MXR_SRC_AIF2DACR, 1, 0),
-+	SOC_DAPM_SINGLE("ADCR", SUN8I_DAC_MXR_SRC,
-+			SUN8I_DAC_MXR_SRC_DACR_MXR_SRC_ADCR, 1, 0),
-+};
-+
-+static const struct snd_soc_dapm_widget sun8i_codec_dapm_widgets[] = {
-+	/* Digital parts of the DACs */
-+	SND_SOC_DAPM_SUPPLY("DAC", SUN8I_DAC_DIG_CTRL, SUN8I_DAC_DIG_CTRL_ENDA,
-+			    0, NULL, 0),
-+
-+	/* Analog DAC */
-+	SND_SOC_DAPM_DAC("Digital Left DAC", "Playback", SUN8I_AIF1_DACDAT_CTRL,
-+			 SUN8I_AIF1_DACDAT_CTRL_AIF1_DA0L_ENA, 0),
-+	SND_SOC_DAPM_DAC("Digital Right DAC", "Playback", SUN8I_AIF1_DACDAT_CTRL,
-+			 SUN8I_AIF1_DACDAT_CTRL_AIF1_DA0R_ENA, 0),
-+
-+	/* DAC Mixers */
-+	SND_SOC_DAPM_MIXER("Left DAC Mixer", SND_SOC_NOPM, 0, 0,
-+			   sun8i_output_left_mixer_controls,
-+			   ARRAY_SIZE(sun8i_output_left_mixer_controls)),
-+	SND_SOC_DAPM_MIXER("Right DAC Mixer", SND_SOC_NOPM, 0, 0,
-+			   sun8i_output_right_mixer_controls,
-+			   ARRAY_SIZE(sun8i_output_right_mixer_controls)),
-+
-+	/* Clocks */
-+	SND_SOC_DAPM_SUPPLY("MODCLK AFI1", SUN8I_MOD_CLK_ENA,
-+			    SUN8I_MOD_CLK_ENA_AIF1, 0, NULL, 0),
-+	SND_SOC_DAPM_SUPPLY("MODCLK DAC", SUN8I_MOD_CLK_ENA,
-+			    SUN8I_MOD_CLK_ENA_DAC, 0, NULL, 0),
-+	SND_SOC_DAPM_SUPPLY("AIF1", SUN8I_SYSCLK_CTL,
-+			    SUN8I_SYSCLK_CTL_AIF1CLK_ENA, 0, NULL, 0),
-+	SND_SOC_DAPM_SUPPLY("SYSCLK", SUN8I_SYSCLK_CTL,
-+			    SUN8I_SYSCLK_CTL_SYSCLK_ENA, 0, NULL, 0),
-+
-+	SND_SOC_DAPM_SUPPLY("AIF1 PLL", SUN8I_SYSCLK_CTL,
-+			    SUN8I_SYSCLK_CTL_AIF1CLK_SRC_PLL, 0, NULL, 0),
-+	/* Inversion as 0=AIF1, 1=AIF2 */
-+	SND_SOC_DAPM_SUPPLY("SYSCLK AIF1", SUN8I_SYSCLK_CTL,
-+			    SUN8I_SYSCLK_CTL_SYSCLK_SRC, 1, NULL, 0),
-+
-+	/* Module reset */
-+	SND_SOC_DAPM_SUPPLY("RST AIF1", SUN8I_MOD_RST_CTL,
-+			    SUN8I_MOD_RST_CTL_AIF1, 0, NULL, 0),
-+	SND_SOC_DAPM_SUPPLY("RST DAC", SUN8I_MOD_RST_CTL,
-+			    SUN8I_MOD_RST_CTL_DAC, 0, NULL, 0),
-+
-+	SND_SOC_DAPM_OUTPUT("HP"),
-+};
-+
-+static const struct snd_soc_dapm_route sun8i_codec_dapm_routes[] = {
-+	/* Clock Routes */
-+	{ "AIF1", NULL, "SYSCLK AIF1" },
-+	{ "AIF1 PLL", NULL, "AIF1" },
-+	{ "RST AIF1", NULL, "AIF1 PLL" },
-+	{ "MODCLK AFI1", NULL, "RST AIF1" },
-+	{ "DAC", NULL, "MODCLK AFI1" },
-+
-+	{ "RST DAC", NULL, "SYSCLK" },
-+	{ "MODCLK DAC", NULL, "RST DAC" },
-+	{ "DAC", NULL, "MODCLK DAC" },
-+
-+	/* DAC Routes */
-+	{ "Digital Left DAC", NULL, "DAC" },
-+	{ "Digital Right DAC", NULL, "DAC" },
-+
-+	/* DAC Mixer Routes */
-+	{ "Left DAC Mixer", "LSlot 0", "Digital Left DAC"},
-+	{ "Right DAC Mixer", "RSlot 0", "Digital Right DAC"},
-+
-+	/* End of route : HP out */
-+	{ "HP", NULL, "Left DAC Mixer" },
-+	{ "HP", NULL, "Right DAC Mixer" },
-+};
-+
-+static struct snd_soc_dai_ops sun8i_codec_dai_ops = {
-+	.hw_params = sun8i_codec_hw_params,
-+	.set_fmt = sun8i_set_fmt,
-+};
-+
-+static struct snd_soc_dai_driver sun8i_codec_dai = {
-+	.name = "sun8i",
-+	/* playback capabilities */
-+	.playback = {
-+		.stream_name = "Playback",
-+		.channels_min = 1,
-+		.channels_max = 2,
-+		.rates = SNDRV_PCM_RATE_8000_192000,
-+		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+	},
-+	/* pcm operations */
-+	.ops = &sun8i_codec_dai_ops,
-+};
-+
-+static struct snd_soc_codec_driver sun8i_soc_codec = {
-+	.component_driver = {
-+		.dapm_widgets		= sun8i_codec_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(sun8i_codec_dapm_widgets),
-+		.dapm_routes		= sun8i_codec_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(sun8i_codec_dapm_routes),
-+	},
-+};
-+
-+static const struct regmap_config sun8i_codec_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= SUN8I_DAC_MXR_SRC,
-+
-+	.cache_type	= REGCACHE_FLAT,
-+};
-+
-+static int sun8i_codec_probe(struct platform_device *pdev)
-+{
-+	struct resource *res_base;
-+	struct sun8i_codec *scodec;
-+	void __iomem *base;
-+	int ret;
-+
-+	scodec = devm_kzalloc(&pdev->dev, sizeof(*scodec), GFP_KERNEL);
-+	if (!scodec)
-+		return -ENOMEM;
-+
-+	scodec->dev = &pdev->dev;
-+
-+	scodec->clk_module = devm_clk_get(&pdev->dev, "mod");
-+	if (IS_ERR(scodec->clk_module)) {
-+		dev_err(&pdev->dev, "Failed to get the module clock\n");
-+		return PTR_ERR(scodec->clk_module);
-+	}
-+
-+	scodec->clk_bus = devm_clk_get(&pdev->dev, "bus");
-+	if (IS_ERR(scodec->clk_bus)) {
-+		dev_err(&pdev->dev, "Failed to get the bus clock\n");
-+		return PTR_ERR(scodec->clk_bus);
-+	}
-+
-+	res_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(&pdev->dev, res_base);
-+	if (IS_ERR(base)) {
-+		dev_err(&pdev->dev, "Failed to map the registers\n");
-+		return PTR_ERR(base);
-+	}
-+
-+	scodec->regmap = devm_regmap_init_mmio(&pdev->dev, base,
-+					       &sun8i_codec_regmap_config);
-+	if (IS_ERR(scodec->regmap)) {
-+		dev_err(&pdev->dev, "Failed to create our regmap\n");
-+		return PTR_ERR(scodec->regmap);
-+	}
-+
-+	platform_set_drvdata(pdev, scodec);
-+
-+	pm_runtime_enable(&pdev->dev);
-+	if (!pm_runtime_enabled(&pdev->dev)) {
-+		ret = sun8i_codec_runtime_resume(&pdev->dev);
-+		if (ret)
-+			goto err_pm_disable;
-+	}
-+
-+	ret = snd_soc_register_codec(&pdev->dev, &sun8i_soc_codec,
-+				     &sun8i_codec_dai, 1);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to register codec\n");
-+		goto err_suspend;
-+	}
-+
-+	return ret;
-+
-+err_suspend:
-+	if (!pm_runtime_status_suspended(&pdev->dev))
-+		sun8i_codec_runtime_suspend(&pdev->dev);
-+
-+err_pm_disable:
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return ret;
-+}
-+
-+static int sun8i_codec_remove(struct platform_device *pdev)
-+{
-+	struct snd_soc_card *card = platform_get_drvdata(pdev);
-+	struct sun8i_codec *scodec = snd_soc_card_get_drvdata(card);
-+
-+	pm_runtime_disable(&pdev->dev);
-+	if (!pm_runtime_status_suspended(&pdev->dev))
-+		sun8i_codec_runtime_suspend(&pdev->dev);
-+
-+	snd_soc_unregister_codec(&pdev->dev);
-+	clk_disable_unprepare(scodec->clk_module);
-+	clk_disable_unprepare(scodec->clk_bus);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id sun8i_codec_of_match[] = {
-+	{ .compatible = "allwinner,sun8i-a33-codec" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, sun8i_codec_of_match);
-+
-+static const struct dev_pm_ops sun8i_codec_pm_ops = {
-+	SET_RUNTIME_PM_OPS(sun8i_codec_runtime_suspend,
-+			   sun8i_codec_runtime_resume, NULL)
-+};
-+
-+static struct platform_driver sun8i_codec_driver = {
-+	.driver = {
-+		.name = "sun8i-codec",
-+		.owner = THIS_MODULE,
-+		.of_match_table = sun8i_codec_of_match,
-+		.pm = &sun8i_codec_pm_ops,
-+	},
-+	.probe = sun8i_codec_probe,
-+	.remove = sun8i_codec_remove,
-+};
-+module_platform_driver(sun8i_codec_driver);
-+
-+MODULE_DESCRIPTION("Allwinner A33 (sun8i) codec driver");
-+MODULE_AUTHOR("Mylène Josserand <mylene.josserand@free-electrons.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:sun8i-codec");
+ On ven., janv. 27 2017, Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
+
+> The 98DX3236, 98DX3336 and 98DX4251 are a set of switch ASICs with
+> integrated CPUs. They CPU block is common within these product lines and
+> (as far as I can tell/have been told) is based on the Armada XP. There
+> are a few differences due to the fact they have to squeeze the CPU into
+> the same package as the switch.
+>
+> I've rebased this series against linux-pinctrl/devel to get access to
+> mvebu_mmio_mpp_ctrl. Everything else still applies cleanly to
+> v4.10.0-rc5.
+
+Just to let you know that I plan to apply the 3 arm patch once Chris
+will have sent the new series with the minor fixes I asked on patch 3.
+
+I already applied them in the for-next branch to benefit of some build
+test coverage.
+
+Stephen,
+
+you gave your Acked-by on the first patch, but don't you plan to apply
+it on the clk branch?
+
+If you really want I can apply on mvebu but there is no build
+dependencies, so the order the patches will be merged is not important.
+
+Linus,
+
+I expect you will apply the pinctrl patch on your tree as it depend of
+code already there.
+
+Thanks,
+
+Gregory
+
+>
+> Chris Packham (4):
+>   clk: mvebu: support for 98DX3236 SoC
+>     Changes in v2:
+>     - Update devicetree binding documentation for new compatible string
+>     Changes in v3:
+>     - Add 98dx3236 support to mvebu/clk-corediv.c rather than creating a new
+>       driver.
+>     - Document mv98dx3236-corediv-clock binding
+>     Changes in v4:
+>     - None
+>     Changes in v5:
+>     - Collect ack from Rob
+>     - Remove explicit initialisation of fields to 0 in mv98dx3236_coreclks
+>     - Register dummy clock provider for marvell,mv98dx3236-cpu-clock
+>   arm: mvebu: support for SMP on 98DX3336 SoC
+>     Changes in v2:
+>     - Document new enable-method value
+>     - Correct some references from 98DX4521 to 98DX3236
+>     Changes in v3:
+>     - Simplify mv98dx3236_resume_init by using of_io_request_and_map()
+>     Changes in v4:
+>     - integrate changes into platsmp.c instead of new init call
+>     - avoid duplicated code.
+>     - fix error return
+>     - Collect ack from Rob
+>     Changes in v5:
+>     - Remove useless casts (thanks to Stephen Boyd)
+>   arm: mvebu: Add device tree for 98DX3236 SoCs
+>     Changes in v2:
+>     - Update devicetree binding documentation to reflect that 98DX3336 and
+>       984251 are supersets of 98DX3236.
+>     - disable crypto block
+>     - disable sdio for 98DX3236, enable for 98DX4251
+>     Changes in v3:
+>     - fix typo 4521 -> 4251
+>     - document prestera bindings
+>     - rework corediv-clock binding
+>     - add label to packet processor node
+>     - add new compatible string for DFX server
+>     Changes in v4:
+>     - Collect ack from Rob
+>     Changes in v5:
+>     - Fixup license text. Add labels to nodes.
+>   arm: mvebu: Add device tree for db-dxbc2 and db-xc3-24g4xg boards
+>     Changes in v5:
+>     - update license text
+>     - use node labels
+>
+> Kalyan Kinthada (1):
+>   pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
+>     Changes in v2:
+>     - include sdio support for the 98DX4251
+>     Changes in v3:
+>     - None
+>     Changes in v4:
+>     - Correct some discrepencies between binding and driver.
+>     - Collect acks from Rob and Sebastian
+>     Changes in v5:
+>     - Update bindings to reflect "gpo" pins
+>     - Use mvebu_mmio_mpp_ctrl instead of armada_xp_mpp_ctrl (note this is reliant
+>       on changes queued in linux-pinctrl)
+>
+>  Documentation/devicetree/bindings/arm/cpus.txt     |   1 +
+>  .../bindings/arm/marvell/98dx3236-resume-ctrl.txt  |  16 ++
+>  .../devicetree/bindings/arm/marvell/98dx3236.txt   |  23 ++
+>  .../bindings/clock/mvebu-corediv-clock.txt         |   1 +
+>  .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |   1 +
+>  .../devicetree/bindings/net/marvell,prestera.txt   |  50 ++++
+>  .../pinctrl/marvell,armada-98dx3236-pinctrl.txt    |  46 ++++
+>  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 254 +++++++++++++++++++++
+>  arch/arm/boot/dts/armada-xp-98dx3336.dtsi          |  76 ++++++
+>  arch/arm/boot/dts/armada-xp-98dx4251.dtsi          |  90 ++++++++
+>  arch/arm/boot/dts/db-dxbc2.dts                     | 151 ++++++++++++
+>  arch/arm/boot/dts/db-xc3-24g4xg.dts                | 142 ++++++++++++
+>  arch/arm/mach-mvebu/platsmp.c                      |  86 +++++++
+>  drivers/clk/mvebu/armada-xp.c                      |  39 ++++
+>  drivers/clk/mvebu/clk-corediv.c                    |  23 ++
+>  drivers/clk/mvebu/clk-cpu.c                        |   8 +
+>  drivers/pinctrl/mvebu/pinctrl-armada-xp.c          | 156 +++++++++++++
+>  17 files changed, 1163 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236-resume-ctrl.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236.txt
+>  create mode 100644 Documentation/devicetree/bindings/net/marvell,prestera.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
+>  create mode 100644 arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+>  create mode 100644 arch/arm/boot/dts/armada-xp-98dx3336.dtsi
+>  create mode 100644 arch/arm/boot/dts/armada-xp-98dx4251.dtsi
+>  create mode 100644 arch/arm/boot/dts/db-dxbc2.dts
+>  create mode 100644 arch/arm/boot/dts/db-xc3-24g4xg.dts
+>
+> interdiff to v4:
+>
+>  diff --git a/Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt
+>  index 520562a7dc2a..c7b4e3a6b2c6 100644
+> @@ -85,7 +86,7 @@
+>           by address and length of the PMU DFS registers
+>   - #clock-cells : should be set to 1.
+>  diff --git a/drivers/clk/mvebu/armada-xp.c b/drivers/clk/mvebu/armada-xp.c
+> -index b3094315a3c0..0413bf8284e0 100644
+> +index b3094315a3c0..890a863ae0d0 100644
+>  --- a/drivers/clk/mvebu/armada-xp.c
+>  +++ b/drivers/clk/mvebu/armada-xp.c
+>   	return 250000000;
+> @@ -118,9 +119,6 @@
+>  +static const struct coreclk_soc_desc mv98dx3236_coreclks = {
+>  +	.get_tclk_freq = mv98dx3236_get_tclk_freq,
+>  +	.get_cpu_freq = mv98dx3236_get_cpu_freq,
+> -+	.get_clk_ratio = NULL,
+> -+	.ratios = NULL,
+> -+	.num_ratios = 0,
+>  +};
+>  +
+>   /*
+> @@ -200,53 +198,16 @@
+>  +CLK_OF_DECLARE(mv98dx3236_corediv_clk, "marvell,mv98dx3236-corediv-clock",
+>  +	       mv98dx3236_corediv_clk_init);
+>  diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
+> -index 5837eb8a212f..3b8f0e14fa01 100644
+> +index 5837eb8a212f..044892b6534d 100644
+>  --- a/drivers/clk/mvebu/clk-cpu.c
+>  +++ b/drivers/clk/mvebu/clk-cpu.c
+> - 	.set_rate = clk_cpu_set_rate,
+> - };
+> - 
+> --static void __init of_cpu_clk_setup(struct device_node *node)
+> -+/* Add parameter to allow this to support different clock operations. */
+> -+static void __init _of_cpu_clk_setup(struct device_node *node,
+> -+			const struct clk_ops *cpu_clk_ops)
+> - {
+> - 	struct cpu_clk *cpuclk;
+> - 	void __iomem *clock_complex_base = of_iomap(node, 0);
+> - 		cpuclk[cpu].hw.init = &init;
+>   
+> - 		init.name = cpuclk[cpu].clk_name;
+> --		init.ops = &cpu_ops;
+> -+		init.ops = cpu_clk_ops;
+> - 		init.flags = 0;
+> - 		init.parent_names = &cpuclk[cpu].parent_name;
+> - 		init.num_parents = 1;
+> - 	iounmap(clock_complex_base);
+> - }
+> - 
+> -+/* Use this function to call the generic setup with the correct
+> -+ * clock operation
+> -+ */
+> -+static void __init of_cpu_clk_setup(struct device_node *node)
+> -+{
+> -+	_of_cpu_clk_setup(node, &cpu_ops);
+> -+}
+> -+
+>   CLK_OF_DECLARE(armada_xp_cpu_clock, "marvell,armada-xp-cpu-clock",
+>   					 of_cpu_clk_setup);
+>  +
+> -+/* Define the clock and operations for the mv98dx3236 - it cannot perform
+> -+ * any operations.
+> -+ */
+> -+static const struct clk_ops mv98dx3236_cpu_ops = {
+> -+	.recalc_rate = NULL,
+> -+	.round_rate = NULL,
+> -+	.set_rate = NULL,
+> -+};
+> -+
+>  +static void __init of_mv98dx3236_cpu_clk_setup(struct device_node *node)
+>  +{
+> -+	_of_cpu_clk_setup(node, &mv98dx3236_cpu_ops);
+> ++	of_clk_add_provider(node, of_clk_src_simple_get, NULL);
+>  +}
+>  +
+>  +CLK_OF_DECLARE(mv98dx3236_cpu_clock, "marvell,mv98dx3236-cpu-clock",
+> @@ -285,7 +247,7 @@
+>   			    "qcom,gcc-msm8660"
+>  diff --git a/Documentation/devicetree/bindings/arm/marvell/98dx3236-resume-ctrl.txt b/Documentation/devicetree/bindings/arm/marvell/98dx3236-resume-ctrl.txt
+>  new file mode 100644
+> -index 000000000000..8082ba872edd
+> +index 000000000000..26eb9d3aa630
+>  --- /dev/null
+>  +++ b/Documentation/devicetree/bindings/arm/marvell/98dx3236-resume-ctrl.txt
+>  +Resume Control
+> @@ -304,10 +266,8 @@
+>  +	compatible = "marvell,98dx3336-resume-ctrl";
+>  +	reg = <0x20980 0x10>;
+>  +};
+> -+
+> -+
+>  diff --git a/arch/arm/mach-mvebu/platsmp.c b/arch/arm/mach-mvebu/platsmp.c
+> -index 46c742d3bd41..59be3ca0464f 100644
+> +index 46c742d3bd41..a5b464497e1a 100644
+>  --- a/arch/arm/mach-mvebu/platsmp.c
+>  +++ b/arch/arm/mach-mvebu/platsmp.c
+>   
+> @@ -327,7 +287,7 @@
+>  +static const struct of_device_id of_mv98dx3236_resume_table[] = {
+>  +	{
+>  +		.compatible = "marvell,98dx3336-resume-ctrl",
+> -+		.data = (void *)&mv98dx3336_resume_controller,
+> ++		.data = &mv98dx3336_resume_controller,
+>  +	},
+>  +	{ /* end of list */ },
+>  +};
+> @@ -337,7 +297,7 @@
+>  +	const struct of_device_id *match;
+>  +	struct device_node *np;
+>  +	void __iomem *base;
+> -+	struct resume_controller *rc;
+> ++	const struct resume_controller *rc;
+>  +
+>  +	WARN_ON(hw_cpu != 1);
+>  +
+> @@ -347,7 +307,7 @@
+>  +		return -ENODEV;
+>  +
+>  +	base = of_io_request_and_map(np, 0, of_node_full_name(np));
+> -+	rc = (struct resume_controller *)match->data;
+> ++	rc = match->data;
+>  +	of_node_put(np);
+>  +	if (IS_ERR(base))
+>  +		return PTR_ERR(base);
+> @@ -411,15 +371,17 @@
+>  diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
+>  new file mode 100644
+> -index 000000000000..d4e6ecdfc853
+> +index 000000000000..97aef67ee769
+>  --- /dev/null
+>  +++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
+>  +* Marvell 98dx3236 pinctrl driver for mpp
+> @@ -435,41 +397,41 @@
+>  +
+>  +name          pins     functions
+>  +================================================================================
+> -+mpp0          0        gpio, spi0(mosi), dev(ad8)
+> ++mpp0          0        gpo, spi0(mosi), dev(ad8)
+>  +mpp1          1        gpio, spi0(miso), dev(ad9)
+> -+mpp2          2        gpio, spi0(sck), dev(ad10)
+> ++mpp2          2        gpo, spi0(sck), dev(ad10)
+>  +mpp3          3        gpio, spi0(cs0), dev(ad11)
+>  +mpp4          4        gpio, spi0(cs1), smi(mdc), dev(cs0)
+>  +mpp5          5        gpio, pex(rsto), sd0(cmd), dev(bootcs)
+> -+mpp6          6        gpio, sd0(clk), dev(a2)
+> ++mpp6          6        gpo, sd0(clk), dev(a2)
+>  +mpp7          7        gpio, sd0(d0), dev(ale0)
+>  +mpp8          8        gpio, sd0(d1), dev(ale1)
+>  +mpp9          9        gpio, sd0(d2), dev(ready0)
+>  +mpp10         10       gpio, sd0(d3), dev(ad12)
+>  +mpp11         11       gpio, uart1(rxd), uart0(cts), dev(ad13)
+> -+mpp12         12       gpio, uart1(txd), uart0(rts), dev(ad14)
+> ++mpp12         12       gpo, uart1(txd), uart0(rts), dev(ad14)
+>  +mpp13         13       gpio, intr(out), dev(ad15)
+>  +mpp14         14       gpio, i2c0(sck)
+>  +mpp15         15       gpio, i2c0(sda)
+> -+mpp16         16       gpio, dev(oe)
+> -+mpp17         17       gpio, dev(clk)
+> ++mpp16         16       gpo, dev(oe)
+> ++mpp17         17       gpo, dev(clkout)
+>  +mpp18         18       gpio, uart1(txd)
+>  +mpp19         19       gpio, uart1(rxd), dev(rb)
+> -+mpp20         20       gpio, dev(we)
+> -+mpp21         21       gpio, dev(ad0)
+> -+mpp22         22       gpio, dev(ad1)
+> -+mpp23         23       gpio, dev(ad2)
+> -+mpp24         24       gpio, dev(ad3)
+> -+mpp25         25       gpio, dev(ad4)
+> -+mpp26         26       gpio, dev(ad5)
+> -+mpp27         27       gpio, dev(ad6)
+> -+mpp28         28       gpio, dev(ad7)
+> -+mpp29         29       gpio, dev(a0)
+> -+mpp30         30       gpio, dev(a1)
+> ++mpp20         20       gpo, dev(we0)
+> ++mpp21         21       gpo, dev(ad0)
+> ++mpp22         22       gpo, dev(ad1)
+> ++mpp23         23       gpo, dev(ad2)
+> ++mpp24         24       gpo, dev(ad3)
+> ++mpp25         25       gpo, dev(ad4)
+> ++mpp26         26       gpo, dev(ad5)
+> ++mpp27         27       gpo, dev(ad6)
+> ++mpp28         28       gpo, dev(ad7)
+> ++mpp29         29       gpo, dev(a0)
+> ++mpp30         30       gpo, dev(a1)
+>  +mpp31         31       gpio, slv_smi(mdc), smi(mdc), dev(we1)
+>  +mpp32         32       gpio, slv_smi(mdio), smi(mdio), dev(cs1)
+>  diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+> -index e4ea71a9d985..554eeae8cd21 100644
+> +index 63e1bd506983..61cbc138703e 100644
+>  --- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+>  +++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+>   	V_MV78460	= BIT(2),
+> @@ -495,8 +457,8 @@
+>  +		 MPP_VAR_FUNCTION(0x2, "spi0", "miso",       V_98DX3236_PLUS),
+>  +		 MPP_VAR_FUNCTION(0x4, "dev", "ad9",         V_98DX3236_PLUS)),
+>  +	MPP_MODE(2,
+> -+		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
+> -+		 MPP_VAR_FUNCTION(0x2, "spi0", "csk",        V_98DX3236_PLUS),
+> ++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+> ++		 MPP_VAR_FUNCTION(0x2, "spi0", "sck",        V_98DX3236_PLUS),
+>  +		 MPP_VAR_FUNCTION(0x4, "dev", "ad10",        V_98DX3236_PLUS)),
+>  +	MPP_MODE(3,
+>  +		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
+> @@ -511,7 +473,7 @@
+>  +		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
+>  +		 MPP_VAR_FUNCTION(0x1, "pex", "rsto",        V_98DX3236_PLUS),
+>  +		 MPP_VAR_FUNCTION(0x2, "sd0", "cmd",         V_98DX4251),
+> -+		 MPP_VAR_FUNCTION(0x4, "dev", "bootcs0",     V_98DX3236_PLUS)),
+> ++		 MPP_VAR_FUNCTION(0x4, "dev", "bootcs",      V_98DX3236_PLUS)),
+>  +	MPP_MODE(6,
+>  +		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+>  +		 MPP_VAR_FUNCTION(0x2, "sd0", "clk",         V_98DX4251),
+> @@ -563,7 +525,8 @@
+>  +		 MPP_VAR_FUNCTION(0x3, "uart1", "txd",       V_98DX3236_PLUS)),
+>  +	MPP_MODE(19,
+>  +		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
+> -+		 MPP_VAR_FUNCTION(0x3, "uart1", "rxd",       V_98DX3236_PLUS)),
+> ++		 MPP_VAR_FUNCTION(0x3, "uart1", "rxd",       V_98DX3236_PLUS),
+> ++		 MPP_VAR_FUNCTION(0x4, "dev", "rb",          V_98DX3236_PLUS)),
+>  +	MPP_MODE(20,
+>  +		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+>  +		 MPP_VAR_FUNCTION(0x4, "dev", "we0",         V_98DX3236_PLUS)),
+> @@ -630,11 +593,11 @@
+>   };
+>   
+>  +static struct mvebu_mpp_ctrl mv98dx3236_mpp_controls[] = {
+> -+	MPP_FUNC_CTRL(0, 32, NULL, armada_xp_mpp_ctrl),
+> ++	MPP_FUNC_CTRL(0, 32, NULL, mvebu_mmio_mpp_ctrl),
+>  +};
+>  +
+>  +static struct pinctrl_gpio_range mv98dx3236_mpp_gpio_ranges[] = {
+> -+	MPP_GPIO_RANGE(0,   0,  0, 32),
+> ++	MPP_GPIO_RANGE(0, 0, 0, 32),
+>  +};
+>  +
+>   static int armada_xp_pinctrl_suspend(struct platform_device *pdev,
+> @@ -767,7 +731,7 @@
+>  +};
+>  diff --git a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+>  new file mode 100644
+> -index 000000000000..4b7b2fe3b682
+> +index 000000000000..9461128fae24
+>  --- /dev/null
+>  +++ b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+>  +/*
+> @@ -785,17 +749,17 @@
+>  + *     published by the Free Software Foundation; either version 2 of the
+>  + *     License, or (at your option) any later version.
+>  + *
+> -+ *     This file is distributed in the hope that it will be useful
+> ++ *     This file is distributed in the hope that it will be useful,
+>  + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+>  + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>  + *     GNU General Public License for more details.
+>  + *
+> -+ * Or, alternatively
+> ++ * Or, alternatively,
+>  + *
+>  + *  b) Permission is hereby granted, free of charge, to any person
+>  + *     obtaining a copy of this software and associated documentation
+>  + *     files (the "Software"), to deal in the Software without
+> -+ *     restriction, including without limitation the rights to use
+> ++ *     restriction, including without limitation the rights to use,
+>  + *     copy, modify, merge, publish, distribute, sublicense, and/or
+>  + *     sell copies of the Software, and to permit persons to whom the
+>  + *     Software is furnished to do so, subject to the following
+> @@ -804,11 +768,11 @@
+>  + *     The above copyright notice and this permission notice shall be
+>  + *     included in all copies or substantial portions of the Software.
+>  + *
+> -+ *     THE SOFTWARE IS PROVIDED , WITHOUT WARRANTY OF ANY KIND
+> ++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+>  + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+>  + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+>  + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> -+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
+> ++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+>  + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+>  + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+>  + *     OTHER DEALINGS IN THE SOFTWARE.
+> @@ -851,9 +815,9 @@
+>  +			  MBUS_ID(0x08, 0x00) 0 0 0xac000000 0x100000>;
+>  +
+>  +		/*
+> -+		 * 98DX3236 has 1 x1 PCIe unit Gen2.0: One unit can be
+> ++		 * 98DX3236 has 1 x1 PCIe unit Gen2.0
+>  +		 */
+> -+		pcie-controller {
+> ++		pciec: pcie-controller@82000000 {
+>  +			compatible = "marvell,armada-xp-pcie";
+>  +			status = "disabled";
+>  +			device_type = "pci";
+> @@ -870,7 +834,7 @@
+>  +				0x81000000 0x1 0       MBUS_ID(0x04, 0xe0) 0 1 0 /* Port 0.0 IO  */
+>  +				0x82000000 0x2 0       MBUS_ID(0x04, 0xd8) 0 1 0 /* Port 0.1 MEM */>;
+>  +
+> -+			pcie@1,0 {
+> ++			pcie1: pcie@1,0 {
+>  +				device_type = "pci";
+>  +				assigned-addresses = <0x82000800 0 0x40000 0 0x2000>;
+>  +				reg = <0x0800 0 0 0 0>;
+> @@ -967,7 +931,7 @@
+>  +			};
+>  +		};
+>  +
+> -+		dfx-registers {
+> ++		dfxr: dfx-registers@ac000000 {
+>  +			compatible = "simple-bus";
+>  +			#address-cells = <1>;
+>  +			#size-cells = <1>;
+> @@ -987,7 +951,7 @@
+>  +			};
+>  +		};
+>  +
+> -+		switch {
+> ++		switch: switch@a8000000 {
+>  +			compatible = "simple-bus";
+>  +			#address-cells = <1>;
+>  +			#size-cells = <1>;
+> @@ -1026,7 +990,7 @@
+>  +};
+>  diff --git a/arch/arm/boot/dts/armada-xp-98dx3336.dtsi b/arch/arm/boot/dts/armada-xp-98dx3336.dtsi
+>  new file mode 100644
+> -index 000000000000..a9b0f47f8df9
+> +index 000000000000..e1580afdc260
+>  --- /dev/null
+>  +++ b/arch/arm/boot/dts/armada-xp-98dx3336.dtsi
+>  +/*
+> @@ -1044,17 +1008,17 @@
+>  + *     published by the Free Software Foundation; either version 2 of the
+>  + *     License, or (at your option) any later version.
+>  + *
+> -+ *     This file is distributed in the hope that it will be useful
+> ++ *     This file is distributed in the hope that it will be useful,
+>  + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+>  + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>  + *     GNU General Public License for more details.
+>  + *
+> -+ * Or, alternatively
+> ++ * Or, alternatively,
+>  + *
+>  + *  b) Permission is hereby granted, free of charge, to any person
+>  + *     obtaining a copy of this software and associated documentation
+>  + *     files (the "Software"), to deal in the Software without
+> -+ *     restriction, including without limitation the rights to use
+> ++ *     restriction, including without limitation the rights to use,
+>  + *     copy, modify, merge, publish, distribute, sublicense, and/or
+>  + *     sell copies of the Software, and to permit persons to whom the
+>  + *     Software is furnished to do so, subject to the following
+> @@ -1063,16 +1027,16 @@
+>  + *     The above copyright notice and this permission notice shall be
+>  + *     included in all copies or substantial portions of the Software.
+>  + *
+> -+ *     THE SOFTWARE IS PROVIDED , WITHOUT WARRANTY OF ANY KIND
+> ++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+>  + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+>  + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+>  + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> -+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
+> ++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+>  + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+>  + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+>  + *     OTHER DEALINGS IN THE SOFTWARE.
+>  + *
+> -+ * Contains definitions specific to the 98dx3336 SoC that are not
+> ++ * Contains definitions specific to the 98dx3236 SoC that are not
+>  + * common to all Armada XP SoCs.
+>  + */
+>  +
+> @@ -1107,7 +1071,7 @@
+>  +};
+>  diff --git a/arch/arm/boot/dts/armada-xp-98dx4251.dtsi b/arch/arm/boot/dts/armada-xp-98dx4251.dtsi
+>  new file mode 100644
+> -index 000000000000..446e6e65ec59
+> +index 000000000000..4b0533a4ccb7
+>  --- /dev/null
+>  +++ b/arch/arm/boot/dts/armada-xp-98dx4251.dtsi
+>  +/*
+> @@ -1125,17 +1089,17 @@
+>  + *     published by the Free Software Foundation; either version 2 of the
+>  + *     License, or (at your option) any later version.
+>  + *
+> -+ *     This file is distributed in the hope that it will be useful
+> ++ *     This file is distributed in the hope that it will be useful,
+>  + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+>  + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>  + *     GNU General Public License for more details.
+>  + *
+> -+ * Or, alternatively
+> ++ * Or, alternatively,
+>  + *
+>  + *  b) Permission is hereby granted, free of charge, to any person
+>  + *     obtaining a copy of this software and associated documentation
+>  + *     files (the "Software"), to deal in the Software without
+> -+ *     restriction, including without limitation the rights to use
+> ++ *     restriction, including without limitation the rights to use,
+>  + *     copy, modify, merge, publish, distribute, sublicense, and/or
+>  + *     sell copies of the Software, and to permit persons to whom the
+>  + *     Software is furnished to do so, subject to the following
+> @@ -1144,11 +1108,11 @@
+>  + *     The above copyright notice and this permission notice shall be
+>  + *     included in all copies or substantial portions of the Software.
+>  + *
+> -+ *     THE SOFTWARE IS PROVIDED , WITHOUT WARRANTY OF ANY KIND
+> ++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+>  + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+>  + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+>  + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> -+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
+> ++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+>  + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+>  + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+>  + *     OTHER DEALINGS IN THE SOFTWARE.
+> @@ -1213,15 +1177,15 @@
+>  diff --git a/arch/arm/boot/dts/db-dxbc2.dts b/arch/arm/boot/dts/db-dxbc2.dts
+>  new file mode 100644
+> -index 000000000000..f56786cea5f8
+> +index 000000000000..a8130805074e
+>  --- /dev/null
+>  +++ b/arch/arm/boot/dts/db-dxbc2.dts
+>  +/*
+> @@ -1241,17 +1205,17 @@
+>  + *     published by the Free Software Foundation; either version 2 of the
+>  + *     License, or (at your option) any later version.
+>  + *
+> -+ *     This file is distributed in the hope that it will be useful
+> ++ *     This file is distributed in the hope that it will be useful,
+>  + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+>  + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>  + *     GNU General Public License for more details.
+>  + *
+> -+ * Or, alternatively
+> ++ * Or, alternatively,
+>  + *
+>  + *  b) Permission is hereby granted, free of charge, to any person
+>  + *     obtaining a copy of this software and associated documentation
+>  + *     files (the "Software"), to deal in the Software without
+> -+ *     restriction, including without limitation the rights to use
+> ++ *     restriction, including without limitation the rights to use,
+>  + *     copy, modify, merge, publish, distribute, sublicense, and/or
+>  + *     sell copies of the Software, and to permit persons to whom the
+>  + *     Software is furnished to do so, subject to the following
+> @@ -1260,11 +1224,11 @@
+>  + *     The above copyright notice and this permission notice shall be
+>  + *     included in all copies or substantial portions of the Software.
+>  + *
+> -+ *     THE SOFTWARE IS PROVIDED , WITHOUT WARRANTY OF ANY KIND
+> ++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+>  + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+>  + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+>  + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> -+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
+> ++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+>  + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+>  + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+>  + *     OTHER DEALINGS IN THE SOFTWARE.
+> @@ -1295,66 +1259,58 @@
+>  +		reg = <0 0x00000000 0 0x20000000>; /* 512 MB */
+>  +	};
+>  +
+> -+	soc {
+> -+		ranges = <MBUS_ID(0xf0, 0x01) 0 0 0xf1000000 0x100000
+> -+			  MBUS_ID(0x01, 0x1d) 0 0 0xfff00000 0x100000
+> -+			  MBUS_ID(0x01, 0x2f) 0 0 0xf0000000 0x1000000
+> -+			  MBUS_ID(0x03, 0x00) 0 0 0xa8000000 0x4000000
+> -+			  MBUS_ID(0x08, 0x00) 0 0 0xac000000 0x100000>;
+> ++};
+>  +
+> -+		devbus-bootcs {
+> -+			status = "okay";
+> ++&devbus_bootcs {
+> ++	status = "okay";
+>  +
+> -+			/* Device Bus parameters are required */
+> ++	/* Device Bus parameters are required */
+>  +
+> -+			/* Read parameters */
+> -+			devbus,bus-width    = <16>;
+> -+			devbus,turn-off-ps  = <60000>;
+> -+			devbus,badr-skew-ps = <0>;
+> -+			devbus,acc-first-ps = <124000>;
+> -+			devbus,acc-next-ps  = <248000>;
+> -+			devbus,rd-setup-ps  = <0>;
+> -+			devbus,rd-hold-ps   = <0>;
+> -+
+> -+			/* Write parameters */
+> -+			devbus,sync-enable = <0>;
+> -+			devbus,wr-high-ps  = <60000>;
+> -+			devbus,wr-low-ps   = <60000>;
+> -+			devbus,ale-wr-ps   = <60000>;
+> -+		};
+> ++	/* Read parameters */
+> ++	devbus,bus-width    = <16>;
+> ++	devbus,turn-off-ps  = <60000>;
+> ++	devbus,badr-skew-ps = <0>;
+> ++	devbus,acc-first-ps = <124000>;
+> ++	devbus,acc-next-ps  = <248000>;
+> ++	devbus,rd-setup-ps  = <0>;
+> ++	devbus,rd-hold-ps   = <0>;
+> ++
+> ++	/* Write parameters */
+> ++	devbus,sync-enable = <0>;
+> ++	devbus,wr-high-ps  = <60000>;
+> ++	devbus,wr-low-ps   = <60000>;
+> ++	devbus,ale-wr-ps   = <60000>;
+> ++};
+>  +
+> -+		internal-regs {
+> -+			serial@12000 {
+> -+				status = "okay";
+> -+			};
+> -+			serial@12100 {
+> -+				status = "okay";
+> -+			};
+> ++&i2c0 {
+> ++	clock-frequency = <100000>;
+> ++	status = "okay";
+> ++};
+>  +
+> -+			i2c@11000 {
+> -+				clock-frequency = <100000>;
+> -+				status = "okay";
+> -+			};
+> ++&uart0 {
+> ++	status = "okay";
+> ++};
+>  +
+> -+			mvsdio@d4000 {
+> -+				pinctrl-0 = <&sdio_pins>;
+> -+				pinctrl-names = "default";
+> -+				status = "okay";
+> -+				/* No CD or WP GPIOs */
+> -+				broken-cd;
+> -+			};
+> ++&uart1 {
+> ++	status = "okay";
+> ++};
+>  +
+> -+			nand@d0000 {
+> -+				status = "okay";
+> -+				num-cs = <1>;
+> -+				marvell,nand-keep-config;
+> -+				marvell,nand-enable-arbiter;
+> -+				nand-on-flash-bbt;
+> -+				nand-ecc-strength = <4>;
+> -+				nand-ecc-step-size = <512>;
+> -+			};
+> -+		};
+> -+	};
+> ++&nand {
+> ++	status = "okay";
+> ++	num-cs = <1>;
+> ++	marvell,nand-keep-config;
+> ++	marvell,nand-enable-arbiter;
+> ++	nand-on-flash-bbt;
+> ++	nand-ecc-strength = <4>;
+> ++	nand-ecc-step-size = <512>;
+> ++};
+> ++
+> ++&sdio {
+> ++	pinctrl-0 = <&sdio_pins>;
+> ++	pinctrl-names = "default";
+> ++	status = "okay";
+> ++	/* No CD or WP GPIOs */
+> ++	broken-cd;
+>  +};
+>  +
+>  +&spi0 {
+> @@ -1385,7 +1341,7 @@
+>  +};
+>  diff --git a/arch/arm/boot/dts/db-xc3-24g4xg.dts b/arch/arm/boot/dts/db-xc3-24g4xg.dts
+>  new file mode 100644
+> -index 000000000000..5eb89ffb9a7d
+> +index 000000000000..4e07cb6ed800
+>  --- /dev/null
+>  +++ b/arch/arm/boot/dts/db-xc3-24g4xg.dts
+>  +/*
+> @@ -1405,17 +1361,17 @@
+>  + *     published by the Free Software Foundation; either version 2 of the
+>  + *     License, or (at your option) any later version.
+>  + *
+> -+ *     This file is distributed in the hope that it will be useful
+> ++ *     This file is distributed in the hope that it will be useful,
+>  + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+>  + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>  + *     GNU General Public License for more details.
+>  + *
+> -+ * Or, alternatively
+> ++ * Or, alternatively,
+>  + *
+>  + *  b) Permission is hereby granted, free of charge, to any person
+>  + *     obtaining a copy of this software and associated documentation
+>  + *     files (the "Software"), to deal in the Software without
+> -+ *     restriction, including without limitation the rights to use
+> ++ *     restriction, including without limitation the rights to use,
+>  + *     copy, modify, merge, publish, distribute, sublicense, and/or
+>  + *     sell copies of the Software, and to permit persons to whom the
+>  + *     Software is furnished to do so, subject to the following
+> @@ -1424,11 +1380,11 @@
+>  + *     The above copyright notice and this permission notice shall be
+>  + *     included in all copies or substantial portions of the Software.
+>  + *
+> -+ *     THE SOFTWARE IS PROVIDED , WITHOUT WARRANTY OF ANY KIND
+> ++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+>  + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+>  + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+>  + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> -+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
+> ++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+>  + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+>  + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+>  + *     OTHER DEALINGS IN THE SOFTWARE.
+> @@ -1458,63 +1414,50 @@
+>  +		device_type = "memory";
+>  +		reg = <0 0x00000000 0 0x40000000>; /* 1 GB */
+>  +	};
+> ++};
+>  +
+> -+	soc {
+> -+		ranges = <MBUS_ID(0xf0, 0x01) 0 0 0xf1000000 0x100000
+> -+			  MBUS_ID(0x01, 0x1d) 0 0 0xfff00000 0x100000
+> -+			  MBUS_ID(0x01, 0x2f) 0 0 0xf0000000 0x1000000
+> -+			  MBUS_ID(0x03, 0x00) 0 0 0xa8000000 0x4000000
+> -+			  MBUS_ID(0x08, 0x00) 0 0 0xac000000 0x100000>;
+> -+
+> -+		devbus-bootcs {
+> -+			status = "okay";
+> ++&devbus_bootcs {
+> ++	status = "okay";
+>  +
+> -+			/* Device Bus parameters are required */
+> ++	/* Device Bus parameters are required */
+>  +
+> -+			/* Read parameters */
+> -+			devbus,bus-width    = <16>;
+> -+			devbus,turn-off-ps  = <60000>;
+> -+			devbus,badr-skew-ps = <0>;
+> -+			devbus,acc-first-ps = <124000>;
+> -+			devbus,acc-next-ps  = <248000>;
+> -+			devbus,rd-setup-ps  = <0>;
+> -+			devbus,rd-hold-ps   = <0>;
+> -+
+> -+			/* Write parameters */
+> -+			devbus,sync-enable = <0>;
+> -+			devbus,wr-high-ps  = <60000>;
+> -+			devbus,wr-low-ps   = <60000>;
+> -+			devbus,ale-wr-ps   = <60000>;
+> -+		};
+> ++	/* Read parameters */
+> ++	devbus,bus-width    = <16>;
+> ++	devbus,turn-off-ps  = <60000>;
+> ++	devbus,badr-skew-ps = <0>;
+> ++	devbus,acc-first-ps = <124000>;
+> ++	devbus,acc-next-ps  = <248000>;
+> ++	devbus,rd-setup-ps  = <0>;
+> ++	devbus,rd-hold-ps   = <0>;
+> ++
+> ++	/* Write parameters */
+> ++	devbus,sync-enable = <0>;
+> ++	devbus,wr-high-ps  = <60000>;
+> ++	devbus,wr-low-ps   = <60000>;
+> ++	devbus,ale-wr-ps   = <60000>;
+> ++};
+>  +
+> -+		internal-regs {
+> -+			serial@12000 {
+> -+				status = "okay";
+> -+			};
+> -+			serial@12100 {
+> -+				status = "okay";
+> -+			};
+> ++&uart0 {
+> ++	status = "okay";
+> ++};
+>  +
+> -+			i2c@11000 {
+> -+				clock-frequency = <100000>;
+> -+				status = "okay";
+> -+			};
+> ++&uart1 {
+> ++	status = "okay";
+> ++};
+>  +
+> -+			mvsdio@d4000 {
+> -+				status = "disabled";
+> -+			};
+> ++&i2c0 {
+> ++	clock-frequency = <100000>;
+> ++	status = "okay";
+> ++};
+>  +
+> -+			nand@d0000 {
+> -+				status = "okay";
+> -+				num-cs = <1>;
+> -+				marvell,nand-keep-config;
+> -+				marvell,nand-enable-arbiter;
+> -+				nand-on-flash-bbt;
+> -+				nand-ecc-strength = <4>;
+> -+				nand-ecc-step-size = <512>;
+> -+			};
+> -+		};
+> -+	};
+> ++&nand {
+> ++	status = "okay";
+> ++	num-cs = <1>;
+> ++	marvell,nand-keep-config;
+> ++	marvell,nand-enable-arbiter;
+> ++	nand-on-flash-bbt;
+> ++	nand-ecc-strength = <4>;
+> ++	nand-ecc-step-size = <512>;
+>  +};
+>  +
+>  +&spi0 {
+>
+> -- 
+> 2.11.0.24.ge6920cf
+>
+
 -- 
-2.11.0
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
