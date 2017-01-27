@@ -1,44 +1,30 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [PATCH] clk: stm32f4: avoid uninitialized variable access
-To: Arnd Bergmann <arnd@arndb.de>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <20170111134107.3821564-1-arnd@arndb.de>
-CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@st.com>,
-        Rob Herring <robh@kernel.org>,
-        Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <a3c0ae24-0289-b008-ebdb-9c9ea289fec3@st.com>
-Date: Wed, 11 Jan 2017 17:08:55 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 26 Jan 2017 16:12:50 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: sunxi-ng: Call divider_round_rate if we only
+ have a single parent
+Message-ID: <20170127001250.GQ8801@codeaurora.org>
+References: <53c56d23af099d8a41460d5ac59a2c792c8d050c.1485250845.git-series.maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <20170111134107.3821564-1-arnd@arndb.de>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <53c56d23af099d8a41460d5ac59a2c792c8d050c.1485250845.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/11/2017 02:40 PM, Arnd Bergmann wrote:
-> The failure path in the newly added function tries to free an
-> uninitialized pointer:
->
-> drivers/clk/clk-stm32f4.c: In function 'stm32f4_rcc_init':
-> drivers/clk/clk-stm32f4.c:1106:4: error: 'gate' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->
-> I'm adding an initialization to NULL here to make the kfree()
-> succeed, and I'm also rearranging the cleanup so that the
-> same kfree() is used for any error path, making the function
-> slightly more robust against newly introduced bugs in the
-> error handling.
->
-> Fixes: daf2d117cbca ("clk: stm32f4: Add lcd-tft clock")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On 01/24, Maxime Ripard wrote:
+> The divider_get_val function that is used in our determine_rate callback
+> doesn't try to change the parent rate at all, while clk_divider_bestdiv,
+> used in divider_round_rate, does.
+> 
+> If we have a single parent, call divider_round_rate.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 > ---
->   drivers/clk/clk-stm32f4.c | 12 +++++++-----
->   1 file changed, 7 insertions(+), 5 deletions(-)
->
->
-Acked-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
