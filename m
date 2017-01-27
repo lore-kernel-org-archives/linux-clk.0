@@ -1,77 +1,47 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 1/8] clk: sunxi-ng: multiplier: Add fractional support
-Date: Sat, 21 Jan 2017 23:50:50 +0100
-Message-Id: <6434f18ff536df321bb315ed3302285046954b51.1485039043.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
-References: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
-References: <cover.04f797fe015b05f19b1d69d0650680baffb27055.1485039043.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 26 Jan 2017 16:17:42 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	linux-clk@vger.kernel.org, "x86@kernel.org" <x86@kernel.org>,
+	Platform Driver <platform-driver-x86@vger.kernel.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+	Irina Tirdea <irina.tirdea@intel.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Takashi Iwai <tiwai@suse.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Brown <broonie@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>, Len Brown <lenb@kernel.org>,
+	Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH v7 0/5] Add platform clock for BayTrail platforms
+Message-ID: <20170127001742.GU8801@codeaurora.org>
+References: <1484690270-28425-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+ <1484736630.2133.184.camel@linux.intel.com>
+ <20170121000028.GG20800@codeaurora.org>
+ <CAHp75VeSYLHg0ugrYYsBhs=_wDD+0j1jkk0LvY4ws3qdbHkL8w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAHp75VeSYLHg0ugrYYsBhs=_wDD+0j1jkk0LvY4ws3qdbHkL8w@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks on the earlier SoCs such as the video PLLs are multipliers with
-fractional settings.
+On 01/21, Andy Shevchenko wrote:
+> 
+> > I can provide a stable branch
+> > in clk tree for platform tree, or platform x86 maintainer can ack
+> > the platform/x86 patches and I can take the whole batch through
+> > clk tree.
+> 
+> That's what I did. Do you need Darren's one?
+> 
 
-Support those cases.
+No worries. I was looking at an outdated copy of the maintainers
+file apparently.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu_mult.c | 8 ++++++++
- drivers/clk/sunxi-ng/ccu_mult.h | 2 ++
- 2 files changed, 10 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
-index 678b6cb49f01..826302464650 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.c
-+++ b/drivers/clk/sunxi-ng/ccu_mult.c
-@@ -75,6 +75,9 @@ static unsigned long ccu_mult_recalc_rate(struct clk_hw *hw,
- 	unsigned long val;
- 	u32 reg;
- 
-+	if (ccu_frac_helper_is_enabled(&cm->common, &cm->frac))
-+		return ccu_frac_helper_read_rate(&cm->common, &cm->frac);
-+
- 	reg = readl(cm->common.base + cm->common.reg);
- 	val = reg >> cm->mult.shift;
- 	val &= (1 << cm->mult.width) - 1;
-@@ -102,6 +105,11 @@ static int ccu_mult_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long flags;
- 	u32 reg;
- 
-+	if (ccu_frac_helper_has_rate(&cm->common, &cm->frac, rate))
-+		return ccu_frac_helper_set_rate(&cm->common, &cm->frac, rate);
-+	else
-+		ccu_frac_helper_disable(&cm->common, &cm->frac);
-+
- 	ccu_mux_helper_adjust_parent_for_prediv(&cm->common, &cm->mux, -1,
- 						&parent_rate);
- 
-diff --git a/drivers/clk/sunxi-ng/ccu_mult.h b/drivers/clk/sunxi-ng/ccu_mult.h
-index c1a2134bdc71..bd2e38b5a32a 100644
---- a/drivers/clk/sunxi-ng/ccu_mult.h
-+++ b/drivers/clk/sunxi-ng/ccu_mult.h
-@@ -2,6 +2,7 @@
- #define _CCU_MULT_H_
- 
- #include "ccu_common.h"
-+#include "ccu_frac.h"
- #include "ccu_mux.h"
- 
- struct ccu_mult_internal {
-@@ -23,6 +24,7 @@ struct ccu_mult_internal {
- struct ccu_mult {
- 	u32			enable;
- 
-+	struct ccu_frac_internal	frac;
- 	struct ccu_mult_internal	mult;
- 	struct ccu_mux_internal	mux;
- 	struct ccu_common	common;
 -- 
-git-series 0.8.11
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
