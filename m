@@ -1,54 +1,46 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH v2 02/10] clk: ccu-sun8i-a33: Add CLK_SET_RATE_PARENT to ac-dig
-Date: Tue, 17 Jan 2017 15:02:22 +0100
-Message-Id: <20170117140230.23142-3-mylene.josserand@free-electrons.com>
-In-Reply-To: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 27 Jan 2017 11:55:37 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [GIT PULL] clk/samsung updates for v4.11, part 2
+Message-ID: <20170127195537.GG8801@codeaurora.org>
+References: <CGME20170127172254epcas1p41085b7154dba751e0c19d4f92a8558a7@epcas1p4.samsung.com>
+ <3297ef21-a1d6-51b0-4d99-70c9a041c952@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <3297ef21-a1d6-51b0-4d99-70c9a041c952@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The audio DAI needs to set the clock rates of the ac-dig clock.
-To make it possible, the parent PLL audio clock rates should
-also be changed. This is possible via "CLK_SET_RATE_PARENT" flag.
+On 01/27, Sylwester Nawrocki wrote:
+> Hi Stephen, Mike,
+> 
+> The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
+> 
+>   Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-samsung-2
+> 
+> for you to fetch changes up to 02c952c8f95fd0adf1835704db95215f57cfc8e6:
+> 
+>   clk: samsung: mark s3c...._clk_sleep_init() as __init (2017-01-27 13:30:00 +0100)
+> 
+> ----------------------------------------------------------------
+> Exporting clock IDs for Exynos5433 SoC MIPI DSI DPHY,
+> Exynos PLL code updates and overall minor clean-ups.
+> 
 
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks. Pulled into clk-next.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 9bd1f78a0547..3cd4190ccd59 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -440,7 +440,7 @@ static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
- 			     0x13c, 16, 3, BIT(31), CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_GATE(ac_dig_clk,	"ac-dig",	"pll-audio",
--		      0x140, BIT(31), 0);
-+		      0x140, BIT(31), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_GATE(ac_dig_4x_clk,	"ac-dig-4x",	"pll-audio-4x",
- 		      0x140, BIT(30), 0);
- static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
+Can you get your key signed by more people? Maybe others at
+Samsung?
+
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
