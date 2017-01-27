@@ -1,92 +1,46 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Mon, 30 Jan 2017 10:06:59 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: Re: [PATCH v3 05/10] arm: dts: sun8i: split Allwinner H3 .dtsi
-Message-ID: <20170130090659.m7nv3z7mji2dhcsc@lukather>
-References: <20170129023331.62106-1-icenowy@aosc.xyz>
- <20170129023331.62106-6-icenowy@aosc.xyz>
-MIME-Version: 1.0
-In-Reply-To: <20170129023331.62106-6-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
- Vinod Koul <vinod.koul@intel.com>, Andre Przywara <andre.przywara@arm.com>,
- Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com,
- linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
- linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
- Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============8661643379529873572=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <chris.brandt@renesas.com>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH] clk: renesas: mstp: ensure register writes complete before returning
+Date: Fri, 27 Jan 2017 13:19:50 -0500
+Message-Id: <20170127181950.22165-1-chris.brandt@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+When there is no status bit, it is possible for the clock enable/disable
+operation to have not completed by the time the driver code resumes
+execution. This is due to the fact that write operations are sometimes
+queued and delayed internally. Doing a read ensures the write operations
+has completed.
 
---===============8661643379529873572==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="exyk2xw4ewndemgf"
-Content-Disposition: inline
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ drivers/clk/renesas/clk-mstp.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-
---exyk2xw4ewndemgf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Jan 29, 2017 at 10:33:26AM +0800, Icenowy Zheng wrote:
-> +#include <dt-bindings/clock/sunxi-h3-h5-ccu.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/pinctrl/sun4i-a10.h>
-> +#include <dt-bindings/reset/sunxi-h3-h5-ccu.h>
-
-You're also converting to the new headers you created. This should be
-part of a separate patch, or merged with your next one.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---exyk2xw4ewndemgf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYjwIzAAoJEBx+YmzsjxAgOvEP/0oAIdeRrVp9T2PoSZlBdB0D
-uoxXvSe2g9irdHPnALjypcMWEb0vST//ZeFhEMy7PYNvZ/E1zkxuaZon1vvhdnD4
-G0yjiAoOq0sEqRzJsId06t5KX9g4qsBBi4eOluOi3qgNW9zJ9zAiCNNltPWSqdfX
-3amBHhv2kRsATnrzdn90lxOcmEFihyiR4dnD4vwbfvK40AVRTPvcjlM3Sq2N3PTC
-wsfnd+NiNDIrLpMAD9x8WzaysI7g55H3rSwl0LnKInJ3MU55545IxX9QGRY8PZPw
-EX12np07r2kR1T3VgoWdWqdzJmfJ7w+Q8RXkT+vf4iCIYB+Sj52m0tGbdJjpLrQU
-0bnP7G2qdKYojEKLeRFBpWJFcWXNS3/5OhYLjq1NhAkF9TDvBGsuvM0T/oTT49pJ
-agYVBMKbThkm76HGxwHoD5KEcb2cZC793tUvQx+X+HmjqaJY15VHGHTQtzBToA3m
-eH6vN3IfRz59U3rvHPlYpHqZq5DPP+eFzO9hCLl6G9ZCC+0Nj2bBb9A3/PfU4I6d
-IxW7Vwt9MA4ijXvt24mUTfiLtHduVlaLWHSjAh+qktllrkEcVHcWePfAQcX+lGjI
-ppxLpFwztiEBikjmikseDGZs23SlFPiGRX/3N8Qul9mOs80ey4aJdhvUoOjARBn+
-5O30EaX4apnwxONI5fgj
-=Ik4j
------END PGP SIGNATURE-----
-
---exyk2xw4ewndemgf--
-
-
---===============8661643379529873572==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============8661643379529873572==--
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 3ce819c..69cfdb9 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -91,6 +91,12 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ 		value |= bitmask;
+ 	cpg_mstp_write(group, value, group->smstpcr);
+ 
++	if (!group->mstpsr) {
++		/* dummy read to ensure write has completed */
++		clk_readl(group->smstpcr);
++		barrier_data(group->smstpcr);
++	}
++
+ 	spin_unlock_irqrestore(&group->lock, flags);
+ 
+ 	if (!enable || !group->mstpsr)
+-- 
+2.10.1
