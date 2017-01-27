@@ -1,47 +1,99 @@
-Return-Path: <Chris.Packham@alliedtelesis.co.nz>
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Florian Fainelli <f.fainelli@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij
-	<linus.walleij@linaro.org>, Jason Cooper <jason@lakedaemon.net>, "Gregory
- Clement" <gregory.clement@free-electrons.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Arnd Bergmann <arnd@arndb.de>,
-	Thierry Reding <treding@nvidia.com>, Sudeep Holla <sudeep.holla@arm.com>,
-	Juri Lelli <juri.lelli@arm.com>, Thomas Petazzoni
-	<thomas.petazzoni@free-electrons.com>, Laxman Dewangan
-	<ldewangan@nvidia.com>, Kalyan Kinthada
-	<Kalyan.Kinthada@alliedtelesis.co.nz>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>
-Subject: Re: [PATCHv2 0/5] Support for Marvell switches with integrated CPUs
-Date: Thu, 5 Jan 2017 19:46:43 +0000
-Message-ID: <059c78eaa7dd40c9a46cb08616bae2eb@svr-chch-ex1.atlnz.lc>
-References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
- <6c6795d3-06ab-a4f0-78ad-5ecc78c1aa2f@gmail.com>
- <185147a37cab4d7eaea5f79d86cc9451@svr-chch-ex1.atlnz.lc>
- <20170105130945.GA18033@lunn.ch>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 27 Jan 2017 12:04:36 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/vc4: Add DSI driver
+Message-ID: <20170127200436.GI8801@codeaurora.org>
+References: <20170124003853.16418-1-eric@anholt.net>
+ <20170124003853.16418-3-eric@anholt.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170124003853.16418-3-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01/17 02:10, Andrew Lunn wrote:=0A=
->> I'd love to see a switchdev driver but it's a huge task (and no I'm not=
-=0A=
->> committing to writing it). As it stands Marvell ship a switch SDK=0A=
->> largely executes in userspace with a small kernel module providing some=
-=0A=
->> linkage to the underlying hardware.=0A=
->=0A=
-> Is there any similarity to the mv88e6xxx family?=0A=
->=0A=
-> If it was similar registers, just a different access mechanising, we=0A=
-> could probably extend the mv88e6xxx to support MMIO as well as MDIO.=0A=
-=0A=
-No the prestera family of devices are considerably more powerful (and =0A=
-complex) than the linkstreet devices.=0A=
+On 01/23, Eric Anholt wrote:
+> +static int
+> +vc4_dsi_init_phy_clocks(struct vc4_dsi *dsi)
+> +{
+> +	struct device *dev = &dsi->pdev->dev;
+> +	const char *parent_name = __clk_get_name(dsi->pll_phy_clock);
+> +	static const struct {
+> +		const char *dsi0_name, *dsi1_name;
+> +		int div;
+> +	} phy_clocks[] = {
+> +		{ "dsi0_byte", "dsi1_byte", 8 },
+> +		{ "dsi0_ddr2", "dsi1_ddr2", 4 },
+> +		{ "dsi0_ddr", "dsi1_ddr", 2 },
+> +	};
+> +	int i;
+> +
+> +	dsi->clk_onecell.clk_num = ARRAY_SIZE(phy_clocks);
+> +	dsi->clk_onecell.clks = devm_kcalloc(dev,
+> +					     dsi->clk_onecell.clk_num,
+> +					     sizeof(*dsi->clk_onecell.clks),
+> +					     GFP_KERNEL);
+> +	if (!dsi->clk_onecell.clks)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(phy_clocks); i++) {
+> +		struct clk_fixed_factor *fix = &dsi->phy_clocks[i];
+> +		struct clk_init_data init;
+> +		struct clk *clk;
+> +
+> +		/* We just use core fixed factor clock ops for the PHY
+> +		 * clocks.  The clocks are actually gated by the
+> +		 * PHY_AFEC0_DDRCLK_EN bits, which we should be
+> +		 * setting if we use the DDR/DDR2 clocks.  However,
+> +		 * vc4_dsi_encoder_enable() is setting up both AFEC0,
+> +		 * setting both our parent DSI PLL's rate and this
+> +		 * clock's rate, so it knows if DDR/DDR2 are going to
+> +		 * be used and could enable the gates itself.
+> +		 */
+> +		fix->mult = 1;
+> +		fix->div = phy_clocks[i].div;
+> +		fix->hw.init = &init;
+> +
+> +		memset(&init, 0, sizeof(init));
+> +		init.parent_names = &parent_name;
+> +		init.num_parents = 1;
+> +		if (dsi->port == 1)
+> +			init.name = phy_clocks[i].dsi1_name;
+> +		else
+> +			init.name = phy_clocks[i].dsi0_name;
+> +		init.ops = &clk_fixed_factor_ops;
+> +		init.flags = CLK_IS_BASIC;
+
+Please don't use this flag unless you need it for something.
+
+> +
+> +		clk = devm_clk_register(dev, &fix->hw);
+
+Can you use devm_clk_hw_register() instead please?
+
+> +		if (IS_ERR(clk))
+> +			return PTR_ERR(clk);
+> +
+> +		dsi->clk_onecell.clks[i] = clk;
+> +	}
+> +
+> +	return of_clk_add_provider(dev->of_node,
+
+And the of_clk_add_hw_provider() API too.
+
+> +				   of_clk_src_onecell_get,
+> +				   &dsi->clk_onecell);
+> +}
+> +
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
