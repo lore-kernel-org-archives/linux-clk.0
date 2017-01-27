@@ -1,47 +1,53 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-Subject: Re: [PATCH v2 02/10] clk: ccu-sun8i-a33: Add CLK_SET_RATE_PARENT to
- ac-dig
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
- <20170117140230.23142-3-mylene.josserand@free-electrons.com>
- <20170117164415.4qseqbqkdx3e6bvt@lukather>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
- wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org,
- mark.rutland@arm.com, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
- linux-sunxi@googlegroups.com, thomas.petazzoni@free-electrons.com,
- alexandre.belloni@free-electrons.com
-From: Mylene Josserand <mylene.josserand@free-electrons.com>
-Message-ID: <7a631ab7-8152-25e0-ba3b-845f207388f5@free-electrons.com>
-Date: Wed, 18 Jan 2017 08:58:29 +0100
-MIME-Version: 1.0
-In-Reply-To: <20170117164415.4qseqbqkdx3e6bvt@lukather>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:54846 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933616AbdA0LF6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Jan 2017 06:05:58 -0500
+Subject: Re: [PATCH 1/2] clk: samsung: exynos5433: Add IDs for
+ PHYCLK_MIPIDPHY0_* clocks
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <45f50263-6c5f-bbc6-1e24-a386dbabb496@samsung.com>
+Date: Fri, 27 Jan 2017 12:05:39 +0100
+MIME-version: 1.0
+In-reply-to: <20170125200631.ubt3x6jhoi367ex6@kozik-lap>
+Content-type: text/plain; charset=utf-8
+References: <1485345118-3082-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125115214eucas1p1517ce7ca8fe88e4742a1306630b91d09@eucas1p1.samsung.com>
+ <1485345118-3082-2-git-send-email-m.szyprowski@samsung.com>
+ <20170125200631.ubt3x6jhoi367ex6@kozik-lap>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Cc: linux-clk@vger.kernel.org
 
-On 17/01/2017 17:44, Maxime Ripard wrote:
-> Hi,
->
-> On Tue, Jan 17, 2017 at 03:02:22PM +0100, Mylène Josserand wrote:
->> The audio DAI needs to set the clock rates of the ac-dig clock.
->> To make it possible, the parent PLL audio clock rates should
->> also be changed. This is possible via "CLK_SET_RATE_PARENT" flag.
+On 01/25/2017 09:06 PM, Krzysztof Kozlowski wrote:
+> On Wed, Jan 25, 2017 at 12:51:57PM +0100, Marek Szyprowski wrote:
+>> Add missing identifiers for phyclk_mipidphy0_bitclkdiv8_phy and
+>> phyclk_mipidphy0_rxclkesc0_phy clocks. Access to those clocks is needed
+>> to setup initial clock configuration for display subsystem in device tree
+>> in order to avoid dependency on the configuration left by the bootloader.
 >>
->> Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
->
-> Please make sure to look at the prefixes usually used in the commit
-> titles of the area you're working on. In this case that would have
-> been "clk: sunxi-ng:". I fixed it, and applied.
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos5433.c   | 6 ++++--
+>>  include/dt-bindings/clock/exynos5433.h | 5 ++++-
+>>  2 files changed, 8 insertions(+), 3 deletions(-)
+>>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> Sylwester,
+> Could you provide a tag with this?
 
-Okay, I will pay more attention to prefixes for commit titles for next 
-times.
-
-Thank you !
+I have the tag prepared already, but please resend the patch to
+linux-clk@vger.kernel.org and I will reply there.
+The patches were sent only to the linux-samsung-soc mailing list.
 
 -- 
-Mylène Josserand, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Thanks,
+Sylwester
