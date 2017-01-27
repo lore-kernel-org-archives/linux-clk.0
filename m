@@ -1,62 +1,37 @@
-Return-Path: <jdelvare@suse.de>
-Date: Wed, 11 Jan 2017 13:41:46 +0100
-From: Jean Delvare <jdelvare@suse.de>
-To: James Liao <jamesjj.liao@mediatek.com>
-Cc: Andreas =?UTF-8?B?RsOkcmJlcg==?= <afaerber@suse.de>,
- <linux-clk@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
- "Matthias Brugger" <matthias.bgg@gmail.com>, Erin Lo
- <erin.lo@mediatek.com>, "Stephen Boyd" <sboyd@codeaurora.org>, Shunli Wang
- <shunli.wang@mediatek.com>, Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH] clk: mediatek: Fix MT2701 dependencies
-Message-ID: <20170111134146.36878e01@endymion>
-In-Reply-To: <1484099788.26901.8.camel@mtksdaap41>
-References: <20170109113621.31d384c9@endymion>
-	<c3da261a-eb85-9b30-d5e2-05863d2efad2@suse.de>
-	<20170110130300.167d215b@endymion>
-	<1484099788.26901.8.camel@mtksdaap41>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 26 Jan 2017 16:23:48 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: linux-clk@vger.kernel.org, x86@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Darren Hart <dvhart@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, alsa-devel@alsa-project.org,
+	Irina Tirdea <irina.tirdea@intel.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Mark Brown <broonie@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+	Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH v8 5/5] platform/x86: fix typo in comment
+Message-ID: <20170127002348.GA8801@codeaurora.org>
+References: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+ <1485194865-10400-6-git-send-email-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1485194865-10400-6-git-send-email-pierre-louis.bossart@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi James,
-
-On Wed, 11 Jan 2017 09:56:28 +0800, James Liao wrote:
-> On Tue, 2017-01-10 at 13:03 +0100, Jean Delvare wrote:
-> > What about MT8135 and MT8173, are they 32-bit SoCs as well?
+On 01/23, Pierre-Louis Bossart wrote:
+> s/Acumulate/Accumulate/
 > 
-> MT8135 is a 32-bit SoC and MT8173 is a 64-bit SoC.
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> ---
 
-OK, so would the following change make sense?
+Applied to clk-next
 
----
- drivers/clk/mediatek/Kconfig |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
---- linux-4.10-rc2.orig/drivers/clk/mediatek/Kconfig	2017-01-09 11:17:37.542344083 +0100
-+++ linux-4.10-rc2/drivers/clk/mediatek/Kconfig	2017-01-11 13:40:21.965890913 +0100
-@@ -52,16 +52,16 @@ config COMMON_CLK_MT2701_BDPSYS
- 
- config COMMON_CLK_MT8135
- 	bool "Clock driver for Mediatek MT8135"
--	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	depends on (ARCH_MEDIATEK && !ARM64) || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
--	default ARCH_MEDIATEK
-+	default y
- 	---help---
- 	  This driver supports Mediatek MT8135 clocks.
- 
- config COMMON_CLK_MT8173
- 	bool "Clock driver for Mediatek MT8173"
--	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
--	default ARCH_MEDIATEK
-+	default y
- 	---help---
- 	  This driver supports Mediatek MT8173 clocks.
-
-Thanks,
 -- 
-Jean Delvare
-SUSE L3 Support
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
