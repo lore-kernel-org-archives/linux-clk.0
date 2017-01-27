@@ -1,68 +1,54 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sat, 21 Jan 2017 18:34:47 +0100
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Fri, 27 Jan 2017 16:59:14 +0100
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 5/7] clk: sunxi-ng: Add sun5i CCU driver
-Message-ID: <20170121173447.hjtddypjxr6achyt@lukather>
-References: <cover.5df5469d9c7a6233e225a875dca513a03b05e871.1484897383.git-series.maxime.ripard@free-electrons.com>
- <a51d856e896b7fe59a1a544a7de3081688e377ff.1484897383.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v65uzxu7P3AcnhJJ_rEvT5OL8=d9-jVjU5sWNNqJpkpSRw@mail.gmail.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH v2 7/9] dmaengine: sun6i: allow build on ARM64 platforms
+ (sun50i)
+Message-ID: <20170127155914.fwbssmehlgwf5q7j@lukather>
+References: <20170126154859.55855-1-icenowy@aosc.xyz>
+ <20170126154859.55855-8-icenowy@aosc.xyz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hzeknru6p7sy5pdl"
-In-Reply-To: <CAGb2v65uzxu7P3AcnhJJ_rEvT5OL8=d9-jVjU5sWNNqJpkpSRw@mail.gmail.com>
+In-Reply-To: <20170126154859.55855-8-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+ Vinod Koul <vinod.koul@intel.com>, Andre Przywara <andre.przywara@arm.com>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com,
+ linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+ linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+ Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============1169428816459833012=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---hzeknru6p7sy5pdl
+--===============1169428816459833012==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ogvszedoamq4z6gj"
+Content-Disposition: inline
+
+
+--ogvszedoamq4z6gj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Sat, Jan 21, 2017 at 09:34:15AM +0800, Chen-Yu Tsai wrote:
-> On Fri, Jan 20, 2017 at 3:29 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > The Allwinner A10s, A13, R8 and NextThing GR8 are all based on the same
-> > silicon, and all share the same clocks.
-> >
-> > However, they're not packaged in the same way, and therefore not all the
-> > controllers are actually available on all these SoCs.
-> >
-> > Introduce a clock controller driver for all these SoCs with different
-> > compatibles to take that into account.
-> >
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On Thu, Jan 26, 2017 at 11:48:57PM +0800, Icenowy Zheng wrote:
+> As 64-bot Allwinner H5 SoC has the same DMA engine with H3, the DMA
+> driver should be allowed to be built for ARM64, in order to make it work =
+on H5.
 >=20
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 
-Thanks!
-
-> > ---
-> >  drivers/clk/sunxi-ng/Kconfig          |   10 +-
-> >  drivers/clk/sunxi-ng/Makefile         |    1 +-
-> >  drivers/clk/sunxi-ng/ccu-sun5i.c      | 1008 +++++++++++++++++++++++++=
-+-
-> >  drivers/clk/sunxi-ng/ccu-sun5i.h      |   67 ++-
-> >  include/dt-bindings/clock/sun5i-ccu.h |  103 +++-
-> >  include/dt-bindings/reset/sun5i-ccu.h |   32 +-
->=20
-> I thought having these 2 in a separate patch would be better for
-> cross tree merges?
-
-Not really. This was needed when we had several drivers using it, but
-since we merged all of them, it's not really needed anymore. Having it
-split wouldn't make it easier, because both the DT bits and the
-drivers bits would depend on it.
-
-We don't have much for the sun5i stuff queued for 4.11, so we can just
-have the DT bits merged through the clk tree.
-
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Thanks,
 Maxime
 
 --=20
@@ -70,24 +56,38 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---hzeknru6p7sy5pdl
+--ogvszedoamq4z6gj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBCAAGBQJYg5uzAAoJEBx+YmzsjxAgZ7QP/0ZuADe9kzSejUmU2tESlyAP
-ayNN9e3c3YrDfZNRhQCMw//BkbN6a7gxd6vQcfI6H+r3BoNsngJQN5EFzIfflCZv
-qp5WX3Oq2tz5TwWl6wEEeooiDLx22hz8EPHto+KcELzwS0N6qQ4O9MJtRuOWfw3K
-WuDZgoDgBEh6/KNoqjPW8dZ6ytfK/wnpXjVnD000q/75x/fDGq8gG4ujUJWtDT4W
-xd6PBxRTzX+t6D3ueZEzybBRUTHxcIyVjYTohbqCf2cRE7p62yH2UrmjnOzocEg+
-dPHJVQ8KB19oKc4zB4/hzaM4QUs+VkIRHpt64Jiuao53rBLFD78P4xZ8SqxM4nN1
-eAsUwcn1H11BBipxlbgYU0UxRrpyqybzKjblWNFQagn7IkJ8Y18pf7PASk2IyDcm
-mkPKYlbTTHntiWBkHwJT94yobdG10+YOSZ+k88FgwZF9+oIssEE6m+8sTjRofU3T
-sTN4sVcEcTxcrZUnSa+lTgxyIXUsbtIpPKHFMypr+A9R3GChZ620ol+PVyZ+ODid
-ZYyX6hxzJwROVf+GqLbXP4CDZeGmUeumRfnjonql2VkHpX7mJWLBaw+Id+MEl/XC
-gG7hvU4sQYBboOrvjVjyB9dvvWcrz9ZVvY3kqnLT259PMbN+/nsChZjIefFoLDTz
-caj0m7jHhkdENyfUu9BW
-=P50t
+iQIcBAEBCAAGBQJYi25SAAoJEBx+YmzsjxAgcLIQAIK9OBWPs/lZ+XHaJA9Rg0eM
+drnCp6rcGkrAiMbhz3qNLLyZgBJY5DqHwe6HGt5EF/mukAHFv3VgnsckgFGvw8wa
+TOd0dmka7lDkNMZboID0W/QVZwSgyso6X88hFhPAjoZP7zTHi/KSu6ylAb7/0iiW
+MJh1u890NhSDMm4k5fUArdsNBstrTF+bfOeEQNqucTqUva42j19JRO03dRMfXXRH
+/bQGgwjGHgRRyTyaWSiL/l8JPyT/TB8BeAaNmELjeIcbxjlA1IJbfJnqdJDq0uI4
+iIpMdeuM+2ToUZGu+4ftq4jxqVvpSnVUlLUr2HXIFQ43DptLgSGVtQwZ3IiWxHOa
+6Qu/h4gnhbBKdrrjFZxLlKCoPAeK0pQ+F2lgVTpW2Bbgq1gqRp9kQvTmuYiL1rzl
+EYpsKtzZjyNMjK87TLmwb6ST6QT+Spfph2KcQPeYRqu5E+5r0orWrOWCLD5/UDNK
+6tbh5lhICzTv+MOIUfnXT2FCqxob9sq36kyqBNqVXVZzvcf5Gy32kKK56ZSl0LQ1
+PFGLct0Dsjo7C6lpc2Ii/gmDKuNbKbSq5rO8o5Xjy0NsnFyHTtYeT0ZMD5tRep1H
+XAm04muuJCFu/y5+m3/8cmgvA1p3Y0rC4xHViX3Lnf5CxFtIrKwCb2vJJWb6OMZk
+BHIC7LufIPpe0ByFpQOi
+=qCeg
 -----END PGP SIGNATURE-----
 
---hzeknru6p7sy5pdl--
+--ogvszedoamq4z6gj--
+
+
+--===============1169428816459833012==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============1169428816459833012==--
