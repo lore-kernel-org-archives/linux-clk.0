@@ -1,174 +1,68 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 17 Jan 2017 17:51:24 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@free-electrons.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org,
-	mark.rutland@arm.com, robh+dt@kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: Re: [PATCH v2 07/10] dt-bindings: sound: Add sun8i audio
- documentation
-Message-ID: <20170117165124.h5rbx3qhvdzwbqup@lukather>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
- <20170117140230.23142-8-mylene.josserand@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3xbl5lavzcfdzlle"
-In-Reply-To: <20170117140230.23142-8-mylene.josserand@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:60216 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754766AbdA0JKT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Jan 2017 04:10:19 -0500
+From: Jeremy McNicoll <jeremymc@redhat.com>
+To: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc: andy.gross@linaro.org, sboyd@codeaurora.org, robh@kernel.org,
+        arnd@arndb.de, bjorn.andersson@linaro.org, riteshh@codeaurora.org,
+        git@kchr.de, ulf.hansson@linaro.org, jszhang@marvell.com,
+        jeremymc@redhat.com
+Subject: [PATCH V4 1/6] clk: qcom: SDHCI enablement on Nexus 5X / 6P
+Date: Fri, 27 Jan 2017 01:10:00 -0800
+Message-Id: <1485508205-1904-2-git-send-email-jeremymc@redhat.com>
+In-Reply-To: <1485508205-1904-1-git-send-email-jeremymc@redhat.com>
+References: <1485508205-1904-1-git-send-email-jeremymc@redhat.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Add missing clock branch to enable onboard storage
+for msm899(2/4).
 
---3xbl5lavzcfdzlle
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
+---
+ drivers/clk/qcom/gcc-msm8994.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Hi,
+diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm8994.c
+index 8afd830..7983288 100644
+--- a/drivers/clk/qcom/gcc-msm8994.c
++++ b/drivers/clk/qcom/gcc-msm8994.c
+@@ -1888,6 +1888,23 @@ static struct clk_branch gcc_sdcc1_apps_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_sdcc1_ahb_clk = {
++	.halt_reg = 0x04c8,
++	.clkr = {
++		.enable_reg = 0x04c8,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data)
++		{
++			.name = "gcc_sdcc1_ahb_clk",
++			.parent_names = (const char *[]){
++				"periph_noc_clk_src",
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_sdcc2_apps_clk = {
+ 	.halt_reg = 0x0504,
+ 	.clkr = {
+@@ -2231,6 +2248,7 @@ static struct clk_regmap *gcc_msm8994_clocks[] = {
+ 	[GCC_SDCC2_APPS_CLK] = &gcc_sdcc2_apps_clk.clkr,
+ 	[GCC_SDCC3_APPS_CLK] = &gcc_sdcc3_apps_clk.clkr,
+ 	[GCC_SDCC4_APPS_CLK] = &gcc_sdcc4_apps_clk.clkr,
++	[GCC_SDCC1_AHB_CLK] = &gcc_sdcc1_ahb_clk.clkr,
+ 	[GCC_SYS_NOC_UFS_AXI_CLK] = &gcc_sys_noc_ufs_axi_clk.clkr,
+ 	[GCC_SYS_NOC_USB3_AXI_CLK] = &gcc_sys_noc_usb3_axi_clk.clkr,
+ 	[GCC_TSIF_REF_CLK] = &gcc_tsif_ref_clk.clkr,
+-- 
+2.6.1
 
-On Tue, Jan 17, 2017 at 03:02:27PM +0100, Myl=E8ne Josserand wrote:
-> Add the documentation for dt-binding of the digital audio codec driver
-> and the audio card driver for Sun8i SoCs.
->=20
-> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
-
-One small comment below,
-
-> ---
->  .../devicetree/bindings/sound/sun8i-codec.txt      | 76 ++++++++++++++++=
-++++++
->  1 file changed, 76 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/sun8i-codec.t=
-xt
->=20
-> diff --git a/Documentation/devicetree/bindings/sound/sun8i-codec.txt b/Do=
-cumentation/devicetree/bindings/sound/sun8i-codec.txt
-> new file mode 100644
-> index 000000000000..ce3c05219e33
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/sun8i-codec.txt
-> @@ -0,0 +1,76 @@
-> +Allwinner SUN8I audio codec
-> +------------------------------------
-> +
-> +On Sun8i SoCs, and particularly on A33, the audio is separated in
-
-Technically that's not true on all the SoCs of the sun8i family, but
-only a few of them (A33 and H3 iirc).
-
-This driver is only made for the A33 at the moment, so you should only
-mention it (and you should rename that file as well).
-
-Once done,
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-Thanks,
-Maxime
-
-
-> +different parts:
-> +	  - A DAI driver. It uses the "sun4i-i2s" driver which is
-> +	  documented here:
-> +	  Documentation/devicetree/bindings/sound/sun4i-i2s.txt
-> +	  - An analog part of the codec which is handled as PRCM registers.
-> +	  See Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
-> +	  - An digital part of the codec which is documented in this current
-> +	  binding documentation.
-> +	  - And finally, an audio card which links all the above components.
-> +	  The simple-audio card will be used.
-> +	  See Documentation/devicetree/bindings/sound/simple-card.txt
-> +
-> +This bindings documentation exposes Sun8i codec (digital part).
-> +
-> +Required properties:
-> +- compatible: must be "allwinner,sun8i-a33-codec"
-> +- reg: must contain the registers location and length
-> +- interrupts: must contain the codec interrupt
-> +- clocks: a list of phandle + clock-specifer pairs, one for each entry
-> +  in clock-names.
-> +- clock-names: should contain followings:
-> +   - "bus": the parent APB clock for this controller
-> +   - "mod": the parent module clock
-> +
-> +Example:
-> +codec: codec@01c22e00 {
-> +	#sound-dai-cells =3D <0>;
-> +	compatible =3D "allwinner,sun8i-a33-codec";
-> +	reg =3D <0x01c22e00 0x400>;
-> +	interrupts =3D <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-> +	clocks =3D <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
-> +	clock-names =3D "bus", "mod";
-> +	status =3D "disabled";
-> +};
-> +
-> +Here is an example to add a sound card and the codec binding on sun8i So=
-Cs that
-> +are similar to A33 using simple-card:
-> +
-> +	sound {
-> +		compatible =3D "simple-audio-card";
-> +		simple-audio-card,name =3D "Sun8i Audio Card";
-> +		simple-audio-card,format =3D "i2s";
-> +		simple-audio-card,frame-master =3D <&link_codec>;
-> +		simple-audio-card,bitclock-master =3D <&link_codec>;
-> +		simple-audio-card,mclk-fs =3D <512>;
-> +		simple-audio-card,aux-devs =3D <&codec_analog>;
-> +		simple-audio-card,routing =3D
-> +				"Left DAC", "Digital Left DAC",
-> +				"Right DAC", "Digital Right DAC";
-> +
-> +		simple-audio-card,cpu {
-> +			sound-dai =3D <&dai>;
-> +		};
-> +
-> +		link_codec: simple-audio-card,codec {
-> +			sound-dai =3D <&codec>;
-> +		};
-> +
-> +	soc@01c00000 {
-> +		[...]
-> +
-> +		codec: codec@01c22e00 {
-> +			#sound-dai-cells =3D <0>;
-> +			compatible =3D "allwinner,sun8i-a33-codec";
-> +			reg =3D <0x01c22e00 0x400>;
-> +			interrupts =3D <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks =3D <&ccu CLK_BUS_CODEC>, <&ccu CLK_AC_DIG>;
-> +			clock-names =3D "bus", "mod";
-> +			status =3D "disabled";
-> +		};
-> +	};
-> +
-> --=20
-> 2.11.0
->=20
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---3xbl5lavzcfdzlle
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYfkuLAAoJEBx+YmzsjxAguJcQAJmodPGhZfbeLb4IaSjSMByU
-nscg5v6R7XNCebSxhcJcQEquyhKnj0gCIxvwGWwe7ZOXKRjo4R3pbChCdfCZ0reB
-y1099d6KjXgz4MG+YZ8k0xFa+tVh5cOnai7SCLe1R7zTFqJ3WvEnS2LbhygN+7vD
-Cy52d2dVDYNsFgGeK4OoE0ljV7VjACnYGovzeRf7j32cElXZNhrbXXYjX/qGOheG
-WrbRXhDfGOWG4bOxBKctoIj1WWsGE0/NqPObbTKbykWecbl9MX1N1/lQ9nTtgR4j
-gcOaAwcG4hU3hTqPJ/bDuLydI/lkvBaXDqPbaqNolAPKx4LIAWqd/za9ahO3R4rA
-fLB4XFAWBUnPeA4GrT2laiN/4fpnAfQ8awpyg60eCt3uYCgJsk20MlRAlW1JCR5p
-NpBvxy2/3SOlkkWvGDWKzHk3gbYlFHdhuzU3ZAzdj7V4brqlpe5M+4WpME13SHaU
-kBAUKwC6Ir7Yo3LI7srvMb9sc96tT6uTunwujzsftxJaNYgHTvWttXqtzEQDfk46
-UBgksgJXYl2zNGY2JUg1h6UuEkJjp7ucoyy4sAylxM7IA4hHKsgynYsx1FM45hEI
-dBK7d2ylqNmtYCyzSM8flVtS7gyQ3ZCAeU2IcJanpC3A03oM6cHz1CdYGuHqSdtU
-iwB9dl75wn/IGTQp8guF
-=0eLG
------END PGP SIGNATURE-----
-
---3xbl5lavzcfdzlle--
