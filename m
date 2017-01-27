@@ -1,85 +1,83 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 27 Jan 2017 09:46:29 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/4] clk: renesas: cpg-mssr: Rename cpg_mssr_priv.mstp_lock
-Date: Wed, 25 Jan 2017 10:15:02 +0100
-Message-Id: <1485335703-27184-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
-References: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 10/11] arm64: dts: allwinner: Remove no longer used
+ pinctrl/sun4i-a10.h header
+Message-ID: <20170127084629.hborqgkmm4exo7z7@lukather>
+References: <20170124023230.3990-1-wens@csie.org>
+ <20170124023230.3990-11-wens@csie.org>
+ <20170126101529.j3fuku4hyy3pbge3@lukather>
+ <CAGb2v66cQoPQzd6W1D8bZ5hSURfGP3icJjeoo1mNk2ccG9B2vw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ciukemjlu7lplsqt"
+In-Reply-To: <CAGb2v66cQoPQzd6W1D8bZ5hSURfGP3icJjeoo1mNk2ccG9B2vw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The spinlock is used to protect Read-Modify-Write register accesses,
-which won't be limited to SMSTPCR register accesses.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
-v2:
-  - Add Acked-by.
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+--ciukemjlu7lplsqt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index eb8534e5ebf3007d..f1161a585c57e433 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -98,7 +98,7 @@
-  *
-  * @dev: CPG/MSSR device
-  * @base: CPG/MSSR register block base address
-- * @mstp_lock: protects writes to SMSTPCR
-+ * @rmw_lock: protects RMW register accesses
-  * @clks: Array containing all Core and Module Clocks
-  * @num_core_clks: Number of Core Clocks in clks[]
-  * @num_mod_clks: Number of Module Clocks in clks[]
-@@ -107,7 +107,7 @@
- struct cpg_mssr_priv {
- 	struct device *dev;
- 	void __iomem *base;
--	spinlock_t mstp_lock;
-+	spinlock_t rmw_lock;
- 
- 	struct clk **clks;
- 	unsigned int num_core_clks;
-@@ -144,7 +144,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 
- 	dev_dbg(dev, "MSTP %u%02u/%pC %s\n", reg, bit, hw->clk,
- 		enable ? "ON" : "OFF");
--	spin_lock_irqsave(&priv->mstp_lock, flags);
-+	spin_lock_irqsave(&priv->rmw_lock, flags);
- 
- 	value = readl(priv->base + SMSTPCR(reg));
- 	if (enable)
-@@ -153,7 +153,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 		value |= bitmask;
- 	writel(value, priv->base + SMSTPCR(reg));
- 
--	spin_unlock_irqrestore(&priv->mstp_lock, flags);
-+	spin_unlock_irqrestore(&priv->rmw_lock, flags);
- 
- 	if (!enable)
- 		return 0;
-@@ -550,7 +550,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	priv->dev = dev;
--	spin_lock_init(&priv->mstp_lock);
-+	spin_lock_init(&priv->rmw_lock);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	priv->base = devm_ioremap_resource(dev, res);
--- 
-1.9.1
+On Thu, Jan 26, 2017 at 07:23:25PM +0800, Chen-Yu Tsai wrote:
+> On Thu, Jan 26, 2017 at 6:15 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > On Tue, Jan 24, 2017 at 10:32:29AM +0800, Chen-Yu Tsai wrote:
+> >> All dts files for the sunxi platform have been switched to the generic
+> >> pinconf bindings. As a result, the sunxi specific pinctrl macros are
+> >> no longer used.
+> >>
+> >> Remove the #include entry with the following command:
+> >>
+> >>     sed -i -e '/pinctrl\/sun4i-a10.h/D' \
+> >>       arch/arm64/boot/dts/allwinner/*.dts?
+> >>
+> >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> >
+> > Applied, thanks!
+> >
+> > Maybe we should also remove the header entirely?
+>=20
+> I don't know. What do we do about deprecated bindings?
+
+Well, we have to support the old device trees, but I don't think to be
+expected to still compile them from the source
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--ciukemjlu7lplsqt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYiwjkAAoJEBx+YmzsjxAgdKQP/0q6a2JmnUseXwLxp//3Sl0v
+pwLZgIAdW4TEc2YRlt4CNdyF44eUv+R1DWLwnEuuY7EDw81ZjNZ+pV1r5aKOIpDj
+OQJkdoQf4OoQeTxFgh8SKE3W8kNbFd/Uvnqf2iCkMFdaBPzxU947hCTgvN1b7OtU
+BnNET25B7Bs7Ut9sHE+66gc5V1yoXLKZxDWEguwcU05/4D/G8//z/oLq3SXsF8BX
+6cMt2LmU12XlSg9nD4lSfRwCXwop2TnmMiH5j7XrQRxyw6+8fzBcTUI0J1V6L+aH
+z17jcNNGjEZWu+TkrXo9bk2SRG8CbfdN0hpgb6RpeuMCs8EgULYrzyqTB11RDXAK
+swDqNLV6v1wHqygeeLVbgUnI3bB173eijM8nHHMsPVPRc94KcNzrM3bMI7oCnMsG
+CVc8aPcbD8aAG7QdEuHG+Rbm2AeHpFCDiA3BD5FmKrdwNKp1oVQsiVTi3dMG460p
+DJ8YU5mzyoof6luk0sJCBz7hNNbgf9xAdcrrOv7bl0KzcbGzfQR827MoBS2ZRtxN
+17rh1QgVJgbUwcuiQOxDbrtlVr0YASbLJXCDrfz2y1Men7pJcK39nKUz2au9NLQr
+CJ5rlqQbPojpTGHfDAGODsdBs74q1ZSMQwPcTHFa+M9o+ZUecevyYFqVJCg9riYk
+phP+4Nk4opZ35BEMUmgV
+=zpnQ
+-----END PGP SIGNATURE-----
+
+--ciukemjlu7lplsqt--
