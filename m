@@ -1,217 +1,221 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 4/4] clk: renesas: cpg-mssr: Add support for reset control
-Date: Wed, 25 Jan 2017 10:15:03 +0100
-Message-Id: <1485335703-27184-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
-References: <1485335703-27184-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <huziji@marvell.com>
+Subject: Re: [PATCH v5 07/12] mmc: sdhci-xenon: Add support to PHYs of Marvell
+ Xenon SDHC.
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Gregory CLEMENT
+	<gregory.clement@free-electrons.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+ <130ccd5a0fe4f822b954e0256c9dccec0b6ca523.1484154449.git-series.gregory.clement@free-electrons.com>
+ <CAPDyKFpx23wio-QmDrx277+YO2Jt2S0ZrokZ2E4K+oVURSR1Hg@mail.gmail.com>
+CC: Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>, Andrew Lunn
+	<andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        Mike Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk
+	<linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Jimmy Xu
+	<zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+        Nadav Haklai
+	<nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
+        Doug Jones
+	<dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
+        "Wei(SOCP) Liu"
+	<liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
+        Yehuda Yitschak
+	<yehuday@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>, Hanna Hawa
+	<hannah@marvell.com>,
+        Kostya Porotchkin <kostap@marvell.com>
+From: Ziji Hu <huziji@marvell.com>
+Message-ID: <1f174462-7644-1d02-9216-01c1fa3b402b@marvell.com>
+Date: Sat, 28 Jan 2017 01:10:54 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAPDyKFpx23wio-QmDrx277+YO2Jt2S0ZrokZ2E4K+oVURSR1Hg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add optional support for the Reset Control feature of the Renesas Clock
-Pulse Generator / Module Standby and Software Reset module on R-Car
-Gen2, R-Car Gen3, and RZ/G1 SoCs.
+Hi Ulf,
 
-This allows to reset SoC devices using the Reset Controller API.
+On 2017/1/26 19:29, Ulf Hansson wrote:
+> [...]
+> 
+>> +
+>> +static inline bool temp_stage_hs200_to_hs400(struct sdhci_host *host,
+>> +                                            struct sdhci_xenon_priv *priv)
+>> +{
+>> +       /*
+>> +        * Tmep stages from HS200 to HS400
+>> +        * from HS200 to HS in 200MHz
+>> +        * from 200MHz to 52MHz
+>> +        */
+>> +       if (((priv->timing == MMC_TIMING_MMC_HS200) &&
+>> +            (host->timing == MMC_TIMING_MMC_HS)) ||
+>> +           ((host->timing == MMC_TIMING_MMC_HS) &&
+>> +            (priv->clock > host->clock)))
+>> +               return true;
+>> +
+>> +       return false;
+>> +}
+>> +
+>> +static inline bool temp_stage_hs400_to_h200(struct sdhci_host *host,
+>> +                                           struct sdhci_xenon_priv *priv)
+>> +{
+>> +       /*
+>> +        * Temp stages from HS400 t0 HS200:
+>> +        * from 200MHz to 52MHz in HS400
+>> +        * from HS400 to HS DDR in 52MHz
+>> +        * from HS DDR to HS in 52MHz
+>> +        * from HS to HS200 in 52MHz
+>> +        */
+>> +       if (((priv->timing == MMC_TIMING_MMC_HS400) &&
+>> +            ((host->clock == MMC_HIGH_52_MAX_DTR) ||
+>> +             (host->timing == MMC_TIMING_MMC_DDR52))) ||
+>> +           ((priv->timing == MMC_TIMING_MMC_DDR52) &&
+>> +            (host->timing == MMC_TIMING_MMC_HS)) ||
+>> +           ((host->timing == MMC_TIMING_MMC_HS200) &&
+>> +            (host->clock == MMC_HIGH_52_MAX_DTR)))
+>> +               return true;
+>> +
+>> +       return false;
+>> +}
+> 
+> Both the above functions seems to be really fragile to use. If
+> anything changes in the core layer related to these sequences, you may
+> end up getting a wrong validated expression.
+> 
+> Perhaps an option would be to add one or two new mmc host ops, which
+> could be called during the related hs200/400 sequences that could make
+> this less fragile for you? What do you think?
+> 
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-v2:
-  - Add Acked-by, Reviewed-by,
-  - Use variable bitmask in all reset operations, to make them more
-    similar.
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 126 +++++++++++++++++++++++++++++++++
- 1 file changed, 126 insertions(+)
+    Yes, they both look fragile to use.
+    In my own opinion, hs200->hs400 sequence might be safe since it has been
+    defined and fixed by eMMC spec. I personally think it is unlikely to be
+    adjusted again. Please correct me if I am wrong.
+    However, as you said, hs400->hs200 sequence will have issue if it is
+    changed in core layer, since such a sequence is not from eMMC spec.
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index f1161a585c57e433..eadcbd43ff88319b 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -16,6 +16,7 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/clk/renesas.h>
-+#include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/mod_devicetable.h>
-@@ -25,6 +26,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_clock.h>
- #include <linux/pm_domain.h>
-+#include <linux/reset-controller.h>
- #include <linux/slab.h>
- 
- #include <dt-bindings/clock/renesas-cpg-mssr.h>
-@@ -96,6 +98,7 @@
- /**
-  * Clock Pulse Generator / Module Standby and Software Reset Private Data
-  *
-+ * @rcdev: Optional reset controller entity
-  * @dev: CPG/MSSR device
-  * @base: CPG/MSSR register block base address
-  * @rmw_lock: protects RMW register accesses
-@@ -105,6 +108,9 @@
-  * @last_dt_core_clk: ID of the last Core Clock exported to DT
-  */
- struct cpg_mssr_priv {
-+#ifdef CONFIG_RESET_CONTROLLER
-+	struct reset_controller_dev rcdev;
-+#endif
- 	struct device *dev;
- 	void __iomem *base;
- 	spinlock_t rmw_lock;
-@@ -494,6 +500,122 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 	return 0;
- }
- 
-+#ifdef CONFIG_RESET_CONTROLLER
-+
-+#define rcdev_to_priv(x)	container_of(x, struct cpg_mssr_priv, rcdev)
-+
-+static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
-+			  unsigned long id)
-+{
-+	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-+	unsigned int reg = id / 32;
-+	unsigned int bit = id % 32;
-+	u32 bitmask = BIT(bit);
-+	unsigned long flags;
-+	u32 value;
-+
-+	dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
-+
-+	/* Reset module */
-+	spin_lock_irqsave(&priv->rmw_lock, flags);
-+	value = readl(priv->base + SRCR(reg));
-+	value |= bitmask;
-+	writel(value, priv->base + SRCR(reg));
-+	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-+
-+	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
-+	udelay(35);
-+
-+	/* Release module from reset state */
-+	writel(bitmask, priv->base + SRSTCLR(reg));
-+
-+	return 0;
-+}
-+
-+static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-+	unsigned int reg = id / 32;
-+	unsigned int bit = id % 32;
-+	u32 bitmask = BIT(bit);
-+	unsigned long flags;
-+	u32 value;
-+
-+	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
-+
-+	spin_lock_irqsave(&priv->rmw_lock, flags);
-+	value = readl(priv->base + SRCR(reg));
-+	value |= bitmask;
-+	writel(value, priv->base + SRCR(reg));
-+	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-+	return 0;
-+}
-+
-+static int cpg_mssr_deassert(struct reset_controller_dev *rcdev,
-+			     unsigned long id)
-+{
-+	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-+	unsigned int reg = id / 32;
-+	unsigned int bit = id % 32;
-+	u32 bitmask = BIT(bit);
-+
-+	dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
-+
-+	writel(bitmask, priv->base + SRSTCLR(reg));
-+	return 0;
-+}
-+
-+static int cpg_mssr_status(struct reset_controller_dev *rcdev,
-+			   unsigned long id)
-+{
-+	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-+	unsigned int reg = id / 32;
-+	unsigned int bit = id % 32;
-+	u32 bitmask = BIT(bit);
-+
-+	return !!(readl(priv->base + SRCR(reg)) & bitmask);
-+}
-+
-+static const struct reset_control_ops cpg_mssr_reset_ops = {
-+	.reset = cpg_mssr_reset,
-+	.assert = cpg_mssr_assert,
-+	.deassert = cpg_mssr_deassert,
-+	.status = cpg_mssr_status,
-+};
-+
-+static int cpg_mssr_reset_xlate(struct reset_controller_dev *rcdev,
-+				const struct of_phandle_args *reset_spec)
-+{
-+	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
-+	unsigned int unpacked = reset_spec->args[0];
-+	unsigned int idx = MOD_CLK_PACK(unpacked);
-+
-+	if (unpacked % 100 > 31 || idx >= rcdev->nr_resets) {
-+		dev_err(priv->dev, "Invalid reset index %u\n", unpacked);
-+		return -EINVAL;
-+	}
-+
-+	return idx;
-+}
-+
-+static int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
-+{
-+	priv->rcdev.ops = &cpg_mssr_reset_ops;
-+	priv->rcdev.of_node = priv->dev->of_node;
-+	priv->rcdev.of_reset_n_cells = 1;
-+	priv->rcdev.of_xlate = cpg_mssr_reset_xlate;
-+	priv->rcdev.nr_resets = priv->num_mod_clks;
-+	return devm_reset_controller_register(priv->dev, &priv->rcdev);
-+}
-+
-+#else /* !CONFIG_RESET_CONTROLLER */
-+static inline int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
-+{
-+	return 0;
-+}
-+#endif /* !CONFIG_RESET_CONTROLLER */
-+
-+
- static const struct of_device_id cpg_mssr_match[] = {
- #ifdef CONFIG_ARCH_R8A7743
- 	{
-@@ -591,6 +713,10 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 	if (error)
- 		return error;
- 
-+	error = cpg_mssr_reset_controller_register(priv);
-+	if (error)
-+		return error;
-+
- 	return 0;
- }
- 
--- 
-1.9.1
+    But, in my opinion, adding additional mmc host ops might not be helpful.
+    The above two functions are part of Xenon PHY adjustment. Those two
+    functions help save some PHY setting steps in hs200->hs400/hs400->hs200
+    sequence. But other PHY settings are still necessary,
+    which should be executed each time when mmc core layer set ios.
+    Neither of them can be extracted out and put into another mmc host ops.
+
+    Instead, it will helps us improve the above two if we can add a flag to
+    indicate that eMMC is in a temporary status in hs200->hs400 or hs400->hs200
+    sequence.
+
+>> +
+>> +/*
+>> + * If eMMC PHY Slow Mode is required in lower speed mode in SDR mode
+>> + * (SDLCK < 55MHz), enable Slow Mode to bypass eMMC PHY.
+>> + * SDIO slower SDR mode also requires Slow Mode.
+>> + *
+>> + * If Slow Mode is enabled, return true.
+>> + * Otherwise, return false.
+>> + */
+>> +static bool emmc_phy_slow_mode(struct sdhci_host *host,
+>> +                              unsigned char timing)
+>> +{
+>> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> +       struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
+>> +       struct emmc_phy_params *params = priv->phy_params;
+>> +       struct xenon_emmc_phy_regs *phy_regs = priv->emmc_phy_regs;
+>> +       u32 reg;
+>> +
+>> +       /* Skip temp stages from HS200 to HS400 */
+>> +       if (temp_stage_hs200_to_hs400(host, priv))
+>> +               return false;
+>> +
+>> +       /* Skip temp stages from HS400 t0 HS200 */
+>> +       if (temp_stage_hs400_to_h200(host, priv))
+>> +               return false;
+>> +
+>> +       reg = sdhci_readl(host, phy_regs->timing_adj);
+>> +       /* Enable Slow Mode for SDIO in slower SDR mode */
+>> +       if ((priv->init_card_type == MMC_TYPE_SDIO) &&
+> 
+> Ah, noticed that there is some specific things going on here for SDIO
+> here as well. So perhaps you do need to implement the ->init_card()
+> ops anyway. Which I suggested not to, for patch6. :-)
+> 
+> Although, there is one problem with using ->init_card(). That is
+> particularly for removable cards, as mmc_rescan() doesn't invoke
+> ->init_card() when it removes a card, which means, you may use old and
+> thus wrong information about what kind of card in the next card
+> detection attempt. So perhaps ->init_card() needs to be called from
+> the core before it even figured out what kind of card it is trying to
+> detect, as to allow the callbacks to reset some data.
+> 
+> Or perhaps you can think of another clever way!?
+>
+
+    It is a good question.
+
+    Our Xenon requires to set SDIO Mode and PHY Slow Mode for SDIO card.
+    Both of them are configed in function emmc_phy_set(). In emmc_phy_set(),
+    we will skip setting those two configs if current timing is
+    MMC_TIMING_LEGACY.
+    It seems that card structure can be updated before switching into
+    higher speed mode from MMC_TIMING_LEGACY. Thus I personally believe we
+    can get updated card type in ->init_card().
+
+    Hope my above answer can satisfy you. If there is any issue, please kindly
+    let me know.
+    I will also ask my teammates to do more tests, to make sure no corner case.
+
+    Thank you.
+
+Best regards,
+Hu Ziji
+
+> 
+>> +           ((timing == MMC_TIMING_UHS_SDR25) ||
+>> +            (timing == MMC_TIMING_UHS_SDR12) ||
+>> +            (timing == MMC_TIMING_SD_HS) ||
+>> +            (timing == MMC_TIMING_LEGACY))) {
+>> +               reg |= XENON_TIMING_ADJUST_SLOW_MODE;
+>> +               sdhci_writel(host, reg, phy_regs->timing_adj);
+>> +               return true;
+>> +       }
+>> +
+>> +       /* Check if Slow Mode is required in lower speed mode in SDR mode */
+>> +       if (((timing == MMC_TIMING_UHS_SDR50) ||
+>> +            (timing == MMC_TIMING_UHS_SDR25) ||
+>> +            (timing == MMC_TIMING_UHS_SDR12) ||
+>> +            (timing == MMC_TIMING_SD_HS) ||
+>> +            (timing == MMC_TIMING_MMC_HS) ||
+>> +            (timing == MMC_TIMING_LEGACY)) && params->slow_mode) {
+>> +               reg |= XENON_TIMING_ADJUST_SLOW_MODE;
+>> +               sdhci_writel(host, reg, phy_regs->timing_adj);
+>> +               return true;
+>> +       }
+>> +
+>> +       reg &= ~XENON_TIMING_ADJUST_SLOW_MODE;
+>> +       sdhci_writel(host, reg, phy_regs->timing_adj);
+>> +       return false;
+>> +}
+>> +
+> 
+> [...]
+> 
+> Kind regards
+> Uffe
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
