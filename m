@@ -1,98 +1,53 @@
-Return-Path: <webczat_200@poczta.onet.pl>
-Subject: Re: [PATCH] clk: scpi: don't add cpufreq device if the scpi dvfs node
- is disabled
-To: Sudeep Holla <sudeep.holla@arm.com>
-References: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
- <d51628d1-c930-ec13-990c-97cc47d80472@poczta.onet.pl>
- <d1cccb6b-e938-6522-c45f-5b613567cb4e@arm.com>
-Cc: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Neil Armstrong <narmstrong@baylibre.com>
-From: =?UTF-8?Q?Micha=c5=82_Zegan?= <webczat_200@poczta.onet.pl>
-Message-ID: <0393387b-8ed5-f75b-7f69-5c0b06c64cca@poczta.onet.pl>
-Date: Mon, 9 Jan 2017 11:14:53 +0100
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Thu, 26 Jan 2017 16:27:50 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: martin@kaiser.cx
+Subject: Re: [PATCH v2] clk: samsung: mark s3c...._clk_sleep_init() as __init
+Message-ID: <20170127002750.GC8801@codeaurora.org>
+References: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
+ <1485380545-24815-1-git-send-email-martin@kaiser.cx>
 MIME-Version: 1.0
-In-Reply-To: <d1cccb6b-e938-6522-c45f-5b613567cb4e@arm.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="IRfoLjtdMOhWHRpeequcwdP7CAieCOXEP"
+In-Reply-To: <1485380545-24815-1-git-send-email-martin@kaiser.cx>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
+ Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---IRfoLjtdMOhWHRpeequcwdP7CAieCOXEP
-Content-Type: multipart/mixed; boundary="Brecu1d6lGD3HCxht2ESgcw2KthvMfX1l";
- protected-headers="v1"
-From: =?UTF-8?Q?Micha=c5=82_Zegan?= <webczat_200@poczta.onet.pl>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <0393387b-8ed5-f75b-7f69-5c0b06c64cca@poczta.onet.pl>
-Subject: Re: [PATCH] clk: scpi: don't add cpufreq device if the scpi dvfs node
- is disabled
-References: <1483706070-12357-1-git-send-email-sudeep.holla@arm.com>
- <d51628d1-c930-ec13-990c-97cc47d80472@poczta.onet.pl>
- <d1cccb6b-e938-6522-c45f-5b613567cb4e@arm.com>
-In-Reply-To: <d1cccb6b-e938-6522-c45f-5b613567cb4e@arm.com>
+On 01/25, martin@kaiser.cx wrote:
+> From: Martin Kaiser <martin@kaiser.cx>
+> 
+> These functions are referencing s3c...._clk_regs[], which are marked as
+> __initdata. When compiling with CONFIG_DEBUG_SECTION_MISMATCH=y, this
+> produces warnings like
+> 
+> WARNING: vmlinux.o(.text+0x198350):
+> Section mismatch in reference from the function s3c2410_clk_sleep_init()
+> to the (unknown reference) .init.data:(unknown)
+> 
+> Mark the s3c...._clk_sleep_init() functions as __init in
+> order to fix this.
+> 
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 
---Brecu1d6lGD3HCxht2ESgcw2KthvMfX1l
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Fixes tag?
 
-Of course.
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-W dniu 09.01.2017 o 10:58, Sudeep Holla pisze:
->=20
->=20
-> On 07/01/17 00:44, Micha=C5=82 Zegan wrote:
->> seems the patch works as intended.
->>
->=20
-> So, can we take this as
-> Tested-by: Micha=C5=82 Zegan <webczat_200@poczta.onet.pl> ?
->=20
->> W dniu 06.01.2017 o 13:34, Sudeep Holla pisze:
->>> Currently we add the virtual cpufreq device unconditionally even when=
-
->>> the SCPI DVFS clock provider node is disabled. This will cause cpufre=
-q
->>> driver to throw errors when it gets initailised on boot/modprobe and
->>> also when the CPUs are hot-plugged back in.
->>>
->>> This patch fixes the issue by adding the virtual cpufreq device only =
-if
->>> the SCPI DVFS clock provider is available and registered.
->>>
->>> Fixes: 9490f01e2471 ("clk: scpi: add support for cpufreq virtual devi=
-ce")
->>> Reported-by: Micha=C5=82 Zegan <webczat_200@poczta.onet.pl>
->>> Cc: Neil Armstrong <narmstrong@baylibre.com>
->>> Cc: Michael Turquette <mturquette@baylibre.com>
->>> Cc: Stephen Boyd <sboyd@codeaurora.org>
->>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->=20
-
-
---Brecu1d6lGD3HCxht2ESgcw2KthvMfX1l--
-
---IRfoLjtdMOhWHRpeequcwdP7CAieCOXEP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQFPBAEBCAA5FiEE8PeJXyv9t1Bfiq63mRxoPZnIFPkFAlhzYp0bHHdlYmN6YXRf
-MjAwQHBvY3p0YS5vbmV0LnBsAAoJEJkcaD2ZyBT5WJgIAOBkriOeaXbg9ETYcOyF
-sW/ovu2xcKCDtxfQZNxELG/aDRFZXK/03/AaRbzVZkAJb7u+TuxWNAEUt/kBExwl
-EODuvUlIcMsVlKKa8L9ToJTztwK2evwIX4P5janO9p/Qkh5hPUOC6lVn55q+NhYp
-agBHP5un4RNfM5mVtVgGFvEr+RqFhxEtvJ2LKhsBqnL+6B/V4MTbvJ1sEgK/dpA/
-UGJ3uS4FZKGWVdFpv2oXuYAmxZ77M212UimGBXPjkalXWWuDyNyrCLBqLTT7oBEX
-gjX+rfZ5nbhXiEoBkH+VNW4rlcyByDaj2hVrPq46WVxwIb5HBSeh8FL+nG+hmblX
-+2k=
-=A5PK
------END PGP SIGNATURE-----
-
---IRfoLjtdMOhWHRpeequcwdP7CAieCOXEP--
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
