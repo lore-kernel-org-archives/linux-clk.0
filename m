@@ -1,97 +1,57 @@
-Return-Path: <linux@roeck-us.net>
-Date: Tue, 31 Jan 2017 09:20:58 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King - ARM Linux <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: add more managed APIs
-Message-ID: <20170131172058.GA15184@roeck-us.net>
-References: <20170128184047.GA24957@dtor-ws>
- <20170128190309.GN27312@n2100.armlinux.org.uk>
- <20170128192207.GA38136@dtor-ws>
- <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
- <20170128233911.GO27312@n2100.armlinux.org.uk>
- <20170129180743.GA10917@dtor-ws>
- <20170130185551.GM8801@codeaurora.org>
- <20170130192214.GC11199@roeck-us.net>
- <20170131005957.GB35974@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170131005957.GB35974@dtor-ws>
+Return-Path: <s.nawrocki@samsung.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk/samsung updates for v4.11, part 2
+Message-id: <3297ef21-a1d6-51b0-4d99-70c9a041c952@samsung.com>
+Date: Fri, 27 Jan 2017 18:22:50 +0100
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
+References: 
+ <CGME20170127172254epcas1p41085b7154dba751e0c19d4f92a8558a7@epcas1p4.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jan 30, 2017 at 04:59:57PM -0800, Dmitry Torokhov wrote:
-> On Mon, Jan 30, 2017 at 11:22:14AM -0800, Guenter Roeck wrote:
-> > On Mon, Jan 30, 2017 at 10:55:51AM -0800, Stephen Boyd wrote:
-> > > On 01/29, Dmitry Torokhov wrote:
-> > > > When converting a driver to managed resources it is desirable to be able to
-> > > > manage all resources in the same fashion. This change allows managing
-> > > > clocks in the same way we manage many other resources.
-> > > 
-> > > Can you please add 'managing clock prepared and enabled state in
-> > > the same way'?
-> > > 
-> > > The current wording makes it sound like we don't have
-> > > devm_clk_get() when we do.
-> > > 
-> > > > 
-> > > > This adds the following managed APIs:
-> > > > 
-> > > > - devm_clk_prepare()/devm_clk_unprepare();
-> > > > - devm_clk_prepare_enable()/devm_clk_disable_unprepare().
-> > > 
-> > > Wouldn't this be preceded by a devm_clk_get() call? Wouldn't it
-> > > be even shorter to have the APIs
-> > > 
-> > >   devm_clk_get_and_prepare()/devm_clk_unprepare_and_put()
-> > >   devm_clk_get_and_prepare_enable()/devm_clk_disable_unprepare_and_put()
-> > > 
-> > > instead?
-> > > 
-> > In many cases I see
-> > 
-> > 	devm_clk_get(clk1);
-> > 	devm_clk_get(clk2);
-> > 	clk_prepare_enable(clk1);
-> > 	clk_prepare_enable(clk2);
-> > 
-> > Sometimes the calls are intertwined with setting the clock rates.
-> > 
-> > 	devm_clk_get(clk);
-> > 	clk_set_rate(clk, rate);
-> > 	clk_prepare_enable(clk);
-> > 
-> > Maybe the additional calls make sense; I can imagine they would.
-> > However, I personally would be a bit wary of changing the initialization
-> > order of multi-clock initializations, and I am not sure how a single call
-> > could address setting the rate ([devm_]clk_get_setrate_prepare_enable()
-> > seems like a bit too much).
-> > 
-> > [ On a side note, why is there no clk_get_prepare_enable() and
-> >   clk_get_prepare() ? Maybe it would be better to introduce those
-> >   together with the matching devm_ functions in a separate patch
-> >   if they are useful. ]
-> > 
-> > > Is there any other subsystem that has similar functionality?
-> > > Regulators? GPIOs? Resets? I'm just curious if those subsystems
-> > > also need similar changes.
-> > > 
-> > Ultimately yes, and most already do. If I recall correctly, I tried to
-> > introduce devm_ functions for regulators some time ago, but that was
-> > rejected with the comment that it would invite misuse.  At the time
-> > I accepted that; today my reaction would be to counter that pretty much
-> > everything can be misused, and that the potential for misuse should not
-> > penaltize all the valid use cases.
-> 
-> I think we should ping Mark again. The only thing we are achieving is
-> that everyone is using devm_add_action_or_reset() with wrappers around
-> regulator_put().
-> 
-regulator_get() has an equivalent devm_regulator_get(). Maybe it was since
-added, or I was thinking about a different function.
+Hi Stephen, Mike,
 
-Guenter
+The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
+
+  Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
+
+are available in the git repository at:
+
+  git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-samsung-2
+
+for you to fetch changes up to 02c952c8f95fd0adf1835704db95215f57cfc8e6:
+
+  clk: samsung: mark s3c...._clk_sleep_init() as __init (2017-01-27 13:30:00 +0100)
+
+----------------------------------------------------------------
+Exporting clock IDs for Exynos5433 SoC MIPI DSI DPHY,
+Exynos PLL code updates and overall minor clean-ups.
+
+----------------------------------------------------------------
+Marek Szyprowski (4):
+      clk: samsung: exynos5433: Add IDs for PHYCLK_MIPIDPHY0_* clocks
+      clk: samsung: exynos5433: Add data for 250MHz and 278MHz PLL rates
+      clk: samsung: exynos5433: Correct typos in SoC name
+      clk: samsung: Add enable/disable support for PLL35XX clocks
+
+Martin Kaiser (1):
+      clk: samsung: mark s3c...._clk_sleep_init() as __init
+
+ drivers/clk/samsung/clk-exynos5433.c   | 36 ++++++++++++++++++++----------------
+ drivers/clk/samsung/clk-pll.c          | 45 ++++++++++++++++++++++++++++++++++++++-------
+ drivers/clk/samsung/clk-s3c2410.c      |  4 ++--
+ drivers/clk/samsung/clk-s3c2412.c      |  4 ++--
+ drivers/clk/samsung/clk-s3c2443.c      |  4 ++--
+ drivers/clk/samsung/clk-s3c64xx.c      |  4 ++--
+ include/dt-bindings/clock/exynos5433.h |  5 ++++-
+ 7 files changed, 70 insertions(+), 32 deletions(-)
+
+-- 
+Thanks,
+Sylwester
