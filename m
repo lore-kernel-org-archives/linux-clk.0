@@ -1,56 +1,62 @@
-Return-Path: <cwchoi00@gmail.com>
-MIME-Version: 1.0
-Reply-To: cwchoi00@gmail.com
-In-Reply-To: <c9b51cb6-f798-d41e-afff-f779b963345c@samsung.com>
-References: <20170114123642.15581-1-krzk@kernel.org> <CGME20170114123727epcas2p296aae6459c8575d7e5def74f18e5c64d@epcas2p2.samsung.com>
- <20170114123642.15581-3-krzk@kernel.org> <c9b51cb6-f798-d41e-afff-f779b963345c@samsung.com>
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Date: Sat, 21 Jan 2017 14:08:34 +0900
-Message-ID: <CAGTfZH2Eh67iMb7bBY2ostNUbxmOtQxy=P7ZRSEDzS4=enyMKg@mail.gmail.com>
-Subject: Re: [PATCH 2/4] clk: samsung: Remove Exynos4415 driver (SoC not
- supported anymore)
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-clk@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Tomasz Figa <tomasz.figa@gmail.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel <linux-kernel@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>,
-	Kukjin Kim <kgene@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 08/10] ARM: dts: sun8i-a23-q8-tablet: Drop pinmux setting for codec PA gpio
+Date: Sat, 28 Jan 2017 20:22:37 +0800
+Message-Id: <20170128122239.4480-9-wens@csie.org>
+In-Reply-To: <20170128122239.4480-1-wens@csie.org>
+References: <20170128122239.4480-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sylwester,
+The old sunxi specific pinctrl bindings are deprecated, in favor of
+the new generic pinconf bindings. Also, we are moving towards handling
+GPIO pinmux settings that don't require extra bias or drive strength
+settings to use the GPIO bindings only.
 
-I add reveiwed-by tag from this patch. But, on you tree, this patch[1] does=
-n=E2=80=99t
-include the my reviewed-by tag.
+This patch removes the last instance of the sunxi specific pinctrl
+bindings that use the pinctrl header by dropping the pinmux setting
+for the audio codec's PA (external amplifier) control GPIO. The pin
+is pulled down externally.
 
-[1] https://git.linuxtv.org/snawrocki/samsung.git/commit/?h=3Dfor-v4.11/clk=
-/next&id=3Dcb4ac949ea14416a2d57b7a343bc4b571074e3bd
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ arch/arm/boot/dts/sun8i-a23-q8-tablet.dts | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-2017-01-16 19:32 GMT+09:00 Sylwester Nawrocki <s.nawrocki@samsung.com>:
-> On 01/14/2017 01:36 PM, Krzysztof Kozlowski wrote:
->> Support for Exynos4415 is going away because there are no internal nor
->> external users.
->>
->> Since commit 46dcf0ff0de3 ("ARM: dts: exynos: Remove exynos4415.dtsi"),
->> the platform cannot be instantiated so remove also the drivers.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> Applied, thanks.
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
-
-
---=20
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+diff --git a/arch/arm/boot/dts/sun8i-a23-q8-tablet.dts b/arch/arm/boot/dts/sun8i-a23-q8-tablet.dts
+index 3ab5c0c09d93..b6958e8f2f01 100644
+--- a/arch/arm/boot/dts/sun8i-a23-q8-tablet.dts
++++ b/arch/arm/boot/dts/sun8i-a23-q8-tablet.dts
+@@ -50,7 +50,6 @@
+ };
+ 
+ &codec {
+-	pinctrl-0 = <&codec_pa_pin>;
+ 	allwinner,pa-gpios = <&pio 7 9 GPIO_ACTIVE_HIGH>; /* PH9 */
+ 	allwinner,audio-routing =
+ 		"Headphone", "HP",
+@@ -62,12 +61,3 @@
+ 		"Headset Mic", "HBIAS";
+ 	status = "okay";
+ };
+-
+-&pio {
+-	codec_pa_pin: codec_pa_pin@0 {
+-		allwinner,pins = "PH9";
+-		allwinner,function = "gpio_out";
+-		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+-		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+-	};
+-};
+-- 
+2.11.0
