@@ -1,111 +1,130 @@
-Return-Path: <alexandre.torgue@st.com>
-Subject: Re: [PATCH 3/4] ARM: dts: stm32: stm32f7: Enable clocks for STM32F746
- boards
-To: <gabriel.fernandez@st.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd
- Bergmann <arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-References: <1483711165-17149-1-git-send-email-gabriel.fernandez@st.com>
- <1483711165-17149-4-git-send-email-gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <2c699f28-f554-e48a-34a0-e356f0bf7e2c@st.com>
-Date: Tue, 10 Jan 2017 11:14:30 +0100
+Return-Path: <linux@roeck-us.net>
+Subject: Re: [PATCH] clk: add more managed APIs
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Russell King - ARM Linux <linux@armlinux.org.uk>
+References: <20170128184047.GA24957@dtor-ws>
+ <20170128190309.GN27312@n2100.armlinux.org.uk>
+ <20170128192207.GA38136@dtor-ws>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
+Date: Sat, 28 Jan 2017 13:44:35 -0800
 MIME-Version: 1.0
-In-Reply-To: <1483711165-17149-4-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <20170128192207.GA38136@dtor-ws>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Gabriel
+On 01/28/2017 11:22 AM, Dmitry Torokhov wrote:
+> On Sat, Jan 28, 2017 at 07:03:10PM +0000, Russell King - ARM Linux wrote:
+>> On Sat, Jan 28, 2017 at 10:40:47AM -0800, Dmitry Torokhov wrote:
+>>> When converting a driver to managed resources it is desirable to be able to
+>>> manage all resources in the same fashion. This change allows managing
+>>> clocks in the same way we manage many other resources.
+>>>
+>>> This adds the following managed APIs:
+>>>
+>>> - devm_clk_prepare()/devm_clk_unprepare();
+>>> - devm_clk_enable()/devm_clk_disable();
+>>> - devm_clk_prepare_enable()/devm_clk_disable_unprepare().
+>>
+>> Does it make any sense what so ever to have devm_clk_enable() and
+>> devm_clk_disable()?
+>>
+>> Take a moment to think about where you use all of these.  The devm_*
+>> functions are there to be used in probe functions so that cleanup
+>> paths can be streamlined and less erroneous.  They aren't for general
+>> use throughout the driver.
+>>
+>> Given that, there are two operations that you may wish to do in the
+>> probe path:
+>>
+>> 1. prepare a clock (avoiding the enable because you want to perform
+>>    the enable elsewhere in the driver.)
+>> 2. prepare and enable a clock
+>>
+>> So, does having devm_clk_enable() really make sense?  I don't think
+>> it does, and I suspect they'll get very little if any use.  So, I
+>> think best not add them until someone comes up with a good and
+>> wide-spread use case.
+>
+> That makes sense.
+>
+> Guenter, I know you are a coccinelle wizard, can you cook a script that
+> can find current users of clk_enable() in probe paths? Then we can make
+> informed decision on devm_clk_enable.
+>
 
-On 01/06/2017 02:59 PM, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->
-> This patch enables clocks for STM32F746 boards.
->
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
+Questionable use:
+	drivers/input/keyboard/st-keyscan.c
 
-In commit header, "stm32f7" is not usefull.
+clk_enable() in probe, clk_disable() in remove:
+	drivers/i2c/busses/i2c-tegra.c
+	drivers/media/platform/exynos4-is/fimc-core.c
+	drivers/media/platform/exynos4-is/mipi-csis.c
+	drivers/thermal/spear_thermal.c
+	drivers/usb/musb/am35x.c
+	drivers/usb/musb/davinci.c
 
+This does not count drivers which call clk_enable() in probe, but disable
+the clock at some point, and only re-enable it when needed.
+	
+Not that many. A quick browse suggests that clk_enable()/clk_disable()
+is more commonly used to temporarily enable the clock while needed.
 
->  arch/arm/boot/dts/stm32f746.dtsi | 29 +++++++++++++++++++++++++++--
->  1 file changed, 27 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/stm32f746.dtsi b/arch/arm/boot/dts/stm32f746.dtsi
-> index f321ffe..e05e131 100644
-> --- a/arch/arm/boot/dts/stm32f746.dtsi
-> +++ b/arch/arm/boot/dts/stm32f746.dtsi
-> @@ -43,6 +43,7 @@
->  #include "skeleton.dtsi"
->  #include "armv7-m.dtsi"
->  #include <dt-bindings/pinctrl/stm32f746-pinfunc.h>
-> +#include <dt-bindings/clock/stm32fx-clock.h>
+For clk_prepare(), I get 33 hits in drivers/.
 
-This patch depends on another series not yet merged (maybe "[PATCH-next 
-... is a better header ?
+patching file drivers/usb/gadget/udc/at91_udc.c
+patching file drivers/i2c/busses/i2c-tegra.c
+patching file drivers/pwm/pwm-spear.c
+patching file drivers/pinctrl/spear/pinctrl-plgpio.c
+patching file drivers/input/keyboard/samsung-keypad.c
+patching file drivers/crypto/atmel-aes.c
+patching file drivers/usb/gadget/udc/pxa27x_udc.c
+patching file drivers/iommu/msm_iommu.c
+patching file drivers/i2c/busses/i2c-rk3x.c
+patching file drivers/tty/serial/pxa.c
+patching file drivers/remoteproc/st_remoteproc.c
+patching file drivers/pwm/pwm-tiehrpwm.c
+patching file drivers/media/platform/mtk-vpu/mtk_vpu.c
+patching file drivers/i2c/busses/i2c-meson.c
+patching file drivers/crypto/ux500/hash/hash_core.c
+patching file drivers/pwm/pwm-vt8500.c
+patching file drivers/pwm/pwm-sti.c
+patching file drivers/tty/serial/xilinx_uartps.c
+patching file drivers/pwm/pwm-atmel.c
+patching file drivers/phy/phy-dm816x-usb.c
+patching file drivers/input/keyboard/spear-keyboard.c
+patching file drivers/gpu/host1x/mipi.c
+patching file drivers/crypto/ux500/cryp/cryp_core.c
+patching file drivers/spi/spi-armada-3700.c
+patching file drivers/pwm/pwm-mtk-disp.c
+patching file drivers/nvmem/mxs-ocotp.c
+patching file drivers/media/platform/s5p-g2d/g2d.c
+patching file drivers/i2c/busses/i2c-sirf.c
+patching file drivers/crypto/atmel-sha.c
+patching file drivers/tty/serial/8250/8250_pxa.c
+patching file drivers/thermal/samsung/exynos_tmu.c
+patching file drivers/media/platform/sti/bdisp/bdisp-v4l2.c
+patching file drivers/dma/s3c24xx-dma.c
 
->
->  / {
->  	clocks {
-> @@ -51,6 +52,24 @@
->  			compatible = "fixed-clock";
->  			clock-frequency = <0>;
->  		};
-> +
-> +		clk-lse {
-> +			#clock-cells = <0>;
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <32768>;
-> +		};
-> +
-> +		clk-lsi {
-> +			#clock-cells = <0>;
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <32000>;
-> +		};
-> +
-> +		clk_i2s_ckin: clk-i2s-ckin {
-> +			#clock-cells = <0>;
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <48000000>;
-> +		};
->  	};
->
->  	soc {
-> @@ -178,6 +197,11 @@
->  			interrupts = <1>, <2>, <3>, <6>, <7>, <8>, <9>, <10>, <23>, <40>, <41>, <42>, <62>, <76>;
->  		};
->
-> +		pwrcfg: power-config@40007000 {
-> +			compatible = "syscon";
-> +			reg = <0x40007000 0x400>;
-> +		};
-> +
->  		pin-controller {
->  			#address-cells = <1>;
->  			#size-cells = <1>;
-> @@ -291,9 +315,10 @@
->
->  		rcc: rcc@40023800 {
->  			#clock-cells = <2>;
-> -			compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
-> +			compatible = "st,stm32f746-rcc", "st,stm32-rcc";
->  			reg = <0x40023800 0x400>;
-> -			clocks = <&clk_hse>;
-> +			clocks = <&clk_hse>, <&clk_i2s_ckin>;
-> +			st,syscfg = <&pwrcfg>;
->  		};
->  	};
->  };
->
+Those drivers call clk_prepare() in the probe function. The list
+may not be complete; my script currently only checks for clk_prepare()
+in the probe function of platform, i2c, and spi drivers.
+
+I quick glance through the generated diffs suggests that most
+if not all of those call clk_prepare() in probe and clk_unprepare()
+in remove.
+
+For clk_prepare_enable() in probe functions, I get 288 hits in drivers/.
+I didn't check those for validity - there are just too many. I did check
+watchdog and input earlier, though. For those, almost all would be
+candidates for devm_clk_prepare_enable().
+
+Overall, I think we should have devm_clk_prepare() and most definitely
+devm_clk_prepare_enable(). I am not that sure about clk_enable().
+
+Thanks,
+Guenter
