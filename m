@@ -1,167 +1,66 @@
-Return-Path: <ping.bai@nxp.com>
-From: Jacky Bai <ping.bai@nxp.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: "shawnguo@kernel.org" <shawnguo@kernel.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>, "linus.walleij@linaro.org"
-	<linus.walleij@linaro.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com"
-	<jacky.baip@gmail.com>
-Subject: RE: [PATCH v2 04/12] driver: clk: imx: Add clock driver for imx6sll
-Date: Tue, 10 Jan 2017 03:18:57 +0000
-Message-ID: <AM3PR04MB5307CB38AA904535AF8D80D87670@AM3PR04MB530.eurprd04.prod.outlook.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-5-git-send-email-ping.bai@nxp.com>
- <20170110003753.GM17126@codeaurora.org>
-In-Reply-To: <20170110003753.GM17126@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <eric@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-rpi-kernel@lists.infradead.org, "linux-arm-kernel\@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, "bcm-kernel-feedback-list\@broadcom.com" <bcm-kernel-feedback-list@broadcom.com>, linux-clk <linux-clk@vger.kernel.org>, "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: Document the VC4 DSI module nodes.
+In-Reply-To: <CAL_JsqJ=VQSUO5MeHJSCB=_SnmOnA7G1=GhmWYKhjm-47kYV-w@mail.gmail.com>
+References: <20170124003853.16418-1-eric@anholt.net> <20170124003853.16418-2-eric@anholt.net> <CAL_JsqJ=VQSUO5MeHJSCB=_SnmOnA7G1=GhmWYKhjm-47kYV-w@mail.gmail.com>
+Date: Fri, 27 Jan 2017 18:41:37 -0800
+Message-ID: <87ziibaota.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-> > +#include <dt-bindings/clock/imx6sll-clock.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/clkdev.h>
->=20
-> Is this used?
+--=-=-=
+Content-Type: text/plain
 
-Sorry, this should be removed.
+Rob Herring <robh+dt@kernel.org> writes:
 
->=20
-> > +#include <linux/err.h>
-> > +#include <linux/init.h>
-> > +#include <linux/io.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_address.h>
-> > +#include <linux/of_irq.h>
->=20
-> Is this used?
+> Need to cc DT list if you want it in my queue.
+>
+> On Mon, Jan 23, 2017 at 6:38 PM, Eric Anholt <eric@anholt.net> wrote:
+>> These are part of the vc4 display pipeline.
+>>
+>> Signed-off-by: Eric Anholt <eric@anholt.net>
+>> ---
+>>  .../devicetree/bindings/display/brcm,bcm-vc4.txt   | 35 ++++++++++++++++++++++
+>>  1 file changed, 35 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt b/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
+>> index e2768703ac2b..34c7fddcea39 100644
+>> --- a/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
+>> +++ b/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
+>> @@ -56,6 +56,18 @@ Required properties for V3D:
+>>  - interrupts:  The interrupt number
+>>                   See bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
+>>
+>> +Required properties for DSI:
+>> +- compatible:  Should be "brcm,bcm2835-dsi0" or "brcm,bcm2835-dsi1"
+>
+> Are the blocks different?
 
-I will remove it.
+They are from the same lineage, but very different (old dsi0 is 1 lane,
+dsi1 is 4 lanes).  You can see how much the registers move around and
+change in the dsi->port conditional blocks in the driver code.
 
->=20
-> > +#include <linux/types.h>
-> > +
-> > +#include "clk.h"
-> > +
-> > +#define CCM_ANALOG_PLL_BYPASS		(0x1 << 16)
-> > +#define BM_CCM_CCDR_MMDC_CH0_MASK	(0x2 << 16)
-> > +#define CCDR	0x4
-> > +#define xPLL_CLR(offset)		 (offset + 0x8)
-> > +
-> > +static const char *pll_bypass_src_sels[] =3D { "osc", "dummy", };
->=20
-> All these should be const char * const unless something is wrong.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If changed to 'const char * const', it vill has argument type mismatch erro=
-r, as imx_clk_* wrapper function
-has argument type 'const char *'.=20
+-----BEGIN PGP SIGNATURE-----
 
->=20
-> > +static const char *pll1_bypass_sels[] =3D { "pll1", "pll1_bypass_src",
-> > +}; static const char *pll2_bypass_sels[] =3D { "pll2",
-> > +"pll2_bypass_src", }; static const char *pll3_bypass_sels[] =3D {
-> > +"pll3", "pll3_bypass_src", }; static const char *pll4_bypass_sels[] =
-=3D
-> > +{ "pll4", "pll4_bypass_src", }; static const char *pll5_bypass_sels[]
-> > +=3D { "pll5", "pll5_bypass_src", }; static const char
-> > +*pll6_bypass_sels[] =3D { "pll6", "pll6_bypass_src", };
-> [...]
-> > +	clks[IMX6SLL_CLK_USDHC3]	=3D imx_clk_gate2("usdhc3",
-> 	"usdhc3_podf",	 base + 0x80,	6);
-> > +
-> > +	/* mask handshake of mmdc */
-> > +	writel_relaxed(BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
-> > +
-> > +	for (i =3D 0; i < ARRAY_SIZE(clks); i++)
-> > +		if (IS_ERR(clks[i]))
-> > +			pr_err("i.MX6SLL clk %d: register failed with %ld\n", i,
-> > +PTR_ERR(clks[i]));
-> > +
-> > +	clk_data.clks =3D clks;
-> > +	clk_data.clk_num =3D ARRAY_SIZE(clks);
-> > +	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-> > +
-> > +	/* set perclk to from OSC */
-> > +	clk_set_parent(clks[IMX6SLL_CLK_PERCLK_SEL],
-> clks[IMX6SLL_CLK_OSC]);
->=20
-> Can this be done with assigned-clocks in DT?
-
-Ok, I will move it to assigned-clocks in DT.
-
->=20
-> > +
-> > +	for (i =3D 0; i < ARRAY_SIZE(clks_init_on); i++)
-> > +		clk_prepare_enable(clks[clks_init_on[i]]);
->=20
-> Critical clocks?
-
-Yes, these clocks must be always on.=20
-
->=20
-> > +
-> > +	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
-> > +		clk_prepare_enable(clks[IMX6SLL_CLK_USBPHY1_GATE]);
-> > +		clk_prepare_enable(clks[IMX6SLL_CLK_USBPHY2_GATE]);
->=20
-> The phy driver can't enable these?
-
-The reason why we enable these two clks here is in below commit
-commit a5120e89e7e187a91852896f586876c7a2030804
-Author: Peter Chen <peter.chen@freescale.com>
-Date:   Fri Jan 18 10:38:05 2013 +0800
-      ARM i.MX6: change mxs usbphy clock usage
-
->=20
-> > +	}
-> > +
-> > +	/* Lower the AHB clock rate before changing the clock source. */
-> > +	clk_set_rate(clks[IMX6SLL_CLK_AHB], 99000000);
-> > +
-> > +	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz *=
-/
-> > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH_CLK2_SEL],
-> clks[IMX6SLL_CLK_PLL3_USB_OTG]);
-> > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH],
-> clks[IMX6SLL_CLK_PERIPH_CLK2]);
-> > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH_PRE],
-> clks[IMX6SLL_CLK_PLL2_BUS]);
-> > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH],
-> > +clks[IMX6SLL_CLK_PERIPH_PRE]);
-> > +
-> > +	clk_set_rate(clks[IMX6SLL_CLK_AHB], 132000000);
->=20
-> assigned-clocks for rates now? Or perhaps we shouldn't be exposing these =
-as
-> clks if they have some sort of complicated rate sequence switch that we c=
-an't
-> guarantee with the clk_ops we have today.
-
-These clks will be used by some peripherals, so we need to expose these clo=
-cks.
-And the above parent and rate swith sequence is not very easy to be handled=
- in assigned-clocks,
-So we leave it in this place.=20
-
->=20
-> > +}
-> > +
-> > +CLK_OF_DECLARE(imx6sll, "fsl,imx6sll-ccm", imx6sll_clocks_init);
-> > +
->=20
-> Please drop this extra newline.
->=20
-
-Thanks, will remove in V3.
-
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linu=
-x
-> Foundation Collaborative Project
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAliMBOEACgkQtdYpNtH8
+nujb2A//cz0wjKMwfrZVnCyS9pI679tKHbsH5zytw4Pukl0EdaV2TpC/BfrOlin8
+Lv4IEh5gFNBKp9g2p/shMDDNDuGZlX+3xv6R9Fm0BCaU2WaxsLFjYqzeT6jewXrE
+K65DndHDfHKGONuHdCyQ3TqKjzgrB4r9oCHJ4Q2tscojQlyrfqXBAqshSTBawg+p
+xY2qSALdIbD8qYkLVqy0Q1Bn41pRFKUF0zYEun6q0lE2ZG6oE/J4w8Vh8gIVNIuu
+g5u5R2IY5EpwQPZ0BNMm7N+pS2zDnmGmd1EqVRqvdjMDbavrAEbm3EnAX77W9IG+
+GY+Ws2nlP+C+vvAfPmY1JDV7RxPAbE2xBgOmaWKHUAWbLzLZW3F3KvMfJXh6nDOz
+VyHjRKGT+Ws5yy0wHpviyc8rHtxRogrLbiM+9mjde6B9s3whIRu2qIMVYtrEM7LD
+swh/sKhkgsG7TtiXT6QhyaVN3j8H6XXLr+q9oJQ5391p/X/XpbAsX/FUfa1TD0bp
+d7GSluEs+P/9CfbXSuVWKamnIy8ip3pN4Mf17STiQuViVB0BkgdJx9ktt7CpZ9Oj
+Ql3v8nAl6UQq+DTQrK5NMwjspDrnjPmwin43wIPegQiRthjm23ruuqroYtKXPKJ4
+iczlM33GTb4FNh0hEn2pggX1ZmNsi7vwm5X16qyeeYsbOT+QIb0=
+=kRRx
+-----END PGP SIGNATURE-----
+--=-=-=--
