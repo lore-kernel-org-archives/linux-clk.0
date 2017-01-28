@@ -1,150 +1,78 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To: linux-clk@vger.kernel.org,
-	x86@kernel.org,
-	platform-driver-x86@vger.kernel.org,
+Return-Path: <shawnguo@kernel.org>
+Date: Sat, 28 Jan 2017 09:36:44 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Scott Wood <oss@buserror.net>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: alsa-devel@alsa-project.org,
-	Irina Tirdea <irina.tirdea@intel.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Mark Brown <broonie@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [PATCH v8 3/5] arch/x86/platform/atom: Move pmc_atom to drivers/platform/x86
-Date: Mon, 23 Jan 2017 12:07:43 -0600
-Message-Id: <1485194865-10400-4-git-send-email-pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
-References: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+	"Z.Q. Hou" <zhiqiang.hou@nxp.com>,
+	"Y.T. Tang" <yuantian.tang@nxp.com>, "Y.B. Lu" <yangbo.lu@nxp.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/3] arm64: dts: ls1012a: Add coreclk
+Message-ID: <20170128013642.GF5662@dragon>
+References: <1485332363-8434-1-git-send-email-oss@buserror.net>
+ <1485332363-8434-2-git-send-email-oss@buserror.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1485332363-8434-2-git-send-email-oss@buserror.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Irina Tirdea <irina.tirdea@intel.com>
+On Wed, Jan 25, 2017 at 02:19:22AM -0600, Scott Wood wrote:
+> ls1012a has separate input root clocks for core PLLs versus the platform
+> PLL, with the latter described as sysclk in the hw docs.
+> 
+> Signed-off-by: Scott Wood <oss@buserror.net>
+> ---
+> Note that current versions of U-Boot are blindly updating the frequency
+> of all fixed-clock nodes.  That needs to be fixed for the split input
+> frequency to work properly, but until U-Boot is fixed this change doesn't
+> make anything worse than it already was.
+> 
+>  arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+> index cffebb4..515f8488 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+> @@ -66,10 +66,17 @@
+>  	sysclk: sysclk {
+>  		compatible = "fixed-clock";
+>  		#clock-cells = <0>;
+> -		clock-frequency = <100000000>;
+> +		clock-frequency = <125000000>;
 
-The pmc_atom driver does not contain any architecture specific
-code. It only enables the SoC Power Management Controller driver
-for BayTrail and CherryTrail platforms.
+Should we mention this change a bit in the commit log?
 
-Move the pmc_atom driver from arch/x86/platform/atom to
-drivers/platform/x86. Also clean-up and reorder include files by
-alphabetical order in pmc_atom.h
+Shawn
 
-Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- arch/x86/Kconfig                                                 | 4 ----
- arch/x86/platform/atom/Makefile                                  | 1 -
- drivers/acpi/acpi_lpss.c                                         | 2 +-
- drivers/platform/x86/Kconfig                                     | 4 ++++
- drivers/platform/x86/Makefile                                    | 1 +
- {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c      | 9 ++++-----
- .../include/asm => include/linux/platform_data/x86}/pmc_atom.h   | 0
- 7 files changed, 10 insertions(+), 11 deletions(-)
- rename {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c (99%)
- rename {arch/x86/include/asm => include/linux/platform_data/x86}/pmc_atom.h (100%)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index e487493..7b4f178 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2789,10 +2789,6 @@ config X86_DMA_REMAP
- 	bool
- 	depends on STA2X11
- 
--config PMC_ATOM
--	def_bool y
--        depends on PCI
--
- source "net/Kconfig"
- 
- source "drivers/Kconfig"
-diff --git a/arch/x86/platform/atom/Makefile b/arch/x86/platform/atom/Makefile
-index 40983f5..57be88f 100644
---- a/arch/x86/platform/atom/Makefile
-+++ b/arch/x86/platform/atom/Makefile
-@@ -1,2 +1 @@
--obj-$(CONFIG_PMC_ATOM)		+= pmc_atom.o
- obj-$(CONFIG_PUNIT_ATOM_DEBUG)	+= punit_atom_debug.o
-diff --git a/drivers/acpi/acpi_lpss.c b/drivers/acpi/acpi_lpss.c
-index 8ea836c..90d112a 100644
---- a/drivers/acpi/acpi_lpss.c
-+++ b/drivers/acpi/acpi_lpss.c
-@@ -18,6 +18,7 @@
- #include <linux/mutex.h>
- #include <linux/platform_device.h>
- #include <linux/platform_data/clk-lpss.h>
-+#include <linux/platform_data/x86/pmc_atom.h>
- #include <linux/pm_domain.h>
- #include <linux/pm_runtime.h>
- #include <linux/delay.h>
-@@ -31,7 +32,6 @@ ACPI_MODULE_NAME("acpi_lpss");
- #include <asm/cpu_device_id.h>
- #include <asm/intel-family.h>
- #include <asm/iosf_mbi.h>
--#include <asm/pmc_atom.h>
- 
- #define LPSS_ADDR(desc) ((unsigned long)&desc)
- 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 59aa8e3..8b1988a 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1077,3 +1077,7 @@ config MLX_CPLD_PLATFORM
- 	  cables and fans on the wide range Mellanox IB and Ethernet systems.
- 
- endif # X86_PLATFORM_DEVICES
-+
-+config PMC_ATOM
-+       def_bool y
-+       depends on PCI
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index d4111f0..49ee7ef 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -74,5 +74,6 @@ obj-$(CONFIG_INTEL_TELEMETRY)	+= intel_telemetry_core.o \
- 				   intel_telemetry_pltdrv.o \
- 				   intel_telemetry_debugfs.o
- obj-$(CONFIG_INTEL_PMC_CORE)    += intel_pmc_core.o
-+obj-$(CONFIG_PMC_ATOM)		+= pmc_atom.o
- obj-$(CONFIG_MLX_PLATFORM)	+= mlx-platform.o
- obj-$(CONFIG_MLX_CPLD_PLATFORM)	+= mlxcpld-hotplug.o
-diff --git a/arch/x86/platform/atom/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
-similarity index 99%
-rename from arch/x86/platform/atom/pmc_atom.c
-rename to drivers/platform/x86/pmc_atom.c
-index 964ff4f..e1dfb1b 100644
---- a/arch/x86/platform/atom/pmc_atom.c
-+++ b/drivers/platform/x86/pmc_atom.c
-@@ -15,14 +15,13 @@
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
-+#include <linux/debugfs.h>
-+#include <linux/device.h>
- #include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/platform_data/x86/pmc_atom.h>
- #include <linux/pci.h>
--#include <linux/device.h>
--#include <linux/debugfs.h>
- #include <linux/seq_file.h>
--#include <linux/io.h>
--
--#include <asm/pmc_atom.h>
- 
- struct pmc_bit_map {
- 	const char *name;
-diff --git a/arch/x86/include/asm/pmc_atom.h b/include/linux/platform_data/x86/pmc_atom.h
-similarity index 100%
-rename from arch/x86/include/asm/pmc_atom.h
-rename to include/linux/platform_data/x86/pmc_atom.h
--- 
-2.7.4
+>  		clock-output-names = "sysclk";
+>  	};
+>  
+> +	coreclk: coreclk {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <100000000>;
+> +		clock-output-names = "coreclk";
+> +	};
+> +
+>  	timer {
+>  		compatible = "arm,armv8-timer";
+>  		interrupts = <1 13 IRQ_TYPE_LEVEL_LOW>,/* Physical Secure PPI */
+> @@ -124,7 +131,8 @@
+>  			compatible = "fsl,ls1012a-clockgen";
+>  			reg = <0x0 0x1ee1000 0x0 0x1000>;
+>  			#clock-cells = <2>;
+> -			clocks = <&sysclk>;
+> +			clocks = <&sysclk &coreclk>;
+> +			clock-names = "sysclk", "coreclk";
+>  		};
+>  
+>  		i2c0: i2c@2180000 {
+> -- 
+> 2.7.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
