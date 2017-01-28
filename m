@@ -1,53 +1,82 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Thu, 26 Jan 2017 16:27:50 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: martin@kaiser.cx
-Subject: Re: [PATCH v2] clk: samsung: mark s3c...._clk_sleep_init() as __init
-Message-ID: <20170127002750.GC8801@codeaurora.org>
-References: <1485293599-23581-1-git-send-email-martin@kaiser.cx>
- <1485380545-24815-1-git-send-email-martin@kaiser.cx>
+Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
+Date: Sat, 28 Jan 2017 23:39:11 +0000
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: add more managed APIs
+Message-ID: <20170128233911.GO27312@n2100.armlinux.org.uk>
+References: <20170128184047.GA24957@dtor-ws>
+ <20170128190309.GN27312@n2100.armlinux.org.uk>
+ <20170128192207.GA38136@dtor-ws>
+ <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <1485380545-24815-1-git-send-email-martin@kaiser.cx>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
- Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/25, martin@kaiser.cx wrote:
-> From: Martin Kaiser <martin@kaiser.cx>
+On Sat, Jan 28, 2017 at 01:44:35PM -0800, Guenter Roeck wrote:
+> On 01/28/2017 11:22 AM, Dmitry Torokhov wrote:
+> >Guenter, I know you are a coccinelle wizard, can you cook a script that
+> >can find current users of clk_enable() in probe paths? Then we can make
+> >informed decision on devm_clk_enable.
+> >
 > 
-> These functions are referencing s3c...._clk_regs[], which are marked as
-> __initdata. When compiling with CONFIG_DEBUG_SECTION_MISMATCH=y, this
-> produces warnings like
-> 
-> WARNING: vmlinux.o(.text+0x198350):
-> Section mismatch in reference from the function s3c2410_clk_sleep_init()
-> to the (unknown reference) .init.data:(unknown)
-> 
-> Mark the s3c...._clk_sleep_init() functions as __init in
-> order to fix this.
-> 
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> Questionable use:
+> 	drivers/input/keyboard/st-keyscan.c
 
-Fixes tag?
+clk_enable() without preceding clk_prepare() - buggy.
+
+> 
+> clk_enable() in probe, clk_disable() in remove:
+> 	drivers/i2c/busses/i2c-tegra.c
+
+Could be converted to use clk_prepare_enable() or clk_prepare()
+depending on i2c_dev->is_multimaster_mode in the initialisation
+path (and their devm_* equivalents.)
+
+> 	drivers/media/platform/exynos4-is/fimc-core.c
+> 	drivers/media/platform/exynos4-is/mipi-csis.c
+
+Looks like it does a sequence of:
+
+	devm_clk_get()
+	clk_prepare()
+	clk_set_rate()
+	clk_enable()
+
+which seems a little wrong - clk_set_rate() should be before
+clk_prepare() if you care about not having the clock output.  Remember
+that clk_prepare() _may_ result in the clock output being enabled.  So
+these two look buggy, and when fixed could use devm_clk_prepare_enable().
+
+> 	drivers/thermal/spear_thermal.c
+
+clk_enable() without a preceding clk_prepare().  Buggy driver.
+
+> 	drivers/usb/musb/am35x.c
+
+Ditto.
+
+> 	drivers/usb/musb/davinci.c
+
+Ditto.
+
+> Not that many. A quick browse suggests that clk_enable()/clk_disable()
+> is more commonly used to temporarily enable the clock while needed.
+
+So out of all those, there's probably only _one_ which is legit - the
+rest are all technically buggy.
+
+Given that, I'd say there's real reason _not_ to provide devm_clk_enable()
+to persuade people to use the correct interfaces in the probe path.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
