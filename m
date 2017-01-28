@@ -1,37 +1,79 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/4] clk: samsung: Remove Exynos4415 driver (SoC not
- supported anymore)
-To: Krzysztof Kozlowski <krzk@kernel.org>, linux-clk@vger.kernel.org
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>,
- Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-gpio@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <c9b51cb6-f798-d41e-afff-f779b963345c@samsung.com>
-Date: Mon, 16 Jan 2017 11:32:40 +0100
-MIME-version: 1.0
-In-reply-to: <20170114123642.15581-3-krzk@kernel.org>
-Content-type: text/plain; charset=windows-1252
-References: <20170114123642.15581-1-krzk@kernel.org>
- <CGME20170114123727epcas2p296aae6459c8575d7e5def74f18e5c64d@epcas2p2.samsung.com>
- <20170114123642.15581-3-krzk@kernel.org>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 04/10] clk: sunxi-ng: Support separately grouped PLL lock status register
+Date: Sat, 28 Jan 2017 20:22:33 +0800
+Message-Id: <20170128122239.4480-5-wens@csie.org>
+In-Reply-To: <20170128122239.4480-1-wens@csie.org>
+References: <20170128122239.4480-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/14/2017 01:36 PM, Krzysztof Kozlowski wrote:
-> Support for Exynos4415 is going away because there are no internal nor
-> external users.
-> 
-> Since commit 46dcf0ff0de3 ("ARM: dts: exynos: Remove exynos4415.dtsi"),
-> the platform cannot be instantiated so remove also the drivers.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+On the Allwinner A80 SoC, the PLL lock status indicators are grouped
+together in a separate register, as opposed to being scattered in each
+PLL's configuration register.
 
-Applied, thanks.
+Add a flag to support this.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu_common.c | 9 +++++++--
+ drivers/clk/sunxi-ng/ccu_common.h | 2 ++
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
+index 51d4bac97ab3..6986e11e91b0 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.c
++++ b/drivers/clk/sunxi-ng/ccu_common.c
+@@ -25,13 +25,18 @@ static DEFINE_SPINLOCK(ccu_lock);
+ 
+ void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock)
+ {
++	void __iomem *addr;
+ 	u32 reg;
+ 
+ 	if (!lock)
+ 		return;
+ 
+-	WARN_ON(readl_relaxed_poll_timeout(common->base + common->reg, reg,
+-					   reg & lock, 100, 70000));
++	if (common->features & CCU_FEATURE_LOCK_REG)
++		addr = common->base + common->lock_reg;
++	else
++		addr = common->base + common->reg;
++
++	WARN_ON(readl_relaxed_poll_timeout(addr, reg, reg & lock, 100, 70000));
+ }
+ 
+ int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
+diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
+index cdd69eb2e0b9..73d81dc58fc5 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.h
++++ b/drivers/clk/sunxi-ng/ccu_common.h
+@@ -22,6 +22,7 @@
+ #define CCU_FEATURE_FIXED_PREDIV	BIT(2)
+ #define CCU_FEATURE_FIXED_POSTDIV	BIT(3)
+ #define CCU_FEATURE_ALL_PREDIV		BIT(4)
++#define CCU_FEATURE_LOCK_REG		BIT(5)
+ 
+ struct device_node;
+ 
+@@ -57,6 +58,7 @@ struct device_node;
+ struct ccu_common {
+ 	void __iomem	*base;
+ 	u16		reg;
++	u16		lock_reg;
+ 	u32		prediv;
+ 
+ 	unsigned long	features;
+-- 
+2.11.0
