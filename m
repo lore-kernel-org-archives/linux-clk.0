@@ -1,103 +1,322 @@
-Return-Path: <s.nawrocki@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk/samsung: exynos542x: mark some clocks as critical
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@baylibre.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>
-Message-id: <1f51a603-b345-2c93-f4e1-9617dca387d0@samsung.com>
-Date: Mon, 09 Jan 2017 13:30:40 +0100
-MIME-version: 1.0
-In-reply-to: <1482399870-18563-1-git-send-email-m.szyprowski@samsung.com>
-Content-type: text/plain; charset=windows-1252
-References: 
- <CGME20161222094441epcas5p330bb16763e02149a275c30eb644b0e7c@epcas5p3.samsung.com>
- <1482399870-18563-1-git-send-email-m.szyprowski@samsung.com>
+Return-Path: <dmitry.torokhov@gmail.com>
+Return-Path: <dmitry.torokhov@gmail.com>
+Date: Sat, 28 Jan 2017 10:40:47 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: add more managed APIs
+Message-ID: <20170128184047.GA24957@dtor-ws>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/22/2016 10:44 AM, Marek Szyprowski wrote:
-> Some parent clocks of the Exynos542x clock blocks, which have separate
-> power domains (like DISP, MFC, MSC, GSC, FSYS and G2D) must be always
-> enabled to access any register related to power management unit or devices
-> connected to it. For the time being, until a proper solution based on
-> runtime PM is applied, mark those clocks as critical (instead of ignore
-> unused or even no flags) to prevent disabling them.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+When converting a driver to managed resources it is desirable to be able to
+manage all resources in the same fashion. This change allows managing
+clocks in the same way we manage many other resources.
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+This adds the following managed APIs:
 
-Stephen, Mike, could you apply the $subject patch directly? Due to recent
-Exynos IOMMU related changes that patch is needed as a regression fix
-for v4.10.
+- devm_clk_prepare()/devm_clk_unprepare();
+- devm_clk_enable()/devm_clk_disable();
+- devm_clk_prepare_enable()/devm_clk_disable_unprepare().
 
-Thanks,
-Sylwester
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c
-b/drivers/clk/samsung/clk-exynos5420.c
-> index 8c8b495cbf0d..cdc092a1d9ef 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -586,7 +586,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
->  	GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
->  				GATE_BUS_TOP, 24, 0, 0),
->  	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
-> -				GATE_BUS_TOP, 27, 0, 0),
-> +				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
->  };
->
->  static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
-> @@ -956,20 +956,20 @@ static void __init exynos5420_clk_sleep_init(void) {}
->  	GATE(CLK_SMMU_G2D, "smmu_g2d", "aclk333_g2d", GATE_IP_G2D, 7, 0, 0),
->
->  	GATE(0, "aclk200_fsys", "mout_user_aclk200_fsys",
-> -			GATE_BUS_FSYS0, 9, CLK_IGNORE_UNUSED, 0),
-> +			GATE_BUS_FSYS0, 9, CLK_IS_CRITICAL, 0),
->  	GATE(0, "aclk200_fsys2", "mout_user_aclk200_fsys2",
->  			GATE_BUS_FSYS0, 10, CLK_IGNORE_UNUSED, 0),
->
->  	GATE(0, "aclk333_g2d", "mout_user_aclk333_g2d",
->  			GATE_BUS_TOP, 0, CLK_IGNORE_UNUSED, 0),
->  	GATE(0, "aclk266_g2d", "mout_user_aclk266_g2d",
-> -			GATE_BUS_TOP, 1, CLK_IGNORE_UNUSED, 0),
-> +			GATE_BUS_TOP, 1, CLK_IS_CRITICAL, 0),
->  	GATE(0, "aclk300_jpeg", "mout_user_aclk300_jpeg",
->  			GATE_BUS_TOP, 4, CLK_IGNORE_UNUSED, 0),
->  	GATE(0, "aclk333_432_isp0", "mout_user_aclk333_432_isp0",
->  			GATE_BUS_TOP, 5, 0, 0),
->  	GATE(0, "aclk300_gscl", "mout_user_aclk300_gscl",
-> -			GATE_BUS_TOP, 6, CLK_IGNORE_UNUSED, 0),
-> +			GATE_BUS_TOP, 6, CLK_IS_CRITICAL, 0),
->  	GATE(0, "aclk333_432_gscl", "mout_user_aclk333_432_gscl",
->  			GATE_BUS_TOP, 7, CLK_IGNORE_UNUSED, 0),
->  	GATE(0, "aclk333_432_isp", "mout_user_aclk333_432_isp",
-> @@ -983,20 +983,20 @@ static void __init exynos5420_clk_sleep_init(void) {}
->  	GATE(0, "aclk166", "mout_user_aclk166",
->  			GATE_BUS_TOP, 14, CLK_IGNORE_UNUSED, 0),
->  	GATE(CLK_ACLK333, "aclk333", "mout_user_aclk333",
-> -			GATE_BUS_TOP, 15, CLK_IGNORE_UNUSED, 0),
-> +			GATE_BUS_TOP, 15, CLK_IS_CRITICAL, 0),
->  	GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
->  			GATE_BUS_TOP, 16, 0, 0),
->  	GATE(0, "aclk400_mscl", "mout_user_aclk400_mscl",
->  			GATE_BUS_TOP, 17, 0, 0),
->  	GATE(0, "aclk200_disp1", "mout_user_aclk200_disp1",
-> -			GATE_BUS_TOP, 18, 0, 0),
-> +			GATE_BUS_TOP, 18, CLK_IS_CRITICAL, 0),
->  	GATE(CLK_SCLK_MPHY_IXTAL24, "sclk_mphy_ixtal24", "mphy_refclk_ixtal24",
->  			GATE_BUS_TOP, 28, 0, 0),
->  	GATE(CLK_SCLK_HSIC_12M, "sclk_hsic_12m", "ff_hsic_12m",
->  			GATE_BUS_TOP, 29, 0, 0),
->
->  	GATE(0, "aclk300_disp1", "mout_user_aclk300_disp1",
-> -			SRC_MASK_TOP2, 24, 0, 0),
-> +			SRC_MASK_TOP2, 24, CLK_IS_CRITICAL, 0),
->
->  	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
->  			SRC_MASK_TOP7, 20, 0, 0),
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+
+This is a resend from about 5 years ago ;) At that time I also tried
+uninlining clk_prepare_enable() and clk_disable_unprepare(), but got
+lost in the maze of COMMON_CLK/HAVE_CLK/HAVE_CLK_PREPARE. This time
+around I left these 2 fucntions alone (inline) and simply adding devm*
+equivalents.
+
+Thanks!
+
+ drivers/clk/clk-devres.c |  99 +++++++++++++++++++++++++++++++---------------
+ include/linux/clk.h      | 101 +++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 168 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 3a218c3a06ae..ef59eb4f3bc8 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -9,30 +9,20 @@
+ #include <linux/export.h>
+ #include <linux/gfp.h>
+ 
+-static void devm_clk_release(struct device *dev, void *res)
++static int devm_clk_create_devres(struct device *dev, struct clk *clk,
++				  void (*release)(struct device *, void *))
+ {
+-	clk_put(*(struct clk **)res);
+-}
++	struct clk **ptr;
+ 
+-struct clk *devm_clk_get(struct device *dev, const char *id)
+-{
+-	struct clk **ptr, *clk;
+-
+-	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
++	ptr = devres_alloc(release, sizeof(*ptr), GFP_KERNEL);
+ 	if (!ptr)
+-		return ERR_PTR(-ENOMEM);
++		return -ENOMEM;
+ 
+-	clk = clk_get(dev, id);
+-	if (!IS_ERR(clk)) {
+-		*ptr = clk;
+-		devres_add(dev, ptr);
+-	} else {
+-		devres_free(ptr);
+-	}
++	*ptr = clk;
++	devres_add(dev, ptr);
+ 
+-	return clk;
++	return 0;
+ }
+-EXPORT_SYMBOL(devm_clk_get);
+ 
+ static int devm_clk_match(struct device *dev, void *res, void *data)
+ {
+@@ -44,31 +34,76 @@ static int devm_clk_match(struct device *dev, void *res, void *data)
+ 	return *c == data;
+ }
+ 
+-void devm_clk_put(struct device *dev, struct clk *clk)
++#define DEFINE_DEVM_CLK_DESTROY_OP(destroy_op)				\
++static void devm_##destroy_op##_release(struct device *dev, void *res)	\
++{									\
++	destroy_op(*(struct clk **)res);				\
++}									\
++									\
++void devm_##destroy_op(struct device *dev, struct clk *clk)		\
++{									\
++	WARN_ON(devres_release(dev, devm_##destroy_op##_release,	\
++				devm_clk_match, clk));			\
++}									\
++EXPORT_SYMBOL(devm_##destroy_op)
++
++#define DEFINE_DEVM_CLK_OP(create_op, destroy_op)			\
++DEFINE_DEVM_CLK_DESTROY_OP(destroy_op);					\
++int devm_##create_op(struct device *dev, struct clk *clk)		\
++{									\
++	int error;							\
++									\
++	error = create_op(clk);						\
++	if (error)							\
++		return error;						\
++									\
++	error = devm_clk_create_devres(dev, clk,			\
++					devm_##destroy_op##_release);	\
++	if (error) {							\
++		destroy_op(clk);					\
++		return error;						\
++	}								\
++									\
++	return 0;							\
++}									\
++EXPORT_SYMBOL(devm_##create_op)
++
++DEFINE_DEVM_CLK_DESTROY_OP(clk_put);
++DEFINE_DEVM_CLK_OP(clk_prepare, clk_unprepare);
++DEFINE_DEVM_CLK_OP(clk_enable, clk_disable);
++DEFINE_DEVM_CLK_OP(clk_prepare_enable, clk_disable_unprepare);
++
++struct clk *devm_clk_get(struct device *dev, const char *id)
+ {
+-	int ret;
++	struct clk *clk;
++	int error;
+ 
+-	ret = devres_release(dev, devm_clk_release, devm_clk_match, clk);
++	clk = clk_get(dev, id);
++	if (!IS_ERR(clk)) {
++		error = devm_clk_create_devres(dev, clk, devm_clk_put_release);
++		if (error) {
++			clk_put(clk);
++			return ERR_PTR(error);
++		}
++	}
+ 
+-	WARN_ON(ret);
++	return clk;
+ }
+-EXPORT_SYMBOL(devm_clk_put);
++EXPORT_SYMBOL(devm_clk_get);
+ 
+ struct clk *devm_get_clk_from_child(struct device *dev,
+ 				    struct device_node *np, const char *con_id)
+ {
+-	struct clk **ptr, *clk;
+-
+-	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
+-	if (!ptr)
+-		return ERR_PTR(-ENOMEM);
++	struct clk *clk;
++	int error;
+ 
+ 	clk = of_clk_get_by_name(np, con_id);
+ 	if (!IS_ERR(clk)) {
+-		*ptr = clk;
+-		devres_add(dev, ptr);
+-	} else {
+-		devres_free(ptr);
++		error = devm_clk_create_devres(dev, clk, devm_clk_put_release);
++		if (error) {
++			clk_put(clk);
++			return ERR_PTR(error);
++		}
+ 	}
+ 
+ 	return clk;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index e9d36b3e49de..03c21c5fee4c 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -267,6 +267,29 @@ struct clk *devm_get_clk_from_child(struct device *dev,
+ 				    struct device_node *np, const char *con_id);
+ 
+ /**
++ * devm_clk_prepare - prepare clock source as a managed resource
++ * @dev: device owning the resource
++ * @clk: clock source
++ *
++ * This prepares the clock source for use.
++ *
++ * Must not be called from within atomic context.
++ */
++int devm_clk_prepare(struct device *dev, struct clk *clk);
++
++/**
++ * devm_clk_unprepare - undo preparation of a managed clock source
++ * @dev: device used to prepare the clock
++ * @clk: clock source
++ *
++ * This undoes preparation of a clock, previously prepared with a call
++ * to devm_clk_pepare().
++ *
++ * Must not be called from within atomic context.
++ */
++void devm_clk_unprepare(struct device *dev, struct clk *clk);
++
++/**
+  * clk_enable - inform the system when the clock source should be running.
+  * @clk: clock source
+  *
+@@ -279,6 +302,19 @@ struct clk *devm_get_clk_from_child(struct device *dev,
+ int clk_enable(struct clk *clk);
+ 
+ /**
++ * devm_clk_enable - enable clock source as a managed resource
++ * @dev: device owning the resource
++ * @clk: clock source
++ *
++ * If the clock can not be enabled/disabled, this should return success.
++ *
++ * May be not called from atomic contexts.
++ *
++ * Returns success (0) or negative errno.
++ */
++int devm_clk_enable(struct device *dev, struct clk *clk);
++
++/**
+  * clk_disable - inform the system when the clock source is no longer required.
+  * @clk: clock source
+  *
+@@ -295,6 +331,40 @@ int clk_enable(struct clk *clk);
+ void clk_disable(struct clk *clk);
+ 
+ /**
++ * devm_clk_disable - disable managed clock source resource
++ * @dev: device owning the clock source
++ * @clk: clock source
++ *
++ * Inform the system that a clock source is no longer required by
++ * a driver and may be shut down.
++ *
++ * Must not be called from atomic contexts.
++ */
++void devm_clk_disable(struct device *dev, struct clk *clk);
++
++/**
++ * devm_clk_prepare_enable - prepare and enable a managed clock source
++ * @dev: device owning the clock source
++ * @clk: clock source
++ *
++ * This prepares the clock source for use and enables it.
++ *
++ * Must not be called from within atomic context.
++ */
++int devm_clk_prepare_enable(struct device *dev, struct clk *clk);
++
++/**
++ * devm_clk_disable_unprepare - disable and undo preparation of a managed clock source
++ * @dev: device used to prepare and enable the clock
++ * @clk: clock source
++ *
++ * This disables and undoes a previously prepared clock.
++ *
++ * Must not be called from within atomic context.
++ */
++void devm_clk_disable_unprepare(struct device *dev, struct clk *clk);
++
++/**
+  * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
+  *		  This is only valid once the clock source has been enabled.
+  * @clk: clock source
+@@ -460,6 +530,17 @@ static inline void clk_put(struct clk *clk) {}
+ 
+ static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
+ 
++static inline int devm_clk_prepare(struct device *dev, struct clk *clk)
++{
++	might_sleep();
++	return 0;
++}
++
++static inline void devm_clk_unprepare(struct device *dev, struct clk *clk)
++{
++	might_sleep();
++}
++
+ static inline int clk_enable(struct clk *clk)
+ {
+ 	return 0;
+@@ -467,6 +548,26 @@ static inline int clk_enable(struct clk *clk)
+ 
+ static inline void clk_disable(struct clk *clk) {}
+ 
++static inline int devm_clk_enable(struct device *dev, struct clk *clk)
++{
++	might_sleep();
++	return 0;
++}
++
++static inline void devm_clk_disable(struct device *dev, struct clk *clk) {}
++
++static inline int devm_clk_prepare_enable(struct device *dev, struct clk *clk)
++{
++	might_sleep();
++	return 0;
++}
++
++static inline void devm_clk_disable_unprepare(struct device *dev,
++					      struct clk *clk)
++{
++	might_sleep();
++}
++
+ static inline unsigned long clk_get_rate(struct clk *clk)
+ {
+ 	return 0;
+-- 
+2.11.0.483.g087da7b7c-goog
+
+
+-- 
+Dmitry
