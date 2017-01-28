@@ -1,82 +1,213 @@
-Return-Path: <broonie@sirena.org.uk>
-From: Mark Brown <broonie@kernel.org>
-To: Mylène Josserand <mylene.josserand@free-electrons.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, maxime.ripard@free-electrons.com, wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com, robh+dt@kernel.org, thomas.petazzoni@free-electrons.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, alexandre.belloni@free-electrons.com, mylene.josserand@free-electrons.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-In-Reply-To: <20170117140230.23142-2-mylene.josserand@free-electrons.com>
-Message-Id: <E1cTYkY-0008Ku-Kd@debutante>
-Date: Tue, 17 Jan 2017 18:44:54 +0000
-Subject: Applied "ASoC: sun4i-i2s: Increase DMA max burst to 8" to the asoc tree
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 00/10] clk: sunxi-ng: Add support for A80 CCUs
+Date: Sat, 28 Jan 2017 20:22:29 +0800
+Message-Id: <20170128122239.4480-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch
+Hi everyone,
 
-   ASoC: sun4i-i2s: Increase DMA max burst to 8
+This is v2 of my A80 CCU clk patches. Changes since v1:
 
-has been applied to the asoc tree at
+  - Use pre-divider adjusted parent rate for rounding.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+  - Use else statement for the case where the PLL lock status bit is
+    in same register.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+  - Add a more detailed description of the main CCU and DE CCU to the
+    commit messages.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+  - Fix DE CCU compatible string in DT binding example.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+  - Fix incorrectly squashed patch hunk.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+  - Drop leading zeros from device tree node name in DT examples.
 
-Thanks,
-Mark
+  - Expanded commit message for "ARM: dts: sun8i-a23-q8-tablet: Drop
+    pinmux setting for codec PA gpio".
 
->From ebad64d19377957976963f99ce1fcf2f09796357 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?=
- <mylene.josserand@free-electrons.com>
-Date: Tue, 17 Jan 2017 15:02:21 +0100
-Subject: [PATCH] ASoC: sun4i-i2s: Increase DMA max burst to 8
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+This series adds new "sunxi-ng" style drivers for the CCUs found in the
+Allwinner A80 SoC. The A80 contains 1 main clock control unit, and some
+subsystem specific clock control units at separate addresses. These
+include the USB, display engine, and MMC.
 
-As done previously for sun4i-codec, the DMA maxburst of 4
-is not supported by every SoCs so the DMA controller engine
-returns "unsupported value".
+  - The MMC clocks can be supported by the old clock drivers,
+    hence here we do not add a new driver for it.
 
-As a maxburst of 8 is supported by all variants, this patch
-increases it to 8.
+  - The old USB clock driver is intertwined with other SoCs,
+    requires old style bindings with clock-output-names and
+    CLK_OF_DECLARE for its parents. It is easier to switch
+    to a new binding and driver.
 
-For more details, see commit from Chen-Yu Tsai:
-commit 730e2dd0cbc7 ("ASoC: sun4i-codec: Increase DMA max burst to 8")
+  - The display engine (DE) CCU was not supported in the past.
 
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sunxi/sun4i-i2s.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The A80 CCU also has some quirks about its design. It has
 
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index f24d19526603..4237323ef594 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -694,10 +694,10 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
- 	}
- 	
- 	i2s->playback_dma_data.addr = res->start + SUN4I_I2S_FIFO_TX_REG;
--	i2s->playback_dma_data.maxburst = 4;
-+	i2s->playback_dma_data.maxburst = 8;
- 
- 	i2s->capture_dma_data.addr = res->start + SUN4I_I2S_FIFO_RX_REG;
--	i2s->capture_dma_data.maxburst = 4;
-+	i2s->capture_dma_data.maxburst = 8;
- 
- 	pm_runtime_enable(&pdev->dev);
- 	if (!pm_runtime_enabled(&pdev->dev)) {
+  - Separate registers for PLL lock status
+
+  - P1, P2 dividers, which are power-of-2 and only 1 bit wide
+
+The first 3 patches fix and extend the behavior of sunxi-ng's
+mux clock type, based on the behavior of the clk subsystem's
+basic mux clock.
+
+The fourth patch adds support for checking PLL lock status
+bits in separate registers, as opposed to within the PLL's
+config register.
+
+Patches 5 through 7 add drivers for the CCU blocks.
+
+Patch 8 and 9 do some cleanup of the sunxi/allwinner dts files
+prior to switching sun9i dts to the new sunxi-ng clock bindings.
+These are independent of the clk stuff, but touch the same lines
+for sun9i. Including them should make it easier to apply and test
+patches.
+
+Patch 10 has sun9i switch over to the new clock bindings.
+
+Please take a look and let me know what you think.
+
+I also have a series adding support for the first display pipeline
+of the A80 with RGB LCD panel output which I will send out later
+on.
+
+
+Regards
+ChenYu
+
+Chen-Yu Tsai (10):
+  clk: sunxi-ng: mux: Fix determine_rate for mux clocks with
+    pre-dividers
+  clk: sunxi-ng: mux: honor CLK_SET_RATE_NO_REPARENT flag
+  clk: sunxi-ng: mux: Get closest parent rate possible with
+    CLK_SET_RATE_PARENT
+  clk: sunxi-ng: Support separately grouped PLL lock status register
+  clk: sunxi-ng: Add A80 CCU
+  clk: sunxi-ng: Add A80 USB CCU
+  clk: sunxi-ng: Add A80 Display Engine CCU
+  ARM: dts: sun8i-a23-q8-tablet: Drop pinmux setting for codec PA gpio
+  ARM: dts: sunxi: Remove no longer used pinctrl/sun4i-a10.h header
+  ARM: dts: sun9i: Switch to new clock bindings
+
+ .../devicetree/bindings/clock/sun9i-de.txt         |   28 +
+ .../devicetree/bindings/clock/sun9i-usb.txt        |   24 +
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |    1 +
+ arch/arm/boot/dts/sun4i-a10-a1000.dts              |    1 -
+ arch/arm/boot/dts/sun4i-a10-cubieboard.dts         |    1 -
+ arch/arm/boot/dts/sun4i-a10-dserve-dsrv9703c.dts   |    1 -
+ arch/arm/boot/dts/sun4i-a10-hackberry.dts          |    1 -
+ arch/arm/boot/dts/sun4i-a10-inet1.dts              |    1 -
+ arch/arm/boot/dts/sun4i-a10-inet9f-rev03.dts       |    1 -
+ arch/arm/boot/dts/sun4i-a10-jesurun-q5.dts         |    1 -
+ arch/arm/boot/dts/sun4i-a10-marsboard.dts          |    1 -
+ arch/arm/boot/dts/sun4i-a10-mini-xplus.dts         |    1 -
+ arch/arm/boot/dts/sun4i-a10-mk802.dts              |    1 -
+ arch/arm/boot/dts/sun4i-a10-olinuxino-lime.dts     |    1 -
+ arch/arm/boot/dts/sun4i-a10-pcduino.dts            |    1 -
+ arch/arm/boot/dts/sun4i-a10-pov-protab2-ips9.dts   |    1 -
+ arch/arm/boot/dts/sun4i-a10.dtsi                   |    1 -
+ arch/arm/boot/dts/sun5i-a10s-auxtek-t003.dts       |    1 -
+ arch/arm/boot/dts/sun5i-a10s-auxtek-t004.dts       |    1 -
+ arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts   |    1 -
+ arch/arm/boot/dts/sun5i-a10s-r7-tv-dongle.dts      |    1 -
+ arch/arm/boot/dts/sun5i-a10s-wobo-i5.dts           |    1 -
+ arch/arm/boot/dts/sun5i-a10s.dtsi                  |    1 -
+ .../boot/dts/sun5i-a13-empire-electronix-d709.dts  |    1 -
+ arch/arm/boot/dts/sun5i-a13-hsg-h702.dts           |    1 -
+ arch/arm/boot/dts/sun5i-a13-olinuxino-micro.dts    |    1 -
+ arch/arm/boot/dts/sun5i-a13-olinuxino.dts          |    1 -
+ arch/arm/boot/dts/sun5i-a13.dtsi                   |    1 -
+ arch/arm/boot/dts/sun5i-gr8.dtsi                   |    1 -
+ arch/arm/boot/dts/sun5i.dtsi                       |    1 -
+ arch/arm/boot/dts/sun6i-a31-app4-evb1.dts          |    1 -
+ arch/arm/boot/dts/sun6i-a31-colombus.dts           |    1 -
+ arch/arm/boot/dts/sun6i-a31-hummingbird.dts        |    1 -
+ arch/arm/boot/dts/sun6i-a31-i7.dts                 |    1 -
+ arch/arm/boot/dts/sun6i-a31-m9.dts                 |    1 -
+ arch/arm/boot/dts/sun6i-a31-mele-a1000g-quad.dts   |    1 -
+ arch/arm/boot/dts/sun6i-a31.dtsi                   |    1 -
+ arch/arm/boot/dts/sun6i-a31s-cs908.dts             |    2 -
+ arch/arm/boot/dts/sun6i-a31s-primo81.dts           |    1 -
+ arch/arm/boot/dts/sun6i-a31s-sina31s-core.dtsi     |    1 -
+ .../dts/sun6i-a31s-yones-toptech-bs1078-v2.dts     |    1 -
+ .../boot/dts/sun6i-reference-design-tablet.dtsi    |    1 -
+ arch/arm/boot/dts/sun7i-a20-bananapi.dts           |    1 -
+ arch/arm/boot/dts/sun7i-a20-cubieboard2.dts        |    1 -
+ arch/arm/boot/dts/sun7i-a20-cubietruck.dts         |    1 -
+ arch/arm/boot/dts/sun7i-a20-hummingbird.dts        |    1 -
+ arch/arm/boot/dts/sun7i-a20-i12-tvbox.dts          |    1 -
+ arch/arm/boot/dts/sun7i-a20-icnova-swac.dts        |    1 -
+ arch/arm/boot/dts/sun7i-a20-lamobo-r1.dts          |    1 -
+ arch/arm/boot/dts/sun7i-a20-m3.dts                 |    1 -
+ arch/arm/boot/dts/sun7i-a20-mk808c.dts             |    1 -
+ arch/arm/boot/dts/sun7i-a20-olimex-som-evb.dts     |    1 -
+ arch/arm/boot/dts/sun7i-a20-olinuxino-lime.dts     |    1 -
+ arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts    |    1 -
+ arch/arm/boot/dts/sun7i-a20-olinuxino-micro.dts    |    1 -
+ arch/arm/boot/dts/sun7i-a20-orangepi-mini.dts      |    1 -
+ arch/arm/boot/dts/sun7i-a20-orangepi.dts           |    1 -
+ arch/arm/boot/dts/sun7i-a20-pcduino3.dts           |    1 -
+ arch/arm/boot/dts/sun7i-a20.dtsi                   |    1 -
+ arch/arm/boot/dts/sun8i-a23-a33.dtsi               |    1 -
+ arch/arm/boot/dts/sun8i-a23-evb.dts                |    1 -
+ arch/arm/boot/dts/sun8i-a23-q8-tablet.dts          |   10 -
+ arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts     |    1 -
+ arch/arm/boot/dts/sun8i-a83t.dtsi                  |    2 -
+ arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    |    1 -
+ arch/arm/boot/dts/sun8i-h3-nanopi.dtsi             |    1 -
+ arch/arm/boot/dts/sun8i-h3-orangepi-2.dts          |    1 -
+ arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       |    1 -
+ arch/arm/boot/dts/sun8i-h3-orangepi-one.dts        |    1 -
+ arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         |    1 -
+ arch/arm/boot/dts/sun8i-h3.dtsi                    |    1 -
+ arch/arm/boot/dts/sun9i-a80-cubieboard4.dts        |    1 -
+ arch/arm/boot/dts/sun9i-a80-optimus.dts            |    1 -
+ arch/arm/boot/dts/sun9i-a80.dtsi                   |  404 ++-----
+ arch/arm/boot/dts/sunxi-common-regulators.dtsi     |    1 -
+ .../boot/dts/sunxi-reference-design-tablet.dtsi    |    1 -
+ drivers/clk/sunxi-ng/Kconfig                       |   10 +
+ drivers/clk/sunxi-ng/Makefile                      |    3 +
+ drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c            |  283 +++++
+ drivers/clk/sunxi-ng/ccu-sun9i-a80-de.h            |   33 +
+ drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c           |  144 +++
+ drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.h           |   25 +
+ drivers/clk/sunxi-ng/ccu-sun9i-a80.c               | 1223 ++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun9i-a80.h               |   57 +
+ drivers/clk/sunxi-ng/ccu_common.c                  |    9 +-
+ drivers/clk/sunxi-ng/ccu_common.h                  |    2 +
+ drivers/clk/sunxi-ng/ccu_mux.c                     |   35 +-
+ include/dt-bindings/clock/sun9i-a80-ccu.h          |  162 +++
+ .../dt-bindings/clock/sun9i-a80-de.h               |   73 +-
+ .../dt-bindings/clock/sun9i-a80-usb.h              |   44 +-
+ .../dt-bindings/reset/sun9i-a80-ccu.h              |   91 +-
+ .../dt-bindings/reset/sun9i-a80-de.h               |   45 +-
+ .../dt-bindings/reset/sun9i-a80-usb.h              |   41 +-
+ 93 files changed, 2271 insertions(+), 549 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/sun9i-de.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/sun9i-usb.txt
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-de.h
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.h
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun9i-a80.h
+ create mode 100644 include/dt-bindings/clock/sun9i-a80-ccu.h
+ copy arch/arm/boot/dts/sunxi-reference-design-tablet.dtsi => include/dt-bindings/clock/sun9i-a80-de.h (67%)
+ copy arch/arm/boot/dts/sun8i-a23-q8-tablet.dts => include/dt-bindings/clock/sun9i-a80-usb.h (73%)
+ copy arch/arm/boot/dts/sunxi-reference-design-tablet.dtsi => include/dt-bindings/reset/sun9i-a80-ccu.h (56%)
+ copy arch/arm/boot/dts/sun8i-a23-q8-tablet.dts => include/dt-bindings/reset/sun9i-a80-de.h (73%)
+ copy arch/arm/boot/dts/sun8i-a23-q8-tablet.dts => include/dt-bindings/reset/sun9i-a80-usb.h (73%)
+
 -- 
 2.11.0
