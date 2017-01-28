@@ -1,45 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 20 Jan 2017 15:00:00 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/2] clk: renesas: Use CLK_IS_CRITICAL to handle critical
- clocks
-Message-ID: <20170120230000.GC8009@codeaurora.org>
-References: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 02/10] clk: sunxi-ng: mux: honor CLK_SET_RATE_NO_REPARENT flag
+Date: Sat, 28 Jan 2017 20:22:31 +0800
+Message-Id: <20170128122239.4480-3-wens@csie.org>
+In-Reply-To: <20170128122239.4480-1-wens@csie.org>
+References: <20170128122239.4480-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/17, Geert Uytterhoeven wrote:
-> 	Hi Mike, Stephen,
-> 
-> This patch series adds support for the CLK_IS_CRITICAL flag to drivers
-> for module clocks on Renesas ARM SoCs.  For now, this is used to prevent
-> disabling of the ARM GIC module clock, which would lead to a system
-> lock-up when accessing the GIC's registers.
-> 
->   1. The first patch migrates the Renesas CPG/MSSR driver from the
->      never merged CLK_ENABLE_HAND_OFF flag to the CLK_IS_CRITICAL flag.
->      Note that as the driver already handled critical clocks (i.e. it
->      ignored them :-), this is not a prerequisite for linking the GIC to
->      its module clock in DT.
-> 
->   2. The second patch makes sure the CLK_IS_CRITICAL flag is set for the
->      INTC-SYS clock on SoCs not (yet) using the Renesas CPG/MSSR driver.
->      Note that this is a hard dependency for describing the INTC-SYS
->      clock in DT on R-Mobile APE6 and R-Car Gen2.
-> 
-> I plan to queue these patches in my clk-renesas-for-v4.11 branch, if
-> you agree.
-> 
+This patch adds support for the CLK_SET_RATE_NO_REPARENT flag to the
+mux determine_rate helper, based on examples from clk-composite and
+clk-mux.
 
-Would the runtime PM patches for ccf make things any better here?
-I still plan to support CLK_ENABLE_HAND_OFF somehow, but it's not
-at the top of my priority list right now.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu_mux.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+index eb66adb28807..d0d69c7eb516 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.c
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -70,6 +70,21 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+ 	struct clk_hw *best_parent, *hw = &common->hw;
+ 	unsigned int i;
+ 
++	if (clk_hw_get_flags(hw) & CLK_SET_RATE_NO_REPARENT) {
++		unsigned long adj_parent_rate;
++
++		best_parent = clk_hw_get_parent(hw);
++		best_parent_rate = clk_hw_get_rate(best_parent);
++
++		adj_parent_rate = best_parent_rate;
++		ccu_mux_helper_adjust_parent_for_prediv(common, cm, -1,
++							&adj_parent_rate);
++
++		best_rate = round(cm, adj_parent_rate, req->rate, data);
++
++		goto out;
++	}
++
+ 	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+ 		unsigned long tmp_rate, parent_rate, adj_parent_rate;
+ 		struct clk_hw *parent;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
