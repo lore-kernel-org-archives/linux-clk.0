@@ -1,80 +1,54 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 19 Jan 2017 13:28:13 -0600
-From: Rob Herring <robh@kernel.org>
-To: Tony Lindgren <tony@atomide.com>
+Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
+Date: Sat, 28 Jan 2017 19:03:10 +0000
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org, Paul Walmsley <paul@pwsan.com>
-Subject: Re: [PATCHv2] Documentation: dt-bindings: Add binding documentation
- for TI clkctrl clocks
-Message-ID: <20170119192813.xdt5jahffcdzmucu@rob-hp-laptop>
-References: <20170117225302.10844-1-tony@atomide.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: add more managed APIs
+Message-ID: <20170128190309.GN27312@n2100.armlinux.org.uk>
+References: <20170128184047.GA24957@dtor-ws>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170117225302.10844-1-tony@atomide.com>
+In-Reply-To: <20170128184047.GA24957@dtor-ws>
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jan 17, 2017 at 02:53:02PM -0800, Tony Lindgren wrote:
-> Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
-> clock controller instance for each interconnect target module. The clkctrl
-> controls functional and interface clocks for the module.
+On Sat, Jan 28, 2017 at 10:40:47AM -0800, Dmitry Torokhov wrote:
+> When converting a driver to managed resources it is desirable to be able to
+> manage all resources in the same fashion. This change allows managing
+> clocks in the same way we manage many other resources.
 > 
-> The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
-> With this binding and a related clock device driver we can start moving the
-> clkctrl clock handling to live in drivers/clk/ti.
+> This adds the following managed APIs:
 > 
-> Note that this binding allows keeping the clockdomain related parts out of
-> drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
-> a separate driver in drivers/soc/ti and genpd. If the clockdomain driver
-> needs to know it's clocks, we can just set the the clkctrl device
-> instances to be children of the related clockdomain device.
-> 
-> Each clkctrl clock can have multiple optional gate clocks, and multiple
-> optional mux clocks. To represent this in device tree, it seems that
-> it is best done using four clock cells #clock-cells = <4> property.
-> 
-> The reasons for using #clock-cells = <4> are:
-> 
-> 1. We need to specify the clkctrl offset from the instance base. Otherwise
->    we end up with a large number of device tree nodes that need to be
->    patched when new clocks are discovered in a clkctrl clock with minor
->    hardware revision changes for example
-> 
-> 2. On omap5 CM_L3INIT_USB_HOST_HS_CLKCTRL has ten OPTFCLKEN bits. So we
->    need to use a separate cell for optional gate clocks to avoid address
->    space conflicts
-> 
-> 3. Some clkctrl instances can also also optional mux clocks. To address
->    them properly we need also a separate cell for the optional mux
->    clock index
-> 
-> 4. The modulemode clock needs a flag passed to it for hardware or
->    software controlled mode
-> 
-> There is probably no need to list input clocks for each clkctrl clock
-> instance in the binding. If we want to add them, the standard clocks
-> binding can be used for that.
-> 
-> For hardware reference, see omap4430 TRM "Table 3-1312. L4PER_CM2 Registers
-> Mapping Summary" for example. It shows one instance of a clkctrl clock
-> controller with multiple clkctrl registers.
-> 
-> Cc: Paul Walmsley <paul@pwsan.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
-> 
-> Changes from v1:
-> 
-> - Use #clock-cells to avoid address space conflicts
-> 
-> - Consider also optional mux clocks as pointed out by Tero
-> 
-> ---
->  .../devicetree/bindings/clock/ti-clkctrl.txt       | 57 ++++++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+> - devm_clk_prepare()/devm_clk_unprepare();
+> - devm_clk_enable()/devm_clk_disable();
+> - devm_clk_prepare_enable()/devm_clk_disable_unprepare().
 
-Acked-by: Rob Herring <robh@kernel.org>
+Does it make any sense what so ever to have devm_clk_enable() and
+devm_clk_disable()?
+
+Take a moment to think about where you use all of these.  The devm_*
+functions are there to be used in probe functions so that cleanup
+paths can be streamlined and less erroneous.  They aren't for general
+use throughout the driver.
+
+Given that, there are two operations that you may wish to do in the
+probe path:
+
+1. prepare a clock (avoiding the enable because you want to perform
+   the enable elsewhere in the driver.)
+2. prepare and enable a clock
+
+So, does having devm_clk_enable() really make sense?  I don't think
+it does, and I suspect they'll get very little if any use.  So, I
+think best not add them until someone comes up with a good and
+wide-spread use case.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
