@@ -1,46 +1,66 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/8] clk: renesas: cpg-mssr: Document suitability for RZ/G1
-Date: Fri, 20 Jan 2017 15:08:20 +0100
-Message-Id: <1484921306-9967-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
-References: <1484921306-9967-1-git-send-email-geert+renesas@glider.be>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 01/10] clk: sunxi-ng: mux: Fix determine_rate for mux clocks with pre-dividers
+Date: Sat, 28 Jan 2017 20:22:30 +0800
+Message-Id: <20170128122239.4480-2-wens@csie.org>
+In-Reply-To: <20170128122239.4480-1-wens@csie.org>
+References: <20170128122239.4480-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Renesas CPG/MSSR driver is already in active use for RZ/G1 since
-commits c0b2d75d2a4bf6a3 ("clk: renesas: cpg-mssr: Add R8A7743 support")
-and 9127d54bb8947159 ("clk: renesas: cpg-mssr: Add R8A7745 support").
+The determine_rate helper used ccu_mux_helper_adjust_parent_for_prediv()
+to adjust the parent_rate to account for pre-dividers, but then passed
+the pristine parent clock rate from clk_hw_get_rate() to the round()
+callback, thereby ignoring the pre-divider adjustment. In addition,
+it was saving the adjusted parent rate back into struct
+clk_rate_request.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch fixes this by saving the pristine parent clock rate, and
+adding a copy that is adjusted and passed to the round() callback.
+The pristine copy, if it is the best solution, would be saved back
+to struct clk_rate_request.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu_mux.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 6947482d48a55094..eb8534e5ebf3007d 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -43,7 +43,7 @@
-  * Module Standby and Software Reset register offets.
-  *
-  * If the registers exist, these are valid for SH-Mobile, R-Mobile,
-- * R-Car Gen 2, and R-Car Gen 3.
-+ * R-Car Gen2, R-Car Gen3, and RZ/G1.
-  * These are NOT valid for R-Car Gen1 and RZ/A1!
-  */
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+index 858a48621631..eb66adb28807 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.c
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -71,7 +71,7 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+ 	unsigned int i;
  
+ 	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+-		unsigned long tmp_rate, parent_rate;
++		unsigned long tmp_rate, parent_rate, adj_parent_rate;
+ 		struct clk_hw *parent;
+ 
+ 		parent = clk_hw_get_parent_by_index(hw, i);
+@@ -79,10 +79,11 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+ 			continue;
+ 
+ 		parent_rate = clk_hw_get_rate(parent);
++		adj_parent_rate = parent_rate;
+ 		ccu_mux_helper_adjust_parent_for_prediv(common, cm, i,
+-							&parent_rate);
++							&adj_parent_rate);
+ 
+-		tmp_rate = round(cm, clk_hw_get_rate(parent), req->rate, data);
++		tmp_rate = round(cm, adj_parent_rate, req->rate, data);
+ 		if (tmp_rate == req->rate) {
+ 			best_parent = parent;
+ 			best_parent_rate = parent_rate;
 -- 
-1.9.1
+2.11.0
