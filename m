@@ -1,44 +1,103 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20170114123642.15581-4-krzk@kernel.org>
-References: <20170114123642.15581-1-krzk@kernel.org> <20170114123642.15581-4-krzk@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 18 Jan 2017 11:37:04 +0100
-Message-ID: <CACRpkdZh+kPUwf56XskzCUPh89h5a_2_-=EFw=NFKYY_zD4jfw@mail.gmail.com>
-Subject: Re: [PATCH 3/4] pinctrl: samsung: Remove support for Exynos4415 (SoC
- not supported anymore)
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/2] clk: uniphier: add NAND clock for all UniPhier SoCs
+Date: Sat, 28 Jan 2017 22:27:00 +0900
+Message-Id: <1485610021-9905-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jan 14, 2017 at 1:36 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Add clock line for the Denali NAND controller.
 
-> Support for Exynos4415 is going away because there are no internal nor
-> external users.
->
-> Since commit 46dcf0ff0de3 ("ARM: dts: exynos: Remove exynos4415.dtsi"),
-> the platform cannot be instantiated so remove also the drivers.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-It can certainly be instantiated (from old DTBs...) but has
-no DTS upstream. But I get what you mean.
+ drivers/clk/uniphier/clk-uniphier-sys.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Patch applied, if someone is unhappy they can always start
-sending reverts.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
+index d049316..b1aaf77 100644
+--- a/drivers/clk/uniphier/clk-uniphier-sys.c
++++ b/drivers/clk/uniphier/clk-uniphier-sys.c
+@@ -29,6 +29,12 @@
+ 	UNIPHIER_CLK_FACTOR("sd-200m", -1, "spll", 1, 10),		\
+ 	UNIPHIER_CLK_FACTOR("sd-133m", -1, "spll", 1, 15)
+ 
++#define UNIPHIER_SLD3_SYS_CLK_NAND(idx)					\
++	UNIPHIER_CLK_GATE("nand", (idx), NULL, 0x2104, 2)
++
++#define UNIPHIER_LD11_SYS_CLK_NAND(idx)					\
++	UNIPHIER_CLK_GATE("nand", (idx), NULL, 0x210c, 0)
++
+ #define UNIPHIER_SLD3_SYS_CLK_STDMAC(idx)				\
+ 	UNIPHIER_CLK_GATE("stdmac", (idx), NULL, 0x2104, 10)
+ 
+@@ -48,6 +54,7 @@ const struct uniphier_clk_data uniphier_sld3_sys_clk_data[] = {
+ 	UNIPHIER_CLK_FACTOR("vpll27a", -1, "ref", 5625, 512),	/* 270 MHz */
+ 	UNIPHIER_CLK_FACTOR("uart", 0, "a2pll", 1, 16),
+ 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 16),
++	UNIPHIER_SLD3_SYS_CLK_NAND(2),
+ 	UNIPHIER_SLD3_SYS_CLK_SD,
+ 	UNIPHIER_CLK_FACTOR("usb2", -1, "upll", 1, 12),
+ 	UNIPHIER_SLD3_SYS_CLK_STDMAC(8),
+@@ -61,6 +68,7 @@ const struct uniphier_clk_data uniphier_ld4_sys_clk_data[] = {
+ 	UNIPHIER_CLK_FACTOR("vpll27a", -1, "ref", 5625, 512),	/* 270 MHz */
+ 	UNIPHIER_CLK_FACTOR("uart", 0, "a2pll", 1, 16),
+ 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 16),
++	UNIPHIER_SLD3_SYS_CLK_NAND(2),
+ 	UNIPHIER_SLD3_SYS_CLK_SD,
+ 	UNIPHIER_CLK_FACTOR("usb2", -1, "upll", 1, 12),
+ 	UNIPHIER_SLD3_SYS_CLK_STDMAC(8),		/* Ether, HSC, MIO */
+@@ -74,6 +82,7 @@ const struct uniphier_clk_data uniphier_pro4_sys_clk_data[] = {
+ 	UNIPHIER_CLK_FACTOR("vpll27a", -1, "ref", 270, 25),	/* 270 MHz */
+ 	UNIPHIER_CLK_FACTOR("uart", 0, "a2pll", 1, 8),
+ 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 32),
++	UNIPHIER_SLD3_SYS_CLK_NAND(2),
+ 	UNIPHIER_SLD3_SYS_CLK_SD,
+ 	UNIPHIER_CLK_FACTOR("usb2", -1, "upll", 1, 12),
+ 	UNIPHIER_SLD3_SYS_CLK_STDMAC(8),		/* HSC, MIO, RLE */
+@@ -89,6 +98,7 @@ const struct uniphier_clk_data uniphier_sld8_sys_clk_data[] = {
+ 	UNIPHIER_CLK_FACTOR("vpll27a", -1, "ref", 270, 25),	/* 270 MHz */
+ 	UNIPHIER_CLK_FACTOR("uart", 0, "spll", 1, 20),
+ 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 16),
++	UNIPHIER_SLD3_SYS_CLK_NAND(2),
+ 	UNIPHIER_SLD3_SYS_CLK_SD,
+ 	UNIPHIER_CLK_FACTOR("usb2", -1, "upll", 1, 12),
+ 	UNIPHIER_SLD3_SYS_CLK_STDMAC(8),		/* Ether, HSC, MIO */
+@@ -101,6 +111,7 @@ const struct uniphier_clk_data uniphier_pro5_sys_clk_data[] = {
+ 	UNIPHIER_CLK_FACTOR("dapll2", -1, "ref", 144, 125),	/* 2949.12 MHz */
+ 	UNIPHIER_CLK_FACTOR("uart", 0, "dapll2", 1, 40),
+ 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 48),
++	UNIPHIER_SLD3_SYS_CLK_NAND(2),
+ 	UNIPHIER_PRO5_SYS_CLK_SD,
+ 	UNIPHIER_SLD3_SYS_CLK_STDMAC(8),			/* HSC */
+ 	UNIPHIER_PRO4_SYS_CLK_GIO(12),				/* PCIe, USB3 */
+@@ -113,6 +124,7 @@ const struct uniphier_clk_data uniphier_pxs2_sys_clk_data[] = {
+ 	UNIPHIER_CLK_FACTOR("spll", -1, "ref", 96, 1),		/* 2400 MHz */
+ 	UNIPHIER_CLK_FACTOR("uart", 0, "spll", 1, 27),
+ 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 48),
++	UNIPHIER_SLD3_SYS_CLK_NAND(2),
+ 	UNIPHIER_PRO5_SYS_CLK_SD,
+ 	UNIPHIER_SLD3_SYS_CLK_STDMAC(8),			/* HSC, RLE */
+ 	/* GIO is always clock-enabled: no function for 0x2104 bit6 */
+@@ -131,6 +143,7 @@ const struct uniphier_clk_data uniphier_ld11_sys_clk_data[] = {
+ 	UNIPHIER_CLK_FACTOR("vspll", -1, "ref", 80, 1),		/* 2000 MHz */
+ 	UNIPHIER_CLK_FACTOR("uart", 0, "spll", 1, 34),
+ 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 40),
++	UNIPHIER_LD11_SYS_CLK_NAND(2),
+ 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC, MIO */
+ 	UNIPHIER_CLK_FACTOR("usb2", -1, "ref", 24, 25),
+ 	/* CPU gears */
+@@ -156,6 +169,7 @@ const struct uniphier_clk_data uniphier_ld20_sys_clk_data[] = {
+ 	UNIPHIER_CLK_FACTOR("vppll", -1, "ref", 504, 5),	/* 2520 MHz */
+ 	UNIPHIER_CLK_FACTOR("uart", 0, "spll", 1, 34),
+ 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 40),
++	UNIPHIER_LD11_SYS_CLK_NAND(2),
+ 	UNIPHIER_LD20_SYS_CLK_SD,
+ 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC */
+ 	/* GIO is always clock-enabled: no function for 0x210c bit5 */
+-- 
+2.7.4
