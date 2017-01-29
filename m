@@ -1,125 +1,275 @@
-Return-Path: <adrian.hunter@intel.com>
-Subject: Re: [PATCH v5 06/12] mmc: sdhci-xenon: Add Marvell Xenon SDHC core
- functionality
-To: Ulf Hansson <ulf.hansson@linaro.org>
-References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
- <3546f143091c121face8ecbcbf7f6a4c41d2cec7.1484154449.git-series.gregory.clement@free-electrons.com>
- <CAPDyKFrwxix4zY4a1x9u6jh_gPfKTsaLnD8b8crum=pc5CN3AA@mail.gmail.com>
- <2e67332d-d8c3-fd24-1f81-72675a09927a@intel.com>
- <CAPDyKFqbjeKCHp40PALydquxdF-qBk156+iOS9TYYsquJ7fK7w@mail.gmail.com>
- <00e8d2dc-bc07-addc-a5d9-8604f143627f@intel.com>
- <CAPDyKFoF2QsTxKC7=PjHqOk106USQ-j9MtiyfC=Sqks8DnPDYQ@mail.gmail.com>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>,
- "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
- Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Rob Herring <robh+dt@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Ziji Hu <huziji@marvell.com>, Jimmy Xu <zmxu@marvell.com>,
- Jisheng Zhang <jszhang@marvell.com>, Nadav Haklai <nadavh@marvell.com>,
- Ryan Gao <ygao@marvell.com>, Doug Jones <dougj@marvell.com>,
- Victor Gu <xigu@marvell.com>, "Wei(SOCP) Liu" <liuw@marvell.com>,
- Wilson Ding <dingwei@marvell.com>, Yehuda Yitschak <yehuday@marvell.com>,
- Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
- Kostya Porotchkin <kostap@marvell.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Message-ID: <1f0cc488-75f0-cff3-1386-070717aa7220@intel.com>
-Date: Mon, 30 Jan 2017 11:40:48 +0200
+Return-Path: <dmitry.torokhov@gmail.com>
+Return-Path: <dmitry.torokhov@gmail.com>
+Date: Sun, 29 Jan 2017 10:07:43 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: add more managed APIs
+Message-ID: <20170129180743.GA10917@dtor-ws>
+References: <20170128184047.GA24957@dtor-ws>
+ <20170128190309.GN27312@n2100.armlinux.org.uk>
+ <20170128192207.GA38136@dtor-ws>
+ <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
+ <20170128233911.GO27312@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFoF2QsTxKC7=PjHqOk106USQ-j9MtiyfC=Sqks8DnPDYQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170128233911.GO27312@n2100.armlinux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30/01/17 11:10, Ulf Hansson wrote:
-> On 28 January 2017 at 09:16, Adrian Hunter <adrian.hunter@intel.com> wrote:
->> On 27/01/2017 5:12 p.m., Ulf Hansson wrote:
->>>
->>> On 26 January 2017 at 13:39, Adrian Hunter <adrian.hunter@intel.com>
->>> wrote:
->>>>
->>>> On 26/01/17 12:50, Ulf Hansson wrote:
->>>>>
->>>>> On 11 January 2017 at 18:19, Gregory CLEMENT
->>>>> <gregory.clement@free-electrons.com> wrote:
->>>>>>
->>>>>> +                       priv->init_card_type = MMC_TYPE_MMC;
->>>>>> +                       mmc->caps |= MMC_CAP_NONREMOVABLE;
->>>>>> +
->>>>>> +                       /*
->>>>>> +                        * Force to clear BUS_TEST to
->>>>>> +                        * skip bus_test_pre and bus_test_post
->>>>>> +                        */
->>>>>> +                       mmc->caps &= ~MMC_CAP_BUS_WIDTH_TEST;
->>>>>> +                       mmc->caps2 |= MMC_CAP2_HC_ERASE_SZ |
->>>>>
->>>>>
->>>>> This cap is a bit strange. It was added several years ago by Adrian
->>>>> Hunter, but I am wondering about the reason to why it's needed.
->>>>>
->>>>
->>>> MMC_CAP2_HC_ERASE_SZ relates to EXT-CSD ERASE_GROUP_DEF.
->>>>
->>>> I think it was added to enable people to choose whether they wanted a
->>>> large
->>>> or small erase granularity.  That probably doesn't matter if the card
->>>> supports TRIM.
->>>>
->>>
->>> Huh, the erase/trim/discard code in the mmc core is really hairy. :-)
->>>
->>> In mmc_calc_max_discard() the following code/comment exists:
->>>
->>> /*
->>>  * Without erase_group_def set, MMC erase timeout depends on clock
->>>  * frequence which can change.  In that case, the best choice is
->>>  * just the preferred erase size.
->>>  */
->>> if (mmc_card_mmc(card) && !(card->ext_csd.erase_group_def & 1))
->>>      return card->pref_erase;
->>>
->>>
->>> This makes me wonder.
->>>
->>> So, when we haven't enabled the high capacity erase groups in the
->>> EXT_CSD register (ext_csd.erase_group_def), we will use the pref_erase
->>> size.
->>>
->>> In the other case, as when having MMC_CAP2_HC_ERASE_SZ set (which will
->>> set ext_csd.erase_group_def),  we will instead  do some calculations
->>> to find out the max discards.
->>>
->>> Are you saying that these calculations doesn't matter much - or are
->>> you saying that we always want to do them?
->>
->>
->> No, I was saying that if you have TRIM then TRIM is preferred to ERASE so
->> the erase group size does not come into play when discarding, since ERASE
->> granularity is erase groups whereas TRIM granularity is sectors.
-> 
-> Right. Thanks for clarifying.
-> 
->>
->> However ERASE_GROUP_DEF also affects the size of write protect groups.
-> 
-> In either case.
-> 
-> What do you think of removing MMC_CAP2_HC_ERASE_SZ? I don't like these
-> kind of soft polices, it's better if we can decide on a common
-> behaviour - whatever that is.
+When converting a driver to managed resources it is desirable to be able to
+manage all resources in the same fashion. This change allows managing
+clocks in the same way we manage many other resources.
 
-Changing the value of ERASE_GROUP_DEF could be a problem, for example the
-spec. says:
+This adds the following managed APIs:
 
-"Similarly if the host set ERASE_GROUP_DEF bit for a device that the default
-write protect was already set in some of the area in the previous power
-cycle, then the device may show unknown behavior when host issue write
-or erase commands to the device. In application, it is mandatory for host to
-use same ERASE GROUP DEF value to the device all the time."
+- devm_clk_prepare()/devm_clk_unprepare();
+- devm_clk_prepare_enable()/devm_clk_disable_unprepare().
 
-Whether or not there is anyone that would actually be affected is hard to know.
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+
+v2: dropped devm_clk_enable() and devm_clk_disable()
+
+
+ drivers/clk/clk-devres.c |   98 +++++++++++++++++++++++++++++++---------------
+ include/linux/clk.h      |   68 ++++++++++++++++++++++++++++++++
+ 2 files changed, 134 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 3a218c3a06ae..2ff94ffe11d3 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -9,30 +9,20 @@
+ #include <linux/export.h>
+ #include <linux/gfp.h>
+ 
+-static void devm_clk_release(struct device *dev, void *res)
++static int devm_clk_create_devres(struct device *dev, struct clk *clk,
++				  void (*release)(struct device *, void *))
+ {
+-	clk_put(*(struct clk **)res);
+-}
++	struct clk **ptr;
+ 
+-struct clk *devm_clk_get(struct device *dev, const char *id)
+-{
+-	struct clk **ptr, *clk;
+-
+-	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
++	ptr = devres_alloc(release, sizeof(*ptr), GFP_KERNEL);
+ 	if (!ptr)
+-		return ERR_PTR(-ENOMEM);
++		return -ENOMEM;
+ 
+-	clk = clk_get(dev, id);
+-	if (!IS_ERR(clk)) {
+-		*ptr = clk;
+-		devres_add(dev, ptr);
+-	} else {
+-		devres_free(ptr);
+-	}
++	*ptr = clk;
++	devres_add(dev, ptr);
+ 
+-	return clk;
++	return 0;
+ }
+-EXPORT_SYMBOL(devm_clk_get);
+ 
+ static int devm_clk_match(struct device *dev, void *res, void *data)
+ {
+@@ -44,31 +34,75 @@ static int devm_clk_match(struct device *dev, void *res, void *data)
+ 	return *c == data;
+ }
+ 
+-void devm_clk_put(struct device *dev, struct clk *clk)
++#define DEFINE_DEVM_CLK_DESTROY_OP(destroy_op)				\
++static void devm_##destroy_op##_release(struct device *dev, void *res)	\
++{									\
++	destroy_op(*(struct clk **)res);				\
++}									\
++									\
++void devm_##destroy_op(struct device *dev, struct clk *clk)		\
++{									\
++	WARN_ON(devres_release(dev, devm_##destroy_op##_release,	\
++				devm_clk_match, clk));			\
++}									\
++EXPORT_SYMBOL(devm_##destroy_op)
++
++#define DEFINE_DEVM_CLK_OP(create_op, destroy_op)			\
++DEFINE_DEVM_CLK_DESTROY_OP(destroy_op);					\
++int devm_##create_op(struct device *dev, struct clk *clk)		\
++{									\
++	int error;							\
++									\
++	error = create_op(clk);						\
++	if (error)							\
++		return error;						\
++									\
++	error = devm_clk_create_devres(dev, clk,			\
++					devm_##destroy_op##_release);	\
++	if (error) {							\
++		destroy_op(clk);					\
++		return error;						\
++	}								\
++									\
++	return 0;							\
++}									\
++EXPORT_SYMBOL(devm_##create_op)
++
++DEFINE_DEVM_CLK_DESTROY_OP(clk_put);
++DEFINE_DEVM_CLK_OP(clk_prepare, clk_unprepare);
++DEFINE_DEVM_CLK_OP(clk_prepare_enable, clk_disable_unprepare);
++
++struct clk *devm_clk_get(struct device *dev, const char *id)
+ {
+-	int ret;
++	struct clk *clk;
++	int error;
+ 
+-	ret = devres_release(dev, devm_clk_release, devm_clk_match, clk);
++	clk = clk_get(dev, id);
++	if (!IS_ERR(clk)) {
++		error = devm_clk_create_devres(dev, clk, devm_clk_put_release);
++		if (error) {
++			clk_put(clk);
++			return ERR_PTR(error);
++		}
++	}
+ 
+-	WARN_ON(ret);
++	return clk;
+ }
+-EXPORT_SYMBOL(devm_clk_put);
++EXPORT_SYMBOL(devm_clk_get);
+ 
+ struct clk *devm_get_clk_from_child(struct device *dev,
+ 				    struct device_node *np, const char *con_id)
+ {
+-	struct clk **ptr, *clk;
+-
+-	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
+-	if (!ptr)
+-		return ERR_PTR(-ENOMEM);
++	struct clk *clk;
++	int error;
+ 
+ 	clk = of_clk_get_by_name(np, con_id);
+ 	if (!IS_ERR(clk)) {
+-		*ptr = clk;
+-		devres_add(dev, ptr);
+-	} else {
+-		devres_free(ptr);
++		error = devm_clk_create_devres(dev, clk, devm_clk_put_release);
++		if (error) {
++			clk_put(clk);
++			return ERR_PTR(error);
++		}
+ 	}
+ 
+ 	return clk;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index e9d36b3e49de..413dc8f636bd 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -267,6 +267,29 @@ struct clk *devm_get_clk_from_child(struct device *dev,
+ 				    struct device_node *np, const char *con_id);
+ 
+ /**
++ * devm_clk_prepare - prepare clock source as a managed resource
++ * @dev: device owning the resource
++ * @clk: clock source
++ *
++ * This prepares the clock source for use.
++ *
++ * Must not be called from within atomic context.
++ */
++int devm_clk_prepare(struct device *dev, struct clk *clk);
++
++/**
++ * devm_clk_unprepare - undo preparation of a managed clock source
++ * @dev: device used to prepare the clock
++ * @clk: clock source
++ *
++ * This undoes preparation of a clock, previously prepared with a call
++ * to devm_clk_pepare().
++ *
++ * Must not be called from within atomic context.
++ */
++void devm_clk_unprepare(struct device *dev, struct clk *clk);
++
++/**
+  * clk_enable - inform the system when the clock source should be running.
+  * @clk: clock source
+  *
+@@ -295,6 +318,28 @@ int clk_enable(struct clk *clk);
+ void clk_disable(struct clk *clk);
+ 
+ /**
++ * devm_clk_prepare_enable - prepare and enable a managed clock source
++ * @dev: device owning the clock source
++ * @clk: clock source
++ *
++ * This prepares the clock source for use and enables it.
++ *
++ * Must not be called from within atomic context.
++ */
++int devm_clk_prepare_enable(struct device *dev, struct clk *clk);
++
++/**
++ * devm_clk_disable_unprepare - disable and undo preparation of a managed clock
++ * @dev: device used to prepare and enable the clock
++ * @clk: clock source
++ *
++ * This disables and undoes a previously prepared clock.
++ *
++ * Must not be called from within atomic context.
++ */
++void devm_clk_disable_unprepare(struct device *dev, struct clk *clk);
++
++/**
+  * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
+  *		  This is only valid once the clock source has been enabled.
+  * @clk: clock source
+@@ -460,6 +505,17 @@ static inline void clk_put(struct clk *clk) {}
+ 
+ static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
+ 
++static inline int devm_clk_prepare(struct device *dev, struct clk *clk)
++{
++	might_sleep();
++	return 0;
++}
++
++static inline void devm_clk_unprepare(struct device *dev, struct clk *clk)
++{
++	might_sleep();
++}
++
+ static inline int clk_enable(struct clk *clk)
+ {
+ 	return 0;
+@@ -467,6 +523,18 @@ static inline int clk_enable(struct clk *clk)
+ 
+ static inline void clk_disable(struct clk *clk) {}
+ 
++static inline int devm_clk_prepare_enable(struct device *dev, struct clk *clk)
++{
++	might_sleep();
++	return 0;
++}
++
++static inline void devm_clk_disable_unprepare(struct device *dev,
++					      struct clk *clk)
++{
++	might_sleep();
++}
++
+ static inline unsigned long clk_get_rate(struct clk *clk)
+ {
+ 	return 0;
