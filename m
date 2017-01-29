@@ -1,137 +1,218 @@
-Return-Path: <rnayak@codeaurora.org>
-Message-ID: <5885814A.9040304@codeaurora.org>
-Date: Mon, 23 Jan 2017 09:36:34 +0530
-From: Rajendra Nayak <rnayak@codeaurora.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v3 07/10] arm64: dts: allwinner: add Allwinner H5 .dtsi
+Date: Sun, 29 Jan 2017 10:33:28 +0800
+Message-Id: <20170129023331.62106-8-icenowy@aosc.xyz>
+In-Reply-To: <20170129023331.62106-1-icenowy@aosc.xyz>
+References: <20170129023331.62106-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
- sboyd@codeaurora.org, mturquette@baylibre.com
-CC: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, sricharan@codeaurora.org
-Subject: Re: [PATCH] clk: qcom: gdsc: Fix handling of hw control enable/disable
-References: <1484027679-18397-1-git-send-email-rnayak@codeaurora.org> <3164de46-a251-3b3f-e6f5-5c3699bb4df8@linaro.org>
-In-Reply-To: <3164de46-a251-3b3f-e6f5-5c3699bb4df8@linaro.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Andre Przywara <andre.przywara@arm.com>
 
-[]..
+The Allwinner H5 SoC is pin-compatible to the H3 SoC, but uses
+Cortex-A53 cores instead.
+Based on the now shared base .dtsi describing the common peripherals
+describe the H5 specific nodes on top of that.
+That symlinks in the sunxi-h3-h5.dtsi from the arch/arm tree.
 
->> ---
->>
->> Stan,
->> If there was a specific issue you saw with venus because of the missing
->> delay and poll, can you check if this fixes any of that.
->>
->>  drivers/clk/qcom/gdsc.c | 58 ++++++++++++++++++++++++++++++++++++++-----------
->>  1 file changed, 45 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
->> index 288186c..6fbd6df 100644
->> --- a/drivers/clk/qcom/gdsc.c
->> +++ b/drivers/clk/qcom/gdsc.c
->> @@ -63,11 +63,26 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
->>  	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
->>  }
->>  
->> +static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool val)
-> 
-> Could you rename 'val' to 'en'.
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+[Icenowy: add H5 pinctrl compatible, and changes for my h3-h5 dtsi
+ refactor, commit message change to met new arm64 naming scheme,
+ drop H3 pinctrl compatible because of interrupt bank change, drop
+ H3 ccu compatible because of clock change]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+Changes in v3:
+- Dropped sun5i-a13-mmc, sun8i-h3-ccu compatibles.
+- Used sun50i-{h5,a64}-emmc compatible for mmc2.
+Changes in v2:
+- Dropped sun8i-h3-pinctrl compatible, as the interrupt of H3 and H5 is
+  in fact different.
 
-yes, I seem to have messed up with the value to write into the register and
-the one to poll. I will fix this up and post a v2.
+ arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi   | 139 +++++++++++++++++++++++++
+ arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi |   1 +
+ 2 files changed, 140 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+ create mode 120000 arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
 
-> 
->> +{
->> +	ktime_t start;
->> +
->> +	start = ktime_get();
->> +	do {
->> +		if (gdsc_is_enabled(sc, reg) == val)
->> +			return 0;
->> +	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
->> +
->> +	if (gdsc_is_enabled(sc, reg) == val)
->> +		return 0;
->> +
->> +	return -ETIMEDOUT;
->> +}
->> +
->>  static int gdsc_toggle_logic(struct gdsc *sc, bool en)
->>  {
->>  	int ret;
->>  	u32 val = en ? 0 : SW_COLLAPSE_MASK;
->> -	ktime_t start;
->>  	unsigned int status_reg = sc->gdscr;
->>  
->>  	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
->> @@ -100,16 +115,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
->>  		udelay(1);
->>  	}
->>  
->> -	start = ktime_get();
->> -	do {
->> -		if (gdsc_is_enabled(sc, status_reg) == en)
->> -			return 0;
->> -	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
->> -
->> -	if (gdsc_is_enabled(sc, status_reg) == en)
->> -		return 0;
->> -
->> -	return -ETIMEDOUT;
->> +	return gdsc_poll_status(sc, status_reg, en);
->>  }
->>  
->>  static inline int gdsc_deassert_reset(struct gdsc *sc)
->> @@ -188,8 +194,19 @@ static int gdsc_enable(struct generic_pm_domain *domain)
->>  	udelay(1);
->>  
->>  	/* Turn on HW trigger mode if supported */
->> -	if (sc->flags & HW_CTRL)
->> -		return gdsc_hwctrl(sc, true);
->> +	if (sc->flags & HW_CTRL) {
->> +		ret = gdsc_hwctrl(sc, true);
->> +		/*
->> +		 * Wait for the GDSC to go through a power down and
->> +		 * up cycle.  In case a firmware ends up polling status
->> +		 * bits for the gdsc, it might read an 'on' status before
->> +		 * the GDSC can finish the power cycle.
->> +		 * We wait 1us before returning to ensure the firmware
->> +		 * can't immediately poll the status bits.
->> +		 */
->> +		mb();
-> 
-> Missing comment for this memory barrier, although I think it is
-> pointless because regmap-mmio using readl and writel.
-
-will get rid of the barrier here and below
-
-> 
-> 
->> +		udelay(1);
->> +	}
->>  
->>  	return 0;
->>  }
->> @@ -204,9 +221,24 @@ static int gdsc_disable(struct generic_pm_domain *domain)
->>  
->>  	/* Turn off HW trigger mode if supported */
->>  	if (sc->flags & HW_CTRL) {
->> +		unsigned int reg;
->> +
-[]..
-
-> 
->> +		udelay(1);
->> +
->> +		reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
->> +		ret = gdsc_poll_status(sc, reg, 0);
-> 
-> This should be gdsc_poll_status(sc, reg, true) because after disabling
-> hw_control we expect that the GDSC is in power_on state.
-
-correct, will fix. thanks for the review.
-
-
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+new file mode 100644
+index 000000000000..b651bd6986e8
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+@@ -0,0 +1,139 @@
++/*
++ * Copyright (C) 2016 ARM Ltd.
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#include "sunxi-h3-h5.dtsi"
++
++/ {
++	interrupt-parent = <&gic>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <0>;
++			enable-method = "psci";
++		};
++
++		cpu@1 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <1>;
++			enable-method = "psci";
++		};
++
++		cpu@2 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <2>;
++			enable-method = "psci";
++		};
++
++		cpu@3 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <3>;
++			enable-method = "psci";
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 13
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
++	soc {
++		gic: interrupt-controller@1c81000 {
++			compatible = "arm,gic-400";
++			reg = <0x01c81000 0x1000>,
++			      <0x01c82000 0x2000>,
++			      <0x01c84000 0x2000>,
++			      <0x01c86000 0x2000>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++			interrupt-controller;
++			#interrupt-cells = <3>;
++		};
++	};
++};
++
++&ccu {
++	compatible = "allwinner,sun50i-h5-ccu";
++};
++
++&mmc0 {
++	compatible = "allwinner,sun50i-h5-mmc",
++		     "allwinner,sun50i-a64-mmc";
++	clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
++	clock-names = "ahb", "mmc";
++};
++
++&mmc1 {
++	compatible = "allwinner,sun50i-h5-mmc",
++		     "allwinner,sun50i-a64-mmc";
++	clocks = <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;
++	clock-names = "ahb", "mmc";
++};
++
++&mmc2 {
++	compatible = "allwinner,sun50i-h5-emmc",
++		     "allwinner,sun50i-a64-emmc";
++	clocks = <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;
++	clock-names = "ahb", "mmc";
++};
++
++&pio {
++	compatible = "allwinner,sun50i-h5-pinctrl";
++};
+diff --git a/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
+new file mode 120000
+index 000000000000..036f01dc2b9b
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
+@@ -0,0 +1 @@
++../../../../arm/boot/dts/sunxi-h3-h5.dtsi
+\ No newline at end of file
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+2.11.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
