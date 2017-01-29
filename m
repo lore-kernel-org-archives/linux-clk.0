@@ -1,147 +1,69 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-Subject: Re: [PATCH] clk: qcom: gdsc: Fix handling of hw control
- enable/disable
-To: Sricharan <sricharan@codeaurora.org>,
- 'Stanimir Varbanov' <stanimir.varbanov@linaro.org>,
- 'Rajendra Nayak' <rnayak@codeaurora.org>, sboyd@codeaurora.org,
- mturquette@baylibre.com
-References: <1484027679-18397-1-git-send-email-rnayak@codeaurora.org>
- <db0b904e-4d28-b404-802b-7c2bcf0801e9@linaro.org>
- <006e01d26b77$dceaa090$96bfe1b0$@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <df75bf26-2c10-d99f-330e-fdcbf68e97b3@linaro.org>
-Date: Wed, 11 Jan 2017 10:55:00 +0200
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v3 02/10] arm64: allwinner: Kconfig: add essential pinctrl
+ driver for H5
+Date: Sun, 29 Jan 2017 10:33:23 +0800
+Message-Id: <20170129023331.62106-3-icenowy@aosc.xyz>
+In-Reply-To: <20170129023331.62106-1-icenowy@aosc.xyz>
+References: <20170129023331.62106-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-In-Reply-To: <006e01d26b77$dceaa090$96bfe1b0$@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sricharan,
+H5 SoC has two pin controllers, one (in user manual called "CPUx") needs
+a slightly advanced driver, and the other (called "CPUs") is just equal
+to the on in H3, and the H3 driver can be just reused.
 
-On 01/10/2017 09:29 PM, Sricharan wrote:
-> Hi stan,
-> 
->> -----Original Message-----
->> From: linux-arm-msm-owner@vger.kernel.org [mailto:linux-arm-msm-owner@vger.kernel.org] On Behalf Of Stanimir Varbanov
->> Sent: Tuesday, January 10, 2017 10:14 PM
->> To: Rajendra Nayak <rnayak@codeaurora.org>; sboyd@codeaurora.org; mturquette@baylibre.com
->> Cc: linux-clk@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-kernel@vger.kernel.org; sricharan@codeaurora.org
->> Subject: Re: [PATCH] clk: qcom: gdsc: Fix handling of hw control enable/disable
->>
->> Hi Rajendra,
->>
->> On 01/10/2017 07:54 AM, Rajendra Nayak wrote:
->>> Once a gdsc is brought in and out of HW control, there is a
->>> power down and up cycle which can take upto 1us. Polling on
->>> the gdsc status immediately after the hw control enable/disable
->>> can mislead software/firmware to belive the gdsc is already either on
->>> or off, while its yet to complete the power cycle.
->>> To avoid this add a 1us delay post a enable/disable of HW control
->>> mode.
->>>
->>> Also after the HW control mode is disabled, poll on the status to
->>> check gdsc status reflects its 'on' before force disabling it
->>> in software.
->>>
->>> Reported-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
->>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
->>> ---
->>>
->>> Stan,
->>> If there was a specific issue you saw with venus because of the missing
->>> delay and poll, can you check if this fixes any of that.
->>
->> Something more about the issue.
->>
->> I had re-designed venus driver on three platform drivers venus-core,
->> venus-dec and venus-enc in order to be able to control those three
->> power-domains (VENUS_GDSC, VENUS_CORE0_GDSC and VENUS_CORE1_GDSC).
->>
->> After that I abstracted MMAGIC hw on a separate mmagic driver. This
->> driver just controls mmagic clocks and GDSC in its runtime_suspend and
->> runtime_resume methods.
->>
->> The DT nodes looks like:
->>
->> mmagic_video {
->> 	compatible = "qcom,msm8996-mmagic";
->> 	clocks = <&rpmcc MSM8996_RPM_SMD_MMAXI_CLK>,
->> 		 <&mmcc MMSS_MMAGIC_AHB_CLK>,
->> 		 <&mmcc MMSS_MMAGIC_CFG_AHB_CLK>,
->> 		 <&mmcc MMAGIC_VIDEO_NOC_CFG_AHB_CLK>,
->> 		 <&mmcc MMSS_MMAGIC_MAXI_CLK>,
->> 		 <&mmcc MMAGIC_VIDEO_AXI_CLK>,
->> 		 <&mmcc SMMU_VIDEO_AHB_CLK>,
->> 		 <&mmcc SMMU_VIDEO_AXI_CLK>;
->> 	power-domains = <&mmcc MMAGIC_VIDEO_GDSC>;
->>
->> 	video-codec {
->> 		compatible = "qcom,msm8996-venus";
->> 		clocks = <&mmcc VIDEO_CORE_CLK>,
->> 			 <&mmcc VIDEO_AHB_CLK>,
->> 			 <&mmcc VIDEO_AXI_CLK>,
->> 			 <&mmcc VIDEO_MAXI_CLK>;
->> 		power-domains = <&mmcc VENUS_GDSC>;
->> 		...
->>
->> 		video-decoder {
->> 			compatible = "venus-decoder";
->> 			clocks = "subcore0";
->> 			clock-names = <&mmcc VIDEO_SUBCORE0_CLK>;
->> 			power-domains = <&mmcc VENUS_CORE0_GDSC>;
->> 		};
->>
->> 		video-encoder {
->> 			compatible = "venus-encoder";
->> 			clocks = "subcore1";
->> 			clock-names = <&mmcc VIDEO_SUBCORE1_CLK>;
->> 			power-domains = <&mmcc VENUS_CORE1_GDSC>;
->> 		};
->> 	};
->> };
->>
->> Note that mmagic_video is a parent dt node for smmu_video DT node so
->> that clocks and mmagic_video gdsc will be enabled once smmu driver is
->> instantiated by venus-core diriver.
->>
-> 
-> mmagic_video is a parent DT for smmu_video ? , so there are no clocks
-> populated for the smmu node as such ?
+Select the two necessary pinctrl drivers when building kernel for
+Allwinner SoCs.
 
-Yes, I completely disabled runtime pm in the arm-smmu driver.
+Also add H5 in the option's description.
 
-> 
->> Now when video-dec driver calls pm_runtime_get_sync() the sequence of
->> enabling is:
->>
->> MMAGIC_VIDEO_GDSC -> MMAGIC clocks and SMMU clocks -> VENUS_GDSC ->
->> VIDEO clocks -> VENUS_CORE0_GDSC -> VIDEO subcore0 clock
->>
->> When video-dec platform driver calls pm_runtime_put_sync() we should
->> disabling of GDSC and clocks in the reversed oder.
->>
->> The issue comes when I have ran video decoder, the decoder hw finish
->> stream decoding and we want to suspend venus core. The issue is that
->> when I start disabling SMMU_VIDEO_AXI_CLK and/or MMAGIC_VIDEO_AXI_CLK
->> the system reboots.
->>
->> I have added a delay (200ms) before disabling mmagic clocks and then
->> everything is fine again.
->>
->> Any idea?
->>
-> 
-> Can you share me a branch, i can have a quick check with a t32
-> if there is any crash logged in the TZ buffer when the system reboots.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ arch/arm64/Kconfig.platforms | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-I can share a branch but you will need my initramfs too.
-
-I don't think it is tz related, most probably it is MMAGIC sequence
-issue or something in GDSC/MMCC.
-
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 715ef1256838..e11523d204b5 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -5,8 +5,11 @@ config ARCH_SUNXI
+ 	select GENERIC_IRQ_CHIP
+ 	select PINCTRL
+ 	select PINCTRL_SUN50I_A64
++	select PINCTRL_SUN50I_H5
++	select PINCTRL_SUN8I_H3_R
+ 	help
+-	  This enables support for Allwinner sunxi based SoCs like the A64.
++	  This enables support for Allwinner sunxi based SoCs like the A64
++	  and H5.
+ 
+ config ARCH_ALPINE
+ 	bool "Annapurna Labs Alpine platform"
 -- 
-regards,
-Stan
+2.11.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
