@@ -1,64 +1,70 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH v2 01/10] ASoC: sun4i-i2s: Increase DMA max burst to 8
-Date: Tue, 17 Jan 2017 15:02:21 +0100
-Message-Id: <20170117140230.23142-2-mylene.josserand@free-electrons.com>
-In-Reply-To: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v3 06/10] clk: sunxi-ng: remove transitional headers for
+ dt-bindings
+Date: Sun, 29 Jan 2017 10:33:27 +0800
+Message-Id: <20170129023331.62106-7-icenowy@aosc.xyz>
+In-Reply-To: <20170129023331.62106-1-icenowy@aosc.xyz>
+References: <20170129023331.62106-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ dmaengine@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-As done previously for sun4i-codec, the DMA maxburst of 4
-is not supported by every SoCs so the DMA controller engine
-returns "unsupported value".
+As we have already changed the DTSI file, the trnasitional dt-bindings
+header sun8i-h3-ccu.h will not be needed any more.
 
-As a maxburst of 8 is supported by all variants, this patch
-increases it to 8.
+Remove them.
 
-For more details, see commit from Chen-Yu Tsai:
-commit 730e2dd0cbc7 ("ASoC: sun4i-codec: Increase DMA max burst to 8")
-
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- sound/soc/sunxi/sun4i-i2s.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+It's a patch which intends to keep the bisectbility of the kernel source
+tree introduced in v2.
 
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index f24d19526603..4237323ef594 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -694,10 +694,10 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
- 	}
- 	
- 	i2s->playback_dma_data.addr = res->start + SUN4I_I2S_FIFO_TX_REG;
--	i2s->playback_dma_data.maxburst = 4;
-+	i2s->playback_dma_data.maxburst = 8;
- 
- 	i2s->capture_dma_data.addr = res->start + SUN4I_I2S_FIFO_RX_REG;
--	i2s->capture_dma_data.maxburst = 4;
-+	i2s->capture_dma_data.maxburst = 8;
- 
- 	pm_runtime_enable(&pdev->dev);
- 	if (!pm_runtime_enabled(&pdev->dev)) {
+ include/dt-bindings/clock/sun8i-h3-ccu.h | 1 -
+ include/dt-bindings/reset/sun8i-h3-ccu.h | 1 -
+ 2 files changed, 2 deletions(-)
+ delete mode 120000 include/dt-bindings/clock/sun8i-h3-ccu.h
+ delete mode 120000 include/dt-bindings/reset/sun8i-h3-ccu.h
+
+diff --git a/include/dt-bindings/clock/sun8i-h3-ccu.h b/include/dt-bindings/clock/sun8i-h3-ccu.h
+deleted file mode 120000
+index ef38232141e4..000000000000
+--- a/include/dt-bindings/clock/sun8i-h3-ccu.h
++++ /dev/null
+@@ -1 +0,0 @@
+-sunxi-h3-h5-ccu.h
+\ No newline at end of file
+diff --git a/include/dt-bindings/reset/sun8i-h3-ccu.h b/include/dt-bindings/reset/sun8i-h3-ccu.h
+deleted file mode 120000
+index ef38232141e4..000000000000
+--- a/include/dt-bindings/reset/sun8i-h3-ccu.h
++++ /dev/null
+@@ -1 +0,0 @@
+-sunxi-h3-h5-ccu.h
+\ No newline at end of file
 -- 
 2.11.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
