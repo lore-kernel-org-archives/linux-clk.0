@@ -1,75 +1,129 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Jonathan Corbet <corbet@lwn.net>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- Zepan <715805855@qq.com>
-Subject: [PATCH v2 1/4] arm: sunxi: add support for V3s SoC
-Date: Tue, 17 Jan 2017 02:01:13 +0800
-Message-Id: <20170116180116.36729-2-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <1f0cc488-75f0-cff3-1386-070717aa7220@intel.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+ <3546f143091c121face8ecbcbf7f6a4c41d2cec7.1484154449.git-series.gregory.clement@free-electrons.com>
+ <CAPDyKFrwxix4zY4a1x9u6jh_gPfKTsaLnD8b8crum=pc5CN3AA@mail.gmail.com>
+ <2e67332d-d8c3-fd24-1f81-72675a09927a@intel.com> <CAPDyKFqbjeKCHp40PALydquxdF-qBk156+iOS9TYYsquJ7fK7w@mail.gmail.com>
+ <00e8d2dc-bc07-addc-a5d9-8604f143627f@intel.com> <CAPDyKFoF2QsTxKC7=PjHqOk106USQ-j9MtiyfC=Sqks8DnPDYQ@mail.gmail.com>
+ <1f0cc488-75f0-cff3-1386-070717aa7220@intel.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 30 Jan 2017 11:15:20 +0100
+Message-ID: <CAPDyKFrQ15bLCApOdf8BXUyyjcxQehqP=aW1hM=NKfwYmcCYOw@mail.gmail.com>
+Subject: Re: [PATCH v5 06/12] mmc: sdhci-xenon: Add Marvell Xenon SDHC core functionality
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>, Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>, "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s is a low-end single-core Cortex-A7 SoC, with 64MB
-integrated DRAM, and several peripherals.
+On 30 January 2017 at 10:40, Adrian Hunter <adrian.hunter@intel.com> wrote:
+> On 30/01/17 11:10, Ulf Hansson wrote:
+>> On 28 January 2017 at 09:16, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>>> On 27/01/2017 5:12 p.m., Ulf Hansson wrote:
+>>>>
+>>>> On 26 January 2017 at 13:39, Adrian Hunter <adrian.hunter@intel.com>
+>>>> wrote:
+>>>>>
+>>>>> On 26/01/17 12:50, Ulf Hansson wrote:
+>>>>>>
+>>>>>> On 11 January 2017 at 18:19, Gregory CLEMENT
+>>>>>> <gregory.clement@free-electrons.com> wrote:
+>>>>>>>
+>>>>>>> +                       priv->init_card_type = MMC_TYPE_MMC;
+>>>>>>> +                       mmc->caps |= MMC_CAP_NONREMOVABLE;
+>>>>>>> +
+>>>>>>> +                       /*
+>>>>>>> +                        * Force to clear BUS_TEST to
+>>>>>>> +                        * skip bus_test_pre and bus_test_post
+>>>>>>> +                        */
+>>>>>>> +                       mmc->caps &= ~MMC_CAP_BUS_WIDTH_TEST;
+>>>>>>> +                       mmc->caps2 |= MMC_CAP2_HC_ERASE_SZ |
+>>>>>>
+>>>>>>
+>>>>>> This cap is a bit strange. It was added several years ago by Adrian
+>>>>>> Hunter, but I am wondering about the reason to why it's needed.
+>>>>>>
+>>>>>
+>>>>> MMC_CAP2_HC_ERASE_SZ relates to EXT-CSD ERASE_GROUP_DEF.
+>>>>>
+>>>>> I think it was added to enable people to choose whether they wanted a
+>>>>> large
+>>>>> or small erase granularity.  That probably doesn't matter if the card
+>>>>> supports TRIM.
+>>>>>
+>>>>
+>>>> Huh, the erase/trim/discard code in the mmc core is really hairy. :-)
+>>>>
+>>>> In mmc_calc_max_discard() the following code/comment exists:
+>>>>
+>>>> /*
+>>>>  * Without erase_group_def set, MMC erase timeout depends on clock
+>>>>  * frequence which can change.  In that case, the best choice is
+>>>>  * just the preferred erase size.
+>>>>  */
+>>>> if (mmc_card_mmc(card) && !(card->ext_csd.erase_group_def & 1))
+>>>>      return card->pref_erase;
+>>>>
+>>>>
+>>>> This makes me wonder.
+>>>>
+>>>> So, when we haven't enabled the high capacity erase groups in the
+>>>> EXT_CSD register (ext_csd.erase_group_def), we will use the pref_erase
+>>>> size.
+>>>>
+>>>> In the other case, as when having MMC_CAP2_HC_ERASE_SZ set (which will
+>>>> set ext_csd.erase_group_def),  we will instead  do some calculations
+>>>> to find out the max discards.
+>>>>
+>>>> Are you saying that these calculations doesn't matter much - or are
+>>>> you saying that we always want to do them?
+>>>
+>>>
+>>> No, I was saying that if you have TRIM then TRIM is preferred to ERASE so
+>>> the erase group size does not come into play when discarding, since ERASE
+>>> granularity is erase groups whereas TRIM granularity is sectors.
+>>
+>> Right. Thanks for clarifying.
+>>
+>>>
+>>> However ERASE_GROUP_DEF also affects the size of write protect groups.
+>>
+>> In either case.
+>>
+>> What do you think of removing MMC_CAP2_HC_ERASE_SZ? I don't like these
+>> kind of soft polices, it's better if we can decide on a common
+>> behaviour - whatever that is.
+>
+> Changing the value of ERASE_GROUP_DEF could be a problem, for example the
+> spec. says:
+>
+> "Similarly if the host set ERASE_GROUP_DEF bit for a device that the default
+> write protect was already set in some of the area in the previous power
+> cycle, then the device may show unknown behavior when host issue write
+> or erase commands to the device. In application, it is mandatory for host to
+> use same ERASE GROUP DEF value to the device all the time."
+>
+> Whether or not there is anyone that would actually be affected is hard to know.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
-Changes in v2:
-- Used linux-sunxi.org wiki hosted address of V3s datasheet.
+Okay. I am going to submit a patch that just removes the behaviour for
+MMC_CAP2_HC_ERASE_SZ and the cap itself.
 
-Note: the V3s datasheet contains its user manual.
+The cap isn't particular widely used anyway. Let's see what people think of it.
 
- Documentation/arm/sunxi/README | 4 ++++
- arch/arm/mach-sunxi/sunxi.c    | 1 +
- 2 files changed, 5 insertions(+)
+Thanks a lot for you input!
 
-diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
-index cd0243302bc1..a455b305c62c 100644
---- a/Documentation/arm/sunxi/README
-+++ b/Documentation/arm/sunxi/README
-@@ -67,6 +67,10 @@ SunXi family
-         + Datasheet
-           http://dl.linux-sunxi.org/H3/Allwinner_H3_Datasheet_V1.0.pdf
- 
-+      - Allwinner V3s (sun8i)
-+        + Datasheet
-+          http://linux-sunxi.org/File:Allwinner_V3s_Datasheet_V1.0.pdf
-+
-     * Quad ARM Cortex-A15, Quad ARM Cortex-A7 based SoCs
-       - Allwinner A80
-         + Datasheet
-diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-index 2e2bde271205..f246bfc6cfe4 100644
---- a/arch/arm/mach-sunxi/sunxi.c
-+++ b/arch/arm/mach-sunxi/sunxi.c
-@@ -64,6 +64,7 @@ static const char * const sun8i_board_dt_compat[] = {
- 	"allwinner,sun8i-a33",
- 	"allwinner,sun8i-a83t",
- 	"allwinner,sun8i-h3",
-+	"allwinner,sun8i-v3s",
- 	NULL,
- };
- 
--- 
-2.11.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Kind regards
+Uffe
