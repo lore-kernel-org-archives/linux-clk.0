@@ -1,127 +1,109 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-Message-ID: <1485208041.2133.293.camel@linux.intel.com>
-Subject: Re: [PATCH v8 0/5] Add platform clock for BayTrail platforms
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- linux-clk@vger.kernel.org, x86@kernel.org,
- platform-driver-x86@vger.kernel.org,  Stephen Boyd <sboyd@codeaurora.org>,
- Darren Hart <dvhart@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: alsa-devel@alsa-project.org, Irina Tirdea <irina.tirdea@intel.com>,
- Michael Turquette <mturquette@baylibre.com>, "Rafael J . Wysocki"
- <rjw@rjwysocki.net>, Takashi Iwai <tiwai@suse.com>,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, Ingo Molnar
- <mingo@redhat.com>, Mark Brown <broonie@kernel.org>, "H . Peter Anvin"
- <hpa@zytor.com>, Len Brown <lenb@kernel.org>, Vinod Koul
- <vinod.koul@intel.com>
-Date: Mon, 23 Jan 2017 23:47:21 +0200
-In-Reply-To: <1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
-References: 
-	<1485194865-10400-1-git-send-email-pierre-louis.bossart@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:54312 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751604AbdA3Foy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 30 Jan 2017 00:44:54 -0500
+From: Jeremy McNicoll <jeremymc@redhat.com>
+To: sboyd@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-clk@vger.kernel.org, andy.gross@linaro.org, robh@kernel.org,
+        arnd@arndb.de, bjorn.andersson@linaro.org, riteshh@codeaurora.org,
+        git@kchr.de, ulf.hansson@linaro.org, jszhang@marvell.com
+Subject: [PATCH V4 4/6] arm64: dts: smem enablement for msm8992
+Date: Sun, 29 Jan 2017 21:44:33 -0800
+Message-Id: <1485755073-6416-1-git-send-email-jeremymc@redhat.com>
+In-Reply-To: <20170127195831.GH8801@codeaurora.org>
+References: <20170127195831.GH8801@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2017-01-23 at 12:07 -0600, Pierre-Louis Bossart wrote:
-> These patches specifically enable the audio MCLK required by Baytrail
-> CR devices. It is the remaining part of a bigger set of patches
-> (already merged in Mark Brown's tree) that enable sound for Baytrail
-> CR
-> devices (especially Asus T100TAF) [1]. They include the clock driver
-> and clock enabling in the pmc_atom code (along with moving of the
-> non-architectural pmc_atom driver code into drivers/platform/x86 as
-> suggested by Thomas Gleixner [2]). This move includes a new header in
-> include/linux/platform_data/x86/. While there is an agreement that the
-> definitions for PMC clocks are not really platform data this location
-> is seen as a good-enough compromise with an agreement between Darren
-> Hart and Andy Shevchenko [3]
-> 
+SMEM allows various subsystems/processors to share
+memory/data (heap format) in order to enable various
+peripherals.
 
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
+---
 
-> [1] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-
-> August/111704.html
-> [2] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-October/
-> 113936.html
-> [3] http://mailman.alsa-project.org/pipermail/alsa-devel/2016-December
-> /115892.html
-> 
-> Changes from v7:
->  - Replaced clk-readl/writel by regular readl/writel
->  - Fixed two nitpick comments (newline and driver name string)
->  - Fixed [5:0] to [0..5] in comment (missed in v6)
-> 
-> Changes from v6:
->  - Addressed comments from Stephen Boyd, Andy Shevchenko and Vinod
-> Koul
->  - Renamed clk-byt-plt to clk-pmc-atom
->  - Rebase to 4.10-rc3 (broonie/for-next)
->  - Added helper functions to make error handling more compact
->  - Removed module-related code since it's not possible/supported
->  - Removed useless tests on remove
->  - PMC_CLK_OFFSET move to clk-pcm-atom (more logical)
->  - Split typo correction and makefile fix in separate patches
->  - small fixes (spaces, defaults in switches, alphabetical order, use
-> of
-> clk_writel/readl and no test on write, simpler error handling, use of
-> while(i--), unsigned loop variables, kernel doc fields, format-patch
-> -M
->  -C -D, use of PLATFORM_DEVID_NONE)
-> 
+ [ Moved sfpb_mutex and smem outside sock as they didn't have
+  'reg' entries.  Everything else is exactly the same. ]
 
+ arch/arm64/boot/dts/qcom/msm8992.dtsi | 42 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-> Changes from v5:
->  - fix build error reported by kbuild test robot
->  - split the clk driver code from x86 platform changes
-> 
-> Changes from v4:
->  - move the pmc_atom driver from arch/x86/platform/atom to
-> drivers/platform/x86
-> 
-> Changes from v3:
->  - replace devm_kzalloc with devm_kcalloc
->  - add x86 architecture maintainers
-> 
-> Changes from v2:
->  - move clk platform data structures to a separate include file
->  - store clk_hw pointer for the fixed rate clocks
-> 
-> Changes from v1:
->  - register the clk device as child of pmc device
->  - pass iomem pointer from pmc driver to clk driver to avoid using
-> pmc_atom_read()/write() and use readl/writel API instead
->  - use devm_clk_hw_register/clkdev_hw_create instead of
-> clk_register/clkdev_create
-> 
-> Irina Tirdea (3):
->   clk: x86: Add Atom PMC platform clocks
->   arch/x86/platform/atom: Move pmc_atom to drivers/platform/x86
->   platform/x86: Enable Atom PMC platform clocks
-> 
-> Pierre-Louis Bossart (2):
->   clk: Make x86/ conditional on CONFIG_COMMON_CLK
->   platform/x86: fix typo in comment
-> 
->  arch/x86/Kconfig                                   |   4 -
->  arch/x86/platform/atom/Makefile                    |   1 -
->  drivers/acpi/acpi_lpss.c                           |   2 +-
->  drivers/clk/Makefile                               |   2 +
->  drivers/clk/x86/Makefile                           |   1 +
->  drivers/clk/x86/clk-pmc-atom.c                     | 371
-> +++++++++++++++++++++
->  drivers/platform/x86/Kconfig                       |   5 +
->  drivers/platform/x86/Makefile                      |   1 +
->  .../atom => drivers/platform/x86}/pmc_atom.c       |  88 ++++-
->  include/linux/platform_data/x86/clk-pmc-atom.h     |  44 +++
->  .../linux/platform_data/x86}/pmc_atom.h            |   2 +-
->  11 files changed, 506 insertions(+), 15 deletions(-)
->  create mode 100644 drivers/clk/x86/clk-pmc-atom.c
->  rename {arch/x86/platform/atom => drivers/platform/x86}/pmc_atom.c
-> (87%)
->  create mode 100644 include/linux/platform_data/x86/clk-pmc-atom.h
->  rename {arch/x86/include/asm =>
-> include/linux/platform_data/x86}/pmc_atom.h (98%)
-> 
-
+diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+index 13fb6f7..1715787 100644
+--- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+@@ -79,6 +79,19 @@
+ 		regulator-always-on;
+ 	};
+ 
++	sfpb_mutex: hwmutex {
++		compatible = "qcom,sfpb-mutex";
++		syscon = <&sfpb_mutex_regs 0x0 0x100>;
++		#hwlock-cells = <1>;
++	};
++
++	smem {
++		compatible = "qcom,smem";
++		memory-region = <&smem_region>;
++		qcom,rpm-msg-ram = <&rpm_msg_ram>;
++		hwlocks = <&sfpb_mutex 3>;
++	};
++
+ 	soc {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -93,6 +106,11 @@
+ 				<0xf9002000 0x1000>;
+ 		};
+ 
++		apcs: syscon@f900d000 {
++			compatible = "syscon";
++			reg = <0xf900d000 0x2000>;
++		};
++
+ 		timer@f9020000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+@@ -183,12 +201,36 @@
+ 			#power-domain-cells = <1>;
+ 			reg = <0xfc400000 0x2000>;
+ 		};
++
++		rpm_msg_ram: memory@fc428000 {
++			compatible = "qcom,rpm-msg-ram";
++			reg = <0xfc428000 0x4000>;
++		};
++
++		sfpb_mutex_regs: syscon@fd484000 {
++			#address-cells = <1>;
++			#size-cells = <1>;
++			compatible = "syscon";
++			reg = <0xfd484000 0x400>;
++		};
+ 	};
+ 
+ 	memory {
+ 		device_type = "memory";
+ 		reg = <0 0 0 0>; // bootloader will update
+ 	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		smem_region: smem@6a00000 {
++			reg = <0x0 0x6a00000 0x0 0x200000>;
++			no-map;
++		};
++	};
++
+ };
+ 
+ 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.6.1
+
