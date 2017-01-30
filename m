@@ -1,72 +1,59 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:45181 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932453AbdA3Qlw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 30 Jan 2017 11:41:52 -0500
+Date: Mon, 30 Jan 2017 22:12:10 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Andre Przywara <andre.przywara@arm.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, dmaengine@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 08/10] dmaengine: sun6i: allow build on ARM64
+ platforms (sun50i)
+Message-ID: <20170130164210.GD19244@localhost>
+References: <20170129023331.62106-1-icenowy@aosc.xyz>
+ <20170129023331.62106-9-icenowy@aosc.xyz>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20170120231243.GE8009@codeaurora.org>
-References: <1484657190-12838-1-git-send-email-geert+renesas@glider.be>
- <1484657190-12838-3-git-send-email-geert+renesas@glider.be> <20170120231243.GE8009@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 23 Jan 2017 10:50:36 +0100
-Message-ID: <CAMuHMdWxmPr9B7QkrhXMbsis0UchdXf7p7TLky9QQNcz474iFw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: renesas: mstp: Make INTC-SYS a critical clock
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170129023331.62106-9-icenowy@aosc.xyz>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On Sun, Jan 29, 2017 at 10:33:29AM +0800, Icenowy Zheng wrote:
+> As 64-bit Allwinner H5 SoC has the same DMA engine with H3, the DMA
+> driver should be allowed to be built for ARM64, in order to make it work on H5.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+> Patch introduced between v1 and v2, to satisfy the newly added H3/H5 audio
+> codec support.
+> 
+>  drivers/dma/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+> index 0d6a96ee9fc7..d01d59812cf3 100644
+> --- a/drivers/dma/Kconfig
+> +++ b/drivers/dma/Kconfig
+> @@ -157,7 +157,7 @@ config DMA_SUN4I
+>  
+>  config DMA_SUN6I
+>  	tristate "Allwinner A31 SoCs DMA support"
+> -	depends on MACH_SUN6I || MACH_SUN8I || COMPILE_TEST
+> +	depends on MACH_SUN6I || MACH_SUN8I || (ARM64 && ARCH_SUNXI) || COMPILE_TEST
 
-On Sat, Jan 21, 2017 at 12:12 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 01/17, Geert Uytterhoeven wrote:
->> INTC-SYS is the module clock for the GIC.  Accessing the GIC while it is
->> disabled causes:
->>
->>     Unhandled fault: asynchronous external abort (0x1211) at 0x00000000
->>
->> Currently, the GIC-400 driver cannot enable its module clock for several
->> reasons:
->>   - It does not use a platform device, so Runtime PM is not an option,
->>   - gic_of_init() runs before any clocks are registered, so it cannot
->>     enable the clock explicitly,
->>   - gic_of_init() cannot return -EPROBE_DEFER, as IRQCHIP_DECLARE()
->>     doesn't support deferred probing.
->>
->> Hence we have to keep on relying on the boot loader for enabling the
->> module clock.
->>
->> To prevent the module clock from being disabled when the CCF core thinks
->> it is unused, and thus causing a system lock-up, add a check to the MSTP
->> clock driver and enable CLK_IS_CRITICAL. This will make sure the module
->> clock is never disabled.
->>
->> This is a hard dependency for describing the INTC-SYS clock in DT on
->> R-Mobile APE6 and R-Car Gen2.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Do we really need ARM64 here? also looking at others I wonder why isn't
+this MACH_SUNXI...?
 
-Thanks!
-
->> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
->> index 9375777776d99407..c0319b8acf3521a2 100644
->> --- a/drivers/clk/renesas/clk-mstp.c
->> +++ b/drivers/clk/renesas/clk-mstp.c
->> @@ -144,6 +144,11 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
->
-> Sad that git gets confused about which function this is in.
-
-Indeed. Will send a patch to fix that...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+~Vinod
