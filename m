@@ -1,42 +1,175 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 9 Jan 2017 16:33:41 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Zoran Markovic <zmarkovic@sierrawireless.com>
-Cc: linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [RFC PATCHv2 2/4] clk: mdm9615: Add EBI2 clock
-Message-ID: <20170110003341.GL17126@codeaurora.org>
-References: <1482468884-31027-1-git-send-email-zmarkovic@sierrawireless.com>
+Return-Path: <huziji@marvell.com>
+Subject: Re: [PATCH v5 06/12] mmc: sdhci-xenon: Add Marvell Xenon SDHC core
+ functionality
+To: Ulf Hansson <ulf.hansson@linaro.org>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+ <3546f143091c121face8ecbcbf7f6a4c41d2cec7.1484154449.git-series.gregory.clement@free-electrons.com>
+ <CAPDyKFrwxix4zY4a1x9u6jh_gPfKTsaLnD8b8crum=pc5CN3AA@mail.gmail.com>
+ <461fd409-81e8-2c3f-3674-ec593e1c7383@marvell.com>
+ <CAPDyKFoERET6Fzc7qEGWJ95t6GZir=XJWfTEoRSEROjPgJ95hg@mail.gmail.com>
+CC: Gregory CLEMENT <gregory.clement@free-electrons.com>,
+        Adrian Hunter
+	<adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>, Andrew Lunn
+	<andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        Mike Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk
+	<linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Jimmy Xu
+	<zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+        Nadav Haklai
+	<nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
+        Doug Jones
+	<dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
+        "Wei(SOCP) Liu"
+	<liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
+        Yehuda Yitschak
+	<yehuday@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>, Hanna Hawa
+	<hannah@marvell.com>,
+        Kostya Porotchkin <kostap@marvell.com>
+From: Ziji Hu <huziji@marvell.com>
+Message-ID: <ed6e5125-85ef-5644-e589-bd5b4be4c84a@marvell.com>
+Date: Mon, 30 Jan 2017 23:12:10 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1482468884-31027-1-git-send-email-zmarkovic@sierrawireless.com>
+In-Reply-To: <CAPDyKFoERET6Fzc7qEGWJ95t6GZir=XJWfTEoRSEROjPgJ95hg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/22, Zoran Markovic wrote:
-> Add definition of EBI2 clock used by MDM9615 NAND controller.
+Hi Ulf,
+
+On 2017/1/30 16:41, Ulf Hansson wrote:
+> [...]
 > 
-> Cc: Andy Gross <andy.gross@linaro.org>
-> Cc: David Brown <david.brown@linaro.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: linux-soc@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Zoran Markovic <zmarkovic@sierrawireless.com>
-> ---
+>>>> + */
+>>>> +static int xenon_child_node_of_parse(struct platform_device *pdev)
+>>>> +{
+>>>> +       struct device_node *np = pdev->dev.of_node;
+>>>> +       struct sdhci_host *host = platform_get_drvdata(pdev);
+>>>> +       struct mmc_host *mmc = host->mmc;
+>>>> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>>> +       struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
+>>>> +       struct device_node *child;
+>>>> +       int nr_child;
+>>>> +
+>>>> +       priv->init_card_type = XENON_CARD_TYPE_UNKNOWN;
+>>>> +
+>>>> +       nr_child = of_get_child_count(np);
+>>>> +       if (!nr_child)
+>>>> +               return 0;
+>>>> +
+>>>> +       for_each_child_of_node(np, child) {
+>>>> +               if (of_device_is_compatible(child, "mmc-card")) {
+>>>
+>>> To avoid code from being duplicated, I would rather see the DT parsing
+>>> of the child nodes for "mmc-card", to be done by the mmc core.
+>>>
+>>> As a matter of fact it is already being done, but perhaps we need to
+>>> change that a bit as to fit your case.
+>>>
+>>> I suggest you have a look and see how to update this in the core,
+>>> instead of doing it here in the host driver.
+>>>
+>>
+>>     I understand your concern.
+>>
+>>     It seems that so far "mmc-card" is only used in our Xenon driver.
+> 
+> git grep "mmc-card" tells you more about where it's being parsed by
+> the mmc core.
+> 
+>>     Besides, we set Xenon specific parameters and attributions when
+>>     parsing "mmc-card" property.
+> 
+> I don't see any Xenon specific properties.
+> 
+> Instead I think it would make sense to update the generic
+> interpretation of the binding for mmc-card, as you have done here.
+> 
 
-Applied to clk-next + fixed halt bit of ebi2_clk to be 24 not 23.
+   OK. I will merge it into core layer.
+ 
+   Our Xenon driver requires to determine whether current SDHC is
+   for eMMC before card init. Thus I would like to implement a specific
+   function for mmc-card parsing in mmc.c and let mmc_of_parse() in host.c
+   to call it.
+   But there are some detailed issues then.
+   1. mmc_decode_ext_csd() also parses mmc-card to check broken-hpi.
+      So mmc-card parse will still be duplicated.
+      Shall we merge broken-hpi check into mmc-card parse?
+      It might require a new flag to indicate broken-hpi attribution in
+      mmc_host structure.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+   2. Structure mmc_card is not ready while parsing mmc-card.
+      Thus we are not able to indicate card type in mmc_card.
+      As a result, our Xenon specific parse function still has to
+      parse mmc-card again to check if eMMC card is in used.
+
+   Could you please help suggest any better place in core layer to
+   parse mmc-card?
+
+   Thank you.
+
+Best regards,
+Hu Ziji
+
+>>
+>>     May I keep current implementation?
+> 
+> Rather not. Let's try to make the parsing of the child node for
+> mmc-card generic.
+> 
+>>     In my very own opinion, moving it into core layer should be another
+>>     independent patch.
+> 
+> Absolutely an independent patch. Whether it can be done as a part of
+> mmc_of_parse() or whether we need yet another new mmc_of* API, we can
+> discuss.
+> 
+> My point is that, I don't this to be specific for Xenon (unless there
+> are specific reason, which I don't see here).
+> 
+>>     And it will also cost some more time. To be honest, it is difficult
+>>     for me to bring up a generic core layer implementation to parse
+>>     "mmc-card", since I'm not clear about other vendor's requirement.
+> 
+> Well, then you need to learn more about how the mmc core works. In
+> this case, it shouldn't be too hard to implement.
+> 
+> [...]
+> 
+>>
+>>>
+>>>> +                                     MMC_CAP2_NO_SD |
+>>>> +                                     MMC_CAP2_NO_SDIO;
+>>>
+>>> I think we need to update the DT documentation for mmc-card.
+>>> Typically, we should explicitly state what kind of other existing mmc
+>>> DT properties that will be automatically selected, when the mmc-card
+>>> is specified.
+>>>
+>>> Can you please look into updating this DT doc as well.
+>>>
+>>
+>>   Similar to above, may I keep it now and bring up another patch later
+>>   to update mmc-card DT and parsing?
+> 
+> Please, no.
+> 
+> [...]
+> 
+> Kind regards
+> Uffe
+> 
