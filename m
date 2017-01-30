@@ -1,99 +1,40 @@
-Return-Path: <jdelvare@suse.de>
-Date: Tue, 24 Jan 2017 13:07:04 +0100
-From: Jean Delvare <jdelvare@suse.de>
-To: linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org
-Cc: Andreas =?UTF-8?B?RsOkcmJlcg==?= <afaerber@suse.de>, James Liao
- <jamesjj.liao@mediatek.com>, Shunli Wang <shunli.wang@mediatek.com>, Erin
- Lo <erin.lo@mediatek.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael
- Turquette <mturquette@baylibre.com>, Matthias Brugger
- <matthias.bgg@gmail.com>
-Subject: [PATCH v2] clk: mediatek: Fix MT2701 dependencies
-Message-ID: <20170124130704.14015da3@endymion>
+Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
+Date: Mon, 30 Jan 2017 22:25:35 +0000
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-clk@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] clk: add more managed APIs
+Message-ID: <20170130222534.GJ27312@n2100.armlinux.org.uk>
+References: <20170128184047.GA24957@dtor-ws>
+ <20170128190309.GN27312@n2100.armlinux.org.uk>
+ <20170128192207.GA38136@dtor-ws>
+ <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
+ <20170128233911.GO27312@n2100.armlinux.org.uk>
+ <20170129180743.GA10917@dtor-ws>
+ <20170130185551.GM8801@codeaurora.org>
+ <20170130192214.GC11199@roeck-us.net>
+ <20170130214227.GI27312@n2100.armlinux.org.uk>
+ <CAKdAkRREDjH4+qxs6AOHHmftPi4HFuDwi8=m4WQJdyhs5ApNPg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAKdAkRREDjH4+qxs6AOHHmftPi4HFuDwi8=m4WQJdyhs5ApNPg@mail.gmail.com>
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-If I say "no" to "Clock driver for Mediatek MT2701", I don't want to
-be asked individually about each sub-driver. No means no.
+On Mon, Jan 30, 2017 at 01:58:05PM -0800, Dmitry Torokhov wrote:
+> FWIW I do not think that kitchen sink calls, like
+> "devm_clk_get_prepare_set_rate_enable" are helpful. Resource
+> acquisition and use of said resource are logically separate.
 
-Additionally, this driver shouldn't be proposed at all on non-mediatek
-builds, unless build-testing.
+That alone is an argument against devm_clk_get_prepare_enable() in
+so far that drivers should really get all their resources before
+they start to enable anything.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
-Reviewed-by: Andreas F=C3=A4rber <afaerber@suse.de>
-Reviewed-by: James Liao <jamesjj.liao@mediatek.com>
-Cc: Shunli Wang <shunli.wang@mediatek.com>
-Cc: Erin Lo <erin.lo@mediatek.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
----
-Changes since v1:
- * Restrict to 32-bit ARM.
-
- drivers/clk/mediatek/Kconfig |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
---- linux-4.10-rc4.orig/drivers/clk/mediatek/Kconfig	2017-01-16 11:13:07.14=
-6675028 +0100
-+++ linux-4.10-rc4/drivers/clk/mediatek/Kconfig	2017-01-24 12:55:50.1921007=
-13 +0100
-@@ -8,44 +8,45 @@ config COMMON_CLK_MEDIATEK
-=20
- config COMMON_CLK_MT2701
- 	bool "Clock driver for Mediatek MT2701"
-+	depends on (ARCH_MEDIATEK && ARM) || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
--	default ARCH_MEDIATEK
-+	default ARCH_MEDIATEK && ARM
- 	---help---
- 	  This driver supports Mediatek MT2701 basic clocks.
-=20
- config COMMON_CLK_MT2701_MMSYS
- 	bool "Clock driver for Mediatek MT2701 mmsys"
--	select COMMON_CLK_MT2701
-+	depends on COMMON_CLK_MT2701
- 	---help---
- 	  This driver supports Mediatek MT2701 mmsys clocks.
-=20
- config COMMON_CLK_MT2701_IMGSYS
- 	bool "Clock driver for Mediatek MT2701 imgsys"
--	select COMMON_CLK_MT2701
-+	depends on COMMON_CLK_MT2701
- 	---help---
- 	  This driver supports Mediatek MT2701 imgsys clocks.
-=20
- config COMMON_CLK_MT2701_VDECSYS
- 	bool "Clock driver for Mediatek MT2701 vdecsys"
--	select COMMON_CLK_MT2701
-+	depends on COMMON_CLK_MT2701
- 	---help---
- 	  This driver supports Mediatek MT2701 vdecsys clocks.
-=20
- config COMMON_CLK_MT2701_HIFSYS
- 	bool "Clock driver for Mediatek MT2701 hifsys"
--	select COMMON_CLK_MT2701
-+	depends on COMMON_CLK_MT2701
- 	---help---
- 	  This driver supports Mediatek MT2701 hifsys clocks.
-=20
- config COMMON_CLK_MT2701_ETHSYS
- 	bool "Clock driver for Mediatek MT2701 ethsys"
--	select COMMON_CLK_MT2701
-+	depends on COMMON_CLK_MT2701
- 	---help---
- 	  This driver supports Mediatek MT2701 ethsys clocks.
-=20
- config COMMON_CLK_MT2701_BDPSYS
- 	bool "Clock driver for Mediatek MT2701 bdpsys"
--	select COMMON_CLK_MT2701
-+	depends on COMMON_CLK_MT2701
- 	---help---
- 	  This driver supports Mediatek MT2701 bdpsys clocks.
-=20
-
-
---=20
-Jean Delvare
-SUSE L3 Support
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
