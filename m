@@ -1,71 +1,125 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 0/7] ARM: sun5i: Convert sun5i SoCs to sunxi-ng
-Date: Tue, 10 Jan 2017 08:57:22 +0100
-Message-Id: <cover.8762813dc78858261716126c700983d4aee00458.1484035021.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <adrian.hunter@intel.com>
+Subject: Re: [PATCH v5 06/12] mmc: sdhci-xenon: Add Marvell Xenon SDHC core
+ functionality
+To: Ulf Hansson <ulf.hansson@linaro.org>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+ <3546f143091c121face8ecbcbf7f6a4c41d2cec7.1484154449.git-series.gregory.clement@free-electrons.com>
+ <CAPDyKFrwxix4zY4a1x9u6jh_gPfKTsaLnD8b8crum=pc5CN3AA@mail.gmail.com>
+ <2e67332d-d8c3-fd24-1f81-72675a09927a@intel.com>
+ <CAPDyKFqbjeKCHp40PALydquxdF-qBk156+iOS9TYYsquJ7fK7w@mail.gmail.com>
+ <00e8d2dc-bc07-addc-a5d9-8604f143627f@intel.com>
+ <CAPDyKFoF2QsTxKC7=PjHqOk106USQ-j9MtiyfC=Sqks8DnPDYQ@mail.gmail.com>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>,
+ "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+ Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Ziji Hu <huziji@marvell.com>, Jimmy Xu <zmxu@marvell.com>,
+ Jisheng Zhang <jszhang@marvell.com>, Nadav Haklai <nadavh@marvell.com>,
+ Ryan Gao <ygao@marvell.com>, Doug Jones <dougj@marvell.com>,
+ Victor Gu <xigu@marvell.com>, "Wei(SOCP) Liu" <liuw@marvell.com>,
+ Wilson Ding <dingwei@marvell.com>, Yehuda Yitschak <yehuday@marvell.com>,
+ Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
+ Kostya Porotchkin <kostap@marvell.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Message-ID: <1f0cc488-75f0-cff3-1386-070717aa7220@intel.com>
+Date: Mon, 30 Jan 2017 11:40:48 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFoF2QsTxKC7=PjHqOk106USQ-j9MtiyfC=Sqks8DnPDYQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 30/01/17 11:10, Ulf Hansson wrote:
+> On 28 January 2017 at 09:16, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>> On 27/01/2017 5:12 p.m., Ulf Hansson wrote:
+>>>
+>>> On 26 January 2017 at 13:39, Adrian Hunter <adrian.hunter@intel.com>
+>>> wrote:
+>>>>
+>>>> On 26/01/17 12:50, Ulf Hansson wrote:
+>>>>>
+>>>>> On 11 January 2017 at 18:19, Gregory CLEMENT
+>>>>> <gregory.clement@free-electrons.com> wrote:
+>>>>>>
+>>>>>> +                       priv->init_card_type = MMC_TYPE_MMC;
+>>>>>> +                       mmc->caps |= MMC_CAP_NONREMOVABLE;
+>>>>>> +
+>>>>>> +                       /*
+>>>>>> +                        * Force to clear BUS_TEST to
+>>>>>> +                        * skip bus_test_pre and bus_test_post
+>>>>>> +                        */
+>>>>>> +                       mmc->caps &= ~MMC_CAP_BUS_WIDTH_TEST;
+>>>>>> +                       mmc->caps2 |= MMC_CAP2_HC_ERASE_SZ |
+>>>>>
+>>>>>
+>>>>> This cap is a bit strange. It was added several years ago by Adrian
+>>>>> Hunter, but I am wondering about the reason to why it's needed.
+>>>>>
+>>>>
+>>>> MMC_CAP2_HC_ERASE_SZ relates to EXT-CSD ERASE_GROUP_DEF.
+>>>>
+>>>> I think it was added to enable people to choose whether they wanted a
+>>>> large
+>>>> or small erase granularity.  That probably doesn't matter if the card
+>>>> supports TRIM.
+>>>>
+>>>
+>>> Huh, the erase/trim/discard code in the mmc core is really hairy. :-)
+>>>
+>>> In mmc_calc_max_discard() the following code/comment exists:
+>>>
+>>> /*
+>>>  * Without erase_group_def set, MMC erase timeout depends on clock
+>>>  * frequence which can change.  In that case, the best choice is
+>>>  * just the preferred erase size.
+>>>  */
+>>> if (mmc_card_mmc(card) && !(card->ext_csd.erase_group_def & 1))
+>>>      return card->pref_erase;
+>>>
+>>>
+>>> This makes me wonder.
+>>>
+>>> So, when we haven't enabled the high capacity erase groups in the
+>>> EXT_CSD register (ext_csd.erase_group_def), we will use the pref_erase
+>>> size.
+>>>
+>>> In the other case, as when having MMC_CAP2_HC_ERASE_SZ set (which will
+>>> set ext_csd.erase_group_def),  we will instead  do some calculations
+>>> to find out the max discards.
+>>>
+>>> Are you saying that these calculations doesn't matter much - or are
+>>> you saying that we always want to do them?
+>>
+>>
+>> No, I was saying that if you have TRIM then TRIM is preferred to ERASE so
+>> the erase group size does not come into play when discarding, since ERASE
+>> granularity is erase groups whereas TRIM granularity is sectors.
+> 
+> Right. Thanks for clarifying.
+> 
+>>
+>> However ERASE_GROUP_DEF also affects the size of write protect groups.
+> 
+> In either case.
+> 
+> What do you think of removing MMC_CAP2_HC_ERASE_SZ? I don't like these
+> kind of soft polices, it's better if we can decide on a common
+> behaviour - whatever that is.
 
-This is yet another serie bringing more SoCs into the sunxi-ng world.
+Changing the value of ERASE_GROUP_DEF could be a problem, for example the
+spec. says:
 
-This is pretty common stuff. Dealing with more corner cases, and adding the
-drivers for the SoCs. The A10 and A20 should be pretty close, and pretty
-easy to support after that.
+"Similarly if the host set ERASE_GROUP_DEF bit for a device that the default
+write protect was already set in some of the area in the previous power
+cycle, then the device may show unknown behavior when host issue write
+or erase commands to the device. In application, it is mandatory for host to
+use same ERASE GROUP DEF value to the device all the time."
 
-Let me know what you think,
-Maxime
-
-Changes from v1:
-  - Rebased on top of 4.10
-  - Dropped post divider patch
-  - Merged all the CCU drivers in a single one
-  - Added the code to deal with multiplier maximum
-  - Added a comment for the PLL audio offset
-  - Added CLK_IS_CRITICAL to the DDR PLL
-  - Added the fixed pre-divider to the AHB clock
-  - Added a bunch of CLK_SET_RATE_PARENT
-
-Maxime Ripard (7):
-  clk: sunxi-ng: multiplier: Add fractional support
-  clk: sunxi-ng: Implement factors offsets
-  clk: sunxi-ng: Implement multiplier maximum
-  clk: sunxi-ng: Add clocks and resets indices for sun5i
-  clk: sunxi-ng: Add sun5i CCU driver
-  ARM: sun5i: Convert to CCU
-  ARM: gr8: Convert to CCU
-
- arch/arm/boot/dts/sun5i-a10s.dtsi     |   85 +--
- arch/arm/boot/dts/sun5i-a13.dtsi      |  140 +----
- arch/arm/boot/dts/sun5i-gr8.dtsi      |  520 +------------
- arch/arm/boot/dts/sun5i-r8.dtsi       |   10 +-
- arch/arm/boot/dts/sun5i.dtsi          |  353 +---------
- drivers/clk/sunxi-ng/Kconfig          |   10 +-
- drivers/clk/sunxi-ng/Makefile         |    1 +-
- drivers/clk/sunxi-ng/ccu-sun5i.c      | 1008 ++++++++++++++++++++++++++-
- drivers/clk/sunxi-ng/ccu-sun5i.h      |   68 ++-
- drivers/clk/sunxi-ng/ccu_div.h        |   10 +-
- drivers/clk/sunxi-ng/ccu_mp.c         |   10 +-
- drivers/clk/sunxi-ng/ccu_mult.c       |   16 +-
- drivers/clk/sunxi-ng/ccu_mult.h       |   24 +-
- drivers/clk/sunxi-ng/ccu_nk.c         |   22 +-
- drivers/clk/sunxi-ng/ccu_nkm.c        |   26 +-
- drivers/clk/sunxi-ng/ccu_nkmp.c       |   25 +-
- drivers/clk/sunxi-ng/ccu_nm.c         |   17 +-
- include/dt-bindings/clock/sun5i-ccu.h |  103 +++-
- include/dt-bindings/reset/sun5i-ccu.h |   32 +-
- 19 files changed, 1459 insertions(+), 1021 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun5i.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun5i.h
- create mode 100644 include/dt-bindings/clock/sun5i-ccu.h
- create mode 100644 include/dt-bindings/reset/sun5i-ccu.h
-
-base-commit: f9ca9b952ee139fbb9cd4d354a33f440bc1049cd
--- 
-git-series 0.8.11
+Whether or not there is anyone that would actually be affected is hard to know.
