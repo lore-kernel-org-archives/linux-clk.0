@@ -1,183 +1,123 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-Subject: Re: [PATCH v2 05/10] ASoC: Add sun8i digital audio codec
-To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
- maxime.ripard@free-electrons.com, wens@csie.org, mturquette@baylibre.com,
- sboyd@codeaurora.org, mark.rutland@arm.com, robh+dt@kernel.org
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
- <20170117140230.23142-6-mylene.josserand@free-electrons.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
- devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
- thomas.petazzoni@free-electrons.com, alexandre.belloni@free-electrons.com
-From: Mylene Josserand <mylene.josserand@free-electrons.com>
-Message-ID: <c1800916-5373-50a8-1b36-0ba5bb69641a@free-electrons.com>
-Date: Tue, 17 Jan 2017 17:20:29 +0100
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20170117140230.23142-6-mylene.josserand@free-electrons.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <461fd409-81e8-2c3f-3674-ec593e1c7383@marvell.com>
+References: <cover.8527229dae6c124f24c5e637430c2cdc86f80392.1484154449.git-series.gregory.clement@free-electrons.com>
+ <3546f143091c121face8ecbcbf7f6a4c41d2cec7.1484154449.git-series.gregory.clement@free-electrons.com>
+ <CAPDyKFrwxix4zY4a1x9u6jh_gPfKTsaLnD8b8crum=pc5CN3AA@mail.gmail.com> <461fd409-81e8-2c3f-3674-ec593e1c7383@marvell.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 30 Jan 2017 09:41:28 +0100
+Message-ID: <CAPDyKFoERET6Fzc7qEGWJ95t6GZir=XJWfTEoRSEROjPgJ95hg@mail.gmail.com>
+Subject: Re: [PATCH v5 06/12] mmc: sdhci-xenon: Add Marvell Xenon SDHC core functionality
+To: Ziji Hu <huziji@marvell.com>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>, Victor Gu <xigu@marvell.com>, "Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>, Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
-
-Hello everyone,
-
-On 17/01/2017 15:02, Mylène Josserand wrote:
-> Add the sun8i audio codec which handles the digital register of
-> A33 codec.
-> The driver handles only the basic playback from the DAC to headphones.
-> All other features (microphone, capture, etc) will be added later.
->
-> Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
 
 [...]
 
-> +static int sun8i_codec_get_hw_rate(struct snd_pcm_hw_params *params)
-> +{
-> +	unsigned int rate = params_rate(params);
-> +
-> +	switch (rate) {
-> +	case 8000:
-> +	case 7350:
-> +		return 0x0;
-> +	case 11025:
-> +		return 0x1;
-> +	case 12000:
-> +		return 0x2;
-> +	case 16000:
-> +		return 0x3;
-> +	case 22050:
-> +		return 0x4;
-> +	case 24000:
-> +		return 0x5;
-> +	case 32000:
-> +		return 0x6;
-> +	case 44100:
-> +		return 0x7;
-> +	case 48000:
-> +		return 0x8;
-> +	case 96000:
-> +		return 0x9;
-> +	case 192000:
-> +		return 0xa;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static u32 sun8i_codec_get_mod_freq(struct snd_pcm_hw_params *params)
-> +{
-> +	unsigned int rate = params_rate(params);
-> +
-> +	switch (rate) {
-> +	case 176400:
-> +	case 88200:
-> +	case 44100:
-> +	case 22050:
-> +	case 11025:
-> +		return 22579200;
-> +
-> +	case 192000:
-> +	case 128000:
-> +	case 96000:
-> +	case 64000:
-> +	case 48000:
-> +	case 32000:
-> +	case 24000:
-> +	case 16000:
-> +	case 12000:
-> +	case 8000:
-> +		return 24576000;
-> +
-> +	default:
-> +		return 0;
-> +	}
-> +}
+>>> + */
+>>> +static int xenon_child_node_of_parse(struct platform_device *pdev)
+>>> +{
+>>> +       struct device_node *np = pdev->dev.of_node;
+>>> +       struct sdhci_host *host = platform_get_drvdata(pdev);
+>>> +       struct mmc_host *mmc = host->mmc;
+>>> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>> +       struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
+>>> +       struct device_node *child;
+>>> +       int nr_child;
+>>> +
+>>> +       priv->init_card_type = XENON_CARD_TYPE_UNKNOWN;
+>>> +
+>>> +       nr_child = of_get_child_count(np);
+>>> +       if (!nr_child)
+>>> +               return 0;
+>>> +
+>>> +       for_each_child_of_node(np, child) {
+>>> +               if (of_device_is_compatible(child, "mmc-card")) {
+>>
+>> To avoid code from being duplicated, I would rather see the DT parsing
+>> of the child nodes for "mmc-card", to be done by the mmc core.
+>>
+>> As a matter of fact it is already being done, but perhaps we need to
+>> change that a bit as to fit your case.
+>>
+>> I suggest you have a look and see how to update this in the core,
+>> instead of doing it here in the host driver.
+>>
+>
+>     I understand your concern.
+>
+>     It seems that so far "mmc-card" is only used in our Xenon driver.
 
-This function is not used anymore, I will remove it in v3 (once I will 
-get some reviews).
+git grep "mmc-card" tells you more about where it's being parsed by
+the mmc core.
 
-> +
-> +static int sun8i_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
-> +{
-> +	struct sun8i_codec *scodec = snd_soc_codec_get_drvdata(dai->codec);
-> +	u32 value;
-> +
-> +	/* clock masters */
-> +	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
-> +	case SND_SOC_DAIFMT_CBS_CFS: /* DAI Slave */
-> +		value = 0x0; /* Codec Master */
-> +		break;
-> +	case SND_SOC_DAIFMT_CBM_CFM: /* DAI Master */
-> +		value = 0x1; /* Codec Slave */
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
-> +			   BIT(SUN8I_AIF1CLK_CTRL_AIF1_MSTR_MOD),
-> +			   value << SUN8I_AIF1CLK_CTRL_AIF1_MSTR_MOD);
-> +
-> +	/* clock inversion */
-> +	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
-> +	case SND_SOC_DAIFMT_NB_NF: /* Normal */
-> +		value = 0x0;
-> +		break;
-> +	case SND_SOC_DAIFMT_IB_IF: /* Inversion */
-> +		value = 0x1;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
-> +			   BIT(SUN8I_AIF1CLK_CTRL_AIF1_BCLK_INV),
-> +			   value << SUN8I_AIF1CLK_CTRL_AIF1_BCLK_INV);
-> +	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
-> +			   BIT(SUN8I_AIF1CLK_CTRL_AIF1_LRCK_INV),
-> +			   value << SUN8I_AIF1CLK_CTRL_AIF1_LRCK_INV);
-> +
-> +	/* DAI format */
-> +	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
-> +	case SND_SOC_DAIFMT_I2S:
-> +		value = 0x0;
-> +		break;
-> +	case SND_SOC_DAIFMT_LEFT_J:
-> +		value = 0x1;
-> +		break;
-> +	case SND_SOC_DAIFMT_RIGHT_J:
-> +		value = 0x2;
-> +		break;
-> +	case SND_SOC_DAIFMT_DSP_A:
-> +	case SND_SOC_DAIFMT_DSP_B:
-> +		value = 0x3;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +	regmap_update_bits(scodec->regmap, SUN8I_AIF1CLK_CTRL,
-> +			   BIT(SUN8I_AIF1CLK_CTRL_AIF1_DATA_FMT),
-> +			   value << SUN8I_AIF1CLK_CTRL_AIF1_DATA_FMT);
-> +
-> +	return 0;
-> +}
-> +
-> +static int sun8i_codec_hw_params(struct snd_pcm_substream *substream,
-> +				 struct snd_pcm_hw_params *params,
-> +				 struct snd_soc_dai *dai)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+>     Besides, we set Xenon specific parameters and attributions when
+>     parsing "mmc-card" property.
 
-Same things for these variables.
+I don't see any Xenon specific properties.
 
-> +	struct sun8i_codec *scodec = snd_soc_codec_get_drvdata(dai->codec);
-> +	u32 clk_freq;
-> +	int sample_rate, err;
+Instead I think it would make sense to update the generic
+interpretation of the binding for mmc-card, as you have done here.
 
-ditto for "clk_freq" and "err" ones.
+>
+>     May I keep current implementation?
 
-Sorry about that.
+Rather not. Let's try to make the parsing of the child node for
+mmc-card generic.
 
-Best regards,
+>     In my very own opinion, moving it into core layer should be another
+>     independent patch.
 
--- 
-Mylène Josserand, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Absolutely an independent patch. Whether it can be done as a part of
+mmc_of_parse() or whether we need yet another new mmc_of* API, we can
+discuss.
+
+My point is that, I don't this to be specific for Xenon (unless there
+are specific reason, which I don't see here).
+
+>     And it will also cost some more time. To be honest, it is difficult
+>     for me to bring up a generic core layer implementation to parse
+>     "mmc-card", since I'm not clear about other vendor's requirement.
+
+Well, then you need to learn more about how the mmc core works. In
+this case, it shouldn't be too hard to implement.
+
+[...]
+
+>
+>>
+>>> +                                     MMC_CAP2_NO_SD |
+>>> +                                     MMC_CAP2_NO_SDIO;
+>>
+>> I think we need to update the DT documentation for mmc-card.
+>> Typically, we should explicitly state what kind of other existing mmc
+>> DT properties that will be automatically selected, when the mmc-card
+>> is specified.
+>>
+>> Can you please look into updating this DT doc as well.
+>>
+>
+>   Similar to above, may I keep it now and bring up another patch later
+>   to update mmc-card DT and parsing?
+
+Please, no.
+
+[...]
+
+Kind regards
+Uffe
