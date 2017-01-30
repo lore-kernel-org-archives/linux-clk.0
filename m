@@ -1,87 +1,55 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
-Subject: [PATCH v2 1/3] dt-bindings: mfd: stm32f4: Fix STM32F4_X_CLOCK() macro
-Date: Mon, 9 Jan 2017 10:07:11 +0100
-Message-ID: <1483952833-14704-2-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1483952833-14704-1-git-send-email-gabriel.fernandez@st.com>
-References: <1483952833-14704-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 30 Jan 2017 10:55:51 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: add more managed APIs
+Message-ID: <20170130185551.GM8801@codeaurora.org>
+References: <20170128184047.GA24957@dtor-ws>
+ <20170128190309.GN27312@n2100.armlinux.org.uk>
+ <20170128192207.GA38136@dtor-ws>
+ <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
+ <20170128233911.GO27312@n2100.armlinux.org.uk>
+ <20170129180743.GA10917@dtor-ws>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170129180743.GA10917@dtor-ws>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 01/29, Dmitry Torokhov wrote:
+> When converting a driver to managed resources it is desirable to be able to
+> manage all resources in the same fashion. This change allows managing
+> clocks in the same way we manage many other resources.
 
-Macro to select a clock was not correct.
+Can you please add 'managing clock prepared and enabled state in
+the same way'?
 
-Offset of enable register starts at 0x30, then calculation to select a bit is:
-(@enable_reg - 0x30) / 4 * 32 + bit_to_select
+The current wording makes it sound like we don't have
+devm_clk_get() when we do.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Tested-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
----
- include/dt-bindings/mfd/stm32f4-rcc.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> This adds the following managed APIs:
+> 
+> - devm_clk_prepare()/devm_clk_unprepare();
+> - devm_clk_prepare_enable()/devm_clk_disable_unprepare().
 
-diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
-index e98942d..f662b19 100644
---- a/include/dt-bindings/mfd/stm32f4-rcc.h
-+++ b/include/dt-bindings/mfd/stm32f4-rcc.h
-@@ -25,7 +25,7 @@
- #define STM32F4_RCC_AHB1_OTGHS	29
- 
- #define STM32F4_AHB1_RESET(bit) (STM32F4_RCC_AHB1_##bit + (0x10 * 8))
--#define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit + (0x30 * 8))
-+#define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit)
- 
- 
- /* AHB2 */
-@@ -36,13 +36,13 @@
- #define STM32F4_RCC_AHB2_OTGFS	7
- 
- #define STM32F4_AHB2_RESET(bit)	(STM32F4_RCC_AHB2_##bit + (0x14 * 8))
--#define STM32F4_AHB2_CLOCK(bit)	(STM32F4_RCC_AHB2_##bit + (0x34 * 8))
-+#define STM32F4_AHB2_CLOCK(bit)	(STM32F4_RCC_AHB2_##bit + 0x20)
- 
- /* AHB3 */
- #define STM32F4_RCC_AHB3_FMC	0
- 
- #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
--#define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + (0x38 * 8))
-+#define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + 0x40)
- 
- /* APB1 */
- #define STM32F4_RCC_APB1_TIM2	0
-@@ -72,7 +72,7 @@
- #define STM32F4_RCC_APB1_UART8	31
- 
- #define STM32F4_APB1_RESET(bit)	(STM32F4_RCC_APB1_##bit + (0x20 * 8))
--#define STM32F4_APB1_CLOCK(bit)	(STM32F4_RCC_APB1_##bit + (0x40 * 8))
-+#define STM32F4_APB1_CLOCK(bit)	(STM32F4_RCC_APB1_##bit + 0x80)
- 
- /* APB2 */
- #define STM32F4_RCC_APB2_TIM1	0
-@@ -93,6 +93,6 @@
- #define STM32F4_RCC_APB2_LTDC	26
- 
- #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
--#define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + (0x44 * 8))
-+#define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + 0xA0)
- 
- #endif /* _DT_BINDINGS_MFD_STM32F4_RCC_H */
+Wouldn't this be preceded by a devm_clk_get() call? Wouldn't it
+be even shorter to have the APIs
+
+  devm_clk_get_and_prepare()/devm_clk_unprepare_and_put()
+  devm_clk_get_and_prepare_enable()/devm_clk_disable_unprepare_and_put()
+
+instead?
+
+Is there any other subsystem that has similar functionality?
+Regulators? GPIOs? Resets? I'm just curious if those subsystems
+also need similar changes.
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
