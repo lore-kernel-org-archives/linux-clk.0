@@ -1,213 +1,52 @@
-Return-Path: <chrisp@alliedtelesis.co.nz>
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: linux@armlinux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCHv5 1/5] clk: mvebu: support for 98DX3236 SoC
-Date: Fri, 27 Jan 2017 16:25:42 +1300
-Message-Id: <20170127032546.14657-2-chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <20170127032546.14657-1-chris.packham@alliedtelesis.co.nz>
-References: <20170127032546.14657-1-chris.packham@alliedtelesis.co.nz>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [GIT PULL] clk/samsung updates for v4.11, part 2
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <380eea9f-401b-f83f-4420-f89810086278@samsung.com>
+Date: Mon, 30 Jan 2017 18:05:32 +0100
+MIME-version: 1.0
+In-reply-to: <20170127195537.GG8801@codeaurora.org>
+Content-type: text/plain; charset=windows-1252
+References: 
+ <CGME20170127172254epcas1p41085b7154dba751e0c19d4f92a8558a7@epcas1p4.samsung.com>
+ <3297ef21-a1d6-51b0-4d99-70c9a041c952@samsung.com>
+ <20170127195537.GG8801@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The 98DX3236, 98DX3336, 98DX4521 and variants have a different TCLK from
-the Armada XP (200MHz vs 250MHz). The CPU core clock is fixed at 800MHz.
+On 01/27/2017 08:55 PM, Stephen Boyd wrote:
+> On 01/27, Sylwester Nawrocki wrote:
+>> Hi Stephen, Mike,
+>>
+>> The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
+>>
+>>   Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
+>>
+>> are available in the git repository at:
+>>
+>>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-samsung-2
+>>
+>> for you to fetch changes up to 02c952c8f95fd0adf1835704db95215f57cfc8e6:
+>>
+>>   clk: samsung: mark s3c...._clk_sleep_init() as __init (2017-01-27 13:30:00 +0100)
+>>
+>> ----------------------------------------------------------------
+>> Exporting clock IDs for Exynos5433 SoC MIPI DSI DPHY,
+>> Exynos PLL code updates and overall minor clean-ups.
+>>
+> Thanks. Pulled into clk-next.
+> 
+> Can you get your key signed by more people? Maybe others at
+> Samsung?
 
-The clock gating options are a subset of those on the Armada XP.
+That has been on my todo list for quite long time, thanks for
+reminding.  My key got signed already by one more person and
+there should be two more before I'm sending next pull request.
 
-The core clock divider is different to the Armada XP also.
-
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Acked-by: Rob Herring <robh@kernel.org>
----
-
-Notes:
-    Changes in v2:
-    - Update devicetree binding documentation for new compatible string
-    Changes in v3:
-    - Add 98dx3236 support to mvebu/clk-corediv.c rather than creating a new
-      driver.
-    - Document mv98dx3236-corediv-clock binding
-    Changes in v4:
-    - None
-    Changes in v5:
-    - Collect ack from Rob
-    - Remove explicit initialisation of fields to 0 in mv98dx3236_coreclks
-    - Register dummy clock provider for marvell,mv98dx3236-cpu-clock
-
- .../bindings/clock/mvebu-corediv-clock.txt         |  1 +
- .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |  1 +
- drivers/clk/mvebu/armada-xp.c                      | 39 ++++++++++++++++++++++
- drivers/clk/mvebu/clk-corediv.c                    | 23 +++++++++++++
- drivers/clk/mvebu/clk-cpu.c                        |  8 +++++
- 5 files changed, 72 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt
-index 520562a7dc2a..c7b4e3a6b2c6 100644
---- a/Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt
-@@ -7,6 +7,7 @@ Required properties:
- - compatible : must be "marvell,armada-370-corediv-clock",
- 		       "marvell,armada-375-corediv-clock",
- 		       "marvell,armada-380-corediv-clock",
-+                       "marvell,mv98dx3236-corediv-clock",
- 
- - reg : must be the register address of Core Divider control register
- - #clock-cells : from common clock binding; shall be set to 1
-diff --git a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
-index 99c214660bdc..7f28506eaee7 100644
---- a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt
-@@ -3,6 +3,7 @@ Device Tree Clock bindings for cpu clock of Marvell EBU platforms
- Required properties:
- - compatible : shall be one of the following:
- 	"marvell,armada-xp-cpu-clock" - cpu clocks for Armada XP
-+	"marvell,mv98dx3236-cpu-clock" - cpu clocks for 98DX3236 SoC
- - reg : Address and length of the clock complex register set, followed
-         by address and length of the PMU DFS registers
- - #clock-cells : should be set to 1.
-diff --git a/drivers/clk/mvebu/armada-xp.c b/drivers/clk/mvebu/armada-xp.c
-index b3094315a3c0..890a863ae0d0 100644
---- a/drivers/clk/mvebu/armada-xp.c
-+++ b/drivers/clk/mvebu/armada-xp.c
-@@ -52,6 +52,12 @@ static u32 __init axp_get_tclk_freq(void __iomem *sar)
- 	return 250000000;
- }
- 
-+/* MV98DX3236 TCLK frequency is fixed to 200MHz */
-+static u32 __init mv98dx3236_get_tclk_freq(void __iomem *sar)
-+{
-+	return 200000000;
-+}
-+
- static const u32 axp_cpu_freqs[] __initconst = {
- 	1000000000,
- 	1066000000,
-@@ -89,6 +95,12 @@ static u32 __init axp_get_cpu_freq(void __iomem *sar)
- 	return cpu_freq;
- }
- 
-+/* MV98DX3236 CLK frequency is fixed to 800MHz */
-+static u32 __init mv98dx3236_get_cpu_freq(void __iomem *sar)
-+{
-+	return 800000000;
-+}
-+
- static const int axp_nbclk_ratios[32][2] __initconst = {
- 	{0, 1}, {1, 2}, {2, 2}, {2, 2},
- 	{1, 2}, {1, 2}, {1, 1}, {2, 3},
-@@ -158,6 +170,11 @@ static const struct coreclk_soc_desc axp_coreclks = {
- 	.num_ratios = ARRAY_SIZE(axp_coreclk_ratios),
- };
- 
-+static const struct coreclk_soc_desc mv98dx3236_coreclks = {
-+	.get_tclk_freq = mv98dx3236_get_tclk_freq,
-+	.get_cpu_freq = mv98dx3236_get_cpu_freq,
-+};
-+
- /*
-  * Clock Gating Control
-  */
-@@ -195,6 +212,15 @@ static const struct clk_gating_soc_desc axp_gating_desc[] __initconst = {
- 	{ }
- };
- 
-+static const struct clk_gating_soc_desc mv98dx3236_gating_desc[] __initconst = {
-+	{ "ge1", NULL, 3, 0 },
-+	{ "ge0", NULL, 4, 0 },
-+	{ "pex00", NULL, 5, 0 },
-+	{ "sdio", NULL, 17, 0 },
-+	{ "xor0", NULL, 22, 0 },
-+	{ }
-+};
-+
- static void __init axp_clk_init(struct device_node *np)
- {
- 	struct device_node *cgnp =
-@@ -206,3 +232,16 @@ static void __init axp_clk_init(struct device_node *np)
- 		mvebu_clk_gating_setup(cgnp, axp_gating_desc);
- }
- CLK_OF_DECLARE(axp_clk, "marvell,armada-xp-core-clock", axp_clk_init);
-+
-+static void __init mv98dx3236_clk_init(struct device_node *np)
-+{
-+	struct device_node *cgnp =
-+		of_find_compatible_node(NULL, NULL, "marvell,armada-xp-gating-clock");
-+
-+	mvebu_coreclk_setup(np, &mv98dx3236_coreclks);
-+
-+	if (cgnp)
-+		mvebu_clk_gating_setup(cgnp, mv98dx3236_gating_desc);
-+}
-+CLK_OF_DECLARE(mv98dx3236_clk, "marvell,mv98dx3236-core-clock",
-+	       mv98dx3236_clk_init);
-diff --git a/drivers/clk/mvebu/clk-corediv.c b/drivers/clk/mvebu/clk-corediv.c
-index d1e5863d3375..8491979f4096 100644
---- a/drivers/clk/mvebu/clk-corediv.c
-+++ b/drivers/clk/mvebu/clk-corediv.c
-@@ -71,6 +71,10 @@ static const struct clk_corediv_desc mvebu_corediv_desc[] = {
- 	{ .mask = 0x3f, .offset = 8, .fieldbit = 1 }, /* NAND clock */
- };
- 
-+static const struct clk_corediv_desc mv98dx3236_corediv_desc[] = {
-+	{ .mask = 0x0f, .offset = 6, .fieldbit = 26 }, /* NAND clock */
-+};
-+
- #define to_corediv_clk(p) container_of(p, struct clk_corediv, hw)
- 
- static int clk_corediv_is_enabled(struct clk_hw *hwclk)
-@@ -232,6 +236,18 @@ static const struct clk_corediv_soc_desc armada375_corediv_soc = {
- 	.ratio_offset = 0x4,
- };
- 
-+static const struct clk_corediv_soc_desc mv98dx3236_corediv_soc = {
-+	.descs = mv98dx3236_corediv_desc,
-+	.ndescs = ARRAY_SIZE(mv98dx3236_corediv_desc),
-+	.ops = {
-+		.recalc_rate = clk_corediv_recalc_rate,
-+		.round_rate = clk_corediv_round_rate,
-+		.set_rate = clk_corediv_set_rate,
-+	},
-+	.ratio_reload = BIT(10),
-+	.ratio_offset = 0x8,
-+};
-+
- static void __init
- mvebu_corediv_clk_init(struct device_node *node,
- 		       const struct clk_corediv_soc_desc *soc_desc)
-@@ -313,3 +329,10 @@ static void __init armada380_corediv_clk_init(struct device_node *node)
- }
- CLK_OF_DECLARE(armada380_corediv_clk, "marvell,armada-380-corediv-clock",
- 	       armada380_corediv_clk_init);
-+
-+static void __init mv98dx3236_corediv_clk_init(struct device_node *node)
-+{
-+	return mvebu_corediv_clk_init(node, &mv98dx3236_corediv_soc);
-+}
-+CLK_OF_DECLARE(mv98dx3236_corediv_clk, "marvell,mv98dx3236-corediv-clock",
-+	       mv98dx3236_corediv_clk_init);
-diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
-index 5837eb8a212f..044892b6534d 100644
---- a/drivers/clk/mvebu/clk-cpu.c
-+++ b/drivers/clk/mvebu/clk-cpu.c
-@@ -245,3 +245,11 @@ static void __init of_cpu_clk_setup(struct device_node *node)
- 
- CLK_OF_DECLARE(armada_xp_cpu_clock, "marvell,armada-xp-cpu-clock",
- 					 of_cpu_clk_setup);
-+
-+static void __init of_mv98dx3236_cpu_clk_setup(struct device_node *node)
-+{
-+	of_clk_add_provider(node, of_clk_src_simple_get, NULL);
-+}
-+
-+CLK_OF_DECLARE(mv98dx3236_cpu_clock, "marvell,mv98dx3236-cpu-clock",
-+					 of_mv98dx3236_cpu_clk_setup);
 -- 
-2.11.0.24.ge6920cf
+Regards,
+Sylwester
