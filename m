@@ -1,47 +1,76 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-In-Reply-To: <20170110181006.yrd6moy2mctzoc4c@lukather>
-References: <20170103151629.19447-1-icenowy@aosc.xyz>
- <20170103151629.19447-3-icenowy@aosc.xyz>
- <20170110181006.yrd6moy2mctzoc4c@lukather>
-Subject: Re: [PATCH 2/5] clk: sunxi-ng: add support for V3s CCU
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,  Linus Walleij <linus.walleij@linaro.org>,  "linux\@armlinux.org.uk" <linux@armlinux.org.uk>,  "linux-arm-kernel\@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,  Rob Herring <robh+dt@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,  Michael Turquette <mturquette@baylibre.com>,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Geert Uytterhoeven <geert+renesas@glider.be>,  Chris Brand <chris.brand@broadcom.com>,  Florian Fainelli <f.fainelli@gmail.com>,  "Arnd Bergmann" <arnd@arndb.de>,  Thierry Reding <treding@nvidia.com>,  Sudeep Holla <sudeep.holla@arm.com>,  Juri Lelli <juri.lelli@arm.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  Laxman Dewangan <ldewangan@nvidia.com>,  Kalyan Kinthada <Kalyan.Kinthada@alliedtelesis.co.nz>,  "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,  "linux-kernel\@vger.kernel.org" <linux-kernel@
+ vger.kernel.org>,  "linux-clk\@vger.kernel.org" <linux-clk@vger.kernel.org>,  "linux-gpio\@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCHv5 0/5] Support for Marvell switches with integrated CPUs
+References: <20170127032546.14657-1-chris.packham@alliedtelesis.co.nz>
+	<87wpdgwj72.fsf@free-electrons.com>
+	<20170127184745.GD8801@codeaurora.org>
+	<f8f6e8db585147d3adb025bed29694ab@svr-chch-ex1.atlnz.lc>
+Date: Mon, 30 Jan 2017 15:40:31 +0100
+In-Reply-To: <f8f6e8db585147d3adb025bed29694ab@svr-chch-ex1.atlnz.lc> (Chris
+	Packham's message of "Sun, 29 Jan 2017 20:30:34 +0000")
+Message-ID: <87o9yotxuo.fsf@free-electrons.com>
 MIME-Version: 1.0
-Message-Id: <2705031484163593@web1g.yandex.ru>
-Date: Thu, 12 Jan 2017 03:39:53 +0800
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Chen-Yu Tsai <wens@csie.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-CgoxMS4wMS4yMDE3LCAwMjoxMCwgIk1heGltZSBSaXBhcmQiIDxtYXhpbWUucmlwYXJkQGZyZWUt
-ZWxlY3Ryb25zLmNvbT46Cj4gT24gVHVlLCBKYW4gMDMsIDIwMTcgYXQgMTE6MTY6MjZQTSArMDgw
-MCwgSWNlbm93eSBaaGVuZyB3cm90ZToKPj4gwqBWM3MgaGFzIGEgc2ltaWxhciBidXQgY3V0LWRv
-d24gQ0NVIHRvIEgzLgo+Pgo+PiDCoEFkZCBzdXBwb3J0IGZvciBpdC4KPj4KPj4gwqBTaWduZWQt
-b2ZmLWJ5OiBJY2Vub3d5IFpoZW5nIDxpY2Vub3d5QGFvc2MueHl6Pgo+Cj4gSXQgbG9va3MgbGlr
-ZSB0aGVyZSdzIG5vdGhpbmcgZGlmZmVyZW50IGJ1dCB0aGUgY2xvY2tzIHRoYXQgeW91Cj4gcmVn
-aXN0ZXIgd2l0aCB0aGUgSDMsIHBsZWFzZSBqdXN0IHVzZSB0aGUgSDMgZHJpdmVyLgoKTm9wZS4K
-Ckl0IGhhcyBhIGRpZmZlcmVudCBQTEwgKFBMTF9JU1ApIGF0IGRpZmZlcmVudCBhZGRyZXNzLCBh
-bmQgc29tZQpkaWZmZXJlbnQgbXV4ZXMuCgo+Cj4gVGhhbmtzIQo+IE1heGltZQo+Cj4gLS0KPiBN
-YXhpbWUgUmlwYXJkLCBGcmVlIEVsZWN0cm9ucwo+IEVtYmVkZGVkIExpbnV4IGFuZCBLZXJuZWwg
-ZW5naW5lZXJpbmcKPiBodHRwOi8vZnJlZS1lbGVjdHJvbnMuY29tCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcg
-bGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmlu
-ZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+Hi Chris,
+ 
+ On dim., janv. 29 2017, Chris Packham <Chris.Packham@alliedtelesis.co.nz> wrote:
+
+> On 28/01/17 07:47, Stephen Boyd wrote:
+>> On 01/27, Gregory CLEMENT wrote:
+>>> Hi all,
+>>>
+>>>  On ven., janv. 27 2017, Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
+>>>
+>>>> The 98DX3236, 98DX3336 and 98DX4251 are a set of switch ASICs with
+>>>> integrated CPUs. They CPU block is common within these product lines and
+>>>> (as far as I can tell/have been told) is based on the Armada XP. There
+>>>> are a few differences due to the fact they have to squeeze the CPU into
+>>>> the same package as the switch.
+>>>>
+>>>> I've rebased this series against linux-pinctrl/devel to get access to
+>>>> mvebu_mmio_mpp_ctrl. Everything else still applies cleanly to
+>>>> v4.10.0-rc5.
+>>>
+>>> Just to let you know that I plan to apply the 3 arm patch once Chris
+>>> will have sent the new series with the minor fixes I asked on patch 3.
+>>>
+>>> I already applied them in the for-next branch to benefit of some build
+>>> test coverage.
+>>>
+>>> Stephen,
+>>>
+>>> you gave your Acked-by on the first patch, but don't you plan to apply
+>>> it on the clk branch?
+>>
+>> It must have not been clear if I should apply it, hence the ack.
+>> I'll apply it now.
+>>
+>
+> Sorry my bad. I need all 5 together in one place to actually test the 
+> series.
+
+The 5 patches should be available soon (if it is not already the case),
+in the linux-next branch.
+
+The clk patch is already there, the 3 arm patch have been merged in my
+mvebu/for-next branch, and the pinctrl patch is about to be merged in
+the pinctrl/for-next branch.
+
+Gregory
+
+>
+> I wasn't sure whether the series should go through mvebu with Acks from 
+> clk and pinctrl or if things should go to the separate maintainers and 
+> come together when they hit the main linux repo. Up until the latest 
+> pinctrl change either approach would have worked.
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
