@@ -1,169 +1,54 @@
-Return-Path: <mylene.josserand@free-electrons.com>
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@free-electrons.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	mark.rutland@arm.com,
-	robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	thomas.petazzoni@free-electrons.com,
-	mylene.josserand@free-electrons.com,
-	alexandre.belloni@free-electrons.com
-Subject: [PATCH v2 04/10] ASoC: sun4i-i2s: Add quirks to handle new compatible for reset
-Date: Tue, 17 Jan 2017 15:02:24 +0100
-Message-Id: <20170117140230.23142-5-mylene.josserand@free-electrons.com>
-In-Reply-To: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
-References: <20170117140230.23142-1-mylene.josserand@free-electrons.com>
+Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
+Date: Mon, 30 Jan 2017 21:42:28 +0000
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: add more managed APIs
+Message-ID: <20170130214227.GI27312@n2100.armlinux.org.uk>
+References: <20170128184047.GA24957@dtor-ws>
+ <20170128190309.GN27312@n2100.armlinux.org.uk>
+ <20170128192207.GA38136@dtor-ws>
+ <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
+ <20170128233911.GO27312@n2100.armlinux.org.uk>
+ <20170129180743.GA10917@dtor-ws>
+ <20170130185551.GM8801@codeaurora.org>
+ <20170130192214.GC11199@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170130192214.GC11199@roeck-us.net>
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some SoCs have a reset line that must be asserted/deasserted.
-This patch adds a quirk to handle the new compatible
-"allwinner,sun6i-a31-i2s" which will deassert the reset
-line on probe function and assert it on remove's one.
+On Mon, Jan 30, 2017 at 11:22:14AM -0800, Guenter Roeck wrote:
+> Maybe the additional calls make sense; I can imagine they would.
+> However, I personally would be a bit wary of changing the initialization
+> order of multi-clock initializations, and I am not sure how a single call
+> could address setting the rate ([devm_]clk_get_setrate_prepare_enable()
+> seems like a bit too much).
+> 
+> [ On a side note, why is there no clk_get_prepare_enable() and
+>   clk_get_prepare() ? Maybe it would be better to introduce those
+>   together with the matching devm_ functions in a separate patch
+>   if they are useful. ]
 
-This new compatible is useful in case of A33 codec driver, for example.
+If you take the view that trying to keep clocks disabled is a good way
+to save power, then you'd have the clk_prepare() or maybe
+clk_prepare_enable() in your runtime PM resume handler, or maybe even
+deeper in the driver... the original design goal of the clk API was to
+allow power saving and clock control.
 
-Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
----
- sound/soc/sunxi/sun4i-i2s.c | 57 +++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 55 insertions(+), 2 deletions(-)
+With that in mind, getting and enabling the clock together in the
+probe function didn't make sense.
 
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index 4237323ef594..3635bbc72cbc 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -14,9 +14,11 @@
- #include <linux/clk.h>
- #include <linux/dmaengine.h>
- #include <linux/module.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
-+#include <linux/reset.h>
- 
- #include <sound/dmaengine_pcm.h>
- #include <sound/pcm_params.h>
-@@ -92,6 +94,7 @@ struct sun4i_i2s {
- 	struct clk	*bus_clk;
- 	struct clk	*mod_clk;
- 	struct regmap	*regmap;
-+	struct reset_control *rst;
- 
- 	unsigned int	mclk_freq;
- 
-@@ -651,9 +654,22 @@ static int sun4i_i2s_runtime_suspend(struct device *dev)
- 	return 0;
- }
- 
-+struct sun4i_i2s_quirks {
-+	bool has_reset;
-+};
-+
-+static const struct sun4i_i2s_quirks sun4i_a10_i2s_quirks = {
-+	.has_reset	= false,
-+};
-+
-+static const struct sun4i_i2s_quirks sun6i_a31_i2s_quirks = {
-+	.has_reset	= true,
-+};
-+
- static int sun4i_i2s_probe(struct platform_device *pdev)
- {
- 	struct sun4i_i2s *i2s;
-+	const struct sun4i_i2s_quirks *quirks;
- 	struct resource *res;
- 	void __iomem *regs;
- 	int irq, ret;
-@@ -674,6 +690,12 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
- 		return irq;
- 	}
- 
-+	quirks = of_device_get_match_data(&pdev->dev);
-+	if (!quirks) {
-+		dev_err(&pdev->dev, "Failed to determine the quirks to use\n");
-+		return -ENODEV;
-+	}
-+
- 	i2s->bus_clk = devm_clk_get(&pdev->dev, "apb");
- 	if (IS_ERR(i2s->bus_clk)) {
- 		dev_err(&pdev->dev, "Can't get our bus clock\n");
-@@ -692,7 +714,24 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "Can't get our mod clock\n");
- 		return PTR_ERR(i2s->mod_clk);
- 	}
--	
-+
-+	if (quirks->has_reset) {
-+		i2s->rst = devm_reset_control_get(&pdev->dev, NULL);
-+		if (IS_ERR(i2s->rst)) {
-+			dev_err(&pdev->dev, "Failed to get reset control\n");
-+			return PTR_ERR(i2s->rst);
-+		}
-+	}
-+
-+	if (!IS_ERR(i2s->rst)) {
-+		ret = reset_control_deassert(i2s->rst);
-+		if (ret) {
-+			dev_err(&pdev->dev,
-+				"Failed to deassert the reset control\n");
-+			return -EINVAL;
-+		}
-+	}
-+
- 	i2s->playback_dma_data.addr = res->start + SUN4I_I2S_FIFO_TX_REG;
- 	i2s->playback_dma_data.maxburst = 8;
- 
-@@ -727,23 +766,37 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
- 		sun4i_i2s_runtime_suspend(&pdev->dev);
- err_pm_disable:
- 	pm_runtime_disable(&pdev->dev);
-+	if (!IS_ERR(i2s->rst))
-+		reset_control_assert(i2s->rst);
- 
- 	return ret;
- }
- 
- static int sun4i_i2s_remove(struct platform_device *pdev)
- {
-+	struct sun4i_i2s *i2s = dev_get_drvdata(&pdev->dev);
-+
- 	snd_dmaengine_pcm_unregister(&pdev->dev);
- 
- 	pm_runtime_disable(&pdev->dev);
- 	if (!pm_runtime_status_suspended(&pdev->dev))
- 		sun4i_i2s_runtime_suspend(&pdev->dev);
- 
-+	if (!IS_ERR(i2s->rst))
-+		reset_control_assert(i2s->rst);
-+
- 	return 0;
- }
- 
- static const struct of_device_id sun4i_i2s_match[] = {
--	{ .compatible = "allwinner,sun4i-a10-i2s", },
-+	{
-+		.compatible = "allwinner,sun4i-a10-i2s",
-+		.data = &sun4i_a10_i2s_quirks,
-+	},
-+	{
-+		.compatible = "allwinner,sun6i-a31-i2s",
-+		.data = &sun6i_a31_i2s_quirks,
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, sun4i_i2s_match);
+I feel that aspect has been somewhat lost, and people now regard much
+of the clk API as a bit of a probe-time nusience.
+
 -- 
-2.11.0
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
