@@ -1,64 +1,57 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 27 Jan 2017 10:47:45 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Chris Brand <chris.brand@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Juri Lelli <juri.lelli@arm.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCHv5 0/5] Support for Marvell switches with integrated CPUs
-Message-ID: <20170127184745.GD8801@codeaurora.org>
-References: <20170127032546.14657-1-chris.packham@alliedtelesis.co.nz>
- <87wpdgwj72.fsf@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <87wpdgwj72.fsf@free-electrons.com>
+In-Reply-To: <20170126154859.55855-2-icenowy@aosc.xyz>
+References: <20170126154859.55855-1-icenowy@aosc.xyz>
+ <20170126154859.55855-2-icenowy@aosc.xyz>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 30 Jan 2017 16:13:50 +0100
+Message-ID: <CACRpkdY=+wAVZtWjeW+jKq_s+YX17L7xUeZ14_sAyd8KCm6+kg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/9] drivers: pinctrl: add driver for Allwinner H5 SoC
+To: Icenowy Zheng <icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+ Vinod Koul <vinod.koul@intel.com>, Andre Przywara <andre.przywara@arm.com>,
+ linux-sunxi <linux-sunxi@googlegroups.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
+ dmaengine@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/27, Gregory CLEMENT wrote:
-> Hi all,
->  
->  On ven., janv. 27 2017, Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
-> 
-> > The 98DX3236, 98DX3336 and 98DX4251 are a set of switch ASICs with
-> > integrated CPUs. They CPU block is common within these product lines and
-> > (as far as I can tell/have been told) is based on the Armada XP. There
-> > are a few differences due to the fact they have to squeeze the CPU into
-> > the same package as the switch.
-> >
-> > I've rebased this series against linux-pinctrl/devel to get access to
-> > mvebu_mmio_mpp_ctrl. Everything else still applies cleanly to
-> > v4.10.0-rc5.
-> 
-> Just to let you know that I plan to apply the 3 arm patch once Chris
-> will have sent the new series with the minor fixes I asked on patch 3.
-> 
-> I already applied them in the for-next branch to benefit of some build
-> test coverage.
-> 
-> Stephen,
-> 
-> you gave your Acked-by on the first patch, but don't you plan to apply
-> it on the clk branch?
+On Thu, Jan 26, 2017 at 4:48 PM, Icenowy Zheng <icenowy@aosc.xyz> wrote:
 
-It must have not been clear if I should apply it, hence the ack.
-I'll apply it now.
+> Based on the Allwinner H5 datasheet and the pinctrl driver of the
+> backward-compatible H3 this introduces the pin multiplex assignments for
+> the H5 SoC.
+>
+> H5 introduced some more pin functions (e.g. three more groups of TS
+> pins, and one more groups of SIM pins) than H3.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+> ---
+> Changes in v2:
+> - Fixed interrupt banks. (There's one more GPIO banks (PF) that can do
+>   interrupt handling on H5)
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Patch applied with Maxime's ACK.
+
+Yours,
+Linus Walleij
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
