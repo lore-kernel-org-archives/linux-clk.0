@@ -1,65 +1,87 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 9 Jan 2017 11:33:12 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+Return-Path: <linux@roeck-us.net>
+Date: Mon, 30 Jan 2017 11:22:14 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Russell King - ARM Linux <linux@armlinux.org.uk>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	"daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
-	"andrea.merello@gmail.com" <andrea.merello@gmail.com>,
-	"radoslaw.pietrzyk@gmail.com" <radoslaw.pietrzyk@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"kernel@stlinux.com" <kernel@stlinux.com>,
-	Ludovic BARRE <ludovic.barre@st.com>,
-	Olivier BIDEAU <olivier.bideau@st.com>,
-	Amelie DELAUNAY <amelie.delaunay@st.com>
-Subject: Re: [PATCH v4 1/9] clk: stm32f4: Update DT bindings documentation
-Message-ID: <20170109193312.GN17126@codeaurora.org>
-References: <1481638820-29324-1-git-send-email-gabriel.fernandez@st.com>
- <1481638820-29324-2-git-send-email-gabriel.fernandez@st.com>
- <20161222001051.GP8288@codeaurora.org>
- <ccd14adb-9d10-ae9e-de6d-565418421968@st.com>
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: add more managed APIs
+Message-ID: <20170130192214.GC11199@roeck-us.net>
+References: <20170128184047.GA24957@dtor-ws>
+ <20170128190309.GN27312@n2100.armlinux.org.uk>
+ <20170128192207.GA38136@dtor-ws>
+ <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
+ <20170128233911.GO27312@n2100.armlinux.org.uk>
+ <20170129180743.GA10917@dtor-ws>
+ <20170130185551.GM8801@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <ccd14adb-9d10-ae9e-de6d-565418421968@st.com>
+In-Reply-To: <20170130185551.GM8801@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/09, Alexandre Torgue wrote:
-> Hi Stephen,
+On Mon, Jan 30, 2017 at 10:55:51AM -0800, Stephen Boyd wrote:
+> On 01/29, Dmitry Torokhov wrote:
+> > When converting a driver to managed resources it is desirable to be able to
+> > manage all resources in the same fashion. This change allows managing
+> > clocks in the same way we manage many other resources.
 > 
-> On 12/22/2016 01:10 AM, Stephen Boyd wrote:
-> >On 12/13, gabriel.fernandez@st.com wrote:
-> >>From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> >>
-> >>Creation of dt include file for specific stm32f4 clocks.
-> >>These specific clocks are not derived from system clock (SYSCLOCK)
-> >>We should use index 1 to use these clocks in DT.
-> >>e.g. <&rcc 1 CLK_LSI>
-> >>
-> >>Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> >>Acked-by: Rob Herring <robh@kernel.org>
-> >>---
-> >
-> >Applied to clk-stm32f4 and merged into clk-next.
-> >
+> Can you please add 'managing clock prepared and enabled state in
+> the same way'?
 > 
-> I'm preparing pull request branch for STM32 DT part. This patch is
-> also requested to build correctly DT patches. Do you know how could
-> we synchronize our pull request ?
+> The current wording makes it sound like we don't have
+> devm_clk_get() when we do.
 > 
+> > 
+> > This adds the following managed APIs:
+> > 
+> > - devm_clk_prepare()/devm_clk_unprepare();
+> > - devm_clk_prepare_enable()/devm_clk_disable_unprepare().
+> 
+> Wouldn't this be preceded by a devm_clk_get() call? Wouldn't it
+> be even shorter to have the APIs
+> 
+>   devm_clk_get_and_prepare()/devm_clk_unprepare_and_put()
+>   devm_clk_get_and_prepare_enable()/devm_clk_disable_unprepare_and_put()
+> 
+> instead?
+> 
+In many cases I see
 
-clk-stm32f4 is stable and not going to be rebased, so you're good
-to base patches on it and send it off to arm-soc if the arm-soc
-maintainers agree to it. You can also base off an earlier part of
-the branch if you only need this first patch for example.
+	devm_clk_get(clk1);
+	devm_clk_get(clk2);
+	clk_prepare_enable(clk1);
+	clk_prepare_enable(clk2);
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Sometimes the calls are intertwined with setting the clock rates.
+
+	devm_clk_get(clk);
+	clk_set_rate(clk, rate);
+	clk_prepare_enable(clk);
+
+Maybe the additional calls make sense; I can imagine they would.
+However, I personally would be a bit wary of changing the initialization
+order of multi-clock initializations, and I am not sure how a single call
+could address setting the rate ([devm_]clk_get_setrate_prepare_enable()
+seems like a bit too much).
+
+[ On a side note, why is there no clk_get_prepare_enable() and
+  clk_get_prepare() ? Maybe it would be better to introduce those
+  together with the matching devm_ functions in a separate patch
+  if they are useful. ]
+
+> Is there any other subsystem that has similar functionality?
+> Regulators? GPIOs? Resets? I'm just curious if those subsystems
+> also need similar changes.
+> 
+Ultimately yes, and most already do. If I recall correctly, I tried to
+introduce devm_ functions for regulators some time ago, but that was
+rejected with the comment that it would invite misuse.  At the time
+I accepted that; today my reaction would be to counter that pretty much
+everything can be misused, and that the potential for misuse should not
+penaltize all the valid use cases.
+
+Thanks,
+Guenter
