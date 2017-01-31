@@ -1,39 +1,57 @@
-Return-Path: <dianders@google.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] rockchip clock changes for 4.11 part2
+Date: Tue, 31 Jan 2017 23:59:50 +0100
+Message-ID: <2089162.48xHT324p0@phil>
 MIME-Version: 1.0
-In-Reply-To: <1484028930-20305-3-git-send-email-zhengxing@rock-chips.com>
-References: <1484028930-20305-1-git-send-email-zhengxing@rock-chips.com> <1484028930-20305-3-git-send-email-zhengxing@rock-chips.com>
-From: Doug Anderson <dianders@google.com>
-Date: Tue, 10 Jan 2017 10:34:41 -0800
-Message-ID: <CAD=FV=Wr0bOLaU2LnhXUSk8b7xaJC2+8ihRvx48Az=zy54Agdg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] dt-bindings: clk: add rockchip,grf property for RK3399
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi Mike, Stephen,
 
-On Mon, Jan 9, 2017 at 10:15 PM, Xing Zheng <zhengxing@rock-chips.com> wrote:
-> Add support for rockchip,grf property which is used for GRF muxes
-> on RK3399.
->
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> ---
->
-> Changes in v4:
-> - update the decription for rockchip,grf property
->
-> Changes in v3: None
-> Changes in v2: None
->
->  Documentation/devicetree/bindings/clock/rockchip,rk3399-cru.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
+some more smallish clock changes popped up since the first pull request,
+which you can find below. Looking at my inbox devoid of clock-related
+patches, this should most likely also be all for 4.7.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+So please pull.
+
+Thanks
+Heiko
+
+
+The following changes since commit 1a0abcd634dc3caf0d15cb8625e3f43d77b37031:
+
+  dt-bindings: clk: add rockchip,grf property for RK3399 (2017-01-13 20:02:27 +0100)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.11-rockchip-clk2
+
+for you to fetch changes up to a811498902cf4c3f6e659f9bc877a1cd1c180606:
+
+  clk: rockchip: rk3288: make all niu clocks critical (2017-01-23 00:58:45 +0100)
+
+----------------------------------------------------------------
+Non-critical fix for the pclk_edp divider on rk3399, one new clock-id
+and making niu (interconnect) clocks critical on rk3288, as
+CLK_IGNORE_UNUSED is not enough to keep them running all the time
+when more users access particular clock subtrees.
+
+----------------------------------------------------------------
+Heiko Stuebner (1):
+      Merge branch 'v4.11-shared/clkids' into v4.11-clk/next
+
+Jacob Chen (3):
+      clk: rockchip: add rk3288 vip_out clock id
+      clk: rockchip: use rk3288 vip_out clock ids
+      clk: rockchip: rk3288: make all niu clocks critical
+
+Xing Zheng (1):
+      clk: rockchip: fix the incorrect pclk_edp div width for RK3399
+
+ drivers/clk/rockchip/clk-rk3288.c      | 23 +++++++++++++++--------
+ drivers/clk/rockchip/clk-rk3399.c      |  2 +-
+ include/dt-bindings/clock/rk3288-cru.h |  1 +
+ 3 files changed, 17 insertions(+), 9 deletions(-)
