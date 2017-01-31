@@ -1,72 +1,75 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 4/7] clk: sunxi-ng: Implement global pre-divider
-Date: Fri, 20 Jan 2017 08:29:44 +0100
-Message-Id: <1e37c723845efe18540268a168baeb81a86e8179.1484897383.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.5df5469d9c7a6233e225a875dca513a03b05e871.1484897383.git-series.maxime.ripard@free-electrons.com>
-References: <cover.5df5469d9c7a6233e225a875dca513a03b05e871.1484897383.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.5df5469d9c7a6233e225a875dca513a03b05e871.1484897383.git-series.maxime.ripard@free-electrons.com>
-References: <cover.5df5469d9c7a6233e225a875dca513a03b05e871.1484897383.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wj0-f195.google.com ([209.85.210.195]:34418 "EHLO
+        mail-wj0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752013AbdAaTlu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jan 2017 14:41:50 -0500
+Date: Tue, 31 Jan 2017 21:41:44 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 1/2] clk: samsung: exynos5433: Add IDs for
+ PHYCLK_MIPIDPHY0_* clocks
+Message-ID: <20170131194144.b3n45kwshu2feqla@kozik-lap>
+References: <1485345118-3082-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125115214eucas1p1517ce7ca8fe88e4742a1306630b91d09@eucas1p1.samsung.com>
+ <1485345118-3082-2-git-send-email-m.szyprowski@samsung.com>
+ <20170125200631.ubt3x6jhoi367ex6@kozik-lap>
+ <45f50263-6c5f-bbc6-1e24-a386dbabb496@samsung.com>
+ <fa7f7ac4-5ac7-435e-a076-b18bf332388b@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <fa7f7ac4-5ac7-435e-a076-b18bf332388b@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some clocks have a global pre-divider that applies to all their parents.
+On Fri, Jan 27, 2017 at 12:34:57PM +0100, Sylwester Nawrocki wrote:
+> On 01/27/2017 12:05 PM, Sylwester Nawrocki wrote:
+> > Cc: linux-clk@vger.kernel.org
+> > 
+> > On 01/25/2017 09:06 PM, Krzysztof Kozlowski wrote:
+> >> On Wed, Jan 25, 2017 at 12:51:57PM +0100, Marek Szyprowski wrote:
+> >>> Add missing identifiers for phyclk_mipidphy0_bitclkdiv8_phy and
+> >>> phyclk_mipidphy0_rxclkesc0_phy clocks. Access to those clocks is needed
+> >>> to setup initial clock configuration for display subsystem in device tree
+> >>> in order to avoid dependency on the configuration left by the bootloader.
+> >>>
+> >>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >>> ---
+> >>>  drivers/clk/samsung/clk-exynos5433.c   | 6 ++++--
+> >>>  include/dt-bindings/clock/exynos5433.h | 5 ++++-
+> >>>  2 files changed, 8 insertions(+), 3 deletions(-)
+> >>>
+> >> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >>
+> >> Sylwester,
+> >> Could you provide a tag with this?
+> > 
+> > I have the tag prepared already, but please resend the patch to
+> > linux-clk@vger.kernel.org and I will reply there.
+> > The patches were sent only to the linux-samsung-soc mailing list.
+> 
+> Krzysztof, if you need this patch series as a dependency here is the tag:
+> 
+>  The following changes since commit 0c744ea4f77d72b3dcebb7a8f2684633ec79be88:
+> 
+>   Linux 4.10-rc2 (2017-01-01 14:31:53 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://linuxtv.org/snawrocki/samsung.git tags/clk-v4.11-samsung-dphy
+> 
+> for you to fetch changes up to 698e0d1d22346ef03d7a13fcd9c2cc86a24bf317:
+> 
+>   clk: samsung: exynos5433: Add data for 250MHz and 278MHz PLL rates
+> (2017-01-27 11:34:00 +0100)
+>
 
-Since it might also apply to clocks that have a single parent, this is
-merged in the ccu_common structure, unlike the other pre-divider settings
-that are tied to a specific index, and thus a specific parent.
+Thanks, pulled.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_common.h | 2 ++
- drivers/clk/sunxi-ng/ccu_mux.c    | 8 +++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+Best regards,
+Krzysztof
 
-diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
-index b3d9abfbd721..cdd69eb2e0b9 100644
---- a/drivers/clk/sunxi-ng/ccu_common.h
-+++ b/drivers/clk/sunxi-ng/ccu_common.h
-@@ -21,6 +21,7 @@
- #define CCU_FEATURE_VARIABLE_PREDIV	BIT(1)
- #define CCU_FEATURE_FIXED_PREDIV	BIT(2)
- #define CCU_FEATURE_FIXED_POSTDIV	BIT(3)
-+#define CCU_FEATURE_ALL_PREDIV		BIT(4)
- 
- struct device_node;
- 
-@@ -56,6 +57,7 @@ struct device_node;
- struct ccu_common {
- 	void __iomem	*base;
- 	u16		reg;
-+	u32		prediv;
- 
- 	unsigned long	features;
- 	spinlock_t	*lock;
-diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-index a43ad52a957d..858a48621631 100644
---- a/drivers/clk/sunxi-ng/ccu_mux.c
-+++ b/drivers/clk/sunxi-ng/ccu_mux.c
-@@ -25,9 +25,15 @@ void ccu_mux_helper_adjust_parent_for_prediv(struct ccu_common *common,
- 	int i;
- 
- 	if (!((common->features & CCU_FEATURE_FIXED_PREDIV) ||
--	      (common->features & CCU_FEATURE_VARIABLE_PREDIV)))
-+	      (common->features & CCU_FEATURE_VARIABLE_PREDIV) ||
-+	      (common->features & CCU_FEATURE_ALL_PREDIV)))
- 		return;
- 
-+	if (common->features & CCU_FEATURE_ALL_PREDIV) {
-+		*parent_rate = *parent_rate / common->prediv;
-+		return;
-+	}
-+
- 	reg = readl(common->base + common->reg);
- 	if (parent_index < 0) {
- 		parent_index = reg >> cm->shift;
--- 
-git-series 0.8.11
