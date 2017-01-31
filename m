@@ -1,58 +1,163 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-Subject: Re: [PATCH] clk: vc5: Add support for IDT VersaClock 5P49V5923B
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <20161228000045.4540-1-marek.vasut@gmail.com>
- <2015482.2Xx0FSfo4q@avalon> <a94799ce-0030-ee4b-3d07-b3c190d79ba5@gmail.com>
- <7398143.JfNZUDgVyk@avalon> <69c22af5-717c-ce9d-5f4c-c1751894b885@gmail.com>
- <20170110002327.GI17126@codeaurora.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <71b654d2-e24e-f09b-ca61-03dd7a27a24b@gmail.com>
-Date: Tue, 10 Jan 2017 01:29:10 +0100
+Return-Path: <daniel@ffwll.ch>
+Return-Path: <daniel@ffwll.ch>
+Sender: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date: Tue, 31 Jan 2017 20:39:01 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Eric Anholt <eric@anholt.net>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	dri-devel@lists.freedesktop.org,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 05/11] drm/vc4: Add support for feeding DSI encoders from
+ the pixel valve.
+Message-ID: <20170131193901.dz7o5g36hqwcsmgt@phenom.ffwll.local>
+References: <20161214194621.16499-1-eric@anholt.net>
+ <20161214194621.16499-6-eric@anholt.net>
 MIME-Version: 1.0
-In-Reply-To: <20170110002327.GI17126@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161214194621.16499-6-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/10/2017 01:23 AM, Stephen Boyd wrote:
-> On 01/05, Marek Vasut wrote:
->> On 01/05/2017 03:13 PM, Laurent Pinchart wrote:
->>> Hi Marek,
->>
->> Hi!
->>
->> [...]
->>
->>>>>>> +static unsigned long vc5_mux_recalc_rate(struct clk_hw *hw,
->>>>>>> +                                        unsigned long parent_rate)
->>>>>>> +{
->>>>>>> +       struct vc5_driver_data *vc5 =
->>>>>>> +               container_of(hw, struct vc5_driver_data, clk_mux);
->>>>>>> +       unsigned long idiv;
->>>>>>> +       u8 div;
->>>>>>> +
->>>>>>> +       /* FIXME: Needs locking ? */
->>>>>
->>>>> Let's fix it then :-)
->>>>
->>>> I would like to get feedback on this one, does it ?
->>>
->>> That's a question for Mike or Stephen I believe.
->>
->> OK
+On Wed, Dec 14, 2016 at 11:46:15AM -0800, Eric Anholt wrote:
+> We have to set a different pixel format, which tells the hardware to
+> use the pix_width field that's fed in sideband from the DSI encoder to
+> divide the "pixel" clock.
 > 
-> What's the question?
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> ---
+>  drivers/gpu/drm/vc4/vc4_crtc.c | 33 +++++++++++++++++++--------------
+>  drivers/gpu/drm/vc4/vc4_regs.h |  2 ++
+>  2 files changed, 21 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vc4/vc4_crtc.c b/drivers/gpu/drm/vc4/vc4_crtc.c
+> index a0fd3e66bc4b..cd070e0c79a6 100644
+> --- a/drivers/gpu/drm/vc4/vc4_crtc.c
+> +++ b/drivers/gpu/drm/vc4/vc4_crtc.c
+> @@ -349,38 +349,40 @@ static u32 vc4_get_fifo_full_level(u32 format)
+>  }
+>  
+>  /*
+> - * Returns the clock select bit for the connector attached to the
+> - * CRTC.
+> + * Returns the encoder attached to the CRTC.
+> + *
+> + * VC4 can only scan out to one encoder at a time, while the DRM core
+> + * allows drivers to push pixels to more than one encoder from the
+> + * same CRTC.
+>   */
+> -static int vc4_get_clock_select(struct drm_crtc *crtc)
+> +static struct drm_encoder *vc4_get_crtc_encoder(struct drm_crtc *crtc)
+>  {
+>  	struct drm_connector *connector;
+>  
+>  	drm_for_each_connector(connector, crtc->dev) {
+>  		if (connector->state->crtc == crtc) {
+> -			struct drm_encoder *encoder = connector->encoder;
+> -			struct vc4_encoder *vc4_encoder =
+> -				to_vc4_encoder(encoder);
+> -
+> -			return vc4_encoder->clock_select;
+> +			return connector->encoder;
+>  		}
+>  	}
+>  
+> -	return -1;
+> +	return NULL;
+>  }
+>  
+>  static void vc4_crtc_mode_set_nofb(struct drm_crtc *crtc)
+>  {
+>  	struct drm_device *dev = crtc->dev;
+>  	struct vc4_dev *vc4 = to_vc4_dev(dev);
+> +	struct drm_encoder *encoder = vc4_get_crtc_encoder(crtc);
+> +	struct vc4_encoder *vc4_encoder = to_vc4_encoder(encoder);
+>  	struct vc4_crtc *vc4_crtc = to_vc4_crtc(crtc);
+>  	struct drm_crtc_state *state = crtc->state;
+>  	struct drm_display_mode *mode = &state->adjusted_mode;
+>  	bool interlace = mode->flags & DRM_MODE_FLAG_INTERLACE;
+>  	u32 pixel_rep = (mode->flags & DRM_MODE_FLAG_DBLCLK) ? 2 : 1;
+> -	u32 format = PV_CONTROL_FORMAT_24;
+> +	bool is_dsi = (vc4_encoder->type == VC4_ENCODER_TYPE_DSI0 ||
+> +		       vc4_encoder->type == VC4_ENCODER_TYPE_DSI1);
+> +	u32 format = is_dsi ? PV_CONTROL_FORMAT_DSIV_24 : PV_CONTROL_FORMAT_24;
+>  	bool debug_dump_regs = false;
+> -	int clock_select = vc4_get_clock_select(crtc);
+>  
+>  	if (debug_dump_regs) {
+>  		DRM_INFO("CRTC %d regs before:\n", drm_crtc_index(crtc));
+> @@ -436,17 +438,19 @@ static void vc4_crtc_mode_set_nofb(struct drm_crtc *crtc)
+>  		 */
+>  		CRTC_WRITE(PV_V_CONTROL,
+>  			   PV_VCONTROL_CONTINUOUS |
+> +			   (is_dsi ? PV_VCONTROL_DSI : 0) |
+>  			   PV_VCONTROL_INTERLACE |
+>  			   VC4_SET_FIELD(mode->htotal * pixel_rep / 2,
+>  					 PV_VCONTROL_ODD_DELAY));
+>  		CRTC_WRITE(PV_VSYNCD_EVEN, 0);
+>  	} else {
+> -		CRTC_WRITE(PV_V_CONTROL, PV_VCONTROL_CONTINUOUS);
+> +		CRTC_WRITE(PV_V_CONTROL,
+> +			   PV_VCONTROL_CONTINUOUS |
+> +			   (is_dsi ? PV_VCONTROL_DSI : 0));
+>  	}
+>  
+>  	CRTC_WRITE(PV_HACT_ACT, mode->hdisplay * pixel_rep);
+>  
+> -
+>  	CRTC_WRITE(PV_CONTROL,
+>  		   VC4_SET_FIELD(format, PV_CONTROL_FORMAT) |
+>  		   VC4_SET_FIELD(vc4_get_fifo_full_level(format),
+> @@ -455,7 +459,8 @@ static void vc4_crtc_mode_set_nofb(struct drm_crtc *crtc)
+>  		   PV_CONTROL_CLR_AT_START |
+>  		   PV_CONTROL_TRIGGER_UNDERFLOW |
+>  		   PV_CONTROL_WAIT_HSTART |
+> -		   VC4_SET_FIELD(clock_select, PV_CONTROL_CLK_SELECT) |
+> +		   VC4_SET_FIELD(vc4_encoder->clock_select,
+> +				 PV_CONTROL_CLK_SELECT) |
 
-Whether or not I need a lock around the code in vc5_mux_recalc_rate(),
-since I am also tweaking the predivider bits there to assure the
-(downstream) PLL supplied from the mux always gets clock in range it can
-handle. This tweaking is mostly inspired by clk-si5351.c driver.
+Hm, so the usual way we solve the "crtc needs information from the encoder
+problem" is to add bits to the crtc state, and then fill those out in the
+encoders ->atomic_check function. In your case ->clock_select and is_dsi.
+
+The benefit is mostly when you start doing hw readout (which is great even
+just to cross-check your modeset code), or when you need that information
+to check limits (which sooner or later tends to happen ime).
+
+Anyway, this works too, just an idea for the future.
+
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+>  		   PV_CONTROL_FIFO_CLR |
+>  		   PV_CONTROL_EN);
+>  
+> diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
+> index b3b297fba709..385405a2df05 100644
+> --- a/drivers/gpu/drm/vc4/vc4_regs.h
+> +++ b/drivers/gpu/drm/vc4/vc4_regs.h
+> @@ -190,6 +190,8 @@
+>  # define PV_VCONTROL_ODD_DELAY_SHIFT		6
+>  # define PV_VCONTROL_ODD_FIRST			BIT(5)
+>  # define PV_VCONTROL_INTERLACE			BIT(4)
+> +# define PV_VCONTROL_DSI			BIT(3)
+> +# define PV_VCONTROL_COMMAND			BIT(2)
+>  # define PV_VCONTROL_CONTINUOUS			BIT(1)
+>  # define PV_VCONTROL_VIDEN			BIT(0)
+>  
+> -- 
+> 2.11.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 -- 
-Best regards,
-Marek Vasut
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
