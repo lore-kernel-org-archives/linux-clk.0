@@ -1,59 +1,58 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-In-Reply-To: <20170110180926.ilqtygttpfgbetvu@lukather>
-References: <20170103151629.19447-1-icenowy@aosc.xyz>
- <20170103151629.19447-2-icenowy@aosc.xyz>
- <20170110180926.ilqtygttpfgbetvu@lukather>
-Subject: Re: [PATCH 1/5] arm: sunxi: add support for V3s SoC
+Return-Path: <daniel@ffwll.ch>
+Return-Path: <daniel@ffwll.ch>
+Sender: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date: Tue, 31 Jan 2017 22:17:02 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Eric Anholt <eric@anholt.net>, Mark Rutland <mark.rutland@arm.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Rob Herring <robh+dt@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 09/11] drm/panel: Add support for the Raspberry Pi 7"
+ Touchscreen.
+Message-ID: <20170131211702.o2he5o6ktaztmrkx@phenom.ffwll.local>
+References: <20161214194621.16499-1-eric@anholt.net>
+ <20161214194621.16499-10-eric@anholt.net>
+ <20170131210717.GA872@mithrandir.ba.sec>
 MIME-Version: 1.0
-Message-Id: <2706391484163632@web1g.yandex.ru>
-Date: Thu, 12 Jan 2017 03:40:32 +0800
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Chen-Yu Tsai <wens@csie.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170131210717.GA872@mithrandir.ba.sec>
 List-ID: <linux-clk.vger.kernel.org>
 
-CgoxMS4wMS4yMDE3LCAwMjowOSwgIk1heGltZSBSaXBhcmQiIDxtYXhpbWUucmlwYXJkQGZyZWUt
-ZWxlY3Ryb25zLmNvbT46Cj4gT24gVHVlLCBKYW4gMDMsIDIwMTcgYXQgMTE6MTY6MjVQTSArMDgw
-MCwgSWNlbm93eSBaaGVuZyB3cm90ZToKPj4gwqBBbGx3aW5uZXIgVjNzIGlzIGEgbG93LWVuZCBz
-aW5nbGUtY29yZSBDb3J0ZXgtQTcgU29DLCB3aXRoIDY0TUIKPj4gwqBpbnRlZ3JhdGVkIERSQU0s
-IGFuZCBzZXZlcmFsIHBlcmlwaGVyYWxzLgo+Pgo+PiDCoFNpZ25lZC1vZmYtYnk6IEljZW5vd3kg
-WmhlbmcgPGljZW5vd3lAYW9zYy54eXo+Cj4+IMKgLS0tCj4+IMKgwqBEb2N1bWVudGF0aW9uL2Fy
-bS9zdW54aS9SRUFETUUgfCA0ICsrKysKPj4gwqDCoGFyY2gvYXJtL21hY2gtc3VueGkvc3VueGku
-YyB8IDEgKwo+PiDCoMKgMiBmaWxlcyBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKykKPj4KPj4gwqBk
-aWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9hcm0vc3VueGkvUkVBRE1FIGIvRG9jdW1lbnRhdGlv
-bi9hcm0vc3VueGkvUkVBRE1FCj4+IMKgaW5kZXggY2QwMjQzMzAyYmMxLi45MWVjOGYyMDU1YmUg
-MTAwNjQ0Cj4+IMKgLS0tIGEvRG9jdW1lbnRhdGlvbi9hcm0vc3VueGkvUkVBRE1FCj4+IMKgKysr
-IGIvRG9jdW1lbnRhdGlvbi9hcm0vc3VueGkvUkVBRE1FCj4+IMKgQEAgLTY3LDYgKzY3LDEwIEBA
-IFN1blhpIGZhbWlseQo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoCsgRGF0YXNoZWV0Cj4+IMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoGh0dHA6Ly9kbC5saW51eC1zdW54aS5vcmcvSDMvQWxsd2lubmVy
-X0gzX0RhdGFzaGVldF9WMS4wLnBkZgo+Pgo+PiDCoCsgLSBBbGx3aW5uZXIgVjNzIChzdW44aSkK
-Pj4gwqArICsgRGF0YXNoZWV0Cj4+IMKgKyBodHRwczovL3d3dy5nb3ByYXduLmNvbS9mb3J1bS9h
-bGx3aW5uZXItY2Ftcy83ODMtYWxsd2lubmVyLXYzcy1zb2MtZGF0YXNoZWV0Cj4+IMKgKwo+Cj4g
-UGxlYXNlIGRvbid0IHB1dCByYW5kb20gbGlua3MgaW4gdGhlcmUsIGJ1dCBhdCBsZWFzdCBzb21l
-dGhpbmcgdGhhdCB3ZQo+IGtub3cgd2lsbCBiZSB0aGVyZSBpbiBhIGNvdXBsZSBvZiB3ZWVrcy9t
-b250aGVzL3llYXJzCgpJcyBodHRwOi8vbGludXgtc3VueGkub3JnL0ZpbGU6QWxsd2lubmVyX1Yz
-c19EYXRhc2hlZXRfVjEuMC5wZGYgYWNjZXB0YWJsZT8KCj4KPiBUaGFua3MsCj4gTWF4aW1lCj4K
-PiAtLQo+IE1heGltZSBSaXBhcmQsIEZyZWUgRWxlY3Ryb25zCj4gRW1iZWRkZWQgTGludXggYW5k
-IEtlcm5lbCBlbmdpbmVlcmluZwo+IGh0dHA6Ly9mcmVlLWVsZWN0cm9ucy5jb20KCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwg
-bWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8v
-bGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+On Tue, Jan 31, 2017 at 10:07:19PM +0100, Thierry Reding wrote:
+> On Wed, Dec 14, 2016 at 11:46:19AM -0800, Eric Anholt wrote:
+> > +static int rpi_touchscreen_enable(struct drm_panel *panel)
+> > +{
+> > +	struct rpi_touchscreen *ts = panel_to_ts(panel);
+> > +	int i;
+> > +
+> > +	rpi_touchscreen_i2c_write(ts, REG_POWERON, 1);
+> > +	/* Wait for nPWRDWN to go low to indicate poweron is done. */
+> > +	for (i = 0; i < 100; i++) {
+> > +		if (rpi_touchscreen_i2c_read(ts, REG_PORTB) & 1)
+> > +			break;
+> > +	}
+> 
+> Don't you want to fail when power on doesn't succeed? Seems kind of
+> pointless to continue if the panel doesn't power on.
+
+kms works under the assumption that even when the sink is dead, the
+display pipe (well, vblanks and pageflips) keep working. There's a patch
+floating around to give userspace more information about what's going
+wrong through an async uevent+read-only property for cases where an
+unresponsive sink is normal, i.e. link training for dp.
+
+But either way, continuing is generally the right thing to do, there's no
+way to report -EIO from here (because no reasons than that's where
+accidentally ended up with our evolved design ...).
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
