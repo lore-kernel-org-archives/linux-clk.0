@@ -1,76 +1,102 @@
-Return-Path: <Chris.Packham@alliedtelesis.co.nz>
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Stephen Boyd <sboyd@codeaurora.org>, Gregory CLEMENT
-	<gregory.clement@free-electrons.com>
-CC: Linus Walleij <linus.walleij@linaro.org>, "linux@armlinux.org.uk"
-	<linux@armlinux.org.uk>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette
-	<mturquette@baylibre.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn
-	<andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Chris Brand
-	<chris.brand@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, "Arnd
- Bergmann" <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Juri Lelli <juri.lelli@arm.com>, Thomas Petazzoni
-	<thomas.petazzoni@free-electrons.com>, Laxman Dewangan
-	<ldewangan@nvidia.com>, Kalyan Kinthada
-	<Kalyan.Kinthada@alliedtelesis.co.nz>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>
-Subject: Re: [PATCHv5 0/5] Support for Marvell switches with integrated CPUs
-Date: Sun, 29 Jan 2017 20:30:34 +0000
-Message-ID: <f8f6e8db585147d3adb025bed29694ab@svr-chch-ex1.atlnz.lc>
-References: <20170127032546.14657-1-chris.packham@alliedtelesis.co.nz>
- <87wpdgwj72.fsf@free-electrons.com> <20170127184745.GD8801@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <daniel@ffwll.ch>
+Return-Path: <daniel@ffwll.ch>
+Sender: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date: Tue, 31 Jan 2017 20:35:25 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Eric Anholt <eric@anholt.net>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	dri-devel@lists.freedesktop.org,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 04/11] drm/vc4: Set up SCALER_DISPCTRL at boot.
+Message-ID: <20170131193525.bjwzmsy74ax4wyy7@phenom.ffwll.local>
+References: <20161214194621.16499-1-eric@anholt.net>
+ <20161214194621.16499-5-eric@anholt.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20161214194621.16499-5-eric@anholt.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28/01/17 07:47, Stephen Boyd wrote:=0A=
-> On 01/27, Gregory CLEMENT wrote:=0A=
->> Hi all,=0A=
->>=0A=
->>  On ven., janv. 27 2017, Chris Packham <chris.packham@alliedtelesis.co.n=
-z> wrote:=0A=
->>=0A=
->>> The 98DX3236, 98DX3336 and 98DX4251 are a set of switch ASICs with=0A=
->>> integrated CPUs. They CPU block is common within these product lines an=
-d=0A=
->>> (as far as I can tell/have been told) is based on the Armada XP. There=
-=0A=
->>> are a few differences due to the fact they have to squeeze the CPU into=
-=0A=
->>> the same package as the switch.=0A=
->>>=0A=
->>> I've rebased this series against linux-pinctrl/devel to get access to=
-=0A=
->>> mvebu_mmio_mpp_ctrl. Everything else still applies cleanly to=0A=
->>> v4.10.0-rc5.=0A=
->>=0A=
->> Just to let you know that I plan to apply the 3 arm patch once Chris=0A=
->> will have sent the new series with the minor fixes I asked on patch 3.=
-=0A=
->>=0A=
->> I already applied them in the for-next branch to benefit of some build=
-=0A=
->> test coverage.=0A=
->>=0A=
->> Stephen,=0A=
->>=0A=
->> you gave your Acked-by on the first patch, but don't you plan to apply=
-=0A=
->> it on the clk branch?=0A=
->=0A=
-> It must have not been clear if I should apply it, hence the ack.=0A=
-> I'll apply it now.=0A=
->=0A=
-=0A=
-Sorry my bad. I need all 5 together in one place to actually test the =0A=
-series.=0A=
-=0A=
-I wasn't sure whether the series should go through mvebu with Acks from =0A=
-clk and pinctrl or if things should go to the separate maintainers and =0A=
-come together when they hit the main linux repo. Up until the latest =0A=
-pinctrl change either approach would have worked.=0A=
+On Wed, Dec 14, 2016 at 11:46:14AM -0800, Eric Anholt wrote:
+> We want the HVS on, obviously, and we also want DSP3 (PV1's source) to
+> be muxed from HVS channel 2 like we expect in vc4_crtc.c.  The
+> firmware wasn't setting the DSP3 mux up when both the LCD and HDMI
+> were disabled.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+
+Yeah, the hvs magic is checked with require_hvs_enable. And the hvs
+channel 2 for pv 1 seems to check out too, though I wonder why you don't
+just set up all the mappings unconditionally. Anyway, looks reasonable.
+
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> ---
+>  drivers/gpu/drm/vc4/vc4_hvs.c  | 14 ++++++++++++++
+>  drivers/gpu/drm/vc4/vc4_regs.h |  3 +++
+>  2 files changed, 17 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
+> index 6fbab1c82cb1..fc68b1b4da52 100644
+> --- a/drivers/gpu/drm/vc4/vc4_hvs.c
+> +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
+> @@ -170,6 +170,7 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
+>  	struct vc4_dev *vc4 = drm->dev_private;
+>  	struct vc4_hvs *hvs = NULL;
+>  	int ret;
+> +	u32 dispctrl;
+>  
+>  	hvs = devm_kzalloc(&pdev->dev, sizeof(*hvs), GFP_KERNEL);
+>  	if (!hvs)
+> @@ -211,6 +212,19 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
+>  		return ret;
+>  
+>  	vc4->hvs = hvs;
+> +
+> +	dispctrl = HVS_READ(SCALER_DISPCTRL);
+> +
+> +	dispctrl |= SCALER_DISPCTRL_ENABLE;
+> +
+> +	/* Set DSP3 (PV1) to use HVS channel 2, which would otherwise
+> +	 * be unused.
+> +	 */
+> +	dispctrl &= ~SCALER_DISPCTRL_DSP3_MUX_MASK;
+> +	dispctrl |= VC4_SET_FIELD(2, SCALER_DISPCTRL_DSP3_MUX);
+> +
+> +	HVS_WRITE(SCALER_DISPCTRL, dispctrl);
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
+> index 39f6886b2410..b3b297fba709 100644
+> --- a/drivers/gpu/drm/vc4/vc4_regs.h
+> +++ b/drivers/gpu/drm/vc4/vc4_regs.h
+> @@ -244,6 +244,9 @@
+>  # define SCALER_DISPCTRL_ENABLE			BIT(31)
+>  # define SCALER_DISPCTRL_DSP2EISLUR		BIT(15)
+>  # define SCALER_DISPCTRL_DSP1EISLUR		BIT(14)
+> +# define SCALER_DISPCTRL_DSP3_MUX_MASK		VC4_MASK(19, 18)
+> +# define SCALER_DISPCTRL_DSP3_MUX_SHIFT		18
+> +
+>  /* Enables Display 0 short line and underrun contribution to
+>   * SCALER_DISPSTAT_IRQDISP0.  Note that short frame contributions are
+>   * always enabled.
+> -- 
+> 2.11.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
