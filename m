@@ -1,30 +1,52 @@
-Return-Path: <arndbergmann@gmail.com>
+Return-Path: <daniel@ffwll.ch>
+Return-Path: <daniel@ffwll.ch>
+Sender: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date: Tue, 31 Jan 2017 22:19:52 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Eric Anholt <eric@anholt.net>, Mark Rutland <mark.rutland@arm.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Rob Herring <robh+dt@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 09/11] drm/panel: Add support for the Raspberry Pi 7"
+ Touchscreen.
+Message-ID: <20170131211952.jirg7scbzajshpec@phenom.ffwll.local>
+References: <20161214194621.16499-1-eric@anholt.net>
+ <20161214194621.16499-10-eric@anholt.net>
+ <20170131210717.GA872@mithrandir.ba.sec>
 MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <20170112220627.GQ17126@codeaurora.org>
-References: <20170111134107.3821564-1-arnd@arndb.de> <20170112220627.GQ17126@codeaurora.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 12 Jan 2017 23:42:30 +0100
-Message-ID: <CAK8P3a3ieV29jgh0jhioN3KjZCfP2drPAQme_+1oMuTTSiA4NQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: stm32f4: avoid uninitialized variable access
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>, Gabriel Fernandez <gabriel.fernandez@st.com>,
-	Rob Herring <robh@kernel.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170131210717.GA872@mithrandir.ba.sec>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 12, 2017 at 11:06 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->
-> Applied to clk-next. Seems I need to update my compiler to find
-> these warnings.
+On Tue, Jan 31, 2017 at 10:07:19PM +0100, Thierry Reding wrote:
+> On Wed, Dec 14, 2016 at 11:46:19AM -0800, Eric Anholt wrote:
+> > +static int rpi_touchscreen_dsi_remove(struct mipi_dsi_device *dsi)
+> > +{
+> > +	struct device *dev = &dsi->dev;
+> > +	struct rpi_touchscreen *ts = dev_get_drvdata(dev);
+> > +	int ret;
+> > +
+> > +	ret = mipi_dsi_detach(dsi);
+> > +	if (ret < 0) {
+> > +		dev_err(&dsi->dev, "failed to detach from DSI host: %d\n", ret);
+> > +		return ret;
+> > +	}
+> 
+> You might want to continue after this anyway, because the driver will be
+> unloaded regardless of your error code and you'll leave behind a
+> dangling panel and leak a reference to the I2C bridge.
 
-I'm currently playing with gcc-7, which adds a lot of new warnings
-(including many false positives). gcc-6 was supposed to have better
-warnings than 5, but I didn't find the difference that noticeable. 5
-or 6 is probably best at the moment, and if you have at least 4.9
-there is no urgent need to upgrade.
-
-    Arnd
+Sounds like we should switch the mipi_dsi_driver->remove callback to
+return void then? But separate cleanup series if someone bothers with it.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
