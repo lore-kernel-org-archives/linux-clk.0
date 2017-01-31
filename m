@@ -1,72 +1,99 @@
-Return-Path: <wens@csie.org>
+Return-Path: <dmitry.torokhov@gmail.com>
+Return-Path: <dmitry.torokhov@gmail.com>
+Date: Mon, 30 Jan 2017 16:59:57 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King - ARM Linux <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: add more managed APIs
+Message-ID: <20170131005957.GB35974@dtor-ws>
+References: <20170128184047.GA24957@dtor-ws>
+ <20170128190309.GN27312@n2100.armlinux.org.uk>
+ <20170128192207.GA38136@dtor-ws>
+ <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
+ <20170128233911.GO27312@n2100.armlinux.org.uk>
+ <20170129180743.GA10917@dtor-ws>
+ <20170130185551.GM8801@codeaurora.org>
+ <20170130192214.GC11199@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <20170126095523.rat5wqbj73fkxy6z@lukather>
-References: <20170124023230.3990-1-wens@csie.org> <20170124023230.3990-2-wens@csie.org>
- <20170126095523.rat5wqbj73fkxy6z@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 26 Jan 2017 19:22:11 +0800
-Message-ID: <CAGb2v66HJEn=t-kERNudXuqDApU8KV7DxBAmdiSrdPTMUP_x-g@mail.gmail.com>
-Subject: Re: [PATCH 01/11] clk: sunxi-ng: mux: Fix determine_rate for mux
- clocks with pre-dividers
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170130192214.GC11199@roeck-us.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jan 26, 2017 at 5:55 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi Chen-Yu,
->
-> On Tue, Jan 24, 2017 at 10:32:20AM +0800, Chen-Yu Tsai wrote:
->> The determine_rate helper used ccu_mux_helper_adjust_parent_for_prediv()
->> to adjust the parent_rate to account for pre-dividers, but then passed
->> the pristine parent clock rate from clk_hw_get_rate() to the round()
->> callback, thereby ignoring the pre-divider adjustment. In addition,
->> it was saving the adjusted parent rate back into struct
->> clk_rate_request.
->>
->> This patch fixes this by saving the pristine parent clock rate, and
->> adding a copy that is adjusted and passed to the round() callback.
->> The pristine copy, if it is the best solution, would be saved back
->> to struct clk_rate_request.
->>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->>  drivers/clk/sunxi-ng/ccu_mux.c | 7 ++++---
->>  1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
->> index 858a48621631..3445041894e7 100644
->> --- a/drivers/clk/sunxi-ng/ccu_mux.c
->> +++ b/drivers/clk/sunxi-ng/ccu_mux.c
->> @@ -71,7 +71,7 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
->>       unsigned int i;
->>
->>       for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
->> -             unsigned long tmp_rate, parent_rate;
->> +             unsigned long tmp_rate, parent_rate, adj_parent_rate;
->>               struct clk_hw *parent;
->>
->>               parent = clk_hw_get_parent_by_index(hw, i);
->> @@ -79,10 +79,11 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
->>                       continue;
->>
->>               parent_rate = clk_hw_get_rate(parent);
->> +             adj_parent_rate = parent_rate;
->>               ccu_mux_helper_adjust_parent_for_prediv(common, cm, i,
->> -                                                     &parent_rate);
->> +                                                     &adj_parent_rate);
->>
->> -             tmp_rate = round(cm, clk_hw_get_rate(parent), req->rate, data);
->> +             tmp_rate = round(cm, parent_rate, req->rate, data);
->
-> Shouldn't you use the adjusted rate here too?
+On Mon, Jan 30, 2017 at 11:22:14AM -0800, Guenter Roeck wrote:
+> On Mon, Jan 30, 2017 at 10:55:51AM -0800, Stephen Boyd wrote:
+> > On 01/29, Dmitry Torokhov wrote:
+> > > When converting a driver to managed resources it is desirable to be able to
+> > > manage all resources in the same fashion. This change allows managing
+> > > clocks in the same way we manage many other resources.
+> > 
+> > Can you please add 'managing clock prepared and enabled state in
+> > the same way'?
+> > 
+> > The current wording makes it sound like we don't have
+> > devm_clk_get() when we do.
+> > 
+> > > 
+> > > This adds the following managed APIs:
+> > > 
+> > > - devm_clk_prepare()/devm_clk_unprepare();
+> > > - devm_clk_prepare_enable()/devm_clk_disable_unprepare().
+> > 
+> > Wouldn't this be preceded by a devm_clk_get() call? Wouldn't it
+> > be even shorter to have the APIs
+> > 
+> >   devm_clk_get_and_prepare()/devm_clk_unprepare_and_put()
+> >   devm_clk_get_and_prepare_enable()/devm_clk_disable_unprepare_and_put()
+> > 
+> > instead?
+> > 
+> In many cases I see
+> 
+> 	devm_clk_get(clk1);
+> 	devm_clk_get(clk2);
+> 	clk_prepare_enable(clk1);
+> 	clk_prepare_enable(clk2);
+> 
+> Sometimes the calls are intertwined with setting the clock rates.
+> 
+> 	devm_clk_get(clk);
+> 	clk_set_rate(clk, rate);
+> 	clk_prepare_enable(clk);
+> 
+> Maybe the additional calls make sense; I can imagine they would.
+> However, I personally would be a bit wary of changing the initialization
+> order of multi-clock initializations, and I am not sure how a single call
+> could address setting the rate ([devm_]clk_get_setrate_prepare_enable()
+> seems like a bit too much).
+> 
+> [ On a side note, why is there no clk_get_prepare_enable() and
+>   clk_get_prepare() ? Maybe it would be better to introduce those
+>   together with the matching devm_ functions in a separate patch
+>   if they are useful. ]
+> 
+> > Is there any other subsystem that has similar functionality?
+> > Regulators? GPIOs? Resets? I'm just curious if those subsystems
+> > also need similar changes.
+> > 
+> Ultimately yes, and most already do. If I recall correctly, I tried to
+> introduce devm_ functions for regulators some time ago, but that was
+> rejected with the comment that it would invite misuse.  At the time
+> I accepted that; today my reaction would be to counter that pretty much
+> everything can be misused, and that the potential for misuse should not
+> penaltize all the valid use cases.
 
-You're right. Thanks!
+I think we should ping Mark again. The only thing we are achieving is
+that everyone is using devm_add_action_or_reset() with wrappers around
+regulator_put().
 
-ChenYu
+As I said elsewhere, there are "always used" devices where it isn't
+worth it to postpone enabling regulators.
+
+Thanks.
+
+-- 
+Dmitry
