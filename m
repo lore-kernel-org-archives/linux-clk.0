@@ -1,81 +1,84 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: jic23@kernel.org,
-	knaack.h@gmx.de,
-	lars@metafoo.de,
-	pmeerw@pmeerw.net,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	khilman@baylibre.com,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: carlo@caione.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	narmstrong@baylibre.com,
-	linux-arm-kernel@lists.infradead.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 0/4] Amlogic Meson SAR ADC support
-Date: Wed, 11 Jan 2017 18:43:30 +0100
-Message-Id: <20170111174334.24343-1-martin.blumenstingl@googlemail.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Tue, 31 Jan 2017 22:38:51 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Eric Anholt <eric@anholt.net>, Mark Rutland <mark.rutland@arm.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Rob Herring <robh+dt@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 09/11] drm/panel: Add support for the Raspberry Pi 7"
+ Touchscreen.
+Message-ID: <20170131213849.GD872@mithrandir.ba.sec>
+References: <20161214194621.16499-1-eric@anholt.net>
+ <20161214194621.16499-10-eric@anholt.net>
+ <20170131210717.GA872@mithrandir.ba.sec>
+ <20170131211952.jirg7scbzajshpec@phenom.ffwll.local>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wULyF7TL5taEdwHz"
+In-Reply-To: <20170131211952.jirg7scbzajshpec@phenom.ffwll.local>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series add support for the SAR ADC on Amlogic Meson GXBB, GXL and
-GXM SoCs.
-The hardware on GXBB provides 10-bit ADC results, while GXL and GXM are
-providing 12-bit results. Support for older SoCs (Meson8b and Meson8)
-can be added with little effort, most of which is testing I guess (I
-don't have any pre-GXBB hardware so I can't say).
 
-A new set of clocks had to be added to the GXBB clock controller (used
-by the GXBB/GXL/GXM SoCs) which are required to get the ADC working.
+--wULyF7TL5taEdwHz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The ADC itself can sample multiple channels at the same time and allows
-capturing multiple samples (which can be used for filtering/averaging).
-The ADC results are stored inside a FIFO register. More details on what
-the driver supports (or doesn't) can be found in the description of
-patch #3.
+On Tue, Jan 31, 2017 at 10:19:52PM +0100, Daniel Vetter wrote:
+> On Tue, Jan 31, 2017 at 10:07:19PM +0100, Thierry Reding wrote:
+> > On Wed, Dec 14, 2016 at 11:46:19AM -0800, Eric Anholt wrote:
+> > > +static int rpi_touchscreen_dsi_remove(struct mipi_dsi_device *dsi)
+> > > +{
+> > > +	struct device *dev =3D &dsi->dev;
+> > > +	struct rpi_touchscreen *ts =3D dev_get_drvdata(dev);
+> > > +	int ret;
+> > > +
+> > > +	ret =3D mipi_dsi_detach(dsi);
+> > > +	if (ret < 0) {
+> > > +		dev_err(&dsi->dev, "failed to detach from DSI host: %d\n", ret);
+> > > +		return ret;
+> > > +	}
+> >=20
+> > You might want to continue after this anyway, because the driver will be
+> > unloaded regardless of your error code and you'll leave behind a
+> > dangling panel and leak a reference to the I2C bridge.
+>=20
+> Sounds like we should switch the mipi_dsi_driver->remove callback to
+> return void then? But separate cleanup series if someone bothers with it.
 
-The code is based on the public S805 (Meson8b) and S905 (GXBB)
-datasheets, as well as by reading (various versions of) the vendor
-driver and by inspecting the registers on the vendor kernels of my
-testing-hardware.
+I think there are advantages to keeping this consistent with the driver
+core's definition of ->remove(). There have been efforts lately to deny
+unloading drivers if they are a dependency for other drivers, so we may
+yet see the day where the driver core actually does something with this
+return value.
 
-Typical use-cases for the ADC on the Meson GX SoCs are:
-- adc-keys ("ADC attached resistor ladder buttons")
-- SoC temperature measurement (not supported by this driver yet as
-  the system firmware does this already and provides the values via the
-  SCPI protocol)
-- "version-strapping" (different resistor values are used to indicate
-  the board-revision)
-- and of course typical ADC measurements
+Thierry
 
+--wULyF7TL5taEdwHz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Martin Blumenstingl (4):
-  Documentation: dt-bindings: add the Amlogic Meson SAR ADC
-    documentation
-  clk: gxbb: add the SAR ADC clocks and expose them
-  iio: adc: add a driver for the SAR ADC found in Amlogic Meson SoCs
-  ARM64: dts: meson: meson-gx: add the SAR ADC
+-----BEGIN PGP SIGNATURE-----
 
- .../bindings/iio/adc/amlogic,meson-saradc.txt      |  31 +
- arch/arm64/boot/dts/amlogic/meson-gx.dtsi          |   8 +
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        |  10 +
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi         |  10 +
- drivers/clk/meson/gxbb.c                           |  48 ++
- drivers/clk/meson/gxbb.h                           |   9 +-
- drivers/iio/adc/Kconfig                            |  12 +
- drivers/iio/adc/Makefile                           |   1 +
- drivers/iio/adc/meson_saradc.c                     | 860 +++++++++++++++++++++
- include/dt-bindings/clock/gxbb-clkc.h              |   4 +
- 10 files changed, 990 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
- create mode 100644 drivers/iio/adc/meson_saradc.c
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliRA+kACgkQ3SOs138+
+s6HwrQ//ck4B/dtyoEU9ZuChGt794vnYtlL+ieQvtCX0K6NH8HlcewJVqRDtceuE
+pIJG6i+KAYpjBX0b96NM4609/+Bo8S5DLCdpt3zvOkii6sdDGwugEQHB5XwdJ3sU
+U1YE89AAozHbODEZqBijbzTB5NP6k9A0e2iawPBVyI1qGcdTo1OAJDpS4VnWL0ZN
+f+YJIx36TFkbP700zPgta9UIgf7R6AvlNMn2ZOsDHK5IFQCUmRPz8zzjVqIEPVZa
+zUnX0EcAH+mqmJ7BsdHs+w2qUbEeKPZIC19F+xOAehK15B6eUBhQ39zDI1wZbSQA
+chB0Z49sP9g2d7Byxyqftn8TUlC3gXvixiXGsobMfj/ceUGoUqqeBzIPbfUnbo4P
+HDhSCxricaUdhyppxOuw4+pbEMBsAeBvpd5BgnmfG7mx9zVuZmvzZwNavAOQfJzc
+2eD3b2gtqQabpybkpFFeSQZyPRE7YKnYzoQBJYvUGsAg7y3uoD/XkhJ2PjpwpcbD
+1iidGrMP4ThVJKxmcfNXiRWnTajTiivf1sl/GRQf8DpdCAKOL8O2h1BbpT2jnXpp
+tx5RTAf09zJniNDCUdPvIuBWy3O+5vJzS15pVYw3tVS2mlavvIZ18ErrJ/k0kVic
+84uEoh69wULJkUQcRbMh9nf5zVjocuu8/S5jc6MtK2FBhr7M5DY=
+=cVgP
+-----END PGP SIGNATURE-----
 
--- 
-2.11.0
+--wULyF7TL5taEdwHz--
