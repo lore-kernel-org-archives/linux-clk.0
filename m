@@ -1,65 +1,50 @@
-Return-Path: <ykaneko0929@gmail.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+Subject: [Resend PATCH v2 0/3] STM32F4 Clock binding fix & update
+Date: Wed, 1 Feb 2017 14:09:53 +0100
+Message-ID: <1485954596-11014-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUCZZ4p9tOJ2HxtLH9QSqyprsW=cQmhMwF9hGtZDntSdg@mail.gmail.com>
-References: <1486920939-3661-1-git-send-email-ykaneko0929@gmail.com> <CAMuHMdUCZZ4p9tOJ2HxtLH9QSqyprsW=cQmhMwF9hGtZDntSdg@mail.gmail.com>
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Date: Thu, 16 Feb 2017 03:34:47 +0900
-Message-ID: <CAH1o70+HDD6t6z6sM90x70HgatSZywYZfcPGcptx-LbPSDQoWw@mail.gmail.com>
-Subject: Re: [PATCH/RFC] clk: renesas: r8a7795: Replace PLL3 multiplication setting
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert-san,
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-2017-02-15 18:28 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
-> Hi Kaneko-san,
->
-> On Sun, Feb 12, 2017 at 6:35 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
->> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->>
->> This patch replaces PLL3 multiplication setting for DDR clock frequency.
->>
->>   - After changes, new PLL3 multiplication setting:
->>     MD19 MD17 : DDR clock frequency
->>     -------------------------------
->>       0    0  : DDR3200
->>       0    1  : DDR2800
->>       1    0  : DDR2400
->>       1    1  : DDR1600
->>
->>   - Before changes, old PLL3 multiplication setting:
->>     MD19 MD17 : DDR clock frequency
->>     -------------------------------
->>       0    0  : DDR3200
->>       0    1  : DDR2133
->>       1    0  : Prohibited setting
->>       1    1  : DDR1600
->>
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->
-> JFTR, this patch, and its counterpart for r8a7796, are too experimental
-> for upstream.
+v2:
+- Only rename commit subject of first patch to avoid the error:
+ Remote Server returned '<vger.kernel.org #5.7.1 SMTP;
+ 550 5.7.1 Content-Policy reject msg: The capital Triple-X in subject
+ is way too often associated with junk email,
 
-Thanks for your review.
-I withdraw these patches.
+This patch-set includes:
+ - a fix to STM32F4_X_CLOCK() macro
+ - an update of missing binding definition
+ - a patch to use STM32F4_X_CLOCK() macro
 
-Thanks,
-Kaneko
+Gabriel Fernandez (3):
+  dt-bindings: mfd: stm32f4: Fix STM32F4_X_CLOCK() macro
+  dt-bindings: mfd: stm32f4: Add missing binding definition
+  ARM: dts: stm32: Use clock DT binding definition on stm32f429 family
 
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+ arch/arm/boot/dts/stm32429i-eval.dts  |  2 +-
+ arch/arm/boot/dts/stm32f429.dtsi      | 66 +++++++++++++++++++----------------
+ include/dt-bindings/mfd/stm32f4-rcc.h | 24 +++++++++----
+ 3 files changed, 53 insertions(+), 39 deletions(-)
+
+-- 
+1.9.1
