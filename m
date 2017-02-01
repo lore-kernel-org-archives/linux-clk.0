@@ -1,48 +1,89 @@
-Return-Path: <chris.brandt@renesas.com>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2] clk: renesas: mstp: ensure register writes complete
-Date: Mon, 13 Feb 2017 13:44:05 -0500
-Message-Id: <20170213184405.5657-1-chris.brandt@renesas.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+Subject: [Resend PATCH v2 2/3] dt-bindings: mfd: stm32f4: Add missing binding definition
+Date: Wed, 1 Feb 2017 14:09:55 +0100
+Message-ID: <1485954596-11014-3-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1485954596-11014-1-git-send-email-gabriel.fernandez@st.com>
+References: <1485954596-11014-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-When there is no status bit, it is possible for the clock enable/disable
-operation to have not completed by the time the driver code resumes
-execution. This is due to the fact that write operations are sometimes
-queued and delayed internally. Doing a read ensures the write operations
-has completed.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Fixes: b6face404f38 ("ARM: shmobile: r7s72100: add essential clock nodes to dtsi")
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
-* add Fixes because technically this is a bug fix
----
- drivers/clk/renesas/clk-mstp.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+This patch adds missing binding definition (backupram, ethernet, otg,
+qspi, adc & dsi)
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 3ce819c..69cfdb9 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -91,6 +91,12 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 		value |= bitmask;
- 	cpg_mstp_write(group, value, group->smstpcr);
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ include/dt-bindings/mfd/stm32f4-rcc.h | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
+index f662b19..082a81c 100644
+--- a/include/dt-bindings/mfd/stm32f4-rcc.h
++++ b/include/dt-bindings/mfd/stm32f4-rcc.h
+@@ -18,11 +18,17 @@
+ #define STM32F4_RCC_AHB1_GPIOJ	9
+ #define STM32F4_RCC_AHB1_GPIOK	10
+ #define STM32F4_RCC_AHB1_CRC	12
++#define STM32F4_RCC_AHB1_BKPSRAM	18
++#define STM32F4_RCC_AHB1_CCMDATARAM	20
+ #define STM32F4_RCC_AHB1_DMA1	21
+ #define STM32F4_RCC_AHB1_DMA2	22
+ #define STM32F4_RCC_AHB1_DMA2D	23
+ #define STM32F4_RCC_AHB1_ETHMAC	25
+-#define STM32F4_RCC_AHB1_OTGHS	29
++#define STM32F4_RCC_AHB1_ETHMACTX	26
++#define STM32F4_RCC_AHB1_ETHMACRX	27
++#define STM32F4_RCC_AHB1_ETHMACPTP	28
++#define STM32F4_RCC_AHB1_OTGHS		29
++#define STM32F4_RCC_AHB1_OTGHSULPI	30
  
-+	if (!group->mstpsr) {
-+		/* dummy read to ensure write has completed */
-+		clk_readl(group->smstpcr);
-+		barrier_data(group->smstpcr);
-+	}
-+
- 	spin_unlock_irqrestore(&group->lock, flags);
+ #define STM32F4_AHB1_RESET(bit) (STM32F4_RCC_AHB1_##bit + (0x10 * 8))
+ #define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit)
+@@ -40,6 +46,7 @@
  
- 	if (!enable || !group->mstpsr)
+ /* AHB3 */
+ #define STM32F4_RCC_AHB3_FMC	0
++#define STM32F4_RCC_AHB3_QSPI	1
+ 
+ #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
+ #define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + 0x40)
+@@ -79,7 +86,9 @@
+ #define STM32F4_RCC_APB2_TIM8	1
+ #define STM32F4_RCC_APB2_USART1	4
+ #define STM32F4_RCC_APB2_USART6	5
+-#define STM32F4_RCC_APB2_ADC	8
++#define STM32F4_RCC_APB2_ADC1	8
++#define STM32F4_RCC_APB2_ADC2	9
++#define STM32F4_RCC_APB2_ADC3	10
+ #define STM32F4_RCC_APB2_SDIO	11
+ #define STM32F4_RCC_APB2_SPI1	12
+ #define STM32F4_RCC_APB2_SPI4	13
+@@ -91,6 +100,7 @@
+ #define STM32F4_RCC_APB2_SPI6	21
+ #define STM32F4_RCC_APB2_SAI1	22
+ #define STM32F4_RCC_APB2_LTDC	26
++#define STM32F4_RCC_APB2_DSI	27
+ 
+ #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
+ #define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + 0xA0)
 -- 
-2.10.1
+1.9.1
