@@ -1,61 +1,101 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: [PATCH v6 14/14] arm64: configs: enable SDHCI driver for Xenon
-Date: Tue, 14 Feb 2017 18:01:54 +0100
-Message-Id: <23d456cc356e2cd3628bf655ade6997374f30e63.1487091464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+Return-Path: <markus.mayer@broadcom.com>
+MIME-Version: 1.0
+In-Reply-To: <20170121005202.GB8801@codeaurora.org>
+References: <20170119002933.7529-1-code@mmayer.net> <20170119002933.7529-2-code@mmayer.net>
+ <20170121005202.GB8801@codeaurora.org>
+From: Markus Mayer <markus.mayer@broadcom.com>
+Date: Wed, 1 Feb 2017 11:50:51 -0800
+Message-ID: <CAGt4E5sGScHp83ufKcX3Q74vW0fo=L0FHM7tCptvqJfchHAweg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: brcm: clocks: add binding for brcmstb-cpu-clk-div
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Markus Mayer <code@mmayer.net>, Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
+	Linux Clock List <linux-clk@vger.kernel.org>,
+	Power Management List <linux-pm@vger.kernel.org>, Device Tree List <devicetree@vger.kernel.org>,
+	ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch enables the driver for the SDHCI controller found on the
-Marvell Armada 3700 and 7K/8K ARM64 SoCs.
+On 20 January 2017 at 16:52, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 01/18, Markus Mayer wrote:
+>> diff --git a/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt b/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
+>> new file mode 100644
+>> index 0000000..c4acb53
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
+>> @@ -0,0 +1,27 @@
+>> +The CPU divider node serves as the sole clock for the CPU complex. It supports
+>> +power-of-2 clock division, with a divider of "1" as the default highest-speed
+>> +setting.
+>> +
+>> +Required properties:
+>> +- compatible: shall be "brcm,brcmstb-cpu-clk-div"
+>> +- reg: address and width of the divider configuration register
+>> +- #clock-cells: shall be set to 0
+>> +- clocks: phandle of clock provider which provides the source clock
+>> +          (this would typically be a "fixed-clock" type PLL)
+>> +- div-table: list of (raw_value,divider) ordered pairs that correspond to the
+>> +             allowed clock divider settings
+>> +- div-shift-width: least-significant bit position and width of divider value
+>
+> Are these properties used? Please don't put these types of
+> details in DT.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Yeah, unfortunately they are. Luckily, I think the issue can be
+resolved quite easily, because the user of those properties isn't
+involved in this series.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 869dded0f09f..341fc631f598 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -390,6 +390,7 @@ CONFIG_MMC_DW_EXYNOS=y
- CONFIG_MMC_DW_K3=y
- CONFIG_MMC_DW_ROCKCHIP=y
- CONFIG_MMC_SUNXI=y
-+CONFIG_MMC_SDHCI_XENON=y
- CONFIG_NEW_LEDS=y
- CONFIG_LEDS_CLASS=y
- CONFIG_LEDS_GPIO=y
--- 
-git-series 0.9.1
+They are currently being used by a clock driver
+("drivers/clk/clk-brcmstb.c") that hasn't been upstreamed yet. I
+performed some code archeology. While I wasn't 100% successful in
+tracking down the origins of this interface, it looks like it was
+designed this way a while back (4+ years or so), probably before
+device tree best practices were developed or, at least, before they
+were widely known.
+
+So, what I can do is to remove the properties from the official
+binding. (I'll send an update to that effect shortly.) Once the
+binding is accepted upstream, we can work on fixing up the design of
+clk-brcmstb.c, so it doesn't rely on these properties anymore (and
+derives them from the compatible string instead), and then proceed to
+upstream that, as well.
+
+I don't think this approach would cause any conflicts or problems.
+
+>> +
+>> +Optional properties:
+>> +- clock-names: the clock may be named
+>> +
+>> +Example:
+>> +     cpuclkdiv: cpu-clk-div@f03e257c {
+>> +             compatible = "brcm,brcmstb-cpu-clk-div";
+>> +             reg = <0xf03e257c 0x4>;
+>
+> This register really looks like some offset in something larger.
+> Is there some clock controller? What's the hw block at
+> 0xf03e2000? Maybe I already asked this.
+
+It looks this way, but in this case, looks are deceiving. The address
+and the length are really correct the way they are.
+
+This memory area holds a range of only loosely related configuration
+registers. It's called the Bus Interface Unit Register Set and deals
+with configuring the CPU in general. At address 0xf03e257c, there
+happens to be the clock divider register we need, and it's really just
+one register, i.e. 4 bytes.
+
+>> +             div-table = <0x00 1>;
+>> +             div-shift-width = <0 5>;
+>> +             #clock-cells = <0>;
+>> +             clocks = <&cpupll>;
+>> +             clock-names = "cpupll";
+>> +     };
+>>
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
