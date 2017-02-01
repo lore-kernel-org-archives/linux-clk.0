@@ -1,39 +1,98 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1488318090.21996.2.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson: fix SET_PARM macro
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Kevin Hilman
-	 <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
-	linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Date: Tue, 28 Feb 2017 22:41:30 +0100
-In-Reply-To: <20170228212654.GM25384@codeaurora.org>
-References: <20170228093016.5624-1-jbrunet@baylibre.com>
-	 <20170228212654.GM25384@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 1 Feb 2017 14:35:33 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, ludovic.barre@st.com,
+	olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [Resend PATCH v2 1/3] dt-bindings: mfd: stm32f4: Fix
+ STM32F4_X_CLOCK() macro
+Message-ID: <20170201143533.pxwe6gmfcymmsy4p@dell>
+References: <1485954596-11014-1-git-send-email-gabriel.fernandez@st.com>
+ <1485954596-11014-2-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1485954596-11014-2-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-02-28 at 13:26 -0800, Stephen Boyd wrote:
-> On 02/28, Jerome Brunet wrote:
-> > parameter val is not enclosed in parenthesis which is buggy when
-> > given an
-> > expression instead of a simple value
-> > 
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+On Wed, 01 Feb 2017, gabriel.fernandez@st.com wrote:
+
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
 > 
-> Fixes tag? Is there a place in the code that is using a complex
-> expression for val right now?
+> Macro to select a clock was not correct.
 > 
+> Offset of enable register starts at 0x30, then calculation to select a bit is:
+> (@enable_reg - 0x30) / 4 * 32 + bit_to_select
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Tested-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> ---
+>  include/dt-bindings/mfd/stm32f4-rcc.h | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 
-Not if with what's already in, afaik. However "clk: meson: mpll: add rw
-operation" I sent earlier today uses a ternary operator for val.
-That's  how I found this issue. Instead of running the test, it would
-always use the "else" clause.
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-I realize I should sent these patches in the same series.
-Would you prefer me to do so ?
+> diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
+> index e98942d..f662b19 100644
+> --- a/include/dt-bindings/mfd/stm32f4-rcc.h
+> +++ b/include/dt-bindings/mfd/stm32f4-rcc.h
+> @@ -25,7 +25,7 @@
+>  #define STM32F4_RCC_AHB1_OTGHS	29
+>  
+>  #define STM32F4_AHB1_RESET(bit) (STM32F4_RCC_AHB1_##bit + (0x10 * 8))
+> -#define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit + (0x30 * 8))
+> +#define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit)
+>  
+>  
+>  /* AHB2 */
+> @@ -36,13 +36,13 @@
+>  #define STM32F4_RCC_AHB2_OTGFS	7
+>  
+>  #define STM32F4_AHB2_RESET(bit)	(STM32F4_RCC_AHB2_##bit + (0x14 * 8))
+> -#define STM32F4_AHB2_CLOCK(bit)	(STM32F4_RCC_AHB2_##bit + (0x34 * 8))
+> +#define STM32F4_AHB2_CLOCK(bit)	(STM32F4_RCC_AHB2_##bit + 0x20)
+>  
+>  /* AHB3 */
+>  #define STM32F4_RCC_AHB3_FMC	0
+>  
+>  #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
+> -#define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + (0x38 * 8))
+> +#define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + 0x40)
+>  
+>  /* APB1 */
+>  #define STM32F4_RCC_APB1_TIM2	0
+> @@ -72,7 +72,7 @@
+>  #define STM32F4_RCC_APB1_UART8	31
+>  
+>  #define STM32F4_APB1_RESET(bit)	(STM32F4_RCC_APB1_##bit + (0x20 * 8))
+> -#define STM32F4_APB1_CLOCK(bit)	(STM32F4_RCC_APB1_##bit + (0x40 * 8))
+> +#define STM32F4_APB1_CLOCK(bit)	(STM32F4_RCC_APB1_##bit + 0x80)
+>  
+>  /* APB2 */
+>  #define STM32F4_RCC_APB2_TIM1	0
+> @@ -93,6 +93,6 @@
+>  #define STM32F4_RCC_APB2_LTDC	26
+>  
+>  #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
+> -#define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + (0x44 * 8))
+> +#define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + 0xA0)
+>  
+>  #endif /* _DT_BINDINGS_MFD_STM32F4_RCC_H */
 
-Jerome
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
