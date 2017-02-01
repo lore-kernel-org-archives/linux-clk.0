@@ -1,50 +1,99 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [Resend PATCH v2 2/3] dt-bindings: mfd: stm32f4: Add missing
+ binding definition
+To: Lee Jones <lee.jones@linaro.org>
+References: <1485954596-11014-1-git-send-email-gabriel.fernandez@st.com>
+ <1485954596-11014-3-git-send-email-gabriel.fernandez@st.com>
+ <20170201133150.ifyxibbiokmcth7i@dell>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <0bc19dc6-61fd-bb17-67ef-eb0f859f2d3b@st.com>
+Date: Wed, 1 Feb 2017 14:34:49 +0100
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20170218213936.142813519@cogentembedded.com>
-References: <20170218213936.142813519@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 20 Feb 2017 09:38:39 +0100
-Message-ID: <CAMuHMdV1x2voYKnMKv8x3XvmGwBA8SgwkhJZcnkycypdPhVjzA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] clk: renesas: cpg-mssr: r8a7796: add IMR clocks
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170201133150.ifyxibbiokmcth7i@dell>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sergei,
+Hi Lee,
 
-On Sat, Feb 18, 2017 at 10:39 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add the IMR[0-1] clocks to the R8A7796 CPG/MSSR driver.
+
+On 02/01/2017 02:31 PM, Lee Jones wrote:
+> On Wed, 01 Feb 2017, gabriel.fernandez@st.com wrote:
 >
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>
+>> This patch adds missing binding definition (backupram, ethernet, otg,
+>> qspi, adc & dsi)
+> What is RCC?
+Reset & Clock Control
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- linux.orig/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> +++ linux/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> @@ -179,6 +179,8 @@ static const struct mssr_mod_clk r8a7796
->         DEF_MOD("vin1",                  810,   R8A7796_CLK_S0D2),
->         DEF_MOD("vin0",                  811,   R8A7796_CLK_S0D2),
->         DEF_MOD("etheravb",              812,   R8A7796_CLK_S0D6),
-> +       DEF_MOD("imr1",                  822,   R8A7796_CLK_S2D1),
-> +       DEF_MOD("imr0",                  823,   R8A7796_CLK_S2D1),
-
-According to R-Car Gen3 Hardware Users Manual Rev.0.53E, the parent
-clock is S0D2, like on H3 ES2.0.
-
-Will queue in clk-renesas-for-v4.12 with corrected parent clock.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+>> ---
+>>   include/dt-bindings/mfd/stm32f4-rcc.h | 14 ++++++++++++--
+>>   1 file changed, 12 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
+>> index f662b19..082a81c 100644
+>> --- a/include/dt-bindings/mfd/stm32f4-rcc.h
+>> +++ b/include/dt-bindings/mfd/stm32f4-rcc.h
+>> @@ -18,11 +18,17 @@
+>>   #define STM32F4_RCC_AHB1_GPIOJ	9
+>>   #define STM32F4_RCC_AHB1_GPIOK	10
+>>   #define STM32F4_RCC_AHB1_CRC	12
+>> +#define STM32F4_RCC_AHB1_BKPSRAM	18
+>> +#define STM32F4_RCC_AHB1_CCMDATARAM	20
+>>   #define STM32F4_RCC_AHB1_DMA1	21
+>>   #define STM32F4_RCC_AHB1_DMA2	22
+>>   #define STM32F4_RCC_AHB1_DMA2D	23
+>>   #define STM32F4_RCC_AHB1_ETHMAC	25
+>> -#define STM32F4_RCC_AHB1_OTGHS	29
+>> +#define STM32F4_RCC_AHB1_ETHMACTX	26
+>> +#define STM32F4_RCC_AHB1_ETHMACRX	27
+>> +#define STM32F4_RCC_AHB1_ETHMACPTP	28
+>> +#define STM32F4_RCC_AHB1_OTGHS		29
+>> +#define STM32F4_RCC_AHB1_OTGHSULPI	30
+>>   
+>>   #define STM32F4_AHB1_RESET(bit) (STM32F4_RCC_AHB1_##bit + (0x10 * 8))
+>>   #define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit)
+>> @@ -40,6 +46,7 @@
+>>   
+>>   /* AHB3 */
+>>   #define STM32F4_RCC_AHB3_FMC	0
+>> +#define STM32F4_RCC_AHB3_QSPI	1
+>>   
+>>   #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
+>>   #define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + 0x40)
+>> @@ -79,7 +86,9 @@
+>>   #define STM32F4_RCC_APB2_TIM8	1
+>>   #define STM32F4_RCC_APB2_USART1	4
+>>   #define STM32F4_RCC_APB2_USART6	5
+>> -#define STM32F4_RCC_APB2_ADC	8
+>> +#define STM32F4_RCC_APB2_ADC1	8
+>> +#define STM32F4_RCC_APB2_ADC2	9
+>> +#define STM32F4_RCC_APB2_ADC3	10
+>>   #define STM32F4_RCC_APB2_SDIO	11
+>>   #define STM32F4_RCC_APB2_SPI1	12
+>>   #define STM32F4_RCC_APB2_SPI4	13
+>> @@ -91,6 +100,7 @@
+>>   #define STM32F4_RCC_APB2_SPI6	21
+>>   #define STM32F4_RCC_APB2_SAI1	22
+>>   #define STM32F4_RCC_APB2_LTDC	26
+>> +#define STM32F4_RCC_APB2_DSI	27
+>>   
+>>   #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
+>>   #define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + 0xA0)
