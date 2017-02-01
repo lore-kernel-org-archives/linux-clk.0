@@ -1,32 +1,97 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 14 Feb 2017 12:06:03 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 1 Feb 2017 13:31:50 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] clk: qcom: Do not drop device node twice
-Message-ID: <20170214200603.GX25384@codeaurora.org>
-References: <1486854296-23156-1-git-send-email-linux@roeck-us.net>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, ludovic.barre@st.com,
+	olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [Resend PATCH v2 2/3] dt-bindings: mfd: stm32f4: Add missing
+ binding definition
+Message-ID: <20170201133150.ifyxibbiokmcth7i@dell>
+References: <1485954596-11014-1-git-send-email-gabriel.fernandez@st.com>
+ <1485954596-11014-3-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1486854296-23156-1-git-send-email-linux@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1485954596-11014-3-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/11, Guenter Roeck wrote:
-> of_find_node_by_name() drops the reference to a passed device node.
-> It is not necessary to drop it again, and doing so may result in the
-> device node being released prematurely.
-> 
-> Cc: Rob Herring <robh@kernel.org>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
+On Wed, 01 Feb 2017, gabriel.fernandez@st.com wrote:
 
-Applied to clk-next
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> This patch adds missing binding definition (backupram, ethernet, otg,
+> qspi, adc & dsi)
+
+What is RCC?
+
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> ---
+>  include/dt-bindings/mfd/stm32f4-rcc.h | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
+> index f662b19..082a81c 100644
+> --- a/include/dt-bindings/mfd/stm32f4-rcc.h
+> +++ b/include/dt-bindings/mfd/stm32f4-rcc.h
+> @@ -18,11 +18,17 @@
+>  #define STM32F4_RCC_AHB1_GPIOJ	9
+>  #define STM32F4_RCC_AHB1_GPIOK	10
+>  #define STM32F4_RCC_AHB1_CRC	12
+> +#define STM32F4_RCC_AHB1_BKPSRAM	18
+> +#define STM32F4_RCC_AHB1_CCMDATARAM	20
+>  #define STM32F4_RCC_AHB1_DMA1	21
+>  #define STM32F4_RCC_AHB1_DMA2	22
+>  #define STM32F4_RCC_AHB1_DMA2D	23
+>  #define STM32F4_RCC_AHB1_ETHMAC	25
+> -#define STM32F4_RCC_AHB1_OTGHS	29
+> +#define STM32F4_RCC_AHB1_ETHMACTX	26
+> +#define STM32F4_RCC_AHB1_ETHMACRX	27
+> +#define STM32F4_RCC_AHB1_ETHMACPTP	28
+> +#define STM32F4_RCC_AHB1_OTGHS		29
+> +#define STM32F4_RCC_AHB1_OTGHSULPI	30
+>  
+>  #define STM32F4_AHB1_RESET(bit) (STM32F4_RCC_AHB1_##bit + (0x10 * 8))
+>  #define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit)
+> @@ -40,6 +46,7 @@
+>  
+>  /* AHB3 */
+>  #define STM32F4_RCC_AHB3_FMC	0
+> +#define STM32F4_RCC_AHB3_QSPI	1
+>  
+>  #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
+>  #define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + 0x40)
+> @@ -79,7 +86,9 @@
+>  #define STM32F4_RCC_APB2_TIM8	1
+>  #define STM32F4_RCC_APB2_USART1	4
+>  #define STM32F4_RCC_APB2_USART6	5
+> -#define STM32F4_RCC_APB2_ADC	8
+> +#define STM32F4_RCC_APB2_ADC1	8
+> +#define STM32F4_RCC_APB2_ADC2	9
+> +#define STM32F4_RCC_APB2_ADC3	10
+>  #define STM32F4_RCC_APB2_SDIO	11
+>  #define STM32F4_RCC_APB2_SPI1	12
+>  #define STM32F4_RCC_APB2_SPI4	13
+> @@ -91,6 +100,7 @@
+>  #define STM32F4_RCC_APB2_SPI6	21
+>  #define STM32F4_RCC_APB2_SAI1	22
+>  #define STM32F4_RCC_APB2_LTDC	26
+> +#define STM32F4_RCC_APB2_DSI	27
+>  
+>  #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
+>  #define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + 0xA0)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
