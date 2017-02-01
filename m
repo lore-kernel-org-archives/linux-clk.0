@@ -1,52 +1,67 @@
-Return-Path: <chris.brandt@renesas.com>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3] clk: renesas: mstp: ensure register writes complete
-Date: Tue, 14 Feb 2017 11:08:05 -0500
-Message-Id: <20170214160805.20156-1-chris.brandt@renesas.com>
+Return-Path: <mmayer@mmayer.net>
+From: Markus Mayer <code@mmayer.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Markus Mayer <mmayer@broadcom.com>,
+	Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
+	Linux Clock List <linux-clk@vger.kernel.org>,
+	Power Management List <linux-pm@vger.kernel.org>,
+	Device Tree List <devicetree@vger.kernel.org>,
+	ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 0/2] cpufreq: brcmstb-cpufreq: CPUfreq driver for older Broadcom STB SoCs
+Date: Wed,  1 Feb 2017 15:26:36 -0800
+Message-Id: <20170201232638.74396-1-code@mmayer.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-When there is no status bit, it is possible for the clock enable/disable
-operation to have not completed by the time the driver code resumes
-execution. This is due to the fact that write operations are sometimes
-queued and delayed internally. Doing a read ensures the write operations
-has completed.
+From: Markus Mayer <mmayer@broadcom.com>
 
-Fixes: b6face404f38 ("ARM: shmobile: r7s72100: add essential clock nodes to dtsi")
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-* changed clk_readl to cpg_mstp_read to take into account 8-bit registers
-* added Reviewed by Geert Uytterhoeven
-v2:
-* added Fixes because technically this is a bug fix
----
- drivers/clk/renesas/clk-mstp.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+This CPUfreq driver provides basic frequency scaling for older Broadcom
+STB SoCs that do not use AVS firmware with DVFS support. There is no
+support for voltage scaling.
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 3ce819c..4067216 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -91,6 +91,12 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 		value |= bitmask;
- 	cpg_mstp_write(group, value, group->smstpcr);
- 
-+	if (!group->mstpsr) {
-+		/* dummy read to ensure write has completed */
-+		cpg_mstp_read(group, group->smstpcr);
-+		barrier_data(group->smstpcr);
-+	}
-+
- 	spin_unlock_irqrestore(&group->lock, flags);
- 
- 	if (!enable || !group->mstpsr)
+v5 of this patch can be found at: https://lkml.org/lkml/2017/1/18/1093
+
+Changes since v5:
+  - Removed DT properties div-table and div-shift-width (Stephen Boyd)
+  - Renamed node from cpu-clk-div@... to clock-controller@... (Rob Herring)
+  - No code changes
+
+v4 of this patch can be found at: https://lkml.org/lkml/2016/12/20/670
+
+Changes since v4:
+  - Simplified (and hopefully clarified) binding document
+  - No code changes
+
+v3 of this patch can be found at: https://lkml.org/lkml/2016/11/22/747
+
+Changes since v3:
+  - added binding document
+  - got rid of calls to __clk_lookup(), using devm_clk_get() instead
+  - re-worked clock lookup code a bit, along with switching to devm_clk_get()
+  - get_frequencies() became a void function, removing the need for some
+    error checking
+  - fixed CONFIG_ARM_BRCM_AVS_CPUFREQ typo
+  - fixed MODULE_DEVICE_TABLE declaration
+
+
+Markus Mayer (2):
+  dt-bindings: brcm: clocks: add binding for brcmstb-cpu-clk-div
+  cpufreq: brcmstb-cpufreq: CPUfreq driver for older Broadcom STB SoCs
+
+ .../bindings/clock/brcm,brcmstb-cpu-clk-div.txt    |  22 ++
+ MAINTAINERS                                        |   1 +
+ drivers/cpufreq/Kconfig.arm                        |  12 +
+ drivers/cpufreq/Makefile                           |   1 +
+ drivers/cpufreq/brcmstb-cpufreq.c                  | 377 +++++++++++++++++++++
+ 5 files changed, 413 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
+ create mode 100644 drivers/cpufreq/brcmstb-cpufreq.c
+
 -- 
-2.10.1
+2.7.4
