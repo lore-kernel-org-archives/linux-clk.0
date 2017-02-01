@@ -1,78 +1,97 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: BH Hsieh <bhsieh@nvidia.com>
-Subject: [PATCH] uphy: handle utmipll iddq
-Date: Tue, 28 Feb 2017 17:19:24 +0200
-Message-ID: <1488295165-23975-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 1 Feb 2017 14:34:40 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: gabriel.fernandez@st.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, ludovic.barre@st.com,
+	olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [Resend PATCH v2 2/3] dt-bindings: mfd: stm32f4: Add missing
+ binding definition
+Message-ID: <20170201143440.mal2tjmrtxpv4wva@dell>
+References: <1485954596-11014-1-git-send-email-gabriel.fernandez@st.com>
+ <1485954596-11014-3-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1485954596-11014-3-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Export utmipll iddq functions. These will be needed when powergating the
-XUSB partition.
+On Wed, 01 Feb 2017, gabriel.fernandez@st.com wrote:
 
-Signed-off-by: BH Hsieh <bhsieh@nvidia.com>
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 26 ++++++++++++++++++++++++++
- include/linux/clk/tegra.h        |  2 ++
- 2 files changed, 28 insertions(+)
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> This patch adds missing binding definition (backupram, ethernet, otg,
+> qspi, adc & dsi)
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> ---
+>  include/dt-bindings/mfd/stm32f4-rcc.h | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 708f5f1..4554a44 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2313,6 +2313,32 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
- 	"clk_m"
- };
- 
-+void tegra210_put_utmipll_in_iddq(void)
-+{
-+	u32 reg;
-+
-+	reg = readl_relaxed(clk_base + UTMIPLL_HW_PWRDN_CFG0);
-+
-+	if (reg & UTMIPLL_HW_PWRDN_CFG0_UTMIPLL_LOCK) {
-+		pr_err("trying to assert IDDQ while UTMIPLL is locked\n");
-+		return;
-+	}
-+
-+	reg |= UTMIPLL_HW_PWRDN_CFG0_IDDQ_OVERRIDE;
-+	writel_relaxed(reg, clk_base + UTMIPLL_HW_PWRDN_CFG0);
-+}
-+EXPORT_SYMBOL_GPL(tegra210_put_utmipll_in_iddq);
-+
-+void tegra210_put_utmipll_out_iddq(void)
-+{
-+	u32 reg;
-+
-+	reg = readl_relaxed(clk_base + UTMIPLL_HW_PWRDN_CFG0);
-+	reg &= ~UTMIPLL_HW_PWRDN_CFG0_IDDQ_OVERRIDE;
-+	writel_relaxed(reg, clk_base + UTMIPLL_HW_PWRDN_CFG0);
-+}
-+EXPORT_SYMBOL_GPL(tegra210_put_utmipll_out_iddq);
-+
- static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 					    void __iomem *pmc_base)
- {
-diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
-index 7007a5f..e17d328 100644
---- a/include/linux/clk/tegra.h
-+++ b/include/linux/clk/tegra.h
-@@ -125,5 +125,7 @@ static inline void tegra_cpu_clock_resume(void)
- extern void tegra210_xusb_pll_hw_sequence_start(void);
- extern void tegra210_sata_pll_hw_control_enable(void);
- extern void tegra210_sata_pll_hw_sequence_start(void);
-+extern void tegra210_put_utmipll_in_iddq(void);
-+extern void tegra210_put_utmipll_out_iddq(void);
- 
- #endif /* __LINUX_CLK_TEGRA_H_ */
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+> diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
+> index f662b19..082a81c 100644
+> --- a/include/dt-bindings/mfd/stm32f4-rcc.h
+> +++ b/include/dt-bindings/mfd/stm32f4-rcc.h
+> @@ -18,11 +18,17 @@
+>  #define STM32F4_RCC_AHB1_GPIOJ	9
+>  #define STM32F4_RCC_AHB1_GPIOK	10
+>  #define STM32F4_RCC_AHB1_CRC	12
+> +#define STM32F4_RCC_AHB1_BKPSRAM	18
+> +#define STM32F4_RCC_AHB1_CCMDATARAM	20
+>  #define STM32F4_RCC_AHB1_DMA1	21
+>  #define STM32F4_RCC_AHB1_DMA2	22
+>  #define STM32F4_RCC_AHB1_DMA2D	23
+>  #define STM32F4_RCC_AHB1_ETHMAC	25
+> -#define STM32F4_RCC_AHB1_OTGHS	29
+> +#define STM32F4_RCC_AHB1_ETHMACTX	26
+> +#define STM32F4_RCC_AHB1_ETHMACRX	27
+> +#define STM32F4_RCC_AHB1_ETHMACPTP	28
+> +#define STM32F4_RCC_AHB1_OTGHS		29
+> +#define STM32F4_RCC_AHB1_OTGHSULPI	30
+>  
+>  #define STM32F4_AHB1_RESET(bit) (STM32F4_RCC_AHB1_##bit + (0x10 * 8))
+>  #define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit)
+> @@ -40,6 +46,7 @@
+>  
+>  /* AHB3 */
+>  #define STM32F4_RCC_AHB3_FMC	0
+> +#define STM32F4_RCC_AHB3_QSPI	1
+>  
+>  #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
+>  #define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + 0x40)
+> @@ -79,7 +86,9 @@
+>  #define STM32F4_RCC_APB2_TIM8	1
+>  #define STM32F4_RCC_APB2_USART1	4
+>  #define STM32F4_RCC_APB2_USART6	5
+> -#define STM32F4_RCC_APB2_ADC	8
+> +#define STM32F4_RCC_APB2_ADC1	8
+> +#define STM32F4_RCC_APB2_ADC2	9
+> +#define STM32F4_RCC_APB2_ADC3	10
+>  #define STM32F4_RCC_APB2_SDIO	11
+>  #define STM32F4_RCC_APB2_SPI1	12
+>  #define STM32F4_RCC_APB2_SPI4	13
+> @@ -91,6 +100,7 @@
+>  #define STM32F4_RCC_APB2_SPI6	21
+>  #define STM32F4_RCC_APB2_SAI1	22
+>  #define STM32F4_RCC_APB2_LTDC	26
+> +#define STM32F4_RCC_APB2_DSI	27
+>  
+>  #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
+>  #define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + 0xA0)
+
 -- 
-1.9.1
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
