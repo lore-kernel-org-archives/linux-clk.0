@@ -1,72 +1,90 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Kishon Vijay Abraham I <kishon@ti.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 1/9] arm: sunxi: add support for R40 SoC
-Date: Sat, 18 Feb 2017 01:37:14 +0800
-Message-Id: <20170217173722.6477-2-icenowy@aosc.xyz>
-In-Reply-To: <20170217173722.6477-1-icenowy@aosc.xyz>
-References: <20170217173722.6477-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Icenowy Zheng <icenowy@aosc.xyz>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd Bergmann
+	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+Subject: [Resend PATCH v2 1/3] dt-bindings: mfd: stm32f4: Fix STM32F4_X_CLOCK() macro
+Date: Wed, 1 Feb 2017 14:09:54 +0100
+Message-ID: <1485954596-11014-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1485954596-11014-1-git-send-email-gabriel.fernandez@st.com>
+References: <1485954596-11014-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner R40 is a new SoC, with Quad Core Cortex-A7 and peripherals
-like A20.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Add support for it.
+Macro to select a clock was not correct.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Offset of enable register starts at 0x30, then calculation to select a bit is:
+(@enable_reg - 0x30) / 4 * 32 + bit_to_select
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Tested-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+
 ---
- Documentation/arm/sunxi/README | 4 ++++
- arch/arm/mach-sunxi/sunxi.c    | 1 +
- 2 files changed, 5 insertions(+)
+ include/dt-bindings/mfd/stm32f4-rcc.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
-index d7b1f016bd62..25c814adcd47 100644
---- a/Documentation/arm/sunxi/README
-+++ b/Documentation/arm/sunxi/README
-@@ -75,6 +75,10 @@ SunXi family
-         + Datasheet
-           http://linux-sunxi.org/File:Allwinner_V3s_Datasheet_V1.0.pdf
+diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
+index e98942d..f662b19 100644
+--- a/include/dt-bindings/mfd/stm32f4-rcc.h
++++ b/include/dt-bindings/mfd/stm32f4-rcc.h
+@@ -25,7 +25,7 @@
+ #define STM32F4_RCC_AHB1_OTGHS	29
  
-+      - Allwinner R40 (sun8i)
-+        + Datasheet Draft
-+          http://linux-sunxi.org/File:Allwinner_R40_Datasheet_V0.1.pdf
-+
-     * Quad ARM Cortex-A15, Quad ARM Cortex-A7 based SoCs
-       - Allwinner A80
-         + Datasheet
-diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-index f44e3acb5c90..aea616759451 100644
---- a/arch/arm/mach-sunxi/sunxi.c
-+++ b/arch/arm/mach-sunxi/sunxi.c
-@@ -66,6 +66,7 @@ static const char * const sun8i_board_dt_compat[] = {
- 	"allwinner,sun8i-h2-plus",
- 	"allwinner,sun8i-h3",
- 	"allwinner,sun8i-v3s",
-+	"allwinner,sun8i-r40",
- 	NULL,
- };
+ #define STM32F4_AHB1_RESET(bit) (STM32F4_RCC_AHB1_##bit + (0x10 * 8))
+-#define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit + (0x30 * 8))
++#define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit)
  
+ 
+ /* AHB2 */
+@@ -36,13 +36,13 @@
+ #define STM32F4_RCC_AHB2_OTGFS	7
+ 
+ #define STM32F4_AHB2_RESET(bit)	(STM32F4_RCC_AHB2_##bit + (0x14 * 8))
+-#define STM32F4_AHB2_CLOCK(bit)	(STM32F4_RCC_AHB2_##bit + (0x34 * 8))
++#define STM32F4_AHB2_CLOCK(bit)	(STM32F4_RCC_AHB2_##bit + 0x20)
+ 
+ /* AHB3 */
+ #define STM32F4_RCC_AHB3_FMC	0
+ 
+ #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
+-#define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + (0x38 * 8))
++#define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + 0x40)
+ 
+ /* APB1 */
+ #define STM32F4_RCC_APB1_TIM2	0
+@@ -72,7 +72,7 @@
+ #define STM32F4_RCC_APB1_UART8	31
+ 
+ #define STM32F4_APB1_RESET(bit)	(STM32F4_RCC_APB1_##bit + (0x20 * 8))
+-#define STM32F4_APB1_CLOCK(bit)	(STM32F4_RCC_APB1_##bit + (0x40 * 8))
++#define STM32F4_APB1_CLOCK(bit)	(STM32F4_RCC_APB1_##bit + 0x80)
+ 
+ /* APB2 */
+ #define STM32F4_RCC_APB2_TIM1	0
+@@ -93,6 +93,6 @@
+ #define STM32F4_RCC_APB2_LTDC	26
+ 
+ #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
+-#define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + (0x44 * 8))
++#define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + 0xA0)
+ 
+ #endif /* _DT_BINDINGS_MFD_STM32F4_RCC_H */
 -- 
-2.11.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.9.1
