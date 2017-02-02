@@ -1,33 +1,41 @@
-Return-Path: <javier@dowhile0.org>
-MIME-Version: 1.0
-In-Reply-To: <20170214210114.5846-1-dianders@chromium.org>
-References: <20170214210114.5846-1-dianders@chromium.org>
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Date: Wed, 15 Feb 2017 12:27:59 -0300
-Message-ID: <CABxcv=kzW9SvrWYNasqCDkV7D6Y2zq+oRuqoPFdWuaWUhPehEA@mail.gmail.com>
-Subject: Re: [PATCH] clk: rockchip: Set "ignore unused" for PMU M0 clocks on rk3399
-To: Douglas Anderson <dianders@chromium.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, jwerner@chromium.org,
-	hl@rock-chips.com, dbasehore@chromium.org, zhengxing@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
 	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: sunxi-ng: select SUNXI_CCU_MULT for sun5i
+Date: Thu,  2 Feb 2017 15:33:57 +0100
+Message-Id: <20170202143417.3514875-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Doug,
+We get a link error when CCU_MULT is not set with the
+newly added driver:
 
-On Tue, Feb 14, 2017 at 6:01 PM, Douglas Anderson <dianders@chromium.org> wrote:
-> The PMU Cortex M0 on rk3399 is intended to be used for things like
-> DDRFreq transitions, suspend/resume, and other things that are the
-> purview of ARM Trusted Firmware and not the kernel.  As such, the
-> kernel shouldn't be messing with the clocks.  Add CLK_IGNORE_UNUSED to
-> these clocks.
->
+drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.17+0x4): undefined reference to `ccu_mult_ops'
+drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.5+0x4): undefined reference to `ccu_mult_ops'
 
-Isn't CLK_IS_CRITICAL a more suitable flag for this case?
+Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/sunxi-ng/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best regards,
-Javier
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 67659091860d..695bbf9ef428 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -67,6 +67,7 @@ config SUN50I_A64_CCU
+ config SUN5I_CCU
+ 	bool "Support for the Allwinner sun5i family CCM"
+ 	select SUNXI_CCU_DIV
++	select SUNXI_CCU_MULT
+ 	select SUNXI_CCU_NK
+ 	select SUNXI_CCU_NKM
+ 	select SUNXI_CCU_NM
+-- 
+2.9.0
