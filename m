@@ -1,112 +1,89 @@
-Return-Path: <florian.fainelli@broadcom.com>
-Return-Path: <florian.fainelli@broadcom.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: brcm: clocks: add binding for
- brcmstb-cpu-clk-div
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Florian Fainelli <f.fainelli@gmail.com>
-References: <20170119002933.7529-1-code@mmayer.net>
- <20170119002933.7529-2-code@mmayer.net>
- <20170121005202.GB8801@codeaurora.org>
- <CAGt4E5sGScHp83ufKcX3Q74vW0fo=L0FHM7tCptvqJfchHAweg@mail.gmail.com>
- <20170203200652.GD25384@codeaurora.org>
- <d56c827e-41cf-fcb3-42e0-792e8bf37871@gmail.com>
- <20170206225914.GJ25384@codeaurora.org>
-Cc: Markus Mayer <markus.mayer@broadcom.com>, Markus Mayer <code@mmayer.net>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring
- <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- "Rafael J . Wysocki" <rjw@rjwysocki.net>, Arnd Bergmann <arnd@arndb.de>,
- Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
- Linux Clock List <linux-clk@vger.kernel.org>,
- Power Management List <linux-pm@vger.kernel.org>,
- Device Tree List <devicetree@vger.kernel.org>,
- ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Message-ID: <a1a11072-908b-352e-a49f-49240d430df9@broadcom.com>
-Date: Mon, 6 Feb 2017 15:16:32 -0800
+Return-Path: <pku.leo@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20170206225914.GJ25384@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <DB6PR0401MB2648CA1169D59950CD8BEC78F0080@DB6PR0401MB2648.eurprd04.prod.outlook.com>
+References: <1466058085-19353-1-git-send-email-oss@buserror.net>
+ <1466058085-19353-2-git-send-email-oss@buserror.net> <146785501714.73491.8643317356949121718@resonance>
+ <1467864803.32358.63.camel@buserror.net> <146794477678.73491.8244253339435407853@resonance>
+ <1468012014.32358.74.camel@buserror.net> <DB6PR0401MB2648CA1169D59950CD8BEC78F0080@DB6PR0401MB2648.eurprd04.prod.outlook.com>
+From: Leo Li <pku.leo@gmail.com>
+Date: Thu, 2 Feb 2017 12:11:36 -0600
+Message-ID: <CADRPPNR0xh_9Q3FZ_-94QD-B7PP=aGBySSi1+n=RmmjvkpKYzA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] cpufreq: qoriq: Don't look at clock implementation details
+To: Yuantian Tang <yuantian.tang@nxp.com>
+Cc: Scott Wood <oss@buserror.net>, Michael Turquette <mturquette@baylibre.com>,
+	Russell King <linux@armlinux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Yang-Leo Li <leoyang.li@nxp.com>,
+	Xiaofeng Ren <xiaofeng.ren@nxp.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/06/2017 02:59 PM, Stephen Boyd wrote:
-> On 02/03, Florian Fainelli wrote:
->> On 02/03/2017 12:06 PM, Stephen Boyd wrote:
->>> On 02/01, Markus Mayer wrote:
->>>> On 20 January 2017 at 16:52, Stephen Boyd <sboyd@codeaurora.org> wrote:
->>>>>
->>>>> Are these properties used? Please don't put these types of
->>>>> details in DT.
->>>>
->>>> Yeah, unfortunately they are. Luckily, I think the issue can be
->>>> resolved quite easily, because the user of those properties isn't
->>>> involved in this series.
->>>>
->>>> They are currently being used by a clock driver
->>>> ("drivers/clk/clk-brcmstb.c") that hasn't been upstreamed yet. I
->>>> performed some code archeology. While I wasn't 100% successful in
->>>> tracking down the origins of this interface, it looks like it was
->>>> designed this way a while back (4+ years or so), probably before
->>>> device tree best practices were developed or, at least, before they
->>>> were widely known.
->>>>
->>>> So, what I can do is to remove the properties from the official
->>>> binding. (I'll send an update to that effect shortly.) Once the
->>>> binding is accepted upstream, we can work on fixing up the design of
->>>> clk-brcmstb.c, so it doesn't rely on these properties anymore (and
->>>> derives them from the compatible string instead), and then proceed to
->>>> upstream that, as well.
->>>
->>> Ok. Sounds like some cleanup needs to be done on the way
->>> upstream.
->>>
->>>>> This register really looks like some offset in something larger.
->>>>> Is there some clock controller? What's the hw block at
->>>>> 0xf03e2000? Maybe I already asked this.
->>>>
->>>> It looks this way, but in this case, looks are deceiving. The address
->>>> and the length are really correct the way they are.
->>>>
->>>> This memory area holds a range of only loosely related configuration
->>>> registers. It's called the Bus Interface Unit Register Set and deals
->>>> with configuring the CPU in general. At address 0xf03e257c, there
->>>> happens to be the clock divider register we need, and it's really just
->>>> one register, i.e. 4 bytes.
->>>
->>> We've seen this style of hardware design before. I'd prefer we
->>> make the "Bus Interface Unit Register Set" into one device node
->>> and have a driver probe for it that registers this clock. If
->>> other things need to be controlled in there then the driver will
->>> do more than just register one clock, possibly hooking into
->>> multiple frameworks. The compatible string can indicate which SoC
->>> it is if the divider register offset changes or if the register
->>> layout is a total free for all.
->>
->> We already have another piece of drive code that manipulates registers
->> in the Bus Interface Unit located in drivers/soc/bcm/brcmstb/biuctrl.c
->> and which has little to nothing to do with the CPU's clock ratio. And
->> actually another one being submitted that deals with the CPU's
->> read-ahead cache. I would very much prefer we keep all of them separate
->> and dealing with just the register offset they need to do, but that does
->> not mean the Device Tree binding has to look that way though.
->>
->> The binding for the BIUCTRL register made it here:
->>
->> Documentation/devicetree/bindings/arm/bcm/brcm,brcmstb.txt
->>
->> so we should re-use that, and have a small piece of clock provided that
->> just uses the relevant register range within that larger register space
->> and provide the CLOCK_RATIO. Does that work?
->>
-> 
-> Ok. That's fine. The existing binding will be updated to include
-> this new subnode then for the clock component?
+On Tue, Jul 19, 2016 at 10:02 PM, Yuantian Tang <yuantian.tang@nxp.com> wrote:
+>
+> PING.
+>
+> Regards,
+> Yuantian
+>
+> > -----Original Message-----
+> > From: Scott Wood [mailto:oss@buserror.net]
+> > Sent: Saturday, July 09, 2016 5:07 AM
+> > To: Michael Turquette <mturquette@baylibre.com>; Russell King
+> > <linux@armlinux.org.uk>; Stephen Boyd <sboyd@codeaurora.org>; Viresh
+> > Kumar <viresh.kumar@linaro.org>; Rafael J. Wysocki <rjw@rjwysocki.net>
+> > Cc: linux-clk@vger.kernel.org; linux-pm@vger.kernel.org; linuxppc-
+> > dev@lists.ozlabs.org; Yuantian Tang <yuantian.tang@nxp.com>; Yang-Leo Li
+> > <leoyang.li@nxp.com>; Xiaofeng Ren <xiaofeng.ren@nxp.com>
+> > Subject: Re: [PATCH v3 2/2] cpufreq: qoriq: Don't look at clock
+> > implementation details
+> >
+> > On Thu, 2016-07-07 at 19:26 -0700, Michael Turquette wrote:
+> > > Quoting Scott Wood (2016-07-06 21:13:23)
+> > > >
+> > > > On Wed, 2016-07-06 at 18:30 -0700, Michael Turquette wrote:
+> > > > >
+> > > > > Quoting Scott Wood (2016-06-15 23:21:25)
+> > > > > >
+> > > > > >
+> > > > > > -static struct device_node *cpu_to_clk_node(int cpu)
+> > > > > > +static struct clk *cpu_to_clk(int cpu)
+> > > > > >  {
+> > > > > > -       struct device_node *np, *clk_np;
+> > > > > > +       struct device_node *np;
+> > > > > > +       struct clk *clk;
+> > > > > >
+> > > > > >         if (!cpu_present(cpu))
+> > > > > >                 return NULL;
+> > > > > > @@ -112,37 +80,28 @@ static struct device_node
+> > > > > > *cpu_to_clk_node(int
+> > > > > > cpu)
+> > > > > >         if (!np)
+> > > > > >                 return NULL;
+> > > > > >
+> > > > > > -       clk_np = of_parse_phandle(np, "clocks", 0);
+> > > > > > -       if (!clk_np)
+> > > > > > -               return NULL;
+> > > > > > -
+> > > > > > +       clk = of_clk_get(np, 0);
+> > > > > Why not use devm_clk_get here?
+> > > > devm_clk_get() is a wrapper around clk_get() which is not the same
+> > > > as of_clk_get().  What device would you pass to devm_clk_get(), and
+> > > > what name would you pass?
+> > > I'm fuzzy on whether or not you get a struct device from a cpufreq
+> > > driver. If so, then that would be the one to use. I would hope that
+> > > cpufreq drivers model cpus as devices, but I'm really not sure without
+> > > looking into the code.
+> >
+> > It's not the cpufreq code that provides it, but get_cpu_device() could be
+> > used.
+> >
+> > Do you have any comments on the first patch of this set?
 
-Humm, I suppose we could do that yes, my original thought was to just
-have this CPU clock provider remap the entire BIUCTRL register range
-(of_iomap() etc.) and manipulate just the relevant register range of
-interest (CPU_CLOCK_CONFIG_REG), but if you want a sub-node to appear,
-we could probably do that as well.
--- 
-Florian
+
+Any action on this patch?  This patch is still a dependency for
+cpufreq to work on all QorIQ platforms.
+
+Regards,
+Leo
