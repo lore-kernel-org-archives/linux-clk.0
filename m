@@ -1,73 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:15695 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751588AbdBFMQK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2017 07:16:10 -0500
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        My Chuang <my.chuang@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        <linux-clk@vger.kernel.org>,
-        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH v2 01/10] Document: DT: mediatek: multiple base address support for sysirq
-Date: Mon, 6 Feb 2017 20:15:27 +0800
-Message-ID: <1486383336-16892-2-git-send-email-mars.cheng@mediatek.com>
-In-Reply-To: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
-References: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 3 Feb 2017 11:55:08 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [GIT PULL] Allwinner clock changes for 4.11
+Message-ID: <20170203195508.GA25384@codeaurora.org>
+References: <20170131084010.jht6mp6dlpbidt4j@lukather>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170131084010.jht6mp6dlpbidt4j@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-This describes how to specify multiple base addresses for sysirq
-in mediatek platforms.
+On 01/31, Maxime Ripard wrote:
+> Hi Mike, Stephen,
+> 
+> Please pull the following changes for 4.11.
+> 
+> Thanks!
+> Maxime
+> 
+> The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
+> 
+>   Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/sunxi-clk-for-4.11
+> 
+> for you to fetch changes up to 64507fe38de3eb7ed60f26843e0ddf1c565a9b21:
+> 
+>   ARM: dts: sun9i: Switch to new clock bindings (2017-01-30 08:39:22 +0100)
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
----
- .../interrupt-controller/mediatek,sysirq.txt       |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+Thanks. Pulled.
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-index 9d1d72c..1718454 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-@@ -18,16 +18,21 @@ Required properties:
- 	"mediatek,mt2701-sysirq"
- - interrupt-controller : Identifies the node as an interrupt controller
- - #interrupt-cells : Use the same format as specified by GIC in arm,gic.txt.
-+- #intpol-bases: Indicate how many base addresses to be used, default is 1.
- - interrupt-parent: phandle of irq parent for sysirq. The parent must
-   use the same interrupt-cells format as GIC.
- - reg: Physical base address of the intpol registers and length of memory
--  mapped region.
-+  mapped region. Could be multiple bases here. Ex: mt6797 needs 2 reg, others
-+  need 1. If not set, the default is 1.
- 
- Example:
--	sysirq: interrupt-controller@10200100 {
--		compatible = "mediatek,mt6589-sysirq", "mediatek,mt6577-sysirq";
-+	sysirq: intpol-controller@10200620 {
-+		compatible = "mediatek,mt6797-sysirq",
-+			     "mediatek,mt6577-sysirq";
- 		interrupt-controller;
- 		#interrupt-cells = <3>;
-+		#intpol-bases = <2>;
- 		interrupt-parent = <&gic>;
--		reg = <0 0x10200100 0 0x1c>;
-+		reg = <0 0x10220620 0 0x20>,
-+		      <0 0x10220690 0 0x10>;
- 	};
 -- 
-1.7.9.5
-
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
