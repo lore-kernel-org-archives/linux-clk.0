@@ -1,56 +1,61 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1486920939-3661-1-git-send-email-ykaneko0929@gmail.com>
-References: <1486920939-3661-1-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 15 Feb 2017 10:28:58 +0100
-Message-ID: <CAMuHMdUCZZ4p9tOJ2HxtLH9QSqyprsW=cQmhMwF9hGtZDntSdg@mail.gmail.com>
-Subject: Re: [PATCH/RFC] clk: renesas: r8a7795: Replace PLL3 multiplication setting
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <chrisp@alliedtelesis.co.nz>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH 0/4] Updates for Marvell Switch SoCs
+Date: Fri,  3 Feb 2017 16:40:08 +1300
+Message-Id: <20170203034012.29399-1-chris.packham@alliedtelesis.co.nz>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Kaneko-san,
+Shortly after I posted my last series I got access to a more recent
+Marvell SDK which had some device tree support for the switch SoCs I'd
+been wanting. It was still based on an older kernel but it was a huge
+improvement over what came before.
 
-On Sun, Feb 12, 2017 at 6:35 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch replaces PLL3 multiplication setting for DDR clock frequency.
->
->   - After changes, new PLL3 multiplication setting:
->     MD19 MD17 : DDR clock frequency
->     -------------------------------
->       0    0  : DDR3200
->       0    1  : DDR2800
->       1    0  : DDR2400
->       1    1  : DDR1600
->
->   - Before changes, old PLL3 multiplication setting:
->     MD19 MD17 : DDR clock frequency
->     -------------------------------
->       0    0  : DDR3200
->       0    1  : DDR2133
->       1    0  : Prohibited setting
->       1    1  : DDR1600
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Patch 1/4 is a bit of a cleanup. I did initially struggle with how to
+access individual parts of the DFX block as well as retaining a handle on
+the entire thing for the switch driver to use.
 
-JFTR, this patch, and its counterpart for r8a7796, are too experimental
-for upstream.
+Patch 2/4 is a re-jig of the dtsi files which is needed by 4/4. This is
+required because I need to use the coreclk label on a different node. It
+also means I don't have to disable nodes for blocks that only exist on
+the Armada-XP.
 
-Gr{oetje,eeting}s,
+Patch 3/4 and 4/4 are ported from the Marvell Linux kernel. I've tested
+them on the hardware I have access to and things look pretty good.
 
-                        Geert
+Chris Packham (4):
+  ARM: dts: armada-xp-98dx3236: combine dfx server nodes
+  ARM: dts: Use armada-370-xp as a base for armada-xp-98dx3236
+  ARM: mvebu: Add mv98dx3236-soc-id
+  clk: mvebu: Expand mv98dx3236-core-clock support
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ .../bindings/arm/marvell/mv98dx3236-soc-id.txt     |  14 ++
+ .../devicetree/bindings/clock/mvebu-core-clock.txt |   7 +
+ .../bindings/clock/mvebu-gated-clock.txt           |  11 ++
+ .../devicetree/bindings/net/marvell,prestera.txt   |  13 +-
+ arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 211 ++++++++++++++++-----
+ arch/arm/mach-mvebu/mvebu-soc-id.c                 |  43 ++++-
+ drivers/clk/mvebu/Makefile                         |   2 +-
+ drivers/clk/mvebu/armada-xp.c                      |  13 --
+ drivers/clk/mvebu/mv98dx3236.c                     | 144 ++++++++++++++
+ 9 files changed, 382 insertions(+), 76 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/marvell/mv98dx3236-soc-id.txt
+ create mode 100644 drivers/clk/mvebu/mv98dx3236.c
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+2.11.0.24.ge6920cf
