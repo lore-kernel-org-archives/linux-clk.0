@@ -1,43 +1,53 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 7/7] clk: tegra: fix type for m field
-Date: Thu, 23 Feb 2017 12:44:44 +0200
-Message-ID: <1487846686-6388-8-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:39810 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752040AbdBCDiO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Feb 2017 22:38:14 -0500
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 0/4] Updates for Marvell Switch SoCs
+Date: Fri,  3 Feb 2017 16:38:01 +1300
+Message-Id: <20170203033805.29046-1-chris.packham@alliedtelesis.co.nz>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-When used as part of fractional ndiv calculations, the current range is not
-enough because the denominator of the fraction is multiplied with m.
+Shortly after I posted my last series I got access to a more recent
+Marvell SDK which had some device tree support for the switch SoCs I'd
+been wanting. It was still based on an older kernel but it was a huge
+improvement over what came before.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch 1/4 is a bit of a cleanup. I did initially struggle with how to
+access individual parts of the DFX block as well as retaining a handle on
+the entire thing for the switch driver to use.
 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 6ba82ec..a62ea73 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -116,7 +116,7 @@ struct tegra_clk_pll_freq_table {
- 	unsigned long	input_rate;
- 	unsigned long	output_rate;
- 	u32		n;
--	u16		m;
-+	u32		m;
- 	u8		p;
- 	u8		cpcon;
- 	u16		sdm_data;
+Patch 2/4 is a re-jig of the dtsi files which is needed by 4/4. This is
+required because I need to use the coreclk label on a different node. It
+also means I don't have to disable nodes for blocks that only exist on
+the Armada-XP.
+
+Patch 3/4 and 4/4 are ported from the Marvell Linux kernel. I've tested
+them on the hardware I have access to and things look pretty good.
+
+Chris Packham (4):
+  ARM: dts: armada-xp-98dx3236: combine dfx server nodes
+  ARM: dts: Use armada-370-xp as a base for armada-xp-98dx3236
+  ARM: mvebu: Add mv98dx3236-soc-id
+  clk: mvebu: Expand mv98dx3236-core-clock support
+
+ .../bindings/arm/marvell/mv98dx3236-soc-id.txt     |  14 ++
+ .../devicetree/bindings/clock/mvebu-core-clock.txt |   7 +
+ .../bindings/clock/mvebu-gated-clock.txt           |  11 ++
+ .../devicetree/bindings/net/marvell,prestera.txt   |  13 +-
+ arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 211 ++++++++++++++++-----
+ arch/arm/mach-mvebu/mvebu-soc-id.c                 |  43 ++++-
+ drivers/clk/mvebu/Makefile                         |   2 +-
+ drivers/clk/mvebu/armada-xp.c                      |  13 --
+ drivers/clk/mvebu/mv98dx3236.c                     | 144 ++++++++++++++
+ 9 files changed, 382 insertions(+), 76 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/marvell/mv98dx3236-soc-id.txt
+ create mode 100644 drivers/clk/mvebu/mv98dx3236.c
+
 -- 
-1.9.1
+2.11.0.24.ge6920cf
+
