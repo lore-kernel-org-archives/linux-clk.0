@@ -1,55 +1,304 @@
-Return-Path: <cyndis@kapsi.fi>
-Subject: Re: [PATCH 1/7] clk: tegra: fix pll_a1 iddq register, add pll_a1
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>,
- linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
- <1487776444-4701-2-git-send-email-pdeschrijver@nvidia.com>
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <67a5d147-b6ed-256b-a269-29456043a20c@kapsi.fi>
-Date: Wed, 22 Feb 2017 18:38:52 +0200
-MIME-Version: 1.0
-In-Reply-To: <1487776444-4701-2-git-send-email-pdeschrijver@nvidia.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@free-electrons.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/4] ARM: dts: Use armada-370-xp as a base for armada-xp-98dx3236
+Date: Fri,  3 Feb 2017 16:40:10 +1300
+Message-Id: <20170203034012.29399-3-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20170203034012.29399-1-chris.packham@alliedtelesis.co.nz>
+References: <20170203034012.29399-1-chris.packham@alliedtelesis.co.nz>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+The Marvell datasheets refer to the integrated CPU as "Armada-XP". In
+reality there are a number of differences to the actual Armada-XP so
+rather than including armada-xp.dtsi and disabling many of the IP
+blocks. Include armada-370-xp.dtsi and add the required nodes.
 
-On 02/22/2017 05:13 PM, Peter De Schrijver wrote:
-> pll_a1 was using CLK_RST_CONTROLLER_PLLA1_MISC_0 for IDDQ control rather
-> than the correct register CLK_RST_CONTROLLER_PLLA1_MISC_1. Also add pll_a1
-> to the set of clocks defined for Tegra210.
->
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index 2896d2e..2ef8d49 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -1772,7 +1772,7 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
->  	.misc_reg = PLLA1_MISC0,
->  	.lock_mask = PLLCX_BASE_LOCK,
->  	.lock_delay = 300,
-> -	.iddq_reg = PLLA1_MISC0,
-> +	.iddq_reg = PLLA1_MISC1,
->  	.iddq_bit_idx = PLLCX_IDDQ_BIT,
->  	.reset_reg = PLLA1_MISC0,
->  	.reset_bit_idx = PLLCX_RESET_BIT,
-> @@ -2209,6 +2209,7 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
->  	[tegra_clk_pll_c4_out2] = { .dt_id = TEGRA210_CLK_PLL_C4_OUT2, .present = true },
->  	[tegra_clk_pll_c4_out3] = { .dt_id = TEGRA210_CLK_PLL_C4_OUT3, .present = true },
->  	[tegra_clk_apb2ape] = { .dt_id = TEGRA210_CLK_APB2APE, .present = true },
-> +	[tegra_clk_pll_a1] = { .dt_id = TEGRA210_CLK_PLL_A1, .present = true },
->  };
->
->  static struct tegra_devclk devclks[] __initdata = {
->
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
+ arch/arm/boot/dts/armada-xp-98dx3236.dtsi | 194 +++++++++++++++++++++++-------
+ 1 file changed, 151 insertions(+), 43 deletions(-)
+
+diff --git a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+index bd8261fdec81..cbf5cd0c6429 100644
+--- a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
++++ b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+@@ -45,11 +45,14 @@
+  * common to all Armada XP SoCs.
+  */
+ 
+-#include "armada-xp.dtsi"
++#include "armada-370-xp.dtsi"
+ 
+ / {
++	#address-cells = <2>;
++	#size-cells = <2>;
++
+ 	model = "Marvell 98DX3236 SoC";
+-	compatible = "marvell,armadaxp-98dx3236", "marvell,armadaxp", "marvell,armada-370-xp";
++	compatible = "marvell,armadaxp-98dx3236", "marvell,armada-370-xp";
+ 
+ 	aliases {
+ 		gpio0 = &gpio0;
+@@ -72,12 +75,19 @@
+ 	};
+ 
+ 	soc {
++		compatible = "marvell,armadaxp-mbus", "simple-bus";
++
+ 		ranges = <MBUS_ID(0xf0, 0x01) 0 0 0xf1000000 0x100000
+ 			  MBUS_ID(0x01, 0x1d) 0 0 0xfff00000 0x100000
+ 			  MBUS_ID(0x01, 0x2f) 0 0 0xf0000000 0x1000000
+ 			  MBUS_ID(0x03, 0x00) 0 0 0xa8000000 0x4000000
+ 			  MBUS_ID(0x08, 0x00) 0 0 0xac000000 0x100000>;
+ 
++		bootrom {
++			compatible = "marvell,bootrom";
++			reg = <MBUS_ID(0x01, 0x1d) 0 0x100000>;
++		};
++
+ 		/*
+ 		 * 98DX3236 has 1 x1 PCIe unit Gen2.0
+ 		 */
+@@ -117,31 +127,92 @@
+ 		};
+ 
+ 		internal-regs {
++			sdramc@1400 {
++				compatible = "marvell,armada-xp-sdram-controller";
++				reg = <0x1400 0x500>;
++			};
++
++			L2: l2-cache@8000 {
++				compatible = "marvell,aurora-system-cache";
++				reg = <0x08000 0x1000>;
++				cache-id-part = <0x100>;
++				cache-level = <2>;
++				cache-unified;
++				wt-override;
++			};
++
++			gpio0: gpio@18100 {
++				compatible = "marvell,orion-gpio";
++				reg = <0x18100 0x40>;
++				ngpios = <32>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				interrupts = <82>, <83>, <84>, <85>;
++			};
++
++			/* does not exist */
++			gpio1: gpio@18140 {
++				compatible = "marvell,orion-gpio";
++				reg = <0x18140 0x40>;
++				status = "disabled";
++			};
++
++			gpio2: gpio@18180 { /* rework some properties */
++				compatible = "marvell,orion-gpio";
++				reg = <0x18180 0x40>;
++				ngpios = <1>; /* only gpio #32 */
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				interrupts = <87>;
++			};
++
++			systemc: system-controller@18200 {
++				compatible = "marvell,armada-370-xp-system-controller";
++				reg = <0x18200 0x500>;
++			};
++
++			gateclk: clock-gating-control@18220 {
++				compatible = "marvell,armada-xp-gating-clock";
++				reg = <0x18220 0x4>;
++				clocks = <&coreclk 0>;
++				#clock-cells = <1>;
++			};
++
+ 			coreclk: mvebu-sar@18230 {
+ 				compatible = "marvell,mv98dx3236-core-clock";
++				reg = <0x18230 0x08>;
++				#clock-cells = <1>;
+ 			};
+ 
+ 			cpuclk: clock-complex@18700 {
++				#clock-cells = <1>;
+ 				compatible = "marvell,mv98dx3236-cpu-clock";
++				reg = <0x18700 0x24>, <0x1c054 0x10>;
++				clocks = <&coreclk 1>;
+ 			};
+ 
+ 			corediv-clock@18740 {
+ 				status = "disabled";
+ 			};
+ 
+-			xor@60900 {
+-				status = "disabled";
++			cpu-config@21000 {
++				compatible = "marvell,armada-xp-cpu-config";
++				reg = <0x21000 0x8>;
+ 			};
+ 
+-			crypto@90000 {
+-				status = "disabled";
++			ethernet@70000 {
++				compatible = "marvell,armada-xp-neta";
+ 			};
+ 
+-			xor@f0900 {
+-				status = "disabled";
++			ethernet@74000 {
++				compatible = "marvell,armada-xp-neta";
+ 			};
+ 
+-			xor@f0800 {
++			xor1: xor@f0800 {
+ 				compatible = "marvell,orion-xor";
+ 				reg = <0xf0800 0x100
+ 				       0xf0a00 0x100>;
+@@ -161,37 +232,28 @@
+ 				};
+ 			};
+ 
+-			gpio0: gpio@18100 {
+-				compatible = "marvell,orion-gpio";
+-				reg = <0x18100 0x40>;
+-				ngpios = <32>;
+-				gpio-controller;
+-				#gpio-cells = <2>;
+-				interrupt-controller;
+-				#interrupt-cells = <2>;
+-				interrupts = <82>, <83>, <84>, <85>;
+-			};
+-
+-			/* does not exist */
+-			gpio1: gpio@18140 {
+-				compatible = "marvell,orion-gpio";
+-				reg = <0x18140 0x40>;
+-				status = "disabled";
++			nand: nand@d0000 {
++				clocks = <&dfx_coredivclk 0>;
+ 			};
+ 
+-			gpio2: gpio@18180 { /* rework some properties */
+-				compatible = "marvell,orion-gpio";
+-				reg = <0x18180 0x40>;
+-				ngpios = <1>; /* only gpio #32 */
+-				gpio-controller;
+-				#gpio-cells = <2>;
+-				interrupt-controller;
+-				#interrupt-cells = <2>;
+-				interrupts = <87>;
+-			};
++			xor0: xor@f0900 {
++				compatible = "marvell,orion-xor";
++				reg = <0xF0900 0x100
++				       0xF0B00 0x100>;
++				clocks = <&gateclk 28>;
++				status = "okay";
+ 
+-			nand: nand@d0000 {
+-				clocks = <&dfx_coredivclk 0>;
++				xor00 {
++					interrupts = <94>;
++					dmacap,memcpy;
++					dmacap,xor;
++				};
++				xor01 {
++					interrupts = <95>;
++					dmacap,memcpy;
++					dmacap,xor;
++					dmacap,memset;
++				};
+ 			};
+ 		};
+ 
+@@ -225,6 +287,53 @@
+ 			};
+ 		};
+ 	};
++
++	clocks {
++		/* 25 MHz reference crystal */
++		refclk: oscillator {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <25000000>;
++		};
++	};
++};
++
++&i2c0 {
++	compatible = "marvell,mv78230-i2c", "marvell,mv64xxx-i2c";
++	reg = <0x11000 0x100>;
++};
++
++&i2c1 {
++	compatible = "marvell,mv78230-i2c", "marvell,mv64xxx-i2c";
++	reg = <0x11100 0x100>;
++};
++
++&mpic {
++	reg = <0x20a00 0x2d0>, <0x21070 0x58>;
++};
++
++&timer {
++	compatible = "marvell,armada-xp-timer";
++	clocks = <&coreclk 2>, <&refclk>;
++	clock-names = "nbclk", "fixed";
++};
++
++&watchdog {
++	compatible = "marvell,armada-xp-wdt";
++	clocks = <&coreclk 2>, <&refclk>;
++	clock-names = "nbclk", "fixed";
++};
++
++&cpurst {
++	reg = <0x20800 0x20>;
++};
++
++&usb0 {
++	clocks = <&gateclk 18>;
++};
++
++&usb1 {
++	clocks = <&gateclk 19>;
+ };
+ 
+ &pinctrl {
+@@ -237,14 +346,13 @@
+ 	};
+ };
+ 
+-&sdio {
+-	status = "disabled";
++&spi0 {
++	compatible = "marvell,armada-xp-spi", "marvell,orion-spi";
++	pinctrl-0 = <&spi0_pins>;
++	pinctrl-names = "default";
+ };
+ 
+-&crypto_sram0 {
++&sdio {
+ 	status = "disabled";
+ };
+ 
+-&crypto_sram1 {
+-	status = "disabled";
+-};
+-- 
+2.11.0.24.ge6920cf
