@@ -1,242 +1,111 @@
-Return-Path: <manu@bidouilliste.com>
-Date: Tue, 28 Feb 2017 10:27:25 +0100
-From: Emmanuel Vadot <manu@bidouilliste.com>
-To: Priit Laes <plaes@plaes.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>, Icenowy
- Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/4] clk: sunxi-ng: Add clocks and reset indices for
- sun7i-a20 SoC
-Message-Id: <20170228102725.0b920f1f8219e47814fb5d89@bidouilliste.com>
-In-Reply-To: <20170227210914.18954-2-plaes@plaes.org>
-References: <20170227210914.18954-1-plaes@plaes.org>
-	<20170227210914.18954-2-plaes@plaes.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <broonie@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+To: Mylène Josserand <mylene.josserand@free-electrons.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, maxime.ripard@free-electrons.com, wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com, robh+dt@kernel.org, thomas.petazzoni@free-electrons.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, alexandre.belloni@free-electrons.com, mylene.josserand@free-electrons.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
+In-Reply-To: <20170117140230.23142-7-mylene.josserand@free-electrons.com>
+Message-Id: <E1cZcZw-0000kv-Q7@finisterre>
+Date: Fri, 03 Feb 2017 13:03:00 +0100
+Subject: Applied "ASoC: sun8i-codec-analog: Add amplifier event to fix first delay" to the asoc tree
 List-ID: <linux-clk.vger.kernel.org>
 
+The patch
 
- Hello Priit,
+   ASoC: sun8i-codec-analog: Add amplifier event to fix first delay
 
-On Mon, 27 Feb 2017 23:09:11 +0200
-Priit Laes <plaes@plaes.org> wrote:
+has been applied to the asoc tree at
 
-> Add preliminary list of exported clocks and reset indices for
-> sun7i-a20 SoC, based on existing sun7i-a20 devicetree implementation.
-> 
-> Signed-off-by: Priit Laes <plaes@plaes.org>
-> ---
->  include/dt-bindings/clock/sun7i-ccu.h | 127 ++++++++++++++++++++++++++++++++++
->  include/dt-bindings/reset/sun7i-ccu.h |  40 +++++++++++
->  2 files changed, 167 insertions(+)
->  create mode 100644 include/dt-bindings/clock/sun7i-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun7i-ccu.h
-> 
-> diff --git a/include/dt-bindings/clock/sun7i-ccu.h b/include/dt-bindings/clock/sun7i-ccu.h
-> new file mode 100644
-> index 0000000..52c4f76
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/sun7i-ccu.h
-> @@ -0,0 +1,127 @@
-> +/*
-> + * Copyright 2017 Priit Laes
-> + *
-> + * Priit Laes <plaes@plaes.org>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
- Do you mind dual licence those header under GPL/MIT like the others ?
- We currently dont use those directly in FreeBSD but we should (and
-will soon) and we can't if they are only GPL.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
- Thanks.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> +
-> +#ifndef _DT_BINDINGS_CLK_SUN7I_H_
-> +#define _DT_BINDINGS_CLK_SUN7I_H_
-> +
-> +#define CLK_HOSC		1
-> +#define CLK_PLL_PERIPH_SATA	16
-> +#define CLK_CPU			19
-> +
-> +/* AHB Gates */
-> +#define CLK_AHB_OTG		24
-> +#define CLK_AHB_EHCI0		25
-> +#define CLK_AHB_OHCI0		26
-> +#define CLK_AHB_EHCI1		27
-> +#define CLK_AHB_OHCI1		28
-> +#define CLK_AHB_SS		29
-> +#define CLK_AHB_DMA		30
-> +
-> +#define CLK_AHB_MMC0		32
-> +#define CLK_AHB_MMC1		33
-> +#define CLK_AHB_MMC2		34
-> +#define CLK_AHB_MMC3		35
-> +
-> +#define CLK_AHB_NAND		37
-> +
-> +#define CLK_AHB_EMAC		40
-> +
-> +#define CLK_AHB_SPI0		42
-> +#define CLK_AHB_SPI1		43
-> +#define CLK_AHB_SPI2		44
-> +#define CLK_AHB_SPI3		45
-> +#define CLK_AHB_SATA		46
-> +#define CLK_AHB_HSTIMER		47
-> +
-> +#define CLK_AHB_TVE0		50
-> +#define CLK_AHB_LCD0		52
-> +#define CLK_AHB_HDMI1		57
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
- We use HDMI (not HDMI1) on FreeBSD (see
-https://svnweb.freebsd.org/base/head/sys/boot/fdt/dts/arm/sun7i-a20-hdmi.dtsi?revision=308672&view=markup#l71)
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
- If you could define it in your patch this will be great.
+Thanks,
+Mark
 
-> +#define CLK_AHB_DE_BE0		58
-> +
-> +#define CLK_AHB_GMAC		62
-> +
-> +/* APB0 Gates */
-> +#define CLK_APB0_CODEC		65
-> +#define CLK_APB0_SPDIF		66
-> +#define CLK_APB0_I2S0		68
-> +#define CLK_APB0_I2S1		69
-> +#define CLK_APB0_PIO		70
-> +#define CLK_APB0_IR0		71
-> +#define CLK_APB0_IR1		72
-> +#define CLK_APB0_I2S2		73
-> +
-> +/* APB1 Gates */
-> +#define CLK_APB1_I2C0		75
-> +#define CLK_APB1_I2C1		76
-> +#define CLK_APB1_I2C2		77
-> +#define CLK_APB1_I2C3		78
-> +
-> +#define CLK_APB1_PS20		81
-> +#define CLK_APB1_PS21		82
-> +#define CLK_APB1_I2C4		83
-> +#define CLK_APB1_UART0		84
-> +#define CLK_APB1_UART1		85
-> +#define CLK_APB1_UART2		86
-> +#define CLK_APB1_UART3		87
-> +#define CLK_APB1_UART4		88
-> +#define CLK_APB1_UART5		89
-> +#define CLK_APB1_UART6		90
-> +#define CLK_APB1_UART7		91
-> +
-> +/* IP blocks */
-> +#define CLK_NAND		92
-> +
-> +#define CLK_MMC0		94
-> +#define CLK_MMC0_OUTPUT		95
-> +#define CLK_MMC0_SAMPLE		96
-> +#define CLK_MMC1		97
-> +#define CLK_MMC1_OUTPUT		98
-> +#define CLK_MMC1_SAMPLE		99
-> +#define CLK_MMC2		100
-> +#define CLK_MMC2_OUTPUT		101
-> +#define CLK_MMC2_SAMPLE		102
-> +#define CLK_MMC3		103
-> +#define CLK_MMC3_OUTPUT		104
-> +#define CLK_MMC3_SAMPLE		105
-> +
-> +#define CLK_SS			107
-> +#define CLK_SPI0		108
-> +#define CLK_SPI1		109
-> +#define CLK_SPI2		110
-> +#define CLK_IR0			112
-> +#define CLK_IR1			113
-> +#define CLK_I2S0		114
-> +
-> +#define CLK_SPDIF		116
-> +
-> +#define CLK_USB_OHCI0		119
-> +#define CLK_USB_OHCI1		120
-> +#define CLK_USB_PHY		121
-> +#define CLK_SPI3		122
-> +#define CLK_I2S1		123
-> +#define CLK_I2S2		124
-> +
-> +/* DRAM Gates */
-> +#define CLK_DRAM_TVE0		130
-> +#define CLK_DRAM_DE_BE0		134
-> +
-> +/* Display Engine Clocks */
-> +#define CLK_DE_BE0		139
-> +#define CLK_TCON0_CH0		144
-> +#define CLK_TCON0_CH1		149
-> +#define CLK_CODEC		153
-> +
-> +#endif /* _DT_BINDINGS_CLK_SUN7I_H_ */
-> diff --git a/include/dt-bindings/reset/sun7i-ccu.h b/include/dt-bindings/reset/sun7i-ccu.h
-> new file mode 100644
-> index 0000000..b8709ab
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/sun7i-ccu.h
-> @@ -0,0 +1,40 @@
-> +/*
-> + * Copyright 2017 Priit Laes
-> + *
-> + * Priit Laes <plaes@plaes.org>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#ifndef _RST_SUN7I_H_
-> +#define _RST_SUN7I_H_
-> +
-> +#define	RST_USB_PHY0		1
-> +#define	RST_USB_PHY1		2
-> +#define	RST_USB_PHY2		3
-> +#define	RST_DE_BE0		4
-> +#define	RST_DE_BE1		5
-> +#define	RST_DE_FE0		6
-> +#define	RST_DE_FE1		7
-> +#define	RST_DE_MP		8
-> +#define	RST_TCON0		9
-> +#define	RST_TCON1		10
-> +#define	RST_CSI0		11
-> +#define	RST_CSI1		12
-> +#define	RST_VE			13
-> +#define	RST_ACE			14
-> +#define	RST_LVDS		15
-> +#define	RST_GPU			16
-> +#define	RST_HDMI_H		17
-> +#define	RST_HDMI_SYS		18
-> +#define	RST_HDMI_AUDIO_DMA	19
-> +
-> +#endif /* _RST_SUN7I_H_ */
-> -- 
-> 2.9.3
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>From bf14da7e55169964a1e6f35dc9d7428dc9e9013c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?=
+ <mylene.josserand@free-electrons.com>
+Date: Thu, 2 Feb 2017 10:24:18 +0100
+Subject: [PATCH] ASoC: sun8i-codec-analog: Add amplifier event to fix first
+ delay
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+When playing a sound for the first time, a short delay, where the audio
+file is not played, can be noticed.
+On a second play (right after), the sound is played correctly.
+If we wait a short time (~5 sec which corresponds to the aplay
+timeout), the delay is back.
 
+This patch fixes it by using an event on headphone amplifier.
+It allows to keep the amplifier enable while playing a sound.
+A delay of 700ms allows to wait that the amplifier is powered-up
+before playing the sound.
+
+Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sunxi/sun8i-codec-analog.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/sunxi/sun8i-codec-analog.c b/sound/soc/sunxi/sun8i-codec-analog.c
+index af02290ebe49..72331332b72e 100644
+--- a/sound/soc/sunxi/sun8i-codec-analog.c
++++ b/sound/soc/sunxi/sun8i-codec-analog.c
+@@ -398,11 +398,37 @@ static const struct snd_kcontrol_new sun8i_codec_hp_src[] = {
+ 		      sun8i_codec_hp_src_enum),
+ };
+ 
++static int sun8i_headphone_amp_event(struct snd_soc_dapm_widget *w,
++				     struct snd_kcontrol *k, int event)
++{
++	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
++
++	if (SND_SOC_DAPM_EVENT_ON(event)) {
++		snd_soc_component_update_bits(component, SUN8I_ADDA_PAEN_HP_CTRL,
++					      BIT(SUN8I_ADDA_PAEN_HP_CTRL_HPPAEN),
++					      BIT(SUN8I_ADDA_PAEN_HP_CTRL_HPPAEN));
++		/*
++		 * Need a delay to have the amplifier up. 700ms seems the best
++		 * compromise between the time to let the amplifier up and the
++		 * time not to feel this delay while playing a sound.
++		 */
++		msleep(700);
++	} else if (SND_SOC_DAPM_EVENT_OFF(event)) {
++		snd_soc_component_update_bits(component, SUN8I_ADDA_PAEN_HP_CTRL,
++					      BIT(SUN8I_ADDA_PAEN_HP_CTRL_HPPAEN),
++					      0x0);
++	}
++
++	return 0;
++}
++
+ static const struct snd_soc_dapm_widget sun8i_codec_headphone_widgets[] = {
+ 	SND_SOC_DAPM_MUX("Headphone Source Playback Route",
+ 			 SND_SOC_NOPM, 0, 0, sun8i_codec_hp_src),
+-	SND_SOC_DAPM_OUT_DRV("Headphone Amp", SUN8I_ADDA_PAEN_HP_CTRL,
+-			     SUN8I_ADDA_PAEN_HP_CTRL_HPPAEN, 0, NULL, 0),
++	SND_SOC_DAPM_OUT_DRV_E("Headphone Amp", SUN8I_ADDA_PAEN_HP_CTRL,
++			       SUN8I_ADDA_PAEN_HP_CTRL_HPPAEN, 0, NULL, 0,
++			       sun8i_headphone_amp_event,
++			       SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_PRE_PMD),
+ 	SND_SOC_DAPM_SUPPLY("HPCOM Protection", SUN8I_ADDA_PAEN_HP_CTRL,
+ 			    SUN8I_ADDA_PAEN_HP_CTRL_COMPTEN, 0, NULL, 0),
+ 	SND_SOC_DAPM_REG(snd_soc_dapm_supply, "HPCOM", SUN8I_ADDA_PAEN_HP_CTRL,
 -- 
-Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
+2.11.0
