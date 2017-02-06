@@ -1,115 +1,149 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH 2/7] clk: tegra: fix isp clock modelling
-Date: Wed, 22 Feb 2017 17:13:57 +0200
-Message-ID: <1487776444-4701-3-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v2 04/10] arm64: dts: mediatek: add mt6797 support
+To: Mars Cheng <mars.cheng@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+References: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
+ <1486383336-16892-5-git-send-email-mars.cheng@mediatek.com>
+Cc: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        My Chuang <my.chuang@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <e944f97a-5c4c-780a-da29-fe308f807469@arm.com>
+Date: Mon, 6 Feb 2017 12:28:48 +0000
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+In-Reply-To: <1486383336-16892-5-git-send-email-mars.cheng@mediatek.com>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The 2 isp clocks (ispa and ispb) share a mux/divider control. So model
-this as 1 mux/divider clock and child gate clocks.
+On 06/02/17 12:15, Mars Cheng wrote:
+> This adds basic chip support for MT6797 SoC.
+> 
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> ---
+>  arch/arm64/boot/dts/mediatek/Makefile       |    1 +
+>  arch/arm64/boot/dts/mediatek/mt6797-evb.dts |   36 ++++++
+>  arch/arm64/boot/dts/mediatek/mt6797.dtsi    |  187 +++++++++++++++++++++++++++
+>  3 files changed, 224 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-evb.dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+> index 9fbfd32..015eb07 100644
+> --- a/arch/arm64/boot/dts/mediatek/Makefile
+> +++ b/arch/arm64/boot/dts/mediatek/Makefile
+> @@ -1,5 +1,6 @@
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
+> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-evb.dtb
+>  
+>  always		:= $(dtb-y)
+> diff --git a/arch/arm64/boot/dts/mediatek/mt6797-evb.dts b/arch/arm64/boot/dts/mediatek/mt6797-evb.dts
+> new file mode 100644
+> index 0000000..c79109c
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/mediatek/mt6797-evb.dts
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-id.h               |  1 +
- drivers/clk/tegra/clk-tegra-periph.c     | 11 +++++++++--
- drivers/clk/tegra/clk-tegra210.c         |  1 +
- include/dt-bindings/clock/tegra210-car.h |  4 ++--
- 4 files changed, 13 insertions(+), 4 deletions(-)
+[...]
 
-diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-index 5738635..1019eb8 100644
---- a/drivers/clk/tegra/clk-id.h
-+++ b/drivers/clk/tegra/clk-id.h
-@@ -307,6 +307,7 @@ enum clk_id {
- 	tegra_clk_xusb_ssp_src,
- 	tegra_clk_sclk_mux,
- 	tegra_clk_sor_safe,
-+	tegra_clk_ispa,
- 	tegra_clk_max,
- };
- 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 4ce4e7f..19b00b7 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -168,6 +168,12 @@
- 			      0, TEGRA_PERIPH_NO_GATE, _clk_id,\
- 			      _parents##_idx, 0, _lock)
- 
-+#define MUX8_NOGATE(_name, _parents, _offset, _clk_id)	\
-+	TEGRA_INIT_DATA_TABLE(_name, NULL, NULL, _parents, _offset,	\
-+			      29, MASK(3), 0, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP,\
-+			      0, TEGRA_PERIPH_NO_GATE, _clk_id,\
-+			      _parents##_idx, 0, NULL)
-+
- #define INT(_name, _parents, _offset,	\
- 			    _clk_num, _gate_flags, _clk_id)	\
- 	TEGRA_INIT_DATA_TABLE(_name, NULL, NULL, _parents, _offset,\
-@@ -739,7 +745,7 @@
- 	MUX8("soc_therm", mux_clkm_pllc_pllp_plla, CLK_SOURCE_SOC_THERM, 78, TEGRA_PERIPH_ON_APB, tegra_clk_soc_therm_8),
- 	MUX8("vi_sensor", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_VI_SENSOR, 164, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor_8),
- 	MUX8("isp", mux_pllm_pllc_pllp_plla_clkm_pllc4, CLK_SOURCE_ISP, 23, TEGRA_PERIPH_ON_APB, tegra_clk_isp_8),
--	MUX8("isp", mux_pllc_pllp_plla1_pllc2_c3_clkm_pllc4, CLK_SOURCE_ISP, 23, TEGRA_PERIPH_ON_APB, tegra_clk_isp_9),
-+	MUX8_NOGATE("isp", mux_pllc_pllp_plla1_pllc2_c3_clkm_pllc4, CLK_SOURCE_ISP, tegra_clk_isp_9),
- 	MUX8("entropy", mux_pllp_clkm1, CLK_SOURCE_ENTROPY, 149,  0, tegra_clk_entropy),
- 	MUX8("entropy", mux_pllp_clkm_clk32_plle, CLK_SOURCE_ENTROPY, 149,  0, tegra_clk_entropy_8),
- 	MUX8("hdmi_audio", mux_pllp3_pllc_clkm, CLK_SOURCE_HDMI_AUDIO, 176, TEGRA_PERIPH_NO_RESET, tegra_clk_hdmi_audio),
-@@ -819,7 +825,8 @@
- 	GATE("xusb_dev", "xusb_dev_src", 95, 0, tegra_clk_xusb_dev, 0),
- 	GATE("emc", "emc_mux", 57, 0, tegra_clk_emc, CLK_IGNORE_UNUSED),
- 	GATE("sata_cold", "clk_m", 129, TEGRA_PERIPH_ON_APB, tegra_clk_sata_cold, 0),
--	GATE("ispb", "clk_m", 3, 0, tegra_clk_ispb, 0),
-+	GATE("ispa", "isp", 23, 0, tegra_clk_ispa, 0),
-+	GATE("ispb", "isp", 3, 0, tegra_clk_ispb, 0),
- 	GATE("vim2_clk", "clk_m", 11, 0, tegra_clk_vim2_clk, 0),
- 	GATE("pcie", "clk_m", 70, 0, tegra_clk_pcie, 0),
- 	GATE("gpu", "pll_ref", 184, 0, tegra_clk_gpu, 0),
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 2ef8d49..7bda8ba 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2210,6 +2210,7 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
- 	[tegra_clk_pll_c4_out3] = { .dt_id = TEGRA210_CLK_PLL_C4_OUT3, .present = true },
- 	[tegra_clk_apb2ape] = { .dt_id = TEGRA210_CLK_APB2APE, .present = true },
- 	[tegra_clk_pll_a1] = { .dt_id = TEGRA210_CLK_PLL_A1, .present = true },
-+	[tegra_clk_ispa] = { .dt_id = TEGRA210_CLK_ISPA, .present = true },
- };
- 
- static struct tegra_devclk devclks[] __initdata = {
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index 35288b2..f5c6563 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -39,7 +39,7 @@
- /* 20 (register bit affects vi and vi_sensor) */
- /* 21 */
- #define TEGRA210_CLK_USBD 22
--#define TEGRA210_CLK_ISP 23
-+#define TEGRA210_CLK_ISPA 23
- /* 24 */
- /* 25 */
- #define TEGRA210_CLK_DISP2 26
-@@ -349,7 +349,7 @@
- #define TEGRA210_CLK_PLL_RE_OUT1 319
- /* 320 */
- /* 321 */
--/* 322 */
-+#define TEGRA210_CLK_ISP 322
- /* 323 */
- /* 324 */
- /* 325 */
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupt-parent = <&gic>;
+> +		interrupts = <GIC_PPI 13
+> +			     (GIC_CPU_MASK_SIMPLE(10) | IRQ_TYPE_LEVEL_LOW)>,
+
+That's exactly why I positively hate these GIC_CPU_MASK_SIMPLE() and co.
+They just hide all kind of sins:
+- With GICv1/v2, this field can only be 8bit wide. Good luck shoving 10
+CPUs there.
+- GICv3 *doesn't* have any affinity bitmap in the binding (it can be
+expressed in a very different way).
+
+So please get rid of this GIC_CPU_MASK_SIMPLE, it is just wrong.
+
+> +			     <GIC_PPI 14
+> +			     (GIC_CPU_MASK_SIMPLE(10) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 11
+> +			     (GIC_CPU_MASK_SIMPLE(10) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 10
+> +			     (GIC_CPU_MASK_SIMPLE(10) | IRQ_TYPE_LEVEL_LOW)>;
+> +	};
+> +
+> +	sysirq: intpol-controller@10200620 {
+> +		compatible = "mediatek,mt6797-sysirq",
+> +			     "mediatek,mt6577-sysirq";
+> +		interrupt-controller;
+> +		#interrupt-cells = <3>;
+> +		#intpol-bases = <2>;
+> +		interrupt-parent = <&gic>;
+> +		reg = <0 0x10220620 0 0x20>,
+> +		      <0 0x10220690 0 0x10>;
+> +	};
+> +
+> +	uart0: serial@11002000 {
+> +		compatible = "mediatek,mt6797-uart",
+> +			     "mediatek,mt6577-uart";
+> +		reg = <0 0x11002000 0 0x400>;
+> +		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&clk26m>;
+> +		status = "disabled";
+> +	};
+> +
+> +	uart1: serial@11003000 {
+> +		compatible = "mediatek,mt6797-uart",
+> +			     "mediatek,mt6577-uart";
+> +		reg = <0 0x11003000 0 0x400>;
+> +		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&clk26m>;
+> +		status = "disabled";
+> +	};
+> +
+> +	uart2: serial@11004000 {
+> +		compatible = "mediatek,mt6797-uart",
+> +			     "mediatek,mt6577-uart";
+> +		reg = <0 0x11004000 0 0x400>;
+> +		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&clk26m>;
+> +		status = "disabled";
+> +	};
+> +
+> +	uart3: serial@11005000 {
+> +		compatible = "mediatek,mt6797-uart",
+> +			     "mediatek,mt6577-uart";
+> +		reg = <0 0x11005000 0 0x400>;
+> +		interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&clk26m>;
+> +		status = "disabled";
+> +	};
+> +
+> +	gic: interrupt-controller@19000000 {
+> +		compatible = "arm,gic-v3";
+> +		#interrupt-cells = <3>;
+> +		interrupt-parent = <&gic>;
+> +		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-controller;
+> +		reg = <0 0x19000000 0 0x10000>,    /* GICD */
+> +		      <0 0x19200000 0 0x200000>,   /* GICR */
+> +		      <0 0x10240000 0 0x2000>;     /* GICC */
+
+No GICH, no GICV, no ITS?
+
+> +	};
+> +};
+> 
+
+Thanks,
+
+	M.
 -- 
-1.9.1
+Jazz is not dead. It just smells funny...
