@@ -1,49 +1,60 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 1/1] clk: renesas: cpg-mssr: r8a7796: add IMR clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <20170218213936.142813519@cogentembedded.com>
- <CAMuHMdV1x2voYKnMKv8x3XvmGwBA8SgwkhJZcnkycypdPhVjzA@mail.gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <b66b04dc-44d4-216f-54aa-1db01a84bcb9@cogentembedded.com>
-Date: Mon, 20 Feb 2017 23:11:56 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdV1x2voYKnMKv8x3XvmGwBA8SgwkhJZcnkycypdPhVjzA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <baoyou.xie@linaro.org>
+Return-Path: <baoyou.xie@linaro.org>
+From: Baoyou Xie <baoyou.xie@linaro.org>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	jun.nie@linaro.org,
+	baoyou.xie@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	shawn.guo@linaro.org,
+	vinod.koul@intel.com
+Cc: alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	shawnguo@kernel.org,
+	xie.baoyou@zte.com.cn,
+	chen.chaokai@zte.com.cn,
+	wang.qiang01@zte.com.cn
+Subject: [PATCH v1 2/3] dt: Document for the ZTE zx296718 I2S controller
+Date: Mon,  6 Feb 2017 21:50:19 +0800
+Message-Id: <1486389020-29432-2-git-send-email-baoyou.xie@linaro.org>
+In-Reply-To: <1486389020-29432-1-git-send-email-baoyou.xie@linaro.org>
+References: <1486389020-29432-1-git-send-email-baoyou.xie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/20/2017 11:38 AM, Geert Uytterhoeven wrote:
+This patch documents the devicetree for the ZTE's zx296718
+I2S audio controller.
 
->> Add the IMR[0-1] clocks to the R8A7796 CPG/MSSR driver.
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
->> --- linux.orig/drivers/clk/renesas/r8a7796-cpg-mssr.c
->> +++ linux/drivers/clk/renesas/r8a7796-cpg-mssr.c
->> @@ -179,6 +179,8 @@ static const struct mssr_mod_clk r8a7796
->>         DEF_MOD("vin1",                  810,   R8A7796_CLK_S0D2),
->>         DEF_MOD("vin0",                  811,   R8A7796_CLK_S0D2),
->>         DEF_MOD("etheravb",              812,   R8A7796_CLK_S0D6),
->> +       DEF_MOD("imr1",                  822,   R8A7796_CLK_S2D1),
->> +       DEF_MOD("imr0",                  823,   R8A7796_CLK_S2D1),
->
-> According to R-Car Gen3 Hardware Users Manual Rev.0.53E, the parent
-> clock is S0D2, like on H3 ES2.0.
+Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+---
+ Documentation/devicetree/bindings/sound/zte,zx-i2s.txt | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-    I only have 0.51E here, doesn't seem to contain much of the clock info...
-
-> Will queue in clk-renesas-for-v4.12 with corrected parent clock.
-
-    Thank you!
-
-> Gr{oetje,eeting}s,
->
->                         Geert
-
-MBR, Sergei
+diff --git a/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt b/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
+index 7e5aa6f..c405561 100644
+--- a/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
++++ b/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
+@@ -1,10 +1,12 @@
+ ZTE ZX296702 I2S controller
+ 
+ Required properties:
+- - compatible : Must be "zte,zx296702-i2s"
++ - compatible : Should include one of the following strings:
++	"zte,zx296702-i2s","zte,zx296718-i2s".
+  - reg : Must contain I2S core's registers location and length
+  - clocks : Pairs of phandle and specifier referencing the controller's clocks.
+- - clock-names: "tx" for the clock to the I2S interface.
++ - clock-names: "tx" for the wclk, "pclk" for the pclk to the I2S interface.
++	must contain pclk for zx296718 SoC.
+  - dmas: Pairs of phandle and specifier for the DMA channel that is used by
+    the core. The core expects two dma channels for transmit.
+  - dma-names : Must be "tx" and "rx"
+-- 
+2.7.4
