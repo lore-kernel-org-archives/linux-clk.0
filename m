@@ -1,66 +1,86 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>,
- David Airlie <airlied@linux.ie>
-Subject: [PATCH 7/8] ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
-Date: Wed, 22 Feb 2017 23:23:09 +0800
-Message-Id: <20170222152310.3719-8-icenowy@aosc.xyz>
-In-Reply-To: <20170222152310.3719-5-icenowy@aosc.xyz>
-References: <20170222152310.3719-5-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Jean-Francois Moine <moinejf@free.fr>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        My Chuang <my.chuang@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        <linux-clk@vger.kernel.org>,
+        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>
+Subject: [PATCH v2 03/10] Document: DT: Add bindings for mediatek MT6797 SoC Platform
+Date: Mon, 6 Feb 2017 20:15:29 +0800
+Message-ID: <1486383336-16892-4-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
+References: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s SoC features a set of pins that have functionality of RGB
-LCD, the pins are at different pin ban than other SoCs.
+This adds dt-binding documentation for Mediatek MT6797. Only
+include very basic items, gic, uart timer and cpu.
 
-Add pinctrl node for them.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
 ---
- arch/arm/boot/dts/sun8i-v3s.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ Documentation/devicetree/bindings/arm/mediatek.txt |    4 ++++
+ .../interrupt-controller/mediatek,sysirq.txt       |    1 +
+ .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
+ 3 files changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
-index e7d5d510a8ff..ba8b17b4e0d6 100644
---- a/arch/arm/boot/dts/sun8i-v3s.dtsi
-+++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
-@@ -297,6 +297,15 @@
- 				function = "i2c0";
- 			};
- 
-+			lcd_rgb666_pins: lcd_rgb666@0 {
-+				pins = "PE0", "PE1", "PE2", "PE3", "PE4",
-+				       "PE5", "PE6", "PE7", "PE8", "PE9",
-+				       "PE10", "PE11", "PE12", "PE13", "PE14",
-+				       "PE15", "PE16", "PE17", "PE18", "PE19",
-+				       "PE23", "PE24";
-+				function = "lcd";
-+			};
-+
- 			uart0_pins_a: uart0@0 {
- 				pins = "PB8", "PB9";
- 				function = "uart0";
+diff --git a/Documentation/devicetree/bindings/arm/mediatek.txt b/Documentation/devicetree/bindings/arm/mediatek.txt
+index c860b24..2d3344d 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek.txt
+@@ -12,6 +12,7 @@ compatible: Must contain one of
+    "mediatek,mt6592"
+    "mediatek,mt6755"
+    "mediatek,mt6795"
++   "mediatek,mt6797"
+    "mediatek,mt7623"
+    "mediatek,mt8127"
+    "mediatek,mt8135"
+@@ -38,6 +39,9 @@ Supported boards:
+ - Evaluation board for MT6795(Helio X10):
+     Required root node properties:
+       - compatible = "mediatek,mt6795-evb", "mediatek,mt6795";
++- Evaluation board for MT6797(Helio X20):
++    Required root node properties:
++      - compatible = "mediatek,mt6797-evb", "mediatek,mt6797";
+ - Evaluation board for MT7623:
+     Required root node properties:
+       - compatible = "mediatek,mt7623-evb", "mediatek,mt7623";
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+index 1718454..9e537d6 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+@@ -9,6 +9,7 @@ Required properties:
+ 	"mediatek,mt8135-sysirq"
+ 	"mediatek,mt8127-sysirq"
+ 	"mediatek,mt6795-sysirq"
++	"mediatek,mt6797-sysirq"
+ 	"mediatek,mt6755-sysirq"
+ 	"mediatek,mt6592-sysirq"
+ 	"mediatek,mt6589-sysirq"
+diff --git a/Documentation/devicetree/bindings/serial/mtk-uart.txt b/Documentation/devicetree/bindings/serial/mtk-uart.txt
+index 0015c72..5b8513d 100644
+--- a/Documentation/devicetree/bindings/serial/mtk-uart.txt
++++ b/Documentation/devicetree/bindings/serial/mtk-uart.txt
+@@ -8,6 +8,7 @@ Required properties:
+   * "mediatek,mt6589-uart" for MT6589 compatible UARTS
+   * "mediatek,mt6755-uart" for MT6755 compatible UARTS
+   * "mediatek,mt6795-uart" for MT6795 compatible UARTS
++  * "mediatek,mt6797-uart" for MT6797 compatible UARTS
+   * "mediatek,mt7623-uart" for MT7623 compatible UARTS
+   * "mediatek,mt8127-uart" for MT8127 compatible UARTS
+   * "mediatek,mt8135-uart" for MT8135 compatible UARTS
 -- 
-2.11.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.7.9.5
