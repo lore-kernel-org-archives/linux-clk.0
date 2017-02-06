@@ -1,50 +1,49 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:44639 "EHLO
+        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752124AbdBFNrz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2017 08:47:55 -0500
+Date: Mon, 6 Feb 2017 16:47:37 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: wens@csie.org
+Cc: linux-clk@vger.kernel.org
+Subject: [bug report] clk: sunxi-ng: Add A80 CCU
+Message-ID: <20170206134737.GA2593@mwanda>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20170213184405.5657-1-chris.brandt@renesas.com>
-References: <20170213184405.5657-1-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 14 Feb 2017 09:38:07 +0100
-Message-ID: <CAMuHMdUm6-FQSuQYt_h2M21QZLz4UbMxPss8mv2ACWCa6rwfCA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: mstp: ensure register writes complete
-To: Chris Brandt <chris.brandt@renesas.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms+renesas@verge.net.au>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chris,
+Hello Chen-Yu Tsai,
 
-On Mon, Feb 13, 2017 at 7:44 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
-> When there is no status bit, it is possible for the clock enable/disable
-> operation to have not completed by the time the driver code resumes
-> execution. This is due to the fact that write operations are sometimes
-> queued and delayed internally. Doing a read ensures the write operations
-> has completed.
->
-> Fixes: b6face404f38 ("ARM: shmobile: r7s72100: add essential clock nodes to dtsi")
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+The patch b8eb71dcdd08: "clk: sunxi-ng: Add A80 CCU" from Jan 28,
+2017, leads to the following static checker warning:
 
-Thanks!
+	drivers/clk/sunxi-ng/ccu-sun9i-a80.c:1205 sun9i_a80_ccu_probe()
+	warn: odd binop '0x10000 & 0x40000'
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+  1192  static int sun9i_a80_ccu_probe(struct platform_device *pdev)
+  1193  {
+  1194          struct resource *res;
+  1195          void __iomem *reg;
+  1196          u32 val;
+  1197  
+  1198          res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+  1199          reg = devm_ioremap_resource(&pdev->dev, res);
+  1200          if (IS_ERR(reg))
+  1201                  return PTR_ERR(reg);
+  1202  
+  1203          /* Enforce d1 = 0, d2 = 0 for Audio PLL */
+  1204          val = readl(reg + SUN9I_A80_PLL_AUDIO_REG);
+  1205          val &= (BIT(16) & BIT(18));
 
-I've regression-tested your patch on R-Car Gen1 (r8a7778/bock-w), which
-also doesn't have status bits for some module clocks, and its SPI FLASH
-is still identified.
+This line just sets "val" to zero.  Not sure what was intended.
 
-Mike/Stephen: As this is a fix, can you please take it directly?
-Thanks!
+  1206          writel(val, reg + SUN9I_A80_PLL_AUDIO_REG);
+  1207  
+  1208          return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun9i_a80_ccu_desc);
+  1209  }
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+regards,
+dan carpenter
