@@ -1,77 +1,146 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Kishon Vijay Abraham I <kishon@ti.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/9] pinctrl: sunxi: rename sun7i-a20 driver to sunxi-a20-r40
-Date: Sat, 18 Feb 2017 01:37:15 +0800
-Message-Id: <20170217173722.6477-3-icenowy@aosc.xyz>
-In-Reply-To: <20170217173722.6477-1-icenowy@aosc.xyz>
-References: <20170217173722.6477-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Icenowy Zheng <icenowy@aosc.xyz>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:10775 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751588AbdBFMQP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2017 07:16:15 -0500
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        My Chuang <my.chuang@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        <linux-clk@vger.kernel.org>,
+        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+Subject: [PATCH v2 07/10] soc: mediatek: refine scysys for mediatek platforms
+Date: Mon, 6 Feb 2017 20:15:33 +0800
+Message-ID: <1486383336-16892-8-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
+References: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The new R40 SoC come with a largely similar version of the pin
-controller in A20.
+This adds 2 refinements: avoid fixed spm power statue and add vdec item
 
-Rename the driver, in order to extend it with R40 support.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
 ---
- drivers/pinctrl/sunxi/Kconfig                                          | 2 +-
- drivers/pinctrl/sunxi/Makefile                                         | 2 +-
- drivers/pinctrl/sunxi/{pinctrl-sun7i-a20.c => pinctrl-sunxi-a20-r40.c} | 0
- 3 files changed, 2 insertions(+), 2 deletions(-)
- rename drivers/pinctrl/sunxi/{pinctrl-sun7i-a20.c => pinctrl-sunxi-a20-r40.c} (100%)
+ drivers/soc/mediatek/mtk-scpsys.c |   35 +++++++++++++++++++++++++++++------
+ 1 file changed, 29 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
-index 92d845827577..6552cfd5c057 100644
---- a/drivers/pinctrl/sunxi/Kconfig
-+++ b/drivers/pinctrl/sunxi/Kconfig
-@@ -26,7 +26,7 @@ config PINCTRL_SUN6I_A31_R
- 	depends on RESET_CONTROLLER
- 	select PINCTRL_SUNXI
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index beb7916..a8ba800 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -71,6 +71,7 @@ enum clk_id {
+ 	CLK_VENC,
+ 	CLK_VENC_LT,
+ 	CLK_ETHIF,
++	CLK_VDEC,
+ 	CLK_MAX,
+ };
  
--config PINCTRL_SUN7I_A20
-+config PINCTRL_SUNXI_A20_R40
- 	def_bool MACH_SUN7I
- 	select PINCTRL_SUNXI
+@@ -81,6 +82,7 @@ enum clk_id {
+ 	"venc",
+ 	"venc_lt",
+ 	"ethif",
++	"vdec",
+ 	NULL,
+ };
  
-diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
-index f9a3855c42f1..6ceab91c3834 100644
---- a/drivers/pinctrl/sunxi/Makefile
-+++ b/drivers/pinctrl/sunxi/Makefile
-@@ -7,7 +7,7 @@ obj-$(CONFIG_PINCTRL_SUN5I)		+= pinctrl-sun5i.o
- obj-$(CONFIG_PINCTRL_SUN6I_A31)		+= pinctrl-sun6i-a31.o
- obj-$(CONFIG_PINCTRL_SUN6I_A31S)	+= pinctrl-sun6i-a31s.o
- obj-$(CONFIG_PINCTRL_SUN6I_A31_R)	+= pinctrl-sun6i-a31-r.o
--obj-$(CONFIG_PINCTRL_SUN7I_A20)		+= pinctrl-sun7i-a20.o
-+obj-$(CONFIG_PINCTRL_SUNXI_A20_R40)	+= pinctrl-sunxi-a20-r40.o
- obj-$(CONFIG_PINCTRL_SUN8I_A23)		+= pinctrl-sun8i-a23.o
- obj-$(CONFIG_PINCTRL_SUN8I_A23_R)	+= pinctrl-sun8i-a23-r.o
- obj-$(CONFIG_PINCTRL_SUN8I_A33)		+= pinctrl-sun8i-a33.o
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c b/drivers/pinctrl/sunxi/pinctrl-sunxi-a20-r40.c
-similarity index 100%
-rename from drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
-rename to drivers/pinctrl/sunxi/pinctrl-sunxi-a20-r40.c
+@@ -107,21 +109,28 @@ struct scp_domain {
+ 	struct regulator *supply;
+ };
+ 
++struct scp_ctrl_reg {
++	int pwr_sta_offs;
++	int pwr_sta2nd_offs;
++};
++
+ struct scp {
+ 	struct scp_domain *domains;
+ 	struct genpd_onecell_data pd_data;
+ 	struct device *dev;
+ 	void __iomem *base;
+ 	struct regmap *infracfg;
++	struct scp_ctrl_reg ctrl_reg;
+ };
+ 
+ static int scpsys_domain_is_on(struct scp_domain *scpd)
+ {
+ 	struct scp *scp = scpd->scp;
+ 
+-	u32 status = readl(scp->base + SPM_PWR_STATUS) & scpd->data->sta_mask;
+-	u32 status2 = readl(scp->base + SPM_PWR_STATUS_2ND) &
+-				scpd->data->sta_mask;
++	u32 status = readl(scp->base + scp->ctrl_reg.pwr_sta_offs) &
++						scpd->data->sta_mask;
++	u32 status2 = readl(scp->base + scp->ctrl_reg.pwr_sta2nd_offs) &
++						scpd->data->sta_mask;
+ 
+ 	/*
+ 	 * A domain is on when both status bits are set. If only one is set
+@@ -346,7 +355,8 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
+ }
+ 
+ static struct scp *init_scp(struct platform_device *pdev,
+-			const struct scp_domain_data *scp_domain_data, int num)
++			const struct scp_domain_data *scp_domain_data, int num,
++			struct scp_ctrl_reg *scp_ctrl_reg)
+ {
+ 	struct genpd_onecell_data *pd_data;
+ 	struct resource *res;
+@@ -358,6 +368,9 @@ static struct scp *init_scp(struct platform_device *pdev,
+ 	if (!scp)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	scp->ctrl_reg.pwr_sta_offs = scp_ctrl_reg->pwr_sta_offs;
++	scp->ctrl_reg.pwr_sta2nd_offs = scp_ctrl_reg->pwr_sta2nd_offs;
++
+ 	scp->dev = &pdev->dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -556,8 +569,13 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ static int __init scpsys_probe_mt2701(struct platform_device *pdev)
+ {
+ 	struct scp *scp;
++	struct scp_ctrl_reg scp_reg;
+ 
+-	scp = init_scp(pdev, scp_domain_data_mt2701, NUM_DOMAINS_MT2701);
++	scp_reg.pwr_sta_offs = SPM_PWR_STATUS;
++	scp_reg.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND;
++
++	scp = init_scp(pdev, scp_domain_data_mt2701, NUM_DOMAINS_MT2701,
++		       &scp_reg);
+ 	if (IS_ERR(scp))
+ 		return PTR_ERR(scp);
+ 
+@@ -667,8 +685,13 @@ static int __init scpsys_probe_mt8173(struct platform_device *pdev)
+ 	struct scp *scp;
+ 	struct genpd_onecell_data *pd_data;
+ 	int ret;
++	struct scp_ctrl_reg scp_reg;
++
++	scp_reg.pwr_sta_offs = SPM_PWR_STATUS;
++	scp_reg.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND;
+ 
+-	scp = init_scp(pdev, scp_domain_data_mt8173, NUM_DOMAINS_MT8173);
++	scp = init_scp(pdev, scp_domain_data_mt8173, NUM_DOMAINS_MT8173,
++		       &scp_reg);
+ 	if (IS_ERR(scp))
+ 		return PTR_ERR(scp);
+ 
 -- 
-2.11.1
+1.7.9.5
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
