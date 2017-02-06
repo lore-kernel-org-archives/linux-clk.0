@@ -1,57 +1,67 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 05/15] clk: ti: add clkdm_lookup to the exported functions
-Date: Mon, 13 Feb 2017 11:35:01 +0200
-Message-ID: <1486978511-29668-6-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
-References: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        My Chuang <my.chuang@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        <linux-clk@vger.kernel.org>,
+        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+Subject: [PATCH v2 08/10] soc: mediatek: add MT6797 power dt-bindings
+Date: Mon, 6 Feb 2017 20:15:34 +0800
+Message-ID: <1486383336-16892-9-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
+References: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This will be needed to move some additional clockdomain functionality
-under clock driver.
+This adds power dt-bindings for MT6797
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
 ---
- arch/arm/mach-omap2/clock.c | 1 +
- include/linux/clk/ti.h      | 2 ++
- 2 files changed, 3 insertions(+)
+ .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index d058125..5391b66 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -57,6 +57,7 @@
- static struct ti_clk_ll_ops omap_clk_ll_ops = {
- 	.clkdm_clk_enable = clkdm_clk_enable,
- 	.clkdm_clk_disable = clkdm_clk_disable,
-+	.clkdm_lookup = clkdm_lookup,
- 	.cm_wait_module_ready = omap_cm_wait_module_ready,
- 	.cm_split_idlest_reg = cm_split_idlest_reg,
- };
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 07308db..bc7fd8f 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -213,6 +213,7 @@ struct clk_omap_reg {
-  * @clk_writel: pointer to register write function
-  * @clkdm_clk_enable: pointer to clockdomain enable function
-  * @clkdm_clk_disable: pointer to clockdomain disable function
-+ * @clkdm_lookup: pointer to clockdomain lookup function
-  * @cm_wait_module_ready: pointer to CM module wait ready function
-  * @cm_split_idlest_reg: pointer to CM module function to split idlest reg
-  *
-@@ -228,6 +229,7 @@ struct ti_clk_ll_ops {
- 	int	(*clkdm_clk_enable)(struct clockdomain *clkdm, struct clk *clk);
- 	int	(*clkdm_clk_disable)(struct clockdomain *clkdm,
- 				     struct clk *clk);
-+	struct clockdomain * (*clkdm_lookup)(const char *name);
- 	int	(*cm_wait_module_ready)(u8 part, s16 prcm_mod, u16 idlest_reg,
- 					u8 idlest_shift);
- 	int	(*cm_split_idlest_reg)(void __iomem *idlest_reg, s16 *prcm_inst,
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+index 16fe94d..b1d165b 100644
+--- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
++++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+@@ -9,11 +9,14 @@ domain control.
+ 
+ The driver implements the Generic PM domain bindings described in
+ power/power_domain.txt. It provides the power domains defined in
+-include/dt-bindings/power/mt8173-power.h and mt2701-power.h.
++- include/dt-bindings/power/mt8173-power.h
++- include/dt-bindings/power/mt6797-power.h
++- include/dt-bindings/power/mt2701-power.h
+ 
+ Required properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-scpsys"
++	- "mediatek,mt6797-scpsys"
+ 	- "mediatek,mt8173-scpsys"
+ - #power-domain-cells: Must be 1
+ - reg: Address range of the SCPSYS unit
+@@ -22,6 +25,7 @@ Required properties:
+                       These are clocks which hardware needs to be
+                       enabled before enabling certain power domains.
+ 	Required clocks for MT2701: "mm", "mfg", "ethif"
++	Required clocks for MT6797: "mm", "mfg", "vdec"
+ 	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
+ 
+ Optional properties:
 -- 
-1.9.1
+1.7.9.5
