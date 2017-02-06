@@ -1,126 +1,52 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 8 Feb 2017 22:25:41 +0800
-From: Shawn Guo <shawnguo@kernel.org>
+Return-Path: <broonie@sirena.org.uk>
+Date: Mon, 6 Feb 2017 16:30:38 +0000
+From: Mark Brown <broonie@kernel.org>
 To: Baoyou Xie <baoyou.xie@linaro.org>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, jun.nie@linaro.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, perex@perex.cz, tiwai@suse.com,
-	shawn.guo@linaro.org, vinod.koul@intel.com,
-	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, mathieu.poirier@linaro.org,
-	xie.baoyou@zte.com.cn, chen.chaokai@zte.com.cn,
+Cc: lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	jun.nie@linaro.org, mturquette@baylibre.com, sboyd@codeaurora.org,
+	perex@perex.cz, tiwai@suse.com, shawn.guo@linaro.org,
+	vinod.koul@intel.com, alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	shawnguo@kernel.org, xie.baoyou@zte.com.cn, chen.chaokai@zte.com.cn,
 	wang.qiang01@zte.com.cn
-Subject: Re: [PATCH v3 3/3] ASoC: zx-i2s: introduce pclk for zx2967 family
-Message-ID: <20170208142539.GN3407@dragon>
-References: <1486522955-14528-1-git-send-email-baoyou.xie@linaro.org>
- <1486522955-14528-3-git-send-email-baoyou.xie@linaro.org>
+Message-ID: <20170206163038.2icxvz3xr44oeeip@sirena.org.uk>
+References: <1486389020-29432-1-git-send-email-baoyou.xie@linaro.org>
+ <1486389020-29432-2-git-send-email-baoyou.xie@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1486522955-14528-3-git-send-email-baoyou.xie@linaro.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ebq3ils46qkqqmaw"
+In-Reply-To: <1486389020-29432-2-git-send-email-baoyou.xie@linaro.org>
+Subject: Re: [PATCH v1 2/3] dt: Document for the ZTE zx296718 I2S controller
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Feb 08, 2017 at 11:02:35AM +0800, Baoyou Xie wrote:
-> The pclk is necessary for zx2967 I2S controller. the driver
-> currently doesn't handle it. This is something we need to fix.
-> 
-> In turn, the driver supports zx296718's I2S controller.
-> 
-> By the way, this patch also change the clock name from tx to wclk
-> to make it clear.
-> 
-> Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
-> ---
->  sound/soc/zte/zx-i2s.c | 37 ++++++++++++++++++++++++++++---------
->  1 file changed, 28 insertions(+), 9 deletions(-)
-> 
-> diff --git a/sound/soc/zte/zx-i2s.c b/sound/soc/zte/zx-i2s.c
-> index ed7a56d..2d486ea 100644
-> --- a/sound/soc/zte/zx-i2s.c
-> +++ b/sound/soc/zte/zx-i2s.c
-> @@ -95,7 +95,7 @@
->  struct zx_i2s_info {
->  	struct snd_dmaengine_dai_dma_data	dma_playback;
->  	struct snd_dmaengine_dai_dma_data	dma_capture;
-> -	struct clk				*dai_clk;
-> +	struct clk				*dai_wclk, *dai_pclk;
 
-It's better to have them on two lines, I would say.
+--ebq3ils46qkqqmaw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->  	void __iomem				*reg_base;
->  	int					master;
->  	resource_size_t				mapbase;
-> @@ -275,8 +275,9 @@ static int zx_i2s_hw_params(struct snd_pcm_substream *substream,
->  	writel_relaxed(val, i2s->reg_base + ZX_I2S_TIMING_CTRL);
->  
->  	if (i2s->master)
-> -		ret = clk_set_rate(i2s->dai_clk,
-> -				   params_rate(params) * ch_num * CLK_RAT);
-> +		ret = clk_set_rate(i2s->dai_wclk,
-> +				params_rate(params) * ch_num * CLK_RAT);
-> +
->  	return ret;
->  }
->  
-> @@ -328,8 +329,19 @@ static int zx_i2s_startup(struct snd_pcm_substream *substream,
->  			  struct snd_soc_dai *dai)
->  {
->  	struct zx_i2s_info *zx_i2s = dev_get_drvdata(dai->dev);
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(zx_i2s->dai_wclk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = clk_prepare_enable(zx_i2s->dai_pclk);
-> +	if (ret) {
-> +		clk_disable_unprepare(zx_i2s->dai_wclk);
-> +		return ret;
-> +	}
->  
-> -	return clk_prepare_enable(zx_i2s->dai_clk);
-> +	return ret;
->  }
->  
->  static void zx_i2s_shutdown(struct snd_pcm_substream *substream,
-> @@ -337,7 +349,8 @@ static void zx_i2s_shutdown(struct snd_pcm_substream *substream,
->  {
->  	struct zx_i2s_info *zx_i2s = dev_get_drvdata(dai->dev);
->  
-> -	clk_disable_unprepare(zx_i2s->dai_clk);
-> +	clk_disable_unprepare(zx_i2s->dai_wclk);
-> +	clk_disable_unprepare(zx_i2s->dai_pclk);
->  }
->  
->  static struct snd_soc_dai_ops zx_i2s_dai_ops = {
-> @@ -381,10 +394,16 @@ static int zx_i2s_probe(struct platform_device *pdev)
->  	if (!zx_i2s)
->  		return -ENOMEM;
->  
-> -	zx_i2s->dai_clk = devm_clk_get(&pdev->dev, "tx");
-> -	if (IS_ERR(zx_i2s->dai_clk)) {
-> -		dev_err(&pdev->dev, "Fail to get clk\n");
-> -		return PTR_ERR(zx_i2s->dai_clk);
-> +	zx_i2s->dai_wclk = devm_clk_get(&pdev->dev, "wclk");
-> +	if (IS_ERR(zx_i2s->dai_wclk)) {
-> +		dev_err(&pdev->dev, "Fail to get wclk\n");
-> +		return PTR_ERR(zx_i2s->dai_wclk);
-> +	}
-> +
-> +	zx_i2s->dai_pclk = devm_clk_get(&pdev->dev, "pclk");
-> +	if (IS_ERR(zx_i2s->dai_pclk)) {
-> +		dev_info(&pdev->dev, "have no pclk\n");
-> +		zx_i2s->dai_pclk = NULL;
+On Mon, Feb 06, 2017 at 09:50:19PM +0800, Baoyou Xie wrote:
+> This patch documents the devicetree for the ZTE's zx296718
+> I2S audio controller.
 
-The 'pclk' is actually required instead of optional.  Since we haven't
-got any in-tree DTB with I2S device yet, there is no DT compatibility to
-maintain.  So it should be good to make 'pclk' required right now.
+Oh, this is the binding document.  Me not seeing this is a perfect
+example of why you should always use subject lines matching the style
+for the subsystem - if you don't it's more likely people will not see
+relevant patches.
 
-Shawn
+--ebq3ils46qkqqmaw
+Content-Type: application/pgp-signature; name="signature.asc"
 
->  	}
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -- 
-> 2.7.4
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAliYpK0ACgkQJNaLcl1U
+h9C1Twf9GiaT0inwwYj5PGRI4haKBSy+wCtCV8jV2hz5mpKXfMMIQvqewLh9L3qu
+BLE/YiB7mK9odhjhG48g843O2IcwElCwAl+Mv+vVRBptCVIgCzl8etCa3y5g9/Kp
+favMjmZiVKpW1+U6J3b4U18KrKqrC9oelxQvNC46KwUiRuy49Ut961GbH4vqJt8n
+/kwKjYVyo+QJRAPSK7pM6SVT14Nr2MRxUvzHeKmunX5UEtZEMlo4VRDyxwtLgIK3
+c+CkqESf1vs8W7qqR6boizkNeYU61xG4079siJ76yhpoWmqa8Jo/rlkLYobk1g75
+B52qNtDwyV8XJLIcaM6IPydc4tqC+A==
+=PTl+
+-----END PGP SIGNATURE-----
+
+--ebq3ils46qkqqmaw--
