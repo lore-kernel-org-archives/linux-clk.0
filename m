@@ -1,70 +1,38 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: [PATCH v6 11/14] MAINTAINERS: add entry for Marvell Xenon MMC Host Controller drivers
-Date: Tue, 14 Feb 2017 18:01:51 +0100
-Message-Id: <5df183ed3b05e582df0bbe17c67ea097d8173dd3.1487091464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 6 Feb 2017 14:48:25 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH] clk: sunxi-ng: Check kzalloc() for errors and cleanup
+ error path
+Message-ID: <20170206224825.GG25384@codeaurora.org>
+References: <20170203230050.26181-1-sboyd@codeaurora.org>
+ <20170206105120.5gxti6szfmxi4psc@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170206105120.5gxti6szfmxi4psc@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Hu Ziji <huziji@marvell.com>
+On 02/06, Maxime Ripard wrote:
+> On Fri, Feb 03, 2017 at 03:00:50PM -0800, Stephen Boyd wrote:
+> > This kzalloc() could fail. Let's bail out with -ENOMEM here
+> > instead of NULL dereferencing. That silences static checkers. We
+> > should also cleanup on the error path even though this function
+> > returning an error probably means the system won't boot.
+> > 
+> > Cc: Chen-Yu Tsai <wens@csie.org>
+> > Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> 
+> Can you apply it directly?
+> 
 
-Add maintainer entry for Marvell Xenon eMMC/SD/SDIO
-Host Controller drivers.
+Yep. Thanks.
 
-Signed-off-by: Hu Ziji <huziji@marvell.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cfff2c9e3d94..f4fea77165d5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7757,6 +7757,13 @@ M:	Nicolas Pitre <nico@fluxnic.net>
- S:	Odd Fixes
- F:	drivers/mmc/host/mvsdio.*
- 
-+MARVELL XENON MMC/SD/SDIO HOST CONTROLLER DRIVER
-+M:	Ziji Hu <huziji@marvell.com>
-+L:	linux-mmc@vger.kernel.org
-+S:	Supported
-+F:	drivers/mmc/host/sdhci-xenon*
-+F:	Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
-+
- MATROX FRAMEBUFFER DRIVER
- L:	linux-fbdev@vger.kernel.org
- S:	Orphan
 -- 
-git-series 0.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
