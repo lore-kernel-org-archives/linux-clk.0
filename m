@@ -1,237 +1,75 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: [PATCH v6 10/14] mmc: sdhci-xenon: Add SoC PHY PAD voltage control
-Date: Tue, 14 Feb 2017 18:01:50 +0100
-Message-Id: <3c21f3f9930373d6e6c28526c2e5b0aa2072daef.1487091464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.133]:43774 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752886AbdBFCtz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Feb 2017 21:49:55 -0500
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de, mturquette@baylibre.com, sboyd@codeaurora.org,
+        xf@rock-chips.com, wdc@rock-chips.com
+Cc: linux-clk@vger.kernel.org, huangtao@rock-chips.com,
+        xxx@rock-chips.com, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v1 2/2] clk: rockchip: describe clk_gmac using the new muxgrf type on rk3328
+Date: Mon,  6 Feb 2017 10:50:35 +0800
+Message-Id: <1486349435-8681-3-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1486349435-8681-1-git-send-email-zhangqing@rock-chips.com>
+References: <1486349435-8681-1-git-send-email-zhangqing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Hu Ziji <huziji@marvell.com>
+With the newly introduced clk type for muxes in the grf we now can
+describe some missing clocks, like the clk_gmac2io and clk_gmac2phy
+that selects between clk_mac2io_src and gmac_clkin based on a bit
+set in the general register files.
 
-Some SoCs have PHY PAD outside Xenon IP.
-PHY PAD voltage should match signalling voltage in use.
-
-Add generic SoC PHY PAD voltage control interface.
-Implement Aramda-3700 SoC PHY PAD voltage control.
-
-Signed-off-by: Hu Ziji <huziji@marvell.com>
-Tested-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- drivers/mmc/host/sdhci-xenon-phy.c | 116 +++++++++++++++++++++++++++++-
- drivers/mmc/host/sdhci-xenon.c     |   2 +-
- drivers/mmc/host/sdhci-xenon.h     |   2 +-
- 3 files changed, 119 insertions(+), 1 deletion(-)
+ drivers/clk/rockchip/clk-rk3328.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-xenon-phy.c b/drivers/mmc/host/sdhci-xenon-phy.c
-index c26ba3a180a0..c3b7e9a21f6b 100644
---- a/drivers/mmc/host/sdhci-xenon-phy.c
-+++ b/drivers/mmc/host/sdhci-xenon-phy.c
-@@ -143,6 +143,27 @@ enum phy_type_enum {
- 	NR_PHY_TYPES
- };
+diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
+index 1e384e143504..b04f29774ee7 100644
+--- a/drivers/clk/rockchip/clk-rk3328.c
++++ b/drivers/clk/rockchip/clk-rk3328.c
+@@ -20,6 +20,7 @@
+ #include <dt-bindings/clock/rk3328-cru.h>
+ #include "clk.h"
  
-+enum soc_pad_ctrl_type {
-+	SOC_PAD_SD,
-+	SOC_PAD_FIXED_1_8V,
-+};
-+
-+struct soc_pad_ctrl_table {
-+	const char *soc;
-+	void (*set_soc_pad)(struct sdhci_host *host,
-+			    unsigned char signal_voltage);
-+};
-+
-+struct soc_pad_ctrl {
-+	/* Register address of SoC PHY PAD ctrl */
-+	void __iomem	*reg;
-+	/* SoC PHY PAD ctrl type */
-+	enum soc_pad_ctrl_type pad_type;
-+	/* SoC specific operation to set SoC PHY PAD */
-+	void (*set_soc_pad)(struct sdhci_host *host,
-+			    unsigned char signal_voltage);
-+};
-+
- static struct xenon_emmc_phy_regs xenon_emmc_5_0_phy_regs = {
- 	.timing_adj	= XENON_EMMC_5_0_PHY_TIMING_ADJUST,
- 	.func_ctrl	= XENON_EMMC_5_0_PHY_FUNC_CONTROL,
-@@ -176,6 +197,8 @@ struct emmc_phy_params {
- 	u8	nr_tun_times;
- 	/* Divider for calculating Tuning Step */
- 	u8	tun_step_divider;
-+
-+	struct soc_pad_ctrl pad_ctrl;
- };
++#define RK3328_GRF_SOC_CON4		0x410
+ #define RK3328_GRF_SOC_STATUS0		0x480
+ #define RK3328_GRF_MAC_CON1		0x904
+ #define RK3328_GRF_MAC_CON2		0x908
+@@ -214,6 +215,8 @@ enum rk3328_plls {
+ 				    "gmac_clkin" };
+ PNAME(mux_mac2phy_src_p)	= { "clk_mac2phy_src",
+ 				    "phy_50m_out" };
++PNAME(mux_mac2io_ext_p)		= { "clk_mac2io",
++				    "gmac_clkin" };
  
- static int alloc_emmc_phy(struct sdhci_xenon_priv *priv)
-@@ -252,6 +275,45 @@ static int emmc_phy_init(struct sdhci_host *host)
- 	return 0;
- }
+ static struct rockchip_pll_clock rk3328_pll_clks[] __initdata = {
+ 	[apll] = PLL(pll_rk3328, PLL_APLL, "apll", mux_pll_p,
+@@ -680,6 +683,10 @@ enum rk3328_plls {
+ 	COMPOSITE(SCLK_MAC2IO_OUT, "clk_mac2io_out", mux_2plls_p, 0,
+ 			RK3328_CLKSEL_CON(27), 15, 1, MFLAGS, 8, 5, DFLAGS,
+ 			RK3328_CLKGATE_CON(3), 5, GFLAGS),
++	MUXGRF(SCLK_MAC2IO, "clk_mac2io", mux_mac2io_src_p, CLK_SET_RATE_NO_REPARENT,
++			RK3328_GRF_MAC_CON1, 10, 1, MFLAGS),
++	MUXGRF(SCLK_MAC2IO_EXT, "clk_mac2io_ext", mux_mac2io_ext_p, CLK_SET_RATE_NO_REPARENT,
++			RK3328_GRF_SOC_CON4, 14, 1, MFLAGS),
  
-+#define ARMADA_3700_SOC_PAD_1_8V	0x1
-+#define ARMADA_3700_SOC_PAD_3_3V	0x0
-+
-+static void armada_3700_soc_pad_voltage_set(struct sdhci_host *host,
-+					    unsigned char signal_voltage)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	struct emmc_phy_params *params = priv->phy_params;
-+
-+	if (params->pad_ctrl.pad_type == SOC_PAD_FIXED_1_8V) {
-+		writel(ARMADA_3700_SOC_PAD_1_8V, params->pad_ctrl.reg);
-+	} else if (params->pad_ctrl.pad_type == SOC_PAD_SD) {
-+		if (signal_voltage == MMC_SIGNAL_VOLTAGE_180)
-+			writel(ARMADA_3700_SOC_PAD_1_8V, params->pad_ctrl.reg);
-+		else if (signal_voltage == MMC_SIGNAL_VOLTAGE_330)
-+			writel(ARMADA_3700_SOC_PAD_3_3V, params->pad_ctrl.reg);
-+	}
-+}
-+
-+/*
-+ * Set SoC PHY voltage PAD control register,
-+ * according to the operation voltage on PAD.
-+ * The detailed operation depends on SoC implementation.
-+ */
-+static void emmc_phy_set_soc_pad(struct sdhci_host *host,
-+				 unsigned char signal_voltage)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	struct emmc_phy_params *params = priv->phy_params;
-+
-+	if (!params->pad_ctrl.reg)
-+		return;
-+
-+	if (params->pad_ctrl.set_soc_pad)
-+		params->pad_ctrl.set_soc_pad(host, signal_voltage);
-+}
-+
- /*
-  * Enable eMMC PHY HW DLL
-  * DLL should be enabled and stable before HS200/SDR104 tuning,
-@@ -584,6 +646,51 @@ static void emmc_phy_set(struct sdhci_host *host,
- 	dev_dbg(mmc_dev(host->mmc), "eMMC PHY setting completes\n");
- }
+ 	COMPOSITE(SCLK_MAC2PHY_SRC, "clk_mac2phy_src", mux_2plls_p, 0,
+ 			RK3328_CLKSEL_CON(26), 7, 1, MFLAGS, 0, 5, DFLAGS,
+@@ -691,6 +698,8 @@ enum rk3328_plls {
+ 	COMPOSITE_NOMUX(SCLK_MAC2PHY_OUT, "clk_mac2phy_out", "clk_mac2phy", 0,
+ 			RK3328_CLKSEL_CON(26), 8, 2, DFLAGS,
+ 			RK3328_CLKGATE_CON(9), 2, GFLAGS),
++	MUXGRF(SCLK_MAC2PHY, "clk_mac2phy", mux_mac2phy_src_p, CLK_SET_RATE_NO_REPARENT,
++			RK3328_GRF_MAC_CON2, 10, 1, MFLAGS),
  
-+static int get_dt_pad_ctrl_data(struct sdhci_host *host,
-+				struct device_node *np,
-+				struct emmc_phy_params *params)
-+{
-+	int ret = 0;
-+	const char *name;
-+	struct resource iomem;
-+
-+	if (of_device_is_compatible(np, "marvell,armada-3700-sdhci"))
-+		params->pad_ctrl.set_soc_pad = armada_3700_soc_pad_voltage_set;
-+	else
-+		return 0;
-+
-+	if (of_address_to_resource(np, 1, &iomem)) {
-+		dev_err(mmc_dev(host->mmc), "Unable to find SoC PAD ctrl register address for %s\n",
-+			np->name);
-+		return -EINVAL;
-+	}
-+
-+	params->pad_ctrl.reg = devm_ioremap_resource(mmc_dev(host->mmc),
-+						     &iomem);
-+	if (IS_ERR(params->pad_ctrl.reg)) {
-+		dev_err(mmc_dev(host->mmc), "Unable to get SoC PHY PAD ctrl register for %s\n",
-+			np->name);
-+		return PTR_ERR(params->pad_ctrl.reg);
-+	}
-+
-+	ret = of_property_read_string(np, "marvell,pad-type", &name);
-+	if (ret) {
-+		dev_err(mmc_dev(host->mmc), "Unable to determine SoC PHY PAD ctrl type\n");
-+		return ret;
-+	}
-+	if (!strcmp(name, "sd")) {
-+		params->pad_ctrl.pad_type = SOC_PAD_SD;
-+	} else if (!strcmp(name, "fixed-1-8v")) {
-+		params->pad_ctrl.pad_type = SOC_PAD_FIXED_1_8V;
-+	} else {
-+		dev_err(mmc_dev(host->mmc), "Unsupported SoC PHY PAD ctrl type %s\n",
-+			name);
-+		return -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
- static int emmc_phy_parse_param_dt(struct sdhci_host *host,
- 				   struct device_node *np,
- 				   struct emmc_phy_params *params)
-@@ -617,7 +724,14 @@ static int emmc_phy_parse_param_dt(struct sdhci_host *host,
- 	else
- 		params->tun_step_divider = XENON_TUNING_STEP_DIVIDER;
+ 	FACTOR(0, "xin12m", "xin24m", 0, 1, 2),
  
--	return 0;
-+	return get_dt_pad_ctrl_data(host, np, params);
-+}
-+
-+/* Set SoC PHY Voltage PAD */
-+void xenon_soc_pad_ctrl(struct sdhci_host *host,
-+			unsigned char signal_voltage)
-+{
-+	emmc_phy_set_soc_pad(host, signal_voltage);
- }
- 
- /*
-diff --git a/drivers/mmc/host/sdhci-xenon.c b/drivers/mmc/host/sdhci-xenon.c
-index 99c18cad6460..f344d9fb0a1b 100644
---- a/drivers/mmc/host/sdhci-xenon.c
-+++ b/drivers/mmc/host/sdhci-xenon.c
-@@ -338,6 +338,8 @@ static int xenon_start_signal_voltage_switch(struct mmc_host *mmc,
- 	 */
- 	enable_xenon_internal_clk(host);
- 
-+	xenon_soc_pad_ctrl(host, ios->signal_voltage);
-+
- 	if (priv->init_card_type == MMC_TYPE_MMC)
- 		return xenon_emmc_signal_voltage_switch(mmc, ios);
- 
-diff --git a/drivers/mmc/host/sdhci-xenon.h b/drivers/mmc/host/sdhci-xenon.h
-index e87639774bca..57e7cb463413 100644
---- a/drivers/mmc/host/sdhci-xenon.h
-+++ b/drivers/mmc/host/sdhci-xenon.h
-@@ -104,4 +104,6 @@ struct sdhci_xenon_priv {
- int xenon_phy_adj(struct sdhci_host *host, struct mmc_ios *ios);
- int xenon_phy_parse_dt(struct device_node *np,
- 		       struct sdhci_host *host);
-+void xenon_soc_pad_ctrl(struct sdhci_host *host,
-+			unsigned char signal_voltage);
- #endif
 -- 
-git-series 0.9.1
+1.9.1
+
+
