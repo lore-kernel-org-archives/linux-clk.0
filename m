@@ -1,89 +1,28 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
-Subject: [Resend PATCH v2 2/3] dt-bindings: mfd: stm32f4: Add missing binding definition
-Date: Wed, 1 Feb 2017 14:09:55 +0100
-Message-ID: <1485954596-11014-3-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1485954596-11014-1-git-send-email-gabriel.fernandez@st.com>
-References: <1485954596-11014-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20170202143417.3514875-1-arnd@arndb.de>
+References: <20170202143417.3514875-1-arnd@arndb.de>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 6 Feb 2017 11:43:42 +0800
+Message-ID: <CAGb2v66epL1kNwqAc-yyWzchZsMCbVNqoHAeYTZz1L3-hMhYwA@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: select SUNXI_CCU_MULT for sun5i
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Thu, Feb 2, 2017 at 10:33 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> We get a link error when CCU_MULT is not set with the
+> newly added driver:
+>
+> drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.17+0x4): undefined reference to `ccu_mult_ops'
+> drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.5+0x4): undefined reference to `ccu_mult_ops'
+>
+> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-This patch adds missing binding definition (backupram, ethernet, otg,
-qspi, adc & dsi)
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- include/dt-bindings/mfd/stm32f4-rcc.h | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
-index f662b19..082a81c 100644
---- a/include/dt-bindings/mfd/stm32f4-rcc.h
-+++ b/include/dt-bindings/mfd/stm32f4-rcc.h
-@@ -18,11 +18,17 @@
- #define STM32F4_RCC_AHB1_GPIOJ	9
- #define STM32F4_RCC_AHB1_GPIOK	10
- #define STM32F4_RCC_AHB1_CRC	12
-+#define STM32F4_RCC_AHB1_BKPSRAM	18
-+#define STM32F4_RCC_AHB1_CCMDATARAM	20
- #define STM32F4_RCC_AHB1_DMA1	21
- #define STM32F4_RCC_AHB1_DMA2	22
- #define STM32F4_RCC_AHB1_DMA2D	23
- #define STM32F4_RCC_AHB1_ETHMAC	25
--#define STM32F4_RCC_AHB1_OTGHS	29
-+#define STM32F4_RCC_AHB1_ETHMACTX	26
-+#define STM32F4_RCC_AHB1_ETHMACRX	27
-+#define STM32F4_RCC_AHB1_ETHMACPTP	28
-+#define STM32F4_RCC_AHB1_OTGHS		29
-+#define STM32F4_RCC_AHB1_OTGHSULPI	30
- 
- #define STM32F4_AHB1_RESET(bit) (STM32F4_RCC_AHB1_##bit + (0x10 * 8))
- #define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit)
-@@ -40,6 +46,7 @@
- 
- /* AHB3 */
- #define STM32F4_RCC_AHB3_FMC	0
-+#define STM32F4_RCC_AHB3_QSPI	1
- 
- #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
- #define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + 0x40)
-@@ -79,7 +86,9 @@
- #define STM32F4_RCC_APB2_TIM8	1
- #define STM32F4_RCC_APB2_USART1	4
- #define STM32F4_RCC_APB2_USART6	5
--#define STM32F4_RCC_APB2_ADC	8
-+#define STM32F4_RCC_APB2_ADC1	8
-+#define STM32F4_RCC_APB2_ADC2	9
-+#define STM32F4_RCC_APB2_ADC3	10
- #define STM32F4_RCC_APB2_SDIO	11
- #define STM32F4_RCC_APB2_SPI1	12
- #define STM32F4_RCC_APB2_SPI4	13
-@@ -91,6 +100,7 @@
- #define STM32F4_RCC_APB2_SPI6	21
- #define STM32F4_RCC_APB2_SAI1	22
- #define STM32F4_RCC_APB2_LTDC	26
-+#define STM32F4_RCC_APB2_DSI	27
- 
- #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
- #define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + 0xA0)
--- 
-1.9.1
+Acked-by: Chen-Yu Tsai <wens@csie.org>
