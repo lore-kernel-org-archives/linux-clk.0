@@ -1,62 +1,132 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:36195 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751126AbdBWKP6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2017 05:15:58 -0500
-Received: by mail-it0-f52.google.com with SMTP id h10so160857589ith.1
-        for <linux-clk@vger.kernel.org>; Thu, 23 Feb 2017 02:15:57 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <0bbc4151-d954-1a27-48c3-1e8c9cb9e16f@rock-chips.com>
-References: <1486983566-32265-1-git-send-email-andy.yan@rock-chips.com>
- <2809087.MHZWQWdaOC@phil> <0bbc4151-d954-1a27-48c3-1e8c9cb9e16f@rock-chips.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 23 Feb 2017 11:15:56 +0100
-Message-ID: <CACRpkdbNbGvwUq3uLgekimOwzBZCXf37JW9LCCqLm1so=CMNrw@mail.gmail.com>
-Subject: Re: [PATCH 0/7] Rename RK1108 to RV1108
-To: Andy Yan <andy.yan@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <chrisp@alliedtelesis.co.nz>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 5/6] ARM: dts: mvebu: Move mv98dx3236 clock bindings
+Date: Wed,  8 Feb 2017 09:28:14 +1300
+Message-Id: <20170207202815.20226-6-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20170207202815.20226-1-chris.packham@alliedtelesis.co.nz>
+References: <20170207202815.20226-1-chris.packham@alliedtelesis.co.nz>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 14, 2017 at 1:44 AM, Andy Yan <andy.yan@rock-chips.com> wrote:
-> Hi Heiko & Rob:
-> On 2017=E5=B9=B402=E6=9C=8813=E6=97=A5 20:51, Heiko Stuebner wrote:
->>
->> Hi Andy,
->>
->> Am Montag, 13. Februar 2017, 18:59:26 CET schrieb Andy Yan:
->>>
->>> Rockchip finally named this soc as RV1108, so change
->>> RK1108/rk1108 to RV1108/rv1108 for compatible.
->>
->> renaming existing bindings (that have been in multiple kernel versions
->> already) always is a hot topic. So I'll be hoping for Rob to give a
->> go-ahead
->> for it :-) .
->>
->> Just to confirm, the rk1108/rv1108 is completely new to the market, so
->> we're
->> not breaking any existing devices, right?
->
->
->     Yes, the 1108 Soc is completely new to market, this change will not
-> breaking any existing devices.
+This moves the coreclk binding for the 98dx3236 SoC to the DFX block
+where the sampled at reset register is located and switches to using the
+correct gating clock compatible string.
 
-Nobody gets hurt. Just rename everything to avoid confusion.
-Just my =E2=82=AC0.01.
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Notes:
+    Changes in v2:
+    - New. Split out from "clk: mvebu: Expand mv98dx3236-core-clock support"
 
-Tell me if I can merge a subset of the patches to the pinctrl tree.
+ .../devicetree/bindings/clock/mvebu-core-clock.txt         |  7 +++++++
+ .../devicetree/bindings/clock/mvebu-gated-clock.txt        | 11 +++++++++++
+ arch/arm/boot/dts/armada-xp-98dx3236.dtsi                  | 14 +++++++-------
+ 3 files changed, 25 insertions(+), 7 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
+index eb985a633d59..796c260c183d 100644
+--- a/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
++++ b/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
+@@ -31,6 +31,12 @@ The following is a list of provided IDs and clock names on Armada 39x:
+  4 = dclk    (SDRAM Interface Clock)
+  5 = refclk  (Reference Clock)
+ 
++The following is a list of provided IDs and clock names on 98dx3236:
++ 0 = tclk    (Internal Bus clock)
++ 1 = cpuclk  (CPU clock)
++ 2 = ddrclk   (DDR clock)
++ 3 = mpll    (MPLL Clock)
++
+ The following is a list of provided IDs and clock names on Kirkwood and Dove:
+  0 = tclk   (Internal Bus clock)
+  1 = cpuclk (CPU0 clock)
+@@ -49,6 +55,7 @@ Required properties:
+ 	"marvell,armada-380-core-clock" - For Armada 380/385 SoC core clocks
+ 	"marvell,armada-390-core-clock" - For Armada 39x SoC core clocks
+ 	"marvell,armada-xp-core-clock" - For Armada XP SoC core clocks
++	"marvell,mv98dx3236-core-clock" - For 98dx3236 family SoC core clocks
+ 	"marvell,dove-core-clock" - for Dove SoC core clocks
+ 	"marvell,kirkwood-core-clock" - for Kirkwood SoC (except mv88f6180)
+ 	"marvell,mv88f6180-core-clock" - for Kirkwood MV88f6180 SoC
+diff --git a/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
+index 5142efc8099d..de562da2ae77 100644
+--- a/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
++++ b/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
+@@ -119,6 +119,16 @@ ID	Clock	Peripheral
+ 29	sata1lnk
+ 30	sata1	SATA Host 1
+ 
++The following is a list of provided IDs for 98dx3236:
++ID	Clock	Peripheral
++-----------------------------------
++3	ge1	Gigabit Ethernet 1
++4	ge0	Gigabit Ethernet 0
++5	pex0	PCIe Cntrl 0
++17	sdio	SDHCI Host
++18	usb0	USB Host 0
++22	xor0	XOR DMA 0
++
+ The following is a list of provided IDs for Dove:
+ ID	Clock	Peripheral
+ -----------------------------------
+@@ -169,6 +179,7 @@ Required properties:
+ 	"marvell,armada-380-gating-clock" - for Armada 380/385 SoC clock gating
+ 	"marvell,armada-390-gating-clock" - for Armada 39x SoC clock gating
+ 	"marvell,armada-xp-gating-clock" - for Armada XP SoC clock gating
++	"marvell,mv98dx3236-gating-clock" - for 98dx3236 SoC clock gating
+ 	"marvell,dove-gating-clock" - for Dove SoC clock gating
+ 	"marvell,kirkwood-gating-clock" - for Kirkwood SoC clock gating
+ - reg : shall be the register address of the Clock Gating Control register
+diff --git a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+index e4baa97836e7..e80a5ee835e5 100644
+--- a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
++++ b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+@@ -176,18 +176,12 @@
+ 			};
+ 
+ 			gateclk: clock-gating-control@18220 {
+-				compatible = "marvell,armada-xp-gating-clock";
++				compatible = "marvell,mv98dx3236-gating-clock";
+ 				reg = <0x18220 0x4>;
+ 				clocks = <&coreclk 0>;
+ 				#clock-cells = <1>;
+ 			};
+ 
+-			coreclk: mvebu-sar@18230 {
+-				compatible = "marvell,mv98dx3236-core-clock";
+-				reg = <0x18230 0x08>;
+-				#clock-cells = <1>;
+-			};
+-
+ 			cpuclk: clock-complex@18700 {
+ 				#clock-cells = <1>;
+ 				compatible = "marvell,mv98dx3236-cpu-clock";
+@@ -264,6 +258,12 @@
+ 			ranges = <0 MBUS_ID(0x08, 0x00) 0 0x100000>;
+ 			reg = <MBUS_ID(0x08, 0x00) 0 0x100000>;
+ 
++			coreclk: mvebu-sar@f8204 {
++				compatible = "marvell,mv98dx3236-core-clock";
++				reg = <0xf8204 0x4>;
++				#clock-cells = <1>;
++			};
++
+ 			soc-id@f8244 {
+ 				compatible = "marvell,mv98dx3236-soc-id";
+ 				reg = <0xf8244 0x4>;
+-- 
+2.11.0.24.ge6920cf
