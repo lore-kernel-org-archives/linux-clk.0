@@ -1,56 +1,71 @@
-Return-Path: <baoyou.xie@linaro.org>
-Return-Path: <baoyou.xie@linaro.org>
-From: Baoyou Xie <baoyou.xie@linaro.org>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	jun.nie@linaro.org,
-	baoyou.xie@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	shawn.guo@linaro.org,
-	vinod.koul@intel.com
-Cc: alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	shawnguo@kernel.org,
-	mathieu.poirier@linaro.org,
-	xie.baoyou@zte.com.cn,
-	chen.chaokai@zte.com.cn,
-	wang.qiang01@zte.com.cn
-Subject: [PATCH v3 1/3] clk: zte: add i2s clocks for zx296718
-Date: Wed,  8 Feb 2017 11:02:33 +0800
-Message-Id: <1486522955-14528-1-git-send-email-baoyou.xie@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 6 Feb 2017 17:04:26 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Markus Mayer <markus.mayer@broadcom.com>,
+	Markus Mayer <code@mmayer.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
+	Linux Clock List <linux-clk@vger.kernel.org>,
+	Power Management List <linux-pm@vger.kernel.org>,
+	Device Tree List <devicetree@vger.kernel.org>,
+	ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 1/2] dt-bindings: brcm: clocks: add binding for
+ brcmstb-cpu-clk-div
+Message-ID: <20170207010426.GO25384@codeaurora.org>
+References: <20170119002933.7529-1-code@mmayer.net>
+ <20170119002933.7529-2-code@mmayer.net>
+ <20170121005202.GB8801@codeaurora.org>
+ <CAGt4E5sGScHp83ufKcX3Q74vW0fo=L0FHM7tCptvqJfchHAweg@mail.gmail.com>
+ <20170203200652.GD25384@codeaurora.org>
+ <d56c827e-41cf-fcb3-42e0-792e8bf37871@gmail.com>
+ <20170206225914.GJ25384@codeaurora.org>
+ <a1a11072-908b-352e-a49f-49240d430df9@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <a1a11072-908b-352e-a49f-49240d430df9@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The i2s related clock support is missing from the existing zx296718
-clock driver. This patch adds it, so that the upstream ZX I2S driver
-can work out.
+On 02/06, Florian Fainelli wrote:
+> On 02/06/2017 02:59 PM, Stephen Boyd wrote:
+> > On 02/03, Florian Fainelli wrote:
+> >>
+> >> We already have another piece of drive code that manipulates registers
+> >> in the Bus Interface Unit located in drivers/soc/bcm/brcmstb/biuctrl.c
+> >> and which has little to nothing to do with the CPU's clock ratio. And
+> >> actually another one being submitted that deals with the CPU's
+> >> read-ahead cache. I would very much prefer we keep all of them separate
+> >> and dealing with just the register offset they need to do, but that does
+> >> not mean the Device Tree binding has to look that way though.
+> >>
+> >> The binding for the BIUCTRL register made it here:
+> >>
+> >> Documentation/devicetree/bindings/arm/bcm/brcm,brcmstb.txt
+> >>
+> >> so we should re-use that, and have a small piece of clock provided that
+> >> just uses the relevant register range within that larger register space
+> >> and provide the CLOCK_RATIO. Does that work?
+> >>
+> > 
+> > Ok. That's fine. The existing binding will be updated to include
+> > this new subnode then for the clock component?
+> 
+> Humm, I suppose we could do that yes, my original thought was to just
+> have this CPU clock provider remap the entire BIUCTRL register range
+> (of_iomap() etc.) and manipulate just the relevant register range of
+> interest (CPU_CLOCK_CONFIG_REG), but if you want a sub-node to appear,
+> we could probably do that as well.
 
-Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
----
- drivers/clk/zte/clk-zx296718.c | 4 ++++
- 1 file changed, 4 insertions(+)
+One node is fine as well. I thought the plan was many subnodes
+based on the binding document you mentioned earlier.
 
-diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
-index ad5d1df..f106d40 100644
---- a/drivers/clk/zte/clk-zx296718.c
-+++ b/drivers/clk/zte/clk-zx296718.c
-@@ -941,6 +941,10 @@ static struct zx_clk_gate audio_gate_clk[] = {
- 	GATE(AUDIO_SPDIF1_WCLK, "spdif1_wclk", "spdif1_wclk_div", AUDIO_SPDIF1_CLK, 9, CLK_SET_RATE_PARENT, 0),
- 	GATE(AUDIO_TDM_WCLK, "tdm_wclk", "tdm_wclk_div", AUDIO_TDM_CLK, 17, CLK_SET_RATE_PARENT, 0),
- 	GATE(AUDIO_TS_PCLK, "tempsensor_pclk", "clk49m5", AUDIO_TS_CLK, 1, 0, 0),
-+	GATE(AUDIO_I2S0_PCLK, "i2s0_pclk", "clk49m5", AUDIO_I2S0_CLK, 8, 0, 0),
-+	GATE(AUDIO_I2S1_PCLK, "i2s1_pclk", "clk49m5", AUDIO_I2S1_CLK, 8, 0, 0),
-+	GATE(AUDIO_I2S2_PCLK, "i2s2_pclk", "clk49m5", AUDIO_I2S2_CLK, 8, 0, 0),
-+	GATE(AUDIO_I2S3_PCLK, "i2s3_pclk", "clk49m5", AUDIO_I2S3_CLK, 8, 0, 0),
- };
- 
- static struct clk_hw_onecell_data audio_hw_onecell_data = {
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
