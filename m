@@ -1,130 +1,79 @@
-Return-Path: <cyndis@kapsi.fi>
-Subject: Re: [PATCH 5/7] clk: tegra: don't warn for PLL defaults unnecessarily
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>,
- linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
- <1487776444-4701-6-git-send-email-pdeschrijver@nvidia.com>
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <011f63fc-8b49-6574-f319-bdfced82f5cc@kapsi.fi>
-Date: Thu, 23 Feb 2017 11:06:14 +0200
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 7 Feb 2017 16:56:05 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+        Vinod Koul <vinod.koul@intel.com>, linux-gpio@vger.kernel.org,
+        dmaengine@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Andre Przywara <andre.przywara@arm.com>,
+        devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        alsa-devel@alsa-project.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com
+Subject: Re: [linux-sunxi] Re: [PATCH v3 04/10] clk: sunxi-ng: add support
+ for Allwinner H5 SoC
+Message-ID: <20170207155605.f2k44gr56ywehz3t@lukather>
+References: <20170207000838.8UJeKISe@smtp2p.mail.yandex.net>
 MIME-Version: 1.0
-In-Reply-To: <1487776444-4701-6-git-send-email-pdeschrijver@nvidia.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ncoqq3u2mcjsuyi5"
+In-Reply-To: <20170207000838.8UJeKISe@smtp2p.mail.yandex.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-On 22.02.2017 17:14, Peter De Schrijver wrote:
-> If the PLL is on, only warn if the defaults are not yet set. Otherwise be
-> silent.
->
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index b7ef8a7..fe698d2 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -502,7 +502,7 @@ static void tegra210_pllcx_set_defaults(const char *name,
->  	pllcx->params->defaults_set = true;
->
->  	if (readl_relaxed(clk_base + pllcx->params->base_reg) &
-> -			PLL_ENABLE) {
-> +			PLL_ENABLE && !pllcx->params->defaults_set) {
->  		/* PLL is ON: only check if defaults already set */
->  		pllcx_check_defaults(pllcx->params);
->  		pr_warn("%s already enabled. Postponing set full defaults\n",
-> @@ -608,7 +608,6 @@ static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
->
->  	if (readl_relaxed(clk_base + plld->params->base_reg) &
->  			PLL_ENABLE) {
-> -		pr_warn("PLL_D already enabled. Postponing set full defaults\n");
->
->  		/*
->  		 * PLL is ON: check if defaults already set, then set those
-> @@ -625,6 +624,9 @@ static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
->  		_pll_misc_chk_default(clk_base, plld->params, 0, val,
->  				~mask & PLLD_MISC0_WRITE_MASK);
->
-> +		if (!plld->params->defaults_set)
-> +			pr_warn("PLL_D already enabled. Postponing set full defaults\n");
-> +
->  		/* Enable lock detect */
->  		mask = PLLD_MISC0_LOCK_ENABLE | PLLD_MISC0_LOCK_OVERRIDE;
->  		val = readl_relaxed(clk_base + plld->params->ext_misc_reg[0]);
-> @@ -896,7 +898,6 @@ static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
->  	val |= step_b << PLLX_MISC2_DYNRAMP_STEPB_SHIFT;
->
->  	if (readl_relaxed(clk_base + pllx->params->base_reg) & PLL_ENABLE) {
-> -		pr_warn("PLL_X already enabled. Postponing set full defaults\n");
->
->  		/*
->  		 * PLL is ON: check if defaults already set, then set those
-> @@ -904,6 +905,8 @@ static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
->  		 */
->  		pllx_check_defaults(pllx);
->
-> +		if (!pllx->params->defaults_set)
-> +			pr_warn("PLL_X already enabled. Postponing set full defaults\n");
->  		/* Configure dyn ramp, disable lock override */
->  		writel_relaxed(val, clk_base + pllx->params->ext_misc_reg[2]);
->
-> @@ -948,7 +951,6 @@ static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
->  	pllmb->params->defaults_set = true;
->
->  	if (val & PLL_ENABLE) {
-> -		pr_warn("PLL_MB already enabled. Postponing set full defaults\n");
->
->  		/*
->  		 * PLL is ON: check if defaults already set, then set those
-> @@ -959,6 +961,8 @@ static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
->  		_pll_misc_chk_default(clk_base, pllmb->params, 0, val,
->  				~mask & PLLMB_MISC1_WRITE_MASK);
->
-> +		if (!pllmb->params->defaults_set)
-> +			pr_warn("PLL_MB already enabled. Postponing set full defaults\n");
->  		/* Enable lock detect */
->  		val = readl_relaxed(clk_base + pllmb->params->ext_misc_reg[0]);
->  		val &= ~mask;
-> @@ -1008,13 +1012,14 @@ static void tegra210_pllp_set_defaults(struct tegra_clk_pll *pllp)
->  	pllp->params->defaults_set = true;
->
->  	if (val & PLL_ENABLE) {
-> -		pr_warn("PLL_P already enabled. Postponing set full defaults\n");
->
->  		/*
->  		 * PLL is ON: check if defaults already set, then set those
->  		 * that can be updated in flight.
->  		 */
->  		pllp_check_defaults(pllp, true);
-> +		if (!pllp->params->defaults_set)
-> +			pr_warn("PLL_P already enabled. Postponing set full defaults\n");
->
->  		/* Enable lock detect */
->  		val = readl_relaxed(clk_base + pllp->params->ext_misc_reg[0]);
-> @@ -1069,13 +1074,14 @@ static void tegra210_pllu_set_defaults(struct tegra_clk_pll *pllu)
->  	pllu->params->defaults_set = true;
->
->  	if (val & PLL_ENABLE) {
-> -		pr_warn("PLL_U already enabled. Postponing set full defaults\n");
->
->  		/*
->  		 * PLL is ON: check if defaults already set, then set those
->  		 * that can be updated in flight.
->  		 */
->  		pllu_check_defaults(pllu, false);
-> +		if (!pllu->params->defaults_set)
-> +			pr_warn("PLL_U already enabled. Postponing set full defaults\n");
->
->  		/* Enable lock detect */
->  		val = readl_relaxed(clk_base + pllu->params->ext_misc_reg[0]);
->
+--ncoqq3u2mcjsuyi5
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jan 30, 2017 at 10:02:04PM +0800, Icenowy Zheng wrote:
+> > >=A0 static struct ccu_reset_map sunxi_h3_h5_ccu_resets[] =3D {=20
+> > >=A0 [RST_USB_PHY0] =3D=A0 { 0x0cc, BIT(0) },=20
+> > >=A0 [RST_USB_PHY1] =3D=A0 { 0x0cc, BIT(1) },=20
+> > > @@ -791,6 +910,7 @@ static struct ccu_reset_map sunxi_h3_h5_ccu_reset=
+s[] =3D {=20
+> > >=A0 [RST_BUS_UART2] =3D=A0 { 0x2d8, BIT(18) },=20
+> > >=A0 [RST_BUS_UART3] =3D=A0 { 0x2d8, BIT(19) },=20
+> > >=A0 [RST_BUS_SCR0] =3D=A0 { 0x2d8, BIT(20) },=20
+> > > + [RST_BUS_SCR1] =3D=A0 { 0x2d8, BIT(21) },=20
+> >
+> > That reset line is not valid on the H3.=20
+>=20
+> So I should split a H3 reset array and a H5 one?
+
+Ideally, yes.
+
+> (I modelled after ccu-sun5i.c, which shares one reset array)
+
+They all share the same reset lines.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--ncoqq3u2mcjsuyi5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYme4VAAoJEBx+YmzsjxAgMQ0QAJ6jQL66cPjxo42RqrezKJnY
+hX5LcNeVppi/6innzyewHL04c+w7w8df5f/yj8s+DPu3EMo4Bl/mgaWaUROENvOV
+bINqyZTyUCEzoI5EuIEcBfjeNJMluE/u6k/2pAl5f8EqeywfaJutnrVOxVy2JnfS
+rYesN2fk6839XS6alMojcgAaPjV2nqO10e+OhYpaLgRY1bl6D23qpiGO4126aJW+
+Q5GtWfPwMUnkNmbGcvNtmm0PwvH4Bo1B/27d372PEI9V2IiRgp3gyT8Nm+UIRPEd
+eeevL8MEtWrbhcoKeWwR4T5sf1tgoKMBN0cNjiWwbTgXr71cUNJ9gVzV+tuZHcnn
+FSRpTe3B8bxI0M43IBjOzKxri4V9cN/2t1jCu6dMBI6i54q/vrbNLHb1OskgJe6P
+A+Lt24psQ7YC66EqgKJzpZx2yVdQ7xDCC6ZGRSNA0XA6WC4jZfYGZvZEF5wMz5HS
+XUdspVIeYkSvZetQufG40a1Fvq6AARE8rH8Mvd/LOuwaxz29xfxlFfc+MKSvPkW/
+54jIxkSgZGaJbm4NYD2IUfBJAvxiq5UUi2Mq04urMBKmqWdT1XIRgEl4TEWxa4E1
+TCcgd+wf8OVAFtnXj5/EyjWUNJslcFnPH+SYWjqkUtzE1DvP6Yikzmzp9IeGTcdR
+v6Ik84G2gvLX5P/g5SN3
+=usYJ
+-----END PGP SIGNATURE-----
+
+--ncoqq3u2mcjsuyi5--
