@@ -1,67 +1,55 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [PATCH] clk: x86: add "mclk" alias for Baytrail/Cherrytrail
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1486937212-10093-1-git-send-email-pierre-louis.bossart@linux.intel.com>
- <20170214190456.GV25384@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, x86@kernel.org,
- platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org,
- Michael Turquette <mturquette@baylibre.com>, Takashi Iwai <tiwai@suse.com>,
- Mark Brown <broonie@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Vinod Koul <vinod.koul@intel.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <bc29984e-cc58-69ed-d6ca-b4808d6514dc@linux.intel.com>
-Date: Tue, 14 Feb 2017 13:23:12 -0600
-MIME-Version: 1.0
-In-Reply-To: <20170214190456.GV25384@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <baoyou.xie@linaro.org>
+Return-Path: <baoyou.xie@linaro.org>
+From: Baoyou Xie <baoyou.xie@linaro.org>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	jun.nie@linaro.org,
+	baoyou.xie@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	shawn.guo@linaro.org,
+	vinod.koul@intel.com
+Cc: alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	shawnguo@kernel.org,
+	xie.baoyou@zte.com.cn,
+	chen.chaokai@zte.com.cn,
+	wang.qiang01@zte.com.cn
+Subject: [PATCH v2 1/3] clk: zte: add i2s clocks for zx296718
+Date: Tue,  7 Feb 2017 11:02:49 +0800
+Message-Id: <1486436571-8682-1-git-send-email-baoyou.xie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2/14/17 1:04 PM, Stephen Boyd wrote:
-> On 02/12, Pierre-Louis Bossart wrote:
->> Due to timing requirements, TI and Conexant manage the audio
->> reference clock from their ASoC codec drivers using the "mclk"
->> string. This patch adds a default alias to "pmc_plt_clk_3" to
->> avoid Intel-specific tests in those codec drivers and use code
->> as-is.
->> "pmc_plt_clk_3" is used exclusively for audio on all known
->> Baytrail/CherryTrail designs and is e.g. routed on the MCLK
->> (pin 26) of the MinnowBoardMAX Turbot LSE connector.
->>
->> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
->> ---
->>
->> Notes:
->>     This patch only applies on top of linux-next or clk-next, the
->>     previous clk-related patches are not yet merged in the audio
->>     trees
->>
->>  drivers/clk/x86/clk-pmc-atom.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
->> index 2b60577..ba00d27 100644
->> --- a/drivers/clk/x86/clk-pmc-atom.c
->> +++ b/drivers/clk/x86/clk-pmc-atom.c
->> @@ -340,6 +340,8 @@ static int plt_clk_probe(struct platform_device *pdev)
->>
->>  	plt_clk_free_parent_names_loop(parent_names, data->nparents);
->>
->> +	clk_add_alias("mclk", dev_name(&pdev->dev), "pmc_plt_clk_3", NULL);
->> +
->
-> This leaks an alias when the driver is removed. Honestly,
-> clk_add_alias() doesn't work well because of that problem. Can
-> you just add another lookup with the pointer you already have
-> instead of passing a NULL device to do a global lookup?
+The i2s related clock support is missing from the existing zx296718
+clock driver. This patch adds it, so that the upstream ZX I2S driver
+can work out.
 
-This is a builtin driver that cannot be configured as a module, is the 
-leaked alias problematic?
-I don't mind trying something different but I am not familiar enough 
-with the framework to understand what you are hinting at. Are you 
-suggesting a change on the last parameter such as:
+Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+---
+ drivers/clk/zte/clk-zx296718.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-clk_add_alias("mclk", dev_name(&pdev->dev), "pmc_plt_clk_3", &pdev->dev)
-
-Thanks!
--Pierre
+diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
+index ad5d1df..f106d40 100644
+--- a/drivers/clk/zte/clk-zx296718.c
++++ b/drivers/clk/zte/clk-zx296718.c
+@@ -941,6 +941,10 @@ static struct zx_clk_gate audio_gate_clk[] = {
+ 	GATE(AUDIO_SPDIF1_WCLK, "spdif1_wclk", "spdif1_wclk_div", AUDIO_SPDIF1_CLK, 9, CLK_SET_RATE_PARENT, 0),
+ 	GATE(AUDIO_TDM_WCLK, "tdm_wclk", "tdm_wclk_div", AUDIO_TDM_CLK, 17, CLK_SET_RATE_PARENT, 0),
+ 	GATE(AUDIO_TS_PCLK, "tempsensor_pclk", "clk49m5", AUDIO_TS_CLK, 1, 0, 0),
++	GATE(AUDIO_I2S0_PCLK, "i2s0_pclk", "clk49m5", AUDIO_I2S0_CLK, 8, 0, 0),
++	GATE(AUDIO_I2S1_PCLK, "i2s1_pclk", "clk49m5", AUDIO_I2S1_CLK, 8, 0, 0),
++	GATE(AUDIO_I2S2_PCLK, "i2s2_pclk", "clk49m5", AUDIO_I2S2_CLK, 8, 0, 0),
++	GATE(AUDIO_I2S3_PCLK, "i2s3_pclk", "clk49m5", AUDIO_I2S3_CLK, 8, 0, 0),
+ };
+ 
+ static struct clk_hw_onecell_data audio_hw_onecell_data = {
+-- 
+2.7.4
