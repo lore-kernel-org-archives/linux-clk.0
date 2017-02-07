@@ -1,60 +1,58 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 14 Feb 2017 10:39:48 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] clk: sunxi-ng: gate: Support common pre-dividers
-Message-ID: <20170214093948.d46xkfunpuj3nn7l@lukather>
-References: <20170214033526.16977-1-wens@csie.org>
- <20170214033526.16977-3-wens@csie.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Mon, 6 Feb 2017 17:03:08 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] clk: mvebu: Expand mv98dx3236-core-clock support
+Message-ID: <20170207010308.GN25384@codeaurora.org>
+References: <20170203034012.29399-1-chris.packham@alliedtelesis.co.nz>
+ <20170203034012.29399-5-chris.packham@alliedtelesis.co.nz>
+ <20170206231400.GM25384@codeaurora.org>
+ <9974653ab84040c3b12fad075790c123@svr-chch-ex1.atlnz.lc>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rb7bp35wck23qqme"
-In-Reply-To: <20170214033526.16977-3-wens@csie.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <9974653ab84040c3b12fad075790c123@svr-chch-ex1.atlnz.lc>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 02/06, Chris Packham wrote:
+> On 07/02/17 12:14, Stephen Boyd wrote:
+> > On 02/03, Chris Packham wrote:
+> >> The initial implementation in commit e120c17a70e5 ("clk: mvebu: support
+> >> for 98DX3236 SoC") hardcoded a fixed value for the main PLL frequency.
+> >> Port code from the Marvell supplied Linux kernel to support different
+> >> PLL frequencies and provide clock gating support.
+> >>
+> >> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> >> ---
+> >>  .../devicetree/bindings/clock/mvebu-core-clock.txt |   7 +
+> >>  .../bindings/clock/mvebu-gated-clock.txt           |  11 ++
+> >>  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          |  14 +-
+> >>  drivers/clk/mvebu/Makefile                         |   2 +-
+> >>  drivers/clk/mvebu/armada-xp.c                      |  13 --
+> >>  drivers/clk/mvebu/mv98dx3236.c                     | 144 +++++++++++++++++++++
+> >
+> > This mixes dts and clk driver changes. Any chance it can be split
+> > up and just have the clk part go through clk tree? Otherwise, I
+> > can ack this if you want to take it all through arm-soc?
+> 
+> I'm happy to split it if it will make life easier.
+> 
 
---rb7bp35wck23qqme
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Well do things keep booting if the clk driver parts merge without
+the associated dts changes? It's nice to maintain backwards
+compatibility even for a short time to make the merge path
+easier.
 
-On Tue, Feb 14, 2017 at 11:35:23AM +0800, Chen-Yu Tsai wrote:
-> Some clock gates have a pre-divider between the source input and the
-> gate itself. A notable example is the HSIC 12 MHz clock found on the
-> A83T, which has the 24 MHz main oscillator as its input, and a /2
-> pre-divider.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---rb7bp35wck23qqme
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYotBgAAoJEBx+YmzsjxAgZTQQAKx29QIN9m2BZs1iob9W5pPc
-X0LNKs4ZMtjKt1NL5J3l4njtt3SsKqPBxWRv5tw128HqYAEa6LFJ8dilpGCIPygq
-6L2QJ5X1FzFYs5nBQiHdOGSURsVXYtbvwmaK2EohPAxtUoq4adt5cR7d+ImrRQZG
-C9qd7BL69bnEgq1xmjz29sz8lkYoSciL9GICedl8Wd7bAYAg19Jq1bn6Aw4gBqux
-o2MjnMw3Pek++XzwW1YEUlO++wCTmpAuW2Qc63Xi7KaQPjFG6ocPK+QPpkpC2L6Y
-HbhevneVLvp1QtzoU7gbEY6IDUGYS28TRn8szh8Kyqu5ME/KR7WuKTXlcJA8eOyE
-4SBQqjEuWyARgN9zmThn9GGhvW8EJ+zkNtuVBbiM3t8RcLl0Nw3o9iSUPsaxc/j+
-z0Zu4e0h7aTa+BPyCI0bU0CozLUFceWRwuxY5eGitMp/OdmSfS/Th0ROSXh7txkH
-tFGZ0tz8vLAyDvR4f2YbzS3JM/yj40vECpgEyLwMuQcRlx/LTVDWIsPUSKt5Eiyp
-PDvek5M+bADCq4EtPBc0+wukWkAaDJsNyoKfx1Tkncczan7EezxyNu2WUiliKqej
-y+uHFQT7p1RyzDwDojOEISMxXiIlaAGo2yUI7qVZadSZ0uel+zYor3I+MI/GFmGS
-vaCIoOg2wGiob45csSjI
-=ZiG1
------END PGP SIGNATURE-----
-
---rb7bp35wck23qqme--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
