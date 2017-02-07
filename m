@@ -1,80 +1,82 @@
-Return-Path: <Chris.Packham@alliedtelesis.co.nz>
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	"Rob Herring" <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	"Jason Cooper" <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory
- Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] clk: mvebu: Expand mv98dx3236-core-clock support
-Date: Tue, 7 Feb 2017 01:25:47 +0000
-Message-ID: <5a974d9d7260432087619486bf5d79ed@svr-chch-ex1.atlnz.lc>
-References: <20170203034012.29399-1-chris.packham@alliedtelesis.co.nz>
- <20170203034012.29399-5-chris.packham@alliedtelesis.co.nz>
- <20170206231400.GM25384@codeaurora.org>
- <9974653ab84040c3b12fad075790c123@svr-chch-ex1.atlnz.lc>
- <20170207010308.GN25384@codeaurora.org>
- <ebe243d06f3542318e5365c560e6cf79@svr-chch-ex1.atlnz.lc>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, xf@rock-chips.com, wdc@rock-chips.com, linux-clk@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 2/2] clk: rockchip: describe clk_gmac using the new muxgrf type on rk3328
+Date: Tue, 07 Feb 2017 01:13:41 +0100
+Message-ID: <2060105.7dU1ly8Kaa@phil>
+In-Reply-To: <1486349435-8681-3-git-send-email-zhangqing@rock-chips.com>
+References: <1486349435-8681-1-git-send-email-zhangqing@rock-chips.com> <1486349435-8681-3-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/02/17 14:13, Chris Packham wrote:=0A=
-> On 07/02/17 14:03, Stephen Boyd wrote:=0A=
->> On 02/06, Chris Packham wrote:=0A=
->>> On 07/02/17 12:14, Stephen Boyd wrote:=0A=
->>>> On 02/03, Chris Packham wrote:=0A=
->>>>> The initial implementation in commit e120c17a70e5 ("clk: mvebu: suppo=
-rt=0A=
->>>>> for 98DX3236 SoC") hardcoded a fixed value for the main PLL frequency=
-.=0A=
->>>>> Port code from the Marvell supplied Linux kernel to support different=
-=0A=
->>>>> PLL frequencies and provide clock gating support.=0A=
->>>>>=0A=
->>>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
->>>>> ---=0A=
->>>>>  .../devicetree/bindings/clock/mvebu-core-clock.txt |   7 +=0A=
->>>>>  .../bindings/clock/mvebu-gated-clock.txt           |  11 ++=0A=
->>>>>  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          |  14 +-=0A=
->>>>>  drivers/clk/mvebu/Makefile                         |   2 +-=0A=
->>>>>  drivers/clk/mvebu/armada-xp.c                      |  13 --=0A=
->>>>>  drivers/clk/mvebu/mv98dx3236.c                     | 144 +++++++++++=
-++++++++++=0A=
->>>>=0A=
->>>> This mixes dts and clk driver changes. Any chance it can be split=0A=
->>>> up and just have the clk part go through clk tree? Otherwise, I=0A=
->>>> can ack this if you want to take it all through arm-soc?=0A=
->>>=0A=
->>> I'm happy to split it if it will make life easier.=0A=
->>>=0A=
->>=0A=
->> Well do things keep booting if the clk driver parts merge without=0A=
->> the associated dts changes? It's nice to maintain backwards=0A=
->> compatibility even for a short time to make the merge path=0A=
->> easier.=0A=
->>=0A=
->=0A=
-> Unfortunately not. I could put the clk changes first (then I'd just have=
-=0A=
-> checkpatch.pl complaining about new compatible strings). But if the clk=
-=0A=
-> patches don't land before the dts changes the boards won't boot. However=
-=0A=
-> that affects 1 person that we know of (me).=0A=
->=0A=
-=0A=
-Actually I wonder if I can try a bit harder to keep a system booting. =0A=
-The following might work=0A=
-1) add the compatible strings to the existing armada clock drivers.=0A=
-2) update the dts to use the new compatible strings.=0A=
-3) add the new driver and remove the compatible strings from the armada =0A=
-drivers.=0A=
-=0A=
-#1 would still upset checkpatch.pl because the documentation would only =0A=
-arrive in #2.=0A=
-=0A=
+Hi Elaine,
+
+Am Montag, 6. Februar 2017, 10:50:35 CET schrieb Elaine Zhang:
+> With the newly introduced clk type for muxes in the grf we now can
+> describe some missing clocks, like the clk_gmac2io and clk_gmac2phy
+> that selects between clk_mac2io_src and gmac_clkin based on a bit
+> set in the general register files.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+
+both patches look good, but I do have a question below.
+
+Anyway, we're very late in the cycle for 4.10, so we'll need to wait until 
+after the next merge-window.
+
+> ---
+>  drivers/clk/rockchip/clk-rk3328.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/clk/rockchip/clk-rk3328.c
+> b/drivers/clk/rockchip/clk-rk3328.c index 1e384e143504..b04f29774ee7 100644
+> --- a/drivers/clk/rockchip/clk-rk3328.c
+> +++ b/drivers/clk/rockchip/clk-rk3328.c
+> @@ -20,6 +20,7 @@
+>  #include <dt-bindings/clock/rk3328-cru.h>
+>  #include "clk.h"
+> 
+> +#define RK3328_GRF_SOC_CON4		0x410
+>  #define RK3328_GRF_SOC_STATUS0		0x480
+>  #define RK3328_GRF_MAC_CON1		0x904
+>  #define RK3328_GRF_MAC_CON2		0x908
+> @@ -214,6 +215,8 @@ enum rk3328_plls {
+>  				    "gmac_clkin" };
+>  PNAME(mux_mac2phy_src_p)	= { "clk_mac2phy_src",
+>  				    "phy_50m_out" };
+> +PNAME(mux_mac2io_ext_p)		= { "clk_mac2io",
+> +				    "gmac_clkin" };
+> 
+>  static struct rockchip_pll_clock rk3328_pll_clks[] __initdata = {
+>  	[apll] = PLL(pll_rk3328, PLL_APLL, "apll", mux_pll_p,
+> @@ -680,6 +683,10 @@ enum rk3328_plls {
+>  	COMPOSITE(SCLK_MAC2IO_OUT, "clk_mac2io_out", mux_2plls_p, 0,
+>  			RK3328_CLKSEL_CON(27), 15, 1, MFLAGS, 8, 5, DFLAGS,
+>  			RK3328_CLKGATE_CON(3), 5, GFLAGS),
+> +	MUXGRF(SCLK_MAC2IO, "clk_mac2io", mux_mac2io_src_p,
+> CLK_SET_RATE_NO_REPARENT, +			RK3328_GRF_MAC_CON1, 10, 1, MFLAGS),
+> +	MUXGRF(SCLK_MAC2IO_EXT, "clk_mac2io_ext", mux_mac2io_ext_p,
+> CLK_SET_RATE_NO_REPARENT, +			RK3328_GRF_SOC_CON4, 14, 1, MFLAGS),
+> 
+>  	COMPOSITE(SCLK_MAC2PHY_SRC, "clk_mac2phy_src", mux_2plls_p, 0,
+>  			RK3328_CLKSEL_CON(26), 7, 1, MFLAGS, 0, 5, DFLAGS,
+> @@ -691,6 +698,8 @@ enum rk3328_plls {
+>  	COMPOSITE_NOMUX(SCLK_MAC2PHY_OUT, "clk_mac2phy_out", "clk_mac2phy", 0,
+>  			RK3328_CLKSEL_CON(26), 8, 2, DFLAGS,
+>  			RK3328_CLKGATE_CON(9), 2, GFLAGS),
+> +	MUXGRF(SCLK_MAC2PHY, "clk_mac2phy", mux_mac2phy_src_p,
+> CLK_SET_RATE_NO_REPARENT, +			RK3328_GRF_MAC_CON2, 10, 1, MFLAGS),
+
+You don't set CLK_SET_RATE_PARENT but you do set CLK_SET_RATE_NO_REPARENT - 
+essentially disabling all automatic clock-changes for them.
+Does this mean that these clocks should always only be set "manually" from 
+something like the assigned-clocks in dts?
+
+This is not a problem in itself, I just want to understand how they should be 
+used :-)
+
+
+Thanks
+Heiko
