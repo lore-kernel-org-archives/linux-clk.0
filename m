@@ -1,33 +1,80 @@
-Return-Path: <leonard.crestez@nxp.com>
-From: Leonard Crestez <leonard.crestez@nxp.com>
-To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: core: Copy connection id
-Date: Sat, 25 Feb 2017 09:20:02 +0000
-Message-ID: <1488014402.6461.3.camel@nxp.com>
-References: <60d115f6c11bc51cd8bc10c64cd222c3cdb43cc7.1487596492.git.leonard.crestez@nxp.com>
-	 <20170224204439.GD25384@codeaurora.org>
-In-Reply-To: <20170224204439.GD25384@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <Chris.Packham@alliedtelesis.co.nz>
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	"Rob Herring" <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	"Jason Cooper" <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory
+ Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] clk: mvebu: Expand mv98dx3236-core-clock support
+Date: Tue, 7 Feb 2017 01:25:47 +0000
+Message-ID: <5a974d9d7260432087619486bf5d79ed@svr-chch-ex1.atlnz.lc>
+References: <20170203034012.29399-1-chris.packham@alliedtelesis.co.nz>
+ <20170203034012.29399-5-chris.packham@alliedtelesis.co.nz>
+ <20170206231400.GM25384@codeaurora.org>
+ <9974653ab84040c3b12fad075790c123@svr-chch-ex1.atlnz.lc>
+ <20170207010308.GN25384@codeaurora.org>
+ <ebe243d06f3542318e5365c560e6cf79@svr-chch-ex1.atlnz.lc>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-T24gRnJpLCAyMDE3LTAyLTI0IGF0IDEyOjQ0IC0wODAwLCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+
-IE9uIDAyLzIwLCBMZW9uYXJkIENyZXN0ZXogd3JvdGU6DQo+ID4gU29tZSBkcml2ZXJzIHVzZSBz
-cHJpbnRmIHRvIGJ1aWxkIGNsayBjb25uZWN0aW9uIGlkIG5hbWVzIGJ1dCB0aGUNCj4gPiBjbGsN
-Cj4gPiBjb3JlIHdpbGwgc2F2ZSB0aG9zZSBzdHJpbmdzIGFuZCBvY2Nhc2lvbmFsbHkgcHJpbnQg
-dGhlbSBiYWNrLg0KPiA+IER1cGxpY2F0ZQ0KPiA+IHRoZSBjb25faWQgc3RyaW5ncyBpbnN0ZWFk
-IG9mIGZpeGluZyBhbGwgdGhlIHVzZXJzLg0KPiANCj4gR29vZCBjYXRjaC4gV2hhdCBhYm91dCBk
-ZXZfaWQgdGhvdWdoPyBUaGF0IGNvdWxkIGFsc28gaGF2ZSB0aGUNCj4gc2FtZSBwcm9ibGVtIGlm
-IHNvbWUgZGV2aWNlIGlzIHJlbW92ZWQgYW5kIHdlJ3JlIHN0aWxsIGhvbGRpbmcgYQ0KPiByZWZl
-cmVuY2UgdG8gdGhlIGtvYmplY3QncyBuYW1lLiBUaGlzIGlzIHByb2JhYmx5IG1vcmUgcmFyZSB0
-aGFuDQo+IHdoYXQgaXMgaGFwcGVuaW5nIGhlcmUsIGJ1dCBzdGlsbCBzZWVtcyBwb3NzaWJsZSB0
-aGF0IHdlIG1pZ2h0DQo+IHRyaXAgb3ZlciB0aGF0IGxhdGVyLg0KDQpBIGRldmljZSBzaG91bGQg
-bm9ybWFsbHkgZnJlZSB0aGUgY2xrcyBpdCB1c2VzIGJlZm9yZSBpdCBpcyBkZXN0cm95ZWQuDQpU
-aGlzIG1lYW5zIHRoYXQgaWYgZGV2X2lkIGlzIHBvaW50aW5nIHRvIGZyZWVkIG1lbW9yeSB0aGVu
-IHRoZSBjbGsNCml0c2VsZiB3YXMgcHJvYmFibHkgbGVha2VkLCByaWdodD8NCg0KVGhpcyBpcyBv
-YnZpb3VzIG1pc3VzZSBvZiB0aGUgQVBJLCBub3QgbGlrZSBzcHJpbnRmLWluZyBhIGNvbl9pZCBp
-biBhDQpjb21wbGV4IGRyaXZlci4gSSBkb24ndCByZWFsbHkgdGhpbmsgaXQncyB3b3J0aCBjb3B5
-aW5nIHN0cmluZ3MgZm9yIGl0Lg0KDQotLQ0KUmVnYXJkcywNCkxlb25hcmQ=
+On 07/02/17 14:13, Chris Packham wrote:=0A=
+> On 07/02/17 14:03, Stephen Boyd wrote:=0A=
+>> On 02/06, Chris Packham wrote:=0A=
+>>> On 07/02/17 12:14, Stephen Boyd wrote:=0A=
+>>>> On 02/03, Chris Packham wrote:=0A=
+>>>>> The initial implementation in commit e120c17a70e5 ("clk: mvebu: suppo=
+rt=0A=
+>>>>> for 98DX3236 SoC") hardcoded a fixed value for the main PLL frequency=
+.=0A=
+>>>>> Port code from the Marvell supplied Linux kernel to support different=
+=0A=
+>>>>> PLL frequencies and provide clock gating support.=0A=
+>>>>>=0A=
+>>>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
+>>>>> ---=0A=
+>>>>>  .../devicetree/bindings/clock/mvebu-core-clock.txt |   7 +=0A=
+>>>>>  .../bindings/clock/mvebu-gated-clock.txt           |  11 ++=0A=
+>>>>>  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          |  14 +-=0A=
+>>>>>  drivers/clk/mvebu/Makefile                         |   2 +-=0A=
+>>>>>  drivers/clk/mvebu/armada-xp.c                      |  13 --=0A=
+>>>>>  drivers/clk/mvebu/mv98dx3236.c                     | 144 +++++++++++=
+++++++++++=0A=
+>>>>=0A=
+>>>> This mixes dts and clk driver changes. Any chance it can be split=0A=
+>>>> up and just have the clk part go through clk tree? Otherwise, I=0A=
+>>>> can ack this if you want to take it all through arm-soc?=0A=
+>>>=0A=
+>>> I'm happy to split it if it will make life easier.=0A=
+>>>=0A=
+>>=0A=
+>> Well do things keep booting if the clk driver parts merge without=0A=
+>> the associated dts changes? It's nice to maintain backwards=0A=
+>> compatibility even for a short time to make the merge path=0A=
+>> easier.=0A=
+>>=0A=
+>=0A=
+> Unfortunately not. I could put the clk changes first (then I'd just have=
+=0A=
+> checkpatch.pl complaining about new compatible strings). But if the clk=
+=0A=
+> patches don't land before the dts changes the boards won't boot. However=
+=0A=
+> that affects 1 person that we know of (me).=0A=
+>=0A=
+=0A=
+Actually I wonder if I can try a bit harder to keep a system booting. =0A=
+The following might work=0A=
+1) add the compatible strings to the existing armada clock drivers.=0A=
+2) update the dts to use the new compatible strings.=0A=
+3) add the new driver and remove the compatible strings from the armada =0A=
+drivers.=0A=
+=0A=
+#1 would still upset checkpatch.pl because the documentation would only =0A=
+arrive in #2.=0A=
+=0A=
