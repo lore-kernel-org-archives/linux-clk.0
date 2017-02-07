@@ -1,61 +1,60 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 14 Feb 2017 11:44:08 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] clk: add more managed APIs
-Message-ID: <20170214194408.GW25384@codeaurora.org>
-References: <20170128184047.GA24957@dtor-ws>
- <20170128190309.GN27312@n2100.armlinux.org.uk>
- <20170128192207.GA38136@dtor-ws>
- <64ed0890-14f6-42ff-66b1-60f7b3d7d02f@roeck-us.net>
- <20170128233911.GO27312@n2100.armlinux.org.uk>
- <20170129180743.GA10917@dtor-ws>
- <20170130185551.GM8801@codeaurora.org>
- <20170131005713.GA35974@dtor-ws>
- <20170207035151.GA18296@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170207035151.GA18296@dtor-ws>
+Return-Path: <baoyou.xie@linaro.org>
+Return-Path: <baoyou.xie@linaro.org>
+From: Baoyou Xie <baoyou.xie@linaro.org>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	jun.nie@linaro.org,
+	baoyou.xie@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	shawn.guo@linaro.org,
+	vinod.koul@intel.com
+Cc: alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	shawnguo@kernel.org,
+	xie.baoyou@zte.com.cn,
+	chen.chaokai@zte.com.cn,
+	wang.qiang01@zte.com.cn
+Subject: [PATCH v2 2/3] dt: ASoC: zx-i2s: Document for the ZTE zx296718 I2S controller
+Date: Tue,  7 Feb 2017 11:02:50 +0800
+Message-Id: <1486436571-8682-2-git-send-email-baoyou.xie@linaro.org>
+In-Reply-To: <1486436571-8682-1-git-send-email-baoyou.xie@linaro.org>
+References: <1486436571-8682-1-git-send-email-baoyou.xie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/06, Dmitry Torokhov wrote:
-> On Mon, Jan 30, 2017 at 04:57:13PM -0800, Dmitry Torokhov wrote:
-> > When converting a driver to managed resources it is desirable to be able to
-> > manage all resources in the same fashion. This change allows managing clock
-> > prepared and enabled state in the same way we manage many other resources.
-> > 
-> > This adds the following managed APIs:
-> > 
-> > - devm_clk_prepare()/devm_clk_unprepare();
-> > - devm_clk_prepare_enable()/devm_clk_disable_unprepare().
-> > 
-> > Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> 
-> It would be awesome if we could get it into 4.11...
+This patch documents the devicetree for the ZTE's zx296718
+I2S audio controller.
 
-I'd prefer we didn't do this. Instead, make clk_put() drop any
-prepare or enables that were done via that clk pointer. Mike
-started to do this before[1], but we have some code that assumes
-it can do:
+Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+---
+ Documentation/devicetree/bindings/sound/zte,zx-i2s.txt | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-	clk = clk_get(...)
-	clk_prepare_enable(clk)
-	clk_put(clk)
-
-and have the clk stay on. Those would need to be changed.
-
-We would also need Russell's approval to update the clk_put()
-documentation to describe this change in behavior.
-
-[1] http://lkml.kernel.org/r/1438974570-20812-1-git-send-email-mturquette@baylibre.com
-
+diff --git a/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt b/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
+index 7e5aa6f..c405561 100644
+--- a/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
++++ b/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
+@@ -1,10 +1,12 @@
+ ZTE ZX296702 I2S controller
+ 
+ Required properties:
+- - compatible : Must be "zte,zx296702-i2s"
++ - compatible : Should include one of the following strings:
++	"zte,zx296702-i2s","zte,zx296718-i2s".
+  - reg : Must contain I2S core's registers location and length
+  - clocks : Pairs of phandle and specifier referencing the controller's clocks.
+- - clock-names: "tx" for the clock to the I2S interface.
++ - clock-names: "tx" for the wclk, "pclk" for the pclk to the I2S interface.
++	must contain pclk for zx296718 SoC.
+  - dmas: Pairs of phandle and specifier for the DMA channel that is used by
+    the core. The core expects two dma channels for transmit.
+  - dma-names : Must be "tx" and "rx"
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
