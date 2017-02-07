@@ -1,51 +1,84 @@
-Return-Path: <ce3a@gmx.de>
-From: Sergej Sawazki <ce3a@gmx.de>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	Sergej Sawazki <ce3a@gmx.de>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: [PATCH] clk: si5351: Do not enable parent clocks on probe
-Date: Sat,  4 Feb 2017 21:17:57 +0100
-Message-Id: <1486239477-24720-1-git-send-email-ce3a@gmx.de>
+Return-Path: <chrisp@alliedtelesis.co.nz>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v2 0/6] Updates for Marvell Switch SoCs
+Date: Wed,  8 Feb 2017 09:28:09 +1300
+Message-Id: <20170207202815.20226-1-chris.packham@alliedtelesis.co.nz>
 List-ID: <linux-clk.vger.kernel.org>
 
-The si5351 driver should not, by default, enable other clocks in
-the tree. Let the clients decide when to enable the clocks.
+Shortly after I posted my last series I got access to a more recent
+Marvell SDK which had some device tree support for the switch SoCs I'd
+been wanting. It was still based on an older kernel but it was a huge
+improvement over what came before.
 
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
----
- drivers/clk/clk-si5351.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Patch 1/6 is a typo I noticed after my initial series was applied.
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index b051db4..f9eb590 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -1442,9 +1442,9 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 	}
- 
- 	if (!IS_ERR(drvdata->pxtal))
--		clk_prepare_enable(drvdata->pxtal);
-+		clk_prepare(drvdata->pxtal);
- 	if (!IS_ERR(drvdata->pclkin))
--		clk_prepare_enable(drvdata->pclkin);
-+		clk_prepare(drvdata->pclkin);
- 
- 	/* register xtal input clock gate */
- 	memset(&init, 0, sizeof(init));
-@@ -1617,9 +1617,9 @@ static int si5351_i2c_probe(struct i2c_client *client,
- 
- err_clk:
- 	if (!IS_ERR(drvdata->pxtal))
--		clk_disable_unprepare(drvdata->pxtal);
-+		clk_unprepare(drvdata->pxtal);
- 	if (!IS_ERR(drvdata->pclkin))
--		clk_disable_unprepare(drvdata->pclkin);
-+		clk_unprepare(drvdata->pclkin);
- 	return ret;
- }
- 
+Patch 2/6 is a bit of a cleanup. I did initially struggle with how to
+access individual parts of the DFX block as well as retaining a handle on
+the entire thing for the switch driver to use.
+
+Patch 3/6 is a re-jig of the dtsi files which is needed by 5/6. This is
+required because I need to use the coreclk label on a different node. It
+also means I don't have to disable nodes for blocks that only exist on
+the Armada-XP.
+
+Patch 4/6, 5/6 and 6/6 are ported from the Marvell Linux kernel. I've tested
+them on the hardware I have access to and things look pretty good.
+
+Chris Packham (6):
+  ARM: dts: Fix typo in armada-xp-98dx4251
+    Changes in v2:
+    - new
+  ARM: dts: armada-xp-98dx3236: combine dfx server nodes
+    Changes in v2:
+    - none
+  ARM: dts: Use armada-370-xp as a base for armada-xp-98dx3236
+    Changes in v2:
+    - Update root compatible strings in armada-xp-98dx3336.dtsi,
+      armada-xp-98dx4251.dtsi, armada-xp-db-dxbc2.dts and
+      armada-xp-db-xc3-24g4xg.dts
+  ARM: mvebu: Add mv98dx3236-soc-id
+    Changes in v2:
+    - none
+  ARM: dts: mvebu: Move mv98dx3236 clock bindings
+    Changes in v2:
+    - New. Split out from "clk: mvebu: Expand mv98dx3236-core-clock support"
+  clk: mvebu: Expand mv98dx3236-core-clock support
+    Changes in v2:
+    - split dts updates into separate patch
+    - add 98DX4251 specific support
+
+ .../bindings/arm/marvell/mv98dx3236-soc-id.txt     |  14 ++
+ .../devicetree/bindings/clock/mvebu-core-clock.txt |   7 +
+ .../bindings/clock/mvebu-gated-clock.txt           |  11 ++
+ .../devicetree/bindings/net/marvell,prestera.txt   |  13 +-
+ arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 211 ++++++++++++++++-----
+ arch/arm/boot/dts/armada-xp-98dx3336.dtsi          |   2 +-
+ arch/arm/boot/dts/armada-xp-98dx4251.dtsi          |   2 +-
+ arch/arm/boot/dts/armada-xp-db-dxbc2.dts           |   2 +-
+ arch/arm/boot/dts/armada-xp-db-xc3-24g4xg.dts      |   2 +-
+ arch/arm/mach-mvebu/mvebu-soc-id.c                 |  43 ++++-
+ drivers/clk/mvebu/Makefile                         |   2 +-
+ drivers/clk/mvebu/armada-xp.c                      |  13 --
+ drivers/clk/mvebu/mv98dx3236.c                     | 180 ++++++++++++++++++
+ 13 files changed, 422 insertions(+), 80 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/marvell/mv98dx3236-soc-id.txt
+ create mode 100644 drivers/clk/mvebu/mv98dx3236.c
+
 -- 
-2.7.4
+2.11.0.24.ge6920cf
