@@ -1,120 +1,137 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 09/15] clk: ti: drop unnecessary MEMMAP_ADDRESSING flag
-Date: Mon, 13 Feb 2017 11:35:05 +0200
-Message-ID: <1486978511-29668-10-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
-References: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <baoyou.xie@linaro.org>
+Return-Path: <baoyou.xie@linaro.org>
+From: Baoyou Xie <baoyou.xie@linaro.org>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	jun.nie@linaro.org,
+	baoyou.xie@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	shawn.guo@linaro.org,
+	vinod.koul@intel.com
+Cc: alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	shawnguo@kernel.org,
+	xie.baoyou@zte.com.cn,
+	chen.chaokai@zte.com.cn,
+	wang.qiang01@zte.com.cn
+Subject: [PATCH v2 3/3] ASoC: zx-i2s: support zx296718 SoC for ZTE's i2s  controller driver
+Date: Tue,  7 Feb 2017 11:02:51 +0800
+Message-Id: <1486436571-8682-3-git-send-email-baoyou.xie@linaro.org>
+In-Reply-To: <1486436571-8682-1-git-send-email-baoyou.xie@linaro.org>
+References: <1486436571-8682-1-git-send-email-baoyou.xie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This has been superceded by the usage of ti_clk_ll_ops for now.
+This patch adds zx296718 SoC support for ZTE's i2s controller driver.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
 ---
- drivers/clk/ti/apll.c      | 1 -
- drivers/clk/ti/dpll.c      | 2 --
- drivers/clk/ti/gate.c      | 4 +---
- drivers/clk/ti/interface.c | 1 -
- include/linux/clk/ti.h     | 2 --
- 5 files changed, 1 insertion(+), 9 deletions(-)
+ sound/soc/zte/zx-i2s.c | 45 +++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 35 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
-index 62b5db7..5cba28c 100644
---- a/drivers/clk/ti/apll.c
-+++ b/drivers/clk/ti/apll.c
-@@ -194,7 +194,6 @@ static void __init of_dra7_apll_setup(struct device_node *node)
+diff --git a/sound/soc/zte/zx-i2s.c b/sound/soc/zte/zx-i2s.c
+index ed7a56d..2afac69 100644
+--- a/sound/soc/zte/zx-i2s.c
++++ b/sound/soc/zte/zx-i2s.c
+@@ -95,12 +95,13 @@
+ struct zx_i2s_info {
+ 	struct snd_dmaengine_dai_dma_data	dma_playback;
+ 	struct snd_dmaengine_dai_dma_data	dma_capture;
+-	struct clk				*dai_clk;
++	struct clk				*dai_wclk, *dai_pclk;
+ 	void __iomem				*reg_base;
+ 	int					master;
+ 	resource_size_t				mapbase;
+ };
  
- 	clk_hw->dpll_data = ad;
- 	clk_hw->hw.init = init;
--	clk_hw->flags = MEMMAP_ADDRESSING;
++
+ static void zx_i2s_tx_en(void __iomem *base, bool on)
+ {
+ 	unsigned long val;
+@@ -274,9 +275,14 @@ static int zx_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	val |= ZX_I2S_TIMING_CHN(ch_num);
+ 	writel_relaxed(val, i2s->reg_base + ZX_I2S_TIMING_CTRL);
  
- 	init->name = node->name;
- 	init->ops = &apll_ck_ops;
-diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-index 37624e1..c149bd1 100644
---- a/drivers/clk/ti/dpll.c
-+++ b/drivers/clk/ti/dpll.c
-@@ -248,7 +248,6 @@ struct clk *ti_clk_register_dpll(struct ti_clk *setup)
- 	clk_hw->dpll_data = dd;
- 	clk_hw->ops = &clkhwops_omap3_dpll;
- 	clk_hw->hw.init = &init;
--	clk_hw->flags = MEMMAP_ADDRESSING;
- 
- 	init.name = setup->name;
- 	init.ops = ops;
-@@ -380,7 +379,6 @@ static void __init of_ti_dpll_setup(struct device_node *node,
- 	clk_hw->dpll_data = dd;
- 	clk_hw->ops = &clkhwops_omap3_dpll;
- 	clk_hw->hw.init = init;
--	clk_hw->flags = MEMMAP_ADDRESSING;
- 
- 	init->name = node->name;
- 	init->ops = ops;
-diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
-index b3291db..5ff62e2 100644
---- a/drivers/clk/ti/gate.c
-+++ b/drivers/clk/ti/gate.c
-@@ -113,7 +113,7 @@ static struct clk *_register_gate(struct device *dev, const char *name,
- 	clk_hw->enable_bit = bit_idx;
- 	clk_hw->ops = hw_ops;
- 
--	clk_hw->flags = MEMMAP_ADDRESSING | clk_gate_flags;
-+	clk_hw->flags = clk_gate_flags;
- 
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
-@@ -203,7 +203,6 @@ struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup)
- 		ops = &clkhwops_iclk_wait;
- 
- 	gate->ops = ops;
--	gate->flags = MEMMAP_ADDRESSING;
- 
- 	return &gate->hw;
+-	if (i2s->master)
+-		ret = clk_set_rate(i2s->dai_clk,
+-				   params_rate(params) * ch_num * CLK_RAT);
++	if (i2s->master) {
++		unsigned long rate = params_rate(params) * ch_num * CLK_RAT;
++
++		ret = clk_set_rate(i2s->dai_wclk, rate);
++		if (!ret && i2s->dai_pclk)
++			ret = clk_set_rate(i2s->dai_pclk, rate);
++	}
++
+ 	return ret;
  }
-@@ -269,7 +268,6 @@ static void __init _of_ti_gate_clk_setup(struct device_node *node,
  
- 	gate->enable_bit = val;
- 	gate->ops = hw_ops;
--	gate->flags = MEMMAP_ADDRESSING;
+@@ -328,8 +334,19 @@ static int zx_i2s_startup(struct snd_pcm_substream *substream,
+ 			  struct snd_soc_dai *dai)
+ {
+ 	struct zx_i2s_info *zx_i2s = dev_get_drvdata(dai->dev);
++	int ret;
++
++	ret = clk_prepare_enable(zx_i2s->dai_wclk);
++	if (ret)
++		return ret;
  
- 	if (!ti_clk_add_component(node, &gate->hw, CLK_COMPONENT_TYPE_GATE))
- 		return;
-diff --git a/drivers/clk/ti/interface.c b/drivers/clk/ti/interface.c
-index 7927e1a..42d9fd4 100644
---- a/drivers/clk/ti/interface.c
-+++ b/drivers/clk/ti/interface.c
-@@ -47,7 +47,6 @@ static struct clk *_register_interface(struct device *dev, const char *name,
+-	return clk_prepare_enable(zx_i2s->dai_clk);
++	ret = clk_prepare_enable(zx_i2s->dai_pclk);
++	if (ret) {
++		clk_disable_unprepare(zx_i2s->dai_wclk);
++		return ret;
++	}
++
++	return ret;
+ }
  
- 	clk_hw->hw.init = &init;
- 	clk_hw->ops = ops;
--	clk_hw->flags = MEMMAP_ADDRESSING;
- 	clk_hw->enable_reg = reg;
- 	clk_hw->enable_bit = bit_idx;
+ static void zx_i2s_shutdown(struct snd_pcm_substream *substream,
+@@ -337,7 +354,8 @@ static void zx_i2s_shutdown(struct snd_pcm_substream *substream,
+ {
+ 	struct zx_i2s_info *zx_i2s = dev_get_drvdata(dai->dev);
  
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 626ae94..affdabd 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -168,7 +168,6 @@ struct clk_hw_omap {
-  *     should be used.  This is a temporary solution - a better approach
-  *     would be to associate clock type-specific data with the clock,
-  *     similar to the struct dpll_data approach.
-- * MEMMAP_ADDRESSING: Use memmap addressing to access clock registers.
-  */
- #define ENABLE_REG_32BIT	(1 << 0)	/* Use 32-bit access */
- #define CLOCK_IDLE_CONTROL	(1 << 1)
-@@ -176,7 +175,6 @@ struct clk_hw_omap {
- #define ENABLE_ON_INIT		(1 << 3)	/* Enable upon framework init */
- #define INVERT_ENABLE		(1 << 4)	/* 0 enables, 1 disables */
- #define CLOCK_CLKOUTX2		(1 << 5)
--#define MEMMAP_ADDRESSING	(1 << 6)
+-	clk_disable_unprepare(zx_i2s->dai_clk);
++	clk_disable_unprepare(zx_i2s->dai_wclk);
++	clk_disable_unprepare(zx_i2s->dai_pclk);
+ }
  
- /* CM_CLKEN_PLL*.EN* bit values - not all are available for every DPLL */
- #define DPLL_LOW_POWER_STOP	0x1
+ static struct snd_soc_dai_ops zx_i2s_dai_ops = {
+@@ -381,10 +399,16 @@ static int zx_i2s_probe(struct platform_device *pdev)
+ 	if (!zx_i2s)
+ 		return -ENOMEM;
+ 
+-	zx_i2s->dai_clk = devm_clk_get(&pdev->dev, "tx");
+-	if (IS_ERR(zx_i2s->dai_clk)) {
+-		dev_err(&pdev->dev, "Fail to get clk\n");
+-		return PTR_ERR(zx_i2s->dai_clk);
++	zx_i2s->dai_wclk = devm_clk_get(&pdev->dev, "tx");
++	if (IS_ERR(zx_i2s->dai_wclk)) {
++		dev_err(&pdev->dev, "Fail to get wclk\n");
++		return PTR_ERR(zx_i2s->dai_wclk);
++	}
++
++	zx_i2s->dai_pclk = devm_clk_get(&pdev->dev, "pclk");
++	if (IS_ERR(zx_i2s->dai_pclk)) {
++		dev_info(&pdev->dev, "have no pclk\n");
++		zx_i2s->dai_pclk = NULL;
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -414,6 +438,7 @@ static int zx_i2s_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id zx_i2s_dt_ids[] = {
+ 	{ .compatible = "zte,zx296702-i2s", },
++	{ .compatible = "zte,zx296718-i2s", },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, zx_i2s_dt_ids);
 -- 
-1.9.1
+2.7.4
