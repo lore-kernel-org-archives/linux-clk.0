@@ -1,88 +1,54 @@
-Return-Path: <Chris.Packham@alliedtelesis.co.nz>
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob
- Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason
- Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, "Gregory
- Clement" <gregory.clement@free-electrons.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] clk: mvebu: Expand mv98dx3236-core-clock support
-Date: Tue, 7 Feb 2017 03:07:37 +0000
-Message-ID: <6149d4126a214ac8b0b0184bd818bea6@svr-chch-ex1.atlnz.lc>
-References: <20170203034012.29399-1-chris.packham@alliedtelesis.co.nz>
- <20170203034012.29399-5-chris.packham@alliedtelesis.co.nz>
- <20170206231400.GM25384@codeaurora.org>
- <9974653ab84040c3b12fad075790c123@svr-chch-ex1.atlnz.lc>
- <20170207010308.GN25384@codeaurora.org>
- <ebe243d06f3542318e5365c560e6cf79@svr-chch-ex1.atlnz.lc>
- <5a974d9d7260432087619486bf5d79ed@svr-chch-ex1.atlnz.lc>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <shawnguo@kernel.org>
+Date: Tue, 7 Feb 2017 16:09:49 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Baoyou Xie <baoyou.xie@linaro.org>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, jun.nie@linaro.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, perex@perex.cz, tiwai@suse.com,
+	shawn.guo@linaro.org, vinod.koul@intel.com,
+	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, xie.baoyou@zte.com.cn,
+	chen.chaokai@zte.com.cn, wang.qiang01@zte.com.cn
+Subject: Re: [PATCH v2 1/3] clk: zte: add i2s clocks for zx296718
+Message-ID: <20170207080947.GG3407@dragon>
+References: <1486436571-8682-1-git-send-email-baoyou.xie@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1486436571-8682-1-git-send-email-baoyou.xie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/02/17 14:25, Chris Packham wrote:=0A=
-> On 07/02/17 14:13, Chris Packham wrote:=0A=
->> On 07/02/17 14:03, Stephen Boyd wrote:=0A=
->>> On 02/06, Chris Packham wrote:=0A=
->>>> On 07/02/17 12:14, Stephen Boyd wrote:=0A=
->>>>> On 02/03, Chris Packham wrote:=0A=
->>>>>> The initial implementation in commit e120c17a70e5 ("clk: mvebu: supp=
-ort=0A=
->>>>>> for 98DX3236 SoC") hardcoded a fixed value for the main PLL frequenc=
-y.=0A=
->>>>>> Port code from the Marvell supplied Linux kernel to support differen=
-t=0A=
->>>>>> PLL frequencies and provide clock gating support.=0A=
->>>>>>=0A=
->>>>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
->>>>>> ---=0A=
->>>>>>  .../devicetree/bindings/clock/mvebu-core-clock.txt |   7 +=0A=
->>>>>>  .../bindings/clock/mvebu-gated-clock.txt           |  11 ++=0A=
->>>>>>  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          |  14 +-=0A=
->>>>>>  drivers/clk/mvebu/Makefile                         |   2 +-=0A=
->>>>>>  drivers/clk/mvebu/armada-xp.c                      |  13 --=0A=
->>>>>>  drivers/clk/mvebu/mv98dx3236.c                     | 144 ++++++++++=
-+++++++++++=0A=
->>>>>=0A=
->>>>> This mixes dts and clk driver changes. Any chance it can be split=0A=
->>>>> up and just have the clk part go through clk tree? Otherwise, I=0A=
->>>>> can ack this if you want to take it all through arm-soc?=0A=
->>>>=0A=
->>>> I'm happy to split it if it will make life easier.=0A=
->>>>=0A=
->>>=0A=
->>> Well do things keep booting if the clk driver parts merge without=0A=
->>> the associated dts changes? It's nice to maintain backwards=0A=
->>> compatibility even for a short time to make the merge path=0A=
->>> easier.=0A=
->>>=0A=
->>=0A=
->> Unfortunately not. I could put the clk changes first (then I'd just have=
-=0A=
->> checkpatch.pl complaining about new compatible strings). But if the clk=
-=0A=
->> patches don't land before the dts changes the boards won't boot. However=
-=0A=
->> that affects 1 person that we know of (me).=0A=
->>=0A=
->=0A=
-> Actually I wonder if I can try a bit harder to keep a system booting.=0A=
-> The following might work=0A=
-> 1) add the compatible strings to the existing armada clock drivers.=0A=
-> 2) update the dts to use the new compatible strings.=0A=
-> 3) add the new driver and remove the compatible strings from the armada=
-=0A=
-> drivers.=0A=
->=0A=
-> #1 would still upset checkpatch.pl because the documentation would only=
-=0A=
-> arrive in #2.=0A=
-=0A=
-Actually upon testing #1 is unnecessary. I lose some of the gated clocks =
-=0A=
-but nothing that prevents booting.=0A=
-=0A=
+On Tue, Feb 07, 2017 at 11:02:49AM +0800, Baoyou Xie wrote:
+> The i2s related clock support is missing from the existing zx296718
+> clock driver. This patch adds it, so that the upstream ZX I2S driver
+> can work out.
+> 
+> Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+> ---
+>  drivers/clk/zte/clk-zx296718.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
+> index ad5d1df..f106d40 100644
+> --- a/drivers/clk/zte/clk-zx296718.c
+> +++ b/drivers/clk/zte/clk-zx296718.c
+> @@ -941,6 +941,10 @@ static struct zx_clk_gate audio_gate_clk[] = {
+>  	GATE(AUDIO_SPDIF1_WCLK, "spdif1_wclk", "spdif1_wclk_div", AUDIO_SPDIF1_CLK, 9, CLK_SET_RATE_PARENT, 0),
+>  	GATE(AUDIO_TDM_WCLK, "tdm_wclk", "tdm_wclk_div", AUDIO_TDM_CLK, 17, CLK_SET_RATE_PARENT, 0),
+>  	GATE(AUDIO_TS_PCLK, "tempsensor_pclk", "clk49m5", AUDIO_TS_CLK, 1, 0, 0),
+> +	GATE(AUDIO_I2S0_PCLK, "i2s0_pclk", "clk49m5", AUDIO_I2S0_CLK, 8, 0, 0),
+> +	GATE(AUDIO_I2S1_PCLK, "i2s1_pclk", "clk49m5", AUDIO_I2S1_CLK, 8, 0, 0),
+> +	GATE(AUDIO_I2S2_PCLK, "i2s2_pclk", "clk49m5", AUDIO_I2S2_CLK, 8, 0, 0),
+> +	GATE(AUDIO_I2S3_PCLK, "i2s3_pclk", "clk49m5", AUDIO_I2S3_CLK, 8, 0, 0),
+
+I would suggest we put these clocks together with AUDIO_I2S_WCLK, so
+that we can find I2S clocks in one place.
+
+Shawn
+
+>  };
+>  
+>  static struct clk_hw_onecell_data audio_hw_onecell_data = {
+> -- 
+> 2.7.4
+> 
