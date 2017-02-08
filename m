@@ -1,46 +1,84 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-Id: <20170213210619.208900184@cogentembedded.com>
-Date: Tue, 14 Feb 2017 00:06:04 +0300
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-Cc: Konstantin Kozhevnikov <Konstantin.Kozhevnikov@cogentembedded.com>,
- Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 1/1] clk: renesas: cpg-mssr: r8a7795: add IMR clocks
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Andre Przywara <andre.przywara@arm.com>,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-sunxi@googlegroups.com, dmaengine@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org
+In-Reply-To: <20170126154859.55855-9-icenowy@aosc.xyz>
+Message-Id: <E1cbX47-0000ia-Ks@debutante>
+Date: Wed, 08 Feb 2017 18:34:03 +0000
+Subject: Applied "ASoC: sunxi: allow the analog codec driver to be built on ARM64" to the asoc tree
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the IMR[0-3] clocks to the R8A7795 CPG/MSSR driver.
+The patch
 
-Based on the original (and large) patch by Konstantin Kozhevnikov
-<Konstantin.Kozhevnikov@cogentembedded.com>.
+   ASoC: sunxi: allow the analog codec driver to be built on ARM64
 
-Signed-off-by: Konstantin Kozhevnikov <Konstantin.Kozhevnikov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+has been applied to the asoc tree at
 
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From e5028a259733ec2324893cb481023ed6cf7e9723 Mon Sep 17 00:00:00 2001
+From: Icenowy Zheng <icenowy@aosc.xyz>
+Date: Wed, 8 Feb 2017 02:30:40 +0800
+Subject: [PATCH] ASoC: sunxi: allow the analog codec driver to be built on
+ ARM64
+
+As the 64-bit Allwinner H5 SoC has the same analog codec part (also the
+same digital part) as H3, enable the driver to be built on ARM64
+Allwinner platform, so that it can be used on H5.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-This patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
+ sound/soc/sunxi/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/renesas/r8a7795-cpg-mssr.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
-Index: linux/drivers/clk/renesas/r8a7795-cpg-mssr.c
-===================================================================
---- linux.orig/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ linux/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -208,6 +208,10 @@ static const struct mssr_mod_clk r8a7795
- 	DEF_MOD("vin0",			 811,	R8A7795_CLK_S2D1),
- 	DEF_MOD("etheravb",		 812,	R8A7795_CLK_S3D2),
- 	DEF_MOD("sata0",		 815,	R8A7795_CLK_S3D2),
-+	DEF_MOD("imr3",			 820,	R8A7795_CLK_S2D1),
-+	DEF_MOD("imr2",			 821,	R8A7795_CLK_S2D1),
-+	DEF_MOD("imr1",			 822,	R8A7795_CLK_S2D1),
-+	DEF_MOD("imr0",			 823,	R8A7795_CLK_S2D1),
- 	DEF_MOD("gpio7",		 905,	R8A7795_CLK_CP),
- 	DEF_MOD("gpio6",		 906,	R8A7795_CLK_CP),
- 	DEF_MOD("gpio5",		 907,	R8A7795_CLK_CP),
+diff --git a/sound/soc/sunxi/Kconfig b/sound/soc/sunxi/Kconfig
+index 13a8267f17c7..22408bc2d6ec 100644
+--- a/sound/soc/sunxi/Kconfig
++++ b/sound/soc/sunxi/Kconfig
+@@ -22,7 +22,7 @@ config SND_SUN8I_CODEC
+ 
+ config SND_SUN8I_CODEC_ANALOG
+ 	tristate "Allwinner sun8i Codec Analog Controls Support"
+-	depends on MACH_SUN8I || COMPILE_TEST
++	depends on MACH_SUN8I || (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+ 	select REGMAP
+ 	help
+ 	  Say Y or M if you want to add support for the analog controls for
+-- 
+2.11.0
