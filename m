@@ -1,64 +1,56 @@
-Return-Path: <alexander.stein@systec-electronic.com>
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 0/3] LS1021A: QSPI clock divider suport
-Date: Wed, 22 Feb 2017 16:03:46 +0100
-Message-Id: <20170222150349.16790-1-alexander.stein@systec-electronic.com>
+Return-Path: <baoyou.xie@linaro.org>
+Return-Path: <baoyou.xie@linaro.org>
+From: Baoyou Xie <baoyou.xie@linaro.org>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	jun.nie@linaro.org,
+	baoyou.xie@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	shawn.guo@linaro.org,
+	vinod.koul@intel.com
+Cc: alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	shawnguo@kernel.org,
+	mathieu.poirier@linaro.org,
+	xie.baoyou@zte.com.cn,
+	chen.chaokai@zte.com.cn,
+	wang.qiang01@zte.com.cn
+Subject: [PATCH v3 1/3] clk: zte: add i2s clocks for zx296718
+Date: Wed,  8 Feb 2017 11:02:33 +0800
+Message-Id: <1486522955-14528-1-git-send-email-baoyou.xie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+The i2s related clock support is missing from the existing zx296718
+clock driver. This patch adds it, so that the upstream ZX I2S driver
+can work out.
 
-first of all this is a set which is not supposed to be merged. I'll describe
-later why. Therefore I also skipped any device tree binding documentation.
-I'm trying to add QSPI clock divider support for LS1021A. This is a single
-register with 4 bits specifying a divider in the set of 8, 12, 16, 20, 23, 32,
-64 and 256.
-As a prove of concept I've added 3 patches adding this feature.
-1st patch:
-Adding a clk_register_divider_table providing those divider set.
+Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+---
+ drivers/clk/zte/clk-zx296718.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-2nd patch:
-DT node for this driver.
-
-3rd patch:
-DT node for QSPI periphery using this clock divider.
-
-The biggest flaws in the current implementation:
-* I don't like the idea of adding a driver for a specific register for a specific
-  platform. Although LS1043 has the same register (even at same offset) but
-  LS2080 has different valid values (e.g. 0 and 1 are reserved), different
-  dividers and a different parent clock. I would like to provide this dividers
-  in DT itself, but apparently there is no simple driver around
-  clk_register_divider_table, no?
-* The bigger problem is that the SCFG periphery containing this register is
-  connected in big endian, even this is a little endian ARM CPU.
-  The values in clk-ls1021a.c for divider offset is actually wrong, but works
-  because this is read big endian.
-  The problem is that clk_readl (used e.g. by clk-divider) and clk_writel
-  assume to access by little endian, unless platform is PPC.
-  I suspect adding endian awareness for those functions affects lots of
-  users and seems non-trivial.
-
-Any comments about the approach using clk_register_divider_table? How about a
-specific driver providing a simple clock divider table in DT? And finally
-any suggestions how to add endian awareness for clk_readl/clk_writel?
-
-Best regards,
-Alexander
-
-Alexander Stein (3):
-  clk: ls1021a: new platform clock driver
-  ARM: dts: ls1021a: Add node for scfg-qspi-cfg
-  ARM: dts: ls1021a: Add QSPI node
-
- arch/arm/boot/dts/ls1021a.dtsi | 24 +++++++++++++++++
- drivers/clk/Makefile           |  1 +
- drivers/clk/clk-ls1021a.c      | 58 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 83 insertions(+)
- create mode 100644 drivers/clk/clk-ls1021a.c
-
+diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
+index ad5d1df..f106d40 100644
+--- a/drivers/clk/zte/clk-zx296718.c
++++ b/drivers/clk/zte/clk-zx296718.c
+@@ -941,6 +941,10 @@ static struct zx_clk_gate audio_gate_clk[] = {
+ 	GATE(AUDIO_SPDIF1_WCLK, "spdif1_wclk", "spdif1_wclk_div", AUDIO_SPDIF1_CLK, 9, CLK_SET_RATE_PARENT, 0),
+ 	GATE(AUDIO_TDM_WCLK, "tdm_wclk", "tdm_wclk_div", AUDIO_TDM_CLK, 17, CLK_SET_RATE_PARENT, 0),
+ 	GATE(AUDIO_TS_PCLK, "tempsensor_pclk", "clk49m5", AUDIO_TS_CLK, 1, 0, 0),
++	GATE(AUDIO_I2S0_PCLK, "i2s0_pclk", "clk49m5", AUDIO_I2S0_CLK, 8, 0, 0),
++	GATE(AUDIO_I2S1_PCLK, "i2s1_pclk", "clk49m5", AUDIO_I2S1_CLK, 8, 0, 0),
++	GATE(AUDIO_I2S2_PCLK, "i2s2_pclk", "clk49m5", AUDIO_I2S2_CLK, 8, 0, 0),
++	GATE(AUDIO_I2S3_PCLK, "i2s3_pclk", "clk49m5", AUDIO_I2S3_CLK, 8, 0, 0),
+ };
+ 
+ static struct clk_hw_onecell_data audio_hw_onecell_data = {
 -- 
-2.10.2
+2.7.4
