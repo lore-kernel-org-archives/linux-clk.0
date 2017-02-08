@@ -1,46 +1,45 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Return-Path: <markus.mayer@broadcom.com>
 MIME-Version: 1.0
-In-Reply-To: <20170217173722.6477-1-icenowy@aosc.xyz>
-References: <20170217173722.6477-1-icenowy@aosc.xyz>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 23 Feb 2017 15:56:30 +0100
-Message-ID: <CACRpkdaGXbXDsrpN4-EY6C5OountFfU8JfbnhX+71GDVi7F0uQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/9] Add support for Allwinner R40 SoC
-To: Icenowy Zheng <icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-sunxi <linux-sunxi@googlegroups.com>,
- Kishon Vijay Abraham I <kishon@ti.com>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20170207184145.32brcgfvl66p5qtm@rob-hp-laptop>
+References: <20170201232638.74396-1-code@mmayer.net> <20170201232638.74396-2-code@mmayer.net>
+ <20170207184145.32brcgfvl66p5qtm@rob-hp-laptop>
+From: Markus Mayer <markus.mayer@broadcom.com>
+Date: Wed, 8 Feb 2017 09:29:20 -0800
+Message-ID: <CAGt4E5t8rtgCgCTMcU1m0Gq9BgHckTUus3h8=j03NF0k4icwzg@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] dt-bindings: brcm: clocks: add binding for brcmstb-cpu-clk-div
+To: Rob Herring <robh@kernel.org>
+Cc: Markus Mayer <code@mmayer.net>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
+	Linux Clock List <linux-clk@vger.kernel.org>,
+	Power Management List <linux-pm@vger.kernel.org>, Device Tree List <devicetree@vger.kernel.org>,
+	ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Feb 17, 2017 at 6:37 PM, Icenowy Zheng <icenowy@aosc.xyz> wrote:
-
-> This patchset is an experiment to add R40 support to mainline Linux.
+On 7 February 2017 at 10:41, Rob Herring <robh@kernel.org> wrote:
+> On Wed, Feb 01, 2017 at 03:26:37PM -0800, Markus Mayer wrote:
+>> From: Markus Mayer <mmayer@broadcom.com>
+>>
+>> Add binding document for brcm,brcmstb-cpu-clk-div.
+>>
+>> Signed-off-by: Markus Mayer <mmayer@broadcom.com>
+>> ---
+>>  .../bindings/clock/brcm,brcmstb-cpu-clk-div.txt    | 22 ++++++++++++++++++++++
+>>  MAINTAINERS                                        |  1 +
+>>  2 files changed, 23 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
 >
-> As we have still no user manual for R40, the patchset is developed
-> by reading the BSP source code and device tree, educated guess and
-> try and error.
+> Acked-by: Rob Herring <robh@kernel.org>
 
-Out of curiosity: does the board support use the mainline drivers
-as starting point? I.e. does it build on top of the community work done
-by Maxime & others?
+Actually, Stephen wasn't liking this too much.
 
-Yours,
-Linus Walleij
+See [1] for the conclusion of the ensuing discussion.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Regards,
+-Markus
+
+[1] https://lkml.org/lkml/2017/2/6/982
