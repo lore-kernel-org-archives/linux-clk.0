@@ -1,95 +1,103 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>,
- David Airlie <airlied@linux.ie>
-Subject: [PATCH 0/8] Initial Allwinner Display Engine 2.0 Support
-Date: Wed, 22 Feb 2017 23:18:46 +0800
-Message-Id: <20170222151854.3280-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Jean-Francois Moine <moinejf@free.fr>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:51888 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751002AbdBIBsC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Feb 2017 20:48:02 -0500
+Message-ID: <1486604877.29572.9.camel@mtkswgap22>
+Subject: Re: [PATCH v2 01/10] Document: DT: mediatek: multiple base address
+ support for sysirq
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Rob Herring <robh@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        "Yingjoe Chen" <yingjoe.chen@mediatek.com>,
+        My Chuang <my.chuang@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        <linux-clk@vger.kernel.org>,
+        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>
+Date: Thu, 9 Feb 2017 09:47:57 +0800
+In-Reply-To: <20170208232039.p7ljh4krndtn2edy@rob-hp-laptop>
+References: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
+         <1486383336-16892-2-git-send-email-mars.cheng@mediatek.com>
+         <20170208232039.p7ljh4krndtn2edy@rob-hp-laptop>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is the initial patchset for Allwinner DE2 support.
+Hi Rob,
 
-It contains the support of clocks in DE2 and the mixers in DE2.
+On Wed, 2017-02-08 at 17:20 -0600, Rob Herring wrote:
+> On Mon, Feb 06, 2017 at 08:15:27PM +0800, Mars Cheng wrote:
+> > This describes how to specify multiple base addresses for sysirq
+> > in mediatek platforms.
+> > 
+> > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> > ---
+> >  .../interrupt-controller/mediatek,sysirq.txt       |   13 +++++++++----
+> >  1 file changed, 9 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+> > index 9d1d72c..1718454 100644
+> > --- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+> > +++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+> > @@ -18,16 +18,21 @@ Required properties:
+> >  	"mediatek,mt2701-sysirq"
+> >  - interrupt-controller : Identifies the node as an interrupt controller
+> >  - #interrupt-cells : Use the same format as specified by GIC in arm,gic.txt.
+> > +- #intpol-bases: Indicate how many base addresses to be used, default is 1.
+> 
+> There is no point in this. It can either be implied by the compatible 
+> string or you just try to get the resource for the 2nd region. (Or in DT 
+> terms, get the size of reg.)
+> 
 
-The SoC used to develop this patchset is V3s, as V3s is the simplest
-one of the SoCs that have DE2.
-(Allwinner V3s features only one mixer, although its clock control
-unit contains support for second mixer's clock; and its only video
-output is RGB LCD, which is already supported in our TCON driver)
+Originally I try to mimic #redistributor-regions in
+Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt.
 
-The last patch is only a testing patch, it shouldn't be merged; and
-for the patch to be really usable, the RFC fix of the TCON driver [1]
-is needed.
+But I think you are right since irq-gic-v3 has several kinds of bases in
+reg so that they need an indicator to decode. For irq-mtk-sysirq, we can
+just try 2nd region and increment a counter to get the number of bases.
 
-No HDMI, TV encoder or other internal bridges' support is included
-in this patchset, which makes it currently not usable on H3.
+Will fix this in v3.
 
-Thanks to Jean-Francois Moine and Jernej Skrabec for their efforts
-to discover the internal of DE2!
+Thanks.
 
-[1] https://lists.freedesktop.org/archives/dri-devel/2016-December/126264.html
-
-Icenowy Zheng (8):
-  dt-bindings: add binding for the Allwinner DE2 CCU
-  clk: sunxi-ng: add support for DE2 CCU
-  dt-bindings: add bindings for DE2 on V3s SoC
-  drm/sun4i: add support for sun8i DE2 mixers and display engines
-  drm/sun4i: tcon: add support for V3s TCON
-  ARM: dts: sun8i: add DE2 nodes for V3s SoC
-  ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
-  [DO NOT MERGE] ARM: dts: sun8i: enable LCD panel of Lichee Pi Zero
-
- .../devicetree/bindings/clock/sunxi-de2.txt        |  31 ++
- .../bindings/display/sunxi/sun4i-drm.txt           |  37 +-
- arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts      |  36 ++
- arch/arm/boot/dts/sun8i-v3s.dtsi                   |  96 +++++
- drivers/clk/sunxi-ng/Kconfig                       |   6 +
- drivers/clk/sunxi-ng/Makefile                      |   1 +
- drivers/clk/sunxi-ng/ccu-sunxi-de2.c               | 204 ++++++++++
- drivers/clk/sunxi-ng/ccu-sunxi-de2.h               |  28 ++
- drivers/gpu/drm/sun4i/Kconfig                      |   8 +
- drivers/gpu/drm/sun4i/Makefile                     |   1 +
- drivers/gpu/drm/sun4i/sun4i_crtc.c                 |   6 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c                  |  41 +-
- drivers/gpu/drm/sun4i/sun4i_drv.h                  |   1 +
- drivers/gpu/drm/sun4i/sun4i_layer.c                |  92 ++++-
- drivers/gpu/drm/sun4i/sun4i_layer.h                |   1 +
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |   5 +
- drivers/gpu/drm/sun4i/sun8i_mixer.c                | 417 +++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_mixer.h                | 133 +++++++
- include/dt-bindings/clock/sunxi-de2.h              |  54 +++
- include/dt-bindings/reset/sunxi-de2.h              |  50 +++
- 20 files changed, 1220 insertions(+), 28 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/sunxi-de2.txt
- create mode 100644 drivers/clk/sunxi-ng/ccu-sunxi-de2.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sunxi-de2.h
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.c
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.h
- create mode 100644 include/dt-bindings/clock/sunxi-de2.h
- create mode 100644 include/dt-bindings/reset/sunxi-de2.h
-
--- 
-2.11.1
+> >  - interrupt-parent: phandle of irq parent for sysirq. The parent must
+> >    use the same interrupt-cells format as GIC.
+> >  - reg: Physical base address of the intpol registers and length of memory
+> > -  mapped region.
+> > +  mapped region. Could be multiple bases here. Ex: mt6797 needs 2 reg, others
+> > +  need 1. If not set, the default is 1.
+> >  
+> >  Example:
+> > -	sysirq: interrupt-controller@10200100 {
+> > -		compatible = "mediatek,mt6589-sysirq", "mediatek,mt6577-sysirq";
+> > +	sysirq: intpol-controller@10200620 {
+> > +		compatible = "mediatek,mt6797-sysirq",
+> > +			     "mediatek,mt6577-sysirq";
+> >  		interrupt-controller;
+> >  		#interrupt-cells = <3>;
+> > +		#intpol-bases = <2>;
+> >  		interrupt-parent = <&gic>;
+> > -		reg = <0 0x10200100 0 0x1c>;
+> > +		reg = <0 0x10220620 0 0x20>,
+> > +		      <0 0x10220690 0 0x10>;
+> >  	};
+> > -- 
+> > 1.7.9.5
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
