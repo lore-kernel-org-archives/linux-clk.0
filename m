@@ -1,231 +1,125 @@
-Return-Path: <cyndis@kapsi.fi>
-Subject: Re: [PATCH 2/5] clk: tegra: define Tegra210 DMIC sync clocks
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>,
- linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1487853585-17934-1-git-send-email-pdeschrijver@nvidia.com>
- <1487853585-17934-3-git-send-email-pdeschrijver@nvidia.com>
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <594c6039-4682-8d11-94db-3f88a46f708e@kapsi.fi>
-Date: Mon, 27 Feb 2017 20:27:33 +0200
-MIME-Version: 1.0
-In-Reply-To: <1487853585-17934-3-git-send-email-pdeschrijver@nvidia.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <baoyou.xie@linaro.org>
+Return-Path: <baoyou.xie@linaro.org>
+From: Baoyou Xie <baoyou.xie@linaro.org>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	jun.nie@linaro.org,
+	baoyou.xie@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	shawn.guo@linaro.org,
+	vinod.koul@intel.com
+Cc: alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	shawnguo@kernel.org,
+	mathieu.poirier@linaro.org,
+	xie.baoyou@zte.com.cn,
+	chen.chaokai@zte.com.cn,
+	wang.qiang01@zte.com.cn
+Subject: [PATCH v4 3/3] ASoC: zx-i2s: introduce pclk for zx2967 family
+Date: Thu,  9 Feb 2017 11:12:58 +0800
+Message-Id: <1486609978-18482-3-git-send-email-baoyou.xie@linaro.org>
+In-Reply-To: <1486609978-18482-1-git-send-email-baoyou.xie@linaro.org>
+References: <1486609978-18482-1-git-send-email-baoyou.xie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/23/2017 02:39 PM, Peter De Schrijver wrote:
-> Tegra210 has 3 DMIC inputs which can be clocked from the recovered clock
-> of several other audio inputs (eg. i2s0, i2s1, ...). To model this, we add
-> a 3 new clocks similar to the audio* clocks which handle the same function
-> for the i2s and spdif clocks.
->
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-id.h               |  8 ++-
->  drivers/clk/tegra/clk-tegra-audio.c      | 85 +++++++++++++++++++++++---------
->  drivers/clk/tegra/clk-tegra210.c         |  6 +++
->  include/dt-bindings/clock/tegra210-car.h |  9 +++-
->  4 files changed, 82 insertions(+), 26 deletions(-)
->
-> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-> index fc978b2..ab9b347 100644
-> --- a/drivers/clk/tegra/clk-id.h
-> +++ b/drivers/clk/tegra/clk-id.h
-> @@ -307,8 +307,14 @@ enum clk_id {
->  	tegra_clk_xusb_ssp_src,
->  	tegra_clk_sclk_mux,
->  	tegra_clk_sor_safe,
-> -	tegra_clk_ispa,
->  	tegra_clk_cec,
-> +	tegra_clk_ispa,
-> +	tegra_clk_dmic1_sync_clk,
-> +	tegra_clk_dmic2_sync_clk,
-> +	tegra_clk_dmic3_sync_clk,
-> +	tegra_clk_dmic1_sync_clk_mux,
-> +	tegra_clk_dmic2_sync_clk_mux,
-> +	tegra_clk_dmic3_sync_clk_mux,
->  	tegra_clk_max,
->  };
->
-> diff --git a/drivers/clk/tegra/clk-tegra-audio.c b/drivers/clk/tegra/clk-tegra-audio.c
-> index e2bfa9b..b4da6e0 100644
-> --- a/drivers/clk/tegra/clk-tegra-audio.c
-> +++ b/drivers/clk/tegra/clk-tegra-audio.c
-> @@ -31,6 +31,9 @@
->  #define AUDIO_SYNC_CLK_I2S3 0x4ac
->  #define AUDIO_SYNC_CLK_I2S4 0x4b0
->  #define AUDIO_SYNC_CLK_SPDIF 0x4b4
-> +#define AUDIO_SYNC_CLK_DMIC1 0x560
-> +#define AUDIO_SYNC_CLK_DMIC2 0x564
-> +#define AUDIO_SYNC_CLK_DMIC3 0x6b8
->
->  #define AUDIO_SYNC_DOUBLER 0x49c
->
-> @@ -91,8 +94,14 @@ struct tegra_audio2x_clk_initdata {
->
->  static DEFINE_SPINLOCK(clk_doubler_lock);
->
-> -static const char *mux_audio_sync_clk[] = { "spdif_in_sync", "i2s0_sync",
-> -	"i2s1_sync", "i2s2_sync", "i2s3_sync", "i2s4_sync", "vimclk_sync",
-> +static const char * const mux_audio_sync_clk[] = { "spdif_in_sync",
-> +	"i2s0_sync", "i2s1_sync", "i2s2_sync", "i2s3_sync", "i2s4_sync",
-> +	"pll_a_out0", "vimclk_sync",
-> +};
-> +
-> +static const char * const mux_dmic_sync_clk[] = { "unused", "i2s0_sync",
-> +	"i2s1_sync", "i2s2_sync", "i2s3_sync", "i2s4_sync", "pll_a_out0",
-> +	"vimclk_sync",
->  };
+The pclk is necessary for zx2967 I2S controller. the driver
+currently doesn't handle it. This is something we need to fix.
 
-My GCC spews a bunch of warnings because these are "const char * const" 
-and are passed to tegra_audio_sync_clk_init which takes "const char **". 
-Similarly for mux_dmic[123] which end up in a struct 
-tegra_periph_init_data which also has a "const char **" field; and 
-finally aclk_parents has the same issue.
+In turn, the driver supports zx296718's I2S controller.
 
-Apart from that, the series:
+By the way, this patch also change the clock name from tx to wclk
+to make it clear.
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-Tested-by: Mikko Perttunen <mperttunen@nvidia.com>
-(booted and verified clocks show up)
+Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+---
+ sound/soc/zte/zx-i2s.c | 38 +++++++++++++++++++++++++++++---------
+ 1 file changed, 29 insertions(+), 9 deletions(-)
 
->
->  static struct tegra_sync_source_initdata sync_source_clks[] __initdata = {
-> @@ -114,6 +123,12 @@ struct tegra_audio2x_clk_initdata {
->  	AUDIO(spdif, AUDIO_SYNC_CLK_SPDIF),
->  };
->
-> +static struct tegra_audio_clk_initdata dmic_clks[] = {
-> +	AUDIO(dmic1_sync_clk, AUDIO_SYNC_CLK_DMIC1),
-> +	AUDIO(dmic2_sync_clk, AUDIO_SYNC_CLK_DMIC2),
-> +	AUDIO(dmic3_sync_clk, AUDIO_SYNC_CLK_DMIC3),
-> +};
-> +
->  static struct tegra_audio2x_clk_initdata audio2x_clks[] = {
->  	AUDIO2X(audio0, 113, 24),
->  	AUDIO2X(audio1, 114, 25),
-> @@ -123,6 +138,41 @@ struct tegra_audio2x_clk_initdata {
->  	AUDIO2X(spdif, 118, 29),
->  };
->
-> +static void __init tegra_audio_sync_clk_init(void __iomem *clk_base,
-> +				      struct tegra_clk *tegra_clks,
-> +				      struct tegra_audio_clk_initdata *sync,
-> +				      int num_sync_clks,
-> +				      const char **mux_names,
-> +				      int num_mux_inputs)
-> +{
-> +	struct clk *clk;
-> +	struct clk **dt_clk;
-> +	struct tegra_audio_clk_initdata *data;
-> +	int i;
-> +
-> +	for (i = 0, data = sync; i < num_sync_clks; i++, data++) {
-> +		dt_clk = tegra_lookup_dt_id(data->mux_clk_id, tegra_clks);
-> +		if (!dt_clk)
-> +			continue;
-> +
-> +		clk = clk_register_mux(NULL, data->mux_name, mux_names,
-> +					num_mux_inputs,
-> +					CLK_SET_RATE_NO_REPARENT,
-> +					clk_base + data->offset, 0, 3, 0,
-> +					NULL);
-> +		*dt_clk = clk;
-> +
-> +		dt_clk = tegra_lookup_dt_id(data->gate_clk_id, tegra_clks);
-> +		if (!dt_clk)
-> +			continue;
-> +
-> +		clk = clk_register_gate(NULL, data->gate_name, data->mux_name,
-> +					0, clk_base + data->offset, 4,
-> +					CLK_GATE_SET_TO_DISABLE, NULL);
-> +		*dt_clk = clk;
-> +	}
-> +}
-> +
->  void __init tegra_audio_clk_init(void __iomem *clk_base,
->  			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
->  			struct tegra_audio_clk_info *audio_info,
-> @@ -176,30 +226,17 @@ void __init tegra_audio_clk_init(void __iomem *clk_base,
->  		*dt_clk = clk;
->  	}
->
-> -	for (i = 0; i < ARRAY_SIZE(audio_clks); i++) {
-> -		struct tegra_audio_clk_initdata *data;
-> +	tegra_audio_sync_clk_init(clk_base, tegra_clks, audio_clks,
-> +				  ARRAY_SIZE(audio_clks), mux_audio_sync_clk,
-> +				  ARRAY_SIZE(mux_audio_sync_clk));
->
-> -		data = &audio_clks[i];
-> -		dt_clk = tegra_lookup_dt_id(data->mux_clk_id, tegra_clks);
-> +	/* make sure the DMIC sync clocks have a valid parent */
-> +	for (i = 0; i < ARRAY_SIZE(dmic_clks); i++)
-> +		writel_relaxed(1, clk_base + dmic_clks[i].offset);
->
-> -		if (!dt_clk)
-> -			continue;
-> -		clk = clk_register_mux(NULL, data->mux_name, mux_audio_sync_clk,
-> -					ARRAY_SIZE(mux_audio_sync_clk),
-> -					CLK_SET_RATE_NO_REPARENT,
-> -					clk_base + data->offset, 0, 3, 0,
-> -					NULL);
-> -		*dt_clk = clk;
-> -
-> -		dt_clk = tegra_lookup_dt_id(data->gate_clk_id, tegra_clks);
-> -		if (!dt_clk)
-> -			continue;
-> -
-> -		clk = clk_register_gate(NULL, data->gate_name, data->mux_name,
-> -					0, clk_base + data->offset, 4,
-> -					CLK_GATE_SET_TO_DISABLE, NULL);
-> -		*dt_clk = clk;
-> -	}
-> +	tegra_audio_sync_clk_init(clk_base, tegra_clks, dmic_clks,
-> +				  ARRAY_SIZE(dmic_clks), mux_dmic_sync_clk,
-> +				  ARRAY_SIZE(mux_dmic_sync_clk));
->
->  	for (i = 0; i < ARRAY_SIZE(audio2x_clks); i++) {
->  		struct tegra_audio2x_clk_initdata *data;
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index bdb296a..ca63901 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -2223,6 +2223,12 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
->  	[tegra_clk_pll_a1] = { .dt_id = TEGRA210_CLK_PLL_A1, .present = true },
->  	[tegra_clk_ispa] = { .dt_id = TEGRA210_CLK_ISPA, .present = true },
->  	[tegra_clk_cec] = { .dt_id = TEGRA210_CLK_CEC, .present = true },
-> +	[tegra_clk_dmic1_sync_clk] = { .dt_id = TEGRA210_CLK_DMIC1_SYNC_CLK, .present = true },
-> +	[tegra_clk_dmic2_sync_clk] = { .dt_id = TEGRA210_CLK_DMIC2_SYNC_CLK, .present = true },
-> +	[tegra_clk_dmic3_sync_clk] = { .dt_id = TEGRA210_CLK_DMIC3_SYNC_CLK, .present = true },
-> +	[tegra_clk_dmic1_sync_clk_mux] = { .dt_id = TEGRA210_CLK_DMIC1_SYNC_CLK_MUX, .present = true },
-> +	[tegra_clk_dmic2_sync_clk_mux] = { .dt_id = TEGRA210_CLK_DMIC2_SYNC_CLK_MUX, .present = true },
-> +	[tegra_clk_dmic3_sync_clk_mux] = { .dt_id = TEGRA210_CLK_DMIC3_SYNC_CLK_MUX, .present = true },
->  };
->
->  static struct tegra_devclk devclks[] __initdata = {
-> diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-> index e7a2578..5aa1027 100644
-> --- a/include/dt-bindings/clock/tegra210-car.h
-> +++ b/include/dt-bindings/clock/tegra210-car.h
-> @@ -396,6 +396,13 @@
->  #define TEGRA210_CLK_PLL_C_UD 364
->  #define TEGRA210_CLK_SCLK_MUX 365
->
-> -#define TEGRA210_CLK_CLK_MAX 366
-> +#define TEGRA210_CLK_DMIC1_SYNC_CLK 388
-> +#define TEGRA210_CLK_DMIC1_SYNC_CLK_MUX 389
-> +#define TEGRA210_CLK_DMIC2_SYNC_CLK 390
-> +#define TEGRA210_CLK_DMIC2_SYNC_CLK_MUX 391
-> +#define TEGRA210_CLK_DMIC3_SYNC_CLK 392
-> +#define TEGRA210_CLK_DMIC3_SYNC_CLK_MUX 393
-> +
-> +#define TEGRA210_CLK_CLK_MAX 394
->
->  #endif	/* _DT_BINDINGS_CLOCK_TEGRA210_CAR_H */
->
+diff --git a/sound/soc/zte/zx-i2s.c b/sound/soc/zte/zx-i2s.c
+index ed7a56d..a865f37 100644
+--- a/sound/soc/zte/zx-i2s.c
++++ b/sound/soc/zte/zx-i2s.c
+@@ -95,7 +95,8 @@
+ struct zx_i2s_info {
+ 	struct snd_dmaengine_dai_dma_data	dma_playback;
+ 	struct snd_dmaengine_dai_dma_data	dma_capture;
+-	struct clk				*dai_clk;
++	struct clk				*dai_wclk;
++	struct clk				*dai_pclk;
+ 	void __iomem				*reg_base;
+ 	int					master;
+ 	resource_size_t				mapbase;
+@@ -275,8 +276,9 @@ static int zx_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	writel_relaxed(val, i2s->reg_base + ZX_I2S_TIMING_CTRL);
+ 
+ 	if (i2s->master)
+-		ret = clk_set_rate(i2s->dai_clk,
+-				   params_rate(params) * ch_num * CLK_RAT);
++		ret = clk_set_rate(i2s->dai_wclk,
++				params_rate(params) * ch_num * CLK_RAT);
++
+ 	return ret;
+ }
+ 
+@@ -328,8 +330,19 @@ static int zx_i2s_startup(struct snd_pcm_substream *substream,
+ 			  struct snd_soc_dai *dai)
+ {
+ 	struct zx_i2s_info *zx_i2s = dev_get_drvdata(dai->dev);
++	int ret;
++
++	ret = clk_prepare_enable(zx_i2s->dai_wclk);
++	if (ret)
++		return ret;
++
++	ret = clk_prepare_enable(zx_i2s->dai_pclk);
++	if (ret) {
++		clk_disable_unprepare(zx_i2s->dai_wclk);
++		return ret;
++	}
+ 
+-	return clk_prepare_enable(zx_i2s->dai_clk);
++	return ret;
+ }
+ 
+ static void zx_i2s_shutdown(struct snd_pcm_substream *substream,
+@@ -337,7 +350,8 @@ static void zx_i2s_shutdown(struct snd_pcm_substream *substream,
+ {
+ 	struct zx_i2s_info *zx_i2s = dev_get_drvdata(dai->dev);
+ 
+-	clk_disable_unprepare(zx_i2s->dai_clk);
++	clk_disable_unprepare(zx_i2s->dai_wclk);
++	clk_disable_unprepare(zx_i2s->dai_pclk);
+ }
+ 
+ static struct snd_soc_dai_ops zx_i2s_dai_ops = {
+@@ -381,10 +395,16 @@ static int zx_i2s_probe(struct platform_device *pdev)
+ 	if (!zx_i2s)
+ 		return -ENOMEM;
+ 
+-	zx_i2s->dai_clk = devm_clk_get(&pdev->dev, "tx");
+-	if (IS_ERR(zx_i2s->dai_clk)) {
+-		dev_err(&pdev->dev, "Fail to get clk\n");
+-		return PTR_ERR(zx_i2s->dai_clk);
++	zx_i2s->dai_wclk = devm_clk_get(&pdev->dev, "wclk");
++	if (IS_ERR(zx_i2s->dai_wclk)) {
++		dev_err(&pdev->dev, "Fail to get wclk\n");
++		return PTR_ERR(zx_i2s->dai_wclk);
++	}
++
++	zx_i2s->dai_pclk = devm_clk_get(&pdev->dev, "pclk");
++	if (IS_ERR(zx_i2s->dai_pclk)) {
++		dev_err(&pdev->dev, "Fail to get pclk\n");
++		return PTR_ERR(zx_i2s->dai_pclk);
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-- 
+2.7.4
