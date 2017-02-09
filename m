@@ -1,98 +1,72 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Wed, 1 Feb 2017 14:35:33 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, ludovic.barre@st.com,
-	olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [Resend PATCH v2 1/3] dt-bindings: mfd: stm32f4: Fix
- STM32F4_X_CLOCK() macro
-Message-ID: <20170201143533.pxwe6gmfcymmsy4p@dell>
-References: <1485954596-11014-1-git-send-email-gabriel.fernandez@st.com>
- <1485954596-11014-2-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <broonie@sirena.org.uk>
+Date: Thu, 9 Feb 2017 12:06:25 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Baoyou Xie <baoyou.xie@linaro.org>,
+	lgirdwood@gmail.com, mark.rutland@arm.com, jun.nie@linaro.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org, perex@perex.cz,
+	tiwai@suse.com, shawn.guo@linaro.org, vinod.koul@intel.com,
+	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, mathieu.poirier@linaro.org,
+	xie.baoyou@zte.com.cn, chen.chaokai@zte.com.cn,
+	wang.qiang01@zte.com.cn
+Message-ID: <20170209120625.lhqcistgyjpy3plq@sirena.org.uk>
+References: <1486522955-14528-1-git-send-email-baoyou.xie@linaro.org>
+ <1486522955-14528-2-git-send-email-baoyou.xie@linaro.org>
+ <20170209005207.y6wcrzk43ngfslhl@rob-hp-laptop>
+ <20170209014807.GO3407@dragon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1485954596-11014-2-git-send-email-gabriel.fernandez@st.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="l2smyxk6aht5vgdo"
+In-Reply-To: <20170209014807.GO3407@dragon>
+Subject: Re: [PATCH v3 2/3] ASoC: zx-i2s: introduce pclk for zx2967 family
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 01 Feb 2017, gabriel.fernandez@st.com wrote:
 
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> Macro to select a clock was not correct.
-> 
-> Offset of enable register starts at 0x30, then calculation to select a bit is:
-> (@enable_reg - 0x30) / 4 * 32 + bit_to_select
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Tested-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-> 
-> ---
->  include/dt-bindings/mfd/stm32f4-rcc.h | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+--l2smyxk6aht5vgdo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+On Thu, Feb 09, 2017 at 09:48:09AM +0800, Shawn Guo wrote:
+> On Wed, Feb 08, 2017 at 06:52:07PM -0600, Rob Herring wrote:
 
-> diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
-> index e98942d..f662b19 100644
-> --- a/include/dt-bindings/mfd/stm32f4-rcc.h
-> +++ b/include/dt-bindings/mfd/stm32f4-rcc.h
-> @@ -25,7 +25,7 @@
->  #define STM32F4_RCC_AHB1_OTGHS	29
->  
->  #define STM32F4_AHB1_RESET(bit) (STM32F4_RCC_AHB1_##bit + (0x10 * 8))
-> -#define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit + (0x30 * 8))
-> +#define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit)
->  
->  
->  /* AHB2 */
-> @@ -36,13 +36,13 @@
->  #define STM32F4_RCC_AHB2_OTGFS	7
->  
->  #define STM32F4_AHB2_RESET(bit)	(STM32F4_RCC_AHB2_##bit + (0x14 * 8))
-> -#define STM32F4_AHB2_CLOCK(bit)	(STM32F4_RCC_AHB2_##bit + (0x34 * 8))
-> +#define STM32F4_AHB2_CLOCK(bit)	(STM32F4_RCC_AHB2_##bit + 0x20)
->  
->  /* AHB3 */
->  #define STM32F4_RCC_AHB3_FMC	0
->  
->  #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
-> -#define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + (0x38 * 8))
-> +#define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + 0x40)
->  
->  /* APB1 */
->  #define STM32F4_RCC_APB1_TIM2	0
-> @@ -72,7 +72,7 @@
->  #define STM32F4_RCC_APB1_UART8	31
->  
->  #define STM32F4_APB1_RESET(bit)	(STM32F4_RCC_APB1_##bit + (0x20 * 8))
-> -#define STM32F4_APB1_CLOCK(bit)	(STM32F4_RCC_APB1_##bit + (0x40 * 8))
-> +#define STM32F4_APB1_CLOCK(bit)	(STM32F4_RCC_APB1_##bit + 0x80)
->  
->  /* APB2 */
->  #define STM32F4_RCC_APB2_TIM1	0
-> @@ -93,6 +93,6 @@
->  #define STM32F4_RCC_APB2_LTDC	26
->  
->  #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
-> -#define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + (0x44 * 8))
-> +#define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + 0xA0)
->  
->  #endif /* _DT_BINDINGS_MFD_STM32F4_RCC_H */
+> > Personally, I'd prefer "dt-bindings: sound: blah...", but not enough to=
+=20
+> > argue with Mark about it. If that is not the prefix, then it should at=
+=20
+> > least have "binding" in the subject.
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> +1
+
+> The prefix of sound bindings is quite unique from other subsystems.
+> Looking at the prefix of Documentation/devicetree/bindings/sound/
+> commits, I'm always confused whether it's a pure binding commit
+> or just submitted as part of the driver patch.  I feel that we
+> kinda lose the point of having a prefix.
+
+That's really not what's happening reliably - other subsystems also seem
+to have a bunch of things prefixed for the subsystem and the DT specific
+prefixes are all over the shop, people seem to be making them up at
+random.  If DT binding review were something that reliably and
+consistently happened and didn't affect the subsystem I'd perhaps buy it
+but for run of the mill stuff it seems like getting things reviewed in
+the subsystem is more important.
+
+--l2smyxk6aht5vgdo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlicW0AACgkQJNaLcl1U
+h9CKUwf/eenRtWOUgLcSz5PgdgRE/tMDYOn9I9BKP3Nk7UCWpJKA2W/LE5lgLfow
+SvQsLunCt49zniDpfmtwIsFedDTfPNjg1P6FZf+/1WrbFBTP4vRP7vve55ERrC+l
+lFpmn9MaPnVRleZqBgG3qEbpoacyxG63VNZNRYnNcn6LT4P8YgaHUmQHOAfjtNXC
+d50aaW2fofXFAWByjaErj7jT2zfVsX4xXy/aBYi4yGd2ILhqfsYsOhC1uJcBdoHh
+xMu+jLHhqZRHQdg62ShazpRifrVI9mL0j0HyUvviAULGu1agA7o1e6Q/vEsFsMlY
+mlDOb6ZOiKRbaGBC7bwA4sta3NaV9A==
+=vk02
+-----END PGP SIGNATURE-----
+
+--l2smyxk6aht5vgdo--
