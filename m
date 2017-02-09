@@ -1,145 +1,80 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: [PATCH v6 13/14] arm64: dts: marvell: add sdhci support for Armada 7K/8K
-Date: Tue, 14 Feb 2017 18:01:53 +0100
-Message-Id: <9571ae6d12f2051c1457dc5fc34042b325d00b60.1487091464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Thu, 9 Feb 2017 16:46:45 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Baoyou Xie <baoyou.xie@linaro.org>
+Message-ID: <20170209164645.ztvockrd6jxpybwt@sirena.org.uk>
+References: <1486609978-18482-1-git-send-email-baoyou.xie@linaro.org>
+ <1486609978-18482-2-git-send-email-baoyou.xie@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <1486609978-18482-2-git-send-email-baoyou.xie@linaro.org>
+Subject: Re: [PATCH v4 2/3] ASoC: zx-i2s: Add the info of pclk to the binding
+ document for zx2967 family
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+ alsa-devel@alsa-project.org, xie.baoyou@zte.com.cn, mathieu.poirier@linaro.org,
+ vinod.koul@intel.com, linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+ tiwai@suse.com, sboyd@codeaurora.org, lgirdwood@gmail.com, perex@perex.cz,
+ robh+dt@kernel.org, chen.chaokai@zte.com.cn, wang.qiang01@zte.com.cn,
+ jun.nie@linaro.org, shawn.guo@linaro.org, shawnguo@kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============7196967185073151420=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Also enable it on the Armada 7040 DB and Armada 8040 DB boards.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- arch/arm64/boot/dts/marvell/armada-7040-db.dts       | 14 +++++++++-
- arch/arm64/boot/dts/marvell/armada-8040-db.dts       | 20 +++++++++++++-
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi        | 11 +++++++-
- arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 11 +++++++-
- 4 files changed, 56 insertions(+)
+--===============7196967185073151420==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yjha4dq3tcbnz6ty"
+Content-Disposition: inline
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-7040-db.dts b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
-index 070b589680c5..6adbfcd26369 100644
---- a/arch/arm64/boot/dts/marvell/armada-7040-db.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
-@@ -146,3 +146,17 @@
- &cpm_usb3_1 {
- 	status = "okay";
- };
-+
-+&ap_sdhci0 {
-+	status = "okay";
-+	bus-width = <4>;
-+	no-1-8-v;
-+	non-removable;
-+};
-+
-+&cpm_sdhci0 {
-+	status = "okay";
-+	bus-width = <4>;
-+	no-1-8-v;
-+	non-removable;
-+};
-diff --git a/arch/arm64/boot/dts/marvell/armada-8040-db.dts b/arch/arm64/boot/dts/marvell/armada-8040-db.dts
-index 6e6f182fb297..ab16082d9fbf 100644
---- a/arch/arm64/boot/dts/marvell/armada-8040-db.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-8040-db.dts
-@@ -148,3 +148,23 @@
- &cps_usb3_1 {
- 	status = "okay";
- };
-+
-+&ap_sdhci0 {
-+	status = "okay";
-+	bus-width = <4>;
-+	non-removable;
-+};
-+
-+&cpm_sdhci0 {
-+	status = "okay";
-+	bus-width = <8>;
-+	non-removable;
-+
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	mmccard: mmccard@0 {
-+		compatible = "mmc-card";
-+		reg = <0>;
-+	};
-+
-+};
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-index 5019c8f4acd0..fe41bf9c301e 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -229,6 +229,17 @@
- 
- 			};
- 
-+			ap_sdhci0: sdhci@6e0000 {
-+				compatible = "marvell,armada-ap806-sdhci";
-+				reg = <0x6e0000 0x300>;
-+				interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+				clock-names = "core";
-+				clocks = <&ap_syscon 4>;
-+				dma-coherent;
-+				marvell,xenon-phy-slow-mode;
-+				status = "disabled";
-+			};
-+
- 			ap_syscon: system-controller@6f4000 {
- 				compatible = "marvell,ap806-system-controller",
- 					     "syscon";
-diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-index 05222f749a45..8ff545dc4195 100644
---- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-@@ -172,6 +172,17 @@
- 				clocks = <&cpm_syscon0 1 25>;
- 				status = "okay";
- 			};
-+
-+			cpm_sdhci0: sdhci@780000 {
-+				compatible = "marvell,armada-cp110-sdhci";
-+				reg = <0x780000 0x300>;
-+				interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+				clock-names = "core";
-+				clocks = <&cpm_syscon0 1 4>;
-+				dma-coherent;
-+				status = "disabled";
-+			};
-+
- 		};
- 
- 		cpm_pcie0: pcie@f2600000 {
--- 
-git-series 0.9.1
+
+--yjha4dq3tcbnz6ty
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Feb 09, 2017 at 11:12:57AM +0800, Baoyou Xie wrote:
+
+> - - compatible : Must be "zte,zx296702-i2s"
+> + - compatible : Must be one of:
+> +	"zte,zx296718-i2s", "zte,zx296702-i2s"
+> +	"zte,zx296702-i2s"
+
+You've added the new compatible twice here?
+
+--yjha4dq3tcbnz6ty
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlicnPQACgkQJNaLcl1U
+h9BQUwf9HQ0uWD5sKqWGdLs+K9rGxgRqp8LRGfHOL4Z8xomixnmyGJ4jXoe1Onzt
+wyPuldTpT2j3dyswUN31M46vLT5p3NgZBiW3vIEMprDDv4n/NTM6nRMXhvNoCt09
++0gN13p0ndUUve6+br1dnW+KmULE9FtEQbWojcwMNFH1o+ofVXoyHsWn/qAgLWrN
+iMXEh19got4kspm1eezacV3YdLgVSzeVi9e56YYt8dyRbpxflAK9uFKduIC6NPuI
+Iq+3BwPSb2HmNIcH/6Hceca5FGyqPkWltMT/ej3WOO/ZGVZcQdkPAzZFVUvv5QRQ
+Nmm1BYGLC7RMSfvFmzQAodEjXVuWsg==
+=+uIv
+-----END PGP SIGNATURE-----
+
+--yjha4dq3tcbnz6ty--
+
+
+--===============7196967185073151420==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============7196967185073151420==--
