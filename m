@@ -1,109 +1,80 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v3 4/6] clk: tegra: define Tegra210 DMIC clocks
-Date: Tue, 28 Feb 2017 16:37:20 +0200
-Message-ID: <1488292648-16876-5-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1488292648-16876-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1488292648-16876-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:34338 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752304AbdBIAhm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Feb 2017 19:37:42 -0500
+Date: Wed, 8 Feb 2017 18:37:41 -0600
+From: Rob Herring <robh@kernel.org>
+To: Mars Cheng <mars.cheng@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        My Chuang <my.chuang@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>,
+        Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+Subject: Re: [PATCH v2 08/10] soc: mediatek: add MT6797 power dt-bindings
+Message-ID: <20170209003741.nxcdxah5ydcj6v33@rob-hp-laptop>
+References: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
+ <1486383336-16892-9-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1486383336-16892-9-git-send-email-mars.cheng@mediatek.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Tegra210 has 3 inputs for Digital Microphones (DMICs). Provide the required
-clocks for them.
+On Mon, Feb 06, 2017 at 08:15:34PM +0800, Mars Cheng wrote:
+> This adds power dt-bindings for MT6797
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-id.h           |  5 ++++-
- drivers/clk/tegra/clk-tegra-periph.c | 21 +++++++++++++++++++++
- drivers/clk/tegra/clk-tegra210.c     |  3 +++
- 3 files changed, 28 insertions(+), 1 deletion(-)
+Some consistency in the subject for bindings please.
 
-diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-index b40293c..d3a79a8 100644
---- a/drivers/clk/tegra/clk-id.h
-+++ b/drivers/clk/tegra/clk-id.h
-@@ -307,8 +307,11 @@ enum clk_id {
- 	tegra_clk_xusb_ssp_src,
- 	tegra_clk_sclk_mux,
- 	tegra_clk_sor_safe,
--	tegra_clk_ispa,
- 	tegra_clk_cec,
-+	tegra_clk_ispa,
-+	tegra_clk_dmic1,
-+	tegra_clk_dmic2,
-+	tegra_clk_dmic3,
- 	tegra_clk_dmic1_sync_clk,
- 	tegra_clk_dmic2_sync_clk,
- 	tegra_clk_dmic3_sync_clk,
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index a2aed27..9e6ac11 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -138,6 +138,9 @@
- #define CLK_SOURCE_TSECB 0x6d8
- #define CLK_SOURCE_MAUD 0x6d4
- #define CLK_SOURCE_USB2_HSIC_TRK 0x6cc
-+#define CLK_SOURCE_DMIC1 0x64c
-+#define CLK_SOURCE_DMIC2 0x650
-+#define CLK_SOURCE_DMIC3 0x6bc
- 
- #define MASK(x) (BIT(x) - 1)
- 
-@@ -625,6 +628,21 @@
- };
- #define mux_clkm_plldp_sor0lvds_idx NULL
- 
-+static const char * const mux_dmic1[] = {
-+	"pll_a_out0", "dmic1_sync_clk", "pll_p", "clk_m"
-+};
-+#define mux_dmic1_idx NULL
-+
-+static const char * const mux_dmic2[] = {
-+	"pll_a_out0", "dmic2_sync_clk", "pll_p", "clk_m"
-+};
-+#define mux_dmic2_idx NULL
-+
-+static const char * const mux_dmic3[] = {
-+	"pll_a_out0", "dmic3_sync_clk", "pll_p", "clk_m"
-+};
-+#define mux_dmic3_idx NULL
-+
- static struct tegra_periph_init_data periph_clks[] = {
- 	AUDIO("d_audio", CLK_SOURCE_D_AUDIO, 106, TEGRA_PERIPH_ON_APB, tegra_clk_d_audio),
- 	AUDIO("dam0", CLK_SOURCE_DAM0, 108, TEGRA_PERIPH_ON_APB, tegra_clk_dam0),
-@@ -794,6 +812,9 @@
- 	MUX("uartape", mux_pllp_pllc_clkm, CLK_SOURCE_UARTAPE, 212, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_uartape),
- 	MUX8("tsecb", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_TSECB, 206, 0, tegra_clk_tsecb),
- 	MUX8("maud", mux_pllp_pllp_out3_clkm_clk32k_plla, CLK_SOURCE_MAUD, 202, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_maud),
-+	MUX8("dmic1", mux_dmic1, CLK_SOURCE_DMIC1, 161, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_dmic1),
-+	MUX8("dmic2", mux_dmic2, CLK_SOURCE_DMIC2, 162, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_dmic2),
-+	MUX8("dmic3", mux_dmic3, CLK_SOURCE_DMIC3, 197, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_dmic3),
- };
- 
- static struct tegra_periph_init_data gate_clks[] = {
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index ca63901..cfe7078 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2223,6 +2223,9 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
- 	[tegra_clk_pll_a1] = { .dt_id = TEGRA210_CLK_PLL_A1, .present = true },
- 	[tegra_clk_ispa] = { .dt_id = TEGRA210_CLK_ISPA, .present = true },
- 	[tegra_clk_cec] = { .dt_id = TEGRA210_CLK_CEC, .present = true },
-+	[tegra_clk_dmic1] = { .dt_id = TEGRA210_CLK_DMIC1, .present = true },
-+	[tegra_clk_dmic2] = { .dt_id = TEGRA210_CLK_DMIC2, .present = true },
-+	[tegra_clk_dmic3] = { .dt_id = TEGRA210_CLK_DMIC3, .present = true },
- 	[tegra_clk_dmic1_sync_clk] = { .dt_id = TEGRA210_CLK_DMIC1_SYNC_CLK, .present = true },
- 	[tegra_clk_dmic2_sync_clk] = { .dt_id = TEGRA210_CLK_DMIC2_SYNC_CLK, .present = true },
- 	[tegra_clk_dmic3_sync_clk] = { .dt_id = TEGRA210_CLK_DMIC3_SYNC_CLK, .present = true },
--- 
-1.9.1
+> 
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+> ---
+>  .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+> index 16fe94d..b1d165b 100644
+> --- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+> +++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+> @@ -9,11 +9,14 @@ domain control.
+>  
+>  The driver implements the Generic PM domain bindings described in
+>  power/power_domain.txt. It provides the power domains defined in
+> -include/dt-bindings/power/mt8173-power.h and mt2701-power.h.
+> +- include/dt-bindings/power/mt8173-power.h
+> +- include/dt-bindings/power/mt6797-power.h
+> +- include/dt-bindings/power/mt2701-power.h
+>  
+>  Required properties:
+>  - compatible: Should be one of:
+>  	- "mediatek,mt2701-scpsys"
+> +	- "mediatek,mt6797-scpsys"
+>  	- "mediatek,mt8173-scpsys"
+>  - #power-domain-cells: Must be 1
+>  - reg: Address range of the SCPSYS unit
+> @@ -22,6 +25,7 @@ Required properties:
+>                        These are clocks which hardware needs to be
+>                        enabled before enabling certain power domains.
+>  	Required clocks for MT2701: "mm", "mfg", "ethif"
+> +	Required clocks for MT6797: "mm", "mfg", "vdec"
+>  	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
+>  
+>  Optional properties:
+> -- 
+> 1.7.9.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
