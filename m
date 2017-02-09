@@ -1,44 +1,64 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: linux-rockchip@lists.infradead.org, jwerner@chromium.org, hl@rock-chips.com, dbasehore@chromium.org, zhengxing@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: Set "ignore unused" for PMU M0 clocks on rk3399
-Date: Tue, 21 Feb 2017 18:47:13 +0100
-Message-ID: <6585236.hCVu3AsgCt@phil>
-In-Reply-To: <20170214210114.5846-1-dianders@chromium.org>
-References: <20170214210114.5846-1-dianders@chromium.org>
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20170209120625.lhqcistgyjpy3plq@sirena.org.uk>
+References: <1486522955-14528-1-git-send-email-baoyou.xie@linaro.org>
+ <1486522955-14528-2-git-send-email-baoyou.xie@linaro.org> <20170209005207.y6wcrzk43ngfslhl@rob-hp-laptop>
+ <20170209014807.GO3407@dragon> <20170209120625.lhqcistgyjpy3plq@sirena.org.uk>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 9 Feb 2017 16:47:42 -0600
+Message-ID: <CAL_JsqJHyNgA2FRMcuZ86OFDJ85NAnx_v9F2LrxwwOxJYLOPCA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] ASoC: zx-i2s: introduce pclk for zx2967 family
+To: Mark Brown <broonie@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>, Baoyou Xie <baoyou.xie@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Jun Nie <jun.nie@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Shawn Guo <shawn.guo@linaro.org>,
+	Vinod Koul <vinod.koul@intel.com>, Linux-ALSA <alsa-devel@alsa-project.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Baoyou Xie <xie.baoyou@zte.com.cn>, chen.chaokai@zte.com.cn, wang.qiang01@zte.com.cn
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 14. Februar 2017, 13:01:14 CET schrieb Douglas Anderson:
-> The PMU Cortex M0 on rk3399 is intended to be used for things like
-> DDRFreq transitions, suspend/resume, and other things that are the
-> purview of ARM Trusted Firmware and not the kernel.  As such, the
-> kernel shouldn't be messing with the clocks.  Add CLK_IGNORE_UNUSED to
-> these clocks.
-> 
-> Without this change, the following was observed on a Chromebook with a
-> rk3399 (using not-yet-upstream ARM Trusted Firmware code and
-> not-yet-upstream kernel code based on kernel-4.4):
-> 
-> 1. We init the clock framework.
-> 
-> 2. We start up "DDRFreq", which causes ATF to occasionally fire up the
->    M0 for transitions.  Each time ATF fires up the M0 it will turn on
->    these clocks and each time it is done it will turn them off.
-> 
-> 3. We finally get to the the part of the kernel that calls
->    clk_disable_unused() and we disables the clocks.
-> 
-> You can see the race above.  Basically everything is fine as long as
-> ARM Trusted Firmware isn't starting up the M0 at exactly the same time
-> that the kernel is disabling unused clocks.  ...but if the race
-> happens then we go boom.
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+On Thu, Feb 9, 2017 at 6:06 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Thu, Feb 09, 2017 at 09:48:09AM +0800, Shawn Guo wrote:
+>> On Wed, Feb 08, 2017 at 06:52:07PM -0600, Rob Herring wrote:
+>
+>> > Personally, I'd prefer "dt-bindings: sound: blah...", but not enough to
+>> > argue with Mark about it. If that is not the prefix, then it should at
+>> > least have "binding" in the subject.
+>
+>> +1
+>
+>> The prefix of sound bindings is quite unique from other subsystems.
+>> Looking at the prefix of Documentation/devicetree/bindings/sound/
+>> commits, I'm always confused whether it's a pure binding commit
+>> or just submitted as part of the driver patch.  I feel that we
+>> kinda lose the point of having a prefix.
+>
+> That's really not what's happening reliably - other subsystems also seem
+> to have a bunch of things prefixed for the subsystem and the DT specific
+> prefixes are all over the shop, people seem to be making them up at
+> random.
 
-applied for 4.12
+I'm getting more picky about the subject and splitting bindings to a
+separate patch, but generally only when I have other comments. And
+I've had to get some maintainers to stop combining commits as they
+apply them.
 
-Thanks
-Heiko
+Maybe get_maintainers.pl could spit out the desired prefix and
+checkpatch check it. Evidently, running "git log --oneline" is too
+hard.
+
+> If DT binding review were something that reliably and
+> consistently happened and didn't affect the subsystem I'd perhaps buy it
+> but for run of the mill stuff it seems like getting things reviewed in
+> the subsystem is more important.
+
+I review everything that gets sent to the DT list unless maintainers
+apply it first. I'll still comment afterwards if there's anything
+significant (or I missed that it was applied :)).
+
+Rob
