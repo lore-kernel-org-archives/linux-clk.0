@@ -1,99 +1,78 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [Resend PATCH v2 2/3] dt-bindings: mfd: stm32f4: Add missing
- binding definition
-To: Lee Jones <lee.jones@linaro.org>
-References: <1485954596-11014-1-git-send-email-gabriel.fernandez@st.com>
- <1485954596-11014-3-git-send-email-gabriel.fernandez@st.com>
- <20170201133150.ifyxibbiokmcth7i@dell>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <0bc19dc6-61fd-bb17-67ef-eb0f859f2d3b@st.com>
-Date: Wed, 1 Feb 2017 14:34:49 +0100
-MIME-Version: 1.0
-In-Reply-To: <20170201133150.ifyxibbiokmcth7i@dell>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <baoyou.xie@linaro.org>
+Return-Path: <baoyou.xie@linaro.org>
+From: Baoyou Xie <baoyou.xie@linaro.org>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	jun.nie@linaro.org,
+	baoyou.xie@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	shawn.guo@linaro.org,
+	vinod.koul@intel.com
+Cc: alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	shawnguo@kernel.org,
+	mathieu.poirier@linaro.org,
+	xie.baoyou@zte.com.cn,
+	chen.chaokai@zte.com.cn,
+	wang.qiang01@zte.com.cn
+Subject: [PATCH v4 2/3] ASoC: zx-i2s: Add the info of pclk to the binding document for zx2967 family
+Date: Thu,  9 Feb 2017 11:12:57 +0800
+Message-Id: <1486609978-18482-2-git-send-email-baoyou.xie@linaro.org>
+In-Reply-To: <1486609978-18482-1-git-send-email-baoyou.xie@linaro.org>
+References: <1486609978-18482-1-git-send-email-baoyou.xie@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Lee,
+ZTE's zx2967 I2S controller driver introduces pclk, this
+patch documents this fact.
 
+Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+---
+ Documentation/devicetree/bindings/sound/zte,zx-i2s.txt | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-On 02/01/2017 02:31 PM, Lee Jones wrote:
-> On Wed, 01 Feb 2017, gabriel.fernandez@st.com wrote:
->
->> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->>
->> This patch adds missing binding definition (backupram, ethernet, otg,
->> qspi, adc & dsi)
-> What is RCC?
-Reset & Clock Control
-
->
->> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
->> ---
->>   include/dt-bindings/mfd/stm32f4-rcc.h | 14 ++++++++++++--
->>   1 file changed, 12 insertions(+), 2 deletions(-)
->>
->> diff --git a/include/dt-bindings/mfd/stm32f4-rcc.h b/include/dt-bindings/mfd/stm32f4-rcc.h
->> index f662b19..082a81c 100644
->> --- a/include/dt-bindings/mfd/stm32f4-rcc.h
->> +++ b/include/dt-bindings/mfd/stm32f4-rcc.h
->> @@ -18,11 +18,17 @@
->>   #define STM32F4_RCC_AHB1_GPIOJ	9
->>   #define STM32F4_RCC_AHB1_GPIOK	10
->>   #define STM32F4_RCC_AHB1_CRC	12
->> +#define STM32F4_RCC_AHB1_BKPSRAM	18
->> +#define STM32F4_RCC_AHB1_CCMDATARAM	20
->>   #define STM32F4_RCC_AHB1_DMA1	21
->>   #define STM32F4_RCC_AHB1_DMA2	22
->>   #define STM32F4_RCC_AHB1_DMA2D	23
->>   #define STM32F4_RCC_AHB1_ETHMAC	25
->> -#define STM32F4_RCC_AHB1_OTGHS	29
->> +#define STM32F4_RCC_AHB1_ETHMACTX	26
->> +#define STM32F4_RCC_AHB1_ETHMACRX	27
->> +#define STM32F4_RCC_AHB1_ETHMACPTP	28
->> +#define STM32F4_RCC_AHB1_OTGHS		29
->> +#define STM32F4_RCC_AHB1_OTGHSULPI	30
->>   
->>   #define STM32F4_AHB1_RESET(bit) (STM32F4_RCC_AHB1_##bit + (0x10 * 8))
->>   #define STM32F4_AHB1_CLOCK(bit) (STM32F4_RCC_AHB1_##bit)
->> @@ -40,6 +46,7 @@
->>   
->>   /* AHB3 */
->>   #define STM32F4_RCC_AHB3_FMC	0
->> +#define STM32F4_RCC_AHB3_QSPI	1
->>   
->>   #define STM32F4_AHB3_RESET(bit)	(STM32F4_RCC_AHB3_##bit + (0x18 * 8))
->>   #define STM32F4_AHB3_CLOCK(bit)	(STM32F4_RCC_AHB3_##bit + 0x40)
->> @@ -79,7 +86,9 @@
->>   #define STM32F4_RCC_APB2_TIM8	1
->>   #define STM32F4_RCC_APB2_USART1	4
->>   #define STM32F4_RCC_APB2_USART6	5
->> -#define STM32F4_RCC_APB2_ADC	8
->> +#define STM32F4_RCC_APB2_ADC1	8
->> +#define STM32F4_RCC_APB2_ADC2	9
->> +#define STM32F4_RCC_APB2_ADC3	10
->>   #define STM32F4_RCC_APB2_SDIO	11
->>   #define STM32F4_RCC_APB2_SPI1	12
->>   #define STM32F4_RCC_APB2_SPI4	13
->> @@ -91,6 +100,7 @@
->>   #define STM32F4_RCC_APB2_SPI6	21
->>   #define STM32F4_RCC_APB2_SAI1	22
->>   #define STM32F4_RCC_APB2_LTDC	26
->> +#define STM32F4_RCC_APB2_DSI	27
->>   
->>   #define STM32F4_APB2_RESET(bit)	(STM32F4_RCC_APB2_##bit + (0x24 * 8))
->>   #define STM32F4_APB2_CLOCK(bit)	(STM32F4_RCC_APB2_##bit + 0xA0)
+diff --git a/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt b/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
+index 7e5aa6f..292ad50 100644
+--- a/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
++++ b/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
+@@ -1,10 +1,12 @@
+ ZTE ZX296702 I2S controller
+ 
+ Required properties:
+- - compatible : Must be "zte,zx296702-i2s"
++ - compatible : Must be one of:
++	"zte,zx296718-i2s", "zte,zx296702-i2s"
++	"zte,zx296702-i2s"
+  - reg : Must contain I2S core's registers location and length
+  - clocks : Pairs of phandle and specifier referencing the controller's clocks.
+- - clock-names: "tx" for the clock to the I2S interface.
++ - clock-names: "wclk" for the wclk, "pclk" for the pclk to the I2S interface.
+  - dmas: Pairs of phandle and specifier for the DMA channel that is used by
+    the core. The core expects two dma channels for transmit.
+  - dma-names : Must be "tx" and "rx"
+@@ -16,12 +18,12 @@ please check:
+ 	* dma/dma.txt
+ 
+ Example:
+-	i2s0: i2s0@0b005000 {
++	i2s0: i2s@b005000 {
+ 		#sound-dai-cells = <0>;
+-		compatible = "zte,zx296702-i2s";
++		compatible = "zte,zx296718-i2s", "zte,zx296702-i2s";
+ 		reg = <0x0b005000 0x1000>;
+-		clocks = <&lsp0clk ZX296702_I2S0_DIV>;
+-		clock-names = "tx";
++		clocks = <&audiocrm AUDIO_I2S0_WCLK>, <&audiocrm AUDIO_I2S0_PCLK>;
++		clock-names = "wclk", "pclk";
+ 		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+ 		dmas = <&dma 5>, <&dma 6>;
+ 		dma-names = "tx", "rx";
+-- 
+2.7.4
