@@ -1,67 +1,90 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH 4/7] clk: tegra: remove non-existing pll_m_out1 clock
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
- <1487776444-4701-5-git-send-email-pdeschrijver@nvidia.com>
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <50337a15-d4a1-b7fa-b568-1d29f11a843c@kapsi.fi>
-Date: Wed, 22 Feb 2017 18:31:04 +0200
-MIME-Version: 1.0
-In-Reply-To: <1487776444-4701-5-git-send-email-pdeschrijver@nvidia.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <broonie@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+To: Baoyou Xie <baoyou.xie@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, jun.nie@linaro.org, baoyou.xie@linaro.org, mturquette@baylibre.com, sboyd@codeaurora.org, perex@perex.cz, tiwai@suse.com, shawn.guo@linaro.org, vinod.koul@intel.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, mathieu.poirier@linaro.org, xie.baoyou@zte.com.cn, linux-kernel@vger.kernel.org, chen.chaokai@zte.com.cn, wang.qiang01@zte.com.cn, shawnguo@kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
+In-Reply-To: <1486609978-18482-2-git-send-email-baoyou.xie@linaro.org>
+Message-Id: <E1cbyPw-0004Dw-6f@debutante>
+Date: Thu, 09 Feb 2017 23:46:24 +0000
+Subject: Applied "ASoC: zx-i2s: Add the info of pclk to the binding document for zx2967 family" to the asoc tree
 List-ID: <linux-clk.vger.kernel.org>
 
-Missing commit message
+The patch
 
-Cheers,
-Mikko.
+   ASoC: zx-i2s: Add the info of pclk to the binding document for zx2967 family
 
-On 02/22/2017 05:13 PM, Peter De Schrijver wrote:
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 5 -----
->  1 file changed, 5 deletions(-)
->
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index 7bda8ba..b7ef8a7 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -2115,7 +2115,6 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
->  	[tegra_clk_pll_c2] = { .dt_id = TEGRA210_CLK_PLL_C2, .present = true },
->  	[tegra_clk_pll_c3] = { .dt_id = TEGRA210_CLK_PLL_C3, .present = true },
->  	[tegra_clk_pll_m] = { .dt_id = TEGRA210_CLK_PLL_M, .present = true },
-> -	[tegra_clk_pll_m_out1] = { .dt_id = TEGRA210_CLK_PLL_M_OUT1, .present = true },
->  	[tegra_clk_pll_p] = { .dt_id = TEGRA210_CLK_PLL_P, .present = true },
->  	[tegra_clk_pll_p_out1] = { .dt_id = TEGRA210_CLK_PLL_P_OUT1, .present = true },
->  	[tegra_clk_pll_p_out3] = { .dt_id = TEGRA210_CLK_PLL_P_OUT3, .present = true },
-> @@ -2229,7 +2228,6 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
->  	{ .con_id = "pll_p_out3", .dt_id = TEGRA210_CLK_PLL_P_OUT3 },
->  	{ .con_id = "pll_p_out4", .dt_id = TEGRA210_CLK_PLL_P_OUT4 },
->  	{ .con_id = "pll_m", .dt_id = TEGRA210_CLK_PLL_M },
-> -	{ .con_id = "pll_m_out1", .dt_id = TEGRA210_CLK_PLL_M_OUT1 },
->  	{ .con_id = "pll_x", .dt_id = TEGRA210_CLK_PLL_X },
->  	{ .con_id = "pll_x_out0", .dt_id = TEGRA210_CLK_PLL_X_OUT0 },
->  	{ .con_id = "pll_u", .dt_id = TEGRA210_CLK_PLL_U },
-> @@ -2404,9 +2402,6 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
->  	clk_register_clkdev(clk, "pll_mb", NULL);
->  	clks[TEGRA210_CLK_PLL_MB] = clk;
->
-> -	clk_register_clkdev(clk, "pll_m_out1", NULL);
-> -	clks[TEGRA210_CLK_PLL_M_OUT1] = clk;
-> -
->  	/* PLLM_UD */
->  	clk = clk_register_fixed_factor(NULL, "pll_m_ud", "pll_m",
->  					CLK_SET_RATE_PARENT, 1, 1);
->
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From b5f18ba89391da7a92605dc76822580d13e2ef74 Mon Sep 17 00:00:00 2001
+From: Baoyou Xie <baoyou.xie@linaro.org>
+Date: Thu, 9 Feb 2017 11:12:57 +0800
+Subject: [PATCH] ASoC: zx-i2s: Add the info of pclk to the binding document
+ for zx2967 family
+
+ZTE's zx2967 I2S controller driver introduces pclk, this
+patch documents this fact.
+
+Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/devicetree/bindings/sound/zte,zx-i2s.txt | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt b/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
+index 7e5aa6f6b5a1..292ad5083704 100644
+--- a/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
++++ b/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
+@@ -1,10 +1,12 @@
+ ZTE ZX296702 I2S controller
+ 
+ Required properties:
+- - compatible : Must be "zte,zx296702-i2s"
++ - compatible : Must be one of:
++	"zte,zx296718-i2s", "zte,zx296702-i2s"
++	"zte,zx296702-i2s"
+  - reg : Must contain I2S core's registers location and length
+  - clocks : Pairs of phandle and specifier referencing the controller's clocks.
+- - clock-names: "tx" for the clock to the I2S interface.
++ - clock-names: "wclk" for the wclk, "pclk" for the pclk to the I2S interface.
+  - dmas: Pairs of phandle and specifier for the DMA channel that is used by
+    the core. The core expects two dma channels for transmit.
+  - dma-names : Must be "tx" and "rx"
+@@ -16,12 +18,12 @@ please check:
+ 	* dma/dma.txt
+ 
+ Example:
+-	i2s0: i2s0@0b005000 {
++	i2s0: i2s@b005000 {
+ 		#sound-dai-cells = <0>;
+-		compatible = "zte,zx296702-i2s";
++		compatible = "zte,zx296718-i2s", "zte,zx296702-i2s";
+ 		reg = <0x0b005000 0x1000>;
+-		clocks = <&lsp0clk ZX296702_I2S0_DIV>;
+-		clock-names = "tx";
++		clocks = <&audiocrm AUDIO_I2S0_WCLK>, <&audiocrm AUDIO_I2S0_PCLK>;
++		clock-names = "wclk", "pclk";
+ 		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+ 		dmas = <&dma 5>, <&dma 6>;
+ 		dma-names = "tx", "rx";
+-- 
+2.11.0
