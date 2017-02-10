@@ -1,287 +1,469 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        My Chuang <my.chuang@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        <linux-clk@vger.kernel.org>,
-        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH v2 04/10] arm64: dts: mediatek: add mt6797 support
-Date: Mon, 6 Feb 2017 20:15:30 +0800
-Message-ID: <1486383336-16892-5-git-send-email-mars.cheng@mediatek.com>
-In-Reply-To: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
-References: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
+Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: sboyd@codeaurora.org,
+	khilman@baylibre.com,
+	carlo@caione.org
+Subject: [PATCH 1/2] clk: meson-gxbb: Add MALI clocks and fix GP0 pll support
+Date: Fri, 10 Feb 2017 11:04:43 +0100
+Message-Id: <1486721084-1383-2-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1486721084-1383-1-git-send-email-narmstrong@baylibre.com>
+References: <1486721084-1383-1-git-send-email-narmstrong@baylibre.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
+List-Post: <mailto:linux-amlogic@lists.infradead.org>
+List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
+Cc: linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Neil Armstrong <narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
+Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds basic chip support for MT6797 SoC.
+The Mali is clocked by two identical clock paths behind a glitch free mux
+to safely change frequency while running.
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+The optimal clock frequency is provided by the GP0 PLL, but unlike Meson8 the
+GXBB GP0 PLL needs some tweaking and need some SoC specific values to be set
+in order to setup the PLL.
+
+Since these values will change for GXL and GXM, add an init table that will
+be changed for GXL or GXM.
+
+For the MALI clocks, introduce them as Composite clocks to simplify the
+management.
+To handle composite clocks, a gxbb_composite structure is added to dynamically
+create the composite clock at probe and fill accordingly the DT table.
+
+Finally the glitch free mux is added and other muxes and dividers are also
+grouped in initialization tables.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- arch/arm64/boot/dts/mediatek/Makefile       |    1 +
- arch/arm64/boot/dts/mediatek/mt6797-evb.dts |   36 ++++++
- arch/arm64/boot/dts/mediatek/mt6797.dtsi    |  187 +++++++++++++++++++++++++++
- 3 files changed, 224 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-evb.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6797.dtsi
+ drivers/clk/meson/clk-pll.c           |  34 ++++--
+ drivers/clk/meson/clkc.h              |   3 +
+ drivers/clk/meson/gxbb.c              | 211 +++++++++++++++++++++++++++++++++-
+ drivers/clk/meson/gxbb.h              |   7 +-
+ include/dt-bindings/clock/gxbb-clkc.h |   4 +
+ 5 files changed, 245 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-index 9fbfd32..015eb07 100644
---- a/arch/arm64/boot/dts/mediatek/Makefile
-+++ b/arch/arm64/boot/dts/mediatek/Makefile
-@@ -1,5 +1,6 @@
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-evb.dtb
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 4adc1e8..b5ff81b 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -132,6 +132,24 @@ static int meson_clk_pll_wait_lock(struct meson_clk_pll *pll,
+ 	return -ETIMEDOUT;
+ }
  
- always		:= $(dtb-y)
-diff --git a/arch/arm64/boot/dts/mediatek/mt6797-evb.dts b/arch/arm64/boot/dts/mediatek/mt6797-evb.dts
-new file mode 100644
-index 0000000..c79109c
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt6797-evb.dts
-@@ -0,0 +1,36 @@
-+/*
-+ * Copyright (c) 2017 MediaTek Inc.
-+ * Author: Mars.C <mars.cheng@mediatek.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
++static void meson_clk_pll_init(struct meson_clk_pll *pll)
++{
++	if (pll->init_count && pll->init_regs && pll->init_data) {
++		unsigned int i;
 +
-+/dts-v1/;
-+#include "mt6797.dtsi"
++		for (i = 0; i < pll->init_count; ++i)
++			writel(pll->init_data[i], pll->init_regs[i]);
++	} else {
++		struct parm *p;
++		u32 reg;
 +
-+/ {
-+	model = "MediaTek MT6797 Evaluation Board";
-+	compatible = "mediatek,mt6797-evb", "mediatek,mt6797";
++		/* PLL reset */
++		p = &pll->n;
++		reg = readl(pll->base + p->reg_off);
++		writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
++	}
++}
 +
-+	aliases {
-+		serial0 = &uart0;
-+	};
+ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				  unsigned long parent_rate)
+ {
+@@ -151,19 +169,18 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!rate_set)
+ 		return -EINVAL;
+ 
+-	/* PLL reset */
+-	p = &pll->n;
+-	reg = readl(pll->base + p->reg_off);
+-	writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
+-
+-	reg = PARM_SET(p->width, p->shift, reg, rate_set->n);
+-	writel(reg, pll->base + p->reg_off);
++	meson_clk_pll_init(pll);
+ 
+ 	p = &pll->m;
+ 	reg = readl(pll->base + p->reg_off);
+ 	reg = PARM_SET(p->width, p->shift, reg, rate_set->m);
+ 	writel(reg, pll->base + p->reg_off);
+ 
++	p = &pll->n;
++	reg = readl(pll->base + p->reg_off);
++	reg = PARM_SET(p->width, p->shift, reg, rate_set->n);
++	writel(reg, pll->base + p->reg_off);
 +
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x1e800000>;
-+	};
+ 	p = &pll->od;
+ 	reg = readl(pll->base + p->reg_off);
+ 	reg = PARM_SET(p->width, p->shift, reg, rate_set->od);
+@@ -184,6 +201,9 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	}
+ 
+ 	p = &pll->n;
++	reg = readl(pll->base + p->reg_off);
++	writel(reg & ~MESON_PLL_RESET, pll->base + p->reg_off);
 +
-+	chosen {};
+ 	ret = meson_clk_pll_wait_lock(pll, p);
+ 	if (ret) {
+ 		pr_warn("%s: pll did not lock, trying to restore old rate %lu\n",
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 9bb70e7..22a6335 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -70,6 +70,9 @@ struct meson_clk_pll {
+ 	struct parm frac;
+ 	struct parm od;
+ 	struct parm od2;
++	void __iomem **init_regs;
++	u32 *init_data;
++	unsigned int init_count;
+ 	const struct pll_rate_table *rate_table;
+ 	unsigned int rate_count;
+ 	spinlock_t *lock;
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 9d9af44..d1dac0f 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -352,6 +352,20 @@
+ 	},
+ };
+ 
++static void __iomem *gxbb_gp0_init_regs[] = {
++	(void *)HHI_GP0_PLL_CNTL,
++	(void *)HHI_GP0_PLL_CNTL2,
++	(void *)HHI_GP0_PLL_CNTL3,
++	(void *)HHI_GP0_PLL_CNTL4,
 +};
 +
-+&uart0 {
-+	status = "okay";
++static u32 gxbb_gp0_init_data[] = {
++	0x6a000228,
++	0x69c80000,
++	0x0a5590c4,
++	0x0000500d,
 +};
-diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-new file mode 100644
-index 0000000..da3a6ff
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-@@ -0,0 +1,187 @@
-+/*
-+ * Copyright (c) 2017 MediaTek Inc.
-+ * Author: Mars.C <mars.cheng@mediatek.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
 +
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "mediatek,mt6797";
-+	interrupt-parent = <&sysirq>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x000>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x001>;
-+		};
-+
-+		cpu2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x002>;
-+		};
-+
-+		cpu3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x003>;
-+		};
-+
-+		cpu4: cpu@100 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x100>;
-+		};
-+
-+		cpu5: cpu@101 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x101>;
-+		};
-+
-+		cpu6: cpu@102 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x102>;
-+		};
-+
-+		cpu7: cpu@103 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x103>;
-+		};
-+
-+		cpu8: cpu@200 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			enable-method = "psci";
-+			reg = <0x200>;
-+		};
-+
-+		cpu9: cpu@201 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			enable-method = "psci";
-+			reg = <0x201>;
-+		};
-+	};
-+
-+	clk26m: oscillator@0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+		clock-output-names = "clk26m";
-+	};
-+
-+	clk32k: oscillator@1 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32000>;
-+		clock-output-names = "clk32k";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_PPI 13
-+			     (GIC_CPU_MASK_SIMPLE(10) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+			     (GIC_CPU_MASK_SIMPLE(10) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+			     (GIC_CPU_MASK_SIMPLE(10) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+			     (GIC_CPU_MASK_SIMPLE(10) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	sysirq: intpol-controller@10200620 {
-+		compatible = "mediatek,mt6797-sysirq",
-+			     "mediatek,mt6577-sysirq";
-+		interrupt-controller;
-+		#interrupt-cells = <3>;
-+		#intpol-bases = <2>;
-+		interrupt-parent = <&gic>;
-+		reg = <0 0x10220620 0 0x20>,
-+		      <0 0x10220690 0 0x10>;
-+	};
-+
-+	uart0: serial@11002000 {
-+		compatible = "mediatek,mt6797-uart",
-+			     "mediatek,mt6577-uart";
-+		reg = <0 0x11002000 0 0x400>;
-+		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&clk26m>;
-+		status = "disabled";
-+	};
-+
-+	uart1: serial@11003000 {
-+		compatible = "mediatek,mt6797-uart",
-+			     "mediatek,mt6577-uart";
-+		reg = <0 0x11003000 0 0x400>;
-+		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&clk26m>;
-+		status = "disabled";
-+	};
-+
-+	uart2: serial@11004000 {
-+		compatible = "mediatek,mt6797-uart",
-+			     "mediatek,mt6577-uart";
-+		reg = <0 0x11004000 0 0x400>;
-+		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&clk26m>;
-+		status = "disabled";
-+	};
-+
-+	uart3: serial@11005000 {
-+		compatible = "mediatek,mt6797-uart",
-+			     "mediatek,mt6577-uart";
-+		reg = <0 0x11005000 0 0x400>;
-+		interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&clk26m>;
-+		status = "disabled";
-+	};
-+
-+	gic: interrupt-controller@19000000 {
-+		compatible = "arm,gic-v3";
-+		#interrupt-cells = <3>;
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-controller;
-+		reg = <0 0x19000000 0 0x10000>,    /* GICD */
-+		      <0 0x19200000 0 0x200000>,   /* GICR */
-+		      <0 0x10240000 0 0x2000>;     /* GICC */
-+	};
+ static struct meson_clk_pll gxbb_gp0_pll = {
+ 	.m = {
+ 		.reg_off = HHI_GP0_PLL_CNTL,
+@@ -368,6 +382,9 @@
+ 		.shift   = 16,
+ 		.width   = 2,
+ 	},
++	.init_regs = gxbb_gp0_init_regs,
++	.init_data = gxbb_gp0_init_data,
++	.init_count = 4,
+ 	.rate_table = gp0_pll_rate_table,
+ 	.rate_count = ARRAY_SIZE(gp0_pll_rate_table),
+ 	.lock = &clk_lock,
+@@ -550,6 +567,75 @@
+ 	},
+ };
+ 
++/* Mali Clock components */
++static u32 mux_table_mali_0_1[] = {0, 1, 2, 3, 4, 5, 6, 7};
++const char *gxbb_mali_0_1_parent_names[] = {
++	"xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
++	"fclk_div4", "fclk_div3", "fclk_div5"
 +};
++
++static struct clk_mux gxbb_mali_0_sel = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.mask = 0x3,
++	.shift = 9,
++	.table = mux_table_mali_0_1,
++	.lock = &clk_lock,
++};
++
++static struct clk_divider gxbb_mali_0_div = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.shift = 0,
++	.width = 7,
++	.lock = &clk_lock,
++};
++
++static struct clk_gate gxbb_mali_0_en = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.bit_idx = 8,
++	.lock = &clk_lock,
++};
++
++static struct clk_mux gxbb_mali_1_sel = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.mask = 0x3,
++	.shift = 25,
++	.table = mux_table_mali_0_1,
++	.lock = &clk_lock,
++};
++
++static struct clk_divider gxbb_mali_1_div = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.shift = 16,
++	.width = 7,
++	.lock = &clk_lock,
++};
++
++static struct clk_gate gxbb_mali_1_en = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.bit_idx = 24,
++	.lock = &clk_lock,
++};
++
++static u32 mux_table_mali[] = {0, 1};
++const char *gxbb_mali_parent_names[] = {
++	"mali_0", "mali_1"
++};
++
++static struct clk_mux gxbb_mali = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.mask = 1,
++	.shift = 31,
++	.table = mux_table_mali,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali",
++		.ops = &clk_mux_ops,
++		.parent_names = gxbb_mali_parent_names,
++		.num_parents = 2,
++		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
++	},
++};
++
+ /* the mother of dragons^W gates */
+ static struct clk_gate gxbb_clk81 = {
+ 	.reg = (void *)HHI_MPEG_CLK_CNTL,
+@@ -754,6 +840,9 @@
+ 		[CLKID_SD_EMMC_A]	    = &gxbb_emmc_a.hw,
+ 		[CLKID_SD_EMMC_B]	    = &gxbb_emmc_b.hw,
+ 		[CLKID_SD_EMMC_C]	    = &gxbb_emmc_c.hw,
++		[CLKID_MALI]		    = &gxbb_mali.hw,
++		/* This sentinel entry makes sure the table is large enough */
++		[NR_CLKS]		    = NULL, /* Sentinel */
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -856,6 +945,66 @@
+ 	&gxbb_emmc_a,
+ 	&gxbb_emmc_b,
+ 	&gxbb_emmc_c,
++	&gxbb_mali_0_en,
++	&gxbb_mali_1_en,
++};
++
++static struct clk_mux *gxbb_clk_muxes[] = {
++	&gxbb_mpeg_clk_sel,
++	&gxbb_mali_0_sel,
++	&gxbb_mali_1_sel,
++	&gxbb_mali,
++};
++
++static struct clk_divider *gxbb_clk_dividers[] = {
++	&gxbb_mpeg_clk_div,
++	&gxbb_mali_0_div,
++	&gxbb_mali_1_div,
++};
++
++struct gxbb_composite_clk {
++	unsigned int id;
++	const char *name;
++	const char * const *parent_names;
++	int num_parents;
++	struct clk_hw *mux_hw;
++	const struct clk_ops *mux_ops;
++	struct clk_hw *rate_hw;
++	const struct clk_ops *rate_ops;
++	struct clk_hw *gate_hw;
++	const struct clk_ops *gate_ops;
++	unsigned long flags;
++};
++
++/* Convenient table to register the composite clocks */
++
++static struct gxbb_composite_clk gxbb_composite_clks[] = {
++	{
++		.id = CLKID_MALI_0,
++		.name = "mali_0",
++		.parent_names = gxbb_mali_0_1_parent_names,
++		.num_parents = ARRAY_SIZE(gxbb_mali_0_1_parent_names),
++		.mux_hw = &gxbb_mali_0_sel.hw,
++		.mux_ops = &clk_mux_ops,
++		.rate_hw = &gxbb_mali_0_div.hw,
++		.rate_ops = &clk_divider_ops,
++		.gate_hw = &gxbb_mali_0_en.hw,
++		.gate_ops = &clk_gate_ops,
++		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
++	},
++	{
++		.id = CLKID_MALI_1,
++		.name = "mali_1",
++		.parent_names = gxbb_mali_0_1_parent_names,
++		.num_parents = ARRAY_SIZE(gxbb_mali_0_1_parent_names),
++		.mux_hw = &gxbb_mali_1_sel.hw,
++		.mux_ops = &clk_mux_ops,
++		.rate_hw = &gxbb_mali_1_div.hw,
++		.rate_ops = &clk_divider_ops,
++		.gate_hw = &gxbb_mali_1_en.hw,
++		.gate_ops = &clk_gate_ops,
++		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
++	},
+ };
+ 
+ static int gxbb_clkc_probe(struct platform_device *pdev)
+@@ -884,24 +1033,61 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	/* Populate the base address for CPU clk */
+ 	gxbb_cpu_clk.base = clk_base;
+ 
+-	/* Populate the base address for the MPEG clks */
+-	gxbb_mpeg_clk_sel.reg = clk_base + (u64)gxbb_mpeg_clk_sel.reg;
+-	gxbb_mpeg_clk_div.reg = clk_base + (u64)gxbb_mpeg_clk_div.reg;
++	/* Populate base address for muxes */
++	for (i = 0; i < ARRAY_SIZE(gxbb_clk_muxes); i++)
++		gxbb_clk_muxes[i]->reg = clk_base +
++			(u64)gxbb_clk_muxes[i]->reg;
++
++	/* Populate base address for dividers */
++	for (i = 0; i < ARRAY_SIZE(gxbb_clk_dividers); i++)
++		gxbb_clk_dividers[i]->reg = clk_base +
++			(u64)gxbb_clk_dividers[i]->reg;
+ 
+ 	/* Populate base address for gates */
+ 	for (i = 0; i < ARRAY_SIZE(gxbb_clk_gates); i++)
+ 		gxbb_clk_gates[i]->reg = clk_base +
+ 			(u64)gxbb_clk_gates[i]->reg;
+ 
++	/* Populate base for GP0 init table */
++	for (i = 0; i < ARRAY_SIZE(gxbb_gp0_init_regs); ++i)
++		gxbb_gp0_init_regs[i] = clk_base +
++			(u64)gxbb_gp0_init_regs[i];
++
+ 	/*
+ 	 * register all clks
+ 	 */
+ 	for (clkid = 0; clkid < NR_CLKS; clkid++) {
++		if (!gxbb_hw_onecell_data.hws[clkid])
++			continue;
++
+ 		ret = devm_clk_hw_register(dev, gxbb_hw_onecell_data.hws[clkid]);
+ 		if (ret)
+ 			goto iounmap;
+ 	}
+ 
++	/* Register Composite Clocks */
++	for (i = 0 ; i < ARRAY_SIZE(gxbb_composite_clks); ++i) {
++		struct gxbb_composite_clk *comp = &gxbb_composite_clks[i];
++		struct clk_hw *hw;
++
++		hw = clk_hw_register_composite(dev, comp->name,
++				comp->parent_names,
++				comp->num_parents,
++				comp->mux_hw, comp->mux_ops,
++				comp->rate_hw, comp->rate_ops,
++				comp->gate_hw, comp->gate_ops,
++				comp->flags);
++		if (IS_ERR(hw)) {
++			ret = PTR_ERR(hw);
++
++			pr_err("%s: Failed to register composite clock %s\n",
++				__func__, comp->name);
++
++			goto unregister_composites;
++		}
++		gxbb_hw_onecell_data.hws[comp->id] = hw;
++	}
++
+ 	/*
+ 	 * Register CPU clk notifier
+ 	 *
+@@ -922,11 +1108,26 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		pr_err("%s: failed to register clock notifier for cpu_clk\n",
+ 				__func__);
+-		goto iounmap;
++		goto unregister_composites;
+ 	}
+ 
+-	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
++	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+ 			&gxbb_hw_onecell_data);
++	if (!ret)
++		return ret;
++
++unregister_composites:
++	for (i = 0 ; i < ARRAY_SIZE(gxbb_composite_clks); ++i) {
++		struct gxbb_composite_clk *comp = &gxbb_composite_clks[i];
++		struct clk *clk;
++
++		if (gxbb_hw_onecell_data.hws[comp->id]) {
++			clk = gxbb_hw_onecell_data.hws[comp->id]->clk;
++			clk_unregister_composite(clk);
++		}
++
++		gxbb_hw_onecell_data.hws[comp->id] = NULL;
++	}
+ 
+ iounmap:
+ 	iounmap(clk_base);
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 0252939..f79ab57 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -177,7 +177,7 @@
+ /* CLKID_FCLK_DIV4 */
+ #define CLKID_FCLK_DIV5		  7
+ #define CLKID_FCLK_DIV7		  8
+-#define CLKID_GP0_PLL		  9
++/* CLKID_GP0_PLL */
+ #define CLKID_MPEG_SEL		  10
+ #define CLKID_MPEG_DIV		  11
+ /* CLKID_CLK81 */
+@@ -265,8 +265,11 @@
+ /* CLKID_SD_EMMC_A */
+ /* CLKID_SD_EMMC_B */
+ /* CLKID_SD_EMMC_C */
++/* CLKID_MALI_0	*/
++/* CLKID_MALI_1	*/
++/* CLKID_MALI	*/
+ 
+-#define NR_CLKS			  97
++#define NR_CLKS			  100
+ 
+ /* include the CLKIDs that have been made part of the stable DT binding */
+ #include <dt-bindings/clock/gxbb-clkc.h>
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index baade6f..7bbc1d0 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -10,6 +10,7 @@
+ #define CLKID_FCLK_DIV2		4
+ #define CLKID_FCLK_DIV3		5
+ #define CLKID_FCLK_DIV4		6
++#define CLKID_GP0_PLL		9
+ #define CLKID_CLK81		12
+ #define CLKID_MPLL2		15
+ #define CLKID_SPI		34
+@@ -24,5 +25,8 @@
+ #define CLKID_SD_EMMC_A		94
+ #define CLKID_SD_EMMC_B		95
+ #define CLKID_SD_EMMC_C		96
++#define CLKID_MALI_0		97
++#define CLKID_MALI_1		98
++#define CLKID_MALI		99
+ 
+ #endif /* __GXBB_CLKC_H */
 -- 
-1.7.9.5
+1.9.1
+
+
+_______________________________________________
+linux-amlogic mailing list
+linux-amlogic@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-amlogic
