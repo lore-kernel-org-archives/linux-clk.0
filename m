@@ -1,27 +1,60 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 28 Feb 2017 13:26:54 -0800
+Date: Fri, 10 Feb 2017 09:21:20 -0800
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>, linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: meson: fix SET_PARM macro
-Message-ID: <20170228212654.GM25384@codeaurora.org>
-References: <20170228093016.5624-1-jbrunet@baylibre.com>
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] clk: mvebu: Expand mv98dx3236-core-clock support
+Message-ID: <20170210172120.GR25384@codeaurora.org>
+References: <20170203034012.29399-1-chris.packham@alliedtelesis.co.nz>
+ <5a974d9d7260432087619486bf5d79ed@svr-chch-ex1.atlnz.lc>
+ <6149d4126a214ac8b0b0184bd818bea6@svr-chch-ex1.atlnz.lc>
+ <9294933.cXSW0amFbE@wuerfel>
+ <aabc6853d7934507a4507b0ad4354b72@svr-chch-ex1.atlnz.lc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170228093016.5624-1-jbrunet@baylibre.com>
+In-Reply-To: <aabc6853d7934507a4507b0ad4354b72@svr-chch-ex1.atlnz.lc>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/28, Jerome Brunet wrote:
-> parameter val is not enclosed in parenthesis which is buggy when given an
-> expression instead of a simple value
+On 02/08, Chris Packham wrote:
+> On 08/02/17 23:53, Arnd Bergmann wrote:
+> > On Tuesday, February 7, 2017 3:07:37 AM CET Chris Packham wrote:
+> >>>
+> >>> Actually I wonder if I can try a bit harder to keep a system booting.
+> >>> The following might work
+> >>> 1) add the compatible strings to the existing armada clock drivers.
+> >>> 2) update the dts to use the new compatible strings.
+> >>> 3) add the new driver and remove the compatible strings from the armada
+> >>> drivers.
+> >>>
+> >>> #1 would still upset checkpatch.pl because the documentation would only
+> >>> arrive in #2.
+> >>
+> >> Actually upon testing #1 is unnecessary. I lose some of the gated clocks
+> >> but nothing that prevents booting.
+> >
+> > Just to be sure: this means we can merge 2) and 3) independently and
+> > having just one of them will not cause regressions over what we have
+> > today?
+> >
 > 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Correct. And that's what I sent out as v2.
+> 
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-February/486467.html
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-February/486471.html
+> 
 
-Fixes tag? Is there a place in the code that is using a complex
-expression for val right now?
+Ok... so I'll apply the 6/6 patch now to the clk tree.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
