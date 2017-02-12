@@ -1,93 +1,108 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:26995 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751588AbdBFMQF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2017 07:16:05 -0500
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        My Chuang <my.chuang@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        <linux-clk@vger.kernel.org>,
-        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>
-Subject: [PATCH v2 00/10] Add Basic SoC support for MT6797
-Date: Mon, 6 Feb 2017 20:15:26 +0800
-Message-ID: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ykaneko0929@gmail.com>
+Return-Path: <ykaneko0929@gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH/RFC] clk: renesas: r8a7796: Replace PLL3 multiplication setting
+Date: Mon, 13 Feb 2017 02:35:10 +0900
+Message-Id: <1486920910-3592-1-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds basic SoC support for mediatek's first 10-core
-chip, X20, also known as MT6797.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-- based on 4.10-rc2
-- support multiple base address for sysirq
-- support common clk
+This patch replaces PLL3 multiplication setting for DDR clock frequency.
 
-Changes since v1:
-- add multiple base addresses support, v1 only allow 2 bases
-- clean up clk driver
+  - After changes, new PLL3 multiplication setting:
+    MD19 MD17 : DDR clock frequency
+    -------------------------------
+      0    0  : DDR3200
+      0    1  : DDR2800
+      1    0  : DDR2400
+      1    1  : DDR1600
 
+  - Before changes, old PLL3 multiplication setting:
+    MD19 MD17 : DDR clock frequency
+    -------------------------------
+      0    0  : DDR3200
+      0    1  : DDR2133
+      1    0  : Prohibited setting
+      1    1  : DDR1600
 
-Kevin-CW Chen (2):
-  dt-bindings: arm: mediatek: document clk bindings for MT6797
-  clk: mediatek: add clk support for MT6797
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
 
-Mars Cheng (8):
-  Document: DT: mediatek: multiple base address support for sysirq
-  irqchip: mtk-sysirq: extend intpol base to arbitrary number
-  Document: DT: Add bindings for mediatek MT6797 SoC Platform
-  arm64: dts: mediatek: add mt6797 support
-  soc: mediatek: refine scysys for mediatek platforms
-  soc: mediatek: add MT6797 power dt-bindings
-  soc: mediatek: add MT6797 scysys support
-  arm64: dts: mediatek: add clk nodes for MT6797
+This patch is based on the clk-next branch of linux-clk tree.
 
- Documentation/devicetree/bindings/arm/mediatek.txt |    4 +
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
- .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
- .../bindings/arm/mediatek/mediatek,vencsys.txt     |    3 +-
- .../interrupt-controller/mediatek,sysirq.txt       |   14 +-
- .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
- .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +-
- arch/arm64/boot/dts/mediatek/Makefile              |    1 +
- arch/arm64/boot/dts/mediatek/mt6797-evb.dts        |   36 +
- arch/arm64/boot/dts/mediatek/mt6797.dtsi           |  250 +++++++
- drivers/clk/mediatek/Kconfig                       |   33 +
- drivers/clk/mediatek/Makefile                      |    5 +
- drivers/clk/mediatek/clk-mt6797-img.c              |   76 +++
- drivers/clk/mediatek/clk-mt6797-mm.c               |  136 ++++
- drivers/clk/mediatek/clk-mt6797-vdec.c             |   93 +++
- drivers/clk/mediatek/clk-mt6797-venc.c             |   78 +++
- drivers/clk/mediatek/clk-mt6797.c                  |  716 ++++++++++++++++++++
- drivers/irqchip/irq-mtk-sysirq.c                   |   71 +-
- drivers/soc/mediatek/mtk-scpsys.c                  |  149 +++-
- include/dt-bindings/clock/mt6797-clk.h             |  281 ++++++++
- include/dt-bindings/power/mt6797-power.h           |   30 +
- 25 files changed, 1956 insertions(+), 33 deletions(-)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-evb.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6797.dtsi
- create mode 100644 drivers/clk/mediatek/clk-mt6797-img.c
- create mode 100644 drivers/clk/mediatek/clk-mt6797-mm.c
- create mode 100644 drivers/clk/mediatek/clk-mt6797-vdec.c
- create mode 100644 drivers/clk/mediatek/clk-mt6797-venc.c
- create mode 100644 drivers/clk/mediatek/clk-mt6797.c
- create mode 100644 include/dt-bindings/clock/mt6797-clk.h
- create mode 100644 include/dt-bindings/power/mt6797-power.h
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
---
-1.7.9.5
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 11e084a..44110ae 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -214,20 +214,20 @@ enum clk_ids {
+  * 14 13 19 17	(MHz)
+  *-------------------------------------------------------------------
+  * 0  0  0  0	16.66 x 1	x180	x192	x144	x192	x144
+- * 0  0  0  1	16.66 x 1	x180	x192	x144	x128	x144
+- * 0  0  1  0	Prohibited setting
++ * 0  0  0  1	16.66 x 1	x180	x192	x144	x168	x144
++ * 0  0  1  0	16.66 x 1	x180	x192	x144	x144	x144
+  * 0  0  1  1	16.66 x 1	x180	x192	x144	x192	x144
+  * 0  1  0  0	20    x 1	x150	x160	x120	x160	x120
+- * 0  1  0  1	20    x 1	x150	x160	x120	x106	x120
+- * 0  1  1  0	Prohibited setting
++ * 0  1  0  1	20    x 1	x150	x160	x120	x140	x120
++ * 0  1  1  0	20    x 1	x150	x160	x120	x120	x120
+  * 0  1  1  1	20    x 1	x150	x160	x120	x160	x120
+  * 1  0  0  0	25    x 1	x120	x128	x96	x128	x96
+- * 1  0  0  1	25    x 1	x120	x128	x96	x84	x96
+- * 1  0  1  0	Prohibited setting
++ * 1  0  0  1	25    x 1	x120	x128	x96	x112	x96
++ * 1  0  1  0	25    x 1	x120	x128	x96	x96	x96
+  * 1  0  1  1	25    x 1	x120	x128	x96	x128	x96
+  * 1  1  0  0	33.33 / 2	x180	x192	x144	x192	x144
+- * 1  1  0  1	33.33 / 2	x180	x192	x144	x128	x144
+- * 1  1  1  0	Prohibited setting
++ * 1  1  0  1	33.33 / 2	x180	x192	x144	x168	x144
++ * 1  1  1  0	33.33 / 2	x180	x192	x144	x144	x144
+  * 1  1  1  1	33.33 / 2	x180	x192	x144	x192	x144
+  */
+ #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 11) | \
+@@ -238,20 +238,20 @@ enum clk_ids {
+ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
+ 	/* EXTAL div	PLL1 mult	PLL3 mult */
+ 	{ 1,		192,		192,	},
+-	{ 1,		192,		128,	},
+-	{ 0, /* Prohibited setting */		},
++	{ 1,		192,		168,	},
++	{ 1,		192,		144,	},
+ 	{ 1,		192,		192,	},
+ 	{ 1,		160,		160,	},
+-	{ 1,		160,		106,	},
+-	{ 0, /* Prohibited setting */		},
++	{ 1,		160,		140,	},
++	{ 1,		160,		120,	},
+ 	{ 1,		160,		160,	},
+ 	{ 1,		128,		128,	},
+-	{ 1,		128,		84,	},
+-	{ 0, /* Prohibited setting */		},
++	{ 1,		128,		112,	},
++	{ 1,		128,		96,	},
+ 	{ 1,		128,		128,	},
+ 	{ 2,		192,		192,	},
+-	{ 2,		192,		128,	},
+-	{ 0, /* Prohibited setting */		},
++	{ 2,		192,		168,	},
++	{ 2,		192,		144,	},
+ 	{ 2,		192,		192,	},
+ };
+ 
+-- 
+1.9.1
