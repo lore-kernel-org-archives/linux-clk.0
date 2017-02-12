@@ -1,55 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.134]:37421 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751948AbdBMK7y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Feb 2017 05:59:54 -0500
-From: Andy Yan <andy.yan@rock-chips.com>
-To: heiko@sntech.de, linus.walleij@linaro.org, robh+dt@kernel.org
-Cc: shawn.lin@rock-chips.com, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        sboyd@codeaurora.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH 0/7] Rename RK1108 to RV1108
-Date: Mon, 13 Feb 2017 18:59:26 +0800
-Message-Id: <1486983566-32265-1-git-send-email-andy.yan@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <pierre-louis.bossart@linux.intel.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To: linux-clk@vger.kernel.org,
+	x86@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: alsa-devel@alsa-project.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Takashi Iwai <tiwai@suse.com>,
+	Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH] clk: x86: add "mclk" alias for Baytrail/Cherrytrail
+Date: Sun, 12 Feb 2017 16:06:52 -0600
+Message-Id: <1486937212-10093-1-git-send-email-pierre-louis.bossart@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Due to timing requirements, TI and Conexant manage the audio
+reference clock from their ASoC codec drivers using the "mclk"
+string. This patch adds a default alias to "pmc_plt_clk_3" to
+avoid Intel-specific tests in those codec drivers and use code
+as-is.
+"pmc_plt_clk_3" is used exclusively for audio on all known
+Baytrail/CherryTrail designs and is e.g. routed on the MCLK
+(pin 26) of the MinnowBoardMAX Turbot LSE connector.
 
-Rockchip finally named this soc as RV1108, so change
-RK1108/rk1108 to RV1108/rv1108 for compatible.
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+---
 
+Notes:
+    This patch only applies on top of linux-next or clk-next, the
+    previous clk-related patches are not yet merged in the audio
+    trees
 
-Andy Yan (7):
-  dt-bindings: rockchip-dw-mshc: rename RK1108 to RV1108
-  dt-bindings: rk1108-cru: rename RK1108 to RV1108
-  clk: rockchip: rename RK1108 to RV1108
-  dt-bindings: rockchip,pinctrl: rename RK1108 to RV1108
-  pinctrl: rockchip: rename RK1108 to RV1108
-  ARM: dts: rename RK1108 to RV1108
-  ARM: rockchip: reanme RK1108 to RV1108
+ drivers/clk/x86/clk-pmc-atom.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- Documentation/devicetree/bindings/arm/rockchip.txt |   4 +-
- ...chip,rk1108-cru.txt => rockchip,rv1108-cru.txt} |  12 +-
- .../devicetree/bindings/mmc/rockchip-dw-mshc.txt   |   2 +-
- .../bindings/pinctrl/rockchip,pinctrl.txt          |  16 +-
- arch/arm/boot/dts/Makefile                         |   2 +-
- .../boot/dts/{rk1108-evb.dts => rv1108-evb.dts}    |   7 +-
- arch/arm/boot/dts/{rk1108.dtsi => rv1108.dtsi}     |  24 +-
- drivers/clk/rockchip/Makefile                      |   2 +-
- .../clk/rockchip/{clk-rk1108.c => clk-rv1108.c}    | 414 ++++++++++-----------
- drivers/clk/rockchip/clk.h                         |  28 +-
- drivers/pinctrl/pinctrl-rockchip.c                 |  76 ++--
- .../clock/{rk1108-cru.h => rv1108-cru.h}           |   6 +-
- 12 files changed, 300 insertions(+), 293 deletions(-)
- rename Documentation/devicetree/bindings/clock/{rockchip,rk1108-cru.txt => rockchip,rv1108-cru.txt} (83%)
- rename arch/arm/boot/dts/{rk1108-evb.dts => rv1108-evb.dts} (89%)
- rename arch/arm/boot/dts/{rk1108.dtsi => rv1108.dtsi} (94%)
- rename drivers/clk/rockchip/{clk-rk1108.c => clk-rv1108.c} (57%)
- rename include/dt-bindings/clock/{rk1108-cru.h => rv1108-cru.h} (97%)
-
+diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+index 2b60577..ba00d27 100644
+--- a/drivers/clk/x86/clk-pmc-atom.c
++++ b/drivers/clk/x86/clk-pmc-atom.c
+@@ -340,6 +340,8 @@ static int plt_clk_probe(struct platform_device *pdev)
+ 
+ 	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+ 
++	clk_add_alias("mclk", dev_name(&pdev->dev), "pmc_plt_clk_3", NULL);
++
+ 	platform_set_drvdata(pdev, data);
+ 	return 0;
+ 
 -- 
 2.7.4
-
-
