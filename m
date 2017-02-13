@@ -1,49 +1,46 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 8 Feb 2017 18:35:46 -0600
-From: Rob Herring <robh@kernel.org>
-To: Mars Cheng <mars.cheng@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        My Chuang <my.chuang@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>,
-        Kevin-CW Chen <kevin-cw.chen@mediatek.com>
-Subject: Re: [PATCH v2 05/10] dt-bindings: arm: mediatek: document clk
- bindings for MT6797
-Message-ID: <20170209003546.3ky4wmeld62rmpkr@rob-hp-laptop>
-References: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
- <1486383336-16892-6-git-send-email-mars.cheng@mediatek.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 01/15] clk: ti: remove un-used definitions from public clk_hw_omap struct
+Date: Mon, 13 Feb 2017 11:34:57 +0200
+Message-ID: <1486978511-29668-2-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
+References: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1486383336-16892-6-git-send-email-mars.cheng@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 06, 2017 at 08:15:31PM +0800, Mars Cheng wrote:
-> From: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
-> 
-> This patch adds the binding documentation for apmixedsys, imgsys,
-> infracfg, mmsys, topckgen, vdecsys and vencsys for MT6797.
-> 
-> Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> ---
->  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
->  .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
->  .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
->  .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
->  .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
->  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
->  .../bindings/arm/mediatek/mediatek,vencsys.txt     |    3 ++-
->  7 files changed, 8 insertions(+), 1 deletion(-)
+Clksel support has been deprecated a while back, so remove these from
+the struct also.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ include/linux/clk/ti.h | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 6110fe0..07308db 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -129,8 +129,6 @@ struct clk_hw_omap_ops {
+  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
+  * @flags: see "struct clk.flags possibilities" above
+  * @clksel_reg: for clksel clks, register va containing src/divisor select
+- * @clksel_mask: bitmask in @clksel_reg for the src/divisor selector
+- * @clksel: for clksel clks, pointer to struct clksel for this clock
+  * @dpll_data: for DPLLs, pointer to struct dpll_data for this clock
+  * @clkdm_name: clockdomain name that this clock is contained in
+  * @clkdm: pointer to struct clockdomain, resolved from @clkdm_name at runtime
+@@ -145,8 +143,6 @@ struct clk_hw_omap {
+ 	u8			enable_bit;
+ 	u8			flags;
+ 	void __iomem		*clksel_reg;
+-	u32			clksel_mask;
+-	const struct clksel	*clksel;
+ 	struct dpll_data	*dpll_data;
+ 	const char		*clkdm_name;
+ 	struct clockdomain	*clkdm;
+-- 
+1.9.1
