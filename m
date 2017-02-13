@@ -1,54 +1,48 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Sun, 26 Feb 2017 10:52:04 +0100
-From: Rask Ingemann Lambertsen <rask@formelder.dk>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: Re: [PATCH v5 2/7] clk: sunxi-ng: rename sun8i-h3 driver to
- sunxi-h3-h5
-Message-ID: <20170226095204.cwh7f2mbgjumr5fu@localhost>
-References: <20170226011956.53581-1-icenowy@aosc.xyz>
- <20170226011956.53581-3-icenowy@aosc.xyz>
-MIME-Version: 1.0
-In-Reply-To: <20170226011956.53581-3-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
- linux-sunxi@googlegroups.com, Will Deacon <will.deacon@arm.com>,
- linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
- Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <chris.brandt@renesas.com>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2] clk: renesas: mstp: ensure register writes complete
+Date: Mon, 13 Feb 2017 13:44:05 -0500
+Message-Id: <20170213184405.5657-1-chris.brandt@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Feb 26, 2017 at 09:19:51AM +0800, Icenowy Zheng wrote:
-> As the CCU in the Allwinner H5 SoC is very similar to the one in H3,
-> rename the H3 driver to sunxi-h3-h5 so that it can be extended with H5
-> support.
-> 
-> Trasitional header symlinks are created, to ensure current device tree
+When there is no status bit, it is possible for the clock enable/disable
+operation to have not completed by the time the driver code resumes
+execution. This is due to the fact that write operations are sometimes
+queued and delayed internally. Doing a read ensures the write operations
+has completed.
 
-s/Trasitional/Transitional/ I guess.
+Fixes: b6face404f38 ("ARM: shmobile: r7s72100: add essential clock nodes to dtsi")
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+v2:
+* add Fixes because technically this is a bug fix
+---
+ drivers/clk/renesas/clk-mstp.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> files which included sun8i-h3-ccu.h can compile.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-> ---
-> Changes in v5:
-> - Add the reason to create trasitional headers in commit message.
-
-Likewise.
-
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 3ce819c..69cfdb9 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -91,6 +91,12 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ 		value |= bitmask;
+ 	cpg_mstp_write(group, value, group->smstpcr);
+ 
++	if (!group->mstpsr) {
++		/* dummy read to ensure write has completed */
++		clk_readl(group->smstpcr);
++		barrier_data(group->smstpcr);
++	}
++
+ 	spin_unlock_irqrestore(&group->lock, flags);
+ 
+ 	if (!enable || !group->mstpsr)
 -- 
-Rask Ingemann Lambertsen
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.10.1
