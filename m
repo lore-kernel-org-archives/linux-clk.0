@@ -1,105 +1,128 @@
-Return-Path: <hkallweit1@gmail.com>
-Return-Path: <hkallweit1@gmail.com>
-Subject: Re: [PATCH v2 3/3] hwrng: meson: add clock handling to driver
-To: Neil Armstrong <narmstrong@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, linux-amlogic@lists.infradead.org,
- linux-crypto@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-References: <daf765e2-1a60-8dea-fee0-8af6ddecdf8e@gmail.com>
- <989cf7bf-b7ea-0b41-510b-6eab403f0185@gmail.com>
- <afe93bb2-30de-233d-ed58-d77c018a6d33@baylibre.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <887d5ec7-d568-f304-1f4d-e201e3c32e12@gmail.com>
-Date: Tue, 21 Feb 2017 22:53:14 +0100
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 02/15] clk: ti: add support for automatic clock alias generation
+Date: Mon, 13 Feb 2017 11:34:58 +0200
+Message-ID: <1486978511-29668-3-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
+References: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <afe93bb2-30de-233d-ed58-d77c018a6d33@baylibre.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 21.02.2017 um 22:21 schrieb Neil Armstrong:
-> On 02/21/2017 12:26 PM, Heiner Kallweit wrote:
->> Add handling of RNG0 clock to the driver.
->>
->> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->> ---
->> v2:
->> - consider that clock is optional
->> - use managed call to clk_disable_unprepare to ensure that
->>   cleaning up is done in the right order if driver is removed
->> ---
->>  drivers/char/hw_random/meson-rng.c | 22 ++++++++++++++++++++++
->>  1 file changed, 22 insertions(+)
->>
->> diff --git a/drivers/char/hw_random/meson-rng.c b/drivers/char/hw_random/meson-rng.c
->> index 119d6984..2e23be80 100644
->> --- a/drivers/char/hw_random/meson-rng.c
->> +++ b/drivers/char/hw_random/meson-rng.c
->> @@ -62,6 +62,7 @@
->>  #include <linux/slab.h>
->>  #include <linux/types.h>
->>  #include <linux/of.h>
->> +#include <linux/clk.h>
->>  
->>  #define RNG_DATA 0x00
->>  
->> @@ -69,6 +70,7 @@ struct meson_rng_data {
->>  	void __iomem *base;
->>  	struct platform_device *pdev;
->>  	struct hwrng rng;
->> +	struct clk *core_clk;
->>  };
->>  
->>  static int meson_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
->> @@ -81,11 +83,17 @@ static int meson_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
->>  	return sizeof(u32);
->>  }
->>  
->> +static void meson_rng_clk_disable(void *clk)
->> +{
->> +	clk_disable_unprepare(clk);
->> +}
->> +
->>  static int meson_rng_probe(struct platform_device *pdev)
->>  {
->>  	struct device *dev = &pdev->dev;
->>  	struct meson_rng_data *data;
->>  	struct resource *res;
->> +	int ret;
->>  
->>  	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->>  	if (!data)
->> @@ -98,6 +106,20 @@ static int meson_rng_probe(struct platform_device *pdev)
->>  	if (IS_ERR(data->base))
->>  		return PTR_ERR(data->base);
->>  
->> +	data->core_clk = devm_clk_get(dev, "core");
->> +	if (IS_ERR(data->core_clk))
->> +		data->core_clk = NULL;
->> +
->> +	if (data->core_clk) {
-> 
-> This "if" is useless, if core_clk is NULL, this will work also.
-> 
-Regarding clk_prepare_enable you're right. However we need this "if" for
-the call to devm_add_action_or_reset because we can't provide a NULL
-pointer as data argument.
-And including clk_prepare_enable in the if clause creates no overhead
-and is clearer IMHO.
+Large portions of the OMAP framework still depend on the support of
+having clock aliases in place, so add support functions for generating
+these automatically.
 
->> +		ret = clk_prepare_enable(data->core_clk);
->> +		if (ret)
->> +			return ret;
->> +		ret = devm_add_action_or_reset(dev, meson_rng_clk_disable,
->> +					       data->core_clk);
->> +		if (ret)
->> +			return ret;
->> +	}
->> +
->>  	data->rng.name = pdev->name;
->>  	data->rng.read = meson_rng_read;
->>  
->>
-> 
-> 
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk.c   | 64 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/ti/clock.h |  5 ++++
+ 2 files changed, 69 insertions(+)
+
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 5fcf247..91bad55 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -24,6 +24,7 @@
+ #include <linux/list.h>
+ #include <linux/regmap.h>
+ #include <linux/bootmem.h>
++#include <linux/device.h>
+ 
+ #include "clock.h"
+ 
+@@ -453,3 +454,66 @@ void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks)
+ 		clk_prepare_enable(init_clk);
+ 	}
+ }
++
++/**
++ * ti_clk_add_alias - add a clock alias for a TI clock
++ * @dev: device alias for this clock
++ * @clk: clock handle to create alias for
++ * @con: connection ID for this clock
++ *
++ * Creates a clock alias for a TI clock. Allocates the clock lookup entry
++ * and assigns the data to it. Returns 0 if successful, negative error
++ * value otherwise.
++ */
++int ti_clk_add_alias(struct device *dev, struct clk *clk, const char *con)
++{
++	struct clk_lookup *cl;
++
++	if (!clk)
++		return 0;
++
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	cl = kzalloc(sizeof(*cl), GFP_KERNEL);
++	if (!cl)
++		return -ENOMEM;
++
++	if (dev)
++		cl->dev_id = dev_name(dev);
++	cl->con_id = con;
++	cl->clk = clk;
++
++	clkdev_add(cl);
++
++	return 0;
++}
++
++/**
++ * ti_clk_register - register a TI clock to the common clock framework
++ * @dev: device for this clock
++ * @hw: hardware clock handle
++ * @con: connection ID for this clock
++ *
++ * Registers a TI clock to the common clock framework, and adds a clock
++ * alias for it. Returns a handle to the registered clock if successful,
++ * ERR_PTR value in failure.
++ */
++struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
++			    const char *con)
++{
++	struct clk *clk;
++	int ret;
++
++	clk = clk_register(dev, hw);
++	if (IS_ERR(clk))
++		return clk;
++
++	ret = ti_clk_add_alias(dev, clk, con);
++	if (ret) {
++		clk_unregister(clk);
++		return ERR_PTR(ret);
++	}
++
++	return clk;
++}
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 13c37f4..ac95fda 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -16,6 +16,8 @@
+ #ifndef __DRIVERS_CLK_TI_CLOCK__
+ #define __DRIVERS_CLK_TI_CLOCK__
+ 
++#include <linux/clkdev.h>
++
+ enum {
+ 	TI_CLK_FIXED,
+ 	TI_CLK_MUX,
+@@ -189,6 +191,9 @@ struct ti_dt_clk {
+ struct clk *ti_clk_register_divider(struct ti_clk *setup);
+ struct clk *ti_clk_register_composite(struct ti_clk *setup);
+ struct clk *ti_clk_register_dpll(struct ti_clk *setup);
++struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
++			    const char *con);
++int ti_clk_add_alias(struct device *dev, struct clk *clk, const char *con);
+ 
+ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup);
+ struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup);
+-- 
+1.9.1
