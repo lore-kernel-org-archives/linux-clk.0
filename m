@@ -1,72 +1,83 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Thu, 9 Feb 2017 12:06:25 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Baoyou Xie <baoyou.xie@linaro.org>,
-	lgirdwood@gmail.com, mark.rutland@arm.com, jun.nie@linaro.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org, perex@perex.cz,
-	tiwai@suse.com, shawn.guo@linaro.org, vinod.koul@intel.com,
-	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, mathieu.poirier@linaro.org,
-	xie.baoyou@zte.com.cn, chen.chaokai@zte.com.cn,
-	wang.qiang01@zte.com.cn
-Message-ID: <20170209120625.lhqcistgyjpy3plq@sirena.org.uk>
-References: <1486522955-14528-1-git-send-email-baoyou.xie@linaro.org>
- <1486522955-14528-2-git-send-email-baoyou.xie@linaro.org>
- <20170209005207.y6wcrzk43ngfslhl@rob-hp-laptop>
- <20170209014807.GO3407@dragon>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 03/15] clk: ti: add API for creating aliases automatically for simple clock types
+Date: Mon, 13 Feb 2017 11:34:59 +0200
+Message-ID: <1486978511-29668-4-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
+References: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="l2smyxk6aht5vgdo"
-In-Reply-To: <20170209014807.GO3407@dragon>
-Subject: Re: [PATCH v3 2/3] ASoC: zx-i2s: introduce pclk for zx2967 family
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+This API generates clock aliases automatically for simple clock types
+(fixed-clock, fixed-factor-clock), so that we don't need to add the data
+for these statically into tables. Shall be called from the SoC specific
+clock init.
 
---l2smyxk6aht5vgdo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk.c   | 26 ++++++++++++++++++++++++++
+ drivers/clk/ti/clock.h |  1 +
+ 2 files changed, 27 insertions(+)
 
-On Thu, Feb 09, 2017 at 09:48:09AM +0800, Shawn Guo wrote:
-> On Wed, Feb 08, 2017 at 06:52:07PM -0600, Rob Herring wrote:
-
-> > Personally, I'd prefer "dt-bindings: sound: blah...", but not enough to=
-=20
-> > argue with Mark about it. If that is not the prefix, then it should at=
-=20
-> > least have "binding" in the subject.
-
-> +1
-
-> The prefix of sound bindings is quite unique from other subsystems.
-> Looking at the prefix of Documentation/devicetree/bindings/sound/
-> commits, I'm always confused whether it's a pure binding commit
-> or just submitted as part of the driver patch.  I feel that we
-> kinda lose the point of having a prefix.
-
-That's really not what's happening reliably - other subsystems also seem
-to have a bunch of things prefixed for the subsystem and the DT specific
-prefixes are all over the shop, people seem to be making them up at
-random.  If DT binding review were something that reliably and
-consistently happened and didn't affect the subsystem I'd perhaps buy it
-but for run of the mill stuff it seems like getting things reviewed in
-the subsystem is more important.
-
---l2smyxk6aht5vgdo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlicW0AACgkQJNaLcl1U
-h9CKUwf/eenRtWOUgLcSz5PgdgRE/tMDYOn9I9BKP3Nk7UCWpJKA2W/LE5lgLfow
-SvQsLunCt49zniDpfmtwIsFedDTfPNjg1P6FZf+/1WrbFBTP4vRP7vve55ERrC+l
-lFpmn9MaPnVRleZqBgG3qEbpoacyxG63VNZNRYnNcn6LT4P8YgaHUmQHOAfjtNXC
-d50aaW2fofXFAWByjaErj7jT2zfVsX4xXy/aBYi4yGd2ILhqfsYsOhC1uJcBdoHh
-xMu+jLHhqZRHQdg62ShazpRifrVI9mL0j0HyUvviAULGu1agA7o1e6Q/vEsFsMlY
-mlDOb6ZOiKRbaGBC7bwA4sta3NaV9A==
-=vk02
------END PGP SIGNATURE-----
-
---l2smyxk6aht5vgdo--
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 91bad55..193862e 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -355,6 +355,12 @@ struct clk __init *ti_clk_register_clk(struct ti_clk *setup)
+ 	return clk;
+ }
+ 
++static const struct of_device_id simple_clk_match_table[] __initconst = {
++	{ .compatible = "fixed-clock" },
++	{ .compatible = "fixed-factor-clock" },
++	{ }
++};
++
+ int __init ti_clk_register_legacy_clks(struct ti_clk_alias *clks)
+ {
+ 	struct clk *clk;
+@@ -409,6 +415,26 @@ int __init ti_clk_register_legacy_clks(struct ti_clk_alias *clks)
+ #endif
+ 
+ /**
++ * ti_clk_add_aliases - setup clock aliases
++ *
++ * Sets up any missing clock aliases. No return value.
++ */
++void __init ti_clk_add_aliases(void)
++{
++	struct device_node *np;
++	struct clk *clk;
++
++	for_each_matching_node(np, simple_clk_match_table) {
++		struct of_phandle_args clkspec;
++
++		clkspec.np = np;
++		clk = of_clk_get_from_provider(&clkspec);
++
++		ti_clk_add_alias(NULL, clk, np->name);
++	}
++}
++
++/**
+  * ti_clk_setup_features - setup clock features flags
+  * @features: features definition to use
+  *
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index ac95fda..05381a3 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -194,6 +194,7 @@ struct ti_dt_clk {
+ struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
+ 			    const char *con);
+ int ti_clk_add_alias(struct device *dev, struct clk *clk, const char *con);
++void ti_clk_add_aliases(void);
+ 
+ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup);
+ struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup);
+-- 
+1.9.1
