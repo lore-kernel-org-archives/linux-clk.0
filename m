@@ -1,61 +1,119 @@
-Return-Path: <hkallweit1@gmail.com>
-Return-Path: <hkallweit1@gmail.com>
-From: Heiner Kallweit <hkallweit1@gmail.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman
- <khilman@baylibre.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- Neil Armstrong <narmstrong@baylibre.com>, linux-amlogic@lists.infradead.org,
- linux-crypto@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v2 1/3] clk: meson-gxbb: expose clock CLKID_RNG0
-Message-ID: <daf765e2-1a60-8dea-fee0-8af6ddecdf8e@gmail.com>
-Date: Tue, 21 Feb 2017 21:11:38 +0100
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 2/6] dt-bindings: clk: add omap4 clkctrl definitions
+Date: Mon, 13 Feb 2017 15:22:33 +0200
+Message-ID: <1486992157-10673-3-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1486992157-10673-1-git-send-email-t-kristo@ti.com>
+References: <1486992157-10673-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Expose clock CLKID_RNG0 which is needed for the HW random number generator.
+Contains offsets for all omap4 clkctrl main and optional clocks.
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
-v2:
-- added clk and DT maintainers
-- split exposing the clock and using it in DT into two patches
-- comment out clock definition in drivers/clk/meson/gxbb.h
-- silently move CLKID_SPI to the right place
----
- drivers/clk/meson/gxbb.h              | 2 +-
- include/dt-bindings/clock/gxbb-clkc.h | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ include/dt-bindings/clock/omap4.h | 89 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
+ create mode 100644 include/dt-bindings/clock/omap4.h
 
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 8ee2022c..cbd62e46 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -193,7 +193,7 @@
- /* CLKID_I2C */
- /* #define CLKID_SAR_ADC */
- #define CLKID_SMART_CARD	  24
--#define CLKID_RNG0		  25
-+/* CLKID_RNG0 */
- #define CLKID_UART0		  26
- #define CLKID_SDHC		  27
- #define CLKID_STREAM		  28
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index 692846c7..63f4c2c4 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -12,9 +12,10 @@
- #define CLKID_FCLK_DIV4		6
- #define CLKID_CLK81		12
- #define CLKID_MPLL2		15
--#define CLKID_SPI		34
- #define CLKID_I2C		22
- #define CLKID_SAR_ADC		23
-+#define CLKID_RNG0		25
-+#define CLKID_SPI		34
- #define CLKID_ETH		36
- #define CLKID_USB0		50
- #define CLKID_USB1		51
+diff --git a/include/dt-bindings/clock/omap4.h b/include/dt-bindings/clock/omap4.h
+new file mode 100644
+index 0000000..4ab7912
+--- /dev/null
++++ b/include/dt-bindings/clock/omap4.h
+@@ -0,0 +1,89 @@
++#define OMAP4_CLKCTRL_OFFSET	0x20
++#define OMAP4_CLKCTRL_INDEX(offset)	((offset) - OMAP4_CLKCTRL_OFFSET)
++#define OMAP4_MPU_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_DSP_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_L4_ABE_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_AESS_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
++#define OMAP4_MCPDM_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
++#define OMAP4_DMIC_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x38)
++#define OMAP4_MCASP_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x40)
++#define OMAP4_MCBSP1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x48)
++#define OMAP4_MCBSP2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x50)
++#define OMAP4_MCBSP3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x58)
++#define OMAP4_SLIMBUS1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x60)
++#define OMAP4_TIMER5_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x68)
++#define OMAP4_TIMER6_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x70)
++#define OMAP4_TIMER7_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x78)
++#define OMAP4_TIMER8_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x80)
++#define OMAP4_WD_TIMER3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x88)
++#define OMAP4_SMARTREFLEX_MPU_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
++#define OMAP4_SMARTREFLEX_IVA_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
++#define OMAP4_SMARTREFLEX_CORE_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x38)
++#define OMAP4_L3_MAIN_1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_L3_MAIN_2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_GPMC_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
++#define OMAP4_OCMC_RAM_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
++#define OMAP4_IPU_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_DMA_SYSTEM_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_DMM_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_EMIF1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
++#define OMAP4_EMIF2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x38)
++#define OMAP4_C2C_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_L4_CFG_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_SPINLOCK_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
++#define OMAP4_MAILBOX_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
++#define OMAP4_L3_MAIN_3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_L3_INSTR_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
++#define OMAP4_OCP_WP_NOC_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x40)
++#define OMAP4_IVA_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_SL2IF_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
++#define OMAP4_ISS_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_FDIF_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
++#define OMAP4_DSS_DISPC_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_GPU_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_MMC1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
++#define OMAP4_MMC2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
++#define OMAP4_HSI_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x38)
++#define OMAP4_USB_HOST_HS_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x58)
++#define OMAP4_USB_OTG_HS_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x60)
++#define OMAP4_USB_TLL_HS_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x68)
++#define OMAP4_USB_HOST_FS_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xd0)
++#define OMAP4_OCP2SCP_USB_PHY_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xe0)
++#define OMAP4_TIMER10_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
++#define OMAP4_TIMER11_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
++#define OMAP4_TIMER2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x38)
++#define OMAP4_TIMER3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x40)
++#define OMAP4_TIMER4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x48)
++#define OMAP4_TIMER9_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x50)
++#define OMAP4_ELM_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x58)
++#define OMAP4_GPIO2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x60)
++#define OMAP4_GPIO3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x68)
++#define OMAP4_GPIO4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x70)
++#define OMAP4_GPIO5_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x78)
++#define OMAP4_GPIO6_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x80)
++#define OMAP4_HDQ1W_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x88)
++#define OMAP4_I2C1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xa0)
++#define OMAP4_I2C2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xa8)
++#define OMAP4_I2C3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xb0)
++#define OMAP4_I2C4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xb8)
++#define OMAP4_L4_PER_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xc0)
++#define OMAP4_MCBSP4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xe0)
++#define OMAP4_MCSPI1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xf0)
++#define OMAP4_MCSPI2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0xf8)
++#define OMAP4_MCSPI3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x100)
++#define OMAP4_MCSPI4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x108)
++#define OMAP4_MMC3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x120)
++#define OMAP4_MMC4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x128)
++#define OMAP4_SLIMBUS2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x138)
++#define OMAP4_UART1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x140)
++#define OMAP4_UART2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x148)
++#define OMAP4_UART3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x150)
++#define OMAP4_UART4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x158)
++#define OMAP4_MMC5_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x160)
++#define OMAP4_L4_WKUP_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
++#define OMAP4_WD_TIMER2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
++#define OMAP4_GPIO1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x38)
++#define OMAP4_TIMER1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x40)
++#define OMAP4_COUNTER_32K_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x50)
++#define OMAP4_KBD_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x78)
++#define OMAP4_DEBUGSS_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
 -- 
-2.11.1
+1.9.1
