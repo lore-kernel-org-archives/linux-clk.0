@@ -1,101 +1,286 @@
-Return-Path: <markus.mayer@broadcom.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 04/15] clk: ti: use automatic clock alias generation framework
+Date: Mon, 13 Feb 2017 11:35:00 +0200
+Message-ID: <1486978511-29668-5-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
+References: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20170121005202.GB8801@codeaurora.org>
-References: <20170119002933.7529-1-code@mmayer.net> <20170119002933.7529-2-code@mmayer.net>
- <20170121005202.GB8801@codeaurora.org>
-From: Markus Mayer <markus.mayer@broadcom.com>
-Date: Wed, 1 Feb 2017 11:50:51 -0800
-Message-ID: <CAGt4E5sGScHp83ufKcX3Q74vW0fo=L0FHM7tCptvqJfchHAweg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: brcm: clocks: add binding for brcmstb-cpu-clk-div
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Markus Mayer <code@mmayer.net>, Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
-	Linux Clock List <linux-clk@vger.kernel.org>,
-	Power Management List <linux-pm@vger.kernel.org>, Device Tree List <devicetree@vger.kernel.org>,
-	ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20 January 2017 at 16:52, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 01/18, Markus Mayer wrote:
->> diff --git a/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt b/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
->> new file mode 100644
->> index 0000000..c4acb53
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
->> @@ -0,0 +1,27 @@
->> +The CPU divider node serves as the sole clock for the CPU complex. It supports
->> +power-of-2 clock division, with a divider of "1" as the default highest-speed
->> +setting.
->> +
->> +Required properties:
->> +- compatible: shall be "brcm,brcmstb-cpu-clk-div"
->> +- reg: address and width of the divider configuration register
->> +- #clock-cells: shall be set to 0
->> +- clocks: phandle of clock provider which provides the source clock
->> +          (this would typically be a "fixed-clock" type PLL)
->> +- div-table: list of (raw_value,divider) ordered pairs that correspond to the
->> +             allowed clock divider settings
->> +- div-shift-width: least-significant bit position and width of divider value
->
-> Are these properties used? Please don't put these types of
-> details in DT.
+Generate clock aliases automatically for all TI clock drivers.
 
-Yeah, unfortunately they are. Luckily, I think the issue can be
-resolved quite easily, because the user of those properties isn't
-involved in this series.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/apll.c         |  2 +-
+ drivers/clk/ti/clk-dra7-atl.c | 11 ++++++++++-
+ drivers/clk/ti/clk.c          | 20 +++++++++++++++-----
+ drivers/clk/ti/composite.c    | 16 +++++++++++++++-
+ drivers/clk/ti/divider.c      |  2 +-
+ drivers/clk/ti/dpll.c         |  6 +++---
+ drivers/clk/ti/fixed-factor.c |  1 +
+ drivers/clk/ti/gate.c         |  2 +-
+ drivers/clk/ti/interface.c    |  2 +-
+ drivers/clk/ti/mux.c          |  2 +-
+ 10 files changed, 49 insertions(+), 15 deletions(-)
 
-They are currently being used by a clock driver
-("drivers/clk/clk-brcmstb.c") that hasn't been upstreamed yet. I
-performed some code archeology. While I wasn't 100% successful in
-tracking down the origins of this interface, it looks like it was
-designed this way a while back (4+ years or so), probably before
-device tree best practices were developed or, at least, before they
-were widely known.
-
-So, what I can do is to remove the properties from the official
-binding. (I'll send an update to that effect shortly.) Once the
-binding is accepted upstream, we can work on fixing up the design of
-clk-brcmstb.c, so it doesn't rely on these properties anymore (and
-derives them from the compatible string instead), and then proceed to
-upstream that, as well.
-
-I don't think this approach would cause any conflicts or problems.
-
->> +
->> +Optional properties:
->> +- clock-names: the clock may be named
->> +
->> +Example:
->> +     cpuclkdiv: cpu-clk-div@f03e257c {
->> +             compatible = "brcm,brcmstb-cpu-clk-div";
->> +             reg = <0xf03e257c 0x4>;
->
-> This register really looks like some offset in something larger.
-> Is there some clock controller? What's the hw block at
-> 0xf03e2000? Maybe I already asked this.
-
-It looks this way, but in this case, looks are deceiving. The address
-and the length are really correct the way they are.
-
-This memory area holds a range of only loosely related configuration
-registers. It's called the Bus Interface Unit Register Set and deals
-with configuring the CPU in general. At address 0xf03e257c, there
-happens to be the clock divider register we need, and it's really just
-one register, i.e. 4 bytes.
-
->> +             div-table = <0x00 1>;
->> +             div-shift-width = <0 5>;
->> +             #clock-cells = <0>;
->> +             clocks = <&cpupll>;
->> +             clock-names = "cpupll";
->> +     };
->>
->
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
+index 6411e13..62b5db7 100644
+--- a/drivers/clk/ti/apll.c
++++ b/drivers/clk/ti/apll.c
+@@ -164,7 +164,7 @@ static void __init omap_clk_register_apll(struct clk_hw *hw,
+ 
+ 	ad->clk_bypass = __clk_get_hw(clk);
+ 
+-	clk = clk_register(NULL, &clk_hw->hw);
++	clk = ti_clk_register(NULL, &clk_hw->hw, node->name);
+ 	if (!IS_ERR(clk)) {
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ 		kfree(clk_hw->hw.init->parent_names);
+diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
+index 45d0533..13eb04f7 100644
+--- a/drivers/clk/ti/clk-dra7-atl.c
++++ b/drivers/clk/ti/clk-dra7-atl.c
+@@ -24,6 +24,9 @@
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/clk/ti.h>
++
++#include "clock.h"
+ 
+ #define DRA7_ATL_INSTANCES	4
+ 
+@@ -171,6 +174,7 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
+ 	struct clk_init_data init = { NULL };
+ 	const char **parent_names = NULL;
+ 	struct clk *clk;
++	int ret;
+ 
+ 	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
+ 	if (!clk_hw) {
+@@ -200,9 +204,14 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
+ 
+ 	init.parent_names = parent_names;
+ 
+-	clk = clk_register(NULL, &clk_hw->hw);
++	clk = ti_clk_register(NULL, &clk_hw->hw, node->name);
+ 
+ 	if (!IS_ERR(clk)) {
++		ret = ti_clk_add_alias(NULL, clk, node->name);
++		if (ret) {
++			clk_unregister(clk);
++			goto cleanup;
++		}
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ 		kfree(parent_names);
+ 		return;
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 193862e..024123f 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -298,6 +298,7 @@ struct clk __init *ti_clk_register_clk(struct ti_clk *setup)
+ 	struct ti_clk_fixed *fixed;
+ 	struct ti_clk_fixed_factor *fixed_factor;
+ 	struct clk_hw *clk_hw;
++	int ret;
+ 
+ 	if (setup->clk)
+ 		return setup->clk;
+@@ -308,6 +309,13 @@ struct clk __init *ti_clk_register_clk(struct ti_clk *setup)
+ 
+ 		clk = clk_register_fixed_rate(NULL, setup->name, NULL, 0,
+ 					      fixed->frequency);
++		if (!IS_ERR(clk)) {
++			ret = ti_clk_add_alias(NULL, clk, setup->name);
++			if (ret) {
++				clk_unregister(clk);
++				clk = ERR_PTR(ret);
++			}
++		}
+ 		break;
+ 	case TI_CLK_MUX:
+ 		clk = ti_clk_register_mux(setup);
+@@ -325,6 +333,13 @@ struct clk __init *ti_clk_register_clk(struct ti_clk *setup)
+ 						fixed_factor->parent,
+ 						0, fixed_factor->mult,
+ 						fixed_factor->div);
++		if (!IS_ERR(clk)) {
++			ret = ti_clk_add_alias(NULL, clk, setup->name);
++			if (ret) {
++				clk_unregister(clk);
++				clk = ERR_PTR(ret);
++			}
++		}
+ 		break;
+ 	case TI_CLK_GATE:
+ 		clk = ti_clk_register_gate(setup);
+@@ -378,9 +393,6 @@ int __init ti_clk_register_legacy_clks(struct ti_clk_alias *clks)
+ 				       clks->clk->name, PTR_ERR(clk));
+ 				return PTR_ERR(clk);
+ 			}
+-		} else {
+-			clks->lk.clk = clk;
+-			clkdev_add(&clks->lk);
+ 		}
+ 		clks++;
+ 	}
+@@ -403,8 +415,6 @@ int __init ti_clk_register_legacy_clks(struct ti_clk_alias *clks)
+ 				}
+ 			} else {
+ 				retry = true;
+-				retry_clk->lk.clk = clk;
+-				clkdev_add(&retry_clk->lk);
+ 				list_del(&retry_clk->link);
+ 			}
+ 		}
+diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
+index 1cf70f4..3f60f99 100644
+--- a/drivers/clk/ti/composite.c
++++ b/drivers/clk/ti/composite.c
+@@ -126,6 +126,7 @@ struct clk *ti_clk_register_composite(struct ti_clk *setup)
+ 	int num_parents = 1;
+ 	const char **parent_names = NULL;
+ 	struct clk *clk;
++	int ret;
+ 
+ 	comp = setup->data;
+ 
+@@ -150,6 +151,12 @@ struct clk *ti_clk_register_composite(struct ti_clk *setup)
+ 				     &ti_composite_divider_ops, gate,
+ 				     &ti_composite_gate_ops, 0);
+ 
++	ret = ti_clk_add_alias(NULL, clk, setup->name);
++	if (ret) {
++		clk_unregister(clk);
++		return ERR_PTR(ret);
++	}
++
+ 	return clk;
+ }
+ #endif
+@@ -163,6 +170,7 @@ static void __init _register_composite(struct clk_hw *hw,
+ 	int num_parents = 0;
+ 	const char **parent_names = NULL;
+ 	int i;
++	int ret;
+ 
+ 	/* Check for presence of each component clock */
+ 	for (i = 0; i < CLK_COMPONENT_TYPE_MAX; i++) {
+@@ -217,8 +225,14 @@ static void __init _register_composite(struct clk_hw *hw,
+ 				     _get_hw(cclk, CLK_COMPONENT_TYPE_GATE),
+ 				     &ti_composite_gate_ops, 0);
+ 
+-	if (!IS_ERR(clk))
++	if (!IS_ERR(clk)) {
++		ret = ti_clk_add_alias(NULL, clk, node->name);
++		if (ret) {
++			clk_unregister(clk);
++			goto cleanup;
++		}
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	}
+ 
+ cleanup:
+ 	/* Free component clock list entries */
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index b4e5de1..a6750f8 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -282,7 +282,7 @@ static struct clk *_register_divider(struct device *dev, const char *name,
+ 	div->table = table;
+ 
+ 	/* register the clock */
+-	clk = clk_register(dev, &div->hw);
++	clk = ti_clk_register(dev, &div->hw, name);
+ 
+ 	if (IS_ERR(clk))
+ 		kfree(div);
+diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+index 4b9a419..37624e1 100644
+--- a/drivers/clk/ti/dpll.c
++++ b/drivers/clk/ti/dpll.c
+@@ -185,7 +185,7 @@ static void __init _register_dpll(struct clk_hw *hw,
+ 	dd->clk_bypass = __clk_get_hw(clk);
+ 
+ 	/* register the clock */
+-	clk = clk_register(NULL, &clk_hw->hw);
++	clk = ti_clk_register(NULL, &clk_hw->hw, node->name);
+ 
+ 	if (!IS_ERR(clk)) {
+ 		omap2_init_clk_hw_omap_clocks(&clk_hw->hw);
+@@ -288,7 +288,7 @@ struct clk *ti_clk_register_dpll(struct ti_clk *setup)
+ 	if (dpll->flags & CLKF_J_TYPE)
+ 		dd->flags |= DPLL_J_TYPE;
+ 
+-	clk = clk_register(NULL, &clk_hw->hw);
++	clk = ti_clk_register(NULL, &clk_hw->hw, setup->name);
+ 
+ 	if (!IS_ERR(clk))
+ 		return clk;
+@@ -340,7 +340,7 @@ static void _register_dpll_x2(struct device_node *node,
+ 	init.num_parents = 1;
+ 
+ 	/* register the clock */
+-	clk = clk_register(NULL, &clk_hw->hw);
++	clk = ti_clk_register(NULL, &clk_hw->hw, name);
+ 
+ 	if (IS_ERR(clk)) {
+ 		kfree(clk_hw);
+diff --git a/drivers/clk/ti/fixed-factor.c b/drivers/clk/ti/fixed-factor.c
+index 3cd4067..0174a51 100644
+--- a/drivers/clk/ti/fixed-factor.c
++++ b/drivers/clk/ti/fixed-factor.c
+@@ -62,6 +62,7 @@ static void __init of_ti_fixed_factor_clk_setup(struct device_node *node)
+ 	if (!IS_ERR(clk)) {
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ 		of_ti_clk_autoidle_setup(node);
++		ti_clk_add_alias(NULL, clk, clk_name);
+ 	}
+ }
+ CLK_OF_DECLARE(ti_fixed_factor_clk, "ti,fixed-factor-clock",
+diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
+index bc05f27..b3291db 100644
+--- a/drivers/clk/ti/gate.c
++++ b/drivers/clk/ti/gate.c
+@@ -120,7 +120,7 @@ static struct clk *_register_gate(struct device *dev, const char *name,
+ 
+ 	init.flags = flags;
+ 
+-	clk = clk_register(NULL, &clk_hw->hw);
++	clk = ti_clk_register(NULL, &clk_hw->hw, name);
+ 
+ 	if (IS_ERR(clk))
+ 		kfree(clk_hw);
+diff --git a/drivers/clk/ti/interface.c b/drivers/clk/ti/interface.c
+index e505e6f..7927e1a 100644
+--- a/drivers/clk/ti/interface.c
++++ b/drivers/clk/ti/interface.c
+@@ -58,7 +58,7 @@ static struct clk *_register_interface(struct device *dev, const char *name,
+ 	init.num_parents = 1;
+ 	init.parent_names = &parent_name;
+ 
+-	clk = clk_register(NULL, &clk_hw->hw);
++	clk = ti_clk_register(NULL, &clk_hw->hw, name);
+ 
+ 	if (IS_ERR(clk))
+ 		kfree(clk_hw);
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index 44777ab..0da149e 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -127,7 +127,7 @@ static struct clk *_register_mux(struct device *dev, const char *name,
+ 	mux->table = table;
+ 	mux->hw.init = &init;
+ 
+-	clk = clk_register(dev, &mux->hw);
++	clk = ti_clk_register(dev, &mux->hw, name);
+ 
+ 	if (IS_ERR(clk))
+ 		kfree(mux);
+-- 
+1.9.1
