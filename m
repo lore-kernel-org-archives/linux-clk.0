@@ -1,115 +1,179 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 2/7] clk: tegra: fix isp clock modelling
-Date: Thu, 23 Feb 2017 12:44:39 +0200
-Message-ID: <1487846686-6388-3-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <tony@atomide.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH DO NOT MERGE 6/6] ARM: OMAP4: hwmod_data: drop a few clkctrl setups replaced with clocks
+Date: Mon, 13 Feb 2017 15:22:37 +0200
+Message-ID: <1486992157-10673-7-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1486992157-10673-1-git-send-email-t-kristo@ti.com>
+References: <1486992157-10673-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The 2 isp clocks (ispa and ispb) share a mux/divider control. So model
-this as 1 mux/divider clock and child gate clocks.
+With the clkctrl clocks being available as clocks now, the clkctrl
+data within hwmod can be dropped away. Do this for the few sample
+clocks that have been converted.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/tegra/clk-id.h               |  1 +
- drivers/clk/tegra/clk-tegra-periph.c     | 11 +++++++++--
- drivers/clk/tegra/clk-tegra210.c         |  1 +
- include/dt-bindings/clock/tegra210-car.h |  4 ++--
- 4 files changed, 13 insertions(+), 4 deletions(-)
+ arch/arm/mach-omap2/omap_hwmod_44xx_data.c | 30 ------------------------------
+ 1 file changed, 30 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-index 5738635..1019eb8 100644
---- a/drivers/clk/tegra/clk-id.h
-+++ b/drivers/clk/tegra/clk-id.h
-@@ -307,6 +307,7 @@ enum clk_id {
- 	tegra_clk_xusb_ssp_src,
- 	tegra_clk_sclk_mux,
- 	tegra_clk_sor_safe,
-+	tegra_clk_ispa,
- 	tegra_clk_max,
+diff --git a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
+index dad871a..3625677 100644
+--- a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
+@@ -517,9 +517,7 @@
+ 	.main_clk	= "func_dmic_abe_gfclk",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM1_ABE_DMIC_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_ABE_DMIC_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_SWCTRL,
+ 		},
+ 	},
  };
- 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 4ce4e7f..19b00b7 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -168,6 +168,12 @@
- 			      0, TEGRA_PERIPH_NO_GATE, _clk_id,\
- 			      _parents##_idx, 0, _lock)
- 
-+#define MUX8_NOGATE(_name, _parents, _offset, _clk_id)	\
-+	TEGRA_INIT_DATA_TABLE(_name, NULL, NULL, _parents, _offset,	\
-+			      29, MASK(3), 0, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP,\
-+			      0, TEGRA_PERIPH_NO_GATE, _clk_id,\
-+			      _parents##_idx, 0, NULL)
-+
- #define INT(_name, _parents, _offset,	\
- 			    _clk_num, _gate_flags, _clk_id)	\
- 	TEGRA_INIT_DATA_TABLE(_name, NULL, NULL, _parents, _offset,\
-@@ -739,7 +745,7 @@
- 	MUX8("soc_therm", mux_clkm_pllc_pllp_plla, CLK_SOURCE_SOC_THERM, 78, TEGRA_PERIPH_ON_APB, tegra_clk_soc_therm_8),
- 	MUX8("vi_sensor", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_VI_SENSOR, 164, TEGRA_PERIPH_NO_RESET, tegra_clk_vi_sensor_8),
- 	MUX8("isp", mux_pllm_pllc_pllp_plla_clkm_pllc4, CLK_SOURCE_ISP, 23, TEGRA_PERIPH_ON_APB, tegra_clk_isp_8),
--	MUX8("isp", mux_pllc_pllp_plla1_pllc2_c3_clkm_pllc4, CLK_SOURCE_ISP, 23, TEGRA_PERIPH_ON_APB, tegra_clk_isp_9),
-+	MUX8_NOGATE("isp", mux_pllc_pllp_plla1_pllc2_c3_clkm_pllc4, CLK_SOURCE_ISP, tegra_clk_isp_9),
- 	MUX8("entropy", mux_pllp_clkm1, CLK_SOURCE_ENTROPY, 149,  0, tegra_clk_entropy),
- 	MUX8("entropy", mux_pllp_clkm_clk32_plle, CLK_SOURCE_ENTROPY, 149,  0, tegra_clk_entropy_8),
- 	MUX8("hdmi_audio", mux_pllp3_pllc_clkm, CLK_SOURCE_HDMI_AUDIO, 176, TEGRA_PERIPH_NO_RESET, tegra_clk_hdmi_audio),
-@@ -819,7 +825,8 @@
- 	GATE("xusb_dev", "xusb_dev_src", 95, 0, tegra_clk_xusb_dev, 0),
- 	GATE("emc", "emc_mux", 57, 0, tegra_clk_emc, CLK_IGNORE_UNUSED),
- 	GATE("sata_cold", "clk_m", 129, TEGRA_PERIPH_ON_APB, tegra_clk_sata_cold, 0),
--	GATE("ispb", "clk_m", 3, 0, tegra_clk_ispb, 0),
-+	GATE("ispa", "isp", 23, 0, tegra_clk_ispa, 0),
-+	GATE("ispb", "isp", 3, 0, tegra_clk_ispb, 0),
- 	GATE("vim2_clk", "clk_m", 11, 0, tegra_clk_vim2_clk, 0),
- 	GATE("pcie", "clk_m", 70, 0, tegra_clk_pcie, 0),
- 	GATE("gpu", "pll_ref", 184, 0, tegra_clk_gpu, 0),
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 2ef8d49..7bda8ba 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2210,6 +2210,7 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
- 	[tegra_clk_pll_c4_out3] = { .dt_id = TEGRA210_CLK_PLL_C4_OUT3, .present = true },
- 	[tegra_clk_apb2ape] = { .dt_id = TEGRA210_CLK_APB2APE, .present = true },
- 	[tegra_clk_pll_a1] = { .dt_id = TEGRA210_CLK_PLL_A1, .present = true },
-+	[tegra_clk_ispa] = { .dt_id = TEGRA210_CLK_ISPA, .present = true },
+@@ -1060,9 +1058,7 @@
+ 	.main_clk	= "l4_div_ck",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM_L4PER_GPIO2_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_L4PER_GPIO2_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_HWCTRL,
+ 		},
+ 	},
+ 	.opt_clks	= gpio2_opt_clks,
+@@ -1083,9 +1079,7 @@
+ 	.main_clk	= "l4_div_ck",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM_L4PER_GPIO3_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_L4PER_GPIO3_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_HWCTRL,
+ 		},
+ 	},
+ 	.opt_clks	= gpio3_opt_clks,
+@@ -1361,9 +1355,7 @@
+ 	.main_clk	= "func_96m_fclk",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM_L4PER_I2C2_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_L4PER_I2C2_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_SWCTRL,
+ 		},
+ 	},
+ 	.dev_attr	= &i2c_dev_attr,
+@@ -1378,9 +1370,7 @@
+ 	.main_clk	= "func_96m_fclk",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM_L4PER_I2C3_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_L4PER_I2C3_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_SWCTRL,
+ 		},
+ 	},
+ 	.dev_attr	= &i2c_dev_attr,
+@@ -1395,9 +1385,7 @@
+ 	.main_clk	= "func_96m_fclk",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM_L4PER_I2C4_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_L4PER_I2C4_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_SWCTRL,
+ 		},
+ 	},
+ 	.dev_attr	= &i2c_dev_attr,
+@@ -1659,9 +1647,7 @@
+ 	.main_clk	= "func_mcbsp1_gfclk",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM1_ABE_MCBSP1_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_ABE_MCBSP1_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_SWCTRL,
+ 		},
+ 	},
+ 	.opt_clks	= mcbsp1_opt_clks,
+@@ -1775,9 +1761,7 @@
+ 	.main_clk	= "pad_clks_ck",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM1_ABE_PDM_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_ABE_PDM_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_SWCTRL,
+ 		},
+ 	},
  };
- 
- static struct tegra_devclk devclks[] __initdata = {
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index 35288b2..f5c6563 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -39,7 +39,7 @@
- /* 20 (register bit affects vi and vi_sensor) */
- /* 21 */
- #define TEGRA210_CLK_USBD 22
--#define TEGRA210_CLK_ISP 23
-+#define TEGRA210_CLK_ISPA 23
- /* 24 */
- /* 25 */
- #define TEGRA210_CLK_DISP2 26
-@@ -349,7 +349,7 @@
- #define TEGRA210_CLK_PLL_RE_OUT1 319
- /* 320 */
- /* 321 */
--/* 322 */
-+#define TEGRA210_CLK_ISP 322
- /* 323 */
- /* 324 */
- /* 325 */
+@@ -2013,9 +1997,7 @@
+ 	.main_clk	= "func_48m_fclk",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM_L4PER_MMCSD3_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_L4PER_MMCSD3_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_SWCTRL,
+ 		},
+ 	},
+ };
+@@ -2035,9 +2017,7 @@
+ 	.main_clk	= "func_48m_fclk",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM_L4PER_MMCSD4_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_L4PER_MMCSD4_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_SWCTRL,
+ 		},
+ 	},
+ };
+@@ -2057,9 +2037,7 @@
+ 	.main_clk	= "func_48m_fclk",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM_L4PER_MMCSD5_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_L4PER_MMCSD5_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_SWCTRL,
+ 		},
+ 	},
+ };
+@@ -2799,9 +2777,7 @@
+ 	.main_clk	= "func_48m_fclk",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM_L4PER_UART1_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_L4PER_UART1_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_SWCTRL,
+ 		},
+ 	},
+ };
+@@ -2815,9 +2791,7 @@
+ 	.main_clk	= "func_48m_fclk",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM_L4PER_UART2_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_L4PER_UART2_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_SWCTRL,
+ 		},
+ 	},
+ };
+@@ -2831,9 +2805,7 @@
+ 	.main_clk	= "func_48m_fclk",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM_L4PER_UART3_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_L4PER_UART3_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_SWCTRL,
+ 		},
+ 	},
+ };
+@@ -2847,9 +2819,7 @@
+ 	.main_clk	= "func_48m_fclk",
+ 	.prcm = {
+ 		.omap4 = {
+-			.clkctrl_offs = OMAP4_CM_L4PER_UART4_CLKCTRL_OFFSET,
+ 			.context_offs = OMAP4_RM_L4PER_UART4_CONTEXT_OFFSET,
+-			.modulemode   = MODULEMODE_SWCTRL,
+ 		},
+ 	},
+ };
 -- 
 1.9.1
