@@ -1,98 +1,97 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 16 Feb 2017 18:55:53 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Bob Ham <rah@settrans.net>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, stable@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: sun6i: Fix enable bit offset for hdmi-ddc
- module clock
-Message-ID: <20170216175553.epqbtjdazj76tjyu@lukather>
-References: <20170214022332.13326-1-wens@csie.org>
- <1487110855.7145.46.camel@settrans.net>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 10/15] clk: ti: mux: convert TI mux clock to use its internal data representation
+Date: Mon, 13 Feb 2017 11:35:06 +0200
+Message-ID: <1486978511-29668-11-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
+References: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zygr7x5jl6opgou7"
-In-Reply-To: <1487110855.7145.46.camel@settrans.net>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Instead of using the generic clock driver data struct, use one internal
+for the TI clock driver itself. This allows modifying the register access
+parts in subsequent patch.
 
---zygr7x5jl6opgou7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clock.h | 11 +++++++++++
+ drivers/clk/ti/mux.c   | 10 +++++-----
+ 2 files changed, 16 insertions(+), 5 deletions(-)
 
-Hi Bob,
-
-On Tue, Feb 14, 2017 at 10:20:55PM +0000, Bob Ham wrote:
-> On Tue, 2017-02-14 at 10:23 +0800, Chen-Yu Tsai wrote:
-> > The enable bit offset for the hdmi-ddc module clock is wrong. It is
-> > pointing to the main hdmi module clock enable bit.
-> >=20
-> > Reported-by: Bob Ham <rah@settrans.net>
-> > Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
-> > Cc: stable@vger.kernel.org # 4.9.x-
-> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > ---
-> >=20
-> > Hi Bob,
-> >=20
-> > Can you try this patch and see if it fixes your HDMI issue?
-> > With the kernel running without "clk_ignore_unused" that is.
->=20
-> Hi Chen-Yu,
->=20
-> Unfortunately, that doesn't fix it; I get the same behaviour as without
-> clk_ignore_unused.
-
-can you apply that patch and give us your kernel boot logs?
-
-Thanks!
-
-------8<---------
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 820a939fb6bb..0a23b03ea393 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -773,7 +773,9 @@ static void clk_disable_unused_subtree(struct clk_core =
-*core)
- 	if (core->enable_count)
- 		goto unlock_out;
-
--	if (core->flags & CLK_IGNORE_UNUSED)
-+	printk("Ignoring %s\n", core->name);
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index a2d16190..4d0ace2 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -18,6 +18,17 @@
+ 
+ #include <linux/clkdev.h>
+ 
++struct clk_omap_mux {
++	struct clk_hw		hw;
++	void __iomem		*reg;
++	u32			*table;
++	u32			mask;
++	u8			shift;
++	u8			flags;
++};
 +
-+	if (true)
- 		goto unlock_out;
-
- 	/*
--------8<-------
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---zygr7x5jl6opgou7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYpeepAAoJEBx+YmzsjxAgme4P/RaOPbZXll+5Pr9a5hw6gHva
-SZc4MtQq3bblP1yS72txJxWpVvJP+b+Gj0IxBkQtWk60DNPS3eyKkW4nWYCYC9UY
-0suv9ETB/lIUk5jyPueDhxGpWgibYVsCPxPOODBkebP8boxQAOi32Gd/02j5vLti
-6wVyhQ1pB/2sWAJPvzJ/UCzd3LjiZGGSq4xRTTj/r3Ww/caZosEXbeuoF8+TzZ9T
-/35ZtkNqSvaBfUXjYNoVXCh9q4mJha4DiBCE/fu/vs/YE/FBZx2Ayzy0I7a3y8ro
-DuY1iBkWu56VelVBhHdgVHSeA+Qya+TE0dUEw7BBI7d5a/zYmLceGXESEhw8hB05
-cL9lXz3v/P3UBLSjXcUWLFjTnZJZGhdvsLaK6ZVbmpGtPE6YonZSkU8BYkKteZza
-y8ziAuReikMscdapQdO7vsrUNU0j8aME/ptP43vRFt1Zth7avo4MW0d+VLwP/jMC
-waLzQk0E/z6xJUTJUHeFyg6oChOBlIo88InOdLW98HlxprJCotX1mQbNLvmI58I7
-MvVWDXx3TUi0C733i97H0VALwvzyE+S8QwplGDFaM9z/y8IOPgWF4OQz7MR/B/wV
-fc8cc9Nk+lWfN0uUpA4BsQDdLoppQkdzqpfUmqHEMenaEQbeGQK/aQCzeqmpBdmq
-Ls+YkVPU2cAMJ0CwwvpH
-=sdo4
------END PGP SIGNATURE-----
-
---zygr7x5jl6opgou7--
++#define to_clk_omap_mux(_hw) container_of(_hw, struct clk_omap_mux, hw)
++
+ enum {
+ 	TI_CLK_FIXED,
+ 	TI_CLK_MUX,
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index 3cc6db4..daa2dee 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -28,7 +28,7 @@
+ 
+ static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
+ {
+-	struct clk_mux *mux = to_clk_mux(hw);
++	struct clk_omap_mux *mux = to_clk_omap_mux(hw);
+ 	int num_parents = clk_hw_get_num_parents(hw);
+ 	u32 val;
+ 
+@@ -65,7 +65,7 @@ static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
+ 
+ static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ {
+-	struct clk_mux *mux = to_clk_mux(hw);
++	struct clk_omap_mux *mux = to_clk_omap_mux(hw);
+ 	u32 val;
+ 
+ 	if (mux->table) {
+@@ -102,7 +102,7 @@ static struct clk *_register_mux(struct device *dev, const char *name,
+ 				 void __iomem *reg, u8 shift, u32 mask,
+ 				 u8 clk_mux_flags, u32 *table)
+ {
+-	struct clk_mux *mux;
++	struct clk_omap_mux *mux;
+ 	struct clk *clk;
+ 	struct clk_init_data init;
+ 
+@@ -229,7 +229,7 @@ static void of_mux_clk_setup(struct device_node *node)
+ 
+ struct clk_hw *ti_clk_build_component_mux(struct ti_clk_mux *setup)
+ {
+-	struct clk_mux *mux;
++	struct clk_omap_mux *mux;
+ 	struct clk_omap_reg *reg;
+ 	int num_parents;
+ 
+@@ -260,7 +260,7 @@ struct clk_hw *ti_clk_build_component_mux(struct ti_clk_mux *setup)
+ 
+ static void __init of_ti_composite_mux_clk_setup(struct device_node *node)
+ {
+-	struct clk_mux *mux;
++	struct clk_omap_mux *mux;
+ 	unsigned int num_parents;
+ 	u32 val;
+ 
+-- 
+1.9.1
