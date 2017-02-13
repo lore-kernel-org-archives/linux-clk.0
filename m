@@ -1,50 +1,57 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Rask Ingemann Lambertsen <rask@formelder.dk>
-In-Reply-To: <20170226095204.cwh7f2mbgjumr5fu@localhost>
-References: <20170226011956.53581-1-icenowy@aosc.xyz>
- <20170226011956.53581-3-icenowy@aosc.xyz>
- <20170226095204.cwh7f2mbgjumr5fu@localhost>
-Subject: Re: [PATCH v5 2/7] clk: sunxi-ng: rename sun8i-h3 driver to
- sunxi-h3-h5
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 05/15] clk: ti: add clkdm_lookup to the exported functions
+Date: Mon, 13 Feb 2017 11:35:01 +0200
+Message-ID: <1486978511-29668-6-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
+References: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Message-Id: <10821061488121078@web18g.yandex.ru>
-Date: Sun, 26 Feb 2017 22:57:58 +0800
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
- Will Deacon <will.deacon@arm.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- Andre Przywara <andre.przywara@arm.com>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-CgoyNi4wMi4yMDE3LCAxNzo1MiwgIlJhc2sgSW5nZW1hbm4gTGFtYmVydHNlbiIgPHJhc2tAZm9y
-bWVsZGVyLmRrPjoKPiBPbiBTdW4sIEZlYiAyNiwgMjAxNyBhdCAwOToxOTo1MUFNICswODAwLCBJ
-Y2Vub3d5IFpoZW5nIHdyb3RlOgo+PiDCoEFzIHRoZSBDQ1UgaW4gdGhlIEFsbHdpbm5lciBINSBT
-b0MgaXMgdmVyeSBzaW1pbGFyIHRvIHRoZSBvbmUgaW4gSDMsCj4+IMKgcmVuYW1lIHRoZSBIMyBk
-cml2ZXIgdG8gc3VueGktaDMtaDUgc28gdGhhdCBpdCBjYW4gYmUgZXh0ZW5kZWQgd2l0aCBINQo+
-PiDCoHN1cHBvcnQuCj4+Cj4+IMKgVHJhc2l0aW9uYWwgaGVhZGVyIHN5bWxpbmtzIGFyZSBjcmVh
-dGVkLCB0byBlbnN1cmUgY3VycmVudCBkZXZpY2UgdHJlZQo+Cj4gcy9UcmFzaXRpb25hbC9UcmFu
-c2l0aW9uYWwvIEkgZ3Vlc3MuCj4KPj4gwqBmaWxlcyB3aGljaCBpbmNsdWRlZCBzdW44aS1oMy1j
-Y3UuaCBjYW4gY29tcGlsZS4KPj4KPj4gwqBTaWduZWQtb2ZmLWJ5OiBJY2Vub3d5IFpoZW5nIDxp
-Y2Vub3d5QGFvc2MueHl6Pgo+PiDCoC0tLQo+PiDCoENoYW5nZXMgaW4gdjU6Cj4+IMKgLSBBZGQg
-dGhlIHJlYXNvbiB0byBjcmVhdGUgdHJhc2l0aW9uYWwgaGVhZGVycyBpbiBjb21taXQgbWVzc2Fn
-ZS4KPgo+IExpa2V3aXNlLgoKVGhhbmtzIDstKQoKPgo+IC0tCj4gUmFzayBJbmdlbWFubiBMYW1i
-ZXJ0c2VuCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwps
-aW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJh
-ZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51
-eC1hcm0ta2VybmVsCg==
+This will be needed to move some additional clockdomain functionality
+under clock driver.
+
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/clock.c | 1 +
+ include/linux/clk/ti.h      | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index d058125..5391b66 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -57,6 +57,7 @@
+ static struct ti_clk_ll_ops omap_clk_ll_ops = {
+ 	.clkdm_clk_enable = clkdm_clk_enable,
+ 	.clkdm_clk_disable = clkdm_clk_disable,
++	.clkdm_lookup = clkdm_lookup,
+ 	.cm_wait_module_ready = omap_cm_wait_module_ready,
+ 	.cm_split_idlest_reg = cm_split_idlest_reg,
+ };
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 07308db..bc7fd8f 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -213,6 +213,7 @@ struct clk_omap_reg {
+  * @clk_writel: pointer to register write function
+  * @clkdm_clk_enable: pointer to clockdomain enable function
+  * @clkdm_clk_disable: pointer to clockdomain disable function
++ * @clkdm_lookup: pointer to clockdomain lookup function
+  * @cm_wait_module_ready: pointer to CM module wait ready function
+  * @cm_split_idlest_reg: pointer to CM module function to split idlest reg
+  *
+@@ -228,6 +229,7 @@ struct ti_clk_ll_ops {
+ 	int	(*clkdm_clk_enable)(struct clockdomain *clkdm, struct clk *clk);
+ 	int	(*clkdm_clk_disable)(struct clockdomain *clkdm,
+ 				     struct clk *clk);
++	struct clockdomain * (*clkdm_lookup)(const char *name);
+ 	int	(*cm_wait_module_ready)(u8 part, s16 prcm_mod, u16 idlest_reg,
+ 					u8 idlest_shift);
+ 	int	(*cm_split_idlest_reg)(void __iomem *idlest_reg, s16 *prcm_inst,
+-- 
+1.9.1
