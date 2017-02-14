@@ -1,54 +1,54 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Tue, 7 Feb 2017 16:09:49 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Baoyou Xie <baoyou.xie@linaro.org>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, jun.nie@linaro.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, perex@perex.cz, tiwai@suse.com,
-	shawn.guo@linaro.org, vinod.koul@intel.com,
-	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, xie.baoyou@zte.com.cn,
-	chen.chaokai@zte.com.cn, wang.qiang01@zte.com.cn
-Subject: Re: [PATCH v2 1/3] clk: zte: add i2s clocks for zx296718
-Message-ID: <20170207080947.GG3407@dragon>
-References: <1486436571-8682-1-git-send-email-baoyou.xie@linaro.org>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Tue, 14 Feb 2017 16:27:18 +0100
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement
+ <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob
+ Herring <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
+ Gala <galak@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, Hanna Hawa
+ <hannah@marvell.com>, Yehuda Yitschak <yehuday@marvell.com>,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 2/3] clk: mvebu: adjust clock handling for the CP110
+ system controller
+Message-ID: <20170214162718.0777d95f@free-electrons.com>
+In-Reply-To: <20161222001456.GX8288@codeaurora.org>
+References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1482316017-22154-3-git-send-email-thomas.petazzoni@free-electrons.com>
+	<20161222001456.GX8288@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1486436571-8682-1-git-send-email-baoyou.xie@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 07, 2017 at 11:02:49AM +0800, Baoyou Xie wrote:
-> The i2s related clock support is missing from the existing zx296718
-> clock driver. This patch adds it, so that the upstream ZX I2S driver
-> can work out.
-> 
-> Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
-> ---
->  drivers/clk/zte/clk-zx296718.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
-> index ad5d1df..f106d40 100644
-> --- a/drivers/clk/zte/clk-zx296718.c
-> +++ b/drivers/clk/zte/clk-zx296718.c
-> @@ -941,6 +941,10 @@ static struct zx_clk_gate audio_gate_clk[] = {
->  	GATE(AUDIO_SPDIF1_WCLK, "spdif1_wclk", "spdif1_wclk_div", AUDIO_SPDIF1_CLK, 9, CLK_SET_RATE_PARENT, 0),
->  	GATE(AUDIO_TDM_WCLK, "tdm_wclk", "tdm_wclk_div", AUDIO_TDM_CLK, 17, CLK_SET_RATE_PARENT, 0),
->  	GATE(AUDIO_TS_PCLK, "tempsensor_pclk", "clk49m5", AUDIO_TS_CLK, 1, 0, 0),
-> +	GATE(AUDIO_I2S0_PCLK, "i2s0_pclk", "clk49m5", AUDIO_I2S0_CLK, 8, 0, 0),
-> +	GATE(AUDIO_I2S1_PCLK, "i2s1_pclk", "clk49m5", AUDIO_I2S1_CLK, 8, 0, 0),
-> +	GATE(AUDIO_I2S2_PCLK, "i2s2_pclk", "clk49m5", AUDIO_I2S2_CLK, 8, 0, 0),
-> +	GATE(AUDIO_I2S3_PCLK, "i2s3_pclk", "clk49m5", AUDIO_I2S3_CLK, 8, 0, 0),
+Hello Stephen,
 
-I would suggest we put these clocks together with AUDIO_I2S_WCLK, so
-that we can find I2S clocks in one place.
-
-Shawn
-
->  };
->  
->  static struct clk_hw_onecell_data audio_hw_onecell_data = {
-> -- 
-> 2.7.4
+On Wed, 21 Dec 2016 16:14:56 -0800, Stephen Boyd wrote:
+> On 12/21, Thomas Petazzoni wrote:
+> > This commit:
+> > 
+> >  - makes the GOP_DP (bit 9) gatable clock a child clock of the
+> >    SD_MMC_GOP (bit 18) clock, as it should have been. The clock for bit
+> >    18 was just named SD_MMC, but since it also covers the GOP block, it
+> >    is renamed SD_MMC_GOP.
+> > 
+> >  - makes the MG (bit 5) gatable clock a child clock of the MG_CORE
+> >    clock (bit 6)
+> > 
+> > Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> > ---  
 > 
+> Applied to clk-next
+
+I don't see my patch in clk-next at
+https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/log/drivers/clk/mvebu/cp110-system-controller.c?h=clk-next,
+nor in linux-next. Am I missing something?
+
+Thanks a lot,
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
