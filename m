@@ -1,47 +1,86 @@
-Return-Path: <Chris.Packham@alliedtelesis.co.nz>
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	"Rob Herring" <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	"Jason Cooper" <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory
- Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] clk: mvebu: Expand mv98dx3236-core-clock support
-Date: Mon, 6 Feb 2017 23:25:23 +0000
-Message-ID: <9974653ab84040c3b12fad075790c123@svr-chch-ex1.atlnz.lc>
-References: <20170203034012.29399-1-chris.packham@alliedtelesis.co.nz>
- <20170203034012.29399-5-chris.packham@alliedtelesis.co.nz>
- <20170206231400.GM25384@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.141]:47346 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751408AbdBNAok (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Feb 2017 19:44:40 -0500
+Subject: Re: [PATCH 0/7] Rename RK1108 to RV1108
+To: Heiko Stuebner <heiko@sntech.de>, robh+dt@kernel.org
+References: <1486983566-32265-1-git-send-email-andy.yan@rock-chips.com>
+ <2809087.MHZWQWdaOC@phil>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, sboyd@codeaurora.org,
+        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        shawn.lin@rock-chips.com, linux-arm-kernel@lists.infradead.org
+From: Andy Yan <andy.yan@rock-chips.com>
+Message-ID: <0bbc4151-d954-1a27-48c3-1e8c9cb9e16f@rock-chips.com>
+Date: Tue, 14 Feb 2017 08:44:31 +0800
 MIME-Version: 1.0
+In-Reply-To: <2809087.MHZWQWdaOC@phil>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/02/17 12:14, Stephen Boyd wrote:=0A=
-> On 02/03, Chris Packham wrote:=0A=
->> The initial implementation in commit e120c17a70e5 ("clk: mvebu: support=
-=0A=
->> for 98DX3236 SoC") hardcoded a fixed value for the main PLL frequency.=
-=0A=
->> Port code from the Marvell supplied Linux kernel to support different=0A=
->> PLL frequencies and provide clock gating support.=0A=
->>=0A=
->> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
->> ---=0A=
->>  .../devicetree/bindings/clock/mvebu-core-clock.txt |   7 +=0A=
->>  .../bindings/clock/mvebu-gated-clock.txt           |  11 ++=0A=
->>  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          |  14 +-=0A=
->>  drivers/clk/mvebu/Makefile                         |   2 +-=0A=
->>  drivers/clk/mvebu/armada-xp.c                      |  13 --=0A=
->>  drivers/clk/mvebu/mv98dx3236.c                     | 144 ++++++++++++++=
-+++++++=0A=
->=0A=
-> This mixes dts and clk driver changes. Any chance it can be split=0A=
-> up and just have the clk part go through clk tree? Otherwise, I=0A=
-> can ack this if you want to take it all through arm-soc?=0A=
-=0A=
-I'm happy to split it if it will make life easier.=0A=
-=0A=
+Hi Heiko & Rob:
+
+
+On 2017年02月13日 20:51, Heiko Stuebner wrote:
+> Hi Andy,
+>
+> Am Montag, 13. Februar 2017, 18:59:26 CET schrieb Andy Yan:
+>> Rockchip finally named this soc as RV1108, so change
+>> RK1108/rk1108 to RV1108/rv1108 for compatible.
+> renaming existing bindings (that have been in multiple kernel versions
+> already) always is a hot topic. So I'll be hoping for Rob to give a go-ahead
+> for it :-) .
+>
+> Just to confirm, the rk1108/rv1108 is completely new to the market, so we're
+> not breaking any existing devices, right?
+
+     Yes, the 1108 Soc is completely new to market, this change will not 
+breaking any existing devices.
+     Hope more suggestions from you.
+>
+> Heiko
+>
+>
+>
+>> Andy Yan (7):
+>>    dt-bindings: rockchip-dw-mshc: rename RK1108 to RV1108
+>>    dt-bindings: rk1108-cru: rename RK1108 to RV1108
+>>    clk: rockchip: rename RK1108 to RV1108
+>>    dt-bindings: rockchip,pinctrl: rename RK1108 to RV1108
+>>    pinctrl: rockchip: rename RK1108 to RV1108
+>>    ARM: dts: rename RK1108 to RV1108
+>>    ARM: rockchip: reanme RK1108 to RV1108
+>>
+>>   Documentation/devicetree/bindings/arm/rockchip.txt |   4 +-
+>>   ...chip,rk1108-cru.txt => rockchip,rv1108-cru.txt} |  12 +-
+>>   .../devicetree/bindings/mmc/rockchip-dw-mshc.txt   |   2 +-
+>>   .../bindings/pinctrl/rockchip,pinctrl.txt          |  16 +-
+>>   arch/arm/boot/dts/Makefile                         |   2 +-
+>>   .../boot/dts/{rk1108-evb.dts => rv1108-evb.dts}    |   7 +-
+>>   arch/arm/boot/dts/{rk1108.dtsi => rv1108.dtsi}     |  24 +-
+>>   drivers/clk/rockchip/Makefile                      |   2 +-
+>>   .../clk/rockchip/{clk-rk1108.c => clk-rv1108.c}    | 414
+>> ++++++++++----------- drivers/clk/rockchip/clk.h                         |
+>> 28 +-
+>>   drivers/pinctrl/pinctrl-rockchip.c                 |  76 ++--
+>>   .../clock/{rk1108-cru.h => rv1108-cru.h}           |   6 +-
+>>   12 files changed, 300 insertions(+), 293 deletions(-)
+>>   rename Documentation/devicetree/bindings/clock/{rockchip,rk1108-cru.txt =>
+>> rockchip,rv1108-cru.txt} (83%) rename arch/arm/boot/dts/{rk1108-evb.dts =>
+>> rv1108-evb.dts} (89%) rename arch/arm/boot/dts/{rk1108.dtsi => rv1108.dtsi}
+>> (94%)
+>>   rename drivers/clk/rockchip/{clk-rk1108.c => clk-rv1108.c} (57%)
+>>   rename include/dt-bindings/clock/{rk1108-cru.h => rv1108-cru.h} (97%)
+>
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+>
+>
+>
+
+
