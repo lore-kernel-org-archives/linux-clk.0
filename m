@@ -1,70 +1,82 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 8 Feb 2017 09:00:51 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Andre Przywara <andre.przywara@arm.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 5/9] dt-bindings: remove transitional headers for
- Allwinner H3 CCU
-Message-ID: <20170208080051.7atx3w2nosz43sib@lukather>
-References: <20170207183042.62699-1-icenowy@aosc.xyz>
- <20170207183042.62699-6-icenowy@aosc.xyz>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="udk6vfcl5f4rjemz"
-In-Reply-To: <20170207183042.62699-6-icenowy@aosc.xyz>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v6 02/14] clk: apn806: Turn the eMMC clock as optional for dts backwards compatible
+Date: Tue, 14 Feb 2017 18:01:42 +0100
+Message-Id: <7dac8a83c938e1073c492a5168961596b54beb5d.1487091464.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+First version of the binding didn't have the eMMC clock. This patch
+allows to not registering the eMMC clock if it is not present in the
+device tree. Then the device tree can be backwards compatible.
 
---udk6vfcl5f4rjemz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ drivers/clk/mvebu/ap806-system-controller.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-On Wed, Feb 08, 2017 at 02:30:38AM +0800, Icenowy Zheng wrote:
-> As we have already changed the DTSI file, the trnasitional dt-bindings
-> header sun8i-h3-ccu.h for clock and reset will not be needed any more.
->=20
-> Remove them.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-
-This can be folded in the previous patch.
-
-Thanks,
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---udk6vfcl5f4rjemz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYmtAzAAoJEBx+YmzsjxAgIXgQAIuCl/iixDKqMd8H+c7Lc2gT
-h20ZOso4JM5tVlRVZhi0JJxKaeIF7s91lRUncoEEksiTzCimrul+c0JVOHksmMaG
-KlcNtmg0PZj+e/zarJY+wGo3HI7gtGCri6jj5PRULvmmY57nDKUudbEuhI1ATLI0
-+lo837fBtz/HNt2ivDZfQSTpa6udS4btqQbhy5jShKitZVSq/xE9gBKVJNpeQ+FQ
-GTb48F1vSITD0wbA0FI3WHq4OFDLTytX/cIBsdP9UnM7ufK4UVqGkKuJ3YsLpvy6
-BvedeskW/EyNmZ6n+zhsB7yCT0gKSLz2p2sNnb52AqOARmunw8SWuxv/K6yPX/PL
-xk5qDEvDsnOjlN1taZFrAYs3Hgeco82h60gCOQ3d7uiqsgW0jUtbnNrfTzcQDvze
-eCTiIdWOA3MMx5uYD3DYMxPFFSMcB5JPsVK9gm8zpMyXWkJL0t8Cp0sYK9QQzDcf
-xaZwAeC11OaYF4hFOpkbg/NszshW90VuM9OxrwZaUOOkQLMUlaI55UrtVG8TUXeV
-tCD9cyP/JX31NWhCu5J7oGQDZElxLVKK6MmL+vIBjZCaaPjRuV3vdEhJMzR6lTcW
-mZTKlQ1OiDyRYmo8OZCd+xDHpZOaXBsyFtjPQT8eP1mZDAcsQOalSLl2w8NSxfD+
-h9ImD3GbkpWvZ9G+eEI5
-=9fSg
------END PGP SIGNATURE-----
-
---udk6vfcl5f4rjemz--
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index 0a785076b0c6..a5459abbc314 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -118,13 +118,19 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* eMMC Clock is fixed clock divided by 3 */
+-	of_property_read_string_index(np, "clock-output-names",
+-				      4, &name);
+-	ap806_clks[4] = clk_register_fixed_factor(NULL, name, fixedclk_name,
+-						  0, 1, 3);
+-	if (IS_ERR(ap806_clks[4])) {
+-		ret = PTR_ERR(ap806_clks[4]);
+-		goto fail4;
++	if (of_property_read_string_index(np, "clock-output-names",
++					  4, &name)) {
++		ap806_clk_data.clk_num--;
++		dev_warn(&pdev->dev,
++			 "eMMC clock mising: update the device tree!\n");
++	} else {
++		ap806_clks[4] = clk_register_fixed_factor(NULL, name,
++							  fixedclk_name,
++							  0, 1, 3);
++		if (IS_ERR(ap806_clks[4])) {
++			ret = PTR_ERR(ap806_clks[4]);
++			goto fail4;
++		}
+ 	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_clk_data);
+-- 
+git-series 0.9.1
