@@ -1,77 +1,87 @@
-Return-Path: <cyndis@kapsi.fi>
-Subject: Re: [PATCH 4/7] clk: tegra: remove non-existing pll_m_out1 clock
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>,
- linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
- <1487776444-4701-5-git-send-email-pdeschrijver@nvidia.com>
- <3be69e34-354c-81ea-0c5e-182a79aa42d0@kapsi.fi>
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <65ad6aa9-d2c9-0264-bf17-6434cb1d84e5@kapsi.fi>
-Date: Thu, 23 Feb 2017 10:17:25 +0200
-MIME-Version: 1.0
-In-Reply-To: <3be69e34-354c-81ea-0c5e-182a79aa42d0@kapsi.fi>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v6 06/14] mmc: sdhci: Export sdhci_enable_sdio_irq() from sdhci.c
+Date: Tue, 14 Feb 2017 18:01:46 +0100
+Message-Id: <43d7894cb56bd69d7980cea12b12d56f509f4797.1487091464.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Whoops, that is, after a commit message is added.
+From: Hu Ziji <huziji@marvell.com>
 
-On 23.02.2017 10:17, Mikko Perttunen wrote:
-> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
->
-> On 22.02.2017 17:13, Peter De Schrijver wrote:
->> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->> ---
->>  drivers/clk/tegra/clk-tegra210.c | 5 -----
->>  1 file changed, 5 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-tegra210.c
->> b/drivers/clk/tegra/clk-tegra210.c
->> index 7bda8ba..b7ef8a7 100644
->> --- a/drivers/clk/tegra/clk-tegra210.c
->> +++ b/drivers/clk/tegra/clk-tegra210.c
->> @@ -2115,7 +2115,6 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
->>      [tegra_clk_pll_c2] = { .dt_id = TEGRA210_CLK_PLL_C2, .present =
->> true },
->>      [tegra_clk_pll_c3] = { .dt_id = TEGRA210_CLK_PLL_C3, .present =
->> true },
->>      [tegra_clk_pll_m] = { .dt_id = TEGRA210_CLK_PLL_M, .present =
->> true },
->> -    [tegra_clk_pll_m_out1] = { .dt_id = TEGRA210_CLK_PLL_M_OUT1,
->> .present = true },
->>      [tegra_clk_pll_p] = { .dt_id = TEGRA210_CLK_PLL_P, .present =
->> true },
->>      [tegra_clk_pll_p_out1] = { .dt_id = TEGRA210_CLK_PLL_P_OUT1,
->> .present = true },
->>      [tegra_clk_pll_p_out3] = { .dt_id = TEGRA210_CLK_PLL_P_OUT3,
->> .present = true },
->> @@ -2229,7 +2228,6 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
->>      { .con_id = "pll_p_out3", .dt_id = TEGRA210_CLK_PLL_P_OUT3 },
->>      { .con_id = "pll_p_out4", .dt_id = TEGRA210_CLK_PLL_P_OUT4 },
->>      { .con_id = "pll_m", .dt_id = TEGRA210_CLK_PLL_M },
->> -    { .con_id = "pll_m_out1", .dt_id = TEGRA210_CLK_PLL_M_OUT1 },
->>      { .con_id = "pll_x", .dt_id = TEGRA210_CLK_PLL_X },
->>      { .con_id = "pll_x_out0", .dt_id = TEGRA210_CLK_PLL_X_OUT0 },
->>      { .con_id = "pll_u", .dt_id = TEGRA210_CLK_PLL_U },
->> @@ -2404,9 +2402,6 @@ static void __init tegra210_pll_init(void
->> __iomem *clk_base,
->>      clk_register_clkdev(clk, "pll_mb", NULL);
->>      clks[TEGRA210_CLK_PLL_MB] = clk;
->>
->> -    clk_register_clkdev(clk, "pll_m_out1", NULL);
->> -    clks[TEGRA210_CLK_PLL_M_OUT1] = clk;
->> -
->>      /* PLLM_UD */
->>      clk = clk_register_fixed_factor(NULL, "pll_m_ud", "pll_m",
->>                      CLK_SET_RATE_PARENT, 1, 1);
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Export sdhci_enable_sdio_irq() from sdhci.c.
+Thus vendor SDHC driver can implement its specific SDIO irq
+control.
+
+Signed-off-by: Hu Ziji <huziji@marvell.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ drivers/mmc/host/sdhci.c | 3 ++-
+ drivers/mmc/host/sdhci.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index d2338dc362f4..9a4fda81ff81 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1824,7 +1824,7 @@ static void sdhci_enable_sdio_irq_nolock(struct sdhci_host *host, int enable)
+ 	}
+ }
+ 
+-static void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable)
++void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable)
+ {
+ 	struct sdhci_host *host = mmc_priv(mmc);
+ 	unsigned long flags;
+@@ -1838,6 +1838,7 @@ static void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable)
+ 	sdhci_enable_sdio_irq_nolock(host, enable);
+ 	spin_unlock_irqrestore(&host->lock, flags);
+ }
++EXPORT_SYMBOL_GPL(sdhci_enable_sdio_irq);
+ 
+ int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+ 				      struct mmc_ios *ios)
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index e4a07543a12b..609783364941 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -694,6 +694,7 @@ int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
+ void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios);
+ int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+ 				      struct mmc_ios *ios);
++void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable);
+ 
+ #ifdef CONFIG_PM
+ extern int sdhci_suspend_host(struct sdhci_host *host);
+-- 
+git-series 0.9.1
