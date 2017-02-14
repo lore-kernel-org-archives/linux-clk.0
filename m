@@ -1,45 +1,33 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-To: andy.gross@linaro.org
-Cc: bjorn.andersson@linaro.org, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
-Subject: [PATCH 1/2] arm: dts: qcom: msm8974: Add RPMCC DT node
-Date: Fri,  3 Feb 2017 20:36:14 +0200
-Message-Id: <20170203183614.28135-1-georgi.djakov@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 14 Feb 2017 11:00:48 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3] clk: renesas: mstp: ensure register writes complete
+Message-ID: <20170214190048.GU25384@codeaurora.org>
+References: <20170214160805.20156-1-chris.brandt@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170214160805.20156-1-chris.brandt@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the RPM Clock Controller DT node for msm8974-based platforms, so that
-drivers can use the clocks provided by the RPM processor.
+On 02/14, Chris Brandt wrote:
+> When there is no status bit, it is possible for the clock enable/disable
+> operation to have not completed by the time the driver code resumes
+> execution. This is due to the fact that write operations are sometimes
+> queued and delayed internally. Doing a read ensures the write operations
+> has completed.
+> 
+> Fixes: b6face404f38 ("ARM: shmobile: r7s72100: add essential clock nodes to dtsi")
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- arch/arm/boot/dts/qcom-msm8974.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Applied to clk-next
 
-diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-index d3e1a61b8671..4b4c61e2ee35 100644
---- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-@@ -2,6 +2,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-msm8974.h>
-+#include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/reset/qcom,gcc-msm8974.h>
- #include "skeleton.dtsi"
-@@ -760,6 +761,11 @@
- 				compatible = "qcom,rpm-msm8974";
- 				qcom,smd-channels = "rpm_requests";
- 
-+				rpmcc: clock-controller {
-+					compatible = "qcom,rpmcc-msm8974", "qcom,rpmcc";
-+					#clock-cells = <1>;
-+				};
-+
- 				pm8841-regulators {
- 					compatible = "qcom,rpm-pm8841-regulators";
- 
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
