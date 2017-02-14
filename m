@@ -1,63 +1,58 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pg0-f51.google.com ([74.125.83.51]:35765 "EHLO
-        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752892AbdBGFfo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Feb 2017 00:35:44 -0500
-Received: by mail-pg0-f51.google.com with SMTP id 194so35366398pgd.2
-        for <linux-clk@vger.kernel.org>; Mon, 06 Feb 2017 21:35:44 -0800 (PST)
-Date: Mon, 6 Feb 2017 21:35:38 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: andy.gross@linaro.org, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm: dts: qcom: msm8974: Add RPMCC DT node
-Message-ID: <20170207053538.GE27837@minitux>
-References: <20170203183614.28135-1-georgi.djakov@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 14 Feb 2017 11:04:56 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: linux-clk@vger.kernel.org, x86@kernel.org,
+	platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH] clk: x86: add "mclk" alias for Baytrail/Cherrytrail
+Message-ID: <20170214190456.GV25384@codeaurora.org>
+References: <1486937212-10093-1-git-send-email-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170203183614.28135-1-georgi.djakov@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1486937212-10093-1-git-send-email-pierre-louis.bossart@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri 03 Feb 10:36 PST 2017, Georgi Djakov wrote:
-
-> Add the RPM Clock Controller DT node for msm8974-based platforms, so that
-> drivers can use the clocks provided by the RPM processor.
+On 02/12, Pierre-Louis Bossart wrote:
+> Due to timing requirements, TI and Conexant manage the audio
+> reference clock from their ASoC codec drivers using the "mclk"
+> string. This patch adds a default alias to "pmc_plt_clk_3" to
+> avoid Intel-specific tests in those codec drivers and use code
+> as-is.
+> "pmc_plt_clk_3" is used exclusively for audio on all known
+> Baytrail/CherryTrail designs and is e.g. routed on the MCLK
+> (pin 26) of the MinnowBoardMAX Turbot LSE connector.
 > 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 > ---
->  arch/arm/boot/dts/qcom-msm8974.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
 > 
-> diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> index d3e1a61b8671..4b4c61e2ee35 100644
-> --- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-> +++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> @@ -2,6 +2,7 @@
+> Notes:
+>     This patch only applies on top of linux-next or clk-next, the
+>     previous clk-related patches are not yet merged in the audio
+>     trees
+> 
+>  drivers/clk/x86/clk-pmc-atom.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+> index 2b60577..ba00d27 100644
+> --- a/drivers/clk/x86/clk-pmc-atom.c
+> +++ b/drivers/clk/x86/clk-pmc-atom.c
+> @@ -340,6 +340,8 @@ static int plt_clk_probe(struct platform_device *pdev)
 >  
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/clock/qcom,gcc-msm8974.h>
-> +#include <dt-bindings/clock/qcom,rpmcc.h>
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/reset/qcom,gcc-msm8974.h>
->  #include "skeleton.dtsi"
-> @@ -760,6 +761,11 @@
->  				compatible = "qcom,rpm-msm8974";
->  				qcom,smd-channels = "rpm_requests";
+>  	plt_clk_free_parent_names_loop(parent_names, data->nparents);
 >  
-> +				rpmcc: clock-controller {
-> +					compatible = "qcom,rpmcc-msm8974", "qcom,rpmcc";
-> +					#clock-cells = <1>;
-> +				};
+> +	clk_add_alias("mclk", dev_name(&pdev->dev), "pmc_plt_clk_3", NULL);
 > +
->  				pm8841-regulators {
->  					compatible = "qcom,rpm-pm8841-regulators";
->  
+
+This leaks an alias when the driver is removed. Honestly,
+clk_add_alias() doesn't work well because of that problem. Can
+you just add another lookup with the pointer you already have
+instead of passing a NULL device to do a global lookup?
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
