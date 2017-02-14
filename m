@@ -1,83 +1,32 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Sun, 26 Feb 2017 10:19:55 +0100
-From: Rask Ingemann Lambertsen <rask@formelder.dk>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: Re: [PATCH v5 7/7] arm64: dts: sunxi: add support for the Orange Pi
- PC 2 board
-Message-ID: <20170226091955.h3f5pgk7elboxqym@localhost>
-References: <20170226011956.53581-1-icenowy@aosc.xyz>
- <20170226011956.53581-8-icenowy@aosc.xyz>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 14 Feb 2017 12:06:03 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] clk: qcom: Do not drop device node twice
+Message-ID: <20170214200603.GX25384@codeaurora.org>
+References: <1486854296-23156-1-git-send-email-linux@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <20170226011956.53581-8-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
- linux-sunxi@googlegroups.com, Will Deacon <will.deacon@arm.com>,
- linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
- Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1486854296-23156-1-git-send-email-linux@roeck-us.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Feb 26, 2017 at 09:19:56AM +0800, Icenowy Zheng wrote:
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-> new file mode 100644
-> index 000000000000..79784cba806c
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-[...]
-> +	leds {
-> +		compatible = "gpio-leds";
-> +
-> +		pwr_led {
-> +			label = "orangepi:green:pwr";
-> +			gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>;
-> +			default-state = "on";
-> +		};
-> +
-> +		status_led {
+On 02/11, Guenter Roeck wrote:
+> of_find_node_by_name() drops the reference to a passed device node.
+> It is not necessary to drop it again, and doing so may result in the
+> device node being released prematurely.
+> 
+> Cc: Rob Herring <robh@kernel.org>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
 
-IMHO, you don't need the '_led' suffix inside the 'leds' node, and then you
-also avoid having underscores in the node names.
-
-> +			label = "orangepi:red:status";
-> +			gpios = <&pio 0 20 GPIO_ACTIVE_HIGH>;
-> +		};
-> +	};
-> +
-> +	r_gpio_keys {
-
-Node names should not contain underscores. You can use hyphens instead. See
-https://www.mail-archive.com/linux-kernel%40vger.kernel.org/msg1122967.html
-https://www.mail-archive.com/linux-kernel%40vger.kernel.org/msg1145633.html
-
-> +&mmc0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin>;
-> +	vmmc-supply = <&reg_vcc3v3>;
-> +	bus-width = <4>;
-> +	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-> +	cd-inverted;
-
-You should be able to simplify those last two lines to just
-
-cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
-
-(see the paragraph which begins with "*NOTE* on CD and WP polarity."
-in 'Documentation/devicetree/bindings/mmc/mmc.txt'.)
+Applied to clk-next
 
 -- 
-Rask Ingemann Lambertsen
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
