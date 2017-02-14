@@ -1,70 +1,50 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/5] clk: sunxi-ng: Add support for A83T CCU
-Date: Tue, 14 Feb 2017 11:35:21 +0800
-Message-Id: <20170214033526.16977-1-wens@csie.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170213184405.5657-1-chris.brandt@renesas.com>
+References: <20170213184405.5657-1-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 14 Feb 2017 09:38:07 +0100
+Message-ID: <CAMuHMdUm6-FQSuQYt_h2M21QZLz4UbMxPss8mv2ACWCa6rwfCA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: mstp: ensure register writes complete
+To: Chris Brandt <chris.brandt@renesas.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms+renesas@verge.net.au>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+Hi Chris,
 
-This is yet another series that adds support for the A83T CCU.
-The A83T CCU has a mix of new styled (like the A80) clocks at
-old (like A3x) offsets. Some differences include:
+On Mon, Feb 13, 2017 at 7:44 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> When there is no status bit, it is possible for the clock enable/disable
+> operation to have not completed by the time the driver code resumes
+> execution. This is due to the fact that write operations are sometimes
+> queued and delayed internally. Doing a read ensures the write operations
+> has completed.
+>
+> Fixes: b6face404f38 ("ARM: shmobile: r7s72100: add essential clock nodes to dtsi")
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-  - D1/D2 style PLL clocks
-  - divisible audio module clocks
-  - new timing mode for mmc2 module clock
+Thanks!
 
-Patch 1 fixes the mp style clock to take into account pre-dividers
-for the .set_rate and .recalc_rate callbacks.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Patch 2 makes the gate clocks support common pre-dividers. This is
-used to make the HSIC 12M clock have the right clock rate.
+I've regression-tested your patch on R-Car Gen1 (r8a7778/bock-w), which
+also doesn't have status bits for some module clocks, and its SPI FLASH
+is still identified.
 
-Patch 3 adds a compatible string for the A83T CCU to the sunxi-ccu
-bindings.
+Mike/Stephen: As this is a fix, can you please take it directly?
+Thanks!
 
-Patch 4 adds the driver for the A83T CCU.
+Gr{oetje,eeting}s,
 
-Patch 5 adds the CCU device nodes, and fixes up any existing clock
-phandles in the dtsi.
+                        Geert
 
-Let me know what you think.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-Regards
-ChenYu
-
-
-Chen-Yu Tsai (5):
-  clk: sunxi-ng: mp: Adjust parent rate for pre-dividers
-  clk: sunxi-ng: gate: Support common pre-dividers
-  clk: sunxi-ng: Add compatible string for A83T CCU to bindings
-  clk: sunxi-ng: Add driver for A83T CCU
-  ARM: dts: sun8i-a83t: Add CCU device nodes
-
- .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
- arch/arm/boot/dts/sun8i-a83t.dtsi                  |  18 +-
- drivers/clk/sunxi-ng/Kconfig                       |  10 +
- drivers/clk/sunxi-ng/Makefile                      |   1 +
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c              | 898 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.h              |  65 ++
- drivers/clk/sunxi-ng/ccu_gate.c                    |  47 ++
- drivers/clk/sunxi-ng/ccu_mp.c                      |   8 +
- include/dt-bindings/clock/sun8i-a83t-ccu.h         | 138 ++++
- include/dt-bindings/reset/sun8i-a83t-ccu.h         |  98 +++
- 10 files changed, 1282 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a83t.h
- create mode 100644 include/dt-bindings/clock/sun8i-a83t-ccu.h
- create mode 100644 include/dt-bindings/reset/sun8i-a83t-ccu.h
-
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
