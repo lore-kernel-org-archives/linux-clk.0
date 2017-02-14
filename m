@@ -1,58 +1,70 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 14 Feb 2017 11:04:56 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: linux-clk@vger.kernel.org, x86@kernel.org,
-	platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH] clk: x86: add "mclk" alias for Baytrail/Cherrytrail
-Message-ID: <20170214190456.GV25384@codeaurora.org>
-References: <1486937212-10093-1-git-send-email-pierre-louis.bossart@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1486937212-10093-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] clk: sunxi-ng: Add support for A83T CCU
+Date: Tue, 14 Feb 2017 11:35:21 +0800
+Message-Id: <20170214033526.16977-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/12, Pierre-Louis Bossart wrote:
-> Due to timing requirements, TI and Conexant manage the audio
-> reference clock from their ASoC codec drivers using the "mclk"
-> string. This patch adds a default alias to "pmc_plt_clk_3" to
-> avoid Intel-specific tests in those codec drivers and use code
-> as-is.
-> "pmc_plt_clk_3" is used exclusively for audio on all known
-> Baytrail/CherryTrail designs and is e.g. routed on the MCLK
-> (pin 26) of the MinnowBoardMAX Turbot LSE connector.
-> 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
-> 
-> Notes:
->     This patch only applies on top of linux-next or clk-next, the
->     previous clk-related patches are not yet merged in the audio
->     trees
-> 
->  drivers/clk/x86/clk-pmc-atom.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-> index 2b60577..ba00d27 100644
-> --- a/drivers/clk/x86/clk-pmc-atom.c
-> +++ b/drivers/clk/x86/clk-pmc-atom.c
-> @@ -340,6 +340,8 @@ static int plt_clk_probe(struct platform_device *pdev)
->  
->  	plt_clk_free_parent_names_loop(parent_names, data->nparents);
->  
-> +	clk_add_alias("mclk", dev_name(&pdev->dev), "pmc_plt_clk_3", NULL);
-> +
+Hi everyone,
 
-This leaks an alias when the driver is removed. Honestly,
-clk_add_alias() doesn't work well because of that problem. Can
-you just add another lookup with the pointer you already have
-instead of passing a NULL device to do a global lookup?
+This is yet another series that adds support for the A83T CCU.
+The A83T CCU has a mix of new styled (like the A80) clocks at
+old (like A3x) offsets. Some differences include:
+
+  - D1/D2 style PLL clocks
+  - divisible audio module clocks
+  - new timing mode for mmc2 module clock
+
+Patch 1 fixes the mp style clock to take into account pre-dividers
+for the .set_rate and .recalc_rate callbacks.
+
+Patch 2 makes the gate clocks support common pre-dividers. This is
+used to make the HSIC 12M clock have the right clock rate.
+
+Patch 3 adds a compatible string for the A83T CCU to the sunxi-ccu
+bindings.
+
+Patch 4 adds the driver for the A83T CCU.
+
+Patch 5 adds the CCU device nodes, and fixes up any existing clock
+phandles in the dtsi.
+
+Let me know what you think.
+
+
+Regards
+ChenYu
+
+
+Chen-Yu Tsai (5):
+  clk: sunxi-ng: mp: Adjust parent rate for pre-dividers
+  clk: sunxi-ng: gate: Support common pre-dividers
+  clk: sunxi-ng: Add compatible string for A83T CCU to bindings
+  clk: sunxi-ng: Add driver for A83T CCU
+  ARM: dts: sun8i-a83t: Add CCU device nodes
+
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
+ arch/arm/boot/dts/sun8i-a83t.dtsi                  |  18 +-
+ drivers/clk/sunxi-ng/Kconfig                       |  10 +
+ drivers/clk/sunxi-ng/Makefile                      |   1 +
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c              | 898 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.h              |  65 ++
+ drivers/clk/sunxi-ng/ccu_gate.c                    |  47 ++
+ drivers/clk/sunxi-ng/ccu_mp.c                      |   8 +
+ include/dt-bindings/clock/sun8i-a83t-ccu.h         | 138 ++++
+ include/dt-bindings/reset/sun8i-a83t-ccu.h         |  98 +++
+ 10 files changed, 1282 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-a83t.h
+ create mode 100644 include/dt-bindings/clock/sun8i-a83t-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun8i-a83t-ccu.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
