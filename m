@@ -1,34 +1,61 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 9 Feb 2017 11:22:40 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Baoyou Xie <baoyou.xie@linaro.org>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, jun.nie@linaro.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, perex@perex.cz, tiwai@suse.com,
-	shawn.guo@linaro.org, vinod.koul@intel.com,
-	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, mathieu.poirier@linaro.org,
-	xie.baoyou@zte.com.cn, chen.chaokai@zte.com.cn,
-	wang.qiang01@zte.com.cn
-Subject: Re: [PATCH v4 3/3] ASoC: zx-i2s: introduce pclk for zx2967 family
-Message-ID: <20170209032238.GQ3407@dragon>
-References: <1486609978-18482-1-git-send-email-baoyou.xie@linaro.org>
- <1486609978-18482-3-git-send-email-baoyou.xie@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1486609978-18482-3-git-send-email-baoyou.xie@linaro.org>
+Return-Path: <rah@settrans.net>
+Message-ID: <1487110855.7145.46.camel@settrans.net>
+Subject: Re: [PATCH] clk: sunxi-ng: sun6i: Fix enable bit offset for
+ hdmi-ddc module clock
+From: Bob Ham <rah@settrans.net>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+	stable@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Tue, 14 Feb 2017 22:20:55 +0000
+In-Reply-To: <20170214022332.13326-1-wens@csie.org>
+References: <20170214022332.13326-1-wens@csie.org>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-yoPiYm75KzXdIUw03yNz"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 09, 2017 at 11:12:58AM +0800, Baoyou Xie wrote:
-> The pclk is necessary for zx2967 I2S controller. the driver
-> currently doesn't handle it. This is something we need to fix.
-> 
-> In turn, the driver supports zx296718's I2S controller.
-> 
-> By the way, this patch also change the clock name from tx to wclk
-> to make it clear.
-> 
-> Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
 
-Reviewed-by: Shawn Guo <shawnguo@kernel.org>
+--=-yoPiYm75KzXdIUw03yNz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, 2017-02-14 at 10:23 +0800, Chen-Yu Tsai wrote:
+> The enable bit offset for the hdmi-ddc module clock is wrong. It is
+> pointing to the main hdmi module clock enable bit.
+>=20
+> Reported-by: Bob Ham <rah@settrans.net>
+> Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+> Cc: stable@vger.kernel.org # 4.9.x-
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>=20
+> Hi Bob,
+>=20
+> Can you try this patch and see if it fixes your HDMI issue?
+> With the kernel running without "clk_ignore_unused" that is.
+
+Hi Chen-Yu,
+
+Unfortunately, that doesn't fix it; I get the same behaviour as without
+clk_ignore_unused.
+
+Thanks though,
+
+Bob
+
+
+--=-yoPiYm75KzXdIUw03yNz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iEYEABECAAYFAlijgtMACgkQ7whsMRnFexR0vACgqvMJWPM8Kk7HuQKhuN+DtWRv
+OoEAoLzHwWuWyBVghUaXty4GYIKmjIEQ
+=ezHP
+-----END PGP SIGNATURE-----
+
+--=-yoPiYm75KzXdIUw03yNz--
