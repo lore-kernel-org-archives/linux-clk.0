@@ -1,171 +1,49 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH 4/5] clk: tegra: add super clk mux/div
-Date: Thu, 23 Feb 2017 14:39:38 +0200
-Message-ID: <1487853585-17934-5-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1487853585-17934-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1487853585-17934-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: stable@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bob Ham <rah@settrans.net>
+Subject: [PATCH] clk: sunxi-ng: sun6i: Fix enable bit offset for hdmi-ddc module clock
+Date: Tue, 14 Feb 2017 10:23:32 +0800
+Message-Id: <20170214022332.13326-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a super clock type which implements both mux and divider. This is used
-for aclk.
+The enable bit offset for the hdmi-ddc module clock is wrong. It is
+pointing to the main hdmi module clock enable bit.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Reported-by: Bob Ham <rah@settrans.net>
+Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+Cc: stable@vger.kernel.org # 4.9.x-
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/tegra/clk-super.c | 87 +++++++++++++++++++++++++++++++++++++++++--
- drivers/clk/tegra/clk.h       |  7 +++-
- 2 files changed, 89 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-index 131d1b50..7982d41 100644
---- a/drivers/clk/tegra/clk-super.c
-+++ b/drivers/clk/tegra/clk-super.c
-@@ -121,9 +121,50 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
- 	return err;
- }
+Hi Bob,
+
+Can you try this patch and see if it fixes your HDMI issue?
+With the kernel running without "clk_ignore_unused" that is.
+
+---
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index 4c9a920ff4ab..89e68d29bf45 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -608,7 +608,7 @@ static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", lcd_ch1_parents,
+ 				 0x150, 0, 4, 24, 2, BIT(31),
+ 				 CLK_SET_RATE_PARENT);
  
-+const struct clk_ops tegra_clk_super_mux_ops = {
-+	.get_parent = clk_super_get_parent,
-+	.set_parent = clk_super_set_parent,
-+};
-+
-+static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *parent_rate)
-+{
-+	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
-+	struct clk_hw *div_hw = &super->frac_div.hw;
-+
-+	__clk_hw_set_clk(div_hw, hw);
-+
-+	return super->div_ops->round_rate(div_hw, rate, parent_rate);
-+}
-+
-+static unsigned long clk_super_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
-+	struct clk_hw *div_hw = &super->frac_div.hw;
-+
-+	__clk_hw_set_clk(div_hw, hw);
-+
-+	return super->div_ops->recalc_rate(div_hw, parent_rate);
-+}
-+
-+static int clk_super_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
-+	struct clk_hw *div_hw = &super->frac_div.hw;
-+
-+	__clk_hw_set_clk(div_hw, hw);
-+
-+	return super->div_ops->set_rate(div_hw, rate, parent_rate);
-+}
-+
- const struct clk_ops tegra_clk_super_ops = {
- 	.get_parent = clk_super_get_parent,
- 	.set_parent = clk_super_set_parent,
-+	.set_rate = clk_super_set_rate,
-+	.round_rate = clk_super_round_rate,
-+	.recalc_rate = clk_super_recalc_rate,
- };
+-static SUNXI_CCU_GATE(hdmi_ddc_clk, "hdmi-ddc", "osc24M", 0x150, BIT(31), 0);
++static SUNXI_CCU_GATE(hdmi_ddc_clk, "hdmi-ddc", "osc24M", 0x150, BIT(30), 0);
  
- struct clk *tegra_clk_register_super_mux(const char *name,
-@@ -136,13 +177,11 @@ struct clk *tegra_clk_register_super_mux(const char *name,
- 	struct clk_init_data init;
+ static SUNXI_CCU_GATE(ps_clk, "ps", "lcd1-ch1", 0x140, BIT(31), 0);
  
- 	super = kzalloc(sizeof(*super), GFP_KERNEL);
--	if (!super) {
--		pr_err("%s: could not allocate super clk\n", __func__);
-+	if (!super)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	init.name = name;
--	init.ops = &tegra_clk_super_ops;
-+	init.ops = &tegra_clk_super_mux_ops;
- 	init.flags = flags;
- 	init.parent_names = parent_names;
- 	init.num_parents = num_parents;
-@@ -163,3 +202,43 @@ struct clk *tegra_clk_register_super_mux(const char *name,
- 
- 	return clk;
- }
-+
-+struct clk *tegra_clk_register_super_clk(const char *name,
-+		const char **parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
-+		spinlock_t *lock)
-+{
-+	struct tegra_clk_super_mux *super;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	super = kzalloc(sizeof(*super), GFP_KERNEL);
-+	if (!super)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &tegra_clk_super_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
-+
-+	super->reg = reg;
-+	super->lock = lock;
-+	super->width = 4;
-+	super->flags = clk_super_flags;
-+	super->frac_div.reg = reg + 4;
-+	super->frac_div.shift = 16;
-+	super->frac_div.width = 8;
-+	super->frac_div.frac_width = 1;
-+	super->frac_div.lock = lock;
-+	super->div_ops = &tegra_clk_frac_div_ops;
-+
-+	/* Data in .init is copied by clk_register(), so stack variable OK */
-+	super->hw.init = &init;
-+
-+	clk = clk_register(NULL, &super->hw);
-+	if (IS_ERR(clk))
-+		kfree(super);
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index a62ea73..6249190 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -686,6 +686,8 @@ struct tegra_periph_init_data {
- struct tegra_clk_super_mux {
- 	struct clk_hw	hw;
- 	void __iomem	*reg;
-+	struct tegra_clk_frac_div frac_div;
-+	const struct clk_ops	*div_ops;
- 	u8		width;
- 	u8		flags;
- 	u8		div2_index;
-@@ -702,7 +704,10 @@ struct clk *tegra_clk_register_super_mux(const char *name,
- 		const char **parent_names, u8 num_parents,
- 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
- 		u8 width, u8 pllx_index, u8 div2_index, spinlock_t *lock);
--
-+struct clk *tegra_clk_register_super_clk(const char *name,
-+		const char **parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
-+		spinlock_t *lock);
- /**
-  * struct clk_init_table - clock initialization table
-  * @clk_id:	clock id as mentioned in device tree bindings
 -- 
-1.9.1
+2.11.0
