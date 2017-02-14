@@ -1,46 +1,60 @@
-Return-Path: <cyndis@kapsi.fi>
-Subject: Re: [PATCH 7/7] clk: tegra: fix type for m field
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>,
- linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
- <1487776444-4701-8-git-send-email-pdeschrijver@nvidia.com>
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <35f5417f-fd92-706c-192b-037819a1661d@kapsi.fi>
-Date: Thu, 23 Feb 2017 11:18:16 +0200
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 14 Feb 2017 10:39:48 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] clk: sunxi-ng: gate: Support common pre-dividers
+Message-ID: <20170214093948.d46xkfunpuj3nn7l@lukather>
+References: <20170214033526.16977-1-wens@csie.org>
+ <20170214033526.16977-3-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <1487776444-4701-8-git-send-email-pdeschrijver@nvidia.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rb7bp35wck23qqme"
+In-Reply-To: <20170214033526.16977-3-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-On 22.02.2017 17:14, Peter De Schrijver wrote:
-> When used as part of fractional ndiv calculations, the current range is not
-> enough because the denominator of the fraction is multiplied with m.
->
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index 6ba82ec..a62ea73 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -116,7 +116,7 @@ struct tegra_clk_pll_freq_table {
->  	unsigned long	input_rate;
->  	unsigned long	output_rate;
->  	u32		n;
-> -	u16		m;
-> +	u32		m;
->  	u8		p;
->  	u8		cpcon;
->  	u16		sdm_data;
->
+--rb7bp35wck23qqme
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Feb 14, 2017 at 11:35:23AM +0800, Chen-Yu Tsai wrote:
+> Some clock gates have a pre-divider between the source input and the
+> gate itself. A notable example is the HSIC 12 MHz clock found on the
+> A83T, which has the 24 MHz main oscillator as its input, and a /2
+> pre-divider.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--rb7bp35wck23qqme
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYotBgAAoJEBx+YmzsjxAgZTQQAKx29QIN9m2BZs1iob9W5pPc
+X0LNKs4ZMtjKt1NL5J3l4njtt3SsKqPBxWRv5tw128HqYAEa6LFJ8dilpGCIPygq
+6L2QJ5X1FzFYs5nBQiHdOGSURsVXYtbvwmaK2EohPAxtUoq4adt5cR7d+ImrRQZG
+C9qd7BL69bnEgq1xmjz29sz8lkYoSciL9GICedl8Wd7bAYAg19Jq1bn6Aw4gBqux
+o2MjnMw3Pek++XzwW1YEUlO++wCTmpAuW2Qc63Xi7KaQPjFG6ocPK+QPpkpC2L6Y
+HbhevneVLvp1QtzoU7gbEY6IDUGYS28TRn8szh8Kyqu5ME/KR7WuKTXlcJA8eOyE
+4SBQqjEuWyARgN9zmThn9GGhvW8EJ+zkNtuVBbiM3t8RcLl0Nw3o9iSUPsaxc/j+
+z0Zu4e0h7aTa+BPyCI0bU0CozLUFceWRwuxY5eGitMp/OdmSfS/Th0ROSXh7txkH
+tFGZ0tz8vLAyDvR4f2YbzS3JM/yj40vECpgEyLwMuQcRlx/LTVDWIsPUSKt5Eiyp
+PDvek5M+bADCq4EtPBc0+wukWkAaDJsNyoKfx1Tkncczan7EezxyNu2WUiliKqej
+y+uHFQT7p1RyzDwDojOEISMxXiIlaAGo2yUI7qVZadSZ0uel+zYor3I+MI/GFmGS
+vaCIoOg2wGiob45csSjI
+=ZiG1
+-----END PGP SIGNATURE-----
+
+--rb7bp35wck23qqme--
