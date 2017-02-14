@@ -3,47 +3,82 @@ From: Chen-Yu Tsai <wens@csie.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: stable@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
+Cc: Chen-Yu Tsai <wens@csie.org>,
 	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Bob Ham <rah@settrans.net>
-Subject: [PATCH] clk: sunxi-ng: sun6i: Fix enable bit offset for hdmi-ddc module clock
-Date: Tue, 14 Feb 2017 10:23:32 +0800
-Message-Id: <20170214022332.13326-1-wens@csie.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 5/5] ARM: dts: sun8i-a83t: Add CCU device nodes
+Date: Tue, 14 Feb 2017 11:35:26 +0800
+Message-Id: <20170214033526.16977-6-wens@csie.org>
+In-Reply-To: <20170214033526.16977-1-wens@csie.org>
+References: <20170214033526.16977-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The enable bit offset for the hdmi-ddc module clock is wrong. It is
-pointing to the main hdmi module clock enable bit.
+Now that we have support for the A83T CCU, add a device node for it,
+and replace any existing placeholder clock phandles with the correct
+ones.
 
-Reported-by: Bob Ham <rah@settrans.net>
-Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
-Cc: stable@vger.kernel.org # 4.9.x-
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-Hi Bob,
-
-Can you try this patch and see if it fixes your HDMI issue?
-With the kernel running without "clk_ignore_unused" that is.
-
----
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-index 4c9a920ff4ab..89e68d29bf45 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-@@ -608,7 +608,7 @@ static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", lcd_ch1_parents,
- 				 0x150, 0, 4, 24, 2, BIT(31),
- 				 CLK_SET_RATE_PARENT);
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 79eaa7139f43..b78c831e8294 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -47,7 +47,9 @@
  
--static SUNXI_CCU_GATE(hdmi_ddc_clk, "hdmi-ddc", "osc24M", 0x150, BIT(31), 0);
-+static SUNXI_CCU_GATE(hdmi_ddc_clk, "hdmi-ddc", "osc24M", 0x150, BIT(30), 0);
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
  
- static SUNXI_CCU_GATE(ps_clk, "ps", "lcd1-ch1", 0x140, BIT(31), 0);
++#include <dt-bindings/clock/sun8i-a83t-ccu.h>
+ #include <dt-bindings/pinctrl/sun4i-a10.h>
++#include <dt-bindings/reset/sun8i-a83t-ccu.h>
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -123,6 +125,7 @@
+ 			#clock-cells = <0>;
+ 			compatible = "fixed-clock";
+ 			clock-frequency = <24000000>;
++			clock-accuracy = <50000>;
+ 			clock-output-names = "osc24M";
+ 		};
+ 
+@@ -154,13 +157,23 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
++		ccu: clock@01c20000 {
++			compatible = "allwinner,sun8i-a83t-ccu";
++			reg = <0x01c20000 0x400>;
++			clocks = <&osc24M>, <&osc16Md512>;
++			clock-names = "hosc", "losc";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
+ 		pio: pinctrl@01c20800 {
+ 			compatible = "allwinner,sun8i-a83t-pinctrl";
+ 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x01c20800 0x400>;
+-			clocks = <&osc24M>;
++			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc16Md512>;
++			clock-names = "apb", "hosc", "losc";
+ 			gpio-controller;
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
+@@ -206,7 +219,8 @@
+ 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&osc24M>;
++			clocks = <&ccu CLK_BUS_UART0>;
++			resets = <&ccu RST_BUS_UART0>;
+ 			status = "disabled";
+ 		};
  
 -- 
 2.11.0
