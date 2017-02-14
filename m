@@ -1,64 +1,70 @@
-Return-Path: <cyndis@kapsi.fi>
-Subject: Re: [PATCH 6/7] clk: tegra: correct tegra210_pll_fixed_mdiv_cfg rate
- calculation
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>,
- linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
- <1487776444-4701-7-git-send-email-pdeschrijver@nvidia.com>
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <27c7f5fe-ee2f-7324-c6bb-a94ea3609f9d@kapsi.fi>
-Date: Thu, 23 Feb 2017 11:18:12 +0200
-MIME-Version: 1.0
-In-Reply-To: <1487776444-4701-7-git-send-email-pdeschrijver@nvidia.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v6 11/14] MAINTAINERS: add entry for Marvell Xenon MMC Host Controller drivers
+Date: Tue, 14 Feb 2017 18:01:51 +0100
+Message-Id: <5df183ed3b05e582df0bbe17c67ea097d8173dd3.1487091464.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+From: Hu Ziji <huziji@marvell.com>
 
-On 22.02.2017 17:14, Peter De Schrijver wrote:
-> Return the actually achieved rate in cfg->output_rate rather than just the
-> requested rate. This is important to make clk_round_rate return the correct
-> result.
->
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index fe698d2..58d7f9c 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -1222,6 +1222,7 @@ static int tegra210_pll_fixed_mdiv_cfg(struct clk_hw *hw,
->  	cfg->n = p_rate / cf;
->
->  	cfg->sdm_data = 0;
-> +	cfg->output_rate = input_rate;
->  	if (params->sdm_ctrl_reg) {
->  		unsigned long rem = p_rate - cf * cfg->n;
->  		/* If ssc is enabled SDM enabled as well, even for integer n */
-> @@ -1232,10 +1233,15 @@ static int tegra210_pll_fixed_mdiv_cfg(struct clk_hw *hw,
->  			s -= PLL_SDM_COEFF / 2;
->  			cfg->sdm_data = sdin_din_to_data(s);
->  		}
-> +		cfg->output_rate *= cfg->n * PLL_SDM_COEFF + PLL_SDM_COEFF/2 +
-> +					sdin_data_to_din(cfg->sdm_data);
-> +		cfg->output_rate /= p * cfg->m * PLL_SDM_COEFF;
-> +	} else {
-> +		cfg->output_rate *= cfg->n;
-> +		cfg->output_rate /= p * cfg->m;
->  	}
->
->  	cfg->input_rate = input_rate;
-> -	cfg->output_rate = rate;
->
->  	return 0;
->  }
->
+Add maintainer entry for Marvell Xenon eMMC/SD/SDIO
+Host Controller drivers.
+
+Signed-off-by: Hu Ziji <huziji@marvell.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cfff2c9e3d94..f4fea77165d5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7757,6 +7757,13 @@ M:	Nicolas Pitre <nico@fluxnic.net>
+ S:	Odd Fixes
+ F:	drivers/mmc/host/mvsdio.*
+ 
++MARVELL XENON MMC/SD/SDIO HOST CONTROLLER DRIVER
++M:	Ziji Hu <huziji@marvell.com>
++L:	linux-mmc@vger.kernel.org
++S:	Supported
++F:	drivers/mmc/host/sdhci-xenon*
++F:	Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
++
+ MATROX FRAMEBUFFER DRIVER
+ L:	linux-fbdev@vger.kernel.org
+ S:	Orphan
+-- 
+git-series 0.9.1
