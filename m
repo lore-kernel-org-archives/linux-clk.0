@@ -1,65 +1,118 @@
-Return-Path: <Chris.Packham@alliedtelesis.co.nz>
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	"Rob Herring" <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	"Jason Cooper" <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory
- Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] clk: mvebu: Expand mv98dx3236-core-clock support
-Date: Tue, 7 Feb 2017 01:13:37 +0000
-Message-ID: <ebe243d06f3542318e5365c560e6cf79@svr-chch-ex1.atlnz.lc>
-References: <20170203034012.29399-1-chris.packham@alliedtelesis.co.nz>
- <20170203034012.29399-5-chris.packham@alliedtelesis.co.nz>
- <20170206231400.GM25384@codeaurora.org>
- <9974653ab84040c3b12fad075790c123@svr-chch-ex1.atlnz.lc>
- <20170207010308.GN25384@codeaurora.org>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
+In-Reply-To: <20170214095819.utsftcvti5zdmlmi@lukather>
+References: <20170214033526.16977-1-wens@csie.org> <20170214033526.16977-5-wens@csie.org>
+ <20170214095819.utsftcvti5zdmlmi@lukather>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 14 Feb 2017 18:26:39 +0800
+Message-ID: <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
+Subject: Re: [PATCH 4/5] clk: sunxi-ng: Add driver for A83T CCU
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/02/17 14:03, Stephen Boyd wrote:=0A=
-> On 02/06, Chris Packham wrote:=0A=
->> On 07/02/17 12:14, Stephen Boyd wrote:=0A=
->>> On 02/03, Chris Packham wrote:=0A=
->>>> The initial implementation in commit e120c17a70e5 ("clk: mvebu: suppor=
-t=0A=
->>>> for 98DX3236 SoC") hardcoded a fixed value for the main PLL frequency.=
-=0A=
->>>> Port code from the Marvell supplied Linux kernel to support different=
-=0A=
->>>> PLL frequencies and provide clock gating support.=0A=
->>>>=0A=
->>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
->>>> ---=0A=
->>>>  .../devicetree/bindings/clock/mvebu-core-clock.txt |   7 +=0A=
->>>>  .../bindings/clock/mvebu-gated-clock.txt           |  11 ++=0A=
->>>>  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          |  14 +-=0A=
->>>>  drivers/clk/mvebu/Makefile                         |   2 +-=0A=
->>>>  drivers/clk/mvebu/armada-xp.c                      |  13 --=0A=
->>>>  drivers/clk/mvebu/mv98dx3236.c                     | 144 ++++++++++++=
-+++++++++=0A=
->>>=0A=
->>> This mixes dts and clk driver changes. Any chance it can be split=0A=
->>> up and just have the clk part go through clk tree? Otherwise, I=0A=
->>> can ack this if you want to take it all through arm-soc?=0A=
->>=0A=
->> I'm happy to split it if it will make life easier.=0A=
->>=0A=
->=0A=
-> Well do things keep booting if the clk driver parts merge without=0A=
-> the associated dts changes? It's nice to maintain backwards=0A=
-> compatibility even for a short time to make the merge path=0A=
-> easier.=0A=
->=0A=
-=0A=
-Unfortunately not. I could put the clk changes first (then I'd just have =
-=0A=
-checkpatch.pl complaining about new compatible strings). But if the clk =0A=
-patches don't land before the dts changes the boards won't boot. However =
-=0A=
-that affects 1 person that we know of (me).=0A=
+On Tue, Feb 14, 2017 at 5:58 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Tue, Feb 14, 2017 at 11:35:25AM +0800, Chen-Yu Tsai wrote:
+>> +/* Some PLLs are input * N / div1 / P. Model them as NKMP with no K */
+>
+> Is that even working?
+
+Looking at the nkmp clock code, only .recalc_rate will work properly though.
+Maybe I could fix up the code so it handles zero width factors.
+
+> I'm not quite sure we want to do that. We might model it as a NP clock
+> with a variable prediv?
+
+There's no NP clock type yet. And a problem with a variable prediv is that
+it doesn't participate in factor calculation. It's effectively fixed.
+
+I did this for the A80 as well though. Fixing up the NKMP clock might be
+easier.
+
+>
+>> +/* Use a separate clock for the pre-divider on the AHB1 PLL-PERIPH input */
+>> +static SUNXI_CCU_M(pll_periph_ahb1_clk, "pll-periph-ahb1", "pll-periph",
+>> +                0x054, 6, 2, 0);
+>> +
+>> +static const char * const ahb1_parents[] = { "osc16M-d512", "osc24M",
+>> +                                          "pll-periph-ahb1",
+>> +                                          "pll-periph-ahb1" };
+>> +static struct ccu_div ahb1_clk = {
+>> +     .div            = _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
+>> +     .mux            = _SUNXI_CCU_MUX(12, 2),
+>> +     .common         = {
+>> +             .reg            = 0x054,
+>> +             .hw.init        = CLK_HW_INIT_PARENTS("ahb1",
+>> +                                                   ahb1_parents,
+>> +                                                   &ccu_div_ops,
+>> +                                                   0),
+>> +     },
+>> +};
+>
+> What's different from a pre divider only for a given index here?
+
+The variable pre-divider is shared for both pll-periph mux inputs.
+This is one way to handle it. The other would be to extend ccu_mux
+to handle multiple variable pre-dividers. I don't really want to do
+that if this is the only instance that needs it though.
+
+>
+>> +/*
+>> + * MMC2 supports what's called the "new timing mode". The CCU and the MMC
+>> + * controller must be in sync about which mode is used. The new mode moves
+>> + * the clock delay controls (and possibly the delay lines) into the MMC
+>> + * block. Also, the output of the clock is divided by 2. The output and
+>> + * sample phase clocks are unused under this mode.
+>> + *
+>> + * This new mode seems to be preferred. Hence we force this clock to the
+>> + * new mode. And we don't add the phase clocks.
+>> + */
+>
+> I'm sorry, but I said this several times, this isn't working. We
+> should model it properly, and not hack this around in the clock
+> driver.
+>
+> As you say in your comment, the MMC driver needs to be aware about
+> which mode is used, in order to also set a bit in one of its registers
+> accordingly, and modify its sampling behaviour.
+>
+> The new timing is preferred, but our previous clock implementations
+> didn't hardcode it, so we can't even rely on that behaviour to always
+> write it in our driver.
+
+Correct. With the A83T there has never been a merged clock driver though.
+I realize this is a one off thing.
+
+> This is not something specific to the A83T, but is found in all the
+> SoCs since the A23, so we need to come up with a good solution to
+> address that.
+>
+> I'm not sure what a good solution would be though. One would be to
+> just have a private function of our own to switch in the new mode (if
+> relevant, because only the MMC2 controllers have it), but that would
+> lead to troubles with !sunxi-ng. Not something we can't deal with, but
+> some extra precautions should be taken (make sure to protect the call
+> through an ifdef / IS_DEFINED, check that the sunxi-ng driver has been
+> probed, etc.)
+
+If the custom function route is acceptable, I'll come up with something.
+
+Regards
+ChenYu
+
+>
+> Or we could introduce a new clk_ops function pointer, but I'm not sure
+> if Mike and Stephen are going to be happy with that.
+>
+> Thanks,
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
