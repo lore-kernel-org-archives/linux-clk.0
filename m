@@ -1,108 +1,49 @@
-Return-Path: <ykaneko0929@gmail.com>
-Return-Path: <ykaneko0929@gmail.com>
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/RFC] clk: renesas: r8a7796: Replace PLL3 multiplication setting
-Date: Mon, 13 Feb 2017 02:35:10 +0900
-Message-Id: <1486920910-3592-1-git-send-email-ykaneko0929@gmail.com>
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bob Ham <rah@settrans.net>,
+	stable@vger.kernel.org#4.9.x-
+Subject: [PATCH] clk: sunxi-ng: sun6i: Fix enable bit offset for hdmi-ddc module clock
+Date: Tue, 14 Feb 2017 10:18:53 +0800
+Message-Id: <20170214021853.13195-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+The enable bit offset for the hdmi-ddc module clock is wrong. It is
+pointing to the main hdmi module clock enable bit.
 
-This patch replaces PLL3 multiplication setting for DDR clock frequency.
-
-  - After changes, new PLL3 multiplication setting:
-    MD19 MD17 : DDR clock frequency
-    -------------------------------
-      0    0  : DDR3200
-      0    1  : DDR2800
-      1    0  : DDR2400
-      1    1  : DDR1600
-
-  - Before changes, old PLL3 multiplication setting:
-    MD19 MD17 : DDR clock frequency
-    -------------------------------
-      0    0  : DDR3200
-      0    1  : DDR2133
-      1    0  : Prohibited setting
-      1    1  : DDR1600
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Reported-by: Bob Ham <rah@settrans.net>
+Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+Cc: stable@vger.kernel.org # 4.9.x-
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
 
-This patch is based on the clk-next branch of linux-clk tree.
+Hi Bob,
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+Can you try this patch and see if it fixes your HDMI issue?
+With the kernel running without "clk_ignore_unused" that is.
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 11e084a..44110ae 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -214,20 +214,20 @@ enum clk_ids {
-  * 14 13 19 17	(MHz)
-  *-------------------------------------------------------------------
-  * 0  0  0  0	16.66 x 1	x180	x192	x144	x192	x144
-- * 0  0  0  1	16.66 x 1	x180	x192	x144	x128	x144
-- * 0  0  1  0	Prohibited setting
-+ * 0  0  0  1	16.66 x 1	x180	x192	x144	x168	x144
-+ * 0  0  1  0	16.66 x 1	x180	x192	x144	x144	x144
-  * 0  0  1  1	16.66 x 1	x180	x192	x144	x192	x144
-  * 0  1  0  0	20    x 1	x150	x160	x120	x160	x120
-- * 0  1  0  1	20    x 1	x150	x160	x120	x106	x120
-- * 0  1  1  0	Prohibited setting
-+ * 0  1  0  1	20    x 1	x150	x160	x120	x140	x120
-+ * 0  1  1  0	20    x 1	x150	x160	x120	x120	x120
-  * 0  1  1  1	20    x 1	x150	x160	x120	x160	x120
-  * 1  0  0  0	25    x 1	x120	x128	x96	x128	x96
-- * 1  0  0  1	25    x 1	x120	x128	x96	x84	x96
-- * 1  0  1  0	Prohibited setting
-+ * 1  0  0  1	25    x 1	x120	x128	x96	x112	x96
-+ * 1  0  1  0	25    x 1	x120	x128	x96	x96	x96
-  * 1  0  1  1	25    x 1	x120	x128	x96	x128	x96
-  * 1  1  0  0	33.33 / 2	x180	x192	x144	x192	x144
-- * 1  1  0  1	33.33 / 2	x180	x192	x144	x128	x144
-- * 1  1  1  0	Prohibited setting
-+ * 1  1  0  1	33.33 / 2	x180	x192	x144	x168	x144
-+ * 1  1  1  0	33.33 / 2	x180	x192	x144	x144	x144
-  * 1  1  1  1	33.33 / 2	x180	x192	x144	x192	x144
-  */
- #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 11) | \
-@@ -238,20 +238,20 @@ enum clk_ids {
- static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
- 	/* EXTAL div	PLL1 mult	PLL3 mult */
- 	{ 1,		192,		192,	},
--	{ 1,		192,		128,	},
--	{ 0, /* Prohibited setting */		},
-+	{ 1,		192,		168,	},
-+	{ 1,		192,		144,	},
- 	{ 1,		192,		192,	},
- 	{ 1,		160,		160,	},
--	{ 1,		160,		106,	},
--	{ 0, /* Prohibited setting */		},
-+	{ 1,		160,		140,	},
-+	{ 1,		160,		120,	},
- 	{ 1,		160,		160,	},
- 	{ 1,		128,		128,	},
--	{ 1,		128,		84,	},
--	{ 0, /* Prohibited setting */		},
-+	{ 1,		128,		112,	},
-+	{ 1,		128,		96,	},
- 	{ 1,		128,		128,	},
- 	{ 2,		192,		192,	},
--	{ 2,		192,		128,	},
--	{ 0, /* Prohibited setting */		},
-+	{ 2,		192,		168,	},
-+	{ 2,		192,		144,	},
- 	{ 2,		192,		192,	},
- };
+---
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index 4c9a920ff4ab..89e68d29bf45 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -608,7 +608,7 @@ static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", lcd_ch1_parents,
+ 				 0x150, 0, 4, 24, 2, BIT(31),
+ 				 CLK_SET_RATE_PARENT);
+ 
+-static SUNXI_CCU_GATE(hdmi_ddc_clk, "hdmi-ddc", "osc24M", 0x150, BIT(31), 0);
++static SUNXI_CCU_GATE(hdmi_ddc_clk, "hdmi-ddc", "osc24M", 0x150, BIT(30), 0);
+ 
+ static SUNXI_CCU_GATE(ps_clk, "ps", "lcd1-ch1", 0x140, BIT(31), 0);
  
 -- 
-1.9.1
+2.11.0
