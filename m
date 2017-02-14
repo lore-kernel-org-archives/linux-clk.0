@@ -1,149 +1,58 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 04/10] arm64: dts: mediatek: add mt6797 support
-To: Mars Cheng <mars.cheng@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-References: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
- <1486383336-16892-5-git-send-email-mars.cheng@mediatek.com>
-Cc: CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        My Chuang <my.chuang@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <e944f97a-5c4c-780a-da29-fe308f807469@arm.com>
-Date: Mon, 6 Feb 2017 12:28:48 +0000
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 14 Feb 2017 10:59:12 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Nadav Haklai <nadavh@marvell.com>, Hanna Hawa <hannah@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 2/3] clk: mvebu: adjust clock handling for the CP110
+ system controller
+Message-ID: <20170214185912.GT25384@codeaurora.org>
+References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1482316017-22154-3-git-send-email-thomas.petazzoni@free-electrons.com>
+ <20161222001456.GX8288@codeaurora.org>
+ <20170214162718.0777d95f@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <1486383336-16892-5-git-send-email-mars.cheng@mediatek.com>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170214162718.0777d95f@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/02/17 12:15, Mars Cheng wrote:
-> This adds basic chip support for MT6797 SoC.
+On 02/14, Thomas Petazzoni wrote:
+> Hello Stephen,
 > 
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> ---
->  arch/arm64/boot/dts/mediatek/Makefile       |    1 +
->  arch/arm64/boot/dts/mediatek/mt6797-evb.dts |   36 ++++++
->  arch/arm64/boot/dts/mediatek/mt6797.dtsi    |  187 +++++++++++++++++++++++++++
->  3 files changed, 224 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-evb.dts
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797.dtsi
+> On Wed, 21 Dec 2016 16:14:56 -0800, Stephen Boyd wrote:
+> > On 12/21, Thomas Petazzoni wrote:
+> > > This commit:
+> > > 
+> > >  - makes the GOP_DP (bit 9) gatable clock a child clock of the
+> > >    SD_MMC_GOP (bit 18) clock, as it should have been. The clock for bit
+> > >    18 was just named SD_MMC, but since it also covers the GOP block, it
+> > >    is renamed SD_MMC_GOP.
+> > > 
+> > >  - makes the MG (bit 5) gatable clock a child clock of the MG_CORE
+> > >    clock (bit 6)
+> > > 
+> > > Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> > > ---  
+> > 
+> > Applied to clk-next
 > 
-> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-> index 9fbfd32..015eb07 100644
-> --- a/arch/arm64/boot/dts/mediatek/Makefile
-> +++ b/arch/arm64/boot/dts/mediatek/Makefile
-> @@ -1,5 +1,6 @@
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
-> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-evb.dtb
->  
->  always		:= $(dtb-y)
-> diff --git a/arch/arm64/boot/dts/mediatek/mt6797-evb.dts b/arch/arm64/boot/dts/mediatek/mt6797-evb.dts
-> new file mode 100644
-> index 0000000..c79109c
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt6797-evb.dts
-
-[...]
-
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupt-parent = <&gic>;
-> +		interrupts = <GIC_PPI 13
-> +			     (GIC_CPU_MASK_SIMPLE(10) | IRQ_TYPE_LEVEL_LOW)>,
-
-That's exactly why I positively hate these GIC_CPU_MASK_SIMPLE() and co.
-They just hide all kind of sins:
-- With GICv1/v2, this field can only be 8bit wide. Good luck shoving 10
-CPUs there.
-- GICv3 *doesn't* have any affinity bitmap in the binding (it can be
-expressed in a very different way).
-
-So please get rid of this GIC_CPU_MASK_SIMPLE, it is just wrong.
-
-> +			     <GIC_PPI 14
-> +			     (GIC_CPU_MASK_SIMPLE(10) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 11
-> +			     (GIC_CPU_MASK_SIMPLE(10) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 10
-> +			     (GIC_CPU_MASK_SIMPLE(10) | IRQ_TYPE_LEVEL_LOW)>;
-> +	};
-> +
-> +	sysirq: intpol-controller@10200620 {
-> +		compatible = "mediatek,mt6797-sysirq",
-> +			     "mediatek,mt6577-sysirq";
-> +		interrupt-controller;
-> +		#interrupt-cells = <3>;
-> +		#intpol-bases = <2>;
-> +		interrupt-parent = <&gic>;
-> +		reg = <0 0x10220620 0 0x20>,
-> +		      <0 0x10220690 0 0x10>;
-> +	};
-> +
-> +	uart0: serial@11002000 {
-> +		compatible = "mediatek,mt6797-uart",
-> +			     "mediatek,mt6577-uart";
-> +		reg = <0 0x11002000 0 0x400>;
-> +		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
-> +		clocks = <&clk26m>;
-> +		status = "disabled";
-> +	};
-> +
-> +	uart1: serial@11003000 {
-> +		compatible = "mediatek,mt6797-uart",
-> +			     "mediatek,mt6577-uart";
-> +		reg = <0 0x11003000 0 0x400>;
-> +		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
-> +		clocks = <&clk26m>;
-> +		status = "disabled";
-> +	};
-> +
-> +	uart2: serial@11004000 {
-> +		compatible = "mediatek,mt6797-uart",
-> +			     "mediatek,mt6577-uart";
-> +		reg = <0 0x11004000 0 0x400>;
-> +		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_LOW>;
-> +		clocks = <&clk26m>;
-> +		status = "disabled";
-> +	};
-> +
-> +	uart3: serial@11005000 {
-> +		compatible = "mediatek,mt6797-uart",
-> +			     "mediatek,mt6577-uart";
-> +		reg = <0 0x11005000 0 0x400>;
-> +		interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_LOW>;
-> +		clocks = <&clk26m>;
-> +		status = "disabled";
-> +	};
-> +
-> +	gic: interrupt-controller@19000000 {
-> +		compatible = "arm,gic-v3";
-> +		#interrupt-cells = <3>;
-> +		interrupt-parent = <&gic>;
-> +		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-controller;
-> +		reg = <0 0x19000000 0 0x10000>,    /* GICD */
-> +		      <0 0x19200000 0 0x200000>,   /* GICR */
-> +		      <0 0x10240000 0 0x2000>;     /* GICC */
-
-No GICH, no GICV, no ITS?
-
-> +	};
-> +};
+> I don't see my patch in clk-next at
+> https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/log/drivers/clk/mvebu/cp110-system-controller.c?h=clk-next,
+> nor in linux-next. Am I missing something?
 > 
 
-Thanks,
+Odd. I don't know what happened. I've applied it now.
 
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
