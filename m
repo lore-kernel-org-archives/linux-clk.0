@@ -1,84 +1,50 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] ARM: dts: sun8i-a83t: Add CCU device nodes
-Date: Tue, 14 Feb 2017 11:35:26 +0800
-Message-Id: <20170214033526.16977-6-wens@csie.org>
-In-Reply-To: <20170214033526.16977-1-wens@csie.org>
-References: <20170214033526.16977-1-wens@csie.org>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Tue, 14 Feb 2017 21:05:37 +0100
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement
+ <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob
+ Herring <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
+ Gala <galak@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, Hanna Hawa
+ <hannah@marvell.com>, Yehuda Yitschak <yehuday@marvell.com>,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 2/3] clk: mvebu: adjust clock handling for the CP110
+ system controller
+Message-ID: <20170214210537.2c0218dd@free-electrons.com>
+In-Reply-To: <20170214185912.GT25384@codeaurora.org>
+References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1482316017-22154-3-git-send-email-thomas.petazzoni@free-electrons.com>
+	<20161222001456.GX8288@codeaurora.org>
+	<20170214162718.0777d95f@free-electrons.com>
+	<20170214185912.GT25384@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have support for the A83T CCU, add a device node for it,
-and replace any existing placeholder clock phandles with the correct
-ones.
+Hello,
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun8i-a83t.dtsi | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+On Tue, 14 Feb 2017 10:59:12 -0800, Stephen Boyd wrote:
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 79eaa7139f43..b78c831e8294 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -47,7 +47,9 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-+#include <dt-bindings/clock/sun8i-a83t-ccu.h>
- #include <dt-bindings/pinctrl/sun4i-a10.h>
-+#include <dt-bindings/reset/sun8i-a83t-ccu.h>
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -123,6 +125,7 @@
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
- 			clock-frequency = <24000000>;
-+			clock-accuracy = <50000>;
- 			clock-output-names = "osc24M";
- 		};
- 
-@@ -154,13 +157,23 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		ccu: clock@01c20000 {
-+			compatible = "allwinner,sun8i-a83t-ccu";
-+			reg = <0x01c20000 0x400>;
-+			clocks = <&osc24M>, <&osc16Md512>;
-+			clock-names = "hosc", "losc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		pio: pinctrl@01c20800 {
- 			compatible = "allwinner,sun8i-a83t-pinctrl";
- 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 			reg = <0x01c20800 0x400>;
--			clocks = <&osc24M>;
-+			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc16Md512>;
-+			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-@@ -206,7 +219,8 @@
- 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&osc24M>;
-+			clocks = <&ccu CLK_BUS_UART0>;
-+			resets = <&ccu RST_BUS_UART0>;
- 			status = "disabled";
- 		};
- 
+> > I don't see my patch in clk-next at
+> > https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/log/drivers/clk/mvebu/cp110-system-controller.c?h=clk-next,
+> > nor in linux-next. Am I missing something?
+> 
+> Odd. I don't know what happened. I've applied it now.
+
+I think you also forgot to apply:
+
+  [PATCHv2 1/3] dt-bindings: arm: update Armada CP110 system controller binding
+
+from the same series. You told me "Applied to clk-next", but I don't
+see it in linux-next.
+
+Thanks!
+
+Thomas
 -- 
-2.11.0
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
