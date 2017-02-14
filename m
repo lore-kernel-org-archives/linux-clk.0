@@ -1,79 +1,145 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1487004724-2806-1-git-send-email-der.herr@hofr.at>
-References: <1487004724-2806-1-git-send-email-der.herr@hofr.at>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 23 Feb 2017 17:29:03 +0900
-Message-ID: <CAK7LNATjV39QfXJH=pfXnMF-vHmJHhSu+RyFC7BuBWqcpqZWDA@mail.gmail.com>
-Subject: Re: [PATCH RFC] iopoll: allow for poll_timeout to back-off
-To: Nicholas Mc Guire <der.herr@hofr.at>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-mtd@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v6 13/14] arm64: dts: marvell: add sdhci support for Armada 7K/8K
+Date: Tue, 14 Feb 2017 18:01:53 +0100
+Message-Id: <9571ae6d12f2051c1457dc5fc34042b325d00b60.1487091464.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Nicholas,
+Also enable it on the Armada 7040 DB and Armada 8040 DB boards.
 
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ arch/arm64/boot/dts/marvell/armada-7040-db.dts       | 14 +++++++++-
+ arch/arm64/boot/dts/marvell/armada-8040-db.dts       | 20 +++++++++++++-
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi        | 11 +++++++-
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 11 +++++++-
+ 4 files changed, 56 insertions(+)
 
-2017-02-14 1:52 GMT+09:00 Nicholas Mc Guire <der.herr@hofr.at>:
-
->
-> One case in /drivers/mmc/host/sdhci-cadence.c has a timeout_us of 1 and
-> sleep_us of 0 which might actually be a bug as it means that the poll loop
-> would do a single read OP in many cases (this is non-atomic context) so it
-> would have to be robust for a single read, thus the poll_timeout might not
-> be suitable - not sure though - but thats a different problem.
-
-Sorry, I could not understand why you thought sdhci-cadence.c seemed a bug.
-
-The SDHCI_CDNS_HRS06_TUNE_UP is auto-cleared by the hardware.
-This will normally be done really soon (within 1us),
-but it may not be cleared if the hardware is in trouble.
-It is the intention of the code:
-
-    readl_poll_timeout(reg, tmp, !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
-                       0, 1);
-
-
-
-
->  which results in min,max values for the initial iterations of:
->       min  max
->       0    1
->       0    2
->       1    4
->       2    8
->       4    16
->       8    32
->       16   64
->       32   128
->       ...
-
-
-I notice you were sending this to me, but
-please notice I am not responsible for this file
-(include/linux/iopoll.h) in any way.
-
-Please take my comments for grain of salt:
-
-With this patch, the sleep range is doubled in each iteration.
-Let's say this routine is called with delay_us=1, timeout_us=50,
-then it slept 16 us, then 32 us.
-If it sleeps 64 us in the next iteration,
-it ends up with sleeping 112 us (=16 + 32 + 64) in total
-where we know waiting 50 us is enough.
-So, the sleep range granularity may get bigger than
-users' intention.
-
-Probably, waiting too long is not a problem in most cases.
-If so, what is the meaning of the argument "sleep_us" after all?
-
-
-
-
+diff --git a/arch/arm64/boot/dts/marvell/armada-7040-db.dts b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
+index 070b589680c5..6adbfcd26369 100644
+--- a/arch/arm64/boot/dts/marvell/armada-7040-db.dts
++++ b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
+@@ -146,3 +146,17 @@
+ &cpm_usb3_1 {
+ 	status = "okay";
+ };
++
++&ap_sdhci0 {
++	status = "okay";
++	bus-width = <4>;
++	no-1-8-v;
++	non-removable;
++};
++
++&cpm_sdhci0 {
++	status = "okay";
++	bus-width = <4>;
++	no-1-8-v;
++	non-removable;
++};
+diff --git a/arch/arm64/boot/dts/marvell/armada-8040-db.dts b/arch/arm64/boot/dts/marvell/armada-8040-db.dts
+index 6e6f182fb297..ab16082d9fbf 100644
+--- a/arch/arm64/boot/dts/marvell/armada-8040-db.dts
++++ b/arch/arm64/boot/dts/marvell/armada-8040-db.dts
+@@ -148,3 +148,23 @@
+ &cps_usb3_1 {
+ 	status = "okay";
+ };
++
++&ap_sdhci0 {
++	status = "okay";
++	bus-width = <4>;
++	non-removable;
++};
++
++&cpm_sdhci0 {
++	status = "okay";
++	bus-width = <8>;
++	non-removable;
++
++	#address-cells = <1>;
++	#size-cells = <0>;
++	mmccard: mmccard@0 {
++		compatible = "mmc-card";
++		reg = <0>;
++	};
++
++};
+diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+index 5019c8f4acd0..fe41bf9c301e 100644
+--- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+@@ -229,6 +229,17 @@
+ 
+ 			};
+ 
++			ap_sdhci0: sdhci@6e0000 {
++				compatible = "marvell,armada-ap806-sdhci";
++				reg = <0x6e0000 0x300>;
++				interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
++				clock-names = "core";
++				clocks = <&ap_syscon 4>;
++				dma-coherent;
++				marvell,xenon-phy-slow-mode;
++				status = "disabled";
++			};
++
+ 			ap_syscon: system-controller@6f4000 {
+ 				compatible = "marvell,ap806-system-controller",
+ 					     "syscon";
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+index 05222f749a45..8ff545dc4195 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+@@ -172,6 +172,17 @@
+ 				clocks = <&cpm_syscon0 1 25>;
+ 				status = "okay";
+ 			};
++
++			cpm_sdhci0: sdhci@780000 {
++				compatible = "marvell,armada-cp110-sdhci";
++				reg = <0x780000 0x300>;
++				interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++				clock-names = "core";
++				clocks = <&cpm_syscon0 1 4>;
++				dma-coherent;
++				status = "disabled";
++			};
++
+ 		};
+ 
+ 		cpm_pcie0: pcie@f2600000 {
 -- 
-Best Regards
-Masahiro Yamada
+git-series 0.9.1
