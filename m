@@ -1,170 +1,165 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, icenowy@aosc.xyz
-Subject: Re: [linux-sunxi] Re: [PATCH 2/8] clk: sunxi-ng: add support for DE2
- CCU
-Date: Wed, 22 Feb 2017 23:11:49 +0100
-Message-ID: <2861790.WmLcjTgm5a@jernej-laptop>
-In-Reply-To: <20170222231754.Hm6O1qAk@smtp3j.mail.yandex.net>
-References: <20170222231754.Hm6O1qAk@smtp3j.mail.yandex.net>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 15 Feb 2017 10:49:54 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/5] clk: sunxi-ng: Add driver for A83T CCU
+Message-ID: <20170215094954.h3wyaxlqkeb342yu@lukather>
+References: <20170214033526.16977-1-wens@csie.org>
+ <20170214033526.16977-5-wens@csie.org>
+ <20170214095819.utsftcvti5zdmlmi@lukather>
+ <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Jean-Francois Moine <moinejf@free.fr>, devicetree@vger.kernel.org,
- David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
- Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="veriv3zmxufd2jsd"
+In-Reply-To: <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGksCgpEbmUgc3JlZGEsIDIyLiBmZWJydWFyIDIwMTcgb2IgMjE6MTc6MjkgQ0VUIGplIEljZW5v
-d3kgWmhlbmcgbmFwaXNhbChhKToKPiAyMDE35bm0MuaciDIz5pelIDAzOjA55LqOIE1heGltZSBS
-aXBhcmQgPG1heGltZS5yaXBhcmRAZnJlZS1lbGVjdHJvbnMuY29tPuWGmemBk++8mgo+IAo+ID4g
-SGksCj4gPiAKPiA+IE9uIFdlZCwgRmViIDIyLCAyMDE3IGF0IDExOjE4OjQ4UE0gKzA4MDAsIElj
-ZW5vd3kgWmhlbmcgd3JvdGU6Cj4gPiA+ICtjb25maWcgU1VOWElfREUyX0NDVQo+ID4gPiArIGJv
-b2wgIlN1cHBvcnQgZm9yIHRoZSBBbGx3aW5uZXIgU29DcyBERTIgQ0NVIgo+ID4gPiArIHNlbGVj
-dCBTVU5YSV9DQ1VfRElWCj4gPiA+ICsgc2VsZWN0IFNVTlhJX0NDVV9HQVRFCj4gPiA+ICsgZGVm
-YXVsdCBuCj4gPiAKPiA+IFRoaXMgaXMgYWxyZWFkeSB0aGUgZGVmYXVsdC4KPiAKPiBQLlMuIEkg
-aW4gZmFjdCB3YW50IGl0IGRlZmF1bHQgRFJNX1NVTjRJX0RFMi4KPiAKPiA+ID4gKwo+ID4gPgo+
-ID4gPiAgZW5kaWYKPiA+ID4KPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL3N1bnhpLW5n
-L01ha2VmaWxlCj4gPiA+IGIvZHJpdmVycy9jbGsvc3VueGktbmcvTWFrZWZpbGUKPiA+ID4gaW5k
-ZXggNmZlYWFjMGM1NjAwLi4xZDM2YzQwMzg0YTYgMTAwNjQ0Cj4gPiA+IC0tLSBhL2RyaXZlcnMv
-Y2xrL3N1bnhpLW5nL01ha2VmaWxlCj4gPiA+ICsrKyBiL2RyaXZlcnMvY2xrL3N1bnhpLW5nL01h
-a2VmaWxlCj4gPiA+IEBAIC0yOCwzICsyOCw0IEBAIG9iai0kKENPTkZJR19TVU44SV9WM1NfQ0NV
-KSArPSBjY3Utc3VuOGktdjNzLm8KPiA+ID4KPiA+ID4gIG9iai0kKENPTkZJR19TVU45SV9BODBf
-Q0NVKSArPSBjY3Utc3VuOWktYTgwLm8KPiA+ID4gIG9iai0kKENPTkZJR19TVU45SV9BODBfQ0NV
-KSArPSBjY3Utc3VuOWktYTgwLWRlLm8KPiA+ID4gIG9iai0kKENPTkZJR19TVU45SV9BODBfQ0NV
-KSArPSBjY3Utc3VuOWktYTgwLXVzYi5vCj4gPiA+Cj4gPiA+ICtvYmotJChDT05GSUdfU1VOWElf
-REUyX0NDVSkgKz0gY2N1LXN1bnhpLWRlMi5vCj4gPiAKPiA+IHN1bjhpLWRlMiBwbGVhc2UKPiAK
-PiBJdCBhbHNvIGV4aXN0cyBpbiBzdW41MGlzLgoKVXN1YWwgYXBwcm9hY2ggaXMgdG8gbmFtZSBp
-dCBhZnRlciB0aGUgZmFtaWx5IHdoZXJlIHRoZSBJUCBibG9jayBmaXJzdCAKYXBwZWFyZWQuCgpS
-ZWdhcmRzLApKZXJuZWoKCj4gCj4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9zdW54aS1u
-Zy9jY3Utc3VueGktZGUyLmMKPiA+ID4gYi9kcml2ZXJzL2Nsay9zdW54aS1uZy9jY3Utc3VueGkt
-ZGUyLmMgbmV3IGZpbGUgbW9kZSAxMDA2NDQKPiA+ID4gaW5kZXggMDAwMDAwMDAwMDAwLi40MjU5
-YzE0NWQ1ZGEKPiA+ID4gLS0tIC9kZXYvbnVsbAo+ID4gPiArKysgYi9kcml2ZXJzL2Nsay9zdW54
-aS1uZy9jY3Utc3VueGktZGUyLmMKPiA+ID4gQEAgLTAsMCArMSwyMDQgQEAKPiA+ID4gKy8qCj4g
-PiA+ICsgKiBDb3B5cmlnaHQgKGMpIDIwMTYgQ2hlbi1ZdSBUc2FpLiBBbGwgcmlnaHRzIHJlc2Vy
-dmVkLgo+ID4gCj4gPiBXcm9uZyBhdXRob3I/Cj4gCj4gT2ggSSBjb3BpZWQgY2N1LXN1bjlpLWE4
-MC1kZS5jLi4uCj4gCj4gPiA+ICsgKgo+ID4gPiArICogVGhpcyBzb2Z0d2FyZSBpcyBsaWNlbnNl
-ZCB1bmRlciB0aGUgdGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYwo+ID4gPiArICogTGlj
-ZW5zZSB2ZXJzaW9uIDIsIGFzIHB1Ymxpc2hlZCBieSB0aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0
-aW9uLCBhbmQKPiA+ID4gKyAqIG1heSBiZSBjb3BpZWQsIGRpc3RyaWJ1dGVkLCBhbmQgbW9kaWZp
-ZWQgdW5kZXIgdGhvc2UgdGVybXMuCj4gPiA+ICsgKgo+ID4gPiArICogVGhpcyBwcm9ncmFtIGlz
-IGRpc3RyaWJ1dGVkIGluIHRoZSBob3BlIHRoYXQgaXQgd2lsbCBiZSB1c2VmdWwsCj4gPiA+ICsg
-KiBidXQgV0lUSE9VVCBBTlkgV0FSUkFOVFk7IHdpdGhvdXQgZXZlbiB0aGUgaW1wbGllZCB3YXJy
-YW50eSBvZgo+ID4gPiArICogTUVSQ0hBTlRBQklMSVRZIG9yIEZJVE5FU1MgRk9SIEEgUEFSVElD
-VUxBUiBQVVJQT1NFLiAgU2VlIHRoZQo+ID4gPiArICogR05VIEdlbmVyYWwgUHVibGljIExpY2Vu
-c2UgZm9yIG1vcmUgZGV0YWlscy4KPiA+ID4gKyAqLwo+ID4gPiArCj4gPiA+ICsjaW5jbHVkZSA8
-bGludXgvY2xrLmg+Cj4gPiA+ICsjaW5jbHVkZSA8bGludXgvY2xrLXByb3ZpZGVyLmg+Cj4gPiA+
-ICsjaW5jbHVkZSA8bGludXgvb2ZfYWRkcmVzcy5oPgo+ID4gPiArI2luY2x1ZGUgPGxpbnV4L29m
-X3BsYXRmb3JtLmg+Cj4gPiA+ICsjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+Cj4g
-PiA+ICsjaW5jbHVkZSA8bGludXgvcmVzZXQuaD4KPiA+ID4gKwo+ID4gPiArI2luY2x1ZGUgImNj
-dV9jb21tb24uaCIKPiA+ID4gKyNpbmNsdWRlICJjY3VfZGl2LmgiCj4gPiA+ICsjaW5jbHVkZSAi
-Y2N1X2dhdGUuaCIKPiA+ID4gKyNpbmNsdWRlICJjY3VfcmVzZXQuaCIKPiA+ID4gKwo+ID4gPiAr
-I2luY2x1ZGUgImNjdS1zdW54aS1kZTIuaCIKPiA+ID4gKwo+ID4gPiArc3RhdGljIFNVTlhJX0ND
-VV9HQVRFKGJ1c19taXhlcjBfY2xrLCAiYnVzLW1peGVyMCIsICJidXMtZGUiLAo+ID4gPiArICAg
-ICAgIDB4MDQsIEJJVCgwKSwgMCk7Cj4gPiA+ICtzdGF0aWMgU1VOWElfQ0NVX0dBVEUoYnVzX21p
-eGVyMV9jbGssICJidXMtbWl4ZXIxIiwgImJ1cy1kZSIsCj4gPiA+ICsgICAgICAgMHgwNCwgQklU
-KDEpLCAwKTsKPiA+ID4gK3N0YXRpYyBTVU5YSV9DQ1VfR0FURShidXNfd2JfY2xrLCAiYnVzLXdi
-IiwgImJ1cy1kZSIsCj4gPiA+ICsgICAgICAgMHgwNCwgQklUKDIpLCAwKTsKPiA+ID4gKwo+ID4g
-PiArc3RhdGljIFNVTlhJX0NDVV9HQVRFKG1peGVyMF9jbGssICJtaXhlcjAiLCAibWl4ZXIwLWRp
-diIsCj4gPiA+ICsgICAgICAgMHgwMCwgQklUKDApLCBDTEtfU0VUX1JBVEVfUEFSRU5UKTsKPiA+
-ID4gK3N0YXRpYyBTVU5YSV9DQ1VfR0FURShtaXhlcjFfY2xrLCAibWl4ZXIxIiwgIm1peGVyMS1k
-aXYiLAo+ID4gPiArICAgICAgIDB4MDAsIEJJVCgxKSwgQ0xLX1NFVF9SQVRFX1BBUkVOVCk7Cj4g
-PiA+ICtzdGF0aWMgU1VOWElfQ0NVX0dBVEUod2JfY2xrLCAid2IiLCAid2ItZGl2IiwKPiA+ID4g
-KyAgICAgICAweDAwLCBCSVQoMiksIENMS19TRVRfUkFURV9QQVJFTlQpOwo+ID4gPiArCj4gPiA+
-ICtzdGF0aWMgU1VOWElfQ0NVX00obWl4ZXIwX2Rpdl9jbGssICJtaXhlcjAtZGl2IiwgImRlIiwg
-MHgwYywgMCwgNCwKPiA+ID4gKyAgICBDTEtfU0VUX1JBVEVfUEFSRU5UKTsKPiA+ID4gK3N0YXRp
-YyBTVU5YSV9DQ1VfTShtaXhlcjFfZGl2X2NsaywgIm1peGVyMS1kaXYiLCAiZGUiLCAweDBjLCA0
-LCA0LAo+ID4gPiArICAgIENMS19TRVRfUkFURV9QQVJFTlQpOwo+ID4gPiArc3RhdGljIFNVTlhJ
-X0NDVV9NKHdiX2Rpdl9jbGssICJ3Yi1kaXYiLCAiZGUiLCAweDBjLCA4LCA0LAo+ID4gPiArICAg
-IENMS19TRVRfUkFURV9QQVJFTlQpOwo+ID4gPiArCj4gPiA+ICtzdGF0aWMgc3RydWN0IGNjdV9j
-b21tb24gKnN1bnhpX2RlMl9jbGtzW10gPSB7Cj4gPiA+ICsgJm1peGVyMF9jbGsuY29tbW9uLAo+
-ID4gPiArICZtaXhlcjFfY2xrLmNvbW1vbiwKPiA+ID4gKyAmd2JfY2xrLmNvbW1vbiwKPiA+ID4g
-Kwo+ID4gPiArICZidXNfbWl4ZXIwX2Nsay5jb21tb24sCj4gPiA+ICsgJmJ1c19taXhlcjFfY2xr
-LmNvbW1vbiwKPiA+ID4gKyAmYnVzX3diX2Nsay5jb21tb24sCj4gPiA+ICsKPiA+ID4gKyAmbWl4
-ZXIwX2Rpdl9jbGsuY29tbW9uLAo+ID4gPiArICZtaXhlcjFfZGl2X2Nsay5jb21tb24sCj4gPiA+
-ICsgJndiX2Rpdl9jbGsuY29tbW9uLAo+ID4gPiArfTsKPiA+ID4gKwo+ID4gPiArc3RhdGljIHN0
-cnVjdCBjbGtfaHdfb25lY2VsbF9kYXRhIHN1bnhpX2RlMl9od19jbGtzID0gewo+ID4gPiArIC5o
-d3MgPSB7Cj4gPiA+ICsgW0NMS19NSVhFUjBdID0gJm1peGVyMF9jbGsuY29tbW9uLmh3LAo+ID4g
-PiArIFtDTEtfTUlYRVIxXSA9ICZtaXhlcjFfY2xrLmNvbW1vbi5odywKPiA+ID4gKyBbQ0xLX1dC
-XSA9ICZ3Yl9jbGsuY29tbW9uLmh3LAo+ID4gPiArCj4gPiA+ICsgW0NMS19CVVNfTUlYRVIwXSA9
-ICZidXNfbWl4ZXIwX2Nsay5jb21tb24uaHcsCj4gPiA+ICsgW0NMS19CVVNfTUlYRVIxXSA9ICZi
-dXNfbWl4ZXIxX2Nsay5jb21tb24uaHcsCj4gPiA+ICsgW0NMS19CVVNfV0JdID0gJmJ1c193Yl9j
-bGsuY29tbW9uLmh3LAo+ID4gPiArCj4gPiA+ICsgW0NMS19NSVhFUjBfRElWXSA9ICZtaXhlcjFf
-ZGl2X2Nsay5jb21tb24uaHcsCj4gPiA+ICsgW0NMS19NSVhFUjFfRElWXSA9ICZtaXhlcjBfZGl2
-X2Nsay5jb21tb24uaHcsCj4gPiA+ICsgW0NMS19XQl9ESVZdID0gJndiX2Rpdl9jbGsuY29tbW9u
-Lmh3LAo+ID4gPiArIH0sCj4gPiA+ICsgLm51bSA9IENMS19OVU1CRVIsCj4gPiA+ICt9Owo+ID4g
-PiArCj4gPiA+ICtzdGF0aWMgc3RydWN0IGNjdV9yZXNldF9tYXAgc3VuOGlfYTgzdF9kZTJfcmVz
-ZXRzW10gPSB7Cj4gPiA+ICsgW1JTVF9NSVhFUjBdID0geyAweDA4LCBCSVQoMCkgfSwKPiA+ID4g
-KyAvKgo+ID4gPiArICogRm9yIEE4M1QsIEgzIGFuZCBSNDAsIG1peGVyMSByZXNldCBsaW5lIGlz
-IHNoYXJlZCB3aXRoIHdiLCBzbwo+ID4gPiArICogb25seSBSU1RfV0IgaXMgZXhwb3J0ZWQgaGVy
-ZS4KPiA+ID4gKyAqLwo+ID4gPiArIFtSU1RfV0JdID0geyAweDA4LCBCSVQoMikgfSwKPiA+ID4g
-K307Cj4gPiA+ICsKPiA+ID4gK3N0YXRpYyBzdHJ1Y3QgY2N1X3Jlc2V0X21hcCBzdW41MGlfYTY0
-X2RlMl9yZXNldHNbXSA9IHsKPiA+ID4gKyBbUlNUX01JWEVSMF0gPSB7IDB4MDgsIEJJVCgwKSB9
-LAo+ID4gPiArIFtSU1RfTUlYRVIxXSA9IHsgMHgwOCwgQklUKDEpIH0sCj4gPiA+ICsgW1JTVF9X
-Ql0gPSB7IDB4MDgsIEJJVCgyKSB9LAo+ID4gPiArfTsKPiA+ID4gKwo+ID4gPiArc3RhdGljIGNv
-bnN0IHN0cnVjdCBzdW54aV9jY3VfZGVzYyBzdW44aV9hODN0X2RlMl9jbGtfZGVzYyA9IHsKPiA+
-ID4gKyAuY2N1X2Nsa3MgPSBzdW54aV9kZTJfY2xrcywKPiA+ID4gKyAubnVtX2NjdV9jbGtzID0g
-QVJSQVlfU0laRShzdW54aV9kZTJfY2xrcyksCj4gPiA+ICsKPiA+ID4gKyAuaHdfY2xrcyA9ICZz
-dW54aV9kZTJfaHdfY2xrcywKPiA+ID4gKwo+ID4gPiArIC5yZXNldHMgPSBzdW44aV9hODN0X2Rl
-Ml9yZXNldHMsCj4gPiA+ICsgLm51bV9yZXNldHMgPSBBUlJBWV9TSVpFKHN1bjhpX2E4M3RfZGUy
-X3Jlc2V0cyksCj4gPiA+ICt9Owo+ID4gPiArCj4gPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHN1
-bnhpX2NjdV9kZXNjIHN1bjUwaV9hNjRfZGUyX2Nsa19kZXNjID0gewo+ID4gPiArIC5jY3VfY2xr
-cyA9IHN1bnhpX2RlMl9jbGtzLAo+ID4gPiArIC5udW1fY2N1X2Nsa3MgPSBBUlJBWV9TSVpFKHN1
-bnhpX2RlMl9jbGtzKSwKPiA+ID4gKwo+ID4gPiArIC5od19jbGtzID0gJnN1bnhpX2RlMl9od19j
-bGtzLAo+ID4gPiArCj4gPiA+ICsgLnJlc2V0cyA9IHN1bjUwaV9hNjRfZGUyX3Jlc2V0cywKPiA+
-ID4gKyAubnVtX3Jlc2V0cyA9IEFSUkFZX1NJWkUoc3VuNTBpX2E2NF9kZTJfcmVzZXRzKSwKPiA+
-ID4gK307Cj4gPiA+ICsKPiA+ID4gK3N0YXRpYyBpbnQgc3VueGlfZGUyX2Nsa19wcm9iZShzdHJ1
-Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ID4gPiArewo+ID4gPiArIHN0cnVjdCByZXNvdXJj
-ZSAqcmVzOwo+ID4gPiArIHN0cnVjdCBjbGsgKmJ1c19jbGs7Cj4gPiA+ICsgc3RydWN0IHJlc2V0
-X2NvbnRyb2wgKnJzdGM7Cj4gPiA+ICsgdm9pZCBfX2lvbWVtICpyZWc7Cj4gPiA+ICsgY29uc3Qg
-c3RydWN0IHN1bnhpX2NjdV9kZXNjICpjY3VfZGVzYzsKPiA+ID4gKyBpbnQgcmV0Owo+ID4gPiAr
-Cj4gPiA+ICsgY2N1X2Rlc2MgPSBvZl9kZXZpY2VfZ2V0X21hdGNoX2RhdGEoJnBkZXYtPmRldik7
-Cj4gPiA+ICsgaWYgKCFjY3VfZGVzYykKPiA+ID4gKyByZXR1cm4gLUVJTlZBTDsKPiA+ID4gKwo+
-ID4gPiArIHJlcyA9IHBsYXRmb3JtX2dldF9yZXNvdXJjZShwZGV2LCBJT1JFU09VUkNFX01FTSwg
-MCk7Cj4gPiA+ICsgcmVnID0gZGV2bV9pb3JlbWFwX3Jlc291cmNlKCZwZGV2LT5kZXYsIHJlcyk7
-Cj4gPiA+ICsgaWYgKElTX0VSUihyZWcpKQo+ID4gPiArIHJldHVybiBQVFJfRVJSKHJlZyk7Cj4g
-PiA+ICsKPiA+ID4gKyBidXNfY2xrID0gZGV2bV9jbGtfZ2V0KCZwZGV2LT5kZXYsICJidXMiKTsK
-PiA+ID4gKyBpZiAoSVNfRVJSKGJ1c19jbGspKSB7Cj4gPiA+ICsgcmV0ID0gUFRSX0VSUihidXNf
-Y2xrKTsKPiA+ID4gKyBpZiAocmV0ICE9IC1FUFJPQkVfREVGRVIpCj4gPiA+ICsgZGV2X2Vycigm
-cGRldi0+ZGV2LCAiQ291bGRuJ3QgZ2V0IGJ1cyBjbGs6ICVkXG4iLCByZXQpOwo+ID4gPiArIHJl
-dHVybiByZXQ7Cj4gPiA+ICsgfQo+ID4gPiArCj4gPiA+ICsgcnN0YyA9IGRldm1fcmVzZXRfY29u
-dHJvbF9nZXRfZXhjbHVzaXZlKCZwZGV2LT5kZXYsIE5VTEwpOwo+ID4gPiArIGlmIChJU19FUlIo
-cnN0YykpIHsKPiA+ID4gKyByZXQgPSBQVFJfRVJSKGJ1c19jbGspOwo+ID4gPiArIGlmIChyZXQg
-IT0gLUVQUk9CRV9ERUZFUikKPiA+ID4gKyBkZXZfZXJyKCZwZGV2LT5kZXYsCj4gPiA+ICsgIkNv
-dWxkbid0IGdldCByZXNldCBjb250cm9sOiAlZFxuIiwgcmV0KTsKPiA+ID4gKyByZXR1cm4gcmV0
-Owo+ID4gPiArIH0KPiA+ID4gKwo+ID4gPiArIC8qIFRoZSBidXMgY2xvY2sgbmVlZHMgdG8gYmUg
-ZW5hYmxlZCBmb3IgdXMgdG8gYWNjZXNzIHRoZSByZWdpc3RlcnMgKi8KPiA+ID4gKyByZXQgPSBj
-bGtfcHJlcGFyZV9lbmFibGUoYnVzX2Nsayk7Cj4gPiA+ICsgaWYgKHJldCkgewo+ID4gPiArIGRl
-dl9lcnIoJnBkZXYtPmRldiwgIkNvdWxkbid0IGVuYWJsZSBidXMgY2xrOiAlZFxuIiwgcmV0KTsK
-PiA+ID4gKyByZXR1cm4gcmV0Owo+ID4gPiArIH0KPiA+IAo+ID4gVGhhdCBsb29rcyBpbmVmZmlj
-aWVudCBpZiBub25lIG9mIHRoZSBjbG9ja3MgYXJlIGVuYWJsZWQuIE1heWJlIHlvdQo+ID4gY2Fu
-IHVzZSBDTEtfT1BTX1BBUkVOVF9FTkFCTEU/Cj4gCj4gRG9uJ3Qga25vdyBhYm91dCBpdC4uLiBp
-dCdzIGEgc2ltcGxpZmllZCB2ZXJzaW9uIG9mIHRoaXMgZnVuYyBvZiBBODAgZGUgY2N1Lgo+ID4g
-VGhhbmtzLAo+ID4gTWF4aW1lCj4gPiAKPiA+IC0tCj4gPiBNYXhpbWUgUmlwYXJkLCBGcmVlIEVs
-ZWN0cm9ucwo+ID4gRW1iZWRkZWQgTGludXggYW5kIEtlcm5lbCBlbmdpbmVlcmluZwo+ID4gaHR0
-cDovL2ZyZWUtZWxlY3Ryb25zLmNvbQo+ID4gCj4gPiAtLQo+ID4gWW91IHJlY2VpdmVkIHRoaXMg
-bWVzc2FnZSBiZWNhdXNlIHlvdSBhcmUgc3Vic2NyaWJlZCB0byB0aGUgR29vZ2xlIEdyb3Vwcwo+
-ID4gImxpbnV4LXN1bnhpIiBncm91cC4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGdyb3VwIGFu
-ZCBzdG9wIHJlY2VpdmluZwo+ID4gZW1haWxzIGZyb20gaXQsIHNlbmQgYW4gZW1haWwgdG8KPiA+
-IGxpbnV4LXN1bnhpK3Vuc3Vic2NyaWJlQGdvb2dsZWdyb3Vwcy5jb20uIEZvciBtb3JlIG9wdGlv
-bnMsIHZpc2l0Cj4gPiBodHRwczovL2dyb3Vwcy5nb29nbGUuY29tL2Qvb3B0b3V0Lgo+IAo+IC0t
-Cj4gWW91IHJlY2VpdmVkIHRoaXMgbWVzc2FnZSBiZWNhdXNlIHlvdSBhcmUgc3Vic2NyaWJlZCB0
-byB0aGUgR29vZ2xlIEdyb3Vwcwo+ICJsaW51eC1zdW54aSIgZ3JvdXAuIFRvIHVuc3Vic2NyaWJl
-IGZyb20gdGhpcyBncm91cCBhbmQgc3RvcCByZWNlaXZpbmcKPiBlbWFpbHMgZnJvbSBpdCwgc2Vu
-ZCBhbiBlbWFpbCB0byBsaW51eC1zdW54aSt1bnN1YnNjcmliZUBnb29nbGVncm91cHMuY29tLgo+
-IEZvciBtb3JlIG9wdGlvbnMsIHZpc2l0IGh0dHBzOi8vZ3JvdXBzLmdvb2dsZS5jb20vZC9vcHRv
-dXQuCgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxp
-bnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
-ZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4
-LWFybS1rZXJuZWwK
+
+--veriv3zmxufd2jsd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Feb 14, 2017 at 06:26:39PM +0800, Chen-Yu Tsai wrote:
+> On Tue, Feb 14, 2017 at 5:58 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > On Tue, Feb 14, 2017 at 11:35:25AM +0800, Chen-Yu Tsai wrote:
+> >> +/* Some PLLs are input * N / div1 / P. Model them as NKMP with no K */
+> >
+> > Is that even working?
+>=20
+> Looking at the nkmp clock code, only .recalc_rate will work properly thou=
+gh.
+> Maybe I could fix up the code so it handles zero width factors.
+>=20
+> > I'm not quite sure we want to do that. We might model it as a NP clock
+> > with a variable prediv?
+>=20
+> There's no NP clock type yet. And a problem with a variable prediv is that
+> it doesn't participate in factor calculation. It's effectively fixed.
+>=20
+> I did this for the A80 as well though. Fixing up the NKMP clock might be
+> easier.
+
+Then maybe we just need a NMP clock type then. What I'm really afraid
+of is that we'll just end up in a clk-factors situation that was
+simply impossible to maintain without breaking anything, hence why we
+had different clock types then.
+
+> >
+> >> +/* Use a separate clock for the pre-divider on the AHB1 PLL-PERIPH in=
+put */
+> >> +static SUNXI_CCU_M(pll_periph_ahb1_clk, "pll-periph-ahb1", "pll-perip=
+h",
+> >> +                0x054, 6, 2, 0);
+> >> +
+> >> +static const char * const ahb1_parents[] =3D { "osc16M-d512", "osc24M=
+",
+> >> +                                          "pll-periph-ahb1",
+> >> +                                          "pll-periph-ahb1" };
+> >> +static struct ccu_div ahb1_clk =3D {
+> >> +     .div            =3D _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER=
+_OF_TWO),
+> >> +     .mux            =3D _SUNXI_CCU_MUX(12, 2),
+> >> +     .common         =3D {
+> >> +             .reg            =3D 0x054,
+> >> +             .hw.init        =3D CLK_HW_INIT_PARENTS("ahb1",
+> >> +                                                   ahb1_parents,
+> >> +                                                   &ccu_div_ops,
+> >> +                                                   0),
+> >> +     },
+> >> +};
+> >
+> > What's different from a pre divider only for a given index here?
+>=20
+> The variable pre-divider is shared for both pll-periph mux inputs.
+> This is one way to handle it. The other would be to extend ccu_mux
+> to handle multiple variable pre-dividers. I don't really want to do
+> that if this is the only instance that needs it though.
+
+Every addition we made was only needed by one instance at first :)
+
+We are working that way for fixed pre-dividers already, I don't see
+why we can't have it for variable ones too.
+
+> >> +/*
+> >> + * MMC2 supports what's called the "new timing mode". The CCU and the=
+ MMC
+> >> + * controller must be in sync about which mode is used. The new mode =
+moves
+> >> + * the clock delay controls (and possibly the delay lines) into the M=
+MC
+> >> + * block. Also, the output of the clock is divided by 2. The output a=
+nd
+> >> + * sample phase clocks are unused under this mode.
+> >> + *
+> >> + * This new mode seems to be preferred. Hence we force this clock to =
+the
+> >> + * new mode. And we don't add the phase clocks.
+> >> + */
+> >
+> > I'm sorry, but I said this several times, this isn't working. We
+> > should model it properly, and not hack this around in the clock
+> > driver.
+> >
+> > As you say in your comment, the MMC driver needs to be aware about
+> > which mode is used, in order to also set a bit in one of its registers
+> > accordingly, and modify its sampling behaviour.
+> >
+> > The new timing is preferred, but our previous clock implementations
+> > didn't hardcode it, so we can't even rely on that behaviour to always
+> > write it in our driver.
+>=20
+> Correct. With the A83T there has never been a merged clock driver though.
+> I realize this is a one off thing.
+>=20
+> > This is not something specific to the A83T, but is found in all the
+> > SoCs since the A23, so we need to come up with a good solution to
+> > address that.
+> >
+> > I'm not sure what a good solution would be though. One would be to
+> > just have a private function of our own to switch in the new mode (if
+> > relevant, because only the MMC2 controllers have it), but that would
+> > lead to troubles with !sunxi-ng. Not something we can't deal with, but
+> > some extra precautions should be taken (make sure to protect the call
+> > through an ifdef / IS_DEFINED, check that the sunxi-ng driver has been
+> > probed, etc.)
+>=20
+> If the custom function route is acceptable, I'll come up with something.
+
+I think it would be a great start yes. I'll try to discuss it with
+Mike and Stephen at ELC and see what they think about that.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--veriv3zmxufd2jsd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYpCQ+AAoJEBx+YmzsjxAg23UQAIkStfh/zN6YEABKSD8lhDVV
+vpyCEN/UU7DAQyL/l+eNS7NdvypbYgFAxcOgOTX6uOhMJOywmlQeVhGsQHmR4bSk
+V8IfcgbKG0g4TNPKgsKDBxxcNigP0mognpqO98pz1BTfjdheX9AHvpzXsr/uZGhO
+l5tBAdX1IdkomFiyoAJq8kMXB0Uhwy/iWOLYbXfc9w++tmGFQidyAofuH9L8ttlj
+6KRPNaFVuHGbI4V0Et5+C8lcowtePYetr4GxoXVZCGEJbqhW8bmtfTXRSUiyHU9x
+FPiBOxYpNI5t9AgaCHQMGy/zgYOKiZo4IXl8ii5nCrYcdCyO3eVfay4CjNYw3i5s
+pVwiPHgofMwRphCm9Te0ENTJsgKbs1yCe/N0GQgxzvuXjuKymkth18fvUzk76f0s
+IhBA5udss8ZKG6fJ94Tu60lAsQtHLqHOm20yUxUuEDPDRXwm6qEkGKlpjyI1zvme
+WLDnWTGg8ahp1NmxqQRpC/l+xWgMEvKry7n/sk1vsYQg+aw2ro0oZO/bwl3YqoEO
+8ENub7mrtLQ9eXS/KFKDqqm54YxcsfeXXlzhWMBzYLLAhsDk6z2oMidkR0i3gBCb
+HSmYJOWHovHQuDyXUHFvoFfS+T/crWVsxQsJngBqra0+k79EtBtfXbO+Nj83Fh2o
+k6qBUy3PrFYSVXdieU5J
+=eQJI
+-----END PGP SIGNATURE-----
+
+--veriv3zmxufd2jsd--
