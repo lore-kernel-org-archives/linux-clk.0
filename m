@@ -1,51 +1,55 @@
 Return-Path: <yuantian.tang@nxp.com>
-From: "Y.T. Tang" <yuantian.tang@nxp.com>
-To: Scott Wood <oss@buserror.net>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>
-CC: "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "robh+dt@kernel.org"
-	<robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 2/2] clk: qoriq: Separate root input clock for core PLLs
- on ls1012a
-Date: Thu, 16 Feb 2017 02:21:09 +0000
-Message-ID: <DB6PR0402MB28374AECE0955BECE2C184E5F05A0@DB6PR0402MB2837.eurprd04.prod.outlook.com>
-References: <1487137656-4006-1-git-send-email-yuantian.tang@nxp.com>
-	 <1487137656-4006-2-git-send-email-yuantian.tang@nxp.com>
- <1487183790.5636.13.camel@buserror.net>
-In-Reply-To: <1487183790.5636.13.camel@buserror.net>
-Content-Type: text/plain; charset="utf-8"
+From: <yuantian.tang@nxp.com>
+To: <mturquette@baylibre.com>
+CC: <sboyd@codeaurora.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, "Tang
+ Yuantian" <Yuantian.Tang@nxp.com>, Scott Wood <oss@buserror.net>, "Tang
+ Yuantian" <yuantian.tang@nxp.com>
+Subject: [PATCH 1/2] dt-bindings: qoriq-clock: Add coreclk
+Date: Wed, 15 Feb 2017 13:47:35 +0800
+Message-ID: <1487137656-4006-1-git-send-email-yuantian.tang@nxp.com>
+Return-Path: yuantian.tang@nxp.com
 MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFNjb3R0IFdvb2QgW21haWx0
-bzpvc3NAYnVzZXJyb3IubmV0XQ0KPiBTZW50OiBUaHVyc2RheSwgRmVicnVhcnkgMTYsIDIwMTcg
-MjozNyBBTQ0KPiBUbzogWS5ULiBUYW5nIDx5dWFudGlhbi50YW5nQG54cC5jb20+OyBtdHVycXVl
-dHRlQGJheWxpYnJlLmNvbQ0KPiBDYzogc2JveWRAY29kZWF1cm9yYS5vcmc7IHJvYmgrZHRAa2Vy
-bmVsLm9yZzsgbWFyay5ydXRsYW5kQGFybS5jb207DQo+IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5v
-cmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2Vy
-bmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+IFN1YmplY3Q6
-IFJlOiBbUEFUQ0ggMi8yXSBjbGs6IHFvcmlxOiBTZXBhcmF0ZSByb290IGlucHV0IGNsb2NrIGZv
-ciBjb3JlIFBMTHMgb24NCj4gbHMxMDEyYQ0KPiANCj4gT24gV2VkLCAyMDE3LTAyLTE1IGF0IDEz
-OjQ3ICswODAwLCB5dWFudGlhbi50YW5nQG54cC5jb20gd3JvdGU6DQo+ID4gRnJvbTogVGFuZyBZ
-dWFudGlhbiA8WXVhbnRpYW4uVGFuZ0BueHAuY29tPg0KPiA+DQo+ID4gbHMxMDEyYSBoYXMgc2Vw
-YXJhdGUgaW5wdXQgcm9vdCBjbG9ja3MgZm9yIGNvcmUgUExMcyB2ZXJzdXMgdGhlDQo+ID4gcGxh
-dGZvcm0gUExMLCB3aXRoIHRoZSBsYXR0ZXIgZGVzY3JpYmVkIGFzIHN5c2NsayBpbiB0aGUgaHcg
-ZG9jcy4NCj4gPiBJZiBhIHNlY29uZCBpbnB1dCBjbG9jaywgbmFtZWQgImNvcmVjbGsiLCBpcyBw
-cmVzZW50LCB0aGlzIGNsb2NrIHdpbGwNCj4gPiBiZSB1c2VkIGZvciB0aGUgY29yZSBQTExzLg0K
-PiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogU2NvdHQgV29vZCA8b3NzQGJ1c2Vycm9yLm5ldD4NCj4g
-PiBTaWduZWQtb2ZmLWJ5OiBUYW5nIFl1YW50aWFuIDx5dWFudGlhbi50YW5nQG54cC5jb20+DQo+
-ID4gLS0tDQo+ID4gwqBkcml2ZXJzL2Nsay9jbGstcW9yaXEuYyB8IDkxDQo+ID4gKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLQ0KPiANCj4gV2h5IGRpZCB5b3Ug
-cmVzZXQgdGhlIGF1dGhvciBvbiB0aGVzZSBwYXRjaGVzPyDCoEhhdmUgeW91IGNoYW5nZWQgYW55
-dGhpbmc/DQo+IMKgV2h5IGFyZW4ndCB0aGV5IG1hcmtlZCBlaXRoZXIgdjIgb3IgcmVzZW5kPw0K
-PiANCg0KSSBzaG91bGQgaGF2ZSBtYXJrZWQgYXMgdjIgb3IgcmVzZW5kLiBJZiBhbnl0aGluZyBj
-aGFuZ2VkLCBJIHRha2UgaXQgb3ZlciBhbmQgZHJvcHBlZCB0aGUgMi8zIHBhdGNoIGluIHlvdXIg
-b3JpZ2luYWwgcGF0Y2ggc2V0IHRvIHNwZWVkIHVwIHRoZSBtZXJnZSwgd2hpY2ggSSB0aGluayBz
-by4NClRoaXMgcGF0Y2ggc2V0IGJsb2NrcyBvdGhlciBwYXRjaGVzIGFuZCAyMCBkYXlzIHBhc3Nl
-ZCwgbm8gYW55IGFjdGlvbiBvbiBpdC4gV2UgY2FuJ3QgYWNjb3VudCBvbiB5b3UgdG8gcHVzaCBp
-dC4gVGhhdCdzIHdoeSBJIHRha2UgaXQgb3ZlciBhbmQgcmVzZW5kIGl0Lg0KDQpBbGwgaW4gYWxs
-LCB3aGF0IHlvdSBzdWdnZXN0IHRvIGRvIHRvIG1ha2UgdGhlbSBnZXQgYWNjZXB0ZWQgQVNBUD8N
-Cg0KUmVnYXJkcywNCll1YW50aWFuDQo+IC1TY290dA0KDQo=
+From: Tang Yuantian <Yuantian.Tang@nxp.com>
+
+ls1012a has separate input root clocks for core PLLs versus the platform
+PLL, with the latter described as sysclk in the hw docs.
+Update the qoriq-clock binding to allow a second input clock, named
+"coreclk".  If present, this clock will be used for the core PLLs.
+
+Signed-off-by: Scott Wood <oss@buserror.net>
+Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
+---
+ Documentation/devicetree/bindings/clock/qoriq-clock.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+index df9cb5a..97a9666 100644
+--- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
++++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+@@ -55,6 +55,11 @@ Optional properties:
+ - clocks: If clock-frequency is not specified, sysclk may be provided
+ 	as an input clock.  Either clock-frequency or clocks must be
+ 	provided.
++	A second input clock, called "coreclk", may be provided if
++	core PLLs are based on a different input clock from the
++	platform PLL.
++- clock-names: Required if a coreclk is present.  Valid names are
++	"sysclk" and "coreclk".
+ 
+ 2. Clock Provider
+ 
+@@ -71,6 +76,7 @@ second cell is the clock index for the specified type.
+ 	2	hwaccel		index (n in CLKCGnHWACSR)
+ 	3	fman		0 for fm1, 1 for fm2
+ 	4	platform pll	0=pll, 1=pll/2, 2=pll/3, 3=pll/4
++	5	coreclk		must be 0
+ 
+ 3. Example
+ 
+-- 
+2.1.0.27.g96db324
