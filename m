@@ -1,58 +1,36 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 6 Feb 2017 17:03:08 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] clk: mvebu: Expand mv98dx3236-core-clock support
-Message-ID: <20170207010308.GN25384@codeaurora.org>
-References: <20170203034012.29399-1-chris.packham@alliedtelesis.co.nz>
- <20170203034012.29399-5-chris.packham@alliedtelesis.co.nz>
- <20170206231400.GM25384@codeaurora.org>
- <9974653ab84040c3b12fad075790c123@svr-chch-ex1.atlnz.lc>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Douglas Anderson <dianders@chromium.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, jwerner@chromium.org, hl@rock-chips.com, dbasehore@chromium.org, zhengxing@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: rockchip: Set "ignore unused" for PMU M0 clocks on rk3399
+Date: Wed, 15 Feb 2017 18:01:25 +0100
+Message-ID: <1716357.fXUCSFMPB6@diego>
+In-Reply-To: <CABxcv=kzW9SvrWYNasqCDkV7D6Y2zq+oRuqoPFdWuaWUhPehEA@mail.gmail.com>
+References: <20170214210114.5846-1-dianders@chromium.org> <CABxcv=kzW9SvrWYNasqCDkV7D6Y2zq+oRuqoPFdWuaWUhPehEA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <9974653ab84040c3b12fad075790c123@svr-chch-ex1.atlnz.lc>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/06, Chris Packham wrote:
-> On 07/02/17 12:14, Stephen Boyd wrote:
-> > On 02/03, Chris Packham wrote:
-> >> The initial implementation in commit e120c17a70e5 ("clk: mvebu: support
-> >> for 98DX3236 SoC") hardcoded a fixed value for the main PLL frequency.
-> >> Port code from the Marvell supplied Linux kernel to support different
-> >> PLL frequencies and provide clock gating support.
-> >>
-> >> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> >> ---
-> >>  .../devicetree/bindings/clock/mvebu-core-clock.txt |   7 +
-> >>  .../bindings/clock/mvebu-gated-clock.txt           |  11 ++
-> >>  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          |  14 +-
-> >>  drivers/clk/mvebu/Makefile                         |   2 +-
-> >>  drivers/clk/mvebu/armada-xp.c                      |  13 --
-> >>  drivers/clk/mvebu/mv98dx3236.c                     | 144 +++++++++++++++++++++
-> >
-> > This mixes dts and clk driver changes. Any chance it can be split
-> > up and just have the clk part go through clk tree? Otherwise, I
-> > can ack this if you want to take it all through arm-soc?
+Am Mittwoch, 15. Februar 2017, 12:27:59 CET schrieb Javier Martinez Canillas:
+> Hello Doug,
 > 
-> I'm happy to split it if it will make life easier.
+> On Tue, Feb 14, 2017 at 6:01 PM, Douglas Anderson <dianders@chromium.org> 
+wrote:
+> > The PMU Cortex M0 on rk3399 is intended to be used for things like
+> > DDRFreq transitions, suspend/resume, and other things that are the
+> > purview of ARM Trusted Firmware and not the kernel.  As such, the
+> > kernel shouldn't be messing with the clocks.  Add CLK_IGNORE_UNUSED to
+> > these clocks.
 > 
+> Isn't CLK_IS_CRITICAL a more suitable flag for this case?
 
-Well do things keep booting if the clk driver parts merge without
-the associated dts changes? It's nice to maintain backwards
-compatibility even for a short time to make the merge path
-easier.
+>From the patch description it looks like the clock is expected to be 
+controlled from firmware in most cases as I guess the Cortex M0 will be used 
+for that all the time now. And the clock is not expected to run all the time.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+So I'd think clk_ignore_unused is the correct one. The whole clock-subtree for 
+these clocks also does not get affected by other clocks, as it is 
+independendly coming from PLLs.
+
+
+Heiko
