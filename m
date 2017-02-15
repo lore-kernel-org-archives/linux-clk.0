@@ -1,60 +1,59 @@
-Return-Path: <baoyou.xie@linaro.org>
-Return-Path: <baoyou.xie@linaro.org>
-From: Baoyou Xie <baoyou.xie@linaro.org>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	jun.nie@linaro.org,
-	baoyou.xie@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	shawn.guo@linaro.org,
-	vinod.koul@intel.com
-Cc: alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	shawnguo@kernel.org,
-	xie.baoyou@zte.com.cn,
-	chen.chaokai@zte.com.cn,
-	wang.qiang01@zte.com.cn
-Subject: [PATCH v2 2/3] dt: ASoC: zx-i2s: Document for the ZTE zx296718 I2S controller
-Date: Tue,  7 Feb 2017 11:02:50 +0800
-Message-Id: <1486436571-8682-2-git-send-email-baoyou.xie@linaro.org>
-In-Reply-To: <1486436571-8682-1-git-send-email-baoyou.xie@linaro.org>
-References: <1486436571-8682-1-git-send-email-baoyou.xie@linaro.org>
+Return-Path: <dianders@google.com>
+MIME-Version: 1.0
+Sender: dianders@google.com
+In-Reply-To: <CABxcv=kzW9SvrWYNasqCDkV7D6Y2zq+oRuqoPFdWuaWUhPehEA@mail.gmail.com>
+References: <20170214210114.5846-1-dianders@chromium.org> <CABxcv=kzW9SvrWYNasqCDkV7D6Y2zq+oRuqoPFdWuaWUhPehEA@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 15 Feb 2017 08:46:06 -0800
+Message-ID: <CAD=FV=WLN6r9DgRQSk2En1sJY=dQnkkWDMc1+KXVq2+JXyA0jg@mail.gmail.com>
+Subject: Re: [PATCH] clk: rockchip: Set "ignore unused" for PMU M0 clocks on rk3399
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Julius Werner <jwerner@chromium.org>,
+	Lin Huang <hl@rock-chips.com>, Derek Basehore <dbasehore@chromium.org>,
+	=?UTF-8?B?6YOR5YW0?= <zhengxing@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch documents the devicetree for the ZTE's zx296718
-I2S audio controller.
+Hi,
 
-Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
----
- Documentation/devicetree/bindings/sound/zte,zx-i2s.txt | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On Wed, Feb 15, 2017 at 7:27 AM, Javier Martinez Canillas
+<javier@dowhile0.org> wrote:
+> Hello Doug,
+>
+> On Tue, Feb 14, 2017 at 6:01 PM, Douglas Anderson <dianders@chromium.org> wrote:
+>> The PMU Cortex M0 on rk3399 is intended to be used for things like
+>> DDRFreq transitions, suspend/resume, and other things that are the
+>> purview of ARM Trusted Firmware and not the kernel.  As such, the
+>> kernel shouldn't be messing with the clocks.  Add CLK_IGNORE_UNUSED to
+>> these clocks.
+>>
+>
+> Isn't CLK_IS_CRITICAL a more suitable flag for this case?
 
-diff --git a/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt b/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
-index 7e5aa6f..c405561 100644
---- a/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
-+++ b/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
-@@ -1,10 +1,12 @@
- ZTE ZX296702 I2S controller
- 
- Required properties:
-- - compatible : Must be "zte,zx296702-i2s"
-+ - compatible : Should include one of the following strings:
-+	"zte,zx296702-i2s","zte,zx296718-i2s".
-  - reg : Must contain I2S core's registers location and length
-  - clocks : Pairs of phandle and specifier referencing the controller's clocks.
-- - clock-names: "tx" for the clock to the I2S interface.
-+ - clock-names: "tx" for the wclk, "pclk" for the pclk to the I2S interface.
-+	must contain pclk for zx296718 SoC.
-  - dmas: Pairs of phandle and specifier for the DMA channel that is used by
-    the core. The core expects two dma channels for transmit.
-  - dma-names : Must be "tx" and "rx"
--- 
-2.7.4
+As I understand it (AKA please correct me if I'm wrong)...
+
+Usually CLK_IS_CRITICAL is more suitable than CLK_IGNORE_UNUSED since
+lots of old code used CLK_IGNORE_UNUSED for critical clocks before
+CLK_IS_CRITICAL existed.
+
+...but in this case, I don't think it is more suitable.
+CLK_IS_CRITICAL means that the kernel should be in charge of keeping
+this clock on at all times.  The documentation I see says:
+
+#define CLK_IS_CRITICAL         BIT(11) /* do not gate, ever */
+
+In our case, as was so eloquently described in our private bug by our
+firmware engineer:
+
+  Just tell the kernel to keep its grubby hands off my clocks completely
+
+AKA: this isn't a clock that the kernel should touch--it is entirely
+managed by the firmware.  It's OK for the kernel to show it in the
+clock tree, but otherwise "hands off".
+
+-Doug
