@@ -1,79 +1,65 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Kishon Vijay Abraham I <kishon@ti.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Subject: [RFC PATCH 0/9] Add support for Allwinner R40 SoC
-Date: Sat, 18 Feb 2017 01:37:13 +0800
-Message-Id: <20170217173722.6477-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Icenowy Zheng <icenowy@aosc.xyz>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 16 Feb 2017 18:53:18 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi: ccu-sun5i needs nkmp
+Message-ID: <20170216175318.fuj375743jt43um4@lukather>
+References: <20170214213005.2848151-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fr5iuajkkwudz4xy"
+In-Reply-To: <20170214213005.2848151-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is an experiment to add R40 support to mainline Linux.
 
-As we have still no user manual for R40, the patchset is developed
-by reading the BSP source code and device tree, educated guess and
-try and error.
+--fr5iuajkkwudz4xy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Note: the PATCH 1~3 and 7 is not RFC (I want them to be merged now),
-but they are sent together as they have functional dependency by
-RFC patches.
+On Tue, Feb 14, 2017 at 10:29:45PM +0100, Arnd Bergmann wrote:
+> A randconfig build ran into this rare link error:
+>=20
+> drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.1+0x4): undefi=
+ned reference to `ccu_nkmp_ops'
+> drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.7+0x4): undefi=
+ned reference to `ccu_nkmp_ops'
+>=20
+> This adds the missing 'select'.
+>=20
+> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Icenowy Zheng (9):
-  arm: sunxi: add support for R40 SoC
-  pinctrl: sunxi: rename sun7i-a20 driver to sunxi-a20-r40
-  pinctrl: sunxi: add support for R40 pinctrl
-  clk: sunxi-ng: support R40 SoC
-  ARM: dts: sun8i: add DTSI file for R40 SoC
-  ARM: dts: sun8i: add DTS file for Banana Pi M2 Ultra
-  phy: sun4i-usb: add support for R40 USB PHY
-  ARM: dts: sun8i: add USB nodes for R40
-  ARM: dts: sun8i: enable USB host for Banana Pi M2 Ultra
+Queued as a fix for 4.11, thanks!
+Maxime
 
- Documentation/arm/sunxi/README                     |    4 +
- .../devicetree/bindings/phy/sun4i-usb-phy.txt      |    1 +
- arch/arm/boot/dts/Makefile                         |    1 +
- arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts  |  184 ++++
- arch/arm/boot/dts/sun8i-r40.dtsi                   |  493 +++++++++
- arch/arm/mach-sunxi/sunxi.c                        |    1 +
- drivers/clk/sunxi-ng/Kconfig                       |   10 +
- drivers/clk/sunxi-ng/Makefile                      |    1 +
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c               | 1140 ++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-r40.h               |   68 ++
- drivers/phy/phy-sun4i-usb.c                        |   17 +-
- drivers/pinctrl/sunxi/Kconfig                      |    2 +-
- drivers/pinctrl/sunxi/Makefile                     |    2 +-
- ...pinctrl-sun7i-a20.c => pinctrl-sunxi-a20-r40.c} |   69 +-
- drivers/pinctrl/sunxi/pinctrl-sunxi.h              |    2 +
- include/dt-bindings/clock/sun8i-r40-ccu.h          |  189 ++++
- include/dt-bindings/reset/sun8i-r40-ccu.h          |  128 +++
- 17 files changed, 2286 insertions(+), 26 deletions(-)
- create mode 100644 arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
- create mode 100644 arch/arm/boot/dts/sun8i-r40.dtsi
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
- rename drivers/pinctrl/sunxi/{pinctrl-sun7i-a20.c => pinctrl-sunxi-a20-r40.c} (95%)
- create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
- create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
--- 
-2.11.1
+--fr5iuajkkwudz4xy
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+iQIcBAEBCAAGBQJYpecGAAoJEBx+YmzsjxAgk3EP/2+ry8D9N2rDfzPBIF9EbEfD
+um30yQeBrOClVmy4eJRQOXOiG+9YBqGv0Ms8R5dKptpRMZ324Tow1XK4Gtzi7Ll0
+0l4CrvrzpNTaAYXgcjFiIhcKGXFycL2v/cWaXzxFfu8bHajKpfozlHTh7LPfhwYM
+T+b2jly2Tv/PSHeFnDypres5eHtkcZYQZXw3Wj48hP+IJnq9x3+DVT3o2iyzaQLj
+fhGXOur00Ap9+owtuBEc3dXeZhzkDXAi3aFxbhpjIWqnB7WmQkK2a8vkLZIRilxJ
+JGW2GnZofNT+czAsBvyxRfigdRAt6nmQBKtXkHPDSJPtZvC0303udbB8x/WtBvfW
+gAj5ABbYn/j1u2nFn9Xw+7884OwW/HpKElKkAqAhFoara1PHdi8VmXomFWiCavVt
+ade1hLgDfleyTVEtuKlkKObDP6skQR4AbF3ulRhoo/BW8+WA6zT536eDRRF815Ql
+kM4QHX0vGorN0tKOXL7n8fyAh8fmAHOL0pGBeb98G+5rRVTemAXpUZJGemi/4lyo
+Fi+psqNlkBfoqerpuaaFEqS8bCB4ZbnKyEl/SQ2mI9NB0o79/Jpkc51rckElmNcV
+tFLYEBT62/6pcXO8aPGMzzUhm5z3m0wS2kbq82Dvq1kFMVhXQ8CM1uUiiwG2S3bF
+MfEoX41yQdfo8JIgP6Rx
+=gVPP
+-----END PGP SIGNATURE-----
+
+--fr5iuajkkwudz4xy--
