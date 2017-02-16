@@ -1,92 +1,138 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Tue, 21 Feb 2017 15:02:33 -0800
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: Re: [PATCH 3/9] pinctrl: sunxi: add support for R40 pinctrl
-Message-ID: <20170221230233.2o4idjwybmkkakcs@lukather>
-References: <20170217173722.6477-1-icenowy@aosc.xyz>
- <20170217173722.6477-4-icenowy@aosc.xyz>
-MIME-Version: 1.0
-In-Reply-To: <20170217173722.6477-4-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com,
- Kishon Vijay Abraham I <kishon@ti.com>, linux-gpio@vger.kernel.org,
- Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============8111783796037153037=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <chrisp@alliedtelesis.co.nz>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 6/6] ARM: dts: mvebu: Move mv98dx3236 clock bindings
+Date: Thu, 16 Feb 2017 21:50:40 +1300
+Message-Id: <20170216085041.28337-7-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20170216085041.28337-1-chris.packham@alliedtelesis.co.nz>
+References: <20170216085041.28337-1-chris.packham@alliedtelesis.co.nz>
 List-ID: <linux-clk.vger.kernel.org>
 
+Previously the coreclk binding for the 98dx3236 SoC was inherited from
+the armada-370/xp. This block is present in as much as it is possible to
+read from the register location without causing any harm. However the
+actual sampled at reset values are reflected in the DFX block.
 
---===============8111783796037153037==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="haxkjxj4vh5e3bal"
-Content-Disposition: inline
+Moving the binding to the DFX block enables support for different clock
+strapping options in hardware.
 
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
 
---haxkjxj4vh5e3bal
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Notes:
+    Changes in v2:
+    - New. Split out from "clk: mvebu: Expand mv98dx3236-core-clock support"
+    Changes in v3:
+    - Clarify why the old location was wrong (but worked).
 
-On Sat, Feb 18, 2017 at 01:37:16AM +0800, Icenowy Zheng wrote:
-> Allwinner R40 have a pin controller similar to A20, only added 8-bit
-> eMMC function to mmc2 at PC bank.
->=20
-> Add support for it in the already renamed sunxi-a20-r40 driver via
-> variant framework.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+ .../devicetree/bindings/clock/mvebu-core-clock.txt         |  7 +++++++
+ .../devicetree/bindings/clock/mvebu-gated-clock.txt        | 11 +++++++++++
+ arch/arm/boot/dts/armada-xp-98dx3236.dtsi                  | 14 +++++++-------
+ 3 files changed, 25 insertions(+), 7 deletions(-)
 
-I think a prerequisite would be to merge A10 as well (possibly even
-the other way around: A20 and R40 into the A10 driver).
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---haxkjxj4vh5e3bal
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYrMcFAAoJEBx+YmzsjxAgo6MP/0w3Z03q1sxqxWVJYWCWTFuk
-wePHnb61OPLqRq0jUEZ/vAEynFr1FLIqdkiimkcn3y7oGrb3nSORzdrJBglR3J2X
-lE9bU5iQ5zDLBdEktR4G18DyCDdkkhxFwNh1RetaKsC8PypYqLD7jLRrAUYz0Cmc
-wdWjtahsWGL2A4ER1UXPff3PCLkqOjwWWWs3lLzhyD7NpAQ0pje03quLDVujqplr
-ip8Te9rv99JJxuEnMVjMaHunACm2WOZKynT+uO6GmyeAE1d1s+f9fDh6XSmXzBcr
-JXZK8CgXyfWnp1IKpBuKCJlQ/03eGCqeywIT+nfmEQjxO87E/16MHO2MSbEMVoqU
-SIY1VvGk8/8pk/1Oml+CnQ/J2Hip3rfc21WXpw0tC4Z9Y7mGGq5NitiTbnckIPp5
-Zgsg9In8TaAbvlxBSdklLH8rtl1uXCisMICAldGCjIsy1/q3kASwKYYK7yy7EchT
-cz7c859ECMAMnH92UyJ833r2ej30jwZIZKFh/tc+gLq1CE6XsB4Pc4wshBpGO6i1
-Q5QGuG3tRsWkF1JfVeidLsOfE0YuWulWa5tO5MwzM49BkkCmoMqDGhW5X637KjBn
-ospK1/KDkOUyzFYxdxg28o+hNybDLQzYr1xEfEMgihet+TJKhAXNfttNVGiC9wnw
-H1zkjDHW+vUQQxxIW9Vp
-=+uEd
------END PGP SIGNATURE-----
-
---haxkjxj4vh5e3bal--
-
-
---===============8111783796037153037==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============8111783796037153037==--
+diff --git a/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
+index eb985a633d59..796c260c183d 100644
+--- a/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
++++ b/Documentation/devicetree/bindings/clock/mvebu-core-clock.txt
+@@ -31,6 +31,12 @@ The following is a list of provided IDs and clock names on Armada 39x:
+  4 = dclk    (SDRAM Interface Clock)
+  5 = refclk  (Reference Clock)
+ 
++The following is a list of provided IDs and clock names on 98dx3236:
++ 0 = tclk    (Internal Bus clock)
++ 1 = cpuclk  (CPU clock)
++ 2 = ddrclk   (DDR clock)
++ 3 = mpll    (MPLL Clock)
++
+ The following is a list of provided IDs and clock names on Kirkwood and Dove:
+  0 = tclk   (Internal Bus clock)
+  1 = cpuclk (CPU0 clock)
+@@ -49,6 +55,7 @@ Required properties:
+ 	"marvell,armada-380-core-clock" - For Armada 380/385 SoC core clocks
+ 	"marvell,armada-390-core-clock" - For Armada 39x SoC core clocks
+ 	"marvell,armada-xp-core-clock" - For Armada XP SoC core clocks
++	"marvell,mv98dx3236-core-clock" - For 98dx3236 family SoC core clocks
+ 	"marvell,dove-core-clock" - for Dove SoC core clocks
+ 	"marvell,kirkwood-core-clock" - for Kirkwood SoC (except mv88f6180)
+ 	"marvell,mv88f6180-core-clock" - for Kirkwood MV88f6180 SoC
+diff --git a/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt b/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
+index 5142efc8099d..de562da2ae77 100644
+--- a/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
++++ b/Documentation/devicetree/bindings/clock/mvebu-gated-clock.txt
+@@ -119,6 +119,16 @@ ID	Clock	Peripheral
+ 29	sata1lnk
+ 30	sata1	SATA Host 1
+ 
++The following is a list of provided IDs for 98dx3236:
++ID	Clock	Peripheral
++-----------------------------------
++3	ge1	Gigabit Ethernet 1
++4	ge0	Gigabit Ethernet 0
++5	pex0	PCIe Cntrl 0
++17	sdio	SDHCI Host
++18	usb0	USB Host 0
++22	xor0	XOR DMA 0
++
+ The following is a list of provided IDs for Dove:
+ ID	Clock	Peripheral
+ -----------------------------------
+@@ -169,6 +179,7 @@ Required properties:
+ 	"marvell,armada-380-gating-clock" - for Armada 380/385 SoC clock gating
+ 	"marvell,armada-390-gating-clock" - for Armada 39x SoC clock gating
+ 	"marvell,armada-xp-gating-clock" - for Armada XP SoC clock gating
++	"marvell,mv98dx3236-gating-clock" - for 98dx3236 SoC clock gating
+ 	"marvell,dove-gating-clock" - for Dove SoC clock gating
+ 	"marvell,kirkwood-gating-clock" - for Kirkwood SoC clock gating
+ - reg : shall be the register address of the Clock Gating Control register
+diff --git a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+index 6b81f7363d53..fe60a751c786 100644
+--- a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
++++ b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+@@ -176,18 +176,12 @@
+ 			};
+ 
+ 			gateclk: clock-gating-control@18220 {
+-				compatible = "marvell,armada-xp-gating-clock";
++				compatible = "marvell,mv98dx3236-gating-clock";
+ 				reg = <0x18220 0x4>;
+ 				clocks = <&coreclk 0>;
+ 				#clock-cells = <1>;
+ 			};
+ 
+-			coreclk: mvebu-sar@18230 {
+-				compatible = "marvell,mv98dx3236-core-clock";
+-				reg = <0x18230 0x08>;
+-				#clock-cells = <1>;
+-			};
+-
+ 			cpuclk: clock-complex@18700 {
+ 				#clock-cells = <1>;
+ 				compatible = "marvell,mv98dx3236-cpu-clock";
+@@ -264,6 +258,12 @@
+ 			ranges = <0 MBUS_ID(0x08, 0x00) 0 0x100000>;
+ 			reg = <MBUS_ID(0x08, 0x00) 0 0x100000>;
+ 
++			coreclk: mvebu-sar@f8204 {
++				compatible = "marvell,mv98dx3236-core-clock";
++				reg = <0xf8204 0x4>;
++				#clock-cells = <1>;
++			};
++
+ 			soc-id@f8244 {
+ 				compatible = "marvell,mv98dx3236-soc-id";
+ 				reg = <0xf8244 0x4>;
+-- 
+2.11.0.24.ge6920cf
