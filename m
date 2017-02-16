@@ -1,215 +1,62 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>, Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v5 6/7] arm64: dts: allwinner: add Allwinner H5 .dtsi
-Date: Sun, 26 Feb 2017 09:19:55 +0800
-Message-Id: <20170226011956.53581-7-icenowy@aosc.xyz>
-In-Reply-To: <20170226011956.53581-1-icenowy@aosc.xyz>
-References: <20170226011956.53581-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 16 Feb 2017 18:56:50 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, stable@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Bob Ham <rah@settrans.net>
+Subject: Re: [PATCH] clk: sunxi-ng: sun6i: Fix enable bit offset for hdmi-ddc
+ module clock
+Message-ID: <20170216175650.kkwbmwa4yyk33ozp@lukather>
+References: <20170214022332.13326-1-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="atbf2wmzen52r6sm"
+In-Reply-To: <20170214022332.13326-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andre Przywara <andre.przywara@arm.com>
 
-The Allwinner H5 SoC is pin-compatible to the H3 SoC, but uses
-Cortex-A53 cores instead.
-Based on the now shared base .dtsi describing the common peripherals
-describe the H5 specific nodes on top of that.
-That symlinks in the sunxi-h3-h5.dtsi from the arch/arm tree.
+--atbf2wmzen52r6sm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-[Icenowy: add H5 pinctrl compatible, and changes for my h3-h5 dtsi
- refactor, commit message change to met new arm64 naming scheme,
- drop H3 pinctrl compatible because of interrupt bank change, drop
- H3 ccu compatible because of clock change]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
-Changes in v3:
-- Dropped sun5i-a13-mmc, sun8i-h3-ccu compatibles.
-- Used sun50i-{h5,a64}-emmc compatible for mmc2.
-Changes in v2:
-- Dropped sun8i-h3-pinctrl compatible, as the interrupt of H3 and H5 is
+On Tue, Feb 14, 2017 at 10:23:32AM +0800, Chen-Yu Tsai wrote:
+> The enable bit offset for the hdmi-ddc module clock is wrong. It is
+> pointing to the main hdmi module clock enable bit.
+>=20
+> Reported-by: Bob Ham <rah@settrans.net>
+> Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+> Cc: stable@vger.kernel.org # 4.9.x-
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
- arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi   | 139 +++++++++++++++++++++++++
- arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi |   1 +
- 2 files changed, 140 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
- create mode 120000 arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
+Queued as a fix for 4.11, thanks,
+Maxime
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-new file mode 100644
-index 000000000000..b651bd6986e8
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-@@ -0,0 +1,139 @@
-+/*
-+ * Copyright (C) 2016 ARM Ltd.
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#include "sunxi-h3-h5.dtsi"
-+
-+/ {
-+	interrupt-parent = <&gic>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <0>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@1 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <1>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@2 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <2>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@3 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <3>;
-+			enable-method = "psci";
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	soc {
-+		gic: interrupt-controller@1c81000 {
-+			compatible = "arm,gic-400";
-+			reg = <0x01c81000 0x1000>,
-+			      <0x01c82000 0x2000>,
-+			      <0x01c84000 0x2000>,
-+			      <0x01c86000 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+		};
-+	};
-+};
-+
-+&ccu {
-+	compatible = "allwinner,sun50i-h5-ccu";
-+};
-+
-+&mmc0 {
-+	compatible = "allwinner,sun50i-h5-mmc",
-+		     "allwinner,sun50i-a64-mmc";
-+	clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
-+	clock-names = "ahb", "mmc";
-+};
-+
-+&mmc1 {
-+	compatible = "allwinner,sun50i-h5-mmc",
-+		     "allwinner,sun50i-a64-mmc";
-+	clocks = <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;
-+	clock-names = "ahb", "mmc";
-+};
-+
-+&mmc2 {
-+	compatible = "allwinner,sun50i-h5-emmc",
-+		     "allwinner,sun50i-a64-emmc";
-+	clocks = <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;
-+	clock-names = "ahb", "mmc";
-+};
-+
-+&pio {
-+	compatible = "allwinner,sun50i-h5-pinctrl";
-+};
-diff --git a/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
-new file mode 120000
-index 000000000000..036f01dc2b9b
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
-@@ -0,0 +1 @@
-+../../../../arm/boot/dts/sunxi-h3-h5.dtsi
-\ No newline at end of file
--- 
-2.11.1
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
+--atbf2wmzen52r6sm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYpefiAAoJEBx+YmzsjxAgBCkP/0E2fz4KjZYWIBSD1L4YTnOB
+Hcn1sQ6HlsV79do4cgAHQUNrmlKn08tm/L8GaLQBOVQNei9If2E0fBWQXJ8uXje0
+5JbsFgh9eAoG321MqrPIQbqg2NrR94ftUEU9bCJevC9jYQqKroNpWPH1cxIGCsQo
+N6Gh87lXvBjCZlrpO2OWW3ymBkT1BA2/1UXcMLVNcIXCowq3yRhhm2uGhnL9EHsi
+gPitY7kbN1HehoZgaMox3JRVa45ew6fZxuMAOoYoWPLa2sVjpvCSyz5WgHPiUtXe
+UBngW5RDmfca6Ud6ruo+W+tSjuGr6eRlDrdImuUHN/IEzH43U2tdWw6uo4EpFYhO
+Z+Zbe3C9s2n02eb8A9jU0/LF/PA0FZ1Ls0JmfR47GCHNGWekWJf+kqGYIi8jv85w
+yrdA/E4aAu5PQapjFVYusayu1ixygAXm5iJv9/RmaNbxUsULiSLen/j0YTBXeGPp
+psjxktTzqvw1Wu17Rdc8OPBJ+JESGHcyrT3+v43BQkwM0K2IUCligPPx45lu/zIH
+7xHfsADVgl4WqAOTP5A7BpqYFpgSjOzpdPyB/5jtpCg+E8tHmGcqaGthTvdM0bPh
+Yk36OBeHiQv7g8nqIuHYsq4OE3s8gln4H5rdHlrbKRvBCR65o26YGMkS+V0rgbc3
+os6Kx+V6tMXZte+kHT0n
+=+1el
+-----END PGP SIGNATURE-----
+
+--atbf2wmzen52r6sm--
