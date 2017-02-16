@@ -1,74 +1,56 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>, Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v5 0/7] Allwinner H5 and Orange Pi PC2 support
-Date: Sun, 26 Feb 2017 09:19:49 +0800
-Message-Id: <20170226011956.53581-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 15 Feb 2017 16:56:23 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: linux-clk@vger.kernel.org, x86@kernel.org,
+	platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH] clk: x86: add "mclk" alias for Baytrail/Cherrytrail
+Message-ID: <20170216005623.GY25384@codeaurora.org>
+References: <1486937212-10093-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+ <20170214190456.GV25384@codeaurora.org>
+ <bc29984e-cc58-69ed-d6ca-b4808d6514dc@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <bc29984e-cc58-69ed-d6ca-b4808d6514dc@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H5 is a 64-bit SoC with a design like the 32-bit
-H3.
+On 02/14, Pierre-Louis Bossart wrote:
+> On 2/14/17 1:04 PM, Stephen Boyd wrote:
+> >
+> >This leaks an alias when the driver is removed. Honestly,
+> >clk_add_alias() doesn't work well because of that problem. Can
+> >you just add another lookup with the pointer you already have
+> >instead of passing a NULL device to do a global lookup?
+> 
+> This is a builtin driver that cannot be configured as a module, is
+> the leaked alias problematic?
 
-This patchset adds support for it, along with the first available
-board -- Orange Pi PC2.
+Well we don't suppress driver unbinding via sysfs here, unless I
+missed something, so the leak could be triggered that way.
 
-Andre Przywara (3):
-  arm: dts: sun8i: split Allwinner H3 .dtsi
-  arm64: dts: allwinner: add Allwinner H5 .dtsi
-  arm64: dts: sunxi: add support for the Orange Pi PC 2 board
+> I don't mind trying something different but I am not familiar enough
+> with the framework to understand what you are hinting at. Are you
+> suggesting a change on the last parameter such as:
+> 
+> clk_add_alias("mclk", dev_name(&pdev->dev), "pmc_plt_clk_3", &pdev->dev)
+> 
 
-Icenowy Zheng (4):
-  arm64: allwinner: Kconfig: add essential pinctrl driver for H5
-  clk: sunxi-ng: rename sun8i-h3 driver to sunxi-h3-h5
-  clk: sunxi-ng: add support for Allwinner H5 SoC
-  ARM: dts: sun8i: convert H3 dtsi to use new sunxi-h3-h5 binding header
+I mean:
 
- .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
- arch/arm/boot/dts/sun8i-h3.dtsi                    | 589 ++-------------------
- arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 575 ++++++++++++++++++++
- arch/arm64/Kconfig.platforms                       |   5 +-
- arch/arm64/boot/dts/allwinner/Makefile             |   1 +
- .../boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 164 ++++++
- arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       | 139 +++++
- arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi     |   1 +
- drivers/clk/sunxi-ng/Kconfig                       |   6 +-
- drivers/clk/sunxi-ng/Makefile                      |   2 +-
- .../sunxi-ng/{ccu-sun8i-h3.c => ccu-sunxi-h3-h5.c} | 339 +++++++++++-
- .../sunxi-ng/{ccu-sun8i-h3.h => ccu-sunxi-h3-h5.h} |  13 +-
- .../clock/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h}    |  11 +-
- .../reset/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h}    |  11 +-
- 14 files changed, 1277 insertions(+), 580 deletions(-)
- create mode 100644 arch/arm/boot/dts/sunxi-h3-h5.dtsi
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
- create mode 120000 arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
- rename drivers/clk/sunxi-ng/{ccu-sun8i-h3.c => ccu-sunxi-h3-h5.c} (71%)
- rename drivers/clk/sunxi-ng/{ccu-sun8i-h3.h => ccu-sunxi-h3-h5.h} (83%)
- rename include/dt-bindings/clock/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h} (95%)
- rename include/dt-bindings/reset/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h} (94%)
+ lookup = clkdev_hw_create(data->clks[3].hw, "mclk", NULL);
+
+and then freeing that lookup with clkdev_drop in the remove of
+the driver. "mclk" is really generic for a connection name
+without an associated device id, so you may want to pass some
+device as the last argument here, but dev_name(&pdev->dev) seems
+odd because that's the clock controller device, not whatever
+device would be calling clk_get() with this created lookup in
+mind.
 
 -- 
-2.11.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
