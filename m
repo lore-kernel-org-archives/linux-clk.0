@@ -1,192 +1,184 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: [PATCH v6 00/14] mmc: Add support to Marvell Xenon SD Host Controller
-Date: Tue, 14 Feb 2017 18:01:40 +0100
-Message-Id: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+Return-Path: <dongas86@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
+From: Dong Aisheng <dongas86@gmail.com>
+Date: Thu, 16 Feb 2017 15:51:40 +0800
+Message-ID: <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com>
+Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
+ for imx6sll
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bai Ping <ping.bai@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, jacky.baip@gmail.com
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Hi Linus,
 
-This the sixth version of the series adding support for the SDHCI
-Xenon controller. It can be currently found on the Armada 37xx and the
-Armada 7K/8K but will be also used in more Marvell SoC (and not only
-the mvebu ones actually).
+On Tue, Dec 27, 2016 at 8:59 PM, Linus Walleij <linus.walleij@linaro.org> w=
+rote:
+> On Tue, Dec 27, 2016 at 10:47 AM, Bai Ping <ping.bai@nxp.com> wrote:
+>
+>> Add pinctrl binding doc update for imx6sll.
+>>
+>> Signed-off-by: Bai Ping <ping.bai@nxp.com>
+>
+> I have to push back on this a bit.
+>
+>> +Please refer to fsl,imx-pinctrl.txt in this directory for common bindin=
+g part
+>> +and usage.
+>
+> I understand that it is building on top of the old i.MX bindings and that
+> it has some kind of "tradition" coming with it.
+>
+> At the same time, the i.MX bindings came about before we had the
+> generic pin control bindings defined.
+>
+>> +CONFIG bits definition:
+>> +PAD_CTL_LVE                    (1 << 22)
+>> +PAD_CTL_HYS                     (1 << 16)
+>> +PAD_CTL_PUS_100K_DOWN           (0 << 14)
+>> +PAD_CTL_PUS_47K_UP              (1 << 14)
+>> +PAD_CTL_PUS_100K_UP             (2 << 14)
+>> +PAD_CTL_PUS_22K_UP              (3 << 14)
+>> +PAD_CTL_PUE                     (1 << 13)
+>> +PAD_CTL_PKE                     (1 << 12)
+>> +PAD_CTL_ODE                     (1 << 11)
+>> +PAD_CTL_SPEED_LOW               (0 << 6)
+>> +PAD_CTL_SPEED_MED               (1 << 6)
+>> +PAD_CTL_SPEED_HIGH              (3 << 6)
+>> +PAD_CTL_DSE_DISABLE             (0 << 3)
+>> +PAD_CTL_DSE_260ohm              (1 << 3)
+>> +PAD_CTL_DSE_130ohm              (2 << 3)
+>> +PAD_CTL_DSE_87ohm               (3 << 3)
+>> +PAD_CTL_DSE_65ohm               (4 << 3)
+>> +PAD_CTL_DSE_52ohm               (5 << 3)
+>> +PAD_CTL_DSE_43ohm               (6 << 3)
+>> +PAD_CTL_DSE_37ohm               (7 << 3)
+>> +PAD_CTL_SRE_FAST                (1 << 0)
+>> +PAD_CTL_SRE_SLOW                (0 << 0)
+>
+> A whole slew of these if not all correspond to the generic bindings.
+>
+> I would consider augmenting the code in the driver to handle the generic
+> bindings *in addition* to the old legacy bindings, and use those over the=
+se
+> random custom bits.
+>
+> Read drivers using CONFIG_GENERIC_PINCONF as an inspiration.
+>
+> For example see commit
+> cefbf1a1b29531a970bc2908a50a75d6474fcc38
+> "pinctrl: sunxi: Support generic binding"
+> from Maxime Ripard, where he does a similar thing for sunxi.
+>
 
-Most of the following changes had been discussed on the mailing list,
-except the new compatible string.
+First thanks for your good suggestion!
 
-It occurred that the xenon controller was integrated in a different
-way in the AP806 and the CP110 which both are part of the Armada 7K/8K
-SoCs. For example the Xenon controller in CP110 doesn't not support
-HS200.
+All we realized that the raw data of IMX pad config in dts is not good.
+e.g.
+pinctrl_ecspi3: ecspi3grp {
+        fsl,pins =3D <
+                MX7D_PAD_SAI2_TX_SYNC__ECSPI3_MISO      0x17059
+        .........
 
-v5->v6:
+I did a deep feasibility analysis these days on the migrating to generic
+pinctrl binding you referred. It is regrettably that it may not be so suita=
+ble
+for IMX to fully migrate right now.
 
-- Add a generic "mmc-card" parse in core layer.
+Generic binding only supports parsing strings for pins and function
+from dts right now, that means we need back to the old way of hardcoding
+all register bits in driver which we actually chose to move out since
+the commit "e164153 pinctrl: imx: move hard-coding data into device tree".
 
-- Fix the spelling issues in Xenon dt binding doc and drivers.
+And IMX doesn't have PAD GROUP in HW, each pad theoretically can be muxed
+as 8 single functions.
+e.g.
+For IOMUXC_SW_MUX_CTL_PAD_CSI_DATA07
+MUX_MODE MUX Mode Select Field.
+Select 1 of 8 iomux modes to be used for pad: CSI_DATA07.
+000 ALT0 =E2=80=94 Select signal CSI1_DATA09.
+001 ALT1 =E2=80=94 Select signal ESAI_TX3_RX2.
+010 ALT2 =E2=80=94 Select signal I2C4_SDA.
+011 ALT3 =E2=80=94 Select signal KPP_ROW7.
+100 ALT4 =E2=80=94 Select signal UART6_CTS_B.
+101 ALT5 =E2=80=94 Select signal GPIO1_IO21.
+110 ALT6 =E2=80=94 Select signal EIM_DATA16.
+111 ALT7 =E2=80=94 Select signal DCIC1_OUT.
+By converting to generic binding, we need construct a huge function/group m=
+ap
+in driver for hundreds of pads for each SoC. That is a bit fear to us.
 
-- Remove descriptions to common mmc properties from Xenon dt binding
-  doc.
+Current IMX method only generates the used function/groups dynamically
+by parsing board dts which is much a lighter way.
 
-- Split compatible string "marvell,armada-8k-sdhci" into
- "marvell,armada-ap806-sdhci" and "marvell,armada-cp110-sdhci".
+But of course, we want to fix the raw config value issue as well which is
+un-maintainable and un-readable as you pointed out.
 
-- Also updates the example in Xenon dt binding doc.
+I think there might be two options for us to go:
+One option is using macro definitions instead of raw data as pinctrl-single
+users as OMAP.
+e.g.
+art2_pins: pinmux_uart2_pins {
+        pinctrl-single,pins =3D <
+                OMAP4_IOPAD(0x118, PIN_INPUT_PULLUP | MUX_MODE0)
+ /* uart2_cts.uart2_cts */
+        ........
 
-- Remove unnecessary dependency on MMC_SDHCI from Xenon entry in
-  Kconfig.
+For this way, no driver changes required, just replace the raw data by macr=
+o
+in device tree. But i wonder this may not be your original intention althou=
+gh
+it's the easiest way for us.
+Anyway, if you agree, we probably would prefer this way.
 
-- Move Xenon specific dt parse into a separate function.
+Another option is partially convert to generic binding for only pad
+configuration
+part. e.g.
+pinctrl_usdhc1: usdhc1grp {
+        fsl,pins =3D <
+                MX7D_PAD_SD1_CMD__SD1_CMD
+                MX7D_PAD_SD1_CLK__SD1_CLK
+                MX7D_PAD_SD1_DATA0__SD1_DATA0
+                ...
+        >;
+        bias-pull-up =3D <47KOHM>;
+        drive-strength =3D <130OHM>;
+        slew-rate =3D <FAST>;
+        speed =3D <50MHZ>;
+        ....
+};
+(Some of the property still not supported or not the same as generic
+binding right now)
 
-- Adjust warnings and condition check in Xenon PHY setting, to remove
- fragile hs200->hs400/hs400->hs200 sequence check function.
+This way requires no big drivers changes and only extend the driver
+to support the generic pinctrl dt configuration properties.
 
-- Enable PHY Slow Mode in MMC_TIMING_LEGACY timing if PHY Slow Mode is
- required in dts.
+And it also fix the raw data issues and looks like more applicable than the=
+ full
+migration.
 
-- Add a patch allowing dts backwards compatible for the clock
+So would you be willing to accept it?
 
-v4->v5:
+Another potential benefits for this way is that we may can use PCONFDUMP
+to dump a more readable data from pinctrl debug system.
 
-- Remove the patch to export sdhci_execute_tuning(). It is already
-  exported in v4.10.
+> Yours,
+> Linus Walleij
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-- Introduce a patch adding a missing clock for the sdhci controller
-  present on the CP master for A7K/A8K. There is no build dependency
-  but obviously this patch is need to use the sdhci controller present
-  on the CP part.
-
-- Adjust Xenon return setup, to avoid being overwritten by
-   sdhci_add_host().
-
-- Change Xenon register definition prefix to "XENON_".
-
--  Fix typos in Xenon driver and dt-binding docs.
-
-- Change compatible string "marvell,armada-7000-sdhci" to
-  "marvell,armada-8k-sdhci". Actually the Armada 7K SoCs are a subset
-  of the Armada 8K SoCs. Moreover, the use of the '000' is not
-  consistent with all the other compatible string already used for the
-  Armada 7K/8K family.
-
-- Added the Tested-by from Russell King on an Armada 8K based board.
-
-v3 -> v4:
-For this version a few change have been done:
-- fixes 2 bug  reported by kbuild-bot
-  - remove extra of_node_put()
-  - convert 0 in false for function returning boolean
-
-- add a device tree node for the sdhci controller present on the CP
-  master for A7K/A8K. It also led to rename the sdhci0 node on AP to
-  ap_sdhci0 to make a distinction with the one present on CP master.
-
-v2 -> v3
-I think that now most (if not all) the remarks had been taking into
-account since the second version. According to Ziji Hu, here are the
-following changes:
-" Changes in V3:
-  Adjust and improve Xenon DT bindings. Move some caps setting from driver into
-  DT. Use mmc-card sub-node to represent eMMC type.
-  Remove PHY Sampling Fixed Delay Line scan in lower speed mode.
-  Improve Xenon probe and ->init_card() functions.
-  Export sdhci_enable_sdio_irq() and implement own SDIO IRQ control.
-  Split PHY patch into two smaller patches.
-  Temporarily remove AXI clock before its implementation is improved."
-
-Besides this changes I also
-- Removed the sdhci-xenon-phy.h and moved its content in the
-shc-xenon-phy.c file.
-- Fixed the tuning-count usage
-- Managed the error case for clk_prepare_enable
-
-For the record the change from v1 was:
-" Changes in V2:
-  rebase on v4.9-rc2.
-  Re-write Xenon bindings. Ajust Xenon DT property naming.
-  Add a new DT property to indicate eMMC card type, instead of using
-  variable card_candidate.
-  Clear quirks SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12 in Xenon platform data
-  Add support to HS400 retuning."
-
-Thanks,
-
-Gregory
-
-Gregory CLEMENT (4):
-  clk: apn806: Turn the eMMC clock as optional for dts backwards compatible
-  arm64: dts: marvell: add eMMC support for Armada 37xx
-  arm64: dts: marvell: add sdhci support for Armada 7K/8K
-  arm64: configs: enable SDHCI driver for Xenon
-
-Hu Ziji (9):
-  mmc: core: Add mmc-card dt sub-node parse in core layer
-  mmc: sdhci: Export sdhci_set_ios() from sdhci.c
-  mmc: sdhci: Export sdhci_start_signal_voltage_switch() in sdhci.c
-  mmc: sdhci: Export sdhci_enable_sdio_irq() from sdhci.c
-  dt: bindings: Add bindings for Marvell Xenon SD Host Controller
-  mmc: sdhci-xenon: Add Marvell Xenon SDHC core functionality
-  mmc: sdhci-xenon: Add support to PHYs of Marvell Xenon SDHC
-  mmc: sdhci-xenon: Add SoC PHY PAD voltage control
-  MAINTAINERS: add entry for Marvell Xenon MMC Host Controller drivers
-
-Konstantin Porotchkin (1):
-  clk: apn806: Add eMMC clock to system controller driver
-
- Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt | 172 +-
- MAINTAINERS                                                   |   7 +-
- arch/arm64/boot/dts/marvell/armada-3720-db.dts                |  16 +-
- arch/arm64/boot/dts/marvell/armada-37xx.dtsi                  |  11 +-
- arch/arm64/boot/dts/marvell/armada-7040-db.dts                |  14 +-
- arch/arm64/boot/dts/marvell/armada-8040-db.dts                |  20 +-
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi                 |  14 +-
- arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi          |  11 +-
- arch/arm64/configs/defconfig                                  |   1 +-
- drivers/clk/mvebu/ap806-system-controller.c                   |  21 +-
- drivers/mmc/core/mmc.c                                        |  24 +-
- drivers/mmc/host/Kconfig                                      |   9 +-
- drivers/mmc/host/Makefile                                     |   3 +-
- drivers/mmc/host/sdhci-xenon-phy.c                            | 865 +++++++-
- drivers/mmc/host/sdhci-xenon.c                                | 605 +++++-
- drivers/mmc/host/sdhci-xenon.h                                | 109 +-
- drivers/mmc/host/sdhci.c                                      |  11 +-
- drivers/mmc/host/sdhci.h                                      |   4 +-
- include/linux/mmc/core.h                                      |   2 +-
- 19 files changed, 1913 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
- create mode 100644 drivers/mmc/host/sdhci-xenon-phy.c
- create mode 100644 drivers/mmc/host/sdhci-xenon.c
- create mode 100644 drivers/mmc/host/sdhci-xenon.h
-
-base-commit: 0c744ea4f77d72b3dcebb7a8f2684633ec79be88
--- 
-git-series 0.9.1
+Regards
+Dong Aisheng
