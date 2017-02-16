@@ -1,158 +1,57 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>,
- David Airlie <airlied@linux.ie>
-Subject: [PATCH 6/8] ARM: dts: sun8i: add DE2 nodes for V3s SoC
-Date: Wed, 22 Feb 2017 23:23:08 +0800
-Message-Id: <20170222152310.3719-7-icenowy@aosc.xyz>
-In-Reply-To: <20170222152310.3719-5-icenowy@aosc.xyz>
-References: <20170222152310.3719-5-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Jean-Francois Moine <moinejf@free.fr>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <andy.shevchenko@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20170216005623.GY25384@codeaurora.org>
+References: <1486937212-10093-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+ <20170214190456.GV25384@codeaurora.org> <bc29984e-cc58-69ed-d6ca-b4808d6514dc@linux.intel.com>
+ <20170216005623.GY25384@codeaurora.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 16 Feb 2017 04:05:19 +0200
+Message-ID: <CAHp75Vdm3v6UdKgVhUjQebQ8QYrughezuxbaZXmM9gw=qgJ2VQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: x86: add "mclk" alias for Baytrail/Cherrytrail
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, linux-clk@vger.kernel.org,
+	"x86@kernel.org" <x86@kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>,
+	ALSA Development Mailing List <alsa-devel@alsa-project.org>, Michael Turquette <mturquette@baylibre.com>,
+	Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vinod Koul <vinod.koul@intel.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s SoC features a "Display Engine 2.0" with only one TCON
-which have RGB LCD output.
+On Thu, Feb 16, 2017 at 2:56 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 02/14, Pierre-Louis Bossart wrote:
+>> On 2/14/17 1:04 PM, Stephen Boyd wrote:
 
-Add device nodes for it as well as the TCON.
+>> This is a builtin driver that cannot be configured as a module, is
+>> the leaked alias problematic?
+>
+> Well we don't suppress driver unbinding via sysfs here, unless I
+> missed something, so the leak could be triggered that way.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
- arch/arm/boot/dts/sun8i-v3s.dtsi | 87 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
+It has ->remove() hook, so, definitely it's possible to unbind.
 
-diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
-index 71075969e5e6..e7d5d510a8ff 100644
---- a/arch/arm/boot/dts/sun8i-v3s.dtsi
-+++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
-@@ -41,6 +41,10 @@
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/sun8i-v3s-ccu.h>
-+#include <dt-bindings/clock/sunxi-de2.h>
-+#include <dt-bindings/reset/sun8i-v3s-ccu.h>
-+#include <dt-bindings/reset/sunxi-de2.h>
- 
- / {
- 	#address-cells = <1>;
-@@ -59,6 +63,12 @@
- 		};
- 	};
- 
-+	de: display-engine {
-+		compatible = "allwinner,sun8i-v3s-display-engine";
-+		allwinner,pipelines = <&de2_mixer0>;
-+		status = "disabled";
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-@@ -93,6 +103,83 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		de2_clocks: clock@01000000 {
-+			compatible = "allwinner,sun50i-a64-de2-clk";
-+			reg = <0x01000000 0x1c>;
-+			clocks = <&ccu CLK_DE>,
-+				 <&ccu CLK_BUS_DE>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&ccu RST_BUS_DE>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		de2_mixer0: mixer@01100000 {
-+			compatible = "allwinner,sun8i-v3s-de2-mixer";
-+			reg = <0x01100000 0x100000>;
-+			clocks = <&de2_clocks CLK_MIXER0>,
-+				 <&de2_clocks CLK_BUS_MIXER0>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&de2_clocks RST_MIXER0>;
-+			assigned-clocks = <&de2_clocks CLK_MIXER0>;
-+			assigned-clock-rates = <150000000>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					mixer0_out_tcon0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon0_in_mixer0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tcon0: lcd-controller@01c0c000 {
-+			compatible = "allwinner,sun8i-v3s-tcon";
-+			reg = <0x01c0c000 0x1000>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON0>,
-+				 <&ccu CLK_TCON0>;
-+			clock-names = "ahb",
-+				      "tcon-ch0";
-+			clock-output-names = "tcon-pixel-clock";
-+			resets = <&ccu RST_BUS_TCON0>;
-+			reset-names = "lcd";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon0_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon0_in_mixer0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer0_out_tcon0>;
-+					};
-+				};
-+
-+				tcon0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+
- 		mmc0: mmc@01c0f000 {
- 			compatible = "allwinner,sun7i-a20-mmc";
- 			reg = <0x01c0f000 0x1000>;
+>  lookup = clkdev_hw_create(data->clks[3].hw, "mclk", NULL);
+>
+> and then freeing that lookup with clkdev_drop in the remove of
+> the driver. "mclk" is really generic for a connection name
+> without an associated device id, so you may want to pass some
+> device as the last argument here, but dev_name(&pdev->dev) seems
+> odd because that's the clock controller device, not whatever
+> device would be calling clk_get() with this created lookup in
+> mind.
+
+Here is the problem with CLK framework since it's (was?) too oriented
+to ARM and clock trees.
+
+The best option for x86 is to place it in some platform code, which is
+bad idea per se.
+For example, GPIO, PWM, etc have static look up tables and glue
+drivers (like PCI part of the driver, or I2C, or similar) can fill
+that table based on ID.
+
+My personal opinion that the best place is not the clock driver for
+that, rather converting existing drivers to take clock name based on
+some (platform related) ID.
+
 -- 
-2.11.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+With Best Regards,
+Andy Shevchenko
