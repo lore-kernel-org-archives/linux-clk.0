@@ -1,82 +1,90 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, xf@rock-chips.com, wdc@rock-chips.com, linux-clk@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 2/2] clk: rockchip: describe clk_gmac using the new muxgrf type on rk3328
-Date: Tue, 07 Feb 2017 01:13:41 +0100
-Message-ID: <2060105.7dU1ly8Kaa@phil>
-In-Reply-To: <1486349435-8681-3-git-send-email-zhangqing@rock-chips.com>
-References: <1486349435-8681-1-git-send-email-zhangqing@rock-chips.com> <1486349435-8681-3-git-send-email-zhangqing@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <chrisp@alliedtelesis.co.nz>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v2 0/6] Updates for Marvell Switch SoCs
+Date: Thu, 16 Feb 2017 21:50:34 +1300
+Message-Id: <20170216085041.28337-1-chris.packham@alliedtelesis.co.nz>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Elaine,
+Shortly after I posted my last series I got access to a more recent
+Marvell SDK which had some device tree support for the switch SoCs I'd
+been wanting. It was still based on an older kernel but it was a huge
+improvement over what came before.
 
-Am Montag, 6. Februar 2017, 10:50:35 CET schrieb Elaine Zhang:
-> With the newly introduced clk type for muxes in the grf we now can
-> describe some missing clocks, like the clk_gmac2io and clk_gmac2phy
-> that selects between clk_mac2io_src and gmac_clkin based on a bit
-> set in the general register files.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Patch 1/6 is a typo I noticed after my initial series was applied.
 
-both patches look good, but I do have a question below.
+Patch 2/6 is a bit of a cleanup. I did initially struggle with how to
+access individual parts of the DFX block as well as retaining a handle on
+the entire thing for the switch driver to use.
 
-Anyway, we're very late in the cycle for 4.10, so we'll need to wait until 
-after the next merge-window.
+Patch 3/6 is a re-jig of the dtsi files which is needed by 5/6. This is
+required because I need to use the coreclk label on a different node. It
+also means I don't have to disable nodes for blocks that only exist on
+the Armada-XP.
 
-> ---
->  drivers/clk/rockchip/clk-rk3328.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3328.c
-> b/drivers/clk/rockchip/clk-rk3328.c index 1e384e143504..b04f29774ee7 100644
-> --- a/drivers/clk/rockchip/clk-rk3328.c
-> +++ b/drivers/clk/rockchip/clk-rk3328.c
-> @@ -20,6 +20,7 @@
->  #include <dt-bindings/clock/rk3328-cru.h>
->  #include "clk.h"
-> 
-> +#define RK3328_GRF_SOC_CON4		0x410
->  #define RK3328_GRF_SOC_STATUS0		0x480
->  #define RK3328_GRF_MAC_CON1		0x904
->  #define RK3328_GRF_MAC_CON2		0x908
-> @@ -214,6 +215,8 @@ enum rk3328_plls {
->  				    "gmac_clkin" };
->  PNAME(mux_mac2phy_src_p)	= { "clk_mac2phy_src",
->  				    "phy_50m_out" };
-> +PNAME(mux_mac2io_ext_p)		= { "clk_mac2io",
-> +				    "gmac_clkin" };
-> 
->  static struct rockchip_pll_clock rk3328_pll_clks[] __initdata = {
->  	[apll] = PLL(pll_rk3328, PLL_APLL, "apll", mux_pll_p,
-> @@ -680,6 +683,10 @@ enum rk3328_plls {
->  	COMPOSITE(SCLK_MAC2IO_OUT, "clk_mac2io_out", mux_2plls_p, 0,
->  			RK3328_CLKSEL_CON(27), 15, 1, MFLAGS, 8, 5, DFLAGS,
->  			RK3328_CLKGATE_CON(3), 5, GFLAGS),
-> +	MUXGRF(SCLK_MAC2IO, "clk_mac2io", mux_mac2io_src_p,
-> CLK_SET_RATE_NO_REPARENT, +			RK3328_GRF_MAC_CON1, 10, 1, MFLAGS),
-> +	MUXGRF(SCLK_MAC2IO_EXT, "clk_mac2io_ext", mux_mac2io_ext_p,
-> CLK_SET_RATE_NO_REPARENT, +			RK3328_GRF_SOC_CON4, 14, 1, MFLAGS),
-> 
->  	COMPOSITE(SCLK_MAC2PHY_SRC, "clk_mac2phy_src", mux_2plls_p, 0,
->  			RK3328_CLKSEL_CON(26), 7, 1, MFLAGS, 0, 5, DFLAGS,
-> @@ -691,6 +698,8 @@ enum rk3328_plls {
->  	COMPOSITE_NOMUX(SCLK_MAC2PHY_OUT, "clk_mac2phy_out", "clk_mac2phy", 0,
->  			RK3328_CLKSEL_CON(26), 8, 2, DFLAGS,
->  			RK3328_CLKGATE_CON(9), 2, GFLAGS),
-> +	MUXGRF(SCLK_MAC2PHY, "clk_mac2phy", mux_mac2phy_src_p,
-> CLK_SET_RATE_NO_REPARENT, +			RK3328_GRF_MAC_CON2, 10, 1, MFLAGS),
+Patch 4/6, 5/6 are split from the previous versions.
 
-You don't set CLK_SET_RATE_PARENT but you do set CLK_SET_RATE_NO_REPARENT - 
-essentially disabling all automatic clock-changes for them.
-Does this mean that these clocks should always only be set "manually" from 
-something like the assigned-clocks in dts?
+Patch 6/6 is the device tree portion of a change already in clk-next.
 
-This is not a problem in itself, I just want to understand how they should be 
-used :-)
+Chris Packham (6):
+  ARM: dts: Fix typo in armada-xp-98dx4251
+    Changes in v2
+    - new
+    Changes in v3:
+    - none
+  ARM: dts: armada-xp-98dx3236: combine dfx server nodes
+    Changes in v2:
+    - none
+    Changes in v3:
+    - none
+  ARM: dts: Use armada-370-xp as a base for armada-xp-98dx3236
+    Changes in v2:
+    - Update root compatible strings in armada-xp-98dx3336.dtsi,
+      armada-xp-98dx4251.dtsi, armada-xp-db-dxbc2.dts and
+      armada-xp-db-xc3-24g4xg.dts
+    Changes in v3:
+    - none
+  ARM: dts: mvebu: Add binding for mv98dx3236-soc-id
+    Changes in v3:
+    - new, split from driver
+  ARM: mvebu: Add driver for mv98dx3236-soc-id
+    Changes in v2:
+    - none
+    Changes in v3:
+    - split from dts changes
+  ARM: dts: mvebu: Move mv98dx3236 clock bindings
+    Changes in v2:
+    - New. Split out from "clk: mvebu: Expand mv98dx3236-core-clock support"
+    Changes in v3:
+    - Clarify why the old location was wrong (but worked).
 
 
-Thanks
-Heiko
+ .../bindings/arm/marvell/mv98dx3236-soc-id.txt     |  14 ++
+ .../devicetree/bindings/clock/mvebu-core-clock.txt |   7 +
+ .../bindings/clock/mvebu-gated-clock.txt           |  11 ++
+ .../devicetree/bindings/net/marvell,prestera.txt   |  13 +-
+ arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 213 ++++++++++++++++-----
+ arch/arm/boot/dts/armada-xp-98dx3336.dtsi          |   2 +-
+ arch/arm/boot/dts/armada-xp-98dx4251.dtsi          |   2 +-
+ arch/arm/boot/dts/armada-xp-db-dxbc2.dts           |   2 +-
+ arch/arm/boot/dts/armada-xp-db-xc3-24g4xg.dts      |   2 +-
+ arch/arm/mach-mvebu/mvebu-soc-id.c                 |  43 ++++-
+ 10 files changed, 242 insertions(+), 67 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/marvell/mv98dx3236-soc-id.txt
+
+-- 
+2.11.0.24.ge6920cf
