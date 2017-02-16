@@ -1,65 +1,51 @@
-Return-Path: <javier@dowhile0.org>
+Return-Path: <yuantian.tang@nxp.com>
+From: "Y.T. Tang" <yuantian.tang@nxp.com>
+To: Scott Wood <oss@buserror.net>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>
+CC: "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "robh+dt@kernel.org"
+	<robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 2/2] clk: qoriq: Separate root input clock for core PLLs
+ on ls1012a
+Date: Thu, 16 Feb 2017 02:21:09 +0000
+Message-ID: <DB6PR0402MB28374AECE0955BECE2C184E5F05A0@DB6PR0402MB2837.eurprd04.prod.outlook.com>
+References: <1487137656-4006-1-git-send-email-yuantian.tang@nxp.com>
+	 <1487137656-4006-2-git-send-email-yuantian.tang@nxp.com>
+ <1487183790.5636.13.camel@buserror.net>
+In-Reply-To: <1487183790.5636.13.camel@buserror.net>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1716357.fXUCSFMPB6@diego>
-References: <20170214210114.5846-1-dianders@chromium.org> <CABxcv=kzW9SvrWYNasqCDkV7D6Y2zq+oRuqoPFdWuaWUhPehEA@mail.gmail.com>
- <1716357.fXUCSFMPB6@diego>
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Date: Wed, 15 Feb 2017 14:06:03 -0300
-Message-ID: <CABxcv=m8X1o=5vo1CdpozD2YgfVZUq663+etc-ywGwBPvSs1Qw@mail.gmail.com>
-Subject: Re: [PATCH] clk: rockchip: Set "ignore unused" for PMU M0 clocks on rk3399
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Douglas Anderson <dianders@chromium.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, jwerner@chromium.org,
-	hl@rock-chips.com, dbasehore@chromium.org, zhengxing@rock-chips.com,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Heiko and Doug,
-
-On Wed, Feb 15, 2017 at 2:01 PM, Heiko St=C3=BCbner <heiko@sntech.de> wrote=
-:
-> Am Mittwoch, 15. Februar 2017, 12:27:59 CET schrieb Javier Martinez Canil=
-las:
->> Hello Doug,
->>
->> On Tue, Feb 14, 2017 at 6:01 PM, Douglas Anderson <dianders@chromium.org=
->
-> wrote:
->> > The PMU Cortex M0 on rk3399 is intended to be used for things like
->> > DDRFreq transitions, suspend/resume, and other things that are the
->> > purview of ARM Trusted Firmware and not the kernel.  As such, the
->> > kernel shouldn't be messing with the clocks.  Add CLK_IGNORE_UNUSED to
->> > these clocks.
->>
->> Isn't CLK_IS_CRITICAL a more suitable flag for this case?
->
-> From the patch description it looks like the clock is expected to be
-> controlled from firmware in most cases as I guess the Cortex M0 will be u=
-sed
-> for that all the time now. And the clock is not expected to run all the t=
-ime.
->
-> So I'd think clk_ignore_unused is the correct one. The whole clock-subtre=
-e for
-> these clocks also does not get affected by other clocks, as it is
-> independendly coming from PLLs.
->
->
-
-I see. Thanks a lot for your explanations. I just asked because
-CLK_IGNORE_UNUSED only prevents the clock to be disabled by
-clk_disable_unused() but still can be disabled if a driver explicitly
-looks it up and calls clk_disable() or if the clock is affected by
-other clocks.
-
-But I understand now that both scenarios are not possible. So yes,
-CLK_IGNORE_UNUSED is more suitable in this case.
-
-> Heiko
-
-Best regards,
-Javier
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFNjb3R0IFdvb2QgW21haWx0
+bzpvc3NAYnVzZXJyb3IubmV0XQ0KPiBTZW50OiBUaHVyc2RheSwgRmVicnVhcnkgMTYsIDIwMTcg
+MjozNyBBTQ0KPiBUbzogWS5ULiBUYW5nIDx5dWFudGlhbi50YW5nQG54cC5jb20+OyBtdHVycXVl
+dHRlQGJheWxpYnJlLmNvbQ0KPiBDYzogc2JveWRAY29kZWF1cm9yYS5vcmc7IHJvYmgrZHRAa2Vy
+bmVsLm9yZzsgbWFyay5ydXRsYW5kQGFybS5jb207DQo+IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5v
+cmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2Vy
+bmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+IFN1YmplY3Q6
+IFJlOiBbUEFUQ0ggMi8yXSBjbGs6IHFvcmlxOiBTZXBhcmF0ZSByb290IGlucHV0IGNsb2NrIGZv
+ciBjb3JlIFBMTHMgb24NCj4gbHMxMDEyYQ0KPiANCj4gT24gV2VkLCAyMDE3LTAyLTE1IGF0IDEz
+OjQ3ICswODAwLCB5dWFudGlhbi50YW5nQG54cC5jb20gd3JvdGU6DQo+ID4gRnJvbTogVGFuZyBZ
+dWFudGlhbiA8WXVhbnRpYW4uVGFuZ0BueHAuY29tPg0KPiA+DQo+ID4gbHMxMDEyYSBoYXMgc2Vw
+YXJhdGUgaW5wdXQgcm9vdCBjbG9ja3MgZm9yIGNvcmUgUExMcyB2ZXJzdXMgdGhlDQo+ID4gcGxh
+dGZvcm0gUExMLCB3aXRoIHRoZSBsYXR0ZXIgZGVzY3JpYmVkIGFzIHN5c2NsayBpbiB0aGUgaHcg
+ZG9jcy4NCj4gPiBJZiBhIHNlY29uZCBpbnB1dCBjbG9jaywgbmFtZWQgImNvcmVjbGsiLCBpcyBw
+cmVzZW50LCB0aGlzIGNsb2NrIHdpbGwNCj4gPiBiZSB1c2VkIGZvciB0aGUgY29yZSBQTExzLg0K
+PiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogU2NvdHQgV29vZCA8b3NzQGJ1c2Vycm9yLm5ldD4NCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBUYW5nIFl1YW50aWFuIDx5dWFudGlhbi50YW5nQG54cC5jb20+DQo+
+ID4gLS0tDQo+ID4gwqBkcml2ZXJzL2Nsay9jbGstcW9yaXEuYyB8IDkxDQo+ID4gKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLQ0KPiANCj4gV2h5IGRpZCB5b3Ug
+cmVzZXQgdGhlIGF1dGhvciBvbiB0aGVzZSBwYXRjaGVzPyDCoEhhdmUgeW91IGNoYW5nZWQgYW55
+dGhpbmc/DQo+IMKgV2h5IGFyZW4ndCB0aGV5IG1hcmtlZCBlaXRoZXIgdjIgb3IgcmVzZW5kPw0K
+PiANCg0KSSBzaG91bGQgaGF2ZSBtYXJrZWQgYXMgdjIgb3IgcmVzZW5kLiBJZiBhbnl0aGluZyBj
+aGFuZ2VkLCBJIHRha2UgaXQgb3ZlciBhbmQgZHJvcHBlZCB0aGUgMi8zIHBhdGNoIGluIHlvdXIg
+b3JpZ2luYWwgcGF0Y2ggc2V0IHRvIHNwZWVkIHVwIHRoZSBtZXJnZSwgd2hpY2ggSSB0aGluayBz
+by4NClRoaXMgcGF0Y2ggc2V0IGJsb2NrcyBvdGhlciBwYXRjaGVzIGFuZCAyMCBkYXlzIHBhc3Nl
+ZCwgbm8gYW55IGFjdGlvbiBvbiBpdC4gV2UgY2FuJ3QgYWNjb3VudCBvbiB5b3UgdG8gcHVzaCBp
+dC4gVGhhdCdzIHdoeSBJIHRha2UgaXQgb3ZlciBhbmQgcmVzZW5kIGl0Lg0KDQpBbGwgaW4gYWxs
+LCB3aGF0IHlvdSBzdWdnZXN0IHRvIGRvIHRvIG1ha2UgdGhlbSBnZXQgYWNjZXB0ZWQgQVNBUD8N
+Cg0KUmVnYXJkcywNCll1YW50aWFuDQo+IC1TY290dA0KDQo=
