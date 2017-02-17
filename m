@@ -1,14 +1,13 @@
 Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
 From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Rask Ingemann Lambertsen <rask@formelder.dk>
-In-Reply-To: <20170226085553.b6o6mv7ibe5op4dg@localhost>
-References: <20170226011956.53581-1-icenowy@aosc.xyz>
- <20170226011956.53581-7-icenowy@aosc.xyz>
- <20170226085553.b6o6mv7ibe5op4dg@localhost>
-Subject: Re: [PATCH v5 6/7] arm64: dts: allwinner: add Allwinner H5 .dtsi
-MIME-Version: 1.0
-Message-Id: <3514551488120894@web6m.yandex.ru>
-Date: Sun, 26 Feb 2017 22:54:54 +0800
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Kishon Vijay Abraham I <kishon@ti.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 7/9] phy: sun4i-usb: add support for R40 USB PHY
+Date: Sat, 18 Feb 2017 01:37:20 +0800
+Message-Id: <20170217173722.6477-8-icenowy@aosc.xyz>
+In-Reply-To: <20170217173722.6477-1-icenowy@aosc.xyz>
+References: <20170217173722.6477-1-icenowy@aosc.xyz>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -16,46 +15,91 @@ List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
 List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
- Will Deacon <will.deacon@arm.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- Andre Przywara <andre.przywara@arm.com>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="utf-8"
+Cc: linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.xyz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-CgoyNi4wMi4yMDE3LCAxNjo1NiwgIlJhc2sgSW5nZW1hbm4gTGFtYmVydHNlbiIgPHJhc2tAZm9y
-bWVsZGVyLmRrPjoKPiBPbiBTdW4sIEZlYiAyNiwgMjAxNyBhdCAwOToxOTo1NUFNICswODAwLCBJ
-Y2Vub3d5IFpoZW5nIHdyb3RlOgo+PiDCoEZyb206IEFuZHJlIFByenl3YXJhIDxhbmRyZS5wcnp5
-d2FyYUBhcm0uY29tPgo+Pgo+PiDCoFRoZSBBbGx3aW5uZXIgSDUgU29DIGlzIHBpbi1jb21wYXRp
-YmxlIHRvIHRoZSBIMyBTb0MsIGJ1dCB1c2VzCj4+IMKgQ29ydGV4LUE1MyBjb3JlcyBpbnN0ZWFk
-Lgo+PiDCoEJhc2VkIG9uIHRoZSBub3cgc2hhcmVkIGJhc2UgLmR0c2kgZGVzY3JpYmluZyB0aGUg
-Y29tbW9uIHBlcmlwaGVyYWxzCj4+IMKgZGVzY3JpYmUgdGhlIEg1IHNwZWNpZmljIG5vZGVzIG9u
-IHRvcCBvZiB0aGF0Lgo+PiDCoFRoYXQgc3ltbGlua3MgaW4gdGhlIHN1bnhpLWgzLWg1LmR0c2kg
-ZnJvbSB0aGUgYXJjaC9hcm0gdHJlZS4KPj4KPj4gwqBTaWduZWQtb2ZmLWJ5OiBBbmRyZSBQcnp5
-d2FyYSA8YW5kcmUucHJ6eXdhcmFAYXJtLmNvbT4KPj4gwqBbSWNlbm93eTogYWRkIEg1IHBpbmN0
-cmwgY29tcGF0aWJsZSwgYW5kIGNoYW5nZXMgZm9yIG15IGgzLWg1IGR0c2kKPj4gwqDCoHJlZmFj
-dG9yLCBjb21taXQgbWVzc2FnZSBjaGFuZ2UgdG8gbWV0IG5ldyBhcm02NCBuYW1pbmcgc2NoZW1l
-LAo+Cj4gcy9jaGFuZ2UgdG8gbWV0L2NoYW5nZSB0byBtZWV0LyBvciBzL2NoYW5nZSB0byBtZXQv
-Y2hhbmdlZCB0byBtZWV0LyA/Cj4KPj4gwqBkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9ib290L2R0
-cy9hbGx3aW5uZXIvc3VueGktaDMtaDUuZHRzaSBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvYWxsd2lu
-bmVyL3N1bnhpLWgzLWg1LmR0c2kKPj4gwqBuZXcgZmlsZSBtb2RlIDEyMDAwMAo+PiDCoGluZGV4
-IDAwMDAwMDAwMDAwMC4uMDM2ZjAxZGMyYjliCj4+IMKgLS0tIC9kZXYvbnVsbAo+PiDCoCsrKyBi
-L2FyY2gvYXJtNjQvYm9vdC9kdHMvYWxsd2lubmVyL3N1bnhpLWgzLWg1LmR0c2kKPj4gwqBAQCAt
-MCwwICsxIEBACj4+IMKgKy4uLy4uLy4uLy4uL2FybS9ib290L2R0cy9zdW54aS1oMy1oNS5kdHNp
-Cj4+IMKgXCBObyBuZXdsaW5lIGF0IGVuZCBvZiBmaWxlCj4KPiBCdXQgaXQncyBtaXNzaW5nIG1v
-cmUgdGhhbiBqdXN0IGEgbmV3bGluZSwgaXNuJ3QgaXQ/IFNob3VsZG4ndCBpdCByZWFkCj4KPiAj
-aW5jbHVkZSA8Li4vLi4vLi4vLi4vYXJtL2Jvb3QvZHRzL3N1bnhpLWgzLWg1LmR0c2k+CgpPaCB5
-b3UgbWF5IGRvIG5vdCBrbm93IHdoYXQgYSBzeW1saW5rIHNlZW1zIGxpa2UgaW4gZ2l0IGZvcm1h
-dC1wYXRjaC4KClRoaXMgaXMgYSBzeW1saW5rLgoKSXQncyBtb2RlIGlzIG5vdCAxMDA2NDQsIGJ1
-dCAxMjAwMDAKCj4KPiA/Cj4KPiAtLQo+IFJhc2sgSW5nZW1hbm4gTGFtYmVydHNlbgoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5l
-bCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6
-Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+Allwinner R40 features a USB PHY like the one in A64, but with 3 ports.
+
+Add support for it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ Documentation/devicetree/bindings/phy/sun4i-usb-phy.txt |  1 +
+ drivers/phy/phy-sun4i-usb.c                             | 17 +++++++++++++----
+ 2 files changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/phy/sun4i-usb-phy.txt b/Documentation/devicetree/bindings/phy/sun4i-usb-phy.txt
+index e42334258185..184a1d7af352 100644
+--- a/Documentation/devicetree/bindings/phy/sun4i-usb-phy.txt
++++ b/Documentation/devicetree/bindings/phy/sun4i-usb-phy.txt
+@@ -11,6 +11,7 @@ Required properties:
+   * allwinner,sun8i-a33-usb-phy
+   * allwinner,sun8i-h3-usb-phy
+   * allwinner,sun8i-v3s-usb-phy
++  * allwinner,sun8i-r40-usb-phy
+   * allwinner,sun50i-a64-usb-phy
+ - reg : a list of offset + length pairs
+ - reg-names :
+diff --git a/drivers/phy/phy-sun4i-usb.c b/drivers/phy/phy-sun4i-usb.c
+index a21b5f24a340..3c6ddd6750dd 100644
+--- a/drivers/phy/phy-sun4i-usb.c
++++ b/drivers/phy/phy-sun4i-usb.c
+@@ -100,6 +100,7 @@ enum sun4i_usb_phy_type {
+ 	sun8i_a33_phy,
+ 	sun8i_h3_phy,
+ 	sun8i_v3s_phy,
++	sun8i_r40_phy,
+ 	sun50i_a64_phy,
+ };
+ 
+@@ -188,10 +189,8 @@ static void sun4i_usb_phy_write(struct sun4i_usb_phy *phy, u32 addr, u32 data,
+ 
+ 	spin_lock_irqsave(&phy_data->reg_lock, flags);
+ 
+-	if (phy_data->cfg->type == sun8i_a33_phy ||
+-	    phy_data->cfg->type == sun50i_a64_phy ||
+-	    phy_data->cfg->type == sun8i_v3s_phy) {
+-		/* A33 or A64 needs us to set phyctl to 0 explicitly */
++	if (phy_data->cfg->phyctl_offset == REG_PHYCTL_A33) {
++		/* A33-style phyctl register needs to be set to 0 explicitly */
+ 		writel(0, phyctl);
+ 	}
+ 
+@@ -845,6 +844,15 @@ static const struct sun4i_usb_phy_cfg sun50i_a64_cfg = {
+ 	.enable_pmu_unk1 = true,
+ };
+ 
++static const struct sun4i_usb_phy_cfg sun8i_r40_cfg = {
++	.num_phys = 3,
++	.type = sun8i_r40_phy,
++	.disc_thresh = 3,
++	.phyctl_offset = REG_PHYCTL_A33,
++	.dedicated_clocks = true,
++	.enable_pmu_unk1 = true,
++};
++
+ static const struct of_device_id sun4i_usb_phy_of_match[] = {
+ 	{ .compatible = "allwinner,sun4i-a10-usb-phy", .data = &sun4i_a10_cfg },
+ 	{ .compatible = "allwinner,sun5i-a13-usb-phy", .data = &sun5i_a13_cfg },
+@@ -854,6 +862,7 @@ static const struct of_device_id sun4i_usb_phy_of_match[] = {
+ 	{ .compatible = "allwinner,sun8i-a33-usb-phy", .data = &sun8i_a33_cfg },
+ 	{ .compatible = "allwinner,sun8i-h3-usb-phy", .data = &sun8i_h3_cfg },
+ 	{ .compatible = "allwinner,sun8i-v3s-usb-phy", .data = &sun8i_v3s_cfg },
++	{ .compatible = "allwinner,sun8i-r40-usb-phy", .data = &sun8i_r40_cfg },
+ 	{ .compatible = "allwinner,sun50i-a64-usb-phy",
+ 	  .data = &sun50i_a64_cfg},
+ 	{ },
+-- 
+2.11.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
