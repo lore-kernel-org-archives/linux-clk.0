@@ -1,59 +1,88 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/7] clk: meson: gxbb: mpll: use rw operation
-Date: Tue, 28 Feb 2017 14:29:59 +0100
-Message-Id: <20170228133002.17894-5-jbrunet@baylibre.com>
-In-Reply-To: <20170228133002.17894-1-jbrunet@baylibre.com>
-References: <20170228133002.17894-1-jbrunet@baylibre.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Kishon Vijay Abraham I <kishon@ti.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Subject: [RFC PATCH 9/9] ARM: dts: sun8i: enable USB host for Banana Pi M2
+ Ultra
+Date: Sat, 18 Feb 2017 01:37:22 +0800
+Message-Id: <20170217173722.6477-10-icenowy@aosc.xyz>
+In-Reply-To: <20170217173722.6477-1-icenowy@aosc.xyz>
+References: <20170217173722.6477-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.xyz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Use read/write operations for the mpll clocks instead of the
-read-only ones.
+Banana Pi M2 Ultra board features two USB host ports, connected to the
+two USB host ports on the SoC.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Add support for them.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- drivers/clk/meson/gxbb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 6b97f4da1708..a52063f57d00 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -459,7 +459,7 @@ static struct meson_clk_mpll gxbb_mpll0 = {
- 	.lock = &clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll0",
--		.ops = &meson_clk_mpll_ro_ops,
-+		.ops = &meson_clk_mpll_ops,
- 		.parent_names = (const char *[]){ "fixed_pll" },
- 		.num_parents = 1,
- 	},
-@@ -489,7 +489,7 @@ static struct meson_clk_mpll gxbb_mpll1 = {
- 	.lock = &clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll1",
--		.ops = &meson_clk_mpll_ro_ops,
-+		.ops = &meson_clk_mpll_ops,
- 		.parent_names = (const char *[]){ "fixed_pll" },
- 		.num_parents = 1,
- 	},
-@@ -519,7 +519,7 @@ static struct meson_clk_mpll gxbb_mpll2 = {
- 	.lock = &clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll2",
--		.ops = &meson_clk_mpll_ro_ops,
-+		.ops = &meson_clk_mpll_ops,
- 		.parent_names = (const char *[]){ "fixed_pll" },
- 		.num_parents = 1,
- 	},
+diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+index 1d824830a1ad..672fb7f0f393 100644
+--- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
++++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+@@ -63,6 +63,14 @@
+ 	};
+ };
+ 
++&ehci1 {
++	status = "okay";
++};
++
++&ehci2 {
++	status = "okay";
++};
++
+ &i2c0 {
+ 	status = "okay";
+ 
+@@ -154,8 +162,23 @@
+ 	status = "okay";
+ };
+ 
++&ohci1 {
++	status = "okay";
++};
++
++&ohci2 {
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_0>;
+ 	status = "okay";
+ };
++
++&usbphy {
++	pinctrl-names = "default";
++	usb1_vbus-supply = <&reg_vcc5v0>;
++	usb2_vbus-supply = <&reg_vcc5v0>;
++	status = "okay";
++};
 -- 
-2.9.3
+2.11.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
