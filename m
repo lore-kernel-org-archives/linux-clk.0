@@ -1,61 +1,143 @@
-Return-Path: <chrisp@alliedtelesis.co.nz>
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH 0/4] Updates for Marvell Switch SoCs
-Date: Fri,  3 Feb 2017 16:40:08 +1300
-Message-Id: <20170203034012.29399-1-chris.packham@alliedtelesis.co.nz>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Kishon Vijay Abraham I <kishon@ti.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Subject: [RFC PATCH 8/9] ARM: dts: sun8i: add USB nodes for R40
+Date: Sat, 18 Feb 2017 01:37:21 +0800
+Message-Id: <20170217173722.6477-9-icenowy@aosc.xyz>
+In-Reply-To: <20170217173722.6477-1-icenowy@aosc.xyz>
+References: <20170217173722.6477-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.xyz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Shortly after I posted my last series I got access to a more recent
-Marvell SDK which had some device tree support for the switch SoCs I'd
-been wanting. It was still based on an older kernel but it was a huge
-improvement over what came before.
+Allwinner R40 SoC features a USB OTG port and two USB HOST ports.
 
-Patch 1/4 is a bit of a cleanup. I did initially struggle with how to
-access individual parts of the DFX block as well as retaining a handle on
-the entire thing for the switch driver to use.
+Add support for the ports in the DTSI file.
 
-Patch 2/4 is a re-jig of the dtsi files which is needed by 4/4. This is
-required because I need to use the coreclk label on a different node. It
-also means I don't have to disable nodes for blocks that only exist on
-the Armada-XP.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ arch/arm/boot/dts/sun8i-r40.dtsi | 89 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
 
-Patch 3/4 and 4/4 are ported from the Marvell Linux kernel. I've tested
-them on the hardware I have access to and things look pretty good.
-
-Chris Packham (4):
-  ARM: dts: armada-xp-98dx3236: combine dfx server nodes
-  ARM: dts: Use armada-370-xp as a base for armada-xp-98dx3236
-  ARM: mvebu: Add mv98dx3236-soc-id
-  clk: mvebu: Expand mv98dx3236-core-clock support
-
- .../bindings/arm/marvell/mv98dx3236-soc-id.txt     |  14 ++
- .../devicetree/bindings/clock/mvebu-core-clock.txt |   7 +
- .../bindings/clock/mvebu-gated-clock.txt           |  11 ++
- .../devicetree/bindings/net/marvell,prestera.txt   |  13 +-
- arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 211 ++++++++++++++++-----
- arch/arm/mach-mvebu/mvebu-soc-id.c                 |  43 ++++-
- drivers/clk/mvebu/Makefile                         |   2 +-
- drivers/clk/mvebu/armada-xp.c                      |  13 --
- drivers/clk/mvebu/mv98dx3236.c                     | 144 ++++++++++++++
- 9 files changed, 382 insertions(+), 76 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/marvell/mv98dx3236-soc-id.txt
- create mode 100644 drivers/clk/mvebu/mv98dx3236.c
-
+diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
+index df48c87237f3..052badc2dd3c 100644
+--- a/arch/arm/boot/dts/sun8i-r40.dtsi
++++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+@@ -179,6 +179,95 @@
+ 			#size-cells = <0>;
+ 		};
+ 
++		usb_otg: usb@01c13000 {
++			compatible = "allwinner,sun8i-a33-musb";
++			reg = <0x01c13000 0x0400>;
++			clocks = <&ccu CLK_BUS_OTG>;
++			resets = <&ccu RST_BUS_OTG>;
++			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "mc";
++			phys = <&usbphy 0>;
++			phy-names = "usb";
++			extcon = <&usbphy 0>;
++			status = "disabled";
++		};
++
++		usbphy: phy@01c13400 {
++			compatible = "allwinner,sun8i-r40-usb-phy";
++			reg = <0x01c13400 0x14>,
++			      <0x01c19800 0x4>,
++			      <0x01c1c800 0x4>;
++			reg-names = "phy_ctrl",
++				    "pmu1",
++				    "pmu2";
++			clocks = <&ccu CLK_USB_PHY0>,
++				 <&ccu CLK_USB_PHY1>,
++				 <&ccu CLK_USB_PHY2>;
++			clock-names = "usb0_phy",
++				      "usb1_phy",
++				      "usb2_phy";
++			resets = <&ccu RST_USB_PHY0>,
++				 <&ccu RST_USB_PHY1>,
++				 <&ccu RST_USB_PHY2>;
++			reset-names = "usb0_reset",
++				      "usb1_reset",
++				      "usb2_reset";
++			status = "disabled";
++			#phy-cells = <1>;
++		};
++
++		ehci1: usb@01c19000 {
++			compatible = "allwinner,sun8i-r40-ehci", "generic-ehci";
++			reg = <0x01c19000 0x100>;
++			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_OHCI1>,
++				 <&ccu CLK_BUS_EHCI1>,
++				 <&ccu CLK_USB_OHCI1>;
++			resets = <&ccu RST_BUS_OHCI1>,
++				 <&ccu RST_BUS_EHCI1>;
++			phys = <&usbphy 1>;
++			phy-names = "usb";
++			status = "disabled";
++		};
++
++		ohci1: usb@01c19400 {
++			compatible = "allwinner,sun8i-r40-ohci", "generic-ohci";
++			reg = <0x01c19400 0x100>;
++			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_OHCI1>,
++				 <&ccu CLK_USB_OHCI1>;
++			resets = <&ccu RST_BUS_OHCI1>;
++			phys = <&usbphy 1>;
++			phy-names = "usb";
++			status = "disabled";
++		};
++
++		ehci2: usb@01c1c000 {
++			compatible = "allwinner,sun8i-r40-ehci", "generic-ehci";
++			reg = <0x01c1c000 0x100>;
++			interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_OHCI2>,
++				 <&ccu CLK_BUS_EHCI2>,
++				 <&ccu CLK_USB_OHCI2>;
++			resets = <&ccu RST_BUS_OHCI2>,
++				 <&ccu RST_BUS_EHCI2>;
++			phys = <&usbphy 2>;
++			phy-names = "usb";
++			status = "disabled";
++		};
++
++		ohci2: usb@01c1c400 {
++			compatible = "allwinner,sun8i-r40-ohci", "generic-ohci";
++			reg = <0x01c1c400 0x100>;
++			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_OHCI2>,
++				 <&ccu CLK_USB_OHCI2>;
++			resets = <&ccu RST_BUS_OHCI2>;
++			phys = <&usbphy 2>;
++			phy-names = "usb";
++			status = "disabled";
++		};
++
+ 		ccu: clock@01c20000 {
+ 			compatible = "allwinner,sun8i-r40-ccu";
+ 			reg = <0x01c20000 0x400>;
 -- 
-2.11.0.24.ge6920cf
+2.11.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
