@@ -1,89 +1,72 @@
-Return-Path: <pku.leo@gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Kishon Vijay Abraham I <kishon@ti.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/9] arm: sunxi: add support for R40 SoC
+Date: Sat, 18 Feb 2017 01:37:14 +0800
+Message-Id: <20170217173722.6477-2-icenowy@aosc.xyz>
+In-Reply-To: <20170217173722.6477-1-icenowy@aosc.xyz>
+References: <20170217173722.6477-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.xyz>
 MIME-Version: 1.0
-In-Reply-To: <DB6PR0401MB2648CA1169D59950CD8BEC78F0080@DB6PR0401MB2648.eurprd04.prod.outlook.com>
-References: <1466058085-19353-1-git-send-email-oss@buserror.net>
- <1466058085-19353-2-git-send-email-oss@buserror.net> <146785501714.73491.8643317356949121718@resonance>
- <1467864803.32358.63.camel@buserror.net> <146794477678.73491.8244253339435407853@resonance>
- <1468012014.32358.74.camel@buserror.net> <DB6PR0401MB2648CA1169D59950CD8BEC78F0080@DB6PR0401MB2648.eurprd04.prod.outlook.com>
-From: Leo Li <pku.leo@gmail.com>
-Date: Thu, 2 Feb 2017 12:11:36 -0600
-Message-ID: <CADRPPNR0xh_9Q3FZ_-94QD-B7PP=aGBySSi1+n=RmmjvkpKYzA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] cpufreq: qoriq: Don't look at clock implementation details
-To: Yuantian Tang <yuantian.tang@nxp.com>
-Cc: Scott Wood <oss@buserror.net>, Michael Turquette <mturquette@baylibre.com>,
-	Russell King <linux@armlinux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Yang-Leo Li <leoyang.li@nxp.com>,
-	Xiaofeng Ren <xiaofeng.ren@nxp.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 19, 2016 at 10:02 PM, Yuantian Tang <yuantian.tang@nxp.com> wrote:
->
-> PING.
->
-> Regards,
-> Yuantian
->
-> > -----Original Message-----
-> > From: Scott Wood [mailto:oss@buserror.net]
-> > Sent: Saturday, July 09, 2016 5:07 AM
-> > To: Michael Turquette <mturquette@baylibre.com>; Russell King
-> > <linux@armlinux.org.uk>; Stephen Boyd <sboyd@codeaurora.org>; Viresh
-> > Kumar <viresh.kumar@linaro.org>; Rafael J. Wysocki <rjw@rjwysocki.net>
-> > Cc: linux-clk@vger.kernel.org; linux-pm@vger.kernel.org; linuxppc-
-> > dev@lists.ozlabs.org; Yuantian Tang <yuantian.tang@nxp.com>; Yang-Leo Li
-> > <leoyang.li@nxp.com>; Xiaofeng Ren <xiaofeng.ren@nxp.com>
-> > Subject: Re: [PATCH v3 2/2] cpufreq: qoriq: Don't look at clock
-> > implementation details
-> >
-> > On Thu, 2016-07-07 at 19:26 -0700, Michael Turquette wrote:
-> > > Quoting Scott Wood (2016-07-06 21:13:23)
-> > > >
-> > > > On Wed, 2016-07-06 at 18:30 -0700, Michael Turquette wrote:
-> > > > >
-> > > > > Quoting Scott Wood (2016-06-15 23:21:25)
-> > > > > >
-> > > > > >
-> > > > > > -static struct device_node *cpu_to_clk_node(int cpu)
-> > > > > > +static struct clk *cpu_to_clk(int cpu)
-> > > > > >  {
-> > > > > > -       struct device_node *np, *clk_np;
-> > > > > > +       struct device_node *np;
-> > > > > > +       struct clk *clk;
-> > > > > >
-> > > > > >         if (!cpu_present(cpu))
-> > > > > >                 return NULL;
-> > > > > > @@ -112,37 +80,28 @@ static struct device_node
-> > > > > > *cpu_to_clk_node(int
-> > > > > > cpu)
-> > > > > >         if (!np)
-> > > > > >                 return NULL;
-> > > > > >
-> > > > > > -       clk_np = of_parse_phandle(np, "clocks", 0);
-> > > > > > -       if (!clk_np)
-> > > > > > -               return NULL;
-> > > > > > -
-> > > > > > +       clk = of_clk_get(np, 0);
-> > > > > Why not use devm_clk_get here?
-> > > > devm_clk_get() is a wrapper around clk_get() which is not the same
-> > > > as of_clk_get().  What device would you pass to devm_clk_get(), and
-> > > > what name would you pass?
-> > > I'm fuzzy on whether or not you get a struct device from a cpufreq
-> > > driver. If so, then that would be the one to use. I would hope that
-> > > cpufreq drivers model cpus as devices, but I'm really not sure without
-> > > looking into the code.
-> >
-> > It's not the cpufreq code that provides it, but get_cpu_device() could be
-> > used.
-> >
-> > Do you have any comments on the first patch of this set?
+Allwinner R40 is a new SoC, with Quad Core Cortex-A7 and peripherals
+like A20.
+
+Add support for it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ Documentation/arm/sunxi/README | 4 ++++
+ arch/arm/mach-sunxi/sunxi.c    | 1 +
+ 2 files changed, 5 insertions(+)
+
+diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
+index d7b1f016bd62..25c814adcd47 100644
+--- a/Documentation/arm/sunxi/README
++++ b/Documentation/arm/sunxi/README
+@@ -75,6 +75,10 @@ SunXi family
+         + Datasheet
+           http://linux-sunxi.org/File:Allwinner_V3s_Datasheet_V1.0.pdf
+ 
++      - Allwinner R40 (sun8i)
++        + Datasheet Draft
++          http://linux-sunxi.org/File:Allwinner_R40_Datasheet_V0.1.pdf
++
+     * Quad ARM Cortex-A15, Quad ARM Cortex-A7 based SoCs
+       - Allwinner A80
+         + Datasheet
+diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+index f44e3acb5c90..aea616759451 100644
+--- a/arch/arm/mach-sunxi/sunxi.c
++++ b/arch/arm/mach-sunxi/sunxi.c
+@@ -66,6 +66,7 @@ static const char * const sun8i_board_dt_compat[] = {
+ 	"allwinner,sun8i-h2-plus",
+ 	"allwinner,sun8i-h3",
+ 	"allwinner,sun8i-v3s",
++	"allwinner,sun8i-r40",
+ 	NULL,
+ };
+ 
+-- 
+2.11.1
 
 
-Any action on this patch?  This patch is still a dependency for
-cpufreq to work on all QorIQ platforms.
-
-Regards,
-Leo
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
