@@ -1,49 +1,483 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:44639 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752124AbdBFNrz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Feb 2017 08:47:55 -0500
-Date: Mon, 6 Feb 2017 16:47:37 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: wens@csie.org
-Cc: linux-clk@vger.kernel.org
-Subject: [bug report] clk: sunxi-ng: Add A80 CCU
-Message-ID: <20170206134737.GA2593@mwanda>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Subject: Re: [linux-sunxi] [RFC PATCH 5/9] ARM: dts: sun8i: add DTSI file for
+ R40 SoC
+To: icenowy@aosc.xyz, Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Kishon Vijay Abraham I <kishon@ti.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+References: <20170217173722.6477-1-icenowy@aosc.xyz>
+ <20170217173722.6477-6-icenowy@aosc.xyz>
+From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
+Message-ID: <8f0d036c-b473-bf3c-8618-0fada725e7df@arm.com>
+Date: Fri, 17 Feb 2017 22:17:00 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170217173722.6477-6-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Chen-Yu Tsai,
+On 17/02/17 17:37, Icenowy Zheng wrote:
+> R40 is a new SoC by Allwinner, with peripherals as rich as A20, and quad
+> core Cortex-A7.
+> 
+> Add a DTSI file for it.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+> ---
+>  arch/arm/boot/dts/sun8i-r40.dtsi | 404 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 404 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/sun8i-r40.dtsi
+> 
+> diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
+> new file mode 100644
+> index 000000000000..df48c87237f3
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+> @@ -0,0 +1,404 @@
+> +/*
+> + * Copyright 2017 Chen-Yu Tsai <wens@csie.org>
+> + * Copyright 2017 Icenowy Zheng <icenowy@aosc.xyz>
+> + *
+> + * This file is dual-licensed: you can use it either under the terms
+> + * of the GPL or the X11 license, at your option. Note that this dual
+> + * licensing only applies to this file, and not this project as a
+> + * whole.
+> + *
+> + *  a) This file is free software; you can redistribute it and/or
+> + *     modify it under the terms of the GNU General Public License as
+> + *     published by the Free Software Foundation; either version 2 of the
+> + *     License, or (at your option) any later version.
+> + *
+> + *     This file is distributed in the hope that it will be useful,
+> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + *     GNU General Public License for more details.
+> + *
+> + * Or, alternatively,
+> + *
+> + *  b) Permission is hereby granted, free of charge, to any person
+> + *     obtaining a copy of this software and associated documentation
+> + *     files (the "Software"), to deal in the Software without
+> + *     restriction, including without limitation the rights to use,
+> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+> + *     sell copies of the Software, and to permit persons to whom the
+> + *     Software is furnished to do so, subject to the following
+> + *     conditions:
+> + *
+> + *     The above copyright notice and this permission notice shall be
+> + *     included in all copies or substantial portions of the Software.
+> + *
+> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + *     OTHER DEALINGS IN THE SOFTWARE.
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/sun8i-r40-ccu.h>
+> +#include <dt-bindings/reset/sun8i-r40-ccu.h>
+> +
+> +/ {
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +	interrupt-parent = <&gic>;
+> +
+> +	aliases {
+> +	};
+> +
+> +	chosen {
+> +	};
+> +
+> +	clocks {
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		osc24M: osc24M {
+> +			#clock-cells = <0>;
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <24000000>;
+> +		};
+> +
+> +		osc32k: osc32k {
+> +			#clock-cells = <0>;
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <32768>;
+> +			clock-output-names = "osc32k";
+> +		};
+> +	};
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cpu@0 {
+> +			compatible = "arm,cortex-a7";
+> +			device_type = "cpu";
+> +			reg = <0>;
+> +		};
+> +
+> +		cpu@1 {
+> +			compatible = "arm,cortex-a7";
+> +			device_type = "cpu";
+> +			reg = <1>;
+> +		};
+> +
+> +		cpu@2 {
+> +			compatible = "arm,cortex-a7";
+> +			device_type = "cpu";
+> +			reg = <2>;
+> +		};
+> +
+> +		cpu@3 {
+> +			compatible = "arm,cortex-a7";
+> +			device_type = "cpu";
+> +			reg = <3>;
+> +		};
+> +	};
+> +
+> +	memory {
+> +		device_type = "memory";
+> +		reg = <0x40000000 0x80000000>;
+> +	};
+> +
+> +	soc@01c00000 {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		nmi_intc: interrupt-controller@01c00030 {
+> +			compatible = "allwinner,sun7i-a20-sc-nmi";
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			reg = <0x01c00030 0x0c>;
+> +			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+> +		};
+> +
+> +		mmc0: mmc@1c0f000 {
+> +			compatible = "allwinner,sun50i-a64-mmc";
 
-The patch b8eb71dcdd08: "clk: sunxi-ng: Add A80 CCU" from Jan 28,
-2017, leads to the following static checker warning:
+Can you please add a SoC specific compatible in the first place?
 
-	drivers/clk/sunxi-ng/ccu-sun9i-a80.c:1205 sun9i_a80_ccu_probe()
-	warn: odd binop '0x10000 & 0x40000'
+			compatible = "allwinner,sun8i-r40-mmc",
+				     "allwinner,sun50i-a64-mmc";
 
-drivers/clk/sunxi-ng/ccu-sun9i-a80.c
-  1192  static int sun9i_a80_ccu_probe(struct platform_device *pdev)
-  1193  {
-  1194          struct resource *res;
-  1195          void __iomem *reg;
-  1196          u32 val;
-  1197  
-  1198          res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-  1199          reg = devm_ioremap_resource(&pdev->dev, res);
-  1200          if (IS_ERR(reg))
-  1201                  return PTR_ERR(reg);
-  1202  
-  1203          /* Enforce d1 = 0, d2 = 0 for Audio PLL */
-  1204          val = readl(reg + SUN9I_A80_PLL_AUDIO_REG);
-  1205          val &= (BIT(16) & BIT(18));
+Same for the others MMC controllers.
 
-This line just sets "val" to zero.  Not sure what was intended.
+> +			reg = <0x01c0f000 0x1000>;
+> +			clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
+> +			clock-names = "ahb", "mmc";
+> +			resets = <&ccu RST_BUS_MMC0>;
+> +			reset-names = "ahb";
+> +			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+> +			max-frequency = <150000000>;
+> +			status = "disabled";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		mmc1: mmc@1c10000 {
+> +			compatible = "allwinner,sun50i-a64-mmc";
+> +			reg = <0x01c10000 0x1000>;
+> +			clocks = <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;
+> +			clock-names = "ahb", "mmc";
+> +			resets = <&ccu RST_BUS_MMC1>;
+> +			reset-names = "ahb";
+> +			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
+> +			max-frequency = <150000000>;
+> +			status = "disabled";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		mmc2: mmc@1c11000 {
+> +			compatible = "allwinner,sun50i-a64-emmc";
+> +			reg = <0x01c11000 0x1000>;
+> +			clocks = <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;
+> +			clock-names = "ahb", "mmc";
+> +			resets = <&ccu RST_BUS_MMC2>;
+> +			reset-names = "ahb";
+> +			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+> +			max-frequency = <200000000>;
+> +			status = "disabled";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		mmc3: mmc@1c12000 {
+> +			compatible = "allwinner,sun50i-a64-mmc";
+> +			reg = <0x01c12000 0x1000>;
+> +			clocks = <&ccu CLK_BUS_MMC3>, <&ccu CLK_MMC3>;
+> +			clock-names = "ahb", "mmc";
+> +			resets = <&ccu RST_BUS_MMC3>;
+> +			reset-names = "ahb";
+> +			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
+> +			max-frequency = <150000000>;
+> +			status = "disabled";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		ccu: clock@01c20000 {
+> +			compatible = "allwinner,sun8i-r40-ccu";
+> +			reg = <0x01c20000 0x400>;
+> +			clocks = <&osc24M>, <&osc32k>;
+> +			clock-names = "hosc", "losc";
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +		};
+> +
+> +		pio: pinctrl@01c20800 {
+> +			compatible = "allwinner,sun8i-r40-pinctrl";
+> +			reg = <0x01c20800 0x400>;
+> +			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc32k>;
+> +			clock-names = "apb", "hosc", "losc";
+> +			gpio-controller;
+> +			interrupt-controller;
+> +			#interrupt-cells = <3>;
+> +			#gpio-cells = <3>;
+> +
+> +			i2c0_pins: twi0@0 {
+> +				pins = "PB0", "PB1";
+> +				function = "i2c0";
+> +			};
+> +
+> +			mmc0_pins: mmc0@0 {
+> +				pins = "PF0", "PF1", "PF2",
+> +				       "PF3", "PF4", "PF5";
+> +				function = "mmc0";
+> +				drive-strength = <30>;
+> +				bias-pull-up;
+> +			};
+> +
+> +			mmc1_pins: mmc1@0 {
+> +				pins = "PG0", "PG1", "PG2",
+> +				       "PG3", "PG4", "PG5";
+> +				function = "mmc1";
+> +				drive-strength = <30>;
+> +				bias-pull-up;
+> +			};
+> +
+> +			mmc2_pins: mmc2@0 {
+> +				pins = "PC5", "PC6", "PC7", "PC8", "PC9",
+> +				       "PC10", "PC11", "PC12", "PC13", "PC14",
+> +				       "PC15", "PC24";
+> +				function = "mmc2";
+> +				drive-strength = <30>;
+> +				bias-pull-up;
+> +			};
+> +
+> +			uart0_pins_0: uart0@0 {
+> +				pins = "PB22", "PB23";
+> +				function = "uart0";
+> +			};
+> +		};
+> +
+> +		uart0: serial@01c28000 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x01c28000 0x400>;
+> +			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART0>;
+> +			resets = <&ccu RST_BUS_UART0>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart1: serial@01c28400 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x01c28400 0x400>;
+> +			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART1>;
+> +			resets = <&ccu RST_BUS_UART1>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart2: serial@01c28800 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x01c28800 0x400>;
+> +			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART2>;
+> +			resets = <&ccu RST_BUS_UART2>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart3: serial@01c28c00 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x01c28c00 0x400>;
+> +			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART3>;
+> +			resets = <&ccu RST_BUS_UART3>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart4: serial@01c29000 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x01c29000 0x400>;
+> +			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART4>;
+> +			resets = <&ccu RST_BUS_UART4>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart5: serial@01c29400 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x01c29400 0x400>;
+> +			interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART5>;
+> +			resets = <&ccu RST_BUS_UART5>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart6: serial@01c29800 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x01c29800 0x400>;
+> +			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART6>;
+> +			resets = <&ccu RST_BUS_UART6>;
+> +			status = "disabled";
+> +		};
+> +
+> +		uart7: serial@01c29c00 {
+> +			compatible = "snps,dw-apb-uart";
+> +			reg = <0x01c29c00 0x400>;
+> +			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+> +			reg-shift = <2>;
+> +			reg-io-width = <4>;
+> +			clocks = <&ccu CLK_BUS_UART7>;
+> +			resets = <&ccu RST_BUS_UART7>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c0: i2c@01c2ac00 {
+> +			compatible = "allwinner,sun6i-a31-i2c";
+> +			reg = <0x01c2ac00 0x400>;
+> +			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_I2C0>;
+> +			resets = <&ccu RST_BUS_I2C0>;
+> +			pinctrl-0 = <&i2c0_pins>;
+> +			pinctrl-names = "default";
+> +			status = "disabled";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		i2c1: i2c@01c2b000 {
+> +			compatible = "allwinner,sun6i-a31-i2c";
+> +			reg = <0x01c2b000 0x400>;
+> +			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_I2C1>;
+> +			resets = <&ccu RST_BUS_I2C1>;
+> +			status = "disabled";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		i2c2: i2c@01c2b400 {
+> +			compatible = "allwinner,sun6i-a31-i2c";
+> +			reg = <0x01c2b400 0x400>;
+> +			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_I2C2>;
+> +			resets = <&ccu RST_BUS_I2C2>;
+> +			status = "disabled";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		i2c3: i2c@01c2b800 {
+> +			compatible = "allwinner,sun6i-a31-i2c";
+> +			reg = <0x01c2b800 0x400>;
+> +			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_I2C3>;
+> +			resets = <&ccu RST_BUS_I2C3>;
+> +			status = "disabled";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		i2c4: i2c@01c2c000 {
+> +			compatible = "allwinner,sun6i-a31-i2c";
+> +			reg = <0x01c2c000 0x400>;
+> +			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_I2C4>;
+> +			resets = <&ccu RST_BUS_I2C4>;
+> +			status = "disabled";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +		};
+> +
+> +		gic: interrupt-controller@01c81000 {
+> +			compatible = "arm,cortex-a7-gic", "arm,cortex-a15-gic";
 
-  1206          writel(val, reg + SUN9I_A80_PLL_AUDIO_REG);
-  1207  
-  1208          return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun9i_a80_ccu_desc);
-  1209  }
+I wonder if we should use the opportunity to change this to something
+more sensible, possibly:
+			compatible = "arm,gic-400", "arm,cortex-a7-gic";
 
-regards,
-dan carpenter
+> +			reg = <0x01c81000 0x1000>,
+> +			      <0x01c82000 0x1000>,
+
+This should be 8K in size.
+And yes, this is wrong in many DTs:
+https://www.spinics.net/lists/arm-kernel/msg555444.html
+
+> +			      <0x01c84000 0x2000>,
+> +			      <0x01c86000 0x2000>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <3>;
+> +			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+> +		};
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv7-timer";
+> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> +		clock-frequency = <24000000>;
+
+This should not be here:
+http://lxr.free-electrons.com/source/Documentation/devicetree/bindings/arm/arch_timer.txt#L20
+
+> +		arm,cpu-registers-not-fw-configured;
+
+Do we actually need this?
+
+Thanks,
+Andre
+> +	};
+> +};
+> 
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
