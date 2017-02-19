@@ -1,76 +1,102 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Fri, 24 Feb 2017 05:20:12 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tdas@codeaurora.org
-Subject: Re: [PATCH 2/7] clk: qcom: Add a custom udelay needed for some
- branch clocks
-Message-ID: <20170224132012.GA29979@builder>
-References: <1476876523-27378-1-git-send-email-rnayak@codeaurora.org>
- <1476876523-27378-3-git-send-email-rnayak@codeaurora.org>
+Return-Path: <afaerber@suse.de>
+From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Eric Miao <eric.y.miao@gmail.com>,
+	info@andromedabox.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	linux-clk@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: [PATCH 1/4] ARM64: Prepare Marvell IAP140 aka PXA1908
+Date: Sun, 19 Feb 2017 04:19:57 +0100
+Message-Id: <20170219032000.4674-2-afaerber@suse.de>
+In-Reply-To: <20170219032000.4674-1-afaerber@suse.de>
+References: <20170219032000.4674-1-afaerber@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1476876523-27378-3-git-send-email-rnayak@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed 19 Oct 04:28 PDT 2016, Rajendra Nayak wrote:
+Suppress COMMON_CLK_PXA and MMC_PXA for now as they don't build on arm64.
+Also suppress the deprecated SERIAL_PXA in favor of SERIAL_8250_PXA.
 
-> Some branch clocks marked with a BRANCH_HALT_DELAY might need more
-> than the default 10us delay. Have a way to specify a custom delay
-> in such cases
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Andreas Färber <afaerber@suse.de>
+---
+ arch/arm64/Kconfig.platforms | 5 +++++
+ drivers/clk/Kconfig          | 2 +-
+ drivers/mmc/host/Kconfig     | 2 +-
+ drivers/tty/serial/Kconfig   | 2 +-
+ 4 files changed, 8 insertions(+), 3 deletions(-)
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  drivers/clk/qcom/clk-branch.c | 5 ++++-
->  drivers/clk/qcom/clk-branch.h | 2 ++
->  2 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
-> index 26f7af31..1c11f12 100644
-> --- a/drivers/clk/qcom/clk-branch.c
-> +++ b/drivers/clk/qcom/clk-branch.c
-> @@ -82,7 +82,10 @@ static int clk_branch_wait(const struct clk_branch *br, bool enabling,
->  		return 0;
->  
->  	if (br->halt_check == BRANCH_HALT_DELAY || (!enabling && voted)) {
-> -		udelay(10);
-> +		if (br->udelay)
-> +			udelay(br->udelay);
-> +		else
-> +			udelay(10);
->  	} else if (br->halt_check == BRANCH_HALT_ENABLE ||
->  		   br->halt_check == BRANCH_HALT ||
->  		   (enabling && voted)) {
-> diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
-> index 284df3f..4c56a35 100644
-> --- a/drivers/clk/qcom/clk-branch.h
-> +++ b/drivers/clk/qcom/clk-branch.h
-> @@ -26,6 +26,7 @@
->   * @halt_reg: halt register
->   * @halt_bit: ANDed with @halt_reg to test for clock halted
->   * @halt_check: type of halt checking to perform
-> + * @udelay: custom udelay incase of BRANCH_HALT_DELAY, default is 10us
->   * @clkr: handle between common and hardware-specific interfaces
->   *
->   * Clock which can gate its output.
-> @@ -43,6 +44,7 @@ struct clk_branch {
->  #define BRANCH_HALT_ENABLE_VOTED	(BRANCH_HALT_ENABLE | BRANCH_VOTED)
->  #define BRANCH_HALT_DELAY		2 /* No bit to check; just delay */
->  
-> +	u32	udelay;
->  	struct clk_regmap clkr;
->  };
->  
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
-> 
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 129cc5a..841b6c8 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -111,6 +111,11 @@ config ARCH_MVEBU
+ 	   - Armada 7K SoC Family
+ 	   - Armada 8K SoC Family
+ 
++config ARCH_PXA
++	bool "Marvell PXA SoC Family"
++	help
++	  This enables support for the Marvell PXA family.
++
+ config ARCH_QCOM
+ 	bool "Qualcomm Platforms"
+ 	select GPIOLIB
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 9356ab4..3d25f20 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -185,7 +185,7 @@ config COMMON_CLK_PWM
+ 	  at 50% duty cycle.
+ 
+ config COMMON_CLK_PXA
+-	def_bool COMMON_CLK && ARCH_PXA
++	def_bool COMMON_CLK && ARCH_PXA && ARM
+ 	---help---
+ 	  Support for the Marvell PXA SoC.
+ 
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index f08691a..a650eca 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -27,7 +27,7 @@ config MMC_QCOM_DML
+ 
+ config MMC_PXA
+ 	tristate "Intel PXA25x/26x/27x Multimedia Card Interface support"
+-	depends on ARCH_PXA
++	depends on ARCH_PXA && ARM
+ 	help
+ 	  This selects the Intel(R) PXA(R) Multimedia card Interface.
+ 	  If you have a PXA(R) platform with a Multimedia Card slot,
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 6117ac8..0713a05 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -439,7 +439,7 @@ config SERIAL_MPSC_CONSOLE
+ 
+ config SERIAL_PXA
+ 	bool "PXA serial port support (DEPRECATED)"
+-	depends on ARCH_PXA || ARCH_MMP
++	depends on (ARCH_PXA && ARM) || ARCH_MMP
+ 	select SERIAL_CORE
+ 	select SERIAL_8250_PXA if SERIAL_8250=y
+ 	select SERIAL_PXA_NON8250 if !SERIAL_8250=y
+-- 
+2.10.2
