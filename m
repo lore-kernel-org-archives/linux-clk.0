@@ -1,55 +1,53 @@
-Return-Path: <Chris.Packham@alliedtelesis.co.nz>
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-CC: Stephen Boyd <sboyd@codeaurora.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	"Rob Herring" <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	"Jason Cooper" <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory
- Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] clk: mvebu: Expand mv98dx3236-core-clock support
-Date: Wed, 8 Feb 2017 20:00:15 +0000
-Message-ID: <aabc6853d7934507a4507b0ad4354b72@svr-chch-ex1.atlnz.lc>
-References: <20170203034012.29399-1-chris.packham@alliedtelesis.co.nz>
- <5a974d9d7260432087619486bf5d79ed@svr-chch-ex1.atlnz.lc>
- <6149d4126a214ac8b0b0184bd818bea6@svr-chch-ex1.atlnz.lc>
- <9294933.cXSW0amFbE@wuerfel>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <leonard.crestez@nxp.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>
+CC: Leonard Crestez <leonard.crestez@nxp.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: core: Copy connection id
+Date: Mon, 20 Feb 2017 15:20:56 +0200
+Message-ID: <60d115f6c11bc51cd8bc10c64cd222c3cdb43cc7.1487596492.git.leonard.crestez@nxp.com>
+Return-Path: leonard.crestez@nxp.com
 MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/02/17 23:53, Arnd Bergmann wrote:=0A=
-> On Tuesday, February 7, 2017 3:07:37 AM CET Chris Packham wrote:=0A=
->>>=0A=
->>> Actually I wonder if I can try a bit harder to keep a system booting.=
-=0A=
->>> The following might work=0A=
->>> 1) add the compatible strings to the existing armada clock drivers.=0A=
->>> 2) update the dts to use the new compatible strings.=0A=
->>> 3) add the new driver and remove the compatible strings from the armada=
-=0A=
->>> drivers.=0A=
->>>=0A=
->>> #1 would still upset checkpatch.pl because the documentation would only=
-=0A=
->>> arrive in #2.=0A=
->>=0A=
->> Actually upon testing #1 is unnecessary. I lose some of the gated clocks=
-=0A=
->> but nothing that prevents booting.=0A=
->=0A=
-> Just to be sure: this means we can merge 2) and 3) independently and=0A=
-> having just one of them will not cause regressions over what we have=0A=
-> today?=0A=
->=0A=
-=0A=
-Correct. And that's what I sent out as v2.=0A=
-=0A=
-http://lists.infradead.org/pipermail/linux-arm-kernel/2017-February/486467.=
-html=0A=
-http://lists.infradead.org/pipermail/linux-arm-kernel/2017-February/486471.=
-html=0A=
-=0A=
+Some drivers use sprintf to build clk connection id names but the clk
+core will save those strings and occasionally print them back. Duplicate
+the con_id strings instead of fixing all the users.
+
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+---
+ drivers/clk/clk.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+Some examples of using sprintf for con_id include:
+drivers/mfd/omap-usb-host.c
+drivers/tty/serial/samsung.c
+sound/soc/fsl/fsl_asrc.c
+
+There are lots more. They are difficult to find and "fixing" them on the
+consumer side requires nasty code to keep track of the allocated clkname.
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0fb39fe..67201f6 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2502,7 +2502,7 @@ struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+ 
+ 	clk->core = hw->core;
+ 	clk->dev_id = dev_id;
+-	clk->con_id = con_id;
++	clk->con_id = kstrdup_const(con_id, GFP_KERNEL);
+ 	clk->max_rate = ULONG_MAX;
+ 
+ 	clk_prepare_lock();
+@@ -2518,6 +2518,7 @@ void __clk_free_clk(struct clk *clk)
+ 	hlist_del(&clk->clks_node);
+ 	clk_prepare_unlock();
+ 
++	kfree_const(clk->con_id);
+ 	kfree(clk);
+ }
+ 
+-- 
+2.7.4
