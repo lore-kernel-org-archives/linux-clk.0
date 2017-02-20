@@ -1,80 +1,71 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-MIME-Version: 1.0
-In-Reply-To: <20170226085553.b6o6mv7ibe5op4dg@localhost>
-References: <20170226011956.53581-1-icenowy@aosc.xyz>
- <20170226011956.53581-7-icenowy@aosc.xyz>
- <20170226085553.b6o6mv7ibe5op4dg@localhost>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 26 Feb 2017 17:00:28 +0800
-Message-ID: <CAGb2v67BvVip+CX+HzAf7jAHxpL_EBtbxLxERMHRVv2+zE5Gcg@mail.gmail.com>
-Subject: Re: [PATCH v5 6/7] arm64: dts: allwinner: add Allwinner H5 .dtsi
-To: Rask Ingemann Lambertsen <rask@formelder.dk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree <devicetree@vger.kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- linux-sunxi <linux-sunxi@googlegroups.com>, Will Deacon <will.deacon@arm.com>,
- linux-kernel <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Rob Herring <robh+dt@kernel.org>, Icenowy Zheng <icenowy@aosc.xyz>,
- Andre Przywara <andre.przywara@arm.com>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <pierre-louis.bossart@linux.intel.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To: linux-clk@vger.kernel.org,
+	x86@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: alsa-devel@alsa-project.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Takashi Iwai <tiwai@suse.com>,
+	Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v2] clk: x86: add "mclk" alias for Baytrail/Cherrytrail
+Date: Mon, 20 Feb 2017 14:23:56 -0600
+Message-Id: <1487622236-16901-1-git-send-email-pierre-louis.bossart@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Feb 26, 2017 at 4:55 PM, Rask Ingemann Lambertsen
-<rask@formelder.dk> wrote:
-> On Sun, Feb 26, 2017 at 09:19:55AM +0800, Icenowy Zheng wrote:
->> From: Andre Przywara <andre.przywara@arm.com>
->>
->> The Allwinner H5 SoC is pin-compatible to the H3 SoC, but uses
->> Cortex-A53 cores instead.
->> Based on the now shared base .dtsi describing the common peripherals
->> describe the H5 specific nodes on top of that.
->> That symlinks in the sunxi-h3-h5.dtsi from the arch/arm tree.
->>
->> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
->> [Icenowy: add H5 pinctrl compatible, and changes for my h3-h5 dtsi
->>  refactor, commit message change to met new arm64 naming scheme,
->
-> s/change to met/change to meet/ or s/change to met/changed to meet/ ?
->
->> diff --git a/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
->> new file mode 120000
->> index 000000000000..036f01dc2b9b
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
->> @@ -0,0 +1 @@
->> +../../../../arm/boot/dts/sunxi-h3-h5.dtsi
->> \ No newline at end of file
->
-> But it's missing more than just a newline, isn't it? Shouldn't it read
+Due to timing requirements, TI and Conexant manage the audio
+reference clock from their ASoC codec drivers using the "mclk"
+string. This patch adds another lookup for the "pmc_plt_clk_3"
+clock to avoid Intel-specific tests in those codec drivers and
+use code as-is.
 
-This is a symbolic link.
+To avoid a leak, clk_add_alias() is not used in this patch.
+Instead the lookup is created manually as part of the .probe()
+step and dropped in the .remove() step.
 
->
-> #include <../../../../arm/boot/dts/sunxi-h3-h5.dtsi>
+"pmc_plt_clk_3" is used exclusively for audio on all known
+Baytrail/CherryTrail designs and is e.g. routed on the MCLK
+(pin 26) of the MinnowBoardMAX Turbot LSE connector.
 
-This won't work directly with the split out device tree repository,
-which has a slightly different layout.
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+---
+ drivers/clk/x86/clk-pmc-atom.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-ChenYu
-
->
-> ?
->
-> --
-> Rask Ingemann Lambertsen
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+index 2b60577..fafc991 100644
+--- a/drivers/clk/x86/clk-pmc-atom.c
++++ b/drivers/clk/x86/clk-pmc-atom.c
+@@ -54,6 +54,7 @@ struct clk_plt_data {
+ 	struct clk_plt_fixed **parents;
+ 	u8 nparents;
+ 	struct clk_plt *clks[PMC_CLK_NUM];
++	struct clk_lookup *mclk_lookup;
+ };
+ 
+ /* Return an index in parent table */
+@@ -337,6 +338,11 @@ static int plt_clk_probe(struct platform_device *pdev)
+ 			goto err_unreg_clk_plt;
+ 		}
+ 	}
++	data->mclk_lookup = clkdev_hw_create(&data->clks[3]->hw, "mclk", NULL);
++	if (IS_ERR(data->mclk_lookup)) {
++		err = PTR_ERR(data->mclk_lookup);
++		goto err_unreg_clk_plt;
++	}
+ 
+ 	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+ 
+@@ -356,6 +362,7 @@ static int plt_clk_remove(struct platform_device *pdev)
+ 
+ 	data = platform_get_drvdata(pdev);
+ 
++	clkdev_drop(data->mclk_lookup);
+ 	plt_clk_unregister_loop(data, PMC_CLK_NUM);
+ 	plt_clk_unregister_parents(data);
+ 	return 0;
+-- 
+2.7.4
