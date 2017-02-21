@@ -1,63 +1,65 @@
-Return-Path: <hkallweit1@gmail.com>
-Return-Path: <hkallweit1@gmail.com>
-Subject: [PATCH v3 3/4] ARM64: dts: meson-gx: add clock CLKID_RNG0 to hwrng
- node
-To: Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman
- <khilman@baylibre.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- Neil Armstrong <narmstrong@baylibre.com>, linux-amlogic@lists.infradead.org,
- linux-crypto@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-References: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <2135c29a-41c2-f649-ea6d-bd635cbe0714@gmail.com>
-Date: Wed, 22 Feb 2017 08:00:55 +0100
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
-Content-Type: text/plain; charset=utf-8
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1b4f2247-d3cf-fcab-deaa-045db17a43bd@cogentembedded.com>
+References: <20170218213936.142813519@cogentembedded.com> <CAMuHMdV1x2voYKnMKv8x3XvmGwBA8SgwkhJZcnkycypdPhVjzA@mail.gmail.com>
+ <1b4f2247-d3cf-fcab-deaa-045db17a43bd@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 21 Feb 2017 20:39:32 +0100
+Message-ID: <CAMuHMdWJ4svcghFzNaTAUGBCmH+fCGjm8Chsr29gDeAiu6Xmew@mail.gmail.com>
+Subject: Re: [PATCH 1/1] clk: renesas: cpg-mssr: r8a7796: add IMR clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock CLKID_RNG0 to HW randon number generator node.
+Hi Sergei,
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
-v2:
-- splitted first version of patch into two
-- add DT binding documentation
-- mention that clock is optional
-- replace spaces with tabs in DT binding example
-v3:
-- splitted DT extension and binding documentation update into two patches
----
- arch/arm64/boot/dts/amlogic/meson-gx.dtsi   | 2 +-
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 5 +++++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+On Tue, Feb 21, 2017 at 7:54 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 02/20/2017 11:38 AM, Geert Uytterhoeven wrote:
+>>> Add the IMR[0-1] clocks to the R8A7796 CPG/MSSR driver.
+>>>
+>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>>> --- linux.orig/drivers/clk/renesas/r8a7796-cpg-mssr.c
+>>> +++ linux/drivers/clk/renesas/r8a7796-cpg-mssr.c
+>>> @@ -179,6 +179,8 @@ static const struct mssr_mod_clk r8a7796
+>>>         DEF_MOD("vin1",                  810,   R8A7796_CLK_S0D2),
+>>>         DEF_MOD("vin0",                  811,   R8A7796_CLK_S0D2),
+>>>         DEF_MOD("etheravb",              812,   R8A7796_CLK_S0D6),
+>>> +       DEF_MOD("imr1",                  822,   R8A7796_CLK_S2D1),
+>>> +       DEF_MOD("imr0",                  823,   R8A7796_CLK_S2D1),
+>>
+>>
+>> According to R-Car Gen3 Hardware Users Manual Rev.0.53E, the parent
+>> clock is S0D2, like on H3 ES2.0.
+>
+>    Not S0D4? I'd expect that what they call "register access" to be
+> controlled by the MSSR bits...
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-index 5d995f77..620495a4 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-@@ -380,7 +380,7 @@
- 			#size-cells = <2>;
- 			ranges = <0x0 0x0 0x0 0xc8834000 0x0 0x2000>;
- 
--			rng {
-+			hwrng: rng {
- 				compatible = "amlogic,meson-rng";
- 				reg = <0x0 0x0 0x0 0x4>;
- 			};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index 04b3324b..a375cb21 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -524,3 +524,8 @@
- &vpu {
- 	compatible = "amlogic,meson-gxbb-vpu", "amlogic,meson-gx-vpu";
- };
-+
-+&hwrng {
-+	clocks = <&clkc CLKID_RNG0>;
-+	clock-names = "core";
-+};
--- 
-2.11.1
+Good question...
+
+>> Will queue in clk-renesas-for-v4.12 with corrected parent clock.
+>
+>    So, what have you used for 7795 and 7796?
+
+S2D1 for r8a7795 (H3 ES1.0)
+S0D2 for r8a7796 (M3-W)
+
+And I planned to use S0D2 for H3 ES2.0, too.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
