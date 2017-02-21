@@ -1,15 +1,14 @@
 Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH 4/8] drm/sun4i: add support for sun8i DE2 mixers and
- display engines
-Date: Fri, 24 Feb 2017 16:30:17 +0100
-Message-ID: <1634001.dRmL8h9ofd@jernej-laptop>
-In-Reply-To: <CAL_JsqKY1sXT9g9wHhQEt9-x32PaY0yQi8++bTajcEVk1x8E_w@mail.gmail.com>
-References: <20170222152310.3719-5-icenowy@aosc.xyz>
- <20170222200947.3ikrhvv76ymfu5tv@lukather>
- <CAL_JsqKY1sXT9g9wHhQEt9-x32PaY0yQi8++bTajcEVk1x8E_w@mail.gmail.com>
+Date: Tue, 21 Feb 2017 14:53:41 -0800
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH 2/9] pinctrl: sunxi: rename sun7i-a20 driver to
+ sunxi-a20-r40
+Message-ID: <20170221225341.cknbz34xji2d3jkp@lukather>
+References: <20170217173722.6477-1-icenowy@aosc.xyz>
+ <20170217173722.6477-3-icenowy@aosc.xyz>
 MIME-Version: 1.0
+In-Reply-To: <20170217173722.6477-3-icenowy@aosc.xyz>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,93 +16,82 @@ List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
 List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Jean-Francois Moine <moinejf@free.fr>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- David Airlie <airlied@linux.ie>, linux-sunxi <linux-sunxi@googlegroups.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- dri-devel <dri-devel@lists.freedesktop.org>, Chen-Yu Tsai <wens@csie.org>,
- Icenowy Zheng <icenowy@aosc.xyz>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com,
+ Kishon Vijay Abraham I <kishon@ti.com>, linux-gpio@vger.kernel.org,
+ Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============0467640487301676761=="
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+
+--===============0467640487301676761==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="xejyx2ceqjen3e5m"
+Content-Disposition: inline
+
+
+--xejyx2ceqjen3e5m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
 Hi,
 
-Dne petek, 24. februar 2017 ob 14:30:36 CET je Rob Herring napisal(a):
-> On Wed, Feb 22, 2017 at 2:09 PM, Maxime Ripard
-> 
-> <maxime.ripard@free-electrons.com> wrote:
-> > Hi,
-> > 
-> > On Wed, Feb 22, 2017 at 11:23:06PM +0800, Icenowy Zheng wrote:
-> >> Allwinner have a new "Display Engine 2.0" in there new SoCs, which comes
-> >> in a new "Display Engine" (mixers instead of old backends and
-> >> frontends).
-> >> 
-> >> Add support for the mixer on Allwinner V3s SoC; it's the simplest one.
-> >> 
-> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-> >> ---
-> 
-> [...]
-> 
-> >> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> >> b/drivers/gpu/drm/sun4i/sun8i_mixer.c new file mode 100644
-> >> index 000000000000..9427b57240d3
-> >> --- /dev/null
-> >> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> >> @@ -0,0 +1,417 @@
-> >> +/*
-> >> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.xyz>
-> >> + *
-> >> + * Based on sun4i_backend.c, which is:
-> >> + *   Copyright (C) 2015 Free Electrons
-> >> + *   Copyright (C) 2015 NextThing Co
-> >> + *
-> >> + * This program is free software; you can redistribute it and/or
-> >> + * modify it under the terms of the GNU General Public License as
-> >> + * published by the Free Software Foundation; either version 2 of
-> >> + * the License, or (at your option) any later version.
-> >> + */
-> >> +
-> >> +#include <drm/drmP.h>
-> >> +#include <drm/drm_atomic_helper.h>
-> >> +#include <drm/drm_crtc.h>
-> >> +#include <drm/drm_crtc_helper.h>
-> >> +#include <drm/drm_fb_cma_helper.h>
-> >> +#include <drm/drm_gem_cma_helper.h>
-> >> +#include <drm/drm_plane_helper.h>
-> >> +
-> >> +#include <linux/component.h>
-> >> +#include <linux/reset.h>
-> >> +#include <linux/of_device.h>
-> >> +
-> >> +#include "sun8i_mixer.h"
-> >> +#include "sun4i_drv.h"
-> >> +
-> >> +#define SUN8I_DRAM_OFFSET 0x40000000
-> > 
-> > PHYS_OFFSET?
-> 
-> PHYS_OFFSET is not portable. __pa(PAGE_OFFSET) instead.
-> 
-> If your DMA addresses are different from CPU addresses (i.e. have some
-> offset), then use "dma-ranges" in DT.
-> 
-> Rob
+On Sat, Feb 18, 2017 at 01:37:15AM +0800, Icenowy Zheng wrote:
+> The new R40 SoC come with a largely similar version of the pin
+> controller in A20.
+>=20
+> Rename the driver, in order to extend it with R40 support.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 
-That adjustment is not needed and should be removed. Such adjusment breaks DE 
-on boards with 2 GiB of RAM.
+I'm not too fond of renaming this. This is going to be renamed over
+and over again, will break the configurations every time.
 
-Regards,
-Jernej
+We're not doing that for the other drivers, I'm not sure why we would
+need it specifically for the pinctrl drivers.
 
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--xejyx2ceqjen3e5m
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYrMTxAAoJEBx+YmzsjxAg990P/jcRcjfRIcVpTGl1JN3L/eXG
+XvX5MOlDHwhywH8pRK23RxY8Qtpm5GRNeDDrZAJdXHURQEI/r8jNIRKXTh1/zDC0
+B9s1cg9kc5fLo8TBR1WIYKE91d3Zx1mnLEYwyUw1xQAdmWS9EZcnxcYDiul7/LXB
+E8c/Gns+Eyf0gDPRTBJ4J5dp+M5u8BPdL0TIB1WZ2euIpujtMqG4i0jnnw4CaIDa
+lha81MvctZMfoWMo9WhfE7kCEO3N5h3f02Kns9SGYUfGJhc2g50izzSrSzF4m9CI
+KYhFL6ovC3wDlV7Es4eolfc0efKEuAC+k7T3fD6mlNWiFi87t49s60Xo8ZhMoBSU
+RHCMTfpnwa0RSqYJGk574/KoBwWmBCjgKrPeHvcPXjYd5kczcOi5IsxQNmrji8+B
+1Gm8i9l2yGhPG2vpj2QiusNSbUq+Qa/TpqIhQ25mEIHExW51PerYasCZqDheRwWF
+0uCOgZnZxtrlIM82ZQMxnluiFrTdiMWTbOi44w13QO0/u4oPu4LVGkzVxepRY3ER
+jc/mUSqxIMTQi2Y0fZgpyqPezx3qKnS9sl+f9kBrvS9pcw0abQ0/ZGVFKiDXy0ob
+2LDCKCwQHikS969Gl+Y+tKHg7TbNVkDiVzXIsuD7m7lx2YIyIJMVgiZ7hVQWtBzj
+qWdiN6VuFuzfGAVPX1fz
+=fnDL
+-----END PGP SIGNATURE-----
+
+--xejyx2ceqjen3e5m--
+
+
+--===============0467640487301676761==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 linux-arm-kernel mailing list
 linux-arm-kernel@lists.infradead.org
 http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0467640487301676761==--
