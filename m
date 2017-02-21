@@ -1,127 +1,50 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH 5/7] clk: tegra: don't warn for PLL defaults unnecessarily
-Date: Wed, 22 Feb 2017 17:14:00 +0200
-Message-ID: <1487776444-4701-6-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 1/1] clk: renesas: cpg-mssr: r8a7796: add IMR clocks
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20170218213936.142813519@cogentembedded.com>
+ <CAMuHMdV1x2voYKnMKv8x3XvmGwBA8SgwkhJZcnkycypdPhVjzA@mail.gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <1b4f2247-d3cf-fcab-deaa-045db17a43bd@cogentembedded.com>
+Date: Tue, 21 Feb 2017 21:54:47 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+In-Reply-To: <CAMuHMdV1x2voYKnMKv8x3XvmGwBA8SgwkhJZcnkycypdPhVjzA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-If the PLL is on, only warn if the defaults are not yet set. Otherwise be
-silent.
+On 02/20/2017 11:38 AM, Geert Uytterhoeven wrote:
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+>> Add the IMR[0-1] clocks to the R8A7796 CPG/MSSR driver.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+>> --- linux.orig/drivers/clk/renesas/r8a7796-cpg-mssr.c
+>> +++ linux/drivers/clk/renesas/r8a7796-cpg-mssr.c
+>> @@ -179,6 +179,8 @@ static const struct mssr_mod_clk r8a7796
+>>         DEF_MOD("vin1",                  810,   R8A7796_CLK_S0D2),
+>>         DEF_MOD("vin0",                  811,   R8A7796_CLK_S0D2),
+>>         DEF_MOD("etheravb",              812,   R8A7796_CLK_S0D6),
+>> +       DEF_MOD("imr1",                  822,   R8A7796_CLK_S2D1),
+>> +       DEF_MOD("imr0",                  823,   R8A7796_CLK_S2D1),
+>
+> According to R-Car Gen3 Hardware Users Manual Rev.0.53E, the parent
+> clock is S0D2, like on H3 ES2.0.
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index b7ef8a7..fe698d2 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -502,7 +502,7 @@ static void tegra210_pllcx_set_defaults(const char *name,
- 	pllcx->params->defaults_set = true;
- 
- 	if (readl_relaxed(clk_base + pllcx->params->base_reg) &
--			PLL_ENABLE) {
-+			PLL_ENABLE && !pllcx->params->defaults_set) {
- 		/* PLL is ON: only check if defaults already set */
- 		pllcx_check_defaults(pllcx->params);
- 		pr_warn("%s already enabled. Postponing set full defaults\n",
-@@ -608,7 +608,6 @@ static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
- 
- 	if (readl_relaxed(clk_base + plld->params->base_reg) &
- 			PLL_ENABLE) {
--		pr_warn("PLL_D already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
-@@ -625,6 +624,9 @@ static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
- 		_pll_misc_chk_default(clk_base, plld->params, 0, val,
- 				~mask & PLLD_MISC0_WRITE_MASK);
- 
-+		if (!plld->params->defaults_set)
-+			pr_warn("PLL_D already enabled. Postponing set full defaults\n");
-+
- 		/* Enable lock detect */
- 		mask = PLLD_MISC0_LOCK_ENABLE | PLLD_MISC0_LOCK_OVERRIDE;
- 		val = readl_relaxed(clk_base + plld->params->ext_misc_reg[0]);
-@@ -896,7 +898,6 @@ static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
- 	val |= step_b << PLLX_MISC2_DYNRAMP_STEPB_SHIFT;
- 
- 	if (readl_relaxed(clk_base + pllx->params->base_reg) & PLL_ENABLE) {
--		pr_warn("PLL_X already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
-@@ -904,6 +905,8 @@ static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
- 		 */
- 		pllx_check_defaults(pllx);
- 
-+		if (!pllx->params->defaults_set)
-+			pr_warn("PLL_X already enabled. Postponing set full defaults\n");
- 		/* Configure dyn ramp, disable lock override */
- 		writel_relaxed(val, clk_base + pllx->params->ext_misc_reg[2]);
- 
-@@ -948,7 +951,6 @@ static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
- 	pllmb->params->defaults_set = true;
- 
- 	if (val & PLL_ENABLE) {
--		pr_warn("PLL_MB already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
-@@ -959,6 +961,8 @@ static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
- 		_pll_misc_chk_default(clk_base, pllmb->params, 0, val,
- 				~mask & PLLMB_MISC1_WRITE_MASK);
- 
-+		if (!pllmb->params->defaults_set)
-+			pr_warn("PLL_MB already enabled. Postponing set full defaults\n");
- 		/* Enable lock detect */
- 		val = readl_relaxed(clk_base + pllmb->params->ext_misc_reg[0]);
- 		val &= ~mask;
-@@ -1008,13 +1012,14 @@ static void tegra210_pllp_set_defaults(struct tegra_clk_pll *pllp)
- 	pllp->params->defaults_set = true;
- 
- 	if (val & PLL_ENABLE) {
--		pr_warn("PLL_P already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
- 		 * that can be updated in flight.
- 		 */
- 		pllp_check_defaults(pllp, true);
-+		if (!pllp->params->defaults_set)
-+			pr_warn("PLL_P already enabled. Postponing set full defaults\n");
- 
- 		/* Enable lock detect */
- 		val = readl_relaxed(clk_base + pllp->params->ext_misc_reg[0]);
-@@ -1069,13 +1074,14 @@ static void tegra210_pllu_set_defaults(struct tegra_clk_pll *pllu)
- 	pllu->params->defaults_set = true;
- 
- 	if (val & PLL_ENABLE) {
--		pr_warn("PLL_U already enabled. Postponing set full defaults\n");
- 
- 		/*
- 		 * PLL is ON: check if defaults already set, then set those
- 		 * that can be updated in flight.
- 		 */
- 		pllu_check_defaults(pllu, false);
-+		if (!pllu->params->defaults_set)
-+			pr_warn("PLL_U already enabled. Postponing set full defaults\n");
- 
- 		/* Enable lock detect */
- 		val = readl_relaxed(clk_base + pllu->params->ext_misc_reg[0]);
--- 
-1.9.1
+    Not S0D4? I'd expect that what they call "register access" to be 
+controlled by the MSSR bits...
+
+> Will queue in clk-renesas-for-v4.12 with corrected parent clock.
+
+    So, what have you used for 7795 and 7796?
+
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+
+MBR, Sergei
