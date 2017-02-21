@@ -1,57 +1,92 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH 4/7] clk: tegra: remove non-existing pll_m_out1 clock
-Date: Wed, 22 Feb 2017 17:13:59 +0200
-Message-ID: <1487776444-4701-5-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Tue, 21 Feb 2017 15:02:33 -0800
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH 3/9] pinctrl: sunxi: add support for R40 pinctrl
+Message-ID: <20170221230233.2o4idjwybmkkakcs@lukather>
+References: <20170217173722.6477-1-icenowy@aosc.xyz>
+ <20170217173722.6477-4-icenowy@aosc.xyz>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+In-Reply-To: <20170217173722.6477-4-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com,
+ Kishon Vijay Abraham I <kishon@ti.com>, linux-gpio@vger.kernel.org,
+ Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============8111783796037153037=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 5 -----
- 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 7bda8ba..b7ef8a7 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2115,7 +2115,6 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
- 	[tegra_clk_pll_c2] = { .dt_id = TEGRA210_CLK_PLL_C2, .present = true },
- 	[tegra_clk_pll_c3] = { .dt_id = TEGRA210_CLK_PLL_C3, .present = true },
- 	[tegra_clk_pll_m] = { .dt_id = TEGRA210_CLK_PLL_M, .present = true },
--	[tegra_clk_pll_m_out1] = { .dt_id = TEGRA210_CLK_PLL_M_OUT1, .present = true },
- 	[tegra_clk_pll_p] = { .dt_id = TEGRA210_CLK_PLL_P, .present = true },
- 	[tegra_clk_pll_p_out1] = { .dt_id = TEGRA210_CLK_PLL_P_OUT1, .present = true },
- 	[tegra_clk_pll_p_out3] = { .dt_id = TEGRA210_CLK_PLL_P_OUT3, .present = true },
-@@ -2229,7 +2228,6 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
- 	{ .con_id = "pll_p_out3", .dt_id = TEGRA210_CLK_PLL_P_OUT3 },
- 	{ .con_id = "pll_p_out4", .dt_id = TEGRA210_CLK_PLL_P_OUT4 },
- 	{ .con_id = "pll_m", .dt_id = TEGRA210_CLK_PLL_M },
--	{ .con_id = "pll_m_out1", .dt_id = TEGRA210_CLK_PLL_M_OUT1 },
- 	{ .con_id = "pll_x", .dt_id = TEGRA210_CLK_PLL_X },
- 	{ .con_id = "pll_x_out0", .dt_id = TEGRA210_CLK_PLL_X_OUT0 },
- 	{ .con_id = "pll_u", .dt_id = TEGRA210_CLK_PLL_U },
-@@ -2404,9 +2402,6 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
- 	clk_register_clkdev(clk, "pll_mb", NULL);
- 	clks[TEGRA210_CLK_PLL_MB] = clk;
- 
--	clk_register_clkdev(clk, "pll_m_out1", NULL);
--	clks[TEGRA210_CLK_PLL_M_OUT1] = clk;
--
- 	/* PLLM_UD */
- 	clk = clk_register_fixed_factor(NULL, "pll_m_ud", "pll_m",
- 					CLK_SET_RATE_PARENT, 1, 1);
--- 
-1.9.1
+--===============8111783796037153037==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="haxkjxj4vh5e3bal"
+Content-Disposition: inline
+
+
+--haxkjxj4vh5e3bal
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Feb 18, 2017 at 01:37:16AM +0800, Icenowy Zheng wrote:
+> Allwinner R40 have a pin controller similar to A20, only added 8-bit
+> eMMC function to mmc2 at PC bank.
+>=20
+> Add support for it in the already renamed sunxi-a20-r40 driver via
+> variant framework.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+
+I think a prerequisite would be to merge A10 as well (possibly even
+the other way around: A20 and R40 into the A10 driver).
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--haxkjxj4vh5e3bal
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYrMcFAAoJEBx+YmzsjxAgo6MP/0w3Z03q1sxqxWVJYWCWTFuk
+wePHnb61OPLqRq0jUEZ/vAEynFr1FLIqdkiimkcn3y7oGrb3nSORzdrJBglR3J2X
+lE9bU5iQ5zDLBdEktR4G18DyCDdkkhxFwNh1RetaKsC8PypYqLD7jLRrAUYz0Cmc
+wdWjtahsWGL2A4ER1UXPff3PCLkqOjwWWWs3lLzhyD7NpAQ0pje03quLDVujqplr
+ip8Te9rv99JJxuEnMVjMaHunACm2WOZKynT+uO6GmyeAE1d1s+f9fDh6XSmXzBcr
+JXZK8CgXyfWnp1IKpBuKCJlQ/03eGCqeywIT+nfmEQjxO87E/16MHO2MSbEMVoqU
+SIY1VvGk8/8pk/1Oml+CnQ/J2Hip3rfc21WXpw0tC4Z9Y7mGGq5NitiTbnckIPp5
+Zgsg9In8TaAbvlxBSdklLH8rtl1uXCisMICAldGCjIsy1/q3kASwKYYK7yy7EchT
+cz7c859ECMAMnH92UyJ833r2ej30jwZIZKFh/tc+gLq1CE6XsB4Pc4wshBpGO6i1
+Q5QGuG3tRsWkF1JfVeidLsOfE0YuWulWa5tO5MwzM49BkkCmoMqDGhW5X637KjBn
+ospK1/KDkOUyzFYxdxg28o+hNybDLQzYr1xEfEMgihet+TJKhAXNfttNVGiC9wnw
+H1zkjDHW+vUQQxxIW9Vp
+=+uEd
+-----END PGP SIGNATURE-----
+
+--haxkjxj4vh5e3bal--
+
+
+--===============8111783796037153037==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============8111783796037153037==--
