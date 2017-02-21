@@ -1,68 +1,97 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Mon, 6 Feb 2017 11:52:20 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: select SUNXI_CCU_MULT for sun5i
-Message-ID: <20170206105220.zplxoeckwbfypwxx@lukather>
-References: <20170202143417.3514875-1-arnd@arndb.de>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH v2 2/3] ARM64: dts: meson-gx: add clock CLKID_RNG0 to
+ hwrng node
+To: Heiner Kallweit <hkallweit1@gmail.com>,
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, linux-amlogic@lists.infradead.org,
+ linux-crypto@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <daf765e2-1a60-8dea-fee0-8af6ddecdf8e@gmail.com>
+ <8bf052e3-de8f-dbdf-be76-369a7bb1ed15@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <a80f9487-b385-b886-5a4c-e8f5da506b7f@baylibre.com>
+Date: Tue, 21 Feb 2017 13:20:44 -0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6l7rwhengg7h5nch"
-In-Reply-To: <20170202143417.3514875-1-arnd@arndb.de>
+In-Reply-To: <8bf052e3-de8f-dbdf-be76-369a7bb1ed15@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On 02/21/2017 12:18 PM, Heiner Kallweit wrote:
+> Add clock CLKID_RNG0 to HW randon number generator node and
+> extend the DT binding documentation accordingly.
+> 
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> ---
+> v2:
+> - splitted first version of patch into two
+> - add DT binding documentation
 
---6l7rwhengg7h5nch
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Heiner,
 
-On Thu, Feb 02, 2017 at 03:33:57PM +0100, Arnd Bergmann wrote:
-> We get a link error when CCU_MULT is not set with the
-> newly added driver:
->=20
-> drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.17+0x4): undef=
-ined reference to `ccu_mult_ops'
-> drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.5+0x4): undefi=
-ned reference to `ccu_mult_ops'
->=20
-> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Can you move the dt-bindings to a separate patch ?
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> - mention that clock is optional
+> - replace spaces with tabs in DT binding example
+> ---
+>  Documentation/devicetree/bindings/rng/amlogic,meson-rng.txt | 8 ++++++--
+>  arch/arm64/boot/dts/amlogic/meson-gx.dtsi                   | 2 +-
+>  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi                 | 5 +++++
+>  3 files changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/rng/amlogic,meson-rng.txt b/Documentation/devicetree/bindings/rng/amlogic,meson-rng.txt
+> index 202f2d09..4c012a04 100644
+> --- a/Documentation/devicetree/bindings/rng/amlogic,meson-rng.txt
+> +++ b/Documentation/devicetree/bindings/rng/amlogic,meson-rng.txt
+> @@ -5,10 +5,14 @@ Required properties:
+>  
+>  - compatible : should be "amlogic,meson-rng"
+>  - reg : Specifies base physical address and size of the registers.
+> +- clocks : Optional core clock
+> +- clock-names: Name of core clock, must be "core"
 
-Mike, Stephen, can you apply it directly?
+Please put these in a separate "Optional Properties" :
 
-Thanks,
-Maxime
+Optional Properties:
+- clocks : phandle to the following named clocks
+- clock-names: Name of core clock, must be "core"
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---6l7rwhengg7h5nch
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYmFVkAAoJEBx+YmzsjxAg+5YP/0RfHtouLkJBYPXqMghHuPko
-i5RcdWbE9lEdDzI7rOdUmP94/LHIya/2Wad/Int1cH96Xbu06whEY6xpn57ZNoXH
-k6KZCSJy5T7Bgp7SX8S6RDuZc+kG91eRDJYi8wD9Wz8BEkwWLw1NCZxhOgijudFe
-vONDwai66MKpZh7GJfUsiIFeV/7MAUuSPCRN+vyHtlCuZJsnP4gzssGUG0GT91Bd
-nv9Mb3W5aG4MjulGhP5aMWUYZUuih+M4VITY66wr+DTFyQ4E+hf1jaHEaxQcdWG7
-YiVKf++C1I31HyEyL/a/ccZVMMSyskHJQd84hA4TRmNF0XMzp91HKsa7cVdWY7t8
-HFgB1uVxOBAw01E1D1IAcunhPoxjlaMxZOpXZYF4LaDA5EHsl8wh/FP6G773mgrA
-eXwF/3zhsItHdzQW7SjmIuHbe4Aj2XG/ppblPK+V+on8BvSIelQPzR2G4SWr03st
-gWpMPGE689J+vy5ejqK1jel5K8/tZgIJ4jnnchO7jZAkOLa3J9e1l3dwqxf20eyv
-nYJ6CeBppMyoU+P7Td8ZZY7t1pAzXaMU+3WF2UYFHH0Q5OlNo0JrHC2YUjugHDjX
-MJOOEbQWHunwLYw+8ZO+99Zv3M0eE1VJEJRJ4caBw/7Kgr2WOIvXrIamQNPY2cqK
-BDNRxzJ/2cNNu0L/TPuM
-=kRch
------END PGP SIGNATURE-----
-
---6l7rwhengg7h5nch--
+>  
+>  Example:
+>  
+>  rng {
+> -        compatible = "amlogic,meson-rng";
+> -        reg = <0x0 0xc8834000 0x0 0x4>;
+> +	compatible = "amlogic,meson-rng";
+> +	reg = <0x0 0xc8834000 0x0 0x4>;
+> +	clocks = <&clkc CLKID_RNG0>;
+> +	clock-names = "core";
+>  };
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+> index 5d995f77..620495a4 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+> @@ -380,7 +380,7 @@
+>  			#size-cells = <2>;
+>  			ranges = <0x0 0x0 0x0 0xc8834000 0x0 0x2000>;
+>  
+> -			rng {
+> +			hwrng: rng {
+>  				compatible = "amlogic,meson-rng";
+>  				reg = <0x0 0x0 0x0 0x4>;
+>  			};
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> index 04b3324b..a375cb21 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> @@ -524,3 +524,8 @@
+>  &vpu {
+>  	compatible = "amlogic,meson-gxbb-vpu", "amlogic,meson-gx-vpu";
+>  };
+> +
+> +&hwrng {
+> +	clocks = <&clkc CLKID_RNG0>;
+> +	clock-names = "core";
+> +};
+> 
