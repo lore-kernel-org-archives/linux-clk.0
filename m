@@ -1,50 +1,63 @@
-Return-Path: <ce3a@gmx.de>
-From: Sergej Sawazki <ce3a@gmx.de>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org,
-	Sergej Sawazki <ce3a@gmx.de>,
-	Jyri Sarha <jsarha@ti.com>
-Subject: [PATCH] clk: gpio: Add debug messages for clock ops
-Date: Sat,  4 Feb 2017 21:22:30 +0100
-Message-Id: <1486239750-24846-1-git-send-email-ce3a@gmx.de>
+Return-Path: <hkallweit1@gmail.com>
+Return-Path: <hkallweit1@gmail.com>
+Subject: [PATCH v3 3/4] ARM64: dts: meson-gx: add clock CLKID_RNG0 to hwrng
+ node
+To: Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman
+ <khilman@baylibre.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ Neil Armstrong <narmstrong@baylibre.com>, linux-amlogic@lists.infradead.org,
+ linux-crypto@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <2135c29a-41c2-f649-ea6d-bd635cbe0714@gmail.com>
+Date: Wed, 22 Feb 2017 08:00:55 +0100
+MIME-Version: 1.0
+In-Reply-To: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Debug messages are helpful when debugging the clock tree setup.
+Add clock CLKID_RNG0 to HW randon number generator node.
 
-Cc: Jyri Sarha <jsarha@ti.com>
-Signed-off-by: Sergej Sawazki <ce3a@gmx.de>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 ---
- drivers/clk/clk-gpio.c | 3 +++
- 1 file changed, 3 insertions(+)
+v2:
+- splitted first version of patch into two
+- add DT binding documentation
+- mention that clock is optional
+- replace spaces with tabs in DT binding example
+v3:
+- splitted DT extension and binding documentation update into two patches
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi   | 2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 5 +++++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index 86b2457..012c289 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -38,6 +38,7 @@ static int clk_gpio_gate_enable(struct clk_hw *hw)
- 	struct clk_gpio *clk = to_clk_gpio(hw);
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 5d995f77..620495a4 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -380,7 +380,7 @@
+ 			#size-cells = <2>;
+ 			ranges = <0x0 0x0 0x0 0xc8834000 0x0 0x2000>;
  
- 	gpiod_set_value(clk->gpiod, 1);
-+	pr_debug("%s clock enabled\n", clk_hw_get_name(hw));
- 
- 	return 0;
- }
-@@ -47,6 +48,7 @@ static void clk_gpio_gate_disable(struct clk_hw *hw)
- 	struct clk_gpio *clk = to_clk_gpio(hw);
- 
- 	gpiod_set_value(clk->gpiod, 0);
-+	pr_debug("%s clock disabled\n", clk_hw_get_name(hw));
- }
- 
- static int clk_gpio_gate_is_enabled(struct clk_hw *hw)
-@@ -83,6 +85,7 @@ static int clk_gpio_mux_set_parent(struct clk_hw *hw, u8 index)
- 	struct clk_gpio *clk = to_clk_gpio(hw);
- 
- 	gpiod_set_value(clk->gpiod, index);
-+	pr_debug("%s set parent %d\n", clk_hw_get_name(hw), index);
- 
- 	return 0;
- }
+-			rng {
++			hwrng: rng {
+ 				compatible = "amlogic,meson-rng";
+ 				reg = <0x0 0x0 0x0 0x4>;
+ 			};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 04b3324b..a375cb21 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -524,3 +524,8 @@
+ &vpu {
+ 	compatible = "amlogic,meson-gxbb-vpu", "amlogic,meson-gx-vpu";
+ };
++
++&hwrng {
++	clocks = <&clkc CLKID_RNG0>;
++	clock-names = "core";
++};
 -- 
-2.7.4
+2.11.1
