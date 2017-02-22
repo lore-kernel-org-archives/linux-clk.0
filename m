@@ -1,128 +1,95 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 02/15] clk: ti: add support for automatic clock alias generation
-Date: Mon, 13 Feb 2017 11:34:58 +0200
-Message-ID: <1486978511-29668-3-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
-References: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>,
+ David Airlie <airlied@linux.ie>
+Subject: [PATCH 0/8] Initial Allwinner Display Engine 2.0 Support
+Date: Wed, 22 Feb 2017 23:18:46 +0800
+Message-Id: <20170222151854.3280-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Jean-Francois Moine <moinejf@free.fr>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Large portions of the OMAP framework still depend on the support of
-having clock aliases in place, so add support functions for generating
-these automatically.
+This patchset is the initial patchset for Allwinner DE2 support.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk.c   | 64 ++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/ti/clock.h |  5 ++++
- 2 files changed, 69 insertions(+)
+It contains the support of clocks in DE2 and the mixers in DE2.
 
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index 5fcf247..91bad55 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -24,6 +24,7 @@
- #include <linux/list.h>
- #include <linux/regmap.h>
- #include <linux/bootmem.h>
-+#include <linux/device.h>
- 
- #include "clock.h"
- 
-@@ -453,3 +454,66 @@ void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks)
- 		clk_prepare_enable(init_clk);
- 	}
- }
-+
-+/**
-+ * ti_clk_add_alias - add a clock alias for a TI clock
-+ * @dev: device alias for this clock
-+ * @clk: clock handle to create alias for
-+ * @con: connection ID for this clock
-+ *
-+ * Creates a clock alias for a TI clock. Allocates the clock lookup entry
-+ * and assigns the data to it. Returns 0 if successful, negative error
-+ * value otherwise.
-+ */
-+int ti_clk_add_alias(struct device *dev, struct clk *clk, const char *con)
-+{
-+	struct clk_lookup *cl;
-+
-+	if (!clk)
-+		return 0;
-+
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	cl = kzalloc(sizeof(*cl), GFP_KERNEL);
-+	if (!cl)
-+		return -ENOMEM;
-+
-+	if (dev)
-+		cl->dev_id = dev_name(dev);
-+	cl->con_id = con;
-+	cl->clk = clk;
-+
-+	clkdev_add(cl);
-+
-+	return 0;
-+}
-+
-+/**
-+ * ti_clk_register - register a TI clock to the common clock framework
-+ * @dev: device for this clock
-+ * @hw: hardware clock handle
-+ * @con: connection ID for this clock
-+ *
-+ * Registers a TI clock to the common clock framework, and adds a clock
-+ * alias for it. Returns a handle to the registered clock if successful,
-+ * ERR_PTR value in failure.
-+ */
-+struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
-+			    const char *con)
-+{
-+	struct clk *clk;
-+	int ret;
-+
-+	clk = clk_register(dev, hw);
-+	if (IS_ERR(clk))
-+		return clk;
-+
-+	ret = ti_clk_add_alias(dev, clk, con);
-+	if (ret) {
-+		clk_unregister(clk);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index 13c37f4..ac95fda 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -16,6 +16,8 @@
- #ifndef __DRIVERS_CLK_TI_CLOCK__
- #define __DRIVERS_CLK_TI_CLOCK__
- 
-+#include <linux/clkdev.h>
-+
- enum {
- 	TI_CLK_FIXED,
- 	TI_CLK_MUX,
-@@ -189,6 +191,9 @@ struct ti_dt_clk {
- struct clk *ti_clk_register_divider(struct ti_clk *setup);
- struct clk *ti_clk_register_composite(struct ti_clk *setup);
- struct clk *ti_clk_register_dpll(struct ti_clk *setup);
-+struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
-+			    const char *con);
-+int ti_clk_add_alias(struct device *dev, struct clk *clk, const char *con);
- 
- struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup);
- struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup);
+The SoC used to develop this patchset is V3s, as V3s is the simplest
+one of the SoCs that have DE2.
+(Allwinner V3s features only one mixer, although its clock control
+unit contains support for second mixer's clock; and its only video
+output is RGB LCD, which is already supported in our TCON driver)
+
+The last patch is only a testing patch, it shouldn't be merged; and
+for the patch to be really usable, the RFC fix of the TCON driver [1]
+is needed.
+
+No HDMI, TV encoder or other internal bridges' support is included
+in this patchset, which makes it currently not usable on H3.
+
+Thanks to Jean-Francois Moine and Jernej Skrabec for their efforts
+to discover the internal of DE2!
+
+[1] https://lists.freedesktop.org/archives/dri-devel/2016-December/126264.html
+
+Icenowy Zheng (8):
+  dt-bindings: add binding for the Allwinner DE2 CCU
+  clk: sunxi-ng: add support for DE2 CCU
+  dt-bindings: add bindings for DE2 on V3s SoC
+  drm/sun4i: add support for sun8i DE2 mixers and display engines
+  drm/sun4i: tcon: add support for V3s TCON
+  ARM: dts: sun8i: add DE2 nodes for V3s SoC
+  ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
+  [DO NOT MERGE] ARM: dts: sun8i: enable LCD panel of Lichee Pi Zero
+
+ .../devicetree/bindings/clock/sunxi-de2.txt        |  31 ++
+ .../bindings/display/sunxi/sun4i-drm.txt           |  37 +-
+ arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts      |  36 ++
+ arch/arm/boot/dts/sun8i-v3s.dtsi                   |  96 +++++
+ drivers/clk/sunxi-ng/Kconfig                       |   6 +
+ drivers/clk/sunxi-ng/Makefile                      |   1 +
+ drivers/clk/sunxi-ng/ccu-sunxi-de2.c               | 204 ++++++++++
+ drivers/clk/sunxi-ng/ccu-sunxi-de2.h               |  28 ++
+ drivers/gpu/drm/sun4i/Kconfig                      |   8 +
+ drivers/gpu/drm/sun4i/Makefile                     |   1 +
+ drivers/gpu/drm/sun4i/sun4i_crtc.c                 |   6 +-
+ drivers/gpu/drm/sun4i/sun4i_drv.c                  |  41 +-
+ drivers/gpu/drm/sun4i/sun4i_drv.h                  |   1 +
+ drivers/gpu/drm/sun4i/sun4i_layer.c                |  92 ++++-
+ drivers/gpu/drm/sun4i/sun4i_layer.h                |   1 +
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |   5 +
+ drivers/gpu/drm/sun4i/sun8i_mixer.c                | 417 +++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_mixer.h                | 133 +++++++
+ include/dt-bindings/clock/sunxi-de2.h              |  54 +++
+ include/dt-bindings/reset/sunxi-de2.h              |  50 +++
+ 20 files changed, 1220 insertions(+), 28 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/sunxi-de2.txt
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sunxi-de2.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sunxi-de2.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.h
+ create mode 100644 include/dt-bindings/clock/sunxi-de2.h
+ create mode 100644 include/dt-bindings/reset/sunxi-de2.h
+
 -- 
-1.9.1
+2.11.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
