@@ -1,84 +1,63 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Mark Brown <broonie@kernel.org>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vinod Koul <vinod.koul@intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Andre Przywara <andre.przywara@arm.com>,
-        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-sunxi@googlegroups.com, dmaengine@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        alsa-devel@alsa-project.org
-In-Reply-To: <20170126154859.55855-9-icenowy@aosc.xyz>
-Message-Id: <E1cbX47-0000ia-Ks@debutante>
-Date: Wed, 08 Feb 2017 18:34:03 +0000
-Subject: Applied "ASoC: sunxi: allow the analog codec driver to be built on ARM64" to the asoc tree
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <hkallweit1@gmail.com>
+Return-Path: <hkallweit1@gmail.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH v3 1/3] clk: meson-gxbb: expose clock CLKID_RNG0
+To: Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman
+ <khilman@baylibre.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ Neil Armstrong <narmstrong@baylibre.com>, linux-amlogic@lists.infradead.org,
+ linux-crypto@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Message-ID: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
+Date: Wed, 22 Feb 2017 07:55:24 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch
+Expose clock CLKID_RNG0 which is needed for the HW random number generator.
 
-   ASoC: sunxi: allow the analog codec driver to be built on ARM64
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From e5028a259733ec2324893cb481023ed6cf7e9723 Mon Sep 17 00:00:00 2001
-From: Icenowy Zheng <icenowy@aosc.xyz>
-Date: Wed, 8 Feb 2017 02:30:40 +0800
-Subject: [PATCH] ASoC: sunxi: allow the analog codec driver to be built on
- ARM64
-
-As the 64-bit Allwinner H5 SoC has the same analog codec part (also the
-same digital part) as H3, enable the driver to be built on ARM64
-Allwinner platform, so that it can be used on H5.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 ---
- sound/soc/sunxi/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2:
+- added clk and DT maintainers
+- split exposing the clock and using it in DT into two patches
+- comment out clock definition in drivers/clk/meson/gxbb.h
+- silently move CLKID_SPI to the right place
+v3:
+- no changes
+---
+ drivers/clk/meson/gxbb.h              | 2 +-
+ include/dt-bindings/clock/gxbb-clkc.h | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/sunxi/Kconfig b/sound/soc/sunxi/Kconfig
-index 13a8267f17c7..22408bc2d6ec 100644
---- a/sound/soc/sunxi/Kconfig
-+++ b/sound/soc/sunxi/Kconfig
-@@ -22,7 +22,7 @@ config SND_SUN8I_CODEC
- 
- config SND_SUN8I_CODEC_ANALOG
- 	tristate "Allwinner sun8i Codec Analog Controls Support"
--	depends on MACH_SUN8I || COMPILE_TEST
-+	depends on MACH_SUN8I || (ARM64 && ARCH_SUNXI) || COMPILE_TEST
- 	select REGMAP
- 	help
- 	  Say Y or M if you want to add support for the analog controls for
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 8ee2022c..cbd62e46 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -193,7 +193,7 @@
+ /* CLKID_I2C */
+ /* #define CLKID_SAR_ADC */
+ #define CLKID_SMART_CARD	  24
+-#define CLKID_RNG0		  25
++/* CLKID_RNG0 */
+ #define CLKID_UART0		  26
+ #define CLKID_SDHC		  27
+ #define CLKID_STREAM		  28
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index 692846c7..63f4c2c4 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -12,9 +12,10 @@
+ #define CLKID_FCLK_DIV4		6
+ #define CLKID_CLK81		12
+ #define CLKID_MPLL2		15
+-#define CLKID_SPI		34
+ #define CLKID_I2C		22
+ #define CLKID_SAR_ADC		23
++#define CLKID_RNG0		25
++#define CLKID_SPI		34
+ #define CLKID_ETH		36
+ #define CLKID_USB0		50
+ #define CLKID_USB1		51
 -- 
-2.11.0
+2.11.1
