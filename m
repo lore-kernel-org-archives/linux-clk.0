@@ -1,41 +1,42 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 24 Feb 2017 12:44:39 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: core: Copy connection id
-Message-ID: <20170224204439.GD25384@codeaurora.org>
-References: <60d115f6c11bc51cd8bc10c64cd222c3cdb43cc7.1487596492.git.leonard.crestez@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <60d115f6c11bc51cd8bc10c64cd222c3cdb43cc7.1487596492.git.leonard.crestez@nxp.com>
+Return-Path: <alexander.stein@systec-electronic.com>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 2/3] ARM: dts: ls1021a: Add node for scfg-qspi-cfg
+Date: Wed, 22 Feb 2017 16:03:48 +0100
+Message-Id: <20170222150349.16790-3-alexander.stein@systec-electronic.com>
+In-Reply-To: <20170222150349.16790-1-alexander.stein@systec-electronic.com>
+References: <20170222150349.16790-1-alexander.stein@systec-electronic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/20, Leonard Crestez wrote:
-> Some drivers use sprintf to build clk connection id names but the clk
-> core will save those strings and occasionally print them back. Duplicate
-> the con_id strings instead of fixing all the users.
-> 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> ---
->  drivers/clk/clk.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> Some examples of using sprintf for con_id include:
-> drivers/mfd/omap-usb-host.c
-> drivers/tty/serial/samsung.c
-> sound/soc/fsl/fsl_asrc.c
-> 
-> There are lots more. They are difficult to find and "fixing" them on the
-> consumer side requires nasty code to keep track of the allocated clkname.
+This adds the node for SCFG_QSPI_CFG driver.
 
-Good catch. What about dev_id though? That could also have the
-same problem if some device is removed and we're still holding a
-reference to the kobject's name. This is probably more rare than
-what is happening here, but still seems possible that we might
-trip over that later.
+Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+---
+ arch/arm/boot/dts/ls1021a.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
+diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
+index 78a3d79..a2d58ef 100644
+--- a/arch/arm/boot/dts/ls1021a.dtsi
++++ b/arch/arm/boot/dts/ls1021a.dtsi
+@@ -176,6 +176,15 @@
+ 			big-endian;
+ 		};
+ 
++		scfg_qspi_cfg: scfg_qspi_cfg@157015c {
++		    compatible = "fsl,scfg-qspi-cfg-ls1021a";
++		    #clock-cells = <0>;
++		    reg = <0x0 0x157015c 0x0 0x4>;
++		    clocks = <&cga_pll1 0>;
++		    clock-output-names = "scfg-qspi-cfg";
++		    big-endian;
++		};
++
+ 		crypto: crypto@1700000 {
+ 			compatible = "fsl,sec-v5.0", "fsl,sec-v4.0";
+ 			fsl,sec-era = <7>;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.10.2
