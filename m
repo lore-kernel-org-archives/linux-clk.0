@@ -1,47 +1,38 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4/4] ARM: dts: rockchip: Make uartpll a child of the gpll on rk3036
-Date: Tue, 28 Feb 2017 06:14:20 +0100
-Message-Id: <20170228051420.7214-5-heiko@sntech.de>
-In-Reply-To: <20170228051420.7214-1-heiko@sntech.de>
-References: <20170228051420.7214-1-heiko@sntech.de>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 0/7] Tegra210 clock bug fixes
+Date: Wed, 22 Feb 2017 17:13:55 +0200
+Message-ID: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The shared uart-pll is normally a child of the apll that can get changed
-by cpu frequency scaling. So move it away to the more stable gpll to
-make sure the uart doesn't break on cpu frequency changes.
+A number of bug fixes for the Tegra210 clock implementation.
 
-This turned up during the 4.11 merge-window when commit
-6a171b299379 ("serial: 8250_dw: Allow hardware flow control to be used")
-added general termios enablement making the uart on rk3036 change
-frequency and thus making it susceptible for the frequency scaling issue.
+Peter De Schrijver (7):
+  clk: tegra: fix pll_a1 iddq register, add pll_a1
+  clk: tegra: fix isp clock modelling
+  clk: tegra: correct afi parent
+  clk: tegra: remove non-existing pll_m_out1 clock
+  clk: tegra: don't warn for PLL defaults unnecessarily
+  clk: tegra: correct tegra210_pll_fixed_mdiv_cfg rate calculation
+  clk: tegra: fix type for m field
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/boot/dts/rk3036.dtsi | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk-id.h               |  1 +
+ drivers/clk/tegra/clk-tegra-periph.c     | 13 +++++++++---
+ drivers/clk/tegra/clk-tegra210.c         | 35 ++++++++++++++++++++------------
+ drivers/clk/tegra/clk.h                  |  2 +-
+ include/dt-bindings/clock/tegra210-car.h |  4 ++--
+ 5 files changed, 36 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm/boot/dts/rk3036.dtsi b/arch/arm/boot/dts/rk3036.dtsi
-index ff9b90bfaefd..6442023854c5 100644
---- a/arch/arm/boot/dts/rk3036.dtsi
-+++ b/arch/arm/boot/dts/rk3036.dtsi
-@@ -310,8 +310,9 @@
- 		rockchip,grf = <&grf>;
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
--		assigned-clocks = <&cru PLL_GPLL>;
--		assigned-clock-rates = <594000000>;
-+		assigned-clocks = <&cru PLL_GPLL>, <&cru SCLK_UARTPLL>;
-+		assigned-clock-rates = <594000000>, <0>;
-+		assigned-clock-parents = <0>, <&cru PLL_GPLL>;
- 	};
- 
- 	grf: syscon@20008000 {
 -- 
-2.11.0
+1.9.1
