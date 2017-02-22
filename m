@@ -1,62 +1,67 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH 0/3] Add support for the R_CCU on Allwinner H3/A64 SoCs
-Date: Wed,  1 Mar 2017 12:15:38 +0800
-Message-Id: <20170301041541.24388-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH 4/7] clk: tegra: remove non-existing pll_m_out1 clock
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Alexandre Courbot <gnurou@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
+ <1487776444-4701-5-git-send-email-pdeschrijver@nvidia.com>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <50337a15-d4a1-b7fa-b568-1d29f11a843c@kapsi.fi>
+Date: Wed, 22 Feb 2017 18:31:04 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <1487776444-4701-5-git-send-email-pdeschrijver@nvidia.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner SoCs after sun6i-a31 nearly all have a R_CCU in PRCM part.
-(V3s and R40 do not have it, as they have even no PRCM)
+Missing commit message
 
-This patch adds support for the ones on H3/A64.
+Cheers,
+Mikko.
 
-Some clock/reset values are reserved for easier extending the support to
-A31/A23, but for this I think some changes to the PRCM MFD should be made,
-see [1] (Although this is only a sketch).
-
-[1] https://github.com/wens/linux/commits/sunxi-ng-prcm
-
-Icenowy Zheng (3):
-  dt-bindings: update device tree binding for Allwinner PRCM CCUs
-  clk: sunxi-ng: add support for PRCM CCUs
-  arm64: dts: allwinner: add r_ccu node
-
- .../devicetree/bindings/clock/sunxi-ccu.txt        |   2 +
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      |  11 ++
- drivers/clk/sunxi-ng/Kconfig                       |   6 +
- drivers/clk/sunxi-ng/Makefile                      |   1 +
- drivers/clk/sunxi-ng/ccu-sun6i-r.c                 | 209 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun6i-r.h                 |  27 +++
- include/dt-bindings/clock/sun6i-r-ccu.h            |  58 ++++++
- include/dt-bindings/reset/sun6i-r-ccu.h            |  54 ++++++
- 8 files changed, 368 insertions(+)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun6i-r.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun6i-r.h
- create mode 100644 include/dt-bindings/clock/sun6i-r-ccu.h
- create mode 100644 include/dt-bindings/reset/sun6i-r-ccu.h
-
--- 
-2.11.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+On 02/22/2017 05:13 PM, Peter De Schrijver wrote:
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 5 -----
+>  1 file changed, 5 deletions(-)
+>
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index 7bda8ba..b7ef8a7 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -2115,7 +2115,6 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
+>  	[tegra_clk_pll_c2] = { .dt_id = TEGRA210_CLK_PLL_C2, .present = true },
+>  	[tegra_clk_pll_c3] = { .dt_id = TEGRA210_CLK_PLL_C3, .present = true },
+>  	[tegra_clk_pll_m] = { .dt_id = TEGRA210_CLK_PLL_M, .present = true },
+> -	[tegra_clk_pll_m_out1] = { .dt_id = TEGRA210_CLK_PLL_M_OUT1, .present = true },
+>  	[tegra_clk_pll_p] = { .dt_id = TEGRA210_CLK_PLL_P, .present = true },
+>  	[tegra_clk_pll_p_out1] = { .dt_id = TEGRA210_CLK_PLL_P_OUT1, .present = true },
+>  	[tegra_clk_pll_p_out3] = { .dt_id = TEGRA210_CLK_PLL_P_OUT3, .present = true },
+> @@ -2229,7 +2228,6 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
+>  	{ .con_id = "pll_p_out3", .dt_id = TEGRA210_CLK_PLL_P_OUT3 },
+>  	{ .con_id = "pll_p_out4", .dt_id = TEGRA210_CLK_PLL_P_OUT4 },
+>  	{ .con_id = "pll_m", .dt_id = TEGRA210_CLK_PLL_M },
+> -	{ .con_id = "pll_m_out1", .dt_id = TEGRA210_CLK_PLL_M_OUT1 },
+>  	{ .con_id = "pll_x", .dt_id = TEGRA210_CLK_PLL_X },
+>  	{ .con_id = "pll_x_out0", .dt_id = TEGRA210_CLK_PLL_X_OUT0 },
+>  	{ .con_id = "pll_u", .dt_id = TEGRA210_CLK_PLL_U },
+> @@ -2404,9 +2402,6 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+>  	clk_register_clkdev(clk, "pll_mb", NULL);
+>  	clks[TEGRA210_CLK_PLL_MB] = clk;
+>
+> -	clk_register_clkdev(clk, "pll_m_out1", NULL);
+> -	clks[TEGRA210_CLK_PLL_M_OUT1] = clk;
+> -
+>  	/* PLLM_UD */
+>  	clk = clk_register_fixed_factor(NULL, "pll_m_ud", "pll_m",
+>  					CLK_SET_RATE_PARENT, 1, 1);
+>
