@@ -8,35 +8,45 @@ To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
 	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
 	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 3/7] clk: tegra: correct afi parent
-Date: Thu, 23 Feb 2017 12:44:40 +0200
-Message-ID: <1487846686-6388-4-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH 1/7] clk: tegra: fix pll_a1 iddq register, add pll_a1
+Date: Wed, 22 Feb 2017 17:13:56 +0200
+Message-ID: <1487776444-4701-2-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The parent for afi is actually mselect, not clk_m.
+pll_a1 was using CLK_RST_CONTROLLER_PLLA1_MISC_0 for IDDQ control rather
+than the correct register CLK_RST_CONTROLLER_PLLA1_MISC_1. Also add pll_a1
+to the set of clocks defined for Tegra210.
 
 Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra-periph.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra210.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 19b00b7..c9e795b 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -815,7 +815,7 @@
- 	GATE("usb2", "clk_m", 58, 0, tegra_clk_usb2, 0),
- 	GATE("usb3", "clk_m", 59, 0, tegra_clk_usb3, 0),
- 	GATE("csi", "pll_p_out3", 52, 0, tegra_clk_csi, 0),
--	GATE("afi", "clk_m", 72, 0, tegra_clk_afi, 0),
-+	GATE("afi", "mselect", 72, 0, tegra_clk_afi, 0),
- 	GATE("csus", "clk_m", 92, TEGRA_PERIPH_NO_RESET, tegra_clk_csus, 0),
- 	GATE("dds", "clk_m", 150, TEGRA_PERIPH_ON_APB, tegra_clk_dds, 0),
- 	GATE("dp2", "clk_m", 152, TEGRA_PERIPH_ON_APB, tegra_clk_dp2, 0),
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 2896d2e..2ef8d49 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -1772,7 +1772,7 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
+ 	.misc_reg = PLLA1_MISC0,
+ 	.lock_mask = PLLCX_BASE_LOCK,
+ 	.lock_delay = 300,
+-	.iddq_reg = PLLA1_MISC0,
++	.iddq_reg = PLLA1_MISC1,
+ 	.iddq_bit_idx = PLLCX_IDDQ_BIT,
+ 	.reset_reg = PLLA1_MISC0,
+ 	.reset_bit_idx = PLLCX_RESET_BIT,
+@@ -2209,6 +2209,7 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
+ 	[tegra_clk_pll_c4_out2] = { .dt_id = TEGRA210_CLK_PLL_C4_OUT2, .present = true },
+ 	[tegra_clk_pll_c4_out3] = { .dt_id = TEGRA210_CLK_PLL_C4_OUT3, .present = true },
+ 	[tegra_clk_apb2ape] = { .dt_id = TEGRA210_CLK_APB2APE, .present = true },
++	[tegra_clk_pll_a1] = { .dt_id = TEGRA210_CLK_PLL_A1, .present = true },
+ };
+ 
+ static struct tegra_devclk devclks[] __initdata = {
 -- 
 1.9.1
