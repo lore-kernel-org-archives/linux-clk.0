@@ -1,46 +1,43 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Mon, 13 Feb 2017 21:05:36 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Baoyou Xie <baoyou.xie@linaro.org>, lgirdwood@gmail.com,
-	robh+dt@kernel.org, mark.rutland@arm.com, jun.nie@linaro.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org, perex@perex.cz,
-	tiwai@suse.com, shawn.guo@linaro.org, vinod.koul@intel.com,
-	alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, mathieu.poirier@linaro.org,
-	xie.baoyou@zte.com.cn, chen.chaokai@zte.com.cn,
-	wang.qiang01@zte.com.cn
-Subject: Re: [PATCH v4 2/3] ASoC: zx-i2s: Add the info of pclk to the binding
- document for zx2967 family
-Message-ID: <20170213130534.GA4151@dragon>
-References: <1486609978-18482-1-git-send-email-baoyou.xie@linaro.org>
- <1486609978-18482-2-git-send-email-baoyou.xie@linaro.org>
- <20170209164645.ztvockrd6jxpybwt@sirena.org.uk>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 7/7] clk: tegra: fix type for m field
+Date: Wed, 22 Feb 2017 17:14:02 +0200
+Message-ID: <1487776444-4701-8-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170209164645.ztvockrd6jxpybwt@sirena.org.uk>
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 09, 2017 at 04:46:45PM +0000, Mark Brown wrote:
-> On Thu, Feb 09, 2017 at 11:12:57AM +0800, Baoyou Xie wrote:
-> 
-> > - - compatible : Must be "zte,zx296702-i2s"
-> > + - compatible : Must be one of:
-> > +	"zte,zx296718-i2s", "zte,zx296702-i2s"
-> > +	"zte,zx296702-i2s"
-> 
-> You've added the new compatible twice here?
+When used as part of fractional ndiv calculations, the current range is not
+enough because the denominator of the fraction is multiplied with m.
 
-It's indeed a bit confusing.  Might be better if we add a couple of
-bullet like below.
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- - compatible : Must be one of:
-	- "zte,zx296718-i2s", "zte,zx296702-i2s";
-	- "zte,zx296702-i2s";
-
-In this case, it's more easier for readers to understand that the first
-one is for I2S device on SoC ZX296718, while it's compatible with the
-I2S on ZX296702.
-
-Shawn
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 6ba82ec..a62ea73 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -116,7 +116,7 @@ struct tegra_clk_pll_freq_table {
+ 	unsigned long	input_rate;
+ 	unsigned long	output_rate;
+ 	u32		n;
+-	u16		m;
++	u32		m;
+ 	u8		p;
+ 	u8		cpcon;
+ 	u16		sdm_data;
+-- 
+1.9.1
