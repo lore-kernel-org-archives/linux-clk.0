@@ -1,41 +1,66 @@
-Return-Path: <linux@roeck-us.net>
-From: Guenter Roeck <linux@roeck-us.net>
-To: Andy Gross <andy.gross@linaro.org>
-Cc: David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH] clk: qcom: Do not drop device node twice
-Date: Sat, 11 Feb 2017 15:04:56 -0800
-Message-Id: <1486854296-23156-1-git-send-email-linux@roeck-us.net>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>,
+ David Airlie <airlied@linux.ie>
+Subject: [PATCH 7/8] ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
+Date: Wed, 22 Feb 2017 23:23:09 +0800
+Message-Id: <20170222152310.3719-8-icenowy@aosc.xyz>
+In-Reply-To: <20170222152310.3719-5-icenowy@aosc.xyz>
+References: <20170222152310.3719-5-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Jean-Francois Moine <moinejf@free.fr>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-of_find_node_by_name() drops the reference to a passed device node.
-It is not necessary to drop it again, and doing so may result in the
-device node being released prematurely.
+Allwinner V3s SoC features a set of pins that have functionality of RGB
+LCD, the pins are at different pin ban than other SoCs.
 
-Cc: Rob Herring <robh@kernel.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Add pinctrl node for them.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- drivers/clk/qcom/common.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/boot/dts/sun8i-v3s.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index cfab7b400381..03f9d316f969 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -145,7 +145,6 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
- 	clocks_node = of_find_node_by_path("/clocks");
- 	if (clocks_node)
- 		node = of_find_node_by_name(clocks_node, path);
--	of_node_put(clocks_node);
+diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
+index e7d5d510a8ff..ba8b17b4e0d6 100644
+--- a/arch/arm/boot/dts/sun8i-v3s.dtsi
++++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
+@@ -297,6 +297,15 @@
+ 				function = "i2c0";
+ 			};
  
- 	if (!node) {
- 		fixed = devm_kzalloc(dev, sizeof(*fixed), GFP_KERNEL);
++			lcd_rgb666_pins: lcd_rgb666@0 {
++				pins = "PE0", "PE1", "PE2", "PE3", "PE4",
++				       "PE5", "PE6", "PE7", "PE8", "PE9",
++				       "PE10", "PE11", "PE12", "PE13", "PE14",
++				       "PE15", "PE16", "PE17", "PE18", "PE19",
++				       "PE23", "PE24";
++				function = "lcd";
++			};
++
+ 			uart0_pins_a: uart0@0 {
+ 				pins = "PB8", "PB9";
+ 				function = "uart0";
 -- 
-2.7.4
+2.11.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
