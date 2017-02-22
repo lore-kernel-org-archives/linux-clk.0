@@ -1,50 +1,103 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd Bergmann
-	<arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez@st.com>, <ludovic.barre@st.com>,
-        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
-Subject: [Resend PATCH v2 0/3] STM32F4 Clock binding fix & update
-Date: Wed, 1 Feb 2017 14:09:53 +0100
-Message-ID: <1485954596-11014-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>,
+ David Airlie <airlied@linux.ie>
+Subject: [PATCH 8/8] [DO NOT MERGE] ARM: dts: sun8i: enable LCD panel of
+ Lichee Pi Zero
+Date: Wed, 22 Feb 2017 23:23:10 +0800
+Message-Id: <20170222152310.3719-9-icenowy@aosc.xyz>
+In-Reply-To: <20170222152310.3719-5-icenowy@aosc.xyz>
+References: <20170222152310.3719-5-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Jean-Francois Moine <moinejf@free.fr>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+A 480x272 QiaoDian QD43003C0-40-7LED panel is available from Lichee Pi.
 
-v2:
-- Only rename commit subject of first patch to avoid the error:
- Remote Server returned '<vger.kernel.org #5.7.1 SMTP;
- 550 5.7.1 Content-Policy reject msg: The capital Triple-X in subject
- is way too often associated with junk email,
+This commit connects this panel to Lichee Pi Zero.
 
-This patch-set includes:
- - a fix to STM32F4_X_CLOCK() macro
- - an update of missing binding definition
- - a patch to use STM32F4_X_CLOCK() macro
+Lichee Pi also provides a 800x480 panel without accurate model number,
+so do not merge this patch. It will finally come as device tree overlay.
 
-Gabriel Fernandez (3):
-  dt-bindings: mfd: stm32f4: Fix STM32F4_X_CLOCK() macro
-  dt-bindings: mfd: stm32f4: Add missing binding definition
-  ARM: dts: stm32: Use clock DT binding definition on stm32f429 family
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts | 36 +++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
- arch/arm/boot/dts/stm32429i-eval.dts  |  2 +-
- arch/arm/boot/dts/stm32f429.dtsi      | 66 +++++++++++++++++++----------------
- include/dt-bindings/mfd/stm32f4-rcc.h | 24 +++++++++----
- 3 files changed, 53 insertions(+), 39 deletions(-)
-
+diff --git a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+index 387fc2aa546d..7ae72bf63cd0 100644
+--- a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
++++ b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+@@ -75,6 +75,28 @@
+ 			gpios = <&pio 6 2 GPIO_ACTIVE_LOW>; /* PG2 */
+ 		};
+ 	};
++
++	panel: panel {
++		compatible = "qiaodian,qd43003c0-40", "simple-panel";
++		enable-gpios = <&pio 1 4 GPIO_ACTIVE_HIGH>; /* Should be backlight */
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			panel_input: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&tcon0_out_lcd>;
++			};
++		};
++	};
++};
++
++&de {
++	status = "okay";
+ };
+ 
+ &mmc0 {
+@@ -86,6 +108,20 @@
+ 	status = "okay";
+ };
+ 
++&tcon0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&lcd_rgb666_pins>;
++	status = "okay";
++
++};
++
++&tcon0_out {
++	tcon0_out_lcd: endpoint@0 {
++		reg = <0>;
++		remote-endpoint = <&panel_input>;
++	};
++};
++
+ &uart0 {
+ 	pinctrl-0 = <&uart0_pins_a>;
+ 	pinctrl-names = "default";
 -- 
-1.9.1
+2.11.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
