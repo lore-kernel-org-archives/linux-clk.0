@@ -1,58 +1,127 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 0/7] clk: meson: update clock controller for audio support
-Date: Tue, 28 Feb 2017 14:29:55 +0100
-Message-Id: <20170228133002.17894-1-jbrunet@baylibre.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 5/7] clk: tegra: don't warn for PLL defaults unnecessarily
+Date: Wed, 22 Feb 2017 17:14:00 +0200
+Message-ID: <1487776444-4701-6-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is a first round of update to the meson clock controllers
-to bring audio support. The patchset is based on clk-next with two
-additional patches from arm-soc next (to avoid conflict later on).
-commit d356a86b1b30 ("clk: meson-gxbb: Export HDMI clocks")
-commit 7d753a742127 ("clk: gxbb: add the SAR ADC clocks and expose them")
+If the PLL is on, only warn if the defaults are not yet set. Otherwise be
+silent.
 
-The 2 first patches of the series put the generic muxes and divisors
-declaration in tables so the register address fixup works in the same way
-as the clock gates. We are going to add more of these clock types for
-audio or gpu support, so we can't continue to fix addresses individually
-like it is currently done.
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-Patches 3 to 6 improve the support of the mpll clocks, now allowing the
-rate to be set. Among other things, the mplls are the parent clocks of the
-i2s and spdif clocks.
-
-Patch 7 expose the clock gates required to power on the i2s output.
-
-These patches have been tested on the meson gxbb p200 board, as part of the
-ongoing work to bring audio support for meson SoC family.
-
-Jerome Brunet (7):
-  clk: meson8b: put dividers and muxes in tables
-  clk: gxbb: put dividers and muxes in tables
-  clk: meson: mpll: add rw operation
-  clk: meson: gxbb: mpll: use rw operation
-  clk: meson8b: add the mplls clocks 0, 1 and 2
-  clk: meson: mpll: correct N2 maximum value
-  dt-bindings: clk: gxbb: expose i2s output clock gates
-
- drivers/clk/meson/clk-mpll.c          | 152 ++++++++++++++++++++++++++++++++--
- drivers/clk/meson/clkc.h              |   4 +-
- drivers/clk/meson/gxbb.c              |  64 +++++++++++---
- drivers/clk/meson/gxbb.h              |  10 +--
- drivers/clk/meson/meson8b.c           | 126 +++++++++++++++++++++++++++-
- drivers/clk/meson/meson8b.h           |  20 ++++-
- include/dt-bindings/clock/gxbb-clkc.h |   5 ++
- 7 files changed, 354 insertions(+), 27 deletions(-)
-
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index b7ef8a7..fe698d2 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -502,7 +502,7 @@ static void tegra210_pllcx_set_defaults(const char *name,
+ 	pllcx->params->defaults_set = true;
+ 
+ 	if (readl_relaxed(clk_base + pllcx->params->base_reg) &
+-			PLL_ENABLE) {
++			PLL_ENABLE && !pllcx->params->defaults_set) {
+ 		/* PLL is ON: only check if defaults already set */
+ 		pllcx_check_defaults(pllcx->params);
+ 		pr_warn("%s already enabled. Postponing set full defaults\n",
+@@ -608,7 +608,6 @@ static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
+ 
+ 	if (readl_relaxed(clk_base + plld->params->base_reg) &
+ 			PLL_ENABLE) {
+-		pr_warn("PLL_D already enabled. Postponing set full defaults\n");
+ 
+ 		/*
+ 		 * PLL is ON: check if defaults already set, then set those
+@@ -625,6 +624,9 @@ static void tegra210_plld_set_defaults(struct tegra_clk_pll *plld)
+ 		_pll_misc_chk_default(clk_base, plld->params, 0, val,
+ 				~mask & PLLD_MISC0_WRITE_MASK);
+ 
++		if (!plld->params->defaults_set)
++			pr_warn("PLL_D already enabled. Postponing set full defaults\n");
++
+ 		/* Enable lock detect */
+ 		mask = PLLD_MISC0_LOCK_ENABLE | PLLD_MISC0_LOCK_OVERRIDE;
+ 		val = readl_relaxed(clk_base + plld->params->ext_misc_reg[0]);
+@@ -896,7 +898,6 @@ static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
+ 	val |= step_b << PLLX_MISC2_DYNRAMP_STEPB_SHIFT;
+ 
+ 	if (readl_relaxed(clk_base + pllx->params->base_reg) & PLL_ENABLE) {
+-		pr_warn("PLL_X already enabled. Postponing set full defaults\n");
+ 
+ 		/*
+ 		 * PLL is ON: check if defaults already set, then set those
+@@ -904,6 +905,8 @@ static void tegra210_pllx_set_defaults(struct tegra_clk_pll *pllx)
+ 		 */
+ 		pllx_check_defaults(pllx);
+ 
++		if (!pllx->params->defaults_set)
++			pr_warn("PLL_X already enabled. Postponing set full defaults\n");
+ 		/* Configure dyn ramp, disable lock override */
+ 		writel_relaxed(val, clk_base + pllx->params->ext_misc_reg[2]);
+ 
+@@ -948,7 +951,6 @@ static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
+ 	pllmb->params->defaults_set = true;
+ 
+ 	if (val & PLL_ENABLE) {
+-		pr_warn("PLL_MB already enabled. Postponing set full defaults\n");
+ 
+ 		/*
+ 		 * PLL is ON: check if defaults already set, then set those
+@@ -959,6 +961,8 @@ static void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
+ 		_pll_misc_chk_default(clk_base, pllmb->params, 0, val,
+ 				~mask & PLLMB_MISC1_WRITE_MASK);
+ 
++		if (!pllmb->params->defaults_set)
++			pr_warn("PLL_MB already enabled. Postponing set full defaults\n");
+ 		/* Enable lock detect */
+ 		val = readl_relaxed(clk_base + pllmb->params->ext_misc_reg[0]);
+ 		val &= ~mask;
+@@ -1008,13 +1012,14 @@ static void tegra210_pllp_set_defaults(struct tegra_clk_pll *pllp)
+ 	pllp->params->defaults_set = true;
+ 
+ 	if (val & PLL_ENABLE) {
+-		pr_warn("PLL_P already enabled. Postponing set full defaults\n");
+ 
+ 		/*
+ 		 * PLL is ON: check if defaults already set, then set those
+ 		 * that can be updated in flight.
+ 		 */
+ 		pllp_check_defaults(pllp, true);
++		if (!pllp->params->defaults_set)
++			pr_warn("PLL_P already enabled. Postponing set full defaults\n");
+ 
+ 		/* Enable lock detect */
+ 		val = readl_relaxed(clk_base + pllp->params->ext_misc_reg[0]);
+@@ -1069,13 +1074,14 @@ static void tegra210_pllu_set_defaults(struct tegra_clk_pll *pllu)
+ 	pllu->params->defaults_set = true;
+ 
+ 	if (val & PLL_ENABLE) {
+-		pr_warn("PLL_U already enabled. Postponing set full defaults\n");
+ 
+ 		/*
+ 		 * PLL is ON: check if defaults already set, then set those
+ 		 * that can be updated in flight.
+ 		 */
+ 		pllu_check_defaults(pllu, false);
++		if (!pllu->params->defaults_set)
++			pr_warn("PLL_U already enabled. Postponing set full defaults\n");
+ 
+ 		/* Enable lock detect */
+ 		val = readl_relaxed(clk_base + pllu->params->ext_misc_reg[0]);
 -- 
-2.9.3
+1.9.1
