@@ -1,83 +1,57 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Thu, 16 Feb 2017 10:31:10 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	linux-clk@vger.kernel.org, "x86@kernel.org" <x86@kernel.org>,
-	Platform Driver <platform-driver-x86@vger.kernel.org>,
-	ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Takashi Iwai <tiwai@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>
-Message-ID: <20170216103109.ljlnpk5xppsjfrhe@sirena.org.uk>
-References: <1486937212-10093-1-git-send-email-pierre-louis.bossart@linux.intel.com>
- <20170214190456.GV25384@codeaurora.org>
- <bc29984e-cc58-69ed-d6ca-b4808d6514dc@linux.intel.com>
- <20170216005623.GY25384@codeaurora.org>
- <CAHp75Vdm3v6UdKgVhUjQebQ8QYrughezuxbaZXmM9gw=qgJ2VQ@mail.gmail.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 4/7] clk: tegra: remove non-existing pll_m_out1 clock
+Date: Wed, 22 Feb 2017 17:13:59 +0200
+Message-ID: <1487776444-4701-5-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hy7rxqv6jg7bmv7s"
-In-Reply-To: <CAHp75Vdm3v6UdKgVhUjQebQ8QYrughezuxbaZXmM9gw=qgJ2VQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: x86: add "mclk" alias for Baytrail/Cherrytrail
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
---hy7rxqv6jg7bmv7s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Feb 16, 2017 at 04:05:19AM +0200, Andy Shevchenko wrote:
-> On Thu, Feb 16, 2017 at 2:56 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-
-> > and then freeing that lookup with clkdev_drop in the remove of
-> > the driver. "mclk" is really generic for a connection name
-> > without an associated device id, so you may want to pass some
-> > device as the last argument here, but dev_name(&pdev->dev) seems
-> > odd because that's the clock controller device, not whatever
-> > device would be calling clk_get() with this created lookup in
-> > mind.
-
-> Here is the problem with CLK framework since it's (was?) too oriented
-> to ARM and clock trees.
-
-That's not really much more of a problem for x86 than it is for ARM,
-things got easier for ARM with the introduction of device tree but this
-stuff all predates device tree.
-
-> The best option for x86 is to place it in some platform code, which is
-> bad idea per se.
-> For example, GPIO, PWM, etc have static look up tables and glue
-> drivers (like PCI part of the driver, or I2C, or similar) can fill
-> that table based on ID.
-
-Platform code seems fine?
-
-> My personal opinion that the best place is not the clock driver for
-> that, rather converting existing drivers to take clock name based on
-> some (platform related) ID.
-
-That doesn't scale so well, you end up needing the platform code anyway
-and it's one more thing to go wrong when configuring the platform code
-so you may as well just do something idiomatic with the platform code.
-Some systems did historically do things like this, that's where the use
-of the device pointer for namespacing came from.
-
---hy7rxqv6jg7bmv7s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlilf20ACgkQJNaLcl1U
-h9BRaQgAgKNlcDX3hkJC6Qw0K4jGulvx87nakbv9kn2+gYC81C09MvafJpJA8Vqk
-99/pSS6F4X9Ss9WmnJ1Lzs/Z1Y3SzrkZpFJBVFMomzuFTWRciyksa/Ub02njIMd6
-wW6mHWKdIc+akTKgN329Q7X/foU5ZfBe4GBco5NnpRx9JYMcfoTMHDxJ5J0X4QwO
-YDKW1KyDRf+Li6PWXRLT14HRjlizEu+CIPczQMlwy51E5+UCZPiRJp/eW/MHljIc
-iSeZ77LilEp4pAEyXKeYgu5Ilx8jASX7QF4xn3M9Ru/AiWRKe4Fqe7evfSYJv4Y2
-V9JoVJ0vNSdMkWqlDX2eHYJdrIsALQ==
-=nfEp
------END PGP SIGNATURE-----
-
---hy7rxqv6jg7bmv7s--
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 7bda8ba..b7ef8a7 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2115,7 +2115,6 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
+ 	[tegra_clk_pll_c2] = { .dt_id = TEGRA210_CLK_PLL_C2, .present = true },
+ 	[tegra_clk_pll_c3] = { .dt_id = TEGRA210_CLK_PLL_C3, .present = true },
+ 	[tegra_clk_pll_m] = { .dt_id = TEGRA210_CLK_PLL_M, .present = true },
+-	[tegra_clk_pll_m_out1] = { .dt_id = TEGRA210_CLK_PLL_M_OUT1, .present = true },
+ 	[tegra_clk_pll_p] = { .dt_id = TEGRA210_CLK_PLL_P, .present = true },
+ 	[tegra_clk_pll_p_out1] = { .dt_id = TEGRA210_CLK_PLL_P_OUT1, .present = true },
+ 	[tegra_clk_pll_p_out3] = { .dt_id = TEGRA210_CLK_PLL_P_OUT3, .present = true },
+@@ -2229,7 +2228,6 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
+ 	{ .con_id = "pll_p_out3", .dt_id = TEGRA210_CLK_PLL_P_OUT3 },
+ 	{ .con_id = "pll_p_out4", .dt_id = TEGRA210_CLK_PLL_P_OUT4 },
+ 	{ .con_id = "pll_m", .dt_id = TEGRA210_CLK_PLL_M },
+-	{ .con_id = "pll_m_out1", .dt_id = TEGRA210_CLK_PLL_M_OUT1 },
+ 	{ .con_id = "pll_x", .dt_id = TEGRA210_CLK_PLL_X },
+ 	{ .con_id = "pll_x_out0", .dt_id = TEGRA210_CLK_PLL_X_OUT0 },
+ 	{ .con_id = "pll_u", .dt_id = TEGRA210_CLK_PLL_U },
+@@ -2404,9 +2402,6 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 	clk_register_clkdev(clk, "pll_mb", NULL);
+ 	clks[TEGRA210_CLK_PLL_MB] = clk;
+ 
+-	clk_register_clkdev(clk, "pll_m_out1", NULL);
+-	clks[TEGRA210_CLK_PLL_M_OUT1] = clk;
+-
+ 	/* PLLM_UD */
+ 	clk = clk_register_fixed_factor(NULL, "pll_m_ud", "pll_m",
+ 					CLK_SET_RATE_PARENT, 1, 1);
+-- 
+1.9.1
