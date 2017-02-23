@@ -1,61 +1,46 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 10 Feb 2017 09:21:20 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] clk: mvebu: Expand mv98dx3236-core-clock support
-Message-ID: <20170210172120.GR25384@codeaurora.org>
-References: <20170203034012.29399-1-chris.packham@alliedtelesis.co.nz>
- <5a974d9d7260432087619486bf5d79ed@svr-chch-ex1.atlnz.lc>
- <6149d4126a214ac8b0b0184bd818bea6@svr-chch-ex1.atlnz.lc>
- <9294933.cXSW0amFbE@wuerfel>
- <aabc6853d7934507a4507b0ad4354b72@svr-chch-ex1.atlnz.lc>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 0/5] Add missing Tegra210 clocks
+Date: Thu, 23 Feb 2017 14:39:34 +0200
+Message-ID: <1487853585-17934-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <aabc6853d7934507a4507b0ad4354b72@svr-chch-ex1.atlnz.lc>
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/08, Chris Packham wrote:
-> On 08/02/17 23:53, Arnd Bergmann wrote:
-> > On Tuesday, February 7, 2017 3:07:37 AM CET Chris Packham wrote:
-> >>>
-> >>> Actually I wonder if I can try a bit harder to keep a system booting.
-> >>> The following might work
-> >>> 1) add the compatible strings to the existing armada clock drivers.
-> >>> 2) update the dts to use the new compatible strings.
-> >>> 3) add the new driver and remove the compatible strings from the armada
-> >>> drivers.
-> >>>
-> >>> #1 would still upset checkpatch.pl because the documentation would only
-> >>> arrive in #2.
-> >>
-> >> Actually upon testing #1 is unnecessary. I lose some of the gated clocks
-> >> but nothing that prevents booting.
-> >
-> > Just to be sure: this means we can merge 2) and 3) independently and
-> > having just one of them will not cause regressions over what we have
-> > today?
-> >
-> 
-> Correct. And that's what I sent out as v2.
-> 
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-February/486467.html
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-February/486471.html
-> 
+This series adds a number of clocks which were missing from the Tegra210
+clock definition. It applies on top of the 'Tegra210 clock bug fixes' series
+posted earlier.
 
-Ok... so I'll apply the 6/6 patch now to the clk tree.
+Peter De Schrijver (5):
+  clk: tegra: add cec clock
+  clk: tegra: define Tegra210 DMIC sync clocks
+  clk: tegra: define Tegra210 DMIC clocks
+  clk: tegra: add super clk mux/div
+  clk: tegra: add aclk
+
+ drivers/clk/tegra/clk-id.h                      | 10 +++
+ drivers/clk/tegra/clk-super.c                   | 87 +++++++++++++++++++++++--
+ drivers/clk/tegra/clk-tegra-audio.c             | 85 +++++++++++++++++-------
+ drivers/clk/tegra/clk-tegra-periph.c            | 22 +++++++
+ drivers/clk/tegra/clk-tegra114.c                |  1 +
+ drivers/clk/tegra/clk-tegra124.c                |  1 +
+ drivers/clk/tegra/clk-tegra210.c                | 20 ++++++
+ drivers/clk/tegra/clk-tegra30.c                 |  1 +
+ drivers/clk/tegra/clk.h                         |  7 +-
+ include/dt-bindings/clock/tegra114-car.h        |  2 +-
+ include/dt-bindings/clock/tegra124-car-common.h |  2 +-
+ include/dt-bindings/clock/tegra210-car.h        | 13 +++-
+ include/dt-bindings/clock/tegra30-car.h         |  2 +-
+ 13 files changed, 219 insertions(+), 34 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
