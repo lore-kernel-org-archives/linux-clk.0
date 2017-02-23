@@ -1,55 +1,62 @@
-Return-Path: <baoyou.xie@linaro.org>
-Return-Path: <baoyou.xie@linaro.org>
-From: Baoyou Xie <baoyou.xie@linaro.org>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	jun.nie@linaro.org,
-	baoyou.xie@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	shawn.guo@linaro.org,
-	vinod.koul@intel.com
-Cc: alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	shawnguo@kernel.org,
-	xie.baoyou@zte.com.cn,
-	chen.chaokai@zte.com.cn,
-	wang.qiang01@zte.com.cn
-Subject: [PATCH v1 1/3] clk: zte: add i2s clocks for zx296718
-Date: Mon,  6 Feb 2017 21:50:18 +0800
-Message-Id: <1486389020-29432-1-git-send-email-baoyou.xie@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f52.google.com ([209.85.214.52]:36195 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751126AbdBWKP6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2017 05:15:58 -0500
+Received: by mail-it0-f52.google.com with SMTP id h10so160857589ith.1
+        for <linux-clk@vger.kernel.org>; Thu, 23 Feb 2017 02:15:57 -0800 (PST)
+MIME-Version: 1.0
+In-Reply-To: <0bbc4151-d954-1a27-48c3-1e8c9cb9e16f@rock-chips.com>
+References: <1486983566-32265-1-git-send-email-andy.yan@rock-chips.com>
+ <2809087.MHZWQWdaOC@phil> <0bbc4151-d954-1a27-48c3-1e8c9cb9e16f@rock-chips.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 23 Feb 2017 11:15:56 +0100
+Message-ID: <CACRpkdbNbGvwUq3uLgekimOwzBZCXf37JW9LCCqLm1so=CMNrw@mail.gmail.com>
+Subject: Re: [PATCH 0/7] Rename RK1108 to RV1108
+To: Andy Yan <andy.yan@rock-chips.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The i2s related clock support is missing from the existing zx296718
-clock driver. This patch adds it, so that the upstream ZX I2S driver
-can work out.
+On Tue, Feb 14, 2017 at 1:44 AM, Andy Yan <andy.yan@rock-chips.com> wrote:
+> Hi Heiko & Rob:
+> On 2017=E5=B9=B402=E6=9C=8813=E6=97=A5 20:51, Heiko Stuebner wrote:
+>>
+>> Hi Andy,
+>>
+>> Am Montag, 13. Februar 2017, 18:59:26 CET schrieb Andy Yan:
+>>>
+>>> Rockchip finally named this soc as RV1108, so change
+>>> RK1108/rk1108 to RV1108/rv1108 for compatible.
+>>
+>> renaming existing bindings (that have been in multiple kernel versions
+>> already) always is a hot topic. So I'll be hoping for Rob to give a
+>> go-ahead
+>> for it :-) .
+>>
+>> Just to confirm, the rk1108/rv1108 is completely new to the market, so
+>> we're
+>> not breaking any existing devices, right?
+>
+>
+>     Yes, the 1108 Soc is completely new to market, this change will not
+> breaking any existing devices.
 
-Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
----
- drivers/clk/zte/clk-zx296718.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Nobody gets hurt. Just rename everything to avoid confusion.
+Just my =E2=82=AC0.01.
 
-diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
-index ad5d1df..f106d40 100644
---- a/drivers/clk/zte/clk-zx296718.c
-+++ b/drivers/clk/zte/clk-zx296718.c
-@@ -941,6 +941,10 @@ static struct zx_clk_gate audio_gate_clk[] = {
- 	GATE(AUDIO_SPDIF1_WCLK, "spdif1_wclk", "spdif1_wclk_div", AUDIO_SPDIF1_CLK, 9, CLK_SET_RATE_PARENT, 0),
- 	GATE(AUDIO_TDM_WCLK, "tdm_wclk", "tdm_wclk_div", AUDIO_TDM_CLK, 17, CLK_SET_RATE_PARENT, 0),
- 	GATE(AUDIO_TS_PCLK, "tempsensor_pclk", "clk49m5", AUDIO_TS_CLK, 1, 0, 0),
-+	GATE(AUDIO_I2S0_PCLK, "i2s0_pclk", "clk49m5", AUDIO_I2S0_CLK, 8, 0, 0),
-+	GATE(AUDIO_I2S1_PCLK, "i2s1_pclk", "clk49m5", AUDIO_I2S1_CLK, 8, 0, 0),
-+	GATE(AUDIO_I2S2_PCLK, "i2s2_pclk", "clk49m5", AUDIO_I2S2_CLK, 8, 0, 0),
-+	GATE(AUDIO_I2S3_PCLK, "i2s3_pclk", "clk49m5", AUDIO_I2S3_CLK, 8, 0, 0),
- };
- 
- static struct clk_hw_onecell_data audio_hw_onecell_data = {
--- 
-2.7.4
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Tell me if I can merge a subset of the patches to the pinctrl tree.
+
+Yours,
+Linus Walleij
