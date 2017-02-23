@@ -1,61 +1,65 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 20 Feb 2017 17:07:39 +0000
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-mmc@vger.kernel.org, Jimmy Xu <zmxu@marvell.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Ziji Hu <huziji@marvell.com>, Victor Gu <xigu@marvell.com>,
-        Doug Jones <dougj@marvell.com>, linux-clk@vger.kernel.org,
-        Jisheng Zhang <jszhang@marvell.com>,
-        Yehuda Yitschak <yehuday@marvell.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Kostya Porotchkin <kostap@marvell.com>,
-        Hanna Hawa <hannah@marvell.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>, Ryan Gao <ygao@marvell.com>,
-        "Wei(SOCP) Liu" <liuw@marvell.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-kernel@vger.kernel.org, Wilson Ding <dingwei@marvell.com>
-Subject: Re: [PATCH v6 00/14] mmc: Add support to Marvell Xenon SD Host
- Controller
-Message-ID: <20170220170739.GL21222@n2100.armlinux.org.uk>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20170222151854.3280-5-icenowy@aosc.xyz>
+References: <20170222151854.3280-1-icenowy@aosc.xyz>
+ <20170222151854.3280-5-icenowy@aosc.xyz>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Date: Thu, 23 Feb 2017 17:44:54 +0000
+Message-ID: <CACvgo5117BB+o429cH=X0t3xz_5=XZ65YCEdE=ro+895a9e=RA@mail.gmail.com>
+Subject: Re: [PATCH 4/8] drm/sun4i: add support for sun8i DE2 mixers and
+ display engines
+To: Icenowy Zheng <icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Jean-Francois Moine <moinejf@free.fr>,
+ Jernej Skrabec <jernej.skrabec@siol.net>,
+ devicetree <devicetree@vger.kernel.org>, David Airlie <airlied@linux.ie>,
+ linux-sunxi@googlegroups.com,
+ "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+ ML dri-devel <dri-devel@lists.freedesktop.org>, Chen-Yu Tsai <wens@csie.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
+ LAKML <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 14, 2017 at 06:01:40PM +0100, Gregory CLEMENT wrote:
-> Hello,
-> 
-> This the sixth version of the series adding support for the SDHCI
-> Xenon controller. It can be currently found on the Armada 37xx and the
-> Armada 7K/8K but will be also used in more Marvell SoC (and not only
-> the mvebu ones actually).
-> 
-> Most of the following changes had been discussed on the mailing list,
-> except the new compatible string.
-> 
-> It occurred that the xenon controller was integrated in a different
-> way in the AP806 and the CP110 which both are part of the Armada 7K/8K
-> SoCs. For example the Xenon controller in CP110 doesn't not support
-> HS200.
+On 22 February 2017 at 15:18, Icenowy Zheng <icenowy@aosc.xyz> wrote:
+> Allwinner have a new "Display Engine 2.0" in there new SoCs, which comes
+> in a new "Display Engine" (mixers instead of old backends and
+> frontends).
+>
+> Add support for the mixer on Allwinner V3s SoC; it's the simplest one.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+> ---
+>  drivers/gpu/drm/sun4i/Kconfig       |   8 +
+>  drivers/gpu/drm/sun4i/Makefile      |   1 +
+>  drivers/gpu/drm/sun4i/sun4i_crtc.c  |   6 +-
+>  drivers/gpu/drm/sun4i/sun4i_drv.c   |  38 +++-
+>  drivers/gpu/drm/sun4i/sun4i_drv.h   |   1 +
+>  drivers/gpu/drm/sun4i/sun4i_layer.c |  92 ++++++--
+>  drivers/gpu/drm/sun4i/sun4i_layer.h |   1 +
+>  drivers/gpu/drm/sun4i/sun8i_mixer.c | 417 ++++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/sun4i/sun8i_mixer.h | 133 ++++++++++++
+>  9 files changed, 674 insertions(+), 23 deletions(-)
+Silly question:
 
-Seems to continnue to work on the Macchiatobin board.
+Does this series cover the same functionality/hardware as the separate
+sun8i driver proposed a few months back ?
+The diff stat looks quite different (~1.6k vs ~0.6k), although that
+could be due to reusing the existing sun4i code.
 
-Tested-by: Russell King <rmk+kernel@armlinux.org.uk>
+Thanks
+Emil
 
-Thanks.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
