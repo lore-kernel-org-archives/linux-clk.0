@@ -1,32 +1,42 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 6 Feb 2017 15:01:31 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, Wei Yongjun <weiyongjun1@huawei.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH -next] clk: sunxi-ng: sun9i-a80: Fix wrong pointer passed
- to PTR_ERR()
-Message-ID: <20170206230131.GL25384@codeaurora.org>
-References: <20170206160926.8274-1-weiyj.lk@gmail.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 3/7] clk: tegra: correct afi parent
+Date: Thu, 23 Feb 2017 12:44:40 +0200
+Message-ID: <1487846686-6388-4-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170206160926.8274-1-weiyj.lk@gmail.com>
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/06, Wei Yongjun wrote:
-> From: Wei Yongjun <weiyongjun1@huawei.com>
-> 
-> PTR_ERR should access the value just tested by IS_ERR, otherwise
-> the wrong error code will be returned.
-> 
-> Fixes: 783ab76ae553 ("clk: sunxi-ng: Add A80 Display Engine CCU")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
+The parent for afi is actually mselect, not clk_m.
 
-Applied to clk-next
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 19b00b7..c9e795b 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -815,7 +815,7 @@
+ 	GATE("usb2", "clk_m", 58, 0, tegra_clk_usb2, 0),
+ 	GATE("usb3", "clk_m", 59, 0, tegra_clk_usb3, 0),
+ 	GATE("csi", "pll_p_out3", 52, 0, tegra_clk_csi, 0),
+-	GATE("afi", "clk_m", 72, 0, tegra_clk_afi, 0),
++	GATE("afi", "mselect", 72, 0, tegra_clk_afi, 0),
+ 	GATE("csus", "clk_m", 92, TEGRA_PERIPH_NO_RESET, tegra_clk_csus, 0),
+ 	GATE("dds", "clk_m", 150, TEGRA_PERIPH_ON_APB, tegra_clk_dds, 0),
+ 	GATE("dp2", "clk_m", 152, TEGRA_PERIPH_ON_APB, tegra_clk_dp2, 0),
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
