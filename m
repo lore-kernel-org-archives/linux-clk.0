@@ -1,40 +1,171 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Carlo Caione <carlo@caione.org>,  linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: meson: fix SET_PARM macro
-References: <20170228093016.5624-1-jbrunet@baylibre.com>
-Date: Tue, 28 Feb 2017 10:04:05 -0800
-In-Reply-To: <20170228093016.5624-1-jbrunet@baylibre.com> (Jerome Brunet's
-	message of "Tue, 28 Feb 2017 10:30:16 +0100")
-Message-ID: <m24lze19be.fsf@baylibre.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 4/5] clk: tegra: add super clk mux/div
+Date: Thu, 23 Feb 2017 14:39:38 +0200
+Message-ID: <1487853585-17934-5-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1487853585-17934-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1487853585-17934-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+Add a super clock type which implements both mux and divider. This is used
+for aclk.
 
-> parameter val is not enclosed in parenthesis which is buggy when given an
-> expression instead of a simple value
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-super.c | 87 +++++++++++++++++++++++++++++++++++++++++--
+ drivers/clk/tegra/clk.h       |  7 +++-
+ 2 files changed, 89 insertions(+), 5 deletions(-)
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-
-> ---
->  drivers/clk/meson/clkc.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-> index 9bb70e7a7d6a..c6be77dd8694 100644
-> --- a/drivers/clk/meson/clkc.h
-> +++ b/drivers/clk/meson/clkc.h
-> @@ -25,7 +25,7 @@
->  #define PARM_GET(width, shift, reg)					\
->  	(((reg) & SETPMASK(width, shift)) >> (shift))
->  #define PARM_SET(width, shift, reg, val)				\
-> -	(((reg) & CLRPMASK(width, shift)) | (val << (shift)))
-> +	(((reg) & CLRPMASK(width, shift)) | ((val) << (shift)))
->  
->  #define MESON_PARM_APPLICABLE(p)		(!!((p)->width))
+diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
+index 131d1b50..7982d41 100644
+--- a/drivers/clk/tegra/clk-super.c
++++ b/drivers/clk/tegra/clk-super.c
+@@ -121,9 +121,50 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
+ 	return err;
+ }
+ 
++const struct clk_ops tegra_clk_super_mux_ops = {
++	.get_parent = clk_super_get_parent,
++	.set_parent = clk_super_set_parent,
++};
++
++static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long *parent_rate)
++{
++	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
++	struct clk_hw *div_hw = &super->frac_div.hw;
++
++	__clk_hw_set_clk(div_hw, hw);
++
++	return super->div_ops->round_rate(div_hw, rate, parent_rate);
++}
++
++static unsigned long clk_super_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
++	struct clk_hw *div_hw = &super->frac_div.hw;
++
++	__clk_hw_set_clk(div_hw, hw);
++
++	return super->div_ops->recalc_rate(div_hw, parent_rate);
++}
++
++static int clk_super_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
++{
++	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
++	struct clk_hw *div_hw = &super->frac_div.hw;
++
++	__clk_hw_set_clk(div_hw, hw);
++
++	return super->div_ops->set_rate(div_hw, rate, parent_rate);
++}
++
+ const struct clk_ops tegra_clk_super_ops = {
+ 	.get_parent = clk_super_get_parent,
+ 	.set_parent = clk_super_set_parent,
++	.set_rate = clk_super_set_rate,
++	.round_rate = clk_super_round_rate,
++	.recalc_rate = clk_super_recalc_rate,
+ };
+ 
+ struct clk *tegra_clk_register_super_mux(const char *name,
+@@ -136,13 +177,11 @@ struct clk *tegra_clk_register_super_mux(const char *name,
+ 	struct clk_init_data init;
+ 
+ 	super = kzalloc(sizeof(*super), GFP_KERNEL);
+-	if (!super) {
+-		pr_err("%s: could not allocate super clk\n", __func__);
++	if (!super)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	init.name = name;
+-	init.ops = &tegra_clk_super_ops;
++	init.ops = &tegra_clk_super_mux_ops;
+ 	init.flags = flags;
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
+@@ -163,3 +202,43 @@ struct clk *tegra_clk_register_super_mux(const char *name,
+ 
+ 	return clk;
+ }
++
++struct clk *tegra_clk_register_super_clk(const char *name,
++		const char **parent_names, u8 num_parents,
++		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
++		spinlock_t *lock)
++{
++	struct tegra_clk_super_mux *super;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	super = kzalloc(sizeof(*super), GFP_KERNEL);
++	if (!super)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &tegra_clk_super_ops;
++	init.flags = flags;
++	init.parent_names = parent_names;
++	init.num_parents = num_parents;
++
++	super->reg = reg;
++	super->lock = lock;
++	super->width = 4;
++	super->flags = clk_super_flags;
++	super->frac_div.reg = reg + 4;
++	super->frac_div.shift = 16;
++	super->frac_div.width = 8;
++	super->frac_div.frac_width = 1;
++	super->frac_div.lock = lock;
++	super->div_ops = &tegra_clk_frac_div_ops;
++
++	/* Data in .init is copied by clk_register(), so stack variable OK */
++	super->hw.init = &init;
++
++	clk = clk_register(NULL, &super->hw);
++	if (IS_ERR(clk))
++		kfree(super);
++
++	return clk;
++}
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index a62ea73..6249190 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -686,6 +686,8 @@ struct tegra_periph_init_data {
+ struct tegra_clk_super_mux {
+ 	struct clk_hw	hw;
+ 	void __iomem	*reg;
++	struct tegra_clk_frac_div frac_div;
++	const struct clk_ops	*div_ops;
+ 	u8		width;
+ 	u8		flags;
+ 	u8		div2_index;
+@@ -702,7 +704,10 @@ struct clk *tegra_clk_register_super_mux(const char *name,
+ 		const char **parent_names, u8 num_parents,
+ 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
+ 		u8 width, u8 pllx_index, u8 div2_index, spinlock_t *lock);
+-
++struct clk *tegra_clk_register_super_clk(const char *name,
++		const char **parent_names, u8 num_parents,
++		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
++		spinlock_t *lock);
+ /**
+  * struct clk_init_table - clock initialization table
+  * @clk_id:	clock id as mentioned in device tree bindings
+-- 
+1.9.1
