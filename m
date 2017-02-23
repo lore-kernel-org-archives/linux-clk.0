@@ -1,39 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from [195.159.176.226] ([195.159.176.226]:53213 "EHLO
-        blaine.gmane.org" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1750828AbdBWPKV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2017 10:10:21 -0500
-Received: from list by blaine.gmane.org with local (Exim 4.84_2)
-        (envelope-from <glkc-linux-clk@m.gmane.org>)
-        id 1cgv1u-0004tH-VS
-        for linux-clk@vger.kernel.org; Thu, 23 Feb 2017 16:10:02 +0100
-To: linux-clk@vger.kernel.org
-From: Stefan Monnier <monnier@iro.umontreal.ca>
-Subject: Re: [PATCH 4/8] drm/sun4i: add support for sun8i DE2 mixers and display engines
-Date: Thu, 23 Feb 2017 09:27:38 -0500
-Message-ID: <jwvwpchgez7.fsf-monnier+gmane.comp.hardware.netbook.arm.sunxi@gnu.org>
-References: <20170222151854.3280-1-icenowy@aosc.xyz>
-        <20170222151854.3280-5-icenowy@aosc.xyz>
-Mime-Version: 1.0
-Content-Type: text/plain
-Cc: linux-sunxi@googlegroups.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <cyndis@kapsi.fi>
+Subject: Re: [PATCH 6/7] clk: tegra: correct tegra210_pll_fixed_mdiv_cfg rate
+ calculation
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>,
+ linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
+ <1487776444-4701-7-git-send-email-pdeschrijver@nvidia.com>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <27c7f5fe-ee2f-7324-c6bb-a94ea3609f9d@kapsi.fi>
+Date: Thu, 23 Feb 2017 11:18:12 +0200
+MIME-Version: 1.0
+In-Reply-To: <1487776444-4701-7-git-send-email-pdeschrijver@nvidia.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
->  drivers/gpu/drm/sun4i/Kconfig       |   8 +
->  drivers/gpu/drm/sun4i/Makefile      |   1 +
->  drivers/gpu/drm/sun4i/sun4i_crtc.c  |   6 +-
->  drivers/gpu/drm/sun4i/sun4i_drv.c   |  38 +++-
->  drivers/gpu/drm/sun4i/sun4i_drv.h   |   1 +
->  drivers/gpu/drm/sun4i/sun4i_layer.c |  92 ++++++--
->  drivers/gpu/drm/sun4i/sun4i_layer.h |   1 +
->  drivers/gpu/drm/sun4i/sun8i_mixer.c | 417 ++++++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/sun4i/sun8i_mixer.h | 133 ++++++++++++
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-Should the drm/sun4i directory be renamed to drm/sunxi then?
-
-
-        Stefan
-
+On 22.02.2017 17:14, Peter De Schrijver wrote:
+> Return the actually achieved rate in cfg->output_rate rather than just the
+> requested rate. This is important to make clk_round_rate return the correct
+> result.
+>
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index fe698d2..58d7f9c 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -1222,6 +1222,7 @@ static int tegra210_pll_fixed_mdiv_cfg(struct clk_hw *hw,
+>  	cfg->n = p_rate / cf;
+>
+>  	cfg->sdm_data = 0;
+> +	cfg->output_rate = input_rate;
+>  	if (params->sdm_ctrl_reg) {
+>  		unsigned long rem = p_rate - cf * cfg->n;
+>  		/* If ssc is enabled SDM enabled as well, even for integer n */
+> @@ -1232,10 +1233,15 @@ static int tegra210_pll_fixed_mdiv_cfg(struct clk_hw *hw,
+>  			s -= PLL_SDM_COEFF / 2;
+>  			cfg->sdm_data = sdin_din_to_data(s);
+>  		}
+> +		cfg->output_rate *= cfg->n * PLL_SDM_COEFF + PLL_SDM_COEFF/2 +
+> +					sdin_data_to_din(cfg->sdm_data);
+> +		cfg->output_rate /= p * cfg->m * PLL_SDM_COEFF;
+> +	} else {
+> +		cfg->output_rate *= cfg->n;
+> +		cfg->output_rate /= p * cfg->m;
+>  	}
+>
+>  	cfg->input_rate = input_rate;
+> -	cfg->output_rate = rate;
+>
+>  	return 0;
+>  }
+>
