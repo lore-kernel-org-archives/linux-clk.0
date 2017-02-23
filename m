@@ -1,71 +1,46 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 07/15] clk: ti: enforce const types on string arrays
-Date: Mon, 13 Feb 2017 11:35:03 +0200
-Message-ID: <1486978511-29668-8-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
-References: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20170217173722.6477-1-icenowy@aosc.xyz>
+References: <20170217173722.6477-1-icenowy@aosc.xyz>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 23 Feb 2017 15:56:30 +0100
+Message-ID: <CACRpkdaGXbXDsrpN4-EY6C5OountFfU8JfbnhX+71GDVi7F0uQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/9] Add support for Allwinner R40 SoC
+To: Icenowy Zheng <icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-sunxi <linux-sunxi@googlegroups.com>,
+ Kishon Vijay Abraham I <kishon@ti.com>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Constant string arrays should use const char * const instead of just
-const char *. Change the implementations using these to proper type.
+On Fri, Feb 17, 2017 at 6:37 PM, Icenowy Zheng <icenowy@aosc.xyz> wrote:
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clock.h     | 2 +-
- drivers/clk/ti/composite.c | 2 +-
- drivers/clk/ti/mux.c       | 8 ++++----
- 3 files changed, 6 insertions(+), 6 deletions(-)
+> This patchset is an experiment to add R40 support to mainline Linux.
+>
+> As we have still no user manual for R40, the patchset is developed
+> by reading the BSP source code and device tree, educated guess and
+> try and error.
 
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index 0385990..a2d16190 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -88,7 +88,7 @@ struct ti_clk_mux {
- 	int num_parents;
- 	u16 reg;
- 	u8 module;
--	const char **parents;
-+	const char * const *parents;
- 	u16 flags;
- };
- 
-diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
-index 3f60f99..beea894 100644
---- a/drivers/clk/ti/composite.c
-+++ b/drivers/clk/ti/composite.c
-@@ -124,7 +124,7 @@ struct clk *ti_clk_register_composite(struct ti_clk *setup)
- 	struct clk_hw *mux;
- 	struct clk_hw *div;
- 	int num_parents = 1;
--	const char **parent_names = NULL;
-+	const char * const *parent_names = NULL;
- 	struct clk *clk;
- 	int ret;
- 
-diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-index 0da149e..3cc6db4 100644
---- a/drivers/clk/ti/mux.c
-+++ b/drivers/clk/ti/mux.c
-@@ -97,10 +97,10 @@ static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
- };
- 
- static struct clk *_register_mux(struct device *dev, const char *name,
--				 const char **parent_names, u8 num_parents,
--				 unsigned long flags, void __iomem *reg,
--				 u8 shift, u32 mask, u8 clk_mux_flags,
--				 u32 *table)
-+				 const char * const *parent_names,
-+				 u8 num_parents, unsigned long flags,
-+				 void __iomem *reg, u8 shift, u32 mask,
-+				 u8 clk_mux_flags, u32 *table)
- {
- 	struct clk_mux *mux;
- 	struct clk *clk;
--- 
-1.9.1
+Out of curiosity: does the board support use the mainline drivers
+as starting point? I.e. does it build on top of the community work done
+by Maxime & others?
+
+Yours,
+Linus Walleij
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
