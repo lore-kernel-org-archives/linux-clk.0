@@ -1,67 +1,46 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        My Chuang <my.chuang@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        <linux-clk@vger.kernel.org>,
-        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>,
-        Kevin-CW Chen <kevin-cw.chen@mediatek.com>
-Subject: [PATCH v2 08/10] soc: mediatek: add MT6797 power dt-bindings
-Date: Mon, 6 Feb 2017 20:15:34 +0800
-Message-ID: <1486383336-16892-9-git-send-email-mars.cheng@mediatek.com>
-In-Reply-To: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
-References: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
+Return-Path: <cyndis@kapsi.fi>
+Subject: Re: [PATCH 7/7] clk: tegra: fix type for m field
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>,
+ linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1487776444-4701-1-git-send-email-pdeschrijver@nvidia.com>
+ <1487776444-4701-8-git-send-email-pdeschrijver@nvidia.com>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <35f5417f-fd92-706c-192b-037819a1661d@kapsi.fi>
+Date: Thu, 23 Feb 2017 11:18:16 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1487776444-4701-8-git-send-email-pdeschrijver@nvidia.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds power dt-bindings for MT6797
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
----
- .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-index 16fe94d..b1d165b 100644
---- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-+++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-@@ -9,11 +9,14 @@ domain control.
- 
- The driver implements the Generic PM domain bindings described in
- power/power_domain.txt. It provides the power domains defined in
--include/dt-bindings/power/mt8173-power.h and mt2701-power.h.
-+- include/dt-bindings/power/mt8173-power.h
-+- include/dt-bindings/power/mt6797-power.h
-+- include/dt-bindings/power/mt2701-power.h
- 
- Required properties:
- - compatible: Should be one of:
- 	- "mediatek,mt2701-scpsys"
-+	- "mediatek,mt6797-scpsys"
- 	- "mediatek,mt8173-scpsys"
- - #power-domain-cells: Must be 1
- - reg: Address range of the SCPSYS unit
-@@ -22,6 +25,7 @@ Required properties:
-                       These are clocks which hardware needs to be
-                       enabled before enabling certain power domains.
- 	Required clocks for MT2701: "mm", "mfg", "ethif"
-+	Required clocks for MT6797: "mm", "mfg", "vdec"
- 	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
- 
- Optional properties:
--- 
-1.7.9.5
+On 22.02.2017 17:14, Peter De Schrijver wrote:
+> When used as part of fractional ndiv calculations, the current range is not
+> enough because the denominator of the fraction is multiplied with m.
+>
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 6ba82ec..a62ea73 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -116,7 +116,7 @@ struct tegra_clk_pll_freq_table {
+>  	unsigned long	input_rate;
+>  	unsigned long	output_rate;
+>  	u32		n;
+> -	u16		m;
+> +	u32		m;
+>  	u8		p;
+>  	u8		cpcon;
+>  	u16		sdm_data;
+>
