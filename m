@@ -1,72 +1,52 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Tue, 28 Feb 2017 08:52:43 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Priit Laes <plaes@plaes.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 0/4] ARM: sun7i: Convert sun7i SoC to sunxi-ng
-Message-ID: <20170228075243.gschowjzagwuxgok@lukather>
-References: <20170227210914.18954-1-plaes@plaes.org>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 1/7] clk: tegra: fix pll_a1 iddq register, add pll_a1
+Date: Thu, 23 Feb 2017 12:44:38 +0200
+Message-ID: <1487846686-6388-2-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="vuvp4e2gkxtnurrf"
-In-Reply-To: <20170227210914.18954-1-plaes@plaes.org>
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
+pll_a1 was using CLK_RST_CONTROLLER_PLLA1_MISC_0 for IDDQ control rather
+than the correct register CLK_RST_CONTROLLER_PLLA1_MISC_1. Also add pll_a1
+to the set of clocks defined for Tegra210.
 
---vuvp4e2gkxtnurrf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Hi Priit,
-
-On Mon, Feb 27, 2017 at 11:09:10PM +0200, Priit Laes wrote:
-> Hi,
->=20
-> This is serie brings another SoC into the sunxi-ng world.
->=20
-> As mentioned in sun5i conversion, this is pretty much standard
-> stuff as all the required clocks were already implemented in
-> the sunxi-ng framework.
-
-Thanks a lot for that work. I think the A10 should be converted at the
-same time, and both would share the same driver.
-
-Fortunately, if I recall properly, both are not too far off.
-
-Thanks again,
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---vuvp4e2gkxtnurrf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYtSxGAAoJEBx+YmzsjxAgvmkP/3HQMhfRAVnfsrlxwxUecL/f
-0EcBFHD67QDk/PsniL6OuhfrFqISClbLlICCFgN4B+pNuVG4d08W9nKdDL4FlLYf
-Tp37DpcAHEhAlMsbD4b4Mh1o338BECwD8MH7l22PS2hSwTwVyjMKC05BXrMfzRO3
-7yw+QPrfBw/5kZwE3HTajNwpHE8p+P8ybAQ53UMoU+gRtSvV+2F/WjsHOHFZ1p/W
-WICyv8H3Wy1g06QyOnjqoAvFFXIITNgzLNSBn3YJfCoSs+pYnUSmeiXwWGRcN5r9
-sZpGRPAXJP6vLskqOOuyO69r/IRGpFfFRcvS516Sd72tIVrM55HuZeKdxgc7QZLK
-GTwDS7Yx8Bn/f0kogKoaA+Xg0pAV8aNnowhq7bQMzoVtrq8w0X1bkXVAxH4R5KwK
-uxvTIW0/ZkXwe6T3aaS7P9p4IrfovJVzhfWp4LrUghBdCQswRCucmi5/6882GvG8
-vkShcjXaWfRCP1D9DIsM4LUFUGDbJldMBwmoBWzbRjv27UJz7T2vZeFJgzY6c0nv
-B4Ytk4SrOH3AbrG8HbsI6N+iK0rEJgEupTRziRUXQXPnpaKBKAtd2nvDoI81tcdo
-y7luUVpfJiVktRy9Cje3jQo+bOe4PuATp+BXjnSmbWpLyPYBQQgkbYTMmPRgk5AA
-z+ac9tr9arAEkBzHvtk4
-=JTxW
------END PGP SIGNATURE-----
-
---vuvp4e2gkxtnurrf--
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 2896d2e..2ef8d49 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -1772,7 +1772,7 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
+ 	.misc_reg = PLLA1_MISC0,
+ 	.lock_mask = PLLCX_BASE_LOCK,
+ 	.lock_delay = 300,
+-	.iddq_reg = PLLA1_MISC0,
++	.iddq_reg = PLLA1_MISC1,
+ 	.iddq_bit_idx = PLLCX_IDDQ_BIT,
+ 	.reset_reg = PLLA1_MISC0,
+ 	.reset_bit_idx = PLLCX_RESET_BIT,
+@@ -2209,6 +2209,7 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
+ 	[tegra_clk_pll_c4_out2] = { .dt_id = TEGRA210_CLK_PLL_C4_OUT2, .present = true },
+ 	[tegra_clk_pll_c4_out3] = { .dt_id = TEGRA210_CLK_PLL_C4_OUT3, .present = true },
+ 	[tegra_clk_apb2ape] = { .dt_id = TEGRA210_CLK_APB2APE, .present = true },
++	[tegra_clk_pll_a1] = { .dt_id = TEGRA210_CLK_PLL_A1, .present = true },
+ };
+ 
+ static struct tegra_devclk devclks[] __initdata = {
+-- 
+1.9.1
