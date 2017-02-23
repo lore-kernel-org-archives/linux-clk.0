@@ -1,118 +1,79 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20170214095819.utsftcvti5zdmlmi@lukather>
-References: <20170214033526.16977-1-wens@csie.org> <20170214033526.16977-5-wens@csie.org>
- <20170214095819.utsftcvti5zdmlmi@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 14 Feb 2017 18:26:39 +0800
-Message-ID: <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
-Subject: Re: [PATCH 4/5] clk: sunxi-ng: Add driver for A83T CCU
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
+In-Reply-To: <1487004724-2806-1-git-send-email-der.herr@hofr.at>
+References: <1487004724-2806-1-git-send-email-der.herr@hofr.at>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 23 Feb 2017 17:29:03 +0900
+Message-ID: <CAK7LNATjV39QfXJH=pfXnMF-vHmJHhSu+RyFC7BuBWqcpqZWDA@mail.gmail.com>
+Subject: Re: [PATCH RFC] iopoll: allow for poll_timeout to back-off
+To: Nicholas Mc Guire <der.herr@hofr.at>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-mtd@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 14, 2017 at 5:58 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Tue, Feb 14, 2017 at 11:35:25AM +0800, Chen-Yu Tsai wrote:
->> +/* Some PLLs are input * N / div1 / P. Model them as NKMP with no K */
->
-> Is that even working?
+Hi Nicholas,
 
-Looking at the nkmp clock code, only .recalc_rate will work properly though.
-Maybe I could fix up the code so it handles zero width factors.
 
-> I'm not quite sure we want to do that. We might model it as a NP clock
-> with a variable prediv?
-
-There's no NP clock type yet. And a problem with a variable prediv is that
-it doesn't participate in factor calculation. It's effectively fixed.
-
-I did this for the A80 as well though. Fixing up the NKMP clock might be
-easier.
+2017-02-14 1:52 GMT+09:00 Nicholas Mc Guire <der.herr@hofr.at>:
 
 >
->> +/* Use a separate clock for the pre-divider on the AHB1 PLL-PERIPH input */
->> +static SUNXI_CCU_M(pll_periph_ahb1_clk, "pll-periph-ahb1", "pll-periph",
->> +                0x054, 6, 2, 0);
->> +
->> +static const char * const ahb1_parents[] = { "osc16M-d512", "osc24M",
->> +                                          "pll-periph-ahb1",
->> +                                          "pll-periph-ahb1" };
->> +static struct ccu_div ahb1_clk = {
->> +     .div            = _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
->> +     .mux            = _SUNXI_CCU_MUX(12, 2),
->> +     .common         = {
->> +             .reg            = 0x054,
->> +             .hw.init        = CLK_HW_INIT_PARENTS("ahb1",
->> +                                                   ahb1_parents,
->> +                                                   &ccu_div_ops,
->> +                                                   0),
->> +     },
->> +};
->
-> What's different from a pre divider only for a given index here?
+> One case in /drivers/mmc/host/sdhci-cadence.c has a timeout_us of 1 and
+> sleep_us of 0 which might actually be a bug as it means that the poll loop
+> would do a single read OP in many cases (this is non-atomic context) so it
+> would have to be robust for a single read, thus the poll_timeout might not
+> be suitable - not sure though - but thats a different problem.
 
-The variable pre-divider is shared for both pll-periph mux inputs.
-This is one way to handle it. The other would be to extend ccu_mux
-to handle multiple variable pre-dividers. I don't really want to do
-that if this is the only instance that needs it though.
+Sorry, I could not understand why you thought sdhci-cadence.c seemed a bug.
 
->
->> +/*
->> + * MMC2 supports what's called the "new timing mode". The CCU and the MMC
->> + * controller must be in sync about which mode is used. The new mode moves
->> + * the clock delay controls (and possibly the delay lines) into the MMC
->> + * block. Also, the output of the clock is divided by 2. The output and
->> + * sample phase clocks are unused under this mode.
->> + *
->> + * This new mode seems to be preferred. Hence we force this clock to the
->> + * new mode. And we don't add the phase clocks.
->> + */
->
-> I'm sorry, but I said this several times, this isn't working. We
-> should model it properly, and not hack this around in the clock
-> driver.
->
-> As you say in your comment, the MMC driver needs to be aware about
-> which mode is used, in order to also set a bit in one of its registers
-> accordingly, and modify its sampling behaviour.
->
-> The new timing is preferred, but our previous clock implementations
-> didn't hardcode it, so we can't even rely on that behaviour to always
-> write it in our driver.
+The SDHCI_CDNS_HRS06_TUNE_UP is auto-cleared by the hardware.
+This will normally be done really soon (within 1us),
+but it may not be cleared if the hardware is in trouble.
+It is the intention of the code:
 
-Correct. With the A83T there has never been a merged clock driver though.
-I realize this is a one off thing.
+    readl_poll_timeout(reg, tmp, !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
+                       0, 1);
 
-> This is not something specific to the A83T, but is found in all the
-> SoCs since the A23, so we need to come up with a good solution to
-> address that.
->
-> I'm not sure what a good solution would be though. One would be to
-> just have a private function of our own to switch in the new mode (if
-> relevant, because only the MMC2 controllers have it), but that would
-> lead to troubles with !sunxi-ng. Not something we can't deal with, but
-> some extra precautions should be taken (make sure to protect the call
-> through an ifdef / IS_DEFINED, check that the sunxi-ng driver has been
-> probed, etc.)
 
-If the custom function route is acceptable, I'll come up with something.
 
-Regards
-ChenYu
 
->
-> Or we could introduce a new clk_ops function pointer, but I'm not sure
-> if Mike and Stephen are going to be happy with that.
->
-> Thanks,
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
+>  which results in min,max values for the initial iterations of:
+>       min  max
+>       0    1
+>       0    2
+>       1    4
+>       2    8
+>       4    16
+>       8    32
+>       16   64
+>       32   128
+>       ...
+
+
+I notice you were sending this to me, but
+please notice I am not responsible for this file
+(include/linux/iopoll.h) in any way.
+
+Please take my comments for grain of salt:
+
+With this patch, the sleep range is doubled in each iteration.
+Let's say this routine is called with delay_us=1, timeout_us=50,
+then it slept 16 us, then 32 us.
+If it sleeps 64 us in the next iteration,
+it ends up with sleeping 112 us (=16 + 32 + 64) in total
+where we know waiting 50 us is enough.
+So, the sleep range granularity may get bigger than
+users' intention.
+
+Probably, waiting too long is not a problem in most cases.
+If so, what is the meaning of the argument "sleep_us" after all?
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
