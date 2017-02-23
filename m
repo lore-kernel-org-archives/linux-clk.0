@@ -1,28 +1,39 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <20170202143417.3514875-1-arnd@arndb.de>
-References: <20170202143417.3514875-1-arnd@arndb.de>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 6 Feb 2017 11:43:42 +0800
-Message-ID: <CAGb2v66epL1kNwqAc-yyWzchZsMCbVNqoHAeYTZz1L3-hMhYwA@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: select SUNXI_CCU_MULT for sun5i
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from [195.159.176.226] ([195.159.176.226]:53213 "EHLO
+        blaine.gmane.org" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1750828AbdBWPKV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Feb 2017 10:10:21 -0500
+Received: from list by blaine.gmane.org with local (Exim 4.84_2)
+        (envelope-from <glkc-linux-clk@m.gmane.org>)
+        id 1cgv1u-0004tH-VS
+        for linux-clk@vger.kernel.org; Thu, 23 Feb 2017 16:10:02 +0100
+To: linux-clk@vger.kernel.org
+From: Stefan Monnier <monnier@iro.umontreal.ca>
+Subject: Re: [PATCH 4/8] drm/sun4i: add support for sun8i DE2 mixers and display engines
+Date: Thu, 23 Feb 2017 09:27:38 -0500
+Message-ID: <jwvwpchgez7.fsf-monnier+gmane.comp.hardware.netbook.arm.sunxi@gnu.org>
+References: <20170222151854.3280-1-icenowy@aosc.xyz>
+        <20170222151854.3280-5-icenowy@aosc.xyz>
+Mime-Version: 1.0
+Content-Type: text/plain
+Cc: linux-sunxi@googlegroups.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 2, 2017 at 10:33 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> We get a link error when CCU_MULT is not set with the
-> newly added driver:
->
-> drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.17+0x4): undefined reference to `ccu_mult_ops'
-> drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.5+0x4): undefined reference to `ccu_mult_ops'
->
-> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>  drivers/gpu/drm/sun4i/Kconfig       |   8 +
+>  drivers/gpu/drm/sun4i/Makefile      |   1 +
+>  drivers/gpu/drm/sun4i/sun4i_crtc.c  |   6 +-
+>  drivers/gpu/drm/sun4i/sun4i_drv.c   |  38 +++-
+>  drivers/gpu/drm/sun4i/sun4i_drv.h   |   1 +
+>  drivers/gpu/drm/sun4i/sun4i_layer.c |  92 ++++++--
+>  drivers/gpu/drm/sun4i/sun4i_layer.h |   1 +
+>  drivers/gpu/drm/sun4i/sun8i_mixer.c | 417 ++++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/sun4i/sun8i_mixer.h | 133 ++++++++++++
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Should the drm/sun4i directory be renamed to drm/sunxi then?
+
+
+        Stefan
+
