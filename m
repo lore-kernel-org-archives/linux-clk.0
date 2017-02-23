@@ -1,81 +1,42 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] clk: gxbb: put dividers and muxes in tables
-Date: Tue, 28 Feb 2017 14:29:57 +0100
-Message-Id: <20170228133002.17894-3-jbrunet@baylibre.com>
-In-Reply-To: <20170228133002.17894-1-jbrunet@baylibre.com>
-References: <20170228133002.17894-1-jbrunet@baylibre.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 0/7] Tegra210 clock bug fixes
+Date: Thu, 23 Feb 2017 12:44:37 +0200
+Message-ID: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Until now, there was only 2 dividers and 2 muxes declared for the gxbb
-platform. With the ongoing work on various subsystem, including audio,
-this is about to change. Use the same approach as gates for dividers and
-muxes, putting them in tables to fix the register address at runtime.
+A number of bug fixes for the Tegra210 clock implementation.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/gxbb.c | 28 ++++++++++++++++++++--------
- 1 file changed, 20 insertions(+), 8 deletions(-)
+Changelog:
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 1c1ec137a3cc..388b0c8838af 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -902,6 +902,16 @@ static struct clk_gate *gxbb_clk_gates[] = {
- 	&gxbb_sar_adc_clk,
- };
- 
-+static struct clk_mux *gxbb_clk_muxes[] = {
-+	&gxbb_mpeg_clk_sel,
-+	&gxbb_sar_adc_clk_sel,
-+};
-+
-+static struct clk_divider *gxbb_clk_dividers[] = {
-+	&gxbb_mpeg_clk_div,
-+	&gxbb_sar_adc_clk_div,
-+};
-+
- static int gxbb_clkc_probe(struct platform_device *pdev)
- {
- 	void __iomem *clk_base;
-@@ -928,19 +938,21 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	/* Populate the base address for CPU clk */
- 	gxbb_cpu_clk.base = clk_base;
- 
--	/* Populate the base address for the MPEG clks */
--	gxbb_mpeg_clk_sel.reg = clk_base + (u64)gxbb_mpeg_clk_sel.reg;
--	gxbb_mpeg_clk_div.reg = clk_base + (u64)gxbb_mpeg_clk_div.reg;
--
--	/* Populate the base address for the SAR ADC clks */
--	gxbb_sar_adc_clk_sel.reg = clk_base + (u64)gxbb_sar_adc_clk_sel.reg;
--	gxbb_sar_adc_clk_div.reg = clk_base + (u64)gxbb_sar_adc_clk_div.reg;
--
- 	/* Populate base address for gates */
- 	for (i = 0; i < ARRAY_SIZE(gxbb_clk_gates); i++)
- 		gxbb_clk_gates[i]->reg = clk_base +
- 			(u64)gxbb_clk_gates[i]->reg;
- 
-+	/* Populate base address for muxes */
-+	for (i = 0; i < ARRAY_SIZE(gxbb_clk_muxes); i++)
-+		gxbb_clk_muxes[i]->reg = clk_base +
-+			(u64)gxbb_clk_muxes[i]->reg;
-+
-+	/* Populate base address for dividers */
-+	for (i = 0; i < ARRAY_SIZE(gxbb_clk_dividers); i++)
-+		gxbb_clk_dividers[i]->reg = clk_base +
-+			(u64)gxbb_clk_dividers[i]->reg;
-+
- 	/*
- 	 * register all clks
- 	 */
+v2: add better description for 'remove non-existing pll_m_out1 clock'
+
+Peter De Schrijver (7):
+  clk: tegra: fix pll_a1 iddq register, add pll_a1
+  clk: tegra: fix isp clock modelling
+  clk: tegra: correct afi parent
+  clk: tegra: remove non-existing pll_m_out1 clock
+  clk: tegra: don't warn for PLL defaults unnecessarily
+  clk: tegra: correct tegra210_pll_fixed_mdiv_cfg rate calculation
+  clk: tegra: fix type for m field
+
+ drivers/clk/tegra/clk-id.h               |  1 +
+ drivers/clk/tegra/clk-tegra-periph.c     | 13 +++++++++---
+ drivers/clk/tegra/clk-tegra210.c         | 35 ++++++++++++++++++++------------
+ drivers/clk/tegra/clk.h                  |  2 +-
+ include/dt-bindings/clock/tegra210-car.h |  4 ++--
+ 5 files changed, 36 insertions(+), 19 deletions(-)
+
 -- 
-2.9.3
+1.9.1
