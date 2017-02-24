@@ -1,84 +1,50 @@
-Return-Path: <yuantian.tang@nxp.com>
-From: "Y.T. Tang" <yuantian.tang@nxp.com>
-To: Rob Herring <robh@kernel.org>
-CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Scott Wood <oss@buserror.net>
-Subject: RE: [PATCH 1/2] dt-bindings: qoriq-clock: Add coreclk
-Date: Wed, 1 Mar 2017 01:45:54 +0000
-Message-ID: <DB6PR0402MB2837F35D8881AA2E4F12F430F0290@DB6PR0402MB2837.eurprd04.prod.outlook.com>
-References: <1487137656-4006-1-git-send-email-yuantian.tang@nxp.com>
- <20170227171837.eymnyebgn7ocsp7w@rob-hp-laptop>
-In-Reply-To: <20170227171837.eymnyebgn7ocsp7w@rob-hp-laptop>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 0/5] Add missing Tegra210 clocks
+Date: Fri, 24 Feb 2017 15:19:25 +0200
+Message-ID: <1487942376-19631-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+This series adds a number of clocks which were missing from the Tegra210
+clock definition. It applies on top of the 'Tegra210 clock bug fixes' series
+posted earlier.
 
-> -----Original Message-----
-> From: Rob Herring [mailto:robh@kernel.org]
-> Sent: Tuesday, February 28, 2017 1:19 AM
-> To: Y.T. Tang <yuantian.tang@nxp.com>
-> Cc: mturquette@baylibre.com; sboyd@codeaurora.org;
-> mark.rutland@arm.com; linux-clk@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; Scott Wood <oss@buserror.net>
-> Subject: Re: [PATCH 1/2] dt-bindings: qoriq-clock: Add coreclk
->=20
-> On Wed, Feb 15, 2017 at 01:47:35PM +0800, yuantian.tang@nxp.com wrote:
-> > From: Tang Yuantian <Yuantian.Tang@nxp.com>
-> >
-> > ls1012a has separate input root clocks for core PLLs versus the
-> > platform PLL, with the latter described as sysclk in the hw docs.
-> > Update the qoriq-clock binding to allow a second input clock, named
-> > "coreclk".  If present, this clock will be used for the core PLLs.
-> >
-> > Signed-off-by: Scott Wood <oss@buserror.net>
-> > Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
-> > ---
-> >  Documentation/devicetree/bindings/clock/qoriq-clock.txt | 6 ++++++
-> >  1 file changed, 6 insertions(+)
->=20
-> The change looks fine, but sounds like Scott should remain the author (or
-> agree he shouldn't be).
->=20
-Sure, please make Scott the author and apply this patch set.
+Change log:
 
-Regards,
-Yuantian
+v2: fixed a few useless lines moving around
 
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> > b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> > index df9cb5a..97a9666 100644
-> > --- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> > +++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> > @@ -55,6 +55,11 @@ Optional properties:
-> >  - clocks: If clock-frequency is not specified, sysclk may be provided
-> >  	as an input clock.  Either clock-frequency or clocks must be
-> >  	provided.
-> > +	A second input clock, called "coreclk", may be provided if
-> > +	core PLLs are based on a different input clock from the
-> > +	platform PLL.
-> > +- clock-names: Required if a coreclk is present.  Valid names are
-> > +	"sysclk" and "coreclk".
-> >
-> >  2. Clock Provider
-> >
-> > @@ -71,6 +76,7 @@ second cell is the clock index for the specified type=
-.
-> >  	2	hwaccel		index (n in CLKCGnHWACSR)
-> >  	3	fman		0 for fm1, 1 for fm2
-> >  	4	platform pll	0=3Dpll, 1=3Dpll/2, 2=3Dpll/3, 3=3Dpll/4
-> > +	5	coreclk		must be 0
-> >
-> >  3. Example
-> >
-> > --
-> > 2.1.0.27.g96db324
-> >
+Peter De Schrijver (5):
+  clk: tegra: add cec clock
+  clk: tegra: define Tegra210 DMIC sync clocks
+  clk: tegra: define Tegra210 DMIC clocks
+  clk: tegra: add super clk mux/div
+  clk: tegra: add aclk
+
+ drivers/clk/tegra/clk-id.h                      | 10 +++
+ drivers/clk/tegra/clk-super.c                   | 87 +++++++++++++++++++++++--
+ drivers/clk/tegra/clk-tegra-audio.c             | 85 +++++++++++++++++-------
+ drivers/clk/tegra/clk-tegra-periph.c            | 22 +++++++
+ drivers/clk/tegra/clk-tegra114.c                |  1 +
+ drivers/clk/tegra/clk-tegra124.c                |  1 +
+ drivers/clk/tegra/clk-tegra210.c                | 20 ++++++
+ drivers/clk/tegra/clk-tegra30.c                 |  1 +
+ drivers/clk/tegra/clk.h                         |  7 +-
+ include/dt-bindings/clock/tegra114-car.h        |  2 +-
+ include/dt-bindings/clock/tegra124-car-common.h |  2 +-
+ include/dt-bindings/clock/tegra210-car.h        | 13 +++-
+ include/dt-bindings/clock/tegra30-car.h         |  2 +-
+ 13 files changed, 219 insertions(+), 34 deletions(-)
+
+-- 
+1.9.1
