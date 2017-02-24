@@ -1,62 +1,198 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 16 Feb 2017 18:56:50 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, stable@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Bob Ham <rah@settrans.net>
-Subject: Re: [PATCH] clk: sunxi-ng: sun6i: Fix enable bit offset for hdmi-ddc
- module clock
-Message-ID: <20170216175650.kkwbmwa4yyk33ozp@lukather>
-References: <20170214022332.13326-1-wens@csie.org>
+Return-Path: <dongas86@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="atbf2wmzen52r6sm"
-In-Reply-To: <20170214022332.13326-1-wens@csie.org>
+In-Reply-To: <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
+ <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com>
+From: Dong Aisheng <dongas86@gmail.com>
+Date: Fri, 24 Feb 2017 17:02:12 +0800
+Message-ID: <CAA+hA=SnrGo62=XAQCTjmsS0tQTB097JhVXFSQU8RDak3hA1Rg@mail.gmail.com>
+Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
+ for imx6sll
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bai Ping <ping.bai@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jacky Bai <jacky.baip@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Linus
 
---atbf2wmzen52r6sm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Gently Ping...
 
-On Tue, Feb 14, 2017 at 10:23:32AM +0800, Chen-Yu Tsai wrote:
-> The enable bit offset for the hdmi-ddc module clock is wrong. It is
-> pointing to the main hdmi module clock enable bit.
->=20
-> Reported-by: Bob Ham <rah@settrans.net>
-> Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
-> Cc: stable@vger.kernel.org # 4.9.x-
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Any feedback about the proposal?
 
-Queued as a fix for 4.11, thanks,
-Maxime
+Regards
+Dong Aisheng
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---atbf2wmzen52r6sm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYpefiAAoJEBx+YmzsjxAgBCkP/0E2fz4KjZYWIBSD1L4YTnOB
-Hcn1sQ6HlsV79do4cgAHQUNrmlKn08tm/L8GaLQBOVQNei9If2E0fBWQXJ8uXje0
-5JbsFgh9eAoG321MqrPIQbqg2NrR94ftUEU9bCJevC9jYQqKroNpWPH1cxIGCsQo
-N6Gh87lXvBjCZlrpO2OWW3ymBkT1BA2/1UXcMLVNcIXCowq3yRhhm2uGhnL9EHsi
-gPitY7kbN1HehoZgaMox3JRVa45ew6fZxuMAOoYoWPLa2sVjpvCSyz5WgHPiUtXe
-UBngW5RDmfca6Ud6ruo+W+tSjuGr6eRlDrdImuUHN/IEzH43U2tdWw6uo4EpFYhO
-Z+Zbe3C9s2n02eb8A9jU0/LF/PA0FZ1Ls0JmfR47GCHNGWekWJf+kqGYIi8jv85w
-yrdA/E4aAu5PQapjFVYusayu1ixygAXm5iJv9/RmaNbxUsULiSLen/j0YTBXeGPp
-psjxktTzqvw1Wu17Rdc8OPBJ+JESGHcyrT3+v43BQkwM0K2IUCligPPx45lu/zIH
-7xHfsADVgl4WqAOTP5A7BpqYFpgSjOzpdPyB/5jtpCg+E8tHmGcqaGthTvdM0bPh
-Yk36OBeHiQv7g8nqIuHYsq4OE3s8gln4H5rdHlrbKRvBCR65o26YGMkS+V0rgbc3
-os6Kx+V6tMXZte+kHT0n
-=+1el
------END PGP SIGNATURE-----
-
---atbf2wmzen52r6sm--
+On Thu, Feb 16, 2017 at 3:51 PM, Dong Aisheng <dongas86@gmail.com> wrote:
+> Hi Linus,
+>
+> On Tue, Dec 27, 2016 at 8:59 PM, Linus Walleij <linus.walleij@linaro.org>=
+ wrote:
+>> On Tue, Dec 27, 2016 at 10:47 AM, Bai Ping <ping.bai@nxp.com> wrote:
+>>
+>>> Add pinctrl binding doc update for imx6sll.
+>>>
+>>> Signed-off-by: Bai Ping <ping.bai@nxp.com>
+>>
+>> I have to push back on this a bit.
+>>
+>>> +Please refer to fsl,imx-pinctrl.txt in this directory for common bindi=
+ng part
+>>> +and usage.
+>>
+>> I understand that it is building on top of the old i.MX bindings and tha=
+t
+>> it has some kind of "tradition" coming with it.
+>>
+>> At the same time, the i.MX bindings came about before we had the
+>> generic pin control bindings defined.
+>>
+>>> +CONFIG bits definition:
+>>> +PAD_CTL_LVE                    (1 << 22)
+>>> +PAD_CTL_HYS                     (1 << 16)
+>>> +PAD_CTL_PUS_100K_DOWN           (0 << 14)
+>>> +PAD_CTL_PUS_47K_UP              (1 << 14)
+>>> +PAD_CTL_PUS_100K_UP             (2 << 14)
+>>> +PAD_CTL_PUS_22K_UP              (3 << 14)
+>>> +PAD_CTL_PUE                     (1 << 13)
+>>> +PAD_CTL_PKE                     (1 << 12)
+>>> +PAD_CTL_ODE                     (1 << 11)
+>>> +PAD_CTL_SPEED_LOW               (0 << 6)
+>>> +PAD_CTL_SPEED_MED               (1 << 6)
+>>> +PAD_CTL_SPEED_HIGH              (3 << 6)
+>>> +PAD_CTL_DSE_DISABLE             (0 << 3)
+>>> +PAD_CTL_DSE_260ohm              (1 << 3)
+>>> +PAD_CTL_DSE_130ohm              (2 << 3)
+>>> +PAD_CTL_DSE_87ohm               (3 << 3)
+>>> +PAD_CTL_DSE_65ohm               (4 << 3)
+>>> +PAD_CTL_DSE_52ohm               (5 << 3)
+>>> +PAD_CTL_DSE_43ohm               (6 << 3)
+>>> +PAD_CTL_DSE_37ohm               (7 << 3)
+>>> +PAD_CTL_SRE_FAST                (1 << 0)
+>>> +PAD_CTL_SRE_SLOW                (0 << 0)
+>>
+>> A whole slew of these if not all correspond to the generic bindings.
+>>
+>> I would consider augmenting the code in the driver to handle the generic
+>> bindings *in addition* to the old legacy bindings, and use those over th=
+ese
+>> random custom bits.
+>>
+>> Read drivers using CONFIG_GENERIC_PINCONF as an inspiration.
+>>
+>> For example see commit
+>> cefbf1a1b29531a970bc2908a50a75d6474fcc38
+>> "pinctrl: sunxi: Support generic binding"
+>> from Maxime Ripard, where he does a similar thing for sunxi.
+>>
+>
+> First thanks for your good suggestion!
+>
+> All we realized that the raw data of IMX pad config in dts is not good.
+> e.g.
+> pinctrl_ecspi3: ecspi3grp {
+>         fsl,pins =3D <
+>                 MX7D_PAD_SAI2_TX_SYNC__ECSPI3_MISO      0x17059
+>         .........
+>
+> I did a deep feasibility analysis these days on the migrating to generic
+> pinctrl binding you referred. It is regrettably that it may not be so sui=
+table
+> for IMX to fully migrate right now.
+>
+> Generic binding only supports parsing strings for pins and function
+> from dts right now, that means we need back to the old way of hardcoding
+> all register bits in driver which we actually chose to move out since
+> the commit "e164153 pinctrl: imx: move hard-coding data into device tree"=
+.
+>
+> And IMX doesn't have PAD GROUP in HW, each pad theoretically can be muxed
+> as 8 single functions.
+> e.g.
+> For IOMUXC_SW_MUX_CTL_PAD_CSI_DATA07
+> MUX_MODE MUX Mode Select Field.
+> Select 1 of 8 iomux modes to be used for pad: CSI_DATA07.
+> 000 ALT0 =E2=80=94 Select signal CSI1_DATA09.
+> 001 ALT1 =E2=80=94 Select signal ESAI_TX3_RX2.
+> 010 ALT2 =E2=80=94 Select signal I2C4_SDA.
+> 011 ALT3 =E2=80=94 Select signal KPP_ROW7.
+> 100 ALT4 =E2=80=94 Select signal UART6_CTS_B.
+> 101 ALT5 =E2=80=94 Select signal GPIO1_IO21.
+> 110 ALT6 =E2=80=94 Select signal EIM_DATA16.
+> 111 ALT7 =E2=80=94 Select signal DCIC1_OUT.
+> By converting to generic binding, we need construct a huge function/group=
+ map
+> in driver for hundreds of pads for each SoC. That is a bit fear to us.
+>
+> Current IMX method only generates the used function/groups dynamically
+> by parsing board dts which is much a lighter way.
+>
+> But of course, we want to fix the raw config value issue as well which is
+> un-maintainable and un-readable as you pointed out.
+>
+> I think there might be two options for us to go:
+> One option is using macro definitions instead of raw data as pinctrl-sing=
+le
+> users as OMAP.
+> e.g.
+> art2_pins: pinmux_uart2_pins {
+>         pinctrl-single,pins =3D <
+>                 OMAP4_IOPAD(0x118, PIN_INPUT_PULLUP | MUX_MODE0)
+>  /* uart2_cts.uart2_cts */
+>         ........
+>
+> For this way, no driver changes required, just replace the raw data by ma=
+cro
+> in device tree. But i wonder this may not be your original intention alth=
+ough
+> it's the easiest way for us.
+> Anyway, if you agree, we probably would prefer this way.
+>
+> Another option is partially convert to generic binding for only pad
+> configuration
+> part. e.g.
+> pinctrl_usdhc1: usdhc1grp {
+>         fsl,pins =3D <
+>                 MX7D_PAD_SD1_CMD__SD1_CMD
+>                 MX7D_PAD_SD1_CLK__SD1_CLK
+>                 MX7D_PAD_SD1_DATA0__SD1_DATA0
+>                 ...
+>         >;
+>         bias-pull-up =3D <47KOHM>;
+>         drive-strength =3D <130OHM>;
+>         slew-rate =3D <FAST>;
+>         speed =3D <50MHZ>;
+>         ....
+> };
+> (Some of the property still not supported or not the same as generic
+> binding right now)
+>
+> This way requires no big drivers changes and only extend the driver
+> to support the generic pinctrl dt configuration properties.
+>
+> And it also fix the raw data issues and looks like more applicable than t=
+he full
+> migration.
+>
+> So would you be willing to accept it?
+>
+> Another potential benefits for this way is that we may can use PCONFDUMP
+> to dump a more readable data from pinctrl debug system.
+>
+>> Yours,
+>> Linus Walleij
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> Regards
+> Dong Aisheng
