@@ -1,59 +1,96 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 8 Feb 2017 18:43:02 -0600
-From: Rob Herring <robh@kernel.org>
-To: Baoyou Xie <baoyou.xie@linaro.org>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, mark.rutland@arm.com,
-	jun.nie@linaro.org, mturquette@baylibre.com, sboyd@codeaurora.org,
-	perex@perex.cz, tiwai@suse.com, shawn.guo@linaro.org,
-	vinod.koul@intel.com, alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	shawnguo@kernel.org, xie.baoyou@zte.com.cn, chen.chaokai@zte.com.cn,
-	wang.qiang01@zte.com.cn
-Subject: Re: [PATCH v1 2/3] dt: Document for the ZTE zx296718 I2S controller
-Message-ID: <20170209004302.njyxhwq5d2kbai7n@rob-hp-laptop>
-References: <1486389020-29432-1-git-send-email-baoyou.xie@linaro.org>
- <1486389020-29432-2-git-send-email-baoyou.xie@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1486389020-29432-2-git-send-email-baoyou.xie@linaro.org>
+In-Reply-To: <20170222200947.3ikrhvv76ymfu5tv@lukather>
+References: <20170222152310.3719-5-icenowy@aosc.xyz>
+ <20170222200947.3ikrhvv76ymfu5tv@lukather>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Fri, 24 Feb 2017 07:30:36 -0600
+Message-ID: <CAL_JsqKY1sXT9g9wHhQEt9-x32PaY0yQi8++bTajcEVk1x8E_w@mail.gmail.com>
+Subject: Re: [PATCH 4/8] drm/sun4i: add support for sun8i DE2 mixers and
+ display engines
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Jean-Francois Moine <moinejf@free.fr>,
+ Jernej Skrabec <jernej.skrabec@siol.net>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ David Airlie <airlied@linux.ie>, linux-sunxi <linux-sunxi@googlegroups.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>, Chen-Yu Tsai <wens@csie.org>,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 06, 2017 at 09:50:19PM +0800, Baoyou Xie wrote:
-> This patch documents the devicetree for the ZTE's zx296718
-> I2S audio controller.
-> 
-> Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
-> ---
->  Documentation/devicetree/bindings/sound/zte,zx-i2s.txt | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt b/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
-> index 7e5aa6f..c405561 100644
-> --- a/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
-> +++ b/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
-> @@ -1,10 +1,12 @@
->  ZTE ZX296702 I2S controller
->  
->  Required properties:
-> - - compatible : Must be "zte,zx296702-i2s"
-> + - compatible : Should include one of the following strings:
-> +	"zte,zx296702-i2s","zte,zx296718-i2s".
+On Wed, Feb 22, 2017 at 2:09 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi,
+>
+> On Wed, Feb 22, 2017 at 11:23:06PM +0800, Icenowy Zheng wrote:
+>> Allwinner have a new "Display Engine 2.0" in there new SoCs, which comes
+>> in a new "Display Engine" (mixers instead of old backends and
+>> frontends).
+>>
+>> Add support for the mixer on Allwinner V3s SoC; it's the simplest one.
+>>
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+>> ---
 
-One per line please.
+[...]
 
->   - reg : Must contain I2S core's registers location and length
->   - clocks : Pairs of phandle and specifier referencing the controller's clocks.
-> - - clock-names: "tx" for the clock to the I2S interface.
-> + - clock-names: "tx" for the wclk, "pclk" for the pclk to the I2S interface.
-> +	must contain pclk for zx296718 SoC.
+>> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+>> new file mode 100644
+>> index 000000000000..9427b57240d3
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+>> @@ -0,0 +1,417 @@
+>> +/*
+>> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.xyz>
+>> + *
+>> + * Based on sun4i_backend.c, which is:
+>> + *   Copyright (C) 2015 Free Electrons
+>> + *   Copyright (C) 2015 NextThing Co
+>> + *
+>> + * This program is free software; you can redistribute it and/or
+>> + * modify it under the terms of the GNU General Public License as
+>> + * published by the Free Software Foundation; either version 2 of
+>> + * the License, or (at your option) any later version.
+>> + */
+>> +
+>> +#include <drm/drmP.h>
+>> +#include <drm/drm_atomic_helper.h>
+>> +#include <drm/drm_crtc.h>
+>> +#include <drm/drm_crtc_helper.h>
+>> +#include <drm/drm_fb_cma_helper.h>
+>> +#include <drm/drm_gem_cma_helper.h>
+>> +#include <drm/drm_plane_helper.h>
+>> +
+>> +#include <linux/component.h>
+>> +#include <linux/reset.h>
+>> +#include <linux/of_device.h>
+>> +
+>> +#include "sun8i_mixer.h"
+>> +#include "sun4i_drv.h"
+>> +
+>> +#define SUN8I_DRAM_OFFSET 0x40000000
+>
+> PHYS_OFFSET?
 
-I'd reword as "pclk is only present for zte,zx296718-i2s"
+PHYS_OFFSET is not portable. __pa(PAGE_OFFSET) instead.
 
->   - dmas: Pairs of phandle and specifier for the DMA channel that is used by
->     the core. The core expects two dma channels for transmit.
->   - dma-names : Must be "tx" and "rx"
-> -- 
-> 2.7.4
-> 
+If your DMA addresses are different from CPU addresses (i.e. have some
+offset), then use "dma-ranges" in DT.
+
+Rob
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
