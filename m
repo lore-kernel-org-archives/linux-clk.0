@@ -1,183 +1,71 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 02/10] irqchip: mtk-sysirq: extend intpol base to
- arbitrary number
-To: Mars Cheng <mars.cheng@mediatek.com>
-References: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
- <1486383336-16892-3-git-send-email-mars.cheng@mediatek.com>
- <2079ad73-6d7d-d20f-2945-68ea9fbd9b50@arm.com>
- <1486632694.8348.14.camel@mtkswgap22>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        My Chuang <my.chuang@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <504b27fa-412b-8f21-d9c3-5e2c7dc67dd5@arm.com>
-Date: Thu, 9 Feb 2017 09:43:56 +0000
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 5/5] clk: tegra: add aclk
+Date: Fri, 24 Feb 2017 15:19:30 +0200
+Message-ID: <1487942376-19631-6-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1487942376-19631-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1487942376-19631-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <1486632694.8348.14.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/02/17 09:31, Mars Cheng wrote:
-> On Thu, 2017-02-09 at 09:03 +0000, Marc Zyngier wrote:
->> On 06/02/17 12:15, Mars Cheng wrote:
->>> Originally driver only supports one base. However, MT6797 has
->>> more than one bases to configure interrupt polarity. To support
->>> possible design change, here comes a solution to use arbitrary
->>> number of bases.
->>>
->>> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
->>> ---
->>>  drivers/irqchip/irq-mtk-sysirq.c |   71 +++++++++++++++++++++++++++-----------
->>>  1 file changed, 50 insertions(+), 21 deletions(-)
->>>
->>> diff --git a/drivers/irqchip/irq-mtk-sysirq.c b/drivers/irqchip/irq-mtk-sysirq.c
->>> index 63ac73b..2645706 100644
->>> --- a/drivers/irqchip/irq-mtk-sysirq.c
->>> +++ b/drivers/irqchip/irq-mtk-sysirq.c
->>> @@ -24,7 +24,9 @@
->>>  
->>>  struct mtk_sysirq_chip_data {
->>>  	spinlock_t lock;
->>> -	void __iomem *intpol_base;
->>> +	u32 nr_intpol_bases;
->>> +	void __iomem **intpol_bases;
->>> +	u32 *intpol_words;
->>>  };
->>>  
->>>  static int mtk_sysirq_set_type(struct irq_data *data, unsigned int type)
->>> @@ -33,13 +35,15 @@ static int mtk_sysirq_set_type(struct irq_data *data, unsigned int type)
->>>  	struct mtk_sysirq_chip_data *chip_data = data->chip_data;
->>>  	u32 offset, reg_index, value;
->>>  	unsigned long flags;
->>> -	int ret;
->>> +	int ret, i;
->>>  
->>>  	offset = hwirq & 0x1f;
->>>  	reg_index = hwirq >> 5;
->>> +	for (i = 0; reg_index >= chip_data->intpol_words[i]; i++)
->>> +		reg_index -= chip_data->intpol_words[i];
->>
->> Two questions:
->> - What guarantees that two successive regions deal with consecutive
->> interrupts? For example, if I have region A that deals with interrupts
->> 0-31, what guarantees that region B covers 32-63?
-> 
-> It is guaranteed by mediatek's chip design team. For those chips with
-> multiple bases, they all have the consecutive interrupts in the next
-> region.
+This clock clocks the ADSP cortex-A9.
 
-Hum. OK. We'll see how long this holds true, I suppose.
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c         | 10 ++++++++++
+ include/dt-bindings/clock/tegra210-car.h |  2 ++
+ 2 files changed, 12 insertions(+)
 
-> 
->> - Given that there is a static relation between a region and a hwirq,
->> can't you compute this relation at init time, and let set_type be a fast
->> path?
->>
-> 
-> sure, I can do this to optimize set_type. will do it in v3
-> 
->>>  
->>>  	spin_lock_irqsave(&chip_data->lock, flags);
->>> -	value = readl_relaxed(chip_data->intpol_base + reg_index * 4);
->>> +	value = readl_relaxed(chip_data->intpol_bases[i] + reg_index * 4);
->>>  	if (type == IRQ_TYPE_LEVEL_LOW || type == IRQ_TYPE_EDGE_FALLING) {
->>>  		if (type == IRQ_TYPE_LEVEL_LOW)
->>>  			type = IRQ_TYPE_LEVEL_HIGH;
->>> @@ -49,7 +53,8 @@ static int mtk_sysirq_set_type(struct irq_data *data, unsigned int type)
->>>  	} else {
->>>  		value &= ~(1 << offset);
->>>  	}
->>> -	writel(value, chip_data->intpol_base + reg_index * 4);
->>> +
->>> +	writel(value, chip_data->intpol_bases[i] + reg_index * 4);
->>
->> Why do you have a writel here, while you're using relaxed accessors
->> otherwise? Is there anything else that needs to be made visible to the
->> irqchip?
->>
-> 
-> before we call spin_unlock_irqrestore() in the end of set_type, polarity
-> should take effect so we use writel() here. This patch did not change
-> the usage.
-
-That's not what I mean. writel has a DSB *before* performing the write
-to the device. Do you have any write (to memory) that needs to be made
-visible to the irqchip before the write to the register occurs?
-
-Looking at the code, I'd say no. This is a standard device
-read-modify-write sequence, no in-memory data that needs to make it
-before the write occurs.
-
-So please turn this into a writel_relaxed.
-
-> 
->>>  
->>>  	data = data->parent_data;
->>>  	ret = data->chip->irq_set_type(data, type);
->>> @@ -124,8 +129,7 @@ static int __init mtk_sysirq_of_init(struct device_node *node,
->>>  {
->>>  	struct irq_domain *domain, *domain_parent;
->>>  	struct mtk_sysirq_chip_data *chip_data;
->>> -	int ret, size, intpol_num;
->>> -	struct resource res;
->>> +	int ret, size, intpol_num = 0, nr_intpol_bases, i;
->>>  
->>>  	domain_parent = irq_find_host(parent);
->>>  	if (!domain_parent) {
->>> @@ -133,36 +137,61 @@ static int __init mtk_sysirq_of_init(struct device_node *node,
->>>  		return -EINVAL;
->>>  	}
->>>  
->>> -	ret = of_address_to_resource(node, 0, &res);
->>> -	if (ret)
->>> -		return ret;
->>> -
->>>  	chip_data = kzalloc(sizeof(*chip_data), GFP_KERNEL);
->>>  	if (!chip_data)
->>>  		return -ENOMEM;
->>>  
->>> -	size = resource_size(&res);
->>> -	intpol_num = size * 8;
->>> -	chip_data->intpol_base = ioremap(res.start, size);
->>> -	if (!chip_data->intpol_base) {
->>> -		pr_err("mtk_sysirq: unable to map sysirq register\n");
->>> -		ret = -ENXIO;
->>> -		goto out_free;
->>> +	if (of_property_read_u32(node, "#intpol-bases", &nr_intpol_bases))
->>> +		nr_intpol_bases = 1;
->>> +
->>> +	chip_data->intpol_words =
->>> +		kcalloc(nr_intpol_bases, sizeof(u32), GFP_KERNEL);
->>
->> Please keep the assignment on a single line.
->>
-> 
-> Got it, but another warning (prefer 75 char in single line) would pop
-> up. Would you still like me to keep it on a single line?
-
-rm scripts/checkpatch.pl
-
-Look, no warning! More seriously, if you're really worried about this,
-you can reformat it:
-
-	chip_data->intpol_words = kcalloc(nr_intpol_bases,
-					  sizeof(u32), GFP_KERNEL);
-
-like this.
-
-Thanks,
-
-	M.
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index cfe7078..9a2512a 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2308,6 +2308,11 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
+ 
+ static struct clk **clks;
+ 
++static const char * const aclk_parents[] = {
++	"pll_a1", "pll_c", "pll_p", "pll_a_out0", "pll_c2", "pll_c3",
++	"clk_m"
++};
++
+ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 					    void __iomem *pmc_base)
+ {
+@@ -2369,6 +2374,11 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 	clk_register_clkdev(clk, "cml1", NULL);
+ 	clks[TEGRA210_CLK_CML1] = clk;
+ 
++	clk = tegra_clk_register_super_clk("aclk", aclk_parents,
++				ARRAY_SIZE(aclk_parents), 0, clk_base + 0x6e0,
++				0, NULL);
++	clks[TEGRA210_CLK_ACLK] = clk;
++
+ 	tegra_periph_clk_init(clk_base, pmc_base, tegra210_clks, &pll_p_params);
+ }
+ 
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index 5aa1027..8744b19 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -396,6 +396,8 @@
+ #define TEGRA210_CLK_PLL_C_UD 364
+ #define TEGRA210_CLK_SCLK_MUX 365
+ 
++#define TEGRA210_CLK_ACLK 370
++
+ #define TEGRA210_CLK_DMIC1_SYNC_CLK 388
+ #define TEGRA210_CLK_DMIC1_SYNC_CLK_MUX 389
+ #define TEGRA210_CLK_DMIC2_SYNC_CLK 390
 -- 
-Jazz is not dead. It just smells funny...
+1.9.1
