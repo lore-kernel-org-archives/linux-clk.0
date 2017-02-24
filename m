@@ -1,46 +1,113 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 01/15] clk: ti: remove un-used definitions from public clk_hw_omap struct
-Date: Mon, 13 Feb 2017 11:34:57 +0200
-Message-ID: <1486978511-29668-2-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
-References: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Thu, 23 Feb 2017 16:20:28 -0800
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [linux-sunxi] Re: [RFC PATCH 4/9] clk: sunxi-ng: support R40 SoC
+Message-ID: <20170224002028.miupa6dzefgxbfse@lukather>
+References: <20170222231738.HXRSmi86@smtp1o.mail.yandex.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20170222231738.HXRSmi86@smtp1o.mail.yandex.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
+ Kishon Vijay Abraham I <kishon@ti.com>, linux-gpio@vger.kernel.org,
+ linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============0533806570926305171=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clksel support has been deprecated a while back, so remove these from
-the struct also.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- include/linux/clk/ti.h | 4 ----
- 1 file changed, 4 deletions(-)
+--===============0533806570926305171==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="g5of3ncydxxzu2w7"
+Content-Disposition: inline
 
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 6110fe0..07308db 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -129,8 +129,6 @@ struct clk_hw_omap_ops {
-  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
-  * @flags: see "struct clk.flags possibilities" above
-  * @clksel_reg: for clksel clks, register va containing src/divisor select
-- * @clksel_mask: bitmask in @clksel_reg for the src/divisor selector
-- * @clksel: for clksel clks, pointer to struct clksel for this clock
-  * @dpll_data: for DPLLs, pointer to struct dpll_data for this clock
-  * @clkdm_name: clockdomain name that this clock is contained in
-  * @clkdm: pointer to struct clockdomain, resolved from @clkdm_name at runtime
-@@ -145,8 +143,6 @@ struct clk_hw_omap {
- 	u8			enable_bit;
- 	u8			flags;
- 	void __iomem		*clksel_reg;
--	u32			clksel_mask;
--	const struct clksel	*clksel;
- 	struct dpll_data	*dpll_data;
- 	const char		*clkdm_name;
- 	struct clockdomain	*clkdm;
--- 
-1.9.1
+
+--g5of3ncydxxzu2w7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Feb 22, 2017 at 01:54:58PM +0800, Icenowy Zheng wrote:
+>=20
+> 2017=E5=B9=B42=E6=9C=8822=E6=97=A5 07:03=E4=BA=8E Maxime Ripard <maxime.r=
+ipard@free-electrons.com>=E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > Hi,=20
+> >
+> > On Sat, Feb 18, 2017 at 01:37:17AM +0800, Icenowy Zheng wrote:=20
+> > > Allwinner R40 SoC have a clock controller module in the style of the=
+=20
+> > > SoCs beyond sun6i, however, it's more rich and complex.=20
+> > >=20
+> > > Add support for it.=20
+> > >=20
+> > > As the user manual is still not available, this driver is made with=
+=20
+> > > knowledge from clk-sun8iw11.c in the BSP kernel source.=20
+> >
+> > Missing SoB.=20
+> >
+> > Why are some patches tagged as RFC and some don't?=20
+>=20
+> There's still no open User Manual for R40, so I tagged CCU-related
+> drivers RFC.
+>=20
+> Pinctrl driver can be written with the datasheet draft, which is
+> available now.
+>=20
+> For USB we have never user manual so everything is educated guess --
+> so it's not RFC.
+
+It's still kind of weird to mix and match patches with and without RFC
+tags.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--g5of3ncydxxzu2w7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYr3xMAAoJEBx+YmzsjxAgfs0QAL24uvKyCPflkHLK1pP4SNL0
+stcJWaa9W6pmnpQkhqyD5oZlrS8MkxdWmCGlKxyrrT+zT3TsmFBKM3sbLk0+Ciw2
+luZUfpsIFZO3zlCCnyrd6sq1VXGLZ3xSftgA24DLE7heMmMDhx0aQghfS6Y6xwFs
+YMQJnVyC9YcpwRkKdsJkSktbbZmRCsSqzRgaa72++lhk05ZuycI8DAnbpsZmC5ov
+PIRXjcGgO2yhHNljyqv87cxf6zKDXmqlAdt9wuZ1GPPhz6JAArDTRxFaEhehLPVY
+zYFQVvEyjdz6mZgZL7lrogjt3V92DOHv7ZR3AYKD78L8g8iZVWcJt00AQ6W92U64
+IHdB4ymTTFe4pNim5AvzF3iG9EekSpfwCVUHQFLQvgykzRndg7iJUS+Qyp1Xi3VM
+bWkONMQl3WBMzN9KNyGx9v657h0ze+qiSFbx8YyiE41ldhQdk0XdrQX9mMsrTgmU
+zEH4MH4j7JbWAEK8Kq62NfgBkSy99MpfJGyR2tEPJsH8rHoZb6JrfHSQtSJKBB1n
+FYUlxR/3HUrl/ydzxDSh1K2E1QQ9Y4HhCSAfMuKnVYSOorCuUDiMBPnky1aZLJGz
+hZPrInmrMJ7aF3SPpUiPKNcvE/TzJ4Lpiq+stceSpnGzzYItSwfy6HubQe6OKMzj
+MAhNp2d5yPs/Oq8QL06X
+=OKPg
+-----END PGP SIGNATURE-----
+
+--g5of3ncydxxzu2w7--
+
+
+--===============0533806570926305171==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0533806570926305171==--
