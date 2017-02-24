@@ -1,40 +1,87 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 16 Feb 2017 18:53:18 +0100
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Thu, 23 Feb 2017 16:46:28 -0800
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi: ccu-sun5i needs nkmp
-Message-ID: <20170216175318.fuj375743jt43um4@lukather>
-References: <20170214213005.2848151-1-arnd@arndb.de>
+To: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH 4/8] drm/sun4i: add support for sun8i DE2 mixers and
+ display engines
+Message-ID: <20170224004628.xkjrpmbomomgbd24@lukather>
+References: <20170222151854.3280-1-icenowy@aosc.xyz>
+ <20170222151854.3280-5-icenowy@aosc.xyz>
+ <CACvgo5117BB+o429cH=X0t3xz_5=XZ65YCEdE=ro+895a9e=RA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="fr5iuajkkwudz4xy"
-In-Reply-To: <20170214213005.2848151-1-arnd@arndb.de>
+In-Reply-To: <CACvgo5117BB+o429cH=X0t3xz_5=XZ65YCEdE=ro+895a9e=RA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Jean-Francois Moine <moinejf@free.fr>,
+ Jernej Skrabec <jernej.skrabec@siol.net>,
+ devicetree <devicetree@vger.kernel.org>, David Airlie <airlied@linux.ie>,
+ linux-sunxi@googlegroups.com,
+ "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+ ML dri-devel <dri-devel@lists.freedesktop.org>, Chen-Yu Tsai <wens@csie.org>,
+ Rob Herring <robh+dt@kernel.org>, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, LAKML <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/mixed; boundary="===============2540278490976861582=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---fr5iuajkkwudz4xy
+--===============2540278490976861582==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="gbdh35hmqoiikprm"
+Content-Disposition: inline
+
+
+--gbdh35hmqoiikprm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 14, 2017 at 10:29:45PM +0100, Arnd Bergmann wrote:
-> A randconfig build ran into this rare link error:
->=20
-> drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.1+0x4): undefi=
-ned reference to `ccu_nkmp_ops'
-> drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.7+0x4): undefi=
-ned reference to `ccu_nkmp_ops'
->=20
-> This adds the missing 'select'.
->=20
-> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Hi Emil,
 
-Queued as a fix for 4.11, thanks!
+On Thu, Feb 23, 2017 at 05:44:54PM +0000, Emil Velikov wrote:
+> On 22 February 2017 at 15:18, Icenowy Zheng <icenowy@aosc.xyz> wrote:
+> > Allwinner have a new "Display Engine 2.0" in there new SoCs, which comes
+> > in a new "Display Engine" (mixers instead of old backends and
+> > frontends).
+> >
+> > Add support for the mixer on Allwinner V3s SoC; it's the simplest one.
+> >
+> > Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+> > ---
+> >  drivers/gpu/drm/sun4i/Kconfig       |   8 +
+> >  drivers/gpu/drm/sun4i/Makefile      |   1 +
+> >  drivers/gpu/drm/sun4i/sun4i_crtc.c  |   6 +-
+> >  drivers/gpu/drm/sun4i/sun4i_drv.c   |  38 +++-
+> >  drivers/gpu/drm/sun4i/sun4i_drv.h   |   1 +
+> >  drivers/gpu/drm/sun4i/sun4i_layer.c |  92 ++++++--
+> >  drivers/gpu/drm/sun4i/sun4i_layer.h |   1 +
+> >  drivers/gpu/drm/sun4i/sun8i_mixer.c | 417 ++++++++++++++++++++++++++++=
+++++++++
+> >  drivers/gpu/drm/sun4i/sun8i_mixer.h | 133 ++++++++++++
+> >  9 files changed, 674 insertions(+), 23 deletions(-)
+> Silly question:
+>=20
+> Does this series cover the same functionality/hardware as the separate
+> sun8i driver proposed a few months back ?
+> The diff stat looks quite different (~1.6k vs ~0.6k), although that
+> could be due to reusing the existing sun4i code.
+
+Since those aren't feature equivalent, this is a bit complicated to
+answer, but most of the changes introduced by the old driver was
+duplication of code that was already existing (Allwinner TCON, TV
+Encoder, Designware HDMI, etc).
+
+This patchset superseeds it by using what is already supported without
+the duplication. It also has a bit less features (for example the HDMI
+support is missing for now), but it's a much better code base to base
+our future work on.
+
 Maxime
 
 --=20
@@ -42,24 +89,38 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---fr5iuajkkwudz4xy
+--gbdh35hmqoiikprm
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBCAAGBQJYpecGAAoJEBx+YmzsjxAgk3EP/2+ry8D9N2rDfzPBIF9EbEfD
-um30yQeBrOClVmy4eJRQOXOiG+9YBqGv0Ms8R5dKptpRMZ324Tow1XK4Gtzi7Ll0
-0l4CrvrzpNTaAYXgcjFiIhcKGXFycL2v/cWaXzxFfu8bHajKpfozlHTh7LPfhwYM
-T+b2jly2Tv/PSHeFnDypres5eHtkcZYQZXw3Wj48hP+IJnq9x3+DVT3o2iyzaQLj
-fhGXOur00Ap9+owtuBEc3dXeZhzkDXAi3aFxbhpjIWqnB7WmQkK2a8vkLZIRilxJ
-JGW2GnZofNT+czAsBvyxRfigdRAt6nmQBKtXkHPDSJPtZvC0303udbB8x/WtBvfW
-gAj5ABbYn/j1u2nFn9Xw+7884OwW/HpKElKkAqAhFoara1PHdi8VmXomFWiCavVt
-ade1hLgDfleyTVEtuKlkKObDP6skQR4AbF3ulRhoo/BW8+WA6zT536eDRRF815Ql
-kM4QHX0vGorN0tKOXL7n8fyAh8fmAHOL0pGBeb98G+5rRVTemAXpUZJGemi/4lyo
-Fi+psqNlkBfoqerpuaaFEqS8bCB4ZbnKyEl/SQ2mI9NB0o79/Jpkc51rckElmNcV
-tFLYEBT62/6pcXO8aPGMzzUhm5z3m0wS2kbq82Dvq1kFMVhXQ8CM1uUiiwG2S3bF
-MfEoX41yQdfo8JIgP6Rx
-=gVPP
+iQIcBAEBCAAGBQJYr4JhAAoJEBx+YmzsjxAgMD8QALDQuqHN7VTMIWfX84C9pI/e
+PiWh92+5X3QybIrrY0xycFJTyOimMxzfWbpwDxZYryYaiU8H0g0rc31LNEfxSiyw
+RbGbgwIzrZPkiG5Fpwpjkmjae/jFTReBifdgaRLLcU/dQs0iPAmJFDdu19CIES+z
+IP3LITo61xzW3i56t7ByNtkbkwAgnqw7yGgLPhaG9AxI0FwarmufUSDcPLA6vRh3
+XjhCKqAxTpcKXh+erAi1I8GKyTwGl55VCzf9pIpc8XNYRgGcjTQUqKCm6FidiYHm
+LoCfJo6RKvqEa+6USpRVfsl4HP0rn6FHGLLrTjH8webLgaGxc/Z6VT/8FcxokUfI
+Ygniiz9rYUOkQVZqXBB2r0i1VPQVfnQ6vz4A6ezB4lrgZrPvrwVHS05uSQaGWBXu
+22GkRLFHLqqBjixFWufCnXlhaejmzqqXkoisMqu0ajq5RKaVPwVbrIq75603yDWS
+FnNxcrf8pJpg7Sri6GHHSe4NlomiupQvYa/8YqQCg0eu3HhKLrOmO59PBZenpIlG
+7p5hPoz4EtdlzXx5H95a+6HVoFSfYg1pLBuW1D7LNPlfEEpj2YYcwR5LUf1BCjV2
+USz8VEoSsdtfhV8kFe4sPYvS6EfsAqkMXKamTjT5+iizWdav97GDRAHSICcfPzhJ
+Aie5wZ9ckFpqTu0+C73q
+=di3S
 -----END PGP SIGNATURE-----
 
---fr5iuajkkwudz4xy--
+--gbdh35hmqoiikprm--
+
+
+--===============2540278490976861582==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============2540278490976861582==--
