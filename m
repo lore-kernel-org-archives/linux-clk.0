@@ -1,165 +1,109 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 15 Feb 2017 10:49:54 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/5] clk: sunxi-ng: Add driver for A83T CCU
-Message-ID: <20170215094954.h3wyaxlqkeb342yu@lukather>
-References: <20170214033526.16977-1-wens@csie.org>
- <20170214033526.16977-5-wens@csie.org>
- <20170214095819.utsftcvti5zdmlmi@lukather>
- <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 3/5] clk: tegra: define Tegra210 DMIC clocks
+Date: Fri, 24 Feb 2017 15:19:28 +0200
+Message-ID: <1487942376-19631-4-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1487942376-19631-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1487942376-19631-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="veriv3zmxufd2jsd"
-In-Reply-To: <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
+Tegra210 has 3 inputs for Digital Microphones (DMICs). Provide the required
+clocks for them.
 
---veriv3zmxufd2jsd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-id.h           |  5 ++++-
+ drivers/clk/tegra/clk-tegra-periph.c | 21 +++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra210.c     |  3 +++
+ 3 files changed, 28 insertions(+), 1 deletion(-)
 
-On Tue, Feb 14, 2017 at 06:26:39PM +0800, Chen-Yu Tsai wrote:
-> On Tue, Feb 14, 2017 at 5:58 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > On Tue, Feb 14, 2017 at 11:35:25AM +0800, Chen-Yu Tsai wrote:
-> >> +/* Some PLLs are input * N / div1 / P. Model them as NKMP with no K */
-> >
-> > Is that even working?
->=20
-> Looking at the nkmp clock code, only .recalc_rate will work properly thou=
-gh.
-> Maybe I could fix up the code so it handles zero width factors.
->=20
-> > I'm not quite sure we want to do that. We might model it as a NP clock
-> > with a variable prediv?
->=20
-> There's no NP clock type yet. And a problem with a variable prediv is that
-> it doesn't participate in factor calculation. It's effectively fixed.
->=20
-> I did this for the A80 as well though. Fixing up the NKMP clock might be
-> easier.
-
-Then maybe we just need a NMP clock type then. What I'm really afraid
-of is that we'll just end up in a clk-factors situation that was
-simply impossible to maintain without breaking anything, hence why we
-had different clock types then.
-
-> >
-> >> +/* Use a separate clock for the pre-divider on the AHB1 PLL-PERIPH in=
-put */
-> >> +static SUNXI_CCU_M(pll_periph_ahb1_clk, "pll-periph-ahb1", "pll-perip=
-h",
-> >> +                0x054, 6, 2, 0);
-> >> +
-> >> +static const char * const ahb1_parents[] =3D { "osc16M-d512", "osc24M=
-",
-> >> +                                          "pll-periph-ahb1",
-> >> +                                          "pll-periph-ahb1" };
-> >> +static struct ccu_div ahb1_clk =3D {
-> >> +     .div            =3D _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER=
-_OF_TWO),
-> >> +     .mux            =3D _SUNXI_CCU_MUX(12, 2),
-> >> +     .common         =3D {
-> >> +             .reg            =3D 0x054,
-> >> +             .hw.init        =3D CLK_HW_INIT_PARENTS("ahb1",
-> >> +                                                   ahb1_parents,
-> >> +                                                   &ccu_div_ops,
-> >> +                                                   0),
-> >> +     },
-> >> +};
-> >
-> > What's different from a pre divider only for a given index here?
->=20
-> The variable pre-divider is shared for both pll-periph mux inputs.
-> This is one way to handle it. The other would be to extend ccu_mux
-> to handle multiple variable pre-dividers. I don't really want to do
-> that if this is the only instance that needs it though.
-
-Every addition we made was only needed by one instance at first :)
-
-We are working that way for fixed pre-dividers already, I don't see
-why we can't have it for variable ones too.
-
-> >> +/*
-> >> + * MMC2 supports what's called the "new timing mode". The CCU and the=
- MMC
-> >> + * controller must be in sync about which mode is used. The new mode =
-moves
-> >> + * the clock delay controls (and possibly the delay lines) into the M=
-MC
-> >> + * block. Also, the output of the clock is divided by 2. The output a=
-nd
-> >> + * sample phase clocks are unused under this mode.
-> >> + *
-> >> + * This new mode seems to be preferred. Hence we force this clock to =
-the
-> >> + * new mode. And we don't add the phase clocks.
-> >> + */
-> >
-> > I'm sorry, but I said this several times, this isn't working. We
-> > should model it properly, and not hack this around in the clock
-> > driver.
-> >
-> > As you say in your comment, the MMC driver needs to be aware about
-> > which mode is used, in order to also set a bit in one of its registers
-> > accordingly, and modify its sampling behaviour.
-> >
-> > The new timing is preferred, but our previous clock implementations
-> > didn't hardcode it, so we can't even rely on that behaviour to always
-> > write it in our driver.
->=20
-> Correct. With the A83T there has never been a merged clock driver though.
-> I realize this is a one off thing.
->=20
-> > This is not something specific to the A83T, but is found in all the
-> > SoCs since the A23, so we need to come up with a good solution to
-> > address that.
-> >
-> > I'm not sure what a good solution would be though. One would be to
-> > just have a private function of our own to switch in the new mode (if
-> > relevant, because only the MMC2 controllers have it), but that would
-> > lead to troubles with !sunxi-ng. Not something we can't deal with, but
-> > some extra precautions should be taken (make sure to protect the call
-> > through an ifdef / IS_DEFINED, check that the sunxi-ng driver has been
-> > probed, etc.)
->=20
-> If the custom function route is acceptable, I'll come up with something.
-
-I think it would be a great start yes. I'll try to discuss it with
-Mike and Stephen at ELC and see what they think about that.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---veriv3zmxufd2jsd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYpCQ+AAoJEBx+YmzsjxAg23UQAIkStfh/zN6YEABKSD8lhDVV
-vpyCEN/UU7DAQyL/l+eNS7NdvypbYgFAxcOgOTX6uOhMJOywmlQeVhGsQHmR4bSk
-V8IfcgbKG0g4TNPKgsKDBxxcNigP0mognpqO98pz1BTfjdheX9AHvpzXsr/uZGhO
-l5tBAdX1IdkomFiyoAJq8kMXB0Uhwy/iWOLYbXfc9w++tmGFQidyAofuH9L8ttlj
-6KRPNaFVuHGbI4V0Et5+C8lcowtePYetr4GxoXVZCGEJbqhW8bmtfTXRSUiyHU9x
-FPiBOxYpNI5t9AgaCHQMGy/zgYOKiZo4IXl8ii5nCrYcdCyO3eVfay4CjNYw3i5s
-pVwiPHgofMwRphCm9Te0ENTJsgKbs1yCe/N0GQgxzvuXjuKymkth18fvUzk76f0s
-IhBA5udss8ZKG6fJ94Tu60lAsQtHLqHOm20yUxUuEDPDRXwm6qEkGKlpjyI1zvme
-WLDnWTGg8ahp1NmxqQRpC/l+xWgMEvKry7n/sk1vsYQg+aw2ro0oZO/bwl3YqoEO
-8ENub7mrtLQ9eXS/KFKDqqm54YxcsfeXXlzhWMBzYLLAhsDk6z2oMidkR0i3gBCb
-HSmYJOWHovHQuDyXUHFvoFfS+T/crWVsxQsJngBqra0+k79EtBtfXbO+Nj83Fh2o
-k6qBUy3PrFYSVXdieU5J
-=eQJI
------END PGP SIGNATURE-----
-
---veriv3zmxufd2jsd--
+diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+index b40293c..d3a79a8 100644
+--- a/drivers/clk/tegra/clk-id.h
++++ b/drivers/clk/tegra/clk-id.h
+@@ -307,8 +307,11 @@ enum clk_id {
+ 	tegra_clk_xusb_ssp_src,
+ 	tegra_clk_sclk_mux,
+ 	tegra_clk_sor_safe,
+-	tegra_clk_ispa,
+ 	tegra_clk_cec,
++	tegra_clk_ispa,
++	tegra_clk_dmic1,
++	tegra_clk_dmic2,
++	tegra_clk_dmic3,
+ 	tegra_clk_dmic1_sync_clk,
+ 	tegra_clk_dmic2_sync_clk,
+ 	tegra_clk_dmic3_sync_clk,
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index a2aed27..9e6ac11 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -138,6 +138,9 @@
+ #define CLK_SOURCE_TSECB 0x6d8
+ #define CLK_SOURCE_MAUD 0x6d4
+ #define CLK_SOURCE_USB2_HSIC_TRK 0x6cc
++#define CLK_SOURCE_DMIC1 0x64c
++#define CLK_SOURCE_DMIC2 0x650
++#define CLK_SOURCE_DMIC3 0x6bc
+ 
+ #define MASK(x) (BIT(x) - 1)
+ 
+@@ -625,6 +628,21 @@
+ };
+ #define mux_clkm_plldp_sor0lvds_idx NULL
+ 
++static const char * const mux_dmic1[] = {
++	"pll_a_out0", "dmic1_sync_clk", "pll_p", "clk_m"
++};
++#define mux_dmic1_idx NULL
++
++static const char * const mux_dmic2[] = {
++	"pll_a_out0", "dmic2_sync_clk", "pll_p", "clk_m"
++};
++#define mux_dmic2_idx NULL
++
++static const char * const mux_dmic3[] = {
++	"pll_a_out0", "dmic3_sync_clk", "pll_p", "clk_m"
++};
++#define mux_dmic3_idx NULL
++
+ static struct tegra_periph_init_data periph_clks[] = {
+ 	AUDIO("d_audio", CLK_SOURCE_D_AUDIO, 106, TEGRA_PERIPH_ON_APB, tegra_clk_d_audio),
+ 	AUDIO("dam0", CLK_SOURCE_DAM0, 108, TEGRA_PERIPH_ON_APB, tegra_clk_dam0),
+@@ -794,6 +812,9 @@
+ 	MUX("uartape", mux_pllp_pllc_clkm, CLK_SOURCE_UARTAPE, 212, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_uartape),
+ 	MUX8("tsecb", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_TSECB, 206, 0, tegra_clk_tsecb),
+ 	MUX8("maud", mux_pllp_pllp_out3_clkm_clk32k_plla, CLK_SOURCE_MAUD, 202, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_maud),
++	MUX8("dmic1", mux_dmic1, CLK_SOURCE_DMIC1, 161, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_dmic1),
++	MUX8("dmic2", mux_dmic2, CLK_SOURCE_DMIC2, 162, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_dmic2),
++	MUX8("dmic3", mux_dmic3, CLK_SOURCE_DMIC3, 197, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_dmic3),
+ };
+ 
+ static struct tegra_periph_init_data gate_clks[] = {
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index ca63901..cfe7078 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2223,6 +2223,9 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
+ 	[tegra_clk_pll_a1] = { .dt_id = TEGRA210_CLK_PLL_A1, .present = true },
+ 	[tegra_clk_ispa] = { .dt_id = TEGRA210_CLK_ISPA, .present = true },
+ 	[tegra_clk_cec] = { .dt_id = TEGRA210_CLK_CEC, .present = true },
++	[tegra_clk_dmic1] = { .dt_id = TEGRA210_CLK_DMIC1, .present = true },
++	[tegra_clk_dmic2] = { .dt_id = TEGRA210_CLK_DMIC2, .present = true },
++	[tegra_clk_dmic3] = { .dt_id = TEGRA210_CLK_DMIC3, .present = true },
+ 	[tegra_clk_dmic1_sync_clk] = { .dt_id = TEGRA210_CLK_DMIC1_SYNC_CLK, .present = true },
+ 	[tegra_clk_dmic2_sync_clk] = { .dt_id = TEGRA210_CLK_DMIC2_SYNC_CLK, .present = true },
+ 	[tegra_clk_dmic3_sync_clk] = { .dt_id = TEGRA210_CLK_DMIC3_SYNC_CLK, .present = true },
+-- 
+1.9.1
