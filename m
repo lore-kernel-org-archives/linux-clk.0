@@ -1,86 +1,50 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 8 Feb 2017 18:52:07 -0600
-From: Rob Herring <robh@kernel.org>
-To: Baoyou Xie <baoyou.xie@linaro.org>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, mark.rutland@arm.com,
-	jun.nie@linaro.org, mturquette@baylibre.com, sboyd@codeaurora.org,
-	perex@perex.cz, tiwai@suse.com, shawn.guo@linaro.org,
-	vinod.koul@intel.com, alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	shawnguo@kernel.org, mathieu.poirier@linaro.org,
-	xie.baoyou@zte.com.cn, chen.chaokai@zte.com.cn,
-	wang.qiang01@zte.com.cn
-Subject: Re: [PATCH v3 2/3] ASoC: zx-i2s: introduce pclk for zx2967 family
-Message-ID: <20170209005207.y6wcrzk43ngfslhl@rob-hp-laptop>
-References: <1486522955-14528-1-git-send-email-baoyou.xie@linaro.org>
- <1486522955-14528-2-git-send-email-baoyou.xie@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Rask Ingemann Lambertsen <rask@formelder.dk>
+In-Reply-To: <20170226095204.cwh7f2mbgjumr5fu@localhost>
+References: <20170226011956.53581-1-icenowy@aosc.xyz>
+ <20170226011956.53581-3-icenowy@aosc.xyz>
+ <20170226095204.cwh7f2mbgjumr5fu@localhost>
+Subject: Re: [PATCH v5 2/7] clk: sunxi-ng: rename sun8i-h3 driver to
+ sunxi-h3-h5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1486522955-14528-2-git-send-email-baoyou.xie@linaro.org>
+Message-Id: <10821061488121078@web18g.yandex.ru>
+Date: Sun, 26 Feb 2017 22:57:58 +0800
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
+ Will Deacon <will.deacon@arm.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ Andre Przywara <andre.przywara@arm.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Feb 08, 2017 at 11:02:34AM +0800, Baoyou Xie wrote:
-> ZTE's zx2967 I2S controller driver introduces pclk, this
-> patch documents this fact.
-
-Now we have the same subject for patches 2 and 3.
-
-Personally, I'd prefer "dt-bindings: sound: blah...", but not enough to 
-argue with Mark about it. If that is not the prefix, then it should at 
-least have "binding" in the subject.
-
-> Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
-> ---
->  Documentation/devicetree/bindings/sound/zte,zx-i2s.txt | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt b/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
-> index 7e5aa6f..77390c0 100644
-> --- a/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
-> +++ b/Documentation/devicetree/bindings/sound/zte,zx-i2s.txt
-> @@ -4,7 +4,7 @@ Required properties:
->   - compatible : Must be "zte,zx296702-i2s"
->   - reg : Must contain I2S core's registers location and length
->   - clocks : Pairs of phandle and specifier referencing the controller's clocks.
-> - - clock-names: "tx" for the clock to the I2S interface.
-> + - clock-names: "wclk" for the wclk, "pclk" for the pclk to the I2S interface.
->   - dmas: Pairs of phandle and specifier for the DMA channel that is used by
->     the core. The core expects two dma channels for transmit.
->   - dma-names : Must be "tx" and "rx"
-> @@ -15,13 +15,17 @@ please check:
->  	* clock/clock-bindings.txt
->  	* dma/dma.txt
->  
-> +Please note that ZTE ZX296702 I2S controller driver is compatible for zx296702
-> +and zx296718, so compatible string might be set as follow:
-> +	"zte,zx296718-i2s", "zte,zx296702-i2s"
-
-Drop this and just make compatible doc above like this:
-
-   - compatible : Must be one of:
-	"zte,zx296718-i2s", "zte,zx296702-i2s"
-	"zte,zx296702-i2s"
-
-> +
->  Example:
->  	i2s0: i2s0@0b005000 {
-
-BTW, this should be "i2s@0b005000". No trailing 0 on i2s and no leading 
-0 on unit-address.
-
->  		#sound-dai-cells = <0>;
-> -		compatible = "zte,zx296702-i2s";
-> +		compatible = "zte,zx296718-i2s", "zte,zx296702-i2s";
->  		reg = <0x0b005000 0x1000>;
-> -		clocks = <&lsp0clk ZX296702_I2S0_DIV>;
-> -		clock-names = "tx";
-> +		clocks = <&audiocrm AUDIO_I2S0_WCLK>, <&audiocrm AUDIO_I2S0_PCLK>;
-> +		clock-names = "wclk", "pclk";
->  		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
->  		dmas = <&dma 5>, <&dma 6>;
->  		dma-names = "tx", "rx";
-> -- 
-> 2.7.4
-> 
+CgoyNi4wMi4yMDE3LCAxNzo1MiwgIlJhc2sgSW5nZW1hbm4gTGFtYmVydHNlbiIgPHJhc2tAZm9y
+bWVsZGVyLmRrPjoKPiBPbiBTdW4sIEZlYiAyNiwgMjAxNyBhdCAwOToxOTo1MUFNICswODAwLCBJ
+Y2Vub3d5IFpoZW5nIHdyb3RlOgo+PiDCoEFzIHRoZSBDQ1UgaW4gdGhlIEFsbHdpbm5lciBINSBT
+b0MgaXMgdmVyeSBzaW1pbGFyIHRvIHRoZSBvbmUgaW4gSDMsCj4+IMKgcmVuYW1lIHRoZSBIMyBk
+cml2ZXIgdG8gc3VueGktaDMtaDUgc28gdGhhdCBpdCBjYW4gYmUgZXh0ZW5kZWQgd2l0aCBINQo+
+PiDCoHN1cHBvcnQuCj4+Cj4+IMKgVHJhc2l0aW9uYWwgaGVhZGVyIHN5bWxpbmtzIGFyZSBjcmVh
+dGVkLCB0byBlbnN1cmUgY3VycmVudCBkZXZpY2UgdHJlZQo+Cj4gcy9UcmFzaXRpb25hbC9UcmFu
+c2l0aW9uYWwvIEkgZ3Vlc3MuCj4KPj4gwqBmaWxlcyB3aGljaCBpbmNsdWRlZCBzdW44aS1oMy1j
+Y3UuaCBjYW4gY29tcGlsZS4KPj4KPj4gwqBTaWduZWQtb2ZmLWJ5OiBJY2Vub3d5IFpoZW5nIDxp
+Y2Vub3d5QGFvc2MueHl6Pgo+PiDCoC0tLQo+PiDCoENoYW5nZXMgaW4gdjU6Cj4+IMKgLSBBZGQg
+dGhlIHJlYXNvbiB0byBjcmVhdGUgdHJhc2l0aW9uYWwgaGVhZGVycyBpbiBjb21taXQgbWVzc2Fn
+ZS4KPgo+IExpa2V3aXNlLgoKVGhhbmtzIDstKQoKPgo+IC0tCj4gUmFzayBJbmdlbWFubiBMYW1i
+ZXJ0c2VuCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwps
+aW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJh
+ZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51
+eC1hcm0ta2VybmVsCg==
