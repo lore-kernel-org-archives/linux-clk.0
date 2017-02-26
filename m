@@ -1,156 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:33673 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750778AbdBKXPU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Feb 2017 18:15:20 -0500
-Subject: Re: [PATCH v2 07/10] soc: mediatek: refine scysys for mediatek
- platforms
-To: Mars Cheng <mars.cheng@mediatek.com>
-References: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
- <1486383336-16892-8-git-send-email-mars.cheng@mediatek.com>
-Cc: CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        My Chuang <my.chuang@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>,
-        Kevin-CW Chen <kevin-cw.chen@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <aa492e68-c754-bfe6-c4b9-7f39822ed5ea@gmail.com>
-Date: Sun, 12 Feb 2017 00:15:14 +0100
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Sun, 26 Feb 2017 10:52:04 +0100
+From: Rask Ingemann Lambertsen <rask@formelder.dk>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH v5 2/7] clk: sunxi-ng: rename sun8i-h3 driver to
+ sunxi-h3-h5
+Message-ID: <20170226095204.cwh7f2mbgjumr5fu@localhost>
+References: <20170226011956.53581-1-icenowy@aosc.xyz>
+ <20170226011956.53581-3-icenowy@aosc.xyz>
 MIME-Version: 1.0
-In-Reply-To: <1486383336-16892-8-git-send-email-mars.cheng@mediatek.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170226011956.53581-3-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ linux-sunxi@googlegroups.com, Will Deacon <will.deacon@arm.com>,
+ linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+ Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Sun, Feb 26, 2017 at 09:19:51AM +0800, Icenowy Zheng wrote:
+> As the CCU in the Allwinner H5 SoC is very similar to the one in H3,
+> rename the H3 driver to sunxi-h3-h5 so that it can be extended with H5
+> support.
+> 
+> Trasitional header symlinks are created, to ensure current device tree
 
+s/Trasitional/Transitional/ I guess.
 
-On 02/06/2017 01:15 PM, Mars Cheng wrote:
-> This adds 2 refinements: avoid fixed spm power statue and add vdec item
->
-
-Please be more explicit in the commit message.
-
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+> files which included sun8i-h3-ccu.h can compile.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 > ---
->  drivers/soc/mediatek/mtk-scpsys.c |   35 +++++++++++++++++++++++++++++------
->  1 file changed, 29 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-> index beb7916..a8ba800 100644
-> --- a/drivers/soc/mediatek/mtk-scpsys.c
-> +++ b/drivers/soc/mediatek/mtk-scpsys.c
-> @@ -71,6 +71,7 @@ enum clk_id {
->  	CLK_VENC,
->  	CLK_VENC_LT,
->  	CLK_ETHIF,
-> +	CLK_VDEC,
->  	CLK_MAX,
->  };
->
-> @@ -81,6 +82,7 @@ enum clk_id {
->  	"venc",
->  	"venc_lt",
->  	"ethif",
-> +	"vdec",
->  	NULL,
->  };
+> Changes in v5:
+> - Add the reason to create trasitional headers in commit message.
 
-Put CLK_VDEC addition in the patch where you add support for mt6797.
+Likewise.
 
-Thanks,
-Matthias
+-- 
+Rask Ingemann Lambertsen
 
->
-> @@ -107,21 +109,28 @@ struct scp_domain {
->  	struct regulator *supply;
->  };
->
-> +struct scp_ctrl_reg {
-> +	int pwr_sta_offs;
-> +	int pwr_sta2nd_offs;
-> +};
-> +
->  struct scp {
->  	struct scp_domain *domains;
->  	struct genpd_onecell_data pd_data;
->  	struct device *dev;
->  	void __iomem *base;
->  	struct regmap *infracfg;
-> +	struct scp_ctrl_reg ctrl_reg;
->  };
->
->  static int scpsys_domain_is_on(struct scp_domain *scpd)
->  {
->  	struct scp *scp = scpd->scp;
->
-> -	u32 status = readl(scp->base + SPM_PWR_STATUS) & scpd->data->sta_mask;
-> -	u32 status2 = readl(scp->base + SPM_PWR_STATUS_2ND) &
-> -				scpd->data->sta_mask;
-> +	u32 status = readl(scp->base + scp->ctrl_reg.pwr_sta_offs) &
-> +						scpd->data->sta_mask;
-> +	u32 status2 = readl(scp->base + scp->ctrl_reg.pwr_sta2nd_offs) &
-> +						scpd->data->sta_mask;
->
->  	/*
->  	 * A domain is on when both status bits are set. If only one is set
-> @@ -346,7 +355,8 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
->  }
->
->  static struct scp *init_scp(struct platform_device *pdev,
-> -			const struct scp_domain_data *scp_domain_data, int num)
-> +			const struct scp_domain_data *scp_domain_data, int num,
-> +			struct scp_ctrl_reg *scp_ctrl_reg)
->  {
->  	struct genpd_onecell_data *pd_data;
->  	struct resource *res;
-> @@ -358,6 +368,9 @@ static struct scp *init_scp(struct platform_device *pdev,
->  	if (!scp)
->  		return ERR_PTR(-ENOMEM);
->
-> +	scp->ctrl_reg.pwr_sta_offs = scp_ctrl_reg->pwr_sta_offs;
-> +	scp->ctrl_reg.pwr_sta2nd_offs = scp_ctrl_reg->pwr_sta2nd_offs;
-> +
->  	scp->dev = &pdev->dev;
->
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> @@ -556,8 +569,13 @@ static void mtk_register_power_domains(struct platform_device *pdev,
->  static int __init scpsys_probe_mt2701(struct platform_device *pdev)
->  {
->  	struct scp *scp;
-> +	struct scp_ctrl_reg scp_reg;
->
-> -	scp = init_scp(pdev, scp_domain_data_mt2701, NUM_DOMAINS_MT2701);
-> +	scp_reg.pwr_sta_offs = SPM_PWR_STATUS;
-> +	scp_reg.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND;
-> +
-> +	scp = init_scp(pdev, scp_domain_data_mt2701, NUM_DOMAINS_MT2701,
-> +		       &scp_reg);
->  	if (IS_ERR(scp))
->  		return PTR_ERR(scp);
->
-> @@ -667,8 +685,13 @@ static int __init scpsys_probe_mt8173(struct platform_device *pdev)
->  	struct scp *scp;
->  	struct genpd_onecell_data *pd_data;
->  	int ret;
-> +	struct scp_ctrl_reg scp_reg;
-> +
-> +	scp_reg.pwr_sta_offs = SPM_PWR_STATUS;
-> +	scp_reg.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND;
->
-> -	scp = init_scp(pdev, scp_domain_data_mt8173, NUM_DOMAINS_MT8173);
-> +	scp = init_scp(pdev, scp_domain_data_mt8173, NUM_DOMAINS_MT8173,
-> +		       &scp_reg);
->  	if (IS_ERR(scp))
->  		return PTR_ERR(scp);
->
->
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
