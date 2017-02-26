@@ -1,76 +1,215 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v3 3/6] clk: tegra: fix constness for periph clks
-Date: Tue, 28 Feb 2017 16:37:19 +0200
-Message-ID: <1488292648-16876-4-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1488292648-16876-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1488292648-16876-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v5 6/7] arm64: dts: allwinner: add Allwinner H5 .dtsi
+Date: Sun, 26 Feb 2017 09:19:55 +0800
+Message-Id: <20170226011956.53581-7-icenowy@aosc.xyz>
+In-Reply-To: <20170226011956.53581-1-icenowy@aosc.xyz>
+References: <20170226011956.53581-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-checkpatch now warns for const ** and expects const * const * to be used
-instead. This means we have to update the prototypes and function
-declarations to handle this change.
+From: Andre Przywara <andre.przywara@arm.com>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+The Allwinner H5 SoC is pin-compatible to the H3 SoC, but uses
+Cortex-A53 cores instead.
+Based on the now shared base .dtsi describing the common peripherals
+describe the H5 specific nodes on top of that.
+That symlinks in the sunxi-h3-h5.dtsi from the arch/arm tree.
+
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+[Icenowy: add H5 pinctrl compatible, and changes for my h3-h5 dtsi
+ refactor, commit message change to met new arm64 naming scheme,
+ drop H3 pinctrl compatible because of interrupt bank change, drop
+ H3 ccu compatible because of clock change]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- drivers/clk/tegra/clk-periph.c | 4 ++--
- drivers/clk/tegra/clk.h        | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Changes in v3:
+- Dropped sun5i-a13-mmc, sun8i-h3-ccu compatibles.
+- Used sun50i-{h5,a64}-emmc compatible for mmc2.
+Changes in v2:
+- Dropped sun8i-h3-pinctrl compatible, as the interrupt of H3 and H5 is
 
-diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
-index a17ca6d..a5a5809 100644
---- a/drivers/clk/tegra/clk-periph.c
-+++ b/drivers/clk/tegra/clk-periph.c
-@@ -138,7 +138,7 @@ static void clk_periph_disable(struct clk_hw *hw)
- };
- 
- static struct clk *_tegra_clk_register_periph(const char *name,
--			const char **parent_names, int num_parents,
-+			const char * const *parent_names, int num_parents,
- 			struct tegra_clk_periph *periph,
- 			void __iomem *clk_base, u32 offset,
- 			unsigned long flags)
-@@ -186,7 +186,7 @@ static struct clk *_tegra_clk_register_periph(const char *name,
- }
- 
- struct clk *tegra_clk_register_periph(const char *name,
--		const char **parent_names, int num_parents,
-+		const char * const *parent_names, int num_parents,
- 		struct tegra_clk_periph *periph, void __iomem *clk_base,
- 		u32 offset, unsigned long flags)
- {
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index a62ea73..8b09021e 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -586,7 +586,7 @@ struct tegra_clk_periph {
- 
- extern const struct clk_ops tegra_clk_periph_ops;
- struct clk *tegra_clk_register_periph(const char *name,
--		const char **parent_names, int num_parents,
-+		const char * const *parent_names, int num_parents,
- 		struct tegra_clk_periph *periph, void __iomem *clk_base,
- 		u32 offset, unsigned long flags);
- struct clk *tegra_clk_register_periph_nodiv(const char *name,
-@@ -626,7 +626,7 @@ struct tegra_periph_init_data {
- 	const char *name;
- 	int clk_id;
- 	union {
--		const char **parent_names;
-+		const char *const *parent_names;
- 		const char *parent_name;
- 	} p;
- 	int num_parents;
+ arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi   | 139 +++++++++++++++++++++++++
+ arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi |   1 +
+ 2 files changed, 140 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+ create mode 120000 arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+new file mode 100644
+index 000000000000..b651bd6986e8
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+@@ -0,0 +1,139 @@
++/*
++ * Copyright (C) 2016 ARM Ltd.
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#include "sunxi-h3-h5.dtsi"
++
++/ {
++	interrupt-parent = <&gic>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <0>;
++			enable-method = "psci";
++		};
++
++		cpu@1 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <1>;
++			enable-method = "psci";
++		};
++
++		cpu@2 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <2>;
++			enable-method = "psci";
++		};
++
++		cpu@3 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <3>;
++			enable-method = "psci";
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 13
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
++	soc {
++		gic: interrupt-controller@1c81000 {
++			compatible = "arm,gic-400";
++			reg = <0x01c81000 0x1000>,
++			      <0x01c82000 0x2000>,
++			      <0x01c84000 0x2000>,
++			      <0x01c86000 0x2000>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++			interrupt-controller;
++			#interrupt-cells = <3>;
++		};
++	};
++};
++
++&ccu {
++	compatible = "allwinner,sun50i-h5-ccu";
++};
++
++&mmc0 {
++	compatible = "allwinner,sun50i-h5-mmc",
++		     "allwinner,sun50i-a64-mmc";
++	clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
++	clock-names = "ahb", "mmc";
++};
++
++&mmc1 {
++	compatible = "allwinner,sun50i-h5-mmc",
++		     "allwinner,sun50i-a64-mmc";
++	clocks = <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;
++	clock-names = "ahb", "mmc";
++};
++
++&mmc2 {
++	compatible = "allwinner,sun50i-h5-emmc",
++		     "allwinner,sun50i-a64-emmc";
++	clocks = <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;
++	clock-names = "ahb", "mmc";
++};
++
++&pio {
++	compatible = "allwinner,sun50i-h5-pinctrl";
++};
+diff --git a/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
+new file mode 120000
+index 000000000000..036f01dc2b9b
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
+@@ -0,0 +1 @@
++../../../../arm/boot/dts/sunxi-h3-h5.dtsi
+\ No newline at end of file
 -- 
-1.9.1
+2.11.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
