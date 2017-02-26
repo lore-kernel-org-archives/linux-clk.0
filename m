@@ -1,53 +1,83 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH v3 1/3] clk: meson-gxbb: expose clock CLKID_RNG0
-To: Heiner Kallweit <hkallweit1@gmail.com>,
- Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, linux-amlogic@lists.infradead.org,
- linux-crypto@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-References: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <80bc00c9-dc3b-5aeb-89a0-8b427dca9b34@baylibre.com>
-Date: Mon, 27 Feb 2017 05:28:49 -0800
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Sun, 26 Feb 2017 10:19:55 +0100
+From: Rask Ingemann Lambertsen <rask@formelder.dk>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH v5 7/7] arm64: dts: sunxi: add support for the Orange Pi
+ PC 2 board
+Message-ID: <20170226091955.h3f5pgk7elboxqym@localhost>
+References: <20170226011956.53581-1-icenowy@aosc.xyz>
+ <20170226011956.53581-8-icenowy@aosc.xyz>
 MIME-Version: 1.0
-In-Reply-To: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20170226011956.53581-8-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ linux-sunxi@googlegroups.com, Will Deacon <will.deacon@arm.com>,
+ linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+ Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/21/2017 10:55 PM, Heiner Kallweit wrote:
-> Expose clock CLKID_RNG0 which is needed for the HW random number generator.
-> 
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> ---
-> v2:
-> - added clk and DT maintainers
-> - split exposing the clock and using it in DT into two patches
-> - comment out clock definition in drivers/clk/meson/gxbb.h
-> - silently move CLKID_SPI to the right place
-> v3:
-> - no changes
-> ---
->  drivers/clk/meson/gxbb.h              | 2 +-
->  include/dt-bindings/clock/gxbb-clkc.h | 3 ++-
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
+On Sun, Feb 26, 2017 at 09:19:56AM +0800, Icenowy Zheng wrote:
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
+> new file mode 100644
+> index 000000000000..79784cba806c
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
+[...]
+> +	leds {
+> +		compatible = "gpio-leds";
+> +
+> +		pwr_led {
+> +			label = "orangepi:green:pwr";
+> +			gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>;
+> +			default-state = "on";
+> +		};
+> +
+> +		status_led {
 
+IMHO, you don't need the '_led' suffix inside the 'leds' node, and then you
+also avoid having underscores in the node names.
 
-Hi Heiner,
+> +			label = "orangepi:red:status";
+> +			gpios = <&pio 0 20 GPIO_ACTIVE_HIGH>;
+> +		};
+> +	};
+> +
+> +	r_gpio_keys {
 
-This looks all good to me, but you should always send a cover letter for each revisions
-of the patchset.
+Node names should not contain underscores. You can use hyphens instead. See
+https://www.mail-archive.com/linux-kernel%40vger.kernel.org/msg1122967.html
+https://www.mail-archive.com/linux-kernel%40vger.kernel.org/msg1145633.html
 
-Using "git send-email" along the "--cover-letter" of "get format-patch" feature would
-also help send them in a row with a up-to-date cover letter.
+> +&mmc0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin>;
+> +	vmmc-supply = <&reg_vcc3v3>;
+> +	bus-width = <4>;
+> +	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
+> +	cd-inverted;
 
-For the third patch, it may be good to also add the same to the GXL dtsi, no ?
+You should be able to simplify those last two lines to just
 
-Anyway :
+cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+(see the paragraph which begins with "*NOTE* on CD and WP polarity."
+in 'Documentation/devicetree/bindings/mmc/mmc.txt'.)
 
-Thanks,
-Neil
+-- 
+Rask Ingemann Lambertsen
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
