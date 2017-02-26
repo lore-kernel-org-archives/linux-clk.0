@@ -1,41 +1,65 @@
-Return-Path: <weiyj.lk@gmail.com>
-Return-Path: <weiyj.lk@gmail.com>
-From: Wei Yongjun <weiyj.lk@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH -next] clk: sunxi-ng: sun9i-a80: Fix wrong pointer passed to PTR_ERR()
-Date: Mon,  6 Feb 2017 16:09:26 +0000
-Message-Id: <20170206160926.8274-1-weiyj.lk@gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Sun, 26 Feb 2017 09:55:54 +0100
+From: Rask Ingemann Lambertsen <rask@formelder.dk>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH v5 6/7] arm64: dts: allwinner: add Allwinner H5 .dtsi
+Message-ID: <20170226085553.b6o6mv7ibe5op4dg@localhost>
+References: <20170226011956.53581-1-icenowy@aosc.xyz>
+ <20170226011956.53581-7-icenowy@aosc.xyz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+In-Reply-To: <20170226011956.53581-7-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ linux-sunxi@googlegroups.com, Will Deacon <will.deacon@arm.com>,
+ linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+ Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+On Sun, Feb 26, 2017 at 09:19:55AM +0800, Icenowy Zheng wrote:
+> From: Andre Przywara <andre.przywara@arm.com>
+> 
+> The Allwinner H5 SoC is pin-compatible to the H3 SoC, but uses
+> Cortex-A53 cores instead.
+> Based on the now shared base .dtsi describing the common peripherals
+> describe the H5 specific nodes on top of that.
+> That symlinks in the sunxi-h3-h5.dtsi from the arch/arm tree.
+> 
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> [Icenowy: add H5 pinctrl compatible, and changes for my h3-h5 dtsi
+>  refactor, commit message change to met new arm64 naming scheme,
 
-PTR_ERR should access the value just tested by IS_ERR, otherwise
-the wrong error code will be returned.
+s/change to met/change to meet/ or s/change to met/changed to meet/ ?
 
-Fixes: 783ab76ae553 ("clk: sunxi-ng: Add A80 Display Engine CCU")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> diff --git a/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
+> new file mode 120000
+> index 000000000000..036f01dc2b9b
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
+> @@ -0,0 +1 @@
+> +../../../../arm/boot/dts/sunxi-h3-h5.dtsi
+> \ No newline at end of file
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
-index 3fc27db..6d11658 100644
---- a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
-@@ -232,7 +232,7 @@ static int sun9i_a80_de_clk_probe(struct platform_device *pdev)
- 
- 	rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
- 	if (IS_ERR(rstc)) {
--		ret = PTR_ERR(bus_clk);
-+		ret = PTR_ERR(rstc);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(&pdev->dev,
- 				"Couldn't get reset control: %d\n", ret);
+But it's missing more than just a newline, isn't it? Shouldn't it read
+
+#include <../../../../arm/boot/dts/sunxi-h3-h5.dtsi>
+
+?
+
+-- 
+Rask Ingemann Lambertsen
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
