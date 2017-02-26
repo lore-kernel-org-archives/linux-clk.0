@@ -1,43 +1,80 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Rob Herring <robh@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: sunxi: ccu-sun5i needs nkmp
-Date: Tue, 14 Feb 2017 22:29:45 +0100
-Message-Id: <20170214213005.2848151-1-arnd@arndb.de>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+MIME-Version: 1.0
+In-Reply-To: <20170226085553.b6o6mv7ibe5op4dg@localhost>
+References: <20170226011956.53581-1-icenowy@aosc.xyz>
+ <20170226011956.53581-7-icenowy@aosc.xyz>
+ <20170226085553.b6o6mv7ibe5op4dg@localhost>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 26 Feb 2017 17:00:28 +0800
+Message-ID: <CAGb2v67BvVip+CX+HzAf7jAHxpL_EBtbxLxERMHRVv2+zE5Gcg@mail.gmail.com>
+Subject: Re: [PATCH v5 6/7] arm64: dts: allwinner: add Allwinner H5 .dtsi
+To: Rask Ingemann Lambertsen <rask@formelder.dk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree <devicetree@vger.kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ linux-sunxi <linux-sunxi@googlegroups.com>, Will Deacon <will.deacon@arm.com>,
+ linux-kernel <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Rob Herring <robh+dt@kernel.org>, Icenowy Zheng <icenowy@aosc.xyz>,
+ Andre Przywara <andre.przywara@arm.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-A randconfig build ran into this rare link error:
+On Sun, Feb 26, 2017 at 4:55 PM, Rask Ingemann Lambertsen
+<rask@formelder.dk> wrote:
+> On Sun, Feb 26, 2017 at 09:19:55AM +0800, Icenowy Zheng wrote:
+>> From: Andre Przywara <andre.przywara@arm.com>
+>>
+>> The Allwinner H5 SoC is pin-compatible to the H3 SoC, but uses
+>> Cortex-A53 cores instead.
+>> Based on the now shared base .dtsi describing the common peripherals
+>> describe the H5 specific nodes on top of that.
+>> That symlinks in the sunxi-h3-h5.dtsi from the arch/arm tree.
+>>
+>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+>> [Icenowy: add H5 pinctrl compatible, and changes for my h3-h5 dtsi
+>>  refactor, commit message change to met new arm64 naming scheme,
+>
+> s/change to met/change to meet/ or s/change to met/changed to meet/ ?
+>
+>> diff --git a/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
+>> new file mode 120000
+>> index 000000000000..036f01dc2b9b
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
+>> @@ -0,0 +1 @@
+>> +../../../../arm/boot/dts/sunxi-h3-h5.dtsi
+>> \ No newline at end of file
+>
+> But it's missing more than just a newline, isn't it? Shouldn't it read
 
-drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.1+0x4): undefined reference to `ccu_nkmp_ops'
-drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.7+0x4): undefined reference to `ccu_nkmp_ops'
+This is a symbolic link.
 
-This adds the missing 'select'.
+>
+> #include <../../../../arm/boot/dts/sunxi-h3-h5.dtsi>
 
-Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/sunxi-ng/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+This won't work directly with the split out device tree repository,
+which has a slightly different layout.
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index 695bbf9ef428..b6e2aa5d0246 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -70,6 +70,7 @@ config SUN5I_CCU
- 	select SUNXI_CCU_MULT
- 	select SUNXI_CCU_NK
- 	select SUNXI_CCU_NKM
-+	select SUNXI_CCU_NKMP
- 	select SUNXI_CCU_NM
- 	select SUNXI_CCU_MP
- 	select SUNXI_CCU_PHASE
--- 
-2.9.0
+ChenYu
+
+>
+> ?
+>
+> --
+> Rask Ingemann Lambertsen
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
