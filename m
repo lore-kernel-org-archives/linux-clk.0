@@ -1,30 +1,74 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 10 Feb 2017 15:27:45 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] clk: mvebu: Expand mv98dx3236-core-clock support
-Message-ID: <20170210232745.GS25384@codeaurora.org>
-References: <20170207202815.20226-1-chris.packham@alliedtelesis.co.nz>
- <20170207202815.20226-7-chris.packham@alliedtelesis.co.nz>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v5 0/7] Allwinner H5 and Orange Pi PC2 support
+Date: Sun, 26 Feb 2017 09:19:49 +0800
+Message-Id: <20170226011956.53581-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170207202815.20226-7-chris.packham@alliedtelesis.co.nz>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/08, Chris Packham wrote:
-> The initial implementation in commit e120c17a70e5 ("clk: mvebu: support
-> for 98DX3236 SoC") hardcoded a fixed value for the main PLL frequency.
-> Port code from the Marvell supplied Linux kernel to support different
-> PLL frequencies and provide clock gating support.
-> 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
+Allwinner H5 is a 64-bit SoC with a design like the 32-bit
+H3.
 
-Applied to clk-next
+This patchset adds support for it, along with the first available
+board -- Orange Pi PC2.
+
+Andre Przywara (3):
+  arm: dts: sun8i: split Allwinner H3 .dtsi
+  arm64: dts: allwinner: add Allwinner H5 .dtsi
+  arm64: dts: sunxi: add support for the Orange Pi PC 2 board
+
+Icenowy Zheng (4):
+  arm64: allwinner: Kconfig: add essential pinctrl driver for H5
+  clk: sunxi-ng: rename sun8i-h3 driver to sunxi-h3-h5
+  clk: sunxi-ng: add support for Allwinner H5 SoC
+  ARM: dts: sun8i: convert H3 dtsi to use new sunxi-h3-h5 binding header
+
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
+ arch/arm/boot/dts/sun8i-h3.dtsi                    | 589 ++-------------------
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 575 ++++++++++++++++++++
+ arch/arm64/Kconfig.platforms                       |   5 +-
+ arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+ .../boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 164 ++++++
+ arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi       | 139 +++++
+ arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi     |   1 +
+ drivers/clk/sunxi-ng/Kconfig                       |   6 +-
+ drivers/clk/sunxi-ng/Makefile                      |   2 +-
+ .../sunxi-ng/{ccu-sun8i-h3.c => ccu-sunxi-h3-h5.c} | 339 +++++++++++-
+ .../sunxi-ng/{ccu-sun8i-h3.h => ccu-sunxi-h3-h5.h} |  13 +-
+ .../clock/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h}    |  11 +-
+ .../reset/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h}    |  11 +-
+ 14 files changed, 1277 insertions(+), 580 deletions(-)
+ create mode 100644 arch/arm/boot/dts/sunxi-h3-h5.dtsi
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+ create mode 120000 arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
+ rename drivers/clk/sunxi-ng/{ccu-sun8i-h3.c => ccu-sunxi-h3-h5.c} (71%)
+ rename drivers/clk/sunxi-ng/{ccu-sun8i-h3.h => ccu-sunxi-h3-h5.h} (83%)
+ rename include/dt-bindings/clock/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h} (95%)
+ rename include/dt-bindings/reset/{sun8i-h3-ccu.h => sunxi-h3-h5-ccu.h} (94%)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
