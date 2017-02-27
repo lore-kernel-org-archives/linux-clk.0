@@ -1,80 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:34338 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752304AbdBIAhm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Feb 2017 19:37:42 -0500
-Date: Wed, 8 Feb 2017 18:37:41 -0600
-From: Rob Herring <robh@kernel.org>
-To: Mars Cheng <mars.cheng@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        My Chuang <my.chuang@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        Chieh-Jay Liu <Chieh-Jay.Liu@mediatek.com>,
-        Kevin-CW Chen <kevin-cw.chen@mediatek.com>
-Subject: Re: [PATCH v2 08/10] soc: mediatek: add MT6797 power dt-bindings
-Message-ID: <20170209003741.nxcdxah5ydcj6v33@rob-hp-laptop>
-References: <1486383336-16892-1-git-send-email-mars.cheng@mediatek.com>
- <1486383336-16892-9-git-send-email-mars.cheng@mediatek.com>
+Return-Path: <cyndis@kapsi.fi>
+Subject: Re: [PATCH v2 0/7] Tegra210 clock bug fixes
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>,
+ linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
+From: Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <726ffa63-31e0-2fba-4edf-52261c43b8da@kapsi.fi>
+Date: Mon, 27 Feb 2017 20:28:44 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1486383336-16892-9-git-send-email-mars.cheng@mediatek.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 06, 2017 at 08:15:34PM +0800, Mars Cheng wrote:
-> This adds power dt-bindings for MT6797
+Series,
 
-Some consistency in the subject for bindings please.
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Tested-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-> 
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
-> ---
->  .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-> index 16fe94d..b1d165b 100644
-> --- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-> +++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-> @@ -9,11 +9,14 @@ domain control.
->  
->  The driver implements the Generic PM domain bindings described in
->  power/power_domain.txt. It provides the power domains defined in
-> -include/dt-bindings/power/mt8173-power.h and mt2701-power.h.
-> +- include/dt-bindings/power/mt8173-power.h
-> +- include/dt-bindings/power/mt6797-power.h
-> +- include/dt-bindings/power/mt2701-power.h
->  
->  Required properties:
->  - compatible: Should be one of:
->  	- "mediatek,mt2701-scpsys"
-> +	- "mediatek,mt6797-scpsys"
->  	- "mediatek,mt8173-scpsys"
->  - #power-domain-cells: Must be 1
->  - reg: Address range of the SCPSYS unit
-> @@ -22,6 +25,7 @@ Required properties:
->                        These are clocks which hardware needs to be
->                        enabled before enabling certain power domains.
->  	Required clocks for MT2701: "mm", "mfg", "ethif"
-> +	Required clocks for MT6797: "mm", "mfg", "vdec"
->  	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
->  
->  Optional properties:
-> -- 
-> 1.7.9.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On 02/23/2017 12:44 PM, Peter De Schrijver wrote:
+> A number of bug fixes for the Tegra210 clock implementation.
+>
+> Changelog:
+>
+> v2: add better description for 'remove non-existing pll_m_out1 clock'
+>
+> Peter De Schrijver (7):
+>   clk: tegra: fix pll_a1 iddq register, add pll_a1
+>   clk: tegra: fix isp clock modelling
+>   clk: tegra: correct afi parent
+>   clk: tegra: remove non-existing pll_m_out1 clock
+>   clk: tegra: don't warn for PLL defaults unnecessarily
+>   clk: tegra: correct tegra210_pll_fixed_mdiv_cfg rate calculation
+>   clk: tegra: fix type for m field
+>
+>  drivers/clk/tegra/clk-id.h               |  1 +
+>  drivers/clk/tegra/clk-tegra-periph.c     | 13 +++++++++---
+>  drivers/clk/tegra/clk-tegra210.c         | 35 ++++++++++++++++++++------------
+>  drivers/clk/tegra/clk.h                  |  2 +-
+>  include/dt-bindings/clock/tegra210-car.h |  4 ++--
+>  5 files changed, 36 insertions(+), 19 deletions(-)
+>
