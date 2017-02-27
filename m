@@ -1,55 +1,76 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Return-Path: <yuantian.tang@nxp.com>
+From: "Y.T. Tang" <yuantian.tang@nxp.com>
+To: "mturquette@baylibre.com" <mturquette@baylibre.com>
+CC: "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "robh+dt@kernel.org"
+	<robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Scott Wood <oss@buserror.net>
+Subject: RE: [PATCH 1/2] dt-bindings: qoriq-clock: Add coreclk
+Date: Mon, 27 Feb 2017 02:19:16 +0000
+Message-ID: <VI1PR0402MB2848DEF2D443FF507CF03D78F0570@VI1PR0402MB2848.eurprd04.prod.outlook.com>
+References: <1487137656-4006-1-git-send-email-yuantian.tang@nxp.com>
+In-Reply-To: <1487137656-4006-1-git-send-email-yuantian.tang@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <20170224002028.miupa6dzefgxbfse@lukather>
-References: <20170222231738.HXRSmi86@smtp1o.mail.yandex.net>
- <20170224002028.miupa6dzefgxbfse@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 28 Feb 2017 23:50:14 +0800
-Message-ID: <CAGb2v66AZK+g3xX4cXd8Q6Ob_+SxpYsxHBEfC9Ec2QsdN4eA9A@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [RFC PATCH 4/9] clk: sunxi-ng: support R40 SoC
-To: Icenowy Zheng <icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
- Kishon Vijay Abraham I <kishon@ti.com>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- linux-sunxi <linux-sunxi@googlegroups.com>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgSWNlbm93eSwKCk9uIEZyaSwgRmViIDI0LCAyMDE3IGF0IDg6MjAgQU0sIE1heGltZSBSaXBh
-cmQKPG1heGltZS5yaXBhcmRAZnJlZS1lbGVjdHJvbnMuY29tPiB3cm90ZToKPiBPbiBXZWQsIEZl
-YiAyMiwgMjAxNyBhdCAwMTo1NDo1OFBNICswODAwLCBJY2Vub3d5IFpoZW5nIHdyb3RlOgo+Pgo+
-PiAyMDE35bm0MuaciDIy5pelIDA3OjAz5LqOIE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRA
-ZnJlZS1lbGVjdHJvbnMuY29tPuWGmemBk++8mgo+PiA+Cj4+ID4gSGksCj4+ID4KPj4gPiBPbiBT
-YXQsIEZlYiAxOCwgMjAxNyBhdCAwMTozNzoxN0FNICswODAwLCBJY2Vub3d5IFpoZW5nIHdyb3Rl
-Ogo+PiA+ID4gQWxsd2lubmVyIFI0MCBTb0MgaGF2ZSBhIGNsb2NrIGNvbnRyb2xsZXIgbW9kdWxl
-IGluIHRoZSBzdHlsZSBvZiB0aGUKPj4gPiA+IFNvQ3MgYmV5b25kIHN1bjZpLCBob3dldmVyLCBp
-dCdzIG1vcmUgcmljaCBhbmQgY29tcGxleC4KPj4gPiA+Cj4+ID4gPiBBZGQgc3VwcG9ydCBmb3Ig
-aXQuCj4+ID4gPgo+PiA+ID4gQXMgdGhlIHVzZXIgbWFudWFsIGlzIHN0aWxsIG5vdCBhdmFpbGFi
-bGUsIHRoaXMgZHJpdmVyIGlzIG1hZGUgd2l0aAo+PiA+ID4ga25vd2xlZGdlIGZyb20gY2xrLXN1
-bjhpdzExLmMgaW4gdGhlIEJTUCBrZXJuZWwgc291cmNlLgo+PiA+Cj4+ID4gTWlzc2luZyBTb0Iu
-Cj4+ID4KPj4gPiBXaHkgYXJlIHNvbWUgcGF0Y2hlcyB0YWdnZWQgYXMgUkZDIGFuZCBzb21lIGRv
-bid0Pwo+Pgo+PiBUaGVyZSdzIHN0aWxsIG5vIG9wZW4gVXNlciBNYW51YWwgZm9yIFI0MCwgc28g
-SSB0YWdnZWQgQ0NVLXJlbGF0ZWQKPj4gZHJpdmVycyBSRkMuCj4+Cj4+IFBpbmN0cmwgZHJpdmVy
-IGNhbiBiZSB3cml0dGVuIHdpdGggdGhlIGRhdGFzaGVldCBkcmFmdCwgd2hpY2ggaXMKPj4gYXZh
-aWxhYmxlIG5vdy4KPj4KPj4gRm9yIFVTQiB3ZSBoYXZlIG5ldmVyIHVzZXIgbWFudWFsIHNvIGV2
-ZXJ5dGhpbmcgaXMgZWR1Y2F0ZWQgZ3Vlc3MgLS0KPj4gc28gaXQncyBub3QgUkZDLgo+Cj4gSXQn
-cyBzdGlsbCBraW5kIG9mIHdlaXJkIHRvIG1peCBhbmQgbWF0Y2ggcGF0Y2hlcyB3aXRoIGFuZCB3
-aXRob3V0IFJGQwo+IHRhZ3MuCgpBbGx3aW5uZXIganVzdCByZWxlYXNlZCB0aGUgZG9jcyB0b2Rh
-eS4gU2VlCgogICAgaHR0cHM6Ly9naXRodWIuY29tL3RpbmFsaW51eC9kb2NzL3RyZWUvcjQwLXYx
-LnkKCkNvdWxkIHlvdSBjaGVjayB5b3VyIHBhdGNoZXMgYWdhaW5zdCBpdCwgYW5kIG1heWJlIHdl
-IGRvbid0IG5lZWQgdGhlClJGQyB0YWdzIGFueW1vcmU/CgpDaGVuWXUKCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGlu
-ZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMu
-aW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+PING!
+
+Regards,
+Yuantian
+
+> -----Original Message-----
+> From: yuantian.tang@nxp.com [mailto:yuantian.tang@nxp.com]
+> Sent: Wednesday, February 15, 2017 1:48 PM
+> To: mturquette@baylibre.com
+> Cc: sboyd@codeaurora.org; robh+dt@kernel.org; mark.rutland@arm.com;
+> linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Y.T. Tang
+> <yuantian.tang@nxp.com>; Scott Wood <oss@buserror.net>; Y.T. Tang
+> <yuantian.tang@nxp.com>
+> Subject: [PATCH 1/2] dt-bindings: qoriq-clock: Add coreclk
+>=20
+> From: Tang Yuantian <Yuantian.Tang@nxp.com>
+>=20
+> ls1012a has separate input root clocks for core PLLs versus the platform =
+PLL,
+> with the latter described as sysclk in the hw docs.
+> Update the qoriq-clock binding to allow a second input clock, named
+> "coreclk".  If present, this clock will be used for the core PLLs.
+>=20
+> Signed-off-by: Scott Wood <oss@buserror.net>
+> Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/clock/qoriq-clock.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> index df9cb5a..97a9666 100644
+> --- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> @@ -55,6 +55,11 @@ Optional properties:
+>  - clocks: If clock-frequency is not specified, sysclk may be provided
+>  	as an input clock.  Either clock-frequency or clocks must be
+>  	provided.
+> +	A second input clock, called "coreclk", may be provided if
+> +	core PLLs are based on a different input clock from the
+> +	platform PLL.
+> +- clock-names: Required if a coreclk is present.  Valid names are
+> +	"sysclk" and "coreclk".
+>=20
+>  2. Clock Provider
+>=20
+> @@ -71,6 +76,7 @@ second cell is the clock index for the specified type.
+>  	2	hwaccel		index (n in CLKCGnHWACSR)
+>  	3	fman		0 for fm1, 1 for fm2
+>  	4	platform pll	0=3Dpll, 1=3Dpll/2, 2=3Dpll/3, 3=3Dpll/4
+> +	5	coreclk		must be 0
+>=20
+>  3. Example
+>=20
+> --
+> 2.1.0.27.g96db324
