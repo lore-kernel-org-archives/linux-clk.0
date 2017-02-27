@@ -1,70 +1,93 @@
-Return-Path: <dianders@chromium.org>
-Return-Path: <dianders@chromium.org>
-From: Douglas Anderson <dianders@chromium.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-rockchip@lists.infradead.org,
-	jwerner@chromium.org,
-	hl@rock-chips.com,
-	dbasehore@chromium.org,
-	zhengxing@rock-chips.com,
-	Douglas Anderson <dianders@chromium.org>,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: rockchip: Set "ignore unused" for PMU M0 clocks on rk3399
-Date: Tue, 14 Feb 2017 13:01:14 -0800
-Message-Id: <20170214210114.5846-1-dianders@chromium.org>
+Return-Path: <huziji@marvell.com>
+Subject: Re: [PATCH v6 00/14] mmc: Add support to Marvell Xenon SD Host
+ Controller
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Gregory CLEMENT
+	<gregory.clement@free-electrons.com>
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+ <87y3x0ajdv.fsf@free-electrons.com>
+ <CAPDyKFqXQmuxWFZwcnTgQcKU_t5MKCtBj6s+tv5gzVWS11x0qA@mail.gmail.com>
+CC: Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>, Andrew Lunn
+	<andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        Mike Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk
+	<linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Jimmy Xu
+	<zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+        Nadav Haklai
+	<nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
+        Doug Jones
+	<dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
+        "Wei(SOCP) Liu"
+	<liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
+        Yehuda Yitschak
+	<yehuday@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>, Hanna Hawa
+	<hannah@marvell.com>,
+        Kostya Porotchkin <kostap@marvell.com>
+From: Ziji Hu <huziji@marvell.com>
+Message-ID: <d1f1d71f-d0d4-d83e-04f6-5688dcbe01b9@marvell.com>
+Date: Mon, 27 Feb 2017 17:41:56 +0800
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFqXQmuxWFZwcnTgQcKU_t5MKCtBj6s+tv5gzVWS11x0qA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The PMU Cortex M0 on rk3399 is intended to be used for things like
-DDRFreq transitions, suspend/resume, and other things that are the
-purview of ARM Trusted Firmware and not the kernel.  As such, the
-kernel shouldn't be messing with the clocks.  Add CLK_IGNORE_UNUSED to
-these clocks.
+Hi Ulf,
 
-Without this change, the following was observed on a Chromebook with a
-rk3399 (using not-yet-upstream ARM Trusted Firmware code and
-not-yet-upstream kernel code based on kernel-4.4):
+On 2017/2/21 3:32, Ulf Hansson wrote:
+> On 20 February 2017 at 17:59, Gregory CLEMENT
+> <gregory.clement@free-electrons.com> wrote:
+>> Hi Ulf,
+>>
+>>  On mar., févr. 14 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+>>
+>>> Hello,
+>>>
+>>> This the sixth version of the series adding support for the SDHCI
+>>> Xenon controller. It can be currently found on the Armada 37xx and the
+>>> Armada 7K/8K but will be also used in more Marvell SoC (and not only
+>>> the mvebu ones actually).
+>>>
+>>> Most of the following changes had been discussed on the mailing list,
+>>> except the new compatible string.
+>>>
+>>
+>> I think that with this version we addressed all the concerns expressed
+>> about the previous version. Do you think that you will be able to apply
+>> this series for 4.11 or do you still see any issues?
+>>
+>> Thanks,
+>>
+>> Gregory
+> 
+> We are in the merge window for v4.11, so new material is out of the
+> question. I am preparing the PR to Linus as this very moment.
+> 
+> Anyway, I will look into the series as soon as I can.
 
-1. We init the clock framework.
+	Could you please take a look at our patch set?
+	Very sorry for pushing you, but your comment is very important to us.
 
-2. We start up "DDRFreq", which causes ATF to occasionally fire up the
-   M0 for transitions.  Each time ATF fires up the M0 it will turn on
-   these clocks and each time it is done it will turn them off.
+	Thank you.
 
-3. We finally get to the the part of the kernel that calls
-   clk_disable_unused() and we disables the clocks.
+Best regards,
+Hu Ziji
 
-You can see the race above.  Basically everything is fine as long as
-ARM Trusted Firmware isn't starting up the M0 at exactly the same time
-that the kernel is disabling unused clocks.  ...but if the race
-happens then we go boom.
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
- drivers/clk/rockchip/clk-rk3399.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 73121b144634..fa3cbef08776 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -1477,10 +1477,10 @@ static struct rockchip_clk_branch rk3399_clk_pmu_branches[] __initdata = {
- 	GATE(PCLK_UART4_PMU, "pclk_uart4_pmu", "pclk_pmu_src", 0, RK3399_PMU_CLKGATE_CON(1), 14, GFLAGS),
- 	GATE(PCLK_WDT_M0_PMU, "pclk_wdt_m0_pmu", "pclk_pmu_src", 0, RK3399_PMU_CLKGATE_CON(1), 15, GFLAGS),
- 
--	GATE(FCLK_CM0S_PMU, "fclk_cm0s_pmu", "fclk_cm0s_src_pmu", 0, RK3399_PMU_CLKGATE_CON(2), 0, GFLAGS),
--	GATE(SCLK_CM0S_PMU, "sclk_cm0s_pmu", "fclk_cm0s_src_pmu", 0, RK3399_PMU_CLKGATE_CON(2), 1, GFLAGS),
--	GATE(HCLK_CM0S_PMU, "hclk_cm0s_pmu", "fclk_cm0s_src_pmu", 0, RK3399_PMU_CLKGATE_CON(2), 2, GFLAGS),
--	GATE(DCLK_CM0S_PMU, "dclk_cm0s_pmu", "fclk_cm0s_src_pmu", 0, RK3399_PMU_CLKGATE_CON(2), 3, GFLAGS),
-+	GATE(FCLK_CM0S_PMU, "fclk_cm0s_pmu", "fclk_cm0s_src_pmu", CLK_IGNORE_UNUSED, RK3399_PMU_CLKGATE_CON(2), 0, GFLAGS),
-+	GATE(SCLK_CM0S_PMU, "sclk_cm0s_pmu", "fclk_cm0s_src_pmu", CLK_IGNORE_UNUSED, RK3399_PMU_CLKGATE_CON(2), 1, GFLAGS),
-+	GATE(HCLK_CM0S_PMU, "hclk_cm0s_pmu", "fclk_cm0s_src_pmu", CLK_IGNORE_UNUSED, RK3399_PMU_CLKGATE_CON(2), 2, GFLAGS),
-+	GATE(DCLK_CM0S_PMU, "dclk_cm0s_pmu", "fclk_cm0s_src_pmu", CLK_IGNORE_UNUSED, RK3399_PMU_CLKGATE_CON(2), 3, GFLAGS),
- 	GATE(HCLK_NOC_PMU, "hclk_noc_pmu", "fclk_cm0s_src_pmu", CLK_IGNORE_UNUSED, RK3399_PMU_CLKGATE_CON(2), 5, GFLAGS),
- };
- 
--- 
-2.11.0.483.g087da7b7c-goog
+> 
+> Kind regards
+> Uffe
+> 
