@@ -1,108 +1,67 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: [PATCH v6 03/14] mmc: core: Add mmc-card dt sub-node parse in core layer
-Date: Tue, 14 Feb 2017 18:01:43 +0100
-Message-Id: <34e51d32c82b57571e061e80df3bbaed731db554.1487091464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Subject: Re: [PATCH v5 5/7] arm: dts: sun8i: split Allwinner H3 .dtsi
+To: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.xyz>
+References: <20170226011956.53581-1-icenowy@aosc.xyz>
+ <20170226011956.53581-6-icenowy@aosc.xyz>
+ <CAGb2v67qywz9EdTzguAOEtWYqqrOZ-jSMTgkRza3dysUsCN6rw@mail.gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <579a2e9f-335f-04b7-fce2-ee4d2128141f@arm.com>
+Date: Mon, 27 Feb 2017 08:20:40 +0000
+MIME-Version: 1.0
+In-Reply-To: <CAGb2v67qywz9EdTzguAOEtWYqqrOZ-jSMTgkRza3dysUsCN6rw@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree <devicetree@vger.kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-sunxi <linux-sunxi@googlegroups.com>, Rob Herring <robh+dt@kernel.org>,
+ Andre Przywara <andre.przywara@arm.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Hu Ziji <huziji@marvell.com>
+On 26/02/17 03:46, Chen-Yu Tsai wrote:
+> Hi,
 
-Some vendor host, like Xenon, can support multiple types.
-In dts, use mmc-card dt sub-node to indicate eMMC is in use.
+[...]
 
-Add a generic mmc-card parse function in mmc core layer.
-If mmc-card sub-node is detected, set eMMC common caps, such as
-MMC_CAP_NONREMOVABLE, MMC_CAP2_NO_SD and MMC_CAP2_NO_SDIO.
+>> -               gic: interrupt-controller@01c81000 {
+>> -                       compatible = "arm,cortex-a7-gic", "arm,cortex-a15-gic";
+>> -                       reg = <0x01c81000 0x1000>,
+>> -                             <0x01c82000 0x2000>,
+>> -                             <0x01c84000 0x2000>,
+>> -                             <0x01c86000 0x2000>;
+>> -                       interrupt-controller;
+>> -                       #interrupt-cells = <3>;
+>> -                       interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+> 
+> The gic bits seem to be the same for both SoCs, aside from the
+> different compatible
+> string. Marc had sent a series to change them all to arm,gic-400, which is the
+> proper name for it, but it wasn't merged. I'm assuming the compatibles
+> are equal?
+> If so then it can also be shared.
 
-Since it is likely that struct mmc_card is not allocated yet when
-this mmc-card parse function is called, it will return true if
-mmc-card sub-node is detected. Otherwise, return false.
-It can help vendor host determine if the card type is eMMC.
+The series was fixing the various GICv2 memory maps, and is now in
+mainline. If you have a good indication that all these SoCs are indeed
+featuring a gic-400, feel free to amend the DT.
 
-Signed-off-by: Hu Ziji <huziji@marvell.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/mmc/core/mmc.c   | 24 ++++++++++++++++++++++++
- include/linux/mmc/core.h |  2 ++
- 2 files changed, 26 insertions(+)
+Thanks,
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index b61b52f9da3d..dc480006a303 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -2111,6 +2111,30 @@ static const struct mmc_bus_ops mmc_ops = {
- };
- 
- /*
-+ * Parse mmc-card dt sub-node and set eMMC common caps
-+ * if mmc-card exists.
-+ * If mmc-card is detected, return true.
-+ * Otherwise, return false.
-+ */
-+bool mmc_of_parse_mmc_card(struct mmc_host *host)
-+{
-+	struct device_node *np;
-+	bool ret = false;
-+
-+	np = mmc_of_find_child_device(host, 0);
-+	if (np && of_device_is_compatible(np, "mmc-card")) {
-+		/* mmc-card sub-node indicates eMMC card is in use. */
-+		host->caps |= MMC_CAP_NONREMOVABLE;
-+		host->caps2 |= MMC_CAP2_NO_SDIO | MMC_CAP2_NO_SD;
-+		ret = true;
-+	}
-+
-+	of_node_put(np);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(mmc_of_parse_mmc_card);
-+
-+/*
-  * Starting point for MMC card init.
-  */
- int mmc_attach_mmc(struct mmc_host *host)
-diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
-index e33cc748dcfe..1b27323f3b6e 100644
---- a/include/linux/mmc/core.h
-+++ b/include/linux/mmc/core.h
-@@ -234,4 +234,6 @@ struct device_node;
- extern u32 mmc_vddrange_to_ocrmask(int vdd_min, int vdd_max);
- extern int mmc_of_parse_voltage(struct device_node *np, u32 *mask);
- 
-+extern bool mmc_of_parse_mmc_card(struct mmc_host *host);
-+
- #endif /* LINUX_MMC_CORE_H */
+	M.
 -- 
-git-series 0.9.1
+Jazz is not dead. It just smells funny...
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
