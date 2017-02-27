@@ -1,65 +1,53 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 00/15] clk: ti: cleanups / fixes for preparation of clkctrl clocks
-Date: Mon, 13 Feb 2017 11:34:56 +0200
-Message-ID: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH v3 1/3] clk: meson-gxbb: expose clock CLKID_RNG0
+To: Heiner Kallweit <hkallweit1@gmail.com>,
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, linux-amlogic@lists.infradead.org,
+ linux-crypto@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <80bc00c9-dc3b-5aeb-89a0-8b427dca9b34@baylibre.com>
+Date: Mon, 27 Feb 2017 05:28:49 -0800
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 02/21/2017 10:55 PM, Heiner Kallweit wrote:
+> Expose clock CLKID_RNG0 which is needed for the HW random number generator.
+> 
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> ---
+> v2:
+> - added clk and DT maintainers
+> - split exposing the clock and using it in DT into two patches
+> - comment out clock definition in drivers/clk/meson/gxbb.h
+> - silently move CLKID_SPI to the right place
+> v3:
+> - no changes
+> ---
+>  drivers/clk/meson/gxbb.h              | 2 +-
+>  include/dt-bindings/clock/gxbb-clkc.h | 3 ++-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
 
-This series provides a number of cleanups and fixes for TI clock drivers.
-There patches are mostly independent of anything else, but are required
-for the upcoming clkctrl support also. Targeted for 4.12 merge window.
 
-Main features provided by this series:
-- Dropped a few obsolete definitions
-- Cleanups for clock alias generation; after this most of the clock aliases
-  can be removed from the drivers/clk/ti/clk-xyz.c files. As a sample,
-  patch #08 is provided for cleaning up omap4 clock aliases, but this can
-  be done for all.
-- Convert mux/divider to use TI clock specific internal representation,
-  instead of re-using the generic clk_divider / clk_mux. This allows
-  better control over the contents of the struct and cleaning up the
-  register access code to be more readable.
-- Convert to use proper register definition instead of the overloaded
-  void *ptr which is dynamically cast into a bitmask (Patch #15.)
+Hi Heiner,
 
-Some of the patches touch mach-omap2 code, so Ack from Tony is needed for
-patch #5, #6 and patch #15.
+This looks all good to me, but you should always send a cover letter for each revisions
+of the patchset.
 
-Boot tested on the omap2+ boards I have access to, no issues seen caused
-by this series.
+Using "git send-email" along the "--cover-letter" of "get format-patch" feature would
+also help send them in a row with a up-to-date cover letter.
 
-am335x-evm      : BOOT FAIL! (farm issue, failed to mount NFS rootfs)
-am335x-evmsk    : boot ok
-am37x-evm       : boot ok
-am437x-sk       : boot ok
-am437x-gp-evm   : boot ok
-am57xx-evm      : boot ok
-omap3-beagle-xm : boot ok
-omap3-beagle    : boot ok
-am335x-boneblack: boot ok
-am335x-bone     : boot ok
-craneboard      : boot ok
-dra72x-evm      : BOOT FAIL! (farm issue, failed to mount NFS rootfs)
-dra7xx-evm      : boot ok
-ldp3430         : BOOT FAIL! (farm issue, bootloader ethernet failure)
-omap3-n900      : boot ok
-omap5-uevm      : boot ok
-omap4-panda-es  : boot ok
-omap4-panda     : boot ok
-omap2430-sdp    : boot ok
-omap3430-sdp    : boot ok
-omap4-sdp-es23plus: boot ok
+For the third patch, it may be good to also add the same to the GXL dtsi, no ?
 
-Branch available against 4.10-rc2 here:
+Anyway :
 
-tree: https://github.com/t-kristo/linux-pm.git
-branch: 4.10-rc2-ti-clk-cleanup
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 
--Tero
+Thanks,
+Neil
