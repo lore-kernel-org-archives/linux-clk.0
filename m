@@ -1,50 +1,62 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 1/1] clk: renesas: cpg-mssr: r8a7796: add IMR clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <20170218213936.142813519@cogentembedded.com>
- <CAMuHMdV1x2voYKnMKv8x3XvmGwBA8SgwkhJZcnkycypdPhVjzA@mail.gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <1b4f2247-d3cf-fcab-deaa-045db17a43bd@cogentembedded.com>
-Date: Tue, 21 Feb 2017 21:54:47 +0300
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 27 Feb 2017 11:18:37 -0600
+From: Rob Herring <robh@kernel.org>
+To: yuantian.tang@nxp.com
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Scott Wood <oss@buserror.net>
+Subject: Re: [PATCH 1/2] dt-bindings: qoriq-clock: Add coreclk
+Message-ID: <20170227171837.eymnyebgn7ocsp7w@rob-hp-laptop>
+References: <1487137656-4006-1-git-send-email-yuantian.tang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdV1x2voYKnMKv8x3XvmGwBA8SgwkhJZcnkycypdPhVjzA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1487137656-4006-1-git-send-email-yuantian.tang@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/20/2017 11:38 AM, Geert Uytterhoeven wrote:
+On Wed, Feb 15, 2017 at 01:47:35PM +0800, yuantian.tang@nxp.com wrote:
+> From: Tang Yuantian <Yuantian.Tang@nxp.com>
+> 
+> ls1012a has separate input root clocks for core PLLs versus the platform
+> PLL, with the latter described as sysclk in the hw docs.
+> Update the qoriq-clock binding to allow a second input clock, named
+> "coreclk".  If present, this clock will be used for the core PLLs.
+> 
+> Signed-off-by: Scott Wood <oss@buserror.net>
+> Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/clock/qoriq-clock.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
->> Add the IMR[0-1] clocks to the R8A7796 CPG/MSSR driver.
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
->> --- linux.orig/drivers/clk/renesas/r8a7796-cpg-mssr.c
->> +++ linux/drivers/clk/renesas/r8a7796-cpg-mssr.c
->> @@ -179,6 +179,8 @@ static const struct mssr_mod_clk r8a7796
->>         DEF_MOD("vin1",                  810,   R8A7796_CLK_S0D2),
->>         DEF_MOD("vin0",                  811,   R8A7796_CLK_S0D2),
->>         DEF_MOD("etheravb",              812,   R8A7796_CLK_S0D6),
->> +       DEF_MOD("imr1",                  822,   R8A7796_CLK_S2D1),
->> +       DEF_MOD("imr0",                  823,   R8A7796_CLK_S2D1),
->
-> According to R-Car Gen3 Hardware Users Manual Rev.0.53E, the parent
-> clock is S0D2, like on H3 ES2.0.
+The change looks fine, but sounds like Scott should remain the author 
+(or agree he shouldn't be).
 
-    Not S0D4? I'd expect that what they call "register access" to be 
-controlled by the MSSR bits...
-
-> Will queue in clk-renesas-for-v4.12 with corrected parent clock.
-
-    So, what have you used for 7795 and 7796?
-
-> Gr{oetje,eeting}s,
->
->                         Geert
-
-MBR, Sergei
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> index df9cb5a..97a9666 100644
+> --- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> @@ -55,6 +55,11 @@ Optional properties:
+>  - clocks: If clock-frequency is not specified, sysclk may be provided
+>  	as an input clock.  Either clock-frequency or clocks must be
+>  	provided.
+> +	A second input clock, called "coreclk", may be provided if
+> +	core PLLs are based on a different input clock from the
+> +	platform PLL.
+> +- clock-names: Required if a coreclk is present.  Valid names are
+> +	"sysclk" and "coreclk".
+>  
+>  2. Clock Provider
+>  
+> @@ -71,6 +76,7 @@ second cell is the clock index for the specified type.
+>  	2	hwaccel		index (n in CLKCGnHWACSR)
+>  	3	fman		0 for fm1, 1 for fm2
+>  	4	platform pll	0=pll, 1=pll/2, 2=pll/3, 3=pll/4
+> +	5	coreclk		must be 0
+>  
+>  3. Example
+>  
+> -- 
+> 2.1.0.27.g96db324
+> 
