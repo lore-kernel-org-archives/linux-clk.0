@@ -1,171 +1,98 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v3 5/6] clk: tegra: add super clk mux/div
-Date: Tue, 28 Feb 2017 16:37:21 +0200
-Message-ID: <1488292648-16876-6-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1488292648-16876-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1488292648-16876-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Mon, 27 Feb 2017 13:24:44 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH v5 2/7] clk: sunxi-ng: rename sun8i-h3 driver to
+ sunxi-h3-h5
+Message-ID: <20170227122444.6523qu4wwm4ihlfx@lukather>
+References: <20170226011956.53581-1-icenowy@aosc.xyz>
+ <20170226011956.53581-3-icenowy@aosc.xyz>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+In-Reply-To: <20170226011956.53581-3-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ linux-sunxi@googlegroups.com, Will Deacon <will.deacon@arm.com>,
+ linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+ Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============8586608977300342273=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a super clock type which implements both mux and divider. This is used
-for aclk.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-super.c | 87 +++++++++++++++++++++++++++++++++++++++++--
- drivers/clk/tegra/clk.h       |  7 +++-
- 2 files changed, 89 insertions(+), 5 deletions(-)
+--===============8586608977300342273==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="e5suamyvr326w62f"
+Content-Disposition: inline
 
-diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-index 131d1b50..84267cf 100644
---- a/drivers/clk/tegra/clk-super.c
-+++ b/drivers/clk/tegra/clk-super.c
-@@ -121,9 +121,50 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
- 	return err;
- }
- 
-+const struct clk_ops tegra_clk_super_mux_ops = {
-+	.get_parent = clk_super_get_parent,
-+	.set_parent = clk_super_set_parent,
-+};
-+
-+static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *parent_rate)
-+{
-+	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
-+	struct clk_hw *div_hw = &super->frac_div.hw;
-+
-+	__clk_hw_set_clk(div_hw, hw);
-+
-+	return super->div_ops->round_rate(div_hw, rate, parent_rate);
-+}
-+
-+static unsigned long clk_super_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
-+	struct clk_hw *div_hw = &super->frac_div.hw;
-+
-+	__clk_hw_set_clk(div_hw, hw);
-+
-+	return super->div_ops->recalc_rate(div_hw, parent_rate);
-+}
-+
-+static int clk_super_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
-+	struct clk_hw *div_hw = &super->frac_div.hw;
-+
-+	__clk_hw_set_clk(div_hw, hw);
-+
-+	return super->div_ops->set_rate(div_hw, rate, parent_rate);
-+}
-+
- const struct clk_ops tegra_clk_super_ops = {
- 	.get_parent = clk_super_get_parent,
- 	.set_parent = clk_super_set_parent,
-+	.set_rate = clk_super_set_rate,
-+	.round_rate = clk_super_round_rate,
-+	.recalc_rate = clk_super_recalc_rate,
- };
- 
- struct clk *tegra_clk_register_super_mux(const char *name,
-@@ -136,13 +177,11 @@ struct clk *tegra_clk_register_super_mux(const char *name,
- 	struct clk_init_data init;
- 
- 	super = kzalloc(sizeof(*super), GFP_KERNEL);
--	if (!super) {
--		pr_err("%s: could not allocate super clk\n", __func__);
-+	if (!super)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	init.name = name;
--	init.ops = &tegra_clk_super_ops;
-+	init.ops = &tegra_clk_super_mux_ops;
- 	init.flags = flags;
- 	init.parent_names = parent_names;
- 	init.num_parents = num_parents;
-@@ -163,3 +202,43 @@ struct clk *tegra_clk_register_super_mux(const char *name,
- 
- 	return clk;
- }
-+
-+struct clk *tegra_clk_register_super_clk(const char *name,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
-+		spinlock_t *lock)
-+{
-+	struct tegra_clk_super_mux *super;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	super = kzalloc(sizeof(*super), GFP_KERNEL);
-+	if (!super)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &tegra_clk_super_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
-+
-+	super->reg = reg;
-+	super->lock = lock;
-+	super->width = 4;
-+	super->flags = clk_super_flags;
-+	super->frac_div.reg = reg + 4;
-+	super->frac_div.shift = 16;
-+	super->frac_div.width = 8;
-+	super->frac_div.frac_width = 1;
-+	super->frac_div.lock = lock;
-+	super->div_ops = &tegra_clk_frac_div_ops;
-+
-+	/* Data in .init is copied by clk_register(), so stack variable OK */
-+	super->hw.init = &init;
-+
-+	clk = clk_register(NULL, &super->hw);
-+	if (IS_ERR(clk))
-+		kfree(super);
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 8b09021e..960e47e 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -686,6 +686,8 @@ struct tegra_periph_init_data {
- struct tegra_clk_super_mux {
- 	struct clk_hw	hw;
- 	void __iomem	*reg;
-+	struct tegra_clk_frac_div frac_div;
-+	const struct clk_ops	*div_ops;
- 	u8		width;
- 	u8		flags;
- 	u8		div2_index;
-@@ -702,7 +704,10 @@ struct clk *tegra_clk_register_super_mux(const char *name,
- 		const char **parent_names, u8 num_parents,
- 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
- 		u8 width, u8 pllx_index, u8 div2_index, spinlock_t *lock);
--
-+struct clk *tegra_clk_register_super_clk(const char *name,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
-+		spinlock_t *lock);
- /**
-  * struct clk_init_table - clock initialization table
-  * @clk_id:	clock id as mentioned in device tree bindings
--- 
-1.9.1
+
+--e5suamyvr326w62f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Sun, Feb 26, 2017 at 09:19:51AM +0800, Icenowy Zheng wrote:
+> As the CCU in the Allwinner H5 SoC is very similar to the one in H3,
+> rename the H3 driver to sunxi-h3-h5 so that it can be extended with H5
+> support.
+>=20
+> Trasitional header symlinks are created, to ensure current device tree
+> files which included sun8i-h3-ccu.h can compile.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+
+Just like for the R40, I wonder whether this is needed at all. We have
+a lot of other drivers that we don't have to rename to support new
+SoCs. This is kind of weird to make an exception for this one only.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--e5suamyvr326w62f
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYtBqMAAoJEBx+YmzsjxAgATMP/RM5d+OXrk1RQWmIkbNmuFbG
+0wDximpqngUEQD5kO+crTEtdWTFTBLeB+vXIE2SJBWrFdCRHY5r+XS7CqikYgWGj
+g+ksATE7sqCm3bD+anAvs660cTvI8F6Kn+R0m5mnPjV0nekvdaHd40oaWwkj4Eyl
+ufjXrB912F4Mi/h/zkFz3hd+PLM47fkqRy64741dNtaeFfTnWM8f4deME8WHmcLP
+5cCsm5PVzcUwC2wCssP0dH1AaM5eB048ZjkWicvllUgXkQXczQDnS2ttxH9k8Aqm
+OlwbqKVmkclf+U1k7wCAebAVHWJAQgWyc49KRaxPoei3FJxwgwRROQPFcJa/o0QC
+yMXSXiI5icJNuhrrYQ+aXJFdkMtzrn4cNejktPTuJkem89rElzexRUNKROGtSYev
+fRgsEhlvMROcdaUvsxrH39zcOWbUBrCIlbZS1WhZPLdycc51wxmltqfHRTlNMqNc
+KYAiiBdplJQNK19A+HUmJsebfkl3erKV1VYUh8VWE/xD/0rR4jd7IxSdviT0gxRU
+fdjapvjZFhOKyEQYzlymyTcDOxsGbybxq/5uaDMWzWa1icfpQX0Fb3LrAS8dGa15
+P0d5IJs7XtJ83QJValsMU6s8ZkadEI0eMRnh4dGjba1f0VgT5HgUUbUwj1Hdg1XE
+0tZd2Hh8SuRCVz5WLjyW
+=L3jj
+-----END PGP SIGNATURE-----
+
+--e5suamyvr326w62f--
+
+
+--===============8586608977300342273==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============8586608977300342273==--
