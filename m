@@ -1,71 +1,47 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 5/5] clk: tegra: add aclk
-Date: Fri, 24 Feb 2017 15:19:30 +0200
-Message-ID: <1487942376-19631-6-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1487942376-19631-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1487942376-19631-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 0/2] rockchip: fix serial output on rk3036
+Date: Tue, 28 Feb 2017 19:12:12 +0100
+Message-Id: <20170228181214.6413-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-This clock clocks the ADSP cortex-A9.
+Recent changes to the 8250-dw variant revealed issues concerning
+how the clock rates are handled on the rk3036 uart.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c         | 10 ++++++++++
- include/dt-bindings/clock/tegra210-car.h |  2 ++
- 2 files changed, 12 insertions(+)
+For one, there was an error in the clock declaration, but also the
+shared uart-pll-select-mux also as default got supplied from the apll
+that also supplies the cpu and thus gets frequency scaled.
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index cfe7078..9a2512a 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2308,6 +2308,11 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
- 
- static struct clk **clks;
- 
-+static const char * const aclk_parents[] = {
-+	"pll_a1", "pll_c", "pll_p", "pll_a_out0", "pll_c2", "pll_c3",
-+	"clk_m"
-+};
-+
- static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 					    void __iomem *pmc_base)
- {
-@@ -2369,6 +2374,11 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 	clk_register_clkdev(clk, "cml1", NULL);
- 	clks[TEGRA210_CLK_CML1] = clk;
- 
-+	clk = tegra_clk_register_super_clk("aclk", aclk_parents,
-+				ARRAY_SIZE(aclk_parents), 0, clk_base + 0x6e0,
-+				0, NULL);
-+	clks[TEGRA210_CLK_ACLK] = clk;
-+
- 	tegra_periph_clk_init(clk_base, pmc_base, tegra210_clks, &pll_p_params);
- }
- 
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index 5aa1027..8744b19 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -396,6 +396,8 @@
- #define TEGRA210_CLK_PLL_C_UD 364
- #define TEGRA210_CLK_SCLK_MUX 365
- 
-+#define TEGRA210_CLK_ACLK 370
-+
- #define TEGRA210_CLK_DMIC1_SYNC_CLK 388
- #define TEGRA210_CLK_DMIC1_SYNC_CLK_MUX 389
- #define TEGRA210_CLK_DMIC2_SYNC_CLK 390
+The patches in this series remedy this and make the debug uart
+function again on 4.10 + current merge window.
+
+
+As for the merge-path, I've now tested all Rockchip socs I have access
+to (3036, 3288, 3368, 3399) and didn't find any more clock-related issues
+with the merge-window as of today. So if no other subtle issue turns up
+this week, these should be all fixes for the 4.11 cycle.
+So these 2 patches could be picked up by clock-maintainers directly if
+so desired, or I can send a pull request after the merge-window closes
+and we're save to say that nothing else broke.
+
+
+changes in v2:
+- Fixes tag for the missing ","
+- do reparenting in the driver itself
+- drop clock-id addition, as they're not needed for the fix anymore
+
+Heiko Stuebner (2):
+  clk: rockchip: add "," to mux_pll_src_apll_dpll_gpll_usb480m_p on
+    rk3036
+  clk: rockchip: Make uartpll a child of the gpll on rk3036
+
+ drivers/clk/rockchip/clk-rk3036.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
 -- 
-1.9.1
+2.11.0
