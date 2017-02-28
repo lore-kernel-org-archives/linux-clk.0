@@ -1,48 +1,304 @@
-Return-Path: <cyndis@kapsi.fi>
-Subject: Re: [PATCH v2 0/7] Tegra210 clock bug fixes
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>,
- linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <726ffa63-31e0-2fba-4edf-52261c43b8da@kapsi.fi>
-Date: Mon, 27 Feb 2017 20:28:44 +0200
-MIME-Version: 1.0
-In-Reply-To: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 3/7] clk: meson: mpll: add rw operation
+Date: Tue, 28 Feb 2017 14:29:58 +0100
+Message-Id: <20170228133002.17894-4-jbrunet@baylibre.com>
+In-Reply-To: <20170228133002.17894-1-jbrunet@baylibre.com>
+References: <20170228133002.17894-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Series,
+This patch adds new callbacks to the meson-mpll driver to control
+and set the pll rate. For this, we also need to add the enable bit and
+sdm enable bit. The corresponding parameters are added to mpll data
+structure.
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-Tested-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/clk-mpll.c | 152 +++++++++++++++++++++++++++++++++++++++++--
+ drivers/clk/meson/clkc.h     |   4 +-
+ drivers/clk/meson/gxbb.c     |  30 +++++++++
+ 3 files changed, 180 insertions(+), 6 deletions(-)
 
-On 02/23/2017 12:44 PM, Peter De Schrijver wrote:
-> A number of bug fixes for the Tegra210 clock implementation.
->
-> Changelog:
->
-> v2: add better description for 'remove non-existing pll_m_out1 clock'
->
-> Peter De Schrijver (7):
->   clk: tegra: fix pll_a1 iddq register, add pll_a1
->   clk: tegra: fix isp clock modelling
->   clk: tegra: correct afi parent
->   clk: tegra: remove non-existing pll_m_out1 clock
->   clk: tegra: don't warn for PLL defaults unnecessarily
->   clk: tegra: correct tegra210_pll_fixed_mdiv_cfg rate calculation
->   clk: tegra: fix type for m field
->
->  drivers/clk/tegra/clk-id.h               |  1 +
->  drivers/clk/tegra/clk-tegra-periph.c     | 13 +++++++++---
->  drivers/clk/tegra/clk-tegra210.c         | 35 ++++++++++++++++++++------------
->  drivers/clk/tegra/clk.h                  |  2 +-
->  include/dt-bindings/clock/tegra210-car.h |  4 ++--
->  5 files changed, 36 insertions(+), 19 deletions(-)
->
+diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+index 03af79005ddb..342b85d4e22a 100644
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -64,16 +64,50 @@
+ #include <linux/clk-provider.h>
+ #include "clkc.h"
+ 
+-#define SDM_MAX 16384
++#define SDM_DEN 16384
++#define SDM_MIN 1
++#define SDM_MAX 16383
++#define N2_MIN	4
++#define N2_MAX	127
+ 
+ #define to_meson_clk_mpll(_hw) container_of(_hw, struct meson_clk_mpll, hw)
+ 
++static unsigned long rate_from_params(unsigned long parent_rate,
++				      unsigned long sdm,
++				      unsigned long n2)
++{
++	return (parent_rate * SDM_DEN) / ((SDM_DEN * n2) + sdm);
++}
++
++static void params_from_rate(unsigned long requested_rate,
++			     unsigned long parent_rate,
++			     unsigned long *sdm,
++			     unsigned long *n2)
++{
++	uint64_t div = parent_rate;
++	unsigned long rem = do_div(div, requested_rate);
++
++	if (div < N2_MIN) {
++		*n2 = N2_MIN;
++		*sdm = SDM_MIN;
++	} else if (div > N2_MAX) {
++		*n2 = N2_MAX;
++		*sdm = SDM_MAX;
++	} else {
++		*n2 = div;
++		*sdm = DIV_ROUND_UP(rem * SDM_DEN, requested_rate);
++		if (*sdm < SDM_MIN)
++			*sdm = SDM_MIN;
++		else if (*sdm > SDM_MAX)
++			*sdm = SDM_MAX;
++	}
++}
++
+ static unsigned long mpll_recalc_rate(struct clk_hw *hw,
+ 		unsigned long parent_rate)
+ {
+ 	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
+ 	struct parm *p;
+-	unsigned long rate = 0;
+ 	unsigned long reg, sdm, n2;
+ 
+ 	p = &mpll->sdm;
+@@ -84,11 +118,119 @@ static unsigned long mpll_recalc_rate(struct clk_hw *hw,
+ 	reg = readl(mpll->base + p->reg_off);
+ 	n2 = PARM_GET(p->width, p->shift, reg);
+ 
+-	rate = (parent_rate * SDM_MAX) / ((SDM_MAX * n2) + sdm);
++	return rate_from_params(parent_rate, sdm, n2);
++}
++
++static long mpll_round_rate(struct clk_hw *hw,
++			    unsigned long rate,
++			    unsigned long *parent_rate)
++{
++	unsigned long sdm, n2;
++
++	params_from_rate(rate, *parent_rate, &sdm, &n2);
++	return rate_from_params(*parent_rate, sdm, n2);
++}
++
++static int mpll_set_rate(struct clk_hw *hw,
++			 unsigned long rate,
++			 unsigned long parent_rate)
++{
++	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
++	struct parm *p;
++	unsigned long reg, sdm, n2;
++	unsigned long flags = 0;
++
++	params_from_rate(rate, parent_rate, &sdm, &n2);
++
++	if (mpll->lock)
++		spin_lock_irqsave(mpll->lock, flags);
++	else
++		__acquire(mpll->lock);
++
++	p = &mpll->sdm;
++	reg = readl(mpll->base + p->reg_off);
++	reg = PARM_SET(p->width, p->shift, reg, sdm);
++	writel(reg, mpll->base + p->reg_off);
++
++	p = &mpll->sdm_en;
++	reg = readl(mpll->base + p->reg_off);
++	reg = PARM_SET(p->width, p->shift, reg, 1);
++	writel(reg, mpll->base + p->reg_off);
++
++	p = &mpll->n2;
++	reg = readl(mpll->base + p->reg_off);
++	reg = PARM_SET(p->width, p->shift, reg, n2);
++	writel(reg, mpll->base + p->reg_off);
++
++	if (mpll->lock)
++		spin_unlock_irqrestore(mpll->lock, flags);
++	else
++		__release(mpll->lock);
+ 
+-	return rate;
++	return 0;
++}
++
++static void mpll_enable_core(struct clk_hw *hw, int enable)
++{
++	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
++	struct parm *p;
++	unsigned long reg;
++	unsigned long flags = 0;
++
++	if (mpll->lock)
++		spin_lock_irqsave(mpll->lock, flags);
++	else
++		__acquire(mpll->lock);
++
++	p = &mpll->en;
++	reg = readl(mpll->base + p->reg_off);
++	reg = PARM_SET(p->width, p->shift, reg, enable ? 1 : 0);
++	writel(reg, mpll->base + p->reg_off);
++
++	if (mpll->lock)
++		spin_unlock_irqrestore(mpll->lock, flags);
++	else
++		__release(mpll->lock);
++}
++
++
++static int mpll_enable(struct clk_hw *hw)
++{
++	mpll_enable_core(hw, 1);
++
++	return 0;
++}
++
++static void mpll_disable(struct clk_hw *hw)
++{
++	mpll_enable_core(hw, 0);
++}
++
++static int mpll_is_enabled(struct clk_hw *hw)
++{
++	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
++	struct parm *p;
++	unsigned long reg;
++	int en;
++
++	p = &mpll->en;
++	reg = readl(mpll->base + p->reg_off);
++	en = PARM_GET(p->width, p->shift, reg);
++
++	return en;
+ }
+ 
+ const struct clk_ops meson_clk_mpll_ro_ops = {
+-	.recalc_rate = mpll_recalc_rate,
++	.recalc_rate	= mpll_recalc_rate,
++	.round_rate	= mpll_round_rate,
++	.is_enabled	= mpll_is_enabled,
++};
++
++const struct clk_ops meson_clk_mpll_ops = {
++	.recalc_rate	= mpll_recalc_rate,
++	.round_rate	= mpll_round_rate,
++	.set_rate	= mpll_set_rate,
++	.enable		= mpll_enable,
++	.disable	= mpll_disable,
++	.is_enabled	= mpll_is_enabled,
+ };
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 9bb70e7a7d6a..54d58a465039 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -92,8 +92,9 @@ struct meson_clk_mpll {
+ 	struct clk_hw hw;
+ 	void __iomem *base;
+ 	struct parm sdm;
++	struct parm sdm_en;
+ 	struct parm n2;
+-	/* FIXME ssen gate control? */
++	struct parm en;
+ 	spinlock_t *lock;
+ };
+ 
+@@ -116,5 +117,6 @@ extern const struct clk_ops meson_clk_pll_ro_ops;
+ extern const struct clk_ops meson_clk_pll_ops;
+ extern const struct clk_ops meson_clk_cpu_ops;
+ extern const struct clk_ops meson_clk_mpll_ro_ops;
++extern const struct clk_ops meson_clk_mpll_ops;
+ 
+ #endif /* __CLKC_H */
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 388b0c8838af..6b97f4da1708 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -441,11 +441,21 @@ static struct meson_clk_mpll gxbb_mpll0 = {
+ 		.shift   = 0,
+ 		.width   = 14,
+ 	},
++	.sdm_en = {
++		.reg_off = HHI_MPLL_CNTL7,
++		.shift   = 15,
++		.width	 = 1,
++	},
+ 	.n2 = {
+ 		.reg_off = HHI_MPLL_CNTL7,
+ 		.shift   = 16,
+ 		.width   = 9,
+ 	},
++	.en = {
++		.reg_off = HHI_MPLL_CNTL7,
++		.shift   = 14,
++		.width	 = 1,
++	},
+ 	.lock = &clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0",
+@@ -461,11 +471,21 @@ static struct meson_clk_mpll gxbb_mpll1 = {
+ 		.shift   = 0,
+ 		.width   = 14,
+ 	},
++	.sdm_en = {
++		.reg_off = HHI_MPLL_CNTL8,
++		.shift   = 15,
++		.width	 = 1,
++	},
+ 	.n2 = {
+ 		.reg_off = HHI_MPLL_CNTL8,
+ 		.shift   = 16,
+ 		.width   = 9,
+ 	},
++	.en = {
++		.reg_off = HHI_MPLL_CNTL8,
++		.shift   = 14,
++		.width	 = 1,
++	},
+ 	.lock = &clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll1",
+@@ -481,11 +501,21 @@ static struct meson_clk_mpll gxbb_mpll2 = {
+ 		.shift   = 0,
+ 		.width   = 14,
+ 	},
++	.sdm_en = {
++		.reg_off = HHI_MPLL_CNTL9,
++		.shift   = 15,
++		.width	 = 1,
++	},
+ 	.n2 = {
+ 		.reg_off = HHI_MPLL_CNTL9,
+ 		.shift   = 16,
+ 		.width   = 9,
+ 	},
++	.en = {
++		.reg_off = HHI_MPLL_CNTL9,
++		.shift   = 14,
++		.width	 = 1,
++	},
+ 	.lock = &clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll2",
+-- 
+2.9.3
