@@ -1,66 +1,38 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 3 Feb 2017 12:43:02 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Jon Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2] clk: tegra: Add BPMP clock driver
-Message-ID: <20170203204302.GF25384@codeaurora.org>
-References: <20161115161129.29722-1-thierry.reding@gmail.com>
- <20161117154731.29528-1-thierry.reding@gmail.com>
- <20170125074112.GC13025@ulmo.ba.sec>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170125074112.GC13025@ulmo.ba.sec>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 0/4] rockchip: fix serial output on rk3036
+Date: Tue, 28 Feb 2017 06:14:16 +0100
+Message-Id: <20170228051420.7214-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/25, Thierry Reding wrote:
-> On Thu, Nov 17, 2016 at 04:47:31PM +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> > 
-> > This driver uses the services provided by the BPMP firmware driver to
-> > implement a clock driver based on the MRQ_CLK request. This part of the
-> > BPMP ABI provides a means to enumerate and control clocks and should
-> > allow the driver to work on any chip that supports this ABI.
-> > 
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> > Changes in v2:
-> > - rename ->prepare() and ->unprepare() implementations for consistency
-> > - implement ->is_prepared() instead of ->is_enabled() to avoid the need
-> >   for atomic operations
-> > - rename tegra_bpmp_clk_message.clk member to id
-> > - remove a double semi-colon and a stray ampersand
-> > - drop extra check for validity of parent index, the core does it
-> >   already
-> > - make struct tegra_bpmp carry an array of struct tegra_bpmp_clk instead
-> >   of struct clk_hw to simplify some driver code
-> > - zero out struct clk_init_data to avoid potentially uninitialized data
-> > - use devm_clk_hw_register() instead of clk_register() because we never
-> >   need the opaque struct clk cookie
-> > - rearrange functions so that they appear in the order specified by
-> >   struct clk_ops
-> > 
-> >  drivers/clk/tegra/Kconfig    |   4 +
-> >  drivers/clk/tegra/Makefile   |   1 +
-> >  drivers/clk/tegra/clk-bpmp.c | 620 +++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 625 insertions(+)
-> >  create mode 100644 drivers/clk/tegra/clk-bpmp.c
-> 
-> Stephen, Mike,
-> 
-> we missed the last merge window with this, but it would be nice to get
-> it in this time. Any more comments?
-> 
+Recent changes to the 8250-dw variant revealed issues concerning
+how the clock rates are handled on the rk3036 uart.
 
-Don't think so. Shall I merge it into clk-next?
+For one, there was an error in the clock declaration, but also the
+shared uart-pll-select-mux also as default got supplied from the apll
+that also supplies the cpu and thus gets frequency scaled.
 
-Sadly it's not easy to test compile this single driver on the
-commandline. Grumble.
+The patches in this series remedy this and make the debug uart
+function again on 4.10 + current merge window.
+
+
+Heiko Stuebner (4):
+  clk: rockchip: add "," to mux_pll_src_apll_dpll_gpll_usb480m_p on
+    rk3036
+  clk: rockchip: add SCLK_UARTPLL to rk3036 clock ids
+  clk: rockchip: assign the SCLK_UARTPLL clock id on rk3036
+  ARM: dts: rockchip: Make uartpll a child of the gpll on rk3036
+
+ arch/arm/boot/dts/rk3036.dtsi          | 5 +++--
+ drivers/clk/rockchip/clk-rk3036.c      | 4 ++--
+ include/dt-bindings/clock/rk3036-cru.h | 1 +
+ 3 files changed, 6 insertions(+), 4 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
