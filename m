@@ -1,76 +1,37 @@
-Return-Path: <mmayer@mmayer.net>
-From: Markus Mayer <code@mmayer.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Markus Mayer <mmayer@broadcom.com>,
-	Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
-	Linux Clock List <linux-clk@vger.kernel.org>,
-	Power Management List <linux-pm@vger.kernel.org>,
-	Device Tree List <devicetree@vger.kernel.org>,
-	ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 1/2] dt-bindings: brcm: clocks: add binding for brcmstb-cpu-clk-div
-Date: Wed,  1 Feb 2017 15:26:37 -0800
-Message-Id: <20170201232638.74396-2-code@mmayer.net>
-In-Reply-To: <20170201232638.74396-1-code@mmayer.net>
-References: <20170201232638.74396-1-code@mmayer.net>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 2/4] clk: rockchip: add SCLK_UARTPLL to rk3036 clock ids
+Date: Tue, 28 Feb 2017 06:14:18 +0100
+Message-Id: <20170228051420.7214-3-heiko@sntech.de>
+In-Reply-To: <20170228051420.7214-1-heiko@sntech.de>
+References: <20170228051420.7214-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Mayer <mmayer@broadcom.com>
+Systems might need it, if they want to assign the pll-mux shared
+by all uart clocks to some specific pll.
 
-Add binding document for brcm,brcmstb-cpu-clk-div.
-
-Signed-off-by: Markus Mayer <mmayer@broadcom.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- .../bindings/clock/brcm,brcmstb-cpu-clk-div.txt    | 22 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 2 files changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
+ include/dt-bindings/clock/rk3036-cru.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt b/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
-new file mode 100644
-index 0000000..7b6a8ce
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
-@@ -0,0 +1,22 @@
-+The CPU divider node serves as the sole clock for the CPU complex. It supports
-+power-of-2 clock division, with a divider of "1" as the default highest-speed
-+setting.
-+
-+Required properties:
-+- compatible: shall be "brcm,brcmstb-cpu-clk-div"
-+- reg: address and width of the divider configuration register
-+- #clock-cells: shall be set to 0
-+- clocks: phandle of clock provider which provides the source clock
-+          (this would typically be a "fixed-clock" type PLL)
-+
-+Optional properties:
-+- clock-names: the clock may be named
-+
-+Example:
-+	cpuclkdiv: clock-controller@f03e257c {
-+		compatible = "brcm,brcmstb-cpu-clk-div";
-+		reg = <0xf03e257c 0x4>;
-+		#clock-cells = <0>;
-+		clocks = <&cpupll>;
-+		clock-names = "cpupll";
-+	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cfff2c9..690761d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2786,6 +2786,7 @@ M:	bcm-kernel-feedback-list@broadcom.com
- L:	linux-pm@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/cpufreq/brcm,stb-avs-cpu-freq.txt
-+F:	Documentation/devicetree/bindings/clock/brcm,brcmstb-cpu-clk-div.txt
- F:	drivers/cpufreq/brcmstb*
+diff --git a/include/dt-bindings/clock/rk3036-cru.h b/include/dt-bindings/clock/rk3036-cru.h
+index de44109a3a04..58dd05af77e2 100644
+--- a/include/dt-bindings/clock/rk3036-cru.h
++++ b/include/dt-bindings/clock/rk3036-cru.h
+@@ -56,6 +56,7 @@
+ #define SCLK_MACREF		152
+ #define SCLK_MACPLL		153
+ #define SCLK_SFC		160
++#define SCLK_UARTPLL		161
  
- BROADCOM SPECIFIC AMBA DRIVER (BCMA)
+ /* aclk gates */
+ #define ACLK_DMAC2		194
 -- 
-2.7.4
+2.11.0
