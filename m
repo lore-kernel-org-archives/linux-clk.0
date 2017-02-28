@@ -8,164 +8,48 @@ To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
 	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
 	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 4/5] clk: tegra: add super clk mux/div
-Date: Fri, 24 Feb 2017 15:19:29 +0200
-Message-ID: <1487942376-19631-5-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1487942376-19631-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1487942376-19631-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH v3 0/6] Add missing Tegra210 clocks
+Date: Tue, 28 Feb 2017 16:37:16 +0200
+Message-ID: <1488292648-16876-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a super clock type which implements both mux and divider. This is used
-for aclk.
+This series adds a number of clocks which were missing from the Tegra210
+clock definition. It applies on top of the 'Tegra210 clock bug fixes' series
+posted earlier.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-super.c | 87 +++++++++++++++++++++++++++++++++++++++++--
- drivers/clk/tegra/clk.h       |  7 +++-
- 2 files changed, 89 insertions(+), 5 deletions(-)
+Change log:
 
-diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-index 131d1b50..7982d41 100644
---- a/drivers/clk/tegra/clk-super.c
-+++ b/drivers/clk/tegra/clk-super.c
-@@ -121,9 +121,50 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
- 	return err;
- }
- 
-+const struct clk_ops tegra_clk_super_mux_ops = {
-+	.get_parent = clk_super_get_parent,
-+	.set_parent = clk_super_set_parent,
-+};
-+
-+static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *parent_rate)
-+{
-+	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
-+	struct clk_hw *div_hw = &super->frac_div.hw;
-+
-+	__clk_hw_set_clk(div_hw, hw);
-+
-+	return super->div_ops->round_rate(div_hw, rate, parent_rate);
-+}
-+
-+static unsigned long clk_super_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
-+	struct clk_hw *div_hw = &super->frac_div.hw;
-+
-+	__clk_hw_set_clk(div_hw, hw);
-+
-+	return super->div_ops->recalc_rate(div_hw, parent_rate);
-+}
-+
-+static int clk_super_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
-+	struct clk_hw *div_hw = &super->frac_div.hw;
-+
-+	__clk_hw_set_clk(div_hw, hw);
-+
-+	return super->div_ops->set_rate(div_hw, rate, parent_rate);
-+}
-+
- const struct clk_ops tegra_clk_super_ops = {
- 	.get_parent = clk_super_get_parent,
- 	.set_parent = clk_super_set_parent,
-+	.set_rate = clk_super_set_rate,
-+	.round_rate = clk_super_round_rate,
-+	.recalc_rate = clk_super_recalc_rate,
- };
- 
- struct clk *tegra_clk_register_super_mux(const char *name,
-@@ -136,13 +177,11 @@ struct clk *tegra_clk_register_super_mux(const char *name,
- 	struct clk_init_data init;
- 
- 	super = kzalloc(sizeof(*super), GFP_KERNEL);
--	if (!super) {
--		pr_err("%s: could not allocate super clk\n", __func__);
-+	if (!super)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	init.name = name;
--	init.ops = &tegra_clk_super_ops;
-+	init.ops = &tegra_clk_super_mux_ops;
- 	init.flags = flags;
- 	init.parent_names = parent_names;
- 	init.num_parents = num_parents;
-@@ -163,3 +202,43 @@ struct clk *tegra_clk_register_super_mux(const char *name,
- 
- 	return clk;
- }
-+
-+struct clk *tegra_clk_register_super_clk(const char *name,
-+		const char **parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
-+		spinlock_t *lock)
-+{
-+	struct tegra_clk_super_mux *super;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	super = kzalloc(sizeof(*super), GFP_KERNEL);
-+	if (!super)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &tegra_clk_super_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
-+
-+	super->reg = reg;
-+	super->lock = lock;
-+	super->width = 4;
-+	super->flags = clk_super_flags;
-+	super->frac_div.reg = reg + 4;
-+	super->frac_div.shift = 16;
-+	super->frac_div.width = 8;
-+	super->frac_div.frac_width = 1;
-+	super->frac_div.lock = lock;
-+	super->div_ops = &tegra_clk_frac_div_ops;
-+
-+	/* Data in .init is copied by clk_register(), so stack variable OK */
-+	super->hw.init = &init;
-+
-+	clk = clk_register(NULL, &super->hw);
-+	if (IS_ERR(clk))
-+		kfree(super);
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index a62ea73..6249190 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -686,6 +686,8 @@ struct tegra_periph_init_data {
- struct tegra_clk_super_mux {
- 	struct clk_hw	hw;
- 	void __iomem	*reg;
-+	struct tegra_clk_frac_div frac_div;
-+	const struct clk_ops	*div_ops;
- 	u8		width;
- 	u8		flags;
- 	u8		div2_index;
-@@ -702,7 +704,10 @@ struct clk *tegra_clk_register_super_mux(const char *name,
- 		const char **parent_names, u8 num_parents,
- 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
- 		u8 width, u8 pllx_index, u8 div2_index, spinlock_t *lock);
--
-+struct clk *tegra_clk_register_super_clk(const char *name,
-+		const char **parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
-+		spinlock_t *lock);
- /**
-  * struct clk_init_table - clock initialization table
-  * @clk_id:	clock id as mentioned in device tree bindings
+v3: fixed compiler warnings
+
+v2: fixed a few useless lines moving around
+
+
+Peter De Schrijver (6):
+  clk: tegra: add cec clock
+  clk: tegra: define Tegra210 DMIC sync clocks
+  clk: tegra: fix constness for periph clks
+  clk: tegra: define Tegra210 DMIC clocks
+  clk: tegra: add super clk mux/div
+  clk: tegra: add aclk
+
+ drivers/clk/tegra/clk-id.h                      | 10 +++
+ drivers/clk/tegra/clk-periph.c                  |  4 +-
+ drivers/clk/tegra/clk-super.c                   | 87 +++++++++++++++++++++++--
+ drivers/clk/tegra/clk-tegra-audio.c             | 85 +++++++++++++++++-------
+ drivers/clk/tegra/clk-tegra-periph.c            | 22 +++++++
+ drivers/clk/tegra/clk-tegra114.c                |  1 +
+ drivers/clk/tegra/clk-tegra124.c                |  1 +
+ drivers/clk/tegra/clk-tegra210.c                | 20 ++++++
+ drivers/clk/tegra/clk-tegra30.c                 |  1 +
+ drivers/clk/tegra/clk.h                         | 11 +++-
+ include/dt-bindings/clock/tegra114-car.h        |  2 +-
+ include/dt-bindings/clock/tegra124-car-common.h |  2 +-
+ include/dt-bindings/clock/tegra210-car.h        | 13 +++-
+ include/dt-bindings/clock/tegra30-car.h         |  2 +-
+ 14 files changed, 223 insertions(+), 38 deletions(-)
+
 -- 
 1.9.1
