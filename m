@@ -1,90 +1,72 @@
-Return-Path: <chrisp@alliedtelesis.co.nz>
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Tue, 28 Feb 2017 08:52:43 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Priit Laes <plaes@plaes.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
 	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH v2 0/6] Updates for Marvell Switch SoCs
-Date: Thu, 16 Feb 2017 21:50:34 +1300
-Message-Id: <20170216085041.28337-1-chris.packham@alliedtelesis.co.nz>
+	Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 0/4] ARM: sun7i: Convert sun7i SoC to sunxi-ng
+Message-ID: <20170228075243.gschowjzagwuxgok@lukather>
+References: <20170227210914.18954-1-plaes@plaes.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vuvp4e2gkxtnurrf"
+In-Reply-To: <20170227210914.18954-1-plaes@plaes.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Shortly after I posted my last series I got access to a more recent
-Marvell SDK which had some device tree support for the switch SoCs I'd
-been wanting. It was still based on an older kernel but it was a huge
-improvement over what came before.
 
-Patch 1/6 is a typo I noticed after my initial series was applied.
+--vuvp4e2gkxtnurrf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Patch 2/6 is a bit of a cleanup. I did initially struggle with how to
-access individual parts of the DFX block as well as retaining a handle on
-the entire thing for the switch driver to use.
+Hi Priit,
 
-Patch 3/6 is a re-jig of the dtsi files which is needed by 5/6. This is
-required because I need to use the coreclk label on a different node. It
-also means I don't have to disable nodes for blocks that only exist on
-the Armada-XP.
+On Mon, Feb 27, 2017 at 11:09:10PM +0200, Priit Laes wrote:
+> Hi,
+>=20
+> This is serie brings another SoC into the sunxi-ng world.
+>=20
+> As mentioned in sun5i conversion, this is pretty much standard
+> stuff as all the required clocks were already implemented in
+> the sunxi-ng framework.
 
-Patch 4/6, 5/6 are split from the previous versions.
+Thanks a lot for that work. I think the A10 should be converted at the
+same time, and both would share the same driver.
 
-Patch 6/6 is the device tree portion of a change already in clk-next.
+Fortunately, if I recall properly, both are not too far off.
 
-Chris Packham (6):
-  ARM: dts: Fix typo in armada-xp-98dx4251
-    Changes in v2
-    - new
-    Changes in v3:
-    - none
-  ARM: dts: armada-xp-98dx3236: combine dfx server nodes
-    Changes in v2:
-    - none
-    Changes in v3:
-    - none
-  ARM: dts: Use armada-370-xp as a base for armada-xp-98dx3236
-    Changes in v2:
-    - Update root compatible strings in armada-xp-98dx3336.dtsi,
-      armada-xp-98dx4251.dtsi, armada-xp-db-dxbc2.dts and
-      armada-xp-db-xc3-24g4xg.dts
-    Changes in v3:
-    - none
-  ARM: dts: mvebu: Add binding for mv98dx3236-soc-id
-    Changes in v3:
-    - new, split from driver
-  ARM: mvebu: Add driver for mv98dx3236-soc-id
-    Changes in v2:
-    - none
-    Changes in v3:
-    - split from dts changes
-  ARM: dts: mvebu: Move mv98dx3236 clock bindings
-    Changes in v2:
-    - New. Split out from "clk: mvebu: Expand mv98dx3236-core-clock support"
-    Changes in v3:
-    - Clarify why the old location was wrong (but worked).
+Thanks again,
+Maxime
 
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
- .../bindings/arm/marvell/mv98dx3236-soc-id.txt     |  14 ++
- .../devicetree/bindings/clock/mvebu-core-clock.txt |   7 +
- .../bindings/clock/mvebu-gated-clock.txt           |  11 ++
- .../devicetree/bindings/net/marvell,prestera.txt   |  13 +-
- arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 213 ++++++++++++++++-----
- arch/arm/boot/dts/armada-xp-98dx3336.dtsi          |   2 +-
- arch/arm/boot/dts/armada-xp-98dx4251.dtsi          |   2 +-
- arch/arm/boot/dts/armada-xp-db-dxbc2.dts           |   2 +-
- arch/arm/boot/dts/armada-xp-db-xc3-24g4xg.dts      |   2 +-
- arch/arm/mach-mvebu/mvebu-soc-id.c                 |  43 ++++-
- 10 files changed, 242 insertions(+), 67 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/marvell/mv98dx3236-soc-id.txt
+--vuvp4e2gkxtnurrf
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-2.11.0.24.ge6920cf
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYtSxGAAoJEBx+YmzsjxAgvmkP/3HQMhfRAVnfsrlxwxUecL/f
+0EcBFHD67QDk/PsniL6OuhfrFqISClbLlICCFgN4B+pNuVG4d08W9nKdDL4FlLYf
+Tp37DpcAHEhAlMsbD4b4Mh1o338BECwD8MH7l22PS2hSwTwVyjMKC05BXrMfzRO3
+7yw+QPrfBw/5kZwE3HTajNwpHE8p+P8ybAQ53UMoU+gRtSvV+2F/WjsHOHFZ1p/W
+WICyv8H3Wy1g06QyOnjqoAvFFXIITNgzLNSBn3YJfCoSs+pYnUSmeiXwWGRcN5r9
+sZpGRPAXJP6vLskqOOuyO69r/IRGpFfFRcvS516Sd72tIVrM55HuZeKdxgc7QZLK
+GTwDS7Yx8Bn/f0kogKoaA+Xg0pAV8aNnowhq7bQMzoVtrq8w0X1bkXVAxH4R5KwK
+uxvTIW0/ZkXwe6T3aaS7P9p4IrfovJVzhfWp4LrUghBdCQswRCucmi5/6882GvG8
+vkShcjXaWfRCP1D9DIsM4LUFUGDbJldMBwmoBWzbRjv27UJz7T2vZeFJgzY6c0nv
+B4Ytk4SrOH3AbrG8HbsI6N+iK0rEJgEupTRziRUXQXPnpaKBKAtd2nvDoI81tcdo
+y7luUVpfJiVktRy9Cje3jQo+bOe4PuATp+BXjnSmbWpLyPYBQQgkbYTMmPRgk5AA
+z+ac9tr9arAEkBzHvtk4
+=JTxW
+-----END PGP SIGNATURE-----
+
+--vuvp4e2gkxtnurrf--
