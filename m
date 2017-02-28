@@ -1,36 +1,39 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Douglas Anderson <dianders@chromium.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, jwerner@chromium.org, hl@rock-chips.com, dbasehore@chromium.org, zhengxing@rock-chips.com, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: rockchip: Set "ignore unused" for PMU M0 clocks on rk3399
-Date: Wed, 15 Feb 2017 18:01:25 +0100
-Message-ID: <1716357.fXUCSFMPB6@diego>
-In-Reply-To: <CABxcv=kzW9SvrWYNasqCDkV7D6Y2zq+oRuqoPFdWuaWUhPehEA@mail.gmail.com>
-References: <20170214210114.5846-1-dianders@chromium.org> <CABxcv=kzW9SvrWYNasqCDkV7D6Y2zq+oRuqoPFdWuaWUhPehEA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: meson: fix SET_PARM macro
+Date: Tue, 28 Feb 2017 10:30:16 +0100
+Message-Id: <20170228093016.5624-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 15. Februar 2017, 12:27:59 CET schrieb Javier Martinez Canillas:
-> Hello Doug,
-> 
-> On Tue, Feb 14, 2017 at 6:01 PM, Douglas Anderson <dianders@chromium.org> 
-wrote:
-> > The PMU Cortex M0 on rk3399 is intended to be used for things like
-> > DDRFreq transitions, suspend/resume, and other things that are the
-> > purview of ARM Trusted Firmware and not the kernel.  As such, the
-> > kernel shouldn't be messing with the clocks.  Add CLK_IGNORE_UNUSED to
-> > these clocks.
-> 
-> Isn't CLK_IS_CRITICAL a more suitable flag for this case?
+parameter val is not enclosed in parenthesis which is buggy when given an
+expression instead of a simple value
 
->From the patch description it looks like the clock is expected to be 
-controlled from firmware in most cases as I guess the Cortex M0 will be used 
-for that all the time now. And the clock is not expected to run all the time.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/clkc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-So I'd think clk_ignore_unused is the correct one. The whole clock-subtree for 
-these clocks also does not get affected by other clocks, as it is 
-independendly coming from PLLs.
-
-
-Heiko
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 9bb70e7a7d6a..c6be77dd8694 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -25,7 +25,7 @@
+ #define PARM_GET(width, shift, reg)					\
+ 	(((reg) & SETPMASK(width, shift)) >> (shift))
+ #define PARM_SET(width, shift, reg, val)				\
+-	(((reg) & CLRPMASK(width, shift)) | (val << (shift)))
++	(((reg) & CLRPMASK(width, shift)) | ((val) << (shift)))
+ 
+ #define MESON_PARM_APPLICABLE(p)		(!!((p)->width))
+ 
+-- 
+2.9.3
