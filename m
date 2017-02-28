@@ -1,50 +1,40 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Tue, 14 Feb 2017 21:05:37 +0100
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
 To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement
- <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob
- Herring <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
- Gala <galak@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, Hanna Hawa
- <hannah@marvell.com>, Yehuda Yitschak <yehuday@marvell.com>,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 2/3] clk: mvebu: adjust clock handling for the CP110
- system controller
-Message-ID: <20170214210537.2c0218dd@free-electrons.com>
-In-Reply-To: <20170214185912.GT25384@codeaurora.org>
-References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1482316017-22154-3-git-send-email-thomas.petazzoni@free-electrons.com>
-	<20161222001456.GX8288@codeaurora.org>
-	<20170214162718.0777d95f@free-electrons.com>
-	<20170214185912.GT25384@codeaurora.org>
+Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, mturquette@baylibre.com
+Subject: Re: [PATCH 0/4] rockchip: fix serial output on rk3036
+Date: Tue, 28 Feb 2017 18:25:50 +0100
+Message-ID: <1641374.43nVGhYm9v@phil>
+In-Reply-To: <20170228073240.GJ25384@codeaurora.org>
+References: <20170228051420.7214-1-heiko@sntech.de> <20170228073240.GJ25384@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
-
-On Tue, 14 Feb 2017 10:59:12 -0800, Stephen Boyd wrote:
-
-> > I don't see my patch in clk-next at
-> > https://git.kernel.org/cgit/linux/kernel/git/clk/linux.git/log/drivers/clk/mvebu/cp110-system-controller.c?h=clk-next,
-> > nor in linux-next. Am I missing something?
+Am Montag, 27. Februar 2017, 23:32:40 CET schrieb Stephen Boyd:
+> On 02/28, Heiko Stuebner wrote:
+> > Recent changes to the 8250-dw variant revealed issues concerning
+> > how the clock rates are handled on the rk3036 uart.
+> > 
+> > For one, there was an error in the clock declaration, but also the
+> > shared uart-pll-select-mux also as default got supplied from the apll
+> > that also supplies the cpu and thus gets frequency scaled.
+> > 
+> > The patches in this series remedy this and make the debug uart
+> > function again on 4.10 + current merge window.
 > 
-> Odd. I don't know what happened. I've applied it now.
+> What's the merge path? The last patch is sort of questionable
+> because it fixes a regression by changing assigned clocks in DT,
+> which doesn't really make sense from a DT perspective (it should
+> have been right already or can be configured from the clk driver
+> itself in software).
 
-I think you also forgot to apply:
+yeah, I was (and somewhat still am) debating on the dt vs. clk driver 
+positioning. As you can see, there are multiple sources, most of them are 
+somewhat questionable. I.e. apll and dpll are the cpu + ddr supplies and we 
+will want to do ddr-scaling at some point too.
 
-  [PATCHv2 1/3] dt-bindings: arm: update Armada CP110 system controller binding
-
-from the same series. You told me "Applied to clk-next", but I don't
-see it in linux-next.
-
-Thanks!
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+So the gpll really is the only really sane option and I guess simply doing it 
+in the driver (similar to what rk3188 does) might be better.
+If some boards really want to select a different source, they then can do that 
+via assigned-clocks in the board-dts.
