@@ -1,64 +1,58 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20170209120625.lhqcistgyjpy3plq@sirena.org.uk>
-References: <1486522955-14528-1-git-send-email-baoyou.xie@linaro.org>
- <1486522955-14528-2-git-send-email-baoyou.xie@linaro.org> <20170209005207.y6wcrzk43ngfslhl@rob-hp-laptop>
- <20170209014807.GO3407@dragon> <20170209120625.lhqcistgyjpy3plq@sirena.org.uk>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 9 Feb 2017 16:47:42 -0600
-Message-ID: <CAL_JsqJHyNgA2FRMcuZ86OFDJ85NAnx_v9F2LrxwwOxJYLOPCA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] ASoC: zx-i2s: introduce pclk for zx2967 family
-To: Mark Brown <broonie@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, Baoyou Xie <baoyou.xie@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Jun Nie <jun.nie@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Shawn Guo <shawn.guo@linaro.org>,
-	Vinod Koul <vinod.koul@intel.com>, Linux-ALSA <alsa-devel@alsa-project.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Baoyou Xie <xie.baoyou@zte.com.cn>, chen.chaokai@zte.com.cn, wang.qiang01@zte.com.cn
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 0/7] clk: meson: update clock controller for audio support
+Date: Tue, 28 Feb 2017 14:29:55 +0100
+Message-Id: <20170228133002.17894-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 9, 2017 at 6:06 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Thu, Feb 09, 2017 at 09:48:09AM +0800, Shawn Guo wrote:
->> On Wed, Feb 08, 2017 at 06:52:07PM -0600, Rob Herring wrote:
->
->> > Personally, I'd prefer "dt-bindings: sound: blah...", but not enough to
->> > argue with Mark about it. If that is not the prefix, then it should at
->> > least have "binding" in the subject.
->
->> +1
->
->> The prefix of sound bindings is quite unique from other subsystems.
->> Looking at the prefix of Documentation/devicetree/bindings/sound/
->> commits, I'm always confused whether it's a pure binding commit
->> or just submitted as part of the driver patch.  I feel that we
->> kinda lose the point of having a prefix.
->
-> That's really not what's happening reliably - other subsystems also seem
-> to have a bunch of things prefixed for the subsystem and the DT specific
-> prefixes are all over the shop, people seem to be making them up at
-> random.
+This patchset is a first round of update to the meson clock controllers
+to bring audio support. The patchset is based on clk-next with two
+additional patches from arm-soc next (to avoid conflict later on).
+commit d356a86b1b30 ("clk: meson-gxbb: Export HDMI clocks")
+commit 7d753a742127 ("clk: gxbb: add the SAR ADC clocks and expose them")
 
-I'm getting more picky about the subject and splitting bindings to a
-separate patch, but generally only when I have other comments. And
-I've had to get some maintainers to stop combining commits as they
-apply them.
+The 2 first patches of the series put the generic muxes and divisors
+declaration in tables so the register address fixup works in the same way
+as the clock gates. We are going to add more of these clock types for
+audio or gpu support, so we can't continue to fix addresses individually
+like it is currently done.
 
-Maybe get_maintainers.pl could spit out the desired prefix and
-checkpatch check it. Evidently, running "git log --oneline" is too
-hard.
+Patches 3 to 6 improve the support of the mpll clocks, now allowing the
+rate to be set. Among other things, the mplls are the parent clocks of the
+i2s and spdif clocks.
 
-> If DT binding review were something that reliably and
-> consistently happened and didn't affect the subsystem I'd perhaps buy it
-> but for run of the mill stuff it seems like getting things reviewed in
-> the subsystem is more important.
+Patch 7 expose the clock gates required to power on the i2s output.
 
-I review everything that gets sent to the DT list unless maintainers
-apply it first. I'll still comment afterwards if there's anything
-significant (or I missed that it was applied :)).
+These patches have been tested on the meson gxbb p200 board, as part of the
+ongoing work to bring audio support for meson SoC family.
 
-Rob
+Jerome Brunet (7):
+  clk: meson8b: put dividers and muxes in tables
+  clk: gxbb: put dividers and muxes in tables
+  clk: meson: mpll: add rw operation
+  clk: meson: gxbb: mpll: use rw operation
+  clk: meson8b: add the mplls clocks 0, 1 and 2
+  clk: meson: mpll: correct N2 maximum value
+  dt-bindings: clk: gxbb: expose i2s output clock gates
+
+ drivers/clk/meson/clk-mpll.c          | 152 ++++++++++++++++++++++++++++++++--
+ drivers/clk/meson/clkc.h              |   4 +-
+ drivers/clk/meson/gxbb.c              |  64 +++++++++++---
+ drivers/clk/meson/gxbb.h              |  10 +--
+ drivers/clk/meson/meson8b.c           | 126 +++++++++++++++++++++++++++-
+ drivers/clk/meson/meson8b.h           |  20 ++++-
+ include/dt-bindings/clock/gxbb-clkc.h |   5 ++
+ 7 files changed, 354 insertions(+), 27 deletions(-)
+
+-- 
+2.9.3
