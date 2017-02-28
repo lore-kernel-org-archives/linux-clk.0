@@ -1,469 +1,81 @@
-Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: sboyd@codeaurora.org,
-	khilman@baylibre.com,
-	carlo@caione.org
-Subject: [PATCH 1/2] clk: meson-gxbb: Add MALI clocks and fix GP0 pll support
-Date: Fri, 10 Feb 2017 11:04:43 +0100
-Message-Id: <1486721084-1383-2-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1486721084-1383-1-git-send-email-narmstrong@baylibre.com>
-References: <1486721084-1383-1-git-send-email-narmstrong@baylibre.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
-List-Post: <mailto:linux-amlogic@lists.infradead.org>
-List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
-Cc: linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Neil Armstrong <narmstrong@baylibre.com>
+Return-Path: <emilio@elopez.com.ar>
+Subject: Re: [linux-sunxi] [PATCH 3/4] ARM: sun7i: Convert to CCU
+To: plaes@plaes.org
+References: <20170227210914.18954-1-plaes@plaes.org>
+ <20170227210914.18954-4-plaes@plaes.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+From: =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>
+Message-ID: <bca96944-bd58-5011-5eb9-01c4a1440fe2@elopez.com.ar>
+Date: Tue, 28 Feb 2017 14:01:48 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
-Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20170227210914.18954-4-plaes@plaes.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The Mali is clocked by two identical clock paths behind a glitch free mux
-to safely change frequency while running.
+Hi,
 
-The optimal clock frequency is provided by the GP0 PLL, but unlike Meson8 the
-GXBB GP0 PLL needs some tweaking and need some SoC specific values to be set
-in order to setup the PLL.
+I spotted a couple of things here on a quick look, see below
 
-Since these values will change for GXL and GXM, add an init table that will
-be changed for GXL or GXM.
+El 27/02/17 a las 18:09, Priit Laes escribió:
+> Convert sun7i-a20.dtsi to new CCU driver.
+> 
+> Signed-off-by: Priit Laes <plaes@plaes.org>
+> ---
+>  arch/arm/boot/dts/sun7i-a20.dtsi | 719 +++++----------------------------------
+>  1 file changed, 86 insertions(+), 633 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+> index 04c9977..6f80cb8 100644
+> --- a/arch/arm/boot/dts/sun7i-a20.dtsi
+> +++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+> @@ -47,7 +47,8 @@
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/thermal/thermal.h>
+>  
+> -#include <dt-bindings/clock/sun4i-a10-pll2.h>
+> +#include <dt-bindings/clock/sun7i-ccu.h>
+> +#include <dt-bindings/reset/sun7i-ccu.h>
+>  #include <dt-bindings/dma/sun4i-a10.h>
+>  #include <dt-bindings/pinctrl/sun4i-a10.h>
+>  
+> @@ -67,19 +68,19 @@
+>  			compatible = "allwinner,simple-framebuffer",
+>  				     "simple-framebuffer";
+>  			allwinner,pipeline = "de_be0-lcd0-hdmi";
+> -			clocks = <&ahb_gates 36>, <&ahb_gates 43>,
+> -				 <&ahb_gates 44>, <&de_be0_clk>,
+> -				 <&tcon0_ch1_clk>, <&dram_gates 26>;
+> +			clocks = <&ccu CLK_AHB_LCD0>, <&ccu CLK_AHB_HDMI1>,
+> +				 <&ccu CLK_AHB_DE_BE0>, <&ccu CLK_DE_BE0>,
+> +				 <&ccu CLK_TCON0_CH1>, <&ccu CLK_DRAM_DE_BE0>;
+>  			status = "disabled";
+>  		};
+>  
+> -		framebuffer@1 {
+> +		framebuffer@0 {
 
-For the MALI clocks, introduce them as Composite clocks to simplify the
-management.
-To handle composite clocks, a gxbb_composite structure is added to dynamically
-create the composite clock at probe and fill accordingly the DT table.
+This looks like an unrelated change
 
-Finally the glitch free mux is added and other muxes and dividers are also
-grouped in initialization tables.
+> @@ -184,21 +185,11 @@
+>  
+>  		osc24M: clk@01c20050 {
+>  			#clock-cells = <0>;
+> -			compatible = "allwinner,sun4i-a10-osc-clk";
+> -			reg = <0x01c20050 0x4>;
+> +			compatible = "fixed-clock";
+>  			clock-frequency = <24000000>;
+>  			clock-output-names = "osc24M";
+>  		};
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/clk-pll.c           |  34 ++++--
- drivers/clk/meson/clkc.h              |   3 +
- drivers/clk/meson/gxbb.c              | 211 +++++++++++++++++++++++++++++++++-
- drivers/clk/meson/gxbb.h              |   7 +-
- include/dt-bindings/clock/gxbb-clkc.h |   4 +
- 5 files changed, 245 insertions(+), 14 deletions(-)
+allwinner,sun4i-a10-osc-clk implements a gate apart from a fixed clock,
+is the feature loss intended?
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 4adc1e8..b5ff81b 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -132,6 +132,24 @@ static int meson_clk_pll_wait_lock(struct meson_clk_pll *pll,
- 	return -ETIMEDOUT;
- }
- 
-+static void meson_clk_pll_init(struct meson_clk_pll *pll)
-+{
-+	if (pll->init_count && pll->init_regs && pll->init_data) {
-+		unsigned int i;
-+
-+		for (i = 0; i < pll->init_count; ++i)
-+			writel(pll->init_data[i], pll->init_regs[i]);
-+	} else {
-+		struct parm *p;
-+		u32 reg;
-+
-+		/* PLL reset */
-+		p = &pll->n;
-+		reg = readl(pll->base + p->reg_off);
-+		writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
-+	}
-+}
-+
- static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 				  unsigned long parent_rate)
- {
-@@ -151,19 +169,18 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!rate_set)
- 		return -EINVAL;
- 
--	/* PLL reset */
--	p = &pll->n;
--	reg = readl(pll->base + p->reg_off);
--	writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
--
--	reg = PARM_SET(p->width, p->shift, reg, rate_set->n);
--	writel(reg, pll->base + p->reg_off);
-+	meson_clk_pll_init(pll);
- 
- 	p = &pll->m;
- 	reg = readl(pll->base + p->reg_off);
- 	reg = PARM_SET(p->width, p->shift, reg, rate_set->m);
- 	writel(reg, pll->base + p->reg_off);
- 
-+	p = &pll->n;
-+	reg = readl(pll->base + p->reg_off);
-+	reg = PARM_SET(p->width, p->shift, reg, rate_set->n);
-+	writel(reg, pll->base + p->reg_off);
-+
- 	p = &pll->od;
- 	reg = readl(pll->base + p->reg_off);
- 	reg = PARM_SET(p->width, p->shift, reg, rate_set->od);
-@@ -184,6 +201,9 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	}
- 
- 	p = &pll->n;
-+	reg = readl(pll->base + p->reg_off);
-+	writel(reg & ~MESON_PLL_RESET, pll->base + p->reg_off);
-+
- 	ret = meson_clk_pll_wait_lock(pll, p);
- 	if (ret) {
- 		pr_warn("%s: pll did not lock, trying to restore old rate %lu\n",
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 9bb70e7..22a6335 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -70,6 +70,9 @@ struct meson_clk_pll {
- 	struct parm frac;
- 	struct parm od;
- 	struct parm od2;
-+	void __iomem **init_regs;
-+	u32 *init_data;
-+	unsigned int init_count;
- 	const struct pll_rate_table *rate_table;
- 	unsigned int rate_count;
- 	spinlock_t *lock;
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 9d9af44..d1dac0f 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -352,6 +352,20 @@
- 	},
- };
- 
-+static void __iomem *gxbb_gp0_init_regs[] = {
-+	(void *)HHI_GP0_PLL_CNTL,
-+	(void *)HHI_GP0_PLL_CNTL2,
-+	(void *)HHI_GP0_PLL_CNTL3,
-+	(void *)HHI_GP0_PLL_CNTL4,
-+};
-+
-+static u32 gxbb_gp0_init_data[] = {
-+	0x6a000228,
-+	0x69c80000,
-+	0x0a5590c4,
-+	0x0000500d,
-+};
-+
- static struct meson_clk_pll gxbb_gp0_pll = {
- 	.m = {
- 		.reg_off = HHI_GP0_PLL_CNTL,
-@@ -368,6 +382,9 @@
- 		.shift   = 16,
- 		.width   = 2,
- 	},
-+	.init_regs = gxbb_gp0_init_regs,
-+	.init_data = gxbb_gp0_init_data,
-+	.init_count = 4,
- 	.rate_table = gp0_pll_rate_table,
- 	.rate_count = ARRAY_SIZE(gp0_pll_rate_table),
- 	.lock = &clk_lock,
-@@ -550,6 +567,75 @@
- 	},
- };
- 
-+/* Mali Clock components */
-+static u32 mux_table_mali_0_1[] = {0, 1, 2, 3, 4, 5, 6, 7};
-+const char *gxbb_mali_0_1_parent_names[] = {
-+	"xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
-+	"fclk_div4", "fclk_div3", "fclk_div5"
-+};
-+
-+static struct clk_mux gxbb_mali_0_sel = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.mask = 0x3,
-+	.shift = 9,
-+	.table = mux_table_mali_0_1,
-+	.lock = &clk_lock,
-+};
-+
-+static struct clk_divider gxbb_mali_0_div = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.shift = 0,
-+	.width = 7,
-+	.lock = &clk_lock,
-+};
-+
-+static struct clk_gate gxbb_mali_0_en = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.bit_idx = 8,
-+	.lock = &clk_lock,
-+};
-+
-+static struct clk_mux gxbb_mali_1_sel = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.mask = 0x3,
-+	.shift = 25,
-+	.table = mux_table_mali_0_1,
-+	.lock = &clk_lock,
-+};
-+
-+static struct clk_divider gxbb_mali_1_div = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.shift = 16,
-+	.width = 7,
-+	.lock = &clk_lock,
-+};
-+
-+static struct clk_gate gxbb_mali_1_en = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.bit_idx = 24,
-+	.lock = &clk_lock,
-+};
-+
-+static u32 mux_table_mali[] = {0, 1};
-+const char *gxbb_mali_parent_names[] = {
-+	"mali_0", "mali_1"
-+};
-+
-+static struct clk_mux gxbb_mali = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.mask = 1,
-+	.shift = 31,
-+	.table = mux_table_mali,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali",
-+		.ops = &clk_mux_ops,
-+		.parent_names = gxbb_mali_parent_names,
-+		.num_parents = 2,
-+		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
- /* the mother of dragons^W gates */
- static struct clk_gate gxbb_clk81 = {
- 	.reg = (void *)HHI_MPEG_CLK_CNTL,
-@@ -754,6 +840,9 @@
- 		[CLKID_SD_EMMC_A]	    = &gxbb_emmc_a.hw,
- 		[CLKID_SD_EMMC_B]	    = &gxbb_emmc_b.hw,
- 		[CLKID_SD_EMMC_C]	    = &gxbb_emmc_c.hw,
-+		[CLKID_MALI]		    = &gxbb_mali.hw,
-+		/* This sentinel entry makes sure the table is large enough */
-+		[NR_CLKS]		    = NULL, /* Sentinel */
- 	},
- 	.num = NR_CLKS,
- };
-@@ -856,6 +945,66 @@
- 	&gxbb_emmc_a,
- 	&gxbb_emmc_b,
- 	&gxbb_emmc_c,
-+	&gxbb_mali_0_en,
-+	&gxbb_mali_1_en,
-+};
-+
-+static struct clk_mux *gxbb_clk_muxes[] = {
-+	&gxbb_mpeg_clk_sel,
-+	&gxbb_mali_0_sel,
-+	&gxbb_mali_1_sel,
-+	&gxbb_mali,
-+};
-+
-+static struct clk_divider *gxbb_clk_dividers[] = {
-+	&gxbb_mpeg_clk_div,
-+	&gxbb_mali_0_div,
-+	&gxbb_mali_1_div,
-+};
-+
-+struct gxbb_composite_clk {
-+	unsigned int id;
-+	const char *name;
-+	const char * const *parent_names;
-+	int num_parents;
-+	struct clk_hw *mux_hw;
-+	const struct clk_ops *mux_ops;
-+	struct clk_hw *rate_hw;
-+	const struct clk_ops *rate_ops;
-+	struct clk_hw *gate_hw;
-+	const struct clk_ops *gate_ops;
-+	unsigned long flags;
-+};
-+
-+/* Convenient table to register the composite clocks */
-+
-+static struct gxbb_composite_clk gxbb_composite_clks[] = {
-+	{
-+		.id = CLKID_MALI_0,
-+		.name = "mali_0",
-+		.parent_names = gxbb_mali_0_1_parent_names,
-+		.num_parents = ARRAY_SIZE(gxbb_mali_0_1_parent_names),
-+		.mux_hw = &gxbb_mali_0_sel.hw,
-+		.mux_ops = &clk_mux_ops,
-+		.rate_hw = &gxbb_mali_0_div.hw,
-+		.rate_ops = &clk_divider_ops,
-+		.gate_hw = &gxbb_mali_0_en.hw,
-+		.gate_ops = &clk_gate_ops,
-+		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
-+	},
-+	{
-+		.id = CLKID_MALI_1,
-+		.name = "mali_1",
-+		.parent_names = gxbb_mali_0_1_parent_names,
-+		.num_parents = ARRAY_SIZE(gxbb_mali_0_1_parent_names),
-+		.mux_hw = &gxbb_mali_1_sel.hw,
-+		.mux_ops = &clk_mux_ops,
-+		.rate_hw = &gxbb_mali_1_div.hw,
-+		.rate_ops = &clk_divider_ops,
-+		.gate_hw = &gxbb_mali_1_en.hw,
-+		.gate_ops = &clk_gate_ops,
-+		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
-+	},
- };
- 
- static int gxbb_clkc_probe(struct platform_device *pdev)
-@@ -884,24 +1033,61 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	/* Populate the base address for CPU clk */
- 	gxbb_cpu_clk.base = clk_base;
- 
--	/* Populate the base address for the MPEG clks */
--	gxbb_mpeg_clk_sel.reg = clk_base + (u64)gxbb_mpeg_clk_sel.reg;
--	gxbb_mpeg_clk_div.reg = clk_base + (u64)gxbb_mpeg_clk_div.reg;
-+	/* Populate base address for muxes */
-+	for (i = 0; i < ARRAY_SIZE(gxbb_clk_muxes); i++)
-+		gxbb_clk_muxes[i]->reg = clk_base +
-+			(u64)gxbb_clk_muxes[i]->reg;
-+
-+	/* Populate base address for dividers */
-+	for (i = 0; i < ARRAY_SIZE(gxbb_clk_dividers); i++)
-+		gxbb_clk_dividers[i]->reg = clk_base +
-+			(u64)gxbb_clk_dividers[i]->reg;
- 
- 	/* Populate base address for gates */
- 	for (i = 0; i < ARRAY_SIZE(gxbb_clk_gates); i++)
- 		gxbb_clk_gates[i]->reg = clk_base +
- 			(u64)gxbb_clk_gates[i]->reg;
- 
-+	/* Populate base for GP0 init table */
-+	for (i = 0; i < ARRAY_SIZE(gxbb_gp0_init_regs); ++i)
-+		gxbb_gp0_init_regs[i] = clk_base +
-+			(u64)gxbb_gp0_init_regs[i];
-+
- 	/*
- 	 * register all clks
- 	 */
- 	for (clkid = 0; clkid < NR_CLKS; clkid++) {
-+		if (!gxbb_hw_onecell_data.hws[clkid])
-+			continue;
-+
- 		ret = devm_clk_hw_register(dev, gxbb_hw_onecell_data.hws[clkid]);
- 		if (ret)
- 			goto iounmap;
- 	}
- 
-+	/* Register Composite Clocks */
-+	for (i = 0 ; i < ARRAY_SIZE(gxbb_composite_clks); ++i) {
-+		struct gxbb_composite_clk *comp = &gxbb_composite_clks[i];
-+		struct clk_hw *hw;
-+
-+		hw = clk_hw_register_composite(dev, comp->name,
-+				comp->parent_names,
-+				comp->num_parents,
-+				comp->mux_hw, comp->mux_ops,
-+				comp->rate_hw, comp->rate_ops,
-+				comp->gate_hw, comp->gate_ops,
-+				comp->flags);
-+		if (IS_ERR(hw)) {
-+			ret = PTR_ERR(hw);
-+
-+			pr_err("%s: Failed to register composite clock %s\n",
-+				__func__, comp->name);
-+
-+			goto unregister_composites;
-+		}
-+		gxbb_hw_onecell_data.hws[comp->id] = hw;
-+	}
-+
- 	/*
- 	 * Register CPU clk notifier
- 	 *
-@@ -922,11 +1108,26 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	if (ret) {
- 		pr_err("%s: failed to register clock notifier for cpu_clk\n",
- 				__func__);
--		goto iounmap;
-+		goto unregister_composites;
- 	}
- 
--	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-+	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
- 			&gxbb_hw_onecell_data);
-+	if (!ret)
-+		return ret;
-+
-+unregister_composites:
-+	for (i = 0 ; i < ARRAY_SIZE(gxbb_composite_clks); ++i) {
-+		struct gxbb_composite_clk *comp = &gxbb_composite_clks[i];
-+		struct clk *clk;
-+
-+		if (gxbb_hw_onecell_data.hws[comp->id]) {
-+			clk = gxbb_hw_onecell_data.hws[comp->id]->clk;
-+			clk_unregister_composite(clk);
-+		}
-+
-+		gxbb_hw_onecell_data.hws[comp->id] = NULL;
-+	}
- 
- iounmap:
- 	iounmap(clk_base);
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 0252939..f79ab57 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -177,7 +177,7 @@
- /* CLKID_FCLK_DIV4 */
- #define CLKID_FCLK_DIV5		  7
- #define CLKID_FCLK_DIV7		  8
--#define CLKID_GP0_PLL		  9
-+/* CLKID_GP0_PLL */
- #define CLKID_MPEG_SEL		  10
- #define CLKID_MPEG_DIV		  11
- /* CLKID_CLK81 */
-@@ -265,8 +265,11 @@
- /* CLKID_SD_EMMC_A */
- /* CLKID_SD_EMMC_B */
- /* CLKID_SD_EMMC_C */
-+/* CLKID_MALI_0	*/
-+/* CLKID_MALI_1	*/
-+/* CLKID_MALI	*/
- 
--#define NR_CLKS			  97
-+#define NR_CLKS			  100
- 
- /* include the CLKIDs that have been made part of the stable DT binding */
- #include <dt-bindings/clock/gxbb-clkc.h>
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index baade6f..7bbc1d0 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -10,6 +10,7 @@
- #define CLKID_FCLK_DIV2		4
- #define CLKID_FCLK_DIV3		5
- #define CLKID_FCLK_DIV4		6
-+#define CLKID_GP0_PLL		9
- #define CLKID_CLK81		12
- #define CLKID_MPLL2		15
- #define CLKID_SPI		34
-@@ -24,5 +25,8 @@
- #define CLKID_SD_EMMC_A		94
- #define CLKID_SD_EMMC_B		95
- #define CLKID_SD_EMMC_C		96
-+#define CLKID_MALI_0		97
-+#define CLKID_MALI_1		98
-+#define CLKID_MALI		99
- 
- #endif /* __GXBB_CLKC_H */
--- 
-1.9.1
-
-
-_______________________________________________
-linux-amlogic mailing list
-linux-amlogic@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-amlogic
+Cheers,
+Emilio
