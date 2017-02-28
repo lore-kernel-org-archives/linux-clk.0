@@ -1,62 +1,162 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 27 Feb 2017 11:18:37 -0600
-From: Rob Herring <robh@kernel.org>
-To: yuantian.tang@nxp.com
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Scott Wood <oss@buserror.net>
-Subject: Re: [PATCH 1/2] dt-bindings: qoriq-clock: Add coreclk
-Message-ID: <20170227171837.eymnyebgn7ocsp7w@rob-hp-laptop>
-References: <1487137656-4006-1-git-send-email-yuantian.tang@nxp.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v3 1/6] clk: tegra: add cec clock
+Date: Tue, 28 Feb 2017 16:37:17 +0200
+Message-ID: <1488292648-16876-2-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1488292648-16876-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1488292648-16876-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1487137656-4006-1-git-send-email-yuantian.tang@nxp.com>
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Feb 15, 2017 at 01:47:35PM +0800, yuantian.tang@nxp.com wrote:
-> From: Tang Yuantian <Yuantian.Tang@nxp.com>
-> 
-> ls1012a has separate input root clocks for core PLLs versus the platform
-> PLL, with the latter described as sysclk in the hw docs.
-> Update the qoriq-clock binding to allow a second input clock, named
-> "coreclk".  If present, this clock will be used for the core PLLs.
-> 
-> Signed-off-by: Scott Wood <oss@buserror.net>
-> Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
-> ---
->  Documentation/devicetree/bindings/clock/qoriq-clock.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
+This clock is used to clock the HDMI CEC interface.
 
-The change looks fine, but sounds like Scott should remain the author 
-(or agree he shouldn't be).
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-id.h                      | 1 +
+ drivers/clk/tegra/clk-tegra-periph.c            | 1 +
+ drivers/clk/tegra/clk-tegra114.c                | 1 +
+ drivers/clk/tegra/clk-tegra124.c                | 1 +
+ drivers/clk/tegra/clk-tegra210.c                | 1 +
+ drivers/clk/tegra/clk-tegra30.c                 | 1 +
+ include/dt-bindings/clock/tegra114-car.h        | 2 +-
+ include/dt-bindings/clock/tegra124-car-common.h | 2 +-
+ include/dt-bindings/clock/tegra210-car.h        | 2 +-
+ include/dt-bindings/clock/tegra30-car.h         | 2 +-
+ 10 files changed, 10 insertions(+), 4 deletions(-)
 
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> index df9cb5a..97a9666 100644
-> --- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> @@ -55,6 +55,11 @@ Optional properties:
->  - clocks: If clock-frequency is not specified, sysclk may be provided
->  	as an input clock.  Either clock-frequency or clocks must be
->  	provided.
-> +	A second input clock, called "coreclk", may be provided if
-> +	core PLLs are based on a different input clock from the
-> +	platform PLL.
-> +- clock-names: Required if a coreclk is present.  Valid names are
-> +	"sysclk" and "coreclk".
->  
->  2. Clock Provider
->  
-> @@ -71,6 +76,7 @@ second cell is the clock index for the specified type.
->  	2	hwaccel		index (n in CLKCGnHWACSR)
->  	3	fman		0 for fm1, 1 for fm2
->  	4	platform pll	0=pll, 1=pll/2, 2=pll/3, 3=pll/4
-> +	5	coreclk		must be 0
->  
->  3. Example
->  
-> -- 
-> 2.1.0.27.g96db324
-> 
+diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+index 1019eb8..fc978b2 100644
+--- a/drivers/clk/tegra/clk-id.h
++++ b/drivers/clk/tegra/clk-id.h
+@@ -308,6 +308,7 @@ enum clk_id {
+ 	tegra_clk_sclk_mux,
+ 	tegra_clk_sor_safe,
+ 	tegra_clk_ispa,
++	tegra_clk_cec,
+ 	tegra_clk_max,
+ };
+ 
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index c9e795b..a2aed27 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -837,6 +837,7 @@
+ 	GATE("pll_p_out_cpu", "pll_p", 223, 0, tegra_clk_pll_p_out_cpu, 0),
+ 	GATE("pll_p_out_adsp", "pll_p", 187, 0, tegra_clk_pll_p_out_adsp, 0),
+ 	GATE("apb2ape", "clk_m", 107, 0, tegra_clk_apb2ape, 0),
++	GATE("cec", "pclk", 136, 0, tegra_clk_cec, 0),
+ };
+ 
+ static struct tegra_periph_init_data div_clks[] = {
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 933b5dd..fd1a99c 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -819,6 +819,7 @@
+ 	[tegra_clk_clk_out_3_mux] = { .dt_id = TEGRA114_CLK_CLK_OUT_3_MUX, .present = true },
+ 	[tegra_clk_dsia_mux] = { .dt_id = TEGRA114_CLK_DSIA_MUX, .present = true },
+ 	[tegra_clk_dsib_mux] = { .dt_id = TEGRA114_CLK_DSIB_MUX, .present = true },
++	[tegra_clk_cec] = { .dt_id = TEGRA114_CLK_CEC, .present = true },
+ };
+ 
+ static struct tegra_devclk devclks[] __initdata = {
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index a112d3d..e81ea5b 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -928,6 +928,7 @@
+ 	[tegra_clk_clk_out_1_mux] = { .dt_id = TEGRA124_CLK_CLK_OUT_1_MUX, .present = true },
+ 	[tegra_clk_clk_out_2_mux] = { .dt_id = TEGRA124_CLK_CLK_OUT_2_MUX, .present = true },
+ 	[tegra_clk_clk_out_3_mux] = { .dt_id = TEGRA124_CLK_CLK_OUT_3_MUX, .present = true },
++	[tegra_clk_cec] = { .dt_id = TEGRA124_CLK_CEC, .present = true },
+ };
+ 
+ static struct tegra_devclk devclks[] __initdata = {
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 58d7f9c..bdb296a 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2222,6 +2222,7 @@ static u32 pll_expo_p_to_pdiv(u32 p, u32 *pdiv)
+ 	[tegra_clk_apb2ape] = { .dt_id = TEGRA210_CLK_APB2APE, .present = true },
+ 	[tegra_clk_pll_a1] = { .dt_id = TEGRA210_CLK_PLL_A1, .present = true },
+ 	[tegra_clk_ispa] = { .dt_id = TEGRA210_CLK_ISPA, .present = true },
++	[tegra_clk_cec] = { .dt_id = TEGRA210_CLK_CEC, .present = true },
+ };
+ 
+ static struct tegra_devclk devclks[] __initdata = {
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 8e2db5e..a2d163f 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -817,6 +817,7 @@
+ 	[tegra_clk_pll_p_out4] = { .dt_id = TEGRA30_CLK_PLL_P_OUT4, .present = true },
+ 	[tegra_clk_pll_a] = { .dt_id = TEGRA30_CLK_PLL_A, .present = true },
+ 	[tegra_clk_pll_a_out0] = { .dt_id = TEGRA30_CLK_PLL_A_OUT0, .present = true },
++	[tegra_clk_cec] = { .dt_id = TEGRA30_CLK_CEC, .present = true },
+ };
+ 
+ static const char *pll_e_parents[] = { "pll_ref", "pll_p" };
+diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bindings/clock/tegra114-car.h
+index 534c03f..ed5ca21 100644
+--- a/include/dt-bindings/clock/tegra114-car.h
++++ b/include/dt-bindings/clock/tegra114-car.h
+@@ -156,7 +156,7 @@
+ /* 133 */
+ /* 134 */
+ /* 135 */
+-/* 136 */
++#define TEGRA114_CLK_CEC 136
+ /* 137 */
+ /* 138 */
+ /* 139 */
+diff --git a/include/dt-bindings/clock/tegra124-car-common.h b/include/dt-bindings/clock/tegra124-car-common.h
+index a215609..9352c7e 100644
+--- a/include/dt-bindings/clock/tegra124-car-common.h
++++ b/include/dt-bindings/clock/tegra124-car-common.h
+@@ -156,7 +156,7 @@
+ /* 133 */
+ /* 134 */
+ /* 135 */
+-/* 136 */
++#define TEGRA124_CLK_CEC 136
+ /* 137 */
+ /* 138 */
+ /* 139 */
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index f5c6563..e7a2578 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -156,7 +156,7 @@
+ /* 133 */
+ /* 134 */
+ /* 135 */
+-/* 136 */
++#define TEGRA210_CLK_CEC 136
+ /* 137 */
+ /* 138 */
+ /* 139 */
+diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindings/clock/tegra30-car.h
+index 889e49b..7213354b 100644
+--- a/include/dt-bindings/clock/tegra30-car.h
++++ b/include/dt-bindings/clock/tegra30-car.h
+@@ -156,7 +156,7 @@
+ /* 133 */
+ /* 134 */
+ /* 135 */
+-/* 136 */
++#define TEGRA30_CLK_CEC 136
+ /* 137 */
+ /* 138 */
+ /* 139 */
+-- 
+1.9.1
