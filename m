@@ -1,124 +1,171 @@
-Return-Path: <baoyou.xie@linaro.org>
-Return-Path: <baoyou.xie@linaro.org>
-From: Baoyou Xie <baoyou.xie@linaro.org>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	jun.nie@linaro.org,
-	baoyou.xie@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	shawn.guo@linaro.org,
-	vinod.koul@intel.com
-Cc: alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	shawnguo@kernel.org,
-	mathieu.poirier@linaro.org,
-	xie.baoyou@zte.com.cn,
-	chen.chaokai@zte.com.cn,
-	wang.qiang01@zte.com.cn
-Subject: [PATCH v3 3/3] ASoC: zx-i2s: introduce pclk for zx2967 family
-Date: Wed,  8 Feb 2017 11:02:35 +0800
-Message-Id: <1486522955-14528-3-git-send-email-baoyou.xie@linaro.org>
-In-Reply-To: <1486522955-14528-1-git-send-email-baoyou.xie@linaro.org>
-References: <1486522955-14528-1-git-send-email-baoyou.xie@linaro.org>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v3 5/6] clk: tegra: add super clk mux/div
+Date: Tue, 28 Feb 2017 16:37:21 +0200
+Message-ID: <1488292648-16876-6-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1488292648-16876-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1488292648-16876-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The pclk is necessary for zx2967 I2S controller. the driver
-currently doesn't handle it. This is something we need to fix.
+Add a super clock type which implements both mux and divider. This is used
+for aclk.
 
-In turn, the driver supports zx296718's I2S controller.
-
-By the way, this patch also change the clock name from tx to wclk
-to make it clear.
-
-Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- sound/soc/zte/zx-i2s.c | 37 ++++++++++++++++++++++++++++---------
- 1 file changed, 28 insertions(+), 9 deletions(-)
+ drivers/clk/tegra/clk-super.c | 87 +++++++++++++++++++++++++++++++++++++++++--
+ drivers/clk/tegra/clk.h       |  7 +++-
+ 2 files changed, 89 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/zte/zx-i2s.c b/sound/soc/zte/zx-i2s.c
-index ed7a56d..2d486ea 100644
---- a/sound/soc/zte/zx-i2s.c
-+++ b/sound/soc/zte/zx-i2s.c
-@@ -95,7 +95,7 @@
- struct zx_i2s_info {
- 	struct snd_dmaengine_dai_dma_data	dma_playback;
- 	struct snd_dmaengine_dai_dma_data	dma_capture;
--	struct clk				*dai_clk;
-+	struct clk				*dai_wclk, *dai_pclk;
- 	void __iomem				*reg_base;
- 	int					master;
- 	resource_size_t				mapbase;
-@@ -275,8 +275,9 @@ static int zx_i2s_hw_params(struct snd_pcm_substream *substream,
- 	writel_relaxed(val, i2s->reg_base + ZX_I2S_TIMING_CTRL);
- 
- 	if (i2s->master)
--		ret = clk_set_rate(i2s->dai_clk,
--				   params_rate(params) * ch_num * CLK_RAT);
-+		ret = clk_set_rate(i2s->dai_wclk,
-+				params_rate(params) * ch_num * CLK_RAT);
-+
- 	return ret;
+diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
+index 131d1b50..84267cf 100644
+--- a/drivers/clk/tegra/clk-super.c
++++ b/drivers/clk/tegra/clk-super.c
+@@ -121,9 +121,50 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
+ 	return err;
  }
  
-@@ -328,8 +329,19 @@ static int zx_i2s_startup(struct snd_pcm_substream *substream,
- 			  struct snd_soc_dai *dai)
- {
- 	struct zx_i2s_info *zx_i2s = dev_get_drvdata(dai->dev);
-+	int ret;
++const struct clk_ops tegra_clk_super_mux_ops = {
++	.get_parent = clk_super_get_parent,
++	.set_parent = clk_super_set_parent,
++};
 +
-+	ret = clk_prepare_enable(zx_i2s->dai_wclk);
-+	if (ret)
-+		return ret;
++static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long *parent_rate)
++{
++	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
++	struct clk_hw *div_hw = &super->frac_div.hw;
 +
-+	ret = clk_prepare_enable(zx_i2s->dai_pclk);
-+	if (ret) {
-+		clk_disable_unprepare(zx_i2s->dai_wclk);
-+		return ret;
-+	}
++	__clk_hw_set_clk(div_hw, hw);
++
++	return super->div_ops->round_rate(div_hw, rate, parent_rate);
++}
++
++static unsigned long clk_super_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
++	struct clk_hw *div_hw = &super->frac_div.hw;
++
++	__clk_hw_set_clk(div_hw, hw);
++
++	return super->div_ops->recalc_rate(div_hw, parent_rate);
++}
++
++static int clk_super_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
++{
++	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
++	struct clk_hw *div_hw = &super->frac_div.hw;
++
++	__clk_hw_set_clk(div_hw, hw);
++
++	return super->div_ops->set_rate(div_hw, rate, parent_rate);
++}
++
+ const struct clk_ops tegra_clk_super_ops = {
+ 	.get_parent = clk_super_get_parent,
+ 	.set_parent = clk_super_set_parent,
++	.set_rate = clk_super_set_rate,
++	.round_rate = clk_super_round_rate,
++	.recalc_rate = clk_super_recalc_rate,
+ };
  
--	return clk_prepare_enable(zx_i2s->dai_clk);
-+	return ret;
+ struct clk *tegra_clk_register_super_mux(const char *name,
+@@ -136,13 +177,11 @@ struct clk *tegra_clk_register_super_mux(const char *name,
+ 	struct clk_init_data init;
+ 
+ 	super = kzalloc(sizeof(*super), GFP_KERNEL);
+-	if (!super) {
+-		pr_err("%s: could not allocate super clk\n", __func__);
++	if (!super)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 
+ 	init.name = name;
+-	init.ops = &tegra_clk_super_ops;
++	init.ops = &tegra_clk_super_mux_ops;
+ 	init.flags = flags;
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
+@@ -163,3 +202,43 @@ struct clk *tegra_clk_register_super_mux(const char *name,
+ 
+ 	return clk;
  }
- 
- static void zx_i2s_shutdown(struct snd_pcm_substream *substream,
-@@ -337,7 +349,8 @@ static void zx_i2s_shutdown(struct snd_pcm_substream *substream,
- {
- 	struct zx_i2s_info *zx_i2s = dev_get_drvdata(dai->dev);
- 
--	clk_disable_unprepare(zx_i2s->dai_clk);
-+	clk_disable_unprepare(zx_i2s->dai_wclk);
-+	clk_disable_unprepare(zx_i2s->dai_pclk);
- }
- 
- static struct snd_soc_dai_ops zx_i2s_dai_ops = {
-@@ -381,10 +394,16 @@ static int zx_i2s_probe(struct platform_device *pdev)
- 	if (!zx_i2s)
- 		return -ENOMEM;
- 
--	zx_i2s->dai_clk = devm_clk_get(&pdev->dev, "tx");
--	if (IS_ERR(zx_i2s->dai_clk)) {
--		dev_err(&pdev->dev, "Fail to get clk\n");
--		return PTR_ERR(zx_i2s->dai_clk);
-+	zx_i2s->dai_wclk = devm_clk_get(&pdev->dev, "wclk");
-+	if (IS_ERR(zx_i2s->dai_wclk)) {
-+		dev_err(&pdev->dev, "Fail to get wclk\n");
-+		return PTR_ERR(zx_i2s->dai_wclk);
-+	}
 +
-+	zx_i2s->dai_pclk = devm_clk_get(&pdev->dev, "pclk");
-+	if (IS_ERR(zx_i2s->dai_pclk)) {
-+		dev_info(&pdev->dev, "have no pclk\n");
-+		zx_i2s->dai_pclk = NULL;
- 	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++struct clk *tegra_clk_register_super_clk(const char *name,
++		const char * const *parent_names, u8 num_parents,
++		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
++		spinlock_t *lock)
++{
++	struct tegra_clk_super_mux *super;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	super = kzalloc(sizeof(*super), GFP_KERNEL);
++	if (!super)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &tegra_clk_super_ops;
++	init.flags = flags;
++	init.parent_names = parent_names;
++	init.num_parents = num_parents;
++
++	super->reg = reg;
++	super->lock = lock;
++	super->width = 4;
++	super->flags = clk_super_flags;
++	super->frac_div.reg = reg + 4;
++	super->frac_div.shift = 16;
++	super->frac_div.width = 8;
++	super->frac_div.frac_width = 1;
++	super->frac_div.lock = lock;
++	super->div_ops = &tegra_clk_frac_div_ops;
++
++	/* Data in .init is copied by clk_register(), so stack variable OK */
++	super->hw.init = &init;
++
++	clk = clk_register(NULL, &super->hw);
++	if (IS_ERR(clk))
++		kfree(super);
++
++	return clk;
++}
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 8b09021e..960e47e 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -686,6 +686,8 @@ struct tegra_periph_init_data {
+ struct tegra_clk_super_mux {
+ 	struct clk_hw	hw;
+ 	void __iomem	*reg;
++	struct tegra_clk_frac_div frac_div;
++	const struct clk_ops	*div_ops;
+ 	u8		width;
+ 	u8		flags;
+ 	u8		div2_index;
+@@ -702,7 +704,10 @@ struct clk *tegra_clk_register_super_mux(const char *name,
+ 		const char **parent_names, u8 num_parents,
+ 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
+ 		u8 width, u8 pllx_index, u8 div2_index, spinlock_t *lock);
+-
++struct clk *tegra_clk_register_super_clk(const char *name,
++		const char * const *parent_names, u8 num_parents,
++		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
++		spinlock_t *lock);
+ /**
+  * struct clk_init_table - clock initialization table
+  * @clk_id:	clock id as mentioned in device tree bindings
 -- 
-2.7.4
+1.9.1
