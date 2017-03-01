@@ -1,88 +1,220 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56528 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753578AbdCNCVY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2017 22:21:24 -0400
-Date: Tue, 14 Mar 2017 10:21:10 +0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: James Hogan <james.hogan@imgtec.com>
-Cc: linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jason Uy <jason.uy@broadcom.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        David Daney <david.daney@cavium.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-serial@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-mips@linux-mips.org, bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH] serial: 8250_dw: Fix breakage when HAVE_CLK=n
-Message-ID: <20170314022110.GA27262@kroah.com>
-References: <CAHp75Ved2h2WyWBokEOsDmAyB3w3iM=uh-9Bq01mU1ST4FapWQ@mail.gmail.com>
- <20170304130958.23655-1-james.hogan@imgtec.com>
- <20170313111407.GJ2878@jhogan-linux.le.imgtec.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: sboyd@codeaurora.org,
+	khilman@baylibre.com,
+	carlo@caione.org
+Subject: [PATCH v2 2/3] clk: meson-gxbb: Add MALI clocks
+Date: Wed,  1 Mar 2017 11:46:03 +0100
+Message-Id: <1488365164-22861-3-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
+References: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Neil Armstrong <narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170313111407.GJ2878@jhogan-linux.le.imgtec.org>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 13, 2017 at 11:14:07AM +0000, James Hogan wrote:
-> Hi Greg,
-> 
-> On Sat, Mar 04, 2017 at 01:09:58PM +0000, James Hogan wrote:
-> > Commit 6a171b299379 ("serial: 8250_dw: Allow hardware flow control to be
-> > used") recently broke the 8250_dw driver on platforms which don't select
-> > HAVE_CLK, as dw8250_set_termios() gets confused by the behaviour of the
-> > fallback HAVE_CLK=n clock API in linux/clk.h which pretends everything
-> > is fine but returns (valid) NULL clocks and 0 HZ clock rates.
-> > 
-> > That 0 rate is written into the uartclk resulting in a crash at boot,
-> > e.g. on Cavium Octeon III based UTM-8 we get something like this:
-> > 
-> > 1180000000800.serial: ttyS0 at MMIO 0x1180000000800 (irq = 41, base_baud = 25000000) is a OCTEON
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 2 PID: 1 at drivers/tty/serial/serial_core.c:441 uart_get_baud_rate+0xfc/0x1f0
-> > ...
-> > Call Trace:
-> > ...
-> > [<ffffffff8149c2e4>] uart_get_baud_rate+0xfc/0x1f0
-> > [<ffffffff814a5098>] serial8250_do_set_termios+0xb0/0x440
-> > [<ffffffff8149c710>] uart_set_options+0xe8/0x190
-> > [<ffffffff814a6cdc>] serial8250_console_setup+0x84/0x158
-> > [<ffffffff814a11ec>] univ8250_console_setup+0x54/0x70
-> > [<ffffffff811901a0>] register_console+0x1c8/0x418
-> > [<ffffffff8149f004>] uart_add_one_port+0x434/0x4b0
-> > [<ffffffff814a1af8>] serial8250_register_8250_port+0x2d8/0x440
-> > [<ffffffff814aa620>] dw8250_probe+0x388/0x5e8
-> > ...
-> > 
-> > The clock API is defined such that NULL is a valid clock handle so it
-> > wouldn't be right to check explicitly for NULL. Instead treat a
-> > clk_round_rate() return value of 0 as an error which prevents uartclk
-> > being overwritten.
-> > 
-> > Fixes: 6a171b299379 ("serial: 8250_dw: Allow hardware flow control to be used")
-> > Signed-off-by: James Hogan <james.hogan@imgtec.com>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Cc: Jason Uy <jason.uy@broadcom.com>
-> > Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-> > Cc: Heiko Stuebner <heiko@sntech.de>
-> > Cc: David Daney <david.daney@cavium.com>
-> > Cc: Russell King <linux@armlinux.org.uk>
-> > Cc: linux-serial@vger.kernel.org
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: linux-mips@linux-mips.org
-> > Cc: bcm-kernel-feedback-list@broadcom.com
-> 
-> Any chance we could have this patch in v4.11-rc3?
-> 
-> As Andy pointed out, it depends on Heiko's patch:
-> https://www.spinics.net/lists/linux-serial/msg25483.html
+The Mali is clocked by two identical clock paths behind a glitch free mux
+to safely change frequency while running.
 
-Yes, will be queueing both up soon.
+The two "mali_0" and "mali_1" clocks are composed of a mux, divider and gate.
+Expose these two clocks trees using generic clocks.
+Finally the glitch free mux is added as "mali" clock.
 
-thanks,
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/gxbb.c | 139 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 139 insertions(+)
 
-greg k-h
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index a52063f..31f6090 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -634,6 +634,131 @@
+ 	},
+ };
+ 
++/*
++ * The MALI IP is clocked by two identical clocks (mali_0 and mali_1)
++ * muxed by a glitch-free switch.
++ */
++
++static u32 mux_table_mali_0_1[] = {0, 1, 2, 3, 4, 5, 6, 7};
++const char *gxbb_mali_0_1_parent_names[] = {
++	"xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
++	"fclk_div4", "fclk_div3", "fclk_div5"
++};
++
++static struct clk_mux gxbb_mali_0_sel = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.mask = 0x7,
++	.shift = 9,
++	.table = mux_table_mali_0_1,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali_0_sel",
++		.ops = &clk_mux_ops,
++		/*
++		 * bits 10:9 selects from 8 possible parents:
++		 * xtal, gp0_pll, mpll2, mpll1, fclk_div7,
++		 * fclk_div4, fclk_div3, fclk_div5
++		 */
++		.parent_names = gxbb_mali_0_1_parent_names,
++		.num_parents = 8,
++		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
++	},
++};
++
++static struct clk_divider gxbb_mali_0_div = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.shift = 0,
++	.width = 7,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali_0_div",
++		.ops = &clk_divider_ops,
++		.parent_names = (const char *[]){ "mali_0_sel" },
++		.num_parents = 1,
++		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
++	},
++};
++
++static struct clk_gate gxbb_mali_0 = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.bit_idx = 8,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali_0",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "mali_0_div" },
++		.num_parents = 1,
++		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
++	},
++};
++
++static struct clk_mux gxbb_mali_1_sel = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.mask = 0x7,
++	.shift = 25,
++	.table = mux_table_mali_0_1,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali_1_sel",
++		.ops = &clk_mux_ops,
++		/*
++		 * bits 10:9 selects from 8 possible parents:
++		 * xtal, gp0_pll, mpll2, mpll1, fclk_div7,
++		 * fclk_div4, fclk_div3, fclk_div5
++		 */
++		.parent_names = gxbb_mali_0_1_parent_names,
++		.num_parents = 8,
++		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
++	},
++};
++
++static struct clk_divider gxbb_mali_1_div = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.shift = 16,
++	.width = 7,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali_1_div",
++		.ops = &clk_divider_ops,
++		.parent_names = (const char *[]){ "mali_1_sel" },
++		.num_parents = 1,
++		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
++	},
++};
++
++static struct clk_gate gxbb_mali_1 = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.bit_idx = 24,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali_1",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "mali_1_div" },
++		.num_parents = 1,
++		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
++	},
++};
++
++static u32 mux_table_mali[] = {0, 1};
++const char *gxbb_mali_parent_names[] = {
++	"mali_0", "mali_1"
++};
++
++static struct clk_mux gxbb_mali = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.mask = 1,
++	.shift = 31,
++	.table = mux_table_mali,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali",
++		.ops = &clk_mux_ops,
++		.parent_names = gxbb_mali_parent_names,
++		.num_parents = 2,
++		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
++	},
++};
++
+ /* Everything Else (EE) domain gates */
+ static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
+ static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
+@@ -827,6 +952,13 @@
+ 		[CLKID_SAR_ADC_CLK]	    = &gxbb_sar_adc_clk.hw,
+ 		[CLKID_SAR_ADC_SEL]	    = &gxbb_sar_adc_clk_sel.hw,
+ 		[CLKID_SAR_ADC_DIV]	    = &gxbb_sar_adc_clk_div.hw,
++		[CLKID_MALI_0_SEL]	    = &gxbb_mali_0_sel.hw,
++		[CLKID_MALI_0_DIV]	    = &gxbb_mali_0_div.hw,
++		[CLKID_MALI_0]		    = &gxbb_mali_0.hw,
++		[CLKID_MALI_1_SEL]	    = &gxbb_mali_1_sel.hw,
++		[CLKID_MALI_1_DIV]	    = &gxbb_mali_1_div.hw,
++		[CLKID_MALI_1]		    = &gxbb_mali_1.hw,
++		[CLKID_MALI]		    = &gxbb_mali.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -930,16 +1062,23 @@
+ 	&gxbb_emmc_b,
+ 	&gxbb_emmc_c,
+ 	&gxbb_sar_adc_clk,
++	&gxbb_mali_0,
++	&gxbb_mali_1,
+ };
+ 
+ static struct clk_mux *gxbb_clk_muxes[] = {
+ 	&gxbb_mpeg_clk_sel,
+ 	&gxbb_sar_adc_clk_sel,
++	&gxbb_mali_0_sel,
++	&gxbb_mali_1_sel,
++	&gxbb_mali,
+ };
+ 
+ static struct clk_divider *gxbb_clk_dividers[] = {
+ 	&gxbb_mpeg_clk_div,
+ 	&gxbb_sar_adc_clk_div,
++	&gxbb_mali_0_div,
++	&gxbb_mali_1_div,
+ };
+ 
+ static int gxbb_clkc_probe(struct platform_device *pdev)
+-- 
+1.9.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
