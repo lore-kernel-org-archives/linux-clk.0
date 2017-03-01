@@ -1,49 +1,203 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH v6 3/4] arm64: dts: allwinner: add Allwinner H5 .dtsi
+Date: Thu,  2 Mar 2017 04:13:41 +0800
+Message-Id: <20170301201342.47583-4-icenowy@aosc.xyz>
+In-Reply-To: <20170301201342.47583-1-icenowy@aosc.xyz>
+References: <20170301201342.47583-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
-References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 Mar 2017 14:25:26 +0100
-Message-ID: <CAMuHMdXcqsOp=W-M0Z4vCmDkq8yCwu9vq3+zUVJiPXGBzKAo9g@mail.gmail.com>
-Subject: Re: [PATCH 0/7] clk: renesas: rcar-gen3: Misc fixes and cleanups
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 13, 2017 at 5:19 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> This patch series contains miscellaneous fixes and cleanups for the
-> Renesas R-Car Gen3 (H3 and M3-W) clock drivers:
->   - Correct parent clock for Audio DMACs,
->   - Correct names of watchdog clocks,
->   - Reformat core clock tables for easier comparisons between drivers,
->   - Add workaround for PLL0/2/4 errata on R-Car H3 ES1.0.
->
-> I plan to queue these up in clk-renesas-for-v4.12.
+From: Andre Przywara <andre.przywara@arm.com>
 
-Queued up with Morimoto-san's grammar fix and Acked-by.
+The Allwinner H5 SoC is pin-compatible to the H3 SoC, but uses
+Cortex-A53 cores instead.
+Based on the now shared base .dtsi describing the common peripherals
+describe the H5 specific nodes on top of that.
+That symlinks in the sunxi-h3-h5.dtsi from the arch/arm tree.
 
-> Geert Uytterhoeven (7):
->   clk: renesas: r8a7795: Correct parent clock and sort order for Audio
->     DMACs
->   clk: renesas: r8a7795: Correct name of watchdog clock
->   clk: renesas: r8a7796: Correct name of watchdog clock
->   clk: renesas: r8a7795: Reformat core clock table
->   clk: renesas: r8a7796: Reformat core clock table
->   clk: renesas: rcar-gen3-cpg: Pass mode pins to rcar_gen3_cpg_init()
->   clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3
->     ES1.0
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+[Icenowy: add H5 pinctrl compatible, and changes for my h3-h5 dtsi
+ refactor, commit message changed to meet new arm64 naming scheme,
+ drop H3 pinctrl compatible because of interrupt bank change, drop
+ H3 ccu compatible because of clock change, drop ccu node as it come
+ into h3-h5 dtsi]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+Changes in v6:
+- Dropped GIC node as it's in sunxi-h3-h5.dtsi now
+- Fixed some words in commit message, thanks to Rask Ingemann Lambertsen
+Changes in v3:
+- Dropped sun5i-a13-mmc, sun8i-h3-ccu compatibles.
+- Used sun50i-{h5,a64}-emmc compatible for mmc2.
+Changes in v2:
+- Dropped sun8i-h3-pinctrl compatible, as the interrupt of H3 and H5 is
 
-Gr{oetje,eeting}s,
+ arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi   | 124 +++++++++++++++++++++++++
+ arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi |   1 +
+ 2 files changed, 125 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+ create mode 120000 arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
 
-                        Geert
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+new file mode 100644
+index 000000000000..4d314a253fd9
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+@@ -0,0 +1,124 @@
++/*
++ * Copyright (C) 2016 ARM Ltd.
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#include "sunxi-h3-h5.dtsi"
++
++/ {
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <0>;
++			enable-method = "psci";
++		};
++
++		cpu@1 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <1>;
++			enable-method = "psci";
++		};
++
++		cpu@2 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <2>;
++			enable-method = "psci";
++		};
++
++		cpu@3 {
++			compatible = "arm,cortex-a53", "arm,armv8";
++			device_type = "cpu";
++			reg = <3>;
++			enable-method = "psci";
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 13
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10
++				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++};
++
++&ccu {
++	compatible = "allwinner,sun50i-h5-ccu";
++};
++
++&mmc0 {
++	compatible = "allwinner,sun50i-h5-mmc",
++		     "allwinner,sun50i-a64-mmc";
++	clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
++	clock-names = "ahb", "mmc";
++};
++
++&mmc1 {
++	compatible = "allwinner,sun50i-h5-mmc",
++		     "allwinner,sun50i-a64-mmc";
++	clocks = <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;
++	clock-names = "ahb", "mmc";
++};
++
++&mmc2 {
++	compatible = "allwinner,sun50i-h5-emmc",
++		     "allwinner,sun50i-a64-emmc";
++	clocks = <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;
++	clock-names = "ahb", "mmc";
++};
++
++&pio {
++	compatible = "allwinner,sun50i-h5-pinctrl";
++};
+diff --git a/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
+new file mode 120000
+index 000000000000..036f01dc2b9b
+--- /dev/null
++++ b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
+@@ -0,0 +1 @@
++../../../../arm/boot/dts/sunxi-h3-h5.dtsi
+\ No newline at end of file
+-- 
+2.11.1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
