@@ -1,99 +1,50 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Mon, 13 Mar 2017 16:12:14 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org, Sudeep Holla <Sudeep.Holla@arm.com>
-Subject: Re: [v3 3/5] coresight: add support for debug module
-Message-ID: <20170313081214.GC22706@leoy-linaro>
-References: <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
- <011fdac0-59bf-b539-2de3-0b59a41bc922@arm.com>
- <20170309175915.GA964@leoy-linaro>
- <3f27efee-3b63-81fd-eb96-73fd7e6f5e92@arm.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Wed, 1 Mar 2017 21:26:53 +0100
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement
+ <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob
+ Herring <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
+ Gala <galak@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, Hanna Hawa
+ <hannah@marvell.com>, Yehuda Yitschak <yehuday@marvell.com>,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 1/3] dt-bindings: arm: update Armada CP110 system
+ controller binding
+Message-ID: <20170301212653.7b58b6a7@free-electrons.com>
+In-Reply-To: <20170301190127.GO25384@codeaurora.org>
+References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1482316017-22154-2-git-send-email-thomas.petazzoni@free-electrons.com>
+	<20161222001453.GW8288@codeaurora.org>
+	<20170301165245.5f2fbfaf@free-electrons.com>
+	<20170301190127.GO25384@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3f27efee-3b63-81fd-eb96-73fd7e6f5e92@arm.com>
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Suzuki,
+Hello,
 
-On Fri, Mar 10, 2017 at 02:29:53PM +0000, Suzuki K Poulose wrote:
+On Wed, 1 Mar 2017 11:01:27 -0800, Stephen Boyd wrote:
 
-[...]
-
-> >>So we cannot really rely on the values in EDVIDSR which we use to make further decisions. So I
-> >>am wondering if this is really guranteed to be useful.
-> >
-> >So this is caused by Software lock is locked?
-> >
-> >Section H8.4.1:
-> >
-> >"Reads and writes have no side-effects. A side-effect is where a
-> >direct read or a direct write of a register creates
-> >an indirect write of the same or another register. When the Software
-> >Lock is locked, the indirect write does
-> >not occur."
+> > Even though you said you applied it, I still don't see this patch in
+> > mainline, while PATCH 2/3 of this series is now in mainline.
+> > 
+> > Was this patch forgotten? Let me know if I should resend it, but I'm
+> > pretty sure it still applies, since no other changes on this file have
+> > been merged since quite a while.
+> >   
 > 
-> Yes, thats correct, further :
-> 
-> Section H9.2.32: EDPCSR
-> 
-> "For a read of EDPCSRlo from the memory-mapped interface, if EDLSR.SLK == 1, meaning
-> the Software Lock is locked, then the access has no side-effects. That is, EDCIDSR,
-> EDVIDSR, and EDPCSRhi are unchanged."
-> 
-> And since we do a CS_UNLOCK, that should be fine. Please ignore my comment.
+> No worries. I've made a note to put it into the fixes queue to
+> send off after rc1.
 
-Thanks a lot for confirmation.
+Great, thanks a lot. It's not a big thing, but it keeps popping up in
+my list of "things accepted by the maintainer, but not yet completely
+merged upstream" :-)
 
-[...]
-
-> >>>+
-> >>>+	put_online_cpus();
-> >>>+
-> >>>+	if (!debug_count++)
-> >>>+		atomic_notifier_chain_register(&panic_notifier_list,
-> >>>+					       &debug_notifier);
-> >>>+
-> >>
-> >>>+	sprintf(buf, (char *)id->data, drvdata->cpu);
-> >>>+	dev_info(dev, "%s initialized\n", buf);
-> >>
-> >>This could simply be :
-> >>	dev_info(dev, "Coresight debug-CPU%d initialized\n", drvdata->cpu);
-> >>
-> >>and get rid of the static string and the buffer, see below.
-> 
-> Also we need pm_runtime_put() here to balance the pm_runtime_get_ from AMBA
-> device probe. More on that below.
-
-[...]
-
-> Btw, I don't see any PM calls to make sure the power domain (at least the debug domain)
-> is up, which could cause problems with accesses to some of these registers (leave alone the
-> ones in CPU power domain), especially the EDPRSR. We could also do pm_runtime_get on the
-> CPU's power domain, if the CPU is online, before we access the pcsr.
-
-I will add pm_runtime_get/pm_runtime_put for apb clock.
-
-But for CPU power domain, AFAIK this part is managed by PSCI but is not
-controlled by pm_runtime_{put|get} pairs. So at beginning, we suggest
-to use "nohlt" to ensure CPU power domain is enabled.
-
-Please let me know if I miss some thing for this?
-
-Thanks,
-Leo Yan
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
