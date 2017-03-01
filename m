@@ -1,55 +1,73 @@
-Return-Path: <baoyou.xie@linaro.org>
-Return-Path: <baoyou.xie@linaro.org>
-From: Baoyou Xie <baoyou.xie@linaro.org>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	jun.nie@linaro.org,
-	baoyou.xie@linaro.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	shawn.guo@linaro.org,
-	vinod.koul@intel.com
-Cc: alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	shawnguo@kernel.org,
-	xie.baoyou@zte.com.cn,
-	chen.chaokai@zte.com.cn,
-	wang.qiang01@zte.com.cn
-Subject: [PATCH v2 1/3] clk: zte: add i2s clocks for zx296718
-Date: Tue,  7 Feb 2017 11:02:49 +0800
-Message-Id: <1486436571-8682-1-git-send-email-baoyou.xie@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH 3/3] arm64: dts: allwinner: add r_ccu node
+Date: Wed,  1 Mar 2017 12:15:41 +0800
+Message-Id: <20170301041541.24388-4-icenowy@aosc.xyz>
+In-Reply-To: <20170301041541.24388-1-icenowy@aosc.xyz>
+References: <20170301041541.24388-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The i2s related clock support is missing from the existing zx296718
-clock driver. This patch adds it, so that the upstream ZX I2S driver
-can work out.
+A64 SoC have a CCU (r_ccu) in PRCM block.
 
-Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+Add support for it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- drivers/clk/zte/clk-zx296718.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
-index ad5d1df..f106d40 100644
---- a/drivers/clk/zte/clk-zx296718.c
-+++ b/drivers/clk/zte/clk-zx296718.c
-@@ -941,6 +941,10 @@ static struct zx_clk_gate audio_gate_clk[] = {
- 	GATE(AUDIO_SPDIF1_WCLK, "spdif1_wclk", "spdif1_wclk_div", AUDIO_SPDIF1_CLK, 9, CLK_SET_RATE_PARENT, 0),
- 	GATE(AUDIO_TDM_WCLK, "tdm_wclk", "tdm_wclk_div", AUDIO_TDM_CLK, 17, CLK_SET_RATE_PARENT, 0),
- 	GATE(AUDIO_TS_PCLK, "tempsensor_pclk", "clk49m5", AUDIO_TS_CLK, 1, 0, 0),
-+	GATE(AUDIO_I2S0_PCLK, "i2s0_pclk", "clk49m5", AUDIO_I2S0_CLK, 8, 0, 0),
-+	GATE(AUDIO_I2S1_PCLK, "i2s1_pclk", "clk49m5", AUDIO_I2S1_CLK, 8, 0, 0),
-+	GATE(AUDIO_I2S2_PCLK, "i2s2_pclk", "clk49m5", AUDIO_I2S2_CLK, 8, 0, 0),
-+	GATE(AUDIO_I2S3_PCLK, "i2s3_pclk", "clk49m5", AUDIO_I2S3_CLK, 8, 0, 0),
- };
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 1c64ea2d23f9..e8be100b91a0 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -43,8 +43,10 @@
+  */
  
- static struct clk_hw_onecell_data audio_hw_onecell_data = {
+ #include <dt-bindings/clock/sun50i-a64-ccu.h>
++#include <dt-bindings/clock/sun6i-r-ccu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/reset/sun50i-a64-ccu.h>
++#include <dt-bindings/reset/sun6i-r-ccu.h>
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -392,5 +394,14 @@
+ 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
++
++		r_ccu: clock@1f01400 {
++			compatible = "allwinner,sun50i-a64-r-ccu";
++			reg = <0x01cf01400 0x100>;
++			clocks = <&osc24M>, <&osc32k>;
++			clock-names = "hosc", "losc";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
+ 	};
+ };
 -- 
-2.7.4
+2.11.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
