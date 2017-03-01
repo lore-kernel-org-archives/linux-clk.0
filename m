@@ -1,67 +1,53 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 20 Mar 2017 14:27:46 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: fix disable unused for clocks sharing enable
- bit
-Message-ID: <20170320132746.GK22463@ulmo.ba.sec>
-References: <1489587055-23722-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+Date: Wed, 1 Mar 2017 16:52:45 +0100
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement
+ <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob
+ Herring <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+ Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
+ Gala <galak@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, Hanna Hawa
+ <hannah@marvell.com>, Yehuda Yitschak <yehuday@marvell.com>,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 1/3] dt-bindings: arm: update Armada CP110 system
+ controller binding
+Message-ID: <20170301165245.5f2fbfaf@free-electrons.com>
+In-Reply-To: <20161222001453.GW8288@codeaurora.org>
+References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1482316017-22154-2-git-send-email-thomas.petazzoni@free-electrons.com>
+	<20161222001453.GW8288@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="W2ydbIOJmkm74tJ2"
-In-Reply-To: <1489587055-23722-1-git-send-email-pdeschrijver@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Stephen,
 
---W2ydbIOJmkm74tJ2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Mar 15, 2017 at 04:10:54PM +0200, Peter De Schrijver wrote:
-> In case 2 clocks share an enable bit and one of them is enabled by a driv=
-er
-> and the other one is not, CCF will think it's enabled because it will only
-> look at the hw state. Therefor it will disable the clock and thus also
-> disable the other clock which was enabled. Solve this by reading the
-> initial state of the enable bit and incrementing the refcount if it's set.
+On Wed, 21 Dec 2016 16:14:53 -0800, Stephen Boyd wrote:
+> On 12/21, Thomas Petazzoni wrote:
+> > It turns out that in the CP110 HW block present in Marvell Armada
+> > 7K/8K SoCs, gatable clock n=C2=B018 not only controls SD/MMC, but also =
+the
+> > GOP block. This commit updates the Device Tree binding for this piece
+> > of hardware accordingly.
+> >=20
+> > Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> > --- =20
 >=20
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-periph-gate.c | 3 +++
->  1 file changed, 3 insertions(+)
+> Applied to clk-next
 
-I think you had already sent a version of this patch a couple of weeks
-ago. I've applied the first version since I couldn't spot any delta
-between them.
+Even though you said you applied it, I still don't see this patch in
+mainline, while PATCH 2/3 of this series is now in mainline.
 
-Thierry
+Was this patch forgotten? Let me know if I should resend it, but I'm
+pretty sure it still applies, since no other changes on this file have
+been merged since quite a while.
 
---W2ydbIOJmkm74tJ2
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP2NIACgkQ3SOs138+
-s6FcLg//SdFeBY0XbrqBGl9TvapcK+Vzx5wScC6O8JvE0wNG/Xdpssg88DTwh4zV
-Xr+aMPna7hSmsDlpz/ydULUKblG5dJR8b2TZ+W+cug1qvekiEW/OxG9kK6iaiHXe
-bVv1WWm5PBldaJKLFk6ZDDO4WJw2tzbQhYYSjLRJlATtVEGOr08uiDWeIJXkaiiR
-iojRuDghj0EPw39OTqtCHXnhV8Eq/GdmzxEjD+xsUvFnVCSYFLdNBMEt1SYOlKWd
-T4cLRA34grvwbX62rJRUT3uqIzfRyt4fBTk/LFBQBaCF62UgyMTXmfPNdSh/RinI
-mKLxeFxtFb8ZLijyh7zPA+y4sizefhb5lKw9maJ/QeBR5LQvSitLOQ14sWJnUX8R
-guH7LvFTq0hnGJGOkKAWMLBlYeKKGFD2yFv6Jo/gVUYBAsfqVJf5Qw0Lo/cV97qd
-jVXSccduF3li90EzPKn92ZDPh2W8XK6kIWhLh/6LFHM/chgXo4rD58hPxdkFPCy/
-TomwajNT4q2rhJ3ovTmPl8ijMYQg7CS9jqZJIE0TC6yWDy34oCvaWWVx/QrJbfuD
-gTQPLtE0S6JEf1xa/3jfZ6265wO/h+Pr3sjw3+orHEFj51GecoFdXevimiY6cvWx
-cwt4u2htxKCAESxm+JiEsgXmSzG3cqwGmxq1MyZC7xizUdrlu2I=
-=UuH8
------END PGP SIGNATURE-----
-
---W2ydbIOJmkm74tJ2--
+Thomas
+--=20
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
