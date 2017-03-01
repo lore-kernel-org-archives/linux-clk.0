@@ -1,44 +1,95 @@
-Return-Path: <tony@atomide.com>
-Date: Thu, 2 Mar 2017 09:51:16 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 00/15] clk: ti: cleanups / fixes for preparation of
- clkctrl clocks
-Message-ID: <20170302175116.GQ20572@atomide.com>
-References: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Wed, 1 Mar 2017 11:11:19 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH v2 2/3] clk: meson-gxbb: Add MALI clocks
+Message-ID: <20170301191119.GR25384@codeaurora.org>
+References: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
+ <1488365164-22861-3-git-send-email-narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1488365164-22861-3-git-send-email-narmstrong@baylibre.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
+List-Post: <mailto:linux-amlogic@lists.infradead.org>
+List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
+Cc: khilman@baylibre.com, linux-kernel@vger.kernel.org, carlo@caione.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
+Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [170213 01:36]:
-> Hi,
-> 
-> This series provides a number of cleanups and fixes for TI clock drivers.
-> There patches are mostly independent of anything else, but are required
-> for the upcoming clkctrl support also. Targeted for 4.12 merge window.
-> 
-> Main features provided by this series:
-> - Dropped a few obsolete definitions
-> - Cleanups for clock alias generation; after this most of the clock aliases
->   can be removed from the drivers/clk/ti/clk-xyz.c files. As a sample,
->   patch #08 is provided for cleaning up omap4 clock aliases, but this can
->   be done for all.
-> - Convert mux/divider to use TI clock specific internal representation,
->   instead of re-using the generic clk_divider / clk_mux. This allows
->   better control over the contents of the struct and cleaning up the
->   register access code to be more readable.
-> - Convert to use proper register definition instead of the overloaded
->   void *ptr which is dynamically cast into a bitmask (Patch #15.)
-> 
-> Some of the patches touch mach-omap2 code, so Ack from Tony is needed for
-> patch #5, #6 and patch #15.
+On 03/01, Neil Armstrong wrote:
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index a52063f..31f6090 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -634,6 +634,131 @@
+>  	},
+>  };
+>  
+> +/*
+> + * The MALI IP is clocked by two identical clocks (mali_0 and mali_1)
+> + * muxed by a glitch-free switch.
+> + */
+> +
+> +static u32 mux_table_mali_0_1[] = {0, 1, 2, 3, 4, 5, 6, 7};
+> +const char *gxbb_mali_0_1_parent_names[] = {
 
-This series looks good to me, needs to be reposted after -rc1 is out
-to apply though. Would be good to have this in Linux next early rather
-than around -rc6 time. Please feel free to add:
+static?
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+> +	"xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
+> +	"fclk_div4", "fclk_div3", "fclk_div5"
+> +};
+> +
+[..]
+> +	.reg = (void *)HHI_MALI_CLK_CNTL,
+> +	.bit_idx = 24,
+> +	.lock = &clk_lock,
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "mali_1",
+> +		.ops = &clk_gate_ops,
+> +		.parent_names = (const char *[]){ "mali_1_div" },
+> +		.num_parents = 1,
+> +		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
+> +	},
+> +};
+> +
+> +static u32 mux_table_mali[] = {0, 1};
+> +const char *gxbb_mali_parent_names[] = {
+
+static?
+
+> +	"mali_0", "mali_1"
+> +};
+[...]
+>  static struct clk_mux *gxbb_clk_muxes[] = {
+>  	&gxbb_mpeg_clk_sel,
+>  	&gxbb_sar_adc_clk_sel,
+> +	&gxbb_mali_0_sel,
+> +	&gxbb_mali_1_sel,
+> +	&gxbb_mali,
+>  };
+>  
+>  static struct clk_divider *gxbb_clk_dividers[] = {
+
+Can these arrays be const? If so, please do that in a separate
+patch.
+
+>  	&gxbb_mpeg_clk_div,
+>  	&gxbb_sar_adc_clk_div,
+> +	&gxbb_mali_0_div,
+> +	&gxbb_mali_1_div,
+>  };
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
+_______________________________________________
+linux-amlogic mailing list
+linux-amlogic@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-amlogic
