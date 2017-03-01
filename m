@@ -1,64 +1,77 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 1 Mar 2017 11:17:05 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/5] clk: sunxi-ng: Add driver for A83T CCU
+Message-ID: <20170301191705.GS25384@codeaurora.org>
+References: <20170214033526.16977-1-wens@csie.org>
+ <20170214033526.16977-5-wens@csie.org>
+ <20170214095819.utsftcvti5zdmlmi@lukather>
+ <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
+ <20170215094954.h3wyaxlqkeb342yu@lukather>
 MIME-Version: 1.0
-In-Reply-To: <1490182543-28550-5-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170322113556eucas1p1b3434935701aba1db7868415a9c3b4f9@eucas1p1.samsung.com>
- <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com> <1490182543-28550-5-git-send-email-m.szyprowski@samsung.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 22 Mar 2017 13:00:56 +0100
-Message-ID: <CAPDyKFrL9pvGQw+09rP52p72FqKuh6rLNt0NEUZ-TFxU838Nzw@mail.gmail.com>
-Subject: Re: [PATCH v6 4/4] clk: samsung: exynos-audss: Use runtime PM
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170215094954.h3wyaxlqkeb342yu@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 22 March 2017 at 12:35, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> This patch adds support for runtime PM to Exynos Audio SubSystem driver to
-> enable full support for audio power domain on Exynos5 SoCs. The main change
-> is moving register saving and restoring code from system sleep PM ops to
-> runtime PM ops and implementing system sleep PM ops with generic
-> pm_runtime_force_suspend/resume helpers. Runtime PM of the Exynos AudSS
-> device is managed from clock core depending on the preparation status
-> of the provided clocks.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On 02/15, Maxime Ripard wrote:
+> On Tue, Feb 14, 2017 at 06:26:39PM +0800, Chen-Yu Tsai wrote:
+> > On Tue, Feb 14, 2017 at 5:58 PM, Maxime Ripard
+> > <maxime.ripard@free-electrons.com> wrote:
+> > > On Tue, Feb 14, 2017 at 11:35:25AM +0800, Chen-Yu Tsai wrote:
+> > >> +/*
+> > >> + * MMC2 supports what's called the "new timing mode". The CCU and the MMC
+> > >> + * controller must be in sync about which mode is used. The new mode moves
+> > >> + * the clock delay controls (and possibly the delay lines) into the MMC
+> > >> + * block. Also, the output of the clock is divided by 2. The output and
+> > >> + * sample phase clocks are unused under this mode.
+> > >> + *
+> > >> + * This new mode seems to be preferred. Hence we force this clock to the
+> > >> + * new mode. And we don't add the phase clocks.
+> > >> + */
+> > >
+> > > I'm sorry, but I said this several times, this isn't working. We
+> > > should model it properly, and not hack this around in the clock
+> > > driver.
+> > >
+> > > As you say in your comment, the MMC driver needs to be aware about
+> > > which mode is used, in order to also set a bit in one of its registers
+> > > accordingly, and modify its sampling behaviour.
+> > >
+> > > The new timing is preferred, but our previous clock implementations
+> > > didn't hardcode it, so we can't even rely on that behaviour to always
+> > > write it in our driver.
+> > 
+> > Correct. With the A83T there has never been a merged clock driver though.
+> > I realize this is a one off thing.
+> > 
+> > > This is not something specific to the A83T, but is found in all the
+> > > SoCs since the A23, so we need to come up with a good solution to
+> > > address that.
+> > >
+> > > I'm not sure what a good solution would be though. One would be to
+> > > just have a private function of our own to switch in the new mode (if
+> > > relevant, because only the MMC2 controllers have it), but that would
+> > > lead to troubles with !sunxi-ng. Not something we can't deal with, but
+> > > some extra precautions should be taken (make sure to protect the call
+> > > through an ifdef / IS_DEFINED, check that the sunxi-ng driver has been
+> > > probed, etc.)
+> > 
+> > If the custom function route is acceptable, I'll come up with something.
+> 
+> I think it would be a great start yes. I'll try to discuss it with
+> Mike and Stephen at ELC and see what they think about that.
+> 
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+I didn't hear anything at ELC. Can someone explain what the issue
+is? Could something like clk_get_phase() + clk_get_rate() tell us
+if we're in one mode vs. the other?
 
-Minor nitpick below.
-
-[...]
-
->
-> -#ifdef CONFIG_PM_SLEEP
->  static unsigned long reg_save[][2] = {
->         { ASS_CLK_SRC,  0 },
->         { ASS_CLK_DIV,  0 },
->         { ASS_CLK_GATE, 0 },
->  };
->
-> -static int exynos_audss_clk_suspend(struct device *dev)
-> +static int __maybe_unused exynos_audss_clk_suspend(struct device *dev)
-
-Instead of using "__maybe_unused", I would rather change from
-"CONFIG_PM_SLEEP" to "CONFIG_PM". However, no strong opinion.
-
-Perhaps you need something like this for patch 3/4 as well?
-
->  {
->         int i;
->
-> @@ -54,7 +54,7 @@ static int exynos_audss_clk_suspend(struct device *dev)
->         return 0;
->  }
-
-[...]
-
-Kind regards
-Uffe
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
