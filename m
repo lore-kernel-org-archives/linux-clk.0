@@ -1,127 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:33639 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754597AbdCaOCo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2017 10:02:44 -0400
-Received: by mail-oi0-f68.google.com with SMTP id f193so9193474oib.0
-        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2017 07:02:43 -0700 (PDT)
+Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: sboyd@codeaurora.org,
+	khilman@baylibre.com,
+	carlo@caione.org
+Subject: [PATCH v2 0/3] meson-gx: Add mali-450 support
+Date: Wed,  1 Mar 2017 11:46:01 +0100
+Message-Id: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
+List-Post: <mailto:linux-amlogic@lists.infradead.org>
+List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
+Cc: linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Neil Armstrong <narmstrong@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <m28tnn69ls.fsf@baylibre.com>
-References: <m28tnn69ls.fsf@baylibre.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 31 Mar 2017 16:02:41 +0200
-Message-ID: <CAK8P3a02e3DxjuW9pA66NSCc9vw_h1Xuk6TdEbRnEQ4v4W7NHA@mail.gmail.com>
-Subject: Re: [GIT PULL] Amlogic 64-bit DT updates for v4.12
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
+Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 11:45 PM, Kevin Hilman <khilman@baylibre.com> wrote:
-> Olof, Arnd,
->
-> Below are some 64-bit DT changes for Amlogic platforms for v4.12.  Note
-> that this branch includes a merge of an immutable branch from the clk
-> tree (clk-meson) due to dependencies on new clocks added to the meson
-> clock driver and used in these DT updates.
+Since the merge of the Mali dt bindings at [1], add support for Mali clocks
+and DT node.
 
-I did not pull this one because of the silly dependency. The device tree
-files should be completely independent of the driver changes.
+The Mali is clocked by two identical clock paths behind a glitch free mux
+to safely change frequency while running.
+So these clocks must be added to the meson-gxbb clock controller.
 
-Here I see commits like these:
+Changes since v1 at [2] :
+ - Remove GP0 fixes, this will pushed later, for base frequency it can depend on fclk_div3
+ - Add GXL support
+ - rebase on clk-next and jbrunet's patchset at [3] and [4]
+ - get rid of composite clocks, this adds more clocks IDs and exposes 2 more clocks
 
-commit fd86d3edb417d5c719fa0ffc4adf9b99e1f2db48
-Author: Neil Armstrong <narmstrong@baylibre.com>
-Date:   Wed Mar 22 11:32:26 2017 +0100
+[4] http://lkml.kernel.org/r/20170228093016.5624-1-jbrunet@baylibre.com
+[3] http://lkml.kernel.org/r/20170228133002.17894-1-jbrunet@baylibre.com
+[2] http://lkml.kernel.org/r/1486721084-1383-1-git-send-email-narmstrong@baylibre.com
+[1] http://lkml.kernel.org/r/b098c4fa9fce88361cca20417978734d0e1b5cca.1485939041.git-series.maxime.ripard@free-electrons.com
 
-    clk: meson-gxbb: Expose GP0 dt-bindings clock id
+Neil Armstrong (3):
+  clk: meson-gxbb: Add MALI clock IDS
+  clk: meson-gxbb: Add MALI clocks
+  ARM64: dts: meson-gx: Add MALI nodes for GXBB and GXL
 
-    This patch exposes the GP0 PLL clock id in the dt bindings.
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi      |  37 ++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi  |  43 +++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi |   1 +
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi |   1 +
+ drivers/clk/meson/gxbb.c                         | 139 +++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h                         |   9 +-
+ include/dt-bindings/clock/gxbb-clkc.h            |   5 +
+ 7 files changed, 234 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
 
-    Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-    Signed-off-by: Michael Turquette <mturquette@baylibre.com>
-    Link: lkml.kernel.org/r/1490178747-14837-5-git-send-email-narmstrong@baylibre.com
+-- 
+1.9.1
 
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h
-b/include/dt-bindings/clock/gxbb-clkc.h
-index ef7d6b792405..cce6cb5418f1 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -10,6 +10,7 @@
- #define CLKID_FCLK_DIV2                4
- #define CLKID_FCLK_DIV3                5
- #define CLKID_FCLK_DIV4                6
-+#define CLKID_GP0_PLL          9
- #define CLKID_CLK81            12
- #define CLKID_MPLL2            15
- #define CLKID_SPI              34
 
-commit 7c4aabd0e19491749488b363fa409956fa3857bb
-Author: Neil Armstrong <narmstrong@baylibre.com>
-Date:   Wed Mar 22 11:18:53 2017 +0100
-
-    clk: meson-gxbb: Add MALI clock IDS
-
-    Add missing MALI clock IDs and expose the muxes and gates in the
-dt-bindings.
-
-    Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-    Signed-off-by: Michael Turquette <mturquette@baylibre.com>
-    Link: lkml.kernel.org/r/1490177935-9646-2-git-send-email-narmstrong@baylibre.com
-
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h
-b/include/dt-bindings/clock/gxbb-clkc.h
-index f08f06dd7702..ef7d6b792405 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -35,5 +35,10 @@
- #define CLKID_SD_EMMC_C                96
- #define CLKID_SAR_ADC_CLK      97
- #define CLKID_SAR_ADC_SEL      98
-+#define CLKID_MALI_0_SEL       100
-+#define CLKID_MALI_0           102
-+#define CLKID_MALI_1_SEL       103
-+#define CLKID_MALI_1           105
-+#define CLKID_MALI             106
-
- #endif /* __GXBB_CLKC_H */
-
-commit 7e148d522982b29c454a31386eb3d27b10d5adbc
-Author: Jerome Brunet <jbrunet@baylibre.com>
-Date:   Thu Mar 9 11:41:54 2017 +0100
-
-    dt-bindings: clk: gxbb: expose i2s output clock gates
-
-    Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-    Signed-off-by: Michael Turquette <mturquette@baylibre.com>
-    Link: lkml.kernel.org/r/20170309104154.28295-10-jbrunet@baylibre.com
-
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h
-b/include/dt-bindings/clock/gxbb-clkc.h
-index 692846c7941b..f08f06dd7702 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -16,6 +16,10 @@
- #define CLKID_I2C              22
- #define CLKID_SAR_ADC          23
- #define CLKID_ETH              36
-+#define CLKID_AIU_GLUE         38
-+#define CLKID_I2S_OUT          40
-+#define CLKID_MIXER_IFACE      44
-+#define CLKID_AIU              47
- #define CLKID_USB0             50
- #define CLKID_USB1             51
- #define CLKID_USB              55
-
-Which add random macros in the middle of the number space.
-
-Since the header changes are in an immutable branch, it's probably
-too late to fix this for 4.12, but maybe we can get the header into a
-form that allows us to do future DT changes without having to
-wait an extra release. The clock driver apparently already defines
-some of the numbers above, so you can fill all of those in already.
-
-     Arnd
+_______________________________________________
+linux-amlogic mailing list
+linux-amlogic@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-amlogic
