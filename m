@@ -1,57 +1,57 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 5/7] clk: tegra: don't warn for PLL defaults
- unnecessarily
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
- <1487846686-6388-6-git-send-email-pdeschrijver@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <b26752ac-5375-86af-8ce8-0be97b99c734@nvidia.com>
-Date: Mon, 27 Mar 2017 12:02:28 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 1 Mar 2017 11:01:27 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kumar Gala <galak@codeaurora.org>,
+	Nadav Haklai <nadavh@marvell.com>, Hanna Hawa <hannah@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 1/3] dt-bindings: arm: update Armada CP110 system
+ controller binding
+Message-ID: <20170301190127.GO25384@codeaurora.org>
+References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
+ <1482316017-22154-2-git-send-email-thomas.petazzoni@free-electrons.com>
+ <20161222001453.GW8288@codeaurora.org>
+ <20170301165245.5f2fbfaf@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <1487846686-6388-6-git-send-email-pdeschrijver@nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20170301165245.5f2fbfaf@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Peter,
-
-On 23/02/17 10:44, Peter De Schrijver wrote:
-> If the PLL is on, only warn if the defaults are not yet set. Otherwise be
-> silent.
+On 03/01, Thomas Petazzoni wrote:
+> Stephen,
 > 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
+> On Wed, 21 Dec 2016 16:14:53 -0800, Stephen Boyd wrote:
+> > On 12/21, Thomas Petazzoni wrote:
+> > > It turns out that in the CP110 HW block present in Marvell Armada
+> > > 7K/8K SoCs, gatable clock n°18 not only controls SD/MMC, but also the
+> > > GOP block. This commit updates the Device Tree binding for this piece
+> > > of hardware accordingly.
+> > > 
+> > > Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> > > ---  
+> > 
+> > Applied to clk-next
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index b7ef8a7..fe698d2 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -502,7 +502,7 @@ static void tegra210_pllcx_set_defaults(const char *name,
->  	pllcx->params->defaults_set = true;
->  
->  	if (readl_relaxed(clk_base + pllcx->params->base_reg) &
-> -			PLL_ENABLE) {
-> +			PLL_ENABLE && !pllcx->params->defaults_set) {
->  		/* PLL is ON: only check if defaults already set */
->  		pllcx_check_defaults(pllcx->params);
->  		pr_warn("%s already enabled. Postponing set full defaults\n",
+> Even though you said you applied it, I still don't see this patch in
+> mainline, while PATCH 2/3 of this series is now in mainline.
+> 
+> Was this patch forgotten? Let me know if I should resend it, but I'm
+> pretty sure it still applies, since no other changes on this file have
+> been merged since quite a while.
+> 
 
-The above hunk is causing the Tegra210 Smaug boot to fail. Looking more
-at the code, I believe that the above hunk is not correct, because
-'defaults_set' is always true and this is now causing us to always reset
-the PLL if in-use or not. I will send a patch to correct this.
-
-Cheers
-Jon
+No worries. I've made a note to put it into the fixes queue to
+send off after rc1.
 
 -- 
-nvpublic
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
