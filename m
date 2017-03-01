@@ -1,94 +1,39 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [PATCH v2 0/8] Initial Allwinner Display Engine 2.0 Support
-Date: Fri, 17 Mar 2017 04:47:40 +0800
-Message-Id: <20170316204748.8596-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v3 1/2] clk: rockchip: add "," to mux_pll_src_apll_dpll_gpll_usb480m_p on rk3036
+Date: Wed,  1 Mar 2017 22:00:41 +0100
+Message-Id: <20170301210042.11352-2-heiko@sntech.de>
+In-Reply-To: <20170301210042.11352-1-heiko@sntech.de>
+References: <20170301210042.11352-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is the initial patchset for Allwinner DE2 support.
+The mux_pll_src_apll_dpll_gpll_usb480m_p parent list was missing a ","
+between the 3rd and 4th parent names, making them fall together and thus
+lookups fail. Fix that.
 
-It contains the support of clocks in DE2 and the mixers in DE2.
+Fixes: 5190c08b2989 ("clk: rockchip: add clock controller for rk3036")
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk-rk3036.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The SoC used to develop this patchset is V3s, as V3s is the simplest
-one of the SoCs that have DE2.
-(Allwinner V3s features only one mixer, although its clock control
-unit contains support for second mixer's clock; and its only video
-output is RGB LCD, which is already supported in our TCON driver)
-
-The last patch is only a testing patch, it shouldn't be merged; and
-for the patch to be really usable, the RFC fix of the TCON driver [1]
-is needed.
-
-No HDMI, TV encoder or other internal bridges' support is included
-in this patchset, which makes it currently not usable on H3.
-
-Thanks to Jean-Francois Moine and Jernej Skrabec for their efforts
-to discover the internal of DE2!
-
-[1] https://lists.freedesktop.org/archives/dri-devel/2016-December/126264.html
-
-Icenowy Zheng (8):
-  dt-bindings: add binding for the Allwinner DE2 CCU
-  clk: sunxi-ng: add support for DE2 CCU
-  dt-bindings: add bindings for DE2 on V3s SoC
-  drm/sun4i: add support for sun8i DE2 mixers and display engines
-  drm/sun4i: tcon: add support for V3s TCON
-  ARM: dts: sun8i: add DE2 nodes for V3s SoC
-  ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
-  ARM: dts: sun8i: enable LCD panel of Lichee Pi Zero
-
- .../devicetree/bindings/clock/sun8i-de2.txt        |  31 ++
- .../bindings/display/sunxi/sun4i-drm.txt           |  37 +-
- arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts      |  36 ++
- arch/arm/boot/dts/sun8i-v3s.dtsi                   |  96 +++++
- drivers/clk/sunxi-ng/Kconfig                       |   5 +
- drivers/clk/sunxi-ng/Makefile                      |   1 +
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 204 +++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-de2.h               |  28 ++
- drivers/gpu/drm/sun4i/Kconfig                      |   9 +
- drivers/gpu/drm/sun4i/Makefile                     |   3 +-
- drivers/gpu/drm/sun4i/sun4i_crtc.c                 |  14 +-
- drivers/gpu/drm/sun4i/sun4i_crtc.h                 |   2 +
- drivers/gpu/drm/sun4i/sun4i_drv.c                  |   4 +-
- drivers/gpu/drm/sun4i/sun4i_drv.h                  |   1 +
- drivers/gpu/drm/sun4i/sun4i_layer.c                |  94 ++++-
- drivers/gpu/drm/sun4i/sun4i_layer.h                |   3 +
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |   7 +-
- drivers/gpu/drm/sun4i/sun8i_mixer.c                | 385 +++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_mixer.h                | 166 +++++++++
- include/dt-bindings/clock/sun8i-de2.h              |  54 +++
- include/dt-bindings/reset/sun8i-de2.h              |  50 +++
- 21 files changed, 1203 insertions(+), 27 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.h
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.c
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.h
- create mode 100644 include/dt-bindings/clock/sun8i-de2.h
- create mode 100644 include/dt-bindings/reset/sun8i-de2.h
-
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index 924f560dcf80..dcde70f4c105 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -127,7 +127,7 @@ PNAME(mux_ddrphy_p)		= { "dpll_ddr", "gpll_ddr" };
+ PNAME(mux_pll_src_3plls_p)	= { "apll", "dpll", "gpll" };
+ PNAME(mux_timer_p)		= { "xin24m", "pclk_peri_src" };
+ 
+-PNAME(mux_pll_src_apll_dpll_gpll_usb480m_p)	= { "apll", "dpll", "gpll" "usb480m" };
++PNAME(mux_pll_src_apll_dpll_gpll_usb480m_p)	= { "apll", "dpll", "gpll", "usb480m" };
+ 
+ PNAME(mux_mmc_src_p)	= { "apll", "dpll", "gpll", "xin24m" };
+ PNAME(mux_i2s_pre_p)	= { "i2s_src", "i2s_frac", "ext_i2s", "xin12m" };
 -- 
-2.12.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.11.0
