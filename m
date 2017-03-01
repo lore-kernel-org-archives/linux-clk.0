@@ -1,69 +1,48 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 3 Mar 2017 15:56:39 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/5] clk: sunxi-ng: Add driver for A83T CCU
-Message-ID: <20170303235639.GW25384@codeaurora.org>
-References: <20170214033526.16977-1-wens@csie.org>
- <20170214033526.16977-5-wens@csie.org>
- <20170214095819.utsftcvti5zdmlmi@lukather>
- <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
- <20170215094954.h3wyaxlqkeb342yu@lukather>
- <20170301191705.GS25384@codeaurora.org>
- <20170303095333.hgxoli2h7clailvo@lukather>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170303095333.hgxoli2h7clailvo@lukather>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v3 2/2] clk: rockchip: Make uartpll a child of the gpll on rk3036
+Date: Wed,  1 Mar 2017 22:00:42 +0100
+Message-Id: <20170301210042.11352-3-heiko@sntech.de>
+In-Reply-To: <20170301210042.11352-1-heiko@sntech.de>
+References: <20170301210042.11352-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/03, Maxime Ripard wrote:
-> On Wed, Mar 01, 2017 at 11:17:05AM -0800, Stephen Boyd wrote:
-> 
-> > Can someone explain what the issue is? Could something like
-> > clk_get_phase() + clk_get_rate() tell us if we're in one mode
-> > vs. the other?
-> 
-> So we have two modes of operation for that clock, old vs new (I know,
-> I didn't pick the names).
-> 
-> The old mode is what we support right now. It has a combination of a
-> linear multiplier and divider, plus some phase controls.
-> 
-> The new mode however disables the phase controls and adds post-divider
-> of 2 on the rate.
-> 
-> We cannot really rely on the rate itself, since there's a huge overlap
-> between the rates we can obtain in the old and new modes. Same thing
-> for the phase, having a 0 deg phase is achieved both in the old and
-> new modes.
-> 
-> To make things worse, the new mode is only available on one out of
-> three MMC controllers (and associated clocks), and that MMC controller
-> needs to set a bit as well to switch to the new mode if needed. So we
-> definitely needs some synchronisation there, and also to be able to
-> retrieve if the mode switching is available, and if we're already
-> using that mode.
-> 
-> Mike agreed that the easiest way forward was to use a custom function.
-> 
+The shared uart-pll is on boot a child of the apll that can get changed
+by cpu frequency scaling. So move it away to the more stable gpll to
+make sure the uart doesn't break on cpu frequency changes.
 
-Ok. Is there any need to change the mode dynamically at runtime?
-Or could it be decided once at clk driver probe time/boot time
-and detected via set_phase() failing when we're in the new mode?
-At least, it sounds like set_phase() should bail out there
-because it doesn't exist, although it could be argued that
-setting the phase to something it already is set to is valid and
-shouldn't return an error.
+This turned up during the 4.11 merge-window when commit
+6a171b299379 ("serial: 8250_dw: Allow hardware flow control to be used")
+added general termios enablement making the uart on rk3036 change
+frequency and thus making it susceptible for the frequency scaling issue.
 
-I'm not saying I'm opposed to the custom function, just thinking
-of alternatives if MMC maintainers don't agree with the custom
-function.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk-rk3036.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index dcde70f4c105..00d4150e33c3 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -450,6 +450,13 @@ static void __init rk3036_clk_init(struct device_node *np)
+ 		return;
+ 	}
+ 
++	/*
++	 * Make uart_pll_clk a child of the gpll, as all other sources are
++	 * not that usable / stable.
++	 */
++	writel_relaxed(HIWORD_UPDATE(0x2, 0x3, 10),
++		       reg_base + RK2928_CLKSEL_CON(13));
++
+ 	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
+ 	if (IS_ERR(ctx)) {
+ 		pr_err("%s: rockchip clk init failed\n", __func__);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
