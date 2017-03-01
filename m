@@ -1,60 +1,47 @@
-Return-Path: <mars.cheng@mediatek.com>
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
-	<robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: CC Hwang <cc.hwang@mediatek.com>, Loda Chou <loda.chou@mediatek.com>,
-	Miles Chen <miles.chen@mediatek.com>, Jades Shih <jades.shih@mediatek.com>,
-	Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang <my.chuang@mediatek.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>,
-	<linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>, Kevin-CW
- Chen <kevin-cw.chen@mediatek.com>
-Subject: [PATCH v3 10/12] dt-bindings: mediatek: add MT6797 power dt-bindings
-Date: Sun, 19 Mar 2017 23:26:31 +0800
-Message-ID: <1489937193-2953-11-git-send-email-mars.cheng@mediatek.com>
-In-Reply-To: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
-References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 1 Mar 2017 11:08:53 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com, linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] clk: rockchip: Make uartpll a child of the gpll
+ on rk3036
+Message-ID: <20170301190853.GQ25384@codeaurora.org>
+References: <20170228181214.6413-1-heiko@sntech.de>
+ <20170228181214.6413-3-heiko@sntech.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: mars.cheng@mediatek.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170228181214.6413-3-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds scpsys dt-bindings for MT6797
+On 02/28, Heiko Stuebner wrote:
+> @@ -480,6 +481,19 @@ static void __init rk3036_clk_init(struct device_node *np)
+>  
+>  	rockchip_register_restart_notifier(ctx, RK2928_GLB_SRST_FST, NULL);
+>  
+> +	clk = __clk_lookup("uart_pll_clk");
+> +	clk2 = __clk_lookup("gpll");
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
----
- .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Can we do the register writes directly? Or call the appropriate
+function to twiddle some bits to change the parent before
+registering the clks? It's nice to avoid using clk API in
+provider drivers when we're getting clks from the provider
+itself, plus I'd like to get rid of __clk_lookup() one day.
 
-diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-index 16fe94d..b1d165b 100644
---- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-+++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-@@ -9,11 +9,14 @@ domain control.
- 
- The driver implements the Generic PM domain bindings described in
- power/power_domain.txt. It provides the power domains defined in
--include/dt-bindings/power/mt8173-power.h and mt2701-power.h.
-+- include/dt-bindings/power/mt8173-power.h
-+- include/dt-bindings/power/mt6797-power.h
-+- include/dt-bindings/power/mt2701-power.h
- 
- Required properties:
- - compatible: Should be one of:
- 	- "mediatek,mt2701-scpsys"
-+	- "mediatek,mt6797-scpsys"
- 	- "mediatek,mt8173-scpsys"
- - #power-domain-cells: Must be 1
- - reg: Address range of the SCPSYS unit
-@@ -22,6 +25,7 @@ Required properties:
-                       These are clocks which hardware needs to be
-                       enabled before enabling certain power domains.
- 	Required clocks for MT2701: "mm", "mfg", "ethif"
-+	Required clocks for MT6797: "mm", "mfg", "vdec"
- 	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
- 
- Optional properties:
+> +	if (clk && clk2) {
+> +		int ret = clk_set_parent(clk, clk2);
+> +
+> +		if (ret < 0)
+> +			pr_warn("%s: could not reparent uart_pll_clk to gpll\n",
+> +				__func__);
+> +	} else {
+> +		pr_warn("%s: missing clocks to reparent uart_pll_clk to gpll\n",
+> +			__func__);
+> +	}
+> +
+>  	rockchip_clk_of_add_provider(np, ctx);
+>  }
+
 -- 
-1.7.9.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
