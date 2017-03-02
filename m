@@ -1,90 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:47289 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750726AbdDAEPn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Apr 2017 00:15:43 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Fri, 31 Mar 2017 21:15:29 -0700
-From: Stefan Agner <stefan@agner.ch>
-To: Dong Aisheng <dongas86@gmail.com>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org,
-        aisheng.dong@nxp.com, fabio.estevam@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: dts: imx7: add USDHC NAND clock to SDHC
- instances
-In-Reply-To: <20170401030312.GB24882@b29396-OptiPlex-7040>
-References: <20170330005029.6472-1-stefan@agner.ch>
- <20170330005029.6472-2-stefan@agner.ch>
- <20170401030312.GB24882@b29396-OptiPlex-7040>
-Message-ID: <5c8339900fa1bd6215fb94d4386f7e06@agner.ch>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <pbrobinson@gmail.com>
+Return-Path: <pbrobinson@gmail.com>
+From: Peter Robinson <pbrobinson@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Peter Robinson <pbrobinson@gmail.com>
+Subject: [PATCH] clk: sunxi-ng: tighten SoC deps on explicit AllWinner SoCs
+Date: Thu,  2 Mar 2017 17:43:57 +0000
+Message-Id: <20170302174357.6246-1-pbrobinson@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2017-03-31 20:03, Dong Aisheng wrote:
-> On Wed, Mar 29, 2017 at 05:50:29PM -0700, Stefan Agner wrote:
->> The USDHC instances need the USDHC NAND clock in order to operate.
->> Add the clock as ahb bus clock.
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
->>  arch/arm/boot/dts/imx7s.dtsi | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
->> index 5d3a43b8de20..5794febb19a4 100644
->> --- a/arch/arm/boot/dts/imx7s.dtsi
->> +++ b/arch/arm/boot/dts/imx7s.dtsi
->> @@ -936,7 +936,7 @@
->>  				reg = <0x30b40000 0x10000>;
->>  				interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
->>  				clocks = <&clks IMX7D_CLK_DUMMY>,
-> 
-> Would you please change the left ipg dummy to IMX7D_IPG_ROOT_CLK as well?
+Tighten the depends on the various AllWinn SoCs so we don't
+inadvertantly get clock drivers when we're not wanting them
+like 32 bit SoC clocks for 64 bit configs. Ensure there's
+still test coverage though.
 
-IMX7D_IPG_ROOT_CLK is currently not a valid clock in upstream... So we
-would have to add it to the clock driver first.
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+---
+ drivers/clk/sunxi-ng/Kconfig | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-I guess we could/should add it anyway at one point? But probably also as
-init on, just to make sure Linux does not disable it since it is
-currently used by several IPs implicitly.
-
---
-Stefan
-
-> 
-> Otherwise,
-> 
-> Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
-> 
-> Regards
-> Dong Aisheng
-> 
->> -					<&clks IMX7D_CLK_DUMMY>,
->> +					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
->>  					<&clks IMX7D_USDHC1_ROOT_CLK>;
->>  				clock-names = "ipg", "ahb", "per";
->>  				bus-width = <4>;
->> @@ -948,7 +948,7 @@
->>  				reg = <0x30b50000 0x10000>;
->>  				interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
->>  				clocks = <&clks IMX7D_CLK_DUMMY>,
->> -					<&clks IMX7D_CLK_DUMMY>,
->> +					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
->>  					<&clks IMX7D_USDHC2_ROOT_CLK>;
->>  				clock-names = "ipg", "ahb", "per";
->>  				bus-width = <4>;
->> @@ -960,7 +960,7 @@
->>  				reg = <0x30b60000 0x10000>;
->>  				interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
->>  				clocks = <&clks IMX7D_CLK_DUMMY>,
->> -					<&clks IMX7D_CLK_DUMMY>,
->> +					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
->>  					<&clks IMX7D_USDHC3_ROOT_CLK>;
->>  				clock-names = "ipg", "ahb", "per";
->>  				bus-width = <4>;
->> --
->> 2.12.1
->>
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 695bbf9..8ab378e 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -63,6 +63,7 @@ config SUN50I_A64_CCU
+ 	select SUNXI_CCU_MP
+ 	select SUNXI_CCU_PHASE
+ 	default ARM64 && ARCH_SUNXI
++	depends (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+ 
+ config SUN5I_CCU
+ 	bool "Support for the Allwinner sun5i family CCM"
+@@ -74,6 +75,7 @@ config SUN5I_CCU
+ 	select SUNXI_CCU_MP
+ 	select SUNXI_CCU_PHASE
+ 	default MACH_SUN5I
++	depends MACH_SUN5I || COMPILE_TEST
+ 
+ config SUN6I_A31_CCU
+ 	bool "Support for the Allwinner A31/A31s CCU"
+@@ -84,6 +86,7 @@ config SUN6I_A31_CCU
+ 	select SUNXI_CCU_MP
+ 	select SUNXI_CCU_PHASE
+ 	default MACH_SUN6I
++	depends MACH_SUN6I || COMPILE_TEST
+ 
+ config SUN8I_A23_CCU
+ 	bool "Support for the Allwinner A23 CCU"
+@@ -96,6 +99,7 @@ config SUN8I_A23_CCU
+ 	select SUNXI_CCU_MP
+ 	select SUNXI_CCU_PHASE
+ 	default MACH_SUN8I
++	depends MACH_SUN8I || COMPILE_TEST
+ 
+ config SUN8I_A33_CCU
+ 	bool "Support for the Allwinner A33 CCU"
+@@ -108,6 +112,7 @@ config SUN8I_A33_CCU
+ 	select SUNXI_CCU_MP
+ 	select SUNXI_CCU_PHASE
+ 	default MACH_SUN8I
++	depends MACH_SUN8I || COMPILE_TEST
+ 
+ config SUN8I_H3_CCU
+ 	bool "Support for the Allwinner H3 CCU"
+@@ -119,6 +124,7 @@ config SUN8I_H3_CCU
+ 	select SUNXI_CCU_MP
+ 	select SUNXI_CCU_PHASE
+ 	default MACH_SUN8I
++	depends MACH_SUN8I || COMPILE_TEST
+ 
+ config SUN8I_V3S_CCU
+ 	bool "Support for the Allwinner V3s CCU"
+@@ -130,6 +136,7 @@ config SUN8I_V3S_CCU
+ 	select SUNXI_CCU_MP
+ 	select SUNXI_CCU_PHASE
+ 	default MACH_SUN8I
++	depends MACH_SUN8I || COMPILE_TEST
+ 
+ config SUN9I_A80_CCU
+ 	bool "Support for the Allwinner A80 CCU"
+@@ -140,5 +147,6 @@ config SUN9I_A80_CCU
+ 	select SUNXI_CCU_MP
+ 	select SUNXI_CCU_PHASE
+ 	default MACH_SUN9I
++	depends MACH_SUN9I || COMPILE_TEST
+ 
+ endif
+-- 
+2.9.3
