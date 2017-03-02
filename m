@@ -1,53 +1,43 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Wed, 1 Mar 2017 16:52:45 +0100
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement
- <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob
- Herring <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
- Gala <galak@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, Hanna Hawa
- <hannah@marvell.com>, Yehuda Yitschak <yehuday@marvell.com>,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 1/3] dt-bindings: arm: update Armada CP110 system
- controller binding
-Message-ID: <20170301165245.5f2fbfaf@free-electrons.com>
-In-Reply-To: <20161222001453.GW8288@codeaurora.org>
-References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1482316017-22154-2-git-send-email-thomas.petazzoni@free-electrons.com>
-	<20161222001453.GW8288@codeaurora.org>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: tegra: fix disable unused for clocks sharing enable bit
+Date: Thu, 2 Mar 2017 15:22:05 +0200
+Message-ID: <1488460925-16793-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Stephen,
+In case 2 clocks share an enable bit and one of them is enabled by a driver
+and the other one is not, CCF will think it's enabled because it will only
+look at the hw state. Therefor it will disable the clock and thus also
+disable the other clock which was enabled. Solve this by reading the
+initial state of the enable bit and incrementing the refcount if it's set.
 
-On Wed, 21 Dec 2016 16:14:53 -0800, Stephen Boyd wrote:
-> On 12/21, Thomas Petazzoni wrote:
-> > It turns out that in the CP110 HW block present in Marvell Armada
-> > 7K/8K SoCs, gatable clock n=C2=B018 not only controls SD/MMC, but also =
-the
-> > GOP block. This commit updates the Device Tree binding for this piece
-> > of hardware accordingly.
-> >=20
-> > Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> > --- =20
->=20
-> Applied to clk-next
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-periph-gate.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Even though you said you applied it, I still don't see this patch in
-mainline, while PATCH 2/3 of this series is now in mainline.
-
-Was this patch forgotten? Let me know if I should resend it, but I'm
-pretty sure it still applies, since no other changes on this file have
-been merged since quite a while.
-
-Thanks,
-
-Thomas
---=20
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
+index 8812782..303ef32 100644
+--- a/drivers/clk/tegra/clk-periph-gate.c
++++ b/drivers/clk/tegra/clk-periph-gate.c
+@@ -159,6 +159,9 @@ struct clk *tegra_clk_register_periph_gate(const char *name,
+ 	gate->enable_refcnt = enable_refcnt;
+ 	gate->regs = pregs;
+ 
++	if (read_enb(gate) & periph_clk_to_bit(gate))
++		enable_refcnt[clk_num]++;
++
+ 	/* Data in .init is copied by clk_register(), so stack variable OK */
+ 	gate->hw.init = &init;
+ 
+-- 
+1.9.1
