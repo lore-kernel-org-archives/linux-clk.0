@@ -1,103 +1,93 @@
-Return-Path: <maxime.ripard@free-electrons.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Thu, 2 Mar 2017 15:08:59 +0100
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 9/15] drm/sun4i: tcon: Pass the encoder to the mode set functions
-Date: Tue,  7 Mar 2017 09:56:28 +0100
-Message-Id: <e7791e7b68ed5c05d1d84c590f920c3d0cb7fb3a.1488876832.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [linux-sunxi] Re: [PATCH 2/3] clk: sunxi-ng: add support for
+ PRCM CCUs
+Message-ID: <20170302140859.aqvwtgzxkdi2lqbc@lukather>
+References: <20170301152220.MEgmqtKw@smtp2p.mail.yandex.net>
+MIME-Version: 1.0
+In-Reply-To: <20170301152220.MEgmqtKw@smtp2p.mail.yandex.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============8600491971143479273=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The mode set function need some changes based on which encoder is being
-used. Make sure we can differentiate between our encoders by passing the
-encoder structure asking for the mode set.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_rgb.c  | 2 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 ++--
- drivers/gpu/drm/sun4i/sun4i_tcon.h | 4 ++--
- drivers/gpu/drm/sun4i/sun4i_tv.c   | 2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
+--===============8600491971143479273==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mmb7xnqrwdznwsjh"
+Content-Disposition: inline
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-index 1147451eb993..1d4a59a44d04 100644
---- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-@@ -173,7 +173,7 @@ static void sun4i_rgb_encoder_mode_set(struct drm_encoder *encoder,
- 	struct sun4i_rgb *rgb = drm_encoder_to_sun4i_rgb(encoder);
- 	struct sun4i_tcon *tcon = rgb->tcon;
- 
--	sun4i_tcon0_mode_set(tcon, mode);
-+	sun4i_tcon0_mode_set(tcon, encoder, mode);
- 
- 	clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
- 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 7461ae107e54..d2335f109601 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -127,7 +127,7 @@ static int sun4i_tcon_get_clk_delay(struct drm_display_mode *mode,
- 	return delay;
- }
- 
--void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
-+void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon, struct drm_encoder *encoder,
- 			  struct drm_display_mode *mode)
- {
- 	unsigned int bp, hsync, vsync;
-@@ -200,7 +200,7 @@ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
- }
- EXPORT_SYMBOL(sun4i_tcon0_mode_set);
- 
--void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
-+void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon, struct drm_encoder *encoder,
- 			  struct drm_display_mode *mode)
- {
- 	unsigned int bp, hsync, vsync;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index f636343a935d..95b7e76eb1f8 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -190,9 +190,9 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable);
- /* Mode Related Controls */
- void sun4i_tcon_switch_interlace(struct sun4i_tcon *tcon,
- 				 bool enable);
--void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
-+void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon, struct drm_encoder *encoder,
- 			  struct drm_display_mode *mode);
--void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
-+void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon, struct drm_encoder *encoder,
- 			  struct drm_display_mode *mode);
- 
- #endif /* __SUN4I_TCON_H__ */
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
-index 32ed5fdf0c4d..2d36df092a6a 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
-@@ -389,7 +389,7 @@ static void sun4i_tv_mode_set(struct drm_encoder *encoder,
- 	struct sun4i_tcon *tcon = drv->tcon;
- 	const struct tv_mode *tv_mode = sun4i_tv_find_tv_by_mode(mode);
- 
--	sun4i_tcon1_mode_set(tcon, mode);
-+	sun4i_tcon1_mode_set(tcon, encoder, mode);
- 
- 	/* Enable and map the DAC to the output */
- 	regmap_update_bits(tv->regs, SUN4I_TVE_EN_REG,
--- 
-git-series 0.8.11
+
+--mmb7xnqrwdznwsjh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Mar 01, 2017 at 08:17:39PM +0800, Icenowy Zheng wrote:
+> > I'm a bit worried by that to be honest. You claim to support the A31,=
+=20
+> > yet jugdging by the current state of that code you never actually=20
+> > tested it on that SoC.=20
+>=20
+> I only claim to reserve possibility to extend the driver to support
+> A31, but I didn't claim it currently support A31.
+
+Well, you did call it sun6i.
+
+Please rename it, and we will consolidate in due time.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--mmb7xnqrwdznwsjh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYuCd2AAoJEBx+YmzsjxAgm9kQALLPQT2oh9KZCud9aigKNGRI
+1TOX1lsZfrme5FEPFxjeX30NBh+IlVpyvypniXRrYd31Nwd7M/O96OOzJI7xyNhB
+qpRT1/DyhJR9RxVYfcHvYPy97yuntTHfI1kp1/nh4DFBgCqzvpNTMs1AIivP+iAn
+I9fDls5EP2FVa6a4E27g3ViM119Rda34ViwTkReEcFlYs4bUc6rNxzNmmjXK8Pfv
+fAqxmtU1SsTf/cPvXYoOLpXHZjJiZIKbkFbc0lnTpesSd2XtdlVTNkQF2zMUCZKW
+Xq/ILCAhTYa4fanBMtu3gm5Tl3FLyxt3wPEENdw3CmE7FDmkCR7IhbrgVa6b9Va1
+E3UgwUKcv/XZvwJeMZ5MqGCUaI8+ETvIolC9lFTtzFEJlb4pCVHluwgwvpzqgUDV
+9Uqa/v9VX3ac6thTU3W8RyPFqQ+45f5V3fD17hh8r4utId0Ip8Ir5geniYCpNu2G
+ZuFLx8kdp+ZQoWEv15TMZ29hMC5L6gttJuPgJ8KNfzP3Zh/OpAT1DJRat1pZa7Ke
+1XiA4YXlZiF87vsCZftgCnqJH5+RNGu5tYaKrF7jjsvJOp96WRomiuYHl7EPEQOT
+M0WmXha+5ZFToAJgFdALTthdvKWUrVdwswMOR1A/V9fElPT2Ta1myW/vkKhdnvDq
+Ynd/WHidjYSsqDC6EONM
+=tiJD
+-----END PGP SIGNATURE-----
+
+--mmb7xnqrwdznwsjh--
+
+
+--===============8600491971143479273==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============8600491971143479273==--
