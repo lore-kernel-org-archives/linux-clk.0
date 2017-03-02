@@ -1,64 +1,148 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
-References: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 Mar 2017 14:58:15 +0200
-Message-ID: <CAMuHMdXtaGWoafQMyRZqVm0Pg0oBO+554HujK=QFnR+kS7YJbQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] clk: renesas: Add support for R-Car H3 ES2.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	Neil Armstrong <narmstrong@baylibre.com>
+Subject: [RFC 1/2] clk: fix CLK_SET_RATE_GATE on parent clocks
+Date: Thu,  2 Mar 2017 18:38:34 +0100
+Message-Id: <20170302173835.18313-2-jbrunet@baylibre.com>
+In-Reply-To: <20170302173835.18313-1-jbrunet@baylibre.com>
+References: <20170302173835.18313-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 13, 2017 at 6:12 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> This patch series adds clock support for R-Car H3 ES2.0, which differs
-> from ES1.x in several areas.
->
-> The goal is twofold:
->   1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
->      for now,
->   2. Make it clear which code supports ES1.x, so it can easily be
->      identified and removed later, when production SoCs are deemed
->      ubiquitous.
->
-> This is achieved by:
->   - Updating the clock tables for the latest revision (ES2.0), but not
->     removing clocks that only exist on earlier revisions (ES1.x),
->   - Detecting the SoC revision at runtime using the new
->     soc_device_match() API, and fixing up the clocks tables to match the
->     actual SoC revision, by:
->       - NULLifying core and module clocks of modules that do not exist,
->       - Reparenting module clocks that have a different parent on ES1.x.
->
-> Changes compared to v1:
->   - Update of various module clocks as per datasheet update,
->   - Add support for RCLK on R-Car H3 ES2.0.
->
-> For testers, this series and its dependencies are available in the
-> topic/r8a7795es2-clk-v2 branch of my renesas-drivers git repository at
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-> An integration branch for testing on the R-Car H3 ES2.0 based Salvator-X
-> development board is provided as topic/r8a7795es2-integration.
->
-> This has been tested on Salvator-X with R-Car H3 ES1.0, ES1.1, and ES2.0
-> SoCs.
->
-> I plan to queue this up in clk-renesas-for-v4.12.
+CLK_SET_RATE_GATE flag will only prevent a consumer from directly changing
+the rate on the clock (if the clock is the leaf when calling clk_set_rate).
+However the clock rate can be changed without being gated if it is a parent
+of the leaf. In addition, other child clocks depending on the rate of
+parent clock might not appreciate.
 
-Queued in clk-renesas-for-v4.12.
+To address this issue, if the clock is busy, this patch stops the tree walk
+while calculating the new rates, and return the current rate as if it was
+fixed clock.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 56 +++++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 36 insertions(+), 20 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0fb39fe217d1..6fe2ea81a9af 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -172,6 +172,14 @@ static bool clk_core_is_enabled(struct clk_core *core)
+ 	return core->ops->is_enabled(core->hw);
+ }
+ 
++static bool clk_core_rate_can_change(struct clk_core *core)
++{
++	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
++		return false;
++
++	return true;
++}
++
+ /***    helper functions   ***/
+ 
+ const char *__clk_get_name(const struct clk *clk)
+@@ -833,11 +841,32 @@ static int clk_disable_unused(void)
+ }
+ late_initcall_sync(clk_disable_unused);
+ 
++static int clk_core_round_rate_query(struct clk_core *core,
++				     struct clk_rate_request *req)
++{
++	long rate;
++
++	if (!clk_core_rate_can_change(core)) {
++		req->rate = core->rate;
++	} else if (core->ops->determine_rate) {
++		return core->ops->determine_rate(core->hw, req);
++	} else if (core->ops->round_rate) {
++		rate = core->ops->round_rate(core->hw, req->rate,
++					     &req->best_parent_rate);
++		if (rate < 0)
++			return rate;
++
++		req->rate = rate;
++	} else {
++		return -EINVAL;
++	}
++
++	return 0;
++}
+ static int clk_core_round_rate_nolock(struct clk_core *core,
+ 				      struct clk_rate_request *req)
+ {
+ 	struct clk_core *parent;
+-	long rate;
+ 
+ 	lockdep_assert_held(&prepare_lock);
+ 
+@@ -853,15 +882,8 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
+ 		req->best_parent_rate = 0;
+ 	}
+ 
+-	if (core->ops->determine_rate) {
+-		return core->ops->determine_rate(core->hw, req);
+-	} else if (core->ops->round_rate) {
+-		rate = core->ops->round_rate(core->hw, req->rate,
+-					     &req->best_parent_rate);
+-		if (rate < 0)
+-			return rate;
+-
+-		req->rate = rate;
++	if (core->ops->determine_rate || core->ops->round_rate) {
++		return clk_core_round_rate_query(core, req);
+ 	} else if (core->flags & CLK_SET_RATE_PARENT) {
+ 		return clk_core_round_rate_nolock(parent, req);
+ 	} else {
+@@ -1353,8 +1375,7 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 
+ 	clk_core_get_boundaries(core, &min_rate, &max_rate);
+ 
+-	/* find the closest rate and parent clk/rate */
+-	if (core->ops->determine_rate) {
++	if (core->ops->determine_rate || core->ops->round_rate) {
+ 		struct clk_rate_request req;
+ 
+ 		req.rate = rate;
+@@ -1368,22 +1389,17 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 			req.best_parent_rate = 0;
+ 		}
+ 
+-		ret = core->ops->determine_rate(core->hw, &req);
++		ret = clk_core_round_rate_query(core, &req);
+ 		if (ret < 0)
+ 			return NULL;
+ 
+ 		best_parent_rate = req.best_parent_rate;
+ 		new_rate = req.rate;
+ 		parent = req.best_parent_hw ? req.best_parent_hw->core : NULL;
+-	} else if (core->ops->round_rate) {
+-		ret = core->ops->round_rate(core->hw, rate,
+-					    &best_parent_rate);
+-		if (ret < 0)
+-			return NULL;
+ 
+-		new_rate = ret;
+ 		if (new_rate < min_rate || new_rate > max_rate)
+ 			return NULL;
++
+ 	} else if (!parent || !(core->flags & CLK_SET_RATE_PARENT)) {
+ 		/* pass-through clock without adjustable parent */
+ 		core->new_rate = core->rate;
+@@ -1571,7 +1587,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	if (rate == clk_core_get_rate_nolock(core))
+ 		return 0;
+ 
+-	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
++	if (!clk_core_rate_can_change(core))
+ 		return -EBUSY;
+ 
+ 	/* calculate new rates and get the topmost changed clock */
+-- 
+2.9.3
