@@ -1,79 +1,79 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [alsa-devel] [PATCH v2] clk: x86: add "mclk" alias for
- Baytrail/Cherrytrail
-To: linux-clk@vger.kernel.org, x86@kernel.org,
- platform-driver-x86@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
-References: <1487622236-16901-1-git-send-email-pierre-louis.bossart@linux.intel.com>
-Cc: alsa-devel@alsa-project.org, Vinod Koul <vinod.koul@intel.com>,
- Michael Turquette <mturquette@baylibre.com>, Takashi Iwai <tiwai@suse.com>,
- Mark Brown <broonie@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <2dbe7397-2c7a-fe94-270c-f02e7e1a6bbb@linux.intel.com>
-Date: Sun, 19 Mar 2017 20:47:24 -0500
+Return-Path: <tony@atomide.com>
+Date: Thu, 2 Mar 2017 10:56:07 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH DO NOT MERGE 5/6] ARM: dts: omap4: add some sample
+ clkctrl data
+Message-ID: <20170302185607.GS20572@atomide.com>
+References: <1486992157-10673-1-git-send-email-t-kristo@ti.com>
+ <1486992157-10673-6-git-send-email-t-kristo@ti.com>
+ <20170302174503.GP20572@atomide.com>
+ <c92a6176-e749-95c3-8eeb-d9bad7a97672@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1487622236-16901-1-git-send-email-pierre-louis.bossart@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <c92a6176-e749-95c3-8eeb-d9bad7a97672@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2/20/17 2:23 PM, Pierre-Louis Bossart wrote:
-> Due to timing requirements, TI and Conexant manage the audio
-> reference clock from their ASoC codec drivers using the "mclk"
-> string. This patch adds another lookup for the "pmc_plt_clk_3"
-> clock to avoid Intel-specific tests in those codec drivers and
-> use code as-is.
->
-> To avoid a leak, clk_add_alias() is not used in this patch.
-> Instead the lookup is created manually as part of the .probe()
-> step and dropped in the .remove() step.
->
-> "pmc_plt_clk_3" is used exclusively for audio on all known
-> Baytrail/CherryTrail designs and is e.g. routed on the MCLK
-> (pin 26) of the MinnowBoardMAX Turbot LSE connector.
->
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+* Tero Kristo <t-kristo@ti.com> [170302 10:45]:
+> On 02/03/17 19:45, Tony Lindgren wrote:
+> > Hi,
+> > 
+> > * Tero Kristo <t-kristo@ti.com> [170213 05:24]:
+> > > Adds clkctrl nodes for cm_l4per and cm_abe as example. Peripherals using
+> > > clocks from these nodes are modified also.
+> > 
+> > Finally got around testing these. Looks like applying this patch
+> > breaks things for devices not using the new clocks entry?
+> > 
+> > For example, SPI now breaks causing "imprecise external abort" during boot
+> > at least on droid 4.
+> 
+> If SPI is under l4per, then yes, a breakage is expected. This will cause a
+> conflict with the existing hwmod data, and the new clock data, effectively
+> disabling the IP clocks during boot. This patch only converts part of the DT
+> data to the new format, and as such is only suitable for testing purposes.
+> 
+> I will provide a full data conversion for the DT file for 4.11-rc.
 
-Was there any objection or feedback on this patch?
-The functionality is needed for a couple of audio drivers from Conexant 
-and Dialog initially written for ARM platforms.
-Thanks
--Pierre
+OK
 
+> > > --- a/arch/arm/boot/dts/omap4.dtsi
+> > > +++ b/arch/arm/boot/dts/omap4.dtsi
+> > > +				cm_l4per: cm_l4per@0 {
+> > 
+> > Above should be cm_l4per: cm_l4per@1400, right?
+> 
+> Yea thats a bug in this test patch. Same issue with other nodes. DT compiler
+> isn't too picky about these so it works even with wrong node name.
+> 
+> > 
+> > > +					compatible = "ti,omap4-cm";
+> > > +					reg = <0x1400 0x200>;
+> > > +					#address-cells = <1>;
+> > > +					#size-cells = <1>;
+> > > +					ranges = <0 0x1400 0x200>;
+> > > +
+> > > +					cm_l4per_clkctrl: cm_l4per_clkctrl@20 {
+> > > +						compatible = "ti,omap4-clkctrl";
+> > > +						reg = <0x20 0x1b0>;
+> > > +						#clock-cells = <2>;
+> > > +					};
+> > > +				};
+> > 
+> > You should update the binding doc accordingly if the "cm_l4per@0" node
+> > there is not needed. I also noticed the binding doc still has
+> > "#clock-cells = <4>" while it should be 2.
+> 
+> cm_l4per is somewhat redundant right now, but we want to add clockdomains
+> under that one in the future. Or, we could just add those directly under
+> parent node also (cm2 in this case.)
 
-> ---
->  drivers/clk/x86/clk-pmc-atom.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-> index 2b60577..fafc991 100644
-> --- a/drivers/clk/x86/clk-pmc-atom.c
-> +++ b/drivers/clk/x86/clk-pmc-atom.c
-> @@ -54,6 +54,7 @@ struct clk_plt_data {
->  	struct clk_plt_fixed **parents;
->  	u8 nparents;
->  	struct clk_plt *clks[PMC_CLK_NUM];
-> +	struct clk_lookup *mclk_lookup;
->  };
->
->  /* Return an index in parent table */
-> @@ -337,6 +338,11 @@ static int plt_clk_probe(struct platform_device *pdev)
->  			goto err_unreg_clk_plt;
->  		}
->  	}
-> +	data->mclk_lookup = clkdev_hw_create(&data->clks[3]->hw, "mclk", NULL);
-> +	if (IS_ERR(data->mclk_lookup)) {
-> +		err = PTR_ERR(data->mclk_lookup);
-> +		goto err_unreg_clk_plt;
-> +	}
->
->  	plt_clk_free_parent_names_loop(parent_names, data->nparents);
->
-> @@ -356,6 +362,7 @@ static int plt_clk_remove(struct platform_device *pdev)
->
->  	data = platform_get_drvdata(pdev);
->
-> +	clkdev_drop(data->mclk_lookup);
->  	plt_clk_unregister_loop(data, PMC_CLK_NUM);
->  	plt_clk_unregister_parents(data);
->  	return 0;
->
+OK so probably best to add it to avoid tweaking the dts files again
+later on.
+
+Regards,
+
+Tony
