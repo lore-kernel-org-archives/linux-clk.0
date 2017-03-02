@@ -1,80 +1,55 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <tony@atomide.com>
+Date: Thu, 2 Mar 2017 09:45:03 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH DO NOT MERGE 5/6] ARM: dts: omap4: add some sample
+ clkctrl data
+Message-ID: <20170302174503.GP20572@atomide.com>
+References: <1486992157-10673-1-git-send-email-t-kristo@ti.com>
+ <1486992157-10673-6-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-To: Neil Armstrong <narmstrong@baylibre.com>, sboyd@codeaurora.org,
- khilman@baylibre.com, carlo@caione.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1489064027-18004-2-git-send-email-narmstrong@baylibre.com>
-Cc: "Neil Armstrong" <narmstrong@baylibre.com>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <1489064027-18004-1-git-send-email-narmstrong@baylibre.com>
- <1489064027-18004-2-git-send-email-narmstrong@baylibre.com>
-Message-ID: <149013888277.54062.3821586656841121329@resonance>
-Subject: Re: [PATCH v3 1/3] clk: meson-gxbb: Add MALI clock IDS
-Date: Tue, 21 Mar 2017 16:28:02 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1486992157-10673-6-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Neil Armstrong (2017-03-09 04:53:45)
-> Add missing MALI clock IDs and expose the muxes and gates in the dt-bindi=
-ngs.
-> =
+Hi,
 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+* Tero Kristo <t-kristo@ti.com> [170213 05:24]:
+> Adds clkctrl nodes for cm_l4per and cm_abe as example. Peripherals using
+> clocks from these nodes are modified also.
 
-Looks good to me.
+Finally got around testing these. Looks like applying this patch
+breaks things for devices not using the new clocks entry?
+
+For example, SPI now breaks causing "imprecise external abort" during boot
+at least on droid 4.
+
+> --- a/arch/arm/boot/dts/omap4.dtsi
+> +++ b/arch/arm/boot/dts/omap4.dtsi
+> +				cm_l4per: cm_l4per@0 {
+
+Above should be cm_l4per: cm_l4per@1400, right?
+
+> +					compatible = "ti,omap4-cm";
+> +					reg = <0x1400 0x200>;
+> +					#address-cells = <1>;
+> +					#size-cells = <1>;
+> +					ranges = <0 0x1400 0x200>;
+> +
+> +					cm_l4per_clkctrl: cm_l4per_clkctrl@20 {
+> +						compatible = "ti,omap4-clkctrl";
+> +						reg = <0x20 0x1b0>;
+> +						#clock-cells = <2>;
+> +					};
+> +				};
+
+You should update the binding doc accordingly if the "cm_l4per@0" node
+there is not needed. I also noticed the binding doc still has
+"#clock-cells = <4>" while it should be 2.
 
 Regards,
-Mike
 
-> ---
->  drivers/clk/meson/gxbb.h              | 9 ++++++++-
->  include/dt-bindings/clock/gxbb-clkc.h | 5 +++++
->  2 files changed, 13 insertions(+), 1 deletion(-)
-> =
-
-> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-> index 274f587..73efdc3 100644
-> --- a/drivers/clk/meson/gxbb.h
-> +++ b/drivers/clk/meson/gxbb.h
-> @@ -268,8 +268,15 @@
->  /* CLKID_SAR_ADC_CLK */
->  /* CLKID_SAR_ADC_SEL */
->  #define CLKID_SAR_ADC_DIV        99
-> +/* CLKID_MALI_0_SEL */
-> +#define CLKID_MALI_0_DIV        101
-> +/* CLKID_MALI_0        */
-> +/* CLKID_MALI_1_SEL */
-> +#define CLKID_MALI_1_DIV        104
-> +/* CLKID_MALI_1        */
-> +/* CLKID_MALI  */
->  =
-
-> -#define NR_CLKS                          100
-> +#define NR_CLKS                          107
->  =
-
->  /* include the CLKIDs that have been made part of the stable DT binding =
-*/
->  #include <dt-bindings/clock/gxbb-clkc.h>
-> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/=
-clock/gxbb-clkc.h
-> index f08f06d..ef7d6b7 100644
-> --- a/include/dt-bindings/clock/gxbb-clkc.h
-> +++ b/include/dt-bindings/clock/gxbb-clkc.h
-> @@ -35,5 +35,10 @@
->  #define CLKID_SD_EMMC_C                96
->  #define CLKID_SAR_ADC_CLK      97
->  #define CLKID_SAR_ADC_SEL      98
-> +#define CLKID_MALI_0_SEL       100
-> +#define CLKID_MALI_0           102
-> +#define CLKID_MALI_1_SEL       103
-> +#define CLKID_MALI_1           105
-> +#define CLKID_MALI             106
->  =
-
->  #endif /* __GXBB_CLKC_H */
-> -- =
-
-> 1.9.1
->=20
+Tony
