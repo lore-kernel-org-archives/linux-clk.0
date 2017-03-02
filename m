@@ -1,45 +1,51 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 07/11] drm/sun4i: Add compatible string for V3s display engine
-Date: Thu, 30 Mar 2017 03:46:09 +0800
-Message-Id: <20170329194613.55548-8-icenowy@aosc.io>
-In-Reply-To: <20170329194613.55548-1-icenowy@aosc.io>
-References: <20170329194613.55548-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <leonard.crestez@nxp.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
+To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: core: Copy connection id
+Date: Thu, 2 Mar 2017 12:45:16 +0000
+Message-ID: <1488458715.12287.18.camel@nxp.com>
+References: <60d115f6c11bc51cd8bc10c64cd222c3cdb43cc7.1487596492.git.leonard.crestez@nxp.com>
+	 <20170224204439.GD25384@codeaurora.org> <1488014402.6461.3.camel@nxp.com>
+	 <20170228080558.GL25384@codeaurora.org>
+In-Reply-To: <20170228080558.GL25384@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s features the new "Display Engine 2.0", which can now also
-be driven with our subdrivers in sun4i-drm.
-
-Add the compatible string for in sun4i_drv.c, in order to make the
-display engine and its components probed.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Patch splited in v3.
-
- drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 8ddd72cd5873..68c0b754cdb5 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -294,6 +294,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
- 	{ .compatible = "allwinner,sun6i-a31-display-engine" },
- 	{ .compatible = "allwinner,sun6i-a31s-display-engine" },
- 	{ .compatible = "allwinner,sun8i-a33-display-engine" },
-+	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun4i_drv_of_table);
--- 
-2.12.0
+T24gVHVlLCAyMDE3LTAyLTI4IGF0IDAwOjA1IC0wODAwLCBzYm95ZEBjb2RlYXVyb3JhLm9yZyB3
+cm90ZToNCj4gT24gMDIvMjUsIExlb25hcmQgQ3Jlc3RleiB3cm90ZToNCj4gPiANCj4gPiBPbiBG
+cmksIDIwMTctMDItMjQgYXQgMTI6NDQgLTA4MDAsIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4gPiA+
+IA0KPiA+ID4gT24gMDIvMjAsIExlb25hcmQgQ3Jlc3RleiB3cm90ZToNCj4gPiA+ID4gDQo+ID4g
+PiA+IFNvbWUgZHJpdmVycyB1c2Ugc3ByaW50ZiB0byBidWlsZCBjbGsgY29ubmVjdGlvbiBpZCBu
+YW1lcyBidXQNCj4gPiA+ID4gdGhlDQo+ID4gPiA+IGNsaw0KPiA+ID4gPiBjb3JlIHdpbGwgc2F2
+ZSB0aG9zZSBzdHJpbmdzIGFuZCBvY2Nhc2lvbmFsbHkgcHJpbnQgdGhlbSBiYWNrLg0KPiA+ID4g
+PiBEdXBsaWNhdGUNCj4gPiA+ID4gdGhlIGNvbl9pZCBzdHJpbmdzIGluc3RlYWQgb2YgZml4aW5n
+IGFsbCB0aGUgdXNlcnMuDQo+ID4gPiBHb29kIGNhdGNoLiBXaGF0IGFib3V0IGRldl9pZCB0aG91
+Z2g/IFRoYXQgY291bGQgYWxzbyBoYXZlIHRoZQ0KPiA+ID4gc2FtZSBwcm9ibGVtIGlmIHNvbWUg
+ZGV2aWNlIGlzIHJlbW92ZWQgYW5kIHdlJ3JlIHN0aWxsIGhvbGRpbmcgYQ0KPiA+ID4gcmVmZXJl
+bmNlIHRvIHRoZSBrb2JqZWN0J3MgbmFtZS4gVGhpcyBpcyBwcm9iYWJseSBtb3JlIHJhcmUgdGhh
+bg0KPiA+ID4gd2hhdCBpcyBoYXBwZW5pbmcgaGVyZSwgYnV0IHN0aWxsIHNlZW1zIHBvc3NpYmxl
+IHRoYXQgd2UgbWlnaHQNCj4gPiA+IHRyaXAgb3ZlciB0aGF0IGxhdGVyLg0KPiA+IEEgZGV2aWNl
+IHNob3VsZCBub3JtYWxseSBmcmVlIHRoZSBjbGtzIGl0IHVzZXMgYmVmb3JlIGl0IGlzDQo+ID4g
+ZGVzdHJveWVkLg0KPiA+IFRoaXMgbWVhbnMgdGhhdCBpZiBkZXZfaWQgaXMgcG9pbnRpbmcgdG8g
+ZnJlZWQgbWVtb3J5IHRoZW4gdGhlIGNsaw0KPiA+IGl0c2VsZiB3YXMgcHJvYmFibHkgbGVha2Vk
+LCByaWdodD8NCj4gU3VyZS4gY2xrX2dldF9zeXMoKSBjb3VsZCBiZSBjYWxsZWQgYW5kIHRoZW4g
+d2UgY291bGQgaGF2ZQ0KPiBzb21ldGhpbmcgc3ByaW50ZiB0aGUgZGV2X2lkIHRoZXJlLiBBIHF1
+aWNrIGdyZXAgZG9lc24ndCBzaG93IGFueQ0KPiBwbGFjZSB3aGVyZSB0aGF0IGhhcHBlbnMgdGhv
+dWdoIHNvIGl0IHNlZW1zIHNhZmUgcmlnaHQgbm93Lg0KPiANCj4gVGhhdCBzYWlkLCBpdCB3b3Vs
+ZCBiZSBuaWNlIHRvIGNsZWFybHkgZG9jdW1lbnQgdGhhdCB3ZSBkb24ndA0KPiBleHBlY3QgZGV2
+X2lkIHRvIGJlIGZyZWVkIG9yIGNoYW5nZWQgZHVyaW5nIHRoZSBsaWZldGltZSBvZiB0aGUNCj4g
+Y2xrIHN0cnVjdHVyZSwgYnV0IHdlIGRvIGFsbG93IGNvbl9pZCB0byBjaGFuZ2UuIFBlcmhhcHMg
+dGhlIGNvcHkNCj4gc2hvd3MgdGhhdCwgYnV0IGEgY29tbWVudCB3b3VsZCBhbHNvIGJlIHVzZWZ1
+bCBzbyB3ZSBkb24ndCBoYXZlDQo+IHBlb3BsZSB3b25kZXJpbmcgd2h5IGRldl9pZCBpc24ndCBj
+b3BpZWQgYXMgd2VsbC4NCg0KVGhpcyBzaG91bGQgYmUgbWVudGlvbmVkIG9uIHRoZSBwdWJsaWMg
+ZG9jdW1lbnRhdGlvbiBmb3IgY2xrX2dldF9zeXMsDQpjbGtfZ2V0IGFuZCBkZXZtX2Nsa19nZXQs
+IHJpZ2h0PyBUaGVzZSBzZWVtIHRvIGJlIHRoZSBwdWJsaWMgZW50cnkNCnBvaW50cyB0byB0aGUg
+Y2xrIHN1YnN5c3RlbSBhbmQgdXNlcnMgYXJlIGV4cGVjdGVkIHRvIHJlYWQgdGhlaXIgZG9jcy4N
+Cg0KRG8geW91IHdhbnQgbWUgdG8gcmVzZW5kIHRoZSBwYXRjaCB3aXRoIHRoZXNlIG5vdGVzPw0K
+DQpJJ20gbm90IGNvbWZvcnRhYmxlIGFkZGluZyB0byBkb2N1bWVudGF0aW9uIHdoZW4gSSBkb24n
+dCBmdWxseQ0KdW5kZXJzdGFuZCB0aGUgc3lzdGVtIG15c2VsZi4gSSBvbmx5IGRpc2NvdmVyZWQg
+dGhpcyB3aGlsZSBsb29raW5nIGludG8NCnVucmVsYXRlZCBkcml2ZXIgaXNzdWVzLg==
