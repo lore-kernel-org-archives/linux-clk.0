@@ -1,39 +1,66 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 0/3] clk: sunxi-ng: minimum multiplier and comment fixes
-Date: Fri, 24 Mar 2017 16:33:04 +0800
-Message-Id: <20170324083307.18338-1-wens@csie.org>
+Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
+Message-ID: <1488454082.2420.3.camel@baylibre.com>
+Subject: Re: [PATCH v2 2/3] clk: meson-gxbb: Add MALI clocks
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>
+Date: Thu, 02 Mar 2017 12:28:02 +0100
+In-Reply-To: <6cd2e42d-6169-a2f0-db33-e13ca1619a41@baylibre.com>
+References: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
+ <1488365164-22861-3-git-send-email-narmstrong@baylibre.com>
+ <20170301191119.GR25384@codeaurora.org>
+ <6cd2e42d-6169-a2f0-db33-e13ca1619a41@baylibre.com>
+Mime-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
+List-Post: <mailto:linux-amlogic@lists.infradead.org>
+List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
+Cc: khilman@baylibre.com, linux-kernel@vger.kernel.org, carlo@caione.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
+Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
-
-Here's a few fixes I came up with while thinking more about how to
-implement some of the tricky clocks on the A83T.
-
-Please have a look. The first 2 might need to go in stable, but I'll
-leave the decision to you.
-
-Regards
-ChenYu
-
-
-Chen-Yu Tsai (3):
-  clk: sunxi-ng: use 1 as fallback for minimum multiplier
-  clk: sunxi-ng: Fix round_rate/set_rate multiplier minimum mismatch
-  clk: sunxi-ng: a80: Fix audio PLL comment not matching actual code
-
- drivers/clk/sunxi-ng/ccu-sun9i-a80.c | 3 +--
- drivers/clk/sunxi-ng/ccu_nk.c        | 8 ++++----
- drivers/clk/sunxi-ng/ccu_nkm.c       | 8 ++++----
- drivers/clk/sunxi-ng/ccu_nkmp.c      | 8 ++++----
- drivers/clk/sunxi-ng/ccu_nm.c        | 4 ++--
- 5 files changed, 15 insertions(+), 16 deletions(-)
-
--- 
-2.11.0
+T24gVGh1LCAyMDE3LTAzLTAyIGF0IDEyOjA3ICswMTAwLCBOZWlsIEFybXN0cm9uZyB3cm90ZToK
+PiBIaSBTdGVwaGVuLAo+IAo+IE9uIDAzLzAxLzIwMTcgMDg6MTEgUE0sIFN0ZXBoZW4gQm95ZCB3
+cm90ZToKPiA+IE9uIDAzLzAxLCBOZWlsIEFybXN0cm9uZyB3cm90ZToKPiA+ID4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvY2xrL21lc29uL2d4YmIuYyBiL2RyaXZlcnMvY2xrL21lc29uL2d4YmIuYwo+
+ID4gPiBpbmRleCBhNTIwNjNmLi4zMWY2MDkwIDEwMDY0NAo+ID4gPiAtLS0gYS9kcml2ZXJzL2Ns
+ay9tZXNvbi9neGJiLmMKPiA+ID4gKysrIGIvZHJpdmVycy9jbGsvbWVzb24vZ3hiYi5jCj4gPiA+
+IEBAIC02MzQsNiArNjM0LDEzMSBAQAo+ID4gPiDCoAl9LAo+ID4gPiDCoH07Cj4gPiA+IMKgCj4g
+PiA+ICsvKgo+ID4gPiArICogVGhlIE1BTEkgSVAgaXMgY2xvY2tlZCBieSB0d28gaWRlbnRpY2Fs
+IGNsb2NrcyAobWFsaV8wIGFuZAo+ID4gPiBtYWxpXzEpCj4gPiA+ICsgKiBtdXhlZCBieSBhIGds
+aXRjaC1mcmVlIHN3aXRjaC4KPiA+ID4gKyAqLwo+ID4gPiArCj4gPiA+ICtzdGF0aWMgdTMyIG11
+eF90YWJsZV9tYWxpXzBfMVtdID0gezAsIDEsIDIsIDMsIDQsIDUsIDYsIDd9Owo+ID4gPiArY29u
+c3QgY2hhciAqZ3hiYl9tYWxpXzBfMV9wYXJlbnRfbmFtZXNbXSA9IHsKPiA+IAo+ID4gc3RhdGlj
+Pwo+IAo+IFdpbGwgZG8gIQo+IAo+ID4gCj4gPiA+ICsJInh0YWwiLCAiZ3AwX3BsbCIsICJtcGxs
+MiIsICJtcGxsMSIsICJmY2xrX2RpdjciLAo+ID4gPiArCSJmY2xrX2RpdjQiLCAiZmNsa19kaXYz
+IiwgImZjbGtfZGl2NSIKPiA+ID4gK307Cj4gPiA+ICsKPiA+IAo+ID4gWy4uXQo+ID4gPiArCS5y
+ZWcgPSAodm9pZCAqKUhISV9NQUxJX0NMS19DTlRMLAo+ID4gPiArCS5iaXRfaWR4ID0gMjQsCj4g
+PiA+ICsJLmxvY2sgPSAmY2xrX2xvY2ssCj4gPiA+ICsJLmh3LmluaXQgPSAmKHN0cnVjdCBjbGtf
+aW5pdF9kYXRhKXsKPiA+ID4gKwkJLm5hbWUgPSAibWFsaV8xIiwKPiA+ID4gKwkJLm9wcyA9ICZj
+bGtfZ2F0ZV9vcHMsCj4gPiA+ICsJCS5wYXJlbnRfbmFtZXMgPSAoY29uc3QgY2hhciAqW10peyAi
+bWFsaV8xX2RpdiIKPiA+ID4gfSwKPiA+ID4gKwkJLm51bV9wYXJlbnRzID0gMSwKPiA+ID4gKwkJ
+LmZsYWdzID0gKENMS19TRVRfUkFURV9QQVJFTlQgfAo+ID4gPiBDTEtfSUdOT1JFX1VOVVNFRCks
+Cj4gPiA+ICsJfSwKPiA+ID4gK307Cj4gPiA+ICsKPiA+ID4gK3N0YXRpYyB1MzIgbXV4X3RhYmxl
+X21hbGlbXSA9IHswLCAxfTsKPiA+ID4gK2NvbnN0IGNoYXIgKmd4YmJfbWFsaV9wYXJlbnRfbmFt
+ZXNbXSA9IHsKPiA+IAo+ID4gc3RhdGljPwo+ID4gCj4gPiA+ICsJIm1hbGlfMCIsICJtYWxpXzEi
+Cj4gPiA+ICt9Owo+ID4gCj4gPiBbLi4uXQo+ID4gPiDCoHN0YXRpYyBzdHJ1Y3QgY2xrX211eCAq
+Z3hiYl9jbGtfbXV4ZXNbXSA9IHsKPiA+ID4gwqAJJmd4YmJfbXBlZ19jbGtfc2VsLAo+ID4gPiDC
+oAkmZ3hiYl9zYXJfYWRjX2Nsa19zZWwsCj4gPiA+ICsJJmd4YmJfbWFsaV8wX3NlbCwKPiA+ID4g
+KwkmZ3hiYl9tYWxpXzFfc2VsLAo+ID4gPiArCSZneGJiX21hbGksCj4gPiA+IMKgfTsKPiA+ID4g
+wqAKPiA+ID4gwqBzdGF0aWMgc3RydWN0IGNsa19kaXZpZGVyICpneGJiX2Nsa19kaXZpZGVyc1td
+ID0gewo+ID4gCj4gPiBDYW4gdGhlc2UgYXJyYXlzIGJlIGNvbnN0PyBJZiBzbywgcGxlYXNlIGRv
+IHRoYXQgaW4gYSBzZXBhcmF0ZQo+ID4gcGF0Y2guCj4gCj4gSG1tLCB0aGVzZSB3ZXJlIGludHJv
+ZHVjZWQgYnkgamVyb21lLCBoZSBzaG91bGQgdXBkYXRlIHRoZW0KPiBhY2NvcmRpbmdseS4KPiAK
+CldpbGwgZG8KCj4gPiA+IMKgCSZneGJiX21wZWdfY2xrX2RpdiwKPiA+ID4gwqAJJmd4YmJfc2Fy
+X2FkY19jbGtfZGl2LAo+ID4gPiArCSZneGJiX21hbGlfMF9kaXYsCj4gPiA+ICsJJmd4YmJfbWFs
+aV8xX2RpdiwKPiA+ID4gwqB9Owo+IAo+IAo+IFRoYW5rcywKPiBOZWlsCgpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hbWxvZ2ljIG1haWxpbmcg
+bGlzdApsaW51eC1hbWxvZ2ljQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJh
+ZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hbWxvZ2ljCg==
