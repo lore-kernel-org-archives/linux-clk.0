@@ -1,208 +1,115 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 3 Mar 2017 23:07:13 +0000
-From: James Hogan <james.hogan@imgtec.com>
-To: Jason Uy <jason.uy@broadcom.com>
-CC: Ray Jui <ray.jui@broadcom.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Noam Camus <noamc@ezchip.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Wang Hongcheng <annie.wang@amd.com>,
-        <linux-serial@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        David Daney <david.daney@cavium.com>,
-        Russell King <linux@armlinux.org.uk>,
-        <linux-clk@vger.kernel.org>, Viresh Kumar <viresh.kumar@st.com>
-Subject: Re: [PATCH v2 1/1] serial: 8250_dw: Allow hardware flow control to
- be used
-Message-ID: <20170303230712.GT996@jhogan-linux.le.imgtec.org>
-References: <1484164100-9805-1-git-send-email-jason.uy@broadcom.com>
- <1484164100-9805-2-git-send-email-jason.uy@broadcom.com>
- <CAAG0J9-n0toSJL8Ze8Esq81dYnpfrTd42bMiR94zw_btBLjsww@mail.gmail.com>
- <1488394220.20145.68.camel@linux.intel.com>
- <20170303002129.GS996@jhogan-linux.le.imgtec.org>
- <1488547866.20145.74.camel@linux.intel.com>
- <ab064967-e362-d9be-3040-3260e9b5c426@broadcom.com>
- <3e45a0582dd91dab1a6e9bd6f4339e12@mail.gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Thu, 2 Mar 2017 14:58:12 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH] arm: dts: sun8i: split Allwinner H3 .dtsi
+Message-ID: <20170302135812.kvvqw6trjipjhhu5@lukather>
+References: <20170301201342.47583-1-icenowy@aosc.xyz>
+ <20170301201342.47583-3-icenowy@aosc.xyz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mvzZjokS1nTZS3h1"
-In-Reply-To: <3e45a0582dd91dab1a6e9bd6f4339e12@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20170301201342.47583-3-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+ linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============7406649139464821910=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
---mvzZjokS1nTZS3h1
-Content-Type: text/plain; charset=utf-8
+
+--===============7406649139464821910==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2u5euainn4mpvuic"
+Content-Disposition: inline
+
+
+--2u5euainn4mpvuic
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jason,
+On Thu, Mar 02, 2017 at 04:13:40AM +0800, Icenowy Zheng wrote:
+> From: Andre Przywara <andre.przywara@arm.com>
+>=20
+> The new Allwinner H5 SoC is pin-compatible to the H3 SoC, but with the
+> Cortex-A7 cores replaced by Cortex-A53 cores and the MMC controller
+> updated. So we should really share almost the whole .dtsi.
+> In preparation for that move the peripheral parts of the existing
+> sun8i-h3.dtsi into a new sunxi-h3-h5.dtsi.
+> The actual sun8i-h3.dtsi then includes that and defines the H3 specific
+> parts on top of it.
+> According to "Allwinner H3 Datasheet Version 1.2 Apr. 23, 2015" [1]
+> Chapter 4.12. GIC and "Allwinner H5 Datasheet Revision 1.0 May. 20,
+> 2016" [2] Chapter 4.12. GIC, the two SoCs both use ARM GIC-400 interrupt
+> controller (see the "Note" after the interrupt source table), so the GIC
+> node is extracted to sunxi-h3-h5.dtsi as well, and the compatible is
+> changed to "arm,gic-400".
 
-On Fri, Mar 03, 2017 at 09:43:55AM -0800, Jason Uy wrote:
-> James,
->=20
-> Can you verify that changing the code to the following fixes your problem?
->=20
-> if (IS_ERR_OR_NULL(d->clk) || !old)
->     goto out;
+This should be in a separate patch.
 
-It does, however I'm not at all convinced it is correct. clk_get either
-returns a valid opaque clock cookie that can be passed to other clock
-functions (which includes NULL), or ERR_PTR(-errno), which IS_ERR()
-should catch for errors.
+> On the way get rid of skeleton.dtsi, as recommended in that very file.
 
-According to this thread:
+That too.
 
-https://lists.gt.net/linux/kernel/2102623
+> The inclusion of pinctrl-a10.h is also dropped, as it's now not needed
+> at all after changing pinctrl binding to the generic pinconf binding.
 
-we should stick to the clk API and use IS_ERR() rather than
-IS_ERR_OR_NULL(), but shouldn't be blindly accepting the result of
-clk_get_rate() (or I suppose clk_round_rate()), but rather checking for
-the value 0 and handling that case as "we don't have a usable clock from
-the clk api, fall back to something else".
+And that as well...
 
-Cheers
-James
+> [1] http://linux-sunxi.org/File:Allwinner_H3_Datasheet_V1.2.pdf
+> [2] https://github.com/OrangePiLibra/OrangePi_H5SDK/blob/master/Documenta=
+tion/Hardware/H5_User_Manual.pdf
 
->=20
-> Regards,
-> Jason
->=20
-> -----Original Message-----
-> From: Ray Jui [mailto:ray.jui@broadcom.com]
-> Sent: March-03-17 9:34 AM
-> To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>; James Hogan
-> <james.hogan@imgtec.com>; Heiko Stuebner <heiko@sntech.de>
-> Cc: Jason Uy <jason.uy@broadcom.com>; Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org>; Jiri Slaby <jslaby@suse.com>; Kefeng Wang
-> <wangkefeng.wang@huawei.com>; Noam Camus <noamc@ezchip.com>; Heikki Kroge=
-rus
-> <heikki.krogerus@linux.intel.com>; Wang Hongcheng <annie.wang@amd.com>;
-> linux-serial@vger.kernel.org; LKML <linux-kernel@vger.kernel.org>;
-> bcm-kernel-feedback-list@broadcom.com; Linux MIPS Mailing List
-> <linux-mips@linux-mips.org>; David Daney <david.daney@cavium.com>; Russell
-> King <linux@armlinux.org.uk>; linux-clk@vger.kernel.org; Viresh Kumar
-> <viresh.kumar@st.com>
-> Subject: Re: [PATCH v2 1/1] serial: 8250_dw: Allow hardware flow control =
-to
-> be used
->=20
-> Hi Andy/Jason,
->=20
-> On 3/3/2017 5:31 AM, Andy Shevchenko wrote:
-> > Heiko, you might be interested in this as well.
-> >
-> > On Fri, 2017-03-03 at 00:21 +0000, James Hogan wrote:
-> >> On Wed, Mar 01, 2017 at 08:50:20PM +0200, Andy Shevchenko wrote:
-> >>> On Wed, 2017-03-01 at 18:02 +0000, James Hogan wrote:
-> >>>> On 11 January 2017 at 19:48, Jason Uy <jason.uy@broadcom.com>
-> >>>> wrote:
-> >>>>> In the most common use case, the Synopsys DW UART driver does not
-> >>>>> set the set_termios callback function.  This prevents
-> >>>>> UPSTAT_AUTOCTS from being set when the UART flag CRTSCTS is set.
-> >>>>> As a result, the driver will use software flow control as opposed
-> >>>>> to hardware flow control.
-> >>>>>
-> >>>>> To fix the problem, the set_termios callback function is set to
-> >>>>> the DW specific function.  The logic to set UPSTAT_AUTOCTS is
-> >>>>> moved so that any clock error will not affect setting the hardware
-> >>>>> flow control.
-> >>>> Bisection shows that this patch, commit
-> >>>> 6a171b29937984a5e0bf29d6577b055998f03edb, has broken boot of the
-> >>>> Cavium Octeon III based UTM-8 board (MIPS architecture).
-> >>>>
-> >>>> I now get the following warning:
-> >>>> [<ffffffff8149c2e4>] uart_get_baud_rate+0xfc/0x1f0
-> >>>> [<ffffffff814a5098>] serial8250_do_set_termios+0xb0/0x440
-> >>>> [<ffffffff8149c710>] uart_set_options+0xe8/0x190
-> >>>> [<ffffffff814a6cdc>] serial8250_console_setup+0x84/0x158
-> >>>> [<ffffffff814a11ec>] univ8250_console_setup+0x54/0x70
-> >>>> [<ffffffff811901a0>] register_console+0x1c8/0x418
-> >>>> [<ffffffff8149f004>] uart_add_one_port+0x434/0x4b0
-> >>>> [<ffffffff814a1af8>] serial8250_register_8250_port+0x2d8/0x440
-> >>>> [<ffffffff814aa620>] dw8250_probe+0x388/0x5e8 Then it hangs and the
-> >>>> watchdog restarts the machine.
-> >>>>
-> >>>> Any ideas?
-> >>>
-> >>> 1. Does it use clock on that platform?
-> >
-> >> I've now dug a little deeper. Essentially what is going on is:
-> >>
-> >> 1) CONFIG_HAVE_CLK=3Dn (Octeon doesn't select it)
-> >> 2) The CONFIG_HAVE_CLK=3Dn implementation of devm_clk_get() returns
-> >> NULL
-> >> 3) The "if (IS_ERR(d->clk) || !old) {" check in dw8250_set_termios()
-> >>    doesn't match, since !IS_ERR(NULL)
-> >> 4) The CONFIG_HAVE_CLK=3Dn implementation of clk_round_rate() returns 0
-> >> 5) The CONFIG_HAVE_CLK=3Dn implementation of clk_set_rate(d->clk, 0)
-> >>    returns 0
-> >> 6) dw8250_set_termios() thinks the frequency for that baud rate has
-> >> been
-> >>    set successfully and writes 0 into uartclk
-> >> 7) it all goes wrong from there...
-> >
-> > So, it means we have need special care of NULL case here, and
-> > honestly, I don't like it. But it seems the only feasible (quick) fix
-> > right now.
->=20
-> I agree. I think it should have been:
->=20
-> if (IS_ERR_OR_NULL(d->clk) || !old)
->     goto out;
->=20
-> I think it makes sense to validate to make sure the 'clk' pointer is valid
-> before proceeding any further down below (regardless of how well or how n=
-ot
-> well the clock framework handles it).
->=20
-> Thanks,
->=20
-> Ray
->=20
-> >
-> >> The CONFIG_HAVE_CLK=3Dn implementation of devm_clk_get() in particular
-> >> seems highly questionable to me, given that commit 93abe8e4b13a ("clk:
-> >> add non CONFIG_HAVE_CLK routines") which added it 5 years ago says:
-> >>
-> >>> These calls will return error for platforms that don't select
-> >>> HAVE_CLK
-> >>
-> >> And NULL isn't an error in this API.
-> >
-> > Which is okay. I dunno what should be returned from clk_round_rate()
-> > if clk is NULL. I would fix CLK framework, though I would like to
-> > gather more details.
-> >
-> > Btw, I hope you also noticed this one:
-> >
-> > http://www.spinics.net/lists/linux-serial/msg25314.html
-> >
+Please don't put URLs in commit logs.
 
---mvzZjokS1nTZS3h1
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--2u5euainn4mpvuic
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBCAAGBQJYufcZAAoJEGwLaZPeOHZ6ZxIQAIK+69uA+O+ZucfIIVEtqb5M
-TVTWaGCoGbTorVa7GI4RAJjfO/0J5QPZyVL8VZiAHI3kovr71VqpVx2dZRtC5ZA/
-yABfv14l9GWX/Tvb91A01RssVlTG3pQ7QMURsW8RbqAbnjxuqCZ8IG/bVArw20Py
-ZYpsYmS4sfxjdQBbtfQVzh1kpEDfCAKL0dvrtzY2sAQ3a4AQptU+Z5sQLMaw+Jmy
-SUaMXKCM0Efhz6W8TdX9qhX5dm3N63JheO7uW3exDJjRe3fcej2ufSos0wK/xrwr
-QU+LDVtf8jp7xfFt28ml6ghFEFow2oaYH0GYakg5UvQBV5P2NzP680mznCpBv/fJ
-Wf2RyZ6YIjFMrYAmUCyyLHLLTFi6oO5qowcfbKYluB7Akr0UcKzrIuI4kGc03C49
-LyDs4hyj9EBE063mcbuJSBmRh8+nLdiNE9FMh0C4EtTVRPyObR+R+O50wYzo/37r
-G0PPFBOmso0cUdqwmBFrhW0bpkogaaWRcWXfEjMcLSZYcncNAVhGbH3xnwcRthJn
-vsDMiseZ1EIxNQe/qcIxUPv1fytdz8APYo+vY+rDepxEXafh2/M0cye6nTDMXqDF
-TzseJAhra3G8C4xDH1+ikXyN0ExmUk/j5VC8+cBzpieNxDKsODozablOTzdwQDr2
-uurjADJQAFXEiVGIATTO
-=EetP
+iQIcBAEBCAAGBQJYuCT0AAoJEBx+YmzsjxAgFEYP/3zNRk09Jwznw4lvRzakB2CH
+xx89I/uyUShT0fiQgVD7ODYQLwVPSJKUKKJE+NPs2qL9cTgX9vDqWAzhInxST372
++Rv43BQOvyMMhVZbzjbZ9C+Q3x8lmuHwiGMDTJElV0znFPGa1hkW1Sr8curqO3cz
+PxisSqMA2mYoyo8J7iR+YnMjcIUVOzaMR8/I51zUCgs40S6cwtO5DjO2qbtWYmp+
+GnOfpJWo6anB0zqoZKo5HY2alIqWVE26Ny+7NyMKY7yn9LstDOGK+k2+dKLsda2F
+KELBadavyT5ujv2DbIkWctA5s5+AIaoyNI7eIaVR8WBRj264Mt5NAWdsYk8TIe3X
+qcq72y9uBZUeyBgp004qwwrkg0Y6hueyHLUStNNmHi4Q3/hVRlrejN4Q4y+2ZAcD
+Nn8XEj4k4KF1bQzW/rm3ZvYAe6KFVaLDHUC3YPWKRtyiMhh4DXYJAEAnfx9ZjciT
+6dYYZ9pB1ZG2VupPlRAq8PIuLme3qwhcIl7hILWd0J/JnocxMiSaIIc7kNCP8pzq
+pspfMW0WHonW9Zd2uWqGrIktwW0QyWHOaIZrfw97C2htlhqtwcUsbg0UCT2JLD/x
+OQXv7+bFY1Fe/cQUD5qlI3P9Z7YG8k2MURqemWZ+UHqzp4J2j1KN0sBaHXaFb7hl
+9AjRpAWKs0WkDdvm9QUj
+=4odw
 -----END PGP SIGNATURE-----
 
---mvzZjokS1nTZS3h1--
+--2u5euainn4mpvuic--
+
+
+--===============7406649139464821910==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============7406649139464821910==--
