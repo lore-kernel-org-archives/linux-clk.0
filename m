@@ -1,100 +1,72 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH DO NOT MERGE 5/6] ARM: dts: omap4: add some sample clkctrl
+ data
+To: Tony Lindgren <tony@atomide.com>
+References: <1486992157-10673-1-git-send-email-t-kristo@ti.com>
+ <1486992157-10673-6-git-send-email-t-kristo@ti.com>
+ <20170302174503.GP20572@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <c92a6176-e749-95c3-8eeb-d9bad7a97672@ti.com>
+Date: Thu, 2 Mar 2017 20:43:12 +0200
 MIME-Version: 1.0
-In-Reply-To: <20170219032000.4674-2-afaerber@suse.de>
-References: <20170219032000.4674-1-afaerber@suse.de> <20170219032000.4674-2-afaerber@suse.de>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 14 Mar 2017 17:30:34 +0100
-Message-ID: <CAPDyKFoy-dKTk=t6cmwzbjyntZHrkSyZbtpJ0wAMUDJ5xz4viA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] ARM64: Prepare Marvell IAP140 aka PXA1908
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@free-electrons.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jisheng Zhang <jszhang@marvell.com>,
-	Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>, Eric Miao <eric.y.miao@gmail.com>, info@andromedabox.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170302174503.GP20572@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19 February 2017 at 04:19, Andreas F=C3=A4rber <afaerber@suse.de> wrote:
-> Suppress COMMON_CLK_PXA and MMC_PXA for now as they don't build on arm64.
-> Also suppress the deprecated SERIAL_PXA in favor of SERIAL_8250_PXA.
+On 02/03/17 19:45, Tony Lindgren wrote:
+> Hi,
 >
-> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
-> ---
->  arch/arm64/Kconfig.platforms | 5 +++++
->  drivers/clk/Kconfig          | 2 +-
->  drivers/mmc/host/Kconfig     | 2 +-
->  drivers/tty/serial/Kconfig   | 2 +-
->  4 files changed, 8 insertions(+), 3 deletions(-)
+> * Tero Kristo <t-kristo@ti.com> [170213 05:24]:
+>> Adds clkctrl nodes for cm_l4per and cm_abe as example. Peripherals using
+>> clocks from these nodes are modified also.
+>
+> Finally got around testing these. Looks like applying this patch
+> breaks things for devices not using the new clocks entry?
+>
+> For example, SPI now breaks causing "imprecise external abort" during boot
+> at least on droid 4.
 
-Please try split this up so it can be applied on each subsystem independent=
-ly.
+If SPI is under l4per, then yes, a breakage is expected. This will cause 
+a conflict with the existing hwmod data, and the new clock data, 
+effectively disabling the IP clocks during boot. This patch only 
+converts part of the DT data to the new format, and as such is only 
+suitable for testing purposes.
 
-Kind regards
-Uffe
+I will provide a full data conversion for the DT file for 4.11-rc.
 
 >
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index 129cc5a..841b6c8 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -111,6 +111,11 @@ config ARCH_MVEBU
->            - Armada 7K SoC Family
->            - Armada 8K SoC Family
+>> --- a/arch/arm/boot/dts/omap4.dtsi
+>> +++ b/arch/arm/boot/dts/omap4.dtsi
+>> +				cm_l4per: cm_l4per@0 {
 >
-> +config ARCH_PXA
-> +       bool "Marvell PXA SoC Family"
-> +       help
-> +         This enables support for the Marvell PXA family.
-> +
->  config ARCH_QCOM
->         bool "Qualcomm Platforms"
->         select GPIOLIB
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 9356ab4..3d25f20 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -185,7 +185,7 @@ config COMMON_CLK_PWM
->           at 50% duty cycle.
+> Above should be cm_l4per: cm_l4per@1400, right?
+
+Yea thats a bug in this test patch. Same issue with other nodes. DT 
+compiler isn't too picky about these so it works even with wrong node name.
+
 >
->  config COMMON_CLK_PXA
-> -       def_bool COMMON_CLK && ARCH_PXA
-> +       def_bool COMMON_CLK && ARCH_PXA && ARM
->         ---help---
->           Support for the Marvell PXA SoC.
+>> +					compatible = "ti,omap4-cm";
+>> +					reg = <0x1400 0x200>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <1>;
+>> +					ranges = <0 0x1400 0x200>;
+>> +
+>> +					cm_l4per_clkctrl: cm_l4per_clkctrl@20 {
+>> +						compatible = "ti,omap4-clkctrl";
+>> +						reg = <0x20 0x1b0>;
+>> +						#clock-cells = <2>;
+>> +					};
+>> +				};
 >
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index f08691a..a650eca 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -27,7 +27,7 @@ config MMC_QCOM_DML
->
->  config MMC_PXA
->         tristate "Intel PXA25x/26x/27x Multimedia Card Interface support"
-> -       depends on ARCH_PXA
-> +       depends on ARCH_PXA && ARM
->         help
->           This selects the Intel(R) PXA(R) Multimedia card Interface.
->           If you have a PXA(R) platform with a Multimedia Card slot,
-> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-> index 6117ac8..0713a05 100644
-> --- a/drivers/tty/serial/Kconfig
-> +++ b/drivers/tty/serial/Kconfig
-> @@ -439,7 +439,7 @@ config SERIAL_MPSC_CONSOLE
->
->  config SERIAL_PXA
->         bool "PXA serial port support (DEPRECATED)"
-> -       depends on ARCH_PXA || ARCH_MMP
-> +       depends on (ARCH_PXA && ARM) || ARCH_MMP
->         select SERIAL_CORE
->         select SERIAL_8250_PXA if SERIAL_8250=3Dy
->         select SERIAL_PXA_NON8250 if !SERIAL_8250=3Dy
-> --
-> 2.10.2
->
+> You should update the binding doc accordingly if the "cm_l4per@0" node
+> there is not needed. I also noticed the binding doc still has
+> "#clock-cells = <4>" while it should be 2.
+
+cm_l4per is somewhat redundant right now, but we want to add 
+clockdomains under that one in the future. Or, we could just add those 
+directly under parent node also (cm2 in this case.)
+
+-Tero
