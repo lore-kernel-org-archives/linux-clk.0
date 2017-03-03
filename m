@@ -1,49 +1,35 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f179.google.com ([209.85.223.179]:33377 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752471AbdCNNg1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2017 09:36:27 -0400
-Received: by mail-io0-f179.google.com with SMTP id f84so103061824ioj.0
-        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2017 06:36:26 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <4369285.zq7cJYMXhu@phil>
-References: <1486983566-32265-1-git-send-email-andy.yan@rock-chips.com>
- <0bbc4151-d954-1a27-48c3-1e8c9cb9e16f@rock-chips.com> <CACRpkdbNbGvwUq3uLgekimOwzBZCXf37JW9LCCqLm1so=CMNrw@mail.gmail.com>
- <4369285.zq7cJYMXhu@phil>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 14 Mar 2017 14:36:24 +0100
-Message-ID: <CACRpkdbuX7f58S_sTBMVEusX2g1iJ4T-cw9efJLFSYb8fV=EDA@mail.gmail.com>
-Subject: Re: [PATCH 0/7] Rename RK1108 to RV1108
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Andy Yan <andy.yan@rock-chips.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robin@protonic.nl>
+From: Robin van der Gracht <robin@protonic.nl>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Robin van der Gracht <robin@protonic.nl>
+Subject: [PATCH] clk: imx: correct uart4_serial clock name in driver for i.MX6UL
+Date: Fri,  3 Mar 2017 13:36:53 +0100
+Message-Id: <20170303123653.8931-1-robin@protonic.nl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 23, 2017 at 4:00 PM, Heiko Stuebner <heiko@sntech.de> wrote:
-> Am Donnerstag, 23. Februar 2017, 11:15:56 CET schrieb Linus Walleij:
+Signed-off-by: Robin van der Gracht <robin@protonic.nl>
+---
+ drivers/clk/imx/clk-imx6ul.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> Nobody gets hurt. Just rename everything to avoid confusion.
->> Just my =E2=82=AC0.01.
->>
->> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->>
->> Tell me if I can merge a subset of the patches to the pinctrl tree.
->
-> I did provide Reviewed-bys for them, so you should be able to merge the
-> pinctrl patches (4+5) at your convenience :-)
-
-They are conflicting right now, but I will merge it when I get a v4.11-rc1
-based series.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index 0f1f17a..4dcd107 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -325,7 +325,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_GPT1_BUS]	= imx_clk_gate2("gpt1_bus",	"perclk",	base + 0x6c,	20);
+ 	clks[IMX6UL_CLK_GPT1_SERIAL]	= imx_clk_gate2("gpt1_serial",	"perclk",	base + 0x6c,	22);
+ 	clks[IMX6UL_CLK_UART4_IPG]	= imx_clk_gate2("uart4_ipg",	"ipg",		base + 0x6c,	24);
+-	clks[IMX6UL_CLK_UART4_SERIAL]	= imx_clk_gate2("uart4_serail",	"uart_podf",	base + 0x6c,	24);
++	clks[IMX6UL_CLK_UART4_SERIAL]	= imx_clk_gate2("uart4_serial",	"uart_podf",	base + 0x6c,	24);
+ 
+ 	/* CCGR2 */
+ 	clks[IMX6UL_CLK_CSI]		= imx_clk_gate2("csi",		"csi_podf",		base + 0x70,	2);
+-- 
+2.9.3
