@@ -1,483 +1,476 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	devicetree@vger.kernel.org,
-	srinivas.kandagatla@linaro.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 2/2] clk: qcom: gcc-msm8996: Remove RPM controlled clocks
-Date: Wed, 22 Mar 2017 15:09:26 +0530
-Message-Id: <1490175566-4084-3-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1490175566-4084-1-git-send-email-rnayak@codeaurora.org>
-References: <1490175566-4084-1-git-send-email-rnayak@codeaurora.org>
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	mike.leach@linaro.org
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v3 3/5] coresight: add support for debug module
+Date: Fri,  3 Mar 2017 14:00:07 +0800
+Message-Id: <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
+References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-All the noc clock sources (system, peripheral and config)
-are controlled by RPM. So is gcc_sleep_clk_src RCG.
-Remove these as part of GCC and hook up all of their children
-to the respective RPM clocks.
+Coresight includes debug module and usually the module connects with CPU
+debug logic. ARMv8 architecture reference manual (ARM DDI 0487A.k) has
+description for related info in "Part H: External Debug".
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Chapter H7 "The Sample-based Profiling Extension" introduces several
+sampling registers, e.g. we can check program counter value with
+combined CPU exception level, secure state, etc. So this is helpful for
+analysis CPU lockup scenarios, e.g. if one CPU has run into infinite
+loop with IRQ disabled. In this case the CPU cannot switch context and
+handle any interrupt (including IPIs), as the result it cannot handle
+SMP call for stack dump.
+
+This patch is to enable coresight debug module, so firstly this driver
+is to bind apb clock for debug module and this is to ensure the debug
+module can be accessed from program or external debugger. And the driver
+uses sample-based registers for debug purpose, e.g. when system detects
+the CPU lockup and trigger panic, the driver will dump program counter
+and combined context registers (EDCIDSR, EDVIDSR); by parsing context
+registers so can quickly get to know CPU secure state, exception level,
+etc.
+
+Some of the debug module registers are located in CPU power domain, so
+in the driver it has checked the power state for CPU before accessing
+registers within CPU power domain. For most safe way to use this driver,
+it's suggested to disable CPU low power states, this can simply set
+"nohlt" in kernel command line.
+
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- drivers/clk/qcom/gcc-msm8996.c               | 156 ++++++---------------------
- include/dt-bindings/clock/qcom,gcc-msm8996.h |   4 -
- 2 files changed, 33 insertions(+), 127 deletions(-)
+ drivers/hwtracing/coresight/Kconfig           |  10 +
+ drivers/hwtracing/coresight/Makefile          |   1 +
+ drivers/hwtracing/coresight/coresight-debug.c | 377 ++++++++++++++++++++++++++
+ 3 files changed, 388 insertions(+)
+ create mode 100644 drivers/hwtracing/coresight/coresight-debug.c
 
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index 8abc200..a7aac0b 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -48,10 +48,6 @@ enum {
- 	P_GPLL1_EARLY_DIV
- };
+diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+index 130cb21..3ed651e 100644
+--- a/drivers/hwtracing/coresight/Kconfig
++++ b/drivers/hwtracing/coresight/Kconfig
+@@ -89,4 +89,14 @@ config CORESIGHT_STM
+ 	  logging useful software events or data coming from various entities
+ 	  in the system, possibly running different OSs
  
--static const struct parent_map gcc_sleep_clk_map[] = {
--	{ P_SLEEP_CLK, 5 }
--};
--
- static const char * const gcc_sleep_clk[] = {
- 	"sleep_clk"
- };
-@@ -284,71 +280,6 @@ enum {
- 	},
- };
- 
--static const struct freq_tbl ftbl_system_noc_clk_src[] = {
--	F(19200000, P_XO, 1, 0, 0),
--	F(50000000, P_GPLL0_EARLY_DIV, 6, 0, 0),
--	F(100000000, P_GPLL0, 6, 0, 0),
--	F(150000000, P_GPLL0, 4, 0, 0),
--	F(200000000, P_GPLL0, 3, 0, 0),
--	F(240000000, P_GPLL0, 2.5, 0, 0),
--	{ }
--};
--
--static struct clk_rcg2 system_noc_clk_src = {
--	.cmd_rcgr = 0x0401c,
--	.hid_width = 5,
--	.parent_map = gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll2_early_gpll0_early_div_map,
--	.freq_tbl = ftbl_system_noc_clk_src,
--	.clkr.hw.init = &(struct clk_init_data){
--		.name = "system_noc_clk_src",
--		.parent_names = gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll2_early_gpll0_early_div,
--		.num_parents = 7,
--		.ops = &clk_rcg2_ops,
--	},
--};
--
--static const struct freq_tbl ftbl_config_noc_clk_src[] = {
--	F(19200000, P_XO, 1, 0, 0),
--	F(37500000, P_GPLL0, 16, 0, 0),
--	F(75000000, P_GPLL0, 8, 0, 0),
--	{ }
--};
--
--static struct clk_rcg2 config_noc_clk_src = {
--	.cmd_rcgr = 0x0500c,
--	.hid_width = 5,
--	.parent_map = gcc_xo_gpll0_map,
--	.freq_tbl = ftbl_config_noc_clk_src,
--	.clkr.hw.init = &(struct clk_init_data){
--		.name = "config_noc_clk_src",
--		.parent_names = gcc_xo_gpll0,
--		.num_parents = 2,
--		.ops = &clk_rcg2_ops,
--	},
--};
--
--static const struct freq_tbl ftbl_periph_noc_clk_src[] = {
--	F(19200000, P_XO, 1, 0, 0),
--	F(37500000, P_GPLL0, 16, 0, 0),
--	F(50000000, P_GPLL0, 12, 0, 0),
--	F(75000000, P_GPLL0, 8, 0, 0),
--	F(100000000, P_GPLL0, 6, 0, 0),
--	{ }
--};
--
--static struct clk_rcg2 periph_noc_clk_src = {
--	.cmd_rcgr = 0x06014,
--	.hid_width = 5,
--	.parent_map = gcc_xo_gpll0_map,
--	.freq_tbl = ftbl_periph_noc_clk_src,
--	.clkr.hw.init = &(struct clk_init_data){
--		.name = "periph_noc_clk_src",
--		.parent_names = gcc_xo_gpll0,
--		.num_parents = 2,
--		.ops = &clk_rcg2_ops,
--	},
--};
--
- static const struct freq_tbl ftbl_usb30_master_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
- 	F(120000000, P_GPLL0, 5, 0, 0),
-@@ -1112,18 +1043,6 @@ enum {
- 	},
- };
- 
--static struct clk_rcg2 gcc_sleep_clk_src = {
--	.cmd_rcgr = 0x43014,
--	.hid_width = 5,
--	.parent_map = gcc_sleep_clk_map,
--	.clkr.hw.init = &(struct clk_init_data){
--		.name = "gcc_sleep_clk_src",
--		.parent_names = gcc_sleep_clk,
--		.num_parents = 1,
--		.ops = &clk_rcg2_ops,
--	},
--};
--
- static struct clk_rcg2 hmss_rbcpr_clk_src = {
- 	.cmd_rcgr = 0x48040,
- 	.hid_width = 5,
-@@ -1331,7 +1250,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_mmss_noc_cfg_ahb_clk",
--			.parent_names = (const char *[]){ "config_noc_clk_src" },
-+			.parent_names = (const char *[]){ "cnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
- 			.ops = &clk_branch2_ops,
-@@ -1374,9 +1293,8 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_usb30_sleep_clk",
--			.parent_names = (const char *[]){ "gcc_sleep_clk_src" },
-+			.parent_names = gcc_sleep_clk,
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -1449,9 +1367,8 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_usb20_sleep_clk",
--			.parent_names = (const char *[]){ "gcc_sleep_clk_src" },
-+			.parent_names = gcc_sleep_clk,
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -1479,7 +1396,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_usb_phy_cfg_ahb2phy_clk",
--			.parent_names = (const char *[]){ "periph_noc_clk_src" },
-+			.parent_names = (const char *[]){ "pcnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -1509,7 +1426,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_sdcc1_ahb_clk",
--			.parent_names = (const char *[]){ "periph_noc_clk_src" },
-+			.parent_names = (const char *[]){ "pcnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -1554,7 +1471,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_sdcc2_ahb_clk",
--			.parent_names = (const char *[]){ "periph_noc_clk_src" },
-+			.parent_names = (const char *[]){ "pcnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -1584,7 +1501,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_sdcc3_ahb_clk",
--			.parent_names = (const char *[]){ "periph_noc_clk_src" },
-+			.parent_names = (const char *[]){ "pcnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -1614,7 +1531,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_sdcc4_ahb_clk",
--			.parent_names = (const char *[]){ "periph_noc_clk_src" },
-+			.parent_names = (const char *[]){ "pcnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -1630,7 +1547,7 @@ enum {
- 		.enable_mask = BIT(17),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_blsp1_ahb_clk",
--			.parent_names = (const char *[]){ "periph_noc_clk_src" },
-+			.parent_names = (const char *[]){ "pcnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -1646,9 +1563,8 @@ enum {
- 		.enable_mask = BIT(16),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_blsp1_sleep_clk",
--			.parent_names = (const char *[]){ "gcc_sleep_clk_src" },
-+			.parent_names = gcc_sleep_clk,
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -1932,7 +1848,7 @@ enum {
- 		.enable_mask = BIT(15),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_blsp2_ahb_clk",
--			.parent_names = (const char *[]){ "periph_noc_clk_src" },
-+			.parent_names = (const char *[]){ "pcnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -1948,9 +1864,8 @@ enum {
- 		.enable_mask = BIT(14),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_blsp2_sleep_clk",
--			.parent_names = (const char *[]){ "gcc_sleep_clk_src" },
-+			.parent_names = gcc_sleep_clk,
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2233,7 +2148,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pdm_ahb_clk",
--			.parent_names = (const char *[]){ "periph_noc_clk_src" },
-+			.parent_names = (const char *[]){ "pcnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2264,7 +2179,7 @@ enum {
- 		.enable_mask = BIT(13),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_prng_ahb_clk",
--			.parent_names = (const char *[]){ "config_noc_clk_src" },
-+			.parent_names = (const char *[]){ "cnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2279,7 +2194,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_tsif_ahb_clk",
--			.parent_names = (const char *[]){ "periph_noc_clk_src" },
-+			.parent_names = (const char *[]){ "pcnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2309,9 +2224,8 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_tsif_inactivity_timers_clk",
--			.parent_names = (const char *[]){ "gcc_sleep_clk_src" },
-+			.parent_names = gcc_sleep_clk,
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2325,7 +2239,7 @@ enum {
- 		.enable_mask = BIT(10),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_boot_rom_ahb_clk",
--			.parent_names = (const char *[]){ "config_noc_clk_src" },
-+			.parent_names = (const char *[]){ "cnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2413,7 +2327,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie_0_slv_axi_clk",
--			.parent_names = (const char *[]){ "system_noc_clk_src" },
-+			.parent_names = (const char *[]){ "snoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2428,7 +2342,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie_0_mstr_axi_clk",
--			.parent_names = (const char *[]){ "system_noc_clk_src" },
-+			.parent_names = (const char *[]){ "snoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2443,7 +2357,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie_0_cfg_ahb_clk",
--			.parent_names = (const char *[]){ "config_noc_clk_src" },
-+			.parent_names = (const char *[]){ "cnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2488,7 +2402,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie_1_slv_axi_clk",
--			.parent_names = (const char *[]){ "system_noc_clk_src" },
-+			.parent_names = (const char *[]){ "snoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2503,7 +2417,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie_1_mstr_axi_clk",
--			.parent_names = (const char *[]){ "system_noc_clk_src" },
-+			.parent_names = (const char *[]){ "snoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2518,7 +2432,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie_1_cfg_ahb_clk",
--			.parent_names = (const char *[]){ "config_noc_clk_src" },
-+			.parent_names = (const char *[]){ "cnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2563,7 +2477,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie_2_slv_axi_clk",
--			.parent_names = (const char *[]){ "system_noc_clk_src" },
-+			.parent_names = (const char *[]){ "snoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2578,7 +2492,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie_2_mstr_axi_clk",
--			.parent_names = (const char *[]){ "system_noc_clk_src" },
-+			.parent_names = (const char *[]){ "snoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2593,7 +2507,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie_2_cfg_ahb_clk",
--			.parent_names = (const char *[]){ "config_noc_clk_src" },
-+			.parent_names = (const char *[]){ "cnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2638,7 +2552,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_pcie_phy_cfg_ahb_clk",
--			.parent_names = (const char *[]){ "config_noc_clk_src" },
-+			.parent_names = (const char *[]){ "cnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2683,7 +2597,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_ufs_ahb_clk",
--			.parent_names = (const char *[]){ "config_noc_clk_src" },
-+			.parent_names = (const char *[]){ "cnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2863,7 +2777,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_aggre0_snoc_axi_clk",
--			.parent_names = (const char *[]){ "system_noc_clk_src" },
-+			.parent_names = (const char *[]){ "snoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2878,7 +2792,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_aggre0_cnoc_ahb_clk",
--			.parent_names = (const char *[]){ "config_noc_clk_src" },
-+			.parent_names = (const char *[]){ "cnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2893,7 +2807,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_smmu_aggre0_axi_clk",
--			.parent_names = (const char *[]){ "system_noc_clk_src" },
-+			.parent_names = (const char *[]){ "snoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2908,7 +2822,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_smmu_aggre0_ahb_clk",
--			.parent_names = (const char *[]){ "config_noc_clk_src" },
-+			.parent_names = (const char *[]){ "cnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -2953,7 +2867,7 @@ enum {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_qspi_ahb_clk",
--			.parent_names = (const char *[]){ "periph_noc_clk_src" },
-+			.parent_names = (const char *[]){ "pcnoc_clk" },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -3150,9 +3064,6 @@ enum {
- 	[GPLL0] = &gpll0.clkr,
- 	[GPLL4_EARLY] = &gpll4_early.clkr,
- 	[GPLL4] = &gpll4.clkr,
--	[SYSTEM_NOC_CLK_SRC] = &system_noc_clk_src.clkr,
--	[CONFIG_NOC_CLK_SRC] = &config_noc_clk_src.clkr,
--	[PERIPH_NOC_CLK_SRC] = &periph_noc_clk_src.clkr,
- 	[USB30_MASTER_CLK_SRC] = &usb30_master_clk_src.clkr,
- 	[USB30_MOCK_UTMI_CLK_SRC] = &usb30_mock_utmi_clk_src.clkr,
- 	[USB3_PHY_AUX_CLK_SRC] = &usb3_phy_aux_clk_src.clkr,
-@@ -3201,7 +3112,6 @@ enum {
- 	[BLSP2_UART6_APPS_CLK_SRC] = &blsp2_uart6_apps_clk_src.clkr,
- 	[PDM2_CLK_SRC] = &pdm2_clk_src.clkr,
- 	[TSIF_REF_CLK_SRC] = &tsif_ref_clk_src.clkr,
--	[GCC_SLEEP_CLK_SRC] = &gcc_sleep_clk_src.clkr,
- 	[HMSS_RBCPR_CLK_SRC] = &hmss_rbcpr_clk_src.clkr,
- 	[HMSS_GPLL0_CLK_SRC] = &hmss_gpll0_clk_src.clkr,
- 	[GP1_CLK_SRC] = &gp1_clk_src.clkr,
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8996.h b/include/dt-bindings/clock/qcom,gcc-msm8996.h
-index 1f5c422..1847e13 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8996.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8996.h
-@@ -24,9 +24,6 @@
- #define GPLL3							7
- #define GPLL4_EARLY						8
- #define GPLL4							9
--#define SYSTEM_NOC_CLK_SRC					10
--#define CONFIG_NOC_CLK_SRC					11
--#define PERIPH_NOC_CLK_SRC					12
- #define MMSS_BIMC_GFX_CLK_SRC					13
- #define USB30_MASTER_CLK_SRC					14
- #define USB30_MOCK_UTMI_CLK_SRC					15
-@@ -77,7 +74,6 @@
- #define PDM2_CLK_SRC						60
- #define TSIF_REF_CLK_SRC					61
- #define CE1_CLK_SRC						62
--#define GCC_SLEEP_CLK_SRC					63
- #define BIMC_CLK_SRC						64
- #define HMSS_AHB_CLK_SRC					65
- #define BIMC_HMSS_AXI_CLK_SRC					66
++config CORESIGHT_DEBUG
++	bool "CoreSight debug driver"
++	depends on ARM || ARM64
++	help
++	  This driver provides support for coresight debugging module. This
++	  is primarily used to dump sample-based profiling registers for
++	  panic. To avoid lockups when accessing debug module registers,
++	  it is safer to disable CPU low power states (like "nohlt" on the
++	  kernel command line) when using this feature.
++
+ endif
+diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
+index af480d9..d540d45 100644
+--- a/drivers/hwtracing/coresight/Makefile
++++ b/drivers/hwtracing/coresight/Makefile
+@@ -16,3 +16,4 @@ obj-$(CONFIG_CORESIGHT_SOURCE_ETM4X) += coresight-etm4x.o \
+ 					coresight-etm4x-sysfs.o
+ obj-$(CONFIG_CORESIGHT_QCOM_REPLICATOR) += coresight-replicator-qcom.o
+ obj-$(CONFIG_CORESIGHT_STM) += coresight-stm.o
++obj-$(CONFIG_CORESIGHT_DEBUG) += coresight-debug.o
+diff --git a/drivers/hwtracing/coresight/coresight-debug.c b/drivers/hwtracing/coresight/coresight-debug.c
+new file mode 100644
+index 0000000..9553fb2
+--- /dev/null
++++ b/drivers/hwtracing/coresight/coresight-debug.c
+@@ -0,0 +1,377 @@
++/*
++ * Copyright (c) 2017 Linaro Limited. All rights reserved.
++ *
++ * Author: Leo Yan <leo.yan@linaro.org>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published by
++ * the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ */
++#include <linux/amba/bus.h>
++#include <linux/coresight.h>
++#include <linux/cpu.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/moduleparam.h>
++#include <linux/slab.h>
++#include <linux/smp.h>
++#include <linux/types.h>
++#include <linux/uaccess.h>
++
++#include "coresight-priv.h"
++
++#define EDPCSR				0x0A0
++#define EDCIDSR				0x0A4
++#define EDVIDSR				0x0A8
++#define EDPCSR_HI			0x0AC
++#define EDOSLAR				0x300
++#define EDPRSR				0x314
++#define EDDEVID1			0xFC4
++#define EDDEVID				0xFC8
++
++#define EDPCSR_PROHIBITED		0xFFFFFFFF
++
++/* bits definition for EDPCSR */
++#ifndef CONFIG_64BIT
++#define EDPCSR_THUMB			BIT(0)
++#define EDPCSR_ARM_INST_MASK		GENMASK(31, 2)
++#define EDPCSR_THUMB_INST_MASK		GENMASK(31, 1)
++#endif
++
++/* bits definition for EDPRSR */
++#define EDPRSR_DLK			BIT(6)
++#define EDPRSR_PU			BIT(0)
++
++/* bits definition for EDVIDSR */
++#define EDVIDSR_NS			BIT(31)
++#define EDVIDSR_E2			BIT(30)
++#define EDVIDSR_E3			BIT(29)
++#define EDVIDSR_HV			BIT(28)
++#define EDVIDSR_VMID			GENMASK(7, 0)
++
++/* bits definition for EDDEVID1 */
++#define EDDEVID1_PCSR_OFFSET_MASK	GENMASK(3, 0)
++#define EDDEVID1_PCSR_OFFSET_INS_SET	(0x0)
++
++/* bits definition for EDDEVID */
++#define EDDEVID_PCSAMPLE_MODE		GENMASK(3, 0)
++#define EDDEVID_IMPL_EDPCSR_EDCIDSR	(0x2)
++#define EDDEVID_IMPL_FULL		(0x3)
++
++struct debug_drvdata {
++	void __iomem	*base;
++	struct device	*dev;
++	int		cpu;
++
++	bool		edpcsr_present;
++	bool		edvidsr_present;
++	bool		pc_has_offset;
++
++	u32		eddevid;
++	u32		eddevid1;
++
++	u32		edpcsr;
++	u32		edpcsr_hi;
++	u32		edprsr;
++	u32		edvidsr;
++	u32		edcidsr;
++};
++
++static DEFINE_PER_CPU(struct debug_drvdata *, debug_drvdata);
++
++static void debug_os_unlock(struct debug_drvdata *drvdata)
++{
++	/* Unlocks the debug registers */
++	writel_relaxed(0x0, drvdata->base + EDOSLAR);
++	wmb();
++}
++
++/*
++ * According to ARM DDI 0487A.k, before access external debug
++ * registers should firstly check the access permission; if any
++ * below condition has been met then cannot access debug
++ * registers to avoid lockup issue:
++ *
++ * - CPU power domain is powered off;
++ * - The OS Double Lock is locked;
++ *
++ * By checking EDPRSR can get to know if meet these conditions.
++ */
++static bool debug_access_permitted(struct debug_drvdata *drvdata)
++{
++	/* CPU is powered off */
++	if (!(drvdata->edprsr & EDPRSR_PU))
++		return false;
++
++	/* The OS Double Lock is locked */
++	if (drvdata->edprsr & EDPRSR_DLK)
++		return false;
++
++	return true;
++}
++
++static void debug_read_regs(struct debug_drvdata *drvdata)
++{
++	drvdata->edprsr = readl_relaxed(drvdata->base + EDPRSR);
++
++	if (!debug_access_permitted(drvdata))
++		return;
++
++	if (!drvdata->edpcsr_present)
++		return;
++
++	CS_UNLOCK(drvdata->base);
++
++	debug_os_unlock(drvdata);
++
++	drvdata->edpcsr = readl_relaxed(drvdata->base + EDPCSR);
++
++	/*
++	 * As described in ARM DDI 0487A.k, if the processing
++	 * element (PE) is in debug state, or sample-based
++	 * profiling is prohibited, EDPCSR reads as 0xFFFFFFFF;
++	 * EDCIDSR, EDVIDSR and EDPCSR_HI registers also become
++	 * UNKNOWN state. So directly bail out for this case.
++	 */
++	if (drvdata->edpcsr == EDPCSR_PROHIBITED) {
++		CS_LOCK(drvdata->base);
++		return;
++	}
++
++	/*
++	 * A read of the EDPCSR normally has the side-effect of
++	 * indirectly writing to EDCIDSR, EDVIDSR and EDPCSR_HI;
++	 * at this point it's safe to read value from them.
++	 */
++	drvdata->edcidsr = readl_relaxed(drvdata->base + EDCIDSR);
++#ifdef CONFIG_64BIT
++	drvdata->edpcsr_hi = readl_relaxed(drvdata->base + EDPCSR_HI);
++#endif
++
++	if (drvdata->edvidsr_present)
++		drvdata->edvidsr = readl_relaxed(drvdata->base + EDVIDSR);
++
++	CS_LOCK(drvdata->base);
++}
++
++#ifndef CONFIG_64BIT
++static bool debug_pc_has_offset(struct debug_drvdata *drvdata)
++{
++	u32 pcsr_offset;
++
++	pcsr_offset = drvdata->eddevid1 & EDDEVID1_PCSR_OFFSET_MASK;
++
++	return (pcsr_offset == EDDEVID1_PCSR_OFFSET_INS_SET);
++}
++
++static unsigned long debug_adjust_pc(struct debug_drvdata *drvdata,
++				     unsigned long pc)
++{
++	unsigned long arm_inst_offset = 0, thumb_inst_offset = 0;
++
++	if (debug_pc_has_offset(drvdata)) {
++		arm_inst_offset = 8;
++		thumb_inst_offset = 4;
++	}
++
++	/* Handle thumb instruction */
++	if (pc & EDPCSR_THUMB) {
++		pc = (pc & EDPCSR_THUMB_INST_MASK) - thumb_inst_offset;
++		return pc;
++	}
++
++	/*
++	 * Handle arm instruction offset, if the arm instruction
++	 * is not 4 byte alignment then it's possible the case
++	 * for implementation defined; keep original value for this
++	 * case and print info for notice.
++	 */
++	if (pc & BIT(1))
++		pr_emerg("Instruction offset is implementation defined\n");
++	else
++		pc = (pc & EDPCSR_ARM_INST_MASK) - arm_inst_offset;
++
++	return pc;
++}
++#endif
++
++static void debug_dump_regs(struct debug_drvdata *drvdata)
++{
++	unsigned long pc;
++
++	pr_emerg("\tEDPRSR:  %08x (Power:%s DLK:%s)\n", drvdata->edprsr,
++		 drvdata->edprsr & EDPRSR_PU ? "On" : "Off",
++		 drvdata->edprsr & EDPRSR_DLK ? "Lock" : "Unlock");
++
++	if (!debug_access_permitted(drvdata) || !drvdata->edpcsr_present) {
++		pr_emerg("No permission to access debug registers!\n");
++		return;
++	}
++
++	if (drvdata->edpcsr == EDPCSR_PROHIBITED) {
++		pr_emerg("CPU is in Debug state or profiling is prohibited!\n");
++		return;
++	}
++
++#ifdef CONFIG_64BIT
++	pc = (unsigned long)drvdata->edpcsr_hi << 32 |
++	     (unsigned long)drvdata->edpcsr;
++#else
++	pc = debug_adjust_pc(drvdata, (unsigned long)drvdata->edpcsr);
++#endif
++
++	pr_emerg("\tEDPCSR:  [<%p>] %pS\n", (void *)pc, (void *)pc);
++	pr_emerg("\tEDCIDSR: %08x\n", drvdata->edcidsr);
++
++	if (!drvdata->edvidsr_present)
++		return;
++
++	pr_emerg("\tEDVIDSR: %08x (State:%s Mode:%s Width:%s VMID:%x)\n",
++		 drvdata->edvidsr,
++		 drvdata->edvidsr & EDVIDSR_NS ? "Non-secure" : "Secure",
++		 drvdata->edvidsr & EDVIDSR_E3 ? "EL3" :
++			(drvdata->edvidsr & EDVIDSR_E2 ? "EL2" : "EL1/0"),
++		 drvdata->edvidsr & EDVIDSR_HV ? "64bits" : "32bits",
++		 drvdata->edvidsr & (u32)EDVIDSR_VMID);
++}
++
++/*
++ * Dump out information on panic.
++ */
++static int debug_notifier_call(struct notifier_block *self,
++			       unsigned long v, void *p)
++{
++	int cpu;
++
++	pr_emerg("ARM external debug module:\n");
++
++	for_each_possible_cpu(cpu) {
++		if (!per_cpu(debug_drvdata, cpu))
++			continue;
++
++		pr_emerg("CPU[%d]:\n", per_cpu(debug_drvdata, cpu)->cpu);
++
++		debug_read_regs(per_cpu(debug_drvdata, cpu));
++		debug_dump_regs(per_cpu(debug_drvdata, cpu));
++	}
++
++	return 0;
++}
++
++static struct notifier_block debug_notifier = {
++	.notifier_call = debug_notifier_call,
++};
++
++static void debug_init_arch_data(void *info)
++{
++	struct debug_drvdata *drvdata = info;
++	u32 mode;
++
++	CS_UNLOCK(drvdata->base);
++
++	debug_os_unlock(drvdata);
++
++	/* Read device info */
++	drvdata->eddevid  = readl_relaxed(drvdata->base + EDDEVID);
++	drvdata->eddevid1 = readl_relaxed(drvdata->base + EDDEVID1);
++
++	/* Parse implementation feature */
++	mode = drvdata->eddevid & EDDEVID_PCSAMPLE_MODE;
++	if (mode == EDDEVID_IMPL_FULL) {
++		drvdata->edpcsr_present  = true;
++		drvdata->edvidsr_present = true;
++	} else if (mode == EDDEVID_IMPL_EDPCSR_EDCIDSR) {
++		drvdata->edpcsr_present  = true;
++		drvdata->edvidsr_present = false;
++	} else {
++		drvdata->edpcsr_present  = false;
++		drvdata->edvidsr_present = false;
++	}
++
++	CS_LOCK(drvdata->base);
++}
++
++static int debug_probe(struct amba_device *adev, const struct amba_id *id)
++{
++	void __iomem *base;
++	struct device *dev = &adev->dev;
++	struct debug_drvdata *drvdata;
++	struct resource *res = &adev->res;
++	struct device_node *np = adev->dev.of_node;
++	char buf[32];
++	static int debug_count;
++
++	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
++	if (!drvdata)
++		return -ENOMEM;
++
++	drvdata->cpu = np ? of_coresight_get_cpu(np) : 0;
++	drvdata->dev = &adev->dev;
++
++	dev_set_drvdata(dev, drvdata);
++
++	/* Validity for the resource is already checked by the AMBA core */
++	base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	drvdata->base = base;
++
++	get_online_cpus();
++	per_cpu(debug_drvdata, drvdata->cpu) = drvdata;
++
++	if (smp_call_function_single(drvdata->cpu,
++				debug_init_arch_data, drvdata, 1))
++		dev_err(dev, "Debug arch init failed\n");
++
++	put_online_cpus();
++
++	if (!debug_count++)
++		atomic_notifier_chain_register(&panic_notifier_list,
++					       &debug_notifier);
++
++	sprintf(buf, (char *)id->data, drvdata->cpu);
++	dev_info(dev, "%s initialized\n", buf);
++	return 0;
++}
++
++static struct amba_id debug_ids[] = {
++	{       /* Debug for Cortex-A53 */
++		.id	= 0x000bbd03,
++		.mask	= 0x000fffff,
++		.data   = "Coresight debug-CPU%d",
++	},
++	{       /* Debug for Cortex-A57 */
++		.id	= 0x000bbd07,
++		.mask	= 0x000fffff,
++		.data   = "Coresight debug-CPU%d",
++	},
++	{       /* Debug for Cortex-A72 */
++		.id	= 0x000bbd08,
++		.mask	= 0x000fffff,
++		.data   = "Coresight debug-CPU%d",
++	},
++	{ 0, 0 },
++};
++
++static struct amba_driver debug_driver = {
++	.drv = {
++		.name   = "coresight-debug",
++		.suppress_bind_attrs = true,
++	},
++	.probe		= debug_probe,
++	.id_table	= debug_ids,
++};
++builtin_amba_driver(debug_driver);
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
