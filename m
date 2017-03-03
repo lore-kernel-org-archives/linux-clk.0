@@ -1,68 +1,61 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-MIME-Version: 1.0
-In-Reply-To: <1490728490.20764.8.camel@baylibre.com>
-References: <20170328092545.4644-1-hgkr.klein@gmail.com> <20170328092545.4644-2-hgkr.klein@gmail.com>
- <1490716277.20764.6.camel@baylibre.com> <71489b62-78c8-7082-587e-8598dc43ca59@gmail.com>
- <1490728490.20764.8.camel@baylibre.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Tue, 28 Mar 2017 23:24:15 +0200
-Message-ID: <CAFBinCDF29+kQpedsJPqRy6fztWrj91Qi6tCno_2S6UCkhW7XQ@mail.gmail.com>
-Subject: Re: [PATCH v2,1/3] meson_uart: expose CLKID_UARTx
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Helmut Klein <hgkr.klein@gmail.com>, mturquette@baylibre.com, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <robin@protonic.nl>
+From: Robin van der Gracht <robin@protonic.nl>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Robin van der Gracht <robin@protonic.nl>
+Subject: [PATCH v3] clk: imx: clk-imx6ul: The i.mx6ul has no aips_tz3 clock
+Date: Fri,  3 Mar 2017 15:14:05 +0100
+Message-Id: <20170303141405.17581-1-robin@protonic.nl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome,
+The clock was mapped on CG15 (gpio2_clocks) in the CCRG0 register.
 
-On Tue, Mar 28, 2017 at 9:14 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> On Tue, 2017-03-28 at 20:18 +0200, Helmut Klein wrote:
->> i know for sure that the bluetooth chip of my system is connected to
->> uart_A. so this clock must be exposed.
->>
->> i don't know if the other 2 uarts are used on other hardware. so i will
->> remove them from my patch.
->
-> What I meant is device trees "upstream".
-> I would expect such patch as part of a series to add support for your board in
-> device-tree, with its bluetooth chipset.
-are you sure about this? Helmut is configuring the core clock of the
-UART controller(s) here. we have the same thing for many other drivers
-as well (MMC, SAR ADC, I2C, SPI, ethernet, you name it...) - these
-clocks are not part of a device specific .dts but rather the SoC
-specific dts (for example meson-gxbb.dtsi - because these clocks are
-not board specific).
-I guess most boards are not affected because the bootloader simply
-enables the UART0 core/gate clock and keeps it enabled when booting
-the kernel. additionally our clock gates are marked with
-CLK_IGNORE_UNUSED so if the bootloader keeps the gates enabled then
-we're not disabling it either.
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Robin van der Gracht <robin@protonic.nl>
+---
+Fixed another title typo in v3
 
-> I think it would better to drop this patch from the series.
-> You can either keep it for your personal work, or send it again when upstreaming
-> the support for your board and/or add the support for the bluetooth chip.
-if we decide to pass the core/gate clock directly in SoC.dtsi then we
-should think about doing it for all three non-AO UARTs (uart_a, uart_b
-and uart_c).
-we can test uart_b on GPIODV_24 and GPIODV_25 on the Khadas VIM board
-for example (pins 22 and 23 on the header, default mode of these pins
-is i2c_sck_a and i2c_sda_a, but we can re-configure it).
-uart_c unfortunately cannot be tested on the Khadas VIM board since
-it's only routed to GPIOX_8 and GPIOX_9 which are hard-wired to the
-bluetooth module's PCM pins (BTPCM_DOUT and BTPCM_DIN).
+ drivers/clk/imx/clk-imx6ul.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-for Helmut this would mean that instead of dropping this patch (or
-dropping CLKID_UART1 and CLKID_UART2 from this patch) he would rather
-have to *add* another patch (for meson-gxbb.dtsi and meson-gxl.dtsi)
-which passes the core clocks to the corresponding UART controllers
-(similar to the CLKID_SD_EMMC_ clocks).
-
-
-Regards,
-Martin
-
-
-[0] http://lxr.free-electrons.com/source/drivers/clk/meson/clkc.h?v=4.10#L110
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index 75c35fb..dbd6e59 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -73,7 +73,7 @@ static struct clk *clks[IMX6UL_CLK_END];
+ static struct clk_onecell_data clk_data;
+ 
+ static int const clks_init_on[] __initconst = {
+-	IMX6UL_CLK_AIPSTZ1, IMX6UL_CLK_AIPSTZ2, IMX6UL_CLK_AIPSTZ3,
++	IMX6UL_CLK_AIPSTZ1, IMX6UL_CLK_AIPSTZ2,
+ 	IMX6UL_CLK_AXI, IMX6UL_CLK_ARM, IMX6UL_CLK_ROM,
+ 	IMX6UL_CLK_MMDC_P0_FAST, IMX6UL_CLK_MMDC_P0_IPG,
+ };
+@@ -341,9 +341,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt2_serial",	"perclk",	base + 0x68,	26);
+ 	clks[IMX6UL_CLK_UART2_IPG]	= imx_clk_gate2("uart2_ipg",	"ipg",		base + 0x68,	28);
+ 	clks[IMX6UL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf",	base + 0x68,	28);
+-	if (clk_on_imx6ul())
+-		clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		base + 0x68,	30);
+-	else if (clk_on_imx6ull())
++	if (clk_on_imx6ull())
+ 		clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		 base + 0x80,	18);
+ 
+ 	/* CCGR1 */
+@@ -482,6 +480,9 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
+ 		clk_prepare_enable(clks[clks_init_on[i]]);
+ 
++	if (clk_on_imx6ull())
++		clk_prepare_enable(clks[IMX6UL_CLK_AIPSTZ3]);
++
+ 	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
+ 		clk_prepare_enable(clks[IMX6UL_CLK_USBPHY1_GATE]);
+ 		clk_prepare_enable(clks[IMX6UL_CLK_USBPHY2_GATE]);
+-- 
+2.9.3
