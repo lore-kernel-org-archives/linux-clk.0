@@ -1,109 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailapp01.imgtec.com ([195.59.15.196]:60214 "EHLO
-        imgpgp01.kl.imgtec.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753152AbdCFKQj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2017 05:16:39 -0500
-Date: Mon, 6 Mar 2017 10:16:04 +0000
-From: James Hogan <james.hogan@imgtec.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jason Uy <jason.uy@broadcom.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        David Daney <david.daney@cavium.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-mips@linux-mips.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH] serial: 8250_dw: Fix breakage when HAVE_CLK=n
-Message-ID: <20170306101603.GW996@jhogan-linux.le.imgtec.org>
-References: <CAHp75Ved2h2WyWBokEOsDmAyB3w3iM=uh-9Bq01mU1ST4FapWQ@mail.gmail.com>
- <20170304130958.23655-1-james.hogan@imgtec.com>
- <CAHp75Vc=VmxvkqjP7nY6K4CKXBJC-NND0CUMbzwjV2nmQ-5OTw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6h64vBu9tReNbGLX"
-In-Reply-To: <CAHp75Vc=VmxvkqjP7nY6K4CKXBJC-NND0CUMbzwjV2nmQ-5OTw@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	mike.leach@linaro.org
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v3 4/5] clk: hi6220: add debug APB clock
+Date: Fri,  3 Mar 2017 14:00:08 +0800
+Message-Id: <1488520809-31670-5-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
+References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
---6h64vBu9tReNbGLX
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The debug APB clock is absent in hi6220 driver, so this patch is to add
+support for it.
 
-On Sat, Mar 04, 2017 at 04:37:17PM +0200, Andy Shevchenko wrote:
-> On Sat, Mar 4, 2017 at 3:09 PM, James Hogan <james.hogan@imgtec.com> wrot=
-e:
-> > Commit 6a171b299379 ("serial: 8250_dw: Allow hardware flow control to be
-> > used") recently broke the 8250_dw driver on platforms which don't select
-> > HAVE_CLK, as dw8250_set_termios() gets confused by the behaviour of the
-> > fallback HAVE_CLK=3Dn clock API in linux/clk.h which pretends everything
-> > is fine but returns (valid) NULL clocks and 0 HZ clock rates.
-> >
-> > That 0 rate is written into the uartclk resulting in a crash at boot,
-> > e.g. on Cavium Octeon III based UTM-8 we get something like this:
-> >
-> > 1180000000800.serial: ttyS0 at MMIO 0x1180000000800 (irq =3D 41, base_b=
-aud =3D 25000000) is a OCTEON
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 2 PID: 1 at drivers/tty/serial/serial_core.c:441 uart_get=
-_baud_rate+0xfc/0x1f0
-> > ...
-> > Call Trace:
-> > ...
-> > [<ffffffff8149c2e4>] uart_get_baud_rate+0xfc/0x1f0
-> > [<ffffffff814a5098>] serial8250_do_set_termios+0xb0/0x440
-> > [<ffffffff8149c710>] uart_set_options+0xe8/0x190
-> > [<ffffffff814a6cdc>] serial8250_console_setup+0x84/0x158
-> > [<ffffffff814a11ec>] univ8250_console_setup+0x54/0x70
-> > [<ffffffff811901a0>] register_console+0x1c8/0x418
-> > [<ffffffff8149f004>] uart_add_one_port+0x434/0x4b0
-> > [<ffffffff814a1af8>] serial8250_register_8250_port+0x2d8/0x440
-> > [<ffffffff814aa620>] dw8250_probe+0x388/0x5e8
-> > ...
-> >
-> > The clock API is defined such that NULL is a valid clock handle so it
-> > wouldn't be right to check explicitly for NULL. Instead treat a
-> > clk_round_rate() return value of 0 as an error which prevents uartclk
-> > being overwritten.
-> >
->=20
-> You forgot to add that it is dependent to Heiko's patch
-> http://www.spinics.net/lists/linux-serial/msg25314.html
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ drivers/clk/hisilicon/clk-hi6220.c       | 1 +
+ include/dt-bindings/clock/hi6220-clock.h | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-Indeed I did. Sorry about that.
-
->=20
-> Patch looks good to me and shouldn't bring any regression to Intel
-> hardware (x86 is using clock framework).
->=20
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
-Thanks
-James
-
---6h64vBu9tReNbGLX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYvTbQAAoJEGwLaZPeOHZ6PR0P/Ri3CSMyjhXUgiu1LIRrGyyp
-QZIEbmylYFH5egbu1IFmK7J0+h8hT0PikUDtcEGxsVVXqS8EL7CkIuoo1IMJcVeV
-Zsbb2B/qxiezbjwyFOjucyE7ilxxu37fmsDBKMOUoZFvTrfc9HMfHKZBIEAGlNc3
-93pEEdv9f6gKk8B8wGLLuRDkCdTxyQv3RoCp6TNo7X+qJMnmYpk/RRTPBFd/aUft
-s/ziHb5WIJWTiY4bwVBI2Atr51inx61IU8uUDJahAJClFYOhMb2OgOfaO1jofPBP
-c14bDcbDUlvGisfvBOLxMB2/MTO4mtRrksEQ7TlqA4NacRncR6yjjndmfgbKvuU1
-IlamLaknN667/7Aefb5OuiLdArRH+Wy0+DTlAXEnQYG1jKYPg3h5xYiR1ynUFmux
-CaJFa0zwjf6O2cIt8qlJpzObfs7E6i3jUkXxiqLJjfyOrL8intPFgf9ckYQIadNG
-IpGk1V9gJwe99EjpQNndI8GApYSDHuehffA2Hzjvc7IRCl5eiC3m/AD2mMYp82h9
-300ufzUcZYu0nnHLh0bM30CohxNp3gA5GP75n5JnvIflid7+EB5gFGPohhCiUMqw
-/i8fWPQXIYxNG9Q1tfRSM7oDQ4qDpBp4Ri4VPdloIzioqg7HFKr/STcCfbaWca0I
-zWohi2YkPlD6NQ3Abe8H
-=ebpd
------END PGP SIGNATURE-----
-
---6h64vBu9tReNbGLX--
+diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
+index c0e8e1f..6879c1f 100644
+--- a/drivers/clk/hisilicon/clk-hi6220.c
++++ b/drivers/clk/hisilicon/clk-hi6220.c
+@@ -134,6 +134,7 @@ static struct hisi_gate_clock hi6220_separated_gate_clks_sys[] __initdata = {
+ 	{ HI6220_UART4_PCLK,    "uart4_pclk",    "uart4_src",      CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 8,  0, },
+ 	{ HI6220_SPI_CLK,       "spi_clk",       "clk_150m",       CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 9,  0, },
+ 	{ HI6220_TSENSOR_CLK,   "tsensor_clk",   "clk_bus",        CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 12, 0, },
++	{ HI6220_DAPB_CLK,      "dapb_clk",      "cs_dapb",        CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 18, 0, },
+ 	{ HI6220_MMU_CLK,       "mmu_clk",       "ddrc_axi1",      CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x240, 11, 0, },
+ 	{ HI6220_HIFI_SEL,      "hifi_sel",      "hifi_src",       CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x270, 0,  0, },
+ 	{ HI6220_MMC0_SYSPLL,   "mmc0_syspll",   "syspll",         CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x270, 1,  0, },
+diff --git a/include/dt-bindings/clock/hi6220-clock.h b/include/dt-bindings/clock/hi6220-clock.h
+index 6b03c84..b8ba665 100644
+--- a/include/dt-bindings/clock/hi6220-clock.h
++++ b/include/dt-bindings/clock/hi6220-clock.h
+@@ -124,7 +124,10 @@
+ #define HI6220_CS_DAPB		57
+ #define HI6220_CS_ATB_DIV	58
+ 
+-#define HI6220_SYS_NR_CLKS	59
++/* gate clock */
++#define HI6220_DAPB_CLK		59
++
++#define HI6220_SYS_NR_CLKS	60
+ 
+ /* clk in Hi6220 media controller */
+ /* gate clocks */
+-- 
+2.7.4
