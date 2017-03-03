@@ -1,39 +1,118 @@
-Return-Path: <marc.zyngier@arm.com>
-Subject: Re: [PATCH v3 00/12] Add Basic SoC support for MT6797
-To: Mars Cheng <mars.cheng@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>
-References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
- <1490229971.25996.2.camel@mtkswgap22>
-Cc: Rob Herring <robh+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, CC Hwang <cc.hwang@mediatek.com>,
- Loda Chou <loda.chou@mediatek.com>, Miles Chen <miles.chen@mediatek.com>,
- Jades Shih <jades.shih@mediatek.com>,
- Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang
- <my.chuang@mediatek.com>, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
- wsd_upstream@mediatek.com, linux-clk@vger.kernel.org
-From: Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <b22b31e0-a965-bc4f-e139-58f0d59d90a9@arm.com>
-Date: Thu, 23 Mar 2017 15:24:31 +0000
-MIME-Version: 1.0
-In-Reply-To: <1490229971.25996.2.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	mike.leach@linaro.org
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v3 2/5] coresight: refactor with function of_coresight_get_cpu
+Date: Fri,  3 Mar 2017 14:00:06 +0800
+Message-Id: <1488520809-31670-3-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
+References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mars,
+This is refactor to add function of_coresight_get_cpu(), so it's used to
+retrieve CPU id for coresight component. Finally can use it as a common
+function for multiple places.
 
-On 23/03/17 00:46, Mars Cheng wrote:
-> Hi Matthias, Rob, Marc, Stephen
-> 
-> gentle ping for this patch set.
+Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ drivers/hwtracing/coresight/of_coresight.c | 37 ++++++++++++++++++++----------
+ include/linux/coresight.h                  |  2 ++
+ 2 files changed, 27 insertions(+), 12 deletions(-)
 
-I appreciate that you're eager to see this reviewed, but less than 4
-days between a posting and a reminder is a bit too eager. We're not
-machines! ;-)
-
-Thanks,
-
-	M.
+diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
+index 629e031..d9a12fb 100644
+--- a/drivers/hwtracing/coresight/of_coresight.c
++++ b/drivers/hwtracing/coresight/of_coresight.c
+@@ -101,14 +101,36 @@ static int of_coresight_alloc_memory(struct device *dev,
+ 	return 0;
+ }
+ 
++int of_coresight_get_cpu(struct device_node *node)
++{
++	int cpu;
++	struct device_node *dn;
++
++	dn = of_parse_phandle(node, "cpu", 0);
++
++	/* Affinity defaults to CPU0 */
++	if (!dn)
++		return 0;
++
++	for_each_possible_cpu(cpu) {
++		if (dn == of_get_cpu_node(cpu, NULL)) {
++			of_node_put(dn);
++			return cpu;
++		}
++	}
++
++	/* Affinity to CPU0 if no cpu nodes are found */
++	of_node_put(dn);
++	return 0;
++}
++
+ struct coresight_platform_data *of_get_coresight_platform_data(
+ 				struct device *dev, struct device_node *node)
+ {
+-	int i = 0, ret = 0, cpu;
++	int i = 0, ret = 0;
+ 	struct coresight_platform_data *pdata;
+ 	struct of_endpoint endpoint, rendpoint;
+ 	struct device *rdev;
+-	struct device_node *dn;
+ 	struct device_node *ep = NULL;
+ 	struct device_node *rparent = NULL;
+ 	struct device_node *rport = NULL;
+@@ -175,16 +197,7 @@ struct coresight_platform_data *of_get_coresight_platform_data(
+ 		} while (ep);
+ 	}
+ 
+-	/* Affinity defaults to CPU0 */
+-	pdata->cpu = 0;
+-	dn = of_parse_phandle(node, "cpu", 0);
+-	for (cpu = 0; dn && cpu < nr_cpu_ids; cpu++) {
+-		if (dn == of_get_cpu_node(cpu, NULL)) {
+-			pdata->cpu = cpu;
+-			break;
+-		}
+-	}
+-	of_node_put(dn);
++	pdata->cpu = of_coresight_get_cpu(node);
+ 
+ 	return pdata;
+ }
+diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+index 2a5982c..7b29743 100644
+--- a/include/linux/coresight.h
++++ b/include/linux/coresight.h
+@@ -263,9 +263,11 @@ static inline int coresight_timeout(void __iomem *addr, u32 offset,
+ #endif
+ 
+ #ifdef CONFIG_OF
++extern int of_coresight_get_cpu(struct device_node *node);
+ extern struct coresight_platform_data *of_get_coresight_platform_data(
+ 				struct device *dev, struct device_node *node);
+ #else
++static int of_coresight_get_cpu(struct device_node *node) { return 0; }
+ static inline struct coresight_platform_data *of_get_coresight_platform_data(
+ 	struct device *dev, struct device_node *node) { return NULL; }
+ #endif
 -- 
-Jazz is not dead. It just smells funny...
+2.7.4
