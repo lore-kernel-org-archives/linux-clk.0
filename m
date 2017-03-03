@@ -1,43 +1,60 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 4/5] clk: qcom: gcc-msm8996: Mark gcc_mmss_noc_cfg_ahb_clk as a critical clock
-Date: Tue, 21 Mar 2017 11:45:22 +0530
-Message-Id: <1490076923-20194-5-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1490076923-20194-1-git-send-email-rnayak@codeaurora.org>
-References: <1490076923-20194-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 3 Mar 2017 08:12:03 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Peter Robinson <pbrobinson@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: sunxi-ng: tighten SoC deps on explicit AllWinner
+ SoCs
+Message-ID: <20170303071203.xbfu4t2jgwt3low3@lukather>
+References: <20170302174357.6246-1-pbrobinson@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="p7qxd2pjecup72hi"
+In-Reply-To: <20170302174357.6246-1-pbrobinson@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-we have gcc_mmss_noc_cfg_ahb_clk marked with a CLK_IGNORE_UNUSED. While
-this can prevent it from being disabled while its unused, it does not
-prevent it from being disabled when a child derived from the clock calls
-an explicit enable/disable.
-Mark this with a CLK_IS_CRITICAL and remove the CLK_IGNORE_UNUSED flag
-so its never disabled.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/qcom/gcc-msm8996.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--p7qxd2pjecup72hi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index 8abc200..8872985 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -1333,7 +1333,7 @@ enum {
- 			.name = "gcc_mmss_noc_cfg_ahb_clk",
- 			.parent_names = (const char *[]){ "config_noc_clk_src" },
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+On Thu, Mar 02, 2017 at 05:43:57PM +0000, Peter Robinson wrote:
+> Tighten the depends on the various AllWinn SoCs so we don't
+> inadvertantly get clock drivers when we're not wanting them
+> like 32 bit SoC clocks for 64 bit configs. Ensure there's
+> still test coverage though.
+>=20
+> Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--p7qxd2pjecup72hi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYuRdCAAoJEBx+YmzsjxAgXCIQAJTQUD/Vt2OtIQAuPJ4Qi6HV
+l/0VRzOMIyNHIDA74bbdGn/kgiwWj4M5t09RkQ6PHyPXS2REN4oo2xZ1icXTSs9o
+Ieg+FQqlUfBL//dxawfgIfIjYtjmdVDCSZ6jPOorZkMI3xQevt+3AkshBhO/S98S
+SDCLjw/MgaLyY6cwkdYe5u4GFJSS0j6H7eBc6fA4Wrqemo1YoxtsfxAPh1WA7o+R
+NCqdzgRf+PEglFbC6fO65ARsdT4uZISl7i2qZvc/GLImScDloZOHQBb7/xmmLWgW
+O4uoOliNWX28Kyzrud848SklSYP/OpPbLc9UF8kBTTnfngjn/IJWQDZpfayPkO/n
+C0bnD3ekVnOPx0Q6MMIaEergvBA1CzVLSC/j1sWUBRbuAlzHEW45hZNODOf/exog
+kNh1b4EQtl1rCNz6NZWMMpvcmv3kq3JbqfCEAgI60GH1g8/Z6YeNdCvawXEuEMhv
+5+qsKhi2l31PsOb/NWIDsbSz4Oo7Qmt6Q1EcZ0pcfc5QFonbSNyGZ+pVZRI8jsIX
+Ghwn7kEZ/4Cgh/aGtmm7ievkKnRMRMOBcDSYakeRp/uqitg76unpV+eRbV5bZdnH
+BfrK0s6vS/NvoO8GsaTfOXhgLNKxU1TX1I4mlq7KeVMDP0+W/YvAWG/WKWIml1jU
+HbRdd2C+IT2Gct7GE4iM
+=bHUV
+-----END PGP SIGNATURE-----
+
+--p7qxd2pjecup72hi--
