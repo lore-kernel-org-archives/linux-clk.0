@@ -1,141 +1,69 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org
-Cc: linus.walleij@linaro.org,
-	robh+dt@kernel.org,
-	andy.yan@rock-chips.com,
-	sboyd@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	mturquette@baylibre.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 5/6] ARM: dts: rockchip: rename core dtsi from RK1108 to RV1108
-Date: Fri, 17 Mar 2017 18:18:39 +0100
-Message-Id: <20170317171840.4683-6-heiko@sntech.de>
-In-Reply-To: <20170317171840.4683-1-heiko@sntech.de>
-References: <20170317171840.4683-1-heiko@sntech.de>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 3 Mar 2017 15:56:39 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/5] clk: sunxi-ng: Add driver for A83T CCU
+Message-ID: <20170303235639.GW25384@codeaurora.org>
+References: <20170214033526.16977-1-wens@csie.org>
+ <20170214033526.16977-5-wens@csie.org>
+ <20170214095819.utsftcvti5zdmlmi@lukather>
+ <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
+ <20170215094954.h3wyaxlqkeb342yu@lukather>
+ <20170301191705.GS25384@codeaurora.org>
+ <20170303095333.hgxoli2h7clailvo@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170303095333.hgxoli2h7clailvo@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andy Yan <andy.yan@rock-chips.com>
+On 03/03, Maxime Ripard wrote:
+> On Wed, Mar 01, 2017 at 11:17:05AM -0800, Stephen Boyd wrote:
+> 
+> > Can someone explain what the issue is? Could something like
+> > clk_get_phase() + clk_get_rate() tell us if we're in one mode
+> > vs. the other?
+> 
+> So we have two modes of operation for that clock, old vs new (I know,
+> I didn't pick the names).
+> 
+> The old mode is what we support right now. It has a combination of a
+> linear multiplier and divider, plus some phase controls.
+> 
+> The new mode however disables the phase controls and adds post-divider
+> of 2 on the rate.
+> 
+> We cannot really rely on the rate itself, since there's a huge overlap
+> between the rates we can obtain in the old and new modes. Same thing
+> for the phase, having a 0 deg phase is achieved both in the old and
+> new modes.
+> 
+> To make things worse, the new mode is only available on one out of
+> three MMC controllers (and associated clocks), and that MMC controller
+> needs to set a bit as well to switch to the new mode if needed. So we
+> definitely needs some synchronisation there, and also to be able to
+> retrieve if the mode switching is available, and if we're already
+> using that mode.
+> 
+> Mike agreed that the easiest way forward was to use a custom function.
+> 
 
-Rockchip finally named the SOC as RV1108, so change it
-for compatible.
+Ok. Is there any need to change the mode dynamically at runtime?
+Or could it be decided once at clk driver probe time/boot time
+and detected via set_phase() failing when we're in the new mode?
+At least, it sounds like set_phase() should bail out there
+because it doesn't exist, although it could be argued that
+setting the phase to something it already is set to is valid and
+shouldn't return an error.
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+I'm not saying I'm opposed to the custom function, just thinking
+of alternatives if MMC maintainers don't agree with the custom
+function.
 
-[adapt include in rk1108-evb.dts to not introduce errors]
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/boot/dts/rk1108-evb.dts               |  2 +-
- arch/arm/boot/dts/{rk1108.dtsi => rv1108.dtsi} | 20 ++++++++++----------
- 2 files changed, 11 insertions(+), 11 deletions(-)
- rename arch/arm/boot/dts/{rk1108.dtsi => rv1108.dtsi} (95%)
-
-diff --git a/arch/arm/boot/dts/rk1108-evb.dts b/arch/arm/boot/dts/rk1108-evb.dts
-index 3956cff4ca79..88fe0a8c4faa 100644
---- a/arch/arm/boot/dts/rk1108-evb.dts
-+++ b/arch/arm/boot/dts/rk1108-evb.dts
-@@ -40,7 +40,7 @@
- 
- /dts-v1/;
- 
--#include "rk1108.dtsi"
-+#include "rv1108.dtsi"
- 
- / {
- 	model = "Rockchip RK1108 Evaluation board";
-diff --git a/arch/arm/boot/dts/rk1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
-similarity index 95%
-rename from arch/arm/boot/dts/rk1108.dtsi
-rename to arch/arm/boot/dts/rv1108.dtsi
-index 1297924db6ad..437098b556eb 100644
---- a/arch/arm/boot/dts/rk1108.dtsi
-+++ b/arch/arm/boot/dts/rv1108.dtsi
-@@ -47,7 +47,7 @@
- 	#address-cells = <1>;
- 	#size-cells = <1>;
- 
--	compatible = "rockchip,rk1108";
-+	compatible = "rockchip,rv1108";
- 
- 	interrupt-parent = <&gic>;
- 
-@@ -113,7 +113,7 @@
- 	};
- 
- 	uart2: serial@10210000 {
--		compatible = "rockchip,rk1108-uart", "snps,dw-apb-uart";
-+		compatible = "rockchip,rv1108-uart", "snps,dw-apb-uart";
- 		reg = <0x10210000 0x100>;
- 		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
- 		reg-shift = <2>;
-@@ -127,7 +127,7 @@
- 	};
- 
- 	uart1: serial@10220000 {
--		compatible = "rockchip,rk1108-uart", "snps,dw-apb-uart";
-+		compatible = "rockchip,rv1108-uart", "snps,dw-apb-uart";
- 		reg = <0x10220000 0x100>;
- 		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
- 		reg-shift = <2>;
-@@ -141,7 +141,7 @@
- 	};
- 
- 	uart0: serial@10230000 {
--		compatible = "rockchip,rk1108-uart", "snps,dw-apb-uart";
-+		compatible = "rockchip,rv1108-uart", "snps,dw-apb-uart";
- 		reg = <0x10230000 0x100>;
- 		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
- 		reg-shift = <2>;
-@@ -155,17 +155,17 @@
- 	};
- 
- 	grf: syscon@10300000 {
--		compatible = "rockchip,rk1108-grf", "syscon";
-+		compatible = "rockchip,rv1108-grf", "syscon";
- 		reg = <0x10300000 0x1000>;
- 	};
- 
- 	pmugrf: syscon@20060000 {
--		compatible = "rockchip,rk1108-pmugrf", "syscon";
-+		compatible = "rockchip,rv1108-pmugrf", "syscon";
- 		reg = <0x20060000 0x1000>;
- 	};
- 
- 	cru: clock-controller@20200000 {
--		compatible = "rockchip,rk1108-cru";
-+		compatible = "rockchip,rv1108-cru";
- 		reg = <0x20200000 0x1000>;
- 		rockchip,grf = <&grf>;
- 		#clock-cells = <1>;
-@@ -173,7 +173,7 @@
- 	};
- 
- 	emmc: dwmmc@30110000 {
--		compatible = "rockchip,rk1108-dw-mshc", "rockchip,rk3288-dw-mshc";
-+		compatible = "rockchip,rv1108-dw-mshc", "rockchip,rk3288-dw-mshc";
- 		clock-freq-min-max = <400000 150000000>;
- 		clocks = <&cru HCLK_EMMC>, <&cru SCLK_EMMC>,
- 			 <&cru SCLK_EMMC_DRV>, <&cru SCLK_EMMC_SAMPLE>;
-@@ -185,7 +185,7 @@
- 	};
- 
- 	sdio: dwmmc@30120000 {
--		compatible = "rockchip,rk1108-dw-mshc", "rockchip,rk3288-dw-mshc";
-+		compatible = "rockchip,rv1108-dw-mshc", "rockchip,rk3288-dw-mshc";
- 		clock-freq-min-max = <400000 150000000>;
- 		clocks = <&cru HCLK_SDIO>, <&cru SCLK_SDIO>,
- 			 <&cru SCLK_SDIO_DRV>, <&cru SCLK_SDIO_SAMPLE>;
-@@ -197,7 +197,7 @@
- 	};
- 
- 	sdmmc: dwmmc@30130000 {
--		compatible = "rockchip,rk1108-dw-mshc", "rockchip,rk3288-dw-mshc";
-+		compatible = "rockchip,rv1108-dw-mshc", "rockchip,rk3288-dw-mshc";
- 		clock-freq-min-max = <400000 100000000>;
- 		clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>,
- 			 <&cru SCLK_SDMMC_DRV>, <&cru SCLK_SDMMC_SAMPLE>;
 -- 
-2.11.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
