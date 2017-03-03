@@ -1,71 +1,111 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 20 Mar 2017 14:21:15 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2] clk: tegra: add Tegra210 special resets
-Message-ID: <20170320132115.GI22463@ulmo.ba.sec>
-References: <1489582774-22217-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MFZs98Tklfu0WsCO"
-In-Reply-To: <1489582774-22217-1-git-send-email-pdeschrijver@nvidia.com>
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	mike.leach@linaro.org
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v3 5/5] arm64: dts: hi6220: register debug module
+Date: Fri,  3 Mar 2017 14:00:09 +0800
+Message-Id: <1488520809-31670-6-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
+References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Bind debug module driver for Hi6220.
 
---MFZs98Tklfu0WsCO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 64 +++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-On Wed, Mar 15, 2017 at 02:59:32PM +0200, Peter De Schrijver wrote:
-> Tegra210 has 2 special resets which don't follow the normal pattern:
-> DVCO and ADSP. Add them in this patch.
->=20
-> Changelog:
->=20
-> v2: add DT bindings file
->=20
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c         | 85 ++++++++++++++++++++++++++=
-++++++
->  include/dt-bindings/reset/tegra210-car.h | 13 +++++
->  2 files changed, 98 insertions(+)
->  create mode 100644 include/dt-bindings/reset/tegra210-car.h
-
-Applied to for-4.12/clk, thanks.
-
-Thierry
-
---MFZs98Tklfu0WsCO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP10sACgkQ3SOs138+
-s6GG3A//bWuGqGDLQcz7JjgQsAIQ584xtwX9xcvsF/aRJYwFyBq7YL+/h3b10Oeo
-7Ggyg0gWdnUKg19wACRS0cJY9efE1stc0HE2PBJb6brWSN6geazoDacvp3zV6w76
-ugjta6zmvd17A150faXamCdlzQGWjOH1/2zOyxOeyWNzfl84+G+lGnXaZtnt75t8
-vTj6uPY2/Rd17PsfC/fsK73iMvlrdAyqSDp232XdyzrgbzUPdWJ7CWz8zf9I75Y5
-QOPXvFrz1NGXvU4mjtatQOVTGjKLCX87e3gnY57PwCiMBY9U7LH7q4pM5wYGoobf
-3MhrjoU31ZWSauOjRASiwI1n2W/r8llLBvZ2NbBKtR2uT5Dd3C6C5xZ3W4OcyRNm
-b4dE78c3VELVkAU3bhTJARpL9kME3L1y6UHCI1ApWJCBJZyWX+QLMisFwDi9BgB5
-xbE2vEuueIbENX9veQKaehPXQCqushfG7THPHK1iMADHGNxalmMhO1VtY9udEvee
-dagiW2SUqWP7GjW14YVDlzfN6poTsDRVLCL+1PAE/ma4JRj1Sa67LV6mRiEXerZN
-4pxDAaztKsnUEQMd6SQjCnQDG5WljWslLWHeJSZbTPko0zHxPs6HOTM6BEIs49RJ
-ZPDMBc2PbxSJ0jLf10fL8tgeqT+aPeRgQSkD7NqYSoR/yjvHLjk=
-=aJ1q
------END PGP SIGNATURE-----
-
---MFZs98Tklfu0WsCO--
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+index 470461d..ed271ed 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+@@ -913,5 +913,69 @@
+ 				};
+ 			};
+ 		};
++
++		debug@f6590000 {
++			compatible = "arm,coresight-debug","arm,primecell";
++			reg = <0 0xf6590000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu0>;
++		};
++
++		debug@f6592000 {
++			compatible = "arm,coresight-debug","arm,primecell";
++			reg = <0 0xf6592000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu1>;
++		};
++
++		debug@f6594000 {
++			compatible = "arm,coresight-debug","arm,primecell";
++			reg = <0 0xf6594000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu2>;
++		};
++
++		debug@f6596000 {
++			compatible = "arm,coresight-debug","arm,primecell";
++			reg = <0 0xf6596000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu3>;
++		};
++
++		debug@f65d0000 {
++			compatible = "arm,coresight-debug","arm,primecell";
++			reg = <0 0xf65d0000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu4>;
++		};
++
++		debug@f65d2000 {
++			compatible = "arm,coresight-debug","arm,primecell";
++			reg = <0 0xf65d2000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu5>;
++		};
++
++		debug@f65d4000 {
++			compatible = "arm,coresight-debug","arm,primecell";
++			reg = <0 0xf65d4000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu6>;
++		};
++
++		debug@f65d6000 {
++			compatible = "arm,coresight-debug","arm,primecell";
++			reg = <0 0xf65d6000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu7>;
++		};
+ 	};
+ };
+-- 
+2.7.4
