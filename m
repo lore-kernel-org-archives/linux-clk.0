@@ -1,185 +1,153 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 13 Mar 2017 18:19:28 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
-	Kevin Hilman <khilman@baylibre.com>,
-	Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [RFC 0/2] CLK_SET_RATE_GATE and protection against changes
-Message-ID: <20170314011928.GG10239@codeaurora.org>
-References: <20170302173835.18313-1-jbrunet@baylibre.com>
- <20170307143823.GD10239@codeaurora.org>
- <1488902436.28627.2.camel@baylibre.com>
- <148909819219.16808.4472770855979808703@resonance>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Fri, 3 Mar 2017 10:53:33 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/5] clk: sunxi-ng: Add driver for A83T CCU
+Message-ID: <20170303095333.hgxoli2h7clailvo@lukather>
+References: <20170214033526.16977-1-wens@csie.org>
+ <20170214033526.16977-5-wens@csie.org>
+ <20170214095819.utsftcvti5zdmlmi@lukather>
+ <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
+ <20170215094954.h3wyaxlqkeb342yu@lukather>
+ <20170301191705.GS25384@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <148909819219.16808.4472770855979808703@resonance>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="afpdob5wjxivssig"
+In-Reply-To: <20170301191705.GS25384@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/09, Michael Turquette wrote:
-> Quoting Jerome Brunet (2017-03-07 08:00:36)
-> > On Tue, 2017-03-07 at 06:38 -0800, Stephen Boyd wrote:
-> > > On 03/02, Jerome Brunet wrote:
-> > > > 
-> > > > I tried to understand what happened but my understanding of CCF is
-> > > > limited,
-> > > > if the following is complete nonsense, feel free to (gently) mock
-> > > > me.
-> > > > CLK_SET_RATE_GATE only prevent rate change when the clock is busy
-> > > > and we
-> > > > through clk_core_set_rate_nolock. So if we call clk_set_rate
-> > > > directly on
-> > > > clock with CLK_SET_RATE_GATE, while another clock uses it, it shall
-> > > > fail. However if we reach this clock by walking up the clock tree,
-> > > > everything seems to be as if this flag did not exist. I think this
-> > > > explains
-> > > > why mpll0 was selected has best parent and updated.
-> > > 
-> > > Right. My understanding is that this is the desired behavior of
-> > > this flag. At least, this is what I recall when speaking with
-> > > Mike about this a year or two ago.
-> > > 
-> > > A few months ago, Jiada Wang reported a similar problem[1] and
-> > > I've never merged it because of the concern it will break
-> > > something due to the flag behavior changing. Perhaps the way
-> > > forward here is to add a new flag for this different behavior and
-> > > let drivers opt-in to it.
-> > > 
-> > 
-> > In this previous thread, you mentioned the idea of deleting the flag.
-> > While a bit radical, I kind of like it. The name, as it is, is
-> > misleading. The flag does not really enforce gating the clock to change
-> > the rate.
-> > Changing the behavior of the flag is also too agressive I guess.
-> > 
-> > What about renaming the current flag to CLK_SET_RATE_GATE_LEAF (or
-> > anything else) and clearly mark it as obsolete in the header with a bit
-> > of explanation ?
-> > 
-> > We could keep that old behavior around while providers ask themself
-> > whether they really need to gate to change rate or not.
-> 
-> Adding a new flag is safer, but we might start accruing more and more
-> technical debt with deprecated flags versus the new ones. We have some
-> of this already with .round_rate vs .determine_rate and some other
-> stuff.
-> 
-> Since -rc1 juuuuust came out, maybe we could try merging it and see what
-> happens?
-> 
-> Also, if we can come up with a better solution that covers all the use
-> cases, I would be fine to delete the flag altogether and cover the
-> existing users. I count only a handful:
-> 
-> wm831x, qcom, at91, sirf, acpi-lpss, axi-clkgen, cs2000, bcm, stm32,
-> h8300, imx, microchip, ux500, and the mediatek drm drivers.
-> 
-> OK, maybe more than handful ;-)
 
-I know for sure that qcom uses this flag incorrectly because I
-added it. On some of the older platforms we can't support rate
-changing in a glitch free manner so we really need to disable the
-clk across the rate switch.
+--afpdob5wjxivssig
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We used to forcibly disable the clk and then change the rate and
-then forcibly enable whatever we forcibly disabled all inside the
-clk ops under a register spinlock. That was before we converted
-to CCF. We may want to keep doing that, because it's confusing
-from a consumer perspective to know if a clk needs to be disabled
-or not when changing the rate (more on this point later).
+Hi Stephen
 
-> 
-> > 
-> > > 
-> > > Do the hardware designers have a frequency plan in mind when
-> > > designing the hardware so that we would know the PLLs they
-> > > planned to use for particular clks? Or is the whole thing
-> > > completely open ended and they expect software to figure out the
-> > > configuration of the clk tree at runtime based on what
-> > > frequencies are required on the different leaf clks (i2s/spdif).
-> 
-> Maybe they have a plan. If so they haven't told us yet ;-)
+On Wed, Mar 01, 2017 at 11:17:05AM -0800, Stephen Boyd wrote:
+> On 02/15, Maxime Ripard wrote:
+> > On Tue, Feb 14, 2017 at 06:26:39PM +0800, Chen-Yu Tsai wrote:
+> > > On Tue, Feb 14, 2017 at 5:58 PM, Maxime Ripard
+> > > <maxime.ripard@free-electrons.com> wrote:
+> > > > On Tue, Feb 14, 2017 at 11:35:25AM +0800, Chen-Yu Tsai wrote:
+> > > >> +/*
+> > > >> + * MMC2 supports what's called the "new timing mode". The CCU and=
+ the MMC
+> > > >> + * controller must be in sync about which mode is used. The new m=
+ode moves
+> > > >> + * the clock delay controls (and possibly the delay lines) into t=
+he MMC
+> > > >> + * block. Also, the output of the clock is divided by 2. The outp=
+ut and
+> > > >> + * sample phase clocks are unused under this mode.
+> > > >> + *
+> > > >> + * This new mode seems to be preferred. Hence we force this clock=
+ to the
+> > > >> + * new mode. And we don't add the phase clocks.
+> > > >> + */
+> > > >
+> > > > I'm sorry, but I said this several times, this isn't working. We
+> > > > should model it properly, and not hack this around in the clock
+> > > > driver.
+> > > >
+> > > > As you say in your comment, the MMC driver needs to be aware about
+> > > > which mode is used, in order to also set a bit in one of its regist=
+ers
+> > > > accordingly, and modify its sampling behaviour.
+> > > >
+> > > > The new timing is preferred, but our previous clock implementations
+> > > > didn't hardcode it, so we can't even rely on that behaviour to alwa=
+ys
+> > > > write it in our driver.
+> > >=20
+> > > Correct. With the A83T there has never been a merged clock driver tho=
+ugh.
+> > > I realize this is a one off thing.
+> > >=20
+> > > > This is not something specific to the A83T, but is found in all the
+> > > > SoCs since the A23, so we need to come up with a good solution to
+> > > > address that.
+> > > >
+> > > > I'm not sure what a good solution would be though. One would be to
+> > > > just have a private function of our own to switch in the new mode (=
+if
+> > > > relevant, because only the MMC2 controllers have it), but that would
+> > > > lead to troubles with !sunxi-ng. Not something we can't deal with, =
+but
+> > > > some extra precautions should be taken (make sure to protect the ca=
+ll
+> > > > through an ifdef / IS_DEFINED, check that the sunxi-ng driver has b=
+een
+> > > > probed, etc.)
+> > >=20
+> > > If the custom function route is acceptable, I'll come up with somethi=
+ng.
+> >=20
+> > I think it would be a great start yes. I'll try to discuss it with
+> > Mike and Stephen at ELC and see what they think about that.
+> >=20
+>=20
+> I didn't hear anything at ELC.
 
-Great!
+Yeah, sorry, I ended up discussing this with Mike.
 
-> 
-> Are you thinking about the ccr stuff here for discrete clock
-> plan/operating points?
+> Can someone explain what the issue is? Could something like
+> clk_get_phase() + clk_get_rate() tell us if we're in one mode
+> vs. the other?
 
-I'm not really thinking ccr here, just that hardware designers
-typically figure out some static configuration of the clk tree
-that doesn't lead to these sorts of problems. The problems
-typically happen when we start using the hardware in ways the
-designers never thought, and then we get into these problems
-where we have to dynamically calculate the clk tree
-configuration.
+So we have two modes of operation for that clock, old vs new (I know,
+I didn't pick the names).
 
-> 
-> > 
-> > >  I haven't
-> > > thought that through completely, but it may work enough to make
-> > > sure the rate can't change while still allowing other clks to get
-> > > rates they want by searching the tree for another source.
-> > 
-> > For this use case, I have to admit I was probably abusing the
-> > CLK_SET_RATE_GATE to fit my use case ;)
-> > 
-> > The clock does not need to be gated for the rate to change, but the
-> > rate can't change if a consumer depends on it.
-> > 
-> > Here another idea: yet another flag (CLK_SET_RATE_PROTECT).
-> > It would require the clock to be prepared to be allowed to set the
-> > rate. if prepare_count > 1, it would return the current rate, acting as
-> > fixed clock. This allows determine_rate to switch to better parent if
-> > available, or try to make the best out of what is available.
-> 
-> So I think this idea is getting somewhere, but it should not be a flag.
-> Instead we could have a clk_lock_rate() and clk_unlock_rate() function,
-> and even a nice helper named clk_set_rate_lock() that wraps
-> clk_set_rate() and clk_lock_rate().
-> 
-> In order to make it easy to track whether parents of a clock are allowed
-> to be changed by a sibling we should introduce a rate_lock_count member to
-> struct clk_core and incremented it up the parent chain exactly how we do
-> already for prepare_count and enable_count. Any time rate_lock_count > 0
-> then we cannot change that clock rate.
-> 
-> I admit that clk_lock_rate() could be satisfied by using a range where
-> min == max, but the problem there is that we do not propagate rate
-> clocks up the parent chain to make it easy to figure out of rate changes
-> are acceptable.
+The old mode is what we support right now. It has a combination of a
+linear multiplier and divider, plus some phase controls.
 
-I lost you here. We should be handling constraints in the
-framework, so min == max should make it impossible to change the
-rate of that clk if it would be affected. The rate propagation up
-the tree is supposed to happen so that we know what range of
-acceptable rates is possible on parent clks.
+The new mode however disables the phase controls and adds post-divider
+of 2 on the rate.
 
-> 
-> Additionally the "range" semantics say nothing about whether a
-> downstream peripheral will glitch during a clock rate change during an
-> operation, which was the idea behind CLK_SET_RATE_GATE, but that flag
-> doesn't handle the sibling-blows-up-everything corner case.
+We cannot really rely on the rate itself, since there's a huge overlap
+between the rates we can obtain in the old and new modes. Same thing
+for the phase, having a 0 deg phase is achieved both in the old and
+new modes.
 
-Agreed. But that sort of knowledge shouldn't always be put on the
-consumer of the clk to know and indicate to the framework.
-Sometimes providers have a glitch free mux that can handle rate
-changes in a glitch free manner. So providers should be
-indicating they can't perform glitch free rate changes through
-some flag or they should ensure they can handle things glitch
-free via coordinated clk rates.
+To make things worse, the new mode is only available on one out of
+three MMC controllers (and associated clocks), and that MMC controller
+needs to set a bit as well to switch to the new mode if needed. So we
+definitely needs some synchronisation there, and also to be able to
+retrieve if the mode switching is available, and if we're already
+using that mode.
 
-I would say drivers don't really care to say they can or can't
-handle glitches downstream either. Drivers most likely _always_
-want it to be glitch free when they call clk_set_rate(), so we
-should make it that way in the core framework by figuring out if
-something downstream of whatever changes rate will glitch and
-taking the right action to avoid that. I've only ever seen this
-as disabling clks downstream of the rate changing source, but
-maybe there are other solutions. Probably we can put this
-information into the rate request structure and act upon it in
-the core.
+Mike agreed that the easiest way forward was to use a custom function.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--afpdob5wjxivssig
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYuT0ZAAoJEBx+YmzsjxAgCVYQAKoZWsFI0CYygLxeogubw9zQ
+SnMB4hhU0wDkMvjcDuF+9IfLWStSulSKAxZtd7l8J6O39RsdqCAEIPJFSTYA86ig
+Vq5Wvkgny6p7wM0d4mULgrBDZK3Ft99z9ZBPMmU2nyASOOwMzsCzqZ1zq3vP6ZBR
+zzq6I2m8ZnlbJm2CY3Q+CNeNmOwdgtmvuBOoPmSyCI/eXciMVnT8aBydBbBCASHr
+5/W0Jwb2rCmLQompXKZ6gT5/usvpe7JHz83dJC4AHxRqe9knnPho+Uy/xt4J54HW
+xGiUKB/o/KYl/dRXPK+QOuASRUI+Pa4Kb4Dg/3Hp+GZg0VRvcP32mSz3RxEZHV6g
+C11tEf5N85cRPcKQzGQGEzNV+mk4pdecHt7R7Jo8ce5WcTRPRlyjmXCJWDlwF2Bp
+0BJBlJfw2M7lzlg4Vb5U7TJCiFoC42ozrZkStkDy3xB91nhDmcgpGQ9GhM9KBa//
+z9ySBJnPYRwTARhhcIuI3IC3D7EX59ascEIDFk3rZhU/PdYPyIdecTw/UDg5HzTw
+WxDq5+k17Oa1BhuTd+dEtMpoceZYst58ISSb1fZw14tQDGX+MS7LdUqv8hVFvKDf
+77idJZPtGNrXDMNgFLZYS8dVfNjw7jA+PrfVW3REIaXQjZmKxnoz9hC8MYn8X8+i
+xT+DynwbY7bIR0KtWLIj
+=W99n
+-----END PGP SIGNATURE-----
+
+--afpdob5wjxivssig--
