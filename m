@@ -1,63 +1,102 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	carlo@caione.org,
-	khilman@baylibre.com
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/5] clk: meson-gxbb: Add GP0 PLL init parameters
-Date: Wed, 22 Mar 2017 11:32:24 +0100
-Message-Id: <1490178747-14837-3-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1490178747-14837-1-git-send-email-narmstrong@baylibre.com>
-References: <1490178747-14837-1-git-send-email-narmstrong@baylibre.com>
+	linux-clk@vger.kernel.org,
+	mike.leach@linaro.org
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v3 0/5] coresight: enable debug module
+Date: Fri,  3 Mar 2017 14:00:04 +0800
+Message-Id: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Tha Amlogic GXBB SoC GP0 PLL needs some vendor provided parameters to be
-initializated in the the GP0 control registers before configuring the rate
-with the rate table provided parameters.
+ARMv8 architecture reference manual (ARM DDI 0487A.k) Chapter H7 "The
+Sample-based Profiling Extension" has description for sampling
+registers, we can utilize these registers to check program counter
+value with combined CPU exception level, secure state, etc. So this is
+helpful for CPU lockup bugs, e.g. if one CPU has run into infinite loop
+with IRQ disabled; the 'hang' CPU cannot switch context and handle any
+interrupt, so it cannot handle SMP call for stack dump, etc.
 
-GXBB GP0 PLL tweaks are also selected to respect the vendor init procedure.
+This patch series is to enable coresight debug module with sample-based
+registers and register call back notifier for PCSR register dumping
+when panic happens, so we can see below dumping info for panic; and
+this patch series has considered the conditions for access permission
+for debug registers self, so this can avoid access debug registers when
+CPU power domain is off; the driver also try to figure out the CPU is
+in secure or non-secure state.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/gxbb.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+The last two patches in this series is to enable debug unit on 96boards
+Hikey, the first patch is to add apb clock for debug unit and the second
+patch is to add DT nodes for debug unit. As result we can below log
+after input command: echo c > /proc/sysrq-trigger:
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index d07dc22..db95038 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -352,6 +352,13 @@
- 	},
- };
- 
-+struct pll_params_table gxbb_gp0_params_table[] = {
-+	PLL_PARAM(HHI_GP0_PLL_CNTL, 0x6a000228),
-+	PLL_PARAM(HHI_GP0_PLL_CNTL2, 0x69c80000),
-+	PLL_PARAM(HHI_GP0_PLL_CNTL3, 0x0a5590c4),
-+	PLL_PARAM(HHI_GP0_PLL_CNTL4, 0x0000500d),
-+};
-+
- static struct meson_clk_pll gxbb_gp0_pll = {
- 	.m = {
- 		.reg_off = HHI_GP0_PLL_CNTL,
-@@ -368,6 +375,12 @@
- 		.shift   = 16,
- 		.width   = 2,
- 	},
-+	.params = {
-+		.params_table = gxbb_gp0_params_table,
-+		.params_count =	ARRAY_SIZE(gxbb_gp0_params_table),
-+		.no_init_reset = true,
-+		.clear_reset_for_lock = true,
-+	},
- 	.rate_table = gp0_pll_rate_table,
- 	.rate_count = ARRAY_SIZE(gp0_pll_rate_table),
- 	.lock = &clk_lock,
+ARM external debug module:
+CPU[0]:
+ EDPRSR:  0000000b (Power:On DLK:Unlock)
+ EDPCSR:  [<ffff00000808eb54>] handle_IPI+0xe4/0x150
+ EDCIDSR: 00000000
+ EDVIDSR: 90000000 (State:Non-secure Mode:EL1/0 Width:64bits VMID:0)
+CPU[1]:
+ EDPRSR:  0000000b (Power:On DLK:Unlock)
+ EDPCSR:  [<ffff0000087a64c0>] debug_notifier_call+0x108/0x288
+ EDCIDSR: 00000000
+ EDVIDSR: 90000000 (State:Non-secure Mode:EL1/0 Width:64bits VMID:0)
+
+[...]
+
+Changes from v2:
+* According to Mathieu Poirier suggestion, applied some minor fixes.
+* Added two extra patches for enabling debug module on Hikey.
+
+Changes from v1:
+* According to Mike Leach suggestion, removed the binding for debug
+  module clocks which have been directly provided by CPU clocks.
+* According to Mathieu Poirier suggestion, added function
+  of_coresight_get_cpu() and some minor refactors for debug module
+  driver.
+
+Changes from RFC:
+* According to Mike Leach suggestion, added check for EDPRSR to avoid
+  lockup; added supporting EDVIDSR and EDCIDSR registers.
+* According to Mark Rutland and Mathieu Poirier suggestion, rewrote
+  the documentation for DT binding.
+* According to Mark and Mathieu suggestion, refined debug driver.
+
+
+Leo Yan (5):
+  coresight: bindings for debug module
+  coresight: refactor with function of_coresight_get_cpu
+  coresight: add support for debug module
+  clk: hi6220: add debug APB clock
+  arm64: dts: hi6220: register debug module
+
+ .../devicetree/bindings/arm/coresight-debug.txt    |  40 +++
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi          |  64 ++++
+ drivers/clk/hisilicon/clk-hi6220.c                 |   1 +
+ drivers/hwtracing/coresight/Kconfig                |  10 +
+ drivers/hwtracing/coresight/Makefile               |   1 +
+ drivers/hwtracing/coresight/coresight-debug.c      | 377 +++++++++++++++++++++
+ drivers/hwtracing/coresight/of_coresight.c         |  37 +-
+ include/dt-bindings/clock/hi6220-clock.h           |   5 +-
+ include/linux/coresight.h                          |   2 +
+ 9 files changed, 524 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/coresight-debug.txt
+ create mode 100644 drivers/hwtracing/coresight/coresight-debug.c
+
 -- 
-1.9.1
+2.7.4
