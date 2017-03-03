@@ -1,50 +1,90 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 30 Mar 2017 17:49:20 -0500
-From: Rob Herring <robh@kernel.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org, Suzuki.Poulose@arm.com, sudeep.holla@arm.com
-Subject: Re: [PATCH v5 1/9] coresight: bindings for CPU debug module
-Message-ID: <20170330224920.ogwoymnxlhf7d72z@rob-hp-laptop>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
- <1490466197-29163-2-git-send-email-leo.yan@linaro.org>
+Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH v2 3/3] ARM64: dts: meson-gx: Add MALI nodes for GXBB and
+ GXL
+References: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
+ <1488365164-22861-4-git-send-email-narmstrong@baylibre.com>
+ <e26cf584-dab2-2702-f7e6-b28f750fa00c@suse.de>
+ <e80d9fb0-1d71-7cab-5e32-72316474fdfc@baylibre.com>
+Date: Fri, 03 Mar 2017 11:29:12 -0800
+In-Reply-To: <e80d9fb0-1d71-7cab-5e32-72316474fdfc@baylibre.com> (Neil
+ Armstrong's message of "Thu, 2 Mar 2017 13:47:26 +0100")
+Message-ID: <m2tw7a17nb.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1490466197-29163-2-git-send-email-leo.yan@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
+List-Post: <mailto:linux-amlogic@lists.infradead.org>
+List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, sboyd@codeaurora.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, carlo@caione.org,
+ linux-amlogic@lists.infradead.org,
+ Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
+Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Mar 26, 2017 at 02:23:09AM +0800, Leo Yan wrote:
-> According to ARMv8 architecture reference manual (ARM DDI 0487A.k)
-> Chapter 'Part H: External debug', the CPU can integrate debug module
-> and it can support self-hosted debug and external debug. Especially
-> for supporting self-hosted debug, this means the program can access
-> the debug module from mmio region; and usually the mmio region is
-> integrated with coresight.
-> 
-> So add document for binding debug component, includes binding to APB
-> clock; and also need specify the CPU node which the debug module is
-> dedicated to specific CPU.
-> 
-> Suggested-by: Mike Leach <mike.leach@linaro.org>
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  .../bindings/arm/coresight-cpu-debug.txt           | 48 ++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
-
-Acked-by: Rob Herring <robh@kernel.org>
+TmVpbCBBcm1zdHJvbmcgPG5hcm1zdHJvbmdAYmF5bGlicmUuY29tPiB3cml0ZXM6Cgo+IEhpIEFu
+ZHJlYXMsCj4gT24gMDMvMDIvMjAxNyAwMTozMSBQTSwgQW5kcmVhcyBGw6RyYmVyIHdyb3RlOgo+
+PiBIaSBOZWlsLAo+PiAKPj4gQW0gMDEuMDMuMjAxNyB1bSAxMTo0NiBzY2hyaWViIE5laWwgQXJt
+c3Ryb25nOgo+Pj4gVGhlIHNhbWUgTUFMSS00NTAgTVAzIEdQVSBpcyBwcmVzZW50IGluIHRoZSBH
+WEJCIGFuZCBHWEwgU29Dcy4KPj4gCj4+IEZpcnN0IG9mIGFsbCwgYW55IHJlYXNvbiB5b3UncmUg
+dXBwZXItY2FzaW5nIE1hbGkgaW4gdGhlIGNvbW1pdCBtZXNzYWdlPwo+PiBBUk0gZG9lc24ndC4K
+Pgo+IE5vIHJlYXNvbiwgb25seSBhIHR5cGUsIGluZGVlZCBpdCB3YXMgbG93ZXItY2FzaW5nIG9u
+IHRoZSB2MS4KPiBXaWxsIGZpeCBpbiB2Mi4KPgo+PiAKPj4+Cj4+PiBUaGUgbm9kZSBpcyBzaW1w
+bHkgYWRkZWQgaW4gdGhlIG1lc29uLWd4YmIuZHRzaSBmaWxlLgo+PiAKPj4gVGhlIEdYQkIgcGFy
+dCBsb29rcyBmaW5lIG9uIGEgcXVpY2sgbG9vay4KPj4gCj4+Pgo+Pj4gRm9yIEdYTCwgc2luY2Ug
+YSBsb3QgaXMgc2hhcmVkIHdpdGggdGhlIEdYTSB0aGF0IGhhcyBhIE1BTEktVDgyMCBJUCwgdGhp
+cwo+Pj4gcGF0Y2ggYWRkcyBhIG5ldyBtZXNvbi1neGwtbWFsaS5kdHNpIGFuZCBpcyBpbmNsdWRl
+ZCBpbiB0aGUgU29DIHNwZWNpZmljCj4+PiBkdHNpIGZpbGVzLgo+PiAKPj4gVGhpcyBwYXJ0IGlz
+IHNsaWdodGx5IGNvbmZ1c2luZyB0aG91Z2guCj4+IAo+PiBXaGF0IGV4YWN0bHkgaXMgdGhlIEdY
+TCB2cy4gR1hNIGRpZmZlcmVuY2UgdGhhdCB0aGlzIGNhbid0IGJlIGhhbmRsZWQgYnkKPj4gb3Zl
+cnJpZGluZyBub2RlIHByb3BlcnRpZXMgY29tcGF0aWJsZS9pbnRlcnJ1cHRzL2Nsb2Nrcz8gSSBh
+bSBtaXNzaW5nIGEKPj4gR1hNIHBhdGNoIGluIHRoaXMgc2VyaWVzIGFzIHJhdGlvbmFsZSBmb3Ig
+ZG9pbmcgaXQgdGhpcyB3YXkuCj4+IAo+PiBJbiBwYXJ0aWN1bGFyIEkgYW0gd29uZGVyaW5nIHdo
+ZXRoZXIgdGhlIHdob2xlIEdYTS1pbmhlcml0cy1mcm9tLUdYTAo+PiBjb25jZXB0IGlzIGZsYXdl
+ZCBhbmQgc2hvdWxkIGJlIGFkanVzdGVkIGlmIHRoaXMgbGVhZHMgdG8gc2Vjb25kYXJ5Cj4+IC5k
+dHNpIGZpbGVzIGxpa2UgdGhpczogTXkgcHJvcG9zYWwgd291bGQgYmUgdG8gaW5zdGVhZCBjcmVh
+dGUgYQo+PiBtZXNvbi1neGwtZ3htLmR0c2ksIHRoYXQgbWVzb24tZ3hsLmR0c2kgYW5kIG1lc29u
+LWd4bS5kdHNpIGNhbiBpbmhlcml0Cj4+IHRoZSBjdXJyZW50IGNvbW1vbiBwYXJ0cyBmcm9tLCB0
+aGVuIHRoZSBNYWxpIGJpdHMgY2FuIHNpbXBseSBnbyBpbnRvCj4+IG1lc29uLWd4bC5kdHNpIHdp
+dGhvdXQgZXh0cmEgI2luY2x1ZGVzIG5lZWRlZCBpbiBTOTA1WCBhbmQgUzkwNUQuIFdoaWxlCj4+
+IGl0J3Mgc2xpZ2h0bHkgbW9yZSB3b3JrIHRvIHNwbGl0IG9uY2UgYWdhaW4sIEkgdGhpbmsgaXQg
+d291bGQgYmUgY2xlYW5lci4KPgo+IFRoZSBHWEwgYW5kIEdYTSBkaWZmZXJlbmNlcyBhcmUgdmVy
+eSBzbWFsbCA6Cj4gIC0gVGhleSBzaGFyZSB0aGUgc2FtZSBjbG9jayB0cmVlCj4gIC0gVGhleSBz
+aGFyZSB0aGUgc2FtZSBwaW5jdHJsIGFuZCBldmVuIHRoZSBzYW1lIHBpbm91dCAoUzkwNUQgYW5k
+IFM5MTIgYXJlIHBpbi10by1waW4gY29tcGF0aWJsZSkKPiAgLSBUaGV5IHNoYXJlIGFsbCB0aGUg
+cGVyaXBoZXJhbHMKPgo+IFRoZSBvbmx5IGNoYW5nZXMgYXJlIDoKPiAgLSBFbmhhbmNlZCB2aWRl
+byBlbmNvZGluZyBhbmQgZGVjb2Rpbmcgc3VwcG9ydCwgdGhpcyB3aWxsIG5lZWQgYSBmYW1pbHkt
+c3BlY2lmaWMgY29tcGF0aWJsZSB3aGVuIHB1c2hlZAo+ICAtIFNsaWdodGx5IGRpZmZlcmVuY2Vz
+IGluIHRoZSBWaWRlbyBQcm9jZXNzaW5nIFVuaXQsIHRoaXMgaXMgd2h5IEkgaW50cm9kdWNlZCBm
+YW1pbHktc3BlY2lmaWMgY29tcGF0aWJsZXMKPiAgLSBBIHNlY29uZGFyeSBDb3J0ZXgtQTUzIGNs
+dXN0ZXIKPiAgLSBBIHNlY29uZGFyeSBTQ1BJIGNwdWZyZXEgY2xvY2sgZW50cnkKPiAgLSBBIGRp
+ZmZlcmVudCBNYWxpIGNvcmUsIGJ1dCB3aXRoIHRoZSBzYW1lIGludGVycnVwdHMgKGxlc3MgYnV0
+IHRoZXkgc2hhcmUgdGhlIHNhbWUgbG93ZXIgaW50ZXJydXB0cyksIGNsb2NrcyBhbmQgbWVtb3J5
+IHNwYWNlCj4KPiBUaGlzIGlzIHdoeSBpdCB3YXMgZGVjaWRlZCB0byBoYXZlIGEgc3ViLWR0c2ks
+IGhhdmluZyBhIHNlY29uZGFyeSBkdHNpIHdpbGwgc2ltcGx5IGNvcHkgOTklIG9mIHRoZSBHWEwg
+ZHRzaSwKPiBidXQgc3VyZWx5IHdlIGNvdWxkIGFsc28gaGF2ZSBhbiBpbnRlcm1lZGlhdGUgZHRz
+aSBidXQgZm9yIGJvYXJkcyBJJ20gb2sgd2l0aCBpdCwgYnV0IGxlc3MgZm9yIGEgU29DIGR0c2ks
+Cj4gc2luY2UgaXQgY291bGQgbGVhZCB0byBzb21lIGNvbmZ1c2lvbi4KPgo+IEZpbmFsbHksIHll
+cyBJIGNvdWxkIGhhdmUgYWRkZWQgdGhlIG1hbGkgbm9kZSB0byB0aGUgR1hMIGR0c2ksIGJ1dCB0
+aGUgbWlkZ2FyZCBNYWxpIGR0LWJpbmRpbmdzIGFyZSBub3QgdXBzdHJlYW0KPiBhbmQgdGhlIGZh
+bWlseSBpcyB0b28gYmlnIGFuZCByZWNlbnQgZW5vdWdoIHRvIGNvbnNpZGVyIGhhdmluZyBzdGFi
+bGUgYmluZGluZ3MgZm9yIG5vdy4KPgo+IE5ldmVydGhlbGVzcywgbm90aGluZyBpcyBmaW5hbCwg
+dGhpcyBneGwtbWFsaS5kdHNpIGNvdWxkIGJlIG1lcmdlZCBpbnRvIHRoZSBHWEwgZHRzaSBpbiB0
+aGUgZnV0dXJlIHdoZW4gd2UKPiBoYXZlIHByb3BlciBkdC1iaW5kaW5ncyBhbmQgYSByZWFsIHN1
+cHBvcnQgb2YgdGhlIFQ4MjAgTWFsaSBvbiB0aGUgUzkxMi4KPgo+IEtldmluLCB3aGF0J3MgeW91
+ciB0aG91Z2h0IGFib3V0IHRoaXMgPwoKSSBkb24ndCBoYXZlIGEgc3Ryb25nIHByZWZlcmVuY2Uu
+ICBJJ20gT0sgd2l0aCBhIHNlcGFyYXRlIE1hbGkgLmR0c2kgZHVlCnRvIHRoZSBzaWduZmljYW50
+IG92ZXJsYXAgYmV0d2VlbiBHWEwvR1hNIGluIHRlcm1zIG9mIGNsb2NrcywgaW50ZXJydXB0cwpl
+dGMuCgpIb3dldmVyLCBpZiB0aGUgcGxhbiBpcyB0byAjaW5jbHVkZSB0aGlzIGZyb20gR1hNIC5k
+dHMgZmlsZXMsIHdob3VsZCBhCmJldHRlciBuYW1lIGJlIG1lc29uLWd4LW1hbGkuZHRzaT8KCktl
+dmluCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51
+eC1hbWxvZ2ljIG1haWxpbmcgbGlzdApsaW51eC1hbWxvZ2ljQGxpc3RzLmluZnJhZGVhZC5vcmcK
+aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hbWxvZ2lj
+Cg==
