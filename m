@@ -1,65 +1,127 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,  mturquette@baylibre.com,  linux-arm-kernel@lists.infradead.org,  narmstrong@baylibre.com,  carlo@caione.org,  sboyd@codeaurora.org
-Subject: Re: [RFC PATCH] clk: meson: gxbb: remove the "cpu_clk"
-References: <20170326110602.23379-1-martin.blumenstingl@googlemail.com>
-	<1490550707.29739.21.camel@baylibre.com>
-Date: Mon, 27 Mar 2017 09:59:48 -0700
-In-Reply-To: <1490550707.29739.21.camel@baylibre.com> (Jerome Brunet's message
-	of "Sun, 26 Mar 2017 19:51:47 +0200")
-Message-ID: <m2mvc6d5a3.fsf@baylibre.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 3 Mar 2017 00:21:29 +0000
+From: James Hogan <james.hogan@imgtec.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: Jason Uy <jason.uy@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Noam Camus <noamc@ezchip.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Wang Hongcheng <annie.wang@amd.com>,
+        <linux-serial@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        David Daney <david.daney@cavium.com>,
+        Russell King <linux@armlinux.org.uk>,
+        <linux-clk@vger.kernel.org>, Viresh Kumar <viresh.kumar@st.com>
+Subject: Re: [PATCH v2 1/1] serial: 8250_dw: Allow hardware flow control to
+ be used
+Message-ID: <20170303002129.GS996@jhogan-linux.le.imgtec.org>
+References: <1484164100-9805-1-git-send-email-jason.uy@broadcom.com>
+ <1484164100-9805-2-git-send-email-jason.uy@broadcom.com>
+ <CAAG0J9-n0toSJL8Ze8Esq81dYnpfrTd42bMiR94zw_btBLjsww@mail.gmail.com>
+ <1488394220.20145.68.camel@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="+bDoS+V4AJZnUgoC"
+In-Reply-To: <1488394220.20145.68.camel@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+--+bDoS+V4AJZnUgoC
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Sun, 2017-03-26 at 13:06 +0200, Martin Blumenstingl wrote:
->> It seems that the "cpu_clk" was carried over from the meson8b clock
->> controller driver. On Meson GX (GXBB/GXL/GXM) the registers which are
->> used by the cpu_clk have a different purpose (in other words: they don't
->> control the CPU clock anymore). HHI_SYS_CPU_CLK_CNTL1 bits 31:24 are
->> reserved according to the public S905 datasheet, while bit 23 is the
->> "A53_trace_clk_DIS" gate (which according to the datasheet should only
->> be used in case a silicon bug is discovered) and bits 22:20 are a
->> divider (A53_trace_clk). The meson clk-cpu code however expects that
->> bits 28:20 are reserved for a divider (according to the public S805
->> datasheet this "SCALE_DIV: This value represents an N+1 divider of the
->> input clock.").
->> 
->> The CPU clock on Meson GX SoCs is provided by the SCPI DVFS clock
->> driver instead. Two examples from a Meson GXL S905X SoC:
->> - vcpu (SCPI DVFS clock 0) rate: 1000000000 / cpu_clk rate: 708000000
->> - vcpu (SCPI DVFS clock 0) rate: 1512000000 / cpu_clk rate: 708000000
->> 
->
-> Thanks for catching this Martin! Looking at the difference between the S805 and
-> S905 register description, it makes no sense that we used the same clock driver
-> for what's behind HHI_SYS_CPU_CLK_CNTL1. I agree, it should be removed from the
-> gxbb clock controller.
->
->> Unfortunately the CLKID_CPUCLK was already exported (but is currently
->> not used) to DT.
->> 
->> This is an RFC because I would like to hear other people's opinion on
->> how to clean up the CLKID_CPUCLK (as it leaves a "hole" in
->> gxbb_hw_onecell_data and changes the DT API (by removing a currently
->> unused #define).
->> 
->
-> In general the DT ABI should be stable but since no one is using this ID, and
-> what it refers to is clearly wrong, I don't think we would disrupt anything by
-> removing it.
->
-> For the "hole" in the ids, Neil and I had similar problem while working other
-> topics. We managed to dodge it but I think it was only a matter of time ...
->
-> In the end, it is not a big deal if there is holes in the onecell_data, as long
-> as we take care to avoid it when we register the clocks:
+On Wed, Mar 01, 2017 at 08:50:20PM +0200, Andy Shevchenko wrote:
+> On Wed, 2017-03-01 at 18:02 +0000, James Hogan wrote:
+> > On 11 January 2017 at 19:48, Jason Uy <jason.uy@broadcom.com> wrote:
+> > > In the most common use case, the Synopsys DW UART driver does not
+> > > set the set_termios callback function.=C2=A0 This prevents UPSTAT_AUT=
+OCTS
+> > > from being set when the UART flag CRTSCTS is set.=C2=A0 As a result, =
+the
+> > > driver will use software flow control as opposed to hardware flow
+> > > control.
+> > >=20
+> > > To fix the problem, the set_termios callback function is set to the
+> > > DW specific function.=C2=A0 The logic to set UPSTAT_AUTOCTS is moved =
+so
+> > > that any clock error will not affect setting the hardware flow
+> > > control.
+>=20
+> > Bisection shows that this patch, commit
+> > 6a171b29937984a5e0bf29d6577b055998f03edb, has broken boot of the
+> > Cavium Octeon III based UTM-8 board (MIPS architecture).
+> >=20
+> > I now get the following warning:
+>=20
+> > [<ffffffff8149c2e4>] uart_get_baud_rate+0xfc/0x1f0
+> > [<ffffffff814a5098>] serial8250_do_set_termios+0xb0/0x440
+> > [<ffffffff8149c710>] uart_set_options+0xe8/0x190
+> > [<ffffffff814a6cdc>] serial8250_console_setup+0x84/0x158
+> > [<ffffffff814a11ec>] univ8250_console_setup+0x54/0x70
+> > [<ffffffff811901a0>] register_console+0x1c8/0x418
+> > [<ffffffff8149f004>] uart_add_one_port+0x434/0x4b0
+> > [<ffffffff814a1af8>] serial8250_register_8250_port+0x2d8/0x440
+> > [<ffffffff814aa620>] dw8250_probe+0x388/0x5e8
+>=20
+> > Then it hangs and the watchdog restarts the machine.
+> >=20
+> > Any ideas?
+>=20
+> 1. Does it use clock on that platform?
 
-Agreed.  It's better to have holes in the clkid space than to introduce
-DT incompatibility.
+btw, sorry for HTML email blocked from lists, gmail tricked me into it
+:-(
 
-Kevin
+I've now dug a little deeper. Essentially what is going on is:
+
+1) CONFIG_HAVE_CLK=3Dn (Octeon doesn't select it)
+2) The CONFIG_HAVE_CLK=3Dn implementation of devm_clk_get() returns NULL
+3) The "if (IS_ERR(d->clk) || !old) {" check in dw8250_set_termios()
+   doesn't match, since !IS_ERR(NULL)
+4) The CONFIG_HAVE_CLK=3Dn implementation of clk_round_rate() returns 0
+5) The CONFIG_HAVE_CLK=3Dn implementation of clk_set_rate(d->clk, 0)
+   returns 0
+6) dw8250_set_termios() thinks the frequency for that baud rate has been
+   set successfully and writes 0 into uartclk
+7) it all goes wrong from there...
+
+The CONFIG_HAVE_CLK=3Dn implementation of devm_clk_get() in particular
+seems highly questionable to me, given that commit 93abe8e4b13a ("clk:
+add non CONFIG_HAVE_CLK routines") which added it 5 years ago says:
+
+> These calls will return error for platforms that don't select HAVE_CLK
+
+And NULL isn't an error in this API.
+
+Cc'ing some clk folk.
+
+Cheers
+James
+
+--+bDoS+V4AJZnUgoC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYuLcJAAoJEGwLaZPeOHZ6cDkP/3mvQE+yaNnKdwh4G/K0ezr8
+zWYFYPAhQWH/gvGkgN6jetBBz7Ffxt51754pBAoXQQk5TddtzDqCGOlZQBpIBTJB
+GEqnq3hf/i9KBwIvWodveOT13U8EIydeQquXRrsVx6SwIln/YlcszzQrDcB4ZRxr
+AL93SMFr+ko79ZgSWvCOt2+aEtmeL2apVuQaWeEq6cCcOfStdv4hPlO4kPQTTbB/
+/YNWvx3s33vWzlwxQ9Npm1/38xPiPWrkVzv25LbyC4lg1Wtg8a0xWrh866UAj8+S
+eaqnm0czRo8NV0fOXjVjDZ0NKtmyV5CScnU0Xmw/dW7lyfsLilKraOw8x8qVBc1K
+ZTnOcnif2+mdKNflK3AWTfU+b+MTte0w7s29LbFuSy3j6coKyMfEAcBaEs36xuJ6
+c8J4cwz5juwq4FIDmSNKOPZxlC+5i1xbJesrbfk20Z0JmM57kSbz1bqFZKOVs9KP
+ovqiZy0FG3McoF1+e4bFnr3+07MsbIBby/gNQDQd/HgTtEHXAwvJ8oZPOw1AuJ47
+yl6YQO+t2k5MOeLemLdxcUcat63YlYNUbMnNx3sOO0gNJ+fDp+aPtg/R79ftKMN9
+0axOINy9M42PAHWK4uSLddVTh9JuEE+vgGh8hk8BDeZovfT6xqaf80ni2dq9htys
+UljKoCl2yxuzgP1pDeWo
+=OgmA
+-----END PGP SIGNATURE-----
+
+--+bDoS+V4AJZnUgoC--
