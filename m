@@ -1,75 +1,148 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jason Uy <jason.uy@broadcom.com>
+References: <1484164100-9805-1-git-send-email-jason.uy@broadcom.com>
+ <1484164100-9805-2-git-send-email-jason.uy@broadcom.com> <CAAG0J9-n0toSJL8Ze8Esq81dYnpfrTd42bMiR94zw_btBLjsww@mail.gmail.com>
+ <1488394220.20145.68.camel@linux.intel.com> <20170303002129.GS996@jhogan-linux.le.imgtec.org>
+ <1488547866.20145.74.camel@linux.intel.com> <ab064967-e362-d9be-3040-3260e9b5c426@broadcom.com>
+In-Reply-To: <ab064967-e362-d9be-3040-3260e9b5c426@broadcom.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1490348353-10989-1-git-send-email-geert+renesas@glider.be>
-References: <1490348353-10989-1-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 31 Mar 2017 11:19:46 +0200
-Message-ID: <CAMuHMdUFJ40ojaBBZ82wGm=xE+BkTxiTKAbjxYcvTd6ku0=Mwg@mail.gmail.com>
-Subject: Re: [git pull] clk: renesas: Updates for v4.11
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date: Fri, 3 Mar 2017 09:43:55 -0800
+Message-ID: <3e45a0582dd91dab1a6e9bd6f4339e12@mail.gmail.com>
+Subject: RE: [PATCH v2 1/1] serial: 8250_dw: Allow hardware flow control to be used
+To: Ray Jui <ray.jui@broadcom.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        James Hogan <james.hogan@imgtec.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Noam Camus <noamc@ezchip.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Wang Hongcheng <annie.wang@amd.com>,
+        linux-serial@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        David Daney <david.daney@cavium.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, Viresh Kumar <viresh.kumar@st.com>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+James,
 
-On Fri, Mar 24, 2017 at 10:39 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
->
->   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.12-tag1
->
-> for you to fetch changes up to cecbe87d73006cb321dec79b349e3fefd1a80962:
->
->   clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0 (2017-03-21 11:12:23 +0100)
->
-> ----------------------------------------------------------------
-> clk: renesas: Updates for v4.12
->
->   - Add IMR clocks for R-Car H3 and M3-W,
->   - Add workaround for PLL0/2/4 errata on R-Car H3 ES1.0,
->   - Small fixes and cleanups.
->
-> Thanks for pulling!
+Can you verify that changing the code to the following fixes your problem?
 
-Obviously the subject should have said "clk: renesas: Updates for v4.12".
-Sorry for that.
+if (IS_ERR_OR_NULL(d->clk) || !old)
+    goto out;
 
-Thanks for pulling!
+Regards,
+Jason
 
-> ----------------------------------------------------------------
-> Geert Uytterhoeven (7):
->       clk: renesas: r8a7795: Correct parent clock and sort order for Audio DMACs
->       clk: renesas: r8a7795: Correct name of watchdog clock
->       clk: renesas: r8a7796: Correct name of watchdog clock
->       clk: renesas: r8a7795: Reformat core clock table
->       clk: renesas: r8a7796: Reformat core clock table
->       clk: renesas: rcar-gen3-cpg: Pass mode pins to rcar_gen3_cpg_init()
->       clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0
+-----Original Message-----
+From: Ray Jui [mailto:ray.jui@broadcom.com]
+Sent: March-03-17 9:34 AM
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>; James Hogan
+<james.hogan@imgtec.com>; Heiko Stuebner <heiko@sntech.de>
+Cc: Jason Uy <jason.uy@broadcom.com>; Greg Kroah-Hartman
+<gregkh@linuxfoundation.org>; Jiri Slaby <jslaby@suse.com>; Kefeng Wang
+<wangkefeng.wang@huawei.com>; Noam Camus <noamc@ezchip.com>; Heikki Krogerus
+<heikki.krogerus@linux.intel.com>; Wang Hongcheng <annie.wang@amd.com>;
+linux-serial@vger.kernel.org; LKML <linux-kernel@vger.kernel.org>;
+bcm-kernel-feedback-list@broadcom.com; Linux MIPS Mailing List
+<linux-mips@linux-mips.org>; David Daney <david.daney@cavium.com>; Russell
+King <linux@armlinux.org.uk>; linux-clk@vger.kernel.org; Viresh Kumar
+<viresh.kumar@st.com>
+Subject: Re: [PATCH v2 1/1] serial: 8250_dw: Allow hardware flow control to
+be used
+
+Hi Andy/Jason,
+
+On 3/3/2017 5:31 AM, Andy Shevchenko wrote:
+> Heiko, you might be interested in this as well.
 >
-> Sergei Shtylyov (2):
->       clk: renesas: r8a7795: Add IMR clocks
->       clk: renesas: r8a7796: Add IMR clocks
+> On Fri, 2017-03-03 at 00:21 +0000, James Hogan wrote:
+>> On Wed, Mar 01, 2017 at 08:50:20PM +0200, Andy Shevchenko wrote:
+>>> On Wed, 2017-03-01 at 18:02 +0000, James Hogan wrote:
+>>>> On 11 January 2017 at 19:48, Jason Uy <jason.uy@broadcom.com>
+>>>> wrote:
+>>>>> In the most common use case, the Synopsys DW UART driver does not
+>>>>> set the set_termios callback function.  This prevents
+>>>>> UPSTAT_AUTOCTS from being set when the UART flag CRTSCTS is set.
+>>>>> As a result, the driver will use software flow control as opposed
+>>>>> to hardware flow control.
+>>>>>
+>>>>> To fix the problem, the set_termios callback function is set to
+>>>>> the DW specific function.  The logic to set UPSTAT_AUTOCTS is
+>>>>> moved so that any clock error will not affect setting the hardware
+>>>>> flow control.
+>>>> Bisection shows that this patch, commit
+>>>> 6a171b29937984a5e0bf29d6577b055998f03edb, has broken boot of the
+>>>> Cavium Octeon III based UTM-8 board (MIPS architecture).
+>>>>
+>>>> I now get the following warning:
+>>>> [<ffffffff8149c2e4>] uart_get_baud_rate+0xfc/0x1f0
+>>>> [<ffffffff814a5098>] serial8250_do_set_termios+0xb0/0x440
+>>>> [<ffffffff8149c710>] uart_set_options+0xe8/0x190
+>>>> [<ffffffff814a6cdc>] serial8250_console_setup+0x84/0x158
+>>>> [<ffffffff814a11ec>] univ8250_console_setup+0x54/0x70
+>>>> [<ffffffff811901a0>] register_console+0x1c8/0x418
+>>>> [<ffffffff8149f004>] uart_add_one_port+0x434/0x4b0
+>>>> [<ffffffff814a1af8>] serial8250_register_8250_port+0x2d8/0x440
+>>>> [<ffffffff814aa620>] dw8250_probe+0x388/0x5e8 Then it hangs and the
+>>>> watchdog restarts the machine.
+>>>>
+>>>> Any ideas?
+>>>
+>>> 1. Does it use clock on that platform?
 >
->  drivers/clk/renesas/r8a7795-cpg-mssr.c | 32 ++++++++++++++++++--------------
->  drivers/clk/renesas/r8a7796-cpg-mssr.c | 18 ++++++++++--------
->  drivers/clk/renesas/rcar-gen3-cpg.c    | 28 +++++++++++++++++++++++++++-
->  drivers/clk/renesas/rcar-gen3-cpg.h    |  2 +-
->  4 files changed, 56 insertions(+), 24 deletions(-)
+>> I've now dug a little deeper. Essentially what is going on is:
+>>
+>> 1) CONFIG_HAVE_CLK=n (Octeon doesn't select it)
+>> 2) The CONFIG_HAVE_CLK=n implementation of devm_clk_get() returns
+>> NULL
+>> 3) The "if (IS_ERR(d->clk) || !old) {" check in dw8250_set_termios()
+>>    doesn't match, since !IS_ERR(NULL)
+>> 4) The CONFIG_HAVE_CLK=n implementation of clk_round_rate() returns 0
+>> 5) The CONFIG_HAVE_CLK=n implementation of clk_set_rate(d->clk, 0)
+>>    returns 0
+>> 6) dw8250_set_termios() thinks the frequency for that baud rate has
+>> been
+>>    set successfully and writes 0 into uartclk
+>> 7) it all goes wrong from there...
+>
+> So, it means we have need special care of NULL case here, and
+> honestly, I don't like it. But it seems the only feasible (quick) fix
+> right now.
 
-Gr{oetje,eeting}s,
+I agree. I think it should have been:
 
-                        Geert
+if (IS_ERR_OR_NULL(d->clk) || !old)
+    goto out;
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I think it makes sense to validate to make sure the 'clk' pointer is valid
+before proceeding any further down below (regardless of how well or how not
+well the clock framework handles it).
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+
+Ray
+
+>
+>> The CONFIG_HAVE_CLK=n implementation of devm_clk_get() in particular
+>> seems highly questionable to me, given that commit 93abe8e4b13a ("clk:
+>> add non CONFIG_HAVE_CLK routines") which added it 5 years ago says:
+>>
+>>> These calls will return error for platforms that don't select
+>>> HAVE_CLK
+>>
+>> And NULL isn't an error in this API.
+>
+> Which is okay. I dunno what should be returned from clk_round_rate()
+> if clk is NULL. I would fix CLK framework, though I would like to
+> gather more details.
+>
+> Btw, I hope you also noticed this one:
+>
+> http://www.spinics.net/lists/linux-serial/msg25314.html
+>
