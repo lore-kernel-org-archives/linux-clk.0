@@ -1,228 +1,93 @@
-Return-Path: <huziji@marvell.com>
-Subject: Re: [PATCH v6 09/14] mmc: sdhci-xenon: Add support to PHYs of Marvell
- Xenon SDHC
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Gregory CLEMENT
-	<gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
- <b646d28daf3d8cb8e57774ce040f39350364041e.1487091464.git-series.gregory.clement@free-electrons.com>
- <CAPDyKFrQb3NA53o6z9go0+RxxvstwWdeLHpiXtKaXOksxrov3g@mail.gmail.com>
-CC: Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org"
-	<linux-mmc@vger.kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>, Andrew Lunn
-	<andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        Mike Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk
-	<linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Jimmy Xu
-	<zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
-        Nadav Haklai
-	<nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
-        Doug Jones
-	<dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
-        "Wei(SOCP) Liu"
-	<liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
-        Yehuda Yitschak
-	<yehuday@marvell.com>,
-        Marcin Wojtas <mw@semihalf.com>, Hanna Hawa
-	<hannah@marvell.com>,
-        Kostya Porotchkin <kostap@marvell.com>
-From: Ziji Hu <huziji@marvell.com>
-Message-ID: <288b58dc-cce7-11c3-e946-7bf0ea5a4863@marvell.com>
-Date: Wed, 15 Mar 2017 22:31:53 +0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailapp01.imgtec.com ([195.59.15.196]:9235 "EHLO
+        mailapp01.imgtec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751370AbdCDNK6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Mar 2017 08:10:58 -0500
+From: James Hogan <james.hogan@imgtec.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: <linux-kernel@vger.kernel.org>,
+        James Hogan <james.hogan@imgtec.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jason Uy <jason.uy@broadcom.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        David Daney <david.daney@cavium.com>,
+        Russell King <linux@armlinux.org.uk>,
+        <linux-serial@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-mips@linux-mips.org>,
+        <bcm-kernel-feedback-list@broadcom.com>
+Subject: [PATCH] serial: 8250_dw: Fix breakage when HAVE_CLK=n
+Date: Sat, 4 Mar 2017 13:09:58 +0000
+Message-ID: <20170304130958.23655-1-james.hogan@imgtec.com>
+In-Reply-To: <CAHp75Ved2h2WyWBokEOsDmAyB3w3iM=uh-9Bq01mU1ST4FapWQ@mail.gmail.com>
+References: <CAHp75Ved2h2WyWBokEOsDmAyB3w3iM=uh-9Bq01mU1ST4FapWQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrQb3NA53o6z9go0+RxxvstwWdeLHpiXtKaXOksxrov3g@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ulf,
+Commit 6a171b299379 ("serial: 8250_dw: Allow hardware flow control to be
+used") recently broke the 8250_dw driver on platforms which don't select
+HAVE_CLK, as dw8250_set_termios() gets confused by the behaviour of the
+fallback HAVE_CLK=n clock API in linux/clk.h which pretends everything
+is fine but returns (valid) NULL clocks and 0 HZ clock rates.
 
-On 2017/3/15 21:39, Ulf Hansson wrote:
-> On 14 February 2017 at 18:01, Gregory CLEMENT
-> <gregory.clement@free-electrons.com> wrote:
->> From: Hu Ziji <huziji@marvell.com>
->>
-<snip>
->> +
->> +       /*
->> +        * FIXME: should depends on the specific board timing.
->> +        */
->> +       if ((timing == MMC_TIMING_MMC_HS400) ||
->> +           (timing == MMC_TIMING_MMC_HS200) ||
->> +           (timing == MMC_TIMING_UHS_SDR50) ||
->> +           (timing == MMC_TIMING_UHS_SDR104) ||
->> +           (timing == MMC_TIMING_UHS_DDR50) ||
->> +           (timing == MMC_TIMING_UHS_SDR25) ||
->> +           (timing == MMC_TIMING_MMC_DDR52)) {
->> +               reg = sdhci_readl(host, phy_regs->timing_adj);
->> +               reg &= ~XENON_OUTPUT_QSN_PHASE_SELECT;
->> +               sdhci_writel(host, reg, phy_regs->timing_adj);
->> +       }
->> +
-<snip>
->> +
->> +       reg = sdhci_readl(host, phy_regs->func_ctrl);
->> +       if ((timing == MMC_TIMING_UHS_DDR50) ||
->> +           (timing == MMC_TIMING_MMC_HS400) ||
->> +           (timing == MMC_TIMING_MMC_DDR52))
->> +               reg |= (XENON_DQ_DDR_MODE_MASK << XENON_DQ_DDR_MODE_SHIFT) |
->> +                      XENON_CMD_DDR_MODE;
->> +       else
->> +               reg &= ~((XENON_DQ_DDR_MODE_MASK << XENON_DQ_DDR_MODE_SHIFT) |
->> +                        XENON_CMD_DDR_MODE);
-<snip>
-> 
-> Again you are checking the MMC_TIMING_* in several if statements.
-> Perhaps you can use switch statement instead and build a couple of
-> different register variables, that you use when reading/writing
-> afterwards.
-> 
+That 0 rate is written into the uartclk resulting in a crash at boot,
+e.g. on Cavium Octeon III based UTM-8 we get something like this:
 
-	Sorry. I don't quite understand your comment.
-	Do you mean combine all the related  register settings
-	under a specific MMC_TIMING_*?
+1180000000800.serial: ttyS0 at MMIO 0x1180000000800 (irq = 41, base_baud = 25000000) is a OCTEON
+------------[ cut here ]------------
+WARNING: CPU: 2 PID: 1 at drivers/tty/serial/serial_core.c:441 uart_get_baud_rate+0xfc/0x1f0
+...
+Call Trace:
+...
+[<ffffffff8149c2e4>] uart_get_baud_rate+0xfc/0x1f0
+[<ffffffff814a5098>] serial8250_do_set_termios+0xb0/0x440
+[<ffffffff8149c710>] uart_set_options+0xe8/0x190
+[<ffffffff814a6cdc>] serial8250_console_setup+0x84/0x158
+[<ffffffff814a11ec>] univ8250_console_setup+0x54/0x70
+[<ffffffff811901a0>] register_console+0x1c8/0x418
+[<ffffffff8149f004>] uart_add_one_port+0x434/0x4b0
+[<ffffffff814a1af8>] serial8250_register_8250_port+0x2d8/0x440
+[<ffffffff814aa620>] dw8250_probe+0x388/0x5e8
+...
 
-	swhich (timing) {
-	case MMC_TIMING_HS400:
-		config reg_1;
-		config reg_2;
-		...
-	case MMC_TIMING_HS200:
-		config reg_2;
-		config reg_3
-		..
-	case ...
-	};
+The clock API is defined such that NULL is a valid clock handle so it
+wouldn't be right to check explicitly for NULL. Instead treat a
+clk_round_rate() return value of 0 as an error which prevents uartclk
+being overwritten.
 
-	I have a little concern that there might be a lot
-	of duplicate register settings. Some PHY operations are
-	irrelevant to the speed mode. They have to be executed in
-	a particular sequence in all speed modes.
+Fixes: 6a171b299379 ("serial: 8250_dw: Allow hardware flow control to be used")
+Signed-off-by: James Hogan <james.hogan@imgtec.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jason Uy <jason.uy@broadcom.com>
+Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: David Daney <david.daney@cavium.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: linux-serial@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-mips@linux-mips.org
+Cc: bcm-kernel-feedback-list@broadcom.com
+---
+ drivers/tty/serial/8250/8250_dw.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
->> +}
->> +
->> +static int emmc_phy_parse_param_dt(struct sdhci_host *host,
->> +                                  struct device_node *np,
->> +                                  struct emmc_phy_params *params)
->> +{
->> +       u32 value;
->> +
->> +       if (of_property_read_bool(np, "marvell,xenon-phy-slow-mode"))
->> +               params->slow_mode = true;
->> +       else
->> +               params->slow_mode = false;
->> +
->> +       if (!of_property_read_u32(np, "marvell,xenon-phy-znr", &value))
->> +               params->znr = value & XENON_ZNR_MASK;
->> +       else
->> +               params->znr = XENON_ZNR_DEF_VALUE;
->> +
->> +       if (!of_property_read_u32(np, "marvell,xenon-phy-zpr", &value))
->> +               params->zpr = value & XENON_ZPR_MASK;
->> +       else
->> +               params->zpr = XENON_ZPR_DEF_VALUE;
->> +
->> +       if (!of_property_read_u32(np, "marvell,xenon-phy-nr-success-tun",
->> +                                 &value))
->> +               params->nr_tun_times = value & XENON_TUN_CONSECUTIVE_TIMES_MASK;
->> +       else
->> +               params->nr_tun_times = XENON_TUN_CONSECUTIVE_TIMES;
->> +
->> +       if (!of_property_read_u32(np, "marvell,xenon-phy-tun-step-divider",
->> +                                 &value))
->> +               params->tun_step_divider = value & 0xFF;
->> +       else
->> +               params->tun_step_divider = XENON_TUNING_STEP_DIVIDER;
->> +
->> +       return 0;
-> 
-> Instead of all these if-else, let's start by assigning default values
-> instead. This makes the code more readable.
-> 
-	Sure. I'll change it.
-	
->> +}
->> +
->> +/*
->> + * Setting PHY when card is working in High Speed Mode.
->> + * HS400 set data strobe line.
->> + * HS200/SDR104 set tuning config to prepare for tuning.
->> + */
->> +static int xenon_hs_delay_adj(struct sdhci_host *host)
->> +{
->> +       int ret = 0;
->> +
->> +       if (WARN_ON(host->clock <= XENON_DEFAULT_SDCLK_FREQ))
->> +               return -EINVAL;
->> +
->> +       if (host->timing == MMC_TIMING_MMC_HS400) {
->> +               emmc_phy_strobe_delay_adj(host);
->> +               return 0;
->> +       }
->> +
->> +       if ((host->timing == MMC_TIMING_MMC_HS200) ||
->> +           (host->timing == MMC_TIMING_UHS_SDR104))
->> +               return emmc_phy_config_tuning(host);
->> +
->> +       /*
->> +        * DDR Mode requires driver to scan Sampling Fixed Delay Line,
->> +        * to find out a perfect operation sampling point.
->> +        * It is hard to implement such a scan in host driver since initiating
->> +        * commands by host driver is not safe.
->> +        * Thus so far just keep PHY Sampling Fixed Delay in default value
->> +        * in DDR mode.
->> +        *
->> +        * If any timing issue occurs in DDR mode on Marvell products,
->> +        * please contact maintainer to ask for internal support in Marvell.
->> +        */
->> +       if ((host->timing == MMC_TIMING_MMC_DDR52) ||
->> +           (host->timing == MMC_TIMING_UHS_DDR50))
->> +               dev_warn_once(mmc_dev(host->mmc), "Timing issue might occur in DDR mode\n");
-> 
-> Please consider a to convert to use a switch statment instead of the
-> several if statements.
-> 
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+index 223ac234ddb2..e65808c482f1 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -267,6 +267,8 @@ static void dw8250_set_termios(struct uart_port *p, struct ktermios *termios,
+ 	rate = clk_round_rate(d->clk, baud * 16);
+ 	if (rate < 0)
+ 		ret = rate;
++	else if (rate == 0)
++		ret = -ENOENT;
+ 	else
+ 		ret = clk_set_rate(d->clk, rate);
+ 	clk_prepare_enable(d->clk);
+-- 
+2.11.1
 
-	It is a good idea to use switch here.
-
->> +       return ret;
->> +}
->> +
-> 
-<snip>
->> +int xenon_phy_parse_dt(struct device_node *np, struct sdhci_host *host)
->> +{
->> +       const char *phy_type = NULL;
->> +
->> +       if (!of_property_read_string(np, "marvell,xenon-phy-type", &phy_type))
->> +               return add_xenon_phy(np, host, phy_type);
->> +
->> +       dev_info(mmc_dev(host->mmc), "Fail to get Xenon PHY type. Use default eMMC 5.1 PHY\n");
-> 
-> Isn't there already a dev_err() being printed for this case. You
-> probably only need one.
-
-	By default, "emmc 5.1 phy" is used on most of our products.
-	Thus this dt property is an optional one.
-	I can remove this dev_info.
-
-> 
->> +       return add_xenon_phy(np, host, "emmc 5.1 phy");
->> +}
-> 
-> [...]
-> 
-> Kind regards
-> Uffe
-> 
