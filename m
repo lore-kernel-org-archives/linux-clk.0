@@ -1,59 +1,58 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 2/3] clk: sunxi-ng: Fix round_rate/set_rate multiplier minimum mismatch
-Date: Fri, 24 Mar 2017 16:33:06 +0800
-Message-Id: <20170324083307.18338-3-wens@csie.org>
-In-Reply-To: <20170324083307.18338-1-wens@csie.org>
-References: <20170324083307.18338-1-wens@csie.org>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
+ <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
+ <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Stephen
+ Warren" <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
+Date: Mon, 6 Mar 2017 09:58:29 +0000
+MIME-Version: 1.0
+In-Reply-To: <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-In commit 2beaa601c849 ("clk: sunxi-ng: Implement minimum for
-multipliers"), the multiplier minimums in the set_rate callback
-for NM and NKMP style clocks were not updated.
 
-This patch fixes them to match their round_rate callbacks.
+On 06/03/17 08:38, Peter De Schrijver wrote:
+> On Thu, Mar 02, 2017 at 05:56:49PM +0000, Jon Hunter wrote:
+>>
+>> On 28/02/17 15:19, Peter De Schrijver wrote:
+>>> This is needed to make the JTAG debugging interface work.
+>>>
+>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>> ---
+>>>  drivers/clk/tegra/clk-tegra210.c | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+>>> index 9a2512a..708f5f1 100644
+>>> --- a/drivers/clk/tegra/clk-tegra210.c
+>>> +++ b/drivers/clk/tegra/clk-tegra210.c
+>>> @@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
+>>>  	{ TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>  	{ TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>  	{ TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>> +	{ TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>  	{ TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
+>>>  	{ TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
+>>>  	{ TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
+>>
+>> Should there be some dependency on say CONFIG_DEBUG_KERNEL? I am not
+>> sure we always want this on for all cases.
+> 
+> Why would you not want it to be always on?
 
-Fixes: 2beaa601c849 ("clk: sunxi-ng: Implement minimum for multipliers")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu_nkmp.c | 4 ++--
- drivers/clk/sunxi-ng/ccu_nm.c   | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Purely for power reasons. I do not know how much power keeping this
+clock running consumes, but I don't like the idea of clocks running all
+the time when they are not needed.
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index 162ff2664f64..e58c95787f94 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -138,9 +138,9 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long flags;
- 	u32 reg;
- 
--	_nkmp.min_n = 1;
-+	_nkmp.min_n = nkmp->n.min ?: 1;
- 	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
--	_nkmp.min_k = 1;
-+	_nkmp.min_k = nkmp->k.min ?: 1;
- 	_nkmp.max_k = nkmp->k.max ?: 1 << nkmp->k.width;
- 	_nkmp.min_m = 1;
- 	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-index f312c92f2a21..5e5e90a4a50c 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nm.c
-@@ -122,7 +122,7 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	else
- 		ccu_frac_helper_disable(&nm->common, &nm->frac);
- 
--	_nm.min_n = 1;
-+	_nm.min_n = nm->n.min ?: 1;
- 	_nm.max_n = nm->n.max ?: 1 << nm->n.width;
- 	_nm.min_m = 1;
- 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+Jon
+
 -- 
-2.11.0
+nvpublic
