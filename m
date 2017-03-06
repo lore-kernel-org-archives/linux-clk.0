@@ -1,72 +1,66 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 6 Mar 2017 10:06:39 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Peter Robinson <pbrobinson@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: sunxi-ng: tighten SoC deps on explicit AllWinner
+ SoCs
+Message-ID: <20170306090639.aubg4ixtt7f4kb5s@lukather>
+References: <20170302174357.6246-1-pbrobinson@gmail.com>
 MIME-Version: 1.0
-To: Kevin Hilman <khilman@baylibre.com>,
- "Herbert Xu" <herbert@gondor.apana.org.au>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <m2lgrxnxlz.fsf@baylibre.com>
-Cc: "Heiner Kallweit" <hkallweit1@gmail.com>,
- "Jerome Brunet" <jbrunet@baylibre.com>,
- "Neil Armstrong" <narmstrong@baylibre.com>,
- linux-amlogic@lists.infradead.org, linux-crypto@vger.kernel.org,
- "Stephen Boyd" <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
- <20170316100743.GA12137@gondor.apana.org.au> <m2mvcl6pwg.fsf@baylibre.com>
- <20170317083032.GA18512@gondor.apana.org.au> <m2lgrxnxlz.fsf@baylibre.com>
-Message-ID: <149023343045.54062.16811894906233729582@resonance>
-Subject: Re: [PATCH v3 1/3] clk: meson-gxbb: expose clock CLKID_RNG0
-Date: Wed, 22 Mar 2017 18:43:50 -0700
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="pyqowu2ek3glmkau"
+In-Reply-To: <20170302174357.6246-1-pbrobinson@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Kevin Hilman (2017-03-22 08:24:08)
-> Herbert Xu <herbert@gondor.apana.org.au> writes:
-> =
 
-> > On Thu, Mar 16, 2017 at 11:24:31AM -0700, Kevin Hilman wrote:
-> >> Hi Herbert,
-> >> =
+--pyqowu2ek3glmkau
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >> Herbert Xu <herbert@gondor.apana.org.au> writes:
-> >> =
+Hi,
 
-> >> > On Wed, Feb 22, 2017 at 07:55:24AM +0100, Heiner Kallweit wrote:
-> >> >> Expose clock CLKID_RNG0 which is needed for the HW random number ge=
-nerator.
-> >> >> =
+On Thu, Mar 02, 2017 at 05:43:57PM +0000, Peter Robinson wrote:
+> Tighten the depends on the various AllWinn SoCs so we don't
+> inadvertantly get clock drivers when we're not wanting them
+> like 32 bit SoC clocks for 64 bit configs. Ensure there's
+> still test coverage though.
+>=20
+> Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
 
-> >> >> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> >> >
-> >> > All patches applied.  Thanks.
-> >> =
+It turns out that this was making Kconfig crash, because the keyword
+is depends on and not depends.
 
-> >> Actually, can you just apply [PATCH 4/4] to your tree?
-> >> =
+I fixed it, but please make sure the syntax is correct next time.
 
-> >> The clock and DT patches need to go through their respective trees or
-> >> will otherwise have conflicts with other things going in via those
-> >> trees.
-> >
-> > It's too late now.  Please speak up sooner next time.  These
-> > patches were posted a month ago.
-> =
+Maxime
 
-> Because this will be causing conflicts with both the platform (amlogic)
-> tree and the clk tree, could provide an immutable branch where these are
-> applied to help us handle these conflicts?
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-+1
+--pyqowu2ek3glmkau
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The DT header changes will cause conflicts in the clk tree. Much better
-to either arrange for the patches to be applied by the correct
-maintainers or to provide a stable, immutable branch.
+-----BEGIN PGP SIGNATURE-----
 
-Best regards,
-Mike
+iQIcBAEBCAAGBQJYvSaaAAoJEBx+YmzsjxAgetgP/jhjxtcrNwJUL6GJZA3+ncFw
+xJh7wwZx5Vhuh33TgcSAd8863rbQX5LMOdKEyoiNwopYy6ups+4K2LW1oOM59M3R
+BCEaFj1f8nfTL8YogYvO827qug6zyBISDxyv+0zMfxv+OLfEWcjsUJgHt1uZxvOP
+9pQq/mPaRyRCF9wxZrQK3rb2M40wnnp+0FW53jnQCQ0SJHrURnXwcCzuBLaGAasv
+4Y7RldAcPtoqwhK6IaJlTsr6NyGmlD+efLVejFLUPSyC1vMx/Gj9WyZ1Ie+BNiLL
+VfrpwuYcvQ0DWweUi/mBqWQQ9gmdqS5uu573VOOOBZyDdvotBLLYDYx4wKvVik1s
+rOon2H7gDaEjK409HWcDdpONU8pS+SZ/dDyb4bQJ0s3iKAxRRCKH3D6Diol7e2ys
+Gl0656OAuRsu5sSmlF16S8sZ63slaGLJF2op5Q7pEL3jxm+gOy8GW2QroRpO+MCf
+QznSDErrJyRr8rofhpFKq9MBfW76tkSuLlvzB1tzEzuVstwd/4Ao3VuzwVY2XD1j
+OB8CkzEFjgc5iZ5SROZna8uJL33RkLl/ZEjjIxOwolY1ebmD3TTzr5TmWBntVLzW
+J/8fpCART88ME1ZzDcVx/CSakJT+BmCSp/uy9kiAmltJrfKeh2hL2woEuOftEXnT
+ITRvMAast4tPpAHm1+lm
+=R8jf
+-----END PGP SIGNATURE-----
 
-> =
-
-> Thanks,
-> =
-
-> Kevin
+--pyqowu2ek3glmkau--
