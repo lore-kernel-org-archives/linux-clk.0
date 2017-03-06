@@ -1,68 +1,109 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Thu, 30 Mar 2017 09:59:41 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org, Suzuki.Poulose@arm.com, sudeep.holla@arm.com
-Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
-Message-ID: <20170330015941.GD3038@leoy-linaro>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
- <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
- <20170328165010.GA21937@linaro.org>
- <20170329015423.GA5035@leoy-linaro>
- <20170329165535.GB24889@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailapp01.imgtec.com ([195.59.15.196]:60214 "EHLO
+        imgpgp01.kl.imgtec.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753152AbdCFKQj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2017 05:16:39 -0500
+Date: Mon, 6 Mar 2017 10:16:04 +0000
+From: James Hogan <james.hogan@imgtec.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jason Uy <jason.uy@broadcom.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        David Daney <david.daney@cavium.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-mips@linux-mips.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH] serial: 8250_dw: Fix breakage when HAVE_CLK=n
+Message-ID: <20170306101603.GW996@jhogan-linux.le.imgtec.org>
+References: <CAHp75Ved2h2WyWBokEOsDmAyB3w3iM=uh-9Bq01mU1ST4FapWQ@mail.gmail.com>
+ <20170304130958.23655-1-james.hogan@imgtec.com>
+ <CAHp75Vc=VmxvkqjP7nY6K4CKXBJC-NND0CUMbzwjV2nmQ-5OTw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170329165535.GB24889@linaro.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6h64vBu9tReNbGLX"
+In-Reply-To: <CAHp75Vc=VmxvkqjP7nY6K4CKXBJC-NND0CUMbzwjV2nmQ-5OTw@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 10:55:35AM -0600, Mathieu Poirier wrote:
+--6h64vBu9tReNbGLX
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[...]
+On Sat, Mar 04, 2017 at 04:37:17PM +0200, Andy Shevchenko wrote:
+> On Sat, Mar 4, 2017 at 3:09 PM, James Hogan <james.hogan@imgtec.com> wrot=
+e:
+> > Commit 6a171b299379 ("serial: 8250_dw: Allow hardware flow control to be
+> > used") recently broke the 8250_dw driver on platforms which don't select
+> > HAVE_CLK, as dw8250_set_termios() gets confused by the behaviour of the
+> > fallback HAVE_CLK=3Dn clock API in linux/clk.h which pretends everything
+> > is fine but returns (valid) NULL clocks and 0 HZ clock rates.
+> >
+> > That 0 rate is written into the uartclk resulting in a crash at boot,
+> > e.g. on Cavium Octeon III based UTM-8 we get something like this:
+> >
+> > 1180000000800.serial: ttyS0 at MMIO 0x1180000000800 (irq =3D 41, base_b=
+aud =3D 25000000) is a OCTEON
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 2 PID: 1 at drivers/tty/serial/serial_core.c:441 uart_get=
+_baud_rate+0xfc/0x1f0
+> > ...
+> > Call Trace:
+> > ...
+> > [<ffffffff8149c2e4>] uart_get_baud_rate+0xfc/0x1f0
+> > [<ffffffff814a5098>] serial8250_do_set_termios+0xb0/0x440
+> > [<ffffffff8149c710>] uart_set_options+0xe8/0x190
+> > [<ffffffff814a6cdc>] serial8250_console_setup+0x84/0x158
+> > [<ffffffff814a11ec>] univ8250_console_setup+0x54/0x70
+> > [<ffffffff811901a0>] register_console+0x1c8/0x418
+> > [<ffffffff8149f004>] uart_add_one_port+0x434/0x4b0
+> > [<ffffffff814a1af8>] serial8250_register_8250_port+0x2d8/0x440
+> > [<ffffffff814aa620>] dw8250_probe+0x388/0x5e8
+> > ...
+> >
+> > The clock API is defined such that NULL is a valid clock handle so it
+> > wouldn't be right to check explicitly for NULL. Instead treat a
+> > clk_round_rate() return value of 0 as an error which prevents uartclk
+> > being overwritten.
+> >
+>=20
+> You forgot to add that it is dependent to Heiko's patch
+> http://www.spinics.net/lists/linux-serial/msg25314.html
 
-> > So this is why add "idle_constraint" as a central place to control
-> > power domain for CPU debug purpose and I also think this is more
-> > friendly for hardware design, e.g. some platforms can enable partial
-> > low power states to save power and avoid overheat after using this
-> > driver.
-> > 
-> > How about you think for this?
-> 
-> Like Sudeep pointed out we should concentrate on doing the right thing,
-> that is work with EDPRSR.PU, EDPRCR.COREPURQ and EDPRCR.CORENPDRQ.
+Indeed I did. Sorry about that.
 
-Agree, and I think we have aligned for this.
+>=20
+> Patch looks good to me and shouldn't bring any regression to Intel
+> hardware (x86 is using clock framework).
+>=20
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-> Anything outside of that becomes platform specific and can't be handled in
-> this driver.
+Thanks
+James
 
-Sorry I argue a bit for this just want to make things more clear and
-if can have better method.
+--6h64vBu9tReNbGLX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Though the issue is platform specific, but the code is to seek common
-method to handle them. So the driver has no any platform specific code.
+-----BEGIN PGP SIGNATURE-----
 
-I read again for Suziki's suggestion: "4) Should document the fact that,
-on some platforms, the user may have to disable CPUidle explicitly to
-get the driver working. But let us not make it the default. The user
-with a not so ideal platform could add "nohlt" and get it working."
+iQIcBAEBCAAGBQJYvTbQAAoJEGwLaZPeOHZ6PR0P/Ri3CSMyjhXUgiu1LIRrGyyp
+QZIEbmylYFH5egbu1IFmK7J0+h8hT0PikUDtcEGxsVVXqS8EL7CkIuoo1IMJcVeV
+Zsbb2B/qxiezbjwyFOjucyE7ilxxu37fmsDBKMOUoZFvTrfc9HMfHKZBIEAGlNc3
+93pEEdv9f6gKk8B8wGLLuRDkCdTxyQv3RoCp6TNo7X+qJMnmYpk/RRTPBFd/aUft
+s/ziHb5WIJWTiY4bwVBI2Atr51inx61IU8uUDJahAJClFYOhMb2OgOfaO1jofPBP
+c14bDcbDUlvGisfvBOLxMB2/MTO4mtRrksEQ7TlqA4NacRncR6yjjndmfgbKvuU1
+IlamLaknN667/7Aefb5OuiLdArRH+Wy0+DTlAXEnQYG1jKYPg3h5xYiR1ynUFmux
+CaJFa0zwjf6O2cIt8qlJpzObfs7E6i3jUkXxiqLJjfyOrL8intPFgf9ckYQIadNG
+IpGk1V9gJwe99EjpQNndI8GApYSDHuehffA2Hzjvc7IRCl5eiC3m/AD2mMYp82h9
+300ufzUcZYu0nnHLh0bM30CohxNp3gA5GP75n5JnvIflid7+EB5gFGPohhCiUMqw
+/i8fWPQXIYxNG9Q1tfRSM7oDQ4qDpBp4Ri4VPdloIzioqg7HFKr/STcCfbaWca0I
+zWohi2YkPlD6NQ3Abe8H
+=ebpd
+-----END PGP SIGNATURE-----
 
-So I'm not strong to resist and if this is alignment yet, I should
-document well for this but doesn't handle it in driver (keep driver
-simple).
-
-Thanks,
-Leo Yan
+--6h64vBu9tReNbGLX--
