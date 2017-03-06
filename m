@@ -1,117 +1,97 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1490728490.20764.8.camel@baylibre.com>
-Subject: Re: [PATCH v2,1/3] meson_uart: expose CLKID_UARTx
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Helmut Klein <hgkr.klein@gmail.com>, mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Date: Tue, 28 Mar 2017 21:14:50 +0200
-In-Reply-To: <71489b62-78c8-7082-587e-8598dc43ca59@gmail.com>
-References: <20170328092545.4644-1-hgkr.klein@gmail.com>
-	 <20170328092545.4644-2-hgkr.klein@gmail.com>
-	 <1490716277.20764.6.camel@baylibre.com>
-	 <71489b62-78c8-7082-587e-8598dc43ca59@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:37502 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752747AbdCFI6q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2017 03:58:46 -0500
+Received: by mail-wm0-f43.google.com with SMTP id n11so58310131wma.0
+        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2017 00:58:45 -0800 (PST)
+Subject: Re: [PATCH v2 3/3] ARM64: dts: meson-gx: Add MALI nodes for GXBB and
+ GXL
+To: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        Kevin Hilman <khilman@baylibre.com>
+References: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
+ <1488365164-22861-4-git-send-email-narmstrong@baylibre.com>
+ <e26cf584-dab2-2702-f7e6-b28f750fa00c@suse.de>
+ <e80d9fb0-1d71-7cab-5e32-72316474fdfc@baylibre.com>
+ <m2tw7a17nb.fsf@baylibre.com> <9f3a17e8-63fa-6c14-4d17-0539ef7cd5a2@suse.de>
+Cc: devicetree@vger.kernel.org, sboyd@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        carlo@caione.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <1825920f-586f-7c84-8e0e-958046397b64@baylibre.com>
+Date: Mon, 6 Mar 2017 09:58:33 +0100
+MIME-Version: 1.0
+In-Reply-To: <9f3a17e8-63fa-6c14-4d17-0539ef7cd5a2@suse.de>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-03-28 at 20:18 +0200, Helmut Klein wrote:
-> i know for sure that the bluetooth chip of my system is connected to 
-> uart_A. so this clock must be exposed.
+On 03/04/2017 01:38 PM, Andreas Färber wrote:
+> Am 03.03.2017 um 20:29 schrieb Kevin Hilman:
+>> Neil Armstrong <narmstrong@baylibre.com> writes:
+>>> On 03/02/2017 01:31 PM, Andreas Färber wrote:
+>>>> Am 01.03.2017 um 11:46 schrieb Neil Armstrong:
+>>>>> The same MALI-450 MP3 GPU is present in the GXBB and GXL SoCs.
+> [...]
+>>>>> The node is simply added in the meson-gxbb.dtsi file.
+> [...]
+>>>>> For GXL, since a lot is shared with the GXM that has a MALI-T820 IP, this
+>>>>> patch adds a new meson-gxl-mali.dtsi and is included in the SoC specific
+>>>>> dtsi files.
+>>>>
+>>>> This part is slightly confusing though.
+>>>>
+>>>> What exactly is the GXL vs. GXM difference that this can't be handled by
+>>>> overriding node properties compatible/interrupts/clocks? I am missing a
+>>>> GXM patch in this series as rationale for doing it this way.
+>>>>
+>>>> In particular I am wondering whether the whole GXM-inherits-from-GXL
+>>>> concept is flawed and should be adjusted if this leads to secondary
+>>>> .dtsi files like this: My proposal would be to instead create a
+>>>> meson-gxl-gxm.dtsi, that meson-gxl.dtsi and meson-gxm.dtsi can inherit
+>>>> the current common parts from, then the Mali bits can simply go into
+>>>> meson-gxl.dtsi without extra #includes needed in S905X and S905D. While
+>>>> it's slightly more work to split once again, I think it would be cleaner.
+> [...]
+>>> The only changes are :
+> [...]
+>>>  - A different Mali core, but with the same interrupts (less but they share the same lower interrupts), clocks and memory space
+>>>
+>>> This is why it was decided to have a sub-dtsi, having a secondary dtsi will simply copy 99% of the GXL dtsi,
+>>> but surely we could also have an intermediate dtsi but for boards I'm ok with it, but less for a SoC dtsi,
+>>> since it could lead to some confusion.
+>>>
+>>> Finally, yes I could have added the mali node to the GXL dtsi, but the midgard Mali dt-bindings are not upstream
+>>> and the family is too big and recent enough to consider having stable bindings for now.
+>>>
+>>> Nevertheless, nothing is final, this gxl-mali.dtsi could be merged into the GXL dtsi in the future when we
+>>> have proper dt-bindings and a real support of the T820 Mali on the S912.
+>>>
+>>> Kevin, what's your thought about this ?
+>>
+>> I don't have a strong preference.  I'm OK with a separate Mali .dtsi due
+>> to the signficant overlap between GXL/GXM in terms of clocks, interrupts
+>> etc.
+>>
+>> However, if the plan is to #include this from GXM .dts files, whould a
+>> better name be meson-gx-mali.dtsi?
 > 
-> i don't know if the other 2 uarts are used on other hardware. so i will 
-> remove them from my patch.
-
-What I meant is device trees "upstream". 
-I would expect such patch as part of a series to add support for your board in
-device-tree, with its bluetooth chipset.
-
-I think it would better to drop this patch from the series.
-You can either keep it for your personal work, or send it again when upstreaming
-the support for your board and/or add the support for the bluetooth chip.
-
-Cheers
-Jerome
-
+> I thought the purpose was specifically to not have GXM include it
+> because it uses a Midgard IP.
 > 
-> Helmut
+> If you want to share the fragment with GXBB too (gx), we should rather
+> use meson-gx-mali-utgard.dtsi, which would differentiate from GXM's
+> Midgard while still allowing for variation on the 4xx side (e.g., 470).
 > 
-> On 28.03.2017 17:51, Jerome Brunet wrote:
-> > On Tue, 2017-03-28 at 11:25 +0200, Helmut Klein wrote:
-> > > Expose the clock ids for the three none AO uarts to the dt-bindings
-> > 
-> > Are they all used in the device tree ?
-> > We try to only expose what we need in the DT
-> > The recent discussion over CLKID_CPUCLK proved it was a sane thing to do.
-> > 
-> > > 
-> > > Signed-off-by: Helmut Klein <hgkr.klein@gmail.com>
-> > > ---
-> > >  drivers/clk/meson/gxbb.h              | 6 +++---
-> > >  include/dt-bindings/clock/gxbb-clkc.h | 3 +++
-> > >  2 files changed, 6 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-> > > index 8ee2022ce5d5..1edfaa5fe307 100644
-> > > --- a/drivers/clk/meson/gxbb.h
-> > > +++ b/drivers/clk/meson/gxbb.h
-> > > @@ -194,7 +194,7 @@
-> > >  /* #define CLKID_SAR_ADC */
-> > >  #define CLKID_SMART_CARD	  24
-> > >  #define CLKID_RNG0		  25
-> > > -#define CLKID_UART0		  26
-> > > +/* CLKID_UART0 */
-> > >  #define CLKID_SDHC		  27
-> > >  #define CLKID_STREAM		  28
-> > >  #define CLKID_ASYNC_FIFO	  29
-> > > @@ -216,7 +216,7 @@
-> > >  #define CLKID_ADC		  45
-> > >  #define CLKID_BLKMV		  46
-> > >  #define CLKID_AIU		  47
-> > > -#define CLKID_UART1		  48
-> > > +/* CLKID_UART1 */
-> > >  #define CLKID_G2D		  49
-> > >  /* CLKID_USB0 */
-> > >  /* CLKID_USB1 */
-> > > @@ -236,7 +236,7 @@
-> > >  /* CLKID_USB0_DDR_BRIDGE */
-> > >  #define CLKID_MMC_PCLK		  66
-> > >  #define CLKID_DVIN		  67
-> > > -#define CLKID_UART2		  68
-> > > +/* CLKID_UART2 */
-> > >  /* #define CLKID_SANA */
-> > >  #define CLKID_VPU_INTR		  70
-> > >  #define CLKID_SEC_AHB_AHB3_BRIDGE 71
-> > > diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-
-> > > bindings/clock/gxbb-clkc.h
-> > > index 692846c7941b..7b329df47752 100644
-> > > --- a/include/dt-bindings/clock/gxbb-clkc.h
-> > > +++ b/include/dt-bindings/clock/gxbb-clkc.h
-> > > @@ -15,13 +15,16 @@
-> > >  #define CLKID_SPI		34
-> > >  #define CLKID_I2C		22
-> > >  #define CLKID_SAR_ADC		23
-> > > +#define CLKID_UART0		26
-> > >  #define CLKID_ETH		36
-> > > +#define CLKID_UART1		48
-> > >  #define CLKID_USB0		50
-> > >  #define CLKID_USB1		51
-> > >  #define CLKID_USB		55
-> > >  #define CLKID_HDMI_PCLK		63
-> > >  #define CLKID_USB1_DDR_BRIDGE	64
-> > >  #define CLKID_USB0_DDR_BRIDGE	65
-> > > +#define CLKID_UART2		68
-> > >  #define CLKID_SANA		69
-> > >  #define CLKID_GCLK_VENCI_INT0	77
-> > >  #define CLKID_AO_I2C		93
-> > > --
-> > > 2.11.0
-> > > 
-> > > 
-> > > _______________________________________________
-> > > linux-amlogic mailing list
-> > > linux-amlogic@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-amlogic
+> Regards,
+> Andreas
+> 
+
+Exact, there is no plan to include it from GXM.
+
+I'm not fan of having meson-gx-mali-utgard.dtsi, we should still need some attributes additions for
+the clocks to the mali node in the gxbb dtsi and each s905x and s905d dtsi files.
+I'm not sure this is even cleaner...
+
+Neil
