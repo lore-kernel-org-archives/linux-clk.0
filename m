@@ -1,92 +1,50 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH 3/5] clk: meson-gxbb: Add GXL/GXM GP0 Variant
-To: Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
- carlo@caione.org, khilman@baylibre.com
-References: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
- <1489411604-18700-4-git-send-email-narmstrong@baylibre.com>
- <149014019624.54062.687648107621865354@resonance>
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <fb561438-dc9a-2e35-337c-6cabe589b0fe@baylibre.com>
-Date: Wed, 22 Mar 2017 10:22:57 +0100
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 6 Mar 2017 10:38:35 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Stephen
+ Warren" <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
+Message-ID: <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
+References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
+ <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <149014019624.54062.687648107621865354@resonance>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/22/2017 12:49 AM, Michael Turquette wrote:
-> Hi Neil,
+On Thu, Mar 02, 2017 at 05:56:49PM +0000, Jon Hunter wrote:
 > 
-> Quoting Neil Armstrong (2017-03-13 06:26:42)
->> @@ -821,6 +893,7 @@ struct pll_params_table gxbb_gp0_params_table[] = {
->>         &gxbb_hdmi_pll,
->>         &gxbb_sys_pll,
->>         &gxbb_gp0_pll,
->> +       &gxl_gp0_pll,
-
-Yes, because this is the table used to change the register base, this won't harm in any way
-to add SoC variant clocks, since they they are initialized using the gxbb_hw_onecell_data table.
-
+> On 28/02/17 15:19, Peter De Schrijver wrote:
+> > This is needed to make the JTAG debugging interface work.
+> > 
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  drivers/clk/tegra/clk-tegra210.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> > index 9a2512a..708f5f1 100644
+> > --- a/drivers/clk/tegra/clk-tegra210.c
+> > +++ b/drivers/clk/tegra/clk-tegra210.c
+> > @@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
+> >  	{ TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
+> >  	{ TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
+> >  	{ TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
+> > +	{ TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
+> >  	{ TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
+> >  	{ TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
+> >  	{ TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
 > 
-> Is there a reason for adding the pointer to this array here? It seems to
-> me that the gxbb_gp0_pll and gxl_gp0_pll are mutually exclusive, so
-> perhaps two different tables should be used?
-> 
->>  };
->>  
->>  static struct meson_clk_mpll *const gxbb_clk_mplls[] = {
->> @@ -923,6 +996,10 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
->>         struct clk *parent_clk;
->>         struct device *dev = &pdev->dev;
->>  
->> +       /* Override GP0 clock for GXL/GXM */
->> +       if (of_device_is_compatible(dev->of_node, "amlogic,gxl-clkc"))
->> +               gxbb_hw_onecell_data.hws[CLKID_GP0_PLL] = &gxl_gp0_pll.hw;
-> 
-> Similarly, this above is a little ugly compared to dedicated tables for
-> each variant.
+> Should there be some dependency on say CONFIG_DEBUG_KERNEL? I am not
+> sure we always want this on for all cases.
 
-Here is the true uglyness, but would you like to have the exact same gxbb_hw_onecell_data
-duplicated for only two different clocks ?
-The gxbb_hw_onecell_data table is 105 lines, and when adding new clocks, we will need to
-make sure they are still synchronized.
+Why would you not want it to be always on?
 
-If you have a better idea... I can still push a v2 with such table with also a
-separate gxbb_clk_plls table stored in a struct given from of_device_get_match_data()
+Cheers,
 
-Neil
-
-> 
-> Regards,
-> Mike
-> 
->> +
->>         /*  Generic clocks and PLLs */
->>         clk_base = of_iomap(dev->of_node, 0);
->>         if (!clk_base) {
->> @@ -996,6 +1073,7 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
->>  
->>  static const struct of_device_id gxbb_clkc_match_table[] = {
->>         { .compatible = "amlogic,gxbb-clkc" },
->> +       { .compatible = "amlogic,gxl-clkc" },
->>         { }
->>  };
->>  
->> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
->> index 8ee2022..7f99bf6 100644
->> --- a/drivers/clk/meson/gxbb.h
->> +++ b/drivers/clk/meson/gxbb.h
->> @@ -71,6 +71,8 @@
->>  #define HHI_GP0_PLL_CNTL2              0x44 /* 0x11 offset in data sheet */
->>  #define HHI_GP0_PLL_CNTL3              0x48 /* 0x12 offset in data sheet */
->>  #define HHI_GP0_PLL_CNTL4              0x4c /* 0x13 offset in data sheet */
->> +#define        HHI_GP0_PLL_CNTL5               0x50 /* 0x14 offset in data sheet */
->> +#define        HHI_GP0_PLL_CNTL1               0x58 /* 0x16 offset in data sheet */
->>  
->>  #define HHI_XTAL_DIVN_CNTL             0xbc /* 0x2f offset in data sheet */
->>  #define HHI_TIMER90K                   0xec /* 0x3b offset in data sheet */
->> -- 
->> 1.9.1
->>
+Peter.
