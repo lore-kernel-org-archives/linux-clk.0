@@ -1,71 +1,64 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/7] clk: renesas: r8a7795: Reformat core clock table
-Date: Mon, 13 Mar 2017 17:19:51 +0100
-Message-Id: <1489421994-19707-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
-References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 6 Mar 2017 16:28:50 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Stephen
+ Warren" <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
+Message-ID: <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
+References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
+ <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
+ <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
+ <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-For easier comparison with other clock drivers.
-No functional changes.
+On Mon, Mar 06, 2017 at 09:58:29AM +0000, Jon Hunter wrote:
+> 
+> On 06/03/17 08:38, Peter De Schrijver wrote:
+> > On Thu, Mar 02, 2017 at 05:56:49PM +0000, Jon Hunter wrote:
+> >>
+> >> On 28/02/17 15:19, Peter De Schrijver wrote:
+> >>> This is needed to make the JTAG debugging interface work.
+> >>>
+> >>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> >>> ---
+> >>>  drivers/clk/tegra/clk-tegra210.c | 1 +
+> >>>  1 file changed, 1 insertion(+)
+> >>>
+> >>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> >>> index 9a2512a..708f5f1 100644
+> >>> --- a/drivers/clk/tegra/clk-tegra210.c
+> >>> +++ b/drivers/clk/tegra/clk-tegra210.c
+> >>> @@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
+> >>>  	{ TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
+> >>>  	{ TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
+> >>>  	{ TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
+> >>> +	{ TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
+> >>>  	{ TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
+> >>>  	{ TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
+> >>>  	{ TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
+> >>
+> >> Should there be some dependency on say CONFIG_DEBUG_KERNEL? I am not
+> >> sure we always want this on for all cases.
+> > 
+> > Why would you not want it to be always on?
+> 
+> Purely for power reasons. I do not know how much power keeping this
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+I don't expect it to be significant but I don't have any numbers.
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 4e176e7f958b133d..608178618da87bef 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -53,8 +53,8 @@ enum clk_ids {
- 
- static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
- 	/* External Clock Inputs */
--	DEF_INPUT("extal",  CLK_EXTAL),
--	DEF_INPUT("extalr", CLK_EXTALR),
-+	DEF_INPUT("extal",      CLK_EXTAL),
-+	DEF_INPUT("extalr",     CLK_EXTALR),
- 
- 	/* Internal Core Clocks */
- 	DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_GEN3_MAIN, CLK_EXTAL),
-@@ -89,23 +89,23 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
- 	DEF_FIXED("s3d2",       R8A7795_CLK_S3D2,  CLK_S3,         2, 1),
- 	DEF_FIXED("s3d4",       R8A7795_CLK_S3D4,  CLK_S3,         4, 1),
- 
--	DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_SDSRC,     0x0074),
--	DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_SDSRC,     0x0078),
--	DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_SDSRC,     0x0268),
--	DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_SDSRC,     0x026c),
-+	DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_SDSRC,     0x074),
-+	DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_SDSRC,     0x078),
-+	DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_SDSRC,     0x268),
-+	DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_SDSRC,     0x26c),
- 
- 	DEF_FIXED("cl",         R8A7795_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
- 	DEF_FIXED("cp",         R8A7795_CLK_CP,    CLK_EXTAL,      2, 1),
- 
--	DEF_DIV6P1("mso",       R8A7795_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
--	DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV4, 0x250),
- 	DEF_DIV6P1("canfd",     R8A7795_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
- 	DEF_DIV6P1("csi0",      R8A7795_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
-+	DEF_DIV6P1("mso",       R8A7795_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
-+	DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV4, 0x250),
- 
--	DEF_DIV6_RO("osc",      R8A7795_CLK_OSC,   CLK_EXTAL, CPG_RCKCR, 8),
-+	DEF_DIV6_RO("osc",      R8A7795_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
- 	DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
- 
--	DEF_BASE("r",           R8A7795_CLK_R, CLK_TYPE_GEN3_R, CLK_RINT),
-+	DEF_BASE("r",           R8A7795_CLK_R,     CLK_TYPE_GEN3_R, CLK_RINT),
- };
- 
- static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
--- 
-2.7.4
+> clock running consumes, but I don't like the idea of clocks running all
+> the time when they are not needed.
+> 
+
+Problem is that in this case there is no easy way to determine if the clock
+needs to be on.
+
+Peter.
