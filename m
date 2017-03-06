@@ -1,64 +1,99 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [PATCH v2 7/8] ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
-Date: Fri, 17 Mar 2017 04:47:47 +0800
-Message-Id: <20170316204748.8596-8-icenowy@aosc.xyz>
-In-Reply-To: <20170316204748.8596-1-icenowy@aosc.xyz>
-References: <20170316204748.8596-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:34390 "EHLO
+        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751974AbdCFXqY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2017 18:46:24 -0500
+Received: by mail-oi0-f42.google.com with SMTP id m124so94073709oig.1
+        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2017 15:45:47 -0800 (PST)
+From: Jason Uy <jason.uy@broadcom.com>
+References: <CAHp75Ved2h2WyWBokEOsDmAyB3w3iM=uh-9Bq01mU1ST4FapWQ@mail.gmail.com>
+ <20170304130958.23655-1-james.hogan@imgtec.com> <CAHp75Vc=VmxvkqjP7nY6K4CKXBJC-NND0CUMbzwjV2nmQ-5OTw@mail.gmail.com>
+ <20170306101603.GW996@jhogan-linux.le.imgtec.org>
+In-Reply-To: <20170306101603.GW996@jhogan-linux.le.imgtec.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Date: Mon, 6 Mar 2017 15:38:47 -0800
+Message-ID: <18720dd546d32a1455fb17ad46ee73e4@mail.gmail.com>
+Subject: RE: [PATCH] serial: 8250_dw: Fix breakage when HAVE_CLK=n
+To: James Hogan <james.hogan@imgtec.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        David Daney <david.daney@cavium.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-serial@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-mips@linux-mips.org,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s SoC features a set of pins that have functionality of RGB
-LCD, the pins are at different pin ban than other SoCs.
+Looks good
+Reviewed-by: Jason Uy <jason.uy@broadcom.com>
 
-Add pinctrl node for them.
+-----Original Message-----
+From: James Hogan [mailto:james.hogan@imgtec.com]
+Sent: March-06-17 2:16 AM
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-kernel@vger.kernel.org; Greg Kroah-Hartman
+<gregkh@linuxfoundation.org>; Andy Shevchenko
+<andriy.shevchenko@linux.intel.com>; Jason Uy <jason.uy@broadcom.com>;
+Kefeng Wang <wangkefeng.wang@huawei.com>; Heiko Stuebner <heiko@sntech.de>;
+David Daney <david.daney@cavium.com>; Russell King <linux@armlinux.org.uk>;
+linux-serial@vger.kernel.org; linux-clk@vger.kernel.org;
+linux-mips@linux-mips.org; bcm-kernel-feedback-list
+<bcm-kernel-feedback-list@broadcom.com>
+Subject: Re: [PATCH] serial: 8250_dw: Fix breakage when HAVE_CLK=n
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
- arch/arm/boot/dts/sun8i-v3s.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+On Sat, Mar 04, 2017 at 04:37:17PM +0200, Andy Shevchenko wrote:
+> On Sat, Mar 4, 2017 at 3:09 PM, James Hogan <james.hogan@imgtec.com>
+> wrote:
+> > Commit 6a171b299379 ("serial: 8250_dw: Allow hardware flow control
+> > to be
+> > used") recently broke the 8250_dw driver on platforms which don't
+> > select HAVE_CLK, as dw8250_set_termios() gets confused by the
+> > behaviour of the fallback HAVE_CLK=n clock API in linux/clk.h which
+> > pretends everything is fine but returns (valid) NULL clocks and 0 HZ
+> > clock rates.
+> >
+> > That 0 rate is written into the uartclk resulting in a crash at
+> > boot, e.g. on Cavium Octeon III based UTM-8 we get something like this:
+> >
+> > 1180000000800.serial: ttyS0 at MMIO 0x1180000000800 (irq = 41,
+> > base_baud = 25000000) is a OCTEON ------------[ cut here
+> > ]------------
+> > WARNING: CPU: 2 PID: 1 at drivers/tty/serial/serial_core.c:441
+> > uart_get_baud_rate+0xfc/0x1f0 ...
+> > Call Trace:
+> > ...
+> > [<ffffffff8149c2e4>] uart_get_baud_rate+0xfc/0x1f0
+> > [<ffffffff814a5098>] serial8250_do_set_termios+0xb0/0x440
+> > [<ffffffff8149c710>] uart_set_options+0xe8/0x190
+> > [<ffffffff814a6cdc>] serial8250_console_setup+0x84/0x158
+> > [<ffffffff814a11ec>] univ8250_console_setup+0x54/0x70
+> > [<ffffffff811901a0>] register_console+0x1c8/0x418
+> > [<ffffffff8149f004>] uart_add_one_port+0x434/0x4b0
+> > [<ffffffff814a1af8>] serial8250_register_8250_port+0x2d8/0x440
+> > [<ffffffff814aa620>] dw8250_probe+0x388/0x5e8 ...
+> >
+> > The clock API is defined such that NULL is a valid clock handle so
+> > it wouldn't be right to check explicitly for NULL. Instead treat a
+> > clk_round_rate() return value of 0 as an error which prevents
+> > uartclk being overwritten.
+> >
+>
+> You forgot to add that it is dependent to Heiko's patch
+> http://www.spinics.net/lists/linux-serial/msg25314.html
 
-diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
-index 3b29f11ad46a..f19258bb821b 100644
---- a/arch/arm/boot/dts/sun8i-v3s.dtsi
-+++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
-@@ -297,6 +297,15 @@
- 				function = "i2c0";
- 			};
- 
-+			lcd_rgb666_pins: lcd_rgb666@0 {
-+				pins = "PE0", "PE1", "PE2", "PE3", "PE4",
-+				       "PE5", "PE6", "PE7", "PE8", "PE9",
-+				       "PE10", "PE11", "PE12", "PE13", "PE14",
-+				       "PE15", "PE16", "PE17", "PE18", "PE19",
-+				       "PE23", "PE24";
-+				function = "lcd";
-+			};
-+
- 			uart0_pins_a: uart0@0 {
- 				pins = "PB8", "PB9";
- 				function = "uart0";
--- 
-2.12.0
+Indeed I did. Sorry about that.
 
+>
+> Patch looks good to me and shouldn't bring any regression to Intel
+> hardware (x86 is using clock framework).
+>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thanks
+James
