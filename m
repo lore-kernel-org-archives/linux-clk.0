@@ -1,29 +1,38 @@
-Return-Path: <herbert@gondor.apana.org.au>
-Date: Thu, 16 Mar 2017 18:07:43 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	linux-amlogic@lists.infradead.org, linux-crypto@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <robin@protonic.nl>
+From: Robin van der Gracht <robin@protonic.nl>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] clk: meson-gxbb: expose clock CLKID_RNG0
-Message-ID: <20170316100743.GA12137@gondor.apana.org.au>
-References: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Robin van der Gracht <robin@protonic.nl>
+Subject: [PATCH v2] clk: imx: correct uart4_serial clock name in driver for i.MX6UL
+Date: Mon,  6 Mar 2017 09:13:43 +0100
+Message-Id: <20170306081343.27641-1-robin@protonic.nl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Feb 22, 2017 at 07:55:24AM +0100, Heiner Kallweit wrote:
-> Expose clock CLKID_RNG0 which is needed for the HW random number generator.
-> 
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Robin van der Gracht <robin@protonic.nl>
+---
+v2: Rebased on latest mainline
 
-All patches applied.  Thanks.
+ drivers/clk/imx/clk-imx6ul.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index dbd6e59..b4e0dff 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -358,7 +358,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_GPT1_BUS]	= imx_clk_gate2("gpt1_bus",	"perclk",	base + 0x6c,	20);
+ 	clks[IMX6UL_CLK_GPT1_SERIAL]	= imx_clk_gate2("gpt1_serial",	"perclk",	base + 0x6c,	22);
+ 	clks[IMX6UL_CLK_UART4_IPG]	= imx_clk_gate2("uart4_ipg",	"ipg",		base + 0x6c,	24);
+-	clks[IMX6UL_CLK_UART4_SERIAL]	= imx_clk_gate2("uart4_serail",	"uart_podf",	base + 0x6c,	24);
++	clks[IMX6UL_CLK_UART4_SERIAL]	= imx_clk_gate2("uart4_serial",	"uart_podf",	base + 0x6c,	24);
+ 
+ 	/* CCGR2 */
+ 	if (clk_on_imx6ull()) {
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.9.3
