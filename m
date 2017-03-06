@@ -1,27 +1,97 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH v2 3/3] ARM64: dts: meson-gx: Add MALI nodes for GXBB and
+ GXL
+References: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
+ <1488365164-22861-4-git-send-email-narmstrong@baylibre.com>
+ <e26cf584-dab2-2702-f7e6-b28f750fa00c@suse.de>
+ <e80d9fb0-1d71-7cab-5e32-72316474fdfc@baylibre.com>
+ <m2tw7a17nb.fsf@baylibre.com>
+ <9f3a17e8-63fa-6c14-4d17-0539ef7cd5a2@suse.de>
+ <1825920f-586f-7c84-8e0e-958046397b64@baylibre.com>
+Date: Mon, 06 Mar 2017 09:27:47 -0800
+In-Reply-To: <1825920f-586f-7c84-8e0e-958046397b64@baylibre.com> (Neil
+ Armstrong's message of "Mon, 6 Mar 2017 09:58:33 +0100")
+Message-ID: <m2efya1fjg.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <3194cb69fa565ded062ea950d5bf72fd7886e3f8.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
- <3194cb69fa565ded062ea950d5bf72fd7886e3f8.1488876832.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 8 Mar 2017 11:36:15 +0800
-Message-ID: <CAGb2v645bCxjdHtBpcVN3E+KbWecVv7RwpfA2fFd7zbsDyFCiQ@mail.gmail.com>
-Subject: Re: [PATCH 15/15] ARM: sun5i: a10s-olinuxino: Enable HDMI
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
+List-Post: <mailto:linux-amlogic@lists.infradead.org>
+List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, sboyd@codeaurora.org,
+ linux-kernel@vger.kernel.org,
+ Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, carlo@caione.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
+Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The A10s Olinuxino has an HDMI connector. Make sure we can use it.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+TmVpbCBBcm1zdHJvbmcgPG5hcm1zdHJvbmdAYmF5bGlicmUuY29tPiB3cml0ZXM6Cgo+IE9uIDAz
+LzA0LzIwMTcgMDE6MzggUE0sIEFuZHJlYXMgRsOkcmJlciB3cm90ZToKPj4gQW0gMDMuMDMuMjAx
+NyB1bSAyMDoyOSBzY2hyaWViIEtldmluIEhpbG1hbjoKPj4+IE5laWwgQXJtc3Ryb25nIDxuYXJt
+c3Ryb25nQGJheWxpYnJlLmNvbT4gd3JpdGVzOgo+Pj4+IE9uIDAzLzAyLzIwMTcgMDE6MzEgUE0s
+IEFuZHJlYXMgRsOkcmJlciB3cm90ZToKPj4+Pj4gQW0gMDEuMDMuMjAxNyB1bSAxMTo0NiBzY2hy
+aWViIE5laWwgQXJtc3Ryb25nOgo+Pj4+Pj4gVGhlIHNhbWUgTUFMSS00NTAgTVAzIEdQVSBpcyBw
+cmVzZW50IGluIHRoZSBHWEJCIGFuZCBHWEwgU29Dcy4KPj4gWy4uLl0KPj4+Pj4+IFRoZSBub2Rl
+IGlzIHNpbXBseSBhZGRlZCBpbiB0aGUgbWVzb24tZ3hiYi5kdHNpIGZpbGUuCj4+IFsuLi5dCj4+
+Pj4+PiBGb3IgR1hMLCBzaW5jZSBhIGxvdCBpcyBzaGFyZWQgd2l0aCB0aGUgR1hNIHRoYXQgaGFz
+IGEgTUFMSS1UODIwIElQLCB0aGlzCj4+Pj4+PiBwYXRjaCBhZGRzIGEgbmV3IG1lc29uLWd4bC1t
+YWxpLmR0c2kgYW5kIGlzIGluY2x1ZGVkIGluIHRoZSBTb0Mgc3BlY2lmaWMKPj4+Pj4+IGR0c2kg
+ZmlsZXMuCj4+Pj4+Cj4+Pj4+IFRoaXMgcGFydCBpcyBzbGlnaHRseSBjb25mdXNpbmcgdGhvdWdo
+Lgo+Pj4+Pgo+Pj4+PiBXaGF0IGV4YWN0bHkgaXMgdGhlIEdYTCB2cy4gR1hNIGRpZmZlcmVuY2Ug
+dGhhdCB0aGlzIGNhbid0IGJlIGhhbmRsZWQgYnkKPj4+Pj4gb3ZlcnJpZGluZyBub2RlIHByb3Bl
+cnRpZXMgY29tcGF0aWJsZS9pbnRlcnJ1cHRzL2Nsb2Nrcz8gSSBhbSBtaXNzaW5nIGEKPj4+Pj4g
+R1hNIHBhdGNoIGluIHRoaXMgc2VyaWVzIGFzIHJhdGlvbmFsZSBmb3IgZG9pbmcgaXQgdGhpcyB3
+YXkuCj4+Pj4+Cj4+Pj4+IEluIHBhcnRpY3VsYXIgSSBhbSB3b25kZXJpbmcgd2hldGhlciB0aGUg
+d2hvbGUgR1hNLWluaGVyaXRzLWZyb20tR1hMCj4+Pj4+IGNvbmNlcHQgaXMgZmxhd2VkIGFuZCBz
+aG91bGQgYmUgYWRqdXN0ZWQgaWYgdGhpcyBsZWFkcyB0byBzZWNvbmRhcnkKPj4+Pj4gLmR0c2kg
+ZmlsZXMgbGlrZSB0aGlzOiBNeSBwcm9wb3NhbCB3b3VsZCBiZSB0byBpbnN0ZWFkIGNyZWF0ZSBh
+Cj4+Pj4+IG1lc29uLWd4bC1neG0uZHRzaSwgdGhhdCBtZXNvbi1neGwuZHRzaSBhbmQgbWVzb24t
+Z3htLmR0c2kgY2FuIGluaGVyaXQKPj4+Pj4gdGhlIGN1cnJlbnQgY29tbW9uIHBhcnRzIGZyb20s
+IHRoZW4gdGhlIE1hbGkgYml0cyBjYW4gc2ltcGx5IGdvIGludG8KPj4+Pj4gbWVzb24tZ3hsLmR0
+c2kgd2l0aG91dCBleHRyYSAjaW5jbHVkZXMgbmVlZGVkIGluIFM5MDVYIGFuZCBTOTA1RC4gV2hp
+bGUKPj4+Pj4gaXQncyBzbGlnaHRseSBtb3JlIHdvcmsgdG8gc3BsaXQgb25jZSBhZ2FpbiwgSSB0
+aGluayBpdCB3b3VsZCBiZSBjbGVhbmVyLgo+PiBbLi4uXQo+Pj4+IFRoZSBvbmx5IGNoYW5nZXMg
+YXJlIDoKPj4gWy4uLl0KPj4+PiAgLSBBIGRpZmZlcmVudCBNYWxpIGNvcmUsIGJ1dCB3aXRoIHRo
+ZSBzYW1lIGludGVycnVwdHMgKGxlc3MgYnV0IHRoZXkgc2hhcmUgdGhlIHNhbWUgbG93ZXIgaW50
+ZXJydXB0cyksIGNsb2NrcyBhbmQgbWVtb3J5IHNwYWNlCj4+Pj4KPj4+PiBUaGlzIGlzIHdoeSBp
+dCB3YXMgZGVjaWRlZCB0byBoYXZlIGEgc3ViLWR0c2ksIGhhdmluZyBhIHNlY29uZGFyeSBkdHNp
+IHdpbGwgc2ltcGx5IGNvcHkgOTklIG9mIHRoZSBHWEwgZHRzaSwKPj4+PiBidXQgc3VyZWx5IHdl
+IGNvdWxkIGFsc28gaGF2ZSBhbiBpbnRlcm1lZGlhdGUgZHRzaSBidXQgZm9yIGJvYXJkcyBJJ20g
+b2sgd2l0aCBpdCwgYnV0IGxlc3MgZm9yIGEgU29DIGR0c2ksCj4+Pj4gc2luY2UgaXQgY291bGQg
+bGVhZCB0byBzb21lIGNvbmZ1c2lvbi4KPj4+Pgo+Pj4+IEZpbmFsbHksIHllcyBJIGNvdWxkIGhh
+dmUgYWRkZWQgdGhlIG1hbGkgbm9kZSB0byB0aGUgR1hMIGR0c2ksIGJ1dCB0aGUgbWlkZ2FyZCBN
+YWxpIGR0LWJpbmRpbmdzIGFyZSBub3QgdXBzdHJlYW0KPj4+PiBhbmQgdGhlIGZhbWlseSBpcyB0
+b28gYmlnIGFuZCByZWNlbnQgZW5vdWdoIHRvIGNvbnNpZGVyIGhhdmluZyBzdGFibGUgYmluZGlu
+Z3MgZm9yIG5vdy4KPj4+Pgo+Pj4+IE5ldmVydGhlbGVzcywgbm90aGluZyBpcyBmaW5hbCwgdGhp
+cyBneGwtbWFsaS5kdHNpIGNvdWxkIGJlIG1lcmdlZCBpbnRvIHRoZSBHWEwgZHRzaSBpbiB0aGUg
+ZnV0dXJlIHdoZW4gd2UKPj4+PiBoYXZlIHByb3BlciBkdC1iaW5kaW5ncyBhbmQgYSByZWFsIHN1
+cHBvcnQgb2YgdGhlIFQ4MjAgTWFsaSBvbiB0aGUgUzkxMi4KPj4+Pgo+Pj4+IEtldmluLCB3aGF0
+J3MgeW91ciB0aG91Z2h0IGFib3V0IHRoaXMgPwo+Pj4KPj4+IEkgZG9uJ3QgaGF2ZSBhIHN0cm9u
+ZyBwcmVmZXJlbmNlLiAgSSdtIE9LIHdpdGggYSBzZXBhcmF0ZSBNYWxpIC5kdHNpIGR1ZQo+Pj4g
+dG8gdGhlIHNpZ25maWNhbnQgb3ZlcmxhcCBiZXR3ZWVuIEdYTC9HWE0gaW4gdGVybXMgb2YgY2xv
+Y2tzLCBpbnRlcnJ1cHRzCj4+PiBldGMuCj4+Pgo+Pj4gSG93ZXZlciwgaWYgdGhlIHBsYW4gaXMg
+dG8gI2luY2x1ZGUgdGhpcyBmcm9tIEdYTSAuZHRzIGZpbGVzLCB3aG91bGQgYQo+Pj4gYmV0dGVy
+IG5hbWUgYmUgbWVzb24tZ3gtbWFsaS5kdHNpPwo+PiAKPj4gSSB0aG91Z2h0IHRoZSBwdXJwb3Nl
+IHdhcyBzcGVjaWZpY2FsbHkgdG8gbm90IGhhdmUgR1hNIGluY2x1ZGUgaXQKPj4gYmVjYXVzZSBp
+dCB1c2VzIGEgTWlkZ2FyZCBJUC4KPj4gCj4+IElmIHlvdSB3YW50IHRvIHNoYXJlIHRoZSBmcmFn
+bWVudCB3aXRoIEdYQkIgdG9vIChneCksIHdlIHNob3VsZCByYXRoZXIKPj4gdXNlIG1lc29uLWd4
+LW1hbGktdXRnYXJkLmR0c2ksIHdoaWNoIHdvdWxkIGRpZmZlcmVudGlhdGUgZnJvbSBHWE0ncwo+
+PiBNaWRnYXJkIHdoaWxlIHN0aWxsIGFsbG93aW5nIGZvciB2YXJpYXRpb24gb24gdGhlIDR4eCBz
+aWRlIChlLmcuLCA0NzApLgo+PiAKPj4gUmVnYXJkcywKPj4gQW5kcmVhcwo+PiAKPgo+IEV4YWN0
+LCB0aGVyZSBpcyBubyBwbGFuIHRvIGluY2x1ZGUgaXQgZnJvbSBHWE0uCj4KPiBJJ20gbm90IGZh
+biBvZiBoYXZpbmcgbWVzb24tZ3gtbWFsaS11dGdhcmQuZHRzaSwgd2Ugc2hvdWxkIHN0aWxsIG5l
+ZWQgc29tZSBhdHRyaWJ1dGVzIGFkZGl0aW9ucyBmb3IKPiB0aGUgY2xvY2tzIHRvIHRoZSBtYWxp
+IG5vZGUgaW4gdGhlIGd4YmIgZHRzaSBhbmQgZWFjaCBzOTA1eCBhbmQgczkwNWQgZHRzaSBmaWxl
+cy4KPiBJJ20gbm90IHN1cmUgdGhpcyBpcyBldmVuIGNsZWFuZXIuLi4KCk9LLCBJIG1pc3VuZGVy
+c3Rvb2QgdGhlIGludGVudCBvZiBoYXZpbmcgaXQgc2VwYXJhdGVkIGZyb20gb3V0IGZyb20gdGhl
+CkdYTCAuZHN0aSB0aGVuLiAgQ291bGQgeW91IHBsZWFzZSBjbGFyaWZ5PwoKS2V2aW4KCgoKCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFtbG9n
+aWMgbWFpbGluZyBsaXN0CmxpbnV4LWFtbG9naWNAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8v
+bGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFtbG9naWMK
