@@ -1,48 +1,117 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,  Jerome Brunet <jbrunet@baylibre.com>,  Neil Armstrong <narmstrong@baylibre.com>,  linux-amlogic@lists.infradead.org,  linux-crypto@vger.kernel.org,  Stephen Boyd <sboyd@codeaurora.org>,  Michael Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] clk: meson-gxbb: expose clock CLKID_RNG0
-References: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
-	<20170316100743.GA12137@gondor.apana.org.au>
-	<m2mvcl6pwg.fsf@baylibre.com>
-	<20170317083032.GA18512@gondor.apana.org.au>
-Date: Wed, 22 Mar 2017 08:24:08 -0700
-In-Reply-To: <20170317083032.GA18512@gondor.apana.org.au> (Herbert Xu's
-	message of "Fri, 17 Mar 2017 16:30:32 +0800")
-Message-ID: <m2lgrxnxlz.fsf@baylibre.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 1/2] clk: rockchip: rk3368: export SCLK_TIMERXX id for timers
+Date: Tue, 07 Mar 2017 11:18:24 +0100
+Message-ID: <15674852.NcXVK0sQHA@diego>
+In-Reply-To: <1488880211-21133-1-git-send-email-zhangqing@rock-chips.com>
+References: <1488880211-21133-1-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-Herbert Xu <herbert@gondor.apana.org.au> writes:
+Hi Elaine,
 
-> On Thu, Mar 16, 2017 at 11:24:31AM -0700, Kevin Hilman wrote:
->> Hi Herbert,
->> 
->> Herbert Xu <herbert@gondor.apana.org.au> writes:
->> 
->> > On Wed, Feb 22, 2017 at 07:55:24AM +0100, Heiner Kallweit wrote:
->> >> Expose clock CLKID_RNG0 which is needed for the HW random number generator.
->> >> 
->> >> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->> >
->> > All patches applied.  Thanks.
->> 
->> Actually, can you just apply [PATCH 4/4] to your tree?
->> 
->> The clock and DT patches need to go through their respective trees or
->> will otherwise have conflicts with other things going in via those
->> trees.
->
-> It's too late now.  Please speak up sooner next time.  These
-> patches were posted a month ago.
+Am Dienstag, 7. M=E4rz 2017, 17:50:10 CET schrieb Elaine Zhang:
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  drivers/clk/rockchip/clk-rk3368.c      | 24 ++++++++++++------------
+>  include/dt-bindings/clock/rk3368-cru.h | 19 ++++++++++++-------
 
-Because this will be causing conflicts with both the platform (amlogic)
-tree and the clk tree, could provide an immutable branch where these are
-applied to help us handle these conflicts?
+as always, please split clock-id addition and the assignment in the clock-
+driver.
 
-Thanks,
+Also, as it looks like the old timer-ids are wrong and also still unused,=20
+please also state this in the patch changing the ids.
 
-Kevin
+
+Thanks
+Heiko
+
+>  2 files changed, 24 insertions(+), 19 deletions(-)
+>=20
+> diff --git a/drivers/clk/rockchip/clk-rk3368.c
+> b/drivers/clk/rockchip/clk-rk3368.c index 6cb474c593e7..139d418f448e 1006=
+44
+> --- a/drivers/clk/rockchip/clk-rk3368.c
+> +++ b/drivers/clk/rockchip/clk-rk3368.c
+> @@ -835,18 +835,18 @@ enum rk3368_plls {
+>  	GATE(PCLK_PMU, "pclk_pmu", "pclk_pd_pmu", CLK_IGNORE_UNUSED,
+> RK3368_CLKGATE_CON(23), 0, GFLAGS),
+>=20
+>  	/* timer gates */
+> -	GATE(0, "sclk_timer15", "xin24m", CLK_IGNORE_UNUSED,
+> RK3368_CLKGATE_CON(24), 11, GFLAGS), -	GATE(0, "sclk_timer14", "xin24m",
+> CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 10, GFLAGS), -	GATE(0,
+> "sclk_timer13", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 9,
+> GFLAGS), -	GATE(0, "sclk_timer12", "xin24m", CLK_IGNORE_UNUSED,
+> RK3368_CLKGATE_CON(24), 8, GFLAGS), -	GATE(0, "sclk_timer11", "xin24m",
+> CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 7, GFLAGS), -	GATE(0,
+> "sclk_timer10", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 6,
+> GFLAGS), -	GATE(0, "sclk_timer05", "xin24m", CLK_IGNORE_UNUSED,
+> RK3368_CLKGATE_CON(24), 5, GFLAGS), -	GATE(0, "sclk_timer04", "xin24m",
+> CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 4, GFLAGS), -	GATE(0,
+> "sclk_timer03", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 3,
+> GFLAGS), -	GATE(0, "sclk_timer02", "xin24m", CLK_IGNORE_UNUSED,
+> RK3368_CLKGATE_CON(24), 2, GFLAGS), -	GATE(0, "sclk_timer01", "xin24m",
+> CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 1, GFLAGS), -	GATE(0,
+> "sclk_timer00", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 0,
+> GFLAGS), +	GATE(SCLK_TIMER15, "sclk_timer15", "xin24m", CLK_IGNORE_UNUSED,
+> RK3368_CLKGATE_CON(24), 11, GFLAGS), +	GATE(SCLK_TIMER14, "sclk_timer14",
+> "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 10, GFLAGS),
+> +	GATE(SCLK_TIMER13, "sclk_timer13", "xin24m", CLK_IGNORE_UNUSED,
+> RK3368_CLKGATE_CON(24), 9, GFLAGS), +	GATE(SCLK_TIMER12, "sclk_timer12",
+> "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 8, GFLAGS),
+> +	GATE(SCLK_TIMER11, "sclk_timer11", "xin24m", CLK_IGNORE_UNUSED,
+> RK3368_CLKGATE_CON(24), 7, GFLAGS), +	GATE(SCLK_TIMER10, "sclk_timer10",
+> "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 6, GFLAGS),
+> +	GATE(SCLK_TIMER05, "sclk_timer05", "xin24m", CLK_IGNORE_UNUSED,
+> RK3368_CLKGATE_CON(24), 5, GFLAGS), +	GATE(SCLK_TIMER04, "sclk_timer04",
+> "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 4, GFLAGS),
+> +	GATE(SCLK_TIMER03, "sclk_timer03", "xin24m", CLK_IGNORE_UNUSED,
+> RK3368_CLKGATE_CON(24), 3, GFLAGS), +	GATE(SCLK_TIMER02, "sclk_timer02",
+> "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 2, GFLAGS),
+> +	GATE(SCLK_TIMER01, "sclk_timer01", "xin24m", CLK_IGNORE_UNUSED,
+> RK3368_CLKGATE_CON(24), 1, GFLAGS), +	GATE(SCLK_TIMER00, "sclk_timer00",
+> "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 0, GFLAGS), };
+>=20
+>  static const char *const rk3368_critical_clocks[] __initconst =3D {
+> diff --git a/include/dt-bindings/clock/rk3368-cru.h
+> b/include/dt-bindings/clock/rk3368-cru.h index 9c5dd9ba2f6c..aeb83e581a11
+> 100644
+> --- a/include/dt-bindings/clock/rk3368-cru.h
+> +++ b/include/dt-bindings/clock/rk3368-cru.h
+> @@ -44,13 +44,12 @@
+>  #define SCLK_I2S_8CH		82
+>  #define SCLK_SPDIF_8CH		83
+>  #define SCLK_I2S_2CH		84
+> -#define SCLK_TIMER0		85
+> -#define SCLK_TIMER1		86
+> -#define SCLK_TIMER2		87
+> -#define SCLK_TIMER3		88
+> -#define SCLK_TIMER4		89
+> -#define SCLK_TIMER5		90
+> -#define SCLK_TIMER6		91
+> +#define SCLK_TIMER00		85
+> +#define SCLK_TIMER01		86
+> +#define SCLK_TIMER02		87
+> +#define SCLK_TIMER03		88
+> +#define SCLK_TIMER04		89
+> +#define SCLK_TIMER05		90
+>  #define SCLK_OTGPHY0		93
+>  #define SCLK_OTG_ADP		96
+>  #define SCLK_HSICPHY480M	97
+> @@ -82,6 +81,12 @@
+>  #define SCLK_SFC		126
+>  #define SCLK_MAC		127
+>  #define SCLK_MACREF_OUT		128
+> +#define SCLK_TIMER10		133
+> +#define SCLK_TIMER11		134
+> +#define SCLK_TIMER12		135
+> +#define SCLK_TIMER13		136
+> +#define SCLK_TIMER14		137
+> +#define SCLK_TIMER15		138
+>=20
+>  #define DCLK_VOP		190
+>  #define MCLK_CRYPTO		191
