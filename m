@@ -1,113 +1,197 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH v7 01/13] clk: apn806: Add eMMC clock to system controller driver
-Date: Thu, 30 Mar 2017 17:22:53 +0200
-Message-Id: <2230c827fee236e0fd03bca01f4d0546d20f0f9b.1490886907.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 2/15] clk: sunxi-ng: Pass the parent and a pointer to the clocks round rate
+Date: Tue,  7 Mar 2017 09:56:21 +0100
+Message-Id: <263d27de0ef00f042443d10f6d92fb051ac80349.1488876832.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Konstantin Porotchkin <kostap@marvell.com>
+The clocks might need to modify their parent clocks. In order to make that
+possible, give them access to the parent clock being evaluated, and to a
+pointer to the parent rate so that they can modify it if needed.
 
-Add fixed clock of 400MHz to system controller driver.  This clock is
-used as SD/eMMC clock source.
-
-Signed-off-by: Konstantin Porotchkin <kostap@marvell.com>
-Reviewed-by: Omri Itach <omrii@marvell.com>
-Reviewed-by: Hanna Hawa <hannah@marvell.com>
-[fixed up conflicts, added error handling --rmk]
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi |  3 ++-
- drivers/clk/mvebu/ap806-system-controller.c   | 15 ++++++++++++++-
- 2 files changed, 16 insertions(+), 2 deletions(-)
+ drivers/clk/sunxi-ng/ccu_div.c  |  7 ++++---
+ drivers/clk/sunxi-ng/ccu_mp.c   |  7 ++++---
+ drivers/clk/sunxi-ng/ccu_mult.c | 11 ++++++-----
+ drivers/clk/sunxi-ng/ccu_mux.c  |  8 +++++---
+ drivers/clk/sunxi-ng/ccu_mux.h  |  3 ++-
+ drivers/clk/sunxi-ng/ccu_nkm.c  |  7 ++++---
+ 6 files changed, 25 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-index a749ba2edec4..5019c8f4acd0 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -235,7 +235,8 @@
- 				#clock-cells = <1>;
- 				clock-output-names = "ap-cpu-cluster-0",
- 						     "ap-cpu-cluster-1",
--						     "ap-fixed", "ap-mss";
-+						     "ap-fixed", "ap-mss",
-+						     "ap-emmc";
- 				reg = <0x6f4000 0x1000>;
- 			};
- 		};
-diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
-index f17702107ac5..901d89c4ab4a 100644
---- a/drivers/clk/mvebu/ap806-system-controller.c
-+++ b/drivers/clk/mvebu/ap806-system-controller.c
-@@ -23,7 +23,7 @@
- #define AP806_SAR_REG			0x400
- #define AP806_SAR_CLKFREQ_MODE_MASK	0x1f
+diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_div.c
+index 92855c2b30bb..7f8b06e38636 100644
+--- a/drivers/clk/sunxi-ng/ccu_div.c
++++ b/drivers/clk/sunxi-ng/ccu_div.c
+@@ -14,7 +14,8 @@
+ #include "ccu_div.h"
  
--#define AP806_CLK_NUM			4
-+#define AP806_CLK_NUM			5
+ static unsigned long ccu_div_round_rate(struct ccu_mux_internal *mux,
+-					unsigned long parent_rate,
++					struct clk_hw *parent,
++					unsigned long *parent_rate,
+ 					unsigned long rate,
+ 					void *data)
+ {
+@@ -26,10 +27,10 @@ static unsigned long ccu_div_round_rate(struct ccu_mux_internal *mux,
+ 	 * several parents, while we might be called to evaluate
+ 	 * several different parents.
+ 	 */
+-	val = divider_get_val(rate, parent_rate, cd->div.table, cd->div.width,
++	val = divider_get_val(rate, *parent_rate, cd->div.table, cd->div.width,
+ 			      cd->div.flags);
  
- static struct clk *ap806_clks[AP806_CLK_NUM];
+-	return divider_recalc_rate(&cd->common.hw, parent_rate, val,
++	return divider_recalc_rate(&cd->common.hw, *parent_rate, val,
+ 				   cd->div.table, cd->div.flags);
+ }
  
-@@ -135,6 +135,17 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 		goto fail3;
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
+index b583f186a804..de02e6c386d8 100644
+--- a/drivers/clk/sunxi-ng/ccu_mp.c
++++ b/drivers/clk/sunxi-ng/ccu_mp.c
+@@ -41,7 +41,8 @@ static void ccu_mp_find_best(unsigned long parent, unsigned long rate,
+ }
+ 
+ static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
+-				       unsigned long parent_rate,
++				       struct clk_hw *hw,
++				       unsigned long *parent_rate,
+ 				       unsigned long rate,
+ 				       void *data)
+ {
+@@ -52,9 +53,9 @@ static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
+ 	max_m = cmp->m.max ?: 1 << cmp->m.width;
+ 	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
+ 
+-	ccu_mp_find_best(parent_rate, rate, max_m, max_p, &m, &p);
++	ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
+ 
+-	return parent_rate / p / m;
++	return *parent_rate / p / m;
+ }
+ 
+ static void ccu_mp_disable(struct clk_hw *hw)
+diff --git a/drivers/clk/sunxi-ng/ccu_mult.c b/drivers/clk/sunxi-ng/ccu_mult.c
+index 8724c01171b1..76d17162366f 100644
+--- a/drivers/clk/sunxi-ng/ccu_mult.c
++++ b/drivers/clk/sunxi-ng/ccu_mult.c
+@@ -33,9 +33,10 @@ static void ccu_mult_find_best(unsigned long parent, unsigned long rate,
+ }
+ 
+ static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
+-					unsigned long parent_rate,
+-					unsigned long rate,
+-					void *data)
++					 struct clk_hw *parent,
++					 unsigned long *parent_rate,
++					 unsigned long rate,
++					 void *data)
+ {
+ 	struct ccu_mult *cm = data;
+ 	struct _ccu_mult _cm;
+@@ -47,9 +48,9 @@ static unsigned long ccu_mult_round_rate(struct ccu_mux_internal *mux,
+ 	else
+ 		_cm.max = (1 << cm->mult.width) + cm->mult.offset - 1;
+ 
+-	ccu_mult_find_best(parent_rate, rate, &_cm);
++	ccu_mult_find_best(*parent_rate, rate, &_cm);
+ 
+-	return parent_rate * _cm.mult;
++	return *parent_rate * _cm.mult;
+ }
+ 
+ static void ccu_mult_disable(struct clk_hw *hw)
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+index c6bb1f523232..bae735e252b6 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.c
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -61,7 +61,8 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+ 				  struct ccu_mux_internal *cm,
+ 				  struct clk_rate_request *req,
+ 				  unsigned long (*round)(struct ccu_mux_internal *,
+-							 unsigned long,
++							 struct clk_hw *,
++							 unsigned long *,
+ 							 unsigned long,
+ 							 void *),
+ 				  void *data)
+@@ -80,7 +81,8 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+ 		ccu_mux_helper_adjust_parent_for_prediv(common, cm, -1,
+ 							&adj_parent_rate);
+ 
+-		best_rate = round(cm, adj_parent_rate, req->rate, data);
++		best_rate = round(cm, best_parent, &adj_parent_rate,
++				  req->rate, data);
+ 
+ 		goto out;
  	}
+@@ -109,7 +111,7 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+ 		ccu_mux_helper_adjust_parent_for_prediv(common, cm, i,
+ 							&adj_parent_rate);
  
-+	/* eMMC Clock is fixed clock divided by 3 */
-+	of_property_read_string_index(np, "clock-output-names",
-+				      4, &name);
-+	ap806_clks[4] = clk_register_fixed_factor(NULL, name, fixedclk_name,
-+						  0, 1, 3);
-+	if (IS_ERR(ap806_clks[4])) {
-+		ret = PTR_ERR(ap806_clks[4]);
-+		goto fail4;
-+	}
-+
-+	of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_clk_data);
- 	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_clk_data);
- 	if (ret)
- 		goto fail_clk_add;
-@@ -142,6 +153,8 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 	return 0;
+-		tmp_rate = round(cm, adj_parent_rate, req->rate, data);
++		tmp_rate = round(cm, parent, &adj_parent_rate, req->rate, data);
+ 		if (tmp_rate == req->rate) {
+ 			best_parent = parent;
+ 			best_parent_rate = parent_rate;
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
+index 47aba3a48245..4be56eee2bfd 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.h
++++ b/drivers/clk/sunxi-ng/ccu_mux.h
+@@ -86,7 +86,8 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+ 				  struct ccu_mux_internal *cm,
+ 				  struct clk_rate_request *req,
+ 				  unsigned long (*round)(struct ccu_mux_internal *,
+-							 unsigned long,
++							 struct clk_hw *,
++							 unsigned long *,
+ 							 unsigned long,
+ 							 void *),
+ 				  void *data);
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+index 71f81e95a061..c5e010eb5991 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.c
++++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+@@ -102,7 +102,8 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
+ }
  
- fail_clk_add:
-+	clk_unregister_fixed_factor(ap806_clks[4]);
-+fail4:
- 	clk_unregister_fixed_factor(ap806_clks[3]);
- fail3:
- 	clk_unregister_fixed_rate(ap806_clks[2]);
+ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+-					unsigned long parent_rate,
++					struct clk_hw *hw,
++					unsigned long *parent_rate,
+ 					unsigned long rate,
+ 					void *data)
+ {
+@@ -116,9 +117,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+ 	_nkm.min_m = 1;
+ 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+ 
+-	ccu_nkm_find_best(parent_rate, rate, &_nkm);
++	ccu_nkm_find_best(*parent_rate, rate, &_nkm);
+ 
+-	return parent_rate * _nkm.n * _nkm.k / _nkm.m;
++	return *parent_rate * _nkm.n * _nkm.k / _nkm.m;
+ }
+ 
+ static int ccu_nkm_determine_rate(struct clk_hw *hw,
 -- 
-git-series 0.9.1
+git-series 0.8.11
