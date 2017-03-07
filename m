@@ -1,62 +1,91 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org
-Cc: linus.walleij@linaro.org,
-	robh+dt@kernel.org,
-	andy.yan@rock-chips.com,
-	sboyd@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	mturquette@baylibre.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 1/6] dt-bindings: rockchip,pinctrl: rename RK1108 to RV1108
-Date: Fri, 17 Mar 2017 18:18:35 +0100
-Message-Id: <20170317171840.4683-2-heiko@sntech.de>
-In-Reply-To: <20170317171840.4683-1-heiko@sntech.de>
-References: <20170317171840.4683-1-heiko@sntech.de>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH DO NOT MERGE 5/6] ARM: dts: omap4: add some sample clkctrl
+ data
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1486992157-10673-1-git-send-email-t-kristo@ti.com>
+ <1486992157-10673-6-git-send-email-t-kristo@ti.com>
+ <20170307144500.GE10239@codeaurora.org>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <mturquette@baylibre.com>, <tony@atomide.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <91fb553a-41fd-9290-0890-dc6cce400404@ti.com>
+Date: Wed, 8 Mar 2017 00:09:36 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170307144500.GE10239@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andy Yan <andy.yan@rock-chips.com>
+On 07/03/17 16:45, Stephen Boyd wrote:
+> On 02/13, Tero Kristo wrote:
+>> Adds clkctrl nodes for cm_l4per and cm_abe as example. Peripherals using
+>> @@ -131,27 +132,61 @@
+>>  			ranges = <0 0x4a000000 0x1000000>;
+>>
+>>  			cm1: cm1@4000 {
+>> -				compatible = "ti,omap4-cm1";
+>> +				compatible = "ti,omap4-cm1", "simple-bus";
+>>  				reg = <0x4000 0x2000>;
+>> +				#address-cells = <1>;
+>> +				#size-cells = <1>;
+>> +				ranges = <0 0x4000 0x2000>;
+>>
+>>  				cm1_clocks: clocks {
+>>  					#address-cells = <1>;
+>>  					#size-cells = <0>;
+>>  				};
+>>
+>> +				cm_abe: cm_abe@0 {
+>
+> The unit address should be 500 here.
 
-Rockchip finally named the SOC as RV1108, so change it.
-Also move the compatible list to one compatible per line.
+True.
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- .../devicetree/bindings/pinctrl/rockchip,pinctrl.txt    | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+>> +					compatible = "ti,omap4-cm";
+>> +					reg = <0x500 0x100>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <1>;
+>> +					ranges = <0 0x500 0x100>;
+>> +
+>> +					cm_abe_clkctrl: cm_abe_clkctrl@20 {
+>> +						compatible = "ti,omap4-clkctrl";
+>> +						reg = <0x20 0x6c>;
+>> +						#clock-cells = <2>;
+>> +					};
+>> +				};
+>> +
+>>  				cm1_clockdomains: clockdomains {
+>>  				};
+>>  			};
+>>
+>>  			cm2: cm2@8000 {
+>> -				compatible = "ti,omap4-cm2";
+>> +				compatible = "ti,omap4-cm2", "simple-bus";
+>>  				reg = <0x8000 0x3000>;
+>> +				#address-cells = <1>;
+>> +				#size-cells = <1>;
+>> +				ranges = <0 0x8000 0x3000>;
+>>
+>>  				cm2_clocks: clocks {
+>>  					#address-cells = <1>;
+>>  					#size-cells = <0>;
+>>  				};
+>>
+>> +				cm_l4per: cm_l4per@0 {
+>
+> and 1400 here.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-index 403b5a272f56..ee01ab58224d 100644
---- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-@@ -19,11 +19,18 @@ The pins are grouped into up to 5 individual pin banks which need to be
- defined as gpio sub-nodes of the pinmux controller.
- 
- Required properties for iomux controller:
--  - compatible: one of "rockchip,rk1108-pinctrl", "rockchip,rk2928-pinctrl"
--		       "rockchip,rk3066a-pinctrl", "rockchip,rk3066b-pinctrl"
--		       "rockchip,rk3188-pinctrl", "rockchip,rk3228-pinctrl"
--		       "rockchip,rk3288-pinctrl", "rockchip,rk3328-pinctrl"
--		       "rockchip,rk3368-pinctrl", "rockchip,rk3399-pinctrl"
-+  - compatible: should be
-+		"rockchip,rv1108-pinctrl":  for Rockchip RV1108
-+		"rockchip,rk2928-pinctrl":  for Rockchip RK2928
-+		"rockchip,rk3066a-pinctrl": for Rockchip RK3066a
-+		"rockchip,rk3066b-pinctrl": for Rockchip RK3066b
-+		"rockchip,rk3188-pinctrl":  for Rockchip RK3188
-+		"rockchip,rk3228-pinctrl":  for Rockchip RK3228
-+		"rockchip,rk3288-pinctrl":  for Rockchip RK3288
-+		"rockchip,rk3328-pinctrl":  for Rockchip RK3328
-+		"rockchip,rk3368-pinctrl":  for Rockchip RK3368
-+		"rockchip,rk3399-pinctrl":  for Rockchip RK3399
-+
-   - rockchip,grf: phandle referencing a syscon providing the
- 	 "general register files"
- 
--- 
-2.11.0
+Yeah, these two are obviously wrong as noted before. Will be fixed in 
+the full patch I will provide hopefully next week.
+
+-Tero
+
+>
+>> +					compatible = "ti,omap4-cm";
+>> +					reg = <0x1400 0x200>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <1>;
+>> +					ranges = <0 0x1400 0x200>;
+>> +
+>> +					cm_l4per_clkctrl: cm_l4per_clkctrl@20 {
+>
