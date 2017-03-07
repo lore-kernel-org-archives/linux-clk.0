@@ -1,210 +1,107 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:56700 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754933AbdCIPga (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2017 10:36:30 -0500
-From: Sricharan R <sricharan@codeaurora.org>
-To: robin.murphy@arm.com, will.deacon@arm.com, joro@8bytes.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, m.szyprowski@samsung.com,
-        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        mathieu.poirier@linaro.org, mark.rutland@arm.com
-Cc: sricharan@codeaurora.org
-Subject: [PATCH V3 2/5] iommu/arm-smmu: Add support for MMU40x/500 clocks
-Date: Thu,  9 Mar 2017 21:05:45 +0530
-Message-Id: <1489073748-3659-3-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
-References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
+Subject: Re: [PATCH v2 3/3] ARM64: dts: meson-gx: Add MALI nodes for GXBB and
+ GXL
+To: Kevin Hilman <khilman@baylibre.com>
+References: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
+ <1488365164-22861-4-git-send-email-narmstrong@baylibre.com>
+ <e26cf584-dab2-2702-f7e6-b28f750fa00c@suse.de>
+ <e80d9fb0-1d71-7cab-5e32-72316474fdfc@baylibre.com>
+ <m2tw7a17nb.fsf@baylibre.com> <9f3a17e8-63fa-6c14-4d17-0539ef7cd5a2@suse.de>
+ <1825920f-586f-7c84-8e0e-958046397b64@baylibre.com>
+ <m2efya1fjg.fsf@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <074a13e8-5772-6fb4-fc45-cfbb57790e58@baylibre.com>
+Date: Tue, 7 Mar 2017 11:36:39 +0100
+MIME-Version: 1.0
+In-Reply-To: <m2efya1fjg.fsf@baylibre.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
+List-Post: <mailto:linux-amlogic@lists.infradead.org>
+List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, sboyd@codeaurora.org,
+ linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>, carlo@caione.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
+Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The MMU400x/500 is the implementation of the SMMUv2
-arch specification. It is split in to two blocks
-TBU, TCU. TBU caches the page table, instantiated
-for each master locally, clocked by the TBUn_clk.
-TCU manages the address translation with PTW and has
-the programming interface as well, clocked using the
-TCU_CLK. The TBU can also be sharing the same clock
-domain as TCU, in which case both are clocked using
-the TCU_CLK.
-
-This defines the clock bindings for the same and adds the
-init, enable and disable functions for handling the
-clocks.
-
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- .../devicetree/bindings/iommu/arm,smmu.txt         | 27 ++++++
- drivers/iommu/arm-smmu.c                           | 95 +++++++++++++++++++++-
- 2 files changed, 121 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-index 6cdf32d..b369c13 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-@@ -60,6 +60,28 @@ conditions.
-                   aliases of secure registers have to be used during
-                   SMMU configuration.
- 
-+- clock-names:    Should be "tbu_clk" and "tcu_clk" and "cfg_clk" for
-+                  "arm,mmu-400", "arm,mmu-401" and "arm,mmu-500"
-+
-+                  "tcu_clk" is required for smmu's register access using the
-+                  programming interface and ptw for downstream bus access.
-+
-+                  "tbu_clk" is required for access to the TBU connected to the
-+                  master locally. This clock is optional and not required when
-+                  TBU is in the same clock domain as the TCU or when the TBU is
-+                  clocked along with the master.
-+
-+                  "cfg_clk" is optional if required to access the TCU's programming
-+                  interface, apart from the "tcu_clk".
-+
-+- clocks:         Phandles for respective clocks described by clock-names.
-+
-+- power-domains:  Phandles to SMMU's power domain specifier. This is
-+                  required even if SMMU belongs to the master's power
-+                  domain, as the SMMU will have to be enabled and
-+                  accessed before master gets enabled and linked to its
-+                  SMMU.
-+
- ** Deprecated properties:
- 
- - mmu-masters (deprecated in favour of the generic "iommus" binding) :
-@@ -84,6 +106,11 @@ conditions.
-                              <0 36 4>,
-                              <0 37 4>;
-                 #iommu-cells = <1>;
-+                clocks = <&gcc GCC_SMMU_CFG_CLK>,
-+                         <&gcc GCC_APSS_TCU_CLK>,
-+			 <&gcc GCC_MDP_TBU_CLK>;
-+
-+		clock-names = "cfg_clk", "tcu_clk", "tbu_clk";
-         };
- 
-         /* device with two stream IDs, 0 and 7 */
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index f7e11d3..720a1ef 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -341,6 +341,12 @@ struct arm_smmu_master_cfg {
- #define for_each_cfg_sme(fw, i, idx) \
- 	for (i = 0; idx = fwspec_smendx(fw, i), i < fw->num_ids; ++i)
- 
-+struct mmu500_clk {
-+	struct clk *cfg_clk;
-+	struct clk *tcu_clk;
-+	struct clk *tbu_clk;
-+};
-+
- struct arm_smmu_clks {
- 	void *clks;
- 	int (*init_clocks)(struct arm_smmu_device *smmu);
-@@ -455,6 +461,92 @@ static struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
- 	return container_of(dom, struct arm_smmu_domain, domain);
- }
- 
-+static int mmu500_enable_clocks(struct arm_smmu_device *smmu)
-+{
-+	int ret = 0;
-+	struct mmu500_clk *sclks = smmu->smmu_clks.clks;
-+
-+	if (!sclks)
-+		return 0;
-+
-+	ret = clk_prepare_enable(sclks->cfg_clk);
-+	if (ret) {
-+		dev_err(smmu->dev, "Couldn't enable cfg_clk");
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(sclks->tcu_clk);
-+	if (ret) {
-+		dev_err(smmu->dev, "Couldn't enable tcu_clk");
-+		clk_disable_unprepare(sclks->cfg_clk);
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(sclks->tbu_clk);
-+	if (ret) {
-+		dev_err(smmu->dev, "Couln't enable tbu_clk");
-+		clk_disable_unprepare(sclks->tcu_clk);
-+		clk_disable_unprepare(sclks->cfg_clk);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void mmu500_disable_clocks(struct arm_smmu_device *smmu)
-+{
-+	struct mmu500_clk *sclks = smmu->smmu_clks.clks;
-+
-+	if (!sclks) {
-+		clk_disable_unprepare(sclks->tbu_clk);
-+		clk_disable_unprepare(sclks->tcu_clk);
-+		clk_disable_unprepare(sclks->cfg_clk);
-+	}
-+}
-+
-+static int mmu500_init_clocks(struct arm_smmu_device *smmu)
-+{
-+	struct device *dev = smmu->dev;
-+	struct mmu500_clk *sclks;
-+	int err;
-+
-+	if (!of_find_property(dev->of_node, "clocks", NULL))
-+		return 0;
-+
-+	sclks = devm_kzalloc(dev, sizeof(*sclks), GFP_KERNEL);
-+	if (!sclks)
-+		return -ENOMEM;
-+
-+	sclks->cfg_clk = devm_clk_get(dev, "cfg_clk");
-+	if (IS_ERR(sclks->cfg_clk)) {
-+		err = PTR_ERR(sclks->cfg_clk);
-+		/* Ignore all, except -EPROBE_DEFER for optional clocks */
-+		if (err == -EPROBE_DEFER)
-+			return err;
-+		else
-+			sclks->cfg_clk = NULL;
-+	}
-+
-+	sclks->tcu_clk = devm_clk_get(dev, "tcu_clk");
-+	if (IS_ERR(sclks->tcu_clk)) {
-+		dev_err(dev, "Couldn't get tcu_clk");
-+		return PTR_ERR(sclks->tcu_clk);
-+	}
-+
-+	sclks->tbu_clk = devm_clk_get(dev, "tbu_clk");
-+	if (IS_ERR(sclks->tbu_clk)) {
-+		err = PTR_ERR(sclks->tbu_clk);
-+		/* Ignore all, ecept -EPROBE_DEFER for optional clocks */
-+		if (err == -EPROBE_DEFER)
-+			return err;
-+		else
-+			sclks->tbu_clk = NULL;
-+	}
-+
-+	smmu->smmu_clks.clks = sclks;
-+	return 0;
-+}
-+
- static void parse_driver_options(struct arm_smmu_device *smmu)
- {
- 	int i = 0;
-@@ -1981,7 +2073,8 @@ struct arm_smmu_match_data {
- 		    NULL, NULL, NULL);
- ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU,
- 		    NULL, NULL, NULL);
--ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500, NULL, NULL, NULL);
-+ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500, mmu500_init_clocks,
-+		    mmu500_enable_clocks, mmu500_disable_clocks);
- ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2,
- 		    NULL, NULL, NULL);
- 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-
+T24gMDMvMDYvMjAxNyAwNjoyNyBQTSwgS2V2aW4gSGlsbWFuIHdyb3RlOgo+IE5laWwgQXJtc3Ry
+b25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT4gd3JpdGVzOgo+IAo+PiBPbiAwMy8wNC8yMDE3
+IDAxOjM4IFBNLCBBbmRyZWFzIEbDpHJiZXIgd3JvdGU6Cj4+PiBBbSAwMy4wMy4yMDE3IHVtIDIw
+OjI5IHNjaHJpZWIgS2V2aW4gSGlsbWFuOgo+Pj4+IE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25n
+QGJheWxpYnJlLmNvbT4gd3JpdGVzOgo+Pj4+PiBPbiAwMy8wMi8yMDE3IDAxOjMxIFBNLCBBbmRy
+ZWFzIEbDpHJiZXIgd3JvdGU6Cj4+Pj4+PiBBbSAwMS4wMy4yMDE3IHVtIDExOjQ2IHNjaHJpZWIg
+TmVpbCBBcm1zdHJvbmc6Cj4+Pj4+Pj4gVGhlIHNhbWUgTUFMSS00NTAgTVAzIEdQVSBpcyBwcmVz
+ZW50IGluIHRoZSBHWEJCIGFuZCBHWEwgU29Dcy4KPj4+IFsuLi5dCj4+Pj4+Pj4gVGhlIG5vZGUg
+aXMgc2ltcGx5IGFkZGVkIGluIHRoZSBtZXNvbi1neGJiLmR0c2kgZmlsZS4KPj4+IFsuLi5dCj4+
+Pj4+Pj4gRm9yIEdYTCwgc2luY2UgYSBsb3QgaXMgc2hhcmVkIHdpdGggdGhlIEdYTSB0aGF0IGhh
+cyBhIE1BTEktVDgyMCBJUCwgdGhpcwo+Pj4+Pj4+IHBhdGNoIGFkZHMgYSBuZXcgbWVzb24tZ3hs
+LW1hbGkuZHRzaSBhbmQgaXMgaW5jbHVkZWQgaW4gdGhlIFNvQyBzcGVjaWZpYwo+Pj4+Pj4+IGR0
+c2kgZmlsZXMuCj4+Pj4+Pgo+Pj4+Pj4gVGhpcyBwYXJ0IGlzIHNsaWdodGx5IGNvbmZ1c2luZyB0
+aG91Z2guCj4+Pj4+Pgo+Pj4+Pj4gV2hhdCBleGFjdGx5IGlzIHRoZSBHWEwgdnMuIEdYTSBkaWZm
+ZXJlbmNlIHRoYXQgdGhpcyBjYW4ndCBiZSBoYW5kbGVkIGJ5Cj4+Pj4+PiBvdmVycmlkaW5nIG5v
+ZGUgcHJvcGVydGllcyBjb21wYXRpYmxlL2ludGVycnVwdHMvY2xvY2tzPyBJIGFtIG1pc3Npbmcg
+YQo+Pj4+Pj4gR1hNIHBhdGNoIGluIHRoaXMgc2VyaWVzIGFzIHJhdGlvbmFsZSBmb3IgZG9pbmcg
+aXQgdGhpcyB3YXkuCj4+Pj4+Pgo+Pj4+Pj4gSW4gcGFydGljdWxhciBJIGFtIHdvbmRlcmluZyB3
+aGV0aGVyIHRoZSB3aG9sZSBHWE0taW5oZXJpdHMtZnJvbS1HWEwKPj4+Pj4+IGNvbmNlcHQgaXMg
+Zmxhd2VkIGFuZCBzaG91bGQgYmUgYWRqdXN0ZWQgaWYgdGhpcyBsZWFkcyB0byBzZWNvbmRhcnkK
+Pj4+Pj4+IC5kdHNpIGZpbGVzIGxpa2UgdGhpczogTXkgcHJvcG9zYWwgd291bGQgYmUgdG8gaW5z
+dGVhZCBjcmVhdGUgYQo+Pj4+Pj4gbWVzb24tZ3hsLWd4bS5kdHNpLCB0aGF0IG1lc29uLWd4bC5k
+dHNpIGFuZCBtZXNvbi1neG0uZHRzaSBjYW4gaW5oZXJpdAo+Pj4+Pj4gdGhlIGN1cnJlbnQgY29t
+bW9uIHBhcnRzIGZyb20sIHRoZW4gdGhlIE1hbGkgYml0cyBjYW4gc2ltcGx5IGdvIGludG8KPj4+
+Pj4+IG1lc29uLWd4bC5kdHNpIHdpdGhvdXQgZXh0cmEgI2luY2x1ZGVzIG5lZWRlZCBpbiBTOTA1
+WCBhbmQgUzkwNUQuIFdoaWxlCj4+Pj4+PiBpdCdzIHNsaWdodGx5IG1vcmUgd29yayB0byBzcGxp
+dCBvbmNlIGFnYWluLCBJIHRoaW5rIGl0IHdvdWxkIGJlIGNsZWFuZXIuCj4+PiBbLi4uXQo+Pj4+
+PiBUaGUgb25seSBjaGFuZ2VzIGFyZSA6Cj4+PiBbLi4uXQo+Pj4+PiAgLSBBIGRpZmZlcmVudCBN
+YWxpIGNvcmUsIGJ1dCB3aXRoIHRoZSBzYW1lIGludGVycnVwdHMgKGxlc3MgYnV0IHRoZXkgc2hh
+cmUgdGhlIHNhbWUgbG93ZXIgaW50ZXJydXB0cyksIGNsb2NrcyBhbmQgbWVtb3J5IHNwYWNlCj4+
+Pj4+Cj4+Pj4+IFRoaXMgaXMgd2h5IGl0IHdhcyBkZWNpZGVkIHRvIGhhdmUgYSBzdWItZHRzaSwg
+aGF2aW5nIGEgc2Vjb25kYXJ5IGR0c2kgd2lsbCBzaW1wbHkgY29weSA5OSUgb2YgdGhlIEdYTCBk
+dHNpLAo+Pj4+PiBidXQgc3VyZWx5IHdlIGNvdWxkIGFsc28gaGF2ZSBhbiBpbnRlcm1lZGlhdGUg
+ZHRzaSBidXQgZm9yIGJvYXJkcyBJJ20gb2sgd2l0aCBpdCwgYnV0IGxlc3MgZm9yIGEgU29DIGR0
+c2ksCj4+Pj4+IHNpbmNlIGl0IGNvdWxkIGxlYWQgdG8gc29tZSBjb25mdXNpb24uCj4+Pj4+Cj4+
+Pj4+IEZpbmFsbHksIHllcyBJIGNvdWxkIGhhdmUgYWRkZWQgdGhlIG1hbGkgbm9kZSB0byB0aGUg
+R1hMIGR0c2ksIGJ1dCB0aGUgbWlkZ2FyZCBNYWxpIGR0LWJpbmRpbmdzIGFyZSBub3QgdXBzdHJl
+YW0KPj4+Pj4gYW5kIHRoZSBmYW1pbHkgaXMgdG9vIGJpZyBhbmQgcmVjZW50IGVub3VnaCB0byBj
+b25zaWRlciBoYXZpbmcgc3RhYmxlIGJpbmRpbmdzIGZvciBub3cuCj4+Pj4+Cj4+Pj4+IE5ldmVy
+dGhlbGVzcywgbm90aGluZyBpcyBmaW5hbCwgdGhpcyBneGwtbWFsaS5kdHNpIGNvdWxkIGJlIG1l
+cmdlZCBpbnRvIHRoZSBHWEwgZHRzaSBpbiB0aGUgZnV0dXJlIHdoZW4gd2UKPj4+Pj4gaGF2ZSBw
+cm9wZXIgZHQtYmluZGluZ3MgYW5kIGEgcmVhbCBzdXBwb3J0IG9mIHRoZSBUODIwIE1hbGkgb24g
+dGhlIFM5MTIuCj4+Pj4+Cj4+Pj4+IEtldmluLCB3aGF0J3MgeW91ciB0aG91Z2h0IGFib3V0IHRo
+aXMgPwo+Pj4+Cj4+Pj4gSSBkb24ndCBoYXZlIGEgc3Ryb25nIHByZWZlcmVuY2UuICBJJ20gT0sg
+d2l0aCBhIHNlcGFyYXRlIE1hbGkgLmR0c2kgZHVlCj4+Pj4gdG8gdGhlIHNpZ25maWNhbnQgb3Zl
+cmxhcCBiZXR3ZWVuIEdYTC9HWE0gaW4gdGVybXMgb2YgY2xvY2tzLCBpbnRlcnJ1cHRzCj4+Pj4g
+ZXRjLgo+Pj4+Cj4+Pj4gSG93ZXZlciwgaWYgdGhlIHBsYW4gaXMgdG8gI2luY2x1ZGUgdGhpcyBm
+cm9tIEdYTSAuZHRzIGZpbGVzLCB3aG91bGQgYQo+Pj4+IGJldHRlciBuYW1lIGJlIG1lc29uLWd4
+LW1hbGkuZHRzaT8KPj4+Cj4+PiBJIHRob3VnaHQgdGhlIHB1cnBvc2Ugd2FzIHNwZWNpZmljYWxs
+eSB0byBub3QgaGF2ZSBHWE0gaW5jbHVkZSBpdAo+Pj4gYmVjYXVzZSBpdCB1c2VzIGEgTWlkZ2Fy
+ZCBJUC4KPj4+Cj4+PiBJZiB5b3Ugd2FudCB0byBzaGFyZSB0aGUgZnJhZ21lbnQgd2l0aCBHWEJC
+IHRvbyAoZ3gpLCB3ZSBzaG91bGQgcmF0aGVyCj4+PiB1c2UgbWVzb24tZ3gtbWFsaS11dGdhcmQu
+ZHRzaSwgd2hpY2ggd291bGQgZGlmZmVyZW50aWF0ZSBmcm9tIEdYTSdzCj4+PiBNaWRnYXJkIHdo
+aWxlIHN0aWxsIGFsbG93aW5nIGZvciB2YXJpYXRpb24gb24gdGhlIDR4eCBzaWRlIChlLmcuLCA0
+NzApLgo+Pj4KPj4+IFJlZ2FyZHMsCj4+PiBBbmRyZWFzCj4+Pgo+Pgo+PiBFeGFjdCwgdGhlcmUg
+aXMgbm8gcGxhbiB0byBpbmNsdWRlIGl0IGZyb20gR1hNLgo+Pgo+PiBJJ20gbm90IGZhbiBvZiBo
+YXZpbmcgbWVzb24tZ3gtbWFsaS11dGdhcmQuZHRzaSwgd2Ugc2hvdWxkIHN0aWxsIG5lZWQgc29t
+ZSBhdHRyaWJ1dGVzIGFkZGl0aW9ucyBmb3IKPj4gdGhlIGNsb2NrcyB0byB0aGUgbWFsaSBub2Rl
+IGluIHRoZSBneGJiIGR0c2kgYW5kIGVhY2ggczkwNXggYW5kIHM5MDVkIGR0c2kgZmlsZXMuCj4+
+IEknbSBub3Qgc3VyZSB0aGlzIGlzIGV2ZW4gY2xlYW5lci4uLgo+IAo+IE9LLCBJIG1pc3VuZGVy
+c3Rvb2QgdGhlIGludGVudCBvZiBoYXZpbmcgaXQgc2VwYXJhdGVkIGZyb20gb3V0IGZyb20gdGhl
+Cj4gR1hMIC5kc3RpIHRoZW4uICBDb3VsZCB5b3UgcGxlYXNlIGNsYXJpZnk/Cj4gCj4gS2V2aW4K
+CkhpLAoKSW5kZWVkLCBteSBjaGFuZ2Vsb2cgd2FzIG5vdCByZWFsbHkgY2xlYXIsIGhlcmUgaXMg
+dGhlIHJld29yZGVkIG9uZSB0aGF0IHdpbGwgbGFuZCBpbiB2MiA6CiIKVGhpcyBwYXRjaCBhZGQg
+bm9kZXMgZm9yIHRoZSBNYWxpLTQ1MCBNUDMgR1BVIHByZXNlbnQgaW4gdGhlIEdYQkIgYW5kIEdY
+TCBTb0NzLgoKRm9yIEdYQkIsIHRoZSBub2RlIGlzIHNpbXBseSBhZGRlZCBpbiB0aGUgbWVzb24t
+Z3hiYi5kdHNpIGZpbGUuCgpGb3ggR1hMLCBzaW5jZSB0aGUgR1hNIGR0c2kgaXMgYSBzdXBlcnNl
+dCBvZiB0aGUgR1hMIGR0c2ksIHRoZSBNYWxpIG5vZGUgaXMgYWRkZWQgdG8KdGhlIEdYTCBTb0Mg
+c3BlY2lmaWMgZHRzaSBmaWxlcyB2aWEgYW4gaW50ZXJtZWRpYXRlICJtZXNvbi1neGwtbWFsaS5k
+dHNpIiBmaWxlIHRvIGF2b2lkCmhhdmluZyBhbiBpbnZhbGlkIE1hbGktNDUwIG5vZGUgaW4gdGhl
+IEdYTSBkZXZpY2UgdHJlZS4KIgoKVGhhbmtzLApOZWlsCgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hbWxvZ2ljIG1haWxpbmcgbGlzdApsaW51
+eC1hbWxvZ2ljQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9saW51eC1hbWxvZ2ljCg==
