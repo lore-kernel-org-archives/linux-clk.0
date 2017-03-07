@@ -1,82 +1,86 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 7 Mar 2017 06:11:57 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-	Carlo Caione <carlo@caione.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, rtc-linux@googlegroups.com
-Subject: Re: [PATCH 1/15] clk: divider: Make divider_round_rate take the
- parent clock
-Message-ID: <20170307141157.GC10239@codeaurora.org>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
- <7ebd073b4941e4b7c619f15ff0a375ff7919d403.1488876832.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Peter De Schrijver
+	<pdeschrijver@nvidia.com>
+References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
+ <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
+ <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
+ <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
+ <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
+ <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Stephen
+ Warren" <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <598a2a7d-6e01-8884-e839-c758b731605a@nvidia.com>
+Date: Tue, 7 Mar 2017 20:27:23 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7ebd073b4941e4b7c619f15ff0a375ff7919d403.1488876832.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/07, Maxime Ripard wrote:
-> So far, divider_round_rate only considers the parent clock returned by
-> clk_hw_get_parent.
-> 
-> This works fine on clocks that have a single parents, this doesn't work on
-> muxes, since we will only consider the first parent, while other parents
-> may totally be able to provide a better combination.
-> 
-> Clocks in that case cannot use divider_round_rate, so would have to come up
-> with a very similar logic to work around it. Instead of having to do
-> something like this, and duplicate that logic everywhere, give an
-> additional parameter for the parent clock to consider.
-> 
-> Current users have been converted using the following coccinelle script
-> 
-> @@
-> identifier hw, rate, prate, table, width, flags;
-> @@
-> 
-> -long divider_round_rate(struct clk_hw *hw,
-> +long divider_round_rate(struct clk_hw *hw, struct clk_hw *parent,
->                         unsigned long rate,
->                         unsigned long *prate,
->                         const struct clk_div_table *table,
->                         u8 width,
->                         unsigned long flags) { ... }
-> 
-> @@
-> identifier fn, hw;
-> expression E2, E3, E4, E5, E6;
-> @@
->  fn (struct clk_hw *hw, ...) {
->  <...
-> -divider_round_rate(hw, E2, E3, E4, E5, E6)
-> +divider_round_rate(hw, clk_hw_get_parent(hw), E2, E3, E4, E5, E6)
->  ...>
-> }
+Hi Geert,
 
-Why not introduce another function like 
+On 06/03/17 15:53, Geert Uytterhoeven wrote:
+> Hi Peter,
+> 
+> On Mon, Mar 6, 2017 at 3:28 PM, Peter De Schrijver
+> <pdeschrijver@nvidia.com> wrote:
+>> On Mon, Mar 06, 2017 at 09:58:29AM +0000, Jon Hunter wrote:
+>>> On 06/03/17 08:38, Peter De Schrijver wrote:
+>>>> On Thu, Mar 02, 2017 at 05:56:49PM +0000, Jon Hunter wrote:
+>>>>> On 28/02/17 15:19, Peter De Schrijver wrote:
+>>>>>> This is needed to make the JTAG debugging interface work.
+>>>>>>
+>>>>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>>>>> ---
+>>>>>>  drivers/clk/tegra/clk-tegra210.c | 1 +
+>>>>>>  1 file changed, 1 insertion(+)
+>>>>>>
+>>>>>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+>>>>>> index 9a2512a..708f5f1 100644
+>>>>>> --- a/drivers/clk/tegra/clk-tegra210.c
+>>>>>> +++ b/drivers/clk/tegra/clk-tegra210.c
+>>>>>> @@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
+>>>>>>   { TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>>>>   { TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>>>>   { TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>>>> + { TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>>>>   { TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
+>>>>>>   { TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
+>>>>>>   { TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
+>>>>>
+>>>>> Should there be some dependency on say CONFIG_DEBUG_KERNEL? I am not
+>>>>> sure we always want this on for all cases.
+>>>>
+>>>> Why would you not want it to be always on?
+>>>
+>>> Purely for power reasons. I do not know how much power keeping this
+>>
+>> I don't expect it to be significant but I don't have any numbers.
+>>
+>>> clock running consumes, but I don't like the idea of clocks running all
+>>> the time when they are not needed.
+>>
+>> Problem is that in this case there is no easy way to determine if the clock
+>> needs to be on.
+> 
+> I had a similar issue with SH-Mobile AG5, where the power domain containing
+> the JTAG interface is powered down.
+> 
+> [DEBUG] ARM: dts: sh73a0: Add minimal device node for Coresight-ETM
+> https://patchwork.kernel.org/patch/8151511/
+> 
+> Want to debug? Apply patch. I know it's not ideal...
 
-	divider_round_rate_parent()
-	divider_round_rate_mux()
+Why don't you apply the patch and just keep the node disabled by default?
 
-that takes the extra parent argument? Technically, a divider is
-considered to only have one parent, and if it has more than one
-parent, then it is a mux and a divider.
+Cheers
+Jon
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+nvpublic
