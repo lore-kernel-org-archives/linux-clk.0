@@ -1,78 +1,57 @@
-Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: sboyd@codeaurora.org,
-	khilman@baylibre.com,
-	carlo@caione.org
-Subject: [PATCH v4 1/3] clk: meson-gxbb: Add MALI clock IDS
-Date: Wed, 22 Mar 2017 11:18:53 +0100
-Message-Id: <1490177935-9646-2-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1490177935-9646-1-git-send-email-narmstrong@baylibre.com>
-References: <1490177935-9646-1-git-send-email-narmstrong@baylibre.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
-List-Post: <mailto:linux-amlogic@lists.infradead.org>
-List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
-Cc: linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Neil Armstrong <narmstrong@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
-Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 11/15] drm/sun4i: tcon: Fix tcon channel 1 backporch calculation
+Date: Tue,  7 Mar 2017 09:56:30 +0100
+Message-Id: <475aeed1da40d46d8e50420c281a74c32b78c730.1488876832.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add missing MALI clock IDs and expose the muxes and gates in the dt-bindings.
+It seems like what's called a backporch in the datasheet is actually the
+backporch plus the sync period. Fix that in our driver.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- drivers/clk/meson/gxbb.h              | 9 ++++++++-
- include/dt-bindings/clock/gxbb-clkc.h | 5 +++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 274f587..73efdc3 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -268,8 +268,15 @@
- /* CLKID_SAR_ADC_CLK */
- /* CLKID_SAR_ADC_SEL */
- #define CLKID_SAR_ADC_DIV	  99
-+/* CLKID_MALI_0_SEL */
-+#define CLKID_MALI_0_DIV	 101
-+/* CLKID_MALI_0	*/
-+/* CLKID_MALI_1_SEL */
-+#define CLKID_MALI_1_DIV	 104
-+/* CLKID_MALI_1	*/
-+/* CLKID_MALI	*/
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 93249c5ab1e4..e44217fb4f6f 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -240,15 +240,14 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon, struct drm_encoder *encoder,
+ 		     SUN4I_TCON1_BASIC2_Y(mode->crtc_vdisplay));
  
--#define NR_CLKS			  100
-+#define NR_CLKS			  107
+ 	/* Set horizontal display timings */
+-	bp = mode->crtc_htotal - mode->crtc_hsync_end;
++	bp = mode->crtc_htotal - mode->crtc_hsync_start;
+ 	DRM_DEBUG_DRIVER("Setting horizontal total %d, backporch %d\n",
+ 			 mode->htotal, bp);
+ 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC3_REG,
+ 		     SUN4I_TCON1_BASIC3_H_TOTAL(mode->crtc_htotal) |
+ 		     SUN4I_TCON1_BASIC3_H_BACKPORCH(bp));
  
- /* include the CLKIDs that have been made part of the stable DT binding */
- #include <dt-bindings/clock/gxbb-clkc.h>
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index f08f06d..ef7d6b7 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -35,5 +35,10 @@
- #define CLKID_SD_EMMC_C		96
- #define CLKID_SAR_ADC_CLK	97
- #define CLKID_SAR_ADC_SEL	98
-+#define CLKID_MALI_0_SEL	100
-+#define CLKID_MALI_0		102
-+#define CLKID_MALI_1_SEL	103
-+#define CLKID_MALI_1		105
-+#define CLKID_MALI		106
- 
- #endif /* __GXBB_CLKC_H */
+-	/* Set vertical display timings */
+-	bp = mode->crtc_vtotal - mode->crtc_vsync_end;
++	bp = mode->crtc_vtotal - mode->crtc_vsync_start;
+ 	DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
+ 			 mode->vtotal, bp);
+ 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC4_REG,
 -- 
-1.9.1
-
-
-_______________________________________________
-linux-amlogic mailing list
-linux-amlogic@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-amlogic
+git-series 0.8.11
