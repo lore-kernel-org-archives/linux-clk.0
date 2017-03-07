@@ -1,104 +1,84 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [PATCH v3 11/11] [DO NOT MERGE] ARM: dts: sun8i: enable LCD panel of
- Lichee Pi Zero
-Date: Thu, 30 Mar 2017 03:46:13 +0800
-Message-Id: <20170329194613.55548-12-icenowy@aosc.io>
-In-Reply-To: <20170329194613.55548-1-icenowy@aosc.io>
-References: <20170329194613.55548-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 7 Mar 2017 06:45:00 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	mturquette@baylibre.com, tony@atomide.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH DO NOT MERGE 5/6] ARM: dts: omap4: add some sample
+ clkctrl data
+Message-ID: <20170307144500.GE10239@codeaurora.org>
+References: <1486992157-10673-1-git-send-email-t-kristo@ti.com>
+ <1486992157-10673-6-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1486992157-10673-6-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.xyz>
+On 02/13, Tero Kristo wrote:
+> Adds clkctrl nodes for cm_l4per and cm_abe as example. Peripherals using
+> @@ -131,27 +132,61 @@
+>  			ranges = <0 0x4a000000 0x1000000>;
+>  
+>  			cm1: cm1@4000 {
+> -				compatible = "ti,omap4-cm1";
+> +				compatible = "ti,omap4-cm1", "simple-bus";
+>  				reg = <0x4000 0x2000>;
+> +				#address-cells = <1>;
+> +				#size-cells = <1>;
+> +				ranges = <0 0x4000 0x2000>;
+>  
+>  				cm1_clocks: clocks {
+>  					#address-cells = <1>;
+>  					#size-cells = <0>;
+>  				};
+>  
+> +				cm_abe: cm_abe@0 {
 
-A 480x272 QiaoDian QD43003C0-40-7LED panel is available from Lichee Pi.
+The unit address should be 500 here.
 
-This commit connects this panel to Lichee Pi Zero.
+> +					compatible = "ti,omap4-cm";
+> +					reg = <0x500 0x100>;
+> +					#address-cells = <1>;
+> +					#size-cells = <1>;
+> +					ranges = <0 0x500 0x100>;
+> +
+> +					cm_abe_clkctrl: cm_abe_clkctrl@20 {
+> +						compatible = "ti,omap4-clkctrl";
+> +						reg = <0x20 0x6c>;
+> +						#clock-cells = <2>;
+> +					};
+> +				};
+> +
+>  				cm1_clockdomains: clockdomains {
+>  				};
+>  			};
+>  
+>  			cm2: cm2@8000 {
+> -				compatible = "ti,omap4-cm2";
+> +				compatible = "ti,omap4-cm2", "simple-bus";
+>  				reg = <0x8000 0x3000>;
+> +				#address-cells = <1>;
+> +				#size-cells = <1>;
+> +				ranges = <0 0x8000 0x3000>;
+>  
+>  				cm2_clocks: clocks {
+>  					#address-cells = <1>;
+>  					#size-cells = <0>;
+>  				};
+>  
+> +				cm_l4per: cm_l4per@0 {
 
-Lichee Pi also provides a 800x480 panel without accurate model number,
-so do not merge this patch. It will finally come as device tree overlay.
+and 1400 here.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
- arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts | 36 +++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+> +					compatible = "ti,omap4-cm";
+> +					reg = <0x1400 0x200>;
+> +					#address-cells = <1>;
+> +					#size-cells = <1>;
+> +					ranges = <0 0x1400 0x200>;
+> +
+> +					cm_l4per_clkctrl: cm_l4per_clkctrl@20 {
 
-diff --git a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-index 387fc2aa546d..7ae72bf63cd0 100644
---- a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-+++ b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-@@ -75,6 +75,28 @@
- 			gpios = <&pio 6 2 GPIO_ACTIVE_LOW>; /* PG2 */
- 		};
- 	};
-+
-+	panel: panel {
-+		compatible = "qiaodian,qd43003c0-40", "simple-panel";
-+		enable-gpios = <&pio 1 4 GPIO_ACTIVE_HIGH>; /* Should be backlight */
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			panel_input: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&tcon0_out_lcd>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
- 
- &mmc0 {
-@@ -86,6 +108,20 @@
- 	status = "okay";
- };
- 
-+&tcon0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&lcd_rgb666_pins>;
-+	status = "okay";
-+
-+};
-+
-+&tcon0_out {
-+	tcon0_out_lcd: endpoint@0 {
-+		reg = <0>;
-+		remote-endpoint = <&panel_input>;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-0 = <&uart0_pins_a>;
- 	pinctrl-names = "default";
 -- 
-2.12.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
