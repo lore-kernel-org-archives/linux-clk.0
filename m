@@ -1,148 +1,69 @@
-Return-Path: <sudeep.holla@arm.com>
-Subject: Re: [PATCH v3 3/5] coresight: add support for debug module
-To: Mike Leach <mike.leach@linaro.org>
-References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
- <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
- <671a0b39-b635-6e0e-d3fa-967651f2e29c@arm.com>
- <CAJ9a7VgCjXNGC4C49PxL-nBxzhMCmA8Mb-0C_epahizA5EL2HA@mail.gmail.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Leo Yan <leo.yan@linaro.org>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Wei Xu <xuwei5@hisilicon.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- John Stultz <john.stultz@linaro.org>, Guodong Xu <guodong.xu@linaro.org>,
- Haojian Zhuang <haojian.zhuang@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <e7a97c52-f61a-e503-f626-09563fa100b8@arm.com>
-Date: Wed, 22 Mar 2017 14:07:47 +0000
-MIME-Version: 1.0
-In-Reply-To: <CAJ9a7VgCjXNGC4C49PxL-nBxzhMCmA8Mb-0C_epahizA5EL2HA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 6/15] dt-bindings: display: sun4i: Add HDMI display bindings
+Date: Tue,  7 Mar 2017 09:56:25 +0100
+Message-Id: <f1d46b79f933df724a6750d557ebe9517b6339b5.1488876832.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+One of the possible output of the display pipeline, on the SoCs that have
+it, is the HDMI controller.
 
+Add a binding for it.
 
-On 22/03/17 12:54, Mike Leach wrote:
-> 
-> 
-> On 21 March 2017 at 15:39, Sudeep Holla <sudeep.holla@arm.com 
-> <mailto:sudeep.holla@arm.com>> wrote:
-> 
-[...]
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 21 +++++++-
+ 1 file changed, 21 insertions(+), 0 deletions(-)
 
-> I disagree with this approach. One of the main usefulness of such
-> self hosted debug feature is to debug issues around features like
-> cpuidle. Adding constraints like "cpuidle needs to be disabled" is
-> not good IMO. There are ways to make it work with cpuidle enabled.
-> Please explore them. In particular refer H9.2.39 EDPRCR, External
-> Debug Power/Reset Control Register.
-> 
-> So, "nohlt" option is not an option. I prefer some sysfs option like 
-> Suzuki suggested to enable this feature on demand if power saving in 
-> normal usecase is the concern. Using "nohlt" just disables idle and 
-> doesn't ensure the debug power domain is ON. Using the flag directly
-> in this driver to enable debug power domain also sounds misuse of
-> that flag for me.
-> 
-> I think the key issue to remember here is that experience with
-> external debug shows that CPU Idle means different things to
-> different SoC designs / power management schemes. (and we are using
-> external debug in a self hosted way here).
-> 
-
-Yes agreed on the point that meaning of "cpuidle" differs on each SoC.
-
-> Some designs will power down an entire cluster if all CPUs on the 
-> cluster are powered down - including the parts of the debug
-> registers that should remain powered in the debug power domain.
-
-Interesting, at-least ETMv4 or some other coresight specification
-clearly classify the power domains and the register access. The actual
-power domain itself may vary depending on implementation.
-
-> The bits in EDPRCR are not respected in these cases - these designs
-> do not really support debug over power down in the way that the
-> CoreSight / Debug designers anticipated. This means that even
-> checking EDPRSR has the potential to cause a bus hang if the target
-> register is unpowered. (and if the debug power domain is unpowered
-> then the PC data is also lost).
-> 
-
-Agreed, but can we start supporting the sane designs in sane way first.
-We can always add compatible and handle deviations. I agree we may need
-to support such deviations but starting with that seems setting a bad
-example.
-
-> In these cases, accessing to the debug registers while they are not 
-> powered is a recipe for disaster - so preventing CPUIdle ​and the
-> subsequent cluster power down ​ allows investigation on this class of
-> system - ​and allowing the CPUs of interest be interrogated without
-> hanging the crash log process.​
-> 
-
-Agreed. But my point is that many issues are around cpuidle and some
-usecase and just eliminating that use-case sounds bad. For me,
-core-sight was most useful to debug issues around cpu power management
-and lockups where we can't stop cores but examine these registers.
-There are other alternatives for other use-cases IMO.
-
-> 
-> ​On systems that do behave correctly with respect to debug power 
-> domains, then disabling CPUIdle is unnecessary - these can be
-> controlled by ​EDPRCR - perhaps; per the specification it is
-> "implementation defined" if writing bits to this register have an
-> effect on the system anyway even if the debug domain is correctly
-> powered.
-> 
-
-We can always do that unconditionally. If implementations don't honor
-those bits, it's different. If they hang on accessing something which is
-on debug power domain and not on core power domain, then you have much
-bigger issue to solve. How can you even trust and make any other
-register accesses that are in debug power domain then ?
-
-> ​While it is true to say that disabling CPUIdle does not guarantee
-> that the debug power domain is on, it does in a certain class of
-> designs prevent it being powered off (Juno historically - not sure if
-> that is still the case.).
-> 
-
-Again it's completely platform specific. All you need to care is that
-the debug power domain is on or not. Disabling CPUIdle to achieve that
-is simply wrong and may work only on few platforms.
-
-> However, I do agree that the use of the driver should not be
-> triggered _only_ on the existence of /nohlt on the command line - ​
-> there is a class of designs where this will not be required.
-> 
-
-Thanks
-
-> When enabing the driver as a kernel config the user needs to
-> decide:- 1) do I need this to debug the issue I am seeing 2) does the
-> power management on my system require I use /nohlt as well.
-
-Please don't *misuse* nohlt to disable idle. There are other ways to
-do the same either from the user-space or from the driver.
-
-> 
-> I think that the use of /nohlt as an option, and the reasons why it 
-> might be needed should be part of the configuration help in this
-> case.
-> 
-> There is also a case for considering if there should be an option to 
-> configure it to be enabled or disabled at boot time. It is easy to 
-> imagine cases I want to have this running from the start as a crash 
-> happens early - and cases I can enable it on demand later.
-> 
-
-Also consider with cpuidle enabled ;). I can help testing if needed.
-
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index b82c00449468..4b280672658e 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -4,6 +4,27 @@ Allwinner A10 Display Pipeline
+ The Allwinner A10 Display pipeline is composed of several components
+ that are going to be documented below:
+ 
++HDMI Encoder
++------------
++
++The HDMI Encoder supports the HDMI video and audio outputs, and does
++CEC. It is one end of the pipeline.
++
++Required properties:
++  - compatible: value must be one of:
++    * allwinner,sun5i-a10s-hdmi
++  - reg: base address and size of memory-mapped region
++  - clocks: phandles to the clocks feeding the HDMI encoder
++    * ahb: the HDMI interface clock
++    * mod: the HDMI module clock
++    * pll-0: the first video PLL
++    * pll-1: the second video PLL
++  - clock-names: the clock names mentioned above
++
++  - ports: A ports node with endpoint definitions as defined in
++    Documentation/devicetree/bindings/media/video-interfaces.txt. The
++    first port should be the input endpoint.
++
+ TV Encoder
+ ----------
+ 
 -- 
-Regards,
-Sudeep
+git-series 0.8.11
