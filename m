@@ -1,53 +1,56 @@
-Return-Path: <Vladislav.Zakharov@synopsys.com>
-From: Vlad Zakharov <Vladislav.Zakharov@synopsys.com>
-To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "Vladislav.Zakharov@synopsys.com"
-	<Vladislav.Zakharov@synopsys.com>
-CC: "robh@kernel.org" <robh@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Jose.Abreu@synopsys.com"
-	<Jose.Abreu@synopsys.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>
-Subject: Re: [PATCH v2] clk/axs10x: introduce AXS10X pll driver
-Date: Wed, 29 Mar 2017 11:20:46 +0000
-Message-ID: <1490786446.32756.4.camel@synopsys.com>
-References: <1487682670-4164-1-git-send-email-vzakhar@synopsys.com>
-	 <1488547113.2557.44.camel@synopsys.com>
-	 <20170303235005.GV25384@codeaurora.org>
-In-Reply-To: <20170303235005.GV25384@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH DO NOT MERGE 5/6] ARM: dts: omap4: add some sample clkctrl
+ data
+To: Tony Lindgren <tony@atomide.com>
+References: <1486992157-10673-1-git-send-email-t-kristo@ti.com>
+ <1486992157-10673-6-git-send-email-t-kristo@ti.com>
+ <20170306224535.GP20572@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <c81492c2-aff8-3adb-33c5-b72b4469488c@ti.com>
+Date: Tue, 7 Mar 2017 11:04:08 +0200
 MIME-Version: 1.0
+In-Reply-To: <20170306224535.GP20572@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwgTWljaGFlbCwNCg0KT24gRnJpLCAyMDE3LTAzLTAzIGF0IDE1OjUwIC0wODAw
-LCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+IE9uIDAzLzAzLCBWbGFkIFpha2hhcm92IHdyb3RlOg0K
-PiA+IA0KPiA+IEhpIE1pY2hhZWwsIFN0ZXBoZW4sDQo+ID4gDQo+ID4gT24gVHVlLCAyMDE3LTAy
-LTIxIGF0IDE2OjExICswMzAwLCBWbGFkIFpha2hhcm92IHdyb3RlOg0KPiA+ID4gDQo+ID4gPiBB
-WFMxMFggYm9hcmRzIG1hbmFnZXMgaXQncyBjbG9ja3MgdXNpbmcgdmFyaW91cyBQTExzLiBUaGVz
-ZSBQTEwgaGFzIHNhbWUNCj4gPiA+IGRpdmlkZXJzIGFuZCBjb3JyZXNwb25kaW5nIGNvbnRyb2wg
-cmVnaXN0ZXJzIG1hcHBlZCB0byBkaWZmZXJlbnQgYWRkcmVzc2VzLg0KPiA+ID4gU28gd2UgYWRk
-IG9uZSBjb21tb24gZHJpdmVyIGZvciBzdWNoIFBMTHMuDQo+ID4gPiANCj4gPiA+IEVhY2ggUExM
-IG9uIEFYUzEwWCBib2FyZCBjb25zaXN0IG9mIHRocmVlIGRpdmlkZXJzOiBJRElWLCBGQkRJViBh
-bmQNCj4gPiA+IE9ESVYuIE91dHB1dCBjbG9jayB2YWx1ZSBpcyBtYW5hZ2VkIHVzaW5nIHRoZXNl
-IGRpdmlkZXJzLg0KPiA+ID4gDQo+ID4gPiBXZSBhZGQgcHJlLWRlZmluZWQgdGFibGVzIHdpdGgg
-c3VwcG9ydGVkIHJhdGUgdmFsdWVzIGFuZCBhcHByb3ByaWF0ZQ0KPiA+ID4gY29uZmlndXJhdGlv
-bnMgb2YgSURJViwgRkJESVYgYW5kIE9ESVYgZm9yIGVhY2ggdmFsdWUuDQo+ID4gPiANCj4gPiA+
-IEFzIG9mIHRvZGF5IHdlIGFkZCBzdXBwb3J0IGZvciBQTExzIHRoYXQgZ2VuZXJhdGUgY2xvY2sg
-Zm9yIHRoZQ0KPiA+ID4gZm9sbG93aW5nIGRldmljZXM6DQo+ID4gPiDCoCogQVJDIGNvcmUgb24g
-QVhDIENQVSB0aWxlcy4NCj4gPiA+IMKgKiBBUkMgUEdVIG9uIEFSQyBTRFAgTWFpbmJvYXJkLg0K
-PiA+ID4gYW5kIG1vcmUgdG8gY29tZSBsYXRlci4NCj4gPiA+IA0KPiA+ID4gQWNrZWQtYnk6IFJv
-YiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBWbGFkIFph
-a2hhcm92IDx2emFraGFyQHN5bm9wc3lzLmNvbT4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6IEpvc2Ug
-QWJyZXUgPGpvYWJyZXVAc3lub3BzeXMuY29tPg0KPiA+ID4gQ2M6IE1pY2hhZWwgVHVycXVldHRl
-IDxtdHVycXVldHRlQGJheWxpYnJlLmNvbT4NCj4gPiA+IENjOiBTdGVwaGVuIEJveWQgPHNib3lk
-QGNvZGVhdXJvcmEub3JnPg0KPiA+ID4gQ2M6IE1hcmsgUnV0bGFuZCA8bWFyay5ydXRsYW5kQGFy
-bS5jb20+DQo+ID4gDQo+ID4gTWF5YmUgeW91IGhhdmUgYW55IGNvbW1lbnRzIG9yIHJlbWFya3Mg
-YWJvdXQgdGhpcyBwYXRjaD8gQW5kIGlmIHlvdSBkb24ndCBjb3VsZCB5b3UgcGxlYXNlIGFwcGx5
-IGl0Lg0KPiA+IA0KPiANCj4gSSBoYXZlbid0IHJldmlld2VkIGl0IHlldC4gVGhlIG1lcmdlIHdp
-bmRvdyBpcyB1cG9uIHVzIHJpZ2h0IG5vdw0KPiBzbyBJJ2xsIHByb2JhYmx5IGdldCB0byBnb2lu
-ZyB0aHJvdWdoIHRoZSBxdWV1ZSB0aGlzIHdlZWtlbmQvbmV4dA0KPiB3ZWVrLg0KPiANCg0KUGxl
-YXNlIHRyZWF0IHRoaXMgbWVzc2FnZSBhcyBhIHBvbGl0ZSByZW1pbmRlciB0byByZXZpZXcgbXkg
-cGF0Y2guDQpJdCBpcyByZXF1aXJlZCBmb3Igc29tZSBzdWJzeXN0ZW1zIG9uIG91ciBib2FyZHMs
-IGUuZy4gZm9yIEFSQyBQR1UuDQoNClRoYW5rcy4NCg0KLS0gDQpCZXN0IHJlZ2FyZHMsDQpWbGFk
-IFpha2hhcm92IDx2emFraGFyQHN5bm9wc3lzLmNvbT4=
+On 07/03/17 00:45, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [170213 05:24]:
+>> @@ -304,6 +339,8 @@
+>>  			#gpio-cells = <2>;
+>>  			interrupt-controller;
+>>  			#interrupt-cells = <2>;
+>> +			clocks = <&cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 0>;
+>> +			clock-names = "clkctrl";
+>>  		};
+>>
+>>  		gpio3: gpio@48057000 {
+>> @@ -315,6 +352,8 @@
+>>  			#gpio-cells = <2>;
+>>  			interrupt-controller;
+>>  			#interrupt-cells = <2>;
+>> +			clocks = <&cm_l4per_clkctrl OMAP4_GPIO3_CLKCTRL 0>;
+>> +			clock-names = "clkctrl";
+>>  		};
+>>
+>>  		gpio4: gpio@48059000 {
+>> @@ -384,6 +423,8 @@
+>>  			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+>>  			ti,hwmods = "uart1";
+>>  			clock-frequency = <48000000>;
+>> +			clocks = <&cm_l4per_clkctrl OMAP4_UART1_CLKCTRL 0>;
+>> +			clock-names = "clkctrl";
+>>  		};
+>
+> BTW, one thing you might want to test also is that the opt clocks
+> can be mapped here properly for gpios to reset. That can be easily
+> tested by kexec booting on beagle-x15 where we currently get warnings
+> on kexec boot about GPIOs failing to reset.
+
+Ok, I'll check that also. I am planning to post the cleanup series this 
+week, and post the clkctrl support next, as this one needs some data 
+changes + additional testing.
+
+-Tero
