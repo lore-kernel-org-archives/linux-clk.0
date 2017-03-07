@@ -1,34 +1,36 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 7 Mar 2017 06:48:23 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org, tony@atomide.com,
-	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 02/15] clk: ti: add support for automatic clock alias
- generation
-Message-ID: <20170307144823.GF10239@codeaurora.org>
-References: <1486978511-29668-1-git-send-email-t-kristo@ti.com>
- <1486978511-29668-3-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1486978511-29668-3-git-send-email-t-kristo@ti.com>
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux-clk@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2 0/5] clk: rockchip: fix up the clk for RK3368 SoC 
+Date: Tue,  7 Mar 2017 19:05:14 +0800
+Message-Id: <1488884719-10350-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/13, Tero Kristo wrote:
-> diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-> index 13c37f4..ac95fda 100644
-> --- a/drivers/clk/ti/clock.h
-> +++ b/drivers/clk/ti/clock.h
-> @@ -16,6 +16,8 @@
->  #ifndef __DRIVERS_CLK_TI_CLOCK__
->  #define __DRIVERS_CLK_TI_CLOCK__
->  
-> +#include <linux/clkdev.h>
+change in V2:
+split clock-id addition and the assignment in the clock-
+driver.
 
-What is this include for? Shouldn't this be in whatever C file is
-using clkdev?
+Elaine Zhang (5):
+  clk: rockchip: rk3368: fix up the timer-ids
+  clk: rockchip: rk3368: remove the unused id
+  clk: rockchip: add clock ids for timer10-15 of RK3368 SoCs
+  clk: rockchip: rk3368: export SCLK_TIMERXX id for timers
+  clk: rockchip: rk3368: add some clks as critical
 
+ drivers/clk/rockchip/clk-rk3368.c      | 27 +++++++++++++++------------
+ include/dt-bindings/clock/rk3368-cru.h | 19 ++++++++++++-------
+ 2 files changed, 27 insertions(+), 19 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
