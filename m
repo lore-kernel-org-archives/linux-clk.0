@@ -1,85 +1,82 @@
-Return-Path: <sudeep.holla@arm.com>
-Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
-To: Leo Yan <leo.yan@linaro.org>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
- <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
- <20170328165010.GA21937@linaro.org> <20170329015423.GA5035@leoy-linaro>
- <20170329165535.GB24889@linaro.org> <20170330015941.GD3038@leoy-linaro>
- <CANLsYkwPYSvy2xjf8uuvx1WGWpGdMFy7kF=30VbvgW+jDvnFuw@mail.gmail.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
- Sudeep Holla <sudeep.holla@arm.com>, Jonathan Corbet <corbet@lwn.net>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Wei Xu <xuwei5@hisilicon.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>, Andy Gross <andy.gross@linaro.org>,
- David Brown <david.brown@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Guodong Xu <guodong.xu@linaro.org>,
- John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- Mike Leach <mike.leach@linaro.org>,
- "Suzuki K. Poulose" <Suzuki.Poulose@arm.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <5a4c5112-4934-c827-2a07-387e4555dc4b@arm.com>
-Date: Thu, 30 Mar 2017 17:04:42 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 7 Mar 2017 06:11:57 -0800
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	Carlo Caione <carlo@caione.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, rtc-linux@googlegroups.com
+Subject: Re: [PATCH 1/15] clk: divider: Make divider_round_rate take the
+ parent clock
+Message-ID: <20170307141157.GC10239@codeaurora.org>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <7ebd073b4941e4b7c619f15ff0a375ff7919d403.1488876832.git-series.maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <CANLsYkwPYSvy2xjf8uuvx1WGWpGdMFy7kF=30VbvgW+jDvnFuw@mail.gmail.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <7ebd073b4941e4b7c619f15ff0a375ff7919d403.1488876832.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 30/03/17 16:46, Mathieu Poirier wrote:
-> On 29 March 2017 at 19:59, Leo Yan <leo.yan@linaro.org> wrote:
->> On Wed, Mar 29, 2017 at 10:55:35AM -0600, Mathieu Poirier wrote:
->>
->> [...]
->>
->>>> So this is why add "idle_constraint" as a central place to control
->>>> power domain for CPU debug purpose and I also think this is more
->>>> friendly for hardware design, e.g. some platforms can enable partial
->>>> low power states to save power and avoid overheat after using this
->>>> driver.
->>>>
->>>> How about you think for this?
->>>
->>> Like Sudeep pointed out we should concentrate on doing the right thing,
->>> that is work with EDPRSR.PU, EDPRCR.COREPURQ and EDPRCR.CORENPDRQ.
->>
->> Agree, and I think we have aligned for this.
->>
->>> Anything outside of that becomes platform specific and can't be handled in
->>> this driver.
->>
->> Sorry I argue a bit for this just want to make things more clear and
->> if can have better method.
->>
->> Though the issue is platform specific, but the code is to seek common
->> method to handle them. So the driver has no any platform specific code.
+On 03/07, Maxime Ripard wrote:
+> So far, divider_round_rate only considers the parent clock returned by
+> clk_hw_get_parent.
 > 
-> Seeking a common way to handle platform specific problems doesn't
-> scale and will never be encompassing.  There will always be a quirk
-> somewhere to deal with, hence the idea of keeping things separate.
+> This works fine on clocks that have a single parents, this doesn't work on
+> muxes, since we will only consider the first parent, while other parents
+> may totally be able to provide a better combination.
 > 
-
-I completely agree and just responded to the original patch.
-
->>
->> I read again for Suziki's suggestion: "4) Should document the fact that,
->> on some platforms, the user may have to disable CPUidle explicitly to
->> get the driver working. But let us not make it the default. The user
->> with a not so ideal platform could add "nohlt" and get it working."
+> Clocks in that case cannot use divider_round_rate, so would have to come up
+> with a very similar logic to work around it. Instead of having to do
+> something like this, and duplicate that logic everywhere, give an
+> additional parameter for the parent clock to consider.
 > 
-> Suzuki and I are expressing the same view using different words.
+> Current users have been converted using the following coccinelle script
 > 
+> @@
+> identifier hw, rate, prate, table, width, flags;
+> @@
+> 
+> -long divider_round_rate(struct clk_hw *hw,
+> +long divider_round_rate(struct clk_hw *hw, struct clk_hw *parent,
+>                         unsigned long rate,
+>                         unsigned long *prate,
+>                         const struct clk_div_table *table,
+>                         u8 width,
+>                         unsigned long flags) { ... }
+> 
+> @@
+> identifier fn, hw;
+> expression E2, E3, E4, E5, E6;
+> @@
+>  fn (struct clk_hw *hw, ...) {
+>  <...
+> -divider_round_rate(hw, E2, E3, E4, E5, E6)
+> +divider_round_rate(hw, clk_hw_get_parent(hw), E2, E3, E4, E5, E6)
+>  ...>
+> }
 
-+1, as I just mentioned on the patch, we can warn user to take action
-when this feature gets enabled to get desired result and *nothing more*
-than that. Please drop all these pm_qos stuff.
+Why not introduce another function like 
+
+	divider_round_rate_parent()
+	divider_round_rate_mux()
+
+that takes the extra parent argument? Technically, a divider is
+considered to only have one parent, and if it has more than one
+parent, then it is a mux and a divider.
 
 -- 
-Regards,
-Sudeep
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
