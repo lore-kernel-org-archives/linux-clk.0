@@ -1,93 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailapp01.imgtec.com ([195.59.15.196]:9235 "EHLO
-        mailapp01.imgtec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751370AbdCDNK6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Mar 2017 08:10:58 -0500
-From: James Hogan <james.hogan@imgtec.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: <linux-kernel@vger.kernel.org>,
-        James Hogan <james.hogan@imgtec.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jason Uy <jason.uy@broadcom.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        David Daney <david.daney@cavium.com>,
-        Russell King <linux@armlinux.org.uk>,
-        <linux-serial@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-mips@linux-mips.org>,
-        <bcm-kernel-feedback-list@broadcom.com>
-Subject: [PATCH] serial: 8250_dw: Fix breakage when HAVE_CLK=n
-Date: Sat, 4 Mar 2017 13:09:58 +0000
-Message-ID: <20170304130958.23655-1-james.hogan@imgtec.com>
-In-Reply-To: <CAHp75Ved2h2WyWBokEOsDmAyB3w3iM=uh-9Bq01mU1ST4FapWQ@mail.gmail.com>
-References: <CAHp75Ved2h2WyWBokEOsDmAyB3w3iM=uh-9Bq01mU1ST4FapWQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux-clk@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2 4/5] clk: rockchip: rk3368: export SCLK_TIMERXX id for timers
+Date: Tue,  7 Mar 2017 19:05:18 +0800
+Message-Id: <1488884719-10350-5-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1488884719-10350-1-git-send-email-zhangqing@rock-chips.com>
+References: <1488884719-10350-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit 6a171b299379 ("serial: 8250_dw: Allow hardware flow control to be
-used") recently broke the 8250_dw driver on platforms which don't select
-HAVE_CLK, as dw8250_set_termios() gets confused by the behaviour of the
-fallback HAVE_CLK=n clock API in linux/clk.h which pretends everything
-is fine but returns (valid) NULL clocks and 0 HZ clock rates.
-
-That 0 rate is written into the uartclk resulting in a crash at boot,
-e.g. on Cavium Octeon III based UTM-8 we get something like this:
-
-1180000000800.serial: ttyS0 at MMIO 0x1180000000800 (irq = 41, base_baud = 25000000) is a OCTEON
-------------[ cut here ]------------
-WARNING: CPU: 2 PID: 1 at drivers/tty/serial/serial_core.c:441 uart_get_baud_rate+0xfc/0x1f0
-...
-Call Trace:
-...
-[<ffffffff8149c2e4>] uart_get_baud_rate+0xfc/0x1f0
-[<ffffffff814a5098>] serial8250_do_set_termios+0xb0/0x440
-[<ffffffff8149c710>] uart_set_options+0xe8/0x190
-[<ffffffff814a6cdc>] serial8250_console_setup+0x84/0x158
-[<ffffffff814a11ec>] univ8250_console_setup+0x54/0x70
-[<ffffffff811901a0>] register_console+0x1c8/0x418
-[<ffffffff8149f004>] uart_add_one_port+0x434/0x4b0
-[<ffffffff814a1af8>] serial8250_register_8250_port+0x2d8/0x440
-[<ffffffff814aa620>] dw8250_probe+0x388/0x5e8
-...
-
-The clock API is defined such that NULL is a valid clock handle so it
-wouldn't be right to check explicitly for NULL. Instead treat a
-clk_round_rate() return value of 0 as an error which prevents uartclk
-being overwritten.
-
-Fixes: 6a171b299379 ("serial: 8250_dw: Allow hardware flow control to be used")
-Signed-off-by: James Hogan <james.hogan@imgtec.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jason Uy <jason.uy@broadcom.com>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: David Daney <david.daney@cavium.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: linux-serial@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-mips@linux-mips.org
-Cc: bcm-kernel-feedback-list@broadcom.com
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- drivers/tty/serial/8250/8250_dw.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/rockchip/clk-rk3368.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 223ac234ddb2..e65808c482f1 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -267,6 +267,8 @@ static void dw8250_set_termios(struct uart_port *p, struct ktermios *termios,
- 	rate = clk_round_rate(d->clk, baud * 16);
- 	if (rate < 0)
- 		ret = rate;
-+	else if (rate == 0)
-+		ret = -ENOENT;
- 	else
- 		ret = clk_set_rate(d->clk, rate);
- 	clk_prepare_enable(d->clk);
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index 6cb474c593e7..139d418f448e 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -835,18 +835,18 @@ enum rk3368_plls {
+ 	GATE(PCLK_PMU, "pclk_pmu", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(23), 0, GFLAGS),
+ 
+ 	/* timer gates */
+-	GATE(0, "sclk_timer15", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 11, GFLAGS),
+-	GATE(0, "sclk_timer14", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 10, GFLAGS),
+-	GATE(0, "sclk_timer13", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 9, GFLAGS),
+-	GATE(0, "sclk_timer12", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 8, GFLAGS),
+-	GATE(0, "sclk_timer11", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 7, GFLAGS),
+-	GATE(0, "sclk_timer10", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 6, GFLAGS),
+-	GATE(0, "sclk_timer05", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 5, GFLAGS),
+-	GATE(0, "sclk_timer04", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 4, GFLAGS),
+-	GATE(0, "sclk_timer03", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 3, GFLAGS),
+-	GATE(0, "sclk_timer02", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 2, GFLAGS),
+-	GATE(0, "sclk_timer01", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 1, GFLAGS),
+-	GATE(0, "sclk_timer00", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 0, GFLAGS),
++	GATE(SCLK_TIMER15, "sclk_timer15", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 11, GFLAGS),
++	GATE(SCLK_TIMER14, "sclk_timer14", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 10, GFLAGS),
++	GATE(SCLK_TIMER13, "sclk_timer13", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 9, GFLAGS),
++	GATE(SCLK_TIMER12, "sclk_timer12", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 8, GFLAGS),
++	GATE(SCLK_TIMER11, "sclk_timer11", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 7, GFLAGS),
++	GATE(SCLK_TIMER10, "sclk_timer10", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 6, GFLAGS),
++	GATE(SCLK_TIMER05, "sclk_timer05", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 5, GFLAGS),
++	GATE(SCLK_TIMER04, "sclk_timer04", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 4, GFLAGS),
++	GATE(SCLK_TIMER03, "sclk_timer03", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 3, GFLAGS),
++	GATE(SCLK_TIMER02, "sclk_timer02", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 2, GFLAGS),
++	GATE(SCLK_TIMER01, "sclk_timer01", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 1, GFLAGS),
++	GATE(SCLK_TIMER00, "sclk_timer00", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 0, GFLAGS),
+ };
+ 
+ static const char *const rk3368_critical_clocks[] __initconst = {
 -- 
-2.11.1
-
+1.9.1
