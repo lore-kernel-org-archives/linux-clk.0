@@ -1,69 +1,74 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
-To: Tony Lindgren <tony@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <20170317152536.GT20572@atomide.com>
- <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
- <20170323010057.GI10760@atomide.com> <20170323170210.GL10760@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <8abeeabd-0339-b332-fc3d-a80ee33ba966@ti.com>
-Date: Tue, 28 Mar 2017 08:41:33 +0300
-MIME-Version: 1.0
-In-Reply-To: <20170323170210.GL10760@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 5/15] clk: sunxi-ng: sun5i: Export video PLLs
+Date: Tue,  7 Mar 2017 09:56:24 +0100
+Message-Id: <4bb77a9793d4ba25bf633eff6abe41910bb7fc3c.1488876832.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 23/03/17 19:02, Tony Lindgren wrote:
-> * Tony Lindgren <tony@atomide.com> [170322 18:03]:
->> * Tero Kristo <t-kristo@ti.com> [170317 14:39]:
->>> On 17/03/17 17:25, Tony Lindgren wrote:
->>>> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
->>>>> Any additional testing on omap4 welcome as this series basically
->>>>> tweaks every possible peripheral clock on the SoC.
->>>>
->>>> Without the last patch in this series, booting fails for me:
->>>>
->>>> [    5.074890] l4_per_cm:clk:0120:0: failed to disable
->>>> [    5.085113] l4_per_cm:clk:0128:0: failed to disable
->>>>
->>>> Care to check that booting keeps working for each patch in the
->>>> series to avoid breaking git bisect for booting?
->>>
->>> Hmm, I think patch 8+9 need to be squashed then. I can double check this
->>> next week though.
->>
->> Also looks like with this set merged HDMI stops working on
->> omap4 with:
->>
->> HDMIWP: omapdss HDMIWP error: Failed to set PHY power mode to 1
->
-> Forgot to mention that's with omapdrm with encoder-tpd12s015 and
-> encoder-tfp410 modules loaded to get HDMI working. Here's more verbose
-> dmesg output in case that provides more clues:
->
-> [   91.042877] omapdss HDMICORE error: operation stopped when reading edid
-> [   91.078308] [drm] Enabling DMM ywrap scrolling
-> [   91.099243] omapdss HDMIWP error: Failed to set PHY power mode to 1
-> [   91.107879] omapdss HDMI error: failed to power on device
-> [   91.107879] omapdrm omapdrm.0: Failed to enable display 'hdmi': -5
-> [   91.359619] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
-> [   91.619964] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
-> [   91.620300] Console: switching to colour frame buffer device 128x48
-> [   91.682434] omapdrm omapdrm.0: fb0: omapdrm frame buffer device
-> [   91.770812] [drm] Initialized omapdrm 1.0.0 20110917 for omapdrm.0 on minor 0
-> [   92.818054] omapdss HDMICORE error: operation stopped when reading edid
-> [   93.090087] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
-> [   93.349853] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+The video PLLs are used directly by the HDMI controller. Export them so
+that we can use them in our DT node.
 
-I have an idea what is wrong here, and also an idea how to fix it. 
-Basically the display clock hierarchy is kind of special from hwmod 
-point of view, so need to tweak the data for this a bit. This should not 
-result into code changes if my idea works out well.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/ccu-sun5i.h      | 6 ++++--
+ include/dt-bindings/clock/sun5i-ccu.h | 3 +++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-I'll try to have a look at this during this week still, I've been busy 
-with some bug fixing lately.
-
--Tero
+diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.h b/drivers/clk/sunxi-ng/ccu-sun5i.h
+index 8144487eb7ca..16f7aa92957e 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun5i.h
++++ b/drivers/clk/sunxi-ng/ccu-sun5i.h
+@@ -28,15 +28,17 @@
+ #define CLK_PLL_AUDIO_4X	6
+ #define CLK_PLL_AUDIO_8X	7
+ #define CLK_PLL_VIDEO0		8
+-#define CLK_PLL_VIDEO0_2X	9
++
++/* The PLL_VIDEO0_2X is exported for HDMI */
++
+ #define CLK_PLL_VE		10
+ #define CLK_PLL_DDR_BASE	11
+ #define CLK_PLL_DDR		12
+ #define CLK_PLL_DDR_OTHER	13
+ #define CLK_PLL_PERIPH		14
+ #define CLK_PLL_VIDEO1		15
+-#define CLK_PLL_VIDEO1_2X	16
+ 
++/* The PLL_VIDEO0_2X is exported for HDMI */
+ /* The CPU clock is exported */
+ 
+ #define CLK_AXI			18
+diff --git a/include/dt-bindings/clock/sun5i-ccu.h b/include/dt-bindings/clock/sun5i-ccu.h
+index aeb2e2f781fb..81f34d477aeb 100644
+--- a/include/dt-bindings/clock/sun5i-ccu.h
++++ b/include/dt-bindings/clock/sun5i-ccu.h
+@@ -19,6 +19,9 @@
+ 
+ #define CLK_HOSC		1
+ 
++#define CLK_PLL_VIDEO0_2X	9
++
++#define CLK_PLL_VIDEO1_2X	16
+ #define CLK_CPU			17
+ 
+ #define CLK_AHB_OTG		23
+-- 
+git-series 0.8.11
