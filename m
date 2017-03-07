@@ -1,59 +1,74 @@
-Return-Path: <robin@protonic.nl>
-From: Robin van der Gracht <robin@protonic.nl>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Robin van der Gracht <robin@protonic.nl>
-Subject: [PATCH v2] clk: imx: clk-imxul: The i.mx6ul has no aips_tz3 clock
-Date: Fri,  3 Mar 2017 15:10:42 +0100
-Message-Id: <20170303141042.17120-1-robin@protonic.nl>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <0b3b516527c42e745ed8a35736948a383411bd50.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <0b3b516527c42e745ed8a35736948a383411bd50.1488876832.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 7 Mar 2017 18:05:17 +0800
+Message-ID: <CAGb2v67t7O4AuSXUupB3EU7OZdxgQbeyB6qL_g3x_BXOFLg9Bg@mail.gmail.com>
+Subject: Re: [PATCH 12/15] drm/sun4i: tcon: multiply the vtotal when not in interlace
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock was mapped on CG15 (gpio2_clocks) in the CCRG0 register.
+Hi,
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Robin van der Gracht <robin@protonic.nl>
----
- drivers/clk/imx/clk-imx6ul.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> It appears that the total vertical resolution needs to be doubled when
+> we're not in interlaced. Make sure that is the case.
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 75c35fb..dbd6e59 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -73,7 +73,7 @@ static struct clk *clks[IMX6UL_CLK_END];
- static struct clk_onecell_data clk_data;
- 
- static int const clks_init_on[] __initconst = {
--	IMX6UL_CLK_AIPSTZ1, IMX6UL_CLK_AIPSTZ2, IMX6UL_CLK_AIPSTZ3,
-+	IMX6UL_CLK_AIPSTZ1, IMX6UL_CLK_AIPSTZ2,
- 	IMX6UL_CLK_AXI, IMX6UL_CLK_ARM, IMX6UL_CLK_ROM,
- 	IMX6UL_CLK_MMDC_P0_FAST, IMX6UL_CLK_MMDC_P0_IPG,
- };
-@@ -341,9 +341,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt2_serial",	"perclk",	base + 0x68,	26);
- 	clks[IMX6UL_CLK_UART2_IPG]	= imx_clk_gate2("uart2_ipg",	"ipg",		base + 0x68,	28);
- 	clks[IMX6UL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf",	base + 0x68,	28);
--	if (clk_on_imx6ul())
--		clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		base + 0x68,	30);
--	else if (clk_on_imx6ull())
-+	if (clk_on_imx6ull())
- 		clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		 base + 0x80,	18);
- 
- 	/* CCGR1 */
-@@ -482,6 +480,9 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
- 		clk_prepare_enable(clks[clks_init_on[i]]);
- 
-+	if (clk_on_imx6ull())
-+		clk_prepare_enable(clks[IMX6UL_CLK_AIPSTZ3]);
-+
- 	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
- 		clk_prepare_enable(clks[IMX6UL_CLK_USBPHY1_GATE]);
- 		clk_prepare_enable(clks[IMX6UL_CLK_USBPHY2_GATE]);
--- 
-2.9.3
+This is true for both channels, though we handle them differently.
+
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> index e44217fb4f6f..515fa56c1e6a 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -248,10 +248,13 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon, struct drm_encoder *encoder,
+>                      SUN4I_TCON1_BASIC3_H_BACKPORCH(bp));
+>
+>         bp = mode->crtc_vtotal - mode->crtc_vsync_start;
+> +       val = mode->crtc_vtotal;
+> +       if (!(mode->flags & DRM_MODE_FLAG_INTERLACE))
+> +               val = val * 2;
+>         DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
+>                          mode->vtotal, bp);
+>         regmap_write(tcon->regs, SUN4I_TCON1_BASIC4_REG,
+> -                    SUN4I_TCON1_BASIC4_V_TOTAL(mode->vtotal) |
+> +                    SUN4I_TCON1_BASIC4_V_TOTAL(val) |
+
+For channel 0, the SUN4I_TCON0_BASIC2_V_TOTAL macro multiplies the passed in
+value by 2. I think we should do the same for channel 1, and instead halve the
+value passed in if we are outputting interlaced data. I think this makes more
+sense because:
+
+1) The register description for both channels are the same. Handling them
+   consistently will result in less confusion, such as this one.
+
+2) The definition of interlaced modes is a frame is separated into odd and
+   even fields, with each field contains half the number of lines of the
+   full frame. One field is displayed during each VSYNC cycle. The TCON does
+   not know whether it's interlaced video or not. It only knows the display
+   timings. In this case, the number of horizontal lines per cycle is key.
+
+Regards
+ChenYu
+
+>                      SUN4I_TCON1_BASIC4_V_BACKPORCH(bp));
+>
+>         /* Set Hsync and Vsync length */
+> --
+> git-series 0.8.11
