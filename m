@@ -1,36 +1,44 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/7] clk: renesas: r8a7796: Correct name of watchdog clock
-Date: Mon, 13 Mar 2017 17:19:50 +0100
-Message-Id: <1489421994-19707-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
-References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@baylibre.com, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] rockchip: fix serial output on rk3036
+Date: Tue, 07 Mar 2017 15:40:05 +0100
+Message-ID: <2904745.ktfkW62xXz@diego>
+In-Reply-To: <20170307135443.GA25384@codeaurora.org>
+References: <20170301210042.11352-1-heiko@sntech.de> <20170307135443.GA25384@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-There's only a single watchdog clock, and it's named "rwdt".
+Am Dienstag, 7. M=E4rz 2017, 05:54:43 CET schrieb Stephen Boyd:
+> On 03/01, Heiko Stuebner wrote:
+> > Recent changes to the 8250-dw variant revealed issues concerning
+> > how the clock rates are handled on the rk3036 uart.
+> >=20
+> > For one, there was an error in the clock declaration, but also the
+> > shared uart-pll-select-mux also as default got supplied from the apll
+> > that also supplies the cpu and thus gets frequency scaled.
+> >=20
+> > The patches in this series remedy this and make the debug uart
+> > function again on 4.10 + current merge window.
+> >=20
+> >=20
+> > As for the merge-path, I've now tested all Rockchip socs I have access
+> > to (3036, 3288, 3368, 3399) and didn't find any more clock-related issu=
+es
+> > with the merge-window as of today. So if no other subtle issue turns up
+> > this week, these should be all fixes for the 4.11 cycle.
+> > So these 2 patches could be picked up by clock-maintainers directly if
+> > so desired, or I can send a pull request after the merge-window closes
+> > and we're save to say that nothing else broke.
+> >=20
+> > changes in v3:
+> > - use a direct register write, instead of using clock apis
+>=20
+> Great. I'm happy to merge this into clk-fixes now (and I will do
+> it now unless you have some need to send a pull request).
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 12a23c18bc1e7eb5..55003194a2561c95 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -135,7 +135,7 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
- 	DEF_MOD("sdif2",		 312,	R8A7796_CLK_SD2),
- 	DEF_MOD("sdif1",		 313,	R8A7796_CLK_SD1),
- 	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
--	DEF_MOD("rwdt0",		 402,	R8A7796_CLK_R),
-+	DEF_MOD("rwdt",			 402,	R8A7796_CLK_R),
- 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
- 	DEF_MOD("drif7",		 508,	R8A7796_CLK_S3D2),
- 	DEF_MOD("drif6",		 509,	R8A7796_CLK_S3D2),
--- 
-2.7.4
+Nope, go ahead ... it seems everything else survived the merge window just =
+fine=20
+clk-wise
