@@ -1,98 +1,42 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 10/15] clk: ti: mux: convert TI mux clock to use its internal data representation
-Date: Sat, 11 Mar 2017 14:50:01 +0200
-Message-ID: <1489236606-24023-11-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
-References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+To: linux-arm-kernel@lists.infradead.org
+From: Stefan Monnier <monnier@iro.umontreal.ca>
+Subject: Re: [PATCH 10/15] drm/sun4i: tcon: Switch mux on only for composite
+Date: Tue, 07 Mar 2017 23:16:59 -0500
+Message-ID: <jwvmvcwflnm.fsf-monnier+gmane.comp.hardware.netbook.arm.sunxi@gnu.org>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <3f70bcfe2ec03188c06d54a262d49ad91963a510.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <CAGb2v67iTOV-=u5rReu6_wi6NFoCoJkbJKshTpmFYUmJ=ggKUw@mail.gmail.com>
+Mime-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Instead of using the generic clock driver data struct, use one internal
-for the TI clock driver itself. This allows modifying the register access
-parts in subsequent patch.
+>> +       if (encoder->encoder_type == DRM_MODE_ENCODER_TVDAC)
+>> +               val = 1;
+>> +       else
+>> +               val = 0;
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
----
- drivers/clk/ti/clock.h | 11 +++++++++++
- drivers/clk/ti/mux.c   | 10 +++++-----
- 2 files changed, 16 insertions(+), 5 deletions(-)
+Isn't this better written as
 
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index cb906a1..41913bf 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -16,6 +16,17 @@
- #ifndef __DRIVERS_CLK_TI_CLOCK__
- #define __DRIVERS_CLK_TI_CLOCK__
- 
-+struct clk_omap_mux {
-+	struct clk_hw		hw;
-+	void __iomem		*reg;
-+	u32			*table;
-+	u32			mask;
-+	u8			shift;
-+	u8			flags;
-+};
-+
-+#define to_clk_omap_mux(_hw) container_of(_hw, struct clk_omap_mux, hw)
-+
- enum {
- 	TI_CLK_FIXED,
- 	TI_CLK_MUX,
-diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-index 3cc6db4..daa2dee 100644
---- a/drivers/clk/ti/mux.c
-+++ b/drivers/clk/ti/mux.c
-@@ -28,7 +28,7 @@
- 
- static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
- {
--	struct clk_mux *mux = to_clk_mux(hw);
-+	struct clk_omap_mux *mux = to_clk_omap_mux(hw);
- 	int num_parents = clk_hw_get_num_parents(hw);
- 	u32 val;
- 
-@@ -65,7 +65,7 @@ static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
- 
- static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
- {
--	struct clk_mux *mux = to_clk_mux(hw);
-+	struct clk_omap_mux *mux = to_clk_omap_mux(hw);
- 	u32 val;
- 
- 	if (mux->table) {
-@@ -102,7 +102,7 @@ static struct clk *_register_mux(struct device *dev, const char *name,
- 				 void __iomem *reg, u8 shift, u32 mask,
- 				 u8 clk_mux_flags, u32 *table)
- {
--	struct clk_mux *mux;
-+	struct clk_omap_mux *mux;
- 	struct clk *clk;
- 	struct clk_init_data init;
- 
-@@ -229,7 +229,7 @@ static void of_mux_clk_setup(struct device_node *node)
- 
- struct clk_hw *ti_clk_build_component_mux(struct ti_clk_mux *setup)
- {
--	struct clk_mux *mux;
-+	struct clk_omap_mux *mux;
- 	struct clk_omap_reg *reg;
- 	int num_parents;
- 
-@@ -260,7 +260,7 @@ struct clk_hw *ti_clk_build_component_mux(struct ti_clk_mux *setup)
- 
- static void __init of_ti_composite_mux_clk_setup(struct device_node *node)
- {
--	struct clk_mux *mux;
-+	struct clk_omap_mux *mux;
- 	unsigned int num_parents;
- 	u32 val;
- 
--- 
-1.9.1
+           val = (encoder->encoder_type == DRM_MODE_ENCODER_TVDAC);
+
+
+-- Stefan
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
