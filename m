@@ -1,67 +1,27 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 20 Mar 2017 14:16:37 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: Implement reset control reset
-Message-ID: <20170320131637.GG22463@ulmo.ba.sec>
-References: <1488464177-24174-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gvF4niNJ+uBMJnEh"
-In-Reply-To: <1488464177-24174-1-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <3194cb69fa565ded062ea950d5bf72fd7886e3f8.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <3194cb69fa565ded062ea950d5bf72fd7886e3f8.1488876832.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 8 Mar 2017 11:36:15 +0800
+Message-ID: <CAGb2v645bCxjdHtBpcVN3E+KbWecVv7RwpfA2fFd7zbsDyFCiQ@mail.gmail.com>
+Subject: Re: [PATCH 15/15] ARM: sun5i: a10s-olinuxino: Enable HDMI
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The A10s Olinuxino has an HDMI connector. Make sure we can use it.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
---gvF4niNJ+uBMJnEh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Mar 02, 2017 at 04:16:16PM +0200, Peter De Schrijver wrote:
-> From: Mikko Perttunen <mperttunen@nvidia.com>
->=20
-> For completeness, also implement this reset framework API for Tegra.
->=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> Reviewed-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Reviewed-by: Arto Merilainen <amerilainen@nvidia.com>
-> ---
->  drivers/clk/tegra/clk.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-
-This was missing a Signed-off-by: from you because you forwarded the
-patch. I've added one before applying, under the assumption that you
-merely forgot to add it.
-
-Thanks,
-Thierry
-
---gvF4niNJ+uBMJnEh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP1jUACgkQ3SOs138+
-s6GuwQ//Vw7KQQUjDQs/Udg7k3KYLsil198NTyN7t1LXrVwPT1RNEt0t3O071rGg
-h3Zz1819cafUzvbJGI1B21G2K884j87WFqxL8sznXarXT8qrmwcS8c14eS9xtOTm
-GMTtZN/kX+R30WVPB47uaT+X4N4bHbHH47ZdRIfvGRDlMtff5v7d3k7y/nN+KjVA
-LyrSh+tQMJn52ZAYo65+icSxgnpYoSmoFGyRA2cRK8I2jPruXIks84ApIcQdCzAo
-NIl8sjSycJXI+BfQZQMvbBZqgT3FZZwAmoPgfIEz2+gJoPZQ4n1EmNn3y3SaMHQB
-RBuvX+a5KfVcTb9yhx42ctnCKTayEeN7Q7yFv9RQfP6TNAUwxvxhVyhj4a3QfPpI
-vovq2e7fZ5MnZEbNWBt3M1PuqJXVr/o6xv5Ww46x3Vp69GII2rwyRzaRhLfAEfrM
-5nS16VnfESNjE9dlLoqAz2XklqlPg7mHq7IIr+cvh6oG8gafDwZHHhW6NREZFPve
-QKvsN9CJM9ZP/TqIBG4j0GUsmAZSsVVDD9V8sZ4Orh17/HSx8lo2qMO8y/C80IJt
-YL0B/VFfFDcZJ7TPHT7/nER2phVM+APMcLn6A9qMCR6LZJtWftHw2cwrv0Z16zM6
-VGmq86W9rkgKnXEpwLCxYdrvDWxSj56w86PWNobL+eTVLHpOoe0=
-=8rfe
------END PGP SIGNATURE-----
-
---gvF4niNJ+uBMJnEh--
+Acked-by: Chen-Yu Tsai <wens@csie.org>
