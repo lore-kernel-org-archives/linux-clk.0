@@ -1,83 +1,72 @@
-Return-Path: <adrian.hunter@intel.com>
-Subject: Re: [PATCH v6 05/14] mmc: sdhci: Export
- sdhci_start_signal_voltage_switch() in sdhci.c
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
- <ebab2ad6a83a91683c9589b976a6975141167296.1487091464.git-series.gregory.clement@free-electrons.com>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
- linux-arm-kernel@lists.infradead.org,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
- devicetree@vger.kernel.org, Ziji Hu <huziji@marvell.com>,
- Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
- Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
- Doug Jones <dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
- "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
- Yehuda Yitschak <yehuday@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
- Hanna Hawa <hannah@marvell.com>, Kostya Porotchkin <kostap@marvell.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Message-ID: <0648f4c1-6acf-00c3-bc5c-c7f029d1eec5@intel.com>
-Date: Wed, 22 Mar 2017 16:49:10 +0200
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <ebab2ad6a83a91683c9589b976a6975141167296.1487091464.git-series.gregory.clement@free-electrons.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <3f70bcfe2ec03188c06d54a262d49ad91963a510.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <3f70bcfe2ec03188c06d54a262d49ad91963a510.1488876832.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 8 Mar 2017 11:51:39 +0800
+Message-ID: <CAGb2v67iTOV-=u5rReu6_wi6NFoCoJkbJKshTpmFYUmJ=ggKUw@mail.gmail.com>
+Subject: Re: [PATCH 10/15] drm/sun4i: tcon: Switch mux on only for composite
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14/02/17 19:01, Gregory CLEMENT wrote:
-> From: Hu Ziji <huziji@marvell.com>
-> 
-> Export sdhci_start_signal_voltage_switch() from sdhci.c.
-> Thus vendor sdhci driver can implement its own signal voltage
-> switch routine.
-> 
-> Signed-off-by: Hu Ziji <huziji@marvell.com>
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
+On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Even though that mux is undocumented, it seems like it needs to be set to 1
+> when using composite, and 0 when using HDMI.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 > ---
->  drivers/mmc/host/sdhci.c | 5 +++--
->  drivers/mmc/host/sdhci.h | 2 ++
->  2 files changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 0e9ed0fadff9..d2338dc362f4 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -1839,8 +1839,8 @@ static void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable)
->  	spin_unlock_irqrestore(&host->lock, flags);
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> index d2335f109601..93249c5ab1e4 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -268,11 +268,16 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon, struct drm_encoder *encoder,
+>                            SUN4I_TCON_GCTL_IOMAP_MASK,
+>                            SUN4I_TCON_GCTL_IOMAP_TCON1);
+>
+> +       if (encoder->encoder_type == DRM_MODE_ENCODER_TVDAC)
+> +               val = 1;
+> +       else
+> +               val = 0;
+> +
+>         /*
+>          * FIXME: Undocumented bits
+>          */
+>         if (tcon->quirks->has_unknown_mux)
+> -               regmap_write(tcon->regs, SUN4I_TCON_MUX_CTRL_REG, 1);
+> +               regmap_write(tcon->regs, SUN4I_TCON_MUX_CTRL_REG, val);
+
+We might want to do this the other way around, i.e. exporting
+
+    int sun4i_tcon_mux_set(struct drm_device *drm, int encoder_type,
+                           int pipeline)
+
+and have downstream encoders call it. For the A31, the mux is not exclusively
+used for channel 1; there is a mux setting for MIPI DSI as well, but AFAIK
+DSI is connected to channel 0.
+
+Additionally, the mux registers are only valid in the first TCON, meaning
+it must available be active in 2 pipeline chips. It's also why we'd pass
+"struct drm_device *" instead of "struct sun4i_tcon *".
+
+
+Regards
+ChenYu
+
 >  }
->  
-> -static int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
-> -					     struct mmc_ios *ios)
-> +int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
-> +				      struct mmc_ios *ios)
->  {
->  	struct sdhci_host *host = mmc_priv(mmc);
->  	u16 ctrl;
-> @@ -1932,6 +1932,7 @@ static int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
->  		return 0;
->  	}
->  }
-> +EXPORT_SYMBOL_GPL(sdhci_start_signal_voltage_switch);
->  
->  static int sdhci_card_busy(struct mmc_host *mmc)
->  {
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index 3563c0c384ca..e4a07543a12b 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -692,6 +692,8 @@ void sdhci_reset(struct sdhci_host *host, u8 mask);
->  void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
->  int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
->  void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios);
-> +int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
-> +				      struct mmc_ios *ios);
->  
->  #ifdef CONFIG_PM
->  extern int sdhci_suspend_host(struct sdhci_host *host);
-> 
+>  EXPORT_SYMBOL(sun4i_tcon1_mode_set);
+>
+> --
+> git-series 0.8.11
