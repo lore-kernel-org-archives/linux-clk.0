@@ -1,64 +1,61 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>,
- Quentin Schulz <quentin.schulz@free-electrons.com>
-Subject: [PATCH] clk: sunxi-ng: fix recalc_rate formula of NKMP clocks
-Date: Sat, 18 Mar 2017 04:19:43 +0800
-Message-Id: <20170317201943.45190-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <475aeed1da40d46d8e50420c281a74c32b78c730.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <475aeed1da40d46d8e50420c281a74c32b78c730.1488876832.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 8 Mar 2017 12:25:59 +0800
+Message-ID: <CAGb2v64gJ13DB3UxfG7DnJCzE+CZ02repkX8=iOQASsHw2cG5A@mail.gmail.com>
+Subject: Re: [PATCH 11/15] drm/sun4i: tcon: Fix tcon channel 1 backporch calculation
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-In commit e66f81bbd746 ("clk: sunxi-ng: Implement factors offsets"), the
-final formula of NKMP clocks' recalc_rate is refactored; however, the
-refactored formula broke the calculation due to some C language operand
-priority problem -- the priority of operand >> is lower than * and /,
-makes the formula being parsed as "(parent_rate * n * k) >> (p / m)", but
-it should be "(parent_rate * n * k >> p) / m".
+On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> It seems like what's called a backporch in the datasheet is actually the
+> backporch plus the sync period. Fix that in our driver.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> index 93249c5ab1e4..e44217fb4f6f 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -240,15 +240,14 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon, struct drm_encoder *encoder,
+>                      SUN4I_TCON1_BASIC2_Y(mode->crtc_vdisplay));
+>
+>         /* Set horizontal display timings */
+> -       bp = mode->crtc_htotal - mode->crtc_hsync_end;
+> +       bp = mode->crtc_htotal - mode->crtc_hsync_start;
+>         DRM_DEBUG_DRIVER("Setting horizontal total %d, backporch %d\n",
+>                          mode->htotal, bp);
+>         regmap_write(tcon->regs, SUN4I_TCON1_BASIC3_REG,
+>                      SUN4I_TCON1_BASIC3_H_TOTAL(mode->crtc_htotal) |
+>                      SUN4I_TCON1_BASIC3_H_BACKPORCH(bp));
+>
+> -       /* Set vertical display timings */
 
-Add the pair of parentheses to fix up this issue. This pair of
-parentheses used to exist in the old formula.
+Why remove the comment?
 
-Fixes: commit e66f81bbd746 ("clk: sunxi-ng: Implement factors offsets")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
-Please patch the latest git tree master too, as this buggy commit is
-introduced in 4.11-rc (for sun5i ccu support).
+Otherwise,
 
- drivers/clk/sunxi-ng/ccu_nkmp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index a2b40a000157..488055ed944f 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -107,7 +107,7 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
- 	p = reg >> nkmp->p.shift;
- 	p &= (1 << nkmp->p.width) - 1;
- 
--	return parent_rate * n * k >> p / m;
-+	return (parent_rate * n * k >> p) / m;
- }
- 
- static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
--- 
-2.12.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> -       bp = mode->crtc_vtotal - mode->crtc_vsync_end;
+> +       bp = mode->crtc_vtotal - mode->crtc_vsync_start;
+>         DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
+>                          mode->vtotal, bp);
+>         regmap_write(tcon->regs, SUN4I_TCON1_BASIC4_REG,
+> --
+> git-series 0.8.11
