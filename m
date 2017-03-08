@@ -1,68 +1,32 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
- "Kevin Hilman" <khilman@baylibre.com>, "Carlo Caione" <carlo@caione.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20170309104154.28295-7-jbrunet@baylibre.com>
-Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20170309104154.28295-1-jbrunet@baylibre.com>
- <20170309104154.28295-7-jbrunet@baylibre.com>
-Message-ID: <149013840504.54062.12985141705597897606@resonance>
-Subject: Re: [PATCH v2 6/9] clk: meson: gxbb: mpll: use rw operation
-Date: Tue, 21 Mar 2017 16:20:05 -0700
+In-Reply-To: <f1d46b79f933df724a6750d557ebe9517b6339b5.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <f1d46b79f933df724a6750d557ebe9517b6339b5.1488876832.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 8 Mar 2017 11:39:38 +0800
+Message-ID: <CAGb2v65eMyznxURoogO6+HBr+6eosXq4njRBFLAo4=CdhfOX0g@mail.gmail.com>
+Subject: Re: [PATCH 6/15] dt-bindings: display: sun4i: Add HDMI display bindings
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jerome Brunet (2017-03-09 02:41:51)
-> Use read/write operations for the mpll clocks instead of the
-> read-only ones.
-> =
+On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> One of the possible output of the display pipeline, on the SoCs that have
+> it, is the HDMI controller.
+>
+> Add a binding for it.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 
-Looks good to me.
-
-Regards,
-Mike
-
-> ---
->  drivers/clk/meson/gxbb.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> =
-
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index 79fb8989f8dd..5059c7bbdbb3 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -459,7 +459,7 @@ static struct meson_clk_mpll gxbb_mpll0 =3D {
->         .lock =3D &clk_lock,
->         .hw.init =3D &(struct clk_init_data){
->                 .name =3D "mpll0",
-> -               .ops =3D &meson_clk_mpll_ro_ops,
-> +               .ops =3D &meson_clk_mpll_ops,
->                 .parent_names =3D (const char *[]){ "fixed_pll" },
->                 .num_parents =3D 1,
->         },
-> @@ -489,7 +489,7 @@ static struct meson_clk_mpll gxbb_mpll1 =3D {
->         .lock =3D &clk_lock,
->         .hw.init =3D &(struct clk_init_data){
->                 .name =3D "mpll1",
-> -               .ops =3D &meson_clk_mpll_ro_ops,
-> +               .ops =3D &meson_clk_mpll_ops,
->                 .parent_names =3D (const char *[]){ "fixed_pll" },
->                 .num_parents =3D 1,
->         },
-> @@ -519,7 +519,7 @@ static struct meson_clk_mpll gxbb_mpll2 =3D {
->         .lock =3D &clk_lock,
->         .hw.init =3D &(struct clk_init_data){
->                 .name =3D "mpll2",
-> -               .ops =3D &meson_clk_mpll_ro_ops,
-> +               .ops =3D &meson_clk_mpll_ops,
->                 .parent_names =3D (const char *[]){ "fixed_pll" },
->                 .num_parents =3D 1,
->         },
-> -- =
-
-> 2.9.3
->=20
+TODO: A31 will also need a DDC clock.
