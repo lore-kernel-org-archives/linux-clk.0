@@ -1,71 +1,40 @@
-Return-Path: <Suzuki.Poulose@arm.com>
-Subject: Re: [v3 3/5] coresight: add support for debug module
-To: Leo Yan <leo.yan@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
- <011fdac0-59bf-b539-2de3-0b59a41bc922@arm.com>
- <20170309175915.GA964@leoy-linaro>
- <3f27efee-3b63-81fd-eb96-73fd7e6f5e92@arm.com>
- <20170313165600.GB32431@linaro.org>
- <516f8989-4dde-2686-d549-0761feb14d1b@arm.com>
- <CANLsYkzJsGvr4ZzNbTwcPu1Qki6=Szvu+bMjHZ_rza==DqFChw@mail.gmail.com>
- <20170317101328.GA19877@leoy-linaro> <20170317155007.GA20435@linaro.org>
- <20170317162836.GD2020@leoy-linaro>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Wei Xu <xuwei5@hisilicon.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, John Stultz <john.stultz@linaro.org>,
- Guodong Xu <guodong.xu@linaro.org>,
- Haojian Zhuang <haojian.zhuang@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
- Mike Leach <mike.leach@linaro.org>, Sudeep Holla <Sudeep.Holla@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <5995f6a7-08b1-c868-fc88-a145d1748a33@arm.com>
-Date: Fri, 17 Mar 2017 16:47:54 +0000
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <20170317162836.GD2020@leoy-linaro>
-Content-Type: text/plain; charset=us-ascii; format=flowed
+In-Reply-To: <46fdec2d680d539652f87d79c627973b3a568438.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <46fdec2d680d539652f87d79c627973b3a568438.1488876832.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 8 Mar 2017 11:38:48 +0800
+Message-ID: <CAGb2v66o79wX9x4+ByNryoSOGrcixsbKKyDmfzeQcMAGLV_SBQ@mail.gmail.com>
+Subject: Re: [PATCH 7/15] dt-bindings: display: sun4i: Add allwinner,tcon-channel
+ property
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 17/03/17 16:28, Leo Yan wrote:
-> On Fri, Mar 17, 2017 at 09:50:07AM -0600, Mathieu Poirier wrote:
+On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The Allwinner Timings Controller has two, mutually exclusive, channels.
+> When the binding has been introduced, it was assumed that there would be
+> only a single user per channel in the system.
 >
-> [...]
+> While this is likely for the channel 0 which only connects to LCD displays,
+> it turns out that the channel 1 can be connected to multiple controllers in
+> the SoC (HDMI and TV encoders for example). And while the simultaneous use
+> of HDMI and TV outputs cannot be achieved, switching from one to the other
+> at runtime definitely sounds plausible.
 >
->> If we don't check for "nohlt" some platform may freeze, others may work.  If we
->> mandate that "nohlt" be present on the kernel cmd line it works in all cases.
->> As such mandating that "nohlt" be present is a better way to go.
+> Add an extra property, allwinner,tcon-channel, to specify for a given
+> endpoint which TCON channel it is connected to, while falling back to the
+> previous mechanism if that property is missing.
 >
-> Sure, so I will add below checking code in the probe function, please
-> let me know if you have alter better way to implement this:
->
-> +       if (IS_ENABLED(CONFIG_CPU_IDLE) &&
-> +                       !strstr(boot_command_line, "nohlt")) {
-> +               dev_err(dev, "May not be accessible in CPU power domain.\n");
-> +               return -EPERM;
-> +       }
->
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-There is an API which kind of achieves what "nohlt" does at runtime :
-
-   cpu_idle_poll_ctrl(true)
-
-So may be we could use that instead of depending on "nohlt". The other side
-of the issues is "when do we decide to use the API". May be we could add something
-like : enable_debug, which could then trigger the panic notifier registrations
-and the above. That would still leave us with a case where the system crashes
-even before the user gets a terminal. May be the following is the best option :
-
-1) Dedicated kernel command line parameter for enabling the CPU debug at boot/probe.
-
-and
-
-2) Runtime enable method via sysfs.
-
-What do you think ?
-
-Suzuki
+Acked-by: Chen-Yu Tsai <wens@csie.org>
