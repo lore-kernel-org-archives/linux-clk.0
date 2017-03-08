@@ -1,67 +1,82 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	mike.leach@linaro.org
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v3 4/5] clk: hi6220: add debug APB clock
-Date: Fri,  3 Mar 2017 14:00:08 +0800
-Message-Id: <1488520809-31670-5-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
-References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Peter De Schrijver
+	<pdeschrijver@nvidia.com>
+References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
+ <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
+ <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
+ <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
+ <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
+ <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Stephen
+ Warren" <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <f1505f37-cf96-fe04-dfc1-1dd94e20e130@nvidia.com>
+Date: Wed, 8 Mar 2017 10:13:02 +0000
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The debug APB clock is absent in hi6220 driver, so this patch is to add
-support for it.
+Hi Peter,
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- drivers/clk/hisilicon/clk-hi6220.c       | 1 +
- include/dt-bindings/clock/hi6220-clock.h | 5 ++++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+On 06/03/17 15:53, Geert Uytterhoeven wrote:
+> Hi Peter,
+> 
+> On Mon, Mar 6, 2017 at 3:28 PM, Peter De Schrijver
+> <pdeschrijver@nvidia.com> wrote:
+>> On Mon, Mar 06, 2017 at 09:58:29AM +0000, Jon Hunter wrote:
+>>> On 06/03/17 08:38, Peter De Schrijver wrote:
+>>>> On Thu, Mar 02, 2017 at 05:56:49PM +0000, Jon Hunter wrote:
+>>>>> On 28/02/17 15:19, Peter De Schrijver wrote:
+>>>>>> This is needed to make the JTAG debugging interface work.
+>>>>>>
+>>>>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>>>>> ---
+>>>>>>  drivers/clk/tegra/clk-tegra210.c | 1 +
+>>>>>>  1 file changed, 1 insertion(+)
+>>>>>>
+>>>>>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+>>>>>> index 9a2512a..708f5f1 100644
+>>>>>> --- a/drivers/clk/tegra/clk-tegra210.c
+>>>>>> +++ b/drivers/clk/tegra/clk-tegra210.c
+>>>>>> @@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
+>>>>>>   { TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>>>>   { TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>>>>   { TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>>>> + { TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
+>>>>>>   { TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
+>>>>>>   { TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
+>>>>>>   { TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
+>>>>>
+>>>>> Should there be some dependency on say CONFIG_DEBUG_KERNEL? I am not
+>>>>> sure we always want this on for all cases.
+>>>>
+>>>> Why would you not want it to be always on?
+>>>
+>>> Purely for power reasons. I do not know how much power keeping this
+>>
+>> I don't expect it to be significant but I don't have any numbers.
+>>
+>>> clock running consumes, but I don't like the idea of clocks running all
+>>> the time when they are not needed.
+>>
+>> Problem is that in this case there is no easy way to determine if the clock
+>> needs to be on.
+> 
+> I had a similar issue with SH-Mobile AG5, where the power domain containing
+> the JTAG interface is powered down.
 
-diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
-index c0e8e1f..6879c1f 100644
---- a/drivers/clk/hisilicon/clk-hi6220.c
-+++ b/drivers/clk/hisilicon/clk-hi6220.c
-@@ -134,6 +134,7 @@ static struct hisi_gate_clock hi6220_separated_gate_clks_sys[] __initdata = {
- 	{ HI6220_UART4_PCLK,    "uart4_pclk",    "uart4_src",      CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 8,  0, },
- 	{ HI6220_SPI_CLK,       "spi_clk",       "clk_150m",       CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 9,  0, },
- 	{ HI6220_TSENSOR_CLK,   "tsensor_clk",   "clk_bus",        CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 12, 0, },
-+	{ HI6220_DAPB_CLK,      "dapb_clk",      "cs_dapb",        CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 18, 0, },
- 	{ HI6220_MMU_CLK,       "mmu_clk",       "ddrc_axi1",      CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x240, 11, 0, },
- 	{ HI6220_HIFI_SEL,      "hifi_sel",      "hifi_src",       CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x270, 0,  0, },
- 	{ HI6220_MMC0_SYSPLL,   "mmc0_syspll",   "syspll",         CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x270, 1,  0, },
-diff --git a/include/dt-bindings/clock/hi6220-clock.h b/include/dt-bindings/clock/hi6220-clock.h
-index 6b03c84..b8ba665 100644
---- a/include/dt-bindings/clock/hi6220-clock.h
-+++ b/include/dt-bindings/clock/hi6220-clock.h
-@@ -124,7 +124,10 @@
- #define HI6220_CS_DAPB		57
- #define HI6220_CS_ATB_DIV	58
- 
--#define HI6220_SYS_NR_CLKS	59
-+/* gate clock */
-+#define HI6220_DAPB_CLK		59
-+
-+#define HI6220_SYS_NR_CLKS	60
- 
- /* clk in Hi6220 media controller */
- /* gate clocks */
+This reminds me, does your patch assume that the DFD power domain is
+enabled? I am guessing that it needs to be for JTAG to work.
+
+Cheers
+Jon
+
 -- 
-2.7.4
+nvpublic
