@@ -1,172 +1,113 @@
-Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: sboyd@codeaurora.org,
-	khilman@baylibre.com,
-	carlo@caione.org
-Subject: [PATCH v4 3/3] ARM64: dts: meson-gx: Add MALI nodes for GXBB and GXL
-Date: Wed, 22 Mar 2017 11:18:55 +0100
-Message-Id: <1490177935-9646-4-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1490177935-9646-1-git-send-email-narmstrong@baylibre.com>
-References: <1490177935-9646-1-git-send-email-narmstrong@baylibre.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
-List-Post: <mailto:linux-amlogic@lists.infradead.org>
-List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
-Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <61406c0ba992f2fa5b5180b790a1ef3fa38d9567.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <61406c0ba992f2fa5b5180b790a1ef3fa38d9567.1488876832.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 8 Mar 2017 11:35:39 +0800
+Message-ID: <CAGb2v64KKp0cYB3u0=bSVcq0gB41LkurCeiTJ3OEzn7UjdSPpQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 14/15] ARM: sun5i: a10s: Add the HDMI
+ controller node
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The same MALI-450 MP3 GPU is present in the GXBB and GXL SoCs.
+Hi,
 
-The node is simply added in the meson-gxbb.dtsi file.
+On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> The A10s has an HDMI controller connected to the second TCON channel. Add
+> it to our DT.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  arch/arm/boot/dts/sun5i-a10s.dtsi | 34 ++++++++++++++++++++++++++++++++-
+>  arch/arm/boot/dts/sun5i.dtsi      |  1 +-
+>  2 files changed, 35 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/sun5i-a10s.dtsi b/arch/arm/boot/dts/sun5i-a10s.dtsi
+> index 074485782a4a..3482c9d2b120 100644
+> --- a/arch/arm/boot/dts/sun5i-a10s.dtsi
+> +++ b/arch/arm/boot/dts/sun5i-a10s.dtsi
+> @@ -72,7 +72,33 @@
+>                 };
+>         };
+>
+> +       display-engine {
+> +               compatible = "allwinner,sun5i-a10s-display-engine",
+> +                            "allwinner,sun5i-a13-display-engine";
+> +               allwinner,pipelines = <&fe0>;
+> +       };
+> +
+>         soc@01c00000 {
+> +               hdmi0: hdmi@01c16000 {
 
-For GXL, since a lot is shared with the GXM that has a MALI-T820 IP, this
-patch adds a new meson-gxl-mali.dtsi and is included in the SoC specific
-dtsi files.
+Nit: is the 0 suffix needed? I don't see any indication that there is
+a second controller.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi      | 37 ++++++++++++++++++++
- arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi  | 43 ++++++++++++++++++++++++
- arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi |  1 +
- arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi |  1 +
- 4 files changed, 82 insertions(+)
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
+> +                       compatible = "allwinner,sun5i-a10s-hdmi";
+> +                       reg = <0x01c16000 0x1000>;
+> +                       clocks = <&ccu CLK_AHB_HDMI>, <&ccu CLK_HDMI>,
+> +                                <&ccu CLK_PLL_VIDEO0_2X>,
+> +                                <&ccu CLK_PLL_VIDEO1_2X>;
+> +                       clock-names = "ahb", "mod", "pll-0", "pll-1";
+> +                       status = "disabled";
+> +
+> +                       port {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               hdmi0_in_tcon0: endpoint@0 {
+> +                                       reg = <0>;
+> +                                       remote-endpoint = <&tcon0_out_hdmi0>;
+> +                               };
+> +                       };
+> +               };
+> +
+>                 pwm: pwm@01c20e00 {
+>                         compatible = "allwinner,sun5i-a10s-pwm";
+>                         reg = <0x01c20e00 0xc>;
+> @@ -129,3 +155,11 @@
+>
+>  &sram_a {
+>  };
+> +
+> +&tcon0_out {
+> +       tcon0_out_hdmi0: endpoint@2 {
+> +               reg = <2>;
+> +               remote-endpoint = <&hdmi0_in_tcon0>;
+> +               allwinner,tcon-channel = <1>;
+> +       };
+> +};
+> diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+> index f3b6e19244f9..3d009b2aa42a 100644
+> --- a/arch/arm/boot/dts/sun5i.dtsi
+> +++ b/arch/arm/boot/dts/sun5i.dtsi
+> @@ -273,6 +273,7 @@
+>                                         tcon0_out_tve0: endpoint@1 {
+>                                                 reg = <1>;
+>                                                 remote-endpoint = <&tve0_in_tcon0>;
+> +                                               allwinner,tcon-channel = <1>;
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index 04b3324..0617a3d 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -478,6 +478,43 @@
- 	};
- };
- 
-+&apb {
-+	mali: gpu@c0000 {
-+		compatible = "amlogic,meson-gxbb-mali", "arm,mali-450";
-+		reg = <0x0 0xc0000 0x0 0x40000>;
-+		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "gp", "gpmmu", "pp", "pmu",
-+			"pp0", "ppmmu0", "pp1", "ppmmu1",
-+			"pp2", "ppmmu2";
-+		clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_MALI>;
-+		clock-names = "bus", "core";
-+
-+		/*
-+		 * Mali clocking is provided by two identical clock paths
-+		 * MALI_0 and MALI_1 muxed to a single clock by a glitch
-+		 * free mux to safely change frequency while running.
-+		 */
-+		assigned-clocks = <&clkc CLKID_MALI_0_SEL>,
-+				  <&clkc CLKID_MALI_0>,
-+				  <&clkc CLKID_MALI>; /* Glitch free mux */
-+		assigned-clock-parents = <&clkc CLKID_FCLK_DIV3>,
-+					 <0>, /* Do Nothing */
-+					 <&clkc CLKID_MALI_0>;
-+		assigned-clock-rates = <0>, /* Do Nothing */
-+				       <666666666>,
-+				       <0>; /* Do Nothing */
-+	};
-+};
-+
- &i2c_A {
- 	clocks = <&clkc CLKID_I2C>;
- };
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
-new file mode 100644
-index 0000000..f06cc234
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
-@@ -0,0 +1,43 @@
-+/*
-+ * Copyright (c) 2017 BayLibre SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+ */
-+
-+&apb {
-+	mali: gpu@c0000 {
-+		compatible = "amlogic,meson-gxbb-mali", "arm,mali-450";
-+		reg = <0x0 0xc0000 0x0 0x40000>;
-+		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "gp", "gpmmu", "pp", "pmu",
-+			"pp0", "ppmmu0", "pp1", "ppmmu1",
-+			"pp2", "ppmmu2";
-+		clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_MALI>;
-+		clock-names = "bus", "core";
-+
-+		/*
-+		 * Mali clocking is provided by two identical clock paths
-+		 * MALI_0 and MALI_1 muxed to a single clock by a glitch
-+		 * free mux to safely change frequency while running.
-+		 */
-+		assigned-clocks = <&clkc CLKID_MALI_0_SEL>,
-+				  <&clkc CLKID_MALI_0>,
-+				  <&clkc CLKID_MALI>; /* Glitch free mux */
-+		assigned-clock-parents = <&clkc CLKID_FCLK_DIV3>,
-+					 <0>, /* Do Nothing */
-+					 <&clkc CLKID_MALI_0>;
-+		assigned-clock-rates = <0>, /* Do Nothing */
-+				       <666666666>,
-+				       <0>; /* Do Nothing */
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi
-index 615308e..5a90e30 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi
-@@ -42,6 +42,7 @@
-  */
- 
- #include "meson-gxl.dtsi"
-+#include "meson-gxl-mali.dtsi"
- 
- / {
- 	compatible = "amlogic,s905d", "amlogic,meson-gxl";
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi
-index 08237ee..0f78d83 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi
-@@ -42,6 +42,7 @@
-  */
- 
- #include "meson-gxl.dtsi"
-+#include "meson-gxl-mali.dtsi"
- 
- / {
- 	compatible = "amlogic,s905x", "amlogic,meson-gxl";
--- 
-1.9.1
+This looks like a separate patch, probably following the binding change?
 
+Regards
+ChenYu
 
-_______________________________________________
-linux-amlogic mailing list
-linux-amlogic@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-amlogic
+>                                         };
+>                                 };
+>                         };
+> --
+> git-series 0.8.11
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
