@@ -1,58 +1,104 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
- <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
- <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
-CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Stephen
- Warren" <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
-Date: Mon, 6 Mar 2017 09:58:29 +0000
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 8 Mar 2017 09:58:13 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Julian Calaby <julian.calaby@gmail.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] [PATCH 5/15] clk: sunxi-ng: sun5i: Export video
+ PLLs
+Message-ID: <20170308085813.ijwsdiip5wdrwnb4@lukather>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <4bb77a9793d4ba25bf633eff6abe41910bb7fc3c.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <CAGRGNgUvNgQonORN0iTV-e2NJzUJpzQUnn13w+C7MwzvR8uZUQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="koor6xchwoiplnj2"
+In-Reply-To: <CAGRGNgUvNgQonORN0iTV-e2NJzUJpzQUnn13w+C7MwzvR8uZUQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
-On 06/03/17 08:38, Peter De Schrijver wrote:
-> On Thu, Mar 02, 2017 at 05:56:49PM +0000, Jon Hunter wrote:
->>
->> On 28/02/17 15:19, Peter De Schrijver wrote:
->>> This is needed to make the JTAG debugging interface work.
->>>
->>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->>> ---
->>>  drivers/clk/tegra/clk-tegra210.c | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
->>> index 9a2512a..708f5f1 100644
->>> --- a/drivers/clk/tegra/clk-tegra210.c
->>> +++ b/drivers/clk/tegra/clk-tegra210.c
->>> @@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
->>>  	{ TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
->>>  	{ TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
->>>  	{ TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
->>> +	{ TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
->>>  	{ TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
->>>  	{ TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
->>>  	{ TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
->>
->> Should there be some dependency on say CONFIG_DEBUG_KERNEL? I am not
->> sure we always want this on for all cases.
-> 
-> Why would you not want it to be always on?
+--koor6xchwoiplnj2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Purely for power reasons. I do not know how much power keeping this
-clock running consumes, but I don't like the idea of clocks running all
-the time when they are not needed.
+Hi Julian,
 
-Jon
+On Tue, Mar 07, 2017 at 09:21:19PM +1100, Julian Calaby wrote:
+> Hi Maxime,
+>=20
+> On Tue, Mar 7, 2017 at 7:56 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > The video PLLs are used directly by the HDMI controller. Export them so
+> > that we can use them in our DT node.
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  drivers/clk/sunxi-ng/ccu-sun5i.h      | 6 ++++--
+> >  include/dt-bindings/clock/sun5i-ccu.h | 3 +++
+> >  2 files changed, 7 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.h b/drivers/clk/sunxi-ng/cc=
+u-sun5i.h
+> > index 8144487eb7ca..16f7aa92957e 100644
+> > --- a/drivers/clk/sunxi-ng/ccu-sun5i.h
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun5i.h
+> > @@ -28,15 +28,17 @@
+> >  #define CLK_PLL_AUDIO_4X       6
+> >  #define CLK_PLL_AUDIO_8X       7
+> >  #define CLK_PLL_VIDEO0         8
+> > -#define CLK_PLL_VIDEO0_2X      9
+> > +
+> > +/* The PLL_VIDEO0_2X is exported for HDMI */
+> > +
+> >  #define CLK_PLL_VE             10
+> >  #define CLK_PLL_DDR_BASE       11
+> >  #define CLK_PLL_DDR            12
+> >  #define CLK_PLL_DDR_OTHER      13
+> >  #define CLK_PLL_PERIPH         14
+> >  #define CLK_PLL_VIDEO1         15
+> > -#define CLK_PLL_VIDEO1_2X      16
+> >
+> > +/* The PLL_VIDEO0_2X is exported for HDMI */
+>=20
+> PLL_VIDEO*1*_2X, right?
 
--- 
-nvpublic
+Good catch, I'll fix it. Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--koor6xchwoiplnj2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYv8elAAoJEBx+YmzsjxAgHb8QAIkagbWudUksxLDQjOC3Q/VG
+oWkTzSIPbyt5Hg7hrimpvPr1Sgsn22xdk/lZYv2rYnlN6kIVKm/7GlBDRSx18jcV
+SEaA4ImOMF0GZ6EKxrr7Ehoi+spHJiwIgtTxNQK2N3PCE5MOjmoSIIWk3Yd9ajLq
+QBfgAhsTc+A7hv8Evop5oayUSlhRdcoYK440dh0hcHNSULhHmXXmPMvUkdjq/uwJ
+osaB29OtD+f1dItlo+10Gxypc1fGKnejADrscyFst6h+MaIARxCB11AT4BGROxMR
+WefiZvI3x9ixgafVlRZ+0PFRLwS6obglYqo76B/AHTx6isxtiY7VOmTj/1p6qiOX
+Q53F73ricbgt5+ayfPd8T9UzSJk7XxFwSEUO2Q5ZlQPn/cs0y7lbGPS+aeuklG66
+k5I8qg8V2Pnw7pBFE5MfyWn3qQC4KKcqgdYCZoqcWVAus1Dn5f3RkJKZp0L9wsT9
+KJhZW/fMnijvw9mqCjSkA4Qg6eeanWZTa2OvTG7qu7amS6FcO/h4Gzi47qgU83Yi
+9vB1MH5Ct7nlEq7waLSBL5s6mFWRbyhbnLOuLOiUnBVDXYiix1kEqw0DDfGo7B9k
+coRZIVkPl1b1ATyCA4WVUNP8x9zXWmUqCi4xjlRKlXG3HJ0r0UpY4qPA05unrEh9
+hZndP7p4AehRQY+2OeWo
+=M/2G
+-----END PGP SIGNATURE-----
+
+--koor6xchwoiplnj2--
