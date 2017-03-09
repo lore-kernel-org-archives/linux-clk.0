@@ -1,203 +1,200 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v6 3/4] arm64: dts: allwinner: add Allwinner H5 .dtsi
-Date: Thu,  2 Mar 2017 04:13:41 +0800
-Message-Id: <20170301201342.47583-4-icenowy@aosc.xyz>
-In-Reply-To: <20170301201342.47583-1-icenowy@aosc.xyz>
-References: <20170301201342.47583-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 7/9] clk: meson8b: add the mplls clocks 0, 1 and 2
+Date: Thu,  9 Mar 2017 11:41:52 +0100
+Message-Id: <20170309104154.28295-8-jbrunet@baylibre.com>
+In-Reply-To: <20170309104154.28295-1-jbrunet@baylibre.com>
+References: <20170309104154.28295-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andre Przywara <andre.przywara@arm.com>
-
-The Allwinner H5 SoC is pin-compatible to the H3 SoC, but uses
-Cortex-A53 cores instead.
-Based on the now shared base .dtsi describing the common peripherals
-describe the H5 specific nodes on top of that.
-That symlinks in the sunxi-h3-h5.dtsi from the arch/arm tree.
-
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-[Icenowy: add H5 pinctrl compatible, and changes for my h3-h5 dtsi
- refactor, commit message changed to meet new arm64 naming scheme,
- drop H3 pinctrl compatible because of interrupt bank change, drop
- H3 ccu compatible because of clock change, drop ccu node as it come
- into h3-h5 dtsi]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
-Changes in v6:
-- Dropped GIC node as it's in sunxi-h3-h5.dtsi now
-- Fixed some words in commit message, thanks to Rask Ingemann Lambertsen
-Changes in v3:
-- Dropped sun5i-a13-mmc, sun8i-h3-ccu compatibles.
-- Used sun50i-{h5,a64}-emmc compatible for mmc2.
-Changes in v2:
-- Dropped sun8i-h3-pinctrl compatible, as the interrupt of H3 and H5 is
+ drivers/clk/meson/meson8b.c | 103 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/meson8b.h |  20 ++++++++-
+ 2 files changed, 122 insertions(+), 1 deletion(-)
 
- arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi   | 124 +++++++++++++++++++++++++
- arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi |   1 +
- 2 files changed, 125 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
- create mode 120000 arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-new file mode 100644
-index 000000000000..4d314a253fd9
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-@@ -0,0 +1,124 @@
-+/*
-+ * Copyright (C) 2016 ARM Ltd.
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 2937443d4505..e9985503165c 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -245,6 +245,96 @@ static struct clk_fixed_factor meson8b_fclk_div7 = {
+ 	},
+ };
+ 
++static struct meson_clk_mpll meson8b_mpll0 = {
++	.sdm = {
++		.reg_off = HHI_MPLL_CNTL7,
++		.shift   = 0,
++		.width   = 14,
++	},
++	.sdm_en = {
++		.reg_off = HHI_MPLL_CNTL7,
++		.shift   = 15,
++		.width   = 1,
++	},
++	.n2 = {
++		.reg_off = HHI_MPLL_CNTL7,
++		.shift   = 16,
++		.width   = 9,
++	},
++	.en = {
++		.reg_off = HHI_MPLL_CNTL7,
++		.shift   = 14,
++		.width   = 1,
++	},
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll0",
++		.ops = &meson_clk_mpll_ops,
++		.parent_names = (const char *[]){ "fixed_pll" },
++		.num_parents = 1,
++	},
++};
++
++static struct meson_clk_mpll meson8b_mpll1 = {
++	.sdm = {
++		.reg_off = HHI_MPLL_CNTL8,
++		.shift   = 0,
++		.width   = 14,
++	},
++	.sdm_en = {
++		.reg_off = HHI_MPLL_CNTL8,
++		.shift   = 15,
++		.width   = 1,
++	},
++	.n2 = {
++		.reg_off = HHI_MPLL_CNTL8,
++		.shift   = 16,
++		.width   = 9,
++	},
++	.en = {
++		.reg_off = HHI_MPLL_CNTL8,
++		.shift   = 14,
++		.width   = 1,
++	},
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll1",
++		.ops = &meson_clk_mpll_ops,
++		.parent_names = (const char *[]){ "fixed_pll" },
++		.num_parents = 1,
++	},
++};
++
++static struct meson_clk_mpll meson8b_mpll2 = {
++	.sdm = {
++		.reg_off = HHI_MPLL_CNTL9,
++		.shift   = 0,
++		.width   = 14,
++	},
++	.sdm_en = {
++		.reg_off = HHI_MPLL_CNTL9,
++		.shift   = 15,
++		.width   = 1,
++	},
++	.n2 = {
++		.reg_off = HHI_MPLL_CNTL9,
++		.shift   = 16,
++		.width   = 9,
++	},
++	.en = {
++		.reg_off = HHI_MPLL_CNTL9,
++		.shift   = 14,
++		.width   = 1,
++	},
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll2",
++		.ops = &meson_clk_mpll_ops,
++		.parent_names = (const char *[]){ "fixed_pll" },
++		.num_parents = 1,
++	},
++};
++
+ /*
+  * FIXME cpu clocks and the legacy composite clocks (e.g. clk81) are both PLL
+  * post-dividers and should be modeled with their respective PLLs via the
+@@ -491,6 +581,9 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
+ 		[CLKID_AO_AHB_SRAM]	    = &meson8b_ao_ahb_sram.hw,
+ 		[CLKID_AO_AHB_BUS]	    = &meson8b_ao_ahb_bus.hw,
+ 		[CLKID_AO_IFACE]	    = &meson8b_ao_iface.hw,
++		[CLKID_MPLL0]		    = &meson8b_mpll0.hw,
++		[CLKID_MPLL1]		    = &meson8b_mpll1.hw,
++		[CLKID_MPLL2]		    = &meson8b_mpll2.hw,
+ 	},
+ 	.num = CLK_NR_CLKS,
+ };
+@@ -501,6 +594,12 @@ static struct meson_clk_pll *const meson8b_clk_plls[] = {
+ 	&meson8b_sys_pll,
+ };
+ 
++static struct meson_clk_mpll *const meson8b_clk_mplls[] = {
++	&meson8b_mpll0,
++	&meson8b_mpll1,
++	&meson8b_mpll2,
++};
++
+ static struct clk_gate *const meson8b_clk_gates[] = {
+ 	&meson8b_clk81,
+ 	&meson8b_ddr,
+@@ -609,6 +708,10 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
+ 	for (i = 0; i < ARRAY_SIZE(meson8b_clk_plls); i++)
+ 		meson8b_clk_plls[i]->base = clk_base;
+ 
++	/* Populate base address for MPLLs */
++	for (i = 0; i < ARRAY_SIZE(meson8b_clk_mplls); i++)
++		meson8b_clk_mplls[i]->base = clk_base;
++
+ 	/* Populate the base address for CPU clk */
+ 	meson8b_cpu_clk.base = clk_base;
+ 
+diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+index 010e9582888d..3881defc8644 100644
+--- a/drivers/clk/meson/meson8b.h
++++ b/drivers/clk/meson/meson8b.h
+@@ -42,6 +42,21 @@
+ #define HHI_VID_PLL_CNTL		0x320 /* 0xc8 offset in data sheet */
+ 
+ /*
++ * MPLL register offeset taken from the S905 datasheet. Vendor kernel source
++ * confirm these are the same for the S805.
 + */
++#define HHI_MPLL_CNTL			0x280 /* 0xa0 offset in data sheet */
++#define HHI_MPLL_CNTL2			0x284 /* 0xa1 offset in data sheet */
++#define HHI_MPLL_CNTL3			0x288 /* 0xa2 offset in data sheet */
++#define HHI_MPLL_CNTL4			0x28C /* 0xa3 offset in data sheet */
++#define HHI_MPLL_CNTL5			0x290 /* 0xa4 offset in data sheet */
++#define HHI_MPLL_CNTL6			0x294 /* 0xa5 offset in data sheet */
++#define HHI_MPLL_CNTL7			0x298 /* 0xa6 offset in data sheet */
++#define HHI_MPLL_CNTL8			0x29C /* 0xa7 offset in data sheet */
++#define HHI_MPLL_CNTL9			0x2A0 /* 0xa8 offset in data sheet */
++#define HHI_MPLL_CNTL10			0x2A4 /* 0xa9 offset in data sheet */
 +
-+#include "sunxi-h3-h5.dtsi"
-+
-+/ {
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <0>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@1 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <1>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@2 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <2>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@3 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			device_type = "cpu";
-+			reg = <3>;
-+			enable-method = "psci";
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
-+
-+&ccu {
-+	compatible = "allwinner,sun50i-h5-ccu";
-+};
-+
-+&mmc0 {
-+	compatible = "allwinner,sun50i-h5-mmc",
-+		     "allwinner,sun50i-a64-mmc";
-+	clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
-+	clock-names = "ahb", "mmc";
-+};
-+
-+&mmc1 {
-+	compatible = "allwinner,sun50i-h5-mmc",
-+		     "allwinner,sun50i-a64-mmc";
-+	clocks = <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;
-+	clock-names = "ahb", "mmc";
-+};
-+
-+&mmc2 {
-+	compatible = "allwinner,sun50i-h5-emmc",
-+		     "allwinner,sun50i-a64-emmc";
-+	clocks = <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;
-+	clock-names = "ahb", "mmc";
-+};
-+
-+&pio {
-+	compatible = "allwinner,sun50i-h5-pinctrl";
-+};
-diff --git a/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
-new file mode 120000
-index 000000000000..036f01dc2b9b
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sunxi-h3-h5.dtsi
-@@ -0,0 +1 @@
-+../../../../arm/boot/dts/sunxi-h3-h5.dtsi
-\ No newline at end of file
++/*
+  * CLKID index values
+  *
+  * These indices are entirely contrived and do not map onto the hardware.
+@@ -142,8 +157,11 @@
+ #define CLKID_AO_AHB_SRAM	90
+ #define CLKID_AO_AHB_BUS	91
+ #define CLKID_AO_IFACE		92
++#define CLKID_MPLL0		93
++#define CLKID_MPLL1		94
++#define CLKID_MPLL2		95
+ 
+-#define CLK_NR_CLKS		93
++#define CLK_NR_CLKS		96
+ 
+ /* include the CLKIDs that have been made part of the stable DT binding */
+ #include <dt-bindings/clock/meson8b-clkc.h>
 -- 
-2.11.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.9.3
