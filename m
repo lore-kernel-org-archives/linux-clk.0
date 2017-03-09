@@ -1,37 +1,124 @@
-Return-Path: <herbert@gondor.apana.org.au>
-Date: Thu, 23 Mar 2017 15:56:02 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	linux-amlogic@lists.infradead.org, linux-crypto@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] clk: meson-gxbb: expose clock CLKID_RNG0
-Message-ID: <20170323075602.GA6054@gondor.apana.org.au>
-References: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
- <20170316100743.GA12137@gondor.apana.org.au>
- <m2mvcl6pwg.fsf@baylibre.com>
- <20170317083032.GA18512@gondor.apana.org.au>
- <m2lgrxnxlz.fsf@baylibre.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 9 Mar 2017 11:55:35 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	Carlo Caione <carlo@caione.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, rtc-linux@googlegroups.com
+Subject: Re: [PATCH 1/15] clk: divider: Make divider_round_rate take the
+ parent clock
+Message-ID: <20170309105535.wdypl3j2ha4ekzyb@lukather>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <7ebd073b4941e4b7c619f15ff0a375ff7919d403.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <20170307141157.GC10239@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <m2lgrxnxlz.fsf@baylibre.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="s5ft7t2tnadun7xg"
+In-Reply-To: <20170307141157.GC10239@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 22, 2017 at 08:24:08AM -0700, Kevin Hilman wrote:
-> 
-> Because this will be causing conflicts with both the platform (amlogic)
-> tree and the clk tree, could provide an immutable branch where these are
-> applied to help us handle these conflicts?
 
-If you apply the same patches to your tree there should be no
-conflicts at all.  git is able to resolve this automatically.
+--s5ft7t2tnadun7xg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Hi Stephen,
+
+On Tue, Mar 07, 2017 at 06:11:57AM -0800, Stephen Boyd wrote:
+> On 03/07, Maxime Ripard wrote:
+> > So far, divider_round_rate only considers the parent clock returned by
+> > clk_hw_get_parent.
+> >=20
+> > This works fine on clocks that have a single parents, this doesn't work=
+ on
+> > muxes, since we will only consider the first parent, while other parents
+> > may totally be able to provide a better combination.
+> >=20
+> > Clocks in that case cannot use divider_round_rate, so would have to com=
+e up
+> > with a very similar logic to work around it. Instead of having to do
+> > something like this, and duplicate that logic everywhere, give an
+> > additional parameter for the parent clock to consider.
+> >=20
+> > Current users have been converted using the following coccinelle script
+> >=20
+> > @@
+> > identifier hw, rate, prate, table, width, flags;
+> > @@
+> >=20
+> > -long divider_round_rate(struct clk_hw *hw,
+> > +long divider_round_rate(struct clk_hw *hw, struct clk_hw *parent,
+> >                         unsigned long rate,
+> >                         unsigned long *prate,
+> >                         const struct clk_div_table *table,
+> >                         u8 width,
+> >                         unsigned long flags) { ... }
+> >=20
+> > @@
+> > identifier fn, hw;
+> > expression E2, E3, E4, E5, E6;
+> > @@
+> >  fn (struct clk_hw *hw, ...) {
+> >  <...
+> > -divider_round_rate(hw, E2, E3, E4, E5, E6)
+> > +divider_round_rate(hw, clk_hw_get_parent(hw), E2, E3, E4, E5, E6)
+> >  ...>
+> > }
+>=20
+> Why not introduce another function like=20
+>=20
+> 	divider_round_rate_parent()
+> 	divider_round_rate_mux()
+>=20
+> that takes the extra parent argument? Technically, a divider is
+> considered to only have one parent, and if it has more than one
+> parent, then it is a mux and a divider.
+
+Yes, that would work too, without needing the cross tree change. I'll
+do that in the next version.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--s5ft7t2tnadun7xg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYwTSnAAoJEBx+YmzsjxAgasYP/i8/gnfsDA6RKGnKu3dnn1el
+ax9gwSyGaYWQxuhj+/e9qlt3qCLn59+QPA0vBKtK7wcBjesCT02fMNEV2eZZScAs
+68EnlhYmuIJ1BagD3eht0LfqW5HKBXBxY/IO7neYZyCXh3XmBbhD3GTXD/3B94vS
+qtLw2HoruWUpisaqLm2tLWF0mYp44zdjvTXhq1q6ilQMYhBYLZKJlnitXHmElPDs
+ZtEtofvl5j8OP47jOSeMwSad/HMz1ge43PLfF6OMPsibV+kn+hS7yo5wiyoAcNm4
+1tTFnvpZCGQPxniCraP6jUEywVoYYJhZ9VytCZhYDsOQPTTVFtaxkEmy8jFE5qsB
+DCHSoVoKROdCsyRVn5x4e9xJgxwdHN41+6blVNG/zWGtZLsls9Nxi0auAxeKjce6
+is7db48DMcujV4wf6VDt5Bc3+NuxGILL+b5TVgVg3iTyifkBKeXrC4Wcryl2csdK
+ZDadZgCeSS+CceWb5JE/JSjHAesgzrnoTtl0XYfEbjnHzyc8GptaIWA5fiTHGnQa
+zjBFcU+iuHX+oompZg9pmTGY0geFTGr7FRpyDHDI2M2y+Csy27cvD5ZrH7Nwlilh
+y01ef/lvAXr/snKVTdXD8nQ20gc53fgyMnBQvPONoFtl95M3QhBc2DziCYeYmmRA
+z0pw4g0LdOs5Q9zUwQHy
+=ItpR
+-----END PGP SIGNATURE-----
+
+--s5ft7t2tnadun7xg--
