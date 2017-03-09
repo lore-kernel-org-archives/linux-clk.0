@@ -1,38 +1,61 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 3 Mar 2017 15:58:08 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org
-Subject: Re: [PATCH v3 4/5] clk: hi6220: add debug APB clock
-Message-ID: <20170303235808.GX25384@codeaurora.org>
-References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
- <1488520809-31670-5-git-send-email-leo.yan@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1488520809-31670-5-git-send-email-leo.yan@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f176.google.com ([209.85.128.176]:35618 "EHLO
+        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754086AbdCIMx4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2017 07:53:56 -0500
+Received: by mail-wr0-f176.google.com with SMTP id g10so44393256wrg.2
+        for <linux-clk@vger.kernel.org>; Thu, 09 Mar 2017 04:53:55 -0800 (PST)
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: sboyd@codeaurora.org, khilman@baylibre.com, carlo@caione.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] meson-gx: Add mali-450 support
+Date: Thu,  9 Mar 2017 13:53:44 +0100
+Message-Id: <1489064027-18004-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/03, Leo Yan wrote:
-> The debug APB clock is absent in hi6220 driver, so this patch is to add
-> support for it.
-> 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
+Since the merge of the Mali dt bindings at [1], add support for Mali clocks
+and DT node.
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+The Mali is clocked by two identical clock paths behind a glitch free mux
+to safely change frequency while running.
+So these clocks must be added to the meson-gxbb clock controller.
+
+Changes since v2 at [5] :
+ - Rebased on v2 Audio Clocks patchset from Jerome Brunet at [6]
+ - Marked parents names list as static
+ - Reworded patch 3 commit message
+
+Changes since v1 at [2] :
+ - Remove GP0 fixes, this will pushed later, for base frequency it can depend on fclk_div3
+ - Add GXL support
+ - rebase on clk-next and jbrunet's patchset at [3] and [4]
+ - get rid of composite clocks, this adds more clocks IDs and exposes 2 more clocks
+
+[6] http://lkml.kernel.org/r/20170309104154.28295-1-jbrunet@baylibre.com
+[5] http://lkml.kernel.org/r/1488365164-22861-1-git-send-email-narmstrong@baylibre.com
+[4] http://lkml.kernel.org/r/20170228093016.5624-1-jbrunet@baylibre.com
+[3] http://lkml.kernel.org/r/20170228133002.17894-1-jbrunet@baylibre.com
+[2] http://lkml.kernel.org/r/1486721084-1383-1-git-send-email-narmstrong@baylibre.com
+[1] http://lkml.kernel.org/r/b098c4fa9fce88361cca20417978734d0e1b5cca.1485939041.git-series.maxime.ripard@free-electrons.com
+
+Neil Armstrong (3):
+  clk: meson-gxbb: Add MALI clock IDS
+  clk: meson-gxbb: Add MALI clocks
+  ARM64: dts: meson-gx: Add MALI nodes for GXBB and GXL
+
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi      |  37 ++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi  |  43 +++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi |   1 +
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi |   1 +
+ drivers/clk/meson/gxbb.c                         | 139 +++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h                         |   9 +-
+ include/dt-bindings/clock/gxbb-clkc.h            |   5 +
+ 7 files changed, 234 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
+
