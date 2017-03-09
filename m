@@ -1,129 +1,202 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-        <daniel.thompson@linaro.org>, <andrea.merello@gmail.com>,
-        <radoslaw.pietrzyk@gmail.com>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <gabriel.fernandez@st.com>
-Subject: [PATCH v2 2/2] clk: stm32f4: fix timeout management for pll and ready gate
-Date: Thu, 16 Mar 2017 09:16:41 +0100
-Message-ID: <1489652201-19889-3-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1489652201-19889-1-git-send-email-gabriel.fernandez@st.com>
-References: <1489652201-19889-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: sboyd@codeaurora.org, khilman@baylibre.com, carlo@caione.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 2/3] clk: meson-gxbb: Add MALI clocks
+Date: Thu,  9 Mar 2017 13:53:46 +0100
+Message-Id: <1489064027-18004-3-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1489064027-18004-1-git-send-email-narmstrong@baylibre.com>
+References: <1489064027-18004-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+The Mali is clocked by two identical clock paths behind a glitch free mux
+to safely change frequency while running.
 
-Use a classic polling to test bit ready.
-And the shift of the bit ready of LSE & LSI were wrongs.
+The two "mali_0" and "mali_1" clocks are composed of a mux, divider and gate.
+Expose these two clocks trees using generic clocks.
+Finally the glitch free mux is added as "mali" clock.
 
-Fixes: 861adc44d290 ("clk: stm32f4: Add LSI & LSE clocks")
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/clk/clk-stm32f4.c | 43 +++++++++++++++++++++++++++++--------------
- 1 file changed, 29 insertions(+), 14 deletions(-)
+ drivers/clk/meson/gxbb.c | 139 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 139 insertions(+)
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index cf9449b3..68e2a4e 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -531,19 +531,26 @@ static int stm32f4_pll_is_enabled(struct clk_hw *hw)
- 	return clk_gate_ops.is_enabled(hw);
- }
- 
-+#define PLL_TIMEOUT 10000
-+
- static int stm32f4_pll_enable(struct clk_hw *hw)
- {
- 	struct clk_gate *gate = to_clk_gate(hw);
- 	struct stm32f4_pll *pll = to_stm32f4_pll(gate);
--	int ret = 0;
--	unsigned long reg;
-+	int bit_status;
-+	unsigned int timeout = PLL_TIMEOUT;
- 
--	ret = clk_gate_ops.enable(hw);
-+	if (clk_gate_ops.is_enabled(hw))
-+		return 0;
-+
-+	clk_gate_ops.enable(hw);
- 
--	ret = readl_relaxed_poll_timeout_atomic(base + STM32F4_RCC_CR, reg,
--			reg & (1 << pll->bit_rdy_idx), 0, 10000);
-+	do {
-+		bit_status = !(readl(gate->reg) & BIT(pll->bit_rdy_idx));
- 
--	return ret;
-+	} while (bit_status && --timeout);
-+
-+	return bit_status;
- }
- 
- static void stm32f4_pll_disable(struct clk_hw *hw)
-@@ -834,24 +841,32 @@ struct stm32_rgate {
- 	u8	bit_rdy_idx;
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 5059c7b..d9f7fef 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -634,6 +634,131 @@
+ 	},
  };
  
--#define RTC_TIMEOUT 1000000
-+#define RGATE_TIMEOUT 50000
- 
- static int rgclk_enable(struct clk_hw *hw)
- {
- 	struct clk_gate *gate = to_clk_gate(hw);
- 	struct stm32_rgate *rgate = to_rgclk(gate);
--	u32 reg;
--	int ret;
-+	int bit_status;
-+	unsigned int timeout = RGATE_TIMEOUT;
++/*
++ * The MALI IP is clocked by two identical clocks (mali_0 and mali_1)
++ * muxed by a glitch-free switch.
++ */
 +
-+	if (clk_gate_ops.is_enabled(hw))
-+		return 0;
- 
- 	disable_power_domain_write_protection();
- 
- 	clk_gate_ops.enable(hw);
- 
--	ret = readl_relaxed_poll_timeout_atomic(gate->reg, reg,
--			reg & rgate->bit_rdy_idx, 1000, RTC_TIMEOUT);
-+	do {
-+		bit_status = !(readl(gate->reg) & BIT(rgate->bit_rdy_idx));
-+		if (bit_status)
-+			udelay(100);
++static u32 mux_table_mali_0_1[] = {0, 1, 2, 3, 4, 5, 6, 7};
++static const char *gxbb_mali_0_1_parent_names[] = {
++	"xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
++	"fclk_div4", "fclk_div3", "fclk_div5"
++};
 +
-+	} while (bit_status && --timeout);
- 
- 	enable_power_domain_write_protection();
--	return ret;
++static struct clk_mux gxbb_mali_0_sel = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.mask = 0x7,
++	.shift = 9,
++	.table = mux_table_mali_0_1,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali_0_sel",
++		.ops = &clk_mux_ops,
++		/*
++		 * bits 10:9 selects from 8 possible parents:
++		 * xtal, gp0_pll, mpll2, mpll1, fclk_div7,
++		 * fclk_div4, fclk_div3, fclk_div5
++		 */
++		.parent_names = gxbb_mali_0_1_parent_names,
++		.num_parents = 8,
++		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
++	},
++};
 +
-+	return bit_status;
- }
++static struct clk_divider gxbb_mali_0_div = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.shift = 0,
++	.width = 7,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali_0_div",
++		.ops = &clk_divider_ops,
++		.parent_names = (const char *[]){ "mali_0_sel" },
++		.num_parents = 1,
++		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
++	},
++};
++
++static struct clk_gate gxbb_mali_0 = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.bit_idx = 8,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali_0",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "mali_0_div" },
++		.num_parents = 1,
++		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
++	},
++};
++
++static struct clk_mux gxbb_mali_1_sel = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.mask = 0x7,
++	.shift = 25,
++	.table = mux_table_mali_0_1,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali_1_sel",
++		.ops = &clk_mux_ops,
++		/*
++		 * bits 10:9 selects from 8 possible parents:
++		 * xtal, gp0_pll, mpll2, mpll1, fclk_div7,
++		 * fclk_div4, fclk_div3, fclk_div5
++		 */
++		.parent_names = gxbb_mali_0_1_parent_names,
++		.num_parents = 8,
++		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
++	},
++};
++
++static struct clk_divider gxbb_mali_1_div = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.shift = 16,
++	.width = 7,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali_1_div",
++		.ops = &clk_divider_ops,
++		.parent_names = (const char *[]){ "mali_1_sel" },
++		.num_parents = 1,
++		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
++	},
++};
++
++static struct clk_gate gxbb_mali_1 = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.bit_idx = 24,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali_1",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "mali_1_div" },
++		.num_parents = 1,
++		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
++	},
++};
++
++static u32 mux_table_mali[] = {0, 1};
++static const char *gxbb_mali_parent_names[] = {
++	"mali_0", "mali_1"
++};
++
++static struct clk_mux gxbb_mali = {
++	.reg = (void *)HHI_MALI_CLK_CNTL,
++	.mask = 1,
++	.shift = 31,
++	.table = mux_table_mali,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "mali",
++		.ops = &clk_mux_ops,
++		.parent_names = gxbb_mali_parent_names,
++		.num_parents = 2,
++		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
++	},
++};
++
+ /* Everything Else (EE) domain gates */
+ static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
+ static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
+@@ -827,6 +952,13 @@
+ 		[CLKID_SAR_ADC_CLK]	    = &gxbb_sar_adc_clk.hw,
+ 		[CLKID_SAR_ADC_SEL]	    = &gxbb_sar_adc_clk_sel.hw,
+ 		[CLKID_SAR_ADC_DIV]	    = &gxbb_sar_adc_clk_div.hw,
++		[CLKID_MALI_0_SEL]	    = &gxbb_mali_0_sel.hw,
++		[CLKID_MALI_0_DIV]	    = &gxbb_mali_0_div.hw,
++		[CLKID_MALI_0]		    = &gxbb_mali_0.hw,
++		[CLKID_MALI_1_SEL]	    = &gxbb_mali_1_sel.hw,
++		[CLKID_MALI_1_DIV]	    = &gxbb_mali_1_div.hw,
++		[CLKID_MALI_1]		    = &gxbb_mali_1.hw,
++		[CLKID_MALI]		    = &gxbb_mali.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -930,16 +1062,23 @@
+ 	&gxbb_emmc_b,
+ 	&gxbb_emmc_c,
+ 	&gxbb_sar_adc_clk,
++	&gxbb_mali_0,
++	&gxbb_mali_1,
+ };
  
- static void rgclk_disable(struct clk_hw *hw)
-@@ -1533,7 +1548,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	}
+ static struct clk_mux *const gxbb_clk_muxes[] = {
+ 	&gxbb_mpeg_clk_sel,
+ 	&gxbb_sar_adc_clk_sel,
++	&gxbb_mali_0_sel,
++	&gxbb_mali_1_sel,
++	&gxbb_mali,
+ };
  
- 	clks[CLK_LSI] = clk_register_rgate(NULL, "lsi", "clk-lsi", 0,
--			base + STM32F4_RCC_CSR, 0, 2, 0, &stm32f4_clk_lock);
-+			base + STM32F4_RCC_CSR, 0, 1, 0, &stm32f4_clk_lock);
+ static struct clk_divider *const gxbb_clk_dividers[] = {
+ 	&gxbb_mpeg_clk_div,
+ 	&gxbb_sar_adc_clk_div,
++	&gxbb_mali_0_div,
++	&gxbb_mali_1_div,
+ };
  
- 	if (IS_ERR(clks[CLK_LSI])) {
- 		pr_err("Unable to register lsi clock\n");
-@@ -1541,7 +1556,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	}
- 
- 	clks[CLK_LSE] = clk_register_rgate(NULL, "lse", "clk-lse", 0,
--			base + STM32F4_RCC_BDCR, 0, 2, 0, &stm32f4_clk_lock);
-+			base + STM32F4_RCC_BDCR, 0, 1, 0, &stm32f4_clk_lock);
- 
- 	if (IS_ERR(clks[CLK_LSE])) {
- 		pr_err("Unable to register lse clock\n");
+ static int gxbb_clkc_probe(struct platform_device *pdev)
 -- 
 1.9.1
