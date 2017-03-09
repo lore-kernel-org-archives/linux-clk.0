@@ -1,154 +1,64 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	mturquette@baylibre.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	narmstrong@baylibre.com,
-	jbrunet@baylibre.com,
-	khilman@baylibre.com,
-	carlo@caione.org,
-	sboyd@codeaurora.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [RFC PATCH] clk: meson: gxbb: remove the "cpu_clk"
-Date: Sun, 26 Mar 2017 13:06:02 +0200
-Message-Id: <20170326110602.23379-1-martin.blumenstingl@googlemail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:57572 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754932AbdCIPgm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2017 10:36:42 -0500
+From: Sricharan R <sricharan@codeaurora.org>
+To: robin.murphy@arm.com, will.deacon@arm.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, m.szyprowski@samsung.com,
+        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        mathieu.poirier@linaro.org, mark.rutland@arm.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH V3 5/5] iommu/arm-smmu: Add the device_link between masters and smmu
+Date: Thu,  9 Mar 2017 21:05:48 +0530
+Message-Id: <1489073748-3659-6-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
+References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-It seems that the "cpu_clk" was carried over from the meson8b clock
-controller driver. On Meson GX (GXBB/GXL/GXM) the registers which are
-used by the cpu_clk have a different purpose (in other words: they don't
-control the CPU clock anymore). HHI_SYS_CPU_CLK_CNTL1 bits 31:24 are
-reserved according to the public S905 datasheet, while bit 23 is the
-"A53_trace_clk_DIS" gate (which according to the datasheet should only
-be used in case a silicon bug is discovered) and bits 22:20 are a
-divider (A53_trace_clk). The meson clk-cpu code however expects that
-bits 28:20 are reserved for a divider (according to the public S805
-datasheet this "SCALE_DIV: This value represents an N+1 divider of the
-input clock.").
+Finally add the device link between the master device and
+smmu, so that the smmu gets runtime enabled/disabled only when the
+master needs it. This is done from add_device callback which gets
+called once when the master is added to the smmu.
 
-The CPU clock on Meson GX SoCs is provided by the SCPI DVFS clock
-driver instead. Two examples from a Meson GXL S905X SoC:
-- vcpu (SCPI DVFS clock 0) rate: 1000000000 / cpu_clk rate: 708000000
-- vcpu (SCPI DVFS clock 0) rate: 1512000000 / cpu_clk rate: 708000000
-
-Unfortunately the CLKID_CPUCLK was already exported (but is currently
-not used) to DT.
-
-This is an RFC because I would like to hear other people's opinion on
-how to clean up the CLKID_CPUCLK (as it leaves a "hole" in
-gxbb_hw_onecell_data and changes the DT API (by removing a currently
-unused #define).
-
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/clk/meson/gxbb.c              | 44 +++--------------------------------
- drivers/clk/meson/gxbb.h              |  2 +-
- include/dt-bindings/clock/gxbb-clkc.h |  1 -
- 3 files changed, 4 insertions(+), 43 deletions(-)
+ drivers/iommu/arm-smmu.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 1c1ec137a3cc..06586fe16ce3 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -496,21 +496,10 @@ static struct meson_clk_mpll gxbb_mpll2 = {
- };
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index 6370421..b06f86c7 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -1671,6 +1671,7 @@ static int arm_smmu_add_device(struct device *dev)
+ 	struct arm_smmu_device *smmu;
+ 	struct arm_smmu_master_cfg *cfg;
+ 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
++	struct device_link *link = NULL;
+ 	int i, ret;
+ 	unsigned long err;
  
- /*
-- * FIXME cpu clocks and the legacy composite clocks (e.g. clk81) are both PLL
-- * post-dividers and should be modeled with their respective PLLs via the
-- * forthcoming coordinated clock rates feature
-+ * FIXME The legacy composite clocks (e.g. clk81) are both PLL post-dividers
-+ * and should be modeled with their respective PLLs via the forthcoming
-+ * coordinated clock rates feature
-  */
--static struct meson_clk_cpu gxbb_cpu_clk = {
--	.reg_off = HHI_SYS_CPU_CLK_CNTL1,
--	.div_table = cpu_div_table,
--	.clk_nb.notifier_call = meson_clk_cpu_notifier_cb,
--	.hw.init = &(struct clk_init_data){
--		.name = "cpu_clk",
--		.ops = &meson_clk_cpu_ops,
--		.parent_names = (const char *[]){ "sys_pll" },
--		.num_parents = 1,
--	},
--};
+@@ -1727,6 +1728,16 @@ static int arm_smmu_add_device(struct device *dev)
+ 	if (IS_ERR_VALUE(err))
+ 		goto out_free;
  
- static u32 mux_table_clk81[]	= { 6, 5, 7 };
++	/*
++	 * Establish the link between smmu and master, so that the
++	 * smmu gets runtime enabled/disabled as per the master's
++	 * needs.
++	 */
++	link = device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME);
++	if (!link)
++		dev_warn(smmu->dev, "Unable to create device link between %s and %s\n",
++			 dev_name(smmu->dev), dev_name(dev));
++
+ 	return 0;
  
-@@ -698,7 +687,6 @@ static MESON_GATE(gxbb_ao_i2c, HHI_GCLK_AO, 4);
- static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
- 	.hws = {
- 		[CLKID_SYS_PLL]		    = &gxbb_sys_pll.hw,
--		[CLKID_CPUCLK]		    = &gxbb_cpu_clk.hw,
- 		[CLKID_HDMI_PLL]	    = &gxbb_hdmi_pll.hw,
- 		[CLKID_FIXED_PLL]	    = &gxbb_fixed_pll.hw,
- 		[CLKID_FCLK_DIV2]	    = &gxbb_fclk_div2.hw,
-@@ -925,9 +913,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	for (i = 0; i < ARRAY_SIZE(gxbb_clk_mplls); i++)
- 		gxbb_clk_mplls[i]->base = clk_base;
- 
--	/* Populate the base address for CPU clk */
--	gxbb_cpu_clk.base = clk_base;
--
- 	/* Populate the base address for the MPEG clks */
- 	gxbb_mpeg_clk_sel.reg = clk_base + (u64)gxbb_mpeg_clk_sel.reg;
- 	gxbb_mpeg_clk_div.reg = clk_base + (u64)gxbb_mpeg_clk_div.reg;
-@@ -950,29 +935,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 			goto iounmap;
- 	}
- 
--	/*
--	 * Register CPU clk notifier
--	 *
--	 * FIXME this is wrong for a lot of reasons. First, the muxes should be
--	 * struct clk_hw objects. Second, we shouldn't program the muxes in
--	 * notifier handlers. The tricky programming sequence will be handled
--	 * by the forthcoming coordinated clock rates mechanism once that
--	 * feature is released.
--	 *
--	 * Furthermore, looking up the parent this way is terrible. At some
--	 * point we will stop allocating a default struct clk when registering
--	 * a new clk_hw, and this hack will no longer work. Releasing the ccr
--	 * feature before that time solves the problem :-)
--	 */
--	parent_hw = clk_hw_get_parent(&gxbb_cpu_clk.hw);
--	parent_clk = parent_hw->clk;
--	ret = clk_notifier_register(parent_clk, &gxbb_cpu_clk.clk_nb);
--	if (ret) {
--		pr_err("%s: failed to register clock notifier for cpu_clk\n",
--				__func__);
--		goto iounmap;
--	}
--
- 	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
- 			&gxbb_hw_onecell_data);
- 
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index cbd62e46bb5b..ca1285acb92d 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -169,7 +169,7 @@
-  * to be exposed to client nodes in DT: include/dt-bindings/clock/gxbb-clkc.h
-  */
- #define CLKID_SYS_PLL		  0
--/* CLKID_CPUCLK */
-+/* CLKID_CPUCLK - not used in the driver anymore */
- /* CLKID_HDMI_PLL */
- #define CLKID_FIXED_PLL		  3
- /* CLKID_FCLK_DIV2 */
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index 63f4c2c44a1f..07311dfdba83 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -5,7 +5,6 @@
- #ifndef __GXBB_CLKC_H
- #define __GXBB_CLKC_H
- 
--#define CLKID_CPUCLK		1
- #define CLKID_HDMI_PLL		2
- #define CLKID_FCLK_DIV2		4
- #define CLKID_FCLK_DIV3		5
+ out_free:
 -- 
-2.12.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
