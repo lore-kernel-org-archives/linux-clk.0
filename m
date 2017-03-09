@@ -1,62 +1,42 @@
-Return-Path: <mars.cheng@mediatek.com>
-Message-ID: <1490313138.25996.10.camel@mtkswgap22>
-Subject: Re: [PATCH v3 02/12] irqchip: mtk-sysirq: extend intpol base to
- arbitrary number
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
-	<robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, CC Hwang <cc.hwang@mediatek.com>, Loda Chou
-	<loda.chou@mediatek.com>, Miles Chen <miles.chen@mediatek.com>, Jades Shih
-	<jades.shih@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, "My
- Chuang" <my.chuang@mediatek.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<wsd_upstream@mediatek.com>, <linux-clk@vger.kernel.org>,
-	<chieh-jay.liu@mediatek.com>
-Date: Fri, 24 Mar 2017 07:52:18 +0800
-In-Reply-To: <3790b6ad-12c0-0c48-c24e-0f3397c6bbba@arm.com>
-References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
-	 <1489937193-2953-3-git-send-email-mars.cheng@mediatek.com>
-	 <3790b6ad-12c0-0c48-c24e-0f3397c6bbba@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Return-Path: mars.cheng@mediatek.com
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/9] clk: meson: fix SET_PARM macro
+Date: Thu,  9 Mar 2017 11:41:46 +0100
+Message-Id: <20170309104154.28295-2-jbrunet@baylibre.com>
+In-Reply-To: <20170309104154.28295-1-jbrunet@baylibre.com>
+References: <20170309104154.28295-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2017-03-23 at 16:25 +0000, Marc Zyngier wrote:
-> On 19/03/17 15:26, Mars Cheng wrote:
-> > Originally driver only supports one base. However, MT6797 has
-> > more than one bases to configure interrupt polarity. To support
-> > possible design change, here comes a solution to use arbitrary
-> > number of bases.
-> > 
-> > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> 
-> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-> 
-> What is the merge strategy for this? I'm happy to take the irqchip stuff
-> through my tree, but there is much more in this series...
-> 
-Hi Marc
+parameter val is not enclosed in parenthesis which is buggy when given an
+expression instead of a simple value
 
-Thanks for your review.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+---
+ drivers/clk/meson/clkc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi Matthias
-
-Would you comment on this? If Marc take the following stuff first in his
-tree:
-
-[PATCH v3 01/12] dt-bindings: mediatek: multiple bases support for
-sysirq  
-[PATCH v3 02/12] irqchip: mtk-sysirq: extend intpol base to arbitrary
-number 
-[PATCH v3 03/12] irqchip: mtk-sysirq: prevent unnecessary visibility
-when set_type 
-
-Since other stuff might need more review and irqchip didn't affect them.
-
-Thanks.
-
-> Thanks,
-> 
-> 	M.
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 9bb70e7a7d6a..c6be77dd8694 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -25,7 +25,7 @@
+ #define PARM_GET(width, shift, reg)					\
+ 	(((reg) & SETPMASK(width, shift)) >> (shift))
+ #define PARM_SET(width, shift, reg, val)				\
+-	(((reg) & CLRPMASK(width, shift)) | (val << (shift)))
++	(((reg) & CLRPMASK(width, shift)) | ((val) << (shift)))
+ 
+ #define MESON_PARM_APPLICABLE(p)		(!!((p)->width))
+ 
+-- 
+2.9.3
