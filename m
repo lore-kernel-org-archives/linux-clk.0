@@ -1,118 +1,210 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [RFC 1/7] clk: take the prepare lock out of clk_core_set_parent
-Date: Tue, 21 Mar 2017 19:33:24 +0100
-Message-Id: <20170321183330.26722-2-jbrunet@baylibre.com>
-In-Reply-To: <20170321183330.26722-1-jbrunet@baylibre.com>
-References: <20170321183330.26722-1-jbrunet@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:56700 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754933AbdCIPga (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2017 10:36:30 -0500
+From: Sricharan R <sricharan@codeaurora.org>
+To: robin.murphy@arm.com, will.deacon@arm.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, m.szyprowski@samsung.com,
+        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        mathieu.poirier@linaro.org, mark.rutland@arm.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH V3 2/5] iommu/arm-smmu: Add support for MMU40x/500 clocks
+Date: Thu,  9 Mar 2017 21:05:45 +0530
+Message-Id: <1489073748-3659-3-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
+References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Rework set_parent core function so it can be called when the prepare lock
-is already held by the caller.
+The MMU400x/500 is the implementation of the SMMUv2
+arch specification. It is split in to two blocks
+TBU, TCU. TBU caches the page table, instantiated
+for each master locally, clocked by the TBUn_clk.
+TCU manages the address translation with PTW and has
+the programming interface as well, clocked using the
+TCU_CLK. The TBU can also be sharing the same clock
+domain as TCU, in which case both are clocked using
+the TCU_CLK.
 
-This rework is done to ease the integration of the "protected" clock
-functionality.
+This defines the clock bindings for the same and adds the
+init, enable and disable functions for handling the
+clocks.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/clk/clk.c | 38 ++++++++++++++++++++------------------
- 1 file changed, 20 insertions(+), 18 deletions(-)
+ .../devicetree/bindings/iommu/arm,smmu.txt         | 27 ++++++
+ drivers/iommu/arm-smmu.c                           | 95 +++++++++++++++++++++-
+ 2 files changed, 121 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 67201f67a14a..e77f03a47da6 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1794,23 +1794,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 	if (!core)
- 		return 0;
+diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+index 6cdf32d..b369c13 100644
+--- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
++++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+@@ -60,6 +60,28 @@ conditions.
+                   aliases of secure registers have to be used during
+                   SMMU configuration.
  
--	/* prevent racing with updates to the clock topology */
--	clk_prepare_lock();
--
- 	if (core->parent == parent)
--		goto out;
++- clock-names:    Should be "tbu_clk" and "tcu_clk" and "cfg_clk" for
++                  "arm,mmu-400", "arm,mmu-401" and "arm,mmu-500"
++
++                  "tcu_clk" is required for smmu's register access using the
++                  programming interface and ptw for downstream bus access.
++
++                  "tbu_clk" is required for access to the TBU connected to the
++                  master locally. This clock is optional and not required when
++                  TBU is in the same clock domain as the TCU or when the TBU is
++                  clocked along with the master.
++
++                  "cfg_clk" is optional if required to access the TCU's programming
++                  interface, apart from the "tcu_clk".
++
++- clocks:         Phandles for respective clocks described by clock-names.
++
++- power-domains:  Phandles to SMMU's power domain specifier. This is
++                  required even if SMMU belongs to the master's power
++                  domain, as the SMMU will have to be enabled and
++                  accessed before master gets enabled and linked to its
++                  SMMU.
++
+ ** Deprecated properties:
+ 
+ - mmu-masters (deprecated in favour of the generic "iommus" binding) :
+@@ -84,6 +106,11 @@ conditions.
+                              <0 36 4>,
+                              <0 37 4>;
+                 #iommu-cells = <1>;
++                clocks = <&gcc GCC_SMMU_CFG_CLK>,
++                         <&gcc GCC_APSS_TCU_CLK>,
++			 <&gcc GCC_MDP_TBU_CLK>;
++
++		clock-names = "cfg_clk", "tcu_clk", "tbu_clk";
+         };
+ 
+         /* device with two stream IDs, 0 and 7 */
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index f7e11d3..720a1ef 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -341,6 +341,12 @@ struct arm_smmu_master_cfg {
+ #define for_each_cfg_sme(fw, i, idx) \
+ 	for (i = 0; idx = fwspec_smendx(fw, i), i < fw->num_ids; ++i)
+ 
++struct mmu500_clk {
++	struct clk *cfg_clk;
++	struct clk *tcu_clk;
++	struct clk *tbu_clk;
++};
++
+ struct arm_smmu_clks {
+ 	void *clks;
+ 	int (*init_clocks)(struct arm_smmu_device *smmu);
+@@ -455,6 +461,92 @@ static struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
+ 	return container_of(dom, struct arm_smmu_domain, domain);
+ }
+ 
++static int mmu500_enable_clocks(struct arm_smmu_device *smmu)
++{
++	int ret = 0;
++	struct mmu500_clk *sclks = smmu->smmu_clks.clks;
++
++	if (!sclks)
 +		return 0;
- 
- 	/* verify ops for for multi-parent clks */
--	if ((core->num_parents > 1) && (!core->ops->set_parent)) {
--		ret = -ENOSYS;
--		goto out;
--	}
-+	if ((core->num_parents > 1) && (!core->ops->set_parent))
-+		return -ENOSYS;
- 
- 	/* check that we are allowed to re-parent if the clock is in use */
--	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count) {
--		ret = -EBUSY;
--		goto out;
--	}
-+	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
-+		return -EBUSY;
- 
- 	/* try finding the new parent index */
- 	if (parent) {
-@@ -1818,8 +1811,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 		if (p_index < 0) {
- 			pr_debug("%s: clk %s can not be parent of clk %s\n",
- 					__func__, parent->name, core->name);
--			ret = p_index;
--			goto out;
-+			return p_index;
- 		}
- 		p_rate = parent->rate;
- 	}
-@@ -1829,7 +1821,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 
- 	/* abort if a driver objects */
- 	if (ret & NOTIFY_STOP_MASK)
--		goto out;
++
++	ret = clk_prepare_enable(sclks->cfg_clk);
++	if (ret) {
++		dev_err(smmu->dev, "Couldn't enable cfg_clk");
 +		return ret;
- 
- 	/* do the re-parent */
- 	ret = __clk_set_parent(core, parent, p_index);
-@@ -1842,7 +1834,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 		__clk_recalc_accuracies(core);
- 	}
- 
--out:
-+	return ret;
++	}
++
++	ret = clk_prepare_enable(sclks->tcu_clk);
++	if (ret) {
++		dev_err(smmu->dev, "Couldn't enable tcu_clk");
++		clk_disable_unprepare(sclks->cfg_clk);
++		return ret;
++	}
++
++	ret = clk_prepare_enable(sclks->tbu_clk);
++	if (ret) {
++		dev_err(smmu->dev, "Couln't enable tbu_clk");
++		clk_disable_unprepare(sclks->tcu_clk);
++		clk_disable_unprepare(sclks->cfg_clk);
++		return ret;
++	}
++
++	return 0;
 +}
 +
-+static int clk_core_set_parent_lock(struct clk_core *core,
-+				    struct clk_core *parent)
++static void mmu500_disable_clocks(struct arm_smmu_device *smmu)
 +{
-+	int ret;
++	struct mmu500_clk *sclks = smmu->smmu_clks.clks;
 +
-+	clk_prepare_lock();
-+	ret = clk_core_set_parent(core, parent);
- 	clk_prepare_unlock();
++	if (!sclks) {
++		clk_disable_unprepare(sclks->tbu_clk);
++		clk_disable_unprepare(sclks->tcu_clk);
++		clk_disable_unprepare(sclks->cfg_clk);
++	}
++}
++
++static int mmu500_init_clocks(struct arm_smmu_device *smmu)
++{
++	struct device *dev = smmu->dev;
++	struct mmu500_clk *sclks;
++	int err;
++
++	if (!of_find_property(dev->of_node, "clocks", NULL))
++		return 0;
++
++	sclks = devm_kzalloc(dev, sizeof(*sclks), GFP_KERNEL);
++	if (!sclks)
++		return -ENOMEM;
++
++	sclks->cfg_clk = devm_clk_get(dev, "cfg_clk");
++	if (IS_ERR(sclks->cfg_clk)) {
++		err = PTR_ERR(sclks->cfg_clk);
++		/* Ignore all, except -EPROBE_DEFER for optional clocks */
++		if (err == -EPROBE_DEFER)
++			return err;
++		else
++			sclks->cfg_clk = NULL;
++	}
++
++	sclks->tcu_clk = devm_clk_get(dev, "tcu_clk");
++	if (IS_ERR(sclks->tcu_clk)) {
++		dev_err(dev, "Couldn't get tcu_clk");
++		return PTR_ERR(sclks->tcu_clk);
++	}
++
++	sclks->tbu_clk = devm_clk_get(dev, "tbu_clk");
++	if (IS_ERR(sclks->tbu_clk)) {
++		err = PTR_ERR(sclks->tbu_clk);
++		/* Ignore all, ecept -EPROBE_DEFER for optional clocks */
++		if (err == -EPROBE_DEFER)
++			return err;
++		else
++			sclks->tbu_clk = NULL;
++	}
++
++	smmu->smmu_clks.clks = sclks;
++	return 0;
++}
++
+ static void parse_driver_options(struct arm_smmu_device *smmu)
+ {
+ 	int i = 0;
+@@ -1981,7 +2073,8 @@ struct arm_smmu_match_data {
+ 		    NULL, NULL, NULL);
+ ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU,
+ 		    NULL, NULL, NULL);
+-ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500, NULL, NULL, NULL);
++ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500, mmu500_init_clocks,
++		    mmu500_enable_clocks, mmu500_disable_clocks);
+ ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2,
+ 		    NULL, NULL, NULL);
  
- 	return ret;
-@@ -1870,7 +1871,8 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
- 	if (!clk)
- 		return 0;
- 
--	return clk_core_set_parent(clk->core, parent ? parent->core : NULL);
-+	return clk_core_set_parent_lock(clk->core,
-+					parent ? parent->core : NULL);
- }
- EXPORT_SYMBOL_GPL(clk_set_parent);
- 
-@@ -2720,7 +2722,7 @@ void clk_unregister(struct clk *clk)
- 		/* Reparent all children to the orphan list. */
- 		hlist_for_each_entry_safe(child, t, &clk->core->children,
- 					  child_node)
--			clk_core_set_parent(child, NULL);
-+			clk_core_set_parent_lock(child, NULL);
- 	}
- 
- 	hlist_del_init(&clk->core->child_node);
 -- 
-2.9.3
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
