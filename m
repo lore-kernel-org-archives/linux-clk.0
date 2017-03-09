@@ -8,93 +8,77 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	linux-clk@vger.kernel.org,
 	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 6/8] clk: meson: gxbb: add cts_i958 clock
-Date: Tue, 28 Mar 2017 16:46:03 +0200
-Message-Id: <20170328144605.25278-7-jbrunet@baylibre.com>
-In-Reply-To: <20170328144605.25278-1-jbrunet@baylibre.com>
-References: <20170328144605.25278-1-jbrunet@baylibre.com>
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 9/9] dt-bindings: clk: gxbb: expose i2s output clock gates
+Date: Thu,  9 Mar 2017 11:41:54 +0100
+Message-Id: <20170309104154.28295-10-jbrunet@baylibre.com>
+In-Reply-To: <20170309104154.28295-1-jbrunet@baylibre.com>
+References: <20170309104154.28295-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
-
-This adds the cts_i958 clock to control the clock source of the spdif
-output block. This mux is not explicitly mentionned in the documentation
-but it is critical to the spdif dai. It is used to select whether the clock
-source of the spdif output is cts_amclk (when data are taken from i2s
-buffer) or the cts_mclk_i958 (when data are taken from the spdif buffer)
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/gxbb.c | 21 +++++++++++++++++++++
- drivers/clk/meson/gxbb.h |  3 ++-
- 2 files changed, 23 insertions(+), 1 deletion(-)
+ drivers/clk/meson/gxbb.h              | 10 +++++-----
+ include/dt-bindings/clock/gxbb-clkc.h |  5 +++++
+ 2 files changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 72492cc63915..ad5f027af1a2 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -933,6 +933,24 @@ static struct clk_gate gxbb_cts_mclk_i958 = {
- 	},
- };
- 
-+static struct clk_mux gxbb_cts_i958 = {
-+	.reg = (void *)HHI_AUD_CLK_CNTL2,
-+	.mask = 0x1,
-+	.shift = 27,
-+	.lock = &clk_lock,
-+		.hw.init = &(struct clk_init_data){
-+		.name = "cts_i958",
-+		.ops = &clk_mux_ops,
-+		.parent_names = (const char *[]){ "cts_amclk", "cts_mclk_i958" },
-+		.num_parents = 2,
-+		/*
-+		 *The parent is specific to origin of the audio data. Let the
-+		 * consumer choose the appropriate parent
-+		 */
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
-+	},
-+};
-+
- /* Everything Else (EE) domain gates */
- static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
- static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
-@@ -1139,6 +1157,7 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
- 		[CLKID_CTS_MCLK_I958]	    = &gxbb_cts_mclk_i958.hw,
- 		[CLKID_CTS_MCLK_I958_SEL]   = &gxbb_cts_mclk_i958_sel.hw,
- 		[CLKID_CTS_MCLK_I958_DIV]   = &gxbb_cts_mclk_i958_div.hw,
-+		[CLKID_CTS_I958]	    = &gxbb_cts_i958.hw,
- 	},
- 	.num = NR_CLKS,
- };
-@@ -1258,6 +1277,7 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
- 		[CLKID_CTS_MCLK_I958]	    = &gxbb_cts_mclk_i958.hw,
- 		[CLKID_CTS_MCLK_I958_SEL]   = &gxbb_cts_mclk_i958_sel.hw,
- 		[CLKID_CTS_MCLK_I958_DIV]   = &gxbb_cts_mclk_i958_div.hw,
-+		[CLKID_CTS_I958]	    = &gxbb_cts_i958.hw,
- 	},
- 	.num = NR_CLKS,
- };
-@@ -1382,6 +1402,7 @@ static struct clk_mux *const gxbb_clk_muxes[] = {
- 	&gxbb_mali,
- 	&gxbb_cts_amclk_sel,
- 	&gxbb_cts_mclk_i958_sel,
-+	&gxbb_cts_i958,
- };
- 
- static struct clk_divider *const gxbb_clk_dividers[] = {
 diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index efa90dad3478..3b0665099a1e 100644
+index 8ee2022ce5d5..274f58764853 100644
 --- a/drivers/clk/meson/gxbb.h
 +++ b/drivers/clk/meson/gxbb.h
-@@ -283,8 +283,9 @@
- #define CLKID_CTS_MCLK_I958	  110
- #define CLKID_CTS_MCLK_I958_SEL	  111
- #define CLKID_CTS_MCLK_I958_DIV	  112
-+#define CLKID_CTS_I958		  113
- 
--#define NR_CLKS			  113
-+#define NR_CLKS			  114
- 
- /* include the CLKIDs that have been made part of the stable DT binding */
- #include <dt-bindings/clock/gxbb-clkc.h>
+@@ -206,16 +206,16 @@
+ #define CLKID_I2S_SPDIF		  35
+ /* CLKID_ETH */
+ #define CLKID_DEMUX		  37
+-#define CLKID_AIU_GLUE		  38
++/* CLKID_AIU_GLUE */
+ #define CLKID_IEC958		  39
+-#define CLKID_I2S_OUT		  40
++/* CLKID_I2S_OUT */
+ #define CLKID_AMCLK		  41
+ #define CLKID_AIFIFO2		  42
+ #define CLKID_MIXER		  43
+-#define CLKID_MIXER_IFACE	  44
++/* CLKID_MIXER_IFACE */
+ #define CLKID_ADC		  45
+ #define CLKID_BLKMV		  46
+-#define CLKID_AIU		  47
++/* CLKID_AIU */
+ #define CLKID_UART1		  48
+ #define CLKID_G2D		  49
+ /* CLKID_USB0 */
+@@ -248,7 +248,7 @@
+ /* CLKID_GCLK_VENCI_INT0 */
+ #define CLKID_GCLK_VENCI_INT	  78
+ #define CLKID_DAC_CLK		  79
+-#define CLKID_AOCLK_GATE	  80
++/* CLKID_AOCLK_GATE */
+ #define CLKID_IEC958_GATE	  81
+ #define CLKID_ENC480P		  82
+ #define CLKID_RNG1		  83
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index 692846c7941b..f08f06dd7702 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -16,6 +16,10 @@
+ #define CLKID_I2C		22
+ #define CLKID_SAR_ADC		23
+ #define CLKID_ETH		36
++#define CLKID_AIU_GLUE		38
++#define CLKID_I2S_OUT		40
++#define CLKID_MIXER_IFACE	44
++#define CLKID_AIU		47
+ #define CLKID_USB0		50
+ #define CLKID_USB1		51
+ #define CLKID_USB		55
+@@ -24,6 +28,7 @@
+ #define CLKID_USB0_DDR_BRIDGE	65
+ #define CLKID_SANA		69
+ #define CLKID_GCLK_VENCI_INT0	77
++#define CLKID_AOCLK_GATE	80
+ #define CLKID_AO_I2C		93
+ #define CLKID_SD_EMMC_A		94
+ #define CLKID_SD_EMMC_B		95
 -- 
 2.9.3
