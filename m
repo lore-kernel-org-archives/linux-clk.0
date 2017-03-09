@@ -1,71 +1,297 @@
-Return-Path: <shawnguo@kernel.org>
-From: Shawn Guo <shawnguo@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Jun Nie <jun.nie@linaro.org>,
-	Baoyou Xie <xie.baoyou@zte.com.cn>,
-	Xin Zhou <zhou.xin8@zte.com.cn>,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH 3/3] clk: zte: add pll_vga clock for zx296718
-Date: Tue, 21 Mar 2017 16:38:23 +0800
-Message-Id: <1490085503-15713-4-git-send-email-shawnguo@kernel.org>
-In-Reply-To: <1490085503-15713-1-git-send-email-shawnguo@kernel.org>
-References: <1490085503-15713-1-git-send-email-shawnguo@kernel.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1488902436.28627.2.camel@baylibre.com>
+Cc: linux-clk@vger.kernel.org, "Kevin Hilman" <khilman@baylibre.com>,
+ "Neil Armstrong" <narmstrong@baylibre.com>
+References: <20170302173835.18313-1-jbrunet@baylibre.com>
+ <20170307143823.GD10239@codeaurora.org>
+ <1488902436.28627.2.camel@baylibre.com>
+Message-ID: <148909819219.16808.4472770855979808703@resonance>
+Subject: Re: [RFC 0/2] CLK_SET_RATE_GATE and protection against changes
+Date: Thu, 09 Mar 2017 14:23:12 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shawn Guo <shawn.guo@linaro.org>
+Quoting Jerome Brunet (2017-03-07 08:00:36)
+> On Tue, 2017-03-07 at 06:38 -0800, Stephen Boyd wrote:
+> > On 03/02, Jerome Brunet wrote:
+> > > =
 
-It adds zx296718 pll_vga clock for VGA support, so that VGA device can
-get required pixel rate from clock driver for different display mode.
+> > > I tried to understand what happened but my understanding of CCF is
+> > > limited,
+> > > if the following is complete nonsense, feel free to (gently) mock
+> > > me.
+> > > CLK_SET_RATE_GATE only prevent rate change when the clock is busy
+> > > and we
+> > > through clk_core_set_rate_nolock. So if we call clk_set_rate
+> > > directly on
+> > > clock with CLK_SET_RATE_GATE, while another clock uses it, it shall
+> > > fail. However if we reach this clock by walking up the clock tree,
+> > > everything seems to be as if this flag did not exist. I think this
+> > > explains
+> > > why mpll0 was selected has best parent and updated.
+> > =
 
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
----
- drivers/clk/zte/clk-zx296718.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> > Right. My understanding is that this is the desired behavior of
+> > this flag. At least, this is what I recall when speaking with
+> > Mike about this a year or two ago.
+> > =
 
-diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
-index f2e1e8b3a8d5..8db0119bc6f7 100644
---- a/drivers/clk/zte/clk-zx296718.c
-+++ b/drivers/clk/zte/clk-zx296718.c
-@@ -101,6 +101,29 @@
- 	PLL_RATE(1600000000, 0x00104221, 0x04aaaaaa),
- };
- 
-+static struct zx_pll_config pll_vga_table[] = {
-+	PLL_RATE(36000000,  0x00102464, 0x04000000), /* 800x600@56 */
-+	PLL_RATE(40000000,  0x00102864, 0x04000000), /* 800x600@60 */
-+	PLL_RATE(49500000,  0x00103164, 0x04800000), /* 800x600@75 */
-+	PLL_RATE(50000000,  0x00103264, 0x04000000), /* 800x600@72 */
-+	PLL_RATE(56250000,  0x00103864, 0x04400000), /* 800x600@85 */
-+	PLL_RATE(65000000,  0x00104164, 0x04000000), /* 1024x768@60 */
-+	PLL_RATE(74375000,  0x00104a64, 0x04600000), /* 1280x720@60 */
-+	PLL_RATE(75000000,  0x00104b64, 0x04800000), /* 1024x768@70 */
-+	PLL_RATE(78750000,  0x00104e64, 0x04c00000), /* 1024x768@75 */
-+	PLL_RATE(85500000,  0x00105564, 0x04800000), /* 1360x768@60 */
-+	PLL_RATE(106500000, 0x00106a64, 0x04800000), /* 1440x900@60 */
-+	PLL_RATE(108000000, 0x00106c64, 0x04000000), /* 1280x1024@60 */
-+	PLL_RATE(110000000, 0x00106e64, 0x04000000), /* 1024x768@85 */
-+	PLL_RATE(135000000, 0x00105a44, 0x04000000), /* 1280x1024@75 */
-+	PLL_RATE(136750000, 0x00104462, 0x04600000), /* 1440x900@75 */
-+	PLL_RATE(148500000, 0x00104a62, 0x04400000), /* 1920x1080@60 */
-+	PLL_RATE(157000000, 0x00104e62, 0x04800000), /* 1440x900@85 */
-+	PLL_RATE(157500000, 0x00104e62, 0x04c00000), /* 1280x1024@85 */
-+	PLL_RATE(162000000, 0x00105162, 0x04000000), /* 1600x1200@60 */
-+	PLL_RATE(193250000, 0x00106062, 0x04a00000), /* 1920x1200@60 */
-+};
-+
- PNAME(osc) = {
- 	"osc24m",
- 	"osc32k",
-@@ -369,6 +392,7 @@
- 
- static struct clk_zx_pll zx296718_pll_clk[] = {
- 	ZX296718_PLL("pll_cpu",	"osc24m",	PLL_CPU_REG,	pll_cpu_table),
-+	ZX296718_PLL("pll_vga",	"osc24m",	PLL_VGA_REG,	pll_vga_table),
- };
- 
- static struct zx_clk_fixed_factor top_ffactor_clk[] = {
--- 
-1.9.1
+> > A few months ago, Jiada Wang reported a similar problem[1] and
+> > I've never merged it because of the concern it will break
+> > something due to the flag behavior changing. Perhaps the way
+> > forward here is to add a new flag for this different behavior and
+> > let drivers opt-in to it.
+> > =
+
+> =
+
+> In this previous thread, you mentioned the idea of deleting the flag.
+> While a bit radical, I kind of like it. The name, as it is, is
+> misleading. The flag does not really enforce gating the clock to change
+> the rate.
+> Changing the behavior of the flag is also too agressive I guess.
+> =
+
+> What about renaming the current flag to CLK_SET_RATE_GATE_LEAF (or
+> anything else) and clearly mark it as obsolete in the header with a bit
+> of explanation ?
+> =
+
+> We could keep that old behavior around while providers ask themself
+> whether they really need to gate to change rate or not.
+
+Adding a new flag is safer, but we might start accruing more and more
+technical debt with deprecated flags versus the new ones. We have some
+of this already with .round_rate vs .determine_rate and some other
+stuff.
+
+Since -rc1 juuuuust came out, maybe we could try merging it and see what
+happens?
+
+Also, if we can come up with a better solution that covers all the use
+cases, I would be fine to delete the flag altogether and cover the
+existing users. I count only a handful:
+
+wm831x, qcom, at91, sirf, acpi-lpss, axi-clkgen, cs2000, bcm, stm32,
+h8300, imx, microchip, ux500, and the mediatek drm drivers.
+
+OK, maybe more than handful ;-)
+
+> =
+
+> > > =
+
+> > > In patch 1, I try in intercept the calls to .round_rate and
+> > > .determine_rate
+> > > and just return the current rate of the clock when it is busy.=C2=A0=
+=C2=A0The
+> > > way the
+> > > clock remains usable with the consumer can deal with the current
+> > > but the
+> > > rate won't change for the consumer already using the
+> > > clock.=C2=A0=C2=A0Because of
+> > > this change, mpll0 is no longer the best parent out there.
+> > > =
+
+> > > fixed_pll=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A03=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A03=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A02000000000
+> > > =C2=A0=C2=A0=C2=A0mpll2=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A00=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00
+> > > =C2=A0=C2=A0=C2=A0mpll1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A00=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A036863870
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0cts_mclk_i958_sel=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A00=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A036863870
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0cts_mclk_i958_d=
+iv=C2=A0=C2=A0=C2=A00=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A06143979
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0cts_mclk_i958=C2=A0=C2=A0=C2=A0=C2=A00=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A00=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A06143979
+> > > =C2=A0=C2=A0=C2=A0mpll0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A01=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A01=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0491495425
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0cts_amclk_sel=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A01=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A01=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0491495425
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0cts_amclk_div=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A01=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A01=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A012287386
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0cts_amclk=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A01=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A01=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A012287386
+> > > =
+
+> > > This is the result I expected :) However, the situation is still
+> > > not ideal
+> > > as I think using CLK_SET_RATE_GATE to protect against rate changes
+> > > in such
+> > > case is subject to race condition.
+> > > =
+
+> > > Suppose that I start both playbacks at the same time, i2s sets its
+> > > rate but
+> > > get descheduled before enabling the clock. Then spdif get
+> > > scheduled, set
+> > > the rate on the same pll (it can as the prepare/enable count is
+> > > still 0)
+> > > and enables the clock.=C2=A0=C2=A0Finally, i2s gets scheduled again, =
+enables
+> > > its
+> > > clock but the rate of the selected parent has changed behind our
+> > > back.=C2=A0=C2=A0I
+> > > don't really know how to solve this one. I was thinking of another
+> > > counter
+> > > (like owner_count) but we already have 2 of those, there must be
+> > > something
+> > > smarter we can do about it... I guess.
+> > =
+
+> > Solving this problem is never fun. One "solution" is to use clk
+> > notifiers to block rate changes that are undesirable. Overall,
+> > that isn't really great though because we are using notifiers,
+> > and it doesn't allow us to resolve what the rate changes should
+> > do. Instead, we can just say yes or no.
+> =
+
+> Wouldn't it be too late anyway ? The goal would be to force the second
+
+It's too late to select another parent, but not too late for any
+affected drivers to clean up their work and pause operations while the
+clock rate change happens.
+
+> consumer to switch a better suited parent. if we just notify "no" while
+> changing the rate, set_rate will return a error I suppose ? Even if
+> could have chosen another parent and be successful ? Something needs to
+> happen in round_rate/determine_rate, doesn't it ?
+
+If the goal of the notifiers was to select a different parent, then
+you'd be correct. However the goal of the notifiers is to allow
+downstream drivers a chance to survive an otherwise catastrophic clock
+rate change. Imagine a system with only a single PLL that clocks
+everything and you'll see why I designed them this way.
+
+On the other hand we could just fail the second clk_set_rate operation
+but that's not very nice is it? ;-)
+
+> =
+
+> > =
+
+> > Do the hardware designers have a frequency plan in mind when
+> > designing the hardware so that we would know the PLLs they
+> > planned to use for particular clks? Or is the whole thing
+> > completely open ended and they expect software to figure out the
+> > configuration of the clk tree at runtime based on what
+> > frequencies are required on the different leaf clks (i2s/spdif).
+
+Maybe they have a plan. If so they haven't told us yet ;-)
+
+Are you thinking about the ccr stuff here for discrete clock
+plan/operating points?
+
+> > =
+
+> > It may also work to use clk_set_rate_range() to "lock" the rate
+> > of a clk to specifically what frequency you want.
+> =
+
+> Would any other driver be prevented from calling clk_set_rate_range as
+> well, if you have the kind race condition I mentioned ?
+
+Ranges are tracked on a per-consumer basis and all consumers are taken
+into account when rates are being changed. The he-who-writes-last-wins
+problem doesn't exist with rate ranges.
+
+> =
+
+> >  I haven't
+> > thought that through completely, but it may work enough to make
+> > sure the rate can't change while still allowing other clks to get
+> > rates they want by searching the tree for another source.
+> =
+
+> For this use case, I have to admit I was probably abusing the
+> CLK_SET_RATE_GATE to fit my use case ;)
+> =
+
+> The clock does not need to be gated for the rate to change, but the
+> rate can't change if a consumer depends on it.
+> =
+
+> Here another idea: yet another flag (CLK_SET_RATE_PROTECT).
+> It would require the clock to be prepared to be allowed to set the
+> rate. if prepare_count > 1, it would return the current rate, acting as
+> fixed clock. This allows determine_rate to switch to better parent if
+> available, or try to make the best out of what is available.
+
+So I think this idea is getting somewhere, but it should not be a flag.
+Instead we could have a clk_lock_rate() and clk_unlock_rate() function,
+and even a nice helper named clk_set_rate_lock() that wraps
+clk_set_rate() and clk_lock_rate().
+
+In order to make it easy to track whether parents of a clock are allowed
+to be changed by a sibling we should introduce a rate_lock_count member to
+struct clk_core and incremented it up the parent chain exactly how we do
+already for prepare_count and enable_count. Any time rate_lock_count > 0
+then we cannot change that clock rate.
+
+I admit that clk_lock_rate() could be satisfied by using a range where
+min =3D=3D max, but the problem there is that we do not propagate rate
+clocks up the parent chain to make it easy to figure out of rate changes
+are acceptable.
+
+Additionally the "range" semantics say nothing about whether a
+downstream peripheral will glitch during a clock rate change during an
+operation, which was the idea behind CLK_SET_RATE_GATE, but that flag
+doesn't handle the sibling-blows-up-everything corner case.
+
+So I propose the following:
+
+0) introduce clk_lock_rate() and clk_unlock_rate() along with struct
+   clk_core->rate_lock_count. Add clk_set_rate_lock() helper
+1) Repeal and replace CLK_SET_RATE_GATE users with clk_set_rate_lock()
+
+The range stuff still makes sense and there are valid use cases where we
+would want to specify a range as well as lock the frequency (e.g. a
+glitchy downstream peripheral that tolerates a frequency band).
+
+We'll have to take care to migrate the rate_lock_count in .set_parent,
+but this should be easier versus the enable_count stuff that requires
+holding both the spinlock and the mutex.
+
+Thoughts?
+
+Regards,
+Mike
+
+> =
+
+> The problem I see with this approach is the case where 2 consumers
+> prepare the clock w/o being able to set the rate =3D> no consumer is
+> satisfied by the clock is locked. Could it be solved by adding a
+> "prepare_set_rate" to the CCF api ?
+> =
+
+> > =
+
+> > [1] https://patchwork.kernel.org/patch/9222903/
+> > [2] https://patchwork.kernel.org/patch/9295171/
+> >=20
