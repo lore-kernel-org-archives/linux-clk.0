@@ -1,220 +1,174 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: sboyd@codeaurora.org,
-	khilman@baylibre.com,
-	carlo@caione.org
-Subject: [PATCH v2 2/3] clk: meson-gxbb: Add MALI clocks
-Date: Wed,  1 Mar 2017 11:46:03 +0100
-Message-Id: <1488365164-22861-3-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
-References: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Neil Armstrong <narmstrong@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:56566 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932664AbdCIPgU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2017 10:36:20 -0500
+From: Sricharan R <sricharan@codeaurora.org>
+To: robin.murphy@arm.com, will.deacon@arm.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, m.szyprowski@samsung.com,
+        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        mathieu.poirier@linaro.org, mark.rutland@arm.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH V3 1/5] iommu/arm-smmu: Add pm_runtime/sleep ops
+Date: Thu,  9 Mar 2017 21:05:44 +0530
+Message-Id: <1489073748-3659-2-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
+References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The Mali is clocked by two identical clock paths behind a glitch free mux
-to safely change frequency while running.
+The smmu needs to be functional only when the respective
+master's using it are active. The device_link feature
+helps to track such functional dependencies, so that the
+iommu gets powered when the master device enables itself
+using pm_runtime. So by adapting the smmu driver for
+runtime pm, above said dependency can be addressed.
 
-The two "mali_0" and "mali_1" clocks are composed of a mux, divider and gate.
-Expose these two clocks trees using generic clocks.
-Finally the glitch free mux is added as "mali" clock.
+This patch adds the pm runtime/sleep callbacks to the
+driver and also the functions to parse the smmu clocks
+from DT and enable them in resume/suspend.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/clk/meson/gxbb.c | 139 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 139 insertions(+)
+ drivers/iommu/arm-smmu.c | 74 ++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 65 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index a52063f..31f6090 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -634,6 +634,131 @@
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index abf6496..f7e11d3 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -48,6 +48,7 @@
+ #include <linux/of_iommu.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+@@ -340,6 +341,13 @@ struct arm_smmu_master_cfg {
+ #define for_each_cfg_sme(fw, i, idx) \
+ 	for (i = 0; idx = fwspec_smendx(fw, i), i < fw->num_ids; ++i)
+ 
++struct arm_smmu_clks {
++	void *clks;
++	int (*init_clocks)(struct arm_smmu_device *smmu);
++	int (*enable_clocks)(struct arm_smmu_device *smmu);
++	void (*disable_clocks)(struct arm_smmu_device *smmu);
++};
++
+ struct arm_smmu_device {
+ 	struct device			*dev;
+ 
+@@ -387,7 +395,7 @@ struct arm_smmu_device {
+ 	u32				num_global_irqs;
+ 	u32				num_context_irqs;
+ 	unsigned int			*irqs;
+-
++	struct arm_smmu_clks		smmu_clks;
+ 	u32				cavium_id_base; /* Specific to Cavium */
+ 
+ 	/* IOMMU core code handle */
+@@ -1958,16 +1966,24 @@ static int arm_smmu_device_cfg_probe(struct arm_smmu_device *smmu)
+ struct arm_smmu_match_data {
+ 	enum arm_smmu_arch_version version;
+ 	enum arm_smmu_implementation model;
++	struct arm_smmu_clks smmu_clks;
+ };
+ 
+-#define ARM_SMMU_MATCH_DATA(name, ver, imp)	\
+-static struct arm_smmu_match_data name = { .version = ver, .model = imp }
+-
+-ARM_SMMU_MATCH_DATA(smmu_generic_v1, ARM_SMMU_V1, GENERIC_SMMU);
+-ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
+-ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
+-ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
+-ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
++#define ARM_SMMU_MATCH_DATA(name, ver, imp, init, enable, disable)	\
++static struct arm_smmu_match_data name = { .version = ver, .model = imp, \
++					   .smmu_clks.init_clocks = init, \
++					   .smmu_clks.enable_clocks = enable, \
++					   .smmu_clks.disable_clocks = disable }
++
++ARM_SMMU_MATCH_DATA(smmu_generic_v1, ARM_SMMU_V1, GENERIC_SMMU,
++		    NULL, NULL, NULL);
++ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU,
++		    NULL, NULL, NULL);
++ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU,
++		    NULL, NULL, NULL);
++ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500, NULL, NULL, NULL);
++ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2,
++		    NULL, NULL, NULL);
+ 
+ static const struct of_device_id arm_smmu_of_match[] = {
+ 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
+@@ -2054,6 +2070,7 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
+ 	data = of_device_get_match_data(dev);
+ 	smmu->version = data->version;
+ 	smmu->model = data->model;
++	smmu->smmu_clks = data->smmu_clks;
+ 
+ 	parse_driver_options(smmu);
+ 
+@@ -2135,6 +2152,13 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 		smmu->irqs[i] = irq;
+ 	}
+ 
++	if (smmu->smmu_clks.init_clocks) {
++		err = smmu->smmu_clks.init_clocks(smmu);
++		if (err)
++			return err;
++	}
++
++	pm_runtime_enable(dev);
+ 	err = arm_smmu_device_cfg_probe(smmu);
+ 	if (err)
+ 		return err;
+@@ -2211,10 +2235,42 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PM
++static int arm_smmu_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct arm_smmu_device *smmu = platform_get_drvdata(pdev);
++	int ret = 0;
++
++	if (smmu->smmu_clks.enable_clocks)
++		ret = smmu->smmu_clks.enable_clocks(smmu);
++
++	return ret;
++}
++
++static int arm_smmu_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct arm_smmu_device *smmu = platform_get_drvdata(pdev);
++
++	if (smmu->smmu_clks.disable_clocks)
++		smmu->smmu_clks.disable_clocks(smmu);
++
++	return 0;
++}
++#endif
++
++static const struct dev_pm_ops arm_smmu_pm_ops = {
++	SET_RUNTIME_PM_OPS(arm_smmu_suspend, arm_smmu_resume, NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				pm_runtime_force_resume)
++};
++
+ static struct platform_driver arm_smmu_driver = {
+ 	.driver	= {
+ 		.name		= "arm-smmu",
+ 		.of_match_table	= of_match_ptr(arm_smmu_of_match),
++		.pm = &arm_smmu_pm_ops,
  	},
- };
- 
-+/*
-+ * The MALI IP is clocked by two identical clocks (mali_0 and mali_1)
-+ * muxed by a glitch-free switch.
-+ */
-+
-+static u32 mux_table_mali_0_1[] = {0, 1, 2, 3, 4, 5, 6, 7};
-+const char *gxbb_mali_0_1_parent_names[] = {
-+	"xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
-+	"fclk_div4", "fclk_div3", "fclk_div5"
-+};
-+
-+static struct clk_mux gxbb_mali_0_sel = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.mask = 0x7,
-+	.shift = 9,
-+	.table = mux_table_mali_0_1,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali_0_sel",
-+		.ops = &clk_mux_ops,
-+		/*
-+		 * bits 10:9 selects from 8 possible parents:
-+		 * xtal, gp0_pll, mpll2, mpll1, fclk_div7,
-+		 * fclk_div4, fclk_div3, fclk_div5
-+		 */
-+		.parent_names = gxbb_mali_0_1_parent_names,
-+		.num_parents = 8,
-+		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
-+static struct clk_divider gxbb_mali_0_div = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.shift = 0,
-+	.width = 7,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali_0_div",
-+		.ops = &clk_divider_ops,
-+		.parent_names = (const char *[]){ "mali_0_sel" },
-+		.num_parents = 1,
-+		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
-+static struct clk_gate gxbb_mali_0 = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.bit_idx = 8,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali_0",
-+		.ops = &clk_gate_ops,
-+		.parent_names = (const char *[]){ "mali_0_div" },
-+		.num_parents = 1,
-+		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
-+static struct clk_mux gxbb_mali_1_sel = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.mask = 0x7,
-+	.shift = 25,
-+	.table = mux_table_mali_0_1,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali_1_sel",
-+		.ops = &clk_mux_ops,
-+		/*
-+		 * bits 10:9 selects from 8 possible parents:
-+		 * xtal, gp0_pll, mpll2, mpll1, fclk_div7,
-+		 * fclk_div4, fclk_div3, fclk_div5
-+		 */
-+		.parent_names = gxbb_mali_0_1_parent_names,
-+		.num_parents = 8,
-+		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
-+static struct clk_divider gxbb_mali_1_div = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.shift = 16,
-+	.width = 7,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali_1_div",
-+		.ops = &clk_divider_ops,
-+		.parent_names = (const char *[]){ "mali_1_sel" },
-+		.num_parents = 1,
-+		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
-+static struct clk_gate gxbb_mali_1 = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.bit_idx = 24,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali_1",
-+		.ops = &clk_gate_ops,
-+		.parent_names = (const char *[]){ "mali_1_div" },
-+		.num_parents = 1,
-+		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
-+static u32 mux_table_mali[] = {0, 1};
-+const char *gxbb_mali_parent_names[] = {
-+	"mali_0", "mali_1"
-+};
-+
-+static struct clk_mux gxbb_mali = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.mask = 1,
-+	.shift = 31,
-+	.table = mux_table_mali,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali",
-+		.ops = &clk_mux_ops,
-+		.parent_names = gxbb_mali_parent_names,
-+		.num_parents = 2,
-+		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
- /* Everything Else (EE) domain gates */
- static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
- static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
-@@ -827,6 +952,13 @@
- 		[CLKID_SAR_ADC_CLK]	    = &gxbb_sar_adc_clk.hw,
- 		[CLKID_SAR_ADC_SEL]	    = &gxbb_sar_adc_clk_sel.hw,
- 		[CLKID_SAR_ADC_DIV]	    = &gxbb_sar_adc_clk_div.hw,
-+		[CLKID_MALI_0_SEL]	    = &gxbb_mali_0_sel.hw,
-+		[CLKID_MALI_0_DIV]	    = &gxbb_mali_0_div.hw,
-+		[CLKID_MALI_0]		    = &gxbb_mali_0.hw,
-+		[CLKID_MALI_1_SEL]	    = &gxbb_mali_1_sel.hw,
-+		[CLKID_MALI_1_DIV]	    = &gxbb_mali_1_div.hw,
-+		[CLKID_MALI_1]		    = &gxbb_mali_1.hw,
-+		[CLKID_MALI]		    = &gxbb_mali.hw,
- 	},
- 	.num = NR_CLKS,
- };
-@@ -930,16 +1062,23 @@
- 	&gxbb_emmc_b,
- 	&gxbb_emmc_c,
- 	&gxbb_sar_adc_clk,
-+	&gxbb_mali_0,
-+	&gxbb_mali_1,
- };
- 
- static struct clk_mux *gxbb_clk_muxes[] = {
- 	&gxbb_mpeg_clk_sel,
- 	&gxbb_sar_adc_clk_sel,
-+	&gxbb_mali_0_sel,
-+	&gxbb_mali_1_sel,
-+	&gxbb_mali,
- };
- 
- static struct clk_divider *gxbb_clk_dividers[] = {
- 	&gxbb_mpeg_clk_div,
- 	&gxbb_sar_adc_clk_div,
-+	&gxbb_mali_0_div,
-+	&gxbb_mali_1_div,
- };
- 
- static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	.probe	= arm_smmu_device_probe,
+ 	.remove	= arm_smmu_device_remove,
 -- 
-1.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
