@@ -1,150 +1,304 @@
-Return-Path: <mars.cheng@mediatek.com>
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
-	<robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: CC Hwang <cc.hwang@mediatek.com>, Loda Chou <loda.chou@mediatek.com>,
-	Miles Chen <miles.chen@mediatek.com>, Jades Shih <jades.shih@mediatek.com>,
-	Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang <my.chuang@mediatek.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>,
-	<linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH v3 12/12] arm64: dts: mediatek: add clk and scp nodes for MT6797
-Date: Sun, 19 Mar 2017 23:26:33 +0800
-Message-ID: <1489937193-2953-13-git-send-email-mars.cheng@mediatek.com>
-In-Reply-To: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
-References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: mars.cheng@mediatek.com
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 5/9] clk: meson: mpll: add rw operation
+Date: Thu,  9 Mar 2017 11:41:50 +0100
+Message-Id: <20170309104154.28295-6-jbrunet@baylibre.com>
+In-Reply-To: <20170309104154.28295-1-jbrunet@baylibre.com>
+References: <20170309104154.28295-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds clk and scp nodes for MT6797
+This patch adds new callbacks to the meson-mpll driver to control
+and set the pll rate. For this, we also need to add the enable bit and
+sdm enable bit. The corresponding parameters are added to mpll data
+structure.
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/mediatek/mt6797.dtsi |   71 ++++++++++++++++++++++++++++--
- 1 file changed, 67 insertions(+), 4 deletions(-)
+ drivers/clk/meson/clk-mpll.c | 152 +++++++++++++++++++++++++++++++++++++++++--
+ drivers/clk/meson/clkc.h     |   4 +-
+ drivers/clk/meson/gxbb.c     |  30 +++++++++
+ 3 files changed, 180 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-index cf4529e..3512c8e 100644
---- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-@@ -11,6 +11,8 @@
-  * GNU General Public License for more details.
-  */
+diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+index 03af79005ddb..342b85d4e22a 100644
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -64,16 +64,50 @@
+ #include <linux/clk-provider.h>
+ #include "clkc.h"
  
-+#include <dt-bindings/clock/mt6797-clk.h>
-+#include <dt-bindings/power/mt6797-power.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
+-#define SDM_MAX 16384
++#define SDM_DEN 16384
++#define SDM_MIN 1
++#define SDM_MAX 16383
++#define N2_MIN	4
++#define N2_MAX	127
  
-@@ -123,6 +125,35 @@
- 			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
- 	};
+ #define to_meson_clk_mpll(_hw) container_of(_hw, struct meson_clk_mpll, hw)
  
-+	topckgen: topckgen@10000000 {
-+		compatible = "mediatek,mt6797-topckgen";
-+		reg = <0 0x10000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
++static unsigned long rate_from_params(unsigned long parent_rate,
++				      unsigned long sdm,
++				      unsigned long n2)
++{
++	return (parent_rate * SDM_DEN) / ((SDM_DEN * n2) + sdm);
++}
 +
-+	infrasys: infracfg_ao@10001000 {
-+		compatible = "mediatek,mt6797-infracfg", "syscon";
-+		reg = <0 0x10001000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
++static void params_from_rate(unsigned long requested_rate,
++			     unsigned long parent_rate,
++			     unsigned long *sdm,
++			     unsigned long *n2)
++{
++	uint64_t div = parent_rate;
++	unsigned long rem = do_div(div, requested_rate);
 +
-+	scpsys: scpsys@10006000 {
-+		compatible = "mediatek,mt6797-scpsys";
-+		#power-domain-cells = <1>;
-+		reg = <0 0x10006000 0 0x1000>;
-+		clocks = <&topckgen CLK_TOP_MUX_MFG>,
-+			 <&topckgen CLK_TOP_MUX_MM>,
-+			 <&topckgen CLK_TOP_MUX_VDEC>;
-+		clock-names = "mfg", "mm", "vdec";
-+		infracfg = <&infrasys>;
-+	};
++	if (div < N2_MIN) {
++		*n2 = N2_MIN;
++		*sdm = SDM_MIN;
++	} else if (div > N2_MAX) {
++		*n2 = N2_MAX;
++		*sdm = SDM_MAX;
++	} else {
++		*n2 = div;
++		*sdm = DIV_ROUND_UP(rem * SDM_DEN, requested_rate);
++		if (*sdm < SDM_MIN)
++			*sdm = SDM_MIN;
++		else if (*sdm > SDM_MAX)
++			*sdm = SDM_MAX;
++	}
++}
 +
-+	apmixedsys: apmixed@1000c000 {
-+		compatible = "mediatek,mt6797-apmixedsys";
-+		reg = <0 0x1000c000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
- 	sysirq: intpol-controller@10200620 {
- 		compatible = "mediatek,mt6797-sysirq",
- 			     "mediatek,mt6577-sysirq";
-@@ -138,7 +169,9 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11002000 0 0x400>;
- 		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&clk26m>;
-+		clocks = <&infrasys CLK_INFRA_UART0>,
-+			 <&infrasys CLK_INFRA_AP_DMA>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
+ static unsigned long mpll_recalc_rate(struct clk_hw *hw,
+ 		unsigned long parent_rate)
+ {
+ 	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
+ 	struct parm *p;
+-	unsigned long rate = 0;
+ 	unsigned long reg, sdm, n2;
  
-@@ -147,7 +180,9 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11003000 0 0x400>;
- 		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&clk26m>;
-+		clocks = <&infrasys CLK_INFRA_UART1>,
-+			 <&infrasys CLK_INFRA_AP_DMA>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
+ 	p = &mpll->sdm;
+@@ -84,11 +118,119 @@ static unsigned long mpll_recalc_rate(struct clk_hw *hw,
+ 	reg = readl(mpll->base + p->reg_off);
+ 	n2 = PARM_GET(p->width, p->shift, reg);
  
-@@ -156,7 +191,9 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11004000 0 0x400>;
- 		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&clk26m>;
-+		clocks = <&infrasys CLK_INFRA_UART2>,
-+			 <&infrasys CLK_INFRA_AP_DMA>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
+-	rate = (parent_rate * SDM_MAX) / ((SDM_MAX * n2) + sdm);
++	return rate_from_params(parent_rate, sdm, n2);
++}
++
++static long mpll_round_rate(struct clk_hw *hw,
++			    unsigned long rate,
++			    unsigned long *parent_rate)
++{
++	unsigned long sdm, n2;
++
++	params_from_rate(rate, *parent_rate, &sdm, &n2);
++	return rate_from_params(*parent_rate, sdm, n2);
++}
++
++static int mpll_set_rate(struct clk_hw *hw,
++			 unsigned long rate,
++			 unsigned long parent_rate)
++{
++	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
++	struct parm *p;
++	unsigned long reg, sdm, n2;
++	unsigned long flags = 0;
++
++	params_from_rate(rate, parent_rate, &sdm, &n2);
++
++	if (mpll->lock)
++		spin_lock_irqsave(mpll->lock, flags);
++	else
++		__acquire(mpll->lock);
++
++	p = &mpll->sdm;
++	reg = readl(mpll->base + p->reg_off);
++	reg = PARM_SET(p->width, p->shift, reg, sdm);
++	writel(reg, mpll->base + p->reg_off);
++
++	p = &mpll->sdm_en;
++	reg = readl(mpll->base + p->reg_off);
++	reg = PARM_SET(p->width, p->shift, reg, 1);
++	writel(reg, mpll->base + p->reg_off);
++
++	p = &mpll->n2;
++	reg = readl(mpll->base + p->reg_off);
++	reg = PARM_SET(p->width, p->shift, reg, n2);
++	writel(reg, mpll->base + p->reg_off);
++
++	if (mpll->lock)
++		spin_unlock_irqrestore(mpll->lock, flags);
++	else
++		__release(mpll->lock);
  
-@@ -165,10 +202,36 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11005000 0 0x400>;
- 		interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&clk26m>;
-+		clocks = <&infrasys CLK_INFRA_UART3>,
-+			 <&infrasys CLK_INFRA_AP_DMA>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
+-	return rate;
++	return 0;
++}
++
++static void mpll_enable_core(struct clk_hw *hw, int enable)
++{
++	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
++	struct parm *p;
++	unsigned long reg;
++	unsigned long flags = 0;
++
++	if (mpll->lock)
++		spin_lock_irqsave(mpll->lock, flags);
++	else
++		__acquire(mpll->lock);
++
++	p = &mpll->en;
++	reg = readl(mpll->base + p->reg_off);
++	reg = PARM_SET(p->width, p->shift, reg, enable ? 1 : 0);
++	writel(reg, mpll->base + p->reg_off);
++
++	if (mpll->lock)
++		spin_unlock_irqrestore(mpll->lock, flags);
++	else
++		__release(mpll->lock);
++}
++
++
++static int mpll_enable(struct clk_hw *hw)
++{
++	mpll_enable_core(hw, 1);
++
++	return 0;
++}
++
++static void mpll_disable(struct clk_hw *hw)
++{
++	mpll_enable_core(hw, 0);
++}
++
++static int mpll_is_enabled(struct clk_hw *hw)
++{
++	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
++	struct parm *p;
++	unsigned long reg;
++	int en;
++
++	p = &mpll->en;
++	reg = readl(mpll->base + p->reg_off);
++	en = PARM_GET(p->width, p->shift, reg);
++
++	return en;
+ }
  
-+	mmsys: mmsys_config@14000000 {
-+		compatible = "mediatek,mt6797-mmsys", "syscon";
-+		reg = <0 0x14000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
+ const struct clk_ops meson_clk_mpll_ro_ops = {
+-	.recalc_rate = mpll_recalc_rate,
++	.recalc_rate	= mpll_recalc_rate,
++	.round_rate	= mpll_round_rate,
++	.is_enabled	= mpll_is_enabled,
++};
 +
-+	imgsys: imgsys_config@15000000  {
-+		compatible = "mediatek,mt6797-imgsys", "syscon";
-+		reg = <0 0x15000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	vdecsys: vdec_gcon@16000000 {
-+		compatible = "mediatek,mt6797-vdecsys", "syscon";
-+		reg = <0 0x16000000 0 0x10000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	vencsys: venc_gcon@17000000 {
-+		compatible = "mediatek,mt6797-vencsys", "syscon";
-+		reg = <0 0x17000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
- 	gic: interrupt-controller@19000000 {
- 		compatible = "arm,gic-v3";
- 		#interrupt-cells = <3>;
++const struct clk_ops meson_clk_mpll_ops = {
++	.recalc_rate	= mpll_recalc_rate,
++	.round_rate	= mpll_round_rate,
++	.set_rate	= mpll_set_rate,
++	.enable		= mpll_enable,
++	.disable	= mpll_disable,
++	.is_enabled	= mpll_is_enabled,
+ };
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index c6be77dd8694..ad254675edd8 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -92,8 +92,9 @@ struct meson_clk_mpll {
+ 	struct clk_hw hw;
+ 	void __iomem *base;
+ 	struct parm sdm;
++	struct parm sdm_en;
+ 	struct parm n2;
+-	/* FIXME ssen gate control? */
++	struct parm en;
+ 	spinlock_t *lock;
+ };
+ 
+@@ -116,5 +117,6 @@ extern const struct clk_ops meson_clk_pll_ro_ops;
+ extern const struct clk_ops meson_clk_pll_ops;
+ extern const struct clk_ops meson_clk_cpu_ops;
+ extern const struct clk_ops meson_clk_mpll_ro_ops;
++extern const struct clk_ops meson_clk_mpll_ops;
+ 
+ #endif /* __CLKC_H */
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 79e9313e6703..79fb8989f8dd 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -441,11 +441,21 @@ static struct meson_clk_mpll gxbb_mpll0 = {
+ 		.shift   = 0,
+ 		.width   = 14,
+ 	},
++	.sdm_en = {
++		.reg_off = HHI_MPLL_CNTL7,
++		.shift   = 15,
++		.width	 = 1,
++	},
+ 	.n2 = {
+ 		.reg_off = HHI_MPLL_CNTL7,
+ 		.shift   = 16,
+ 		.width   = 9,
+ 	},
++	.en = {
++		.reg_off = HHI_MPLL_CNTL7,
++		.shift   = 14,
++		.width	 = 1,
++	},
+ 	.lock = &clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0",
+@@ -461,11 +471,21 @@ static struct meson_clk_mpll gxbb_mpll1 = {
+ 		.shift   = 0,
+ 		.width   = 14,
+ 	},
++	.sdm_en = {
++		.reg_off = HHI_MPLL_CNTL8,
++		.shift   = 15,
++		.width	 = 1,
++	},
+ 	.n2 = {
+ 		.reg_off = HHI_MPLL_CNTL8,
+ 		.shift   = 16,
+ 		.width   = 9,
+ 	},
++	.en = {
++		.reg_off = HHI_MPLL_CNTL8,
++		.shift   = 14,
++		.width	 = 1,
++	},
+ 	.lock = &clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll1",
+@@ -481,11 +501,21 @@ static struct meson_clk_mpll gxbb_mpll2 = {
+ 		.shift   = 0,
+ 		.width   = 14,
+ 	},
++	.sdm_en = {
++		.reg_off = HHI_MPLL_CNTL9,
++		.shift   = 15,
++		.width	 = 1,
++	},
+ 	.n2 = {
+ 		.reg_off = HHI_MPLL_CNTL9,
+ 		.shift   = 16,
+ 		.width   = 9,
+ 	},
++	.en = {
++		.reg_off = HHI_MPLL_CNTL9,
++		.shift   = 14,
++		.width	 = 1,
++	},
+ 	.lock = &clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll2",
 -- 
-1.7.9.5
+2.9.3
