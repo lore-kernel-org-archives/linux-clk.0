@@ -1,128 +1,71 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Leo Yan <leo.yan@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	linux-clk@vger.kernel.org,
-	mike.leach@linaro.org,
-	Suzuki.Poulose@arm.com,
-	sudeep.holla@arm.com
-Subject: [PATCH v4 3/7] coresight: refactor with function of_coresight_get_cpu
-Date: Fri, 17 Mar 2017 23:02:19 +0800
-Message-Id: <1489762943-25849-4-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
-References: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/9] clk: meson: update clock controller for audio support
+Date: Thu,  9 Mar 2017 11:41:45 +0100
+Message-Id: <20170309104154.28295-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is refactor to add function of_coresight_get_cpu(), so it's used to
-retrieve CPU id for coresight component. Finally can use it as a common
-function for multiple places.
+This patchset is a first round of update to the meson clock controllers
+to bring audio support. The patchset is based on clk-next. It could be
+rebased on amlogic tree later on, if you prefer the patches to go through
+Kevin's tree.
 
-Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- drivers/hwtracing/coresight/of_coresight.c | 42 +++++++++++++++++++-----------
- include/linux/coresight.h                  |  2 ++
- 2 files changed, 29 insertions(+), 15 deletions(-)
+First patch fix an issue found while writing patch 5 (Giving ternary
+operator to SET_PARM)
 
-diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-index 917ca39..7a60f2b 100644
---- a/drivers/hwtracing/coresight/of_coresight.c
-+++ b/drivers/hwtracing/coresight/of_coresight.c
-@@ -101,15 +101,38 @@ static int of_coresight_alloc_memory(struct device *dev,
- 	return 0;
- }
- 
-+int of_coresight_get_cpu(struct device_node *node)
-+{
-+	int cpu;
-+	bool found;
-+	struct device_node *dn, *np;
-+
-+	dn = of_parse_phandle(node, "cpu", 0);
-+
-+	/* Affinity defaults to CPU0 */
-+	if (!dn)
-+		return 0;
-+
-+	for_each_possible_cpu(cpu) {
-+		np = of_get_cpu_node(cpu, NULL);
-+		found = (dn == np);
-+		of_node_put(np);
-+		if (found)
-+			break;
-+	}
-+	of_node_put(dn);
-+
-+	/* Affinity to CPU0 if no cpu nodes are found */
-+	return found ? cpu : 0;
-+}
-+
- struct coresight_platform_data *of_get_coresight_platform_data(
- 				struct device *dev, struct device_node *node)
- {
--	int i = 0, ret = 0, cpu;
-+	int i = 0, ret = 0;
- 	struct coresight_platform_data *pdata;
- 	struct of_endpoint endpoint, rendpoint;
- 	struct device *rdev;
--	bool found;
--	struct device_node *dn, *np;
- 	struct device_node *ep = NULL;
- 	struct device_node *rparent = NULL;
- 	struct device_node *rport = NULL;
-@@ -176,18 +199,7 @@ struct coresight_platform_data *of_get_coresight_platform_data(
- 		} while (ep);
- 	}
- 
--	dn = of_parse_phandle(node, "cpu", 0);
--	for_each_possible_cpu(cpu) {
--		np = of_get_cpu_node(cpu, NULL);
--		found = (dn == np);
--		of_node_put(np);
--		if (found)
--			break;
--	}
--	of_node_put(dn);
--
--	/* Affinity to CPU0 if no cpu nodes are found */
--	pdata->cpu = found ? cpu : 0;
-+	pdata->cpu = of_coresight_get_cpu(node);
- 
- 	return pdata;
- }
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index 2a5982c..7b29743 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -263,9 +263,11 @@ static inline int coresight_timeout(void __iomem *addr, u32 offset,
- #endif
- 
- #ifdef CONFIG_OF
-+extern int of_coresight_get_cpu(struct device_node *node);
- extern struct coresight_platform_data *of_get_coresight_platform_data(
- 				struct device *dev, struct device_node *node);
- #else
-+static int of_coresight_get_cpu(struct device_node *node) { return 0; }
- static inline struct coresight_platform_data *of_get_coresight_platform_data(
- 	struct device *dev, struct device_node *node) { return NULL; }
- #endif
+Following Stephen comment on the v1, patch 2 adds the const qualifiers
+missing upstream.
+
+Patches 3 and 4 put the generic muxes and divisors declaration in tables so
+the register address fixup works in the same way as the clock gates. We are
+going to add more of these clock types for audio or gpu support, so we
+can't continue to fix addresses individually like it is currently done.
+
+Patches 5 to 8 improve the support of the mpll clocks, now allowing the
+rate to be set. Among other things, the mplls are the parent clocks of the
+i2s and spdif clocks.
+
+Patch 9 expose the clock gates required to power on the i2s output.
+
+These patches have been tested on the meson gxbb p200 board, as part of the
+ongoing work to bring audio support to meson SoC family.
+
+Changes since v1 [0]:
+ * Add SET_PARM fix to the series
+ * Add missing const qualifiers to the clock arrays
+ * No more additional patches required as SAR clocks have been merged
+
+[0]: http://lkml.kernel.org/r/20170228133002.17894-1-jbrunet@baylibre.com
+
+Jerome Brunet (9):
+  clk: meson: fix SET_PARM macro
+  clk: meson: add missing const qualifiers on gate arrays
+  clk: meson8b: put dividers and muxes in tables
+  clk: gxbb: put dividers and muxes in tables
+  clk: meson: mpll: add rw operation
+  clk: meson: gxbb: mpll: use rw operation
+  clk: meson8b: add the mplls clocks 0, 1 and 2
+  clk: meson: mpll: correct N2 maximum value
+  dt-bindings: clk: gxbb: expose i2s output clock gates
+
+ drivers/clk/meson/clk-mpll.c          | 152 ++++++++++++++++++++++++++++++++--
+ drivers/clk/meson/clkc.h              |   6 +-
+ drivers/clk/meson/gxbb.c              |  66 ++++++++++++---
+ drivers/clk/meson/gxbb.h              |  10 +--
+ drivers/clk/meson/meson8b.c           | 127 ++++++++++++++++++++++++++--
+ drivers/clk/meson/meson8b.h           |  20 ++++-
+ include/dt-bindings/clock/gxbb-clkc.h |   5 ++
+ 7 files changed, 356 insertions(+), 30 deletions(-)
+
 -- 
-2.7.4
+2.9.3
