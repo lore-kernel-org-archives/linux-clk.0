@@ -1,33 +1,74 @@
-Return-Path: <linus.walleij@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20170317171840.4683-2-heiko@sntech.de>
-References: <20170317171840.4683-1-heiko@sntech.de> <20170317171840.4683-2-heiko@sntech.de>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 23 Mar 2017 10:16:38 +0100
-Message-ID: <CACRpkdbK4O3F_+qOdzepR1ercr-xuHPAT7pnSTyb0y1mUGv-qQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] dt-bindings: rockchip,pinctrl: rename RK1108 to RV1108
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>,
-	Andy Yan <andy.yan@rock-chips.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:56320 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932647AbdCIPgU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2017 10:36:20 -0500
+From: Sricharan R <sricharan@codeaurora.org>
+To: robin.murphy@arm.com, will.deacon@arm.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, m.szyprowski@samsung.com,
+        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        mathieu.poirier@linaro.org, mark.rutland@arm.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH V3 0/5] iommu/arm-smmu: Add runtime pm/sleep support
+Date: Thu,  9 Mar 2017 21:05:43 +0530
+Message-Id: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 17, 2017 at 6:18 PM, Heiko Stuebner <heiko@sntech.de> wrote:
+This series provides the support for turning on the arm-smmu's
+clocks/power domains using runtime pm. This is done using the
+recently introduced device links patches, which lets the symmu's
+runtime to follow the master's runtime pm, so the smmu remains
+powered only when the masters use it.
 
-> From: Andy Yan <andy.yan@rock-chips.com>
->
-> Rockchip finally named the SOC as RV1108, so change it.
-> Also move the compatible list to one compatible per line.
->
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Took some reference from the exynos runtime patches [2].
+Tested this with MDP, GPU, VENUS devices on apq8096-db820c board.
 
-Patch applied.
+Previous version of the patchset [1].
 
-Yours,
-Linus Walleij
+[V3]
+   * Reworked the patches to keep the clocks init/enabling function
+     seperately for each compatible.
+
+   * Added clocks bindings for MMU40x/500.
+
+   * Added a new compatible for qcom,smmu-v2 implementation and
+     the clock bindings for the same.
+
+   * Rebased on top of 4.11-rc1
+
+[V2]
+   * Split the patches little differently.
+
+   * Addressed comments.
+
+   * Removed the patch #4 [3] from previous post
+     for arm-smmu context save restore. Planning to
+     post this separately after reworking/addressing Robin's
+     feedback.
+
+   * Reversed the sequence to disable clocks than enabling.
+     This was required for those cases where the
+     clocks are populated in a dependent order from DT.
+
+[1] https://www.spinics.net/lists/linux-arm-msm/msg23870.html
+[2] https://lkml.org/lkml/2016/10/20/70
+[3] https://patchwork.kernel.org/patch/9389717/
+
+Sricharan R (5):
+  iommu/arm-smmu: Add pm_runtime/sleep ops
+  iommu/arm-smmu: Add support for MMU40x/500 clocks
+  drivers: arm-smmu: Add clock support for QCOM_SMMUV2
+  iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
+  iommu/arm-smmu: Add the device_link between masters and smmu
+
+ .../devicetree/bindings/iommu/arm,smmu.txt         |  35 +++
+ drivers/iommu/arm-smmu.c                           | 349 ++++++++++++++++++++-
+ 2 files changed, 373 insertions(+), 11 deletions(-)
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
