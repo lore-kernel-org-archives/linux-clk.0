@@ -1,104 +1,81 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 8 Mar 2017 09:58:13 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Julian Calaby <julian.calaby@gmail.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] [PATCH 5/15] clk: sunxi-ng: sun5i: Export video
- PLLs
-Message-ID: <20170308085813.ijwsdiip5wdrwnb4@lukather>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
- <4bb77a9793d4ba25bf633eff6abe41910bb7fc3c.1488876832.git-series.maxime.ripard@free-electrons.com>
- <CAGRGNgUvNgQonORN0iTV-e2NJzUJpzQUnn13w+C7MwzvR8uZUQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="koor6xchwoiplnj2"
-In-Reply-To: <CAGRGNgUvNgQonORN0iTV-e2NJzUJpzQUnn13w+C7MwzvR8uZUQ@mail.gmail.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/9] clk: gxbb: put dividers and muxes in tables
+Date: Thu,  9 Mar 2017 11:41:49 +0100
+Message-Id: <20170309104154.28295-5-jbrunet@baylibre.com>
+In-Reply-To: <20170309104154.28295-1-jbrunet@baylibre.com>
+References: <20170309104154.28295-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Until now, there was only 2 dividers and 2 muxes declared for the gxbb
+platform. With the ongoing work on various subsystem, including audio,
+this is about to change. Use the same approach as gates for dividers and
+muxes, putting them in tables to fix the register address at runtime.
 
---koor6xchwoiplnj2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/gxbb.c | 28 ++++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
-Hi Julian,
-
-On Tue, Mar 07, 2017 at 09:21:19PM +1100, Julian Calaby wrote:
-> Hi Maxime,
->=20
-> On Tue, Mar 7, 2017 at 7:56 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > The video PLLs are used directly by the HDMI controller. Export them so
-> > that we can use them in our DT node.
-> >
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  drivers/clk/sunxi-ng/ccu-sun5i.h      | 6 ++++--
-> >  include/dt-bindings/clock/sun5i-ccu.h | 3 +++
-> >  2 files changed, 7 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.h b/drivers/clk/sunxi-ng/cc=
-u-sun5i.h
-> > index 8144487eb7ca..16f7aa92957e 100644
-> > --- a/drivers/clk/sunxi-ng/ccu-sun5i.h
-> > +++ b/drivers/clk/sunxi-ng/ccu-sun5i.h
-> > @@ -28,15 +28,17 @@
-> >  #define CLK_PLL_AUDIO_4X       6
-> >  #define CLK_PLL_AUDIO_8X       7
-> >  #define CLK_PLL_VIDEO0         8
-> > -#define CLK_PLL_VIDEO0_2X      9
-> > +
-> > +/* The PLL_VIDEO0_2X is exported for HDMI */
-> > +
-> >  #define CLK_PLL_VE             10
-> >  #define CLK_PLL_DDR_BASE       11
-> >  #define CLK_PLL_DDR            12
-> >  #define CLK_PLL_DDR_OTHER      13
-> >  #define CLK_PLL_PERIPH         14
-> >  #define CLK_PLL_VIDEO1         15
-> > -#define CLK_PLL_VIDEO1_2X      16
-> >
-> > +/* The PLL_VIDEO0_2X is exported for HDMI */
->=20
-> PLL_VIDEO*1*_2X, right?
-
-Good catch, I'll fix it. Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---koor6xchwoiplnj2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYv8elAAoJEBx+YmzsjxAgHb8QAIkagbWudUksxLDQjOC3Q/VG
-oWkTzSIPbyt5Hg7hrimpvPr1Sgsn22xdk/lZYv2rYnlN6kIVKm/7GlBDRSx18jcV
-SEaA4ImOMF0GZ6EKxrr7Ehoi+spHJiwIgtTxNQK2N3PCE5MOjmoSIIWk3Yd9ajLq
-QBfgAhsTc+A7hv8Evop5oayUSlhRdcoYK440dh0hcHNSULhHmXXmPMvUkdjq/uwJ
-osaB29OtD+f1dItlo+10Gxypc1fGKnejADrscyFst6h+MaIARxCB11AT4BGROxMR
-WefiZvI3x9ixgafVlRZ+0PFRLwS6obglYqo76B/AHTx6isxtiY7VOmTj/1p6qiOX
-Q53F73ricbgt5+ayfPd8T9UzSJk7XxFwSEUO2Q5ZlQPn/cs0y7lbGPS+aeuklG66
-k5I8qg8V2Pnw7pBFE5MfyWn3qQC4KKcqgdYCZoqcWVAus1Dn5f3RkJKZp0L9wsT9
-KJhZW/fMnijvw9mqCjSkA4Qg6eeanWZTa2OvTG7qu7amS6FcO/h4Gzi47qgU83Yi
-9vB1MH5Ct7nlEq7waLSBL5s6mFWRbyhbnLOuLOiUnBVDXYiix1kEqw0DDfGo7B9k
-coRZIVkPl1b1ATyCA4WVUNP8x9zXWmUqCi4xjlRKlXG3HJ0r0UpY4qPA05unrEh9
-hZndP7p4AehRQY+2OeWo
-=M/2G
------END PGP SIGNATURE-----
-
---koor6xchwoiplnj2--
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index c063287bb0ed..79e9313e6703 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -902,6 +902,16 @@ static struct clk_gate *const gxbb_clk_gates[] = {
+ 	&gxbb_sar_adc_clk,
+ };
+ 
++static struct clk_mux *const gxbb_clk_muxes[] = {
++	&gxbb_mpeg_clk_sel,
++	&gxbb_sar_adc_clk_sel,
++};
++
++static struct clk_divider *const gxbb_clk_dividers[] = {
++	&gxbb_mpeg_clk_div,
++	&gxbb_sar_adc_clk_div,
++};
++
+ static int gxbb_clkc_probe(struct platform_device *pdev)
+ {
+ 	void __iomem *clk_base;
+@@ -928,19 +938,21 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	/* Populate the base address for CPU clk */
+ 	gxbb_cpu_clk.base = clk_base;
+ 
+-	/* Populate the base address for the MPEG clks */
+-	gxbb_mpeg_clk_sel.reg = clk_base + (u64)gxbb_mpeg_clk_sel.reg;
+-	gxbb_mpeg_clk_div.reg = clk_base + (u64)gxbb_mpeg_clk_div.reg;
+-
+-	/* Populate the base address for the SAR ADC clks */
+-	gxbb_sar_adc_clk_sel.reg = clk_base + (u64)gxbb_sar_adc_clk_sel.reg;
+-	gxbb_sar_adc_clk_div.reg = clk_base + (u64)gxbb_sar_adc_clk_div.reg;
+-
+ 	/* Populate base address for gates */
+ 	for (i = 0; i < ARRAY_SIZE(gxbb_clk_gates); i++)
+ 		gxbb_clk_gates[i]->reg = clk_base +
+ 			(u64)gxbb_clk_gates[i]->reg;
+ 
++	/* Populate base address for muxes */
++	for (i = 0; i < ARRAY_SIZE(gxbb_clk_muxes); i++)
++		gxbb_clk_muxes[i]->reg = clk_base +
++			(u64)gxbb_clk_muxes[i]->reg;
++
++	/* Populate base address for dividers */
++	for (i = 0; i < ARRAY_SIZE(gxbb_clk_dividers); i++)
++		gxbb_clk_dividers[i]->reg = clk_base +
++			(u64)gxbb_clk_dividers[i]->reg;
++
+ 	/*
+ 	 * register all clks
+ 	 */
+-- 
+2.9.3
