@@ -1,64 +1,83 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.11
-Date: Fri, 24 Mar 2017 10:39:13 +0100
-Message-Id: <1490348353-10989-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 9 Mar 2017 15:55:39 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 10/15] drm/sun4i: tcon: Switch mux on
+ only for composite
+Message-ID: <20170309145539.43eequth2ej7wvqk@lukather>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <3f70bcfe2ec03188c06d54a262d49ad91963a510.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <CAGb2v67iTOV-=u5rReu6_wi6NFoCoJkbJKshTpmFYUmJ=ggKUw@mail.gmail.com>
+ <20170309105800.mnzhvnky6na7d5vn@lukather>
+ <CAGb2v67XkaC2+AxubaUF9nPcoGZcAzny7LKVD6C+-9BM5Fi+9g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="h753cmu4qni4wyzx"
+In-Reply-To: <CAGb2v67XkaC2+AxubaUF9nPcoGZcAzny7LKVD6C+-9BM5Fi+9g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
 
-The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+--h753cmu4qni4wyzx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+On Thu, Mar 09, 2017 at 07:31:27PM +0800, Chen-Yu Tsai wrote:
+> >> Additionally, the mux registers are only valid in the first TCON, mean=
+ing
+> >> it must available be active in 2 pipeline chips. It's also why we'd pa=
+ss
+> >> "struct drm_device *" instead of "struct sun4i_tcon *".
+> >
+> > Hmmmm. That's going to be tricky to support. Has this been confirmed
+> > somehow? Is the register used for something else on TCON1?
+>=20
+> At this point, the only reference is Allwinner's kernel, and the old 3.4
+> kernel for A10/A20. I could try getting HDMI working on the A31 to get
+> some real results.
+>=20
+> FWIW, the registers do not seem to be aliased across the two TCONs.
 
-are available in the git repository at:
+Then maybe we don't need to care, and we can just always write to the
+mux?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.12-tag1
+Maxime
 
-for you to fetch changes up to cecbe87d73006cb321dec79b349e3fefd1a80962:
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-  clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0 (2017-03-21 11:12:23 +0100)
+--h753cmu4qni4wyzx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-----------------------------------------------------------------
-clk: renesas: Updates for v4.12
+-----BEGIN PGP SIGNATURE-----
 
-  - Add IMR clocks for R-Car H3 and M3-W,
-  - Add workaround for PLL0/2/4 errata on R-Car H3 ES1.0,
-  - Small fixes and cleanups.
+iQIcBAEBCAAGBQJYwWznAAoJEBx+YmzsjxAgM/gP/0I1y73K2s/qMlT9DUThALv1
+my4pbybYM8Gqp3b27Va5qiPsy/e79qK38/oyRKKBdJow5HaQO2g06wPPhXPXNIrp
+nK5+olfnpx0ZnO24pWDw6B+mxDyi1HrpspTG/CKx97bqwrxyWd+Tj3U2i7qoEQ/q
+icdJ14q2KJ5AvFjQkr+HWCnceogvN76gom8oxFMOZ98FVEcTZKEej+cEbLyvIisd
+zLmOutk1bwlwRU86/NTB0xDJ9Gss1fT7NtaUpBKKcuAqsSdhzH1z7CM2RSLWqLqm
+Dx6kUhYZUmxTOw7dqXY0YfY/Jab2REy+5pGKBlTOY6FZRHzAE9biRHc0SjKdoKxh
+Xr8LMSFCO5+RlY41PvzUbnwx1/mRiCNrP8etgezpfME1MxsGW1Zmde6avWvWBNKM
+8q9C8W+DPJi1qA43wVjJlfNkDknjaGIxbGB92WjMdDxezYQYWLjZs02OGrULe9pR
+tV7ZMgrVS04hK16wDCqkwXsp6jL2xhUnFPQvF0aBUIy61AHxIIdVM7z5CwyBfjQc
+T7lIZCfCQRqIumEhg477eiw3bAEz0BoSr6VTvFjmT2G6Fd89IalX3J5ttyEpem9+
+7zPG+5K7j/InkEMwiOyu94yqK1Oc7wXiIyGsRXEr6ZDhXip8h0I5z9hq3BkS+A2c
+2HGZHv5+YtuUsUkAe2ev
+=AF8I
+-----END PGP SIGNATURE-----
 
-Thanks for pulling!
-----------------------------------------------------------------
-Geert Uytterhoeven (7):
-      clk: renesas: r8a7795: Correct parent clock and sort order for Audio DMACs
-      clk: renesas: r8a7795: Correct name of watchdog clock
-      clk: renesas: r8a7796: Correct name of watchdog clock
-      clk: renesas: r8a7795: Reformat core clock table
-      clk: renesas: r8a7796: Reformat core clock table
-      clk: renesas: rcar-gen3-cpg: Pass mode pins to rcar_gen3_cpg_init()
-      clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0
-
-Sergei Shtylyov (2):
-      clk: renesas: r8a7795: Add IMR clocks
-      clk: renesas: r8a7796: Add IMR clocks
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 32 ++++++++++++++++++--------------
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 18 ++++++++++--------
- drivers/clk/renesas/rcar-gen3-cpg.c    | 28 +++++++++++++++++++++++++++-
- drivers/clk/renesas/rcar-gen3-cpg.h    |  2 +-
- 4 files changed, 56 insertions(+), 24 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--h753cmu4qni4wyzx--
