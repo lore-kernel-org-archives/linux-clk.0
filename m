@@ -1,43 +1,120 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: tegra: fix disable unused for clocks sharing enable bit
-Date: Thu, 2 Mar 2017 15:22:05 +0200
-Message-ID: <1488460925-16793-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 02/15] clk: ti: add support for automatic clock alias generation
+Date: Sat, 11 Mar 2017 14:49:53 +0200
+Message-ID: <1489236606-24023-3-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-In case 2 clocks share an enable bit and one of them is enabled by a driver
-and the other one is not, CCF will think it's enabled because it will only
-look at the hw state. Therefor it will disable the clock and thus also
-disable the other clock which was enabled. Solve this by reading the
-initial state of the enable bit and incrementing the refcount if it's set.
+Large portions of the OMAP framework still depend on the support of
+having clock aliases in place, so add support functions for generating
+these automatically.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/clk/tegra/clk-periph-gate.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/ti/clk.c   | 64 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/ti/clock.h |  3 +++
+ 2 files changed, 67 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
-index 8812782..303ef32 100644
---- a/drivers/clk/tegra/clk-periph-gate.c
-+++ b/drivers/clk/tegra/clk-periph-gate.c
-@@ -159,6 +159,9 @@ struct clk *tegra_clk_register_periph_gate(const char *name,
- 	gate->enable_refcnt = enable_refcnt;
- 	gate->regs = pregs;
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 5fcf247..91bad55 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -24,6 +24,7 @@
+ #include <linux/list.h>
+ #include <linux/regmap.h>
+ #include <linux/bootmem.h>
++#include <linux/device.h>
  
-+	if (read_enb(gate) & periph_clk_to_bit(gate))
-+		enable_refcnt[clk_num]++;
+ #include "clock.h"
+ 
+@@ -453,3 +454,66 @@ void omap2_clk_enable_init_clocks(const char **clk_names, u8 num_clocks)
+ 		clk_prepare_enable(init_clk);
+ 	}
+ }
 +
- 	/* Data in .init is copied by clk_register(), so stack variable OK */
- 	gate->hw.init = &init;
++/**
++ * ti_clk_add_alias - add a clock alias for a TI clock
++ * @dev: device alias for this clock
++ * @clk: clock handle to create alias for
++ * @con: connection ID for this clock
++ *
++ * Creates a clock alias for a TI clock. Allocates the clock lookup entry
++ * and assigns the data to it. Returns 0 if successful, negative error
++ * value otherwise.
++ */
++int ti_clk_add_alias(struct device *dev, struct clk *clk, const char *con)
++{
++	struct clk_lookup *cl;
++
++	if (!clk)
++		return 0;
++
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	cl = kzalloc(sizeof(*cl), GFP_KERNEL);
++	if (!cl)
++		return -ENOMEM;
++
++	if (dev)
++		cl->dev_id = dev_name(dev);
++	cl->con_id = con;
++	cl->clk = clk;
++
++	clkdev_add(cl);
++
++	return 0;
++}
++
++/**
++ * ti_clk_register - register a TI clock to the common clock framework
++ * @dev: device for this clock
++ * @hw: hardware clock handle
++ * @con: connection ID for this clock
++ *
++ * Registers a TI clock to the common clock framework, and adds a clock
++ * alias for it. Returns a handle to the registered clock if successful,
++ * ERR_PTR value in failure.
++ */
++struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
++			    const char *con)
++{
++	struct clk *clk;
++	int ret;
++
++	clk = clk_register(dev, hw);
++	if (IS_ERR(clk))
++		return clk;
++
++	ret = ti_clk_add_alias(dev, clk, con);
++	if (ret) {
++		clk_unregister(clk);
++		return ERR_PTR(ret);
++	}
++
++	return clk;
++}
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 13c37f4..c38de6d 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -189,6 +189,9 @@ struct ti_dt_clk {
+ struct clk *ti_clk_register_divider(struct ti_clk *setup);
+ struct clk *ti_clk_register_composite(struct ti_clk *setup);
+ struct clk *ti_clk_register_dpll(struct ti_clk *setup);
++struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
++			    const char *con);
++int ti_clk_add_alias(struct device *dev, struct clk *clk, const char *con);
  
+ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup);
+ struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup);
 -- 
 1.9.1
