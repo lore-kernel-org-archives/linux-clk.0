@@ -1,47 +1,154 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Rob Herring <robh@kernel.org>,
-	Icenowy Zheng <icenowy@aosc.xyz>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] clk: sunxi: ccu-sun5i needs nkmp
-Date: Mon, 13 Mar 2017 17:25:58 +0100
-Message-Id: <20170313162614.840660-1-arnd@arndb.de>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 12/15] clk: ti: divider: add driver internal API for parsing divider data
+Date: Sat, 11 Mar 2017 14:50:03 +0200
+Message-ID: <1489236606-24023-13-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-A randconfig build ran into this rare link error:
+This can be used from the divider itself, and also from the clkctrl
+clocks once this is introduced.
 
-drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.1+0x4): undefined reference to `ccu_nkmp_ops'
-drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.7+0x4): undefined reference to `ccu_nkmp_ops'
-
-This adds the missing 'select'.
-
-Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
 ---
-For some reason this fix (first sent on Feb 14) didn't make it into mainline
-as of v4.11-rc2 and is still needed there. I see it in the sunxi tree.
----
- drivers/clk/sunxi-ng/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/ti/clock.h   |  4 +++
+ drivers/clk/ti/divider.c | 63 +++++++++++++++++++++++++++++++-----------------
+ 2 files changed, 45 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index 695bbf9ef428..b6e2aa5d0246 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -70,6 +70,7 @@ config SUN5I_CCU
- 	select SUNXI_CCU_MULT
- 	select SUNXI_CCU_NK
- 	select SUNXI_CCU_NKM
-+	select SUNXI_CCU_NKMP
- 	select SUNXI_CCU_NM
- 	select SUNXI_CCU_MP
- 	select SUNXI_CCU_PHASE
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 11d3f6a..bdfdf26 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -220,6 +220,10 @@ struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
+ struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup);
+ struct clk_hw *ti_clk_build_component_mux(struct ti_clk_mux *setup);
+ 
++int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
++			      u8 flags, u8 *width,
++			      const struct clk_div_table **table);
++
+ void ti_clk_patch_legacy_clks(struct ti_clk **patch);
+ struct clk *ti_clk_register_clk(struct ti_clk *setup);
+ int ti_clk_register_legacy_clks(struct ti_clk_alias *clks);
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index a07652e..1cc0242 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -319,20 +319,17 @@ static struct clk *_register_divider(struct device *dev, const char *name,
+ 	return clk;
+ }
+ 
+-static struct clk_div_table *
+-_get_div_table_from_setup(struct ti_clk_divider *setup, u8 *width)
++int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
++			      u8 flags, u8 *width,
++			      const struct clk_div_table **table)
+ {
+ 	int valid_div = 0;
+-	struct clk_div_table *table;
+-	int i;
+-	int div;
+ 	u32 val;
+-	u8 flags;
+-
+-	if (!setup->num_dividers) {
+-		/* Clk divider table not provided, determine min/max divs */
+-		flags = setup->flags;
++	int div;
++	int i;
++	struct clk_div_table *tmp;
+ 
++	if (!div_table) {
+ 		if (flags & CLKF_INDEX_STARTS_AT_ONE)
+ 			val = 1;
+ 		else
+@@ -340,7 +337,7 @@ static struct clk *_register_divider(struct device *dev, const char *name,
+ 
+ 		div = 1;
+ 
+-		while (div < setup->max_div) {
++		while (div < max_div) {
+ 			if (flags & CLKF_INDEX_POWER_OF_TWO)
+ 				div <<= 1;
+ 			else
+@@ -349,30 +346,52 @@ static struct clk *_register_divider(struct device *dev, const char *name,
+ 		}
+ 
+ 		*width = fls(val);
++		*table = NULL;
+ 
+-		return NULL;
++		return 0;
+ 	}
+ 
+-	for (i = 0; i < setup->num_dividers; i++)
+-		if (setup->dividers[i])
++	i = 0;
++
++	while (!num_dividers || i < num_dividers) {
++		if (div_table[i] == -1)
++			break;
++		if (div_table[i])
+ 			valid_div++;
++		i++;
++	}
+ 
+-	table = kzalloc(sizeof(*table) * (valid_div + 1), GFP_KERNEL);
+-	if (!table)
+-		return ERR_PTR(-ENOMEM);
++	num_dividers = i;
++
++	tmp = kzalloc(sizeof(*tmp) * (valid_div + 1), GFP_KERNEL);
++	if (!tmp)
++		return -ENOMEM;
+ 
+ 	valid_div = 0;
+ 	*width = 0;
+ 
+-	for (i = 0; i < setup->num_dividers; i++)
+-		if (setup->dividers[i]) {
+-			table[valid_div].div = setup->dividers[i];
+-			table[valid_div].val = i;
++	for (i = 0; i < num_dividers; i++)
++		if (div_table[i] > 0) {
++			tmp[valid_div].div = div_table[i];
++			tmp[valid_div].val = i;
+ 			valid_div++;
+ 			*width = i;
+ 		}
+ 
+ 	*width = fls(*width);
++	*table = tmp;
++
++	return 0;
++}
++
++static const struct clk_div_table *
++_get_div_table_from_setup(struct ti_clk_divider *setup, u8 *width)
++{
++	const struct clk_div_table *table = NULL;
++
++	ti_clk_parse_divider_data(setup->dividers, setup->num_dividers,
++				  setup->max_div, setup->flags, width,
++				  &table);
+ 
+ 	return table;
+ }
+@@ -414,7 +433,7 @@ struct clk *ti_clk_register_divider(struct ti_clk *setup)
+ 	u8 width;
+ 	u32 flags = 0;
+ 	u8 div_flags = 0;
+-	struct clk_div_table *table;
++	const struct clk_div_table *table;
+ 	struct clk *clk;
+ 
+ 	div = setup->data;
 -- 
-2.9.0
+1.9.1
