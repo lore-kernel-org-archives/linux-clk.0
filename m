@@ -1,81 +1,98 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Mon, 20 Mar 2017 19:49:53 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org, Suzuki.Poulose@arm.com, sudeep.holla@arm.com
-Subject: Re: [PATCH v4 1/7] coresight: bindings for CPU debug module
-Message-ID: <20170320114953.GA19581@leoy-linaro>
-References: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
- <1489762943-25849-2-git-send-email-leo.yan@linaro.org>
- <20170317161335.GB20435@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 10/15] clk: ti: mux: convert TI mux clock to use its internal data representation
+Date: Sat, 11 Mar 2017 14:50:01 +0200
+Message-ID: <1489236606-24023-11-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170317161335.GB20435@linaro.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mathieu,
+Instead of using the generic clock driver data struct, use one internal
+for the TI clock driver itself. This allows modifying the register access
+parts in subsequent patch.
 
-On Fri, Mar 17, 2017 at 10:13:35AM -0600, Mathieu Poirier wrote:
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/clk/ti/clock.h | 11 +++++++++++
+ drivers/clk/ti/mux.c   | 10 +++++-----
+ 2 files changed, 16 insertions(+), 5 deletions(-)
 
-[...]
-
-> > +- compatible : should be
-> > +	     * "arm,coresight-cpu-debug"; supplemented with "arm,primecell"
-> > +	       since this driver is using the AMBA bus interface.
-> 
-> This description needs to be refactored - see my comment from an earlier post
-> for more details.
-
-I have refined this description according to your suggestion:
-http://archive.armlinux.org.uk/lurker/message/20170301.154550.f55a09d5.en.html
-
-Am I missing anthing for this?
-
-> > +- reg : physical base address and length of the register set.
-> > +
-> > +- clocks : the clock associated to this component.
-> > +
-> > +- clock-names : the name of the clock referenced by the code. Since we are
-> > +                using the AMBA framework, the name of the clock providing
-> > +		the interconnect should be "apb_pclk" and the clock is
-> > +		mandatory. The interface between the debug logic and the
-> > +		processor core is clocked by the internal CPU clock, so it
-> > +		is enabled with CPU clock by default.
-> > +
-> > +- cpu : the cpu phandle the debug module is affined to. When omitted
-> > +	the module is considered to belong to CPU0.
-> > +
-> > +Optional properties:
-> 
-> s/properties/property
-> 
-> > +
-> > +- power-domains: a phandle to power domain node for debug module. We can
-> > +		 use "nohlt" to ensure CPU power domain is enabled.
-> 
-> The "power-domains" property is to take care of the debug power domain.  The
-> "nohlt" is to make sure registers in the CPU power domain are accessible - both
-> are independent from one another.  As such the description for this binding
-> shoudl be:
-> 
-> "a phandle to the debug power domain".
-
-Will fix for upper two comments.
-
-Thanks,
-Leo Yan
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index cb906a1..41913bf 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -16,6 +16,17 @@
+ #ifndef __DRIVERS_CLK_TI_CLOCK__
+ #define __DRIVERS_CLK_TI_CLOCK__
+ 
++struct clk_omap_mux {
++	struct clk_hw		hw;
++	void __iomem		*reg;
++	u32			*table;
++	u32			mask;
++	u8			shift;
++	u8			flags;
++};
++
++#define to_clk_omap_mux(_hw) container_of(_hw, struct clk_omap_mux, hw)
++
+ enum {
+ 	TI_CLK_FIXED,
+ 	TI_CLK_MUX,
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index 3cc6db4..daa2dee 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -28,7 +28,7 @@
+ 
+ static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
+ {
+-	struct clk_mux *mux = to_clk_mux(hw);
++	struct clk_omap_mux *mux = to_clk_omap_mux(hw);
+ 	int num_parents = clk_hw_get_num_parents(hw);
+ 	u32 val;
+ 
+@@ -65,7 +65,7 @@ static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
+ 
+ static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ {
+-	struct clk_mux *mux = to_clk_mux(hw);
++	struct clk_omap_mux *mux = to_clk_omap_mux(hw);
+ 	u32 val;
+ 
+ 	if (mux->table) {
+@@ -102,7 +102,7 @@ static struct clk *_register_mux(struct device *dev, const char *name,
+ 				 void __iomem *reg, u8 shift, u32 mask,
+ 				 u8 clk_mux_flags, u32 *table)
+ {
+-	struct clk_mux *mux;
++	struct clk_omap_mux *mux;
+ 	struct clk *clk;
+ 	struct clk_init_data init;
+ 
+@@ -229,7 +229,7 @@ static void of_mux_clk_setup(struct device_node *node)
+ 
+ struct clk_hw *ti_clk_build_component_mux(struct ti_clk_mux *setup)
+ {
+-	struct clk_mux *mux;
++	struct clk_omap_mux *mux;
+ 	struct clk_omap_reg *reg;
+ 	int num_parents;
+ 
+@@ -260,7 +260,7 @@ struct clk_hw *ti_clk_build_component_mux(struct ti_clk_mux *setup)
+ 
+ static void __init of_ti_composite_mux_clk_setup(struct device_node *node)
+ {
+-	struct clk_mux *mux;
++	struct clk_omap_mux *mux;
+ 	unsigned int num_parents;
+ 	u32 val;
+ 
+-- 
+1.9.1
