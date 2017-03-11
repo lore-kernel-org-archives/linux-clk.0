@@ -1,75 +1,174 @@
-Return-Path: <al.kochet@gmail.com>
-Return-Path: <al.kochet@gmail.com>
-From: Alexander Kochetkov <al.kochet@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Alexander Kochetkov <al.kochet@gmail.com>
-Subject: [PATCH] clk: rockchip: limit i2s0_pre max rate on rk3188
-Date: Fri, 24 Mar 2017 14:31:10 +0300
-Message-Id: <1490355070-21818-1-git-send-email-al.kochet@gmail.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 11/15] clk: ti: divider: convert TI divider clock to use its own data representation
+Date: Sat, 11 Mar 2017 14:50:02 +0200
+Message-ID: <1489236606-24023-12-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Change i2s0_pre from 768MHz to 192MHz and limit it's rate to 192MHz in
-order to fix issues described below.
+Instead of using the generic clock driver data struct, use one internal
+for the TI clock driver itself. This allows modifying the register access
+parts in subsequent patch.
 
-If right after the boot change i2s0_clk to 16.384MHz, real rate on
-i2s0_clk pin may differ from 16.384MHz. The issue is random. Sometimes
-rate on i2s0_clk pin equal to 16.384MHz, sometimes not.
-
-There is another 100% reproducable issue. First we have to boot and see
-the correct frequency on i2s0_clk pin (16.384MHz). Then we change its rate
-to 8.192MHz (and it changes), then we change its rate again to 16.384MHz.
-Rate leaves unchanged and equal to 8.192MHz.
-
-'clk_summary' shows following clock connection in all the cases, where
-rate was set to 16.384MHz (even then real rate differs).
-
-    clock                       rate
-    -----                       ----
-    xin24m                      24000000
-      pll_gpll                  768000000
-         gpll                   768000000
-            i2s_src             768000000
-               i2s0_pre         768000000
-                  i2s0_frac     16384000
-                     sclk_i2s0  16384000
-
-Also I found, that if I change i2s0_pre to 192MHz all the issues described
-above gone. I supposed that the issues is due to high i2s0_pre rate.
-Probably rk3188 has some sort of frequency restrictions imposed. Haven't
-found anything in the RK3188 TRM, so this is my assumption.
-
-Anyway, with the patch, all the issues gone.
-
-Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/clk/rockchip/clk-rk3188.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/clk/ti/clock.h   | 11 +++++++++++
+ drivers/clk/ti/divider.c | 22 +++++++++++-----------
+ drivers/clk/ti/gate.c    |  4 ++--
+ 3 files changed, 24 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index d0e722a..e883f48 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -849,6 +849,15 @@ static void __init rk3188a_clk_init(struct device_node *np)
- 			__func__);
- 	}
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 41913bf..11d3f6a 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -16,6 +16,17 @@
+ #ifndef __DRIVERS_CLK_TI_CLOCK__
+ #define __DRIVERS_CLK_TI_CLOCK__
  
-+	/* limit i2s0_pre max rate */
-+	clk1 = __clk_lookup("aclk_cpu_pre");
-+	clk2 = __clk_lookup("i2s0_pre");
-+	if (clk1 && clk2) {
-+		rate = clk_get_rate(clk1);
-+		clk_set_max_rate(clk2, rate);
-+		clk_set_rate(clk2, rate);
-+	}
++struct clk_omap_divider {
++	struct clk_hw		hw;
++	void __iomem		*reg;
++	u8			shift;
++	u8			width;
++	u8			flags;
++	const struct clk_div_table	*table;
++};
 +
- 	rockchip_clk_protect_critical(rk3188_critical_clocks,
- 				      ARRAY_SIZE(rk3188_critical_clocks));
- 	rockchip_clk_of_add_provider(np, ctx);
++#define to_clk_omap_divider(_hw) container_of(_hw, struct clk_omap_divider, hw)
++
+ struct clk_omap_mux {
+ 	struct clk_hw		hw;
+ 	void __iomem		*reg;
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index 0e8c136..a07652e 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -39,7 +39,7 @@ static unsigned int _get_table_maxdiv(const struct clk_div_table *table)
+ 	return maxdiv;
+ }
+ 
+-static unsigned int _get_maxdiv(struct clk_divider *divider)
++static unsigned int _get_maxdiv(struct clk_omap_divider *divider)
+ {
+ 	if (divider->flags & CLK_DIVIDER_ONE_BASED)
+ 		return div_mask(divider);
+@@ -61,7 +61,7 @@ static unsigned int _get_table_div(const struct clk_div_table *table,
+ 	return 0;
+ }
+ 
+-static unsigned int _get_div(struct clk_divider *divider, unsigned int val)
++static unsigned int _get_div(struct clk_omap_divider *divider, unsigned int val)
+ {
+ 	if (divider->flags & CLK_DIVIDER_ONE_BASED)
+ 		return val;
+@@ -83,7 +83,7 @@ static unsigned int _get_table_val(const struct clk_div_table *table,
+ 	return 0;
+ }
+ 
+-static unsigned int _get_val(struct clk_divider *divider, u8 div)
++static unsigned int _get_val(struct clk_omap_divider *divider, u8 div)
+ {
+ 	if (divider->flags & CLK_DIVIDER_ONE_BASED)
+ 		return div;
+@@ -97,7 +97,7 @@ static unsigned int _get_val(struct clk_divider *divider, u8 div)
+ static unsigned long ti_clk_divider_recalc_rate(struct clk_hw *hw,
+ 						unsigned long parent_rate)
+ {
+-	struct clk_divider *divider = to_clk_divider(hw);
++	struct clk_omap_divider *divider = to_clk_omap_divider(hw);
+ 	unsigned int div, val;
+ 
+ 	val = ti_clk_ll_ops->clk_readl(divider->reg) >> divider->shift;
+@@ -131,7 +131,7 @@ static bool _is_valid_table_div(const struct clk_div_table *table,
+ 	return false;
+ }
+ 
+-static bool _is_valid_div(struct clk_divider *divider, unsigned int div)
++static bool _is_valid_div(struct clk_omap_divider *divider, unsigned int div)
+ {
+ 	if (divider->flags & CLK_DIVIDER_POWER_OF_TWO)
+ 		return is_power_of_2(div);
+@@ -172,7 +172,7 @@ static int _div_round(const struct clk_div_table *table,
+ static int ti_clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
+ 				  unsigned long *best_parent_rate)
+ {
+-	struct clk_divider *divider = to_clk_divider(hw);
++	struct clk_omap_divider *divider = to_clk_omap_divider(hw);
+ 	int i, bestdiv = 0;
+ 	unsigned long parent_rate, best = 0, now, maxdiv;
+ 	unsigned long parent_rate_saved = *best_parent_rate;
+@@ -239,14 +239,14 @@ static long ti_clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+ static int ti_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				   unsigned long parent_rate)
+ {
+-	struct clk_divider *divider;
++	struct clk_omap_divider *divider;
+ 	unsigned int div, value;
+ 	u32 val;
+ 
+ 	if (!hw || !rate)
+ 		return -EINVAL;
+ 
+-	divider = to_clk_divider(hw);
++	divider = to_clk_omap_divider(hw);
+ 
+ 	div = DIV_ROUND_UP(parent_rate, rate);
+ 	value = _get_val(divider, div);
+@@ -278,7 +278,7 @@ static struct clk *_register_divider(struct device *dev, const char *name,
+ 				     u8 shift, u8 width, u8 clk_divider_flags,
+ 				     const struct clk_div_table *table)
+ {
+-	struct clk_divider *div;
++	struct clk_omap_divider *div;
+ 	struct clk *clk;
+ 	struct clk_init_data init;
+ 
+@@ -379,7 +379,7 @@ static struct clk *_register_divider(struct device *dev, const char *name,
+ 
+ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+ {
+-	struct clk_divider *div;
++	struct clk_omap_divider *div;
+ 	struct clk_omap_reg *reg;
+ 
+ 	if (!setup)
+@@ -617,7 +617,7 @@ static void __init of_ti_divider_clk_setup(struct device_node *node)
+ 
+ static void __init of_ti_composite_divider_clk_setup(struct device_node *node)
+ {
+-	struct clk_divider *div;
++	struct clk_omap_divider *div;
+ 	u32 val;
+ 
+ 	div = kzalloc(sizeof(*div), GFP_KERNEL);
+diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
+index 5ff62e2..a65f082 100644
+--- a/drivers/clk/ti/gate.c
++++ b/drivers/clk/ti/gate.c
+@@ -62,7 +62,7 @@
+  */
+ static int omap36xx_gate_clk_enable_with_hsdiv_restore(struct clk_hw *hw)
+ {
+-	struct clk_divider *parent;
++	struct clk_omap_divider *parent;
+ 	struct clk_hw *parent_hw;
+ 	u32 dummy_v, orig_v;
+ 	int ret;
+@@ -72,7 +72,7 @@ static int omap36xx_gate_clk_enable_with_hsdiv_restore(struct clk_hw *hw)
+ 
+ 	/* Parent is the x2 node, get parent of parent for the m2 div */
+ 	parent_hw = clk_hw_get_parent(clk_hw_get_parent(hw));
+-	parent = to_clk_divider(parent_hw);
++	parent = to_clk_omap_divider(parent_hw);
+ 
+ 	/* Restore the dividers */
+ 	if (!ret) {
 -- 
-1.7.9.5
+1.9.1
