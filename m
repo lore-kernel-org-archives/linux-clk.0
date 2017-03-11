@@ -1,95 +1,84 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	mike.leach@linaro.org
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v3 1/5] coresight: bindings for debug module
-Date: Fri,  3 Mar 2017 14:00:05 +0800
-Message-Id: <1488520809-31670-2-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
-References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 03/15] clk: ti: add API for creating aliases automatically for simple clock types
+Date: Sat, 11 Mar 2017 14:49:54 +0200
+Message-ID: <1489236606-24023-4-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-According to ARMv8 architecture reference manual (ARM DDI 0487A.k)
-Chapter 'Part H: External debug', the CPU can integrate debug module
-and it can support self-hosted debug and external debug. Especially
-for supporting self-hosted debug, this means the program can access
-the debug module from mmio region; and usually the mmio region is
-integrated with coresight.
+This API generates clock aliases automatically for simple clock types
+(fixed-clock, fixed-factor-clock), so that we don't need to add the data
+for these statically into tables. Shall be called from the SoC specific
+clock init.
 
-So add document for binding debug component, includes binding to APB
-clock; and also need specify the CPU node which the debug module is
-dedicated to specific CPU.
-
-Suggested-by: Mike Leach <mike.leach@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
 ---
- .../devicetree/bindings/arm/coresight-debug.txt    | 40 ++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/coresight-debug.txt
+ drivers/clk/ti/clk.c   | 26 ++++++++++++++++++++++++++
+ drivers/clk/ti/clock.h |  1 +
+ 2 files changed, 27 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/coresight-debug.txt b/Documentation/devicetree/bindings/arm/coresight-debug.txt
-new file mode 100644
-index 0000000..92e5003
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/coresight-debug.txt
-@@ -0,0 +1,40 @@
-+* CoreSight Debug Component:
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 91bad55..193862e 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -355,6 +355,12 @@ struct clk __init *ti_clk_register_clk(struct ti_clk *setup)
+ 	return clk;
+ }
+ 
++static const struct of_device_id simple_clk_match_table[] __initconst = {
++	{ .compatible = "fixed-clock" },
++	{ .compatible = "fixed-factor-clock" },
++	{ }
++};
 +
-+CoreSight debug component are compliant with the ARMv8 architecture reference
-+manual (ARM DDI 0487A.k) Chapter 'Part H: External debug'. The external debug
-+module is mainly used for two modes: self-hosted debug and external debug, and
-+it can be accessed from mmio region from Coresight and eventually the debug
-+module connects with CPU for debugging. And the debug module provides
-+sample-based profiling extension, which can be used to sample CPU program
-+counter, secure state and exception level, etc; usually every CPU has one
-+dedicated debug module to be connected.
+ int __init ti_clk_register_legacy_clks(struct ti_clk_alias *clks)
+ {
+ 	struct clk *clk;
+@@ -409,6 +415,26 @@ int __init ti_clk_register_legacy_clks(struct ti_clk_alias *clks)
+ #endif
+ 
+ /**
++ * ti_clk_add_aliases - setup clock aliases
++ *
++ * Sets up any missing clock aliases. No return value.
++ */
++void __init ti_clk_add_aliases(void)
++{
++	struct device_node *np;
++	struct clk *clk;
 +
-+Required properties:
++	for_each_matching_node(np, simple_clk_match_table) {
++		struct of_phandle_args clkspec;
 +
-+- compatible : should be
-+	     * "arm,coresight-debug"; supplemented with "arm,primecell" since
-+	       this driver is using the AMBA bus interface.
++		clkspec.np = np;
++		clk = of_clk_get_from_provider(&clkspec);
 +
-+- reg : physical base address and length of the register set.
++		ti_clk_add_alias(NULL, clk, np->name);
++	}
++}
 +
-+- clocks : the clock associated to this component.
-+
-+- clock-names : the name of the clock referenced by the code. Since we are
-+                using the AMBA framework, the name of the clock providing
-+		the interconnect should be "apb_pclk" and the clock is
-+		mandatory. The interface between the debug logic and the
-+		processor core is clocked by the internal CPU clock, so it
-+		is enabled with CPU clock by default.
-+
-+- cpu : the cpu phandle the debug module is affined to. When omitted
-+	the module is considered to belong to CPU0.
-+
-+Example:
-+
-+	debug@f6590000 {
-+		compatible = "arm,coresight-debug","arm,primecell";
-+		reg = <0 0xf6590000 0 0x1000>;
-+		clocks = <&sys_ctrl HI6220_DAPB_CLK>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu0>;
-+	};
++/**
+  * ti_clk_setup_features - setup clock features flags
+  * @features: features definition to use
+  *
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index c38de6d..ee6d225 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -192,6 +192,7 @@ struct ti_dt_clk {
+ struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
+ 			    const char *con);
+ int ti_clk_add_alias(struct device *dev, struct clk *clk, const char *con);
++void ti_clk_add_aliases(void);
+ 
+ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup);
+ struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup);
 -- 
-2.7.4
+1.9.1
