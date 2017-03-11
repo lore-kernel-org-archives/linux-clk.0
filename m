@@ -1,97 +1,59 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Mon, 20 Mar 2017 10:33:55 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: Re: [PATCH] clk: sunxi-ng: fix recalc_rate formula of NKMP clocks
-Message-ID: <20170320093355.wougjul675q3hru7@lukather>
-References: <20170317201943.45190-1-icenowy@aosc.xyz>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 14/15] clk: ti: dpll44xx: fix clksel register initialization
+Date: Sat, 11 Mar 2017 14:50:05 +0200
+Message-ID: <1489236606-24023-15-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20170317201943.45190-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
- Quentin Schulz <quentin.schulz@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============7523850218092673963=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+clksel register pointer should be used for the DPLL-MX autoidle handling.
+Currently this is not setup at all. Fix by adding proper handling for the
+register.
 
---===============7523850218092673963==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hepdbv2zwagcac3t"
-Content-Disposition: inline
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/clk/ti/dpll.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-
---hepdbv2zwagcac3t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Mar 18, 2017 at 04:19:43AM +0800, Icenowy Zheng wrote:
-> In commit e66f81bbd746 ("clk: sunxi-ng: Implement factors offsets"), the
-> final formula of NKMP clocks' recalc_rate is refactored; however, the
-> refactored formula broke the calculation due to some C language operand
-> priority problem -- the priority of operand >> is lower than * and /,
-> makes the formula being parsed as "(parent_rate * n * k) >> (p / m)", but
-> it should be "(parent_rate * n * k >> p) / m".
->=20
-> Add the pair of parentheses to fix up this issue. This pair of
-> parentheses used to exist in the old formula.
->=20
-> Fixes: commit e66f81bbd746 ("clk: sunxi-ng: Implement factors offsets")
-
-You shouldn't have commit here.
-
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-
-Fixed it, and applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---hepdbv2zwagcac3t
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYz6H+AAoJEBx+YmzsjxAg0okP/2uU+/Golxd8n5Hk1uuKXa8A
-XJ7+8Qj7hv7jDAgs9zc7Y9ADSzYs+/qNdXcXVkgj1oa1JMfUuHegKfgBvyun3M4I
-PVr2fUQBVJuxDt+LpUqgDdacuT+CnDjhJ5BSVxgOSWheaj9YnOBwZG0fJmp4ET3/
-JYRE8WeapBkc+o2zQKwqYFBR9d1v9nhgK8bn2MtF9W0KTgoxB/XTl/XpYbhWjeY/
-1FoF4kZHz9OsfEXaj+wDicS0c3x4xrGb34pGBDon/x+eaPgZRXkWigFC0FAVhsAw
-laQ5UTx4ZgU51KjyxwxsSnkOLkrY4n1S4SnMpfwGD97XfWKw6YPLiQt8iXvHCDC4
-pl++1I1D7/VhaWSYRE64dBHbHcGhzRXzI2XpjVl/LXFvK3bm3ozeq9WDpIlYh34u
-pQ/rp7D6GXvL4WYGDr8YQ7kSLyX1AN8fhX38cjnCIrybsR8J5528RSiRd4LTImvK
-u0IBieYGP2wK7TbHfZSVkvTTF+uwcAYZBcC7KRoVfhFiAWBz5U4uGbqFGIw+7b57
-AdW4qU4MpLNika/qEQeJDJO9l0It4txPcrj0SMGyCPrtTatIbWq1VqpzrZCODtBD
-GnME1wXGDRaw7qfP2plXGWbak2mU34T50Dgx1m/Wub9J8BF6j1VD47xv2Xkkk0V2
-T3Ih4GdLVGRwCgm/pDJS
-=P2t5
------END PGP SIGNATURE-----
-
---hepdbv2zwagcac3t--
-
-
---===============7523850218092673963==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============7523850218092673963==--
+diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+index c149bd1..778bc90 100644
+--- a/drivers/clk/ti/dpll.c
++++ b/drivers/clk/ti/dpll.c
+@@ -319,6 +319,7 @@ static void _register_dpll_x2(struct device_node *node,
+ 	struct clk_hw_omap *clk_hw;
+ 	const char *name = node->name;
+ 	const char *parent_name;
++	int ret;
+ 
+ 	parent_name = of_clk_get_parent_name(node, 0);
+ 	if (!parent_name) {
+@@ -338,6 +339,20 @@ static void _register_dpll_x2(struct device_node *node,
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+ 
++	if (hw_ops == &clkhwops_omap4_dpllmx) {
++		/* Check if register defined, if not, drop hw-ops */
++		ret = of_property_count_elems_of_size(node, "reg", 1);
++		if (ret <= 0) {
++			hw_ops = NULL;
++		} else {
++			clk_hw->clksel_reg = ti_clk_get_reg_addr(node, 0);
++			if (IS_ERR(clk_hw->clksel_reg)) {
++				kfree(clk_hw);
++				return;
++			}
++		}
++	}
++
+ 	/* register the clock */
+ 	clk = ti_clk_register(NULL, &clk_hw->hw, name);
+ 
+-- 
+1.9.1
