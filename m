@@ -1,58 +1,72 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 3 Mar 2017 15:50:09 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Vlad Zakharov <Vladislav.Zakharov@synopsys.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2] clk/axs10x: introduce AXS10X pll driver
-Message-ID: <20170303235005.GV25384@codeaurora.org>
-References: <1487682670-4164-1-git-send-email-vzakhar@synopsys.com>
- <1488547113.2557.44.camel@synopsys.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 07/15] clk: ti: enforce const types on string arrays
+Date: Sat, 11 Mar 2017 14:49:58 +0200
+Message-ID: <1489236606-24023-8-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1488547113.2557.44.camel@synopsys.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/03, Vlad Zakharov wrote:
-> Hi Michael, Stephen,
-> 
-> On Tue, 2017-02-21 at 16:11 +0300, Vlad Zakharov wrote:
-> > AXS10X boards manages it's clocks using various PLLs. These PLL has same
-> > dividers and corresponding control registers mapped to different addresses.
-> > So we add one common driver for such PLLs.
-> > 
-> > Each PLL on AXS10X board consist of three dividers: IDIV, FBDIV and
-> > ODIV. Output clock value is managed using these dividers.
-> > 
-> > We add pre-defined tables with supported rate values and appropriate
-> > configurations of IDIV, FBDIV and ODIV for each value.
-> > 
-> > As of today we add support for PLLs that generate clock for the
-> > following devices:
-> >  * ARC core on AXC CPU tiles.
-> >  * ARC PGU on ARC SDP Mainboard.
-> > and more to come later.
-> > 
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Vlad Zakharov <vzakhar@synopsys.com>
-> > Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> 
-> Maybe you have any comments or remarks about this patch? And if you don't could you please apply it.
-> 
+Constant string arrays should use const char * const instead of just
+const char *. Change the implementations using these to proper type.
 
-I haven't reviewed it yet. The merge window is upon us right now
-so I'll probably get to going through the queue this weekend/next
-week.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/clk/ti/clock.h     | 2 +-
+ drivers/clk/ti/composite.c | 2 +-
+ drivers/clk/ti/mux.c       | 8 ++++----
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index ecf82d8..cb906a1 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -86,7 +86,7 @@ struct ti_clk_mux {
+ 	int num_parents;
+ 	u16 reg;
+ 	u8 module;
+-	const char **parents;
++	const char * const *parents;
+ 	u16 flags;
+ };
+ 
+diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
+index 3f60f99..beea894 100644
+--- a/drivers/clk/ti/composite.c
++++ b/drivers/clk/ti/composite.c
+@@ -124,7 +124,7 @@ struct clk *ti_clk_register_composite(struct ti_clk *setup)
+ 	struct clk_hw *mux;
+ 	struct clk_hw *div;
+ 	int num_parents = 1;
+-	const char **parent_names = NULL;
++	const char * const *parent_names = NULL;
+ 	struct clk *clk;
+ 	int ret;
+ 
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index 0da149e..3cc6db4 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -97,10 +97,10 @@ static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ };
+ 
+ static struct clk *_register_mux(struct device *dev, const char *name,
+-				 const char **parent_names, u8 num_parents,
+-				 unsigned long flags, void __iomem *reg,
+-				 u8 shift, u32 mask, u8 clk_mux_flags,
+-				 u32 *table)
++				 const char * const *parent_names,
++				 u8 num_parents, unsigned long flags,
++				 void __iomem *reg, u8 shift, u32 mask,
++				 u8 clk_mux_flags, u32 *table)
+ {
+ 	struct clk_mux *mux;
+ 	struct clk *clk;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
