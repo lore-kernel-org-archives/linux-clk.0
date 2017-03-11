@@ -1,121 +1,73 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 09/15] clk: ti: drop unnecessary MEMMAP_ADDRESSING flag
-Date: Sat, 11 Mar 2017 14:50:00 +0200
-Message-ID: <1489236606-24023-10-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
-References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Carlo Caione <carlo@caione.org>,  linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,  linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/9] clk: meson: update clock controller for audio support
+References: <20170309104154.28295-1-jbrunet@baylibre.com>
+Date: Fri, 10 Mar 2017 16:39:27 -0800
+In-Reply-To: <20170309104154.28295-1-jbrunet@baylibre.com> (Jerome Brunet's
+	message of "Thu, 9 Mar 2017 11:41:45 +0100")
+Message-ID: <m2r324bq9s.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This has been superceded by the usage of ti_clk_ll_ops for now.
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
----
- drivers/clk/ti/apll.c      | 1 -
- drivers/clk/ti/dpll.c      | 2 --
- drivers/clk/ti/gate.c      | 4 +---
- drivers/clk/ti/interface.c | 1 -
- include/linux/clk/ti.h     | 2 --
- 5 files changed, 1 insertion(+), 9 deletions(-)
+> This patchset is a first round of update to the meson clock controllers
+> to bring audio support. The patchset is based on clk-next. It could be
+> rebased on amlogic tree later on, if you prefer the patches to go through
+> Kevin's tree.
 
-diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
-index 62b5db7..5cba28c 100644
---- a/drivers/clk/ti/apll.c
-+++ b/drivers/clk/ti/apll.c
-@@ -194,7 +194,6 @@ static void __init of_dra7_apll_setup(struct device_node *node)
- 
- 	clk_hw->dpll_data = ad;
- 	clk_hw->hw.init = init;
--	clk_hw->flags = MEMMAP_ADDRESSING;
- 
- 	init->name = node->name;
- 	init->ops = &apll_ck_ops;
-diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-index 37624e1..c149bd1 100644
---- a/drivers/clk/ti/dpll.c
-+++ b/drivers/clk/ti/dpll.c
-@@ -248,7 +248,6 @@ struct clk *ti_clk_register_dpll(struct ti_clk *setup)
- 	clk_hw->dpll_data = dd;
- 	clk_hw->ops = &clkhwops_omap3_dpll;
- 	clk_hw->hw.init = &init;
--	clk_hw->flags = MEMMAP_ADDRESSING;
- 
- 	init.name = setup->name;
- 	init.ops = ops;
-@@ -380,7 +379,6 @@ static void __init of_ti_dpll_setup(struct device_node *node,
- 	clk_hw->dpll_data = dd;
- 	clk_hw->ops = &clkhwops_omap3_dpll;
- 	clk_hw->hw.init = init;
--	clk_hw->flags = MEMMAP_ADDRESSING;
- 
- 	init->name = node->name;
- 	init->ops = ops;
-diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
-index b3291db..5ff62e2 100644
---- a/drivers/clk/ti/gate.c
-+++ b/drivers/clk/ti/gate.c
-@@ -113,7 +113,7 @@ static struct clk *_register_gate(struct device *dev, const char *name,
- 	clk_hw->enable_bit = bit_idx;
- 	clk_hw->ops = hw_ops;
- 
--	clk_hw->flags = MEMMAP_ADDRESSING | clk_gate_flags;
-+	clk_hw->flags = clk_gate_flags;
- 
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
-@@ -203,7 +203,6 @@ struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup)
- 		ops = &clkhwops_iclk_wait;
- 
- 	gate->ops = ops;
--	gate->flags = MEMMAP_ADDRESSING;
- 
- 	return &gate->hw;
- }
-@@ -269,7 +268,6 @@ static void __init _of_ti_gate_clk_setup(struct device_node *node,
- 
- 	gate->enable_bit = val;
- 	gate->ops = hw_ops;
--	gate->flags = MEMMAP_ADDRESSING;
- 
- 	if (!ti_clk_add_component(node, &gate->hw, CLK_COMPONENT_TYPE_GATE))
- 		return;
-diff --git a/drivers/clk/ti/interface.c b/drivers/clk/ti/interface.c
-index 7927e1a..42d9fd4 100644
---- a/drivers/clk/ti/interface.c
-+++ b/drivers/clk/ti/interface.c
-@@ -47,7 +47,6 @@ static struct clk *_register_interface(struct device *dev, const char *name,
- 
- 	clk_hw->hw.init = &init;
- 	clk_hw->ops = ops;
--	clk_hw->flags = MEMMAP_ADDRESSING;
- 	clk_hw->enable_reg = reg;
- 	clk_hw->enable_bit = bit_idx;
- 
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 626ae94..affdabd 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -168,7 +168,6 @@ struct clk_hw_omap {
-  *     should be used.  This is a temporary solution - a better approach
-  *     would be to associate clock type-specific data with the clock,
-  *     similar to the struct dpll_data approach.
-- * MEMMAP_ADDRESSING: Use memmap addressing to access clock registers.
-  */
- #define ENABLE_REG_32BIT	(1 << 0)	/* Use 32-bit access */
- #define CLOCK_IDLE_CONTROL	(1 << 1)
-@@ -176,7 +175,6 @@ struct clk_hw_omap {
- #define ENABLE_ON_INIT		(1 << 3)	/* Enable upon framework init */
- #define INVERT_ENABLE		(1 << 4)	/* 0 enables, 1 disables */
- #define CLOCK_CLKOUTX2		(1 << 5)
--#define MEMMAP_ADDRESSING	(1 << 6)
- 
- /* CM_CLKEN_PLL*.EN* bit values - not all are available for every DPLL */
- #define DPLL_LOW_POWER_STOP	0x1
--- 
-1.9.1
+I'd prefer these go through the clk tree, and get an immutable branch
+that I can use for my stuff that goes through the arm-soc tree.
+
+Kevin
+
+> First patch fix an issue found while writing patch 5 (Giving ternary
+> operator to SET_PARM)
+>
+> Following Stephen comment on the v1, patch 2 adds the const qualifiers
+> missing upstream.
+>
+> Patches 3 and 4 put the generic muxes and divisors declaration in tables so
+> the register address fixup works in the same way as the clock gates. We are
+> going to add more of these clock types for audio or gpu support, so we
+> can't continue to fix addresses individually like it is currently done.
+>
+> Patches 5 to 8 improve the support of the mpll clocks, now allowing the
+> rate to be set. Among other things, the mplls are the parent clocks of the
+> i2s and spdif clocks.
+>
+> Patch 9 expose the clock gates required to power on the i2s output.
+>
+> These patches have been tested on the meson gxbb p200 board, as part of the
+> ongoing work to bring audio support to meson SoC family.
+>
+> Changes since v1 [0]:
+>  * Add SET_PARM fix to the series
+>  * Add missing const qualifiers to the clock arrays
+>  * No more additional patches required as SAR clocks have been merged
+>
+> [0]: http://lkml.kernel.org/r/20170228133002.17894-1-jbrunet@baylibre.com
+>
+> Jerome Brunet (9):
+>   clk: meson: fix SET_PARM macro
+>   clk: meson: add missing const qualifiers on gate arrays
+>   clk: meson8b: put dividers and muxes in tables
+>   clk: gxbb: put dividers and muxes in tables
+>   clk: meson: mpll: add rw operation
+>   clk: meson: gxbb: mpll: use rw operation
+>   clk: meson8b: add the mplls clocks 0, 1 and 2
+>   clk: meson: mpll: correct N2 maximum value
+>   dt-bindings: clk: gxbb: expose i2s output clock gates
+>
+>  drivers/clk/meson/clk-mpll.c          | 152 ++++++++++++++++++++++++++++++++--
+>  drivers/clk/meson/clkc.h              |   6 +-
+>  drivers/clk/meson/gxbb.c              |  66 ++++++++++++---
+>  drivers/clk/meson/gxbb.h              |  10 +--
+>  drivers/clk/meson/meson8b.c           | 127 ++++++++++++++++++++++++++--
+>  drivers/clk/meson/meson8b.h           |  20 ++++-
+>  include/dt-bindings/clock/gxbb-clkc.h |   5 ++
+>  7 files changed, 356 insertions(+), 30 deletions(-)
