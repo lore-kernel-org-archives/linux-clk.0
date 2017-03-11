@@ -1,54 +1,136 @@
-Return-Path: <icenowy@aosc.io>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Icenowy Zheng <icenowy@aosc.xyz>
-Subject: [PATCH v3 5/5] arm64: allwinner: a64: add R_PIO pinctrl node
-Date: Wed, 29 Mar 2017 18:42:46 +0800
-Message-Id: <20170329104246.34204-6-icenowy@aosc.io>
-In-Reply-To: <20170329104246.34204-1-icenowy@aosc.io>
-References: <20170329104246.34204-1-icenowy@aosc.io>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 06/15] clk: ti: move omap2_init_clk_clkdm under TI clock driver
+Date: Sat, 11 Mar 2017 14:49:57 +0200
+Message-ID: <1489236606-24023-7-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.xyz>
+This is not needed outside the driver, so move it inside it and remove
+the prototype from the public header also.
 
-Allwinner A64 have a dedicated pin controller to manage the PL pin bank.
-As the driver and the required clock support are added, add the device
-node for it.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/mach-omap2/clock.c  | 32 --------------------------------
+ drivers/clk/ti/clock.h       |  1 +
+ drivers/clk/ti/clockdomain.c | 30 ++++++++++++++++++++++++++++++
+ include/linux/clk/ti.h       |  1 -
+ 4 files changed, 31 insertions(+), 33 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 0fe9865d4bd6..165dbc848aa6 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -411,5 +411,17 @@
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 		};
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index 6fac826..ae5b23c 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -79,38 +79,6 @@ int __init omap2_clk_setup_ll_ops(void)
+  * OMAP2+ specific clock functions
+  */
+ 
+-/* Public functions */
+-
+-/**
+- * omap2_init_clk_clkdm - look up a clockdomain name, store pointer in clk
+- * @clk: OMAP clock struct ptr to use
+- *
+- * Convert a clockdomain name stored in a struct clk 'clk' into a
+- * clockdomain pointer, and save it into the struct clk.  Intended to be
+- * called during clk_register().  No return value.
+- */
+-void omap2_init_clk_clkdm(struct clk_hw *hw)
+-{
+-	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
+-	struct clockdomain *clkdm;
+-	const char *clk_name;
+-
+-	if (!clk->clkdm_name)
+-		return;
+-
+-	clk_name = __clk_get_name(hw->clk);
+-
+-	clkdm = clkdm_lookup(clk->clkdm_name);
+-	if (clkdm) {
+-		pr_debug("clock: associated clk %s to clkdm %s\n",
+-			 clk_name, clk->clkdm_name);
+-		clk->clkdm = clkdm;
+-	} else {
+-		pr_debug("clock: could not associate clk %s to clkdm %s\n",
+-			 clk_name, clk->clkdm_name);
+-	}
+-}
+-
+ /**
+  * ti_clk_init_features - init clock features struct for the SoC
+  *
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index ee6d225..ecf82d8 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -228,6 +228,7 @@ int ti_clk_retry_init(struct device_node *node, struct clk_hw *hw,
+ extern const struct clk_ops ti_clk_divider_ops;
+ extern const struct clk_ops ti_clk_mux_ops;
+ 
++void omap2_init_clk_clkdm(struct clk_hw *hw);
+ int omap2_clkops_enable_clkdm(struct clk_hw *hw);
+ void omap2_clkops_disable_clkdm(struct clk_hw *hw);
+ 
+diff --git a/drivers/clk/ti/clockdomain.c b/drivers/clk/ti/clockdomain.c
+index 6cf9dd1..704157d 100644
+--- a/drivers/clk/ti/clockdomain.c
++++ b/drivers/clk/ti/clockdomain.c
+@@ -103,6 +103,36 @@ void omap2_clkops_disable_clkdm(struct clk_hw *hw)
+ 	ti_clk_ll_ops->clkdm_clk_disable(clk->clkdm, hw->clk);
+ }
+ 
++/**
++ * omap2_init_clk_clkdm - look up a clockdomain name, store pointer in clk
++ * @clk: OMAP clock struct ptr to use
++ *
++ * Convert a clockdomain name stored in a struct clk 'clk' into a
++ * clockdomain pointer, and save it into the struct clk.  Intended to be
++ * called during clk_register().  No return value.
++ */
++void omap2_init_clk_clkdm(struct clk_hw *hw)
++{
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	struct clockdomain *clkdm;
++	const char *clk_name;
 +
-+		r_pio: pinctrl@01f02c00 {
-+			compatible = "allwinner,sun50i-a64-r-pinctrl";
-+			reg = <0x01f02c00 0x400>;
-+			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&r_ccu CLK_APB0_PIO>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
-+			gpio-controller;
-+			#gpio-cells = <3>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+		};
- 	};
- };
++	if (!clk->clkdm_name)
++		return;
++
++	clk_name = __clk_get_name(hw->clk);
++
++	clkdm = ti_clk_ll_ops->clkdm_lookup(clk->clkdm_name);
++	if (clkdm) {
++		pr_debug("clock: associated clk %s to clkdm %s\n",
++			 clk_name, clk->clkdm_name);
++		clk->clkdm = clkdm;
++	} else {
++		pr_debug("clock: could not associate clk %s to clkdm %s\n",
++			 clk_name, clk->clkdm_name);
++	}
++}
++
+ static void __init of_ti_clockdomain_setup(struct device_node *node)
+ {
+ 	struct clk *clk;
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index bc7fd8f..626ae94 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -238,7 +238,6 @@ struct ti_clk_ll_ops {
+ 
+ #define to_clk_hw_omap(_hw) container_of(_hw, struct clk_hw_omap, hw)
+ 
+-void omap2_init_clk_clkdm(struct clk_hw *clk);
+ int omap2_clk_disable_autoidle_all(void);
+ int omap2_clk_enable_autoidle_all(void);
+ int omap2_clk_allow_idle(struct clk *clk);
 -- 
-2.12.0
+1.9.1
