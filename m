@@ -1,56 +1,58 @@
-Return-Path: <wens@csie.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 05/15] clk: ti: add clkdm_lookup to the exported functions
+Date: Sat, 11 Mar 2017 14:49:56 +0200
+Message-ID: <1489236606-24023-6-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20170315173753.6zywfxapdczu2i34@rob-hp-laptop>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
- <46fdec2d680d539652f87d79c627973b3a568438.1488876832.git-series.maxime.ripard@free-electrons.com>
- <20170315173753.6zywfxapdczu2i34@rob-hp-laptop>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 17 Mar 2017 11:34:45 +0800
-Message-ID: <CAGb2v67A2T4KeLBttAGLKoo7igBTnQH+5yxN-jJo1k7Ewfd9mQ@mail.gmail.com>
-Subject: Re: [PATCH 7/15] dt-bindings: display: sun4i: Add allwinner,tcon-channel
- property
-To: Rob Herring <robh@kernel.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 16, 2017 at 1:37 AM, Rob Herring <robh@kernel.org> wrote:
-> On Tue, Mar 07, 2017 at 09:56:26AM +0100, Maxime Ripard wrote:
->> The Allwinner Timings Controller has two, mutually exclusive, channels.
->> When the binding has been introduced, it was assumed that there would be
->> only a single user per channel in the system.
->>
->> While this is likely for the channel 0 which only connects to LCD displays,
->> it turns out that the channel 1 can be connected to multiple controllers in
->> the SoC (HDMI and TV encoders for example). And while the simultaneous use
->> of HDMI and TV outputs cannot be achieved, switching from one to the other
->> at runtime definitely sounds plausible.
->>
->> Add an extra property, allwinner,tcon-channel, to specify for a given
->> endpoint which TCON channel it is connected to, while falling back to the
->> previous mechanism if that property is missing.
->
-> I think perhaps TCON channels should have been ports rather than
-> endpoints. The fact that the channels are mutually exclusive can be
-> handled in the driver and doesn't really matter in the binding. How
-> painful would it be to rework things to move TCON channel 1 from port 0,
-> endpoint 1 to port 1?
+This will be needed to move some additional clockdomain functionality
+under clock driver.
 
-Having a separate output port for channel 1 was one option we discussed.
-However it wouldn't work well with the kernel's of_graph based crtc
-detection (drm_of_find_possible_crtcs / drm_of_find_possible_crtcs),
-which has the crtcs bound via the output port. As the logic is used
-by multiple drivers, I'm not sure it's easy to rework or test.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
+---
+ arch/arm/mach-omap2/clock.c | 1 +
+ include/linux/clk/ti.h      | 2 ++
+ 2 files changed, 3 insertions(+)
 
-Also, we still have to support old device trees using channel 1 from
-output port 0 endpoint 1. This is the TV encoder on sun5i (A10s/A13/R8).
-
-Regards
-ChenYu
+diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
+index 1270afd..6fac826 100644
+--- a/arch/arm/mach-omap2/clock.c
++++ b/arch/arm/mach-omap2/clock.c
+@@ -57,6 +57,7 @@
+ static struct ti_clk_ll_ops omap_clk_ll_ops = {
+ 	.clkdm_clk_enable = clkdm_clk_enable,
+ 	.clkdm_clk_disable = clkdm_clk_disable,
++	.clkdm_lookup = clkdm_lookup,
+ 	.cm_wait_module_ready = omap_cm_wait_module_ready,
+ 	.cm_split_idlest_reg = cm_split_idlest_reg,
+ };
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 07308db..bc7fd8f 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -213,6 +213,7 @@ struct clk_omap_reg {
+  * @clk_writel: pointer to register write function
+  * @clkdm_clk_enable: pointer to clockdomain enable function
+  * @clkdm_clk_disable: pointer to clockdomain disable function
++ * @clkdm_lookup: pointer to clockdomain lookup function
+  * @cm_wait_module_ready: pointer to CM module wait ready function
+  * @cm_split_idlest_reg: pointer to CM module function to split idlest reg
+  *
+@@ -228,6 +229,7 @@ struct ti_clk_ll_ops {
+ 	int	(*clkdm_clk_enable)(struct clockdomain *clkdm, struct clk *clk);
+ 	int	(*clkdm_clk_disable)(struct clockdomain *clkdm,
+ 				     struct clk *clk);
++	struct clockdomain * (*clkdm_lookup)(const char *name);
+ 	int	(*cm_wait_module_ready)(u8 part, s16 prcm_mod, u16 idlest_reg,
+ 					u8 idlest_shift);
+ 	int	(*cm_split_idlest_reg)(void __iomem *idlest_reg, s16 *prcm_inst,
+-- 
+1.9.1
