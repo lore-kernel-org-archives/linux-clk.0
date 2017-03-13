@@ -1,88 +1,46 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Mon, 13 Mar 2017 16:18:50 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
-Message-ID: <20170313141850.GX26640@tbergstrom-lnx.Nvidia.com>
-References: <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
- <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
- <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
- <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
- <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
- <f1505f37-cf96-fe04-dfc1-1dd94e20e130@nvidia.com>
- <CAMuHMdVRa3C4ikaoNDDU21NbRVcPTf0z6fPiJ1nF-VDd+3Dm0g@mail.gmail.com>
- <313f1245-02aa-496c-3545-5029ece652af@nvidia.com>
- <20170313104532.GT26640@tbergstrom-lnx.Nvidia.com>
- <9e81c653-b6bb-a47c-8891-d7c7d42a7650@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <9e81c653-b6bb-a47c-8891-d7c7d42a7650@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 2/4] clk: renesas: Add r8a7795 ES2.0 CPG Core Clock Definitions
+Date: Mon, 13 Mar 2017 18:12:31 +0100
+Message-Id: <1489425153-22623-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
+References: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 13, 2017 at 11:03:27AM +0000, Jon Hunter wrote:
-> 
-> On 13/03/17 10:45, Peter De Schrijver wrote:
-> > On Wed, Mar 08, 2017 at 11:48:21AM +0000, Jon Hunter wrote:
-> >>
-> >> On 08/03/17 11:38, Geert Uytterhoeven wrote:
-> >>> Hi Jon,
-> >>>
-> >>> On Wed, Mar 8, 2017 at 11:13 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
-> >>>>> I had a similar issue with SH-Mobile AG5, where the power domain containing
-> >>>>> the JTAG interface is powered down.
-> >>>>
-> >>>> This reminds me, does your patch assume that the DFD power domain is
-> >>>> enabled? I am guessing that it needs to be for JTAG to work.
-> >>>
-> >>> Yes. The pm-rmobile driver looks for "arm,coresight-etm3x" devices, and
-> >>> marks the corresponding PM Domain as always-on, as long as the
-> >>> Coresight code doesn't handle runtime PM.
-> >>
-> >> Sorry Geert, but I was asking Peter specifically about the power-domain
-> >> on Tegra as I have a feeling we may have the same scenario ;-)
-> > 
-> > We don't have a specific power domain for DFD on Tegra210. It's part of the
-> > non-powergateable core domain.
-> 
-> Either we are getting our wires crossed or the TRM is wrong :-(
-> 
->  static const char * const tegra210_powergates[] = {
->          [TEGRA_POWERGATE_CPU] = "crail",
->          [TEGRA_POWERGATE_3D] = "3d",
->          [TEGRA_POWERGATE_VENC] = "venc",
->          [TEGRA_POWERGATE_PCIE] = "pcie",
->          [TEGRA_POWERGATE_MPE] = "mpe",
->          [TEGRA_POWERGATE_SATA] = "sata",
->          [TEGRA_POWERGATE_CPU1] = "cpu1",
->          [TEGRA_POWERGATE_CPU2] = "cpu2",
->          [TEGRA_POWERGATE_CPU3] = "cpu3",
->          [TEGRA_POWERGATE_CPU0] = "cpu0",
->          [TEGRA_POWERGATE_C0NC] = "c0nc",
->          [TEGRA_POWERGATE_SOR] = "sor",
->          [TEGRA_POWERGATE_DIS] = "dis",
->          [TEGRA_POWERGATE_DISB] = "disb",
->          [TEGRA_POWERGATE_XUSBA] = "xusba",
->          [TEGRA_POWERGATE_XUSBB] = "xusbb",
->          [TEGRA_POWERGATE_XUSBC] = "xusbc",
->          [TEGRA_POWERGATE_VIC] = "vic",
->          [TEGRA_POWERGATE_IRAM] = "iram",
->          [TEGRA_POWERGATE_NVDEC] = "nvdec",
->          [TEGRA_POWERGATE_NVJPG] = "nvjpg",
->          [TEGRA_POWERGATE_AUD] = "aud",
->          [TEGRA_POWERGATE_DFD] = "dfd",
->          [TEGRA_POWERGATE_VE2] = "ve2",
->  };
-> 
+Add all R-Car H3 ES2.0 Clock Pulse Generator Core Clock Outputs, as
+listed in Table 8.2a ("List of Clocks [R-Car H3]") of the R-Car Gen3
+Hardware User's Manual rev. 0.53E.
 
-This seems to exist indeed. However downstream has never used it, so I wonder
-how well powergating this domain has been tested.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Drop RFC state,
+  - Update datasheet revision.
+---
+ include/dt-bindings/clock/r8a7795-cpg-mssr.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Peter.
+diff --git a/include/dt-bindings/clock/r8a7795-cpg-mssr.h b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
+index e864aae0a2561c4b..f047eaf261f34ac7 100644
+--- a/include/dt-bindings/clock/r8a7795-cpg-mssr.h
++++ b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
+@@ -60,4 +60,11 @@
+ #define R8A7795_CLK_R			45
+ #define R8A7795_CLK_OSC			46
+ 
++/* r8a7795 ES2.0 CPG Core Clocks */
++#define R8A7795_CLK_S0D2		47
++#define R8A7795_CLK_S0D3		48
++#define R8A7795_CLK_S0D6		49
++#define R8A7795_CLK_S0D8		50
++#define R8A7795_CLK_S0D12		51
++
+ #endif /* __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__ */
+-- 
+2.7.4
