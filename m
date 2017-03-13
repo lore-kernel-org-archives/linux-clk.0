@@ -1,43 +1,36 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 7 Mar 2017 05:54:43 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] rockchip: fix serial output on rk3036
-Message-ID: <20170307135443.GA25384@codeaurora.org>
-References: <20170301210042.11352-1-heiko@sntech.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170301210042.11352-1-heiko@sntech.de>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/7] clk: renesas: r8a7795: Correct name of watchdog clock
+Date: Mon, 13 Mar 2017 17:19:49 +0100
+Message-Id: <1489421994-19707-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/01, Heiko Stuebner wrote:
-> Recent changes to the 8250-dw variant revealed issues concerning
-> how the clock rates are handled on the rk3036 uart.
-> 
-> For one, there was an error in the clock declaration, but also the
-> shared uart-pll-select-mux also as default got supplied from the apll
-> that also supplies the cpu and thus gets frequency scaled.
-> 
-> The patches in this series remedy this and make the debug uart
-> function again on 4.10 + current merge window.
-> 
-> 
-> As for the merge-path, I've now tested all Rockchip socs I have access
-> to (3036, 3288, 3368, 3399) and didn't find any more clock-related issues
-> with the merge-window as of today. So if no other subtle issue turns up
-> this week, these should be all fixes for the 4.11 cycle.
-> So these 2 patches could be picked up by clock-maintainers directly if
-> so desired, or I can send a pull request after the merge-window closes
-> and we're save to say that nothing else broke.
-> 
-> changes in v3:
-> - use a direct register write, instead of using clock apis
+There's only a single watchdog clock, and it's named "rwdt".
 
-Great. I'm happy to merge this into clk-fixes now (and I will do
-it now unless you have some need to send a pull request).
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index cde470ce81e449cf..4e176e7f958b133d 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -139,7 +139,7 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+ 	DEF_MOD("usb3-if0",		 328,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("usb-dmac0",		 330,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("usb-dmac1",		 331,	R8A7795_CLK_S3D1),
+-	DEF_MOD("rwdt0",		 402,	R8A7795_CLK_R),
++	DEF_MOD("rwdt",			 402,	R8A7795_CLK_R),
+ 	DEF_MOD("intc-ex",		 407,	R8A7795_CLK_CP),
+ 	DEF_MOD("intc-ap",		 408,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("audmac1",		 501,	R8A7795_CLK_S3D1),
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
