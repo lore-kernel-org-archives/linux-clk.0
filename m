@@ -1,99 +1,53 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	mike.leach@linaro.org,
-	Suzuki.Poulose@arm.com,
-	sudeep.holla@arm.com
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v5 5/9] coresight: use const for device_node structures
-Date: Sun, 26 Mar 2017 02:23:13 +0800
-Message-Id: <1490466197-29163-6-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 13 Mar 2017 12:45:32 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
+Message-ID: <20170313104532.GT26640@tbergstrom-lnx.Nvidia.com>
+References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
+ <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
+ <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
+ <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
+ <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
+ <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
+ <f1505f37-cf96-fe04-dfc1-1dd94e20e130@nvidia.com>
+ <CAMuHMdVRa3C4ikaoNDDU21NbRVcPTf0z6fPiJ1nF-VDd+3Dm0g@mail.gmail.com>
+ <313f1245-02aa-496c-3545-5029ece652af@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <313f1245-02aa-496c-3545-5029ece652af@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Almost low level functions from open firmware have used const to
-qualify device_node structures, so add const for device_node
-parameters in of_coresight related functions.
+On Wed, Mar 08, 2017 at 11:48:21AM +0000, Jon Hunter wrote:
+> 
+> On 08/03/17 11:38, Geert Uytterhoeven wrote:
+> > Hi Jon,
+> > 
+> > On Wed, Mar 8, 2017 at 11:13 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
+> >>> I had a similar issue with SH-Mobile AG5, where the power domain containing
+> >>> the JTAG interface is powered down.
+> >>
+> >> This reminds me, does your patch assume that the DFD power domain is
+> >> enabled? I am guessing that it needs to be for JTAG to work.
+> > 
+> > Yes. The pm-rmobile driver looks for "arm,coresight-etm3x" devices, and
+> > marks the corresponding PM Domain as always-on, as long as the
+> > Coresight code doesn't handle runtime PM.
+> 
+> Sorry Geert, but I was asking Peter specifically about the power-domain
+> on Tegra as I have a feeling we may have the same scenario ;-)
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- drivers/hwtracing/coresight/of_coresight.c | 6 +++---
- include/linux/coresight.h                  | 8 ++++----
- 2 files changed, 7 insertions(+), 7 deletions(-)
+We don't have a specific power domain for DFD on Tegra210. It's part of the
+non-powergateable core domain.
 
-diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-index 78d2399..46eec0f 100644
---- a/drivers/hwtracing/coresight/of_coresight.c
-+++ b/drivers/hwtracing/coresight/of_coresight.c
-@@ -52,7 +52,7 @@ of_coresight_get_endpoint_device(struct device_node *endpoint)
- 			       endpoint, of_dev_node_match);
- }
- 
--static void of_coresight_get_ports(struct device_node *node,
-+static void of_coresight_get_ports(const struct device_node *node,
- 				   int *nr_inport, int *nr_outport)
- {
- 	struct device_node *ep = NULL;
-@@ -101,7 +101,7 @@ static int of_coresight_alloc_memory(struct device *dev,
- 	return 0;
- }
- 
--int of_coresight_get_cpu(struct device_node *node)
-+int of_coresight_get_cpu(const struct device_node *node)
- {
- 	int cpu;
- 	bool found;
-@@ -128,7 +128,7 @@ int of_coresight_get_cpu(struct device_node *node)
- EXPORT_SYMBOL_GPL(of_coresight_get_cpu);
- 
- struct coresight_platform_data *of_get_coresight_platform_data(
--				struct device *dev, struct device_node *node)
-+			struct device *dev, const struct device_node *node)
- {
- 	int i = 0, ret = 0;
- 	struct coresight_platform_data *pdata;
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index bf96678..4915254 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -263,13 +263,13 @@ static inline int coresight_timeout(void __iomem *addr, u32 offset,
- #endif
- 
- #ifdef CONFIG_OF
--extern int of_coresight_get_cpu(struct device_node *node);
-+extern int of_coresight_get_cpu(const struct device_node *node);
- extern struct coresight_platform_data *of_get_coresight_platform_data(
--				struct device *dev, struct device_node *node);
-+	struct device *dev, const struct device_node *node);
- #else
--static inline int of_coresight_get_cpu(struct device_node *node) { return 0; }
-+static inline int of_coresight_get_cpu(const struct device_node *node) { return 0; }
- static inline struct coresight_platform_data *of_get_coresight_platform_data(
--	struct device *dev, struct device_node *node) { return NULL; }
-+	struct device *dev, const struct device_node *node) { return NULL; }
- #endif
- 
- #ifdef CONFIG_PID_NS
--- 
-2.7.4
+Cheers,
+
+Peter.
