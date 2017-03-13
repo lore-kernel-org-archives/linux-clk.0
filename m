@@ -1,53 +1,164 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Alex Frid <afrid@nvidia.com>
-Subject: [PATCH] clk: tegra: Propagate clk_out_x rate to parent
-Date: Wed, 22 Mar 2017 15:38:19 +0200
-Message-ID: <1490189899-19401-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	carlo@caione.org,
+	khilman@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] clk: meson: Add support for parameters for specific PLLs
+Date: Mon, 13 Mar 2017 14:26:40 +0100
+Message-Id: <1489411604-18700-2-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
+References: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Alex Frid <afrid@nvidia.com>
+In recent Amlogic GXBB, GXL and GXM SoCs, the GP0 PLL needs some specific
+parameters in order to initialize and lock correctly.
 
-Given that externx can only be used as a parent for clk_out_x, it makes
-sense to propagate requests to make clk_out_x easier to handle.
+This patch adds an optional PARAM table used to initialize the PLL to a
+default value with it's parameters in order to achieve to desired frequency.
 
-Signed-off-by: Alex Frid <afrid@nvidia.com>
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+The GP0 PLL in GXBB, GXL/GXM also needs some tweaks in the initialization
+steps, and these are exposed along the PARAM table.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/clk/tegra/clk-tegra-pmc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/meson/clk-pll.c | 52 +++++++++++++++++++++++++++++++++++++++++++--
+ drivers/clk/meson/clkc.h    | 23 ++++++++++++++++++++
+ 2 files changed, 73 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
-index 91377ab..a35579a 100644
---- a/drivers/clk/tegra/clk-tegra-pmc.c
-+++ b/drivers/clk/tegra/clk-tegra-pmc.c
-@@ -95,7 +95,8 @@ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
- 			continue;
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 4adc1e8..aff223b 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -116,6 +116,29 @@ static const struct pll_rate_table *meson_clk_get_pll_settings(struct meson_clk_
+ 	return NULL;
+ }
  
- 		clk = clk_register_mux(NULL, data->mux_name, data->parents,
--				data->num_parents, CLK_SET_RATE_NO_REPARENT,
-+				data->num_parents,
-+				CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
- 				pmc_base + PMC_CLK_OUT_CNTRL, data->mux_shift,
- 				3, 0, &clk_out_lock);
- 		*dt_clk = clk;
-@@ -106,7 +107,8 @@ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
- 			continue;
++/* Specific wait loop for GXL/GXM GP0 PLL */
++static int meson_clk_pll_wait_lock_reset(struct meson_clk_pll *pll,
++					 struct parm *p_n)
++{
++	int delay = 100;
++	u32 reg;
++
++	while (delay > 0) {
++		reg = readl(pll->base + p_n->reg_off);
++		writel(reg | MESON_PLL_RESET, pll->base + p_n->reg_off);
++		udelay(10);
++		writel(reg & ~MESON_PLL_RESET, pll->base + p_n->reg_off);
++
++		mdelay(1);
++
++		reg = readl(pll->base + p_n->reg_off);
++		if (reg & MESON_PLL_LOCK)
++			return 0;
++		delay--;
++	}
++	return -ETIMEDOUT;
++}
++
+ static int meson_clk_pll_wait_lock(struct meson_clk_pll *pll,
+ 				   struct parm *p_n)
+ {
+@@ -132,6 +155,15 @@ static int meson_clk_pll_wait_lock(struct meson_clk_pll *pll,
+ 	return -ETIMEDOUT;
+ }
  
- 		clk = clk_register_gate(NULL, data->gate_name, data->mux_name,
--					0, pmc_base + PMC_CLK_OUT_CNTRL,
-+					CLK_SET_RATE_PARENT,
-+					pmc_base + PMC_CLK_OUT_CNTRL,
- 					data->gate_shift, 0, &clk_out_lock);
- 		*dt_clk = clk;
- 		clk_register_clkdev(clk, data->dev_name, data->gate_name);
++static void meson_clk_pll_init_params(struct meson_clk_pll *pll)
++{
++	int i;
++
++	for (i = 0 ; i < pll->params.params_count ; ++i)
++		writel(pll->params.params_table[i].value,
++		       pll->base + pll->params.params_table[i].reg_off);
++}
++
+ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				  unsigned long parent_rate)
+ {
+@@ -151,10 +183,16 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!rate_set)
+ 		return -EINVAL;
+ 
++	/* Initialize the PLL in a clean state if specified */
++	if (pll->params.params_count)
++		meson_clk_pll_init_params(pll);
++
+ 	/* PLL reset */
+ 	p = &pll->n;
+ 	reg = readl(pll->base + p->reg_off);
+-	writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
++	/* If no_init_reset is provided, avoid resetting at this point */
++	if (!pll->params.no_init_reset)
++		writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
+ 
+ 	reg = PARM_SET(p->width, p->shift, reg, rate_set->n);
+ 	writel(reg, pll->base + p->reg_off);
+@@ -184,7 +222,17 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	}
+ 
+ 	p = &pll->n;
+-	ret = meson_clk_pll_wait_lock(pll, p);
++	/* If unreset_for_lock is provided, remove the reset bit here */
++	if (pll->params.unreset_for_lock) {
++		reg = readl(pll->base + p->reg_off);
++		writel(reg & ~MESON_PLL_RESET, pll->base + p->reg_off);
++	}
++
++	/* If reset_lock_loop, use a special loop including resetting */
++	if (pll->params.reset_lock_loop)
++		ret = meson_clk_pll_wait_lock_reset(pll, p);
++	else
++		ret = meson_clk_pll_wait_lock(pll, p);
+ 	if (ret) {
+ 		pr_warn("%s: pll did not lock, trying to restore old rate %lu\n",
+ 			__func__, old_rate);
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 9bb70e7..5f1c12d 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -62,6 +62,28 @@ struct pll_rate_table {
+ 		.frac		= (_frac),				\
+ 	}								\
+ 
++struct pll_params_table {
++	unsigned int reg_off;
++	unsigned int value;
++};
++
++#define PLL_PARAM(_reg, _val)						\
++	{								\
++		.reg_off	= (_reg),				\
++		.value		= (_val),				\
++	}
++
++struct pll_setup_params {
++	struct pll_params_table *params_table;
++	unsigned int params_count;
++	/* Workaround for GP0, do not reset before configuring */
++	bool no_init_reset;
++	/* Workaround for GP0, unreset right before checking for lock */
++	bool unreset_for_lock;
++	/* Workaround for GXL GP0, reset in the lock checking loop */
++	bool reset_lock_loop;
++};
++
+ struct meson_clk_pll {
+ 	struct clk_hw hw;
+ 	void __iomem *base;
+@@ -70,6 +92,7 @@ struct meson_clk_pll {
+ 	struct parm frac;
+ 	struct parm od;
+ 	struct parm od2;
++	const struct pll_setup_params params;
+ 	const struct pll_rate_table *rate_table;
+ 	unsigned int rate_count;
+ 	spinlock_t *lock;
 -- 
 1.9.1
