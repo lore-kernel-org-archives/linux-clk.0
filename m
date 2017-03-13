@@ -1,110 +1,119 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: linux-arm-kernel@lists.infradead.org,  Rob Herring <robh+dt@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Russell King <linux@armlinux.org.uk>,  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,  netdev@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Updates for Marvell Switch SoCs
-References: <20170216085041.28337-1-chris.packham@alliedtelesis.co.nz>
-Date: Tue, 07 Mar 2017 18:10:12 +0100
-In-Reply-To: <20170216085041.28337-1-chris.packham@alliedtelesis.co.nz> (Chris
-	Packham's message of "Thu, 16 Feb 2017 21:50:34 +1300")
-Message-ID: <87bmtdovwr.fsf@free-electrons.com>
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1485345194-3196-3-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170125115329eucas1p1fc59d9be3421bc763d16aa331375b9f6@eucas1p1.samsung.com>
+ <1485345194-3196-1-git-send-email-m.szyprowski@samsung.com> <1485345194-3196-3-git-send-email-m.szyprowski@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 13 Mar 2017 14:34:00 +0100
+Message-ID: <CAPDyKFpCkzq6A-QcWuaG+k_R-fcnoJCJqYJNGEWHTaeT-8bZhA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/4] clk: samsung: Add support for runtime PM
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chris,
-=20
- On jeu., f=C3=A9vr. 16 2017, Chris Packham <chris.packham@alliedtelesis.co=
-.nz> wrote:
-
-> Shortly after I posted my last series I got access to a more recent
-> Marvell SDK which had some device tree support for the switch SoCs I'd
-> been wanting. It was still based on an older kernel but it was a huge
-> improvement over what came before.
+On 25 January 2017 at 12:53, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> This patch adds struct device pointer to samsung_clk_provider and forwarding it
+> to clk_register_* functions, so drivers can register clocks, which use runtime
+> pm feature.
 >
-> Patch 1/6 is a typo I noticed after my initial series was applied.
->
-> Patch 2/6 is a bit of a cleanup. I did initially struggle with how to
-> access individual parts of the DFX block as well as retaining a handle on
-> the entire thing for the switch driver to use.
->
-> Patch 3/6 is a re-jig of the dtsi files which is needed by 5/6. This is
-> required because I need to use the coreclk label on a different node. It
-> also means I don't have to disable nodes for blocks that only exist on
-> the Armada-XP.
->
-> Patch 4/6, 5/6 are split from the previous versions.
->
-> Patch 6/6 is the device tree portion of a change already in clk-next.
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-I applied patches 2, 3 and 6 on mvebu/dt with the acked-by from Rob when
-he gave it.
-
-Patch 1 is already part of 4.11-rc1.
-
-For patch 4 and 5 I understand that either we don't need it or it should
-be a updated version so I skipped them.
-
-Thanks,
-
-Gregory
-
+> ---
+>  drivers/clk/samsung/clk-pll.c |  2 +-
+>  drivers/clk/samsung/clk.c     | 12 ++++++------
+>  drivers/clk/samsung/clk.h     |  1 +
+>  3 files changed, 8 insertions(+), 7 deletions(-)
 >
-> Chris Packham (6):
->   ARM: dts: Fix typo in armada-xp-98dx4251
->     Changes in v2
->     - new
->     Changes in v3:
->     - none
->   ARM: dts: armada-xp-98dx3236: combine dfx server nodes
->     Changes in v2:
->     - none
->     Changes in v3:
->     - none
->   ARM: dts: Use armada-370-xp as a base for armada-xp-98dx3236
->     Changes in v2:
->     - Update root compatible strings in armada-xp-98dx3336.dtsi,
->       armada-xp-98dx4251.dtsi, armada-xp-db-dxbc2.dts and
->       armada-xp-db-xc3-24g4xg.dts
->     Changes in v3:
->     - none
->   ARM: dts: mvebu: Add binding for mv98dx3236-soc-id
->     Changes in v3:
->     - new, split from driver
->   ARM: mvebu: Add driver for mv98dx3236-soc-id
->     Changes in v2:
->     - none
->     Changes in v3:
->     - split from dts changes
->   ARM: dts: mvebu: Move mv98dx3236 clock bindings
->     Changes in v2:
->     - New. Split out from "clk: mvebu: Expand mv98dx3236-core-clock suppo=
-rt"
->     Changes in v3:
->     - Clarify why the old location was wrong (but worked).
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> index 52290894857a..74c9ce89538a 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -1376,7 +1376,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+>         pll->lock_reg = base + pll_clk->lock_offset;
+>         pll->con_reg = base + pll_clk->con_offset;
 >
+> -       clk = clk_register(NULL, &pll->hw);
+> +       clk = clk_register(ctx->dev, &pll->hw);
+>         if (IS_ERR(clk)) {
+>                 pr_err("%s: failed to register pll clock %s : %ld\n",
+>                         __func__, pll_clk->name, PTR_ERR(clk));
+> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+> index b7d87d6db9dc..e6923714f024 100644
+> --- a/drivers/clk/samsung/clk.c
+> +++ b/drivers/clk/samsung/clk.c
+> @@ -143,7 +143,7 @@ void __init samsung_clk_register_fixed_rate(struct samsung_clk_provider *ctx,
+>         unsigned int idx, ret;
 >
->  .../bindings/arm/marvell/mv98dx3236-soc-id.txt     |  14 ++
->  .../devicetree/bindings/clock/mvebu-core-clock.txt |   7 +
->  .../bindings/clock/mvebu-gated-clock.txt           |  11 ++
->  .../devicetree/bindings/net/marvell,prestera.txt   |  13 +-
->  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 213 +++++++++++++++=
-+-----
->  arch/arm/boot/dts/armada-xp-98dx3336.dtsi          |   2 +-
->  arch/arm/boot/dts/armada-xp-98dx4251.dtsi          |   2 +-
->  arch/arm/boot/dts/armada-xp-db-dxbc2.dts           |   2 +-
->  arch/arm/boot/dts/armada-xp-db-xc3-24g4xg.dts      |   2 +-
->  arch/arm/mach-mvebu/mvebu-soc-id.c                 |  43 ++++-
->  10 files changed, 242 insertions(+), 67 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/marvell/mv98dx3=
-236-soc-id.txt
+>         for (idx = 0; idx < nr_clk; idx++, list++) {
+> -               clk = clk_register_fixed_rate(NULL, list->name,
+> +               clk = clk_register_fixed_rate(ctx->dev, list->name,
+>                         list->parent_name, list->flags, list->fixed_rate);
+>                 if (IS_ERR(clk)) {
+>                         pr_err("%s: failed to register clock %s\n", __func__,
+> @@ -172,7 +172,7 @@ void __init samsung_clk_register_fixed_factor(struct samsung_clk_provider *ctx,
+>         unsigned int idx;
 >
-> --=20
-> 2.11.0.24.ge6920cf
-
---=20
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+>         for (idx = 0; idx < nr_clk; idx++, list++) {
+> -               clk = clk_register_fixed_factor(NULL, list->name,
+> +               clk = clk_register_fixed_factor(ctx->dev, list->name,
+>                         list->parent_name, list->flags, list->mult, list->div);
+>                 if (IS_ERR(clk)) {
+>                         pr_err("%s: failed to register clock %s\n", __func__,
+> @@ -193,7 +193,7 @@ void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
+>         unsigned int idx, ret;
+>
+>         for (idx = 0; idx < nr_clk; idx++, list++) {
+> -               clk = clk_register_mux(NULL, list->name, list->parent_names,
+> +               clk = clk_register_mux(ctx->dev, list->name, list->parent_names,
+>                         list->num_parents, list->flags,
+>                         ctx->reg_base + list->offset,
+>                         list->shift, list->width, list->mux_flags, &ctx->lock);
+> @@ -226,13 +226,13 @@ void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
+>
+>         for (idx = 0; idx < nr_clk; idx++, list++) {
+>                 if (list->table)
+> -                       clk = clk_register_divider_table(NULL, list->name,
+> +                       clk = clk_register_divider_table(ctx->dev, list->name,
+>                                 list->parent_name, list->flags,
+>                                 ctx->reg_base + list->offset,
+>                                 list->shift, list->width, list->div_flags,
+>                                 list->table, &ctx->lock);
+>                 else
+> -                       clk = clk_register_divider(NULL, list->name,
+> +                       clk = clk_register_divider(ctx->dev, list->name,
+>                                 list->parent_name, list->flags,
+>                                 ctx->reg_base + list->offset, list->shift,
+>                                 list->width, list->div_flags, &ctx->lock);
+> @@ -264,7 +264,7 @@ void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
+>         unsigned int idx, ret;
+>
+>         for (idx = 0; idx < nr_clk; idx++, list++) {
+> -               clk = clk_register_gate(NULL, list->name, list->parent_name,
+> +               clk = clk_register_gate(ctx->dev, list->name, list->parent_name,
+>                                 list->flags, ctx->reg_base + list->offset,
+>                                 list->bit_idx, list->gate_flags, &ctx->lock);
+>                 if (IS_ERR(clk)) {
+> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+> index da3bdebabf1e..9263d8a27c6b 100644
+> --- a/drivers/clk/samsung/clk.h
+> +++ b/drivers/clk/samsung/clk.h
+> @@ -26,6 +26,7 @@
+>   */
+>  struct samsung_clk_provider {
+>         void __iomem *reg_base;
+> +       struct device *dev;
+>         struct clk_onecell_data clk_data;
+>         spinlock_t lock;
+>  };
+> --
+> 1.9.1
+>
