@@ -1,75 +1,100 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Mon, 20 Mar 2017 20:10:46 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org, sudeep.holla@arm.com
-Subject: Re: [PATCH v4 4/7] coresight: add support for CPU debug module
-Message-ID: <20170320121046.GB19581@leoy-linaro>
-References: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
- <1489762943-25849-5-git-send-email-leo.yan@linaro.org>
- <74d6fd19-89f0-7edf-ace3-8b07f13e9569@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <74d6fd19-89f0-7edf-ace3-8b07f13e9569@arm.com>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Dien Pham <dien.pham.ry@renesas.com>
+Subject: [PATCH 7/7] clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0
+Date: Mon, 13 Mar 2017 17:19:54 +0100
+Message-Id: <1489421994-19707-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 17, 2017 at 06:44:03PM +0000, Suzuki K Poulose wrote:
-> On 17/03/17 15:02, Leo Yan wrote:
-> >Coresight includes debug module and usually the module connects with CPU
-> >debug logic. ARMv8 architecture reference manual (ARM DDI 0487A.k) has
-> >description for related info in "Part H: External Debug".
-> >
-> >Chapter H7 "The Sample-based Profiling Extension" introduces several
-> >sampling registers, e.g. we can check program counter value with
-> >combined CPU exception level, secure state, etc. So this is helpful for
-> >analysis CPU lockup scenarios, e.g. if one CPU has run into infinite
-> >loop with IRQ disabled. In this case the CPU cannot switch context and
-> >handle any interrupt (including IPIs), as the result it cannot handle
-> >SMP call for stack dump.
-> >
-> >This patch is to enable coresight debug module, so firstly this driver
-> >is to bind apb clock for debug module and this is to ensure the debug
-> >module can be accessed from program or external debugger. And the driver
-> >uses sample-based registers for debug purpose, e.g. when system detects
-> >the CPU lockup and trigger panic, the driver will dump program counter
-> 
-> Do we dump it when the CPU lockup is detected with this change ? If not,
-> we shouldn't claim that here.
+Add a workaround for errata on R-Car H3 ES1.0, where the PLL0, PLL2, and
+PLL4 clock frequencies are off by a factor of two.
 
-Right, the mainline kernel missed Colin Cross's patch to trigger panic
-when detect CPU lockup which used by Android common kernel:
-http://people.linaro.org/~leo.yan/0001-hardlockup-detect-hard-lockups-without-NMIs-using-se.patch
+Inspired by a patch by Dien Pham in the BSP.
 
-Will fix it.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Dien Pham <dien.pham.ry@renesas.com>
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-[...]
-
-> >+	pr_emerg("\tEDPCSR:  [<%p>] %pS\n", (void *)pc, (void *)pc);
-> 
-> Are we safe calling %pS on the PC, when the PC offset in implementation defined ?
-
-I did some quick testing, if cannot find proper kernel symbol for PC
-value, then %pS will directly output pc value rather than symbol value.
-
-Other suggestions are good for me; I will fix for all for them.
-
-[...]
-
-Thanks,
-Leo Yan
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index d395bb8c22f575cf..e5247e3dc897f9f4 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -20,6 +20,7 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
++#include <linux/sys_soc.h>
+ 
+ #include "renesas-cpg-mssr.h"
+ #include "rcar-gen3-cpg.h"
+@@ -248,6 +249,17 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+ static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
+ static unsigned int cpg_clk_extalr __initdata;
+ static u32 cpg_mode __initdata;
++static u32 cpg_quirks __initdata;
++
++#define PLL_ERRATA	BIT(0)		/* Missing PLL0/2/4 post-divider */
++
++static const struct soc_device_attribute cpg_quirks_match[] __initconst = {
++	{
++		.soc_id = "r8a7795", .revision = "ES1.0",
++		.data = (void *)PLL_ERRATA,
++	},
++	{ /* sentinel */ }
++};
+ 
+ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+@@ -276,6 +288,8 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		 */
+ 		value = readl(base + CPG_PLL0CR);
+ 		mult = (((value >> 24) & 0x7f) + 1) * 2;
++		if (cpg_quirks & PLL_ERRATA)
++			mult *= 2;
+ 		break;
+ 
+ 	case CLK_TYPE_GEN3_PLL1:
+@@ -291,6 +305,8 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		 */
+ 		value = readl(base + CPG_PLL2CR);
+ 		mult = (((value >> 24) & 0x7f) + 1) * 2;
++		if (cpg_quirks & PLL_ERRATA)
++			mult *= 2;
+ 		break;
+ 
+ 	case CLK_TYPE_GEN3_PLL3:
+@@ -306,6 +322,8 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		 */
+ 		value = readl(base + CPG_PLL4CR);
+ 		mult = (((value >> 24) & 0x7f) + 1) * 2;
++		if (cpg_quirks & PLL_ERRATA)
++			mult *= 2;
+ 		break;
+ 
+ 	case CLK_TYPE_GEN3_SD:
+@@ -337,8 +355,14 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ int __init rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
+ 			      unsigned int clk_extalr, u32 mode)
+ {
++	const struct soc_device_attribute *attr;
++
+ 	cpg_pll_config = config;
+ 	cpg_clk_extalr = clk_extalr;
+ 	cpg_mode = mode;
++	attr = soc_device_match(cpg_quirks_match);
++	if (attr)
++		cpg_quirks = (uintptr_t)attr->data;
++	pr_debug("%s: mode = 0x%x quirks = 0x%x\n", __func__, mode, cpg_quirks);
+ 	return 0;
+ }
+-- 
+2.7.4
