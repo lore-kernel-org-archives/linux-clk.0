@@ -1,81 +1,63 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	carlo@caione.org,
+	khilman@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
 	linux-clk@vger.kernel.org,
 	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/9] clk: gxbb: put dividers and muxes in tables
-Date: Thu,  9 Mar 2017 11:41:49 +0100
-Message-Id: <20170309104154.28295-5-jbrunet@baylibre.com>
-In-Reply-To: <20170309104154.28295-1-jbrunet@baylibre.com>
-References: <20170309104154.28295-1-jbrunet@baylibre.com>
+Subject: [PATCH 2/5] clk: meson-gxbb: Add GP0 PLL init parameters
+Date: Mon, 13 Mar 2017 14:26:41 +0100
+Message-Id: <1489411604-18700-3-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
+References: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Until now, there was only 2 dividers and 2 muxes declared for the gxbb
-platform. With the ongoing work on various subsystem, including audio,
-this is about to change. Use the same approach as gates for dividers and
-muxes, putting them in tables to fix the register address at runtime.
+Tha Amlogic GXBB SoC GP0 PLL needs some vendor provided parameters to be
+initializated in the the GP0 control registers before configuring the rate
+with the rate table provided parameters.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+GXBB GP0 PLL tweaks are also selected to respect the vendor init procedure.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/clk/meson/gxbb.c | 28 ++++++++++++++++++++--------
- 1 file changed, 20 insertions(+), 8 deletions(-)
+ drivers/clk/meson/gxbb.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index c063287bb0ed..79e9313e6703 100644
+index 1c1ec13..5e1a7dc4 100644
 --- a/drivers/clk/meson/gxbb.c
 +++ b/drivers/clk/meson/gxbb.c
-@@ -902,6 +902,16 @@ static struct clk_gate *const gxbb_clk_gates[] = {
- 	&gxbb_sar_adc_clk,
+@@ -352,6 +352,13 @@
+ 	},
  };
  
-+static struct clk_mux *const gxbb_clk_muxes[] = {
-+	&gxbb_mpeg_clk_sel,
-+	&gxbb_sar_adc_clk_sel,
++struct pll_params_table gxbb_gp0_params_table[] = {
++	PLL_PARAM(HHI_GP0_PLL_CNTL, 0x6a000228),
++	PLL_PARAM(HHI_GP0_PLL_CNTL2, 0x69c80000),
++	PLL_PARAM(HHI_GP0_PLL_CNTL3, 0x0a5590c4),
++	PLL_PARAM(HHI_GP0_PLL_CNTL4, 0x0000500d),
 +};
 +
-+static struct clk_divider *const gxbb_clk_dividers[] = {
-+	&gxbb_mpeg_clk_div,
-+	&gxbb_sar_adc_clk_div,
-+};
-+
- static int gxbb_clkc_probe(struct platform_device *pdev)
- {
- 	void __iomem *clk_base;
-@@ -928,19 +938,21 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	/* Populate the base address for CPU clk */
- 	gxbb_cpu_clk.base = clk_base;
- 
--	/* Populate the base address for the MPEG clks */
--	gxbb_mpeg_clk_sel.reg = clk_base + (u64)gxbb_mpeg_clk_sel.reg;
--	gxbb_mpeg_clk_div.reg = clk_base + (u64)gxbb_mpeg_clk_div.reg;
--
--	/* Populate the base address for the SAR ADC clks */
--	gxbb_sar_adc_clk_sel.reg = clk_base + (u64)gxbb_sar_adc_clk_sel.reg;
--	gxbb_sar_adc_clk_div.reg = clk_base + (u64)gxbb_sar_adc_clk_div.reg;
--
- 	/* Populate base address for gates */
- 	for (i = 0; i < ARRAY_SIZE(gxbb_clk_gates); i++)
- 		gxbb_clk_gates[i]->reg = clk_base +
- 			(u64)gxbb_clk_gates[i]->reg;
- 
-+	/* Populate base address for muxes */
-+	for (i = 0; i < ARRAY_SIZE(gxbb_clk_muxes); i++)
-+		gxbb_clk_muxes[i]->reg = clk_base +
-+			(u64)gxbb_clk_muxes[i]->reg;
-+
-+	/* Populate base address for dividers */
-+	for (i = 0; i < ARRAY_SIZE(gxbb_clk_dividers); i++)
-+		gxbb_clk_dividers[i]->reg = clk_base +
-+			(u64)gxbb_clk_dividers[i]->reg;
-+
- 	/*
- 	 * register all clks
- 	 */
+ static struct meson_clk_pll gxbb_gp0_pll = {
+ 	.m = {
+ 		.reg_off = HHI_GP0_PLL_CNTL,
+@@ -368,6 +375,12 @@
+ 		.shift   = 16,
+ 		.width   = 2,
+ 	},
++	.params = {
++		.params_table = gxbb_gp0_params_table,
++		.params_count =	ARRAY_SIZE(gxbb_gp0_params_table),
++		.no_init_reset = true,
++		.unreset_for_lock = true,
++	},
+ 	.rate_table = gp0_pll_rate_table,
+ 	.rate_count = ARRAY_SIZE(gp0_pll_rate_table),
+ 	.lock = &clk_lock,
 -- 
-2.9.3
+1.9.1
