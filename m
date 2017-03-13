@@ -1,96 +1,87 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
+ <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
+ <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
+ <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
+ <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
+ <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
+ <f1505f37-cf96-fe04-dfc1-1dd94e20e130@nvidia.com>
+ <CAMuHMdVRa3C4ikaoNDDU21NbRVcPTf0z6fPiJ1nF-VDd+3Dm0g@mail.gmail.com>
+ <313f1245-02aa-496c-3545-5029ece652af@nvidia.com>
+ <20170313104532.GT26640@tbergstrom-lnx.Nvidia.com>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <9e81c653-b6bb-a47c-8891-d7c7d42a7650@nvidia.com>
+Date: Mon, 13 Mar 2017 11:03:27 +0000
 MIME-Version: 1.0
-To: Kevin Hilman <khilman@baylibre.com>, "Jerome Brunet" <jbrunet@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <m2r324bq9s.fsf@baylibre.com>
-Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Carlo Caione" <carlo@caione.org>,
- linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20170309104154.28295-1-jbrunet@baylibre.com> <m2r324bq9s.fsf@baylibre.com>
-Message-ID: <149064437219.54062.14490095828514639237@resonance>
-Subject: Re: [PATCH v2 0/9] clk: meson: update clock controller for audio support
-Date: Mon, 27 Mar 2017 12:52:52 -0700
+In-Reply-To: <20170313104532.GT26640@tbergstrom-lnx.Nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Kevin Hilman (2017-03-10 16:39:27)
-> Jerome Brunet <jbrunet@baylibre.com> writes:
-> =
 
-> > This patchset is a first round of update to the meson clock controllers
-> > to bring audio support. The patchset is based on clk-next. It could be
-> > rebased on amlogic tree later on, if you prefer the patches to go throu=
-gh
-> > Kevin's tree.
-> =
+On 13/03/17 10:45, Peter De Schrijver wrote:
+> On Wed, Mar 08, 2017 at 11:48:21AM +0000, Jon Hunter wrote:
+>>
+>> On 08/03/17 11:38, Geert Uytterhoeven wrote:
+>>> Hi Jon,
+>>>
+>>> On Wed, Mar 8, 2017 at 11:13 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
+>>>>> I had a similar issue with SH-Mobile AG5, where the power domain containing
+>>>>> the JTAG interface is powered down.
+>>>>
+>>>> This reminds me, does your patch assume that the DFD power domain is
+>>>> enabled? I am guessing that it needs to be for JTAG to work.
+>>>
+>>> Yes. The pm-rmobile driver looks for "arm,coresight-etm3x" devices, and
+>>> marks the corresponding PM Domain as always-on, as long as the
+>>> Coresight code doesn't handle runtime PM.
+>>
+>> Sorry Geert, but I was asking Peter specifically about the power-domain
+>> on Tegra as I have a feeling we may have the same scenario ;-)
+> 
+> We don't have a specific power domain for DFD on Tegra210. It's part of the
+> non-powergateable core domain.
 
-> I'd prefer these go through the clk tree, and get an immutable branch
-> that I can use for my stuff that goes through the arm-soc tree.
+Either we are getting our wires crossed or the TRM is wrong :-(
 
-Applied to clk-meson, a stable branch, which has been merged into
-clk-next.
+ static const char * const tegra210_powergates[] = {
+         [TEGRA_POWERGATE_CPU] = "crail",
+         [TEGRA_POWERGATE_3D] = "3d",
+         [TEGRA_POWERGATE_VENC] = "venc",
+         [TEGRA_POWERGATE_PCIE] = "pcie",
+         [TEGRA_POWERGATE_MPE] = "mpe",
+         [TEGRA_POWERGATE_SATA] = "sata",
+         [TEGRA_POWERGATE_CPU1] = "cpu1",
+         [TEGRA_POWERGATE_CPU2] = "cpu2",
+         [TEGRA_POWERGATE_CPU3] = "cpu3",
+         [TEGRA_POWERGATE_CPU0] = "cpu0",
+         [TEGRA_POWERGATE_C0NC] = "c0nc",
+         [TEGRA_POWERGATE_SOR] = "sor",
+         [TEGRA_POWERGATE_DIS] = "dis",
+         [TEGRA_POWERGATE_DISB] = "disb",
+         [TEGRA_POWERGATE_XUSBA] = "xusba",
+         [TEGRA_POWERGATE_XUSBB] = "xusbb",
+         [TEGRA_POWERGATE_XUSBC] = "xusbc",
+         [TEGRA_POWERGATE_VIC] = "vic",
+         [TEGRA_POWERGATE_IRAM] = "iram",
+         [TEGRA_POWERGATE_NVDEC] = "nvdec",
+         [TEGRA_POWERGATE_NVJPG] = "nvjpg",
+         [TEGRA_POWERGATE_AUD] = "aud",
+         [TEGRA_POWERGATE_DFD] = "dfd",
+         [TEGRA_POWERGATE_VE2] = "ve2",
+ };
 
-Kevin, feel free to use clk-meson or any commit id therein: they will
-not be rebased.
 
-Regards,
-Mike
+Jon
 
-> =
-
-> Kevin
-> =
-
-> > First patch fix an issue found while writing patch 5 (Giving ternary
-> > operator to SET_PARM)
-> >
-> > Following Stephen comment on the v1, patch 2 adds the const qualifiers
-> > missing upstream.
-> >
-> > Patches 3 and 4 put the generic muxes and divisors declaration in table=
-s so
-> > the register address fixup works in the same way as the clock gates. We=
- are
-> > going to add more of these clock types for audio or gpu support, so we
-> > can't continue to fix addresses individually like it is currently done.
-> >
-> > Patches 5 to 8 improve the support of the mpll clocks, now allowing the
-> > rate to be set. Among other things, the mplls are the parent clocks of =
-the
-> > i2s and spdif clocks.
-> >
-> > Patch 9 expose the clock gates required to power on the i2s output.
-> >
-> > These patches have been tested on the meson gxbb p200 board, as part of=
- the
-> > ongoing work to bring audio support to meson SoC family.
-> >
-> > Changes since v1 [0]:
-> >  * Add SET_PARM fix to the series
-> >  * Add missing const qualifiers to the clock arrays
-> >  * No more additional patches required as SAR clocks have been merged
-> >
-> > [0]: http://lkml.kernel.org/r/20170228133002.17894-1-jbrunet@baylibre.c=
-om
-> >
-> > Jerome Brunet (9):
-> >   clk: meson: fix SET_PARM macro
-> >   clk: meson: add missing const qualifiers on gate arrays
-> >   clk: meson8b: put dividers and muxes in tables
-> >   clk: gxbb: put dividers and muxes in tables
-> >   clk: meson: mpll: add rw operation
-> >   clk: meson: gxbb: mpll: use rw operation
-> >   clk: meson8b: add the mplls clocks 0, 1 and 2
-> >   clk: meson: mpll: correct N2 maximum value
-> >   dt-bindings: clk: gxbb: expose i2s output clock gates
-> >
-> >  drivers/clk/meson/clk-mpll.c          | 152 ++++++++++++++++++++++++++=
-++++++--
-> >  drivers/clk/meson/clkc.h              |   6 +-
-> >  drivers/clk/meson/gxbb.c              |  66 ++++++++++++---
-> >  drivers/clk/meson/gxbb.h              |  10 +--
-> >  drivers/clk/meson/meson8b.c           | 127 ++++++++++++++++++++++++++=
---
-> >  drivers/clk/meson/meson8b.h           |  20 ++++-
-> >  include/dt-bindings/clock/gxbb-clkc.h |   5 ++
-> >  7 files changed, 356 insertions(+), 30 deletions(-)
+-- 
+nvpublic
