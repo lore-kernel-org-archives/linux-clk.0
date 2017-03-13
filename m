@@ -1,83 +1,99 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 9 Mar 2017 15:55:39 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Mon, 13 Mar 2017 16:12:14 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] Re: [PATCH 10/15] drm/sun4i: tcon: Switch mux on
- only for composite
-Message-ID: <20170309145539.43eequth2ej7wvqk@lukather>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
- <3f70bcfe2ec03188c06d54a262d49ad91963a510.1488876832.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v67iTOV-=u5rReu6_wi6NFoCoJkbJKshTpmFYUmJ=ggKUw@mail.gmail.com>
- <20170309105800.mnzhvnky6na7d5vn@lukather>
- <CAGb2v67XkaC2+AxubaUF9nPcoGZcAzny7LKVD6C+-9BM5Fi+9g@mail.gmail.com>
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	mike.leach@linaro.org, Sudeep Holla <Sudeep.Holla@arm.com>
+Subject: Re: [v3 3/5] coresight: add support for debug module
+Message-ID: <20170313081214.GC22706@leoy-linaro>
+References: <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
+ <011fdac0-59bf-b539-2de3-0b59a41bc922@arm.com>
+ <20170309175915.GA964@leoy-linaro>
+ <3f27efee-3b63-81fd-eb96-73fd7e6f5e92@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="h753cmu4qni4wyzx"
-In-Reply-To: <CAGb2v67XkaC2+AxubaUF9nPcoGZcAzny7LKVD6C+-9BM5Fi+9g@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <3f27efee-3b63-81fd-eb96-73fd7e6f5e92@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Suzuki,
 
---h753cmu4qni4wyzx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Mar 10, 2017 at 02:29:53PM +0000, Suzuki K Poulose wrote:
 
-On Thu, Mar 09, 2017 at 07:31:27PM +0800, Chen-Yu Tsai wrote:
-> >> Additionally, the mux registers are only valid in the first TCON, mean=
-ing
-> >> it must available be active in 2 pipeline chips. It's also why we'd pa=
-ss
-> >> "struct drm_device *" instead of "struct sun4i_tcon *".
+[...]
+
+> >>So we cannot really rely on the values in EDVIDSR which we use to make further decisions. So I
+> >>am wondering if this is really guranteed to be useful.
 > >
-> > Hmmmm. That's going to be tricky to support. Has this been confirmed
-> > somehow? Is the register used for something else on TCON1?
->=20
-> At this point, the only reference is Allwinner's kernel, and the old 3.4
-> kernel for A10/A20. I could try getting HDMI working on the A31 to get
-> some real results.
->=20
-> FWIW, the registers do not seem to be aliased across the two TCONs.
+> >So this is caused by Software lock is locked?
+> >
+> >Section H8.4.1:
+> >
+> >"Reads and writes have no side-effects. A side-effect is where a
+> >direct read or a direct write of a register creates
+> >an indirect write of the same or another register. When the Software
+> >Lock is locked, the indirect write does
+> >not occur."
+> 
+> Yes, thats correct, further :
+> 
+> Section H9.2.32: EDPCSR
+> 
+> "For a read of EDPCSRlo from the memory-mapped interface, if EDLSR.SLK == 1, meaning
+> the Software Lock is locked, then the access has no side-effects. That is, EDCIDSR,
+> EDVIDSR, and EDPCSRhi are unchanged."
+> 
+> And since we do a CS_UNLOCK, that should be fine. Please ignore my comment.
 
-Then maybe we don't need to care, and we can just always write to the
-mux?
+Thanks a lot for confirmation.
 
-Maxime
+[...]
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+> >>>+
+> >>>+	put_online_cpus();
+> >>>+
+> >>>+	if (!debug_count++)
+> >>>+		atomic_notifier_chain_register(&panic_notifier_list,
+> >>>+					       &debug_notifier);
+> >>>+
+> >>
+> >>>+	sprintf(buf, (char *)id->data, drvdata->cpu);
+> >>>+	dev_info(dev, "%s initialized\n", buf);
+> >>
+> >>This could simply be :
+> >>	dev_info(dev, "Coresight debug-CPU%d initialized\n", drvdata->cpu);
+> >>
+> >>and get rid of the static string and the buffer, see below.
+> 
+> Also we need pm_runtime_put() here to balance the pm_runtime_get_ from AMBA
+> device probe. More on that below.
 
---h753cmu4qni4wyzx
-Content-Type: application/pgp-signature; name="signature.asc"
+[...]
 
------BEGIN PGP SIGNATURE-----
+> Btw, I don't see any PM calls to make sure the power domain (at least the debug domain)
+> is up, which could cause problems with accesses to some of these registers (leave alone the
+> ones in CPU power domain), especially the EDPRSR. We could also do pm_runtime_get on the
+> CPU's power domain, if the CPU is online, before we access the pcsr.
 
-iQIcBAEBCAAGBQJYwWznAAoJEBx+YmzsjxAgM/gP/0I1y73K2s/qMlT9DUThALv1
-my4pbybYM8Gqp3b27Va5qiPsy/e79qK38/oyRKKBdJow5HaQO2g06wPPhXPXNIrp
-nK5+olfnpx0ZnO24pWDw6B+mxDyi1HrpspTG/CKx97bqwrxyWd+Tj3U2i7qoEQ/q
-icdJ14q2KJ5AvFjQkr+HWCnceogvN76gom8oxFMOZ98FVEcTZKEej+cEbLyvIisd
-zLmOutk1bwlwRU86/NTB0xDJ9Gss1fT7NtaUpBKKcuAqsSdhzH1z7CM2RSLWqLqm
-Dx6kUhYZUmxTOw7dqXY0YfY/Jab2REy+5pGKBlTOY6FZRHzAE9biRHc0SjKdoKxh
-Xr8LMSFCO5+RlY41PvzUbnwx1/mRiCNrP8etgezpfME1MxsGW1Zmde6avWvWBNKM
-8q9C8W+DPJi1qA43wVjJlfNkDknjaGIxbGB92WjMdDxezYQYWLjZs02OGrULe9pR
-tV7ZMgrVS04hK16wDCqkwXsp6jL2xhUnFPQvF0aBUIy61AHxIIdVM7z5CwyBfjQc
-T7lIZCfCQRqIumEhg477eiw3bAEz0BoSr6VTvFjmT2G6Fd89IalX3J5ttyEpem9+
-7zPG+5K7j/InkEMwiOyu94yqK1Oc7wXiIyGsRXEr6ZDhXip8h0I5z9hq3BkS+A2c
-2HGZHv5+YtuUsUkAe2ev
-=AF8I
------END PGP SIGNATURE-----
+I will add pm_runtime_get/pm_runtime_put for apb clock.
 
---h753cmu4qni4wyzx--
+But for CPU power domain, AFAIK this part is managed by PSCI but is not
+controlled by pm_runtime_{put|get} pairs. So at beginning, we suggest
+to use "nohlt" to ensure CPU power domain is enabled.
+
+Please let me know if I miss some thing for this?
+
+Thanks,
+Leo Yan
