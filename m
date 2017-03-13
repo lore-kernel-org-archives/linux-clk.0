@@ -1,57 +1,71 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: "maxime.ripard@free-electrons.com" <maxime.ripard@free-electrons.com>
-In-Reply-To: <20170302140931.tq3vpncln6giyjpr@lukather>
-References: <20170301152236.MUXmRgOe@smtp1m.mail.yandex.net>
- <20170302140931.tq3vpncln6giyjpr@lukather>
-Subject: Re: [linux-sunxi] Re: [PATCH 2/3] clk: sunxi-ng: add support for PRCM
- CCUs
-MIME-Version: 1.0
-Message-Id: <2899221488467633@web38j.yandex.ru>
-Date: Thu, 02 Mar 2017 23:13:53 +0800
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
- Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/7] clk: renesas: r8a7795: Reformat core clock table
+Date: Mon, 13 Mar 2017 17:19:51 +0100
+Message-Id: <1489421994-19707-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-CgowMi4wMy4yMDE3LCAyMjowOSwgIk1heGltZSBSaXBhcmQiIDxtYXhpbWUucmlwYXJkQGZyZWUt
-ZWxlY3Ryb25zLmNvbT46Cj4gT24gV2VkLCBNYXIgMDEsIDIwMTcgYXQgMDg6MjI6MTNQTSArMDgw
-MCwgSWNlbm93eSBaaGVuZyB3cm90ZToKPj4gwqA+IEknbSBhIGJpdCB3b3JyaWVkIGJ5IHRoYXQg
-dG8gYmUgaG9uZXN0LiBZb3UgY2xhaW0gdG8gc3VwcG9ydCB0aGUgQTMxLAo+PiDCoD4geWV0IGp1
-Z2RnaW5nIGJ5IHRoZSBjdXJyZW50IHN0YXRlIG9mIHRoYXQgY29kZSB5b3UgbmV2ZXIgYWN0dWFs
-bHkKPj4gwqA+IHRlc3RlZCBpdCBvbiB0aGF0IFNvQy4KPj4gwqA+Cj4+IMKgPiBXaGF0IG1ha2Vz
-IHlvdSBzYXkgdGhhdCB0aGUgUFJDTSBjbG9ja3MgYXJlIHRoZSBzYW1lIGZvciB0aGUgSDMgYW5k
-Cj4+IMKgPiBBNjQ/IFdlIGhhdmUgdG8gYmUgc3VyZSwgb3RoZXJ3aXNlIHdlIG1pZ2h0IG5vdCBi
-ZSBhYmxlIHRvIGdldCB0aGUgRFQKPj4gwqA+IGJpbmRpbmcgcmlnaHQgZnJvbSB0aGUgdmVyeSBi
-ZWdpbm5pbmcsIGFuZCB3ZSBtaWdodCBub3QgYmUgYWJsZSB0byBmaXgKPj4gwqA+IGl0IGxhdGVy
-Lgo+Pgo+PiDCoEluIGZhY3QsIGlmIHdlIHdvcnJ5IGFib3V0IHRoaXMsIHdlIHNob3VsZG4ndCBt
-YWtlIHItY2N1LCBhcwo+PiDCoGRlZGljYXRlZCBjbG9ja3MgYXJlIG1vcmUgZWFzeSB0byBmaXgu
-Cj4+Cj4+IMKgRm9yIG5ld2VyIFNvQ3MnIFBSQ00sIHdlIG5ldmVyIGhhdmUgZW5vdWdoIGRvY3Vt
-ZW50cywgYW5kIEFsbHdpbm5lcgo+PiDCoGhhdmUgc2FpZCB0aGF0IHRoZXkgY2Fubm90IHByb3Zp
-ZGUgaXQuIChJIGFza2VkIHRoZW0gZm9yIHRoaXMuKQo+Pgo+PiDCoFRoZSBiZXN0IHNvbHV0aW9u
-IGlzIHRvIGltcGxlbWVudCBtYXR1cmUgZW5vdWdoIGRlZGljYXRlZCBjbG9ja3MKPj4gwqBiZWZv
-cmUgd2UgY29udmVydCB0byBjY3UuCj4KPiBXaGF0IGRvIHlvdSBtZWFuIGJ5IGRlZGljYXRlZCBj
-bG9ja3M/CgpUaGUgbGVnYWN5IGZvcm0gb2YgY2xvY2tzLgoKPgo+IE1heGltZQo+Cj4gLS0KPiBN
-YXhpbWUgUmlwYXJkLCBGcmVlIEVsZWN0cm9ucwo+IEVtYmVkZGVkIExpbnV4IGFuZCBLZXJuZWwg
-ZW5naW5lZXJpbmcKPiBodHRwOi8vZnJlZS1lbGVjdHJvbnMuY29tCj4KPiAtLQo+IFlvdSByZWNl
-aXZlZCB0aGlzIG1lc3NhZ2UgYmVjYXVzZSB5b3UgYXJlIHN1YnNjcmliZWQgdG8gdGhlIEdvb2ds
-ZSBHcm91cHMgImxpbnV4LXN1bnhpIiBncm91cC4KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMg
-Z3JvdXAgYW5kIHN0b3AgcmVjZWl2aW5nIGVtYWlscyBmcm9tIGl0LCBzZW5kIGFuIGVtYWlsIHRv
-IGxpbnV4LXN1bnhpK3Vuc3Vic2NyaWJlQGdvb2dsZWdyb3Vwcy5jb20uCj4gRm9yIG1vcmUgb3B0
-aW9ucywgdmlzaXQgaHR0cHM6Ly9ncm91cHMuZ29vZ2xlLmNvbS9kL29wdG91dC4KCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwg
-bWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8v
-bGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+For easier comparison with other clock drivers.
+No functional changes.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 4e176e7f958b133d..608178618da87bef 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -53,8 +53,8 @@ enum clk_ids {
+ 
+ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
+ 	/* External Clock Inputs */
+-	DEF_INPUT("extal",  CLK_EXTAL),
+-	DEF_INPUT("extalr", CLK_EXTALR),
++	DEF_INPUT("extal",      CLK_EXTAL),
++	DEF_INPUT("extalr",     CLK_EXTALR),
+ 
+ 	/* Internal Core Clocks */
+ 	DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_GEN3_MAIN, CLK_EXTAL),
+@@ -89,23 +89,23 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
+ 	DEF_FIXED("s3d2",       R8A7795_CLK_S3D2,  CLK_S3,         2, 1),
+ 	DEF_FIXED("s3d4",       R8A7795_CLK_S3D4,  CLK_S3,         4, 1),
+ 
+-	DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_SDSRC,     0x0074),
+-	DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_SDSRC,     0x0078),
+-	DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_SDSRC,     0x0268),
+-	DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_SDSRC,     0x026c),
++	DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_SDSRC,     0x074),
++	DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_SDSRC,     0x078),
++	DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_SDSRC,     0x268),
++	DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_SDSRC,     0x26c),
+ 
+ 	DEF_FIXED("cl",         R8A7795_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+ 	DEF_FIXED("cp",         R8A7795_CLK_CP,    CLK_EXTAL,      2, 1),
+ 
+-	DEF_DIV6P1("mso",       R8A7795_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
+-	DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV4, 0x250),
+ 	DEF_DIV6P1("canfd",     R8A7795_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
+ 	DEF_DIV6P1("csi0",      R8A7795_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
++	DEF_DIV6P1("mso",       R8A7795_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
++	DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV4, 0x250),
+ 
+-	DEF_DIV6_RO("osc",      R8A7795_CLK_OSC,   CLK_EXTAL, CPG_RCKCR, 8),
++	DEF_DIV6_RO("osc",      R8A7795_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
+ 	DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
+ 
+-	DEF_BASE("r",           R8A7795_CLK_R, CLK_TYPE_GEN3_R, CLK_RINT),
++	DEF_BASE("r",           R8A7795_CLK_R,     CLK_TYPE_GEN3_R, CLK_RINT),
+ };
+ 
+ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+-- 
+2.7.4
