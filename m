@@ -1,78 +1,96 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: add clk_possible_parents debugfs file
-Date: Tue, 21 Mar 2017 15:20:31 +0200
-Message-ID: <1490102432-21314-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: [PATCH v2 4/4] clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0
+Date: Mon, 13 Mar 2017 18:12:33 +0100
+Message-Id: <1489425153-22623-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
+References: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-For validation purposes, it's often useful to be able to retrieve the list
-of possible parents in userspace. Add a debugfs file for every clock which
-has more than 1 possible parent.
+Starting with R-Car H3 ES2.0, the parent of RCLK is selected using MD28.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Reviewed-by: Jon Mayo <jmayo@nvidia.com>
+Add support for that, but retain the old behavior for R-Car H3 ES1.x and
+M3-W ES1.0 using a quirk.
+
+Inspired by a patch by Takeshi Kihara in the BSP.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 ---
- drivers/clk/clk.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+v2:
+  - New.
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 38 ++++++++++++++++++++++++++-----------
+ 1 file changed, 27 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f5f2bcd..2fa2fb8 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2128,6 +2128,34 @@ static int clk_dump_open(struct inode *inode, struct file *file)
- 	.release	= single_release,
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index e5247e3dc897f9f4..3dee900522b703bd 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -252,11 +252,20 @@ static u32 cpg_mode __initdata;
+ static u32 cpg_quirks __initdata;
+ 
+ #define PLL_ERRATA	BIT(0)		/* Missing PLL0/2/4 post-divider */
++#define RCKCR_CKSEL	BIT(1)		/* Manual RCLK parent selection */
+ 
+ static const struct soc_device_attribute cpg_quirks_match[] __initconst = {
+ 	{
+ 		.soc_id = "r8a7795", .revision = "ES1.0",
+-		.data = (void *)PLL_ERRATA,
++		.data = (void *)(PLL_ERRATA | RCKCR_CKSEL),
++	},
++	{
++		.soc_id = "r8a7795", .revision = "ES1.*",
++		.data = (void *)RCKCR_CKSEL,
++	},
++	{
++		.soc_id = "r8a7796", .revision = "ES1.0",
++		.data = (void *)RCKCR_CKSEL,
+ 	},
+ 	{ /* sentinel */ }
  };
+@@ -330,18 +339,25 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		return cpg_sd_clk_register(core, base, __clk_get_name(parent));
  
-+static int possible_parents_dump(struct seq_file *s, void *data)
-+{
-+	struct clk_core *core;
-+	int i;
+ 	case CLK_TYPE_GEN3_R:
+-		/*
+-		 * RINT is default.
+-		 * Only if EXTALR is populated, we switch to it.
+-		 */
+-		value = readl(base + CPG_RCKCR) & 0x3f;
+-
+-		if (clk_get_rate(clks[cpg_clk_extalr])) {
+-			parent = clks[cpg_clk_extalr];
+-			value |= BIT(15);
++		if (cpg_quirks & RCKCR_CKSEL) {
++			/*
++			 * RINT is default.
++			 * Only if EXTALR is populated, we switch to it.
++			 */
++			value = readl(base + CPG_RCKCR) & 0x3f;
 +
-+	core = (struct clk_core *)s->private;
++			if (clk_get_rate(clks[cpg_clk_extalr])) {
++				parent = clks[cpg_clk_extalr];
++				value |= BIT(15);
++			}
 +
-+	for (i = 0; i < core->num_parents - 1; i++)
-+		seq_printf(s, "%s ", core->parent_names[i]);
-+
-+	seq_printf(s, "%s\n", core->parent_names[i]);
-+
-+	return 0;
-+}
-+
-+static int possible_parents_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, possible_parents_dump, inode->i_private);
-+}
-+
-+
-+static const struct file_operations possible_parents_fops = {
-+	.open		= possible_parents_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
- static int clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
- {
- 	struct dentry *d;
-@@ -2179,6 +2207,13 @@ static int clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
- 	if (!d)
- 		goto err_out;
++			writel(value, base + CPG_RCKCR);
++			break;
+ 		}
  
-+	if (core->num_parents > 1) {
-+		d = debugfs_create_file("clk_possible_parents", S_IRUGO,
-+				core->dentry, core, &possible_parents_fops);
-+		if (!d)
-+			goto err_out;
-+	}
-+
- 	if (core->ops->debug_init) {
- 		ret = core->ops->debug_init(core->hw, core->dentry);
- 		if (ret)
+-		writel(value, base + CPG_RCKCR);
++		/* Select parent clock of RCLK by MD28 */
++		if (cpg_mode & BIT(28))
++			parent = clks[cpg_clk_extalr];
+ 		break;
+ 
+ 	default:
 -- 
-1.9.1
+2.7.4
