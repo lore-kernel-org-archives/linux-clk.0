@@ -2,46 +2,58 @@ Return-Path: <geert@linux-m68k.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.12 (take two)
-Date: Fri, 31 Mar 2017 11:24:13 +0200
-Message-Id: <1490952253-10963-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 0/4] clk: renesas: Add support for R-Car H3 ES2.0
+Date: Mon, 13 Mar 2017 18:12:29 +0100
+Message-Id: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
 	Hi Mike, Stephen,
 
-The following changes since commit cecbe87d73006cb321dec79b349e3fefd1a80962:
+This patch series adds clock support for R-Car H3 ES2.0, which differs
+from ES1.x in several areas.
 
-  clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0 (2017-03-21 11:12:23 +0100)
+The goal is twofold:
+  1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
+     for now,
+  2. Make it clear which code supports ES1.x, so it can easily be
+     identified and removed later, when production SoCs are deemed
+     ubiquitous.
 
-are available in the git repository at:
+This is achieved by:
+  - Updating the clock tables for the latest revision (ES2.0), but not
+    removing clocks that only exist on earlier revisions (ES1.x),
+  - Detecting the SoC revision at runtime using the new
+    soc_device_match() API, and fixing up the clocks tables to match the
+    actual SoC revision, by:
+      - NULLifying core and module clocks of modules that do not exist,
+      - Reparenting module clocks that have a different parent on ES1.x.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.12-tag2
+Changes compared to v1:
+  - Update of various module clocks as per datasheet update,
+  - Add support for RCLK on R-Car H3 ES2.0.
 
-for you to fetch changes up to bb1953067c05be30a605ee1d5b05a2677735bb37:
+For testers, this series and its dependencies are available in the
+topic/r8a7795es2-clk-v2 branch of my renesas-drivers git repository at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+An integration branch for testing on the R-Car H3 ES2.0 based Salvator-X
+development board is provided as topic/r8a7795es2-integration.
 
-  clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0 (2017-03-30 13:26:02 +0200)
+This has been tested on Salvator-X with R-Car H3 ES1.0, ES1.1, and ES2.0
+SoCs.
 
-----------------------------------------------------------------
-clk: renesas: Updates for v4.12 (take two)
+I plan to queue this up in clk-renesas-for-v4.12.
 
-  - Add support for the Clock Pulse Generator / Module Standby and
-    Software Reset module on revision ES2.0 of the R-Car H3 SoC, which
-    differs from ES1.x in some areas.
+Thanks for your comments!
 
-Note that this pull request is on top of my previous pull request for
-v4.12, which accidentally had a wrong version number in the subject
-line, and which I believe you haven't pulled yet.
-
-Thanks for pulling (both)!
-----------------------------------------------------------------
 Geert Uytterhoeven (4):
-      clk: renesas: cpg-mssr: Add support for fixing up clock tables
-      clk: renesas: Add r8a7795 ES2.0 CPG Core Clock Definitions
-      clk: renesas: r8a7795: Add support for R-Car H3 ES2.0
-      clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0
+  clk: renesas: cpg-mssr: Add support for fixing up clock tables
+  clk: renesas: Add r8a7795 ES2.0 CPG Core Clock Definitions
+  clk: renesas: r8a7795: Add support for R-Car H3 ES2.0
+  clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0
 
  drivers/clk/renesas/r8a7795-cpg-mssr.c       | 201 ++++++++++++++++++++-------
  drivers/clk/renesas/rcar-gen3-cpg.c          |  38 +++--
@@ -49,6 +61,9 @@ Geert Uytterhoeven (4):
  drivers/clk/renesas/renesas-cpg-mssr.h       |  22 +++
  include/dt-bindings/clock/r8a7795-cpg-mssr.h |   7 +
  5 files changed, 257 insertions(+), 61 deletions(-)
+
+-- 
+2.7.4
 
 Gr{oetje,eeting}s,
 
