@@ -1,65 +1,177 @@
-Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Helmut Klein <hgkr.klein@gmail.com>
-To: 
-Subject: [PATCH v2,
- 0/3] tty/serial: meson_uart: add support for core clock handling
-Date: Tue, 28 Mar 2017 11:25:42 +0200
-Message-Id: <20170328092545.4644-1-hgkr.klein@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
-List-Post: <mailto:linux-amlogic@lists.infradead.org>
-List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Helmut Klein <hgkr.klein@gmail.com>, linux-serial@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
-Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	carlo@caione.org,
+	khilman@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 3/5] clk: meson-gxbb: Add GXL/GXM GP0 Variant
+Date: Mon, 13 Mar 2017 14:26:42 +0100
+Message-Id: <1489411604-18700-4-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
+References: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-To be able to use the three none AO uarts of the s905 SoCs (uart_A, uart_B
-& uart_C), the core clock has to be enabled. (see chapter 22.3 of the
-public s905 data sheet) At least the u-boot of my s905 based media player
-(netxeon minimx) doesn't do this. so the driver must do it.
+The clock tree in the Amlogic GXBB and GXL/GXM SoCs is shared, but the GXL/GXM
+SoCs embeds a different GP0 PLL, and needs different parameters with a vendor
+provided reduced rate table.
 
-This patch set does:
-- exposes the clock ids to the dtb
-- adds documentation for the dt-bindings of meson_uart
-- adds the core clock handling to the driver
+This patch adds the GXL GP0 variant, and adds a GXL DT compatible in order
+to use the GXL GP0 PLL instead of the GXBB specific one.
 
-The patchset is based on the branch master of the repository in [1]
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/gxbb.c | 84 ++++++++++++++++++++++++++++++++++++++++++++++--
+ drivers/clk/meson/gxbb.h |  2 ++
+ 2 files changed, 83 insertions(+), 3 deletions(-)
 
-Changes since v1
-- use git to produce the patch set
-- added the clock ids for uart_B and uart_C
-
-None of the available s905 dts use uart_A actively. So there is no patch
-for any of the existing dts files.
-
-[1] git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-amlogic.git
-
-Helmut Klein (3):
-  tty/serial: meson_uart: expose CLKID_UARTx
-  tty/serial: meson_uart: add documentation for the dt-bindings
-  tty/serial: meson_uart: add the core clock handling to the driver
-
- .../bindings/serial/amlogic,meson_uart.txt         | 25 ++++++++++++++++++++++
- drivers/clk/meson/gxbb.h                           |  6 +++---
- drivers/tty/serial/meson_uart.c                    | 10 +++++++++
- include/dt-bindings/clock/gxbb-clkc.h              |  3 +++
- 4 files changed, 41 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/serial/amlogic,meson_uart.txt
-
---
-2.11.0
-
-
-_______________________________________________
-linux-amlogic mailing list
-linux-amlogic@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-amlogic
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 5e1a7dc4..1838f22 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -120,7 +120,7 @@
+ 	{ /* sentinel */ },
+ };
+ 
+-static const struct pll_rate_table gp0_pll_rate_table[] = {
++static const struct pll_rate_table gxbb_gp0_pll_rate_table[] = {
+ 	PLL_RATE(96000000, 32, 1, 3),
+ 	PLL_RATE(99000000, 33, 1, 3),
+ 	PLL_RATE(102000000, 34, 1, 3),
+@@ -248,6 +248,35 @@
+ 	{ /* sentinel */ },
+ };
+ 
++static const struct pll_rate_table gxl_gp0_pll_rate_table[] = {
++	PLL_RATE(504000000, 42, 1, 1),
++	PLL_RATE(516000000, 43, 1, 1),
++	PLL_RATE(528000000, 44, 1, 1),
++	PLL_RATE(540000000, 45, 1, 1),
++	PLL_RATE(552000000, 46, 1, 1),
++	PLL_RATE(564000000, 47, 1, 1),
++	PLL_RATE(576000000, 48, 1, 1),
++	PLL_RATE(588000000, 49, 1, 1),
++	PLL_RATE(600000000, 50, 1, 1),
++	PLL_RATE(612000000, 51, 1, 1),
++	PLL_RATE(624000000, 52, 1, 1),
++	PLL_RATE(636000000, 53, 1, 1),
++	PLL_RATE(648000000, 54, 1, 1),
++	PLL_RATE(660000000, 55, 1, 1),
++	PLL_RATE(672000000, 56, 1, 1),
++	PLL_RATE(684000000, 57, 1, 1),
++	PLL_RATE(696000000, 58, 1, 1),
++	PLL_RATE(708000000, 59, 1, 1),
++	PLL_RATE(720000000, 60, 1, 1),
++	PLL_RATE(732000000, 61, 1, 1),
++	PLL_RATE(744000000, 62, 1, 1),
++	PLL_RATE(756000000, 63, 1, 1),
++	PLL_RATE(768000000, 64, 1, 1),
++	PLL_RATE(780000000, 65, 1, 1),
++	PLL_RATE(792000000, 66, 1, 1),
++	{ /* sentinel */ },
++};
++
+ static const struct clk_div_table cpu_div_table[] = {
+ 	{ .val = 1, .div = 1 },
+ 	{ .val = 2, .div = 2 },
+@@ -381,8 +410,51 @@ struct pll_params_table gxbb_gp0_params_table[] = {
+ 		.no_init_reset = true,
+ 		.unreset_for_lock = true,
+ 	},
+-	.rate_table = gp0_pll_rate_table,
+-	.rate_count = ARRAY_SIZE(gp0_pll_rate_table),
++	.rate_table = gxbb_gp0_pll_rate_table,
++	.rate_count = ARRAY_SIZE(gxbb_gp0_pll_rate_table),
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "gp0_pll",
++		.ops = &meson_clk_pll_ops,
++		.parent_names = (const char *[]){ "xtal" },
++		.num_parents = 1,
++		.flags = CLK_GET_RATE_NOCACHE,
++	},
++};
++
++struct pll_params_table gxl_gp0_params_table[] = {
++	PLL_PARAM(HHI_GP0_PLL_CNTL, 0x40010250),
++	PLL_PARAM(HHI_GP0_PLL_CNTL1, 0xc084a000),
++	PLL_PARAM(HHI_GP0_PLL_CNTL2, 0xb75020be),
++	PLL_PARAM(HHI_GP0_PLL_CNTL3, 0x0a59a288),
++	PLL_PARAM(HHI_GP0_PLL_CNTL4, 0xc000004d),
++	PLL_PARAM(HHI_GP0_PLL_CNTL5, 0x00078000),
++};
++
++static struct meson_clk_pll gxl_gp0_pll = {
++	.m = {
++		.reg_off = HHI_GP0_PLL_CNTL,
++		.shift   = 0,
++		.width   = 9,
++	},
++	.n = {
++		.reg_off = HHI_GP0_PLL_CNTL,
++		.shift   = 9,
++		.width   = 5,
++	},
++	.od = {
++		.reg_off = HHI_GP0_PLL_CNTL,
++		.shift   = 16,
++		.width   = 2,
++	},
++	.params = {
++		.params_table = gxl_gp0_params_table,
++		.params_count =	ARRAY_SIZE(gxl_gp0_params_table),
++		.no_init_reset = true,
++		.reset_lock_loop = true,
++	},
++	.rate_table = gxl_gp0_pll_rate_table,
++	.rate_count = ARRAY_SIZE(gxl_gp0_pll_rate_table),
+ 	.lock = &clk_lock,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "gp0_pll",
+@@ -821,6 +893,7 @@ struct pll_params_table gxbb_gp0_params_table[] = {
+ 	&gxbb_hdmi_pll,
+ 	&gxbb_sys_pll,
+ 	&gxbb_gp0_pll,
++	&gxl_gp0_pll,
+ };
+ 
+ static struct meson_clk_mpll *const gxbb_clk_mplls[] = {
+@@ -923,6 +996,10 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	struct clk *parent_clk;
+ 	struct device *dev = &pdev->dev;
+ 
++	/* Override GP0 clock for GXL/GXM */
++	if (of_device_is_compatible(dev->of_node, "amlogic,gxl-clkc"))
++		gxbb_hw_onecell_data.hws[CLKID_GP0_PLL] = &gxl_gp0_pll.hw;
++
+ 	/*  Generic clocks and PLLs */
+ 	clk_base = of_iomap(dev->of_node, 0);
+ 	if (!clk_base) {
+@@ -996,6 +1073,7 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id gxbb_clkc_match_table[] = {
+ 	{ .compatible = "amlogic,gxbb-clkc" },
++	{ .compatible = "amlogic,gxl-clkc" },
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 8ee2022..7f99bf6 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -71,6 +71,8 @@
+ #define HHI_GP0_PLL_CNTL2		0x44 /* 0x11 offset in data sheet */
+ #define HHI_GP0_PLL_CNTL3		0x48 /* 0x12 offset in data sheet */
+ #define HHI_GP0_PLL_CNTL4		0x4c /* 0x13 offset in data sheet */
++#define	HHI_GP0_PLL_CNTL5		0x50 /* 0x14 offset in data sheet */
++#define	HHI_GP0_PLL_CNTL1		0x58 /* 0x16 offset in data sheet */
+ 
+ #define HHI_XTAL_DIVN_CNTL		0xbc /* 0x2f offset in data sheet */
+ #define HHI_TIMER90K			0xec /* 0x3b offset in data sheet */
+-- 
+1.9.1
