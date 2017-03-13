@@ -1,56 +1,88 @@
-Return-Path: <afaerber@suse.de>
-Subject: Re: [PATCH 1/4] ARM64: Prepare Marvell IAP140 aka PXA1908
-To: Ulf Hansson <ulf.hansson@linaro.org>
-References: <20170219032000.4674-1-afaerber@suse.de>
- <20170219032000.4674-2-afaerber@suse.de>
- <CAPDyKFoy-dKTk=t6cmwzbjyntZHrkSyZbtpJ0wAMUDJ5xz4viA@mail.gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, Jason Cooper <jason@lakedaemon.net>,
- Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@free-electrons.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Jisheng Zhang <jszhang@marvell.com>, Daniel Mack <daniel@zonque.org>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>, Eric Miao <eric.y.miao@gmail.com>,
- info@andromedabox.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jslaby@suse.com>, linux-clk <linux-clk@vger.kernel.org>,
- "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
- linux-serial@vger.kernel.org
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Message-ID: <9c1fe53f-d25a-6bba-c324-a08818431795@suse.de>
-Date: Tue, 14 Mar 2017 19:10:29 +0100
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 13 Mar 2017 16:18:50 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
+Message-ID: <20170313141850.GX26640@tbergstrom-lnx.Nvidia.com>
+References: <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
+ <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
+ <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
+ <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
+ <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
+ <f1505f37-cf96-fe04-dfc1-1dd94e20e130@nvidia.com>
+ <CAMuHMdVRa3C4ikaoNDDU21NbRVcPTf0z6fPiJ1nF-VDd+3Dm0g@mail.gmail.com>
+ <313f1245-02aa-496c-3545-5029ece652af@nvidia.com>
+ <20170313104532.GT26640@tbergstrom-lnx.Nvidia.com>
+ <9e81c653-b6bb-a47c-8891-d7c7d42a7650@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFoy-dKTk=t6cmwzbjyntZHrkSyZbtpJ0wAMUDJ5xz4viA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <9e81c653-b6bb-a47c-8891-d7c7d42a7650@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 14.03.2017 um 17:30 schrieb Ulf Hansson:
-> On 19 February 2017 at 04:19, Andreas Färber <afaerber@suse.de> wrote:
->> Suppress COMMON_CLK_PXA and MMC_PXA for now as they don't build on arm64.
->> Also suppress the deprecated SERIAL_PXA in favor of SERIAL_8250_PXA.
->>
->> Signed-off-by: Andreas Färber <afaerber@suse.de>
->> ---
->>  arch/arm64/Kconfig.platforms | 5 +++++
->>  drivers/clk/Kconfig          | 2 +-
->>  drivers/mmc/host/Kconfig     | 2 +-
->>  drivers/tty/serial/Kconfig   | 2 +-
->>  4 files changed, 8 insertions(+), 3 deletions(-)
+On Mon, Mar 13, 2017 at 11:03:27AM +0000, Jon Hunter wrote:
 > 
-> Please try split this up so it can be applied on each subsystem independently.
+> On 13/03/17 10:45, Peter De Schrijver wrote:
+> > On Wed, Mar 08, 2017 at 11:48:21AM +0000, Jon Hunter wrote:
+> >>
+> >> On 08/03/17 11:38, Geert Uytterhoeven wrote:
+> >>> Hi Jon,
+> >>>
+> >>> On Wed, Mar 8, 2017 at 11:13 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
+> >>>>> I had a similar issue with SH-Mobile AG5, where the power domain containing
+> >>>>> the JTAG interface is powered down.
+> >>>>
+> >>>> This reminds me, does your patch assume that the DFD power domain is
+> >>>> enabled? I am guessing that it needs to be for JTAG to work.
+> >>>
+> >>> Yes. The pm-rmobile driver looks for "arm,coresight-etm3x" devices, and
+> >>> marks the corresponding PM Domain as always-on, as long as the
+> >>> Coresight code doesn't handle runtime PM.
+> >>
+> >> Sorry Geert, but I was asking Peter specifically about the power-domain
+> >> on Tegra as I have a feeling we may have the same scenario ;-)
+> > 
+> > We don't have a specific power domain for DFD on Tegra210. It's part of the
+> > non-powergateable core domain.
+> 
+> Either we are getting our wires crossed or the TRM is wrong :-(
+> 
+>  static const char * const tegra210_powergates[] = {
+>          [TEGRA_POWERGATE_CPU] = "crail",
+>          [TEGRA_POWERGATE_3D] = "3d",
+>          [TEGRA_POWERGATE_VENC] = "venc",
+>          [TEGRA_POWERGATE_PCIE] = "pcie",
+>          [TEGRA_POWERGATE_MPE] = "mpe",
+>          [TEGRA_POWERGATE_SATA] = "sata",
+>          [TEGRA_POWERGATE_CPU1] = "cpu1",
+>          [TEGRA_POWERGATE_CPU2] = "cpu2",
+>          [TEGRA_POWERGATE_CPU3] = "cpu3",
+>          [TEGRA_POWERGATE_CPU0] = "cpu0",
+>          [TEGRA_POWERGATE_C0NC] = "c0nc",
+>          [TEGRA_POWERGATE_SOR] = "sor",
+>          [TEGRA_POWERGATE_DIS] = "dis",
+>          [TEGRA_POWERGATE_DISB] = "disb",
+>          [TEGRA_POWERGATE_XUSBA] = "xusba",
+>          [TEGRA_POWERGATE_XUSBB] = "xusbb",
+>          [TEGRA_POWERGATE_XUSBC] = "xusbc",
+>          [TEGRA_POWERGATE_VIC] = "vic",
+>          [TEGRA_POWERGATE_IRAM] = "iram",
+>          [TEGRA_POWERGATE_NVDEC] = "nvdec",
+>          [TEGRA_POWERGATE_NVJPG] = "nvjpg",
+>          [TEGRA_POWERGATE_AUD] = "aud",
+>          [TEGRA_POWERGATE_DFD] = "dfd",
+>          [TEGRA_POWERGATE_VE2] = "ve2",
+>  };
+> 
 
-I believe that comment is obsoleted by later versions of the patchset
-using ARCH_MMP instead?
+This seems to exist indeed. However downstream has never used it, so I wonder
+how well powergating this domain has been tested.
 
-Regards,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Peter.
