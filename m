@@ -1,32 +1,46 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 15 Mar 2017 13:43:07 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] STM32F4 clock fixes
-Message-ID: <20170315204307.GK10239@codeaurora.org>
-References: <1489588071-18164-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1489588071-18164-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	carlo@caione.org,
+	khilman@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 0/5] clk: meson: Fix GXBB and GXL/GXM GP0 PLL
+Date: Mon, 13 Mar 2017 14:26:39 +0100
+Message-Id: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/15, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> This patch-set contains 2 fixes.
-> One concerning exclusion of wrong values for PLLQ (0 & 1)
-> And the second is a fix about timeout management of PLL and LSE/LSI clocks.
+This patchset fixes support for the Amlogic GXBB then GXL/GXM embedded GP0 PLL.
 
-But neither of the patches have a "Fixes" tag. Can you please
-indicate what commits they're fixing?
+The current support is done via a very generic interface where only the
+N/M/OD parameters are changed in the control registers.
+
+But unlike the Fixed PLL, this PLL is not initialized by the bootloader or
+firmware, and needs some parameters to initialize and lock correctly.
+
+This patchset also adds the GXL variant compatible string which is already
+supported by the GXL and GXM DT nodes.
+
+Neil Armstrong (5):
+  clk: meson: Add support for parameters for specific PLLs
+  clk: meson-gxbb: Add GP0 PLL init parameters
+  clk: meson-gxbb: Add GXL/GXM GP0 Variant
+  clk: meson-gxbb: Expose GP0 dt-bindings clock id
+  dt-bindings: clock: gxbb-clkc: Add GXL compatible variant
+
+ .../bindings/clock/amlogic,gxbb-clkc.txt           |  3 +-
+ drivers/clk/meson/clk-pll.c                        | 52 +++++++++++-
+ drivers/clk/meson/clkc.h                           | 23 +++++
+ drivers/clk/meson/gxbb.c                           | 97 +++++++++++++++++++++-
+ drivers/clk/meson/gxbb.h                           |  4 +-
+ include/dt-bindings/clock/gxbb-clkc.h              |  1 +
+ 6 files changed, 173 insertions(+), 7 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
