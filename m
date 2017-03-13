@@ -1,34 +1,55 @@
-Return-Path: <dcb314@hotmail.com>
-From: David Binderman <dcb314@hotmail.com>
-To: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "rjui@broadcom.com"
-	<rjui@broadcom.com>, "sbranden@broadcom.com" <sbranden@broadcom.com>,
-	"jonmason@broadcom.com" <jonmason@broadcom.com>,
-	"bcm-kernel-feedback-list@broadcom.com"
-	<bcm-kernel-feedback-list@broadcom.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: drivers/clk/bcm/clk-iproc-pll.c:280]: (style) Redundant condition
-Date: Mon, 27 Mar 2017 10:47:11 +0000
-Message-ID: <HE1PR0801MB186548205AD0A49B09F6A3149C330@HE1PR0801MB1865.eurprd08.prod.outlook.com>
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	carlo@caione.org,
+	khilman@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 4/5] clk: meson-gxbb: Expose GP0 dt-bindings clock id
+Date: Mon, 13 Mar 2017 14:26:43 +0100
+Message-Id: <1489411604-18700-5-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
+References: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello there,
+This patch exposes the GP0 PLL clock id in the dt bindings.
 
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/gxbb.h              | 2 +-
+ include/dt-bindings/clock/gxbb-clkc.h | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-linux-4.11-rc4/drivers/clk/bcm/clk-iproc-pll.c:280]: (style) Redundant cond=
-ition: If 'rate >=3D 2200000000', the comparison 'rate' is always true.
-
-Source code is
-
-    } else if (rate >=3D VCO_HIGH && rate && rate < VCO_HIGH_HIGH) {
-
-Suggest new code
-
-    } else if (rate >=3D VCO_HIGH  && rate < VCO_HIGH_HIGH) {
-
-Regards
-
-David Binderman
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 7f99bf6..89f1a2c 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -179,7 +179,7 @@
+ /* CLKID_FCLK_DIV4 */
+ #define CLKID_FCLK_DIV5		  7
+ #define CLKID_FCLK_DIV7		  8
+-#define CLKID_GP0_PLL		  9
++/* CLKID_GP0_PLL */
+ #define CLKID_MPEG_SEL		  10
+ #define CLKID_MPEG_DIV		  11
+ /* CLKID_CLK81 */
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index 692846c..febef8b 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -10,6 +10,7 @@
+ #define CLKID_FCLK_DIV2		4
+ #define CLKID_FCLK_DIV3		5
+ #define CLKID_FCLK_DIV4		6
++#define CLKID_GP0_PLL		9
+ #define CLKID_CLK81		12
+ #define CLKID_MPLL2		15
+ #define CLKID_SPI		34
+-- 
+1.9.1
