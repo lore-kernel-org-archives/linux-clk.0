@@ -1,73 +1,42 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	mike.leach@linaro.org,
-	Suzuki.Poulose@arm.com,
-	sudeep.holla@arm.com
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v5 7/9] clk: hi6220: add debug APB clock
-Date: Sun, 26 Mar 2017 02:23:15 +0800
-Message-Id: <1490466197-29163-8-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH 1/7] clk: renesas: r8a7795: Correct parent clock and sort order for Audio DMACs
+Date: Mon, 13 Mar 2017 17:19:48 +0100
+Message-Id: <1489421994-19707-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-The debug APB clock is absent in hi6220 driver, so this patch is to add
-support for it.
+The parent clock of the Audio DMACs is the "ZS" AXI bus clock, which
+maps to S3D1 or R-Car H3 ES1.x.
+All module clocks must be sorted by clock ID.
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
- drivers/clk/hisilicon/clk-hi6220.c       | 1 +
- include/dt-bindings/clock/hi6220-clock.h | 5 ++++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
-index c0e8e1f..2ae151c 100644
---- a/drivers/clk/hisilicon/clk-hi6220.c
-+++ b/drivers/clk/hisilicon/clk-hi6220.c
-@@ -134,6 +134,7 @@ static struct hisi_gate_clock hi6220_separated_gate_clks_sys[] __initdata = {
- 	{ HI6220_UART4_PCLK,    "uart4_pclk",    "uart4_src",      CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 8,  0, },
- 	{ HI6220_SPI_CLK,       "spi_clk",       "clk_150m",       CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 9,  0, },
- 	{ HI6220_TSENSOR_CLK,   "tsensor_clk",   "clk_bus",        CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 12, 0, },
-+	{ HI6220_DAPB_CLK,      "dapb_clk",      "cs_dapb",        CLK_SET_RATE_PARENT|CLK_IS_CRITICAL,   0x230, 18, 0, },
- 	{ HI6220_MMU_CLK,       "mmu_clk",       "ddrc_axi1",      CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x240, 11, 0, },
- 	{ HI6220_HIFI_SEL,      "hifi_sel",      "hifi_src",       CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x270, 0,  0, },
- 	{ HI6220_MMC0_SYSPLL,   "mmc0_syspll",   "syspll",         CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x270, 1,  0, },
-diff --git a/include/dt-bindings/clock/hi6220-clock.h b/include/dt-bindings/clock/hi6220-clock.h
-index 6b03c84..b8ba665 100644
---- a/include/dt-bindings/clock/hi6220-clock.h
-+++ b/include/dt-bindings/clock/hi6220-clock.h
-@@ -124,7 +124,10 @@
- #define HI6220_CS_DAPB		57
- #define HI6220_CS_ATB_DIV	58
- 
--#define HI6220_SYS_NR_CLKS	59
-+/* gate clock */
-+#define HI6220_DAPB_CLK		59
-+
-+#define HI6220_SYS_NR_CLKS	60
- 
- /* clk in Hi6220 media controller */
- /* gate clocks */
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 2add8218e0f7a6c0..cde470ce81e449cf 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -142,8 +142,8 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+ 	DEF_MOD("rwdt0",		 402,	R8A7795_CLK_R),
+ 	DEF_MOD("intc-ex",		 407,	R8A7795_CLK_CP),
+ 	DEF_MOD("intc-ap",		 408,	R8A7795_CLK_S3D1),
+-	DEF_MOD("audmac0",		 502,	R8A7795_CLK_S3D4),
+-	DEF_MOD("audmac1",		 501,	R8A7795_CLK_S3D4),
++	DEF_MOD("audmac1",		 501,	R8A7795_CLK_S3D1),
++	DEF_MOD("audmac0",		 502,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("drif7",		 508,	R8A7795_CLK_S3D2),
+ 	DEF_MOD("drif6",		 509,	R8A7795_CLK_S3D2),
+ 	DEF_MOD("drif5",		 510,	R8A7795_CLK_S3D2),
 -- 
 2.7.4
