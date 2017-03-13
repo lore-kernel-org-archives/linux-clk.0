@@ -1,86 +1,400 @@
-Return-Path: <wens@csie.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Mon, 13 Mar 2017 10:29:33 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	mike.leach@linaro.org
+Subject: Re: [v3 3/5] coresight: add support for debug module
+Message-ID: <20170313162933.GA32431@linaro.org>
+References: <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
+ <011fdac0-59bf-b539-2de3-0b59a41bc922@arm.com>
+ <20170309175915.GA964@leoy-linaro>
 MIME-Version: 1.0
-In-Reply-To: <20170326205124.vdjbmjukfysgbefc@lukather>
-References: <20170214033526.16977-1-wens@csie.org> <20170214033526.16977-5-wens@csie.org>
- <20170214095819.utsftcvti5zdmlmi@lukather> <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
- <20170215094954.h3wyaxlqkeb342yu@lukather> <CAGb2v67ey1Ppc3wf1154QKoCX-xsOjWDEsXi5gxPbL4MY37zHw@mail.gmail.com>
- <20170326205124.vdjbmjukfysgbefc@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 27 Mar 2017 16:53:05 +0800
-Message-ID: <CAGb2v647bc0VdYTQDyEjAerKnfjtkDYGdhnUgpTU-Tuns6FYYA@mail.gmail.com>
-Subject: Re: [PATCH 4/5] clk: sunxi-ng: Add driver for A83T CCU
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170309175915.GA964@leoy-linaro>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 27, 2017 at 4:51 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi Chen-Yu,
->
-> On Wed, Mar 22, 2017 at 02:50:31PM +0800, Chen-Yu Tsai wrote:
->> On Wed, Feb 15, 2017 at 5:49 PM, Maxime Ripard
->> <maxime.ripard@free-electrons.com> wrote:
->> > On Tue, Feb 14, 2017 at 06:26:39PM +0800, Chen-Yu Tsai wrote:
->> >> On Tue, Feb 14, 2017 at 5:58 PM, Maxime Ripard
->> >> <maxime.ripard@free-electrons.com> wrote:
->> >> > On Tue, Feb 14, 2017 at 11:35:25AM +0800, Chen-Yu Tsai wrote:
->> >> >> +/* Some PLLs are input * N / div1 / P. Model them as NKMP with no K */
->> >> >
->> >> > Is that even working?
->> >>
->> >> Looking at the nkmp clock code, only .recalc_rate will work properly though.
->> >> Maybe I could fix up the code so it handles zero width factors.
->> >>
->> >> > I'm not quite sure we want to do that. We might model it as a NP clock
->> >> > with a variable prediv?
->> >>
->> >> There's no NP clock type yet. And a problem with a variable prediv is that
->> >> it doesn't participate in factor calculation. It's effectively fixed.
->> >>
->> >> I did this for the A80 as well though. Fixing up the NKMP clock might be
->> >> easier.
->> >
->> > Then maybe we just need a NMP clock type then. What I'm really afraid
->> > of is that we'll just end up in a clk-factors situation that was
->> > simply impossible to maintain without breaking anything, hence why we
->> > had different clock types then.
->>
->> Upon further review, I think it will work. I did notice a discrepancy
->> between .set_rate and .round_rate though. Will send fixes later.
->>
->> About the old clk-factors situation, I'm not exactly sure what part
->> you're referring to.
->
-> We need to be able to support old DTs, which will still use the old
-> clock code. Whatever solution we come up with need to take that into
-> account.
->
->> To me it seems the "factors" bits are mostly the same. Differences
->> are mostly with parent-specific pre-dividers, clock post-dividers,
->> and non-standard factors. The first is nicely handled by the new mux
->> wrapper, the second is currently only used with NK types, and the
->> last is currently only supported by single factor divider or
->> multiplier clocks with tables.
->>
->> Non-standard factors are probably the trickiest one, but given we will
->> support full factor tables for some of the tricky CPU PLLs, this is
->> probably solved, even if not implemented yet.
->>
->> I'll start with the NP style clocks, which only use P when the output
->> is under a certain frequency.
->
-> Do we need to use a P factor? I mean, we can just create a custom
-> clock for that, I'd realy don't want to cripple the generic code for a
-> completely non-generic problem.
+On Fri, Mar 10, 2017 at 01:59:15AM +0800, Leo Yan wrote:
+> Hi Suziku,
+> 
+> Thanks for reviewing, please see some replying.
+> 
+> On Thu, Mar 09, 2017 at 04:53:05PM +0000, Suzuki K Poulose wrote:
+> > On 03/03/17 06:00, Leo Yan wrote:
+> > >Coresight includes debug module and usually the module connects with CPU
+> > >debug logic. ARMv8 architecture reference manual (ARM DDI 0487A.k) has
+> > >description for related info in "Part H: External Debug".
+> > >
+> > >Chapter H7 "The Sample-based Profiling Extension" introduces several
+> > >sampling registers, e.g. we can check program counter value with
+> > >combined CPU exception level, secure state, etc. So this is helpful for
+> > >analysis CPU lockup scenarios, e.g. if one CPU has run into infinite
+> > >loop with IRQ disabled. In this case the CPU cannot switch context and
+> > >handle any interrupt (including IPIs), as the result it cannot handle
+> > >SMP call for stack dump.
+> > >
+> > >This patch is to enable coresight debug module, so firstly this driver
+> > >is to bind apb clock for debug module and this is to ensure the debug
+> > >module can be accessed from program or external debugger. And the driver
+> > >uses sample-based registers for debug purpose, e.g. when system detects
+> > >the CPU lockup and trigger panic, the driver will dump program counter
+> > >and combined context registers (EDCIDSR, EDVIDSR); by parsing context
+> > >registers so can quickly get to know CPU secure state, exception level,
+> > >etc.
+> > 
+> > The problem is, it is not guaranteed that the EDPCSR_Hi, EDCIDSR & EDVIDSR are
+> > updated as a side effect of a memory mapped access (which is what we do here) to the
+> > EDPCSR_Lo.
+> > 
+> > Section H.7.1.2 : Reads of EDPCSRs (in ARM DDI 0487A.k) :
+> > 
+> > "The indirect writes to EDCIDSR, EDVIDSR, and EDPCSRhi might not occur for a memory-mapped access
+> > to the external debug interface. For more information, see Memory-mapped accesses to the external debug
+> > interface on page H8-4968."
+> > 
+> > So we cannot really rely on the values in EDVIDSR which we use to make further decisions. So I
+> > am wondering if this is really guranteed to be useful.
+> 
+> So this is caused by Software lock is locked?
+> 
+> Section H8.4.1: 
+> 
+> "Reads and writes have no side-effects. A side-effect is where a
+> direct read or a direct write of a register creates
+> an indirect write of the same or another register. When the Software
+> Lock is locked, the indirect write does
+> not occur."
+> 
+> > >Some of the debug module registers are located in CPU power domain, so
+> > >in the driver it has checked the power state for CPU before accessing
+> > >registers within CPU power domain. For most safe way to use this driver,
+> > >it's suggested to disable CPU low power states, this can simply set
+> > >"nohlt" in kernel command line.
+> > >
+> > >Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > >---
+> > > drivers/hwtracing/coresight/Kconfig           |  10 +
+> > > drivers/hwtracing/coresight/Makefile          |   1 +
+> > > drivers/hwtracing/coresight/coresight-debug.c | 377 ++++++++++++++++++++++++++
+> > > 3 files changed, 388 insertions(+)
+> > > create mode 100644 drivers/hwtracing/coresight/coresight-debug.c
+> > >
+> > >diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+> > >index 130cb21..3ed651e 100644
+> > >--- a/drivers/hwtracing/coresight/Kconfig
+> > >+++ b/drivers/hwtracing/coresight/Kconfig
+> > >@@ -89,4 +89,14 @@ config CORESIGHT_STM
+> > > 	  logging useful software events or data coming from various entities
+> > > 	  in the system, possibly running different OSs
+> > >
+> > >+config CORESIGHT_DEBUG
+> > 
+> > To make it more specific, may be CORESIGHT_CPU_DEBUG ?
+> 
+> Will fix.
+> 
+> > >+	bool "CoreSight debug driver"
+> > 
+> > "Coresight CPU Debug driver"
+> 
+> Will fix.
+> 
+> > >+	depends on ARM || ARM64
+> > >+	help
+> > >+	  This driver provides support for coresight debugging module. This
+> > >+	  is primarily used to dump sample-based profiling registers for
+> > >+	  panic. To avoid lockups when accessing debug module registers,
+> > >+	  it is safer to disable CPU low power states (like "nohlt" on the
+> > >+	  kernel command line) when using this feature.
+> > >+
+> > 
+> > >+#define EDPCSR_THUMB			BIT(0)
+> > >+#define EDPCSR_ARM_INST_MASK		GENMASK(31, 2)
+> > >+#define EDPCSR_THUMB_INST_MASK		GENMASK(31, 1)
+> > 
+> > We don't need two different masks. {ED/DBG}PCSR has only bit 0 reserved
+> > for instruction set indication.
+> 
+> I think we need this two different masks. Please review below extra doc
+> for PC offset analysis in ARM ARM.
+> 
+> > >+#endif
+> > >+
+> > >+/* bits definition for EDPRSR */
+> > >+#define EDPRSR_DLK			BIT(6)
+> > >+#define EDPRSR_PU			BIT(0)
+> > >+
+> > >+
+> > >+static void debug_read_regs(struct debug_drvdata *drvdata)
+> > >+{
+> > >+	drvdata->edprsr = readl_relaxed(drvdata->base + EDPRSR);
+> > >+
+> > >+	if (!debug_access_permitted(drvdata))
+> > >+		return;
+> > >+
+> > >+	if (!drvdata->edpcsr_present)
+> > >+		return;
+> > >+
+> > >+	CS_UNLOCK(drvdata->base);
+> > >+
+> > >+	debug_os_unlock(drvdata);
+> > >+
+> > >+	drvdata->edpcsr = readl_relaxed(drvdata->base + EDPCSR);
+> > >+
+> > >+	/*
+> > >+	 * As described in ARM DDI 0487A.k, if the processing
+> > >+	 * element (PE) is in debug state, or sample-based
+> > >+	 * profiling is prohibited, EDPCSR reads as 0xFFFFFFFF;
+> > >+	 * EDCIDSR, EDVIDSR and EDPCSR_HI registers also become
+> > >+	 * UNKNOWN state. So directly bail out for this case.
+> > >+	 */
+> > >+	if (drvdata->edpcsr == EDPCSR_PROHIBITED) {
+> > >+		CS_LOCK(drvdata->base);
+> > >+		return;
+> > >+	}
+> > >+
+> > >+	/*
+> > >+	 * A read of the EDPCSR normally has the side-effect of
+> > >+	 * indirectly writing to EDCIDSR, EDVIDSR and EDPCSR_HI;
+> > >+	 * at this point it's safe to read value from them.
+> > >+	 */
+> > 
+> > See my comment above about the side effects of memory mapped access.
+> 
+> Yeah.
+> 
+> > >+	drvdata->edcidsr = readl_relaxed(drvdata->base + EDCIDSR);
+> > >+#ifdef CONFIG_64BIT
+> > >+	drvdata->edpcsr_hi = readl_relaxed(drvdata->base + EDPCSR_HI);
+> > >+#endif
+> > 
+> > >+
+> > >+	if (drvdata->edvidsr_present)
+> > >+		drvdata->edvidsr = readl_relaxed(drvdata->base + EDVIDSR);
+> > >+
+> > >+	CS_LOCK(drvdata->base);
+> > >+}
+> > >+
+> > 
+> > >+#ifndef CONFIG_64BIT
+> > 
+> > I guess this doesn't help for an ARMv8 32bit only core (e.g, Cortex-A32). And
+> > unfortunately, there are conflicting definitions for the values for PCSROffset w.r.t
+> > ARMv8 and ARMv7.
+> > 
+> > DBGDEVID1[3:0] For ARMv7 :
+> > 
+> > 0000 - Sample offset applies based on the instruction state.
+> > 0001 - No offset applies.
+> > 
+> > EDDEVID1[3:0] For ARMv8 :
+> > 0000 - EDPCSR not implemented
+> > 0010 - EDPCSR implemented without offsets, but do not use in AArch32 state!
+> > 
+> > So there is no easy way to make sense of the value, unless you know which version
+> > of the architecture is in use. Or may be we could co-relate it with the value from
+> > DEVID.
+> > 
+> > i.e, EDPCSR is not implemented do not register this device, see comments on debug_probe().
+> > ( And we should also include the following test for 32bit code to see if edpcsr is implemented.
+> > See comments on debug_init_arch_data() )
+> > 
+> > 
+> > That way, we could use the following inference from the PCSROffset value :
+> > 
+> > 0000 - Sample offset applies based on the instruction state (indicated by PCSR[0])
+> > 0001 - No offset applies.
+> > 0010 - No offset applies, but do not use in AArch32 mode
+> 
+> Just now I went through ARM ARM and ARMv8 ARM, this makes sense to me.
+> Thanks for good pointing for this.
+> 
+> > >+static bool debug_pc_has_offset(struct debug_drvdata *drvdata)
+> > >+{
+> > >+	u32 pcsr_offset;
+> > >+
+> > >+	pcsr_offset = drvdata->eddevid1 & EDDEVID1_PCSR_OFFSET_MASK;
+> > >+
+> > >+	return (pcsr_offset == EDDEVID1_PCSR_OFFSET_INS_SET);
+> > >+}
+> > >+
+> > >+static unsigned long debug_adjust_pc(struct debug_drvdata *drvdata,
+> > >+				     unsigned long pc)
+> > >+{
+> > >+	unsigned long arm_inst_offset = 0, thumb_inst_offset = 0;
+> > >+
+> > >+	if (debug_pc_has_offset(drvdata)) {
+> > >+		arm_inst_offset = 8;
+> > >+		thumb_inst_offset = 4;
+> > >+	}
+> > >+
+> > >+	/* Handle thumb instruction */
+> > >+	if (pc & EDPCSR_THUMB) {
+> > >+		pc = (pc & EDPCSR_THUMB_INST_MASK) - thumb_inst_offset;
+> > >+		return pc;
+> > >+	}
+> > >+
+> > >+	/*
+> > >+	 * Handle arm instruction offset, if the arm instruction
+> > >+	 * is not 4 byte alignment then it's possible the case
+> > >+	 * for implementation defined; keep original value for this
+> > >+	 * case and print info for notice.
+> > >+	 */
+> > >+	if (pc & BIT(1))
+> > >+		pr_emerg("Instruction offset is implementation defined\n");
+> > 
+> > I am struggling to find the any mention about this in the ARM ARM. Please could
+> > you point me to it.
+> 
+> Sure, please see ARM DDI 0406C.b, chapter C11.11.34 "
+> DBGPCSR, Program Counter Sampling Register":
+> 
+> A profiling tool can use the value of the T bit to calculate the
+> instruction address as follows:
+> 
+> When an offset is applied to the sampled address
+> - if T is 0 and DBGPCSR[1] is 0, ((DBGPCSR[31:2] << 2) - 8) is the
+> address of the sampled ARM instruction
+> - if T is 0 and DBGPCSR[1] is 1, the instruction address is
+> IMPLEMENTATION DEFINED
+> - if T is 1, ((DBGPCSR[31:1] << 1) - 4) is the address of the sampled
+> Thumb or ThumbEE instruction.
+> 
+> When no offset is applied to the sampled address
+> -  if T is 0 and DBGPCSR[1] is 0, (DBGPCSR[31:2] << 2) is the address
+> of the sampled ARM instruction
+> -  if T is 0 and DBGPCSR[1] is 1, the instruction address is
+> IMPLEMENTATION DEFINED
+> - if T is 1, (DBGPCSR[31:1] << 1) is the address of the sampled Thumb
+> or ThumbEE instruction.
+> 
+> > >+static void debug_init_arch_data(void *info)
+> > >+{
+> > >+	struct debug_drvdata *drvdata = info;
+> > >+	u32 mode;
+> > >+
+> > >+	CS_UNLOCK(drvdata->base);
+> > >+
+> > >+	debug_os_unlock(drvdata);
+> > >+
+> > >+	/* Read device info */
+> > >+	drvdata->eddevid  = readl_relaxed(drvdata->base + EDDEVID);
+> > >+	drvdata->eddevid1 = readl_relaxed(drvdata->base + EDDEVID1);
+> > >+
+> > >+	/* Parse implementation feature */
+> > >+	mode = drvdata->eddevid & EDDEVID_PCSAMPLE_MODE;
+> > >+	if (mode == EDDEVID_IMPL_FULL) {
+> > >+		drvdata->edpcsr_present  = true;
+> > >+		drvdata->edvidsr_present = true;
+> > >+	} else if (mode == EDDEVID_IMPL_EDPCSR_EDCIDSR) {
+> > >+		drvdata->edpcsr_present  = true;
+> > >+		drvdata->edvidsr_present = false;
+> > 
+> > As discussed above, we need to consult the DEVID1:PCSROffset for AArch32 to decide
+> > if we have the edpcsr implemented on ARMv8.
+> 
+> Yeah.
+> 
+> > >+	} else {
+> > >+		drvdata->edpcsr_present  = false;
+> > >+		drvdata->edvidsr_present = false;
+> > >+	}
+> > >+
+> > >+	CS_LOCK(drvdata->base);
+> > >+}
+> > >+
+> > >+static int debug_probe(struct amba_device *adev, const struct amba_id *id)
+> > >+{
+> > >+	void __iomem *base;
+> > >+	struct device *dev = &adev->dev;
+> > >+	struct debug_drvdata *drvdata;
+> > >+	struct resource *res = &adev->res;
+> > >+	struct device_node *np = adev->dev.of_node;
+> > >+	char buf[32];
+> > >+	static int debug_count;
+> > >+
+> > >+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+> > >+	if (!drvdata)
+> > >+		return -ENOMEM;
+> > >+
+> > >+	drvdata->cpu = np ? of_coresight_get_cpu(np) : 0;
+> > >+	drvdata->dev = &adev->dev;
+> > >+
+> > >+	dev_set_drvdata(dev, drvdata);
+> > >+
+> > >+	/* Validity for the resource is already checked by the AMBA core */
+> > >+	base = devm_ioremap_resource(dev, res);
+> > >+	if (IS_ERR(base))
+> > >+		return PTR_ERR(base);
+> > >+
+> > >+	drvdata->base = base;
+> > >+
+> > >+	get_online_cpus();
+> > >+	per_cpu(debug_drvdata, drvdata->cpu) = drvdata;
+> > >+
+> > >+	if (smp_call_function_single(drvdata->cpu,
+> > >+				debug_init_arch_data, drvdata, 1))
+> > >+		dev_err(dev, "Debug arch init failed\n");
+> > 
+> > If this fails (say the CPU was offline), should we still return success ?
+> > And may be we should check if the drvdata->edpcsr_present to detect if the CPU
+> > implements the PC Sampling and return failure here if it doesn't.
+> 
+> Will fix.
+> 
+> > >+
+> > >+	put_online_cpus();
+> > >+
+> > >+	if (!debug_count++)
+> > >+		atomic_notifier_chain_register(&panic_notifier_list,
+> > >+					       &debug_notifier);
+> > >+
+> > 
+> > >+	sprintf(buf, (char *)id->data, drvdata->cpu);
+> > >+	dev_info(dev, "%s initialized\n", buf);
+> > 
+> > This could simply be :
+> > 	dev_info(dev, "Coresight debug-CPU%d initialized\n", drvdata->cpu);
+> > 
+> > and get rid of the static string and the buffer, see below.
+> > 
+> > >+	return 0;
+> > >+}
+> > >+
+> > >+static struct amba_id debug_ids[] = {
+> > >+	{       /* Debug for Cortex-A53 */
+> > >+		.id	= 0x000bbd03,
+> > >+		.mask	= 0x000fffff,
+> > 
+> > ...
+> > 
+> > >+		.data   = "Coresight debug-CPU%d",
+> > 
+> > I think this is pointless, as the debug area we are interested in is always associated
+> > with a CPU, we could as well figure out what to print from the drvdata->cpu above.
+> 
+> I prefer to follow your suggestion for upper two comments; but I'd like
+> check with Mathieu, due I followed up Mathieu's suggestion to write
+> current code.
 
-I'm not sure. AFAIK the vendor BSP cpufreq doesn't use frequencies
-low enough to require the P divider, so we could just ignore it. But
-then we need to make sure it's set to 1 at probe time, while keeping
-the output frequency usable, which would kind of bloat the probe
-function. FYI I'm in favor of doing it this way.
+The end result is the same - I'm good either way.
 
-ChenYu
+Thanks,
+Mathieu
+
+> 
+> Thanks,
+> Leo Yan
