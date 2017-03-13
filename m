@@ -1,130 +1,55 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	mike.leach@linaro.org,
-	Suzuki.Poulose@arm.com,
-	sudeep.holla@arm.com
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v5 4/9] coresight: refactor with function of_coresight_get_cpu
-Date: Sun, 26 Mar 2017 02:23:12 +0800
-Message-Id: <1490466197-29163-5-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/7] clk: renesas: rcar-gen3: Misc fixes and cleanups
+Date: Mon, 13 Mar 2017 17:19:47 +0100
+Message-Id: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is refactor to add function of_coresight_get_cpu(), so it's used to
-retrieve CPU id for coresight component. Finally can use it as a common
-function for multiple places.
+	Hi Mike, Stephen,
 
-Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- drivers/hwtracing/coresight/of_coresight.c | 43 +++++++++++++++++++-----------
- include/linux/coresight.h                  |  2 ++
- 2 files changed, 30 insertions(+), 15 deletions(-)
+This patch series contains miscellaneous fixes and cleanups for the
+Renesas R-Car Gen3 (H3 and M3-W) clock drivers:
+  - Correct parent clock for Audio DMACs,
+  - Correct names of watchdog clocks,
+  - Reformat core clock tables for easier comparisons between drivers,
+  - Add workaround for PLL0/2/4 errata on R-Car H3 ES1.0.
 
-diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-index 1a77280..78d2399 100644
---- a/drivers/hwtracing/coresight/of_coresight.c
-+++ b/drivers/hwtracing/coresight/of_coresight.c
-@@ -101,15 +101,39 @@ static int of_coresight_alloc_memory(struct device *dev,
- 	return 0;
- }
- 
-+int of_coresight_get_cpu(struct device_node *node)
-+{
-+	int cpu;
-+	bool found;
-+	struct device_node *dn, *np;
-+
-+	dn = of_parse_phandle(node, "cpu", 0);
-+
-+	/* Affinity defaults to CPU0 */
-+	if (!dn)
-+		return 0;
-+
-+	for_each_possible_cpu(cpu) {
-+		np = of_cpu_device_node_get(cpu);
-+		found = (dn == np);
-+		of_node_put(np);
-+		if (found)
-+			break;
-+	}
-+	of_node_put(dn);
-+
-+	/* Affinity to CPU0 if no cpu nodes are found */
-+	return found ? cpu : 0;
-+}
-+EXPORT_SYMBOL_GPL(of_coresight_get_cpu);
-+
- struct coresight_platform_data *of_get_coresight_platform_data(
- 				struct device *dev, struct device_node *node)
- {
--	int i = 0, ret = 0, cpu;
-+	int i = 0, ret = 0;
- 	struct coresight_platform_data *pdata;
- 	struct of_endpoint endpoint, rendpoint;
- 	struct device *rdev;
--	bool found;
--	struct device_node *dn, *np;
- 	struct device_node *ep = NULL;
- 	struct device_node *rparent = NULL;
- 	struct device_node *rport = NULL;
-@@ -176,18 +200,7 @@ struct coresight_platform_data *of_get_coresight_platform_data(
- 		} while (ep);
- 	}
- 
--	dn = of_parse_phandle(node, "cpu", 0);
--	for_each_possible_cpu(cpu) {
--		np = of_cpu_device_node_get(cpu);
--		found = (dn == np);
--		of_node_put(np);
--		if (found)
--			break;
--	}
--	of_node_put(dn);
--
--	/* Affinity to CPU0 if no cpu nodes are found */
--	pdata->cpu = found ? cpu : 0;
-+	pdata->cpu = of_coresight_get_cpu(node);
- 
- 	return pdata;
- }
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index 2a5982c..bf96678 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -263,9 +263,11 @@ static inline int coresight_timeout(void __iomem *addr, u32 offset,
- #endif
- 
- #ifdef CONFIG_OF
-+extern int of_coresight_get_cpu(struct device_node *node);
- extern struct coresight_platform_data *of_get_coresight_platform_data(
- 				struct device *dev, struct device_node *node);
- #else
-+static inline int of_coresight_get_cpu(struct device_node *node) { return 0; }
- static inline struct coresight_platform_data *of_get_coresight_platform_data(
- 	struct device *dev, struct device_node *node) { return NULL; }
- #endif
+I plan to queue these up in clk-renesas-for-v4.12.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (7):
+  clk: renesas: r8a7795: Correct parent clock and sort order for Audio
+    DMACs
+  clk: renesas: r8a7795: Correct name of watchdog clock
+  clk: renesas: r8a7796: Correct name of watchdog clock
+  clk: renesas: r8a7795: Reformat core clock table
+  clk: renesas: r8a7796: Reformat core clock table
+  clk: renesas: rcar-gen3-cpg: Pass mode pins to rcar_gen3_cpg_init()
+  clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3
+    ES1.0
+
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 28 ++++++++++++++--------------
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 16 ++++++++--------
+ drivers/clk/renesas/rcar-gen3-cpg.c    | 28 +++++++++++++++++++++++++++-
+ drivers/clk/renesas/rcar-gen3-cpg.h    |  2 +-
+ 4 files changed, 50 insertions(+), 24 deletions(-)
+
 -- 
 2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
