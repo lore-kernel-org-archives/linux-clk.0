@@ -1,47 +1,90 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 01/15] clk: ti: remove un-used definitions from public clk_hw_omap struct
-Date: Sat, 11 Mar 2017 14:49:52 +0200
-Message-ID: <1489236606-24023-2-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
-References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 6/7] clk: renesas: rcar-gen3-cpg: Pass mode pins to rcar_gen3_cpg_init()
+Date: Mon, 13 Mar 2017 17:19:53 +0100
+Message-Id: <1489421994-19707-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clksel support has been deprecated a while back, so remove these from
-the struct also.
+Pass the mode pin states from the SoC-specific CPG/MSSR driver to the
+R-Car Gen3 CPG driver core, as their state will be needed to make some
+core clock configuration decisions.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/linux/clk/ti.h | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 2 +-
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 +-
+ drivers/clk/renesas/rcar-gen3-cpg.c    | 4 +++-
+ drivers/clk/renesas/rcar-gen3-cpg.h    | 2 +-
+ 4 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 6110fe0..07308db 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -129,8 +129,6 @@ struct clk_hw_omap_ops {
-  * @enable_bit: bitshift to write to enable/disable the clock (see @enable_reg)
-  * @flags: see "struct clk.flags possibilities" above
-  * @clksel_reg: for clksel clks, register va containing src/divisor select
-- * @clksel_mask: bitmask in @clksel_reg for the src/divisor selector
-- * @clksel: for clksel clks, pointer to struct clksel for this clock
-  * @dpll_data: for DPLLs, pointer to struct dpll_data for this clock
-  * @clkdm_name: clockdomain name that this clock is contained in
-  * @clkdm: pointer to struct clockdomain, resolved from @clkdm_name at runtime
-@@ -145,8 +143,6 @@ struct clk_hw_omap {
- 	u8			enable_bit;
- 	u8			flags;
- 	void __iomem		*clksel_reg;
--	u32			clksel_mask;
--	const struct clksel	*clksel;
- 	struct dpll_data	*dpll_data;
- 	const char		*clkdm_name;
- 	struct clockdomain	*clkdm;
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 608178618da87bef..4699f416e275d924 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -330,7 +330,7 @@ static int __init r8a7795_cpg_mssr_init(struct device *dev)
+ 		return -EINVAL;
+ 	}
+ 
+-	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR);
++	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
+ }
+ 
+ const struct cpg_mssr_info r8a7795_cpg_mssr_info __initconst = {
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index f7787101b8d0406c..9d114b31b0731b5e 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -273,7 +273,7 @@ static int __init r8a7796_cpg_mssr_init(struct device *dev)
+ 		return -EINVAL;
+ 	}
+ 
+-	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR);
++	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
+ }
+ 
+ const struct cpg_mssr_info r8a7796_cpg_mssr_info __initconst = {
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 742f6dc7c15653ef..d395bb8c22f575cf 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -247,6 +247,7 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+ 
+ static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
+ static unsigned int cpg_clk_extalr __initdata;
++static u32 cpg_mode __initdata;
+ 
+ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+@@ -334,9 +335,10 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ }
+ 
+ int __init rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
+-			      unsigned int clk_extalr)
++			      unsigned int clk_extalr, u32 mode)
+ {
+ 	cpg_pll_config = config;
+ 	cpg_clk_extalr = clk_extalr;
++	cpg_mode = mode;
+ 	return 0;
+ }
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index f788f481dd42cdf6..073be54b5d038ae3 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -37,6 +37,6 @@ struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
+ 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+ 	struct clk **clks, void __iomem *base);
+ int rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
+-		       unsigned int clk_extalr);
++		       unsigned int clk_extalr, u32 mode);
+ 
+ #endif
 -- 
-1.9.1
+2.7.4
