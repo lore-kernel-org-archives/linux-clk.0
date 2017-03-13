@@ -1,36 +1,41 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,  Helmut Klein <hgkr.klein@gmail.com>,  mturquette@baylibre.com,  sboyd@codeaurora.org,  devicetree@vger.kernel.org,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,  linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v2,1/3] meson_uart: expose CLKID_UARTx
-References: <20170328092545.4644-1-hgkr.klein@gmail.com>
-	<20170328092545.4644-2-hgkr.klein@gmail.com>
-	<1490716277.20764.6.camel@baylibre.com>
-	<71489b62-78c8-7082-587e-8598dc43ca59@gmail.com>
-	<1490728490.20764.8.camel@baylibre.com>
-	<CAFBinCDF29+kQpedsJPqRy6fztWrj91Qi6tCno_2S6UCkhW7XQ@mail.gmail.com>
-Date: Wed, 29 Mar 2017 13:21:11 -0700
-In-Reply-To: <CAFBinCDF29+kQpedsJPqRy6fztWrj91Qi6tCno_2S6UCkhW7XQ@mail.gmail.com>
-	(Martin Blumenstingl's message of "Tue, 28 Mar 2017 23:24:15 +0200")
-Message-ID: <m2y3vn6dhk.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	carlo@caione.org,
+	khilman@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 5/5] dt-bindings: clock: gxbb-clkc: Add GXL compatible variant
+Date: Mon, 13 Mar 2017 14:26:44 +0100
+Message-Id: <1489411604-18700-6-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
+References: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-[...]
-
-> for Helmut this would mean that instead of dropping this patch (or
-> dropping CLKID_UART1 and CLKID_UART2 from this patch) he would rather
-> have to *add* another patch (for meson-gxbb.dtsi and meson-gxl.dtsi)
-> which passes the core clocks to the corresponding UART controllers
-> (similar to the CLKID_SD_EMMC_ clocks).
-
-Yes, this is what I would like to see.
-
-If a new CLKID is exposed, I want to see the users of it at the same
-time.
-
-Kevin
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+index ce06435..a09d627 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+@@ -5,7 +5,8 @@ controllers within the SoC.
+ 
+ Required Properties:
+ 
+-- compatible: should be "amlogic,gxbb-clkc"
++- compatible: should be "amlogic,gxbb-clkc" for GXBB SoC,
++	      or "amlogic,gxl-clkc" for GXL and GXM SoC.
+ - reg: physical base address of the clock controller and length of memory
+        mapped region.
+ 
+-- 
+1.9.1
