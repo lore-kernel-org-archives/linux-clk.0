@@ -1,49 +1,59 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v3 0/2] rockchip: fix serial output on rk3036
-Date: Wed,  1 Mar 2017 22:00:40 +0100
-Message-Id: <20170301210042.11352-1-heiko@sntech.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:37692 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751291AbdCMQUK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Mar 2017 12:20:10 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 5/7] clk: renesas: r8a7796: Reformat core clock table
+Date: Mon, 13 Mar 2017 17:19:52 +0100
+Message-Id: <1489421994-19707-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Recent changes to the 8250-dw variant revealed issues concerning
-how the clock rates are handled on the rk3036 uart.
+For easier comparison with other clock drivers.
+No functional changes.
 
-For one, there was an error in the clock declaration, but also the
-shared uart-pll-select-mux also as default got supplied from the apll
-that also supplies the cpu and thus gets frequency scaled.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-The patches in this series remedy this and make the debug uart
-function again on 4.10 + current merge window.
-
-
-As for the merge-path, I've now tested all Rockchip socs I have access
-to (3036, 3288, 3368, 3399) and didn't find any more clock-related issues
-with the merge-window as of today. So if no other subtle issue turns up
-this week, these should be all fixes for the 4.11 cycle.
-So these 2 patches could be picked up by clock-maintainers directly if
-so desired, or I can send a pull request after the merge-window closes
-and we're save to say that nothing else broke.
-
-changes in v3:
-- use a direct register write, instead of using clock apis
-
-changes in v2:
-- Fixes tag for the missing ","
-- do reparenting in the driver itself
-- drop clock-id addition, as they're not needed for the fix anymore
-
-Heiko Stuebner (2):
-  clk: rockchip: add "," to mux_pll_src_apll_dpll_gpll_usb480m_p on
-    rk3036
-  clk: rockchip: Make uartpll a child of the gpll on rk3036
-
- drivers/clk/rockchip/clk-rk3036.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 55003194a2561c95..f7787101b8d0406c 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -54,8 +54,8 @@ enum clk_ids {
+ 
+ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ 	/* External Clock Inputs */
+-	DEF_INPUT("extal",  CLK_EXTAL),
+-	DEF_INPUT("extalr", CLK_EXTALR),
++	DEF_INPUT("extal",      CLK_EXTAL),
++	DEF_INPUT("extalr",     CLK_EXTALR),
+ 
+ 	/* Internal Core Clocks */
+ 	DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_GEN3_MAIN, CLK_EXTAL),
+@@ -95,10 +95,10 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ 	DEF_FIXED("s3d2",       R8A7796_CLK_S3D2,  CLK_S3,         2, 1),
+ 	DEF_FIXED("s3d4",       R8A7796_CLK_S3D4,  CLK_S3,         4, 1),
+ 
+-	DEF_GEN3_SD("sd0",      R8A7796_CLK_SD0,   CLK_SDSRC,    0x0074),
+-	DEF_GEN3_SD("sd1",      R8A7796_CLK_SD1,   CLK_SDSRC,    0x0078),
+-	DEF_GEN3_SD("sd2",      R8A7796_CLK_SD2,   CLK_SDSRC,    0x0268),
+-	DEF_GEN3_SD("sd3",      R8A7796_CLK_SD3,   CLK_SDSRC,    0x026c),
++	DEF_GEN3_SD("sd0",      R8A7796_CLK_SD0,   CLK_SDSRC,     0x074),
++	DEF_GEN3_SD("sd1",      R8A7796_CLK_SD1,   CLK_SDSRC,     0x078),
++	DEF_GEN3_SD("sd2",      R8A7796_CLK_SD2,   CLK_SDSRC,     0x268),
++	DEF_GEN3_SD("sd3",      R8A7796_CLK_SD3,   CLK_SDSRC,     0x26c),
+ 
+ 	DEF_FIXED("cl",         R8A7796_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+ 	DEF_FIXED("cp",         R8A7796_CLK_CP,    CLK_EXTAL,      2, 1),
 -- 
-2.11.0
+2.7.4
+
