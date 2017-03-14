@@ -1,88 +1,49 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: [PATCH v7 05/13] mmc: sdhci: Export sdhci_enable_sdio_irq() from sdhci.c
-Date: Thu, 30 Mar 2017 17:22:57 +0200
-Message-Id: <eb72f50cf8a5dc4cfbcf2f9464d6781e8b71d70e.1490886907.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f179.google.com ([209.85.223.179]:33377 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752471AbdCNNg1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Mar 2017 09:36:27 -0400
+Received: by mail-io0-f179.google.com with SMTP id f84so103061824ioj.0
+        for <linux-clk@vger.kernel.org>; Tue, 14 Mar 2017 06:36:26 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <4369285.zq7cJYMXhu@phil>
+References: <1486983566-32265-1-git-send-email-andy.yan@rock-chips.com>
+ <0bbc4151-d954-1a27-48c3-1e8c9cb9e16f@rock-chips.com> <CACRpkdbNbGvwUq3uLgekimOwzBZCXf37JW9LCCqLm1so=CMNrw@mail.gmail.com>
+ <4369285.zq7cJYMXhu@phil>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 14 Mar 2017 14:36:24 +0100
+Message-ID: <CACRpkdbuX7f58S_sTBMVEusX2g1iJ4T-cw9efJLFSYb8fV=EDA@mail.gmail.com>
+Subject: Re: [PATCH 0/7] Rename RK1108 to RV1108
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Andy Yan <andy.yan@rock-chips.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Hu Ziji <huziji@marvell.com>
+On Thu, Feb 23, 2017 at 4:00 PM, Heiko Stuebner <heiko@sntech.de> wrote:
+> Am Donnerstag, 23. Februar 2017, 11:15:56 CET schrieb Linus Walleij:
 
-Export sdhci_enable_sdio_irq() from sdhci.c.
-Thus vendor SDHC driver can implement its specific SDIO irq
-control.
+>> Nobody gets hurt. Just rename everything to avoid confusion.
+>> Just my =E2=82=AC0.01.
+>>
+>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> Tell me if I can merge a subset of the patches to the pinctrl tree.
+>
+> I did provide Reviewed-bys for them, so you should be able to merge the
+> pinctrl patches (4+5) at your convenience :-)
 
-Signed-off-by: Hu Ziji <huziji@marvell.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
----
- drivers/mmc/host/sdhci.c | 3 ++-
- drivers/mmc/host/sdhci.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+They are conflicting right now, but I will merge it when I get a v4.11-rc1
+based series.
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index cc5bb9fb7706..5e090227c6c7 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1832,7 +1832,7 @@ static void sdhci_enable_sdio_irq_nolock(struct sdhci_host *host, int enable)
- 	}
- }
- 
--static void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable)
-+void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable)
- {
- 	struct sdhci_host *host = mmc_priv(mmc);
- 	unsigned long flags;
-@@ -1846,6 +1846,7 @@ static void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable)
- 	sdhci_enable_sdio_irq_nolock(host, enable);
- 	spin_unlock_irqrestore(&host->lock, flags);
- }
-+EXPORT_SYMBOL_GPL(sdhci_enable_sdio_irq);
- 
- int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
- 				      struct mmc_ios *ios)
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index a741d8da6227..78437f82609e 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -706,6 +706,7 @@ int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
- void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios);
- int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
- 				      struct mmc_ios *ios);
-+void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable);
- 
- #ifdef CONFIG_PM
- int sdhci_suspend_host(struct sdhci_host *host);
--- 
-git-series 0.9.1
+Yours,
+Linus Walleij
