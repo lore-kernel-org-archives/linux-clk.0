@@ -1,44 +1,100 @@
-Return-Path: <marc.zyngier@arm.com>
-Subject: Re: [PATCH v3 01/12] dt-bindings: mediatek: multiple bases support
- for sysirq
-To: Rob Herring <robh@kernel.org>, Mars Cheng <mars.cheng@mediatek.com>
-References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
- <1489937193-2953-2-git-send-email-mars.cheng@mediatek.com>
- <20170324152001.nmzivwtietre27iq@rob-hp-laptop>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, CC Hwang <cc.hwang@mediatek.com>,
- Loda Chou <loda.chou@mediatek.com>, Miles Chen <miles.chen@mediatek.com>,
- Jades Shih <jades.shih@mediatek.com>,
- Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang
- <my.chuang@mediatek.com>, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
- wsd_upstream@mediatek.com, linux-clk@vger.kernel.org
-From: Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <97d965b5-7dc0-ead7-441c-d5bbe9921129@arm.com>
-Date: Fri, 24 Mar 2017 15:58:41 +0000
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20170324152001.nmzivwtietre27iq@rob-hp-laptop>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20170219032000.4674-2-afaerber@suse.de>
+References: <20170219032000.4674-1-afaerber@suse.de> <20170219032000.4674-2-afaerber@suse.de>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 14 Mar 2017 17:30:34 +0100
+Message-ID: <CAPDyKFoy-dKTk=t6cmwzbjyntZHrkSyZbtpJ0wAMUDJ5xz4viA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] ARM64: Prepare Marvell IAP140 aka PXA1908
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@free-electrons.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jisheng Zhang <jszhang@marvell.com>,
+	Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>, Eric Miao <eric.y.miao@gmail.com>, info@andromedabox.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 24/03/17 15:20, Rob Herring wrote:
-> On Sun, Mar 19, 2017 at 11:26:22PM +0800, Mars Cheng wrote:
->> This describes how to specify multiple base addresses for sysirq
->> in mediatek platforms.
->>
->> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
->> ---
->>  .../interrupt-controller/mediatek,sysirq.txt       |   11 +++++++----
->>  1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
-> 
+On 19 February 2017 at 04:19, Andreas F=C3=A4rber <afaerber@suse.de> wrote:
+> Suppress COMMON_CLK_PXA and MMC_PXA for now as they don't build on arm64.
+> Also suppress the deprecated SERIAL_PXA in favor of SERIAL_8250_PXA.
+>
+> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+> ---
+>  arch/arm64/Kconfig.platforms | 5 +++++
+>  drivers/clk/Kconfig          | 2 +-
+>  drivers/mmc/host/Kconfig     | 2 +-
+>  drivers/tty/serial/Kconfig   | 2 +-
+>  4 files changed, 8 insertions(+), 3 deletions(-)
 
-Thanks Rob. I've queued patches 1-3 for 4.12.
+Please try split this up so it can be applied on each subsystem independent=
+ly.
 
-Cheers,
+Kind regards
+Uffe
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+>
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index 129cc5a..841b6c8 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -111,6 +111,11 @@ config ARCH_MVEBU
+>            - Armada 7K SoC Family
+>            - Armada 8K SoC Family
+>
+> +config ARCH_PXA
+> +       bool "Marvell PXA SoC Family"
+> +       help
+> +         This enables support for the Marvell PXA family.
+> +
+>  config ARCH_QCOM
+>         bool "Qualcomm Platforms"
+>         select GPIOLIB
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 9356ab4..3d25f20 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -185,7 +185,7 @@ config COMMON_CLK_PWM
+>           at 50% duty cycle.
+>
+>  config COMMON_CLK_PXA
+> -       def_bool COMMON_CLK && ARCH_PXA
+> +       def_bool COMMON_CLK && ARCH_PXA && ARM
+>         ---help---
+>           Support for the Marvell PXA SoC.
+>
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index f08691a..a650eca 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -27,7 +27,7 @@ config MMC_QCOM_DML
+>
+>  config MMC_PXA
+>         tristate "Intel PXA25x/26x/27x Multimedia Card Interface support"
+> -       depends on ARCH_PXA
+> +       depends on ARCH_PXA && ARM
+>         help
+>           This selects the Intel(R) PXA(R) Multimedia card Interface.
+>           If you have a PXA(R) platform with a Multimedia Card slot,
+> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+> index 6117ac8..0713a05 100644
+> --- a/drivers/tty/serial/Kconfig
+> +++ b/drivers/tty/serial/Kconfig
+> @@ -439,7 +439,7 @@ config SERIAL_MPSC_CONSOLE
+>
+>  config SERIAL_PXA
+>         bool "PXA serial port support (DEPRECATED)"
+> -       depends on ARCH_PXA || ARCH_MMP
+> +       depends on (ARCH_PXA && ARM) || ARCH_MMP
+>         select SERIAL_CORE
+>         select SERIAL_8250_PXA if SERIAL_8250=3Dy
+>         select SERIAL_PXA_NON8250 if !SERIAL_8250=3Dy
+> --
+> 2.10.2
+>
