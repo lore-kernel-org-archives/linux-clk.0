@@ -1,58 +1,91 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 05/15] clk: ti: add clkdm_lookup to the exported functions
-Date: Sat, 11 Mar 2017 14:49:56 +0200
-Message-ID: <1489236606-24023-6-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
-References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
+ <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 14 Mar 2017 14:54:24 +0100
+Message-ID: <CACRpkdaLq125bKQcpHeFn312omxw9jp0VHr9DVanj42Y_29+mg@mail.gmail.com>
+Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
+ for imx6sll
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Bai Ping <ping.bai@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jacky Bai <jacky.baip@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This will be needed to move some additional clockdomain functionality
-under clock driver.
+On Thu, Feb 16, 2017 at 8:51 AM, Dong Aisheng <dongas86@gmail.com> wrote:
+> On Tue, Dec 27, 2016 at 8:59 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
----
- arch/arm/mach-omap2/clock.c | 1 +
- include/linux/clk/ti.h      | 2 ++
- 2 files changed, 3 insertions(+)
+>> I would consider augmenting the code in the driver to handle the generic
+>> bindings *in addition* to the old legacy bindings, and use those over these
+>> random custom bits.
+(...)
+> Generic binding only supports parsing strings for pins and function
+> from dts right now, that means we need back to the old way of hardcoding
+> all register bits in driver which we actually chose to move out since
+> the commit "e164153 pinctrl: imx: move hard-coding data into device tree".
 
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index 1270afd..6fac826 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -57,6 +57,7 @@
- static struct ti_clk_ll_ops omap_clk_ll_ops = {
- 	.clkdm_clk_enable = clkdm_clk_enable,
- 	.clkdm_clk_disable = clkdm_clk_disable,
-+	.clkdm_lookup = clkdm_lookup,
- 	.cm_wait_module_ready = omap_cm_wait_module_ready,
- 	.cm_split_idlest_reg = cm_split_idlest_reg,
- };
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 07308db..bc7fd8f 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -213,6 +213,7 @@ struct clk_omap_reg {
-  * @clk_writel: pointer to register write function
-  * @clkdm_clk_enable: pointer to clockdomain enable function
-  * @clkdm_clk_disable: pointer to clockdomain disable function
-+ * @clkdm_lookup: pointer to clockdomain lookup function
-  * @cm_wait_module_ready: pointer to CM module wait ready function
-  * @cm_split_idlest_reg: pointer to CM module function to split idlest reg
-  *
-@@ -228,6 +229,7 @@ struct ti_clk_ll_ops {
- 	int	(*clkdm_clk_enable)(struct clockdomain *clkdm, struct clk *clk);
- 	int	(*clkdm_clk_disable)(struct clockdomain *clkdm,
- 				     struct clk *clk);
-+	struct clockdomain * (*clkdm_lookup)(const char *name);
- 	int	(*cm_wait_module_ready)(u8 part, s16 prcm_mod, u16 idlest_reg,
- 					u8 idlest_shift);
- 	int	(*cm_split_idlest_reg)(void __iomem *idlest_reg, s16 *prcm_inst,
--- 
-1.9.1
+Aha I see.
+
+> One option is using macro definitions instead of raw data as pinctrl-single
+> users as OMAP.
+> e.g.
+> art2_pins: pinmux_uart2_pins {
+>         pinctrl-single,pins = <
+>                 OMAP4_IOPAD(0x118, PIN_INPUT_PULLUP | MUX_MODE0)
+>  /* uart2_cts.uart2_cts */
+>         ........
+>
+> For this way, no driver changes required, just replace the raw data by macro
+> in device tree. But i wonder this may not be your original intention although
+> it's the easiest way for us.
+> Anyway, if you agree, we probably would prefer this way.
+
+That make it look better than it looks today, but...
+
+> Another option is partially convert to generic binding for only pad
+> configuration
+> part. e.g.
+> pinctrl_usdhc1: usdhc1grp {
+>         fsl,pins = <
+>                 MX7D_PAD_SD1_CMD__SD1_CMD
+>                 MX7D_PAD_SD1_CLK__SD1_CLK
+>                 MX7D_PAD_SD1_DATA0__SD1_DATA0
+>                 ...
+>         >;
+>         bias-pull-up = <47KOHM>;
+>         drive-strength = <130OHM>;
+>         slew-rate = <FAST>;
+>         speed = <50MHZ>;
+>         ....
+> };
+> (Some of the property still not supported or not the same as generic
+> binding right now)
+
+This looks totally awesome, so if you could do this, it would be even
+better.
+
+> This way requires no big drivers changes and only extend the driver
+> to support the generic pinctrl dt configuration properties.
+
+Yep, you should be able to support both the old and the new
+way of configuring the pins this way I guess.
+
+> And it also fix the raw data issues and looks like more applicable than the full
+> migration.
+>
+> So would you be willing to accept it?
+
+Anything that move us closer to the generic bindings will be accepted.
+
+Yours,
+Linus Walleij
