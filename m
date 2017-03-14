@@ -1,51 +1,56 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v1 0/8] clk: meson: gxbb: more clock controller update for audio support
-Date: Tue, 28 Mar 2017 16:45:57 +0200
-Message-Id: <20170328144605.25278-1-jbrunet@baylibre.com>
+Return-Path: <afaerber@suse.de>
+Subject: Re: [PATCH 1/4] ARM64: Prepare Marvell IAP140 aka PXA1908
+To: Ulf Hansson <ulf.hansson@linaro.org>
+References: <20170219032000.4674-1-afaerber@suse.de>
+ <20170219032000.4674-2-afaerber@suse.de>
+ <CAPDyKFoy-dKTk=t6cmwzbjyntZHrkSyZbtpJ0wAMUDJ5xz4viA@mail.gmail.com>
+Cc: "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, Jason Cooper <jason@lakedaemon.net>,
+ Andrew Lunn <andrew@lunn.ch>,
+ Gregory Clement <gregory.clement@free-electrons.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Jisheng Zhang <jszhang@marvell.com>, Daniel Mack <daniel@zonque.org>,
+ Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>, Eric Miao <eric.y.miao@gmail.com>,
+ info@andromedabox.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jslaby@suse.com>, linux-clk <linux-clk@vger.kernel.org>,
+ "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+ linux-serial@vger.kernel.org
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Message-ID: <9c1fe53f-d25a-6bba-c324-a08818431795@suse.de>
+Date: Tue, 14 Mar 2017 19:10:29 +0100
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFoy-dKTk=t6cmwzbjyntZHrkSyZbtpJ0wAMUDJ5xz4viA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The patchset is the 2nd round of update to the meson gxbb clock controller
-to add initial audio support. The patchset is based on clk-next.
+Am 14.03.2017 um 17:30 schrieb Ulf Hansson:
+> On 19 February 2017 at 04:19, Andreas Färber <afaerber@suse.de> wrote:
+>> Suppress COMMON_CLK_PXA and MMC_PXA for now as they don't build on arm64.
+>> Also suppress the deprecated SERIAL_PXA in favor of SERIAL_8250_PXA.
+>>
+>> Signed-off-by: Andreas Färber <afaerber@suse.de>
+>> ---
+>>  arch/arm64/Kconfig.platforms | 5 +++++
+>>  drivers/clk/Kconfig          | 2 +-
+>>  drivers/mmc/host/Kconfig     | 2 +-
+>>  drivers/tty/serial/Kconfig   | 2 +-
+>>  4 files changed, 8 insertions(+), 3 deletions(-)
+> 
+> Please try split this up so it can be applied on each subsystem independently.
 
-There is not much out of the ordinary here (adding new clocks and exposing
-them) except maybe for 2 patches:
-Patch #2: Adds a safety check while registering clocks to protect against
-          holes in clk_hw_onecell_data, if it ever happens. Same thing is
-	  done for the meson8b clock controller. 
-Patch #3: Adds a new clock divider driver to implement the necessary
-          policy for the i2s master clock (see patch changelog)
+I believe that comment is obsoleted by later versions of the patchset
+using ARCH_MMP instead?
 
-This patchset has been test on the gxbb p200 and gxl p230.
-
-Jerome Brunet (8):
-  dt-bindings: clock: gxbb: expose spdif clock gates
-  clk: meson: gxbb: protect against holes in the onecell_data array
-  clk: meson: add audio clock divider support
-  clk: meson: gxbb: add cts_amclk
-  clk: meson: gxbb: add cts_mclk_i958
-  clk: meson: gxbb: add cts_i958 clock
-  dt-bindings: clock: gxbb: expose i2s master clock
-  dt-bindings: clock: gxbb: expose spdif master clock
-
- drivers/clk/meson/Makefile            |   2 +-
- drivers/clk/meson/clk-audio-divider.c | 149 ++++++++++++++++++++++++++++++++++
- drivers/clk/meson/clkc.h              |  10 +++
- drivers/clk/meson/gxbb.c              | 144 ++++++++++++++++++++++++++++++++
- drivers/clk/meson/gxbb.h              |  13 ++-
- include/dt-bindings/clock/gxbb-clkc.h |   5 ++
- 6 files changed, 319 insertions(+), 4 deletions(-)
- create mode 100644 drivers/clk/meson/clk-audio-divider.c
+Regards,
+Andreas
 
 -- 
-2.9.3
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
