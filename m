@@ -1,68 +1,54 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: Re-evaluate clock rate on min/max update
-Date: Tue, 21 Mar 2017 15:43:26 +0200
-Message-ID: <1490103807-21821-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <mmayer@mmayer.net>
+From: Markus Mayer <code@mmayer.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Markus Mayer <mmayer@broadcom.com>,
+	Linux Clock Mailing List <linux-clk@vger.kernel.org>,
+	Device Tree Mailing List <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [RFC 0/2] Basic divider clock
+Date: Tue, 14 Mar 2017 13:22:34 -0700
+Message-Id: <20170314202236.39910-1-code@mmayer.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Whenever a user change its min or max rate limit of a clock, we need to
-re-evaluate the current clock rate and possibly change it if the new limits
-require so. To do this clk_set_rate_range() already calls
-clk_core_set_rate_nolock, however this won't have the intended effect
-because the core clock rate hasn't changed. To fix this, move the test to
-avoid setting the same core clock rate again, to clk_set_rate() so
-clk_core_set_rate_nolock() can change the clock rate when min or max have
-been updated, even when the core clock rate has not changed.
+From: Markus Mayer <mmayer@broadcom.com>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/clk.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+This series contains a patch that was originally submitted by Mike
+Turquette in August 2013, but never merged.[1] Although I didn't see
+any comments rejecting it.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 2fa2fb8..0b815d1 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1569,10 +1569,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 	if (!core)
- 		return 0;
- 
--	/* bail early if nothing to do */
--	if (rate == clk_core_get_rate_nolock(core))
--		return 0;
--
- 	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
- 		return -EBUSY;
- 
-@@ -1621,16 +1617,21 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
-  */
- int clk_set_rate(struct clk *clk, unsigned long rate)
- {
--	int ret;
-+	int ret = 0;
- 
- 	if (!clk)
--		return 0;
-+		return ret;
- 
- 	/* prevent racing with updates to the clock topology */
- 	clk_prepare_lock();
- 
-+	/* bail early if nothing to do */
-+	if (rate == clk_core_get_rate_nolock(clk->core))
-+		goto out;
-+
- 	ret = clk_core_set_rate_nolock(clk->core, rate);
- 
-+out:
- 	clk_prepare_unlock();
- 
- 	return ret;
+We have been using this code for our STB platform for quite some time
+and wouldn't mind seeing it upstream. What are the current thoughts on
+merging this code?
+
+The patch is almost entirely how Mike submitted it originally. For the
+purposes of this RFC, I kept my modifications separate, to make it
+easier to see what is different from the original. I am expecting that
+my modifications would need to be squashed into the main patch with
+annotations in the commit message.
+
+There were trivial conflicts applying the original patch to 4.11-rc1.
+Those were entirely due to the patch context changing
+(clk_hw_unregister_divider() didn't exist back then) and not due to any
+incompatibilities with the patch itself.
+
+The other changes I made are listed and described in patch 2/2.
+
+[1] https://patchwork.kernel.org/patch/2848065/
+
+Markus Mayer (1):
+  clk: divider: modifications for 4.11
+
+Mike Turquette (1):
+  clk: dt: binding for basic divider clock
+
+ .../devicetree/bindings/clock/divider-clock.txt    |  90 +++++++++++++++++++
+ drivers/clk/clk-divider.c                          | 100 ++++++++++++++++++++-
+ include/linux/clk-provider.h                       |   1 +
+ 3 files changed, 190 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/divider-clock.txt
+
 -- 
-1.9.1
+2.7.4
