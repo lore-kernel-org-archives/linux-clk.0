@@ -1,63 +1,143 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sun, 26 Mar 2017 15:11:38 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 2/3] clk: sunxi-ng: Fix round_rate/set_rate multiplier
- minimum mismatch
-Message-ID: <20170326131138.l4mqz7dwueadnkxj@lukather>
-References: <20170324083307.18338-1-wens@csie.org>
- <20170324083307.18338-3-wens@csie.org>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: tegra: add Tegra210 special resets
+Date: Wed, 15 Mar 2017 14:41:01 +0200
+Message-ID: <1489581661-15299-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="z7tozcuhc5tmtlns"
-In-Reply-To: <20170324083307.18338-3-wens@csie.org>
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
+Tegra210 has 2 special resets which don't follow the normal pattern:
+DVCO and ADSP. Add them in this patch.
 
---z7tozcuhc5tmtlns
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 85 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
 
-On Fri, Mar 24, 2017 at 04:33:06PM +0800, Chen-Yu Tsai wrote:
-> In commit 2beaa601c849 ("clk: sunxi-ng: Implement minimum for
-> multipliers"), the multiplier minimums in the set_rate callback
-> for NM and NKMP style clocks were not updated.
->=20
-> This patch fixes them to match their round_rate callbacks.
->=20
-> Fixes: 2beaa601c849 ("clk: sunxi-ng: Implement minimum for multipliers")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---z7tozcuhc5tmtlns
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJY174KAAoJEBx+YmzsjxAgDxEP/1r6z3ZuNkA/49SFSoTq/9aW
-s2cEGgtR0vukKqNBYs/ER0ZaHWGhNExIwqXsy/YhN79hABMXEhN2Hx+VQWJqwCOu
-pC4wB/ItMkQHMhYbvqRK6uKCj4ObwhWmf66xriDoL7kgIKHoLzcx4AbUjDx5MG1L
-XT9sqs0GeCpFRJ5Dc415XxLGLKOerOOHZzsJ0oDJ9LRMSApmSQIkVD0UZ86ibuGY
-tP1vhTx2vUoH5IY2rmobWflyxSGqFQjhKiQ/dUrsVYP1hf9tjD3qd+9RYU6+Eov6
-K5/XdI1suFqZ+URn9H0/VwntCxOcqkE2dG6vltwe/vc20657RwspHuN0T9UABrlm
-9nv6MiOPJgZ1CP9UBwkcz4Pv49RL8u/sD9yJYn8qMlsf5WhbiwJUzq13u6jbrWDj
-U+n7exgW0OETI4Swpkvcro29lAA5oNwQUbEG8ABw5tWtWfk1lEsX8uLYZNSvCNDb
-7FPhxxIowIgxfXVw+FuEO1nPHj8CLNtSDY+Z+E3n2WjWSfgzcE7ClqMGH+wztF7y
-vcU6iwVdiewND1gM68xL5pzJ01kSbtrloPzkOd8UVg89XHJZuddpo3/EWeMu3CEz
-hsSgqG/RCdbam3FYwtUkTwiGPcr8fiXrsRYtBjJGfly+h6m7d1xbMwNs8K5WoJCp
-YlwlJRdFQFiZPAAAkDDk
-=l+vh
------END PGP SIGNATURE-----
-
---z7tozcuhc5tmtlns--
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 2a84897..a41733d 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -24,6 +24,7 @@
+ #include <linux/export.h>
+ #include <linux/clk/tegra.h>
+ #include <dt-bindings/clock/tegra210-car.h>
++#include <dt-bindings/reset/tegra210-car.h>
+ #include <linux/iopoll.h>
+ 
+ #include "clk.h"
+@@ -218,6 +219,12 @@
+ #define CLK_M_DIVISOR_SHIFT 2
+ #define CLK_M_DIVISOR_MASK 0x3
+ 
++#define RST_DFLL_DVCO 0x2f4
++#define DVFS_DFLL_RESET_SHIFT 0
++
++#define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
++#define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
++
+ /*
+  * SDM fractional divisor is 16-bit 2's complement signed number within
+  * (-2^12 ... 2^12-1) range. Represented in PLL data structure as unsigned
+@@ -2984,6 +2991,81 @@ static void __init tegra210_clock_apply_init_table(void)
+ }
+ 
+ /**
++ * tegra210_car_barrier - wait for pending writes to the CAR to complete
++ *
++ * Wait for any outstanding writes to the CAR MMIO space from this CPU
++ * to complete before continuing execution.  No return value.
++ */
++static void tegra210_car_barrier(void)
++{
++	readl_relaxed(clk_base + RST_DFLL_DVCO);
++}
++
++/**
++ * tegra210_clock_assert_dfll_dvco_reset - assert the DFLL's DVCO reset
++ *
++ * Assert the reset line of the DFLL's DVCO.  No return value.
++ */
++static void tegra210_clock_assert_dfll_dvco_reset(void)
++{
++	u32 v;
++
++	v = readl_relaxed(clk_base + RST_DFLL_DVCO);
++	v |= (1 << DVFS_DFLL_RESET_SHIFT);
++	writel_relaxed(v, clk_base + RST_DFLL_DVCO);
++	tegra210_car_barrier();
++}
++
++/**
++ * tegra210_clock_deassert_dfll_dvco_reset - deassert the DFLL's DVCO reset
++ *
++ * Deassert the reset line of the DFLL's DVCO, allowing the DVCO to
++ * operate.  No return value.
++ */
++static void tegra210_clock_deassert_dfll_dvco_reset(void)
++{
++	u32 v;
++
++	v = readl_relaxed(clk_base + RST_DFLL_DVCO);
++	v &= ~(1 << DVFS_DFLL_RESET_SHIFT);
++	writel_relaxed(v, clk_base + RST_DFLL_DVCO);
++	tegra210_car_barrier();
++}
++
++static int tegra210_reset_assert(unsigned long id)
++{
++	if (id == TEGRA210_RST_DFLL_DVCO)
++		tegra210_clock_assert_dfll_dvco_reset();
++	else if (id == TEGRA210_RST_ADSP)
++		writel(GENMASK(26, 21) | BIT(7),
++			clk_base + CLK_RST_CONTROLLER_RST_DEV_Y_SET);
++	else
++		return -EINVAL;
++
++	return 0;
++}
++
++static int tegra210_reset_deassert(unsigned long id)
++{
++	if (id == TEGRA210_RST_DFLL_DVCO)
++		tegra210_clock_deassert_dfll_dvco_reset();
++	else if (id == TEGRA210_RST_ADSP) {
++		writel(BIT(21), clk_base + CLK_RST_CONTROLLER_RST_DEV_Y_CLR);
++		/*
++		 * Considering adsp cpu clock (min: 12.5MHZ, max: 1GHz)
++		 * a delay of 5us ensures that it's at least
++		 * 6 * adsp_cpu_cycle_period long.
++		 */
++		udelay(5);
++		writel(GENMASK(26, 22) | BIT(7),
++			clk_base + CLK_RST_CONTROLLER_RST_DEV_Y_CLR);
++	} else
++		return -EINVAL;
++
++	return 0;
++}
++
++/**
+  * tegra210_clock_init - Tegra210-specific clock initialization
+  * @np: struct device_node * of the DT node for the SoC CAR IP block
+  *
+@@ -3047,6 +3129,9 @@ static void __init tegra210_clock_init(struct device_node *np)
+ 
+ 	tegra_super_clk_gen5_init(clk_base, pmc_base, tegra210_clks,
+ 				  &pll_x_params);
++	tegra_init_special_resets(2, tegra210_reset_assert,
++				  tegra210_reset_deassert);
++
+ 	tegra_add_of_provider(np);
+ 	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
+ 
+-- 
+1.9.1
