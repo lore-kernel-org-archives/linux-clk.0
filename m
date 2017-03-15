@@ -1,79 +1,124 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-To: Neil Armstrong <narmstrong@baylibre.com>, sboyd@codeaurora.org,
- carlo@caione.org, khilman@baylibre.com
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1490178747-14837-1-git-send-email-narmstrong@baylibre.com>
-Cc: "Neil Armstrong" <narmstrong@baylibre.com>, linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1490178747-14837-1-git-send-email-narmstrong@baylibre.com>
-Message-ID: <149064493648.54062.5595306508519104671@resonance>
-Subject: Re: [PATCH v2 0/5] clk: meson: Fix GXBB and GXL/GXM GP0 PLL
-Date: Mon, 27 Mar 2017 13:02:16 -0700
+In-Reply-To: <34e51d32c82b57571e061e80df3bbaed731db554.1487091464.git-series.gregory.clement@free-electrons.com>
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+ <34e51d32c82b57571e061e80df3bbaed731db554.1487091464.git-series.gregory.clement@free-electrons.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 15 Mar 2017 13:43:44 +0100
+Message-ID: <CAPDyKFoqxMCSe-2bt2dz1AM_2X7dtVe4w6e7+oAQ==HO_=XKQw@mail.gmail.com>
+Subject: Re: [PATCH v6 03/14] mmc: core: Add mmc-card dt sub-node parse in
+ core layer
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>, Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>, "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Neil,
+On 14 February 2017 at 18:01, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
+> From: Hu Ziji <huziji@marvell.com>
+>
+> Some vendor host, like Xenon, can support multiple types.
+> In dts, use mmc-card dt sub-node to indicate eMMC is in use.
+>
+> Add a generic mmc-card parse function in mmc core layer.
+> If mmc-card sub-node is detected, set eMMC common caps, such as
+> MMC_CAP_NONREMOVABLE, MMC_CAP2_NO_SD and MMC_CAP2_NO_SDIO.
+>
+> Since it is likely that struct mmc_card is not allocated yet when
+> this mmc-card parse function is called, it will return true if
+> mmc-card sub-node is detected. Otherwise, return false.
+> It can help vendor host determine if the card type is eMMC.
+>
+> Signed-off-by: Hu Ziji <huziji@marvell.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> ---
+>  drivers/mmc/core/mmc.c   | 24 ++++++++++++++++++++++++
+>  include/linux/mmc/core.h |  2 ++
+>  2 files changed, 26 insertions(+)
+>
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index b61b52f9da3d..dc480006a303 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -2111,6 +2111,30 @@ static const struct mmc_bus_ops mmc_ops = {
+>  };
+>
+>  /*
+> + * Parse mmc-card dt sub-node and set eMMC common caps
+> + * if mmc-card exists.
+> + * If mmc-card is detected, return true.
+> + * Otherwise, return false.
+> + */
+> +bool mmc_of_parse_mmc_card(struct mmc_host *host)
+> +{
+> +       struct device_node *np;
+> +       bool ret = false;
+> +
+> +       np = mmc_of_find_child_device(host, 0);
 
-Quoting Neil Armstrong (2017-03-22 03:32:22)
-> This patchset fixes support for the Amlogic GXBB then GXL/GXM embedded GP=
-0 PLL.
-> =
+There are already some places in the mmc core where child nodes are
+being parsed. You may have a look for mmc_of_find_child_device() and
+find the callers of it.
 
-> The current support is done via a very generic interface where only the
-> N/M/OD parameters are changed in the control registers.
-> =
+Additionally, we need a generic method of how to describe in DT, when
+an mmc host controller has more than one mmc slot. This will also be
+done using child nodes.
 
-> But unlike the Fixed PLL, this PLL is not initialized by the bootloader or
-> firmware, and needs some parameters to initialize and lock correctly.
-> =
+So, before starting hacking on this, it seems like we need some
+consolidation of the code. In principle, I would like to move the APIs
+for parsing of the child nodes into host.c, along with existing
+mmc_of_parse() function.
 
-> This patchset also adds the GXL variant compatible string which is already
-> supported by the GXL and GXM DT nodes.
-> =
+> +       if (np && of_device_is_compatible(np, "mmc-card")) {
+> +               /* mmc-card sub-node indicates eMMC card is in use. */
+> +               host->caps |= MMC_CAP_NONREMOVABLE;
+> +               host->caps2 |= MMC_CAP2_NO_SDIO | MMC_CAP2_NO_SD;
+> +               ret = true;
+> +       }
+> +
 
-> Changes since v1 at [1]:
->  - Rebase on the Mali clocks patchset at [2]
->  - also depends on v2 Audio Clocks patchset from Jerome Brunet at [3]
->  - Add match table and separate tables for gxl
->  - Switch to probe function to use match table data only
->  - Rename unreset_for_lock to clear_reset_for_lock
+So instead of providing a new mmc OF parse API, let's make
+mmc_of_parse() call another internal function which deals with child
+node parsing.
 
-Thanks for the quick changes. Applied to clk-meson, a stable branch,
-which was merged into clk-next.
+> +       of_node_put(np);
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(mmc_of_parse_mmc_card);
+> +
+> +/*
+>   * Starting point for MMC card init.
+>   */
+>  int mmc_attach_mmc(struct mmc_host *host)
+> diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
+> index e33cc748dcfe..1b27323f3b6e 100644
+> --- a/include/linux/mmc/core.h
+> +++ b/include/linux/mmc/core.h
+> @@ -234,4 +234,6 @@ struct device_node;
+>  extern u32 mmc_vddrange_to_ocrmask(int vdd_min, int vdd_max);
+>  extern int mmc_of_parse_voltage(struct device_node *np, u32 *mask);
+>
+> +extern bool mmc_of_parse_mmc_card(struct mmc_host *host);
+> +
+>  #endif /* LINUX_MMC_CORE_H */
+> --
+> git-series 0.9.1
 
-Best regards,
-Mike
+If you didn't quite understand my comments, then please tell me. Then
+I can help out cooking some patches for you.
 
-> =
-
-> [1] http://lkml.kernel.org/r/1489411604-18700-1-git-send-email-narmstrong=
-@baylibre.com
-> [2] http://lkml.kernel.org/r/1490177935-9646-1-git-send-email-narmstrong@=
-baylibre.com
-> [3] http://lkml.kernel.org/r/20170309104154.28295-1-jbrunet@baylibre.com
-> =
-
-> Neil Armstrong (5):
->   clk: meson: Add support for parameters for specific PLLs
->   clk: meson-gxbb: Add GP0 PLL init parameters
->   clk: meson-gxbb: Add GXL/GXM GP0 Variant
->   clk: meson-gxbb: Expose GP0 dt-bindings clock id
->   dt-bindings: clock: gxbb-clkc: Add GXL compatible variant
-> =
-
->  .../bindings/clock/amlogic,gxbb-clkc.txt           |   3 +-
->  drivers/clk/meson/clk-pll.c                        |  53 +++-
->  drivers/clk/meson/clkc.h                           |  23 ++
->  drivers/clk/meson/gxbb.c                           | 314 +++++++++++++++=
-++++--
->  drivers/clk/meson/gxbb.h                           |   4 +-
->  include/dt-bindings/clock/gxbb-clkc.h              |   1 +
->  6 files changed, 366 insertions(+), 32 deletions(-)
-> =
-
-> -- =
-
-> 1.9.1
->=20
+Kind regards
+Uffe
