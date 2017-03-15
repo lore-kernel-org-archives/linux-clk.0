@@ -1,75 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:38368 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934128AbdC3S5D (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Mar 2017 14:57:03 -0400
-Date: Thu, 30 Mar 2017 19:56:39 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-mmc@vger.kernel.org, Jimmy Xu <zmxu@marvell.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Ziji Hu <huziji@marvell.com>, Victor Gu <xigu@marvell.com>,
-        Doug Jones <dougj@marvell.com>, linux-clk@vger.kernel.org,
-        Jisheng Zhang <jszhang@marvell.com>,
-        Yehuda Yitschak <yehuday@marvell.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Kostya Porotchkin <kostap@marvell.com>,
-        Hanna Hawa <hannah@marvell.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>, Ryan Gao <ygao@marvell.com>,
-        "Wei(SOCP) Liu" <liuw@marvell.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-kernel@vger.kernel.org, Wilson Ding <dingwei@marvell.com>
-Subject: Re: [PATCH v7 00/13] mmc: Add support to Marvell Xenon SD Host
- Controller
-Message-ID: <20170330185639.GI7909@n2100.armlinux.org.uk>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 15 Mar 2017 12:26:22 -0500
+From: Rob Herring <robh@kernel.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 6/15] dt-bindings: display: sun4i: Add HDMI display
+ bindings
+Message-ID: <20170315172622.lb6vy7cmbwaf7crn@rob-hp-laptop>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <f1d46b79f933df724a6750d557ebe9517b6339b5.1488876832.git-series.maxime.ripard@free-electrons.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <f1d46b79f933df724a6750d557ebe9517b6339b5.1488876832.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 30, 2017 at 05:22:52PM +0200, Gregory CLEMENT wrote:
-> - Remove parse of child node mmc-card. Wait for a better solution.
+On Tue, Mar 07, 2017 at 09:56:25AM +0100, Maxime Ripard wrote:
+> One of the possible output of the display pipeline, on the SoCs that have
+> it, is the HDMI controller.
+> 
+> Add a binding for it.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 21 +++++++-
+>  1 file changed, 21 insertions(+), 0 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> index b82c00449468..4b280672658e 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> @@ -4,6 +4,27 @@ Allwinner A10 Display Pipeline
+>  The Allwinner A10 Display pipeline is composed of several components
+>  that are going to be documented below:
+>  
+> +HDMI Encoder
+> +------------
+> +
+> +The HDMI Encoder supports the HDMI video and audio outputs, and does
+> +CEC. It is one end of the pipeline.
+> +
+> +Required properties:
+> +  - compatible: value must be one of:
+> +    * allwinner,sun5i-a10s-hdmi
+> +  - reg: base address and size of memory-mapped region
+> +  - clocks: phandles to the clocks feeding the HDMI encoder
+> +    * ahb: the HDMI interface clock
+> +    * mod: the HDMI module clock
+> +    * pll-0: the first video PLL
+> +    * pll-1: the second video PLL
+> +  - clock-names: the clock names mentioned above
+> +
+> +  - ports: A ports node with endpoint definitions as defined in
+> +    Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> +    first port should be the input endpoint.
 
-So for mcbin, I have:
+You need an output port to an HDMI connector node and an audio port.
 
-&ap_sdhci0 {
-        bus-width = <8>;
-        marvell,xenon-emmc;
-        marvell,xenon-phy-type = "emmc 5.1 phy";
-        /*
-         * Not stable in HS modes - phy needs "more calibration", so add
-         * the "slow-mode" and disable SDR104, SDR50 and DDR50 modes.
-         */
-        marvell,xenon-phy-slow-mode;
-        no-1-8-v;
-        non-removable;
-        status = "okay";
-        vqmmc-supply = <&v_vddo_h>;
-
-        #address-cells = <1>;
-        #size-cells = <0>;
-        mmccard: mmccard@0 {
-                compatible = "mmc-card";
-                reg = <0>;
-        };
-};
-
-Does this mean the "mmccard" bit is no longer required - or is it required
-for the eMMC to be detected but is no longer supported by the driver?
-
-Thanks.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+> +
+>  TV Encoder
+>  ----------
+>  
+> -- 
+> git-series 0.8.11
