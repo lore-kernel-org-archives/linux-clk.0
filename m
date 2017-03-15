@@ -1,57 +1,135 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 11/15] drm/sun4i: tcon: Fix tcon channel 1 backporch calculation
-Date: Tue,  7 Mar 2017 09:56:30 +0100
-Message-Id: <475aeed1da40d46d8e50420c281a74c32b78c730.1488876832.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <mathieu.poirier@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <516f8989-4dde-2686-d549-0761feb14d1b@arm.com>
+References: <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
+ <011fdac0-59bf-b539-2de3-0b59a41bc922@arm.com> <20170309175915.GA964@leoy-linaro>
+ <3f27efee-3b63-81fd-eb96-73fd7e6f5e92@arm.com> <20170313165600.GB32431@linaro.org>
+ <516f8989-4dde-2686-d549-0761feb14d1b@arm.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Wed, 15 Mar 2017 14:41:59 -0600
+Message-ID: <CANLsYkzJsGvr4ZzNbTwcPu1Qki6=Szvu+bMjHZ_rza==DqFChw@mail.gmail.com>
+Subject: Re: [v3 3/5] coresight: add support for debug module
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	John Stultz <john.stultz@linaro.org>, Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	Mike Leach <mike.leach@linaro.org>, Sudeep Holla <Sudeep.Holla@arm.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-It seems like what's called a backporch in the datasheet is actually the
-backporch plus the sync period. Fix that in our driver.
+On 15 March 2017 at 10:44, Suzuki K Poulose <Suzuki.Poulose@arm.com> wrote:
+> On 13/03/17 16:56, Mathieu Poirier wrote:
+>>
+>> On Fri, Mar 10, 2017 at 02:29:53PM +0000, Suzuki K Poulose wrote:
+>>>>>>
+>>>>>> +
+>>>>>> +       put_online_cpus();
+>>>>>> +
+>>>>>> +       if (!debug_count++)
+>>>>>> +               atomic_notifier_chain_register(&panic_notifier_list,
+>>>>>> +                                              &debug_notifier);
+>>>>>> +
+>>>>>
+>>>>>
+>>>>>> +       sprintf(buf, (char *)id->data, drvdata->cpu);
+>>>>>> +       dev_info(dev, "%s initialized\n", buf);
+>>>>>
+>>>>>
+>>>>> This could simply be :
+>>>>>         dev_info(dev, "Coresight debug-CPU%d initialized\n",
+>>>>> drvdata->cpu);
+>>>>>
+>>>>> and get rid of the static string and the buffer, see below.
+>>>
+>>>
+>>> Also we need pm_runtime_put() here to balance the pm_runtime_get_ from
+>>> AMBA
+>>> device probe.
+>>
+>>
+>> Good point.
+>>
+>>> More on that below.
+>>>
+>>>>>
+>>>>>> +       return 0;
+>>>>>> +}
+>>>>>> +
+>>>>>> +static struct amba_id debug_ids[] = {
+>>>>>> +       {       /* Debug for Cortex-A53 */
+>>>>>> +               .id     = 0x000bbd03,
+>>>>>> +               .mask   = 0x000fffff,
+>>>>>
+>>>>>
+>>>>> ...
+>>>>>
+>>>>>> +               .data   = "Coresight debug-CPU%d",
+>>>>>
+>>>>>
+>>>>> I think this is pointless, as the debug area we are interested in is
+>>>>> always associated
+>>>>> with a CPU, we could as well figure out what to print from the
+>>>>> drvdata->cpu above.
+>>>>
+>>>>
+>>>> I prefer to follow your suggestion for upper two comments; but I'd like
+>>>> check with Mathieu, due I followed up Mathieu's suggestion to write
+>>>> current code.
+>>>
+>>>
+>>> Btw, I don't see any PM calls to make sure the power domain (at least the
+>>> debug domain)
+>>> is up, which could cause problems with accesses to some of these
+>>> registers (leave alone the
+>>> ones in CPU power domain), especially the EDPRSR. We could also do
+>>> pm_runtime_get on the
+>>> CPU's power domain, if the CPU is online, before we access the pcsr.
+>>
+>>
+>> I thought about PM runtime operations a little while back but wondered if
+>> it is
+>> really a good thing to have them around.  When this code is called the
+>> system
+>> has crashed and as such making PM runtimes call isn't a good idea.
+>
+>
+> You are right. It is not safe to make such calls when we have crashed.
+> The other side effect is, if we don't have the debug power domain up,
+> we could possibly hang the system and prevent other registered notifiers
+> from running, which doesn't sound good either.
+>
+>>
+>> One thing we could do is _not_ call pm_runtime_put() at the end of the
+>> probe()
+>> operation.  That way we wouldn't have to mess around with PM runtime
+>> operations
+>> on an unstable system.  This, of course, is costly in terms of power
+>> consumption
+>> but the system is under test/debug anyway.
+>
+>
+> May be control the behavior via kernel command line ? Something like
+> coresight_debug={on or 1} or
+> even use the "nohlt" ?
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+We need to deal with the debug and CPU power domains.
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 93249c5ab1e4..e44217fb4f6f 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -240,15 +240,14 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon, struct drm_encoder *encoder,
- 		     SUN4I_TCON1_BASIC2_Y(mode->crtc_vdisplay));
- 
- 	/* Set horizontal display timings */
--	bp = mode->crtc_htotal - mode->crtc_hsync_end;
-+	bp = mode->crtc_htotal - mode->crtc_hsync_start;
- 	DRM_DEBUG_DRIVER("Setting horizontal total %d, backporch %d\n",
- 			 mode->htotal, bp);
- 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC3_REG,
- 		     SUN4I_TCON1_BASIC3_H_TOTAL(mode->crtc_htotal) |
- 		     SUN4I_TCON1_BASIC3_H_BACKPORCH(bp));
- 
--	/* Set vertical display timings */
--	bp = mode->crtc_vtotal - mode->crtc_vsync_end;
-+	bp = mode->crtc_vtotal - mode->crtc_vsync_start;
- 	DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
- 			 mode->vtotal, bp);
- 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC4_REG,
--- 
-git-series 0.8.11
+For the former I suggest we do what coresight does and use the
+"power-domains" binding[1].  For the CPU power domain we can re-use
+the "nohlt" flag.  In the probe function if the "nohlt" cmd line flag
+is not set the code bails out.  If it is set pm_runtime_put() is _not_
+called and the driver can be used without worries of hanging the
+system when the panic handler is invoked.
+
+Am I forgetting something?
+
+[1]. http://lxr.free-electrons.com/source/arch/arm64/boot/dts/arm/juno-base.dtsi#L137
+
+>
+> Suzuki
