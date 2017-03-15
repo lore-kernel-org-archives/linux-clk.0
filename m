@@ -1,188 +1,127 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        <daniel.thompson@linaro.org>, <andrea.merello@gmail.com>,
+        <radoslaw.pietrzyk@gmail.com>
+CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <gabriel.fernandez@st.com>
+Subject: [PATCH 2/2] clk: stm32f4: fix timeout management for pll and ready gate
+Date: Wed, 15 Mar 2017 15:27:51 +0100
+Message-ID: <1489588071-18164-3-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1489588071-18164-1-git-send-email-gabriel.fernandez@st.com>
+References: <1489588071-18164-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
- "Kevin Hilman" <khilman@baylibre.com>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20170321183330.26722-1-jbrunet@baylibre.com>
-Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org
-References: <20170321183330.26722-1-jbrunet@baylibre.com>
-Message-ID: <149014126203.54062.76278318846510349@resonance>
-Subject: Re: [RFC 0/7] clk: implement clock locking mechanism
-Date: Tue, 21 Mar 2017 17:07:42 -0700
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi J=C3=A9r=C3=B4me,
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Quoting Jerome Brunet (2017-03-21 11:33:23)
-> This RFC patchset is related to the discussion around CLK_SET_RATE_GATE a=
-nd
-> clk_lock which available here [0]
-> =
+Use a classic polling to test bit ready.
+And the shift of the bit ready of LSE & LSI were wrongs.
 
-> The goal of this patchset is to provide a way for consumers to inform the
-> system that they depend on the rate of the clock source and can't tolerate
-> other consumers changing the rate or causing glitches.
-> =
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32f4.c | 43 +++++++++++++++++++++++++++++--------------
+ 1 file changed, 29 insertions(+), 14 deletions(-)
 
-> Patches 1 to 3 are just rework to ease the integration of the locking
-> mechanism. They should not introduce any functional differences.
-> =
-
-> Patch 4 is the important bit. It introduce 2 new functions to the CCF API:
-> clk_protect and clk_unprotect (The "lock" word is already used lot in
-> clk.c. Using clk_lock and clk_unlock would have been very messy. If you
-> found "protect" to be a poor choice, I'm happy to sed the whole thing in
-> future version)
-
-I prefer clk_lock_rate and clk_unlock_rate.
-
-> =
-
-> These calls can happen at anytime during the life of the clk. As for
-> prepare and enable, the calls must be balanced.
-> =
-
-> Inside the clock framework, 2 new count values are introduced to keep tra=
-ck
-> of the protection:
-> * core "protect_count": this reference count value works in the same way =
-as
->   prepare and enable count, and track whether the clock is protected or
->   not. This is the value that will checked to allow operation which may
->   cause glitches or change the rate of clock source.
-> * clk consumer "protect_ucount": this allows to track if the consumer is
->   protecting the clock.
-
-Similarly, s/protect/lock_rate/g
-
-> =
-
-> Requiring the consumer to unprotect its clock before changing it would ha=
-ve
-> been very annoying for the consumer. It would also be unsafe, as it would
-> still be possible for another consumer to change the rate between the call
-> to set_rate and protect. This needs to happen in a critical section.  A
-> solution would be to add "set_rate_protect", but we would need to do the
-> same for the set_parent and set_phase (and the possible future
-> functions). It does not scale well.  The solution proposed in this patch =
-is
-> to use the consumer protect count.
-> =
-
-> In function altering the clock, if the consumer is protecting the clock,
-> the protection is temporarily release under the prepare_lock. This ensure
-> that:
-> * the clock is still protect from another consumer because of the
->   prepare_lock
-> * the rate set on a protected clock cannot change between set_rate and
->   later enable
-> * only a consumer protecting a clock can do this temporary protection
->   removal (less chance of people messing with the refcount)
-
-It should be impossible for consumer_A to remove the lock refcount set
-by consumer_B using something like these patches I wrote for
-prepare_count and enable_count:
-
-https://lkml.kernel.org/r/1438974570-20812-1-git-send-email-mturquette@bayl=
-ibre.com
-
-> * if more than one consumer protect the clock, it remains protected.
->   Because the protection is removed for the calling consumer, it gives
->   it a chance to jump to another provider, if available.
-
-Hmm, that's a bit confusing. I guess you mean, "if the rate a parent
-clock is locked, and the child clock has multiple parents to choose
-from, then the child may select a different parent with an unlocked
-rate"?
-
-> =
-
-> This protection mechanism assume that "protecting" consumer knows what it
-> is doing when it comes to setting the rate, and does not expect to be
-> protected against itself.
-
-Is this always true? Are there drivers where one code path requires a
-stable rate (due to glitches) while another code path might try to
-change the rate?
-
-I can't think of any, but it's a big assumption to make. Anyone else
-have thoughts on it?
-
-> =
-
-> This was tested with the audio use case mentioned in [0]
-> =
-
-> One caveat is the following case:
-> N+1 consumers protect their clocks. These clocks come from N possible
-> providers. We should able to satisfy at least N consumers before exhausti=
-ng
-> the resources.  In the particular case where all the consumers call
-> "protect" before having a chance to call "set_rate", the last 2 consumers
-> will remains stuck on the last provider w/o being able to set the rate on
-> it. This means that in situation where there is 2 consumers on 1
-> providers, they will compete for the clock, and may end up in situation
-> where both protect the clock and none can set the rate they need.  This c=
-an
-> be solved if, when the rate fails to be set, the consumer release the
-> protection. Then the second consumer will be able to satisfy its request.
-> =
-
-> Patch 5 is a small change on set_rate_range to restore the old range on
-> failure. It don't use set_rate_range in any driver so I could not test th=
-is
-> change.
-> =
-
-> Patch 6 is just a cosmetic change to clk_summary debugfs entry to make it
-> less wide after adding protect count in it.
-> =
-
-> Patch 7 fix a warning reported by checkpatch.pl. Apparently, ENOSYS is us=
-ed
-> incorrectly.
-> =
-
-> Bonus:
-> =
-
-> With this patchset, we should probably change the use the flags
-> "CLK_SET_RATE_GATE" and "CLK_SET_PARENT_GATE" We discussed removing
-> them. Another solution would be to have them automatically gate the clock
-> before performing the related operation.  What is your view on this ?
-
-We'll need to ask the users of these flags. It would be nice to convert
-those folks over to use clk_lock_rate() instead of those flags.
-
-Regards,
-Mike
-
-> =
-
-> [0]: http://lkml.kernel.org/r/148942423440.82235.17188153691656009029@res=
-onance
-> =
-
-> Jerome Brunet (7):
->   clk: take the prepare lock out of clk_core_set_parent
->   clk: add set_phase core function
->   clk: rework calls to round and determine rate callbacks
->   clk: add support for clock protection
->   clk: rollback set_rate_range changes on failure
->   clk: cosmetic changes to clk_summary debugfs entry
->   clk: fix incorrect usage of ENOSYS
-> =
-
->  drivers/clk/clk.c            | 313 ++++++++++++++++++++++++++++++++++---=
-------
->  include/linux/clk-provider.h |   1 +
->  include/linux/clk.h          |  29 ++++
->  3 files changed, 279 insertions(+), 64 deletions(-)
-> =
-
-> -- =
-
-> 2.9.3
->=20
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index cf9449b3..68e2a4e 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -531,19 +531,26 @@ static int stm32f4_pll_is_enabled(struct clk_hw *hw)
+ 	return clk_gate_ops.is_enabled(hw);
+ }
+ 
++#define PLL_TIMEOUT 10000
++
+ static int stm32f4_pll_enable(struct clk_hw *hw)
+ {
+ 	struct clk_gate *gate = to_clk_gate(hw);
+ 	struct stm32f4_pll *pll = to_stm32f4_pll(gate);
+-	int ret = 0;
+-	unsigned long reg;
++	int bit_status;
++	unsigned int timeout = PLL_TIMEOUT;
+ 
+-	ret = clk_gate_ops.enable(hw);
++	if (clk_gate_ops.is_enabled(hw))
++		return 0;
++
++	clk_gate_ops.enable(hw);
+ 
+-	ret = readl_relaxed_poll_timeout_atomic(base + STM32F4_RCC_CR, reg,
+-			reg & (1 << pll->bit_rdy_idx), 0, 10000);
++	do {
++		bit_status = !(readl(gate->reg) & BIT(pll->bit_rdy_idx));
+ 
+-	return ret;
++	} while (bit_status && --timeout);
++
++	return bit_status;
+ }
+ 
+ static void stm32f4_pll_disable(struct clk_hw *hw)
+@@ -834,24 +841,32 @@ struct stm32_rgate {
+ 	u8	bit_rdy_idx;
+ };
+ 
+-#define RTC_TIMEOUT 1000000
++#define RGATE_TIMEOUT 50000
+ 
+ static int rgclk_enable(struct clk_hw *hw)
+ {
+ 	struct clk_gate *gate = to_clk_gate(hw);
+ 	struct stm32_rgate *rgate = to_rgclk(gate);
+-	u32 reg;
+-	int ret;
++	int bit_status;
++	unsigned int timeout = RGATE_TIMEOUT;
++
++	if (clk_gate_ops.is_enabled(hw))
++		return 0;
+ 
+ 	disable_power_domain_write_protection();
+ 
+ 	clk_gate_ops.enable(hw);
+ 
+-	ret = readl_relaxed_poll_timeout_atomic(gate->reg, reg,
+-			reg & rgate->bit_rdy_idx, 1000, RTC_TIMEOUT);
++	do {
++		bit_status = !(readl(gate->reg) & BIT(rgate->bit_rdy_idx));
++		if (bit_status)
++			udelay(100);
++
++	} while (bit_status && --timeout);
+ 
+ 	enable_power_domain_write_protection();
+-	return ret;
++
++	return bit_status;
+ }
+ 
+ static void rgclk_disable(struct clk_hw *hw)
+@@ -1533,7 +1548,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 	}
+ 
+ 	clks[CLK_LSI] = clk_register_rgate(NULL, "lsi", "clk-lsi", 0,
+-			base + STM32F4_RCC_CSR, 0, 2, 0, &stm32f4_clk_lock);
++			base + STM32F4_RCC_CSR, 0, 1, 0, &stm32f4_clk_lock);
+ 
+ 	if (IS_ERR(clks[CLK_LSI])) {
+ 		pr_err("Unable to register lsi clock\n");
+@@ -1541,7 +1556,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 	}
+ 
+ 	clks[CLK_LSE] = clk_register_rgate(NULL, "lse", "clk-lse", 0,
+-			base + STM32F4_RCC_BDCR, 0, 2, 0, &stm32f4_clk_lock);
++			base + STM32F4_RCC_BDCR, 0, 1, 0, &stm32f4_clk_lock);
+ 
+ 	if (IS_ERR(clks[CLK_LSE])) {
+ 		pr_err("Unable to register lse clock\n");
+-- 
+1.9.1
