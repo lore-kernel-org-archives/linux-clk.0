@@ -1,60 +1,82 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Fri, 31 Mar 2017 08:54:20 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org, Suzuki.Poulose@arm.com
-Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
-Message-ID: <20170331005420.GA6149@leoy-linaro>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
- <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
- <f0c460e2-4e49-4f34-5288-f20a519dc182@arm.com>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: tegra: Add sata seq input control
+Date: Wed, 15 Mar 2017 17:42:05 +0200
+Message-ID: <1489592525-6231-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <f0c460e2-4e49-4f34-5288-f20a519dc182@arm.com>
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 30, 2017 at 04:56:52PM +0100, Sudeep Holla wrote:
+This will be used by the powergating driver to ensure proper sequencer
+state when the SATA domain is powergated.
 
-[...]
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 25 +++++++++++++++++++++++++
+ include/linux/clk/tegra.h        |  1 +
+ 2 files changed, 26 insertions(+)
 
-> > +static struct pm_qos_request debug_qos_req;
-> > +static int idle_constraint = PM_QOS_DEFAULT_VALUE;
-> > +module_param(idle_constraint, int, 0600);
-> > +MODULE_PARM_DESC(idle_constraint, "Latency requirement in microseconds for CPU "
-> > +		 "idle states (default is -1, which means have no limiation "
-> > +		 "to CPU idle states; 0 means disabling all idle states; user "
-> > +		 "can choose other platform dependent values so can disable "
-> > +		 "specific idle states for the platform)");
-> > +
-> 
-> NACK for this. Why you want the policy inside the driver. You can always
-> do that from the user-space. I have mentioned it several times now.
-> What can't you do these ?
-> 
-> 1. echo "what_ever_latency_you_need_in_uS" > /dev/cpu_dma_latency
-> 2. echo 1 > /sys/devices/system/cpu/cpu$cpu/cpuidle/state$state/disable
->    (for all cpus and their states) (1) is definitely simpler way to
->     disable deeper idle if latency = 0uS
-> 
-> You can always warn user about that when it's enabled via debugfs/sysfs
-
-Thanks for suggestion, now it's clear for me.
-
-> -- 
-> Regards,
-> Sudeep
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index a41733d..34b5520 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -181,6 +181,11 @@
+ #define SATA_PLL_CFG0				0x490
+ #define SATA_PLL_CFG0_PADPLL_RESET_SWCTL	BIT(0)
+ #define SATA_PLL_CFG0_PADPLL_USE_LOCKDET	BIT(2)
++#define SATA_PLL_CFG0_SATA_SEQ_IN_SWCTL		BIT(4)
++#define SATA_PLL_CFG0_SATA_SEQ_RESET_INPUT_VALUE	BIT(5)
++#define SATA_PLL_CFG0_SATA_SEQ_LANE_PD_INPUT_VALUE	BIT(6)
++#define SATA_PLL_CFG0_SATA_SEQ_PADPLL_PD_INPUT_VALUE	BIT(7)
++
+ #define SATA_PLL_CFG0_PADPLL_SLEEP_IDDQ		BIT(13)
+ #define SATA_PLL_CFG0_SEQ_ENABLE		BIT(24)
+ 
+@@ -483,6 +488,26 @@ void tegra210_sata_pll_hw_sequence_start(void)
+ }
+ EXPORT_SYMBOL_GPL(tegra210_sata_pll_hw_sequence_start);
+ 
++void tegra210_set_sata_pll_seq_sw(bool state)
++{
++	u32 val;
++
++	val = readl_relaxed(clk_base + SATA_PLL_CFG0);
++	if (state) {
++		val |= SATA_PLL_CFG0_SATA_SEQ_IN_SWCTL;
++		val |= SATA_PLL_CFG0_SATA_SEQ_RESET_INPUT_VALUE;
++		val |= SATA_PLL_CFG0_SATA_SEQ_LANE_PD_INPUT_VALUE;
++		val |= SATA_PLL_CFG0_SATA_SEQ_PADPLL_PD_INPUT_VALUE;
++	} else {
++		val &= ~SATA_PLL_CFG0_SATA_SEQ_IN_SWCTL;
++		val &= ~SATA_PLL_CFG0_SATA_SEQ_RESET_INPUT_VALUE;
++		val &= ~SATA_PLL_CFG0_SATA_SEQ_LANE_PD_INPUT_VALUE;
++		val &= ~SATA_PLL_CFG0_SATA_SEQ_PADPLL_PD_INPUT_VALUE;
++	}
++	writel_relaxed(val, clk_base + SATA_PLL_CFG0);
++}
++EXPORT_SYMBOL_GPL(tegra210_set_sata_pll_seq_sw);
++
+ static inline void _pll_misc_chk_default(void __iomem *base,
+ 					struct tegra_clk_pll_params *params,
+ 					u8 misc_num, u32 default_val, u32 mask)
+diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
+index e17d328..d23c9cf 100644
+--- a/include/linux/clk/tegra.h
++++ b/include/linux/clk/tegra.h
+@@ -125,6 +125,7 @@ static inline void tegra_cpu_clock_resume(void)
+ extern void tegra210_xusb_pll_hw_sequence_start(void);
+ extern void tegra210_sata_pll_hw_control_enable(void);
+ extern void tegra210_sata_pll_hw_sequence_start(void);
++extern void tegra210_set_sata_pll_seq_sw(bool state);
+ extern void tegra210_put_utmipll_in_iddq(void);
+ extern void tegra210_put_utmipll_out_iddq(void);
+ 
+-- 
+1.9.1
