@@ -1,72 +1,228 @@
-Return-Path: <sudeep.holla@arm.com>
-Subject: Re: [PATCH v3 3/5] coresight: add support for debug module
-To: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- John Stultz <john.stultz@linaro.org>, Guodong Xu <guodong.xu@linaro.org>,
- Haojian Zhuang <haojian.zhuang@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, mike.leach@linaro.org
-References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
- <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <671a0b39-b635-6e0e-d3fa-967651f2e29c@arm.com>
-Date: Tue, 21 Mar 2017 15:39:23 +0000
+Return-Path: <huziji@marvell.com>
+Subject: Re: [PATCH v6 09/14] mmc: sdhci-xenon: Add support to PHYs of Marvell
+ Xenon SDHC
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Gregory CLEMENT
+	<gregory.clement@free-electrons.com>
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+ <b646d28daf3d8cb8e57774ce040f39350364041e.1487091464.git-series.gregory.clement@free-electrons.com>
+ <CAPDyKFrQb3NA53o6z9go0+RxxvstwWdeLHpiXtKaXOksxrov3g@mail.gmail.com>
+CC: Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>, Andrew Lunn
+	<andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        Mike Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk
+	<linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Jimmy Xu
+	<zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+        Nadav Haklai
+	<nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
+        Doug Jones
+	<dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
+        "Wei(SOCP) Liu"
+	<liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
+        Yehuda Yitschak
+	<yehuday@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>, Hanna Hawa
+	<hannah@marvell.com>,
+        Kostya Porotchkin <kostap@marvell.com>
+From: Ziji Hu <huziji@marvell.com>
+Message-ID: <288b58dc-cce7-11c3-e946-7bf0ea5a4863@marvell.com>
+Date: Wed, 15 Mar 2017 22:31:53 +0800
 MIME-Version: 1.0
-In-Reply-To: <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <CAPDyKFrQb3NA53o6z9go0+RxxvstwWdeLHpiXtKaXOksxrov3g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Ulf,
 
-
-On 03/03/17 06:00, Leo Yan wrote:
-> Coresight includes debug module and usually the module connects with CPU
-> debug logic. ARMv8 architecture reference manual (ARM DDI 0487A.k) has
-> description for related info in "Part H: External Debug".
+On 2017/3/15 21:39, Ulf Hansson wrote:
+> On 14 February 2017 at 18:01, Gregory CLEMENT
+> <gregory.clement@free-electrons.com> wrote:
+>> From: Hu Ziji <huziji@marvell.com>
+>>
+<snip>
+>> +
+>> +       /*
+>> +        * FIXME: should depends on the specific board timing.
+>> +        */
+>> +       if ((timing == MMC_TIMING_MMC_HS400) ||
+>> +           (timing == MMC_TIMING_MMC_HS200) ||
+>> +           (timing == MMC_TIMING_UHS_SDR50) ||
+>> +           (timing == MMC_TIMING_UHS_SDR104) ||
+>> +           (timing == MMC_TIMING_UHS_DDR50) ||
+>> +           (timing == MMC_TIMING_UHS_SDR25) ||
+>> +           (timing == MMC_TIMING_MMC_DDR52)) {
+>> +               reg = sdhci_readl(host, phy_regs->timing_adj);
+>> +               reg &= ~XENON_OUTPUT_QSN_PHASE_SELECT;
+>> +               sdhci_writel(host, reg, phy_regs->timing_adj);
+>> +       }
+>> +
+<snip>
+>> +
+>> +       reg = sdhci_readl(host, phy_regs->func_ctrl);
+>> +       if ((timing == MMC_TIMING_UHS_DDR50) ||
+>> +           (timing == MMC_TIMING_MMC_HS400) ||
+>> +           (timing == MMC_TIMING_MMC_DDR52))
+>> +               reg |= (XENON_DQ_DDR_MODE_MASK << XENON_DQ_DDR_MODE_SHIFT) |
+>> +                      XENON_CMD_DDR_MODE;
+>> +       else
+>> +               reg &= ~((XENON_DQ_DDR_MODE_MASK << XENON_DQ_DDR_MODE_SHIFT) |
+>> +                        XENON_CMD_DDR_MODE);
+<snip>
 > 
-> Chapter H7 "The Sample-based Profiling Extension" introduces several
-> sampling registers, e.g. we can check program counter value with
-> combined CPU exception level, secure state, etc. So this is helpful for
-> analysis CPU lockup scenarios, e.g. if one CPU has run into infinite
-> loop with IRQ disabled. In this case the CPU cannot switch context and
-> handle any interrupt (including IPIs), as the result it cannot handle
-> SMP call for stack dump.
-> 
-> This patch is to enable coresight debug module, so firstly this driver
-> is to bind apb clock for debug module and this is to ensure the debug
-> module can be accessed from program or external debugger. And the driver
-> uses sample-based registers for debug purpose, e.g. when system detects
-> the CPU lockup and trigger panic, the driver will dump program counter
-> and combined context registers (EDCIDSR, EDVIDSR); by parsing context
-> registers so can quickly get to know CPU secure state, exception level,
-> etc.
-> 
-> Some of the debug module registers are located in CPU power domain, so
-> in the driver it has checked the power state for CPU before accessing
-> registers within CPU power domain. For most safe way to use this driver,
-> it's suggested to disable CPU low power states, this can simply set
-> "nohlt" in kernel command line.
+> Again you are checking the MMC_TIMING_* in several if statements.
+> Perhaps you can use switch statement instead and build a couple of
+> different register variables, that you use when reading/writing
+> afterwards.
 > 
 
-I disagree with this approach. One of the main usefulness of such self
-hosted debug feature is to debug issues around features like cpuidle.
-Adding constraints like "cpuidle needs to be disabled" is not good IMO.
-There are ways to make it work with cpuidle enabled. Please explore
-them. In particular refer H9.2.39 EDPRCR, External Debug Power/Reset
-Control Register.
+	Sorry. I don't quite understand your comment.
+	Do you mean combine all the related  register settings
+	under a specific MMC_TIMING_*?
 
-So, "nohlt" option is not an option. I prefer some sysfs option like
-Suzuki suggested to enable this feature on demand if power saving in
-normal usecase is the concern. Using "nohlt" just disables idle and
-doesn't ensure the debug power domain is ON. Using the flag directly in
-this driver to enable debug power domain also sounds misuse of that flag
-for me.
+	swhich (timing) {
+	case MMC_TIMING_HS400:
+		config reg_1;
+		config reg_2;
+		...
+	case MMC_TIMING_HS200:
+		config reg_2;
+		config reg_3
+		..
+	case ...
+	};
 
--- 
-Regards,
-Sudeep
+	I have a little concern that there might be a lot
+	of duplicate register settings. Some PHY operations are
+	irrelevant to the speed mode. They have to be executed in
+	a particular sequence in all speed modes.
+
+>> +}
+>> +
+>> +static int emmc_phy_parse_param_dt(struct sdhci_host *host,
+>> +                                  struct device_node *np,
+>> +                                  struct emmc_phy_params *params)
+>> +{
+>> +       u32 value;
+>> +
+>> +       if (of_property_read_bool(np, "marvell,xenon-phy-slow-mode"))
+>> +               params->slow_mode = true;
+>> +       else
+>> +               params->slow_mode = false;
+>> +
+>> +       if (!of_property_read_u32(np, "marvell,xenon-phy-znr", &value))
+>> +               params->znr = value & XENON_ZNR_MASK;
+>> +       else
+>> +               params->znr = XENON_ZNR_DEF_VALUE;
+>> +
+>> +       if (!of_property_read_u32(np, "marvell,xenon-phy-zpr", &value))
+>> +               params->zpr = value & XENON_ZPR_MASK;
+>> +       else
+>> +               params->zpr = XENON_ZPR_DEF_VALUE;
+>> +
+>> +       if (!of_property_read_u32(np, "marvell,xenon-phy-nr-success-tun",
+>> +                                 &value))
+>> +               params->nr_tun_times = value & XENON_TUN_CONSECUTIVE_TIMES_MASK;
+>> +       else
+>> +               params->nr_tun_times = XENON_TUN_CONSECUTIVE_TIMES;
+>> +
+>> +       if (!of_property_read_u32(np, "marvell,xenon-phy-tun-step-divider",
+>> +                                 &value))
+>> +               params->tun_step_divider = value & 0xFF;
+>> +       else
+>> +               params->tun_step_divider = XENON_TUNING_STEP_DIVIDER;
+>> +
+>> +       return 0;
+> 
+> Instead of all these if-else, let's start by assigning default values
+> instead. This makes the code more readable.
+> 
+	Sure. I'll change it.
+	
+>> +}
+>> +
+>> +/*
+>> + * Setting PHY when card is working in High Speed Mode.
+>> + * HS400 set data strobe line.
+>> + * HS200/SDR104 set tuning config to prepare for tuning.
+>> + */
+>> +static int xenon_hs_delay_adj(struct sdhci_host *host)
+>> +{
+>> +       int ret = 0;
+>> +
+>> +       if (WARN_ON(host->clock <= XENON_DEFAULT_SDCLK_FREQ))
+>> +               return -EINVAL;
+>> +
+>> +       if (host->timing == MMC_TIMING_MMC_HS400) {
+>> +               emmc_phy_strobe_delay_adj(host);
+>> +               return 0;
+>> +       }
+>> +
+>> +       if ((host->timing == MMC_TIMING_MMC_HS200) ||
+>> +           (host->timing == MMC_TIMING_UHS_SDR104))
+>> +               return emmc_phy_config_tuning(host);
+>> +
+>> +       /*
+>> +        * DDR Mode requires driver to scan Sampling Fixed Delay Line,
+>> +        * to find out a perfect operation sampling point.
+>> +        * It is hard to implement such a scan in host driver since initiating
+>> +        * commands by host driver is not safe.
+>> +        * Thus so far just keep PHY Sampling Fixed Delay in default value
+>> +        * in DDR mode.
+>> +        *
+>> +        * If any timing issue occurs in DDR mode on Marvell products,
+>> +        * please contact maintainer to ask for internal support in Marvell.
+>> +        */
+>> +       if ((host->timing == MMC_TIMING_MMC_DDR52) ||
+>> +           (host->timing == MMC_TIMING_UHS_DDR50))
+>> +               dev_warn_once(mmc_dev(host->mmc), "Timing issue might occur in DDR mode\n");
+> 
+> Please consider a to convert to use a switch statment instead of the
+> several if statements.
+> 
+
+	It is a good idea to use switch here.
+
+>> +       return ret;
+>> +}
+>> +
+> 
+<snip>
+>> +int xenon_phy_parse_dt(struct device_node *np, struct sdhci_host *host)
+>> +{
+>> +       const char *phy_type = NULL;
+>> +
+>> +       if (!of_property_read_string(np, "marvell,xenon-phy-type", &phy_type))
+>> +               return add_xenon_phy(np, host, phy_type);
+>> +
+>> +       dev_info(mmc_dev(host->mmc), "Fail to get Xenon PHY type. Use default eMMC 5.1 PHY\n");
+> 
+> Isn't there already a dev_err() being printed for this case. You
+> probably only need one.
+
+	By default, "emmc 5.1 phy" is used on most of our products.
+	Thus this dt property is an optional one.
+	I can remove this dev_info.
+
+> 
+>> +       return add_xenon_phy(np, host, "emmc 5.1 phy");
+>> +}
+> 
+> [...]
+> 
+> Kind regards
+> Uffe
+> 
