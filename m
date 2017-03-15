@@ -1,99 +1,72 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1 1/2] clk: rockchip: rk3368: export SCLK_TIMERXX id for timers
-Date: Tue,  7 Mar 2017 17:50:10 +0800
-Message-Id: <1488880211-21133-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        <daniel.thompson@linaro.org>, <andrea.merello@gmail.com>,
+        <radoslaw.pietrzyk@gmail.com>
+CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <gabriel.fernandez@st.com>
+Subject: [PATCH 1/2] clk: stm32f4: fix: exclude values 0 and 1 for PLLQ
+Date: Wed, 15 Mar 2017 15:27:50 +0100
+Message-ID: <1489588071-18164-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1489588071-18164-1-git-send-email-gabriel.fernandez@st.com>
+References: <1489588071-18164-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3368.c      | 24 ++++++++++++------------
- include/dt-bindings/clock/rk3368-cru.h | 19 ++++++++++++-------
- 2 files changed, 24 insertions(+), 19 deletions(-)
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-index 6cb474c593e7..139d418f448e 100644
---- a/drivers/clk/rockchip/clk-rk3368.c
-+++ b/drivers/clk/rockchip/clk-rk3368.c
-@@ -835,18 +835,18 @@ enum rk3368_plls {
- 	GATE(PCLK_PMU, "pclk_pmu", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(23), 0, GFLAGS),
- 
- 	/* timer gates */
--	GATE(0, "sclk_timer15", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 11, GFLAGS),
--	GATE(0, "sclk_timer14", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 10, GFLAGS),
--	GATE(0, "sclk_timer13", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 9, GFLAGS),
--	GATE(0, "sclk_timer12", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 8, GFLAGS),
--	GATE(0, "sclk_timer11", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 7, GFLAGS),
--	GATE(0, "sclk_timer10", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 6, GFLAGS),
--	GATE(0, "sclk_timer05", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 5, GFLAGS),
--	GATE(0, "sclk_timer04", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 4, GFLAGS),
--	GATE(0, "sclk_timer03", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 3, GFLAGS),
--	GATE(0, "sclk_timer02", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 2, GFLAGS),
--	GATE(0, "sclk_timer01", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 1, GFLAGS),
--	GATE(0, "sclk_timer00", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 0, GFLAGS),
-+	GATE(SCLK_TIMER15, "sclk_timer15", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 11, GFLAGS),
-+	GATE(SCLK_TIMER14, "sclk_timer14", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 10, GFLAGS),
-+	GATE(SCLK_TIMER13, "sclk_timer13", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 9, GFLAGS),
-+	GATE(SCLK_TIMER12, "sclk_timer12", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 8, GFLAGS),
-+	GATE(SCLK_TIMER11, "sclk_timer11", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 7, GFLAGS),
-+	GATE(SCLK_TIMER10, "sclk_timer10", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 6, GFLAGS),
-+	GATE(SCLK_TIMER05, "sclk_timer05", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 5, GFLAGS),
-+	GATE(SCLK_TIMER04, "sclk_timer04", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 4, GFLAGS),
-+	GATE(SCLK_TIMER03, "sclk_timer03", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 3, GFLAGS),
-+	GATE(SCLK_TIMER02, "sclk_timer02", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 2, GFLAGS),
-+	GATE(SCLK_TIMER01, "sclk_timer01", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 1, GFLAGS),
-+	GATE(SCLK_TIMER00, "sclk_timer00", "xin24m", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(24), 0, GFLAGS),
+0000: PLLQ = 0, wrong configuration
+0001: PLLQ = 1, wrong configuration
+...
+0010: PLLQ = 2
+0011: PLLQ = 3
+0100: PLLQ = 4
+...
+1111: PLLQ = 1
+
+Use divider table to exclude 0 and 1 values.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32f4.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index ab609a7..cf9449b3 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -429,6 +429,13 @@ enum {
+ 	{ 0, 2 }, { 1, 4 }, { 2, 6 }, { 3, 8 }, { 0 }
  };
  
- static const char *const rk3368_critical_clocks[] __initconst = {
-diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bindings/clock/rk3368-cru.h
-index 9c5dd9ba2f6c..aeb83e581a11 100644
---- a/include/dt-bindings/clock/rk3368-cru.h
-+++ b/include/dt-bindings/clock/rk3368-cru.h
-@@ -44,13 +44,12 @@
- #define SCLK_I2S_8CH		82
- #define SCLK_SPDIF_8CH		83
- #define SCLK_I2S_2CH		84
--#define SCLK_TIMER0		85
--#define SCLK_TIMER1		86
--#define SCLK_TIMER2		87
--#define SCLK_TIMER3		88
--#define SCLK_TIMER4		89
--#define SCLK_TIMER5		90
--#define SCLK_TIMER6		91
-+#define SCLK_TIMER00		85
-+#define SCLK_TIMER01		86
-+#define SCLK_TIMER02		87
-+#define SCLK_TIMER03		88
-+#define SCLK_TIMER04		89
-+#define SCLK_TIMER05		90
- #define SCLK_OTGPHY0		93
- #define SCLK_OTG_ADP		96
- #define SCLK_HSICPHY480M	97
-@@ -82,6 +81,12 @@
- #define SCLK_SFC		126
- #define SCLK_MAC		127
- #define SCLK_MACREF_OUT		128
-+#define SCLK_TIMER10		133
-+#define SCLK_TIMER11		134
-+#define SCLK_TIMER12		135
-+#define SCLK_TIMER13		136
-+#define SCLK_TIMER14		137
-+#define SCLK_TIMER15		138
++static const struct clk_div_table pll_divq_table[] = {
++	{ 2, 2 }, { 3, 3 }, { 4, 4 }, { 5, 5 }, { 6, 6 }, { 7, 7 },
++	{ 8, 8 }, { 9, 9 }, { 10, 10 }, { 11, 11 }, { 12, 12 }, { 13, 13 },
++	{ 14, 14 }, { 15, 15 },
++	{ 0 }
++};
++
+ static const struct clk_div_table pll_divr_table[] = {
+ 	{ 2, 2 }, { 3, 3 }, { 4, 4 }, { 5, 5 }, { 6, 6 }, { 7, 7 }, { 0 }
+ };
+@@ -496,9 +503,9 @@ struct stm32f4_div_data {
  
- #define DCLK_VOP		190
- #define MCLK_CRYPTO		191
+ #define MAX_PLL_DIV 3
+ static const struct stm32f4_div_data  div_data[MAX_PLL_DIV] = {
+-	{ 16, 2, 0,			pll_divp_table	},
+-	{ 24, 4, CLK_DIVIDER_ONE_BASED, NULL		},
+-	{ 28, 3, 0,			pll_divr_table	},
++	{ 16, 2, 0, pll_divp_table },
++	{ 24, 4, 0, pll_divq_table },
++	{ 28, 3, 0, pll_divr_table },
+ };
+ 
+ struct stm32f4_pll_data {
 -- 
 1.9.1
