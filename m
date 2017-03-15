@@ -1,52 +1,55 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.hostsharing.net ([83.223.95.204]:50803 "EHLO
-        mailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935544AbdCXLho (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Mar 2017 07:37:44 -0400
-Date: Fri, 24 Mar 2017 12:37:36 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] PM / runtime: Use synchronous runtime PM call in
- rpm_put_suppliers()
-Message-ID: <20170324113736.GA21618@h08.hostsharing.net>
-References: <CGME20170322092305eucas1p20d2a6dfede483210febea5b5e0ff68db@eucas1p2.samsung.com>
- <1490174570-18345-1-git-send-email-m.szyprowski@samsung.com>
- <CAPDyKFq+mTvruQb5ifj3etMxSCWgDZTZ6ebGkk84UCQDqjR4-A@mail.gmail.com>
- <CAJZ5v0ihYQp4_oJCu3Tugbqrm=68hcxdg8-yUphbCXCUw3UzPw@mail.gmail.com>
- <CAPDyKFot3C1C1k45JovwKHFkvTJAFvdetoE8_ADAhMCkFw3hPA@mail.gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 14 Mar 2017 18:07:10 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Markus Mayer <code@mmayer.net>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Linux Clock Mailing List <linux-clk@vger.kernel.org>,
+	Device Tree Mailing List <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Markus Mayer <mmayer@broadcom.com>
+Subject: Re: [RFC 1/2] clk: dt: binding for basic divider clock
+Message-ID: <20170315010710.GJ10239@codeaurora.org>
+References: <20170314202236.39910-1-code@mmayer.net>
+ <20170314202236.39910-2-code@mmayer.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAPDyKFot3C1C1k45JovwKHFkvTJAFvdetoE8_ADAhMCkFw3hPA@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170314202236.39910-2-code@mmayer.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 23, 2017 at 01:47:46PM +0100, Ulf Hansson wrote:
-> For the sync runtime PM suspend/idle case:
-> When a driver for a children/consumers decides to use the sync runtime
-> PM APIs, it's most likely because it wants the device to enter its low
-> power state as soon as possible.
+On 03/14, Markus Mayer wrote:
+> From: Mike Turquette <mturquette@linaro.org>
+> 
+> Devicetree binding for the basic clock divider, plus the setup function
+> to register the clock.  Based on the existing fixed-clock binding.
+> 
+> Tero Kristo contributed helpful bug fixes to this patch.
+> 
+> Signed-off-by: Mike Turquette <mturquette@linaro.org>
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Markus Mayer <mmayer@broadcom.com>
 
-I think a driver is doing it wrong if it uses sync vs. async to achieve
-a certain policy.  (As in the example you've given above.)  That should
-be left to the PM core, and the PM core should try to suspend as early
-and as often as possible in order to save power.  If the driver wants to
-achieve a policy such as "suspend this device ASAP but let this other
-device idle a bit before suspend because its usage pattern is bursty"
-then the correct way to implement this is via a sane default value for
-the autosuspend delay.
+These sorts of details should go into C code. Is there any
+difficulty in writing a driver to do so? So far we've avoided
+adding the generic divider, multiplier, mux, bindings because
+those usually need some register level details that we've been
+reluctant to add to DT.
 
-Generelly, async should be used.  One example where sync is warranted
-is when the ->runtime_suspend hook needs to be finished before power
-is cut to the device.  That's a hard constraint.  E.g. vga_switcheroo
-does this when runtime suspending the GPU.  In this case, "runtime
-suspend" means that the driver puts the device in a state from which
-power can be cut.  The actual power switch is toggled afterwards.
+That's because if something is wrong with these register level
+details or we need to make some policy updates, e.g. favor this
+divider over another, we can't really do that with a DT update.
+So we really want to see DT nodes have some hardware specific
+compatible string, and also put the logic for the driver into the
+code so that it can be easily fixed and updated after the fact.
 
-Regards,
+The DTS file is there to tell us "I have a divider from company X
+here and it's connected to this and that" and the driver is there
+to do the work of driving that piece of hardware so it works
+properly.
 
-Lukas
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
