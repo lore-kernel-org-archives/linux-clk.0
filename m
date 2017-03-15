@@ -1,211 +1,100 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [PATCH v3 04/11] drm/sun4i: abstract the layer type
-Date: Thu, 30 Mar 2017 03:46:06 +0800
-Message-Id: <20170329194613.55548-5-icenowy@aosc.io>
-In-Reply-To: <20170329194613.55548-1-icenowy@aosc.io>
-References: <20170329194613.55548-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Icenowy Zheng <icenowy@aosc.io>
+Return-Path: <dongas86@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <CACRpkdaLq125bKQcpHeFn312omxw9jp0VHr9DVanj42Y_29+mg@mail.gmail.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
+ <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com> <CACRpkdaLq125bKQcpHeFn312omxw9jp0VHr9DVanj42Y_29+mg@mail.gmail.com>
+From: Dong Aisheng <dongas86@gmail.com>
+Date: Wed, 15 Mar 2017 22:05:21 +0800
+Message-ID: <CAA+hA=Rtw-4-SCf8svFq3E9TKv3zBD9T=nPhF7=3qEoH9k4wsA@mail.gmail.com>
+Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
+ for imx6sll
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bai Ping <ping.bai@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jacky Bai <jacky.baip@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-As we are going to add support for the Allwinner DE2 Mixer in sun4i-drm
-driver, we will finally have two types of layer.
+Hi Linus,
 
-Abstract the layer type to void * and a ops struct, which contains the
-only function used by crtc -- get the drm_plane struct of the layer.
+On Tue, Mar 14, 2017 at 9:54 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Feb 16, 2017 at 8:51 AM, Dong Aisheng <dongas86@gmail.com> wrote:
+>> On Tue, Dec 27, 2016 at 8:59 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+>>> I would consider augmenting the code in the driver to handle the generic
+>>> bindings *in addition* to the old legacy bindings, and use those over these
+>>> random custom bits.
+> (...)
+>> Generic binding only supports parsing strings for pins and function
+>> from dts right now, that means we need back to the old way of hardcoding
+>> all register bits in driver which we actually chose to move out since
+>> the commit "e164153 pinctrl: imx: move hard-coding data into device tree".
+>
+> Aha I see.
+>
+>> One option is using macro definitions instead of raw data as pinctrl-single
+>> users as OMAP.
+>> e.g.
+>> art2_pins: pinmux_uart2_pins {
+>>         pinctrl-single,pins = <
+>>                 OMAP4_IOPAD(0x118, PIN_INPUT_PULLUP | MUX_MODE0)
+>>  /* uart2_cts.uart2_cts */
+>>         ........
+>>
+>> For this way, no driver changes required, just replace the raw data by macro
+>> in device tree. But i wonder this may not be your original intention although
+>> it's the easiest way for us.
+>> Anyway, if you agree, we probably would prefer this way.
+>
+> That make it look better than it looks today, but...
+>
+>> Another option is partially convert to generic binding for only pad
+>> configuration
+>> part. e.g.
+>> pinctrl_usdhc1: usdhc1grp {
+>>         fsl,pins = <
+>>                 MX7D_PAD_SD1_CMD__SD1_CMD
+>>                 MX7D_PAD_SD1_CLK__SD1_CLK
+>>                 MX7D_PAD_SD1_DATA0__SD1_DATA0
+>>                 ...
+>>         >;
+>>         bias-pull-up = <47KOHM>;
+>>         drive-strength = <130OHM>;
+>>         slew-rate = <FAST>;
+>>         speed = <50MHZ>;
+>>         ....
+>> };
+>> (Some of the property still not supported or not the same as generic
+>> binding right now)
+>
+> This looks totally awesome, so if you could do this, it would be even
+> better.
+>
+>> This way requires no big drivers changes and only extend the driver
+>> to support the generic pinctrl dt configuration properties.
+>
+> Yep, you should be able to support both the old and the new
+> way of configuring the pins this way I guess.
+>
+>> And it also fix the raw data issues and looks like more applicable than the full
+>> migration.
+>>
+>> So would you be willing to accept it?
+>
+> Anything that move us closer to the generic bindings will be accepted.
+>
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Refactored patch in v3.
+It's good to get an alignment with you.
+We will start to do that.
 
- drivers/gpu/drm/sun4i/sun4i_crtc.c  | 19 +++++++++++--------
- drivers/gpu/drm/sun4i/sun4i_crtc.h  |  3 ++-
- drivers/gpu/drm/sun4i/sun4i_layer.c | 19 ++++++++++++++++++-
- drivers/gpu/drm/sun4i/sun4i_layer.h |  2 +-
- drivers/gpu/drm/sun4i/sunxi_layer.h | 17 +++++++++++++++++
- 5 files changed, 49 insertions(+), 11 deletions(-)
- create mode 100644 drivers/gpu/drm/sun4i/sunxi_layer.h
+Thanks
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-index 3c876c3a356a..33854ee7f636 100644
---- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-@@ -29,6 +29,7 @@
- #include "sun4i_crtc.h"
- #include "sun4i_drv.h"
- #include "sun4i_layer.h"
-+#include "sunxi_layer.h"
- #include "sun4i_tcon.h"
- 
- static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
-@@ -149,7 +150,7 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
- 	scrtc->tcon = tcon;
- 
- 	/* Create our layers */
--	scrtc->layers = sun4i_layers_init(drm, scrtc->backend);
-+	scrtc->layers = (void **)sun4i_layers_init(drm, scrtc);
- 	if (IS_ERR(scrtc->layers)) {
- 		dev_err(drm->dev, "Couldn't create the planes\n");
- 		return NULL;
-@@ -157,14 +158,15 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
- 
- 	/* find primary and cursor planes for drm_crtc_init_with_planes */
- 	for (i = 0; scrtc->layers[i]; i++) {
--		struct sun4i_layer *layer = scrtc->layers[i];
-+		void *layer = scrtc->layers[i];
-+		struct drm_plane *plane = scrtc->layer_ops->get_plane(layer);
- 
--		switch (layer->plane.type) {
-+		switch (plane->type) {
- 		case DRM_PLANE_TYPE_PRIMARY:
--			primary = &layer->plane;
-+			primary = plane;
- 			break;
- 		case DRM_PLANE_TYPE_CURSOR:
--			cursor = &layer->plane;
-+			cursor = plane;
- 			break;
- 		default:
- 			break;
-@@ -190,10 +192,11 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
- 	/* Set possible_crtcs to this crtc for overlay planes */
- 	for (i = 0; scrtc->layers[i]; i++) {
- 		uint32_t possible_crtcs = BIT(drm_crtc_index(&scrtc->crtc));
--		struct sun4i_layer *layer = scrtc->layers[i];
-+		void *layer = scrtc->layers[i];
-+		struct drm_plane *plane = scrtc->layer_ops->get_plane(layer);
- 
--		if (layer->plane.type == DRM_PLANE_TYPE_OVERLAY)
--			layer->plane.possible_crtcs = possible_crtcs;
-+		if (plane->type == DRM_PLANE_TYPE_OVERLAY)
-+			plane->possible_crtcs = possible_crtcs;
- 	}
- 
- 	return scrtc;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.h b/drivers/gpu/drm/sun4i/sun4i_crtc.h
-index 230cb8f0d601..a4036ee44cf8 100644
---- a/drivers/gpu/drm/sun4i/sun4i_crtc.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_crtc.h
-@@ -19,7 +19,8 @@ struct sun4i_crtc {
- 
- 	struct sun4i_backend		*backend;
- 	struct sun4i_tcon		*tcon;
--	struct sun4i_layer		**layers;
-+	void				**layers;
-+	const struct sunxi_layer_ops	*layer_ops;
- };
- 
- static inline struct sun4i_crtc *drm_crtc_to_sun4i_crtc(struct drm_crtc *crtc)
-diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c b/drivers/gpu/drm/sun4i/sun4i_layer.c
-index f26bde5b9117..bc4a70d6968b 100644
---- a/drivers/gpu/drm/sun4i/sun4i_layer.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
-@@ -16,7 +16,9 @@
- #include <drm/drmP.h>
- 
- #include "sun4i_backend.h"
-+#include "sun4i_crtc.h"
- #include "sun4i_layer.h"
-+#include "sunxi_layer.h"
- 
- struct sun4i_plane_desc {
- 	       enum drm_plane_type     type;
-@@ -100,6 +102,17 @@ static const struct sun4i_plane_desc sun4i_backend_planes[] = {
- 	},
- };
- 
-+static struct drm_plane *sun4i_layer_get_plane(void *layer)
-+{
-+	struct sun4i_layer *sun4i_layer = layer;
-+
-+	return &sun4i_layer->plane;
-+}
-+
-+static const struct sunxi_layer_ops layer_ops = {
-+	.get_plane = sun4i_layer_get_plane,
-+};
-+
- static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
- 						struct sun4i_backend *backend,
- 						const struct sun4i_plane_desc *plane)
-@@ -129,9 +142,10 @@ static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
- }
- 
- struct sun4i_layer **sun4i_layers_init(struct drm_device *drm,
--				       struct sun4i_backend *backend)
-+				       struct sun4i_crtc *crtc)
- {
- 	struct sun4i_layer **layers;
-+	struct sun4i_backend *backend = crtc->backend;
- 	int i;
- 
- 	layers = devm_kcalloc(drm->dev, ARRAY_SIZE(sun4i_backend_planes) + 1,
-@@ -181,5 +195,8 @@ struct sun4i_layer **sun4i_layers_init(struct drm_device *drm,
- 		layers[i] = layer;
- 	};
- 
-+	/* Assign layer ops to the CRTC */
-+	crtc->layer_ops = &layer_ops;
-+
- 	return layers;
- }
-diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.h b/drivers/gpu/drm/sun4i/sun4i_layer.h
-index 4be1f0919df2..425eea7b9e3b 100644
---- a/drivers/gpu/drm/sun4i/sun4i_layer.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_layer.h
-@@ -27,6 +27,6 @@ plane_to_sun4i_layer(struct drm_plane *plane)
- }
- 
- struct sun4i_layer **sun4i_layers_init(struct drm_device *drm,
--				       struct sun4i_backend *backend);
-+				       struct sun4i_crtc *crtc);
- 
- #endif /* _SUN4I_LAYER_H_ */
-diff --git a/drivers/gpu/drm/sun4i/sunxi_layer.h b/drivers/gpu/drm/sun4i/sunxi_layer.h
-new file mode 100644
-index 000000000000..d8838ec39299
---- /dev/null
-+++ b/drivers/gpu/drm/sun4i/sunxi_layer.h
-@@ -0,0 +1,17 @@
-+/*
-+ * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.xyz>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#ifndef _SUNXI_LAYER_H_
-+#define _SUNXI_LAYER_H_
-+
-+struct sunxi_layer_ops {
-+	struct drm_plane *(*get_plane)(void *layer);
-+};
-+
-+#endif /* _SUNXI_LAYER_H_ */
--- 
-2.12.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Regards
+Dong Aisheng
