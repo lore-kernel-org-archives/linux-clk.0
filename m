@@ -1,97 +1,153 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:37502 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752747AbdCFI6q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2017 03:58:46 -0500
-Received: by mail-wm0-f43.google.com with SMTP id n11so58310131wma.0
-        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2017 00:58:45 -0800 (PST)
-Subject: Re: [PATCH v2 3/3] ARM64: dts: meson-gx: Add MALI nodes for GXBB and
- GXL
-To: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Kevin Hilman <khilman@baylibre.com>
-References: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
- <1488365164-22861-4-git-send-email-narmstrong@baylibre.com>
- <e26cf584-dab2-2702-f7e6-b28f750fa00c@suse.de>
- <e80d9fb0-1d71-7cab-5e32-72316474fdfc@baylibre.com>
- <m2tw7a17nb.fsf@baylibre.com> <9f3a17e8-63fa-6c14-4d17-0539ef7cd5a2@suse.de>
-Cc: devicetree@vger.kernel.org, sboyd@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        carlo@caione.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <1825920f-586f-7c84-8e0e-958046397b64@baylibre.com>
-Date: Mon, 6 Mar 2017 09:58:33 +0100
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <9f3a17e8-63fa-6c14-4d17-0539ef7cd5a2@suse.de>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <cb885ae19e7c467908cdaa1f1cc8d95a7217d663.1487091464.git-series.gregory.clement@free-electrons.com>
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+ <cb885ae19e7c467908cdaa1f1cc8d95a7217d663.1487091464.git-series.gregory.clement@free-electrons.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 15 Mar 2017 14:11:31 +0100
+Message-ID: <CAPDyKFpH+RGAZGoVCuCOKJ2iEa+Y=cNNcM-uKhkYaTpmogXCKA@mail.gmail.com>
+Subject: Re: [PATCH v6 08/14] mmc: sdhci-xenon: Add Marvell Xenon SDHC core functionality
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>, Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>, "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/04/2017 01:38 PM, Andreas Färber wrote:
-> Am 03.03.2017 um 20:29 schrieb Kevin Hilman:
->> Neil Armstrong <narmstrong@baylibre.com> writes:
->>> On 03/02/2017 01:31 PM, Andreas Färber wrote:
->>>> Am 01.03.2017 um 11:46 schrieb Neil Armstrong:
->>>>> The same MALI-450 MP3 GPU is present in the GXBB and GXL SoCs.
-> [...]
->>>>> The node is simply added in the meson-gxbb.dtsi file.
-> [...]
->>>>> For GXL, since a lot is shared with the GXM that has a MALI-T820 IP, this
->>>>> patch adds a new meson-gxl-mali.dtsi and is included in the SoC specific
->>>>> dtsi files.
->>>>
->>>> This part is slightly confusing though.
->>>>
->>>> What exactly is the GXL vs. GXM difference that this can't be handled by
->>>> overriding node properties compatible/interrupts/clocks? I am missing a
->>>> GXM patch in this series as rationale for doing it this way.
->>>>
->>>> In particular I am wondering whether the whole GXM-inherits-from-GXL
->>>> concept is flawed and should be adjusted if this leads to secondary
->>>> .dtsi files like this: My proposal would be to instead create a
->>>> meson-gxl-gxm.dtsi, that meson-gxl.dtsi and meson-gxm.dtsi can inherit
->>>> the current common parts from, then the Mali bits can simply go into
->>>> meson-gxl.dtsi without extra #includes needed in S905X and S905D. While
->>>> it's slightly more work to split once again, I think it would be cleaner.
-> [...]
->>> The only changes are :
-> [...]
->>>  - A different Mali core, but with the same interrupts (less but they share the same lower interrupts), clocks and memory space
->>>
->>> This is why it was decided to have a sub-dtsi, having a secondary dtsi will simply copy 99% of the GXL dtsi,
->>> but surely we could also have an intermediate dtsi but for boards I'm ok with it, but less for a SoC dtsi,
->>> since it could lead to some confusion.
->>>
->>> Finally, yes I could have added the mali node to the GXL dtsi, but the midgard Mali dt-bindings are not upstream
->>> and the family is too big and recent enough to consider having stable bindings for now.
->>>
->>> Nevertheless, nothing is final, this gxl-mali.dtsi could be merged into the GXL dtsi in the future when we
->>> have proper dt-bindings and a real support of the T820 Mali on the S912.
->>>
->>> Kevin, what's your thought about this ?
->>
->> I don't have a strong preference.  I'm OK with a separate Mali .dtsi due
->> to the signficant overlap between GXL/GXM in terms of clocks, interrupts
->> etc.
->>
->> However, if the plan is to #include this from GXM .dts files, whould a
->> better name be meson-gx-mali.dtsi?
-> 
-> I thought the purpose was specifically to not have GXM include it
-> because it uses a Midgard IP.
-> 
-> If you want to share the fragment with GXBB too (gx), we should rather
-> use meson-gx-mali-utgard.dtsi, which would differentiate from GXM's
-> Midgard while still allowing for variation on the 4xx side (e.g., 470).
-> 
-> Regards,
-> Andreas
-> 
+On 14 February 2017 at 18:01, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
+> From: Hu Ziji <huziji@marvell.com>
+>
+> Add Xenon eMMC/SD/SDIO host controller core functionality.
+> Add Xenon specific initialization process.
+> Add Xenon specific mmc_host_ops APIs.
+> Add Xenon specific register definitions.
+>
+> Add CONFIG_MMC_SDHCI_XENON support in drivers/mmc/host/Kconfig.
+>
+> Marvell Xenon SDHC conforms to SD Physical Layer Specification
+> Version 3.01 and is designed according to the guidelines provided
+> in the SD Host Controller Standard Specification Version 3.00.
+>
+> Signed-off-by: Hu Ziji <huziji@marvell.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> ---
+>  drivers/mmc/host/Kconfig       |   9 +-
+>  drivers/mmc/host/Makefile      |   3 +-
+>  drivers/mmc/host/sdhci-xenon.c | 602 ++++++++++++++++++++++++++++++++++-
+>  drivers/mmc/host/sdhci-xenon.h |  70 ++++-
+>  4 files changed, 684 insertions(+)
+>  create mode 100644 drivers/mmc/host/sdhci-xenon.c
+>  create mode 100644 drivers/mmc/host/sdhci-xenon.h
+>
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 2eb97014dc3f..1c1a88bfbdad 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -819,3 +819,12 @@ config MMC_SDHCI_BRCMSTB
+>           Broadcom STB SoCs.
+>
+>           If unsure, say Y.
+> +
+> +config MMC_SDHCI_XENON
+> +       tristate "Marvell Xenon eMMC/SD/SDIO SDHCI driver"
+> +       depends on MMC_SDHCI_PLTFM
+> +       help
+> +         This selects Marvell Xenon eMMC/SD/SDIO SDHCI.
+> +         If you have a machine with integrated Marvell Xenon SDHC IP,
 
-Exact, there is no plan to include it from GXM.
+/s/SDHC/SDHCI
 
-I'm not fan of having meson-gx-mali-utgard.dtsi, we should still need some attributes additions for
-the clocks to the mali node in the gxbb dtsi and each s905x and s905d dtsi files.
-I'm not sure this is even cleaner...
+> +         say Y or M here.
+> +         If unsure, say N.
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> index ccc9c4cba154..b0a2ab4b256e 100644
+> --- a/drivers/mmc/host/Makefile
+> +++ b/drivers/mmc/host/Makefile
+> @@ -82,3 +82,6 @@ obj-$(CONFIG_MMC_SDHCI_BRCMSTB)               += sdhci-brcmstb.o
+>  ifeq ($(CONFIG_CB710_DEBUG),y)
+>         CFLAGS-cb710-mmc        += -DDEBUG
+>  endif
+> +
+> +obj-$(CONFIG_MMC_SDHCI_XENON)  += sdhci-xenon-driver.o
+> +sdhci-xenon-driver-y           += sdhci-xenon.o
 
-Neil
+Why not only this:
+obj-$(CONFIG_MMC_SDHCI_XENON) += sdhci-xenon.o
+
+> diff --git a/drivers/mmc/host/sdhci-xenon.c b/drivers/mmc/host/sdhci-xenon.c
+> new file mode 100644
+> index 000000000000..e633f803907a
+> --- /dev/null
+> +++ b/drivers/mmc/host/sdhci-xenon.c
+> @@ -0,0 +1,602 @@
+> +/*
+> + * Driver for Marvell Xenon SDHC as a platform device
+> + *
+> + * Copyright (C) 2016 Marvell, All Rights Reserved.
+> + *
+> + * Author:     Hu Ziji <huziji@marvell.com>
+> + * Date:       2016-8-24
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation version 2.
+> + *
+> + * Inspired by Jisheng Zhang <jszhang@marvell.com>
+> + * Special thanks to Video BG4 project team.
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +
+> +#include "sdhci-pltfm.h"
+> +#include "sdhci-xenon.h"
+> +
+> +static int enable_xenon_internal_clk(struct sdhci_host *host)
+
+[...]
+
+> +/* Set SDCLK-off-while-idle */
+> +static void xenon_set_sdclk_off_idle(struct sdhci_host *host,
+> +                                    unsigned char sdhc_id, bool enable)
+
+[...]
+
+> +/* Recover the Register Setting cleared during SOFTWARE_RESET_ALL */
+> +static void sdhci_xenon_reset_exit(struct sdhci_host *host,
+> +                                  unsigned char sdhc_id, u8 mask)
+
+[...]
+
+ff --git a/drivers/mmc/host/sdhci-xenon.h b/drivers/mmc/host/sdhci-xenon.h
+> new file mode 100644
+> index 000000000000..69de711db9eb
+> --- /dev/null
+> +++ b/drivers/mmc/host/sdhci-xenon.h
+
+You should probably put all this in the c-file instead. That is how
+most other sdhci variants does it.
+
+[...]
+
+Overall this looks good to me, however I think Adrian needs to have a
+quick look as well.
+
+One additional very minor nitpick. Perhaps you can align on the
+function names prefix, as those currently varies between "whatever",
+"xenon_" and "sdhci_xenon_".
+
+Kind regards
+Uffe
