@@ -1,13 +1,13 @@
 Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Icenowy Zheng <icenowy@aosc.xyz>
 To: Rob Herring <robh+dt@kernel.org>,
  Maxime Ripard <maxime.ripard@free-electrons.com>,
  Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [PATCH v3 03/11] dt-bindings: add bindings for DE2 on V3s SoC
-Date: Thu, 30 Mar 2017 03:46:05 +0800
-Message-Id: <20170329194613.55548-4-icenowy@aosc.io>
-In-Reply-To: <20170329194613.55548-1-icenowy@aosc.io>
-References: <20170329194613.55548-1-icenowy@aosc.io>
+Subject: [PATCH v2 7/8] ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
+Date: Fri, 17 Mar 2017 04:47:47 +0800
+Message-Id: <20170316204748.8596-8-icenowy@aosc.xyz>
+In-Reply-To: <20170316204748.8596-1-icenowy@aosc.xyz>
+References: <20170316204748.8596-1-icenowy@aosc.xyz>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -16,107 +16,44 @@ List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+ dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.xyz>
+Allwinner V3s SoC features a set of pins that have functionality of RGB
+LCD, the pins are at different pin ban than other SoCs.
 
-Allwinner V3s SoC have a display engine which have a different pipeline
-with older SoCs.
-
-Add document for it (new compatibles and the new "mixer" part).
-
-The paragraph of TCON is also refactored, for furtherly add TCONs in
-A83T/H3/A64/H5 that have only a channel 1 (used for HDMI or TV Encoder).
+Add pinctrl node for them.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
-Changes in v3:
-- Remove the description of having a BE directly as allwinner,pipeline.
+ arch/arm/boot/dts/sun8i-v3s.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
- .../bindings/display/sunxi/sun4i-drm.txt           | 37 +++++++++++++++++++---
- 1 file changed, 33 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index b82c00449468..38de5e96f359 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -31,11 +31,11 @@ Required properties:
-    * allwinner,sun6i-a31-tcon
-    * allwinner,sun6i-a31s-tcon
-    * allwinner,sun8i-a33-tcon
-+   * allwinner,sun8i-v3s-tcon
-  - reg: base address and size of memory-mapped region
-  - interrupts: interrupt associated to this IP
-- - clocks: phandles to the clocks feeding the TCON. Three are needed:
-+ - clocks: phandles to the clocks feeding the TCON
-    - 'ahb': the interface clocks
--   - 'tcon-ch0': The clock driving the TCON channel 0
-  - resets: phandles to the reset controllers driving the encoder
-    - "lcd": the reset line for the TCON channel 0
+diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
+index 3b29f11ad46a..f19258bb821b 100644
+--- a/arch/arm/boot/dts/sun8i-v3s.dtsi
++++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
+@@ -297,6 +297,15 @@
+ 				function = "i2c0";
+ 			};
  
-@@ -52,7 +52,12 @@ Required properties:
-   second the block connected to the TCON channel 1 (usually the TV
-   encoder)
- 
--On SoCs other than the A33, there is one more clock required:
-+On TCONs that have a channel 0 (currently all TCONs supported), there
-+is one more clock required:
-+   - 'tcon-ch0': The clock driving the TCON channel 0
++			lcd_rgb666_pins: lcd_rgb666@0 {
++				pins = "PE0", "PE1", "PE2", "PE3", "PE4",
++				       "PE5", "PE6", "PE7", "PE8", "PE9",
++				       "PE10", "PE11", "PE12", "PE13", "PE14",
++				       "PE15", "PE16", "PE17", "PE18", "PE19",
++				       "PE23", "PE24";
++				function = "lcd";
++			};
 +
-+On TCONs that have a channel 1 (currently all TCONs except the ones in
-+A33 and V3s), there is one more clock required:
-    - 'tcon-ch1': The clock driving the TCON channel 1
- 
- DRC
-@@ -137,6 +142,26 @@ Required properties:
-   Documentation/devicetree/bindings/media/video-interfaces.txt. The
-   first port should be the input endpoints, the second one the outputs
- 
-+Display Engine 2.0 Mixer
-+------------------------
-+
-+The DE2 mixer have many functionalities, currently only layer blending is
-+supported.
-+
-+Required properties:
-+  - compatible: value must be one of:
-+    * allwinner,sun8i-v3s-de2-mixer
-+  - reg: base address and size of the memory-mapped region.
-+  - clocks: phandles to the clocks feeding the frontend and backend
-+    * bus: the backend interface clock
-+    * ram: the backend DRAM clock
-+  - clock-names: the clock names mentioned above
-+  - resets: phandles to the reset controllers driving the backend
-+
-+- ports: A ports node with endpoint definitions as defined in
-+  Documentation/devicetree/bindings/media/video-interfaces.txt. The
-+  first port should be the input endpoints, the second one the output
-+
- 
- Display Engine Pipeline
- -----------------------
-@@ -151,9 +176,13 @@ Required properties:
-     * allwinner,sun6i-a31-display-engine
-     * allwinner,sun6i-a31s-display-engine
-     * allwinner,sun8i-a33-display-engine
-+    * allwinner,sun8i-v3s-display-engine
- 
-   - allwinner,pipelines: list of phandle to the display engine
--    frontends available.
-+    pipeline entry point. For SoCs with original DE (currently
-+    all SoCs supported by display engine except V3s), this
-+    phandle should be a display frontend; for SoCs with DE2,
-+    this phandle should be a mixer.
- 
- Example:
- 
+ 			uart0_pins_a: uart0@0 {
+ 				pins = "PB8", "PB9";
+ 				function = "uart0";
 -- 
 2.12.0
 
