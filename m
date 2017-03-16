@@ -1,207 +1,81 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ot0-f173.google.com ([74.125.82.173]:32838 "EHLO
-        mail-ot0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752373AbdCDADG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Mar 2017 19:03:06 -0500
-Received: by mail-ot0-f173.google.com with SMTP id 19so13363572oti.0
-        for <linux-clk@vger.kernel.org>; Fri, 03 Mar 2017 16:03:04 -0800 (PST)
-From: Jason Uy <jason.uy@broadcom.com>
-References: <1484164100-9805-1-git-send-email-jason.uy@broadcom.com>
- <1484164100-9805-2-git-send-email-jason.uy@broadcom.com> <CAAG0J9-n0toSJL8Ze8Esq81dYnpfrTd42bMiR94zw_btBLjsww@mail.gmail.com>
- <1488394220.20145.68.camel@linux.intel.com> <20170303002129.GS996@jhogan-linux.le.imgtec.org>
- <1488547866.20145.74.camel@linux.intel.com> <ab064967-e362-d9be-3040-3260e9b5c426@broadcom.com>
- <3e45a0582dd91dab1a6e9bd6f4339e12@mail.gmail.com> <20170303230712.GT996@jhogan-linux.le.imgtec.org>
-In-Reply-To: <20170303230712.GT996@jhogan-linux.le.imgtec.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH v2 1/8] dt-bindings: add binding for the Allwinner DE2 CCU
+Date: Fri, 17 Mar 2017 04:47:41 +0800
+Message-Id: <20170316204748.8596-2-icenowy@aosc.xyz>
+In-Reply-To: <20170316204748.8596-1-icenowy@aosc.xyz>
+References: <20170316204748.8596-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Date: Fri, 3 Mar 2017 16:02:56 -0800
-Message-ID: <69272eeb863f39633c51b0312c9ccd2f@mail.gmail.com>
-Subject: RE: [PATCH v2 1/1] serial: 8250_dw: Allow hardware flow control to be used
-To: James Hogan <james.hogan@imgtec.com>
-Cc: Ray Jui <ray.jui@broadcom.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Noam Camus <noamc@ezchip.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Wang Hongcheng <annie.wang@amd.com>,
-        linux-serial@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        David Daney <david.daney@cavium.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, Viresh Kumar <viresh.kumar@st.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-HI James,
+Allwinner "Display Engine 2.0" contains some clock controls in it.
 
-Maybe instead of that, we should do this instead
+Add them as a clock driver, and make a device tree binding.
 
-If ((IS_ERR(d->clk) && PTR_ERR(d->clk)) || !old)
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ .../devicetree/bindings/clock/sun8i-de2.txt        | 31 ++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
 
-Note that this is what is done in the probe function of the dw driver.
+diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+new file mode 100644
+index 000000000000..c19496f037a4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+@@ -0,0 +1,31 @@
++Allwinner Display Engine 2.0 Clock Control Binding
++--------------------------------------------------
++
++Required properties :
++- compatible: must contain one of the following compatibles:
++		- "allwinner,sun8i-a83t-de2-clk"
++		- "allwinner,sun50i-a64-de2-clk"
++		- "allwinner,sun50i-h5-de2-clk"
++
++- reg: Must contain the registers base address and length
++- clocks: phandle to the clocks feeding the display engine subsystem.
++	  Three are needed:
++  - "mod": the display engine module clock
++  - "bus": the bus clock for the whole display engine subsystem
++- clock-names: Must contain the clock names described just above
++- resets: phandle to the reset control for the display engine subsystem.
++- #clock-cells : must contain 1
++- #reset-cells : must contain 1
++
++Example:
++de2_clocks: clock@01000000 {
++	compatible = "allwinner,sun50i-a64-de2-clk";
++	reg = <0x01000000 0x1c>;
++	clocks = <&ccu CLK_DE>,
++		 <&ccu CLK_BUS_DE>;
++	clock-names = "mod",
++		      "bus";
++	resets = <&ccu RST_BUS_DE>;
++	#clock-cells = <1>;
++	#reset-cells = <1>;
++};
+-- 
+2.12.0
 
-Regards,
-Jason
 
------Original Message-----
-From: James Hogan [mailto:james.hogan@imgtec.com]
-Sent: March-03-17 3:07 PM
-To: Jason Uy <jason.uy@broadcom.com>
-Cc: Ray Jui <ray.jui@broadcom.com>; Andy Shevchenko
-<andriy.shevchenko@linux.intel.com>; Heiko Stuebner <heiko@sntech.de>; Greg
-Kroah-Hartman <gregkh@linuxfoundation.org>; Jiri Slaby <jslaby@suse.com>;
-Kefeng Wang <wangkefeng.wang@huawei.com>; Noam Camus <noamc@ezchip.com>;
-Heikki Krogerus <heikki.krogerus@linux.intel.com>; Wang Hongcheng
-<annie.wang@amd.com>; linux-serial@vger.kernel.org; LKML
-<linux-kernel@vger.kernel.org>; bcm-kernel-feedback-list@broadcom.com; Linux
-MIPS Mailing List <linux-mips@linux-mips.org>; David Daney
-<david.daney@cavium.com>; Russell King <linux@armlinux.org.uk>;
-linux-clk@vger.kernel.org; Viresh Kumar <viresh.kumar@st.com>
-Subject: Re: [PATCH v2 1/1] serial: 8250_dw: Allow hardware flow control to
-be used
-
-Hi Jason,
-
-On Fri, Mar 03, 2017 at 09:43:55AM -0800, Jason Uy wrote:
-> James,
->
-> Can you verify that changing the code to the following fixes your problem?
->
-> if (IS_ERR_OR_NULL(d->clk) || !old)
->     goto out;
-
-It does, however I'm not at all convinced it is correct. clk_get either
-returns a valid opaque clock cookie that can be passed to other clock
-functions (which includes NULL), or ERR_PTR(-errno), which IS_ERR() should
-catch for errors.
-
-According to this thread:
-
-https://lists.gt.net/linux/kernel/2102623
-
-we should stick to the clk API and use IS_ERR() rather than
-IS_ERR_OR_NULL(), but shouldn't be blindly accepting the result of
-clk_get_rate() (or I suppose clk_round_rate()), but rather checking for the
-value 0 and handling that case as "we don't have a usable clock from the clk
-api, fall back to something else".
-
-Cheers
-James
-
->
-> Regards,
-> Jason
->
-> -----Original Message-----
-> From: Ray Jui [mailto:ray.jui@broadcom.com]
-> Sent: March-03-17 9:34 AM
-> To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>; James Hogan
-> <james.hogan@imgtec.com>; Heiko Stuebner <heiko@sntech.de>
-> Cc: Jason Uy <jason.uy@broadcom.com>; Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org>; Jiri Slaby <jslaby@suse.com>; Kefeng
-> Wang <wangkefeng.wang@huawei.com>; Noam Camus <noamc@ezchip.com>;
-> Heikki Krogerus <heikki.krogerus@linux.intel.com>; Wang Hongcheng
-> <annie.wang@amd.com>; linux-serial@vger.kernel.org; LKML
-> <linux-kernel@vger.kernel.org>; bcm-kernel-feedback-list@broadcom.com;
-> Linux MIPS Mailing List <linux-mips@linux-mips.org>; David Daney
-> <david.daney@cavium.com>; Russell King <linux@armlinux.org.uk>;
-> linux-clk@vger.kernel.org; Viresh Kumar <viresh.kumar@st.com>
-> Subject: Re: [PATCH v2 1/1] serial: 8250_dw: Allow hardware flow
-> control to be used
->
-> Hi Andy/Jason,
->
-> On 3/3/2017 5:31 AM, Andy Shevchenko wrote:
-> > Heiko, you might be interested in this as well.
-> >
-> > On Fri, 2017-03-03 at 00:21 +0000, James Hogan wrote:
-> >> On Wed, Mar 01, 2017 at 08:50:20PM +0200, Andy Shevchenko wrote:
-> >>> On Wed, 2017-03-01 at 18:02 +0000, James Hogan wrote:
-> >>>> On 11 January 2017 at 19:48, Jason Uy <jason.uy@broadcom.com>
-> >>>> wrote:
-> >>>>> In the most common use case, the Synopsys DW UART driver does
-> >>>>> not set the set_termios callback function.  This prevents
-> >>>>> UPSTAT_AUTOCTS from being set when the UART flag CRTSCTS is set.
-> >>>>> As a result, the driver will use software flow control as
-> >>>>> opposed to hardware flow control.
-> >>>>>
-> >>>>> To fix the problem, the set_termios callback function is set to
-> >>>>> the DW specific function.  The logic to set UPSTAT_AUTOCTS is
-> >>>>> moved so that any clock error will not affect setting the
-> >>>>> hardware flow control.
-> >>>> Bisection shows that this patch, commit
-> >>>> 6a171b29937984a5e0bf29d6577b055998f03edb, has broken boot of the
-> >>>> Cavium Octeon III based UTM-8 board (MIPS architecture).
-> >>>>
-> >>>> I now get the following warning:
-> >>>> [<ffffffff8149c2e4>] uart_get_baud_rate+0xfc/0x1f0
-> >>>> [<ffffffff814a5098>] serial8250_do_set_termios+0xb0/0x440
-> >>>> [<ffffffff8149c710>] uart_set_options+0xe8/0x190
-> >>>> [<ffffffff814a6cdc>] serial8250_console_setup+0x84/0x158
-> >>>> [<ffffffff814a11ec>] univ8250_console_setup+0x54/0x70
-> >>>> [<ffffffff811901a0>] register_console+0x1c8/0x418
-> >>>> [<ffffffff8149f004>] uart_add_one_port+0x434/0x4b0
-> >>>> [<ffffffff814a1af8>] serial8250_register_8250_port+0x2d8/0x440
-> >>>> [<ffffffff814aa620>] dw8250_probe+0x388/0x5e8 Then it hangs and
-> >>>> the watchdog restarts the machine.
-> >>>>
-> >>>> Any ideas?
-> >>>
-> >>> 1. Does it use clock on that platform?
-> >
-> >> I've now dug a little deeper. Essentially what is going on is:
-> >>
-> >> 1) CONFIG_HAVE_CLK=n (Octeon doesn't select it)
-> >> 2) The CONFIG_HAVE_CLK=n implementation of devm_clk_get() returns
-> >> NULL
-> >> 3) The "if (IS_ERR(d->clk) || !old) {" check in dw8250_set_termios()
-> >>    doesn't match, since !IS_ERR(NULL)
-> >> 4) The CONFIG_HAVE_CLK=n implementation of clk_round_rate() returns
-> >> 0
-> >> 5) The CONFIG_HAVE_CLK=n implementation of clk_set_rate(d->clk, 0)
-> >>    returns 0
-> >> 6) dw8250_set_termios() thinks the frequency for that baud rate has
-> >> been
-> >>    set successfully and writes 0 into uartclk
-> >> 7) it all goes wrong from there...
-> >
-> > So, it means we have need special care of NULL case here, and
-> > honestly, I don't like it. But it seems the only feasible (quick)
-> > fix right now.
->
-> I agree. I think it should have been:
->
-> if (IS_ERR_OR_NULL(d->clk) || !old)
->     goto out;
->
-> I think it makes sense to validate to make sure the 'clk' pointer is
-> valid before proceeding any further down below (regardless of how well
-> or how not well the clock framework handles it).
->
-> Thanks,
->
-> Ray
->
-> >
-> >> The CONFIG_HAVE_CLK=n implementation of devm_clk_get() in
-> >> particular seems highly questionable to me, given that commit
-> >> 93abe8e4b13a ("clk:
-> >> add non CONFIG_HAVE_CLK routines") which added it 5 years ago says:
-> >>
-> >>> These calls will return error for platforms that don't select
-> >>> HAVE_CLK
-> >>
-> >> And NULL isn't an error in this API.
-> >
-> > Which is okay. I dunno what should be returned from clk_round_rate()
-> > if clk is NULL. I would fix CLK framework, though I would like to
-> > gather more details.
-> >
-> > Btw, I hope you also noticed this one:
-> >
-> > http://www.spinics.net/lists/linux-serial/msg25314.html
-> >
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
