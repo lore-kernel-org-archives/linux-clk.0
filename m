@@ -1,97 +1,105 @@
-Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH v2 3/3] ARM64: dts: meson-gx: Add MALI nodes for GXBB and
- GXL
-References: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
- <1488365164-22861-4-git-send-email-narmstrong@baylibre.com>
- <e26cf584-dab2-2702-f7e6-b28f750fa00c@suse.de>
- <e80d9fb0-1d71-7cab-5e32-72316474fdfc@baylibre.com>
- <m2tw7a17nb.fsf@baylibre.com>
- <9f3a17e8-63fa-6c14-4d17-0539ef7cd5a2@suse.de>
- <1825920f-586f-7c84-8e0e-958046397b64@baylibre.com>
-Date: Mon, 06 Mar 2017 09:27:47 -0800
-In-Reply-To: <1825920f-586f-7c84-8e0e-958046397b64@baylibre.com> (Neil
- Armstrong's message of "Mon, 6 Mar 2017 09:58:33 +0100")
-Message-ID: <m2efya1fjg.fsf@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:33502 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752582AbdCPVKm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2017 17:10:42 -0400
+Date: Thu, 16 Mar 2017 16:10:39 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robin.murphy@arm.com, will.deacon@arm.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, m.szyprowski@samsung.com,
+        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+        devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
+        mark.rutland@arm.com
+Subject: Re: [PATCH V3 3/5] drivers: arm-smmu: Add clock support for
+ QCOM_SMMUV2
+Message-ID: <20170316211039.rbqq262syalyfcs6@rob-hp-laptop>
+References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
+ <1489073748-3659-4-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
-List-Post: <mailto:linux-amlogic@lists.infradead.org>
-List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, sboyd@codeaurora.org,
- linux-kernel@vger.kernel.org,
- Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, carlo@caione.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
-Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1489073748-3659-4-git-send-email-sricharan@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-TmVpbCBBcm1zdHJvbmcgPG5hcm1zdHJvbmdAYmF5bGlicmUuY29tPiB3cml0ZXM6Cgo+IE9uIDAz
-LzA0LzIwMTcgMDE6MzggUE0sIEFuZHJlYXMgRsOkcmJlciB3cm90ZToKPj4gQW0gMDMuMDMuMjAx
-NyB1bSAyMDoyOSBzY2hyaWViIEtldmluIEhpbG1hbjoKPj4+IE5laWwgQXJtc3Ryb25nIDxuYXJt
-c3Ryb25nQGJheWxpYnJlLmNvbT4gd3JpdGVzOgo+Pj4+IE9uIDAzLzAyLzIwMTcgMDE6MzEgUE0s
-IEFuZHJlYXMgRsOkcmJlciB3cm90ZToKPj4+Pj4gQW0gMDEuMDMuMjAxNyB1bSAxMTo0NiBzY2hy
-aWViIE5laWwgQXJtc3Ryb25nOgo+Pj4+Pj4gVGhlIHNhbWUgTUFMSS00NTAgTVAzIEdQVSBpcyBw
-cmVzZW50IGluIHRoZSBHWEJCIGFuZCBHWEwgU29Dcy4KPj4gWy4uLl0KPj4+Pj4+IFRoZSBub2Rl
-IGlzIHNpbXBseSBhZGRlZCBpbiB0aGUgbWVzb24tZ3hiYi5kdHNpIGZpbGUuCj4+IFsuLi5dCj4+
-Pj4+PiBGb3IgR1hMLCBzaW5jZSBhIGxvdCBpcyBzaGFyZWQgd2l0aCB0aGUgR1hNIHRoYXQgaGFz
-IGEgTUFMSS1UODIwIElQLCB0aGlzCj4+Pj4+PiBwYXRjaCBhZGRzIGEgbmV3IG1lc29uLWd4bC1t
-YWxpLmR0c2kgYW5kIGlzIGluY2x1ZGVkIGluIHRoZSBTb0Mgc3BlY2lmaWMKPj4+Pj4+IGR0c2kg
-ZmlsZXMuCj4+Pj4+Cj4+Pj4+IFRoaXMgcGFydCBpcyBzbGlnaHRseSBjb25mdXNpbmcgdGhvdWdo
-Lgo+Pj4+Pgo+Pj4+PiBXaGF0IGV4YWN0bHkgaXMgdGhlIEdYTCB2cy4gR1hNIGRpZmZlcmVuY2Ug
-dGhhdCB0aGlzIGNhbid0IGJlIGhhbmRsZWQgYnkKPj4+Pj4gb3ZlcnJpZGluZyBub2RlIHByb3Bl
-cnRpZXMgY29tcGF0aWJsZS9pbnRlcnJ1cHRzL2Nsb2Nrcz8gSSBhbSBtaXNzaW5nIGEKPj4+Pj4g
-R1hNIHBhdGNoIGluIHRoaXMgc2VyaWVzIGFzIHJhdGlvbmFsZSBmb3IgZG9pbmcgaXQgdGhpcyB3
-YXkuCj4+Pj4+Cj4+Pj4+IEluIHBhcnRpY3VsYXIgSSBhbSB3b25kZXJpbmcgd2hldGhlciB0aGUg
-d2hvbGUgR1hNLWluaGVyaXRzLWZyb20tR1hMCj4+Pj4+IGNvbmNlcHQgaXMgZmxhd2VkIGFuZCBz
-aG91bGQgYmUgYWRqdXN0ZWQgaWYgdGhpcyBsZWFkcyB0byBzZWNvbmRhcnkKPj4+Pj4gLmR0c2kg
-ZmlsZXMgbGlrZSB0aGlzOiBNeSBwcm9wb3NhbCB3b3VsZCBiZSB0byBpbnN0ZWFkIGNyZWF0ZSBh
-Cj4+Pj4+IG1lc29uLWd4bC1neG0uZHRzaSwgdGhhdCBtZXNvbi1neGwuZHRzaSBhbmQgbWVzb24t
-Z3htLmR0c2kgY2FuIGluaGVyaXQKPj4+Pj4gdGhlIGN1cnJlbnQgY29tbW9uIHBhcnRzIGZyb20s
-IHRoZW4gdGhlIE1hbGkgYml0cyBjYW4gc2ltcGx5IGdvIGludG8KPj4+Pj4gbWVzb24tZ3hsLmR0
-c2kgd2l0aG91dCBleHRyYSAjaW5jbHVkZXMgbmVlZGVkIGluIFM5MDVYIGFuZCBTOTA1RC4gV2hp
-bGUKPj4+Pj4gaXQncyBzbGlnaHRseSBtb3JlIHdvcmsgdG8gc3BsaXQgb25jZSBhZ2FpbiwgSSB0
-aGluayBpdCB3b3VsZCBiZSBjbGVhbmVyLgo+PiBbLi4uXQo+Pj4+IFRoZSBvbmx5IGNoYW5nZXMg
-YXJlIDoKPj4gWy4uLl0KPj4+PiAgLSBBIGRpZmZlcmVudCBNYWxpIGNvcmUsIGJ1dCB3aXRoIHRo
-ZSBzYW1lIGludGVycnVwdHMgKGxlc3MgYnV0IHRoZXkgc2hhcmUgdGhlIHNhbWUgbG93ZXIgaW50
-ZXJydXB0cyksIGNsb2NrcyBhbmQgbWVtb3J5IHNwYWNlCj4+Pj4KPj4+PiBUaGlzIGlzIHdoeSBp
-dCB3YXMgZGVjaWRlZCB0byBoYXZlIGEgc3ViLWR0c2ksIGhhdmluZyBhIHNlY29uZGFyeSBkdHNp
-IHdpbGwgc2ltcGx5IGNvcHkgOTklIG9mIHRoZSBHWEwgZHRzaSwKPj4+PiBidXQgc3VyZWx5IHdl
-IGNvdWxkIGFsc28gaGF2ZSBhbiBpbnRlcm1lZGlhdGUgZHRzaSBidXQgZm9yIGJvYXJkcyBJJ20g
-b2sgd2l0aCBpdCwgYnV0IGxlc3MgZm9yIGEgU29DIGR0c2ksCj4+Pj4gc2luY2UgaXQgY291bGQg
-bGVhZCB0byBzb21lIGNvbmZ1c2lvbi4KPj4+Pgo+Pj4+IEZpbmFsbHksIHllcyBJIGNvdWxkIGhh
-dmUgYWRkZWQgdGhlIG1hbGkgbm9kZSB0byB0aGUgR1hMIGR0c2ksIGJ1dCB0aGUgbWlkZ2FyZCBN
-YWxpIGR0LWJpbmRpbmdzIGFyZSBub3QgdXBzdHJlYW0KPj4+PiBhbmQgdGhlIGZhbWlseSBpcyB0
-b28gYmlnIGFuZCByZWNlbnQgZW5vdWdoIHRvIGNvbnNpZGVyIGhhdmluZyBzdGFibGUgYmluZGlu
-Z3MgZm9yIG5vdy4KPj4+Pgo+Pj4+IE5ldmVydGhlbGVzcywgbm90aGluZyBpcyBmaW5hbCwgdGhp
-cyBneGwtbWFsaS5kdHNpIGNvdWxkIGJlIG1lcmdlZCBpbnRvIHRoZSBHWEwgZHRzaSBpbiB0aGUg
-ZnV0dXJlIHdoZW4gd2UKPj4+PiBoYXZlIHByb3BlciBkdC1iaW5kaW5ncyBhbmQgYSByZWFsIHN1
-cHBvcnQgb2YgdGhlIFQ4MjAgTWFsaSBvbiB0aGUgUzkxMi4KPj4+Pgo+Pj4+IEtldmluLCB3aGF0
-J3MgeW91ciB0aG91Z2h0IGFib3V0IHRoaXMgPwo+Pj4KPj4+IEkgZG9uJ3QgaGF2ZSBhIHN0cm9u
-ZyBwcmVmZXJlbmNlLiAgSSdtIE9LIHdpdGggYSBzZXBhcmF0ZSBNYWxpIC5kdHNpIGR1ZQo+Pj4g
-dG8gdGhlIHNpZ25maWNhbnQgb3ZlcmxhcCBiZXR3ZWVuIEdYTC9HWE0gaW4gdGVybXMgb2YgY2xv
-Y2tzLCBpbnRlcnJ1cHRzCj4+PiBldGMuCj4+Pgo+Pj4gSG93ZXZlciwgaWYgdGhlIHBsYW4gaXMg
-dG8gI2luY2x1ZGUgdGhpcyBmcm9tIEdYTSAuZHRzIGZpbGVzLCB3aG91bGQgYQo+Pj4gYmV0dGVy
-IG5hbWUgYmUgbWVzb24tZ3gtbWFsaS5kdHNpPwo+PiAKPj4gSSB0aG91Z2h0IHRoZSBwdXJwb3Nl
-IHdhcyBzcGVjaWZpY2FsbHkgdG8gbm90IGhhdmUgR1hNIGluY2x1ZGUgaXQKPj4gYmVjYXVzZSBp
-dCB1c2VzIGEgTWlkZ2FyZCBJUC4KPj4gCj4+IElmIHlvdSB3YW50IHRvIHNoYXJlIHRoZSBmcmFn
-bWVudCB3aXRoIEdYQkIgdG9vIChneCksIHdlIHNob3VsZCByYXRoZXIKPj4gdXNlIG1lc29uLWd4
-LW1hbGktdXRnYXJkLmR0c2ksIHdoaWNoIHdvdWxkIGRpZmZlcmVudGlhdGUgZnJvbSBHWE0ncwo+
-PiBNaWRnYXJkIHdoaWxlIHN0aWxsIGFsbG93aW5nIGZvciB2YXJpYXRpb24gb24gdGhlIDR4eCBz
-aWRlIChlLmcuLCA0NzApLgo+PiAKPj4gUmVnYXJkcywKPj4gQW5kcmVhcwo+PiAKPgo+IEV4YWN0
-LCB0aGVyZSBpcyBubyBwbGFuIHRvIGluY2x1ZGUgaXQgZnJvbSBHWE0uCj4KPiBJJ20gbm90IGZh
-biBvZiBoYXZpbmcgbWVzb24tZ3gtbWFsaS11dGdhcmQuZHRzaSwgd2Ugc2hvdWxkIHN0aWxsIG5l
-ZWQgc29tZSBhdHRyaWJ1dGVzIGFkZGl0aW9ucyBmb3IKPiB0aGUgY2xvY2tzIHRvIHRoZSBtYWxp
-IG5vZGUgaW4gdGhlIGd4YmIgZHRzaSBhbmQgZWFjaCBzOTA1eCBhbmQgczkwNWQgZHRzaSBmaWxl
-cy4KPiBJJ20gbm90IHN1cmUgdGhpcyBpcyBldmVuIGNsZWFuZXIuLi4KCk9LLCBJIG1pc3VuZGVy
-c3Rvb2QgdGhlIGludGVudCBvZiBoYXZpbmcgaXQgc2VwYXJhdGVkIGZyb20gb3V0IGZyb20gdGhl
-CkdYTCAuZHN0aSB0aGVuLiAgQ291bGQgeW91IHBsZWFzZSBjbGFyaWZ5PwoKS2V2aW4KCgoKCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFtbG9n
-aWMgbWFpbGluZyBsaXN0CmxpbnV4LWFtbG9naWNAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8v
-bGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFtbG9naWMK
+On Thu, Mar 09, 2017 at 09:05:46PM +0530, Sricharan R wrote:
+> The QCOM_SMMUV2 is an implementation of the arm,smmu-v2 architecture.
+> The qcom,smmu is instantiated for each of the multimedia cores (for eg)
+> Venus (video encoder/decoder), mdp (display) etc, and they are connected
+> to the Multimedia Aggregator Interconnect (MMAGIC). So the access to
+> any of the MMU's registers, as well as MMU's downstream bus access,
+> requires the specified MMAGIC clocks to be enabled. So adding a new
+> binding for the qcom,smmu-v2 and the required mmagic clock bindings for
+> the same. Also adding the support for enabling the qcom,smmu-v2 clocks in
+> the driver.
+> 
+>                -------------  ---------
+>                |   VENUS   |  | MDP   |
+> 	       |	   |  |       |
+> 	       -------------  --------
+> 		     |           |
+> 		     |           |
+>                   ------      ---------
+>                   |SMMU |     | SMMU  |
+>                   |	|     |       |
+>                   ------      --------
+> 		    |            |
+> 		    |            |
+>        -----------------------------------------
+>        |	MMAGIC INTERCONNECT (MMSS NOC) |
+>        |                                       |
+>        -----------------------------------------
+>                    |                 |
+> 		   |           ----------------------------------
+>                  -----         | 	SYSTEM NOC		|
+>                  |DDR|	       |				|
+>                  -----         ---------------------------------
+> 		   |		    |
+>                    |               ------
+> 		   |<-------------| CPU|
+> 				  ------
+> 
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> ---
+>  .../devicetree/bindings/iommu/arm,smmu.txt         |   8 ++
+>  drivers/iommu/arm-smmu.c                           | 124 +++++++++++++++++++++
+>  2 files changed, 132 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> index b369c13..88e02d6 100644
+> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> @@ -17,6 +17,7 @@ conditions.
+>                          "arm,mmu-401"
+>                          "arm,mmu-500"
+>                          "cavium,smmu-v2"
+> +			"qcom,smmu-v2"
+
+I know Cavium did it, but I'd prefer to see SoC specific compatibles 
+here.
+
+>  
+>                    depending on the particular implementation and/or the
+>                    version of the architecture implemented.
+> @@ -74,6 +75,13 @@ conditions.
+>                    "cfg_clk" is optional if required to access the TCU's programming
+>                    interface, apart from the "tcu_clk".
+>  
+> +		  Should have "mmagic_ahb_clk", "mmagic_cfg_ahb_clk",
+> +                              "smmu_core_ahb_clk", "smmu_core_axi_clk",
+> +                              "mmagic_core_axi_clk" for "qcom,smmu-v2"
+
+This is instead of the above clocks?
+
+Are these clocks all really part of the SMMU or are the mmagic clocks 
+working around no proper driver for the mmagic?
+
+> +
+> +		  "mmagic_core_axi_clk" is required for smmu's access to the
+> +                   downstream bus and rest for the smmu's register group access.
+> +
+>  - clocks:         Phandles for respective clocks described by clock-names.
+>  
+>  - power-domains:  Phandles to SMMU's power domain specifier. This is
