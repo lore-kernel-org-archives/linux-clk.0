@@ -1,106 +1,100 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
 To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Leo Yan <leo.yan@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	mike.leach@linaro.org,
-	Suzuki.Poulose@arm.com,
-	sudeep.holla@arm.com
-Subject: [PATCH v4 1/7] coresight: bindings for CPU debug module
-Date: Fri, 17 Mar 2017 23:02:17 +0800
-Message-Id: <1489762943-25849-2-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
-References: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH v2 8/8] ARM: dts: sun8i: enable LCD panel of Lichee Pi Zero
+Date: Fri, 17 Mar 2017 04:47:48 +0800
+Message-Id: <20170316204748.8596-9-icenowy@aosc.xyz>
+In-Reply-To: <20170316204748.8596-1-icenowy@aosc.xyz>
+References: <20170316204748.8596-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-According to ARMv8 architecture reference manual (ARM DDI 0487A.k)
-Chapter 'Part H: External debug', the CPU can integrate debug module
-and it can support self-hosted debug and external debug. Especially
-for supporting self-hosted debug, this means the program can access
-the debug module from mmio region; and usually the mmio region is
-integrated with coresight.
+A 480x272 QiaoDian QD43003C0-40-7LED panel is available from Lichee Pi.
 
-So add document for binding debug component, includes binding to APB
-clock; and also need specify the CPU node which the debug module is
-dedicated to specific CPU.
+This commit connects this panel to Lichee Pi Zero.
 
-Suggested-by: Mike Leach <mike.leach@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Lichee Pi also provides a 800x480 panel without accurate model number,
+so do not merge this patch. It will finally come as device tree overlay.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- .../bindings/arm/coresight-cpu-debug.txt           | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
+ arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts | 36 +++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt b/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
-new file mode 100644
-index 0000000..f6855c3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
-@@ -0,0 +1,46 @@
-+* CoreSight CPU Debug Component:
+diff --git a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+index 387fc2aa546d..7ae72bf63cd0 100644
+--- a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
++++ b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+@@ -75,6 +75,28 @@
+ 			gpios = <&pio 6 2 GPIO_ACTIVE_LOW>; /* PG2 */
+ 		};
+ 	};
 +
-+CoreSight cpu debug component are compliant with the ARMv8 architecture
-+reference manual (ARM DDI 0487A.k) Chapter 'Part H: External debug'. The
-+external debug module is mainly used for two modes: self-hosted debug and
-+external debug, and it can be accessed from mmio region from Coresight
-+and eventually the debug module connects with CPU for debugging. And the
-+debug module provides sample-based profiling extension, which can be used
-+to sample CPU program counter, secure state and exception level, etc;
-+usually every CPU has one dedicated debug module to be connected.
++	panel: panel {
++		compatible = "qiaodian,qd43003c0-40", "simple-panel";
++		enable-gpios = <&pio 1 4 GPIO_ACTIVE_HIGH>; /* Should be backlight */
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+Required properties:
++		port@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
 +
-+- compatible : should be
-+	     * "arm,coresight-cpu-debug"; supplemented with "arm,primecell"
-+	       since this driver is using the AMBA bus interface.
-+
-+- reg : physical base address and length of the register set.
-+
-+- clocks : the clock associated to this component.
-+
-+- clock-names : the name of the clock referenced by the code. Since we are
-+                using the AMBA framework, the name of the clock providing
-+		the interconnect should be "apb_pclk" and the clock is
-+		mandatory. The interface between the debug logic and the
-+		processor core is clocked by the internal CPU clock, so it
-+		is enabled with CPU clock by default.
-+
-+- cpu : the cpu phandle the debug module is affined to. When omitted
-+	the module is considered to belong to CPU0.
-+
-+Optional properties:
-+
-+- power-domains: a phandle to power domain node for debug module. We can
-+		 use "nohlt" to ensure CPU power domain is enabled.
-+
-+
-+Example:
-+
-+	debug@f6590000 {
-+		compatible = "arm,coresight-cpu-debug","arm,primecell";
-+		reg = <0 0xf6590000 0 0x1000>;
-+		clocks = <&sys_ctrl HI6220_DAPB_CLK>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu0>;
++			panel_input: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&tcon0_out_lcd>;
++			};
++		};
 +	};
++};
++
++&de {
++	status = "okay";
+ };
+ 
+ &mmc0 {
+@@ -86,6 +108,20 @@
+ 	status = "okay";
+ };
+ 
++&tcon0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&lcd_rgb666_pins>;
++	status = "okay";
++
++};
++
++&tcon0_out {
++	tcon0_out_lcd: endpoint@0 {
++		reg = <0>;
++		remote-endpoint = <&panel_input>;
++	};
++};
++
+ &uart0 {
+ 	pinctrl-0 = <&uart0_pins_a>;
+ 	pinctrl-names = "default";
 -- 
-2.7.4
+2.12.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
