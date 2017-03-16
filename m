@@ -1,126 +1,121 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>, Paul Walmsley <paul@pwsan.com>
-Subject: [PATCHv2 1/9] Documentation: dt-bindings: Add binding documentation for TI clkctrl clocks
-Date: Fri, 17 Mar 2017 11:09:33 +0200
-Message-ID: <1489741781-12816-2-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH v2 3/8] dt-bindings: add bindings for DE2 on V3s SoC
+Date: Fri, 17 Mar 2017 04:47:43 +0800
+Message-Id: <20170316204748.8596-4-icenowy@aosc.xyz>
+In-Reply-To: <20170316204748.8596-1-icenowy@aosc.xyz>
+References: <20170316204748.8596-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Tony Lindgren <tony@atomide.com>
+Allwinner V3s SoC have a display engine which have a different pipeline
+with older SoCs.
 
-Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
-clock controller instance for each interconnect target module. The clkctrl
-controls functional and interface clocks for the module.
+Add document for it (new compatibles and the new "mixer" part).
 
-The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
-With this binding and a related clock device driver we can start moving the
-clkctrl clock handling to live in drivers/clk/ti.
+The paragraph of TCON is also refactored, for furtherly add TCONs in
+A83T/H3/A64/H5 that have only a channel 1 (used for HDMI or TV Encoder).
 
-Note that this binding allows keeping the clockdomain related parts out of
-drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
-a separate driver in drivers/soc/ti and genpd. If the clockdomain driver
-needs to know it's clocks, we can just set the the clkctrl device
-instances to be children of the related clockdomain device.
-
-Each clkctrl clock can have multiple optional gate clocks, and multiple
-optional mux clocks. To represent this in device tree, it seems that
-it is best done using four clock cells #clock-cells = <2> property.
-
-The reasons for using #clock-cells = <2> are:
-
-1. We need to specify the clkctrl offset from the instance base. Otherwise
-   we end up with a large number of device tree nodes that need to be
-   patched when new clocks are discovered in a clkctrl clock with minor
-   hardware revision changes for example
-
-2. On omap5 CM_L3INIT_USB_HOST_HS_CLKCTRL has ten OPTFCLKEN bits. So we
-   need to use a separate cell for optional gate clocks to avoid address
-   space conflicts
-
-There is probably no need to list input clocks for each clkctrl clock
-instance in the binding. If we want to add them, the standard clocks
-binding can be used for that.
-
-For hardware reference, see omap4430 TRM "Table 3-1312. L4PER_CM2 Registers
-Mapping Summary" for example. It shows one instance of a clkctrl clock
-controller with multiple clkctrl registers.
-
-Cc: Paul Walmsley <paul@pwsan.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- .../devicetree/bindings/clock/ti-clkctrl.txt       | 56 ++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+ .../bindings/display/sunxi/sun4i-drm.txt           | 37 +++++++++++++++++++---
+ 1 file changed, 33 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-new file mode 100644
-index 0000000..7e5d9f5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-@@ -0,0 +1,56 @@
-+Texas Instruments clkctrl clock binding
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index b82c00449468..2c293247c41d 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -31,11 +31,11 @@ Required properties:
+    * allwinner,sun6i-a31-tcon
+    * allwinner,sun6i-a31s-tcon
+    * allwinner,sun8i-a33-tcon
++   * allwinner,sun8i-v3s-tcon
+  - reg: base address and size of memory-mapped region
+  - interrupts: interrupt associated to this IP
+- - clocks: phandles to the clocks feeding the TCON. Three are needed:
++ - clocks: phandles to the clocks feeding the TCON
+    - 'ahb': the interface clocks
+-   - 'tcon-ch0': The clock driving the TCON channel 0
+  - resets: phandles to the reset controllers driving the encoder
+    - "lcd": the reset line for the TCON channel 0
+ 
+@@ -52,7 +52,12 @@ Required properties:
+   second the block connected to the TCON channel 1 (usually the TV
+   encoder)
+ 
+-On SoCs other than the A33, there is one more clock required:
++On TCONs that have a channel 0 (currently all TCONs supported), there
++is one more clock required:
++   - 'tcon-ch0': The clock driving the TCON channel 0
 +
-+Texas Instruments SoCs can have a clkctrl clock controller for each
-+interconnect target module. The clkctrl clock controller manages functional
-+and interface clocks for each module. Each clkctrl controller can also
-+gate one or more optional functional clocks for a module, and can have one
-+or more clock muxes. There is a clkctrl clock controller typically for each
-+interconnect target module on omap4 and later variants.
++On TCONs that have a channel 1 (currently all TCONs except the ones in
++A33 and V3s), there is one more clock required:
+    - 'tcon-ch1': The clock driving the TCON channel 1
+ 
+ DRC
+@@ -137,6 +142,26 @@ Required properties:
+   Documentation/devicetree/bindings/media/video-interfaces.txt. The
+   first port should be the input endpoints, the second one the outputs
+ 
++Display Engine 2.0 Mixer
++------------------------
 +
-+The clock consumers can specify the index of the clkctrl clock using
-+the hardware offset from the clkctrl instance register space. The optional
-+clocks can be specified by clkctrl hardware offset and the index of the
-+optional clock.
++The DE2 mixer have many functionalities, currently only layer blending is
++supported.
 +
-+For more information, please see the Linux clock framework binding at
-+Documentation/devicetree/bindings/clock/clock-bindings.txt.
++Required properties:
++  - compatible: value must be one of:
++    * allwinner,sun8i-v3s-de2-mixer
++  - reg: base address and size of the memory-mapped region.
++  - clocks: phandles to the clocks feeding the frontend and backend
++    * bus: the backend interface clock
++    * ram: the backend DRAM clock
++  - clock-names: the clock names mentioned above
++  - resets: phandles to the reset controllers driving the backend
 +
-+Required properties :
-+- compatible : shall be "ti,clkctrl"
-+- #clock-cells : shall contain 2 with the first entry being the instance
-+		 offset from the clock domain base and the second being the
-+		 clock index
++- ports: A ports node with endpoint definitions as defined in
++  Documentation/devicetree/bindings/media/video-interfaces.txt. The
++  first port should be the input endpoints, the second one the output
 +
-+Example: Clock controller node on omap 4430:
-+
-+&cm2 {
-+	l4per: cm@1400 {
-+		cm_l4per@0 {
-+			cm_l4per_clkctrl: clk@20 {
-+				compatible = "ti,clkctrl";
-+				reg = <0x20 0x1b0>;
-+				#clock-cells = <4>;
-+			};
-+		};
-+	};
-+};
-+
-+Example: Preprocessor helper macros in dt-bindings/clock/ti-clkctrl.h
-+
-+#define OMAP4_CLKCTRL_OFFSET		0x20
-+#define OMAP4_CLKCTRL_INDEX(offset)	((offset) - OMAP4_CLKCTRL_OFFSET)
-+#define MODULEMODE_HWCTRL		1
-+#define MODULEMODE_SWCTRL		2
-+
-+#define OMAP4_GPTIMER10_CLKTRL		OMAP4_CLKCTRL_INDEX(0x28)
-+#define OMAP4_GPTIMER11_CLKTRL		OMAP4_CLKCTRL_INDEX(0x30)
-+#define OMAP4_GPTIMER2_CLKTRL		OMAP4_CLKCTRL_INDEX(0x38)
-+...
-+#define OMAP4_GPIO2_CLKCTRL		OMAP_CLKCTRL_INDEX(0x60)
-+
-+Example: Clock consumer node for GPIO2:
-+
-+&gpio2 {
-+       clocks = <&cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 0
-+		 &cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 8>;
-+};
+ 
+ Display Engine Pipeline
+ -----------------------
+@@ -151,9 +176,13 @@ Required properties:
+     * allwinner,sun6i-a31-display-engine
+     * allwinner,sun6i-a31s-display-engine
+     * allwinner,sun8i-a33-display-engine
++    * allwinner,sun8i-v3s-display-engine
+ 
+   - allwinner,pipelines: list of phandle to the display engine
+-    frontends available.
++    pipeline entry point. For SoCs with original DE (currently
++    all SoCs supported by display engine except V3s), this
++    phandle should be a display frontend or backend; for SoCs
++    with DE2, this phandle should be a mixer.
+ 
+ Example:
+ 
 -- 
-1.9.1
+2.12.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
