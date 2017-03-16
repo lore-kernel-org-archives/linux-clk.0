@@ -1,154 +1,129 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1488902436.28627.2.camel@baylibre.com>
-Subject: Re: [RFC 0/2] CLK_SET_RATE_GATE and protection against changes
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- Kevin Hilman <khilman@baylibre.com>, Neil Armstrong
- <narmstrong@baylibre.com>
-Date: Tue, 07 Mar 2017 17:00:36 +0100
-In-Reply-To: <20170307143823.GD10239@codeaurora.org>
-References: <20170302173835.18313-1-jbrunet@baylibre.com>
-	 <20170307143823.GD10239@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        <daniel.thompson@linaro.org>, <andrea.merello@gmail.com>,
+        <radoslaw.pietrzyk@gmail.com>
+CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <gabriel.fernandez@st.com>
+Subject: [PATCH v2 2/2] clk: stm32f4: fix timeout management for pll and ready gate
+Date: Thu, 16 Mar 2017 09:16:41 +0100
+Message-ID: <1489652201-19889-3-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1489652201-19889-1-git-send-email-gabriel.fernandez@st.com>
+References: <1489652201-19889-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-03-07 at 06:38 -0800, Stephen Boyd wrote:
-> On 03/02, Jerome Brunet wrote:
-> > 
-> > I tried to understand what happened but my understanding of CCF is
-> > limited,
-> > if the following is complete nonsense, feel free to (gently) mock
-> > me.
-> > CLK_SET_RATE_GATE only prevent rate change when the clock is busy
-> > and we
-> > through clk_core_set_rate_nolock. So if we call clk_set_rate
-> > directly on
-> > clock with CLK_SET_RATE_GATE, while another clock uses it, it shall
-> > fail. However if we reach this clock by walking up the clock tree,
-> > everything seems to be as if this flag did not exist. I think this
-> > explains
-> > why mpll0 was selected has best parent and updated.
-> 
-> Right. My understanding is that this is the desired behavior of
-> this flag. At least, this is what I recall when speaking with
-> Mike about this a year or two ago.
-> 
-> A few months ago, Jiada Wang reported a similar problem[1] and
-> I've never merged it because of the concern it will break
-> something due to the flag behavior changing. Perhaps the way
-> forward here is to add a new flag for this different behavior and
-> let drivers opt-in to it.
-> 
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-In this previous thread, you mentioned the idea of deleting the flag.
-While a bit radical, I kind of like it. The name, as it is, is
-misleading. The flag does not really enforce gating the clock to change
-the rate.
-Changing the behavior of the flag is also too agressive I guess.
+Use a classic polling to test bit ready.
+And the shift of the bit ready of LSE & LSI were wrongs.
 
-What about renaming the current flag to CLK_SET_RATE_GATE_LEAF (or
-anything else) and clearly mark it as obsolete in the header with a bit
-of explanation ?
+Fixes: 861adc44d290 ("clk: stm32f4: Add LSI & LSE clocks")
 
-We could keep that old behavior around while providers ask themself
-whether they really need to gate to change rate or not.
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32f4.c | 43 +++++++++++++++++++++++++++++--------------
+ 1 file changed, 29 insertions(+), 14 deletions(-)
 
-> > 
-> > In patch 1, I try in intercept the calls to .round_rate and
-> > .determine_rate
-> > and just return the current rate of the clock when it is busy.  The
-> > way the
-> > clock remains usable with the consumer can deal with the current
-> > but the
-> > rate won't change for the consumer already using the
-> > clock.  Because of
-> > this change, mpll0 is no longer the best parent out there.
-> > 
-> > fixed_pll                    3        3            2000000000
-> >    mpll2                     0        0                     0
-> >    mpll1                     0        0              36863870
-> >       cts_mclk_i958_sel      0        0              36863870
-> >          cts_mclk_i958_div   0        0               6143979
-> >             cts_mclk_i958    0        0               6143979
-> >    mpll0                     1        1             491495425
-> >       cts_amclk_sel          1        1             491495425
-> >          cts_amclk_div       1        1              12287386
-> >             cts_amclk        1        1              12287386
-> > 
-> > This is the result I expected :) However, the situation is still
-> > not ideal
-> > as I think using CLK_SET_RATE_GATE to protect against rate changes
-> > in such
-> > case is subject to race condition.
-> > 
-> > Suppose that I start both playbacks at the same time, i2s sets its
-> > rate but
-> > get descheduled before enabling the clock. Then spdif get
-> > scheduled, set
-> > the rate on the same pll (it can as the prepare/enable count is
-> > still 0)
-> > and enables the clock.  Finally, i2s gets scheduled again, enables
-> > its
-> > clock but the rate of the selected parent has changed behind our
-> > back.  I
-> > don't really know how to solve this one. I was thinking of another
-> > counter
-> > (like owner_count) but we already have 2 of those, there must be
-> > something
-> > smarter we can do about it... I guess.
-> 
-> Solving this problem is never fun. One "solution" is to use clk
-> notifiers to block rate changes that are undesirable. Overall,
-> that isn't really great though because we are using notifiers,
-> and it doesn't allow us to resolve what the rate changes should
-> do. Instead, we can just say yes or no.
-
-Wouldn't it be too late anyway ? The goal would be to force the second
-consumer to switch a better suited parent. if we just notify "no" while
-changing the rate, set_rate will return a error I suppose ? Even if
-could have chosen another parent and be successful ? Something needs to
-happen in round_rate/determine_rate, doesn't it ?
-
-> 
-> Do the hardware designers have a frequency plan in mind when
-> designing the hardware so that we would know the PLLs they
-> planned to use for particular clks? Or is the whole thing
-> completely open ended and they expect software to figure out the
-> configuration of the clk tree at runtime based on what
-> frequencies are required on the different leaf clks (i2s/spdif).
-> 
-> It may also work to use clk_set_rate_range() to "lock" the rate
-> of a clk to specifically what frequency you want.
-
-Would any other driver be prevented from calling clk_set_rate_range as
-well, if you have the kind race condition I mentioned ?
-
->  I haven't
-> thought that through completely, but it may work enough to make
-> sure the rate can't change while still allowing other clks to get
-> rates they want by searching the tree for another source.
-
-For this use case, I have to admit I was probably abusing the
-CLK_SET_RATE_GATE to fit my use case ;)
-
-The clock does not need to be gated for the rate to change, but the
-rate can't change if a consumer depends on it.
-
-Here another idea: yet another flag (CLK_SET_RATE_PROTECT).
-It would require the clock to be prepared to be allowed to set the
-rate. if prepare_count > 1, it would return the current rate, acting as
-fixed clock. This allows determine_rate to switch to better parent if
-available, or try to make the best out of what is available.
-
-The problem I see with this approach is the case where 2 consumers
-prepare the clock w/o being able to set the rate => no consumer is
-satisfied by the clock is locked. Could it be solved by adding a
-"prepare_set_rate" to the CCF api ?
-
-> 
-> [1] https://patchwork.kernel.org/patch/9222903/
-> [2] https://patchwork.kernel.org/patch/9295171/
-> 
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index cf9449b3..68e2a4e 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -531,19 +531,26 @@ static int stm32f4_pll_is_enabled(struct clk_hw *hw)
+ 	return clk_gate_ops.is_enabled(hw);
+ }
+ 
++#define PLL_TIMEOUT 10000
++
+ static int stm32f4_pll_enable(struct clk_hw *hw)
+ {
+ 	struct clk_gate *gate = to_clk_gate(hw);
+ 	struct stm32f4_pll *pll = to_stm32f4_pll(gate);
+-	int ret = 0;
+-	unsigned long reg;
++	int bit_status;
++	unsigned int timeout = PLL_TIMEOUT;
+ 
+-	ret = clk_gate_ops.enable(hw);
++	if (clk_gate_ops.is_enabled(hw))
++		return 0;
++
++	clk_gate_ops.enable(hw);
+ 
+-	ret = readl_relaxed_poll_timeout_atomic(base + STM32F4_RCC_CR, reg,
+-			reg & (1 << pll->bit_rdy_idx), 0, 10000);
++	do {
++		bit_status = !(readl(gate->reg) & BIT(pll->bit_rdy_idx));
+ 
+-	return ret;
++	} while (bit_status && --timeout);
++
++	return bit_status;
+ }
+ 
+ static void stm32f4_pll_disable(struct clk_hw *hw)
+@@ -834,24 +841,32 @@ struct stm32_rgate {
+ 	u8	bit_rdy_idx;
+ };
+ 
+-#define RTC_TIMEOUT 1000000
++#define RGATE_TIMEOUT 50000
+ 
+ static int rgclk_enable(struct clk_hw *hw)
+ {
+ 	struct clk_gate *gate = to_clk_gate(hw);
+ 	struct stm32_rgate *rgate = to_rgclk(gate);
+-	u32 reg;
+-	int ret;
++	int bit_status;
++	unsigned int timeout = RGATE_TIMEOUT;
++
++	if (clk_gate_ops.is_enabled(hw))
++		return 0;
+ 
+ 	disable_power_domain_write_protection();
+ 
+ 	clk_gate_ops.enable(hw);
+ 
+-	ret = readl_relaxed_poll_timeout_atomic(gate->reg, reg,
+-			reg & rgate->bit_rdy_idx, 1000, RTC_TIMEOUT);
++	do {
++		bit_status = !(readl(gate->reg) & BIT(rgate->bit_rdy_idx));
++		if (bit_status)
++			udelay(100);
++
++	} while (bit_status && --timeout);
+ 
+ 	enable_power_domain_write_protection();
+-	return ret;
++
++	return bit_status;
+ }
+ 
+ static void rgclk_disable(struct clk_hw *hw)
+@@ -1533,7 +1548,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 	}
+ 
+ 	clks[CLK_LSI] = clk_register_rgate(NULL, "lsi", "clk-lsi", 0,
+-			base + STM32F4_RCC_CSR, 0, 2, 0, &stm32f4_clk_lock);
++			base + STM32F4_RCC_CSR, 0, 1, 0, &stm32f4_clk_lock);
+ 
+ 	if (IS_ERR(clks[CLK_LSI])) {
+ 		pr_err("Unable to register lsi clock\n");
+@@ -1541,7 +1556,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 	}
+ 
+ 	clks[CLK_LSE] = clk_register_rgate(NULL, "lse", "clk-lse", 0,
+-			base + STM32F4_RCC_BDCR, 0, 2, 0, &stm32f4_clk_lock);
++			base + STM32F4_RCC_BDCR, 0, 1, 0, &stm32f4_clk_lock);
+ 
+ 	if (IS_ERR(clks[CLK_LSE])) {
+ 		pr_err("Unable to register lse clock\n");
+-- 
+1.9.1
