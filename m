@@ -1,54 +1,29 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <herbert@gondor.apana.org.au>
+Date: Thu, 16 Mar 2017 18:07:43 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	linux-amlogic@lists.infradead.org, linux-crypto@vger.kernel.org,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 12/15] drm/sun4i: tcon: multiply the vtotal when not in interlace
-Date: Tue,  7 Mar 2017 09:56:31 +0100
-Message-Id: <0b3b516527c42e745ed8a35736948a383411bd50.1488876832.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] clk: meson-gxbb: expose clock CLKID_RNG0
+Message-ID: <20170316100743.GA12137@gondor.apana.org.au>
+References: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-It appears that the total vertical resolution needs to be doubled when
-we're not in interlaced. Make sure that is the case.
+On Wed, Feb 22, 2017 at 07:55:24AM +0100, Heiner Kallweit wrote:
+> Expose clock CLKID_RNG0 which is needed for the HW random number generator.
+> 
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index e44217fb4f6f..515fa56c1e6a 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -248,10 +248,13 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon, struct drm_encoder *encoder,
- 		     SUN4I_TCON1_BASIC3_H_BACKPORCH(bp));
- 
- 	bp = mode->crtc_vtotal - mode->crtc_vsync_start;
-+	val = mode->crtc_vtotal;
-+	if (!(mode->flags & DRM_MODE_FLAG_INTERLACE))
-+		val = val * 2;
- 	DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
- 			 mode->vtotal, bp);
- 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC4_REG,
--		     SUN4I_TCON1_BASIC4_V_TOTAL(mode->vtotal) |
-+		     SUN4I_TCON1_BASIC4_V_TOTAL(val) |
- 		     SUN4I_TCON1_BASIC4_V_BACKPORCH(bp));
- 
- 	/* Set Hsync and Vsync length */
+All patches applied.  Thanks.
 -- 
-git-series 0.8.11
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
