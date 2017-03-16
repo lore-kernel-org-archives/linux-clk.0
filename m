@@ -1,98 +1,73 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
- "Kevin Hilman" <khilman@baylibre.com>, "Carlo Caione" <carlo@caione.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20170328144605.25278-1-jbrunet@baylibre.com>
-Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, narmstrong@baylibre.com
-References: <20170328144605.25278-1-jbrunet@baylibre.com>
-Message-ID: <149082017390.31513.12254031076684821992@resonance>
-Subject: Re: [PATCH v1 0/8] clk: meson: gxbb: more clock controller update for audio
- support
-Date: Wed, 29 Mar 2017 13:42:53 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.133]:59720 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751531AbdCPInk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2017 04:43:40 -0400
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
+        linux-clk@vger.kernel.org, huangtao@rock-chips.com,
+        xxx@rock-chips.com, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v1 4/4] clk: rockchip: rk3368: add CLK_IGNORE_UNUSED flag for some clks
+Date: Thu, 16 Mar 2017 16:44:54 +0800
+Message-Id: <1489653894-2440-5-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1489653894-2440-1-git-send-email-zhangqing@rock-chips.com>
+References: <1489653894-2440-1-git-send-email-zhangqing@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome,
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-rk3368.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Adding Neil Armstong to Cc.
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index 6cb474c593e7..e91dd52c328f 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -638,7 +638,7 @@ enum rk3368_plls {
+ 	GATE(SCLK_MAC_TX, "sclk_mac_tx", "mac_clk", 0,
+ 			RK3368_CLKGATE_CON(7), 5, GFLAGS),
+ 
+-	GATE(0, "jtag", "ext_jtag", 0,
++	GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
+ 			RK3368_CLKGATE_CON(7), 0, GFLAGS),
+ 
+ 	COMPOSITE_NODIV(0, "hsic_usbphy_480m", mux_hsic_usbphy480m_p, 0,
+@@ -702,8 +702,8 @@ enum rk3368_plls {
+ 	GATE(MCLK_CRYPTO, "mclk_crypto", "hclk_bus", 0, RK3368_CLKGATE_CON(13), 3, GFLAGS),
+ 
+ 	/* pclk_cpu gates */
+-	GATE(PCLK_DDRPHY, "pclk_ddrphy", "pclk_bus", 0, RK3368_CLKGATE_CON(12), 14, GFLAGS),
+-	GATE(PCLK_DDRUPCTL, "pclk_ddrupctl", "pclk_bus", 0, RK3368_CLKGATE_CON(12), 13, GFLAGS),
++	GATE(PCLK_DDRPHY, "pclk_ddrphy", "pclk_bus", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(12), 14, GFLAGS),
++	GATE(PCLK_DDRUPCTL, "pclk_ddrupctl", "pclk_bus", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(12), 13, GFLAGS),
+ 	GATE(PCLK_I2C1, "pclk_i2c1", "pclk_bus", 0, RK3368_CLKGATE_CON(12), 3, GFLAGS),
+ 	GATE(PCLK_I2C0, "pclk_i2c0", "pclk_bus", 0, RK3368_CLKGATE_CON(12), 2, GFLAGS),
+ 	GATE(PCLK_MAILBOX, "pclk_mailbox", "pclk_bus", 0, RK3368_CLKGATE_CON(12), 1, GFLAGS),
+@@ -711,8 +711,8 @@ enum rk3368_plls {
+ 	GATE(PCLK_SIM, "pclk_sim", "pclk_bus", 0, RK3368_CLKGATE_CON(13), 8, GFLAGS),
+ 	GATE(PCLK_PWM1, "pclk_pwm1", "pclk_bus", 0, RK3368_CLKGATE_CON(13), 6, GFLAGS),
+ 	GATE(PCLK_UART2, "pclk_uart2", "pclk_bus", 0, RK3368_CLKGATE_CON(13), 5, GFLAGS),
+-	GATE(0, "pclk_efuse_256", "pclk_bus", 0, RK3368_CLKGATE_CON(13), 1, GFLAGS),
+-	GATE(0, "pclk_efuse_1024", "pclk_bus", 0, RK3368_CLKGATE_CON(13), 0, GFLAGS),
++	GATE(0, "pclk_efuse_256", "pclk_bus", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(13), 1, GFLAGS),
++	GATE(0, "pclk_efuse_1024", "pclk_bus", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(13), 0, GFLAGS),
+ 
+ 	/*
+ 	 * video clk gates
+@@ -786,7 +786,7 @@ enum rk3368_plls {
+ 	GATE(HCLK_HSIC, "hclk_hsic", "hclk_peri", 0, RK3368_CLKGATE_CON(20), 5, GFLAGS),
+ 	GATE(HCLK_HOST1, "hclk_host1", "hclk_peri", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(20), 4, GFLAGS),
+ 	GATE(HCLK_HOST0, "hclk_host0", "hclk_peri", 0, RK3368_CLKGATE_CON(20), 3, GFLAGS),
+-	GATE(0, "pmu_hclk_otg0", "hclk_peri", 0, RK3368_CLKGATE_CON(20), 2, GFLAGS),
++	GATE(0, "pmu_hclk_otg0", "hclk_peri", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(20), 2, GFLAGS),
+ 	GATE(HCLK_OTG0, "hclk_otg0", "hclk_peri", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(20), 1, GFLAGS),
+ 	GATE(HCLK_HSADC, "hclk_hsadc", "hclk_peri", 0, RK3368_CLKGATE_CON(21), 3, GFLAGS),
+ 	GATE(HCLK_EMMC, "hclk_emmc", "hclk_peri", 0, RK3368_CLKGATE_CON(21), 2, GFLAGS),
+-- 
+1.9.1
 
-Quoting Jerome Brunet (2017-03-28 07:45:57)
-> The patchset is the 2nd round of update to the meson gxbb clock controller
-> to add initial audio support. The patchset is based on clk-next.
-> =
 
-> There is not much out of the ordinary here (adding new clocks and exposing
-> them) except maybe for 2 patches:
-> Patch #2: Adds a safety check while registering clocks to protect against
->           holes in clk_hw_onecell_data, if it ever happens. Same thing is
->           done for the meson8b clock controller. =
-
-> Patch #3: Adds a new clock divider driver to implement the necessary
->           policy for the i2s master clock (see patch changelog)
-> =
-
-> This patchset has been test on the gxbb p200 and gxl p230.
-
-First off, this series looks fine to me. Please add,
-
-Acked-by: Michael Turquette <mturquette@baylibre.com>
-
-Secondly, it seems the AmLogic clock drivers have mostly calmed down and
-things are in the "add new clocks when we need them" phase, which is
-nice. Since you and Neil are doing a lot of this work, might I suggest
-that you both start collecting patches for the AmLogic/meson clock
-drivers begin submitting pull requests to Stephen and myself?
-
-As usual the rules are the same as always: all patches in the PR must
-first be posted for review on the list. PRs should correspond to signed
-tags. Stephen and I might ignore PRs sent after -rc4, and will
-definitely ignore PRs sent after -rc6 since we want some stabilization
-time before the merge window. Base your branch on -rc1, not on clk-next.
-
-Also feel free to submit a patch to MAINTAINERS with either one or both
-of you maintaining the meson clk stuff, assuming that you're OK to
-review all of those patches and collect them into a PR.
-
-Thoughts?
-
-If it sounds good to you then I suggest grabbing the clk-meson branch
-from the clk tree and using that as a baseline for your first PR. In the
-future you'll just Linus' -rc1, but I have already created a branch for
-this cycle. You can apply these 8 patches with my Ack and send a PR by
--rc6 (possibly with other stuff collected from Martin, etc).
-
-Thanks,
-Mike
-
-> =
-
-> Jerome Brunet (8):
->   dt-bindings: clock: gxbb: expose spdif clock gates
->   clk: meson: gxbb: protect against holes in the onecell_data array
->   clk: meson: add audio clock divider support
->   clk: meson: gxbb: add cts_amclk
->   clk: meson: gxbb: add cts_mclk_i958
->   clk: meson: gxbb: add cts_i958 clock
->   dt-bindings: clock: gxbb: expose i2s master clock
->   dt-bindings: clock: gxbb: expose spdif master clock
-> =
-
->  drivers/clk/meson/Makefile            |   2 +-
->  drivers/clk/meson/clk-audio-divider.c | 149 ++++++++++++++++++++++++++++=
-++++++
->  drivers/clk/meson/clkc.h              |  10 +++
->  drivers/clk/meson/gxbb.c              | 144 ++++++++++++++++++++++++++++=
-++++
->  drivers/clk/meson/gxbb.h              |  13 ++-
->  include/dt-bindings/clock/gxbb-clkc.h |   5 ++
->  6 files changed, 319 insertions(+), 4 deletions(-)
->  create mode 100644 drivers/clk/meson/clk-audio-divider.c
-> =
-
-> -- =
-
-> 2.9.3
->=20
