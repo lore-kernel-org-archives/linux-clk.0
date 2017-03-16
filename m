@@ -1,84 +1,79 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 03/15] clk: ti: add API for creating aliases automatically for simple clock types
-Date: Sat, 11 Mar 2017 14:49:54 +0200
-Message-ID: <1489236606-24023-4-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
-References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH v2 5/8] drm/sun4i: tcon: add support for V3s TCON
+Date: Fri, 17 Mar 2017 04:47:45 +0800
+Message-Id: <20170316204748.8596-6-icenowy@aosc.xyz>
+In-Reply-To: <20170316204748.8596-1-icenowy@aosc.xyz>
+References: <20170316204748.8596-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This API generates clock aliases automatically for simple clock types
-(fixed-clock, fixed-factor-clock), so that we don't need to add the data
-for these statically into tables. Shall be called from the SoC specific
-clock init.
+Allwinner V3s SoC features a TCON without channel 1.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
+Add support for it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- drivers/clk/ti/clk.c   | 26 ++++++++++++++++++++++++++
- drivers/clk/ti/clock.h |  1 +
- 2 files changed, 27 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_drv.c  | 3 ++-
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 +++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index 91bad55..193862e 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -355,6 +355,12 @@ struct clk __init *ti_clk_register_clk(struct ti_clk *setup)
- 	return clk;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index e78b8aaa4019..aad6a1a4664c 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -186,7 +186,8 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
+ 	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
+ 		of_device_is_compatible(node, "allwinner,sun6i-a31-tcon") ||
+ 		of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
+-		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon");
++		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
++		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
  }
  
-+static const struct of_device_id simple_clk_match_table[] __initconst = {
-+	{ .compatible = "fixed-clock" },
-+	{ .compatible = "fixed-factor-clock" },
-+	{ }
+ static int compare_of(struct device *dev, void *data)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index f4f7283f7cb2..110e432b766d 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -613,11 +613,16 @@ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
+ 	/* nothing is supported */
+ };
+ 
++static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
++	/* nothing is supported */
 +};
 +
- int __init ti_clk_register_legacy_clks(struct ti_clk_alias *clks)
- {
- 	struct clk *clk;
-@@ -409,6 +415,26 @@ int __init ti_clk_register_legacy_clks(struct ti_clk_alias *clks)
- #endif
- 
- /**
-+ * ti_clk_add_aliases - setup clock aliases
-+ *
-+ * Sets up any missing clock aliases. No return value.
-+ */
-+void __init ti_clk_add_aliases(void)
-+{
-+	struct device_node *np;
-+	struct clk *clk;
-+
-+	for_each_matching_node(np, simple_clk_match_table) {
-+		struct of_phandle_args clkspec;
-+
-+		clkspec.np = np;
-+		clk = of_clk_get_from_provider(&clkspec);
-+
-+		ti_clk_add_alias(NULL, clk, np->name);
-+	}
-+}
-+
-+/**
-  * ti_clk_setup_features - setup clock features flags
-  * @features: features definition to use
-  *
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index c38de6d..ee6d225 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -192,6 +192,7 @@ struct ti_dt_clk {
- struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
- 			    const char *con);
- int ti_clk_add_alias(struct device *dev, struct clk *clk, const char *con);
-+void ti_clk_add_aliases(void);
- 
- struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup);
- struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup);
+ static const struct of_device_id sun4i_tcon_of_table[] = {
+ 	{ .compatible = "allwinner,sun5i-a13-tcon", .data = &sun5i_a13_quirks },
+ 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
+ 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
+ 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
++	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sun4i_tcon_of_table);
 -- 
-1.9.1
+2.12.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
