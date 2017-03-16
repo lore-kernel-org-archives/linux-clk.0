@@ -1,41 +1,31 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
 	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [RFC 7/7] clk: fix incorrect usage of ENOSYS
-Date: Tue, 21 Mar 2017 19:33:30 +0100
-Message-Id: <20170321183330.26722-8-jbrunet@baylibre.com>
-In-Reply-To: <20170321183330.26722-1-jbrunet@baylibre.com>
-References: <20170321183330.26722-1-jbrunet@baylibre.com>
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v1 0/4] iclk: rockchip: add CLK_IGNORE_UNUSED flag for some clks
+Date: Thu, 16 Mar 2017 16:44:50 +0800
+Message-Id: <1489653894-2440-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-ENOSYS is special and should only be used for incorrect syscall number.
-It does not seem to be the case here.
+Elaine Zhang (4):
+  clk: rockchip: rk3036: add CLK_IGNORE_UNUSED flag for pclk_ddrupctl
+  clk: rockchip: rk3228: add CLK_IGNORE_UNUSED flag for some clks
+  clk: rockchip: rk3288: add CLK_IGNORE_UNUSED flag for some clks
+  clk: rockchip: rk3368: add CLK_IGNORE_UNUSED flag for some clks
 
-Reported by checkpatch.pl while working on clock protection.
+ drivers/clk/rockchip/clk-rk3036.c |  2 +-
+ drivers/clk/rockchip/clk-rk3228.c | 66 ++++++++++++++++++++-------------------
+ drivers/clk/rockchip/clk-rk3288.c | 42 ++++++++++++-------------
+ drivers/clk/rockchip/clk-rk3368.c | 12 +++----
+ 4 files changed, 62 insertions(+), 60 deletions(-)
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ec6d57e97bac..377d5301348b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1926,7 +1926,7 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 
- 	/* verify ops for for multi-parent clks */
- 	if ((core->num_parents > 1) && (!core->ops->set_parent))
--		return -ENOSYS;
-+		return -EPERM;
- 
- 	/* check that we are allowed to re-parent if the clock is in use */
- 	if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
 -- 
-2.9.3
+1.9.1
