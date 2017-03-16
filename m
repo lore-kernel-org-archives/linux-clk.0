@@ -1,63 +1,40 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 20 Mar 2017 14:28:30 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: Add sata seq input control
-Message-ID: <20170320132830.GL22463@ulmo.ba.sec>
-References: <1489592525-6231-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        <daniel.thompson@linaro.org>, <andrea.merello@gmail.com>,
+        <radoslaw.pietrzyk@gmail.com>
+CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <gabriel.fernandez@st.com>
+Subject: [PATCH v2 0/2] STM32F4 clock fixes
+Date: Thu, 16 Mar 2017 09:16:39 +0100
+Message-ID: <1489652201-19889-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="DXIF1lRUlMsbZ3S1"
-In-Reply-To: <1489592525-6231-1-git-send-email-pdeschrijver@nvidia.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
---DXIF1lRUlMsbZ3S1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+v2:
+Just add "Fixes" tags.
 
-On Wed, Mar 15, 2017 at 05:42:05PM +0200, Peter De Schrijver wrote:
-> This will be used by the powergating driver to ensure proper sequencer
-> state when the SATA domain is powergated.
->=20
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 25 +++++++++++++++++++++++++
->  include/linux/clk/tegra.h        |  1 +
->  2 files changed, 26 insertions(+)
+This patch-set contains 2 fixes.
+One concerning exclusion of wrong values for PLLQ (0 & 1)
+Fixes: 83135ad3c517 ("clk: stm32f4: Add PLL_I2S & PLL_SAI for STM32F429/469 boards")
 
-Applied to for-4.12/clk, thanks.
+And the second is a fix about timeout management of PLL and LSE/LSI clocks.
+Fixes: 861adc44d290 ("clk: stm32f4: Add LSI & LSE clocks")
 
-I assume that somebody will send out patches for the powergate driver?
+Gabriel Fernandez (2):
+  clk: stm32f4: fix: exclude values 0 and 1 for PLLQ
+  clk: stm32f4: fix timeout management for pll and ready gate
 
-Thierry
+ drivers/clk/clk-stm32f4.c | 56 +++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 39 insertions(+), 17 deletions(-)
 
---DXIF1lRUlMsbZ3S1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP2P4ACgkQ3SOs138+
-s6F3zQ//W90aNjkhySbIEiFQDcLzbn54fW2ynDxEWU5vTeyshwCoxmrTFB9WQisZ
-gaHQBoRadQiqEA+XN3U6Aua3b225ZrmqOLNRkJVfF83QAqr1+48LJx+9iWVNLsAj
-HO437l4kjY5pRHiXhsnyVb6Ioboog7lRUE/kTEft3uqlJiDHgEMDjTB1zfBDR4Dw
-/fl4lwzBGG6VvoNn7fJvC0XP0ShbzJk/49aKVMO062Xaku9apXh0DI6yXuCmUckt
-LXbRACTvBsqkxGOtGv9ofN4k5w8uCBSc3VlGShWXmA1IZoiSSYvFqQstZ1TeNdLA
-u38dX6x5/dVr3Ow0XNw1n61EWi2aUr0goJVZ/vC5aMvb8zA9VfGy5kGEWuGKF5Kd
-TNY1ZCcA3STse1lmUPPSad4fWDngp0O+hPRzqXxPY6h+NAbmjMHJZz4taAT6nvAK
-vp6X2FuuRgNmidNErNhwAGlqWJTffDN3Rfqi5JsbPLTNEDkEmnzhAjC/TkS6u1bW
-55wojYtBpW7UwTZYEA+K7u36P3qNa4B0BCpnbDaC1Ovr/APdkc4xicA6N3NCB50k
-cHGQvMyypNJ+pzvkOex1WCTBt/Lsqy80o1bImb3uI4g7ctOfVzxPBty6DdnSRdTq
-0h5AzaDkTHpOct4e7MrN5teDUv1mm7Knn39WmifpYsDG5KRyjkU=
-=VpjP
------END PGP SIGNATURE-----
-
---DXIF1lRUlMsbZ3S1--
+-- 
+1.9.1
