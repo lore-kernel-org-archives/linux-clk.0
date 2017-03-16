@@ -1,84 +1,56 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Tue, 21 Mar 2017 09:15:03 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk@vger.kernel.org, Mike Leach <mike.leach@linaro.org>,
-	Sudeep Holla <Sudeep.Holla@arm.com>
-Subject: Re: [v3 3/5] coresight: add support for debug module
-Message-ID: <20170321151503.GA17413@linaro.org>
-References: <516f8989-4dde-2686-d549-0761feb14d1b@arm.com>
- <CANLsYkzJsGvr4ZzNbTwcPu1Qki6=Szvu+bMjHZ_rza==DqFChw@mail.gmail.com>
- <20170317101328.GA19877@leoy-linaro>
- <20170317155007.GA20435@linaro.org>
- <20170317162836.GD2020@leoy-linaro>
- <5995f6a7-08b1-c868-fc88-a145d1748a33@arm.com>
- <CANLsYkyiAnSGW4Ujs6L-yBKK3no3zigbyBgOCWbm06ZdV-f2Hw@mail.gmail.com>
- <20170321025924.GA7429@leoy-linaro>
- <7226bc83-24f5-f609-2f87-f0afc7657488@arm.com>
- <20170321114711.GA5886@leoy-linaro>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170321114711.GA5886@leoy-linaro>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:36084 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751902AbdCPMzK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2017 08:55:10 -0400
+Received: by mail-wm0-f51.google.com with SMTP id n11so111207130wma.1
+        for <linux-clk@vger.kernel.org>; Thu, 16 Mar 2017 05:55:09 -0700 (PDT)
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: andy.gross@linaro.org
+Cc: bjorn.andersson@linaro.org, sboyd@codeaurora.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
+Subject: [PATCH v2 1/2] ARM: dts: qcom: msm8974: Add RPMCC DT node
+Date: Thu, 16 Mar 2017 14:55:09 +0200
+Message-Id: <20170316125509.13717-1-georgi.djakov@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Mar 21, 2017 at 07:47:11PM +0800, Leo Yan wrote:
-> On Tue, Mar 21, 2017 at 10:16:45AM +0000, Suzuki K Poulose wrote:
-> 
-> [...]
-> 
-> > >>In my opinion booting with "nohlt" on the cmd line is sufficient to
-> > >>determine if we should use the driver or not.  That way we also avoid
-> > >>declaring yet another sysfs flag, something I really want to avoid.
-> > >
-> > >Agree.
-> > >
-> > >I did spend some time to implement coresight core framework to support
-> > >debug module, you could see it on:http://termbin.com/k2fj; this also
-> > >gives me more sense which is better choice. If declaring another sysfs
-> > >flag to support debug module in coresight framework, this lets the
-> > >codes and interfaces more complex. E.g. for best fit into coresight
-> > >framework, finally we can get 8 sysfs nodes for 8 CPUs in system; so
-> > >that means we need enable every CPU one by one.
-> > 
-> > Having a node for each debug area indeed doesn't look good. We could
-> > as will stick a single node under /sys/kernel/debug/ which would enable/disable
-> > the debug component.
-> > 
-> > I am OK with it being tied to nohlt. In that case we will have to add
-> > a Kconfig dependency on GENERIC_IDLE_POLL_SETUP (though it is selected
-> > by default on ARM/ARM64). Parsing the boot command line for nohlt doesn't
-> > look like a good idea. We may have to figure out a way to do that.
-> 
-> I remembered that we can use QoS constraint for CPUIdle:
->         pm_qos_add_request(pm_qos_req, PM_QOS_CPU_DMA_LATENCY, 0);
-> 
-> Using this way we can disable all low power states and don't depend on
-> nohlt anymore.
+Add the RPM Clock Controller DT node for msm8974-based platforms, so that
+drivers can use the clocks provided by the RPM processor.
 
-The idea is to use "nohlt" as a trigger option.  If it is set then we use this
-driver - if it isn't then it is kept under wrap.
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-> 
-> > Also, please could you add support for building this as a module ? Since it
-> > doesn't depend on the coresight bus anyway, it should be pretty straight
-> > forward.
-> 
-> Yeah. Will support module building.
-> 
-> Thanks,
-> Leo Yan
+Changes since v1 (https://lkml.org/lkml/2017/2/3/492)
+ * Added Bjorn's Reviewed-by
+
+ arch/arm/boot/dts/qcom-msm8974.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
+index d3e1a61b8671..4b4c61e2ee35 100644
+--- a/arch/arm/boot/dts/qcom-msm8974.dtsi
++++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
+@@ -2,6 +2,7 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/qcom,gcc-msm8974.h>
++#include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/reset/qcom,gcc-msm8974.h>
+ #include "skeleton.dtsi"
+@@ -760,6 +761,11 @@
+ 				compatible = "qcom,rpm-msm8974";
+ 				qcom,smd-channels = "rpm_requests";
+ 
++				rpmcc: clock-controller {
++					compatible = "qcom,rpmcc-msm8974", "qcom,rpmcc";
++					#clock-cells = <1>;
++				};
++
+ 				pm8841-regulators {
+ 					compatible = "qcom,rpm-pm8841-regulators";
+ 
