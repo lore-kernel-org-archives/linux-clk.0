@@ -1,124 +1,74 @@
-Return-Path: <huziji@marvell.com>
-Subject: Re: [PATCH v6 08/14] mmc: sdhci-xenon: Add Marvell Xenon SDHC core
- functionality
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Gregory CLEMENT
-	<gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
- <cb885ae19e7c467908cdaa1f1cc8d95a7217d663.1487091464.git-series.gregory.clement@free-electrons.com>
- <CAPDyKFpH+RGAZGoVCuCOKJ2iEa+Y=cNNcM-uKhkYaTpmogXCKA@mail.gmail.com>
-CC: Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org"
-	<linux-mmc@vger.kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>, Andrew Lunn
-	<andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        Mike Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk
-	<linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Jimmy Xu
-	<zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
-        Nadav Haklai
-	<nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
-        Doug Jones
-	<dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
-        "Wei(SOCP) Liu"
-	<liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
-        Yehuda Yitschak
-	<yehuday@marvell.com>,
-        Marcin Wojtas <mw@semihalf.com>, Hanna Hawa
-	<hannah@marvell.com>,
-        Kostya Porotchkin <kostap@marvell.com>
-From: Ziji Hu <huziji@marvell.com>
-Message-ID: <10855817-e693-e007-9499-c4e97936fadb@marvell.com>
-Date: Wed, 15 Mar 2017 21:58:43 +0800
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        <daniel.thompson@linaro.org>, <andrea.merello@gmail.com>,
+        <radoslaw.pietrzyk@gmail.com>
+CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <gabriel.fernandez@st.com>
+Subject: [PATCH v2 1/2] clk: stm32f4: fix: exclude values 0 and 1 for PLLQ
+Date: Thu, 16 Mar 2017 09:16:40 +0100
+Message-ID: <1489652201-19889-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1489652201-19889-1-git-send-email-gabriel.fernandez@st.com>
+References: <1489652201-19889-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFpH+RGAZGoVCuCOKJ2iEa+Y=cNNcM-uKhkYaTpmogXCKA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ulf,
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-On 2017/3/15 21:11, Ulf Hansson wrote:
-> On 14 February 2017 at 18:01, Gregory CLEMENT
-> <gregory.clement@free-electrons.com> wrote:
->> From: Hu Ziji <huziji@marvell.com>
-<snip>
->> +config MMC_SDHCI_XENON
->> +       tristate "Marvell Xenon eMMC/SD/SDIO SDHCI driver"
->> +       depends on MMC_SDHCI_PLTFM
->> +       help
->> +         This selects Marvell Xenon eMMC/SD/SDIO SDHCI.
->> +         If you have a machine with integrated Marvell Xenon SDHC IP,
-> 
-> /s/SDHC/SDHCI
-> 
+0000: PLLQ = 0, wrong configuration
+0001: PLLQ = 1, wrong configuration
+...
+0010: PLLQ = 2
+0011: PLLQ = 3
+0100: PLLQ = 4
+...
+1111: PLLQ = 1
 
-	Sorry. I don't get your point.
-	Could you please give more detailed comments?
+Use divider table to exclude 0 and 1 values.
 
->> +         say Y or M here.
->> +         If unsure, say N.
->> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
->> index ccc9c4cba154..b0a2ab4b256e 100644
->> --- a/drivers/mmc/host/Makefile
->> +++ b/drivers/mmc/host/Makefile
->> @@ -82,3 +82,6 @@ obj-$(CONFIG_MMC_SDHCI_BRCMSTB)               += sdhci-brcmstb.o
->>  ifeq ($(CONFIG_CB710_DEBUG),y)
->>         CFLAGS-cb710-mmc        += -DDEBUG
->>  endif
->> +
->> +obj-$(CONFIG_MMC_SDHCI_XENON)  += sdhci-xenon-driver.o
->> +sdhci-xenon-driver-y           += sdhci-xenon.o
-> 
-> Why not only this:
-> obj-$(CONFIG_MMC_SDHCI_XENON) += sdhci-xenon.o
-> 
+Fixes: 83135ad3c517 ("clk: stm32f4: Add PLL_I2S & PLL_SAI for STM32F429/469 boards")
 
-	Yes. Will try.
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32f4.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
->> diff --git a/drivers/mmc/host/sdhci-xenon.c b/drivers/mmc/host/sdhci-xenon.c
->> new file mode 100644
-<snip>
-> 
-> ff --git a/drivers/mmc/host/sdhci-xenon.h b/drivers/mmc/host/sdhci-xenon.h
->> new file mode 100644
->> index 000000000000..69de711db9eb
->> --- /dev/null
->> +++ b/drivers/mmc/host/sdhci-xenon.h
-> 
-> You should probably put all this in the c-file instead. That is how
-> most other sdhci variants does it.
-> 
-
-	Unfortunately, we have some registers like XENON_SLOT_EMMC_CTRL
-	which are accessed by both sdhci-xenon.c and sdhci-xenon-phy.c
-
-> [...]
-> 
-> Overall this looks good to me, however I think Adrian needs to have a
-> quick look as well.
-> 
-> One additional very minor nitpick. Perhaps you can align on the
-> function names prefix, as those currently varies between "whatever",
-> "xenon_" and "sdhci_xenon_".
-> 
-	Sure. Will fix them as you request.
-
-	Thank you.
-
-Best regards,
-Hu Ziji
-
-> Kind regards
-> Uffe
-> 
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index ab609a7..cf9449b3 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -429,6 +429,13 @@ enum {
+ 	{ 0, 2 }, { 1, 4 }, { 2, 6 }, { 3, 8 }, { 0 }
+ };
+ 
++static const struct clk_div_table pll_divq_table[] = {
++	{ 2, 2 }, { 3, 3 }, { 4, 4 }, { 5, 5 }, { 6, 6 }, { 7, 7 },
++	{ 8, 8 }, { 9, 9 }, { 10, 10 }, { 11, 11 }, { 12, 12 }, { 13, 13 },
++	{ 14, 14 }, { 15, 15 },
++	{ 0 }
++};
++
+ static const struct clk_div_table pll_divr_table[] = {
+ 	{ 2, 2 }, { 3, 3 }, { 4, 4 }, { 5, 5 }, { 6, 6 }, { 7, 7 }, { 0 }
+ };
+@@ -496,9 +503,9 @@ struct stm32f4_div_data {
+ 
+ #define MAX_PLL_DIV 3
+ static const struct stm32f4_div_data  div_data[MAX_PLL_DIV] = {
+-	{ 16, 2, 0,			pll_divp_table	},
+-	{ 24, 4, CLK_DIVIDER_ONE_BASED, NULL		},
+-	{ 28, 3, 0,			pll_divr_table	},
++	{ 16, 2, 0, pll_divp_table },
++	{ 24, 4, 0, pll_divq_table },
++	{ 28, 3, 0, pll_divr_table },
+ };
+ 
+ struct stm32f4_pll_data {
+-- 
+1.9.1
