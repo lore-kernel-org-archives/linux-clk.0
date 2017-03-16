@@ -1,227 +1,444 @@
-Return-Path: <sudeep.holla@arm.com>
-Subject: Re: [PATCH v3 3/5] coresight: add support for debug module
-To: Mike Leach <mike.leach@linaro.org>
-References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
- <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
- <671a0b39-b635-6e0e-d3fa-967651f2e29c@arm.com>
- <CAJ9a7VgCjXNGC4C49PxL-nBxzhMCmA8Mb-0C_epahizA5EL2HA@mail.gmail.com>
- <e7a97c52-f61a-e503-f626-09563fa100b8@arm.com>
- <CAJ9a7VhvCS3xXAHBt0AUVB2Zp2P1HP_LQm4KiptiBT9VJ1fC0Q@mail.gmail.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Leo Yan <leo.yan@linaro.org>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Wei Xu <xuwei5@hisilicon.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- John Stultz <john.stultz@linaro.org>, Guodong Xu <guodong.xu@linaro.org>,
- Haojian Zhuang <haojian.zhuang@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <4961636d-d77c-0f9a-7076-4db1ef456073@arm.com>
-Date: Wed, 22 Mar 2017 16:17:32 +0000
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH v2 2/8] clk: sunxi-ng: add support for DE2 CCU
+Date: Fri, 17 Mar 2017 04:47:42 +0800
+Message-Id: <20170316204748.8596-3-icenowy@aosc.xyz>
+In-Reply-To: <20170316204748.8596-1-icenowy@aosc.xyz>
+References: <20170316204748.8596-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-In-Reply-To: <CAJ9a7VhvCS3xXAHBt0AUVB2Zp2P1HP_LQm4KiptiBT9VJ1fC0Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+The "Display Engine 2.0" in Allwinner newer SoCs contains a clock
+management unit for its subunits, like the DE CCU in A80.
 
+Add a sunxi-ng style driver for it.
 
-On 22/03/17 15:45, Mike Leach wrote:
-> On 22 March 2017 at 14:07, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>
->>
->> On 22/03/17 12:54, Mike Leach wrote:
->>>
->>>
->>> On 21 March 2017 at 15:39, Sudeep Holla <sudeep.holla@arm.com
->>> <mailto:sudeep.holla@arm.com>> wrote:
->>>
->> [...]
->>
->>> I disagree with this approach. One of the main usefulness of such
->>> self hosted debug feature is to debug issues around features like
->>> cpuidle. Adding constraints like "cpuidle needs to be disabled" is
->>> not good IMO. There are ways to make it work with cpuidle enabled.
->>> Please explore them. In particular refer H9.2.39 EDPRCR, External
->>> Debug Power/Reset Control Register.
->>>
->>> So, "nohlt" option is not an option. I prefer some sysfs option like
->>> Suzuki suggested to enable this feature on demand if power saving in
->>> normal usecase is the concern. Using "nohlt" just disables idle and
->>> doesn't ensure the debug power domain is ON. Using the flag directly
->>> in this driver to enable debug power domain also sounds misuse of
->>> that flag for me.
->>>
->>> I think the key issue to remember here is that experience with
->>> external debug shows that CPU Idle means different things to
->>> different SoC designs / power management schemes. (and we are using
->>> external debug in a self hosted way here).
->>>
->>
->> Yes agreed on the point that meaning of "cpuidle" differs on each SoC.
->>
->>> Some designs will power down an entire cluster if all CPUs on the
->>> cluster are powered down - including the parts of the debug
->>> registers that should remain powered in the debug power domain.
->>
->> Interesting, at-least ETMv4 or some other coresight specification
->> clearly classify the power domains and the register access. The actual
->> power domain itself may vary depending on implementation.
-> 
-> Yes - the ETMv4 spec defines what should be in the core / debug power
-> domains, but there is no architectural requirement for these to be
-> separate.
-> Most of power management is "implementation defined", & hw designers
-> seem to have different criteria than sw engineers wanting to debug
-> stuff.
-> 
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+Changes in v2:
+- Rename sunxi-de2-ccu to sun8i-de2-ccu.
 
-Yes I agree, no argument there.
+ drivers/clk/sunxi-ng/Kconfig          |   5 +
+ drivers/clk/sunxi-ng/Makefile         |   1 +
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c  | 204 ++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.h  |  28 +++++
+ include/dt-bindings/clock/sun8i-de2.h |  54 +++++++++
+ include/dt-bindings/reset/sun8i-de2.h |  50 +++++++++
+ 6 files changed, 342 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+ create mode 100644 include/dt-bindings/clock/sun8i-de2.h
+ create mode 100644 include/dt-bindings/reset/sun8i-de2.h
 
->>> The bits in EDPRCR are not respected in these cases - these designs
->>> do not really support debug over power down in the way that the
->>> CoreSight / Debug designers anticipated. This means that even
->>> checking EDPRSR has the potential to cause a bus hang if the target
->>> register is unpowered. (and if the debug power domain is unpowered
->>> then the PC data is also lost).
->>>
->>
->> Agreed, but can we start supporting the sane designs in sane way first.
->> We can always add compatible and handle deviations. I agree we may need
->> to support such deviations but starting with that seems setting a bad
->> example.
->>
-> 
-> From a pragmatic point of view, we have to support the designs that we
-> have and are currently using.
-> Sadly this might include some that do not behave in an ideal way.
-> 
-
-We will have to support them. But I don't want that to be defacto
-standard. They should be treated as deviations. Though specification
-says the behavior is IMPDEF, it does provide standard interface(EDPRCR)
-to use and we should have that in the driver IMO.
-
-> I'm not saying disabling CPUIdle is right for all cases, or perhaps
-> many, but it has in the past been useful in specific instances - not
-> just for external debug, 
-
-Yes I know but that's either issue with the firmware or the debugger
-and we can work them around in user-space too instead of baking the
-solution to kernel.
-
-> but to use CoreSight trace etc, were powering
-> down the a CPU / cluster takes out ETM accesses and breaks stuff.
-> 
-
-FYI, I added support in ETMv4 to emulate power-down during active trace
-session and so far I have not seen any report on things breaking because
-of that register access(may be no one has tested it on other platforms
-yet :()
-
-> The key is that to use this driver, the user has to be aware of the PM
-> implications on their specific system - the kernel may not take care
-> of it all for them - as SCP type power controllers are often external
-> and may have unique firmware and capabilites.
-> 
-
-Sure
-
-> Historically CPUIdle disable has been used as a blunt instrument to
-> handle power management problems in real debug use cases - but it is
-> one that has been successful. Where there are better methods then I am
-> all for using these.
-> 
-
-Cool, thanks. Lets try out that and see if it helps first before bluntly
-advertising CPUIdle disabling and that too in misleading ways like "nohlt"
-
->>> In these cases, accessing to the debug registers while they are not
->>> powered is a recipe for disaster - so preventing CPUIdle and the
->>> subsequent cluster power down allows investigation on this class of
->>> system - and allowing the CPUs of interest be interrogated without
->>> hanging the crash log process.
->>>
->>
->> Agreed. But my point is that many issues are around cpuidle and some
->> usecase and just eliminating that use-case sounds bad. For me,
->> core-sight was most useful to debug issues around cpu power management
->> and lockups where we can't stop cores but examine these registers.
->> There are other alternatives for other use-cases IMO.
-> 
-> For your case, removing what you are interested in debugging is
-> evidently counter productive, so other techniques need to be used to
-> ensure the CS regs remain alive.
-> But equally there could be use cases where this might be just fine or
-> even the only way.
->
-
-Again not arguing on that. Just saying we can try out if that solves the
-issue. As I said there are other ways to disable idle and we can
-advertise those instead of such misuse. Also those alternative methods
-are runtime and can be used when you need them.
-
->>>
->>> On systems that do behave correctly with respect to debug power
->>> domains, then disabling CPUIdle is unnecessary - these can be
->>> controlled by EDPRCR - perhaps; per the specification it is
->>> "implementation defined" if writing bits to this register have an
->>> effect on the system anyway even if the debug domain is correctly
->>> powered.
->>>
->>
->> We can always do that unconditionally. If implementations don't honor
->> those bits, it's different. If they hang on accessing something which is
->> on debug power domain and not on core power domain, then you have much
->> bigger issue to solve. How can you even trust and make any other
->> register accesses that are in debug power domain then ?
->>
-> 
-> It is difficult and highly platform dependent. For external debug we
-> might have per-platform rules built into the debugger on what can and
-> cannot be done and when, plus on occasion some power management
-> scripts. Those platforms that get closest to the "standard" CoreSight
-> power management are easiest to debug.
-> 
-
-Absolutely, so just mandating might just solve issue *accidentally*
-not *intentionally*. So I don't want it to be advertised in that way
-and that becomes defacto.
-
-[...]
-> 
-> I'm not advocating /nohlt above anything else - it's just what is
-> being discussed here. Furthermore, no one debug technique is ever
-> going to be appropriate in all circumstances - debug and trace are
-> always a compromise.
-> 
-
-True.
-
-> I initially raised the issue of clusters powering down, and
-> possibility that no CPUIdle might prevent this, to ensure that
-> awareness is built in to driver / config / help text /documentation
-> that these are real issues seen in the external debug world.
-> 
-
-Point taken. So we could just specify that all necessary power domains
-need to be on for proper functionality for this feature and that it's
-highly platform specific instead of mixing cpu/cluster idle details here.
-
-> The key point is that the caveat in using this driver is that the
-> power management has to be considered on a platform specific basis
-> before it is configured; and appropriate actions may be needed for it
-> to work correctly. Without this then the driver could cause more
-> issues than it debugs. A user selecting this _must_ be told about
-> these issues
-> 
-
-Exactly and the help text could be something on the similar lines as you
-mention/summarize above.
-
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 213cf64e4fab..6f921f45c487 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -139,6 +139,11 @@ config SUN8I_V3S_CCU
+ 	default MACH_SUN8I
+ 	depends on MACH_SUN8I || COMPILE_TEST
+ 
++config SUN8I_DE2_CCU
++	bool "Support for the Allwinner SoCs DE2 CCU"
++	select SUNXI_CCU_DIV
++	select SUNXI_CCU_GATE
++
+ config SUN9I_A80_CCU
+ 	bool "Support for the Allwinner A80 CCU"
+ 	select SUNXI_CCU_DIV
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 6feaac0c5600..8bf3afaefde4 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -25,6 +25,7 @@ obj-$(CONFIG_SUN8I_A23_CCU)	+= ccu-sun8i-a23.o
+ obj-$(CONFIG_SUN8I_A33_CCU)	+= ccu-sun8i-a33.o
+ obj-$(CONFIG_SUN8I_H3_CCU)	+= ccu-sun8i-h3.o
+ obj-$(CONFIG_SUN8I_V3S_CCU)	+= ccu-sun8i-v3s.o
++obj-$(CONFIG_SUN8I_DE2_CCU)	+= ccu-sun8i-de2.o
+ obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80.o
+ obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80-de.o
+ obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80-usb.o
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+new file mode 100644
+index 000000000000..43d7bd15e38b
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+@@ -0,0 +1,204 @@
++/*
++ * Copyright (c) 2016 Chen-Yu Tsai. All rights reserved.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/reset.h>
++
++#include "ccu_common.h"
++#include "ccu_div.h"
++#include "ccu_gate.h"
++#include "ccu_reset.h"
++
++#include "ccu-sun8i-de2.h"
++
++static SUNXI_CCU_GATE(bus_mixer0_clk,	"bus-mixer0",	"bus-de",
++		      0x04, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_mixer1_clk,	"bus-mixer1",	"bus-de",
++		      0x04, BIT(1), 0);
++static SUNXI_CCU_GATE(bus_wb_clk,	"bus-wb",	"bus-de",
++		      0x04, BIT(2), 0);
++
++static SUNXI_CCU_GATE(mixer0_clk,	"mixer0",	"mixer0-div",
++		      0x00, BIT(0), CLK_SET_RATE_PARENT);
++static SUNXI_CCU_GATE(mixer1_clk,	"mixer1",	"mixer1-div",
++		      0x00, BIT(1), CLK_SET_RATE_PARENT);
++static SUNXI_CCU_GATE(wb_clk,		"wb",		"wb-div",
++		      0x00, BIT(2), CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
++		   CLK_SET_RATE_PARENT);
++static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div", "de", 0x0c, 4, 4,
++		   CLK_SET_RATE_PARENT);
++static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
++		   CLK_SET_RATE_PARENT);
++
++static struct ccu_common *sunxi_de2_clks[] = {
++	&mixer0_clk.common,
++	&mixer1_clk.common,
++	&wb_clk.common,
++
++	&bus_mixer0_clk.common,
++	&bus_mixer1_clk.common,
++	&bus_wb_clk.common,
++
++	&mixer0_div_clk.common,
++	&mixer1_div_clk.common,
++	&wb_div_clk.common,
++};
++
++static struct clk_hw_onecell_data sunxi_de2_hw_clks = {
++	.hws	= {
++		[CLK_MIXER0]		= &mixer0_clk.common.hw,
++		[CLK_MIXER1]		= &mixer1_clk.common.hw,
++		[CLK_WB]		= &wb_clk.common.hw,
++
++		[CLK_BUS_MIXER0]	= &bus_mixer0_clk.common.hw,
++		[CLK_BUS_MIXER1]	= &bus_mixer1_clk.common.hw,
++		[CLK_BUS_WB]		= &bus_wb_clk.common.hw,
++
++		[CLK_MIXER0_DIV]	= &mixer1_div_clk.common.hw,
++		[CLK_MIXER1_DIV]	= &mixer0_div_clk.common.hw,
++		[CLK_WB_DIV]		= &wb_div_clk.common.hw,
++	},
++	.num	= CLK_NUMBER,
++};
++
++static struct ccu_reset_map sun8i_a83t_de2_resets[] = {
++	[RST_MIXER0]	= { 0x08, BIT(0) },
++	/*
++	 * For A83T, H3 and R40, mixer1 reset line is shared with wb, so
++	 * only RST_WB is exported here.
++	 */
++	[RST_WB]	= { 0x08, BIT(2) },
++};
++
++static struct ccu_reset_map sun50i_a64_de2_resets[] = {
++	[RST_MIXER0]	= { 0x08, BIT(0) },
++	[RST_MIXER1]	= { 0x08, BIT(1) },
++	[RST_WB]	= { 0x08, BIT(2) },
++};
++
++static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc = {
++	.ccu_clks	= sunxi_de2_clks,
++	.num_ccu_clks	= ARRAY_SIZE(sunxi_de2_clks),
++
++	.hw_clks	= &sunxi_de2_hw_clks,
++
++	.resets		= sun8i_a83t_de2_resets,
++	.num_resets	= ARRAY_SIZE(sun8i_a83t_de2_resets),
++};
++
++static const struct sunxi_ccu_desc sun50i_a64_de2_clk_desc = {
++	.ccu_clks	= sunxi_de2_clks,
++	.num_ccu_clks	= ARRAY_SIZE(sunxi_de2_clks),
++
++	.hw_clks	= &sunxi_de2_hw_clks,
++
++	.resets		= sun50i_a64_de2_resets,
++	.num_resets	= ARRAY_SIZE(sun50i_a64_de2_resets),
++};
++
++static int sunxi_de2_clk_probe(struct platform_device *pdev)
++{
++	struct resource *res;
++	struct clk *bus_clk;
++	struct reset_control *rstc;
++	void __iomem *reg;
++	const struct sunxi_ccu_desc *ccu_desc;
++	int ret;
++
++	ccu_desc = of_device_get_match_data(&pdev->dev);
++	if (!ccu_desc)
++		return -EINVAL;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	reg = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(reg))
++		return PTR_ERR(reg);
++
++	bus_clk = devm_clk_get(&pdev->dev, "bus");
++	if (IS_ERR(bus_clk)) {
++		ret = PTR_ERR(bus_clk);
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "Couldn't get bus clk: %d\n", ret);
++		return ret;
++	}
++
++	rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
++	if (IS_ERR(rstc)) {
++		ret = PTR_ERR(bus_clk);
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"Couldn't get reset control: %d\n", ret);
++		return ret;
++	}
++
++	/* The bus clock needs to be enabled for us to access the registers */
++	ret = clk_prepare_enable(bus_clk);
++	if (ret) {
++		dev_err(&pdev->dev, "Couldn't enable bus clk: %d\n", ret);
++		return ret;
++	}
++
++	/* The reset control needs to be asserted for the controls to work */
++	ret = reset_control_deassert(rstc);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"Couldn't deassert reset control: %d\n", ret);
++		goto err_disable_clk;
++	}
++
++	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, ccu_desc);
++	if (ret)
++		goto err_assert_reset;
++
++	return 0;
++
++err_assert_reset:
++	reset_control_assert(rstc);
++err_disable_clk:
++	clk_disable_unprepare(bus_clk);
++	return ret;
++}
++
++static const struct of_device_id sunxi_de2_clk_ids[] = {
++	{
++		.compatible = "allwinner,sun8i-a83t-de2-clk",
++		.data = &sun8i_a83t_de2_clk_desc,
++	},
++	{
++		.compatible = "allwinner,sun50i-h5-de2-clk",
++		.data = &sun50i_a64_de2_clk_desc,
++	},
++	/*
++	 * The Allwinner A64 SoC needs some bit to be poke in syscon to make
++	 * DE2 really working.
++	 * So there's currently no A64 compatible here.
++	 * H5 shares the same reset line with A64, so here H5 is using the
++	 * clock description of A64.
++	 */
++	{ }
++};
++
++static struct platform_driver sunxi_de2_clk_driver = {
++	.probe	= sunxi_de2_clk_probe,
++	.driver	= {
++		.name	= "sunxi-de2-clks",
++		.of_match_table	= sunxi_de2_clk_ids,
++	},
++};
++builtin_platform_driver(sunxi_de2_clk_driver);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+new file mode 100644
+index 000000000000..ab8bcd4ba3a5
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+@@ -0,0 +1,28 @@
++/*
++ * Copyright 2016 Icenowy Zheng <icenowy@aosc.xyz>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _CCU_SUN8I_DE2_H_
++#define _CCU_SUN8I_DE2_H_
++
++#include <dt-bindings/clock/sun8i-de2.h>
++#include <dt-bindings/reset/sun8i-de2.h>
++
++/* Intermediary clock dividers are not exported */
++#define CLK_MIXER0_DIV	3
++#define CLK_MIXER1_DIV	4
++#define CLK_WB_DIV	5
++
++#define CLK_NUMBER	(CLK_WB + 1)
++
++#endif /* _CCU_SUN8I_DE2_H_ */
+diff --git a/include/dt-bindings/clock/sun8i-de2.h b/include/dt-bindings/clock/sun8i-de2.h
+new file mode 100644
+index 000000000000..5fbc954d78e8
+--- /dev/null
++++ b/include/dt-bindings/clock/sun8i-de2.h
+@@ -0,0 +1,54 @@
++/*
++ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_SUN8I_DE2_H_
++#define _DT_BINDINGS_CLOCK_SUN8I_DE2_H_
++
++#define CLK_BUS_MIXER0		0
++#define CLK_BUS_MIXER1		1
++#define CLK_BUS_WB		2
++
++#define CLK_MIXER0		6
++#define CLK_MIXER1		7
++#define CLK_WB			8
++
++#endif /* _DT_BINDINGS_CLOCK_SUN8I_DE2_H_ */
+diff --git a/include/dt-bindings/reset/sun8i-de2.h b/include/dt-bindings/reset/sun8i-de2.h
+new file mode 100644
+index 000000000000..b45eba4e28c8
+--- /dev/null
++++ b/include/dt-bindings/reset/sun8i-de2.h
+@@ -0,0 +1,50 @@
++/*
++ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#ifndef _DT_BINDINGS_RESET_SUN8I_DE2_H_
++#define _DT_BINDINGS_RESET_SUN8I_DE2_H_
++
++#define RST_MIXER0	0
++#define RST_MIXER1	1
++#define RST_WB		2
++
++#endif /* _DT_BINDINGS_RESET_SUN8I_DE2_H_ */
 -- 
-Regards,
-Sudeep
+2.12.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
