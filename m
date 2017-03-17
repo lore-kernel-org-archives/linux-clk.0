@@ -1,85 +1,128 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Leo Yan <leo.yan@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [RFC 2/7] clk: add set_phase core function
-Date: Tue, 21 Mar 2017 19:33:25 +0100
-Message-Id: <20170321183330.26722-3-jbrunet@baylibre.com>
-In-Reply-To: <20170321183330.26722-1-jbrunet@baylibre.com>
-References: <20170321183330.26722-1-jbrunet@baylibre.com>
+	mike.leach@linaro.org,
+	Suzuki.Poulose@arm.com,
+	sudeep.holla@arm.com
+Subject: [PATCH v4 3/7] coresight: refactor with function of_coresight_get_cpu
+Date: Fri, 17 Mar 2017 23:02:19 +0800
+Message-Id: <1489762943-25849-4-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
+References: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Create a core function for set_phase, as it is done for set_rate and
-set_parent.
+This is refactor to add function of_coresight_get_cpu(), so it's used to
+retrieve CPU id for coresight component. Finally can use it as a common
+function for multiple places.
 
-This rework is done to ease the integration of "protected" clock
-functionality.
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- drivers/clk/clk.c | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+ drivers/hwtracing/coresight/of_coresight.c | 42 +++++++++++++++++++-----------
+ include/linux/coresight.h                  |  2 ++
+ 2 files changed, 29 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index e77f03a47da6..57982a06dbce 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1876,6 +1876,23 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
+diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
+index 917ca39..7a60f2b 100644
+--- a/drivers/hwtracing/coresight/of_coresight.c
++++ b/drivers/hwtracing/coresight/of_coresight.c
+@@ -101,15 +101,38 @@ static int of_coresight_alloc_memory(struct device *dev,
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(clk_set_parent);
  
-+static int clk_core_set_phase(struct clk_core *core, int degrees)
++int of_coresight_get_cpu(struct device_node *node)
 +{
-+	int ret = -EINVAL;
++	int cpu;
++	bool found;
++	struct device_node *dn, *np;
 +
-+	if (!core)
++	dn = of_parse_phandle(node, "cpu", 0);
++
++	/* Affinity defaults to CPU0 */
++	if (!dn)
 +		return 0;
 +
-+	trace_clk_set_phase(clk->core, degrees);
++	for_each_possible_cpu(cpu) {
++		np = of_get_cpu_node(cpu, NULL);
++		found = (dn == np);
++		of_node_put(np);
++		if (found)
++			break;
++	}
++	of_node_put(dn);
 +
-+	if (core->ops->set_phase)
-+		ret = core->ops->set_phase(core->hw, degrees);
-+
-+	trace_clk_set_phase_complete(core, degrees);
-+
-+	return ret;
++	/* Affinity to CPU0 if no cpu nodes are found */
++	return found ? cpu : 0;
 +}
 +
- /**
-  * clk_set_phase - adjust the phase shift of a clock signal
-  * @clk: clock signal source
-@@ -1898,7 +1915,7 @@ EXPORT_SYMBOL_GPL(clk_set_parent);
-  */
- int clk_set_phase(struct clk *clk, int degrees)
+ struct coresight_platform_data *of_get_coresight_platform_data(
+ 				struct device *dev, struct device_node *node)
  {
--	int ret = -EINVAL;
-+	int ret;
+-	int i = 0, ret = 0, cpu;
++	int i = 0, ret = 0;
+ 	struct coresight_platform_data *pdata;
+ 	struct of_endpoint endpoint, rendpoint;
+ 	struct device *rdev;
+-	bool found;
+-	struct device_node *dn, *np;
+ 	struct device_node *ep = NULL;
+ 	struct device_node *rparent = NULL;
+ 	struct device_node *rport = NULL;
+@@ -176,18 +199,7 @@ struct coresight_platform_data *of_get_coresight_platform_data(
+ 		} while (ep);
+ 	}
  
- 	if (!clk)
- 		return 0;
-@@ -1909,17 +1926,7 @@ int clk_set_phase(struct clk *clk, int degrees)
- 		degrees += 360;
+-	dn = of_parse_phandle(node, "cpu", 0);
+-	for_each_possible_cpu(cpu) {
+-		np = of_get_cpu_node(cpu, NULL);
+-		found = (dn == np);
+-		of_node_put(np);
+-		if (found)
+-			break;
+-	}
+-	of_node_put(dn);
+-
+-	/* Affinity to CPU0 if no cpu nodes are found */
+-	pdata->cpu = found ? cpu : 0;
++	pdata->cpu = of_coresight_get_cpu(node);
  
- 	clk_prepare_lock();
--
--	trace_clk_set_phase(clk->core, degrees);
--
--	if (clk->core->ops->set_phase)
--		ret = clk->core->ops->set_phase(clk->core->hw, degrees);
--
--	trace_clk_set_phase_complete(clk->core, degrees);
--
--	if (!ret)
--		clk->core->phase = degrees;
--
-+	ret = clk_core_set_phase(clk->core, degrees);
- 	clk_prepare_unlock();
+ 	return pdata;
+ }
+diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+index 2a5982c..7b29743 100644
+--- a/include/linux/coresight.h
++++ b/include/linux/coresight.h
+@@ -263,9 +263,11 @@ static inline int coresight_timeout(void __iomem *addr, u32 offset,
+ #endif
  
- 	return ret;
+ #ifdef CONFIG_OF
++extern int of_coresight_get_cpu(struct device_node *node);
+ extern struct coresight_platform_data *of_get_coresight_platform_data(
+ 				struct device *dev, struct device_node *node);
+ #else
++static int of_coresight_get_cpu(struct device_node *node) { return 0; }
+ static inline struct coresight_platform_data *of_get_coresight_platform_data(
+ 	struct device *dev, struct device_node *node) { return NULL; }
+ #endif
 -- 
-2.9.3
+2.7.4
