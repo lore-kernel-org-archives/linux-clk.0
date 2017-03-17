@@ -1,188 +1,342 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH 1/5] clk: meson: Add support for parameters for specific
- PLLs
-To: Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
- carlo@caione.org, khilman@baylibre.com
-References: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
- <1489411604-18700-2-git-send-email-narmstrong@baylibre.com>
- <149013981400.54062.11268768959465562064@resonance>
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <ccfe12e8-7108-76e4-7d6b-1addcf6fe95a@baylibre.com>
-Date: Wed, 22 Mar 2017 10:17:21 +0100
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 8/9] ARM: dts: omap4: add clkctrl nodes
+Date: Fri, 17 Mar 2017 11:09:40 +0200
+Message-ID: <1489741781-12816-9-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <149013981400.54062.11268768959465562064@resonance>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/22/2017 12:43 AM, Michael Turquette wrote:
-> Quoting Neil Armstrong (2017-03-13 06:26:40)
->> In recent Amlogic GXBB, GXL and GXM SoCs, the GP0 PLL needs some specific
->> parameters in order to initialize and lock correctly.
->>
->> This patch adds an optional PARAM table used to initialize the PLL to a
->> default value with it's parameters in order to achieve to desired frequency.
->>
->> The GP0 PLL in GXBB, GXL/GXM also needs some tweaks in the initialization
->> steps, and these are exposed along the PARAM table.
->>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/clk/meson/clk-pll.c | 52 +++++++++++++++++++++++++++++++++++++++++++--
->>  drivers/clk/meson/clkc.h    | 23 ++++++++++++++++++++
->>  2 files changed, 73 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
->> index 4adc1e8..aff223b 100644
->> --- a/drivers/clk/meson/clk-pll.c
->> +++ b/drivers/clk/meson/clk-pll.c
->> @@ -116,6 +116,29 @@ static const struct pll_rate_table *meson_clk_get_pll_settings(struct meson_clk_
->>         return NULL;
->>  }
->>  
->> +/* Specific wait loop for GXL/GXM GP0 PLL */
->> +static int meson_clk_pll_wait_lock_reset(struct meson_clk_pll *pll,
->> +                                        struct parm *p_n)
->> +{
->> +       int delay = 100;
->> +       u32 reg;
->> +
->> +       while (delay > 0) {
->> +               reg = readl(pll->base + p_n->reg_off);
->> +               writel(reg | MESON_PLL_RESET, pll->base + p_n->reg_off);
->> +               udelay(10);
->> +               writel(reg & ~MESON_PLL_RESET, pll->base + p_n->reg_off);
->> +
->> +               mdelay(1);
-> 
-> Can you add a comment explaining where the delay values come from? Can
-> they vary from chip to chip?
+Add clkctrl nodes for OMAP4 SoC. These are going to be acting as
+replacement for part of the existing clock data and the existing
+clkctrl hooks under hwmod data.
 
-Hi,
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/boot/dts/omap4.dtsi           |   1 +
+ arch/arm/boot/dts/omap44xx-clocks.dtsi | 289 +++++++++++++++++++++++++++++++++
+ 2 files changed, 290 insertions(+)
 
-Ok, the code comes from the vendor tree, and seems to be generic enough to handle
-other chips.
-But I'm not sure about this particular delay, 1ms seems large enough for a PLL locking...
-
-Neil
-
-> 
->> +
->> +               reg = readl(pll->base + p_n->reg_off);
->> +               if (reg & MESON_PLL_LOCK)
->> +                       return 0;
->> +               delay--;
->> +       }
->> +       return -ETIMEDOUT;
->> +}
->> +
->>  static int meson_clk_pll_wait_lock(struct meson_clk_pll *pll,
->>                                    struct parm *p_n)
->>  {
->> @@ -132,6 +155,15 @@ static int meson_clk_pll_wait_lock(struct meson_clk_pll *pll,
->>         return -ETIMEDOUT;
->>  }
->>  
->> +static void meson_clk_pll_init_params(struct meson_clk_pll *pll)
->> +{
->> +       int i;
->> +
->> +       for (i = 0 ; i < pll->params.params_count ; ++i)
->> +               writel(pll->params.params_table[i].value,
->> +                      pll->base + pll->params.params_table[i].reg_off);
->> +}
->> +
->>  static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->>                                   unsigned long parent_rate)
->>  {
->> @@ -151,10 +183,16 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->>         if (!rate_set)
->>                 return -EINVAL;
->>  
->> +       /* Initialize the PLL in a clean state if specified */
->> +       if (pll->params.params_count)
->> +               meson_clk_pll_init_params(pll);
->> +
->>         /* PLL reset */
->>         p = &pll->n;
->>         reg = readl(pll->base + p->reg_off);
->> -       writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
->> +       /* If no_init_reset is provided, avoid resetting at this point */
->> +       if (!pll->params.no_init_reset)
->> +               writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
->>  
->>         reg = PARM_SET(p->width, p->shift, reg, rate_set->n);
->>         writel(reg, pll->base + p->reg_off);
->> @@ -184,7 +222,17 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->>         }
->>  
->>         p = &pll->n;
->> -       ret = meson_clk_pll_wait_lock(pll, p);
->> +       /* If unreset_for_lock is provided, remove the reset bit here */
->> +       if (pll->params.unreset_for_lock) {
-> 
-> Small nitpick, but I find "unreset" to be confusing. Since 'reset' here
-> is a bit that can be set and unset, maybe use clear_reset_for_lock
-> instead?
-> 
-> Regards,
-> Mike
-> 
->> +               reg = readl(pll->base + p->reg_off);
->> +               writel(reg & ~MESON_PLL_RESET, pll->base + p->reg_off);
->> +       }
->> +
->> +       /* If reset_lock_loop, use a special loop including resetting */
->> +       if (pll->params.reset_lock_loop)
->> +               ret = meson_clk_pll_wait_lock_reset(pll, p);
->> +       else
->> +               ret = meson_clk_pll_wait_lock(pll, p);
->>         if (ret) {
->>                 pr_warn("%s: pll did not lock, trying to restore old rate %lu\n",
->>                         __func__, old_rate);
->> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
->> index 9bb70e7..5f1c12d 100644
->> --- a/drivers/clk/meson/clkc.h
->> +++ b/drivers/clk/meson/clkc.h
->> @@ -62,6 +62,28 @@ struct pll_rate_table {
->>                 .frac           = (_frac),                              \
->>         }                                                               \
->>  
->> +struct pll_params_table {
->> +       unsigned int reg_off;
->> +       unsigned int value;
->> +};
->> +
->> +#define PLL_PARAM(_reg, _val)                                          \
->> +       {                                                               \
->> +               .reg_off        = (_reg),                               \
->> +               .value          = (_val),                               \
->> +       }
->> +
->> +struct pll_setup_params {
->> +       struct pll_params_table *params_table;
->> +       unsigned int params_count;
->> +       /* Workaround for GP0, do not reset before configuring */
->> +       bool no_init_reset;
->> +       /* Workaround for GP0, unreset right before checking for lock */
->> +       bool unreset_for_lock;
->> +       /* Workaround for GXL GP0, reset in the lock checking loop */
->> +       bool reset_lock_loop;
->> +};
->> +
->>  struct meson_clk_pll {
->>         struct clk_hw hw;
->>         void __iomem *base;
->> @@ -70,6 +92,7 @@ struct meson_clk_pll {
->>         struct parm frac;
->>         struct parm od;
->>         struct parm od2;
->> +       const struct pll_setup_params params;
->>         const struct pll_rate_table *rate_table;
->>         unsigned int rate_count;
->>         spinlock_t *lock;
->> -- 
->> 1.9.1
->>
+diff --git a/arch/arm/boot/dts/omap4.dtsi b/arch/arm/boot/dts/omap4.dtsi
+index 0cbd6c1..3ecf616 100644
+--- a/arch/arm/boot/dts/omap4.dtsi
++++ b/arch/arm/boot/dts/omap4.dtsi
+@@ -9,6 +9,7 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/pinctrl/omap.h>
++#include <dt-bindings/clock/omap4.h>
+ 
+ / {
+ 	compatible = "ti,omap4430", "ti,omap4";
+diff --git a/arch/arm/boot/dts/omap44xx-clocks.dtsi b/arch/arm/boot/dts/omap44xx-clocks.dtsi
+index 9573b37..c7d517c 100644
+--- a/arch/arm/boot/dts/omap44xx-clocks.dtsi
++++ b/arch/arm/boot/dts/omap44xx-clocks.dtsi
+@@ -622,6 +622,7 @@
+ 		clock-frequency = <0>;
+ 	};
+ };
++
+ &prm_clocks {
+ 	sys_clkin_ck: sys_clkin_ck@110 {
+ 		#clock-cells = <0>;
+@@ -1641,3 +1642,291 @@
+ 		reg = <0x0224>;
+ 	};
+ };
++
++&cm1 {
++	mpuss_cm: mpuss_cm@300 {
++		compatible = "ti,omap4-cm";
++		reg = <0x300 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x300 0x100>;
++
++		mpuss_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x4>;
++			#clock-cells = <2>;
++		};
++	};
++
++	tesla_cm: tesla_cm@400 {
++		compatible = "ti,omap4-cm";
++		reg = <0x400 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x400 0x100>;
++
++		tesla_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x4>;
++			#clock-cells = <2>;
++		};
++	};
++
++	abe_cm: abe_cm@500 {
++		compatible = "ti,omap4-cm";
++		reg = <0x500 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x500 0x100>;
++
++		abe_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x6c>;
++			#clock-cells = <2>;
++		};
++	};
++
++};
++
++&cm2 {
++	l4_ao_cm: l4_ao_cm@600 {
++		compatible = "ti,omap4-cm";
++		reg = <0x600 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x600 0x100>;
++
++		l4_ao_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x1c>;
++			#clock-cells = <2>;
++		};
++	};
++
++	l3_1_cm: l3_1_cm@700 {
++		compatible = "ti,omap4-cm";
++		reg = <0x700 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x700 0x100>;
++
++		l3_1_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x4>;
++			#clock-cells = <2>;
++		};
++	};
++
++	l3_2_cm: l3_2_cm@800 {
++		compatible = "ti,omap4-cm";
++		reg = <0x800 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x800 0x100>;
++
++		l3_2_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x14>;
++			#clock-cells = <2>;
++		};
++	};
++
++	ducati_cm: ducati_cm@900 {
++		compatible = "ti,omap4-cm";
++		reg = <0x900 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x900 0x100>;
++
++		ducati_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x4>;
++			#clock-cells = <2>;
++		};
++	};
++
++	l3_dma_cm: l3_dma_cm@a00 {
++		compatible = "ti,omap4-cm";
++		reg = <0xa00 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0xa00 0x100>;
++
++		l3_dma_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x4>;
++			#clock-cells = <2>;
++		};
++	};
++
++	l3_emif_cm: l3_emif_cm@b00 {
++		compatible = "ti,omap4-cm";
++		reg = <0xb00 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0xb00 0x100>;
++
++		l3_emif_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x1c>;
++			#clock-cells = <2>;
++		};
++	};
++
++	d2d_cm: d2d_cm@c00 {
++		compatible = "ti,omap4-cm";
++		reg = <0xc00 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0xc00 0x100>;
++
++		d2d_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x4>;
++			#clock-cells = <2>;
++		};
++	};
++
++	l4_cfg_cm: l4_cfg_cm@d00 {
++		compatible = "ti,omap4-cm";
++		reg = <0xd00 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0xd00 0x100>;
++
++		l4_cfg_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x14>;
++			#clock-cells = <2>;
++		};
++	};
++
++	l3_instr_cm: l3_instr_cm@e00 {
++		compatible = "ti,omap4-cm";
++		reg = <0xe00 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0xe00 0x100>;
++
++		l3_instr_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x24>;
++			#clock-cells = <2>;
++		};
++	};
++
++	ivahd_cm: ivahd_cm@f00 {
++		compatible = "ti,omap4-cm";
++		reg = <0xf00 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0xf00 0x100>;
++
++		ivahd_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0xc>;
++			#clock-cells = <2>;
++		};
++	};
++
++	iss_cm: iss_cm@1000 {
++		compatible = "ti,omap4-cm";
++		reg = <0x1000 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x1000 0x100>;
++
++		iss_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0xc>;
++			#clock-cells = <2>;
++		};
++	};
++
++	l3_dss_cm: l3_dss_cm@1100 {
++		compatible = "ti,omap4-cm";
++		reg = <0x1100 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x1100 0x100>;
++
++		l3_dss_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x4>;
++			#clock-cells = <2>;
++		};
++	};
++
++	l3_gfx_cm: l3_gfx_cm@1200 {
++		compatible = "ti,omap4-cm";
++		reg = <0x1200 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x1200 0x100>;
++
++		l3_gfx_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x4>;
++			#clock-cells = <2>;
++		};
++	};
++
++	l3_init_cm: l3_init_cm@1300 {
++		compatible = "ti,omap4-cm";
++		reg = <0x1300 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x1300 0x100>;
++
++		l3_init_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0xc4>;
++			#clock-cells = <2>;
++		};
++	};
++
++	l4_per_cm: l4_per_cm@1400 {
++		compatible = "ti,omap4-cm";
++		reg = <0x1400 0x200>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x1400 0x200>;
++
++		l4_per_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x144>;
++			#clock-cells = <2>;
++		};
++	};
++
++};
++
++&prm {
++	l4_wkup_cm: l4_wkup_cm@1800 {
++		compatible = "ti,omap4-cm";
++		reg = <0x1800 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x1800 0x100>;
++
++		l4_wkup_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x5c>;
++			#clock-cells = <2>;
++		};
++	};
++
++	emu_sys_cm: emu_sys_cm@1a00 {
++		compatible = "ti,omap4-cm";
++		reg = <0x1a00 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x1a00 0x100>;
++
++		emu_sys_clkctrl: clk@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x4>;
++			#clock-cells = <2>;
++		};
++	};
++};
+-- 
+1.9.1
