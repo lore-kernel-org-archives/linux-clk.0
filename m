@@ -1,59 +1,84 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv2 9/9] ARM: dts: omap4: convert to use the new clkctrl
- clocks for the drivers
-To: Tony Lindgren <tony@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <1489741781-12816-10-git-send-email-t-kristo@ti.com>
- <20170328001800.GR10760@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <8b502a89-dcc6-1932-70cc-e887b1404dbb@ti.com>
-Date: Tue, 28 Mar 2017 08:44:35 +0300
-MIME-Version: 1.0
-In-Reply-To: <20170328001800.GR10760@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org
+Cc: linus.walleij@linaro.org,
+	robh+dt@kernel.org,
+	andy.yan@rock-chips.com,
+	sboyd@codeaurora.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	mturquette@baylibre.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 3/6] dt-bindings: rk1108-cru: rename RK1108 to RV1108
+Date: Fri, 17 Mar 2017 18:18:37 +0100
+Message-Id: <20170317171840.4683-4-heiko@sntech.de>
+In-Reply-To: <20170317171840.4683-1-heiko@sntech.de>
+References: <20170317171840.4683-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28/03/17 03:18, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
->> Convert the drivers to use the new clkctrl clocks.
->>
->> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->> ---
->>  arch/arm/boot/dts/omap4.dtsi | 164 ++++++++++++++++++++++++++++++++++++++-----
->>  1 file changed, 146 insertions(+), 18 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/omap4.dtsi b/arch/arm/boot/dts/omap4.dtsi
->> index 3ecf616..c39304a 100644
->> --- a/arch/arm/boot/dts/omap4.dtsi
->> +++ b/arch/arm/boot/dts/omap4.dtsi
->> @@ -94,16 +94,22 @@
->>  			compatible = "ti,omap4-mpu";
->>  			ti,hwmods = "mpu";
->>  			sram = <&ocmcram>;
->> +			clocks = <&mpuss_clkctrl OMAP4_MPU_CLKCTRL 0>;
->> +			clock-names = "clkctrl";
->>  		};
->
-> Oh one more thing. I don't think we should add the clocks
-> here as they are now wrongly allocated to the device within
-> the interconnect target module. These clocks really belong
-> to each interconnect target module that we don't have in the
-> dts yet.
->
-> So we're better off adding the clockctrl clocks and then
-> changing the dts to use the interconnect target modules
-> with the clockctrl clocks.
+From: Andy Yan <andy.yan@rock-chips.com>
 
-The problem is, you can't just add the clkctrl clock nodes themselves 
-alone, as this introduces the problem that any clocks with no users will 
-get disabled => causes a boot time hang when all the device clocks get 
-shut down.
+Rockchip finally named the SOC as RV1108, so change it.
 
-If you want to delay the usage of the clocks until you have interconnect 
-target modules in place, you need to introduce the clock nodes also at 
-that point, similar to what needs to be done now to squash patch #8 or #9.
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ .../{rockchip,rk1108-cru.txt => rockchip,rv1108-cru.txt}     | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{rockchip,rk1108-cru.txt => rockchip,rv1108-cru.txt} (83%)
 
--Tero
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.txt
+similarity index 83%
+rename from Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt
+rename to Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.txt
+index 4da126116cf0..161326a4f9c1 100644
+--- a/Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt
++++ b/Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.txt
+@@ -1,12 +1,12 @@
+-* Rockchip RK1108 Clock and Reset Unit
++* Rockchip RV1108 Clock and Reset Unit
+ 
+-The RK1108 clock controller generates and supplies clock to various
++The RV1108 clock controller generates and supplies clock to various
+ controllers within the SoC and also implements a reset controller for SoC
+ peripherals.
+ 
+ Required Properties:
+ 
+-- compatible: should be "rockchip,rk1108-cru"
++- compatible: should be "rockchip,rv1108-cru"
+ - reg: physical base address of the controller and length of memory mapped
+   region.
+ - #clock-cells: should be 1.
+@@ -19,7 +19,7 @@ Optional Properties:
+ 
+ Each clock is assigned an identifier and client nodes can use this identifier
+ to specify the clock which they consume. All available clocks are defined as
+-preprocessor macros in the dt-bindings/clock/rk1108-cru.h headers and can be
++preprocessor macros in the dt-bindings/clock/rv1108-cru.h headers and can be
+ used in device tree sources. Similar macros exist for the reset sources in
+ these files.
+ 
+@@ -38,7 +38,7 @@ clock-output-names:
+ Example: Clock controller node:
+ 
+ 	cru: cru@20200000 {
+-		compatible = "rockchip,rk1108-cru";
++		compatible = "rockchip,rv1108-cru";
+ 		reg = <0x20200000 0x1000>;
+ 		rockchip,grf = <&grf>;
+ 
+@@ -50,7 +50,7 @@ Example: UART controller node that consumes the clock generated by the clock
+   controller:
+ 
+ 	uart0: serial@10230000 {
+-		compatible = "rockchip,rk1108-uart", "snps,dw-apb-uart";
++		compatible = "rockchip,rv1108-uart", "snps,dw-apb-uart";
+ 		reg = <0x10230000 0x100>;
+ 		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+ 		reg-shift = <2>;
+-- 
+2.11.0
