@@ -1,60 +1,132 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: sboyd@codeaurora.org, khilman@baylibre.com, carlo@caione.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/3] clk: meson-gxbb: Add MALI clock IDS
-Date: Thu,  9 Mar 2017 13:53:45 +0100
-Message-Id: <1489064027-18004-2-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1489064027-18004-1-git-send-email-narmstrong@baylibre.com>
-References: <1489064027-18004-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 5/9] ARM: OMAP2+: hwmod: assign main clock from DT if available
+Date: Fri, 17 Mar 2017 11:09:37 +0200
+Message-ID: <1489741781-12816-6-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add missing MALI clock IDs and expose the muxes and gates in the dt-bindings.
+Fix the main clock assignment to assign clkctrl clk from DT as the main
+clock if available. If main clock is assigned via DT, the direct PRCM
+access for module handling is not used on OMAP4+ architectures either,
+as it is assumed the main clock will be doing this instead.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+This patch also drops the obsolete "_mod_ck" search as the implementation
+required for this was not accepted upstream.
+
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/meson/gxbb.h              | 9 ++++++++-
- include/dt-bindings/clock/gxbb-clkc.h | 5 +++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ arch/arm/mach-omap2/omap_hwmod.c | 57 ++++++++++++++++++++++++++--------------
+ 1 file changed, 37 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 274f587..73efdc3 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -268,8 +268,15 @@
- /* CLKID_SAR_ADC_CLK */
- /* CLKID_SAR_ADC_SEL */
- #define CLKID_SAR_ADC_DIV	  99
-+/* CLKID_MALI_0_SEL */
-+#define CLKID_MALI_0_DIV	 101
-+/* CLKID_MALI_0	*/
-+/* CLKID_MALI_1_SEL */
-+#define CLKID_MALI_1_DIV	 104
-+/* CLKID_MALI_1	*/
-+/* CLKID_MALI	*/
+diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+index 0da4f2e..99783f1 100644
+--- a/arch/arm/mach-omap2/omap_hwmod.c
++++ b/arch/arm/mach-omap2/omap_hwmod.c
+@@ -731,31 +731,48 @@ static int _del_initiator_dep(struct omap_hwmod *oh, struct omap_hwmod *init_oh)
+ /**
+  * _init_main_clk - get a struct clk * for the the hwmod's main functional clk
+  * @oh: struct omap_hwmod *
++ * @np: device node mapped to this hwmod
+  *
+  * Called from _init_clocks().  Populates the @oh _clk (main
+  * functional clock pointer) if a clock matching the hwmod name is found,
+  * or a main_clk is present.  Returns 0 on success or -EINVAL on error.
+  */
+-static int _init_main_clk(struct omap_hwmod *oh)
++static int _init_main_clk(struct omap_hwmod *oh, struct device_node *np)
+ {
+ 	int ret = 0;
+-	char name[MOD_CLK_MAX_NAME_LEN];
+-	struct clk *clk;
+-	static const char modck[] = "_mod_ck";
+-
+-	if (strlen(oh->name) >= MOD_CLK_MAX_NAME_LEN - strlen(modck))
+-		pr_warn("%s: warning: cropping name for %s\n", __func__,
+-			oh->name);
++	struct clk *clk = NULL;
++	int i;
++	int count;
++	const char *name;
++	char clk_name[strlen("clkctrl-x") + 1];
  
--#define NR_CLKS			  100
-+#define NR_CLKS			  107
+-	strlcpy(name, oh->name, MOD_CLK_MAX_NAME_LEN - strlen(modck));
+-	strlcat(name, modck, MOD_CLK_MAX_NAME_LEN);
++	if (np) {
++		clk = of_clk_get_by_name(np, "clkctrl");
++		if (IS_ERR(clk)) {
++			/* Try matching by hwmod name */
++			count = of_property_count_strings(np, "ti,hwmods");
++			for (i = 0; i < count; i++) {
++				ret = of_property_read_string_index(np,
++								    "ti,hwmods",
++								    i, &name);
++				if (ret)
++					continue;
++				if (!strcmp(name, oh->name)) {
++					sprintf(clk_name, "clkctrl-%d", i);
++					clk = of_clk_get_by_name(np, clk_name);
++				}
++			}
++		}
++		if (!IS_ERR(clk)) {
++			pr_debug("%s: mapped main_clk %s for %s\n", __func__,
++				 __clk_get_name(clk), oh->name);
++			oh->main_clk = __clk_get_name(clk);
++			oh->_clk = clk;
++			soc_ops.disable_direct_prcm(oh);
++		}
++	}
  
- /* include the CLKIDs that have been made part of the stable DT binding */
- #include <dt-bindings/clock/gxbb-clkc.h>
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index f08f06d..ef7d6b7 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -35,5 +35,10 @@
- #define CLKID_SD_EMMC_C		96
- #define CLKID_SAR_ADC_CLK	97
- #define CLKID_SAR_ADC_SEL	98
-+#define CLKID_MALI_0_SEL	100
-+#define CLKID_MALI_0		102
-+#define CLKID_MALI_1_SEL	103
-+#define CLKID_MALI_1		105
-+#define CLKID_MALI		106
+-	clk = clk_get(NULL, name);
+-	if (!IS_ERR(clk)) {
+-		oh->_clk = clk;
+-		soc_ops.disable_direct_prcm(oh);
+-		oh->main_clk = kstrdup(name, GFP_KERNEL);
+-	} else {
++	if (IS_ERR_OR_NULL(clk)) {
+ 		if (!oh->main_clk)
+ 			return 0;
  
- #endif /* __GXBB_CLKC_H */
+@@ -1547,13 +1564,13 @@ static int _init_clkdm(struct omap_hwmod *oh)
+  * _init_clocks - clk_get() all clocks associated with this hwmod. Retrieve as
+  * well the clockdomain.
+  * @oh: struct omap_hwmod *
+- * @data: not used; pass NULL
++ * @np: device_node mapped to this hwmod
+  *
+  * Called by omap_hwmod_setup_*() (after omap2_clk_init()).
+  * Resolves all clock names embedded in the hwmod.  Returns 0 on
+  * success, or a negative error code on failure.
+  */
+-static int _init_clocks(struct omap_hwmod *oh, void *data)
++static int _init_clocks(struct omap_hwmod *oh, struct device_node *np)
+ {
+ 	int ret = 0;
+ 
+@@ -1565,7 +1582,7 @@ static int _init_clocks(struct omap_hwmod *oh, void *data)
+ 	if (soc_ops.init_clkdm)
+ 		ret |= soc_ops.init_clkdm(oh);
+ 
+-	ret |= _init_main_clk(oh);
++	ret |= _init_main_clk(oh, np);
+ 	ret |= _init_interface_clks(oh);
+ 	ret |= _init_opt_clks(oh);
+ 
+@@ -2420,7 +2437,7 @@ static int __init _init(struct omap_hwmod *oh, void *data)
+ 		return 0;
+ 	}
+ 
+-	r = _init_clocks(oh, NULL);
++	r = _init_clocks(oh, np);
+ 	if (r < 0) {
+ 		WARN(1, "omap_hwmod: %s: couldn't init clocks\n", oh->name);
+ 		return -EINVAL;
 -- 
 1.9.1
