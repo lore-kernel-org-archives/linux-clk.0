@@ -1,367 +1,141 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v6 1/4] clk: Add support for runtime PM
-Date: Wed, 22 Mar 2017 12:35:40 +0100
-Message-id: <1490182543-28550-2-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
-References: <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170322113554eucas1p27471f0de278c55d5dce7fdf120395e09@eucas1p2.samsung.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org
+Cc: linus.walleij@linaro.org,
+	robh+dt@kernel.org,
+	andy.yan@rock-chips.com,
+	sboyd@codeaurora.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	mturquette@baylibre.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 5/6] ARM: dts: rockchip: rename core dtsi from RK1108 to RV1108
+Date: Fri, 17 Mar 2017 18:18:39 +0100
+Message-Id: <20170317171840.4683-6-heiko@sntech.de>
+In-Reply-To: <20170317171840.4683-1-heiko@sntech.de>
+References: <20170317171840.4683-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Registers for some clocks might be located in the SOC area, which are under the
-power domain. To enable access to those registers respective domain has to be
-turned on. Additionally, registers for such clocks will usually loose its
-contents when power domain is turned off, so additional saving and restoring of
-them might be needed in the clock controller driver.
+From: Andy Yan <andy.yan@rock-chips.com>
 
-This patch adds basic infrastructure in the clocks core to allow implementing
-driver for such clocks under power domains. Clock provider can supply a
-struct device pointer, which is the used by clock core for tracking and managing
-clock's controller runtime pm state. Each clk_prepare() operation
-will first call pm_runtime_get_sync() on the supplied device, while
-clk_unprepare() will do pm_runtime_put_sync() at the end.
+Rockchip finally named the SOC as RV1108, so change it
+for compatible.
 
-Additional calls to pm_runtime_get/put functions are required to ensure that any
-register access (like calculating/changing clock rates and unpreparing/disabling
-unused clocks on boot) will be done with clock controller in runtime resumend
-state.
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
-When one wants to register clock controller, which make use of this feature, he
-has to:
-1. Provide a struct device to the core when registering the provider.
-2. Ensure to enable runtime PM for that device before registering clocks.
-3. Make sure that the runtime PM status of the controller device reflects
-   the HW state.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+[adapt include in rk1108-evb.dts to not introduce errors]
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/clk/clk.c | 129 +++++++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 114 insertions(+), 15 deletions(-)
+ arch/arm/boot/dts/rk1108-evb.dts               |  2 +-
+ arch/arm/boot/dts/{rk1108.dtsi => rv1108.dtsi} | 20 ++++++++++----------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
+ rename arch/arm/boot/dts/{rk1108.dtsi => rv1108.dtsi} (95%)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0fb39fe217d1..a6001b6e49a7 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -21,6 +21,7 @@
- #include <linux/of.h>
- #include <linux/device.h>
- #include <linux/init.h>
-+#include <linux/pm_runtime.h>
- #include <linux/sched.h>
- #include <linux/clkdev.h>
+diff --git a/arch/arm/boot/dts/rk1108-evb.dts b/arch/arm/boot/dts/rk1108-evb.dts
+index 3956cff4ca79..88fe0a8c4faa 100644
+--- a/arch/arm/boot/dts/rk1108-evb.dts
++++ b/arch/arm/boot/dts/rk1108-evb.dts
+@@ -40,7 +40,7 @@
  
-@@ -46,6 +47,7 @@ struct clk_core {
- 	const struct clk_ops	*ops;
- 	struct clk_hw		*hw;
- 	struct module		*owner;
-+	struct device		*dev;
- 	struct clk_core		*parent;
- 	const char		**parent_names;
- 	struct clk_core		**parents;
-@@ -87,6 +89,26 @@ struct clk {
- 	struct hlist_node clks_node;
- };
+ /dts-v1/;
  
-+/***           runtime pm          ***/
-+static int clk_pm_runtime_get(struct clk_core *core)
-+{
-+	int ret = 0;
-+
-+	if (!core->dev)
-+		return 0;
-+
-+	ret = pm_runtime_get_sync(core->dev);
-+	return ret < 0 ? ret : 0;
-+}
-+
-+static void clk_pm_runtime_put(struct clk_core *core)
-+{
-+	if (!core->dev)
-+		return;
-+
-+	pm_runtime_put_sync(core->dev);
-+}
-+
- /***           locking             ***/
- static void clk_prepare_lock(void)
- {
-@@ -150,6 +172,8 @@ static void clk_enable_unlock(unsigned long flags)
+-#include "rk1108.dtsi"
++#include "rv1108.dtsi"
  
- static bool clk_core_is_prepared(struct clk_core *core)
- {
-+	bool ret = false;
-+
- 	/*
- 	 * .is_prepared is optional for clocks that can prepare
- 	 * fall back to software usage counter if it is missing
-@@ -157,11 +181,18 @@ static bool clk_core_is_prepared(struct clk_core *core)
- 	if (!core->ops->is_prepared)
- 		return core->prepare_count;
+ / {
+ 	model = "Rockchip RK1108 Evaluation board";
+diff --git a/arch/arm/boot/dts/rk1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
+similarity index 95%
+rename from arch/arm/boot/dts/rk1108.dtsi
+rename to arch/arm/boot/dts/rv1108.dtsi
+index 1297924db6ad..437098b556eb 100644
+--- a/arch/arm/boot/dts/rk1108.dtsi
++++ b/arch/arm/boot/dts/rv1108.dtsi
+@@ -47,7 +47,7 @@
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
  
--	return core->ops->is_prepared(core->hw);
-+	if (!clk_pm_runtime_get(core)) {
-+		ret = core->ops->is_prepared(core->hw);
-+		clk_pm_runtime_put(core);
-+	}
-+
-+	return ret;
- }
+-	compatible = "rockchip,rk1108";
++	compatible = "rockchip,rv1108";
  
- static bool clk_core_is_enabled(struct clk_core *core)
- {
-+	bool ret = false;
-+
- 	/*
- 	 * .is_enabled is only mandatory for clocks that gate
- 	 * fall back to software usage counter if .is_enabled is missing
-@@ -169,7 +200,29 @@ static bool clk_core_is_enabled(struct clk_core *core)
- 	if (!core->ops->is_enabled)
- 		return core->enable_count;
+ 	interrupt-parent = <&gic>;
  
--	return core->ops->is_enabled(core->hw);
-+	/*
-+	 * Check if clock controller's device is runtime active before
-+	 * calling .is_enabled callback. If not, assume that clock is
-+	 * disabled, because we might be called from atomic context, from
-+	 * which pm_runtime_get() is not allowed.
-+	 * This function is called mainly from clk_disable_unused_subtree,
-+	 * which ensures proper runtime pm activation of controller before
-+	 * taking enable spinlock, but the below check is needed if one tries
-+	 * to call it from other places.
-+	 */
-+	if (core->dev) {
-+		pm_runtime_get_noresume(core->dev);
-+		if (!pm_runtime_active(core->dev)) {
-+			ret = false;
-+			goto done;
-+		}
-+	}
-+
-+	ret = core->ops->is_enabled(core->hw);
-+done:
-+	clk_pm_runtime_put(core);
-+
-+	return ret;
- }
+@@ -113,7 +113,7 @@
+ 	};
  
- /***    helper functions   ***/
-@@ -489,6 +542,8 @@ static void clk_core_unprepare(struct clk_core *core)
- 	if (core->ops->unprepare)
- 		core->ops->unprepare(core->hw);
+ 	uart2: serial@10210000 {
+-		compatible = "rockchip,rk1108-uart", "snps,dw-apb-uart";
++		compatible = "rockchip,rv1108-uart", "snps,dw-apb-uart";
+ 		reg = <0x10210000 0x100>;
+ 		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
+ 		reg-shift = <2>;
+@@ -127,7 +127,7 @@
+ 	};
  
-+	clk_pm_runtime_put(core);
-+
- 	trace_clk_unprepare_complete(core);
- 	clk_core_unprepare(core->parent);
- }
-@@ -530,10 +585,14 @@ static int clk_core_prepare(struct clk_core *core)
- 		return 0;
+ 	uart1: serial@10220000 {
+-		compatible = "rockchip,rk1108-uart", "snps,dw-apb-uart";
++		compatible = "rockchip,rv1108-uart", "snps,dw-apb-uart";
+ 		reg = <0x10220000 0x100>;
+ 		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+ 		reg-shift = <2>;
+@@ -141,7 +141,7 @@
+ 	};
  
- 	if (core->prepare_count == 0) {
--		ret = clk_core_prepare(core->parent);
-+		ret = clk_pm_runtime_get(core);
- 		if (ret)
- 			return ret;
+ 	uart0: serial@10230000 {
+-		compatible = "rockchip,rk1108-uart", "snps,dw-apb-uart";
++		compatible = "rockchip,rv1108-uart", "snps,dw-apb-uart";
+ 		reg = <0x10230000 0x100>;
+ 		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+ 		reg-shift = <2>;
+@@ -155,17 +155,17 @@
+ 	};
  
-+		ret = clk_core_prepare(core->parent);
-+		if (ret)
-+			goto runtime_put;
-+
- 		trace_clk_prepare(core);
+ 	grf: syscon@10300000 {
+-		compatible = "rockchip,rk1108-grf", "syscon";
++		compatible = "rockchip,rv1108-grf", "syscon";
+ 		reg = <0x10300000 0x1000>;
+ 	};
  
- 		if (core->ops->prepare)
-@@ -541,15 +600,18 @@ static int clk_core_prepare(struct clk_core *core)
+ 	pmugrf: syscon@20060000 {
+-		compatible = "rockchip,rk1108-pmugrf", "syscon";
++		compatible = "rockchip,rv1108-pmugrf", "syscon";
+ 		reg = <0x20060000 0x1000>;
+ 	};
  
- 		trace_clk_prepare_complete(core);
+ 	cru: clock-controller@20200000 {
+-		compatible = "rockchip,rk1108-cru";
++		compatible = "rockchip,rv1108-cru";
+ 		reg = <0x20200000 0x1000>;
+ 		rockchip,grf = <&grf>;
+ 		#clock-cells = <1>;
+@@ -173,7 +173,7 @@
+ 	};
  
--		if (ret) {
--			clk_core_unprepare(core->parent);
--			return ret;
--		}
-+		if (ret)
-+			goto unprepare;
- 	}
+ 	emmc: dwmmc@30110000 {
+-		compatible = "rockchip,rk1108-dw-mshc", "rockchip,rk3288-dw-mshc";
++		compatible = "rockchip,rv1108-dw-mshc", "rockchip,rk3288-dw-mshc";
+ 		clock-freq-min-max = <400000 150000000>;
+ 		clocks = <&cru HCLK_EMMC>, <&cru SCLK_EMMC>,
+ 			 <&cru SCLK_EMMC_DRV>, <&cru SCLK_EMMC_SAMPLE>;
+@@ -185,7 +185,7 @@
+ 	};
  
- 	core->prepare_count++;
+ 	sdio: dwmmc@30120000 {
+-		compatible = "rockchip,rk1108-dw-mshc", "rockchip,rk3288-dw-mshc";
++		compatible = "rockchip,rv1108-dw-mshc", "rockchip,rk3288-dw-mshc";
+ 		clock-freq-min-max = <400000 150000000>;
+ 		clocks = <&cru HCLK_SDIO>, <&cru SCLK_SDIO>,
+ 			 <&cru SCLK_SDIO_DRV>, <&cru SCLK_SDIO_SAMPLE>;
+@@ -197,7 +197,7 @@
+ 	};
  
- 	return 0;
-+unprepare:
-+	clk_core_unprepare(core->parent);
-+runtime_put:
-+	clk_pm_runtime_put(core);
-+	return ret;
- }
- 
- static int clk_core_prepare_lock(struct clk_core *core)
-@@ -745,6 +807,9 @@ static void clk_unprepare_unused_subtree(struct clk_core *core)
- 	if (core->flags & CLK_IGNORE_UNUSED)
- 		return;
- 
-+	if (clk_pm_runtime_get(core))
-+		return;
-+
- 	if (clk_core_is_prepared(core)) {
- 		trace_clk_unprepare(core);
- 		if (core->ops->unprepare_unused)
-@@ -753,6 +818,8 @@ static void clk_unprepare_unused_subtree(struct clk_core *core)
- 			core->ops->unprepare(core->hw);
- 		trace_clk_unprepare_complete(core);
- 	}
-+
-+	clk_pm_runtime_put(core);
- }
- 
- static void clk_disable_unused_subtree(struct clk_core *core)
-@@ -768,6 +835,9 @@ static void clk_disable_unused_subtree(struct clk_core *core)
- 	if (core->flags & CLK_OPS_PARENT_ENABLE)
- 		clk_core_prepare_enable(core->parent);
- 
-+	if (clk_pm_runtime_get(core))
-+		goto unprepare_out;
-+
- 	flags = clk_enable_lock();
- 
- 	if (core->enable_count)
-@@ -792,6 +862,8 @@ static void clk_disable_unused_subtree(struct clk_core *core)
- 
- unlock_out:
- 	clk_enable_unlock(flags);
-+	clk_pm_runtime_put(core);
-+unprepare_out:
- 	if (core->flags & CLK_OPS_PARENT_ENABLE)
- 		clk_core_disable_unprepare(core->parent);
- }
-@@ -1036,9 +1108,13 @@ long clk_get_accuracy(struct clk *clk)
- static unsigned long clk_recalc(struct clk_core *core,
- 				unsigned long parent_rate)
- {
--	if (core->ops->recalc_rate)
--		return core->ops->recalc_rate(core->hw, parent_rate);
--	return parent_rate;
-+	unsigned long rate = parent_rate;
-+
-+	if (core->ops->recalc_rate && !clk_pm_runtime_get(core)) {
-+		rate = core->ops->recalc_rate(core->hw, parent_rate);
-+		clk_pm_runtime_put(core);
-+	}
-+	return rate;
- }
- 
- /**
-@@ -1563,6 +1639,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- {
- 	struct clk_core *top, *fail_clk;
- 	unsigned long rate = req_rate;
-+	int ret = 0;
- 
- 	if (!core)
- 		return 0;
-@@ -1579,21 +1656,28 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 	if (!top)
- 		return -EINVAL;
- 
-+	ret = clk_pm_runtime_get(core);
-+	if (ret)
-+		return ret;
-+
- 	/* notify that we are about to change rates */
- 	fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
- 	if (fail_clk) {
- 		pr_debug("%s: failed to set %s rate\n", __func__,
- 				fail_clk->name);
- 		clk_propagate_rate_change(top, ABORT_RATE_CHANGE);
--		return -EBUSY;
-+		ret = -EBUSY;
-+		goto err;
- 	}
- 
- 	/* change the rates */
- 	clk_change_rate(top);
- 
- 	core->req_rate = req_rate;
-+err:
-+	clk_pm_runtime_put(core);
- 
--	return 0;
-+	return ret;
- }
- 
- /**
-@@ -1824,12 +1908,16 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 		p_rate = parent->rate;
- 	}
- 
-+	ret = clk_pm_runtime_get(core);
-+	if (ret)
-+		goto out;
-+
- 	/* propagate PRE_RATE_CHANGE notifications */
- 	ret = __clk_speculate_rates(core, p_rate);
- 
- 	/* abort if a driver objects */
- 	if (ret & NOTIFY_STOP_MASK)
--		goto out;
-+		goto runtime_put;
- 
- 	/* do the re-parent */
- 	ret = __clk_set_parent(core, parent, p_index);
-@@ -1842,6 +1930,8 @@ static int clk_core_set_parent(struct clk_core *core, struct clk_core *parent)
- 		__clk_recalc_accuracies(core);
- 	}
- 
-+runtime_put:
-+	clk_pm_runtime_put(core);
- out:
- 	clk_prepare_unlock();
- 
-@@ -2549,6 +2639,12 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 		goto fail_name;
- 	}
- 	core->ops = hw->init->ops;
-+	if (dev && pm_runtime_enabled(dev)) {
-+		core->dev = dev;
-+		ret = clk_pm_runtime_get(core);
-+		if (ret)
-+			goto fail_pm;
-+	}
- 	if (dev && dev->driver)
- 		core->owner = dev->driver->owner;
- 	core->hw = hw;
-@@ -2595,12 +2691,13 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 	}
- 
- 	ret = __clk_core_init(core);
--	if (!ret)
-+	if (!ret) {
-+		clk_pm_runtime_put(core);
- 		return hw->clk;
-+	}
- 
- 	__clk_free_clk(hw->clk);
- 	hw->clk = NULL;
--
- fail_parents:
- 	kfree(core->parents);
- fail_parent_names_copy:
-@@ -2608,6 +2705,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 		kfree_const(core->parent_names[i]);
- 	kfree(core->parent_names);
- fail_parent_names:
-+	clk_pm_runtime_put(core);
-+fail_pm:
- 	kfree_const(core->name);
- fail_name:
- 	kfree(core);
+ 	sdmmc: dwmmc@30130000 {
+-		compatible = "rockchip,rk1108-dw-mshc", "rockchip,rk3288-dw-mshc";
++		compatible = "rockchip,rv1108-dw-mshc", "rockchip,rk3288-dw-mshc";
+ 		clock-freq-min-max = <400000 100000000>;
+ 		clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>,
+ 			 <&cru SCLK_SDMMC_DRV>, <&cru SCLK_SDMMC_SAMPLE>;
 -- 
-1.9.1
+2.11.0
