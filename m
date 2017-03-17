@@ -1,230 +1,579 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: [PATCH v7 06/13] dt: bindings: Add bindings for Marvell Xenon SD Host Controller
-Date: Thu, 30 Mar 2017 17:22:58 +0200
-Message-Id: <ecacddaa5d38b678e1c8c95b56f65f4a39527ead.1490886907.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 2/9] clk: ti: add support for clkctrl clocks
+Date: Fri, 17 Mar 2017 11:09:34 +0200
+Message-ID: <1489741781-12816-3-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Hu Ziji <huziji@marvell.com>
+Previously, hwmod core has been used for controlling the hwmod level
+clocks directly. This has certain drawbacks, like being unable to share
+the clocks for multiple users, missing usecounting and generally being
+totally incompatible with the common clock framework.
 
-Marvell Xenon SDHC can support eMMC/SD/SDIO.
-Add Xenon-specific properties.
-Also add properties for Xenon PHY setting.
+This patch adds support for clkctrl clocks for addressing the above
+issues. These support the modulemode handling, which will replace the
+direct hwmod clkctrl linkage. Any optional clocks are also supported,
+gate, mux and divider.
 
-Signed-off-by: Hu Ziji <huziji@marvell.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
 ---
- Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt | 170 +++++++-
- 1 file changed, 170 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
+ drivers/clk/ti/Makefile  |   3 +-
+ drivers/clk/ti/clkctrl.c | 482 +++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/ti/clock.h   |  31 +++
+ 3 files changed, 515 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/ti/clkctrl.c
 
-diff --git a/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt b/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
+diff --git a/drivers/clk/ti/Makefile b/drivers/clk/ti/Makefile
+index 0deac98..edb9f47 100644
+--- a/drivers/clk/ti/Makefile
++++ b/drivers/clk/ti/Makefile
+@@ -3,7 +3,8 @@ ifeq ($(CONFIG_ARCH_OMAP2PLUS), y)
+ obj-y					+= clk.o autoidle.o clockdomain.o
+ clk-common				= dpll.o composite.o divider.o gate.o \
+ 					  fixed-factor.o mux.o apll.o \
+-					  clkt_dpll.o clkt_iclk.o clkt_dflt.o
++					  clkt_dpll.o clkt_iclk.o clkt_dflt.o \
++					  clkctrl.o
+ obj-$(CONFIG_SOC_AM33XX)		+= $(clk-common) clk-33xx.o dpll3xxx.o
+ obj-$(CONFIG_SOC_TI81XX)		+= $(clk-common) fapll.o clk-814x.o clk-816x.o
+ obj-$(CONFIG_ARCH_OMAP2)		+= $(clk-common) interface.o clk-2xxx.o
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
 new file mode 100644
-index 000000000000..b878a1e305af
+index 0000000..f517ac6
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
-@@ -0,0 +1,170 @@
-+Marvell Xenon SDHCI Controller device tree bindings
-+This file documents differences between the core mmc properties
-+described by mmc.txt and the properties used by the Xenon implementation.
++++ b/drivers/clk/ti/clkctrl.c
+@@ -0,0 +1,482 @@
++/*
++ * OMAP clkctrl clock support
++ *
++ * Copyright (C) 2017 Texas Instruments, Inc.
++ *
++ * Tero Kristo <t-kristo@ti.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+Multiple SDHCs might be put into a single Xenon IP, to save size and cost.
-+Each SDHC is independent and owns independent resources, such as register sets,
-+clock and PHY.
-+Each SDHC should have an independent device tree node.
++#include <linux/clk-provider.h>
++#include <linux/slab.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/clk/ti.h>
++#include <linux/delay.h>
++#include "clock.h"
 +
-+Required Properties:
-+- compatible: should be one of the following
-+  - "marvell,armada-3700-sdhci": For controllers on Armada-3700 SoC.
-+  Must provide a second register area and marvell,pad-type.
-+  - "marvell,armada-ap806-sdhci": For controllers on Armada AP806.
-+  - "marvell,armada-cp110-sdhci": For controllers on Armada CP110.
++#define NO_IDLEST			0x1
 +
-+- clocks:
-+  Array of clocks required for SDHC.
-+  Require at least input clock for Xenon IP core.
++#define OMAP4_MODULEMODE_MASK		0x3
 +
-+- clock-names:
-+  Array of names corresponding to clocks property.
-+  The input clock for Xenon IP core should be named as "core".
++#define MODULEMODE_HWCTRL		0x1
++#define MODULEMODE_SWCTRL		0x2
 +
-+- reg:
-+  * For "marvell,armada-3700-sdhci", two register areas.
-+    The first one for Xenon IP register. The second one for the Armada 3700 SoC
-+    PHY PAD Voltage Control register.
-+    Please follow the examples with compatible "marvell,armada-3700-sdhci"
-+    in below.
-+    Please also check property marvell,pad-type in below.
++#define OMAP4_IDLEST_MASK		(0x3 << 16)
++#define OMAP4_IDLEST_SHIFT		16
 +
-+  * For other compatible strings, one register area for Xenon IP.
++#define CLKCTRL_IDLEST_FUNCTIONAL	0x0
++#define CLKCTRL_IDLEST_INTERFACE_IDLE	0x2
++#define CLKCTRL_IDLEST_DISABLED		0x3
 +
-+Optional Properties:
-+- marvell,xenon-sdhc-id:
-+  Indicate the corresponding bit index of current SDHC in
-+  SDHC System Operation Control Register Bit[7:0].
-+  Set/clear the corresponding bit to enable/disable current SDHC.
-+  If Xenon IP contains only one SDHC, this property is optional.
++/* These timeouts are in us */
++#define OMAP4_MAX_MODULE_READY_TIME	2000
++#define OMAP4_MAX_MODULE_DISABLE_TIME	5000
 +
-+- marvell,xenon-phy-type:
-+  Xenon support multiple types of PHYs.
-+  To select eMMC 5.1 PHY, set:
-+  marvell,xenon-phy-type = "emmc 5.1 phy"
-+  eMMC 5.1 PHY is the default choice if this property is not provided.
-+  To select eMMC 5.0 PHY, set:
-+  marvell,xenon-phy-type = "emmc 5.0 phy"
++static bool _early_timeout = true;
 +
-+  All those types of PHYs can support eMMC, SD and SDIO.
-+  Please note that this property only presents the type of PHY.
-+  It doesn't stand for the entire SDHC type or property.
-+  For example, "emmc 5.1 phy" doesn't mean that this Xenon SDHC only
-+  supports eMMC 5.1.
++struct omap_clkctrl_provider {
++	void __iomem *base;
++	struct list_head clocks;
++};
 +
-+- marvell,xenon-phy-znr:
-+  Set PHY ZNR value.
-+  Only available for eMMC PHY.
-+  Valid range = [0:0x1F].
-+  ZNR is set as 0xF by default if this property is not provided.
++struct omap_clkctrl_clk {
++	struct clk_hw *clk;
++	u16 reg_offset;
++	int bit_offset;
++	struct list_head node;
++};
 +
-+- marvell,xenon-phy-zpr:
-+  Set PHY ZPR value.
-+  Only available for eMMC PHY.
-+  Valid range = [0:0x1F].
-+  ZPR is set as 0xF by default if this property is not provided.
++union omap4_timeout {
++	u32 cycles;
++	ktime_t start;
++};
 +
-+- marvell,xenon-phy-nr-success-tun:
-+  Set the number of required consecutive successful sampling points
-+  used to identify a valid sampling window, in tuning process.
-+  Valid range = [1:7].
-+  Set as 0x4 by default if this property is not provided.
++static u32 _omap4_idlest(u32 val)
++{
++	val &= OMAP4_IDLEST_MASK;
++	val >>= OMAP4_IDLEST_SHIFT;
 +
-+- marvell,xenon-phy-tun-step-divider:
-+  Set the divider for calculating TUN_STEP.
-+  Set as 64 by default if this property is not provided.
++	return val;
++}
 +
-+- marvell,xenon-phy-slow-mode:
-+  If this property is selected, transfers will bypass PHY.
-+  Only available when bus frequency lower than 55MHz in SDR mode.
-+  Disabled by default. Please only try this property if timing issues
-+  always occur with PHY enabled in eMMC HS SDR, SD SDR12, SD SDR25,
-+  SD Default Speed and HS mode and eMMC legacy speed mode.
++static bool _omap4_is_idle(u32 val)
++{
++	val = _omap4_idlest(val);
 +
-+- marvell,xenon-tun-count:
-+  Xenon SDHC SoC usually doesn't provide re-tuning counter in
-+  Capabilities Register 3 Bit[11:8].
-+  This property provides the re-tuning counter.
-+  If this property is not set, default re-tuning counter will
-+  be set as 0x9 in driver.
++	return val == CLKCTRL_IDLEST_DISABLED;
++}
 +
-+- marvell,pad-type:
-+  Type of Armada 3700 SoC PHY PAD Voltage Controller register.
-+  Only valid when "marvell,armada-3700-sdhci" is selected.
-+  Two types: "sd" and "fixed-1-8v".
-+  If "sd" is selected, SoC PHY PAD is set as 3.3V at the beginning and is
-+  switched to 1.8V when later in higher speed mode.
-+  If "fixed-1-8v" is selected, SoC PHY PAD is fixed 1.8V, such as for eMMC.
-+  Please follow the examples with compatible "marvell,armada-3700-sdhci"
-+  in below.
++static bool _omap4_is_ready(u32 val)
++{
++	val = _omap4_idlest(val);
 +
-+Example:
-+- For eMMC:
++	return val == CLKCTRL_IDLEST_FUNCTIONAL ||
++	       val == CLKCTRL_IDLEST_INTERFACE_IDLE;
++}
 +
-+	sdhci@aa0000 {
-+		compatible = "marvell,armada-ap806-sdhci";
-+		reg = <0xaa0000 0x1000>;
-+		interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>
-+		clocks = <&emmc_clk>;
-+		clock-names = "core";
-+		bus-width = <4>;
-+		marvell,xenon-phy-slow-mode;
-+		marvell,xenon-tun-count = <11>;
-+		non-removable;
-+		no-sd;
-+		no-sdio;
++static bool _omap4_is_timeout(union omap4_timeout *time, u32 timeout)
++{
++	if (unlikely(_early_timeout)) {
++		if (time->cycles++ < timeout) {
++			udelay(1);
++			return false;
++		}
++	} else {
++		if (!ktime_to_ns(time->start)) {
++			time->start = ktime_get();
++			return false;
++		}
 +
-+		/* Vmmc and Vqmmc are both fixed */
-+	};
++		if (ktime_us_delta(ktime_get(), time->start) < timeout) {
++			cpu_relax();
++			return false;
++		}
++	}
 +
-+- For SD/SDIO:
++	return true;
++}
 +
-+	sdhci@ab0000 {
-+		compatible = "marvell,armada-cp110-sdhci";
-+		reg = <0xab0000 0x1000>;
-+		interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>
-+		vqmmc-supply = <&sd_vqmmc_regulator>;
-+		vmmc-supply = <&sd_vmmc_regulator>;
-+		clocks = <&sdclk>;
-+		clock-names = "core";
-+		bus-width = <4>;
-+		marvell,xenon-tun-count = <9>;
-+	};
++static int __init _omap4_disable_early_timeout(void)
++{
++	_early_timeout = false;
 +
-+- For eMMC with compatible "marvell,armada-3700-sdhci":
++	return 0;
++}
++arch_initcall(_omap4_disable_early_timeout);
 +
-+	sdhci@aa0000 {
-+		compatible = "marvell,armada-3700-sdhci";
-+		reg = <0xaa0000 0x1000>,
-+		      <phy_addr 0x4>;
-+		interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>
-+		clocks = <&emmcclk>;
-+		clock-names = "core";
-+		bus-width = <8>;
-+		mmc-ddr-1_8v;
-+		mmc-hs400-1_8v;
-+		non-removable;
-+		no-sd;
-+		no-sdio;
++static int _omap4_clkctrl_clk_enable(struct clk_hw *hw)
++{
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	u32 val;
++	int ret;
++	union omap4_timeout timeout = { 0 };
 +
-+		/* Vmmc and Vqmmc are both fixed */
++	if (!clk->enable_bit)
++		return 0;
 +
-+		marvell,pad-type = "fixed-1-8v";
-+	};
++	if (clk->clkdm) {
++		ret = ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm, hw->clk);
++		if (ret) {
++			WARN(1,
++			     "%s: could not enable %s's clockdomain %s: %d\n",
++			     __func__, clk_hw_get_name(hw),
++			     clk->clkdm_name, ret);
++			return ret;
++		}
++	}
 +
-+- For SD/SDIO with compatible "marvell,armada-3700-sdhci":
++	val = ti_clk_ll_ops->clk_readl(&clk->enable_reg);
 +
-+	sdhci@ab0000 {
-+		compatible = "marvell,armada-3700-sdhci";
-+		reg = <0xab0000 0x1000>,
-+		      <phy_addr 0x4>;
-+		interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>
-+		vqmmc-supply = <&sd_regulator>;
-+		/* Vmmc is fixed */
-+		clocks = <&sdclk>;
-+		clock-names = "core";
-+		bus-width = <4>;
++	val &= ~OMAP4_MODULEMODE_MASK;
++	val |= clk->enable_bit;
 +
-+		marvell,pad-type = "sd";
-+	};
++	ti_clk_ll_ops->clk_writel(val, &clk->enable_reg);
++
++	if (clk->flags & NO_IDLEST)
++		return 0;
++
++	/* Wait until module is enabled */
++	while (!_omap4_is_ready(ti_clk_ll_ops->clk_readl(&clk->enable_reg))) {
++		if (_omap4_is_timeout(&timeout, OMAP4_MAX_MODULE_READY_TIME)) {
++			pr_err("%s: failed to enable\n", clk_hw_get_name(hw));
++			return -EBUSY;
++		}
++	}
++
++	return 0;
++}
++
++static void _omap4_clkctrl_clk_disable(struct clk_hw *hw)
++{
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	u32 val;
++	union omap4_timeout timeout = { 0 };
++
++	if (!clk->enable_bit)
++		return;
++
++	val = ti_clk_ll_ops->clk_readl(&clk->enable_reg);
++
++	val &= ~OMAP4_MODULEMODE_MASK;
++
++	ti_clk_ll_ops->clk_writel(val, &clk->enable_reg);
++
++	if (clk->flags & NO_IDLEST)
++		goto exit;
++
++	/* Wait until module is disabled */
++	while (!_omap4_is_idle(ti_clk_ll_ops->clk_readl(&clk->enable_reg))) {
++		if (_omap4_is_timeout(&timeout,
++				      OMAP4_MAX_MODULE_DISABLE_TIME)) {
++			pr_err("%s: failed to disable\n", clk_hw_get_name(hw));
++			break;
++		}
++	}
++
++exit:
++	if (clk->clkdm)
++		ti_clk_ll_ops->clkdm_clk_disable(clk->clkdm, hw->clk);
++}
++
++static int _omap4_clkctrl_clk_is_enabled(struct clk_hw *hw)
++{
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	u32 val;
++
++	val = ti_clk_ll_ops->clk_readl(&clk->enable_reg);
++
++	if (val & clk->enable_bit)
++		return 1;
++
++	return 0;
++}
++
++static const struct clk_ops omap4_clkctrl_clk_ops = {
++	.enable		= _omap4_clkctrl_clk_enable,
++	.disable	= _omap4_clkctrl_clk_disable,
++	.is_enabled	= _omap4_clkctrl_clk_is_enabled,
++};
++
++static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
++					      void *data)
++{
++	struct omap_clkctrl_provider *provider = data;
++	struct omap_clkctrl_clk *entry;
++
++	if (clkspec->args_count != 2)
++		return ERR_PTR(-EINVAL);
++
++	pr_debug("%s: looking for %x:%x\n", __func__,
++		 clkspec->args[0], clkspec->args[1]);
++
++	list_for_each_entry(entry, &provider->clocks, node) {
++		if (entry->reg_offset == clkspec->args[0] &&
++		    entry->bit_offset == clkspec->args[1])
++			break;
++	}
++
++	if (!entry)
++		return ERR_PTR(-EINVAL);
++
++	return entry->clk;
++}
++
++static int __init
++_ti_clkctrl_clk_register(struct omap_clkctrl_provider *provider,
++			 struct device_node *node, struct clk_hw *clk_hw,
++			 u16 offset, u8 bit, const char * const *parents,
++			 int num_parents, const struct clk_ops *ops)
++{
++	struct clk_init_data init = { NULL };
++	struct clk *clk;
++	struct omap_clkctrl_clk *clkctrl_clk;
++
++	init.name = kasprintf(GFP_KERNEL, "%s:%s:%04x:%d", node->parent->name,
++			      node->name, offset, bit);
++	clkctrl_clk = kzalloc(sizeof(*clkctrl_clk), GFP_KERNEL);
++	if (!init.name || !clkctrl_clk) {
++		kfree(init.name);
++		return -ENOMEM;
++	}
++
++	clk_hw->init = &init;
++	init.parent_names = parents;
++	init.num_parents = num_parents;
++	init.ops = ops;
++	init.flags = CLK_IS_BASIC;
++
++	clk = ti_clk_register(NULL, clk_hw, init.name);
++
++	if (IS_ERR_OR_NULL(clk))
++		return -EINVAL;
++
++	clkctrl_clk->reg_offset = offset;
++	clkctrl_clk->bit_offset = bit;
++	clkctrl_clk->clk = clk_hw;
++
++	list_add(&clkctrl_clk->node, &provider->clocks);
++
++	return 0;
++}
++
++static void __init
++_ti_clkctrl_setup_gate(struct omap_clkctrl_provider *provider,
++		       struct device_node *node, u16 offset,
++		       const struct omap_clkctrl_bit_data *data,
++		       void __iomem *reg)
++{
++	struct clk_hw_omap *clk_hw;
++
++	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
++	if (!clk_hw)
++		return;
++
++	clk_hw->enable_bit = data->bit;
++	clk_hw->enable_reg.ptr = reg;
++
++	if (_ti_clkctrl_clk_register(provider, node, &clk_hw->hw, offset,
++				     data->bit, data->parents, 1,
++				     &omap_gate_clk_ops))
++		kfree(clk_hw);
++}
++
++static void __init
++_ti_clkctrl_setup_mux(struct omap_clkctrl_provider *provider,
++		      struct device_node *node, u16 offset,
++		      const struct omap_clkctrl_bit_data *data,
++		      void __iomem *reg)
++{
++	struct clk_omap_mux *mux;
++	int num_parents = 0;
++	const char * const *pname;
++
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return;
++
++	pname = data->parents;
++	while (*pname) {
++		num_parents++;
++		pname++;
++	}
++
++	mux->mask = num_parents;
++	mux->mask = (1 << fls(mux->mask)) - 1;
++
++	mux->shift = data->bit;
++	mux->reg.ptr = reg;
++
++	if (_ti_clkctrl_clk_register(provider, node, &mux->hw, offset,
++				     data->bit, data->parents, num_parents,
++				     &ti_clk_mux_ops))
++		kfree(mux);
++}
++
++static void __init
++_ti_clkctrl_setup_div(struct omap_clkctrl_provider *provider,
++		      struct device_node *node, u16 offset,
++		      const struct omap_clkctrl_bit_data *data,
++		      void __iomem *reg)
++{
++	struct clk_omap_divider *div;
++	const struct omap_clkctrl_div_data *div_data = data->data;
++
++	div = kzalloc(sizeof(*div), GFP_KERNEL);
++	if (!div)
++		return;
++
++	div->reg.ptr = reg;
++	div->shift = data->bit;
++
++	if (ti_clk_parse_divider_data((int *)div_data->dividers,
++				      div_data->max_div, 0, 0,
++				      &div->width, &div->table)) {
++		pr_err("%s: Data parsing for %s:%04x:%d failed\n", __func__,
++		       node->name, offset, data->bit);
++		kfree(div);
++		return;
++	}
++
++	if (_ti_clkctrl_clk_register(provider, node, &div->hw, offset,
++				     data->bit, data->parents, 1,
++				     &ti_clk_divider_ops))
++		kfree(div);
++}
++
++static void __init
++_ti_clkctrl_setup_subclks(struct omap_clkctrl_provider *provider,
++			  struct device_node *node,
++			  const struct omap_clkctrl_reg_data *data,
++			  void __iomem *reg)
++{
++	const struct omap_clkctrl_bit_data *bits = data->bit_data;
++
++	if (!bits)
++		return;
++
++	while (bits->bit) {
++		switch (bits->type) {
++		case TI_CLK_GATE:
++			_ti_clkctrl_setup_gate(provider, node, data->offset,
++					       bits, reg);
++			break;
++
++		case TI_CLK_DIVIDER:
++			_ti_clkctrl_setup_div(provider, node, data->offset,
++					      bits, reg);
++			break;
++
++		case TI_CLK_MUX:
++			_ti_clkctrl_setup_mux(provider, node, data->offset,
++					      bits, reg);
++			break;
++
++		default:
++			pr_err("%s: bad subclk type: %d\n", __func__,
++			       bits->type);
++			return;
++		}
++		bits++;
++	}
++}
++
++static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
++{
++	struct omap_clkctrl_provider *provider;
++	const struct omap_clkctrl_data *data;
++	const struct omap_clkctrl_reg_data *reg_data;
++	struct clk_init_data init = { NULL };
++	struct clk_hw_omap *hw;
++	struct clk *clk;
++	struct omap_clkctrl_clk *clkctrl_clk;
++	const __be32 *addrp;
++	u32 addr;
++
++	addrp = of_get_address(node, 0, NULL, NULL);
++	addr = (u32)of_translate_address(node, addrp);
++
++	if (of_machine_is_compatible("ti,omap4"))
++		data = omap4_clkctrl_data;
++	else
++		return;
++
++	while (data->addr) {
++		if (addr == data->addr)
++			break;
++
++		data++;
++	}
++
++	if (!data->addr) {
++		pr_err("%s not found from clkctrl data.\n", node->name);
++		return;
++	}
++
++	provider = kzalloc(sizeof(*provider), GFP_KERNEL);
++	if (!provider)
++		return;
++
++	provider->base = of_iomap(node, 0);
++
++	INIT_LIST_HEAD(&provider->clocks);
++
++	/* Generate clocks */
++	reg_data = data->regs;
++
++	while (reg_data->parent) {
++		hw = kzalloc(sizeof(*hw), GFP_KERNEL);
++		if (!hw)
++			return;
++
++		hw->enable_reg.ptr = provider->base + reg_data->offset;
++
++		_ti_clkctrl_setup_subclks(provider, node, reg_data,
++					  hw->enable_reg.ptr);
++
++		if (reg_data->flags & CLKF_SW_SUP)
++			hw->enable_bit = MODULEMODE_SWCTRL;
++		if (reg_data->flags & CLKF_HW_SUP)
++			hw->enable_bit = MODULEMODE_HWCTRL;
++		if (reg_data->flags & CLKF_NO_IDLEST)
++			hw->flags |= NO_IDLEST;
++
++		init.parent_names = &reg_data->parent;
++		init.num_parents = 1;
++		init.flags = 0;
++		init.name = kasprintf(GFP_KERNEL, "%s:%s:%04x:%d",
++				      node->parent->name, node->name,
++				      reg_data->offset, 0);
++		clkctrl_clk = kzalloc(sizeof(*clkctrl_clk), GFP_KERNEL);
++		if (!init.name || !clkctrl_clk) {
++			kfree(init.name);
++			kfree(hw);
++			return;
++		}
++		init.ops = &omap4_clkctrl_clk_ops;
++		hw->hw.init = &init;
++
++		clk = ti_clk_register(NULL, &hw->hw, init.name);
++		if (IS_ERR_OR_NULL(clk))
++			return;
++
++		clkctrl_clk->reg_offset = reg_data->offset;
++		clkctrl_clk->clk = &hw->hw;
++
++		list_add(&clkctrl_clk->node, &provider->clocks);
++
++		reg_data++;
++	}
++
++	of_clk_add_hw_provider(node, _ti_omap4_clkctrl_xlate, provider);
++}
++CLK_OF_DECLARE(ti_omap4_clkctrl_clock, "ti,clkctrl",
++	       _ti_omap4_clkctrl_setup);
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 3f7b265..561dbe9 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -203,6 +203,37 @@ struct ti_dt_clk {
+ 		.node_name = name,	\
+ 	}
+ 
++/* CLKCTRL type definitions */
++struct omap_clkctrl_div_data {
++	const int *dividers;
++	int max_div;
++};
++
++struct omap_clkctrl_bit_data {
++	u8 bit;
++	u8 type;
++	const char * const *parents;
++	const void *data;
++};
++
++struct omap_clkctrl_reg_data {
++	u16 offset;
++	const struct omap_clkctrl_bit_data *bit_data;
++	u16 flags;
++	const char *parent;
++};
++
++struct omap_clkctrl_data {
++	u32 addr;
++	const struct omap_clkctrl_reg_data *regs;
++};
++
++extern const struct omap_clkctrl_data omap4_clkctrl_data[];
++
++#define CLKF_SW_SUP	BIT(0)
++#define CLKF_HW_SUP	BIT(1)
++#define CLKF_NO_IDLEST	BIT(2)
++
+ typedef void (*ti_of_clk_init_cb_t)(struct clk_hw *, struct device_node *);
+ 
+ struct clk *ti_clk_register_gate(struct ti_clk *setup);
 -- 
-git-series 0.9.1
+1.9.1
