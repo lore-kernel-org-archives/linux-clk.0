@@ -1,164 +1,217 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: mturquette@baylibre.com,
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org
+Cc: linus.walleij@linaro.org,
+	robh+dt@kernel.org,
+	andy.yan@rock-chips.com,
 	sboyd@codeaurora.org,
-	carlo@caione.org,
-	khilman@baylibre.com
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] clk: meson: Add support for parameters for specific PLLs
-Date: Mon, 13 Mar 2017 14:26:40 +0100
-Message-Id: <1489411604-18700-2-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
-References: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
+	linux-gpio@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	mturquette@baylibre.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 2/6] pinctrl: rockchip: rename RK1108 to RV1108
+Date: Fri, 17 Mar 2017 18:18:36 +0100
+Message-Id: <20170317171840.4683-3-heiko@sntech.de>
+In-Reply-To: <20170317171840.4683-1-heiko@sntech.de>
+References: <20170317171840.4683-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-In recent Amlogic GXBB, GXL and GXM SoCs, the GP0 PLL needs some specific
-parameters in order to initialize and lock correctly.
+From: Andy Yan <andy.yan@rock-chips.com>
 
-This patch adds an optional PARAM table used to initialize the PLL to a
-default value with it's parameters in order to achieve to desired frequency.
+Rockchip finally named the SOC as RV1108, so change it.
 
-The GP0 PLL in GXBB, GXL/GXM also needs some tweaks in the initialization
-steps, and these are exposed along the PARAM table.
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+[adapted rk1108 dtsi to keep bisectability]
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/clk/meson/clk-pll.c | 52 +++++++++++++++++++++++++++++++++++++++++++--
- drivers/clk/meson/clkc.h    | 23 ++++++++++++++++++++
- 2 files changed, 73 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/rk1108.dtsi      |  2 +-
+ drivers/pinctrl/pinctrl-rockchip.c | 76 +++++++++++++++++++-------------------
+ 2 files changed, 39 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 4adc1e8..aff223b 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -116,6 +116,29 @@ static const struct pll_rate_table *meson_clk_get_pll_settings(struct meson_clk_
- 	return NULL;
+diff --git a/arch/arm/boot/dts/rk1108.dtsi b/arch/arm/boot/dts/rk1108.dtsi
+index d6194bff7afe..6c8fc19d0ecd 100644
+--- a/arch/arm/boot/dts/rk1108.dtsi
++++ b/arch/arm/boot/dts/rk1108.dtsi
+@@ -222,7 +222,7 @@
+ 	};
+ 
+ 	pinctrl: pinctrl {
+-		compatible = "rockchip,rk1108-pinctrl";
++		compatible = "rockchip,rv1108-pinctrl";
+ 		rockchip,grf = <&grf>;
+ 		rockchip,pmu = <&pmugrf>;
+ 		#address-cells = <1>;
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 1e276dfe1763..9000a986caab 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -59,7 +59,7 @@
+ #define GPIO_LS_SYNC		0x60
+ 
+ enum rockchip_pinctrl_type {
+-	RK1108,
++	RV1108,
+ 	RK2928,
+ 	RK3066B,
+ 	RK3188,
+@@ -713,13 +713,13 @@ static int rockchip_set_mux(struct rockchip_pin_bank *bank, int pin, int mux)
+ 	return ret;
  }
  
-+/* Specific wait loop for GXL/GXM GP0 PLL */
-+static int meson_clk_pll_wait_lock_reset(struct meson_clk_pll *pll,
-+					 struct parm *p_n)
-+{
-+	int delay = 100;
-+	u32 reg;
-+
-+	while (delay > 0) {
-+		reg = readl(pll->base + p_n->reg_off);
-+		writel(reg | MESON_PLL_RESET, pll->base + p_n->reg_off);
-+		udelay(10);
-+		writel(reg & ~MESON_PLL_RESET, pll->base + p_n->reg_off);
-+
-+		mdelay(1);
-+
-+		reg = readl(pll->base + p_n->reg_off);
-+		if (reg & MESON_PLL_LOCK)
-+			return 0;
-+		delay--;
-+	}
-+	return -ETIMEDOUT;
-+}
-+
- static int meson_clk_pll_wait_lock(struct meson_clk_pll *pll,
- 				   struct parm *p_n)
+-#define RK1108_PULL_PMU_OFFSET		0x10
+-#define RK1108_PULL_OFFSET		0x110
+-#define RK1108_PULL_PINS_PER_REG	8
+-#define RK1108_PULL_BITS_PER_PIN	2
+-#define RK1108_PULL_BANK_STRIDE		16
++#define RV1108_PULL_PMU_OFFSET		0x10
++#define RV1108_PULL_OFFSET		0x110
++#define RV1108_PULL_PINS_PER_REG	8
++#define RV1108_PULL_BITS_PER_PIN	2
++#define RV1108_PULL_BANK_STRIDE		16
+ 
+-static void rk1108_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
++static void rv1108_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
+ 					 int pin_num, struct regmap **regmap,
+ 					 int *reg, u8 *bit)
  {
-@@ -132,6 +155,15 @@ static int meson_clk_pll_wait_lock(struct meson_clk_pll *pll,
- 	return -ETIMEDOUT;
- }
- 
-+static void meson_clk_pll_init_params(struct meson_clk_pll *pll)
-+{
-+	int i;
-+
-+	for (i = 0 ; i < pll->params.params_count ; ++i)
-+		writel(pll->params.params_table[i].value,
-+		       pll->base + pll->params.params_table[i].reg_off);
-+}
-+
- static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 				  unsigned long parent_rate)
- {
-@@ -151,10 +183,16 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!rate_set)
- 		return -EINVAL;
- 
-+	/* Initialize the PLL in a clean state if specified */
-+	if (pll->params.params_count)
-+		meson_clk_pll_init_params(pll);
-+
- 	/* PLL reset */
- 	p = &pll->n;
- 	reg = readl(pll->base + p->reg_off);
--	writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
-+	/* If no_init_reset is provided, avoid resetting at this point */
-+	if (!pll->params.no_init_reset)
-+		writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
- 
- 	reg = PARM_SET(p->width, p->shift, reg, rate_set->n);
- 	writel(reg, pll->base + p->reg_off);
-@@ -184,7 +222,17 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -728,27 +728,27 @@ static void rk1108_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
+ 	/* The first 24 pins of the first bank are located in PMU */
+ 	if (bank->bank_num == 0) {
+ 		*regmap = info->regmap_pmu;
+-		*reg = RK1108_PULL_PMU_OFFSET;
++		*reg = RV1108_PULL_PMU_OFFSET;
+ 	} else {
+-		*reg = RK1108_PULL_OFFSET;
++		*reg = RV1108_PULL_OFFSET;
+ 		*regmap = info->regmap_base;
+ 		/* correct the offset, as we're starting with the 2nd bank */
+ 		*reg -= 0x10;
+-		*reg += bank->bank_num * RK1108_PULL_BANK_STRIDE;
++		*reg += bank->bank_num * RV1108_PULL_BANK_STRIDE;
  	}
  
- 	p = &pll->n;
--	ret = meson_clk_pll_wait_lock(pll, p);
-+	/* If unreset_for_lock is provided, remove the reset bit here */
-+	if (pll->params.unreset_for_lock) {
-+		reg = readl(pll->base + p->reg_off);
-+		writel(reg & ~MESON_PLL_RESET, pll->base + p->reg_off);
-+	}
-+
-+	/* If reset_lock_loop, use a special loop including resetting */
-+	if (pll->params.reset_lock_loop)
-+		ret = meson_clk_pll_wait_lock_reset(pll, p);
-+	else
-+		ret = meson_clk_pll_wait_lock(pll, p);
- 	if (ret) {
- 		pr_warn("%s: pll did not lock, trying to restore old rate %lu\n",
- 			__func__, old_rate);
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 9bb70e7..5f1c12d 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -62,6 +62,28 @@ struct pll_rate_table {
- 		.frac		= (_frac),				\
- 	}								\
+-	*reg += ((pin_num / RK1108_PULL_PINS_PER_REG) * 4);
+-	*bit = (pin_num % RK1108_PULL_PINS_PER_REG);
+-	*bit *= RK1108_PULL_BITS_PER_PIN;
++	*reg += ((pin_num / RV1108_PULL_PINS_PER_REG) * 4);
++	*bit = (pin_num % RV1108_PULL_PINS_PER_REG);
++	*bit *= RV1108_PULL_BITS_PER_PIN;
+ }
  
-+struct pll_params_table {
-+	unsigned int reg_off;
-+	unsigned int value;
-+};
-+
-+#define PLL_PARAM(_reg, _val)						\
-+	{								\
-+		.reg_off	= (_reg),				\
-+		.value		= (_val),				\
-+	}
-+
-+struct pll_setup_params {
-+	struct pll_params_table *params_table;
-+	unsigned int params_count;
-+	/* Workaround for GP0, do not reset before configuring */
-+	bool no_init_reset;
-+	/* Workaround for GP0, unreset right before checking for lock */
-+	bool unreset_for_lock;
-+	/* Workaround for GXL GP0, reset in the lock checking loop */
-+	bool reset_lock_loop;
-+};
-+
- struct meson_clk_pll {
- 	struct clk_hw hw;
- 	void __iomem *base;
-@@ -70,6 +92,7 @@ struct meson_clk_pll {
- 	struct parm frac;
- 	struct parm od;
- 	struct parm od2;
-+	const struct pll_setup_params params;
- 	const struct pll_rate_table *rate_table;
- 	unsigned int rate_count;
- 	spinlock_t *lock;
+-#define RK1108_DRV_PMU_OFFSET		0x20
+-#define RK1108_DRV_GRF_OFFSET		0x210
+-#define RK1108_DRV_BITS_PER_PIN		2
+-#define RK1108_DRV_PINS_PER_REG		8
+-#define RK1108_DRV_BANK_STRIDE		16
++#define RV1108_DRV_PMU_OFFSET		0x20
++#define RV1108_DRV_GRF_OFFSET		0x210
++#define RV1108_DRV_BITS_PER_PIN		2
++#define RV1108_DRV_PINS_PER_REG		8
++#define RV1108_DRV_BANK_STRIDE		16
+ 
+-static void rk1108_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
++static void rv1108_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
+ 					int pin_num, struct regmap **regmap,
+ 					int *reg, u8 *bit)
+ {
+@@ -757,19 +757,19 @@ static void rk1108_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
+ 	/* The first 24 pins of the first bank are located in PMU */
+ 	if (bank->bank_num == 0) {
+ 		*regmap = info->regmap_pmu;
+-		*reg = RK1108_DRV_PMU_OFFSET;
++		*reg = RV1108_DRV_PMU_OFFSET;
+ 	} else {
+ 		*regmap = info->regmap_base;
+-		*reg = RK1108_DRV_GRF_OFFSET;
++		*reg = RV1108_DRV_GRF_OFFSET;
+ 
+ 		/* correct the offset, as we're starting with the 2nd bank */
+ 		*reg -= 0x10;
+-		*reg += bank->bank_num * RK1108_DRV_BANK_STRIDE;
++		*reg += bank->bank_num * RV1108_DRV_BANK_STRIDE;
+ 	}
+ 
+-	*reg += ((pin_num / RK1108_DRV_PINS_PER_REG) * 4);
+-	*bit = pin_num % RK1108_DRV_PINS_PER_REG;
+-	*bit *= RK1108_DRV_BITS_PER_PIN;
++	*reg += ((pin_num / RV1108_DRV_PINS_PER_REG) * 4);
++	*bit = pin_num % RV1108_DRV_PINS_PER_REG;
++	*bit *= RV1108_DRV_BITS_PER_PIN;
+ }
+ 
+ #define RK2928_PULL_OFFSET		0x118
+@@ -1271,7 +1271,7 @@ static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
+ 		return !(data & BIT(bit))
+ 				? PIN_CONFIG_BIAS_PULL_PIN_DEFAULT
+ 				: PIN_CONFIG_BIAS_DISABLE;
+-	case RK1108:
++	case RV1108:
+ 	case RK3188:
+ 	case RK3288:
+ 	case RK3368:
+@@ -1318,7 +1318,7 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
+ 
+ 		spin_unlock_irqrestore(&bank->slock, flags);
+ 		break;
+-	case RK1108:
++	case RV1108:
+ 	case RK3188:
+ 	case RK3288:
+ 	case RK3368:
+@@ -1581,7 +1581,7 @@ static bool rockchip_pinconf_pull_valid(struct rockchip_pin_ctrl *ctrl,
+ 					pull == PIN_CONFIG_BIAS_DISABLE);
+ 	case RK3066B:
+ 		return pull ? false : true;
+-	case RK1108:
++	case RV1108:
+ 	case RK3188:
+ 	case RK3288:
+ 	case RK3368:
+@@ -2699,7 +2699,7 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static struct rockchip_pin_bank rk1108_pin_banks[] = {
++static struct rockchip_pin_bank rv1108_pin_banks[] = {
+ 	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", IOMUX_SOURCE_PMU,
+ 					     IOMUX_SOURCE_PMU,
+ 					     IOMUX_SOURCE_PMU,
+@@ -2709,15 +2709,15 @@ static struct rockchip_pin_bank rk1108_pin_banks[] = {
+ 	PIN_BANK_IOMUX_FLAGS(3, 32, "gpio3", 0, 0, 0, 0),
+ };
+ 
+-static struct rockchip_pin_ctrl rk1108_pin_ctrl = {
+-	.pin_banks		= rk1108_pin_banks,
+-	.nr_banks		= ARRAY_SIZE(rk1108_pin_banks),
+-	.label			= "RK1108-GPIO",
+-	.type			= RK1108,
++static struct rockchip_pin_ctrl rv1108_pin_ctrl = {
++	.pin_banks		= rv1108_pin_banks,
++	.nr_banks		= ARRAY_SIZE(rv1108_pin_banks),
++	.label			= "RV1108-GPIO",
++	.type			= RV1108,
+ 	.grf_mux_offset		= 0x10,
+ 	.pmu_mux_offset		= 0x0,
+-	.pull_calc_reg		= rk1108_calc_pull_reg_and_bit,
+-	.drv_calc_reg		= rk1108_calc_drv_reg_and_bit,
++	.pull_calc_reg		= rv1108_calc_pull_reg_and_bit,
++	.drv_calc_reg		= rv1108_calc_drv_reg_and_bit,
+ };
+ 
+ static struct rockchip_pin_bank rk2928_pin_banks[] = {
+@@ -2975,8 +2975,8 @@ static struct rockchip_pin_ctrl rk3399_pin_ctrl = {
+ };
+ 
+ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
+-	{ .compatible = "rockchip,rk1108-pinctrl",
+-		.data = (void *)&rk1108_pin_ctrl },
++	{ .compatible = "rockchip,rv1108-pinctrl",
++		.data = (void *)&rv1108_pin_ctrl },
+ 	{ .compatible = "rockchip,rk2928-pinctrl",
+ 		.data = (void *)&rk2928_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3036-pinctrl",
 -- 
-1.9.1
+2.11.0
