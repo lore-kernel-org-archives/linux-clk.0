@@ -1,209 +1,71 @@
-Return-Path: <mars.cheng@mediatek.com>
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
-	<robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: CC Hwang <cc.hwang@mediatek.com>, Loda Chou <loda.chou@mediatek.com>,
-	Miles Chen <miles.chen@mediatek.com>, Jades Shih <jades.shih@mediatek.com>,
-	Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang <my.chuang@mediatek.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>,
-	<linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH v3 02/12] irqchip: mtk-sysirq: extend intpol base to arbitrary number
-Date: Sun, 19 Mar 2017 23:26:23 +0800
-Message-ID: <1489937193-2953-3-git-send-email-mars.cheng@mediatek.com>
-In-Reply-To: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
-References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+Return-Path: <Suzuki.Poulose@arm.com>
+Subject: Re: [v3 3/5] coresight: add support for debug module
+To: Leo Yan <leo.yan@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
+References: <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
+ <011fdac0-59bf-b539-2de3-0b59a41bc922@arm.com>
+ <20170309175915.GA964@leoy-linaro>
+ <3f27efee-3b63-81fd-eb96-73fd7e6f5e92@arm.com>
+ <20170313165600.GB32431@linaro.org>
+ <516f8989-4dde-2686-d549-0761feb14d1b@arm.com>
+ <CANLsYkzJsGvr4ZzNbTwcPu1Qki6=Szvu+bMjHZ_rza==DqFChw@mail.gmail.com>
+ <20170317101328.GA19877@leoy-linaro> <20170317155007.GA20435@linaro.org>
+ <20170317162836.GD2020@leoy-linaro>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Wei Xu <xuwei5@hisilicon.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, John Stultz <john.stultz@linaro.org>,
+ Guodong Xu <guodong.xu@linaro.org>,
+ Haojian Zhuang <haojian.zhuang@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+ Mike Leach <mike.leach@linaro.org>, Sudeep Holla <Sudeep.Holla@arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <5995f6a7-08b1-c868-fc88-a145d1748a33@arm.com>
+Date: Fri, 17 Mar 2017 16:47:54 +0000
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: mars.cheng@mediatek.com
+In-Reply-To: <20170317162836.GD2020@leoy-linaro>
+Content-Type: text/plain; charset=us-ascii; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Originally driver only supports one base. However, MT6797 has
-more than one bases to configure interrupt polarity. To support
-possible design change, here comes a solution to use arbitrary
-number of bases.
+On 17/03/17 16:28, Leo Yan wrote:
+> On Fri, Mar 17, 2017 at 09:50:07AM -0600, Mathieu Poirier wrote:
+>
+> [...]
+>
+>> If we don't check for "nohlt" some platform may freeze, others may work.  If we
+>> mandate that "nohlt" be present on the kernel cmd line it works in all cases.
+>> As such mandating that "nohlt" be present is a better way to go.
+>
+> Sure, so I will add below checking code in the probe function, please
+> let me know if you have alter better way to implement this:
+>
+> +       if (IS_ENABLED(CONFIG_CPU_IDLE) &&
+> +                       !strstr(boot_command_line, "nohlt")) {
+> +               dev_err(dev, "May not be accessible in CPU power domain.\n");
+> +               return -EPERM;
+> +       }
+>
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
----
- drivers/irqchip/irq-mtk-sysirq.c |  116 +++++++++++++++++++++++++++++++-------
- 1 file changed, 95 insertions(+), 21 deletions(-)
+There is an API which kind of achieves what "nohlt" does at runtime :
 
-diff --git a/drivers/irqchip/irq-mtk-sysirq.c b/drivers/irqchip/irq-mtk-sysirq.c
-index 63ac73b..9ba969c 100644
---- a/drivers/irqchip/irq-mtk-sysirq.c
-+++ b/drivers/irqchip/irq-mtk-sysirq.c
-@@ -24,22 +24,29 @@
- 
- struct mtk_sysirq_chip_data {
- 	spinlock_t lock;
--	void __iomem *intpol_base;
-+	u32 nr_intpol_bases;
-+	void __iomem **intpol_bases;
-+	u32 *intpol_words;
-+	u8 *intpol_idx;
-+	u16 *which_word;
- };
- 
- static int mtk_sysirq_set_type(struct irq_data *data, unsigned int type)
- {
- 	irq_hw_number_t hwirq = data->hwirq;
- 	struct mtk_sysirq_chip_data *chip_data = data->chip_data;
-+	u8 intpol_idx = chip_data->intpol_idx[hwirq];
-+	void __iomem *base;
- 	u32 offset, reg_index, value;
- 	unsigned long flags;
- 	int ret;
- 
-+	base = chip_data->intpol_bases[intpol_idx];
-+	reg_index = chip_data->which_word[hwirq];
- 	offset = hwirq & 0x1f;
--	reg_index = hwirq >> 5;
- 
- 	spin_lock_irqsave(&chip_data->lock, flags);
--	value = readl_relaxed(chip_data->intpol_base + reg_index * 4);
-+	value = readl_relaxed(base + reg_index * 4);
- 	if (type == IRQ_TYPE_LEVEL_LOW || type == IRQ_TYPE_EDGE_FALLING) {
- 		if (type == IRQ_TYPE_LEVEL_LOW)
- 			type = IRQ_TYPE_LEVEL_HIGH;
-@@ -49,7 +56,8 @@ static int mtk_sysirq_set_type(struct irq_data *data, unsigned int type)
- 	} else {
- 		value &= ~(1 << offset);
- 	}
--	writel(value, chip_data->intpol_base + reg_index * 4);
-+
-+	writel(value, base + reg_index * 4);
- 
- 	data = data->parent_data;
- 	ret = data->chip->irq_set_type(data, type);
-@@ -124,8 +132,7 @@ static int __init mtk_sysirq_of_init(struct device_node *node,
- {
- 	struct irq_domain *domain, *domain_parent;
- 	struct mtk_sysirq_chip_data *chip_data;
--	int ret, size, intpol_num;
--	struct resource res;
-+	int ret, size, intpol_num = 0, nr_intpol_bases = 0, i = 0;
- 
- 	domain_parent = irq_find_host(parent);
- 	if (!domain_parent) {
-@@ -133,36 +140,103 @@ static int __init mtk_sysirq_of_init(struct device_node *node,
- 		return -EINVAL;
- 	}
- 
--	ret = of_address_to_resource(node, 0, &res);
--	if (ret)
--		return ret;
--
- 	chip_data = kzalloc(sizeof(*chip_data), GFP_KERNEL);
- 	if (!chip_data)
- 		return -ENOMEM;
- 
--	size = resource_size(&res);
--	intpol_num = size * 8;
--	chip_data->intpol_base = ioremap(res.start, size);
--	if (!chip_data->intpol_base) {
--		pr_err("mtk_sysirq: unable to map sysirq register\n");
--		ret = -ENXIO;
--		goto out_free;
-+	while (of_get_address(node, i++, NULL, NULL))
-+		nr_intpol_bases++;
-+
-+	if (nr_intpol_bases == 0) {
-+		pr_err("mtk_sysirq: base address not specified\n");
-+		ret = -EINVAL;
-+		goto out_free_chip;
-+	}
-+
-+	chip_data->intpol_words = kcalloc(nr_intpol_bases,
-+					  sizeof(*chip_data->intpol_words),
-+					  GFP_KERNEL);
-+	if (!chip_data->intpol_words) {
-+		ret = -ENOMEM;
-+		goto out_free_chip;
-+	}
-+
-+	chip_data->intpol_bases = kcalloc(nr_intpol_bases,
-+					  sizeof(*chip_data->intpol_bases),
-+					  GFP_KERNEL);
-+	if (!chip_data->intpol_bases) {
-+		ret = -ENOMEM;
-+		goto out_free_intpol_words;
-+	}
-+
-+	for (i = 0; i < nr_intpol_bases; i++) {
-+		struct resource res;
-+
-+		ret = of_address_to_resource(node, i, &res);
-+		size = resource_size(&res);
-+		intpol_num += size * 8;
-+		chip_data->intpol_words[i] = size / 4;
-+		chip_data->intpol_bases[i] = of_iomap(node, i);
-+		if (ret || !chip_data->intpol_bases[i]) {
-+			pr_err("%s: couldn't map region %d\n",
-+			       node->full_name, i);
-+			ret = -ENODEV;
-+			goto out_free_intpol;
-+		}
-+	}
-+
-+	chip_data->intpol_idx = kcalloc(intpol_num,
-+					sizeof(*chip_data->intpol_idx),
-+					GFP_KERNEL);
-+	if (!chip_data->intpol_idx) {
-+		ret = -ENOMEM;
-+		goto out_free_intpol;
-+	}
-+
-+	chip_data->which_word = kcalloc(intpol_num,
-+					sizeof(*chip_data->which_word),
-+					GFP_KERNEL);
-+	if (!chip_data->which_word) {
-+		ret = -ENOMEM;
-+		goto out_free_intpol_idx;
-+	}
-+
-+	/*
-+	 * assign an index of the intpol_bases for each irq
-+	 * to set it fast later
-+	 */
-+	for (i = 0; i < intpol_num ; i++) {
-+		u32 word = i / 32, j;
-+
-+		for (j = 0; word >= chip_data->intpol_words[j] ; j++)
-+			word -= chip_data->intpol_words[j];
-+
-+		chip_data->intpol_idx[i] = j;
-+		chip_data->which_word[i] = word;
- 	}
- 
- 	domain = irq_domain_add_hierarchy(domain_parent, 0, intpol_num, node,
- 					  &sysirq_domain_ops, chip_data);
- 	if (!domain) {
- 		ret = -ENOMEM;
--		goto out_unmap;
-+		goto out_free_which_word;
- 	}
- 	spin_lock_init(&chip_data->lock);
- 
- 	return 0;
- 
--out_unmap:
--	iounmap(chip_data->intpol_base);
--out_free:
-+out_free_which_word:
-+	kfree(chip_data->which_word);
-+out_free_intpol_idx:
-+	kfree(chip_data->intpol_idx);
-+out_free_intpol:
-+	for (i = 0; i < nr_intpol_bases; i++)
-+		if (chip_data->intpol_bases[i])
-+			iounmap(chip_data->intpol_bases[i]);
-+	kfree(chip_data->intpol_bases);
-+out_free_intpol_words:
-+	kfree(chip_data->intpol_words);
-+out_free_chip:
- 	kfree(chip_data);
- 	return ret;
- }
--- 
-1.7.9.5
+   cpu_idle_poll_ctrl(true)
+
+So may be we could use that instead of depending on "nohlt". The other side
+of the issues is "when do we decide to use the API". May be we could add something
+like : enable_debug, which could then trigger the panic notifier registrations
+and the above. That would still leave us with a case where the system crashes
+even before the user gets a terminal. May be the following is the best option :
+
+1) Dedicated kernel command line parameter for enabling the CPU debug at boot/probe.
+
+and
+
+2) Runtime enable method via sysfs.
+
+What do you think ?
+
+Suzuki
