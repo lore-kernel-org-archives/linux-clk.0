@@ -1,40 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:56538 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751123AbdCWHox (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2017 03:44:53 -0400
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH] clk: qcom: gdsc: Fix the vfe1 powerdomain name
-Date: Thu, 23 Mar 2017 13:13:40 +0530
-Message-Id: <1490255020-31616-1-git-send-email-rnayak@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20170315173753.6zywfxapdczu2i34@rob-hp-laptop>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <46fdec2d680d539652f87d79c627973b3a568438.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <20170315173753.6zywfxapdczu2i34@rob-hp-laptop>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 17 Mar 2017 11:34:45 +0800
+Message-ID: <CAGb2v67A2T4KeLBttAGLKoo7igBTnQH+5yxN-jJo1k7Ewfd9mQ@mail.gmail.com>
+Subject: Re: [PATCH 7/15] dt-bindings: display: sun4i: Add allwinner,tcon-channel
+ property
+To: Rob Herring <robh@kernel.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Fix a typo which caused both vfe0 and vfe1 powerdomains to be
-named as vfe0
+On Thu, Mar 16, 2017 at 1:37 AM, Rob Herring <robh@kernel.org> wrote:
+> On Tue, Mar 07, 2017 at 09:56:26AM +0100, Maxime Ripard wrote:
+>> The Allwinner Timings Controller has two, mutually exclusive, channels.
+>> When the binding has been introduced, it was assumed that there would be
+>> only a single user per channel in the system.
+>>
+>> While this is likely for the channel 0 which only connects to LCD displays,
+>> it turns out that the channel 1 can be connected to multiple controllers in
+>> the SoC (HDMI and TV encoders for example). And while the simultaneous use
+>> of HDMI and TV outputs cannot be achieved, switching from one to the other
+>> at runtime definitely sounds plausible.
+>>
+>> Add an extra property, allwinner,tcon-channel, to specify for a given
+>> endpoint which TCON channel it is connected to, while falling back to the
+>> previous mechanism if that property is missing.
+>
+> I think perhaps TCON channels should have been ports rather than
+> endpoints. The fact that the channels are mutually exclusive can be
+> handled in the driver and doesn't really matter in the binding. How
+> painful would it be to rework things to move TCON channel 1 from port 0,
+> endpoint 1 to port 1?
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/qcom/mmcc-msm8996.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Having a separate output port for channel 1 was one option we discussed.
+However it wouldn't work well with the kernel's of_graph based crtc
+detection (drm_of_find_possible_crtcs / drm_of_find_possible_crtcs),
+which has the crtcs bound via the output port. As the logic is used
+by multiple drivers, I'm not sure it's easy to rework or test.
 
-diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-index 9b97246..20d8fea 100644
---- a/drivers/clk/qcom/mmcc-msm8996.c
-+++ b/drivers/clk/qcom/mmcc-msm8996.c
-@@ -2986,7 +2986,7 @@ enum {
- 	.cxcs = (unsigned int []){ 0x36ac },
- 	.cxc_count = 1,
- 	.pd = {
--		.name = "vfe0",
-+		.name = "vfe1",
- 	},
- 	.parent = &camss_gdsc.pd,
- 	.pwrsts = PWRSTS_OFF_ON,
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Also, we still have to support old device trees using channel 1 from
+output port 0 endpoint 1. This is the TV encoder on sun5i (A10s/A13/R8).
 
+Regards
+ChenYu
