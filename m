@@ -1,94 +1,42 @@
-Return-Path: <pbrobinson@gmail.com>
-Return-Path: <pbrobinson@gmail.com>
-From: Peter Robinson <pbrobinson@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Peter Robinson <pbrobinson@gmail.com>
-Subject: [PATCH] clk: sunxi-ng: tighten SoC deps on explicit AllWinner SoCs
-Date: Thu,  2 Mar 2017 17:43:57 +0000
-Message-Id: <20170302174357.6246-1-pbrobinson@gmail.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv2 1/9] Documentation: dt-bindings: Add binding
+ documentation for TI clkctrl clocks
+To: Tony Lindgren <tony@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <1489741781-12816-2-git-send-email-t-kristo@ti.com>
+ <20170317141813.GS20572@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>, Paul Walmsley <paul@pwsan.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <2c30dc5a-203e-fbcf-229f-b4366dfe2774@ti.com>
+Date: Fri, 17 Mar 2017 17:01:22 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170317141813.GS20572@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Tighten the depends on the various AllWinn SoCs so we don't
-inadvertantly get clock drivers when we're not wanting them
-like 32 bit SoC clocks for 64 bit configs. Ensure there's
-still test coverage though.
+On 17/03/17 16:18, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+>> From: Tony Lindgren <tony@atomide.com>
+>> +Example: Clock controller node on omap 4430:
+>> +
+>> +&cm2 {
+>> +	l4per: cm@1400 {
+>> +		cm_l4per@0 {
+>> +			cm_l4per_clkctrl: clk@20 {
+>> +				compatible = "ti,clkctrl";
+>> +				reg = <0x20 0x1b0>;
+>> +				#clock-cells = <4>;
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>
+> The #clock-cells = <4> is a typo left over from earlier revisions,
+> care to update it to 2 like the binding doc specifies?
 
-Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
----
- drivers/clk/sunxi-ng/Kconfig | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Ouch, yea I can update that. Will post along with v3 once more comments 
+pour in.
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index 695bbf9..8ab378e 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -63,6 +63,7 @@ config SUN50I_A64_CCU
- 	select SUNXI_CCU_MP
- 	select SUNXI_CCU_PHASE
- 	default ARM64 && ARCH_SUNXI
-+	depends (ARM64 && ARCH_SUNXI) || COMPILE_TEST
- 
- config SUN5I_CCU
- 	bool "Support for the Allwinner sun5i family CCM"
-@@ -74,6 +75,7 @@ config SUN5I_CCU
- 	select SUNXI_CCU_MP
- 	select SUNXI_CCU_PHASE
- 	default MACH_SUN5I
-+	depends MACH_SUN5I || COMPILE_TEST
- 
- config SUN6I_A31_CCU
- 	bool "Support for the Allwinner A31/A31s CCU"
-@@ -84,6 +86,7 @@ config SUN6I_A31_CCU
- 	select SUNXI_CCU_MP
- 	select SUNXI_CCU_PHASE
- 	default MACH_SUN6I
-+	depends MACH_SUN6I || COMPILE_TEST
- 
- config SUN8I_A23_CCU
- 	bool "Support for the Allwinner A23 CCU"
-@@ -96,6 +99,7 @@ config SUN8I_A23_CCU
- 	select SUNXI_CCU_MP
- 	select SUNXI_CCU_PHASE
- 	default MACH_SUN8I
-+	depends MACH_SUN8I || COMPILE_TEST
- 
- config SUN8I_A33_CCU
- 	bool "Support for the Allwinner A33 CCU"
-@@ -108,6 +112,7 @@ config SUN8I_A33_CCU
- 	select SUNXI_CCU_MP
- 	select SUNXI_CCU_PHASE
- 	default MACH_SUN8I
-+	depends MACH_SUN8I || COMPILE_TEST
- 
- config SUN8I_H3_CCU
- 	bool "Support for the Allwinner H3 CCU"
-@@ -119,6 +124,7 @@ config SUN8I_H3_CCU
- 	select SUNXI_CCU_MP
- 	select SUNXI_CCU_PHASE
- 	default MACH_SUN8I
-+	depends MACH_SUN8I || COMPILE_TEST
- 
- config SUN8I_V3S_CCU
- 	bool "Support for the Allwinner V3s CCU"
-@@ -130,6 +136,7 @@ config SUN8I_V3S_CCU
- 	select SUNXI_CCU_MP
- 	select SUNXI_CCU_PHASE
- 	default MACH_SUN8I
-+	depends MACH_SUN8I || COMPILE_TEST
- 
- config SUN9I_A80_CCU
- 	bool "Support for the Allwinner A80 CCU"
-@@ -140,5 +147,6 @@ config SUN9I_A80_CCU
- 	select SUNXI_CCU_MP
- 	select SUNXI_CCU_PHASE
- 	default MACH_SUN9I
-+	depends MACH_SUN9I || COMPILE_TEST
- 
- endif
--- 
-2.9.3
+-Tero
