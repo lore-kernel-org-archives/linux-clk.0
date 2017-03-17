@@ -1,50 +1,47 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 28 Mar 2017 19:59:43 -0500
-From: Rob Herring <robh@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk: qcom: Elaborate on "active" clocks in the RPM
- clock bindings
-Message-ID: <20170329005943.xqs6ouqbqwdzaayf@rob-hp-laptop>
-References: <20170322081842.20495-1-linus.walleij@linaro.org>
+Return-Path: <herbert@gondor.apana.org.au>
+Date: Fri, 17 Mar 2017 16:30:32 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	linux-amlogic@lists.infradead.org, linux-crypto@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] clk: meson-gxbb: expose clock CLKID_RNG0
+Message-ID: <20170317083032.GA18512@gondor.apana.org.au>
+References: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
+ <20170316100743.GA12137@gondor.apana.org.au>
+ <m2mvcl6pwg.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170322081842.20495-1-linus.walleij@linaro.org>
+In-Reply-To: <m2mvcl6pwg.fsf@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 22, 2017 at 09:18:42AM +0100, Linus Walleij wrote:
-> The concept of "active" clocks is just explained in a bried comment in the
-> device driver, let's explain it a bit more in the device tree bindings
-> so everyone understands this.
+On Thu, Mar 16, 2017 at 11:24:31AM -0700, Kevin Hilman wrote:
+> Hi Herbert,
 > 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> Herbert Xu <herbert@gondor.apana.org.au> writes:
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> index d470a0187035..cf80a00b7ff2 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> @@ -18,6 +18,14 @@ Required properties :
->  
->  - #clock-cells : shall contain 1
->  
-> +The clock enumerators are defined in <dt-bindings/clock/qcom,rpmcc.h>
-> +and come in pairs: FOO_CLK followed by FOO_A_CLK. The latter clock
-> +is an "active" clock, which means that the consumer only care that the
-> +clock is available when the system is active, i.e. not suspended. If
-> +it is important that the clock keeps running during system suspend,
-> +you need to specify the non-active clock, the one not containing
-> +*_A_* in the enumerator name.
-> +
+> > On Wed, Feb 22, 2017 at 07:55:24AM +0100, Heiner Kallweit wrote:
+> >> Expose clock CLKID_RNG0 which is needed for the HW random number generator.
+> >> 
+> >> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> >
+> > All patches applied.  Thanks.
+> 
+> Actually, can you just apply [PATCH 4/4] to your tree?
+> 
+> The clock and DT patches need to go through their respective trees or
+> will otherwise have conflicts with other things going in via those
+> trees.
 
-Sounds like abuse as the clock id is encoding policy into it. The number 
-of clocks should be the number of inputs to a block. I wouldn't be 
-opposed to some flags for clocks, but that should be a separate cell.
+It's too late now.  Please speak up sooner next time.  These
+patches were posted a month ago.
 
-Rob
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
