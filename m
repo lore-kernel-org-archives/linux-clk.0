@@ -1,198 +1,133 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1490550707.29739.21.camel@baylibre.com>
-Subject: Re: [RFC PATCH] clk: meson: gxbb: remove the "cpu_clk"
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com
-Cc: linux-arm-kernel@lists.infradead.org, narmstrong@baylibre.com,
-	khilman@baylibre.com, carlo@caione.org, sboyd@codeaurora.org
-Date: Sun, 26 Mar 2017 19:51:47 +0200
-In-Reply-To: <20170326110602.23379-1-martin.blumenstingl@googlemail.com>
-References: <20170326110602.23379-1-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Fri, 17 Mar 2017 09:50:07 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Leo Yan <leo.yan@linaro.org>
+Subject: Re: [v3 3/5] coresight: add support for debug module
+Message-ID: <20170317155007.GA20435@linaro.org>
+References: <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
+ <011fdac0-59bf-b539-2de3-0b59a41bc922@arm.com>
+ <20170309175915.GA964@leoy-linaro>
+ <3f27efee-3b63-81fd-eb96-73fd7e6f5e92@arm.com>
+ <20170313165600.GB32431@linaro.org>
+ <516f8989-4dde-2686-d549-0761feb14d1b@arm.com>
+ <CANLsYkzJsGvr4ZzNbTwcPu1Qki6=Szvu+bMjHZ_rza==DqFChw@mail.gmail.com>
+ <20170317101328.GA19877@leoy-linaro>
+MIME-Version: 1.0
+In-Reply-To: <20170317101328.GA19877@leoy-linaro>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Guodong Xu <guodong.xu@linaro.org>, Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Sudeep Holla <Sudeep.Holla@arm.com>, Will Deacon <will.deacon@arm.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Wei Xu <xuwei5@hisilicon.com>, linux-clk@vger.kernel.org,
+ Rob Herring <robh+dt@kernel.org>, John Stultz <john.stultz@linaro.org>,
+ Haojian Zhuang <haojian.zhuang@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Mike Leach <mike.leach@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, 2017-03-26 at 13:06 +0200, Martin Blumenstingl wrote:
-> It seems that the "cpu_clk" was carried over from the meson8b clock
-> controller driver. On Meson GX (GXBB/GXL/GXM) the registers which are
-> used by the cpu_clk have a different purpose (in other words: they don't
-> control the CPU clock anymore). HHI_SYS_CPU_CLK_CNTL1 bits 31:24 are
-> reserved according to the public S905 datasheet, while bit 23 is the
-> "A53_trace_clk_DIS" gate (which according to the datasheet should only
-> be used in case a silicon bug is discovered) and bits 22:20 are a
-> divider (A53_trace_clk). The meson clk-cpu code however expects that
-> bits 28:20 are reserved for a divider (according to the public S805
-> datasheet this "SCALE_DIV: This value represents an N+1 divider of the
-> input clock.").
+On Fri, Mar 17, 2017 at 06:13:28PM +0800, Leo Yan wrote:
+> On Wed, Mar 15, 2017 at 02:41:59PM -0600, Mathieu Poirier wrote:
+> > On 15 March 2017 at 10:44, Suzuki K Poulose <Suzuki.Poulose@arm.com> wrote:
+> > > On 13/03/17 16:56, Mathieu Poirier wrote:
+> > >> On Fri, Mar 10, 2017 at 02:29:53PM +0000, Suzuki K Poulose wrote:
 > 
-> The CPU clock on Meson GX SoCs is provided by the SCPI DVFS clock
-> driver instead. Two examples from a Meson GXL S905X SoC:
-> - vcpu (SCPI DVFS clock 0) rate: 1000000000 / cpu_clk rate: 708000000
-> - vcpu (SCPI DVFS clock 0) rate: 1512000000 / cpu_clk rate: 708000000
+> [...]
 > 
-
-Thanks for catching this Martin! Looking at the difference between the S805 and
-S905 register description, it makes no sense that we used the same clock driver
-for what's behind HHI_SYS_CPU_CLK_CNTL1. I agree, it should be removed from the
-gxbb clock controller.
-
-> Unfortunately the CLKID_CPUCLK was already exported (but is currently
-> not used) to DT.
+> > >>> Btw, I don't see any PM calls to make sure the power domain (at least the
+> > >>> debug domain)
+> > >>> is up, which could cause problems with accesses to some of these
+> > >>> registers (leave alone the
+> > >>> ones in CPU power domain), especially the EDPRSR. We could also do
+> > >>> pm_runtime_get on the
+> > >>> CPU's power domain, if the CPU is online, before we access the pcsr.
+> > >>
+> > >>
+> > >> I thought about PM runtime operations a little while back but wondered if
+> > >> it is
+> > >> really a good thing to have them around.  When this code is called the
+> > >> system
+> > >> has crashed and as such making PM runtimes call isn't a good idea.
+> > >
+> > >
+> > > You are right. It is not safe to make such calls when we have crashed.
+> > > The other side effect is, if we don't have the debug power domain up,
+> > > we could possibly hang the system and prevent other registered notifiers
+> > > from running, which doesn't sound good either.
+> > >
+> > >>
+> > >> One thing we could do is _not_ call pm_runtime_put() at the end of the
+> > >> probe()
+> > >> operation.  That way we wouldn't have to mess around with PM runtime
+> > >> operations
+> > >> on an unstable system.  This, of course, is costly in terms of power
+> > >> consumption
+> > >> but the system is under test/debug anyway.
+> > >
+> > >
+> > > May be control the behavior via kernel command line ? Something like
+> > > coresight_debug={on or 1} or
+> > > even use the "nohlt" ?
+> > 
+> > We need to deal with the debug and CPU power domains.
+> > 
+> > For the former I suggest we do what coresight does and use the
+> > "power-domains" binding[1].  For the CPU power domain we can re-use
+> > the "nohlt" flag.  In the probe function if the "nohlt" cmd line flag
+> > is not set the code bails out.  If it is set pm_runtime_put() is _not_
+> > called and the driver can be used without worries of hanging the
+> > system when the panic handler is invoked.
+> > 
+> > Am I forgetting something?
 > 
-> This is an RFC because I would like to hear other people's opinion on
-> how to clean up the CLKID_CPUCLK (as it leaves a "hole" in
-> gxbb_hw_onecell_data and changes the DT API (by removing a currently
-> unused #define).
+> I tested this drvier on Hikey and DB410c. For Hikey we must pass
+> "nohlt" to disable low power states, otherwise the kernel will hang
+> during initialization. But for DB410c, this driver even can work well
+> without "nohlt" and I checked the CPUIdle has been really enabled with
+> below sysfs entries:
 > 
-
-In general the DT ABI should be stable but since no one is using this ID, and
-what it refers to is clearly wrong, I don't think we would disrupt anything by
-removing it.
-
-For the "hole" in the ids, Neil and I had similar problem while working other
-topics. We managed to dodge it but I think it was only a matter of time ...
-
-In the end, it is not a big deal if there is holes in the onecell_data, as long
-as we take care to avoid it when we register the clocks:
-
-/*
- * register all clks
- */
-for (clkid = 0; clkid < NR_CLKS; clkid++) {
-
-+	if (!gxbb_hw_onecell_data.hws[clkid])
-+			continue;
-
-	ret = devm_clk_hw_register(dev, gxbb_hw_onecell_data.hws[clkid]);
-	if (ret)
-		goto iounmap;
-}
-
-Same thing is done for the meson8b.
-Also, once ID #1 is free, nothing prevents us from recycling it ...
-
-Overall, the patch looks good to me but make sure to add the change above if you
-introduce holes in the onecell_data.
-
-Cheers
-
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  drivers/clk/meson/gxbb.c              | 44 +++-------------------------------
-> -
->  drivers/clk/meson/gxbb.h              |  2 +-
->  include/dt-bindings/clock/gxbb-clkc.h |  1 -
->  3 files changed, 4 insertions(+), 43 deletions(-)
+> root@linaro-developer:~# cat /sys/devices/system/cpu/cpu*/cpuidle/state*/usage
+> 5992
+> 6988
+> 4225
+> 4547
+> 2790
+> 23696
+> 4202
+> 3899
 > 
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index 1c1ec137a3cc..06586fe16ce3 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -496,21 +496,10 @@ static struct meson_clk_mpll gxbb_mpll2 = {
->  };
->  
->  /*
-> - * FIXME cpu clocks and the legacy composite clocks (e.g. clk81) are both PLL
-> - * post-dividers and should be modeled with their respective PLLs via the
-> - * forthcoming coordinated clock rates feature
-> + * FIXME The legacy composite clocks (e.g. clk81) are both PLL post-dividers
-> + * and should be modeled with their respective PLLs via the forthcoming
-> + * coordinated clock rates feature
->   */
-> -static struct meson_clk_cpu gxbb_cpu_clk = {
-> -	.reg_off = HHI_SYS_CPU_CLK_CNTL1,
-> -	.div_table = cpu_div_table,
-> -	.clk_nb.notifier_call = meson_clk_cpu_notifier_cb,
-> -	.hw.init = &(struct clk_init_data){
-> -		.name = "cpu_clk",
-> -		.ops = &meson_clk_cpu_ops,
-> -		.parent_names = (const char *[]){ "sys_pll" },
-> -		.num_parents = 1,
-> -	},
-> -};
->  
->  static u32 mux_table_clk81[]	= { 6, 5, 7 };
->  
-> @@ -698,7 +687,6 @@ static MESON_GATE(gxbb_ao_i2c, HHI_GCLK_AO, 4);
->  static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
->  	.hws = {
->  		[CLKID_SYS_PLL]		    = &gxbb_sys_pll.hw,
-> -		[CLKID_CPUCLK]		    = &gxbb_cpu_clk.hw,
->  		[CLKID_HDMI_PLL]	    = &gxbb_hdmi_pll.hw,
->  		[CLKID_FIXED_PLL]	    = &gxbb_fixed_pll.hw,
->  		[CLKID_FCLK_DIV2]	    = &gxbb_fclk_div2.hw,
-> @@ -925,9 +913,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
->  	for (i = 0; i < ARRAY_SIZE(gxbb_clk_mplls); i++)
->  		gxbb_clk_mplls[i]->base = clk_base;
->  
-> -	/* Populate the base address for CPU clk */
-> -	gxbb_cpu_clk.base = clk_base;
-> -
->  	/* Populate the base address for the MPEG clks */
->  	gxbb_mpeg_clk_sel.reg = clk_base + (u64)gxbb_mpeg_clk_sel.reg;
->  	gxbb_mpeg_clk_div.reg = clk_base + (u64)gxbb_mpeg_clk_div.reg;
-> @@ -950,29 +935,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
->  			goto iounmap;
->  	}
->  
-> -	/*
-> -	 * Register CPU clk notifier
-> -	 *
-> -	 * FIXME this is wrong for a lot of reasons. First, the muxes should
-> be
-> -	 * struct clk_hw objects. Second, we shouldn't program the muxes in
-> -	 * notifier handlers. The tricky programming sequence will be handled
-> -	 * by the forthcoming coordinated clock rates mechanism once that
-> -	 * feature is released.
-> -	 *
-> -	 * Furthermore, looking up the parent this way is terrible. At some
-> -	 * point we will stop allocating a default struct clk when
-> registering
-> -	 * a new clk_hw, and this hack will no longer work. Releasing the ccr
-> -	 * feature before that time solves the problem :-)
-> -	 */
-> -	parent_hw = clk_hw_get_parent(&gxbb_cpu_clk.hw);
-> -	parent_clk = parent_hw->clk;
-> -	ret = clk_notifier_register(parent_clk, &gxbb_cpu_clk.clk_nb);
-> -	if (ret) {
-> -		pr_err("%s: failed to register clock notifier for cpu_clk\n",
-> -				__func__);
-> -		goto iounmap;
-> -	}
-> -
->  	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
->  			&gxbb_hw_onecell_data);
->  
-> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-> index cbd62e46bb5b..ca1285acb92d 100644
-> --- a/drivers/clk/meson/gxbb.h
-> +++ b/drivers/clk/meson/gxbb.h
-> @@ -169,7 +169,7 @@
->   * to be exposed to client nodes in DT: include/dt-bindings/clock/gxbb-clkc.h
->   */
->  #define CLKID_SYS_PLL		  0
-> -/* CLKID_CPUCLK */
-> +/* CLKID_CPUCLK - not used in the driver anymore */
+> And from my previous experience, I'm quite sure some SoCs can access
+> the debug module registers with CPUIdle enabled, and it will read
+> back 0xFFFF_FFFF_FFFF_FFFF when the CPU stays in low power state.
+> So I prefer we could keep current method to suggest to use "nohlt" in
+> Kconfig's help description but it's not mandotory to check this in
+> the code. How about you think for this?
 
-I would completely remove the reference to CPUCLK and put a small comment here,
-explaining why the id is free.
+If we don't check for "nohlt" some platform may freeze, others may work.  If we
+mandate that "nohlt" be present on the kernel cmd line it works in all cases.
+As such mandating that "nohlt" be present is a better way to go.
 
->  /* CLKID_HDMI_PLL */
->  #define CLKID_FIXED_PLL		  3
->  /* CLKID_FCLK_DIV2 */
-> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-
-> bindings/clock/gxbb-clkc.h
-> index 63f4c2c44a1f..07311dfdba83 100644
-> --- a/include/dt-bindings/clock/gxbb-clkc.h
-> +++ b/include/dt-bindings/clock/gxbb-clkc.h
-> @@ -5,7 +5,6 @@
->  #ifndef __GXBB_CLKC_H
->  #define __GXBB_CLKC_H
->  
-> -#define CLKID_CPUCLK		1
->  #define CLKID_HDMI_PLL		2
->  #define CLKID_FCLK_DIV2		4
->  #define CLKID_FCLK_DIV3		5
+Mathieu
+
+> 
+> Thanks,
+> Leo Yan
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
