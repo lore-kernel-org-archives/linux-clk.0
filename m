@@ -1,50 +1,49 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-Date: Wed, 1 Mar 2017 21:26:53 +0100
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement
- <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob
- Herring <robh+dt@kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
- Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Kumar
- Gala <galak@codeaurora.org>, Nadav Haklai <nadavh@marvell.com>, Hanna Hawa
- <hannah@marvell.com>, Yehuda Yitschak <yehuday@marvell.com>,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 1/3] dt-bindings: arm: update Armada CP110 system
- controller binding
-Message-ID: <20170301212653.7b58b6a7@free-electrons.com>
-In-Reply-To: <20170301190127.GO25384@codeaurora.org>
-References: <1482316017-22154-1-git-send-email-thomas.petazzoni@free-electrons.com>
-	<1482316017-22154-2-git-send-email-thomas.petazzoni@free-electrons.com>
-	<20161222001453.GW8288@codeaurora.org>
-	<20170301165245.5f2fbfaf@free-electrons.com>
-	<20170301190127.GO25384@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCHv2 6/9] ARM: OMAP2+: timer: add support for fetching fck handle from DT
+Date: Fri, 17 Mar 2017 11:09:38 +0200
+Message-ID: <1489741781-12816-7-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+The mux clock handle shall be provided via "fck" DT handle. This avoids
+the need to lookup the main clock via hwmod core, which will not work
+with the clkctrl clock support anymore; the main clock is not going to
+be a mux.
 
-On Wed, 1 Mar 2017 11:01:27 -0800, Stephen Boyd wrote:
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ arch/arm/mach-omap2/timer.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> > Even though you said you applied it, I still don't see this patch in
-> > mainline, while PATCH 2/3 of this series is now in mainline.
-> > 
-> > Was this patch forgotten? Let me know if I should resend it, but I'm
-> > pretty sure it still applies, since no other changes on this file have
-> > been merged since quite a while.
-> >   
-> 
-> No worries. I've made a note to put it into the fixes queue to
-> send off after rc1.
-
-Great, thanks a lot. It's not a big thing, but it keeps popping up in
-my list of "things accepted by the maintainer, but not yet completely
-merged upstream" :-)
-
-Thomas
+diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
+index 07dd692..af90f95 100644
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@ -255,6 +255,8 @@ static int __init omap_dm_timer_init_one(struct omap_dm_timer *timer,
+ 
+ 		timer->io_base = of_iomap(np, 0);
+ 
++		timer->fclk = of_clk_get_by_name(np, "fck");
++
+ 		of_node_put(np);
+ 	} else {
+ 		if (omap_dm_timer_reserve_systimer(timer->id))
+@@ -292,7 +294,8 @@ static int __init omap_dm_timer_init_one(struct omap_dm_timer *timer,
+ 	omap_hwmod_setup_one(oh_name);
+ 
+ 	/* After the dmtimer is using hwmod these clocks won't be needed */
+-	timer->fclk = clk_get(NULL, omap_hwmod_get_main_clk(oh));
++	if (IS_ERR_OR_NULL(timer->fclk))
++		timer->fclk = clk_get(NULL, omap_hwmod_get_main_clk(oh));
+ 	if (IS_ERR(timer->fclk))
+ 		return PTR_ERR(timer->fclk);
+ 
 -- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+1.9.1
