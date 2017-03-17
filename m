@@ -1,25 +1,61 @@
-Return-Path: <jun.nie@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Fri, 17 Mar 2017 23:25:23 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	mike.leach@linaro.org, sudeep.holla@arm.com
+Subject: Re: [PATCH v4 2/7] coresight: of_get_coresight_platform_data: Add
+ missing of_node_put
+Message-ID: <20170317152523.GC2020@leoy-linaro>
+References: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
+ <1489762943-25849-3-git-send-email-leo.yan@linaro.org>
+ <574d8e6b-cd2d-c1be-6c14-09e8be147e93@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <1490085503-15713-4-git-send-email-shawnguo@kernel.org>
-References: <1490085503-15713-1-git-send-email-shawnguo@kernel.org> <1490085503-15713-4-git-send-email-shawnguo@kernel.org>
-From: Jun Nie <jun.nie@linaro.org>
-Date: Thu, 23 Mar 2017 09:36:16 +0800
-Message-ID: <CABymUCOpbDZO=g1KcWWsK26Q14YB9vagpoHmRA0JbOR2vbkwfg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: zte: add pll_vga clock for zx296718
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Baoyou Xie <xie.baoyou@zte.com.cn>, Xin Zhou <zhou.xin8@zte.com.cn>,
-	Shawn Guo <shawn.guo@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <574d8e6b-cd2d-c1be-6c14-09e8be147e93@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2017-03-21 16:38 GMT+08:00 Shawn Guo <shawnguo@kernel.org>:
-> From: Shawn Guo <shawn.guo@linaro.org>
->
-> It adds zx296718 pll_vga clock for VGA support, so that VGA device can
-> get required pixel rate from clock driver for different display mode.
->
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+On Fri, Mar 17, 2017 at 03:09:23PM +0000, Suzuki K Poulose wrote:
+> On 17/03/17 15:02, Leo Yan wrote:
+> >From: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >
+> >The of_get_coresight_platform_data iterates over the possible CPU nodes
+> >to find a given cpu phandle. However it does not drop the reference
+> >to the node pointer returned by the of_get_coresight_platform_data.
+> >
+> >[Leo: minor tweaks for of_get_coresight_platform_data]
+> >
+> >Cc: Leo Yan <leo.yan@linaro.org>
+> >Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> >Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> 
+> You should add your Signed-off-by here when you send somebody's patch, irrespective
+> of whether you have modified it or not.
+> e.g:
+> 
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> [Leo: minor tweaks for of_get_coresight_platform_data]
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
 
-Reviewed-by: Jun Nie <jun.nie@linaro.org>
+Thanks for pointing out this. Will follow up later.
+
+[...]
+
+Thanks,
+Leo Yan
