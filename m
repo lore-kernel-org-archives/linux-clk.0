@@ -1,44 +1,30 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1 2/2] clk: rockchip: rk3368: add some clks as critical
-Date: Tue,  7 Mar 2017 17:50:11 +0800
-Message-Id: <1488880211-21133-2-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1488880211-21133-1-git-send-email-zhangqing@rock-chips.com>
-References: <1488880211-21133-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <tony@atomide.com>
+Date: Fri, 17 Mar 2017 08:25:37 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
+Message-ID: <20170317152536.GT20572@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-make pclk_pd_alive, pclk_peri, hclk_peri as critical
+* Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+> Any additional testing on omap4 welcome as this series basically
+> tweaks every possible peripheral clock on the SoC.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3368.c | 3 +++
- 1 file changed, 3 insertions(+)
+Without the last patch in this series, booting fails for me:
 
-diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-index 139d418f448e..024762d3214d 100644
---- a/drivers/clk/rockchip/clk-rk3368.c
-+++ b/drivers/clk/rockchip/clk-rk3368.c
-@@ -858,6 +858,9 @@ enum rk3368_plls {
- 	 */
- 	"pclk_pwm1",
- 	"pclk_pd_pmu",
-+	"pclk_pd_alive",
-+	"pclk_peri",
-+	"hclk_peri",
- };
- 
- static void __init rk3368_clk_init(struct device_node *np)
--- 
-1.9.1
+[    5.074890] l4_per_cm:clk:0120:0: failed to disable
+[    5.085113] l4_per_cm:clk:0128:0: failed to disable
+
+Care to check that booting keeps working for each patch in the
+series to avoid breaking git bisect for booting?
+
+Regards,
+
+Tony
