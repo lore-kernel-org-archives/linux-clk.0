@@ -1,89 +1,27 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40063 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751660AbdCWKbW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2017 06:31:22 -0400
-Subject: Re: [PATCH] PM / runtime: Use synchronous runtime PM call in
- rpm_put_suppliers()
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <3b74f606-31ea-e11c-2887-a8cf1fde1eb6@samsung.com>
-Date: Thu, 23 Mar 2017 11:31:16 +0100
-MIME-version: 1.0
-In-reply-to: <CAJZ5v0ihYQp4_oJCu3Tugbqrm=68hcxdg8-yUphbCXCUw3UzPw@mail.gmail.com>
-Content-type: text/plain; charset=utf-8; format=flowed
-References: <CGME20170322092305eucas1p20d2a6dfede483210febea5b5e0ff68db@eucas1p2.samsung.com>
- <1490174570-18345-1-git-send-email-m.szyprowski@samsung.com>
- <CAPDyKFq+mTvruQb5ifj3etMxSCWgDZTZ6ebGkk84UCQDqjR4-A@mail.gmail.com>
- <CAJZ5v0ihYQp4_oJCu3Tugbqrm=68hcxdg8-yUphbCXCUw3UzPw@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tony@atomide.com>
+Date: Fri, 17 Mar 2017 08:43:33 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 8/9] ARM: dts: omap4: add clkctrl nodes
+Message-ID: <20170317154333.GW20572@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <1489741781-12816-9-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1489741781-12816-9-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rafael,
+* Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+> Add clkctrl nodes for OMAP4 SoC. These are going to be acting as
+> replacement for part of the existing clock data and the existing
+> clkctrl hooks under hwmod data.
 
-On 2017-03-22 21:56, Rafael J. Wysocki wrote:
-> On Wed, Mar 22, 2017 at 12:34 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> On 22 March 2017 at 10:22, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->>> rpm_put_suppliers() might be called as a result of pm_runtime_put_sync()
->>> call, where the called explicitly wants to perform the operation in
->>> synchronous way to avoid some deadlocks related to concurrent code
->>> execution in the PM workers. However the current code for handling device
->>> links always use asynchronous calls. This patch changes it to always use
->>> the synchronous calls.
->> This is a good idea! It is better to leave the decision to the "leaf"
->> node of whether to use asynchronous mode or not.
-> One immediate concern that I have is that this happens in an SRCU
-> read-side critical section and sync runtime suspend can take arbitrary
-> amount of time, especially if those devices have suppliers etc.  You
-> may very well wait for an entire subtree to suspend synchronously
-> here.
->
-> Moreover, if the suppliers have parents, those parents won't be
-> suspended synchronously anyway, so this only addresses the first level
-> of hierarchy in that case.
->
-> Also the behavior for suppliers follows the behavior for parents and I
-> don't quite see the reason for these two cases to behave differently
-> in principle.
+It seems to be actually this patch in the series that breaks booting
+if the last patch in this series is not applied.
 
-Well, then I don't get why do we really have pm_runtime_put_sync() if it
-doesn't guarantee synchronous suspend operations. This might be really 
-tricky
-to debug locking issues if one assumes that suspend operation has been
-finished, but it is still being performed in parallel by the worker.
+Regards,
 
->>> This patch fixes the potential deadlock, which appears during adding
->>> runtime PM support to clock framework, which uses global mutex, which is
->>> reentrant only for the current process, so trying to execute runtime PM
->>> callback from the worker results in deadlock (the mentioned mutex is
->>> already taken by the current process, which waits for execution of PM
->>> worker).
->> This just tells that the locking mechanism for clocks are fragile.
-> Right.
->
-> We seem to be working around problems in there with this patch.
-
-Not really. This problem will reappear always if re-entrant locks are used.
-Clocks are just one of such frameworks, which use such locking mechanism.
-
-Maybe propagating flags from the caller will be a better approach in this
-case? So if caller wants synchronous call, it will be properly propagated,
-otherwise, the current behavior will take place. Using pm_runtime_put_sync
-is not that common, so probably in most cases callers have a good reason
-for that. It would make sense to apply this also to operations on parents.
-
->> Whether it is a good motivation for this change, I am not sure.
->>
->> In either case, I like the change!
-> Why exactly do you like it?
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Tony
