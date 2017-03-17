@@ -1,55 +1,106 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Leo Yan <leo.yan@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 7/8] dt-bindings: clock: gxbb: expose i2s master clock
-Date: Fri, 31 Mar 2017 15:04:10 +0200
-Message-Id: <20170331130411.4781-8-jbrunet@baylibre.com>
-In-Reply-To: <20170331130411.4781-1-jbrunet@baylibre.com>
-References: <20170331130411.4781-1-jbrunet@baylibre.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	mike.leach@linaro.org,
+	Suzuki.Poulose@arm.com,
+	sudeep.holla@arm.com
+Subject: [PATCH v4 1/7] coresight: bindings for CPU debug module
+Date: Fri, 17 Mar 2017 23:02:17 +0800
+Message-Id: <1489762943-25849-2-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
+References: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Expose cts_amclk in the device tree bindings
+According to ARMv8 architecture reference manual (ARM DDI 0487A.k)
+Chapter 'Part H: External debug', the CPU can integrate debug module
+and it can support self-hosted debug and external debug. Especially
+for supporting self-hosted debug, this means the program can access
+the debug module from mmio region; and usually the mmio region is
+integrated with coresight.
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+So add document for binding debug component, includes binding to APB
+clock; and also need specify the CPU node which the debug module is
+dedicated to specific CPU.
+
+Suggested-by: Mike Leach <mike.leach@linaro.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- drivers/clk/meson/gxbb.h              | 2 +-
- include/dt-bindings/clock/gxbb-clkc.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ .../bindings/arm/coresight-cpu-debug.txt           | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
 
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 3b0665099a1e..742bc3b42565 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -277,7 +277,7 @@
- #define CLKID_MALI_1_DIV	 104
- /* CLKID_MALI_1	*/
- /* CLKID_MALI	*/
--#define CLKID_CTS_AMCLK		  107
-+/* CLKID_CTS_AMCLK */
- #define CLKID_CTS_AMCLK_SEL	  108
- #define CLKID_CTS_AMCLK_DIV	  109
- #define CLKID_CTS_MCLK_I958	  110
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index 1d4614bc8154..0d231bef92e0 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -43,5 +43,6 @@
- #define CLKID_MALI_1_SEL	103
- #define CLKID_MALI_1		105
- #define CLKID_MALI		106
-+#define CLKID_CTS_AMCLK		107
- 
- #endif /* __GXBB_CLKC_H */
+diff --git a/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt b/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
+new file mode 100644
+index 0000000..f6855c3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
+@@ -0,0 +1,46 @@
++* CoreSight CPU Debug Component:
++
++CoreSight cpu debug component are compliant with the ARMv8 architecture
++reference manual (ARM DDI 0487A.k) Chapter 'Part H: External debug'. The
++external debug module is mainly used for two modes: self-hosted debug and
++external debug, and it can be accessed from mmio region from Coresight
++and eventually the debug module connects with CPU for debugging. And the
++debug module provides sample-based profiling extension, which can be used
++to sample CPU program counter, secure state and exception level, etc;
++usually every CPU has one dedicated debug module to be connected.
++
++Required properties:
++
++- compatible : should be
++	     * "arm,coresight-cpu-debug"; supplemented with "arm,primecell"
++	       since this driver is using the AMBA bus interface.
++
++- reg : physical base address and length of the register set.
++
++- clocks : the clock associated to this component.
++
++- clock-names : the name of the clock referenced by the code. Since we are
++                using the AMBA framework, the name of the clock providing
++		the interconnect should be "apb_pclk" and the clock is
++		mandatory. The interface between the debug logic and the
++		processor core is clocked by the internal CPU clock, so it
++		is enabled with CPU clock by default.
++
++- cpu : the cpu phandle the debug module is affined to. When omitted
++	the module is considered to belong to CPU0.
++
++Optional properties:
++
++- power-domains: a phandle to power domain node for debug module. We can
++		 use "nohlt" to ensure CPU power domain is enabled.
++
++
++Example:
++
++	debug@f6590000 {
++		compatible = "arm,coresight-cpu-debug","arm,primecell";
++		reg = <0 0xf6590000 0 0x1000>;
++		clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++		clock-names = "apb_pclk";
++		cpu = <&cpu0>;
++	};
 -- 
-2.9.3
+2.7.4
