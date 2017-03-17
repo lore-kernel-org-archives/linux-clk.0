@@ -1,213 +1,135 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <1485345194-3196-2-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170125115328eucas1p1d97fac29286805b58039f8aec2b9bfe6@eucas1p1.samsung.com>
- <1485345194-3196-1-git-send-email-m.szyprowski@samsung.com> <1485345194-3196-2-git-send-email-m.szyprowski@samsung.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 13 Mar 2017 13:20:14 +0100
-Message-ID: <CAPDyKFpe1ujO+ZMJ=pYG+NupxSAgY6WjgDkybkUhD1g6YpEfkg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] clk: Add support for runtime PM
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Leo Yan <leo.yan@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	mike.leach@linaro.org,
+	Suzuki.Poulose@arm.com,
+	sudeep.holla@arm.com
+Subject: [PATCH v4 0/7] coresight: enable debug module
+Date: Fri, 17 Mar 2017 23:02:16 +0800
+Message-Id: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25 January 2017 at 12:53, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> Registers for some clocks might be located in the SOC area, which are under the
-> power domain. To enable access to those registers respective domain has to be
-> turned on. Additionally, registers for such clocks will usually loose its
-> contents when power domain is turned off, so additional saving and restoring of
-> them might be needed in the clock controller driver.
->
-> This patch adds basic infrastructure in the clocks core to allow implementing
-> driver for such clocks under power domains. Clock provider can supply a
-> struct device pointer, which is the used by clock core for tracking and managing
-> clock's controller runtime pm state. Each clk_prepare() operation
-> will first call pm_runtime_get_sync() on the supplied device, while
-> clk_unprepare() will do pm_runtime_put() at the end.
->
-> Additional calls to pm_runtime_get/put functions are required to ensure that any
-> register access (like calculating/changing clock rates and unpreparing/disabling
-> unused clocks on boot) will be done with clock controller in runtime resumend
-> state.
->
-> When one wants to register clock controller, which make use of this feature, he
-> has to:
-> 1. Provide a struct device to the core when registering the provider.
-> 2. Ensure to enable runtime PM for that device before registering clocks.
-> 3. Make sure that the runtime PM status of the controller device reflects
->    the HW state.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/clk.c | 132 +++++++++++++++++++++++++++++++++++++++++++++++-------
->  1 file changed, 117 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 0fb39fe217d1..5b9d52c8185b 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -21,6 +21,7 @@
->  #include <linux/of.h>
->  #include <linux/device.h>
->  #include <linux/init.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/sched.h>
->  #include <linux/clkdev.h>
->
-> @@ -46,6 +47,7 @@ struct clk_core {
->         const struct clk_ops    *ops;
->         struct clk_hw           *hw;
->         struct module           *owner;
-> +       struct device           *dev;
->         struct clk_core         *parent;
->         const char              **parent_names;
->         struct clk_core         **parents;
-> @@ -87,6 +89,26 @@ struct clk {
->         struct hlist_node clks_node;
->  };
->
-> +/***           runtime pm          ***/
-> +static int clk_pm_runtime_get(struct clk_core *core)
-> +{
-> +       int ret = 0;
-> +
-> +       if (!core->dev)
-> +               return 0;
-> +
-> +       ret = pm_runtime_get_sync(core->dev);
-> +       return ret < 0 ? ret : 0;
-> +}
-> +
-> +static void clk_pm_runtime_put(struct clk_core *core)
-> +{
-> +       if (!core->dev)
-> +               return;
-> +
-> +       pm_runtime_put(core->dev);
+ARMv8 architecture reference manual (ARM DDI 0487A.k) Chapter H7 "The
+Sample-based Profiling Extension" has description for sampling
+registers, we can utilize these registers to check program counter
+value with combined CPU exception level, secure state, etc. So this is
+helpful for CPU lockup bugs, e.g. if one CPU has run into infinite loop
+with IRQ disabled; the 'hang' CPU cannot switch context and handle any
+interrupt, so it cannot handle SMP call for stack dump, etc.
 
-I would rather change this to a pm_runtime_put_sync().
+This patch series is to enable coresight debug module with sample-based
+registers and register call back notifier for PCSR register dumping
+when panic happens, so we can see below dumping info for panic; and
+this patch series has considered the conditions for access permission
+for debug registers self, so this can avoid access debug registers when
+CPU power domain is off; the driver also try to figure out the CPU is
+in secure or non-secure state.
 
-The reason is that users of clocks (drivers being clock consumers),
-which has runtime PM support deployed, often performs clock
-gating/ungating from their runtime PM callbacks.
+Patch 0001 is to document the dt binding.
 
-In other words, using async or sync runtime PM APIs, is better decided
-by the user of the clock itself.
+Patch 0002 is used to fix the func of_get_coresight_platform_data()
+doesn't properly drop the reference to the CPU node pointer; and
+patch 0003 is refactor to add new function of_coresight_get_cpu().
 
+Patch 0004 is the driver for CPU debug module, which is Based on
+patches 0002/0003.
 
-> +}
-> +
->  /***           locking             ***/
->  static void clk_prepare_lock(void)
->  {
-> @@ -150,6 +172,8 @@ static void clk_enable_unlock(unsigned long flags)
->
->  static bool clk_core_is_prepared(struct clk_core *core)
->  {
-> +       bool status;
-> +
->         /*
->          * .is_prepared is optional for clocks that can prepare
->          * fall back to software usage counter if it is missing
-> @@ -157,11 +181,20 @@ static bool clk_core_is_prepared(struct clk_core *core)
->         if (!core->ops->is_prepared)
->                 return core->prepare_count;
->
-> -       return core->ops->is_prepared(core->hw);
-> +       if (clk_pm_runtime_get(core) == 0) {
-> +               status = core->ops->is_prepared(core->hw);
-> +               clk_pm_runtime_put(core);
-> +       } else {
-> +               status = false;
+Patches 0005/0006 in this series are to enable debug unit on 96boards
+Hikey, patch 0005 is to add apb clock for debug unit and patch 0006
+is to add DT nodes for debug unit. Patch 0007 is to enable debug on
+96boards DB410c. Have verified on both two boards.
 
-To simplify this, you could assign status to false when defining it.
-Perhaps also rename it from "status" to "ret", as that name is more
-commonly used, I think.
+As result we can get below log after input command:
+echo c > /proc/sysrq-trigger:
 
-> +       }
-> +
-> +       return status;
->  }
->
->  static bool clk_core_is_enabled(struct clk_core *core)
->  {
-> +       bool status;
-
-Maybe name the variable ret instead, to be more consistent.
-
-> +
->         /*
->          * .is_enabled is only mandatory for clocks that gate
->          * fall back to software usage counter if .is_enabled is missing
-> @@ -169,7 +202,30 @@ static bool clk_core_is_enabled(struct clk_core *core)
->         if (!core->ops->is_enabled)
->                 return core->enable_count;
->
-> -       return core->ops->is_enabled(core->hw);
-> +       /*
-> +        * Check if clock controller's device is runtime active before
-> +        * calling .is_enabled callback. If not, assume that clock is
-> +        * disabled, because we might be called from atomic context, from
-> +        * which pm_runtime_get() is not allowed.
-> +        * This function is called mainly from clk_disable_unused_subtree,
-> +        * which ensures proper runtime pm activation of controller before
-> +        * taking enable spinlock, but the below check is needed if one tries
-> +        * to call it from other places.
-> +        */
-> +       if (core->dev) {
-> +               pm_runtime_get_noresume(core->dev);
-> +               if (!pm_runtime_active(core->dev)) {
-> +                       status = false;
-> +                       goto done;
-> +               }
-> +       }
-> +
-> +       status = core->ops->is_enabled(core->hw);
-> +done:
-> +       if (core->dev)
-> +               pm_runtime_put(core->dev);
-
-Let's use clk_pm_runtime_put() here instead.
-
-> +
-> +       return status;
->  }
->
+ARM external debug module:
+CPU[0]:
+ EDPRSR:  0000000b (Power:On DLK:Unlock)
+ EDPCSR:  [<ffff00000808eb54>] handle_IPI+0xe4/0x150
+ EDCIDSR: 00000000
+ EDVIDSR: 90000000 (State:Non-secure Mode:EL1/0 Width:64bits VMID:0)
+CPU[1]:
+ EDPRSR:  0000000b (Power:On DLK:Unlock)
+ EDPCSR:  [<ffff0000087a64c0>] debug_notifier_call+0x108/0x288
+ EDCIDSR: 00000000
+ EDVIDSR: 90000000 (State:Non-secure Mode:EL1/0 Width:64bits VMID:0)
 
 [...]
 
-> @@ -1036,9 +1111,13 @@ long clk_get_accuracy(struct clk *clk)
->  static unsigned long clk_recalc(struct clk_core *core,
->                                 unsigned long parent_rate)
->  {
-> -       if (core->ops->recalc_rate)
-> -               return core->ops->recalc_rate(core->hw, parent_rate);
-> -       return parent_rate;
-> +       unsigned long rate = parent_rate;
-> +
-> +       if (core->ops->recalc_rate && clk_pm_runtime_get(core) == 0) {
+Changes from v3:
+* Added Suzuki K Poulose's patch to fix issue for the func
+  of_get_coresight_platform_data() doesn't properly drop the reference
+  to the CPU node pointer.
+* According to Suzuki suggestion, added code to handl the corner case
+  for ARMv8 CPU with aarch32 mode.
+* According to Suzuki suggestion, changed compatible string to
+  "arm,coresight-cpu-debug".
+* According to Mathieu suggestion, added "power-domains" as optional
+  properties.
 
-To be consistent, let's not check against "== 0", but instead just use
-a "!" before the expression.
+Changes from v2:
+* According to Mathieu Poirier suggestion, applied some minor fixes.
+* Added two extra patches for enabling debug module on Hikey.
 
-> +               rate = core->ops->recalc_rate(core->hw, parent_rate);
-> +               clk_pm_runtime_put(core);
-> +       }
-> +       return rate;
->  }
->
+Changes from v1:
+* According to Mike Leach suggestion, removed the binding for debug
+  module clocks which have been directly provided by CPU clocks.
+* According to Mathieu Poirier suggestion, added function
+  of_coresight_get_cpu() and some minor refactors for debug module
+  driver.
 
-[...]
+Changes from RFC:
+* According to Mike Leach suggestion, added check for EDPRSR to avoid
+  lockup; added supporting EDVIDSR and EDCIDSR registers.
+* According to Mark Rutland and Mathieu Poirier suggestion, rewrote
+  the documentation for DT binding.
+* According to Mark and Mathieu suggestion, refined debug driver.
 
-Overall, this looks good to me. So with the minor changes suggested
-above, feel free to add my reviewed-by tag.
 
-Kind regards
-Uffe
+Leo Yan (6):
+  coresight: bindings for CPU debug module
+  coresight: refactor with function of_coresight_get_cpu
+  coresight: add support for CPU debug module
+  clk: hi6220: add debug APB clock
+  arm64: dts: hi6220: register debug module
+  arm64: dts: qcom: msm8916: Add debug unit
+
+Suzuki K Poulose (1):
+  coresight: of_get_coresight_platform_data: Add missing of_node_put
+
+ .../bindings/arm/coresight-cpu-debug.txt           |  46 +++
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi          |  64 ++++
+ arch/arm64/boot/dts/qcom/msm8916.dtsi              |  32 ++
+ drivers/clk/hisilicon/clk-hi6220.c                 |   1 +
+ drivers/hwtracing/coresight/Kconfig                |  10 +
+ drivers/hwtracing/coresight/Makefile               |   1 +
+ drivers/hwtracing/coresight/coresight-cpu-debug.c  | 407 +++++++++++++++++++++
+ drivers/hwtracing/coresight/of_coresight.c         |  39 +-
+ include/dt-bindings/clock/hi6220-clock.h           |   5 +-
+ include/linux/coresight.h                          |   2 +
+ 10 files changed, 594 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
+ create mode 100644 drivers/hwtracing/coresight/coresight-cpu-debug.c
+
+-- 
+2.7.4
