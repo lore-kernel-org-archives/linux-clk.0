@@ -1,69 +1,33 @@
-Return-Path: <julian.calaby@gmail.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
+To: Tony Lindgren <tony@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <20170317152536.GT20572@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
+Date: Fri, 17 Mar 2017 23:37:18 +0200
 MIME-Version: 1.0
-In-Reply-To: <4bb77a9793d4ba25bf633eff6abe41910bb7fc3c.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
- <4bb77a9793d4ba25bf633eff6abe41910bb7fc3c.1488876832.git-series.maxime.ripard@free-electrons.com>
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Tue, 7 Mar 2017 21:21:19 +1100
-Message-ID: <CAGRGNgUvNgQonORN0iTV-e2NJzUJpzQUnn13w+C7MwzvR8uZUQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 5/15] clk: sunxi-ng: sun5i: Export video PLLs
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20170317152536.GT20572@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
-
-On Tue, Mar 7, 2017 at 7:56 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The video PLLs are used directly by the HDMI controller. Export them so
-> that we can use them in our DT node.
+On 17/03/17 17:25, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+>> Any additional testing on omap4 welcome as this series basically
+>> tweaks every possible peripheral clock on the SoC.
 >
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun5i.h      | 6 ++++--
->  include/dt-bindings/clock/sun5i-ccu.h | 3 +++
->  2 files changed, 7 insertions(+), 2 deletions(-)
+> Without the last patch in this series, booting fails for me:
 >
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.h b/drivers/clk/sunxi-ng/ccu-sun5i.h
-> index 8144487eb7ca..16f7aa92957e 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun5i.h
-> +++ b/drivers/clk/sunxi-ng/ccu-sun5i.h
-> @@ -28,15 +28,17 @@
->  #define CLK_PLL_AUDIO_4X       6
->  #define CLK_PLL_AUDIO_8X       7
->  #define CLK_PLL_VIDEO0         8
-> -#define CLK_PLL_VIDEO0_2X      9
-> +
-> +/* The PLL_VIDEO0_2X is exported for HDMI */
-> +
->  #define CLK_PLL_VE             10
->  #define CLK_PLL_DDR_BASE       11
->  #define CLK_PLL_DDR            12
->  #define CLK_PLL_DDR_OTHER      13
->  #define CLK_PLL_PERIPH         14
->  #define CLK_PLL_VIDEO1         15
-> -#define CLK_PLL_VIDEO1_2X      16
+> [    5.074890] l4_per_cm:clk:0120:0: failed to disable
+> [    5.085113] l4_per_cm:clk:0128:0: failed to disable
 >
-> +/* The PLL_VIDEO0_2X is exported for HDMI */
+> Care to check that booting keeps working for each patch in the
+> series to avoid breaking git bisect for booting?
 
-PLL_VIDEO*1*_2X, right?
+Hmm, I think patch 8+9 need to be squashed then. I can double check this 
+next week though.
 
->  /* The CPU clock is exported */
->
->  #define CLK_AXI                        18
-
-Thanks,
-
--- 
-Julian Calaby
-
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+-Tero
