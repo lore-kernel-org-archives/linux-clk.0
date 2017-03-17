@@ -1,96 +1,62 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org
+Cc: linus.walleij@linaro.org,
+	robh+dt@kernel.org,
+	andy.yan@rock-chips.com,
+	sboyd@codeaurora.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: [PATCH v2 4/4] clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0
-Date: Mon, 13 Mar 2017 18:12:33 +0100
-Message-Id: <1489425153-22623-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
-References: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
+	linux-gpio@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	mturquette@baylibre.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 1/6] dt-bindings: rockchip,pinctrl: rename RK1108 to RV1108
+Date: Fri, 17 Mar 2017 18:18:35 +0100
+Message-Id: <20170317171840.4683-2-heiko@sntech.de>
+In-Reply-To: <20170317171840.4683-1-heiko@sntech.de>
+References: <20170317171840.4683-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Starting with R-Car H3 ES2.0, the parent of RCLK is selected using MD28.
+From: Andy Yan <andy.yan@rock-chips.com>
 
-Add support for that, but retain the old behavior for R-Car H3 ES1.x and
-M3-W ES1.0 using a quirk.
+Rockchip finally named the SOC as RV1108, so change it.
+Also move the compatible list to one compatible per line.
 
-Inspired by a patch by Takeshi Kihara in the BSP.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
-v2:
-  - New.
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 38 ++++++++++++++++++++++++++-----------
- 1 file changed, 27 insertions(+), 11 deletions(-)
+ .../devicetree/bindings/pinctrl/rockchip,pinctrl.txt    | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index e5247e3dc897f9f4..3dee900522b703bd 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -252,11 +252,20 @@ static u32 cpg_mode __initdata;
- static u32 cpg_quirks __initdata;
+diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
+index 403b5a272f56..ee01ab58224d 100644
+--- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
+@@ -19,11 +19,18 @@ The pins are grouped into up to 5 individual pin banks which need to be
+ defined as gpio sub-nodes of the pinmux controller.
  
- #define PLL_ERRATA	BIT(0)		/* Missing PLL0/2/4 post-divider */
-+#define RCKCR_CKSEL	BIT(1)		/* Manual RCLK parent selection */
- 
- static const struct soc_device_attribute cpg_quirks_match[] __initconst = {
- 	{
- 		.soc_id = "r8a7795", .revision = "ES1.0",
--		.data = (void *)PLL_ERRATA,
-+		.data = (void *)(PLL_ERRATA | RCKCR_CKSEL),
-+	},
-+	{
-+		.soc_id = "r8a7795", .revision = "ES1.*",
-+		.data = (void *)RCKCR_CKSEL,
-+	},
-+	{
-+		.soc_id = "r8a7796", .revision = "ES1.0",
-+		.data = (void *)RCKCR_CKSEL,
- 	},
- 	{ /* sentinel */ }
- };
-@@ -330,18 +339,25 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 		return cpg_sd_clk_register(core, base, __clk_get_name(parent));
- 
- 	case CLK_TYPE_GEN3_R:
--		/*
--		 * RINT is default.
--		 * Only if EXTALR is populated, we switch to it.
--		 */
--		value = readl(base + CPG_RCKCR) & 0x3f;
--
--		if (clk_get_rate(clks[cpg_clk_extalr])) {
--			parent = clks[cpg_clk_extalr];
--			value |= BIT(15);
-+		if (cpg_quirks & RCKCR_CKSEL) {
-+			/*
-+			 * RINT is default.
-+			 * Only if EXTALR is populated, we switch to it.
-+			 */
-+			value = readl(base + CPG_RCKCR) & 0x3f;
+ Required properties for iomux controller:
+-  - compatible: one of "rockchip,rk1108-pinctrl", "rockchip,rk2928-pinctrl"
+-		       "rockchip,rk3066a-pinctrl", "rockchip,rk3066b-pinctrl"
+-		       "rockchip,rk3188-pinctrl", "rockchip,rk3228-pinctrl"
+-		       "rockchip,rk3288-pinctrl", "rockchip,rk3328-pinctrl"
+-		       "rockchip,rk3368-pinctrl", "rockchip,rk3399-pinctrl"
++  - compatible: should be
++		"rockchip,rv1108-pinctrl":  for Rockchip RV1108
++		"rockchip,rk2928-pinctrl":  for Rockchip RK2928
++		"rockchip,rk3066a-pinctrl": for Rockchip RK3066a
++		"rockchip,rk3066b-pinctrl": for Rockchip RK3066b
++		"rockchip,rk3188-pinctrl":  for Rockchip RK3188
++		"rockchip,rk3228-pinctrl":  for Rockchip RK3228
++		"rockchip,rk3288-pinctrl":  for Rockchip RK3288
++		"rockchip,rk3328-pinctrl":  for Rockchip RK3328
++		"rockchip,rk3368-pinctrl":  for Rockchip RK3368
++		"rockchip,rk3399-pinctrl":  for Rockchip RK3399
 +
-+			if (clk_get_rate(clks[cpg_clk_extalr])) {
-+				parent = clks[cpg_clk_extalr];
-+				value |= BIT(15);
-+			}
-+
-+			writel(value, base + CPG_RCKCR);
-+			break;
- 		}
+   - rockchip,grf: phandle referencing a syscon providing the
+ 	 "general register files"
  
--		writel(value, base + CPG_RCKCR);
-+		/* Select parent clock of RCLK by MD28 */
-+		if (cpg_mode & BIT(28))
-+			parent = clks[cpg_clk_extalr];
- 		break;
- 
- 	default:
 -- 
-2.7.4
+2.11.0
