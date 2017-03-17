@@ -1,172 +1,126 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:57212 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755000AbdCIPgf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2017 10:36:35 -0500
-From: Sricharan R <sricharan@codeaurora.org>
-To: robin.murphy@arm.com, will.deacon@arm.com, joro@8bytes.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, m.szyprowski@samsung.com,
-        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        mathieu.poirier@linaro.org, mark.rutland@arm.com
-Cc: sricharan@codeaurora.org
-Subject: [PATCH V3 4/5] iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
-Date: Thu,  9 Mar 2017 21:05:47 +0530
-Message-Id: <1489073748-3659-5-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
-References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
+CC: <linux-arm-kernel@lists.infradead.org>, Paul Walmsley <paul@pwsan.com>
+Subject: [PATCHv2 1/9] Documentation: dt-bindings: Add binding documentation for TI clkctrl clocks
+Date: Fri, 17 Mar 2017 11:09:33 +0200
+Message-ID: <1489741781-12816-2-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The smmu device probe/remove and add/remove master device callbacks
-gets called when the smmu is not linked to its master, that is without
-the context of the master device. So calling runtime apis in those places
-separately.
+From: Tony Lindgren <tony@atomide.com>
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
+clock controller instance for each interconnect target module. The clkctrl
+controls functional and interface clocks for the module.
+
+The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
+With this binding and a related clock device driver we can start moving the
+clkctrl clock handling to live in drivers/clk/ti.
+
+Note that this binding allows keeping the clockdomain related parts out of
+drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
+a separate driver in drivers/soc/ti and genpd. If the clockdomain driver
+needs to know it's clocks, we can just set the the clkctrl device
+instances to be children of the related clockdomain device.
+
+Each clkctrl clock can have multiple optional gate clocks, and multiple
+optional mux clocks. To represent this in device tree, it seems that
+it is best done using four clock cells #clock-cells = <2> property.
+
+The reasons for using #clock-cells = <2> are:
+
+1. We need to specify the clkctrl offset from the instance base. Otherwise
+   we end up with a large number of device tree nodes that need to be
+   patched when new clocks are discovered in a clkctrl clock with minor
+   hardware revision changes for example
+
+2. On omap5 CM_L3INIT_USB_HOST_HS_CLKCTRL has ten OPTFCLKEN bits. So we
+   need to use a separate cell for optional gate clocks to avoid address
+   space conflicts
+
+There is probably no need to list input clocks for each clkctrl clock
+instance in the binding. If we want to add them, the standard clocks
+binding can be used for that.
+
+For hardware reference, see omap4430 TRM "Table 3-1312. L4PER_CM2 Registers
+Mapping Summary" for example. It shows one instance of a clkctrl clock
+controller with multiple clkctrl registers.
+
+Cc: Paul Walmsley <paul@pwsan.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/iommu/arm-smmu.c | 47 +++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 45 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/clock/ti-clkctrl.txt       | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti-clkctrl.txt
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index f29e28bf..6370421 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -1216,11 +1216,16 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
- 	struct arm_smmu_device *smmu = smmu_domain->smmu;
- 	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
- 	void __iomem *cb_base;
-+	unsigned long ret;
- 	int irq;
- 
- 	if (!smmu)
- 		return;
- 
-+	ret = pm_runtime_get_sync(smmu->dev);
-+	if (IS_ERR_VALUE(ret))
-+		dev_warn(smmu->dev, "runtime resume failed");
+diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+new file mode 100644
+index 0000000..7e5d9f5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+@@ -0,0 +1,56 @@
++Texas Instruments clkctrl clock binding
 +
- 	/*
- 	 * Disable the context bank and free the page tables before freeing
- 	 * it.
-@@ -1235,6 +1240,10 @@ static void arm_smmu_destroy_domain_context(struct iommu_domain *domain)
- 
- 	free_io_pgtable_ops(smmu_domain->pgtbl_ops);
- 	__arm_smmu_free_bitmap(smmu->context_map, cfg->cbndx);
++Texas Instruments SoCs can have a clkctrl clock controller for each
++interconnect target module. The clkctrl clock controller manages functional
++and interface clocks for each module. Each clkctrl controller can also
++gate one or more optional functional clocks for a module, and can have one
++or more clock muxes. There is a clkctrl clock controller typically for each
++interconnect target module on omap4 and later variants.
 +
-+	ret = pm_runtime_put_sync(smmu->dev);
-+	if (IS_ERR_VALUE(ret))
-+		dev_warn(smmu->dev, "runtime suspend failed");
- }
- 
- static struct iommu_domain *arm_smmu_domain_alloc(unsigned type)
-@@ -1663,6 +1672,7 @@ static int arm_smmu_add_device(struct device *dev)
- 	struct arm_smmu_master_cfg *cfg;
- 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
- 	int i, ret;
-+	unsigned long err;
- 
- 	if (using_legacy_binding) {
- 		ret = arm_smmu_register_legacy_master(dev, &smmu);
-@@ -1703,12 +1713,20 @@ static int arm_smmu_add_device(struct device *dev)
- 	while (i--)
- 		cfg->smendx[i] = INVALID_SMENDX;
- 
-+	err = pm_runtime_get_sync(smmu->dev);
-+	if (IS_ERR_VALUE(err))
-+		goto out_free;
++The clock consumers can specify the index of the clkctrl clock using
++the hardware offset from the clkctrl instance register space. The optional
++clocks can be specified by clkctrl hardware offset and the index of the
++optional clock.
 +
- 	ret = arm_smmu_master_alloc_smes(dev);
- 	if (ret)
- 		goto out_free;
- 
- 	iommu_device_link(&smmu->iommu, dev);
- 
-+	err = pm_runtime_put_sync(smmu->dev);
-+	if (IS_ERR_VALUE(err))
-+		goto out_free;
++For more information, please see the Linux clock framework binding at
++Documentation/devicetree/bindings/clock/clock-bindings.txt.
 +
- 	return 0;
- 
- out_free:
-@@ -1723,7 +1741,7 @@ static void arm_smmu_remove_device(struct device *dev)
- 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
- 	struct arm_smmu_master_cfg *cfg;
- 	struct arm_smmu_device *smmu;
--
-+	unsigned long ret;
- 
- 	if (!fwspec || fwspec->ops != &arm_smmu_ops)
- 		return;
-@@ -1731,8 +1749,23 @@ static void arm_smmu_remove_device(struct device *dev)
- 	cfg  = fwspec->iommu_priv;
- 	smmu = cfg->smmu;
- 
-+	/*
-+	 * The device link between the master device and
-+	 * smmu is already purged at this point.
-+	 * So enable the power to smmu explicitly.
-+	 */
++Required properties :
++- compatible : shall be "ti,clkctrl"
++- #clock-cells : shall contain 2 with the first entry being the instance
++		 offset from the clock domain base and the second being the
++		 clock index
 +
-+	ret = pm_runtime_get_sync(smmu->dev);
-+	if (IS_ERR_VALUE(ret))
-+		dev_warn(smmu->dev, "runtime resume failed");
++Example: Clock controller node on omap 4430:
 +
- 	iommu_device_unlink(&smmu->iommu, dev);
- 	arm_smmu_master_free_smes(fwspec);
++&cm2 {
++	l4per: cm@1400 {
++		cm_l4per@0 {
++			cm_l4per_clkctrl: clk@20 {
++				compatible = "ti,clkctrl";
++				reg = <0x20 0x1b0>;
++				#clock-cells = <4>;
++			};
++		};
++	};
++};
 +
-+	ret = pm_runtime_put_sync(smmu->dev);
-+	if (IS_ERR_VALUE(ret))
-+		dev_warn(smmu->dev, "runtime suspend failed");
++Example: Preprocessor helper macros in dt-bindings/clock/ti-clkctrl.h
 +
- 	iommu_group_remove_device(dev);
- 	kfree(fwspec->iommu_priv);
- 	iommu_fwspec_free(dev);
-@@ -2316,6 +2349,7 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 	struct arm_smmu_device *smmu;
- 	struct device *dev = &pdev->dev;
- 	int num_irqs, i, err;
-+	unsigned long ret;
- 
- 	smmu = devm_kzalloc(dev, sizeof(*smmu), GFP_KERNEL);
- 	if (!smmu) {
-@@ -2375,7 +2409,12 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 			return err;
- 	}
- 
-+	platform_set_drvdata(pdev, smmu);
- 	pm_runtime_enable(dev);
-+	ret = pm_runtime_get_sync(dev);
-+	if (IS_ERR_VALUE(ret))
-+		return ret;
++#define OMAP4_CLKCTRL_OFFSET		0x20
++#define OMAP4_CLKCTRL_INDEX(offset)	((offset) - OMAP4_CLKCTRL_OFFSET)
++#define MODULEMODE_HWCTRL		1
++#define MODULEMODE_SWCTRL		2
 +
- 	err = arm_smmu_device_cfg_probe(smmu);
- 	if (err)
- 		return err;
-@@ -2417,9 +2456,11 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	platform_set_drvdata(pdev, smmu);
- 	arm_smmu_device_reset(smmu);
- 	arm_smmu_test_smr_masks(smmu);
-+	ret = pm_runtime_put_sync(dev);
-+	if (IS_ERR_VALUE(ret))
-+		return err;
- 
- 	/* Oh, for a proper bus abstraction */
- 	if (!iommu_present(&platform_bus_type))
-@@ -2449,6 +2490,8 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
- 
- 	/* Turn the thing off */
- 	writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
-+	pm_runtime_force_suspend(smmu->dev);
++#define OMAP4_GPTIMER10_CLKTRL		OMAP4_CLKCTRL_INDEX(0x28)
++#define OMAP4_GPTIMER11_CLKTRL		OMAP4_CLKCTRL_INDEX(0x30)
++#define OMAP4_GPTIMER2_CLKTRL		OMAP4_CLKCTRL_INDEX(0x38)
++...
++#define OMAP4_GPIO2_CLKCTRL		OMAP_CLKCTRL_INDEX(0x60)
 +
- 	return 0;
- }
- 
++Example: Clock consumer node for GPIO2:
++
++&gpio2 {
++       clocks = <&cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 0
++		 &cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 8>;
++};
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-
+1.9.1
