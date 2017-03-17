@@ -1,56 +1,30 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH 1/3] clk: qcom: Update DT bindings for the MSM8660/APQ8060 RPMCC
-Date: Wed, 22 Mar 2017 09:18:23 +0100
-Message-Id: <20170322081823.20446-1-linus.walleij@linaro.org>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv2 8/9] ARM: dts: omap4: add clkctrl nodes
+To: Tony Lindgren <tony@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <1489741781-12816-9-git-send-email-t-kristo@ti.com>
+ <20170317154333.GW20572@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <9456caee-4f45-044a-0b2e-305fa2d0d274@ti.com>
+Date: Fri, 17 Mar 2017 23:41:24 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170317154333.GW20572@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-These compatible strings need to be added to extend support
-for the RPM CC to cover MSM8660/APQ8060. We also need to add
-enumberators to the include file for a few clocks that were
-missing.
+On 17/03/17 17:43, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+>> Add clkctrl nodes for OMAP4 SoC. These are going to be acting as
+>> replacement for part of the existing clock data and the existing
+>> clkctrl hooks under hwmod data.
+>
+> It seems to be actually this patch in the series that breaks booting
+> if the last patch in this series is not applied.
 
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 2 ++
- include/dt-bindings/clock/qcom,rpmcc.h                 | 4 ++++
- 2 files changed, 6 insertions(+)
+Yea I guess we need to squash this and patch #9, I'll double check next 
+week. Sorry about not catching this one.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-index a7235e9e1c97..d470a0187035 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -10,6 +10,8 @@ Required properties :
- - compatible : shall contain only one of the following. The generic
-                compatible "qcom,rpmcc" should be also included.
- 
-+			"qcom,rpmcc-msm8660", "qcom,rpmcc"
-+			"qcom,rpmcc-apq8060", "qcom,rpmcc"
- 			"qcom,rpmcc-msm8916", "qcom,rpmcc"
- 			"qcom,rpmcc-msm8974", "qcom,rpmcc"
- 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
-diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
-index 96b63c00249e..44358562a031 100644
---- a/include/dt-bindings/clock/qcom,rpmcc.h
-+++ b/include/dt-bindings/clock/qcom,rpmcc.h
-@@ -37,6 +37,10 @@
- #define RPM_SYS_FABRIC_A_CLK			19
- #define RPM_SFPB_CLK				20
- #define RPM_SFPB_A_CLK				21
-+#define RPM_PLL4_CLK				22
-+#define RPM_PLL4_A_CLK				23
-+#define RPM_SMI_CLK				24
-+#define RPM_SMI_A_CLK				25
- 
- /* SMD RPM clocks */
- #define RPM_SMD_XO_CLK_SRC				0
--- 
-2.9.3
+-Tero
