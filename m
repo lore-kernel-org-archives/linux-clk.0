@@ -1,36 +1,72 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 20 Mar 2017 07:34:33 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 5/9] ARM: OMAP2+: hwmod: assign main clock from DT if
- available
-Message-ID: <20170320143433.GG20572@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <1489741781-12816-6-git-send-email-t-kristo@ti.com>
- <20170317154126.GU20572@atomide.com>
- <f7c795dc-13db-9157-cdcc-b61892cc73f9@ti.com>
- <20170317221728.GX20572@atomide.com>
- <95b7142f-8cc7-5909-764e-05dbad434298@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <95b7142f-8cc7-5909-764e-05dbad434298@ti.com>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Leo Yan <leo.yan@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	mike.leach@linaro.org,
+	Suzuki.Poulose@arm.com,
+	sudeep.holla@arm.com
+Subject: [PATCH v4 5/7] clk: hi6220: add debug APB clock
+Date: Fri, 17 Mar 2017 23:02:21 +0800
+Message-Id: <1489762943-25849-6-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
+References: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [170320 06:25]:
-> On 18/03/17 00:17, Tony Lindgren wrote:
-> > I don't quite follow you, what breaks if you fall back to the old clock
-> > lookup if no "ti,hwmods" is set?
-> 
-> I think I misunderstood your earlier comment. So basically the code already
-> bails out early if ti,hwmods is not set. In this case, the earlier lookup
-> done by hwmod core sets the node pointer for this code to be NULL, and this
-> just parses the existing main_clk info.
+The debug APB clock is absent in hi6220 driver, so this patch is to add
+support for it.
 
-OK thanks for confirming that.
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ drivers/clk/hisilicon/clk-hi6220.c       | 1 +
+ include/dt-bindings/clock/hi6220-clock.h | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-Regards,
-
-Tony
+diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
+index c0e8e1f..2ae151c 100644
+--- a/drivers/clk/hisilicon/clk-hi6220.c
++++ b/drivers/clk/hisilicon/clk-hi6220.c
+@@ -134,6 +134,7 @@ static struct hisi_gate_clock hi6220_separated_gate_clks_sys[] __initdata = {
+ 	{ HI6220_UART4_PCLK,    "uart4_pclk",    "uart4_src",      CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 8,  0, },
+ 	{ HI6220_SPI_CLK,       "spi_clk",       "clk_150m",       CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 9,  0, },
+ 	{ HI6220_TSENSOR_CLK,   "tsensor_clk",   "clk_bus",        CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 12, 0, },
++	{ HI6220_DAPB_CLK,      "dapb_clk",      "cs_dapb",        CLK_SET_RATE_PARENT|CLK_IS_CRITICAL,   0x230, 18, 0, },
+ 	{ HI6220_MMU_CLK,       "mmu_clk",       "ddrc_axi1",      CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x240, 11, 0, },
+ 	{ HI6220_HIFI_SEL,      "hifi_sel",      "hifi_src",       CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x270, 0,  0, },
+ 	{ HI6220_MMC0_SYSPLL,   "mmc0_syspll",   "syspll",         CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x270, 1,  0, },
+diff --git a/include/dt-bindings/clock/hi6220-clock.h b/include/dt-bindings/clock/hi6220-clock.h
+index 6b03c84..b8ba665 100644
+--- a/include/dt-bindings/clock/hi6220-clock.h
++++ b/include/dt-bindings/clock/hi6220-clock.h
+@@ -124,7 +124,10 @@
+ #define HI6220_CS_DAPB		57
+ #define HI6220_CS_ATB_DIV	58
+ 
+-#define HI6220_SYS_NR_CLKS	59
++/* gate clock */
++#define HI6220_DAPB_CLK		59
++
++#define HI6220_SYS_NR_CLKS	60
+ 
+ /* clk in Hi6220 media controller */
+ /* gate clocks */
+-- 
+2.7.4
