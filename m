@@ -1,105 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:33502 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752582AbdCPVKm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Mar 2017 17:10:42 -0400
-Date: Thu, 16 Mar 2017 16:10:39 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: robin.murphy@arm.com, will.deacon@arm.com, joro@8bytes.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, m.szyprowski@samsung.com,
-        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
-        mark.rutland@arm.com
-Subject: Re: [PATCH V3 3/5] drivers: arm-smmu: Add clock support for
- QCOM_SMMUV2
-Message-ID: <20170316211039.rbqq262syalyfcs6@rob-hp-laptop>
-References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
- <1489073748-3659-4-git-send-email-sricharan@codeaurora.org>
+Return-Path: <tony@atomide.com>
+Date: Fri, 17 Mar 2017 08:41:26 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 5/9] ARM: OMAP2+: hwmod: assign main clock from DT if
+ available
+Message-ID: <20170317154126.GU20572@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <1489741781-12816-6-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1489073748-3659-4-git-send-email-sricharan@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1489741781-12816-6-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 09, 2017 at 09:05:46PM +0530, Sricharan R wrote:
-> The QCOM_SMMUV2 is an implementation of the arm,smmu-v2 architecture.
-> The qcom,smmu is instantiated for each of the multimedia cores (for eg)
-> Venus (video encoder/decoder), mdp (display) etc, and they are connected
-> to the Multimedia Aggregator Interconnect (MMAGIC). So the access to
-> any of the MMU's registers, as well as MMU's downstream bus access,
-> requires the specified MMAGIC clocks to be enabled. So adding a new
-> binding for the qcom,smmu-v2 and the required mmagic clock bindings for
-> the same. Also adding the support for enabling the qcom,smmu-v2 clocks in
-> the driver.
-> 
->                -------------  ---------
->                |   VENUS   |  | MDP   |
-> 	       |	   |  |       |
-> 	       -------------  --------
-> 		     |           |
-> 		     |           |
->                   ------      ---------
->                   |SMMU |     | SMMU  |
->                   |	|     |       |
->                   ------      --------
-> 		    |            |
-> 		    |            |
->        -----------------------------------------
->        |	MMAGIC INTERCONNECT (MMSS NOC) |
->        |                                       |
->        -----------------------------------------
->                    |                 |
-> 		   |           ----------------------------------
->                  -----         | 	SYSTEM NOC		|
->                  |DDR|	       |				|
->                  -----         ---------------------------------
-> 		   |		    |
->                    |               ------
-> 		   |<-------------| CPU|
-> 				  ------
-> 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> ---
->  .../devicetree/bindings/iommu/arm,smmu.txt         |   8 ++
->  drivers/iommu/arm-smmu.c                           | 124 +++++++++++++++++++++
->  2 files changed, 132 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> index b369c13..88e02d6 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> @@ -17,6 +17,7 @@ conditions.
->                          "arm,mmu-401"
->                          "arm,mmu-500"
->                          "cavium,smmu-v2"
-> +			"qcom,smmu-v2"
-
-I know Cavium did it, but I'd prefer to see SoC specific compatibles 
-here.
-
+* Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+> -static int _init_main_clk(struct omap_hwmod *oh)
+> +static int _init_main_clk(struct omap_hwmod *oh, struct device_node *np)
+>  {
+>  	int ret = 0;
+> -	char name[MOD_CLK_MAX_NAME_LEN];
+> -	struct clk *clk;
+> -	static const char modck[] = "_mod_ck";
+> -
+> -	if (strlen(oh->name) >= MOD_CLK_MAX_NAME_LEN - strlen(modck))
+> -		pr_warn("%s: warning: cropping name for %s\n", __func__,
+> -			oh->name);
+> +	struct clk *clk = NULL;
+> +	int i;
+> +	int count;
+> +	const char *name;
+> +	char clk_name[strlen("clkctrl-x") + 1];
 >  
->                    depending on the particular implementation and/or the
->                    version of the architecture implemented.
-> @@ -74,6 +75,13 @@ conditions.
->                    "cfg_clk" is optional if required to access the TCU's programming
->                    interface, apart from the "tcu_clk".
->  
-> +		  Should have "mmagic_ahb_clk", "mmagic_cfg_ahb_clk",
-> +                              "smmu_core_ahb_clk", "smmu_core_axi_clk",
-> +                              "mmagic_core_axi_clk" for "qcom,smmu-v2"
+> -	strlcpy(name, oh->name, MOD_CLK_MAX_NAME_LEN - strlen(modck));
+> -	strlcat(name, modck, MOD_CLK_MAX_NAME_LEN);
+> +	if (np) {
+> +		clk = of_clk_get_by_name(np, "clkctrl");
+> +		if (IS_ERR(clk)) {
+> +			/* Try matching by hwmod name */
+> +			count = of_property_count_strings(np, "ti,hwmods");
+> +			for (i = 0; i < count; i++) {
+> +				ret = of_property_read_string_index(np,
+> +								    "ti,hwmods",
+> +								    i, &name);
+> +				if (ret)
+> +					continue;
+> +				if (!strcmp(name, oh->name)) {
+> +					sprintf(clk_name, "clkctrl-%d", i);
+> +					clk = of_clk_get_by_name(np, clk_name);
+> +				}
+> +			}
+> +		}
+> +		if (!IS_ERR(clk)) {
+> +			pr_debug("%s: mapped main_clk %s for %s\n", __func__,
+> +				 __clk_get_name(clk), oh->name);
+> +			oh->main_clk = __clk_get_name(clk);
+> +			oh->_clk = clk;
+> +			soc_ops.disable_direct_prcm(oh);
+> +		}
+> +	}
 
-This is instead of the above clocks?
+You should bail out and do nothing here if legacy "ti,hwmods" property is
+not found. Eventually it will be the interconnect target IP wrapper module
+that will manage the clock and populate the rest of the hwmod data
+dynamically.
 
-Are these clocks all really part of the SMMU or are the mmagic clocks 
-working around no proper driver for the mmagic?
+Regards,
 
-> +
-> +		  "mmagic_core_axi_clk" is required for smmu's access to the
-> +                   downstream bus and rest for the smmu's register group access.
-> +
->  - clocks:         Phandles for respective clocks described by clock-names.
->  
->  - power-domains:  Phandles to SMMU's power domain specifier. This is
+Tony
