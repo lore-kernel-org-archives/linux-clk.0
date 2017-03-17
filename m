@@ -1,55 +1,91 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <DB6PR0402MB2837F35D8881AA2E4F12F430F0290@DB6PR0402MB2837.eurprd04.prod.outlook.com>
-References: <1487137656-4006-1-git-send-email-yuantian.tang@nxp.com>
- <20170227171837.eymnyebgn7ocsp7w@rob-hp-laptop> <DB6PR0402MB2837F35D8881AA2E4F12F430F0290@DB6PR0402MB2837.eurprd04.prod.outlook.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 1 Mar 2017 17:17:25 -0600
-Message-ID: <CAL_Jsq+EE-tybQKg+T6TF6T5nGW17KiGuthXj=R9nuF0btNSUg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: qoriq-clock: Add coreclk
-To: "Y.T. Tang" <yuantian.tang@nxp.com>
-Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Scott Wood <oss@buserror.net>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org
+Cc: linus.walleij@linaro.org,
+	robh+dt@kernel.org,
+	andy.yan@rock-chips.com,
+	sboyd@codeaurora.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	mturquette@baylibre.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 6/6] ARM: dts: rockchip: rename RK1108-evb to RV1108-evb
+Date: Fri, 17 Mar 2017 18:18:40 +0100
+Message-Id: <20170317171840.4683-7-heiko@sntech.de>
+In-Reply-To: <20170317171840.4683-1-heiko@sntech.de>
+References: <20170317171840.4683-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 28, 2017 at 7:45 PM, Y.T. Tang <yuantian.tang@nxp.com> wrote:
-> Hi Rob,
->
->> -----Original Message-----
->> From: Rob Herring [mailto:robh@kernel.org]
->> Sent: Tuesday, February 28, 2017 1:19 AM
->> To: Y.T. Tang <yuantian.tang@nxp.com>
->> Cc: mturquette@baylibre.com; sboyd@codeaurora.org;
->> mark.rutland@arm.com; linux-clk@vger.kernel.org;
->> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
->> kernel@lists.infradead.org; Scott Wood <oss@buserror.net>
->> Subject: Re: [PATCH 1/2] dt-bindings: qoriq-clock: Add coreclk
->>
->> On Wed, Feb 15, 2017 at 01:47:35PM +0800, yuantian.tang@nxp.com wrote:
->> > From: Tang Yuantian <Yuantian.Tang@nxp.com>
->> >
->> > ls1012a has separate input root clocks for core PLLs versus the
->> > platform PLL, with the latter described as sysclk in the hw docs.
->> > Update the qoriq-clock binding to allow a second input clock, named
->> > "coreclk".  If present, this clock will be used for the core PLLs.
->> >
->> > Signed-off-by: Scott Wood <oss@buserror.net>
->> > Signed-off-by: Tang Yuantian <yuantian.tang@nxp.com>
->> > ---
->> >  Documentation/devicetree/bindings/clock/qoriq-clock.txt | 6 ++++++
->> >  1 file changed, 6 insertions(+)
->>
->> The change looks fine, but sounds like Scott should remain the author (or
->> agree he shouldn't be).
->>
-> Sure, please make Scott the author and apply this patch set.
+From: Andy Yan <andy.yan@rock-chips.com>
 
-Fixing the author is your job. Plus you sent this TO Mike, so I'm
-assuming you only want my ack and Mike will apply.
+Rockchip finally named the SOC as RV1108, so change it
+for compatible.
 
-Rob
+The rk1108/rv1108 is completely new to the market, so there no real
+devices exist in the wild, only the Rockchip internal evaluation
+board. Therefore we're not breaking any existing devices when
+changing compatible values.
+
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Acked-by: Rob Herring <robh@kernel.org>
+
+[added paragraph about no real devices existing]
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ Documentation/devicetree/bindings/arm/rockchip.txt   | 4 ++--
+ arch/arm/boot/dts/Makefile                           | 2 +-
+ arch/arm/boot/dts/{rk1108-evb.dts => rv1108-evb.dts} | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+ rename arch/arm/boot/dts/{rk1108-evb.dts => rv1108-evb.dts} (95%)
+
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.txt b/Documentation/devicetree/bindings/arm/rockchip.txt
+index cc4ace6397ab..9901cbd6d11a 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.txt
++++ b/Documentation/devicetree/bindings/arm/rockchip.txt
+@@ -111,9 +111,9 @@ Rockchip platforms device tree bindings
+     Required root node properties:
+       - compatible = "rockchip,px5-evb", "rockchip,px5", "rockchip,rk3368";
+ 
+-- Rockchip RK1108 Evaluation board
++- Rockchip RV1108 Evaluation board
+     Required root node properties:
+-      - compatible = "rockchip,rk1108-evb", "rockchip,rk1108";
++      - compatible = "rockchip,rv1108-evb", "rockchip,rv1108";
+ 
+ - Rockchip RK3368 evb:
+     Required root node properties:
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 011808490fed..d0d37d028790 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -674,7 +674,7 @@ dtb-$(CONFIG_ARCH_REALVIEW) += \
+ 	arm-realview-pba8.dtb \
+ 	arm-realview-pbx-a9.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+-	rk1108-evb.dtb \
++	rv1108-evb.dtb \
+ 	rk3036-evb.dtb \
+ 	rk3036-kylin.dtb \
+ 	rk3066a-bqcurie2.dtb \
+diff --git a/arch/arm/boot/dts/rk1108-evb.dts b/arch/arm/boot/dts/rv1108-evb.dts
+similarity index 95%
+rename from arch/arm/boot/dts/rk1108-evb.dts
+rename to arch/arm/boot/dts/rv1108-evb.dts
+index 88fe0a8c4faa..58cf4ac079c3 100644
+--- a/arch/arm/boot/dts/rk1108-evb.dts
++++ b/arch/arm/boot/dts/rv1108-evb.dts
+@@ -43,8 +43,8 @@
+ #include "rv1108.dtsi"
+ 
+ / {
+-	model = "Rockchip RK1108 Evaluation board";
+-	compatible = "rockchip,rk1108-evb", "rockchip,rk1108";
++	model = "Rockchip RV1108 Evaluation board";
++	compatible = "rockchip,rv1108-evb", "rockchip,rv1108";
+ 
+ 	memory@60000000 {
+ 		device_type = "memory";
+-- 
+2.11.0
