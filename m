@@ -1,91 +1,265 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org
-Cc: linus.walleij@linaro.org,
-	robh+dt@kernel.org,
-	andy.yan@rock-chips.com,
-	sboyd@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	mturquette@baylibre.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 6/6] ARM: dts: rockchip: rename RK1108-evb to RV1108-evb
-Date: Fri, 17 Mar 2017 18:18:40 +0100
-Message-Id: <20170317171840.4683-7-heiko@sntech.de>
-In-Reply-To: <20170317171840.4683-1-heiko@sntech.de>
-References: <20170317171840.4683-1-heiko@sntech.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:52692 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751413AbdCQEny (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Mar 2017 00:43:54 -0400
+Subject: Re: [PATCH V3 2/5] iommu/arm-smmu: Add support for MMU40x/500 clocks
+To: Rob Clark <robdclark@gmail.com>
+References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
+ <1489073748-3659-3-git-send-email-sricharan@codeaurora.org>
+ <CAF6AEGv3FAyWfXGT_8=bcn+UL8Ug1pE8EGu=MQC70U++wUOioA@mail.gmail.com>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, mathieu.poirier@linaro.org,
+        Mark Rutland <mark.rutland@arm.com>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <6d4a47e3-bab7-4dda-c9db-cef6a699adf1@codeaurora.org>
+Date: Fri, 17 Mar 2017 10:13:38 +0530
+MIME-Version: 1.0
+In-Reply-To: <CAF6AEGv3FAyWfXGT_8=bcn+UL8Ug1pE8EGu=MQC70U++wUOioA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andy Yan <andy.yan@rock-chips.com>
+Hi,
 
-Rockchip finally named the SOC as RV1108, so change it
-for compatible.
+On 3/17/2017 4:22 AM, Rob Clark wrote:
+> On Thu, Mar 9, 2017 at 10:35 AM, Sricharan R <sricharan@codeaurora.org> wrote:
+>> The MMU400x/500 is the implementation of the SMMUv2
+>> arch specification. It is split in to two blocks
+>> TBU, TCU. TBU caches the page table, instantiated
+>> for each master locally, clocked by the TBUn_clk.
+>> TCU manages the address translation with PTW and has
+>> the programming interface as well, clocked using the
+>> TCU_CLK. The TBU can also be sharing the same clock
+>> domain as TCU, in which case both are clocked using
+>> the TCU_CLK.
+>>
+>> This defines the clock bindings for the same and adds the
+>> init, enable and disable functions for handling the
+>> clocks.
+>>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> ---
+>>  .../devicetree/bindings/iommu/arm,smmu.txt         | 27 ++++++
+>>  drivers/iommu/arm-smmu.c                           | 95 +++++++++++++++++++++-
+>>  2 files changed, 121 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+>> index 6cdf32d..b369c13 100644
+>> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+>> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+>> @@ -60,6 +60,28 @@ conditions.
+>>                    aliases of secure registers have to be used during
+>>                    SMMU configuration.
+>>
+>> +- clock-names:    Should be "tbu_clk" and "tcu_clk" and "cfg_clk" for
+>> +                  "arm,mmu-400", "arm,mmu-401" and "arm,mmu-500"
+>
+> I guess that should be: "Should be "tbu_clk" *or* "tcu_clk" and
+> "cfg_clk" for..."
+>
+> Also, possibly we should define our own compat strings for various
+> SoC's that require these clks so we can properly describe when they
+> are required?  I guess that would address Rob H's comment.
+>
 
-The rk1108/rv1108 is completely new to the market, so there no real
-devices exist in the wild, only the Rockchip internal evaluation
-board. Therefore we're not breaking any existing devices when
-changing compatible values.
+Ok, calling "optional" does not look correct. But i was trying to define
+something which would be right for all implementations of MMU-500, but
+looks like that's not the right way. Making it soc specific would give a
+exact description, except for the number of compatibles and have to
+change the code to not consider any of tbu , tcu, cfg clk as mandatory
+for adding support for other compatibles later which are mostly similar.
+So i am trying to setup the clocks using functions specific for each
+compatible. Not sure, if at this point, some soc specific callback from 
+the driver where these things can be initialized might be good.
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Regards,
+  Sricharan
 
-[added paragraph about no real devices existing]
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- Documentation/devicetree/bindings/arm/rockchip.txt   | 4 ++--
- arch/arm/boot/dts/Makefile                           | 2 +-
- arch/arm/boot/dts/{rk1108-evb.dts => rv1108-evb.dts} | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
- rename arch/arm/boot/dts/{rk1108-evb.dts => rv1108-evb.dts} (95%)
 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.txt b/Documentation/devicetree/bindings/arm/rockchip.txt
-index cc4ace6397ab..9901cbd6d11a 100644
---- a/Documentation/devicetree/bindings/arm/rockchip.txt
-+++ b/Documentation/devicetree/bindings/arm/rockchip.txt
-@@ -111,9 +111,9 @@ Rockchip platforms device tree bindings
-     Required root node properties:
-       - compatible = "rockchip,px5-evb", "rockchip,px5", "rockchip,rk3368";
- 
--- Rockchip RK1108 Evaluation board
-+- Rockchip RV1108 Evaluation board
-     Required root node properties:
--      - compatible = "rockchip,rk1108-evb", "rockchip,rk1108";
-+      - compatible = "rockchip,rv1108-evb", "rockchip,rv1108";
- 
- - Rockchip RK3368 evb:
-     Required root node properties:
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 011808490fed..d0d37d028790 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -674,7 +674,7 @@ dtb-$(CONFIG_ARCH_REALVIEW) += \
- 	arm-realview-pba8.dtb \
- 	arm-realview-pbx-a9.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += \
--	rk1108-evb.dtb \
-+	rv1108-evb.dtb \
- 	rk3036-evb.dtb \
- 	rk3036-kylin.dtb \
- 	rk3066a-bqcurie2.dtb \
-diff --git a/arch/arm/boot/dts/rk1108-evb.dts b/arch/arm/boot/dts/rv1108-evb.dts
-similarity index 95%
-rename from arch/arm/boot/dts/rk1108-evb.dts
-rename to arch/arm/boot/dts/rv1108-evb.dts
-index 88fe0a8c4faa..58cf4ac079c3 100644
---- a/arch/arm/boot/dts/rk1108-evb.dts
-+++ b/arch/arm/boot/dts/rv1108-evb.dts
-@@ -43,8 +43,8 @@
- #include "rv1108.dtsi"
- 
- / {
--	model = "Rockchip RK1108 Evaluation board";
--	compatible = "rockchip,rk1108-evb", "rockchip,rk1108";
-+	model = "Rockchip RV1108 Evaluation board";
-+	compatible = "rockchip,rv1108-evb", "rockchip,rv1108";
- 
- 	memory@60000000 {
- 		device_type = "memory";
+
+Regards,
+  Sricharan
+
+> BR,
+> -R
+>
+>> +                  "tcu_clk" is required for smmu's register access using the
+>> +                  programming interface and ptw for downstream bus access.
+>> +
+>> +                  "tbu_clk" is required for access to the TBU connected to the
+>> +                  master locally. This clock is optional and not required when
+>> +                  TBU is in the same clock domain as the TCU or when the TBU is
+>> +                  clocked along with the master.
+>> +
+>> +                  "cfg_clk" is optional if required to access the TCU's programming
+>> +                  interface, apart from the "tcu_clk".
+>> +
+>> +- clocks:         Phandles for respective clocks described by clock-names.
+>> +
+>> +- power-domains:  Phandles to SMMU's power domain specifier. This is
+>> +                  required even if SMMU belongs to the master's power
+>> +                  domain, as the SMMU will have to be enabled and
+>> +                  accessed before master gets enabled and linked to its
+>> +                  SMMU.
+>> +
+>>  ** Deprecated properties:
+>>
+>>  - mmu-masters (deprecated in favour of the generic "iommus" binding) :
+>> @@ -84,6 +106,11 @@ conditions.
+>>                               <0 36 4>,
+>>                               <0 37 4>;
+>>                  #iommu-cells = <1>;
+>> +                clocks = <&gcc GCC_SMMU_CFG_CLK>,
+>> +                         <&gcc GCC_APSS_TCU_CLK>,
+>> +                        <&gcc GCC_MDP_TBU_CLK>;
+>> +
+>> +               clock-names = "cfg_clk", "tcu_clk", "tbu_clk";
+>>          };
+>>
+>>          /* device with two stream IDs, 0 and 7 */
+>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+>> index f7e11d3..720a1ef 100644
+>> --- a/drivers/iommu/arm-smmu.c
+>> +++ b/drivers/iommu/arm-smmu.c
+>> @@ -341,6 +341,12 @@ struct arm_smmu_master_cfg {
+>>  #define for_each_cfg_sme(fw, i, idx) \
+>>         for (i = 0; idx = fwspec_smendx(fw, i), i < fw->num_ids; ++i)
+>>
+>> +struct mmu500_clk {
+>> +       struct clk *cfg_clk;
+>> +       struct clk *tcu_clk;
+>> +       struct clk *tbu_clk;
+>> +};
+>> +
+>>  struct arm_smmu_clks {
+>>         void *clks;
+>>         int (*init_clocks)(struct arm_smmu_device *smmu);
+>> @@ -455,6 +461,92 @@ static struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
+>>         return container_of(dom, struct arm_smmu_domain, domain);
+>>  }
+>>
+>> +static int mmu500_enable_clocks(struct arm_smmu_device *smmu)
+>> +{
+>> +       int ret = 0;
+>> +       struct mmu500_clk *sclks = smmu->smmu_clks.clks;
+>> +
+>> +       if (!sclks)
+>> +               return 0;
+>> +
+>> +       ret = clk_prepare_enable(sclks->cfg_clk);
+>> +       if (ret) {
+>> +               dev_err(smmu->dev, "Couldn't enable cfg_clk");
+>> +               return ret;
+>> +       }
+>> +
+>> +       ret = clk_prepare_enable(sclks->tcu_clk);
+>> +       if (ret) {
+>> +               dev_err(smmu->dev, "Couldn't enable tcu_clk");
+>> +               clk_disable_unprepare(sclks->cfg_clk);
+>> +               return ret;
+>> +       }
+>> +
+>> +       ret = clk_prepare_enable(sclks->tbu_clk);
+>> +       if (ret) {
+>> +               dev_err(smmu->dev, "Couln't enable tbu_clk");
+>> +               clk_disable_unprepare(sclks->tcu_clk);
+>> +               clk_disable_unprepare(sclks->cfg_clk);
+>> +               return ret;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static void mmu500_disable_clocks(struct arm_smmu_device *smmu)
+>> +{
+>> +       struct mmu500_clk *sclks = smmu->smmu_clks.clks;
+>> +
+>> +       if (!sclks) {
+>> +               clk_disable_unprepare(sclks->tbu_clk);
+>> +               clk_disable_unprepare(sclks->tcu_clk);
+>> +               clk_disable_unprepare(sclks->cfg_clk);
+>> +       }
+>> +}
+>> +
+>> +static int mmu500_init_clocks(struct arm_smmu_device *smmu)
+>> +{
+>> +       struct device *dev = smmu->dev;
+>> +       struct mmu500_clk *sclks;
+>> +       int err;
+>> +
+>> +       if (!of_find_property(dev->of_node, "clocks", NULL))
+>> +               return 0;
+>> +
+>> +       sclks = devm_kzalloc(dev, sizeof(*sclks), GFP_KERNEL);
+>> +       if (!sclks)
+>> +               return -ENOMEM;
+>> +
+>> +       sclks->cfg_clk = devm_clk_get(dev, "cfg_clk");
+>> +       if (IS_ERR(sclks->cfg_clk)) {
+>> +               err = PTR_ERR(sclks->cfg_clk);
+>> +               /* Ignore all, except -EPROBE_DEFER for optional clocks */
+>> +               if (err == -EPROBE_DEFER)
+>> +                       return err;
+>> +               else
+>> +                       sclks->cfg_clk = NULL;
+>> +       }
+>> +
+>> +       sclks->tcu_clk = devm_clk_get(dev, "tcu_clk");
+>> +       if (IS_ERR(sclks->tcu_clk)) {
+>> +               dev_err(dev, "Couldn't get tcu_clk");
+>> +               return PTR_ERR(sclks->tcu_clk);
+>> +       }
+>> +
+>> +       sclks->tbu_clk = devm_clk_get(dev, "tbu_clk");
+>> +       if (IS_ERR(sclks->tbu_clk)) {
+>> +               err = PTR_ERR(sclks->tbu_clk);
+>> +               /* Ignore all, ecept -EPROBE_DEFER for optional clocks */
+>> +               if (err == -EPROBE_DEFER)
+>> +                       return err;
+>> +               else
+>> +                       sclks->tbu_clk = NULL;
+>> +       }
+>> +
+>> +       smmu->smmu_clks.clks = sclks;
+>> +       return 0;
+>> +}
+>> +
+>>  static void parse_driver_options(struct arm_smmu_device *smmu)
+>>  {
+>>         int i = 0;
+>> @@ -1981,7 +2073,8 @@ struct arm_smmu_match_data {
+>>                     NULL, NULL, NULL);
+>>  ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU,
+>>                     NULL, NULL, NULL);
+>> -ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500, NULL, NULL, NULL);
+>> +ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500, mmu500_init_clocks,
+>> +                   mmu500_enable_clocks, mmu500_disable_clocks);
+>>  ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2,
+>>                     NULL, NULL, NULL);
+>>
+>> --
+>> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+>>
+>> _______________________________________________
+>> iommu mailing list
+>> iommu@lists.linux-foundation.org
+>> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+
 -- 
-2.11.0
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
+member of Code Aurora Forum, hosted by The Linux Foundation
