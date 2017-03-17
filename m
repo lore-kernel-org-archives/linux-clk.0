@@ -1,43 +1,65 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 5/7] clk: tegra: don't warn for PLL defaults
- unnecessarily
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
- <1487846686-6388-6-git-send-email-pdeschrijver@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <d6435129-4c67-1126-429d-ffef52d0b2d4@nvidia.com>
-Date: Thu, 23 Mar 2017 14:37:23 +0000
-MIME-Version: 1.0
-In-Reply-To: <1487846686-6388-6-git-send-email-pdeschrijver@nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org
+Cc: linus.walleij@linaro.org,
+	robh+dt@kernel.org,
+	andy.yan@rock-chips.com,
+	sboyd@codeaurora.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	mturquette@baylibre.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 0/6] Rename RK1108 to RV1108
+Date: Fri, 17 Mar 2017 18:18:34 +0100
+Message-Id: <20170317171840.4683-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Peter,
+The former rk1108 got a new name: rv1108. It is still early for its
+development and there are no devices in the wild, except the internal
+evaluation board. So we're somewhat safe in reanming things now,
+before things spread to much.
 
-On 23/02/17 10:44, Peter De Schrijver wrote:
-> If the PLL is on, only warn if the defaults are not yet set. Otherwise be
-> silent.
-> 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+My basic idea for merging is the individual changes (pinctrl, clk)
+going through the respective maintainer trees and I've added necessary
+dts glue, so that it doesn't break bisectability or fail to compile
+even though the internal board wouldn't care.
+After the pieces are in mainline (after 4.12-rc1?) we can then just
+do the dts renames.
 
-This patch is breaking boot for Tegra210 Smaug on -next [0]. Reverting
-this on top of -next allows the board to boot again. I have not had
-chance to dig into this any further yet, but can unless you have some
-thoughts.
 
-Cheers
-Jon
+changes in v2:
+- drop mmc binding patch, which got applied
+- rebased pinctrl patches onto pinctrl tree
+- adapted patches, so that they don't break when applied individually
+- fixed recipients (mturquette)
 
-[0]
-https://nvtb.github.io//linux-next/test_next-20170323/20170323021534/boot/tegra210-smaug/tegra210-smaug/defconfig_log.txt
+Andy Yan (6):
+  dt-bindings: rockchip,pinctrl: rename RK1108 to RV1108
+  pinctrl: rockchip: rename RK1108 to RV1108
+  dt-bindings: rk1108-cru: rename RK1108 to RV1108
+  clk: rockchip: rename RK1108 to RV1108
+  ARM: dts: rockchip: rename core dtsi from RK1108 to RV1108
+  ARM: dts: rockchip: rename RK1108-evb to RV1108-evb
+
+ Documentation/devicetree/bindings/arm/rockchip.txt |   4 +-
+ ...chip,rk1108-cru.txt => rockchip,rv1108-cru.txt} |  12 +-
+ .../bindings/pinctrl/rockchip,pinctrl.txt          |  17 +-
+ arch/arm/boot/dts/Makefile                         |   2 +-
+ .../boot/dts/{rk1108-evb.dts => rv1108-evb.dts}    |   6 +-
+ arch/arm/boot/dts/{rk1108.dtsi => rv1108.dtsi}     |  24 +-
+ drivers/clk/rockchip/Makefile                      |   2 +-
+ .../clk/rockchip/{clk-rk1108.c => clk-rv1108.c}    | 414 ++++++++++-----------
+ drivers/clk/rockchip/clk.h                         |  28 +-
+ drivers/pinctrl/pinctrl-rockchip.c                 |  76 ++--
+ .../clock/{rk1108-cru.h => rv1108-cru.h}           |   6 +-
+ 11 files changed, 299 insertions(+), 292 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{rockchip,rk1108-cru.txt => rockchip,rv1108-cru.txt} (83%)
+ rename arch/arm/boot/dts/{rk1108-evb.dts => rv1108-evb.dts} (94%)
+ rename arch/arm/boot/dts/{rk1108.dtsi => rv1108.dtsi} (94%)
+ rename drivers/clk/rockchip/{clk-rk1108.c => clk-rv1108.c} (57%)
+ rename include/dt-bindings/clock/{rk1108-cru.h => rv1108-cru.h} (97%)
 
 -- 
-nvpublic
+2.11.0
