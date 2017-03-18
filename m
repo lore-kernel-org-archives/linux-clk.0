@@ -1,64 +1,44 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Mon, 6 Mar 2017 16:28:50 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Stephen
- Warren" <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Alexandre Courbot <gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
-Message-ID: <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
-References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
- <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
- <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
- <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 0/2] move the ICST library to common clocks
+Date: Sat, 18 Mar 2017 09:59:42 +0100
+Message-Id: <20170318085944.15899-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 06, 2017 at 09:58:29AM +0000, Jon Hunter wrote:
-> 
-> On 06/03/17 08:38, Peter De Schrijver wrote:
-> > On Thu, Mar 02, 2017 at 05:56:49PM +0000, Jon Hunter wrote:
-> >>
-> >> On 28/02/17 15:19, Peter De Schrijver wrote:
-> >>> This is needed to make the JTAG debugging interface work.
-> >>>
-> >>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> >>> ---
-> >>>  drivers/clk/tegra/clk-tegra210.c | 1 +
-> >>>  1 file changed, 1 insertion(+)
-> >>>
-> >>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> >>> index 9a2512a..708f5f1 100644
-> >>> --- a/drivers/clk/tegra/clk-tegra210.c
-> >>> +++ b/drivers/clk/tegra/clk-tegra210.c
-> >>> @@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
-> >>>  	{ TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
-> >>>  	{ TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
-> >>>  	{ TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
-> >>> +	{ TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
-> >>>  	{ TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
-> >>>  	{ TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
-> >>>  	{ TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
-> >>
-> >> Should there be some dependency on say CONFIG_DEBUG_KERNEL? I am not
-> >> sure we always want this on for all cases.
-> > 
-> > Why would you not want it to be always on?
-> 
-> Purely for power reasons. I do not know how much power keeping this
+This consolidates the last piece of the Versatile clocks, the ICST
+clock divider, into drivers/clk/*
 
-I don't expect it to be significant but I don't have any numbers.
+If the series is OK I suggest we take this through ARM SoC since
+the first patch needs to be applied there, alternatively they
+can both go into the clk tree.
 
-> clock running consumes, but I don't like the idea of clocks running all
-> the time when they are not needed.
-> 
+Linus Walleij (2):
+  ARM: plat-versatile: remove stale clock header
+  ARM/clk: move the ICST library to drivers/clk
 
-Problem is that in this case there is no easy way to determine if the clock
-needs to be on.
+ arch/arm/common/Kconfig                                   |  3 ---
+ arch/arm/common/Makefile                                  |  1 -
+ arch/arm/plat-versatile/include/plat/clock.h              | 15 ---------------
+ drivers/clk/versatile/Kconfig                             |  3 +++
+ drivers/clk/versatile/Makefile                            |  2 +-
+ drivers/clk/versatile/clk-icst.c                          |  1 +
+ drivers/clk/versatile/clk-icst.h                          |  2 --
+ drivers/clk/versatile/clk-impd1.c                         |  1 +
+ drivers/clk/versatile/clk-realview.c                      |  1 +
+ drivers/clk/versatile/clk-versatile.c                     |  1 +
+ {arch/arm/common => drivers/clk/versatile}/icst.c         |  2 +-
+ .../include/asm/hardware => drivers/clk/versatile}/icst.h |  6 ++----
+ 12 files changed, 11 insertions(+), 27 deletions(-)
+ delete mode 100644 arch/arm/plat-versatile/include/plat/clock.h
+ rename {arch/arm/common => drivers/clk/versatile}/icst.c (98%)
+ rename {arch/arm/include/asm/hardware => drivers/clk/versatile}/icst.h (94%)
 
-Peter.
+-- 
+2.9.3
