@@ -1,69 +1,50 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Cc: linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 6/15] dt-bindings: display: sun4i: Add HDMI display bindings
-Date: Tue,  7 Mar 2017 09:56:25 +0100
-Message-Id: <f1d46b79f933df724a6750d557ebe9517b6339b5.1488876832.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/2] ARM: plat-versatile: remove stale clock header
+Date: Sat, 18 Mar 2017 09:59:43 +0100
+Message-Id: <20170318085944.15899-2-linus.walleij@linaro.org>
+In-Reply-To: <20170318085944.15899-1-linus.walleij@linaro.org>
+References: <20170318085944.15899-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-One of the possible output of the display pipeline, on the SoCs that have
-it, is the HDMI controller.
+All the Versatile platforms (Integrator, Versatile, RealView
+Versatile Express) have been migrated to use the drivers/clk
+subsystem. Clean out this header that is not referenced
+anywhere anymore.
 
-Add a binding for it.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 21 +++++++-
- 1 file changed, 21 insertions(+), 0 deletions(-)
+ arch/arm/plat-versatile/include/plat/clock.h | 15 ---------------
+ 1 file changed, 15 deletions(-)
+ delete mode 100644 arch/arm/plat-versatile/include/plat/clock.h
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index b82c00449468..4b280672658e 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -4,6 +4,27 @@ Allwinner A10 Display Pipeline
- The Allwinner A10 Display pipeline is composed of several components
- that are going to be documented below:
- 
-+HDMI Encoder
-+------------
-+
-+The HDMI Encoder supports the HDMI video and audio outputs, and does
-+CEC. It is one end of the pipeline.
-+
-+Required properties:
-+  - compatible: value must be one of:
-+    * allwinner,sun5i-a10s-hdmi
-+  - reg: base address and size of memory-mapped region
-+  - clocks: phandles to the clocks feeding the HDMI encoder
-+    * ahb: the HDMI interface clock
-+    * mod: the HDMI module clock
-+    * pll-0: the first video PLL
-+    * pll-1: the second video PLL
-+  - clock-names: the clock names mentioned above
-+
-+  - ports: A ports node with endpoint definitions as defined in
-+    Documentation/devicetree/bindings/media/video-interfaces.txt. The
-+    first port should be the input endpoint.
-+
- TV Encoder
- ----------
- 
+diff --git a/arch/arm/plat-versatile/include/plat/clock.h b/arch/arm/plat-versatile/include/plat/clock.h
+deleted file mode 100644
+index 3cfb024ccd70..000000000000
+--- a/arch/arm/plat-versatile/include/plat/clock.h
++++ /dev/null
+@@ -1,15 +0,0 @@
+-#ifndef PLAT_CLOCK_H
+-#define PLAT_CLOCK_H
+-
+-#include <asm/hardware/icst.h>
+-
+-struct clk_ops {
+-	long	(*round)(struct clk *, unsigned long);
+-	int	(*set)(struct clk *, unsigned long);
+-	void	(*setvco)(struct clk *, struct icst_vco);
+-};
+-
+-int icst_clk_set(struct clk *, unsigned long);
+-long icst_clk_round(struct clk *, unsigned long);
+-
+-#endif
 -- 
-git-series 0.8.11
+2.9.3
