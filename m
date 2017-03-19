@@ -1,69 +1,80 @@
-Return-Path: <Chris.Packham@alliedtelesis.co.nz>
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Jason Cooper
-	<jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH v2 0/6] Updates for Marvell Switch SoCs
-Date: Tue, 7 Mar 2017 19:38:32 +0000
-Message-ID: <b2dc1865150d46a4b64c0522480bdec6@svr-chch-ex1.atlnz.lc>
-References: <20170216085041.28337-1-chris.packham@alliedtelesis.co.nz>
- <87bmtdovwr.fsf@free-electrons.com>
-Content-Type: text/plain; charset="iso-8859-1"
+Return-Path: <mars.cheng@mediatek.com>
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
+	<robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+CC: CC Hwang <cc.hwang@mediatek.com>, Loda Chou <loda.chou@mediatek.com>,
+	Miles Chen <miles.chen@mediatek.com>, Jades Shih <jades.shih@mediatek.com>,
+	Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang <my.chuang@mediatek.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>,
+	<linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>
+Subject: [PATCH v3 04/12] dt-bindings: mediatek: Add bindings for mediatek MT6797 Platform
+Date: Sun, 19 Mar 2017 23:26:25 +0800
+Message-ID: <1489937193-2953-5-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: mars.cheng@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Gregory,=0A=
-=0A=
-On 08/03/17 06:10, Gregory CLEMENT wrote:=0A=
-> Hi Chris,=0A=
->=0A=
->  On jeu., f=E9vr. 16 2017, Chris Packham <chris.packham@alliedtelesis.co.=
-nz> wrote:=0A=
->=0A=
->> Shortly after I posted my last series I got access to a more recent=0A=
->> Marvell SDK which had some device tree support for the switch SoCs I'd=
-=0A=
->> been wanting. It was still based on an older kernel but it was a huge=0A=
->> improvement over what came before.=0A=
->>=0A=
->> Patch 1/6 is a typo I noticed after my initial series was applied.=0A=
->>=0A=
->> Patch 2/6 is a bit of a cleanup. I did initially struggle with how to=0A=
->> access individual parts of the DFX block as well as retaining a handle o=
-n=0A=
->> the entire thing for the switch driver to use.=0A=
->>=0A=
->> Patch 3/6 is a re-jig of the dtsi files which is needed by 5/6. This is=
-=0A=
->> required because I need to use the coreclk label on a different node. It=
-=0A=
->> also means I don't have to disable nodes for blocks that only exist on=
-=0A=
->> the Armada-XP.=0A=
->>=0A=
->> Patch 4/6, 5/6 are split from the previous versions.=0A=
->>=0A=
->> Patch 6/6 is the device tree portion of a change already in clk-next.=0A=
->=0A=
->=0A=
-> I applied patches 2, 3 and 6 on mvebu/dt with the acked-by from Rob when=
-=0A=
-> he gave it.=0A=
->=0A=
-> Patch 1 is already part of 4.11-rc1.=0A=
->=0A=
-> For patch 4 and 5 I understand that either we don't need it or it should=
-=0A=
-> be a updated version so I skipped them.=0A=
->=0A=
-=0A=
-That's correct, thanks.=0A=
-=0A=
+This adds dt-binding documentation for Mediatek MT6797. Only
+include very basic items, gic, uart timer and cpu.
+
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/arm/mediatek.txt |    4 ++++
+ .../interrupt-controller/mediatek,sysirq.txt       |    1 +
+ .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
+ 3 files changed, 6 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/mediatek.txt b/Documentation/devicetree/bindings/arm/mediatek.txt
+index c860b24..2d3344d 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek.txt
+@@ -12,6 +12,7 @@ compatible: Must contain one of
+    "mediatek,mt6592"
+    "mediatek,mt6755"
+    "mediatek,mt6795"
++   "mediatek,mt6797"
+    "mediatek,mt7623"
+    "mediatek,mt8127"
+    "mediatek,mt8135"
+@@ -38,6 +39,9 @@ Supported boards:
+ - Evaluation board for MT6795(Helio X10):
+     Required root node properties:
+       - compatible = "mediatek,mt6795-evb", "mediatek,mt6795";
++- Evaluation board for MT6797(Helio X20):
++    Required root node properties:
++      - compatible = "mediatek,mt6797-evb", "mediatek,mt6797";
+ - Evaluation board for MT7623:
+     Required root node properties:
+       - compatible = "mediatek,mt7623-evb", "mediatek,mt7623";
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+index 40bf9b9..04e162a 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+@@ -9,6 +9,7 @@ Required properties:
+ 	"mediatek,mt8135-sysirq"
+ 	"mediatek,mt8127-sysirq"
+ 	"mediatek,mt6795-sysirq"
++	"mediatek,mt6797-sysirq"
+ 	"mediatek,mt6755-sysirq"
+ 	"mediatek,mt6592-sysirq"
+ 	"mediatek,mt6589-sysirq"
+diff --git a/Documentation/devicetree/bindings/serial/mtk-uart.txt b/Documentation/devicetree/bindings/serial/mtk-uart.txt
+index 0015c72..5b8513d 100644
+--- a/Documentation/devicetree/bindings/serial/mtk-uart.txt
++++ b/Documentation/devicetree/bindings/serial/mtk-uart.txt
+@@ -8,6 +8,7 @@ Required properties:
+   * "mediatek,mt6589-uart" for MT6589 compatible UARTS
+   * "mediatek,mt6755-uart" for MT6755 compatible UARTS
+   * "mediatek,mt6795-uart" for MT6795 compatible UARTS
++  * "mediatek,mt6797-uart" for MT6797 compatible UARTS
+   * "mediatek,mt7623-uart" for MT7623 compatible UARTS
+   * "mediatek,mt8127-uart" for MT8127 compatible UARTS
+   * "mediatek,mt8135-uart" for MT8135 compatible UARTS
+-- 
+1.7.9.5
