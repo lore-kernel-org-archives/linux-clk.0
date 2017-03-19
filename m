@@ -1,107 +1,43 @@
-Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
-Subject: Re: [PATCH v2 3/3] ARM64: dts: meson-gx: Add MALI nodes for GXBB and
- GXL
-To: Kevin Hilman <khilman@baylibre.com>
-References: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
- <1488365164-22861-4-git-send-email-narmstrong@baylibre.com>
- <e26cf584-dab2-2702-f7e6-b28f750fa00c@suse.de>
- <e80d9fb0-1d71-7cab-5e32-72316474fdfc@baylibre.com>
- <m2tw7a17nb.fsf@baylibre.com> <9f3a17e8-63fa-6c14-4d17-0539ef7cd5a2@suse.de>
- <1825920f-586f-7c84-8e0e-958046397b64@baylibre.com>
- <m2efya1fjg.fsf@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <074a13e8-5772-6fb4-fc45-cfbb57790e58@baylibre.com>
-Date: Tue, 7 Mar 2017 11:36:39 +0100
+Return-Path: <mars.cheng@mediatek.com>
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
+	<robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+CC: CC Hwang <cc.hwang@mediatek.com>, Loda Chou <loda.chou@mediatek.com>,
+	Miles Chen <miles.chen@mediatek.com>, Jades Shih <jades.shih@mediatek.com>,
+	Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang <my.chuang@mediatek.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>,
+	<linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>
+Subject: [PATCH v3 03/12] irqchip: mtk-sysirq: prevent unnecessary visibility when set_type
+Date: Sun, 19 Mar 2017 23:26:24 +0800
+Message-ID: <1489937193-2953-4-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <m2efya1fjg.fsf@baylibre.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
-List-Post: <mailto:linux-amlogic@lists.infradead.org>
-List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, sboyd@codeaurora.org,
- linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>, carlo@caione.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
-Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
+Return-Path: mars.cheng@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-T24gMDMvMDYvMjAxNyAwNjoyNyBQTSwgS2V2aW4gSGlsbWFuIHdyb3RlOgo+IE5laWwgQXJtc3Ry
-b25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT4gd3JpdGVzOgo+IAo+PiBPbiAwMy8wNC8yMDE3
-IDAxOjM4IFBNLCBBbmRyZWFzIEbDpHJiZXIgd3JvdGU6Cj4+PiBBbSAwMy4wMy4yMDE3IHVtIDIw
-OjI5IHNjaHJpZWIgS2V2aW4gSGlsbWFuOgo+Pj4+IE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25n
-QGJheWxpYnJlLmNvbT4gd3JpdGVzOgo+Pj4+PiBPbiAwMy8wMi8yMDE3IDAxOjMxIFBNLCBBbmRy
-ZWFzIEbDpHJiZXIgd3JvdGU6Cj4+Pj4+PiBBbSAwMS4wMy4yMDE3IHVtIDExOjQ2IHNjaHJpZWIg
-TmVpbCBBcm1zdHJvbmc6Cj4+Pj4+Pj4gVGhlIHNhbWUgTUFMSS00NTAgTVAzIEdQVSBpcyBwcmVz
-ZW50IGluIHRoZSBHWEJCIGFuZCBHWEwgU29Dcy4KPj4+IFsuLi5dCj4+Pj4+Pj4gVGhlIG5vZGUg
-aXMgc2ltcGx5IGFkZGVkIGluIHRoZSBtZXNvbi1neGJiLmR0c2kgZmlsZS4KPj4+IFsuLi5dCj4+
-Pj4+Pj4gRm9yIEdYTCwgc2luY2UgYSBsb3QgaXMgc2hhcmVkIHdpdGggdGhlIEdYTSB0aGF0IGhh
-cyBhIE1BTEktVDgyMCBJUCwgdGhpcwo+Pj4+Pj4+IHBhdGNoIGFkZHMgYSBuZXcgbWVzb24tZ3hs
-LW1hbGkuZHRzaSBhbmQgaXMgaW5jbHVkZWQgaW4gdGhlIFNvQyBzcGVjaWZpYwo+Pj4+Pj4+IGR0
-c2kgZmlsZXMuCj4+Pj4+Pgo+Pj4+Pj4gVGhpcyBwYXJ0IGlzIHNsaWdodGx5IGNvbmZ1c2luZyB0
-aG91Z2guCj4+Pj4+Pgo+Pj4+Pj4gV2hhdCBleGFjdGx5IGlzIHRoZSBHWEwgdnMuIEdYTSBkaWZm
-ZXJlbmNlIHRoYXQgdGhpcyBjYW4ndCBiZSBoYW5kbGVkIGJ5Cj4+Pj4+PiBvdmVycmlkaW5nIG5v
-ZGUgcHJvcGVydGllcyBjb21wYXRpYmxlL2ludGVycnVwdHMvY2xvY2tzPyBJIGFtIG1pc3Npbmcg
-YQo+Pj4+Pj4gR1hNIHBhdGNoIGluIHRoaXMgc2VyaWVzIGFzIHJhdGlvbmFsZSBmb3IgZG9pbmcg
-aXQgdGhpcyB3YXkuCj4+Pj4+Pgo+Pj4+Pj4gSW4gcGFydGljdWxhciBJIGFtIHdvbmRlcmluZyB3
-aGV0aGVyIHRoZSB3aG9sZSBHWE0taW5oZXJpdHMtZnJvbS1HWEwKPj4+Pj4+IGNvbmNlcHQgaXMg
-Zmxhd2VkIGFuZCBzaG91bGQgYmUgYWRqdXN0ZWQgaWYgdGhpcyBsZWFkcyB0byBzZWNvbmRhcnkK
-Pj4+Pj4+IC5kdHNpIGZpbGVzIGxpa2UgdGhpczogTXkgcHJvcG9zYWwgd291bGQgYmUgdG8gaW5z
-dGVhZCBjcmVhdGUgYQo+Pj4+Pj4gbWVzb24tZ3hsLWd4bS5kdHNpLCB0aGF0IG1lc29uLWd4bC5k
-dHNpIGFuZCBtZXNvbi1neG0uZHRzaSBjYW4gaW5oZXJpdAo+Pj4+Pj4gdGhlIGN1cnJlbnQgY29t
-bW9uIHBhcnRzIGZyb20sIHRoZW4gdGhlIE1hbGkgYml0cyBjYW4gc2ltcGx5IGdvIGludG8KPj4+
-Pj4+IG1lc29uLWd4bC5kdHNpIHdpdGhvdXQgZXh0cmEgI2luY2x1ZGVzIG5lZWRlZCBpbiBTOTA1
-WCBhbmQgUzkwNUQuIFdoaWxlCj4+Pj4+PiBpdCdzIHNsaWdodGx5IG1vcmUgd29yayB0byBzcGxp
-dCBvbmNlIGFnYWluLCBJIHRoaW5rIGl0IHdvdWxkIGJlIGNsZWFuZXIuCj4+PiBbLi4uXQo+Pj4+
-PiBUaGUgb25seSBjaGFuZ2VzIGFyZSA6Cj4+PiBbLi4uXQo+Pj4+PiAgLSBBIGRpZmZlcmVudCBN
-YWxpIGNvcmUsIGJ1dCB3aXRoIHRoZSBzYW1lIGludGVycnVwdHMgKGxlc3MgYnV0IHRoZXkgc2hh
-cmUgdGhlIHNhbWUgbG93ZXIgaW50ZXJydXB0cyksIGNsb2NrcyBhbmQgbWVtb3J5IHNwYWNlCj4+
-Pj4+Cj4+Pj4+IFRoaXMgaXMgd2h5IGl0IHdhcyBkZWNpZGVkIHRvIGhhdmUgYSBzdWItZHRzaSwg
-aGF2aW5nIGEgc2Vjb25kYXJ5IGR0c2kgd2lsbCBzaW1wbHkgY29weSA5OSUgb2YgdGhlIEdYTCBk
-dHNpLAo+Pj4+PiBidXQgc3VyZWx5IHdlIGNvdWxkIGFsc28gaGF2ZSBhbiBpbnRlcm1lZGlhdGUg
-ZHRzaSBidXQgZm9yIGJvYXJkcyBJJ20gb2sgd2l0aCBpdCwgYnV0IGxlc3MgZm9yIGEgU29DIGR0
-c2ksCj4+Pj4+IHNpbmNlIGl0IGNvdWxkIGxlYWQgdG8gc29tZSBjb25mdXNpb24uCj4+Pj4+Cj4+
-Pj4+IEZpbmFsbHksIHllcyBJIGNvdWxkIGhhdmUgYWRkZWQgdGhlIG1hbGkgbm9kZSB0byB0aGUg
-R1hMIGR0c2ksIGJ1dCB0aGUgbWlkZ2FyZCBNYWxpIGR0LWJpbmRpbmdzIGFyZSBub3QgdXBzdHJl
-YW0KPj4+Pj4gYW5kIHRoZSBmYW1pbHkgaXMgdG9vIGJpZyBhbmQgcmVjZW50IGVub3VnaCB0byBj
-b25zaWRlciBoYXZpbmcgc3RhYmxlIGJpbmRpbmdzIGZvciBub3cuCj4+Pj4+Cj4+Pj4+IE5ldmVy
-dGhlbGVzcywgbm90aGluZyBpcyBmaW5hbCwgdGhpcyBneGwtbWFsaS5kdHNpIGNvdWxkIGJlIG1l
-cmdlZCBpbnRvIHRoZSBHWEwgZHRzaSBpbiB0aGUgZnV0dXJlIHdoZW4gd2UKPj4+Pj4gaGF2ZSBw
-cm9wZXIgZHQtYmluZGluZ3MgYW5kIGEgcmVhbCBzdXBwb3J0IG9mIHRoZSBUODIwIE1hbGkgb24g
-dGhlIFM5MTIuCj4+Pj4+Cj4+Pj4+IEtldmluLCB3aGF0J3MgeW91ciB0aG91Z2h0IGFib3V0IHRo
-aXMgPwo+Pj4+Cj4+Pj4gSSBkb24ndCBoYXZlIGEgc3Ryb25nIHByZWZlcmVuY2UuICBJJ20gT0sg
-d2l0aCBhIHNlcGFyYXRlIE1hbGkgLmR0c2kgZHVlCj4+Pj4gdG8gdGhlIHNpZ25maWNhbnQgb3Zl
-cmxhcCBiZXR3ZWVuIEdYTC9HWE0gaW4gdGVybXMgb2YgY2xvY2tzLCBpbnRlcnJ1cHRzCj4+Pj4g
-ZXRjLgo+Pj4+Cj4+Pj4gSG93ZXZlciwgaWYgdGhlIHBsYW4gaXMgdG8gI2luY2x1ZGUgdGhpcyBm
-cm9tIEdYTSAuZHRzIGZpbGVzLCB3aG91bGQgYQo+Pj4+IGJldHRlciBuYW1lIGJlIG1lc29uLWd4
-LW1hbGkuZHRzaT8KPj4+Cj4+PiBJIHRob3VnaHQgdGhlIHB1cnBvc2Ugd2FzIHNwZWNpZmljYWxs
-eSB0byBub3QgaGF2ZSBHWE0gaW5jbHVkZSBpdAo+Pj4gYmVjYXVzZSBpdCB1c2VzIGEgTWlkZ2Fy
-ZCBJUC4KPj4+Cj4+PiBJZiB5b3Ugd2FudCB0byBzaGFyZSB0aGUgZnJhZ21lbnQgd2l0aCBHWEJC
-IHRvbyAoZ3gpLCB3ZSBzaG91bGQgcmF0aGVyCj4+PiB1c2UgbWVzb24tZ3gtbWFsaS11dGdhcmQu
-ZHRzaSwgd2hpY2ggd291bGQgZGlmZmVyZW50aWF0ZSBmcm9tIEdYTSdzCj4+PiBNaWRnYXJkIHdo
-aWxlIHN0aWxsIGFsbG93aW5nIGZvciB2YXJpYXRpb24gb24gdGhlIDR4eCBzaWRlIChlLmcuLCA0
-NzApLgo+Pj4KPj4+IFJlZ2FyZHMsCj4+PiBBbmRyZWFzCj4+Pgo+Pgo+PiBFeGFjdCwgdGhlcmUg
-aXMgbm8gcGxhbiB0byBpbmNsdWRlIGl0IGZyb20gR1hNLgo+Pgo+PiBJJ20gbm90IGZhbiBvZiBo
-YXZpbmcgbWVzb24tZ3gtbWFsaS11dGdhcmQuZHRzaSwgd2Ugc2hvdWxkIHN0aWxsIG5lZWQgc29t
-ZSBhdHRyaWJ1dGVzIGFkZGl0aW9ucyBmb3IKPj4gdGhlIGNsb2NrcyB0byB0aGUgbWFsaSBub2Rl
-IGluIHRoZSBneGJiIGR0c2kgYW5kIGVhY2ggczkwNXggYW5kIHM5MDVkIGR0c2kgZmlsZXMuCj4+
-IEknbSBub3Qgc3VyZSB0aGlzIGlzIGV2ZW4gY2xlYW5lci4uLgo+IAo+IE9LLCBJIG1pc3VuZGVy
-c3Rvb2QgdGhlIGludGVudCBvZiBoYXZpbmcgaXQgc2VwYXJhdGVkIGZyb20gb3V0IGZyb20gdGhl
-Cj4gR1hMIC5kc3RpIHRoZW4uICBDb3VsZCB5b3UgcGxlYXNlIGNsYXJpZnk/Cj4gCj4gS2V2aW4K
-CkhpLAoKSW5kZWVkLCBteSBjaGFuZ2Vsb2cgd2FzIG5vdCByZWFsbHkgY2xlYXIsIGhlcmUgaXMg
-dGhlIHJld29yZGVkIG9uZSB0aGF0IHdpbGwgbGFuZCBpbiB2MiA6CiIKVGhpcyBwYXRjaCBhZGQg
-bm9kZXMgZm9yIHRoZSBNYWxpLTQ1MCBNUDMgR1BVIHByZXNlbnQgaW4gdGhlIEdYQkIgYW5kIEdY
-TCBTb0NzLgoKRm9yIEdYQkIsIHRoZSBub2RlIGlzIHNpbXBseSBhZGRlZCBpbiB0aGUgbWVzb24t
-Z3hiYi5kdHNpIGZpbGUuCgpGb3ggR1hMLCBzaW5jZSB0aGUgR1hNIGR0c2kgaXMgYSBzdXBlcnNl
-dCBvZiB0aGUgR1hMIGR0c2ksIHRoZSBNYWxpIG5vZGUgaXMgYWRkZWQgdG8KdGhlIEdYTCBTb0Mg
-c3BlY2lmaWMgZHRzaSBmaWxlcyB2aWEgYW4gaW50ZXJtZWRpYXRlICJtZXNvbi1neGwtbWFsaS5k
-dHNpIiBmaWxlIHRvIGF2b2lkCmhhdmluZyBhbiBpbnZhbGlkIE1hbGktNDUwIG5vZGUgaW4gdGhl
-IEdYTSBkZXZpY2UgdHJlZS4KIgoKVGhhbmtzLApOZWlsCgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hbWxvZ2ljIG1haWxpbmcgbGlzdApsaW51
-eC1hbWxvZ2ljQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9saW51eC1hbWxvZ2ljCg==
+This prevent unnecessary visibility when configuring trigger type
+
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+---
+ drivers/irqchip/irq-mtk-sysirq.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-mtk-sysirq.c b/drivers/irqchip/irq-mtk-sysirq.c
+index 9ba969c..eeac512 100644
+--- a/drivers/irqchip/irq-mtk-sysirq.c
++++ b/drivers/irqchip/irq-mtk-sysirq.c
+@@ -57,7 +57,7 @@ static int mtk_sysirq_set_type(struct irq_data *data, unsigned int type)
+ 		value &= ~(1 << offset);
+ 	}
+ 
+-	writel(value, base + reg_index * 4);
++	writel_relaxed(value, base + reg_index * 4);
+ 
+ 	data = data->parent_data;
+ 	ret = data->chip->irq_set_type(data, type);
+-- 
+1.7.9.5
