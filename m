@@ -1,86 +1,119 @@
-Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
-Subject: Re: [PATCH v2 3/3] ARM64: dts: meson-gx: Add MALI nodes for GXBB and
- GXL
-To: Kevin Hilman <khilman@baylibre.com>,
- Neil Armstrong <narmstrong@baylibre.com>
-References: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
- <1488365164-22861-4-git-send-email-narmstrong@baylibre.com>
- <e26cf584-dab2-2702-f7e6-b28f750fa00c@suse.de>
- <e80d9fb0-1d71-7cab-5e32-72316474fdfc@baylibre.com>
- <m2tw7a17nb.fsf@baylibre.com>
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Message-ID: <9f3a17e8-63fa-6c14-4d17-0539ef7cd5a2@suse.de>
-Date: Sat, 4 Mar 2017 13:38:04 +0100
+Return-Path: <mars.cheng@mediatek.com>
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
+	<robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+CC: CC Hwang <cc.hwang@mediatek.com>, Loda Chou <loda.chou@mediatek.com>,
+	Miles Chen <miles.chen@mediatek.com>, Jades Shih <jades.shih@mediatek.com>,
+	Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang <my.chuang@mediatek.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>,
+	<linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>, Kevin-CW
+ Chen <kevin-cw.chen@mediatek.com>
+Subject: [PATCH v3 08/12] soc: mediatek: avoid using fixed spm power status defines
+Date: Sun, 19 Mar 2017 23:26:29 +0800
+Message-ID: <1489937193-2953-9-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <m2tw7a17nb.fsf@baylibre.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
-List-Post: <mailto:linux-amlogic@lists.infradead.org>
-List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, sboyd@codeaurora.org,
- linux-kernel@vger.kernel.org, carlo@caione.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
-Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
+Return-Path: mars.cheng@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-QW0gMDMuMDMuMjAxNyB1bSAyMDoyOSBzY2hyaWViIEtldmluIEhpbG1hbjoKPiBOZWlsIEFybXN0
-cm9uZyA8bmFybXN0cm9uZ0BiYXlsaWJyZS5jb20+IHdyaXRlczoKPj4gT24gMDMvMDIvMjAxNyAw
-MTozMSBQTSwgQW5kcmVhcyBGw6RyYmVyIHdyb3RlOgo+Pj4gQW0gMDEuMDMuMjAxNyB1bSAxMTo0
-NiBzY2hyaWViIE5laWwgQXJtc3Ryb25nOgo+Pj4+IFRoZSBzYW1lIE1BTEktNDUwIE1QMyBHUFUg
-aXMgcHJlc2VudCBpbiB0aGUgR1hCQiBhbmQgR1hMIFNvQ3MuClsuLi5dCj4+Pj4gVGhlIG5vZGUg
-aXMgc2ltcGx5IGFkZGVkIGluIHRoZSBtZXNvbi1neGJiLmR0c2kgZmlsZS4KWy4uLl0KPj4+PiBG
-b3IgR1hMLCBzaW5jZSBhIGxvdCBpcyBzaGFyZWQgd2l0aCB0aGUgR1hNIHRoYXQgaGFzIGEgTUFM
-SS1UODIwIElQLCB0aGlzCj4+Pj4gcGF0Y2ggYWRkcyBhIG5ldyBtZXNvbi1neGwtbWFsaS5kdHNp
-IGFuZCBpcyBpbmNsdWRlZCBpbiB0aGUgU29DIHNwZWNpZmljCj4+Pj4gZHRzaSBmaWxlcy4KPj4+
-Cj4+PiBUaGlzIHBhcnQgaXMgc2xpZ2h0bHkgY29uZnVzaW5nIHRob3VnaC4KPj4+Cj4+PiBXaGF0
-IGV4YWN0bHkgaXMgdGhlIEdYTCB2cy4gR1hNIGRpZmZlcmVuY2UgdGhhdCB0aGlzIGNhbid0IGJl
-IGhhbmRsZWQgYnkKPj4+IG92ZXJyaWRpbmcgbm9kZSBwcm9wZXJ0aWVzIGNvbXBhdGlibGUvaW50
-ZXJydXB0cy9jbG9ja3M/IEkgYW0gbWlzc2luZyBhCj4+PiBHWE0gcGF0Y2ggaW4gdGhpcyBzZXJp
-ZXMgYXMgcmF0aW9uYWxlIGZvciBkb2luZyBpdCB0aGlzIHdheS4KPj4+Cj4+PiBJbiBwYXJ0aWN1
-bGFyIEkgYW0gd29uZGVyaW5nIHdoZXRoZXIgdGhlIHdob2xlIEdYTS1pbmhlcml0cy1mcm9tLUdY
-TAo+Pj4gY29uY2VwdCBpcyBmbGF3ZWQgYW5kIHNob3VsZCBiZSBhZGp1c3RlZCBpZiB0aGlzIGxl
-YWRzIHRvIHNlY29uZGFyeQo+Pj4gLmR0c2kgZmlsZXMgbGlrZSB0aGlzOiBNeSBwcm9wb3NhbCB3
-b3VsZCBiZSB0byBpbnN0ZWFkIGNyZWF0ZSBhCj4+PiBtZXNvbi1neGwtZ3htLmR0c2ksIHRoYXQg
-bWVzb24tZ3hsLmR0c2kgYW5kIG1lc29uLWd4bS5kdHNpIGNhbiBpbmhlcml0Cj4+PiB0aGUgY3Vy
-cmVudCBjb21tb24gcGFydHMgZnJvbSwgdGhlbiB0aGUgTWFsaSBiaXRzIGNhbiBzaW1wbHkgZ28g
-aW50bwo+Pj4gbWVzb24tZ3hsLmR0c2kgd2l0aG91dCBleHRyYSAjaW5jbHVkZXMgbmVlZGVkIGlu
-IFM5MDVYIGFuZCBTOTA1RC4gV2hpbGUKPj4+IGl0J3Mgc2xpZ2h0bHkgbW9yZSB3b3JrIHRvIHNw
-bGl0IG9uY2UgYWdhaW4sIEkgdGhpbmsgaXQgd291bGQgYmUgY2xlYW5lci4KWy4uLl0KPj4gVGhl
-IG9ubHkgY2hhbmdlcyBhcmUgOgpbLi4uXQo+PiAgLSBBIGRpZmZlcmVudCBNYWxpIGNvcmUsIGJ1
-dCB3aXRoIHRoZSBzYW1lIGludGVycnVwdHMgKGxlc3MgYnV0IHRoZXkgc2hhcmUgdGhlIHNhbWUg
-bG93ZXIgaW50ZXJydXB0cyksIGNsb2NrcyBhbmQgbWVtb3J5IHNwYWNlCj4+Cj4+IFRoaXMgaXMg
-d2h5IGl0IHdhcyBkZWNpZGVkIHRvIGhhdmUgYSBzdWItZHRzaSwgaGF2aW5nIGEgc2Vjb25kYXJ5
-IGR0c2kgd2lsbCBzaW1wbHkgY29weSA5OSUgb2YgdGhlIEdYTCBkdHNpLAo+PiBidXQgc3VyZWx5
-IHdlIGNvdWxkIGFsc28gaGF2ZSBhbiBpbnRlcm1lZGlhdGUgZHRzaSBidXQgZm9yIGJvYXJkcyBJ
-J20gb2sgd2l0aCBpdCwgYnV0IGxlc3MgZm9yIGEgU29DIGR0c2ksCj4+IHNpbmNlIGl0IGNvdWxk
-IGxlYWQgdG8gc29tZSBjb25mdXNpb24uCj4+Cj4+IEZpbmFsbHksIHllcyBJIGNvdWxkIGhhdmUg
-YWRkZWQgdGhlIG1hbGkgbm9kZSB0byB0aGUgR1hMIGR0c2ksIGJ1dCB0aGUgbWlkZ2FyZCBNYWxp
-IGR0LWJpbmRpbmdzIGFyZSBub3QgdXBzdHJlYW0KPj4gYW5kIHRoZSBmYW1pbHkgaXMgdG9vIGJp
-ZyBhbmQgcmVjZW50IGVub3VnaCB0byBjb25zaWRlciBoYXZpbmcgc3RhYmxlIGJpbmRpbmdzIGZv
-ciBub3cuCj4+Cj4+IE5ldmVydGhlbGVzcywgbm90aGluZyBpcyBmaW5hbCwgdGhpcyBneGwtbWFs
-aS5kdHNpIGNvdWxkIGJlIG1lcmdlZCBpbnRvIHRoZSBHWEwgZHRzaSBpbiB0aGUgZnV0dXJlIHdo
-ZW4gd2UKPj4gaGF2ZSBwcm9wZXIgZHQtYmluZGluZ3MgYW5kIGEgcmVhbCBzdXBwb3J0IG9mIHRo
-ZSBUODIwIE1hbGkgb24gdGhlIFM5MTIuCj4+Cj4+IEtldmluLCB3aGF0J3MgeW91ciB0aG91Z2h0
-IGFib3V0IHRoaXMgPwo+IAo+IEkgZG9uJ3QgaGF2ZSBhIHN0cm9uZyBwcmVmZXJlbmNlLiAgSSdt
-IE9LIHdpdGggYSBzZXBhcmF0ZSBNYWxpIC5kdHNpIGR1ZQo+IHRvIHRoZSBzaWduZmljYW50IG92
-ZXJsYXAgYmV0d2VlbiBHWEwvR1hNIGluIHRlcm1zIG9mIGNsb2NrcywgaW50ZXJydXB0cwo+IGV0
-Yy4KPiAKPiBIb3dldmVyLCBpZiB0aGUgcGxhbiBpcyB0byAjaW5jbHVkZSB0aGlzIGZyb20gR1hN
-IC5kdHMgZmlsZXMsIHdob3VsZCBhCj4gYmV0dGVyIG5hbWUgYmUgbWVzb24tZ3gtbWFsaS5kdHNp
-PwoKSSB0aG91Z2h0IHRoZSBwdXJwb3NlIHdhcyBzcGVjaWZpY2FsbHkgdG8gbm90IGhhdmUgR1hN
-IGluY2x1ZGUgaXQKYmVjYXVzZSBpdCB1c2VzIGEgTWlkZ2FyZCBJUC4KCklmIHlvdSB3YW50IHRv
-IHNoYXJlIHRoZSBmcmFnbWVudCB3aXRoIEdYQkIgdG9vIChneCksIHdlIHNob3VsZCByYXRoZXIK
-dXNlIG1lc29uLWd4LW1hbGktdXRnYXJkLmR0c2ksIHdoaWNoIHdvdWxkIGRpZmZlcmVudGlhdGUg
-ZnJvbSBHWE0ncwpNaWRnYXJkIHdoaWxlIHN0aWxsIGFsbG93aW5nIGZvciB2YXJpYXRpb24gb24g
-dGhlIDR4eCBzaWRlIChlLmcuLCA0NzApLgoKUmVnYXJkcywKQW5kcmVhcwoKLS0gClNVU0UgTGlu
-dXggR21iSCwgTWF4ZmVsZHN0ci4gNSwgOTA0MDkgTsO8cm5iZXJnLCBHZXJtYW55CkdGOiBGZWxp
-eCBJbWVuZMO2cmZmZXIsIEphbmUgU21pdGhhcmQsIEdyYWhhbSBOb3J0b24KSFJCIDIxMjg0IChB
-RyBOw7xybmJlcmcpCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpsaW51eC1hbWxvZ2ljIG1haWxpbmcgbGlzdApsaW51eC1hbWxvZ2ljQGxpc3RzLmluZnJh
-ZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51
-eC1hbWxvZ2ljCg==
+Use variables to replace fixed defines since the offset
+of the status of spm power might be different for some chips
+
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+---
+ drivers/soc/mediatek/mtk-scpsys.c |   33 +++++++++++++++++++++++++++------
+ 1 file changed, 27 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index beb7916..eadbf0d 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -107,21 +107,28 @@ struct scp_domain {
+ 	struct regulator *supply;
+ };
+ 
++struct scp_ctrl_reg {
++	int pwr_sta_offs;
++	int pwr_sta2nd_offs;
++};
++
+ struct scp {
+ 	struct scp_domain *domains;
+ 	struct genpd_onecell_data pd_data;
+ 	struct device *dev;
+ 	void __iomem *base;
+ 	struct regmap *infracfg;
++	struct scp_ctrl_reg ctrl_reg;
+ };
+ 
+ static int scpsys_domain_is_on(struct scp_domain *scpd)
+ {
+ 	struct scp *scp = scpd->scp;
+ 
+-	u32 status = readl(scp->base + SPM_PWR_STATUS) & scpd->data->sta_mask;
+-	u32 status2 = readl(scp->base + SPM_PWR_STATUS_2ND) &
+-				scpd->data->sta_mask;
++	u32 status = readl(scp->base + scp->ctrl_reg.pwr_sta_offs) &
++						scpd->data->sta_mask;
++	u32 status2 = readl(scp->base + scp->ctrl_reg.pwr_sta2nd_offs) &
++						scpd->data->sta_mask;
+ 
+ 	/*
+ 	 * A domain is on when both status bits are set. If only one is set
+@@ -346,7 +353,8 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
+ }
+ 
+ static struct scp *init_scp(struct platform_device *pdev,
+-			const struct scp_domain_data *scp_domain_data, int num)
++			const struct scp_domain_data *scp_domain_data, int num,
++			struct scp_ctrl_reg *scp_ctrl_reg)
+ {
+ 	struct genpd_onecell_data *pd_data;
+ 	struct resource *res;
+@@ -358,6 +366,9 @@ static struct scp *init_scp(struct platform_device *pdev,
+ 	if (!scp)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	scp->ctrl_reg.pwr_sta_offs = scp_ctrl_reg->pwr_sta_offs;
++	scp->ctrl_reg.pwr_sta2nd_offs = scp_ctrl_reg->pwr_sta2nd_offs;
++
+ 	scp->dev = &pdev->dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -556,8 +567,13 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ static int __init scpsys_probe_mt2701(struct platform_device *pdev)
+ {
+ 	struct scp *scp;
++	struct scp_ctrl_reg scp_reg;
+ 
+-	scp = init_scp(pdev, scp_domain_data_mt2701, NUM_DOMAINS_MT2701);
++	scp_reg.pwr_sta_offs = SPM_PWR_STATUS;
++	scp_reg.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND;
++
++	scp = init_scp(pdev, scp_domain_data_mt2701, NUM_DOMAINS_MT2701,
++		       &scp_reg);
+ 	if (IS_ERR(scp))
+ 		return PTR_ERR(scp);
+ 
+@@ -667,8 +683,13 @@ static int __init scpsys_probe_mt8173(struct platform_device *pdev)
+ 	struct scp *scp;
+ 	struct genpd_onecell_data *pd_data;
+ 	int ret;
++	struct scp_ctrl_reg scp_reg;
++
++	scp_reg.pwr_sta_offs = SPM_PWR_STATUS;
++	scp_reg.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND;
+ 
+-	scp = init_scp(pdev, scp_domain_data_mt8173, NUM_DOMAINS_MT8173);
++	scp = init_scp(pdev, scp_domain_data_mt8173, NUM_DOMAINS_MT8173,
++		       &scp_reg);
+ 	if (IS_ERR(scp))
+ 		return PTR_ERR(scp);
+ 
+-- 
+1.7.9.5
