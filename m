@@ -1,81 +1,150 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Wed, 29 Mar 2017 18:27:40 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org, sudeep.holla@arm.com
-Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
-Message-ID: <20170329102740.GA20804@leoy-linaro>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
- <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
- <31be033f-514e-e48a-3ba2-a5c5cd477548@arm.com>
- <20170329030735.GA23889@leoy-linaro>
- <5584203e-cb19-a5d2-45b1-3e78d3482c55@arm.com>
+Return-Path: <mars.cheng@mediatek.com>
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
+	<robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+CC: CC Hwang <cc.hwang@mediatek.com>, Loda Chou <loda.chou@mediatek.com>,
+	Miles Chen <miles.chen@mediatek.com>, Jades Shih <jades.shih@mediatek.com>,
+	Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang <my.chuang@mediatek.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>,
+	<linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>
+Subject: [PATCH v3 12/12] arm64: dts: mediatek: add clk and scp nodes for MT6797
+Date: Sun, 19 Mar 2017 23:26:33 +0800
+Message-ID: <1489937193-2953-13-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5584203e-cb19-a5d2-45b1-3e78d3482c55@arm.com>
+Content-Type: text/plain
+Return-Path: mars.cheng@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 10:07:07AM +0100, Suzuki K Poulose wrote:
+This adds clk and scp nodes for MT6797
 
-[...]
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+---
+ arch/arm64/boot/dts/mediatek/mt6797.dtsi |   71 ++++++++++++++++++++++++++++--
+ 1 file changed, 67 insertions(+), 4 deletions(-)
 
-> >>>+	if (mode == EDDEVID_IMPL_NONE) {
-> >>>+		drvdata->edpcsr_present  = false;
-> >>>+		drvdata->edcidsr_present = false;
-> >>>+		drvdata->edvidsr_present = false;
-> >>>+	} else if (mode == EDDEVID_IMPL_EDPCSR) {
-> >>>+		drvdata->edpcsr_present  = true;
-> >>>+		drvdata->edcidsr_present = false;
-> >>>+		drvdata->edvidsr_present = false;
-> >>>+	} else if (mode == EDDEVID_IMPL_EDPCSR_EDCIDSR) {
-> >>>+		if (!IS_ENABLED(CONFIG_64BIT) &&
-> >>>+			(pcsr_offset == EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32))
-> >>>+			drvdata->edpcsr_present = false;
-> >>>+		else
-> >>>+			drvdata->edpcsr_present = true;
-> >>
-> >>Sorry, I forgot why we do this check only in this mode. Shouldn't this be
-> >>common to all modes (of course which implies PCSR is present) ?
-> >
-> >No. PCSROffset is defined differently in ARMv7 and ARMv8; So finally we
-> >simplize PCSROffset value :
-> >0000 - Sample offset applies based on the instruction state (indicated by PCSR[0])
-> >0001 - No offset applies.
-> >0010 - No offset applies, but do not use in AArch32 mode!
-> >
-> >So we need handle the corner case is when CPU runs AArch32 mode and
-> >PCSRoffset = 'b0010. Other cases the pcsr should be present.
-> 
-> I understand that reasoning. But my question is, why do we check for PCSROffset
-> only when mode == EDDEVID_IMPL_EDPCSR_EDCIDSR and not for say mode == EDDEVID_IMPL_EDPCSR or
-> any other mode where PCSR is present.
-
-Sorry I misunderstood your question.
-
-I made mistake when I analyzed the possbile combination for mode and
-PCSROffset so I thought it's the only case should handle:
-{ EDDEVID_IMPL_EDPCSR_EDCIDSR, EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 }
-
-Below three combinations are possible to exist; so you are right, I
-should move this out for the checking:
-{ EDDEVID_IMPL_NONE,           EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 }
-{ EDDEVID_IMPL_EDPCSR_EDCIDSR, EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 }
-{ EDDEVID_IMPL_FULL,           EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 }
-
-Thanks,
-Leo Yan
+diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+index cf4529e..3512c8e 100644
+--- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+@@ -11,6 +11,8 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <dt-bindings/clock/mt6797-clk.h>
++#include <dt-bindings/power/mt6797-power.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+@@ -123,6 +125,35 @@
+ 			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+ 	};
+ 
++	topckgen: topckgen@10000000 {
++		compatible = "mediatek,mt6797-topckgen";
++		reg = <0 0x10000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	infrasys: infracfg_ao@10001000 {
++		compatible = "mediatek,mt6797-infracfg", "syscon";
++		reg = <0 0x10001000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	scpsys: scpsys@10006000 {
++		compatible = "mediatek,mt6797-scpsys";
++		#power-domain-cells = <1>;
++		reg = <0 0x10006000 0 0x1000>;
++		clocks = <&topckgen CLK_TOP_MUX_MFG>,
++			 <&topckgen CLK_TOP_MUX_MM>,
++			 <&topckgen CLK_TOP_MUX_VDEC>;
++		clock-names = "mfg", "mm", "vdec";
++		infracfg = <&infrasys>;
++	};
++
++	apmixedsys: apmixed@1000c000 {
++		compatible = "mediatek,mt6797-apmixedsys";
++		reg = <0 0x1000c000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	sysirq: intpol-controller@10200620 {
+ 		compatible = "mediatek,mt6797-sysirq",
+ 			     "mediatek,mt6577-sysirq";
+@@ -138,7 +169,9 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11002000 0 0x400>;
+ 		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&clk26m>;
++		clocks = <&infrasys CLK_INFRA_UART0>,
++			 <&infrasys CLK_INFRA_AP_DMA>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -147,7 +180,9 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11003000 0 0x400>;
+ 		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&clk26m>;
++		clocks = <&infrasys CLK_INFRA_UART1>,
++			 <&infrasys CLK_INFRA_AP_DMA>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -156,7 +191,9 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11004000 0 0x400>;
+ 		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&clk26m>;
++		clocks = <&infrasys CLK_INFRA_UART2>,
++			 <&infrasys CLK_INFRA_AP_DMA>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -165,10 +202,36 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11005000 0 0x400>;
+ 		interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&clk26m>;
++		clocks = <&infrasys CLK_INFRA_UART3>,
++			 <&infrasys CLK_INFRA_AP_DMA>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
++	mmsys: mmsys_config@14000000 {
++		compatible = "mediatek,mt6797-mmsys", "syscon";
++		reg = <0 0x14000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	imgsys: imgsys_config@15000000  {
++		compatible = "mediatek,mt6797-imgsys", "syscon";
++		reg = <0 0x15000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	vdecsys: vdec_gcon@16000000 {
++		compatible = "mediatek,mt6797-vdecsys", "syscon";
++		reg = <0 0x16000000 0 0x10000>;
++		#clock-cells = <1>;
++	};
++
++	vencsys: venc_gcon@17000000 {
++		compatible = "mediatek,mt6797-vencsys", "syscon";
++		reg = <0 0x17000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	gic: interrupt-controller@19000000 {
+ 		compatible = "arm,gic-v3";
+ 		#interrupt-cells = <3>;
+-- 
+1.7.9.5
