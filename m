@@ -1,71 +1,41 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
+Return-Path: <jon.mason@broadcom.com>
+Return-Path: <jon.mason@broadcom.com>
+From: Jon Mason <jon.mason@broadcom.com>
 To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: bcm-kernel-feedback-list@broadcom.com,
 	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v1 1/8] dt-bindings: clock: gxbb: expose spdif clock gates
-Date: Tue, 28 Mar 2017 16:45:58 +0200
-Message-Id: <20170328144605.25278-2-jbrunet@baylibre.com>
-In-Reply-To: <20170328144605.25278-1-jbrunet@baylibre.com>
-References: <20170328144605.25278-1-jbrunet@baylibre.com>
+	Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>
+Subject: [PATCH] clk: ns2: Correct SDIO bits
+Date: Mon, 20 Mar 2017 18:12:14 -0400
+Message-Id: <1490047934-3061-1-git-send-email-jon.mason@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Expose the clock gates required for the spdif output
+From: Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Corrected the bits for power and iso.
+
+Signed-off-by: Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>
+Signed-off-by: Jon Mason <jon.mason@broadcom.com>
+Fixes: f7225a83 ("clk: ns2: add clock support for Broadcom Northstar 2 SoC")
 ---
- drivers/clk/meson/gxbb.h              | 4 ++--
- include/dt-bindings/clock/gxbb-clkc.h | 2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/bcm/clk-ns2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 9d949244b104..0d535f7e7aed 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -209,7 +209,7 @@
- /* CLKID_ETH */
- #define CLKID_DEMUX		  37
- /* CLKID_AIU_GLUE */
--#define CLKID_IEC958		  39
-+/* CLKID_IEC958 */
- /* CLKID_I2S_OUT */
- #define CLKID_AMCLK		  41
- #define CLKID_AIFIFO2		  42
-@@ -251,7 +251,7 @@
- #define CLKID_GCLK_VENCI_INT	  78
- #define CLKID_DAC_CLK		  79
- /* CLKID_AOCLK_GATE */
--#define CLKID_IEC958_GATE	  81
-+/* CLKID_IEC958_GATE */
- #define CLKID_ENC480P		  82
- #define CLKID_RNG1		  83
- #define CLKID_GCLK_VENCI_INT1	  84
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index cce6cb5418f1..1d4614bc8154 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -18,6 +18,7 @@
- #define CLKID_SAR_ADC		23
- #define CLKID_ETH		36
- #define CLKID_AIU_GLUE		38
-+#define CLKID_IEC958		39
- #define CLKID_I2S_OUT		40
- #define CLKID_MIXER_IFACE	44
- #define CLKID_AIU		47
-@@ -30,6 +31,7 @@
- #define CLKID_SANA		69
- #define CLKID_GCLK_VENCI_INT0	77
- #define CLKID_AOCLK_GATE	80
-+#define CLKID_IEC958_GATE	81
- #define CLKID_AO_I2C		93
- #define CLKID_SD_EMMC_A		94
- #define CLKID_SD_EMMC_B		95
+diff --git a/drivers/clk/bcm/clk-ns2.c b/drivers/clk/bcm/clk-ns2.c
+index a564e92..adc1414 100644
+--- a/drivers/clk/bcm/clk-ns2.c
++++ b/drivers/clk/bcm/clk-ns2.c
+@@ -103,7 +103,7 @@ CLK_OF_DECLARE(ns2_genpll_src_clk, "brcm,ns2-genpll-scr",
+ 
+ static const struct iproc_pll_ctrl genpll_sw = {
+ 	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_SPLIT_STAT_CTRL,
+-	.aon = AON_VAL(0x0, 2, 9, 8),
++	.aon = AON_VAL(0x0, 1, 11, 10),
+ 	.reset = RESET_VAL(0x4, 2, 1),
+ 	.dig_filter = DF_VAL(0x0, 9, 3, 5, 4, 2, 3),
+ 	.ndiv_int = REG_VAL(0x8, 4, 10),
 -- 
-2.9.3
+2.7.4
