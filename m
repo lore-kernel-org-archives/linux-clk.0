@@ -1,36 +1,45 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,  Jerome Brunet <jbrunet@baylibre.com>,  Neil Armstrong <narmstrong@baylibre.com>,  linux-amlogic@lists.infradead.org,  linux-crypto@vger.kernel.org,  Stephen Boyd <sboyd@codeaurora.org>,  Michael Turquette <mturquette@baylibre.com>,  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] clk: meson-gxbb: expose clock CLKID_RNG0
-References: <4e2d12e5-f75b-3ac6-a3f7-18e8a8b7283b@gmail.com>
-	<20170316100743.GA12137@gondor.apana.org.au>
-Date: Thu, 16 Mar 2017 11:24:31 -0700
-In-Reply-To: <20170316100743.GA12137@gondor.apana.org.au> (Herbert Xu's
-	message of "Thu, 16 Mar 2017 18:07:43 +0800")
-Message-ID: <m2mvcl6pwg.fsf@baylibre.com>
+Return-Path: <tony@atomide.com>
+Date: Mon, 20 Mar 2017 07:35:39 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 8/9] ARM: dts: omap4: add clkctrl nodes
+Message-ID: <20170320143538.GH20572@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <1489741781-12816-9-git-send-email-t-kristo@ti.com>
+ <20170317154333.GW20572@atomide.com>
+ <9456caee-4f45-044a-0b2e-305fa2d0d274@ti.com>
+ <b602ccba-489f-e78f-0011-6d808bca9f84@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <b602ccba-489f-e78f-0011-6d808bca9f84@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Herbert,
+* Tero Kristo <t-kristo@ti.com> [170320 06:27]:
+> On 17/03/17 23:41, Tero Kristo wrote:
+> > On 17/03/17 17:43, Tony Lindgren wrote:
+> > > * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+> > > > Add clkctrl nodes for OMAP4 SoC. These are going to be acting as
+> > > > replacement for part of the existing clock data and the existing
+> > > > clkctrl hooks under hwmod data.
+> > > 
+> > > It seems to be actually this patch in the series that breaks booting
+> > > if the last patch in this series is not applied.
+> > 
+> > Yea I guess we need to squash this and patch #9, I'll double check next
+> > week. Sorry about not catching this one.
+> 
+> Yes, patch #8 and #9 must be squashed. What happens with patch #8 alone, is
+> that you get all the clkctrl clocks registered, but as nobody is using them,
+> the clock core disables them later on in clk_disable_unused.
 
-Herbert Xu <herbert@gondor.apana.org.au> writes:
+So how hard would it to do a mixed approach where we don't need
+to have everything in place in the dts in order to flip a SoC?
 
-> On Wed, Feb 22, 2017 at 07:55:24AM +0100, Heiner Kallweit wrote:
->> Expose clock CLKID_RNG0 which is needed for the HW random number generator.
->> 
->> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->
-> All patches applied.  Thanks.
+This atomic transaction worries me..
 
-Actually, can you just apply [PATCH 4/4] to your tree?
+Regards,
 
-The clock and DT patches need to go through their respective trees or
-will otherwise have conflicts with other things going in via those
-trees.
-
-Thanks,
-
-Kevin
+Tony
