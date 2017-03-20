@@ -1,30 +1,57 @@
-Return-Path: <tony@atomide.com>
-Date: Fri, 17 Mar 2017 08:25:37 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
-Message-ID: <20170317152536.GT20572@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+Return-Path: <andy.tang@nxp.com>
+From: Yuantian Tang <andy.tang@nxp.com>
+To: <mturquette@baylibre.com>
+CC: <sboyd@codeaurora.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, Scott
+ Wood <oss@buserror.net>, Tang Yuantian <andy.tang@nxp.com>
+Subject: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
+Date: Mon, 20 Mar 2017 10:37:22 +0800
+Message-ID: <1489977443-33582-1-git-send-email-andy.tang@nxp.com>
+Return-Path: andy.tang@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [170317 02:12]:
-> Any additional testing on omap4 welcome as this series basically
-> tweaks every possible peripheral clock on the SoC.
+From: Scott Wood <oss@buserror.net>
 
-Without the last patch in this series, booting fails for me:
+ls1012a has separate input root clocks for core PLLs versus the platform
+PLL, with the latter described as sysclk in the hw docs.
+Update the qoriq-clock binding to allow a second input clock, named
+"coreclk".  If present, this clock will be used for the core PLLs.
 
-[    5.074890] l4_per_cm:clk:0120:0: failed to disable
-[    5.085113] l4_per_cm:clk:0128:0: failed to disable
+Signed-off-by: Scott Wood <oss@buserror.net>
+Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+v2:
+	-- change the author to Scott
+ Documentation/devicetree/bindings/clock/qoriq-clock.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Care to check that booting keeps working for each patch in the
-series to avoid breaking git bisect for booting?
-
-Regards,
-
-Tony
+diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+index aa3526f..119cafd 100644
+--- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
++++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+@@ -56,6 +56,11 @@ Optional properties:
+ - clocks: If clock-frequency is not specified, sysclk may be provided
+ 	as an input clock.  Either clock-frequency or clocks must be
+ 	provided.
++	A second input clock, called "coreclk", may be provided if
++	core PLLs are based on a different input clock from the
++	platform PLL.
++- clock-names: Required if a coreclk is present.  Valid names are
++	"sysclk" and "coreclk".
+ 
+ 2. Clock Provider
+ 
+@@ -72,6 +77,7 @@ second cell is the clock index for the specified type.
+ 	2	hwaccel		index (n in CLKCGnHWACSR)
+ 	3	fman		0 for fm1, 1 for fm2
+ 	4	platform pll	0=pll, 1=pll/2, 2=pll/3, 3=pll/4
++	5	coreclk		must be 0
+ 
+ 3. Example
+ 
+-- 
+2.1.0.27.g96db324
