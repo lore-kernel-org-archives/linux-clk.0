@@ -1,342 +1,79 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 8/9] ARM: dts: omap4: add clkctrl nodes
-Date: Fri, 17 Mar 2017 11:09:40 +0200
-Message-ID: <1489741781-12816-9-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+Return-Path: <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [alsa-devel] [PATCH v2] clk: x86: add "mclk" alias for
+ Baytrail/Cherrytrail
+To: linux-clk@vger.kernel.org, x86@kernel.org,
+ platform-driver-x86@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+References: <1487622236-16901-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+Cc: alsa-devel@alsa-project.org, Vinod Koul <vinod.koul@intel.com>,
+ Michael Turquette <mturquette@baylibre.com>, Takashi Iwai <tiwai@suse.com>,
+ Mark Brown <broonie@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <2dbe7397-2c7a-fe94-270c-f02e7e1a6bbb@linux.intel.com>
+Date: Sun, 19 Mar 2017 20:47:24 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1487622236-16901-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clkctrl nodes for OMAP4 SoC. These are going to be acting as
-replacement for part of the existing clock data and the existing
-clkctrl hooks under hwmod data.
+On 2/20/17 2:23 PM, Pierre-Louis Bossart wrote:
+> Due to timing requirements, TI and Conexant manage the audio
+> reference clock from their ASoC codec drivers using the "mclk"
+> string. This patch adds another lookup for the "pmc_plt_clk_3"
+> clock to avoid Intel-specific tests in those codec drivers and
+> use code as-is.
+>
+> To avoid a leak, clk_add_alias() is not used in this patch.
+> Instead the lookup is created manually as part of the .probe()
+> step and dropped in the .remove() step.
+>
+> "pmc_plt_clk_3" is used exclusively for audio on all known
+> Baytrail/CherryTrail designs and is e.g. routed on the MCLK
+> (pin 26) of the MinnowBoardMAX Turbot LSE connector.
+>
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/boot/dts/omap4.dtsi           |   1 +
- arch/arm/boot/dts/omap44xx-clocks.dtsi | 289 +++++++++++++++++++++++++++++++++
- 2 files changed, 290 insertions(+)
+Was there any objection or feedback on this patch?
+The functionality is needed for a couple of audio drivers from Conexant 
+and Dialog initially written for ARM platforms.
+Thanks
+-Pierre
 
-diff --git a/arch/arm/boot/dts/omap4.dtsi b/arch/arm/boot/dts/omap4.dtsi
-index 0cbd6c1..3ecf616 100644
---- a/arch/arm/boot/dts/omap4.dtsi
-+++ b/arch/arm/boot/dts/omap4.dtsi
-@@ -9,6 +9,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/pinctrl/omap.h>
-+#include <dt-bindings/clock/omap4.h>
- 
- / {
- 	compatible = "ti,omap4430", "ti,omap4";
-diff --git a/arch/arm/boot/dts/omap44xx-clocks.dtsi b/arch/arm/boot/dts/omap44xx-clocks.dtsi
-index 9573b37..c7d517c 100644
---- a/arch/arm/boot/dts/omap44xx-clocks.dtsi
-+++ b/arch/arm/boot/dts/omap44xx-clocks.dtsi
-@@ -622,6 +622,7 @@
- 		clock-frequency = <0>;
- 	};
- };
-+
- &prm_clocks {
- 	sys_clkin_ck: sys_clkin_ck@110 {
- 		#clock-cells = <0>;
-@@ -1641,3 +1642,291 @@
- 		reg = <0x0224>;
- 	};
- };
-+
-+&cm1 {
-+	mpuss_cm: mpuss_cm@300 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x300 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x300 0x100>;
-+
-+		mpuss_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x4>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	tesla_cm: tesla_cm@400 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x400 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x400 0x100>;
-+
-+		tesla_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x4>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	abe_cm: abe_cm@500 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x500 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x500 0x100>;
-+
-+		abe_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x6c>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+};
-+
-+&cm2 {
-+	l4_ao_cm: l4_ao_cm@600 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x600 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x600 0x100>;
-+
-+		l4_ao_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x1c>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	l3_1_cm: l3_1_cm@700 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x700 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x700 0x100>;
-+
-+		l3_1_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x4>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	l3_2_cm: l3_2_cm@800 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x800 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x800 0x100>;
-+
-+		l3_2_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x14>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	ducati_cm: ducati_cm@900 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x900 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x900 0x100>;
-+
-+		ducati_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x4>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	l3_dma_cm: l3_dma_cm@a00 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0xa00 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0xa00 0x100>;
-+
-+		l3_dma_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x4>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	l3_emif_cm: l3_emif_cm@b00 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0xb00 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0xb00 0x100>;
-+
-+		l3_emif_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x1c>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	d2d_cm: d2d_cm@c00 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0xc00 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0xc00 0x100>;
-+
-+		d2d_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x4>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	l4_cfg_cm: l4_cfg_cm@d00 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0xd00 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0xd00 0x100>;
-+
-+		l4_cfg_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x14>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	l3_instr_cm: l3_instr_cm@e00 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0xe00 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0xe00 0x100>;
-+
-+		l3_instr_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x24>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	ivahd_cm: ivahd_cm@f00 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0xf00 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0xf00 0x100>;
-+
-+		ivahd_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0xc>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	iss_cm: iss_cm@1000 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x1000 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x1000 0x100>;
-+
-+		iss_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0xc>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	l3_dss_cm: l3_dss_cm@1100 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x1100 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x1100 0x100>;
-+
-+		l3_dss_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x4>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	l3_gfx_cm: l3_gfx_cm@1200 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x1200 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x1200 0x100>;
-+
-+		l3_gfx_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x4>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	l3_init_cm: l3_init_cm@1300 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x1300 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x1300 0x100>;
-+
-+		l3_init_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0xc4>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	l4_per_cm: l4_per_cm@1400 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x1400 0x200>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x1400 0x200>;
-+
-+		l4_per_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x144>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+};
-+
-+&prm {
-+	l4_wkup_cm: l4_wkup_cm@1800 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x1800 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x1800 0x100>;
-+
-+		l4_wkup_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x5c>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
-+	emu_sys_cm: emu_sys_cm@1a00 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x1a00 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x1a00 0x100>;
-+
-+		emu_sys_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x4>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+};
--- 
-1.9.1
+
+> ---
+>  drivers/clk/x86/clk-pmc-atom.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+> index 2b60577..fafc991 100644
+> --- a/drivers/clk/x86/clk-pmc-atom.c
+> +++ b/drivers/clk/x86/clk-pmc-atom.c
+> @@ -54,6 +54,7 @@ struct clk_plt_data {
+>  	struct clk_plt_fixed **parents;
+>  	u8 nparents;
+>  	struct clk_plt *clks[PMC_CLK_NUM];
+> +	struct clk_lookup *mclk_lookup;
+>  };
+>
+>  /* Return an index in parent table */
+> @@ -337,6 +338,11 @@ static int plt_clk_probe(struct platform_device *pdev)
+>  			goto err_unreg_clk_plt;
+>  		}
+>  	}
+> +	data->mclk_lookup = clkdev_hw_create(&data->clks[3]->hw, "mclk", NULL);
+> +	if (IS_ERR(data->mclk_lookup)) {
+> +		err = PTR_ERR(data->mclk_lookup);
+> +		goto err_unreg_clk_plt;
+> +	}
+>
+>  	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+>
+> @@ -356,6 +362,7 @@ static int plt_clk_remove(struct platform_device *pdev)
+>
+>  	data = platform_get_drvdata(pdev);
+>
+> +	clkdev_drop(data->mclk_lookup);
+>  	plt_clk_unregister_loop(data, PMC_CLK_NUM);
+>  	plt_clk_unregister_parents(data);
+>  	return 0;
+>
