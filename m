@@ -1,72 +1,81 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Leo Yan <leo.yan@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	mike.leach@linaro.org,
-	Suzuki.Poulose@arm.com,
-	sudeep.holla@arm.com
-Subject: [PATCH v4 5/7] clk: hi6220: add debug APB clock
-Date: Fri, 17 Mar 2017 23:02:21 +0800
-Message-Id: <1489762943-25849-6-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
-References: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 20 Mar 2017 10:51:08 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: sunxi: ccu-sun5i needs nkmp
+Message-ID: <20170320095108.nru6wnl5lcigzsoc@lukather>
+References: <20170214213005.2848151-1-arnd@arndb.de>
+ <20170216175318.fuj375743jt43um4@lukather>
+ <CAK8P3a13rqommB90NP_aNPgcoYXb9u=LYs7ep3U=c3C6-3wPHA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="3orsvpvjuayvl3ib"
+In-Reply-To: <CAK8P3a13rqommB90NP_aNPgcoYXb9u=LYs7ep3U=c3C6-3wPHA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The debug APB clock is absent in hi6220 driver, so this patch is to add
-support for it.
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- drivers/clk/hisilicon/clk-hi6220.c       | 1 +
- include/dt-bindings/clock/hi6220-clock.h | 5 ++++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+--3orsvpvjuayvl3ib
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/clk-hi6220.c
-index c0e8e1f..2ae151c 100644
---- a/drivers/clk/hisilicon/clk-hi6220.c
-+++ b/drivers/clk/hisilicon/clk-hi6220.c
-@@ -134,6 +134,7 @@ static struct hisi_gate_clock hi6220_separated_gate_clks_sys[] __initdata = {
- 	{ HI6220_UART4_PCLK,    "uart4_pclk",    "uart4_src",      CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 8,  0, },
- 	{ HI6220_SPI_CLK,       "spi_clk",       "clk_150m",       CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 9,  0, },
- 	{ HI6220_TSENSOR_CLK,   "tsensor_clk",   "clk_bus",        CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x230, 12, 0, },
-+	{ HI6220_DAPB_CLK,      "dapb_clk",      "cs_dapb",        CLK_SET_RATE_PARENT|CLK_IS_CRITICAL,   0x230, 18, 0, },
- 	{ HI6220_MMU_CLK,       "mmu_clk",       "ddrc_axi1",      CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x240, 11, 0, },
- 	{ HI6220_HIFI_SEL,      "hifi_sel",      "hifi_src",       CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x270, 0,  0, },
- 	{ HI6220_MMC0_SYSPLL,   "mmc0_syspll",   "syspll",         CLK_SET_RATE_PARENT|CLK_IGNORE_UNUSED, 0x270, 1,  0, },
-diff --git a/include/dt-bindings/clock/hi6220-clock.h b/include/dt-bindings/clock/hi6220-clock.h
-index 6b03c84..b8ba665 100644
---- a/include/dt-bindings/clock/hi6220-clock.h
-+++ b/include/dt-bindings/clock/hi6220-clock.h
-@@ -124,7 +124,10 @@
- #define HI6220_CS_DAPB		57
- #define HI6220_CS_ATB_DIV	58
- 
--#define HI6220_SYS_NR_CLKS	59
-+/* gate clock */
-+#define HI6220_DAPB_CLK		59
-+
-+#define HI6220_SYS_NR_CLKS	60
- 
- /* clk in Hi6220 media controller */
- /* gate clocks */
--- 
-2.7.4
+Hi Arnd,
+
+On Mon, Mar 13, 2017 at 05:24:10PM +0100, Arnd Bergmann wrote:
+> On Thu, Feb 16, 2017 at 6:53 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > On Tue, Feb 14, 2017 at 10:29:45PM +0100, Arnd Bergmann wrote:
+> >> A randconfig build ran into this rare link error:
+> >>
+> >> drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.1+0x4): und=
+efined reference to `ccu_nkmp_ops'
+> >> drivers/clk/sunxi-ng/ccu-sun5i.o:(.data.__compound_literal.7+0x4): und=
+efined reference to `ccu_nkmp_ops'
+> >>
+> >> This adds the missing 'select'.
+> >>
+> >> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
+> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >
+> > Queued as a fix for 4.11, thanks!
+>=20
+> I just checked my old patches and this seems to still be required as of
+> 4.11-rc2. I see it in linux-next through sunxi/sunxi/for-next, but not as
+> part of a clk-fixes merge.
+
+Sorry, I went to holidays without sending the PR. I just did,
+hopefully, it should be on Linus' way for the next rc.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--3orsvpvjuayvl3ib
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYz6YMAAoJEBx+YmzsjxAgZb4P/3hyjS2OF9sVng2Qq+hYKvrF
+Vcth7i5XiDAGBTslmoBP29yV4BRZJnow6jTtBc4+STdW40W7LMuVwYcPlmkbKkx+
+3IjfS0bowyDj5ApmASh0LUztZdaK5uOuPE17+nMKxHvznenefqvfCYGCfjRYJDNf
+HsPit7dRKKTBt/zcc+t/dimYHkBxxo4Mm+kaQJg76EfZMcf+SSmlAZNzt1mV0zby
+xCBT7Y02GPIlHjveS+1wQssLzxZrN6yEZHZt+ZoSKV8NJRzuVMxQWcr6VXfSFlSa
+f8ZZMMZvEzA2EcX7J3hp6waFPxzrRtifzCRzYjFzTl8/Eh3+Vk81uvdvltrdCHGC
+9ngWPWU837nZixDFIYghhH7jYj6GoE/gU1MxtroqDJXaNUJSuH5kWPCNiFav+gqz
+1bbZfJg8FMEKcnVQWcoKeSYSeChpHiqBgPbuOUXgRQ09KVMT35jBnTmeEzaSok5i
+HZ1PBO8wWH2pvQMuEbloSHAuzpAvD1XzYCqAh3d59Xu6qz3lIK5EmX4ut2RIm5P5
+Bbfzl6cQ7ibJDKklp+U+n50m//h+YoDSzyx4iPpTsb4Zi2vK2vypryyZyqidAKBS
+clUBYL0FiPif6FR4yqyPG+dMdJ51tWkXS+K/0LsaoOkSnsaXb9JYp5BqNYiMLuyy
+wStoEqHLv2bVQfkRHkXi
+=7BPz
+-----END PGP SIGNATURE-----
+
+--3orsvpvjuayvl3ib--
