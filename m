@@ -1,78 +1,94 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv2 5/9] ARM: OMAP2+: hwmod: assign main clock from DT if
- available
-To: Tony Lindgren <tony@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <1489741781-12816-6-git-send-email-t-kristo@ti.com>
- <20170317154126.GU20572@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <f7c795dc-13db-9157-cdcc-b61892cc73f9@ti.com>
-Date: Fri, 17 Mar 2017 23:40:19 +0200
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 20 Mar 2017 14:08:25 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 0/6] Add missing Tegra210 clocks
+Message-ID: <20170320130825.GD22463@ulmo.ba.sec>
+References: <1488292648-16876-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20170317154126.GU20572@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="NklN7DEeGtkPCoo3"
+In-Reply-To: <1488292648-16876-1-git-send-email-pdeschrijver@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 17/03/17 17:41, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
->> -static int _init_main_clk(struct omap_hwmod *oh)
->> +static int _init_main_clk(struct omap_hwmod *oh, struct device_node *np)
->>  {
->>  	int ret = 0;
->> -	char name[MOD_CLK_MAX_NAME_LEN];
->> -	struct clk *clk;
->> -	static const char modck[] = "_mod_ck";
->> -
->> -	if (strlen(oh->name) >= MOD_CLK_MAX_NAME_LEN - strlen(modck))
->> -		pr_warn("%s: warning: cropping name for %s\n", __func__,
->> -			oh->name);
->> +	struct clk *clk = NULL;
->> +	int i;
->> +	int count;
->> +	const char *name;
->> +	char clk_name[strlen("clkctrl-x") + 1];
->>
->> -	strlcpy(name, oh->name, MOD_CLK_MAX_NAME_LEN - strlen(modck));
->> -	strlcat(name, modck, MOD_CLK_MAX_NAME_LEN);
->> +	if (np) {
->> +		clk = of_clk_get_by_name(np, "clkctrl");
->> +		if (IS_ERR(clk)) {
->> +			/* Try matching by hwmod name */
->> +			count = of_property_count_strings(np, "ti,hwmods");
->> +			for (i = 0; i < count; i++) {
->> +				ret = of_property_read_string_index(np,
->> +								    "ti,hwmods",
->> +								    i, &name);
->> +				if (ret)
->> +					continue;
->> +				if (!strcmp(name, oh->name)) {
->> +					sprintf(clk_name, "clkctrl-%d", i);
->> +					clk = of_clk_get_by_name(np, clk_name);
->> +				}
->> +			}
->> +		}
->> +		if (!IS_ERR(clk)) {
->> +			pr_debug("%s: mapped main_clk %s for %s\n", __func__,
->> +				 __clk_get_name(clk), oh->name);
->> +			oh->main_clk = __clk_get_name(clk);
->> +			oh->_clk = clk;
->> +			soc_ops.disable_direct_prcm(oh);
->> +		}
->> +	}
->
-> You should bail out and do nothing here if legacy "ti,hwmods" property is
-> not found. Eventually it will be the interconnect target IP wrapper module
-> that will manage the clock and populate the rest of the hwmod data
-> dynamically.
 
-This is only for transitional support of hwmod, this patch will not be 
-needed for anything later on; or you probably need to do something 
-similar within the interconnect driver itself. The code still needs to 
-care for the cases where we want to find the main clock based on the 
-clock link within hwmod data, so bailing out early will break any boards 
-that don't support the new clkctrl clocks yet.
+--NklN7DEeGtkPCoo3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--Tero
+On Tue, Feb 28, 2017 at 04:37:16PM +0200, Peter De Schrijver wrote:
+> This series adds a number of clocks which were missing from the Tegra210
+> clock definition. It applies on top of the 'Tegra210 clock bug fixes' ser=
+ies
+> posted earlier.
+>=20
+> Change log:
+>=20
+> v3: fixed compiler warnings
+>=20
+> v2: fixed a few useless lines moving around
+>=20
+>=20
+> Peter De Schrijver (6):
+>   clk: tegra: add cec clock
+>   clk: tegra: define Tegra210 DMIC sync clocks
+>   clk: tegra: fix constness for periph clks
+>   clk: tegra: define Tegra210 DMIC clocks
+>   clk: tegra: add super clk mux/div
+>   clk: tegra: add aclk
+>=20
+>  drivers/clk/tegra/clk-id.h                      | 10 +++
+>  drivers/clk/tegra/clk-periph.c                  |  4 +-
+>  drivers/clk/tegra/clk-super.c                   | 87 +++++++++++++++++++=
+++++--
+>  drivers/clk/tegra/clk-tegra-audio.c             | 85 +++++++++++++++++--=
+-----
+>  drivers/clk/tegra/clk-tegra-periph.c            | 22 +++++++
+>  drivers/clk/tegra/clk-tegra114.c                |  1 +
+>  drivers/clk/tegra/clk-tegra124.c                |  1 +
+>  drivers/clk/tegra/clk-tegra210.c                | 20 ++++++
+>  drivers/clk/tegra/clk-tegra30.c                 |  1 +
+>  drivers/clk/tegra/clk.h                         | 11 +++-
+>  include/dt-bindings/clock/tegra114-car.h        |  2 +-
+>  include/dt-bindings/clock/tegra124-car-common.h |  2 +-
+>  include/dt-bindings/clock/tegra210-car.h        | 13 +++-
+>  include/dt-bindings/clock/tegra30-car.h         |  2 +-
+>  14 files changed, 223 insertions(+), 38 deletions(-)
+
+Applied to for-4.12/clk, thanks.
+
+Thierry
+
+--NklN7DEeGtkPCoo3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP1EgACgkQ3SOs138+
+s6ExFRAArpqwGFG07p0hyU3po5I7Sz0oqb+K/+8tre8JvW8JyK/5XQljU5sulvdf
+lkhDSXNFzr9tprBixr2LZ0E7+4nPhHPn0EhQ6LH+6imAygqxpIgjwFxA+OqIOmEd
+u8wvF4Unc9UXdKkN20JpJ3Rr1iX33YWMFukhWumyYI5WNl/LugNgeeeNaAiTDyZB
+clu6D8DVrDd7au8D1rwfrAQFt/5SFVfAQLP+MJDQxVI8rKFT8dPnafvpgRGVBtip
+AfUNYBRG7ubrp9V9bOlgwWjpHVtgQDGg8Fh7snLvGMavVFYUYQz7SV4F38MajOIf
+WXqbyQpXzGHNPeBqsvJT3oHO+f0o5fY3RP1kUUKnhxA1EvX7YVv+2qRX0paZ7dgA
+skyZ4tKWD0iVqx3ZsiiAk7WjU0TzZmpGyCVT3rF9huhjyGO8wIbWbM5QDbanmUB/
+rvX+6fjDzyycgOvm65MVq7SteC0P9EfiInpu5TvCQfUcKLYDUZACpq3JT++QKKpW
+MXGUVfKTSZLNLlqBtyUvMgrUfWggqbNOMTsz8wP260j7TR/6Alyvu3hKRPVakN7I
+FM1RrJCBidgEQS2uU4me5qz4PgFFMn3pukME8bo1HB+/+g7RX64BH/Q0XhIQo6D9
+Ri3+3oPs8s4ucbdZR2DJPDI4oZXsGY9Px7gcc8Yx6bPsJPiEtdE=
+=UWQr
+-----END PGP SIGNATURE-----
+
+--NklN7DEeGtkPCoo3--
