@@ -1,107 +1,242 @@
-Return-Path: <Suzuki.Poulose@arm.com>
-Subject: Re: [v3 3/5] coresight: add support for debug module
-To: Leo Yan <leo.yan@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <20170309175915.GA964@leoy-linaro>
- <3f27efee-3b63-81fd-eb96-73fd7e6f5e92@arm.com>
- <20170313165600.GB32431@linaro.org>
- <516f8989-4dde-2686-d549-0761feb14d1b@arm.com>
- <CANLsYkzJsGvr4ZzNbTwcPu1Qki6=Szvu+bMjHZ_rza==DqFChw@mail.gmail.com>
- <20170317101328.GA19877@leoy-linaro> <20170317155007.GA20435@linaro.org>
- <20170317162836.GD2020@leoy-linaro>
- <5995f6a7-08b1-c868-fc88-a145d1748a33@arm.com>
- <CANLsYkyiAnSGW4Ujs6L-yBKK3no3zigbyBgOCWbm06ZdV-f2Hw@mail.gmail.com>
- <20170321025924.GA7429@leoy-linaro>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Wei Xu <xuwei5@hisilicon.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, John Stultz <john.stultz@linaro.org>,
- Guodong Xu <guodong.xu@linaro.org>,
- Haojian Zhuang <haojian.zhuang@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
- Mike Leach <mike.leach@linaro.org>, Sudeep Holla <Sudeep.Holla@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <7226bc83-24f5-f609-2f87-f0afc7657488@arm.com>
-Date: Tue, 21 Mar 2017 10:16:45 +0000
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:57402 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755487AbdCTOs0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2017 10:48:26 -0400
+Subject: Re: [PATCH V3 2/5] iommu/arm-smmu: Add support for MMU40x/500 clocks
+To: Rob Herring <robh@kernel.org>
+References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
+ <1489073748-3659-3-git-send-email-sricharan@codeaurora.org>
+ <20170316210331.i47xkr6opm6he3lk@rob-hp-laptop>
+Cc: robin.murphy@arm.com, will.deacon@arm.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, m.szyprowski@samsung.com,
+        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+        devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
+        mark.rutland@arm.com
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <a678b829-42a7-50f2-f5cb-be6ba4e36732@codeaurora.org>
+Date: Mon, 20 Mar 2017 20:18:05 +0530
 MIME-Version: 1.0
-In-Reply-To: <20170321025924.GA7429@leoy-linaro>
-Content-Type: text/plain; charset=us-ascii; format=flowed
+In-Reply-To: <20170316210331.i47xkr6opm6he3lk@rob-hp-laptop>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 21/03/17 02:59, Leo Yan wrote:
-> On Mon, Mar 20, 2017 at 10:40:00AM -0600, Mathieu Poirier wrote:
->
-> [...]
->
->>>>> If we don't check for "nohlt" some platform may freeze, others may work.
->>>>> If we
->>>>> mandate that "nohlt" be present on the kernel cmd line it works in all
->>>>> cases.
->>>>> As such mandating that "nohlt" be present is a better way to go.
->>>>
->>>>
->>>> Sure, so I will add below checking code in the probe function, please
->>>> let me know if you have alter better way to implement this:
->>>>
->>>> +       if (IS_ENABLED(CONFIG_CPU_IDLE) &&
->>>> +                       !strstr(boot_command_line, "nohlt")) {
->>>> +               dev_err(dev, "May not be accessible in CPU power
->>>> domain.\n");
->>>> +               return -EPERM;
->>>> +       }
->>>>
->>>
->>> There is an API which kind of achieves what "nohlt" does at runtime :
->>>
->>>   cpu_idle_poll_ctrl(true)
->>>
->>> So may be we could use that instead of depending on "nohlt". The other side
->>> of the issues is "when do we decide to use the API". May be we could add
->>> something
->>> like : enable_debug, which could then trigger the panic notifier
->>> registrations
->>> and the above. That would still leave us with a case where the system
->>> crashes
->>> even before the user gets a terminal. May be the following is the best
->>> option :
->>>
->>> 1) Dedicated kernel command line parameter for enabling the CPU debug at
->>> boot/probe.
->>>
->>> and
->>>
->>> 2) Runtime enable method via sysfs.
->>>
->>> What do you think ?
+Hi Rob,
+
+On 3/17/2017 2:33 AM, Rob Herring wrote:
+> On Thu, Mar 09, 2017 at 09:05:45PM +0530, Sricharan R wrote:
+>> The MMU400x/500 is the implementation of the SMMUv2
+>> arch specification. It is split in to two blocks
+>> TBU, TCU. TBU caches the page table, instantiated
+>> for each master locally, clocked by the TBUn_clk.
+>> TCU manages the address translation with PTW and has
+>> the programming interface as well, clocked using the
+>> TCU_CLK. The TBU can also be sharing the same clock
+>> domain as TCU, in which case both are clocked using
+>> the TCU_CLK.
 >>
->> In my opinion booting with "nohlt" on the cmd line is sufficient to
->> determine if we should use the driver or not.  That way we also avoid
->> declaring yet another sysfs flag, something I really want to avoid.
+>> This defines the clock bindings for the same and adds the
+>> init, enable and disable functions for handling the
+>> clocks.
+>>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> ---
+>>  .../devicetree/bindings/iommu/arm,smmu.txt         | 27 ++++++
+>>  drivers/iommu/arm-smmu.c                           | 95 +++++++++++++++++++++-
+>>  2 files changed, 121 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+>> index 6cdf32d..b369c13 100644
+>> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+>> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+>> @@ -60,6 +60,28 @@ conditions.
+>>                    aliases of secure registers have to be used during
+>>                    SMMU configuration.
+>>
+>> +- clock-names:    Should be "tbu_clk" and "tcu_clk" and "cfg_clk" for
 >
-> Agree.
+> _clk is redundant
+
+ok, will remove it.
+
 >
-> I did spend some time to implement coresight core framework to support
-> debug module, you could see it on:http://termbin.com/k2fj; this also
-> gives me more sense which is better choice. If declaring another sysfs
-> flag to support debug module in coresight framework, this lets the
-> codes and interfaces more complex. E.g. for best fit into coresight
-> framework, finally we can get 8 sysfs nodes for 8 CPUs in system; so
-> that means we need enable every CPU one by one.
+>> +                  "arm,mmu-400", "arm,mmu-401" and "arm,mmu-500"
+>> +
+>> +                  "tcu_clk" is required for smmu's register access using the
+>> +                  programming interface and ptw for downstream bus access.
+>> +
+>> +                  "tbu_clk" is required for access to the TBU connected to the
+>> +                  master locally. This clock is optional and not required when
+>> +                  TBU is in the same clock domain as the TCU or when the TBU is
+>> +                  clocked along with the master.
+>> +
+>> +                  "cfg_clk" is optional if required to access the TCU's programming
+>> +                  interface, apart from the "tcu_clk".
+>
+> Clocks generally shouldn't be optional. Either the h/w has a clock or it
+> doesn't.
+>
 
-Having a node for each debug area indeed doesn't look good. We could
-as will stick a single node under /sys/kernel/debug/ which would enable/disable
-the debug component.
+ok, will not define it as 'optional'. I will define it to be soc
+specific. Also will change the driver to ignore the clk not present,
+just to reuse/have common clock enable functions for MMU-500
+for other socs as well. Only problem being unable to catch a case
+where a clk DT entry is not populated when it should have been.
 
-I am OK with it being tied to nohlt. In that case we will have to add
-a Kconfig dependency on GENERIC_IDLE_POLL_SETUP (though it is selected
-by default on ARM/ARM64). Parsing the boot command line for nohlt doesn't
-look like a good idea. We may have to figure out a way to do that. Also,
-please could you add support for building this as a module ? Since it
-doesn't depend on the coresight bus anyway, it should be pretty straight
-forward.
+Regards,
+  Sricharan
 
-Suzuki
+>> +
+>> +- clocks:         Phandles for respective clocks described by clock-names.
+>> +
+>> +- power-domains:  Phandles to SMMU's power domain specifier. This is
+>> +                  required even if SMMU belongs to the master's power
+>> +                  domain, as the SMMU will have to be enabled and
+>> +                  accessed before master gets enabled and linked to its
+>> +                  SMMU.
+>> +
+>>  ** Deprecated properties:
+>>
+>>  - mmu-masters (deprecated in favour of the generic "iommus" binding) :
+>> @@ -84,6 +106,11 @@ conditions.
+>>                               <0 36 4>,
+>>                               <0 37 4>;
+>>                  #iommu-cells = <1>;
+>> +                clocks = <&gcc GCC_SMMU_CFG_CLK>,
+>> +                         <&gcc GCC_APSS_TCU_CLK>,
+>> +			 <&gcc GCC_MDP_TBU_CLK>;
+>> +
+>> +		clock-names = "cfg_clk", "tcu_clk", "tbu_clk";
+>>          };
+>>
+>>          /* device with two stream IDs, 0 and 7 */
+>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+>> index f7e11d3..720a1ef 100644
+>> --- a/drivers/iommu/arm-smmu.c
+>> +++ b/drivers/iommu/arm-smmu.c
+>> @@ -341,6 +341,12 @@ struct arm_smmu_master_cfg {
+>>  #define for_each_cfg_sme(fw, i, idx) \
+>>  	for (i = 0; idx = fwspec_smendx(fw, i), i < fw->num_ids; ++i)
+>>
+>> +struct mmu500_clk {
+>> +	struct clk *cfg_clk;
+>> +	struct clk *tcu_clk;
+>> +	struct clk *tbu_clk;
+>> +};
+>> +
+>>  struct arm_smmu_clks {
+>>  	void *clks;
+>>  	int (*init_clocks)(struct arm_smmu_device *smmu);
+>> @@ -455,6 +461,92 @@ static struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
+>>  	return container_of(dom, struct arm_smmu_domain, domain);
+>>  }
+>>
+>> +static int mmu500_enable_clocks(struct arm_smmu_device *smmu)
+>> +{
+>> +	int ret = 0;
+>> +	struct mmu500_clk *sclks = smmu->smmu_clks.clks;
+>> +
+>> +	if (!sclks)
+>> +		return 0;
+>> +
+>> +	ret = clk_prepare_enable(sclks->cfg_clk);
+>> +	if (ret) {
+>> +		dev_err(smmu->dev, "Couldn't enable cfg_clk");
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = clk_prepare_enable(sclks->tcu_clk);
+>> +	if (ret) {
+>> +		dev_err(smmu->dev, "Couldn't enable tcu_clk");
+>> +		clk_disable_unprepare(sclks->cfg_clk);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = clk_prepare_enable(sclks->tbu_clk);
+>> +	if (ret) {
+>> +		dev_err(smmu->dev, "Couln't enable tbu_clk");
+>> +		clk_disable_unprepare(sclks->tcu_clk);
+>> +		clk_disable_unprepare(sclks->cfg_clk);
+>> +		return ret;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void mmu500_disable_clocks(struct arm_smmu_device *smmu)
+>> +{
+>> +	struct mmu500_clk *sclks = smmu->smmu_clks.clks;
+>> +
+>> +	if (!sclks) {
+>> +		clk_disable_unprepare(sclks->tbu_clk);
+>> +		clk_disable_unprepare(sclks->tcu_clk);
+>> +		clk_disable_unprepare(sclks->cfg_clk);
+>> +	}
+>> +}
+>> +
+>> +static int mmu500_init_clocks(struct arm_smmu_device *smmu)
+>> +{
+>> +	struct device *dev = smmu->dev;
+>> +	struct mmu500_clk *sclks;
+>> +	int err;
+>> +
+>> +	if (!of_find_property(dev->of_node, "clocks", NULL))
+>> +		return 0;
+>> +
+>> +	sclks = devm_kzalloc(dev, sizeof(*sclks), GFP_KERNEL);
+>> +	if (!sclks)
+>> +		return -ENOMEM;
+>> +
+>> +	sclks->cfg_clk = devm_clk_get(dev, "cfg_clk");
+>> +	if (IS_ERR(sclks->cfg_clk)) {
+>> +		err = PTR_ERR(sclks->cfg_clk);
+>> +		/* Ignore all, except -EPROBE_DEFER for optional clocks */
+>> +		if (err == -EPROBE_DEFER)
+>> +			return err;
+>> +		else
+>> +			sclks->cfg_clk = NULL;
+>> +	}
+>> +
+>> +	sclks->tcu_clk = devm_clk_get(dev, "tcu_clk");
+>> +	if (IS_ERR(sclks->tcu_clk)) {
+>> +		dev_err(dev, "Couldn't get tcu_clk");
+>> +		return PTR_ERR(sclks->tcu_clk);
+>> +	}
+>> +
+>> +	sclks->tbu_clk = devm_clk_get(dev, "tbu_clk");
+>> +	if (IS_ERR(sclks->tbu_clk)) {
+>> +		err = PTR_ERR(sclks->tbu_clk);
+>> +		/* Ignore all, ecept -EPROBE_DEFER for optional clocks */
+>> +		if (err == -EPROBE_DEFER)
+>> +			return err;
+>> +		else
+>> +			sclks->tbu_clk = NULL;
+>> +	}
+>> +
+>> +	smmu->smmu_clks.clks = sclks;
+>> +	return 0;
+>> +}
+>> +
+>>  static void parse_driver_options(struct arm_smmu_device *smmu)
+>>  {
+>>  	int i = 0;
+>> @@ -1981,7 +2073,8 @@ struct arm_smmu_match_data {
+>>  		    NULL, NULL, NULL);
+>>  ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU,
+>>  		    NULL, NULL, NULL);
+>> -ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500, NULL, NULL, NULL);
+>> +ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500, mmu500_init_clocks,
+>> +		    mmu500_enable_clocks, mmu500_disable_clocks);
+>>  ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2,
+>>  		    NULL, NULL, NULL);
+>>
+>> --
+>> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+>>
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
+member of Code Aurora Forum, hosted by The Linux Foundation
