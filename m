@@ -1,304 +1,60 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/9] clk: meson: mpll: add rw operation
-Date: Thu,  9 Mar 2017 11:41:50 +0100
-Message-Id: <20170309104154.28295-6-jbrunet@baylibre.com>
-In-Reply-To: <20170309104154.28295-1-jbrunet@baylibre.com>
-References: <20170309104154.28295-1-jbrunet@baylibre.com>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 20 Mar 2017 16:37:05 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Stephen
+ Warren" <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: rework pll_u
+Message-ID: <20170320143705.GJ21907@tbergstrom-lnx.Nvidia.com>
+References: <1489500769-28694-1-git-send-email-pdeschrijver@nvidia.com>
+ <20170320132021.GH22463@ulmo.ba.sec>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20170320132021.GH22463@ulmo.ba.sec>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds new callbacks to the meson-mpll driver to control
-and set the pll rate. For this, we also need to add the enable bit and
-sdm enable bit. The corresponding parameters are added to mpll data
-structure.
+On Mon, Mar 20, 2017 at 02:20:21PM +0100, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Tue, Mar 14, 2017 at 04:12:49PM +0200, Peter De Schrijver wrote:
+> > In normal operation pll_u is under hardware control and has a fixed rate of
+> > 480MHz. Hardware will turn on pll_u on whenever any of the XUSB
+> > powerdomains is on. From a software point of view we model this is if pll_u
+> > is always on using a fixed rate clock. However the bootloader might or
+> > might not have configured pll_u this way. So we will check the current
+> > state of pll_u at boot and reconfigure it if required.
+> > 
+> > There are 3 possiblities at kernel boot:
+> > 1) pll_u is under hardware control: do nothing
+> > 2) pll_u is under hardware control and enabled: enable hardware control
+> > 3) pll_u is disabled: enable pll_u and enable hardware control
+> > 
+> > In all cases we also check if UTMIPLL is under hardware control at boot
+> > and configure it for hardware control if that is not the case.
+> > The same is done during SC7 resume.
+> > 
+> > Thanks to Joseph Lo <josephl@nvidia.com> for bug fixes.
+> > 
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  drivers/clk/tegra/clk-pll.c      | 174 -----------------------
+> >  drivers/clk/tegra/clk-tegra210.c | 295 ++++++++++++++++++++++++++++++++++++---
+> >  2 files changed, 272 insertions(+), 197 deletions(-)
+> 
+> Applied, thanks.
+> 
+> Do you think this actually fixes a bug? We've had a long standing issue
+> with booting Debian on a Jetson TX1 which is due to some USB related PLL
+> failing to lock. This sounds like it could fix that particular issue.
+> 
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/clk-mpll.c | 152 +++++++++++++++++++++++++++++++++++++++++--
- drivers/clk/meson/clkc.h     |   4 +-
- drivers/clk/meson/gxbb.c     |  30 +++++++++
- 3 files changed, 180 insertions(+), 6 deletions(-)
+I think the current approach does have problems if the PLL is already under
+hw control.
 
-diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-index 03af79005ddb..342b85d4e22a 100644
---- a/drivers/clk/meson/clk-mpll.c
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -64,16 +64,50 @@
- #include <linux/clk-provider.h>
- #include "clkc.h"
- 
--#define SDM_MAX 16384
-+#define SDM_DEN 16384
-+#define SDM_MIN 1
-+#define SDM_MAX 16383
-+#define N2_MIN	4
-+#define N2_MAX	127
- 
- #define to_meson_clk_mpll(_hw) container_of(_hw, struct meson_clk_mpll, hw)
- 
-+static unsigned long rate_from_params(unsigned long parent_rate,
-+				      unsigned long sdm,
-+				      unsigned long n2)
-+{
-+	return (parent_rate * SDM_DEN) / ((SDM_DEN * n2) + sdm);
-+}
-+
-+static void params_from_rate(unsigned long requested_rate,
-+			     unsigned long parent_rate,
-+			     unsigned long *sdm,
-+			     unsigned long *n2)
-+{
-+	uint64_t div = parent_rate;
-+	unsigned long rem = do_div(div, requested_rate);
-+
-+	if (div < N2_MIN) {
-+		*n2 = N2_MIN;
-+		*sdm = SDM_MIN;
-+	} else if (div > N2_MAX) {
-+		*n2 = N2_MAX;
-+		*sdm = SDM_MAX;
-+	} else {
-+		*n2 = div;
-+		*sdm = DIV_ROUND_UP(rem * SDM_DEN, requested_rate);
-+		if (*sdm < SDM_MIN)
-+			*sdm = SDM_MIN;
-+		else if (*sdm > SDM_MAX)
-+			*sdm = SDM_MAX;
-+	}
-+}
-+
- static unsigned long mpll_recalc_rate(struct clk_hw *hw,
- 		unsigned long parent_rate)
- {
- 	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
- 	struct parm *p;
--	unsigned long rate = 0;
- 	unsigned long reg, sdm, n2;
- 
- 	p = &mpll->sdm;
-@@ -84,11 +118,119 @@ static unsigned long mpll_recalc_rate(struct clk_hw *hw,
- 	reg = readl(mpll->base + p->reg_off);
- 	n2 = PARM_GET(p->width, p->shift, reg);
- 
--	rate = (parent_rate * SDM_MAX) / ((SDM_MAX * n2) + sdm);
-+	return rate_from_params(parent_rate, sdm, n2);
-+}
-+
-+static long mpll_round_rate(struct clk_hw *hw,
-+			    unsigned long rate,
-+			    unsigned long *parent_rate)
-+{
-+	unsigned long sdm, n2;
-+
-+	params_from_rate(rate, *parent_rate, &sdm, &n2);
-+	return rate_from_params(*parent_rate, sdm, n2);
-+}
-+
-+static int mpll_set_rate(struct clk_hw *hw,
-+			 unsigned long rate,
-+			 unsigned long parent_rate)
-+{
-+	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
-+	struct parm *p;
-+	unsigned long reg, sdm, n2;
-+	unsigned long flags = 0;
-+
-+	params_from_rate(rate, parent_rate, &sdm, &n2);
-+
-+	if (mpll->lock)
-+		spin_lock_irqsave(mpll->lock, flags);
-+	else
-+		__acquire(mpll->lock);
-+
-+	p = &mpll->sdm;
-+	reg = readl(mpll->base + p->reg_off);
-+	reg = PARM_SET(p->width, p->shift, reg, sdm);
-+	writel(reg, mpll->base + p->reg_off);
-+
-+	p = &mpll->sdm_en;
-+	reg = readl(mpll->base + p->reg_off);
-+	reg = PARM_SET(p->width, p->shift, reg, 1);
-+	writel(reg, mpll->base + p->reg_off);
-+
-+	p = &mpll->n2;
-+	reg = readl(mpll->base + p->reg_off);
-+	reg = PARM_SET(p->width, p->shift, reg, n2);
-+	writel(reg, mpll->base + p->reg_off);
-+
-+	if (mpll->lock)
-+		spin_unlock_irqrestore(mpll->lock, flags);
-+	else
-+		__release(mpll->lock);
- 
--	return rate;
-+	return 0;
-+}
-+
-+static void mpll_enable_core(struct clk_hw *hw, int enable)
-+{
-+	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
-+	struct parm *p;
-+	unsigned long reg;
-+	unsigned long flags = 0;
-+
-+	if (mpll->lock)
-+		spin_lock_irqsave(mpll->lock, flags);
-+	else
-+		__acquire(mpll->lock);
-+
-+	p = &mpll->en;
-+	reg = readl(mpll->base + p->reg_off);
-+	reg = PARM_SET(p->width, p->shift, reg, enable ? 1 : 0);
-+	writel(reg, mpll->base + p->reg_off);
-+
-+	if (mpll->lock)
-+		spin_unlock_irqrestore(mpll->lock, flags);
-+	else
-+		__release(mpll->lock);
-+}
-+
-+
-+static int mpll_enable(struct clk_hw *hw)
-+{
-+	mpll_enable_core(hw, 1);
-+
-+	return 0;
-+}
-+
-+static void mpll_disable(struct clk_hw *hw)
-+{
-+	mpll_enable_core(hw, 0);
-+}
-+
-+static int mpll_is_enabled(struct clk_hw *hw)
-+{
-+	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
-+	struct parm *p;
-+	unsigned long reg;
-+	int en;
-+
-+	p = &mpll->en;
-+	reg = readl(mpll->base + p->reg_off);
-+	en = PARM_GET(p->width, p->shift, reg);
-+
-+	return en;
- }
- 
- const struct clk_ops meson_clk_mpll_ro_ops = {
--	.recalc_rate = mpll_recalc_rate,
-+	.recalc_rate	= mpll_recalc_rate,
-+	.round_rate	= mpll_round_rate,
-+	.is_enabled	= mpll_is_enabled,
-+};
-+
-+const struct clk_ops meson_clk_mpll_ops = {
-+	.recalc_rate	= mpll_recalc_rate,
-+	.round_rate	= mpll_round_rate,
-+	.set_rate	= mpll_set_rate,
-+	.enable		= mpll_enable,
-+	.disable	= mpll_disable,
-+	.is_enabled	= mpll_is_enabled,
- };
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index c6be77dd8694..ad254675edd8 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -92,8 +92,9 @@ struct meson_clk_mpll {
- 	struct clk_hw hw;
- 	void __iomem *base;
- 	struct parm sdm;
-+	struct parm sdm_en;
- 	struct parm n2;
--	/* FIXME ssen gate control? */
-+	struct parm en;
- 	spinlock_t *lock;
- };
- 
-@@ -116,5 +117,6 @@ extern const struct clk_ops meson_clk_pll_ro_ops;
- extern const struct clk_ops meson_clk_pll_ops;
- extern const struct clk_ops meson_clk_cpu_ops;
- extern const struct clk_ops meson_clk_mpll_ro_ops;
-+extern const struct clk_ops meson_clk_mpll_ops;
- 
- #endif /* __CLKC_H */
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 79e9313e6703..79fb8989f8dd 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -441,11 +441,21 @@ static struct meson_clk_mpll gxbb_mpll0 = {
- 		.shift   = 0,
- 		.width   = 14,
- 	},
-+	.sdm_en = {
-+		.reg_off = HHI_MPLL_CNTL7,
-+		.shift   = 15,
-+		.width	 = 1,
-+	},
- 	.n2 = {
- 		.reg_off = HHI_MPLL_CNTL7,
- 		.shift   = 16,
- 		.width   = 9,
- 	},
-+	.en = {
-+		.reg_off = HHI_MPLL_CNTL7,
-+		.shift   = 14,
-+		.width	 = 1,
-+	},
- 	.lock = &clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll0",
-@@ -461,11 +471,21 @@ static struct meson_clk_mpll gxbb_mpll1 = {
- 		.shift   = 0,
- 		.width   = 14,
- 	},
-+	.sdm_en = {
-+		.reg_off = HHI_MPLL_CNTL8,
-+		.shift   = 15,
-+		.width	 = 1,
-+	},
- 	.n2 = {
- 		.reg_off = HHI_MPLL_CNTL8,
- 		.shift   = 16,
- 		.width   = 9,
- 	},
-+	.en = {
-+		.reg_off = HHI_MPLL_CNTL8,
-+		.shift   = 14,
-+		.width	 = 1,
-+	},
- 	.lock = &clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll1",
-@@ -481,11 +501,21 @@ static struct meson_clk_mpll gxbb_mpll2 = {
- 		.shift   = 0,
- 		.width   = 14,
- 	},
-+	.sdm_en = {
-+		.reg_off = HHI_MPLL_CNTL9,
-+		.shift   = 15,
-+		.width	 = 1,
-+	},
- 	.n2 = {
- 		.reg_off = HHI_MPLL_CNTL9,
- 		.shift   = 16,
- 		.width   = 9,
- 	},
-+	.en = {
-+		.reg_off = HHI_MPLL_CNTL9,
-+		.shift   = 14,
-+		.width	 = 1,
-+	},
- 	.lock = &clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll2",
--- 
-2.9.3
+Cheers,
+
+Peter.
