@@ -1,94 +1,142 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv2 5/9] ARM: OMAP2+: hwmod: assign main clock from DT if
- available
-To: Tony Lindgren <tony@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <1489741781-12816-6-git-send-email-t-kristo@ti.com>
- <20170317154126.GU20572@atomide.com>
- <f7c795dc-13db-9157-cdcc-b61892cc73f9@ti.com>
- <20170317221728.GX20572@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <95b7142f-8cc7-5909-764e-05dbad434298@ti.com>
-Date: Mon, 20 Mar 2017 15:23:27 +0200
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Subject: Re: [PATCH V3 3/5] drivers: arm-smmu: Add clock support for
+ QCOM_SMMUV2
+To: Rob Herring <robh@kernel.org>
+References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
+ <1489073748-3659-4-git-send-email-sricharan@codeaurora.org>
+ <20170316211039.rbqq262syalyfcs6@rob-hp-laptop>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <fa0a35be-a717-44ca-1ec5-208827bfb503@codeaurora.org>
+Date: Mon, 20 Mar 2017 20:01:53 +0530
 MIME-Version: 1.0
-In-Reply-To: <20170317221728.GX20572@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <20170316211039.rbqq262syalyfcs6@rob-hp-laptop>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+ mathieu.poirier@linaro.org, linux-arm-msm@vger.kernel.org, joro@8bytes.org,
+ sboyd@codeaurora.org, will.deacon@arm.com, iommu@lists.linux-foundation.org,
+ robin.murphy@arm.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 18/03/17 00:17, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [170317 14:42]:
->> On 17/03/17 17:41, Tony Lindgren wrote:
->>> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
->>>> -static int _init_main_clk(struct omap_hwmod *oh)
->>>> +static int _init_main_clk(struct omap_hwmod *oh, struct device_node *np)
->>>>  {
->>>>  	int ret = 0;
->>>> -	char name[MOD_CLK_MAX_NAME_LEN];
->>>> -	struct clk *clk;
->>>> -	static const char modck[] = "_mod_ck";
->>>> -
->>>> -	if (strlen(oh->name) >= MOD_CLK_MAX_NAME_LEN - strlen(modck))
->>>> -		pr_warn("%s: warning: cropping name for %s\n", __func__,
->>>> -			oh->name);
->>>> +	struct clk *clk = NULL;
->>>> +	int i;
->>>> +	int count;
->>>> +	const char *name;
->>>> +	char clk_name[strlen("clkctrl-x") + 1];
->>>>
->>>> -	strlcpy(name, oh->name, MOD_CLK_MAX_NAME_LEN - strlen(modck));
->>>> -	strlcat(name, modck, MOD_CLK_MAX_NAME_LEN);
->>>> +	if (np) {
->>>> +		clk = of_clk_get_by_name(np, "clkctrl");
->>>> +		if (IS_ERR(clk)) {
->>>> +			/* Try matching by hwmod name */
->>>> +			count = of_property_count_strings(np, "ti,hwmods");
->>>> +			for (i = 0; i < count; i++) {
->>>> +				ret = of_property_read_string_index(np,
->>>> +								    "ti,hwmods",
->>>> +								    i, &name);
->>>> +				if (ret)
->>>> +					continue;
->>>> +				if (!strcmp(name, oh->name)) {
->>>> +					sprintf(clk_name, "clkctrl-%d", i);
->>>> +					clk = of_clk_get_by_name(np, clk_name);
->>>> +				}
->>>> +			}
->>>> +		}
->>>> +		if (!IS_ERR(clk)) {
->>>> +			pr_debug("%s: mapped main_clk %s for %s\n", __func__,
->>>> +				 __clk_get_name(clk), oh->name);
->>>> +			oh->main_clk = __clk_get_name(clk);
->>>> +			oh->_clk = clk;
->>>> +			soc_ops.disable_direct_prcm(oh);
->>>> +		}
->>>> +	}
->>>
->>> You should bail out and do nothing here if legacy "ti,hwmods" property is
->>> not found. Eventually it will be the interconnect target IP wrapper module
->>> that will manage the clock and populate the rest of the hwmod data
->>> dynamically.
+Hi Rob,
+
+On 3/17/2017 2:40 AM, Rob Herring wrote:
+> On Thu, Mar 09, 2017 at 09:05:46PM +0530, Sricharan R wrote:
+>> The QCOM_SMMUV2 is an implementation of the arm,smmu-v2 architecture.
+>> The qcom,smmu is instantiated for each of the multimedia cores (for eg)
+>> Venus (video encoder/decoder), mdp (display) etc, and they are connected
+>> to the Multimedia Aggregator Interconnect (MMAGIC). So the access to
+>> any of the MMU's registers, as well as MMU's downstream bus access,
+>> requires the specified MMAGIC clocks to be enabled. So adding a new
+>> binding for the qcom,smmu-v2 and the required mmagic clock bindings for
+>> the same. Also adding the support for enabling the qcom,smmu-v2 clocks in
+>> the driver.
 >>
->> This is only for transitional support of hwmod, this patch will not be
->> needed for anything later on; or you probably need to do something similar
->> within the interconnect driver itself. The code still needs to care for the
->> cases where we want to find the main clock based on the clock link within
->> hwmod data, so bailing out early will break any boards that don't support
->> the new clkctrl clocks yet.
+>>                -------------  ---------
+>>                |   VENUS   |  | MDP   |
+>> 	       |	   |  |       |
+>> 	       -------------  --------
+>> 		     |           |
+>> 		     |           |
+>>                   ------      ---------
+>>                   |SMMU |     | SMMU  |
+>>                   |	|     |       |
+>>                   ------      --------
+>> 		    |            |
+>> 		    |            |
+>>        -----------------------------------------
+>>        |	MMAGIC INTERCONNECT (MMSS NOC) |
+>>        |                                       |
+>>        -----------------------------------------
+>>                    |                 |
+>> 		   |           ----------------------------------
+>>                  -----         | 	SYSTEM NOC		|
+>>                  |DDR|	       |				|
+>>                  -----         ---------------------------------
+>> 		   |		    |
+>>                    |               ------
+>> 		   |<-------------| CPU|
+>> 				  ------
+>>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> ---
+>>  .../devicetree/bindings/iommu/arm,smmu.txt         |   8 ++
+>>  drivers/iommu/arm-smmu.c                           | 124 +++++++++++++++++++++
+>>  2 files changed, 132 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+>> index b369c13..88e02d6 100644
+>> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+>> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+>> @@ -17,6 +17,7 @@ conditions.
+>>                          "arm,mmu-401"
+>>                          "arm,mmu-500"
+>>                          "cavium,smmu-v2"
+>> +			"qcom,smmu-v2"
 >
-> Well we really don't want hwmod code parsing anything out of the dtb
-> unless "ti,hwmods" property is set. That makes moving driver like features
-> to live under drivers much harder.
+> I know Cavium did it, but I'd prefer to see SoC specific compatibles
+> here.
+
+ok, will change it to be soc specific.
+
 >
-> I don't quite follow you, what breaks if you fall back to the old clock
-> lookup if no "ti,hwmods" is set?
+>>
+>>                    depending on the particular implementation and/or the
+>>                    version of the architecture implemented.
+>> @@ -74,6 +75,13 @@ conditions.
+>>                    "cfg_clk" is optional if required to access the TCU's programming
+>>                    interface, apart from the "tcu_clk".
+>>
+>> +		  Should have "mmagic_ahb_clk", "mmagic_cfg_ahb_clk",
+>> +                              "smmu_core_ahb_clk", "smmu_core_axi_clk",
+>> +                              "mmagic_core_axi_clk" for "qcom,smmu-v2"
+>
+> This is instead of the above clocks?
+>
 
-I think I misunderstood your earlier comment. So basically the code 
-already bails out early if ti,hwmods is not set. In this case, the 
-earlier lookup done by hwmod core sets the node pointer for this code to 
-be NULL, and this just parses the existing main_clk info.
+These clocks are for 'qcom,smmu-v2'. I should have put
+that first, then the clock names.
 
--Tero
+> Are these clocks all really part of the SMMU or are the mmagic clocks
+> working around no proper driver for the mmagic?
+>
+
+infact because of the absence of the mmagic driver to handle it.
+But i think, i will have to rework this, because handling mmagic
+clocks is going to pushed elsewhere, to the the gdscs(powerdomains).
+So adding the mmagic clocks should not be required here after that.
+
+Regards,
+  Sricharan
+
+>> +
+>> +		  "mmagic_core_axi_clk" is required for smmu's access to the
+>> +                   downstream bus and rest for the smmu's register group access.
+>> +
+>>  - clocks:         Phandles for respective clocks described by clock-names.
+>>
+>>  - power-domains:  Phandles to SMMU's power domain specifier. This is
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
+member of Code Aurora Forum, hosted by The Linux Foundation
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
