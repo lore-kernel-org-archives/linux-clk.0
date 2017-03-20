@@ -1,49 +1,63 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 6/9] ARM: OMAP2+: timer: add support for fetching fck handle from DT
-Date: Fri, 17 Mar 2017 11:09:38 +0200
-Message-ID: <1489741781-12816-7-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 20 Mar 2017 15:18:47 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
+Message-ID: <20170320141847.GD28203@ulmo.ba.sec>
+References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="VMt1DrMGOVs3KQwf"
+In-Reply-To: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The mux clock handle shall be provided via "fck" DT handle. This avoids
-the need to lookup the main clock via hwmod core, which will not work
-with the clkctrl clock support anymore; the main clock is not going to
-be a mux.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/mach-omap2/timer.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+--VMt1DrMGOVs3KQwf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
-index 07dd692..af90f95 100644
---- a/arch/arm/mach-omap2/timer.c
-+++ b/arch/arm/mach-omap2/timer.c
-@@ -255,6 +255,8 @@ static int __init omap_dm_timer_init_one(struct omap_dm_timer *timer,
- 
- 		timer->io_base = of_iomap(np, 0);
- 
-+		timer->fclk = of_clk_get_by_name(np, "fck");
-+
- 		of_node_put(np);
- 	} else {
- 		if (omap_dm_timer_reserve_systimer(timer->id))
-@@ -292,7 +294,8 @@ static int __init omap_dm_timer_init_one(struct omap_dm_timer *timer,
- 	omap_hwmod_setup_one(oh_name);
- 
- 	/* After the dmtimer is using hwmod these clocks won't be needed */
--	timer->fclk = clk_get(NULL, omap_hwmod_get_main_clk(oh));
-+	if (IS_ERR_OR_NULL(timer->fclk))
-+		timer->fclk = clk_get(NULL, omap_hwmod_get_main_clk(oh));
- 	if (IS_ERR(timer->fclk))
- 		return PTR_ERR(timer->fclk);
- 
--- 
-1.9.1
+On Tue, Feb 28, 2017 at 05:19:50PM +0200, Peter De Schrijver wrote:
+> This is needed to make the JTAG debugging interface work.
+>=20
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 1 +
+>  1 file changed, 1 insertion(+)
+
+Let's revisit the power-saving aspects of this when we're actually good
+at saving power. I suspect that the power consumption of DBGAPB is
+dwarfed by the rest of the SoC. I've added a TODO comment as a reminder.
+
+Applied to for-4.12/clk, thanks.
+
+Thierry
+
+--VMt1DrMGOVs3KQwf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP5McACgkQ3SOs138+
+s6F1KhAAjRBkTlU+k50OlRZegGNYPADzskXC3QS4kErxGn3hkAwvh/ADmfC1GTF9
+8Whvz9H7lU+Qi76pnnDoOj3/cN/7Y9RZ7WnGUrslZvfd8JuQFLFPVyKE0yxcpSMg
+Rly/YHLK06q0+WgHYTeK5ZX2qdfaSL4lvyE6m/MrPnAkvK44jWJg+n72IrpIpCXF
+d4rV+TBMz9bKuGq7Dj3Eg6Z4jkmLOVFVBF3O3vG/tkA+rhDCe7+dxJSa3SOCMOG8
+7bymACvfLfrRef6729dz4JnlENZGUkJgvEFsOB5igJKfaQCzwOigu9iCW37knhHJ
+ajEOggImYxhdTR9Ld1OHc+fRM7VVob5aB0TqQrEUcZ36SCPaeJaeu41ySDNOn4YX
+mmSuUC4qxOmGw05RoV8DUtmhAb5ZPIFVXPN3sgzvHJjEXYMB20efXHCAGo7ZNYvC
+SSPcESHEynolO3mcGNRp/w++LGO4OEmCKxP41zip4Emk7ZOn4XRRNcy/74EyKGgk
+t4vQbJ/yU1qZi9kO6Q0SfEpZ+Mh9iFONbJZbBsJ0LMobaV8v9d/nCPANE7IZQGHN
+RKAyIZbDSCAZWw/xK7Hw5PWIQ2sgnfHrikOUEnRWEkc4poyBJOzX/XE5s1T9DG0c
+QlzMbVktNziIH3kCO/QmY0VrFKk7o7481v+cQtU7r2irWSN6fjU=
+=qay2
+-----END PGP SIGNATURE-----
+
+--VMt1DrMGOVs3KQwf--
