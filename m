@@ -1,33 +1,93 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Mon, 20 Mar 2017 09:32:15 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	mike.leach@linaro.org, Suzuki.Poulose@arm.com, sudeep.holla@arm.com
+Subject: Re: [PATCH v4 1/7] coresight: bindings for CPU debug module
+Message-ID: <20170320153215.GA15068@linaro.org>
+References: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
+ <1489762943-25849-2-git-send-email-leo.yan@linaro.org>
+ <20170317161335.GB20435@linaro.org>
+ <20170320114953.GA19581@leoy-linaro>
 MIME-Version: 1.0
-In-Reply-To: <20170317171840.4683-3-heiko@sntech.de>
-References: <20170317171840.4683-1-heiko@sntech.de> <20170317171840.4683-3-heiko@sntech.de>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 23 Mar 2017 10:17:33 +0100
-Message-ID: <CACRpkdbhOP8wW-xTMhTOVr_P0KrxHxitOkOAcYOdcVd89bcqJA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] pinctrl: rockchip: rename RK1108 to RV1108
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>,
-	Andy Yan <andy.yan@rock-chips.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170320114953.GA19581@leoy-linaro>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 17, 2017 at 6:18 PM, Heiko Stuebner <heiko@sntech.de> wrote:
+On Mon, Mar 20, 2017 at 07:49:53PM +0800, Leo Yan wrote:
+> Hi Mathieu,
+> 
+> On Fri, Mar 17, 2017 at 10:13:35AM -0600, Mathieu Poirier wrote:
+> 
+> [...]
+> 
+> > > +- compatible : should be
+> > > +	     * "arm,coresight-cpu-debug"; supplemented with "arm,primecell"
+> > > +	       since this driver is using the AMBA bus interface.
+> > 
+> > This description needs to be refactored - see my comment from an earlier post
+> > for more details.
+> 
+> I have refined this description according to your suggestion:
+> http://archive.armlinux.org.uk/lurker/message/20170301.154550.f55a09d5.en.html
 
-> From: Andy Yan <andy.yan@rock-chips.com>
->
-> Rockchip finally named the SOC as RV1108, so change it.
->
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
->
-> [adapted rk1108 dtsi to keep bisectability]
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+My apologies here, I did not express myself properly.  You got the wording right
+but the format is a little bizarre.  The line break after "should be" and the
+sentence that starts with a '*' on the next line feel unatural.  Simply
 
-Patch applied.
+compatible : should be "arm,coresight-cpu-debug"; supplemented with
+             "arm,primecell" since this driver is using the AMBA bus interface.
 
-Yours,
-Linus Walleij
+will be fine.
+
+> 
+> Am I missing anthing for this?
+> 
+> > > +- reg : physical base address and length of the register set.
+> > > +
+> > > +- clocks : the clock associated to this component.
+> > > +
+> > > +- clock-names : the name of the clock referenced by the code. Since we are
+> > > +                using the AMBA framework, the name of the clock providing
+> > > +		the interconnect should be "apb_pclk" and the clock is
+> > > +		mandatory. The interface between the debug logic and the
+> > > +		processor core is clocked by the internal CPU clock, so it
+> > > +		is enabled with CPU clock by default.
+> > > +
+> > > +- cpu : the cpu phandle the debug module is affined to. When omitted
+> > > +	the module is considered to belong to CPU0.
+> > > +
+> > > +Optional properties:
+> > 
+> > s/properties/property
+> > 
+> > > +
+> > > +- power-domains: a phandle to power domain node for debug module. We can
+> > > +		 use "nohlt" to ensure CPU power domain is enabled.
+> > 
+> > The "power-domains" property is to take care of the debug power domain.  The
+> > "nohlt" is to make sure registers in the CPU power domain are accessible - both
+> > are independent from one another.  As such the description for this binding
+> > shoudl be:
+> > 
+> > "a phandle to the debug power domain".
+> 
+> Will fix for upper two comments.
+> 
+> Thanks,
+> Leo Yan
