@@ -1,77 +1,60 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/4] clk: renesas: Add support for R-Car H3 ES2.0
-Date: Mon, 13 Mar 2017 18:12:29 +0100
-Message-Id: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv2 8/9] ARM: dts: omap4: add clkctrl nodes
+To: Tony Lindgren <tony@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <1489741781-12816-9-git-send-email-t-kristo@ti.com>
+ <20170317154333.GW20572@atomide.com>
+ <9456caee-4f45-044a-0b2e-305fa2d0d274@ti.com>
+ <b602ccba-489f-e78f-0011-6d808bca9f84@ti.com>
+ <20170320143538.GH20572@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <3a82add5-7d85-458c-f8c1-9e58db6a8949@ti.com>
+Date: Mon, 20 Mar 2017 16:52:11 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170320143538.GH20572@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+On 20/03/17 16:35, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [170320 06:27]:
+>> On 17/03/17 23:41, Tero Kristo wrote:
+>>> On 17/03/17 17:43, Tony Lindgren wrote:
+>>>> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+>>>>> Add clkctrl nodes for OMAP4 SoC. These are going to be acting as
+>>>>> replacement for part of the existing clock data and the existing
+>>>>> clkctrl hooks under hwmod data.
+>>>>
+>>>> It seems to be actually this patch in the series that breaks booting
+>>>> if the last patch in this series is not applied.
+>>>
+>>> Yea I guess we need to squash this and patch #9, I'll double check next
+>>> week. Sorry about not catching this one.
+>>
+>> Yes, patch #8 and #9 must be squashed. What happens with patch #8 alone, is
+>> that you get all the clkctrl clocks registered, but as nobody is using them,
+>> the clock core disables them later on in clk_disable_unused.
+>
+> So how hard would it to do a mixed approach where we don't need
+> to have everything in place in the dts in order to flip a SoC?
+>
+> This atomic transaction worries me..
 
-This patch series adds clock support for R-Car H3 ES2.0, which differs
-from ES1.x in several areas.
+Well, you could do few things.
 
-The goal is twofold:
-  1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
-     for now,
-  2. Make it clear which code supports ES1.x, so it can easily be
-     identified and removed later, when production SoCs are deemed
-     ubiquitous.
+- You can use clk_ignore_unused cmdline option between patch #8 and #9 
+and it should work, but will most likely break PM.
+- You can introduce the DTS changes on a clkctrl module basis, e.g. 
+introduce the node for l4_per_clkctrl along with the clock node changes 
+for the same
+- Do some sort of split between DTS / vs. clkctrl data introduction 
+within the clock driver, this forces the files to be in sync with each 
+other though.
+- Try parsing the DTs for matching clock handles while registering DT 
+clocks, if not found, toss our a pr_warn and skip registering the clock. 
+Will be very ineffective though as one needs to parse the whole DTS to 
+find the clock entries. This clock parsing could be dropped later.
 
-This is achieved by:
-  - Updating the clock tables for the latest revision (ES2.0), but not
-    removing clocks that only exist on earlier revisions (ES1.x),
-  - Detecting the SoC revision at runtime using the new
-    soc_device_match() API, and fixing up the clocks tables to match the
-    actual SoC revision, by:
-      - NULLifying core and module clocks of modules that do not exist,
-      - Reparenting module clocks that have a different parent on ES1.x.
-
-Changes compared to v1:
-  - Update of various module clocks as per datasheet update,
-  - Add support for RCLK on R-Car H3 ES2.0.
-
-For testers, this series and its dependencies are available in the
-topic/r8a7795es2-clk-v2 branch of my renesas-drivers git repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-An integration branch for testing on the R-Car H3 ES2.0 based Salvator-X
-development board is provided as topic/r8a7795es2-integration.
-
-This has been tested on Salvator-X with R-Car H3 ES1.0, ES1.1, and ES2.0
-SoCs.
-
-I plan to queue this up in clk-renesas-for-v4.12.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (4):
-  clk: renesas: cpg-mssr: Add support for fixing up clock tables
-  clk: renesas: Add r8a7795 ES2.0 CPG Core Clock Definitions
-  clk: renesas: r8a7795: Add support for R-Car H3 ES2.0
-  clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c       | 201 ++++++++++++++++++++-------
- drivers/clk/renesas/rcar-gen3-cpg.c          |  38 +++--
- drivers/clk/renesas/renesas-cpg-mssr.c       |  50 +++++++
- drivers/clk/renesas/renesas-cpg-mssr.h       |  22 +++
- include/dt-bindings/clock/r8a7795-cpg-mssr.h |   7 +
- 5 files changed, 257 insertions(+), 61 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+-Tero
