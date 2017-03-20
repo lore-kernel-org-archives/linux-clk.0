@@ -1,170 +1,65 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2] clk: tegra: add Tegra210 special resets
-Date: Wed, 15 Mar 2017 14:59:32 +0200
-Message-ID: <1489582774-22217-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 20 Mar 2017 14:15:02 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: fix disable unused for clocks sharing enable
+ bit
+Message-ID: <20170320131502.GF22463@ulmo.ba.sec>
+References: <1488460925-16793-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="AH+kv8CCoFf6qPuz"
+In-Reply-To: <1488460925-16793-1-git-send-email-pdeschrijver@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Tegra210 has 2 special resets which don't follow the normal pattern:
-DVCO and ADSP. Add them in this patch.
 
-Changelog:
+--AH+kv8CCoFf6qPuz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v2: add DT bindings file
+On Thu, Mar 02, 2017 at 03:22:05PM +0200, Peter De Schrijver wrote:
+> In case 2 clocks share an enable bit and one of them is enabled by a driv=
+er
+> and the other one is not, CCF will think it's enabled because it will only
+> look at the hw state. Therefor it will disable the clock and thus also
+> disable the other clock which was enabled. Solve this by reading the
+> initial state of the enable bit and incrementing the refcount if it's set.
+>=20
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-periph-gate.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c         | 85 ++++++++++++++++++++++++++++++++
- include/dt-bindings/reset/tegra210-car.h | 13 +++++
- 2 files changed, 98 insertions(+)
- create mode 100644 include/dt-bindings/reset/tegra210-car.h
+Applied, thanks.
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 2a84897..a41733d 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -24,6 +24,7 @@
- #include <linux/export.h>
- #include <linux/clk/tegra.h>
- #include <dt-bindings/clock/tegra210-car.h>
-+#include <dt-bindings/reset/tegra210-car.h>
- #include <linux/iopoll.h>
- 
- #include "clk.h"
-@@ -218,6 +219,12 @@
- #define CLK_M_DIVISOR_SHIFT 2
- #define CLK_M_DIVISOR_MASK 0x3
- 
-+#define RST_DFLL_DVCO 0x2f4
-+#define DVFS_DFLL_RESET_SHIFT 0
-+
-+#define CLK_RST_CONTROLLER_RST_DEV_Y_SET 0x2a8
-+#define CLK_RST_CONTROLLER_RST_DEV_Y_CLR 0x2ac
-+
- /*
-  * SDM fractional divisor is 16-bit 2's complement signed number within
-  * (-2^12 ... 2^12-1) range. Represented in PLL data structure as unsigned
-@@ -2984,6 +2991,81 @@ static void __init tegra210_clock_apply_init_table(void)
- }
- 
- /**
-+ * tegra210_car_barrier - wait for pending writes to the CAR to complete
-+ *
-+ * Wait for any outstanding writes to the CAR MMIO space from this CPU
-+ * to complete before continuing execution.  No return value.
-+ */
-+static void tegra210_car_barrier(void)
-+{
-+	readl_relaxed(clk_base + RST_DFLL_DVCO);
-+}
-+
-+/**
-+ * tegra210_clock_assert_dfll_dvco_reset - assert the DFLL's DVCO reset
-+ *
-+ * Assert the reset line of the DFLL's DVCO.  No return value.
-+ */
-+static void tegra210_clock_assert_dfll_dvco_reset(void)
-+{
-+	u32 v;
-+
-+	v = readl_relaxed(clk_base + RST_DFLL_DVCO);
-+	v |= (1 << DVFS_DFLL_RESET_SHIFT);
-+	writel_relaxed(v, clk_base + RST_DFLL_DVCO);
-+	tegra210_car_barrier();
-+}
-+
-+/**
-+ * tegra210_clock_deassert_dfll_dvco_reset - deassert the DFLL's DVCO reset
-+ *
-+ * Deassert the reset line of the DFLL's DVCO, allowing the DVCO to
-+ * operate.  No return value.
-+ */
-+static void tegra210_clock_deassert_dfll_dvco_reset(void)
-+{
-+	u32 v;
-+
-+	v = readl_relaxed(clk_base + RST_DFLL_DVCO);
-+	v &= ~(1 << DVFS_DFLL_RESET_SHIFT);
-+	writel_relaxed(v, clk_base + RST_DFLL_DVCO);
-+	tegra210_car_barrier();
-+}
-+
-+static int tegra210_reset_assert(unsigned long id)
-+{
-+	if (id == TEGRA210_RST_DFLL_DVCO)
-+		tegra210_clock_assert_dfll_dvco_reset();
-+	else if (id == TEGRA210_RST_ADSP)
-+		writel(GENMASK(26, 21) | BIT(7),
-+			clk_base + CLK_RST_CONTROLLER_RST_DEV_Y_SET);
-+	else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int tegra210_reset_deassert(unsigned long id)
-+{
-+	if (id == TEGRA210_RST_DFLL_DVCO)
-+		tegra210_clock_deassert_dfll_dvco_reset();
-+	else if (id == TEGRA210_RST_ADSP) {
-+		writel(BIT(21), clk_base + CLK_RST_CONTROLLER_RST_DEV_Y_CLR);
-+		/*
-+		 * Considering adsp cpu clock (min: 12.5MHZ, max: 1GHz)
-+		 * a delay of 5us ensures that it's at least
-+		 * 6 * adsp_cpu_cycle_period long.
-+		 */
-+		udelay(5);
-+		writel(GENMASK(26, 22) | BIT(7),
-+			clk_base + CLK_RST_CONTROLLER_RST_DEV_Y_CLR);
-+	} else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+/**
-  * tegra210_clock_init - Tegra210-specific clock initialization
-  * @np: struct device_node * of the DT node for the SoC CAR IP block
-  *
-@@ -3047,6 +3129,9 @@ static void __init tegra210_clock_init(struct device_node *np)
- 
- 	tegra_super_clk_gen5_init(clk_base, pmc_base, tegra210_clks,
- 				  &pll_x_params);
-+	tegra_init_special_resets(2, tegra210_reset_assert,
-+				  tegra210_reset_deassert);
-+
- 	tegra_add_of_provider(np);
- 	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
- 
-diff --git a/include/dt-bindings/reset/tegra210-car.h b/include/dt-bindings/reset/tegra210-car.h
-new file mode 100644
-index 0000000..296ec6e
---- /dev/null
-+++ b/include/dt-bindings/reset/tegra210-car.h
-@@ -0,0 +1,13 @@
-+/*
-+ * This header provides Tegra210-specific constants for binding
-+ * nvidia,tegra210-car.
-+ */
-+
-+#ifndef _DT_BINDINGS_RESET_TEGRA210_CAR_H
-+#define _DT_BINDINGS_RESET_TEGRA210_CAR_H
-+
-+#define TEGRA210_RESET(x)		(7 * 32 + (x))
-+#define TEGRA210_RST_DFLL_DVCO		TEGRA210_RESET(0)
-+#define TEGRA210_RST_ADSP		TEGRA210_RESET(1)
-+
-+#endif	/* _DT_BINDINGS_RESET_TEGRA210_CAR_H */
--- 
-1.9.1
+Thierry
+
+--AH+kv8CCoFf6qPuz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP1dUACgkQ3SOs138+
+s6GkSw//W+tuYVVMEFwpdzx5QO1c55tW27vjpjogjh15EFaJvkJkmWBY6jfStHQe
+T9l/pYl93dwTzP5UcRIZRAOMjABsorVn6cR9EA6uR6mqjsKm2oMotDPYcIZp1c/D
+pyJkO51DAMhMye6RqH/hJNdT6zaftn1nwyTjGuoSvavTmC58juKQCpmt8YvQ6OdF
+sK1AiGRk4juKlIUpSd5OyKnEYgpRQJyhEaUfs22N4rHsGK5wGAkVPizJg06alOuG
+KQbrMaemt5bSWfrqSzIQW6X1slMKr1ASRKO4c1VHSJBQDXq8VF7wXlLRTMiPWbZZ
+lTXBzt3V5NqcaCmuEzqcRzAxBZzvJ8vuoCDQBpL3LoXLzr7CO7d37zC3MvYYOdPo
+PLJArFU+p/B3plzb2jFbXME/eqMCiXEYMYnU2CZQk8O6PvM5P7fIqqMlHFIOM5vR
+SRLTe7bj9uSbO/Qf3wN9gkilfkJ0Gsj7W59FuoyhQEpeH+rGrDn6KLGothpoNmYR
+AWRi2aZJ9ZtYVEUeO/vqdhgwL3YqYaqXNW5wGFLsFts0Ymn4d2WQPGnExwaXQxnL
+Udg9ACMgMsU79gGdo0RAkorX+77zHQ6X3qSWN/bYcbVz+a0EX0D5rpsEdy1NU7UL
+n6tMEcD9TLnl0oUbj06IIDk842jN9DxtRN2Vgjlcqu5mMALSF+U=
+=zat5
+-----END PGP SIGNATURE-----
+
+--AH+kv8CCoFf6qPuz--
