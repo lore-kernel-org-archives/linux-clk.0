@@ -1,132 +1,71 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 24 Mar 2017 11:14:21 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 20 Mar 2017 14:21:15 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org, Suzuki.Poulose@arm.com, sudeep.holla@arm.com
-Subject: Re: [PATCH v4 3/7] coresight: refactor with function
- of_coresight_get_cpu
-Message-ID: <20170324181421.GB25840@codeaurora.org>
-References: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
- <1489762943-25849-4-git-send-email-leo.yan@linaro.org>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] clk: tegra: add Tegra210 special resets
+Message-ID: <20170320132115.GI22463@ulmo.ba.sec>
+References: <1489582774-22217-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1489762943-25849-4-git-send-email-leo.yan@linaro.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="MFZs98Tklfu0WsCO"
+In-Reply-To: <1489582774-22217-1-git-send-email-pdeschrijver@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/17, Leo Yan wrote:
-> diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-> index 917ca39..7a60f2b 100644
-> --- a/drivers/hwtracing/coresight/of_coresight.c
-> +++ b/drivers/hwtracing/coresight/of_coresight.c
-> @@ -101,15 +101,38 @@ static int of_coresight_alloc_memory(struct device *dev,
->  	return 0;
->  }
->  
-> +int of_coresight_get_cpu(struct device_node *node)
 
-const node?
+--MFZs98Tklfu0WsCO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +{
-> +	int cpu;
-> +	bool found;
-> +	struct device_node *dn, *np;
-> +
-> +	dn = of_parse_phandle(node, "cpu", 0);
-> +
-> +	/* Affinity defaults to CPU0 */
-> +	if (!dn)
-> +		return 0;
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		np = of_get_cpu_node(cpu, NULL);
+On Wed, Mar 15, 2017 at 02:59:32PM +0200, Peter De Schrijver wrote:
+> Tegra210 has 2 special resets which don't follow the normal pattern:
+> DVCO and ADSP. Add them in this patch.
+>=20
+> Changelog:
+>=20
+> v2: add DT bindings file
+>=20
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c         | 85 ++++++++++++++++++++++++++=
+++++++
+>  include/dt-bindings/reset/tegra210-car.h | 13 +++++
+>  2 files changed, 98 insertions(+)
+>  create mode 100644 include/dt-bindings/reset/tegra210-car.h
 
-of_cpu_device_node_get()?
+Applied to for-4.12/clk, thanks.
 
-> +		found = (dn == np);
-> +		of_node_put(np);
-> +		if (found)
-> +			break;
-> +	}
-> +	of_node_put(dn);
-> +
-> +	/* Affinity to CPU0 if no cpu nodes are found */
-> +	return found ? cpu : 0;
-> +}
-> +
->  struct coresight_platform_data *of_get_coresight_platform_data(
->  				struct device *dev, struct device_node *node)
->  {
-> -	int i = 0, ret = 0, cpu;
-> +	int i = 0, ret = 0;
->  	struct coresight_platform_data *pdata;
->  	struct of_endpoint endpoint, rendpoint;
->  	struct device *rdev;
-> -	bool found;
-> -	struct device_node *dn, *np;
->  	struct device_node *ep = NULL;
->  	struct device_node *rparent = NULL;
->  	struct device_node *rport = NULL;
-> @@ -176,18 +199,7 @@ struct coresight_platform_data *of_get_coresight_platform_data(
->  		} while (ep);
->  	}
->  
-> -	dn = of_parse_phandle(node, "cpu", 0);
-> -	for_each_possible_cpu(cpu) {
-> -		np = of_get_cpu_node(cpu, NULL);
-> -		found = (dn == np);
-> -		of_node_put(np);
-> -		if (found)
-> -			break;
-> -	}
-> -	of_node_put(dn);
-> -
+Thierry
 
-Ok yeah the code is moving, so perhaps another patch to make the
-changes suggested above.
+--MFZs98Tklfu0WsCO
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> -	/* Affinity to CPU0 if no cpu nodes are found */
-> -	pdata->cpu = found ? cpu : 0;
-> +	pdata->cpu = of_coresight_get_cpu(node);
->  
->  	return pdata;
->  }
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index 2a5982c..7b29743 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -263,9 +263,11 @@ static inline int coresight_timeout(void __iomem *addr, u32 offset,
->  #endif
->  
->  #ifdef CONFIG_OF
-> +extern int of_coresight_get_cpu(struct device_node *node);
->  extern struct coresight_platform_data *of_get_coresight_platform_data(
->  				struct device *dev, struct device_node *node);
->  #else
-> +static int of_coresight_get_cpu(struct device_node *node) { return 0; }
+-----BEGIN PGP SIGNATURE-----
 
-inline?
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP10sACgkQ3SOs138+
+s6GG3A//bWuGqGDLQcz7JjgQsAIQ584xtwX9xcvsF/aRJYwFyBq7YL+/h3b10Oeo
+7Ggyg0gWdnUKg19wACRS0cJY9efE1stc0HE2PBJb6brWSN6geazoDacvp3zV6w76
+ugjta6zmvd17A150faXamCdlzQGWjOH1/2zOyxOeyWNzfl84+G+lGnXaZtnt75t8
+vTj6uPY2/Rd17PsfC/fsK73iMvlrdAyqSDp232XdyzrgbzUPdWJ7CWz8zf9I75Y5
+QOPXvFrz1NGXvU4mjtatQOVTGjKLCX87e3gnY57PwCiMBY9U7LH7q4pM5wYGoobf
+3MhrjoU31ZWSauOjRASiwI1n2W/r8llLBvZ2NbBKtR2uT5Dd3C6C5xZ3W4OcyRNm
+b4dE78c3VELVkAU3bhTJARpL9kME3L1y6UHCI1ApWJCBJZyWX+QLMisFwDi9BgB5
+xbE2vEuueIbENX9veQKaehPXQCqushfG7THPHK1iMADHGNxalmMhO1VtY9udEvee
+dagiW2SUqWP7GjW14YVDlzfN6poTsDRVLCL+1PAE/ma4JRj1Sa67LV6mRiEXerZN
+4pxDAaztKsnUEQMd6SQjCnQDG5WljWslLWHeJSZbTPko0zHxPs6HOTM6BEIs49RJ
+ZPDMBc2PbxSJ0jLf10fL8tgeqT+aPeRgQSkD7NqYSoR/yjvHLjk=
+=aJ1q
+-----END PGP SIGNATURE-----
 
->  static inline struct coresight_platform_data *of_get_coresight_platform_data(
->  	struct device *dev, struct device_node *node) { return NULL; }
->  #endif
-> -- 
-> 2.7.4
-> 
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--MFZs98Tklfu0WsCO--
