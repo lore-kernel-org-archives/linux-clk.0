@@ -1,65 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:55661 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933703AbdCVJfw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2017 05:35:52 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] PM / runtime: Use synchronous runtime PM call in
- rpm_put_suppliers()
-Date: Wed, 22 Mar 2017 10:22:50 +0100
-Message-id: <1490174570-18345-1-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170322092305eucas1p20d2a6dfede483210febea5b5e0ff68db@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv2 5/9] ARM: OMAP2+: hwmod: assign main clock from DT if
+ available
+To: Tony Lindgren <tony@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <1489741781-12816-6-git-send-email-t-kristo@ti.com>
+ <20170317154126.GU20572@atomide.com>
+ <f7c795dc-13db-9157-cdcc-b61892cc73f9@ti.com>
+ <20170317221728.GX20572@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <95b7142f-8cc7-5909-764e-05dbad434298@ti.com>
+Date: Mon, 20 Mar 2017 15:23:27 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170317221728.GX20572@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-rpm_put_suppliers() might be called as a result of pm_runtime_put_sync()
-call, where the called explicitly wants to perform the operation in
-synchronous way to avoid some deadlocks related to concurrent code
-execution in the PM workers. However the current code for handling device
-links always use asynchronous calls. This patch changes it to always use
-the synchronous calls.
+On 18/03/17 00:17, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [170317 14:42]:
+>> On 17/03/17 17:41, Tony Lindgren wrote:
+>>> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+>>>> -static int _init_main_clk(struct omap_hwmod *oh)
+>>>> +static int _init_main_clk(struct omap_hwmod *oh, struct device_node *np)
+>>>>  {
+>>>>  	int ret = 0;
+>>>> -	char name[MOD_CLK_MAX_NAME_LEN];
+>>>> -	struct clk *clk;
+>>>> -	static const char modck[] = "_mod_ck";
+>>>> -
+>>>> -	if (strlen(oh->name) >= MOD_CLK_MAX_NAME_LEN - strlen(modck))
+>>>> -		pr_warn("%s: warning: cropping name for %s\n", __func__,
+>>>> -			oh->name);
+>>>> +	struct clk *clk = NULL;
+>>>> +	int i;
+>>>> +	int count;
+>>>> +	const char *name;
+>>>> +	char clk_name[strlen("clkctrl-x") + 1];
+>>>>
+>>>> -	strlcpy(name, oh->name, MOD_CLK_MAX_NAME_LEN - strlen(modck));
+>>>> -	strlcat(name, modck, MOD_CLK_MAX_NAME_LEN);
+>>>> +	if (np) {
+>>>> +		clk = of_clk_get_by_name(np, "clkctrl");
+>>>> +		if (IS_ERR(clk)) {
+>>>> +			/* Try matching by hwmod name */
+>>>> +			count = of_property_count_strings(np, "ti,hwmods");
+>>>> +			for (i = 0; i < count; i++) {
+>>>> +				ret = of_property_read_string_index(np,
+>>>> +								    "ti,hwmods",
+>>>> +								    i, &name);
+>>>> +				if (ret)
+>>>> +					continue;
+>>>> +				if (!strcmp(name, oh->name)) {
+>>>> +					sprintf(clk_name, "clkctrl-%d", i);
+>>>> +					clk = of_clk_get_by_name(np, clk_name);
+>>>> +				}
+>>>> +			}
+>>>> +		}
+>>>> +		if (!IS_ERR(clk)) {
+>>>> +			pr_debug("%s: mapped main_clk %s for %s\n", __func__,
+>>>> +				 __clk_get_name(clk), oh->name);
+>>>> +			oh->main_clk = __clk_get_name(clk);
+>>>> +			oh->_clk = clk;
+>>>> +			soc_ops.disable_direct_prcm(oh);
+>>>> +		}
+>>>> +	}
+>>>
+>>> You should bail out and do nothing here if legacy "ti,hwmods" property is
+>>> not found. Eventually it will be the interconnect target IP wrapper module
+>>> that will manage the clock and populate the rest of the hwmod data
+>>> dynamically.
+>>
+>> This is only for transitional support of hwmod, this patch will not be
+>> needed for anything later on; or you probably need to do something similar
+>> within the interconnect driver itself. The code still needs to care for the
+>> cases where we want to find the main clock based on the clock link within
+>> hwmod data, so bailing out early will break any boards that don't support
+>> the new clkctrl clocks yet.
+>
+> Well we really don't want hwmod code parsing anything out of the dtb
+> unless "ti,hwmods" property is set. That makes moving driver like features
+> to live under drivers much harder.
+>
+> I don't quite follow you, what breaks if you fall back to the old clock
+> lookup if no "ti,hwmods" is set?
 
-This patch fixes the potential deadlock, which appears during adding
-runtime PM support to clock framework, which uses global mutex, which is
-reentrant only for the current process, so trying to execute runtime PM
-callback from the worker results in deadlock (the mentioned mutex is
-already taken by the current process, which waits for execution of PM
-worker).
+I think I misunderstood your earlier comment. So basically the code 
+already bails out early if ti,hwmods is not set. In this case, the 
+earlier lookup done by hwmod core sets the node pointer for this code to 
+be NULL, and this just parses the existing main_clk info.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-Hi Rafael & Ulf,
-
-This was the simplest way of fixing this issue. Other way would be to
-propagate rpmflags to rpm_get/put_suppliers() to ensure that synchronous
-calls will be also done on the linked devices. Which way is better in
-your opinion?
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
----
- drivers/base/power/runtime.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-index 7bcf80fa9ada..b7df589ae579 100644
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -292,7 +292,7 @@ static void rpm_put_suppliers(struct device *dev)
- 	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
- 		if (link->rpm_active &&
- 		    READ_ONCE(link->status) != DL_STATE_SUPPLIER_UNBIND) {
--			pm_runtime_put(link->supplier);
-+			pm_runtime_put_sync(link->supplier);
- 			link->rpm_active = false;
- 		}
- }
--- 
-1.9.1
-
+-Tero
