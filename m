@@ -1,170 +1,85 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,  "linux-mmc\@vger.kernel.org" <linux-mmc@vger.kernel.org>,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  "linux-arm-kernel\@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,  Mike Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  linux-clk <linux-clk@vger.kernel.org>,  "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,  Rob Herring <robh+dt@kernel.org>,  "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,  Ziji Hu <huziji@marvell.com>,  Jimmy Xu <zmxu@marvell.com>,  Jisheng Zhang <jszhang@marvell.com>,  Nadav Haklai <nadavh@marvell.com>,  Ryan Gao <ygao@marvell.com>,  Doug Jones <dougj@marvell.com>,  Victor Gu <xigu@marvell.com>,  "Wei\(SOCP\) Liu" <liuw@marvell.com>,  Wilson Ding <dingwei@marvell.com>,  Yehuda Yitschak <yehuday@marvell.com>,  Ma
- rcin Wojtas <mw@semihalf.com>,  Hanna Hawa <hannah@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>
-Subject: Re: [PATCH v6 03/14] mmc: core: Add mmc-card dt sub-node parse in core layer
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
-	<34e51d32c82b57571e061e80df3bbaed731db554.1487091464.git-series.gregory.clement@free-electrons.com>
-	<CAPDyKFoqxMCSe-2bt2dz1AM_2X7dtVe4w6e7+oAQ==HO_=XKQw@mail.gmail.com>
-Date: Wed, 22 Mar 2017 18:11:14 +0100
-In-Reply-To: <CAPDyKFoqxMCSe-2bt2dz1AM_2X7dtVe4w6e7+oAQ==HO_=XKQw@mail.gmail.com>
-	(Ulf Hansson's message of "Wed, 15 Mar 2017 13:43:44 +0100")
-Message-ID: <87r31pdyod.fsf@free-electrons.com>
+Return-Path: <mathieu.poirier@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <5995f6a7-08b1-c868-fc88-a145d1748a33@arm.com>
+References: <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
+ <011fdac0-59bf-b539-2de3-0b59a41bc922@arm.com> <20170309175915.GA964@leoy-linaro>
+ <3f27efee-3b63-81fd-eb96-73fd7e6f5e92@arm.com> <20170313165600.GB32431@linaro.org>
+ <516f8989-4dde-2686-d549-0761feb14d1b@arm.com> <CANLsYkzJsGvr4ZzNbTwcPu1Qki6=Szvu+bMjHZ_rza==DqFChw@mail.gmail.com>
+ <20170317101328.GA19877@leoy-linaro> <20170317155007.GA20435@linaro.org>
+ <20170317162836.GD2020@leoy-linaro> <5995f6a7-08b1-c868-fc88-a145d1748a33@arm.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 20 Mar 2017 10:40:00 -0600
+Message-ID: <CANLsYkyiAnSGW4Ujs6L-yBKK3no3zigbyBgOCWbm06ZdV-f2Hw@mail.gmail.com>
+Subject: Re: [v3 3/5] coresight: add support for debug module
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	John Stultz <john.stultz@linaro.org>, Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
+	Mike Leach <mike.leach@linaro.org>, Sudeep Holla <Sudeep.Holla@arm.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ulf,
- 
- On mer., mars 15 2017, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-
-> On 14 February 2017 at 18:01, Gregory CLEMENT
-> <gregory.clement@free-electrons.com> wrote:
->> From: Hu Ziji <huziji@marvell.com>
+On 17 March 2017 at 10:47, Suzuki K Poulose <Suzuki.Poulose@arm.com> wrote:
+> On 17/03/17 16:28, Leo Yan wrote:
 >>
->> Some vendor host, like Xenon, can support multiple types.
->> In dts, use mmc-card dt sub-node to indicate eMMC is in use.
+>> On Fri, Mar 17, 2017 at 09:50:07AM -0600, Mathieu Poirier wrote:
 >>
->> Add a generic mmc-card parse function in mmc core layer.
->> If mmc-card sub-node is detected, set eMMC common caps, such as
->> MMC_CAP_NONREMOVABLE, MMC_CAP2_NO_SD and MMC_CAP2_NO_SDIO.
+>> [...]
 >>
->> Since it is likely that struct mmc_card is not allocated yet when
->> this mmc-card parse function is called, it will return true if
->> mmc-card sub-node is detected. Otherwise, return false.
->> It can help vendor host determine if the card type is eMMC.
+>>> If we don't check for "nohlt" some platform may freeze, others may work.
+>>> If we
+>>> mandate that "nohlt" be present on the kernel cmd line it works in all
+>>> cases.
+>>> As such mandating that "nohlt" be present is a better way to go.
 >>
->> Signed-off-by: Hu Ziji <huziji@marvell.com>
->> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
->> ---
->>  drivers/mmc/core/mmc.c   | 24 ++++++++++++++++++++++++
->>  include/linux/mmc/core.h |  2 ++
->>  2 files changed, 26 insertions(+)
 >>
->> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
->> index b61b52f9da3d..dc480006a303 100644
->> --- a/drivers/mmc/core/mmc.c
->> +++ b/drivers/mmc/core/mmc.c
->> @@ -2111,6 +2111,30 @@ static const struct mmc_bus_ops mmc_ops = {
->>  };
+>> Sure, so I will add below checking code in the probe function, please
+>> let me know if you have alter better way to implement this:
 >>
->>  /*
->> + * Parse mmc-card dt sub-node and set eMMC common caps
->> + * if mmc-card exists.
->> + * If mmc-card is detected, return true.
->> + * Otherwise, return false.
->> + */
->> +bool mmc_of_parse_mmc_card(struct mmc_host *host)
->> +{
->> +       struct device_node *np;
->> +       bool ret = false;
->> +
->> +       np = mmc_of_find_child_device(host, 0);
->
-> There are already some places in the mmc core where child nodes are
-> being parsed. You may have a look for mmc_of_find_child_device() and
-> find the callers of it.
-
-mmc_of_find_child_device is called in 3 places:
-
- - in mmc_add_card() from drivers/mmc/core/bus.c to populate the of_node
-   field of card->dev. Here we don't care of the mmc-card property
-
- - in mmc_decode_ext_csd() from drivers/mmc/core/mmc.c, here the purpose
-   is exactly to check if the mmc-card property is present so we could
-   replace it by mmc_of_parse_mmc_card().
-
- - in sdio_set_of_node from drivers/mmc/core/sdio_bus.c to populate the
-   of_node field of func->dev. Here again, we don't care of the mmc-card
-   property
-
-So in one case we could use the same function but for the 2 other cases
-continue to use mmc_of_find_child_device() alone make sens.
-
->
-> Additionally, we need a generic method of how to describe in DT, when
-> an mmc host controller has more than one mmc slot. This will also be
-> done using child nodes.
->
-> So, before starting hacking on this, it seems like we need some
-> consolidation of the code. In principle, I would like to move the APIs
-> for parsing of the child nodes into host.c, along with existing
-> mmc_of_parse() function.
-
-I understand that you want consolidate this subsystem but it seems
-beyond the this series. I would not want that the merge of this driver
-will be delayed more because of it. We submitted the first version 5
-month ago now, made several changes and we will reach the 7th
-version. Along these version we also already contribute to improve the
-mmc subsystem. I agree to work on the change you want, but I would like
-not depending of it to merge this series.
-
-We will address all the other comment on v6 from you and Andrian for a
-v7. And for this patch we can:
-
- - keep it as is and only modify the mmc_decode_ext_csd() to use
-   mmc_of_find_child_device().
-
- - Moving it back inside our driver waiting for a better API in the mmc
-   subsystem.
-
-What would be your preference?
-
->
->> +       if (np && of_device_is_compatible(np, "mmc-card")) {
->> +               /* mmc-card sub-node indicates eMMC card is in use. */
->> +               host->caps |= MMC_CAP_NONREMOVABLE;
->> +               host->caps2 |= MMC_CAP2_NO_SDIO | MMC_CAP2_NO_SD;
->> +               ret = true;
+>> +       if (IS_ENABLED(CONFIG_CPU_IDLE) &&
+>> +                       !strstr(boot_command_line, "nohlt")) {
+>> +               dev_err(dev, "May not be accessible in CPU power
+>> domain.\n");
+>> +               return -EPERM;
 >> +       }
->> +
+>>
 >
-> So instead of providing a new mmc OF parse API, let's make
-> mmc_of_parse() call another internal function which deals with child
-> node parsing.
+> There is an API which kind of achieves what "nohlt" does at runtime :
+>
+>   cpu_idle_poll_ctrl(true)
+>
+> So may be we could use that instead of depending on "nohlt". The other side
+> of the issues is "when do we decide to use the API". May be we could add
+> something
+> like : enable_debug, which could then trigger the panic notifier
+> registrations
+> and the above. That would still leave us with a case where the system
+> crashes
+> even before the user gets a terminal. May be the following is the best
+> option :
+>
+> 1) Dedicated kernel command line parameter for enabling the CPU debug at
+> boot/probe.
+>
+> and
+>
+> 2) Runtime enable method via sysfs.
+>
+> What do you think ?
 
-As the driver need to know if the card is an emmc then we need to alos
-expose this information in one of the mmc structure, waht about "struct
-mmc_host"?
+In my opinion booting with "nohlt" on the cmd line is sufficient to
+determine if we should use the driver or not.  That way we also avoid
+declaring yet another sysfs flag, something I really want to avoid.
 
 Thanks,
-
-Gregory
-
+Mathieu
 
 >
->> +       of_node_put(np);
->> +       return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(mmc_of_parse_mmc_card);
->> +
->> +/*
->>   * Starting point for MMC card init.
->>   */
->>  int mmc_attach_mmc(struct mmc_host *host)
->> diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
->> index e33cc748dcfe..1b27323f3b6e 100644
->> --- a/include/linux/mmc/core.h
->> +++ b/include/linux/mmc/core.h
->> @@ -234,4 +234,6 @@ struct device_node;
->>  extern u32 mmc_vddrange_to_ocrmask(int vdd_min, int vdd_max);
->>  extern int mmc_of_parse_voltage(struct device_node *np, u32 *mask);
->>
->> +extern bool mmc_of_parse_mmc_card(struct mmc_host *host);
->> +
->>  #endif /* LINUX_MMC_CORE_H */
->> --
->> git-series 0.9.1
+> Suzuki
 >
-> If you didn't quite understand my comments, then please tell me. Then
-> I can help out cooking some patches for you.
->
-> Kind regards
-> Uffe
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
