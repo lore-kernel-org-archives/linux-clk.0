@@ -1,42 +1,44 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/9] clk: meson: fix SET_PARM macro
-Date: Thu,  9 Mar 2017 11:41:46 +0100
-Message-Id: <20170309104154.28295-2-jbrunet@baylibre.com>
-In-Reply-To: <20170309104154.28295-1-jbrunet@baylibre.com>
-References: <20170309104154.28295-1-jbrunet@baylibre.com>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 20 Mar 2017 16:29:22 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Stephen
+ Warren" <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: fix disable unused for clocks sharing enable
+ bit
+Message-ID: <20170320142922.GI21907@tbergstrom-lnx.Nvidia.com>
+References: <1489587055-23722-1-git-send-email-pdeschrijver@nvidia.com>
+ <20170320132746.GK22463@ulmo.ba.sec>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20170320132746.GK22463@ulmo.ba.sec>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-parameter val is not enclosed in parenthesis which is buggy when given an
-expression instead of a simple value
+On Mon, Mar 20, 2017 at 02:27:46PM +0100, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Wed, Mar 15, 2017 at 04:10:54PM +0200, Peter De Schrijver wrote:
+> > In case 2 clocks share an enable bit and one of them is enabled by a driver
+> > and the other one is not, CCF will think it's enabled because it will only
+> > look at the hw state. Therefor it will disable the clock and thus also
+> > disable the other clock which was enabled. Solve this by reading the
+> > initial state of the enable bit and incrementing the refcount if it's set.
+> > 
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  drivers/clk/tegra/clk-periph-gate.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> 
+> I think you had already sent a version of this patch a couple of weeks
+> ago. I've applied the first version since I couldn't spot any delta
+> between them.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
----
- drivers/clk/meson/clkc.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hmm. Could be.
 
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 9bb70e7a7d6a..c6be77dd8694 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -25,7 +25,7 @@
- #define PARM_GET(width, shift, reg)					\
- 	(((reg) & SETPMASK(width, shift)) >> (shift))
- #define PARM_SET(width, shift, reg, val)				\
--	(((reg) & CLRPMASK(width, shift)) | (val << (shift)))
-+	(((reg) & CLRPMASK(width, shift)) | ((val) << (shift)))
- 
- #define MESON_PARM_APPLICABLE(p)		(!!((p)->width))
- 
--- 
-2.9.3
+Cheers,
+
+Peter.
