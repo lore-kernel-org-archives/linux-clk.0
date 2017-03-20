@@ -1,86 +1,34 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] rockchip clock changes for 4.12 part1
-Date: Tue, 28 Mar 2017 14:52:34 +0200
-Message-ID: <5160508.89PunkDez8@phil>
+Return-Path: <tony@atomide.com>
+Date: Mon, 20 Mar 2017 08:07:39 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 8/9] ARM: dts: omap4: add clkctrl nodes
+Message-ID: <20170320150738.GJ20572@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <1489741781-12816-9-git-send-email-t-kristo@ti.com>
+ <20170317154333.GW20572@atomide.com>
+ <9456caee-4f45-044a-0b2e-305fa2d0d274@ti.com>
+ <b602ccba-489f-e78f-0011-6d808bca9f84@ti.com>
+ <20170320143538.GH20572@atomide.com>
+ <3a82add5-7d85-458c-f8c1-9e58db6a8949@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <3a82add5-7d85-458c-f8c1-9e58db6a8949@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+* Tero Kristo <t-kristo@ti.com> [170320 07:54]:
+> - You can introduce the DTS changes on a clkctrl module basis, e.g.
+> introduce the node for l4_per_clkctrl along with the clock node changes for
+> the same
 
-Please find below rockchip clock changes for 4.12. As the tag states,
-I've included the rk1108 -> rv1108 clock rename in here. Pinctrl changes
-go through the pinctrl tree and once everything is in mainline I'll put
-the actual devicetree on top. That way we keep cross-tree changes to a
-minimum while keeping everything error-free and bisectable.
+I don't mind introducing them all at once, I'm worried about
+reverting in case of trouble. But as long as we can revert things on
+a clkctrl module basis in case of trouble, we should be good to go as
+far as I'm concerned.
 
-So please pull if nothing stands out.
+Regards,
 
-Thanks
-Heiko
-
-
-The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
-
-  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.12-rockchip-clk1
-
-for you to fetch changes up to 9be83448951a404a6fd5cf43ee0245a9bccc02c1:
-
-  clk: rockchip: add pll_wait_lock for pll_enable (2017-03-22 18:33:22 +0100)
-
-----------------------------------------------------------------
-General rockchip clock changes for 4.12. Contains some new clock-ids
-as well as fixups of the clock-ids on rk3368 timers, which were unused
-and completely wrong (more and differently named timers).
-Also there is one new clock on rk3328 using the muxgrf type, a fix for
-pll enablement which should wait for the pll to lock before continuing,
-some more critical clocks and the rename of the rk1108 to rv1108, as the
-soc seems to have been using a preliminary name before its actual release.
-The plan is to have the driver changes (pinctrl, clk) go through the
-respective maintainer trees and once everything landed in mainline do
-the rename of the devicetree files. With the dts-include change in the
-clock rename, we also keep everything compiling and thus bisectability.
-
-----------------------------------------------------------------
-Andy Yan (2):
-      dt-bindings: rk1108-cru: rename RK1108 to RV1108
-      clk: rockchip: rename RK1108 to RV1108
-
-Douglas Anderson (1):
-      clk: rockchip: Set "ignore unused" for PMU M0 clocks on rk3399
-
-Elaine Zhang (7):
-      clk: rockchip: add rk3328 clk_mac2io_ext ID
-      clk: rockchip: fix up rk3368 timer-ids
-      clk: rockchip: add clock ids for timer10-15 of RK3368 SoCs
-      clk: rockchip: describe clk_gmac using the new muxgrf type on rk3328
-      clk: rockchip: export SCLK_TIMERXX id for timers on rk3368
-      clk: rockchip: mark some rk3368 core-clks as critical
-      clk: rockchip: add pll_wait_lock for pll_enable
-
-Heiko Stuebner (1):
-      Merge branch 'v4.12-shared/clkids' into v4.12-clk/next
-
- ...chip,rk1108-cru.txt => rockchip,rv1108-cru.txt} |  12 +-
- arch/arm/boot/dts/rk1108.dtsi                      |   2 +-
- drivers/clk/rockchip/Makefile                      |   2 +-
- drivers/clk/rockchip/clk-pll.c                     |   3 +
- drivers/clk/rockchip/clk-rk3328.c                  |   9 +
- drivers/clk/rockchip/clk-rk3368.c                  |  27 +-
- drivers/clk/rockchip/clk-rk3399.c                  |   8 +-
- .../clk/rockchip/{clk-rk1108.c => clk-rv1108.c}    | 414 ++++++++++-----------
- drivers/clk/rockchip/clk.h                         |  28 +-
- include/dt-bindings/clock/rk3328-cru.h             |   1 +
- include/dt-bindings/clock/rk3368-cru.h             |  19 +-
- .../clock/{rk1108-cru.h => rv1108-cru.h}           |   6 +-
- 12 files changed, 276 insertions(+), 255 deletions(-)
- rename Documentation/devicetree/bindings/clock/{rockchip,rk1108-cru.txt => rockchip,rv1108-cru.txt} (83%)
- rename drivers/clk/rockchip/{clk-rk1108.c => clk-rv1108.c} (57%)
- rename include/dt-bindings/clock/{rk1108-cru.h => rv1108-cru.h} (97%)
+Tony
