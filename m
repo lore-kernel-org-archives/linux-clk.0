@@ -1,122 +1,170 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Fri, 17 Mar 2017 10:13:35 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org, Suzuki.Poulose@arm.com, sudeep.holla@arm.com
-Subject: Re: [PATCH v4 1/7] coresight: bindings for CPU debug module
-Message-ID: <20170317161335.GB20435@linaro.org>
-References: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
- <1489762943-25849-2-git-send-email-leo.yan@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Mon, 20 Mar 2017 10:56:49 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH v2 3/8] dt-bindings: add bindings for DE2 on V3s SoC
+Message-ID: <20170320095649.pnokqzv3akubkklm@lukather>
+References: <20170316204748.8596-1-icenowy@aosc.xyz>
+ <20170316204748.8596-4-icenowy@aosc.xyz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1489762943-25849-2-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <20170316204748.8596-4-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============4593027427558975992=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 17, 2017 at 11:02:17PM +0800, Leo Yan wrote:
-> According to ARMv8 architecture reference manual (ARM DDI 0487A.k)
-> Chapter 'Part H: External debug', the CPU can integrate debug module
-> and it can support self-hosted debug and external debug. Especially
-> for supporting self-hosted debug, this means the program can access
-> the debug module from mmio region; and usually the mmio region is
-> integrated with coresight.
-> 
-> So add document for binding debug component, includes binding to APB
-> clock; and also need specify the CPU node which the debug module is
-> dedicated to specific CPU.
-> 
-> Suggested-by: Mike Leach <mike.leach@linaro.org>
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+
+--===============4593027427558975992==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="4sksu36x4iadloy5"
+Content-Disposition: inline
+
+
+--4sksu36x4iadloy5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Mar 17, 2017 at 04:47:43AM +0800, Icenowy Zheng wrote:
+> Allwinner V3s SoC have a display engine which have a different pipeline
+> with older SoCs.
+>=20
+> Add document for it (new compatibles and the new "mixer" part).
+>=20
+> The paragraph of TCON is also refactored, for furtherly add TCONs in
+> A83T/H3/A64/H5 that have only a channel 1 (used for HDMI or TV Encoder).
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 > ---
->  .../bindings/arm/coresight-cpu-debug.txt           | 46 ++++++++++++++++++++++
->  1 file changed, 46 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt b/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
-> new file mode 100644
-> index 0000000..f6855c3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
-> @@ -0,0 +1,46 @@
-> +* CoreSight CPU Debug Component:
+>  .../bindings/display/sunxi/sun4i-drm.txt           | 37 ++++++++++++++++=
++++---
+>  1 file changed, 33 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.tx=
+t b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> index b82c00449468..2c293247c41d 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> @@ -31,11 +31,11 @@ Required properties:
+>     * allwinner,sun6i-a31-tcon
+>     * allwinner,sun6i-a31s-tcon
+>     * allwinner,sun8i-a33-tcon
+> +   * allwinner,sun8i-v3s-tcon
+>   - reg: base address and size of memory-mapped region
+>   - interrupts: interrupt associated to this IP
+> - - clocks: phandles to the clocks feeding the TCON. Three are needed:
+> + - clocks: phandles to the clocks feeding the TCON
+>     - 'ahb': the interface clocks
+> -   - 'tcon-ch0': The clock driving the TCON channel 0
+>   - resets: phandles to the reset controllers driving the encoder
+>     - "lcd": the reset line for the TCON channel 0
+> =20
+> @@ -52,7 +52,12 @@ Required properties:
+>    second the block connected to the TCON channel 1 (usually the TV
+>    encoder)
+> =20
+> -On SoCs other than the A33, there is one more clock required:
+> +On TCONs that have a channel 0 (currently all TCONs supported), there
+> +is one more clock required:
+> +   - 'tcon-ch0': The clock driving the TCON channel 0
 > +
-> +CoreSight cpu debug component are compliant with the ARMv8 architecture
-> +reference manual (ARM DDI 0487A.k) Chapter 'Part H: External debug'. The
-> +external debug module is mainly used for two modes: self-hosted debug and
-> +external debug, and it can be accessed from mmio region from Coresight
-> +and eventually the debug module connects with CPU for debugging. And the
-> +debug module provides sample-based profiling extension, which can be used
-> +to sample CPU program counter, secure state and exception level, etc;
-> +usually every CPU has one dedicated debug module to be connected.
+> +On TCONs that have a channel 1 (currently all TCONs except the ones in
+> +A33 and V3s), there is one more clock required:
+>     - 'tcon-ch1': The clock driving the TCON channel 1
+> =20
+>  DRC
+> @@ -137,6 +142,26 @@ Required properties:
+>    Documentation/devicetree/bindings/media/video-interfaces.txt. The
+>    first port should be the input endpoints, the second one the outputs
+> =20
+> +Display Engine 2.0 Mixer
+> +------------------------
+> +
+> +The DE2 mixer have many functionalities, currently only layer blending is
+> +supported.
 > +
 > +Required properties:
+> +  - compatible: value must be one of:
+> +    * allwinner,sun8i-v3s-de2-mixer
+> +  - reg: base address and size of the memory-mapped region.
+> +  - clocks: phandles to the clocks feeding the frontend and backend
+> +    * bus: the backend interface clock
+> +    * ram: the backend DRAM clock
+> +  - clock-names: the clock names mentioned above
+> +  - resets: phandles to the reset controllers driving the backend
 > +
-> +- compatible : should be
-> +	     * "arm,coresight-cpu-debug"; supplemented with "arm,primecell"
-> +	       since this driver is using the AMBA bus interface.
+> +- ports: A ports node with endpoint definitions as defined in
+> +  Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> +  first port should be the input endpoints, the second one the output
+> +
+> =20
+>  Display Engine Pipeline
+>  -----------------------
+> @@ -151,9 +176,13 @@ Required properties:
+>      * allwinner,sun6i-a31-display-engine
+>      * allwinner,sun6i-a31s-display-engine
+>      * allwinner,sun8i-a33-display-engine
+> +    * allwinner,sun8i-v3s-display-engine
+> =20
+>    - allwinner,pipelines: list of phandle to the display engine
+> -    frontends available.
+> +    pipeline entry point. For SoCs with original DE (currently
+> +    all SoCs supported by display engine except V3s), this
+> +    phandle should be a display frontend or backend; for SoCs
+> +    with DE2, this phandle should be a mixer.
 
-This description needs to be refactored - see my comment from an earlier post
-for more details.
+In the old ones, this should never be the backend.
 
-> +
-> +- reg : physical base address and length of the register set.
-> +
-> +- clocks : the clock associated to this component.
-> +
-> +- clock-names : the name of the clock referenced by the code. Since we are
-> +                using the AMBA framework, the name of the clock providing
-> +		the interconnect should be "apb_pclk" and the clock is
-> +		mandatory. The interface between the debug logic and the
-> +		processor core is clocked by the internal CPU clock, so it
-> +		is enabled with CPU clock by default.
-> +
-> +- cpu : the cpu phandle the debug module is affined to. When omitted
-> +	the module is considered to belong to CPU0.
-> +
-> +Optional properties:
+Maxime
 
-s/properties/property
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-> +
-> +- power-domains: a phandle to power domain node for debug module. We can
-> +		 use "nohlt" to ensure CPU power domain is enabled.
+--4sksu36x4iadloy5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The "power-domains" property is to take care of the debug power domain.  The
-"nohlt" is to make sure registers in the CPU power domain are accessible - both
-are independent from one another.  As such the description for this binding
-shoudl be:
+-----BEGIN PGP SIGNATURE-----
 
-"a phandle to the debug power domain".
+iQIcBAEBCAAGBQJYz6dhAAoJEBx+YmzsjxAgjtQP/208fM4WV3++1VkzGyr2eEkK
+ZPJ4x0HW57Gy25tfhdyTKc0VpG/p4AdfKp+CZtjuIzBsmab7zpQBTjiMoBUyz5hj
+IPNumRi/FeVp5SeQTKEV0TXhJZhy0Ft3nNxG8jTHmaO70sgL4//HUz8J3IN8BmNv
+BaDc3KGLsWIwxmOm6miVWWMUA+beNPkTms6v0zin1y2gXu7396PzK4Jyrhni07GU
+fcwheXSn3A3iG0+V13tBsmK9NkyE1cMNIpUJ2pX8CewzBmqfzM3oAfnfeLtVhv28
+4Iq2Hf4oSs/5a9548xyFa3qZbqplyoOb1xFygmXC4Ebt1+SJeVb10PxXfDy7cuhA
+3MUY8pPziz8Ac936cpmphHtyR4BmPS8v9OpC4n56v1amxOn5kwYeNPv4eanPrIt8
+GoYX3jQhUH+dbkxzj4g62JXySSbMyQfuVgBZQ06MawErusY870FPhbE7jFPXguUL
+Yt5Z1XiSwRb1EjEmxyKP8byh109lwXdK63muAr7xRltnq6LtINR1CiWoEphHwakj
+NfF9qtIaE8/VUv1Lj/1CS+kkEoQP4Xyw7CEYuZgrfLCy+w7A8rup3XQI7H0wf9Y+
+qOIZPO1a/2Dcd7P34d07wML6ngiSK9jrXcU3jjksVs0TpLEk4X7ltJmCdRwv+FK7
+sHeBf81vEOrBQ/FtMzbx
+=q1HR
+-----END PGP SIGNATURE-----
 
-Thanks,
-Mathieu
+--4sksu36x4iadloy5--
 
-> +
-> +
-> +Example:
-> +
-> +	debug@f6590000 {
-> +		compatible = "arm,coresight-cpu-debug","arm,primecell";
-> +		reg = <0 0xf6590000 0 0x1000>;
-> +		clocks = <&sys_ctrl HI6220_DAPB_CLK>;
-> +		clock-names = "apb_pclk";
-> +		cpu = <&cpu0>;
-> +	};
-> -- 
-> 2.7.4
-> 
+
+--===============4593027427558975992==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============4593027427558975992==--
