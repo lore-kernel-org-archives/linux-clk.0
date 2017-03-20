@@ -1,186 +1,125 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1 2/4] clk: rockchip: rk3228: add CLK_IGNORE_UNUSED flag for some clks
-Date: Thu, 16 Mar 2017 16:44:52 +0800
-Message-Id: <1489653894-2440-3-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1489653894-2440-1-git-send-email-zhangqing@rock-chips.com>
-References: <1489653894-2440-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Mon, 20 Mar 2017 10:55:25 +0100
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH v2 1/8] dt-bindings: add binding for the Allwinner DE2 CCU
+Message-ID: <20170320095525.osvx5zba4xkfqm25@lukather>
+References: <20170316204748.8596-1-icenowy@aosc.xyz>
+ <20170316204748.8596-2-icenowy@aosc.xyz>
+MIME-Version: 1.0
+In-Reply-To: <20170316204748.8596-2-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/mixed; boundary="===============1850135076331618746=="
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-set pclk_cpu and hclk_cpu as critical_clocks
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3228.c | 66 ++++++++++++++++++++-------------------
- 1 file changed, 34 insertions(+), 32 deletions(-)
+--===============1850135076331618746==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="bvtb6bi2qa3loh6l"
+Content-Disposition: inline
 
-diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-index db6e5a9e6de6..9f82d089084e 100644
---- a/drivers/clk/rockchip/clk-rk3228.c
-+++ b/drivers/clk/rockchip/clk-rk3228.c
-@@ -262,9 +262,9 @@ enum rk3228_plls {
- 			RK2928_CLKGATE_CON(6), 2, GFLAGS),
- 	GATE(0, "pclk_cpu", "pclk_bus_src", 0,
- 			RK2928_CLKGATE_CON(6), 3, GFLAGS),
--	GATE(0, "pclk_phy_pre", "pclk_bus_src", 0,
-+	GATE(0, "pclk_phy_pre", "pclk_bus_src", CLK_IGNORE_UNUSED,
- 			RK2928_CLKGATE_CON(6), 4, GFLAGS),
--	GATE(0, "pclk_ddr_pre", "pclk_bus_src", 0,
-+	GATE(0, "pclk_ddr_pre", "pclk_bus_src", CLK_IGNORE_UNUSED,
- 			RK2928_CLKGATE_CON(6), 13, GFLAGS),
- 
- 	/* PD_VIDEO */
-@@ -445,7 +445,7 @@ enum rk3228_plls {
- 			RK2928_CLKGATE_CON(2), 12, GFLAGS,
- 			&rk3228_spdif_fracmux),
- 
--	GATE(0, "jtag", "ext_jtag", 0,
-+	GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
- 			RK2928_CLKGATE_CON(1), 3, GFLAGS),
- 
- 	GATE(0, "sclk_otgphy0", "xin24m", 0,
-@@ -527,24 +527,24 @@ enum rk3228_plls {
- 
- 	/* PD_VOP */
- 	GATE(0, "aclk_rga", "aclk_rga_pre", 0, RK2928_CLKGATE_CON(13), 0, GFLAGS),
--	GATE(0, "aclk_rga_noc", "aclk_rga_pre", 0, RK2928_CLKGATE_CON(13), 11, GFLAGS),
-+	GATE(0, "aclk_rga_noc", "aclk_rga_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(13), 11, GFLAGS),
- 	GATE(0, "aclk_iep", "aclk_iep_pre", 0, RK2928_CLKGATE_CON(13), 2, GFLAGS),
--	GATE(0, "aclk_iep_noc", "aclk_iep_pre", 0, RK2928_CLKGATE_CON(13), 9, GFLAGS),
-+	GATE(0, "aclk_iep_noc", "aclk_iep_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(13), 9, GFLAGS),
- 
- 	GATE(ACLK_VOP, "aclk_vop", "aclk_vop_pre", 0, RK2928_CLKGATE_CON(13), 5, GFLAGS),
--	GATE(0, "aclk_vop_noc", "aclk_vop_pre", 0, RK2928_CLKGATE_CON(13), 12, GFLAGS),
-+	GATE(0, "aclk_vop_noc", "aclk_vop_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(13), 12, GFLAGS),
- 
- 	GATE(0, "aclk_hdcp", "aclk_hdcp_pre", 0, RK2928_CLKGATE_CON(14), 10, GFLAGS),
--	GATE(0, "aclk_hdcp_noc", "aclk_hdcp_pre", 0, RK2928_CLKGATE_CON(13), 10, GFLAGS),
-+	GATE(0, "aclk_hdcp_noc", "aclk_hdcp_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(13), 10, GFLAGS),
- 
- 	GATE(0, "hclk_rga", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(13), 1, GFLAGS),
- 	GATE(0, "hclk_iep", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(13), 3, GFLAGS),
- 	GATE(HCLK_VOP, "hclk_vop", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(13), 6, GFLAGS),
--	GATE(0, "hclk_vio_ahb_arbi", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(13), 7, GFLAGS),
--	GATE(0, "hclk_vio_noc", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(13), 8, GFLAGS),
--	GATE(0, "hclk_vop_noc", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(13), 13, GFLAGS),
-+	GATE(0, "hclk_vio_ahb_arbi", "hclk_vio_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(13), 7, GFLAGS),
-+	GATE(0, "hclk_vio_noc", "hclk_vio_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(13), 8, GFLAGS),
-+	GATE(0, "hclk_vop_noc", "hclk_vio_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(13), 13, GFLAGS),
- 	GATE(0, "hclk_vio_h2p", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(14), 7, GFLAGS),
--	GATE(0, "hclk_hdcp_mmu", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(14), 12, GFLAGS),
-+	GATE(0, "hclk_hdcp_mmu", "hclk_vio_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(14), 12, GFLAGS),
- 	GATE(PCLK_HDMI_CTRL, "pclk_hdmi_ctrl", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(14), 6, GFLAGS),
- 	GATE(0, "pclk_vio_h2p", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(14), 8, GFLAGS),
- 	GATE(0, "pclk_hdcp", "hclk_vio_pre", 0, RK2928_CLKGATE_CON(14), 11, GFLAGS),
-@@ -558,13 +558,13 @@ enum rk3228_plls {
- 	GATE(HCLK_EMMC, "hclk_emmc", "hclk_peri", 0, RK2928_CLKGATE_CON(11), 2, GFLAGS),
- 	GATE(HCLK_NANDC, "hclk_nandc", "hclk_peri", 0, RK2928_CLKGATE_CON(11), 3, GFLAGS),
- 	GATE(0, "hclk_host0", "hclk_peri", 0, RK2928_CLKGATE_CON(11), 6, GFLAGS),
--	GATE(0, "hclk_host0_arb", "hclk_peri", 0, RK2928_CLKGATE_CON(11), 7, GFLAGS),
-+	GATE(0, "hclk_host0_arb", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(11), 7, GFLAGS),
- 	GATE(0, "hclk_host1", "hclk_peri", 0, RK2928_CLKGATE_CON(11), 8, GFLAGS),
--	GATE(0, "hclk_host1_arb", "hclk_peri", 0, RK2928_CLKGATE_CON(11), 9, GFLAGS),
-+	GATE(0, "hclk_host1_arb", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(11), 9, GFLAGS),
- 	GATE(0, "hclk_host2", "hclk_peri", 0, RK2928_CLKGATE_CON(11), 10, GFLAGS),
- 	GATE(0, "hclk_otg", "hclk_peri", 0, RK2928_CLKGATE_CON(11), 12, GFLAGS),
--	GATE(0, "hclk_otg_pmu", "hclk_peri", 0, RK2928_CLKGATE_CON(11), 13, GFLAGS),
--	GATE(0, "hclk_host2_arb", "hclk_peri", 0, RK2928_CLKGATE_CON(11), 14, GFLAGS),
-+	GATE(0, "hclk_otg_pmu", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(11), 13, GFLAGS),
-+	GATE(0, "hclk_host2_arb", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(11), 14, GFLAGS),
- 	GATE(0, "hclk_peri_noc", "hclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(12), 1, GFLAGS),
- 
- 	GATE(PCLK_GMAC, "pclk_gmac", "pclk_peri", 0, RK2928_CLKGATE_CON(11), 5, GFLAGS),
-@@ -572,15 +572,15 @@ enum rk3228_plls {
- 
- 	/* PD_GPU */
- 	GATE(0, "aclk_gpu", "aclk_gpu_pre", 0, RK2928_CLKGATE_CON(13), 14, GFLAGS),
--	GATE(0, "aclk_gpu_noc", "aclk_gpu_pre", 0, RK2928_CLKGATE_CON(13), 15, GFLAGS),
-+	GATE(0, "aclk_gpu_noc", "aclk_gpu_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(13), 15, GFLAGS),
- 
- 	/* PD_BUS */
--	GATE(0, "sclk_initmem_mbist", "aclk_cpu", 0, RK2928_CLKGATE_CON(8), 1, GFLAGS),
--	GATE(0, "aclk_initmem", "aclk_cpu", 0, RK2928_CLKGATE_CON(8), 0, GFLAGS),
-+	GATE(0, "sclk_initmem_mbist", "aclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(8), 1, GFLAGS),
-+	GATE(0, "aclk_initmem", "aclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(8), 0, GFLAGS),
- 	GATE(ACLK_DMAC, "aclk_dmac_bus", "aclk_cpu", 0, RK2928_CLKGATE_CON(8), 2, GFLAGS),
- 	GATE(0, "aclk_bus_noc", "aclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 1, GFLAGS),
- 
--	GATE(0, "hclk_rom", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 3, GFLAGS),
-+	GATE(0, "hclk_rom", "hclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(8), 3, GFLAGS),
- 	GATE(HCLK_I2S0_8CH, "hclk_i2s0_8ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 7, GFLAGS),
- 	GATE(HCLK_I2S1_8CH, "hclk_i2s1_8ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 8, GFLAGS),
- 	GATE(HCLK_I2S2_2CH, "hclk_i2s2_2ch", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 9, GFLAGS),
-@@ -589,18 +589,18 @@ enum rk3228_plls {
- 	GATE(0, "hclk_crypto_mst", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 11, GFLAGS),
- 	GATE(0, "hclk_crypto_slv", "hclk_cpu", 0, RK2928_CLKGATE_CON(8), 12, GFLAGS),
- 
--	GATE(0, "pclk_ddrupctl", "pclk_ddr_pre", 0, RK2928_CLKGATE_CON(8), 4, GFLAGS),
--	GATE(0, "pclk_ddrmon", "pclk_ddr_pre", 0, RK2928_CLKGATE_CON(8), 6, GFLAGS),
--	GATE(0, "pclk_msch_noc", "pclk_ddr_pre", 0, RK2928_CLKGATE_CON(10), 2, GFLAGS),
-+	GATE(0, "pclk_ddrupctl", "pclk_ddr_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(8), 4, GFLAGS),
-+	GATE(0, "pclk_ddrmon", "pclk_ddr_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(8), 6, GFLAGS),
-+	GATE(0, "pclk_msch_noc", "pclk_ddr_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 2, GFLAGS),
- 
--	GATE(0, "pclk_efuse_1024", "pclk_cpu", 0, RK2928_CLKGATE_CON(8), 13, GFLAGS),
--	GATE(0, "pclk_efuse_256", "pclk_cpu", 0, RK2928_CLKGATE_CON(8), 14, GFLAGS),
-+	GATE(0, "pclk_efuse_1024", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(8), 13, GFLAGS),
-+	GATE(0, "pclk_efuse_256", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(8), 14, GFLAGS),
- 	GATE(PCLK_I2C0, "pclk_i2c0", "pclk_cpu", 0, RK2928_CLKGATE_CON(8), 15, GFLAGS),
- 	GATE(PCLK_I2C1, "pclk_i2c1", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 0, GFLAGS),
- 	GATE(PCLK_I2C2, "pclk_i2c2", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 1, GFLAGS),
- 	GATE(PCLK_I2C3, "pclk_i2c3", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 2, GFLAGS),
- 	GATE(PCLK_TIMER, "pclk_timer0", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 4, GFLAGS),
--	GATE(0, "pclk_stimer", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 5, GFLAGS),
-+	GATE(0, "pclk_stimer", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(9), 5, GFLAGS),
- 	GATE(PCLK_SPI0, "pclk_spi0", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 6, GFLAGS),
- 	GATE(PCLK_PWM, "pclk_rk_pwm", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 7, GFLAGS),
- 	GATE(PCLK_GPIO0, "pclk_gpio0", "pclk_cpu", 0, RK2928_CLKGATE_CON(9), 8, GFLAGS),
-@@ -616,20 +616,20 @@ enum rk3228_plls {
- 	GATE(0, "pclk_sgrf", "pclk_cpu", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 2, GFLAGS),
- 	GATE(0, "pclk_sim", "pclk_cpu", 0, RK2928_CLKGATE_CON(10), 3, GFLAGS),
- 
--	GATE(0, "pclk_ddrphy", "pclk_phy_pre", 0, RK2928_CLKGATE_CON(10), 3, GFLAGS),
--	GATE(0, "pclk_acodecphy", "pclk_phy_pre", 0, RK2928_CLKGATE_CON(10), 5, GFLAGS),
-+	GATE(0, "pclk_ddrphy", "pclk_phy_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 3, GFLAGS),
-+	GATE(0, "pclk_acodecphy", "pclk_phy_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 5, GFLAGS),
- 	GATE(PCLK_HDMI_PHY, "pclk_hdmiphy", "pclk_phy_pre", 0, RK2928_CLKGATE_CON(10), 7, GFLAGS),
- 	GATE(0, "pclk_vdacphy", "pclk_phy_pre", 0, RK2928_CLKGATE_CON(10), 8, GFLAGS),
--	GATE(0, "pclk_phy_noc", "pclk_phy_pre", 0, RK2928_CLKGATE_CON(10), 9, GFLAGS),
-+	GATE(0, "pclk_phy_noc", "pclk_phy_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(10), 9, GFLAGS),
- 
- 	GATE(0, "aclk_vpu", "aclk_vpu_pre", 0, RK2928_CLKGATE_CON(15), 0, GFLAGS),
--	GATE(0, "aclk_vpu_noc", "aclk_vpu_pre", 0, RK2928_CLKGATE_CON(15), 4, GFLAGS),
-+	GATE(0, "aclk_vpu_noc", "aclk_vpu_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(15), 4, GFLAGS),
- 	GATE(0, "aclk_rkvdec", "aclk_rkvdec_pre", 0, RK2928_CLKGATE_CON(15), 2, GFLAGS),
--	GATE(0, "aclk_rkvdec_noc", "aclk_rkvdec_pre", 0, RK2928_CLKGATE_CON(15), 6, GFLAGS),
-+	GATE(0, "aclk_rkvdec_noc", "aclk_rkvdec_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(15), 6, GFLAGS),
- 	GATE(0, "hclk_vpu", "hclk_vpu_pre", 0, RK2928_CLKGATE_CON(15), 1, GFLAGS),
--	GATE(0, "hclk_vpu_noc", "hclk_vpu_pre", 0, RK2928_CLKGATE_CON(15), 5, GFLAGS),
-+	GATE(0, "hclk_vpu_noc", "hclk_vpu_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(15), 5, GFLAGS),
- 	GATE(0, "hclk_rkvdec", "hclk_rkvdec_pre", 0, RK2928_CLKGATE_CON(15), 3, GFLAGS),
--	GATE(0, "hclk_rkvdec_noc", "hclk_rkvdec_pre", 0, RK2928_CLKGATE_CON(15), 7, GFLAGS),
-+	GATE(0, "hclk_rkvdec_noc", "hclk_rkvdec_pre", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(15), 7, GFLAGS),
- 
- 	/* PD_MMC */
- 	MMC(SCLK_SDMMC_DRV,    "sdmmc_drv",    "sclk_sdmmc", RK3228_SDMMC_CON0, 1),
-@@ -644,6 +644,8 @@ enum rk3228_plls {
- 
- static const char *const rk3228_critical_clocks[] __initconst = {
- 	"aclk_cpu",
-+	"pclk_cpu",
-+	"hclk_cpu",
- 	"aclk_peri",
- 	"hclk_peri",
- 	"pclk_peri",
--- 
-1.9.1
+
+--bvtb6bi2qa3loh6l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Mar 17, 2017 at 04:47:41AM +0800, Icenowy Zheng wrote:
+> Allwinner "Display Engine 2.0" contains some clock controls in it.
+>=20
+> Add them as a clock driver, and make a device tree binding.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+> ---
+>  .../devicetree/bindings/clock/sun8i-de2.txt        | 31 ++++++++++++++++=
+++++++
+>  1 file changed, 31 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Docu=
+mentation/devicetree/bindings/clock/sun8i-de2.txt
+> new file mode 100644
+> index 000000000000..c19496f037a4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+> @@ -0,0 +1,31 @@
+> +Allwinner Display Engine 2.0 Clock Control Binding
+> +--------------------------------------------------
+> +
+> +Required properties :
+> +- compatible: must contain one of the following compatibles:
+> +		- "allwinner,sun8i-a83t-de2-clk"
+> +		- "allwinner,sun50i-a64-de2-clk"
+> +		- "allwinner,sun50i-h5-de2-clk"
+> +
+> +- reg: Must contain the registers base address and length
+> +- clocks: phandle to the clocks feeding the display engine subsystem.
+> +	  Three are needed:
+> +  - "mod": the display engine module clock
+> +  - "bus": the bus clock for the whole display engine subsystem
+> +- clock-names: Must contain the clock names described just above
+> +- resets: phandle to the reset control for the display engine subsystem.
+> +- #clock-cells : must contain 1
+> +- #reset-cells : must contain 1
+> +
+> +Example:
+> +de2_clocks: clock@01000000 {
+> +	compatible =3D "allwinner,sun50i-a64-de2-clk";
+> +	reg =3D <0x01000000 0x1c>;
+
+Please use the full size of the memory area allocated to that device.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--bvtb6bi2qa3loh6l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYz6cNAAoJEBx+YmzsjxAgkp0P+wVDmXMejCJewPQsa3US2c+E
+Q8GtBjDThWmpPG8Plyrv4KyvxP7Dg/Zubev9WGU856z10O5WhAHne17M4gQj4pIh
+ZAyI/pd67/0u0P9EK/e3Qcc2zuaWaWV+Rv5J62NoqoSY3aCMcl0mBF1k5XKkP1Kn
+wV3oUDoMmaJU1u5wmzzvzfdLjFKBtgYdLYJlxDZzP+fuMs++TGY0YktbT94YFh+H
+xwkyl3IdrvP6+adleacNs5jrOzndMhe0vVhzjJmc/VWX3FAYPt7Efxw12lPL4rvY
+6lQ7LV2AtRvrrF2QRiRafEYtemv8er5OYxyTKScy5a/KqKrjR9H7uO6iZxqIUikf
+fgRWc2t5nCrPQxxmn/O9NQcI34shEzJa9qAPsMzBFmLEhQ/OFACNS3ExjeU5VH/s
+Jf4UCPbf4GhF3+PZ+FpyVT+cbZ2QErnnHXCTdvxk0leshQ+aHBYII8wymp2u1YjJ
+uhqcqTherN8aA6eo4AGyCB1ECJ7aU4a31t37bX+d5t5Wc1TiyQlIm+rOoWkZS7JQ
+oXxCRpBfFESkpLXgIRYYBiWmTTfMcbAsWGmMKW2hYFENKuTgZH1ww/iQ8wI0ijkJ
+wEx1cBDBmWYYWrv8VDroqCuBcaE1DvC5vUZVrhNYiDVxX1lJL3fkcrk9jiI2g7NL
+xy4MrjPMAbxkv2aCJytP
+=um0S
+-----END PGP SIGNATURE-----
+
+--bvtb6bi2qa3loh6l--
+
+
+--===============1850135076331618746==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============1850135076331618746==--
