@@ -1,209 +1,98 @@
-Return-Path: <mars.cheng@mediatek.com>
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
-	<robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-CC: CC Hwang <cc.hwang@mediatek.com>, Loda Chou <loda.chou@mediatek.com>,
-	Miles Chen <miles.chen@mediatek.com>, Jades Shih <jades.shih@mediatek.com>,
-	Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang <my.chuang@mediatek.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>,
-	<linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>, Kevin-CW
- Chen <kevin-cw.chen@mediatek.com>
-Subject: [PATCH v3 11/12] soc: mediatek: add MT6797 scysys support
-Date: Sun, 19 Mar 2017 23:26:32 +0800
-Message-ID: <1489937193-2953-12-git-send-email-mars.cheng@mediatek.com>
-In-Reply-To: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
-References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: mars.cheng@mediatek.com
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 2/5] clk: Add clk_hw_get_clk() helper API to be used by clk providers
+Date: Tue, 21 Mar 2017 11:45:20 +0530
+Message-Id: <1490076923-20194-3-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1490076923-20194-1-git-send-email-rnayak@codeaurora.org>
+References: <1490076923-20194-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds scysys support for MT6797
+As we move towards a cleaner split to have clock providers use clk_hw
+for all clock operations, while consumers operate on the (per-user)
+struct clk handles, we still have cases where in a clock provider
+might want to call into high level clk apis which only operate on a
+struct clk handle.
+To facilitate such needs, have a clk_hw_get_clk() api which can be
+used from within clock providers to get access to struct clk handles.
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
- drivers/soc/mediatek/mtk-scpsys.c        |  114 ++++++++++++++++++++++++++++++
- include/dt-bindings/power/mt6797-power.h |   30 ++++++++
- 2 files changed, 144 insertions(+)
- create mode 100644 include/dt-bindings/power/mt6797-power.h
+ drivers/clk/clk.c            | 39 +++++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |  5 +++++
+ 2 files changed, 44 insertions(+)
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index a8ba800..fc7bf95 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -21,6 +21,7 @@
- #include <linux/soc/mediatek/infracfg.h>
- 
- #include <dt-bindings/power/mt2701-power.h>
-+#include <dt-bindings/power/mt6797-power.h>
- #include <dt-bindings/power/mt8173-power.h>
- 
- #define SPM_VDE_PWR_CON			0x0210
-@@ -585,6 +586,116 @@ static int __init scpsys_probe_mt2701(struct platform_device *pdev)
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0fb39fe..a6ba77c 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -186,6 +186,45 @@ const char *clk_hw_get_name(const struct clk_hw *hw)
  }
+ EXPORT_SYMBOL_GPL(clk_hw_get_name);
  
- /*
-+ * MT6797 power domain support
-+ */
-+
-+static const struct scp_domain_data scp_domain_data_mt6797[] = {
-+	[MT6797_POWER_DOMAIN_VDEC] = {
-+		.name = "vdec",
-+		.sta_mask = BIT(7),
-+		.ctl_offs = 0x300,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.clk_id = {CLK_VDEC},
-+	},
-+	[MT6797_POWER_DOMAIN_VENC] = {
-+		.name = "venc",
-+		.sta_mask = BIT(21),
-+		.ctl_offs = 0x304,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(15, 12),
-+		.clk_id = {CLK_NONE},
-+	},
-+	[MT6797_POWER_DOMAIN_ISP] = {
-+		.name = "isp",
-+		.sta_mask = BIT(5),
-+		.ctl_offs = 0x308,
-+		.sram_pdn_bits = GENMASK(9, 8),
-+		.sram_pdn_ack_bits = GENMASK(13, 12),
-+		.clk_id = {CLK_NONE},
-+	},
-+	[MT6797_POWER_DOMAIN_MM] = {
-+		.name = "mm",
-+		.sta_mask = BIT(3),
-+		.ctl_offs = 0x30C,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.clk_id = {CLK_MM},
-+		.bus_prot_mask = (BIT(1) | BIT(2)),
-+	},
-+	[MT6797_POWER_DOMAIN_AUDIO] = {
-+		.name = "audio",
-+		.sta_mask = BIT(24),
-+		.ctl_offs = 0x314,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(15, 12),
-+		.clk_id = {CLK_NONE},
-+	},
-+	[MT6797_POWER_DOMAIN_MFG_ASYNC] = {
-+		.name = "mfg_async",
-+		.sta_mask = BIT(13),
-+		.ctl_offs = 0x334,
-+		.sram_pdn_bits = 0,
-+		.sram_pdn_ack_bits = 0,
-+		.clk_id = {CLK_MFG},
-+	},
-+	[MT6797_POWER_DOMAIN_MJC] = {
-+		.name = "mjc",
-+		.sta_mask = BIT(20),
-+		.ctl_offs = 0x310,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.clk_id = {CLK_NONE},
-+	},
-+};
-+
-+#define NUM_DOMAINS_MT6797	ARRAY_SIZE(scp_domain_data_mt6797)
-+#define SPM_PWR_STATUS_MT6797		0x0180
-+#define SPM_PWR_STATUS_2ND_MT6797	0x0184
-+
-+static int __init scpsys_probe_mt6797(struct platform_device *pdev)
++struct clk *clk_hw_get_clk(struct clk_hw *hw, const char *dev_id,
++			   const char *con_id)
 +{
-+	struct scp *scp;
-+	struct genpd_onecell_data *pd_data;
-+	int ret;
-+	struct scp_ctrl_reg scp_reg;
++	return __clk_create_clk(hw, dev_id, con_id);
++}
++EXPORT_SYMBOL_GPL(clk_hw_get_clk);
 +
-+	scp_reg.pwr_sta_offs = SPM_PWR_STATUS_MT6797;
-+	scp_reg.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6797;
++void clk_hw_put_clk(struct clk *clk)
++{
++	__clk_free_clk(clk);
++}
++EXPORT_SYMBOL_GPL(clk_hw_put_clk);
 +
-+	scp = init_scp(pdev, scp_domain_data_mt6797, NUM_DOMAINS_MT6797,
-+		       &scp_reg);
-+	if (IS_ERR(scp))
-+		return PTR_ERR(scp);
-+
-+	mtk_register_power_domains(pdev, scp, NUM_DOMAINS_MT6797);
-+
-+	pd_data = &scp->pd_data;
-+
-+	ret = pm_genpd_add_subdomain(pd_data->domains[MT6797_POWER_DOMAIN_MM],
-+				pd_data->domains[MT6797_POWER_DOMAIN_VDEC]);
-+	if (ret && IS_ENABLED(CONFIG_PM))
-+		dev_err(&pdev->dev, "Failed to add subdomain: %d\n", ret);
-+
-+	ret = pm_genpd_add_subdomain(pd_data->domains[MT6797_POWER_DOMAIN_MM],
-+				pd_data->domains[MT6797_POWER_DOMAIN_ISP]);
-+	if (ret && IS_ENABLED(CONFIG_PM))
-+		dev_err(&pdev->dev, "Failed to add subdomain: %d\n", ret);
-+
-+	ret = pm_genpd_add_subdomain(pd_data->domains[MT6797_POWER_DOMAIN_MM],
-+				pd_data->domains[MT6797_POWER_DOMAIN_VENC]);
-+	if (ret && IS_ENABLED(CONFIG_PM))
-+		dev_err(&pdev->dev, "Failed to add subdomain: %d\n", ret);
-+
-+	ret = pm_genpd_add_subdomain(pd_data->domains[MT6797_POWER_DOMAIN_MM],
-+		pd_data->domains[MT6797_POWER_DOMAIN_MJC]);
-+	if (ret && IS_ENABLED(CONFIG_PM))
-+		dev_err(&pdev->dev, "Failed to add subdomain: %d\n", ret);
-+
-+	return 0;
++static void devm_clk_hw_put(struct device *dev, void *res)
++{
++	clk_hw_put_clk(*(struct clk **)res);
 +}
 +
-+/*
-  * MT8173 power domain support
-  */
- 
-@@ -721,6 +832,9 @@ static int __init scpsys_probe_mt8173(struct platform_device *pdev)
- 		.compatible = "mediatek,mt2701-scpsys",
- 		.data = scpsys_probe_mt2701,
- 	}, {
-+		.compatible = "mediatek,mt6797-scpsys",
-+		.data = scpsys_probe_mt6797,
-+	}, {
- 		.compatible = "mediatek,mt8173-scpsys",
- 		.data = scpsys_probe_mt8173,
- 	}, {
-diff --git a/include/dt-bindings/power/mt6797-power.h b/include/dt-bindings/power/mt6797-power.h
-new file mode 100644
-index 0000000..d54b377
---- /dev/null
-+++ b/include/dt-bindings/power/mt6797-power.h
-@@ -0,0 +1,30 @@
-+/*
-+ * Copyright (c) 2017 MediaTek Inc.
-+ * Author: Mars.C <mars.cheng@mediatek.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
++struct clk *devm_clk_hw_get_clk(struct device *dev, struct clk_hw *hw,
++				const char *con_id)
++{
++	struct clk **ptr, *clk;
 +
-+#ifndef _DT_BINDINGS_POWER_MT6797_POWER_H
-+#define _DT_BINDINGS_POWER_MT6797_POWER_H
++	ptr = devres_alloc(devm_clk_hw_put, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
 +
-+#define MT6797_POWER_DOMAIN_VDEC		0
-+#define MT6797_POWER_DOMAIN_VENC		1
-+#define MT6797_POWER_DOMAIN_ISP			2
-+#define MT6797_POWER_DOMAIN_MM			3
-+#define MT6797_POWER_DOMAIN_AUDIO		4
-+#define MT6797_POWER_DOMAIN_MFG_ASYNC		5
-+#define MT6797_POWER_DOMAIN_MFG			6
-+#define MT6797_POWER_DOMAIN_MFG_CORE0		7
-+#define MT6797_POWER_DOMAIN_MFG_CORE1		8
-+#define MT6797_POWER_DOMAIN_MFG_CORE2		9
-+#define MT6797_POWER_DOMAIN_MFG_CORE3		10
-+#define MT6797_POWER_DOMAIN_MJC			11
++	clk = clk_hw_get_clk(hw, dev_name(dev), con_id);
++	if (!IS_ERR(clk)) {
++		*ptr = clk;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
 +
-+#endif /* _DT_BINDINGS_POWER_MT6797_POWER_H */
++	return clk;
++}
++EXPORT_SYMBOL_GPL(devm_clk_hw_get_clk);
++
+ struct clk_hw *__clk_get_hw(struct clk *clk)
+ {
+ 	return !clk ? NULL : clk->core->hw;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index a428aec..feddf95 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -729,6 +729,11 @@ struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
+ /* helper functions */
+ const char *__clk_get_name(const struct clk *clk);
+ const char *clk_hw_get_name(const struct clk_hw *hw);
++struct clk *clk_hw_get_clk(struct clk_hw *hw, const char *dev_id,
++			   const char *con_id);
++void clk_hw_put_clk(struct clk *clk);
++struct clk *devm_clk_hw_get_clk(struct device *dev, struct clk_hw *hw,
++				const char *con_id);
+ struct clk_hw *__clk_get_hw(struct clk *clk);
+ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
 -- 
-1.7.9.5
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
