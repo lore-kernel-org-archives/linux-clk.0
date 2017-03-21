@@ -1,129 +1,33 @@
-Return-Path: <icenowy@aosc.io>
-From: Icenowy Zheng <icenowy@aosc.io>
+Return-Path: <shawnguo@kernel.org>
+From: Shawn Guo <shawnguo@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>
+	Stephen Boyd <sboyd@codeaurora.org>
 Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Icenowy Zheng <icenowy@aosc.xyz>
-Subject: [PATCH v3 4/5] ARM: sunxi: h3/h5: switch apb0-related clocks to r_ccu
-Date: Wed, 29 Mar 2017 18:42:45 +0800
-Message-Id: <20170329104246.34204-5-icenowy@aosc.io>
-In-Reply-To: <20170329104246.34204-1-icenowy@aosc.io>
-References: <20170329104246.34204-1-icenowy@aosc.io>
+	Jun Nie <jun.nie@linaro.org>,
+	Baoyou Xie <xie.baoyou@zte.com.cn>,
+	Xin Zhou <zhou.xin8@zte.com.cn>,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH 0/3] ZX296718 clock update for VGA support
+Date: Tue, 21 Mar 2017 16:38:20 +0800
+Message-Id: <1490085503-15713-1-git-send-email-shawnguo@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.xyz>
+From: Shawn Guo <shawn.guo@linaro.org>
 
-Now we have driver for the PRCM CCU, switch to use it instead of
-old-style clock nodes for apb0-related clocks in sunxi-h3-h5.dtsi .
+This is a series which makes necessary changes on zx296718 clock driver
+in order to support VGA display.  The second patch actually fixes a bug
+that is discovered by VGA driver debugging.
 
-The mux 3 of R_CCU is still the internal oscillator, which is said to be
-16MHz plus minus 30%, and get a measured value of 15MHz~16MHz on my two
-H3 boards and one H5 board.
+Shawn Guo (3):
+  clk: zte: set CLK_SET_RATE_PARENT for a few zx296718 clocks
+  zte: clk: pd_bit is not 0 on zx296718
+  clk: zte: add pll_vga clock for zx296718
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
-Changes in v3:
-- Change osc32000 to iosc.
+ drivers/clk/zte/clk-zx296718.c | 30 +++++++++++++++++++++++++++---
+ drivers/clk/zte/clk.c          | 12 +++++++++++-
+ drivers/clk/zte/clk.h          |  6 +++++-
+ 3 files changed, 43 insertions(+), 5 deletions(-)
 
- arch/arm/boot/dts/sunxi-h3-h5.dtsi | 47 +++++++++++++-------------------------
- 1 file changed, 16 insertions(+), 31 deletions(-)
-
-diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-index 6640ebfa6419..a7e858a82c90 100644
---- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-+++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-@@ -41,8 +41,10 @@
-  */
- 
- #include <dt-bindings/clock/sun8i-h3-ccu.h>
-+#include <dt-bindings/clock/sun8i-r-ccu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/reset/sun8i-h3-ccu.h>
-+#include <dt-bindings/reset/sun8i-r-ccu.h>
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -68,31 +70,12 @@
- 			clock-output-names = "osc32k";
- 		};
- 
--		apb0: apb0_clk {
--			compatible = "fixed-factor-clock";
-+		iosc: internal-osc-clk {
- 			#clock-cells = <0>;
--			clock-div = <1>;
--			clock-mult = <1>;
--			clocks = <&osc24M>;
--			clock-output-names = "apb0";
--		};
--
--		apb0_gates: clk@01f01428 {
--			compatible = "allwinner,sun8i-h3-apb0-gates-clk",
--				     "allwinner,sun4i-a10-gates-clk";
--			reg = <0x01f01428 0x4>;
--			#clock-cells = <1>;
--			clocks = <&apb0>;
--			clock-indices = <0>, <1>;
--			clock-output-names = "apb0_pio", "apb0_ir";
--		};
--
--		ir_clk: ir_clk@01f01454 {
--			compatible = "allwinner,sun4i-a10-mod0-clk";
--			reg = <0x01f01454 0x4>;
--			#clock-cells = <0>;
--			clocks = <&osc32k>, <&osc24M>;
--			clock-output-names = "ir";
-+			compatible = "fixed-clock";
-+			clock-frequency = <16000000>;
-+			clock-accuracy = <300000000>;
-+			clock-output-names = "iosc";
- 		};
- 	};
- 
-@@ -576,9 +559,12 @@
- 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
--		apb0_reset: reset@01f014b0 {
--			reg = <0x01f014b0 0x4>;
--			compatible = "allwinner,sun6i-a31-clock-reset";
-+		r_ccu: clock@1f01400 {
-+			compatible = "allwinner,sun50i-a64-r-ccu";
-+			reg = <0x01f01400 0x100>;
-+			clocks = <&osc24M>, <&osc32k>, <&iosc>;
-+			clock-names = "hosc", "losc", "iosc";
-+			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 		};
- 
-@@ -589,9 +575,9 @@
- 
- 		ir: ir@01f02000 {
- 			compatible = "allwinner,sun5i-a13-ir";
--			clocks = <&apb0_gates 1>, <&ir_clk>;
-+			clocks = <&r_ccu CLK_APB0_IR>, <&r_ccu CLK_IR>;
- 			clock-names = "apb", "ir";
--			resets = <&apb0_reset 1>;
-+			resets = <&r_ccu RST_APB0_IR>;
- 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
- 			reg = <0x01f02000 0x40>;
- 			status = "disabled";
-@@ -601,9 +587,8 @@
- 			compatible = "allwinner,sun8i-h3-r-pinctrl";
- 			reg = <0x01f02c00 0x400>;
- 			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&apb0_gates 0>, <&osc24M>, <&osc32k>;
-+			clocks = <&r_ccu CLK_APB0_PIO>, <&osc24M>, <&osc32k>;
- 			clock-names = "apb", "hosc", "losc";
--			resets = <&apb0_reset 0>;
- 			gpio-controller;
- 			#gpio-cells = <3>;
- 			interrupt-controller;
 -- 
-2.12.0
+1.9.1
