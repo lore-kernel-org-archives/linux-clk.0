@@ -1,145 +1,79 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Tue, 21 Mar 2017 19:47:11 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/8] clk: meson: gxbb: add cts_mclk_i958
-Date: Fri, 31 Mar 2017 15:04:08 +0200
-Message-Id: <20170331130411.4781-6-jbrunet@baylibre.com>
-In-Reply-To: <20170331130411.4781-1-jbrunet@baylibre.com>
-References: <20170331130411.4781-1-jbrunet@baylibre.com>
+	John Stultz <john.stultz@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk@vger.kernel.org, Mike Leach <mike.leach@linaro.org>,
+	Sudeep Holla <Sudeep.Holla@arm.com>
+Subject: Re: [v3 3/5] coresight: add support for debug module
+Message-ID: <20170321114711.GA5886@leoy-linaro>
+References: <20170313165600.GB32431@linaro.org>
+ <516f8989-4dde-2686-d549-0761feb14d1b@arm.com>
+ <CANLsYkzJsGvr4ZzNbTwcPu1Qki6=Szvu+bMjHZ_rza==DqFChw@mail.gmail.com>
+ <20170317101328.GA19877@leoy-linaro>
+ <20170317155007.GA20435@linaro.org>
+ <20170317162836.GD2020@leoy-linaro>
+ <5995f6a7-08b1-c868-fc88-a145d1748a33@arm.com>
+ <CANLsYkyiAnSGW4Ujs6L-yBKK3no3zigbyBgOCWbm06ZdV-f2Hw@mail.gmail.com>
+ <20170321025924.GA7429@leoy-linaro>
+ <7226bc83-24f5-f609-2f87-f0afc7657488@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <7226bc83-24f5-f609-2f87-f0afc7657488@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the spdif master clock also referred as cts_mclk_i958
+On Tue, Mar 21, 2017 at 10:16:45AM +0000, Suzuki K Poulose wrote:
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/gxbb.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/gxbb.h |  5 ++++-
- 2 files changed, 56 insertions(+), 1 deletion(-)
+[...]
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 1c20edbfc812..72492cc63915 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -890,6 +890,49 @@ static struct clk_gate gxbb_cts_amclk = {
- 	},
- };
- 
-+static struct clk_mux gxbb_cts_mclk_i958_sel = {
-+	.reg = (void *)HHI_AUD_CLK_CNTL2,
-+	.mask = 0x3,
-+	.shift = 25,
-+	/* Default parent unknown (register reset value: 0) */
-+	.table = (u32[]){ 1, 2, 3 },
-+	.lock = &clk_lock,
-+		.hw.init = &(struct clk_init_data){
-+		.name = "cts_mclk_i958_sel",
-+		.ops = &clk_mux_ops,
-+		.parent_names = (const char *[]){ "mpll0", "mpll1", "mpll2" },
-+		.num_parents = 3,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_divider gxbb_cts_mclk_i958_div = {
-+	.reg = (void *)HHI_AUD_CLK_CNTL2,
-+	.shift = 16,
-+	.width = 8,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cts_mclk_i958_div",
-+		.ops = &clk_divider_ops,
-+		.parent_names = (const char *[]){ "cts_mclk_i958_sel" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT | CLK_DIVIDER_ROUND_CLOSEST,
-+	},
-+};
-+
-+static struct clk_gate gxbb_cts_mclk_i958 = {
-+	.reg = (void *)HHI_AUD_CLK_CNTL2,
-+	.bit_idx = 24,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cts_mclk_i958",
-+		.ops = &clk_gate_ops,
-+		.parent_names = (const char *[]){ "cts_mclk_i958_div" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- /* Everything Else (EE) domain gates */
- static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
- static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
-@@ -1093,6 +1136,9 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
- 		[CLKID_CTS_AMCLK]	    = &gxbb_cts_amclk.hw,
- 		[CLKID_CTS_AMCLK_SEL]	    = &gxbb_cts_amclk_sel.hw,
- 		[CLKID_CTS_AMCLK_DIV]	    = &gxbb_cts_amclk_div.hw,
-+		[CLKID_CTS_MCLK_I958]	    = &gxbb_cts_mclk_i958.hw,
-+		[CLKID_CTS_MCLK_I958_SEL]   = &gxbb_cts_mclk_i958_sel.hw,
-+		[CLKID_CTS_MCLK_I958_DIV]   = &gxbb_cts_mclk_i958_div.hw,
- 	},
- 	.num = NR_CLKS,
- };
-@@ -1209,6 +1255,9 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
- 		[CLKID_CTS_AMCLK]	    = &gxbb_cts_amclk.hw,
- 		[CLKID_CTS_AMCLK_SEL]	    = &gxbb_cts_amclk_sel.hw,
- 		[CLKID_CTS_AMCLK_DIV]	    = &gxbb_cts_amclk_div.hw,
-+		[CLKID_CTS_MCLK_I958]	    = &gxbb_cts_mclk_i958.hw,
-+		[CLKID_CTS_MCLK_I958_SEL]   = &gxbb_cts_mclk_i958_sel.hw,
-+		[CLKID_CTS_MCLK_I958_DIV]   = &gxbb_cts_mclk_i958_div.hw,
- 	},
- 	.num = NR_CLKS,
- };
-@@ -1322,6 +1371,7 @@ static struct clk_gate *const gxbb_clk_gates[] = {
- 	&gxbb_mali_0,
- 	&gxbb_mali_1,
- 	&gxbb_cts_amclk,
-+	&gxbb_cts_mclk_i958,
- };
- 
- static struct clk_mux *const gxbb_clk_muxes[] = {
-@@ -1331,6 +1381,7 @@ static struct clk_mux *const gxbb_clk_muxes[] = {
- 	&gxbb_mali_1_sel,
- 	&gxbb_mali,
- 	&gxbb_cts_amclk_sel,
-+	&gxbb_cts_mclk_i958_sel,
- };
- 
- static struct clk_divider *const gxbb_clk_dividers[] = {
-@@ -1338,6 +1389,7 @@ static struct clk_divider *const gxbb_clk_dividers[] = {
- 	&gxbb_sar_adc_clk_div,
- 	&gxbb_mali_0_div,
- 	&gxbb_mali_1_div,
-+	&gxbb_cts_mclk_i958_div,
- };
- 
- static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index c8e9fb99af92..efa90dad3478 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -280,8 +280,11 @@
- #define CLKID_CTS_AMCLK		  107
- #define CLKID_CTS_AMCLK_SEL	  108
- #define CLKID_CTS_AMCLK_DIV	  109
-+#define CLKID_CTS_MCLK_I958	  110
-+#define CLKID_CTS_MCLK_I958_SEL	  111
-+#define CLKID_CTS_MCLK_I958_DIV	  112
- 
--#define NR_CLKS			  110
-+#define NR_CLKS			  113
- 
- /* include the CLKIDs that have been made part of the stable DT binding */
- #include <dt-bindings/clock/gxbb-clkc.h>
--- 
-2.9.3
+> >>In my opinion booting with "nohlt" on the cmd line is sufficient to
+> >>determine if we should use the driver or not.  That way we also avoid
+> >>declaring yet another sysfs flag, something I really want to avoid.
+> >
+> >Agree.
+> >
+> >I did spend some time to implement coresight core framework to support
+> >debug module, you could see it on:http://termbin.com/k2fj; this also
+> >gives me more sense which is better choice. If declaring another sysfs
+> >flag to support debug module in coresight framework, this lets the
+> >codes and interfaces more complex. E.g. for best fit into coresight
+> >framework, finally we can get 8 sysfs nodes for 8 CPUs in system; so
+> >that means we need enable every CPU one by one.
+> 
+> Having a node for each debug area indeed doesn't look good. We could
+> as will stick a single node under /sys/kernel/debug/ which would enable/disable
+> the debug component.
+> 
+> I am OK with it being tied to nohlt. In that case we will have to add
+> a Kconfig dependency on GENERIC_IDLE_POLL_SETUP (though it is selected
+> by default on ARM/ARM64). Parsing the boot command line for nohlt doesn't
+> look like a good idea. We may have to figure out a way to do that.
+
+I remembered that we can use QoS constraint for CPUIdle:
+        pm_qos_add_request(pm_qos_req, PM_QOS_CPU_DMA_LATENCY, 0);
+
+Using this way we can disable all low power states and don't depend on
+nohlt anymore.
+
+> Also, please could you add support for building this as a module ? Since it
+> doesn't depend on the coresight bus anyway, it should be pretty straight
+> forward.
+
+Yeah. Will support module building.
+
+Thanks,
+Leo Yan
