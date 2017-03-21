@@ -1,61 +1,78 @@
-Return-Path: <marc.zyngier@arm.com>
-Subject: Re: [PATCH v3 02/12] irqchip: mtk-sysirq: extend intpol base to
- arbitrary number
-To: Mars Cheng <mars.cheng@mediatek.com>
-References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
- <1489937193-2953-3-git-send-email-mars.cheng@mediatek.com>
- <3790b6ad-12c0-0c48-c24e-0f3397c6bbba@arm.com>
- <1490313138.25996.10.camel@mtkswgap22>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
- Rob Herring <robh+dt@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- CC Hwang <cc.hwang@mediatek.com>, Loda Chou <loda.chou@mediatek.com>,
- Miles Chen <miles.chen@mediatek.com>, Jades Shih <jades.shih@mediatek.com>,
- Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang
- <my.chuang@mediatek.com>, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
- wsd_upstream@mediatek.com, linux-clk@vger.kernel.org,
- chieh-jay.liu@mediatek.com
-From: Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <c2fcee41-f78f-da13-bf01-a0a01c7e8b39@arm.com>
-Date: Fri, 24 Mar 2017 09:42:10 +0000
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: add clk_possible_parents debugfs file
+Date: Tue, 21 Mar 2017 15:20:31 +0200
+Message-ID: <1490102432-21314-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <1490313138.25996.10.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 23/03/17 23:52, Mars Cheng wrote:
-> On Thu, 2017-03-23 at 16:25 +0000, Marc Zyngier wrote:
->> On 19/03/17 15:26, Mars Cheng wrote:
->>> Originally driver only supports one base. However, MT6797 has
->>> more than one bases to configure interrupt polarity. To support
->>> possible design change, here comes a solution to use arbitrary
->>> number of bases.
->>>
->>> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
->>
->> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
->>
->> What is the merge strategy for this? I'm happy to take the irqchip stuff
->> through my tree, but there is much more in this series...
->>
-> Hi Marc
-> 
-> Thanks for your review.
-> 
-> Hi Matthias
-> 
-> Would you comment on this? If Marc take the following stuff first in his
-> tree:
-> 
-> [PATCH v3 01/12] dt-bindings: mediatek: multiple bases support for
-> sysirq  
+For validation purposes, it's often useful to be able to retrieve the list
+of possible parents in userspace. Add a debugfs file for every clock which
+has more than 1 possible parent.
 
-Before taking this patch, I still need one of the DT maintainer to ack
-the binding extension.
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Reviewed-by: Jon Mayo <jmayo@nvidia.com>
+---
+ drivers/clk/clk.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-Thanks,
-
-	M.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f5f2bcd..2fa2fb8 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2128,6 +2128,34 @@ static int clk_dump_open(struct inode *inode, struct file *file)
+ 	.release	= single_release,
+ };
+ 
++static int possible_parents_dump(struct seq_file *s, void *data)
++{
++	struct clk_core *core;
++	int i;
++
++	core = (struct clk_core *)s->private;
++
++	for (i = 0; i < core->num_parents - 1; i++)
++		seq_printf(s, "%s ", core->parent_names[i]);
++
++	seq_printf(s, "%s\n", core->parent_names[i]);
++
++	return 0;
++}
++
++static int possible_parents_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, possible_parents_dump, inode->i_private);
++}
++
++
++static const struct file_operations possible_parents_fops = {
++	.open		= possible_parents_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= single_release,
++};
++
+ static int clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
+ {
+ 	struct dentry *d;
+@@ -2179,6 +2207,13 @@ static int clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
+ 	if (!d)
+ 		goto err_out;
+ 
++	if (core->num_parents > 1) {
++		d = debugfs_create_file("clk_possible_parents", S_IRUGO,
++				core->dentry, core, &possible_parents_fops);
++		if (!d)
++			goto err_out;
++	}
++
+ 	if (core->ops->debug_init) {
+ 		ret = core->ops->debug_init(core->hw, core->dentry);
+ 		if (ret)
 -- 
-Jazz is not dead. It just smells funny...
+1.9.1
