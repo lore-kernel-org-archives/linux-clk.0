@@ -1,55 +1,85 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	carlo@caione.org,
-	khilman@baylibre.com
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 4/5] clk: meson-gxbb: Expose GP0 dt-bindings clock id
-Date: Wed, 22 Mar 2017 11:32:26 +0100
-Message-Id: <1490178747-14837-5-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1490178747-14837-1-git-send-email-narmstrong@baylibre.com>
-References: <1490178747-14837-1-git-send-email-narmstrong@baylibre.com>
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 5/5] clk: qcom: mmcc-8996: Associate all mmagic clks with mmagic gdscs
+Date: Tue, 21 Mar 2017 11:45:23 +0530
+Message-Id: <1490076923-20194-6-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1490076923-20194-1-git-send-email-rnayak@codeaurora.org>
+References: <1490076923-20194-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch exposes the GP0 PLL clock id in the dt bindings.
+With support added to control clocks associated with a gdsc from within
+the gdsc driver, associate all mmagic clock instances with the respective
+mmagic gdscs so devices inside these mmagic domains do not have to control
+them individually.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
- drivers/clk/meson/gxbb.h              | 2 +-
- include/dt-bindings/clock/gxbb-clkc.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/mmcc-msm8996.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index b710e06..9d94924 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -179,7 +179,7 @@
- /* CLKID_FCLK_DIV4 */
- #define CLKID_FCLK_DIV5		  7
- #define CLKID_FCLK_DIV7		  8
--#define CLKID_GP0_PLL		  9
-+/* CLKID_GP0_PLL */
- #define CLKID_MPEG_SEL		  10
- #define CLKID_MPEG_DIV		  11
- /* CLKID_CLK81 */
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index ef7d6b7..cce6cb5 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -10,6 +10,7 @@
- #define CLKID_FCLK_DIV2		4
- #define CLKID_FCLK_DIV3		5
- #define CLKID_FCLK_DIV4		6
-+#define CLKID_GP0_PLL		9
- #define CLKID_CLK81		12
- #define CLKID_MPLL2		15
- #define CLKID_SPI		34
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 9b97246..7c0ffb5 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -2893,6 +2893,10 @@ enum {
+ 	.pd = {
+ 		.name = "mmagic_bimc",
+ 	},
++	.clk_hws = {
++		&mmagic_bimc_noc_cfg_ahb_clk.clkr.hw,
++	},
++	.clk_count = 1,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
+ 
+@@ -2902,6 +2906,13 @@ enum {
+ 	.pd = {
+ 		.name = "mmagic_video",
+ 	},
++	.clk_hws = {
++		&mmss_mmagic_ahb_clk.clkr.hw,
++		&mmss_mmagic_cfg_ahb_clk.clkr.hw,
++		&mmagic_video_axi_clk.clkr.hw,
++		&mmagic_video_noc_cfg_ahb_clk.clkr.hw,
++	},
++	.clk_count = 4,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ 	.flags = VOTABLE,
+ };
+@@ -2912,6 +2923,13 @@ enum {
+ 	.pd = {
+ 		.name = "mmagic_mdss",
+ 	},
++	.clk_hws = {
++		&mmss_mmagic_ahb_clk.clkr.hw,
++		&mmss_mmagic_cfg_ahb_clk.clkr.hw,
++		&mmagic_mdss_axi_clk.clkr.hw,
++		&mmagic_mdss_noc_cfg_ahb_clk.clkr.hw,
++	},
++	.clk_count = 4,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ 	.flags = VOTABLE,
+ };
+@@ -2922,6 +2940,13 @@ enum {
+ 	.pd = {
+ 		.name = "mmagic_camss",
+ 	},
++	.clk_hws = {
++		&mmss_mmagic_ahb_clk.clkr.hw,
++		&mmss_mmagic_cfg_ahb_clk.clkr.hw,
++		&mmagic_camss_axi_clk.clkr.hw,
++		&mmagic_camss_noc_cfg_ahb_clk.clkr.hw,
++	},
++	.clk_count = 4,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ 	.flags = VOTABLE,
+ };
 -- 
-1.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
