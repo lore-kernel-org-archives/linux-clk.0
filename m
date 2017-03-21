@@ -1,117 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailapp01.imgtec.com ([195.59.15.196]:58571 "EHLO
-        imgpgp01.kl.imgtec.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752064AbdCCXXy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Mar 2017 18:23:54 -0500
-Date: Fri, 3 Mar 2017 23:23:05 +0000
-From: James Hogan <james.hogan@imgtec.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: Heiko Stuebner <heiko@sntech.de>, Jason Uy <jason.uy@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Noam Camus <noamc@ezchip.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Wang Hongcheng <annie.wang@amd.com>,
-        <linux-serial@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        David Daney <david.daney@cavium.com>,
-        Russell King <linux@armlinux.org.uk>,
-        <linux-clk@vger.kernel.org>, Viresh Kumar <viresh.kumar@st.com>
-Subject: Re: [PATCH v2 1/1] serial: 8250_dw: Allow hardware flow control to
- be used
-Message-ID: <20170303232305.GU996@jhogan-linux.le.imgtec.org>
-References: <1484164100-9805-1-git-send-email-jason.uy@broadcom.com>
- <1484164100-9805-2-git-send-email-jason.uy@broadcom.com>
- <CAAG0J9-n0toSJL8Ze8Esq81dYnpfrTd42bMiR94zw_btBLjsww@mail.gmail.com>
- <1488394220.20145.68.camel@linux.intel.com>
- <20170303002129.GS996@jhogan-linux.le.imgtec.org>
- <1488547866.20145.74.camel@linux.intel.com>
+Return-Path: <sudeep.holla@arm.com>
+Subject: Re: [PATCH v3 3/5] coresight: add support for debug module
+To: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ John Stultz <john.stultz@linaro.org>, Guodong Xu <guodong.xu@linaro.org>,
+ Haojian Zhuang <haojian.zhuang@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, mike.leach@linaro.org
+References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
+ <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <671a0b39-b635-6e0e-d3fa-967651f2e29c@arm.com>
+Date: Tue, 21 Mar 2017 15:39:23 +0000
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="eu12+zRL7gQwOC+E"
-In-Reply-To: <1488547866.20145.74.camel@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
---eu12+zRL7gQwOC+E
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 03, 2017 at 03:31:06PM +0200, Andy Shevchenko wrote:
-> On Fri, 2017-03-03 at 00:21 +0000, James Hogan wrote:
-> > The CONFIG_HAVE_CLK=3Dn implementation of devm_clk_get() in particular
-> > seems highly questionable to me, given that commit 93abe8e4b13a ("clk:
-> > add non CONFIG_HAVE_CLK routines") which added it 5 years ago says:
-> >=20
-> > > These calls will return error for platforms that don't select
-> > > HAVE_CLK
-> >=20
-> > And NULL isn't an error in this API.
->=20
-> Which is okay. I dunno what should be returned from clk_round_rate() if
-> clk is NULL. I would fix CLK framework, though I would like to gather
-> more details.
 
-Hmm, the common clock framwork is just one implementation of the clock
-API that won't use NULL as a valid clock handle. HAVE_CLK=3Dn is just
-another implementation that does return NULL as a valid value, and
-accepts that value in the other clk functions.
+On 03/03/17 06:00, Leo Yan wrote:
+> Coresight includes debug module and usually the module connects with CPU
+> debug logic. ARMv8 architecture reference manual (ARM DDI 0487A.k) has
+> description for related info in "Part H: External Debug".
+> 
+> Chapter H7 "The Sample-based Profiling Extension" introduces several
+> sampling registers, e.g. we can check program counter value with
+> combined CPU exception level, secure state, etc. So this is helpful for
+> analysis CPU lockup scenarios, e.g. if one CPU has run into infinite
+> loop with IRQ disabled. In this case the CPU cannot switch context and
+> handle any interrupt (including IPIs), as the result it cannot handle
+> SMP call for stack dump.
+> 
+> This patch is to enable coresight debug module, so firstly this driver
+> is to bind apb clock for debug module and this is to ensure the debug
+> module can be accessed from program or external debugger. And the driver
+> uses sample-based registers for debug purpose, e.g. when system detects
+> the CPU lockup and trigger panic, the driver will dump program counter
+> and combined context registers (EDCIDSR, EDVIDSR); by parsing context
+> registers so can quickly get to know CPU secure state, exception level,
+> etc.
+> 
+> Some of the debug module registers are located in CPU power domain, so
+> in the driver it has checked the power state for CPU before accessing
+> registers within CPU power domain. For most safe way to use this driver,
+> it's suggested to disable CPU low power states, this can simply set
+> "nohlt" in kernel command line.
+> 
 
-> Btw, I hope you also noticed this one:
->=20
-> http://www.spinics.net/lists/linux-serial/msg25314.html
+I disagree with this approach. One of the main usefulness of such self
+hosted debug feature is to debug issues around features like cpuidle.
+Adding constraints like "cpuidle needs to be disabled" is not good IMO.
+There are ways to make it work with cpuidle enabled. Please explore
+them. In particular refer H9.2.39 EDPRCR, External Debug Power/Reset
+Control Register.
 
-Interesting.
+So, "nohlt" option is not an option. I prefer some sysfs option like
+Suzuki suggested to enable this feature on demand if power saving in
+normal usecase is the concern. Using "nohlt" just disables idle and
+doesn't ensure the debug power domain is ON. Using the flag directly in
+this driver to enable debug power domain also sounds misuse of that flag
+for me.
 
-Following Russel's past advise[1], the following patch on top of Heiko's
-patch also fixes things for me on Octeon:
-
-[1] https://lists.gt.net/linux/kernel/2102623
-
-If thats an acceptable fix I'll post it properly. Thoughts?
-
-Cheers
-James
-
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/82=
-50_dw.c
-index 223ac234ddb2..e65808c482f1 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -267,6 +267,8 @@ static void dw8250_set_termios(struct uart_port *p, str=
-uct ktermios *termios,
- 	rate =3D clk_round_rate(d->clk, baud * 16);
- 	if (rate < 0)
- 		ret =3D rate;
-+	else if (rate =3D=3D 0)
-+		ret =3D -ENOENT;
- 	else
- 		ret =3D clk_set_rate(d->clk, rate);
- 	clk_prepare_enable(d->clk);
-
---eu12+zRL7gQwOC+E
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYufrZAAoJEGwLaZPeOHZ6dsIQAJ956pbafQjyZZoAJCoVVwY1
-eahyEn46RIgiTsgmDIypoJrHQ58yHm4vOzZ+6/RGJFT5HK1mcUfjLTzjylj/RrVN
-cANvUCA3ctGQZeb0A5CXEwLyauqXnPF0r0BMSWdXSVH+iiHeQpWXhQWFDxEPy5E3
-hYwy4KTU28EJADvRKN/aGJ0gqhGkYjGSNvNWRqaCoDhkoUb5VTSGz9Rl40uPHeIw
-U11lVqMBk8BYaya9wQtXRTgLiNQ7JVqvIJ5ysmqPYbgC7O1KbAlbp1WboFokTllR
-git98A8q9pSF8uWZ021GuNcUMsc8HAaL+ccTotRS81R3uEML7kXhvDzupIu6jm/P
-36NnsQAmDgtaTOCEpBgDxbhwFJkWGR4e2dtrS1Lsz1ql8CALTIxThCuvylfHP0SZ
-smopP0TC1A7uk7TaRv9u7y5IUOz+8eY17NhKyiFWc6NU1etNMDjYFuBSfBgAsB+O
-0a6soaGYiHKvZehtKBxOPX1Jgnt5Z1uCyWFdNkHhTKK41SKY32q7lj7qXlafnBg4
-rEUv3tYe6AscM89dU76Q1nohjQEMuzlCKnEPFKVrt0UbmWZj3gb1dH1SYq5uqBV7
-fZ2CM+K+2GtYfc2sprtK81YPqkr9YbSFSkRrmyXvYdv6CWGSQm6ev1kT37rw5ikR
-GPLTYOWTsxHeZQp2t5Gu
-=uYM0
------END PGP SIGNATURE-----
-
---eu12+zRL7gQwOC+E--
+-- 
+Regards,
+Sudeep
