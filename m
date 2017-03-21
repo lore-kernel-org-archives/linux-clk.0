@@ -1,208 +1,237 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [PATCH] clk: stm32h7: Add stm32h743 clock driver
-To: Rob Herring <robh@kernel.org>
-References: <1489569810-24350-1-git-send-email-gabriel.fernandez@st.com>
- <20170324020630.vhffmeeb6wto53zx@rob-hp-laptop>
- <dce20025-9f42-e747-e325-e1667504e615@st.com>
- <CAL_Jsq++rdPqNZk54S7gQaeLBdzSptogp3dp9P1HmNTV67Sk9w@mail.gmail.com>
-CC: Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd
- Bergmann <arnd@arndb.de>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Andrea Merello <andrea.merello@gmail.com>,
-        =?UTF-8?Q?Rados=c5=82aw_Pietrzyk?=
-	<radoslaw.pietrzyk@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Ludovic Barre <ludovic.barre@st.com>,
-        Olivier Bideau <olivier.bideau@st.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <461b2321-c43c-6d88-c805-97a887cc431d@st.com>
-Date: Tue, 28 Mar 2017 08:20:24 +0200
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq++rdPqNZk54S7gQaeLBdzSptogp3dp9P1HmNTV67Sk9w@mail.gmail.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Kevin Hilman" <khilman@baylibre.com>, "Carlo Caione" <carlo@caione.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20170309104154.28295-8-jbrunet@baylibre.com>
+Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20170309104154.28295-1-jbrunet@baylibre.com>
+ <20170309104154.28295-8-jbrunet@baylibre.com>
+Message-ID: <149013848582.54062.17644077026355953692@resonance>
+Subject: Re: [PATCH v2 7/9] clk: meson8b: add the mplls clocks 0, 1 and 2
+Date: Tue, 21 Mar 2017 16:21:25 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Jerome Brunet (2017-03-09 02:41:52)
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
+Hmm, even for obvious patches like this it is still better to have some
+sort of changelog :-/
 
-On 03/27/2017 09:04 PM, Rob Herring wrote:
-> On Fri, Mar 24, 2017 at 4:41 AM, Gabriel Fernandez
-> <gabriel.fernandez@st.com> wrote:
->> Hi Rob,
->>
->> Thanks for reviewing
->>
->>
->>
->> On 03/24/2017 03:06 AM, Rob Herring wrote:
->>> On Wed, Mar 15, 2017 at 10:23:30AM +0100, gabriel.fernandez@st.com wrote:
->>>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->>>>
->>>> This patch enables clocks for STM32H743 boards.
->>>>
->>>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
->>>> ---
->>>>    .../devicetree/bindings/clock/st,stm32h7-rcc.txt   |  152 ++
->>>>    drivers/clk/Makefile                               |    1 +
->>>>    drivers/clk/clk-stm32h7.c                          | 1586
->>>> ++++++++++++++++++++
->>>>    include/dt-bindings/clock/stm32h7-clks.h           |  165 ++
->>>>    include/dt-bindings/mfd/stm32h7-rcc.h              |  138 ++
->>>>    5 files changed, 2042 insertions(+)
->>>>    create mode 100644
->>>> Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
->>>>    create mode 100644 drivers/clk/clk-stm32h7.c
->>>>    create mode 100644 include/dt-bindings/clock/stm32h7-clks.h
->>>>    create mode 100644 include/dt-bindings/mfd/stm32h7-rcc.h
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
->>>> b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
->>>> new file mode 100644
->>>> index 0000000..9d4b587
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
->>>> @@ -0,0 +1,152 @@
->>>> +STMicroelectronics STM32H7 Reset and Clock Controller
->>>> +=====================================================
->>>> +
->>>> +The RCC IP is both a reset and a clock controller.
->>>> +
->>>> +Please refer to clock-bindings.txt for common clock controller binding
->>>> usage.
->>>> +Please also refer to reset.txt for common reset controller binding
->>>> usage.
->>>> +
->>>> +Required properties:
->>>> +- compatible: Should be:
->>>> +  "st,stm32h743-rcc"
->>>> +
->>>> +- reg: should be register base and length as documented in the
->>>> +  datasheet
->>>> +
->>>> +- #reset-cells: 1, see below
->>>> +
->>>> +- #clock-cells : from common clock binding; shall be set to 1
->>>> +
->>>> +- clocks: External oscillator clock phandle
->>>> +  - high speed external clock signal (HSE)
->>>> +  - low speed external clock signal (LSE)
->>>> +  - external I2S clock (I2S_CKIN)
->>>> +
->>>> +- st,syscfg: phandle for pwrcfg, mandatory to disable/enable backup
->>>> domain
->>>> +  write protection (RTC clock).
->>>> +
->>>> +- pll x node: Allow to register a pll with specific parameters.
->>>> +  Please see PLL section below.
->>>> +
->>>> +Example:
->>>> +
->>>> +       rcc: rcc@58024400 {
->>>> +               #reset-cells = <1>;
->>>> +               #clock-cells = <2>
->>>> +               compatible = "st,stm32h743-rcc", "st,stm32-rcc";
->>>> +               reg = <0x58024400 0x400>;
->>>> +               clocks = <&clk_hse>, <&clk_lse>, <&clk_i2s_ckin>;
->>>> +
->>>> +               st,syscfg = <&pwrcfg>;
->>>> +
->>>> +               #address-cells = <1>;
->>>> +               #size-cells = <0>;
->>>> +
->>>> +               vco1@58024430 {
->>>> +                       #clock-cells = <0>;
->>>> +                       compatible = "stm32,pll";
->>>> +                       reg = <0>;
->>> The reg addr value and unit address don't match.
->> ok il will change into
->>
->>          vco1@0 {
->>                  reg = <0>;
->>
->>
->>>> +               };
->>>> +
->>>> +               vco2@58024438 {
->>>> +                       #clock-cells = <0>;
->>>> +                       compatible = "stm32,pll";
->>>> +                       reg = <1>;
->>>> +                       st,clock-div = <2>;
->>>> +                       st,clock-mult = <40>;
->>>> +                       st,frac-status = <0>;
->>>> +                       st,frac = <0>;
->>>> +                       st,vcosel = <1>;
->>>> +                       st,pllrge = <2>;
->>>> +               };
->>>> +       };
->>>> +
->>>> +
->>>> +STM32H7 PLL
->>>> +-----------
->>>> +
->>>> +The VCO of STM32 PLL could be reprensented like this:
->>>> +
->>>> +  Vref    ---------       --------
->>>> +    ---->| / DIVM  |---->| x DIVN | ------> VCO
->>>> +          ---------       --------
->>>> +                            ^
->>>> +                            |
->>>> +                         -------
->>>> +                        | FRACN |
->>>> +                         -------
->>>> +
->>>> +When the PLL is configured in integer mode:
->>>> +- VCO = ( Vref / DIVM ) * DIVN
->>>> +
->>>> +When the PLL is configured in fractional mode:
->>>> +- VCO = ( Vref / DIVM ) * ( DIVN + FRACN / 2^13)
->>>> +
->>>> +
->>>> +Required properties for pll node:
->>>> +- compatible: Should be:
->>>> +  "stm32,pll"
->>> Only 1 single PLL design for all STM32 chips ever?
->> no, i can change into "stm32h7,pll"
-> Actually, should be "st,stm32h7-pll".
-ok
+Otherwise patch appears fine to me.
 
->>>> +
->>>> +- #clock-cells: from common clock binding; shall be set to 0
->>>> +- reg: Should be the pll number.
->>>> +
->>>> +Optional properties:
->>>> +- st,clock-div:  DIVM division factor       : <1..63>
->>>> +- st,clock-mult: DIVN multiplication factor : <4..512>
->>>> +
->>>> +- st,frac-status:
->>>> +   - 0 Pll is configured in integer mode
->>>> +   - 1 Pll is configure in fractional mode
->>> Isn't this implied by the presence of the next property?
->> do you prefer this ?
->>
->> - st,frac :
->> 0 : pll is configured in integer mode
->> 1..8191 : Fractional part of the multiplication factor and pll is configured
->> in fractional mode
-> Why not no st,frac property means integer mode?
-No
+Regards,
+Mike
 
-no st,frac property means no change (keep default values from bootloader)
+> ---
+>  drivers/clk/meson/meson8b.c | 103 ++++++++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/clk/meson/meson8b.h |  20 ++++++++-
+>  2 files changed, 122 insertions(+), 1 deletion(-)
+> =
 
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index 2937443d4505..e9985503165c 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+> @@ -245,6 +245,96 @@ static struct clk_fixed_factor meson8b_fclk_div7 =3D=
+ {
+>         },
+>  };
+>  =
 
-Best Regards
+> +static struct meson_clk_mpll meson8b_mpll0 =3D {
+> +       .sdm =3D {
+> +               .reg_off =3D HHI_MPLL_CNTL7,
+> +               .shift   =3D 0,
+> +               .width   =3D 14,
+> +       },
+> +       .sdm_en =3D {
+> +               .reg_off =3D HHI_MPLL_CNTL7,
+> +               .shift   =3D 15,
+> +               .width   =3D 1,
+> +       },
+> +       .n2 =3D {
+> +               .reg_off =3D HHI_MPLL_CNTL7,
+> +               .shift   =3D 16,
+> +               .width   =3D 9,
+> +       },
+> +       .en =3D {
+> +               .reg_off =3D HHI_MPLL_CNTL7,
+> +               .shift   =3D 14,
+> +               .width   =3D 1,
+> +       },
+> +       .lock =3D &clk_lock,
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "mpll0",
+> +               .ops =3D &meson_clk_mpll_ops,
+> +               .parent_names =3D (const char *[]){ "fixed_pll" },
+> +               .num_parents =3D 1,
+> +       },
+> +};
+> +
+> +static struct meson_clk_mpll meson8b_mpll1 =3D {
+> +       .sdm =3D {
+> +               .reg_off =3D HHI_MPLL_CNTL8,
+> +               .shift   =3D 0,
+> +               .width   =3D 14,
+> +       },
+> +       .sdm_en =3D {
+> +               .reg_off =3D HHI_MPLL_CNTL8,
+> +               .shift   =3D 15,
+> +               .width   =3D 1,
+> +       },
+> +       .n2 =3D {
+> +               .reg_off =3D HHI_MPLL_CNTL8,
+> +               .shift   =3D 16,
+> +               .width   =3D 9,
+> +       },
+> +       .en =3D {
+> +               .reg_off =3D HHI_MPLL_CNTL8,
+> +               .shift   =3D 14,
+> +               .width   =3D 1,
+> +       },
+> +       .lock =3D &clk_lock,
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "mpll1",
+> +               .ops =3D &meson_clk_mpll_ops,
+> +               .parent_names =3D (const char *[]){ "fixed_pll" },
+> +               .num_parents =3D 1,
+> +       },
+> +};
+> +
+> +static struct meson_clk_mpll meson8b_mpll2 =3D {
+> +       .sdm =3D {
+> +               .reg_off =3D HHI_MPLL_CNTL9,
+> +               .shift   =3D 0,
+> +               .width   =3D 14,
+> +       },
+> +       .sdm_en =3D {
+> +               .reg_off =3D HHI_MPLL_CNTL9,
+> +               .shift   =3D 15,
+> +               .width   =3D 1,
+> +       },
+> +       .n2 =3D {
+> +               .reg_off =3D HHI_MPLL_CNTL9,
+> +               .shift   =3D 16,
+> +               .width   =3D 9,
+> +       },
+> +       .en =3D {
+> +               .reg_off =3D HHI_MPLL_CNTL9,
+> +               .shift   =3D 14,
+> +               .width   =3D 1,
+> +       },
+> +       .lock =3D &clk_lock,
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "mpll2",
+> +               .ops =3D &meson_clk_mpll_ops,
+> +               .parent_names =3D (const char *[]){ "fixed_pll" },
+> +               .num_parents =3D 1,
+> +       },
+> +};
+> +
+>  /*
+>   * FIXME cpu clocks and the legacy composite clocks (e.g. clk81) are bot=
+h PLL
+>   * post-dividers and should be modeled with their respective PLLs via the
+> @@ -491,6 +581,9 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_=
+data =3D {
+>                 [CLKID_AO_AHB_SRAM]         =3D &meson8b_ao_ahb_sram.hw,
+>                 [CLKID_AO_AHB_BUS]          =3D &meson8b_ao_ahb_bus.hw,
+>                 [CLKID_AO_IFACE]            =3D &meson8b_ao_iface.hw,
+> +               [CLKID_MPLL0]               =3D &meson8b_mpll0.hw,
+> +               [CLKID_MPLL1]               =3D &meson8b_mpll1.hw,
+> +               [CLKID_MPLL2]               =3D &meson8b_mpll2.hw,
+>         },
+>         .num =3D CLK_NR_CLKS,
+>  };
+> @@ -501,6 +594,12 @@ static struct meson_clk_pll *const meson8b_clk_plls[=
+] =3D {
+>         &meson8b_sys_pll,
+>  };
+>  =
 
-Gabriel
+> +static struct meson_clk_mpll *const meson8b_clk_mplls[] =3D {
+> +       &meson8b_mpll0,
+> +       &meson8b_mpll1,
+> +       &meson8b_mpll2,
+> +};
+> +
+>  static struct clk_gate *const meson8b_clk_gates[] =3D {
+>         &meson8b_clk81,
+>         &meson8b_ddr,
+> @@ -609,6 +708,10 @@ static int meson8b_clkc_probe(struct platform_device=
+ *pdev)
+>         for (i =3D 0; i < ARRAY_SIZE(meson8b_clk_plls); i++)
+>                 meson8b_clk_plls[i]->base =3D clk_base;
+>  =
 
-> Rob
+> +       /* Populate base address for MPLLs */
+> +       for (i =3D 0; i < ARRAY_SIZE(meson8b_clk_mplls); i++)
+> +               meson8b_clk_mplls[i]->base =3D clk_base;
+> +
+>         /* Populate the base address for CPU clk */
+>         meson8b_cpu_clk.base =3D clk_base;
+>  =
+
+> diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+> index 010e9582888d..3881defc8644 100644
+> --- a/drivers/clk/meson/meson8b.h
+> +++ b/drivers/clk/meson/meson8b.h
+> @@ -42,6 +42,21 @@
+>  #define HHI_VID_PLL_CNTL               0x320 /* 0xc8 offset in data shee=
+t */
+>  =
+
+>  /*
+> + * MPLL register offeset taken from the S905 datasheet. Vendor kernel so=
+urce
+> + * confirm these are the same for the S805.
+> + */
+> +#define HHI_MPLL_CNTL                  0x280 /* 0xa0 offset in data shee=
+t */
+> +#define HHI_MPLL_CNTL2                 0x284 /* 0xa1 offset in data shee=
+t */
+> +#define HHI_MPLL_CNTL3                 0x288 /* 0xa2 offset in data shee=
+t */
+> +#define HHI_MPLL_CNTL4                 0x28C /* 0xa3 offset in data shee=
+t */
+> +#define HHI_MPLL_CNTL5                 0x290 /* 0xa4 offset in data shee=
+t */
+> +#define HHI_MPLL_CNTL6                 0x294 /* 0xa5 offset in data shee=
+t */
+> +#define HHI_MPLL_CNTL7                 0x298 /* 0xa6 offset in data shee=
+t */
+> +#define HHI_MPLL_CNTL8                 0x29C /* 0xa7 offset in data shee=
+t */
+> +#define HHI_MPLL_CNTL9                 0x2A0 /* 0xa8 offset in data shee=
+t */
+> +#define HHI_MPLL_CNTL10                        0x2A4 /* 0xa9 offset in d=
+ata sheet */
+> +
+> +/*
+>   * CLKID index values
+>   *
+>   * These indices are entirely contrived and do not map onto the hardware.
+> @@ -142,8 +157,11 @@
+>  #define CLKID_AO_AHB_SRAM      90
+>  #define CLKID_AO_AHB_BUS       91
+>  #define CLKID_AO_IFACE         92
+> +#define CLKID_MPLL0            93
+> +#define CLKID_MPLL1            94
+> +#define CLKID_MPLL2            95
+>  =
+
+> -#define CLK_NR_CLKS            93
+> +#define CLK_NR_CLKS            96
+>  =
+
+>  /* include the CLKIDs that have been made part of the stable DT binding =
+*/
+>  #include <dt-bindings/clock/meson8b-clkc.h>
+> -- =
+
+> 2.9.3
+>=20
