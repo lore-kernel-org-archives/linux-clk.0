@@ -1,82 +1,85 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [PATCH v3 08/11] drm/sun4i: tcon: add support for V3s TCON
-Date: Thu, 30 Mar 2017 03:46:10 +0800
-Message-Id: <20170329194613.55548-9-icenowy@aosc.io>
-In-Reply-To: <20170329194613.55548-1-icenowy@aosc.io>
-References: <20170329194613.55548-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [RFC 2/7] clk: add set_phase core function
+Date: Tue, 21 Mar 2017 19:33:25 +0100
+Message-Id: <20170321183330.26722-3-jbrunet@baylibre.com>
+In-Reply-To: <20170321183330.26722-1-jbrunet@baylibre.com>
+References: <20170321183330.26722-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.xyz>
+Create a core function for set_phase, as it is done for set_rate and
+set_parent.
 
-Allwinner V3s SoC features a TCON without channel 1.
+This rework is done to ease the integration of "protected" clock
+functionality.
 
-Add support for it.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c  | 3 ++-
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 +++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ drivers/clk/clk.c | 31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 68c0b754cdb5..736b28e47281 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -176,7 +176,8 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
- 	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun6i-a31-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
--		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon");
-+		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
-+		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e77f03a47da6..57982a06dbce 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1876,6 +1876,23 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
  }
+ EXPORT_SYMBOL_GPL(clk_set_parent);
  
- static int compare_of(struct device *dev, void *data)
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 2f330e4e2ead..1a710d7d6a74 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -613,11 +613,16 @@ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
- 	/* nothing is supported */
- };
- 
-+static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
-+	/* nothing is supported */
-+};
++static int clk_core_set_phase(struct clk_core *core, int degrees)
++{
++	int ret = -EINVAL;
 +
- static const struct of_device_id sun4i_tcon_of_table[] = {
- 	{ .compatible = "allwinner,sun5i-a13-tcon", .data = &sun5i_a13_quirks },
- 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
- 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
- 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
-+	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun4i_tcon_of_table);
++	if (!core)
++		return 0;
++
++	trace_clk_set_phase(clk->core, degrees);
++
++	if (core->ops->set_phase)
++		ret = core->ops->set_phase(core->hw, degrees);
++
++	trace_clk_set_phase_complete(core, degrees);
++
++	return ret;
++}
++
+ /**
+  * clk_set_phase - adjust the phase shift of a clock signal
+  * @clk: clock signal source
+@@ -1898,7 +1915,7 @@ EXPORT_SYMBOL_GPL(clk_set_parent);
+  */
+ int clk_set_phase(struct clk *clk, int degrees)
+ {
+-	int ret = -EINVAL;
++	int ret;
+ 
+ 	if (!clk)
+ 		return 0;
+@@ -1909,17 +1926,7 @@ int clk_set_phase(struct clk *clk, int degrees)
+ 		degrees += 360;
+ 
+ 	clk_prepare_lock();
+-
+-	trace_clk_set_phase(clk->core, degrees);
+-
+-	if (clk->core->ops->set_phase)
+-		ret = clk->core->ops->set_phase(clk->core->hw, degrees);
+-
+-	trace_clk_set_phase_complete(clk->core, degrees);
+-
+-	if (!ret)
+-		clk->core->phase = degrees;
+-
++	ret = clk_core_set_phase(clk->core, degrees);
+ 	clk_prepare_unlock();
+ 
+ 	return ret;
 -- 
-2.12.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.9.3
