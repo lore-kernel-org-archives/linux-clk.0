@@ -1,125 +1,227 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 29 Mar 2017 14:31:18 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	linux-sunxi <linux-sunxi@googlegroups.com>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 7/15] dt-bindings: display: sun4i: Add
- allwinner,tcon-channel property
-Message-ID: <20170329123118.yvwnqpgtamc5pjqf@lukather>
-References: <20170328100519.145DE203419@relay.mailchannels.net>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="d6ild6ujpwsam4vj"
-In-Reply-To: <20170328100519.145DE203419@relay.mailchannels.net>
+To: Neil Armstrong <narmstrong@baylibre.com>, sboyd@codeaurora.org,
+ khilman@baylibre.com, carlo@caione.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1489064027-18004-3-git-send-email-narmstrong@baylibre.com>
+Cc: "Neil Armstrong" <narmstrong@baylibre.com>, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <1489064027-18004-1-git-send-email-narmstrong@baylibre.com>
+ <1489064027-18004-3-git-send-email-narmstrong@baylibre.com>
+Message-ID: <149013907135.54062.15157425339137707641@resonance>
+Subject: Re: [PATCH v3 2/3] clk: meson-gxbb: Add MALI clocks
+Date: Tue, 21 Mar 2017 16:31:11 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Neil,
 
---d6ild6ujpwsam4vj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Quoting Neil Armstrong (2017-03-09 04:53:46)
+> The Mali is clocked by two identical clock paths behind a glitch free mux
+> to safely change frequency while running.
+> =
 
-On Tue, Mar 28, 2017 at 06:05:08PM +0800, Icenowy Zheng wrote:
+> The two "mali_0" and "mali_1" clocks are composed of a mux, divider and g=
+ate.
+> Expose these two clocks trees using generic clocks.
+> Finally the glitch free mux is added as "mali" clock.
+> =
+
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/clk/meson/gxbb.c | 139 +++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 139 insertions(+)
+> =
+
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index 5059c7b..d9f7fef 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -634,6 +634,131 @@
+>         },
+>  };
+>  =
+
+> +/*
+> + * The MALI IP is clocked by two identical clocks (mali_0 and mali_1)
+> + * muxed by a glitch-free switch.
+> + */
+> +
+> +static u32 mux_table_mali_0_1[] =3D {0, 1, 2, 3, 4, 5, 6, 7};
+> +static const char *gxbb_mali_0_1_parent_names[] =3D {
+> +       "xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
+> +       "fclk_div4", "fclk_div3", "fclk_div5"
+> +};
+> +
+> +static struct clk_mux gxbb_mali_0_sel =3D {
+> +       .reg =3D (void *)HHI_MALI_CLK_CNTL,
+> +       .mask =3D 0x7,
+> +       .shift =3D 9,
+> +       .table =3D mux_table_mali_0_1,
+> +       .lock =3D &clk_lock,
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "mali_0_sel",
+> +               .ops =3D &clk_mux_ops,
+> +               /*
+> +                * bits 10:9 selects from 8 possible parents:
+> +                * xtal, gp0_pll, mpll2, mpll1, fclk_div7,
+> +                * fclk_div4, fclk_div3, fclk_div5
+> +                */
+> +               .parent_names =3D gxbb_mali_0_1_parent_names,
+> +               .num_parents =3D 8,
+> +               .flags =3D (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
+
+Are all of these CLK_IGNORE_UNUSED flags necessary? If so, why? I'm just
+wondering if this is yet another display-related use case where a
+hand-off mechanism would work better?
+
+Thanks,
+Mike
+
+> +       },
+> +};
+> +
+> +static struct clk_divider gxbb_mali_0_div =3D {
+> +       .reg =3D (void *)HHI_MALI_CLK_CNTL,
+> +       .shift =3D 0,
+> +       .width =3D 7,
+> +       .lock =3D &clk_lock,
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "mali_0_div",
+> +               .ops =3D &clk_divider_ops,
+> +               .parent_names =3D (const char *[]){ "mali_0_sel" },
+> +               .num_parents =3D 1,
+> +               .flags =3D (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
+> +       },
+> +};
+> +
+> +static struct clk_gate gxbb_mali_0 =3D {
+> +       .reg =3D (void *)HHI_MALI_CLK_CNTL,
+> +       .bit_idx =3D 8,
+> +       .lock =3D &clk_lock,
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "mali_0",
+> +               .ops =3D &clk_gate_ops,
+> +               .parent_names =3D (const char *[]){ "mali_0_div" },
+> +               .num_parents =3D 1,
+> +               .flags =3D (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
+> +       },
+> +};
+> +
+> +static struct clk_mux gxbb_mali_1_sel =3D {
+> +       .reg =3D (void *)HHI_MALI_CLK_CNTL,
+> +       .mask =3D 0x7,
+> +       .shift =3D 25,
+> +       .table =3D mux_table_mali_0_1,
+> +       .lock =3D &clk_lock,
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "mali_1_sel",
+> +               .ops =3D &clk_mux_ops,
+> +               /*
+> +                * bits 10:9 selects from 8 possible parents:
+> +                * xtal, gp0_pll, mpll2, mpll1, fclk_div7,
+> +                * fclk_div4, fclk_div3, fclk_div5
+> +                */
+> +               .parent_names =3D gxbb_mali_0_1_parent_names,
+> +               .num_parents =3D 8,
+> +               .flags =3D (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
+> +       },
+> +};
+> +
+> +static struct clk_divider gxbb_mali_1_div =3D {
+> +       .reg =3D (void *)HHI_MALI_CLK_CNTL,
+> +       .shift =3D 16,
+> +       .width =3D 7,
+> +       .lock =3D &clk_lock,
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "mali_1_div",
+> +               .ops =3D &clk_divider_ops,
+> +               .parent_names =3D (const char *[]){ "mali_1_sel" },
+> +               .num_parents =3D 1,
+> +               .flags =3D (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
+> +       },
+> +};
+> +
+> +static struct clk_gate gxbb_mali_1 =3D {
+> +       .reg =3D (void *)HHI_MALI_CLK_CNTL,
+> +       .bit_idx =3D 24,
+> +       .lock =3D &clk_lock,
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "mali_1",
+> +               .ops =3D &clk_gate_ops,
+> +               .parent_names =3D (const char *[]){ "mali_1_div" },
+> +               .num_parents =3D 1,
+> +               .flags =3D (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
+> +       },
+> +};
+> +
+> +static u32 mux_table_mali[] =3D {0, 1};
+> +static const char *gxbb_mali_parent_names[] =3D {
+> +       "mali_0", "mali_1"
+> +};
+> +
+> +static struct clk_mux gxbb_mali =3D {
+> +       .reg =3D (void *)HHI_MALI_CLK_CNTL,
+> +       .mask =3D 1,
+> +       .shift =3D 31,
+> +       .table =3D mux_table_mali,
+> +       .lock =3D &clk_lock,
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "mali",
+> +               .ops =3D &clk_mux_ops,
+> +               .parent_names =3D gxbb_mali_parent_names,
+> +               .num_parents =3D 2,
+> +               .flags =3D (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
+> +       },
+> +};
+> +
+>  /* Everything Else (EE) domain gates */
+>  static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
+>  static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
+> @@ -827,6 +952,13 @@
+>                 [CLKID_SAR_ADC_CLK]         =3D &gxbb_sar_adc_clk.hw,
+>                 [CLKID_SAR_ADC_SEL]         =3D &gxbb_sar_adc_clk_sel.hw,
+>                 [CLKID_SAR_ADC_DIV]         =3D &gxbb_sar_adc_clk_div.hw,
+> +               [CLKID_MALI_0_SEL]          =3D &gxbb_mali_0_sel.hw,
+> +               [CLKID_MALI_0_DIV]          =3D &gxbb_mali_0_div.hw,
+> +               [CLKID_MALI_0]              =3D &gxbb_mali_0.hw,
+> +               [CLKID_MALI_1_SEL]          =3D &gxbb_mali_1_sel.hw,
+> +               [CLKID_MALI_1_DIV]          =3D &gxbb_mali_1_div.hw,
+> +               [CLKID_MALI_1]              =3D &gxbb_mali_1.hw,
+> +               [CLKID_MALI]                =3D &gxbb_mali.hw,
+>         },
+>         .num =3D NR_CLKS,
+>  };
+> @@ -930,16 +1062,23 @@
+>         &gxbb_emmc_b,
+>         &gxbb_emmc_c,
+>         &gxbb_sar_adc_clk,
+> +       &gxbb_mali_0,
+> +       &gxbb_mali_1,
+>  };
+>  =
+
+>  static struct clk_mux *const gxbb_clk_muxes[] =3D {
+>         &gxbb_mpeg_clk_sel,
+>         &gxbb_sar_adc_clk_sel,
+> +       &gxbb_mali_0_sel,
+> +       &gxbb_mali_1_sel,
+> +       &gxbb_mali,
+>  };
+>  =
+
+>  static struct clk_divider *const gxbb_clk_dividers[] =3D {
+>         &gxbb_mpeg_clk_div,
+>         &gxbb_sar_adc_clk_div,
+> +       &gxbb_mali_0_div,
+> +       &gxbb_mali_1_div,
+>  };
+>  =
+
+>  static int gxbb_clkc_probe(struct platform_device *pdev)
+> -- =
+
+> 1.9.1
 >=20
-> 2017=E5=B9=B43=E6=9C=8827=E6=97=A5 =E4=B8=8A=E5=8D=885:11=E4=BA=8E Maxime=
- Ripard <maxime.ripard@free-electrons.com>=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On Fri, Mar 17, 2017 at 11:34:45AM +0800, Chen-Yu Tsai wrote:=20
-> > > On Thu, Mar 16, 2017 at 1:37 AM, Rob Herring <robh@kernel.org> wrote:=
-=20
-> > > > On Tue, Mar 07, 2017 at 09:56:26AM +0100, Maxime Ripard wrote:=20
-> > > >> The Allwinner Timings Controller has two, mutually exclusive, chan=
-nels.=20
-> > > >> When the binding has been introduced, it was assumed that there wo=
-uld be=20
-> > > >> only a single user per channel in the system.=20
-> > > >>=20
-> > > >> While this is likely for the channel 0 which only connects to LCD =
-displays,=20
-> > > >> it turns out that the channel 1 can be connected to multiple contr=
-ollers in=20
-> > > >> the SoC (HDMI and TV encoders for example). And while the simultan=
-eous use=20
-> > > >> of HDMI and TV outputs cannot be achieved, switching from one to t=
-he other=20
-> > > >> at runtime definitely sounds plausible.=20
-> > > >>=20
-> > > >> Add an extra property, allwinner,tcon-channel, to specify for a gi=
-ven=20
-> > > >> endpoint which TCON channel it is connected to, while falling back=
- to the=20
-> > > >> previous mechanism if that property is missing.=20
-> > > >=20
-> > > > I think perhaps TCON channels should have been ports rather than=20
-> > > > endpoints. The fact that the channels are mutually exclusive can be=
-=20
-> > > > handled in the driver and doesn't really matter in the binding. How=
-=20
-> > > > painful would it be to rework things to move TCON channel 1 from po=
-rt 0,=20
-> > > > endpoint 1 to port 1?=20
-> > >=20
-> > > Having a separate output port for channel 1 was one option we discuss=
-ed.=20
-> > > However it wouldn't work well with the kernel's of_graph based crtc=
-=20
-> > > detection (drm_of_find_possible_crtcs / drm_of_find_possible_crtcs),=
-=20
-> > > which has the crtcs bound via the output port. As the logic is used=
-=20
-> > > by multiple drivers, I'm not sure it's easy to rework or test.=20
-> >
-> > Can't we use a different logic than drm_of_find_possible_crtcs to fill=
-=20
-> > the same role?=20
-> >
-> > > Also, we still have to support old device trees using channel 1 from=
-=20
-> > > output port 0 endpoint 1. This is the TV encoder on sun5i (A10s/A13/R=
-8).=20
->=20
-> And from A83T on we will face channel-1 only TCONs., which do not
-> have channel 0 at all in hardware.
-
-Yes, but those patches have not been merged yet, so we don't have to
-care about the backward compatibility.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---d6ild6ujpwsam4vj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJY26kWAAoJEBx+YmzsjxAgb/MP/jtL0JlIwAveyf/CcfjkxgHw
-MLNrGlxGFilQgryvyxGYk0QLMYz/1KpXkIWviJHt2dAFkxwxrG/YC6p2zEKDskw0
-Pwi0GshgXCs8xRgV98RHH3n60R1tVirmp/S940I1Ci+DdVQVV4Cy/XJzWFqzbpR3
-79O2jb+CX5fF/n5g32xij4e5rtjiFRPZ33ywS4J7mRfSf6+aqIx/d51NDncT/3mb
-dvQp7yp2mijSRe0wjMxaSvAtRWDBl+qqJ7CKfVHhVpm2yONJCIBk1qE1KvFNCT0S
-c/kX/TIR7hJV2j4HQjkcjSTE3vtX3ZdZxErsnV6Q+8xjnJiT5a65LgsaG09bBEdb
-IgEL47RcbdYEdObw46n5ykrAyB7IgeQPmhFiftEha28zyVVwjFahEJxBsvj3t57I
-93Ll52kx5lw4AB+hEE7e6hbyFaHfMLVXFRuIxjY2/eVKEUOFlm49XfKGey02/lXH
-l4lwjqAHOO3czlBA/Bh0mLl5mgTrZF9LhjOzYibkqNU6ct+i4aIwmIjN0bQyRUZC
-UmatmpRh9pliIiBSA3eyKMRkVpY1/6NzVsvwEgvzRuK7MrAFjkQwMjoaFBIazzOI
-ew5V7qiXXcjJ806QE/dg6PkBVScqUB+14D6/EL9l+HdPzCRAzuG74Dy90wVIPCI8
-okHeulGoa3+JdB7BGDPe
-=8jnb
------END PGP SIGNATURE-----
-
---d6ild6ujpwsam4vj--
