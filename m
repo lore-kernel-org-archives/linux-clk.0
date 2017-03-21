@@ -1,214 +1,197 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Wed, 29 Mar 2017 09:41:15 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org, sudeep.holla@arm.com
-Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
-Message-ID: <20170329154115.GA24889@linaro.org>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
- <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
- <31be033f-514e-e48a-3ba2-a5c5cd477548@arm.com>
- <20170329030735.GA23889@leoy-linaro>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170329030735.GA23889@leoy-linaro>
+To: Neil Armstrong <narmstrong@baylibre.com>, sboyd@codeaurora.org,
+ carlo@caione.org, khilman@baylibre.com
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1489411604-18700-2-git-send-email-narmstrong@baylibre.com>
+Cc: "Neil Armstrong" <narmstrong@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
+ <1489411604-18700-2-git-send-email-narmstrong@baylibre.com>
+Message-ID: <149013981400.54062.11268768959465562064@resonance>
+Subject: Re: [PATCH 1/5] clk: meson: Add support for parameters for specific PLLs
+Date: Tue, 21 Mar 2017 16:43:34 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 11:07:35AM +0800, Leo Yan wrote:
-> Hi Suzuki,
-> 
-> On Mon, Mar 27, 2017 at 05:34:57PM +0100, Suzuki K Poulose wrote:
-> > On 25/03/17 18:23, Leo Yan wrote:
-> 
-> [...]
-> 
-> > Leo,
-> > 
-> > Thanks a lot for the quick rework. I don't fully understand (yet!) why we need the
-> > idle_constraint. I will leave it for Sudeep to comment on it, as he is the expert
-> > in that area. Some minor comments below.
-> 
-> Thanks a lot for quick reviewing :)
-> 
-> > >Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > >---
-> > > drivers/hwtracing/coresight/Kconfig               |  11 +
-> > > drivers/hwtracing/coresight/Makefile              |   1 +
-> > > drivers/hwtracing/coresight/coresight-cpu-debug.c | 704 ++++++++++++++++++++++
-> > > 3 files changed, 716 insertions(+)
-> > > create mode 100644 drivers/hwtracing/coresight/coresight-cpu-debug.c
-> > >
-> > >diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-> > >index 130cb21..18d7931 100644
-> > >--- a/drivers/hwtracing/coresight/Kconfig
-> > >+++ b/drivers/hwtracing/coresight/Kconfig
-> > >@@ -89,4 +89,15 @@ config CORESIGHT_STM
-> > > 	  logging useful software events or data coming from various entities
-> > > 	  in the system, possibly running different OSs
-> > >
-> > >+config CORESIGHT_CPU_DEBUG
-> > >+	tristate "CoreSight CPU Debug driver"
-> > >+	depends on ARM || ARM64
-> > >+	depends on DEBUG_FS
-> > >+	help
-> > >+	  This driver provides support for coresight debugging module. This
-> > >+	  is primarily used to dump sample-based profiling registers when
-> > >+	  system triggers panic, the driver will parse context registers so
-> > >+	  can quickly get to know program counter (PC), secure state,
-> > >+	  exception level, etc.
-> > 
-> > May be we should mention/warn the user about the possible caveats of using
-> > this feature to help him make a better decision ? And / Or we should add a documentation
-> > for it. We have collected some real good information over the discussions and
-> > it is a good idea to capture it somewhere.
-> 
-> Sure, I will add a documentation for this.
-> 
-> [...]
-> 
-> > >+static struct pm_qos_request debug_qos_req;
-> > >+static int idle_constraint = PM_QOS_DEFAULT_VALUE;
-> > >+module_param(idle_constraint, int, 0600);
-> > >+MODULE_PARM_DESC(idle_constraint, "Latency requirement in microseconds for CPU "
-> > >+		 "idle states (default is -1, which means have no limiation "
-> > >+		 "to CPU idle states; 0 means disabling all idle states; user "
-> > >+		 "can choose other platform dependent values so can disable "
-> > >+		 "specific idle states for the platform)");
-> > 
-> > Correct me if I am wrong,
-> > 
-> > All we want to do is disable the CPUIdle explicitly if the user knows that this
-> > could be a problem to use CPU debug on his platform. So, in effect, we should
-> > only be using idle_constraint = 0 or -1.
-> > 
-> > In which case, we could make it easier for the user to tell us, either
-> > 
-> >  0 - Don't do anything with CPUIdle (default)
-> >  1 - Disable CPUIdle for me as I know the platform has issues with CPU debug and CPUidle.
-> 
-> The reason for not using bool flag is: usually SoC may have many idle
-> states, so if user wants to partially enable some states then can set
-> the latency to constraint.
-> 
-> But of course, we can change this to binary value as you suggested,
-> this means turn on of turn off all states. The only one reason to use
-> latency value is it is more friendly for hardware design, e.g. some
-> platforms can enable partial states to save power and avoid overheat
-> after using this driver.
-> 
-> If you guys think this is a bit over design, I will follow up your
-> suggestion. I also have some replying in Mathieu's reviewing, please
-> help review as well.
-> 
-> > than explaining the miscrosecond latency etc and make the appropriate calls underneath.
-> > something like (not necessarily the same name) :
-> > 
-> > module_param(broken_with_cpuidle, bool, 0600);
-> > MODULE_PARAM_DESC(broken_with_cpuidle, "Specifies whether the CPU debug has issues with CPUIdle on"
-> > 				       " the platform. Non-zero value implies CPUIdle has to be"
-> > 				       " explicitly disabled.",);
-> 
-> [...]
-> 
-> > >+	/*
-> > >+	 * Unfortunately the CPU cannot be powered up, so return
-> > >+	 * back and later has no permission to access other
-> > >+	 * registers. For this case, should set 'idle_constraint'
-> > >+	 * to ensure CPU power domain is enabled!
-> > >+	 */
-> > >+	if (!(drvdata->edprsr & EDPRSR_PU)) {
-> > >+		pr_err("%s: power up request for CPU%d failed\n",
-> > >+			__func__, drvdata->cpu);
-> > >+		goto out;
-> > >+	}
-> > >+
-> > >+out_powered_up:
-> > >+	debug_os_unlock(drvdata);
-> > 
-> > Question: Do we need a matching debug_os_lock() once we are done ?
-> 
-> I have checked ARM ARMv8, but there have no detailed description for
-> this. I refered coresight-etmv4 code and Mike's pseudo code, ther have
-> no debug_os_lock() related operations.
-> 
-> Mike, Mathieu, could you also help confirm this?
+Quoting Neil Armstrong (2017-03-13 06:26:40)
+> In recent Amlogic GXBB, GXL and GXM SoCs, the GP0 PLL needs some specific
+> parameters in order to initialize and lock correctly.
+> =
 
-I'm not strongly opiniated on the usage of the OS lock, hence being a little
-nonchalent in the coresight-etmv4 driver.   
+> This patch adds an optional PARAM table used to initialize the PLL to a
+> default value with it's parameters in order to achieve to desired frequen=
+cy.
+> =
 
-> 
-> [...]
-> 
-> > >+static void debug_init_arch_data(void *info)
-> > >+{
-> > >+	struct debug_drvdata *drvdata = info;
-> > >+	u32 mode, pcsr_offset;
-> > >+
-> > >+	CS_UNLOCK(drvdata->base);
-> > >+
-> > >+	debug_os_unlock(drvdata);
-> > >+
-> > >+	/* Read device info */
-> > >+	drvdata->eddevid  = readl_relaxed(drvdata->base + EDDEVID);
-> > >+	drvdata->eddevid1 = readl_relaxed(drvdata->base + EDDEVID1);
-> > 
-> > As mentioned above, both of these registers are only need at init time to
-> > figure out the flags we set here. So we could remove them.
-> > 
-> > >+
-> > >+	CS_LOCK(drvdata->base);
-> > >+
-> > >+	/* Parse implementation feature */
-> > >+	mode = drvdata->eddevid & EDDEVID_PCSAMPLE_MODE;
-> > >+	pcsr_offset = drvdata->eddevid1 & EDDEVID1_PCSR_OFFSET_MASK;
-> > 
-> > 
-> > >+
-> > >+	if (mode == EDDEVID_IMPL_NONE) {
-> > >+		drvdata->edpcsr_present  = false;
-> > >+		drvdata->edcidsr_present = false;
-> > >+		drvdata->edvidsr_present = false;
-> > >+	} else if (mode == EDDEVID_IMPL_EDPCSR) {
-> > >+		drvdata->edpcsr_present  = true;
-> > >+		drvdata->edcidsr_present = false;
-> > >+		drvdata->edvidsr_present = false;
-> > >+	} else if (mode == EDDEVID_IMPL_EDPCSR_EDCIDSR) {
-> > >+		if (!IS_ENABLED(CONFIG_64BIT) &&
-> > >+			(pcsr_offset == EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32))
-> > >+			drvdata->edpcsr_present = false;
-> > >+		else
-> > >+			drvdata->edpcsr_present = true;
-> > 
-> > Sorry, I forgot why we do this check only in this mode. Shouldn't this be
-> > common to all modes (of course which implies PCSR is present) ?
-> 
-> No. PCSROffset is defined differently in ARMv7 and ARMv8; So finally we
-> simplize PCSROffset value :
-> 0000 - Sample offset applies based on the instruction state (indicated by PCSR[0])
-> 0001 - No offset applies.
-> 0010 - No offset applies, but do not use in AArch32 mode!
-> 
-> So we need handle the corner case is when CPU runs AArch32 mode and
-> PCSRoffset = 'b0010. Other cases the pcsr should be present.
-> 
-> [...]
-> 
-> Other suggestions are good for me, will take them in next version.
-> 
-> Thanks,
-> Leo Yan
+> The GP0 PLL in GXBB, GXL/GXM also needs some tweaks in the initialization
+> steps, and these are exposed along the PARAM table.
+> =
+
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/clk/meson/clk-pll.c | 52 +++++++++++++++++++++++++++++++++++++++=
+++++--
+>  drivers/clk/meson/clkc.h    | 23 ++++++++++++++++++++
+>  2 files changed, 73 insertions(+), 2 deletions(-)
+> =
+
+> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+> index 4adc1e8..aff223b 100644
+> --- a/drivers/clk/meson/clk-pll.c
+> +++ b/drivers/clk/meson/clk-pll.c
+> @@ -116,6 +116,29 @@ static const struct pll_rate_table *meson_clk_get_pl=
+l_settings(struct meson_clk_
+>         return NULL;
+>  }
+>  =
+
+> +/* Specific wait loop for GXL/GXM GP0 PLL */
+> +static int meson_clk_pll_wait_lock_reset(struct meson_clk_pll *pll,
+> +                                        struct parm *p_n)
+> +{
+> +       int delay =3D 100;
+> +       u32 reg;
+> +
+> +       while (delay > 0) {
+> +               reg =3D readl(pll->base + p_n->reg_off);
+> +               writel(reg | MESON_PLL_RESET, pll->base + p_n->reg_off);
+> +               udelay(10);
+> +               writel(reg & ~MESON_PLL_RESET, pll->base + p_n->reg_off);
+> +
+> +               mdelay(1);
+
+Can you add a comment explaining where the delay values come from? Can
+they vary from chip to chip?
+
+> +
+> +               reg =3D readl(pll->base + p_n->reg_off);
+> +               if (reg & MESON_PLL_LOCK)
+> +                       return 0;
+> +               delay--;
+> +       }
+> +       return -ETIMEDOUT;
+> +}
+> +
+>  static int meson_clk_pll_wait_lock(struct meson_clk_pll *pll,
+>                                    struct parm *p_n)
+>  {
+> @@ -132,6 +155,15 @@ static int meson_clk_pll_wait_lock(struct meson_clk_=
+pll *pll,
+>         return -ETIMEDOUT;
+>  }
+>  =
+
+> +static void meson_clk_pll_init_params(struct meson_clk_pll *pll)
+> +{
+> +       int i;
+> +
+> +       for (i =3D 0 ; i < pll->params.params_count ; ++i)
+> +               writel(pll->params.params_table[i].value,
+> +                      pll->base + pll->params.params_table[i].reg_off);
+> +}
+> +
+>  static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>                                   unsigned long parent_rate)
+>  {
+> @@ -151,10 +183,16 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw=
+, unsigned long rate,
+>         if (!rate_set)
+>                 return -EINVAL;
+>  =
+
+> +       /* Initialize the PLL in a clean state if specified */
+> +       if (pll->params.params_count)
+> +               meson_clk_pll_init_params(pll);
+> +
+>         /* PLL reset */
+>         p =3D &pll->n;
+>         reg =3D readl(pll->base + p->reg_off);
+> -       writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
+> +       /* If no_init_reset is provided, avoid resetting at this point */
+> +       if (!pll->params.no_init_reset)
+> +               writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
+>  =
+
+>         reg =3D PARM_SET(p->width, p->shift, reg, rate_set->n);
+>         writel(reg, pll->base + p->reg_off);
+> @@ -184,7 +222,17 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw,=
+ unsigned long rate,
+>         }
+>  =
+
+>         p =3D &pll->n;
+> -       ret =3D meson_clk_pll_wait_lock(pll, p);
+> +       /* If unreset_for_lock is provided, remove the reset bit here */
+> +       if (pll->params.unreset_for_lock) {
+
+Small nitpick, but I find "unreset" to be confusing. Since 'reset' here
+is a bit that can be set and unset, maybe use clear_reset_for_lock
+instead?
+
+Regards,
+Mike
+
+> +               reg =3D readl(pll->base + p->reg_off);
+> +               writel(reg & ~MESON_PLL_RESET, pll->base + p->reg_off);
+> +       }
+> +
+> +       /* If reset_lock_loop, use a special loop including resetting */
+> +       if (pll->params.reset_lock_loop)
+> +               ret =3D meson_clk_pll_wait_lock_reset(pll, p);
+> +       else
+> +               ret =3D meson_clk_pll_wait_lock(pll, p);
+>         if (ret) {
+>                 pr_warn("%s: pll did not lock, trying to restore old rate=
+ %lu\n",
+>                         __func__, old_rate);
+> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+> index 9bb70e7..5f1c12d 100644
+> --- a/drivers/clk/meson/clkc.h
+> +++ b/drivers/clk/meson/clkc.h
+> @@ -62,6 +62,28 @@ struct pll_rate_table {
+>                 .frac           =3D (_frac),                             =
+ \
+>         }                                                               \
+>  =
+
+> +struct pll_params_table {
+> +       unsigned int reg_off;
+> +       unsigned int value;
+> +};
+> +
+> +#define PLL_PARAM(_reg, _val)                                          \
+> +       {                                                               \
+> +               .reg_off        =3D (_reg),                              =
+ \
+> +               .value          =3D (_val),                              =
+ \
+> +       }
+> +
+> +struct pll_setup_params {
+> +       struct pll_params_table *params_table;
+> +       unsigned int params_count;
+> +       /* Workaround for GP0, do not reset before configuring */
+> +       bool no_init_reset;
+> +       /* Workaround for GP0, unreset right before checking for lock */
+> +       bool unreset_for_lock;
+> +       /* Workaround for GXL GP0, reset in the lock checking loop */
+> +       bool reset_lock_loop;
+> +};
+> +
+>  struct meson_clk_pll {
+>         struct clk_hw hw;
+>         void __iomem *base;
+> @@ -70,6 +92,7 @@ struct meson_clk_pll {
+>         struct parm frac;
+>         struct parm od;
+>         struct parm od2;
+> +       const struct pll_setup_params params;
+>         const struct pll_rate_table *rate_table;
+>         unsigned int rate_count;
+>         spinlock_t *lock;
+> -- =
+
+> 1.9.1
+>=20
