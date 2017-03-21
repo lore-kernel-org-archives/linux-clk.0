@@ -1,34 +1,52 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 20 Mar 2017 08:07:39 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 8/9] ARM: dts: omap4: add clkctrl nodes
-Message-ID: <20170320150738.GJ20572@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <1489741781-12816-9-git-send-email-t-kristo@ti.com>
- <20170317154333.GW20572@atomide.com>
- <9456caee-4f45-044a-0b2e-305fa2d0d274@ti.com>
- <b602ccba-489f-e78f-0011-6d808bca9f84@ti.com>
- <20170320143538.GH20572@atomide.com>
- <3a82add5-7d85-458c-f8c1-9e58db6a8949@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3a82add5-7d85-458c-f8c1-9e58db6a8949@ti.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: [RFC 5/7] clk: rollback set_rate_range changes on failure
+Date: Tue, 21 Mar 2017 19:33:28 +0100
+Message-Id: <20170321183330.26722-6-jbrunet@baylibre.com>
+In-Reply-To: <20170321183330.26722-1-jbrunet@baylibre.com>
+References: <20170321183330.26722-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [170320 07:54]:
-> - You can introduce the DTS changes on a clkctrl module basis, e.g.
-> introduce the node for l4_per_clkctrl along with the clock node changes for
-> the same
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-I don't mind introducing them all at once, I'm worried about
-reverting in case of trouble. But as long as we can revert things on
-a clkctrl module basis in case of trouble, we should be good to go as
-far as I'm concerned.
-
-Regards,
-
-Tony
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 69db8cc15063..50798ef618d1 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1759,6 +1759,7 @@ EXPORT_SYMBOL_GPL(clk_set_rate);
+ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+ {
+ 	int ret = 0;
++	unsigned int old_min, old_max;
+ 
+ 	if (!clk)
+ 		return 0;
+@@ -1776,9 +1777,16 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+ 		clk_core_unprotect(clk->core);
+ 
+ 	if (min != clk->min_rate || max != clk->max_rate) {
++		old_min = clk->min_rate;
++		old_max = clk->max_rate;
+ 		clk->min_rate = min;
+ 		clk->max_rate = max;
+ 		ret = clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
++		if (ret) {
++			/* undo changes */
++			clk->min_rate = old_min;
++			clk->max_rate = old_max;
++		}
+ 	}
+ 
+ 	if (clk->protect_ucount)
+-- 
+2.9.3
