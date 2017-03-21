@@ -1,41 +1,96 @@
-Return-Path: <jon.mason@broadcom.com>
-Return-Path: <jon.mason@broadcom.com>
-From: Jon Mason <jon.mason@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>
-Subject: [PATCH] clk: ns2: Correct SDIO bits
-Date: Mon, 20 Mar 2017 18:12:14 -0400
-Message-Id: <1490047934-3061-1-git-send-email-jon.mason@broadcom.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Kevin Hilman" <khilman@baylibre.com>, "Carlo Caione" <carlo@caione.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20170309104154.28295-5-jbrunet@baylibre.com>
+Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20170309104154.28295-1-jbrunet@baylibre.com>
+ <20170309104154.28295-5-jbrunet@baylibre.com>
+Message-ID: <149013783116.54062.8867118335254325862@resonance>
+Subject: Re: [PATCH v2 4/9] clk: gxbb: put dividers and muxes in tables
+Date: Tue, 21 Mar 2017 16:10:31 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>
+Quoting Jerome Brunet (2017-03-09 02:41:49)
+> Until now, there was only 2 dividers and 2 muxes declared for the gxbb
+> platform. With the ongoing work on various subsystem, including audio,
+> this is about to change. Use the same approach as gates for dividers and
+> muxes, putting them in tables to fix the register address at runtime.
+> =
 
-Corrected the bits for power and iso.
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Signed-off-by: Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>
-Signed-off-by: Jon Mason <jon.mason@broadcom.com>
-Fixes: f7225a83 ("clk: ns2: add clock support for Broadcom Northstar 2 SoC")
----
- drivers/clk/bcm/clk-ns2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks good to me.
 
-diff --git a/drivers/clk/bcm/clk-ns2.c b/drivers/clk/bcm/clk-ns2.c
-index a564e92..adc1414 100644
---- a/drivers/clk/bcm/clk-ns2.c
-+++ b/drivers/clk/bcm/clk-ns2.c
-@@ -103,7 +103,7 @@ CLK_OF_DECLARE(ns2_genpll_src_clk, "brcm,ns2-genpll-scr",
- 
- static const struct iproc_pll_ctrl genpll_sw = {
- 	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_SPLIT_STAT_CTRL,
--	.aon = AON_VAL(0x0, 2, 9, 8),
-+	.aon = AON_VAL(0x0, 1, 11, 10),
- 	.reset = RESET_VAL(0x4, 2, 1),
- 	.dig_filter = DF_VAL(0x0, 9, 3, 5, 4, 2, 3),
- 	.ndiv_int = REG_VAL(0x8, 4, 10),
--- 
-2.7.4
+Regards,
+Mike
+
+> ---
+>  drivers/clk/meson/gxbb.c | 28 ++++++++++++++++++++--------
+>  1 file changed, 20 insertions(+), 8 deletions(-)
+> =
+
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index c063287bb0ed..79e9313e6703 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -902,6 +902,16 @@ static struct clk_gate *const gxbb_clk_gates[] =3D {
+>         &gxbb_sar_adc_clk,
+>  };
+>  =
+
+> +static struct clk_mux *const gxbb_clk_muxes[] =3D {
+> +       &gxbb_mpeg_clk_sel,
+> +       &gxbb_sar_adc_clk_sel,
+> +};
+> +
+> +static struct clk_divider *const gxbb_clk_dividers[] =3D {
+> +       &gxbb_mpeg_clk_div,
+> +       &gxbb_sar_adc_clk_div,
+> +};
+> +
+>  static int gxbb_clkc_probe(struct platform_device *pdev)
+>  {
+>         void __iomem *clk_base;
+> @@ -928,19 +938,21 @@ static int gxbb_clkc_probe(struct platform_device *=
+pdev)
+>         /* Populate the base address for CPU clk */
+>         gxbb_cpu_clk.base =3D clk_base;
+>  =
+
+> -       /* Populate the base address for the MPEG clks */
+> -       gxbb_mpeg_clk_sel.reg =3D clk_base + (u64)gxbb_mpeg_clk_sel.reg;
+> -       gxbb_mpeg_clk_div.reg =3D clk_base + (u64)gxbb_mpeg_clk_div.reg;
+> -
+> -       /* Populate the base address for the SAR ADC clks */
+> -       gxbb_sar_adc_clk_sel.reg =3D clk_base + (u64)gxbb_sar_adc_clk_sel=
+.reg;
+> -       gxbb_sar_adc_clk_div.reg =3D clk_base + (u64)gxbb_sar_adc_clk_div=
+.reg;
+> -
+>         /* Populate base address for gates */
+>         for (i =3D 0; i < ARRAY_SIZE(gxbb_clk_gates); i++)
+>                 gxbb_clk_gates[i]->reg =3D clk_base +
+>                         (u64)gxbb_clk_gates[i]->reg;
+>  =
+
+> +       /* Populate base address for muxes */
+> +       for (i =3D 0; i < ARRAY_SIZE(gxbb_clk_muxes); i++)
+> +               gxbb_clk_muxes[i]->reg =3D clk_base +
+> +                       (u64)gxbb_clk_muxes[i]->reg;
+> +
+> +       /* Populate base address for dividers */
+> +       for (i =3D 0; i < ARRAY_SIZE(gxbb_clk_dividers); i++)
+> +               gxbb_clk_dividers[i]->reg =3D clk_base +
+> +                       (u64)gxbb_clk_dividers[i]->reg;
+> +
+>         /*
+>          * register all clks
+>          */
+> -- =
+
+> 2.9.3
+>=20
