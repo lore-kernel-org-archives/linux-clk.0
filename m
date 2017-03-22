@@ -1,38 +1,80 @@
-Return-Path: <tony@atomide.com>
-Date: Thu, 2 Mar 2017 10:57:01 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: clk: ti: clkctrl clock support
-Message-ID: <20170302185700.GT20572@atomide.com>
-References: <1486992157-10673-1-git-send-email-t-kristo@ti.com>
+Return-Path: <sudeep.holla@arm.com>
+Subject: Re: [PATCH v3 3/5] coresight: add support for debug module
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+ Mike Leach <mike.leach@linaro.org>
+References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
+ <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
+ <671a0b39-b635-6e0e-d3fa-967651f2e29c@arm.com>
+ <CAJ9a7VgCjXNGC4C49PxL-nBxzhMCmA8Mb-0C_epahizA5EL2HA@mail.gmail.com>
+ <e7a97c52-f61a-e503-f626-09563fa100b8@arm.com>
+ <CAJ9a7VhvCS3xXAHBt0AUVB2Zp2P1HP_LQm4KiptiBT9VJ1fC0Q@mail.gmail.com>
+ <4961636d-d77c-0f9a-7076-4db1ef456073@arm.com>
+ <1e6d6a91-3bdc-7cfb-a96f-780c959e0316@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Leo Yan <leo.yan@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Wei Xu <xuwei5@hisilicon.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ John Stultz <john.stultz@linaro.org>, Guodong Xu <guodong.xu@linaro.org>,
+ Haojian Zhuang <haojian.zhuang@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <7a028460-d598-e337-5e09-234beddca88b@arm.com>
+Date: Wed, 22 Mar 2017 17:25:50 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1486992157-10673-1-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1e6d6a91-3bdc-7cfb-a96f-780c959e0316@arm.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [170213 05:24]:
-> Hi,
-> 
-> This series is a derivative of the hwmod clock support framework
-> (https://www.spinics.net/lists/arm-kernel/msg536742.html.) This
-> adds support for clkctrl main and optional clocks, which can be
-> linked initially with hwmod framework, and later with the
-> interconnect driver functionality. The implementation is based
-> on the DT bindings patch from Tony:
-> https://patchwork.kernel.org/patch/9533605/
-> 
-> This series also depends on the TI clock driver cleanup series
-> posted here: https://www.spinics.net/lists/arm-kernel/msg562362.html
-> 
-> OMAP4 used as a reference platform for the work, patches 4-6 contain
-> SoC specific patches, out of which 5-6 should not be merged; these
-> are only provided as a reference and for testing purposes and are
-> incomplete. Rest of the data can be provided once the code is
-> approved / merged.
 
-Looks good to me:
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+On 22/03/17 17:09, Suzuki K Poulose wrote:
+> On 22/03/17 16:17, Sudeep Holla wrote:
+
+[...]
+
+>> 
+>> Point taken. So we could just specify that all necessary power
+>> domains need to be on for proper functionality for this feature and
+>> that it's highly platform specific instead of mixing cpu/cluster
+>> idle details here.
+>> 
+>>> The key point is that the caveat in using this driver is that
+>>> the power management has to be considered on a platform specific
+>>> basis before it is configured; and appropriate actions may be
+>>> needed for it to work correctly. Without this then the driver
+>>> could cause more issues than it debugs. A user selecting this
+>>> _must_ be told about these issues
+>>> 
+> 
+> So given all the possible caveats, I think we :
+> 
+> 1) Shouldn't enable the driver by default at runtime even if it is 
+> built-in. 
+> 2) Should provide mechanisms to turn it on at boot (via
+> kernel commandline) or anytime later (via sysfs), which kind of puts
+> the responsibility back on the user : "You know what you are doing". 
+> 3) Shouldn't turn the driver on based on "nohlt" which the user
+> could use it for some other purposes, without explicit intention of
+> turning this driver on).
+> 4) Should document the fact that, on some
+> platforms, the user may have to disable CPUidle explicitly to get the
+> driver working. But let us not make it the default. The user with a
+> not so ideal platform could add "nohlt" and get it working.
+> 
+
+Agreed on all points and well summarized.
+I would like to highlight (3) and (4) as it needs to be well understood.
+
+"nohlt" has a *different* meaning already, so using that in this
+driver for something else is simple wrong as it affects the system in
+unintended ways. And yes if user (mis)uses it to get things working,
+it's fine but shouldn't be recommended way.
+
+-- 
+Regards,
+Sudeep
