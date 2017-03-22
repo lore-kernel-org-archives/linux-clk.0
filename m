@@ -1,39 +1,71 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 0/5] clk: qcom: gdsc: Add support for clk control 
-Date: Tue, 21 Mar 2017 11:45:18 +0530
-Message-Id: <1490076923-20194-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ot0-f177.google.com ([74.125.82.177]:35483 "EHLO
+        mail-ot0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932208AbdCVU4x (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2017 16:56:53 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFq+mTvruQb5ifj3etMxSCWgDZTZ6ebGkk84UCQDqjR4-A@mail.gmail.com>
+References: <CGME20170322092305eucas1p20d2a6dfede483210febea5b5e0ff68db@eucas1p2.samsung.com>
+ <1490174570-18345-1-git-send-email-m.szyprowski@samsung.com> <CAPDyKFq+mTvruQb5ifj3etMxSCWgDZTZ6ebGkk84UCQDqjR4-A@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 22 Mar 2017 21:56:51 +0100
+Message-ID: <CAJZ5v0ihYQp4_oJCu3Tugbqrm=68hcxdg8-yUphbCXCUw3UzPw@mail.gmail.com>
+Subject: Re: [PATCH] PM / runtime: Use synchronous runtime PM call in rpm_put_suppliers()
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This series allows clocks associated with GDSCs to be controlled
-along with the powerdomains. To start with, some of the mmagic
-clocks are assocaited with the mmagic gdscs on msm8996 so the
-devices in these mmagic domains (vidc, mdss, their smmu instances etc)
-don't have to put these in their resp. DT bindings.
+On Wed, Mar 22, 2017 at 12:34 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 22 March 2017 at 10:22, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>> rpm_put_suppliers() might be called as a result of pm_runtime_put_sync()
+>> call, where the called explicitly wants to perform the operation in
+>> synchronous way to avoid some deadlocks related to concurrent code
+>> execution in the PM workers. However the current code for handling device
+>> links always use asynchronous calls. This patch changes it to always use
+>> the synchronous calls.
+>
+> This is a good idea! It is better to leave the decision to the "leaf"
+> node of whether to use asynchronous mode or not.
 
-Rajendra Nayak (5):
-  arm64: qcom: Select PM_GENERIC_DOMAINS
-  clk: Add clk_hw_get_clk() helper API to be used by clk providers
-  clk: qcom: gdsc: Add support to control associated clks
-  clk: qcom: gcc-msm8996: Mark gcc_mmss_noc_cfg_ahb_clk as a critical
-    clock
-  clk: qcom: mmcc-8996: Associate all mmagic clks with mmagic gdscs
+One immediate concern that I have is that this happens in an SRCU
+read-side critical section and sync runtime suspend can take arbitrary
+amount of time, especially if those devices have suppliers etc.  You
+may very well wait for an entire subtree to suspend synchronously
+here.
 
- arch/arm64/Kconfig.platforms    |  2 ++
- drivers/clk/clk.c               | 39 +++++++++++++++++++++++++++++++++
- drivers/clk/qcom/gcc-msm8996.c  |  2 +-
- drivers/clk/qcom/gdsc.c         | 48 +++++++++++++++++++++++++++++++++++++++--
- drivers/clk/qcom/gdsc.h         |  8 +++++++
- drivers/clk/qcom/mmcc-msm8996.c | 25 +++++++++++++++++++++
- include/linux/clk-provider.h    |  5 +++++
- 7 files changed, 126 insertions(+), 3 deletions(-)
+Moreover, if the suppliers have parents, those parents won't be
+suspended synchronously anyway, so this only addresses the first level
+of hierarchy in that case.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Also the behavior for suppliers follows the behavior for parents and I
+don't quite see the reason for these two cases to behave differently
+in principle.
+
+>>
+>> This patch fixes the potential deadlock, which appears during adding
+>> runtime PM support to clock framework, which uses global mutex, which is
+>> reentrant only for the current process, so trying to execute runtime PM
+>> callback from the worker results in deadlock (the mentioned mutex is
+>> already taken by the current process, which waits for execution of PM
+>> worker).
+>
+> This just tells that the locking mechanism for clocks are fragile.
+
+Right.
+
+We seem to be working around problems in there with this patch.
+
+> Whether it is a good motivation for this change, I am not sure.
+>
+> In either case, I like the change!
+
+Why exactly do you like it?
+
+Thanks,
+Rafael
