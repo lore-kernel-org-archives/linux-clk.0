@@ -1,70 +1,81 @@
-Return-Path: <tony@atomide.com>
-Date: Tue, 28 Mar 2017 08:03:16 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 9/9] ARM: dts: omap4: convert to use the new clkctrl
- clocks for the drivers
-Message-ID: <20170328150316.GU10760@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <1489741781-12816-10-git-send-email-t-kristo@ti.com>
- <20170328001800.GR10760@atomide.com>
- <8b502a89-dcc6-1932-70cc-e887b1404dbb@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <8b502a89-dcc6-1932-70cc-e887b1404dbb@ti.com>
+Return-Path: <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v6 4/4] clk: samsung: exynos-audss: Use runtime PM
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <42b06c10-4a80-ed62-a120-e6b86b2af0b2@samsung.com>
+Date: Wed, 22 Mar 2017 14:32:32 +0100
+MIME-version: 1.0
+In-reply-to: 
+ <CAPDyKFrL9pvGQw+09rP52p72FqKuh6rLNt0NEUZ-TFxU838Nzw@mail.gmail.com>
+Content-type: text/plain; charset=utf-8; format=flowed
+References: 
+ <CGME20170322113556eucas1p1b3434935701aba1db7868415a9c3b4f9@eucas1p1.samsung.com>
+ <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
+ <1490182543-28550-5-git-send-email-m.szyprowski@samsung.com>
+ <CAPDyKFrL9pvGQw+09rP52p72FqKuh6rLNt0NEUZ-TFxU838Nzw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [170327 22:46]:
-> On 28/03/17 03:18, Tony Lindgren wrote:
-> > * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
-> > > Convert the drivers to use the new clkctrl clocks.
-> > > 
-> > > Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> > > ---
-> > >  arch/arm/boot/dts/omap4.dtsi | 164 ++++++++++++++++++++++++++++++++++++++-----
-> > >  1 file changed, 146 insertions(+), 18 deletions(-)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/omap4.dtsi b/arch/arm/boot/dts/omap4.dtsi
-> > > index 3ecf616..c39304a 100644
-> > > --- a/arch/arm/boot/dts/omap4.dtsi
-> > > +++ b/arch/arm/boot/dts/omap4.dtsi
-> > > @@ -94,16 +94,22 @@
-> > >  			compatible = "ti,omap4-mpu";
-> > >  			ti,hwmods = "mpu";
-> > >  			sram = <&ocmcram>;
-> > > +			clocks = <&mpuss_clkctrl OMAP4_MPU_CLKCTRL 0>;
-> > > +			clock-names = "clkctrl";
-> > >  		};
-> > 
-> > Oh one more thing. I don't think we should add the clocks
-> > here as they are now wrongly allocated to the device within
-> > the interconnect target module. These clocks really belong
-> > to each interconnect target module that we don't have in the
-> > dts yet.
-> > 
-> > So we're better off adding the clockctrl clocks and then
-> > changing the dts to use the interconnect target modules
-> > with the clockctrl clocks.
-> 
-> The problem is, you can't just add the clkctrl clock nodes themselves alone,
-> as this introduces the problem that any clocks with no users will get
-> disabled => causes a boot time hang when all the device clocks get shut
-> down.
+Hi Ulf,
 
-Hmm yeah. I wonder how to work around that.. What if we first updated
-the clocks in the hwmod code? Or updated the aliases?
+On 2017-03-22 13:00, Ulf Hansson wrote:
+> On 22 March 2017 at 12:35, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>> This patch adds support for runtime PM to Exynos Audio SubSystem driver to
+>> enable full support for audio power domain on Exynos5 SoCs. The main change
+>> is moving register saving and restoring code from system sleep PM ops to
+>> runtime PM ops and implementing system sleep PM ops with generic
+>> pm_runtime_force_suspend/resume helpers. Runtime PM of the Exynos AudSS
+>> device is managed from clock core depending on the preparation status
+>> of the provided clocks.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>
+> Minor nitpick below.
+>
+> [...]
+>
+>> -#ifdef CONFIG_PM_SLEEP
+>>   static unsigned long reg_save[][2] = {
+>>          { ASS_CLK_SRC,  0 },
+>>          { ASS_CLK_DIV,  0 },
+>>          { ASS_CLK_GATE, 0 },
+>>   };
+>>
+>> -static int exynos_audss_clk_suspend(struct device *dev)
+>> +static int __maybe_unused exynos_audss_clk_suspend(struct device *dev)
+> Instead of using "__maybe_unused", I would rather change from
+> "CONFIG_PM_SLEEP" to "CONFIG_PM". However, no strong opinion.
+>
+> Perhaps you need something like this for patch 3/4 as well?
 
-> If you want to delay the usage of the clocks until you have interconnect
-> target modules in place, you need to introduce the clock nodes also at that
-> point, similar to what needs to be done now to squash patch #8 or #9.
+Frankly, this matters only for compile-time tests. All Exynos platforms
+require CONFIG_PM, so that code will be always used in runtime.
 
-I'd like to do this one device at a time without any large
-flips as we have quite a few devices with special handling for
-reset and idling in the hwmod code.
+For compile-time tests probably it is better to use __maybe_unused approach
+to have higher coverage.
 
-Regards,
+>>   {
+>>          int i;
+>>
+>> @@ -54,7 +54,7 @@ static int exynos_audss_clk_suspend(struct device *dev)
+>>          return 0;
+>>   }
+> [...]
+>
+> Kind regards
+> Uffe
 
-Tony
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
