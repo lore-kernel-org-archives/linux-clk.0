@@ -1,49 +1,45 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
- <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
- <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
- <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
- <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
- <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
- <f1505f37-cf96-fe04-dfc1-1dd94e20e130@nvidia.com>
- <CAMuHMdVRa3C4ikaoNDDU21NbRVcPTf0z6fPiJ1nF-VDd+3Dm0g@mail.gmail.com>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <313f1245-02aa-496c-3545-5029ece652af@nvidia.com>
-Date: Wed, 8 Mar 2017 11:48:21 +0000
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVRa3C4ikaoNDDU21NbRVcPTf0z6fPiJ1nF-VDd+3Dm0g@mail.gmail.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 2/3] clk: qcom: Elaborate on "active" clocks in the RPM clock bindings
+Date: Wed, 22 Mar 2017 09:18:42 +0100
+Message-Id: <20170322081842.20495-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+The concept of "active" clocks is just explained in a bried comment in the
+device driver, let's explain it a bit more in the device tree bindings
+so everyone understands this.
 
-On 08/03/17 11:38, Geert Uytterhoeven wrote:
-> Hi Jon,
-> 
-> On Wed, Mar 8, 2017 at 11:13 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
->>> I had a similar issue with SH-Mobile AG5, where the power domain containing
->>> the JTAG interface is powered down.
->>
->> This reminds me, does your patch assume that the DFD power domain is
->> enabled? I am guessing that it needs to be for JTAG to work.
-> 
-> Yes. The pm-rmobile driver looks for "arm,coresight-etm3x" devices, and
-> marks the corresponding PM Domain as always-on, as long as the
-> Coresight code doesn't handle runtime PM.
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Sorry Geert, but I was asking Peter specifically about the power-domain
-on Tegra as I have a feeling we may have the same scenario ;-)
-
-Jon
-
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+index d470a0187035..cf80a00b7ff2 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+@@ -18,6 +18,14 @@ Required properties :
+ 
+ - #clock-cells : shall contain 1
+ 
++The clock enumerators are defined in <dt-bindings/clock/qcom,rpmcc.h>
++and come in pairs: FOO_CLK followed by FOO_A_CLK. The latter clock
++is an "active" clock, which means that the consumer only care that the
++clock is available when the system is active, i.e. not suspended. If
++it is important that the clock keeps running during system suspend,
++you need to specify the non-active clock, the one not containing
++*_A_* in the enumerator name.
++
+ Example:
+ 	smd {
+ 		compatible = "qcom,smd";
 -- 
-nvpublic
+2.9.3
