@@ -1,35 +1,25 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 30 Mar 2017 18:19:16 -0500
-From: Rob Herring <robh@kernel.org>
-To: Priit Laes <plaes@plaes.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
-	Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v2 5/6] dt-bindings: List devicetree binding for the CCU
- of Allwinner A10
-Message-ID: <20170330231916.lwzpql4hx74devgr@rob-hp-laptop>
-References: <cover.a58841efb571d44013658505f3fa140536a89d1c.1490545262.git-series.plaes@plaes.org>
- <28a3c670575f368a2bd9a67b451f0f45c474dc7b.1490545262.git-series.plaes@plaes.org>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, xf@rock-chips.com, linux-clk@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1] clk: rockchip: add pll_wait_lock for pll_enable
+Date: Wed, 22 Mar 2017 19:07:39 +0100
+Message-ID: <1524529.CszJHdUNkn@phil>
+In-Reply-To: <1487732395-30353-1-git-send-email-zhangqing@rock-chips.com>
+References: <1487732395-30353-1-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <28a3c670575f368a2bd9a67b451f0f45c474dc7b.1490545262.git-series.plaes@plaes.org>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Mar 26, 2017 at 08:20:20PM +0300, Priit Laes wrote:
-> Allwinner A10 is now driven by sunxi-ng CCU driver.
+Am Mittwoch, 22. Februar 2017, 10:59:55 CET schrieb Elaine Zhang:
+> If pll is power down,when power up pll need wait pll lock.
+> The reference documents section:
+> 	PLL frequency change and lock check
 > 
-> Add devicetree binding for it.
-> 
-> Signed-off-by: Priit Laes <plaes@plaes.org>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 1 +
->  1 file changed, 1 insertion(+)
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+applied to my clk-branch for 4.12
+
+
+Thanks
+Heiko
