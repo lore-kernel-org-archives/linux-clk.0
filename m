@@ -1,58 +1,53 @@
-Return-Path: <robin@protonic.nl>
-From: Robin van der Gracht <robin@protonic.nl>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Robin van der Gracht <robin@protonic.nl>
-Subject: [PATCH] clk: imx: clk-imxul: The i.mx6ul has no aips_tx3 clock
-Date: Fri,  3 Mar 2017 14:26:20 +0100
-Message-Id: <20170303132620.32156-1-robin@protonic.nl>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Alex Frid <afrid@nvidia.com>
+Subject: [PATCH] clk: tegra: Propagate clk_out_x rate to parent
+Date: Wed, 22 Mar 2017 15:38:19 +0200
+Message-ID: <1490189899-19401-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock was mapped on CG15 (gpio2_clocks) in the CCRG0 register.
+From: Alex Frid <afrid@nvidia.com>
 
-Signed-off-by: Robin van der Gracht <robin@protonic.nl>
+Given that externx can only be used as a parent for clk_out_x, it makes
+sense to propagate requests to make clk_out_x easier to handle.
+
+Signed-off-by: Alex Frid <afrid@nvidia.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/imx/clk-imx6ul.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/clk/tegra/clk-tegra-pmc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 75c35fb..dbd6e59 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -73,7 +73,7 @@ static struct clk *clks[IMX6UL_CLK_END];
- static struct clk_onecell_data clk_data;
+diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
+index 91377ab..a35579a 100644
+--- a/drivers/clk/tegra/clk-tegra-pmc.c
++++ b/drivers/clk/tegra/clk-tegra-pmc.c
+@@ -95,7 +95,8 @@ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
+ 			continue;
  
- static int const clks_init_on[] __initconst = {
--	IMX6UL_CLK_AIPSTZ1, IMX6UL_CLK_AIPSTZ2, IMX6UL_CLK_AIPSTZ3,
-+	IMX6UL_CLK_AIPSTZ1, IMX6UL_CLK_AIPSTZ2,
- 	IMX6UL_CLK_AXI, IMX6UL_CLK_ARM, IMX6UL_CLK_ROM,
- 	IMX6UL_CLK_MMDC_P0_FAST, IMX6UL_CLK_MMDC_P0_IPG,
- };
-@@ -341,9 +341,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt2_serial",	"perclk",	base + 0x68,	26);
- 	clks[IMX6UL_CLK_UART2_IPG]	= imx_clk_gate2("uart2_ipg",	"ipg",		base + 0x68,	28);
- 	clks[IMX6UL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf",	base + 0x68,	28);
--	if (clk_on_imx6ul())
--		clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		base + 0x68,	30);
--	else if (clk_on_imx6ull())
-+	if (clk_on_imx6ull())
- 		clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		 base + 0x80,	18);
+ 		clk = clk_register_mux(NULL, data->mux_name, data->parents,
+-				data->num_parents, CLK_SET_RATE_NO_REPARENT,
++				data->num_parents,
++				CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
+ 				pmc_base + PMC_CLK_OUT_CNTRL, data->mux_shift,
+ 				3, 0, &clk_out_lock);
+ 		*dt_clk = clk;
+@@ -106,7 +107,8 @@ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
+ 			continue;
  
- 	/* CCGR1 */
-@@ -482,6 +480,9 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
- 		clk_prepare_enable(clks[clks_init_on[i]]);
- 
-+	if (clk_on_imx6ull())
-+		clk_prepare_enable(clks[IMX6UL_CLK_AIPSTZ3]);
-+
- 	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
- 		clk_prepare_enable(clks[IMX6UL_CLK_USBPHY1_GATE]);
- 		clk_prepare_enable(clks[IMX6UL_CLK_USBPHY2_GATE]);
+ 		clk = clk_register_gate(NULL, data->gate_name, data->mux_name,
+-					0, pmc_base + PMC_CLK_OUT_CNTRL,
++					CLK_SET_RATE_PARENT,
++					pmc_base + PMC_CLK_OUT_CNTRL,
+ 					data->gate_shift, 0, &clk_out_lock);
+ 		*dt_clk = clk;
+ 		clk_register_clkdev(clk, data->dev_name, data->gate_name);
 -- 
-2.9.3
+1.9.1
