@@ -1,162 +1,173 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [PATCH v3 09/11] ARM: dts: sun8i: add DE2 nodes for V3s SoC
-Date: Thu, 30 Mar 2017 03:46:11 +0800
-Message-Id: <20170329194613.55548-10-icenowy@aosc.io>
-In-Reply-To: <20170329194613.55548-1-icenowy@aosc.io>
-References: <20170329194613.55548-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 3/3] clk: qcom: Implement RPM clocks for MSM8660/APQ8060
+Date: Wed, 22 Mar 2017 09:18:50 +0100
+Message-Id: <20170322081850.20544-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.xyz>
+The RPM clocks were missing for MSM8660/APQ8060. For this to be
+completed we need to add a special fixed rate RPM clock that is used
+for the PLL4 on these SoCs. The rest of the clocks are pretty
+similar to the other supported platforms.
 
-Allwinner V3s SoC features a "Display Engine 2.0" with only one TCON
-which have RGB LCD output.
+The "active" clock pattern is mirrored in all the clocks. I guess
+that the PLL4 that clocks the LPASS is actually never used as
+"active only" since the low-power audio subsystem should be left
+on when the system suspends, so it can be used as a stand-alone
+MP3 player type of device.
 
-Add device nodes for it as well as the TCON.
+As we do not have firmware for the LPASS we will probably only use
+this clock when the system is up and running (not suspended) for now,
+so that will be using the "active" clock.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Changes in v3:
-- Change the size of de2_clocks regs according to the binding example.
+ drivers/clk/qcom/clk-rpm.c | 99 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
 
- arch/arm/boot/dts/sun8i-v3s.dtsi | 87 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
-index 71075969e5e6..ae23746731a8 100644
---- a/arch/arm/boot/dts/sun8i-v3s.dtsi
-+++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
-@@ -41,6 +41,10 @@
-  */
+diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
+index df3e5fe8442a..0e2a02baaed7 100644
+--- a/drivers/clk/qcom/clk-rpm.c
++++ b/drivers/clk/qcom/clk-rpm.c
+@@ -56,6 +56,30 @@
+ 		},							      \
+ 	}
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/sun8i-v3s-ccu.h>
-+#include <dt-bindings/clock/sun8i-de2.h>
-+#include <dt-bindings/reset/sun8i-v3s-ccu.h>
-+#include <dt-bindings/reset/sun8i-de2.h>
++#define DEFINE_CLK_RPM_FIXED(_platform, _name, _active, r_id, r)	      \
++	static struct clk_rpm _platform##_##_name = {			      \
++		.rpm_clk_id = (r_id),					      \
++		.rate = (r),						      \
++		.hw.init = &(struct clk_init_data){			      \
++			.ops = &clk_rpm_fixed_ops,			      \
++			.name = #_name,					      \
++			.parent_names = (const char *[]){ "pxo_board" },      \
++			.num_parents = 1,				      \
++		},							      \
++	};								      \
++	static struct clk_rpm _platform##_##_active = {			      \
++		.rpm_clk_id = (r_id),					      \
++		.peer = &_platform##_##_name,				      \
++		.active_only = true,					      \
++		.rate = (r),						      \
++		.hw.init = &(struct clk_init_data){			      \
++			.ops = &clk_rpm_fixed_ops,			      \
++			.name = #_active,				      \
++			.parent_names = (const char *[]){ "pxo_board" },      \
++			.num_parents = 1,				      \
++		},							      \
++	}
++
+ #define DEFINE_CLK_RPM_PXO_BRANCH(_platform, _name, _active, r_id, r)	      \
+ 	static struct clk_rpm _platform##_##_active;			      \
+ 	static struct clk_rpm _platform##_##_name = {			      \
+@@ -269,6 +293,32 @@ static void clk_rpm_unprepare(struct clk_hw *hw)
+ 	mutex_unlock(&rpm_clk_lock);
+ }
  
- / {
- 	#address-cells = <1>;
-@@ -59,6 +63,12 @@
- 		};
- 	};
++static int clk_rpm_fixed_prepare(struct clk_hw *hw)
++{
++	struct clk_rpm *r = to_clk_rpm(hw);
++	u32 value = 1;
++	int ret;
++
++	ret = qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
++			     r->rpm_clk_id, &value, 1);
++	if (!ret)
++		r->enabled = true;
++
++	return ret;
++}
++
++static void clk_rpm_fixed_unprepare(struct clk_hw *hw)
++{
++	struct clk_rpm *r = to_clk_rpm(hw);
++	u32 value = 0;
++	int ret;
++
++	ret = qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
++			     r->rpm_clk_id, &value, 1);
++	if (!ret)
++		r->enabled = false;
++}
++
+ static int clk_rpm_set_rate(struct clk_hw *hw,
+ 			    unsigned long rate, unsigned long parent_rate)
+ {
+@@ -333,6 +383,13 @@ static unsigned long clk_rpm_recalc_rate(struct clk_hw *hw,
+ 	return r->rate;
+ }
  
-+	de: display-engine {
-+		compatible = "allwinner,sun8i-v3s-display-engine";
-+		allwinner,pipelines = <&de2_mixer0>;
-+		status = "disabled";
-+	};
++static const struct clk_ops clk_rpm_fixed_ops = {
++	.prepare	= clk_rpm_fixed_prepare,
++	.unprepare	= clk_rpm_fixed_unprepare,
++	.round_rate	= clk_rpm_round_rate,
++	.recalc_rate	= clk_rpm_recalc_rate,
++};
 +
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-@@ -93,6 +103,83 @@
- 		#size-cells = <1>;
- 		ranges;
+ static const struct clk_ops clk_rpm_ops = {
+ 	.prepare	= clk_rpm_prepare,
+ 	.unprepare	= clk_rpm_unprepare,
+@@ -348,6 +405,46 @@ static const struct clk_ops clk_rpm_branch_ops = {
+ 	.recalc_rate	= clk_rpm_recalc_rate,
+ };
  
-+		de2_clocks: clock@01000000 {
-+			compatible = "allwinner,sun50i-h5-de2-clk";
-+			reg = <0x01000000 0x100000>;
-+			clocks = <&ccu CLK_DE>,
-+				 <&ccu CLK_BUS_DE>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&ccu RST_BUS_DE>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
++/* MSM8660/APQ8060 */
++DEFINE_CLK_RPM_FIXED(msm8660, pll4_clk, pll4_a_clk, QCOM_RPM_PLL_4, 540672000);
++DEFINE_CLK_RPM(msm8660, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
++DEFINE_CLK_RPM(msm8660, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
++DEFINE_CLK_RPM(msm8660, mmfab_clk, mmfab_a_clk, QCOM_RPM_MM_FABRIC_CLK);
++DEFINE_CLK_RPM(msm8660, daytona_clk, daytona_a_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
++DEFINE_CLK_RPM(msm8660, sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
++DEFINE_CLK_RPM(msm8660, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
++DEFINE_CLK_RPM(msm8660, mmfpb_clk, mmfpb_a_clk, QCOM_RPM_MMFPB_CLK);
++DEFINE_CLK_RPM(msm8660, smi_clk, smi_a_clk, QCOM_RPM_SMI_CLK);
++DEFINE_CLK_RPM(msm8660, ebi1_clk, ebi1_a_clk, QCOM_RPM_EBI1_CLK);
 +
-+		de2_mixer0: mixer@01100000 {
-+			compatible = "allwinner,sun8i-v3s-de2-mixer";
-+			reg = <0x01100000 0x100000>;
-+			clocks = <&de2_clocks CLK_MIXER0>,
-+				 <&de2_clocks CLK_BUS_MIXER0>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&de2_clocks RST_MIXER0>;
-+			assigned-clocks = <&de2_clocks CLK_MIXER0>;
-+			assigned-clock-rates = <150000000>;
++static struct clk_rpm *msm8660_clks[] = {
++	[RPM_PLL4_CLK] = &msm8660_pll4_clk,
++	[RPM_PLL4_A_CLK] = &msm8660_pll4_a_clk,
++	[RPM_APPS_FABRIC_CLK] = &msm8660_afab_clk,
++	[RPM_APPS_FABRIC_A_CLK] = &msm8660_afab_a_clk,
++	[RPM_SYS_FABRIC_CLK] = &msm8660_sfab_clk,
++	[RPM_SYS_FABRIC_A_CLK] = &msm8660_sfab_a_clk,
++	[RPM_MM_FABRIC_CLK] = &msm8660_mmfab_clk,
++	[RPM_MM_FABRIC_A_CLK] = &msm8660_mmfab_a_clk,
++	[RPM_DAYTONA_FABRIC_CLK] = &msm8660_daytona_clk,
++	[RPM_DAYTONA_FABRIC_A_CLK] = &msm8660_daytona_a_clk,
++	[RPM_SFPB_CLK] = &msm8660_sfpb_clk,
++	[RPM_SFPB_A_CLK] = &msm8660_sfpb_a_clk,
++	[RPM_CFPB_CLK] = &msm8660_cfpb_clk,
++	[RPM_CFPB_A_CLK] = &msm8660_cfpb_a_clk,
++	[RPM_MMFPB_CLK] = &msm8660_mmfpb_clk,
++	[RPM_MMFPB_A_CLK] = &msm8660_mmfpb_a_clk,
++	[RPM_SMI_CLK] = &msm8660_smi_clk,
++	[RPM_SMI_A_CLK] = &msm8660_smi_a_clk,
++	[RPM_EBI1_CLK] = &msm8660_ebi1_clk,
++	[RPM_EBI1_A_CLK] = &msm8660_ebi1_a_clk,
++};
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
++static const struct rpm_clk_desc rpm_clk_msm8660 = {
++	.clks = msm8660_clks,
++	.num_clks = ARRAY_SIZE(msm8660_clks),
++};
 +
-+				mixer0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					mixer0_out_tcon0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon0_in_mixer0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tcon0: lcd-controller@01c0c000 {
-+			compatible = "allwinner,sun8i-v3s-tcon";
-+			reg = <0x01c0c000 0x1000>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON0>,
-+				 <&ccu CLK_TCON0>;
-+			clock-names = "ahb",
-+				      "tcon-ch0";
-+			clock-output-names = "tcon-pixel-clock";
-+			resets = <&ccu RST_BUS_TCON0>;
-+			reset-names = "lcd";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon0_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon0_in_mixer0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer0_out_tcon0>;
-+					};
-+				};
-+
-+				tcon0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+
- 		mmc0: mmc@01c0f000 {
- 			compatible = "allwinner,sun7i-a20-mmc";
- 			reg = <0x01c0f000 0x1000>;
+ /* apq8064 */
+ DEFINE_CLK_RPM(apq8064, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
+ DEFINE_CLK_RPM(apq8064, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
+@@ -386,6 +483,8 @@ static const struct rpm_clk_desc rpm_clk_apq8064 = {
+ };
+ 
+ static const struct of_device_id rpm_clk_match_table[] = {
++	{ .compatible = "qcom,rpmcc-msm8660", .data = &rpm_clk_msm8660 },
++	{ .compatible = "qcom,rpmcc-apq8060", .data = &rpm_clk_msm8660 },
+ 	{ .compatible = "qcom,rpmcc-apq8064", .data = &rpm_clk_apq8064 },
+ 	{ }
+ };
 -- 
-2.12.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.9.3
