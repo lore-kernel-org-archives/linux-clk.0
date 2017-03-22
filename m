@@ -1,147 +1,288 @@
-Return-Path: <wens@csie.org>
+Return-Path: <mike.leach@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20170215094954.h3wyaxlqkeb342yu@lukather>
-References: <20170214033526.16977-1-wens@csie.org> <20170214033526.16977-5-wens@csie.org>
- <20170214095819.utsftcvti5zdmlmi@lukather> <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
- <20170215094954.h3wyaxlqkeb342yu@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 22 Mar 2017 14:50:31 +0800
-Message-ID: <CAGb2v67ey1Ppc3wf1154QKoCX-xsOjWDEsXi5gxPbL4MY37zHw@mail.gmail.com>
-Subject: Re: [PATCH 4/5] clk: sunxi-ng: Add driver for A83T CCU
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <671a0b39-b635-6e0e-d3fa-967651f2e29c@arm.com>
+References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
+ <1488520809-31670-4-git-send-email-leo.yan@linaro.org> <671a0b39-b635-6e0e-d3fa-967651f2e29c@arm.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Wed, 22 Mar 2017 12:54:36 +0000
+Message-ID: <CAJ9a7VgCjXNGC4C49PxL-nBxzhMCmA8Mb-0C_epahizA5EL2HA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] coresight: add support for debug module
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>, John Stultz <john.stultz@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>, Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Content-Type: multipart/alternative; boundary=001a113cbdd849a780054b5143de
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Feb 15, 2017 at 5:49 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Tue, Feb 14, 2017 at 06:26:39PM +0800, Chen-Yu Tsai wrote:
->> On Tue, Feb 14, 2017 at 5:58 PM, Maxime Ripard
->> <maxime.ripard@free-electrons.com> wrote:
->> > On Tue, Feb 14, 2017 at 11:35:25AM +0800, Chen-Yu Tsai wrote:
->> >> +/* Some PLLs are input * N / div1 / P. Model them as NKMP with no K */
->> >
->> > Is that even working?
->>
->> Looking at the nkmp clock code, only .recalc_rate will work properly though.
->> Maybe I could fix up the code so it handles zero width factors.
->>
->> > I'm not quite sure we want to do that. We might model it as a NP clock
->> > with a variable prediv?
->>
->> There's no NP clock type yet. And a problem with a variable prediv is that
->> it doesn't participate in factor calculation. It's effectively fixed.
->>
->> I did this for the A80 as well though. Fixing up the NKMP clock might be
->> easier.
->
-> Then maybe we just need a NMP clock type then. What I'm really afraid
-> of is that we'll just end up in a clk-factors situation that was
-> simply impossible to maintain without breaking anything, hence why we
-> had different clock types then.
+--001a113cbdd849a780054b5143de
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Upon further review, I think it will work. I did notice a discrepancy
-between .set_rate and .round_rate though. Will send fixes later.
+On 21 March 2017 at 15:39, Sudeep Holla <sudeep.holla@arm.com> wrote:
 
-About the old clk-factors situation, I'm not exactly sure what part
-you're referring to. To me it seems the "factors" bits are mostly the
-same. Differences are mostly with parent-specific pre-dividers,
-clock post-dividers, and non-standard factors. The first is nicely
-handled by the new mux wrapper, the second is currently only used
-with NK types, and the last is currently only supported by single
-factor divider or multiplier clocks with tables.
-
-Non-standard factors are probably the trickiest one, but given we will
-support full factor tables for some of the tricky CPU PLLs, this is
-probably solved, even if not implemented yet.
-
-I'll start with the NP style clocks, which only use P when the output
-is under a certain frequency.
-
-Regards
-ChenYu
-
->> >
->> >> +/* Use a separate clock for the pre-divider on the AHB1 PLL-PERIPH input */
->> >> +static SUNXI_CCU_M(pll_periph_ahb1_clk, "pll-periph-ahb1", "pll-periph",
->> >> +                0x054, 6, 2, 0);
->> >> +
->> >> +static const char * const ahb1_parents[] = { "osc16M-d512", "osc24M",
->> >> +                                          "pll-periph-ahb1",
->> >> +                                          "pll-periph-ahb1" };
->> >> +static struct ccu_div ahb1_clk = {
->> >> +     .div            = _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
->> >> +     .mux            = _SUNXI_CCU_MUX(12, 2),
->> >> +     .common         = {
->> >> +             .reg            = 0x054,
->> >> +             .hw.init        = CLK_HW_INIT_PARENTS("ahb1",
->> >> +                                                   ahb1_parents,
->> >> +                                                   &ccu_div_ops,
->> >> +                                                   0),
->> >> +     },
->> >> +};
->> >
->> > What's different from a pre divider only for a given index here?
->>
->> The variable pre-divider is shared for both pll-periph mux inputs.
->> This is one way to handle it. The other would be to extend ccu_mux
->> to handle multiple variable pre-dividers. I don't really want to do
->> that if this is the only instance that needs it though.
 >
-> Every addition we made was only needed by one instance at first :)
 >
-> We are working that way for fixed pre-dividers already, I don't see
-> why we can't have it for variable ones too.
+> On 03/03/17 06:00, Leo Yan wrote:
+> > Coresight includes debug module and usually the module connects with CP=
+U
+> > debug logic. ARMv8 architecture reference manual (ARM DDI 0487A.k) has
+> > description for related info in "Part H: External Debug".
+> >
+> > Chapter H7 "The Sample-based Profiling Extension" introduces several
+> > sampling registers, e.g. we can check program counter value with
+> > combined CPU exception level, secure state, etc. So this is helpful for
+> > analysis CPU lockup scenarios, e.g. if one CPU has run into infinite
+> > loop with IRQ disabled. In this case the CPU cannot switch context and
+> > handle any interrupt (including IPIs), as the result it cannot handle
+> > SMP call for stack dump.
+> >
+> > This patch is to enable coresight debug module, so firstly this driver
+> > is to bind apb clock for debug module and this is to ensure the debug
+> > module can be accessed from program or external debugger. And the drive=
+r
+> > uses sample-based registers for debug purpose, e.g. when system detects
+> > the CPU lockup and trigger panic, the driver will dump program counter
+> > and combined context registers (EDCIDSR, EDVIDSR); by parsing context
+> > registers so can quickly get to know CPU secure state, exception level,
+> > etc.
+> >
+> > Some of the debug module registers are located in CPU power domain, so
+> > in the driver it has checked the power state for CPU before accessing
+> > registers within CPU power domain. For most safe way to use this driver=
+,
+> > it's suggested to disable CPU low power states, this can simply set
+> > "nohlt" in kernel command line.
+> >
 >
->> >> +/*
->> >> + * MMC2 supports what's called the "new timing mode". The CCU and the MMC
->> >> + * controller must be in sync about which mode is used. The new mode moves
->> >> + * the clock delay controls (and possibly the delay lines) into the MMC
->> >> + * block. Also, the output of the clock is divided by 2. The output and
->> >> + * sample phase clocks are unused under this mode.
->> >> + *
->> >> + * This new mode seems to be preferred. Hence we force this clock to the
->> >> + * new mode. And we don't add the phase clocks.
->> >> + */
->> >
->> > I'm sorry, but I said this several times, this isn't working. We
->> > should model it properly, and not hack this around in the clock
->> > driver.
->> >
->> > As you say in your comment, the MMC driver needs to be aware about
->> > which mode is used, in order to also set a bit in one of its registers
->> > accordingly, and modify its sampling behaviour.
->> >
->> > The new timing is preferred, but our previous clock implementations
->> > didn't hardcode it, so we can't even rely on that behaviour to always
->> > write it in our driver.
->>
->> Correct. With the A83T there has never been a merged clock driver though.
->> I realize this is a one off thing.
->>
->> > This is not something specific to the A83T, but is found in all the
->> > SoCs since the A23, so we need to come up with a good solution to
->> > address that.
->> >
->> > I'm not sure what a good solution would be though. One would be to
->> > just have a private function of our own to switch in the new mode (if
->> > relevant, because only the MMC2 controllers have it), but that would
->> > lead to troubles with !sunxi-ng. Not something we can't deal with, but
->> > some extra precautions should be taken (make sure to protect the call
->> > through an ifdef / IS_DEFINED, check that the sunxi-ng driver has been
->> > probed, etc.)
->>
->> If the custom function route is acceptable, I'll come up with something.
+> I disagree with this approach. One of the main usefulness of such self
+> hosted debug feature is to debug issues around features like cpuidle.
+> Adding constraints like "cpuidle needs to be disabled" is not good IMO.
+> There are ways to make it work with cpuidle enabled. Please explore
+> them. In particular refer H9.2.39 EDPRCR, External Debug Power/Reset
+> Control Register.
 >
-> I think it would be a great start yes. I'll try to discuss it with
-> Mike and Stephen at ELC and see what they think about that.
->
-> Maxime
+> So, "nohlt" option is not an option. I prefer some sysfs option like
+> Suzuki suggested to enable this feature on demand if power saving in
+> normal usecase is the concern. Using "nohlt" just disables idle and
+> doesn't ensure the debug power domain is ON. Using the flag directly in
+> this driver to enable debug power domain also sounds misuse of that flag
+> for me.
 >
 > --
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
+> Regards,
+> Sudeep
+>
+
+I think the key issue to remember here is that experience with external
+debug shows that CPU Idle means different things to different SoC designs /
+power management schemes. (and we are using external debug in a self hosted
+way here).
+
+Some designs will power down an entire cluster if all CPUs on the cluster
+are powered down - including the parts of the debug registers that should
+remain powered in the debug power domain. The bits in EDPRCR are not
+respected in these cases - these designs do not really support debug over
+power down in the way that the CoreSight / Debug designers anticipated.
+This means that even checking EDPRSR has the potential to cause a bus hang
+if the target register is unpowered. (and if the debug power domain is
+unpowered then the PC data is also lost).
+
+In these cases, accessing to the debug registers while they are not powered
+is a recipe for disaster - so preventing CPUIdle
+=E2=80=8Band the subsequent cluster power down =E2=80=8B
+allows investigation on this class of system -
+=E2=80=8Band allowing the CPUs of interest be interrogated without hanging =
+the
+crash log process.=E2=80=8B
+
+
+=E2=80=8BOn systems that do behave correctly with respect to debug power do=
+mains,
+then disabling CPUIdle is unnecessary - these can be controlled by =E2=80=
+=8BEDPRCR
+- perhaps; per the specification it is "implementation defined" if writing
+bits to this register have an effect on the system anyway even if the debug
+domain is correctly powered.
+
+=E2=80=8BWhile it is true to say that disabling CPUIdle does not guarantee =
+that the
+debug power domain is on, it does in a certain class of designs prevent it
+being powered off (Juno historically - not sure if that is still the case.)=
+.
+
+However, I do agree that the use of the driver should not be triggered
+_only_ on the existence of /nohlt on the command line - =E2=80=8Bthere is a=
+ class
+of designs where this will not be required.
+
+When enabing the driver as a kernel config the user needs to decide:-
+1) do I need this to debug the issue I am seeing
+2) does the power management on my system require I use /nohlt as well.
+
+I think that the use of /nohlt as an option, and the reasons why it might
+be needed should be part of the configuration help in this case.
+
+There is also a case for considering if there should be an option to
+configure it to be enabled or disabled at boot time. It is easy to imagine
+cases I want to have this running from the start as a crash happens early -
+and cases I can enable it on demand later.
+
+
+=E2=80=8BRegards=E2=80=8B
+
+=E2=80=8BMike=E2=80=8B
+
+--=20
+Mike Leach
+Principal Engineer, ARM Ltd.
+Blackburn Design Centre. UK
+
+--001a113cbdd849a780054b5143de
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br><div class=3D"gmail_extra"><br><div class=3D"gmail_quo=
+te">On 21 March 2017 at 15:39, Sudeep Holla <span dir=3D"ltr">&lt;<a href=
+=3D"mailto:sudeep.holla@arm.com" target=3D"_blank">sudeep.holla@arm.com</a>=
+&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:0px=
+ 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><sp=
+an class=3D"gmail-"><br>
+<br>
+On 03/03/17 06:00, Leo Yan wrote:<br>
+</span><span class=3D"gmail-">&gt; Coresight includes debug module and usua=
+lly the module connects with CPU<br>
+&gt; debug logic. ARMv8 architecture reference manual (ARM DDI 0487A.k) has=
+<br>
+&gt; description for related info in &quot;Part H: External Debug&quot;.<br=
+>
+&gt;<br>
+&gt; Chapter H7 &quot;The Sample-based Profiling Extension&quot; introduces=
+ several<br>
+&gt; sampling registers, e.g. we can check program counter value with<br>
+&gt; combined CPU exception level, secure state, etc. So this is helpful fo=
+r<br>
+&gt; analysis CPU lockup scenarios, e.g. if one CPU has run into infinite<b=
+r>
+&gt; loop with IRQ disabled. In this case the CPU cannot switch context and=
+<br>
+&gt; handle any interrupt (including IPIs), as the result it cannot handle<=
+br>
+&gt; SMP call for stack dump.<br>
+&gt;<br>
+&gt; This patch is to enable coresight debug module, so firstly this driver=
+<br>
+&gt; is to bind apb clock for debug module and this is to ensure the debug<=
+br>
+&gt; module can be accessed from program or external debugger. And the driv=
+er<br>
+&gt; uses sample-based registers for debug purpose, e.g. when system detect=
+s<br>
+&gt; the CPU lockup and trigger panic, the driver will dump program counter=
+<br>
+&gt; and combined context registers (EDCIDSR, EDVIDSR); by parsing context<=
+br>
+&gt; registers so can quickly get to know CPU secure state, exception level=
+,<br>
+&gt; etc.<br>
+&gt;<br>
+&gt; Some of the debug module registers are located in CPU power domain, so=
+<br>
+&gt; in the driver it has checked the power state for CPU before accessing<=
+br>
+&gt; registers within CPU power domain. For most safe way to use this drive=
+r,<br>
+&gt; it&#39;s suggested to disable CPU low power states, this can simply se=
+t<br>
+&gt; &quot;nohlt&quot; in kernel command line.<br>
+&gt;<br>
+<br>
+</span>I disagree with this approach. One of the main usefulness of such se=
+lf<br>
+hosted debug feature is to debug issues around features like cpuidle.<br>
+Adding constraints like &quot;cpuidle needs to be disabled&quot; is not goo=
+d IMO.<br>
+There are ways to make it work with cpuidle enabled. Please explore<br>
+them. In particular refer H9.2.39 EDPRCR, External Debug Power/Reset<br>
+Control Register.<br>
+<br>
+So, &quot;nohlt&quot; option is not an option. I prefer some sysfs option l=
+ike<br>
+Suzuki suggested to enable this feature on demand if power saving in<br>
+normal usecase is the concern. Using &quot;nohlt&quot; just disables idle a=
+nd<br>
+doesn&#39;t ensure the debug power domain is ON. Using the flag directly in=
+<br>
+this driver to enable debug power domain also sounds misuse of that flag<br=
+>
+for me.<br>
+<span class=3D"gmail-HOEnZb"><font color=3D"#888888"><br>
+--<br>
+Regards,<br>
+Sudeep<br>
+</font></span></blockquote></div><br><div class=3D"gmail_default" style=3D"=
+font-family:arial,helvetica,sans-serif">I
+ think the key issue to remember here is that experience with external=20
+debug shows that CPU Idle means different things to different SoC=20
+designs / power management schemes. (and we are using external debug in a s=
+elf hosted way here).<br><br></div><div class=3D"gmail_default" style=3D"fo=
+nt-family:arial,helvetica,sans-serif">Some designs will power down an entir=
+e cluster if all CPUs on the cluster are=20
+powered down - including the parts of the debug registers that should=20
+remain powered in the debug power domain. The bits in EDPRCR are not=20
+respected in these cases - these designs do not really support debug=20
+over power down in the way that the CoreSight / Debug designers=20
+anticipated. This means that even checking EDPRSR has the potential to caus=
+e a
+ bus hang if the target register is unpowered. (and if the debug power doma=
+in is unpowered then the PC data is also lost).<br><br></div>In
+ these cases, accessing to the debug registers while they are not=20
+powered is a recipe for disaster - so preventing CPUIdle <div style=3D"font=
+-family:arial,helvetica,sans-serif;display:inline" class=3D"gmail_default">=
+=E2=80=8Band the subsequent cluster power down =E2=80=8B</div>allows=20
+investigation on this class of system - <div style=3D"font-family:arial,hel=
+vetica,sans-serif;display:inline" class=3D"gmail_default">=E2=80=8Band allo=
+wing the CPUs of interest be interrogated without hanging the crash log pro=
+cess.=E2=80=8B</div><br><br><div style=3D"font-family:arial,helvetica,sans-=
+serif" class=3D"gmail_default">=E2=80=8BOn systems that do behave correctly=
+ with respect to debug power domains, then disabling CPUIdle is unnecessary=
+ - these can be controlled by =E2=80=8BEDPRCR - perhaps; per the specificat=
+ion it is &quot;implementation defined&quot; if writing bits to this regist=
+er have an effect on the system anyway even if the debug domain is correctl=
+y powered.<br></div><br><div style=3D"font-family:arial,helvetica,sans-seri=
+f" class=3D"gmail_default">=E2=80=8BWhile it is true to say that disabling =
+CPUIdle does not guarantee that the debug power domain is on, it does in a =
+certain class of designs prevent it being powered off (Juno historically - =
+not sure if that is still the case.).<br></div><div style=3D"font-family:ar=
+ial,helvetica,sans-serif" class=3D"gmail_default"><br>However, I do agree t=
+hat the use of the driver should not be triggered _only_ on the existence o=
+f /nohlt on the command line - =E2=80=8Bthere is a class of designs where t=
+his will not be required. <br><br></div><div style=3D"font-family:arial,hel=
+vetica,sans-serif" class=3D"gmail_default">When enabing the driver as a ker=
+nel config the user needs to decide:-<br></div><div style=3D"font-family:ar=
+ial,helvetica,sans-serif" class=3D"gmail_default">1) do I need this to debu=
+g the issue I am seeing<br></div><div style=3D"font-family:arial,helvetica,=
+sans-serif" class=3D"gmail_default">2) does the power management on my syst=
+em require I use /nohlt as well.<br><br></div><div style=3D"font-family:ari=
+al,helvetica,sans-serif" class=3D"gmail_default">I think that the use of /n=
+ohlt as an option, and the reasons why it might be needed should be part of=
+ the configuration help in this case.<br></div><div style=3D"font-family:ar=
+ial,helvetica,sans-serif" class=3D"gmail_default"><br>There is also a case =
+for considering if there should be an option to configure it to be enabled =
+or disabled at boot time. It is easy to imagine cases I want to have this r=
+unning from the start as a crash happens early - and cases I can enable it =
+on demand later. <br></div><div style=3D"font-family:arial,helvetica,sans-s=
+erif" class=3D"gmail_default"><br><br></div><div style=3D"font-family:arial=
+,helvetica,sans-serif" class=3D"gmail_default">=E2=80=8BRegards=E2=80=8B</d=
+iv><br><div style=3D"font-family:arial,helvetica,sans-serif" class=3D"gmail=
+_default">=E2=80=8BMike=E2=80=8B</div><br>-- <br><div class=3D"gmail_signat=
+ure"><div dir=3D"ltr"><div>Mike Leach</div><div>Principal Engineer, ARM Ltd=
+.</div><div>Blackburn Design Centre. UK</div></div></div>
+</div></div>
+
+--001a113cbdd849a780054b5143de--
