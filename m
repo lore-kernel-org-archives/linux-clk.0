@@ -1,101 +1,115 @@
-Return-Path: <sudeep.holla@arm.com>
-Subject: Re: [PATCH v3 3/5] coresight: add support for debug module
-To: Leo Yan <leo.yan@linaro.org>
-References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
- <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
- <671a0b39-b635-6e0e-d3fa-967651f2e29c@arm.com>
- <CAJ9a7VgCjXNGC4C49PxL-nBxzhMCmA8Mb-0C_epahizA5EL2HA@mail.gmail.com>
- <e7a97c52-f61a-e503-f626-09563fa100b8@arm.com>
- <20170322160102.GB15179@leoy-linaro>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Mike Leach <mike.leach@linaro.org>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Wei Xu <xuwei5@hisilicon.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
  Stephen Boyd <sboyd@codeaurora.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- John Stultz <john.stultz@linaro.org>, Guodong Xu <guodong.xu@linaro.org>,
- Haojian Zhuang <haojian.zhuang@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <d976bae5-0b81-e47c-4f41-eb240bea7827@arm.com>
-Date: Wed, 22 Mar 2017 16:53:32 +0000
-MIME-Version: 1.0
-In-Reply-To: <20170322160102.GB15179@leoy-linaro>
-Content-Type: text/plain; charset=utf-8
+ Michael Turquette <mturquette@baylibre.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v6 2/4] clk: samsung: Add support for runtime PM
+Date: Wed, 22 Mar 2017 12:35:41 +0100
+Message-id: <1490182543-28550-3-git-send-email-m.szyprowski@samsung.com>
+In-reply-to: <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
+References: <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170322113555eucas1p261e9641f1ea64d2b95501dde51792b58@eucas1p2.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch adds struct device pointer to samsung_clk_provider and forwarding it
+to clk_register_* functions, so drivers can register clocks, which use runtime
+pm feature.
 
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/clk/samsung/clk-pll.c |  2 +-
+ drivers/clk/samsung/clk.c     | 12 ++++++------
+ drivers/clk/samsung/clk.h     |  1 +
+ 3 files changed, 8 insertions(+), 7 deletions(-)
 
-On 22/03/17 16:01, Leo Yan wrote:
-> On Wed, Mar 22, 2017 at 02:07:47PM +0000, Sudeep Holla wrote:
-
-[...]
-
->>
->> We can always do that unconditionally. If implementations don't honor
->> those bits, it's different. If they hang on accessing something which is
->> on debug power domain and not on core power domain, then you have much
->> bigger issue to solve. How can you even trust and make any other
->> register accesses that are in debug power domain then ?
-> 
-> So we can add below code before really access another other registers
-> are possible in CPU power domain:
-> 
->         /*
->          * Force to power on CPU power domain and assert
->          * DBGPWRUPREQ signal
->          */
->         val = readl(drvdata->base + EDPRCR);
->         val |= BIT(3);
->         writel(val, drvdata->base + EDPRCR);
-> 
-
-Yes worth trying it out.
-
-[...]
-
-> 
-> I tried to digest these info and below are my understanding from your
-> suggestion:
-> 
-> ### For boot time: add two command line flags
-> 
-
-I am not really sure about boot flags as there are dependency on power
-domains and expecting them to be powered on quite earlier is too much to
-ask. I am not sure if we need special case for boot time. But that's
-just my opinion. If someone has found it *really* useful and no other
-alternative exists, then go for it.
-
-[...]
-
-> ### For runtime: use one sysfs node
-> 
-> - Create sysfs node:
->   /sys/kernel/debug/coresight_cpu_debug/enable_debug
-> 
->   echo 1 > /sys/kernel/debug/coresight_cpu_debug/enable_debug: same
->   functionality with boot time's 'coresight.cpu_debug';
-> 
-
-My argument was this to be default without any need for flags.
-We can skip it as and when we find broken implementation if required.
-
->   echo 2 > /sys/kernel/debug/coresight_cpu_debug/enable_debug: same
->   functionality with boot time's 'coresight.cpu_debug_pwrup';
-> 
->   echo 0 > /sys/kernel/debug/coresight_cpu_debug/enable_debug: disable
->   debug functionality.
->
-
-So it can be simple boolean to force setup the power domain requirements
-for it to work whenever you need to activate it. I may be missing some
-use-case, but IIUC simple boolean flag should be fine as suggested
-initially.
-
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 52290894857a..74c9ce89538a 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -1376,7 +1376,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 	pll->lock_reg = base + pll_clk->lock_offset;
+ 	pll->con_reg = base + pll_clk->con_offset;
+ 
+-	clk = clk_register(NULL, &pll->hw);
++	clk = clk_register(ctx->dev, &pll->hw);
+ 	if (IS_ERR(clk)) {
+ 		pr_err("%s: failed to register pll clock %s : %ld\n",
+ 			__func__, pll_clk->name, PTR_ERR(clk));
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index b7d87d6db9dc..e6923714f024 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -143,7 +143,7 @@ void __init samsung_clk_register_fixed_rate(struct samsung_clk_provider *ctx,
+ 	unsigned int idx, ret;
+ 
+ 	for (idx = 0; idx < nr_clk; idx++, list++) {
+-		clk = clk_register_fixed_rate(NULL, list->name,
++		clk = clk_register_fixed_rate(ctx->dev, list->name,
+ 			list->parent_name, list->flags, list->fixed_rate);
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to register clock %s\n", __func__,
+@@ -172,7 +172,7 @@ void __init samsung_clk_register_fixed_factor(struct samsung_clk_provider *ctx,
+ 	unsigned int idx;
+ 
+ 	for (idx = 0; idx < nr_clk; idx++, list++) {
+-		clk = clk_register_fixed_factor(NULL, list->name,
++		clk = clk_register_fixed_factor(ctx->dev, list->name,
+ 			list->parent_name, list->flags, list->mult, list->div);
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to register clock %s\n", __func__,
+@@ -193,7 +193,7 @@ void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
+ 	unsigned int idx, ret;
+ 
+ 	for (idx = 0; idx < nr_clk; idx++, list++) {
+-		clk = clk_register_mux(NULL, list->name, list->parent_names,
++		clk = clk_register_mux(ctx->dev, list->name, list->parent_names,
+ 			list->num_parents, list->flags,
+ 			ctx->reg_base + list->offset,
+ 			list->shift, list->width, list->mux_flags, &ctx->lock);
+@@ -226,13 +226,13 @@ void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
+ 
+ 	for (idx = 0; idx < nr_clk; idx++, list++) {
+ 		if (list->table)
+-			clk = clk_register_divider_table(NULL, list->name,
++			clk = clk_register_divider_table(ctx->dev, list->name,
+ 				list->parent_name, list->flags,
+ 				ctx->reg_base + list->offset,
+ 				list->shift, list->width, list->div_flags,
+ 				list->table, &ctx->lock);
+ 		else
+-			clk = clk_register_divider(NULL, list->name,
++			clk = clk_register_divider(ctx->dev, list->name,
+ 				list->parent_name, list->flags,
+ 				ctx->reg_base + list->offset, list->shift,
+ 				list->width, list->div_flags, &ctx->lock);
+@@ -264,7 +264,7 @@ void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
+ 	unsigned int idx, ret;
+ 
+ 	for (idx = 0; idx < nr_clk; idx++, list++) {
+-		clk = clk_register_gate(NULL, list->name, list->parent_name,
++		clk = clk_register_gate(ctx->dev, list->name, list->parent_name,
+ 				list->flags, ctx->reg_base + list->offset,
+ 				list->bit_idx, list->gate_flags, &ctx->lock);
+ 		if (IS_ERR(clk)) {
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index da3bdebabf1e..9263d8a27c6b 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -26,6 +26,7 @@
+  */
+ struct samsung_clk_provider {
+ 	void __iomem *reg_base;
++	struct device *dev;
+ 	struct clk_onecell_data clk_data;
+ 	spinlock_t lock;
+ };
 -- 
-Regards,
-Sudeep
+1.9.1
