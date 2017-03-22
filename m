@@ -1,57 +1,80 @@
-Return-Path: <andy.tang@nxp.com>
-From: Yuantian Tang <andy.tang@nxp.com>
-To: <mturquette@baylibre.com>
-CC: <sboyd@codeaurora.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, Scott
- Wood <oss@buserror.net>, Tang Yuantian <andy.tang@nxp.com>
-Subject: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
-Date: Mon, 20 Mar 2017 10:37:22 +0800
-Message-ID: <1489977443-33582-1-git-send-email-andy.tang@nxp.com>
-Return-Path: andy.tang@nxp.com
+Return-Path: <adrian.hunter@intel.com>
+Subject: Re: [PATCH v6 06/14] mmc: sdhci: Export sdhci_enable_sdio_irq() from
+ sdhci.c
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+ <43d7894cb56bd69d7980cea12b12d56f509f4797.1487091464.git-series.gregory.clement@free-electrons.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+ linux-arm-kernel@lists.infradead.org,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+ devicetree@vger.kernel.org, Ziji Hu <huziji@marvell.com>,
+ Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+ Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
+ Doug Jones <dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
+ "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
+ Yehuda Yitschak <yehuday@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
+ Hanna Hawa <hannah@marvell.com>, Kostya Porotchkin <kostap@marvell.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Message-ID: <ff0c74a4-00c3-6eea-9427-bdd5412a2c07@intel.com>
+Date: Wed, 22 Mar 2017 16:49:38 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <43d7894cb56bd69d7980cea12b12d56f509f4797.1487091464.git-series.gregory.clement@free-electrons.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Scott Wood <oss@buserror.net>
+On 14/02/17 19:01, Gregory CLEMENT wrote:
+> From: Hu Ziji <huziji@marvell.com>
+> 
+> Export sdhci_enable_sdio_irq() from sdhci.c.
+> Thus vendor SDHC driver can implement its specific SDIO irq
+> control.
+> 
+> Signed-off-by: Hu Ziji <huziji@marvell.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-ls1012a has separate input root clocks for core PLLs versus the platform
-PLL, with the latter described as sysclk in the hw docs.
-Update the qoriq-clock binding to allow a second input clock, named
-"coreclk".  If present, this clock will be used for the core PLLs.
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Signed-off-by: Scott Wood <oss@buserror.net>
-Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
-v2:
-	-- change the author to Scott
- Documentation/devicetree/bindings/clock/qoriq-clock.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-index aa3526f..119cafd 100644
---- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-@@ -56,6 +56,11 @@ Optional properties:
- - clocks: If clock-frequency is not specified, sysclk may be provided
- 	as an input clock.  Either clock-frequency or clocks must be
- 	provided.
-+	A second input clock, called "coreclk", may be provided if
-+	core PLLs are based on a different input clock from the
-+	platform PLL.
-+- clock-names: Required if a coreclk is present.  Valid names are
-+	"sysclk" and "coreclk".
- 
- 2. Clock Provider
- 
-@@ -72,6 +77,7 @@ second cell is the clock index for the specified type.
- 	2	hwaccel		index (n in CLKCGnHWACSR)
- 	3	fman		0 for fm1, 1 for fm2
- 	4	platform pll	0=pll, 1=pll/2, 2=pll/3, 3=pll/4
-+	5	coreclk		must be 0
- 
- 3. Example
- 
--- 
-2.1.0.27.g96db324
+> ---
+>  drivers/mmc/host/sdhci.c | 3 ++-
+>  drivers/mmc/host/sdhci.h | 1 +
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index d2338dc362f4..9a4fda81ff81 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -1824,7 +1824,7 @@ static void sdhci_enable_sdio_irq_nolock(struct sdhci_host *host, int enable)
+>  	}
+>  }
+>  
+> -static void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable)
+> +void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable)
+>  {
+>  	struct sdhci_host *host = mmc_priv(mmc);
+>  	unsigned long flags;
+> @@ -1838,6 +1838,7 @@ static void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable)
+>  	sdhci_enable_sdio_irq_nolock(host, enable);
+>  	spin_unlock_irqrestore(&host->lock, flags);
+>  }
+> +EXPORT_SYMBOL_GPL(sdhci_enable_sdio_irq);
+>  
+>  int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+>  				      struct mmc_ios *ios)
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index e4a07543a12b..609783364941 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -694,6 +694,7 @@ int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
+>  void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios);
+>  int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+>  				      struct mmc_ios *ios);
+> +void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable);
+>  
+>  #ifdef CONFIG_PM
+>  extern int sdhci_suspend_host(struct sdhci_host *host);
+> 
