@@ -1,47 +1,165 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 23 Mar 2017 16:27:20 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL] Allwinner clock fixes for 4.11
-Message-ID: <20170323232720.GA25840@codeaurora.org>
-References: <20170320095004.4vd2edph2u7kxi7l@lukather>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170320095004.4vd2edph2u7kxi7l@lukather>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	carlo@caione.org,
+	khilman@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/5] clk: meson: Add support for parameters for specific PLLs
+Date: Wed, 22 Mar 2017 11:32:23 +0100
+Message-Id: <1490178747-14837-2-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1490178747-14837-1-git-send-email-narmstrong@baylibre.com>
+References: <1490178747-14837-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/20, Maxime Ripard wrote:
-> Hi Mike, Stephen,
-> 
-> Please pull the following patches for one of the 4.11's rc
-> 
-> Thanks!
-> Maxime
-> 
-> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
-> 
->   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/sunxi-clk-fixes-for-4.11
-> 
-> for you to fetch changes up to b467e08a15563dede0d37d3233baa24fb97a7310:
-> 
->   clk: sunxi-ng: fix recalc_rate formula of NKMP clocks (2017-03-20 10:34:05 +0100)
-> 
-> ----------------------------------------------------------------
-> Allwinner clock fixes for 4.11
-> 
-> A few fixes for a bunch of clocks on a few SoCs. The most important one is
-> probably one that fixes the NKMP clock frequency calculation and could end
-> up with clocking the CPU frequency to out of bounds rates.
-> 
+In recent Amlogic GXBB, GXL and GXM SoCs, the GP0 PLL needs some specific
+parameters in order to initialize and lock correctly.
 
-Thanks. Pulled
+This patch adds an optional PARAM table used to initialize the PLL to a
+default value with it's parameters in order to achieve to desired frequency.
 
+The GP0 PLL in GXBB, GXL/GXM also needs some tweaks in the initialization
+steps, and these are exposed along the PARAM table.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/clk-pll.c | 53 +++++++++++++++++++++++++++++++++++++++++++--
+ drivers/clk/meson/clkc.h    | 23 ++++++++++++++++++++
+ 2 files changed, 74 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 4adc1e8..0134155 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -116,6 +116,30 @@ static const struct pll_rate_table *meson_clk_get_pll_settings(struct meson_clk_
+ 	return NULL;
+ }
+ 
++/* Specific wait loop for GXL/GXM GP0 PLL */
++static int meson_clk_pll_wait_lock_reset(struct meson_clk_pll *pll,
++					 struct parm *p_n)
++{
++	int delay = 100;
++	u32 reg;
++
++	while (delay > 0) {
++		reg = readl(pll->base + p_n->reg_off);
++		writel(reg | MESON_PLL_RESET, pll->base + p_n->reg_off);
++		udelay(10);
++		writel(reg & ~MESON_PLL_RESET, pll->base + p_n->reg_off);
++
++		/* This delay comes from AMLogic tree clk-gp0-gxl driver */
++		mdelay(1);
++
++		reg = readl(pll->base + p_n->reg_off);
++		if (reg & MESON_PLL_LOCK)
++			return 0;
++		delay--;
++	}
++	return -ETIMEDOUT;
++}
++
+ static int meson_clk_pll_wait_lock(struct meson_clk_pll *pll,
+ 				   struct parm *p_n)
+ {
+@@ -132,6 +156,15 @@ static int meson_clk_pll_wait_lock(struct meson_clk_pll *pll,
+ 	return -ETIMEDOUT;
+ }
+ 
++static void meson_clk_pll_init_params(struct meson_clk_pll *pll)
++{
++	int i;
++
++	for (i = 0 ; i < pll->params.params_count ; ++i)
++		writel(pll->params.params_table[i].value,
++		       pll->base + pll->params.params_table[i].reg_off);
++}
++
+ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				  unsigned long parent_rate)
+ {
+@@ -151,10 +184,16 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!rate_set)
+ 		return -EINVAL;
+ 
++	/* Initialize the PLL in a clean state if specified */
++	if (pll->params.params_count)
++		meson_clk_pll_init_params(pll);
++
+ 	/* PLL reset */
+ 	p = &pll->n;
+ 	reg = readl(pll->base + p->reg_off);
+-	writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
++	/* If no_init_reset is provided, avoid resetting at this point */
++	if (!pll->params.no_init_reset)
++		writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
+ 
+ 	reg = PARM_SET(p->width, p->shift, reg, rate_set->n);
+ 	writel(reg, pll->base + p->reg_off);
+@@ -184,7 +223,17 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	}
+ 
+ 	p = &pll->n;
+-	ret = meson_clk_pll_wait_lock(pll, p);
++	/* If clear_reset_for_lock is provided, remove the reset bit here */
++	if (pll->params.clear_reset_for_lock) {
++		reg = readl(pll->base + p->reg_off);
++		writel(reg & ~MESON_PLL_RESET, pll->base + p->reg_off);
++	}
++
++	/* If reset_lock_loop, use a special loop including resetting */
++	if (pll->params.reset_lock_loop)
++		ret = meson_clk_pll_wait_lock_reset(pll, p);
++	else
++		ret = meson_clk_pll_wait_lock(pll, p);
+ 	if (ret) {
+ 		pr_warn("%s: pll did not lock, trying to restore old rate %lu\n",
+ 			__func__, old_rate);
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index ad25467..b0c9999 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -62,6 +62,28 @@ struct pll_rate_table {
+ 		.frac		= (_frac),				\
+ 	}								\
+ 
++struct pll_params_table {
++	unsigned int reg_off;
++	unsigned int value;
++};
++
++#define PLL_PARAM(_reg, _val)						\
++	{								\
++		.reg_off	= (_reg),				\
++		.value		= (_val),				\
++	}
++
++struct pll_setup_params {
++	struct pll_params_table *params_table;
++	unsigned int params_count;
++	/* Workaround for GP0, do not reset before configuring */
++	bool no_init_reset;
++	/* Workaround for GP0, unreset right before checking for lock */
++	bool clear_reset_for_lock;
++	/* Workaround for GXL GP0, reset in the lock checking loop */
++	bool reset_lock_loop;
++};
++
+ struct meson_clk_pll {
+ 	struct clk_hw hw;
+ 	void __iomem *base;
+@@ -70,6 +92,7 @@ struct meson_clk_pll {
+ 	struct parm frac;
+ 	struct parm od;
+ 	struct parm od2;
++	const struct pll_setup_params params;
+ 	const struct pll_rate_table *rate_table;
+ 	unsigned int rate_count;
+ 	spinlock_t *lock;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
