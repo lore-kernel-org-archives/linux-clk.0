@@ -1,38 +1,170 @@
-Return-Path: <gabriel.fernandez@st.com>
-Subject: Re: [PATCH 0/2] STM32F4 clock fixes
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1489588071-18164-1-git-send-email-gabriel.fernandez@st.com>
- <20170315204307.GK10239@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-        <daniel.thompson@linaro.org>, <andrea.merello@gmail.com>,
-        <radoslaw.pietrzyk@gmail.com>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Message-ID: <d400ff60-06ce-c765-981a-2dce4b1de89d@st.com>
-Date: Thu, 16 Mar 2017 09:04:40 +0100
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,  "linux-mmc\@vger.kernel.org" <linux-mmc@vger.kernel.org>,  Jason Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  "linux-arm-kernel\@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,  Mike Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  linux-clk <linux-clk@vger.kernel.org>,  "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,  Rob Herring <robh+dt@kernel.org>,  "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,  Ziji Hu <huziji@marvell.com>,  Jimmy Xu <zmxu@marvell.com>,  Jisheng Zhang <jszhang@marvell.com>,  Nadav Haklai <nadavh@marvell.com>,  Ryan Gao <ygao@marvell.com>,  Doug Jones <dougj@marvell.com>,  Victor Gu <xigu@marvell.com>,  "Wei\(SOCP\) Liu" <liuw@marvell.com>,  Wilson Ding <dingwei@marvell.com>,  Yehuda Yitschak <yehuday@marvell.com>,  Ma
+ rcin Wojtas <mw@semihalf.com>,  Hanna Hawa <hannah@marvell.com>,  Kostya Porotchkin <kostap@marvell.com>
+Subject: Re: [PATCH v6 03/14] mmc: core: Add mmc-card dt sub-node parse in core layer
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+	<34e51d32c82b57571e061e80df3bbaed731db554.1487091464.git-series.gregory.clement@free-electrons.com>
+	<CAPDyKFoqxMCSe-2bt2dz1AM_2X7dtVe4w6e7+oAQ==HO_=XKQw@mail.gmail.com>
+Date: Wed, 22 Mar 2017 18:11:14 +0100
+In-Reply-To: <CAPDyKFoqxMCSe-2bt2dz1AM_2X7dtVe4w6e7+oAQ==HO_=XKQw@mail.gmail.com>
+	(Ulf Hansson's message of "Wed, 15 Mar 2017 13:43:44 +0100")
+Message-ID: <87r31pdyod.fsf@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <20170315204307.GK10239@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Hi Ulf,
+ 
+ On mer., mars 15 2017, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 
-On 03/15/2017 09:43 PM, Stephen Boyd wrote:
-> On 03/15, gabriel.fernandez@st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> On 14 February 2017 at 18:01, Gregory CLEMENT
+> <gregory.clement@free-electrons.com> wrote:
+>> From: Hu Ziji <huziji@marvell.com>
 >>
->> This patch-set contains 2 fixes.
->> One concerning exclusion of wrong values for PLLQ (0 & 1)
->> And the second is a fix about timeout management of PLL and LSE/LSI clocks.
-> But neither of the patches have a "Fixes" tag. Can you please
-> indicate what commits they're fixing?
+>> Some vendor host, like Xenon, can support multiple types.
+>> In dts, use mmc-card dt sub-node to indicate eMMC is in use.
+>>
+>> Add a generic mmc-card parse function in mmc core layer.
+>> If mmc-card sub-node is detected, set eMMC common caps, such as
+>> MMC_CAP_NONREMOVABLE, MMC_CAP2_NO_SD and MMC_CAP2_NO_SDIO.
+>>
+>> Since it is likely that struct mmc_card is not allocated yet when
+>> this mmc-card parse function is called, it will return true if
+>> mmc-card sub-node is detected. Otherwise, return false.
+>> It can help vendor host determine if the card type is eMMC.
+>>
+>> Signed-off-by: Hu Ziji <huziji@marvell.com>
+>> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>> ---
+>>  drivers/mmc/core/mmc.c   | 24 ++++++++++++++++++++++++
+>>  include/linux/mmc/core.h |  2 ++
+>>  2 files changed, 26 insertions(+)
+>>
+>> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+>> index b61b52f9da3d..dc480006a303 100644
+>> --- a/drivers/mmc/core/mmc.c
+>> +++ b/drivers/mmc/core/mmc.c
+>> @@ -2111,6 +2111,30 @@ static const struct mmc_bus_ops mmc_ops = {
+>>  };
+>>
+>>  /*
+>> + * Parse mmc-card dt sub-node and set eMMC common caps
+>> + * if mmc-card exists.
+>> + * If mmc-card is detected, return true.
+>> + * Otherwise, return false.
+>> + */
+>> +bool mmc_of_parse_mmc_card(struct mmc_host *host)
+>> +{
+>> +       struct device_node *np;
+>> +       bool ret = false;
+>> +
+>> +       np = mmc_of_find_child_device(host, 0);
 >
-Okay i will send a v2 with "Fixes" tags
+> There are already some places in the mmc core where child nodes are
+> being parsed. You may have a look for mmc_of_find_child_device() and
+> find the callers of it.
 
-BR
+mmc_of_find_child_device is called in 3 places:
 
-Gabriel
+ - in mmc_add_card() from drivers/mmc/core/bus.c to populate the of_node
+   field of card->dev. Here we don't care of the mmc-card property
+
+ - in mmc_decode_ext_csd() from drivers/mmc/core/mmc.c, here the purpose
+   is exactly to check if the mmc-card property is present so we could
+   replace it by mmc_of_parse_mmc_card().
+
+ - in sdio_set_of_node from drivers/mmc/core/sdio_bus.c to populate the
+   of_node field of func->dev. Here again, we don't care of the mmc-card
+   property
+
+So in one case we could use the same function but for the 2 other cases
+continue to use mmc_of_find_child_device() alone make sens.
+
+>
+> Additionally, we need a generic method of how to describe in DT, when
+> an mmc host controller has more than one mmc slot. This will also be
+> done using child nodes.
+>
+> So, before starting hacking on this, it seems like we need some
+> consolidation of the code. In principle, I would like to move the APIs
+> for parsing of the child nodes into host.c, along with existing
+> mmc_of_parse() function.
+
+I understand that you want consolidate this subsystem but it seems
+beyond the this series. I would not want that the merge of this driver
+will be delayed more because of it. We submitted the first version 5
+month ago now, made several changes and we will reach the 7th
+version. Along these version we also already contribute to improve the
+mmc subsystem. I agree to work on the change you want, but I would like
+not depending of it to merge this series.
+
+We will address all the other comment on v6 from you and Andrian for a
+v7. And for this patch we can:
+
+ - keep it as is and only modify the mmc_decode_ext_csd() to use
+   mmc_of_find_child_device().
+
+ - Moving it back inside our driver waiting for a better API in the mmc
+   subsystem.
+
+What would be your preference?
+
+>
+>> +       if (np && of_device_is_compatible(np, "mmc-card")) {
+>> +               /* mmc-card sub-node indicates eMMC card is in use. */
+>> +               host->caps |= MMC_CAP_NONREMOVABLE;
+>> +               host->caps2 |= MMC_CAP2_NO_SDIO | MMC_CAP2_NO_SD;
+>> +               ret = true;
+>> +       }
+>> +
+>
+> So instead of providing a new mmc OF parse API, let's make
+> mmc_of_parse() call another internal function which deals with child
+> node parsing.
+
+As the driver need to know if the card is an emmc then we need to alos
+expose this information in one of the mmc structure, waht about "struct
+mmc_host"?
+
+Thanks,
+
+Gregory
+
+
+>
+>> +       of_node_put(np);
+>> +       return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(mmc_of_parse_mmc_card);
+>> +
+>> +/*
+>>   * Starting point for MMC card init.
+>>   */
+>>  int mmc_attach_mmc(struct mmc_host *host)
+>> diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
+>> index e33cc748dcfe..1b27323f3b6e 100644
+>> --- a/include/linux/mmc/core.h
+>> +++ b/include/linux/mmc/core.h
+>> @@ -234,4 +234,6 @@ struct device_node;
+>>  extern u32 mmc_vddrange_to_ocrmask(int vdd_min, int vdd_max);
+>>  extern int mmc_of_parse_voltage(struct device_node *np, u32 *mask);
+>>
+>> +extern bool mmc_of_parse_mmc_card(struct mmc_host *host);
+>> +
+>>  #endif /* LINUX_MMC_CORE_H */
+>> --
+>> git-series 0.9.1
+>
+> If you didn't quite understand my comments, then please tell me. Then
+> I can help out cooking some patches for you.
+>
+> Kind regards
+> Uffe
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
