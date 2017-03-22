@@ -1,476 +1,195 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	mike.leach@linaro.org
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v3 3/5] coresight: add support for debug module
-Date: Fri,  3 Mar 2017 14:00:07 +0800
-Message-Id: <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
-References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1490206409.29739.2.camel@baylibre.com>
+Subject: Re: [RFC 0/7] clk: implement clock locking mechanism
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
+Date: Wed, 22 Mar 2017 19:13:29 +0100
+In-Reply-To: <149014126203.54062.76278318846510349@resonance>
+References: <20170321183330.26722-1-jbrunet@baylibre.com>
+	 <149014126203.54062.76278318846510349@resonance>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Coresight includes debug module and usually the module connects with CPU
-debug logic. ARMv8 architecture reference manual (ARM DDI 0487A.k) has
-description for related info in "Part H: External Debug".
+On Tue, 2017-03-21 at 17:07 -0700, Michael Turquette wrote:
+> Hi Jérôme,
+> 
+> Quoting Jerome Brunet (2017-03-21 11:33:23)
+> > This RFC patchset is related to the discussion around CLK_SET_RATE_GATE and
+> > clk_lock which available here [0]
+> > 
+> > The goal of this patchset is to provide a way for consumers to inform the
+> > system that they depend on the rate of the clock source and can't tolerate
+> > other consumers changing the rate or causing glitches.
+> > 
+> > Patches 1 to 3 are just rework to ease the integration of the locking
+> > mechanism. They should not introduce any functional differences.
+> > 
+> > Patch 4 is the important bit. It introduce 2 new functions to the CCF API:
+> > clk_protect and clk_unprotect (The "lock" word is already used lot in
+> > clk.c. Using clk_lock and clk_unlock would have been very messy. If you
+> > found "protect" to be a poor choice, I'm happy to sed the whole thing in
+> > future version)
+> 
+> I prefer clk_lock_rate and clk_unlock_rate.
+> 
+> > 
+> > These calls can happen at anytime during the life of the clk. As for
+> > prepare and enable, the calls must be balanced.
+> > 
+> > Inside the clock framework, 2 new count values are introduced to keep track
+> > of the protection:
+> > * core "protect_count": this reference count value works in the same way as
+> >   prepare and enable count, and track whether the clock is protected or
+> >   not. This is the value that will checked to allow operation which may
+> >   cause glitches or change the rate of clock source.
+> > * clk consumer "protect_ucount": this allows to track if the consumer is
+> >   protecting the clock.
+> 
+> Similarly, s/protect/lock_rate/g
+> 
+> > 
+> > Requiring the consumer to unprotect its clock before changing it would have
+> > been very annoying for the consumer. It would also be unsafe, as it would
+> > still be possible for another consumer to change the rate between the call
+> > to set_rate and protect. This needs to happen in a critical section.  A
+> > solution would be to add "set_rate_protect", but we would need to do the
+> > same for the set_parent and set_phase (and the possible future
+> > functions). It does not scale well.  The solution proposed in this patch is
+> > to use the consumer protect count.
+> > 
+> > In function altering the clock, if the consumer is protecting the clock,
+> > the protection is temporarily release under the prepare_lock. This ensure
+> > that:
+> > * the clock is still protect from another consumer because of the
+> >   prepare_lock
+> > * the rate set on a protected clock cannot change between set_rate and
+> >   later enable
+> > * only a consumer protecting a clock can do this temporary protection
+> >   removal (less chance of people messing with the refcount)
+> 
+> It should be impossible for consumer_A to remove the lock refcount set
+> by consumer_B using something like these patches I wrote for
+> prepare_count and enable_count:
+> 
+> https://lkml.kernel.org/r/1438974570-20812-1-git-send-email-mturquette@baylibr
+> e.com
+> 
+Looks like what I have done here, except that this (core_count behind the
+consumer count) is an added bonus.  The initial reason for it was to allow
+consumer protecting the clock to do the temporary release of the protection
+under the prepare_lock, so the consumer does not lock itself out.
 
-Chapter H7 "The Sample-based Profiling Extension" introduces several
-sampling registers, e.g. we can check program counter value with
-combined CPU exception level, secure state, etc. So this is helpful for
-analysis CPU lockup scenarios, e.g. if one CPU has run into infinite
-loop with IRQ disabled. In this case the CPU cannot switch context and
-handle any interrupt (including IPIs), as the result it cannot handle
-SMP call for stack dump.
+> > * if more than one consumer protect the clock, it remains protected.
+> >   Because the protection is removed for the calling consumer, it gives
+> >   it a chance to jump to another provider, if available.
+> 
+> Hmm, that's a bit confusing. I guess you mean, "if the rate a parent
+> clock is locked, and the child clock has multiple parents to choose
+> from, then the child may select a different parent with an unlocked
+> rate"?
 
-This patch is to enable coresight debug module, so firstly this driver
-is to bind apb clock for debug module and this is to ensure the debug
-module can be accessed from program or external debugger. And the driver
-uses sample-based registers for debug purpose, e.g. when system detects
-the CPU lockup and trigger panic, the driver will dump program counter
-and combined context registers (EDCIDSR, EDVIDSR); by parsing context
-registers so can quickly get to know CPU secure state, exception level,
-etc.
+Could not have said it better, apparently :)
 
-Some of the debug module registers are located in CPU power domain, so
-in the driver it has checked the power state for CPU before accessing
-registers within CPU power domain. For most safe way to use this driver,
-it's suggested to disable CPU low power states, this can simply set
-"nohlt" in kernel command line.
+> 
+> > 
+> > This protection mechanism assume that "protecting" consumer knows what it
+> > is doing when it comes to setting the rate, and does not expect to be
+> > protected against itself.
+> 
+> Is this always true? Are there drivers where one code path requires a
+> stable rate (due to glitches) while another code path might try to
+> change the rate?
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- drivers/hwtracing/coresight/Kconfig           |  10 +
- drivers/hwtracing/coresight/Makefile          |   1 +
- drivers/hwtracing/coresight/coresight-debug.c | 377 ++++++++++++++++++++++++++
- 3 files changed, 388 insertions(+)
- create mode 100644 drivers/hwtracing/coresight/coresight-debug.c
+For this particular case, each path can call "protect", protecting against each
+other.
 
-diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-index 130cb21..3ed651e 100644
---- a/drivers/hwtracing/coresight/Kconfig
-+++ b/drivers/hwtracing/coresight/Kconfig
-@@ -89,4 +89,14 @@ config CORESIGHT_STM
- 	  logging useful software events or data coming from various entities
- 	  in the system, possibly running different OSs
- 
-+config CORESIGHT_DEBUG
-+	bool "CoreSight debug driver"
-+	depends on ARM || ARM64
-+	help
-+	  This driver provides support for coresight debugging module. This
-+	  is primarily used to dump sample-based profiling registers for
-+	  panic. To avoid lockups when accessing debug module registers,
-+	  it is safer to disable CPU low power states (like "nohlt" on the
-+	  kernel command line) when using this feature.
-+
- endif
-diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
-index af480d9..d540d45 100644
---- a/drivers/hwtracing/coresight/Makefile
-+++ b/drivers/hwtracing/coresight/Makefile
-@@ -16,3 +16,4 @@ obj-$(CONFIG_CORESIGHT_SOURCE_ETM4X) += coresight-etm4x.o \
- 					coresight-etm4x-sysfs.o
- obj-$(CONFIG_CORESIGHT_QCOM_REPLICATOR) += coresight-replicator-qcom.o
- obj-$(CONFIG_CORESIGHT_STM) += coresight-stm.o
-+obj-$(CONFIG_CORESIGHT_DEBUG) += coresight-debug.o
-diff --git a/drivers/hwtracing/coresight/coresight-debug.c b/drivers/hwtracing/coresight/coresight-debug.c
-new file mode 100644
-index 0000000..9553fb2
---- /dev/null
-+++ b/drivers/hwtracing/coresight/coresight-debug.c
-@@ -0,0 +1,377 @@
-+/*
-+ * Copyright (c) 2017 Linaro Limited. All rights reserved.
-+ *
-+ * Author: Leo Yan <leo.yan@linaro.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published by
-+ * the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program.  If not, see <http://www.gnu.org/licenses/>.
-+ *
-+ */
-+#include <linux/amba/bus.h>
-+#include <linux/coresight.h>
-+#include <linux/cpu.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/moduleparam.h>
-+#include <linux/slab.h>
-+#include <linux/smp.h>
-+#include <linux/types.h>
-+#include <linux/uaccess.h>
-+
-+#include "coresight-priv.h"
-+
-+#define EDPCSR				0x0A0
-+#define EDCIDSR				0x0A4
-+#define EDVIDSR				0x0A8
-+#define EDPCSR_HI			0x0AC
-+#define EDOSLAR				0x300
-+#define EDPRSR				0x314
-+#define EDDEVID1			0xFC4
-+#define EDDEVID				0xFC8
-+
-+#define EDPCSR_PROHIBITED		0xFFFFFFFF
-+
-+/* bits definition for EDPCSR */
-+#ifndef CONFIG_64BIT
-+#define EDPCSR_THUMB			BIT(0)
-+#define EDPCSR_ARM_INST_MASK		GENMASK(31, 2)
-+#define EDPCSR_THUMB_INST_MASK		GENMASK(31, 1)
-+#endif
-+
-+/* bits definition for EDPRSR */
-+#define EDPRSR_DLK			BIT(6)
-+#define EDPRSR_PU			BIT(0)
-+
-+/* bits definition for EDVIDSR */
-+#define EDVIDSR_NS			BIT(31)
-+#define EDVIDSR_E2			BIT(30)
-+#define EDVIDSR_E3			BIT(29)
-+#define EDVIDSR_HV			BIT(28)
-+#define EDVIDSR_VMID			GENMASK(7, 0)
-+
-+/* bits definition for EDDEVID1 */
-+#define EDDEVID1_PCSR_OFFSET_MASK	GENMASK(3, 0)
-+#define EDDEVID1_PCSR_OFFSET_INS_SET	(0x0)
-+
-+/* bits definition for EDDEVID */
-+#define EDDEVID_PCSAMPLE_MODE		GENMASK(3, 0)
-+#define EDDEVID_IMPL_EDPCSR_EDCIDSR	(0x2)
-+#define EDDEVID_IMPL_FULL		(0x3)
-+
-+struct debug_drvdata {
-+	void __iomem	*base;
-+	struct device	*dev;
-+	int		cpu;
-+
-+	bool		edpcsr_present;
-+	bool		edvidsr_present;
-+	bool		pc_has_offset;
-+
-+	u32		eddevid;
-+	u32		eddevid1;
-+
-+	u32		edpcsr;
-+	u32		edpcsr_hi;
-+	u32		edprsr;
-+	u32		edvidsr;
-+	u32		edcidsr;
-+};
-+
-+static DEFINE_PER_CPU(struct debug_drvdata *, debug_drvdata);
-+
-+static void debug_os_unlock(struct debug_drvdata *drvdata)
-+{
-+	/* Unlocks the debug registers */
-+	writel_relaxed(0x0, drvdata->base + EDOSLAR);
-+	wmb();
-+}
-+
-+/*
-+ * According to ARM DDI 0487A.k, before access external debug
-+ * registers should firstly check the access permission; if any
-+ * below condition has been met then cannot access debug
-+ * registers to avoid lockup issue:
-+ *
-+ * - CPU power domain is powered off;
-+ * - The OS Double Lock is locked;
-+ *
-+ * By checking EDPRSR can get to know if meet these conditions.
-+ */
-+static bool debug_access_permitted(struct debug_drvdata *drvdata)
-+{
-+	/* CPU is powered off */
-+	if (!(drvdata->edprsr & EDPRSR_PU))
-+		return false;
-+
-+	/* The OS Double Lock is locked */
-+	if (drvdata->edprsr & EDPRSR_DLK)
-+		return false;
-+
-+	return true;
-+}
-+
-+static void debug_read_regs(struct debug_drvdata *drvdata)
-+{
-+	drvdata->edprsr = readl_relaxed(drvdata->base + EDPRSR);
-+
-+	if (!debug_access_permitted(drvdata))
-+		return;
-+
-+	if (!drvdata->edpcsr_present)
-+		return;
-+
-+	CS_UNLOCK(drvdata->base);
-+
-+	debug_os_unlock(drvdata);
-+
-+	drvdata->edpcsr = readl_relaxed(drvdata->base + EDPCSR);
-+
-+	/*
-+	 * As described in ARM DDI 0487A.k, if the processing
-+	 * element (PE) is in debug state, or sample-based
-+	 * profiling is prohibited, EDPCSR reads as 0xFFFFFFFF;
-+	 * EDCIDSR, EDVIDSR and EDPCSR_HI registers also become
-+	 * UNKNOWN state. So directly bail out for this case.
-+	 */
-+	if (drvdata->edpcsr == EDPCSR_PROHIBITED) {
-+		CS_LOCK(drvdata->base);
-+		return;
-+	}
-+
-+	/*
-+	 * A read of the EDPCSR normally has the side-effect of
-+	 * indirectly writing to EDCIDSR, EDVIDSR and EDPCSR_HI;
-+	 * at this point it's safe to read value from them.
-+	 */
-+	drvdata->edcidsr = readl_relaxed(drvdata->base + EDCIDSR);
-+#ifdef CONFIG_64BIT
-+	drvdata->edpcsr_hi = readl_relaxed(drvdata->base + EDPCSR_HI);
-+#endif
-+
-+	if (drvdata->edvidsr_present)
-+		drvdata->edvidsr = readl_relaxed(drvdata->base + EDVIDSR);
-+
-+	CS_LOCK(drvdata->base);
-+}
-+
-+#ifndef CONFIG_64BIT
-+static bool debug_pc_has_offset(struct debug_drvdata *drvdata)
-+{
-+	u32 pcsr_offset;
-+
-+	pcsr_offset = drvdata->eddevid1 & EDDEVID1_PCSR_OFFSET_MASK;
-+
-+	return (pcsr_offset == EDDEVID1_PCSR_OFFSET_INS_SET);
-+}
-+
-+static unsigned long debug_adjust_pc(struct debug_drvdata *drvdata,
-+				     unsigned long pc)
-+{
-+	unsigned long arm_inst_offset = 0, thumb_inst_offset = 0;
-+
-+	if (debug_pc_has_offset(drvdata)) {
-+		arm_inst_offset = 8;
-+		thumb_inst_offset = 4;
-+	}
-+
-+	/* Handle thumb instruction */
-+	if (pc & EDPCSR_THUMB) {
-+		pc = (pc & EDPCSR_THUMB_INST_MASK) - thumb_inst_offset;
-+		return pc;
-+	}
-+
-+	/*
-+	 * Handle arm instruction offset, if the arm instruction
-+	 * is not 4 byte alignment then it's possible the case
-+	 * for implementation defined; keep original value for this
-+	 * case and print info for notice.
-+	 */
-+	if (pc & BIT(1))
-+		pr_emerg("Instruction offset is implementation defined\n");
-+	else
-+		pc = (pc & EDPCSR_ARM_INST_MASK) - arm_inst_offset;
-+
-+	return pc;
-+}
-+#endif
-+
-+static void debug_dump_regs(struct debug_drvdata *drvdata)
-+{
-+	unsigned long pc;
-+
-+	pr_emerg("\tEDPRSR:  %08x (Power:%s DLK:%s)\n", drvdata->edprsr,
-+		 drvdata->edprsr & EDPRSR_PU ? "On" : "Off",
-+		 drvdata->edprsr & EDPRSR_DLK ? "Lock" : "Unlock");
-+
-+	if (!debug_access_permitted(drvdata) || !drvdata->edpcsr_present) {
-+		pr_emerg("No permission to access debug registers!\n");
-+		return;
-+	}
-+
-+	if (drvdata->edpcsr == EDPCSR_PROHIBITED) {
-+		pr_emerg("CPU is in Debug state or profiling is prohibited!\n");
-+		return;
-+	}
-+
-+#ifdef CONFIG_64BIT
-+	pc = (unsigned long)drvdata->edpcsr_hi << 32 |
-+	     (unsigned long)drvdata->edpcsr;
-+#else
-+	pc = debug_adjust_pc(drvdata, (unsigned long)drvdata->edpcsr);
-+#endif
-+
-+	pr_emerg("\tEDPCSR:  [<%p>] %pS\n", (void *)pc, (void *)pc);
-+	pr_emerg("\tEDCIDSR: %08x\n", drvdata->edcidsr);
-+
-+	if (!drvdata->edvidsr_present)
-+		return;
-+
-+	pr_emerg("\tEDVIDSR: %08x (State:%s Mode:%s Width:%s VMID:%x)\n",
-+		 drvdata->edvidsr,
-+		 drvdata->edvidsr & EDVIDSR_NS ? "Non-secure" : "Secure",
-+		 drvdata->edvidsr & EDVIDSR_E3 ? "EL3" :
-+			(drvdata->edvidsr & EDVIDSR_E2 ? "EL2" : "EL1/0"),
-+		 drvdata->edvidsr & EDVIDSR_HV ? "64bits" : "32bits",
-+		 drvdata->edvidsr & (u32)EDVIDSR_VMID);
-+}
-+
-+/*
-+ * Dump out information on panic.
-+ */
-+static int debug_notifier_call(struct notifier_block *self,
-+			       unsigned long v, void *p)
-+{
-+	int cpu;
-+
-+	pr_emerg("ARM external debug module:\n");
-+
-+	for_each_possible_cpu(cpu) {
-+		if (!per_cpu(debug_drvdata, cpu))
-+			continue;
-+
-+		pr_emerg("CPU[%d]:\n", per_cpu(debug_drvdata, cpu)->cpu);
-+
-+		debug_read_regs(per_cpu(debug_drvdata, cpu));
-+		debug_dump_regs(per_cpu(debug_drvdata, cpu));
-+	}
-+
-+	return 0;
-+}
-+
-+static struct notifier_block debug_notifier = {
-+	.notifier_call = debug_notifier_call,
-+};
-+
-+static void debug_init_arch_data(void *info)
-+{
-+	struct debug_drvdata *drvdata = info;
-+	u32 mode;
-+
-+	CS_UNLOCK(drvdata->base);
-+
-+	debug_os_unlock(drvdata);
-+
-+	/* Read device info */
-+	drvdata->eddevid  = readl_relaxed(drvdata->base + EDDEVID);
-+	drvdata->eddevid1 = readl_relaxed(drvdata->base + EDDEVID1);
-+
-+	/* Parse implementation feature */
-+	mode = drvdata->eddevid & EDDEVID_PCSAMPLE_MODE;
-+	if (mode == EDDEVID_IMPL_FULL) {
-+		drvdata->edpcsr_present  = true;
-+		drvdata->edvidsr_present = true;
-+	} else if (mode == EDDEVID_IMPL_EDPCSR_EDCIDSR) {
-+		drvdata->edpcsr_present  = true;
-+		drvdata->edvidsr_present = false;
-+	} else {
-+		drvdata->edpcsr_present  = false;
-+		drvdata->edvidsr_present = false;
-+	}
-+
-+	CS_LOCK(drvdata->base);
-+}
-+
-+static int debug_probe(struct amba_device *adev, const struct amba_id *id)
-+{
-+	void __iomem *base;
-+	struct device *dev = &adev->dev;
-+	struct debug_drvdata *drvdata;
-+	struct resource *res = &adev->res;
-+	struct device_node *np = adev->dev.of_node;
-+	char buf[32];
-+	static int debug_count;
-+
-+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-+	if (!drvdata)
-+		return -ENOMEM;
-+
-+	drvdata->cpu = np ? of_coresight_get_cpu(np) : 0;
-+	drvdata->dev = &adev->dev;
-+
-+	dev_set_drvdata(dev, drvdata);
-+
-+	/* Validity for the resource is already checked by the AMBA core */
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	drvdata->base = base;
-+
-+	get_online_cpus();
-+	per_cpu(debug_drvdata, drvdata->cpu) = drvdata;
-+
-+	if (smp_call_function_single(drvdata->cpu,
-+				debug_init_arch_data, drvdata, 1))
-+		dev_err(dev, "Debug arch init failed\n");
-+
-+	put_online_cpus();
-+
-+	if (!debug_count++)
-+		atomic_notifier_chain_register(&panic_notifier_list,
-+					       &debug_notifier);
-+
-+	sprintf(buf, (char *)id->data, drvdata->cpu);
-+	dev_info(dev, "%s initialized\n", buf);
-+	return 0;
-+}
-+
-+static struct amba_id debug_ids[] = {
-+	{       /* Debug for Cortex-A53 */
-+		.id	= 0x000bbd03,
-+		.mask	= 0x000fffff,
-+		.data   = "Coresight debug-CPU%d",
-+	},
-+	{       /* Debug for Cortex-A57 */
-+		.id	= 0x000bbd07,
-+		.mask	= 0x000fffff,
-+		.data   = "Coresight debug-CPU%d",
-+	},
-+	{       /* Debug for Cortex-A72 */
-+		.id	= 0x000bbd08,
-+		.mask	= 0x000fffff,
-+		.data   = "Coresight debug-CPU%d",
-+	},
-+	{ 0, 0 },
-+};
-+
-+static struct amba_driver debug_driver = {
-+	.drv = {
-+		.name   = "coresight-debug",
-+		.suppress_bind_attrs = true,
-+	},
-+	.probe		= debug_probe,
-+	.id_table	= debug_ids,
-+};
-+builtin_amba_driver(debug_driver);
--- 
-2.7.4
+> 
+> I can't think of any, but it's a big assumption to make. Anyone else
+> have thoughts on it?
+
+This mechanism I'm proposing is not a locking mechanism, but a way for a
+consumer to inform the system "I heavily depends on this clock rate, it is
+critical to my task, I can't tolerate anyone *else* from messing with it during
+this specific period"
+
+It effectively give the consumer the guarantee that the rate set under the
+protection is the one it will get as long as it hold the protection
+
+> 
+> > 
+> > This was tested with the audio use case mentioned in [0]
+> > 
+> > One caveat is the following case:
+> > N+1 consumers protect their clocks. These clocks come from N possible
+> > providers. We should able to satisfy at least N consumers before exhausting
+> > the resources.  In the particular case where all the consumers call
+> > "protect" before having a chance to call "set_rate", the last 2 consumers
+> > will remains stuck on the last provider w/o being able to set the rate on
+> > it. This means that in situation where there is 2 consumers on 1
+> > providers, they will compete for the clock, and may end up in situation
+> > where both protect the clock and none can set the rate they need.  This can
+> > be solved if, when the rate fails to be set, the consumer release the
+> > protection. Then the second consumer will be able to satisfy its request.
+> > 
+> > Patch 5 is a small change on set_rate_range to restore the old range on
+> > failure. It don't use set_rate_range in any driver so I could not test this
+> > change.
+> > 
+> > Patch 6 is just a cosmetic change to clk_summary debugfs entry to make it
+> > less wide after adding protect count in it.
+> > 
+> > Patch 7 fix a warning reported by checkpatch.pl. Apparently, ENOSYS is used
+> > incorrectly.
+> > 
+> > Bonus:
+> > 
+> > With this patchset, we should probably change the use the flags
+> > "CLK_SET_RATE_GATE" and "CLK_SET_PARENT_GATE" We discussed removing
+> > them. Another solution would be to have them automatically gate the clock
+> > before performing the related operation.  What is your view on this ?
+> 
+> We'll need to ask the users of these flags. It would be nice to convert
+> those folks over to use clk_lock_rate() instead of those flags.
+> 
+
+These flag have a very different purpose in the end.
+These flags *should* mean that "to perform this operation, the clock should be
+gated" In a way, it is the provider protecting itself against all the consumers
+(1).
+The api proposed here allow consumers to protect against other consumers (2).
+
+I think these are different things. Some tried to do (2) using these flags (like
+ me) and probably failed (like me).
+
+I think these flags are still useful (if fixed - enforcing the clock to be gated
+to perform the operation) to implement (1) use-cases.
+
+> Regards,
+> Mike
+> 
+> > 
+> > [0]: http://lkml.kernel.org/r/148942423440.82235.17188153691656009029@resona
+> > nce
+> > 
+> > Jerome Brunet (7):
+> >   clk: take the prepare lock out of clk_core_set_parent
+> >   clk: add set_phase core function
+> >   clk: rework calls to round and determine rate callbacks
+> >   clk: add support for clock protection
+> >   clk: rollback set_rate_range changes on failure
+> >   clk: cosmetic changes to clk_summary debugfs entry
+> >   clk: fix incorrect usage of ENOSYS
+> > 
+> >  drivers/clk/clk.c            | 313 ++++++++++++++++++++++++++++++++++----
+> > -----
+> >  include/linux/clk-provider.h |   1 +
+> >  include/linux/clk.h          |  29 ++++
+> >  3 files changed, 279 insertions(+), 64 deletions(-)
+> > 
+> > -- 
+> > 2.9.3
+> > 
