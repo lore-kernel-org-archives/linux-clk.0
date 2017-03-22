@@ -1,45 +1,63 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-In-Reply-To: <20170302140859.aqvwtgzxkdi2lqbc@lukather>
-References: <20170301152220.MEgmqtKw@smtp2p.mail.yandex.net>
- <20170302140859.aqvwtgzxkdi2lqbc@lukather>
-Subject: Re: [linux-sunxi] Re: [PATCH 2/3] clk: sunxi-ng: add support for PRCM
- CCUs
-MIME-Version: 1.0
-Message-Id: <3232491488467598@web22o.yandex.ru>
-Date: Thu, 02 Mar 2017 23:13:18 +0800
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
- Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	carlo@caione.org,
+	khilman@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/5] clk: meson-gxbb: Add GP0 PLL init parameters
+Date: Wed, 22 Mar 2017 11:32:24 +0100
+Message-Id: <1490178747-14837-3-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1490178747-14837-1-git-send-email-narmstrong@baylibre.com>
+References: <1490178747-14837-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-CgowMi4wMy4yMDE3LCAyMjowOSwgIk1heGltZSBSaXBhcmQiIDxtYXhpbWUucmlwYXJkQGZyZWUt
-ZWxlY3Ryb25zLmNvbT46Cj4gT24gV2VkLCBNYXIgMDEsIDIwMTcgYXQgMDg6MTc6MzlQTSArMDgw
-MCwgSWNlbm93eSBaaGVuZyB3cm90ZToKPj4gwqA+IEknbSBhIGJpdCB3b3JyaWVkIGJ5IHRoYXQg
-dG8gYmUgaG9uZXN0LiBZb3UgY2xhaW0gdG8gc3VwcG9ydCB0aGUgQTMxLAo+PiDCoD4geWV0IGp1
-Z2RnaW5nIGJ5IHRoZSBjdXJyZW50IHN0YXRlIG9mIHRoYXQgY29kZSB5b3UgbmV2ZXIgYWN0dWFs
-bHkKPj4gwqA+IHRlc3RlZCBpdCBvbiB0aGF0IFNvQy4KPj4KPj4gwqBJIG9ubHkgY2xhaW0gdG8g
-cmVzZXJ2ZSBwb3NzaWJpbGl0eSB0byBleHRlbmQgdGhlIGRyaXZlciB0byBzdXBwb3J0Cj4+IMKg
-QTMxLCBidXQgSSBkaWRuJ3QgY2xhaW0gaXQgY3VycmVudGx5IHN1cHBvcnQgQTMxLgo+Cj4gV2Vs
-bCwgeW91IGRpZCBjYWxsIGl0IHN1bjZpLgo+Cj4gUGxlYXNlIHJlbmFtZSBpdCwgYW5kIHdlIHdp
-bGwgY29uc29saWRhdGUgaW4gZHVlIHRpbWUuCgpUaGVuIHJlbmFtZSBpdCBiYWNrIHdoZW4gaXQg
-cmVhbGx5IGdhaW5zIHN1cHBvcnQgZm9yIEEzMT8KCj4KPiBNYXhpbWUKPgo+IC0tCj4gTWF4aW1l
-IFJpcGFyZCwgRnJlZSBFbGVjdHJvbnMKPiBFbWJlZGRlZCBMaW51eCBhbmQgS2VybmVsIGVuZ2lu
-ZWVyaW5nCj4gaHR0cDovL2ZyZWUtZWxlY3Ryb25zLmNvbQoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QK
-bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRl
-YWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+Tha Amlogic GXBB SoC GP0 PLL needs some vendor provided parameters to be
+initializated in the the GP0 control registers before configuring the rate
+with the rate table provided parameters.
+
+GXBB GP0 PLL tweaks are also selected to respect the vendor init procedure.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/gxbb.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index d07dc22..db95038 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -352,6 +352,13 @@
+ 	},
+ };
+ 
++struct pll_params_table gxbb_gp0_params_table[] = {
++	PLL_PARAM(HHI_GP0_PLL_CNTL, 0x6a000228),
++	PLL_PARAM(HHI_GP0_PLL_CNTL2, 0x69c80000),
++	PLL_PARAM(HHI_GP0_PLL_CNTL3, 0x0a5590c4),
++	PLL_PARAM(HHI_GP0_PLL_CNTL4, 0x0000500d),
++};
++
+ static struct meson_clk_pll gxbb_gp0_pll = {
+ 	.m = {
+ 		.reg_off = HHI_GP0_PLL_CNTL,
+@@ -368,6 +375,12 @@
+ 		.shift   = 16,
+ 		.width   = 2,
+ 	},
++	.params = {
++		.params_table = gxbb_gp0_params_table,
++		.params_count =	ARRAY_SIZE(gxbb_gp0_params_table),
++		.no_init_reset = true,
++		.clear_reset_for_lock = true,
++	},
+ 	.rate_table = gp0_pll_rate_table,
+ 	.rate_count = ARRAY_SIZE(gp0_pll_rate_table),
+ 	.lock = &clk_lock,
+-- 
+1.9.1
