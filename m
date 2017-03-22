@@ -1,88 +1,83 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Mon, 20 Mar 2017 20:30:59 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk@vger.kernel.org, Mike Leach <mike.leach@linaro.org>,
-	Sudeep Holla <Sudeep.Holla@arm.com>
-Subject: Re: [v3 3/5] coresight: add support for debug module
-Message-ID: <20170320123059.GA30276@leoy-linaro>
-References: <011fdac0-59bf-b539-2de3-0b59a41bc922@arm.com>
- <20170309175915.GA964@leoy-linaro>
- <3f27efee-3b63-81fd-eb96-73fd7e6f5e92@arm.com>
- <20170313165600.GB32431@linaro.org>
- <516f8989-4dde-2686-d549-0761feb14d1b@arm.com>
- <CANLsYkzJsGvr4ZzNbTwcPu1Qki6=Szvu+bMjHZ_rza==DqFChw@mail.gmail.com>
- <20170317101328.GA19877@leoy-linaro>
- <20170317155007.GA20435@linaro.org>
- <20170317162836.GD2020@leoy-linaro>
- <5995f6a7-08b1-c868-fc88-a145d1748a33@arm.com>
+Return-Path: <adrian.hunter@intel.com>
+Subject: Re: [PATCH v6 05/14] mmc: sdhci: Export
+ sdhci_start_signal_voltage_switch() in sdhci.c
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+ <ebab2ad6a83a91683c9589b976a6975141167296.1487091464.git-series.gregory.clement@free-electrons.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+ linux-arm-kernel@lists.infradead.org,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+ devicetree@vger.kernel.org, Ziji Hu <huziji@marvell.com>,
+ Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+ Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
+ Doug Jones <dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
+ "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
+ Yehuda Yitschak <yehuday@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
+ Hanna Hawa <hannah@marvell.com>, Kostya Porotchkin <kostap@marvell.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Message-ID: <0648f4c1-6acf-00c3-bc5c-c7f029d1eec5@intel.com>
+Date: Wed, 22 Mar 2017 16:49:10 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5995f6a7-08b1-c868-fc88-a145d1748a33@arm.com>
+In-Reply-To: <ebab2ad6a83a91683c9589b976a6975141167296.1487091464.git-series.gregory.clement@free-electrons.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 17, 2017 at 04:47:54PM +0000, Suzuki K Poulose wrote:
-> On 17/03/17 16:28, Leo Yan wrote:
-> >On Fri, Mar 17, 2017 at 09:50:07AM -0600, Mathieu Poirier wrote:
-> >
-> >[...]
-> >
-> >>If we don't check for "nohlt" some platform may freeze, others may work.  If we
-> >>mandate that "nohlt" be present on the kernel cmd line it works in all cases.
-> >>As such mandating that "nohlt" be present is a better way to go.
-> >
-> >Sure, so I will add below checking code in the probe function, please
-> >let me know if you have alter better way to implement this:
-> >
-> >+       if (IS_ENABLED(CONFIG_CPU_IDLE) &&
-> >+                       !strstr(boot_command_line, "nohlt")) {
-> >+               dev_err(dev, "May not be accessible in CPU power domain.\n");
-> >+               return -EPERM;
-> >+       }
-> >
+On 14/02/17 19:01, Gregory CLEMENT wrote:
+> From: Hu Ziji <huziji@marvell.com>
 > 
-> There is an API which kind of achieves what "nohlt" does at runtime :
+> Export sdhci_start_signal_voltage_switch() from sdhci.c.
+> Thus vendor sdhci driver can implement its own signal voltage
+> switch routine.
 > 
->   cpu_idle_poll_ctrl(true)
-> 
-> So may be we could use that instead of depending on "nohlt". The other side
-> of the issues is "when do we decide to use the API". May be we could add something
-> like : enable_debug, which could then trigger the panic notifier registrations
-> and the above. That would still leave us with a case where the system crashes
-> even before the user gets a terminal. May be the following is the best option :
-> 
-> 1) Dedicated kernel command line parameter for enabling the CPU debug at boot/probe.
-> and
-> 
-> 2) Runtime enable method via sysfs.
+> Signed-off-by: Hu Ziji <huziji@marvell.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-For upper methods, I think the benefit is the user can use very
-explict method to enable debug module and can easily aware this
-will totally disable CPU low power states as sequential result..
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-For sysfs, we need send IPIs to all CPUs to ensure all CPUs will not
-stay in low power state anymore.
-
-Now I have one questions mainly related with how to registser sysfs
-node. Should register sysfs node based on coresight API
-coresight_register()? If so, we should extend coresight core
-structures to support CPU debug module. Or directly register sysfs
-node by using sysfs node like /sys/bus/coresight/devices/cpu_debug?
-
-Thanks,
-Leo Yan
+> ---
+>  drivers/mmc/host/sdhci.c | 5 +++--
+>  drivers/mmc/host/sdhci.h | 2 ++
+>  2 files changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 0e9ed0fadff9..d2338dc362f4 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -1839,8 +1839,8 @@ static void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable)
+>  	spin_unlock_irqrestore(&host->lock, flags);
+>  }
+>  
+> -static int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+> -					     struct mmc_ios *ios)
+> +int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+> +				      struct mmc_ios *ios)
+>  {
+>  	struct sdhci_host *host = mmc_priv(mmc);
+>  	u16 ctrl;
+> @@ -1932,6 +1932,7 @@ static int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+>  		return 0;
+>  	}
+>  }
+> +EXPORT_SYMBOL_GPL(sdhci_start_signal_voltage_switch);
+>  
+>  static int sdhci_card_busy(struct mmc_host *mmc)
+>  {
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 3563c0c384ca..e4a07543a12b 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -692,6 +692,8 @@ void sdhci_reset(struct sdhci_host *host, u8 mask);
+>  void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
+>  int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
+>  void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios);
+> +int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+> +				      struct mmc_ios *ios);
+>  
+>  #ifdef CONFIG_PM
+>  extern int sdhci_suspend_host(struct sdhci_host *host);
+> 
