@@ -1,42 +1,76 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
 To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 1/5] arm64: qcom: Select PM_GENERIC_DOMAINS
-Date: Tue, 21 Mar 2017 11:45:19 +0530
-Message-Id: <1490076923-20194-2-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1490076923-20194-1-git-send-email-rnayak@codeaurora.org>
-References: <1490076923-20194-1-git-send-email-rnayak@codeaurora.org>
+	khilman@baylibre.com,
+	carlo@caione.org
+Subject: [PATCH v4 0/3] meson-gx: Add mali-450 support
+Date: Wed, 22 Mar 2017 11:18:52 +0100
+Message-Id: <1490177935-9646-1-git-send-email-narmstrong@baylibre.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Neil Armstrong <narmstrong@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable PM_GENERIC_DOMAINS for 64-bit qualcomm platforms. This is required
-to ensure devices which are dependent on some gdscs (powerdomains) to be
-powered on before they can be probed, work as expected.
+Since the merge of the Mali dt bindings at [1], add support for Mali clocks
+and DT node.
 
-CC: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- arch/arm64/Kconfig.platforms | 2 ++
- 1 file changed, 2 insertions(+)
+The Mali is clocked by two identical clock paths behind a glitch free mux
+to safely change frequency while running.
+So these clocks must be added to the meson-gxbb clock controller.
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 129cc5a..c5ae2cf 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -115,6 +115,8 @@ config ARCH_QCOM
- 	bool "Qualcomm Platforms"
- 	select GPIOLIB
- 	select PINCTRL
-+	select PM
-+	select PM_GENERIC_DOMAINS
- 	help
- 	  This enables support for the ARMv8 based Qualcomm chipsets.
- 
+Changes since v3 at [7] :
+ - Removed CLK_IGNORE_UNUSED on mali clocks
+
+Changes since v2 at [5] :
+ - Rebased on v2 Audio Clocks patchset from Jerome Brunet at [6]
+ - Marked parents names list as static
+ - Reworded patch 3 commit message
+
+Changes since v1 at [2] :
+ - Remove GP0 fixes, this will pushed later, for base frequency it can depend on fclk_div3
+ - Add GXL support
+ - rebase on clk-next and jbrunet's patchset at [3] and [4]
+ - get rid of composite clocks, this adds more clocks IDs and exposes 2 more clocks
+
+[7] http://lkml.kernel.org/r/1489064027-18004-1-git-send-email-narmstrong@baylibre.com
+[6] http://lkml.kernel.org/r/20170309104154.28295-1-jbrunet@baylibre.com
+[5] http://lkml.kernel.org/r/1488365164-22861-1-git-send-email-narmstrong@baylibre.com
+[4] http://lkml.kernel.org/r/20170228093016.5624-1-jbrunet@baylibre.com
+[3] http://lkml.kernel.org/r/20170228133002.17894-1-jbrunet@baylibre.com
+[2] http://lkml.kernel.org/r/1486721084-1383-1-git-send-email-narmstrong@baylibre.com
+[1] http://lkml.kernel.org/r/b098c4fa9fce88361cca20417978734d0e1b5cca.1485939041.git-series.maxime.ripard@free-electrons.com
+
+Neil Armstrong (3):
+  clk: meson-gxbb: Add MALI clock IDS
+  clk: meson-gxbb: Add MALI clocks
+  ARM64: dts: meson-gx: Add MALI nodes for GXBB and GXL
+
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi      |  37 ++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi  |  43 +++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi |   1 +
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi |   1 +
+ drivers/clk/meson/gxbb.c                         | 139 +++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h                         |   9 +-
+ include/dt-bindings/clock/gxbb-clkc.h            |   5 +
+ 7 files changed, 234 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
