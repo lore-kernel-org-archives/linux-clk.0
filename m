@@ -1,37 +1,65 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	xf@rock-chips.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 0/4] make some special clk as critical_clocks
-Date: Tue, 28 Mar 2017 18:06:50 +0800
-Message-Id: <1490695614-3220-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:55661 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933703AbdCVJfw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Mar 2017 05:35:52 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] PM / runtime: Use synchronous runtime PM call in
+ rpm_put_suppliers()
+Date: Wed, 22 Mar 2017 10:22:50 +0100
+Message-id: <1490174570-18345-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170322092305eucas1p20d2a6dfede483210febea5b5e0ff68db@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-change in v2:
-fix up some clks which have their own driver, not need to set as critical clocks
+rpm_put_suppliers() might be called as a result of pm_runtime_put_sync()
+call, where the called explicitly wants to perform the operation in
+synchronous way to avoid some deadlocks related to concurrent code
+execution in the PM workers. However the current code for handling device
+links always use asynchronous calls. This patch changes it to always use
+the synchronous calls.
 
-Elaine Zhang (4):
-  clk: rockchip: rk3036: make pclk_ddrupctl as critical_clock
-  clk: rockchip: rk3228: make noc and some special clk as
-    critical_clocks
-  clk: rockchip: rk3288: make noc and some special clk as
-    critical_clocks
-  clk: rockchip: rk3368: make some special clk as critical_clocks
+This patch fixes the potential deadlock, which appears during adding
+runtime PM support to clock framework, which uses global mutex, which is
+reentrant only for the current process, so trying to execute runtime PM
+callback from the worker results in deadlock (the mentioned mutex is
+already taken by the current process, which waits for execution of PM
+worker).
 
- drivers/clk/rockchip/clk-rk3036.c |  1 +
- drivers/clk/rockchip/clk-rk3228.c | 30 +++++++++++++++++++++++++++++-
- drivers/clk/rockchip/clk-rk3288.c | 14 ++++++++++----
- drivers/clk/rockchip/clk-rk3368.c |  5 ++++-
- 4 files changed, 44 insertions(+), 6 deletions(-)
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+Hi Rafael & Ulf,
 
+This was the simplest way of fixing this issue. Other way would be to
+propagate rpmflags to rpm_get/put_suppliers() to ensure that synchronous
+calls will be also done on the linked devices. Which way is better in
+your opinion?
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+---
+ drivers/base/power/runtime.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+index 7bcf80fa9ada..b7df589ae579 100644
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -292,7 +292,7 @@ static void rpm_put_suppliers(struct device *dev)
+ 	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
+ 		if (link->rpm_active &&
+ 		    READ_ONCE(link->status) != DL_STATE_SUPPLIER_UNBIND) {
+-			pm_runtime_put(link->supplier);
++			pm_runtime_put_sync(link->supplier);
+ 			link->rpm_active = false;
+ 		}
+ }
 -- 
 1.9.1
+
