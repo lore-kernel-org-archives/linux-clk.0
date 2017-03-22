@@ -1,231 +1,148 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: [PATCH v7 09/13] mmc: sdhci-xenon: Add SoC PHY PAD voltage control
-Date: Thu, 30 Mar 2017 17:23:01 +0200
-Message-Id: <4363b2b62cd424745ebc2e630d30dad968814e46.1490886907.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+Return-Path: <sudeep.holla@arm.com>
+Subject: Re: [PATCH v3 3/5] coresight: add support for debug module
+To: Mike Leach <mike.leach@linaro.org>
+References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
+ <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
+ <671a0b39-b635-6e0e-d3fa-967651f2e29c@arm.com>
+ <CAJ9a7VgCjXNGC4C49PxL-nBxzhMCmA8Mb-0C_epahizA5EL2HA@mail.gmail.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Leo Yan <leo.yan@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Wei Xu <xuwei5@hisilicon.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ John Stultz <john.stultz@linaro.org>, Guodong Xu <guodong.xu@linaro.org>,
+ Haojian Zhuang <haojian.zhuang@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <e7a97c52-f61a-e503-f626-09563fa100b8@arm.com>
+Date: Wed, 22 Mar 2017 14:07:47 +0000
+MIME-Version: 1.0
+In-Reply-To: <CAJ9a7VgCjXNGC4C49PxL-nBxzhMCmA8Mb-0C_epahizA5EL2HA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Hu Ziji <huziji@marvell.com>
 
-Some SoCs have PHY PAD outside Xenon IP.
-PHY PAD voltage should match signalling voltage in use.
 
-Add generic SoC PHY PAD voltage control interface.
-Implement Aramda-3700 SoC PHY PAD voltage control.
+On 22/03/17 12:54, Mike Leach wrote:
+> 
+> 
+> On 21 March 2017 at 15:39, Sudeep Holla <sudeep.holla@arm.com 
+> <mailto:sudeep.holla@arm.com>> wrote:
+> 
+[...]
 
-Signed-off-by: Hu Ziji <huziji@marvell.com>
-Tested-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/mmc/host/sdhci-xenon-phy.c | 110 +++++++++++++++++++++++++++++-
- drivers/mmc/host/sdhci-xenon.c     |   2 +-
- drivers/mmc/host/sdhci-xenon.h     |   2 +-
- 3 files changed, 113 insertions(+), 1 deletion(-)
+> I disagree with this approach. One of the main usefulness of such
+> self hosted debug feature is to debug issues around features like
+> cpuidle. Adding constraints like "cpuidle needs to be disabled" is
+> not good IMO. There are ways to make it work with cpuidle enabled.
+> Please explore them. In particular refer H9.2.39 EDPRCR, External
+> Debug Power/Reset Control Register.
+> 
+> So, "nohlt" option is not an option. I prefer some sysfs option like 
+> Suzuki suggested to enable this feature on demand if power saving in 
+> normal usecase is the concern. Using "nohlt" just disables idle and 
+> doesn't ensure the debug power domain is ON. Using the flag directly
+> in this driver to enable debug power domain also sounds misuse of
+> that flag for me.
+> 
+> I think the key issue to remember here is that experience with
+> external debug shows that CPU Idle means different things to
+> different SoC designs / power management schemes. (and we are using
+> external debug in a self hosted way here).
+> 
 
-diff --git a/drivers/mmc/host/sdhci-xenon-phy.c b/drivers/mmc/host/sdhci-xenon-phy.c
-index b14544e91b65..4bdbcd3f2645 100644
---- a/drivers/mmc/host/sdhci-xenon-phy.c
-+++ b/drivers/mmc/host/sdhci-xenon-phy.c
-@@ -143,6 +143,21 @@ enum xenon_phy_type_enum {
- 	NR_PHY_TYPES
- };
- 
-+enum soc_pad_ctrl_type {
-+	SOC_PAD_SD,
-+	SOC_PAD_FIXED_1_8V,
-+};
-+
-+struct soc_pad_ctrl {
-+	/* Register address of SoC PHY PAD ctrl */
-+	void __iomem	*reg;
-+	/* SoC PHY PAD ctrl type */
-+	enum soc_pad_ctrl_type pad_type;
-+	/* SoC specific operation to set SoC PHY PAD */
-+	void (*set_soc_pad)(struct sdhci_host *host,
-+			    unsigned char signal_voltage);
-+};
-+
- static struct xenon_emmc_phy_regs xenon_emmc_5_0_phy_regs = {
- 	.timing_adj	= XENON_EMMC_5_0_PHY_TIMING_ADJUST,
- 	.func_ctrl	= XENON_EMMC_5_0_PHY_FUNC_CONTROL,
-@@ -176,6 +191,8 @@ struct xenon_emmc_phy_params {
- 	u8	nr_tun_times;
- 	/* Divider for calculating Tuning Step */
- 	u8	tun_step_divider;
-+
-+	struct soc_pad_ctrl pad_ctrl;
- };
- 
- static int xenon_alloc_emmc_phy(struct sdhci_host *host)
-@@ -254,6 +271,45 @@ static int xenon_emmc_phy_init(struct sdhci_host *host)
- 	return 0;
- }
- 
-+#define ARMADA_3700_SOC_PAD_1_8V	0x1
-+#define ARMADA_3700_SOC_PAD_3_3V	0x0
-+
-+static void armada_3700_soc_pad_voltage_set(struct sdhci_host *host,
-+					    unsigned char signal_voltage)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	struct xenon_emmc_phy_params *params = priv->phy_params;
-+
-+	if (params->pad_ctrl.pad_type == SOC_PAD_FIXED_1_8V) {
-+		writel(ARMADA_3700_SOC_PAD_1_8V, params->pad_ctrl.reg);
-+	} else if (params->pad_ctrl.pad_type == SOC_PAD_SD) {
-+		if (signal_voltage == MMC_SIGNAL_VOLTAGE_180)
-+			writel(ARMADA_3700_SOC_PAD_1_8V, params->pad_ctrl.reg);
-+		else if (signal_voltage == MMC_SIGNAL_VOLTAGE_330)
-+			writel(ARMADA_3700_SOC_PAD_3_3V, params->pad_ctrl.reg);
-+	}
-+}
-+
-+/*
-+ * Set SoC PHY voltage PAD control register,
-+ * according to the operation voltage on PAD.
-+ * The detailed operation depends on SoC implementation.
-+ */
-+static void xenon_emmc_phy_set_soc_pad(struct sdhci_host *host,
-+				       unsigned char signal_voltage)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	struct xenon_emmc_phy_params *params = priv->phy_params;
-+
-+	if (!params->pad_ctrl.reg)
-+		return;
-+
-+	if (params->pad_ctrl.set_soc_pad)
-+		params->pad_ctrl.set_soc_pad(host, signal_voltage);
-+}
-+
- /*
-  * Enable eMMC PHY HW DLL
-  * DLL should be enabled and stable before HS200/SDR104 tuning,
-@@ -562,6 +618,51 @@ static void xenon_emmc_phy_set(struct sdhci_host *host,
- 	dev_dbg(mmc_dev(host->mmc), "eMMC PHY setting completes\n");
- }
- 
-+static int get_dt_pad_ctrl_data(struct sdhci_host *host,
-+				struct device_node *np,
-+				struct xenon_emmc_phy_params *params)
-+{
-+	int ret = 0;
-+	const char *name;
-+	struct resource iomem;
-+
-+	if (of_device_is_compatible(np, "marvell,armada-3700-sdhci"))
-+		params->pad_ctrl.set_soc_pad = armada_3700_soc_pad_voltage_set;
-+	else
-+		return 0;
-+
-+	if (of_address_to_resource(np, 1, &iomem)) {
-+		dev_err(mmc_dev(host->mmc), "Unable to find SoC PAD ctrl register address for %s\n",
-+			np->name);
-+		return -EINVAL;
-+	}
-+
-+	params->pad_ctrl.reg = devm_ioremap_resource(mmc_dev(host->mmc),
-+						     &iomem);
-+	if (IS_ERR(params->pad_ctrl.reg)) {
-+		dev_err(mmc_dev(host->mmc), "Unable to get SoC PHY PAD ctrl register for %s\n",
-+			np->name);
-+		return PTR_ERR(params->pad_ctrl.reg);
-+	}
-+
-+	ret = of_property_read_string(np, "marvell,pad-type", &name);
-+	if (ret) {
-+		dev_err(mmc_dev(host->mmc), "Unable to determine SoC PHY PAD ctrl type\n");
-+		return ret;
-+	}
-+	if (!strcmp(name, "sd")) {
-+		params->pad_ctrl.pad_type = SOC_PAD_SD;
-+	} else if (!strcmp(name, "fixed-1-8v")) {
-+		params->pad_ctrl.pad_type = SOC_PAD_FIXED_1_8V;
-+	} else {
-+		dev_err(mmc_dev(host->mmc), "Unsupported SoC PHY PAD ctrl type %s\n",
-+			name);
-+		return -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
- static int xenon_emmc_phy_parse_param_dt(struct sdhci_host *host,
- 					 struct device_node *np,
- 					 struct xenon_emmc_phy_params *params)
-@@ -590,7 +691,14 @@ static int xenon_emmc_phy_parse_param_dt(struct sdhci_host *host,
- 				  &value))
- 		params->tun_step_divider = value & 0xFF;
- 
--	return 0;
-+	return get_dt_pad_ctrl_data(host, np, params);
-+}
-+
-+/* Set SoC PHY Voltage PAD */
-+void xenon_soc_pad_ctrl(struct sdhci_host *host,
-+			unsigned char signal_voltage)
-+{
-+	xenon_emmc_phy_set_soc_pad(host, signal_voltage);
- }
- 
- /*
-diff --git a/drivers/mmc/host/sdhci-xenon.c b/drivers/mmc/host/sdhci-xenon.c
-index 36e22bd2b8cc..8e56b9ccfb39 100644
---- a/drivers/mmc/host/sdhci-xenon.c
-+++ b/drivers/mmc/host/sdhci-xenon.c
-@@ -280,6 +280,8 @@ static int xenon_start_signal_voltage_switch(struct mmc_host *mmc,
- 	 */
- 	xenon_enable_internal_clk(host);
- 
-+	xenon_soc_pad_ctrl(host, ios->signal_voltage);
-+
- 	/*
- 	 * If Vqmmc is fixed on platform, vqmmc regulator should be unavailable.
- 	 * Thus SDHCI_CTRL_VDD_180 bit might not work then.
-diff --git a/drivers/mmc/host/sdhci-xenon.h b/drivers/mmc/host/sdhci-xenon.h
-index b29d45358de8..6e6523ea01ce 100644
---- a/drivers/mmc/host/sdhci-xenon.h
-+++ b/drivers/mmc/host/sdhci-xenon.h
-@@ -96,4 +96,6 @@ int xenon_phy_adj(struct sdhci_host *host, struct mmc_ios *ios);
- void xenon_clean_phy(struct sdhci_host *host);
- int xenon_phy_parse_dt(struct device_node *np,
- 		       struct sdhci_host *host);
-+void xenon_soc_pad_ctrl(struct sdhci_host *host,
-+			unsigned char signal_voltage);
- #endif
+Yes agreed on the point that meaning of "cpuidle" differs on each SoC.
+
+> Some designs will power down an entire cluster if all CPUs on the 
+> cluster are powered down - including the parts of the debug
+> registers that should remain powered in the debug power domain.
+
+Interesting, at-least ETMv4 or some other coresight specification
+clearly classify the power domains and the register access. The actual
+power domain itself may vary depending on implementation.
+
+> The bits in EDPRCR are not respected in these cases - these designs
+> do not really support debug over power down in the way that the
+> CoreSight / Debug designers anticipated. This means that even
+> checking EDPRSR has the potential to cause a bus hang if the target
+> register is unpowered. (and if the debug power domain is unpowered
+> then the PC data is also lost).
+> 
+
+Agreed, but can we start supporting the sane designs in sane way first.
+We can always add compatible and handle deviations. I agree we may need
+to support such deviations but starting with that seems setting a bad
+example.
+
+> In these cases, accessing to the debug registers while they are not 
+> powered is a recipe for disaster - so preventing CPUIdle ​and the
+> subsequent cluster power down ​ allows investigation on this class of
+> system - ​and allowing the CPUs of interest be interrogated without
+> hanging the crash log process.​
+> 
+
+Agreed. But my point is that many issues are around cpuidle and some
+usecase and just eliminating that use-case sounds bad. For me,
+core-sight was most useful to debug issues around cpu power management
+and lockups where we can't stop cores but examine these registers.
+There are other alternatives for other use-cases IMO.
+
+> 
+> ​On systems that do behave correctly with respect to debug power 
+> domains, then disabling CPUIdle is unnecessary - these can be
+> controlled by ​EDPRCR - perhaps; per the specification it is
+> "implementation defined" if writing bits to this register have an
+> effect on the system anyway even if the debug domain is correctly
+> powered.
+> 
+
+We can always do that unconditionally. If implementations don't honor
+those bits, it's different. If they hang on accessing something which is
+on debug power domain and not on core power domain, then you have much
+bigger issue to solve. How can you even trust and make any other
+register accesses that are in debug power domain then ?
+
+> ​While it is true to say that disabling CPUIdle does not guarantee
+> that the debug power domain is on, it does in a certain class of
+> designs prevent it being powered off (Juno historically - not sure if
+> that is still the case.).
+> 
+
+Again it's completely platform specific. All you need to care is that
+the debug power domain is on or not. Disabling CPUIdle to achieve that
+is simply wrong and may work only on few platforms.
+
+> However, I do agree that the use of the driver should not be
+> triggered _only_ on the existence of /nohlt on the command line - ​
+> there is a class of designs where this will not be required.
+> 
+
+Thanks
+
+> When enabing the driver as a kernel config the user needs to
+> decide:- 1) do I need this to debug the issue I am seeing 2) does the
+> power management on my system require I use /nohlt as well.
+
+Please don't *misuse* nohlt to disable idle. There are other ways to
+do the same either from the user-space or from the driver.
+
+> 
+> I think that the use of /nohlt as an option, and the reasons why it 
+> might be needed should be part of the configuration help in this
+> case.
+> 
+> There is also a case for considering if there should be an option to 
+> configure it to be enabled or disabled at boot time. It is easy to 
+> imagine cases I want to have this running from the start as a crash 
+> happens early - and cases I can enable it on demand later.
+> 
+
+Also consider with cpuidle enabled ;). I can help testing if needed.
+
 -- 
-git-series 0.9.1
+Regards,
+Sudeep
