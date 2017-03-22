@@ -1,66 +1,147 @@
-Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
-Message-ID: <1488454082.2420.3.camel@baylibre.com>
-Subject: Re: [PATCH v2 2/3] clk: meson-gxbb: Add MALI clocks
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>
-Date: Thu, 02 Mar 2017 12:28:02 +0100
-In-Reply-To: <6cd2e42d-6169-a2f0-db33-e13ca1619a41@baylibre.com>
-References: <1488365164-22861-1-git-send-email-narmstrong@baylibre.com>
- <1488365164-22861-3-git-send-email-narmstrong@baylibre.com>
- <20170301191119.GR25384@codeaurora.org>
- <6cd2e42d-6169-a2f0-db33-e13ca1619a41@baylibre.com>
-Mime-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
-List-Post: <mailto:linux-amlogic@lists.infradead.org>
-List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
-Cc: khilman@baylibre.com, linux-kernel@vger.kernel.org, carlo@caione.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
-Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <20170215094954.h3wyaxlqkeb342yu@lukather>
+References: <20170214033526.16977-1-wens@csie.org> <20170214033526.16977-5-wens@csie.org>
+ <20170214095819.utsftcvti5zdmlmi@lukather> <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
+ <20170215094954.h3wyaxlqkeb342yu@lukather>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 22 Mar 2017 14:50:31 +0800
+Message-ID: <CAGb2v67ey1Ppc3wf1154QKoCX-xsOjWDEsXi5gxPbL4MY37zHw@mail.gmail.com>
+Subject: Re: [PATCH 4/5] clk: sunxi-ng: Add driver for A83T CCU
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-T24gVGh1LCAyMDE3LTAzLTAyIGF0IDEyOjA3ICswMTAwLCBOZWlsIEFybXN0cm9uZyB3cm90ZToK
-PiBIaSBTdGVwaGVuLAo+IAo+IE9uIDAzLzAxLzIwMTcgMDg6MTEgUE0sIFN0ZXBoZW4gQm95ZCB3
-cm90ZToKPiA+IE9uIDAzLzAxLCBOZWlsIEFybXN0cm9uZyB3cm90ZToKPiA+ID4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvY2xrL21lc29uL2d4YmIuYyBiL2RyaXZlcnMvY2xrL21lc29uL2d4YmIuYwo+
-ID4gPiBpbmRleCBhNTIwNjNmLi4zMWY2MDkwIDEwMDY0NAo+ID4gPiAtLS0gYS9kcml2ZXJzL2Ns
-ay9tZXNvbi9neGJiLmMKPiA+ID4gKysrIGIvZHJpdmVycy9jbGsvbWVzb24vZ3hiYi5jCj4gPiA+
-IEBAIC02MzQsNiArNjM0LDEzMSBAQAo+ID4gPiDCoAl9LAo+ID4gPiDCoH07Cj4gPiA+IMKgCj4g
-PiA+ICsvKgo+ID4gPiArICogVGhlIE1BTEkgSVAgaXMgY2xvY2tlZCBieSB0d28gaWRlbnRpY2Fs
-IGNsb2NrcyAobWFsaV8wIGFuZAo+ID4gPiBtYWxpXzEpCj4gPiA+ICsgKiBtdXhlZCBieSBhIGds
-aXRjaC1mcmVlIHN3aXRjaC4KPiA+ID4gKyAqLwo+ID4gPiArCj4gPiA+ICtzdGF0aWMgdTMyIG11
-eF90YWJsZV9tYWxpXzBfMVtdID0gezAsIDEsIDIsIDMsIDQsIDUsIDYsIDd9Owo+ID4gPiArY29u
-c3QgY2hhciAqZ3hiYl9tYWxpXzBfMV9wYXJlbnRfbmFtZXNbXSA9IHsKPiA+IAo+ID4gc3RhdGlj
-Pwo+IAo+IFdpbGwgZG8gIQo+IAo+ID4gCj4gPiA+ICsJInh0YWwiLCAiZ3AwX3BsbCIsICJtcGxs
-MiIsICJtcGxsMSIsICJmY2xrX2RpdjciLAo+ID4gPiArCSJmY2xrX2RpdjQiLCAiZmNsa19kaXYz
-IiwgImZjbGtfZGl2NSIKPiA+ID4gK307Cj4gPiA+ICsKPiA+IAo+ID4gWy4uXQo+ID4gPiArCS5y
-ZWcgPSAodm9pZCAqKUhISV9NQUxJX0NMS19DTlRMLAo+ID4gPiArCS5iaXRfaWR4ID0gMjQsCj4g
-PiA+ICsJLmxvY2sgPSAmY2xrX2xvY2ssCj4gPiA+ICsJLmh3LmluaXQgPSAmKHN0cnVjdCBjbGtf
-aW5pdF9kYXRhKXsKPiA+ID4gKwkJLm5hbWUgPSAibWFsaV8xIiwKPiA+ID4gKwkJLm9wcyA9ICZj
-bGtfZ2F0ZV9vcHMsCj4gPiA+ICsJCS5wYXJlbnRfbmFtZXMgPSAoY29uc3QgY2hhciAqW10peyAi
-bWFsaV8xX2RpdiIKPiA+ID4gfSwKPiA+ID4gKwkJLm51bV9wYXJlbnRzID0gMSwKPiA+ID4gKwkJ
-LmZsYWdzID0gKENMS19TRVRfUkFURV9QQVJFTlQgfAo+ID4gPiBDTEtfSUdOT1JFX1VOVVNFRCks
-Cj4gPiA+ICsJfSwKPiA+ID4gK307Cj4gPiA+ICsKPiA+ID4gK3N0YXRpYyB1MzIgbXV4X3RhYmxl
-X21hbGlbXSA9IHswLCAxfTsKPiA+ID4gK2NvbnN0IGNoYXIgKmd4YmJfbWFsaV9wYXJlbnRfbmFt
-ZXNbXSA9IHsKPiA+IAo+ID4gc3RhdGljPwo+ID4gCj4gPiA+ICsJIm1hbGlfMCIsICJtYWxpXzEi
-Cj4gPiA+ICt9Owo+ID4gCj4gPiBbLi4uXQo+ID4gPiDCoHN0YXRpYyBzdHJ1Y3QgY2xrX211eCAq
-Z3hiYl9jbGtfbXV4ZXNbXSA9IHsKPiA+ID4gwqAJJmd4YmJfbXBlZ19jbGtfc2VsLAo+ID4gPiDC
-oAkmZ3hiYl9zYXJfYWRjX2Nsa19zZWwsCj4gPiA+ICsJJmd4YmJfbWFsaV8wX3NlbCwKPiA+ID4g
-KwkmZ3hiYl9tYWxpXzFfc2VsLAo+ID4gPiArCSZneGJiX21hbGksCj4gPiA+IMKgfTsKPiA+ID4g
-wqAKPiA+ID4gwqBzdGF0aWMgc3RydWN0IGNsa19kaXZpZGVyICpneGJiX2Nsa19kaXZpZGVyc1td
-ID0gewo+ID4gCj4gPiBDYW4gdGhlc2UgYXJyYXlzIGJlIGNvbnN0PyBJZiBzbywgcGxlYXNlIGRv
-IHRoYXQgaW4gYSBzZXBhcmF0ZQo+ID4gcGF0Y2guCj4gCj4gSG1tLCB0aGVzZSB3ZXJlIGludHJv
-ZHVjZWQgYnkgamVyb21lLCBoZSBzaG91bGQgdXBkYXRlIHRoZW0KPiBhY2NvcmRpbmdseS4KPiAK
-CldpbGwgZG8KCj4gPiA+IMKgCSZneGJiX21wZWdfY2xrX2RpdiwKPiA+ID4gwqAJJmd4YmJfc2Fy
-X2FkY19jbGtfZGl2LAo+ID4gPiArCSZneGJiX21hbGlfMF9kaXYsCj4gPiA+ICsJJmd4YmJfbWFs
-aV8xX2RpdiwKPiA+ID4gwqB9Owo+IAo+IAo+IFRoYW5rcywKPiBOZWlsCgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hbWxvZ2ljIG1haWxpbmcg
-bGlzdApsaW51eC1hbWxvZ2ljQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJh
-ZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hbWxvZ2ljCg==
+On Wed, Feb 15, 2017 at 5:49 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Tue, Feb 14, 2017 at 06:26:39PM +0800, Chen-Yu Tsai wrote:
+>> On Tue, Feb 14, 2017 at 5:58 PM, Maxime Ripard
+>> <maxime.ripard@free-electrons.com> wrote:
+>> > On Tue, Feb 14, 2017 at 11:35:25AM +0800, Chen-Yu Tsai wrote:
+>> >> +/* Some PLLs are input * N / div1 / P. Model them as NKMP with no K */
+>> >
+>> > Is that even working?
+>>
+>> Looking at the nkmp clock code, only .recalc_rate will work properly though.
+>> Maybe I could fix up the code so it handles zero width factors.
+>>
+>> > I'm not quite sure we want to do that. We might model it as a NP clock
+>> > with a variable prediv?
+>>
+>> There's no NP clock type yet. And a problem with a variable prediv is that
+>> it doesn't participate in factor calculation. It's effectively fixed.
+>>
+>> I did this for the A80 as well though. Fixing up the NKMP clock might be
+>> easier.
+>
+> Then maybe we just need a NMP clock type then. What I'm really afraid
+> of is that we'll just end up in a clk-factors situation that was
+> simply impossible to maintain without breaking anything, hence why we
+> had different clock types then.
+
+Upon further review, I think it will work. I did notice a discrepancy
+between .set_rate and .round_rate though. Will send fixes later.
+
+About the old clk-factors situation, I'm not exactly sure what part
+you're referring to. To me it seems the "factors" bits are mostly the
+same. Differences are mostly with parent-specific pre-dividers,
+clock post-dividers, and non-standard factors. The first is nicely
+handled by the new mux wrapper, the second is currently only used
+with NK types, and the last is currently only supported by single
+factor divider or multiplier clocks with tables.
+
+Non-standard factors are probably the trickiest one, but given we will
+support full factor tables for some of the tricky CPU PLLs, this is
+probably solved, even if not implemented yet.
+
+I'll start with the NP style clocks, which only use P when the output
+is under a certain frequency.
+
+Regards
+ChenYu
+
+>> >
+>> >> +/* Use a separate clock for the pre-divider on the AHB1 PLL-PERIPH input */
+>> >> +static SUNXI_CCU_M(pll_periph_ahb1_clk, "pll-periph-ahb1", "pll-periph",
+>> >> +                0x054, 6, 2, 0);
+>> >> +
+>> >> +static const char * const ahb1_parents[] = { "osc16M-d512", "osc24M",
+>> >> +                                          "pll-periph-ahb1",
+>> >> +                                          "pll-periph-ahb1" };
+>> >> +static struct ccu_div ahb1_clk = {
+>> >> +     .div            = _SUNXI_CCU_DIV_FLAGS(4, 2, CLK_DIVIDER_POWER_OF_TWO),
+>> >> +     .mux            = _SUNXI_CCU_MUX(12, 2),
+>> >> +     .common         = {
+>> >> +             .reg            = 0x054,
+>> >> +             .hw.init        = CLK_HW_INIT_PARENTS("ahb1",
+>> >> +                                                   ahb1_parents,
+>> >> +                                                   &ccu_div_ops,
+>> >> +                                                   0),
+>> >> +     },
+>> >> +};
+>> >
+>> > What's different from a pre divider only for a given index here?
+>>
+>> The variable pre-divider is shared for both pll-periph mux inputs.
+>> This is one way to handle it. The other would be to extend ccu_mux
+>> to handle multiple variable pre-dividers. I don't really want to do
+>> that if this is the only instance that needs it though.
+>
+> Every addition we made was only needed by one instance at first :)
+>
+> We are working that way for fixed pre-dividers already, I don't see
+> why we can't have it for variable ones too.
+>
+>> >> +/*
+>> >> + * MMC2 supports what's called the "new timing mode". The CCU and the MMC
+>> >> + * controller must be in sync about which mode is used. The new mode moves
+>> >> + * the clock delay controls (and possibly the delay lines) into the MMC
+>> >> + * block. Also, the output of the clock is divided by 2. The output and
+>> >> + * sample phase clocks are unused under this mode.
+>> >> + *
+>> >> + * This new mode seems to be preferred. Hence we force this clock to the
+>> >> + * new mode. And we don't add the phase clocks.
+>> >> + */
+>> >
+>> > I'm sorry, but I said this several times, this isn't working. We
+>> > should model it properly, and not hack this around in the clock
+>> > driver.
+>> >
+>> > As you say in your comment, the MMC driver needs to be aware about
+>> > which mode is used, in order to also set a bit in one of its registers
+>> > accordingly, and modify its sampling behaviour.
+>> >
+>> > The new timing is preferred, but our previous clock implementations
+>> > didn't hardcode it, so we can't even rely on that behaviour to always
+>> > write it in our driver.
+>>
+>> Correct. With the A83T there has never been a merged clock driver though.
+>> I realize this is a one off thing.
+>>
+>> > This is not something specific to the A83T, but is found in all the
+>> > SoCs since the A23, so we need to come up with a good solution to
+>> > address that.
+>> >
+>> > I'm not sure what a good solution would be though. One would be to
+>> > just have a private function of our own to switch in the new mode (if
+>> > relevant, because only the MMC2 controllers have it), but that would
+>> > lead to troubles with !sunxi-ng. Not something we can't deal with, but
+>> > some extra precautions should be taken (make sure to protect the call
+>> > through an ifdef / IS_DEFINED, check that the sunxi-ng driver has been
+>> > probed, etc.)
+>>
+>> If the custom function route is acceptable, I'll come up with something.
+>
+> I think it would be a great start yes. I'll try to discuss it with
+> Mike and Stephen at ELC and see what they think about that.
+>
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
