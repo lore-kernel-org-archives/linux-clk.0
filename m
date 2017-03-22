@@ -1,74 +1,78 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:56320 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932647AbdCIPgU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2017 10:36:20 -0500
-From: Sricharan R <sricharan@codeaurora.org>
-To: robin.murphy@arm.com, will.deacon@arm.com, joro@8bytes.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, m.szyprowski@samsung.com,
-        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        mathieu.poirier@linaro.org, mark.rutland@arm.com
-Cc: sricharan@codeaurora.org
-Subject: [PATCH V3 0/5] iommu/arm-smmu: Add runtime pm/sleep support
-Date: Thu,  9 Mar 2017 21:05:43 +0530
-Message-Id: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <adrian.hunter@intel.com>
+Subject: Re: [PATCH v6 04/14] mmc: sdhci: Export sdhci_set_ios() from sdhci.c
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+ <b95bc01da68874afbf85968d6181c60508fc56ff.1487091464.git-series.gregory.clement@free-electrons.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+ linux-arm-kernel@lists.infradead.org,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+ devicetree@vger.kernel.org, Ziji Hu <huziji@marvell.com>,
+ Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+ Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
+ Doug Jones <dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
+ "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
+ Yehuda Yitschak <yehuday@marvell.com>, Marcin Wojtas <mw@semihalf.com>,
+ Hanna Hawa <hannah@marvell.com>, Kostya Porotchkin <kostap@marvell.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Message-ID: <05648b8f-26e8-8af7-5544-6e8ef1df7c43@intel.com>
+Date: Wed, 22 Mar 2017 16:48:43 +0200
+MIME-Version: 1.0
+In-Reply-To: <b95bc01da68874afbf85968d6181c60508fc56ff.1487091464.git-series.gregory.clement@free-electrons.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-This series provides the support for turning on the arm-smmu's
-clocks/power domains using runtime pm. This is done using the
-recently introduced device links patches, which lets the symmu's
-runtime to follow the master's runtime pm, so the smmu remains
-powered only when the masters use it.
+On 14/02/17 19:01, Gregory CLEMENT wrote:
+> From: Hu Ziji <huziji@marvell.com>
+> 
+> Export sdhci_set_ios() in sdhci.c.
+> Thus vendor sdhci driver can implement its own set_ios() routine.
+> 
+> Signed-off-by: Hu Ziji <huziji@marvell.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-Took some reference from the exynos runtime patches [2].
-Tested this with MDP, GPU, VENUS devices on apq8096-db820c board.
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Previous version of the patchset [1].
-
-[V3]
-   * Reworked the patches to keep the clocks init/enabling function
-     seperately for each compatible.
-
-   * Added clocks bindings for MMU40x/500.
-
-   * Added a new compatible for qcom,smmu-v2 implementation and
-     the clock bindings for the same.
-
-   * Rebased on top of 4.11-rc1
-
-[V2]
-   * Split the patches little differently.
-
-   * Addressed comments.
-
-   * Removed the patch #4 [3] from previous post
-     for arm-smmu context save restore. Planning to
-     post this separately after reworking/addressing Robin's
-     feedback.
-
-   * Reversed the sequence to disable clocks than enabling.
-     This was required for those cases where the
-     clocks are populated in a dependent order from DT.
-
-[1] https://www.spinics.net/lists/linux-arm-msm/msg23870.html
-[2] https://lkml.org/lkml/2016/10/20/70
-[3] https://patchwork.kernel.org/patch/9389717/
-
-Sricharan R (5):
-  iommu/arm-smmu: Add pm_runtime/sleep ops
-  iommu/arm-smmu: Add support for MMU40x/500 clocks
-  drivers: arm-smmu: Add clock support for QCOM_SMMUV2
-  iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
-  iommu/arm-smmu: Add the device_link between masters and smmu
-
- .../devicetree/bindings/iommu/arm,smmu.txt         |  35 +++
- drivers/iommu/arm-smmu.c                           | 349 ++++++++++++++++++++-
- 2 files changed, 373 insertions(+), 11 deletions(-)
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-
+> ---
+>  drivers/mmc/host/sdhci.c | 3 ++-
+>  drivers/mmc/host/sdhci.h | 1 +
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 23909804ffb8..0e9ed0fadff9 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -1570,7 +1570,7 @@ void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing)
+>  }
+>  EXPORT_SYMBOL_GPL(sdhci_set_uhs_signaling);
+>  
+> -static void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+> +void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>  {
+>  	struct sdhci_host *host = mmc_priv(mmc);
+>  	unsigned long flags;
+> @@ -1730,6 +1730,7 @@ static void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>  	mmiowb();
+>  	spin_unlock_irqrestore(&host->lock, flags);
+>  }
+> +EXPORT_SYMBOL_GPL(sdhci_set_ios);
+>  
+>  static int sdhci_get_cd(struct mmc_host *mmc)
+>  {
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 0b66f210ae82..3563c0c384ca 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -691,6 +691,7 @@ void sdhci_set_bus_width(struct sdhci_host *host, int width);
+>  void sdhci_reset(struct sdhci_host *host, u8 mask);
+>  void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
+>  int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
+> +void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios);
+>  
+>  #ifdef CONFIG_PM
+>  extern int sdhci_suspend_host(struct sdhci_host *host);
+> 
