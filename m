@@ -1,217 +1,64 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org
-Cc: linus.walleij@linaro.org,
-	robh+dt@kernel.org,
-	andy.yan@rock-chips.com,
-	sboyd@codeaurora.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	mturquette@baylibre.com,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 2/6] pinctrl: rockchip: rename RK1108 to RV1108
-Date: Fri, 17 Mar 2017 18:18:36 +0100
-Message-Id: <20170317171840.4683-3-heiko@sntech.de>
-In-Reply-To: <20170317171840.4683-1-heiko@sntech.de>
-References: <20170317171840.4683-1-heiko@sntech.de>
+Return-Path: <ulf.hansson@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <1490182543-28550-5-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170322113556eucas1p1b3434935701aba1db7868415a9c3b4f9@eucas1p1.samsung.com>
+ <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com> <1490182543-28550-5-git-send-email-m.szyprowski@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 22 Mar 2017 13:00:56 +0100
+Message-ID: <CAPDyKFrL9pvGQw+09rP52p72FqKuh6rLNt0NEUZ-TFxU838Nzw@mail.gmail.com>
+Subject: Re: [PATCH v6 4/4] clk: samsung: exynos-audss: Use runtime PM
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Andy Yan <andy.yan@rock-chips.com>
+On 22 March 2017 at 12:35, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> This patch adds support for runtime PM to Exynos Audio SubSystem driver to
+> enable full support for audio power domain on Exynos5 SoCs. The main change
+> is moving register saving and restoring code from system sleep PM ops to
+> runtime PM ops and implementing system sleep PM ops with generic
+> pm_runtime_force_suspend/resume helpers. Runtime PM of the Exynos AudSS
+> device is managed from clock core depending on the preparation status
+> of the provided clocks.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Rockchip finally named the SOC as RV1108, so change it.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Minor nitpick below.
 
-[adapted rk1108 dtsi to keep bisectability]
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/boot/dts/rk1108.dtsi      |  2 +-
- drivers/pinctrl/pinctrl-rockchip.c | 76 +++++++++++++++++++-------------------
- 2 files changed, 39 insertions(+), 39 deletions(-)
+[...]
 
-diff --git a/arch/arm/boot/dts/rk1108.dtsi b/arch/arm/boot/dts/rk1108.dtsi
-index d6194bff7afe..6c8fc19d0ecd 100644
---- a/arch/arm/boot/dts/rk1108.dtsi
-+++ b/arch/arm/boot/dts/rk1108.dtsi
-@@ -222,7 +222,7 @@
- 	};
- 
- 	pinctrl: pinctrl {
--		compatible = "rockchip,rk1108-pinctrl";
-+		compatible = "rockchip,rv1108-pinctrl";
- 		rockchip,grf = <&grf>;
- 		rockchip,pmu = <&pmugrf>;
- 		#address-cells = <1>;
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 1e276dfe1763..9000a986caab 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -59,7 +59,7 @@
- #define GPIO_LS_SYNC		0x60
- 
- enum rockchip_pinctrl_type {
--	RK1108,
-+	RV1108,
- 	RK2928,
- 	RK3066B,
- 	RK3188,
-@@ -713,13 +713,13 @@ static int rockchip_set_mux(struct rockchip_pin_bank *bank, int pin, int mux)
- 	return ret;
- }
- 
--#define RK1108_PULL_PMU_OFFSET		0x10
--#define RK1108_PULL_OFFSET		0x110
--#define RK1108_PULL_PINS_PER_REG	8
--#define RK1108_PULL_BITS_PER_PIN	2
--#define RK1108_PULL_BANK_STRIDE		16
-+#define RV1108_PULL_PMU_OFFSET		0x10
-+#define RV1108_PULL_OFFSET		0x110
-+#define RV1108_PULL_PINS_PER_REG	8
-+#define RV1108_PULL_BITS_PER_PIN	2
-+#define RV1108_PULL_BANK_STRIDE		16
- 
--static void rk1108_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
-+static void rv1108_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
- 					 int pin_num, struct regmap **regmap,
- 					 int *reg, u8 *bit)
- {
-@@ -728,27 +728,27 @@ static void rk1108_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
- 	/* The first 24 pins of the first bank are located in PMU */
- 	if (bank->bank_num == 0) {
- 		*regmap = info->regmap_pmu;
--		*reg = RK1108_PULL_PMU_OFFSET;
-+		*reg = RV1108_PULL_PMU_OFFSET;
- 	} else {
--		*reg = RK1108_PULL_OFFSET;
-+		*reg = RV1108_PULL_OFFSET;
- 		*regmap = info->regmap_base;
- 		/* correct the offset, as we're starting with the 2nd bank */
- 		*reg -= 0x10;
--		*reg += bank->bank_num * RK1108_PULL_BANK_STRIDE;
-+		*reg += bank->bank_num * RV1108_PULL_BANK_STRIDE;
- 	}
- 
--	*reg += ((pin_num / RK1108_PULL_PINS_PER_REG) * 4);
--	*bit = (pin_num % RK1108_PULL_PINS_PER_REG);
--	*bit *= RK1108_PULL_BITS_PER_PIN;
-+	*reg += ((pin_num / RV1108_PULL_PINS_PER_REG) * 4);
-+	*bit = (pin_num % RV1108_PULL_PINS_PER_REG);
-+	*bit *= RV1108_PULL_BITS_PER_PIN;
- }
- 
--#define RK1108_DRV_PMU_OFFSET		0x20
--#define RK1108_DRV_GRF_OFFSET		0x210
--#define RK1108_DRV_BITS_PER_PIN		2
--#define RK1108_DRV_PINS_PER_REG		8
--#define RK1108_DRV_BANK_STRIDE		16
-+#define RV1108_DRV_PMU_OFFSET		0x20
-+#define RV1108_DRV_GRF_OFFSET		0x210
-+#define RV1108_DRV_BITS_PER_PIN		2
-+#define RV1108_DRV_PINS_PER_REG		8
-+#define RV1108_DRV_BANK_STRIDE		16
- 
--static void rk1108_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
-+static void rv1108_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
- 					int pin_num, struct regmap **regmap,
- 					int *reg, u8 *bit)
- {
-@@ -757,19 +757,19 @@ static void rk1108_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
- 	/* The first 24 pins of the first bank are located in PMU */
- 	if (bank->bank_num == 0) {
- 		*regmap = info->regmap_pmu;
--		*reg = RK1108_DRV_PMU_OFFSET;
-+		*reg = RV1108_DRV_PMU_OFFSET;
- 	} else {
- 		*regmap = info->regmap_base;
--		*reg = RK1108_DRV_GRF_OFFSET;
-+		*reg = RV1108_DRV_GRF_OFFSET;
- 
- 		/* correct the offset, as we're starting with the 2nd bank */
- 		*reg -= 0x10;
--		*reg += bank->bank_num * RK1108_DRV_BANK_STRIDE;
-+		*reg += bank->bank_num * RV1108_DRV_BANK_STRIDE;
- 	}
- 
--	*reg += ((pin_num / RK1108_DRV_PINS_PER_REG) * 4);
--	*bit = pin_num % RK1108_DRV_PINS_PER_REG;
--	*bit *= RK1108_DRV_BITS_PER_PIN;
-+	*reg += ((pin_num / RV1108_DRV_PINS_PER_REG) * 4);
-+	*bit = pin_num % RV1108_DRV_PINS_PER_REG;
-+	*bit *= RV1108_DRV_BITS_PER_PIN;
- }
- 
- #define RK2928_PULL_OFFSET		0x118
-@@ -1271,7 +1271,7 @@ static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
- 		return !(data & BIT(bit))
- 				? PIN_CONFIG_BIAS_PULL_PIN_DEFAULT
- 				: PIN_CONFIG_BIAS_DISABLE;
--	case RK1108:
-+	case RV1108:
- 	case RK3188:
- 	case RK3288:
- 	case RK3368:
-@@ -1318,7 +1318,7 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
- 
- 		spin_unlock_irqrestore(&bank->slock, flags);
- 		break;
--	case RK1108:
-+	case RV1108:
- 	case RK3188:
- 	case RK3288:
- 	case RK3368:
-@@ -1581,7 +1581,7 @@ static bool rockchip_pinconf_pull_valid(struct rockchip_pin_ctrl *ctrl,
- 					pull == PIN_CONFIG_BIAS_DISABLE);
- 	case RK3066B:
- 		return pull ? false : true;
--	case RK1108:
-+	case RV1108:
- 	case RK3188:
- 	case RK3288:
- 	case RK3368:
-@@ -2699,7 +2699,7 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static struct rockchip_pin_bank rk1108_pin_banks[] = {
-+static struct rockchip_pin_bank rv1108_pin_banks[] = {
- 	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", IOMUX_SOURCE_PMU,
- 					     IOMUX_SOURCE_PMU,
- 					     IOMUX_SOURCE_PMU,
-@@ -2709,15 +2709,15 @@ static struct rockchip_pin_bank rk1108_pin_banks[] = {
- 	PIN_BANK_IOMUX_FLAGS(3, 32, "gpio3", 0, 0, 0, 0),
- };
- 
--static struct rockchip_pin_ctrl rk1108_pin_ctrl = {
--	.pin_banks		= rk1108_pin_banks,
--	.nr_banks		= ARRAY_SIZE(rk1108_pin_banks),
--	.label			= "RK1108-GPIO",
--	.type			= RK1108,
-+static struct rockchip_pin_ctrl rv1108_pin_ctrl = {
-+	.pin_banks		= rv1108_pin_banks,
-+	.nr_banks		= ARRAY_SIZE(rv1108_pin_banks),
-+	.label			= "RV1108-GPIO",
-+	.type			= RV1108,
- 	.grf_mux_offset		= 0x10,
- 	.pmu_mux_offset		= 0x0,
--	.pull_calc_reg		= rk1108_calc_pull_reg_and_bit,
--	.drv_calc_reg		= rk1108_calc_drv_reg_and_bit,
-+	.pull_calc_reg		= rv1108_calc_pull_reg_and_bit,
-+	.drv_calc_reg		= rv1108_calc_drv_reg_and_bit,
- };
- 
- static struct rockchip_pin_bank rk2928_pin_banks[] = {
-@@ -2975,8 +2975,8 @@ static struct rockchip_pin_ctrl rk3399_pin_ctrl = {
- };
- 
- static const struct of_device_id rockchip_pinctrl_dt_match[] = {
--	{ .compatible = "rockchip,rk1108-pinctrl",
--		.data = (void *)&rk1108_pin_ctrl },
-+	{ .compatible = "rockchip,rv1108-pinctrl",
-+		.data = (void *)&rv1108_pin_ctrl },
- 	{ .compatible = "rockchip,rk2928-pinctrl",
- 		.data = (void *)&rk2928_pin_ctrl },
- 	{ .compatible = "rockchip,rk3036-pinctrl",
--- 
-2.11.0
+>
+> -#ifdef CONFIG_PM_SLEEP
+>  static unsigned long reg_save[][2] = {
+>         { ASS_CLK_SRC,  0 },
+>         { ASS_CLK_DIV,  0 },
+>         { ASS_CLK_GATE, 0 },
+>  };
+>
+> -static int exynos_audss_clk_suspend(struct device *dev)
+> +static int __maybe_unused exynos_audss_clk_suspend(struct device *dev)
+
+Instead of using "__maybe_unused", I would rather change from
+"CONFIG_PM_SLEEP" to "CONFIG_PM". However, no strong opinion.
+
+Perhaps you need something like this for patch 3/4 as well?
+
+>  {
+>         int i;
+>
+> @@ -54,7 +54,7 @@ static int exynos_audss_clk_suspend(struct device *dev)
+>         return 0;
+>  }
+
+[...]
+
+Kind regards
+Uffe
