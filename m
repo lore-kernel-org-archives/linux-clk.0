@@ -1,45 +1,49 @@
-Return-Path: <tony@atomide.com>
-Date: Wed, 22 Mar 2017 18:00:57 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
-Message-ID: <20170323010057.GI10760@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <20170317152536.GT20572@atomide.com>
- <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 Mar 2017 14:25:26 +0100
+Message-ID: <CAMuHMdXcqsOp=W-M0Z4vCmDkq8yCwu9vq3+zUVJiPXGBzKAo9g@mail.gmail.com>
+Subject: Re: [PATCH 0/7] clk: renesas: rcar-gen3: Misc fixes and cleanups
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [170317 14:39]:
-> On 17/03/17 17:25, Tony Lindgren wrote:
-> > * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
-> > > Any additional testing on omap4 welcome as this series basically
-> > > tweaks every possible peripheral clock on the SoC.
-> > 
-> > Without the last patch in this series, booting fails for me:
-> > 
-> > [    5.074890] l4_per_cm:clk:0120:0: failed to disable
-> > [    5.085113] l4_per_cm:clk:0128:0: failed to disable
-> > 
-> > Care to check that booting keeps working for each patch in the
-> > series to avoid breaking git bisect for booting?
-> 
-> Hmm, I think patch 8+9 need to be squashed then. I can double check this
-> next week though.
+On Mon, Mar 13, 2017 at 5:19 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> This patch series contains miscellaneous fixes and cleanups for the
+> Renesas R-Car Gen3 (H3 and M3-W) clock drivers:
+>   - Correct parent clock for Audio DMACs,
+>   - Correct names of watchdog clocks,
+>   - Reformat core clock tables for easier comparisons between drivers,
+>   - Add workaround for PLL0/2/4 errata on R-Car H3 ES1.0.
+>
+> I plan to queue these up in clk-renesas-for-v4.12.
 
-Also looks like with this set merged HDMI stops working on
-omap4 with:
+Queued up with Morimoto-san's grammar fix and Acked-by.
 
-HDMIWP: omapdss HDMIWP error: Failed to set PHY power mode to 1
+> Geert Uytterhoeven (7):
+>   clk: renesas: r8a7795: Correct parent clock and sort order for Audio
+>     DMACs
+>   clk: renesas: r8a7795: Correct name of watchdog clock
+>   clk: renesas: r8a7796: Correct name of watchdog clock
+>   clk: renesas: r8a7795: Reformat core clock table
+>   clk: renesas: r8a7796: Reformat core clock table
+>   clk: renesas: rcar-gen3-cpg: Pass mode pins to rcar_gen3_cpg_init()
+>   clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3
+>     ES1.0
 
-Other than that, things seem to behave quite nicely for me
-with this set.
+Gr{oetje,eeting}s,
 
-Regards,
+                        Geert
 
-Tony
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
