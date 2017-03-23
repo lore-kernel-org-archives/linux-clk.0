@@ -1,91 +1,143 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:34782 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933419AbdCaRym (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 31 Mar 2017 13:54:42 -0400
-Date: Fri, 31 Mar 2017 18:54:57 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: robin.murphy@arm.com, joro@8bytes.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, m.szyprowski@samsung.com,
-        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        mathieu.poirier@linaro.org, mark.rutland@arm.com
-Subject: Re: [PATCH V3 0/5] iommu/arm-smmu: Add runtime pm/sleep support
-Message-ID: <20170331175457.GD4897@arm.com>
-References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>, sboyd@codeaurora.org,
+ carlo@caione.org, khilman@baylibre.com
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <fb561438-dc9a-2e35-337c-6cabe589b0fe@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
+ <1489411604-18700-4-git-send-email-narmstrong@baylibre.com>
+ <149014019624.54062.687648107621865354@resonance>
+ <fb561438-dc9a-2e35-337c-6cabe589b0fe@baylibre.com>
+Message-ID: <149023325102.54062.9484584718973106363@resonance>
+Subject: Re: [PATCH 3/5] clk: meson-gxbb: Add GXL/GXM GP0 Variant
+Date: Wed, 22 Mar 2017 18:40:51 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 09, 2017 at 09:05:43PM +0530, Sricharan R wrote:
-> This series provides the support for turning on the arm-smmu's
-> clocks/power domains using runtime pm. This is done using the
-> recently introduced device links patches, which lets the symmu's
-> runtime to follow the master's runtime pm, so the smmu remains
-> powered only when the masters use it.
+Quoting Neil Armstrong (2017-03-22 02:22:57)
+> On 03/22/2017 12:49 AM, Michael Turquette wrote:
+> > Hi Neil,
+> > =
 
-Do you have any numbers for the power savings you achieve with this?
-How often do we actually manage to stop the SMMU clocks on an SoC with
-a handful of masters?
+> > Quoting Neil Armstrong (2017-03-13 06:26:42)
+> >> @@ -821,6 +893,7 @@ struct pll_params_table gxbb_gp0_params_table[] =
+=3D {
+> >>         &gxbb_hdmi_pll,
+> >>         &gxbb_sys_pll,
+> >>         &gxbb_gp0_pll,
+> >> +       &gxl_gp0_pll,
+> =
 
-In other words, is this too coarse-grained to be useful, or is it common
-that all the devices upstream of the SMMU are suspended?
+> Yes, because this is the table used to change the register base, this won=
+'t harm in any way
+> to add SoC variant clocks, since they they are initialized using the gxbb=
+_hw_onecell_data table.
+> =
 
-Thanks,
+> > =
 
-Will
+> > Is there a reason for adding the pointer to this array here? It seems to
+> > me that the gxbb_gp0_pll and gxl_gp0_pll are mutually exclusive, so
+> > perhaps two different tables should be used?
+> > =
 
-> 
-> Took some reference from the exynos runtime patches [2].
-> Tested this with MDP, GPU, VENUS devices on apq8096-db820c board.
-> 
-> Previous version of the patchset [1].
-> 
-> [V3]
->    * Reworked the patches to keep the clocks init/enabling function
->      seperately for each compatible.
-> 
->    * Added clocks bindings for MMU40x/500.
-> 
->    * Added a new compatible for qcom,smmu-v2 implementation and
->      the clock bindings for the same.
-> 
->    * Rebased on top of 4.11-rc1
-> 
-> [V2]
->    * Split the patches little differently.
-> 
->    * Addressed comments.
-> 
->    * Removed the patch #4 [3] from previous post
->      for arm-smmu context save restore. Planning to
->      post this separately after reworking/addressing Robin's
->      feedback.
-> 
->    * Reversed the sequence to disable clocks than enabling.
->      This was required for those cases where the
->      clocks are populated in a dependent order from DT.
-> 
-> [1] https://www.spinics.net/lists/linux-arm-msm/msg23870.html
-> [2] https://lkml.org/lkml/2016/10/20/70
-> [3] https://patchwork.kernel.org/patch/9389717/
-> 
-> Sricharan R (5):
->   iommu/arm-smmu: Add pm_runtime/sleep ops
->   iommu/arm-smmu: Add support for MMU40x/500 clocks
->   drivers: arm-smmu: Add clock support for QCOM_SMMUV2
->   iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
->   iommu/arm-smmu: Add the device_link between masters and smmu
-> 
->  .../devicetree/bindings/iommu/arm,smmu.txt         |  35 +++
->  drivers/iommu/arm-smmu.c                           | 349 ++++++++++++++++++++-
->  2 files changed, 373 insertions(+), 11 deletions(-)
-> 
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-> 
+> >>  };
+> >>  =
+
+> >>  static struct meson_clk_mpll *const gxbb_clk_mplls[] =3D {
+> >> @@ -923,6 +996,10 @@ static int gxbb_clkc_probe(struct platform_device=
+ *pdev)
+> >>         struct clk *parent_clk;
+> >>         struct device *dev =3D &pdev->dev;
+> >>  =
+
+> >> +       /* Override GP0 clock for GXL/GXM */
+> >> +       if (of_device_is_compatible(dev->of_node, "amlogic,gxl-clkc"))
+> >> +               gxbb_hw_onecell_data.hws[CLKID_GP0_PLL] =3D &gxl_gp0_p=
+ll.hw;
+> > =
+
+> > Similarly, this above is a little ugly compared to dedicated tables for
+> > each variant.
+> =
+
+> Here is the true uglyness, but would you like to have the exact same gxbb=
+_hw_onecell_data
+> duplicated for only two different clocks ?
+> The gxbb_hw_onecell_data table is 105 lines, and when adding new clocks, =
+we will need to
+> make sure they are still synchronized.
+> =
+
+> If you have a better idea... I can still push a v2 with such table with a=
+lso a
+> separate gxbb_clk_plls table stored in a struct given from of_device_get_=
+match_data()
+
+I was not thinking of duplicating all of the clock data table, but
+breaking out the parts with variation into separate tables. E.g. a
+common table, a gxbb table and a gp0 table.
+
+But on second look your original solution is fine, especially since
+those two new tables I mentioned would only have a single element in
+them, which is silly.
+
+Ack.
+
+Regards,
+Mike
+
+> =
+
+> Neil
+> =
+
+> > =
+
+> > Regards,
+> > Mike
+> > =
+
+> >> +
+> >>         /*  Generic clocks and PLLs */
+> >>         clk_base =3D of_iomap(dev->of_node, 0);
+> >>         if (!clk_base) {
+> >> @@ -996,6 +1073,7 @@ static int gxbb_clkc_probe(struct platform_device=
+ *pdev)
+> >>  =
+
+> >>  static const struct of_device_id gxbb_clkc_match_table[] =3D {
+> >>         { .compatible =3D "amlogic,gxbb-clkc" },
+> >> +       { .compatible =3D "amlogic,gxl-clkc" },
+> >>         { }
+> >>  };
+> >>  =
+
+> >> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+> >> index 8ee2022..7f99bf6 100644
+> >> --- a/drivers/clk/meson/gxbb.h
+> >> +++ b/drivers/clk/meson/gxbb.h
+> >> @@ -71,6 +71,8 @@
+> >>  #define HHI_GP0_PLL_CNTL2              0x44 /* 0x11 offset in data sh=
+eet */
+> >>  #define HHI_GP0_PLL_CNTL3              0x48 /* 0x12 offset in data sh=
+eet */
+> >>  #define HHI_GP0_PLL_CNTL4              0x4c /* 0x13 offset in data sh=
+eet */
+> >> +#define        HHI_GP0_PLL_CNTL5               0x50 /* 0x14 offset in=
+ data sheet */
+> >> +#define        HHI_GP0_PLL_CNTL1               0x58 /* 0x16 offset in=
+ data sheet */
+> >>  =
+
+> >>  #define HHI_XTAL_DIVN_CNTL             0xbc /* 0x2f offset in data sh=
+eet */
+> >>  #define HHI_TIMER90K                   0xec /* 0x3b offset in data sh=
+eet */
+> >> -- =
+
+> >> 1.9.1
+> >>
+>=20
