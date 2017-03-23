@@ -1,24 +1,33 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, andy.yan@rock-chips.com, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com
-Subject: Re: [PATCH v2 4/6] clk: rockchip: rename RK1108 to RV1108
-Date: Wed, 22 Mar 2017 18:06:17 +0100
-Message-ID: <3220937.UdfUUayLc5@phil>
-In-Reply-To: <20170317171840.4683-5-heiko@sntech.de>
-References: <20170317171840.4683-1-heiko@sntech.de> <20170317171840.4683-5-heiko@sntech.de>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <20170317171840.4683-2-heiko@sntech.de>
+References: <20170317171840.4683-1-heiko@sntech.de> <20170317171840.4683-2-heiko@sntech.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 23 Mar 2017 10:16:38 +0100
+Message-ID: <CACRpkdbK4O3F_+qOdzepR1ercr-xuHPAT7pnSTyb0y1mUGv-qQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] dt-bindings: rockchip,pinctrl: rename RK1108 to RV1108
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>,
+	Andy Yan <andy.yan@rock-chips.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Freitag, 17. M=E4rz 2017, 18:18:38 CET schrieb Heiko Stuebner:
+On Fri, Mar 17, 2017 at 6:18 PM, Heiko Stuebner <heiko@sntech.de> wrote:
+
 > From: Andy Yan <andy.yan@rock-chips.com>
->=20
+>
 > Rockchip finally named the SOC as RV1108, so change it.
->=20
+> Also move the compatible list to one compatible per line.
+>
 > Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
->=20
-> [include rename in rk1108.dtsi to prevent compile errors]
+> Acked-by: Rob Herring <robh@kernel.org>
 > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 
-applied to my clk-branch for 4.12
+Patch applied.
+
+Yours,
+Linus Walleij
