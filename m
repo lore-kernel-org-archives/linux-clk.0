@@ -1,44 +1,89 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Mon, 20 Mar 2017 16:29:22 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Stephen
- Warren" <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: tegra: fix disable unused for clocks sharing enable
- bit
-Message-ID: <20170320142922.GI21907@tbergstrom-lnx.Nvidia.com>
-References: <1489587055-23722-1-git-send-email-pdeschrijver@nvidia.com>
- <20170320132746.GK22463@ulmo.ba.sec>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20170320132746.GK22463@ulmo.ba.sec>
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:40063 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751660AbdCWKbW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Mar 2017 06:31:22 -0400
+Subject: Re: [PATCH] PM / runtime: Use synchronous runtime PM call in
+ rpm_put_suppliers()
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <3b74f606-31ea-e11c-2887-a8cf1fde1eb6@samsung.com>
+Date: Thu, 23 Mar 2017 11:31:16 +0100
+MIME-version: 1.0
+In-reply-to: <CAJZ5v0ihYQp4_oJCu3Tugbqrm=68hcxdg8-yUphbCXCUw3UzPw@mail.gmail.com>
+Content-type: text/plain; charset=utf-8; format=flowed
+References: <CGME20170322092305eucas1p20d2a6dfede483210febea5b5e0ff68db@eucas1p2.samsung.com>
+ <1490174570-18345-1-git-send-email-m.szyprowski@samsung.com>
+ <CAPDyKFq+mTvruQb5ifj3etMxSCWgDZTZ6ebGkk84UCQDqjR4-A@mail.gmail.com>
+ <CAJZ5v0ihYQp4_oJCu3Tugbqrm=68hcxdg8-yUphbCXCUw3UzPw@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 20, 2017 at 02:27:46PM +0100, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Wed, Mar 15, 2017 at 04:10:54PM +0200, Peter De Schrijver wrote:
-> > In case 2 clocks share an enable bit and one of them is enabled by a driver
-> > and the other one is not, CCF will think it's enabled because it will only
-> > look at the hw state. Therefor it will disable the clock and thus also
-> > disable the other clock which was enabled. Solve this by reading the
-> > initial state of the enable bit and incrementing the refcount if it's set.
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > ---
-> >  drivers/clk/tegra/clk-periph-gate.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> 
-> I think you had already sent a version of this patch a couple of weeks
-> ago. I've applied the first version since I couldn't spot any delta
-> between them.
+Hi Rafael,
 
-Hmm. Could be.
+On 2017-03-22 21:56, Rafael J. Wysocki wrote:
+> On Wed, Mar 22, 2017 at 12:34 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> On 22 March 2017 at 10:22, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>>> rpm_put_suppliers() might be called as a result of pm_runtime_put_sync()
+>>> call, where the called explicitly wants to perform the operation in
+>>> synchronous way to avoid some deadlocks related to concurrent code
+>>> execution in the PM workers. However the current code for handling device
+>>> links always use asynchronous calls. This patch changes it to always use
+>>> the synchronous calls.
+>> This is a good idea! It is better to leave the decision to the "leaf"
+>> node of whether to use asynchronous mode or not.
+> One immediate concern that I have is that this happens in an SRCU
+> read-side critical section and sync runtime suspend can take arbitrary
+> amount of time, especially if those devices have suppliers etc.  You
+> may very well wait for an entire subtree to suspend synchronously
+> here.
+>
+> Moreover, if the suppliers have parents, those parents won't be
+> suspended synchronously anyway, so this only addresses the first level
+> of hierarchy in that case.
+>
+> Also the behavior for suppliers follows the behavior for parents and I
+> don't quite see the reason for these two cases to behave differently
+> in principle.
 
-Cheers,
+Well, then I don't get why do we really have pm_runtime_put_sync() if it
+doesn't guarantee synchronous suspend operations. This might be really 
+tricky
+to debug locking issues if one assumes that suspend operation has been
+finished, but it is still being performed in parallel by the worker.
 
-Peter.
+>>> This patch fixes the potential deadlock, which appears during adding
+>>> runtime PM support to clock framework, which uses global mutex, which is
+>>> reentrant only for the current process, so trying to execute runtime PM
+>>> callback from the worker results in deadlock (the mentioned mutex is
+>>> already taken by the current process, which waits for execution of PM
+>>> worker).
+>> This just tells that the locking mechanism for clocks are fragile.
+> Right.
+>
+> We seem to be working around problems in there with this patch.
+
+Not really. This problem will reappear always if re-entrant locks are used.
+Clocks are just one of such frameworks, which use such locking mechanism.
+
+Maybe propagating flags from the caller will be a better approach in this
+case? So if caller wants synchronous call, it will be properly propagated,
+otherwise, the current behavior will take place. Using pm_runtime_put_sync
+is not that common, so probably in most cases callers have a good reason
+for that. It would make sense to apply this also to operations on parents.
+
+>> Whether it is a good motivation for this change, I am not sure.
+>>
+>> In either case, I like the change!
+> Why exactly do you like it?
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
