@@ -1,170 +1,41 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Mon, 20 Mar 2017 10:56:49 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: Re: [PATCH v2 3/8] dt-bindings: add bindings for DE2 on V3s SoC
-Message-ID: <20170320095649.pnokqzv3akubkklm@lukather>
-References: <20170316204748.8596-1-icenowy@aosc.xyz>
- <20170316204748.8596-4-icenowy@aosc.xyz>
+Return-Path: <marc.zyngier@arm.com>
+Subject: Re: [PATCH v3 02/12] irqchip: mtk-sysirq: extend intpol base to
+ arbitrary number
+To: Mars Cheng <mars.cheng@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+ <1489937193-2953-3-git-send-email-mars.cheng@mediatek.com>
+Cc: CC Hwang <cc.hwang@mediatek.com>, Loda Chou <loda.chou@mediatek.com>,
+ Miles Chen <miles.chen@mediatek.com>, Jades Shih <jades.shih@mediatek.com>,
+ Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang
+ <my.chuang@mediatek.com>, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ wsd_upstream@mediatek.com, linux-clk@vger.kernel.org
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <3790b6ad-12c0-0c48-c24e-0f3397c6bbba@arm.com>
+Date: Thu, 23 Mar 2017 16:25:54 +0000
 MIME-Version: 1.0
-In-Reply-To: <20170316204748.8596-4-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============4593027427558975992=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <1489937193-2953-3-git-send-email-mars.cheng@mediatek.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
+On 19/03/17 15:26, Mars Cheng wrote:
+> Originally driver only supports one base. However, MT6797 has
+> more than one bases to configure interrupt polarity. To support
+> possible design change, here comes a solution to use arbitrary
+> number of bases.
+> 
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
 
---===============4593027427558975992==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4sksu36x4iadloy5"
-Content-Disposition: inline
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
+What is the merge strategy for this? I'm happy to take the irqchip stuff
+through my tree, but there is much more in this series...
 
---4sksu36x4iadloy5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks,
 
-On Fri, Mar 17, 2017 at 04:47:43AM +0800, Icenowy Zheng wrote:
-> Allwinner V3s SoC have a display engine which have a different pipeline
-> with older SoCs.
->=20
-> Add document for it (new compatibles and the new "mixer" part).
->=20
-> The paragraph of TCON is also refactored, for furtherly add TCONs in
-> A83T/H3/A64/H5 that have only a channel 1 (used for HDMI or TV Encoder).
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-> ---
->  .../bindings/display/sunxi/sun4i-drm.txt           | 37 ++++++++++++++++=
-+++---
->  1 file changed, 33 insertions(+), 4 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.tx=
-t b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> index b82c00449468..2c293247c41d 100644
-> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> @@ -31,11 +31,11 @@ Required properties:
->     * allwinner,sun6i-a31-tcon
->     * allwinner,sun6i-a31s-tcon
->     * allwinner,sun8i-a33-tcon
-> +   * allwinner,sun8i-v3s-tcon
->   - reg: base address and size of memory-mapped region
->   - interrupts: interrupt associated to this IP
-> - - clocks: phandles to the clocks feeding the TCON. Three are needed:
-> + - clocks: phandles to the clocks feeding the TCON
->     - 'ahb': the interface clocks
-> -   - 'tcon-ch0': The clock driving the TCON channel 0
->   - resets: phandles to the reset controllers driving the encoder
->     - "lcd": the reset line for the TCON channel 0
-> =20
-> @@ -52,7 +52,12 @@ Required properties:
->    second the block connected to the TCON channel 1 (usually the TV
->    encoder)
-> =20
-> -On SoCs other than the A33, there is one more clock required:
-> +On TCONs that have a channel 0 (currently all TCONs supported), there
-> +is one more clock required:
-> +   - 'tcon-ch0': The clock driving the TCON channel 0
-> +
-> +On TCONs that have a channel 1 (currently all TCONs except the ones in
-> +A33 and V3s), there is one more clock required:
->     - 'tcon-ch1': The clock driving the TCON channel 1
-> =20
->  DRC
-> @@ -137,6 +142,26 @@ Required properties:
->    Documentation/devicetree/bindings/media/video-interfaces.txt. The
->    first port should be the input endpoints, the second one the outputs
-> =20
-> +Display Engine 2.0 Mixer
-> +------------------------
-> +
-> +The DE2 mixer have many functionalities, currently only layer blending is
-> +supported.
-> +
-> +Required properties:
-> +  - compatible: value must be one of:
-> +    * allwinner,sun8i-v3s-de2-mixer
-> +  - reg: base address and size of the memory-mapped region.
-> +  - clocks: phandles to the clocks feeding the frontend and backend
-> +    * bus: the backend interface clock
-> +    * ram: the backend DRAM clock
-> +  - clock-names: the clock names mentioned above
-> +  - resets: phandles to the reset controllers driving the backend
-> +
-> +- ports: A ports node with endpoint definitions as defined in
-> +  Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> +  first port should be the input endpoints, the second one the output
-> +
-> =20
->  Display Engine Pipeline
->  -----------------------
-> @@ -151,9 +176,13 @@ Required properties:
->      * allwinner,sun6i-a31-display-engine
->      * allwinner,sun6i-a31s-display-engine
->      * allwinner,sun8i-a33-display-engine
-> +    * allwinner,sun8i-v3s-display-engine
-> =20
->    - allwinner,pipelines: list of phandle to the display engine
-> -    frontends available.
-> +    pipeline entry point. For SoCs with original DE (currently
-> +    all SoCs supported by display engine except V3s), this
-> +    phandle should be a display frontend or backend; for SoCs
-> +    with DE2, this phandle should be a mixer.
-
-In the old ones, this should never be the backend.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---4sksu36x4iadloy5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYz6dhAAoJEBx+YmzsjxAgjtQP/208fM4WV3++1VkzGyr2eEkK
-ZPJ4x0HW57Gy25tfhdyTKc0VpG/p4AdfKp+CZtjuIzBsmab7zpQBTjiMoBUyz5hj
-IPNumRi/FeVp5SeQTKEV0TXhJZhy0Ft3nNxG8jTHmaO70sgL4//HUz8J3IN8BmNv
-BaDc3KGLsWIwxmOm6miVWWMUA+beNPkTms6v0zin1y2gXu7396PzK4Jyrhni07GU
-fcwheXSn3A3iG0+V13tBsmK9NkyE1cMNIpUJ2pX8CewzBmqfzM3oAfnfeLtVhv28
-4Iq2Hf4oSs/5a9548xyFa3qZbqplyoOb1xFygmXC4Ebt1+SJeVb10PxXfDy7cuhA
-3MUY8pPziz8Ac936cpmphHtyR4BmPS8v9OpC4n56v1amxOn5kwYeNPv4eanPrIt8
-GoYX3jQhUH+dbkxzj4g62JXySSbMyQfuVgBZQ06MawErusY870FPhbE7jFPXguUL
-Yt5Z1XiSwRb1EjEmxyKP8byh109lwXdK63muAr7xRltnq6LtINR1CiWoEphHwakj
-NfF9qtIaE8/VUv1Lj/1CS+kkEoQP4Xyw7CEYuZgrfLCy+w7A8rup3XQI7H0wf9Y+
-qOIZPO1a/2Dcd7P34d07wML6ngiSK9jrXcU3jjksVs0TpLEk4X7ltJmCdRwv+FK7
-sHeBf81vEOrBQ/FtMzbx
-=q1HR
------END PGP SIGNATURE-----
-
---4sksu36x4iadloy5--
-
-
---===============4593027427558975992==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============4593027427558975992==--
+	M.
+-- 
+Jazz is not dead. It just smells funny...
