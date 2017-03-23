@@ -1,42 +1,91 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv2 1/9] Documentation: dt-bindings: Add binding
- documentation for TI clkctrl clocks
-To: Tony Lindgren <tony@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <1489741781-12816-2-git-send-email-t-kristo@ti.com>
- <20170317141813.GS20572@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>, Paul Walmsley <paul@pwsan.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <2c30dc5a-203e-fbcf-229f-b4366dfe2774@ti.com>
-Date: Fri, 17 Mar 2017 17:01:22 +0200
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Thu, 23 Mar 2017 13:43:20 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] coresight: add support for debug module
+Message-ID: <20170323054319.GA7716@leoy-linaro>
+References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
+ <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
+ <671a0b39-b635-6e0e-d3fa-967651f2e29c@arm.com>
+ <CAJ9a7VgCjXNGC4C49PxL-nBxzhMCmA8Mb-0C_epahizA5EL2HA@mail.gmail.com>
+ <e7a97c52-f61a-e503-f626-09563fa100b8@arm.com>
+ <CAJ9a7VhvCS3xXAHBt0AUVB2Zp2P1HP_LQm4KiptiBT9VJ1fC0Q@mail.gmail.com>
+ <4961636d-d77c-0f9a-7076-4db1ef456073@arm.com>
+ <1e6d6a91-3bdc-7cfb-a96f-780c959e0316@arm.com>
+ <7a028460-d598-e337-5e09-234beddca88b@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20170317141813.GS20572@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <7a028460-d598-e337-5e09-234beddca88b@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 17/03/17 16:18, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
->> From: Tony Lindgren <tony@atomide.com>
->> +Example: Clock controller node on omap 4430:
->> +
->> +&cm2 {
->> +	l4per: cm@1400 {
->> +		cm_l4per@0 {
->> +			cm_l4per_clkctrl: clk@20 {
->> +				compatible = "ti,clkctrl";
->> +				reg = <0x20 0x1b0>;
->> +				#clock-cells = <4>;
->> +			};
->> +		};
->> +	};
->> +};
->
-> The #clock-cells = <4> is a typo left over from earlier revisions,
-> care to update it to 2 like the binding doc specifies?
+On Wed, Mar 22, 2017 at 05:25:50PM +0000, Sudeep Holla wrote:
+> 
+> 
+> On 22/03/17 17:09, Suzuki K Poulose wrote:
+> > On 22/03/17 16:17, Sudeep Holla wrote:
+> 
+> [...]
+> 
+> >> 
+> >> Point taken. So we could just specify that all necessary power
+> >> domains need to be on for proper functionality for this feature and
+> >> that it's highly platform specific instead of mixing cpu/cluster
+> >> idle details here.
+> >> 
+> >>> The key point is that the caveat in using this driver is that
+> >>> the power management has to be considered on a platform specific
+> >>> basis before it is configured; and appropriate actions may be
+> >>> needed for it to work correctly. Without this then the driver
+> >>> could cause more issues than it debugs. A user selecting this
+> >>> _must_ be told about these issues
+> >>> 
+> > 
+> > So given all the possible caveats, I think we :
+> > 
+> > 1) Shouldn't enable the driver by default at runtime even if it is 
+> > built-in. 
+> > 2) Should provide mechanisms to turn it on at boot (via
+> > kernel commandline) or anytime later (via sysfs), which kind of puts
+> > the responsibility back on the user : "You know what you are doing". 
+> > 3) Shouldn't turn the driver on based on "nohlt" which the user
+> > could use it for some other purposes, without explicit intention of
+> > turning this driver on).
+> > 4) Should document the fact that, on some
+> > platforms, the user may have to disable CPUidle explicitly to get the
+> > driver working. But let us not make it the default. The user with a
+> > not so ideal platform could add "nohlt" and get it working.
+> > 
+> 
+> Agreed on all points and well summarized.
+> I would like to highlight (3) and (4) as it needs to be well understood.
+> 
+> "nohlt" has a *different* meaning already, so using that in this
+> driver for something else is simple wrong as it affects the system in
+> unintended ways. And yes if user (mis)uses it to get things working,
+> it's fine but shouldn't be recommended way.
 
-Ouch, yea I can update that. Will post along with v3 once more comments 
-pour in.
+Understand this point.
 
--Tero
+I will try to use general way to constraint CPUIdle like other
+drivers.
+
+Thanks all for these good suggestions :)
+
+Thanks,
+Leo Yan
