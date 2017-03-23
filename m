@@ -1,74 +1,127 @@
-Return-Path: <wens@csie.org>
+Return-Path: <mike.leach@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <0b3b516527c42e745ed8a35736948a383411bd50.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
- <0b3b516527c42e745ed8a35736948a383411bd50.1488876832.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 7 Mar 2017 18:05:17 +0800
-Message-ID: <CAGb2v67t7O4AuSXUupB3EU7OZdxgQbeyB6qL_g3x_BXOFLg9Bg@mail.gmail.com>
-Subject: Re: [PATCH 12/15] drm/sun4i: tcon: multiply the vtotal when not in interlace
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+In-Reply-To: <20170323054319.GA7716@leoy-linaro>
+References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
+ <1488520809-31670-4-git-send-email-leo.yan@linaro.org> <671a0b39-b635-6e0e-d3fa-967651f2e29c@arm.com>
+ <CAJ9a7VgCjXNGC4C49PxL-nBxzhMCmA8Mb-0C_epahizA5EL2HA@mail.gmail.com>
+ <e7a97c52-f61a-e503-f626-09563fa100b8@arm.com> <CAJ9a7VhvCS3xXAHBt0AUVB2Zp2P1HP_LQm4KiptiBT9VJ1fC0Q@mail.gmail.com>
+ <4961636d-d77c-0f9a-7076-4db1ef456073@arm.com> <1e6d6a91-3bdc-7cfb-a96f-780c959e0316@arm.com>
+ <7a028460-d598-e337-5e09-234beddca88b@arm.com> <20170323054319.GA7716@leoy-linaro>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Thu, 23 Mar 2017 12:27:09 +0000
+Message-ID: <CAJ9a7Vj8Rt7+Pq+pYg-K+xHNYnSyR+oN4RHM6XTb_Ju+akgbug@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] coresight: add support for debug module
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>, John Stultz <john.stultz@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>, Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Also agree with Suzuki's excellent summary.
 
-On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> It appears that the total vertical resolution needs to be doubled when
-> we're not in interlaced. Make sure that is the case.
+A couple of notes on using EDPRCR....
 
-This is true for both channels, though we handle them differently.
+The logic for this assuming a correctly implemented system should be
+something like.....
 
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> index e44217fb4f6f..515fa56c1e6a 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -248,10 +248,13 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon, struct drm_encoder *encoder,
->                      SUN4I_TCON1_BASIC3_H_BACKPORCH(bp));
->
->         bp = mode->crtc_vtotal - mode->crtc_vsync_start;
-> +       val = mode->crtc_vtotal;
-> +       if (!(mode->flags & DRM_MODE_FLAG_INTERLACE))
-> +               val = val * 2;
->         DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
->                          mode->vtotal, bp);
->         regmap_write(tcon->regs, SUN4I_TCON1_BASIC4_REG,
-> -                    SUN4I_TCON1_BASIC4_V_TOTAL(mode->vtotal) |
-> +                    SUN4I_TCON1_BASIC4_V_TOTAL(val) |
+if (prsr() == powered_down) { // if we are powered down request power up.
+    sw_unlock()   // ensure that the sw lock register on the device is unlocked
+    write(prcr(bit3=1))
+    wait_with_timeout(prsr()==powered_up)   // must wait to see if the
+system does power up - otherwise bad things happen!
+    if(timed_out)
+       fail("power up request for CPU N failed.")  // nothing to do
+after this point though if a CPU can't be powered is should not be
+included in the list to be checked on crash.
+}
+ensure_os_lock_unlocked()  // os lock has to be unlocked for bit 0 of
+prcr to be writeable.
+sw_unlock()   // ensure that the sw lock register on the device is unlocked
+write(prcr(bit3=1 | bit0=1)) // the core is powered, set the
+nopowerdown request bit so we don't lose it & emulate power down
 
-For channel 0, the SUN4I_TCON0_BASIC2_V_TOTAL macro multiplies the passed in
-value by 2. I think we should do the same for channel 1, and instead halve the
-value passed in if we are outputting interlaced data. I think this makes more
-sense because:
 
-1) The register description for both channels are the same. Handling them
-   consistently will result in less confusion, such as this one.
+I think that some of the above logic is already in the driver, so
+needs to be adapted for the PRCR handling.
 
-2) The definition of interlaced modes is a frame is separated into odd and
-   even fields, with each field contains half the number of lines of the
-   full frame. One field is displayed during each VSYNC cycle. The TCON does
-   not know whether it's interlaced video or not. It only knows the display
-   timings. In this case, the number of horizontal lines per cycle is key.
+
+On the "bad" systems, the initial prsr check is likely to fail (crash
+/ buslock) if the debug logic is not correctly powered. The user will
+then have to use one or more of the PM mitigations previously
+discussed that are appropriate for that specific platform and retry
 
 Regards
-ChenYu
 
->                      SUN4I_TCON1_BASIC4_V_BACKPORCH(bp));
+Mike
+
+
+On 23 March 2017 at 05:43, Leo Yan <leo.yan@linaro.org> wrote:
+> On Wed, Mar 22, 2017 at 05:25:50PM +0000, Sudeep Holla wrote:
+>>
+>>
+>> On 22/03/17 17:09, Suzuki K Poulose wrote:
+>> > On 22/03/17 16:17, Sudeep Holla wrote:
+>>
+>> [...]
+>>
+>> >>
+>> >> Point taken. So we could just specify that all necessary power
+>> >> domains need to be on for proper functionality for this feature and
+>> >> that it's highly platform specific instead of mixing cpu/cluster
+>> >> idle details here.
+>> >>
+>> >>> The key point is that the caveat in using this driver is that
+>> >>> the power management has to be considered on a platform specific
+>> >>> basis before it is configured; and appropriate actions may be
+>> >>> needed for it to work correctly. Without this then the driver
+>> >>> could cause more issues than it debugs. A user selecting this
+>> >>> _must_ be told about these issues
+>> >>>
+>> >
+>> > So given all the possible caveats, I think we :
+>> >
+>> > 1) Shouldn't enable the driver by default at runtime even if it is
+>> > built-in.
+>> > 2) Should provide mechanisms to turn it on at boot (via
+>> > kernel commandline) or anytime later (via sysfs), which kind of puts
+>> > the responsibility back on the user : "You know what you are doing".
+>> > 3) Shouldn't turn the driver on based on "nohlt" which the user
+>> > could use it for some other purposes, without explicit intention of
+>> > turning this driver on).
+>> > 4) Should document the fact that, on some
+>> > platforms, the user may have to disable CPUidle explicitly to get the
+>> > driver working. But let us not make it the default. The user with a
+>> > not so ideal platform could add "nohlt" and get it working.
+>> >
+>>
+>> Agreed on all points and well summarized.
+>> I would like to highlight (3) and (4) as it needs to be well understood.
+>>
+>> "nohlt" has a *different* meaning already, so using that in this
+>> driver for something else is simple wrong as it affects the system in
+>> unintended ways. And yes if user (mis)uses it to get things working,
+>> it's fine but shouldn't be recommended way.
 >
->         /* Set Hsync and Vsync length */
-> --
-> git-series 0.8.11
+> Understand this point.
+>
+> I will try to use general way to constraint CPUIdle like other
+> drivers.
+>
+> Thanks all for these good suggestions :)
+>
+> Thanks,
+> Leo Yan
+
+
+
+-- 
+Mike Leach
+Principal Engineer, ARM Ltd.
+Blackburn Design Centre. UK
