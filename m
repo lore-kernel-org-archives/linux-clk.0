@@ -1,64 +1,25 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH v4 3/3] ARM64: dts: meson-gx: Add MALI nodes for GXBB and
- GXL
-To: Kevin Hilman <khilman@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>
-References: <1490177935-9646-1-git-send-email-narmstrong@baylibre.com>
- <1490177935-9646-4-git-send-email-narmstrong@baylibre.com>
- <m237e2iirk.fsf@baylibre.com>
- <149064443540.54062.12740186024138662455@resonance>
- <m2d1d1bgml.fsf@baylibre.com>
-Cc: sboyd@codeaurora.org, carlo@caione.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <9c4e31be-1008-4ca3-a7d2-a0389f6c57cd@baylibre.com>
-Date: Tue, 28 Mar 2017 16:51:55 +0200
+Return-Path: <jun.nie@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <m2d1d1bgml.fsf@baylibre.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <1490085503-15713-4-git-send-email-shawnguo@kernel.org>
+References: <1490085503-15713-1-git-send-email-shawnguo@kernel.org> <1490085503-15713-4-git-send-email-shawnguo@kernel.org>
+From: Jun Nie <jun.nie@linaro.org>
+Date: Thu, 23 Mar 2017 09:36:16 +0800
+Message-ID: <CABymUCOpbDZO=g1KcWWsK26Q14YB9vagpoHmRA0JbOR2vbkwfg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: zte: add pll_vga clock for zx296718
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Baoyou Xie <xie.baoyou@zte.com.cn>, Xin Zhou <zhou.xin8@zte.com.cn>,
+	Shawn Guo <shawn.guo@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/28/2017 04:49 PM, Kevin Hilman wrote:
-> Michael Turquette <mturquette@baylibre.com> writes:
-> 
->> Quoting Kevin Hilman (2017-03-24 12:20:31)
->>> Neil Armstrong <narmstrong@baylibre.com> writes:
->>>
->>>> The same MALI-450 MP3 GPU is present in the GXBB and GXL SoCs.
->>>>
->>>> The node is simply added in the meson-gxbb.dtsi file.
->>>>
->>>> For GXL, since a lot is shared with the GXM that has a MALI-T820 IP, this
->>>> patch adds a new meson-gxl-mali.dtsi and is included in the SoC specific
->>>> dtsi files.
->>>>
->>>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->>>
->>> LGTM, I can apply this when the clk driver changes are merged (feel free
->>> to let me know when that happens, in case I'm not paying attention.)
->>
->> Applied to clk-meson, a stable branch, which has been merged into
->> clk-next.
->>
->> Kevin, the dtsi is all yours.
-> 
-> Thanks, I applied it...
-> 
->>>
->>> <bikeshed>
->>> nit: This series (and previous ones) use MALI, but I believe the correct
->>> way is Mali. Could you standarize on that throughout the series?
->>> </bikeshed>
->>>
-> 
-> ... after s/MALI/Mali/ in the changelog.
-> 
-> Kevin
-> 
+2017-03-21 16:38 GMT+08:00 Shawn Guo <shawnguo@kernel.org>:
+> From: Shawn Guo <shawn.guo@linaro.org>
+>
+> It adds zx296718 pll_vga clock for VGA support, so that VGA device can
+> get required pixel rate from clock driver for different display mode.
+>
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
 
-Thanks Kevin,
-
-Neil
+Reviewed-by: Jun Nie <jun.nie@linaro.org>
