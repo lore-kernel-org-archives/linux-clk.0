@@ -1,56 +1,166 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Sat, 18 Mar 2017 00:28:36 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk@vger.kernel.org, Mike Leach <mike.leach@linaro.org>,
-	Sudeep Holla <Sudeep.Holla@arm.com>
-Subject: Re: [v3 3/5] coresight: add support for debug module
-Message-ID: <20170317162836.GD2020@leoy-linaro>
-References: <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
- <011fdac0-59bf-b539-2de3-0b59a41bc922@arm.com>
- <20170309175915.GA964@leoy-linaro>
- <3f27efee-3b63-81fd-eb96-73fd7e6f5e92@arm.com>
- <20170313165600.GB32431@linaro.org>
- <516f8989-4dde-2686-d549-0761feb14d1b@arm.com>
- <CANLsYkzJsGvr4ZzNbTwcPu1Qki6=Szvu+bMjHZ_rza==DqFChw@mail.gmail.com>
- <20170317101328.GA19877@leoy-linaro>
- <20170317155007.GA20435@linaro.org>
+Return-Path: <huziji@marvell.com>
+Subject: Re: [EXT] Re: [PATCH v6 07/14] dt: bindings: Add bindings for Marvell
+ Xenon SD Host Controller
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Gregory CLEMENT
+	<gregory.clement@free-electrons.com>
+References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
+ <3a4ce2fd25ed812482b0fc96f50dd305c8f40fe9.1487091464.git-series.gregory.clement@free-electrons.com>
+ <CAPDyKFrmb51cTR7B5S0JkmACH0=bw9+28RmWnjwWkuiT7N4wVw@mail.gmail.com>
+CC: Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>, Andrew Lunn
+	<andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        Mike Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk
+	<linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Jimmy Xu
+	<zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
+        Nadav Haklai
+	<nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
+        Doug Jones
+	<dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
+        "Wei(SOCP) Liu"
+	<liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
+        Yehuda Yitschak
+	<yehuday@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>, Hanna Hawa
+	<hannah@marvell.com>,
+        Kostya Porotchkin <kostap@marvell.com>
+From: Ziji Hu <huziji@marvell.com>
+Message-ID: <c3c97ce1-4aaa-4e85-d2c3-275f5247c0cc@marvell.com>
+Date: Thu, 23 Mar 2017 13:32:23 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170317155007.GA20435@linaro.org>
+In-Reply-To: <CAPDyKFrmb51cTR7B5S0JkmACH0=bw9+28RmWnjwWkuiT7N4wVw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 17, 2017 at 09:50:07AM -0600, Mathieu Poirier wrote:
+Hi Ulf,
 
-[...]
+On 2017/3/15 20:48, Ulf Hansson wrote:
+> [...]
+> 
+>> +
+>> +Example:
+>> +- For eMMC:
+>> +
+>> +       sdhci@aa0000 {
+>> +               compatible = "marvell,armada-ap806-sdhci";
+>> +               reg = <0xaa0000 0x1000>;
+>> +               interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>
+>> +               clocks = <&emmc_clk>;
+>> +               clock-names = "core";
+>> +               bus-width = <4>;
+>> +               marvell,xenon-phy-slow-mode;
+>> +               marvell,xenon-tun-count = <11>;
+> 
+> There's no vmmc-supply here.
+> 
+> How do you control power to the eMMC card?
+> 
 
-> If we don't check for "nohlt" some platform may freeze, others may work.  If we
-> mandate that "nohlt" be present on the kernel cmd line it works in all cases.
-> As such mandating that "nohlt" be present is a better way to go.
+	Sorry for the delayed reply.
+	Just confirmed with the engineers.
 
-Sure, so I will add below checking code in the probe function, please
-let me know if you have alter better way to implement this:
+	It seems that there is a regulator.
+	I will ask for a complete node example.
 
-+       if (IS_ENABLED(CONFIG_CPU_IDLE) &&
-+                       !strstr(boot_command_line, "nohlt")) {
-+               dev_err(dev, "May not be accessible in CPU power domain.\n");
-+               return -EPERM;
-+       }
+>> +
+>> +               #address-cells = <1>;
+>> +               #size-cells = <0>;
+>> +               apm_mmccard: mmccard@0 {
+>> +                       compatible = "mmc-card";
+>> +                       reg = <0>;
+>> +               };
+>> +       };
+>> +
+>> +- For SD/SDIO:
+>> +
+>> +       sdhci@ab0000 {
+>> +               compatible = "marvell,armada-cp110-sdhci";
+>> +               reg = <0xab0000 0x1000>;
+>> +               interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>
+>> +               vqmmc-supply = <&sd_regulator>;
+> 
+> I guess you know vqmmc is for the I/O voltage.
+> 
+> Again, how do you power the SD/SDIO card? No vmmc?
 
-Thanks,
-Leo Yan
+	The vmmc-supply regulator does exist according to the engineer.
+	I will ask them to provide a complete one.
+
+> 
+>> +               clocks = <&sdclk>;
+>> +               clock-names = "core";
+>> +               bus-width = <4>;
+>> +               marvell,xenon-tun-count = <9>;
+>> +       };
+>> +
+>> +- For eMMC with compatible "marvell,armada-3700-sdhci":
+>> +
+>> +       sdhci@aa0000 {
+>> +               compatible = "marvell,armada-3700-sdhci";
+>> +               reg = <0xaa0000 0x1000>,
+>> +                     <phy_addr 0x4>;
+>> +               interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>
+>> +               clocks = <&emmcclk>;
+>> +               clock-names = "core";
+>> +               bus-width = <8>;
+>> +               mmc-ddr-1_8v;
+>> +               mmc-hs400-1_8v;
+> 
+> Again, no vmmc?
+> 
+
+	The engineer told me the power to eMMC card is fixed on this platform.
+	They don't implement a specific regulator for eMMC core power.
+
+>> +
+>> +               marvell,pad-type = "fixed-1-8v";
+>> +
+>> +               #address-cells = <1>;
+>> +               #size-cells = <0>;
+>> +               mmccard: mmccard@0 {
+>> +                       compatible = "mmc-card";
+>> +                       reg = <0>;
+>> +               };
+>> +       };
+>> +
+>> +- For SD/SDIO with compatible "marvell,armada-3700-sdhci":
+>> +
+>> +       sdhci@ab0000 {
+>> +               compatible = "marvell,armada-3700-sdhci";
+>> +               reg = <0xab0000 0x1000>,
+>> +                     <phy_addr 0x4>;
+>> +               interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>
+>> +               vqmmc-supply = <&sd_regulator>;
+> 
+> Again, no vmmc?
+> 
+	
+	It seems that the core power to SD is also fixed.
+
+>> +               clocks = <&sdclk>;
+>> +               clock-names = "core";
+>> +               bus-width = <4>;
+>> +
+>> +               marvell,pad-type = "sd";
+>> +       };
+>> --
+>> git-series 0.9.1
+> 
+> 
+> Kind regards
+> Uffe
+> 
