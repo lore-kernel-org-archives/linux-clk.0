@@ -1,71 +1,47 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 0/9] clk: meson: update clock controller for audio support
-Date: Thu,  9 Mar 2017 11:41:45 +0100
-Message-Id: <20170309104154.28295-1-jbrunet@baylibre.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 23 Mar 2017 16:27:20 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [GIT PULL] Allwinner clock fixes for 4.11
+Message-ID: <20170323232720.GA25840@codeaurora.org>
+References: <20170320095004.4vd2edph2u7kxi7l@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170320095004.4vd2edph2u7kxi7l@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is a first round of update to the meson clock controllers
-to bring audio support. The patchset is based on clk-next. It could be
-rebased on amlogic tree later on, if you prefer the patches to go through
-Kevin's tree.
+On 03/20, Maxime Ripard wrote:
+> Hi Mike, Stephen,
+> 
+> Please pull the following patches for one of the 4.11's rc
+> 
+> Thanks!
+> Maxime
+> 
+> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+> 
+>   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git tags/sunxi-clk-fixes-for-4.11
+> 
+> for you to fetch changes up to b467e08a15563dede0d37d3233baa24fb97a7310:
+> 
+>   clk: sunxi-ng: fix recalc_rate formula of NKMP clocks (2017-03-20 10:34:05 +0100)
+> 
+> ----------------------------------------------------------------
+> Allwinner clock fixes for 4.11
+> 
+> A few fixes for a bunch of clocks on a few SoCs. The most important one is
+> probably one that fixes the NKMP clock frequency calculation and could end
+> up with clocking the CPU frequency to out of bounds rates.
+> 
 
-First patch fix an issue found while writing patch 5 (Giving ternary
-operator to SET_PARM)
-
-Following Stephen comment on the v1, patch 2 adds the const qualifiers
-missing upstream.
-
-Patches 3 and 4 put the generic muxes and divisors declaration in tables so
-the register address fixup works in the same way as the clock gates. We are
-going to add more of these clock types for audio or gpu support, so we
-can't continue to fix addresses individually like it is currently done.
-
-Patches 5 to 8 improve the support of the mpll clocks, now allowing the
-rate to be set. Among other things, the mplls are the parent clocks of the
-i2s and spdif clocks.
-
-Patch 9 expose the clock gates required to power on the i2s output.
-
-These patches have been tested on the meson gxbb p200 board, as part of the
-ongoing work to bring audio support to meson SoC family.
-
-Changes since v1 [0]:
- * Add SET_PARM fix to the series
- * Add missing const qualifiers to the clock arrays
- * No more additional patches required as SAR clocks have been merged
-
-[0]: http://lkml.kernel.org/r/20170228133002.17894-1-jbrunet@baylibre.com
-
-Jerome Brunet (9):
-  clk: meson: fix SET_PARM macro
-  clk: meson: add missing const qualifiers on gate arrays
-  clk: meson8b: put dividers and muxes in tables
-  clk: gxbb: put dividers and muxes in tables
-  clk: meson: mpll: add rw operation
-  clk: meson: gxbb: mpll: use rw operation
-  clk: meson8b: add the mplls clocks 0, 1 and 2
-  clk: meson: mpll: correct N2 maximum value
-  dt-bindings: clk: gxbb: expose i2s output clock gates
-
- drivers/clk/meson/clk-mpll.c          | 152 ++++++++++++++++++++++++++++++++--
- drivers/clk/meson/clkc.h              |   6 +-
- drivers/clk/meson/gxbb.c              |  66 ++++++++++++---
- drivers/clk/meson/gxbb.h              |  10 +--
- drivers/clk/meson/meson8b.c           | 127 ++++++++++++++++++++++++++--
- drivers/clk/meson/meson8b.h           |  20 ++++-
- include/dt-bindings/clock/gxbb-clkc.h |   5 ++
- 7 files changed, 356 insertions(+), 30 deletions(-)
+Thanks. Pulled
 
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
