@@ -1,45 +1,62 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 3/5] clk: rockchip: add clock ids for timer10-15 of RK3368 SoCs
-Date: Tue,  7 Mar 2017 19:05:17 +0800
-Message-Id: <1488884719-10350-4-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1488884719-10350-1-git-send-email-zhangqing@rock-chips.com>
-References: <1488884719-10350-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <mars.cheng@mediatek.com>
+Message-ID: <1490313138.25996.10.camel@mtkswgap22>
+Subject: Re: [PATCH v3 02/12] irqchip: mtk-sysirq: extend intpol base to
+ arbitrary number
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
+	<robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, CC Hwang <cc.hwang@mediatek.com>, Loda Chou
+	<loda.chou@mediatek.com>, Miles Chen <miles.chen@mediatek.com>, Jades Shih
+	<jades.shih@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, "My
+ Chuang" <my.chuang@mediatek.com>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<wsd_upstream@mediatek.com>, <linux-clk@vger.kernel.org>,
+	<chieh-jay.liu@mediatek.com>
+Date: Fri, 24 Mar 2017 07:52:18 +0800
+In-Reply-To: <3790b6ad-12c0-0c48-c24e-0f3397c6bbba@arm.com>
+References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+	 <1489937193-2953-3-git-send-email-mars.cheng@mediatek.com>
+	 <3790b6ad-12c0-0c48-c24e-0f3397c6bbba@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: mars.cheng@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- include/dt-bindings/clock/rk3368-cru.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Thu, 2017-03-23 at 16:25 +0000, Marc Zyngier wrote:
+> On 19/03/17 15:26, Mars Cheng wrote:
+> > Originally driver only supports one base. However, MT6797 has
+> > more than one bases to configure interrupt polarity. To support
+> > possible design change, here comes a solution to use arbitrary
+> > number of bases.
+> > 
+> > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> 
+> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+> 
+> What is the merge strategy for this? I'm happy to take the irqchip stuff
+> through my tree, but there is much more in this series...
+> 
+Hi Marc
 
-diff --git a/include/dt-bindings/clock/rk3368-cru.h b/include/dt-bindings/clock/rk3368-cru.h
-index 2bf23eda8938..aeb83e581a11 100644
---- a/include/dt-bindings/clock/rk3368-cru.h
-+++ b/include/dt-bindings/clock/rk3368-cru.h
-@@ -81,6 +81,12 @@
- #define SCLK_SFC		126
- #define SCLK_MAC		127
- #define SCLK_MACREF_OUT		128
-+#define SCLK_TIMER10		133
-+#define SCLK_TIMER11		134
-+#define SCLK_TIMER12		135
-+#define SCLK_TIMER13		136
-+#define SCLK_TIMER14		137
-+#define SCLK_TIMER15		138
- 
- #define DCLK_VOP		190
- #define MCLK_CRYPTO		191
--- 
-1.9.1
+Thanks for your review.
+
+Hi Matthias
+
+Would you comment on this? If Marc take the following stuff first in his
+tree:
+
+[PATCH v3 01/12] dt-bindings: mediatek: multiple bases support for
+sysirq  
+[PATCH v3 02/12] irqchip: mtk-sysirq: extend intpol base to arbitrary
+number 
+[PATCH v3 03/12] irqchip: mtk-sysirq: prevent unnecessary visibility
+when set_type 
+
+Since other stuff might need more review and irqchip didn't affect them.
+
+Thanks.
+
+> Thanks,
+> 
+> 	M.
