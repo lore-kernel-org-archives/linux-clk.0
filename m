@@ -1,100 +1,33 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH v1 0/8] clk: meson: gxbb: more clock controller update for
- audio support
-To: Michael Turquette <mturquette@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-References: <20170328144605.25278-1-jbrunet@baylibre.com>
- <149082017390.31513.12254031076684821992@resonance>
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <6474a845-f325-ccae-24d8-81dba2185c84@baylibre.com>
-Date: Thu, 30 Mar 2017 10:15:06 +0200
+Return-Path: <marc.zyngier@arm.com>
+Subject: Re: [PATCH v3 03/12] irqchip: mtk-sysirq: prevent unnecessary
+ visibility when set_type
+To: Mars Cheng <mars.cheng@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+ <1489937193-2953-4-git-send-email-mars.cheng@mediatek.com>
+Cc: CC Hwang <cc.hwang@mediatek.com>, Loda Chou <loda.chou@mediatek.com>,
+ Miles Chen <miles.chen@mediatek.com>, Jades Shih <jades.shih@mediatek.com>,
+ Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang
+ <my.chuang@mediatek.com>, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ wsd_upstream@mediatek.com, linux-clk@vger.kernel.org
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <4f74ffd9-279f-7516-f922-a5f2a6978fca@arm.com>
+Date: Thu, 23 Mar 2017 16:13:16 +0000
 MIME-Version: 1.0
-In-Reply-To: <149082017390.31513.12254031076684821992@resonance>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1489937193-2953-4-git-send-email-mars.cheng@mediatek.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/29/2017 10:42 PM, Michael Turquette wrote:
-> Hi Jerome,
+On 19/03/17 15:26, Mars Cheng wrote:
+> This prevent unnecessary visibility when configuring trigger type
 > 
-> Adding Neil Armstong to Cc.
-> 
-> Quoting Jerome Brunet (2017-03-28 07:45:57)
->> The patchset is the 2nd round of update to the meson gxbb clock controller
->> to add initial audio support. The patchset is based on clk-next.
->>
->> There is not much out of the ordinary here (adding new clocks and exposing
->> them) except maybe for 2 patches:
->> Patch #2: Adds a safety check while registering clocks to protect against
->>           holes in clk_hw_onecell_data, if it ever happens. Same thing is
->>           done for the meson8b clock controller. 
->> Patch #3: Adds a new clock divider driver to implement the necessary
->>           policy for the i2s master clock (see patch changelog)
->>
->> This patchset has been test on the gxbb p200 and gxl p230.
-> 
-> First off, this series looks fine to me. Please add,
-> 
-> Acked-by: Michael Turquette <mturquette@baylibre.com>
-> 
-> Secondly, it seems the AmLogic clock drivers have mostly calmed down and
-> things are in the "add new clocks when we need them" phase, which is
-> nice. Since you and Neil are doing a lot of this work, might I suggest
-> that you both start collecting patches for the AmLogic/meson clock
-> drivers begin submitting pull requests to Stephen and myself?
-> 
-> As usual the rules are the same as always: all patches in the PR must
-> first be posted for review on the list. PRs should correspond to signed
-> tags. Stephen and I might ignore PRs sent after -rc4, and will
-> definitely ignore PRs sent after -rc6 since we want some stabilization
-> time before the merge window. Base your branch on -rc1, not on clk-next.
-> 
-> Also feel free to submit a patch to MAINTAINERS with either one or both
-> of you maintaining the meson clk stuff, assuming that you're OK to
-> review all of those patches and collect them into a PR.
-> 
-> Thoughts?
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
 
-Thanks Mike, I'll be glad to co-maintain this with jerome !
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
-Neil
-
-> 
-> If it sounds good to you then I suggest grabbing the clk-meson branch
-> from the clk tree and using that as a baseline for your first PR. In the
-> future you'll just Linus' -rc1, but I have already created a branch for
-> this cycle. You can apply these 8 patches with my Ack and send a PR by
-> -rc6 (possibly with other stuff collected from Martin, etc).
-
-Acked !
-
-> 
-> Thanks,
-> Mike
-> 
->>
->> Jerome Brunet (8):
->>   dt-bindings: clock: gxbb: expose spdif clock gates
->>   clk: meson: gxbb: protect against holes in the onecell_data array
->>   clk: meson: add audio clock divider support
->>   clk: meson: gxbb: add cts_amclk
->>   clk: meson: gxbb: add cts_mclk_i958
->>   clk: meson: gxbb: add cts_i958 clock
->>   dt-bindings: clock: gxbb: expose i2s master clock
->>   dt-bindings: clock: gxbb: expose spdif master clock
->>
->>  drivers/clk/meson/Makefile            |   2 +-
->>  drivers/clk/meson/clk-audio-divider.c | 149 ++++++++++++++++++++++++++++++++++
->>  drivers/clk/meson/clkc.h              |  10 +++
->>  drivers/clk/meson/gxbb.c              | 144 ++++++++++++++++++++++++++++++++
->>  drivers/clk/meson/gxbb.h              |  13 ++-
->>  include/dt-bindings/clock/gxbb-clkc.h |   5 ++
->>  6 files changed, 319 insertions(+), 4 deletions(-)
->>  create mode 100644 drivers/clk/meson/clk-audio-divider.c
->>
->> -- 
->> 2.9.3
->>
+	M.
+-- 
+Jazz is not dead. It just smells funny...
