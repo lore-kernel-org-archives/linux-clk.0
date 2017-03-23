@@ -1,142 +1,45 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v6 0/4] Add runtime PM support for clocks (on Exynos SoC
- example)
-Date: Wed, 22 Mar 2017 12:35:39 +0100
-Message-id: <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
-References: 
- <CGME20170322113553eucas1p20875eb2da524fd090c6a7cc725c9d944@eucas1p2.samsung.com>
+Return-Path: <tony@atomide.com>
+Date: Wed, 22 Mar 2017 18:00:57 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
+Message-ID: <20170323010057.GI10760@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <20170317152536.GT20572@atomide.com>
+ <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear All,
+* Tero Kristo <t-kristo@ti.com> [170317 14:39]:
+> On 17/03/17 17:25, Tony Lindgren wrote:
+> > * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+> > > Any additional testing on omap4 welcome as this series basically
+> > > tweaks every possible peripheral clock on the SoC.
+> > 
+> > Without the last patch in this series, booting fails for me:
+> > 
+> > [    5.074890] l4_per_cm:clk:0120:0: failed to disable
+> > [    5.085113] l4_per_cm:clk:0128:0: failed to disable
+> > 
+> > Care to check that booting keeps working for each patch in the
+> > series to avoid breaking git bisect for booting?
+> 
+> Hmm, I think patch 8+9 need to be squashed then. I can double check this
+> next week though.
 
-This patchset adds runtime PM support to common clock framework. This is an
-attempt to implement support for clock controllers, which belongs to a power
-domain. This approach works surprisingly well on Exynos 5433 SoC, what allowed
-us to solve various freeze/crash issues related to power management.
+Also looks like with this set merged HDMI stops working on
+omap4 with:
 
-The main idea behind this patchset is to keep clock's controller power domain
-enabled every time when at least one of its clock is enabled or access to its
-registers is being made. Clock controller driver (clock provider) can
-supply a struct device pointer, which is the used by clock core for tracking and
-managing clock's controller runtime pm state. Each clk_prepare() operation will
-first call pm_runtime_get_sync() on the supplied device, while clk_unprepare()
-will do pm_runtime_put() at the end.
+HDMIWP: omapdss HDMIWP error: Failed to set PHY power mode to 1
 
-This runtime PM feature has been tested with Exynos4412 (not included in this
-patchset) and Exynos5433 clocks drivers. Both have some clocks, which belongs to
-respective power domains and need special handling during power on/off
-procedures. Till now it wasn't handled at all, what caused various problems.
+Other than that, things seem to behave quite nicely for me
+with this set.
 
-Patches for clocks drivers change the way the clock provider is initialized.
-Instead of CLK_OF_DECLARE based initialization, a complete platform device driver
-infrastructure is being used. This is needed to let driver to use runtime PM
-feature and integrate with generic power domains. The side-effect of this change
-is a delay in clock provider registeration during system boot, so early
-initialized drivers might get EPROBEDEFER error when requesting their clocks.
-This is an issue for IOMMU drivers, so this patchset will be fully functional
-once the deferred probe for IOMMU will be merged. v9 of the IOMMU deferred probe
-support has been posted a few days ago:
-https://www.spinics.net/lists/arm-kernel/msg567558.html
+Regards,
 
-Patches are based on v4.11-rc3.
-
-Stephen: this patchset finally got a review from Ulf (from PM point of
-view). Is also touches only the Exynos5433 and Exynos Audio Subsystem
-drivers, which both have separate DT nodes for each clock controllers and
-each clock controller is entirely only in the one power domain, so everything is
-clean from the current DT bindings perspective. Would it be okay to merge it?
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Changelog:
-
-v6:
-- addressed comments from Ulf Hanson and added his 'Reviewed-by' tags
-- simplified exynos 5433 clock driver code a bit
-- fixes issues pointed by kbuild test robot
-
-v5:
-- rebased onto next-20170125 kernel release
-- added two more calls to runtime PM in clock's core:
-	1. clk_recalc() should ensure active runtime pm state, because it might
-	   read registers (in case of dividers) to calculate the rate
-	2. clk_register() also needs to ensure active runtime pm state to read
-	   initial rate and status of the clocks
-- more fixes in Exynos5433 clocks drivers:
-	1. PLL in DISP CMU must be enabled for suspend
-	2. guard clocks registration with pm_runtime_get_sync/pm_runtime_put to
-	   avoid turning the power domain on and off many times for no good
-	   reason (registering each clock will call pm_runtime_get_sync(), then
-	   pm_runtime_put, what in turn might disable power domain)
-- still waiting for a review...
-
-v4: http://www.spinics.net/lists/arm-kernel/msg550747.html
-- Removed patch for Exynos4412 clocks from the patchset. DT bindings for power
-  domain for ISP sub-controller needs more discussion. It will be handled
-  separately when the runtime PM for clocks feature gets merged.
-- Added patch with runtime PM support for Exynos AudioSS clock controller driver
-  (needed to enable audio power domain on Exynos5 series).
-- Fixes in Exynos5433 driver:
-	1. added missing clock for Audio CMU
-	2. added support for FSYS CMU
-	3. improved support for DISP CMU (thanks to Andrzej Hajda for
-	   investigating that).
-- Rebased onto v4.10-rc1
-- Waiting for a review...
-
-v3: http://www.spinics.net/lists/arm-kernel/msg538122.html
-- Removed CLK_RUNTIME_PM flag, core now simply checks if runtime pm is enabled
-  for the provided device during clock registration as suggested by Ulf
-- Simplified code for exynos4412 isp clock driver registration
-- Resolved some other minor issues pointed by Ulf clk core code
-- Rebased onto v4.9-rc1 and new version of IOMMU deferred probe patchset
-
-v2: https://www.spinics.net/lists/arm-kernel/msg532798.html
-- Simplified clk_pm_runtime_get/put functions, removed workaround for devices
-  with disabled runtime pm. Such workaround is no longer needed since commit
-  4d23a5e84806b202d9231929c9507ef7cf7a0185 ("PM / Domains: Allow runtime PM
-  during system PM phases").
-- Added CLK_RUNTIME_PM flag to indicate clocks, for which clock core should
-  call runtime pm functions. This solves problem with clocks, for which struct
-  device is already registered, but no runtime pm is enabled.
-- Extended commit messages according to Ulf suggestions.
-- Fixed some style issues pointed by Barlomiej.
-
-v1: http://www.spinics.net/lists/arm-kernel/msg528128.html
-- initial version
-
-
-Patch summary:
-
-Marek Szyprowski (4):
-  clk: Add support for runtime PM
-  clk: samsung: Add support for runtime PM
-  clk: samsung: exynos5433: Add runtime PM support
-  clk: samsung: exynos-audss: Use runtime PM
-
- .../devicetree/bindings/clock/clk-exynos-audss.txt |   6 +
- .../devicetree/bindings/clock/exynos5433-clock.txt |  16 +
- drivers/clk/clk.c                                  | 129 ++++++-
- drivers/clk/samsung/clk-exynos-audss.c             |  68 ++--
- drivers/clk/samsung/clk-exynos5433.c               | 413 ++++++++++++++++-----
- drivers/clk/samsung/clk-pll.c                      |   2 +-
- drivers/clk/samsung/clk.c                          |  12 +-
- drivers/clk/samsung/clk.h                          |   7 +
- 8 files changed, 517 insertions(+), 136 deletions(-)
-
--- 
-1.9.1
+Tony
