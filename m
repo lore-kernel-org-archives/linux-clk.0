@@ -1,87 +1,101 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
- <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
- <20170306083835.GF26640@tbergstrom-lnx.Nvidia.com>
- <6d4dd315-cab6-189d-f383-fb7523fc31bd@nvidia.com>
- <20170306142850.GJ26640@tbergstrom-lnx.Nvidia.com>
- <CAMuHMdWD5Pw4BfH7YMY5hnxGbib=8zqUrHrG+GHXquRjjSZ+gA@mail.gmail.com>
- <f1505f37-cf96-fe04-dfc1-1dd94e20e130@nvidia.com>
- <CAMuHMdVRa3C4ikaoNDDU21NbRVcPTf0z6fPiJ1nF-VDd+3Dm0g@mail.gmail.com>
- <313f1245-02aa-496c-3545-5029ece652af@nvidia.com>
- <20170313104532.GT26640@tbergstrom-lnx.Nvidia.com>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <9e81c653-b6bb-a47c-8891-d7c7d42a7650@nvidia.com>
-Date: Mon, 13 Mar 2017 11:03:27 +0000
+Return-Path: <mars.cheng@mediatek.com>
+Message-ID: <1490229971.25996.2.camel@mtkswgap22>
+Subject: Re: [PATCH v3 00/12] Add Basic SoC support for MT6797
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: Rob Herring <robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, CC Hwang <cc.hwang@mediatek.com>, Loda Chou
+	<loda.chou@mediatek.com>, Miles Chen <miles.chen@mediatek.com>, Jades Shih
+	<jades.shih@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, "My
+ Chuang" <my.chuang@mediatek.com>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<wsd_upstream@mediatek.com>, <linux-clk@vger.kernel.org>
+Date: Thu, 23 Mar 2017 08:46:11 +0800
+In-Reply-To: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <20170313104532.GT26640@tbergstrom-lnx.Nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+Return-Path: mars.cheng@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Matthias, Rob, Marc, Stephen
 
-On 13/03/17 10:45, Peter De Schrijver wrote:
-> On Wed, Mar 08, 2017 at 11:48:21AM +0000, Jon Hunter wrote:
->>
->> On 08/03/17 11:38, Geert Uytterhoeven wrote:
->>> Hi Jon,
->>>
->>> On Wed, Mar 8, 2017 at 11:13 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
->>>>> I had a similar issue with SH-Mobile AG5, where the power domain containing
->>>>> the JTAG interface is powered down.
->>>>
->>>> This reminds me, does your patch assume that the DFD power domain is
->>>> enabled? I am guessing that it needs to be for JTAG to work.
->>>
->>> Yes. The pm-rmobile driver looks for "arm,coresight-etm3x" devices, and
->>> marks the corresponding PM Domain as always-on, as long as the
->>> Coresight code doesn't handle runtime PM.
->>
->> Sorry Geert, but I was asking Peter specifically about the power-domain
->> on Tegra as I have a feeling we may have the same scenario ;-)
+gentle ping for this patch set.
+
+Thanks.
+
+On Sun, 2017-03-19 at 23:26 +0800, Mars Cheng wrote:
+> This patch set adds basic SoC support for mediatek's first 10-core
+> chip, X20, also known as MT6797.
 > 
-> We don't have a specific power domain for DFD on Tegra210. It's part of the
-> non-powergateable core domain.
-
-Either we are getting our wires crossed or the TRM is wrong :-(
-
- static const char * const tegra210_powergates[] = {
-         [TEGRA_POWERGATE_CPU] = "crail",
-         [TEGRA_POWERGATE_3D] = "3d",
-         [TEGRA_POWERGATE_VENC] = "venc",
-         [TEGRA_POWERGATE_PCIE] = "pcie",
-         [TEGRA_POWERGATE_MPE] = "mpe",
-         [TEGRA_POWERGATE_SATA] = "sata",
-         [TEGRA_POWERGATE_CPU1] = "cpu1",
-         [TEGRA_POWERGATE_CPU2] = "cpu2",
-         [TEGRA_POWERGATE_CPU3] = "cpu3",
-         [TEGRA_POWERGATE_CPU0] = "cpu0",
-         [TEGRA_POWERGATE_C0NC] = "c0nc",
-         [TEGRA_POWERGATE_SOR] = "sor",
-         [TEGRA_POWERGATE_DIS] = "dis",
-         [TEGRA_POWERGATE_DISB] = "disb",
-         [TEGRA_POWERGATE_XUSBA] = "xusba",
-         [TEGRA_POWERGATE_XUSBB] = "xusbb",
-         [TEGRA_POWERGATE_XUSBC] = "xusbc",
-         [TEGRA_POWERGATE_VIC] = "vic",
-         [TEGRA_POWERGATE_IRAM] = "iram",
-         [TEGRA_POWERGATE_NVDEC] = "nvdec",
-         [TEGRA_POWERGATE_NVJPG] = "nvjpg",
-         [TEGRA_POWERGATE_AUD] = "aud",
-         [TEGRA_POWERGATE_DFD] = "dfd",
-         [TEGRA_POWERGATE_VE2] = "ve2",
- };
-
-
-Jon
-
--- 
-nvpublic
+> - based on 4.11-rc1
+> - support multiple base address for sysirq
+> - support common clk framework
+> 
+> Changes since v2:
+> - prevent uncessary #intpol-bases for mtk-sysirq
+> - add fast path for mtk-sysirq set_type when introducing multiple bases
+> - add acked-by and tested-by
+> - remove wrong usage for timer node
+> 
+> Changes since v1:
+> - add multiple base addresses support, v1 only allow 2 bases
+> - clean up clk driver
+> 
+> 
+> Kevin-CW Chen (2):
+>   dt-bindings: arm: mediatek: document clk bindings for MT6797
+>   clk: mediatek: add clk support for MT6797
+> 
+> Mars Cheng (10):
+>   dt-bindings: mediatek: multiple bases support for sysirq
+>   irqchip: mtk-sysirq: extend intpol base to arbitrary number
+>   irqchip: mtk-sysirq: prevent unnecessary visibility when set_type
+>   dt-bindings: mediatek: Add bindings for mediatek MT6797 Platform
+>   arm64: dts: mediatek: add mt6797 support
+>   soc: mediatek: avoid using fixed spm power status defines
+>   soc: mediatek: add vdec item for scpsys
+>   dt-bindings: mediatek: add MT6797 power dt-bindings
+>   soc: mediatek: add MT6797 scysys support
+>   arm64: dts: mediatek: add clk and scp nodes for MT6797
+> 
+>  Documentation/devicetree/bindings/arm/mediatek.txt |    4 +
+>  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
+>  .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
+>  .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
+>  .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
+>  .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
+>  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
+>  .../bindings/arm/mediatek/mediatek,vencsys.txt     |    3 +-
+>  .../interrupt-controller/mediatek,sysirq.txt       |   12 +-
+>  .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
+>  .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +-
+>  arch/arm64/boot/dts/mediatek/Makefile              |    1 +
+>  arch/arm64/boot/dts/mediatek/mt6797-evb.dts        |   36 +
+>  arch/arm64/boot/dts/mediatek/mt6797.dtsi           |  245 +++++++
+>  drivers/clk/mediatek/Kconfig                       |   32 +
+>  drivers/clk/mediatek/Makefile                      |    5 +
+>  drivers/clk/mediatek/clk-mt6797-img.c              |   76 +++
+>  drivers/clk/mediatek/clk-mt6797-mm.c               |  136 ++++
+>  drivers/clk/mediatek/clk-mt6797-vdec.c             |   93 +++
+>  drivers/clk/mediatek/clk-mt6797-venc.c             |   78 +++
+>  drivers/clk/mediatek/clk-mt6797.c                  |  716 ++++++++++++++++++++
+>  drivers/irqchip/irq-mtk-sysirq.c                   |  116 +++-
+>  drivers/soc/mediatek/mtk-scpsys.c                  |  149 +++-
+>  include/dt-bindings/clock/mt6797-clk.h             |  281 ++++++++
+>  include/dt-bindings/power/mt6797-power.h           |   30 +
+>  25 files changed, 1993 insertions(+), 33 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-evb.dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797.dtsi
+>  create mode 100644 drivers/clk/mediatek/clk-mt6797-img.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt6797-mm.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt6797-vdec.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt6797-venc.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt6797.c
+>  create mode 100644 include/dt-bindings/clock/mt6797-clk.h
+>  create mode 100644 include/dt-bindings/power/mt6797-power.h
+> 
+> --
+> 1.7.9.5
+> 
