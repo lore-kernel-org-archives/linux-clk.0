@@ -1,61 +1,52 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f176.google.com ([209.85.128.176]:35618 "EHLO
-        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754086AbdCIMx4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Mar 2017 07:53:56 -0500
-Received: by mail-wr0-f176.google.com with SMTP id g10so44393256wrg.2
-        for <linux-clk@vger.kernel.org>; Thu, 09 Mar 2017 04:53:55 -0800 (PST)
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: sboyd@codeaurora.org, khilman@baylibre.com, carlo@caione.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/3] meson-gx: Add mali-450 support
-Date: Thu,  9 Mar 2017 13:53:44 +0100
-Message-Id: <1489064027-18004-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 5/7] clk: tegra: don't warn for PLL defaults
+ unnecessarily
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
+ <1487846686-6388-6-git-send-email-pdeschrijver@nvidia.com>
+ <d6435129-4c67-1126-429d-ffef52d0b2d4@nvidia.com>
+ <20170324092546.GA22128@tbergstrom-lnx.Nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Stephen
+ Warren" <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, "Mark
+ Rutland" <mark.rutland@arm.com>, Rhyland Klein <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <6a7a5f58-08e1-c8e8-c32f-f57b63690863@nvidia.com>
+Date: Fri, 24 Mar 2017 09:27:50 +0000
+MIME-Version: 1.0
+In-Reply-To: <20170324092546.GA22128@tbergstrom-lnx.Nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-Since the merge of the Mali dt bindings at [1], add support for Mali clocks
-and DT node.
 
-The Mali is clocked by two identical clock paths behind a glitch free mux
-to safely change frequency while running.
-So these clocks must be added to the meson-gxbb clock controller.
+On 24/03/17 09:25, Peter De Schrijver wrote:
+> On Thu, Mar 23, 2017 at 02:37:23PM +0000, Jon Hunter wrote:
+>> Hi Peter,
+>>
+>> On 23/02/17 10:44, Peter De Schrijver wrote:
+>>> If the PLL is on, only warn if the defaults are not yet set. Otherwise be
+>>> silent.
+>>>
+>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>
+>> This patch is breaking boot for Tegra210 Smaug on -next [0]. Reverting
+>> this on top of -next allows the board to boot again. I have not had
+>> chance to dig into this any further yet, but can unless you have some
+>> thoughts.
+> 
+> My guess would be pllm. Maybe the bootloader on Smaug switches to pllm for
+> a higher emc frequency? On jetson cboot doesn't do that, so at least that
+> could be a difference.
 
-Changes since v2 at [5] :
- - Rebased on v2 Audio Clocks patchset from Jerome Brunet at [6]
- - Marked parents names list as static
- - Reworded patch 3 commit message
+Thanks. I will take a closer look at what is going on either today or
+Monday and let you know what I find.
 
-Changes since v1 at [2] :
- - Remove GP0 fixes, this will pushed later, for base frequency it can depend on fclk_div3
- - Add GXL support
- - rebase on clk-next and jbrunet's patchset at [3] and [4]
- - get rid of composite clocks, this adds more clocks IDs and exposes 2 more clocks
-
-[6] http://lkml.kernel.org/r/20170309104154.28295-1-jbrunet@baylibre.com
-[5] http://lkml.kernel.org/r/1488365164-22861-1-git-send-email-narmstrong@baylibre.com
-[4] http://lkml.kernel.org/r/20170228093016.5624-1-jbrunet@baylibre.com
-[3] http://lkml.kernel.org/r/20170228133002.17894-1-jbrunet@baylibre.com
-[2] http://lkml.kernel.org/r/1486721084-1383-1-git-send-email-narmstrong@baylibre.com
-[1] http://lkml.kernel.org/r/b098c4fa9fce88361cca20417978734d0e1b5cca.1485939041.git-series.maxime.ripard@free-electrons.com
-
-Neil Armstrong (3):
-  clk: meson-gxbb: Add MALI clock IDS
-  clk: meson-gxbb: Add MALI clocks
-  ARM64: dts: meson-gx: Add MALI nodes for GXBB and GXL
-
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi      |  37 ++++++
- arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi  |  43 +++++++
- arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi |   1 +
- arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi |   1 +
- drivers/clk/meson/gxbb.c                         | 139 +++++++++++++++++++++++
- drivers/clk/meson/gxbb.h                         |   9 +-
- include/dt-bindings/clock/gxbb-clkc.h            |   5 +
- 7 files changed, 234 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
+Cheers
+Jon
 
 -- 
-1.9.1
-
+nvpublic
