@@ -1,55 +1,37 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 14 Mar 2017 18:07:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Markus Mayer <code@mmayer.net>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mike Turquette <mturquette@linaro.org>,
-	Linux Clock Mailing List <linux-clk@vger.kernel.org>,
-	Device Tree Mailing List <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Markus Mayer <mmayer@broadcom.com>
-Subject: Re: [RFC 1/2] clk: dt: binding for basic divider clock
-Message-ID: <20170315010710.GJ10239@codeaurora.org>
-References: <20170314202236.39910-1-code@mmayer.net>
- <20170314202236.39910-2-code@mmayer.net>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 24 Mar 2017 10:20:01 -0500
+From: Rob Herring <robh@kernel.org>
+To: Mars Cheng <mars.cheng@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	CC Hwang <cc.hwang@mediatek.com>,
+	Loda Chou <loda.chou@mediatek.com>,
+	Miles Chen <miles.chen@mediatek.com>,
+	Jades Shih <jades.shih@mediatek.com>,
+	Yingjoe Chen <yingjoe.chen@mediatek.com>,
+	My Chuang <my.chuang@mediatek.com>, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+	wsd_upstream@mediatek.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 01/12] dt-bindings: mediatek: multiple bases support
+ for sysirq
+Message-ID: <20170324152001.nmzivwtietre27iq@rob-hp-laptop>
+References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+ <1489937193-2953-2-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170314202236.39910-2-code@mmayer.net>
+In-Reply-To: <1489937193-2953-2-git-send-email-mars.cheng@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/14, Markus Mayer wrote:
-> From: Mike Turquette <mturquette@linaro.org>
+On Sun, Mar 19, 2017 at 11:26:22PM +0800, Mars Cheng wrote:
+> This describes how to specify multiple base addresses for sysirq
+> in mediatek platforms.
 > 
-> Devicetree binding for the basic clock divider, plus the setup function
-> to register the clock.  Based on the existing fixed-clock binding.
-> 
-> Tero Kristo contributed helpful bug fixes to this patch.
-> 
-> Signed-off-by: Mike Turquette <mturquette@linaro.org>
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Markus Mayer <mmayer@broadcom.com>
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> ---
+>  .../interrupt-controller/mediatek,sysirq.txt       |   11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
 
-These sorts of details should go into C code. Is there any
-difficulty in writing a driver to do so? So far we've avoided
-adding the generic divider, multiplier, mux, bindings because
-those usually need some register level details that we've been
-reluctant to add to DT.
-
-That's because if something is wrong with these register level
-details or we need to make some policy updates, e.g. favor this
-divider over another, we can't really do that with a DT update.
-So we really want to see DT nodes have some hardware specific
-compatible string, and also put the logic for the driver into the
-code so that it can be easily fixed and updated after the fact.
-
-The DTS file is there to tell us "I have a divider from company X
-here and it's connected to this and that" and the driver is there
-to do the work of driving that piece of hardware so it works
-properly.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Acked-by: Rob Herring <robh@kernel.org>
