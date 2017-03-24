@@ -1,120 +1,192 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sun, 26 Mar 2017 22:51:24 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/5] clk: sunxi-ng: Add driver for A83T CCU
-Message-ID: <20170326205124.vdjbmjukfysgbefc@lukather>
-References: <20170214033526.16977-1-wens@csie.org>
- <20170214033526.16977-5-wens@csie.org>
- <20170214095819.utsftcvti5zdmlmi@lukather>
- <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
- <20170215094954.h3wyaxlqkeb342yu@lukather>
- <CAGb2v67ey1Ppc3wf1154QKoCX-xsOjWDEsXi5gxPbL4MY37zHw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bf6mpdsqixwtklyz"
-In-Reply-To: <CAGb2v67ey1Ppc3wf1154QKoCX-xsOjWDEsXi5gxPbL4MY37zHw@mail.gmail.com>
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 2/2 v2] clk: qcom: Implement RPM clocks for MSM8660/APQ8060
+Date: Fri, 24 Mar 2017 09:20:54 +0100
+Message-Id: <20170324082054.5782-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+The RPM clocks were missing for MSM8660/APQ8060. For this to be
+completed we need to add a special fixed rate RPM clock that is used
+for the PLL4 on these SoCs. The rest of the clocks are pretty
+similar to the other supported platforms.
 
---bf6mpdsqixwtklyz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The "active" clock pattern is mirrored in all the clocks. I guess
+that the PLL4 that clocks the LPASS is actually never used as
+"active only" since the low-power audio subsystem should be left
+on when the system suspends, so it can be used as a stand-alone
+MP3 player type of device.
 
-Hi Chen-Yu,
+As we do not have firmware for the LPASS we will probably only use
+this clock when the system is up and running (not suspended) for now,
+so that will be using the "active" clock.
 
-On Wed, Mar 22, 2017 at 02:50:31PM +0800, Chen-Yu Tsai wrote:
-> On Wed, Feb 15, 2017 at 5:49 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > On Tue, Feb 14, 2017 at 06:26:39PM +0800, Chen-Yu Tsai wrote:
-> >> On Tue, Feb 14, 2017 at 5:58 PM, Maxime Ripard
-> >> <maxime.ripard@free-electrons.com> wrote:
-> >> > On Tue, Feb 14, 2017 at 11:35:25AM +0800, Chen-Yu Tsai wrote:
-> >> >> +/* Some PLLs are input * N / div1 / P. Model them as NKMP with no =
-K */
-> >> >
-> >> > Is that even working?
-> >>
-> >> Looking at the nkmp clock code, only .recalc_rate will work properly t=
-hough.
-> >> Maybe I could fix up the code so it handles zero width factors.
-> >>
-> >> > I'm not quite sure we want to do that. We might model it as a NP clo=
-ck
-> >> > with a variable prediv?
-> >>
-> >> There's no NP clock type yet. And a problem with a variable prediv is =
-that
-> >> it doesn't participate in factor calculation. It's effectively fixed.
-> >>
-> >> I did this for the A80 as well though. Fixing up the NKMP clock might =
-be
-> >> easier.
-> >
-> > Then maybe we just need a NMP clock type then. What I'm really afraid
-> > of is that we'll just end up in a clk-factors situation that was
-> > simply impossible to maintain without breaking anything, hence why we
-> > had different clock types then.
->=20
-> Upon further review, I think it will work. I did notice a discrepancy
-> between .set_rate and .round_rate though. Will send fixes later.
->=20
-> About the old clk-factors situation, I'm not exactly sure what part
-> you're referring to.
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- Add the small hunk to the clk_rpm_handoff() function that just
+  skip over this for the fixed PLL4 clock. This accidentally
+  ended up in another patch.
+---
+ drivers/clk/qcom/clk-rpm.c | 106 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 106 insertions(+)
 
-We need to be able to support old DTs, which will still use the old
-clock code. Whatever solution we come up with need to take that into
-account.
-
-> To me it seems the "factors" bits are mostly the same. Differences
-> are mostly with parent-specific pre-dividers, clock post-dividers,
-> and non-standard factors. The first is nicely handled by the new mux
-> wrapper, the second is currently only used with NK types, and the
-> last is currently only supported by single factor divider or
-> multiplier clocks with tables.
->=20
-> Non-standard factors are probably the trickiest one, but given we will
-> support full factor tables for some of the tricky CPU PLLs, this is
-> probably solved, even if not implemented yet.
->=20
-> I'll start with the NP style clocks, which only use P when the output
-> is under a certain frequency.
-
-Do we need to use a P factor? I mean, we can just create a custom
-clock for that, I'd realy don't want to cripple the generic code for a
-completely non-generic problem.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---bf6mpdsqixwtklyz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJY2CnIAAoJEBx+YmzsjxAgT6MP/3H8ljhykejdroCTuH2BZutm
-WHvYGgHAwU03IRuxtPxYtlIisXtLFl2m7j6+IXYVJIUw2jH/01MiqWdXMvDzTZx8
-HOj1OOHXu+BRia32pGmZR+fQIrhoGFcIHj9GN1pmEhcteGM08+KWbhCpm8Y4DO+V
-TxVoqC6ncKaZ8JorhNqjTnfqWyxqpbzl6sD/O+EhmGyIW7VkBTdoP27IVZ7jEsNS
-CT1hsNKpq72Fcd0JXGjiOxfYoiTGUypqr0bNVn6xv+wEfzYHvJoBa54oN3KhSqdz
-fV9Mzxf8n5tvgq3ShgQq+WgwiISqz8auaDakCTOm23wlIRa7bbAW5aX1yHMc5jT9
-9ZboYz8RP3Do8OrtOI1fEpwE14qV73Fke4xW+F0NVBgexUv3U0RCRDSI2XTmtzcp
-FENW3+nvEh5AFv2FX9WFt+nsMF7xngc2bCBZ+E7hEVp5K9IcRyOGCuH0n+qlqYeC
-4XqZDErb6v+fUjr/G4UuxGJZ3WaCtP2Gl800ricbbaXA5Wn5hnZPrEQVmt3foRPq
-Q4WI3bE/QAM9JuA57QYVIc47upDQqOjXsjpNrXDEr4MRjOLBHqXAJ/MpKIKBX6Mu
-gKNv8IAuxghRVvCazulOyK5v+wI1oTomjLQsrLZ4N8xC7vt+qlJgwpEBNUMqMBGz
-0CedYIo2AizXqarG89st
-=/Cj7
------END PGP SIGNATURE-----
-
---bf6mpdsqixwtklyz--
+diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
+index df3e5fe8442a..61c67e93bea3 100644
+--- a/drivers/clk/qcom/clk-rpm.c
++++ b/drivers/clk/qcom/clk-rpm.c
+@@ -56,6 +56,30 @@
+ 		},							      \
+ 	}
+ 
++#define DEFINE_CLK_RPM_FIXED(_platform, _name, _active, r_id, r)	      \
++	static struct clk_rpm _platform##_##_name = {			      \
++		.rpm_clk_id = (r_id),					      \
++		.rate = (r),						      \
++		.hw.init = &(struct clk_init_data){			      \
++			.ops = &clk_rpm_fixed_ops,			      \
++			.name = #_name,					      \
++			.parent_names = (const char *[]){ "pxo_board" },      \
++			.num_parents = 1,				      \
++		},							      \
++	};								      \
++	static struct clk_rpm _platform##_##_active = {			      \
++		.rpm_clk_id = (r_id),					      \
++		.peer = &_platform##_##_name,				      \
++		.active_only = true,					      \
++		.rate = (r),						      \
++		.hw.init = &(struct clk_init_data){			      \
++			.ops = &clk_rpm_fixed_ops,			      \
++			.name = #_active,				      \
++			.parent_names = (const char *[]){ "pxo_board" },      \
++			.num_parents = 1,				      \
++		},							      \
++	}
++
+ #define DEFINE_CLK_RPM_PXO_BRANCH(_platform, _name, _active, r_id, r)	      \
+ 	static struct clk_rpm _platform##_##_active;			      \
+ 	static struct clk_rpm _platform##_##_name = {			      \
+@@ -143,6 +167,13 @@ static int clk_rpm_handoff(struct clk_rpm *r)
+ 	int ret;
+ 	u32 value = INT_MAX;
+ 
++	/*
++	 * The vendor tree simply reads the status for this
++	 * RPM clock.
++	 */
++	if (r->rpm_clk_id == QCOM_RPM_PLL_4)
++		return 0;
++
+ 	ret = qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
+ 			     r->rpm_clk_id, &value, 1);
+ 	if (ret)
+@@ -269,6 +300,32 @@ static void clk_rpm_unprepare(struct clk_hw *hw)
+ 	mutex_unlock(&rpm_clk_lock);
+ }
+ 
++static int clk_rpm_fixed_prepare(struct clk_hw *hw)
++{
++	struct clk_rpm *r = to_clk_rpm(hw);
++	u32 value = 1;
++	int ret;
++
++	ret = qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
++			     r->rpm_clk_id, &value, 1);
++	if (!ret)
++		r->enabled = true;
++
++	return ret;
++}
++
++static void clk_rpm_fixed_unprepare(struct clk_hw *hw)
++{
++	struct clk_rpm *r = to_clk_rpm(hw);
++	u32 value = 0;
++	int ret;
++
++	ret = qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
++			     r->rpm_clk_id, &value, 1);
++	if (!ret)
++		r->enabled = false;
++}
++
+ static int clk_rpm_set_rate(struct clk_hw *hw,
+ 			    unsigned long rate, unsigned long parent_rate)
+ {
+@@ -333,6 +390,13 @@ static unsigned long clk_rpm_recalc_rate(struct clk_hw *hw,
+ 	return r->rate;
+ }
+ 
++static const struct clk_ops clk_rpm_fixed_ops = {
++	.prepare	= clk_rpm_fixed_prepare,
++	.unprepare	= clk_rpm_fixed_unprepare,
++	.round_rate	= clk_rpm_round_rate,
++	.recalc_rate	= clk_rpm_recalc_rate,
++};
++
+ static const struct clk_ops clk_rpm_ops = {
+ 	.prepare	= clk_rpm_prepare,
+ 	.unprepare	= clk_rpm_unprepare,
+@@ -348,6 +412,46 @@ static const struct clk_ops clk_rpm_branch_ops = {
+ 	.recalc_rate	= clk_rpm_recalc_rate,
+ };
+ 
++/* MSM8660/APQ8060 */
++DEFINE_CLK_RPM_FIXED(msm8660, pll4_clk, pll4_a_clk, QCOM_RPM_PLL_4, 540672000);
++DEFINE_CLK_RPM(msm8660, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
++DEFINE_CLK_RPM(msm8660, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
++DEFINE_CLK_RPM(msm8660, mmfab_clk, mmfab_a_clk, QCOM_RPM_MM_FABRIC_CLK);
++DEFINE_CLK_RPM(msm8660, daytona_clk, daytona_a_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
++DEFINE_CLK_RPM(msm8660, sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
++DEFINE_CLK_RPM(msm8660, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
++DEFINE_CLK_RPM(msm8660, mmfpb_clk, mmfpb_a_clk, QCOM_RPM_MMFPB_CLK);
++DEFINE_CLK_RPM(msm8660, smi_clk, smi_a_clk, QCOM_RPM_SMI_CLK);
++DEFINE_CLK_RPM(msm8660, ebi1_clk, ebi1_a_clk, QCOM_RPM_EBI1_CLK);
++
++static struct clk_rpm *msm8660_clks[] = {
++	[RPM_PLL4_CLK] = &msm8660_pll4_clk,
++	[RPM_PLL4_A_CLK] = &msm8660_pll4_a_clk,
++	[RPM_APPS_FABRIC_CLK] = &msm8660_afab_clk,
++	[RPM_APPS_FABRIC_A_CLK] = &msm8660_afab_a_clk,
++	[RPM_SYS_FABRIC_CLK] = &msm8660_sfab_clk,
++	[RPM_SYS_FABRIC_A_CLK] = &msm8660_sfab_a_clk,
++	[RPM_MM_FABRIC_CLK] = &msm8660_mmfab_clk,
++	[RPM_MM_FABRIC_A_CLK] = &msm8660_mmfab_a_clk,
++	[RPM_DAYTONA_FABRIC_CLK] = &msm8660_daytona_clk,
++	[RPM_DAYTONA_FABRIC_A_CLK] = &msm8660_daytona_a_clk,
++	[RPM_SFPB_CLK] = &msm8660_sfpb_clk,
++	[RPM_SFPB_A_CLK] = &msm8660_sfpb_a_clk,
++	[RPM_CFPB_CLK] = &msm8660_cfpb_clk,
++	[RPM_CFPB_A_CLK] = &msm8660_cfpb_a_clk,
++	[RPM_MMFPB_CLK] = &msm8660_mmfpb_clk,
++	[RPM_MMFPB_A_CLK] = &msm8660_mmfpb_a_clk,
++	[RPM_SMI_CLK] = &msm8660_smi_clk,
++	[RPM_SMI_A_CLK] = &msm8660_smi_a_clk,
++	[RPM_EBI1_CLK] = &msm8660_ebi1_clk,
++	[RPM_EBI1_A_CLK] = &msm8660_ebi1_a_clk,
++};
++
++static const struct rpm_clk_desc rpm_clk_msm8660 = {
++	.clks = msm8660_clks,
++	.num_clks = ARRAY_SIZE(msm8660_clks),
++};
++
+ /* apq8064 */
+ DEFINE_CLK_RPM(apq8064, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
+ DEFINE_CLK_RPM(apq8064, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
+@@ -386,6 +490,8 @@ static const struct rpm_clk_desc rpm_clk_apq8064 = {
+ };
+ 
+ static const struct of_device_id rpm_clk_match_table[] = {
++	{ .compatible = "qcom,rpmcc-msm8660", .data = &rpm_clk_msm8660 },
++	{ .compatible = "qcom,rpmcc-apq8060", .data = &rpm_clk_msm8660 },
+ 	{ .compatible = "qcom,rpmcc-apq8064", .data = &rpm_clk_apq8064 },
+ 	{ }
+ };
+-- 
+2.9.3
