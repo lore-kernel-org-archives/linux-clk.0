@@ -1,156 +1,59 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 9 Mar 2017 11:59:34 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] [PATCH 14/15] ARM: sun5i: a10s: Add the HDMI
- controller node
-Message-ID: <20170309105934.ahsussan6p36lrzn@lukather>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
- <61406c0ba992f2fa5b5180b790a1ef3fa38d9567.1488876832.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v64KKp0cYB3u0=bSVcq0gB41LkurCeiTJ3OEzn7UjdSPpQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ikoiozqmyzngxi4v"
-In-Reply-To: <CAGb2v64KKp0cYB3u0=bSVcq0gB41LkurCeiTJ3OEzn7UjdSPpQ@mail.gmail.com>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 2/3] clk: sunxi-ng: Fix round_rate/set_rate multiplier minimum mismatch
+Date: Fri, 24 Mar 2017 16:33:06 +0800
+Message-Id: <20170324083307.18338-3-wens@csie.org>
+In-Reply-To: <20170324083307.18338-1-wens@csie.org>
+References: <20170324083307.18338-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+In commit 2beaa601c849 ("clk: sunxi-ng: Implement minimum for
+multipliers"), the multiplier minimums in the set_rate callback
+for NM and NKMP style clocks were not updated.
 
---ikoiozqmyzngxi4v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch fixes them to match their round_rate callbacks.
 
-1;4601;0c
-On Wed, Mar 08, 2017 at 11:35:39AM +0800, Chen-Yu Tsai wrote:
-> Hi,
->=20
-> On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > The A10s has an HDMI controller connected to the second TCON channel. A=
-dd
-> > it to our DT.
-> >
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  arch/arm/boot/dts/sun5i-a10s.dtsi | 34 +++++++++++++++++++++++++++++++=
-+-
-> >  arch/arm/boot/dts/sun5i.dtsi      |  1 +-
-> >  2 files changed, 35 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/sun5i-a10s.dtsi b/arch/arm/boot/dts/sun5=
-i-a10s.dtsi
-> > index 074485782a4a..3482c9d2b120 100644
-> > --- a/arch/arm/boot/dts/sun5i-a10s.dtsi
-> > +++ b/arch/arm/boot/dts/sun5i-a10s.dtsi
-> > @@ -72,7 +72,33 @@
-> >                 };
-> >         };
-> >
-> > +       display-engine {
-> > +               compatible =3D "allwinner,sun5i-a10s-display-engine",
-> > +                            "allwinner,sun5i-a13-display-engine";
-> > +               allwinner,pipelines =3D <&fe0>;
-> > +       };
-> > +
-> >         soc@01c00000 {
-> > +               hdmi0: hdmi@01c16000 {
->=20
-> Nit: is the 0 suffix needed? I don't see any indication that there is
-> a second controller.
->=20
-> > +                       compatible =3D "allwinner,sun5i-a10s-hdmi";
-> > +                       reg =3D <0x01c16000 0x1000>;
-> > +                       clocks =3D <&ccu CLK_AHB_HDMI>, <&ccu CLK_HDMI>,
-> > +                                <&ccu CLK_PLL_VIDEO0_2X>,
-> > +                                <&ccu CLK_PLL_VIDEO1_2X>;
-> > +                       clock-names =3D "ahb", "mod", "pll-0", "pll-1";
-> > +                       status =3D "disabled";
-> > +
-> > +                       port {
-> > +                               #address-cells =3D <1>;
-> > +                               #size-cells =3D <0>;
-> > +
-> > +                               hdmi0_in_tcon0: endpoint@0 {
-> > +                                       reg =3D <0>;
-> > +                                       remote-endpoint =3D <&tcon0_out=
-_hdmi0>;
-> > +                               };
-> > +                       };
-> > +               };
-> > +
-> >                 pwm: pwm@01c20e00 {
-> >                         compatible =3D "allwinner,sun5i-a10s-pwm";
-> >                         reg =3D <0x01c20e00 0xc>;
-> > @@ -129,3 +155,11 @@
-> >
-> >  &sram_a {
-> >  };
-> > +
-> > +&tcon0_out {
-> > +       tcon0_out_hdmi0: endpoint@2 {
-> > +               reg =3D <2>;
-> > +               remote-endpoint =3D <&hdmi0_in_tcon0>;
-> > +               allwinner,tcon-channel =3D <1>;
-> > +       };
-> > +};
-> > diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-> > index f3b6e19244f9..3d009b2aa42a 100644
-> > --- a/arch/arm/boot/dts/sun5i.dtsi
-> > +++ b/arch/arm/boot/dts/sun5i.dtsi
-> > @@ -273,6 +273,7 @@
-> >                                         tcon0_out_tve0: endpoint@1 {
-> >                                                 reg =3D <1>;
-> >                                                 remote-endpoint =3D <&t=
-ve0_in_tcon0>;
-> > +                                               allwinner,tcon-channel =
-=3D <1>;
->=20
-> This looks like a separate patch, probably following the binding
-> change?
+Fixes: 2beaa601c849 ("clk: sunxi-ng: Implement minimum for multipliers")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu_nkmp.c | 4 ++--
+ drivers/clk/sunxi-ng/ccu_nm.c   | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-I don't know, the binding says that without anything specified, reg
-would be used. I was assuming that we only needed it once we had the
-new endpoint to make it consistent, therefore it didn't need an extra
-patch.
-
-But I can definitely create one if you want.
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---ikoiozqmyzngxi4v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYwTWVAAoJEBx+YmzsjxAgunUP/0D7KJGfoMuMy1+eEyshi+D9
-c1RT+29VmIa3vEPDT0yvR50Rz246p+UbarifLf+d1m0rLLJ9KCLQt30/+ISCbuDz
-g34ZZyle0AKeCpUI+0bTpb09ARLEbE4ELpC3VVdqyfTfmDZmjUZyevf2mvMJwTiN
-bQMuiriZXS9/zU4RxPd4K0RElhapXws9nLZ/AUwYH0GRgmVWEPc4aTu34tHK4s+I
-bPat0bnkzoLHlkMmWbT7D4dBMNvxYLczAib8N9FFH1r65Mqw8qyhAjeJBvI5XdYl
-aL56tcUDX72zQHY9oDHk2pqLgtlIlldJvDeSLRELlLiCgSKi/lkyd35WCYrCwI/h
-EzPa5wcLlZ7NDOFUjABk4+5GYDLY0ig5bUwosbwCnxLgqbWwJq6HDkH1EevoYfpS
-JhPSZV88g79eELMTOIpFMTnpRkiebuEsMcgNf8jWJSq/BmflI1DXz1rfQkq6Fo8G
-BJB/4Qx/haXe9ZC8gMpmIQNYbEQW6Uc2+pclU3C137NGXfrDKC90IeZ+K4UXJbnE
-mhEj5f4fbsWIvZdLOA672nvQiA8VS3fyq74ZoHQznIUz1ssgDCuD4fGyVb++W7Ot
-RyupTgrDcmKw/uuD4PegQLJNj0exWNQWEIg/PvOcB5lK2ilaPTp4s7Injainzi4W
-Feoiw/eidxij4UXvNh33
-=Q/Ir
------END PGP SIGNATURE-----
-
---ikoiozqmyzngxi4v--
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index 162ff2664f64..e58c95787f94 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -138,9 +138,9 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long flags;
+ 	u32 reg;
+ 
+-	_nkmp.min_n = 1;
++	_nkmp.min_n = nkmp->n.min ?: 1;
+ 	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
+-	_nkmp.min_k = 1;
++	_nkmp.min_k = nkmp->k.min ?: 1;
+ 	_nkmp.max_k = nkmp->k.max ?: 1 << nkmp->k.width;
+ 	_nkmp.min_m = 1;
+ 	_nkmp.max_m = nkmp->m.max ?: 1 << nkmp->m.width;
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index f312c92f2a21..5e5e90a4a50c 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -122,7 +122,7 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	else
+ 		ccu_frac_helper_disable(&nm->common, &nm->frac);
+ 
+-	_nm.min_n = 1;
++	_nm.min_n = nm->n.min ?: 1;
+ 	_nm.max_n = nm->n.max ?: 1 << nm->n.width;
+ 	_nm.min_m = 1;
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+-- 
+2.11.0
