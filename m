@@ -1,80 +1,64 @@
-Return-Path: <hgkr.klein@gmail.com>
-Return-Path: <hgkr.klein@gmail.com>
-From: Helmut Klein <hgkr.klein@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: Helmut Klein <hgkr.klein@gmail.com>,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3 1/4] dt-bindings: clock: gxbb: expose UART clocks
-Date: Fri, 31 Mar 2017 18:54:34 +0200
-Message-Id: <20170331165437.26227-2-hgkr.klein@gmail.com>
-In-Reply-To: <20170331165437.26227-1-hgkr.klein@gmail.com>
-References: <20170331165437.26227-1-hgkr.klein@gmail.com>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v4.11
+Date: Fri, 24 Mar 2017 10:39:13 +0100
+Message-Id: <1490348353-10989-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Expose the clock ids of the three none AO uarts to the dt-bindings
+	Hi Mike, Stephen,
 
-Signed-off-by: Helmut Klein <hgkr.klein@gmail.com>
----
- drivers/clk/meson/gxbb.h              | 6 +++---
- include/dt-bindings/clock/gxbb-clkc.h | 3 +++
- 2 files changed, 6 insertions(+), 3 deletions(-)
+The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
 
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 8ee2022ce5d5..1edfaa5fe307 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -194,7 +194,7 @@
- /* #define CLKID_SAR_ADC */
- #define CLKID_SMART_CARD	  24
- #define CLKID_RNG0		  25
--#define CLKID_UART0		  26
-+/* CLKID_UART0 */
- #define CLKID_SDHC		  27
- #define CLKID_STREAM		  28
- #define CLKID_ASYNC_FIFO	  29
-@@ -216,7 +216,7 @@
- #define CLKID_ADC		  45
- #define CLKID_BLKMV		  46
- #define CLKID_AIU		  47
--#define CLKID_UART1		  48
-+/* CLKID_UART1 */
- #define CLKID_G2D		  49
- /* CLKID_USB0 */
- /* CLKID_USB1 */
-@@ -236,7 +236,7 @@
- /* CLKID_USB0_DDR_BRIDGE */
- #define CLKID_MMC_PCLK		  66
- #define CLKID_DVIN		  67
--#define CLKID_UART2		  68
-+/* CLKID_UART2 */
- /* #define CLKID_SANA */
- #define CLKID_VPU_INTR		  70
- #define CLKID_SEC_AHB_AHB3_BRIDGE 71
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index 692846c7941b..7b329df47752 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -15,13 +15,16 @@
- #define CLKID_SPI		34
- #define CLKID_I2C		22
- #define CLKID_SAR_ADC		23
-+#define CLKID_UART0		26
- #define CLKID_ETH		36
-+#define CLKID_UART1		48
- #define CLKID_USB0		50
- #define CLKID_USB1		51
- #define CLKID_USB		55
- #define CLKID_HDMI_PCLK		63
- #define CLKID_USB1_DDR_BRIDGE	64
- #define CLKID_USB0_DDR_BRIDGE	65
-+#define CLKID_UART2		68
- #define CLKID_SANA		69
- #define CLKID_GCLK_VENCI_INT0	77
- #define CLKID_AO_I2C		93
+  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.12-tag1
+
+for you to fetch changes up to cecbe87d73006cb321dec79b349e3fefd1a80962:
+
+  clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0 (2017-03-21 11:12:23 +0100)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v4.12
+
+  - Add IMR clocks for R-Car H3 and M3-W,
+  - Add workaround for PLL0/2/4 errata on R-Car H3 ES1.0,
+  - Small fixes and cleanups.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (7):
+      clk: renesas: r8a7795: Correct parent clock and sort order for Audio DMACs
+      clk: renesas: r8a7795: Correct name of watchdog clock
+      clk: renesas: r8a7796: Correct name of watchdog clock
+      clk: renesas: r8a7795: Reformat core clock table
+      clk: renesas: r8a7796: Reformat core clock table
+      clk: renesas: rcar-gen3-cpg: Pass mode pins to rcar_gen3_cpg_init()
+      clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0
+
+Sergei Shtylyov (2):
+      clk: renesas: r8a7795: Add IMR clocks
+      clk: renesas: r8a7796: Add IMR clocks
+
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 32 ++++++++++++++++++--------------
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 18 ++++++++++--------
+ drivers/clk/renesas/rcar-gen3-cpg.c    | 28 +++++++++++++++++++++++++++-
+ drivers/clk/renesas/rcar-gen3-cpg.h    |  2 +-
+ 4 files changed, 56 insertions(+), 24 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
 --
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
