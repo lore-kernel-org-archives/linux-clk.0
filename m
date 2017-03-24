@@ -1,67 +1,94 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [PATCH v3 10/11] ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
-Date: Thu, 30 Mar 2017 03:46:12 +0800
-Message-Id: <20170329194613.55548-11-icenowy@aosc.io>
-In-Reply-To: <20170329194613.55548-1-icenowy@aosc.io>
-References: <20170329194613.55548-1-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
- Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 1/2] clk: qcom: Update DT bindings for MSM8660 LCC
+Date: Fri, 24 Mar 2017 09:24:24 +0100
+Message-Id: <20170324082424.6143-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.xyz>
+This adds the right compatible string and header for the
+MSM8660 LCC and some new defines to the dt-bindings header.
 
-Allwinner V3s SoC features a set of pins that have functionality of RGB
-LCD, the pins are at different pin ban than other SoCs.
+Take this opportunity to spell out the acronym LPASS for
+Low-power Audio Subsystem.
 
-Add pinctrl node for them.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/boot/dts/sun8i-v3s.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../devicetree/bindings/clock/qcom,lcc.txt         |  5 +--
+ include/dt-bindings/clock/qcom,lcc-msm8660.h       | 40 ++++++++++++++++++++++
+ 2 files changed, 43 insertions(+), 2 deletions(-)
+ create mode 100644 include/dt-bindings/clock/qcom,lcc-msm8660.h
 
-diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
-index ae23746731a8..ac783a8a4fd3 100644
---- a/arch/arm/boot/dts/sun8i-v3s.dtsi
-+++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
-@@ -297,6 +297,15 @@
- 				function = "i2c0";
- 			};
+diff --git a/Documentation/devicetree/bindings/clock/qcom,lcc.txt b/Documentation/devicetree/bindings/clock/qcom,lcc.txt
+index a3c78aa88038..4de51df37f1a 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,lcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,lcc.txt
+@@ -1,10 +1,11 @@
+-Qualcomm LPASS Clock & Reset Controller Binding
+-------------------------------------------------
++Qualcomm Low-power Audio Subsystem (LPASS) Clock & Reset Controller Binding
++---------------------------------------------------------------------------
  
-+			lcd_rgb666_pins: lcd_rgb666@0 {
-+				pins = "PE0", "PE1", "PE2", "PE3", "PE4",
-+				       "PE5", "PE6", "PE7", "PE8", "PE9",
-+				       "PE10", "PE11", "PE12", "PE13", "PE14",
-+				       "PE15", "PE16", "PE17", "PE18", "PE19",
-+				       "PE23", "PE24";
-+				function = "lcd";
-+			};
+ Required properties :
+ - compatible : shall contain only one of the following:
+ 
+ 			"qcom,lcc-msm8960"
++			"qcom,lcc-msm8660"
+ 			"qcom,lcc-apq8064"
+ 			"qcom,lcc-ipq8064"
+ 			"qcom,lcc-mdm9615"
+diff --git a/include/dt-bindings/clock/qcom,lcc-msm8660.h b/include/dt-bindings/clock/qcom,lcc-msm8660.h
+new file mode 100644
+index 000000000000..7cddcbd6b1ee
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,lcc-msm8660.h
+@@ -0,0 +1,40 @@
++/*
++ * Copyright (c) 2017 Linus Walleij <linus.walleij@linaro.org>
++ * Qualcomm MSM8660 Low-power Audio Subsystem (LPASS) Clock Controller
++ * devicetree definitions
++ */
 +
- 			uart0_pins_a: uart0@0 {
- 				pins = "PB8", "PB9";
- 				function = "uart0";
++#ifndef _DT_BINDINGS_CLK_LCC_MSM8660_H
++#define _DT_BINDINGS_CLK_LCC_MSM8660_H
++
++#define LPA_PLL0			0
++#define MI2S_OSR_SRC			1
++#define MI2S_OSR_CLK			2
++#define MI2S_DIV_CLK			3
++#define MI2S_BIT_DIV_CLK		4
++#define MI2S_BIT_CLK			5
++#define CODEC_I2S_MIC_OSR_SRC		6
++#define CODEC_I2S_MIC_OSR_CLK		7
++#define CODEC_I2S_MIC_DIV_CLK		8
++#define CODEC_I2S_MIC_BIT_DIV_CLK	9
++#define CODEC_I2S_MIC_BIT_CLK		10
++#define SPARE_I2S_MIC_OSR_SRC		11
++#define SPARE_I2S_MIC_OSR_CLK		12
++#define SPARE_I2S_MIC_DIV_CLK		13
++#define SPARE_I2S_MIC_BIT_DIV_CLK	14
++#define SPARE_I2S_MIC_BIT_CLK		15
++#define CODEC_I2S_SPKR_OSR_SRC		16
++#define CODEC_I2S_SPKR_OSR_CLK		17
++#define CODEC_I2S_SPKR_DIV_CLK		18
++#define CODEC_I2S_SPKR_BIT_DIV_CLK	19
++#define CODEC_I2S_SPKR_BIT_CLK		20
++#define SPARE_I2S_SPKR_OSR_SRC		21
++#define SPARE_I2S_SPKR_OSR_CLK		22
++#define SPARE_I2S_SPKR_DIV_CLK		23
++#define SPARE_I2S_SPKR_BIT_DIV_CLK	24
++#define SPARE_I2S_SPKR_BIT_CLK		25
++#define PCM_SRC				26
++#define PCM_CLK_OUT			27
++#define PCM_CLK				28
++
++#endif
 -- 
-2.12.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.9.3
