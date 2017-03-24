@@ -1,166 +1,75 @@
-Return-Path: <huziji@marvell.com>
-Subject: Re: [PATCH v6 03/14] mmc: core: Add mmc-card dt sub-node parse in
- core layer
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Gregory CLEMENT
-	<gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
- <34e51d32c82b57571e061e80df3bbaed731db554.1487091464.git-series.gregory.clement@free-electrons.com>
- <CAPDyKFoqxMCSe-2bt2dz1AM_2X7dtVe4w6e7+oAQ==HO_=XKQw@mail.gmail.com>
-CC: Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org"
-	<linux-mmc@vger.kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>, Andrew Lunn
-	<andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        Mike Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk
-	<linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Jimmy Xu
-	<zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
-        Nadav Haklai
-	<nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
-        Doug Jones
-	<dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
-        "Wei(SOCP) Liu"
-	<liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
-        Yehuda Yitschak
-	<yehuday@marvell.com>,
-        Marcin Wojtas <mw@semihalf.com>, Hanna Hawa
-	<hannah@marvell.com>,
-        Kostya Porotchkin <kostap@marvell.com>
-From: Ziji Hu <huziji@marvell.com>
-Message-ID: <f6a64290-47fb-b9c7-384f-ee87c97ce399@marvell.com>
-Date: Wed, 15 Mar 2017 21:46:07 +0800
-MIME-Version: 1.0
-In-Reply-To: <CAPDyKFoqxMCSe-2bt2dz1AM_2X7dtVe4w6e7+oAQ==HO_=XKQw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <al.kochet@gmail.com>
+Return-Path: <al.kochet@gmail.com>
+From: Alexander Kochetkov <al.kochet@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexander Kochetkov <al.kochet@gmail.com>
+Subject: [PATCH] clk: rockchip: limit i2s0_pre max rate on rk3188
+Date: Fri, 24 Mar 2017 14:31:10 +0300
+Message-Id: <1490355070-21818-1-git-send-email-al.kochet@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ulf,
+Change i2s0_pre from 768MHz to 192MHz and limit it's rate to 192MHz in
+order to fix issues described below.
 
-On 2017/3/15 20:43, Ulf Hansson wrote:
-> On 14 February 2017 at 18:01, Gregory CLEMENT
-> <gregory.clement@free-electrons.com> wrote:
->> From: Hu Ziji <huziji@marvell.com>
->>
->> Some vendor host, like Xenon, can support multiple types.
->> In dts, use mmc-card dt sub-node to indicate eMMC is in use.
->>
->> Add a generic mmc-card parse function in mmc core layer.
->> If mmc-card sub-node is detected, set eMMC common caps, such as
->> MMC_CAP_NONREMOVABLE, MMC_CAP2_NO_SD and MMC_CAP2_NO_SDIO.
->>
->> Since it is likely that struct mmc_card is not allocated yet when
->> this mmc-card parse function is called, it will return true if
->> mmc-card sub-node is detected. Otherwise, return false.
->> It can help vendor host determine if the card type is eMMC.
->>
-<snip>
->> +bool mmc_of_parse_mmc_card(struct mmc_host *host)
->> +{
->> +       struct device_node *np;
->> +       bool ret = false;
->> +
->> +       np = mmc_of_find_child_device(host, 0);
-> 
-> There are already some places in the mmc core where child nodes are
-> being parsed. You may have a look for mmc_of_find_child_device() and
-> find the callers of it.
-> 
-> Additionally, we need a generic method of how to describe in DT, when
-> an mmc host controller has more than one mmc slot. This will also be
-> done using child nodes.
-> 
+If right after the boot change i2s0_clk to 16.384MHz, real rate on
+i2s0_clk pin may differ from 16.384MHz. The issue is random. Sometimes
+rate on i2s0_clk pin equal to 16.384MHz, sometimes not.
 
-	I'd like to confirm if you require a universal child node
-	parsing function to deal with all the child node use cases.
-	It might be a little difficult to us.
+There is another 100% reproducable issue. First we have to boot and see
+the correct frequency on i2s0_clk pin (16.384MHz). Then we change its rate
+to 8.192MHz (and it changes), then we change its rate again to 16.384MHz.
+Rate leaves unchanged and equal to 8.192MHz.
 
-> So, before starting hacking on this, it seems like we need some
-> consolidation of the code. In principle, I would like to move the APIs
-> for parsing of the child nodes into host.c, along with existing
-> mmc_of_parse() function.
-> 
+'clk_summary' shows following clock connection in all the cases, where
+rate was set to 16.384MHz (even then real rate differs).
 
-	I guess that your requirement is like:
-	int mmc_of_pars(struct mmc_host *host)
-	{
+    clock                       rate
+    -----                       ----
+    xin24m                      24000000
+      pll_gpll                  768000000
+         gpll                   768000000
+            i2s_src             768000000
+               i2s0_pre         768000000
+                  i2s0_frac     16384000
+                     sclk_i2s0  16384000
 
-		...
+Also I found, that if I change i2s0_pre to 192MHz all the issues described
+above gone. I supposed that the issues is due to high i2s0_pre rate.
+Probably rk3188 has some sort of frequency restrictions imposed. Haven't
+found anything in the RK3188 TRM, so this is my assumption.
 
-		np = mmc_of_find_child_device(host, 0);
-		if (np && of_device_is_compatible(np, "mmc-card")) {
-			...
-		}
+Anyway, with the patch, all the issues gone.
 
-		...
+Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
+---
+ drivers/clk/rockchip/clk-rk3188.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-	}
-	Am I correct?
-
-	Actually, I previously tried this implementation.
-	But I found that it is difficult to return eMMC card type information
-	to our vendor driver. Our Xenon driver expects to know if the device
-	is eMMC card through this parse.
-
->> +       if (np && of_device_is_compatible(np, "mmc-card")) {
->> +               /* mmc-card sub-node indicates eMMC card is in use. */
->> +               host->caps |= MMC_CAP_NONREMOVABLE;
->> +               host->caps2 |= MMC_CAP2_NO_SDIO | MMC_CAP2_NO_SD;
->> +               ret = true;
->> +       }
->> +
-> 
-> So instead of providing a new mmc OF parse API, let's make
-> mmc_of_parse() call another internal function which deals with child
-> node parsing.
-> 
->> +       of_node_put(np);
->> +       return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(mmc_of_parse_mmc_card);
->> +
->> +/*
->>   * Starting point for MMC card init.
->>   */
->>  int mmc_attach_mmc(struct mmc_host *host)
->> diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
->> index e33cc748dcfe..1b27323f3b6e 100644
->> --- a/include/linux/mmc/core.h
->> +++ b/include/linux/mmc/core.h
->> @@ -234,4 +234,6 @@ struct device_node;
->>  extern u32 mmc_vddrange_to_ocrmask(int vdd_min, int vdd_max);
->>  extern int mmc_of_parse_voltage(struct device_node *np, u32 *mask);
->>
->> +extern bool mmc_of_parse_mmc_card(struct mmc_host *host);
->> +
->>  #endif /* LINUX_MMC_CORE_H */
->> --
->> git-series 0.9.1
-> 
-> If you didn't quite understand my comments, then please tell me. Then
-> I can help out cooking some patches for you.
-
-	Thanks a lot. Actually I'm not sure if our implementation to detect
-	eMMC card type can meet your requirement of child node parsing.
-	Please help provide me some examples or patches.
-
-	Thank you.
-
-Best regards,
-Hu Ziji
-
-> 
-> Kind regards
-> Uffe
-> 
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index d0e722a..e883f48 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -849,6 +849,15 @@ static void __init rk3188a_clk_init(struct device_node *np)
+ 			__func__);
+ 	}
+ 
++	/* limit i2s0_pre max rate */
++	clk1 = __clk_lookup("aclk_cpu_pre");
++	clk2 = __clk_lookup("i2s0_pre");
++	if (clk1 && clk2) {
++		rate = clk_get_rate(clk1);
++		clk_set_max_rate(clk2, rate);
++		clk_set_rate(clk2, rate);
++	}
++
+ 	rockchip_clk_protect_critical(rk3188_critical_clocks,
+ 				      ARRAY_SIZE(rk3188_critical_clocks));
+ 	rockchip_clk_of_add_provider(np, ctx);
+-- 
+1.7.9.5
