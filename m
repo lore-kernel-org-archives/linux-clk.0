@@ -1,102 +1,214 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 23 Mar 2017 21:06:30 -0500
+From: Rob Herring <robh@kernel.org>
+To: gabriel.fernandez@st.com
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/8] clk: meson: gxbb: add cts_i958 clock
-Date: Fri, 31 Mar 2017 15:04:09 +0200
-Message-Id: <20170331130411.4781-7-jbrunet@baylibre.com>
-In-Reply-To: <20170331130411.4781-1-jbrunet@baylibre.com>
-References: <20170331130411.4781-1-jbrunet@baylibre.com>
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [PATCH] clk: stm32h7: Add stm32h743 clock driver
+Message-ID: <20170324020630.vhffmeeb6wto53zx@rob-hp-laptop>
+References: <1489569810-24350-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1489569810-24350-1-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the cts_i958 clock to control the clock source of the spdif
-output block. This mux is not explicitly mentionned in the documentation
-but it is critical to the spdif dai. It is used to select whether the clock
-source of the spdif output is cts_amclk (when data are taken from i2s
-buffer) or the cts_mclk_i958 (when data are taken from the spdif buffer)
+On Wed, Mar 15, 2017 at 10:23:30AM +0100, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> This patch enables clocks for STM32H743 boards.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> ---
+>  .../devicetree/bindings/clock/st,stm32h7-rcc.txt   |  152 ++
+>  drivers/clk/Makefile                               |    1 +
+>  drivers/clk/clk-stm32h7.c                          | 1586 ++++++++++++++++++++
+>  include/dt-bindings/clock/stm32h7-clks.h           |  165 ++
+>  include/dt-bindings/mfd/stm32h7-rcc.h              |  138 ++
+>  5 files changed, 2042 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+>  create mode 100644 drivers/clk/clk-stm32h7.c
+>  create mode 100644 include/dt-bindings/clock/stm32h7-clks.h
+>  create mode 100644 include/dt-bindings/mfd/stm32h7-rcc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+> new file mode 100644
+> index 0000000..9d4b587
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+> @@ -0,0 +1,152 @@
+> +STMicroelectronics STM32H7 Reset and Clock Controller
+> +=====================================================
+> +
+> +The RCC IP is both a reset and a clock controller.
+> +
+> +Please refer to clock-bindings.txt for common clock controller binding usage.
+> +Please also refer to reset.txt for common reset controller binding usage.
+> +
+> +Required properties:
+> +- compatible: Should be:
+> +  "st,stm32h743-rcc"
+> +
+> +- reg: should be register base and length as documented in the
+> +  datasheet
+> +
+> +- #reset-cells: 1, see below
+> +
+> +- #clock-cells : from common clock binding; shall be set to 1
+> +
+> +- clocks: External oscillator clock phandle
+> +  - high speed external clock signal (HSE)
+> +  - low speed external clock signal (LSE)
+> +  - external I2S clock (I2S_CKIN)
+> +
+> +- st,syscfg: phandle for pwrcfg, mandatory to disable/enable backup domain
+> +  write protection (RTC clock).
+> +
+> +- pll x node: Allow to register a pll with specific parameters.
+> +  Please see PLL section below.
+> +
+> +Example:
+> +
+> +	rcc: rcc@58024400 {
+> +		#reset-cells = <1>;
+> +		#clock-cells = <2>
+> +		compatible = "st,stm32h743-rcc", "st,stm32-rcc";
+> +		reg = <0x58024400 0x400>;
+> +		clocks = <&clk_hse>, <&clk_lse>, <&clk_i2s_ckin>;
+> +
+> +		st,syscfg = <&pwrcfg>;
+> +
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		vco1@58024430 {
+> +			#clock-cells = <0>;
+> +			compatible = "stm32,pll";
+> +			reg = <0>;
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/gxbb.c | 21 +++++++++++++++++++++
- drivers/clk/meson/gxbb.h |  3 ++-
- 2 files changed, 23 insertions(+), 1 deletion(-)
+The reg addr value and unit address don't match.
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 72492cc63915..ad5f027af1a2 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -933,6 +933,24 @@ static struct clk_gate gxbb_cts_mclk_i958 = {
- 	},
- };
- 
-+static struct clk_mux gxbb_cts_i958 = {
-+	.reg = (void *)HHI_AUD_CLK_CNTL2,
-+	.mask = 0x1,
-+	.shift = 27,
-+	.lock = &clk_lock,
-+		.hw.init = &(struct clk_init_data){
-+		.name = "cts_i958",
-+		.ops = &clk_mux_ops,
-+		.parent_names = (const char *[]){ "cts_amclk", "cts_mclk_i958" },
-+		.num_parents = 2,
-+		/*
-+		 *The parent is specific to origin of the audio data. Let the
-+		 * consumer choose the appropriate parent
-+		 */
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
-+	},
-+};
-+
- /* Everything Else (EE) domain gates */
- static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
- static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
-@@ -1139,6 +1157,7 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
- 		[CLKID_CTS_MCLK_I958]	    = &gxbb_cts_mclk_i958.hw,
- 		[CLKID_CTS_MCLK_I958_SEL]   = &gxbb_cts_mclk_i958_sel.hw,
- 		[CLKID_CTS_MCLK_I958_DIV]   = &gxbb_cts_mclk_i958_div.hw,
-+		[CLKID_CTS_I958]	    = &gxbb_cts_i958.hw,
- 	},
- 	.num = NR_CLKS,
- };
-@@ -1258,6 +1277,7 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
- 		[CLKID_CTS_MCLK_I958]	    = &gxbb_cts_mclk_i958.hw,
- 		[CLKID_CTS_MCLK_I958_SEL]   = &gxbb_cts_mclk_i958_sel.hw,
- 		[CLKID_CTS_MCLK_I958_DIV]   = &gxbb_cts_mclk_i958_div.hw,
-+		[CLKID_CTS_I958]	    = &gxbb_cts_i958.hw,
- 	},
- 	.num = NR_CLKS,
- };
-@@ -1382,6 +1402,7 @@ static struct clk_mux *const gxbb_clk_muxes[] = {
- 	&gxbb_mali,
- 	&gxbb_cts_amclk_sel,
- 	&gxbb_cts_mclk_i958_sel,
-+	&gxbb_cts_i958,
- };
- 
- static struct clk_divider *const gxbb_clk_dividers[] = {
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index efa90dad3478..3b0665099a1e 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -283,8 +283,9 @@
- #define CLKID_CTS_MCLK_I958	  110
- #define CLKID_CTS_MCLK_I958_SEL	  111
- #define CLKID_CTS_MCLK_I958_DIV	  112
-+#define CLKID_CTS_I958		  113
- 
--#define NR_CLKS			  113
-+#define NR_CLKS			  114
- 
- /* include the CLKIDs that have been made part of the stable DT binding */
- #include <dt-bindings/clock/gxbb-clkc.h>
--- 
-2.9.3
+> +		};
+> +
+> +		vco2@58024438 {
+> +			#clock-cells = <0>;
+> +			compatible = "stm32,pll";
+> +			reg = <1>;
+> +			st,clock-div = <2>;
+> +			st,clock-mult = <40>;
+> +			st,frac-status = <0>;
+> +			st,frac = <0>;
+> +			st,vcosel = <1>;
+> +			st,pllrge = <2>;
+> +		};
+> +	};
+> +
+> +
+> +STM32H7 PLL
+> +-----------
+> +
+> +The VCO of STM32 PLL could be reprensented like this:
+> +
+> +  Vref    ---------       --------
+> +    ---->| / DIVM  |---->| x DIVN | ------> VCO
+> +          ---------       --------
+> +		             ^
+> +			     |
+> +	                  -------
+> +		         | FRACN |
+> +		          -------
+> +
+> +When the PLL is configured in integer mode:
+> +- VCO = ( Vref / DIVM ) * DIVN
+> +
+> +When the PLL is configured in fractional mode:
+> +- VCO = ( Vref / DIVM ) * ( DIVN + FRACN / 2^13)
+> +
+> +
+> +Required properties for pll node:
+> +- compatible: Should be:
+> +  "stm32,pll"
+
+Only 1 single PLL design for all STM32 chips ever?
+
+> +
+> +- #clock-cells: from common clock binding; shall be set to 0
+> +- reg: Should be the pll number.
+> +
+> +Optional properties:
+> +- st,clock-div:  DIVM division factor       : <1..63>
+> +- st,clock-mult: DIVN multiplication factor : <4..512>
+> +
+> +- st,frac-status:
+> +   - 0 Pll is configured in integer mode
+> +   - 1 Pll is configure in fractional mode
+
+Isn't this implied by the presence of the next property?
+
+> +
+> +- st,frac: Fractional part of the multiplication factor : <0..8191>
+> +
+> +- st,vcosel: VCO selection
+> +  - 0: Wide VCO range:192 to 836 MHz
+> +  - 1: Medium VCO range:150 to 420 MHz
+> +
+> +- st,pllrge: PLL input frequency range
+> +  - 0: The PLL input (Vref / DIVM) clock range frequency is between 1 and 2 MHz
+> +  - 1: The PLL input (Vref / DIVM) clock range frequency is between 2 and 4 MHz
+> +  - 2: The PLL input (Vref / DIVM) clock range frequency is between 4 and 8 MHz
+> +  - 3: The PLL input (Vref / DIVM) clock range frequency is between 8 and 16 MHz
+
+Seems like you could figure this out based on the input freq and other 
+properties.
+
+> +
+> +
+> +The peripheral clock consumer should specify the desired clock by
+> +having the clock ID in its "clocks" phandle cell.
+> +
+> +All available clocks are defined as preprocessor macros in
+> +dt-bindings/clock/stm32h7-clks.h header and can be used in device
+> +tree sources.
+> +
+> +Example:
+> +
+> +		timer5: timer@40000c00 {
+> +			compatible = "st,stm32-timer";
+> +			reg = <0x40000c00 0x400>;
+> +			interrupts = <50>;
+> +			clocks = <&rcc TIM5_CK>;
+> +
+> +		};
+> +
+> +Specifying softreset control of devices
+> +=======================================
+> +
+> +Device nodes should specify the reset channel required in their "resets"
+> +property, containing a phandle to the reset device node and an index specifying
+> +which channel to use.
+> +The index is the bit number within the RCC registers bank, starting from RCC
+> +base address.
+> +It is calculated as: index = register_offset / 4 * 32 + bit_offset.
+> +Where bit_offset is the bit offset within the register.
+> +
+> +For example, for CRC reset:
+> +  crc = AHB4RSTR_offset / 4 * 32 + CRCRST_bit_offset = 0x88 / 4 * 32 + 19 = 1107
+> +
+> +All available preprocessor macros for reset are defined dt-bindings//mfd/stm32h7-rcc.h
+> +header and can be used in device tree sources.
+> +
+> +example:
+> +
+> +	timer2 {
+> +		resets	= <&rcc STM32H7_APB1L_RESET(TIM2)>;
+> +	};
