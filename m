@@ -1,206 +1,61 @@
-Return-Path: <Suzuki.Poulose@arm.com>
-Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
-To: Leo Yan <leo.yan@linaro.org>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
- <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
- <31be033f-514e-e48a-3ba2-a5c5cd477548@arm.com>
- <20170329030735.GA23889@leoy-linaro>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will.deacon@arm.com>, Andy Gross <andy.gross@linaro.org>,
- David Brown <david.brown@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Guodong Xu <guodong.xu@linaro.org>, John Stultz <john.stultz@linaro.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, mike.leach@linaro.org, sudeep.holla@arm.com
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <5584203e-cb19-a5d2-45b1-3e78d3482c55@arm.com>
-Date: Wed, 29 Mar 2017 10:07:07 +0100
+Return-Path: <marc.zyngier@arm.com>
+Subject: Re: [PATCH v3 02/12] irqchip: mtk-sysirq: extend intpol base to
+ arbitrary number
+To: Mars Cheng <mars.cheng@mediatek.com>
+References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+ <1489937193-2953-3-git-send-email-mars.cheng@mediatek.com>
+ <3790b6ad-12c0-0c48-c24e-0f3397c6bbba@arm.com>
+ <1490313138.25996.10.camel@mtkswgap22>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ Rob Herring <robh+dt@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ CC Hwang <cc.hwang@mediatek.com>, Loda Chou <loda.chou@mediatek.com>,
+ Miles Chen <miles.chen@mediatek.com>, Jades Shih <jades.shih@mediatek.com>,
+ Yingjoe Chen <yingjoe.chen@mediatek.com>, My Chuang
+ <my.chuang@mediatek.com>, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ wsd_upstream@mediatek.com, linux-clk@vger.kernel.org,
+ chieh-jay.liu@mediatek.com
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <c2fcee41-f78f-da13-bf01-a0a01c7e8b39@arm.com>
+Date: Fri, 24 Mar 2017 09:42:10 +0000
 MIME-Version: 1.0
-In-Reply-To: <20170329030735.GA23889@leoy-linaro>
-Content-Type: text/plain; charset=us-ascii; format=flowed
+In-Reply-To: <1490313138.25996.10.camel@mtkswgap22>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 29/03/17 04:07, Leo Yan wrote:
-> Hi Suzuki,
->
-> On Mon, Mar 27, 2017 at 05:34:57PM +0100, Suzuki K Poulose wrote:
->> On 25/03/17 18:23, Leo Yan wrote:
->
-> [...]
->
->> Leo,
->>
->> Thanks a lot for the quick rework. I don't fully understand (yet!) why we need the
->> idle_constraint. I will leave it for Sudeep to comment on it, as he is the expert
->> in that area. Some minor comments below.
->
-> Thanks a lot for quick reviewing :)
->
->>> Signed-off-by: Leo Yan <leo.yan@linaro.org>
->>> ---
->>> drivers/hwtracing/coresight/Kconfig               |  11 +
->>> drivers/hwtracing/coresight/Makefile              |   1 +
->>> drivers/hwtracing/coresight/coresight-cpu-debug.c | 704 ++++++++++++++++++++++
->>> 3 files changed, 716 insertions(+)
->>> create mode 100644 drivers/hwtracing/coresight/coresight-cpu-debug.c
+On 23/03/17 23:52, Mars Cheng wrote:
+> On Thu, 2017-03-23 at 16:25 +0000, Marc Zyngier wrote:
+>> On 19/03/17 15:26, Mars Cheng wrote:
+>>> Originally driver only supports one base. However, MT6797 has
+>>> more than one bases to configure interrupt polarity. To support
+>>> possible design change, here comes a solution to use arbitrary
+>>> number of bases.
 >>>
->>> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
->>> index 130cb21..18d7931 100644
->>> --- a/drivers/hwtracing/coresight/Kconfig
->>> +++ b/drivers/hwtracing/coresight/Kconfig
->>> @@ -89,4 +89,15 @@ config CORESIGHT_STM
->>> 	  logging useful software events or data coming from various entities
->>> 	  in the system, possibly running different OSs
->>>
->>> +config CORESIGHT_CPU_DEBUG
->>> +	tristate "CoreSight CPU Debug driver"
->>> +	depends on ARM || ARM64
->>> +	depends on DEBUG_FS
->>> +	help
->>> +	  This driver provides support for coresight debugging module. This
->>> +	  is primarily used to dump sample-based profiling registers when
->>> +	  system triggers panic, the driver will parse context registers so
->>> +	  can quickly get to know program counter (PC), secure state,
->>> +	  exception level, etc.
+>>> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
 >>
->> May be we should mention/warn the user about the possible caveats of using
->> this feature to help him make a better decision ? And / Or we should add a documentation
->> for it. We have collected some real good information over the discussions and
->> it is a good idea to capture it somewhere.
->
-> Sure, I will add a documentation for this.
->
-> [...]
->
->>> +static struct pm_qos_request debug_qos_req;
->>> +static int idle_constraint = PM_QOS_DEFAULT_VALUE;
->>> +module_param(idle_constraint, int, 0600);
->>> +MODULE_PARM_DESC(idle_constraint, "Latency requirement in microseconds for CPU "
->>> +		 "idle states (default is -1, which means have no limiation "
->>> +		 "to CPU idle states; 0 means disabling all idle states; user "
->>> +		 "can choose other platform dependent values so can disable "
->>> +		 "specific idle states for the platform)");
+>> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 >>
->> Correct me if I am wrong,
+>> What is the merge strategy for this? I'm happy to take the irqchip stuff
+>> through my tree, but there is much more in this series...
 >>
->> All we want to do is disable the CPUIdle explicitly if the user knows that this
->> could be a problem to use CPU debug on his platform. So, in effect, we should
->> only be using idle_constraint = 0 or -1.
->>
->> In which case, we could make it easier for the user to tell us, either
->>
->>  0 - Don't do anything with CPUIdle (default)
->>  1 - Disable CPUIdle for me as I know the platform has issues with CPU debug and CPUidle.
->
-> The reason for not using bool flag is: usually SoC may have many idle
-> states, so if user wants to partially enable some states then can set
-> the latency to constraint.
->
-> But of course, we can change this to binary value as you suggested,
-> this means turn on of turn off all states. The only one reason to use
-> latency value is it is more friendly for hardware design, e.g. some
-> platforms can enable partial states to save power and avoid overheat
-> after using this driver.
->
-> If you guys think this is a bit over design, I will follow up your
-> suggestion. I also have some replying in Mathieu's reviewing, please
-> help review as well.
->
->> than explaining the miscrosecond latency etc and make the appropriate calls underneath.
->> something like (not necessarily the same name) :
->>
->> module_param(broken_with_cpuidle, bool, 0600);
->> MODULE_PARAM_DESC(broken_with_cpuidle, "Specifies whether the CPU debug has issues with CPUIdle on"
->> 				       " the platform. Non-zero value implies CPUIdle has to be"
->> 				       " explicitly disabled.",);
->
-> [...]
->
->>> +	/*
->>> +	 * Unfortunately the CPU cannot be powered up, so return
->>> +	 * back and later has no permission to access other
->>> +	 * registers. For this case, should set 'idle_constraint'
->>> +	 * to ensure CPU power domain is enabled!
->>> +	 */
->>> +	if (!(drvdata->edprsr & EDPRSR_PU)) {
->>> +		pr_err("%s: power up request for CPU%d failed\n",
->>> +			__func__, drvdata->cpu);
->>> +		goto out;
->>> +	}
->>> +
->>> +out_powered_up:
->>> +	debug_os_unlock(drvdata);
->>
->> Question: Do we need a matching debug_os_lock() once we are done ?
->
-> I have checked ARM ARMv8, but there have no detailed description for
-> this. I refered coresight-etmv4 code and Mike's pseudo code, ther have
-> no debug_os_lock() related operations.
->
-> Mike, Mathieu, could you also help confirm this?
->
-> [...]
->
->>> +static void debug_init_arch_data(void *info)
->>> +{
->>> +	struct debug_drvdata *drvdata = info;
->>> +	u32 mode, pcsr_offset;
->>> +
->>> +	CS_UNLOCK(drvdata->base);
->>> +
->>> +	debug_os_unlock(drvdata);
->>> +
->>> +	/* Read device info */
->>> +	drvdata->eddevid  = readl_relaxed(drvdata->base + EDDEVID);
->>> +	drvdata->eddevid1 = readl_relaxed(drvdata->base + EDDEVID1);
->>
->> As mentioned above, both of these registers are only need at init time to
->> figure out the flags we set here. So we could remove them.
->>
->>> +
->>> +	CS_LOCK(drvdata->base);
->>> +
->>> +	/* Parse implementation feature */
->>> +	mode = drvdata->eddevid & EDDEVID_PCSAMPLE_MODE;
->>> +	pcsr_offset = drvdata->eddevid1 & EDDEVID1_PCSR_OFFSET_MASK;
->>
->>
->>> +
->>> +	if (mode == EDDEVID_IMPL_NONE) {
->>> +		drvdata->edpcsr_present  = false;
->>> +		drvdata->edcidsr_present = false;
->>> +		drvdata->edvidsr_present = false;
->>> +	} else if (mode == EDDEVID_IMPL_EDPCSR) {
->>> +		drvdata->edpcsr_present  = true;
->>> +		drvdata->edcidsr_present = false;
->>> +		drvdata->edvidsr_present = false;
->>> +	} else if (mode == EDDEVID_IMPL_EDPCSR_EDCIDSR) {
->>> +		if (!IS_ENABLED(CONFIG_64BIT) &&
->>> +			(pcsr_offset == EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32))
->>> +			drvdata->edpcsr_present = false;
->>> +		else
->>> +			drvdata->edpcsr_present = true;
->>
->> Sorry, I forgot why we do this check only in this mode. Shouldn't this be
->> common to all modes (of course which implies PCSR is present) ?
->
-> No. PCSROffset is defined differently in ARMv7 and ARMv8; So finally we
-> simplize PCSROffset value :
-> 0000 - Sample offset applies based on the instruction state (indicated by PCSR[0])
-> 0001 - No offset applies.
-> 0010 - No offset applies, but do not use in AArch32 mode!
->
-> So we need handle the corner case is when CPU runs AArch32 mode and
-> PCSRoffset = 'b0010. Other cases the pcsr should be present.
+> Hi Marc
+> 
+> Thanks for your review.
+> 
+> Hi Matthias
+> 
+> Would you comment on this? If Marc take the following stuff first in his
+> tree:
+> 
+> [PATCH v3 01/12] dt-bindings: mediatek: multiple bases support for
+> sysirq  
 
-I understand that reasoning. But my question is, why do we check for PCSROffset
-only when mode == EDDEVID_IMPL_EDPCSR_EDCIDSR and not for say mode == EDDEVID_IMPL_EDPCSR or
-any other mode where PCSR is present.
+Before taking this patch, I still need one of the DT maintainer to ack
+the binding extension.
 
-Suzuki
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
