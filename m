@@ -1,91 +1,232 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Thu, 23 Mar 2017 13:43:20 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] coresight: add support for debug module
-Message-ID: <20170323054319.GA7716@leoy-linaro>
-References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
- <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
- <671a0b39-b635-6e0e-d3fa-967651f2e29c@arm.com>
- <CAJ9a7VgCjXNGC4C49PxL-nBxzhMCmA8Mb-0C_epahizA5EL2HA@mail.gmail.com>
- <e7a97c52-f61a-e503-f626-09563fa100b8@arm.com>
- <CAJ9a7VhvCS3xXAHBt0AUVB2Zp2P1HP_LQm4KiptiBT9VJ1fC0Q@mail.gmail.com>
- <4961636d-d77c-0f9a-7076-4db1ef456073@arm.com>
- <1e6d6a91-3bdc-7cfb-a96f-780c959e0316@arm.com>
- <7a028460-d598-e337-5e09-234beddca88b@arm.com>
+Return-Path: <gabriel.fernandez@st.com>
+Subject: Re: [PATCH] clk: stm32h7: Add stm32h743 clock driver
+To: Rob Herring <robh@kernel.org>
+References: <1489569810-24350-1-git-send-email-gabriel.fernandez@st.com>
+ <20170324020630.vhffmeeb6wto53zx@rob-hp-laptop>
+CC: Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>,
+        Lee Jones
+	<lee.jones@linaro.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <ludovic.barre@st.com>,
+        <olivier.bideau@st.com>, <amelie.delaunay@st.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Message-ID: <dce20025-9f42-e747-e325-e1667504e615@st.com>
+Date: Fri, 24 Mar 2017 10:41:28 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7a028460-d598-e337-5e09-234beddca88b@arm.com>
+In-Reply-To: <20170324020630.vhffmeeb6wto53zx@rob-hp-laptop>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 22, 2017 at 05:25:50PM +0000, Sudeep Holla wrote:
-> 
-> 
-> On 22/03/17 17:09, Suzuki K Poulose wrote:
-> > On 22/03/17 16:17, Sudeep Holla wrote:
-> 
-> [...]
-> 
-> >> 
-> >> Point taken. So we could just specify that all necessary power
-> >> domains need to be on for proper functionality for this feature and
-> >> that it's highly platform specific instead of mixing cpu/cluster
-> >> idle details here.
-> >> 
-> >>> The key point is that the caveat in using this driver is that
-> >>> the power management has to be considered on a platform specific
-> >>> basis before it is configured; and appropriate actions may be
-> >>> needed for it to work correctly. Without this then the driver
-> >>> could cause more issues than it debugs. A user selecting this
-> >>> _must_ be told about these issues
-> >>> 
-> > 
-> > So given all the possible caveats, I think we :
-> > 
-> > 1) Shouldn't enable the driver by default at runtime even if it is 
-> > built-in. 
-> > 2) Should provide mechanisms to turn it on at boot (via
-> > kernel commandline) or anytime later (via sysfs), which kind of puts
-> > the responsibility back on the user : "You know what you are doing". 
-> > 3) Shouldn't turn the driver on based on "nohlt" which the user
-> > could use it for some other purposes, without explicit intention of
-> > turning this driver on).
-> > 4) Should document the fact that, on some
-> > platforms, the user may have to disable CPUidle explicitly to get the
-> > driver working. But let us not make it the default. The user with a
-> > not so ideal platform could add "nohlt" and get it working.
-> > 
-> 
-> Agreed on all points and well summarized.
-> I would like to highlight (3) and (4) as it needs to be well understood.
-> 
-> "nohlt" has a *different* meaning already, so using that in this
-> driver for something else is simple wrong as it affects the system in
-> unintended ways. And yes if user (mis)uses it to get things working,
-> it's fine but shouldn't be recommended way.
+Hi Rob,
 
-Understand this point.
+Thanks for reviewing
 
-I will try to use general way to constraint CPUIdle like other
-drivers.
 
-Thanks all for these good suggestions :)
+On 03/24/2017 03:06 AM, Rob Herring wrote:
+> On Wed, Mar 15, 2017 at 10:23:30AM +0100, gabriel.fernandez@st.com wrote:
+>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>
+>> This patch enables clocks for STM32H743 boards.
+>>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+>> ---
+>>   .../devicetree/bindings/clock/st,stm32h7-rcc.txt   |  152 ++
+>>   drivers/clk/Makefile                               |    1 +
+>>   drivers/clk/clk-stm32h7.c                          | 1586 ++++++++++++++++++++
+>>   include/dt-bindings/clock/stm32h7-clks.h           |  165 ++
+>>   include/dt-bindings/mfd/stm32h7-rcc.h              |  138 ++
+>>   5 files changed, 2042 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+>>   create mode 100644 drivers/clk/clk-stm32h7.c
+>>   create mode 100644 include/dt-bindings/clock/stm32h7-clks.h
+>>   create mode 100644 include/dt-bindings/mfd/stm32h7-rcc.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+>> new file mode 100644
+>> index 0000000..9d4b587
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+>> @@ -0,0 +1,152 @@
+>> +STMicroelectronics STM32H7 Reset and Clock Controller
+>> +=====================================================
+>> +
+>> +The RCC IP is both a reset and a clock controller.
+>> +
+>> +Please refer to clock-bindings.txt for common clock controller binding usage.
+>> +Please also refer to reset.txt for common reset controller binding usage.
+>> +
+>> +Required properties:
+>> +- compatible: Should be:
+>> +  "st,stm32h743-rcc"
+>> +
+>> +- reg: should be register base and length as documented in the
+>> +  datasheet
+>> +
+>> +- #reset-cells: 1, see below
+>> +
+>> +- #clock-cells : from common clock binding; shall be set to 1
+>> +
+>> +- clocks: External oscillator clock phandle
+>> +  - high speed external clock signal (HSE)
+>> +  - low speed external clock signal (LSE)
+>> +  - external I2S clock (I2S_CKIN)
+>> +
+>> +- st,syscfg: phandle for pwrcfg, mandatory to disable/enable backup domain
+>> +  write protection (RTC clock).
+>> +
+>> +- pll x node: Allow to register a pll with specific parameters.
+>> +  Please see PLL section below.
+>> +
+>> +Example:
+>> +
+>> +	rcc: rcc@58024400 {
+>> +		#reset-cells = <1>;
+>> +		#clock-cells = <2>
+>> +		compatible = "st,stm32h743-rcc", "st,stm32-rcc";
+>> +		reg = <0x58024400 0x400>;
+>> +		clocks = <&clk_hse>, <&clk_lse>, <&clk_i2s_ckin>;
+>> +
+>> +		st,syscfg = <&pwrcfg>;
+>> +
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		vco1@58024430 {
+>> +			#clock-cells = <0>;
+>> +			compatible = "stm32,pll";
+>> +			reg = <0>;
+> The reg addr value and unit address don't match.
+ok il will change into
 
-Thanks,
-Leo Yan
+	vco1@0 {
+		reg = <0>;
+
+>
+>> +		};
+>> +
+>> +		vco2@58024438 {
+>> +			#clock-cells = <0>;
+>> +			compatible = "stm32,pll";
+>> +			reg = <1>;
+>> +			st,clock-div = <2>;
+>> +			st,clock-mult = <40>;
+>> +			st,frac-status = <0>;
+>> +			st,frac = <0>;
+>> +			st,vcosel = <1>;
+>> +			st,pllrge = <2>;
+>> +		};
+>> +	};
+>> +
+>> +
+>> +STM32H7 PLL
+>> +-----------
+>> +
+>> +The VCO of STM32 PLL could be reprensented like this:
+>> +
+>> +  Vref    ---------       --------
+>> +    ---->| / DIVM  |---->| x DIVN | ------> VCO
+>> +          ---------       --------
+>> +		             ^
+>> +			     |
+>> +	                  -------
+>> +		         | FRACN |
+>> +		          -------
+>> +
+>> +When the PLL is configured in integer mode:
+>> +- VCO = ( Vref / DIVM ) * DIVN
+>> +
+>> +When the PLL is configured in fractional mode:
+>> +- VCO = ( Vref / DIVM ) * ( DIVN + FRACN / 2^13)
+>> +
+>> +
+>> +Required properties for pll node:
+>> +- compatible: Should be:
+>> +  "stm32,pll"
+> Only 1 single PLL design for all STM32 chips ever?
+no, i can change into "stm32h7,pll"
+
+>> +
+>> +- #clock-cells: from common clock binding; shall be set to 0
+>> +- reg: Should be the pll number.
+>> +
+>> +Optional properties:
+>> +- st,clock-div:  DIVM division factor       : <1..63>
+>> +- st,clock-mult: DIVN multiplication factor : <4..512>
+>> +
+>> +- st,frac-status:
+>> +   - 0 Pll is configured in integer mode
+>> +   - 1 Pll is configure in fractional mode
+> Isn't this implied by the presence of the next property?
+do you prefer this ?
+
+- st,frac :
+0 : pll is configured in integer mode
+1..8191 : Fractional part of the multiplication factor and pll is 
+configured in fractional mode
+
+>> +
+>> +- st,frac: Fractional part of the multiplication factor : <0..8191>
+>> +
+>> +- st,vcosel: VCO selection
+>> +  - 0: Wide VCO range:192 to 836 MHz
+>> +  - 1: Medium VCO range:150 to 420 MHz
+>> +
+>> +- st,pllrge: PLL input frequency range
+>> +  - 0: The PLL input (Vref / DIVM) clock range frequency is between 1 and 2 MHz
+>> +  - 1: The PLL input (Vref / DIVM) clock range frequency is between 2 and 4 MHz
+>> +  - 2: The PLL input (Vref / DIVM) clock range frequency is between 4 and 8 MHz
+>> +  - 3: The PLL input (Vref / DIVM) clock range frequency is between 8 and 16 MHz
+> Seems like you could figure this out based on the input freq and other
+> properties.
+ok i will try to integrate pllrge configuration in the code.
+
+>
+>> +
+>> +
+>> +The peripheral clock consumer should specify the desired clock by
+>> +having the clock ID in its "clocks" phandle cell.
+>> +
+>> +All available clocks are defined as preprocessor macros in
+>> +dt-bindings/clock/stm32h7-clks.h header and can be used in device
+>> +tree sources.
+>> +
+>> +Example:
+>> +
+>> +		timer5: timer@40000c00 {
+>> +			compatible = "st,stm32-timer";
+>> +			reg = <0x40000c00 0x400>;
+>> +			interrupts = <50>;
+>> +			clocks = <&rcc TIM5_CK>;
+>> +
+>> +		};
+>> +
+>> +Specifying softreset control of devices
+>> +=======================================
+>> +
+>> +Device nodes should specify the reset channel required in their "resets"
+>> +property, containing a phandle to the reset device node and an index specifying
+>> +which channel to use.
+>> +The index is the bit number within the RCC registers bank, starting from RCC
+>> +base address.
+>> +It is calculated as: index = register_offset / 4 * 32 + bit_offset.
+>> +Where bit_offset is the bit offset within the register.
+>> +
+>> +For example, for CRC reset:
+>> +  crc = AHB4RSTR_offset / 4 * 32 + CRCRST_bit_offset = 0x88 / 4 * 32 + 19 = 1107
+>> +
+>> +All available preprocessor macros for reset are defined dt-bindings//mfd/stm32h7-rcc.h
+>> +header and can be used in device tree sources.
+>> +
+>> +example:
+>> +
+>> +	timer2 {
+>> +		resets	= <&rcc STM32H7_APB1L_RESET(TIM2)>;
+>> +	};
