@@ -1,85 +1,52 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 5/5] clk: qcom: mmcc-8996: Associate all mmagic clks with mmagic gdscs
-Date: Tue, 21 Mar 2017 11:45:23 +0530
-Message-Id: <1490076923-20194-6-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1490076923-20194-1-git-send-email-rnayak@codeaurora.org>
-References: <1490076923-20194-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.hostsharing.net ([83.223.95.204]:50803 "EHLO
+        mailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935544AbdCXLho (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Mar 2017 07:37:44 -0400
+Date: Fri, 24 Mar 2017 12:37:36 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] PM / runtime: Use synchronous runtime PM call in
+ rpm_put_suppliers()
+Message-ID: <20170324113736.GA21618@h08.hostsharing.net>
+References: <CGME20170322092305eucas1p20d2a6dfede483210febea5b5e0ff68db@eucas1p2.samsung.com>
+ <1490174570-18345-1-git-send-email-m.szyprowski@samsung.com>
+ <CAPDyKFq+mTvruQb5ifj3etMxSCWgDZTZ6ebGkk84UCQDqjR4-A@mail.gmail.com>
+ <CAJZ5v0ihYQp4_oJCu3Tugbqrm=68hcxdg8-yUphbCXCUw3UzPw@mail.gmail.com>
+ <CAPDyKFot3C1C1k45JovwKHFkvTJAFvdetoE8_ADAhMCkFw3hPA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAPDyKFot3C1C1k45JovwKHFkvTJAFvdetoE8_ADAhMCkFw3hPA@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-With support added to control clocks associated with a gdsc from within
-the gdsc driver, associate all mmagic clock instances with the respective
-mmagic gdscs so devices inside these mmagic domains do not have to control
-them individually.
+On Thu, Mar 23, 2017 at 01:47:46PM +0100, Ulf Hansson wrote:
+> For the sync runtime PM suspend/idle case:
+> When a driver for a children/consumers decides to use the sync runtime
+> PM APIs, it's most likely because it wants the device to enter its low
+> power state as soon as possible.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/qcom/mmcc-msm8996.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+I think a driver is doing it wrong if it uses sync vs. async to achieve
+a certain policy.  (As in the example you've given above.)  That should
+be left to the PM core, and the PM core should try to suspend as early
+and as often as possible in order to save power.  If the driver wants to
+achieve a policy such as "suspend this device ASAP but let this other
+device idle a bit before suspend because its usage pattern is bursty"
+then the correct way to implement this is via a sane default value for
+the autosuspend delay.
 
-diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-index 9b97246..7c0ffb5 100644
---- a/drivers/clk/qcom/mmcc-msm8996.c
-+++ b/drivers/clk/qcom/mmcc-msm8996.c
-@@ -2893,6 +2893,10 @@ enum {
- 	.pd = {
- 		.name = "mmagic_bimc",
- 	},
-+	.clk_hws = {
-+		&mmagic_bimc_noc_cfg_ahb_clk.clkr.hw,
-+	},
-+	.clk_count = 1,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-@@ -2902,6 +2906,13 @@ enum {
- 	.pd = {
- 		.name = "mmagic_video",
- 	},
-+	.clk_hws = {
-+		&mmss_mmagic_ahb_clk.clkr.hw,
-+		&mmss_mmagic_cfg_ahb_clk.clkr.hw,
-+		&mmagic_video_axi_clk.clkr.hw,
-+		&mmagic_video_noc_cfg_ahb_clk.clkr.hw,
-+	},
-+	.clk_count = 4,
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.flags = VOTABLE,
- };
-@@ -2912,6 +2923,13 @@ enum {
- 	.pd = {
- 		.name = "mmagic_mdss",
- 	},
-+	.clk_hws = {
-+		&mmss_mmagic_ahb_clk.clkr.hw,
-+		&mmss_mmagic_cfg_ahb_clk.clkr.hw,
-+		&mmagic_mdss_axi_clk.clkr.hw,
-+		&mmagic_mdss_noc_cfg_ahb_clk.clkr.hw,
-+	},
-+	.clk_count = 4,
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.flags = VOTABLE,
- };
-@@ -2922,6 +2940,13 @@ enum {
- 	.pd = {
- 		.name = "mmagic_camss",
- 	},
-+	.clk_hws = {
-+		&mmss_mmagic_ahb_clk.clkr.hw,
-+		&mmss_mmagic_cfg_ahb_clk.clkr.hw,
-+		&mmagic_camss_axi_clk.clkr.hw,
-+		&mmagic_camss_noc_cfg_ahb_clk.clkr.hw,
-+	},
-+	.clk_count = 4,
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.flags = VOTABLE,
- };
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Generelly, async should be used.  One example where sync is warranted
+is when the ->runtime_suspend hook needs to be finished before power
+is cut to the device.  That's a hard constraint.  E.g. vga_switcheroo
+does this when runtime suspending the GPU.  In this case, "runtime
+suspend" means that the driver puts the device in a state from which
+power can be cut.  The actual power switch is toggled afterwards.
+
+Regards,
+
+Lukas
