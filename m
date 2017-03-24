@@ -1,62 +1,176 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pg0-f53.google.com ([74.125.83.53]:35323 "EHLO
+        mail-pg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966669AbdCXTUr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Mar 2017 15:20:47 -0400
+Received: by mail-pg0-f53.google.com with SMTP id t143so5509141pgb.2
+        for <linux-clk@vger.kernel.org>; Fri, 24 Mar 2017 12:20:46 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: sboyd@codeaurora.org, carlo@caione.org,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] ARM64: dts: meson-gx: Add MALI nodes for GXBB and GXL
+References: <1490177935-9646-1-git-send-email-narmstrong@baylibre.com>
+        <1490177935-9646-4-git-send-email-narmstrong@baylibre.com>
+Date: Fri, 24 Mar 2017 12:20:31 -0700
+In-Reply-To: <1490177935-9646-4-git-send-email-narmstrong@baylibre.com> (Neil
+        Armstrong's message of "Wed, 22 Mar 2017 11:18:55 +0100")
+Message-ID: <m237e2iirk.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20170303071203.xbfu4t2jgwt3low3@lukather>
-References: <20170302174357.6246-1-pbrobinson@gmail.com> <20170303071203.xbfu4t2jgwt3low3@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 6 Mar 2017 16:44:54 +0800
-Message-ID: <CAGb2v66GQ4bYWrR-=j_+mKcvxH-gMxhiQamX1E4nr1Ax-B5Bqg@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: tighten SoC deps on explicit AllWinner SoCs
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Peter Robinson <pbrobinson@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 3, 2017 at 3:12 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Thu, Mar 02, 2017 at 05:43:57PM +0000, Peter Robinson wrote:
->> Tighten the depends on the various AllWinn SoCs so we don't
->> inadvertantly get clock drivers when we're not wanting them
->> like 32 bit SoC clocks for 64 bit configs. Ensure there's
->> still test coverage though.
->>
->> Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+Neil Armstrong <narmstrong@baylibre.com> writes:
+
+> The same MALI-450 MP3 GPU is present in the GXBB and GXL SoCs.
 >
-> Applied, thanks!
-> Maxime
+> The node is simply added in the meson-gxbb.dtsi file.
+>
+> For GXL, since a lot is shared with the GXM that has a MALI-T820 IP, this
+> patch adds a new meson-gxl-mali.dtsi and is included in the SoC specific
+> dtsi files.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Just built your for-next branch:
+LGTM, I can apply this when the clk driver changes are merged (feel free
+to let me know when that happens, in case I'm not paying attention.)
 
-$ make -j8 zImage dtbs modules
-scripts/kconfig/conf  --silentoldconfig Kconfig
-drivers/clk/sunxi-ng/Kconfig:67: syntax error
-drivers/clk/sunxi-ng/Kconfig:66: invalid option
-drivers/clk/sunxi-ng/Kconfig:79: syntax error
-drivers/clk/sunxi-ng/Kconfig:78: invalid option
-drivers/clk/sunxi-ng/Kconfig:91: syntax error
-drivers/clk/sunxi-ng/Kconfig:90: invalid option
-drivers/clk/sunxi-ng/Kconfig:104: syntax error
-drivers/clk/sunxi-ng/Kconfig:103: invalid option
-drivers/clk/sunxi-ng/Kconfig:117: syntax error
-drivers/clk/sunxi-ng/Kconfig:116: invalid option
-drivers/clk/sunxi-ng/Kconfig:129: syntax error
-drivers/clk/sunxi-ng/Kconfig:128: invalid option
-drivers/clk/sunxi-ng/Kconfig:141: syntax error
-drivers/clk/sunxi-ng/Kconfig:140: invalid option
-drivers/clk/sunxi-ng/Kconfig:152: syntax error
-drivers/clk/sunxi-ng/Kconfig:151: invalid option
-scripts/kconfig/Makefile:37: recipe for target 'silentoldconfig' failed
-make[2]: *** [silentoldconfig] Error 1
-Makefile:548: recipe for target 'silentoldconfig' failed
-make[1]: *** [silentoldconfig] Error 2
-make: *** No rule to make target 'include/config/auto.conf', needed by
-'include/config/kernel.release'.  Stop.
-make: *** Waiting for unfinished jobs....
+<bikeshed>
+nit: This series (and previous ones) use MALI, but I believe the correct
+way is Mali. Could you standarize on that throughout the series?
+</bikeshed>
 
-This patch is the culprit. The proper syntax is "depends on", not "depends".
+Kevin
 
-
-Regards
-ChenYu
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi      | 37 ++++++++++++++++++++
+>  arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi  | 43 ++++++++++++++++++++++++
+>  arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi |  1 +
+>  arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi |  1 +
+>  4 files changed, 82 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
+>
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> index 04b3324..0617a3d 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> @@ -478,6 +478,43 @@
+>  	};
+>  };
+>  
+> +&apb {
+> +	mali: gpu@c0000 {
+> +		compatible = "amlogic,meson-gxbb-mali", "arm,mali-450";
+> +		reg = <0x0 0xc0000 0x0 0x40000>;
+> +		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-names = "gp", "gpmmu", "pp", "pmu",
+> +			"pp0", "ppmmu0", "pp1", "ppmmu1",
+> +			"pp2", "ppmmu2";
+> +		clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_MALI>;
+> +		clock-names = "bus", "core";
+> +
+> +		/*
+> +		 * Mali clocking is provided by two identical clock paths
+> +		 * MALI_0 and MALI_1 muxed to a single clock by a glitch
+> +		 * free mux to safely change frequency while running.
+> +		 */
+> +		assigned-clocks = <&clkc CLKID_MALI_0_SEL>,
+> +				  <&clkc CLKID_MALI_0>,
+> +				  <&clkc CLKID_MALI>; /* Glitch free mux */
+> +		assigned-clock-parents = <&clkc CLKID_FCLK_DIV3>,
+> +					 <0>, /* Do Nothing */
+> +					 <&clkc CLKID_MALI_0>;
+> +		assigned-clock-rates = <0>, /* Do Nothing */
+> +				       <666666666>,
+> +				       <0>; /* Do Nothing */
+> +	};
+> +};
+> +
+>  &i2c_A {
+>  	clocks = <&clkc CLKID_I2C>;
+>  };
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
+> new file mode 100644
+> index 0000000..f06cc234
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
+> @@ -0,0 +1,43 @@
+> +/*
+> + * Copyright (c) 2017 BayLibre SAS
+> + * Author: Neil Armstrong <narmstrong@baylibre.com>
+> + *
+> + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> + */
+> +
+> +&apb {
+> +	mali: gpu@c0000 {
+> +		compatible = "amlogic,meson-gxbb-mali", "arm,mali-450";
+> +		reg = <0x0 0xc0000 0x0 0x40000>;
+> +		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-names = "gp", "gpmmu", "pp", "pmu",
+> +			"pp0", "ppmmu0", "pp1", "ppmmu1",
+> +			"pp2", "ppmmu2";
+> +		clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_MALI>;
+> +		clock-names = "bus", "core";
+> +
+> +		/*
+> +		 * Mali clocking is provided by two identical clock paths
+> +		 * MALI_0 and MALI_1 muxed to a single clock by a glitch
+> +		 * free mux to safely change frequency while running.
+> +		 */
+> +		assigned-clocks = <&clkc CLKID_MALI_0_SEL>,
+> +				  <&clkc CLKID_MALI_0>,
+> +				  <&clkc CLKID_MALI>; /* Glitch free mux */
+> +		assigned-clock-parents = <&clkc CLKID_FCLK_DIV3>,
+> +					 <0>, /* Do Nothing */
+> +					 <&clkc CLKID_MALI_0>;
+> +		assigned-clock-rates = <0>, /* Do Nothing */
+> +				       <666666666>,
+> +				       <0>; /* Do Nothing */
+> +	};
+> +};
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi
+> index 615308e..5a90e30 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi
+> @@ -42,6 +42,7 @@
+>   */
+>  
+>  #include "meson-gxl.dtsi"
+> +#include "meson-gxl-mali.dtsi"
+>  
+>  / {
+>  	compatible = "amlogic,s905d", "amlogic,meson-gxl";
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi
+> index 08237ee..0f78d83 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi
+> @@ -42,6 +42,7 @@
+>   */
+>  
+>  #include "meson-gxl.dtsi"
+> +#include "meson-gxl-mali.dtsi"
+>  
+>  / {
+>  	compatible = "amlogic,s905x", "amlogic,meson-gxl";
