@@ -1,197 +1,100 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 24 Mar 2017 09:54:31 -0500
+From: Rob Herring <robh@kernel.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Leo Yan <leo.yan@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	mike.leach@linaro.org, Suzuki.Poulose@arm.com, sudeep.holla@arm.com
+Subject: Re: [PATCH v4 1/7] coresight: bindings for CPU debug module
+Message-ID: <20170324145431.5bqkpv2h27kmqimu@rob-hp-laptop>
+References: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
+ <1489762943-25849-2-git-send-email-leo.yan@linaro.org>
+ <20170317161335.GB20435@linaro.org>
 MIME-Version: 1.0
-To: Neil Armstrong <narmstrong@baylibre.com>, sboyd@codeaurora.org,
- carlo@caione.org, khilman@baylibre.com
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <1489411604-18700-2-git-send-email-narmstrong@baylibre.com>
-Cc: "Neil Armstrong" <narmstrong@baylibre.com>, linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
- <1489411604-18700-2-git-send-email-narmstrong@baylibre.com>
-Message-ID: <149013981400.54062.11268768959465562064@resonance>
-Subject: Re: [PATCH 1/5] clk: meson: Add support for parameters for specific PLLs
-Date: Tue, 21 Mar 2017 16:43:34 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170317161335.GB20435@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Neil Armstrong (2017-03-13 06:26:40)
-> In recent Amlogic GXBB, GXL and GXM SoCs, the GP0 PLL needs some specific
-> parameters in order to initialize and lock correctly.
-> =
+On Fri, Mar 17, 2017 at 10:13:35AM -0600, Mathieu Poirier wrote:
+> On Fri, Mar 17, 2017 at 11:02:17PM +0800, Leo Yan wrote:
+> > According to ARMv8 architecture reference manual (ARM DDI 0487A.k)
+> > Chapter 'Part H: External debug', the CPU can integrate debug module
+> > and it can support self-hosted debug and external debug. Especially
+> > for supporting self-hosted debug, this means the program can access
+> > the debug module from mmio region; and usually the mmio region is
+> > integrated with coresight.
+> > 
+> > So add document for binding debug component, includes binding to APB
+> > clock; and also need specify the CPU node which the debug module is
+> > dedicated to specific CPU.
+> > 
+> > Suggested-by: Mike Leach <mike.leach@linaro.org>
+> > Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > ---
+> >  .../bindings/arm/coresight-cpu-debug.txt           | 46 ++++++++++++++++++++++
+> >  1 file changed, 46 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt b/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
+> > new file mode 100644
+> > index 0000000..f6855c3
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
+> > @@ -0,0 +1,46 @@
+> > +* CoreSight CPU Debug Component:
+> > +
+> > +CoreSight cpu debug component are compliant with the ARMv8 architecture
+> > +reference manual (ARM DDI 0487A.k) Chapter 'Part H: External debug'. The
+> > +external debug module is mainly used for two modes: self-hosted debug and
+> > +external debug, and it can be accessed from mmio region from Coresight
+> > +and eventually the debug module connects with CPU for debugging. And the
+> > +debug module provides sample-based profiling extension, which can be used
+> > +to sample CPU program counter, secure state and exception level, etc;
+> > +usually every CPU has one dedicated debug module to be connected.
+> > +
+> > +Required properties:
+> > +
+> > +- compatible : should be
+> > +	     * "arm,coresight-cpu-debug"; supplemented with "arm,primecell"
+> > +	       since this driver is using the AMBA bus interface.
+> 
+> This description needs to be refactored - see my comment from an earlier post
+> for more details.
+> 
+> > +
+> > +- reg : physical base address and length of the register set.
+> > +
+> > +- clocks : the clock associated to this component.
+> > +
+> > +- clock-names : the name of the clock referenced by the code. Since we are
+> > +                using the AMBA framework, the name of the clock providing
+> > +		the interconnect should be "apb_pclk" and the clock is
+> > +		mandatory. The interface between the debug logic and the
+> > +		processor core is clocked by the internal CPU clock, so it
+> > +		is enabled with CPU clock by default.
+> > +
+> > +- cpu : the cpu phandle the debug module is affined to. When omitted
+> > +	the module is considered to belong to CPU0.
+> > +
+> > +Optional properties:
+> 
+> s/properties/property
 
-> This patch adds an optional PARAM table used to initialize the PLL to a
-> default value with it's parameters in order to achieve to desired frequen=
-cy.
-> =
+I prefer it as-is. Then it doesn't need to be changed if we add 
+properties.
 
-> The GP0 PLL in GXBB, GXL/GXM also needs some tweaks in the initialization
-> steps, and these are exposed along the PARAM table.
-> =
-
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  drivers/clk/meson/clk-pll.c | 52 +++++++++++++++++++++++++++++++++++++++=
-++++--
->  drivers/clk/meson/clkc.h    | 23 ++++++++++++++++++++
->  2 files changed, 73 insertions(+), 2 deletions(-)
-> =
-
-> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> index 4adc1e8..aff223b 100644
-> --- a/drivers/clk/meson/clk-pll.c
-> +++ b/drivers/clk/meson/clk-pll.c
-> @@ -116,6 +116,29 @@ static const struct pll_rate_table *meson_clk_get_pl=
-l_settings(struct meson_clk_
->         return NULL;
->  }
->  =
-
-> +/* Specific wait loop for GXL/GXM GP0 PLL */
-> +static int meson_clk_pll_wait_lock_reset(struct meson_clk_pll *pll,
-> +                                        struct parm *p_n)
-> +{
-> +       int delay =3D 100;
-> +       u32 reg;
-> +
-> +       while (delay > 0) {
-> +               reg =3D readl(pll->base + p_n->reg_off);
-> +               writel(reg | MESON_PLL_RESET, pll->base + p_n->reg_off);
-> +               udelay(10);
-> +               writel(reg & ~MESON_PLL_RESET, pll->base + p_n->reg_off);
-> +
-> +               mdelay(1);
-
-Can you add a comment explaining where the delay values come from? Can
-they vary from chip to chip?
-
-> +
-> +               reg =3D readl(pll->base + p_n->reg_off);
-> +               if (reg & MESON_PLL_LOCK)
-> +                       return 0;
-> +               delay--;
-> +       }
-> +       return -ETIMEDOUT;
-> +}
-> +
->  static int meson_clk_pll_wait_lock(struct meson_clk_pll *pll,
->                                    struct parm *p_n)
->  {
-> @@ -132,6 +155,15 @@ static int meson_clk_pll_wait_lock(struct meson_clk_=
-pll *pll,
->         return -ETIMEDOUT;
->  }
->  =
-
-> +static void meson_clk_pll_init_params(struct meson_clk_pll *pll)
-> +{
-> +       int i;
-> +
-> +       for (i =3D 0 ; i < pll->params.params_count ; ++i)
-> +               writel(pll->params.params_table[i].value,
-> +                      pll->base + pll->params.params_table[i].reg_off);
-> +}
-> +
->  static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->                                   unsigned long parent_rate)
->  {
-> @@ -151,10 +183,16 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw=
-, unsigned long rate,
->         if (!rate_set)
->                 return -EINVAL;
->  =
-
-> +       /* Initialize the PLL in a clean state if specified */
-> +       if (pll->params.params_count)
-> +               meson_clk_pll_init_params(pll);
-> +
->         /* PLL reset */
->         p =3D &pll->n;
->         reg =3D readl(pll->base + p->reg_off);
-> -       writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
-> +       /* If no_init_reset is provided, avoid resetting at this point */
-> +       if (!pll->params.no_init_reset)
-> +               writel(reg | MESON_PLL_RESET, pll->base + p->reg_off);
->  =
-
->         reg =3D PARM_SET(p->width, p->shift, reg, rate_set->n);
->         writel(reg, pll->base + p->reg_off);
-> @@ -184,7 +222,17 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw,=
- unsigned long rate,
->         }
->  =
-
->         p =3D &pll->n;
-> -       ret =3D meson_clk_pll_wait_lock(pll, p);
-> +       /* If unreset_for_lock is provided, remove the reset bit here */
-> +       if (pll->params.unreset_for_lock) {
-
-Small nitpick, but I find "unreset" to be confusing. Since 'reset' here
-is a bit that can be set and unset, maybe use clear_reset_for_lock
-instead?
-
-Regards,
-Mike
-
-> +               reg =3D readl(pll->base + p->reg_off);
-> +               writel(reg & ~MESON_PLL_RESET, pll->base + p->reg_off);
-> +       }
-> +
-> +       /* If reset_lock_loop, use a special loop including resetting */
-> +       if (pll->params.reset_lock_loop)
-> +               ret =3D meson_clk_pll_wait_lock_reset(pll, p);
-> +       else
-> +               ret =3D meson_clk_pll_wait_lock(pll, p);
->         if (ret) {
->                 pr_warn("%s: pll did not lock, trying to restore old rate=
- %lu\n",
->                         __func__, old_rate);
-> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-> index 9bb70e7..5f1c12d 100644
-> --- a/drivers/clk/meson/clkc.h
-> +++ b/drivers/clk/meson/clkc.h
-> @@ -62,6 +62,28 @@ struct pll_rate_table {
->                 .frac           =3D (_frac),                             =
- \
->         }                                                               \
->  =
-
-> +struct pll_params_table {
-> +       unsigned int reg_off;
-> +       unsigned int value;
-> +};
-> +
-> +#define PLL_PARAM(_reg, _val)                                          \
-> +       {                                                               \
-> +               .reg_off        =3D (_reg),                              =
- \
-> +               .value          =3D (_val),                              =
- \
-> +       }
-> +
-> +struct pll_setup_params {
-> +       struct pll_params_table *params_table;
-> +       unsigned int params_count;
-> +       /* Workaround for GP0, do not reset before configuring */
-> +       bool no_init_reset;
-> +       /* Workaround for GP0, unreset right before checking for lock */
-> +       bool unreset_for_lock;
-> +       /* Workaround for GXL GP0, reset in the lock checking loop */
-> +       bool reset_lock_loop;
-> +};
-> +
->  struct meson_clk_pll {
->         struct clk_hw hw;
->         void __iomem *base;
-> @@ -70,6 +92,7 @@ struct meson_clk_pll {
->         struct parm frac;
->         struct parm od;
->         struct parm od2;
-> +       const struct pll_setup_params params;
->         const struct pll_rate_table *rate_table;
->         unsigned int rate_count;
->         spinlock_t *lock;
-> -- =
-
-> 1.9.1
->=20
+Rob
