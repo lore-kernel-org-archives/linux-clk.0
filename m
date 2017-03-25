@@ -1,124 +1,117 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <34e51d32c82b57571e061e80df3bbaed731db554.1487091464.git-series.gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
- <34e51d32c82b57571e061e80df3bbaed731db554.1487091464.git-series.gregory.clement@free-electrons.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 15 Mar 2017 13:43:44 +0100
-Message-ID: <CAPDyKFoqxMCSe-2bt2dz1AM_2X7dtVe4w6e7+oAQ==HO_=XKQw@mail.gmail.com>
-Subject: Re: [PATCH v6 03/14] mmc: core: Add mmc-card dt sub-node parse in
- core layer
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>, Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>, "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	mike.leach@linaro.org,
+	Suzuki.Poulose@arm.com,
+	sudeep.holla@arm.com
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v5 8/9] arm64: dts: hi6220: register debug module
+Date: Sun, 26 Mar 2017 02:23:16 +0800
+Message-Id: <1490466197-29163-9-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14 February 2017 at 18:01, Gregory CLEMENT
-<gregory.clement@free-electrons.com> wrote:
-> From: Hu Ziji <huziji@marvell.com>
->
-> Some vendor host, like Xenon, can support multiple types.
-> In dts, use mmc-card dt sub-node to indicate eMMC is in use.
->
-> Add a generic mmc-card parse function in mmc core layer.
-> If mmc-card sub-node is detected, set eMMC common caps, such as
-> MMC_CAP_NONREMOVABLE, MMC_CAP2_NO_SD and MMC_CAP2_NO_SDIO.
->
-> Since it is likely that struct mmc_card is not allocated yet when
-> this mmc-card parse function is called, it will return true if
-> mmc-card sub-node is detected. Otherwise, return false.
-> It can help vendor host determine if the card type is eMMC.
->
-> Signed-off-by: Hu Ziji <huziji@marvell.com>
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  drivers/mmc/core/mmc.c   | 24 ++++++++++++++++++++++++
->  include/linux/mmc/core.h |  2 ++
->  2 files changed, 26 insertions(+)
->
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index b61b52f9da3d..dc480006a303 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -2111,6 +2111,30 @@ static const struct mmc_bus_ops mmc_ops = {
->  };
->
->  /*
-> + * Parse mmc-card dt sub-node and set eMMC common caps
-> + * if mmc-card exists.
-> + * If mmc-card is detected, return true.
-> + * Otherwise, return false.
-> + */
-> +bool mmc_of_parse_mmc_card(struct mmc_host *host)
-> +{
-> +       struct device_node *np;
-> +       bool ret = false;
-> +
-> +       np = mmc_of_find_child_device(host, 0);
+Bind debug module driver for Hi6220.
 
-There are already some places in the mmc core where child nodes are
-being parsed. You may have a look for mmc_of_find_child_device() and
-find the callers of it.
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 64 +++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-Additionally, we need a generic method of how to describe in DT, when
-an mmc host controller has more than one mmc slot. This will also be
-done using child nodes.
-
-So, before starting hacking on this, it seems like we need some
-consolidation of the code. In principle, I would like to move the APIs
-for parsing of the child nodes into host.c, along with existing
-mmc_of_parse() function.
-
-> +       if (np && of_device_is_compatible(np, "mmc-card")) {
-> +               /* mmc-card sub-node indicates eMMC card is in use. */
-> +               host->caps |= MMC_CAP_NONREMOVABLE;
-> +               host->caps2 |= MMC_CAP2_NO_SDIO | MMC_CAP2_NO_SD;
-> +               ret = true;
-> +       }
-> +
-
-So instead of providing a new mmc OF parse API, let's make
-mmc_of_parse() call another internal function which deals with child
-node parsing.
-
-> +       of_node_put(np);
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(mmc_of_parse_mmc_card);
-> +
-> +/*
->   * Starting point for MMC card init.
->   */
->  int mmc_attach_mmc(struct mmc_host *host)
-> diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
-> index e33cc748dcfe..1b27323f3b6e 100644
-> --- a/include/linux/mmc/core.h
-> +++ b/include/linux/mmc/core.h
-> @@ -234,4 +234,6 @@ struct device_node;
->  extern u32 mmc_vddrange_to_ocrmask(int vdd_min, int vdd_max);
->  extern int mmc_of_parse_voltage(struct device_node *np, u32 *mask);
->
-> +extern bool mmc_of_parse_mmc_card(struct mmc_host *host);
-> +
->  #endif /* LINUX_MMC_CORE_H */
-> --
-> git-series 0.9.1
-
-If you didn't quite understand my comments, then please tell me. Then
-I can help out cooking some patches for you.
-
-Kind regards
-Uffe
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+index 470461d..467aa15 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+@@ -913,5 +913,69 @@
+ 				};
+ 			};
+ 		};
++
++		debug@f6590000 {
++			compatible = "arm,coresight-cpu-debug","arm,primecell";
++			reg = <0 0xf6590000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu0>;
++		};
++
++		debug@f6592000 {
++			compatible = "arm,coresight-cpu-debug","arm,primecell";
++			reg = <0 0xf6592000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu1>;
++		};
++
++		debug@f6594000 {
++			compatible = "arm,coresight-cpu-debug","arm,primecell";
++			reg = <0 0xf6594000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu2>;
++		};
++
++		debug@f6596000 {
++			compatible = "arm,coresight-cpu-debug","arm,primecell";
++			reg = <0 0xf6596000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu3>;
++		};
++
++		debug@f65d0000 {
++			compatible = "arm,coresight-cpu-debug","arm,primecell";
++			reg = <0 0xf65d0000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu4>;
++		};
++
++		debug@f65d2000 {
++			compatible = "arm,coresight-cpu-debug","arm,primecell";
++			reg = <0 0xf65d2000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu5>;
++		};
++
++		debug@f65d4000 {
++			compatible = "arm,coresight-cpu-debug","arm,primecell";
++			reg = <0 0xf65d4000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu6>;
++		};
++
++		debug@f65d6000 {
++			compatible = "arm,coresight-cpu-debug","arm,primecell";
++			reg = <0 0xf65d6000 0 0x1000>;
++			clocks = <&sys_ctrl HI6220_DAPB_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&cpu7>;
++		};
+ 	};
+ };
+-- 
+2.7.4
