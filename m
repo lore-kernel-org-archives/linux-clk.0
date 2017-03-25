@@ -1,61 +1,168 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <475aeed1da40d46d8e50420c281a74c32b78c730.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
- <475aeed1da40d46d8e50420c281a74c32b78c730.1488876832.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 8 Mar 2017 12:25:59 +0800
-Message-ID: <CAGb2v64gJ13DB3UxfG7DnJCzE+CZ02repkX8=iOQASsHw2cG5A@mail.gmail.com>
-Subject: Re: [PATCH 11/15] drm/sun4i: tcon: Fix tcon channel 1 backporch calculation
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	mike.leach@linaro.org,
+	Suzuki.Poulose@arm.com,
+	sudeep.holla@arm.com
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v5 0/9] coresight: enable debug module
+Date: Sun, 26 Mar 2017 02:23:08 +0800
+Message-Id: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> It seems like what's called a backporch in the datasheet is actually the
-> backporch plus the sync period. Fix that in our driver.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> index 93249c5ab1e4..e44217fb4f6f 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -240,15 +240,14 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon, struct drm_encoder *encoder,
->                      SUN4I_TCON1_BASIC2_Y(mode->crtc_vdisplay));
->
->         /* Set horizontal display timings */
-> -       bp = mode->crtc_htotal - mode->crtc_hsync_end;
-> +       bp = mode->crtc_htotal - mode->crtc_hsync_start;
->         DRM_DEBUG_DRIVER("Setting horizontal total %d, backporch %d\n",
->                          mode->htotal, bp);
->         regmap_write(tcon->regs, SUN4I_TCON1_BASIC3_REG,
->                      SUN4I_TCON1_BASIC3_H_TOTAL(mode->crtc_htotal) |
->                      SUN4I_TCON1_BASIC3_H_BACKPORCH(bp));
->
-> -       /* Set vertical display timings */
+ARMv8 architecture reference manual (ARM DDI 0487A.k) Chapter H7 "The
+Sample-based Profiling Extension" has description for sampling
+registers, we can utilize these registers to check program counter
+value with combined CPU exception level, secure state, etc. So this is
+helpful for CPU lockup bugs, e.g. if one CPU has run into infinite loop
+with IRQ disabled; the 'hang' CPU cannot switch context and handle any
+interrupt, so it cannot handle SMP call for stack dump, etc.
 
-Why remove the comment?
+This patch series is to enable coresight debug module with sample-based
+registers and register call back notifier for PCSR register dumping
+when panic happens, so we can see below dumping info for panic; and
+this patch series has considered the conditions for access permission
+for debug registers self, so this can avoid access debug registers when
+CPU power domain is off; the driver also try to figure out the CPU is
+in secure or non-secure state.
 
-Otherwise,
+Patch 0001 is to document the dt binding; patch 0002 is to document
+boot parameters used in kernel command line.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Patch 0003 is used to fix the func of_get_coresight_platform_data()
+doesn't properly drop the reference to the CPU node pointer; and
+patch 0004 is refactor to add new function of_coresight_get_cpu().
+Patch 0005 is to add const quality to structure device_node.
 
-> -       bp = mode->crtc_vtotal - mode->crtc_vsync_end;
-> +       bp = mode->crtc_vtotal - mode->crtc_vsync_start;
->         DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
->                          mode->vtotal, bp);
->         regmap_write(tcon->regs, SUN4I_TCON1_BASIC4_REG,
-> --
-> git-series 0.8.11
+Patch 0006 is the driver for CPU debug module.
+
+Patches 0007/0008 in this series are to enable debug unit on 96boards
+Hikey, patch 0007 is to add apb clock for debug unit and patch 0006
+is to add DT nodes for debug unit. Patch 0009 is to enable debug on
+96boards DB410c. Have verified on both two boards.
+
+We can enable debugging with two method, adding parameters into kernel
+command line for build-in module:
+  coresight_cpu_debug.enable=1
+  coresight_cpu_debug.idle_constraint=0
+
+Or we can wait the system has booted up to use debugfs nodes to enable
+debugging and set idle constraints:
+  # echo 1 > /sys/kernel/debug/coresight_cpu_debug/enable
+  # echo 0 > /sys/kernel/debug/coresight_cpu_debug/idle_constraint
+
+As result we can get below log after input command:
+echo c > /proc/sysrq-trigger:
+
+ARM external debug module:
+CPU[0]:
+ EDPRSR:  0000000b (Power:On DLK:Unlock)
+ EDPCSR:  [<ffff00000808eb54>] handle_IPI+0xe4/0x150
+ EDCIDSR: 00000000
+ EDVIDSR: 90000000 (State:Non-secure Mode:EL1/0 Width:64bits VMID:0)
+CPU[1]:
+ EDPRSR:  0000000b (Power:On DLK:Unlock)
+ EDPCSR:  [<ffff0000087a64c0>] debug_notifier_call+0x108/0x288
+ EDCIDSR: 00000000
+ EDVIDSR: 90000000 (State:Non-secure Mode:EL1/0 Width:64bits VMID:0)
+
+[...]
+
+Changes from v4:
+* This version is mainly credit to ARM colleagues many contribution
+  ideas for better quality (Thanks a lot Suzuki, Mike and Sudeep!).
+* According to Suzuki suggestion, refined debug module driver to avoid
+  memory leak for drvdata struct, handle PCSAMPLE_MODE=1, use flag
+  drvdata.pc_has_offset to indicate if PCSR has offset, minor fixes.
+* According to Mathieu suggestion, refined dt binding description.
+* Changed driver to support module mode;
+* According to Mike suggestion and very appreciate the pseudo code,
+  added support to force CPU powered up with register EDPRCR;
+* According to discussions, added command line and debugfs nodes to
+  support enabling debugging for boot time, or later can dynamically
+  enable/disable debugging by debugfs.
+* According to Rob Herring suggestion, one minor fixes in DT binding.
+* According to Stephen Boyd suggestion, add const quality to structure
+  device_node. And used use of_cpu_device_node_get() to replace
+  of_get_cpu_node() in patch 0003.
+
+Changes from v3:
+* Added Suzuki K Poulose's patch to fix issue for the func
+  of_get_coresight_platform_data() doesn't properly drop the reference
+  to the CPU node pointer.
+* According to Suzuki suggestion, added code to handl the corner case
+  for ARMv8 CPU with aarch32 mode.
+* According to Suzuki suggestion, changed compatible string to
+  "arm,coresight-cpu-debug".
+* According to Mathieu suggestion, added "power-domains" as optional
+  properties.
+
+Changes from v2:
+* According to Mathieu Poirier suggestion, applied some minor fixes.
+* Added two extra patches for enabling debug module on Hikey.
+
+Changes from v1:
+* According to Mike Leach suggestion, removed the binding for debug
+  module clocks which have been directly provided by CPU clocks.
+* According to Mathieu Poirier suggestion, added function
+  of_coresight_get_cpu() and some minor refactors for debug module
+  driver.
+
+Changes from RFC:
+* According to Mike Leach suggestion, added check for EDPRSR to avoid
+  lockup; added supporting EDVIDSR and EDCIDSR registers.
+* According to Mark Rutland and Mathieu Poirier suggestion, rewrote
+  the documentation for DT binding.
+* According to Mark and Mathieu suggestion, refined debug driver.
+
+
+Leo Yan (8):
+  coresight: bindings for CPU debug module
+  doc: Add documentation for Coresight CPU debug
+  coresight: refactor with function of_coresight_get_cpu
+  coresight: use const for device_node structures
+  coresight: add support for CPU debug module
+  clk: hi6220: add debug APB clock
+  arm64: dts: hi6220: register debug module
+  arm64: dts: qcom: msm8916: Add debug unit
+
+Suzuki K Poulose (1):
+  coresight: of_get_coresight_platform_data: Add missing of_node_put
+
+ Documentation/admin-guide/kernel-parameters.txt    |  21 +
+ .../bindings/arm/coresight-cpu-debug.txt           |  48 ++
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi          |  64 ++
+ arch/arm64/boot/dts/qcom/msm8916.dtsi              |  32 +
+ drivers/clk/hisilicon/clk-hi6220.c                 |   1 +
+ drivers/hwtracing/coresight/Kconfig                |  11 +
+ drivers/hwtracing/coresight/Makefile               |   1 +
+ drivers/hwtracing/coresight/coresight-cpu-debug.c  | 704 +++++++++++++++++++++
+ drivers/hwtracing/coresight/of_coresight.c         |  44 +-
+ include/dt-bindings/clock/hi6220-clock.h           |   5 +-
+ include/linux/coresight.h                          |   6 +-
+ 11 files changed, 920 insertions(+), 17 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
+ create mode 100644 drivers/hwtracing/coresight/coresight-cpu-debug.c
+
+-- 
+2.7.4
