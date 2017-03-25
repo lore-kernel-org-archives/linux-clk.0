@@ -1,45 +1,87 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 15 Mar 2017 12:37:53 -0500
-From: Rob Herring <robh@kernel.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 7/15] dt-bindings: display: sun4i: Add
- allwinner,tcon-channel property
-Message-ID: <20170315173753.6zywfxapdczu2i34@rob-hp-laptop>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
- <46fdec2d680d539652f87d79c627973b3a568438.1488876832.git-series.maxime.ripard@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <46fdec2d680d539652f87d79c627973b3a568438.1488876832.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	mike.leach@linaro.org,
+	Suzuki.Poulose@arm.com,
+	sudeep.holla@arm.com
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v5 9/9] arm64: dts: qcom: msm8916: Add debug unit
+Date: Sun, 26 Mar 2017 02:23:17 +0800
+Message-Id: <1490466197-29163-10-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Mar 07, 2017 at 09:56:26AM +0100, Maxime Ripard wrote:
-> The Allwinner Timings Controller has two, mutually exclusive, channels.
-> When the binding has been introduced, it was assumed that there would be
-> only a single user per channel in the system.
-> 
-> While this is likely for the channel 0 which only connects to LCD displays,
-> it turns out that the channel 1 can be connected to multiple controllers in
-> the SoC (HDMI and TV encoders for example). And while the simultaneous use
-> of HDMI and TV outputs cannot be achieved, switching from one to the other
-> at runtime definitely sounds plausible.
-> 
-> Add an extra property, allwinner,tcon-channel, to specify for a given
-> endpoint which TCON channel it is connected to, while falling back to the
-> previous mechanism if that property is missing.
+Add debug unit on Qualcomm msm8916 based platforms, including the
+DragonBoard 410c board.
 
-I think perhaps TCON channels should have been ports rather than 
-endpoints. The fact that the channels are mutually exclusive can be 
-handled in the driver and doesn't really matter in the binding. How 
-painful would it be to rework things to move TCON channel 1 from port 0, 
-endpoint 1 to port 1? 
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-Rob
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index 68a8e67..3af814b 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -1104,6 +1104,38 @@
+ 			};
+ 		};
+ 
++		debug@850000 {
++			compatible = "arm,coresight-cpu-debug","arm,primecell";
++			reg = <0x850000 0x1000>;
++			clocks = <&rpmcc RPM_QDSS_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&CPU0>;
++		};
++
++		debug@852000 {
++			compatible = "arm,coresight-cpu-debug","arm,primecell";
++			reg = <0x852000 0x1000>;
++			clocks = <&rpmcc RPM_QDSS_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&CPU1>;
++		};
++
++		debug@854000 {
++			compatible = "arm,coresight-cpu-debug","arm,primecell";
++			reg = <0x854000 0x1000>;
++			clocks = <&rpmcc RPM_QDSS_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&CPU2>;
++		};
++
++		debug@856000 {
++			compatible = "arm,coresight-cpu-debug","arm,primecell";
++			reg = <0x856000 0x1000>;
++			clocks = <&rpmcc RPM_QDSS_CLK>;
++			clock-names = "apb_pclk";
++			cpu = <&CPU3>;
++		};
++
+ 		etm@85c000 {
+ 			compatible = "arm,coresight-etm4x", "arm,primecell";
+ 			reg = <0x85c000 0x1000>;
+-- 
+2.7.4
