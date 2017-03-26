@@ -1,242 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:57402 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755487AbdCTOs0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Mar 2017 10:48:26 -0400
-Subject: Re: [PATCH V3 2/5] iommu/arm-smmu: Add support for MMU40x/500 clocks
-To: Rob Herring <robh@kernel.org>
-References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
- <1489073748-3659-3-git-send-email-sricharan@codeaurora.org>
- <20170316210331.i47xkr6opm6he3lk@rob-hp-laptop>
-Cc: robin.murphy@arm.com, will.deacon@arm.com, joro@8bytes.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, m.szyprowski@samsung.com,
-        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
-        mark.rutland@arm.com
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <a678b829-42a7-50f2-f5cb-be6ba4e36732@codeaurora.org>
-Date: Mon, 20 Mar 2017 20:18:05 +0530
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Sun, 26 Mar 2017 15:11:16 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 1/3] clk: sunxi-ng: use 1 as fallback for minimum
+ multiplier
+Message-ID: <20170326131116.ir6rkf7sh7jkyqod@lukather>
+References: <20170324083307.18338-1-wens@csie.org>
+ <20170324083307.18338-2-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <20170316210331.i47xkr6opm6he3lk@rob-hp-laptop>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="knyujehglo7qk4ib"
+In-Reply-To: <20170324083307.18338-2-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
 
-On 3/17/2017 2:33 AM, Rob Herring wrote:
-> On Thu, Mar 09, 2017 at 09:05:45PM +0530, Sricharan R wrote:
->> The MMU400x/500 is the implementation of the SMMUv2
->> arch specification. It is split in to two blocks
->> TBU, TCU. TBU caches the page table, instantiated
->> for each master locally, clocked by the TBUn_clk.
->> TCU manages the address translation with PTW and has
->> the programming interface as well, clocked using the
->> TCU_CLK. The TBU can also be sharing the same clock
->> domain as TCU, in which case both are clocked using
->> the TCU_CLK.
->>
->> This defines the clock bindings for the same and adds the
->> init, enable and disable functions for handling the
->> clocks.
->>
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> ---
->>  .../devicetree/bindings/iommu/arm,smmu.txt         | 27 ++++++
->>  drivers/iommu/arm-smmu.c                           | 95 +++++++++++++++++++++-
->>  2 files changed, 121 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
->> index 6cdf32d..b369c13 100644
->> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
->> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
->> @@ -60,6 +60,28 @@ conditions.
->>                    aliases of secure registers have to be used during
->>                    SMMU configuration.
->>
->> +- clock-names:    Should be "tbu_clk" and "tcu_clk" and "cfg_clk" for
->
-> _clk is redundant
+--knyujehglo7qk4ib
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-ok, will remove it.
+On Fri, Mar 24, 2017 at 04:33:05PM +0800, Chen-Yu Tsai wrote:
+> A zero multiplier does not make sense for clocks.
+>=20
+> Use 1 as the minimum when a multiplier minimum isn't specified.
+>=20
+> Fixes: 2beaa601c849 ("clk: sunxi-ng: Implement minimum for multipliers")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
->
->> +                  "arm,mmu-400", "arm,mmu-401" and "arm,mmu-500"
->> +
->> +                  "tcu_clk" is required for smmu's register access using the
->> +                  programming interface and ptw for downstream bus access.
->> +
->> +                  "tbu_clk" is required for access to the TBU connected to the
->> +                  master locally. This clock is optional and not required when
->> +                  TBU is in the same clock domain as the TCU or when the TBU is
->> +                  clocked along with the master.
->> +
->> +                  "cfg_clk" is optional if required to access the TCU's programming
->> +                  interface, apart from the "tcu_clk".
->
-> Clocks generally shouldn't be optional. Either the h/w has a clock or it
-> doesn't.
->
+Applied, thanks!
+Maxime
 
-ok, will not define it as 'optional'. I will define it to be soc
-specific. Also will change the driver to ignore the clk not present,
-just to reuse/have common clock enable functions for MMU-500
-for other socs as well. Only problem being unable to catch a case
-where a clk DT entry is not populated when it should have been.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-Regards,
-  Sricharan
+--knyujehglo7qk4ib
+Content-Type: application/pgp-signature; name="signature.asc"
 
->> +
->> +- clocks:         Phandles for respective clocks described by clock-names.
->> +
->> +- power-domains:  Phandles to SMMU's power domain specifier. This is
->> +                  required even if SMMU belongs to the master's power
->> +                  domain, as the SMMU will have to be enabled and
->> +                  accessed before master gets enabled and linked to its
->> +                  SMMU.
->> +
->>  ** Deprecated properties:
->>
->>  - mmu-masters (deprecated in favour of the generic "iommus" binding) :
->> @@ -84,6 +106,11 @@ conditions.
->>                               <0 36 4>,
->>                               <0 37 4>;
->>                  #iommu-cells = <1>;
->> +                clocks = <&gcc GCC_SMMU_CFG_CLK>,
->> +                         <&gcc GCC_APSS_TCU_CLK>,
->> +			 <&gcc GCC_MDP_TBU_CLK>;
->> +
->> +		clock-names = "cfg_clk", "tcu_clk", "tbu_clk";
->>          };
->>
->>          /* device with two stream IDs, 0 and 7 */
->> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->> index f7e11d3..720a1ef 100644
->> --- a/drivers/iommu/arm-smmu.c
->> +++ b/drivers/iommu/arm-smmu.c
->> @@ -341,6 +341,12 @@ struct arm_smmu_master_cfg {
->>  #define for_each_cfg_sme(fw, i, idx) \
->>  	for (i = 0; idx = fwspec_smendx(fw, i), i < fw->num_ids; ++i)
->>
->> +struct mmu500_clk {
->> +	struct clk *cfg_clk;
->> +	struct clk *tcu_clk;
->> +	struct clk *tbu_clk;
->> +};
->> +
->>  struct arm_smmu_clks {
->>  	void *clks;
->>  	int (*init_clocks)(struct arm_smmu_device *smmu);
->> @@ -455,6 +461,92 @@ static struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
->>  	return container_of(dom, struct arm_smmu_domain, domain);
->>  }
->>
->> +static int mmu500_enable_clocks(struct arm_smmu_device *smmu)
->> +{
->> +	int ret = 0;
->> +	struct mmu500_clk *sclks = smmu->smmu_clks.clks;
->> +
->> +	if (!sclks)
->> +		return 0;
->> +
->> +	ret = clk_prepare_enable(sclks->cfg_clk);
->> +	if (ret) {
->> +		dev_err(smmu->dev, "Couldn't enable cfg_clk");
->> +		return ret;
->> +	}
->> +
->> +	ret = clk_prepare_enable(sclks->tcu_clk);
->> +	if (ret) {
->> +		dev_err(smmu->dev, "Couldn't enable tcu_clk");
->> +		clk_disable_unprepare(sclks->cfg_clk);
->> +		return ret;
->> +	}
->> +
->> +	ret = clk_prepare_enable(sclks->tbu_clk);
->> +	if (ret) {
->> +		dev_err(smmu->dev, "Couln't enable tbu_clk");
->> +		clk_disable_unprepare(sclks->tcu_clk);
->> +		clk_disable_unprepare(sclks->cfg_clk);
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static void mmu500_disable_clocks(struct arm_smmu_device *smmu)
->> +{
->> +	struct mmu500_clk *sclks = smmu->smmu_clks.clks;
->> +
->> +	if (!sclks) {
->> +		clk_disable_unprepare(sclks->tbu_clk);
->> +		clk_disable_unprepare(sclks->tcu_clk);
->> +		clk_disable_unprepare(sclks->cfg_clk);
->> +	}
->> +}
->> +
->> +static int mmu500_init_clocks(struct arm_smmu_device *smmu)
->> +{
->> +	struct device *dev = smmu->dev;
->> +	struct mmu500_clk *sclks;
->> +	int err;
->> +
->> +	if (!of_find_property(dev->of_node, "clocks", NULL))
->> +		return 0;
->> +
->> +	sclks = devm_kzalloc(dev, sizeof(*sclks), GFP_KERNEL);
->> +	if (!sclks)
->> +		return -ENOMEM;
->> +
->> +	sclks->cfg_clk = devm_clk_get(dev, "cfg_clk");
->> +	if (IS_ERR(sclks->cfg_clk)) {
->> +		err = PTR_ERR(sclks->cfg_clk);
->> +		/* Ignore all, except -EPROBE_DEFER for optional clocks */
->> +		if (err == -EPROBE_DEFER)
->> +			return err;
->> +		else
->> +			sclks->cfg_clk = NULL;
->> +	}
->> +
->> +	sclks->tcu_clk = devm_clk_get(dev, "tcu_clk");
->> +	if (IS_ERR(sclks->tcu_clk)) {
->> +		dev_err(dev, "Couldn't get tcu_clk");
->> +		return PTR_ERR(sclks->tcu_clk);
->> +	}
->> +
->> +	sclks->tbu_clk = devm_clk_get(dev, "tbu_clk");
->> +	if (IS_ERR(sclks->tbu_clk)) {
->> +		err = PTR_ERR(sclks->tbu_clk);
->> +		/* Ignore all, ecept -EPROBE_DEFER for optional clocks */
->> +		if (err == -EPROBE_DEFER)
->> +			return err;
->> +		else
->> +			sclks->tbu_clk = NULL;
->> +	}
->> +
->> +	smmu->smmu_clks.clks = sclks;
->> +	return 0;
->> +}
->> +
->>  static void parse_driver_options(struct arm_smmu_device *smmu)
->>  {
->>  	int i = 0;
->> @@ -1981,7 +2073,8 @@ struct arm_smmu_match_data {
->>  		    NULL, NULL, NULL);
->>  ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU,
->>  		    NULL, NULL, NULL);
->> -ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500, NULL, NULL, NULL);
->> +ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500, mmu500_init_clocks,
->> +		    mmu500_enable_clocks, mmu500_disable_clocks);
->>  ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2,
->>  		    NULL, NULL, NULL);
->>
->> --
->> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
->>
+-----BEGIN PGP SIGNATURE-----
 
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
-member of Code Aurora Forum, hosted by The Linux Foundation
+iQIcBAEBCAAGBQJY1730AAoJEBx+YmzsjxAgoTcQAKidZbXOXsZnsYb2PqkSkJ1Q
+mzexQJ0TiPl5KQH1PrP913w0uoEeX+Xpdj9QKKOh8tdmdJ7TvMVcm05OJh4Mf4xu
+KDEdgWxR51zgLQ5UK341RYvVWCwSXFvPROd9wXXrosdVeEvlX0RJZ6CgQH4Vx51Q
+jQZo5ku3tfj5qc2NZyqKUxZwgLwBpWE+T5WxLxLVK4SjQfLC8Yn9uviw1MdBA7Ln
+gzjS3e/VyS40OEgZyCuz/nYJpC9VABpa7Rtl4mR7wcKCyK8sDs8DrcEANI/ZQ8o4
+WXwoUyC5+K8Ri3Xo7nWfjkFk5WN3ZL2RxByg23feNo1rpnscGe3eykJW4CAZX9S9
+doXUvxO624GZF9EkXe8so1d+9Zgm9lHmrj8nbufrhid7tQgbbW/MnfRE6Q7XHOFK
+rf2HYIhCvbuPdVlMYG1uWyB94SGwQ46BYwIX6KRi8AopJ7sy1Iu7XBQqy0w3ySD8
+Hkve9pQ/so8VJkV9pe4DsgohUb2I48t+kv9p7F63bnmyyVdD9gG4RE6ZYYprTz+m
+zvgNjT4in1gFq8gPF60qMnLB7Cc+ZjBiVUG2MJ9HgdYoYy7cxv6qu91WmILbJPJp
+h0TwrPncQVJPDE7HTl0vHIJgF9mxJLH8Nho/iib/w4TqB0+gJ1XTPRapggKsawBg
+O7NgX9QESjxkJana9LgW
+=JTma
+-----END PGP SIGNATURE-----
+
+--knyujehglo7qk4ib--
