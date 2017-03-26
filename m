@@ -1,127 +1,106 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-        <daniel.thompson@linaro.org>, <andrea.merello@gmail.com>,
-        <radoslaw.pietrzyk@gmail.com>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <gabriel.fernandez@st.com>
-Subject: [PATCH 2/2] clk: stm32f4: fix timeout management for pll and ready gate
-Date: Wed, 15 Mar 2017 15:27:51 +0100
-Message-ID: <1489588071-18164-3-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1489588071-18164-1-git-send-email-gabriel.fernandez@st.com>
-References: <1489588071-18164-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Sun, 26 Mar 2017 23:11:22 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Rob Herring <robh@kernel.org>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 7/15] dt-bindings: display: sun4i: Add
+ allwinner,tcon-channel property
+Message-ID: <20170326211122.ofbl4z25imyyyn3f@lukather>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <46fdec2d680d539652f87d79c627973b3a568438.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <20170315173753.6zywfxapdczu2i34@rob-hp-laptop>
+ <CAGb2v67A2T4KeLBttAGLKoo7igBTnQH+5yxN-jJo1k7Ewfd9mQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="zyqbyw7y52pdpduq"
+In-Reply-To: <CAGb2v67A2T4KeLBttAGLKoo7igBTnQH+5yxN-jJo1k7Ewfd9mQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Use a classic polling to test bit ready.
-And the shift of the bit ready of LSE & LSI were wrongs.
+--zyqbyw7y52pdpduq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32f4.c | 43 +++++++++++++++++++++++++++++--------------
- 1 file changed, 29 insertions(+), 14 deletions(-)
+On Fri, Mar 17, 2017 at 11:34:45AM +0800, Chen-Yu Tsai wrote:
+> On Thu, Mar 16, 2017 at 1:37 AM, Rob Herring <robh@kernel.org> wrote:
+> > On Tue, Mar 07, 2017 at 09:56:26AM +0100, Maxime Ripard wrote:
+> >> The Allwinner Timings Controller has two, mutually exclusive, channels.
+> >> When the binding has been introduced, it was assumed that there would =
+be
+> >> only a single user per channel in the system.
+> >>
+> >> While this is likely for the channel 0 which only connects to LCD disp=
+lays,
+> >> it turns out that the channel 1 can be connected to multiple controlle=
+rs in
+> >> the SoC (HDMI and TV encoders for example). And while the simultaneous=
+ use
+> >> of HDMI and TV outputs cannot be achieved, switching from one to the o=
+ther
+> >> at runtime definitely sounds plausible.
+> >>
+> >> Add an extra property, allwinner,tcon-channel, to specify for a given
+> >> endpoint which TCON channel it is connected to, while falling back to =
+the
+> >> previous mechanism if that property is missing.
+> >
+> > I think perhaps TCON channels should have been ports rather than
+> > endpoints. The fact that the channels are mutually exclusive can be
+> > handled in the driver and doesn't really matter in the binding. How
+> > painful would it be to rework things to move TCON channel 1 from port 0,
+> > endpoint 1 to port 1?
+>=20
+> Having a separate output port for channel 1 was one option we discussed.
+> However it wouldn't work well with the kernel's of_graph based crtc
+> detection (drm_of_find_possible_crtcs / drm_of_find_possible_crtcs),
+> which has the crtcs bound via the output port. As the logic is used
+> by multiple drivers, I'm not sure it's easy to rework or test.
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index cf9449b3..68e2a4e 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -531,19 +531,26 @@ static int stm32f4_pll_is_enabled(struct clk_hw *hw)
- 	return clk_gate_ops.is_enabled(hw);
- }
- 
-+#define PLL_TIMEOUT 10000
-+
- static int stm32f4_pll_enable(struct clk_hw *hw)
- {
- 	struct clk_gate *gate = to_clk_gate(hw);
- 	struct stm32f4_pll *pll = to_stm32f4_pll(gate);
--	int ret = 0;
--	unsigned long reg;
-+	int bit_status;
-+	unsigned int timeout = PLL_TIMEOUT;
- 
--	ret = clk_gate_ops.enable(hw);
-+	if (clk_gate_ops.is_enabled(hw))
-+		return 0;
-+
-+	clk_gate_ops.enable(hw);
- 
--	ret = readl_relaxed_poll_timeout_atomic(base + STM32F4_RCC_CR, reg,
--			reg & (1 << pll->bit_rdy_idx), 0, 10000);
-+	do {
-+		bit_status = !(readl(gate->reg) & BIT(pll->bit_rdy_idx));
- 
--	return ret;
-+	} while (bit_status && --timeout);
-+
-+	return bit_status;
- }
- 
- static void stm32f4_pll_disable(struct clk_hw *hw)
-@@ -834,24 +841,32 @@ struct stm32_rgate {
- 	u8	bit_rdy_idx;
- };
- 
--#define RTC_TIMEOUT 1000000
-+#define RGATE_TIMEOUT 50000
- 
- static int rgclk_enable(struct clk_hw *hw)
- {
- 	struct clk_gate *gate = to_clk_gate(hw);
- 	struct stm32_rgate *rgate = to_rgclk(gate);
--	u32 reg;
--	int ret;
-+	int bit_status;
-+	unsigned int timeout = RGATE_TIMEOUT;
-+
-+	if (clk_gate_ops.is_enabled(hw))
-+		return 0;
- 
- 	disable_power_domain_write_protection();
- 
- 	clk_gate_ops.enable(hw);
- 
--	ret = readl_relaxed_poll_timeout_atomic(gate->reg, reg,
--			reg & rgate->bit_rdy_idx, 1000, RTC_TIMEOUT);
-+	do {
-+		bit_status = !(readl(gate->reg) & BIT(rgate->bit_rdy_idx));
-+		if (bit_status)
-+			udelay(100);
-+
-+	} while (bit_status && --timeout);
- 
- 	enable_power_domain_write_protection();
--	return ret;
-+
-+	return bit_status;
- }
- 
- static void rgclk_disable(struct clk_hw *hw)
-@@ -1533,7 +1548,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	}
- 
- 	clks[CLK_LSI] = clk_register_rgate(NULL, "lsi", "clk-lsi", 0,
--			base + STM32F4_RCC_CSR, 0, 2, 0, &stm32f4_clk_lock);
-+			base + STM32F4_RCC_CSR, 0, 1, 0, &stm32f4_clk_lock);
- 
- 	if (IS_ERR(clks[CLK_LSI])) {
- 		pr_err("Unable to register lsi clock\n");
-@@ -1541,7 +1556,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	}
- 
- 	clks[CLK_LSE] = clk_register_rgate(NULL, "lse", "clk-lse", 0,
--			base + STM32F4_RCC_BDCR, 0, 2, 0, &stm32f4_clk_lock);
-+			base + STM32F4_RCC_BDCR, 0, 1, 0, &stm32f4_clk_lock);
- 
- 	if (IS_ERR(clks[CLK_LSE])) {
- 		pr_err("Unable to register lse clock\n");
--- 
-1.9.1
+Can't we use a different logic than drm_of_find_possible_crtcs to fill
+the same role?
+
+> Also, we still have to support old device trees using channel 1 from
+> output port 0 endpoint 1. This is the TV encoder on sun5i (A10s/A13/R8).
+
+We could probably work something out if we go that way to deal with
+old DTs though.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--zyqbyw7y52pdpduq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJY2C51AAoJEBx+YmzsjxAgQw8P/1LVA6+heTx96fApnkSX0QLV
+o/Eu77bZ8tyy4Q5wGN3tHYgv6tyQ5O7PflwTkrQzS82otgaHypgeZVwGyPgG2tF5
+fuhsjDQosO/yicBx3NuyuQDJ8K6Ki+su6tlKwzcYgG9z204i67eUVjdAJVy/gdzL
+yUHHa1EYHtE8AgnM2lGysHTqwAh5FY0+m4P5PqBPo2bDHl5KzdL3dgApbt18iUEp
+rDpNSJ4kst6RmBTxPOpQ0Yz6i6JZEp3sEIyA67rOuRpQFcd3nLIZuhft6PFrb5Co
+dGWXsOmww1vkucJ8ru6pTTYUPcNlqQPV5FZMd7sXaqzlXOedDF7rAMQGiq8r7J8/
+PRlkDYLZ6mqxo43/JQdWMb00jDyMIOdSAZDzz1szosUgJipP1n94mcBwH6wHydma
+gwbxUpk8HEFDpXmIPDXgUXWa+oQs0nUCzjTgUcyKd6bA/7kMNCHGoWswwz9bd79E
+mvawMF2ugx102Se2vgJ1q4WrKlB5q1GW+kIhu284Ef+w7z2d1xJiqUkFrQRyVqm8
+Ijajt9VG8oVv8C/v+5wBVeEabjZqDkJOvujarkVXDn9lkDS2oDgz/N/0Da6/Q+Pb
+I94lHck4KHdvNNamsmSbAfxYre1saiiN0cUfrpYNGPLiAKFN3v3XWJDjyJtiUcjo
+T/huXq9iY/d+3nuMUKDi
+=QgYl
+-----END PGP SIGNATURE-----
+
+--zyqbyw7y52pdpduq--
