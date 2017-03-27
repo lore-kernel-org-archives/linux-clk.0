@@ -1,32 +1,86 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 30 Mar 2017 17:31:13 -0500
-From: Rob Herring <robh@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: qcom: Update DT bindings for MSM8660 LCC
-Message-ID: <20170330223113.adnvw62boi5xtpu2@rob-hp-laptop>
-References: <20170324082424.6143-1-linus.walleij@linaro.org>
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170324082424.6143-1-linus.walleij@linaro.org>
+In-Reply-To: <20170326205124.vdjbmjukfysgbefc@lukather>
+References: <20170214033526.16977-1-wens@csie.org> <20170214033526.16977-5-wens@csie.org>
+ <20170214095819.utsftcvti5zdmlmi@lukather> <CAGb2v66PxbhUdqSwFc5iFN2wDVQbOsibDkckXpFsxXW1WJNe3w@mail.gmail.com>
+ <20170215094954.h3wyaxlqkeb342yu@lukather> <CAGb2v67ey1Ppc3wf1154QKoCX-xsOjWDEsXi5gxPbL4MY37zHw@mail.gmail.com>
+ <20170326205124.vdjbmjukfysgbefc@lukather>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 27 Mar 2017 16:53:05 +0800
+Message-ID: <CAGb2v647bc0VdYTQDyEjAerKnfjtkDYGdhnUgpTU-Tuns6FYYA@mail.gmail.com>
+Subject: Re: [PATCH 4/5] clk: sunxi-ng: Add driver for A83T CCU
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 24, 2017 at 09:24:24AM +0100, Linus Walleij wrote:
-> This adds the right compatible string and header for the
-> MSM8660 LCC and some new defines to the dt-bindings header.
-> 
-> Take this opportunity to spell out the acronym LPASS for
-> Low-power Audio Subsystem.
-> 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  .../devicetree/bindings/clock/qcom,lcc.txt         |  5 +--
->  include/dt-bindings/clock/qcom,lcc-msm8660.h       | 40 ++++++++++++++++++++++
->  2 files changed, 43 insertions(+), 2 deletions(-)
->  create mode 100644 include/dt-bindings/clock/qcom,lcc-msm8660.h
+On Mon, Mar 27, 2017 at 4:51 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi Chen-Yu,
+>
+> On Wed, Mar 22, 2017 at 02:50:31PM +0800, Chen-Yu Tsai wrote:
+>> On Wed, Feb 15, 2017 at 5:49 PM, Maxime Ripard
+>> <maxime.ripard@free-electrons.com> wrote:
+>> > On Tue, Feb 14, 2017 at 06:26:39PM +0800, Chen-Yu Tsai wrote:
+>> >> On Tue, Feb 14, 2017 at 5:58 PM, Maxime Ripard
+>> >> <maxime.ripard@free-electrons.com> wrote:
+>> >> > On Tue, Feb 14, 2017 at 11:35:25AM +0800, Chen-Yu Tsai wrote:
+>> >> >> +/* Some PLLs are input * N / div1 / P. Model them as NKMP with no K */
+>> >> >
+>> >> > Is that even working?
+>> >>
+>> >> Looking at the nkmp clock code, only .recalc_rate will work properly though.
+>> >> Maybe I could fix up the code so it handles zero width factors.
+>> >>
+>> >> > I'm not quite sure we want to do that. We might model it as a NP clock
+>> >> > with a variable prediv?
+>> >>
+>> >> There's no NP clock type yet. And a problem with a variable prediv is that
+>> >> it doesn't participate in factor calculation. It's effectively fixed.
+>> >>
+>> >> I did this for the A80 as well though. Fixing up the NKMP clock might be
+>> >> easier.
+>> >
+>> > Then maybe we just need a NMP clock type then. What I'm really afraid
+>> > of is that we'll just end up in a clk-factors situation that was
+>> > simply impossible to maintain without breaking anything, hence why we
+>> > had different clock types then.
+>>
+>> Upon further review, I think it will work. I did notice a discrepancy
+>> between .set_rate and .round_rate though. Will send fixes later.
+>>
+>> About the old clk-factors situation, I'm not exactly sure what part
+>> you're referring to.
+>
+> We need to be able to support old DTs, which will still use the old
+> clock code. Whatever solution we come up with need to take that into
+> account.
+>
+>> To me it seems the "factors" bits are mostly the same. Differences
+>> are mostly with parent-specific pre-dividers, clock post-dividers,
+>> and non-standard factors. The first is nicely handled by the new mux
+>> wrapper, the second is currently only used with NK types, and the
+>> last is currently only supported by single factor divider or
+>> multiplier clocks with tables.
+>>
+>> Non-standard factors are probably the trickiest one, but given we will
+>> support full factor tables for some of the tricky CPU PLLs, this is
+>> probably solved, even if not implemented yet.
+>>
+>> I'll start with the NP style clocks, which only use P when the output
+>> is under a certain frequency.
+>
+> Do we need to use a P factor? I mean, we can just create a custom
+> clock for that, I'd realy don't want to cripple the generic code for a
+> completely non-generic problem.
 
-Acked-by: Rob Herring <robh@kernel.org>
+I'm not sure. AFAIK the vendor BSP cpufreq doesn't use frequencies
+low enough to require the P divider, so we could just ignore it. But
+then we need to make sure it's set to 1 at probe time, while keeping
+the output frequency usable, which would kind of bloat the probe
+function. FYI I'm in favor of doing it this way.
+
+ChenYu
