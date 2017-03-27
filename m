@@ -1,89 +1,117 @@
-Return-Path: <tony@atomide.com>
-Date: Fri, 17 Mar 2017 15:17:29 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 5/9] ARM: OMAP2+: hwmod: assign main clock from DT if
- available
-Message-ID: <20170317221728.GX20572@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <1489741781-12816-6-git-send-email-t-kristo@ti.com>
- <20170317154126.GU20572@atomide.com>
- <f7c795dc-13db-9157-cdcc-b61892cc73f9@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <f7c795dc-13db-9157-cdcc-b61892cc73f9@ti.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+Subject: Re: [PATCH] PM / runtime: Use synchronous runtime PM call in
+ rpm_put_suppliers()
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <55b66219-e210-fe27-441c-177125afc3e0@samsung.com>
+Date: Mon, 27 Mar 2017 12:14:12 +0200
+MIME-version: 1.0
+In-reply-to: <CAPDyKFot3C1C1k45JovwKHFkvTJAFvdetoE8_ADAhMCkFw3hPA@mail.gmail.com>
+Content-type: text/plain; charset=utf-8; format=flowed
+References: <CGME20170322092305eucas1p20d2a6dfede483210febea5b5e0ff68db@eucas1p2.samsung.com>
+ <1490174570-18345-1-git-send-email-m.szyprowski@samsung.com>
+ <CAPDyKFq+mTvruQb5ifj3etMxSCWgDZTZ6ebGkk84UCQDqjR4-A@mail.gmail.com>
+ <CAJZ5v0ihYQp4_oJCu3Tugbqrm=68hcxdg8-yUphbCXCUw3UzPw@mail.gmail.com>
+ <CAPDyKFot3C1C1k45JovwKHFkvTJAFvdetoE8_ADAhMCkFw3hPA@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [170317 14:42]:
-> On 17/03/17 17:41, Tony Lindgren wrote:
-> > * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
-> > > -static int _init_main_clk(struct omap_hwmod *oh)
-> > > +static int _init_main_clk(struct omap_hwmod *oh, struct device_node *np)
-> > >  {
-> > >  	int ret = 0;
-> > > -	char name[MOD_CLK_MAX_NAME_LEN];
-> > > -	struct clk *clk;
-> > > -	static const char modck[] = "_mod_ck";
-> > > -
-> > > -	if (strlen(oh->name) >= MOD_CLK_MAX_NAME_LEN - strlen(modck))
-> > > -		pr_warn("%s: warning: cropping name for %s\n", __func__,
-> > > -			oh->name);
-> > > +	struct clk *clk = NULL;
-> > > +	int i;
-> > > +	int count;
-> > > +	const char *name;
-> > > +	char clk_name[strlen("clkctrl-x") + 1];
-> > > 
-> > > -	strlcpy(name, oh->name, MOD_CLK_MAX_NAME_LEN - strlen(modck));
-> > > -	strlcat(name, modck, MOD_CLK_MAX_NAME_LEN);
-> > > +	if (np) {
-> > > +		clk = of_clk_get_by_name(np, "clkctrl");
-> > > +		if (IS_ERR(clk)) {
-> > > +			/* Try matching by hwmod name */
-> > > +			count = of_property_count_strings(np, "ti,hwmods");
-> > > +			for (i = 0; i < count; i++) {
-> > > +				ret = of_property_read_string_index(np,
-> > > +								    "ti,hwmods",
-> > > +								    i, &name);
-> > > +				if (ret)
-> > > +					continue;
-> > > +				if (!strcmp(name, oh->name)) {
-> > > +					sprintf(clk_name, "clkctrl-%d", i);
-> > > +					clk = of_clk_get_by_name(np, clk_name);
-> > > +				}
-> > > +			}
-> > > +		}
-> > > +		if (!IS_ERR(clk)) {
-> > > +			pr_debug("%s: mapped main_clk %s for %s\n", __func__,
-> > > +				 __clk_get_name(clk), oh->name);
-> > > +			oh->main_clk = __clk_get_name(clk);
-> > > +			oh->_clk = clk;
-> > > +			soc_ops.disable_direct_prcm(oh);
-> > > +		}
-> > > +	}
-> > 
-> > You should bail out and do nothing here if legacy "ti,hwmods" property is
-> > not found. Eventually it will be the interconnect target IP wrapper module
-> > that will manage the clock and populate the rest of the hwmod data
-> > dynamically.
-> 
-> This is only for transitional support of hwmod, this patch will not be
-> needed for anything later on; or you probably need to do something similar
-> within the interconnect driver itself. The code still needs to care for the
-> cases where we want to find the main clock based on the clock link within
-> hwmod data, so bailing out early will break any boards that don't support
-> the new clkctrl clocks yet.
+Hi Ulf,
 
-Well we really don't want hwmod code parsing anything out of the dtb
-unless "ti,hwmods" property is set. That makes moving driver like features
-to live under drivers much harder.
+On 2017-03-23 13:47, Ulf Hansson wrote:
+> On 22 March 2017 at 21:56, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>> On Wed, Mar 22, 2017 at 12:34 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>> On 22 March 2017 at 10:22, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>>>> rpm_put_suppliers() might be called as a result of pm_runtime_put_sync()
+>>>> call, where the called explicitly wants to perform the operation in
+>>>> synchronous way to avoid some deadlocks related to concurrent code
+>>>> execution in the PM workers. However the current code for handling device
+>>>> links always use asynchronous calls. This patch changes it to always use
+>>>> the synchronous calls.
+>>> This is a good idea! It is better to leave the decision to the "leaf"
+>>> node of whether to use asynchronous mode or not.
+>> One immediate concern that I have is that this happens in an SRCU
+>> read-side critical section and sync runtime suspend can take arbitrary
+>> amount of time, especially if those devices have suppliers etc.  You
+>> may very well wait for an entire subtree to suspend synchronously
+>> here.
+> Yes that's a problem. Can we address that somehow?
 
-I don't quite follow you, what breaks if you fall back to the old clock
-lookup if no "ti,hwmods" is set?
+Just a stupid question: why this is issue in case of rpm_put_suppliers()
+and call to pm_runtime_put_sync(), but it is okay in rpm_get_suppliers()
+and pm_runtime_get_sync(), which can also take a long time to complete?
 
-Regards,
+>> Moreover, if the suppliers have parents, those parents won't be
+>> suspended synchronously anyway, so this only addresses the first level
+>> of hierarchy in that case.
+>>
+>> Also the behavior for suppliers follows the behavior for parents and I
+>> don't quite see the reason for these two cases to behave differently
+>> in principle.
+> Yes, you are right!
+>
+> We shouldn't change this for suppliers unless we also change this for parents.
 
-Tony
+Right, this can also lead to the deadlock similar to the one observed with
+links. Once again, it looks that if caller wants a synchronous operation,
+it should be propagated to parents also.
+
+>>>> This patch fixes the potential deadlock, which appears during adding
+>>>> runtime PM support to clock framework, which uses global mutex, which is
+>>>> reentrant only for the current process, so trying to execute runtime PM
+>>>> callback from the worker results in deadlock (the mentioned mutex is
+>>>> already taken by the current process, which waits for execution of PM
+>>>> worker).
+>>> This just tells that the locking mechanism for clocks are fragile.
+>> Right.
+>>
+>> We seem to be working around problems in there with this patch.
+>>
+>>> Whether it is a good motivation for this change, I am not sure.
+>>>
+>>> In either case, I like the change!
+>> Why exactly do you like it?
+> Okay, let me try to elaborate.
+>
+> For the async runtime PM suspend/idle case (including runtime PM autosuspend):
+> When a driver for a children/consumer decides to use the async runtime
+> PM APIs, I assume it's because the driver expects the device to be
+> used in some kind of a "bursty" manner. Meaning it doesn't make sense
+> to save power in-between every request, but instead leave the device
+> powered for little while after a request has been served. The purpose
+> is often to avoid the wakeup-latency for *each* request, when these
+> comes in bursts.
+>
+> For these cases the driver has already traded some power savings for
+> improved performance of requests in bursts. When this trade is done
+> for the children/consumer, I think it seems reasonable to not further
+> defer the parent/supplier to be be runtime suspended/idled, as that
+> would further trade power for performance, which is what happens when
+> rpm_idle|suspend() decides to punt this to a work.
+>
+> Moreover, scheduling a work for each parent/supplier seems suboptimal
+> to me, as in the async case we are already executing from within a
+> work. In cases of a higher level of device hierarchy, several works
+> becomes scheduled.
+>
+> For the sync runtime PM suspend/idle case:
+> When a driver for a children/consumers decides to use the sync runtime
+> PM APIs, it's most likely because it wants the device to enter its low
+> power state as soon as possible. In other words, there is no need to
+> trade power for performance, either because power is more important
+> than performance or because the wakeup latency is negligible. To me, I
+> think it seems reasonable to respect this policy for parents/suppliers
+> as well instead of always punting to a work.
+
+Thanks for the detailed explanation. It looks that is should be safe to
+use sync for both links and parents in all cases...
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
