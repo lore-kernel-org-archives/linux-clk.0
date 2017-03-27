@@ -1,48 +1,56 @@
 Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: mark TEGRA210_CLK_DBGAPB as always on
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
 From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <4cf40c25-2ce9-737c-9ccb-06bc2cdb61d7@nvidia.com>
-Date: Thu, 2 Mar 2017 17:56:49 +0000
-MIME-Version: 1.0
-In-Reply-To: <1488295191-24038-1-git-send-email-pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] clk: tegra: Don't reset PLL-CX if it is already enabled
+Date: Mon, 27 Mar 2017 12:01:05 +0100
+Message-ID: <1490612465-12454-1-git-send-email-jonathanh@nvidia.com>
 Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="windows-1252"
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Commit 8dce89a1c2cf ("clk: tegra: Don't warn for PLL defaults unnecessarily")
+changed the tegra210_pllcx_set_defaults() function causing the PLL to
+always be reset regardless of whether it is in-use. This function was
+changed so that resetting of the PLL will only be skipped if the PLL
+is enabled AND 'pllcx->params->defaults_set' is not true. However, the
+'pllcx->params->defaults_set' is always true and hence, the PLL is now
+always reset. This causes the boot to fail on the Tegra210 Smaug where
+the PLL is already enabled and in-use. Fix this by only resetting the
+PLL if not in-use and only printing the warning that the defaults are
+not set after we have checked the default settings.
 
-On 28/02/17 15:19, Peter De Schrijver wrote:
-> This is needed to make the JTAG debugging interface work.
-> 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index 9a2512a..708f5f1 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -2680,6 +2680,7 @@ static void tegra210_cpu_clock_resume(void)
->  	{ TEGRA210_CLK_EMC, TEGRA210_CLK_CLK_MAX, 0, 1 },
->  	{ TEGRA210_CLK_MSELECT, TEGRA210_CLK_CLK_MAX, 0, 1 },
->  	{ TEGRA210_CLK_CSITE, TEGRA210_CLK_CLK_MAX, 0, 1 },
-> +	{ TEGRA210_CLK_DBGAPB, TEGRA210_CLK_CLK_MAX, 0, 1 },
->  	{ TEGRA210_CLK_TSENSOR, TEGRA210_CLK_CLK_M, 400000, 0 },
->  	{ TEGRA210_CLK_I2C1, TEGRA210_CLK_PLL_P, 0, 0 },
->  	{ TEGRA210_CLK_I2C2, TEGRA210_CLK_PLL_P, 0, 0 },
+Fixes: 8dce89a1c2cf ("clk: tegra: Don't warn for PLL defaults unnecessarily")
 
-Should there be some dependency on say CONFIG_DEBUG_KERNEL? I am not
-sure we always want this on for all cases.
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Cheers
-Jon
-
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 9897dc55676b..b56a104328fa 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -555,12 +555,12 @@ static void tegra210_pllcx_set_defaults(const char *name,
+ {
+ 	pllcx->params->defaults_set = true;
+ 
+-	if (readl_relaxed(clk_base + pllcx->params->base_reg) &
+-			PLL_ENABLE && !pllcx->params->defaults_set) {
++	if (readl_relaxed(clk_base + pllcx->params->base_reg) & PLL_ENABLE) {
+ 		/* PLL is ON: only check if defaults already set */
+ 		pllcx_check_defaults(pllcx->params);
+-		pr_warn("%s already enabled. Postponing set full defaults\n",
+-			name);
++		if (!pllcx->params->defaults_set)
++			pr_warn("%s already enabled. Postponing set full defaults\n",
++				name);
+ 		return;
+ 	}
+ 
 -- 
-nvpublic
+2.7.4
