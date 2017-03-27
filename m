@@ -1,74 +1,34 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 5/15] clk: sunxi-ng: sun5i: Export video PLLs
-Date: Tue,  7 Mar 2017 09:56:24 +0100
-Message-Id: <4bb77a9793d4ba25bf633eff6abe41910bb7fc3c.1488876832.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <dcb314@hotmail.com>
+From: David Binderman <dcb314@hotmail.com>
+To: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "rjui@broadcom.com"
+	<rjui@broadcom.com>, "sbranden@broadcom.com" <sbranden@broadcom.com>,
+	"jonmason@broadcom.com" <jonmason@broadcom.com>,
+	"bcm-kernel-feedback-list@broadcom.com"
+	<bcm-kernel-feedback-list@broadcom.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: drivers/clk/bcm/clk-iproc-pll.c:280]: (style) Redundant condition
+Date: Mon, 27 Mar 2017 10:47:11 +0000
+Message-ID: <HE1PR0801MB186548205AD0A49B09F6A3149C330@HE1PR0801MB1865.eurprd08.prod.outlook.com>
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The video PLLs are used directly by the HDMI controller. Export them so
-that we can use them in our DT node.
+Hello there,
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu-sun5i.h      | 6 ++++--
- include/dt-bindings/clock/sun5i-ccu.h | 3 +++
- 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.h b/drivers/clk/sunxi-ng/ccu-sun5i.h
-index 8144487eb7ca..16f7aa92957e 100644
---- a/drivers/clk/sunxi-ng/ccu-sun5i.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun5i.h
-@@ -28,15 +28,17 @@
- #define CLK_PLL_AUDIO_4X	6
- #define CLK_PLL_AUDIO_8X	7
- #define CLK_PLL_VIDEO0		8
--#define CLK_PLL_VIDEO0_2X	9
-+
-+/* The PLL_VIDEO0_2X is exported for HDMI */
-+
- #define CLK_PLL_VE		10
- #define CLK_PLL_DDR_BASE	11
- #define CLK_PLL_DDR		12
- #define CLK_PLL_DDR_OTHER	13
- #define CLK_PLL_PERIPH		14
- #define CLK_PLL_VIDEO1		15
--#define CLK_PLL_VIDEO1_2X	16
- 
-+/* The PLL_VIDEO0_2X is exported for HDMI */
- /* The CPU clock is exported */
- 
- #define CLK_AXI			18
-diff --git a/include/dt-bindings/clock/sun5i-ccu.h b/include/dt-bindings/clock/sun5i-ccu.h
-index aeb2e2f781fb..81f34d477aeb 100644
---- a/include/dt-bindings/clock/sun5i-ccu.h
-+++ b/include/dt-bindings/clock/sun5i-ccu.h
-@@ -19,6 +19,9 @@
- 
- #define CLK_HOSC		1
- 
-+#define CLK_PLL_VIDEO0_2X	9
-+
-+#define CLK_PLL_VIDEO1_2X	16
- #define CLK_CPU			17
- 
- #define CLK_AHB_OTG		23
--- 
-git-series 0.8.11
+linux-4.11-rc4/drivers/clk/bcm/clk-iproc-pll.c:280]: (style) Redundant cond=
+ition: If 'rate >=3D 2200000000', the comparison 'rate' is always true.
+
+Source code is
+
+    } else if (rate >=3D VCO_HIGH && rate && rate < VCO_HIGH_HIGH) {
+
+Suggest new code
+
+    } else if (rate >=3D VCO_HIGH  && rate < VCO_HIGH_HIGH) {
+
+Regards
+
+David Binderman
