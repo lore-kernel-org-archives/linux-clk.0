@@ -1,73 +1,202 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 1/8] dt-bindings: clock: gxbb: expose spdif clock gates
-Date: Fri, 31 Mar 2017 15:04:04 +0200
-Message-Id: <20170331130411.4781-2-jbrunet@baylibre.com>
-In-Reply-To: <20170331130411.4781-1-jbrunet@baylibre.com>
-References: <20170331130411.4781-1-jbrunet@baylibre.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Kevin Hilman <khilman@baylibre.com>,
+ "Neil Armstrong" <narmstrong@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <m237e2iirk.fsf@baylibre.com>
+Cc: sboyd@codeaurora.org, carlo@caione.org, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1490177935-9646-1-git-send-email-narmstrong@baylibre.com>
+ <1490177935-9646-4-git-send-email-narmstrong@baylibre.com>
+ <m237e2iirk.fsf@baylibre.com>
+Message-ID: <149064443540.54062.12740186024138662455@resonance>
+Subject: Re: [PATCH v4 3/3] ARM64: dts: meson-gx: Add MALI nodes for GXBB and GXL
+Date: Mon, 27 Mar 2017 12:53:55 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Expose the clock gates required for the spdif output
+Quoting Kevin Hilman (2017-03-24 12:20:31)
+> Neil Armstrong <narmstrong@baylibre.com> writes:
+> =
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/gxbb.h              | 4 ++--
- include/dt-bindings/clock/gxbb-clkc.h | 2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+> > The same MALI-450 MP3 GPU is present in the GXBB and GXL SoCs.
+> >
+> > The node is simply added in the meson-gxbb.dtsi file.
+> >
+> > For GXL, since a lot is shared with the GXM that has a MALI-T820 IP, th=
+is
+> > patch adds a new meson-gxl-mali.dtsi and is included in the SoC specific
+> > dtsi files.
+> >
+> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> =
 
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 9d949244b104..0d535f7e7aed 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -209,7 +209,7 @@
- /* CLKID_ETH */
- #define CLKID_DEMUX		  37
- /* CLKID_AIU_GLUE */
--#define CLKID_IEC958		  39
-+/* CLKID_IEC958 */
- /* CLKID_I2S_OUT */
- #define CLKID_AMCLK		  41
- #define CLKID_AIFIFO2		  42
-@@ -251,7 +251,7 @@
- #define CLKID_GCLK_VENCI_INT	  78
- #define CLKID_DAC_CLK		  79
- /* CLKID_AOCLK_GATE */
--#define CLKID_IEC958_GATE	  81
-+/* CLKID_IEC958_GATE */
- #define CLKID_ENC480P		  82
- #define CLKID_RNG1		  83
- #define CLKID_GCLK_VENCI_INT1	  84
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index cce6cb5418f1..1d4614bc8154 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -18,6 +18,7 @@
- #define CLKID_SAR_ADC		23
- #define CLKID_ETH		36
- #define CLKID_AIU_GLUE		38
-+#define CLKID_IEC958		39
- #define CLKID_I2S_OUT		40
- #define CLKID_MIXER_IFACE	44
- #define CLKID_AIU		47
-@@ -30,6 +31,7 @@
- #define CLKID_SANA		69
- #define CLKID_GCLK_VENCI_INT0	77
- #define CLKID_AOCLK_GATE	80
-+#define CLKID_IEC958_GATE	81
- #define CLKID_AO_I2C		93
- #define CLKID_SD_EMMC_A		94
- #define CLKID_SD_EMMC_B		95
--- 
-2.9.3
+> LGTM, I can apply this when the clk driver changes are merged (feel free
+> to let me know when that happens, in case I'm not paying attention.)
+
+Applied to clk-meson, a stable branch, which has been merged into
+clk-next.
+
+Kevin, the dtsi is all yours.
+
+Regards,
+Mike
+
+> =
+
+> <bikeshed>
+> nit: This series (and previous ones) use MALI, but I believe the correct
+> way is Mali. Could you standarize on that throughout the series?
+> </bikeshed>
+> =
+
+> Kevin
+> =
+
+> > ---
+> >  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi      | 37 ++++++++++++++++=
+++++
+> >  arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi  | 43 ++++++++++++++++=
+++++++++
+> >  arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi |  1 +
+> >  arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi |  1 +
+> >  4 files changed, 82 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
+> >
+> > diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/b=
+oot/dts/amlogic/meson-gxbb.dtsi
+> > index 04b3324..0617a3d 100644
+> > --- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> > +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> > @@ -478,6 +478,43 @@
+> >       };
+> >  };
+> >  =
+
+> > +&apb {
+> > +     mali: gpu@c0000 {
+> > +             compatible =3D "amlogic,meson-gxbb-mali", "arm,mali-450";
+> > +             reg =3D <0x0 0xc0000 0x0 0x40000>;
+> > +             interrupts =3D <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+> > +             interrupt-names =3D "gp", "gpmmu", "pp", "pmu",
+> > +                     "pp0", "ppmmu0", "pp1", "ppmmu1",
+> > +                     "pp2", "ppmmu2";
+> > +             clocks =3D <&clkc CLKID_CLK81>, <&clkc CLKID_MALI>;
+> > +             clock-names =3D "bus", "core";
+> > +
+> > +             /*
+> > +              * Mali clocking is provided by two identical clock paths
+> > +              * MALI_0 and MALI_1 muxed to a single clock by a glitch
+> > +              * free mux to safely change frequency while running.
+> > +              */
+> > +             assigned-clocks =3D <&clkc CLKID_MALI_0_SEL>,
+> > +                               <&clkc CLKID_MALI_0>,
+> > +                               <&clkc CLKID_MALI>; /* Glitch free mux =
+*/
+> > +             assigned-clock-parents =3D <&clkc CLKID_FCLK_DIV3>,
+> > +                                      <0>, /* Do Nothing */
+> > +                                      <&clkc CLKID_MALI_0>;
+> > +             assigned-clock-rates =3D <0>, /* Do Nothing */
+> > +                                    <666666666>,
+> > +                                    <0>; /* Do Nothing */
+> > +     };
+> > +};
+> > +
+> >  &i2c_A {
+> >       clocks =3D <&clkc CLKID_I2C>;
+> >  };
+> > diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi b/arch/arm=
+64/boot/dts/amlogic/meson-gxl-mali.dtsi
+> > new file mode 100644
+> > index 0000000..f06cc234
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
+> > @@ -0,0 +1,43 @@
+> > +/*
+> > + * Copyright (c) 2017 BayLibre SAS
+> > + * Author: Neil Armstrong <narmstrong@baylibre.com>
+> > + *
+> > + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> > + */
+> > +
+> > +&apb {
+> > +     mali: gpu@c0000 {
+> > +             compatible =3D "amlogic,meson-gxbb-mali", "arm,mali-450";
+> > +             reg =3D <0x0 0xc0000 0x0 0x40000>;
+> > +             interrupts =3D <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+> > +             interrupt-names =3D "gp", "gpmmu", "pp", "pmu",
+> > +                     "pp0", "ppmmu0", "pp1", "ppmmu1",
+> > +                     "pp2", "ppmmu2";
+> > +             clocks =3D <&clkc CLKID_CLK81>, <&clkc CLKID_MALI>;
+> > +             clock-names =3D "bus", "core";
+> > +
+> > +             /*
+> > +              * Mali clocking is provided by two identical clock paths
+> > +              * MALI_0 and MALI_1 muxed to a single clock by a glitch
+> > +              * free mux to safely change frequency while running.
+> > +              */
+> > +             assigned-clocks =3D <&clkc CLKID_MALI_0_SEL>,
+> > +                               <&clkc CLKID_MALI_0>,
+> > +                               <&clkc CLKID_MALI>; /* Glitch free mux =
+*/
+> > +             assigned-clock-parents =3D <&clkc CLKID_FCLK_DIV3>,
+> > +                                      <0>, /* Do Nothing */
+> > +                                      <&clkc CLKID_MALI_0>;
+> > +             assigned-clock-rates =3D <0>, /* Do Nothing */
+> > +                                    <666666666>,
+> > +                                    <0>; /* Do Nothing */
+> > +     };
+> > +};
+> > diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi b/arch/ar=
+m64/boot/dts/amlogic/meson-gxl-s905d.dtsi
+> > index 615308e..5a90e30 100644
+> > --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi
+> > +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi
+> > @@ -42,6 +42,7 @@
+> >   */
+> >  =
+
+> >  #include "meson-gxl.dtsi"
+> > +#include "meson-gxl-mali.dtsi"
+> >  =
+
+> >  / {
+> >       compatible =3D "amlogic,s905d", "amlogic,meson-gxl";
+> > diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi b/arch/ar=
+m64/boot/dts/amlogic/meson-gxl-s905x.dtsi
+> > index 08237ee..0f78d83 100644
+> > --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi
+> > +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi
+> > @@ -42,6 +42,7 @@
+> >   */
+> >  =
+
+> >  #include "meson-gxl.dtsi"
+> > +#include "meson-gxl-mali.dtsi"
+> >  =
+
+> >  / {
+> >       compatible =3D "amlogic,s905x", "amlogic,meson-gxl";
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
