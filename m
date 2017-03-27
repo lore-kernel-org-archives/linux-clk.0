@@ -1,51 +1,57 @@
-Return-Path: <leonard.crestez@nxp.com>
-From: Leonard Crestez <leonard.crestez@nxp.com>
-To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: core: Copy connection id
-Date: Thu, 2 Mar 2017 12:45:16 +0000
-Message-ID: <1488458715.12287.18.camel@nxp.com>
-References: <60d115f6c11bc51cd8bc10c64cd222c3cdb43cc7.1487596492.git.leonard.crestez@nxp.com>
-	 <20170224204439.GD25384@codeaurora.org> <1488014402.6461.3.camel@nxp.com>
-	 <20170228080558.GL25384@codeaurora.org>
-In-Reply-To: <20170228080558.GL25384@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 5/7] clk: tegra: don't warn for PLL defaults
+ unnecessarily
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
+	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
+	<gnurou@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, "Rhyland Klein" <rklein@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1487846686-6388-1-git-send-email-pdeschrijver@nvidia.com>
+ <1487846686-6388-6-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <b26752ac-5375-86af-8ce8-0be97b99c734@nvidia.com>
+Date: Mon, 27 Mar 2017 12:02:28 +0100
 MIME-Version: 1.0
+In-Reply-To: <1487846686-6388-6-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-T24gVHVlLCAyMDE3LTAyLTI4IGF0IDAwOjA1IC0wODAwLCBzYm95ZEBjb2RlYXVyb3JhLm9yZyB3
-cm90ZToNCj4gT24gMDIvMjUsIExlb25hcmQgQ3Jlc3RleiB3cm90ZToNCj4gPiANCj4gPiBPbiBG
-cmksIDIwMTctMDItMjQgYXQgMTI6NDQgLTA4MDAsIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4gPiA+
-IA0KPiA+ID4gT24gMDIvMjAsIExlb25hcmQgQ3Jlc3RleiB3cm90ZToNCj4gPiA+ID4gDQo+ID4g
-PiA+IFNvbWUgZHJpdmVycyB1c2Ugc3ByaW50ZiB0byBidWlsZCBjbGsgY29ubmVjdGlvbiBpZCBu
-YW1lcyBidXQNCj4gPiA+ID4gdGhlDQo+ID4gPiA+IGNsaw0KPiA+ID4gPiBjb3JlIHdpbGwgc2F2
-ZSB0aG9zZSBzdHJpbmdzIGFuZCBvY2Nhc2lvbmFsbHkgcHJpbnQgdGhlbSBiYWNrLg0KPiA+ID4g
-PiBEdXBsaWNhdGUNCj4gPiA+ID4gdGhlIGNvbl9pZCBzdHJpbmdzIGluc3RlYWQgb2YgZml4aW5n
-IGFsbCB0aGUgdXNlcnMuDQo+ID4gPiBHb29kIGNhdGNoLiBXaGF0IGFib3V0IGRldl9pZCB0aG91
-Z2g/IFRoYXQgY291bGQgYWxzbyBoYXZlIHRoZQ0KPiA+ID4gc2FtZSBwcm9ibGVtIGlmIHNvbWUg
-ZGV2aWNlIGlzIHJlbW92ZWQgYW5kIHdlJ3JlIHN0aWxsIGhvbGRpbmcgYQ0KPiA+ID4gcmVmZXJl
-bmNlIHRvIHRoZSBrb2JqZWN0J3MgbmFtZS4gVGhpcyBpcyBwcm9iYWJseSBtb3JlIHJhcmUgdGhh
-bg0KPiA+ID4gd2hhdCBpcyBoYXBwZW5pbmcgaGVyZSwgYnV0IHN0aWxsIHNlZW1zIHBvc3NpYmxl
-IHRoYXQgd2UgbWlnaHQNCj4gPiA+IHRyaXAgb3ZlciB0aGF0IGxhdGVyLg0KPiA+IEEgZGV2aWNl
-IHNob3VsZCBub3JtYWxseSBmcmVlIHRoZSBjbGtzIGl0IHVzZXMgYmVmb3JlIGl0IGlzDQo+ID4g
-ZGVzdHJveWVkLg0KPiA+IFRoaXMgbWVhbnMgdGhhdCBpZiBkZXZfaWQgaXMgcG9pbnRpbmcgdG8g
-ZnJlZWQgbWVtb3J5IHRoZW4gdGhlIGNsaw0KPiA+IGl0c2VsZiB3YXMgcHJvYmFibHkgbGVha2Vk
-LCByaWdodD8NCj4gU3VyZS4gY2xrX2dldF9zeXMoKSBjb3VsZCBiZSBjYWxsZWQgYW5kIHRoZW4g
-d2UgY291bGQgaGF2ZQ0KPiBzb21ldGhpbmcgc3ByaW50ZiB0aGUgZGV2X2lkIHRoZXJlLiBBIHF1
-aWNrIGdyZXAgZG9lc24ndCBzaG93IGFueQ0KPiBwbGFjZSB3aGVyZSB0aGF0IGhhcHBlbnMgdGhv
-dWdoIHNvIGl0IHNlZW1zIHNhZmUgcmlnaHQgbm93Lg0KPiANCj4gVGhhdCBzYWlkLCBpdCB3b3Vs
-ZCBiZSBuaWNlIHRvIGNsZWFybHkgZG9jdW1lbnQgdGhhdCB3ZSBkb24ndA0KPiBleHBlY3QgZGV2
-X2lkIHRvIGJlIGZyZWVkIG9yIGNoYW5nZWQgZHVyaW5nIHRoZSBsaWZldGltZSBvZiB0aGUNCj4g
-Y2xrIHN0cnVjdHVyZSwgYnV0IHdlIGRvIGFsbG93IGNvbl9pZCB0byBjaGFuZ2UuIFBlcmhhcHMg
-dGhlIGNvcHkNCj4gc2hvd3MgdGhhdCwgYnV0IGEgY29tbWVudCB3b3VsZCBhbHNvIGJlIHVzZWZ1
-bCBzbyB3ZSBkb24ndCBoYXZlDQo+IHBlb3BsZSB3b25kZXJpbmcgd2h5IGRldl9pZCBpc24ndCBj
-b3BpZWQgYXMgd2VsbC4NCg0KVGhpcyBzaG91bGQgYmUgbWVudGlvbmVkIG9uIHRoZSBwdWJsaWMg
-ZG9jdW1lbnRhdGlvbiBmb3IgY2xrX2dldF9zeXMsDQpjbGtfZ2V0IGFuZCBkZXZtX2Nsa19nZXQs
-IHJpZ2h0PyBUaGVzZSBzZWVtIHRvIGJlIHRoZSBwdWJsaWMgZW50cnkNCnBvaW50cyB0byB0aGUg
-Y2xrIHN1YnN5c3RlbSBhbmQgdXNlcnMgYXJlIGV4cGVjdGVkIHRvIHJlYWQgdGhlaXIgZG9jcy4N
-Cg0KRG8geW91IHdhbnQgbWUgdG8gcmVzZW5kIHRoZSBwYXRjaCB3aXRoIHRoZXNlIG5vdGVzPw0K
-DQpJJ20gbm90IGNvbWZvcnRhYmxlIGFkZGluZyB0byBkb2N1bWVudGF0aW9uIHdoZW4gSSBkb24n
-dCBmdWxseQ0KdW5kZXJzdGFuZCB0aGUgc3lzdGVtIG15c2VsZi4gSSBvbmx5IGRpc2NvdmVyZWQg
-dGhpcyB3aGlsZSBsb29raW5nIGludG8NCnVucmVsYXRlZCBkcml2ZXIgaXNzdWVzLg==
+Hi Peter,
+
+On 23/02/17 10:44, Peter De Schrijver wrote:
+> If the PLL is on, only warn if the defaults are not yet set. Otherwise be
+> silent.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index b7ef8a7..fe698d2 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -502,7 +502,7 @@ static void tegra210_pllcx_set_defaults(const char *name,
+>  	pllcx->params->defaults_set = true;
+>  
+>  	if (readl_relaxed(clk_base + pllcx->params->base_reg) &
+> -			PLL_ENABLE) {
+> +			PLL_ENABLE && !pllcx->params->defaults_set) {
+>  		/* PLL is ON: only check if defaults already set */
+>  		pllcx_check_defaults(pllcx->params);
+>  		pr_warn("%s already enabled. Postponing set full defaults\n",
+
+The above hunk is causing the Tegra210 Smaug boot to fail. Looking more
+at the code, I believe that the above hunk is not correct, because
+'defaults_set' is always true and this is now causing us to always reset
+the PLL if in-use or not. I will send a patch to correct this.
+
+Cheers
+Jon
+
+-- 
+nvpublic
