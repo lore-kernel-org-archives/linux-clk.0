@@ -1,38 +1,65 @@
-Return-Path: <robin@protonic.nl>
-From: Robin van der Gracht <robin@protonic.nl>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Robin van der Gracht <robin@protonic.nl>
-Subject: [PATCH v2] clk: imx: correct uart4_serial clock name in driver for i.MX6UL
-Date: Mon,  6 Mar 2017 09:13:43 +0100
-Message-Id: <20170306081343.27641-1-robin@protonic.nl>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,  mturquette@baylibre.com,  linux-arm-kernel@lists.infradead.org,  narmstrong@baylibre.com,  carlo@caione.org,  sboyd@codeaurora.org
+Subject: Re: [RFC PATCH] clk: meson: gxbb: remove the "cpu_clk"
+References: <20170326110602.23379-1-martin.blumenstingl@googlemail.com>
+	<1490550707.29739.21.camel@baylibre.com>
+Date: Mon, 27 Mar 2017 09:59:48 -0700
+In-Reply-To: <1490550707.29739.21.camel@baylibre.com> (Jerome Brunet's message
+	of "Sun, 26 Mar 2017 19:51:47 +0200")
+Message-ID: <m2mvc6d5a3.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Robin van der Gracht <robin@protonic.nl>
----
-v2: Rebased on latest mainline
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
- drivers/clk/imx/clk-imx6ul.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Sun, 2017-03-26 at 13:06 +0200, Martin Blumenstingl wrote:
+>> It seems that the "cpu_clk" was carried over from the meson8b clock
+>> controller driver. On Meson GX (GXBB/GXL/GXM) the registers which are
+>> used by the cpu_clk have a different purpose (in other words: they don't
+>> control the CPU clock anymore). HHI_SYS_CPU_CLK_CNTL1 bits 31:24 are
+>> reserved according to the public S905 datasheet, while bit 23 is the
+>> "A53_trace_clk_DIS" gate (which according to the datasheet should only
+>> be used in case a silicon bug is discovered) and bits 22:20 are a
+>> divider (A53_trace_clk). The meson clk-cpu code however expects that
+>> bits 28:20 are reserved for a divider (according to the public S805
+>> datasheet this "SCALE_DIV: This value represents an N+1 divider of the
+>> input clock.").
+>> 
+>> The CPU clock on Meson GX SoCs is provided by the SCPI DVFS clock
+>> driver instead. Two examples from a Meson GXL S905X SoC:
+>> - vcpu (SCPI DVFS clock 0) rate: 1000000000 / cpu_clk rate: 708000000
+>> - vcpu (SCPI DVFS clock 0) rate: 1512000000 / cpu_clk rate: 708000000
+>> 
+>
+> Thanks for catching this Martin! Looking at the difference between the S805 and
+> S905 register description, it makes no sense that we used the same clock driver
+> for what's behind HHI_SYS_CPU_CLK_CNTL1. I agree, it should be removed from the
+> gxbb clock controller.
+>
+>> Unfortunately the CLKID_CPUCLK was already exported (but is currently
+>> not used) to DT.
+>> 
+>> This is an RFC because I would like to hear other people's opinion on
+>> how to clean up the CLKID_CPUCLK (as it leaves a "hole" in
+>> gxbb_hw_onecell_data and changes the DT API (by removing a currently
+>> unused #define).
+>> 
+>
+> In general the DT ABI should be stable but since no one is using this ID, and
+> what it refers to is clearly wrong, I don't think we would disrupt anything by
+> removing it.
+>
+> For the "hole" in the ids, Neil and I had similar problem while working other
+> topics. We managed to dodge it but I think it was only a matter of time ...
+>
+> In the end, it is not a big deal if there is holes in the onecell_data, as long
+> as we take care to avoid it when we register the clocks:
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index dbd6e59..b4e0dff 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -358,7 +358,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_GPT1_BUS]	= imx_clk_gate2("gpt1_bus",	"perclk",	base + 0x6c,	20);
- 	clks[IMX6UL_CLK_GPT1_SERIAL]	= imx_clk_gate2("gpt1_serial",	"perclk",	base + 0x6c,	22);
- 	clks[IMX6UL_CLK_UART4_IPG]	= imx_clk_gate2("uart4_ipg",	"ipg",		base + 0x6c,	24);
--	clks[IMX6UL_CLK_UART4_SERIAL]	= imx_clk_gate2("uart4_serail",	"uart_podf",	base + 0x6c,	24);
-+	clks[IMX6UL_CLK_UART4_SERIAL]	= imx_clk_gate2("uart4_serial",	"uart_podf",	base + 0x6c,	24);
- 
- 	/* CCGR2 */
- 	if (clk_on_imx6ull()) {
--- 
-2.9.3
+Agreed.  It's better to have holes in the clkid space than to introduce
+DT incompatibility.
+
+Kevin
