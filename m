@@ -1,68 +1,96 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 7/15] dt-bindings: display: sun4i: Add allwinner,tcon-channel property
-Date: Tue,  7 Mar 2017 09:56:26 +0100
-Message-Id: <46fdec2d680d539652f87d79c627973b3a568438.1488876832.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Kevin Hilman <khilman@baylibre.com>, "Jerome Brunet" <jbrunet@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <m2r324bq9s.fsf@baylibre.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Carlo Caione" <carlo@caione.org>,
+ linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20170309104154.28295-1-jbrunet@baylibre.com> <m2r324bq9s.fsf@baylibre.com>
+Message-ID: <149064437219.54062.14490095828514639237@resonance>
+Subject: Re: [PATCH v2 0/9] clk: meson: update clock controller for audio support
+Date: Mon, 27 Mar 2017 12:52:52 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The Allwinner Timings Controller has two, mutually exclusive, channels.
-When the binding has been introduced, it was assumed that there would be
-only a single user per channel in the system.
+Quoting Kevin Hilman (2017-03-10 16:39:27)
+> Jerome Brunet <jbrunet@baylibre.com> writes:
+> =
 
-While this is likely for the channel 0 which only connects to LCD displays,
-it turns out that the channel 1 can be connected to multiple controllers in
-the SoC (HDMI and TV encoders for example). And while the simultaneous use
-of HDMI and TV outputs cannot be achieved, switching from one to the other
-at runtime definitely sounds plausible.
+> > This patchset is a first round of update to the meson clock controllers
+> > to bring audio support. The patchset is based on clk-next. It could be
+> > rebased on amlogic tree later on, if you prefer the patches to go throu=
+gh
+> > Kevin's tree.
+> =
 
-Add an extra property, allwinner,tcon-channel, to specify for a given
-endpoint which TCON channel it is connected to, while falling back to the
-previous mechanism if that property is missing.
+> I'd prefer these go through the clk tree, and get an immutable branch
+> that I can use for my stuff that goes through the arm-soc tree.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 11 ++++---
- 1 file changed, 7 insertions(+), 4 deletions(-)
+Applied to clk-meson, a stable branch, which has been merged into
+clk-next.
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 4b280672658e..18d445723c3e 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -68,10 +68,13 @@ Required properties:
-   Documentation/devicetree/bindings/media/video-interfaces.txt. The
-   first port should be the input endpoint, the second one the output
- 
--  The output should have two endpoints. The first is the block
--  connected to the TCON channel 0 (usually a panel or a bridge), the
--  second the block connected to the TCON channel 1 (usually the TV
--  encoder)
-+  The output may have multiple endpoints. The TCON has two channels,
-+  usually with the first channel being used for the panels interfaces
-+  (RGB, LVDS, etc.), and the second being used for the outputs that
-+  require another controller (TV Encoder, HDMI, etc.). The endpoints
-+  will take an extra property, allwinner,tcon-channel, to specify the
-+  channel the endpoint is associated to. If that property is not
-+  present, the endpoint number will be used as the channel number.
- 
- On SoCs other than the A33, there is one more clock required:
-    - 'tcon-ch1': The clock driving the TCON channel 1
--- 
-git-series 0.8.11
+Kevin, feel free to use clk-meson or any commit id therein: they will
+not be rebased.
+
+Regards,
+Mike
+
+> =
+
+> Kevin
+> =
+
+> > First patch fix an issue found while writing patch 5 (Giving ternary
+> > operator to SET_PARM)
+> >
+> > Following Stephen comment on the v1, patch 2 adds the const qualifiers
+> > missing upstream.
+> >
+> > Patches 3 and 4 put the generic muxes and divisors declaration in table=
+s so
+> > the register address fixup works in the same way as the clock gates. We=
+ are
+> > going to add more of these clock types for audio or gpu support, so we
+> > can't continue to fix addresses individually like it is currently done.
+> >
+> > Patches 5 to 8 improve the support of the mpll clocks, now allowing the
+> > rate to be set. Among other things, the mplls are the parent clocks of =
+the
+> > i2s and spdif clocks.
+> >
+> > Patch 9 expose the clock gates required to power on the i2s output.
+> >
+> > These patches have been tested on the meson gxbb p200 board, as part of=
+ the
+> > ongoing work to bring audio support to meson SoC family.
+> >
+> > Changes since v1 [0]:
+> >  * Add SET_PARM fix to the series
+> >  * Add missing const qualifiers to the clock arrays
+> >  * No more additional patches required as SAR clocks have been merged
+> >
+> > [0]: http://lkml.kernel.org/r/20170228133002.17894-1-jbrunet@baylibre.c=
+om
+> >
+> > Jerome Brunet (9):
+> >   clk: meson: fix SET_PARM macro
+> >   clk: meson: add missing const qualifiers on gate arrays
+> >   clk: meson8b: put dividers and muxes in tables
+> >   clk: gxbb: put dividers and muxes in tables
+> >   clk: meson: mpll: add rw operation
+> >   clk: meson: gxbb: mpll: use rw operation
+> >   clk: meson8b: add the mplls clocks 0, 1 and 2
+> >   clk: meson: mpll: correct N2 maximum value
+> >   dt-bindings: clk: gxbb: expose i2s output clock gates
+> >
+> >  drivers/clk/meson/clk-mpll.c          | 152 ++++++++++++++++++++++++++=
+++++++--
+> >  drivers/clk/meson/clkc.h              |   6 +-
+> >  drivers/clk/meson/gxbb.c              |  66 ++++++++++++---
+> >  drivers/clk/meson/gxbb.h              |  10 +--
+> >  drivers/clk/meson/meson8b.c           | 127 ++++++++++++++++++++++++++=
+--
+> >  drivers/clk/meson/meson8b.h           |  20 ++++-
+> >  include/dt-bindings/clock/gxbb-clkc.h |   5 ++
+> >  7 files changed, 356 insertions(+), 30 deletions(-)
