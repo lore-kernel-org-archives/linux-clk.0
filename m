@@ -1,50 +1,44 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 27 Mar 2017 17:18:00 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 9/9] ARM: dts: omap4: convert to use the new clkctrl
- clocks for the drivers
-Message-ID: <20170328001800.GR10760@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <1489741781-12816-10-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1489741781-12816-10-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:33989 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751908AbdC0KBS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Mar 2017 06:01:18 -0400
+From: Tobias Regnery <tobias.regnery@gmail.com>
+To: maxime.ripard@free-electrons.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: Tobias Regnery <tobias.regnery@gmail.com>
+Subject: [PATCH] clk: sunxi-ng: fix build error without CONFIG_RESET_CONTROLLER
+Date: Mon, 27 Mar 2017 11:57:53 +0200
+Message-Id: <20170327095753.29091-1-tobias.regnery@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [170317 02:12]:
-> Convert the drivers to use the new clkctrl clocks.
-> 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> ---
->  arch/arm/boot/dts/omap4.dtsi | 164 ++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 146 insertions(+), 18 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/omap4.dtsi b/arch/arm/boot/dts/omap4.dtsi
-> index 3ecf616..c39304a 100644
-> --- a/arch/arm/boot/dts/omap4.dtsi
-> +++ b/arch/arm/boot/dts/omap4.dtsi
-> @@ -94,16 +94,22 @@
->  			compatible = "ti,omap4-mpu";
->  			ti,hwmods = "mpu";
->  			sram = <&ocmcram>;
-> +			clocks = <&mpuss_clkctrl OMAP4_MPU_CLKCTRL 0>;
-> +			clock-names = "clkctrl";
->  		};
+With CONFIG_RESET_CONTROLLER=n we get the following link error in the
+sunxi-ng clk driver:
 
-Oh one more thing. I don't think we should add the clocks
-here as they are now wrongly allocated to the device within
-the interconnect target module. These clocks really belong
-to each interconnect target module that we don't have in the
-dts yet.
+drivers/built-in.o: In function `sunxi_ccu_probe':
+mux-core.c:(.text+0x12fe68): undefined reference to 'reset_controller_register'
+mux-core.c:(.text+0x12fe68): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol 'reset_controller_register'
 
-So we're better off adding the clockctrl clocks and then
-changing the dts to use the interconnect target modules
-with the clockctrl clocks.
+Fix this by adding the appropriate select statement.
 
-Regards,
+Signed-off-by: Tobias Regnery <tobias.regnery@gmail.com>
+---
+ drivers/clk/sunxi-ng/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Tony
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 213cf64e4fab..8af8f4be8e3b 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -1,6 +1,7 @@
+ config SUNXI_CCU
+ 	bool "Clock support for Allwinner SoCs"
+ 	depends on ARCH_SUNXI || COMPILE_TEST
++	select RESET_CONTROLLER
+ 	default ARCH_SUNXI
+ 
+ if SUNXI_CCU
+-- 
+2.11.0
+
