@@ -1,97 +1,78 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Wed, 29 Mar 2017 18:37:12 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org, sudeep.holla@arm.com
-Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
-Message-ID: <20170329103712.GA22480@leoy-linaro>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
- <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
- <31be033f-514e-e48a-3ba2-a5c5cd477548@arm.com>
- <20170329030735.GA23889@leoy-linaro>
- <5584203e-cb19-a5d2-45b1-3e78d3482c55@arm.com>
- <20170329102740.GA20804@leoy-linaro>
- <89b6c6c7-0da0-6891-312a-c9221851c20a@arm.com>
+Return-Path: <andy.tang@nxp.com>
+From: Andy Tang <andy.tang@nxp.com>
+To: "mturquette@baylibre.com" <mturquette@baylibre.com>
+CC: "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "robh+dt@kernel.org"
+	<robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Scott Wood <oss@buserror.net>
+Subject: RE: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
+Date: Mon, 27 Mar 2017 03:39:42 +0000
+Message-ID: <DB6PR0402MB2837A1C0A3B832AB50774177F3330@DB6PR0402MB2837.eurprd04.prod.outlook.com>
+References: <1489977443-33582-1-git-send-email-andy.tang@nxp.com>
+In-Reply-To: <1489977443-33582-1-git-send-email-andy.tang@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <89b6c6c7-0da0-6891-312a-c9221851c20a@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 11:31:03AM +0100, Suzuki K Poulose wrote:
-> On 29/03/17 11:27, Leo Yan wrote:
-> >On Wed, Mar 29, 2017 at 10:07:07AM +0100, Suzuki K Poulose wrote:
-> >
-> >[...]
-> >
-> >>>>>+	if (mode == EDDEVID_IMPL_NONE) {
-> >>>>>+		drvdata->edpcsr_present  = false;
-> >>>>>+		drvdata->edcidsr_present = false;
-> >>>>>+		drvdata->edvidsr_present = false;
-> >>>>>+	} else if (mode == EDDEVID_IMPL_EDPCSR) {
-> >>>>>+		drvdata->edpcsr_present  = true;
-> >>>>>+		drvdata->edcidsr_present = false;
-> >>>>>+		drvdata->edvidsr_present = false;
-> >>>>>+	} else if (mode == EDDEVID_IMPL_EDPCSR_EDCIDSR) {
-> >>>>>+		if (!IS_ENABLED(CONFIG_64BIT) &&
-> >>>>>+			(pcsr_offset == EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32))
-> >>>>>+			drvdata->edpcsr_present = false;
-> >>>>>+		else
-> >>>>>+			drvdata->edpcsr_present = true;
-> >>>>
-> >>>>Sorry, I forgot why we do this check only in this mode. Shouldn't this be
-> >>>>common to all modes (of course which implies PCSR is present) ?
-> >>>
-> >>>No. PCSROffset is defined differently in ARMv7 and ARMv8; So finally we
-> >>>simplize PCSROffset value :
-> >>>0000 - Sample offset applies based on the instruction state (indicated by PCSR[0])
-> >>>0001 - No offset applies.
-> >>>0010 - No offset applies, but do not use in AArch32 mode!
-> >>>
-> >>>So we need handle the corner case is when CPU runs AArch32 mode and
-> >>>PCSRoffset = 'b0010. Other cases the pcsr should be present.
-> >>
-> >>I understand that reasoning. But my question is, why do we check for PCSROffset
-> >>only when mode == EDDEVID_IMPL_EDPCSR_EDCIDSR and not for say mode == EDDEVID_IMPL_EDPCSR or
-> >>any other mode where PCSR is present.
-> >
-> >Sorry I misunderstood your question.
-> >
-> >I made mistake when I analyzed the possbile combination for mode and
-> >PCSROffset so I thought it's the only case should handle:
-> >{ EDDEVID_IMPL_EDPCSR_EDCIDSR, EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 }
-> >
-> >Below three combinations are possible to exist; so you are right, I
-> >should move this out for the checking:
-> >{ EDDEVID_IMPL_NONE,           EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 }
-> 
-> That need not be covered, as IMPL_NONE says PCSR is not implemented hence you
-> don't worry about anything as the functionality is missing. This should rather be:
-> EDDEVID_IMPL_EDPCSR, where only PCSR is implemented.
+PING!
 
-I think below combination doesn't really exist:
-{ EDDEVID_IMPL_EDPCSR, EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 };
+Regards,
+Yuantian
 
-EDDEVID_IMPL_EDPCSR is only defined in ARMv7 ARM, and
-EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 is only defined in ARMv8 ARM.
-
-> My switch...case suggestion makes it easier to do all this checking.
-
-Agree. Will do this.
-
-Thanks,
-Leo Yan
+> -----Original Message-----
+> From: Yuantian Tang [mailto:andy.tang@nxp.com]
+> Sent: Monday, March 20, 2017 10:37 AM
+> To: mturquette@baylibre.com
+> Cc: sboyd@codeaurora.org; robh+dt@kernel.org; mark.rutland@arm.com;
+> linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Scott Wood;
+> Andy Tang
+> Subject: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
+>=20
+> From: Scott Wood <oss@buserror.net>
+>=20
+> ls1012a has separate input root clocks for core PLLs versus the platform =
+PLL,
+> with the latter described as sysclk in the hw docs.
+> Update the qoriq-clock binding to allow a second input clock, named
+> "coreclk".  If present, this clock will be used for the core PLLs.
+>=20
+> Signed-off-by: Scott Wood <oss@buserror.net>
+> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+> v2:
+> 	-- change the author to Scott
+>  Documentation/devicetree/bindings/clock/qoriq-clock.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> index aa3526f..119cafd 100644
+> --- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
+> @@ -56,6 +56,11 @@ Optional properties:
+>  - clocks: If clock-frequency is not specified, sysclk may be provided
+>  	as an input clock.  Either clock-frequency or clocks must be
+>  	provided.
+> +	A second input clock, called "coreclk", may be provided if
+> +	core PLLs are based on a different input clock from the
+> +	platform PLL.
+> +- clock-names: Required if a coreclk is present.  Valid names are
+> +	"sysclk" and "coreclk".
+>=20
+>  2. Clock Provider
+>=20
+> @@ -72,6 +77,7 @@ second cell is the clock index for the specified type.
+>  	2	hwaccel		index (n in CLKCGnHWACSR)
+>  	3	fman		0 for fm1, 1 for fm2
+>  	4	platform pll	0=3Dpll, 1=3Dpll/2, 2=3Dpll/3, 3=3Dpll/4
+> +	5	coreclk		must be 0
+>=20
+>  3. Example
+>=20
+> --
+> 2.1.0.27.g96db324
