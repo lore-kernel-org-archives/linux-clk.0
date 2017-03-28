@@ -1,59 +1,50 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pg0-f43.google.com ([74.125.83.43]:36788 "EHLO
-        mail-pg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933152AbdCaQBf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2017 12:01:35 -0400
-Received: by mail-pg0-f43.google.com with SMTP id g2so74177289pge.3
-        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2017 09:01:34 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [GIT PULL] Amlogic 64-bit DT updates for v4.12
-References: <m28tnn69ls.fsf@baylibre.com>
-        <CAK8P3a02e3DxjuW9pA66NSCc9vw_h1Xuk6TdEbRnEQ4v4W7NHA@mail.gmail.com>
-Date: Fri, 31 Mar 2017 09:01:31 -0700
-In-Reply-To: <CAK8P3a02e3DxjuW9pA66NSCc9vw_h1Xuk6TdEbRnEQ4v4W7NHA@mail.gmail.com>
-        (Arnd Bergmann's message of "Fri, 31 Mar 2017 16:02:41 +0200")
-Message-ID: <m2fuht4eqs.fsf@baylibre.com>
+Return-Path: <tony@atomide.com>
+Date: Mon, 27 Mar 2017 17:18:00 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 9/9] ARM: dts: omap4: convert to use the new clkctrl
+ clocks for the drivers
+Message-ID: <20170328001800.GR10760@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <1489741781-12816-10-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1489741781-12816-10-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Arnd Bergmann <arnd@arndb.de> writes:
+* Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+> Convert the drivers to use the new clkctrl clocks.
+> 
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> ---
+>  arch/arm/boot/dts/omap4.dtsi | 164 ++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 146 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/omap4.dtsi b/arch/arm/boot/dts/omap4.dtsi
+> index 3ecf616..c39304a 100644
+> --- a/arch/arm/boot/dts/omap4.dtsi
+> +++ b/arch/arm/boot/dts/omap4.dtsi
+> @@ -94,16 +94,22 @@
+>  			compatible = "ti,omap4-mpu";
+>  			ti,hwmods = "mpu";
+>  			sram = <&ocmcram>;
+> +			clocks = <&mpuss_clkctrl OMAP4_MPU_CLKCTRL 0>;
+> +			clock-names = "clkctrl";
+>  		};
 
-> On Wed, Mar 29, 2017 at 11:45 PM, Kevin Hilman <khilman@baylibre.com> wrote:
->> Olof, Arnd,
->>
->> Below are some 64-bit DT changes for Amlogic platforms for v4.12.  Note
->> that this branch includes a merge of an immutable branch from the clk
->> tree (clk-meson) due to dependencies on new clocks added to the meson
->> clock driver and used in these DT updates.
->
-> I did not pull this one because of the silly dependency. The device tree
-> files should be completely independent of the driver changes.
+Oh one more thing. I don't think we should add the clocks
+here as they are now wrongly allocated to the device within
+the interconnect target module. These clocks really belong
+to each interconnect target module that we don't have in the
+dts yet.
 
-Aaargh, this is getting very frustrating.
+So we're better off adding the clockctrl clocks and then
+changing the dts to use the interconnect target modules
+with the clockctrl clocks.
 
-[...]
+Regards,
 
-> Which add random macros in the middle of the number space.
->
-> Since the header changes are in an immutable branch, it's probably
-> too late to fix this for 4.12, but maybe we can get the header into a
-> form that allows us to do future DT changes without having to
-> wait an extra release. The clock driver apparently already defines
-> some of the numbers above, so you can fill all of those in already.
-
-We could, but this is in direct conflict with the recommendations of the
-clk maintainers to not expose clock IDs to the DT until we know they are
-used because, well, things change.
-
-Can we *please* get some clarity on on this between arm-soc and the clk
-maintainers?  I've been asking for a couple merge windows now.
-
-Irritated,
-
-Kevin
+Tony
