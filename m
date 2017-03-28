@@ -1,94 +1,53 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv2 9/9] ARM: dts: omap4: convert to use the new clkctrl
- clocks for the drivers
-To: Tony Lindgren <tony@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <1489741781-12816-10-git-send-email-t-kristo@ti.com>
- <20170328001800.GR10760@atomide.com>
- <8b502a89-dcc6-1932-70cc-e887b1404dbb@ti.com>
- <20170328150316.GU10760@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <87f1e815-baf6-f41a-99d2-8ba6ca6292c4@ti.com>
-Date: Thu, 30 Mar 2017 10:33:55 +0300
-MIME-Version: 1.0
-In-Reply-To: <20170328150316.GU10760@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v1 7/8] dt-bindings: clock: gxbb: expose i2s master clock
+Date: Tue, 28 Mar 2017 16:46:04 +0200
+Message-Id: <20170328144605.25278-8-jbrunet@baylibre.com>
+In-Reply-To: <20170328144605.25278-1-jbrunet@baylibre.com>
+References: <20170328144605.25278-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28/03/17 18:03, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [170327 22:46]:
->> On 28/03/17 03:18, Tony Lindgren wrote:
->>> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
->>>> Convert the drivers to use the new clkctrl clocks.
->>>>
->>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->>>> ---
->>>>  arch/arm/boot/dts/omap4.dtsi | 164 ++++++++++++++++++++++++++++++++++++++-----
->>>>  1 file changed, 146 insertions(+), 18 deletions(-)
->>>>
->>>> diff --git a/arch/arm/boot/dts/omap4.dtsi b/arch/arm/boot/dts/omap4.dtsi
->>>> index 3ecf616..c39304a 100644
->>>> --- a/arch/arm/boot/dts/omap4.dtsi
->>>> +++ b/arch/arm/boot/dts/omap4.dtsi
->>>> @@ -94,16 +94,22 @@
->>>>  			compatible = "ti,omap4-mpu";
->>>>  			ti,hwmods = "mpu";
->>>>  			sram = <&ocmcram>;
->>>> +			clocks = <&mpuss_clkctrl OMAP4_MPU_CLKCTRL 0>;
->>>> +			clock-names = "clkctrl";
->>>>  		};
->>>
->>> Oh one more thing. I don't think we should add the clocks
->>> here as they are now wrongly allocated to the device within
->>> the interconnect target module. These clocks really belong
->>> to each interconnect target module that we don't have in the
->>> dts yet.
->>>
->>> So we're better off adding the clockctrl clocks and then
->>> changing the dts to use the interconnect target modules
->>> with the clockctrl clocks.
->>
->> The problem is, you can't just add the clkctrl clock nodes themselves alone,
->> as this introduces the problem that any clocks with no users will get
->> disabled => causes a boot time hang when all the device clocks get shut
->> down.
->
-> Hmm yeah. I wonder how to work around that.. What if we first updated
-> the clocks in the hwmod code? Or updated the aliases?
+Expose cts_amclk in the device tree bindings
 
-Kind of a chicken-egg problem. You could maybe probe the "ti,clkctrl" 
-driver manually to avoid the issue.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/gxbb.h              | 2 +-
+ include/dt-bindings/clock/gxbb-clkc.h | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-The core clocks get disabled when CCF notices they are not used. You 
-can't really avoid that with updating aliases / updating the clocks in 
-hwmod code. And, hwmod basically tries to still use the same registers 
-through the legacy route, which leads to conflict.
-
->
->> If you want to delay the usage of the clocks until you have interconnect
->> target modules in place, you need to introduce the clock nodes also at that
->> point, similar to what needs to be done now to squash patch #8 or #9.
->
-> I'd like to do this one device at a time without any large
-> flips as we have quite a few devices with special handling for
-> reset and idling in the hwmod code.
-
-One thing that can be done also is to introduce the clkctrl clocks one 
-at a time in the data file also, but this is going to be cumbersome, as 
-you need to keep these three in sync:
-
-- drivers/clk/ti/clk-44xx.c
-- arch/arm/mach-omap2/omap_hwmod_44xx_data.c
-- arch/arm/boot/dts/omap4.dtsi
-
-... and that per SoC of course.
-
-With the interconnect driver introduction, you should be able to flip 
-one device at a time from hwmod to interconnect. In this case, all the 
-clocks are already there, and you just need to modify DT + hwmod data to 
-do the flip.
-
--Tero
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 3b0665099a1e..742bc3b42565 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -277,7 +277,7 @@
+ #define CLKID_MALI_1_DIV	 104
+ /* CLKID_MALI_1	*/
+ /* CLKID_MALI	*/
+-#define CLKID_CTS_AMCLK		  107
++/* CLKID_CTS_AMCLK */
+ #define CLKID_CTS_AMCLK_SEL	  108
+ #define CLKID_CTS_AMCLK_DIV	  109
+ #define CLKID_CTS_MCLK_I958	  110
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index 1d4614bc8154..0d231bef92e0 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -43,5 +43,6 @@
+ #define CLKID_MALI_1_SEL	103
+ #define CLKID_MALI_1		105
+ #define CLKID_MALI		106
++#define CLKID_CTS_AMCLK		107
+ 
+ #endif /* __GXBB_CLKC_H */
+-- 
+2.9.3
