@@ -1,100 +1,143 @@
-Return-Path: <dongas86@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdaLq125bKQcpHeFn312omxw9jp0VHr9DVanj42Y_29+mg@mail.gmail.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
- <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com> <CACRpkdaLq125bKQcpHeFn312omxw9jp0VHr9DVanj42Y_29+mg@mail.gmail.com>
-From: Dong Aisheng <dongas86@gmail.com>
-Date: Wed, 15 Mar 2017 22:05:21 +0800
-Message-ID: <CAA+hA=Rtw-4-SCf8svFq3E9TKv3zBD9T=nPhF7=3qEoH9k4wsA@mail.gmail.com>
-Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
- for imx6sll
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bai Ping <ping.bai@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jacky Bai <jacky.baip@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 5/8] clk: meson: gxbb: add cts_mclk_i958
+Date: Tue, 28 Mar 2017 16:46:02 +0200
+Message-Id: <20170328144605.25278-6-jbrunet@baylibre.com>
+In-Reply-To: <20170328144605.25278-1-jbrunet@baylibre.com>
+References: <20170328144605.25278-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Linus,
+Add the spdif master clock also referred as cts_mclk_i958
 
-On Tue, Mar 14, 2017 at 9:54 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Feb 16, 2017 at 8:51 AM, Dong Aisheng <dongas86@gmail.com> wrote:
->> On Tue, Dec 27, 2016 at 8:59 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->
->>> I would consider augmenting the code in the driver to handle the generic
->>> bindings *in addition* to the old legacy bindings, and use those over these
->>> random custom bits.
-> (...)
->> Generic binding only supports parsing strings for pins and function
->> from dts right now, that means we need back to the old way of hardcoding
->> all register bits in driver which we actually chose to move out since
->> the commit "e164153 pinctrl: imx: move hard-coding data into device tree".
->
-> Aha I see.
->
->> One option is using macro definitions instead of raw data as pinctrl-single
->> users as OMAP.
->> e.g.
->> art2_pins: pinmux_uart2_pins {
->>         pinctrl-single,pins = <
->>                 OMAP4_IOPAD(0x118, PIN_INPUT_PULLUP | MUX_MODE0)
->>  /* uart2_cts.uart2_cts */
->>         ........
->>
->> For this way, no driver changes required, just replace the raw data by macro
->> in device tree. But i wonder this may not be your original intention although
->> it's the easiest way for us.
->> Anyway, if you agree, we probably would prefer this way.
->
-> That make it look better than it looks today, but...
->
->> Another option is partially convert to generic binding for only pad
->> configuration
->> part. e.g.
->> pinctrl_usdhc1: usdhc1grp {
->>         fsl,pins = <
->>                 MX7D_PAD_SD1_CMD__SD1_CMD
->>                 MX7D_PAD_SD1_CLK__SD1_CLK
->>                 MX7D_PAD_SD1_DATA0__SD1_DATA0
->>                 ...
->>         >;
->>         bias-pull-up = <47KOHM>;
->>         drive-strength = <130OHM>;
->>         slew-rate = <FAST>;
->>         speed = <50MHZ>;
->>         ....
->> };
->> (Some of the property still not supported or not the same as generic
->> binding right now)
->
-> This looks totally awesome, so if you could do this, it would be even
-> better.
->
->> This way requires no big drivers changes and only extend the driver
->> to support the generic pinctrl dt configuration properties.
->
-> Yep, you should be able to support both the old and the new
-> way of configuring the pins this way I guess.
->
->> And it also fix the raw data issues and looks like more applicable than the full
->> migration.
->>
->> So would you be willing to accept it?
->
-> Anything that move us closer to the generic bindings will be accepted.
->
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/gxbb.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h |  5 ++++-
+ 2 files changed, 56 insertions(+), 1 deletion(-)
 
-It's good to get an alignment with you.
-We will start to do that.
-
-Thanks
-
-Regards
-Dong Aisheng
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 1c20edbfc812..72492cc63915 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -890,6 +890,49 @@ static struct clk_gate gxbb_cts_amclk = {
+ 	},
+ };
+ 
++static struct clk_mux gxbb_cts_mclk_i958_sel = {
++	.reg = (void *)HHI_AUD_CLK_CNTL2,
++	.mask = 0x3,
++	.shift = 25,
++	/* Default parent unknown (register reset value: 0) */
++	.table = (u32[]){ 1, 2, 3 },
++	.lock = &clk_lock,
++		.hw.init = &(struct clk_init_data){
++		.name = "cts_mclk_i958_sel",
++		.ops = &clk_mux_ops,
++		.parent_names = (const char *[]){ "mpll0", "mpll1", "mpll2" },
++		.num_parents = 3,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_divider gxbb_cts_mclk_i958_div = {
++	.reg = (void *)HHI_AUD_CLK_CNTL2,
++	.shift = 16,
++	.width = 8,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "cts_mclk_i958_div",
++		.ops = &clk_divider_ops,
++		.parent_names = (const char *[]){ "cts_mclk_i958_sel" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT | CLK_DIVIDER_ROUND_CLOSEST,
++	},
++};
++
++static struct clk_gate gxbb_cts_mclk_i958 = {
++	.reg = (void *)HHI_AUD_CLK_CNTL2,
++	.bit_idx = 24,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "cts_mclk_i958",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "cts_mclk_i958_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ /* Everything Else (EE) domain gates */
+ static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
+ static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
+@@ -1093,6 +1136,9 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ 		[CLKID_CTS_AMCLK]	    = &gxbb_cts_amclk.hw,
+ 		[CLKID_CTS_AMCLK_SEL]	    = &gxbb_cts_amclk_sel.hw,
+ 		[CLKID_CTS_AMCLK_DIV]	    = &gxbb_cts_amclk_div.hw,
++		[CLKID_CTS_MCLK_I958]	    = &gxbb_cts_mclk_i958.hw,
++		[CLKID_CTS_MCLK_I958_SEL]   = &gxbb_cts_mclk_i958_sel.hw,
++		[CLKID_CTS_MCLK_I958_DIV]   = &gxbb_cts_mclk_i958_div.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -1209,6 +1255,9 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 		[CLKID_CTS_AMCLK]	    = &gxbb_cts_amclk.hw,
+ 		[CLKID_CTS_AMCLK_SEL]	    = &gxbb_cts_amclk_sel.hw,
+ 		[CLKID_CTS_AMCLK_DIV]	    = &gxbb_cts_amclk_div.hw,
++		[CLKID_CTS_MCLK_I958]	    = &gxbb_cts_mclk_i958.hw,
++		[CLKID_CTS_MCLK_I958_SEL]   = &gxbb_cts_mclk_i958_sel.hw,
++		[CLKID_CTS_MCLK_I958_DIV]   = &gxbb_cts_mclk_i958_div.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -1322,6 +1371,7 @@ static struct clk_gate *const gxbb_clk_gates[] = {
+ 	&gxbb_mali_0,
+ 	&gxbb_mali_1,
+ 	&gxbb_cts_amclk,
++	&gxbb_cts_mclk_i958,
+ };
+ 
+ static struct clk_mux *const gxbb_clk_muxes[] = {
+@@ -1331,6 +1381,7 @@ static struct clk_mux *const gxbb_clk_muxes[] = {
+ 	&gxbb_mali_1_sel,
+ 	&gxbb_mali,
+ 	&gxbb_cts_amclk_sel,
++	&gxbb_cts_mclk_i958_sel,
+ };
+ 
+ static struct clk_divider *const gxbb_clk_dividers[] = {
+@@ -1338,6 +1389,7 @@ static struct clk_divider *const gxbb_clk_dividers[] = {
+ 	&gxbb_sar_adc_clk_div,
+ 	&gxbb_mali_0_div,
+ 	&gxbb_mali_1_div,
++	&gxbb_cts_mclk_i958_div,
+ };
+ 
+ static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index c8e9fb99af92..efa90dad3478 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -280,8 +280,11 @@
+ #define CLKID_CTS_AMCLK		  107
+ #define CLKID_CTS_AMCLK_SEL	  108
+ #define CLKID_CTS_AMCLK_DIV	  109
++#define CLKID_CTS_MCLK_I958	  110
++#define CLKID_CTS_MCLK_I958_SEL	  111
++#define CLKID_CTS_MCLK_I958_DIV	  112
+ 
+-#define NR_CLKS			  110
++#define NR_CLKS			  113
+ 
+ /* include the CLKIDs that have been made part of the stable DT binding */
+ #include <dt-bindings/clock/gxbb-clkc.h>
+-- 
+2.9.3
