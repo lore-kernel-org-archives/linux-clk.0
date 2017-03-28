@@ -1,83 +1,80 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 20 Mar 2017 14:20:21 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: rework pll_u
-Message-ID: <20170320132021.GH22463@ulmo.ba.sec>
-References: <1489500769-28694-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="CNfT9TXqV7nd4cfk"
-In-Reply-To: <1489500769-28694-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <hgkr.klein@gmail.com>
+Return-Path: <hgkr.klein@gmail.com>
+From: Helmut Klein <hgkr.klein@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Helmut Klein <hgkr.klein@gmail.com>,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2,1/3] meson_uart: expose CLKID_UARTx
+Date: Tue, 28 Mar 2017 11:25:43 +0200
+Message-Id: <20170328092545.4644-2-hgkr.klein@gmail.com>
+In-Reply-To: <20170328092545.4644-1-hgkr.klein@gmail.com>
+References: <20170328092545.4644-1-hgkr.klein@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Expose the clock ids for the three none AO uarts to the dt-bindings
 
---CNfT9TXqV7nd4cfk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Helmut Klein <hgkr.klein@gmail.com>
+---
+ drivers/clk/meson/gxbb.h              | 6 +++---
+ include/dt-bindings/clock/gxbb-clkc.h | 3 +++
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-On Tue, Mar 14, 2017 at 04:12:49PM +0200, Peter De Schrijver wrote:
-> In normal operation pll_u is under hardware control and has a fixed rate =
-of
-> 480MHz. Hardware will turn on pll_u on whenever any of the XUSB
-> powerdomains is on. From a software point of view we model this is if pll=
-_u
-> is always on using a fixed rate clock. However the bootloader might or
-> might not have configured pll_u this way. So we will check the current
-> state of pll_u at boot and reconfigure it if required.
->=20
-> There are 3 possiblities at kernel boot:
-> 1) pll_u is under hardware control: do nothing
-> 2) pll_u is under hardware control and enabled: enable hardware control
-> 3) pll_u is disabled: enable pll_u and enable hardware control
->=20
-> In all cases we also check if UTMIPLL is under hardware control at boot
-> and configure it for hardware control if that is not the case.
-> The same is done during SC7 resume.
->=20
-> Thanks to Joseph Lo <josephl@nvidia.com> for bug fixes.
->=20
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-pll.c      | 174 -----------------------
->  drivers/clk/tegra/clk-tegra210.c | 295 +++++++++++++++++++++++++++++++++=
-+++---
->  2 files changed, 272 insertions(+), 197 deletions(-)
-
-Applied, thanks.
-
-Do you think this actually fixes a bug? We've had a long standing issue
-with booting Debian on a Jetson TX1 which is due to some USB related PLL
-failing to lock. This sounds like it could fix that particular issue.
-
-Thierry
-
---CNfT9TXqV7nd4cfk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljP1xUACgkQ3SOs138+
-s6HZZxAAnD/+1Srk7zp8ptj3CqI3CZcjH8ESaUhjCsPQB/8tL14sQID42gqq7GJr
-fTZ/CVjKvvVNH4IcNN2IMPm9xBswtH7Cxn6zWE36bEgqRpue78LSGxNtw+JOnsRT
-mhTEezWu+0DDni4+kafiMp+4ugh6upcSZnXussSrMwp7NzBRrBy79Za/upBXVFS7
-qfO20MMuc8OiDIKhCTpyuFjp8tVq4cf2wre1+HGWE2KBiWQkigrHy5fwEdEGdILP
-Ysge7yIoX0tO/5TLxMeOxZHeVfoWXWKlhvm6Kkm1Kf6//xhAhYhInV7EwQkfvJ9s
-4eRAycoxgNWjkYqexoUrJQgAxOj0q310e4noAG/jM5hI7E3HgGgOdLF0FFsUwFwm
-MgYBCCgirUu2U8uDRSpkAx6TMgClFtp6t+Lu88fqqMbPKC6NSeAGp7XvpTmuJtGg
-QIQjj0iBISue/TvuXDCs2TZktTn5qSXuaO9IrxKpLUUT75tlRdGjJSKSwC49Jlxd
-kHcZgvbKSG1Ry6y+zW2VzZdxrpv+0TqNe9Wu7pIKV1YNdsvNDY9VG4SCNa+cJahU
-3np2CKD/Gyw9gziVlY6x8E1TsVFLh78fvXV08TCqjiomgl3kEhVdSaFV7AuexKtR
-kyyJvgD0eFHe96JwlKKc1Qc+R70jqNpSICMSCkf6ZYC4+9BP+s4=
-=faJ3
------END PGP SIGNATURE-----
-
---CNfT9TXqV7nd4cfk--
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 8ee2022ce5d5..1edfaa5fe307 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -194,7 +194,7 @@
+ /* #define CLKID_SAR_ADC */
+ #define CLKID_SMART_CARD	  24
+ #define CLKID_RNG0		  25
+-#define CLKID_UART0		  26
++/* CLKID_UART0 */
+ #define CLKID_SDHC		  27
+ #define CLKID_STREAM		  28
+ #define CLKID_ASYNC_FIFO	  29
+@@ -216,7 +216,7 @@
+ #define CLKID_ADC		  45
+ #define CLKID_BLKMV		  46
+ #define CLKID_AIU		  47
+-#define CLKID_UART1		  48
++/* CLKID_UART1 */
+ #define CLKID_G2D		  49
+ /* CLKID_USB0 */
+ /* CLKID_USB1 */
+@@ -236,7 +236,7 @@
+ /* CLKID_USB0_DDR_BRIDGE */
+ #define CLKID_MMC_PCLK		  66
+ #define CLKID_DVIN		  67
+-#define CLKID_UART2		  68
++/* CLKID_UART2 */
+ /* #define CLKID_SANA */
+ #define CLKID_VPU_INTR		  70
+ #define CLKID_SEC_AHB_AHB3_BRIDGE 71
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index 692846c7941b..7b329df47752 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -15,13 +15,16 @@
+ #define CLKID_SPI		34
+ #define CLKID_I2C		22
+ #define CLKID_SAR_ADC		23
++#define CLKID_UART0		26
+ #define CLKID_ETH		36
++#define CLKID_UART1		48
+ #define CLKID_USB0		50
+ #define CLKID_USB1		51
+ #define CLKID_USB		55
+ #define CLKID_HDMI_PCLK		63
+ #define CLKID_USB1_DDR_BRIDGE	64
+ #define CLKID_USB0_DDR_BRIDGE	65
++#define CLKID_UART2		68
+ #define CLKID_SANA		69
+ #define CLKID_GCLK_VENCI_INT0	77
+ #define CLKID_AO_I2C		93
+--
+2.11.0
