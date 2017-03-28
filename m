@@ -1,61 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33328 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933167AbdCaQyr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2017 12:54:47 -0400
+Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
 From: Helmut Klein <hgkr.klein@gmail.com>
-Cc: Helmut Klein <hgkr.klein@gmail.com>, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v3 0/4] tty/serial: meson_uart: add support for core clock handling
-Date: Fri, 31 Mar 2017 18:54:33 +0200
-Message-Id: <20170331165437.26227-1-hgkr.klein@gmail.com>
-To: unlisted-recipients:; (no To-header on input)
-Sender: linux-clk-owner@vger.kernel.org
+To: 
+Subject: [PATCH v2,
+ 0/3] tty/serial: meson_uart: add support for core clock handling
+Date: Tue, 28 Mar 2017 11:25:42 +0200
+Message-Id: <20170328092545.4644-1-hgkr.klein@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
+List-Post: <mailto:linux-amlogic@lists.infradead.org>
+List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
+ <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Helmut Klein <hgkr.klein@gmail.com>, linux-serial@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
+Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-To be able to use the three none AO uarts of the meson gx SoCs (uart_A,
-uart_B & uart_C), the core clock has to be enabled (see chapter 22.3 of
-the public s905 data sheet).
-At least the u-boot of my s905 based media player (netxeon minimx-g)
-doesn't do this. so the driver must enable the clock.
+To be able to use the three none AO uarts of the s905 SoCs (uart_A, uart_B
+& uart_C), the core clock has to be enabled. (see chapter 22.3 of the
+public s905 data sheet) At least the u-boot of my s905 based media player
+(netxeon minimx) doesn't do this. so the driver must do it.
 
 This patch set does:
-- exposes the UART clock ids to the dtb
+- exposes the clock ids to the dtb
 - adds documentation for the dt-bindings of meson_uart
 - adds the core clock handling to the driver
-- adds the core clock handling to meson-gxbb.dtsi and meson-gxl.dtsi
 
-The patchset is based on the branch "master" of the repository in [1]
-
-Changes since v2
-- mail subjects reworked
-- add clocks/clock-names to the documentation
-- add core clock handling to meson-gxbb.dtsi & meson-gxl.dtsi
+The patchset is based on the branch master of the repository in [1]
 
 Changes since v1
 - use git to produce the patch set
 - added the clock ids for uart_B and uart_C
 
+None of the available s905 dts use uart_A actively. So there is no patch
+for any of the existing dts files.
+
 [1] git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-amlogic.git
 
-Helmut Klein (4):
-  clk: meson: gxbb: expose CLKID_UARTx
-  dt-bindings: meson_uart: add documentation for meson UARTs
+Helmut Klein (3):
+  tty/serial: meson_uart: expose CLKID_UARTx
+  tty/serial: meson_uart: add documentation for the dt-bindings
   tty/serial: meson_uart: add the core clock handling to the driver
-  ARM64: dts: meson-gx: add core clock support for uart_A, uart_B and
-    uart_C
 
- .../bindings/serial/amlogic,meson_uart.txt         | 30 ++++++++++++++++++++++
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        | 15 +++++++++++
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi         | 15 +++++++++++
- drivers/clk/meson/gxbb.h                           |  6 ++---
- drivers/tty/serial/meson_uart.c                    | 10 ++++++++
+ .../bindings/serial/amlogic,meson_uart.txt         | 25 ++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h                           |  6 +++---
+ drivers/tty/serial/meson_uart.c                    | 10 +++++++++
  include/dt-bindings/clock/gxbb-clkc.h              |  3 +++
- 6 files changed, 76 insertions(+), 3 deletions(-)
+ 4 files changed, 41 insertions(+), 3 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/serial/amlogic,meson_uart.txt
 
 --
 2.11.0
 
+
+_______________________________________________
+linux-amlogic mailing list
+linux-amlogic@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-amlogic
