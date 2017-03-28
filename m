@@ -1,46 +1,59 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/4] clk: renesas: Add r8a7795 ES2.0 CPG Core Clock Definitions
-Date: Mon, 13 Mar 2017 18:12:31 +0100
-Message-Id: <1489425153-22623-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
-References: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v1 8/8] dt-bindings: clock: gxbb: expose spdif master clock
+Date: Tue, 28 Mar 2017 16:46:05 +0200
+Message-Id: <20170328144605.25278-9-jbrunet@baylibre.com>
+In-Reply-To: <20170328144605.25278-1-jbrunet@baylibre.com>
+References: <20170328144605.25278-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add all R-Car H3 ES2.0 Clock Pulse Generator Core Clock Outputs, as
-listed in Table 8.2a ("List of Clocks [R-Car H3]") of the R-Car Gen3
-Hardware User's Manual rev. 0.53E.
+Expose the spdif master clock and the mux to select the appropriate spdif
+clock parent depending on the data source.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
-v2:
-  - Drop RFC state,
-  - Update datasheet revision.
----
- include/dt-bindings/clock/r8a7795-cpg-mssr.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/meson/gxbb.h              | 4 ++--
+ include/dt-bindings/clock/gxbb-clkc.h | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/include/dt-bindings/clock/r8a7795-cpg-mssr.h b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-index e864aae0a2561c4b..f047eaf261f34ac7 100644
---- a/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-+++ b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-@@ -60,4 +60,11 @@
- #define R8A7795_CLK_R			45
- #define R8A7795_CLK_OSC			46
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 742bc3b42565..17c6aef033ff 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -280,10 +280,10 @@
+ /* CLKID_CTS_AMCLK */
+ #define CLKID_CTS_AMCLK_SEL	  108
+ #define CLKID_CTS_AMCLK_DIV	  109
+-#define CLKID_CTS_MCLK_I958	  110
++/* CLKID_CTS_MCLK_I958 */
+ #define CLKID_CTS_MCLK_I958_SEL	  111
+ #define CLKID_CTS_MCLK_I958_DIV	  112
+-#define CLKID_CTS_I958		  113
++/* CLKID_CTS_I958 */
  
-+/* r8a7795 ES2.0 CPG Core Clocks */
-+#define R8A7795_CLK_S0D2		47
-+#define R8A7795_CLK_S0D3		48
-+#define R8A7795_CLK_S0D6		49
-+#define R8A7795_CLK_S0D8		50
-+#define R8A7795_CLK_S0D12		51
-+
- #endif /* __DT_BINDINGS_CLOCK_R8A7795_CPG_MSSR_H__ */
+ #define NR_CLKS			  114
+ 
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index 0d231bef92e0..4516bc4253b5 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -44,5 +44,7 @@
+ #define CLKID_MALI_1		105
+ #define CLKID_MALI		106
+ #define CLKID_CTS_AMCLK		107
++#define CLKID_CTS_MCLK_I958	110
++#define CLKID_CTS_I958		113
+ 
+ #endif /* __GXBB_CLKC_H */
 -- 
-2.7.4
+2.9.3
