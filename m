@@ -1,55 +1,77 @@
-Return-Path: <icenowy@aosc.io>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 0/5] Add support for the R_CCU on Allwinner H3/A64 SoCs
-Date: Wed, 29 Mar 2017 18:42:41 +0800
-Message-Id: <20170329104246.34204-1-icenowy@aosc.io>
+Return-Path: <martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+In-Reply-To: <m2mvc6d5a3.fsf@baylibre.com>
+References: <20170326110602.23379-1-martin.blumenstingl@googlemail.com>
+ <1490550707.29739.21.camel@baylibre.com> <m2mvc6d5a3.fsf@baylibre.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Tue, 28 Mar 2017 23:30:52 +0200
+Message-ID: <CAFBinCBwoXQC3_C6u-3Oqa9c7sbRKq6waN-eRHpZRwKKHSuruA@mail.gmail.com>
+Subject: Re: [RFC PATCH] clk: meson: gxbb: remove the "cpu_clk"
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org, narmstrong@baylibre.com,
+	carlo@caione.org, sboyd@codeaurora.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner SoCs after sun6i-a31 nearly all have a R_CCU in PRCM part.
-(V3s and R40 do not have it, as they have even no PRCM)
+Hi Jerome, Hi Kevin,
 
-This patch adds support for the ones on H3/A64.
+On Mon, Mar 27, 2017 at 6:59 PM, Kevin Hilman <khilman@baylibre.com> wrote:
+> Jerome Brunet <jbrunet@baylibre.com> writes:
+>
+>> On Sun, 2017-03-26 at 13:06 +0200, Martin Blumenstingl wrote:
+>>> It seems that the "cpu_clk" was carried over from the meson8b clock
+>>> controller driver. On Meson GX (GXBB/GXL/GXM) the registers which are
+>>> used by the cpu_clk have a different purpose (in other words: they don't
+>>> control the CPU clock anymore). HHI_SYS_CPU_CLK_CNTL1 bits 31:24 are
+>>> reserved according to the public S905 datasheet, while bit 23 is the
+>>> "A53_trace_clk_DIS" gate (which according to the datasheet should only
+>>> be used in case a silicon bug is discovered) and bits 22:20 are a
+>>> divider (A53_trace_clk). The meson clk-cpu code however expects that
+>>> bits 28:20 are reserved for a divider (according to the public S805
+>>> datasheet this "SCALE_DIV: This value represents an N+1 divider of the
+>>> input clock.").
+>>>
+>>> The CPU clock on Meson GX SoCs is provided by the SCPI DVFS clock
+>>> driver instead. Two examples from a Meson GXL S905X SoC:
+>>> - vcpu (SCPI DVFS clock 0) rate: 1000000000 / cpu_clk rate: 708000000
+>>> - vcpu (SCPI DVFS clock 0) rate: 1512000000 / cpu_clk rate: 708000000
+>>>
+>>
+>> Thanks for catching this Martin! Looking at the difference between the S805 and
+>> S905 register description, it makes no sense that we used the same clock driver
+>> for what's behind HHI_SYS_CPU_CLK_CNTL1. I agree, it should be removed from the
+>> gxbb clock controller.
+you're welcome - I always like removing code :)
 
-Some clock/reset values are reserved for easier extending the support to
-A31/A23, but for this I think some changes to the PRCM MFD should be made,
-see [1] (Although this is only a sketch).
+>>> Unfortunately the CLKID_CPUCLK was already exported (but is currently
+>>> not used) to DT.
+>>>
+>>> This is an RFC because I would like to hear other people's opinion on
+>>> how to clean up the CLKID_CPUCLK (as it leaves a "hole" in
+>>> gxbb_hw_onecell_data and changes the DT API (by removing a currently
+>>> unused #define).
+>>>
+>>
+>> In general the DT ABI should be stable but since no one is using this ID, and
+>> what it refers to is clearly wrong, I don't think we would disrupt anything by
+>> removing it.
+>>
+>> For the "hole" in the ids, Neil and I had similar problem while working other
+>> topics. We managed to dodge it but I think it was only a matter of time ...
+>>
+>> In the end, it is not a big deal if there is holes in the onecell_data, as long
+>> as we take care to avoid it when we register the clocks:
+>
+> Agreed.  It's better to have holes in the clkid space than to introduce
+> DT incompatibility.
+perfect, thanks for your opinion. and special thanks to Jerome who
+already prepared a patch which allows holes in the _hw_onecell_data.
 
-The r_pio device node is also added for A64, as the driver is already
-merged, and its depends (r_ccu) is now met.
+I will rebase this on the meson-clk branch and re-send a non-RFC patch
+in the next few days.
 
-[1] https://github.com/wens/linux/commits/sunxi-ng-prcm
 
-Icenowy Zheng (5):
-  dt-bindings: update device tree binding for Allwinner PRCM CCUs
-  clk: sunxi-ng: add support for PRCM CCUs
-  arm64: allwinner: a64: add r_ccu node
-  ARM: sunxi: h3/h5: switch apb0-related clocks to r_ccu
-  arm64: allwinner: a64: add R_PIO pinctrl node
-
- .../devicetree/bindings/clock/sunxi-ccu.txt        |  17 +-
- arch/arm/boot/dts/sunxi-h3-h5.dtsi                 |  47 ++---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      |  31 +++
- drivers/clk/sunxi-ng/Kconfig                       |   6 +
- drivers/clk/sunxi-ng/Makefile                      |   1 +
- drivers/clk/sunxi-ng/ccu-sun8i-r.c                 | 211 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-r.h                 |  27 +++
- include/dt-bindings/clock/sun8i-r-ccu.h            |  59 ++++++
- include/dt-bindings/reset/sun8i-r-ccu.h            |  53 ++++++
- 9 files changed, 420 insertions(+), 32 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r.h
- create mode 100644 include/dt-bindings/clock/sun8i-r-ccu.h
- create mode 100644 include/dt-bindings/reset/sun8i-r-ccu.h
-
--- 
-2.12.0
+Regards,
+Martin
