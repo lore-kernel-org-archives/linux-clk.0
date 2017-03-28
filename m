@@ -1,61 +1,186 @@
-Return-Path: <robin@protonic.nl>
-From: Robin van der Gracht <robin@protonic.nl>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Robin van der Gracht <robin@protonic.nl>
-Subject: [PATCH v3] clk: imx: clk-imx6ul: The i.mx6ul has no aips_tz3 clock
-Date: Fri,  3 Mar 2017 15:14:05 +0100
-Message-Id: <20170303141405.17581-1-robin@protonic.nl>
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 4/8] clk: meson: gxbb: add cts_amclk
+Date: Tue, 28 Mar 2017 16:46:01 +0200
+Message-Id: <20170328144605.25278-5-jbrunet@baylibre.com>
+In-Reply-To: <20170328144605.25278-1-jbrunet@baylibre.com>
+References: <20170328144605.25278-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock was mapped on CG15 (gpio2_clocks) in the CCRG0 register.
+Add the i2s master clock also referred as cts_amclk
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Robin van der Gracht <robin@protonic.nl>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
-Fixed another title typo in v3
+ drivers/clk/meson/gxbb.c | 67 ++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h |  5 +++-
+ 2 files changed, 71 insertions(+), 1 deletion(-)
 
- drivers/clk/imx/clk-imx6ul.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 75c35fb..dbd6e59 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -73,7 +73,7 @@ static struct clk *clks[IMX6UL_CLK_END];
- static struct clk_onecell_data clk_data;
- 
- static int const clks_init_on[] __initconst = {
--	IMX6UL_CLK_AIPSTZ1, IMX6UL_CLK_AIPSTZ2, IMX6UL_CLK_AIPSTZ3,
-+	IMX6UL_CLK_AIPSTZ1, IMX6UL_CLK_AIPSTZ2,
- 	IMX6UL_CLK_AXI, IMX6UL_CLK_ARM, IMX6UL_CLK_ROM,
- 	IMX6UL_CLK_MMDC_P0_FAST, IMX6UL_CLK_MMDC_P0_IPG,
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 28812ea41a60..1c20edbfc812 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -845,6 +845,51 @@ static struct clk_mux gxbb_mali = {
+ 	},
  };
-@@ -341,9 +341,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt2_serial",	"perclk",	base + 0x68,	26);
- 	clks[IMX6UL_CLK_UART2_IPG]	= imx_clk_gate2("uart2_ipg",	"ipg",		base + 0x68,	28);
- 	clks[IMX6UL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf",	base + 0x68,	28);
--	if (clk_on_imx6ul())
--		clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		base + 0x68,	30);
--	else if (clk_on_imx6ull())
-+	if (clk_on_imx6ull())
- 		clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		 base + 0x80,	18);
  
- 	/* CCGR1 */
-@@ -482,6 +480,9 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
- 		clk_prepare_enable(clks[clks_init_on[i]]);
- 
-+	if (clk_on_imx6ull())
-+		clk_prepare_enable(clks[IMX6UL_CLK_AIPSTZ3]);
++static struct clk_mux gxbb_cts_amclk_sel = {
++	.reg = (void *) HHI_AUD_CLK_CNTL,
++	.mask = 0x3,
++	.shift = 9,
++	/* Default parent unknown (register reset value: 0) */
++	.table = (u32[]){ 1, 2, 3 },
++	.lock = &clk_lock,
++		.hw.init = &(struct clk_init_data){
++		.name = "cts_amclk_sel",
++		.ops = &clk_mux_ops,
++		.parent_names = (const char *[]){ "mpll0", "mpll1", "mpll2" },
++		.num_parents = 3,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
 +
- 	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
- 		clk_prepare_enable(clks[IMX6UL_CLK_USBPHY1_GATE]);
- 		clk_prepare_enable(clks[IMX6UL_CLK_USBPHY2_GATE]);
++static struct meson_clk_audio_divider gxbb_cts_amclk_div = {
++	.div = {
++		.reg_off = HHI_AUD_CLK_CNTL,
++		.shift   = 0,
++		.width   = 8,
++	},
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "cts_amclk_div",
++		.ops = &meson_clk_audio_divider_ops,
++		.parent_names = (const char *[]){ "cts_amclk_sel" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT | CLK_DIVIDER_ROUND_CLOSEST,
++	},
++};
++
++static struct clk_gate gxbb_cts_amclk = {
++	.reg = (void *) HHI_AUD_CLK_CNTL,
++	.bit_idx = 8,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "cts_amclk",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "cts_amclk_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ /* Everything Else (EE) domain gates */
+ static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
+ static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
+@@ -1045,6 +1090,9 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ 		[CLKID_MALI_1_DIV]	    = &gxbb_mali_1_div.hw,
+ 		[CLKID_MALI_1]		    = &gxbb_mali_1.hw,
+ 		[CLKID_MALI]		    = &gxbb_mali.hw,
++		[CLKID_CTS_AMCLK]	    = &gxbb_cts_amclk.hw,
++		[CLKID_CTS_AMCLK_SEL]	    = &gxbb_cts_amclk_sel.hw,
++		[CLKID_CTS_AMCLK_DIV]	    = &gxbb_cts_amclk_div.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -1158,6 +1206,9 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 		[CLKID_MALI_1_DIV]	    = &gxbb_mali_1_div.hw,
+ 		[CLKID_MALI_1]		    = &gxbb_mali_1.hw,
+ 		[CLKID_MALI]		    = &gxbb_mali.hw,
++		[CLKID_CTS_AMCLK]	    = &gxbb_cts_amclk.hw,
++		[CLKID_CTS_AMCLK_SEL]	    = &gxbb_cts_amclk_sel.hw,
++		[CLKID_CTS_AMCLK_DIV]	    = &gxbb_cts_amclk_div.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -1270,6 +1321,7 @@ static struct clk_gate *const gxbb_clk_gates[] = {
+ 	&gxbb_sar_adc_clk,
+ 	&gxbb_mali_0,
+ 	&gxbb_mali_1,
++	&gxbb_cts_amclk,
+ };
+ 
+ static struct clk_mux *const gxbb_clk_muxes[] = {
+@@ -1278,6 +1330,7 @@ static struct clk_mux *const gxbb_clk_muxes[] = {
+ 	&gxbb_mali_0_sel,
+ 	&gxbb_mali_1_sel,
+ 	&gxbb_mali,
++	&gxbb_cts_amclk_sel,
+ };
+ 
+ static struct clk_divider *const gxbb_clk_dividers[] = {
+@@ -1287,6 +1340,10 @@ static struct clk_divider *const gxbb_clk_dividers[] = {
+ 	&gxbb_mali_1_div,
+ };
+ 
++static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
++	&gxbb_cts_amclk_div,
++};
++
+ struct clkc_data {
+ 	struct clk_gate *const *clk_gates;
+ 	unsigned int clk_gates_count;
+@@ -1298,6 +1355,8 @@ struct clkc_data {
+ 	unsigned int clk_muxes_count;
+ 	struct clk_divider *const *clk_dividers;
+ 	unsigned int clk_dividers_count;
++	struct meson_clk_audio_divider *const *clk_audio_dividers;
++	unsigned int clk_audio_dividers_count;
+ 	struct meson_clk_cpu *cpu_clk;
+ 	struct clk_hw_onecell_data *hw_onecell_data;
+ };
+@@ -1313,6 +1372,8 @@ static const struct clkc_data gxbb_clkc_data = {
+ 	.clk_muxes_count = ARRAY_SIZE(gxbb_clk_muxes),
+ 	.clk_dividers = gxbb_clk_dividers,
+ 	.clk_dividers_count = ARRAY_SIZE(gxbb_clk_dividers),
++	.clk_audio_dividers = gxbb_audio_dividers,
++	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
+ 	.cpu_clk = &gxbb_cpu_clk,
+ 	.hw_onecell_data = &gxbb_hw_onecell_data,
+ };
+@@ -1328,6 +1389,8 @@ static const struct clkc_data gxl_clkc_data = {
+ 	.clk_muxes_count = ARRAY_SIZE(gxbb_clk_muxes),
+ 	.clk_dividers = gxbb_clk_dividers,
+ 	.clk_dividers_count = ARRAY_SIZE(gxbb_clk_dividers),
++	.clk_audio_dividers = gxbb_audio_dividers,
++	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
+ 	.cpu_clk = &gxbb_cpu_clk,
+ 	.hw_onecell_data = &gxl_hw_onecell_data,
+ };
+@@ -1384,6 +1447,10 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 		clkc_data->clk_dividers[i]->reg = clk_base +
+ 			(u64)clkc_data->clk_dividers[i]->reg;
+ 
++	/* Populate base address for the audio dividers */
++	for (i = 0; i < clkc_data->clk_audio_dividers_count; i++)
++		clkc_data->clk_audio_dividers[i]->base = clk_base;
++
+ 	/*
+ 	 * register all clks
+ 	 */
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 0d535f7e7aed..c8e9fb99af92 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -277,8 +277,11 @@
+ #define CLKID_MALI_1_DIV	 104
+ /* CLKID_MALI_1	*/
+ /* CLKID_MALI	*/
++#define CLKID_CTS_AMCLK		  107
++#define CLKID_CTS_AMCLK_SEL	  108
++#define CLKID_CTS_AMCLK_DIV	  109
+ 
+-#define NR_CLKS			  107
++#define NR_CLKS			  110
+ 
+ /* include the CLKIDs that have been made part of the stable DT binding */
+ #include <dt-bindings/clock/gxbb-clkc.h>
 -- 
 2.9.3
