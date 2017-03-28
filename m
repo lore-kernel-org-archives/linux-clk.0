@@ -1,78 +1,91 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	xf@rock-chips.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 3/4] clk: rockchip: rk3288: make noc and some special clk as critical_clocks
-Date: Tue, 28 Mar 2017 18:06:53 +0800
-Message-Id: <1490695614-3220-4-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1490695614-3220-1-git-send-email-zhangqing@rock-chips.com>
-References: <1490695614-3220-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: xf@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/4] clk: rockchip: rk3228: make noc and some special clk as critical_clocks
+Date: Tue, 28 Mar 2017 22:08:13 +0200
+Message-ID: <3534897.Tc49fhGY27@phil>
+In-Reply-To: <1490695614-3220-3-git-send-email-zhangqing@rock-chips.com>
+References: <1490695614-3220-1-git-send-email-zhangqing@rock-chips.com> <1490695614-3220-3-git-send-email-zhangqing@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3288.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Hi Elaine,
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 68ba7d4105e7..450de24a1b42 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -292,13 +292,13 @@ enum rk3288_plls {
- 	COMPOSITE_NOMUX(0, "aclk_core_mp", "armclk", CLK_IGNORE_UNUSED,
- 			RK3288_CLKSEL_CON(0), 4, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,
- 			RK3288_CLKGATE_CON(12), 6, GFLAGS),
--	COMPOSITE_NOMUX(0, "atclk", "armclk", 0,
-+	COMPOSITE_NOMUX(0, "atclk", "armclk", CLK_IGNORE_UNUSED,
- 			RK3288_CLKSEL_CON(37), 4, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
- 			RK3288_CLKGATE_CON(12), 7, GFLAGS),
- 	COMPOSITE_NOMUX(0, "pclk_dbg_pre", "armclk", CLK_IGNORE_UNUSED,
- 			RK3288_CLKSEL_CON(37), 9, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
- 			RK3288_CLKGATE_CON(12), 8, GFLAGS),
--	GATE(0, "pclk_dbg", "pclk_dbg_pre", 0,
-+	GATE(0, "pclk_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
- 			RK3288_CLKGATE_CON(12), 9, GFLAGS),
- 	GATE(0, "cs_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
- 			RK3288_CLKGATE_CON(12), 10, GFLAGS),
-@@ -626,7 +626,7 @@ enum rk3288_plls {
- 	INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
- 			RK3288_CLKSEL_CON(22), 7, IFLAGS),
- 
--	GATE(0, "jtag", "ext_jtag", 0,
-+	GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
- 			RK3288_CLKGATE_CON(4), 14, GFLAGS),
- 
- 	COMPOSITE_NODIV(SCLK_USBPHY480M_SRC, "usbphy480m_src", mux_usbphy480m_p, 0,
-@@ -635,7 +635,7 @@ enum rk3288_plls {
- 	COMPOSITE_NODIV(SCLK_HSICPHY480M, "sclk_hsicphy480m", mux_hsicphy480m_p, 0,
- 			RK3288_CLKSEL_CON(29), 0, 2, MFLAGS,
- 			RK3288_CLKGATE_CON(3), 6, GFLAGS),
--	GATE(0, "hsicphy12m_xin12m", "xin12m", 0,
-+	GATE(0, "hsicphy12m_xin12m", "xin12m", CLK_IGNORE_UNUSED,
- 			RK3288_CLKGATE_CON(13), 9, GFLAGS),
- 	DIV(0, "hsicphy12m_usbphy", "sclk_hsicphy480m", 0,
- 			RK3288_CLKSEL_CON(11), 8, 6, DFLAGS),
-@@ -816,6 +816,12 @@ enum rk3288_plls {
- 	"pclk_alive_niu",
- 	"pclk_pd_pmu",
- 	"pclk_pmu_niu",
-+	"pclk_core_niu",
-+	"pclk_ddrupctl0",
-+	"pclk_publ0",
-+	"pclk_ddrupctl1",
-+	"pclk_publ1",
-+	"pmu_hclk_otg0",
- };
- 
- static void __iomem *rk3288_cru_base;
--- 
-1.9.1
+Am Dienstag, 28. M=E4rz 2017, 18:06:52 CEST schrieb Elaine Zhang:
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+
+I really do expect a commit message explaining why the specific clocks
+are needed to be critical.
+
+The noc and arbiter clocks I somewhat understand, but I'll need
+explanation on clocks like hclk_otg_pmu,  hclk_otg_pmu _etc_ [all these
+non-noc / non-arbi clocks] on why there is no driver to handle them.
+
+Also please group noc / arbi clocks together.
+
+
+This applies to all patches in this series.
+
+Thanks
+Heiko
+
+
+> ---
+>  drivers/clk/rockchip/clk-rk3228.c | 30 +++++++++++++++++++++++++++++-
+>  1 file changed, 29 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk=
+=2Drk3228.c
+> index db6e5a9e6de6..4d3203f887e2 100644
+> --- a/drivers/clk/rockchip/clk-rk3228.c
+> +++ b/drivers/clk/rockchip/clk-rk3228.c
+> @@ -445,7 +445,7 @@ enum rk3228_plls {
+>  			RK2928_CLKGATE_CON(2), 12, GFLAGS,
+>  			&rk3228_spdif_fracmux),
+> =20
+> -	GATE(0, "jtag", "ext_jtag", 0,
+> +	GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
+>  			RK2928_CLKGATE_CON(1), 3, GFLAGS),
+> =20
+>  	GATE(0, "sclk_otgphy0", "xin24m", 0,
+> @@ -644,9 +644,37 @@ enum rk3228_plls {
+> =20
+>  static const char *const rk3228_critical_clocks[] __initconst =3D {
+>  	"aclk_cpu",
+> +	"pclk_cpu",
+> +	"hclk_cpu",
+>  	"aclk_peri",
+>  	"hclk_peri",
+>  	"pclk_peri",
+> +	"aclk_rga_noc",
+> +	"aclk_iep_noc",
+> +	"aclk_vop_noc",
+> +	"aclk_hdcp_noc",
+> +	"hclk_vio_ahb_arbi",
+> +	"hclk_vio_noc",
+> +	"hclk_vop_noc",
+> +	"hclk_host0_arb",
+> +	"hclk_host1_arb",
+> +	"hclk_host2_arb",
+> +	"hclk_otg_pmu",
+> +	"aclk_gpu_noc",
+> +	"sclk_initmem_mbist",
+> +	"aclk_initmem",
+> +	"hclk_rom",
+> +	"pclk_ddrupctl",
+> +	"pclk_ddrmon",
+> +	"pclk_msch_noc",
+> +	"pclk_stimer",
+> +	"pclk_ddrphy",
+> +	"pclk_acodecphy",
+> +	"pclk_phy_noc",
+> +	"aclk_vpu_noc",
+> +	"aclk_rkvdec_noc",
+> +	"hclk_vpu_noc",
+> +	"hclk_rkvdec_noc",
+>  };
+> =20
+>  static void __init rk3228_clk_init(struct device_node *np)
+>=20
