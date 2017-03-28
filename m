@@ -1,48 +1,70 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v6 3/4] clk: samsung: exynos5433: Add runtime PM support
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, Ulf Hansson
-	<ulf.hansson@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae
-	<inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej
-	Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <583f5de0-ef54-2558-9673-a2b52f38e5e9@samsung.com>
-Date: Mon, 27 Mar 2017 17:24:49 +0200
-MIME-version: 1.0
-In-reply-to: <1490182543-28550-4-git-send-email-m.szyprowski@samsung.com>
-Content-type: text/plain; charset="windows-1252"; format="flowed"
-References: <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
-	<CGME20170322113555eucas1p2e6d19d66de5dc48b9f34e4b639759f78@eucas1p2.samsung.com>
-	<1490182543-28550-4-git-send-email-m.szyprowski@samsung.com>
+Return-Path: <tony@atomide.com>
+Date: Tue, 28 Mar 2017 08:03:16 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 9/9] ARM: dts: omap4: convert to use the new clkctrl
+ clocks for the drivers
+Message-ID: <20170328150316.GU10760@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <1489741781-12816-10-git-send-email-t-kristo@ti.com>
+ <20170328001800.GR10760@atomide.com>
+ <8b502a89-dcc6-1932-70cc-e887b1404dbb@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <8b502a89-dcc6-1932-70cc-e887b1404dbb@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/22/2017 12:35 PM, Marek Szyprowski wrote:
-> +static int __init exynos5433_cmu_probe(struct platform_device *pdev)
-> +{
+* Tero Kristo <t-kristo@ti.com> [170327 22:46]:
+> On 28/03/17 03:18, Tony Lindgren wrote:
+> > * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+> > > Convert the drivers to use the new clkctrl clocks.
+> > > 
+> > > Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> > > ---
+> > >  arch/arm/boot/dts/omap4.dtsi | 164 ++++++++++++++++++++++++++++++++++++++-----
+> > >  1 file changed, 146 insertions(+), 18 deletions(-)
+> > > 
+> > > diff --git a/arch/arm/boot/dts/omap4.dtsi b/arch/arm/boot/dts/omap4.dtsi
+> > > index 3ecf616..c39304a 100644
+> > > --- a/arch/arm/boot/dts/omap4.dtsi
+> > > +++ b/arch/arm/boot/dts/omap4.dtsi
+> > > @@ -94,16 +94,22 @@
+> > >  			compatible = "ti,omap4-mpu";
+> > >  			ti,hwmods = "mpu";
+> > >  			sram = <&ocmcram>;
+> > > +			clocks = <&mpuss_clkctrl OMAP4_MPU_CLKCTRL 0>;
+> > > +			clock-names = "clkctrl";
+> > >  		};
+> > 
+> > Oh one more thing. I don't think we should add the clocks
+> > here as they are now wrongly allocated to the device within
+> > the interconnect target module. These clocks really belong
+> > to each interconnect target module that we don't have in the
+> > dts yet.
+> > 
+> > So we're better off adding the clockctrl clocks and then
+> > changing the dts to use the interconnect target modules
+> > with the clockctrl clocks.
+> 
+> The problem is, you can't just add the clkctrl clock nodes themselves alone,
+> as this introduces the problem that any clocks with no users will get
+> disabled => causes a boot time hang when all the device clocks get shut
+> down.
 
-> +	/*
-> +	 * Enable runtime pm here, so clock core with use runtime pm for all
-> +	 * registered clocks. Additionally we increase the runtime PM usage
-> +	 * count during the clock registration, to avoid the clock core from
-> +	 * runtime suspending the device.
-> +	 */
+Hmm yeah. I wonder how to work around that.. What if we first updated
+the clocks in the hwmod code? Or updated the aliases?
 
-While applying I rephrased the above comment to:
+> If you want to delay the usage of the clocks until you have interconnect
+> target modules in place, you need to introduce the clock nodes also at that
+> point, similar to what needs to be done now to squash patch #8 or #9.
 
-/*
-  * Enable runtime PM here to allow the clock core using runtime PM
-  * for the registered clocks. Additionally, we increase the runtime
-  * PM usage count before registering the clocks, to prevent the
-  * clock core from runtime suspending the device.
-  */
+I'd like to do this one device at a time without any large
+flips as we have quite a few devices with special handling for
+reset and idling in the hwmod code.
 
-> +	pm_runtime_get_noresume(dev);
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_enable(dev);
+Regards,
 
-
--- 
-Thanks,
-Sylwester
+Tony
