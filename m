@@ -1,137 +1,71 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: [PATCH v7 12/13] arm64: dts: marvell: add sdhci support for Armada 7K/8K
-Date: Thu, 30 Mar 2017 17:23:04 +0200
-Message-Id: <08d6b21af1fd65783062c14e5896700d25c602f3.1490886907.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+	devicetree@vger.kernel.org
+Subject: [PATCH v1 1/8] dt-bindings: clock: gxbb: expose spdif clock gates
+Date: Tue, 28 Mar 2017 16:45:58 +0200
+Message-Id: <20170328144605.25278-2-jbrunet@baylibre.com>
+In-Reply-To: <20170328144605.25278-1-jbrunet@baylibre.com>
+References: <20170328144605.25278-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Also enable it on the Armada 7040 DB and Armada 8040 DB boards.
+Expose the clock gates required for the spdif output
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/marvell/armada-7040-db.dts       | 14 +++++++++++++-
- arch/arm64/boot/dts/marvell/armada-8040-db.dts       | 12 +++++++++++-
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi        | 11 ++++++++++-
- arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 11 ++++++++++-
- 4 files changed, 48 insertions(+)
+ drivers/clk/meson/gxbb.h              | 4 ++--
+ include/dt-bindings/clock/gxbb-clkc.h | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-7040-db.dts b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
-index 070b589680c5..6adbfcd26369 100644
---- a/arch/arm64/boot/dts/marvell/armada-7040-db.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
-@@ -146,3 +146,17 @@
- &cpm_usb3_1 {
- 	status = "okay";
- };
-+
-+&ap_sdhci0 {
-+	status = "okay";
-+	bus-width = <4>;
-+	no-1-8-v;
-+	non-removable;
-+};
-+
-+&cpm_sdhci0 {
-+	status = "okay";
-+	bus-width = <4>;
-+	no-1-8-v;
-+	non-removable;
-+};
-diff --git a/arch/arm64/boot/dts/marvell/armada-8040-db.dts b/arch/arm64/boot/dts/marvell/armada-8040-db.dts
-index 6e6f182fb297..3d9565bf6e91 100644
---- a/arch/arm64/boot/dts/marvell/armada-8040-db.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-8040-db.dts
-@@ -148,3 +148,15 @@
- &cps_usb3_1 {
- 	status = "okay";
- };
-+
-+&ap_sdhci0 {
-+	status = "okay";
-+	bus-width = <4>;
-+	non-removable;
-+};
-+
-+&cpm_sdhci0 {
-+	status = "okay";
-+	bus-width = <8>;
-+	non-removable;
-+};
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-index 5019c8f4acd0..fe41bf9c301e 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -229,6 +229,17 @@
- 
- 			};
- 
-+			ap_sdhci0: sdhci@6e0000 {
-+				compatible = "marvell,armada-ap806-sdhci";
-+				reg = <0x6e0000 0x300>;
-+				interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+				clock-names = "core";
-+				clocks = <&ap_syscon 4>;
-+				dma-coherent;
-+				marvell,xenon-phy-slow-mode;
-+				status = "disabled";
-+			};
-+
- 			ap_syscon: system-controller@6f4000 {
- 				compatible = "marvell,ap806-system-controller",
- 					     "syscon";
-diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-index 3a99c36433d6..f07ea5aeac48 100644
---- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
-@@ -173,6 +173,17 @@
- 				clocks = <&cpm_syscon0 1 25>;
- 				status = "okay";
- 			};
-+
-+			cpm_sdhci0: sdhci@780000 {
-+				compatible = "marvell,armada-cp110-sdhci";
-+				reg = <0x780000 0x300>;
-+				interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+				clock-names = "core";
-+				clocks = <&cpm_syscon0 1 4>;
-+				dma-coherent;
-+				status = "disabled";
-+			};
-+
- 		};
- 
- 		cpm_pcie0: pcie@f2600000 {
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 9d949244b104..0d535f7e7aed 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -209,7 +209,7 @@
+ /* CLKID_ETH */
+ #define CLKID_DEMUX		  37
+ /* CLKID_AIU_GLUE */
+-#define CLKID_IEC958		  39
++/* CLKID_IEC958 */
+ /* CLKID_I2S_OUT */
+ #define CLKID_AMCLK		  41
+ #define CLKID_AIFIFO2		  42
+@@ -251,7 +251,7 @@
+ #define CLKID_GCLK_VENCI_INT	  78
+ #define CLKID_DAC_CLK		  79
+ /* CLKID_AOCLK_GATE */
+-#define CLKID_IEC958_GATE	  81
++/* CLKID_IEC958_GATE */
+ #define CLKID_ENC480P		  82
+ #define CLKID_RNG1		  83
+ #define CLKID_GCLK_VENCI_INT1	  84
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index cce6cb5418f1..1d4614bc8154 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -18,6 +18,7 @@
+ #define CLKID_SAR_ADC		23
+ #define CLKID_ETH		36
+ #define CLKID_AIU_GLUE		38
++#define CLKID_IEC958		39
+ #define CLKID_I2S_OUT		40
+ #define CLKID_MIXER_IFACE	44
+ #define CLKID_AIU		47
+@@ -30,6 +31,7 @@
+ #define CLKID_SANA		69
+ #define CLKID_GCLK_VENCI_INT0	77
+ #define CLKID_AOCLK_GATE	80
++#define CLKID_IEC958_GATE	81
+ #define CLKID_AO_I2C		93
+ #define CLKID_SD_EMMC_A		94
+ #define CLKID_SD_EMMC_B		95
 -- 
-git-series 0.9.1
+2.9.3
