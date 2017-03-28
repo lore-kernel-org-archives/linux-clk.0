@@ -1,136 +1,86 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 06/15] clk: ti: move omap2_init_clk_clkdm under TI clock driver
-Date: Sat, 11 Mar 2017 14:49:57 +0200
-Message-ID: <1489236606-24023-7-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
-References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] rockchip clock changes for 4.12 part1
+Date: Tue, 28 Mar 2017 14:52:34 +0200
+Message-ID: <5160508.89PunkDez8@phil>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-This is not needed outside the driver, so move it inside it and remove
-the prototype from the public header also.
+Hi Mike, Stephen,
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
----
- arch/arm/mach-omap2/clock.c  | 32 --------------------------------
- drivers/clk/ti/clock.h       |  1 +
- drivers/clk/ti/clockdomain.c | 30 ++++++++++++++++++++++++++++++
- include/linux/clk/ti.h       |  1 -
- 4 files changed, 31 insertions(+), 33 deletions(-)
+Please find below rockchip clock changes for 4.12. As the tag states,
+I've included the rk1108 -> rv1108 clock rename in here. Pinctrl changes
+go through the pinctrl tree and once everything is in mainline I'll put
+the actual devicetree on top. That way we keep cross-tree changes to a
+minimum while keeping everything error-free and bisectable.
 
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index 6fac826..ae5b23c 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -79,38 +79,6 @@ int __init omap2_clk_setup_ll_ops(void)
-  * OMAP2+ specific clock functions
-  */
- 
--/* Public functions */
--
--/**
-- * omap2_init_clk_clkdm - look up a clockdomain name, store pointer in clk
-- * @clk: OMAP clock struct ptr to use
-- *
-- * Convert a clockdomain name stored in a struct clk 'clk' into a
-- * clockdomain pointer, and save it into the struct clk.  Intended to be
-- * called during clk_register().  No return value.
-- */
--void omap2_init_clk_clkdm(struct clk_hw *hw)
--{
--	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
--	struct clockdomain *clkdm;
--	const char *clk_name;
--
--	if (!clk->clkdm_name)
--		return;
--
--	clk_name = __clk_get_name(hw->clk);
--
--	clkdm = clkdm_lookup(clk->clkdm_name);
--	if (clkdm) {
--		pr_debug("clock: associated clk %s to clkdm %s\n",
--			 clk_name, clk->clkdm_name);
--		clk->clkdm = clkdm;
--	} else {
--		pr_debug("clock: could not associate clk %s to clkdm %s\n",
--			 clk_name, clk->clkdm_name);
--	}
--}
--
- /**
-  * ti_clk_init_features - init clock features struct for the SoC
-  *
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index ee6d225..ecf82d8 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -228,6 +228,7 @@ int ti_clk_retry_init(struct device_node *node, struct clk_hw *hw,
- extern const struct clk_ops ti_clk_divider_ops;
- extern const struct clk_ops ti_clk_mux_ops;
- 
-+void omap2_init_clk_clkdm(struct clk_hw *hw);
- int omap2_clkops_enable_clkdm(struct clk_hw *hw);
- void omap2_clkops_disable_clkdm(struct clk_hw *hw);
- 
-diff --git a/drivers/clk/ti/clockdomain.c b/drivers/clk/ti/clockdomain.c
-index 6cf9dd1..704157d 100644
---- a/drivers/clk/ti/clockdomain.c
-+++ b/drivers/clk/ti/clockdomain.c
-@@ -103,6 +103,36 @@ void omap2_clkops_disable_clkdm(struct clk_hw *hw)
- 	ti_clk_ll_ops->clkdm_clk_disable(clk->clkdm, hw->clk);
- }
- 
-+/**
-+ * omap2_init_clk_clkdm - look up a clockdomain name, store pointer in clk
-+ * @clk: OMAP clock struct ptr to use
-+ *
-+ * Convert a clockdomain name stored in a struct clk 'clk' into a
-+ * clockdomain pointer, and save it into the struct clk.  Intended to be
-+ * called during clk_register().  No return value.
-+ */
-+void omap2_init_clk_clkdm(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	struct clockdomain *clkdm;
-+	const char *clk_name;
-+
-+	if (!clk->clkdm_name)
-+		return;
-+
-+	clk_name = __clk_get_name(hw->clk);
-+
-+	clkdm = ti_clk_ll_ops->clkdm_lookup(clk->clkdm_name);
-+	if (clkdm) {
-+		pr_debug("clock: associated clk %s to clkdm %s\n",
-+			 clk_name, clk->clkdm_name);
-+		clk->clkdm = clkdm;
-+	} else {
-+		pr_debug("clock: could not associate clk %s to clkdm %s\n",
-+			 clk_name, clk->clkdm_name);
-+	}
-+}
-+
- static void __init of_ti_clockdomain_setup(struct device_node *node)
- {
- 	struct clk *clk;
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index bc7fd8f..626ae94 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -238,7 +238,6 @@ struct ti_clk_ll_ops {
- 
- #define to_clk_hw_omap(_hw) container_of(_hw, struct clk_hw_omap, hw)
- 
--void omap2_init_clk_clkdm(struct clk_hw *clk);
- int omap2_clk_disable_autoidle_all(void);
- int omap2_clk_enable_autoidle_all(void);
- int omap2_clk_allow_idle(struct clk *clk);
--- 
-1.9.1
+So please pull if nothing stands out.
+
+Thanks
+Heiko
+
+
+The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+
+  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.12-rockchip-clk1
+
+for you to fetch changes up to 9be83448951a404a6fd5cf43ee0245a9bccc02c1:
+
+  clk: rockchip: add pll_wait_lock for pll_enable (2017-03-22 18:33:22 +0100)
+
+----------------------------------------------------------------
+General rockchip clock changes for 4.12. Contains some new clock-ids
+as well as fixups of the clock-ids on rk3368 timers, which were unused
+and completely wrong (more and differently named timers).
+Also there is one new clock on rk3328 using the muxgrf type, a fix for
+pll enablement which should wait for the pll to lock before continuing,
+some more critical clocks and the rename of the rk1108 to rv1108, as the
+soc seems to have been using a preliminary name before its actual release.
+The plan is to have the driver changes (pinctrl, clk) go through the
+respective maintainer trees and once everything landed in mainline do
+the rename of the devicetree files. With the dts-include change in the
+clock rename, we also keep everything compiling and thus bisectability.
+
+----------------------------------------------------------------
+Andy Yan (2):
+      dt-bindings: rk1108-cru: rename RK1108 to RV1108
+      clk: rockchip: rename RK1108 to RV1108
+
+Douglas Anderson (1):
+      clk: rockchip: Set "ignore unused" for PMU M0 clocks on rk3399
+
+Elaine Zhang (7):
+      clk: rockchip: add rk3328 clk_mac2io_ext ID
+      clk: rockchip: fix up rk3368 timer-ids
+      clk: rockchip: add clock ids for timer10-15 of RK3368 SoCs
+      clk: rockchip: describe clk_gmac using the new muxgrf type on rk3328
+      clk: rockchip: export SCLK_TIMERXX id for timers on rk3368
+      clk: rockchip: mark some rk3368 core-clks as critical
+      clk: rockchip: add pll_wait_lock for pll_enable
+
+Heiko Stuebner (1):
+      Merge branch 'v4.12-shared/clkids' into v4.12-clk/next
+
+ ...chip,rk1108-cru.txt => rockchip,rv1108-cru.txt} |  12 +-
+ arch/arm/boot/dts/rk1108.dtsi                      |   2 +-
+ drivers/clk/rockchip/Makefile                      |   2 +-
+ drivers/clk/rockchip/clk-pll.c                     |   3 +
+ drivers/clk/rockchip/clk-rk3328.c                  |   9 +
+ drivers/clk/rockchip/clk-rk3368.c                  |  27 +-
+ drivers/clk/rockchip/clk-rk3399.c                  |   8 +-
+ .../clk/rockchip/{clk-rk1108.c => clk-rv1108.c}    | 414 ++++++++++-----------
+ drivers/clk/rockchip/clk.h                         |  28 +-
+ include/dt-bindings/clock/rk3328-cru.h             |   1 +
+ include/dt-bindings/clock/rk3368-cru.h             |  19 +-
+ .../clock/{rk1108-cru.h => rv1108-cru.h}           |   6 +-
+ 12 files changed, 276 insertions(+), 255 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{rockchip,rk1108-cru.txt => rockchip,rv1108-cru.txt} (83%)
+ rename drivers/clk/rockchip/{clk-rk1108.c => clk-rv1108.c} (57%)
+ rename include/dt-bindings/clock/{rk1108-cru.h => rv1108-cru.h} (97%)
