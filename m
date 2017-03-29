@@ -1,39 +1,79 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v3 1/2] clk: rockchip: add "," to mux_pll_src_apll_dpll_gpll_usb480m_p on rk3036
-Date: Wed,  1 Mar 2017 22:00:41 +0100
-Message-Id: <20170301210042.11352-2-heiko@sntech.de>
-In-Reply-To: <20170301210042.11352-1-heiko@sntech.de>
-References: <20170301210042.11352-1-heiko@sntech.de>
+Return-Path: <icenowy@aosc.io>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Icenowy Zheng <icenowy@aosc.xyz>
+Subject: [PATCH v3 1/5] dt-bindings: update device tree binding for Allwinner PRCM CCUs
+Date: Wed, 29 Mar 2017 18:42:42 +0800
+Message-Id: <20170329104246.34204-2-icenowy@aosc.io>
+In-Reply-To: <20170329104246.34204-1-icenowy@aosc.io>
+References: <20170329104246.34204-1-icenowy@aosc.io>
 List-ID: <linux-clk.vger.kernel.org>
 
-The mux_pll_src_apll_dpll_gpll_usb480m_p parent list was missing a ","
-between the 3rd and 4th parent names, making them fall together and thus
-lookups fail. Fix that.
+From: Icenowy Zheng <icenowy@aosc.xyz>
 
-Fixes: 5190c08b2989 ("clk: rockchip: add clock controller for rk3036")
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Many Allwinner SoCs after A31 have a CCU in PRCM block.
+
+Give the ones on H3 and A64 compatible strings.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- drivers/clk/rockchip/clk-rk3036.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v3:
+- Removed frequency info of iosc in this device tree binding document.
+Changes in v2:
+- Add iosc for R_CCU's on H3/A64.
 
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index 924f560dcf80..dcde70f4c105 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -127,7 +127,7 @@ PNAME(mux_ddrphy_p)		= { "dpll_ddr", "gpll_ddr" };
- PNAME(mux_pll_src_3plls_p)	= { "apll", "dpll", "gpll" };
- PNAME(mux_timer_p)		= { "xin24m", "pclk_peri_src" };
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index 68512aa398a9..e9c5a1d9834a 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -7,9 +7,11 @@ Required properties :
+ 		- "allwinner,sun8i-a23-ccu"
+ 		- "allwinner,sun8i-a33-ccu"
+ 		- "allwinner,sun8i-h3-ccu"
++		- "allwinner,sun8i-h3-r-ccu"
+ 		- "allwinner,sun8i-v3s-ccu"
+ 		- "allwinner,sun9i-a80-ccu"
+ 		- "allwinner,sun50i-a64-ccu"
++		- "allwinner,sun50i-a64-r-ccu"
+ 		- "allwinner,sun50i-h5-ccu"
  
--PNAME(mux_pll_src_apll_dpll_gpll_usb480m_p)	= { "apll", "dpll", "gpll" "usb480m" };
-+PNAME(mux_pll_src_apll_dpll_gpll_usb480m_p)	= { "apll", "dpll", "gpll", "usb480m" };
+ - reg: Must contain the registers base address and length
+@@ -20,7 +22,10 @@ Required properties :
+ - #clock-cells : must contain 1
+ - #reset-cells : must contain 1
  
- PNAME(mux_mmc_src_p)	= { "apll", "dpll", "gpll", "xin24m" };
- PNAME(mux_i2s_pre_p)	= { "i2s_src", "i2s_frac", "ext_i2s", "xin12m" };
+-Example:
++For the PRCM CCUs on H3/A64, one more clock is needed:
++- "iosc": the SoC's internal frequency oscillator
++
++Example for generic CCU:
+ ccu: clock@01c20000 {
+ 	compatible = "allwinner,sun8i-h3-ccu";
+ 	reg = <0x01c20000 0x400>;
+@@ -29,3 +34,13 @@ ccu: clock@01c20000 {
+ 	#clock-cells = <1>;
+ 	#reset-cells = <1>;
+ };
++
++Example for PRCM CCU:
++r_ccu: clock@01f01400 {
++	compatible = "allwinner,sun50i-a64-r-ccu";
++	reg = <0x01f01400 0x100>;
++	clocks = <&osc24M>, <&osc32k>, <&iosc>;
++	clock-names = "hosc", "losc", "iosc";
++	#clock-cells = <1>;
++	#reset-cells = <1>;
++};
 -- 
-2.11.0
+2.12.0
