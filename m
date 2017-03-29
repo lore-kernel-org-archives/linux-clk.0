@@ -1,94 +1,127 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
 From: Icenowy Zheng <icenowy@aosc.io>
 To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 00/11] Initial Allwinner Display Engine 2.0 Support
-Date: Thu, 30 Mar 2017 03:46:02 +0800
-Message-Id: <20170329194613.55548-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH v3 03/11] dt-bindings: add bindings for DE2 on V3s SoC
+Date: Thu, 30 Mar 2017 03:46:05 +0800
+Message-Id: <20170329194613.55548-4-icenowy@aosc.io>
+In-Reply-To: <20170329194613.55548-1-icenowy@aosc.io>
+References: <20170329194613.55548-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is the initial patchset for Allwinner DE2 support.
+From: Icenowy Zheng <icenowy@aosc.xyz>
 
-It contains the support of clocks in DE2 and the mixers in DE2.
+Allwinner V3s SoC have a display engine which have a different pipeline
+with older SoCs.
 
-The SoC used to develop this patchset is V3s, as V3s is the simplest
-one of the SoCs that have DE2.
-(Allwinner V3s features only one mixer, although its clock control
-unit contains support for second mixer's clock; and its only video
-output is RGB LCD, which is already supported in our TCON driver)
+Add document for it (new compatibles and the new "mixer" part).
 
-The last patch is only a testing patch, it shouldn't be merged; and
-for the patch to be really usable, the RFC fix of the TCON driver [1]
-is needed.
+The paragraph of TCON is also refactored, for furtherly add TCONs in
+A83T/H3/A64/H5 that have only a channel 1 (used for HDMI or TV Encoder).
 
-No HDMI, TV encoder or other internal bridges' support is included
-in this patchset, which makes it currently not usable on H3.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+Changes in v3:
+- Remove the description of having a BE directly as allwinner,pipeline.
 
-Thanks to Jean-Francois Moine and Jernej Skrabec for their efforts
-to discover the internal of DE2!
+ .../bindings/display/sunxi/sun4i-drm.txt           | 37 +++++++++++++++++++---
+ 1 file changed, 33 insertions(+), 4 deletions(-)
 
-[1] https://lists.freedesktop.org/archives/dri-devel/2016-December/126264.html
-
-Icenowy Zheng (11):
-  dt-bindings: add binding for the Allwinner DE2 CCU
-  clk: sunxi-ng: add support for DE2 CCU
-  dt-bindings: add bindings for DE2 on V3s SoC
-  drm/sun4i: abstruct the layer type
-  drm/sun4i: abstract a mixer type
-  drm/sun4i: add support for Allwinner DE2 mixers
-  drm/sun4i: Add compatible string for V3s display engine
-  drm/sun4i: tcon: add support for V3s TCON
-  ARM: dts: sun8i: add DE2 nodes for V3s SoC
-  ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
-  [DO NOT MERGE] ARM: dts: sun8i: enable LCD panel of Lichee Pi Zero
-
- .../devicetree/bindings/clock/sun8i-de2.txt        |  31 ++
- .../bindings/display/sunxi/sun4i-drm.txt           |  37 +-
- arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts      |  36 ++
- arch/arm/boot/dts/sun8i-v3s.dtsi                   |  96 +++++
- drivers/clk/sunxi-ng/Kconfig                       |   5 +
- drivers/clk/sunxi-ng/Makefile                      |   1 +
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 204 +++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-de2.h               |  28 ++
- drivers/gpu/drm/sun4i/Kconfig                      |  20 ++
- drivers/gpu/drm/sun4i/Makefile                     |  10 +-
- drivers/gpu/drm/sun4i/sun4i_backend.c              |  26 +-
- drivers/gpu/drm/sun4i/sun4i_backend.h              |   5 -
- drivers/gpu/drm/sun4i/sun4i_crtc.c                 |  31 +-
- drivers/gpu/drm/sun4i/sun4i_crtc.h                 |  10 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c                  |   4 +-
- drivers/gpu/drm/sun4i/sun4i_drv.h                  |   3 +-
- drivers/gpu/drm/sun4i/sun4i_layer.c                |  22 +-
- drivers/gpu/drm/sun4i/sun4i_layer.h                |   6 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |   7 +-
- drivers/gpu/drm/sun4i/sun4i_tv.c                   |   8 +-
- drivers/gpu/drm/sun4i/sun8i_layer.c                | 156 +++++++++
- drivers/gpu/drm/sun4i/sun8i_layer.h                |  35 ++
- drivers/gpu/drm/sun4i/sun8i_mixer.c                | 386 +++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_mixer.h                | 131 +++++++
- drivers/gpu/drm/sun4i/sunxi_layer.h                |  17 +
- drivers/gpu/drm/sun4i/sunxi_mixer.h                |  22 ++
- include/dt-bindings/clock/sun8i-de2.h              |  54 +++
- include/dt-bindings/reset/sun8i-de2.h              |  50 +++
- 28 files changed, 1391 insertions(+), 50 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.h
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_layer.c
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_layer.h
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.c
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.h
- create mode 100644 drivers/gpu/drm/sun4i/sunxi_layer.h
- create mode 100644 drivers/gpu/drm/sun4i/sunxi_mixer.h
- create mode 100644 include/dt-bindings/clock/sun8i-de2.h
- create mode 100644 include/dt-bindings/reset/sun8i-de2.h
-
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index b82c00449468..38de5e96f359 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -31,11 +31,11 @@ Required properties:
+    * allwinner,sun6i-a31-tcon
+    * allwinner,sun6i-a31s-tcon
+    * allwinner,sun8i-a33-tcon
++   * allwinner,sun8i-v3s-tcon
+  - reg: base address and size of memory-mapped region
+  - interrupts: interrupt associated to this IP
+- - clocks: phandles to the clocks feeding the TCON. Three are needed:
++ - clocks: phandles to the clocks feeding the TCON
+    - 'ahb': the interface clocks
+-   - 'tcon-ch0': The clock driving the TCON channel 0
+  - resets: phandles to the reset controllers driving the encoder
+    - "lcd": the reset line for the TCON channel 0
+ 
+@@ -52,7 +52,12 @@ Required properties:
+   second the block connected to the TCON channel 1 (usually the TV
+   encoder)
+ 
+-On SoCs other than the A33, there is one more clock required:
++On TCONs that have a channel 0 (currently all TCONs supported), there
++is one more clock required:
++   - 'tcon-ch0': The clock driving the TCON channel 0
++
++On TCONs that have a channel 1 (currently all TCONs except the ones in
++A33 and V3s), there is one more clock required:
+    - 'tcon-ch1': The clock driving the TCON channel 1
+ 
+ DRC
+@@ -137,6 +142,26 @@ Required properties:
+   Documentation/devicetree/bindings/media/video-interfaces.txt. The
+   first port should be the input endpoints, the second one the outputs
+ 
++Display Engine 2.0 Mixer
++------------------------
++
++The DE2 mixer have many functionalities, currently only layer blending is
++supported.
++
++Required properties:
++  - compatible: value must be one of:
++    * allwinner,sun8i-v3s-de2-mixer
++  - reg: base address and size of the memory-mapped region.
++  - clocks: phandles to the clocks feeding the frontend and backend
++    * bus: the backend interface clock
++    * ram: the backend DRAM clock
++  - clock-names: the clock names mentioned above
++  - resets: phandles to the reset controllers driving the backend
++
++- ports: A ports node with endpoint definitions as defined in
++  Documentation/devicetree/bindings/media/video-interfaces.txt. The
++  first port should be the input endpoints, the second one the output
++
+ 
+ Display Engine Pipeline
+ -----------------------
+@@ -151,9 +176,13 @@ Required properties:
+     * allwinner,sun6i-a31-display-engine
+     * allwinner,sun6i-a31s-display-engine
+     * allwinner,sun8i-a33-display-engine
++    * allwinner,sun8i-v3s-display-engine
+ 
+   - allwinner,pipelines: list of phandle to the display engine
+-    frontends available.
++    pipeline entry point. For SoCs with original DE (currently
++    all SoCs supported by display engine except V3s), this
++    phandle should be a display frontend; for SoCs with DE2,
++    this phandle should be a mixer.
+ 
+ Example:
+ 
 -- 
 2.12.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
