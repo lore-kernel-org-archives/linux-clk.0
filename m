@@ -1,109 +1,31 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	mike.leach@linaro.org,
-	Suzuki.Poulose@arm.com,
-	sudeep.holla@arm.com
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v5 1/9] coresight: bindings for CPU debug module
-Date: Sun, 26 Mar 2017 02:23:09 +0800
-Message-Id: <1490466197-29163-2-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 28 Mar 2017 20:21:55 -0500
+From: Rob Herring <robh@kernel.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, srinivas.kandagatla@linaro.org
+Subject: Re: [PATCH 1/2] clk: qcom: clk-smd-rpm: add msm8996 rpmclks
+Message-ID: <20170329012155.cqm5xwzfxfbhgxx6@rob-hp-laptop>
+References: <1490175566-4084-1-git-send-email-rnayak@codeaurora.org>
+ <1490175566-4084-2-git-send-email-rnayak@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1490175566-4084-2-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-According to ARMv8 architecture reference manual (ARM DDI 0487A.k)
-Chapter 'Part H: External debug', the CPU can integrate debug module
-and it can support self-hosted debug and external debug. Especially
-for supporting self-hosted debug, this means the program can access
-the debug module from mmio region; and usually the mmio region is
-integrated with coresight.
+On Wed, Mar 22, 2017 at 03:09:25PM +0530, Rajendra Nayak wrote:
+> Add all RPM controlled clocks on msm8996 platform
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> [srini: Fixed various issues with offsets and made names specific to msm8996]
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
+>  drivers/clk/qcom/clk-smd-rpm.c                     | 82 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,rpmcc.h             | 14 ++++
+>  include/linux/soc/qcom/smd-rpm.h                   |  4 ++
+>  4 files changed, 101 insertions(+)
 
-So add document for binding debug component, includes binding to APB
-clock; and also need specify the CPU node which the debug module is
-dedicated to specific CPU.
-
-Suggested-by: Mike Leach <mike.leach@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- .../bindings/arm/coresight-cpu-debug.txt           | 48 ++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
-
-diff --git a/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt b/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
-new file mode 100644
-index 0000000..7ef3824
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
-@@ -0,0 +1,48 @@
-+* CoreSight CPU Debug Component:
-+
-+CoreSight CPU debug component are compliant with the ARMv8 architecture
-+reference manual (ARM DDI 0487A.k) Chapter 'Part H: External debug'. The
-+external debug module is mainly used for two modes: self-hosted debug and
-+external debug, and it can be accessed from mmio region from Coresight
-+and eventually the debug module connects with CPU for debugging. And the
-+debug module provides sample-based profiling extension, which can be used
-+to sample CPU program counter, secure state and exception level, etc;
-+usually every CPU has one dedicated debug module to be connected.
-+
-+Required properties:
-+
-+- compatible : should be "arm,coresight-cpu-debug"; supplemented with
-+               "arm,primecell" since this driver is using the AMBA bus
-+	       interface.
-+
-+- reg : physical base address and length of the register set.
-+
-+- clocks : the clock associated to this component.
-+
-+- clock-names : the name of the clock referenced by the code. Since we are
-+                using the AMBA framework, the name of the clock providing
-+		the interconnect should be "apb_pclk" and the clock is
-+		mandatory. The interface between the debug logic and the
-+		processor core is clocked by the internal CPU clock, so it
-+		is enabled with CPU clock by default.
-+
-+- cpu : the CPU phandle the debug module is affined to. When omitted
-+	the module is considered to belong to CPU0.
-+
-+Optional properties:
-+
-+- power-domains: a phandle to the debug power domain. We use "power-domains"
-+                 binding to turn on the debug logic if it has own dedicated
-+		 power domain and if necessary to use "idle_constraint" in
-+		 kernel command line or debugfs node to constrain idle states
-+		 to ensure registers in the CPU power domain are accessible.
-+
-+Example:
-+
-+	debug@f6590000 {
-+		compatible = "arm,coresight-cpu-debug","arm,primecell";
-+		reg = <0 0xf6590000 0 0x1000>;
-+		clocks = <&sys_ctrl HI6220_DAPB_CLK>;
-+		clock-names = "apb_pclk";
-+		cpu = <&cpu0>;
-+	};
--- 
-2.7.4
+Acked-by: Rob Herring <robh@kernel.org>
