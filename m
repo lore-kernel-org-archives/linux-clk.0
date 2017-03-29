@@ -1,80 +1,125 @@
-Return-Path: <sudeep.holla@arm.com>
-Subject: Re: [PATCH v3 3/5] coresight: add support for debug module
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>
-References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
- <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
- <671a0b39-b635-6e0e-d3fa-967651f2e29c@arm.com>
- <CAJ9a7VgCjXNGC4C49PxL-nBxzhMCmA8Mb-0C_epahizA5EL2HA@mail.gmail.com>
- <e7a97c52-f61a-e503-f626-09563fa100b8@arm.com>
- <CAJ9a7VhvCS3xXAHBt0AUVB2Zp2P1HP_LQm4KiptiBT9VJ1fC0Q@mail.gmail.com>
- <4961636d-d77c-0f9a-7076-4db1ef456073@arm.com>
- <1e6d6a91-3bdc-7cfb-a96f-780c959e0316@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Leo Yan <leo.yan@linaro.org>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Wei Xu <xuwei5@hisilicon.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will.deacon@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- John Stultz <john.stultz@linaro.org>, Guodong Xu <guodong.xu@linaro.org>,
- Haojian Zhuang <haojian.zhuang@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <7a028460-d598-e337-5e09-234beddca88b@arm.com>
-Date: Wed, 22 Mar 2017 17:25:50 +0000
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 29 Mar 2017 14:31:18 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	linux-sunxi <linux-sunxi@googlegroups.com>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 7/15] dt-bindings: display: sun4i: Add
+ allwinner,tcon-channel property
+Message-ID: <20170329123118.yvwnqpgtamc5pjqf@lukather>
+References: <20170328100519.145DE203419@relay.mailchannels.net>
 MIME-Version: 1.0
-In-Reply-To: <1e6d6a91-3bdc-7cfb-a96f-780c959e0316@arm.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="d6ild6ujpwsam4vj"
+In-Reply-To: <20170328100519.145DE203419@relay.mailchannels.net>
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--d6ild6ujpwsam4vj
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 22/03/17 17:09, Suzuki K Poulose wrote:
-> On 22/03/17 16:17, Sudeep Holla wrote:
+On Tue, Mar 28, 2017 at 06:05:08PM +0800, Icenowy Zheng wrote:
+>=20
+> 2017=E5=B9=B43=E6=9C=8827=E6=97=A5 =E4=B8=8A=E5=8D=885:11=E4=BA=8E Maxime=
+ Ripard <maxime.ripard@free-electrons.com>=E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > On Fri, Mar 17, 2017 at 11:34:45AM +0800, Chen-Yu Tsai wrote:=20
+> > > On Thu, Mar 16, 2017 at 1:37 AM, Rob Herring <robh@kernel.org> wrote:=
+=20
+> > > > On Tue, Mar 07, 2017 at 09:56:26AM +0100, Maxime Ripard wrote:=20
+> > > >> The Allwinner Timings Controller has two, mutually exclusive, chan=
+nels.=20
+> > > >> When the binding has been introduced, it was assumed that there wo=
+uld be=20
+> > > >> only a single user per channel in the system.=20
+> > > >>=20
+> > > >> While this is likely for the channel 0 which only connects to LCD =
+displays,=20
+> > > >> it turns out that the channel 1 can be connected to multiple contr=
+ollers in=20
+> > > >> the SoC (HDMI and TV encoders for example). And while the simultan=
+eous use=20
+> > > >> of HDMI and TV outputs cannot be achieved, switching from one to t=
+he other=20
+> > > >> at runtime definitely sounds plausible.=20
+> > > >>=20
+> > > >> Add an extra property, allwinner,tcon-channel, to specify for a gi=
+ven=20
+> > > >> endpoint which TCON channel it is connected to, while falling back=
+ to the=20
+> > > >> previous mechanism if that property is missing.=20
+> > > >=20
+> > > > I think perhaps TCON channels should have been ports rather than=20
+> > > > endpoints. The fact that the channels are mutually exclusive can be=
+=20
+> > > > handled in the driver and doesn't really matter in the binding. How=
+=20
+> > > > painful would it be to rework things to move TCON channel 1 from po=
+rt 0,=20
+> > > > endpoint 1 to port 1?=20
+> > >=20
+> > > Having a separate output port for channel 1 was one option we discuss=
+ed.=20
+> > > However it wouldn't work well with the kernel's of_graph based crtc=
+=20
+> > > detection (drm_of_find_possible_crtcs / drm_of_find_possible_crtcs),=
+=20
+> > > which has the crtcs bound via the output port. As the logic is used=
+=20
+> > > by multiple drivers, I'm not sure it's easy to rework or test.=20
+> >
+> > Can't we use a different logic than drm_of_find_possible_crtcs to fill=
+=20
+> > the same role?=20
+> >
+> > > Also, we still have to support old device trees using channel 1 from=
+=20
+> > > output port 0 endpoint 1. This is the TV encoder on sun5i (A10s/A13/R=
+8).=20
+>=20
+> And from A83T on we will face channel-1 only TCONs., which do not
+> have channel 0 at all in hardware.
 
-[...]
+Yes, but those patches have not been merged yet, so we don't have to
+care about the backward compatibility.
 
->> 
->> Point taken. So we could just specify that all necessary power
->> domains need to be on for proper functionality for this feature and
->> that it's highly platform specific instead of mixing cpu/cluster
->> idle details here.
->> 
->>> The key point is that the caveat in using this driver is that
->>> the power management has to be considered on a platform specific
->>> basis before it is configured; and appropriate actions may be
->>> needed for it to work correctly. Without this then the driver
->>> could cause more issues than it debugs. A user selecting this
->>> _must_ be told about these issues
->>> 
-> 
-> So given all the possible caveats, I think we :
-> 
-> 1) Shouldn't enable the driver by default at runtime even if it is 
-> built-in. 
-> 2) Should provide mechanisms to turn it on at boot (via
-> kernel commandline) or anytime later (via sysfs), which kind of puts
-> the responsibility back on the user : "You know what you are doing". 
-> 3) Shouldn't turn the driver on based on "nohlt" which the user
-> could use it for some other purposes, without explicit intention of
-> turning this driver on).
-> 4) Should document the fact that, on some
-> platforms, the user may have to disable CPUidle explicitly to get the
-> driver working. But let us not make it the default. The user with a
-> not so ideal platform could add "nohlt" and get it working.
-> 
+Maxime
 
-Agreed on all points and well summarized.
-I would like to highlight (3) and (4) as it needs to be well understood.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-"nohlt" has a *different* meaning already, so using that in this
-driver for something else is simple wrong as it affects the system in
-unintended ways. And yes if user (mis)uses it to get things working,
-it's fine but shouldn't be recommended way.
+--d6ild6ujpwsam4vj
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Regards,
-Sudeep
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJY26kWAAoJEBx+YmzsjxAgb/MP/jtL0JlIwAveyf/CcfjkxgHw
+MLNrGlxGFilQgryvyxGYk0QLMYz/1KpXkIWviJHt2dAFkxwxrG/YC6p2zEKDskw0
+Pwi0GshgXCs8xRgV98RHH3n60R1tVirmp/S940I1Ci+DdVQVV4Cy/XJzWFqzbpR3
+79O2jb+CX5fF/n5g32xij4e5rtjiFRPZ33ywS4J7mRfSf6+aqIx/d51NDncT/3mb
+dvQp7yp2mijSRe0wjMxaSvAtRWDBl+qqJ7CKfVHhVpm2yONJCIBk1qE1KvFNCT0S
+c/kX/TIR7hJV2j4HQjkcjSTE3vtX3ZdZxErsnV6Q+8xjnJiT5a65LgsaG09bBEdb
+IgEL47RcbdYEdObw46n5ykrAyB7IgeQPmhFiftEha28zyVVwjFahEJxBsvj3t57I
+93Ll52kx5lw4AB+hEE7e6hbyFaHfMLVXFRuIxjY2/eVKEUOFlm49XfKGey02/lXH
+l4lwjqAHOO3czlBA/Bh0mLl5mgTrZF9LhjOzYibkqNU6ct+i4aIwmIjN0bQyRUZC
+UmatmpRh9pliIiBSA3eyKMRkVpY1/6NzVsvwEgvzRuK7MrAFjkQwMjoaFBIazzOI
+ew5V7qiXXcjJ806QE/dg6PkBVScqUB+14D6/EL9l+HdPzCRAzuG74Dy90wVIPCI8
+okHeulGoa3+JdB7BGDPe
+=8jnb
+-----END PGP SIGNATURE-----
+
+--d6ild6ujpwsam4vj--
