@@ -1,214 +1,95 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 23 Mar 2017 21:06:30 -0500
-From: Rob Herring <robh@kernel.org>
-To: gabriel.fernandez@st.com
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [PATCH] clk: stm32h7: Add stm32h743 clock driver
-Message-ID: <20170324020630.vhffmeeb6wto53zx@rob-hp-laptop>
-References: <1489569810-24350-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <Suzuki.Poulose@arm.com>
+Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
+To: Leo Yan <leo.yan@linaro.org>
+References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+ <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
+ <31be033f-514e-e48a-3ba2-a5c5cd477548@arm.com>
+ <20170329030735.GA23889@leoy-linaro>
+ <5584203e-cb19-a5d2-45b1-3e78d3482c55@arm.com>
+ <20170329102740.GA20804@leoy-linaro>
+ <89b6c6c7-0da0-6891-312a-c9221851c20a@arm.com>
+ <20170329103712.GA22480@leoy-linaro>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will.deacon@arm.com>, Andy Gross <andy.gross@linaro.org>,
+ David Brown <david.brown@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Guodong Xu <guodong.xu@linaro.org>, John Stultz <john.stultz@linaro.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, mike.leach@linaro.org, sudeep.holla@arm.com
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <c167e6d7-e02d-3dfb-7194-0754eeaf0863@arm.com>
+Date: Wed, 29 Mar 2017 16:50:43 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1489569810-24350-1-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <20170329103712.GA22480@leoy-linaro>
+Content-Type: text/plain; charset=us-ascii; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 15, 2017 at 10:23:30AM +0100, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> This patch enables clocks for STM32H743 boards.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
->  .../devicetree/bindings/clock/st,stm32h7-rcc.txt   |  152 ++
->  drivers/clk/Makefile                               |    1 +
->  drivers/clk/clk-stm32h7.c                          | 1586 ++++++++++++++++++++
->  include/dt-bindings/clock/stm32h7-clks.h           |  165 ++
->  include/dt-bindings/mfd/stm32h7-rcc.h              |  138 ++
->  5 files changed, 2042 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
->  create mode 100644 drivers/clk/clk-stm32h7.c
->  create mode 100644 include/dt-bindings/clock/stm32h7-clks.h
->  create mode 100644 include/dt-bindings/mfd/stm32h7-rcc.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
-> new file mode 100644
-> index 0000000..9d4b587
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
-> @@ -0,0 +1,152 @@
-> +STMicroelectronics STM32H7 Reset and Clock Controller
-> +=====================================================
-> +
-> +The RCC IP is both a reset and a clock controller.
-> +
-> +Please refer to clock-bindings.txt for common clock controller binding usage.
-> +Please also refer to reset.txt for common reset controller binding usage.
-> +
-> +Required properties:
-> +- compatible: Should be:
-> +  "st,stm32h743-rcc"
-> +
-> +- reg: should be register base and length as documented in the
-> +  datasheet
-> +
-> +- #reset-cells: 1, see below
-> +
-> +- #clock-cells : from common clock binding; shall be set to 1
-> +
-> +- clocks: External oscillator clock phandle
-> +  - high speed external clock signal (HSE)
-> +  - low speed external clock signal (LSE)
-> +  - external I2S clock (I2S_CKIN)
-> +
-> +- st,syscfg: phandle for pwrcfg, mandatory to disable/enable backup domain
-> +  write protection (RTC clock).
-> +
-> +- pll x node: Allow to register a pll with specific parameters.
-> +  Please see PLL section below.
-> +
-> +Example:
-> +
-> +	rcc: rcc@58024400 {
-> +		#reset-cells = <1>;
-> +		#clock-cells = <2>
-> +		compatible = "st,stm32h743-rcc", "st,stm32-rcc";
-> +		reg = <0x58024400 0x400>;
-> +		clocks = <&clk_hse>, <&clk_lse>, <&clk_i2s_ckin>;
-> +
-> +		st,syscfg = <&pwrcfg>;
-> +
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		vco1@58024430 {
-> +			#clock-cells = <0>;
-> +			compatible = "stm32,pll";
-> +			reg = <0>;
+On 29/03/17 11:37, Leo Yan wrote:
+> On Wed, Mar 29, 2017 at 11:31:03AM +0100, Suzuki K Poulose wrote:
+>> On 29/03/17 11:27, Leo Yan wrote:
+>>> On Wed, Mar 29, 2017 at 10:07:07AM +0100, Suzuki K Poulose wrote:
+>>>
+>>> [...]
+>>>
+>>>>>>> +	if (mode == EDDEVID_IMPL_NONE) {
+>>>>>>> +		drvdata->edpcsr_present  = false;
+>>>>>>> +		drvdata->edcidsr_present = false;
+>>>>>>> +		drvdata->edvidsr_present = false;
+>>>>>>> +	} else if (mode == EDDEVID_IMPL_EDPCSR) {
+>>>>>>> +		drvdata->edpcsr_present  = true;
+>>>>>>> +		drvdata->edcidsr_present = false;
+>>>>>>> +		drvdata->edvidsr_present = false;
+>>>>>>> +	} else if (mode == EDDEVID_IMPL_EDPCSR_EDCIDSR) {
+>>>>>>> +		if (!IS_ENABLED(CONFIG_64BIT) &&
+>>>>>>> +			(pcsr_offset == EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32))
+>>>>>>> +			drvdata->edpcsr_present = false;
+>>>>>>> +		else
+>>>>>>> +			drvdata->edpcsr_present = true;
+>>>>>>
+>>>>>> Sorry, I forgot why we do this check only in this mode. Shouldn't this be
+>>>>>> common to all modes (of course which implies PCSR is present) ?
+>>>>>
+>>>>> No. PCSROffset is defined differently in ARMv7 and ARMv8; So finally we
+>>>>> simplize PCSROffset value :
+>>>>> 0000 - Sample offset applies based on the instruction state (indicated by PCSR[0])
+>>>>> 0001 - No offset applies.
+>>>>> 0010 - No offset applies, but do not use in AArch32 mode!
+>>>>>
+>>>>> So we need handle the corner case is when CPU runs AArch32 mode and
+>>>>> PCSRoffset = 'b0010. Other cases the pcsr should be present.
+>>>>
+>>>> I understand that reasoning. But my question is, why do we check for PCSROffset
+>>>> only when mode == EDDEVID_IMPL_EDPCSR_EDCIDSR and not for say mode == EDDEVID_IMPL_EDPCSR or
+>>>> any other mode where PCSR is present.
+>>>
+>>> Sorry I misunderstood your question.
+>>>
+>>> I made mistake when I analyzed the possbile combination for mode and
+>>> PCSROffset so I thought it's the only case should handle:
+>>> { EDDEVID_IMPL_EDPCSR_EDCIDSR, EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 }
+>>>
+>>> Below three combinations are possible to exist; so you are right, I
+>>> should move this out for the checking:
+>>> { EDDEVID_IMPL_NONE,           EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 }
+>>
+>> That need not be covered, as IMPL_NONE says PCSR is not implemented hence you
+>> don't worry about anything as the functionality is missing. This should rather be:
+>> EDDEVID_IMPL_EDPCSR, where only PCSR is implemented.
+>
+> I think below combination doesn't really exist:
+> { EDDEVID_IMPL_EDPCSR, EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 };
+>
+> EDDEVID_IMPL_EDPCSR is only defined in ARMv7 ARM, and
+> EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 is only defined in ARMv8 ARM.
 
-The reg addr value and unit address don't match.
+It is not wrong to check the PCSROffset in all cases where PCSR is available, as if
+we hit PCSR on ARMv7 then PCSROffset shouldn't be DIS_AARCH32. And in fact that
+would make the code a bit more cleaner. Anyways, I am not particular about this.
 
-> +		};
-> +
-> +		vco2@58024438 {
-> +			#clock-cells = <0>;
-> +			compatible = "stm32,pll";
-> +			reg = <1>;
-> +			st,clock-div = <2>;
-> +			st,clock-mult = <40>;
-> +			st,frac-status = <0>;
-> +			st,frac = <0>;
-> +			st,vcosel = <1>;
-> +			st,pllrge = <2>;
-> +		};
-> +	};
-> +
-> +
-> +STM32H7 PLL
-> +-----------
-> +
-> +The VCO of STM32 PLL could be reprensented like this:
-> +
-> +  Vref    ---------       --------
-> +    ---->| / DIVM  |---->| x DIVN | ------> VCO
-> +          ---------       --------
-> +		             ^
-> +			     |
-> +	                  -------
-> +		         | FRACN |
-> +		          -------
-> +
-> +When the PLL is configured in integer mode:
-> +- VCO = ( Vref / DIVM ) * DIVN
-> +
-> +When the PLL is configured in fractional mode:
-> +- VCO = ( Vref / DIVM ) * ( DIVN + FRACN / 2^13)
-> +
-> +
-> +Required properties for pll node:
-> +- compatible: Should be:
-> +  "stm32,pll"
-
-Only 1 single PLL design for all STM32 chips ever?
-
-> +
-> +- #clock-cells: from common clock binding; shall be set to 0
-> +- reg: Should be the pll number.
-> +
-> +Optional properties:
-> +- st,clock-div:  DIVM division factor       : <1..63>
-> +- st,clock-mult: DIVN multiplication factor : <4..512>
-> +
-> +- st,frac-status:
-> +   - 0 Pll is configured in integer mode
-> +   - 1 Pll is configure in fractional mode
-
-Isn't this implied by the presence of the next property?
-
-> +
-> +- st,frac: Fractional part of the multiplication factor : <0..8191>
-> +
-> +- st,vcosel: VCO selection
-> +  - 0: Wide VCO range:192 to 836 MHz
-> +  - 1: Medium VCO range:150 to 420 MHz
-> +
-> +- st,pllrge: PLL input frequency range
-> +  - 0: The PLL input (Vref / DIVM) clock range frequency is between 1 and 2 MHz
-> +  - 1: The PLL input (Vref / DIVM) clock range frequency is between 2 and 4 MHz
-> +  - 2: The PLL input (Vref / DIVM) clock range frequency is between 4 and 8 MHz
-> +  - 3: The PLL input (Vref / DIVM) clock range frequency is between 8 and 16 MHz
-
-Seems like you could figure this out based on the input freq and other 
-properties.
-
-> +
-> +
-> +The peripheral clock consumer should specify the desired clock by
-> +having the clock ID in its "clocks" phandle cell.
-> +
-> +All available clocks are defined as preprocessor macros in
-> +dt-bindings/clock/stm32h7-clks.h header and can be used in device
-> +tree sources.
-> +
-> +Example:
-> +
-> +		timer5: timer@40000c00 {
-> +			compatible = "st,stm32-timer";
-> +			reg = <0x40000c00 0x400>;
-> +			interrupts = <50>;
-> +			clocks = <&rcc TIM5_CK>;
-> +
-> +		};
-> +
-> +Specifying softreset control of devices
-> +=======================================
-> +
-> +Device nodes should specify the reset channel required in their "resets"
-> +property, containing a phandle to the reset device node and an index specifying
-> +which channel to use.
-> +The index is the bit number within the RCC registers bank, starting from RCC
-> +base address.
-> +It is calculated as: index = register_offset / 4 * 32 + bit_offset.
-> +Where bit_offset is the bit offset within the register.
-> +
-> +For example, for CRC reset:
-> +  crc = AHB4RSTR_offset / 4 * 32 + CRCRST_bit_offset = 0x88 / 4 * 32 + 19 = 1107
-> +
-> +All available preprocessor macros for reset are defined dt-bindings//mfd/stm32h7-rcc.h
-> +header and can be used in device tree sources.
-> +
-> +example:
-> +
-> +	timer2 {
-> +		resets	= <&rcc STM32H7_APB1L_RESET(TIM2)>;
-> +	};
+Suzuki
