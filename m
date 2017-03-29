@@ -1,55 +1,62 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	carlo@caione.org,
-	khilman@baylibre.com
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 4/5] clk: meson-gxbb: Expose GP0 dt-bindings clock id
-Date: Mon, 13 Mar 2017 14:26:43 +0100
-Message-Id: <1489411604-18700-5-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
-References: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Wed, 29 Mar 2017 15:49:16 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding
+	<thierry.reding@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: Don't reset PLL-CX if it is already enabled
+Message-ID: <20170329124916.GW22128@tbergstrom-lnx.Nvidia.com>
+References: <1490612465-12454-1-git-send-email-jonathanh@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1490612465-12454-1-git-send-email-jonathanh@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch exposes the GP0 PLL clock id in the dt bindings.
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/gxbb.h              | 2 +-
- include/dt-bindings/clock/gxbb-clkc.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 7f99bf6..89f1a2c 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -179,7 +179,7 @@
- /* CLKID_FCLK_DIV4 */
- #define CLKID_FCLK_DIV5		  7
- #define CLKID_FCLK_DIV7		  8
--#define CLKID_GP0_PLL		  9
-+/* CLKID_GP0_PLL */
- #define CLKID_MPEG_SEL		  10
- #define CLKID_MPEG_DIV		  11
- /* CLKID_CLK81 */
-diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-index 692846c..febef8b 100644
---- a/include/dt-bindings/clock/gxbb-clkc.h
-+++ b/include/dt-bindings/clock/gxbb-clkc.h
-@@ -10,6 +10,7 @@
- #define CLKID_FCLK_DIV2		4
- #define CLKID_FCLK_DIV3		5
- #define CLKID_FCLK_DIV4		6
-+#define CLKID_GP0_PLL		9
- #define CLKID_CLK81		12
- #define CLKID_MPLL2		15
- #define CLKID_SPI		34
--- 
-1.9.1
+On Mon, Mar 27, 2017 at 12:01:05PM +0100, Jon Hunter wrote:
+> Commit 8dce89a1c2cf ("clk: tegra: Don't warn for PLL defaults unnecessarily")
+> changed the tegra210_pllcx_set_defaults() function causing the PLL to
+> always be reset regardless of whether it is in-use. This function was
+> changed so that resetting of the PLL will only be skipped if the PLL
+> is enabled AND 'pllcx->params->defaults_set' is not true. However, the
+> 'pllcx->params->defaults_set' is always true and hence, the PLL is now
+> always reset. This causes the boot to fail on the Tegra210 Smaug where
+> the PLL is already enabled and in-use. Fix this by only resetting the
+> PLL if not in-use and only printing the warning that the defaults are
+> not set after we have checked the default settings.
+> 
+> Fixes: 8dce89a1c2cf ("clk: tegra: Don't warn for PLL defaults unnecessarily")
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index 9897dc55676b..b56a104328fa 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -555,12 +555,12 @@ static void tegra210_pllcx_set_defaults(const char *name,
+>  {
+>  	pllcx->params->defaults_set = true;
+>  
+> -	if (readl_relaxed(clk_base + pllcx->params->base_reg) &
+> -			PLL_ENABLE && !pllcx->params->defaults_set) {
+> +	if (readl_relaxed(clk_base + pllcx->params->base_reg) & PLL_ENABLE) {
+>  		/* PLL is ON: only check if defaults already set */
+>  		pllcx_check_defaults(pllcx->params);
+> -		pr_warn("%s already enabled. Postponing set full defaults\n",
+> -			name);
+> +		if (!pllcx->params->defaults_set)
+> +			pr_warn("%s already enabled. Postponing set full defaults\n",
+> +				name);
+>  		return;
+>  	}
+>  
+> -- 
+> 2.7.4
+> 
