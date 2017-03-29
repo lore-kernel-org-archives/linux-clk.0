@@ -1,90 +1,45 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 6/7] clk: renesas: rcar-gen3-cpg: Pass mode pins to rcar_gen3_cpg_init()
-Date: Mon, 13 Mar 2017 17:19:53 +0100
-Message-Id: <1489421994-19707-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
-References: <1489421994-19707-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 07/11] drm/sun4i: Add compatible string for V3s display engine
+Date: Thu, 30 Mar 2017 03:46:09 +0800
+Message-Id: <20170329194613.55548-8-icenowy@aosc.io>
+In-Reply-To: <20170329194613.55548-1-icenowy@aosc.io>
+References: <20170329194613.55548-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Pass the mode pin states from the SoC-specific CPG/MSSR driver to the
-R-Car Gen3 CPG driver core, as their state will be needed to make some
-core clock configuration decisions.
+Allwinner V3s features the new "Display Engine 2.0", which can now also
+be driven with our subdrivers in sun4i-drm.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add the compatible string for in sun4i_drv.c, in order to make the
+display engine and its components probed.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 2 +-
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 +-
- drivers/clk/renesas/rcar-gen3-cpg.c    | 4 +++-
- drivers/clk/renesas/rcar-gen3-cpg.h    | 2 +-
- 4 files changed, 6 insertions(+), 4 deletions(-)
+Patch splited in v3.
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 608178618da87bef..4699f416e275d924 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -330,7 +330,7 @@ static int __init r8a7795_cpg_mssr_init(struct device *dev)
- 		return -EINVAL;
- 	}
- 
--	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR);
-+	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
- }
- 
- const struct cpg_mssr_info r8a7795_cpg_mssr_info __initconst = {
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index f7787101b8d0406c..9d114b31b0731b5e 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -273,7 +273,7 @@ static int __init r8a7796_cpg_mssr_init(struct device *dev)
- 		return -EINVAL;
- 	}
- 
--	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR);
-+	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
- }
- 
- const struct cpg_mssr_info r8a7796_cpg_mssr_info __initconst = {
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 742f6dc7c15653ef..d395bb8c22f575cf 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -247,6 +247,7 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 
- static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
- static unsigned int cpg_clk_extalr __initdata;
-+static u32 cpg_mode __initdata;
- 
- struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
-@@ -334,9 +335,10 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- }
- 
- int __init rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
--			      unsigned int clk_extalr)
-+			      unsigned int clk_extalr, u32 mode)
- {
- 	cpg_pll_config = config;
- 	cpg_clk_extalr = clk_extalr;
-+	cpg_mode = mode;
- 	return 0;
- }
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index f788f481dd42cdf6..073be54b5d038ae3 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -37,6 +37,6 @@ struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
- 	struct clk **clks, void __iomem *base);
- int rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
--		       unsigned int clk_extalr);
-+		       unsigned int clk_extalr, u32 mode);
- 
- #endif
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 8ddd72cd5873..68c0b754cdb5 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -294,6 +294,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
+ 	{ .compatible = "allwinner,sun6i-a31-display-engine" },
+ 	{ .compatible = "allwinner,sun6i-a31s-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-a33-display-engine" },
++	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sun4i_drv_of_table);
 -- 
-2.7.4
+2.12.0
