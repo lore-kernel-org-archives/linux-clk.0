@@ -1,44 +1,53 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 0/2] move the ICST library to common clocks
-Date: Sat, 18 Mar 2017 09:59:42 +0100
-Message-Id: <20170318085944.15899-1-linus.walleij@linaro.org>
+Return-Path: <Vladislav.Zakharov@synopsys.com>
+From: Vlad Zakharov <Vladislav.Zakharov@synopsys.com>
+To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "Vladislav.Zakharov@synopsys.com"
+	<Vladislav.Zakharov@synopsys.com>
+CC: "robh@kernel.org" <robh@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Jose.Abreu@synopsys.com"
+	<Jose.Abreu@synopsys.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH v2] clk/axs10x: introduce AXS10X pll driver
+Date: Wed, 29 Mar 2017 11:20:46 +0000
+Message-ID: <1490786446.32756.4.camel@synopsys.com>
+References: <1487682670-4164-1-git-send-email-vzakhar@synopsys.com>
+	 <1488547113.2557.44.camel@synopsys.com>
+	 <20170303235005.GV25384@codeaurora.org>
+In-Reply-To: <20170303235005.GV25384@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This consolidates the last piece of the Versatile clocks, the ICST
-clock divider, into drivers/clk/*
-
-If the series is OK I suggest we take this through ARM SoC since
-the first patch needs to be applied there, alternatively they
-can both go into the clk tree.
-
-Linus Walleij (2):
-  ARM: plat-versatile: remove stale clock header
-  ARM/clk: move the ICST library to drivers/clk
-
- arch/arm/common/Kconfig                                   |  3 ---
- arch/arm/common/Makefile                                  |  1 -
- arch/arm/plat-versatile/include/plat/clock.h              | 15 ---------------
- drivers/clk/versatile/Kconfig                             |  3 +++
- drivers/clk/versatile/Makefile                            |  2 +-
- drivers/clk/versatile/clk-icst.c                          |  1 +
- drivers/clk/versatile/clk-icst.h                          |  2 --
- drivers/clk/versatile/clk-impd1.c                         |  1 +
- drivers/clk/versatile/clk-realview.c                      |  1 +
- drivers/clk/versatile/clk-versatile.c                     |  1 +
- {arch/arm/common => drivers/clk/versatile}/icst.c         |  2 +-
- .../include/asm/hardware => drivers/clk/versatile}/icst.h |  6 ++----
- 12 files changed, 11 insertions(+), 27 deletions(-)
- delete mode 100644 arch/arm/plat-versatile/include/plat/clock.h
- rename {arch/arm/common => drivers/clk/versatile}/icst.c (98%)
- rename {arch/arm/include/asm/hardware => drivers/clk/versatile}/icst.h (94%)
-
--- 
-2.9.3
+SGkgU3RlcGhlbiwgTWljaGFlbCwNCg0KT24gRnJpLCAyMDE3LTAzLTAzIGF0IDE1OjUwIC0wODAw
+LCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+IE9uIDAzLzAzLCBWbGFkIFpha2hhcm92IHdyb3RlOg0K
+PiA+IA0KPiA+IEhpIE1pY2hhZWwsIFN0ZXBoZW4sDQo+ID4gDQo+ID4gT24gVHVlLCAyMDE3LTAy
+LTIxIGF0IDE2OjExICswMzAwLCBWbGFkIFpha2hhcm92IHdyb3RlOg0KPiA+ID4gDQo+ID4gPiBB
+WFMxMFggYm9hcmRzIG1hbmFnZXMgaXQncyBjbG9ja3MgdXNpbmcgdmFyaW91cyBQTExzLiBUaGVz
+ZSBQTEwgaGFzIHNhbWUNCj4gPiA+IGRpdmlkZXJzIGFuZCBjb3JyZXNwb25kaW5nIGNvbnRyb2wg
+cmVnaXN0ZXJzIG1hcHBlZCB0byBkaWZmZXJlbnQgYWRkcmVzc2VzLg0KPiA+ID4gU28gd2UgYWRk
+IG9uZSBjb21tb24gZHJpdmVyIGZvciBzdWNoIFBMTHMuDQo+ID4gPiANCj4gPiA+IEVhY2ggUExM
+IG9uIEFYUzEwWCBib2FyZCBjb25zaXN0IG9mIHRocmVlIGRpdmlkZXJzOiBJRElWLCBGQkRJViBh
+bmQNCj4gPiA+IE9ESVYuIE91dHB1dCBjbG9jayB2YWx1ZSBpcyBtYW5hZ2VkIHVzaW5nIHRoZXNl
+IGRpdmlkZXJzLg0KPiA+ID4gDQo+ID4gPiBXZSBhZGQgcHJlLWRlZmluZWQgdGFibGVzIHdpdGgg
+c3VwcG9ydGVkIHJhdGUgdmFsdWVzIGFuZCBhcHByb3ByaWF0ZQ0KPiA+ID4gY29uZmlndXJhdGlv
+bnMgb2YgSURJViwgRkJESVYgYW5kIE9ESVYgZm9yIGVhY2ggdmFsdWUuDQo+ID4gPiANCj4gPiA+
+IEFzIG9mIHRvZGF5IHdlIGFkZCBzdXBwb3J0IGZvciBQTExzIHRoYXQgZ2VuZXJhdGUgY2xvY2sg
+Zm9yIHRoZQ0KPiA+ID4gZm9sbG93aW5nIGRldmljZXM6DQo+ID4gPiDCoCogQVJDIGNvcmUgb24g
+QVhDIENQVSB0aWxlcy4NCj4gPiA+IMKgKiBBUkMgUEdVIG9uIEFSQyBTRFAgTWFpbmJvYXJkLg0K
+PiA+ID4gYW5kIG1vcmUgdG8gY29tZSBsYXRlci4NCj4gPiA+IA0KPiA+ID4gQWNrZWQtYnk6IFJv
+YiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBWbGFkIFph
+a2hhcm92IDx2emFraGFyQHN5bm9wc3lzLmNvbT4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6IEpvc2Ug
+QWJyZXUgPGpvYWJyZXVAc3lub3BzeXMuY29tPg0KPiA+ID4gQ2M6IE1pY2hhZWwgVHVycXVldHRl
+IDxtdHVycXVldHRlQGJheWxpYnJlLmNvbT4NCj4gPiA+IENjOiBTdGVwaGVuIEJveWQgPHNib3lk
+QGNvZGVhdXJvcmEub3JnPg0KPiA+ID4gQ2M6IE1hcmsgUnV0bGFuZCA8bWFyay5ydXRsYW5kQGFy
+bS5jb20+DQo+ID4gDQo+ID4gTWF5YmUgeW91IGhhdmUgYW55IGNvbW1lbnRzIG9yIHJlbWFya3Mg
+YWJvdXQgdGhpcyBwYXRjaD8gQW5kIGlmIHlvdSBkb24ndCBjb3VsZCB5b3UgcGxlYXNlIGFwcGx5
+IGl0Lg0KPiA+IA0KPiANCj4gSSBoYXZlbid0IHJldmlld2VkIGl0IHlldC4gVGhlIG1lcmdlIHdp
+bmRvdyBpcyB1cG9uIHVzIHJpZ2h0IG5vdw0KPiBzbyBJJ2xsIHByb2JhYmx5IGdldCB0byBnb2lu
+ZyB0aHJvdWdoIHRoZSBxdWV1ZSB0aGlzIHdlZWtlbmQvbmV4dA0KPiB3ZWVrLg0KPiANCg0KUGxl
+YXNlIHRyZWF0IHRoaXMgbWVzc2FnZSBhcyBhIHBvbGl0ZSByZW1pbmRlciB0byByZXZpZXcgbXkg
+cGF0Y2guDQpJdCBpcyByZXF1aXJlZCBmb3Igc29tZSBzdWJzeXN0ZW1zIG9uIG91ciBib2FyZHMs
+IGUuZy4gZm9yIEFSQyBQR1UuDQoNClRoYW5rcy4NCg0KLS0gDQpCZXN0IHJlZ2FyZHMsDQpWbGFk
+IFpha2hhcm92IDx2emFraGFyQHN5bm9wc3lzLmNvbT4=
