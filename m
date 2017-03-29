@@ -1,82 +1,88 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-mmc@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <icenowy@aosc.io>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: [PATCH v7 02/13] clk: apn806: Turn the eMMC clock as optional for dts backwards compatible
-Date: Thu, 30 Mar 2017 17:22:54 +0200
-Message-Id: <b94b2164859fa487a38bcb00e95dd26cc20aef77.1490886907.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Icenowy Zheng <icenowy@aosc.xyz>
+Subject: [PATCH v3 3/5] arm64: allwinner: a64: add r_ccu node
+Date: Wed, 29 Mar 2017 18:42:44 +0800
+Message-Id: <20170329104246.34204-4-icenowy@aosc.io>
+In-Reply-To: <20170329104246.34204-1-icenowy@aosc.io>
+References: <20170329104246.34204-1-icenowy@aosc.io>
 List-ID: <linux-clk.vger.kernel.org>
 
-First version of the binding didn't have the eMMC clock. This patch
-allows to not registering the eMMC clock if it is not present in the
-device tree. Then the device tree can be backwards compatible.
+From: Icenowy Zheng <icenowy@aosc.xyz>
 
-Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+A64 SoC have a CCU (r_ccu) in PRCM block.
+
+Add the device node for it.
+
+The mux 3 of R_CCU is an internal oscillator, which is 16MHz according
+to the user manual, and has only 30% accuracy based on our experience
+on older SoCs. The real mesaured value of it on two Pine64 boards is
+around 11MHz, which is around 70% of 16MHz.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- drivers/clk/mvebu/ap806-system-controller.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+Changes in v3:
+- Change osc32000 to iosc, which is 16MHz plus minus 30%, according to the
+  RTC chapter of the user manual and our experiences on A33.
+Changes in v2:
+- Add osc32000.
 
-diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
-index 901d89c4ab4a..103fe18a3c29 100644
---- a/drivers/clk/mvebu/ap806-system-controller.c
-+++ b/drivers/clk/mvebu/ap806-system-controller.c
-@@ -136,13 +136,19 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 	}
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 1c64ea2d23f9..0fe9865d4bd6 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -43,8 +43,10 @@
+  */
  
- 	/* eMMC Clock is fixed clock divided by 3 */
--	of_property_read_string_index(np, "clock-output-names",
--				      4, &name);
--	ap806_clks[4] = clk_register_fixed_factor(NULL, name, fixedclk_name,
--						  0, 1, 3);
--	if (IS_ERR(ap806_clks[4])) {
--		ret = PTR_ERR(ap806_clks[4]);
--		goto fail4;
-+	if (of_property_read_string_index(np, "clock-output-names",
-+					  4, &name)) {
-+		ap806_clk_data.clk_num--;
-+		dev_warn(&pdev->dev,
-+			 "eMMC clock mising: update the device tree!\n");
-+	} else {
-+		ap806_clks[4] = clk_register_fixed_factor(NULL, name,
-+							  fixedclk_name,
-+							  0, 1, 3);
-+		if (IS_ERR(ap806_clks[4])) {
-+			ret = PTR_ERR(ap806_clks[4]);
-+			goto fail4;
-+		}
- 	}
+ #include <dt-bindings/clock/sun50i-a64-ccu.h>
++#include <dt-bindings/clock/sun8i-r-ccu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/reset/sun50i-a64-ccu.h>
++#include <dt-bindings/reset/sun8i-r-ccu.h>
  
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_clk_data);
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -98,6 +100,14 @@
+ 		clock-output-names = "osc32k";
+ 	};
+ 
++	iosc: internal-osc-clk {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <16000000>;
++		clock-accuracy = <300000000>;
++		clock-output-names = "iosc";
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-0.2";
+ 		method = "smc";
+@@ -392,5 +402,14 @@
+ 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
++
++		r_ccu: clock@1f01400 {
++			compatible = "allwinner,sun50i-a64-r-ccu";
++			reg = <0x01f01400 0x100>;
++			clocks = <&osc24M>, <&osc32k>, <&iosc>;
++			clock-names = "hosc", "losc", "iosc";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
+ 	};
+ };
 -- 
-git-series 0.9.1
+2.12.0
