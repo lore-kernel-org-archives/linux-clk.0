@@ -1,50 +1,162 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <tony@atomide.com>, <sboyd@codeaurora.org>, <mturquette@baylibre.com>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
-Date: Fri, 17 Mar 2017 11:09:32 +0200
-Message-ID: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH v3 09/11] ARM: dts: sun8i: add DE2 nodes for V3s SoC
+Date: Thu, 30 Mar 2017 03:46:11 +0800
+Message-Id: <20170329194613.55548-10-icenowy@aosc.io>
+In-Reply-To: <20170329194613.55548-1-icenowy@aosc.io>
+References: <20170329194613.55548-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+From: Icenowy Zheng <icenowy@aosc.xyz>
 
->From functional code point of view, this is mostly just a rebase of v1 of the
-series on top of 4.11-rc1:
+Allwinner V3s SoC features a "Display Engine 2.0" with only one TCON
+which have RGB LCD output.
 
-https://www.spinics.net/lists/arm-kernel/msg562460.html
+Add device nodes for it as well as the TCON.
 
-This series depends on the TI clock cleanup series I posted last week:
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+Changes in v3:
+- Change the size of de2_clocks regs according to the binding example.
 
-https://www.spinics.net/lists/arm-kernel/msg567920.html
+ arch/arm/boot/dts/sun8i-v3s.dtsi | 87 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
 
-Patch #5 has been changed to accommodate for the existence of multiple
-hwmods under single DT node, for example the "ocp" node for omap4
-contains 3 hwmods for the different buses; support for this is enabled
-by accepting index for the clkctrl clocks also.
+diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
+index 71075969e5e6..ae23746731a8 100644
+--- a/arch/arm/boot/dts/sun8i-v3s.dtsi
++++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
+@@ -41,6 +41,10 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/sun8i-v3s-ccu.h>
++#include <dt-bindings/clock/sun8i-de2.h>
++#include <dt-bindings/reset/sun8i-v3s-ccu.h>
++#include <dt-bindings/reset/sun8i-de2.h>
+ 
+ / {
+ 	#address-cells = <1>;
+@@ -59,6 +63,12 @@
+ 		};
+ 	};
+ 
++	de: display-engine {
++		compatible = "allwinner,sun8i-v3s-display-engine";
++		allwinner,pipelines = <&de2_mixer0>;
++		status = "disabled";
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+@@ -93,6 +103,83 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
++		de2_clocks: clock@01000000 {
++			compatible = "allwinner,sun50i-h5-de2-clk";
++			reg = <0x01000000 0x100000>;
++			clocks = <&ccu CLK_DE>,
++				 <&ccu CLK_BUS_DE>;
++			clock-names = "mod",
++				      "bus";
++			resets = <&ccu RST_BUS_DE>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
++		de2_mixer0: mixer@01100000 {
++			compatible = "allwinner,sun8i-v3s-de2-mixer";
++			reg = <0x01100000 0x100000>;
++			clocks = <&de2_clocks CLK_MIXER0>,
++				 <&de2_clocks CLK_BUS_MIXER0>;
++			clock-names = "mod",
++				      "bus";
++			resets = <&de2_clocks RST_MIXER0>;
++			assigned-clocks = <&de2_clocks CLK_MIXER0>;
++			assigned-clock-rates = <150000000>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				mixer0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					mixer0_out_tcon0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon0_in_mixer0>;
++					};
++				};
++			};
++		};
++
++		tcon0: lcd-controller@01c0c000 {
++			compatible = "allwinner,sun8i-v3s-tcon";
++			reg = <0x01c0c000 0x1000>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON0>,
++				 <&ccu CLK_TCON0>;
++			clock-names = "ahb",
++				      "tcon-ch0";
++			clock-output-names = "tcon-pixel-clock";
++			resets = <&ccu RST_BUS_TCON0>;
++			reset-names = "lcd";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon0_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					tcon0_in_mixer0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&mixer0_out_tcon0>;
++					};
++				};
++
++				tcon0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
++
+ 		mmc0: mmc@01c0f000 {
+ 			compatible = "allwinner,sun7i-a20-mmc";
+ 			reg = <0x01c0f000 0x1000>;
+-- 
+2.12.0
 
-Patch #6 is a new one to properly assign the clock for timers. This is
-needed as currently timer code only fetches the main clock info from
-hwmod itself.
 
-Patches #7, #8 and #9 add the DT data for omap4.
-
-Boot tested on am335x-evm, am335x-evmsk, am47x-evm, am437x-sk, am437x-gp-evm,
-  am57xx-evm, omap3-beagle-xm, omap3-beagle, am335x-boneblack, craneboard,
-  dra72x-evm, dra7xx-evm, n900, omap5-uevm, omap4-panda-es, omap4-panda,
-  omap2430-sdp, omap3430-sdp, omap4430-sdp.
-
-Suspend-resume tested on omap4-panda-es.
-
-Any additional testing on omap4 welcome as this series basically
-tweaks every possible peripheral clock on the SoC.
-
-Branch available on top of 4.11-rc1 (+ the cleanup series) here:
-
-tree: https://github.com/t-kristo/linux-pm.git
-branch: for-4.12-ti-clkctrl
-
--Tero
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
