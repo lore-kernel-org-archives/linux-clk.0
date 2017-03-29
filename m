@@ -1,80 +1,82 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 30 Mar 2017 14:44:17 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: heiko@sntech.de, xf@rock-chips.com, huangtao@rock-chips.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, xxx@rock-chips.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/4] clk: rockchip: rk3228: make noc and some special
- clk as critical_clocks
-Message-ID: <20170330124417.73ucpdkoonuiyhxz@lukather>
-References: <1490695614-3220-1-git-send-email-zhangqing@rock-chips.com>
- <1490695614-3220-3-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH v3 08/11] drm/sun4i: tcon: add support for V3s TCON
+Date: Thu, 30 Mar 2017 03:46:10 +0800
+Message-Id: <20170329194613.55548-9-icenowy@aosc.io>
+In-Reply-To: <20170329194613.55548-1-icenowy@aosc.io>
+References: <20170329194613.55548-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qr26icxxwhan4wmg"
-In-Reply-To: <1490695614-3220-3-git-send-email-zhangqing@rock-chips.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Icenowy Zheng <icenowy@aosc.xyz>
 
---qr26icxxwhan4wmg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Allwinner V3s SoC features a TCON without channel 1.
 
-On Tue, Mar 28, 2017 at 06:06:52PM +0800, Elaine Zhang wrote:
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->  drivers/clk/rockchip/clk-rk3228.c | 30 +++++++++++++++++++++++++++++-
->  1 file changed, 29 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk=
--rk3228.c
-> index db6e5a9e6de6..4d3203f887e2 100644
-> --- a/drivers/clk/rockchip/clk-rk3228.c
-> +++ b/drivers/clk/rockchip/clk-rk3228.c
-> @@ -445,7 +445,7 @@ enum rk3228_plls {
->  			RK2928_CLKGATE_CON(2), 12, GFLAGS,
->  			&rk3228_spdif_fracmux),
-> =20
-> -	GATE(0, "jtag", "ext_jtag", 0,
-> +	GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
+Add support for it.
 
-CLK_IGNORE_UNUSED only prevents a given clock from being gated at
-late_initcall time, but will not prevent it from being gated later in
-the life of the system, for example if a reparenting occurs, or if all
-the clocks sharing the same clock tree become disabled.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ drivers/gpu/drm/sun4i/sun4i_drv.c  | 3 ++-
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 +++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-If your clock really should never ever be gated in order for Linux to
-operate properly, you should use CLK_IS_CRITICAL.
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 68c0b754cdb5..736b28e47281 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -176,7 +176,8 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
+ 	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
+ 		of_device_is_compatible(node, "allwinner,sun6i-a31-tcon") ||
+ 		of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
+-		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon");
++		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
++		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
+ }
+ 
+ static int compare_of(struct device *dev, void *data)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 2f330e4e2ead..1a710d7d6a74 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -613,11 +613,16 @@ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
+ 	/* nothing is supported */
+ };
+ 
++static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
++	/* nothing is supported */
++};
++
+ static const struct of_device_id sun4i_tcon_of_table[] = {
+ 	{ .compatible = "allwinner,sun5i-a13-tcon", .data = &sun5i_a13_quirks },
+ 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
+ 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
+ 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
++	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sun4i_tcon_of_table);
+-- 
+2.12.0
 
-Maxime
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---qr26icxxwhan4wmg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJY3P2dAAoJEBx+YmzsjxAgB54QALt6JZwo49kNlmAA+F1+ttCA
-tAidISBolM6ZhBrIwUXH3+jTzHfdC9hbdV5s2U307zWXwf7C5GNxR7wx8p7SspmC
-RGIe8pb+RKruqr7Uivgj1jdut20RH70NVDjR958xLAbIV3ciOUhVhaXzZXQvjtiy
-GHMjnS5mVJY5c62n4wV3nshO8jSdhS/97mxIHlauZa9aSSJenrCeySy2aJh/aZ0C
-QT1iMm4ewvMkSbPUW+tIPQL4HTWDHVY6gvnZ87FbYDZng4455Gplbr9PormAF9Gc
-GPzI7jaDNdLLaNliMc9kiJHvIbLhmjZ1vHnFh0/S31faw4XQ7J4+uFYMaEozcfhC
-XoqdzK8eDbK0GTHepv2BfxdmMwszT2CcXBfu2W7Ip4BPRJhIGWsUzaz6wwEXR8Ub
-c7YLqs0uBG8i8/oXW4JgWHxMEJfFIsUEYQKt8S9CcaWhezG1+OwCR1InpneoN7f/
-h5lKKZM/g8b81fw40ycfvHdOFDPErwosfDLpvC8zkDfFL+zjohg9lyyX+dc6AcMb
-0vBSvMK9Ayby8c0WadSnSLYLXlpyRkVrgK7le56JYsb7UCTKZsRbk4OgkEjh05XQ
-t6uDfLWBnV5OvyJDqfNhcBEJ3BmQDnDX7vBh651dxTpKT7J2e66taOUpWQVqDOFR
-frduTCTOL2gG4iKK1ITL
-=UFrl
------END PGP SIGNATURE-----
-
---qr26icxxwhan4wmg--
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
