@@ -1,115 +1,97 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Thu, 2 Mar 2017 14:58:12 +0100
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: Re: [PATCH] arm: dts: sun8i: split Allwinner H3 .dtsi
-Message-ID: <20170302135812.kvvqw6trjipjhhu5@lukather>
-References: <20170301201342.47583-1-icenowy@aosc.xyz>
- <20170301201342.47583-3-icenowy@aosc.xyz>
-MIME-Version: 1.0
-In-Reply-To: <20170301201342.47583-3-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
- linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============7406649139464821910=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1490768490.2439.1.camel@baylibre.com>
+Subject: Re: [PATCH v2,1/3] meson_uart: expose CLKID_UARTx
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Helmut Klein <hgkr.klein@gmail.com>, mturquette@baylibre.com,
+ sboyd@codeaurora.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-amlogic@lists.infradead.org
+Date: Wed, 29 Mar 2017 08:21:30 +0200
+In-Reply-To: <CAFBinCDF29+kQpedsJPqRy6fztWrj91Qi6tCno_2S6UCkhW7XQ@mail.gmail.com>
+References: <20170328092545.4644-1-hgkr.klein@gmail.com>
+	 <20170328092545.4644-2-hgkr.klein@gmail.com>
+	 <1490716277.20764.6.camel@baylibre.com>
+	 <71489b62-78c8-7082-587e-8598dc43ca59@gmail.com>
+	 <1490728490.20764.8.camel@baylibre.com>
+	 <CAFBinCDF29+kQpedsJPqRy6fztWrj91Qi6tCno_2S6UCkhW7XQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, 2017-03-28 at 23:24 +0200, Martin Blumenstingl wrote:
+> Hi Jerome,
+> 
+> On Tue, Mar 28, 2017 at 9:14 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > On Tue, 2017-03-28 at 20:18 +0200, Helmut Klein wrote:
+> > > i know for sure that the bluetooth chip of my system is connected to
+> > > uart_A. so this clock must be exposed.
+> > > 
+> > > i don't know if the other 2 uarts are used on other hardware. so i will
+> > > remove them from my patch.
+> > 
+> > What I meant is device trees "upstream".
+> > I would expect such patch as part of a series to add support for your board
+> > in
+> > device-tree, with its bluetooth chipset.
+> 
+> are you sure about this? 
 
---===============7406649139464821910==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2u5euainn4mpvuic"
-Content-Disposition: inline
+Actually no ;) I started questioning this reply as soon as I sent it.
+the moto so far as been "we expose what's needed" but there is many ways to
+interpret that.
 
+DT bindings is an ABI. Simply because we don't use part of that ABI upstream,
+doesn't mean we shouldn't provide it. My previous statement was clearly wrong
+about this, apologies.
 
---2u5euainn4mpvuic
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Helmut is configuring the core clock of the
+> UART controller(s) here. we have the same thing for many other drivers
+> as well (MMC, SAR ADC, I2C, SPI, ethernet, you name it...) - these
+> clocks are not part of a device specific .dts but rather the SoC
+> specific dts (for example meson-gxbb.dtsi - because these clocks are
+> not board specific).
 
-On Thu, Mar 02, 2017 at 04:13:40AM +0800, Icenowy Zheng wrote:
-> From: Andre Przywara <andre.przywara@arm.com>
->=20
-> The new Allwinner H5 SoC is pin-compatible to the H3 SoC, but with the
-> Cortex-A7 cores replaced by Cortex-A53 cores and the MMC controller
-> updated. So we should really share almost the whole .dtsi.
-> In preparation for that move the peripheral parts of the existing
-> sun8i-h3.dtsi into a new sunxi-h3-h5.dtsi.
-> The actual sun8i-h3.dtsi then includes that and defines the H3 specific
-> parts on top of it.
-> According to "Allwinner H3 Datasheet Version 1.2 Apr. 23, 2015" [1]
-> Chapter 4.12. GIC and "Allwinner H5 Datasheet Revision 1.0 May. 20,
-> 2016" [2] Chapter 4.12. GIC, the two SoCs both use ARM GIC-400 interrupt
-> controller (see the "Note" after the interrupt source table), so the GIC
-> node is extracted to sunxi-h3-h5.dtsi as well, and the compatible is
-> changed to "arm,gic-400".
+Agreed
+Since Helmut tested it, this clock should be added to the dtsi.
 
-This should be in a separate patch.
+> I guess most boards are not affected because the bootloader simply
+> enables the UART0 core/gate clock and keeps it enabled when booting
+> the kernel. additionally our clock gates are marked with
+> CLK_IGNORE_UNUSED so if the bootloader keeps the gates enabled then
+> we're not disabling it either.
+> 
+> > I think it would better to drop this patch from the series.
+> > You can either keep it for your personal work, or send it again when
+> > upstreaming
+> > the support for your board and/or add the support for the bluetooth chip.
+> 
+> if we decide to pass the core/gate clock directly in SoC.dtsi then we
+> should think about doing it for all three non-AO UARTs (uart_a, uart_b
+> and uart_c).
+> we can test uart_b on GPIODV_24 and GPIODV_25 on the Khadas VIM board
+> for example (pins 22 and 23 on the header, default mode of these pins
+> is i2c_sck_a and i2c_sda_a, but we can re-configure it).
+> uart_c unfortunately cannot be tested on the Khadas VIM board since
+> it's only routed to GPIOX_8 and GPIOX_9 which are hard-wired to the
+> bluetooth module's PCM pins (BTPCM_DOUT and BTPCM_DIN).
+> 
+> for Helmut this would mean that instead of dropping this patch (or
+> dropping CLKID_UART1 and CLKID_UART2 from this patch) he would rather
+> have to *add* another patch (for meson-gxbb.dtsi and meson-gxl.dtsi)
+> which passes the core clocks to the corresponding UART controllers
+> (similar to the CLKID_SD_EMMC_ clocks).
 
-> On the way get rid of skeleton.dtsi, as recommended in that very file.
+You are right. This could be part of another series.
+I guess this patch fine as it is.
 
-That too.
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
 
-> The inclusion of pinctrl-a10.h is also dropped, as it's now not needed
-> at all after changing pinctrl binding to the generic pinconf binding.
-
-And that as well...
-
-> [1] http://linux-sunxi.org/File:Allwinner_H3_Datasheet_V1.2.pdf
-> [2] https://github.com/OrangePiLibra/OrangePi_H5SDK/blob/master/Documenta=
-tion/Hardware/H5_User_Manual.pdf
-
-Please don't put URLs in commit logs.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---2u5euainn4mpvuic
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYuCT0AAoJEBx+YmzsjxAgFEYP/3zNRk09Jwznw4lvRzakB2CH
-xx89I/uyUShT0fiQgVD7ODYQLwVPSJKUKKJE+NPs2qL9cTgX9vDqWAzhInxST372
-+Rv43BQOvyMMhVZbzjbZ9C+Q3x8lmuHwiGMDTJElV0znFPGa1hkW1Sr8curqO3cz
-PxisSqMA2mYoyo8J7iR+YnMjcIUVOzaMR8/I51zUCgs40S6cwtO5DjO2qbtWYmp+
-GnOfpJWo6anB0zqoZKo5HY2alIqWVE26Ny+7NyMKY7yn9LstDOGK+k2+dKLsda2F
-KELBadavyT5ujv2DbIkWctA5s5+AIaoyNI7eIaVR8WBRj264Mt5NAWdsYk8TIe3X
-qcq72y9uBZUeyBgp004qwwrkg0Y6hueyHLUStNNmHi4Q3/hVRlrejN4Q4y+2ZAcD
-Nn8XEj4k4KF1bQzW/rm3ZvYAe6KFVaLDHUC3YPWKRtyiMhh4DXYJAEAnfx9ZjciT
-6dYYZ9pB1ZG2VupPlRAq8PIuLme3qwhcIl7hILWd0J/JnocxMiSaIIc7kNCP8pzq
-pspfMW0WHonW9Zd2uWqGrIktwW0QyWHOaIZrfw97C2htlhqtwcUsbg0UCT2JLD/x
-OQXv7+bFY1Fe/cQUD5qlI3P9Z7YG8k2MURqemWZ+UHqzp4J2j1KN0sBaHXaFb7hl
-9AjRpAWKs0WkDdvm9QUj
-=4odw
------END PGP SIGNATURE-----
-
---2u5euainn4mpvuic--
-
-
---===============7406649139464821910==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============7406649139464821910==--
+> 
+> 
+> Regards,
+> Martin
+> 
+> 
+> [0] http://lxr.free-electrons.com/source/drivers/clk/meson/clkc.h?v=4.10#L110
