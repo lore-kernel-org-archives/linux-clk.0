@@ -1,96 +1,85 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <Suzuki.Poulose@arm.com>
+Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
+To: Leo Yan <leo.yan@linaro.org>
+References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+ <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
+ <31be033f-514e-e48a-3ba2-a5c5cd477548@arm.com>
+ <20170329030735.GA23889@leoy-linaro>
+ <5584203e-cb19-a5d2-45b1-3e78d3482c55@arm.com>
+ <20170329102740.GA20804@leoy-linaro>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will.deacon@arm.com>, Andy Gross <andy.gross@linaro.org>,
+ David Brown <david.brown@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Guodong Xu <guodong.xu@linaro.org>, John Stultz <john.stultz@linaro.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, mike.leach@linaro.org, sudeep.holla@arm.com
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <89b6c6c7-0da0-6891-312a-c9221851c20a@arm.com>
+Date: Wed, 29 Mar 2017 11:31:03 +0100
 MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
- "Kevin Hilman" <khilman@baylibre.com>, "Carlo Caione" <carlo@caione.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20170309104154.28295-5-jbrunet@baylibre.com>
-Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20170309104154.28295-1-jbrunet@baylibre.com>
- <20170309104154.28295-5-jbrunet@baylibre.com>
-Message-ID: <149013783116.54062.8867118335254325862@resonance>
-Subject: Re: [PATCH v2 4/9] clk: gxbb: put dividers and muxes in tables
-Date: Tue, 21 Mar 2017 16:10:31 -0700
+In-Reply-To: <20170329102740.GA20804@leoy-linaro>
+Content-Type: text/plain; charset=us-ascii; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jerome Brunet (2017-03-09 02:41:49)
-> Until now, there was only 2 dividers and 2 muxes declared for the gxbb
-> platform. With the ongoing work on various subsystem, including audio,
-> this is about to change. Use the same approach as gates for dividers and
-> muxes, putting them in tables to fix the register address at runtime.
-> =
+On 29/03/17 11:27, Leo Yan wrote:
+> On Wed, Mar 29, 2017 at 10:07:07AM +0100, Suzuki K Poulose wrote:
+>
+> [...]
+>
+>>>>> +	if (mode == EDDEVID_IMPL_NONE) {
+>>>>> +		drvdata->edpcsr_present  = false;
+>>>>> +		drvdata->edcidsr_present = false;
+>>>>> +		drvdata->edvidsr_present = false;
+>>>>> +	} else if (mode == EDDEVID_IMPL_EDPCSR) {
+>>>>> +		drvdata->edpcsr_present  = true;
+>>>>> +		drvdata->edcidsr_present = false;
+>>>>> +		drvdata->edvidsr_present = false;
+>>>>> +	} else if (mode == EDDEVID_IMPL_EDPCSR_EDCIDSR) {
+>>>>> +		if (!IS_ENABLED(CONFIG_64BIT) &&
+>>>>> +			(pcsr_offset == EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32))
+>>>>> +			drvdata->edpcsr_present = false;
+>>>>> +		else
+>>>>> +			drvdata->edpcsr_present = true;
+>>>>
+>>>> Sorry, I forgot why we do this check only in this mode. Shouldn't this be
+>>>> common to all modes (of course which implies PCSR is present) ?
+>>>
+>>> No. PCSROffset is defined differently in ARMv7 and ARMv8; So finally we
+>>> simplize PCSROffset value :
+>>> 0000 - Sample offset applies based on the instruction state (indicated by PCSR[0])
+>>> 0001 - No offset applies.
+>>> 0010 - No offset applies, but do not use in AArch32 mode!
+>>>
+>>> So we need handle the corner case is when CPU runs AArch32 mode and
+>>> PCSRoffset = 'b0010. Other cases the pcsr should be present.
+>>
+>> I understand that reasoning. But my question is, why do we check for PCSROffset
+>> only when mode == EDDEVID_IMPL_EDPCSR_EDCIDSR and not for say mode == EDDEVID_IMPL_EDPCSR or
+>> any other mode where PCSR is present.
+>
+> Sorry I misunderstood your question.
+>
+> I made mistake when I analyzed the possbile combination for mode and
+> PCSROffset so I thought it's the only case should handle:
+> { EDDEVID_IMPL_EDPCSR_EDCIDSR, EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 }
+>
+> Below three combinations are possible to exist; so you are right, I
+> should move this out for the checking:
+> { EDDEVID_IMPL_NONE,           EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 }
 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+That need not be covered, as IMPL_NONE says PCSR is not implemented hence you
+don't worry about anything as the functionality is missing. This should rather be:
+EDDEVID_IMPL_EDPCSR, where only PCSR is implemented.
 
-Looks good to me.
+My switch...case suggestion makes it easier to do all this checking.
 
-Regards,
-Mike
 
-> ---
->  drivers/clk/meson/gxbb.c | 28 ++++++++++++++++++++--------
->  1 file changed, 20 insertions(+), 8 deletions(-)
-> =
-
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index c063287bb0ed..79e9313e6703 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -902,6 +902,16 @@ static struct clk_gate *const gxbb_clk_gates[] =3D {
->         &gxbb_sar_adc_clk,
->  };
->  =
-
-> +static struct clk_mux *const gxbb_clk_muxes[] =3D {
-> +       &gxbb_mpeg_clk_sel,
-> +       &gxbb_sar_adc_clk_sel,
-> +};
-> +
-> +static struct clk_divider *const gxbb_clk_dividers[] =3D {
-> +       &gxbb_mpeg_clk_div,
-> +       &gxbb_sar_adc_clk_div,
-> +};
-> +
->  static int gxbb_clkc_probe(struct platform_device *pdev)
->  {
->         void __iomem *clk_base;
-> @@ -928,19 +938,21 @@ static int gxbb_clkc_probe(struct platform_device *=
-pdev)
->         /* Populate the base address for CPU clk */
->         gxbb_cpu_clk.base =3D clk_base;
->  =
-
-> -       /* Populate the base address for the MPEG clks */
-> -       gxbb_mpeg_clk_sel.reg =3D clk_base + (u64)gxbb_mpeg_clk_sel.reg;
-> -       gxbb_mpeg_clk_div.reg =3D clk_base + (u64)gxbb_mpeg_clk_div.reg;
-> -
-> -       /* Populate the base address for the SAR ADC clks */
-> -       gxbb_sar_adc_clk_sel.reg =3D clk_base + (u64)gxbb_sar_adc_clk_sel=
-.reg;
-> -       gxbb_sar_adc_clk_div.reg =3D clk_base + (u64)gxbb_sar_adc_clk_div=
-.reg;
-> -
->         /* Populate base address for gates */
->         for (i =3D 0; i < ARRAY_SIZE(gxbb_clk_gates); i++)
->                 gxbb_clk_gates[i]->reg =3D clk_base +
->                         (u64)gxbb_clk_gates[i]->reg;
->  =
-
-> +       /* Populate base address for muxes */
-> +       for (i =3D 0; i < ARRAY_SIZE(gxbb_clk_muxes); i++)
-> +               gxbb_clk_muxes[i]->reg =3D clk_base +
-> +                       (u64)gxbb_clk_muxes[i]->reg;
-> +
-> +       /* Populate base address for dividers */
-> +       for (i =3D 0; i < ARRAY_SIZE(gxbb_clk_dividers); i++)
-> +               gxbb_clk_dividers[i]->reg =3D clk_base +
-> +                       (u64)gxbb_clk_dividers[i]->reg;
-> +
->         /*
->          * register all clks
->          */
-> -- =
-
-> 2.9.3
->=20
+Thanks
+Suzuki
