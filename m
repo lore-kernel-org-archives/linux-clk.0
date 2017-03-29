@@ -1,91 +1,94 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: xf@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, huangtao@rock-chips.com, xxx@rock-chips.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/4] clk: rockchip: rk3228: make noc and some special clk as critical_clocks
-Date: Tue, 28 Mar 2017 22:08:13 +0200
-Message-ID: <3534897.Tc49fhGY27@phil>
-In-Reply-To: <1490695614-3220-3-git-send-email-zhangqing@rock-chips.com>
-References: <1490695614-3220-1-git-send-email-zhangqing@rock-chips.com> <1490695614-3220-3-git-send-email-zhangqing@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 00/11] Initial Allwinner Display Engine 2.0 Support
+Date: Thu, 30 Mar 2017 03:46:02 +0800
+Message-Id: <20170329194613.55548-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Elaine,
+This patchset is the initial patchset for Allwinner DE2 support.
 
-Am Dienstag, 28. M=E4rz 2017, 18:06:52 CEST schrieb Elaine Zhang:
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+It contains the support of clocks in DE2 and the mixers in DE2.
 
-I really do expect a commit message explaining why the specific clocks
-are needed to be critical.
+The SoC used to develop this patchset is V3s, as V3s is the simplest
+one of the SoCs that have DE2.
+(Allwinner V3s features only one mixer, although its clock control
+unit contains support for second mixer's clock; and its only video
+output is RGB LCD, which is already supported in our TCON driver)
 
-The noc and arbiter clocks I somewhat understand, but I'll need
-explanation on clocks like hclk_otg_pmu,  hclk_otg_pmu _etc_ [all these
-non-noc / non-arbi clocks] on why there is no driver to handle them.
+The last patch is only a testing patch, it shouldn't be merged; and
+for the patch to be really usable, the RFC fix of the TCON driver [1]
+is needed.
 
-Also please group noc / arbi clocks together.
+No HDMI, TV encoder or other internal bridges' support is included
+in this patchset, which makes it currently not usable on H3.
 
+Thanks to Jean-Francois Moine and Jernej Skrabec for their efforts
+to discover the internal of DE2!
 
-This applies to all patches in this series.
+[1] https://lists.freedesktop.org/archives/dri-devel/2016-December/126264.html
 
-Thanks
-Heiko
+Icenowy Zheng (11):
+  dt-bindings: add binding for the Allwinner DE2 CCU
+  clk: sunxi-ng: add support for DE2 CCU
+  dt-bindings: add bindings for DE2 on V3s SoC
+  drm/sun4i: abstruct the layer type
+  drm/sun4i: abstract a mixer type
+  drm/sun4i: add support for Allwinner DE2 mixers
+  drm/sun4i: Add compatible string for V3s display engine
+  drm/sun4i: tcon: add support for V3s TCON
+  ARM: dts: sun8i: add DE2 nodes for V3s SoC
+  ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
+  [DO NOT MERGE] ARM: dts: sun8i: enable LCD panel of Lichee Pi Zero
 
+ .../devicetree/bindings/clock/sun8i-de2.txt        |  31 ++
+ .../bindings/display/sunxi/sun4i-drm.txt           |  37 +-
+ arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts      |  36 ++
+ arch/arm/boot/dts/sun8i-v3s.dtsi                   |  96 +++++
+ drivers/clk/sunxi-ng/Kconfig                       |   5 +
+ drivers/clk/sunxi-ng/Makefile                      |   1 +
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 204 +++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.h               |  28 ++
+ drivers/gpu/drm/sun4i/Kconfig                      |  20 ++
+ drivers/gpu/drm/sun4i/Makefile                     |  10 +-
+ drivers/gpu/drm/sun4i/sun4i_backend.c              |  26 +-
+ drivers/gpu/drm/sun4i/sun4i_backend.h              |   5 -
+ drivers/gpu/drm/sun4i/sun4i_crtc.c                 |  31 +-
+ drivers/gpu/drm/sun4i/sun4i_crtc.h                 |  10 +-
+ drivers/gpu/drm/sun4i/sun4i_drv.c                  |   4 +-
+ drivers/gpu/drm/sun4i/sun4i_drv.h                  |   3 +-
+ drivers/gpu/drm/sun4i/sun4i_layer.c                |  22 +-
+ drivers/gpu/drm/sun4i/sun4i_layer.h                |   6 +-
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |   7 +-
+ drivers/gpu/drm/sun4i/sun4i_tv.c                   |   8 +-
+ drivers/gpu/drm/sun4i/sun8i_layer.c                | 156 +++++++++
+ drivers/gpu/drm/sun4i/sun8i_layer.h                |  35 ++
+ drivers/gpu/drm/sun4i/sun8i_mixer.c                | 386 +++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_mixer.h                | 131 +++++++
+ drivers/gpu/drm/sun4i/sunxi_layer.h                |  17 +
+ drivers/gpu/drm/sun4i/sunxi_mixer.h                |  22 ++
+ include/dt-bindings/clock/sun8i-de2.h              |  54 +++
+ include/dt-bindings/reset/sun8i-de2.h              |  50 +++
+ 28 files changed, 1391 insertions(+), 50 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_layer.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_layer.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_mixer.h
+ create mode 100644 drivers/gpu/drm/sun4i/sunxi_layer.h
+ create mode 100644 drivers/gpu/drm/sun4i/sunxi_mixer.h
+ create mode 100644 include/dt-bindings/clock/sun8i-de2.h
+ create mode 100644 include/dt-bindings/reset/sun8i-de2.h
 
-> ---
->  drivers/clk/rockchip/clk-rk3228.c | 30 +++++++++++++++++++++++++++++-
->  1 file changed, 29 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk=
-=2Drk3228.c
-> index db6e5a9e6de6..4d3203f887e2 100644
-> --- a/drivers/clk/rockchip/clk-rk3228.c
-> +++ b/drivers/clk/rockchip/clk-rk3228.c
-> @@ -445,7 +445,7 @@ enum rk3228_plls {
->  			RK2928_CLKGATE_CON(2), 12, GFLAGS,
->  			&rk3228_spdif_fracmux),
-> =20
-> -	GATE(0, "jtag", "ext_jtag", 0,
-> +	GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
->  			RK2928_CLKGATE_CON(1), 3, GFLAGS),
-> =20
->  	GATE(0, "sclk_otgphy0", "xin24m", 0,
-> @@ -644,9 +644,37 @@ enum rk3228_plls {
-> =20
->  static const char *const rk3228_critical_clocks[] __initconst =3D {
->  	"aclk_cpu",
-> +	"pclk_cpu",
-> +	"hclk_cpu",
->  	"aclk_peri",
->  	"hclk_peri",
->  	"pclk_peri",
-> +	"aclk_rga_noc",
-> +	"aclk_iep_noc",
-> +	"aclk_vop_noc",
-> +	"aclk_hdcp_noc",
-> +	"hclk_vio_ahb_arbi",
-> +	"hclk_vio_noc",
-> +	"hclk_vop_noc",
-> +	"hclk_host0_arb",
-> +	"hclk_host1_arb",
-> +	"hclk_host2_arb",
-> +	"hclk_otg_pmu",
-> +	"aclk_gpu_noc",
-> +	"sclk_initmem_mbist",
-> +	"aclk_initmem",
-> +	"hclk_rom",
-> +	"pclk_ddrupctl",
-> +	"pclk_ddrmon",
-> +	"pclk_msch_noc",
-> +	"pclk_stimer",
-> +	"pclk_ddrphy",
-> +	"pclk_acodecphy",
-> +	"pclk_phy_noc",
-> +	"aclk_vpu_noc",
-> +	"aclk_rkvdec_noc",
-> +	"hclk_vpu_noc",
-> +	"hclk_rkvdec_noc",
->  };
-> =20
->  static void __init rk3228_clk_init(struct device_node *np)
->=20
+-- 
+2.12.0
