@@ -1,191 +1,160 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Thu, 23 Mar 2017 00:01:02 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Mike Leach <mike.leach@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] coresight: add support for debug module
-Message-ID: <20170322160102.GB15179@leoy-linaro>
-References: <1488520809-31670-1-git-send-email-leo.yan@linaro.org>
- <1488520809-31670-4-git-send-email-leo.yan@linaro.org>
- <671a0b39-b635-6e0e-d3fa-967651f2e29c@arm.com>
- <CAJ9a7VgCjXNGC4C49PxL-nBxzhMCmA8Mb-0C_epahizA5EL2HA@mail.gmail.com>
- <e7a97c52-f61a-e503-f626-09563fa100b8@arm.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Kevin Hilman <khilman@baylibre.com>
+To: arm@kernel.org
+Subject: [GIT PULL] Amlogic 64-bit DT updates for v4.12
+Date: Wed, 29 Mar 2017 14:45:03 -0700
+Message-ID: <m28tnn69ls.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <e7a97c52-f61a-e503-f626-09563fa100b8@arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 22, 2017 at 02:07:47PM +0000, Sudeep Holla wrote:
-> On 22/03/17 12:54, Mike Leach wrote:
-> > On 21 March 2017 at 15:39, Sudeep Holla <sudeep.holla@arm.com 
-> > <mailto:sudeep.holla@arm.com>> wrote:
-> > 
-> [...]
-> 
-> > I disagree with this approach. One of the main usefulness of such
-> > self hosted debug feature is to debug issues around features like
-> > cpuidle. Adding constraints like "cpuidle needs to be disabled" is
-> > not good IMO. There are ways to make it work with cpuidle enabled.
-> > Please explore them. In particular refer H9.2.39 EDPRCR, External
-> > Debug Power/Reset Control Register.
-> > 
-> > So, "nohlt" option is not an option. I prefer some sysfs option like 
-> > Suzuki suggested to enable this feature on demand if power saving in 
-> > normal usecase is the concern. Using "nohlt" just disables idle and 
-> > doesn't ensure the debug power domain is ON. Using the flag directly
-> > in this driver to enable debug power domain also sounds misuse of
-> > that flag for me.
-> > 
-> > I think the key issue to remember here is that experience with
-> > external debug shows that CPU Idle means different things to
-> > different SoC designs / power management schemes. (and we are using
-> > external debug in a self hosted way here).
->
-> Yes agreed on the point that meaning of "cpuidle" differs on each SoC.
+Olof, Arnd,
 
-Very appreciate for Mike's summary. It's shame for me this is one thing
-I should do better :)
+Below are some 64-bit DT changes for Amlogic platforms for v4.12.  Note
+that this branch includes a merge of an immutable branch from the clk
+tree (clk-meson) due to dependencies on new clocks added to the meson
+clock driver and used in these DT updates.
 
-This good summary is quite important.
+Kevin
 
-> > Some designs will power down an entire cluster if all CPUs on the 
-> > cluster are powered down - including the parts of the debug
-> > registers that should remain powered in the debug power domain.
-> 
-> Interesting, at-least ETMv4 or some other coresight specification
-> clearly classify the power domains and the register access. The actual
-> power domain itself may vary depending on implementation.
-> 
-> > The bits in EDPRCR are not respected in these cases - these designs
-> > do not really support debug over power down in the way that the
-> > CoreSight / Debug designers anticipated. This means that even
-> > checking EDPRSR has the potential to cause a bus hang if the target
-> > register is unpowered. (and if the debug power domain is unpowered
-> > then the PC data is also lost).
-> > 
-> 
-> Agreed, but can we start supporting the sane designs in sane way first.
-> We can always add compatible and handle deviations. I agree we may need
-> to support such deviations but starting with that seems setting a bad
-> example.
-> 
-> > In these cases, accessing to the debug registers while they are not 
-> > powered is a recipe for disaster - so preventing CPUIdle ​and the
-> > subsequent cluster power down ​ allows investigation on this class of
-> > system - ​and allowing the CPUs of interest be interrogated without
-> > hanging the crash log process.​
-> > 
-> 
-> Agreed. But my point is that many issues are around cpuidle and some
-> usecase and just eliminating that use-case sounds bad. For me,
-> core-sight was most useful to debug issues around cpu power management
-> and lockups where we can't stop cores but examine these registers.
-> There are other alternatives for other use-cases IMO.
-> 
-> > 
-> > ​On systems that do behave correctly with respect to debug power 
-> > domains, then disabling CPUIdle is unnecessary - these can be
-> > controlled by ​EDPRCR - perhaps; per the specification it is
-> > "implementation defined" if writing bits to this register have an
-> > effect on the system anyway even if the debug domain is correctly
-> > powered.
-> > 
-> 
-> We can always do that unconditionally. If implementations don't honor
-> those bits, it's different. If they hang on accessing something which is
-> on debug power domain and not on core power domain, then you have much
-> bigger issue to solve. How can you even trust and make any other
-> register accesses that are in debug power domain then ?
 
-So we can add below code before really access another other registers
-are possible in CPU power domain:
+The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
 
-        /*
-         * Force to power on CPU power domain and assert
-         * DBGPWRUPREQ signal
-         */
-        val = readl(drvdata->base + EDPRCR);
-        val |= BIT(3);
-        writel(val, drvdata->base + EDPRCR);
+  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
 
-> > ​While it is true to say that disabling CPUIdle does not guarantee
-> > that the debug power domain is on, it does in a certain class of
-> > designs prevent it being powered off (Juno historically - not sure if
-> > that is still the case.).
-> > 
-> 
-> Again it's completely platform specific. All you need to care is that
-> the debug power domain is on or not. Disabling CPUIdle to achieve that
-> is simply wrong and may work only on few platforms.
-> 
-> > However, I do agree that the use of the driver should not be
-> > triggered _only_ on the existence of /nohlt on the command line - ​
-> > there is a class of designs where this will not be required.
-> > 
-> 
-> Thanks
-> 
-> > When enabing the driver as a kernel config the user needs to
-> > decide:- 1) do I need this to debug the issue I am seeing 2) does the
-> > power management on my system require I use /nohlt as well.
-> 
-> Please don't *misuse* nohlt to disable idle. There are other ways to
-> do the same either from the user-space or from the driver.
-> 
-> > 
-> > I think that the use of /nohlt as an option, and the reasons why it 
-> > might be needed should be part of the configuration help in this
-> > case.
-> > 
-> > There is also a case for considering if there should be an option to 
-> > configure it to be enabled or disabled at boot time. It is easy to 
-> > imagine cases I want to have this running from the start as a crash 
-> > happens early - and cases I can enable it on demand later.
-> > 
-> 
-> Also consider with cpuidle enabled ;). I can help testing if needed.
+are available in the git repository at:
 
-I tried to digest these info and below are my understanding from your
-suggestion:
+  git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-amlogic.git tags/amlogic-dt64
 
-### For boot time: add two command line flags
+for you to fetch changes up to a1093238d6b148b46b7f3e0642681ec41baa1d0b:
 
-- coresight.cpu_debug: this flag is used to enable cpu debug module at
-  boot time, and it relys on sane hardware design (like PRCR can works
-  well) to access registers;
+  Merge branch 'clk-meson' of git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux into v4.12/dt64 (2017-03-28 10:47:49 -0700)
 
-- coresight.cpu_debug_pwrup: this flag is used to enable cpu debug
-  module at boot time, and it cannot relys on PRCR anymore so we need
-  manually constraint CPU power states;
+----------------------------------------------------------------
+Amlogic 64-bit DT updates for v4.12
+- pinctrl: new pins for audio
+- clocks: more clocks exposed for GFX, audio
+- new board: Khadas Vim (S905X)
+- new board: HwaCom AmazeTV (S905X)
+- ethernet phy: add GPIO resets
 
-### For runtime: use one sysfs node
+----------------------------------------------------------------
+Carlo Caione (3):
+      dt-bindings: Add vendor prefix for Hwacom Systems Inc.
+      dt-bindings: amlogic: Add HwaCom board
+      ARM64: dts: meson-gxl: Add support for HwaCom AmazeTV
 
-- Create sysfs node:
-  /sys/kernel/debug/coresight_cpu_debug/enable_debug
+Jerome Brunet (9):
+      clk: meson: fix SET_PARM macro
+      clk: meson: add missing const qualifiers on gate arrays
+      clk: meson8b: put dividers and muxes in tables
+      clk: gxbb: put dividers and muxes in tables
+      clk: meson: mpll: add rw operation
+      clk: meson: gxbb: mpll: use rw operation
+      clk: meson8b: add the mplls clocks 0, 1 and 2
+      clk: meson: mpll: correct N2 maximum value
+      dt-bindings: clk: gxbb: expose i2s output clock gates
 
-  echo 1 > /sys/kernel/debug/coresight_cpu_debug/enable_debug: same
-  functionality with boot time's 'coresight.cpu_debug';
+Kevin Hilman (1):
+      Merge branch 'clk-meson' of git://git.kernel.org/.../clk/linux into v4.12/dt64
 
-  echo 2 > /sys/kernel/debug/coresight_cpu_debug/enable_debug: same
-  functionality with boot time's 'coresight.cpu_debug_pwrup';
+Martin Blumenstingl (14):
+      ARM64: dts: meson-gxbb-odroidc2: add the ethernet PHY's reset GPIO
+      ARM64: dts: meson-gxbb-p200: add the ethernet PHY's reset GPIO
+      ARM64: dts: meson-gxbb-vega-s95: add the ethernet PHY's reset GPIO
+      ARM64: dts: meson-gxbb-nexbox-a95x: add the ethernet PHY's reset GPIO
+      ARM64: dts: meson-gxbb-wetek-hub: add the ethernet PHY's reset GPIO
+      ARM64: dts: meson-gxbb-wetek-play2: add the ethernet PHY's reset GPIO
+      ARM64: dts: meson-gxbb-p201: fix ethernet support
+      ARM64: dts: amlogic: add the ethernet TX delay configuration
+      ARM64: dts: meson-gx: remove the phy-mode property from meson-gx
+      ARM64: dts: meson-gxl: improve support for the P212 reference design
+      ARM64: dts: amlogic: meson-gxl: add the missing PWM pins
+      devicetree: add vendor prefix for Khadas
+      dt-bindings: amlogic: add the Khadas VIM
+      ARM64: dts: meson-gxl: add support for the Khadas VIM board
 
-  echo 0 > /sys/kernel/debug/coresight_cpu_debug/enable_debug: disable
-  debug functionality.
+Neil Armstrong (20):
+      ARM64: dts: meson-gx: Add Buttons to Q200 and P230 boards
+      ARM64: dts: meson-gxbb-odroidc2: Add GPIO lines names
+      ARM64: dts: meson-gxbb-odroidc2: Fix TFLASH VDD regulator GPIO line
+      ARM64: dts: meson-gx: Finally move common nodes to GX dtsi
+      ARM64: dts: meson-gx: empty line cleanup
+      ARM64: dts: meson-gx: Prepend GX generic compatible like other nodes
+      ARM64: dts: meson-gxl: Add missing pinctrl pins groups
+      clk: meson-gxbb: Add MALI clock IDS
+      clk: meson-gxbb: Add MALI clocks
+      clk: meson: Add support for parameters for specific PLLs
+      clk: meson-gxbb: Add GP0 PLL init parameters
+      clk: meson-gxbb: Add GXL/GXM GP0 Variant
+      clk: meson-gxbb: Expose GP0 dt-bindings clock id
+      dt-bindings: clock: gxbb-clkc: Add GXL compatible variant
+      ARM64: dts: meson-gx: Add Mali nodes for GXBB and GXL
+      ARM64: dts: meson-gxbb: Add gpio-ranges properties
+      ARM64: dts: meson-gxl: Add gpio-ranges properties
+      ARM: dts: meson8: Add gpio-ranges properties
+      ARM: dts: meson8b: Add gpio-ranges properties
+      ARM64: dts: meson-gxbb: Add USB Hub GPIO hog
 
-Does this make sense?
+jbrunet (4):
+      ARM64: dts: meson-gxbb: add i2s output pins
+      ARM64: dts: meson-gxbb: add spdif output pins
+      ARM64: dts: meson-gxl: add i2s output pins
+      ARM64: dts: meson-gxl: add spdif output pins
 
-Thanks,
-Leo Yan
+ Documentation/devicetree/bindings/arm/amlogic.txt              |   3 +
+ Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt  |   3 +-
+ Documentation/devicetree/bindings/vendor-prefixes.txt          |   2 +
+ arch/arm/boot/dts/meson8.dtsi                                  |   2 +
+ arch/arm/boot/dts/meson8b.dtsi                                 |   2 +
+ arch/arm64/boot/dts/amlogic/Makefile                           |   2 +
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi                      |  40 +++++--
+ arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts         |  17 +++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts            |  75 ++++++++++++-
+ arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts                |  25 +++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-p201.dts                |  11 ++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi               |   6 --
+ arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi           |  21 +++-
+ arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-hub.dts           |  26 +++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts         |  26 +++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi                    | 160 ++++++++++++++++++++++------
+ arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi                |  43 ++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts           |  42 ++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi               |   1 +
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts | 164 ++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts     | 114 ++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts           |  21 ++--
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi          | 173 ++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi               |   1 +
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi                     | 181 +++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts            |   2 +
+ arch/arm64/boot/dts/amlogic/meson-gxm-q200.dts                 |  42 ++++++++
+ drivers/clk/meson/clk-mpll.c                                   | 152 +++++++++++++++++++++++++-
+ drivers/clk/meson/clk-pll.c                                    |  53 +++++++++-
+ drivers/clk/meson/clkc.h                                       |  29 ++++-
+ drivers/clk/meson/gxbb.c                                       | 505 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
+ drivers/clk/meson/gxbb.h                                       |  23 ++--
+ drivers/clk/meson/meson8b.c                                    | 127 +++++++++++++++++++++-
+ drivers/clk/meson/meson8b.h                                    |  20 +++-
+ include/dt-bindings/clock/gxbb-clkc.h                          |  11 ++
+ 35 files changed, 2011 insertions(+), 114 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
