@@ -1,49 +1,31 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 00/15] clk: ti: cleanups for 4.12 merge window
-Date: Sat, 11 Mar 2017 14:49:51 +0200
-Message-ID: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 28 Mar 2017 19:55:37 -0500
+From: Rob Herring <robh@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk: qcom: Update DT bindings for the
+ MSM8660/APQ8060 RPMCC
+Message-ID: <20170329005537.kcuziz2szwtrz4o2@rob-hp-laptop>
+References: <20170322081823.20446-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170322081823.20446-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Wed, Mar 22, 2017 at 09:18:23AM +0100, Linus Walleij wrote:
+> These compatible strings need to be added to extend support
+> for the RPM CC to cover MSM8660/APQ8060. We also need to add
+> enumberators to the include file for a few clocks that were
+> missing.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 2 ++
+>  include/dt-bindings/clock/qcom,rpmcc.h                 | 4 ++++
+>  2 files changed, 6 insertions(+)
 
-This series is basically just a rebase of v1 of the same, with Tony's
-acks added.
-
-https://www.spinics.net/lists/arm-kernel/msg562362.html
-
-Boot tested on the omap2+ boards I have access to, no issues seen caused
-by this series.
-
-am335x-evm      : boot ok
-am335x-evmsk    : boot ok
-am37x-evm       : boot ok
-am437x-sk       : boot ok
-am437x-gp-evm   : boot ok
-am57xx-evm      : boot ok
-omap3-beagle-xm : boot ok
-omap3-beagle    : boot ok
-am335x-boneblack: boot ok
-am335x-bone     : boot ok
-dra72x-evm      : BOOT FAIL! (farm issue, failed to mount NFS rootfs)
-dra7xx-evm      : boot ok
-ldp3430         : BOOT FAIL! (farm issue, bootloader ethernet failure)
-omap3-n900      : boot ok
-omap5-uevm      : boot ok
-omap4-panda-es  : boot ok
-omap4-panda     : boot ok
-omap2430-sdp    : boot ok
-omap3430-sdp    : boot ok
-omap4-sdp-es23plus: boot ok
-
-Branch available on top of 4.11-rc1 here:
-
-tree: https://github.com/t-kristo/linux-pm.git
-branch: for-4.12-ti-clk-cleanups
-
--Tero
+Acked-by: Rob Herring <robh@kernel.org>
