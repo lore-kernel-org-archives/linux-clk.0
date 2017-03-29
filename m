@@ -1,260 +1,374 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1490714781.20764.3.camel@baylibre.com>
-Subject: Re: [PATCH v1 3/8] clk: meson: add audio clock divider support
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: "Hendrik v. Raven" <hendrik@consetetur.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	 <carlo@caione.org>, linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 28 Mar 2017 17:26:21 +0200
-In-Reply-To: <20170328145855.GA1150@psyche>
-References: <20170328144605.25278-1-jbrunet@baylibre.com>
-	 <20170328144605.25278-4-jbrunet@baylibre.com>
-	 <20170328145855.GA1150@psyche>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Wed, 29 Mar 2017 09:54:23 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	mike.leach@linaro.org, Suzuki.Poulose@arm.com, sudeep.holla@arm.com
+Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
+Message-ID: <20170329015423.GA5035@leoy-linaro>
+References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+ <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
+ <20170328165010.GA21937@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170328165010.GA21937@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2017-03-28 at 16:58 +0200, Hendrik v. Raven wrote:
-> On Tue, Mar 28, 2017 at 04:46:00PM +0200, Jerome Brunet wrote:
-> > The audio divider needs a specific clock divider driver.
-> > With am mpll parent clock, which is able to provide a fairly precise rate,
-> > the generic divider tends to select low value of the divider. In such case
-> > the quality of the clock is very poor. For the same final rate, maximizing
-> > the audio clock divider value and selecting the corresponding mpll rate
-> > gives better results. This is what this driver aims to acheive. So far, so
-> > good.
-> > 
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > ---
-> >  drivers/clk/meson/Makefile            |   2 +-
-> >  drivers/clk/meson/clk-audio-divider.c | 149
-> > ++++++++++++++++++++++++++++++++++
-> >  drivers/clk/meson/clkc.h              |  10 +++
-> >  3 files changed, 160 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/clk/meson/clk-audio-divider.c
-> > 
-> > diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> > index 349583405b7c..83b6d9d65aa1 100644
-> > --- a/drivers/clk/meson/Makefile
-> > +++ b/drivers/clk/meson/Makefile
-> > @@ -2,6 +2,6 @@
-> >  # Makefile for Meson specific clk
-> >  #
-> >  
-> > -obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o
-> > +obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-
-> > audio-divider.o
-> >  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
-> >  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o
-> > diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-
-> > audio-divider.c
-> > new file mode 100644
-> > index 000000000000..ac713b9ea84a
-> > --- /dev/null
-> > +++ b/drivers/clk/meson/clk-audio-divider.c
-> > @@ -0,0 +1,149 @@
-> > +/*
-> > + * Copyright (c) 2017 AmLogic, Inc.
-> > + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify it
-> > + * under the terms and conditions of the GNU General Public License,
-> > + * version 2, as published by the Free Software Foundation.
-> > + *
-> > + * This program is distributed in the hope it will be useful, but WITHOUT
-> > + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> > + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-> > for
-> > + * more details.
-> > + *
-> > + * You should have received a copy of the GNU General Public License along
-> > with
-> > + * this program.  If not, see <http://www.gnu.org/licenses/>.
-> > + */
-> > +
-> > +/*
-> > + * i2s master clock divider: The algorithm of the generic clk-divider used
-> > with
-> > + * a very precise clock parent such as the mpll tends to select a low
-> > divider
-> > + * factor. This gives very results with this particular divider, especially
-> > with
-> 
-> a "poor" appears to be missing here
-Indeed, thanks for spotting this 
+Hi Mathieu,
 
-> 
-> > + * high frequencies (> 100 MHz)
-> > + *
-> > + * This driver try to select the maximum possible divider with the rate the
-> > + * upstream clock can provide.
-> > + */
-> > +
-> > +#include <linux/clk-provider.h>
-> > +#include "clkc.h"
-> > +
-> > +#define to_meson_clk_audio_divider(_hw) container_of(_hw, \
-> > +				struct meson_clk_audio_divider, hw)
-> > +
-> > +static int _div_round(unsigned long parent_rate, unsigned long rate,
-> > +		      unsigned long flags)
-> > +{
-> > +	if (flags & CLK_DIVIDER_ROUND_CLOSEST)
-> > +		return DIV_ROUND_CLOSEST_ULL((u64)parent_rate, rate);
-> > +
-> > +	return DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-> > +}
-> > +
-> > +static int _get_val(unsigned long parent_rate, unsigned long rate)
-> > +{
-> > +	return DIV_ROUND_UP_ULL((u64)parent_rate, rate) - 1;
-> > +}
-> > +
-> > +static int _valid_divider(struct clk_hw *hw, int divider)
-> > +{
-> > +	struct meson_clk_audio_divider *adiv =
-> > +		to_meson_clk_audio_divider(hw);
-> > +	int max_divider;
-> > +	u8 width;
-> > +
-> > +	width = adiv->div.width;
-> > +	max_divider = 1 << width;
-> > +
-> > +	if (divider < 1)
-> > +		return 1;
-> > +	else if (divider > max_divider)
-> > +		return max_divider;
-> > +
-> > +	return divider;
-> 
-> This can be replaced by 
-> return clamp(divider, 1, max_divider);
-Will be replaced in v2. Thx
+On Tue, Mar 28, 2017 at 10:50:10AM -0600, Mathieu Poirier wrote:
+> On Sun, Mar 26, 2017 at 02:23:14AM +0800, Leo Yan wrote:
 
+[...]
+
+> > +static void debug_force_cpu_powered_up(struct debug_drvdata *drvdata)
+> > +{
+> > +	int timeout = DEBUG_WAIT_TIMEOUT;
+> > +
+> > +	drvdata->edprsr = readl_relaxed(drvdata->base + EDPRSR);
+> > +
+> > +	CS_UNLOCK(drvdata->base);
+> > +
+> > +	/* Bail out if CPU is powered up yet */
+> > +	if (drvdata->edprsr & EDPRSR_PU)
+> > +		goto out_powered_up;
+> > +
+> > +	/*
+> > +	 * Send request to power management controller and assert
+> > +	 * DBGPWRUPREQ signal; if power management controller has
+> > +	 * sane implementation, it should enable CPU power domain
+> > +	 * in case CPU is in low power state.
+> > +	 */
+> > +	drvdata->edprsr = readl(drvdata->base + EDPRCR);
+> > +	drvdata->edprsr |= EDPRCR_COREPURQ;
+> > +	writel(drvdata->edprsr, drvdata->base + EDPRCR);
 > 
-> > +}
+> Here ->edprsr is used but EDPRCR is accessed.  Is this intentional or a
+> copy/paste error?  The same is true for accesses in the out_powered_up section.
+
+Thanks for pointing out. This is a typo error and will fix.
+
 > > +
-> > +static unsigned long audio_divider_recalc_rate(struct clk_hw *hw,
-> > +					       unsigned long parent_rate)
-> > +{
-> > +	struct meson_clk_audio_divider *adiv =
-> > +		to_meson_clk_audio_divider(hw);
-> > +	struct parm *p;
-> > +	unsigned long reg, divider;
+> > +	/* Wait for CPU to be powered up (timeout~=32ms) */
+> > +	while (timeout--) {
+> > +		drvdata->edprsr = readl_relaxed(drvdata->base + EDPRSR);
+> > +		if (drvdata->edprsr & EDPRSR_PU)
+> > +			break;
 > > +
-> > +	p = &adiv->div;
-> > +	reg = readl(adiv->base + p->reg_off);
-> > +	divider = PARM_GET(p->width, p->shift, reg) + 1;
+> > +		usleep_range(1000, 2000);
+> > +	}
+> 
+> See if function readx_poll_timeout() can be used.
+
+Will use it.
+
 > > +
-> > +	return DIV_ROUND_UP_ULL((u64)parent_rate, divider);
-> > +}
-> > +
-> > +static long audio_divider_round_rate(struct clk_hw *hw,
-> > +				     unsigned long rate,
-> > +				     unsigned long *parent_rate)
-> > +{
-> > +	struct meson_clk_audio_divider *adiv =
-> > +		to_meson_clk_audio_divider(hw);
-> > +	unsigned long max_prate;
-> > +	int divider;
-> > +
-> > +	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
-> > +		divider = _div_round(*parent_rate, rate, adiv->flags);
-> > +		divider = _valid_divider(hw, divider);
-> > +		return DIV_ROUND_UP_ULL((u64)*parent_rate, divider);
+> > +	/*
+> > +	 * Unfortunately the CPU cannot be powered up, so return
+> > +	 * back and later has no permission to access other
+> > +	 * registers. For this case, should set 'idle_constraint'
+> > +	 * to ensure CPU power domain is enabled!
+> > +	 */
+> > +	if (!(drvdata->edprsr & EDPRSR_PU)) {
+> > +		pr_err("%s: power up request for CPU%d failed\n",
+> > +			__func__, drvdata->cpu);
+> > +		goto out;
 > > +	}
 > > +
-> > +	/* Get the maximum parent rate */
-> > +	max_prate = clk_hw_round_rate(clk_hw_get_parent(hw), ULONG_MAX);
+> > +out_powered_up:
+> > +	debug_os_unlock(drvdata);
 > > +
-> > +	/* Get the corresponding rounded down divider */
-> > +	divider = max_prate / rate;
-> > +	divider = _valid_divider(hw, divider);
+> > +	/*
+> > +	 * At this point the CPU is powered up, so set the no powerdown
+> > +	 * request bit so we don't lose power and emulate power down.
+> > +	 */
+> > +	drvdata->edprsr = readl(drvdata->base + EDPRCR);
+> > +	drvdata->edprsr |= EDPRCR_COREPURQ | EDPRCR_CORENPDRQ;
+> 
+> If we are here the core is already up.  Shouldn't we need to set
+> EDPRCR_CORENPDRQ only?
+
+Yeah. Will fix.
+
+> > +	writel(drvdata->edprsr, drvdata->base + EDPRCR);
+> 
+> This section is a little racy - between the time the PU bit has been
+> checked and the time COREPDRQ has been flipped, the state of PU may have
+> changed.  You can probably get around this by checking edprsr.PU rigth here.  If
+> it is not set you go through the process again.  Note that doing this will
+> probably force a refactoring of the whole function.  
+
+Agree. Will handle this.
+
+[...]
+
+> > +static ssize_t debug_func_knob_write(struct file *f,
+> > +		const char __user *buf, size_t count, loff_t *ppos)
+> > +{
+> > e	u8 on;
+> > +	int ret;
 > > +
-> > +	/* Get actual rate of the parent */
-> > +	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
-> > +					 divider * rate);
+> > +	ret = kstrtou8_from_user(buf, count, 2, &on);
+> > +	if (ret)
+> > +		return ret;
 > > +
-> > +	return DIV_ROUND_UP_ULL((u64)*parent_rate, divider);
+> > +	mutex_lock(&debug_lock);
+> > +
+> > +	if (!on ^ debug_enable)
+> > +		goto out;
+> 
+> I had to read this condition too many times - please refactor.
+
+Will do it.
+
+> > +
+> > +	if (on) {
+> > +		ret = debug_enable_func();
+> > +		if (ret) {
+> > +			pr_err("%s: unable to disable debug function: %d\n",
+> > +			       __func__, ret);
+> 
+> Based on the semantic this is the wrong error message.
+
+Yeah. Will fix.
+
+> > +			goto err;
+> > +		}
+> > +	} else
+> > +		debug_disable_func();
+> 
+> Did checkpatch.pl complain about extra curly braces?  If not please add them.
+
+checkpatch.pl doesn't report for this. Will add.
+
+> > +
+> > +	debug_enable = on;
+> 
+> Here we can't set debug_enable if we just called debug_disable_func().  Maybe
+> I'm missing something.  If that's the case a comment in the code would be worth
+> it.
+
+After called debug_disable_func(), debug_enable is set to 0 (on = 0).
+
+> > +
+> > +out:
+> > +	ret = count;
+> > +err:
+> > +	mutex_unlock(&debug_lock);
+> > +	return ret;
 > > +}
 > > +
-> > +static int audio_divider_set_rate(struct clk_hw *hw,
-> > +				  unsigned long rate,
-> > +				  unsigned long parent_rate)
+> > +static ssize_t debug_func_knob_read(struct file *f,
+> > +		char __user *ubuf, size_t count, loff_t *ppos)
 > > +{
-> > +	struct meson_clk_audio_divider *adiv =
-> > +		to_meson_clk_audio_divider(hw);
-> > +	struct parm *p;
-> > +	unsigned long reg, flags = 0;
+> > +	char val[] = { '0' + debug_enable, '\n' };
+> > +
+> > +	return simple_read_from_buffer(ubuf, count, ppos, val, sizeof(val));
+> 
+> Use the debug_lock to avoid race conditions.
+
+Will do it.
+
+> > +}
+> > +
+> > +static ssize_t debug_idle_constraint_write(struct file *f,
+> > +		const char __user *buf, size_t count, loff_t *ppos)
+> > +{
 > > +	int val;
+> > +	ssize_t ret;
 > > +
-> > +	val = _get_val(parent_rate, rate);
+> > +	ret = kstrtoint_from_user(buf, count, 10, &val);
+> > +	if (ret)
+> > +		return ret;
 > > +
-> > +	if (adiv->lock)
-> > +		spin_lock_irqsave(adiv->lock, flags);
-> > +	else
-> > +		__acquire(adiv->lock);
+> > +	mutex_lock(&debug_lock);
+> > +	idle_constraint = val;
 > > +
-> > +	p = &adiv->div;
-> > +	reg = readl(adiv->base + p->reg_off);
-> > +	reg = PARM_SET(p->width, p->shift, reg, val);
-> > +	writel(reg, adiv->base + p->reg_off);
+> > +	if (debug_enable)
+> > +		pm_qos_update_request(&debug_qos_req, idle_constraint);
 > > +
-> > +	if (adiv->lock)
-> > +		spin_unlock_irqrestore(adiv->lock, flags);
-> > +	else
-> > +		__release(adiv->lock);
+> > +	mutex_unlock(&debug_lock);
+> > +	return count;
+> > +}
+> > +
+> > +static ssize_t debug_idle_constraint_read(struct file *f,
+> > +		char __user *ubuf, size_t count, loff_t *ppos)
+> > +{
+> > +	char buf[32];
+> > +	int len;
+> > +
+> > +	if (*ppos)
+> > +		return 0;
+> > +
+> > +	len = sprintf(buf, "%d\n", idle_constraint);
+> > +	return simple_read_from_buffer(ubuf, count, ppos, buf, len);
+> 
+> Use the debug_lock to avoid race conditions.
+
+Will do it.
+
+> > +}
+> > +
+> > +static const struct file_operations debug_func_knob_fops = {
+> > +	.open	= simple_open,
+> > +	.read	= debug_func_knob_read,
+> > +	.write	= debug_func_knob_write,
+> > +};
+> > +
+> > +static const struct file_operations debug_idle_constraint_fops = {
+> > +	.open	= simple_open,
+> > +	.read	= debug_idle_constraint_read,
+> > +	.write	= debug_idle_constraint_write,
+> > +};
+> > +
+> > +static int debug_func_init(void)
+> > +{
+> > +	struct dentry *file;
+> > +	int ret;
+> > +
+> > +	/* Create debugfs node */
+> > +	debug_debugfs_dir = debugfs_create_dir("coresight_cpu_debug", NULL);
+> > +	if (!debug_debugfs_dir) {
+> > +		pr_err("%s: unable to create debugfs directory\n", __func__);
+> > +		return -ENOMEM;
+> 
+> return PTR_ERR(debug_debugfs_dir);
+
+Here cannot use PTR_ERR(debug_debugfs_dir). If create debugfs failed
+the pointer is NULL value, so finally we will return zero value for
+PTR_ERR(debug_debugfs_dir).
+
+[...]
+
+> > +	}
+> > +
+> > +	file = debugfs_create_file("enable", S_IRUGO | S_IWUSR,
+> > +			debug_debugfs_dir, NULL, &debug_func_knob_fops);
+> > +	if (!file) {
+> > +		pr_err("%s: unable to create enable knob file\n", __func__);
+> > +		ret = -ENOMEM;
+> 
+> Same as above.
+> 
+> > +		goto err;
+> > +	}
+> > +
+> > +	file = debugfs_create_file("idle_constraint", S_IRUGO | S_IWUSR,
+> > +			debug_debugfs_dir, NULL, &debug_idle_constraint_fops);
+> > +	if (!file) {
+> > +		pr_err("%s: unable to create idle constraint file\n", __func__);
+> > +		ret = -ENOMEM;
+> 
+> Same as above.
+> 
+> > +		goto err;
+> > +	}
+> > +
+> > +	/* Use sysfs node to enable functionality */
+> > +	if (!debug_enable)
+> > +		return 0;
+> > +
+> > +	/* Enable debug module at boot time */
+> > +	ret = debug_enable_func();
+> > +	if (ret) {
+> > +		pr_err("%s: unable to disable debug function: %d\n",
+> > +		       __func__, ret);
+> > +		goto err;
+> > +	}
+> 
+> Use the debug_lock to avoid race conditions.
+
+I'm struggling to understand what's race condition at here? The
+function pairs debug_func_init()/debug_func_exit() are used for
+module's probing and removing, so naturally module's probing and
+removing are sequential, right?
+
 > > +
 > > +	return 0;
+> > +
+> > +err:
+> > +	debugfs_remove_recursive(debug_debugfs_dir);
+> > +	return ret;
 > > +}
 > > +
-> > +const struct clk_ops meson_clk_audio_divider_ro_ops = {
-> > +	.recalc_rate	= audio_divider_recalc_rate,
-> > +	.round_rate	= audio_divider_round_rate,
-> > +};
+> > +static void debug_func_exit(void)
+> > +{
+> > +	debugfs_remove_recursive(debug_debugfs_dir);
 > > +
-> > +const struct clk_ops meson_clk_audio_divider_ops = {
-> > +	.recalc_rate	= audio_divider_recalc_rate,
-> > +	.round_rate	= audio_divider_round_rate,
-> > +	.set_rate	= audio_divider_set_rate,
-> > +};
-> > diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-> > index b0c9999d03de..d6feafe8bd6c 100644
-> > --- a/drivers/clk/meson/clkc.h
-> > +++ b/drivers/clk/meson/clkc.h
-> > @@ -121,6 +121,14 @@ struct meson_clk_mpll {
-> >  	spinlock_t *lock;
-> >  };
-> >  
-> > +struct meson_clk_audio_divider {
-> > +	struct clk_hw hw;
+> > +	/* Disable functionality if has enabled */
+> > +	if (debug_enable)
+> > +		debug_disable_func();
+> > +}
+> > +
+> > +static int debug_probe(struct amba_device *adev, const struct amba_id *id)
+> > +{
 > > +	void __iomem *base;
-> > +	struct parm div;
-> > +	u8 flags;
-> > +	spinlock_t *lock;
-> > +};
+> > +	struct device *dev = &adev->dev;
+> > +	struct debug_drvdata *drvdata;
+> > +	struct resource *res = &adev->res;
+> > +	struct device_node *np = adev->dev.of_node;
+> > +	int ret;
 > > +
-> >  #define MESON_GATE(_name, _reg, _bit)					
-> > \
-> >  struct clk_gate _name = { 						\
-> >  	.reg = (void __iomem *) _reg, 					
-> > \
-> > @@ -141,5 +149,7 @@ extern const struct clk_ops meson_clk_pll_ops;
-> >  extern const struct clk_ops meson_clk_cpu_ops;
-> >  extern const struct clk_ops meson_clk_mpll_ro_ops;
-> >  extern const struct clk_ops meson_clk_mpll_ops;
-> > +extern const struct clk_ops meson_clk_audio_divider_ro_ops;
-> > +extern const struct clk_ops meson_clk_audio_divider_ops;
-> >  
-> >  #endif /* __CLKC_H */
-> > -- 
-> > 2.9.3
-> > 
-> > 
-> > _______________________________________________
-> > linux-amlogic mailing list
-> > linux-amlogic@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-amlogic
+> > +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+> > +	if (!drvdata)
+> > +		return -ENOMEM;
+> > +
+> > +	drvdata->cpu = np ? of_coresight_get_cpu(np) : 0;
+> > +	if (per_cpu(debug_drvdata, drvdata->cpu)) {
+> > +		dev_err(dev, "CPU's drvdata has been initialized\n");
+> 
+> Might be worth adding the CPU number in the error message.
+
+Yeah, will add it.
+
+[...]
+
+> This driver doesn't call the pm_runtime_put/get() operations needed to handle the
+> debug power domain.  See the other CoreSight drivers for details. 
+
+Sure, will do it.
+
+> Also, from the conversation that followed the previous post we agreed that we wouldn't
+> deal with CPUidle issues in this driver.  We deal with the CPU power domain
+> using the EDPRCR register (like you did) and that's it.  System that don't honor that register
+> can use other (external) means to solve this.  As such please remove the
+> pm_qos_xyz() functions. 
+
+>From previous discussion, Mike reminds the CPU power domain design is
+quite SoC specific and usually the SoC has many different low power
+states, e.g. except CPU level and cluster level low power states, they
+also can define SoC level low power states. Any SoC with any power
+state is possible finally impact CPU power domain, so this is why I add
+this interface to let user can have the final decision based on their
+working platform.
+
+We can rely on "nohlt" and "cpuidle.off=1" in kernel command line to
+disable whole SoC low power states at boot time; or we can use sysfs
+node "echo 1 > /sys/devices/system/cpu/cpuX/cpuidle/stateX/disble" to
+disable CPU low power states at runtime. But that means we need use
+different interfaces to control CPU power domain for booting and
+runtime, it's not nice for usage.
+
+So this is why add "idle_constraint" as a central place to control
+power domain for CPU debug purpose and I also think this is more
+friendly for hardware design, e.g. some platforms can enable partial
+low power states to save power and avoid overheat after using this
+driver.
+
+How about you think for this?
+
+Thanks,
+Leo Yan
