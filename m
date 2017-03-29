@@ -1,117 +1,67 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [RFC 0/7] clk: implement clock locking mechanism
-Date: Tue, 21 Mar 2017 19:33:23 +0100
-Message-Id: <20170321183330.26722-1-jbrunet@baylibre.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH v3 10/11] ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
+Date: Thu, 30 Mar 2017 03:46:12 +0800
+Message-Id: <20170329194613.55548-11-icenowy@aosc.io>
+In-Reply-To: <20170329194613.55548-1-icenowy@aosc.io>
+References: <20170329194613.55548-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This RFC patchset is related to the discussion around CLK_SET_RATE_GATE and
-clk_lock which available here [0]
+From: Icenowy Zheng <icenowy@aosc.xyz>
 
-The goal of this patchset is to provide a way for consumers to inform the
-system that they depend on the rate of the clock source and can't tolerate
-other consumers changing the rate or causing glitches.
+Allwinner V3s SoC features a set of pins that have functionality of RGB
+LCD, the pins are at different pin ban than other SoCs.
 
-Patches 1 to 3 are just rework to ease the integration of the locking
-mechanism. They should not introduce any functional differences.
+Add pinctrl node for them.
 
-Patch 4 is the important bit. It introduce 2 new functions to the CCF API:
-clk_protect and clk_unprotect (The "lock" word is already used lot in
-clk.c. Using clk_lock and clk_unlock would have been very messy. If you
-found "protect" to be a poor choice, I'm happy to sed the whole thing in
-future version)
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ arch/arm/boot/dts/sun8i-v3s.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-These calls can happen at anytime during the life of the clk. As for
-prepare and enable, the calls must be balanced.
-
-Inside the clock framework, 2 new count values are introduced to keep track
-of the protection:
-* core "protect_count": this reference count value works in the same way as
-  prepare and enable count, and track whether the clock is protected or
-  not. This is the value that will checked to allow operation which may
-  cause glitches or change the rate of clock source.
-* clk consumer "protect_ucount": this allows to track if the consumer is
-  protecting the clock.
-
-Requiring the consumer to unprotect its clock before changing it would have
-been very annoying for the consumer. It would also be unsafe, as it would
-still be possible for another consumer to change the rate between the call
-to set_rate and protect. This needs to happen in a critical section.  A
-solution would be to add "set_rate_protect", but we would need to do the
-same for the set_parent and set_phase (and the possible future
-functions). It does not scale well.  The solution proposed in this patch is
-to use the consumer protect count.
-
-In function altering the clock, if the consumer is protecting the clock,
-the protection is temporarily release under the prepare_lock. This ensure
-that:
-* the clock is still protect from another consumer because of the
-  prepare_lock
-* the rate set on a protected clock cannot change between set_rate and
-  later enable
-* only a consumer protecting a clock can do this temporary protection
-  removal (less chance of people messing with the refcount)
-* if more than one consumer protect the clock, it remains protected.
-  Because the protection is removed for the calling consumer, it gives
-  it a chance to jump to another provider, if available.
-
-This protection mechanism assume that "protecting" consumer knows what it
-is doing when it comes to setting the rate, and does not expect to be
-protected against itself.
-
-This was tested with the audio use case mentioned in [0]
-
-One caveat is the following case:
-N+1 consumers protect their clocks. These clocks come from N possible
-providers. We should able to satisfy at least N consumers before exhausting
-the resources.  In the particular case where all the consumers call
-"protect" before having a chance to call "set_rate", the last 2 consumers
-will remains stuck on the last provider w/o being able to set the rate on
-it. This means that in situation where there is 2 consumers on 1
-providers, they will compete for the clock, and may end up in situation
-where both protect the clock and none can set the rate they need.  This can
-be solved if, when the rate fails to be set, the consumer release the
-protection. Then the second consumer will be able to satisfy its request.
-
-Patch 5 is a small change on set_rate_range to restore the old range on
-failure. It don't use set_rate_range in any driver so I could not test this
-change.
-
-Patch 6 is just a cosmetic change to clk_summary debugfs entry to make it
-less wide after adding protect count in it.
-
-Patch 7 fix a warning reported by checkpatch.pl. Apparently, ENOSYS is used
-incorrectly.
-
-Bonus:
-
-With this patchset, we should probably change the use the flags
-"CLK_SET_RATE_GATE" and "CLK_SET_PARENT_GATE" We discussed removing
-them. Another solution would be to have them automatically gate the clock
-before performing the related operation.  What is your view on this ?
-
-[0]: http://lkml.kernel.org/r/148942423440.82235.17188153691656009029@resonance
-
-Jerome Brunet (7):
-  clk: take the prepare lock out of clk_core_set_parent
-  clk: add set_phase core function
-  clk: rework calls to round and determine rate callbacks
-  clk: add support for clock protection
-  clk: rollback set_rate_range changes on failure
-  clk: cosmetic changes to clk_summary debugfs entry
-  clk: fix incorrect usage of ENOSYS
-
- drivers/clk/clk.c            | 313 ++++++++++++++++++++++++++++++++++---------
- include/linux/clk-provider.h |   1 +
- include/linux/clk.h          |  29 ++++
- 3 files changed, 279 insertions(+), 64 deletions(-)
-
+diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
+index ae23746731a8..ac783a8a4fd3 100644
+--- a/arch/arm/boot/dts/sun8i-v3s.dtsi
++++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
+@@ -297,6 +297,15 @@
+ 				function = "i2c0";
+ 			};
+ 
++			lcd_rgb666_pins: lcd_rgb666@0 {
++				pins = "PE0", "PE1", "PE2", "PE3", "PE4",
++				       "PE5", "PE6", "PE7", "PE8", "PE9",
++				       "PE10", "PE11", "PE12", "PE13", "PE14",
++				       "PE15", "PE16", "PE17", "PE18", "PE19",
++				       "PE23", "PE24";
++				function = "lcd";
++			};
++
+ 			uart0_pins_a: uart0@0 {
+ 				pins = "PB8", "PB9";
+ 				function = "uart0";
 -- 
-2.9.3
+2.12.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
