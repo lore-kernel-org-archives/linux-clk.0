@@ -10,77 +10,43 @@ Cc: linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-sunxi@googlegroups.com,
 	Icenowy Zheng <icenowy@aosc.xyz>
-Subject: [PATCH v3 3/5] arm64: allwinner: a64: add r_ccu node
-Date: Wed, 29 Mar 2017 18:42:44 +0800
-Message-Id: <20170329104246.34204-4-icenowy@aosc.io>
+Subject: [PATCH v3 5/5] arm64: allwinner: a64: add R_PIO pinctrl node
+Date: Wed, 29 Mar 2017 18:42:46 +0800
+Message-Id: <20170329104246.34204-6-icenowy@aosc.io>
 In-Reply-To: <20170329104246.34204-1-icenowy@aosc.io>
 References: <20170329104246.34204-1-icenowy@aosc.io>
 List-ID: <linux-clk.vger.kernel.org>
 
 From: Icenowy Zheng <icenowy@aosc.xyz>
 
-A64 SoC have a CCU (r_ccu) in PRCM block.
-
-Add the device node for it.
-
-The mux 3 of R_CCU is an internal oscillator, which is 16MHz according
-to the user manual, and has only 30% accuracy based on our experience
-on older SoCs. The real mesaured value of it on two Pine64 boards is
-around 11MHz, which is around 70% of 16MHz.
+Allwinner A64 have a dedicated pin controller to manage the PL pin bank.
+As the driver and the required clock support are added, add the device
+node for it.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
-Changes in v3:
-- Change osc32000 to iosc, which is 16MHz plus minus 30%, according to the
-  RTC chapter of the user manual and our experiences on A33.
-Changes in v2:
-- Add osc32000.
-
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 1c64ea2d23f9..0fe9865d4bd6 100644
+index 0fe9865d4bd6..165dbc848aa6 100644
 --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
 +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -43,8 +43,10 @@
-  */
- 
- #include <dt-bindings/clock/sun50i-a64-ccu.h>
-+#include <dt-bindings/clock/sun8i-r-ccu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/reset/sun50i-a64-ccu.h>
-+#include <dt-bindings/reset/sun8i-r-ccu.h>
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -98,6 +100,14 @@
- 		clock-output-names = "osc32k";
- 	};
- 
-+	iosc: internal-osc-clk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <16000000>;
-+		clock-accuracy = <300000000>;
-+		clock-output-names = "iosc";
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-0.2";
- 		method = "smc";
-@@ -392,5 +402,14 @@
- 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+@@ -411,5 +411,17 @@
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
  		};
 +
-+		r_ccu: clock@1f01400 {
-+			compatible = "allwinner,sun50i-a64-r-ccu";
-+			reg = <0x01f01400 0x100>;
-+			clocks = <&osc24M>, <&osc32k>, <&iosc>;
-+			clock-names = "hosc", "losc", "iosc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
++		r_pio: pinctrl@01f02c00 {
++			compatible = "allwinner,sun50i-a64-r-pinctrl";
++			reg = <0x01f02c00 0x400>;
++			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&r_ccu CLK_APB0_PIO>, <&osc24M>, <&osc32k>;
++			clock-names = "apb", "hosc", "losc";
++			gpio-controller;
++			#gpio-cells = <3>;
++			interrupt-controller;
++			#interrupt-cells = <3>;
 +		};
  	};
  };
