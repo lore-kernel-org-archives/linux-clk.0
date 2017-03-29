@@ -1,156 +1,129 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [PATCH v2 6/8] ARM: dts: sun8i: add DE2 nodes for V3s SoC
-Date: Fri, 17 Mar 2017 04:47:46 +0800
-Message-Id: <20170316204748.8596-7-icenowy@aosc.xyz>
-In-Reply-To: <20170316204748.8596-1-icenowy@aosc.xyz>
-References: <20170316204748.8596-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <icenowy@aosc.io>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Icenowy Zheng <icenowy@aosc.xyz>
+Subject: [PATCH v3 4/5] ARM: sunxi: h3/h5: switch apb0-related clocks to r_ccu
+Date: Wed, 29 Mar 2017 18:42:45 +0800
+Message-Id: <20170329104246.34204-5-icenowy@aosc.io>
+In-Reply-To: <20170329104246.34204-1-icenowy@aosc.io>
+References: <20170329104246.34204-1-icenowy@aosc.io>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s SoC features a "Display Engine 2.0" with only one TCON
-which have RGB LCD output.
+From: Icenowy Zheng <icenowy@aosc.xyz>
 
-Add device nodes for it as well as the TCON.
+Now we have driver for the PRCM CCU, switch to use it instead of
+old-style clock nodes for apb0-related clocks in sunxi-h3-h5.dtsi .
+
+The mux 3 of R_CCU is still the internal oscillator, which is said to be
+16MHz plus minus 30%, and get a measured value of 15MHz~16MHz on my two
+H3 boards and one H5 board.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
- arch/arm/boot/dts/sun8i-v3s.dtsi | 87 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
+Changes in v3:
+- Change osc32000 to iosc.
 
-diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
-index 71075969e5e6..3b29f11ad46a 100644
---- a/arch/arm/boot/dts/sun8i-v3s.dtsi
-+++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
-@@ -41,6 +41,10 @@
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi | 47 +++++++++++++-------------------------
+ 1 file changed, 16 insertions(+), 31 deletions(-)
+
+diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+index 6640ebfa6419..a7e858a82c90 100644
+--- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
++++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+@@ -41,8 +41,10 @@
   */
  
+ #include <dt-bindings/clock/sun8i-h3-ccu.h>
++#include <dt-bindings/clock/sun8i-r-ccu.h>
  #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/sun8i-v3s-ccu.h>
-+#include <dt-bindings/clock/sun8i-de2.h>
-+#include <dt-bindings/reset/sun8i-v3s-ccu.h>
-+#include <dt-bindings/reset/sun8i-de2.h>
+ #include <dt-bindings/reset/sun8i-h3-ccu.h>
++#include <dt-bindings/reset/sun8i-r-ccu.h>
  
  / {
- 	#address-cells = <1>;
-@@ -59,6 +63,12 @@
+ 	interrupt-parent = <&gic>;
+@@ -68,31 +70,12 @@
+ 			clock-output-names = "osc32k";
+ 		};
+ 
+-		apb0: apb0_clk {
+-			compatible = "fixed-factor-clock";
++		iosc: internal-osc-clk {
+ 			#clock-cells = <0>;
+-			clock-div = <1>;
+-			clock-mult = <1>;
+-			clocks = <&osc24M>;
+-			clock-output-names = "apb0";
+-		};
+-
+-		apb0_gates: clk@01f01428 {
+-			compatible = "allwinner,sun8i-h3-apb0-gates-clk",
+-				     "allwinner,sun4i-a10-gates-clk";
+-			reg = <0x01f01428 0x4>;
+-			#clock-cells = <1>;
+-			clocks = <&apb0>;
+-			clock-indices = <0>, <1>;
+-			clock-output-names = "apb0_pio", "apb0_ir";
+-		};
+-
+-		ir_clk: ir_clk@01f01454 {
+-			compatible = "allwinner,sun4i-a10-mod0-clk";
+-			reg = <0x01f01454 0x4>;
+-			#clock-cells = <0>;
+-			clocks = <&osc32k>, <&osc24M>;
+-			clock-output-names = "ir";
++			compatible = "fixed-clock";
++			clock-frequency = <16000000>;
++			clock-accuracy = <300000000>;
++			clock-output-names = "iosc";
  		};
  	};
  
-+	de: display-engine {
-+		compatible = "allwinner,sun8i-v3s-display-engine";
-+		allwinner,pipelines = <&de2_mixer0>;
-+		status = "disabled";
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-@@ -93,6 +103,83 @@
- 		#size-cells = <1>;
- 		ranges;
+@@ -576,9 +559,12 @@
+ 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
  
-+		de2_clocks: clock@01000000 {
-+			compatible = "allwinner,sun50i-h5-de2-clk";
-+			reg = <0x01000000 0x1c>;
-+			clocks = <&ccu CLK_DE>,
-+				 <&ccu CLK_BUS_DE>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&ccu RST_BUS_DE>;
+-		apb0_reset: reset@01f014b0 {
+-			reg = <0x01f014b0 0x4>;
+-			compatible = "allwinner,sun6i-a31-clock-reset";
++		r_ccu: clock@1f01400 {
++			compatible = "allwinner,sun50i-a64-r-ccu";
++			reg = <0x01f01400 0x100>;
++			clocks = <&osc24M>, <&osc32k>, <&iosc>;
++			clock-names = "hosc", "losc", "iosc";
 +			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		de2_mixer0: mixer@01100000 {
-+			compatible = "allwinner,sun8i-v3s-de2-mixer";
-+			reg = <0x01100000 0x100000>;
-+			clocks = <&de2_clocks CLK_MIXER0>,
-+				 <&de2_clocks CLK_BUS_MIXER0>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&de2_clocks RST_MIXER0>;
-+			assigned-clocks = <&de2_clocks CLK_MIXER0>;
-+			assigned-clock-rates = <150000000>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					mixer0_out_tcon0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon0_in_mixer0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tcon0: lcd-controller@01c0c000 {
-+			compatible = "allwinner,sun8i-v3s-tcon";
-+			reg = <0x01c0c000 0x1000>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON0>,
-+				 <&ccu CLK_TCON0>;
-+			clock-names = "ahb",
-+				      "tcon-ch0";
-+			clock-output-names = "tcon-pixel-clock";
-+			resets = <&ccu RST_BUS_TCON0>;
-+			reset-names = "lcd";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon0_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon0_in_mixer0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer0_out_tcon0>;
-+					};
-+				};
-+
-+				tcon0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+
- 		mmc0: mmc@01c0f000 {
- 			compatible = "allwinner,sun7i-a20-mmc";
- 			reg = <0x01c0f000 0x1000>;
+ 			#reset-cells = <1>;
+ 		};
+ 
+@@ -589,9 +575,9 @@
+ 
+ 		ir: ir@01f02000 {
+ 			compatible = "allwinner,sun5i-a13-ir";
+-			clocks = <&apb0_gates 1>, <&ir_clk>;
++			clocks = <&r_ccu CLK_APB0_IR>, <&r_ccu CLK_IR>;
+ 			clock-names = "apb", "ir";
+-			resets = <&apb0_reset 1>;
++			resets = <&r_ccu RST_APB0_IR>;
+ 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x01f02000 0x40>;
+ 			status = "disabled";
+@@ -601,9 +587,8 @@
+ 			compatible = "allwinner,sun8i-h3-r-pinctrl";
+ 			reg = <0x01f02c00 0x400>;
+ 			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&apb0_gates 0>, <&osc24M>, <&osc32k>;
++			clocks = <&r_ccu CLK_APB0_PIO>, <&osc24M>, <&osc32k>;
+ 			clock-names = "apb", "hosc", "losc";
+-			resets = <&apb0_reset 0>;
+ 			gpio-controller;
+ 			#gpio-cells = <3>;
+ 			interrupt-controller;
 -- 
 2.12.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
