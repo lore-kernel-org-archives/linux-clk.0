@@ -1,60 +1,97 @@
-Return-Path: <hgkr.klein@gmail.com>
-Return-Path: <hgkr.klein@gmail.com>
-Subject: Re: [PATCH v2,1/3] meson_uart: expose CLKID_UARTx
-To: Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman
- <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-References: <20170328092545.4644-1-hgkr.klein@gmail.com>
- <20170328092545.4644-2-hgkr.klein@gmail.com>
- <1490716277.20764.6.camel@baylibre.com>
- <71489b62-78c8-7082-587e-8598dc43ca59@gmail.com>
- <1490728490.20764.8.camel@baylibre.com>
- <CAFBinCDF29+kQpedsJPqRy6fztWrj91Qi6tCno_2S6UCkhW7XQ@mail.gmail.com>
- <m2y3vn6dhk.fsf@baylibre.com> <1490974657.12951.5.camel@baylibre.com>
-Cc: mturquette@baylibre.com, sboyd@codeaurora.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org
-From: Helmut Klein <hgkr.klein@gmail.com>
-Message-ID: <26dd484d-f6fd-048d-7467-0fe9a1e6645b@gmail.com>
-Date: Fri, 31 Mar 2017 19:03:12 +0200
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Wed, 29 Mar 2017 18:37:12 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	mike.leach@linaro.org, sudeep.holla@arm.com
+Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
+Message-ID: <20170329103712.GA22480@leoy-linaro>
+References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+ <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
+ <31be033f-514e-e48a-3ba2-a5c5cd477548@arm.com>
+ <20170329030735.GA23889@leoy-linaro>
+ <5584203e-cb19-a5d2-45b1-3e78d3482c55@arm.com>
+ <20170329102740.GA20804@leoy-linaro>
+ <89b6c6c7-0da0-6891-312a-c9221851c20a@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <1490974657.12951.5.camel@baylibre.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <89b6c6c7-0da0-6891-312a-c9221851c20a@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 31.03.2017 17:37, Jerome Brunet wrote:
-> On Wed, 2017-03-29 at 13:21 -0700, Kevin Hilman wrote:
->> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
->>
->> [...]
->>
->>> for Helmut this would mean that instead of dropping this patch (or
->>> dropping CLKID_UART1 and CLKID_UART2 from this patch) he would rather
->>> have to *add* another patch (for meson-gxbb.dtsi and meson-gxl.dtsi)
->>> which passes the core clocks to the corresponding UART controllers
->>> (similar to the CLKID_SD_EMMC_ clocks).
->>
->> Yes, this is what I would like to see.
->>
->> If a new CLKID is exposed, I want to see the users of it at the same
->> time.
->
-> Helmut,
->
-> If you send another version of these patches, considering the feedback of Kevin
-> and Martin, could you please change the subject of this patch to:
->
-> dt-bindings: clock: gxbb: expose UART clocks
->
-> Thx
-> Jerome
->
-i've just sent v3 of my patchset.
-(i changed the subjects of most patches in the set)
+On Wed, Mar 29, 2017 at 11:31:03AM +0100, Suzuki K Poulose wrote:
+> On 29/03/17 11:27, Leo Yan wrote:
+> >On Wed, Mar 29, 2017 at 10:07:07AM +0100, Suzuki K Poulose wrote:
+> >
+> >[...]
+> >
+> >>>>>+	if (mode == EDDEVID_IMPL_NONE) {
+> >>>>>+		drvdata->edpcsr_present  = false;
+> >>>>>+		drvdata->edcidsr_present = false;
+> >>>>>+		drvdata->edvidsr_present = false;
+> >>>>>+	} else if (mode == EDDEVID_IMPL_EDPCSR) {
+> >>>>>+		drvdata->edpcsr_present  = true;
+> >>>>>+		drvdata->edcidsr_present = false;
+> >>>>>+		drvdata->edvidsr_present = false;
+> >>>>>+	} else if (mode == EDDEVID_IMPL_EDPCSR_EDCIDSR) {
+> >>>>>+		if (!IS_ENABLED(CONFIG_64BIT) &&
+> >>>>>+			(pcsr_offset == EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32))
+> >>>>>+			drvdata->edpcsr_present = false;
+> >>>>>+		else
+> >>>>>+			drvdata->edpcsr_present = true;
+> >>>>
+> >>>>Sorry, I forgot why we do this check only in this mode. Shouldn't this be
+> >>>>common to all modes (of course which implies PCSR is present) ?
+> >>>
+> >>>No. PCSROffset is defined differently in ARMv7 and ARMv8; So finally we
+> >>>simplize PCSROffset value :
+> >>>0000 - Sample offset applies based on the instruction state (indicated by PCSR[0])
+> >>>0001 - No offset applies.
+> >>>0010 - No offset applies, but do not use in AArch32 mode!
+> >>>
+> >>>So we need handle the corner case is when CPU runs AArch32 mode and
+> >>>PCSRoffset = 'b0010. Other cases the pcsr should be present.
+> >>
+> >>I understand that reasoning. But my question is, why do we check for PCSROffset
+> >>only when mode == EDDEVID_IMPL_EDPCSR_EDCIDSR and not for say mode == EDDEVID_IMPL_EDPCSR or
+> >>any other mode where PCSR is present.
+> >
+> >Sorry I misunderstood your question.
+> >
+> >I made mistake when I analyzed the possbile combination for mode and
+> >PCSROffset so I thought it's the only case should handle:
+> >{ EDDEVID_IMPL_EDPCSR_EDCIDSR, EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 }
+> >
+> >Below three combinations are possible to exist; so you are right, I
+> >should move this out for the checking:
+> >{ EDDEVID_IMPL_NONE,           EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 }
+> 
+> That need not be covered, as IMPL_NONE says PCSR is not implemented hence you
+> don't worry about anything as the functionality is missing. This should rather be:
+> EDDEVID_IMPL_EDPCSR, where only PCSR is implemented.
 
-Helmut
+I think below combination doesn't really exist:
+{ EDDEVID_IMPL_EDPCSR, EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 };
 
->>
->> Kevin
->
+EDDEVID_IMPL_EDPCSR is only defined in ARMv7 ARM, and
+EDDEVID1_PCSR_NO_OFFSET_DIS_AARCH32 is only defined in ARMv8 ARM.
+
+> My switch...case suggestion makes it easier to do all this checking.
+
+Agree. Will do this.
+
+Thanks,
+Leo Yan
