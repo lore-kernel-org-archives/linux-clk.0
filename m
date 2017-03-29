@@ -1,117 +1,104 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Subject: Re: [PATCH] PM / runtime: Use synchronous runtime PM call in
- rpm_put_suppliers()
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <55b66219-e210-fe27-441c-177125afc3e0@samsung.com>
-Date: Mon, 27 Mar 2017 12:14:12 +0200
-MIME-version: 1.0
-In-reply-to: <CAPDyKFot3C1C1k45JovwKHFkvTJAFvdetoE8_ADAhMCkFw3hPA@mail.gmail.com>
-Content-type: text/plain; charset=utf-8; format=flowed
-References: <CGME20170322092305eucas1p20d2a6dfede483210febea5b5e0ff68db@eucas1p2.samsung.com>
- <1490174570-18345-1-git-send-email-m.szyprowski@samsung.com>
- <CAPDyKFq+mTvruQb5ifj3etMxSCWgDZTZ6ebGkk84UCQDqjR4-A@mail.gmail.com>
- <CAJZ5v0ihYQp4_oJCu3Tugbqrm=68hcxdg8-yUphbCXCUw3UzPw@mail.gmail.com>
- <CAPDyKFot3C1C1k45JovwKHFkvTJAFvdetoE8_ADAhMCkFw3hPA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [PATCH v3 11/11] [DO NOT MERGE] ARM: dts: sun8i: enable LCD panel of
+ Lichee Pi Zero
+Date: Thu, 30 Mar 2017 03:46:13 +0800
+Message-Id: <20170329194613.55548-12-icenowy@aosc.io>
+In-Reply-To: <20170329194613.55548-1-icenowy@aosc.io>
+References: <20170329194613.55548-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+ Icenowy Zheng <icenowy@aosc.xyz>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ulf,
+From: Icenowy Zheng <icenowy@aosc.xyz>
 
-On 2017-03-23 13:47, Ulf Hansson wrote:
-> On 22 March 2017 at 21:56, Rafael J. Wysocki <rafael@kernel.org> wrote:
->> On Wed, Mar 22, 2017 at 12:34 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>> On 22 March 2017 at 10:22, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->>>> rpm_put_suppliers() might be called as a result of pm_runtime_put_sync()
->>>> call, where the called explicitly wants to perform the operation in
->>>> synchronous way to avoid some deadlocks related to concurrent code
->>>> execution in the PM workers. However the current code for handling device
->>>> links always use asynchronous calls. This patch changes it to always use
->>>> the synchronous calls.
->>> This is a good idea! It is better to leave the decision to the "leaf"
->>> node of whether to use asynchronous mode or not.
->> One immediate concern that I have is that this happens in an SRCU
->> read-side critical section and sync runtime suspend can take arbitrary
->> amount of time, especially if those devices have suppliers etc.  You
->> may very well wait for an entire subtree to suspend synchronously
->> here.
-> Yes that's a problem. Can we address that somehow?
+A 480x272 QiaoDian QD43003C0-40-7LED panel is available from Lichee Pi.
 
-Just a stupid question: why this is issue in case of rpm_put_suppliers()
-and call to pm_runtime_put_sync(), but it is okay in rpm_get_suppliers()
-and pm_runtime_get_sync(), which can also take a long time to complete?
+This commit connects this panel to Lichee Pi Zero.
 
->> Moreover, if the suppliers have parents, those parents won't be
->> suspended synchronously anyway, so this only addresses the first level
->> of hierarchy in that case.
->>
->> Also the behavior for suppliers follows the behavior for parents and I
->> don't quite see the reason for these two cases to behave differently
->> in principle.
-> Yes, you are right!
->
-> We shouldn't change this for suppliers unless we also change this for parents.
+Lichee Pi also provides a 800x480 panel without accurate model number,
+so do not merge this patch. It will finally come as device tree overlay.
 
-Right, this can also lead to the deadlock similar to the one observed with
-links. Once again, it looks that if caller wants a synchronous operation,
-it should be propagated to parents also.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts | 36 +++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
->>>> This patch fixes the potential deadlock, which appears during adding
->>>> runtime PM support to clock framework, which uses global mutex, which is
->>>> reentrant only for the current process, so trying to execute runtime PM
->>>> callback from the worker results in deadlock (the mentioned mutex is
->>>> already taken by the current process, which waits for execution of PM
->>>> worker).
->>> This just tells that the locking mechanism for clocks are fragile.
->> Right.
->>
->> We seem to be working around problems in there with this patch.
->>
->>> Whether it is a good motivation for this change, I am not sure.
->>>
->>> In either case, I like the change!
->> Why exactly do you like it?
-> Okay, let me try to elaborate.
->
-> For the async runtime PM suspend/idle case (including runtime PM autosuspend):
-> When a driver for a children/consumer decides to use the async runtime
-> PM APIs, I assume it's because the driver expects the device to be
-> used in some kind of a "bursty" manner. Meaning it doesn't make sense
-> to save power in-between every request, but instead leave the device
-> powered for little while after a request has been served. The purpose
-> is often to avoid the wakeup-latency for *each* request, when these
-> comes in bursts.
->
-> For these cases the driver has already traded some power savings for
-> improved performance of requests in bursts. When this trade is done
-> for the children/consumer, I think it seems reasonable to not further
-> defer the parent/supplier to be be runtime suspended/idled, as that
-> would further trade power for performance, which is what happens when
-> rpm_idle|suspend() decides to punt this to a work.
->
-> Moreover, scheduling a work for each parent/supplier seems suboptimal
-> to me, as in the async case we are already executing from within a
-> work. In cases of a higher level of device hierarchy, several works
-> becomes scheduled.
->
-> For the sync runtime PM suspend/idle case:
-> When a driver for a children/consumers decides to use the sync runtime
-> PM APIs, it's most likely because it wants the device to enter its low
-> power state as soon as possible. In other words, there is no need to
-> trade power for performance, either because power is more important
-> than performance or because the wakeup latency is negligible. To me, I
-> think it seems reasonable to respect this policy for parents/suppliers
-> as well instead of always punting to a work.
-
-Thanks for the detailed explanation. It looks that is should be safe to
-use sync for both links and parents in all cases...
-
-Best regards
+diff --git a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+index 387fc2aa546d..7ae72bf63cd0 100644
+--- a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
++++ b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+@@ -75,6 +75,28 @@
+ 			gpios = <&pio 6 2 GPIO_ACTIVE_LOW>; /* PG2 */
+ 		};
+ 	};
++
++	panel: panel {
++		compatible = "qiaodian,qd43003c0-40", "simple-panel";
++		enable-gpios = <&pio 1 4 GPIO_ACTIVE_HIGH>; /* Should be backlight */
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			panel_input: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&tcon0_out_lcd>;
++			};
++		};
++	};
++};
++
++&de {
++	status = "okay";
+ };
+ 
+ &mmc0 {
+@@ -86,6 +108,20 @@
+ 	status = "okay";
+ };
+ 
++&tcon0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&lcd_rgb666_pins>;
++	status = "okay";
++
++};
++
++&tcon0_out {
++	tcon0_out_lcd: endpoint@0 {
++		reg = <0>;
++		remote-endpoint = <&panel_input>;
++	};
++};
++
+ &uart0 {
+ 	pinctrl-0 = <&uart0_pins_a>;
+ 	pinctrl-names = "default";
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.12.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
