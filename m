@@ -1,79 +1,55 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Tue, 21 Mar 2017 19:47:11 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+Return-Path: <icenowy@aosc.io>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk@vger.kernel.org, Mike Leach <mike.leach@linaro.org>,
-	Sudeep Holla <Sudeep.Holla@arm.com>
-Subject: Re: [v3 3/5] coresight: add support for debug module
-Message-ID: <20170321114711.GA5886@leoy-linaro>
-References: <20170313165600.GB32431@linaro.org>
- <516f8989-4dde-2686-d549-0761feb14d1b@arm.com>
- <CANLsYkzJsGvr4ZzNbTwcPu1Qki6=Szvu+bMjHZ_rza==DqFChw@mail.gmail.com>
- <20170317101328.GA19877@leoy-linaro>
- <20170317155007.GA20435@linaro.org>
- <20170317162836.GD2020@leoy-linaro>
- <5995f6a7-08b1-c868-fc88-a145d1748a33@arm.com>
- <CANLsYkyiAnSGW4Ujs6L-yBKK3no3zigbyBgOCWbm06ZdV-f2Hw@mail.gmail.com>
- <20170321025924.GA7429@leoy-linaro>
- <7226bc83-24f5-f609-2f87-f0afc7657488@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7226bc83-24f5-f609-2f87-f0afc7657488@arm.com>
+	Chen-Yu Tsai <wens@csie.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 0/5] Add support for the R_CCU on Allwinner H3/A64 SoCs
+Date: Wed, 29 Mar 2017 18:42:41 +0800
+Message-Id: <20170329104246.34204-1-icenowy@aosc.io>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Mar 21, 2017 at 10:16:45AM +0000, Suzuki K Poulose wrote:
+Allwinner SoCs after sun6i-a31 nearly all have a R_CCU in PRCM part.
+(V3s and R40 do not have it, as they have even no PRCM)
 
-[...]
+This patch adds support for the ones on H3/A64.
 
-> >>In my opinion booting with "nohlt" on the cmd line is sufficient to
-> >>determine if we should use the driver or not.  That way we also avoid
-> >>declaring yet another sysfs flag, something I really want to avoid.
-> >
-> >Agree.
-> >
-> >I did spend some time to implement coresight core framework to support
-> >debug module, you could see it on:http://termbin.com/k2fj; this also
-> >gives me more sense which is better choice. If declaring another sysfs
-> >flag to support debug module in coresight framework, this lets the
-> >codes and interfaces more complex. E.g. for best fit into coresight
-> >framework, finally we can get 8 sysfs nodes for 8 CPUs in system; so
-> >that means we need enable every CPU one by one.
-> 
-> Having a node for each debug area indeed doesn't look good. We could
-> as will stick a single node under /sys/kernel/debug/ which would enable/disable
-> the debug component.
-> 
-> I am OK with it being tied to nohlt. In that case we will have to add
-> a Kconfig dependency on GENERIC_IDLE_POLL_SETUP (though it is selected
-> by default on ARM/ARM64). Parsing the boot command line for nohlt doesn't
-> look like a good idea. We may have to figure out a way to do that.
+Some clock/reset values are reserved for easier extending the support to
+A31/A23, but for this I think some changes to the PRCM MFD should be made,
+see [1] (Although this is only a sketch).
 
-I remembered that we can use QoS constraint for CPUIdle:
-        pm_qos_add_request(pm_qos_req, PM_QOS_CPU_DMA_LATENCY, 0);
+The r_pio device node is also added for A64, as the driver is already
+merged, and its depends (r_ccu) is now met.
 
-Using this way we can disable all low power states and don't depend on
-nohlt anymore.
+[1] https://github.com/wens/linux/commits/sunxi-ng-prcm
 
-> Also, please could you add support for building this as a module ? Since it
-> doesn't depend on the coresight bus anyway, it should be pretty straight
-> forward.
+Icenowy Zheng (5):
+  dt-bindings: update device tree binding for Allwinner PRCM CCUs
+  clk: sunxi-ng: add support for PRCM CCUs
+  arm64: allwinner: a64: add r_ccu node
+  ARM: sunxi: h3/h5: switch apb0-related clocks to r_ccu
+  arm64: allwinner: a64: add R_PIO pinctrl node
 
-Yeah. Will support module building.
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |  17 +-
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi                 |  47 ++---
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      |  31 +++
+ drivers/clk/sunxi-ng/Kconfig                       |   6 +
+ drivers/clk/sunxi-ng/Makefile                      |   1 +
+ drivers/clk/sunxi-ng/ccu-sun8i-r.c                 | 211 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-r.h                 |  27 +++
+ include/dt-bindings/clock/sun8i-r-ccu.h            |  59 ++++++
+ include/dt-bindings/reset/sun8i-r-ccu.h            |  53 ++++++
+ 9 files changed, 420 insertions(+), 32 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r.h
+ create mode 100644 include/dt-bindings/clock/sun8i-r-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun8i-r-ccu.h
 
-Thanks,
-Leo Yan
+-- 
+2.12.0
