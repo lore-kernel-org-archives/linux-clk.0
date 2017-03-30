@@ -1,77 +1,87 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:36466 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932895AbdCaLGa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2017 07:06:30 -0400
-Date: Sat, 1 Apr 2017 11:03:13 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org,
-        aisheng.dong@nxp.com, fabio.estevam@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: dts: imx7: add USDHC NAND clock to SDHC
- instances
-Message-ID: <20170401030312.GB24882@b29396-OptiPlex-7040>
-References: <20170330005029.6472-1-stefan@agner.ch>
- <20170330005029.6472-2-stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170330005029.6472-2-stefan@agner.ch>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v7 03/13] mmc: sdhci: Export sdhci_set_ios() from sdhci.c
+Date: Thu, 30 Mar 2017 17:22:55 +0200
+Message-Id: <e03ff1bc129aac815ca5859024c1fe23e5d30965.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 05:50:29PM -0700, Stefan Agner wrote:
-> The USDHC instances need the USDHC NAND clock in order to operate.
-> Add the clock as ahb bus clock.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  arch/arm/boot/dts/imx7s.dtsi | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-> index 5d3a43b8de20..5794febb19a4 100644
-> --- a/arch/arm/boot/dts/imx7s.dtsi
-> +++ b/arch/arm/boot/dts/imx7s.dtsi
-> @@ -936,7 +936,7 @@
->  				reg = <0x30b40000 0x10000>;
->  				interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
->  				clocks = <&clks IMX7D_CLK_DUMMY>,
+From: Hu Ziji <huziji@marvell.com>
 
-Would you please change the left ipg dummy to IMX7D_IPG_ROOT_CLK as well?
+Export sdhci_set_ios() in sdhci.c.
+Thus vendor sdhci driver can implement its own set_ios() routine.
 
-Otherwise,
+Signed-off-by: Hu Ziji <huziji@marvell.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci.c | 3 ++-
+ drivers/mmc/host/sdhci.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
-
-Regards
-Dong Aisheng
-
-> -					<&clks IMX7D_CLK_DUMMY>,
-> +					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
->  					<&clks IMX7D_USDHC1_ROOT_CLK>;
->  				clock-names = "ipg", "ahb", "per";
->  				bus-width = <4>;
-> @@ -948,7 +948,7 @@
->  				reg = <0x30b50000 0x10000>;
->  				interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
->  				clocks = <&clks IMX7D_CLK_DUMMY>,
-> -					<&clks IMX7D_CLK_DUMMY>,
-> +					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
->  					<&clks IMX7D_USDHC2_ROOT_CLK>;
->  				clock-names = "ipg", "ahb", "per";
->  				bus-width = <4>;
-> @@ -960,7 +960,7 @@
->  				reg = <0x30b60000 0x10000>;
->  				interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
->  				clocks = <&clks IMX7D_CLK_DUMMY>,
-> -					<&clks IMX7D_CLK_DUMMY>,
-> +					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
->  					<&clks IMX7D_USDHC3_ROOT_CLK>;
->  				clock-names = "ipg", "ahb", "per";
->  				bus-width = <4>;
-> -- 
-> 2.12.1
-> 
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 811981394e6e..d5bca886419d 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1583,7 +1583,7 @@ void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing)
+ }
+ EXPORT_SYMBOL_GPL(sdhci_set_uhs_signaling);
+ 
+-static void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
++void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ {
+ 	struct sdhci_host *host = mmc_priv(mmc);
+ 	u8 ctrl;
+@@ -1738,6 +1738,7 @@ static void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 
+ 	mmiowb();
+ }
++EXPORT_SYMBOL_GPL(sdhci_set_ios);
+ 
+ static int sdhci_get_cd(struct mmc_host *mmc)
+ {
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index fdb5d7e1911f..b0cb805937c0 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -703,6 +703,7 @@ void sdhci_set_bus_width(struct sdhci_host *host, int width);
+ void sdhci_reset(struct sdhci_host *host, u8 mask);
+ void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
+ int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
++void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios);
+ 
+ #ifdef CONFIG_PM
+ int sdhci_suspend_host(struct sdhci_host *host);
+-- 
+git-series 0.9.1
