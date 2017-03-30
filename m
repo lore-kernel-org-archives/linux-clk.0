@@ -1,173 +1,198 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 3/3] clk: qcom: Implement RPM clocks for MSM8660/APQ8060
-Date: Wed, 22 Mar 2017 09:18:50 +0100
-Message-Id: <20170322081850.20544-1-linus.walleij@linaro.org>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v7 00/13] mmc: Add support to Marvell Xenon SD Host Controller
+Date: Thu, 30 Mar 2017 17:22:52 +0200
+Message-Id: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The RPM clocks were missing for MSM8660/APQ8060. For this to be
-completed we need to add a special fixed rate RPM clock that is used
-for the PLL4 on these SoCs. The rest of the clocks are pretty
-similar to the other supported platforms.
+Hello,
 
-The "active" clock pattern is mirrored in all the clocks. I guess
-that the PLL4 that clocks the LPASS is actually never used as
-"active only" since the low-power audio subsystem should be left
-on when the system suspends, so it can be used as a stand-alone
-MP3 player type of device.
+This the seventh version of the series adding support for the SDHCI
+Xenon controller. It can be currently found on the Armada 37xx and the
+Armada 7K/8K but will be also used in more Marvell SoC (and not only
+the mvebu ones actually).
 
-As we do not have firmware for the LPASS we will probably only use
-this clock when the system is up and running (not suspended) for now,
-so that will be using the "active" clock.
+v6->v7:
+ - Add comments on vqmmc and vmmc in examples in dt binding doc.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/clk/qcom/clk-rpm.c | 99 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+ - Fix all the issues pointed out by Ulf and Adrian:
 
-diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
-index df3e5fe8442a..0e2a02baaed7 100644
---- a/drivers/clk/qcom/clk-rpm.c
-+++ b/drivers/clk/qcom/clk-rpm.c
-@@ -56,6 +56,30 @@
- 		},							      \
- 	}
- 
-+#define DEFINE_CLK_RPM_FIXED(_platform, _name, _active, r_id, r)	      \
-+	static struct clk_rpm _platform##_##_name = {			      \
-+		.rpm_clk_id = (r_id),					      \
-+		.rate = (r),						      \
-+		.hw.init = &(struct clk_init_data){			      \
-+			.ops = &clk_rpm_fixed_ops,			      \
-+			.name = #_name,					      \
-+			.parent_names = (const char *[]){ "pxo_board" },      \
-+			.num_parents = 1,				      \
-+		},							      \
-+	};								      \
-+	static struct clk_rpm _platform##_##_active = {			      \
-+		.rpm_clk_id = (r_id),					      \
-+		.peer = &_platform##_##_name,				      \
-+		.active_only = true,					      \
-+		.rate = (r),						      \
-+		.hw.init = &(struct clk_init_data){			      \
-+			.ops = &clk_rpm_fixed_ops,			      \
-+			.name = #_active,				      \
-+			.parent_names = (const char *[]){ "pxo_board" },      \
-+			.num_parents = 1,				      \
-+		},							      \
-+	}
-+
- #define DEFINE_CLK_RPM_PXO_BRANCH(_platform, _name, _active, r_id, r)	      \
- 	static struct clk_rpm _platform##_##_active;			      \
- 	static struct clk_rpm _platform##_##_name = {			      \
-@@ -269,6 +293,32 @@ static void clk_rpm_unprepare(struct clk_hw *hw)
- 	mutex_unlock(&rpm_clk_lock);
- }
- 
-+static int clk_rpm_fixed_prepare(struct clk_hw *hw)
-+{
-+	struct clk_rpm *r = to_clk_rpm(hw);
-+	u32 value = 1;
-+	int ret;
-+
-+	ret = qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
-+			     r->rpm_clk_id, &value, 1);
-+	if (!ret)
-+		r->enabled = true;
-+
-+	return ret;
-+}
-+
-+static void clk_rpm_fixed_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_rpm *r = to_clk_rpm(hw);
-+	u32 value = 0;
-+	int ret;
-+
-+	ret = qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
-+			     r->rpm_clk_id, &value, 1);
-+	if (!ret)
-+		r->enabled = false;
-+}
-+
- static int clk_rpm_set_rate(struct clk_hw *hw,
- 			    unsigned long rate, unsigned long parent_rate)
- {
-@@ -333,6 +383,13 @@ static unsigned long clk_rpm_recalc_rate(struct clk_hw *hw,
- 	return r->rate;
- }
- 
-+static const struct clk_ops clk_rpm_fixed_ops = {
-+	.prepare	= clk_rpm_fixed_prepare,
-+	.unprepare	= clk_rpm_fixed_unprepare,
-+	.round_rate	= clk_rpm_round_rate,
-+	.recalc_rate	= clk_rpm_recalc_rate,
-+};
-+
- static const struct clk_ops clk_rpm_ops = {
- 	.prepare	= clk_rpm_prepare,
- 	.unprepare	= clk_rpm_unprepare,
-@@ -348,6 +405,46 @@ static const struct clk_ops clk_rpm_branch_ops = {
- 	.recalc_rate	= clk_rpm_recalc_rate,
- };
- 
-+/* MSM8660/APQ8060 */
-+DEFINE_CLK_RPM_FIXED(msm8660, pll4_clk, pll4_a_clk, QCOM_RPM_PLL_4, 540672000);
-+DEFINE_CLK_RPM(msm8660, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
-+DEFINE_CLK_RPM(msm8660, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
-+DEFINE_CLK_RPM(msm8660, mmfab_clk, mmfab_a_clk, QCOM_RPM_MM_FABRIC_CLK);
-+DEFINE_CLK_RPM(msm8660, daytona_clk, daytona_a_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
-+DEFINE_CLK_RPM(msm8660, sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
-+DEFINE_CLK_RPM(msm8660, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
-+DEFINE_CLK_RPM(msm8660, mmfpb_clk, mmfpb_a_clk, QCOM_RPM_MMFPB_CLK);
-+DEFINE_CLK_RPM(msm8660, smi_clk, smi_a_clk, QCOM_RPM_SMI_CLK);
-+DEFINE_CLK_RPM(msm8660, ebi1_clk, ebi1_a_clk, QCOM_RPM_EBI1_CLK);
-+
-+static struct clk_rpm *msm8660_clks[] = {
-+	[RPM_PLL4_CLK] = &msm8660_pll4_clk,
-+	[RPM_PLL4_A_CLK] = &msm8660_pll4_a_clk,
-+	[RPM_APPS_FABRIC_CLK] = &msm8660_afab_clk,
-+	[RPM_APPS_FABRIC_A_CLK] = &msm8660_afab_a_clk,
-+	[RPM_SYS_FABRIC_CLK] = &msm8660_sfab_clk,
-+	[RPM_SYS_FABRIC_A_CLK] = &msm8660_sfab_a_clk,
-+	[RPM_MM_FABRIC_CLK] = &msm8660_mmfab_clk,
-+	[RPM_MM_FABRIC_A_CLK] = &msm8660_mmfab_a_clk,
-+	[RPM_DAYTONA_FABRIC_CLK] = &msm8660_daytona_clk,
-+	[RPM_DAYTONA_FABRIC_A_CLK] = &msm8660_daytona_a_clk,
-+	[RPM_SFPB_CLK] = &msm8660_sfpb_clk,
-+	[RPM_SFPB_A_CLK] = &msm8660_sfpb_a_clk,
-+	[RPM_CFPB_CLK] = &msm8660_cfpb_clk,
-+	[RPM_CFPB_A_CLK] = &msm8660_cfpb_a_clk,
-+	[RPM_MMFPB_CLK] = &msm8660_mmfpb_clk,
-+	[RPM_MMFPB_A_CLK] = &msm8660_mmfpb_a_clk,
-+	[RPM_SMI_CLK] = &msm8660_smi_clk,
-+	[RPM_SMI_A_CLK] = &msm8660_smi_a_clk,
-+	[RPM_EBI1_CLK] = &msm8660_ebi1_clk,
-+	[RPM_EBI1_A_CLK] = &msm8660_ebi1_a_clk,
-+};
-+
-+static const struct rpm_clk_desc rpm_clk_msm8660 = {
-+	.clks = msm8660_clks,
-+	.num_clks = ARRAY_SIZE(msm8660_clks),
-+};
-+
- /* apq8064 */
- DEFINE_CLK_RPM(apq8064, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
- DEFINE_CLK_RPM(apq8064, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
-@@ -386,6 +483,8 @@ static const struct rpm_clk_desc rpm_clk_apq8064 = {
- };
- 
- static const struct of_device_id rpm_clk_match_table[] = {
-+	{ .compatible = "qcom,rpmcc-msm8660", .data = &rpm_clk_msm8660 },
-+	{ .compatible = "qcom,rpmcc-apq8060", .data = &rpm_clk_msm8660 },
- 	{ .compatible = "qcom,rpmcc-apq8064", .data = &rpm_clk_apq8064 },
- 	{ }
- };
+   - Align the prefix of function and variable names.
+   - Replace the if-else with switch statements when checking MMC_TIMING_*
+   - Remove the spinlocks in set_ios.
+   - Optimize the delay loop as Adrian patch does.
+   - Add release of phy params structures
+
+- Add check of Vqmmc supply in Xenon signal voltage switch. If Vqmmc
+  regulator doesn't exist, skip standard SD signal voltage regulator
+  switch process.
+
+- Remove parse of child node mmc-card. Wait for a better solution.
+
+v5->v6:
+
+- Add a generic "mmc-card" parse in core layer.
+
+- Fix the spelling issues in Xenon dt binding doc and drivers.
+
+- Remove descriptions to common mmc properties from Xenon dt binding
+  doc.
+
+- Split compatible string "marvell,armada-8k-sdhci" into
+ "marvell,armada-ap806-sdhci" and "marvell,armada-cp110-sdhci".
+
+- Also updates the example in Xenon dt binding doc.
+
+- Remove unnecessary dependency on MMC_SDHCI from Xenon entry in
+  Kconfig.
+
+- Move Xenon specific dt parse into a separate function.
+
+- Adjust warnings and condition check in Xenon PHY setting, to remove
+ fragile hs200->hs400/hs400->hs200 sequence check function.
+
+- Enable PHY Slow Mode in MMC_TIMING_LEGACY timing if PHY Slow Mode is
+ required in dts.
+
+- Add a patch allowing dts backwards compatible for the clock
+
+v4->v5:
+
+- Remove the patch to export sdhci_execute_tuning(). It is already
+  exported in v4.10.
+
+- Introduce a patch adding a missing clock for the sdhci controller
+  present on the CP master for A7K/A8K. There is no build dependency
+  but obviously this patch is need to use the sdhci controller present
+  on the CP part.
+
+- Adjust Xenon return setup, to avoid being overwritten by
+   sdhci_add_host().
+
+- Change Xenon register definition prefix to "XENON_".
+
+-  Fix typos in Xenon driver and dt-binding docs.
+
+- Change compatible string "marvell,armada-7000-sdhci" to
+  "marvell,armada-8k-sdhci". Actually the Armada 7K SoCs are a subset
+  of the Armada 8K SoCs. Moreover, the use of the '000' is not
+  consistent with all the other compatible string already used for the
+  Armada 7K/8K family.
+
+- Added the Tested-by from Russell King on an Armada 8K based board.
+
+v3 -> v4:
+For this version a few change have been done:
+- fixes 2 bug  reported by kbuild-bot
+  - remove extra of_node_put()
+  - convert 0 in false for function returning boolean
+
+- add a device tree node for the sdhci controller present on the CP
+  master for A7K/A8K. It also led to rename the sdhci0 node on AP to
+  ap_sdhci0 to make a distinction with the one present on CP master.
+
+v2 -> v3
+I think that now most (if not all) the remarks had been taking into
+account since the second version. According to Ziji Hu, here are the
+following changes:
+" Changes in V3:
+  Adjust and improve Xenon DT bindings. Move some caps setting from driver into
+  DT. Use mmc-card sub-node to represent eMMC type.
+  Remove PHY Sampling Fixed Delay Line scan in lower speed mode.
+  Improve Xenon probe and ->init_card() functions.
+  Export sdhci_enable_sdio_irq() and implement own SDIO IRQ control.
+  Split PHY patch into two smaller patches.
+  Temporarily remove AXI clock before its implementation is improved."
+
+Besides this changes I also
+- Removed the sdhci-xenon-phy.h and moved its content in the
+shc-xenon-phy.c file.
+- Fixed the tuning-count usage
+- Managed the error case for clk_prepare_enable
+
+For the record the change from v1 was:
+" Changes in V2:
+  rebase on v4.9-rc2.
+  Re-write Xenon bindings. Ajust Xenon DT property naming.
+  Add a new DT property to indicate eMMC card type, instead of using
+  variable card_candidate.
+  Clear quirks SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12 in Xenon platform data
+  Add support to HS400 retuning."
+
+Thanks,
+
+Gregory
+
+Gregory CLEMENT (4):
+  clk: apn806: Turn the eMMC clock as optional for dts backwards compatible
+  arm64: dts: marvell: add eMMC support for Armada 37xx
+  arm64: dts: marvell: add sdhci support for Armada 7K/8K
+  arm64: configs: enable SDHCI driver for Xenon
+
+Hu Ziji (8):
+  mmc: sdhci: Export sdhci_set_ios() from sdhci.c
+  mmc: sdhci: Export sdhci_start_signal_voltage_switch() in sdhci.c
+  mmc: sdhci: Export sdhci_enable_sdio_irq() from sdhci.c
+  dt: bindings: Add bindings for Marvell Xenon SD Host Controller
+  mmc: sdhci-xenon: Add Marvell Xenon SDHC core functionality
+  mmc: sdhci-xenon: Add support to PHYs of Marvell Xenon SDHC
+  mmc: sdhci-xenon: Add SoC PHY PAD voltage control
+  MAINTAINERS: add entry for Marvell Xenon MMC Host Controller drivers
+
+Konstantin Porotchkin (1):
+  clk: apn806: Add eMMC clock to system controller driver
+
+ Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt | 170 +-
+ MAINTAINERS                                                   |   7 +-
+ arch/arm64/boot/dts/marvell/armada-3720-db.dts                |   9 +-
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi                  |  11 +-
+ arch/arm64/boot/dts/marvell/armada-7040-db.dts                |  14 +-
+ arch/arm64/boot/dts/marvell/armada-8040-db.dts                |  12 +-
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi                 |  14 +-
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi          |  11 +-
+ arch/arm64/configs/defconfig                                  |   1 +-
+ drivers/clk/mvebu/ap806-system-controller.c                   |  21 +-
+ drivers/mmc/host/Kconfig                                      |   8 +-
+ drivers/mmc/host/Makefile                                     |   3 +-
+ drivers/mmc/host/sdhci-xenon-phy.c                            | 835 +++++++-
+ drivers/mmc/host/sdhci-xenon.c                                | 548 +++++-
+ drivers/mmc/host/sdhci-xenon.h                                | 101 +-
+ drivers/mmc/host/sdhci.c                                      |  11 +-
+ drivers/mmc/host/sdhci.h                                      |   4 +-
+ 17 files changed, 1774 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
+ create mode 100644 drivers/mmc/host/sdhci-xenon-phy.c
+ create mode 100644 drivers/mmc/host/sdhci-xenon.c
+ create mode 100644 drivers/mmc/host/sdhci-xenon.h
+
+base-commit: a645cc1df4ff41ba54a2fb839962b8ff142121d9
 -- 
-2.9.3
+git-series 0.9.1
