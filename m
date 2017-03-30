@@ -1,59 +1,137 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <tony@atomide.com>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <linux-omap@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCHv2 14/15] clk: ti: dpll44xx: fix clksel register initialization
-Date: Sat, 11 Mar 2017 14:50:05 +0200
-Message-ID: <1489236606-24023-15-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
-References: <1489236606-24023-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v7 12/13] arm64: dts: marvell: add sdhci support for Armada 7K/8K
+Date: Thu, 30 Mar 2017 17:23:04 +0200
+Message-Id: <08d6b21af1fd65783062c14e5896700d25c602f3.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-clksel register pointer should be used for the DPLL-MX autoidle handling.
-Currently this is not setup at all. Fix by adding proper handling for the
-register.
+Also enable it on the Armada 7040 DB and Armada 8040 DB boards.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 ---
- drivers/clk/ti/dpll.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm64/boot/dts/marvell/armada-7040-db.dts       | 14 +++++++++++++-
+ arch/arm64/boot/dts/marvell/armada-8040-db.dts       | 12 +++++++++++-
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi        | 11 ++++++++++-
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi | 11 ++++++++++-
+ 4 files changed, 48 insertions(+)
 
-diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-index c149bd1..778bc90 100644
---- a/drivers/clk/ti/dpll.c
-+++ b/drivers/clk/ti/dpll.c
-@@ -319,6 +319,7 @@ static void _register_dpll_x2(struct device_node *node,
- 	struct clk_hw_omap *clk_hw;
- 	const char *name = node->name;
- 	const char *parent_name;
-+	int ret;
- 
- 	parent_name = of_clk_get_parent_name(node, 0);
- 	if (!parent_name) {
-@@ -338,6 +339,20 @@ static void _register_dpll_x2(struct device_node *node,
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
- 
-+	if (hw_ops == &clkhwops_omap4_dpllmx) {
-+		/* Check if register defined, if not, drop hw-ops */
-+		ret = of_property_count_elems_of_size(node, "reg", 1);
-+		if (ret <= 0) {
-+			hw_ops = NULL;
-+		} else {
-+			clk_hw->clksel_reg = ti_clk_get_reg_addr(node, 0);
-+			if (IS_ERR(clk_hw->clksel_reg)) {
-+				kfree(clk_hw);
-+				return;
-+			}
-+		}
-+	}
+diff --git a/arch/arm64/boot/dts/marvell/armada-7040-db.dts b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
+index 070b589680c5..6adbfcd26369 100644
+--- a/arch/arm64/boot/dts/marvell/armada-7040-db.dts
++++ b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
+@@ -146,3 +146,17 @@
+ &cpm_usb3_1 {
+ 	status = "okay";
+ };
 +
- 	/* register the clock */
- 	clk = ti_clk_register(NULL, &clk_hw->hw, name);
++&ap_sdhci0 {
++	status = "okay";
++	bus-width = <4>;
++	no-1-8-v;
++	non-removable;
++};
++
++&cpm_sdhci0 {
++	status = "okay";
++	bus-width = <4>;
++	no-1-8-v;
++	non-removable;
++};
+diff --git a/arch/arm64/boot/dts/marvell/armada-8040-db.dts b/arch/arm64/boot/dts/marvell/armada-8040-db.dts
+index 6e6f182fb297..3d9565bf6e91 100644
+--- a/arch/arm64/boot/dts/marvell/armada-8040-db.dts
++++ b/arch/arm64/boot/dts/marvell/armada-8040-db.dts
+@@ -148,3 +148,15 @@
+ &cps_usb3_1 {
+ 	status = "okay";
+ };
++
++&ap_sdhci0 {
++	status = "okay";
++	bus-width = <4>;
++	non-removable;
++};
++
++&cpm_sdhci0 {
++	status = "okay";
++	bus-width = <8>;
++	non-removable;
++};
+diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+index 5019c8f4acd0..fe41bf9c301e 100644
+--- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+@@ -229,6 +229,17 @@
  
+ 			};
+ 
++			ap_sdhci0: sdhci@6e0000 {
++				compatible = "marvell,armada-ap806-sdhci";
++				reg = <0x6e0000 0x300>;
++				interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
++				clock-names = "core";
++				clocks = <&ap_syscon 4>;
++				dma-coherent;
++				marvell,xenon-phy-slow-mode;
++				status = "disabled";
++			};
++
+ 			ap_syscon: system-controller@6f4000 {
+ 				compatible = "marvell,ap806-system-controller",
+ 					     "syscon";
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+index 3a99c36433d6..f07ea5aeac48 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi
+@@ -173,6 +173,17 @@
+ 				clocks = <&cpm_syscon0 1 25>;
+ 				status = "okay";
+ 			};
++
++			cpm_sdhci0: sdhci@780000 {
++				compatible = "marvell,armada-cp110-sdhci";
++				reg = <0x780000 0x300>;
++				interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++				clock-names = "core";
++				clocks = <&cpm_syscon0 1 4>;
++				dma-coherent;
++				status = "disabled";
++			};
++
+ 		};
+ 
+ 		cpm_pcie0: pcie@f2600000 {
 -- 
-1.9.1
+git-series 0.9.1
