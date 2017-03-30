@@ -1,133 +1,91 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Ben Dooks <ben.dooks@codethink.co.uk>, "Kevin Hilman" <khilman@baylibre.com>,
- "Arnd Bergmann" <arnd@arndb.de>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <8e708a9f-b32e-a80c-b5d7-8979e59b6662@codethink.co.uk>
-Cc: linux-amlogic@lists.infradead.org, "arm-soc" <arm@kernel.org>,
- linux-clk@vger.kernel.org, "Linux ARM" <linux-arm-kernel@lists.infradead.org>
-References: <m28tnn69ls.fsf@baylibre.com>
- <CAK8P3a02e3DxjuW9pA66NSCc9vw_h1Xuk6TdEbRnEQ4v4W7NHA@mail.gmail.com>
- <m2fuht4eqs.fsf@baylibre.com>
- <8e708a9f-b32e-a80c-b5d7-8979e59b6662@codethink.co.uk>
-Message-ID: <149098004659.31513.4466752098392400631@resonance>
-Subject: Re: [GIT PULL] Amlogic 64-bit DT updates for v4.12
-Date: Fri, 31 Mar 2017 10:07:26 -0700
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v7 04/13] mmc: sdhci: Export sdhci_start_signal_voltage_switch() in sdhci.c
+Date: Thu, 30 Mar 2017 17:22:56 +0200
+Message-Id: <0bca528a39b34230c09eca0bf30bcff4d3a5278f.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Ben Dooks (2017-03-31 09:11:17)
-> On 31/03/17 17:01, Kevin Hilman wrote:
-> > Arnd Bergmann <arnd@arndb.de> writes:
-> >
-> >> On Wed, Mar 29, 2017 at 11:45 PM, Kevin Hilman <khilman@baylibre.com> =
-wrote:
-> >>> Olof, Arnd,
-> >>>
-> >>> Below are some 64-bit DT changes for Amlogic platforms for v4.12.  No=
-te
-> >>> that this branch includes a merge of an immutable branch from the clk
-> >>> tree (clk-meson) due to dependencies on new clocks added to the meson
-> >>> clock driver and used in these DT updates.
-> >>
-> >> I did not pull this one because of the silly dependency. The device tr=
-ee
-> >> files should be completely independent of the driver changes.
-> >
-> > Aaargh, this is getting very frustrating.
-> =
+From: Hu Ziji <huziji@marvell.com>
 
-> I tried to make this point very early on in the development,
-> we don't want to be changing both driver and dt if we are
-> adding things like IDs for gated clocks.
-> =
+Export sdhci_start_signal_voltage_switch() from sdhci.c.
+Thus vendor sdhci driver can implement its own signal voltage
+switch routine.
 
-> For example, having an almost 1:1 mapping from clock-id to
-> bit-in-hardware would make life much easier, even if the
-> driver had a little bit more code to create clocks at the
-> probe time, it would have meant that DT additions for new
-> peripherals would have been much easier.
+Signed-off-by: Hu Ziji <huziji@marvell.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci.c | 5 +++--
+ drivers/mmc/host/sdhci.h | 2 ++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-It would be great if the hardware was designed in such a way to make
-that possible. A lot of clock controller hardware simply isn't.
-
-We're talking about defining a reference to a clock control, somewhere
-in the middle of the clock tree, that maybe we didn't know existed until
-now. This simply is not the same as enumerating physical pins or
-something like that.
-
-To be clear, all of the leaf clock (gates) were defined in DT from the
-very beginning for the SoC in question. This is perfectly in-line with
-Arnd's world-view. These gates are very orderly and correspond directly
-to the consumer devices that take them as input.
-
-It's the mess of clocks that make up the "middle" of the tree that cause
-these problems. I don't see why we can't agree on a way to update the DT
-headers in such cases.
-
-> =
-
-> > [...]
-> >
-> >> Which add random macros in the middle of the number space.
-> >>
-> >> Since the header changes are in an immutable branch, it's probably
-> >> too late to fix this for 4.12, but maybe we can get the header into a
-> >> form that allows us to do future DT changes without having to
-> >> wait an extra release. The clock driver apparently already defines
-> >> some of the numbers above, so you can fill all of those in already.
-> >
-> > We could, but this is in direct conflict with the recommendations of the
-> > clk maintainers to not expose clock IDs to the DT until we know they are
-> > used because, well, things change.
-> >
-> > Can we *please* get some clarity on on this between arm-soc and the clk
-> > maintainers?  I've been asking for a couple merge windows now.
-
-I'm hopeful that that the arm-soc maintainers can see it my way ;-)
-
-I'll explain the thought process behind the gxbb clk IDs in DT again:
-
-1) we don't know about all the clocks ahead of time. New documentation
-is always forthcoming, especially in regards to multimedia-focused IP
-
-2) we do know about all of the leaf clocks that devices take as input
-and expose them in DT from the very beginning, as we should
-
-3) ideally we should not need to expose any non-leaf clocks in DT. This
-would be akin to exposing private data or state machine internals in DT,
-when the consumer nodes only care about a phandle to their input
-
-4) ideally consumer devices should reference only the leaf clocks.
-Ideally the framework & clk provider driver should be smart enough to Do
-The Right Thing.
-
-Items #3 and #4 are not always true, we don't life in an ideal world and
-hence, sometimes we add new clock IDs to DT. This should not be grounds
-for a patch not making it into the merge window IMO.
-
-Best regards,
-Mike
-
-> >
-> > Irritated,
-> >
-> > Kevin
-> >
-> > _______________________________________________
-> > linux-amlogic mailing list
-> > linux-amlogic@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-amlogic
-> >
-> =
-
-> =
-
-> -- =
-
-> Ben Dooks                               http://www.codethink.co.uk/
-> Senior Engineer                         Codethink - Providing Genius
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index d5bca886419d..cc5bb9fb7706 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1847,8 +1847,8 @@ static void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable)
+ 	spin_unlock_irqrestore(&host->lock, flags);
+ }
+ 
+-static int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+-					     struct mmc_ios *ios)
++int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
++				      struct mmc_ios *ios)
+ {
+ 	struct sdhci_host *host = mmc_priv(mmc);
+ 	u16 ctrl;
+@@ -1940,6 +1940,7 @@ static int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+ 		return 0;
+ 	}
+ }
++EXPORT_SYMBOL_GPL(sdhci_start_signal_voltage_switch);
+ 
+ static int sdhci_card_busy(struct mmc_host *mmc)
+ {
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index b0cb805937c0..a741d8da6227 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -704,6 +704,8 @@ void sdhci_reset(struct sdhci_host *host, u8 mask);
+ void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
+ int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
+ void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios);
++int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
++				      struct mmc_ios *ios);
+ 
+ #ifdef CONFIG_PM
+ int sdhci_suspend_host(struct sdhci_host *host);
+-- 
+git-series 0.9.1
