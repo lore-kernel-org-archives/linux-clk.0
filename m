@@ -1,233 +1,705 @@
-Return-Path: <icenowy@aosc.xyz>
-Message-Id: <20170302085439.sTju7Mpu@smtp2o.mail.yandex.net>
-Date: Thu, 02 Mar 2017 13:54:27 +0800
-Subject: Re: [linux-sunxi] Re: [PATCH 2/4] clk: sunxi-ng: Add sun7i-a20 CCU
- driver
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Priit Laes <plaes@plaes.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring
- <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Stephen Boyd	 <sboyd@codeaurora.org>,
- devicetree@vger.kernel.org, Russell King	 <linux@armlinux.org.uk>, Mark
- Rutland	 <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
- maxime.ripard@free-electrons.com
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v7 07/13] mmc: sdhci-xenon: Add Marvell Xenon SDHC core functionality
+Date: Thu, 30 Mar 2017 17:22:59 +0200
+Message-Id: <f98dadbc6cba05e1a3530379f8f7e2a86e0e1b45.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-CjIwMTflubQz5pyIMuaXpSDkuIrljYg1OjM45LqOIFByaWl0IExhZXMgPHBsYWVzQHBsYWVzLm9y
-Zz7lhpnpgZPvvJoKPgo+IE9uIFR1ZSwgMjAxNy0wMi0yOCBhdCAwOToyMSArMDEwMCwgTWF4aW1l
-IFJpcGFyZCB3cm90ZTogCj4gPiBIaSwgCj4gPiAKPiA+IE9uIE1vbiwgRmViIDI3LCAyMDE3IGF0
-IDExOjA5OjEyUE0gKzAyMDAsIFByaWl0IExhZXMgd3JvdGU6IAo+ID4gPiBJbnRyb2R1Y2UgYSBj
-bG9jayBjb250cm9sbGVyIGRyaXZlciBmb3Igc3VuN2kgQTIwIFNvQy4gCj4gPiA+IAo+ID4gPiA+
-ID4gU2lnbmVkLW9mZi1ieTogUHJpaXQgTGFlcyA8cGxhZXNAcGxhZXMub3JnPiAKPiA+ID4gLS0t
-IAo+ID4gPiDCoGRyaXZlcnMvY2xrL3N1bnhpLW5nL0tjb25maWfCoMKgwqDCoMKgwqDCoMKgwqB8
-wqDCoMKgMTEgKyAKPiA+ID4gwqBkcml2ZXJzL2Nsay9zdW54aS1uZy9NYWtlZmlsZcKgwqDCoMKg
-wqDCoMKgwqB8wqDCoMKgwqAxICsgCj4gPiA+IMKgZHJpdmVycy9jbGsvc3VueGktbmcvY2N1LXN1
-bjdpLWEyMC5jIHwgMTA2OCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrIAo+ID4g
-PiDCoGRyaXZlcnMvY2xrL3N1bnhpLW5nL2NjdS1zdW43aS1hMjAuaCB8wqDCoDEyMSArKysrIAo+
-ID4gPiDCoDQgZmlsZXMgY2hhbmdlZCwgMTIwMSBpbnNlcnRpb25zKCspIAo+ID4gPiDCoGNyZWF0
-ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9zdW54aS1uZy9jY3Utc3VuN2ktYTIwLmMgCj4gPiA+
-IMKgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL3N1bnhpLW5nL2NjdS1zdW43aS1hMjAu
-aCAKPiA+ID4gCj4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9zdW54aS1uZy9LY29uZmln
-IGIvZHJpdmVycy9jbGsvc3VueGktbmcvS2NvbmZpZyAKPiA+ID4gaW5kZXggNjk1YmJmOS4uNGY0
-MzZhYiAxMDA2NDQgCj4gPiA+IC0tLSBhL2RyaXZlcnMvY2xrL3N1bnhpLW5nL0tjb25maWcgCj4g
-PiA+ICsrKyBiL2RyaXZlcnMvY2xrL3N1bnhpLW5nL0tjb25maWcgCj4gPiA+IEBAIC04NSw2ICs4
-NSwxNyBAQCBjb25maWcgU1VONklfQTMxX0NDVSAKPiA+ID4gPiA+IMKgIHNlbGVjdCBTVU5YSV9D
-Q1VfUEhBU0UgCj4gPiA+ID4gPiDCoCBkZWZhdWx0IE1BQ0hfU1VONkkgCj4gPiA+IMKgIAo+ID4g
-PiArY29uZmlnIFNVTjdJX0EyMF9DQ1UgCj4gPiA+ID4gPiArIGJvb2wgIlN1cHBvcnQgZm9yIHRo
-ZSBBbGx3aW5uZXIgQTIwIENDVSIgCj4gPiA+ID4gPiArIHNlbGVjdCBTVU5YSV9DQ1VfRElWIAo+
-ID4gPiA+ID4gKyBzZWxlY3QgU1VOWElfQ0NVX01VTFQgCj4gPiA+ID4gPiArIHNlbGVjdCBTVU5Y
-SV9DQ1VfTksgCj4gPiA+ID4gPiArIHNlbGVjdCBTVU5YSV9DQ1VfTktNIAo+ID4gPiA+ID4gKyBz
-ZWxlY3QgU1VOWElfQ0NVX05NIAo+ID4gPiA+ID4gKyBzZWxlY3QgU1VOWElfQ0NVX01QIAo+ID4g
-PiA+ID4gKyBzZWxlY3QgU1VOWElfQ0NVX1BIQVNFIAo+ID4gPiA+ID4gKyBkZWZhdWx0IE1BQ0hf
-U1VON0kgCj4gPiA+ICsgCj4gPiA+IMKgY29uZmlnIFNVTjhJX0EyM19DQ1UgCj4gPiA+ID4gPiDC
-oCBib29sICJTdXBwb3J0IGZvciB0aGUgQWxsd2lubmVyIEEyMyBDQ1UiIAo+ID4gPiA+ID4gwqAg
-c2VsZWN0IFNVTlhJX0NDVV9ESVYgCj4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9zdW54
-aS1uZy9NYWtlZmlsZSBiL2RyaXZlcnMvY2xrL3N1bnhpLW5nL01ha2VmaWxlIAo+ID4gPiBpbmRl
-eCA2ZmVhYWMwLi5iZWRkYTViIDEwMDY0NCAKPiA+ID4gLS0tIGEvZHJpdmVycy9jbGsvc3VueGkt
-bmcvTWFrZWZpbGUgCj4gPiA+ICsrKyBiL2RyaXZlcnMvY2xrL3N1bnhpLW5nL01ha2VmaWxlIAo+
-ID4gPiA+ID4gQEAgLTIxLDYgKzIxLDcgQEAgb2JqLSQoQ09ORklHX1NVTlhJX0NDVV9NUCkgKz0g
-Y2N1X21wLm8gCj4gPiA+ID4gPiDCoG9iai0kKENPTkZJR19TVU41MElfQTY0X0NDVSkgKz0gY2N1
-LXN1bjUwaS1hNjQubyAKPiA+ID4gPiA+IMKgb2JqLSQoQ09ORklHX1NVTjVJX0NDVSkgKz0gY2N1
-LXN1bjVpLm8gCj4gPiA+ID4gPiDCoG9iai0kKENPTkZJR19TVU42SV9BMzFfQ0NVKSArPSBjY3Ut
-c3VuNmktYTMxLm8gCj4gPiA+ID4gPiArb2JqLSQoQ09ORklHX1NVTjdJX0EyMF9DQ1UpICs9IGNj
-dS1zdW43aS1hMjAubyAKPiA+ID4gPiA+IMKgb2JqLSQoQ09ORklHX1NVTjhJX0EyM19DQ1UpICs9
-IGNjdS1zdW44aS1hMjMubyAKPiA+ID4gPiA+IMKgb2JqLSQoQ09ORklHX1NVTjhJX0EzM19DQ1Up
-ICs9IGNjdS1zdW44aS1hMzMubyAKPiA+ID4gPiA+IMKgb2JqLSQoQ09ORklHX1NVTjhJX0gzX0ND
-VSkgKz0gY2N1LXN1bjhpLWgzLm8gCj4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9zdW54
-aS1uZy9jY3Utc3VuN2ktYTIwLmMgYi9kcml2ZXJzL2Nsay9zdW54aS1uZy9jY3Utc3VuN2ktYTIw
-LmMgCj4gPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0IAo+ID4gPiBpbmRleCAwMDAwMDAwLi45MGQy
-ZjEzIAo+ID4gPiAtLS0gL2Rldi9udWxsIAo+ID4gPiArKysgYi9kcml2ZXJzL2Nsay9zdW54aS1u
-Zy9jY3Utc3VuN2ktYTIwLmMgCj4gPiA+IEBAIC0wLDAgKzEsMTA2OCBAQCAKPiA+ID4gKy8qIAo+
-ID4gPiArICogQ29weXJpZ2h0IChjKSAyMDE3IFByaWl0IExhZXMuIEFsbCByaWdodHMgcmVzZXJ2
-ZWQuIAo+ID4gPiArICogCj4gPiA+ICsgKiBUaGlzIHNvZnR3YXJlIGlzIGxpY2Vuc2VkIHVuZGVy
-IHRoZSB0ZXJtcyBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIAo+ID4gPiArICogTGljZW5zZSB2
-ZXJzaW9uIDIsIGFzIHB1Ymxpc2hlZCBieSB0aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9uLCBh
-bmQgCj4gPiA+ICsgKiBtYXkgYmUgY29waWVkLCBkaXN0cmlidXRlZCwgYW5kIG1vZGlmaWVkIHVu
-ZGVyIHRob3NlIHRlcm1zLiAKPiA+ID4gKyAqIAo+ID4gPiArICogVGhpcyBwcm9ncmFtIGlzIGRp
-c3RyaWJ1dGVkIGluIHRoZSBob3BlIHRoYXQgaXQgd2lsbCBiZSB1c2VmdWwsIAo+ID4gPiArICog
-YnV0IFdJVEhPVVQgQU5ZIFdBUlJBTlRZOyB3aXRob3V0IGV2ZW4gdGhlIGltcGxpZWQgd2FycmFu
-dHkgb2YgCj4gPiA+ICsgKiBNRVJDSEFOVEFCSUxJVFkgb3IgRklUTkVTUyBGT1IgQSBQQVJUSUNV
-TEFSIFBVUlBPU0UuwqDCoFNlZSB0aGUgCj4gPiA+ICsgKiBHTlUgR2VuZXJhbCBQdWJsaWMgTGlj
-ZW5zZSBmb3IgbW9yZSBkZXRhaWxzLiAKPiA+ID4gKyAqLyAKPiA+ID4gKyAKPiA+ID4gKyNpbmNs
-dWRlIDxsaW51eC9jbGstcHJvdmlkZXIuaD4gCj4gPiA+ICsjaW5jbHVkZSA8bGludXgvb2ZfYWRk
-cmVzcy5oPiAKPiA+ID4gKyAKPiA+ID4gKyNpbmNsdWRlICJjY3VfY29tbW9uLmgiIAo+ID4gPiAr
-I2luY2x1ZGUgImNjdV9yZXNldC5oIiAKPiA+ID4gKyAKPiA+ID4gKyNpbmNsdWRlICJjY3VfZGl2
-LmgiIAo+ID4gPiArI2luY2x1ZGUgImNjdV9nYXRlLmgiIAo+ID4gPiArI2luY2x1ZGUgImNjdV9t
-cC5oIiAKPiA+ID4gKyNpbmNsdWRlICJjY3VfbXVsdC5oIiAKPiA+ID4gKyNpbmNsdWRlICJjY3Vf
-bmsuaCIgCj4gPiA+ICsjaW5jbHVkZSAiY2N1X25rbS5oIiAKPiA+ID4gKyNpbmNsdWRlICJjY3Vf
-bmttcC5oIiAKPiA+ID4gKyNpbmNsdWRlICJjY3Vfbm0uaCIgCj4gPiA+ICsjaW5jbHVkZSAiY2N1
-X3BoYXNlLmgiIAo+ID4gPiArIAo+ID4gPiArI2luY2x1ZGUgImNjdS1zdW43aS1hMjAuaCIgCj4g
-PiA+ICsgCj4gPiA+ICsvKiAKPiA+ID4gKyAqIFBMTDEgLSBDb3JlIGNsb2NrIAo+ID4gPiArICog
-Cj4gPiA+ICsgKiBUT0RPOiBzaWdtYS1kZWx0YSBwYXR0ZXJuIGJpdHMgMiAmIDMgCj4gPiA+ICsg
-KiBUT0RPOiBQTEwxIHR1bmluZyByZWdpc3RlciAKPiA+IAo+ID4gSSBkb24ndCB0aGluayB3ZSBu
-ZWVkIHRob3NlIFRPRE8ncyBhdCBhbGwsIGFuZCB0aGVzZSBjb21tZW50cyB0b28uIElmIAo+ID4g
-dGhlIGNsb2NrIG5hbWUgaXMgZ29vZCBlbm91Z2ggKGFuZCBpdCBpcyksIGl0J3MgcmVkdW5kYW50
-LiAKPgo+IE9rLCB3aWxsIGNsZWFuIHRoZW0gdXAuIAo+Cj4gPiAKPiA+ID4gKyAqLyAKPiA+ID4g
-Cj4gWy4uLl0gCj4gPiA+ICt9OyAKPiA+ID4gKyAKPiA+ID4gKy8qIFBMTDIgLSBBdWRpbyBjbG9j
-ayAqLyAKPiA+ID4gK3N0YXRpYyBzdHJ1Y3QgY2N1X25tIHBsbF9hdWRpb19iYXNlX2NsayA9IHsg
-Cj4gPiA+ID4gPiA+ID4gKyAuZW5hYmxlID0gQklUKDMxKSwgCj4gPiA+ID4gPiA+ID4gKyAubiA9
-IF9TVU5YSV9DQ1VfTVVMVF9PRkZTRVQoOCwgNywgMCksIAo+ID4gPiA+ID4gPiA+ICsgLm0gPSBf
-U1VOWElfQ0NVX0RJVl9PRkZTRVQoMCwgNSwgMCksIAo+ID4gPiA+ID4gPiA+ICsgLmNvbW1vbiA9
-IHsgCj4gPiA+ID4gPiA+ID4gKyAucmVnID0gMHgwMDgsIAo+ID4gPiA+ID4gPiA+ICsgLmh3Lmlu
-aXQgPSBDTEtfSFdfSU5JVCgicGxsLWF1ZGlvLWJhc2UiLCAKPiA+ID4gPiA+ICsgwqDCoMKgwqDC
-oMKgImhvc2MiLCAKPiA+ID4gPiA+ICsgwqDCoMKgwqDCoMKgJmNjdV9ubV9vcHMsIAo+ID4gPiA+
-ID4gKyDCoMKgwqDCoMKgwqAwKSwgCj4gPiA+ID4gPiArIH0sIAo+ID4gPiArIAo+ID4gPiArfTsg
-Cj4gPiAKPiA+IFlvdSdyZSBmb3JnZXR0aW5nIHRoZSBwb3N0LWRpdmlkZXIgaGVyZSAKPgo+IEl0
-J3MgaGFyZGNvZGVkIHRvIDQgZHVyaW5nIGNjdSBpbml0aWFsaXphdGlvbiwgc2ltaWxhciB0byB3
-aGF0IGlzIGRvbmUgCj4gb24gdGhlIG90aGVyIFNvQ3MgKEExMywgQTMxLi4pLiAKPgo+ID4gCj4g
-PiA+ICsvKiBUT0RPOiBwbGw4IGdwdSAweDA0MCAqLyAKPiA+IAo+ID4gUGxlYXNlIGFkZCBhbGwg
-dGhlIGNsb2Nrcy4gCj4KPiBJJ20gbm90IHJlYWxseSBjb21mb3J0YWJsZSBhZGRpbmcgY2xvY2tz
-IGZvciBibG9ja3MgdGhhdCBjdXJyZW50bHkgbGFjayAKPiBkcml2ZXJzLiAKPgoKMS4gQ0NVIGRy
-aXZlciBzaG91bGQgaW1wbGVtZW50IGFsbCBjbG9ja3MgaW4gYSBDQ1UsIGFzIGl0IG1heSBiZSBu
-ZWVkZWQgc29tZSBkYXkuCjIuIFdlIHJlYWxseSBoYXZlIGRyaXZlciBmb3IgbWFsaSwgYXQgbGVh
-c3Qga2VybmVsIHBhcnQgOi0pCgo+ID4gPiArLyogQklUKDIxIC4uIDMxKSAtIHJlc2VydmVkICov
-IAo+ID4gCj4gPiBJJ20gbm90IHN1cmUgd2UgbmVlZCB0aG9zZSBjb21tZW50cyBlaXRoZXIuIAo+
-ID4gCj4gPiA+ICsvKiAKPiA+ID4gKyAqIFRPRE86IFNBVEEgY2xvY2sgYWxzbyBzdXBwb3J0cyBl
-eHRlcm5hbCBjbG9jayBhcyBwYXJlbnQuIAo+ID4gPiArICogQ3VycmVudGx5IHdlIGRlZmF1bHQg
-dG8gdXNpbmcgUExMNiBTQVRBIGdhdGUuIAo+ID4gPiArICovIAo+ID4gCj4gPiBXaGljaCBleHRl
-cm5hbCBjbG9jaz8gSXQgc2hvdWxkIGJlIG1vZGVsbGVkIGFueXdheS4gSWYgd2UgaGF2ZSBhIAo+
-ID4gZGVwZW5kZW5jeSBvbiBzb21lIG90aGVyIGNsb2NrLCBpdCBzaG91bGQgYmUgaW4gb3VyIERU
-IGJpbmRpbmcsIGFuZCAKPiA+IGxpc3RlZCBpbiB0aGUgbXV4IHRoZXJlLiAKPiA+IAo+ID4gT3Ro
-ZXJ3aXNlLCB0aGUgY2xvY2sgZnJhbWV3b3JrIHdpbGwgbm90IGJlIGFibGUgdG8gZGVhbCB3aXRo
-IHRoYXQgbXV4IAo+ID4gYmVpbmcgYWxyZWFkeSBzZXQgYnkgdGhlIGJvb3Rsb2FkZXIsIGFuZCBp
-ZiB3ZSBuZWVkIHRvIHN1cHBvcnQgdGhhdCAKPiA+IGNsb2NrIGluIHRoZSBmdXR1cmUsIG91ciBi
-aW5kaW5nIHdpbGwgYmUgcmVhZHkgZm9yIGl0LiAKPgo+IEkgd2lzaCBJIGtuZXcgd2hpY2ggY2xv
-Y2sgdGhleSdyZSB0YWxraW5nIGFib3V0Li4gCj4KPiBVc2VyIG1hbnVhbHMgKEExMC9BMjApIG9u
-bHkgc3BlY2lmeSBmb2xsb3dpbmcgaW4gdGhlIGNsb2NrIHJlZ2lzdGVyIAo+IGRlc2NyaXB0aW9u
-OiAKPgo+IEJJVCgyNCkgLSBDTEtfU1JDX0dBVElORywgZGVmYXVsdCAweDAgCj4gQ2xvY2sgU291
-cmNlIFNlbGVjdDogCj4gMDogUExMNiBmb3IgU0FUQSgxMDBNSHopIAo+IDE6IEV4dGVybmFsIENs
-b2NrIAo+Cj4gVGhlcmUncyBubyBzZWN0aW9uIGZvciBTQVRBwqAoY2FsbGVkIE5DKSBpbiBBMTAg
-bWFudWFsLCBhbmQgaW4gQTIwIAo+IG1hbnVhbCBvbmx5IGNvbnRhaW5zIGxpc3Qgb2YgU0FUQS9B
-SENJIGZlYXR1cmVzLiAKPgo+Cj4gPiAKPiA+ID4gK3N0YXRpYyBDTEtfRklYRURfRkFDVE9SKHBs
-bF9wZXJpcGhfMnhfY2xrLCAicGxsLXBlcmlwaC0yeCIsIAo+ID4gPiA+ID4gKyAicGxsLXBlcmlw
-aCIsIDEsIDIsIENMS19TRVRfUkFURV9QQVJFTlQpOyAKPiA+ID4gKy8qIFdlIGhhcmRjb2RlIHRo
-ZSBkaXZpZGVyIHRvIDQgZm9yIG5vdyAqLyAKPiA+ID4gK3N0YXRpYyBDTEtfRklYRURfRkFDVE9S
-KHBsbF9hdWRpb19jbGssICJwbGwtYXVkaW8iLCAKPiA+ID4gPiA+ICsgInBsbC1hdWRpby1iYXNl
-IiwgNCwgMSwgQ0xLX1NFVF9SQVRFX1BBUkVOVCk7IAo+ID4gPiArc3RhdGljIENMS19GSVhFRF9G
-QUNUT1IocGxsX2F1ZGlvXzJ4X2NsaywgInBsbC1hdWRpby0yeCIsIAo+ID4gPiA+ID4gKyAicGxs
-LWF1ZGlvLWJhc2UiLCAyLCAxLCBDTEtfU0VUX1JBVEVfUEFSRU5UKTsgCj4gPiA+ICtzdGF0aWMg
-Q0xLX0ZJWEVEX0ZBQ1RPUihwbGxfYXVkaW9fNHhfY2xrLCAicGxsLWF1ZGlvLTR4IiwgCj4gPiA+
-ID4gPiArICJwbGwtYXVkaW8tYmFzZSIsIDEsIDEsIENMS19TRVRfUkFURV9QQVJFTlQpOyAKPiA+
-ID4gK3N0YXRpYyBDTEtfRklYRURfRkFDVE9SKHBsbF9hdWRpb184eF9jbGssICJwbGwtYXVkaW8t
-OHgiLCAKPiA+ID4gPiA+ICsgInBsbC1hdWRpby1iYXNlIiwgMSwgMiwgQ0xLX1NFVF9SQVRFX1BB
-UkVOVCk7IAo+ID4gPiArc3RhdGljIENMS19GSVhFRF9GQUNUT1IocGxsX3ZpZGVvMF8yeF9jbGss
-ICJwbGwtdmlkZW8wLTJ4IiwgCj4gPiA+ID4gPiArICJwbGwtdmlkZW8wIiwgMSwgMiwgQ0xLX1NF
-VF9SQVRFX1BBUkVOVCk7IAo+ID4gPiArc3RhdGljIENMS19GSVhFRF9GQUNUT1IocGxsX3ZpZGVv
-MV8yeF9jbGssICJwbGwtdmlkZW8xLTJ4IiwgCj4gPiA+ICsgInBsbC12aWRlbzEiLCAxLCAyLCBD
-TEtfU0VUX1JBVEVfUEFSRU5UKTsgCj4gPiAKPiA+IEl0IGZlZWxzIG1vcmUgbmF0dXJhbCB0byBq
-dXN0IGhhdmUgdGhlIGNsb2NrcyBkZWZpbmVkIGluIHRoZSBzYW1lIAo+ID4gb3JkZXIgdGhhbiB0
-aGVpciBwYXJlbnRzLiBTbyBwZXJpcGggc2hvdWxkbid0IGJlIGZpcnN0IAo+Cj4gT2ssIHdpbGwg
-bW92ZSB0aGUgcGVyaXBoIGNsb2NrIGFmdGVyIHRoZSB2aWRlby4gCj4KPiA+ID4gK3N0YXRpYyBz
-dHJ1Y3QgY2N1X3Jlc2V0X21hcCBzdW43aV9hMjBfY2N1X3Jlc2V0c1tdID0geyAKPiA+ID4gKyAK
-PiA+ID4gPiA+ID4gPiArIFtSU1RfVVNCX1BIWTBdID0geyAweDBjYywgQklUKDApIH0sIAo+ID4g
-PiA+ID4gPiA+ICsgW1JTVF9VU0JfUEhZMV0gPSB7IDB4MGNjLCBCSVQoMSkgfSwgCj4gPiA+ID4g
-PiA+ID4gKyBbUlNUX1VTQl9QSFkyXSA9IHsgMHgwY2MsIEJJVCgyKSB9LCAKPiA+ID4gPiA+ID4g
-PiArIFtSU1RfREVfQkUwXSA9IHsgMHgxMDQsIEJJVCgzMCkgfSwgCj4gPiA+ID4gPiA+ID4gKyBb
-UlNUX0RFX0JFMV0gPSB7IDB4MTA4LCBCSVQoMzApIH0sIAo+ID4gPiA+ID4gPiA+ICsgW1JTVF9E
-RV9GRTBdID0geyAweDEwYywgQklUKDMwKSB9LCAKPiA+ID4gPiA+ID4gPiArIFtSU1RfREVfRkUx
-XSA9IHsgMHgxMTAsIEJJVCgzMCkgfSwgCj4gPiA+ID4gPiA+ID4gKyBbUlNUX0RFX01QXSA9IHsg
-MHgxMTQsIEJJVCgzMCkgfSwgCj4gPiA+ID4gPiA+ID4gKyBbUlNUX1RDT04wXSA9IHsgMHgxMTgs
-IEJJVCgzMCkgfSwgCj4gPiA+ID4gPiA+ID4gKyBbUlNUX1RDT04xXSA9IHsgMHgxMWMsIEJJVCgz
-MCkgfSwgCj4gPiA+ID4gPiA+ID4gKyBbUlNUX0NTSTBdID0geyAweDEzNCwgQklUKDMwKSB9LCAK
-PiA+ID4gPiA+ID4gPiArIFtSU1RfQ1NJMV0gPSB7IDB4MTM4LCBCSVQoMzApIH0sIAo+ID4gPiA+
-ID4gPiA+ICsgW1JTVF9WRV0gPSB7IDB4MTNjLCBCSVQoMCkgfSwgCj4gPiA+ID4gPiA+ID4gKyBb
-UlNUX0FDRV0gPSB7IDB4MTQ4LCBCSVQoMTYpIH0sIAo+ID4gPiA+ID4gPiA+ICsgW1JTVF9MVkRT
-XSA9IHsgMHgxNGMsIEJJVCgwKSB9LCAKPiA+ID4gPiA+ID4gPiArIFtSU1RfR1BVXSA9IHsgMHgx
-NTQsIEJJVCgzMCkgfSwgCj4gPiA+ID4gPiA+ID4gKyBbUlNUX0hETUlfSF0gPSB7IDB4MTcwLCBC
-SVQoMCkgfSwgCj4gPiA+ID4gPiA+ID4gKyBbUlNUX0hETUlfU1lTXSA9IHsgMHgxNzAsIEJJVCgx
-KSB9LCAKPiA+ID4gPiA+ID4gPiArIFtSU1RfSERNSV9BVURJT19ETUFdID0geyAweDE3MCwgQklU
-KDIpIH0sIAo+ID4gPiArfTsgCj4gPiA+ICsgCj4gPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHN1
-bnhpX2NjdV9kZXNjIHN1bjdpX2EyMF9jY3VfZGVzYyA9IHsgCj4gPiA+ID4gPiA+ID4gKyAuY2N1
-X2Nsa3MgPSBzdW43aV9hMjBfY2N1X2Nsa3MsIAo+ID4gPiA+ID4gPiA+ICsgLm51bV9jY3VfY2xr
-cyA9IEFSUkFZX1NJWkUoc3VuN2lfYTIwX2NjdV9jbGtzKSwgCj4gPiA+ICsgCj4gPiA+ID4gPiA+
-ID4gKyAuaHdfY2xrcyA9ICZzdW43aV9hMjBfaHdfY2xrcywgCj4gPiA+ICsgCj4gPiA+ID4gPiA+
-ID4gKyAucmVzZXRzID0gc3VuN2lfYTIwX2NjdV9yZXNldHMsIAo+ID4gPiA+ID4gPiA+ICsgLm51
-bV9yZXNldHMgPSBBUlJBWV9TSVpFKHN1bjdpX2EyMF9jY3VfcmVzZXRzKSwgCj4gPiA+ICt9OyAK
-PiA+ID4gKyAKPiA+ID4gK3N0YXRpYyB2b2lkIF9faW5pdCBzdW43aV9hMjBfY2N1X3NldHVwKHN0
-cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSkgCj4gPiA+ICt7IAo+ID4gPiA+ID4gKyB2b2lkIF9faW9t
-ZW0gKnJlZzsgCj4gPiA+ID4gPiArIHUzMiB2YWw7IAo+ID4gPiArIAo+ID4gPiA+ID4gKyByZWcg
-PSBvZl9pb19yZXF1ZXN0X2FuZF9tYXAobm9kZSwgMCwgb2Zfbm9kZV9mdWxsX25hbWUobm9kZSkp
-OyAKPiA+ID4gPiA+ICsgaWYgKElTX0VSUihyZWcpKSB7IAo+ID4gPiA+ID4gKyBwcl9lcnIoIiVz
-OiBDb3VsZCBub3QgbWFwIHRoZSBjbG9jayByZWdpc3RlcnNcbiIsIAo+ID4gPiA+ID4gKyDCoMKg
-wqDCoMKgwqDCoG9mX25vZGVfZnVsbF9uYW1lKG5vZGUpKTsgCj4gPiA+ID4gPiArIHJldHVybjsg
-Cj4gPiA+ID4gPiArIH0gCj4gPiA+ICsgCj4gPiA+ICsgI2RlZmluZSBTVU43SV9QTExfQVVESU9f
-UkVHIDB4MDA4IAo+ID4gCj4gPiBUaGlzIHNob3VsZCBiZSBkZWZpbmVkIGFib3ZlIAo+Cj4gV2ls
-bCBkby4uIAo+ID4gCj4gPiA+ICsgCj4gPiA+ID4gPiArIC8qIEZvcmNlIHRoZSBQTEwtQXVkaW8t
-MXggZGl2aWRlciB0byA0ICovIAo+ID4gPiA+ID4gKyB2YWwgPSByZWFkbChyZWcgKyBTVU43SV9Q
-TExfQVVESU9fUkVHKTsgCj4gPiA+ID4gPiArIHZhbCAmPSB+R0VOTUFTSygxOSwgMTYpOyAKPiA+
-ID4gPiA+ICsgd3JpdGVsKHZhbCB8ICgzIDw8IDE2KSwgcmVnICsgU1VON0lfUExMX0FVRElPX1JF
-Ryk7IAo+ID4gPiArIAo+ID4gPiA+ID4gKyAvKiAKPiA+ID4gPiA+ICsgwqAqIFVzZSBQTEw2IGFz
-IHBhcmVudCBmb3IgQUhCIAo+ID4gPiArIMKgKiBDUFUvQVhJIGNsb2NrIGNoYW5nZXMgcmF0ZSB3
-aGVuIGNwdWZyZXEgaXMgZW5hYmxlZCAKPiA+IAo+ID4gSSdtIG5vdCBzdXJlIHdoeSB0aGF0IGxh
-c3Qgc2VudGVuY2UgaXMgbmVlZGVkIHRvby4gQSBsb3Qgb2YgY2xvY2sgCj4gPiBsaXN0ZWQgdGhl
-cmUgY2hhbmdlIHJhdGUgd2hlbiA8c29tZS1mZWF0dXJlPiBpcyBlbmFibGVkLiAKPgo+IFdpbGwg
-cmVtb3ZlLiAKPgo+ID4gCj4gPiA+ICsvKiBTb21lIEFIQiBnYXRlcyBhcmUgZXhwb3J0ZWQgKi8g
-Cj4gPiA+ID4gPiArI2RlZmluZSBDTEtfQUhCX0JJU1QgMzEgCj4gPiA+ID4gPiArI2RlZmluZSBD
-TEtfQUhCX01TIDM2IAo+ID4gPiA+ID4gKyNkZWZpbmUgQ0xLX0FIQl9TRFJBTSAzOCAKPiA+ID4g
-PiA+ICsjZGVmaW5lIENMS19BSEJfQUNFIDM5IAo+ID4gPiA+ID4gKyNkZWZpbmUgQ0xLX0FIQl9U
-UyA0MSAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19BSEJfVkUgNDggCj4gPiA+ID4gPiArI2RlZmlu
-ZSBDTEtfQUhCX1RWRCA0OSAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19BSEJfVFZFMSA1MSAKPiA+
-ID4gPiA+ICsjZGVmaW5lIENMS19BSEJfTENEMSA1MyAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19B
-SEJfQ1NJMCA1NCAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19BSEJfQ1NJMSA1NSAKPiA+ID4gPiA+
-ICsjZGVmaW5lIENMS19BSEJfSERNSTAgNTYgCj4gPiA+ID4gPiArI2RlZmluZSBDTEtfQUhCX0RF
-X0JFMSA1OSAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19BSEJfREVfRkUwIDYwIAo+ID4gPiA+ID4g
-KyNkZWZpbmUgQ0xLX0FIQl9ERV9GRTEgNjEgCj4gPiA+ID4gPiArI2RlZmluZSBDTEtfQUhCX01Q
-IDYzIAo+ID4gPiA+ID4gKyNkZWZpbmUgQ0xLX0FIQl9HUFUgNjQgCj4gPiA+ICsgCj4gPiA+ICsv
-KiBTb21lIEFQQjAgZ2F0ZXMgYXJlIGV4cG9ydGVkICovIAo+ID4gPiA+ID4gKyNkZWZpbmUgQ0xL
-X0FQQjBfQUM5NyA2NyAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19BUEIwX0tFWVBBRCA3NCAKPiA+
-ID4gKyAKPiA+ID4gKy8qIFNvbWUgQVBCMSBnYXRlcyBhcmUgZXhwb3J0ZWQgKi8gCj4gPiA+ID4g
-PiArI2RlZmluZSBDTEtfQVBCMV9DQU4gNzkgCj4gPiA+ID4gPiArI2RlZmluZSBDTEtfQVBCMV9T
-Q1IgODAgCj4gPiA+ICsgCj4gPiA+ICsvKiBTb21lIElQIG1vZHVsZSBjbG9ja3MgYXJlIGV4cG9y
-dGVkICovIAo+ID4gPiA+ID4gKyNkZWZpbmUgQ0xLX01TIDkzIAo+ID4gPiA+ID4gKyNkZWZpbmUg
-Q0xLX1RTIDEwNiAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19QQVRBIDExMSAKPiA+ID4gPiA+ICsj
-ZGVmaW5lIENMS19BQzk3IDExNSAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19LRVlQQUQgMTE3IAo+
-ID4gPiA+ID4gKyNkZWZpbmUgQ0xLX1NBVEEgMTE4IAo+ID4gPiArIAo+ID4gPiArLyogU29tZSBE
-UkFNIGdhdGVzIGFyZSBleHBvcnRlZCAqLyAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19EUkFNX1ZF
-IDEyNSAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19EUkFNX0NTSTAgMTI2IAo+ID4gPiA+ID4gKyNk
-ZWZpbmUgQ0xLX0RSQU1fQ1NJMSAxMjcgCj4gPiA+ID4gPiArI2RlZmluZSBDTEtfRFJBTV9UUyAx
-MjggCj4gPiA+ID4gPiArI2RlZmluZSBDTEtfRFJBTV9UVkQgMTI5IAo+ID4gPiA+ID4gKyNkZWZp
-bmUgQ0xLX0RSQU1fVFZFMSAxMzEgCj4gPiA+ID4gPiArI2RlZmluZSBDTEtfRFJBTV9PVVQgMTMy
-IAo+ID4gPiA+ID4gKyNkZWZpbmUgQ0xLX0RSQU1fREVfRkUxIDEzMyAKPiA+ID4gPiA+ICsjZGVm
-aW5lIENMS19EUkFNX0RFX0ZFMCAxMzQgCj4gPiA+ID4gPiArI2RlZmluZSBDTEtfRFJBTV9ERV9C
-RTEgMTM2IAo+ID4gPiA+ID4gKyNkZWZpbmUgQ0xLX0RSQU1fTVAgMTM3IAo+ID4gPiA+ID4gKyNk
-ZWZpbmUgQ0xLX0RSQU1fQUNFIDEzOCAKPiA+ID4gKyAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19E
-RV9CRTEgMTQwIAo+ID4gPiA+ID4gKyNkZWZpbmUgQ0xLX0RFX0ZFMCAxNDEgCj4gPiA+ID4gPiAr
-I2RlZmluZSBDTEtfREVfRkUxIDE0MiAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19ERV9NUCAxNDMg
-Cj4gPiA+ID4gPiArI2RlZmluZSBDTEtfVENPTjFfQ0gwIDE0NSAKPiA+ID4gPiA+ICsjZGVmaW5l
-IENMS19DU0lfU1BFQ0lBTCAxNDYgCj4gPiA+ID4gPiArI2RlZmluZSBDTEtfVFZEIDE0NyAKPiA+
-ID4gPiA+ICsjZGVmaW5lIENMS19UQ09OMF9DSDFfU0NMSzIgMTQ4IAo+ID4gPiA+ID4gKyNkZWZp
-bmUgQ0xLX1RDT04xX0NIMV9TQ0xLMiAxNTAgCj4gPiA+ID4gPiArI2RlZmluZSBDTEtfVENPTjFf
-Q0gxIDE1MSAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19DU0kwIDE1MiAKPiA+ID4gPiA+ICsjZGVm
-aW5lIENMS19DU0kxIDE1MyAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19WRSAxNTQgCj4gPiA+ID4g
-PiArI2RlZmluZSBDTEtfQVZTIDE1NiAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19BQ0UgMTU3IAo+
-ID4gPiA+ID4gKyNkZWZpbmUgQ0xLX0hETUkgMTU4IAo+ID4gPiA+ID4gKyNkZWZpbmUgQ0xLX0dQ
-VSAxNTkgCj4gPiA+ID4gPiArI2RlZmluZSBDTEtfTUJVUyAxNjAgCj4gPiA+ID4gPiArI2RlZmlu
-ZSBDTEtfSERNSTFfU0xPVyAxNjEgCj4gPiA+ID4gPiArI2RlZmluZSBDTEtfSERNSTFfUkVQRUFU
-IDE2MiAKPiA+ID4gPiA+ICsjZGVmaW5lIENMS19PVVRfQSAxNjMgCj4gPiA+ICsjZGVmaW5lIENM
-S19PVVRfQiAxNjQgCj4gPiAKPiA+IElzIHRoZXJlIGEgcmVhc29uIG5vdCB0byBleHBvc2UgdGhl
-c2UgY2xvY2tzPyAKPgo+IEkgZXhwb3NlZCB0aGVtIG9uIG5lZWQgdG8gaGF2ZSBiYXNpcy4gQW5k
-IGJhc2ljYWxseSBkaWQgb25lLXRvLW9uZSAKPiBjb252ZXJzaW9uIGZyb20gZGV2aWNldHJlZS4g
-Cj4KPiBQw6Rpa2VzdCwgCj4gUHJpaXQgCg==
+From: Hu Ziji <huziji@marvell.com>
+
+Add Xenon eMMC/SD/SDIO host controller core functionality.
+Add Xenon specific initialization process.
+Add Xenon specific mmc_host_ops APIs.
+Add Xenon specific register definitions.
+
+Add CONFIG_MMC_SDHCI_XENON support in drivers/mmc/host/Kconfig.
+
+Marvell Xenon SDHC conforms to SD Physical Layer Specification
+Version 3.01 and is designed according to the guidelines provided
+in the SD Host Controller Standard Specification Version 3.00.
+
+Signed-off-by: Hu Ziji <huziji@marvell.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ drivers/mmc/host/Kconfig       |   8 +-
+ drivers/mmc/host/Makefile      |   3 +-
+ drivers/mmc/host/sdhci-xenon.c | 541 ++++++++++++++++++++++++++++++++++-
+ drivers/mmc/host/sdhci-xenon.h |  60 ++++-
+ 4 files changed, 612 insertions(+)
+ create mode 100644 drivers/mmc/host/sdhci-xenon.c
+ create mode 100644 drivers/mmc/host/sdhci-xenon.h
+
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index a638cd0d80be..f36f8ff9296d 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -842,3 +842,11 @@ config MMC_SDHCI_BRCMSTB
+ 	  Broadcom STB SoCs.
+ 
+ 	  If unsure, say Y.
++
++config MMC_SDHCI_XENON
++	tristate "Marvell Xenon eMMC/SD/SDIO SDHCI driver"
++	depends on MMC_SDHCI_PLTFM
++	help
++	  This selects Marvell Xenon eMMC/SD/SDIO SDHCI.
++	  If you have a controller with this interface, say Y or M here.
++	  If unsure, say N.
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index bc2c2e2c68c0..014f0548ea86 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -84,3 +84,6 @@ obj-$(CONFIG_MMC_SDHCI_BRCMSTB)		+= sdhci-brcmstb.o
+ ifeq ($(CONFIG_CB710_DEBUG),y)
+ 	CFLAGS-cb710-mmc	+= -DDEBUG
+ endif
++
++obj-$(CONFIG_MMC_SDHCI_XENON)	+= sdhci-xenon-driver.o
++sdhci-xenon-driver-y		+= sdhci-xenon.o
+diff --git a/drivers/mmc/host/sdhci-xenon.c b/drivers/mmc/host/sdhci-xenon.c
+new file mode 100644
+index 000000000000..b3f2b018fe3d
+--- /dev/null
++++ b/drivers/mmc/host/sdhci-xenon.c
+@@ -0,0 +1,541 @@
++/*
++ * Driver for Marvell Xenon SDHC as a platform device
++ *
++ * Copyright (C) 2016 Marvell, All Rights Reserved.
++ *
++ * Author:	Hu Ziji <huziji@marvell.com>
++ * Date:	2016-8-24
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation version 2.
++ *
++ * Inspired by Jisheng Zhang <jszhang@marvell.com>
++ * Special thanks to Video BG4 project team.
++ */
++
++#include <linux/delay.h>
++#include <linux/ktime.h>
++#include <linux/module.h>
++#include <linux/of.h>
++
++#include "sdhci-pltfm.h"
++#include "sdhci-xenon.h"
++
++static int xenon_enable_internal_clk(struct sdhci_host *host)
++{
++	u32 reg;
++	ktime_t timeout;
++
++	reg = sdhci_readl(host, SDHCI_CLOCK_CONTROL);
++	reg |= SDHCI_CLOCK_INT_EN;
++	sdhci_writel(host, reg, SDHCI_CLOCK_CONTROL);
++	/* Wait max 20 ms */
++	timeout = ktime_add_ms(ktime_get(), 20);
++	while (!((reg = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
++			& SDHCI_CLOCK_INT_STABLE)) {
++		if (ktime_after(ktime_get(), timeout)) {
++			dev_err(mmc_dev(host->mmc), "Internal clock never stabilised.\n");
++			return -ETIMEDOUT;
++		}
++		usleep_range(900, 1100);
++	}
++
++	return 0;
++}
++
++/* Set SDCLK-off-while-idle */
++static void xenon_set_sdclk_off_idle(struct sdhci_host *host,
++				     unsigned char sdhc_id, bool enable)
++{
++	u32 reg;
++	u32 mask;
++
++	reg = sdhci_readl(host, XENON_SYS_OP_CTRL);
++	/* Get the bit shift basing on the SDHC index */
++	mask = (0x1 << (XENON_SDCLK_IDLEOFF_ENABLE_SHIFT + sdhc_id));
++	if (enable)
++		reg |= mask;
++	else
++		reg &= ~mask;
++
++	sdhci_writel(host, reg, XENON_SYS_OP_CTRL);
++}
++
++/* Enable/Disable the Auto Clock Gating function */
++static void xenon_set_acg(struct sdhci_host *host, bool enable)
++{
++	u32 reg;
++
++	reg = sdhci_readl(host, XENON_SYS_OP_CTRL);
++	if (enable)
++		reg &= ~XENON_AUTO_CLKGATE_DISABLE_MASK;
++	else
++		reg |= XENON_AUTO_CLKGATE_DISABLE_MASK;
++	sdhci_writel(host, reg, XENON_SYS_OP_CTRL);
++}
++
++/* Enable this SDHC */
++static void xenon_enable_sdhc(struct sdhci_host *host,
++			      unsigned char sdhc_id)
++{
++	u32 reg;
++
++	reg = sdhci_readl(host, XENON_SYS_OP_CTRL);
++	reg |= (BIT(sdhc_id) << XENON_SLOT_ENABLE_SHIFT);
++	sdhci_writel(host, reg, XENON_SYS_OP_CTRL);
++
++	host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY;
++	/*
++	 * Force to clear BUS_TEST to
++	 * skip bus_test_pre and bus_test_post
++	 */
++	host->mmc->caps &= ~MMC_CAP_BUS_WIDTH_TEST;
++}
++
++/* Disable this SDHC */
++static void xenon_disable_sdhc(struct sdhci_host *host,
++			       unsigned char sdhc_id)
++{
++	u32 reg;
++
++	reg = sdhci_readl(host, XENON_SYS_OP_CTRL);
++	reg &= ~(BIT(sdhc_id) << XENON_SLOT_ENABLE_SHIFT);
++	sdhci_writel(host, reg, XENON_SYS_OP_CTRL);
++}
++
++/* Enable Parallel Transfer Mode */
++static void xenon_enable_sdhc_parallel_tran(struct sdhci_host *host,
++					    unsigned char sdhc_id)
++{
++	u32 reg;
++
++	reg = sdhci_readl(host, XENON_SYS_EXT_OP_CTRL);
++	reg |= BIT(sdhc_id);
++	sdhci_writel(host, reg, XENON_SYS_EXT_OP_CTRL);
++}
++
++/* Mask command conflict error */
++static void xenon_mask_cmd_conflict_err(struct sdhci_host *host)
++{
++	u32  reg;
++
++	reg = sdhci_readl(host, XENON_SYS_EXT_OP_CTRL);
++	reg |= XENON_MASK_CMD_CONFLICT_ERR;
++	sdhci_writel(host, reg, XENON_SYS_EXT_OP_CTRL);
++}
++
++static void xenon_retune_setup(struct sdhci_host *host)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
++	u32 reg;
++
++	/* Disable the Re-Tuning Request functionality */
++	reg = sdhci_readl(host, XENON_SLOT_RETUNING_REQ_CTRL);
++	reg &= ~XENON_RETUNING_COMPATIBLE;
++	sdhci_writel(host, reg, XENON_SLOT_RETUNING_REQ_CTRL);
++
++	/* Disable the Re-tuning Interrupt */
++	reg = sdhci_readl(host, SDHCI_SIGNAL_ENABLE);
++	reg &= ~SDHCI_INT_RETUNE;
++	sdhci_writel(host, reg, SDHCI_SIGNAL_ENABLE);
++	reg = sdhci_readl(host, SDHCI_INT_ENABLE);
++	reg &= ~SDHCI_INT_RETUNE;
++	sdhci_writel(host, reg, SDHCI_INT_ENABLE);
++
++	/* Force to use Tuning Mode 1 */
++	host->tuning_mode = SDHCI_TUNING_MODE_1;
++	/* Set re-tuning period */
++	host->tuning_count = 1 << (priv->tuning_count - 1);
++}
++
++/*
++ * Operations inside struct sdhci_ops
++ */
++/* Recover the Register Setting cleared during SOFTWARE_RESET_ALL */
++static void xenon_reset_exit(struct sdhci_host *host,
++			     unsigned char sdhc_id, u8 mask)
++{
++	/* Only SOFTWARE RESET ALL will clear the register setting */
++	if (!(mask & SDHCI_RESET_ALL))
++		return;
++
++	/* Disable tuning request and auto-retuning again */
++	xenon_retune_setup(host);
++
++	xenon_set_acg(host, true);
++
++	xenon_set_sdclk_off_idle(host, sdhc_id, false);
++
++	xenon_mask_cmd_conflict_err(host);
++}
++
++static void xenon_reset(struct sdhci_host *host, u8 mask)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
++
++	sdhci_reset(host, mask);
++	xenon_reset_exit(host, priv->sdhc_id, mask);
++}
++
++/*
++ * Xenon defines different values for HS200 and HS400
++ * in Host_Control_2
++ */
++static void xenon_set_uhs_signaling(struct sdhci_host *host,
++				    unsigned int timing)
++{
++	u16 ctrl_2;
++
++	ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
++	/* Select Bus Speed Mode for host */
++	ctrl_2 &= ~SDHCI_CTRL_UHS_MASK;
++	if (timing == MMC_TIMING_MMC_HS200)
++		ctrl_2 |= XENON_CTRL_HS200;
++	else if (timing == MMC_TIMING_UHS_SDR104)
++		ctrl_2 |= SDHCI_CTRL_UHS_SDR104;
++	else if (timing == MMC_TIMING_UHS_SDR12)
++		ctrl_2 |= SDHCI_CTRL_UHS_SDR12;
++	else if (timing == MMC_TIMING_UHS_SDR25)
++		ctrl_2 |= SDHCI_CTRL_UHS_SDR25;
++	else if (timing == MMC_TIMING_UHS_SDR50)
++		ctrl_2 |= SDHCI_CTRL_UHS_SDR50;
++	else if ((timing == MMC_TIMING_UHS_DDR50) ||
++		 (timing == MMC_TIMING_MMC_DDR52))
++		ctrl_2 |= SDHCI_CTRL_UHS_DDR50;
++	else if (timing == MMC_TIMING_MMC_HS400)
++		ctrl_2 |= XENON_CTRL_HS400;
++	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
++}
++
++static const struct sdhci_ops sdhci_xenon_ops = {
++	.set_clock		= sdhci_set_clock,
++	.set_bus_width		= sdhci_set_bus_width,
++	.reset			= xenon_reset,
++	.set_uhs_signaling	= xenon_set_uhs_signaling,
++	.get_max_clock		= sdhci_pltfm_clk_get_max_clock,
++};
++
++static const struct sdhci_pltfm_data sdhci_xenon_pdata = {
++	.ops = &sdhci_xenon_ops,
++	.quirks = SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC |
++		  SDHCI_QUIRK_NO_SIMULT_VDD_AND_POWER |
++		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
++};
++
++/*
++ * Xenon Specific Operations in mmc_host_ops
++ */
++static void xenon_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
++{
++	struct sdhci_host *host = mmc_priv(mmc);
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
++	u32 reg;
++
++	/*
++	 * HS400/HS200/eMMC HS doesn't have Preset Value register.
++	 * However, sdhci_set_ios will read HS400/HS200 Preset register.
++	 * Disable Preset Value register for HS400/HS200.
++	 * eMMC HS with preset_enabled set will trigger a bug in
++	 * get_preset_value().
++	 */
++	if ((ios->timing == MMC_TIMING_MMC_HS400) ||
++	    (ios->timing == MMC_TIMING_MMC_HS200) ||
++	    (ios->timing == MMC_TIMING_MMC_HS)) {
++		host->preset_enabled = false;
++		host->quirks2 |= SDHCI_QUIRK2_PRESET_VALUE_BROKEN;
++		host->flags &= ~SDHCI_PV_ENABLED;
++
++		reg = sdhci_readw(host, SDHCI_HOST_CONTROL2);
++		reg &= ~SDHCI_CTRL_PRESET_VAL_ENABLE;
++		sdhci_writew(host, reg, SDHCI_HOST_CONTROL2);
++	} else {
++		host->quirks2 &= ~SDHCI_QUIRK2_PRESET_VALUE_BROKEN;
++	}
++
++	sdhci_set_ios(mmc, ios);
++
++	if (host->clock > XENON_DEFAULT_SDCLK_FREQ)
++		xenon_set_sdclk_off_idle(host, priv->sdhc_id, true);
++}
++
++static int xenon_start_signal_voltage_switch(struct mmc_host *mmc,
++					     struct mmc_ios *ios)
++{
++	struct sdhci_host *host = mmc_priv(mmc);
++
++	/*
++	 * Before SD/SDIO set signal voltage, SD bus clock should be
++	 * disabled. However, sdhci_set_clock will also disable the Internal
++	 * clock in mmc_set_signal_voltage().
++	 * If Internal clock is disabled, the 3.3V/1.8V bit can not be updated.
++	 * Thus here manually enable internal clock.
++	 *
++	 * After switch completes, it is unnecessary to disable internal clock,
++	 * since keeping internal clock active obeys SD spec.
++	 */
++	xenon_enable_internal_clk(host);
++
++	/*
++	 * If Vqmmc is fixed on platform, vqmmc regulator should be unavailable.
++	 * Thus SDHCI_CTRL_VDD_180 bit might not work then.
++	 * Skip the standard voltage switch to avoid any issue.
++	 */
++	if (PTR_ERR(mmc->supply.vqmmc) == -ENODEV)
++		return 0;
++
++	return sdhci_start_signal_voltage_switch(mmc, ios);
++}
++
++/*
++ * Update card type.
++ * priv->init_card_type will be used in PHY timing adjustment.
++ */
++static void xenon_init_card(struct mmc_host *mmc, struct mmc_card *card)
++{
++	struct sdhci_host *host = mmc_priv(mmc);
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
++
++	/* Update card type*/
++	priv->init_card_type = card->type;
++}
++
++static int xenon_execute_tuning(struct mmc_host *mmc, u32 opcode)
++{
++	struct sdhci_host *host = mmc_priv(mmc);
++
++	if (host->timing == MMC_TIMING_UHS_DDR50)
++		return 0;
++
++	/*
++	 * Currently force Xenon driver back to support mode 1 only,
++	 * even though Xenon might claim to support mode 2 or mode 3.
++	 * It requires more time to test mode 2/mode 3 on more platforms.
++	 */
++	if (host->tuning_mode != SDHCI_TUNING_MODE_1)
++		xenon_retune_setup(host);
++
++	return sdhci_execute_tuning(mmc, opcode);
++}
++
++static void xenon_enable_sdio_irq(struct mmc_host *mmc, int enable)
++{
++	struct sdhci_host *host = mmc_priv(mmc);
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
++	u32 reg;
++	u8 sdhc_id = priv->sdhc_id;
++
++	sdhci_enable_sdio_irq(mmc, enable);
++
++	if (enable) {
++		/*
++		 * Set SDIO Card Inserted indication
++		 * to enable detecting SDIO async irq.
++		 */
++		reg = sdhci_readl(host, XENON_SYS_CFG_INFO);
++		reg |= (1 << (sdhc_id + XENON_SLOT_TYPE_SDIO_SHIFT));
++		sdhci_writel(host, reg, XENON_SYS_CFG_INFO);
++	} else {
++		/* Clear SDIO Card Inserted indication */
++		reg = sdhci_readl(host, XENON_SYS_CFG_INFO);
++		reg &= ~(1 << (sdhc_id + XENON_SLOT_TYPE_SDIO_SHIFT));
++		sdhci_writel(host, reg, XENON_SYS_CFG_INFO);
++	}
++}
++
++static void xenon_replace_mmc_host_ops(struct sdhci_host *host)
++{
++	host->mmc_host_ops.set_ios = xenon_set_ios;
++	host->mmc_host_ops.start_signal_voltage_switch =
++			xenon_start_signal_voltage_switch;
++	host->mmc_host_ops.init_card = xenon_init_card;
++	host->mmc_host_ops.execute_tuning = xenon_execute_tuning;
++	host->mmc_host_ops.enable_sdio_irq = xenon_enable_sdio_irq;
++}
++
++/*
++ * Parse Xenon specific DT properties:
++ * sdhc-id: the index of current SDHC.
++ *	    Refer to XENON_SYS_CFG_INFO register
++ * tun-count: the interval between re-tuning
++ */
++static int xenon_probe_dt(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct sdhci_host *host = platform_get_drvdata(pdev);
++	struct mmc_host *mmc = host->mmc;
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
++	u32 sdhc_id, nr_sdhc;
++	u32 tuning_count;
++
++	/* Disable HS200 on Armada AP806 */
++	if (of_device_is_compatible(np, "marvell,armada-ap806-sdhci"))
++		host->quirks2 |= SDHCI_QUIRK2_BROKEN_HS200;
++
++	sdhc_id = 0x0;
++	if (!of_property_read_u32(np, "marvell,xenon-sdhc-id", &sdhc_id)) {
++		nr_sdhc = sdhci_readl(host, XENON_SYS_CFG_INFO);
++		nr_sdhc &= XENON_NR_SUPPORTED_SLOT_MASK;
++		if (unlikely(sdhc_id > nr_sdhc)) {
++			dev_err(mmc_dev(mmc), "SDHC Index %d exceeds Number of SDHCs %d\n",
++				sdhc_id, nr_sdhc);
++			return -EINVAL;
++		}
++	}
++	priv->sdhc_id = sdhc_id;
++
++	tuning_count = XENON_DEF_TUNING_COUNT;
++	if (!of_property_read_u32(np, "marvell,xenon-tun-count",
++				  &tuning_count)) {
++		if (unlikely(tuning_count >= XENON_TMR_RETUN_NO_PRESENT)) {
++			dev_err(mmc_dev(mmc), "Wrong Re-tuning Count. Set default value %d\n",
++				XENON_DEF_TUNING_COUNT);
++			tuning_count = XENON_DEF_TUNING_COUNT;
++		}
++	}
++	priv->tuning_count = tuning_count;
++
++	return 0;
++}
++
++static int xenon_sdhc_prepare(struct sdhci_host *host)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
++	u8 sdhc_id = priv->sdhc_id;
++
++	/* Enable SDHC */
++	xenon_enable_sdhc(host, sdhc_id);
++
++	/* Enable ACG */
++	xenon_set_acg(host, true);
++
++	/* Enable Parallel Transfer Mode */
++	xenon_enable_sdhc_parallel_tran(host, sdhc_id);
++
++	/* Disable SDCLK-Off-While-Idle before card init */
++	xenon_set_sdclk_off_idle(host, sdhc_id, false);
++
++	xenon_mask_cmd_conflict_err(host);
++
++	return 0;
++}
++
++static void xenon_sdhc_unprepare(struct sdhci_host *host)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct xenon_priv *priv = sdhci_pltfm_priv(pltfm_host);
++	u8 sdhc_id = priv->sdhc_id;
++
++	/* disable SDHC */
++	xenon_disable_sdhc(host, sdhc_id);
++}
++
++static int xenon_probe(struct platform_device *pdev)
++{
++	struct sdhci_pltfm_host *pltfm_host;
++	struct sdhci_host *host;
++	struct xenon_priv *priv;
++	int err;
++
++	host = sdhci_pltfm_init(pdev, &sdhci_xenon_pdata,
++				sizeof(struct xenon_priv));
++	if (IS_ERR(host))
++		return PTR_ERR(host);
++
++	pltfm_host = sdhci_priv(host);
++	priv = sdhci_pltfm_priv(pltfm_host);
++
++	/*
++	 * Link Xenon specific mmc_host_ops function,
++	 * to replace standard ones in sdhci_ops.
++	 */
++	xenon_replace_mmc_host_ops(host);
++
++	pltfm_host->clk = devm_clk_get(&pdev->dev, "core");
++	if (IS_ERR(pltfm_host->clk)) {
++		err = PTR_ERR(pltfm_host->clk);
++		dev_err(&pdev->dev, "Failed to setup input clk: %d\n", err);
++		goto free_pltfm;
++	}
++	err = clk_prepare_enable(pltfm_host->clk);
++	if (err)
++		goto free_pltfm;
++
++	err = mmc_of_parse(host->mmc);
++	if (err)
++		goto err_clk;
++
++	sdhci_get_of_property(pdev);
++
++	xenon_set_acg(host, false);
++
++	/* Xenon specific dt parse */
++	err = xenon_probe_dt(pdev);
++	if (err)
++		goto err_clk;
++
++	err = xenon_sdhc_prepare(host);
++	if (err)
++		goto err_clk;
++
++	err = sdhci_add_host(host);
++	if (err)
++		goto remove_sdhc;
++
++	return 0;
++
++remove_sdhc:
++	xenon_sdhc_unprepare(host);
++err_clk:
++	clk_disable_unprepare(pltfm_host->clk);
++free_pltfm:
++	sdhci_pltfm_free(pdev);
++	return err;
++}
++
++static int xenon_remove(struct platform_device *pdev)
++{
++	struct sdhci_host *host = platform_get_drvdata(pdev);
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++
++	xenon_sdhc_unprepare(host);
++
++	sdhci_remove_host(host, 0);
++
++	clk_disable_unprepare(pltfm_host->clk);
++
++	sdhci_pltfm_free(pdev);
++
++	return 0;
++}
++
++static const struct of_device_id sdhci_xenon_dt_ids[] = {
++	{ .compatible = "marvell,armada-ap806-sdhci",},
++	{ .compatible = "marvell,armada-cp110-sdhci",},
++	{ .compatible = "marvell,armada-3700-sdhci",},
++	{}
++};
++MODULE_DEVICE_TABLE(of, sdhci_xenon_dt_ids);
++
++static struct platform_driver sdhci_xenon_driver = {
++	.driver	= {
++		.name	= "xenon-sdhci",
++		.of_match_table = sdhci_xenon_dt_ids,
++		.pm = &sdhci_pltfm_pmops,
++	},
++	.probe	= xenon_probe,
++	.remove	= xenon_remove,
++};
++
++module_platform_driver(sdhci_xenon_driver);
++
++MODULE_DESCRIPTION("SDHCI platform driver for Marvell Xenon SDHC");
++MODULE_AUTHOR("Hu Ziji <huziji@marvell.com>");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/mmc/host/sdhci-xenon.h b/drivers/mmc/host/sdhci-xenon.h
+new file mode 100644
+index 000000000000..813585b45e8d
+--- /dev/null
++++ b/drivers/mmc/host/sdhci-xenon.h
+@@ -0,0 +1,60 @@
++/*
++ * Copyright (C) 2016 Marvell, All Rights Reserved.
++ *
++ * Author:	Hu Ziji <huziji@marvell.com>
++ * Date:	2016-8-24
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation version 2.
++ */
++#ifndef SDHCI_XENON_H_
++#define SDHCI_XENON_H_
++
++/* Register Offset of Xenon SDHC self-defined register */
++#define XENON_SYS_CFG_INFO			0x0104
++#define XENON_SLOT_TYPE_SDIO_SHIFT		24
++#define XENON_NR_SUPPORTED_SLOT_MASK		0x7
++
++#define XENON_SYS_OP_CTRL			0x0108
++#define XENON_AUTO_CLKGATE_DISABLE_MASK		BIT(20)
++#define XENON_SDCLK_IDLEOFF_ENABLE_SHIFT	8
++#define XENON_SLOT_ENABLE_SHIFT			0
++
++#define XENON_SYS_EXT_OP_CTRL			0x010C
++#define XENON_MASK_CMD_CONFLICT_ERR		BIT(8)
++
++#define XENON_SLOT_RETUNING_REQ_CTRL		0x0144
++/* retuning compatible */
++#define XENON_RETUNING_COMPATIBLE		0x1
++
++/* Tuning Parameter */
++#define XENON_TMR_RETUN_NO_PRESENT		0xF
++#define XENON_DEF_TUNING_COUNT			0x9
++
++#define XENON_DEFAULT_SDCLK_FREQ		400000
++
++/* Xenon specific Mode Select value */
++#define XENON_CTRL_HS200			0x5
++#define XENON_CTRL_HS400			0x6
++
++struct xenon_priv {
++	unsigned char	tuning_count;
++	/* idx of SDHC */
++	u8		sdhc_id;
++
++	/*
++	 * eMMC/SD/SDIO require different register settings.
++	 * Xenon driver has to recognize card type
++	 * before mmc_host->card is not available.
++	 * This field records the card type during init.
++	 * It is updated in xenon_init_card().
++	 *
++	 * It is only valid during initialization after it is updated.
++	 * Do not access this variable in normal transfers after
++	 * initialization completes.
++	 */
++	unsigned int	init_card_type;
++};
++
++#endif
+-- 
+git-series 0.9.1
