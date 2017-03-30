@@ -1,39 +1,61 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH 1/5] clk: meson: Add support for parameters for specific
- PLLs
-To: Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
- carlo@caione.org, khilman@baylibre.com
-References: <1489411604-18700-1-git-send-email-narmstrong@baylibre.com>
- <1489411604-18700-2-git-send-email-narmstrong@baylibre.com>
- <149013981400.54062.11268768959465562064@resonance>
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <f8dbb772-90c9-b98f-d237-4b773188faf5@baylibre.com>
-Date: Wed, 22 Mar 2017 11:23:24 +0100
-MIME-Version: 1.0
-In-Reply-To: <149013981400.54062.11268768959465562064@resonance>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v7 13/13] arm64: configs: enable SDHCI driver for Xenon
+Date: Thu, 30 Mar 2017 17:23:05 +0200
+Message-Id: <13642de40b722ced00446e5b1e7aa95e6abb43f1.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/22/2017 12:43 AM, Michael Turquette wrote:
-> Quoting Neil Armstrong (2017-03-13 06:26:40)
-[..]
->>  
->>         p = &pll->n;
->> -       ret = meson_clk_pll_wait_lock(pll, p);
->> +       /* If unreset_for_lock is provided, remove the reset bit here */
->> +       if (pll->params.unreset_for_lock) {
-> 
-> Small nitpick, but I find "unreset" to be confusing. Since 'reset' here
-> is a bit that can be set and unset, maybe use clear_reset_for_lock
-> instead?
-> 
-> Regards,
-> Mike
-> 
+This patch enables the driver for the SDHCI controller found on the
+Marvell Armada 3700 and 7K/8K ARM64 SoCs.
 
-You are right, I'll rename it.
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Neil
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 7c48028ec64a..95954a4ecba2 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -398,6 +398,7 @@ CONFIG_MMC_DW_EXYNOS=y
+ CONFIG_MMC_DW_K3=y
+ CONFIG_MMC_DW_ROCKCHIP=y
+ CONFIG_MMC_SUNXI=y
++CONFIG_MMC_SDHCI_XENON=y
+ CONFIG_NEW_LEDS=y
+ CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_GPIO=y
+-- 
+git-series 0.9.1
