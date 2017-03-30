@@ -1,77 +1,179 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-MIME-Version: 1.0
-In-Reply-To: <m2mvc6d5a3.fsf@baylibre.com>
-References: <20170326110602.23379-1-martin.blumenstingl@googlemail.com>
- <1490550707.29739.21.camel@baylibre.com> <m2mvc6d5a3.fsf@baylibre.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Tue, 28 Mar 2017 23:30:52 +0200
-Message-ID: <CAFBinCBwoXQC3_C6u-3Oqa9c7sbRKq6waN-eRHpZRwKKHSuruA@mail.gmail.com>
-Subject: Re: [RFC PATCH] clk: meson: gxbb: remove the "cpu_clk"
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org, narmstrong@baylibre.com,
-	carlo@caione.org, sboyd@codeaurora.org
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from SMTPBG179.QQ.COM ([119.147.194.222]:49254 "EHLO
+        smtpbg179.qq.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753213AbdC3Con (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Mar 2017 22:44:43 -0400
+From: Binbin Zhou <zhoubb@lemote.com>
+To: Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <james.hogan@imgtec.com>
+Cc: John Crispin <john@phrozen.org>,
+        "Steven J . Hill" <Steven.Hill@imgtec.com>,
+        Aurelien Jarno <aurelien@aurel32.net>,
+        Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>,
+        Kelvin Cheung <keguang.zhang@gmail.com>,
+        Yang Ling <gnaygnil@gmail.com>,
+        =?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6?= <Yeking@Red54.com>,
+        linux-mips@linux-mips.org, Binbin Zhou <zhoubb@lemote.com>,
+        HuaCai Chen <chenhc@lemote.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: [PATCH v6 7/8] clk: Loongson: Add Loongson-1A clock support
+Date: Thu, 30 Mar 2017 10:44:48 +0800
+Message-Id: <1490841889-13450-8-git-send-email-zhoubb@lemote.com>
+In-Reply-To: <1490841889-13450-1-git-send-email-zhoubb@lemote.com>
+References: <1490841889-13450-1-git-send-email-zhoubb@lemote.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome, Hi Kevin,
+This patch adds clock support to Loongson-1A SoC.
 
-On Mon, Mar 27, 2017 at 6:59 PM, Kevin Hilman <khilman@baylibre.com> wrote:
-> Jerome Brunet <jbrunet@baylibre.com> writes:
->
->> On Sun, 2017-03-26 at 13:06 +0200, Martin Blumenstingl wrote:
->>> It seems that the "cpu_clk" was carried over from the meson8b clock
->>> controller driver. On Meson GX (GXBB/GXL/GXM) the registers which are
->>> used by the cpu_clk have a different purpose (in other words: they don't
->>> control the CPU clock anymore). HHI_SYS_CPU_CLK_CNTL1 bits 31:24 are
->>> reserved according to the public S905 datasheet, while bit 23 is the
->>> "A53_trace_clk_DIS" gate (which according to the datasheet should only
->>> be used in case a silicon bug is discovered) and bits 22:20 are a
->>> divider (A53_trace_clk). The meson clk-cpu code however expects that
->>> bits 28:20 are reserved for a divider (according to the public S805
->>> datasheet this "SCALE_DIV: This value represents an N+1 divider of the
->>> input clock.").
->>>
->>> The CPU clock on Meson GX SoCs is provided by the SCPI DVFS clock
->>> driver instead. Two examples from a Meson GXL S905X SoC:
->>> - vcpu (SCPI DVFS clock 0) rate: 1000000000 / cpu_clk rate: 708000000
->>> - vcpu (SCPI DVFS clock 0) rate: 1512000000 / cpu_clk rate: 708000000
->>>
->>
->> Thanks for catching this Martin! Looking at the difference between the S805 and
->> S905 register description, it makes no sense that we used the same clock driver
->> for what's behind HHI_SYS_CPU_CLK_CNTL1. I agree, it should be removed from the
->> gxbb clock controller.
-you're welcome - I always like removing code :)
+Unfortunately, The Loongson-1A's PLL register is written only,
+so we just set it with a fixed value.
 
->>> Unfortunately the CLKID_CPUCLK was already exported (but is currently
->>> not used) to DT.
->>>
->>> This is an RFC because I would like to hear other people's opinion on
->>> how to clean up the CLKID_CPUCLK (as it leaves a "hole" in
->>> gxbb_hw_onecell_data and changes the DT API (by removing a currently
->>> unused #define).
->>>
->>
->> In general the DT ABI should be stable but since no one is using this ID, and
->> what it refers to is clearly wrong, I don't think we would disrupt anything by
->> removing it.
->>
->> For the "hole" in the ids, Neil and I had similar problem while working other
->> topics. We managed to dodge it but I think it was only a matter of time ...
->>
->> In the end, it is not a big deal if there is holes in the onecell_data, as long
->> as we take care to avoid it when we register the clocks:
->
-> Agreed.  It's better to have holes in the clkid space than to introduce
-> DT incompatibility.
-perfect, thanks for your opinion. and special thanks to Jerome who
-already prepared a patch which allows holes in the _hw_onecell_data.
+Signed-off-by: Binbin Zhou <zhoubb@lemote.com>
+Signed-off-by: HuaCai Chen <chenhc@lemote.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+---
+ arch/mips/include/asm/mach-loongson32/regs-clk.h | 30 +++++++++-
+ drivers/clk/loongson1/Makefile                   |  1 +
+ drivers/clk/loongson1/clk-loongson1a.c           | 75 ++++++++++++++++++++++++
+ 3 files changed, 105 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/loongson1/clk-loongson1a.c
 
-I will rebase this on the meson-clk branch and re-send a non-RFC patch
-in the next few days.
+diff --git a/arch/mips/include/asm/mach-loongson32/regs-clk.h b/arch/mips/include/asm/mach-loongson32/regs-clk.h
+index e5e8f11..d8278a4 100644
+--- a/arch/mips/include/asm/mach-loongson32/regs-clk.h
++++ b/arch/mips/include/asm/mach-loongson32/regs-clk.h
+@@ -18,7 +18,35 @@
+ #define LS1X_CLK_PLL_FREQ		LS1X_CLK_REG(0x0)
+ #define LS1X_CLK_PLL_DIV		LS1X_CLK_REG(0x4)
+ 
+-#if defined(CONFIG_LOONGSON1_LS1B)
++#if defined(CONFIG_LOONGSON1_LS1A)
++/* write only */
++#define CORE_PLL_CFG		0x1fe78030
++#define CPU_MUL			GENMASK(2, 0)
++#define CPU_CFG_EN		BIT(3)
++#define DDR_MUL			GENMASK(6, 4)
++#define DDR_CFG_EN		BIT(7)
++#define CPU_CFG_W_EN		BIT(11)
++#define DDR_CFG_W_EN		BIT(15)
++
++#define VGA_PLL_CFG		0x1fd00410
++#define VGA_M			GENMASK(7, 0)
++#define VGA_N			GENMASK(11, 8)
++#define VGA_OD			GENMASK(13, 12)
++#define VGA_FRAC		GENMASK(31, 14)
++
++#define LCD_PLL_CFG		0x1fd00410
++#define LCD_M			GENMASK(7, 0)
++#define LCD_N			GENMASK(11, 8)
++#define LCD_OD			GENMASK(13, 12)
++#define LCD_FRAC		GENMASK(31, 14)
++
++#define GPU_PLL_CFG		0x1fd00414
++#define GPU_M			GENMASK(7, 0)
++#define GPU_N			GENMASK(11, 8)
++#define GPU_OD			GENMASK(13, 12)
++#define GPU_FRAC		GENMASK(31, 14)
++
++#elif defined(CONFIG_LOONGSON1_LS1B)
+ /* Clock PLL Divisor Register Bits */
+ #define DIV_DC_EN			BIT(31)
+ #define DIV_DC_RST			BIT(30)
+diff --git a/drivers/clk/loongson1/Makefile b/drivers/clk/loongson1/Makefile
+index b7f6a16..da7b2dd 100644
+--- a/drivers/clk/loongson1/Makefile
++++ b/drivers/clk/loongson1/Makefile
+@@ -1,3 +1,4 @@
+ obj-y				+= clk.o
++obj-$(CONFIG_LOONGSON1_LS1A)	+= clk-loongson1a.o
+ obj-$(CONFIG_LOONGSON1_LS1B)	+= clk-loongson1b.o
+ obj-$(CONFIG_LOONGSON1_LS1C)	+= clk-loongson1c.o
+diff --git a/drivers/clk/loongson1/clk-loongson1a.c b/drivers/clk/loongson1/clk-loongson1a.c
+new file mode 100644
+index 0000000..263a82c
+--- /dev/null
++++ b/drivers/clk/loongson1/clk-loongson1a.c
+@@ -0,0 +1,75 @@
++/*
++ * Copyright (c) 2012-2016 Binbin Zhou <zhoubb@lemote.com>
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ */
++
++#include <linux/clkdev.h>
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/err.h>
++
++#include <loongson1.h>
++#include "clk.h"
++
++#define OSC		(33 * 1000000)
++#define DIV_APB		2
++
++static DEFINE_SPINLOCK(_lock);
++
++static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	/* Workaround, loongson-1A pll register is written only */
++	return OSC * 8;
++}
++
++static const struct clk_ops ls1x_pll_clk_ops = {
++	.recalc_rate = ls1x_pll_recalc_rate,
++};
++
++void __init ls1x_clk_init(void)
++{
++	struct clk_hw *hw;
++
++	hw = clk_hw_register_fixed_rate(NULL, "osc_clk", NULL, 0, OSC);
++	clk_hw_register_clkdev(hw, "osc_clk", NULL);
++
++	/* clock from 33 MHz OSC clk */
++	hw = clk_hw_register_pll(NULL, "pll_clk", "osc_clk",
++				&ls1x_pll_clk_ops, 0);
++	clk_hw_register_clkdev(hw, "pll_clk", NULL);
++
++	/* cpu clk */
++	hw = clk_hw_register_fixed_factor(NULL, "cpu_clk", "pll_clk",
++					0, 1, 1);
++	clk_hw_register_clkdev(hw, "cpu_clk", NULL);
++
++	/* dc clk */
++	hw = clk_hw_register_fixed_factor(NULL, "ddr_clk", "pll_clk",
++					0, 1, 1);
++	clk_hw_register_clkdev(hw, "ddr_clk", NULL);
++
++	/* ahb clk */
++	hw = clk_hw_register_fixed_factor(NULL, "ahb_clk", "pll_clk",
++					0, 1, 2);
++	clk_hw_register_clkdev(hw, "ahb_clk", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-dma", NULL);
++	clk_hw_register_clkdev(hw, "stmmaceth", NULL);
++
++	/* clock derived from AHB clk */
++	/* APB clk is always half of the AHB clk */
++	hw = clk_hw_register_fixed_factor(NULL, "apb_clk", "ahb_clk",
++					0, 1, DIV_APB);
++	clk_hw_register_clkdev(hw, "apb_clk", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-ac97", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-i2c", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-nand", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-pwmtimer", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-spi", NULL);
++	clk_hw_register_clkdev(hw, "ls1x-wdt", NULL);
++	clk_hw_register_clkdev(hw, "serial8250", NULL);
++}
+-- 
+2.9.3
 
-
-Regards,
-Martin
