@@ -1,54 +1,230 @@
-Return-Path: <mmayer@mmayer.net>
-From: Markus Mayer <code@mmayer.net>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Markus Mayer <mmayer@broadcom.com>,
-	Linux Clock Mailing List <linux-clk@vger.kernel.org>,
-	Device Tree Mailing List <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [RFC 0/2] Basic divider clock
-Date: Tue, 14 Mar 2017 13:22:34 -0700
-Message-Id: <20170314202236.39910-1-code@mmayer.net>
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v7 06/13] dt: bindings: Add bindings for Marvell Xenon SD Host Controller
+Date: Thu, 30 Mar 2017 17:22:58 +0200
+Message-Id: <ecacddaa5d38b678e1c8c95b56f65f4a39527ead.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Mayer <mmayer@broadcom.com>
+From: Hu Ziji <huziji@marvell.com>
 
-This series contains a patch that was originally submitted by Mike
-Turquette in August 2013, but never merged.[1] Although I didn't see
-any comments rejecting it.
+Marvell Xenon SDHC can support eMMC/SD/SDIO.
+Add Xenon-specific properties.
+Also add properties for Xenon PHY setting.
 
-We have been using this code for our STB platform for quite some time
-and wouldn't mind seeing it upstream. What are the current thoughts on
-merging this code?
+Signed-off-by: Hu Ziji <huziji@marvell.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt | 170 +++++++-
+ 1 file changed, 170 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
 
-The patch is almost entirely how Mike submitted it originally. For the
-purposes of this RFC, I kept my modifications separate, to make it
-easier to see what is different from the original. I am expecting that
-my modifications would need to be squashed into the main patch with
-annotations in the commit message.
-
-There were trivial conflicts applying the original patch to 4.11-rc1.
-Those were entirely due to the patch context changing
-(clk_hw_unregister_divider() didn't exist back then) and not due to any
-incompatibilities with the patch itself.
-
-The other changes I made are listed and described in patch 2/2.
-
-[1] https://patchwork.kernel.org/patch/2848065/
-
-Markus Mayer (1):
-  clk: divider: modifications for 4.11
-
-Mike Turquette (1):
-  clk: dt: binding for basic divider clock
-
- .../devicetree/bindings/clock/divider-clock.txt    |  90 +++++++++++++++++++
- drivers/clk/clk-divider.c                          | 100 ++++++++++++++++++++-
- include/linux/clk-provider.h                       |   1 +
- 3 files changed, 190 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/divider-clock.txt
-
+diff --git a/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt b/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
+new file mode 100644
+index 000000000000..b878a1e305af
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
+@@ -0,0 +1,170 @@
++Marvell Xenon SDHCI Controller device tree bindings
++This file documents differences between the core mmc properties
++described by mmc.txt and the properties used by the Xenon implementation.
++
++Multiple SDHCs might be put into a single Xenon IP, to save size and cost.
++Each SDHC is independent and owns independent resources, such as register sets,
++clock and PHY.
++Each SDHC should have an independent device tree node.
++
++Required Properties:
++- compatible: should be one of the following
++  - "marvell,armada-3700-sdhci": For controllers on Armada-3700 SoC.
++  Must provide a second register area and marvell,pad-type.
++  - "marvell,armada-ap806-sdhci": For controllers on Armada AP806.
++  - "marvell,armada-cp110-sdhci": For controllers on Armada CP110.
++
++- clocks:
++  Array of clocks required for SDHC.
++  Require at least input clock for Xenon IP core.
++
++- clock-names:
++  Array of names corresponding to clocks property.
++  The input clock for Xenon IP core should be named as "core".
++
++- reg:
++  * For "marvell,armada-3700-sdhci", two register areas.
++    The first one for Xenon IP register. The second one for the Armada 3700 SoC
++    PHY PAD Voltage Control register.
++    Please follow the examples with compatible "marvell,armada-3700-sdhci"
++    in below.
++    Please also check property marvell,pad-type in below.
++
++  * For other compatible strings, one register area for Xenon IP.
++
++Optional Properties:
++- marvell,xenon-sdhc-id:
++  Indicate the corresponding bit index of current SDHC in
++  SDHC System Operation Control Register Bit[7:0].
++  Set/clear the corresponding bit to enable/disable current SDHC.
++  If Xenon IP contains only one SDHC, this property is optional.
++
++- marvell,xenon-phy-type:
++  Xenon support multiple types of PHYs.
++  To select eMMC 5.1 PHY, set:
++  marvell,xenon-phy-type = "emmc 5.1 phy"
++  eMMC 5.1 PHY is the default choice if this property is not provided.
++  To select eMMC 5.0 PHY, set:
++  marvell,xenon-phy-type = "emmc 5.0 phy"
++
++  All those types of PHYs can support eMMC, SD and SDIO.
++  Please note that this property only presents the type of PHY.
++  It doesn't stand for the entire SDHC type or property.
++  For example, "emmc 5.1 phy" doesn't mean that this Xenon SDHC only
++  supports eMMC 5.1.
++
++- marvell,xenon-phy-znr:
++  Set PHY ZNR value.
++  Only available for eMMC PHY.
++  Valid range = [0:0x1F].
++  ZNR is set as 0xF by default if this property is not provided.
++
++- marvell,xenon-phy-zpr:
++  Set PHY ZPR value.
++  Only available for eMMC PHY.
++  Valid range = [0:0x1F].
++  ZPR is set as 0xF by default if this property is not provided.
++
++- marvell,xenon-phy-nr-success-tun:
++  Set the number of required consecutive successful sampling points
++  used to identify a valid sampling window, in tuning process.
++  Valid range = [1:7].
++  Set as 0x4 by default if this property is not provided.
++
++- marvell,xenon-phy-tun-step-divider:
++  Set the divider for calculating TUN_STEP.
++  Set as 64 by default if this property is not provided.
++
++- marvell,xenon-phy-slow-mode:
++  If this property is selected, transfers will bypass PHY.
++  Only available when bus frequency lower than 55MHz in SDR mode.
++  Disabled by default. Please only try this property if timing issues
++  always occur with PHY enabled in eMMC HS SDR, SD SDR12, SD SDR25,
++  SD Default Speed and HS mode and eMMC legacy speed mode.
++
++- marvell,xenon-tun-count:
++  Xenon SDHC SoC usually doesn't provide re-tuning counter in
++  Capabilities Register 3 Bit[11:8].
++  This property provides the re-tuning counter.
++  If this property is not set, default re-tuning counter will
++  be set as 0x9 in driver.
++
++- marvell,pad-type:
++  Type of Armada 3700 SoC PHY PAD Voltage Controller register.
++  Only valid when "marvell,armada-3700-sdhci" is selected.
++  Two types: "sd" and "fixed-1-8v".
++  If "sd" is selected, SoC PHY PAD is set as 3.3V at the beginning and is
++  switched to 1.8V when later in higher speed mode.
++  If "fixed-1-8v" is selected, SoC PHY PAD is fixed 1.8V, such as for eMMC.
++  Please follow the examples with compatible "marvell,armada-3700-sdhci"
++  in below.
++
++Example:
++- For eMMC:
++
++	sdhci@aa0000 {
++		compatible = "marvell,armada-ap806-sdhci";
++		reg = <0xaa0000 0x1000>;
++		interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>
++		clocks = <&emmc_clk>;
++		clock-names = "core";
++		bus-width = <4>;
++		marvell,xenon-phy-slow-mode;
++		marvell,xenon-tun-count = <11>;
++		non-removable;
++		no-sd;
++		no-sdio;
++
++		/* Vmmc and Vqmmc are both fixed */
++	};
++
++- For SD/SDIO:
++
++	sdhci@ab0000 {
++		compatible = "marvell,armada-cp110-sdhci";
++		reg = <0xab0000 0x1000>;
++		interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>
++		vqmmc-supply = <&sd_vqmmc_regulator>;
++		vmmc-supply = <&sd_vmmc_regulator>;
++		clocks = <&sdclk>;
++		clock-names = "core";
++		bus-width = <4>;
++		marvell,xenon-tun-count = <9>;
++	};
++
++- For eMMC with compatible "marvell,armada-3700-sdhci":
++
++	sdhci@aa0000 {
++		compatible = "marvell,armada-3700-sdhci";
++		reg = <0xaa0000 0x1000>,
++		      <phy_addr 0x4>;
++		interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>
++		clocks = <&emmcclk>;
++		clock-names = "core";
++		bus-width = <8>;
++		mmc-ddr-1_8v;
++		mmc-hs400-1_8v;
++		non-removable;
++		no-sd;
++		no-sdio;
++
++		/* Vmmc and Vqmmc are both fixed */
++
++		marvell,pad-type = "fixed-1-8v";
++	};
++
++- For SD/SDIO with compatible "marvell,armada-3700-sdhci":
++
++	sdhci@ab0000 {
++		compatible = "marvell,armada-3700-sdhci";
++		reg = <0xab0000 0x1000>,
++		      <phy_addr 0x4>;
++		interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>
++		vqmmc-supply = <&sd_regulator>;
++		/* Vmmc is fixed */
++		clocks = <&sdclk>;
++		clock-names = "core";
++		bus-width = <4>;
++
++		marvell,pad-type = "sd";
++	};
 -- 
-2.7.4
+git-series 0.9.1
