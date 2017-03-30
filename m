@@ -1,28 +1,42 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <71ebb24fd6b0efc1af7de732aa4aac9d5a2ee4f1.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
- <71ebb24fd6b0efc1af7de732aa4aac9d5a2ee4f1.1488876832.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 8 Mar 2017 11:37:23 +0800
-Message-ID: <CAGb2v66h35Rm-bnWi-XUjxCWdPzBoZLDT5SHasYFK7UaCdoJdQ@mail.gmail.com>
-Subject: Re: [PATCH 8/15] drm/sun4i: tcon: Add channel debug
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Cc: Elaine Zhang <zhangqing@rock-chips.com>, xf@rock-chips.com, huangtao@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, xxx@rock-chips.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/4] clk: rockchip: rk3228: make noc and some special clk as critical_clocks
+Date: Thu, 30 Mar 2017 15:10:24 +0200
+Message-ID: <6718031.Ukr0mjLQLl@phil>
+In-Reply-To: <20170330124417.73ucpdkoonuiyhxz@lukather>
+References: <1490695614-3220-1-git-send-email-zhangqing@rock-chips.com> <1490695614-3220-3-git-send-email-zhangqing@rock-chips.com> <20170330124417.73ucpdkoonuiyhxz@lukather>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> While all functions have debug logs, the channel enable and disable are not
-> logged. Make sure this is the case.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Am Donnerstag, 30. M=E4rz 2017, 14:44:17 CEST schrieb Maxime Ripard:
+> On Tue, Mar 28, 2017 at 06:06:52PM +0800, Elaine Zhang wrote:
+> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> > ---
+> >  drivers/clk/rockchip/clk-rk3228.c | 30 +++++++++++++++++++++++++++++-
+> >  1 file changed, 29 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/c=
+lk-rk3228.c
+> > index db6e5a9e6de6..4d3203f887e2 100644
+> > --- a/drivers/clk/rockchip/clk-rk3228.c
+> > +++ b/drivers/clk/rockchip/clk-rk3228.c
+> > @@ -445,7 +445,7 @@ enum rk3228_plls {
+> >  			RK2928_CLKGATE_CON(2), 12, GFLAGS,
+> >  			&rk3228_spdif_fracmux),
+> > =20
+> > -	GATE(0, "jtag", "ext_jtag", 0,
+> > +	GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
+>=20
+> CLK_IGNORE_UNUSED only prevents a given clock from being gated at
+> late_initcall time, but will not prevent it from being gated later in
+> the life of the system, for example if a reparenting occurs, or if all
+> the clocks sharing the same clock tree become disabled.
+>=20
+> If your clock really should never ever be gated in order for Linux to
+> operate properly, you should use CLK_IS_CRITICAL.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+in the scope of the jtag clock, that is actually ok. As it only gates
+some clock supplied from an external source (ext_jtag).
