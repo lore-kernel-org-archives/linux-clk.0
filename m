@@ -1,84 +1,91 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 7 Mar 2017 06:45:00 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	mturquette@baylibre.com, tony@atomide.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH DO NOT MERGE 5/6] ARM: dts: omap4: add some sample
- clkctrl data
-Message-ID: <20170307144500.GE10239@codeaurora.org>
-References: <1486992157-10673-1-git-send-email-t-kristo@ti.com>
- <1486992157-10673-6-git-send-email-t-kristo@ti.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 30 Mar 2017 15:19:28 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Elaine Zhang <zhangqing@rock-chips.com>, xf@rock-chips.com,
+	huangtao@rock-chips.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	xxx@rock-chips.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/4] clk: rockchip: rk3228: make noc and some special
+ clk as critical_clocks
+Message-ID: <20170330131928.s6tr4rgx7bzwqiag@lukather>
+References: <1490695614-3220-1-git-send-email-zhangqing@rock-chips.com>
+ <1490695614-3220-3-git-send-email-zhangqing@rock-chips.com>
+ <20170330124417.73ucpdkoonuiyhxz@lukather>
+ <6718031.Ukr0mjLQLl@phil>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1486992157-10673-6-git-send-email-t-kristo@ti.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="i63pmrtaaox3mivm"
+In-Reply-To: <6718031.Ukr0mjLQLl@phil>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/13, Tero Kristo wrote:
-> Adds clkctrl nodes for cm_l4per and cm_abe as example. Peripherals using
-> @@ -131,27 +132,61 @@
->  			ranges = <0 0x4a000000 0x1000000>;
->  
->  			cm1: cm1@4000 {
-> -				compatible = "ti,omap4-cm1";
-> +				compatible = "ti,omap4-cm1", "simple-bus";
->  				reg = <0x4000 0x2000>;
-> +				#address-cells = <1>;
-> +				#size-cells = <1>;
-> +				ranges = <0 0x4000 0x2000>;
->  
->  				cm1_clocks: clocks {
->  					#address-cells = <1>;
->  					#size-cells = <0>;
->  				};
->  
-> +				cm_abe: cm_abe@0 {
 
-The unit address should be 500 here.
+--i63pmrtaaox3mivm
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +					compatible = "ti,omap4-cm";
-> +					reg = <0x500 0x100>;
-> +					#address-cells = <1>;
-> +					#size-cells = <1>;
-> +					ranges = <0 0x500 0x100>;
-> +
-> +					cm_abe_clkctrl: cm_abe_clkctrl@20 {
-> +						compatible = "ti,omap4-clkctrl";
-> +						reg = <0x20 0x6c>;
-> +						#clock-cells = <2>;
-> +					};
-> +				};
-> +
->  				cm1_clockdomains: clockdomains {
->  				};
->  			};
->  
->  			cm2: cm2@8000 {
-> -				compatible = "ti,omap4-cm2";
-> +				compatible = "ti,omap4-cm2", "simple-bus";
->  				reg = <0x8000 0x3000>;
-> +				#address-cells = <1>;
-> +				#size-cells = <1>;
-> +				ranges = <0 0x8000 0x3000>;
->  
->  				cm2_clocks: clocks {
->  					#address-cells = <1>;
->  					#size-cells = <0>;
->  				};
->  
-> +				cm_l4per: cm_l4per@0 {
+On Thu, Mar 30, 2017 at 03:10:24PM +0200, Heiko Stuebner wrote:
+> Am Donnerstag, 30. M=E4rz 2017, 14:44:17 CEST schrieb Maxime Ripard:
+> > On Tue, Mar 28, 2017 at 06:06:52PM +0800, Elaine Zhang wrote:
+> > > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> > > ---
+> > >  drivers/clk/rockchip/clk-rk3228.c | 30 +++++++++++++++++++++++++++++-
+> > >  1 file changed, 29 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip=
+/clk-rk3228.c
+> > > index db6e5a9e6de6..4d3203f887e2 100644
+> > > --- a/drivers/clk/rockchip/clk-rk3228.c
+> > > +++ b/drivers/clk/rockchip/clk-rk3228.c
+> > > @@ -445,7 +445,7 @@ enum rk3228_plls {
+> > >  			RK2928_CLKGATE_CON(2), 12, GFLAGS,
+> > >  			&rk3228_spdif_fracmux),
+> > > =20
+> > > -	GATE(0, "jtag", "ext_jtag", 0,
+> > > +	GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
+> >=20
+> > CLK_IGNORE_UNUSED only prevents a given clock from being gated at
+> > late_initcall time, but will not prevent it from being gated later in
+> > the life of the system, for example if a reparenting occurs, or if all
+> > the clocks sharing the same clock tree become disabled.
+> >=20
+> > If your clock really should never ever be gated in order for Linux to
+> > operate properly, you should use CLK_IS_CRITICAL.
+>=20
+> in the scope of the jtag clock, that is actually ok. As it only gates
+> some clock supplied from an external source (ext_jtag).
 
-and 1400 here.
+It might, I don't know how your clocks work in general, this was just
+a warning that this probably isn't sufficient if the clock is actually
+critical.
 
-> +					compatible = "ti,omap4-cm";
-> +					reg = <0x1400 0x200>;
-> +					#address-cells = <1>;
-> +					#size-cells = <1>;
-> +					ranges = <0 0x1400 0x200>;
-> +
-> +					cm_l4per_clkctrl: cm_l4per_clkctrl@20 {
+Maxime
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--i63pmrtaaox3mivm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJY3QXcAAoJEBx+YmzsjxAgmLYP/jgMtGIrfF7g5n0NVY+3ZdwO
+e9Mbiy3GNcWYENxT6MOPz6fpp/+T51npll4Q9VlT2X/AupL0yhVEnPSm2qiEVV0Q
+L7cVUXktpjTEZRNeDWNJF/HoSyKA9GF52mpCMzCekWUKuCqdvS4wMuIKZdJlKPWD
+aIX1ilTstsRB3L4XX4+uvXbfoRzpHAyz+SnZ7P9MREMYcnHRDLx0sj0ms0hPw4fT
+WRjA8lnpmxXgfq9z8B9rBUHkTX1KwX0OOIn6ux6H7HApPWsPM/Fo4mQZOoFatgnv
+wGiM5REci25JmTKSFo8ifOhJGSHMJHrDw5rQV+oCPXt2h2ofKzizOmQoR7/LnBWP
+Mxfi8O2lkLGnrai5Kopk6gksddKM9hJt/VndGiIofcvJ476sHXZzwQnKinAdh0gR
+XlEzqp9lQMMcXUnVgQ+XgKHqkMyJhzhy8ud3qeHbBgMa6ncrfmv3OqOi12AThxbL
+li0l6KYZLEkQiPRtZZTnfCgzCAINuIcS/NqWasoA1//YhjHFA5fFXXlLCcE4wboK
+gDgwWQpFkKcyaHjF5ZwIHhHju2Vrptavxu3GWcokdx5oH1ooRcbZrlVoUt26QVSw
+oV5ZkW8aMKzi42tCbr7HUoY/0+BT1DYIQSSuVH4vzraZcQswGw3st4hCqd1k0ga8
+/Nvki3w3ygW0rLIdLuS8
+=Oqll
+-----END PGP SIGNATURE-----
+
+--i63pmrtaaox3mivm--
