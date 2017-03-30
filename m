@@ -1,397 +1,203 @@
-Return-Path: <mike.leach@linaro.org>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20170329015423.GA5035@leoy-linaro>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
- <1490466197-29163-7-git-send-email-leo.yan@linaro.org> <20170328165010.GA21937@linaro.org>
- <20170329015423.GA5035@leoy-linaro>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Wed, 29 Mar 2017 15:56:23 +0100
-Message-ID: <CAJ9a7VhQRuVOCJkjPc9RANGo=fgA8wjtB65dC5f19ZX22a5FHQ@mail.gmail.com>
-Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Jonathan Corbet <corbet@lwn.net>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Guodong Xu <guodong.xu@linaro.org>, John Stultz <john.stultz@linaro.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, "Suzuki K. Poulose" <Suzuki.Poulose@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>
-Content-Type: text/plain; charset=UTF-8
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <75509e0f-26cd-52e7-8c71-b004ab6abc81@samsung.com>
+Cc: "Stephen Boyd" <sboyd@codeaurora.org>, "Ulf Hansson" <ulf.hansson@linaro.org>,
+ "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+ "Chanwoo Choi" <cw00.choi@samsung.com>, "Inki Dae" <inki.dae@samsung.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>
+References: <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170322113554eucas1p27471f0de278c55d5dce7fdf120395e09@eucas1p2.samsung.com>
+ <1490182543-28550-2-git-send-email-m.szyprowski@samsung.com>
+ <149081897388.31513.7062843004022908296@resonance>
+ <75509e0f-26cd-52e7-8c71-b004ab6abc81@samsung.com>
+Message-ID: <149089387341.31513.7531874072502656432@resonance>
+Subject: Re: [PATCH v6 1/4] clk: Add support for runtime PM
+Date: Thu, 30 Mar 2017 10:11:13 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
- Hi Leo
+Quoting Marek Szyprowski (2017-03-30 00:24:15)
+> Hi Michael,
+> =
 
-On 29 March 2017 at 02:54, Leo Yan <leo.yan@linaro.org> wrote:
-> Hi Mathieu,
->
-> On Tue, Mar 28, 2017 at 10:50:10AM -0600, Mathieu Poirier wrote:
->> On Sun, Mar 26, 2017 at 02:23:14AM +0800, Leo Yan wrote:
->
-> [...]
->
->> > +static void debug_force_cpu_powered_up(struct debug_drvdata *drvdata)
->> > +{
->> > +   int timeout = DEBUG_WAIT_TIMEOUT;
->> > +
->> > +   drvdata->edprsr = readl_relaxed(drvdata->base + EDPRSR);
->> > +
->> > +   CS_UNLOCK(drvdata->base);
->> > +
->> > +   /* Bail out if CPU is powered up yet */
->> > +   if (drvdata->edprsr & EDPRSR_PU)
->> > +           goto out_powered_up;
->> > +
->> > +   /*
->> > +    * Send request to power management controller and assert
->> > +    * DBGPWRUPREQ signal; if power management controller has
->> > +    * sane implementation, it should enable CPU power domain
->> > +    * in case CPU is in low power state.
->> > +    */
->> > +   drvdata->edprsr = readl(drvdata->base + EDPRCR);
->> > +   drvdata->edprsr |= EDPRCR_COREPURQ;
->> > +   writel(drvdata->edprsr, drvdata->base + EDPRCR);
->>
->> Here ->edprsr is used but EDPRCR is accessed.  Is this intentional or a
->> copy/paste error?  The same is true for accesses in the out_powered_up section.
->
-> Thanks for pointing out. This is a typo error and will fix.
->
->> > +
->> > +   /* Wait for CPU to be powered up (timeout~=32ms) */
->> > +   while (timeout--) {
->> > +           drvdata->edprsr = readl_relaxed(drvdata->base + EDPRSR);
->> > +           if (drvdata->edprsr & EDPRSR_PU)
->> > +                   break;
->> > +
->> > +           usleep_range(1000, 2000);
->> > +   }
->>
->> See if function readx_poll_timeout() can be used.
->
-> Will use it.
->
->> > +
->> > +   /*
->> > +    * Unfortunately the CPU cannot be powered up, so return
->> > +    * back and later has no permission to access other
->> > +    * registers. For this case, should set 'idle_constraint'
->> > +    * to ensure CPU power domain is enabled!
->> > +    */
->> > +   if (!(drvdata->edprsr & EDPRSR_PU)) {
->> > +           pr_err("%s: power up request for CPU%d failed\n",
->> > +                   __func__, drvdata->cpu);
->> > +           goto out;
->> > +   }
->> > +
->> > +out_powered_up:
->> > +   debug_os_unlock(drvdata);
->> > +
->> > +   /*
->> > +    * At this point the CPU is powered up, so set the no powerdown
->> > +    * request bit so we don't lose power and emulate power down.
->> > +    */
->> > +   drvdata->edprsr = readl(drvdata->base + EDPRCR);
->> > +   drvdata->edprsr |= EDPRCR_COREPURQ | EDPRCR_CORENPDRQ;
->>
->> If we are here the core is already up.  Shouldn't we need to set
->> EDPRCR_CORENPDRQ only?
->
-> Yeah. Will fix.
+> On 2017-03-29 22:22, Michael Turquette wrote:
+> > Quoting Marek Szyprowski (2017-03-22 04:35:40)
+> >> Registers for some clocks might be located in the SOC area, which are =
+under the
+> >> power domain. To enable access to those registers respective domain ha=
+s to be
+> >> turned on. Additionally, registers for such clocks will usually loose =
+its
+> >> contents when power domain is turned off, so additional saving and res=
+toring of
+> >> them might be needed in the clock controller driver.
+> >>
+> >> This patch adds basic infrastructure in the clocks core to allow imple=
+menting
+> >> driver for such clocks under power domains. Clock provider can supply a
+> >> struct device pointer, which is the used by clock core for tracking an=
+d managing
+> >> clock's controller runtime pm state. Each clk_prepare() operation
+> >> will first call pm_runtime_get_sync() on the supplied device, while
+> >> clk_unprepare() will do pm_runtime_put_sync() at the end.
+> >>
+> >> Additional calls to pm_runtime_get/put functions are required to ensur=
+e that any
+> >> register access (like calculating/changing clock rates and unpreparing=
+/disabling
+> >> unused clocks on boot) will be done with clock controller in runtime r=
+esumend
+> >> state.
+> > The above is a bit confusing. Is clk_prepare really special? It seems to
+> > me that every single clk_ops callback will need this?
+> =
 
-No - EDPRCR_COREPURQ and EDPRCR_CORENPDRQ have different semantics and purposes
+> clk_prepare/unprepare are special, because they allow sleeping, so they =
 
-EDPRCR_COREPURQ is in the debug power domain an is tied to an external
-debug request that should be an input to the external (to the PE)
-system power controller.
-The requirement is that the system power controller powers up the core
-domain and does not power it down while it remains asserted.
+> are natural
+> candidates for the place for calling runtime PM operations. =
 
-EDPRCR_CORENPDRQ is in the core power domain and thus to the specific
-core only. This ensures that any power control software running on
-that core should emulate a power down if this is set to one.
+> clk_enable()/disable()
+> is called under a spinlock, so runtime pm cannot be called efficiently =
 
-We cannot know the power control design of the system, so the safe
-solution is to set both bits.
+> there, but
+> core guarantees that they are called after clk_prepare(), so accessing =
 
+> hw registers
+> is safe. The only remaining calls are not guaranteed to be called always =
+
+> after
+> clk_prepare(), so those additional calls and checks in runtime pm are =
+
+> needed there.
+
+Right, so any call that holds prepare_lock and might touch the hardware
+needs to first call pm_runtime_get_sync.
+
+> =
+
+> > That leads to my second question: why put this in the clk core? Can the
+> > clk provider driver simply add pm_runtime_{get,put} calls into its
+> > clk_ops callbacks instead? The clk core does not directly touch hardware
+> > (e.g. reading registers) so putting the pm runtime calls into the
+> > provider callbacks should be sufficient.
+> =
+
+> In theory is should be possible to duplicate all kind of clock build bloc=
+ks
+> (gates, muxes, dividers, ...) with additional runtime pm calls. This =
+
+> would however
+> end in much more code and a bit more complicated locking. Implementing =
+
+> it in clk
+> core made the code simpler. It also turned out that runtime pm =
+
+> integration is
+> needed for more that a single clock provider: besides Samsung SoCs =
+
+> (Exynos 5433
+> and newer, Exynos 4412 ISP, Exynos Audio Subsystem, hacks in Exynos 542x =
+
+> can be
+> also replaced by runtime PM calls), Ulf mentioned that exactly similar =
+
+> pattern
+> is used for some UX500 SoCs (STE). More will probably come once the =
+
+> feature is
+> in, because for now such drivers simply forces runtime active state as a
+> workaround or don't instantiate related power domains at all.
+
+I agree with the above, but I'm also wondering about the folks that use
+regmap internally to their own clock provider drivers. I guess they will
+have the option to either do their own thing or use this framework-level
+solution.
+
+I've started reviewing the code itself and will respond to those mails
+separately.
+
+Thanks,
 Mike
->
->> > +   writel(drvdata->edprsr, drvdata->base + EDPRCR);
->>
->> This section is a little racy - between the time the PU bit has been
->> checked and the time COREPDRQ has been flipped, the state of PU may have
->> changed.  You can probably get around this by checking edprsr.PU rigth here.  If
->> it is not set you go through the process again.  Note that doing this will
->> probably force a refactoring of the whole function.
->
-> Agree. Will handle this.
->
-> [...]
->
->> > +static ssize_t debug_func_knob_write(struct file *f,
->> > +           const char __user *buf, size_t count, loff_t *ppos)
->> > +{
->> > e   u8 on;
->> > +   int ret;
->> > +
->> > +   ret = kstrtou8_from_user(buf, count, 2, &on);
->> > +   if (ret)
->> > +           return ret;
->> > +
->> > +   mutex_lock(&debug_lock);
->> > +
->> > +   if (!on ^ debug_enable)
->> > +           goto out;
->>
->> I had to read this condition too many times - please refactor.
->
-> Will do it.
->
->> > +
->> > +   if (on) {
->> > +           ret = debug_enable_func();
->> > +           if (ret) {
->> > +                   pr_err("%s: unable to disable debug function: %d\n",
->> > +                          __func__, ret);
->>
->> Based on the semantic this is the wrong error message.
->
-> Yeah. Will fix.
->
->> > +                   goto err;
->> > +           }
->> > +   } else
->> > +           debug_disable_func();
->>
->> Did checkpatch.pl complain about extra curly braces?  If not please add them.
->
-> checkpatch.pl doesn't report for this. Will add.
->
->> > +
->> > +   debug_enable = on;
->>
->> Here we can't set debug_enable if we just called debug_disable_func().  Maybe
->> I'm missing something.  If that's the case a comment in the code would be worth
->> it.
->
-> After called debug_disable_func(), debug_enable is set to 0 (on = 0).
->
->> > +
->> > +out:
->> > +   ret = count;
->> > +err:
->> > +   mutex_unlock(&debug_lock);
->> > +   return ret;
->> > +}
->> > +
->> > +static ssize_t debug_func_knob_read(struct file *f,
->> > +           char __user *ubuf, size_t count, loff_t *ppos)
->> > +{
->> > +   char val[] = { '0' + debug_enable, '\n' };
->> > +
->> > +   return simple_read_from_buffer(ubuf, count, ppos, val, sizeof(val));
->>
->> Use the debug_lock to avoid race conditions.
->
-> Will do it.
->
->> > +}
->> > +
->> > +static ssize_t debug_idle_constraint_write(struct file *f,
->> > +           const char __user *buf, size_t count, loff_t *ppos)
->> > +{
->> > +   int val;
->> > +   ssize_t ret;
->> > +
->> > +   ret = kstrtoint_from_user(buf, count, 10, &val);
->> > +   if (ret)
->> > +           return ret;
->> > +
->> > +   mutex_lock(&debug_lock);
->> > +   idle_constraint = val;
->> > +
->> > +   if (debug_enable)
->> > +           pm_qos_update_request(&debug_qos_req, idle_constraint);
->> > +
->> > +   mutex_unlock(&debug_lock);
->> > +   return count;
->> > +}
->> > +
->> > +static ssize_t debug_idle_constraint_read(struct file *f,
->> > +           char __user *ubuf, size_t count, loff_t *ppos)
->> > +{
->> > +   char buf[32];
->> > +   int len;
->> > +
->> > +   if (*ppos)
->> > +           return 0;
->> > +
->> > +   len = sprintf(buf, "%d\n", idle_constraint);
->> > +   return simple_read_from_buffer(ubuf, count, ppos, buf, len);
->>
->> Use the debug_lock to avoid race conditions.
->
-> Will do it.
->
->> > +}
->> > +
->> > +static const struct file_operations debug_func_knob_fops = {
->> > +   .open   = simple_open,
->> > +   .read   = debug_func_knob_read,
->> > +   .write  = debug_func_knob_write,
->> > +};
->> > +
->> > +static const struct file_operations debug_idle_constraint_fops = {
->> > +   .open   = simple_open,
->> > +   .read   = debug_idle_constraint_read,
->> > +   .write  = debug_idle_constraint_write,
->> > +};
->> > +
->> > +static int debug_func_init(void)
->> > +{
->> > +   struct dentry *file;
->> > +   int ret;
->> > +
->> > +   /* Create debugfs node */
->> > +   debug_debugfs_dir = debugfs_create_dir("coresight_cpu_debug", NULL);
->> > +   if (!debug_debugfs_dir) {
->> > +           pr_err("%s: unable to create debugfs directory\n", __func__);
->> > +           return -ENOMEM;
->>
->> return PTR_ERR(debug_debugfs_dir);
->
-> Here cannot use PTR_ERR(debug_debugfs_dir). If create debugfs failed
-> the pointer is NULL value, so finally we will return zero value for
-> PTR_ERR(debug_debugfs_dir).
->
-> [...]
->
->> > +   }
->> > +
->> > +   file = debugfs_create_file("enable", S_IRUGO | S_IWUSR,
->> > +                   debug_debugfs_dir, NULL, &debug_func_knob_fops);
->> > +   if (!file) {
->> > +           pr_err("%s: unable to create enable knob file\n", __func__);
->> > +           ret = -ENOMEM;
->>
->> Same as above.
->>
->> > +           goto err;
->> > +   }
->> > +
->> > +   file = debugfs_create_file("idle_constraint", S_IRUGO | S_IWUSR,
->> > +                   debug_debugfs_dir, NULL, &debug_idle_constraint_fops);
->> > +   if (!file) {
->> > +           pr_err("%s: unable to create idle constraint file\n", __func__);
->> > +           ret = -ENOMEM;
->>
->> Same as above.
->>
->> > +           goto err;
->> > +   }
->> > +
->> > +   /* Use sysfs node to enable functionality */
->> > +   if (!debug_enable)
->> > +           return 0;
->> > +
->> > +   /* Enable debug module at boot time */
->> > +   ret = debug_enable_func();
->> > +   if (ret) {
->> > +           pr_err("%s: unable to disable debug function: %d\n",
->> > +                  __func__, ret);
->> > +           goto err;
->> > +   }
->>
->> Use the debug_lock to avoid race conditions.
->
-> I'm struggling to understand what's race condition at here? The
-> function pairs debug_func_init()/debug_func_exit() are used for
-> module's probing and removing, so naturally module's probing and
-> removing are sequential, right?
->
->> > +
->> > +   return 0;
->> > +
->> > +err:
->> > +   debugfs_remove_recursive(debug_debugfs_dir);
->> > +   return ret;
->> > +}
->> > +
->> > +static void debug_func_exit(void)
->> > +{
->> > +   debugfs_remove_recursive(debug_debugfs_dir);
->> > +
->> > +   /* Disable functionality if has enabled */
->> > +   if (debug_enable)
->> > +           debug_disable_func();
->> > +}
->> > +
->> > +static int debug_probe(struct amba_device *adev, const struct amba_id *id)
->> > +{
->> > +   void __iomem *base;
->> > +   struct device *dev = &adev->dev;
->> > +   struct debug_drvdata *drvdata;
->> > +   struct resource *res = &adev->res;
->> > +   struct device_node *np = adev->dev.of_node;
->> > +   int ret;
->> > +
->> > +   drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
->> > +   if (!drvdata)
->> > +           return -ENOMEM;
->> > +
->> > +   drvdata->cpu = np ? of_coresight_get_cpu(np) : 0;
->> > +   if (per_cpu(debug_drvdata, drvdata->cpu)) {
->> > +           dev_err(dev, "CPU's drvdata has been initialized\n");
->>
->> Might be worth adding the CPU number in the error message.
->
-> Yeah, will add it.
->
-> [...]
->
->> This driver doesn't call the pm_runtime_put/get() operations needed to handle the
->> debug power domain.  See the other CoreSight drivers for details.
->
-> Sure, will do it.
->
->> Also, from the conversation that followed the previous post we agreed that we wouldn't
->> deal with CPUidle issues in this driver.  We deal with the CPU power domain
->> using the EDPRCR register (like you did) and that's it.  System that don't honor that register
->> can use other (external) means to solve this.  As such please remove the
->> pm_qos_xyz() functions.
->
-> From previous discussion, Mike reminds the CPU power domain design is
-> quite SoC specific and usually the SoC has many different low power
-> states, e.g. except CPU level and cluster level low power states, they
-> also can define SoC level low power states. Any SoC with any power
-> state is possible finally impact CPU power domain, so this is why I add
-> this interface to let user can have the final decision based on their
-> working platform.
->
-> We can rely on "nohlt" and "cpuidle.off=1" in kernel command line to
-> disable whole SoC low power states at boot time; or we can use sysfs
-> node "echo 1 > /sys/devices/system/cpu/cpuX/cpuidle/stateX/disble" to
-> disable CPU low power states at runtime. But that means we need use
-> different interfaces to control CPU power domain for booting and
-> runtime, it's not nice for usage.
->
-> So this is why add "idle_constraint" as a central place to control
-> power domain for CPU debug purpose and I also think this is more
-> friendly for hardware design, e.g. some platforms can enable partial
-> low power states to save power and avoid overheat after using this
-> driver.
->
-> How about you think for this?
->
-> Thanks,
-> Leo Yan
 
+> =
 
+> It is not that uncommon to have runtime PM integrated in the framework =
 
--- 
-Mike Leach
-Principal Engineer, ARM Ltd.
-Blackburn Design Centre. UK
+> (examples:
+> mmc, scsi). Please not that this is optional for clock providers - if =
+
+> they don't
+> enable runtime PM for the provided clock controller device during clock
+> registration, the clock core will behave exactly the same way as now.
+> =
+
+> >> When one wants to register clock controller, which make use of this fe=
+ature, he
+> >> has to:
+> >> 1. Provide a struct device to the core when registering the provider.
+> >> 2. Ensure to enable runtime PM for that device before registering cloc=
+ks.
+> >> 3. Make sure that the runtime PM status of the controller device refle=
+cts
+> >>     the HW state.
+> > Third question: is there a case where more than one device is required?
+> > Is is possible that a single pm_runtime_get call against a single device
+> > will not be enough for some clk provider drivers? If so then this
+> > solution does not scale very well and the clk provider driver will have
+> > to implement this in the clk_ops callbacks (as I mentioned above in my
+> > second question).
+> =
+
+> This is a generic question about runtime PM. There are various methods to
+> model hardware relations to control pm/runtime pm state of a set of devic=
+es:
+> child-parent-bus relations (setting child to active state also activates a
+> parent), gen_pd power domains and sub-domains and recently merged device =
+pm
+> links, which allows to model relations across the typical child-parent tr=
+ee
+> hierarchy. IMHO device core pm related framework provides enough features=
+ to
+> solve the case when one needs to control more than one device - what is
+> worth to mention - in all cases the client only need to call pm_runtime
+> funtions on the ONE leaf device, everything else will be handled by pm co=
+re.
+> =
+
+> > Fourth & final question: I'm under the impression that pm runtime calls
+> > be be nested and re-enter, but I want to make sure (Ulf?). For instance
+> > it is highly likely that this new feature would cause something like:
+> >
+> > pm_runtime_get()              - called by random driver
+> > -> clk_prepare_enable()       - genpd enables functioal clocks
+> >     -> pm_runtime_get()        - called by clk_pm_runtime_get in clk co=
+re
+> >        -> clk_prepare_enable() - genpd enables interface or bus clocks
+> >
+> > I guess this is safe from the pm_runtime_get/genpd perspective, but want
+> > to make sure first.
+> =
+
+> Yes, this will work fine after recent fixes. Tested with Exynos IIS ASoC
+> driver (which is also a clock provider), which in turn is a client for
+> Exynos Audio Subsystem clock provider.
+> =
+
+> > Thanks,
+> =
+
+>  >> [...]
+> =
+
+> Best regards
+> -- =
+
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+>=20
