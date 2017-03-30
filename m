@@ -1,38 +1,92 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 20 Mar 2017 07:36:05 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: mturquette@baylibre.com, linux-omap@vger.kernel.org,
-	sboyd@codeaurora.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 5/9] ARM: OMAP2+: hwmod: assign main clock from DT if
- available
-Message-ID: <20170320143605.GI20572@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <1489741781-12816-6-git-send-email-t-kristo@ti.com>
- <20170317154126.GU20572@atomide.com>
- <f7c795dc-13db-9157-cdcc-b61892cc73f9@ti.com>
- <20170317221728.GX20572@atomide.com>
- <95b7142f-8cc7-5909-764e-05dbad434298@ti.com>
- <20170320143433.GG20572@atomide.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170320143433.GG20572@atomide.com>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
+	Kostya Porotchkin <kostap@marvell.com>
+Subject: [PATCH v7 11/13] arm64: dts: marvell: add eMMC support for Armada 37xx
+Date: Thu, 30 Mar 2017 17:23:03 +0200
+Message-Id: <f02cef05e7348975ba5a01443f90ce4147e52edd.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tony Lindgren <tony@atomide.com> [170320 07:37]:
-> * Tero Kristo <t-kristo@ti.com> [170320 06:25]:
-> > On 18/03/17 00:17, Tony Lindgren wrote:
-> > > I don't quite follow you, what breaks if you fall back to the old clock
-> > > lookup if no "ti,hwmods" is set?
-> > 
-> > I think I misunderstood your earlier comment. So basically the code already
-> > bails out early if ti,hwmods is not set. In this case, the earlier lookup
-> > done by hwmod core sets the node pointer for this code to be NULL, and this
-> > just parses the existing main_clk info.
-> 
-> OK thanks for confirming that.
+Add the eMMC support for Armada 37xx SoC and enable it in the Armada 3720
+DB board.
 
-And also for this patch:
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ arch/arm64/boot/dts/marvell/armada-3720-db.dts |  9 +++++++++
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi   | 11 +++++++++++
+ 2 files changed, 20 insertions(+)
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+diff --git a/arch/arm64/boot/dts/marvell/armada-3720-db.dts b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
+index 86602c907a61..c84623dd334a 100644
+--- a/arch/arm64/boot/dts/marvell/armada-3720-db.dts
++++ b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
+@@ -106,6 +106,15 @@
+ 	status = "okay";
+ };
+ 
++&sdhci0 {
++	non-removable;
++	bus-width = <8>;
++	mmc-ddr-1_8v;
++	mmc-hs400-1_8v;
++	marvell,pad-type = "fixed-1-8v";
++	status = "okay";
++};
++
+ /* CON31 */
+ &usb3 {
+ 	status = "okay";
+diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+index b48d668a6ab6..4c499b86fb8b 100644
+--- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+@@ -213,6 +213,17 @@
+ 				};
+ 			};
+ 
++			sdhci0: sdhci@d8000 {
++				compatible = "marvell,armada-3700-sdhci",
++				"marvell,sdhci-xenon";
++				reg = <0xd8000 0x300
++				       0x17808 0x4>;
++				interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&nb_periph_clk 0>;
++				clock-names = "core";
++				status = "disabled";
++			};
++
+ 			sata: sata@e0000 {
+ 				compatible = "marvell,armada-3700-ahci";
+ 				reg = <0xe0000 0x2000>;
+-- 
+git-series 0.9.1
