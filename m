@@ -1,73 +1,68 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Carlo Caione <carlo@caione.org>,  linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,  linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/9] clk: meson: update clock controller for audio support
-References: <20170309104154.28295-1-jbrunet@baylibre.com>
-Date: Fri, 10 Mar 2017 16:39:27 -0800
-In-Reply-To: <20170309104154.28295-1-jbrunet@baylibre.com> (Jerome Brunet's
-	message of "Thu, 9 Mar 2017 11:41:45 +0100")
-Message-ID: <m2r324bq9s.fsf@baylibre.com>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Thu, 30 Mar 2017 09:59:41 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	mike.leach@linaro.org, Suzuki.Poulose@arm.com, sudeep.holla@arm.com
+Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
+Message-ID: <20170330015941.GD3038@leoy-linaro>
+References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+ <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
+ <20170328165010.GA21937@linaro.org>
+ <20170329015423.GA5035@leoy-linaro>
+ <20170329165535.GB24889@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170329165535.GB24889@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+On Wed, Mar 29, 2017 at 10:55:35AM -0600, Mathieu Poirier wrote:
 
-> This patchset is a first round of update to the meson clock controllers
-> to bring audio support. The patchset is based on clk-next. It could be
-> rebased on amlogic tree later on, if you prefer the patches to go through
-> Kevin's tree.
+[...]
 
-I'd prefer these go through the clk tree, and get an immutable branch
-that I can use for my stuff that goes through the arm-soc tree.
+> > So this is why add "idle_constraint" as a central place to control
+> > power domain for CPU debug purpose and I also think this is more
+> > friendly for hardware design, e.g. some platforms can enable partial
+> > low power states to save power and avoid overheat after using this
+> > driver.
+> > 
+> > How about you think for this?
+> 
+> Like Sudeep pointed out we should concentrate on doing the right thing,
+> that is work with EDPRSR.PU, EDPRCR.COREPURQ and EDPRCR.CORENPDRQ.
 
-Kevin
+Agree, and I think we have aligned for this.
 
-> First patch fix an issue found while writing patch 5 (Giving ternary
-> operator to SET_PARM)
->
-> Following Stephen comment on the v1, patch 2 adds the const qualifiers
-> missing upstream.
->
-> Patches 3 and 4 put the generic muxes and divisors declaration in tables so
-> the register address fixup works in the same way as the clock gates. We are
-> going to add more of these clock types for audio or gpu support, so we
-> can't continue to fix addresses individually like it is currently done.
->
-> Patches 5 to 8 improve the support of the mpll clocks, now allowing the
-> rate to be set. Among other things, the mplls are the parent clocks of the
-> i2s and spdif clocks.
->
-> Patch 9 expose the clock gates required to power on the i2s output.
->
-> These patches have been tested on the meson gxbb p200 board, as part of the
-> ongoing work to bring audio support to meson SoC family.
->
-> Changes since v1 [0]:
->  * Add SET_PARM fix to the series
->  * Add missing const qualifiers to the clock arrays
->  * No more additional patches required as SAR clocks have been merged
->
-> [0]: http://lkml.kernel.org/r/20170228133002.17894-1-jbrunet@baylibre.com
->
-> Jerome Brunet (9):
->   clk: meson: fix SET_PARM macro
->   clk: meson: add missing const qualifiers on gate arrays
->   clk: meson8b: put dividers and muxes in tables
->   clk: gxbb: put dividers and muxes in tables
->   clk: meson: mpll: add rw operation
->   clk: meson: gxbb: mpll: use rw operation
->   clk: meson8b: add the mplls clocks 0, 1 and 2
->   clk: meson: mpll: correct N2 maximum value
->   dt-bindings: clk: gxbb: expose i2s output clock gates
->
->  drivers/clk/meson/clk-mpll.c          | 152 ++++++++++++++++++++++++++++++++--
->  drivers/clk/meson/clkc.h              |   6 +-
->  drivers/clk/meson/gxbb.c              |  66 ++++++++++++---
->  drivers/clk/meson/gxbb.h              |  10 +--
->  drivers/clk/meson/meson8b.c           | 127 ++++++++++++++++++++++++++--
->  drivers/clk/meson/meson8b.h           |  20 ++++-
->  include/dt-bindings/clock/gxbb-clkc.h |   5 ++
->  7 files changed, 356 insertions(+), 30 deletions(-)
+> Anything outside of that becomes platform specific and can't be handled in
+> this driver.
+
+Sorry I argue a bit for this just want to make things more clear and
+if can have better method.
+
+Though the issue is platform specific, but the code is to seek common
+method to handle them. So the driver has no any platform specific code.
+
+I read again for Suziki's suggestion: "4) Should document the fact that,
+on some platforms, the user may have to disable CPUidle explicitly to
+get the driver working. But let us not make it the default. The user
+with a not so ideal platform could add "nohlt" and get it working."
+
+So I'm not strong to resist and if this is alignment yet, I should
+document well for this but doesn't handle it in driver (keep driver
+simple).
+
+Thanks,
+Leo Yan
