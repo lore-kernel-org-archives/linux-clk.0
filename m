@@ -1,77 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:33360 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751765AbdCDDAQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Mar 2017 22:00:16 -0500
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20170303232305.GU996@jhogan-linux.le.imgtec.org>
-References: <1484164100-9805-1-git-send-email-jason.uy@broadcom.com>
- <1484164100-9805-2-git-send-email-jason.uy@broadcom.com> <CAAG0J9-n0toSJL8Ze8Esq81dYnpfrTd42bMiR94zw_btBLjsww@mail.gmail.com>
- <1488394220.20145.68.camel@linux.intel.com> <20170303002129.GS996@jhogan-linux.le.imgtec.org>
- <1488547866.20145.74.camel@linux.intel.com> <20170303232305.GU996@jhogan-linux.le.imgtec.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 4 Mar 2017 04:56:48 +0200
-Message-ID: <CAHp75Ved2h2WyWBokEOsDmAyB3w3iM=uh-9Bq01mU1ST4FapWQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] serial: 8250_dw: Allow hardware flow control to be used
-To: James Hogan <james.hogan@imgtec.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jason Uy <jason.uy@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Noam Camus <noamc@ezchip.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Wang Hongcheng <annie.wang@amd.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        David Daney <david.daney@cavium.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, Viresh Kumar <viresh.kumar@st.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
+References: <1489425153-22623-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 30 Mar 2017 14:58:15 +0200
+Message-ID: <CAMuHMdXtaGWoafQMyRZqVm0Pg0oBO+554HujK=QFnR+kS7YJbQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] clk: renesas: Add support for R-Car H3 ES2.0
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Mar 4, 2017 at 1:23 AM, James Hogan <james.hogan@imgtec.com> wrote:
-> On Fri, Mar 03, 2017 at 03:31:06PM +0200, Andy Shevchenko wrote:
->> On Fri, 2017-03-03 at 00:21 +0000, James Hogan wrote:
->> > The CONFIG_HAVE_CLK=n implementation of devm_clk_get() in particular
->> > seems highly questionable to me, given that commit 93abe8e4b13a ("clk:
->> > add non CONFIG_HAVE_CLK routines") which added it 5 years ago says:
-
->> Btw, I hope you also noticed this one:
->>
->> http://www.spinics.net/lists/linux-serial/msg25314.html
+On Mon, Mar 13, 2017 at 6:12 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> This patch series adds clock support for R-Car H3 ES2.0, which differs
+> from ES1.x in several areas.
 >
-> Interesting.
+> The goal is twofold:
+>   1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
+>      for now,
+>   2. Make it clear which code supports ES1.x, so it can easily be
+>      identified and removed later, when production SoCs are deemed
+>      ubiquitous.
 >
-> Following Russel's past advise[1], the following patch on top of Heiko's
-> patch also fixes things for me on Octeon:
+> This is achieved by:
+>   - Updating the clock tables for the latest revision (ES2.0), but not
+>     removing clocks that only exist on earlier revisions (ES1.x),
+>   - Detecting the SoC revision at runtime using the new
+>     soc_device_match() API, and fixing up the clocks tables to match the
+>     actual SoC revision, by:
+>       - NULLifying core and module clocks of modules that do not exist,
+>       - Reparenting module clocks that have a different parent on ES1.x.
 >
-> [1] https://lists.gt.net/linux/kernel/2102623
+> Changes compared to v1:
+>   - Update of various module clocks as per datasheet update,
+>   - Add support for RCLK on R-Car H3 ES2.0.
 >
-> If thats an acceptable fix I'll post it properly. Thoughts?
+> For testers, this series and its dependencies are available in the
+> topic/r8a7795es2-clk-v2 branch of my renesas-drivers git repository at
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+> An integration branch for testing on the R-Car H3 ES2.0 based Salvator-X
+> development board is provided as topic/r8a7795es2-integration.
+>
+> This has been tested on Salvator-X with R-Car H3 ES1.0, ES1.1, and ES2.0
+> SoCs.
+>
+> I plan to queue this up in clk-renesas-for-v4.12.
 
-Fine by me. Looks definitely better than IS_ERR_OR_NULL().
+Queued in clk-renesas-for-v4.12.
 
-Please, submit as usual with your SoB tag.
+Gr{oetje,eeting}s,
 
-> diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-> index 223ac234ddb2..e65808c482f1 100644
-> --- a/drivers/tty/serial/8250/8250_dw.c
-> +++ b/drivers/tty/serial/8250/8250_dw.c
-> @@ -267,6 +267,8 @@ static void dw8250_set_termios(struct uart_port *p, struct ktermios *termios,
->         rate = clk_round_rate(d->clk, baud * 16);
->         if (rate < 0)
->                 ret = rate;
-> +       else if (rate == 0)
-> +               ret = -ENOENT;
->         else
->                 ret = clk_set_rate(d->clk, rate);
->         clk_prepare_enable(d->clk);
+                        Geert
 
--- 
-With Best Regards,
-Andy Shevchenko
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
