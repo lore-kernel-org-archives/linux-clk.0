@@ -1,82 +1,85 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>,
-	"Thierry Reding" <thierry.reding@gmail.com>, Alexandre Courbot
-	<gnurou@gmail.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: tegra: Add sata seq input control
-Date: Wed, 15 Mar 2017 17:42:05 +0200
-Message-ID: <1489592525-6231-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <sudeep.holla@arm.com>
+Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
+To: Leo Yan <leo.yan@linaro.org>
+References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+ <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
+ <20170328165010.GA21937@linaro.org> <20170329015423.GA5035@leoy-linaro>
+ <20170329165535.GB24889@linaro.org> <20170330015941.GD3038@leoy-linaro>
+ <CANLsYkwPYSvy2xjf8uuvx1WGWpGdMFy7kF=30VbvgW+jDvnFuw@mail.gmail.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Sudeep Holla <sudeep.holla@arm.com>, Jonathan Corbet <corbet@lwn.net>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Wei Xu <xuwei5@hisilicon.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Andy Gross <andy.gross@linaro.org>,
+ David Brown <david.brown@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Guodong Xu <guodong.xu@linaro.org>,
+ John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ Mike Leach <mike.leach@linaro.org>,
+ "Suzuki K. Poulose" <Suzuki.Poulose@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <5a4c5112-4934-c827-2a07-387e4555dc4b@arm.com>
+Date: Thu, 30 Mar 2017 17:04:42 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+In-Reply-To: <CANLsYkwPYSvy2xjf8uuvx1WGWpGdMFy7kF=30VbvgW+jDvnFuw@mail.gmail.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-This will be used by the powergating driver to ensure proper sequencer
-state when the SATA domain is powergated.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 25 +++++++++++++++++++++++++
- include/linux/clk/tegra.h        |  1 +
- 2 files changed, 26 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index a41733d..34b5520 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -181,6 +181,11 @@
- #define SATA_PLL_CFG0				0x490
- #define SATA_PLL_CFG0_PADPLL_RESET_SWCTL	BIT(0)
- #define SATA_PLL_CFG0_PADPLL_USE_LOCKDET	BIT(2)
-+#define SATA_PLL_CFG0_SATA_SEQ_IN_SWCTL		BIT(4)
-+#define SATA_PLL_CFG0_SATA_SEQ_RESET_INPUT_VALUE	BIT(5)
-+#define SATA_PLL_CFG0_SATA_SEQ_LANE_PD_INPUT_VALUE	BIT(6)
-+#define SATA_PLL_CFG0_SATA_SEQ_PADPLL_PD_INPUT_VALUE	BIT(7)
-+
- #define SATA_PLL_CFG0_PADPLL_SLEEP_IDDQ		BIT(13)
- #define SATA_PLL_CFG0_SEQ_ENABLE		BIT(24)
- 
-@@ -483,6 +488,26 @@ void tegra210_sata_pll_hw_sequence_start(void)
- }
- EXPORT_SYMBOL_GPL(tegra210_sata_pll_hw_sequence_start);
- 
-+void tegra210_set_sata_pll_seq_sw(bool state)
-+{
-+	u32 val;
-+
-+	val = readl_relaxed(clk_base + SATA_PLL_CFG0);
-+	if (state) {
-+		val |= SATA_PLL_CFG0_SATA_SEQ_IN_SWCTL;
-+		val |= SATA_PLL_CFG0_SATA_SEQ_RESET_INPUT_VALUE;
-+		val |= SATA_PLL_CFG0_SATA_SEQ_LANE_PD_INPUT_VALUE;
-+		val |= SATA_PLL_CFG0_SATA_SEQ_PADPLL_PD_INPUT_VALUE;
-+	} else {
-+		val &= ~SATA_PLL_CFG0_SATA_SEQ_IN_SWCTL;
-+		val &= ~SATA_PLL_CFG0_SATA_SEQ_RESET_INPUT_VALUE;
-+		val &= ~SATA_PLL_CFG0_SATA_SEQ_LANE_PD_INPUT_VALUE;
-+		val &= ~SATA_PLL_CFG0_SATA_SEQ_PADPLL_PD_INPUT_VALUE;
-+	}
-+	writel_relaxed(val, clk_base + SATA_PLL_CFG0);
-+}
-+EXPORT_SYMBOL_GPL(tegra210_set_sata_pll_seq_sw);
-+
- static inline void _pll_misc_chk_default(void __iomem *base,
- 					struct tegra_clk_pll_params *params,
- 					u8 misc_num, u32 default_val, u32 mask)
-diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
-index e17d328..d23c9cf 100644
---- a/include/linux/clk/tegra.h
-+++ b/include/linux/clk/tegra.h
-@@ -125,6 +125,7 @@ static inline void tegra_cpu_clock_resume(void)
- extern void tegra210_xusb_pll_hw_sequence_start(void);
- extern void tegra210_sata_pll_hw_control_enable(void);
- extern void tegra210_sata_pll_hw_sequence_start(void);
-+extern void tegra210_set_sata_pll_seq_sw(bool state);
- extern void tegra210_put_utmipll_in_iddq(void);
- extern void tegra210_put_utmipll_out_iddq(void);
- 
+On 30/03/17 16:46, Mathieu Poirier wrote:
+> On 29 March 2017 at 19:59, Leo Yan <leo.yan@linaro.org> wrote:
+>> On Wed, Mar 29, 2017 at 10:55:35AM -0600, Mathieu Poirier wrote:
+>>
+>> [...]
+>>
+>>>> So this is why add "idle_constraint" as a central place to control
+>>>> power domain for CPU debug purpose and I also think this is more
+>>>> friendly for hardware design, e.g. some platforms can enable partial
+>>>> low power states to save power and avoid overheat after using this
+>>>> driver.
+>>>>
+>>>> How about you think for this?
+>>>
+>>> Like Sudeep pointed out we should concentrate on doing the right thing,
+>>> that is work with EDPRSR.PU, EDPRCR.COREPURQ and EDPRCR.CORENPDRQ.
+>>
+>> Agree, and I think we have aligned for this.
+>>
+>>> Anything outside of that becomes platform specific and can't be handled in
+>>> this driver.
+>>
+>> Sorry I argue a bit for this just want to make things more clear and
+>> if can have better method.
+>>
+>> Though the issue is platform specific, but the code is to seek common
+>> method to handle them. So the driver has no any platform specific code.
+> 
+> Seeking a common way to handle platform specific problems doesn't
+> scale and will never be encompassing.  There will always be a quirk
+> somewhere to deal with, hence the idea of keeping things separate.
+> 
+
+I completely agree and just responded to the original patch.
+
+>>
+>> I read again for Suziki's suggestion: "4) Should document the fact that,
+>> on some platforms, the user may have to disable CPUidle explicitly to
+>> get the driver working. But let us not make it the default. The user
+>> with a not so ideal platform could add "nohlt" and get it working."
+> 
+> Suzuki and I are expressing the same view using different words.
+> 
+
++1, as I just mentioned on the patch, we can warn user to take action
+when this feature gets enabled to get desired result and *nothing more*
+than that. Please drop all these pm_qos stuff.
+
 -- 
-1.9.1
+Regards,
+Sudeep
