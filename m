@@ -1,153 +1,70 @@
-Return-Path: <ulf.hansson@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <cb885ae19e7c467908cdaa1f1cc8d95a7217d663.1487091464.git-series.gregory.clement@free-electrons.com>
-References: <cover.ff78bebe0384f650a51e5e6f0f1dca6e7894b53b.1487091464.git-series.gregory.clement@free-electrons.com>
- <cb885ae19e7c467908cdaa1f1cc8d95a7217d663.1487091464.git-series.gregory.clement@free-electrons.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 15 Mar 2017 14:11:31 +0100
-Message-ID: <CAPDyKFpH+RGAZGoVCuCOKJ2iEa+Y=cNNcM-uKhkYaTpmogXCKA@mail.gmail.com>
-Subject: Re: [PATCH v6 08/14] mmc: sdhci-xenon: Add Marvell Xenon SDHC core functionality
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
 	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ziji Hu <huziji@marvell.com>,
-	Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>, Doug Jones <dougj@marvell.com>,
-	Victor Gu <xigu@marvell.com>, "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Ziji Hu <huziji@marvell.com>,
+	Jimmy Xu <zmxu@marvell.com>,
+	Jisheng Zhang <jszhang@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Ryan Gao <ygao@marvell.com>,
+	Doug Jones <dougj@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	"Wei(SOCP) Liu" <liuw@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Yehuda Yitschak <yehuday@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Hanna Hawa <hannah@marvell.com>,
 	Kostya Porotchkin <kostap@marvell.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH v7 10/13] MAINTAINERS: add entry for Marvell Xenon MMC Host Controller drivers
+Date: Thu, 30 Mar 2017 17:23:02 +0200
+Message-Id: <9dc4051aec96f86ed1655fcbbbd4140e012ef5cb.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14 February 2017 at 18:01, Gregory CLEMENT
-<gregory.clement@free-electrons.com> wrote:
-> From: Hu Ziji <huziji@marvell.com>
->
-> Add Xenon eMMC/SD/SDIO host controller core functionality.
-> Add Xenon specific initialization process.
-> Add Xenon specific mmc_host_ops APIs.
-> Add Xenon specific register definitions.
->
-> Add CONFIG_MMC_SDHCI_XENON support in drivers/mmc/host/Kconfig.
->
-> Marvell Xenon SDHC conforms to SD Physical Layer Specification
-> Version 3.01 and is designed according to the guidelines provided
-> in the SD Host Controller Standard Specification Version 3.00.
->
-> Signed-off-by: Hu Ziji <huziji@marvell.com>
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  drivers/mmc/host/Kconfig       |   9 +-
->  drivers/mmc/host/Makefile      |   3 +-
->  drivers/mmc/host/sdhci-xenon.c | 602 ++++++++++++++++++++++++++++++++++-
->  drivers/mmc/host/sdhci-xenon.h |  70 ++++-
->  4 files changed, 684 insertions(+)
->  create mode 100644 drivers/mmc/host/sdhci-xenon.c
->  create mode 100644 drivers/mmc/host/sdhci-xenon.h
->
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 2eb97014dc3f..1c1a88bfbdad 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -819,3 +819,12 @@ config MMC_SDHCI_BRCMSTB
->           Broadcom STB SoCs.
->
->           If unsure, say Y.
-> +
-> +config MMC_SDHCI_XENON
-> +       tristate "Marvell Xenon eMMC/SD/SDIO SDHCI driver"
-> +       depends on MMC_SDHCI_PLTFM
-> +       help
-> +         This selects Marvell Xenon eMMC/SD/SDIO SDHCI.
-> +         If you have a machine with integrated Marvell Xenon SDHC IP,
+From: Hu Ziji <huziji@marvell.com>
 
-/s/SDHC/SDHCI
+Add maintainer entry for Marvell Xenon eMMC/SD/SDIO
+Host Controller drivers.
 
-> +         say Y or M here.
-> +         If unsure, say N.
-> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-> index ccc9c4cba154..b0a2ab4b256e 100644
-> --- a/drivers/mmc/host/Makefile
-> +++ b/drivers/mmc/host/Makefile
-> @@ -82,3 +82,6 @@ obj-$(CONFIG_MMC_SDHCI_BRCMSTB)               += sdhci-brcmstb.o
->  ifeq ($(CONFIG_CB710_DEBUG),y)
->         CFLAGS-cb710-mmc        += -DDEBUG
->  endif
-> +
-> +obj-$(CONFIG_MMC_SDHCI_XENON)  += sdhci-xenon-driver.o
-> +sdhci-xenon-driver-y           += sdhci-xenon.o
+Signed-off-by: Hu Ziji <huziji@marvell.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Why not only this:
-obj-$(CONFIG_MMC_SDHCI_XENON) += sdhci-xenon.o
-
-> diff --git a/drivers/mmc/host/sdhci-xenon.c b/drivers/mmc/host/sdhci-xenon.c
-> new file mode 100644
-> index 000000000000..e633f803907a
-> --- /dev/null
-> +++ b/drivers/mmc/host/sdhci-xenon.c
-> @@ -0,0 +1,602 @@
-> +/*
-> + * Driver for Marvell Xenon SDHC as a platform device
-> + *
-> + * Copyright (C) 2016 Marvell, All Rights Reserved.
-> + *
-> + * Author:     Hu Ziji <huziji@marvell.com>
-> + * Date:       2016-8-24
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License as
-> + * published by the Free Software Foundation version 2.
-> + *
-> + * Inspired by Jisheng Zhang <jszhang@marvell.com>
-> + * Special thanks to Video BG4 project team.
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +
-> +#include "sdhci-pltfm.h"
-> +#include "sdhci-xenon.h"
-> +
-> +static int enable_xenon_internal_clk(struct sdhci_host *host)
-
-[...]
-
-> +/* Set SDCLK-off-while-idle */
-> +static void xenon_set_sdclk_off_idle(struct sdhci_host *host,
-> +                                    unsigned char sdhc_id, bool enable)
-
-[...]
-
-> +/* Recover the Register Setting cleared during SOFTWARE_RESET_ALL */
-> +static void sdhci_xenon_reset_exit(struct sdhci_host *host,
-> +                                  unsigned char sdhc_id, u8 mask)
-
-[...]
-
-ff --git a/drivers/mmc/host/sdhci-xenon.h b/drivers/mmc/host/sdhci-xenon.h
-> new file mode 100644
-> index 000000000000..69de711db9eb
-> --- /dev/null
-> +++ b/drivers/mmc/host/sdhci-xenon.h
-
-You should probably put all this in the c-file instead. That is how
-most other sdhci variants does it.
-
-[...]
-
-Overall this looks good to me, however I think Adrian needs to have a
-quick look as well.
-
-One additional very minor nitpick. Perhaps you can align on the
-function names prefix, as those currently varies between "whatever",
-"xenon_" and "sdhci_xenon_".
-
-Kind regards
-Uffe
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c45c02bc6082..553b508e9134 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7862,6 +7862,13 @@ M:	Nicolas Pitre <nico@fluxnic.net>
+ S:	Odd Fixes
+ F:	drivers/mmc/host/mvsdio.*
+ 
++MARVELL XENON MMC/SD/SDIO HOST CONTROLLER DRIVER
++M:	Hu Ziji <huziji@marvell.com>
++L:	linux-mmc@vger.kernel.org
++S:	Supported
++F:	drivers/mmc/host/sdhci-xenon*
++F:	Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
++
+ MATROX FRAMEBUFFER DRIVER
+ L:	linux-fbdev@vger.kernel.org
+ S:	Orphan
+-- 
+git-series 0.9.1
