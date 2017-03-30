@@ -1,202 +1,58 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: sboyd@codeaurora.org, khilman@baylibre.com, carlo@caione.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/3] clk: meson-gxbb: Add MALI clocks
-Date: Thu,  9 Mar 2017 13:53:46 +0100
-Message-Id: <1489064027-18004-3-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1489064027-18004-1-git-send-email-narmstrong@baylibre.com>
-References: <1489064027-18004-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sudeep.holla@arm.com>
+Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
+To: Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linaro.org>
+References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+ <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
+ <20170328165010.GA21937@linaro.org> <20170329015423.GA5035@leoy-linaro>
+ <CAJ9a7VhQRuVOCJkjPc9RANGo=fgA8wjtB65dC5f19ZX22a5FHQ@mail.gmail.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will.deacon@arm.com>, Andy Gross <andy.gross@linaro.org>,
+ David Brown <david.brown@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Guodong Xu <guodong.xu@linaro.org>,
+ John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ "Suzuki K. Poulose" <Suzuki.Poulose@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <b3bed726-921c-0f5c-8b51-2beaa19921c9@arm.com>
+Date: Thu, 30 Mar 2017 16:47:59 +0100
+MIME-Version: 1.0
+In-Reply-To: <CAJ9a7VhQRuVOCJkjPc9RANGo=fgA8wjtB65dC5f19ZX22a5FHQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The Mali is clocked by two identical clock paths behind a glitch free mux
-to safely change frequency while running.
 
-The two "mali_0" and "mali_1" clocks are composed of a mux, divider and gate.
-Expose these two clocks trees using generic clocks.
-Finally the glitch free mux is added as "mali" clock.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/gxbb.c | 139 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 139 insertions(+)
+On 29/03/17 15:56, Mike Leach wrote:
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 5059c7b..d9f7fef 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -634,6 +634,131 @@
- 	},
- };
- 
-+/*
-+ * The MALI IP is clocked by two identical clocks (mali_0 and mali_1)
-+ * muxed by a glitch-free switch.
-+ */
-+
-+static u32 mux_table_mali_0_1[] = {0, 1, 2, 3, 4, 5, 6, 7};
-+static const char *gxbb_mali_0_1_parent_names[] = {
-+	"xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
-+	"fclk_div4", "fclk_div3", "fclk_div5"
-+};
-+
-+static struct clk_mux gxbb_mali_0_sel = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.mask = 0x7,
-+	.shift = 9,
-+	.table = mux_table_mali_0_1,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali_0_sel",
-+		.ops = &clk_mux_ops,
-+		/*
-+		 * bits 10:9 selects from 8 possible parents:
-+		 * xtal, gp0_pll, mpll2, mpll1, fclk_div7,
-+		 * fclk_div4, fclk_div3, fclk_div5
-+		 */
-+		.parent_names = gxbb_mali_0_1_parent_names,
-+		.num_parents = 8,
-+		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
-+static struct clk_divider gxbb_mali_0_div = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.shift = 0,
-+	.width = 7,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali_0_div",
-+		.ops = &clk_divider_ops,
-+		.parent_names = (const char *[]){ "mali_0_sel" },
-+		.num_parents = 1,
-+		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
-+static struct clk_gate gxbb_mali_0 = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.bit_idx = 8,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali_0",
-+		.ops = &clk_gate_ops,
-+		.parent_names = (const char *[]){ "mali_0_div" },
-+		.num_parents = 1,
-+		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
-+static struct clk_mux gxbb_mali_1_sel = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.mask = 0x7,
-+	.shift = 25,
-+	.table = mux_table_mali_0_1,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali_1_sel",
-+		.ops = &clk_mux_ops,
-+		/*
-+		 * bits 10:9 selects from 8 possible parents:
-+		 * xtal, gp0_pll, mpll2, mpll1, fclk_div7,
-+		 * fclk_div4, fclk_div3, fclk_div5
-+		 */
-+		.parent_names = gxbb_mali_0_1_parent_names,
-+		.num_parents = 8,
-+		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
-+static struct clk_divider gxbb_mali_1_div = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.shift = 16,
-+	.width = 7,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali_1_div",
-+		.ops = &clk_divider_ops,
-+		.parent_names = (const char *[]){ "mali_1_sel" },
-+		.num_parents = 1,
-+		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
-+static struct clk_gate gxbb_mali_1 = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.bit_idx = 24,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali_1",
-+		.ops = &clk_gate_ops,
-+		.parent_names = (const char *[]){ "mali_1_div" },
-+		.num_parents = 1,
-+		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
-+static u32 mux_table_mali[] = {0, 1};
-+static const char *gxbb_mali_parent_names[] = {
-+	"mali_0", "mali_1"
-+};
-+
-+static struct clk_mux gxbb_mali = {
-+	.reg = (void *)HHI_MALI_CLK_CNTL,
-+	.mask = 1,
-+	.shift = 31,
-+	.table = mux_table_mali,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mali",
-+		.ops = &clk_mux_ops,
-+		.parent_names = gxbb_mali_parent_names,
-+		.num_parents = 2,
-+		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
-+	},
-+};
-+
- /* Everything Else (EE) domain gates */
- static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
- static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
-@@ -827,6 +952,13 @@
- 		[CLKID_SAR_ADC_CLK]	    = &gxbb_sar_adc_clk.hw,
- 		[CLKID_SAR_ADC_SEL]	    = &gxbb_sar_adc_clk_sel.hw,
- 		[CLKID_SAR_ADC_DIV]	    = &gxbb_sar_adc_clk_div.hw,
-+		[CLKID_MALI_0_SEL]	    = &gxbb_mali_0_sel.hw,
-+		[CLKID_MALI_0_DIV]	    = &gxbb_mali_0_div.hw,
-+		[CLKID_MALI_0]		    = &gxbb_mali_0.hw,
-+		[CLKID_MALI_1_SEL]	    = &gxbb_mali_1_sel.hw,
-+		[CLKID_MALI_1_DIV]	    = &gxbb_mali_1_div.hw,
-+		[CLKID_MALI_1]		    = &gxbb_mali_1.hw,
-+		[CLKID_MALI]		    = &gxbb_mali.hw,
- 	},
- 	.num = NR_CLKS,
- };
-@@ -930,16 +1062,23 @@
- 	&gxbb_emmc_b,
- 	&gxbb_emmc_c,
- 	&gxbb_sar_adc_clk,
-+	&gxbb_mali_0,
-+	&gxbb_mali_1,
- };
- 
- static struct clk_mux *const gxbb_clk_muxes[] = {
- 	&gxbb_mpeg_clk_sel,
- 	&gxbb_sar_adc_clk_sel,
-+	&gxbb_mali_0_sel,
-+	&gxbb_mali_1_sel,
-+	&gxbb_mali,
- };
- 
- static struct clk_divider *const gxbb_clk_dividers[] = {
- 	&gxbb_mpeg_clk_div,
- 	&gxbb_sar_adc_clk_div,
-+	&gxbb_mali_0_div,
-+	&gxbb_mali_1_div,
- };
- 
- static int gxbb_clkc_probe(struct platform_device *pdev)
+[...]
+> 
+> No - EDPRCR_COREPURQ and EDPRCR_CORENPDRQ have different semantics and purposes
+> 
+> EDPRCR_COREPURQ is in the debug power domain an is tied to an external
+> debug request that should be an input to the external (to the PE)
+> system power controller.
+> The requirement is that the system power controller powers up the core
+> domain and does not power it down while it remains asserted.
+> 
+> EDPRCR_CORENPDRQ is in the core power domain and thus to the specific
+> core only. This ensures that any power control software running on
+> that core should emulate a power down if this is set to one.
+> 
+> We cannot know the power control design of the system, so the safe
+> solution is to set both bits.
+> 
+
++1
+
+I agree that's the safe bet.
+
 -- 
-1.9.1
+Regards,
+Sudeep
