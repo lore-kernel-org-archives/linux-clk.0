@@ -1,40 +1,102 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <46fdec2d680d539652f87d79c627973b3a568438.1488876832.git-series.maxime.ripard@free-electrons.com>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
- <46fdec2d680d539652f87d79c627973b3a568438.1488876832.git-series.maxime.ripard@free-electrons.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 8 Mar 2017 11:38:48 +0800
-Message-ID: <CAGb2v66o79wX9x4+ByNryoSOGrcixsbKKyDmfzeQcMAGLV_SBQ@mail.gmail.com>
-Subject: Re: [PATCH 7/15] dt-bindings: display: sun4i: Add allwinner,tcon-channel
- property
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 6/8] clk: meson: gxbb: add cts_i958 clock
+Date: Fri, 31 Mar 2017 15:04:09 +0200
+Message-Id: <20170331130411.4781-7-jbrunet@baylibre.com>
+In-Reply-To: <20170331130411.4781-1-jbrunet@baylibre.com>
+References: <20170331130411.4781-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The Allwinner Timings Controller has two, mutually exclusive, channels.
-> When the binding has been introduced, it was assumed that there would be
-> only a single user per channel in the system.
->
-> While this is likely for the channel 0 which only connects to LCD displays,
-> it turns out that the channel 1 can be connected to multiple controllers in
-> the SoC (HDMI and TV encoders for example). And while the simultaneous use
-> of HDMI and TV outputs cannot be achieved, switching from one to the other
-> at runtime definitely sounds plausible.
->
-> Add an extra property, allwinner,tcon-channel, to specify for a given
-> endpoint which TCON channel it is connected to, while falling back to the
-> previous mechanism if that property is missing.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+This adds the cts_i958 clock to control the clock source of the spdif
+output block. This mux is not explicitly mentionned in the documentation
+but it is critical to the spdif dai. It is used to select whether the clock
+source of the spdif output is cts_amclk (when data are taken from i2s
+buffer) or the cts_mclk_i958 (when data are taken from the spdif buffer)
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/gxbb.c | 21 +++++++++++++++++++++
+ drivers/clk/meson/gxbb.h |  3 ++-
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 72492cc63915..ad5f027af1a2 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -933,6 +933,24 @@ static struct clk_gate gxbb_cts_mclk_i958 = {
+ 	},
+ };
+ 
++static struct clk_mux gxbb_cts_i958 = {
++	.reg = (void *)HHI_AUD_CLK_CNTL2,
++	.mask = 0x1,
++	.shift = 27,
++	.lock = &clk_lock,
++		.hw.init = &(struct clk_init_data){
++		.name = "cts_i958",
++		.ops = &clk_mux_ops,
++		.parent_names = (const char *[]){ "cts_amclk", "cts_mclk_i958" },
++		.num_parents = 2,
++		/*
++		 *The parent is specific to origin of the audio data. Let the
++		 * consumer choose the appropriate parent
++		 */
++		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
++	},
++};
++
+ /* Everything Else (EE) domain gates */
+ static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
+ static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
+@@ -1139,6 +1157,7 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ 		[CLKID_CTS_MCLK_I958]	    = &gxbb_cts_mclk_i958.hw,
+ 		[CLKID_CTS_MCLK_I958_SEL]   = &gxbb_cts_mclk_i958_sel.hw,
+ 		[CLKID_CTS_MCLK_I958_DIV]   = &gxbb_cts_mclk_i958_div.hw,
++		[CLKID_CTS_I958]	    = &gxbb_cts_i958.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -1258,6 +1277,7 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 		[CLKID_CTS_MCLK_I958]	    = &gxbb_cts_mclk_i958.hw,
+ 		[CLKID_CTS_MCLK_I958_SEL]   = &gxbb_cts_mclk_i958_sel.hw,
+ 		[CLKID_CTS_MCLK_I958_DIV]   = &gxbb_cts_mclk_i958_div.hw,
++		[CLKID_CTS_I958]	    = &gxbb_cts_i958.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -1382,6 +1402,7 @@ static struct clk_mux *const gxbb_clk_muxes[] = {
+ 	&gxbb_mali,
+ 	&gxbb_cts_amclk_sel,
+ 	&gxbb_cts_mclk_i958_sel,
++	&gxbb_cts_i958,
+ };
+ 
+ static struct clk_divider *const gxbb_clk_dividers[] = {
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index efa90dad3478..3b0665099a1e 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -283,8 +283,9 @@
+ #define CLKID_CTS_MCLK_I958	  110
+ #define CLKID_CTS_MCLK_I958_SEL	  111
+ #define CLKID_CTS_MCLK_I958_DIV	  112
++#define CLKID_CTS_I958		  113
+ 
+-#define NR_CLKS			  113
++#define NR_CLKS			  114
+ 
+ /* include the CLKIDs that have been made part of the stable DT binding */
+ #include <dt-bindings/clock/gxbb-clkc.h>
+-- 
+2.9.3
