@@ -1,73 +1,127 @@
-Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:33639 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754597AbdCaOCo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2017 10:02:44 -0400
+Received: by mail-oi0-f68.google.com with SMTP id f193so9193474oib.0
+        for <linux-clk@vger.kernel.org>; Fri, 31 Mar 2017 07:02:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20170330015941.GD3038@leoy-linaro>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
- <1490466197-29163-7-git-send-email-leo.yan@linaro.org> <20170328165010.GA21937@linaro.org>
- <20170329015423.GA5035@leoy-linaro> <20170329165535.GB24889@linaro.org> <20170330015941.GD3038@leoy-linaro>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Thu, 30 Mar 2017 09:46:21 -0600
-Message-ID: <CANLsYkwPYSvy2xjf8uuvx1WGWpGdMFy7kF=30VbvgW+jDvnFuw@mail.gmail.com>
-Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Guodong Xu <guodong.xu@linaro.org>, John Stultz <john.stultz@linaro.org>,
-	linux-doc@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	Mike Leach <mike.leach@linaro.org>, "Suzuki K. Poulose" <Suzuki.Poulose@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>
+In-Reply-To: <m28tnn69ls.fsf@baylibre.com>
+References: <m28tnn69ls.fsf@baylibre.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 31 Mar 2017 16:02:41 +0200
+Message-ID: <CAK8P3a02e3DxjuW9pA66NSCc9vw_h1Xuk6TdEbRnEQ4v4W7NHA@mail.gmail.com>
+Subject: Re: [GIT PULL] Amlogic 64-bit DT updates for v4.12
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: arm-soc <arm@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 29 March 2017 at 19:59, Leo Yan <leo.yan@linaro.org> wrote:
-> On Wed, Mar 29, 2017 at 10:55:35AM -0600, Mathieu Poirier wrote:
+On Wed, Mar 29, 2017 at 11:45 PM, Kevin Hilman <khilman@baylibre.com> wrote:
+> Olof, Arnd,
 >
-> [...]
->
->> > So this is why add "idle_constraint" as a central place to control
->> > power domain for CPU debug purpose and I also think this is more
->> > friendly for hardware design, e.g. some platforms can enable partial
->> > low power states to save power and avoid overheat after using this
->> > driver.
->> >
->> > How about you think for this?
->>
->> Like Sudeep pointed out we should concentrate on doing the right thing,
->> that is work with EDPRSR.PU, EDPRCR.COREPURQ and EDPRCR.CORENPDRQ.
->
-> Agree, and I think we have aligned for this.
->
->> Anything outside of that becomes platform specific and can't be handled in
->> this driver.
->
-> Sorry I argue a bit for this just want to make things more clear and
-> if can have better method.
->
-> Though the issue is platform specific, but the code is to seek common
-> method to handle them. So the driver has no any platform specific code.
+> Below are some 64-bit DT changes for Amlogic platforms for v4.12.  Note
+> that this branch includes a merge of an immutable branch from the clk
+> tree (clk-meson) due to dependencies on new clocks added to the meson
+> clock driver and used in these DT updates.
 
-Seeking a common way to handle platform specific problems doesn't
-scale and will never be encompassing.  There will always be a quirk
-somewhere to deal with, hence the idea of keeping things separate.
+I did not pull this one because of the silly dependency. The device tree
+files should be completely independent of the driver changes.
 
->
-> I read again for Suziki's suggestion: "4) Should document the fact that,
-> on some platforms, the user may have to disable CPUidle explicitly to
-> get the driver working. But let us not make it the default. The user
-> with a not so ideal platform could add "nohlt" and get it working."
+Here I see commits like these:
 
-Suzuki and I are expressing the same view using different words.
+commit fd86d3edb417d5c719fa0ffc4adf9b99e1f2db48
+Author: Neil Armstrong <narmstrong@baylibre.com>
+Date:   Wed Mar 22 11:32:26 2017 +0100
 
->
-> So I'm not strong to resist and if this is alignment yet, I should
-> document well for this but doesn't handle it in driver (keep driver
-> simple).
->
-> Thanks,
-> Leo Yan
+    clk: meson-gxbb: Expose GP0 dt-bindings clock id
+
+    This patch exposes the GP0 PLL clock id in the dt bindings.
+
+    Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+    Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+    Link: lkml.kernel.org/r/1490178747-14837-5-git-send-email-narmstrong@baylibre.com
+
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h
+b/include/dt-bindings/clock/gxbb-clkc.h
+index ef7d6b792405..cce6cb5418f1 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -10,6 +10,7 @@
+ #define CLKID_FCLK_DIV2                4
+ #define CLKID_FCLK_DIV3                5
+ #define CLKID_FCLK_DIV4                6
++#define CLKID_GP0_PLL          9
+ #define CLKID_CLK81            12
+ #define CLKID_MPLL2            15
+ #define CLKID_SPI              34
+
+commit 7c4aabd0e19491749488b363fa409956fa3857bb
+Author: Neil Armstrong <narmstrong@baylibre.com>
+Date:   Wed Mar 22 11:18:53 2017 +0100
+
+    clk: meson-gxbb: Add MALI clock IDS
+
+    Add missing MALI clock IDs and expose the muxes and gates in the
+dt-bindings.
+
+    Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+    Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+    Link: lkml.kernel.org/r/1490177935-9646-2-git-send-email-narmstrong@baylibre.com
+
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h
+b/include/dt-bindings/clock/gxbb-clkc.h
+index f08f06dd7702..ef7d6b792405 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -35,5 +35,10 @@
+ #define CLKID_SD_EMMC_C                96
+ #define CLKID_SAR_ADC_CLK      97
+ #define CLKID_SAR_ADC_SEL      98
++#define CLKID_MALI_0_SEL       100
++#define CLKID_MALI_0           102
++#define CLKID_MALI_1_SEL       103
++#define CLKID_MALI_1           105
++#define CLKID_MALI             106
+
+ #endif /* __GXBB_CLKC_H */
+
+commit 7e148d522982b29c454a31386eb3d27b10d5adbc
+Author: Jerome Brunet <jbrunet@baylibre.com>
+Date:   Thu Mar 9 11:41:54 2017 +0100
+
+    dt-bindings: clk: gxbb: expose i2s output clock gates
+
+    Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+    Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+    Link: lkml.kernel.org/r/20170309104154.28295-10-jbrunet@baylibre.com
+
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h
+b/include/dt-bindings/clock/gxbb-clkc.h
+index 692846c7941b..f08f06dd7702 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -16,6 +16,10 @@
+ #define CLKID_I2C              22
+ #define CLKID_SAR_ADC          23
+ #define CLKID_ETH              36
++#define CLKID_AIU_GLUE         38
++#define CLKID_I2S_OUT          40
++#define CLKID_MIXER_IFACE      44
++#define CLKID_AIU              47
+ #define CLKID_USB0             50
+ #define CLKID_USB1             51
+ #define CLKID_USB              55
+
+Which add random macros in the middle of the number space.
+
+Since the header changes are in an immutable branch, it's probably
+too late to fix this for 4.12, but maybe we can get the header into a
+form that allows us to do future DT changes without having to
+wait an extra release. The clock driver apparently already defines
+some of the numbers above, so you can fill all of those in already.
+
+     Arnd
