@@ -1,68 +1,60 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.11-rc3
-Date: Fri, 24 Mar 2017 18:01:34 -0700
-Message-Id: <20170325010134.2884-1-sboyd@codeaurora.org>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Fri, 31 Mar 2017 08:54:20 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	mike.leach@linaro.org, Suzuki.Poulose@arm.com
+Subject: Re: [PATCH v5 6/9] coresight: add support for CPU debug module
+Message-ID: <20170331005420.GA6149@leoy-linaro>
+References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+ <1490466197-29163-7-git-send-email-leo.yan@linaro.org>
+ <f0c460e2-4e49-4f34-5288-f20a519dc182@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <f0c460e2-4e49-4f34-5288-f20a519dc182@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+On Thu, Mar 30, 2017 at 04:56:52PM +0100, Sudeep Holla wrote:
 
-  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+[...]
 
-are available in the git repository at:
+> > +static struct pm_qos_request debug_qos_req;
+> > +static int idle_constraint = PM_QOS_DEFAULT_VALUE;
+> > +module_param(idle_constraint, int, 0600);
+> > +MODULE_PARM_DESC(idle_constraint, "Latency requirement in microseconds for CPU "
+> > +		 "idle states (default is -1, which means have no limiation "
+> > +		 "to CPU idle states; 0 means disabling all idle states; user "
+> > +		 "can choose other platform dependent values so can disable "
+> > +		 "specific idle states for the platform)");
+> > +
+> 
+> NACK for this. Why you want the policy inside the driver. You can always
+> do that from the user-space. I have mentioned it several times now.
+> What can't you do these ?
+> 
+> 1. echo "what_ever_latency_you_need_in_uS" > /dev/cpu_dma_latency
+> 2. echo 1 > /sys/devices/system/cpu/cpu$cpu/cpuidle/state$state/disable
+>    (for all cpus and their states) (1) is definitely simpler way to
+>     disable deeper idle if latency = 0uS
+> 
+> You can always warn user about that when it's enabled via debugfs/sysfs
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+Thanks for suggestion, now it's clear for me.
 
-for you to fetch changes up to 7f0b97d5bb4c1c99c38dd6770ad11f714ea42583:
-
-  Merge tag 'sunxi-clk-fixes-for-4.11' of https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux into clk-fixes (2017-03-23 16:08:46 -0700)
-
-----------------------------------------------------------------
-A handful of Sunxi and Rockchip clk driver fixes and a core framework
-one where we need to copy a string because we can't guarantee it isn't
-freed sometime later.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      clk: sunxi: ccu-sun5i needs nkmp
-
-Chen-Yu Tsai (2):
-      clk: sunxi-ng: mp: Adjust parent rate for pre-dividers
-      clk: sunxi-ng: sun6i: Fix enable bit offset for hdmi-ddc module clock
-
-Heiko Stuebner (2):
-      clk: rockchip: add "," to mux_pll_src_apll_dpll_gpll_usb480m_p on rk3036
-      clk: rockchip: Make uartpll a child of the gpll on rk3036
-
-Icenowy Zheng (1):
-      clk: sunxi-ng: fix recalc_rate formula of NKMP clocks
-
-Leonard Crestez (1):
-      clk: core: Copy connection id
-
-Philipp Tomsich (1):
-      clk: sunxi-ng: Fix div/mult settings for osc12M on A64
-
-Stephen Boyd (1):
-      Merge tag 'sunxi-clk-fixes-for-4.11' of https://git.kernel.org/.../mripard/linux into clk-fixes
-
-Thomas Petazzoni (1):
-      dt-bindings: arm: update Armada CP110 system controller binding
-
- .../devicetree/bindings/arm/marvell/cp110-system-controller0.txt | 6 +++---
- drivers/clk/clk.c                                                | 3 ++-
- drivers/clk/rockchip/clk-rk3036.c                                | 9 ++++++++-
- drivers/clk/sunxi-ng/Kconfig                                     | 1 +
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c                            | 2 +-
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c                             | 2 +-
- drivers/clk/sunxi-ng/ccu_mp.c                                    | 8 ++++++++
- drivers/clk/sunxi-ng/ccu_nkmp.c                                  | 2 +-
- 8 files changed, 25 insertions(+), 8 deletions(-)
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> -- 
+> Regards,
+> Sudeep
