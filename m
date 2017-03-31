@@ -1,99 +1,91 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:34390 "EHLO
-        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751974AbdCFXqY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Mar 2017 18:46:24 -0500
-Received: by mail-oi0-f42.google.com with SMTP id m124so94073709oig.1
-        for <linux-clk@vger.kernel.org>; Mon, 06 Mar 2017 15:45:47 -0800 (PST)
-From: Jason Uy <jason.uy@broadcom.com>
-References: <CAHp75Ved2h2WyWBokEOsDmAyB3w3iM=uh-9Bq01mU1ST4FapWQ@mail.gmail.com>
- <20170304130958.23655-1-james.hogan@imgtec.com> <CAHp75Vc=VmxvkqjP7nY6K4CKXBJC-NND0CUMbzwjV2nmQ-5OTw@mail.gmail.com>
- <20170306101603.GW996@jhogan-linux.le.imgtec.org>
-In-Reply-To: <20170306101603.GW996@jhogan-linux.le.imgtec.org>
+Received: from foss.arm.com ([217.140.101.70]:34782 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933419AbdCaRym (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 31 Mar 2017 13:54:42 -0400
+Date: Fri, 31 Mar 2017 18:54:57 +0100
+From: Will Deacon <will.deacon@arm.com>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robin.murphy@arm.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, m.szyprowski@samsung.com,
+        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        mathieu.poirier@linaro.org, mark.rutland@arm.com
+Subject: Re: [PATCH V3 0/5] iommu/arm-smmu: Add runtime pm/sleep support
+Message-ID: <20170331175457.GD4897@arm.com>
+References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
-Date: Mon, 6 Mar 2017 15:38:47 -0800
-Message-ID: <18720dd546d32a1455fb17ad46ee73e4@mail.gmail.com>
-Subject: RE: [PATCH] serial: 8250_dw: Fix breakage when HAVE_CLK=n
-To: James Hogan <james.hogan@imgtec.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        David Daney <david.daney@cavium.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-serial@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-mips@linux-mips.org,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Looks good
-Reviewed-by: Jason Uy <jason.uy@broadcom.com>
+On Thu, Mar 09, 2017 at 09:05:43PM +0530, Sricharan R wrote:
+> This series provides the support for turning on the arm-smmu's
+> clocks/power domains using runtime pm. This is done using the
+> recently introduced device links patches, which lets the symmu's
+> runtime to follow the master's runtime pm, so the smmu remains
+> powered only when the masters use it.
 
------Original Message-----
-From: James Hogan [mailto:james.hogan@imgtec.com]
-Sent: March-06-17 2:16 AM
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-kernel@vger.kernel.org; Greg Kroah-Hartman
-<gregkh@linuxfoundation.org>; Andy Shevchenko
-<andriy.shevchenko@linux.intel.com>; Jason Uy <jason.uy@broadcom.com>;
-Kefeng Wang <wangkefeng.wang@huawei.com>; Heiko Stuebner <heiko@sntech.de>;
-David Daney <david.daney@cavium.com>; Russell King <linux@armlinux.org.uk>;
-linux-serial@vger.kernel.org; linux-clk@vger.kernel.org;
-linux-mips@linux-mips.org; bcm-kernel-feedback-list
-<bcm-kernel-feedback-list@broadcom.com>
-Subject: Re: [PATCH] serial: 8250_dw: Fix breakage when HAVE_CLK=n
+Do you have any numbers for the power savings you achieve with this?
+How often do we actually manage to stop the SMMU clocks on an SoC with
+a handful of masters?
 
-On Sat, Mar 04, 2017 at 04:37:17PM +0200, Andy Shevchenko wrote:
-> On Sat, Mar 4, 2017 at 3:09 PM, James Hogan <james.hogan@imgtec.com>
-> wrote:
-> > Commit 6a171b299379 ("serial: 8250_dw: Allow hardware flow control
-> > to be
-> > used") recently broke the 8250_dw driver on platforms which don't
-> > select HAVE_CLK, as dw8250_set_termios() gets confused by the
-> > behaviour of the fallback HAVE_CLK=n clock API in linux/clk.h which
-> > pretends everything is fine but returns (valid) NULL clocks and 0 HZ
-> > clock rates.
-> >
-> > That 0 rate is written into the uartclk resulting in a crash at
-> > boot, e.g. on Cavium Octeon III based UTM-8 we get something like this:
-> >
-> > 1180000000800.serial: ttyS0 at MMIO 0x1180000000800 (irq = 41,
-> > base_baud = 25000000) is a OCTEON ------------[ cut here
-> > ]------------
-> > WARNING: CPU: 2 PID: 1 at drivers/tty/serial/serial_core.c:441
-> > uart_get_baud_rate+0xfc/0x1f0 ...
-> > Call Trace:
-> > ...
-> > [<ffffffff8149c2e4>] uart_get_baud_rate+0xfc/0x1f0
-> > [<ffffffff814a5098>] serial8250_do_set_termios+0xb0/0x440
-> > [<ffffffff8149c710>] uart_set_options+0xe8/0x190
-> > [<ffffffff814a6cdc>] serial8250_console_setup+0x84/0x158
-> > [<ffffffff814a11ec>] univ8250_console_setup+0x54/0x70
-> > [<ffffffff811901a0>] register_console+0x1c8/0x418
-> > [<ffffffff8149f004>] uart_add_one_port+0x434/0x4b0
-> > [<ffffffff814a1af8>] serial8250_register_8250_port+0x2d8/0x440
-> > [<ffffffff814aa620>] dw8250_probe+0x388/0x5e8 ...
-> >
-> > The clock API is defined such that NULL is a valid clock handle so
-> > it wouldn't be right to check explicitly for NULL. Instead treat a
-> > clk_round_rate() return value of 0 as an error which prevents
-> > uartclk being overwritten.
-> >
->
-> You forgot to add that it is dependent to Heiko's patch
-> http://www.spinics.net/lists/linux-serial/msg25314.html
+In other words, is this too coarse-grained to be useful, or is it common
+that all the devices upstream of the SMMU are suspended?
 
-Indeed I did. Sorry about that.
+Thanks,
 
->
-> Patch looks good to me and shouldn't bring any regression to Intel
-> hardware (x86 is using clock framework).
->
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Will
 
-Thanks
-James
+> 
+> Took some reference from the exynos runtime patches [2].
+> Tested this with MDP, GPU, VENUS devices on apq8096-db820c board.
+> 
+> Previous version of the patchset [1].
+> 
+> [V3]
+>    * Reworked the patches to keep the clocks init/enabling function
+>      seperately for each compatible.
+> 
+>    * Added clocks bindings for MMU40x/500.
+> 
+>    * Added a new compatible for qcom,smmu-v2 implementation and
+>      the clock bindings for the same.
+> 
+>    * Rebased on top of 4.11-rc1
+> 
+> [V2]
+>    * Split the patches little differently.
+> 
+>    * Addressed comments.
+> 
+>    * Removed the patch #4 [3] from previous post
+>      for arm-smmu context save restore. Planning to
+>      post this separately after reworking/addressing Robin's
+>      feedback.
+> 
+>    * Reversed the sequence to disable clocks than enabling.
+>      This was required for those cases where the
+>      clocks are populated in a dependent order from DT.
+> 
+> [1] https://www.spinics.net/lists/linux-arm-msm/msg23870.html
+> [2] https://lkml.org/lkml/2016/10/20/70
+> [3] https://patchwork.kernel.org/patch/9389717/
+> 
+> Sricharan R (5):
+>   iommu/arm-smmu: Add pm_runtime/sleep ops
+>   iommu/arm-smmu: Add support for MMU40x/500 clocks
+>   drivers: arm-smmu: Add clock support for QCOM_SMMUV2
+>   iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
+>   iommu/arm-smmu: Add the device_link between masters and smmu
+> 
+>  .../devicetree/bindings/iommu/arm,smmu.txt         |  35 +++
+>  drivers/iommu/arm-smmu.c                           | 349 ++++++++++++++++++++-
+>  2 files changed, 373 insertions(+), 11 deletions(-)
+> 
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> 
