@@ -1,101 +1,188 @@
-Return-Path: <mars.cheng@mediatek.com>
-Message-ID: <1490229971.25996.2.camel@mtkswgap22>
-Subject: Re: [PATCH v3 00/12] Add Basic SoC support for MT6797
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: Rob Herring <robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, CC Hwang <cc.hwang@mediatek.com>, Loda Chou
-	<loda.chou@mediatek.com>, Miles Chen <miles.chen@mediatek.com>, Jades Shih
-	<jades.shih@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, "My
- Chuang" <my.chuang@mediatek.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<wsd_upstream@mediatek.com>, <linux-clk@vger.kernel.org>
-Date: Thu, 23 Mar 2017 08:46:11 +0800
-In-Reply-To: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
-References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Return-Path: mars.cheng@mediatek.com
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/8] clk: meson: gxbb: add cts_amclk
+Date: Fri, 31 Mar 2017 15:04:07 +0200
+Message-Id: <20170331130411.4781-5-jbrunet@baylibre.com>
+In-Reply-To: <20170331130411.4781-1-jbrunet@baylibre.com>
+References: <20170331130411.4781-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Matthias, Rob, Marc, Stephen
+Add the i2s master clock also referred as cts_amclk
 
-gentle ping for this patch set.
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/gxbb.c | 67 ++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h |  5 +++-
+ 2 files changed, 71 insertions(+), 1 deletion(-)
 
-Thanks.
-
-On Sun, 2017-03-19 at 23:26 +0800, Mars Cheng wrote:
-> This patch set adds basic SoC support for mediatek's first 10-core
-> chip, X20, also known as MT6797.
-> 
-> - based on 4.11-rc1
-> - support multiple base address for sysirq
-> - support common clk framework
-> 
-> Changes since v2:
-> - prevent uncessary #intpol-bases for mtk-sysirq
-> - add fast path for mtk-sysirq set_type when introducing multiple bases
-> - add acked-by and tested-by
-> - remove wrong usage for timer node
-> 
-> Changes since v1:
-> - add multiple base addresses support, v1 only allow 2 bases
-> - clean up clk driver
-> 
-> 
-> Kevin-CW Chen (2):
->   dt-bindings: arm: mediatek: document clk bindings for MT6797
->   clk: mediatek: add clk support for MT6797
-> 
-> Mars Cheng (10):
->   dt-bindings: mediatek: multiple bases support for sysirq
->   irqchip: mtk-sysirq: extend intpol base to arbitrary number
->   irqchip: mtk-sysirq: prevent unnecessary visibility when set_type
->   dt-bindings: mediatek: Add bindings for mediatek MT6797 Platform
->   arm64: dts: mediatek: add mt6797 support
->   soc: mediatek: avoid using fixed spm power status defines
->   soc: mediatek: add vdec item for scpsys
->   dt-bindings: mediatek: add MT6797 power dt-bindings
->   soc: mediatek: add MT6797 scysys support
->   arm64: dts: mediatek: add clk and scp nodes for MT6797
-> 
->  Documentation/devicetree/bindings/arm/mediatek.txt |    4 +
->  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
->  .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
->  .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
->  .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
->  .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
->  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
->  .../bindings/arm/mediatek/mediatek,vencsys.txt     |    3 +-
->  .../interrupt-controller/mediatek,sysirq.txt       |   12 +-
->  .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
->  .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +-
->  arch/arm64/boot/dts/mediatek/Makefile              |    1 +
->  arch/arm64/boot/dts/mediatek/mt6797-evb.dts        |   36 +
->  arch/arm64/boot/dts/mediatek/mt6797.dtsi           |  245 +++++++
->  drivers/clk/mediatek/Kconfig                       |   32 +
->  drivers/clk/mediatek/Makefile                      |    5 +
->  drivers/clk/mediatek/clk-mt6797-img.c              |   76 +++
->  drivers/clk/mediatek/clk-mt6797-mm.c               |  136 ++++
->  drivers/clk/mediatek/clk-mt6797-vdec.c             |   93 +++
->  drivers/clk/mediatek/clk-mt6797-venc.c             |   78 +++
->  drivers/clk/mediatek/clk-mt6797.c                  |  716 ++++++++++++++++++++
->  drivers/irqchip/irq-mtk-sysirq.c                   |  116 +++-
->  drivers/soc/mediatek/mtk-scpsys.c                  |  149 +++-
->  include/dt-bindings/clock/mt6797-clk.h             |  281 ++++++++
->  include/dt-bindings/power/mt6797-power.h           |   30 +
->  25 files changed, 1993 insertions(+), 33 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-evb.dts
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797.dtsi
->  create mode 100644 drivers/clk/mediatek/clk-mt6797-img.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6797-mm.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6797-vdec.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6797-venc.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6797.c
->  create mode 100644 include/dt-bindings/clock/mt6797-clk.h
->  create mode 100644 include/dt-bindings/power/mt6797-power.h
-> 
-> --
-> 1.7.9.5
-> 
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 28812ea41a60..1c20edbfc812 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -845,6 +845,51 @@ static struct clk_mux gxbb_mali = {
+ 	},
+ };
+ 
++static struct clk_mux gxbb_cts_amclk_sel = {
++	.reg = (void *) HHI_AUD_CLK_CNTL,
++	.mask = 0x3,
++	.shift = 9,
++	/* Default parent unknown (register reset value: 0) */
++	.table = (u32[]){ 1, 2, 3 },
++	.lock = &clk_lock,
++		.hw.init = &(struct clk_init_data){
++		.name = "cts_amclk_sel",
++		.ops = &clk_mux_ops,
++		.parent_names = (const char *[]){ "mpll0", "mpll1", "mpll2" },
++		.num_parents = 3,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct meson_clk_audio_divider gxbb_cts_amclk_div = {
++	.div = {
++		.reg_off = HHI_AUD_CLK_CNTL,
++		.shift   = 0,
++		.width   = 8,
++	},
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "cts_amclk_div",
++		.ops = &meson_clk_audio_divider_ops,
++		.parent_names = (const char *[]){ "cts_amclk_sel" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT | CLK_DIVIDER_ROUND_CLOSEST,
++	},
++};
++
++static struct clk_gate gxbb_cts_amclk = {
++	.reg = (void *) HHI_AUD_CLK_CNTL,
++	.bit_idx = 8,
++	.lock = &clk_lock,
++	.hw.init = &(struct clk_init_data){
++		.name = "cts_amclk",
++		.ops = &clk_gate_ops,
++		.parent_names = (const char *[]){ "cts_amclk_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ /* Everything Else (EE) domain gates */
+ static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
+ static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
+@@ -1045,6 +1090,9 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ 		[CLKID_MALI_1_DIV]	    = &gxbb_mali_1_div.hw,
+ 		[CLKID_MALI_1]		    = &gxbb_mali_1.hw,
+ 		[CLKID_MALI]		    = &gxbb_mali.hw,
++		[CLKID_CTS_AMCLK]	    = &gxbb_cts_amclk.hw,
++		[CLKID_CTS_AMCLK_SEL]	    = &gxbb_cts_amclk_sel.hw,
++		[CLKID_CTS_AMCLK_DIV]	    = &gxbb_cts_amclk_div.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -1158,6 +1206,9 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 		[CLKID_MALI_1_DIV]	    = &gxbb_mali_1_div.hw,
+ 		[CLKID_MALI_1]		    = &gxbb_mali_1.hw,
+ 		[CLKID_MALI]		    = &gxbb_mali.hw,
++		[CLKID_CTS_AMCLK]	    = &gxbb_cts_amclk.hw,
++		[CLKID_CTS_AMCLK_SEL]	    = &gxbb_cts_amclk_sel.hw,
++		[CLKID_CTS_AMCLK_DIV]	    = &gxbb_cts_amclk_div.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+@@ -1270,6 +1321,7 @@ static struct clk_gate *const gxbb_clk_gates[] = {
+ 	&gxbb_sar_adc_clk,
+ 	&gxbb_mali_0,
+ 	&gxbb_mali_1,
++	&gxbb_cts_amclk,
+ };
+ 
+ static struct clk_mux *const gxbb_clk_muxes[] = {
+@@ -1278,6 +1330,7 @@ static struct clk_mux *const gxbb_clk_muxes[] = {
+ 	&gxbb_mali_0_sel,
+ 	&gxbb_mali_1_sel,
+ 	&gxbb_mali,
++	&gxbb_cts_amclk_sel,
+ };
+ 
+ static struct clk_divider *const gxbb_clk_dividers[] = {
+@@ -1287,6 +1340,10 @@ static struct clk_divider *const gxbb_clk_dividers[] = {
+ 	&gxbb_mali_1_div,
+ };
+ 
++static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
++	&gxbb_cts_amclk_div,
++};
++
+ struct clkc_data {
+ 	struct clk_gate *const *clk_gates;
+ 	unsigned int clk_gates_count;
+@@ -1298,6 +1355,8 @@ struct clkc_data {
+ 	unsigned int clk_muxes_count;
+ 	struct clk_divider *const *clk_dividers;
+ 	unsigned int clk_dividers_count;
++	struct meson_clk_audio_divider *const *clk_audio_dividers;
++	unsigned int clk_audio_dividers_count;
+ 	struct meson_clk_cpu *cpu_clk;
+ 	struct clk_hw_onecell_data *hw_onecell_data;
+ };
+@@ -1313,6 +1372,8 @@ static const struct clkc_data gxbb_clkc_data = {
+ 	.clk_muxes_count = ARRAY_SIZE(gxbb_clk_muxes),
+ 	.clk_dividers = gxbb_clk_dividers,
+ 	.clk_dividers_count = ARRAY_SIZE(gxbb_clk_dividers),
++	.clk_audio_dividers = gxbb_audio_dividers,
++	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
+ 	.cpu_clk = &gxbb_cpu_clk,
+ 	.hw_onecell_data = &gxbb_hw_onecell_data,
+ };
+@@ -1328,6 +1389,8 @@ static const struct clkc_data gxl_clkc_data = {
+ 	.clk_muxes_count = ARRAY_SIZE(gxbb_clk_muxes),
+ 	.clk_dividers = gxbb_clk_dividers,
+ 	.clk_dividers_count = ARRAY_SIZE(gxbb_clk_dividers),
++	.clk_audio_dividers = gxbb_audio_dividers,
++	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
+ 	.cpu_clk = &gxbb_cpu_clk,
+ 	.hw_onecell_data = &gxl_hw_onecell_data,
+ };
+@@ -1384,6 +1447,10 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 		clkc_data->clk_dividers[i]->reg = clk_base +
+ 			(u64)clkc_data->clk_dividers[i]->reg;
+ 
++	/* Populate base address for the audio dividers */
++	for (i = 0; i < clkc_data->clk_audio_dividers_count; i++)
++		clkc_data->clk_audio_dividers[i]->base = clk_base;
++
+ 	/*
+ 	 * register all clks
+ 	 */
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 0d535f7e7aed..c8e9fb99af92 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -277,8 +277,11 @@
+ #define CLKID_MALI_1_DIV	 104
+ /* CLKID_MALI_1	*/
+ /* CLKID_MALI	*/
++#define CLKID_CTS_AMCLK		  107
++#define CLKID_CTS_AMCLK_SEL	  108
++#define CLKID_CTS_AMCLK_DIV	  109
+ 
+-#define NR_CLKS			  107
++#define NR_CLKS			  110
+ 
+ /* include the CLKIDs that have been made part of the stable DT binding */
+ #include <dt-bindings/clock/gxbb-clkc.h>
+-- 
+2.9.3
