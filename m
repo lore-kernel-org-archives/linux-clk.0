@@ -1,52 +1,61 @@
-Return-Path: <tony@atomide.com>
-Date: Mon, 6 Mar 2017 14:45:36 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH DO NOT MERGE 5/6] ARM: dts: omap4: add some sample
- clkctrl data
-Message-ID: <20170306224535.GP20572@atomide.com>
-References: <1486992157-10673-1-git-send-email-t-kristo@ti.com>
- <1486992157-10673-6-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1486992157-10673-6-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33328 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933167AbdCaQyr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2017 12:54:47 -0400
+From: Helmut Klein <hgkr.klein@gmail.com>
+Cc: Helmut Klein <hgkr.klein@gmail.com>, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v3 0/4] tty/serial: meson_uart: add support for core clock handling
+Date: Fri, 31 Mar 2017 18:54:33 +0200
+Message-Id: <20170331165437.26227-1-hgkr.klein@gmail.com>
+To: unlisted-recipients:; (no To-header on input)
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [170213 05:24]:
-> @@ -304,6 +339,8 @@
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> +			clocks = <&cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 0>;
-> +			clock-names = "clkctrl";
->  		};
->  
->  		gpio3: gpio@48057000 {
-> @@ -315,6 +352,8 @@
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> +			clocks = <&cm_l4per_clkctrl OMAP4_GPIO3_CLKCTRL 0>;
-> +			clock-names = "clkctrl";
->  		};
->  
->  		gpio4: gpio@48059000 {
-> @@ -384,6 +423,8 @@
->  			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
->  			ti,hwmods = "uart1";
->  			clock-frequency = <48000000>;
-> +			clocks = <&cm_l4per_clkctrl OMAP4_UART1_CLKCTRL 0>;
-> +			clock-names = "clkctrl";
->  		};
+To be able to use the three none AO uarts of the meson gx SoCs (uart_A,
+uart_B & uart_C), the core clock has to be enabled (see chapter 22.3 of
+the public s905 data sheet).
+At least the u-boot of my s905 based media player (netxeon minimx-g)
+doesn't do this. so the driver must enable the clock.
 
-BTW, one thing you might want to test also is that the opt clocks
-can be mapped here properly for gpios to reset. That can be easily
-tested by kexec booting on beagle-x15 where we currently get warnings
-on kexec boot about GPIOs failing to reset.
+This patch set does:
+- exposes the UART clock ids to the dtb
+- adds documentation for the dt-bindings of meson_uart
+- adds the core clock handling to the driver
+- adds the core clock handling to meson-gxbb.dtsi and meson-gxl.dtsi
 
-Regards,
+The patchset is based on the branch "master" of the repository in [1]
 
-Tony
+Changes since v2
+- mail subjects reworked
+- add clocks/clock-names to the documentation
+- add core clock handling to meson-gxbb.dtsi & meson-gxl.dtsi
+
+Changes since v1
+- use git to produce the patch set
+- added the clock ids for uart_B and uart_C
+
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-amlogic.git
+
+Helmut Klein (4):
+  clk: meson: gxbb: expose CLKID_UARTx
+  dt-bindings: meson_uart: add documentation for meson UARTs
+  tty/serial: meson_uart: add the core clock handling to the driver
+  ARM64: dts: meson-gx: add core clock support for uart_A, uart_B and
+    uart_C
+
+ .../bindings/serial/amlogic,meson_uart.txt         | 30 ++++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        | 15 +++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi         | 15 +++++++++++
+ drivers/clk/meson/gxbb.h                           |  6 ++---
+ drivers/tty/serial/meson_uart.c                    | 10 ++++++++
+ include/dt-bindings/clock/gxbb-clkc.h              |  3 +++
+ 6 files changed, 76 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/serial/amlogic,meson_uart.txt
+
+--
+2.11.0
+
