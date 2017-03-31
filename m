@@ -1,26 +1,73 @@
-Return-Path: <tony@atomide.com>
-Date: Fri, 17 Mar 2017 08:41:57 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv2 6/9] ARM: OMAP2+: timer: add support for fetching fck
- handle from DT
-Message-ID: <20170317154156.GV20572@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <1489741781-12816-7-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1489741781-12816-7-git-send-email-t-kristo@ti.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 1/8] dt-bindings: clock: gxbb: expose spdif clock gates
+Date: Fri, 31 Mar 2017 15:04:04 +0200
+Message-Id: <20170331130411.4781-2-jbrunet@baylibre.com>
+In-Reply-To: <20170331130411.4781-1-jbrunet@baylibre.com>
+References: <20170331130411.4781-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [170317 02:12]:
-> The mux clock handle shall be provided via "fck" DT handle. This avoids
-> the need to lookup the main clock via hwmod core, which will not work
-> with the clkctrl clock support anymore; the main clock is not going to
-> be a mux.
-> 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Expose the clock gates required for the spdif output
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/gxbb.h              | 4 ++--
+ include/dt-bindings/clock/gxbb-clkc.h | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 9d949244b104..0d535f7e7aed 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -209,7 +209,7 @@
+ /* CLKID_ETH */
+ #define CLKID_DEMUX		  37
+ /* CLKID_AIU_GLUE */
+-#define CLKID_IEC958		  39
++/* CLKID_IEC958 */
+ /* CLKID_I2S_OUT */
+ #define CLKID_AMCLK		  41
+ #define CLKID_AIFIFO2		  42
+@@ -251,7 +251,7 @@
+ #define CLKID_GCLK_VENCI_INT	  78
+ #define CLKID_DAC_CLK		  79
+ /* CLKID_AOCLK_GATE */
+-#define CLKID_IEC958_GATE	  81
++/* CLKID_IEC958_GATE */
+ #define CLKID_ENC480P		  82
+ #define CLKID_RNG1		  83
+ #define CLKID_GCLK_VENCI_INT1	  84
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index cce6cb5418f1..1d4614bc8154 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -18,6 +18,7 @@
+ #define CLKID_SAR_ADC		23
+ #define CLKID_ETH		36
+ #define CLKID_AIU_GLUE		38
++#define CLKID_IEC958		39
+ #define CLKID_I2S_OUT		40
+ #define CLKID_MIXER_IFACE	44
+ #define CLKID_AIU		47
+@@ -30,6 +31,7 @@
+ #define CLKID_SANA		69
+ #define CLKID_GCLK_VENCI_INT0	77
+ #define CLKID_AOCLK_GATE	80
++#define CLKID_IEC958_GATE	81
+ #define CLKID_AO_I2C		93
+ #define CLKID_SD_EMMC_A		94
+ #define CLKID_SD_EMMC_B		95
+-- 
+2.9.3
