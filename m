@@ -1,94 +1,133 @@
-Return-Path: <Suzuki.Poulose@arm.com>
-Subject: Re: [PATCH v4 2/7] coresight: of_get_coresight_platform_data: Add
- missing of_node_put
-To: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will.deacon@arm.com>, Andy Gross <andy.gross@linaro.org>,
- David Brown <david.brown@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Guodong Xu <guodong.xu@linaro.org>, John Stultz <john.stultz@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, mike.leach@linaro.org, sudeep.holla@arm.com
-References: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
- <1489762943-25849-3-git-send-email-leo.yan@linaro.org>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <574d8e6b-cd2d-c1be-6c14-09e8be147e93@arm.com>
-Date: Fri, 17 Mar 2017 15:09:23 +0000
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1489762943-25849-3-git-send-email-leo.yan@linaro.org>
-Content-Type: text/plain; charset=us-ascii; format=flowed
+To: Ben Dooks <ben.dooks@codethink.co.uk>, "Kevin Hilman" <khilman@baylibre.com>,
+ "Arnd Bergmann" <arnd@arndb.de>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <8e708a9f-b32e-a80c-b5d7-8979e59b6662@codethink.co.uk>
+Cc: linux-amlogic@lists.infradead.org, "arm-soc" <arm@kernel.org>,
+ linux-clk@vger.kernel.org, "Linux ARM" <linux-arm-kernel@lists.infradead.org>
+References: <m28tnn69ls.fsf@baylibre.com>
+ <CAK8P3a02e3DxjuW9pA66NSCc9vw_h1Xuk6TdEbRnEQ4v4W7NHA@mail.gmail.com>
+ <m2fuht4eqs.fsf@baylibre.com>
+ <8e708a9f-b32e-a80c-b5d7-8979e59b6662@codethink.co.uk>
+Message-ID: <149098004659.31513.4466752098392400631@resonance>
+Subject: Re: [GIT PULL] Amlogic 64-bit DT updates for v4.12
+Date: Fri, 31 Mar 2017 10:07:26 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 17/03/17 15:02, Leo Yan wrote:
-> From: Suzuki K Poulose <suzuki.poulose@arm.com>
->
-> The of_get_coresight_platform_data iterates over the possible CPU nodes
-> to find a given cpu phandle. However it does not drop the reference
-> to the node pointer returned by the of_get_coresight_platform_data.
->
-> [Leo: minor tweaks for of_get_coresight_platform_data]
->
-> Cc: Leo Yan <leo.yan@linaro.org>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Quoting Ben Dooks (2017-03-31 09:11:17)
+> On 31/03/17 17:01, Kevin Hilman wrote:
+> > Arnd Bergmann <arnd@arndb.de> writes:
+> >
+> >> On Wed, Mar 29, 2017 at 11:45 PM, Kevin Hilman <khilman@baylibre.com> =
+wrote:
+> >>> Olof, Arnd,
+> >>>
+> >>> Below are some 64-bit DT changes for Amlogic platforms for v4.12.  No=
+te
+> >>> that this branch includes a merge of an immutable branch from the clk
+> >>> tree (clk-meson) due to dependencies on new clocks added to the meson
+> >>> clock driver and used in these DT updates.
+> >>
+> >> I did not pull this one because of the silly dependency. The device tr=
+ee
+> >> files should be completely independent of the driver changes.
+> >
+> > Aaargh, this is getting very frustrating.
+> =
 
-You should add your Signed-off-by here when you send somebody's patch, irrespective
-of whether you have modified it or not.
-e.g:
+> I tried to make this point very early on in the development,
+> we don't want to be changing both driver and dt if we are
+> adding things like IDs for gated clocks.
+> =
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-[Leo: minor tweaks for of_get_coresight_platform_data]
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> For example, having an almost 1:1 mapping from clock-id to
+> bit-in-hardware would make life much easier, even if the
+> driver had a little bit more code to create clocks at the
+> probe time, it would have meant that DT additions for new
+> peripherals would have been much easier.
 
+It would be great if the hardware was designed in such a way to make
+that possible. A lot of clock controller hardware simply isn't.
 
-> ---
->  drivers/hwtracing/coresight/of_coresight.c | 17 ++++++++++-------
->  1 file changed, 10 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-> index 629e031..917ca39 100644
-> --- a/drivers/hwtracing/coresight/of_coresight.c
-> +++ b/drivers/hwtracing/coresight/of_coresight.c
-> @@ -108,7 +108,8 @@ struct coresight_platform_data *of_get_coresight_platform_data(
->  	struct coresight_platform_data *pdata;
->  	struct of_endpoint endpoint, rendpoint;
->  	struct device *rdev;
-> -	struct device_node *dn;
-> +	bool found;
-> +	struct device_node *dn, *np;
->  	struct device_node *ep = NULL;
->  	struct device_node *rparent = NULL;
->  	struct device_node *rport = NULL;
-> @@ -175,17 +176,19 @@ struct coresight_platform_data *of_get_coresight_platform_data(
->  		} while (ep);
->  	}
->
-> -	/* Affinity defaults to CPU0 */
-> -	pdata->cpu = 0;
->  	dn = of_parse_phandle(node, "cpu", 0);
-> -	for (cpu = 0; dn && cpu < nr_cpu_ids; cpu++) {
-> -		if (dn == of_get_cpu_node(cpu, NULL)) {
-> -			pdata->cpu = cpu;
-> +	for_each_possible_cpu(cpu) {
-> +		np = of_get_cpu_node(cpu, NULL);
-> +		found = (dn == np);
-> +		of_node_put(np);
-> +		if (found)
->  			break;
-> -		}
->  	}
->  	of_node_put(dn);
->
-> +	/* Affinity to CPU0 if no cpu nodes are found */
-> +	pdata->cpu = found ? cpu : 0;
-> +
->  	return pdata;
->  }
->  EXPORT_SYMBOL_GPL(of_get_coresight_platform_data);
->
+We're talking about defining a reference to a clock control, somewhere
+in the middle of the clock tree, that maybe we didn't know existed until
+now. This simply is not the same as enumerating physical pins or
+something like that.
+
+To be clear, all of the leaf clock (gates) were defined in DT from the
+very beginning for the SoC in question. This is perfectly in-line with
+Arnd's world-view. These gates are very orderly and correspond directly
+to the consumer devices that take them as input.
+
+It's the mess of clocks that make up the "middle" of the tree that cause
+these problems. I don't see why we can't agree on a way to update the DT
+headers in such cases.
+
+> =
+
+> > [...]
+> >
+> >> Which add random macros in the middle of the number space.
+> >>
+> >> Since the header changes are in an immutable branch, it's probably
+> >> too late to fix this for 4.12, but maybe we can get the header into a
+> >> form that allows us to do future DT changes without having to
+> >> wait an extra release. The clock driver apparently already defines
+> >> some of the numbers above, so you can fill all of those in already.
+> >
+> > We could, but this is in direct conflict with the recommendations of the
+> > clk maintainers to not expose clock IDs to the DT until we know they are
+> > used because, well, things change.
+> >
+> > Can we *please* get some clarity on on this between arm-soc and the clk
+> > maintainers?  I've been asking for a couple merge windows now.
+
+I'm hopeful that that the arm-soc maintainers can see it my way ;-)
+
+I'll explain the thought process behind the gxbb clk IDs in DT again:
+
+1) we don't know about all the clocks ahead of time. New documentation
+is always forthcoming, especially in regards to multimedia-focused IP
+
+2) we do know about all of the leaf clocks that devices take as input
+and expose them in DT from the very beginning, as we should
+
+3) ideally we should not need to expose any non-leaf clocks in DT. This
+would be akin to exposing private data or state machine internals in DT,
+when the consumer nodes only care about a phandle to their input
+
+4) ideally consumer devices should reference only the leaf clocks.
+Ideally the framework & clk provider driver should be smart enough to Do
+The Right Thing.
+
+Items #3 and #4 are not always true, we don't life in an ideal world and
+hence, sometimes we add new clock IDs to DT. This should not be grounds
+for a patch not making it into the merge window IMO.
+
+Best regards,
+Mike
+
+> >
+> > Irritated,
+> >
+> > Kevin
+> >
+> > _______________________________________________
+> > linux-amlogic mailing list
+> > linux-amlogic@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-amlogic
+> >
+> =
+
+> =
+
+> -- =
+
+> Ben Dooks                               http://www.codethink.co.uk/
+> Senior Engineer                         Codethink - Providing Genius
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
