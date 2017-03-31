@@ -1,64 +1,63 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sun, 26 Mar 2017 15:11:57 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 3/3] clk: sunxi-ng: a80: Fix audio PLL comment not
- matching actual code
-Message-ID: <20170326131157.4kngtrhqpme433ac@lukather>
-References: <20170324083307.18338-1-wens@csie.org>
- <20170324083307.18338-4-wens@csie.org>
+Return-Path: <Suzuki.Poulose@arm.com>
+Subject: Re: [PATCH v5 4/9] coresight: refactor with function
+ of_coresight_get_cpu
+To: Leo Yan <leo.yan@linaro.org>, Jonathan Corbet <corbet@lwn.net>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Wei Xu <xuwei5@hisilicon.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Andy Gross <andy.gross@linaro.org>,
+ David Brown <david.brown@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Guodong Xu <guodong.xu@linaro.org>, John Stultz <john.stultz@linaro.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, mike.leach@linaro.org, sudeep.holla@arm.com
+References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+ <1490466197-29163-5-git-send-email-leo.yan@linaro.org>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <8f45279c-5768-9a56-3c6d-3ecfd63f4b18@arm.com>
+Date: Fri, 31 Mar 2017 10:05:37 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="o74jroi6nporhp2j"
-In-Reply-To: <20170324083307.18338-4-wens@csie.org>
+In-Reply-To: <1490466197-29163-5-git-send-email-leo.yan@linaro.org>
+Content-Type: text/plain; charset=us-ascii; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+On 25/03/17 18:23, Leo Yan wrote:
+> This is refactor to add function of_coresight_get_cpu(), so it's used to
+> retrieve CPU id for coresight component. Finally can use it as a common
+> function for multiple places.
+>
+> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
 
---o74jroi6nporhp2j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Mar 24, 2017 at 04:33:07PM +0800, Chen-Yu Tsai wrote:
-> We ignore the d1 and d2 dividers in the audio PLL, and force them to
-> 1 (register value 0) at probe time. However the comment preceding the
-> audio PLL definition says we enforce the default value, which is not
-> the same.
->=20
-> Fix the preceding comment to match what we do in code.
->=20
-> Fixes: b8eb71dcdd08 ("clk: sunxi-ng: Add A80 CCU")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---o74jroi6nporhp2j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJY174dAAoJEBx+YmzsjxAgKCoP/jW8XQJKj06pCYYXhU0lqThA
-WujeV3TL9jYPm+JdjGJM6QimV37X8Fdsuv81ZqrBgIgbEd72VnIilGBmGXPBNBiq
-ax7zhiilfGiIB6iPRPNlsDCWOa51nq64g7pWDsXDWuQH6Ei+kDvkd7eBoXoCxr/M
-jrjJTRuQK6nFRKK5mvaE0USpaGypUDDAA5hQsaC+c6OeK/b4mFqU5o8/kO/t3rAq
-0SWwIFgKI7QO7U+hp2yRLMFldnfSrvDATQXu0iaRbK6TvRs//t4sN4ftrtAYH7Av
-Di4gWOma3XzjUvmPgklYjRzbIVYj87UY7v0zkovpoa2v4vxuwu77E/9DTrMReqWN
-lZmmgEFCVjIu9dS3JrDe97p0ND2/y6d2XZelAV/trwd/sz1W2K+40zWlWpI27a+5
-vQB2GYnvyOM4CVfwWR6ip4NQSWiSfFqxV98y/pzmvCJZEwXnWxaCvVmeuAuEBhdM
-phYaaqGP3DuTmvp8UkXgS13Vd767AQKpEYay5XWdnL6qOc0Pye3V8aMPyN47nR7O
-0bYBpBvmFQx/4KXNs4pQ3iDdrAlvyskiiPP+SSGYvhPnxLPvU7FDVfszrzHECh5v
-Je27yEEr77eS0sCPLpTzyIPGgqKPESYesWKg2Lw8kIcXkHClLSAMI9IAeoBmfFAv
-LR7Xj5u7cN4mMYITl7XZ
-=ujal
------END PGP SIGNATURE-----
-
---o74jroi6nporhp2j--
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> -		if (found)
+> -			break;
+> -	}
+> -	of_node_put(dn);
+> -
+> -	/* Affinity to CPU0 if no cpu nodes are found */
+> -	pdata->cpu = found ? cpu : 0;
+> +	pdata->cpu = of_coresight_get_cpu(node);
+>
+>  	return pdata;
+>  }
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index 2a5982c..bf96678 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -263,9 +263,11 @@ static inline int coresight_timeout(void __iomem *addr, u32 offset,
+>  #endif
+>
+>  #ifdef CONFIG_OF
+> +extern int of_coresight_get_cpu(struct device_node *node);
+>  extern struct coresight_platform_data *of_get_coresight_platform_data(
+>  				struct device *dev, struct device_node *node);
+>  #else
+> +static inline int of_coresight_get_cpu(struct device_node *node) { return 0; }
+>  static inline struct coresight_platform_data *of_get_coresight_platform_data(
+>  	struct device *dev, struct device_node *node) { return NULL; }
+>  #endif
+>
