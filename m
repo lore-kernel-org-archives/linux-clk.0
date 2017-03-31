@@ -1,78 +1,80 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:47434 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934056AbdC3VGV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 30 Mar 2017 17:06:21 -0400
-Date: Thu, 30 Mar 2017 16:06:17 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Russell King <linux@armlinux.org.uk>,
-        James Morris <james.l.morris@oracle.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>, Johannes Weiner <hannes@cmpxchg.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>,
-        Hillf Danton <hillf.zj@alibaba-inc.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        zijun_hu <zijun_hu@htc.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        linux-block@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 9/9] kernel-api.rst: fix a series of errors when parsing
- C files
-Message-ID: <20170330210617.GA28207@bhelgaas-glaptop.roam.corp.google.com>
-References: <cover.1490904090.git.mchehab@s-opensource.com>
- <5c39bc852b201759de4cf901f7e9ad04715285d9.1490904090.git.mchehab@s-opensource.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5c39bc852b201759de4cf901f7e9ad04715285d9.1490904090.git.mchehab@s-opensource.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <hgkr.klein@gmail.com>
+Return-Path: <hgkr.klein@gmail.com>
+From: Helmut Klein <hgkr.klein@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: Helmut Klein <hgkr.klein@gmail.com>,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v3 1/4] dt-bindings: clock: gxbb: expose UART clocks
+Date: Fri, 31 Mar 2017 18:54:34 +0200
+Message-Id: <20170331165437.26227-2-hgkr.klein@gmail.com>
+In-Reply-To: <20170331165437.26227-1-hgkr.klein@gmail.com>
+References: <20170331165437.26227-1-hgkr.klein@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 30, 2017 at 05:11:36PM -0300, Mauro Carvalho Chehab wrote:
-> ./lib/string.c:134: WARNING: Inline emphasis start-string without end-string.
-> ./mm/filemap.c:522: WARNING: Inline interpreted text or phrase reference start-string without end-string.
-> ./mm/filemap.c:1283: ERROR: Unexpected indentation.
-> ./mm/filemap.c:3003: WARNING: Inline interpreted text or phrase reference start-string without end-string.
-> ./mm/vmalloc.c:1544: WARNING: Inline emphasis start-string without end-string.
-> ./mm/page_alloc.c:4245: ERROR: Unexpected indentation.
-> ./ipc/util.c:676: ERROR: Unexpected indentation.
-> ./drivers/pci/irq.c:35: WARNING: Block quote ends without a blank line; unexpected unindent.
-> ./security/security.c:109: ERROR: Unexpected indentation.
-> ./security/security.c:110: WARNING: Definition list ends without a blank line; unexpected unindent.
-> ./block/genhd.c:275: WARNING: Inline strong start-string without end-string.
-> ./block/genhd.c:283: WARNING: Inline strong start-string without end-string.
-> ./include/linux/clk.h:134: WARNING: Inline emphasis start-string without end-string.
-> ./include/linux/clk.h:134: WARNING: Inline emphasis start-string without end-string.
-> ./ipc/util.c:477: ERROR: Unknown target name: "s".
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Expose the clock ids of the three none AO uarts to the dt-bindings
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# for drivers/pci/irq.c
+Signed-off-by: Helmut Klein <hgkr.klein@gmail.com>
+---
+ drivers/clk/meson/gxbb.h              | 6 +++---
+ include/dt-bindings/clock/gxbb-clkc.h | 3 +++
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-> diff --git a/drivers/pci/irq.c b/drivers/pci/irq.c
-> index 6684f153ab57..f9f2a0324ecc 100644
-> --- a/drivers/pci/irq.c
-> +++ b/drivers/pci/irq.c
-> @@ -31,7 +31,7 @@ static void pci_note_irq_problem(struct pci_dev *pdev, const char *reason)
->   * driver).
->   *
->   * Returns:
-> - *  a suggestion for fixing it (although the driver is not required to
-> + * a suggestion for fixing it (although the driver is not required to
->   * act on this).
->   */
->  enum pci_lost_interrupt_reason pci_lost_interrupt(struct pci_dev *pdev)
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 8ee2022ce5d5..1edfaa5fe307 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -194,7 +194,7 @@
+ /* #define CLKID_SAR_ADC */
+ #define CLKID_SMART_CARD	  24
+ #define CLKID_RNG0		  25
+-#define CLKID_UART0		  26
++/* CLKID_UART0 */
+ #define CLKID_SDHC		  27
+ #define CLKID_STREAM		  28
+ #define CLKID_ASYNC_FIFO	  29
+@@ -216,7 +216,7 @@
+ #define CLKID_ADC		  45
+ #define CLKID_BLKMV		  46
+ #define CLKID_AIU		  47
+-#define CLKID_UART1		  48
++/* CLKID_UART1 */
+ #define CLKID_G2D		  49
+ /* CLKID_USB0 */
+ /* CLKID_USB1 */
+@@ -236,7 +236,7 @@
+ /* CLKID_USB0_DDR_BRIDGE */
+ #define CLKID_MMC_PCLK		  66
+ #define CLKID_DVIN		  67
+-#define CLKID_UART2		  68
++/* CLKID_UART2 */
+ /* #define CLKID_SANA */
+ #define CLKID_VPU_INTR		  70
+ #define CLKID_SEC_AHB_AHB3_BRIDGE 71
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index 692846c7941b..7b329df47752 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -15,13 +15,16 @@
+ #define CLKID_SPI		34
+ #define CLKID_I2C		22
+ #define CLKID_SAR_ADC		23
++#define CLKID_UART0		26
+ #define CLKID_ETH		36
++#define CLKID_UART1		48
+ #define CLKID_USB0		50
+ #define CLKID_USB1		51
+ #define CLKID_USB		55
+ #define CLKID_HDMI_PCLK		63
+ #define CLKID_USB1_DDR_BRIDGE	64
+ #define CLKID_USB0_DDR_BRIDGE	65
++#define CLKID_UART2		68
+ #define CLKID_SANA		69
+ #define CLKID_GCLK_VENCI_INT0	77
+ #define CLKID_AO_I2C		93
+--
+2.11.0
