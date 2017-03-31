@@ -1,79 +1,79 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.xyz>
-To: Rob Herring <robh+dt@kernel.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [PATCH v2 5/8] drm/sun4i: tcon: add support for V3s TCON
-Date: Fri, 17 Mar 2017 04:47:45 +0800
-Message-Id: <20170316204748.8596-6-icenowy@aosc.xyz>
-In-Reply-To: <20170316204748.8596-1-icenowy@aosc.xyz>
-References: <20170316204748.8596-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Icenowy Zheng <icenowy@aosc.xyz>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from imap0.codethink.co.uk ([185.43.218.159]:42475 "EHLO
+        imap0.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933054AbdCaQL1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Mar 2017 12:11:27 -0400
+Subject: Re: [GIT PULL] Amlogic 64-bit DT updates for v4.12
+To: Kevin Hilman <khilman@baylibre.com>, Arnd Bergmann <arnd@arndb.de>
+References: <m28tnn69ls.fsf@baylibre.com>
+ <CAK8P3a02e3DxjuW9pA66NSCc9vw_h1Xuk6TdEbRnEQ4v4W7NHA@mail.gmail.com>
+ <m2fuht4eqs.fsf@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, arm-soc <arm@kernel.org>,
+        linux-clk@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Message-ID: <8e708a9f-b32e-a80c-b5d7-8979e59b6662@codethink.co.uk>
+Date: Fri, 31 Mar 2017 17:11:17 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <m2fuht4eqs.fsf@baylibre.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s SoC features a TCON without channel 1.
+On 31/03/17 17:01, Kevin Hilman wrote:
+> Arnd Bergmann <arnd@arndb.de> writes:
+>
+>> On Wed, Mar 29, 2017 at 11:45 PM, Kevin Hilman <khilman@baylibre.com> wrote:
+>>> Olof, Arnd,
+>>>
+>>> Below are some 64-bit DT changes for Amlogic platforms for v4.12.  Note
+>>> that this branch includes a merge of an immutable branch from the clk
+>>> tree (clk-meson) due to dependencies on new clocks added to the meson
+>>> clock driver and used in these DT updates.
+>>
+>> I did not pull this one because of the silly dependency. The device tree
+>> files should be completely independent of the driver changes.
+>
+> Aaargh, this is getting very frustrating.
 
-Add support for it.
+I tried to make this point very early on in the development,
+we don't want to be changing both driver and dt if we are
+adding things like IDs for gated clocks.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
----
- drivers/gpu/drm/sun4i/sun4i_drv.c  | 3 ++-
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 +++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+For example, having an almost 1:1 mapping from clock-id to
+bit-in-hardware would make life much easier, even if the
+driver had a little bit more code to create clocks at the
+probe time, it would have meant that DT additions for new
+peripherals would have been much easier.
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index e78b8aaa4019..aad6a1a4664c 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -186,7 +186,8 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
- 	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun6i-a31-tcon") ||
- 		of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
--		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon");
-+		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
-+		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
- }
- 
- static int compare_of(struct device *dev, void *data)
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index f4f7283f7cb2..110e432b766d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -613,11 +613,16 @@ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
- 	/* nothing is supported */
- };
- 
-+static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
-+	/* nothing is supported */
-+};
-+
- static const struct of_device_id sun4i_tcon_of_table[] = {
- 	{ .compatible = "allwinner,sun5i-a13-tcon", .data = &sun5i_a13_quirks },
- 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
- 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
- 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
-+	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun4i_tcon_of_table);
+> [...]
+>
+>> Which add random macros in the middle of the number space.
+>>
+>> Since the header changes are in an immutable branch, it's probably
+>> too late to fix this for 4.12, but maybe we can get the header into a
+>> form that allows us to do future DT changes without having to
+>> wait an extra release. The clock driver apparently already defines
+>> some of the numbers above, so you can fill all of those in already.
+>
+> We could, but this is in direct conflict with the recommendations of the
+> clk maintainers to not expose clock IDs to the DT until we know they are
+> used because, well, things change.
+>
+> Can we *please* get some clarity on on this between arm-soc and the clk
+> maintainers?  I've been asking for a couple merge windows now.
+>
+> Irritated,
+>
+> Kevin
+>
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+>
+
+
 -- 
-2.12.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
