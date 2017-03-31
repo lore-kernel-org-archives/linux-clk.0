@@ -1,135 +1,57 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Leo Yan <leo.yan@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	linux-clk@vger.kernel.org,
-	mike.leach@linaro.org,
-	Suzuki.Poulose@arm.com,
-	sudeep.holla@arm.com
-Subject: [PATCH v4 0/7] coresight: enable debug module
-Date: Fri, 17 Mar 2017 23:02:16 +0800
-Message-Id: <1489762943-25849-1-git-send-email-leo.yan@linaro.org>
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/8] clk: meson: gxbb: more clock controller update for audio support
+Date: Fri, 31 Mar 2017 15:04:03 +0200
+Message-Id: <20170331130411.4781-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-ARMv8 architecture reference manual (ARM DDI 0487A.k) Chapter H7 "The
-Sample-based Profiling Extension" has description for sampling
-registers, we can utilize these registers to check program counter
-value with combined CPU exception level, secure state, etc. So this is
-helpful for CPU lockup bugs, e.g. if one CPU has run into infinite loop
-with IRQ disabled; the 'hang' CPU cannot switch context and handle any
-interrupt, so it cannot handle SMP call for stack dump, etc.
+The patchset is the 2nd round of update to the meson gxbb clock controller
+to add initial audio support. The patchset is based on clk-next.
 
-This patch series is to enable coresight debug module with sample-based
-registers and register call back notifier for PCSR register dumping
-when panic happens, so we can see below dumping info for panic; and
-this patch series has considered the conditions for access permission
-for debug registers self, so this can avoid access debug registers when
-CPU power domain is off; the driver also try to figure out the CPU is
-in secure or non-secure state.
+There is not much out of the ordinary here (adding new clocks and exposing
+them) except maybe for 2 patches:
+Patch #2: Adds a safety check while registering clocks to protect against
+          holes in clk_hw_onecell_data, if it ever happens. Same thing is
+	  done for the meson8b clock controller.
+Patch #3: Adds a new clock divider driver to implement the necessary
+          policy for the i2s master clock (see patch changelog)
 
-Patch 0001 is to document the dt binding.
+This patchset has been test on the gxbb p200 and gxl p230.
 
-Patch 0002 is used to fix the func of_get_coresight_platform_data()
-doesn't properly drop the reference to the CPU node pointer; and
-patch 0003 is refactor to add new function of_coresight_get_cpu().
+Changes since v1 [0]:
+ - fix typo and use clamp function in patch #3
 
-Patch 0004 is the driver for CPU debug module, which is Based on
-patches 0002/0003.
+[0]: https://lkml.kernel.org/r/20170328144605.25278-1-jbrunet@baylibre.com
 
-Patches 0005/0006 in this series are to enable debug unit on 96boards
-Hikey, patch 0005 is to add apb clock for debug unit and patch 0006
-is to add DT nodes for debug unit. Patch 0007 is to enable debug on
-96boards DB410c. Have verified on both two boards.
+Jerome Brunet (8):
+  dt-bindings: clock: gxbb: expose spdif clock gates
+  clk: meson: gxbb: protect against holes in the onecell_data array
+  clk: meson: add audio clock divider support
+  clk: meson: gxbb: add cts_amclk
+  clk: meson: gxbb: add cts_mclk_i958
+  clk: meson: gxbb: add cts_i958 clock
+  dt-bindings: clock: gxbb: expose i2s master clock
+  dt-bindings: clock: gxbb: expose spdif master clock
 
-As result we can get below log after input command:
-echo c > /proc/sysrq-trigger:
-
-ARM external debug module:
-CPU[0]:
- EDPRSR:  0000000b (Power:On DLK:Unlock)
- EDPCSR:  [<ffff00000808eb54>] handle_IPI+0xe4/0x150
- EDCIDSR: 00000000
- EDVIDSR: 90000000 (State:Non-secure Mode:EL1/0 Width:64bits VMID:0)
-CPU[1]:
- EDPRSR:  0000000b (Power:On DLK:Unlock)
- EDPCSR:  [<ffff0000087a64c0>] debug_notifier_call+0x108/0x288
- EDCIDSR: 00000000
- EDVIDSR: 90000000 (State:Non-secure Mode:EL1/0 Width:64bits VMID:0)
-
-[...]
-
-Changes from v3:
-* Added Suzuki K Poulose's patch to fix issue for the func
-  of_get_coresight_platform_data() doesn't properly drop the reference
-  to the CPU node pointer.
-* According to Suzuki suggestion, added code to handl the corner case
-  for ARMv8 CPU with aarch32 mode.
-* According to Suzuki suggestion, changed compatible string to
-  "arm,coresight-cpu-debug".
-* According to Mathieu suggestion, added "power-domains" as optional
-  properties.
-
-Changes from v2:
-* According to Mathieu Poirier suggestion, applied some minor fixes.
-* Added two extra patches for enabling debug module on Hikey.
-
-Changes from v1:
-* According to Mike Leach suggestion, removed the binding for debug
-  module clocks which have been directly provided by CPU clocks.
-* According to Mathieu Poirier suggestion, added function
-  of_coresight_get_cpu() and some minor refactors for debug module
-  driver.
-
-Changes from RFC:
-* According to Mike Leach suggestion, added check for EDPRSR to avoid
-  lockup; added supporting EDVIDSR and EDCIDSR registers.
-* According to Mark Rutland and Mathieu Poirier suggestion, rewrote
-  the documentation for DT binding.
-* According to Mark and Mathieu suggestion, refined debug driver.
-
-
-Leo Yan (6):
-  coresight: bindings for CPU debug module
-  coresight: refactor with function of_coresight_get_cpu
-  coresight: add support for CPU debug module
-  clk: hi6220: add debug APB clock
-  arm64: dts: hi6220: register debug module
-  arm64: dts: qcom: msm8916: Add debug unit
-
-Suzuki K Poulose (1):
-  coresight: of_get_coresight_platform_data: Add missing of_node_put
-
- .../bindings/arm/coresight-cpu-debug.txt           |  46 +++
- arch/arm64/boot/dts/hisilicon/hi6220.dtsi          |  64 ++++
- arch/arm64/boot/dts/qcom/msm8916.dtsi              |  32 ++
- drivers/clk/hisilicon/clk-hi6220.c                 |   1 +
- drivers/hwtracing/coresight/Kconfig                |  10 +
- drivers/hwtracing/coresight/Makefile               |   1 +
- drivers/hwtracing/coresight/coresight-cpu-debug.c  | 407 +++++++++++++++++++++
- drivers/hwtracing/coresight/of_coresight.c         |  39 +-
- include/dt-bindings/clock/hi6220-clock.h           |   5 +-
- include/linux/coresight.h                          |   2 +
- 10 files changed, 594 insertions(+), 13 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/coresight-cpu-debug.txt
- create mode 100644 drivers/hwtracing/coresight/coresight-cpu-debug.c
+ drivers/clk/meson/Makefile            |   2 +-
+ drivers/clk/meson/clk-audio-divider.c | 144 ++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/clkc.h              |  10 +++
+ drivers/clk/meson/gxbb.c              | 144 ++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h              |  13 ++-
+ include/dt-bindings/clock/gxbb-clkc.h |   5 ++
+ 6 files changed, 314 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/clk/meson/clk-audio-divider.c
 
 -- 
-2.7.4
+2.9.3
