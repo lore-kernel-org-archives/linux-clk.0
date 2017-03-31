@@ -1,91 +1,42 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <Suzuki.Poulose@arm.com>
+Subject: Re: [PATCH v5 1/9] coresight: bindings for CPU debug module
+To: Leo Yan <leo.yan@linaro.org>, Jonathan Corbet <corbet@lwn.net>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Wei Xu <xuwei5@hisilicon.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Andy Gross <andy.gross@linaro.org>,
+ David Brown <david.brown@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Guodong Xu <guodong.xu@linaro.org>, John Stultz <john.stultz@linaro.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, mike.leach@linaro.org, sudeep.holla@arm.com
+References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+ <1490466197-29163-2-git-send-email-leo.yan@linaro.org>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <516de455-796f-8243-7bfa-e8ff104e1945@arm.com>
+Date: Fri, 31 Mar 2017 10:04:49 +0100
 MIME-Version: 1.0
-In-Reply-To: <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
- <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 14 Mar 2017 14:54:24 +0100
-Message-ID: <CACRpkdaLq125bKQcpHeFn312omxw9jp0VHr9DVanj42Y_29+mg@mail.gmail.com>
-Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
- for imx6sll
-To: Dong Aisheng <dongas86@gmail.com>
-Cc: Bai Ping <ping.bai@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jacky Bai <jacky.baip@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1490466197-29163-2-git-send-email-leo.yan@linaro.org>
+Content-Type: text/plain; charset=us-ascii; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 16, 2017 at 8:51 AM, Dong Aisheng <dongas86@gmail.com> wrote:
-> On Tue, Dec 27, 2016 at 8:59 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-
->> I would consider augmenting the code in the driver to handle the generic
->> bindings *in addition* to the old legacy bindings, and use those over these
->> random custom bits.
-(...)
-> Generic binding only supports parsing strings for pins and function
-> from dts right now, that means we need back to the old way of hardcoding
-> all register bits in driver which we actually chose to move out since
-> the commit "e164153 pinctrl: imx: move hard-coding data into device tree".
-
-Aha I see.
-
-> One option is using macro definitions instead of raw data as pinctrl-single
-> users as OMAP.
-> e.g.
-> art2_pins: pinmux_uart2_pins {
->         pinctrl-single,pins = <
->                 OMAP4_IOPAD(0x118, PIN_INPUT_PULLUP | MUX_MODE0)
->  /* uart2_cts.uart2_cts */
->         ........
+On 25/03/17 18:23, Leo Yan wrote:
+> According to ARMv8 architecture reference manual (ARM DDI 0487A.k)
+> Chapter 'Part H: External debug', the CPU can integrate debug module
+> and it can support self-hosted debug and external debug. Especially
+> for supporting self-hosted debug, this means the program can access
+> the debug module from mmio region; and usually the mmio region is
+> integrated with coresight.
 >
-> For this way, no driver changes required, just replace the raw data by macro
-> in device tree. But i wonder this may not be your original intention although
-> it's the easiest way for us.
-> Anyway, if you agree, we probably would prefer this way.
-
-That make it look better than it looks today, but...
-
-> Another option is partially convert to generic binding for only pad
-> configuration
-> part. e.g.
-> pinctrl_usdhc1: usdhc1grp {
->         fsl,pins = <
->                 MX7D_PAD_SD1_CMD__SD1_CMD
->                 MX7D_PAD_SD1_CLK__SD1_CLK
->                 MX7D_PAD_SD1_DATA0__SD1_DATA0
->                 ...
->         >;
->         bias-pull-up = <47KOHM>;
->         drive-strength = <130OHM>;
->         slew-rate = <FAST>;
->         speed = <50MHZ>;
->         ....
-> };
-> (Some of the property still not supported or not the same as generic
-> binding right now)
-
-This looks totally awesome, so if you could do this, it would be even
-better.
-
-> This way requires no big drivers changes and only extend the driver
-> to support the generic pinctrl dt configuration properties.
-
-Yep, you should be able to support both the old and the new
-way of configuring the pins this way I guess.
-
-> And it also fix the raw data issues and looks like more applicable than the full
-> migration.
+> So add document for binding debug component, includes binding to APB
+> clock; and also need specify the CPU node which the debug module is
+> dedicated to specific CPU.
 >
-> So would you be willing to accept it?
+> Suggested-by: Mike Leach <mike.leach@linaro.org>
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
 
-Anything that move us closer to the generic bindings will be accepted.
-
-Yours,
-Linus Walleij
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
