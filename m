@@ -1,357 +1,216 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 10/10] clk: renesas: r8a7794: Add new CPG/MSSR driver
-Date: Tue, 25 Apr 2017 18:53:20 +0200
-Message-Id: <1493139200-27396-11-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
-References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-amlogic@lists.infradead.org,
+	jbrunet@baylibre.com,
+	narmstrong@baylibre.com,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	khilman@baylibre.com,
+	carlo@caione.org,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 1/1] clk: meson: gxbb: remove the "cpu_clk" from the GXBB and GXL driver
+Date: Sat,  1 Apr 2017 14:55:19 +0200
+Message-Id: <20170401125519.7339-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170401125519.7339-1-martin.blumenstingl@googlemail.com>
+References: <20170401125519.7339-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a new R-Car E2 Clock Pulse Generator / Module Standby and Software
-Reset driver, using the CPG/MSSR driver core.
+It seems that the "cpu_clk" was carried over from the meson8b clock
+controller driver. On Meson GX (GXBB/GXL/GXM) the registers which are
+used by the cpu_clk have a different purpose (in other words: they don't
+control the CPU clock anymore). HHI_SYS_CPU_CLK_CNTL1 bits 31:24 are
+reserved according to the public S905 datasheet, while bit 23 is the
+"A53_trace_clk_DIS" gate (which according to the datasheet should only
+be used in case a silicon bug is discovered) and bits 22:20 are a
+divider (A53_trace_clk). The meson clk-cpu code however expects that
+bits 28:20 are reserved for a divider (according to the public S805
+datasheet this "SCALE_DIV: This value represents an N+1 divider of the
+input clock.").
 
-The old driver can still be used through a Kconfig option, to preserve
-backward compatibility with old DTBs.
+The CPU clock on Meson GX SoCs is provided by the SCPI DVFS clock
+driver instead. Two examples from a Meson GXL S905X SoC:
+- vcpu (SCPI DVFS clock 0) rate: 1000000000 / cpu_clk rate: 708000000
+- vcpu (SCPI DVFS clock 0) rate: 1512000000 / cpu_clk rate: 708000000
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Unfortunately the CLKID_CPUCLK was already exported (but is currently
+not used) to DT. Due to the removal of this clock definition there is
+now a hole in the clk_hw_onecell_data (which is not a problem because
+this case is already handled in gxbb_clkc_probe).
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/renesas/Kconfig            |   5 +-
- drivers/clk/renesas/Makefile           |   1 +
- drivers/clk/renesas/r8a7794-cpg-mssr.c | 255 +++++++++++++++++++++++++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c |   6 +
- drivers/clk/renesas/renesas-cpg-mssr.h |   1 +
- 5 files changed, 266 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a7794-cpg-mssr.c
+ drivers/clk/meson/gxbb.c              | 64 ++---------------------------------
+ drivers/clk/meson/gxbb.h              |  2 +-
+ include/dt-bindings/clock/gxbb-clkc.h |  1 -
+ 3 files changed, 4 insertions(+), 63 deletions(-)
 
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index 4b9ce278a4e9ddc5..2dd9efac3a996a32 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -21,7 +21,7 @@ if CLK_RENESAS
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index ad5f027af1a2..7cf88ca9bdce 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -278,20 +278,6 @@ static const struct pll_rate_table gxl_gp0_pll_rate_table[] = {
+ 	{ /* sentinel */ },
+ };
  
- config CLK_RENESAS_LEGACY
- 	bool "Legacy DT clock support"
--	depends on CLK_R8A7790 || CLK_R8A7791 || CLK_R8A7792
-+	depends on CLK_R8A7790 || CLK_R8A7791 || CLK_R8A7792 || CLK_R8A7794
- 	default y
- 	help
- 	  Enable backward compatibility with old device trees describing a
-@@ -82,7 +82,8 @@ config CLK_R8A7792
+-static const struct clk_div_table cpu_div_table[] = {
+-	{ .val = 1, .div = 1 },
+-	{ .val = 2, .div = 2 },
+-	{ .val = 3, .div = 3 },
+-	{ .val = 2, .div = 4 },
+-	{ .val = 3, .div = 6 },
+-	{ .val = 4, .div = 8 },
+-	{ .val = 5, .div = 10 },
+-	{ .val = 6, .div = 12 },
+-	{ .val = 7, .div = 14 },
+-	{ .val = 8, .div = 16 },
+-	{ /* sentinel */ },
+-};
+-
+ static struct meson_clk_pll gxbb_fixed_pll = {
+ 	.m = {
+ 		.reg_off = HHI_MPLL_CNTL,
+@@ -612,21 +598,10 @@ static struct meson_clk_mpll gxbb_mpll2 = {
+ };
  
- config CLK_R8A7794
- 	bool "R-Car E2 clock support" if COMPILE_TEST
--	select CLK_RCAR_GEN2
-+	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
-+	select CLK_RCAR_GEN2_CPG
- 	select CLK_RENESAS_DIV6
+ /*
+- * FIXME cpu clocks and the legacy composite clocks (e.g. clk81) are both PLL
+- * post-dividers and should be modeled with their respective PLLs via the
+- * forthcoming coordinated clock rates feature
++ * FIXME The legacy composite clocks (e.g. clk81) are both PLL post-dividers
++ * and should be modeled with their respective PLLs via the forthcoming
++ * coordinated clock rates feature
+  */
+-static struct meson_clk_cpu gxbb_cpu_clk = {
+-	.reg_off = HHI_SYS_CPU_CLK_CNTL1,
+-	.div_table = cpu_div_table,
+-	.clk_nb.notifier_call = meson_clk_cpu_notifier_cb,
+-	.hw.init = &(struct clk_init_data){
+-		.name = "cpu_clk",
+-		.ops = &meson_clk_cpu_ops,
+-		.parent_names = (const char *[]){ "sys_pll" },
+-		.num_parents = 1,
+-	},
+-};
  
- config CLK_R8A7795
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index f14a4e5d629bfc85..02d04124371f717a 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -10,6 +10,7 @@ obj-$(CONFIG_CLK_R8A7779)		+= clk-r8a7779.o
- obj-$(CONFIG_CLK_R8A7790)		+= r8a7790-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A7791)		+= r8a7791-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A7792)		+= r8a7792-cpg-mssr.o
-+obj-$(CONFIG_CLK_R8A7794)		+= r8a7794-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A7795)		+= r8a7795-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A7796)		+= r8a7796-cpg-mssr.o
- obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
-diff --git a/drivers/clk/renesas/r8a7794-cpg-mssr.c b/drivers/clk/renesas/r8a7794-cpg-mssr.c
-new file mode 100644
-index 0000000000000000..ec091a42da54d8c8
---- /dev/null
-+++ b/drivers/clk/renesas/r8a7794-cpg-mssr.c
-@@ -0,0 +1,255 @@
-+/*
-+ * r8a7794 Clock Pulse Generator / Module Standby and Software Reset
-+ *
-+ * Copyright (C) 2017 Glider bvba
-+ *
-+ * Based on clk-rcar-gen2.c
-+ *
-+ * Copyright (C) 2013 Ideas On Board SPRL
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/soc/renesas/rcar-rst.h>
-+
-+#include <dt-bindings/clock/r8a7794-cpg-mssr.h>
-+
-+#include "renesas-cpg-mssr.h"
-+#include "rcar-gen2-cpg.h"
-+
-+enum clk_ids {
-+	/* Core Clock Outputs exported to DT */
-+	LAST_DT_CORE_CLK = R8A7794_CLK_OSC,
-+
-+	/* External Input Clocks */
-+	CLK_EXTAL,
-+	CLK_USB_EXTAL,
-+
-+	/* Internal Core Clocks */
-+	CLK_MAIN,
-+	CLK_PLL0,
-+	CLK_PLL1,
-+	CLK_PLL3,
-+	CLK_PLL1_DIV2,
-+
-+	/* Module Clocks */
-+	MOD_CLK_BASE
-+};
-+
-+static const struct cpg_core_clk r8a7794_core_clks[] __initconst = {
-+	/* External Clock Inputs */
-+	DEF_INPUT("extal",     CLK_EXTAL),
-+	DEF_INPUT("usb_extal", CLK_USB_EXTAL),
-+
-+	/* Internal Core Clocks */
-+	DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_GEN2_MAIN, CLK_EXTAL),
-+	DEF_BASE(".pll0",       CLK_PLL0, CLK_TYPE_GEN2_PLL0, CLK_MAIN),
-+	DEF_BASE(".pll1",       CLK_PLL1, CLK_TYPE_GEN2_PLL1, CLK_MAIN),
-+	DEF_BASE(".pll3",       CLK_PLL3, CLK_TYPE_GEN2_PLL3, CLK_MAIN),
-+
-+	DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
-+
-+	/* Core Clock Outputs */
-+	DEF_BASE("lb",   R8A7794_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
-+	DEF_BASE("adsp", R8A7794_CLK_ADSP, CLK_TYPE_GEN2_ADSP, CLK_PLL1),
-+	DEF_BASE("sdh",  R8A7794_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
-+	DEF_BASE("sd0",  R8A7794_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
-+	DEF_BASE("qspi", R8A7794_CLK_QSPI, CLK_TYPE_GEN2_QSPI, CLK_PLL1_DIV2),
-+	DEF_BASE("rcan", R8A7794_CLK_RCAN, CLK_TYPE_GEN2_RCAN, CLK_USB_EXTAL),
-+
-+	DEF_FIXED("z2",     R8A7794_CLK_Z2,    CLK_PLL0,          1, 1),
-+	DEF_FIXED("zg",     R8A7794_CLK_ZG,    CLK_PLL1,          6, 1),
-+	DEF_FIXED("zx",     R8A7794_CLK_ZX,    CLK_PLL1,          3, 1),
-+	DEF_FIXED("zs",     R8A7794_CLK_ZS,    CLK_PLL1,          6, 1),
-+	DEF_FIXED("hp",     R8A7794_CLK_HP,    CLK_PLL1,         12, 1),
-+	DEF_FIXED("i",      R8A7794_CLK_I,     CLK_PLL1,          2, 1),
-+	DEF_FIXED("b",      R8A7794_CLK_B,     CLK_PLL1,         12, 1),
-+	DEF_FIXED("p",      R8A7794_CLK_P,     CLK_PLL1,         24, 1),
-+	DEF_FIXED("cl",     R8A7794_CLK_CL,    CLK_PLL1,         48, 1),
-+	DEF_FIXED("cp",     R8A7794_CLK_CP,    CLK_PLL1,         48, 1),
-+	DEF_FIXED("m2",     R8A7794_CLK_M2,    CLK_PLL1,          8, 1),
-+	DEF_FIXED("zb3",    R8A7794_CLK_ZB3,   CLK_PLL3,          4, 1),
-+	DEF_FIXED("zb3d2",  R8A7794_CLK_ZB3D2, CLK_PLL3,          8, 1),
-+	DEF_FIXED("ddr",    R8A7794_CLK_DDR,   CLK_PLL3,          8, 1),
-+	DEF_FIXED("mp",     R8A7794_CLK_MP,    CLK_PLL1_DIV2,    15, 1),
-+	DEF_FIXED("cpex",   R8A7794_CLK_CPEX,  CLK_EXTAL,         2, 1),
-+	DEF_FIXED("r",      R8A7794_CLK_R,     CLK_PLL1,      49152, 1),
-+	DEF_FIXED("osc",    R8A7794_CLK_OSC,   CLK_PLL1,      12288, 1),
-+
-+	DEF_DIV6P1("sd2",   R8A7794_CLK_SD2,   CLK_PLL1_DIV2, 0x078),
-+	DEF_DIV6P1("sd3",   R8A7794_CLK_SD3,   CLK_PLL1_DIV2, 0x26c),
-+	DEF_DIV6P1("mmc0",  R8A7794_CLK_MMC0,  CLK_PLL1_DIV2, 0x240),
-+};
-+
-+static const struct mssr_mod_clk r8a7794_mod_clks[] __initconst = {
-+	DEF_MOD("msiof0",		   0,	R8A7794_CLK_MP),
-+	DEF_MOD("vcp0",			 101,	R8A7794_CLK_ZS),
-+	DEF_MOD("vpc0",			 103,	R8A7794_CLK_ZS),
-+	DEF_MOD("jpu",			 106,	R8A7794_CLK_M2),
-+	DEF_MOD("tmu1",			 111,	R8A7794_CLK_P),
-+	DEF_MOD("3dg",			 112,	R8A7794_CLK_ZG),
-+	DEF_MOD("2d-dmac",		 115,	R8A7794_CLK_ZS),
-+	DEF_MOD("fdp1-0",		 119,	R8A7794_CLK_ZS),
-+	DEF_MOD("tmu3",			 121,	R8A7794_CLK_P),
-+	DEF_MOD("tmu2",			 122,	R8A7794_CLK_P),
-+	DEF_MOD("cmt0",			 124,	R8A7794_CLK_R),
-+	DEF_MOD("tmu0",			 125,	R8A7794_CLK_CP),
-+	DEF_MOD("vsp1du0",		 128,	R8A7794_CLK_ZS),
-+	DEF_MOD("vsp1-sy",		 131,	R8A7794_CLK_ZS),
-+	DEF_MOD("scifa2",		 202,	R8A7794_CLK_MP),
-+	DEF_MOD("scifa1",		 203,	R8A7794_CLK_MP),
-+	DEF_MOD("scifa0",		 204,	R8A7794_CLK_MP),
-+	DEF_MOD("msiof2",		 205,	R8A7794_CLK_MP),
-+	DEF_MOD("scifb0",		 206,	R8A7794_CLK_MP),
-+	DEF_MOD("scifb1",		 207,	R8A7794_CLK_MP),
-+	DEF_MOD("msiof1",		 208,	R8A7794_CLK_MP),
-+	DEF_MOD("scifb2",		 216,	R8A7794_CLK_MP),
-+	DEF_MOD("sys-dmac1",		 218,	R8A7794_CLK_ZS),
-+	DEF_MOD("sys-dmac0",		 219,	R8A7794_CLK_ZS),
-+	DEF_MOD("tpu0",			 304,	R8A7794_CLK_CP),
-+	DEF_MOD("sdhi3",		 311,	R8A7794_CLK_SD3),
-+	DEF_MOD("sdhi2",		 312,	R8A7794_CLK_SD2),
-+	DEF_MOD("sdhi0",		 314,	R8A7794_CLK_SD0),
-+	DEF_MOD("mmcif0",		 315,	R8A7794_CLK_MMC0),
-+	DEF_MOD("iic0",			 318,	R8A7794_CLK_HP),
-+	DEF_MOD("iic1",			 323,	R8A7794_CLK_HP),
-+	DEF_MOD("cmt1",			 329,	R8A7794_CLK_R),
-+	DEF_MOD("usbhs-dmac0",		 330,	R8A7794_CLK_HP),
-+	DEF_MOD("usbhs-dmac1",		 331,	R8A7794_CLK_HP),
-+	DEF_MOD("irqc",			 407,	R8A7794_CLK_CP),
-+	DEF_MOD("intc-sys",		 408,	R8A7794_CLK_ZS),
-+	DEF_MOD("audio-dmac0",		 502,	R8A7794_CLK_HP),
-+	DEF_MOD("adsp_mod",		 506,	R8A7794_CLK_ADSP),
-+	DEF_MOD("pwm",			 523,	R8A7794_CLK_P),
-+	DEF_MOD("usb-ehci",		 703,	R8A7794_CLK_MP),
-+	DEF_MOD("usbhs",		 704,	R8A7794_CLK_HP),
-+	DEF_MOD("hscif2",		 713,	R8A7794_CLK_ZS),
-+	DEF_MOD("scif5",		 714,	R8A7794_CLK_P),
-+	DEF_MOD("scif4",		 715,	R8A7794_CLK_P),
-+	DEF_MOD("hscif1",		 716,	R8A7794_CLK_ZS),
-+	DEF_MOD("hscif0",		 717,	R8A7794_CLK_ZS),
-+	DEF_MOD("scif3",		 718,	R8A7794_CLK_P),
-+	DEF_MOD("scif2",		 719,	R8A7794_CLK_P),
-+	DEF_MOD("scif1",		 720,	R8A7794_CLK_P),
-+	DEF_MOD("scif0",		 721,	R8A7794_CLK_P),
-+	DEF_MOD("du1",			 723,	R8A7794_CLK_ZX),
-+	DEF_MOD("du0",			 724,	R8A7794_CLK_ZX),
-+	DEF_MOD("ipmmu-sgx",		 800,	R8A7794_CLK_ZX),
-+	DEF_MOD("mlb",			 802,	R8A7794_CLK_HP),
-+	DEF_MOD("vin1",			 810,	R8A7794_CLK_ZG),
-+	DEF_MOD("vin0",			 811,	R8A7794_CLK_ZG),
-+	DEF_MOD("etheravb",		 812,	R8A7794_CLK_HP),
-+	DEF_MOD("ether",		 813,	R8A7794_CLK_P),
-+	DEF_MOD("gyro-adc",		 901,	R8A7794_CLK_P),
-+	DEF_MOD("gpio6",		 905,	R8A7794_CLK_CP),
-+	DEF_MOD("gpio5",		 907,	R8A7794_CLK_CP),
-+	DEF_MOD("gpio4",		 908,	R8A7794_CLK_CP),
-+	DEF_MOD("gpio3",		 909,	R8A7794_CLK_CP),
-+	DEF_MOD("gpio2",		 910,	R8A7794_CLK_CP),
-+	DEF_MOD("gpio1",		 911,	R8A7794_CLK_CP),
-+	DEF_MOD("gpio0",		 912,	R8A7794_CLK_CP),
-+	DEF_MOD("can1",			 915,	R8A7794_CLK_P),
-+	DEF_MOD("can0",			 916,	R8A7794_CLK_P),
-+	DEF_MOD("qspi_mod",		 917,	R8A7794_CLK_QSPI),
-+	DEF_MOD("i2c5",			 925,	R8A7794_CLK_HP),
-+	DEF_MOD("i2c4",			 927,	R8A7794_CLK_HP),
-+	DEF_MOD("i2c3",			 928,	R8A7794_CLK_HP),
-+	DEF_MOD("i2c2",			 929,	R8A7794_CLK_HP),
-+	DEF_MOD("i2c1",			 930,	R8A7794_CLK_HP),
-+	DEF_MOD("i2c0",			 931,	R8A7794_CLK_HP),
-+	DEF_MOD("ssi-all",		1005,	R8A7794_CLK_P),
-+	DEF_MOD("ssi9",			1006,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi8",			1007,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi7",			1008,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi6",			1009,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi5",			1010,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi4",			1011,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi3",			1012,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi2",			1013,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi1",			1014,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi0",			1015,	MOD_CLK_ID(1005)),
-+	DEF_MOD("scu-all",		1017,	R8A7794_CLK_P),
-+	DEF_MOD("scu-dvc1",		1018,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-dvc0",		1019,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-ctu1-mix1",	1020,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-ctu0-mix0",	1021,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src6",		1025,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src5",		1026,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src4",		1027,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src3",		1028,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src2",		1029,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scu-src1",		1030,	MOD_CLK_ID(1017)),
-+	DEF_MOD("scifa3",		1106,	R8A7794_CLK_MP),
-+	DEF_MOD("scifa4",		1107,	R8A7794_CLK_MP),
-+	DEF_MOD("scifa5",		1108,	R8A7794_CLK_MP),
-+};
-+
-+static const unsigned int r8a7794_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
-+};
-+
-+/*
-+ * CPG Clock Data
-+ */
-+
-+/*
-+ *   MD		EXTAL		PLL0	PLL1	PLL3
-+ * 14 13 19	(MHz)		*1	*2
-+ *---------------------------------------------------
-+ * 0  0  1	15		x200/3	x208/2	x88
-+ * 0  1  1	20		x150/3	x156/2	x66
-+ * 1  0  1	26 / 2		x230/3	x240/2	x102
-+ * 1  1  1	30 / 2		x200/3	x208/2	x88
-+ *
-+ * *1 :	Table 7.5c indicates VCO output (PLL0 = VCO/3)
-+ * *2 :	Table 7.5c indicates VCO output (PLL1 = VCO/2)
-+ */
-+#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 13) | \
-+					 (((md) & BIT(13)) >> 13))
-+static const struct rcar_gen2_cpg_pll_config cpg_pll_configs[4] __initconst = {
-+	{ 1, 208,  88, 200 },
-+	{ 1, 156,  66, 150 },
-+	{ 2, 240, 102, 230 },
-+	{ 2, 208,  88, 200 },
-+};
-+
-+static int __init r8a7794_cpg_mssr_init(struct device *dev)
-+{
-+	const struct rcar_gen2_cpg_pll_config *cpg_pll_config;
-+	u32 cpg_mode;
-+	int error;
-+
-+	error = rcar_rst_read_mode_pins(&cpg_mode);
-+	if (error)
-+		return error;
-+
-+	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
-+
-+	return rcar_gen2_cpg_init(cpg_pll_config, 3, cpg_mode);
-+}
-+
-+const struct cpg_mssr_info r8a7794_cpg_mssr_info __initconst = {
-+	/* Core Clocks */
-+	.core_clks = r8a7794_core_clks,
-+	.num_core_clks = ARRAY_SIZE(r8a7794_core_clks),
-+	.last_dt_core_clk = LAST_DT_CORE_CLK,
-+	.num_total_core_clks = MOD_CLK_BASE,
-+
-+	/* Module Clocks */
-+	.mod_clks = r8a7794_mod_clks,
-+	.num_mod_clks = ARRAY_SIZE(r8a7794_mod_clks),
-+	.num_hw_mod_clks = 12 * 32,
-+
-+	/* Critical Module Clocks */
-+	.crit_mod_clks = r8a7794_crit_mod_clks,
-+	.num_crit_mod_clks = ARRAY_SIZE(r8a7794_crit_mod_clks),
-+
-+	/* Callbacks */
-+	.init = r8a7794_cpg_mssr_init,
-+	.cpg_clk_register = rcar_gen2_cpg_clk_register,
-+};
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 27b4ca8c7b90bec3..2c833025648081c3 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -662,6 +662,12 @@ static const struct of_device_id cpg_mssr_match[] = {
- 		.data = &r8a7792_cpg_mssr_info,
- 	},
- #endif
-+#ifdef CONFIG_CLK_R8A7794
-+	{
-+		.compatible = "renesas,r8a7794-cpg-mssr",
-+		.data = &r8a7794_cpg_mssr_info,
-+	},
-+#endif
- #ifdef CONFIG_CLK_R8A7795
- 	{
- 		.compatible = "renesas,r8a7795-cpg-mssr",
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 07d53fa3e867fa7b..43d7c7f6832df0b2 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -135,6 +135,7 @@ extern const struct cpg_mssr_info r8a7745_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7790_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7791_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7792_cpg_mssr_info;
-+extern const struct cpg_mssr_info r8a7794_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7795_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a7796_cpg_mssr_info;
+ static u32 mux_table_clk81[]	= { 6, 5, 7 };
  
+@@ -1045,7 +1020,6 @@ static MESON_GATE(gxbb_ao_i2c, HHI_GCLK_AO, 4);
+ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ 	.hws = {
+ 		[CLKID_SYS_PLL]		    = &gxbb_sys_pll.hw,
+-		[CLKID_CPUCLK]		    = &gxbb_cpu_clk.hw,
+ 		[CLKID_HDMI_PLL]	    = &gxbb_hdmi_pll.hw,
+ 		[CLKID_FIXED_PLL]	    = &gxbb_fixed_pll.hw,
+ 		[CLKID_FCLK_DIV2]	    = &gxbb_fclk_div2.hw,
+@@ -1165,7 +1139,6 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 	.hws = {
+ 		[CLKID_SYS_PLL]		    = &gxbb_sys_pll.hw,
+-		[CLKID_CPUCLK]		    = &gxbb_cpu_clk.hw,
+ 		[CLKID_HDMI_PLL]	    = &gxbb_hdmi_pll.hw,
+ 		[CLKID_FIXED_PLL]	    = &gxbb_fixed_pll.hw,
+ 		[CLKID_FCLK_DIV2]	    = &gxbb_fclk_div2.hw,
+@@ -1430,7 +1403,6 @@ struct clkc_data {
+ 	unsigned int clk_dividers_count;
+ 	struct meson_clk_audio_divider *const *clk_audio_dividers;
+ 	unsigned int clk_audio_dividers_count;
+-	struct meson_clk_cpu *cpu_clk;
+ 	struct clk_hw_onecell_data *hw_onecell_data;
+ };
+ 
+@@ -1447,7 +1419,6 @@ static const struct clkc_data gxbb_clkc_data = {
+ 	.clk_dividers_count = ARRAY_SIZE(gxbb_clk_dividers),
+ 	.clk_audio_dividers = gxbb_audio_dividers,
+ 	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
+-	.cpu_clk = &gxbb_cpu_clk,
+ 	.hw_onecell_data = &gxbb_hw_onecell_data,
+ };
+ 
+@@ -1464,7 +1435,6 @@ static const struct clkc_data gxl_clkc_data = {
+ 	.clk_dividers_count = ARRAY_SIZE(gxbb_clk_dividers),
+ 	.clk_audio_dividers = gxbb_audio_dividers,
+ 	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
+-	.cpu_clk = &gxbb_cpu_clk,
+ 	.hw_onecell_data = &gxl_hw_onecell_data,
+ };
+ 
+@@ -1479,8 +1449,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	const struct clkc_data *clkc_data;
+ 	void __iomem *clk_base;
+ 	int ret, clkid, i;
+-	struct clk_hw *parent_hw;
+-	struct clk *parent_clk;
+ 	struct device *dev = &pdev->dev;
+ 
+ 	clkc_data = of_device_get_match_data(&pdev->dev);
+@@ -1502,9 +1470,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	for (i = 0; i < clkc_data->clk_mplls_count; i++)
+ 		clkc_data->clk_mplls[i]->base = clk_base;
+ 
+-	/* Populate the base address for CPU clk */
+-	clkc_data->cpu_clk->base = clk_base;
+-
+ 	/* Populate base address for gates */
+ 	for (i = 0; i < clkc_data->clk_gates_count; i++)
+ 		clkc_data->clk_gates[i]->reg = clk_base +
+@@ -1538,29 +1503,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 			goto iounmap;
+ 	}
+ 
+-	/*
+-	 * Register CPU clk notifier
+-	 *
+-	 * FIXME this is wrong for a lot of reasons. First, the muxes should be
+-	 * struct clk_hw objects. Second, we shouldn't program the muxes in
+-	 * notifier handlers. The tricky programming sequence will be handled
+-	 * by the forthcoming coordinated clock rates mechanism once that
+-	 * feature is released.
+-	 *
+-	 * Furthermore, looking up the parent this way is terrible. At some
+-	 * point we will stop allocating a default struct clk when registering
+-	 * a new clk_hw, and this hack will no longer work. Releasing the ccr
+-	 * feature before that time solves the problem :-)
+-	 */
+-	parent_hw = clk_hw_get_parent(&clkc_data->cpu_clk->hw);
+-	parent_clk = parent_hw->clk;
+-	ret = clk_notifier_register(parent_clk, &clkc_data->cpu_clk->clk_nb);
+-	if (ret) {
+-		pr_err("%s: failed to register clock notifier for cpu_clk\n",
+-				__func__);
+-		goto iounmap;
+-	}
+-
+ 	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+ 			clkc_data->hw_onecell_data);
+ 
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 17c6aef033ff..36330c2d4433 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -171,7 +171,7 @@
+  * to be exposed to client nodes in DT: include/dt-bindings/clock/gxbb-clkc.h
+  */
+ #define CLKID_SYS_PLL		  0
+-/* CLKID_CPUCLK */
++/* ID 1 is unused (it was used by the non-existing CLKID_CPUCLK before) */
+ /* CLKID_HDMI_PLL */
+ #define CLKID_FIXED_PLL		  3
+ /* CLKID_FCLK_DIV2 */
+diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
+index 4516bc4253b5..54faf83a4851 100644
+--- a/include/dt-bindings/clock/gxbb-clkc.h
++++ b/include/dt-bindings/clock/gxbb-clkc.h
+@@ -5,7 +5,6 @@
+ #ifndef __GXBB_CLKC_H
+ #define __GXBB_CLKC_H
+ 
+-#define CLKID_CPUCLK		1
+ #define CLKID_HDMI_PLL		2
+ #define CLKID_FCLK_DIV2		4
+ #define CLKID_FCLK_DIV3		5
 -- 
-2.7.4
+2.12.1
