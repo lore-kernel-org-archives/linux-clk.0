@@ -1,40 +1,44 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1492624001-3758-16-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-16-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:40:54 +0200
-Message-ID: <CAMuHMdVpHagph1USDuPohJ1x9xDNOFEUci9u0JBcz9s_obhygA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add Sound DVC clocks
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	jbrunet@baylibre.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	narmstrong@baylibre.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@caione.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/2] clk: meson: MPLL fixes for Meson8b
+Date: Sat,  1 Apr 2017 15:02:23 +0200
+Message-Id: <20170401130225.8811-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
->
-> This patch adds adds SCU(DVC{0,1}) clocks for R8A7796 SoC.
->
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Jerome recently added the MPLL clocks to the Meson8b clock driver: [0]
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On my board this unfortunatley causes a division by zero error which
+is fixed by patch #1 in this series.
 
-I.e. will queue in clk-renesas-for-v4.13.
+While investigating this I found that there also seems to be a 32bit
+overflow in the calculation in rate_from_params(), which is fixed by
+patch #2 in this series.
+If the review of patch #2 reveals problems then patch #1 should still
+be applied.
 
-Gr{oetje,eeting}s,
+This series is based to the "clk-meson" branch (e65ae3fb97b4
+"dt-bindings: clock: gxbb-clkc: Add GXL compatible variant").
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+[0] http://lists.infradead.org/pipermail/linux-amlogic/2017-March/002757.html
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Martin Blumenstingl (2):
+  clk: meson: mpll: fix division by zero in rate_from_params
+  clk: meson: mpll: use 64bit math in rate_from_params
+
+ drivers/clk/meson/clk-mpll.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+-- 
+2.12.1
