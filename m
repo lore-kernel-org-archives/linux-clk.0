@@ -1,49 +1,43 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: arm-soc <arm@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	jbrunet@baylibre.com,
 	linux-clk@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v2 0/7] ARM: SPEAr600 updates
-Date: Mon, 17 Apr 2017 14:46:38 +0200
-Message-Id: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	linux-amlogic@lists.infradead.org,
+	narmstrong@baylibre.com
+Cc: carlo@caione.org,
+	khilman@baylibre.com,
+	linux-arm-kernel@lists.infradead.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/1] add support for the NAND clocks on Meson8b
+Date: Sat,  1 Apr 2017 15:10:00 +0200
+Message-Id: <20170401131001.9988-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Arnd, Olof, Mike, Stephen,
+This adds support for the NAND clocks found in the Meson8b SoC.
+The clocks consist of a simple gate, a divider and a mux. The mux
+parents are not documented in the public S805 datasheet [0], so I
+had to use a bit of math and take the vendor kernel as reference [1]
+to find the actual parent clocks.
+Some mux parents cannot be divided down without remainder to the
+target clocks (as expected by the vendor NAND driver) these clocks
+have the ROUND_CLOSEST flag set.
 
-Here are a set of patches touching the support of the SPEAr600
-platform, for which the platform maintained Viresh Kumar has Acked the
-patches, but would like the arm-soc and clk maintainers to pick up the
-patches directly, see
-http://lists.infradead.org/pipermail/linux-arm-kernel/2017-April/501653.html.
+This is based on the "clk-meson" branch (e65ae3fb97b4 "dt-bindings:
+clock: gxbb-clkc: Add GXL compatible variant")
 
-Arnd, Olof, could you pick patches 1 to 6 directly in your arm-soc tree ?
 
-Mike, Stephen, could you pick patch 7 directly in your clk tree ?
+[0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
+[1] https://github.com/khadas/linux/blob/9587681285cb/drivers/amlogic/amlnf/dev/amlnf_ctrl.c#L314
 
-Thanks a lot,
+Martin Blumenstingl (1):
+  clk: meson: meson8b: add support for the NAND clocks
 
-Thomas Petazzoni
-
-Thomas Petazzoni (7):
-  arm: spear6xx: add labels to various nodes in spear600.dtsi
-  arm: spear6xx: use node labels in spear600-evb.dts
-  arm: spear6xx: fix spaces in spear600-evb.dts
-  arm: spear6xx: switch spear600-evb to the new flash partition DT
-    binding
-  arm: spear6xx: remove unneeded pinctrl properties in spear600-evb
-  arm: spear6xx: add DT description of the ADC on SPEAr600
-  clk: spear: fix ADC clock definition on SPEAr600
-
- arch/arm/boot/dts/spear600-evb.dts | 148 ++++++++++++++++++-------------------
- arch/arm/boot/dts/spear600.dtsi    |  28 ++++---
- drivers/clk/spear/spear6xx_clock.c |   2 +-
- 3 files changed, 91 insertions(+), 87 deletions(-)
+ drivers/clk/meson/meson8b.c | 53 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/meson8b.h |  6 ++++-
+ 2 files changed, 58 insertions(+), 1 deletion(-)
 
 -- 
-2.7.4
+2.12.1
