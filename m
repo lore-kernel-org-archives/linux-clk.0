@@ -1,86 +1,58 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v5 11/11] [DO NOT MERGE] ARM: dts: sun8i: enable LCD panel of Lichee Pi Zero
-Date: Sun, 23 Apr 2017 18:37:54 +0800
-Message-Id: <20170423103754.50012-12-icenowy@aosc.io>
-In-Reply-To: <20170423103754.50012-1-icenowy@aosc.io>
-References: <20170423103754.50012-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	jbrunet@baylibre.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	narmstrong@baylibre.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@caione.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 2/2] clk: meson: mpll: use 64bit math in rate_from_params
+Date: Sat,  1 Apr 2017 15:02:25 +0200
+Message-Id: <20170401130225.8811-3-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170401130225.8811-1-martin.blumenstingl@googlemail.com>
+References: <20170401130225.8811-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-A 480x272 QiaoDian QD43003C0-40-7LED panel is available from Lichee Pi.
+On Meson8b the MPLL parent clock (fixed_pll) has a rate of 2550MHz.
+Multiplying this with SDM_DEN results in a value greater than 32bits.
+This is not a problem on the 64bit Meson GX SoCs, but it may result in
+undefined behavior on the older 32bit Meson8b SoC.
 
-This commit connects this panel to Lichee Pi Zero.
+While rate_from_params was only introduced recently to make the math
+reusable from _round_rate and _recalc_rate the original bug exists much
+longer.
 
-Lichee Pi also provides a 800x480 panel without accurate model number,
-so do not merge this patch. It will finally come as device tree overlay.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Fixes: 1c50da4f27 ("clk: meson: add mpll support")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts | 36 +++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ drivers/clk/meson/clk-mpll.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-index 387fc2aa546d..7ae72bf63cd0 100644
---- a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-+++ b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-@@ -75,6 +75,28 @@
- 			gpios = <&pio 6 2 GPIO_ACTIVE_LOW>; /* PG2 */
- 		};
- 	};
-+
-+	panel: panel {
-+		compatible = "qiaodian,qd43003c0-40", "simple-panel";
-+		enable-gpios = <&pio 1 4 GPIO_ACTIVE_HIGH>; /* Should be backlight */
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			panel_input: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&tcon0_out_lcd>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
+diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+index 551aa2a5b291..4306ad833a4f 100644
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -62,6 +62,7 @@
+  */
  
- &mmc0 {
-@@ -86,6 +108,20 @@
- 	status = "okay";
- };
+ #include <linux/clk-provider.h>
++#include <linux/math64.h>
+ #include "clkc.h"
  
-+&tcon0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&lcd_rgb666_pins>;
-+	status = "okay";
-+
-+};
-+
-+&tcon0_out {
-+	tcon0_out_lcd: endpoint@0 {
-+		reg = <0>;
-+		remote-endpoint = <&panel_input>;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-0 = <&uart0_pins_a>;
- 	pinctrl-names = "default";
+ #define SDM_DEN 16384
+@@ -81,7 +82,7 @@ static unsigned long rate_from_params(unsigned long parent_rate,
+ 	if (divisor == 0)
+ 		return 0;
+ 	else
+-		return (parent_rate * SDM_DEN) / divisor;
++		return mul_u64_u32_div(parent_rate, SDM_DEN, divisor);
+ }
+ 
+ static void params_from_rate(unsigned long requested_rate,
 -- 
-2.12.2
+2.12.1
