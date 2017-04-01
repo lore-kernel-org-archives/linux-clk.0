@@ -1,61 +1,75 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Sun, 26 Mar 2017 15:11:16 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/3] clk: sunxi-ng: use 1 as fallback for minimum
- multiplier
-Message-ID: <20170326131116.ir6rkf7sh7jkyqod@lukather>
-References: <20170324083307.18338-1-wens@csie.org>
- <20170324083307.18338-2-wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Sat, 1 Apr 2017 11:00:22 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org,
+        aisheng.dong@nxp.com, fabio.estevam@nxp.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: imx7d: fix USDHC NAND clock
+Message-ID: <20170401030022.GA24882@b29396-OptiPlex-7040>
+References: <20170330005029.6472-1-stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="knyujehglo7qk4ib"
-In-Reply-To: <20170324083307.18338-2-wens@csie.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170330005029.6472-1-stefan@agner.ch>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wed, Mar 29, 2017 at 05:50:28PM -0700, Stefan Agner wrote:
+> The USDHC NAND root clock is not gated by any CCM clock gate. Remove
+> the bogus gate definition.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+> The IMX7D_NAND_USDHC_BUS_ROOT_CLK clock is also in clks_init_on.
+> In a quick test I removed IMX7D_NAND_USDHC_BUS_ROOT_CLK from
+> clks_init_on, and the system including SD-cards seemed to work
+> fine... So I guess we could remove the clock from clks_init_on
+> after the two both changes got applied, any thoughts?
+> 
 
---knyujehglo7qk4ib
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, it can be removed after apply.
 
-On Fri, Mar 24, 2017 at 04:33:05PM +0800, Chen-Yu Tsai wrote:
-> A zero multiplier does not make sense for clocks.
->=20
-> Use 1 as the minimum when a multiplier minimum isn't specified.
->=20
-> Fixes: 2beaa601c849 ("clk: sunxi-ng: Implement minimum for multipliers")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> The gate 0x4130 was actually the DRAM gate, hence disabling that
+> clock lead to disabling this gate, and hence a crash before this
+> fixes... Maybe that was the reason it landed in clks_init_on...?
+> 
 
-Applied, thanks!
-Maxime
+Probably a history reason or mistake. :-)
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
 
---knyujehglo7qk4ib
-Content-Type: application/pgp-signature; name="signature.asc"
+Regards
+Dong Aisheng
 
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJY1730AAoJEBx+YmzsjxAgoTcQAKidZbXOXsZnsYb2PqkSkJ1Q
-mzexQJ0TiPl5KQH1PrP913w0uoEeX+Xpdj9QKKOh8tdmdJ7TvMVcm05OJh4Mf4xu
-KDEdgWxR51zgLQ5UK341RYvVWCwSXFvPROd9wXXrosdVeEvlX0RJZ6CgQH4Vx51Q
-jQZo5ku3tfj5qc2NZyqKUxZwgLwBpWE+T5WxLxLVK4SjQfLC8Yn9uviw1MdBA7Ln
-gzjS3e/VyS40OEgZyCuz/nYJpC9VABpa7Rtl4mR7wcKCyK8sDs8DrcEANI/ZQ8o4
-WXwoUyC5+K8Ri3Xo7nWfjkFk5WN3ZL2RxByg23feNo1rpnscGe3eykJW4CAZX9S9
-doXUvxO624GZF9EkXe8so1d+9Zgm9lHmrj8nbufrhid7tQgbbW/MnfRE6Q7XHOFK
-rf2HYIhCvbuPdVlMYG1uWyB94SGwQ46BYwIX6KRi8AopJ7sy1Iu7XBQqy0w3ySD8
-Hkve9pQ/so8VJkV9pe4DsgohUb2I48t+kv9p7F63bnmyyVdD9gG4RE6ZYYprTz+m
-zvgNjT4in1gFq8gPF60qMnLB7Cc+ZjBiVUG2MJ9HgdYoYy7cxv6qu91WmILbJPJp
-h0TwrPncQVJPDE7HTl0vHIJgF9mxJLH8Nho/iib/w4TqB0+gJ1XTPRapggKsawBg
-O7NgX9QESjxkJana9LgW
-=JTma
------END PGP SIGNATURE-----
-
---knyujehglo7qk4ib--
+> --
+> Stefan
+> 
+>  drivers/clk/imx/clk-imx7d.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+> index ae1d31be906e..4466acaacb71 100644
+> --- a/drivers/clk/imx/clk-imx7d.c
+> +++ b/drivers/clk/imx/clk-imx7d.c
+> @@ -724,7 +724,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+>  	clks[IMX7D_MAIN_AXI_ROOT_DIV] = imx_clk_divider2("axi_post_div", "axi_pre_div", base + 0x8800, 0, 6);
+>  	clks[IMX7D_DISP_AXI_ROOT_DIV] = imx_clk_divider2("disp_axi_post_div", "disp_axi_pre_div", base + 0x8880, 0, 6);
+>  	clks[IMX7D_ENET_AXI_ROOT_DIV] = imx_clk_divider2("enet_axi_post_div", "enet_axi_pre_div", base + 0x8900, 0, 6);
+> -	clks[IMX7D_NAND_USDHC_BUS_ROOT_DIV] = imx_clk_divider2("nand_usdhc_post_div", "nand_usdhc_pre_div", base + 0x8980, 0, 6);
+> +	clks[IMX7D_NAND_USDHC_BUS_ROOT_CLK] = imx_clk_divider2("nand_usdhc_root_clk", "nand_usdhc_pre_div", base + 0x8980, 0, 6);
+>  	clks[IMX7D_AHB_CHANNEL_ROOT_DIV] = imx_clk_divider2("ahb_post_div", "ahb_pre_div", base + 0x9000, 0, 6);
+>  	clks[IMX7D_DRAM_ROOT_DIV] = imx_clk_divider2("dram_post_div", "dram_cg", base + 0x9880, 0, 3);
+>  	clks[IMX7D_DRAM_PHYM_ALT_ROOT_DIV] = imx_clk_divider2("dram_phym_alt_post_div", "dram_phym_alt_pre_div", base + 0xa000, 0, 3);
+> @@ -797,7 +797,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+>  	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
+>  	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "axi_post_div", base + 0x4110, 0);
+>  	clks[IMX7D_OCRAM_S_CLK] = imx_clk_gate4("ocram_s_clk", "ahb_post_div", base + 0x4120, 0);
+> -	clks[IMX7D_NAND_USDHC_BUS_ROOT_CLK] = imx_clk_gate4("nand_usdhc_root_clk", "nand_usdhc_post_div", base + 0x4130, 0);
+>  	clks[IMX7D_AHB_CHANNEL_ROOT_CLK] = imx_clk_gate4("ahb_root_clk", "ahb_post_div", base + 0x4200, 0);
+>  	clks[IMX7D_DRAM_ROOT_CLK] = imx_clk_gate4("dram_root_clk", "dram_post_div", base + 0x4130, 0);
+>  	clks[IMX7D_DRAM_PHYM_ROOT_CLK] = imx_clk_gate4("dram_phym_root_clk", "dram_phym_cg", base + 0x4130, 0);
+> -- 
+> 2.12.1
+> 
