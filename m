@@ -1,44 +1,57 @@
-Return-Path: <Alexey_Firago@mentor.com>
-From: Alexey Firago <alexey_firago@mentor.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<marek.vasut@gmail.com>, <geert@linux-m68k.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-CC: Alexey Firago <alexey_firago@mentor.com>
-Subject: [PATCH v4 0/3] clk: Add support for IDT 5P49V5935
-Date: Fri, 7 Apr 2017 12:12:21 +0300
-Message-ID: <1491556344-9465-1-git-send-email-alexey_firago@mentor.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	jbrunet@baylibre.com,
+	sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	narmstrong@baylibre.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	khilman@baylibre.com,
+	carlo@caione.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 1/2] clk: meson: mpll: fix division by zero in rate_from_params
+Date: Sat,  1 Apr 2017 15:02:24 +0200
+Message-Id: <20170401130225.8811-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20170401130225.8811-1-martin.blumenstingl@googlemail.com>
+References: <20170401130225.8811-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series adds support for IDT VersaClock 5P49V5935 programmable clock
-generator to the existing clk-versaclock5 driver. Driver is also updated to
-simplify addition of support for more VersaClock 5 models. 
+According to the public datasheet all register bits in HHI_MPLL_CNTL7,
+HHI_MPLL_CNTL8 and HHI_MPLL_CNTL9 default to zero. On all GX SoCs these
+seem to be initialized by the bootloader to some default value.
+However, on my Meson8 board they are not initialized, leading to a
+division by zero in rate_from_params as the math is:
+(parent_rate * SDM_DEN) / ((SDM_DEN * 0) + 0)
 
-Patches were verified on Avnet UltraZed-EG board with IO Carrier Card.
+Although the rate_from_params function was only introduced recently the
+original bug has been there for much longer. It was only exposed
+recently when the MPLL clocks were added to the Meson8b clock driver.
 
-Changes in V2:
-- Introduce vc5_chip_info structure describing chip features
-- Set vc5_chip_info for the supported chips using clk_vc5_of_match[].data
-- Add 5P49V5935 support using vc5_chip_info approach
-- Fix idx comparison in vc5_of_clk_get ('>' to '>=')
+Fixes: 1c50da4f27 ("clk: meson: add mpll support")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/clk/meson/clk-mpll.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Changes in V3:
-- Change type of clk_fod_cnt and clk_out_cnt to unsigned int
-- Add missed 'const' to vc5_chip_info instance declaration
-- Use of_device_get_match_data() to initialize vc5_chip_info on probe 
-
-Changes in V4:
-- Add 'const' to vc5_chip_info.flags
-
-Alexey Firago (3):
-  clk: vc5: Add structure to describe particular chip features
-  clk: vc5: Add bindings for IDT VersaClock 5P49V5935
-  clk: vc5: Add support for IDT VersaClock 5P49V5935
-
- .../devicetree/bindings/clock/idt,versaclock5.txt  | 16 ++++-
- drivers/clk/clk-versaclock5.c                      | 76 +++++++++++++++++-----
- 2 files changed, 71 insertions(+), 21 deletions(-)
-
+diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+index 540dabe5adad..551aa2a5b291 100644
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -76,7 +76,12 @@ static unsigned long rate_from_params(unsigned long parent_rate,
+ 				      unsigned long sdm,
+ 				      unsigned long n2)
+ {
+-	return (parent_rate * SDM_DEN) / ((SDM_DEN * n2) + sdm);
++	unsigned long divisor = (SDM_DEN * n2) + sdm;
++
++	if (divisor == 0)
++		return 0;
++	else
++		return (parent_rate * SDM_DEN) / divisor;
+ }
+ 
+ static void params_from_rate(unsigned long requested_rate,
 -- 
-2.7.4
+2.12.1
