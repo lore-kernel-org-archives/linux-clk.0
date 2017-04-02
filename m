@@ -1,60 +1,66 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	devicetree@vger.kernel.org
-Subject: [PATCH 01/10] clk: renesas: cpg-mssr: Document R-Car Gen2 support
-Date: Tue, 25 Apr 2017 18:53:11 +0200
-Message-Id: <1493139200-27396-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
-References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1491144577.3480.1.camel@baylibre.com>
+Subject: Re: [PATCH 1/2] clk: meson: mpll: fix division by zero in
+ rate_from_params
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, khilman@baylibre.com,
+	carlo@caione.org, sboyd@codeaurora.org, mturquette@baylibre.com,
+	narmstrong@baylibre.com
+Date: Sun, 02 Apr 2017 16:49:37 +0200
+In-Reply-To: <20170401130225.8811-2-martin.blumenstingl@googlemail.com>
+References: <20170401130225.8811-1-martin.blumenstingl@googlemail.com>
+	 <20170401130225.8811-2-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Document use of the Renesas Clock Pulse Generator / Module Standby and
-Software Reset DT Bindings for various member of the R-Car Gen2 family
-(H2, M2-W, V2H, M2-N, and E2).
+On Sat, 2017-04-01 at 15:02 +0200, Martin Blumenstingl wrote:
+> According to the public datasheet all register bits in HHI_MPLL_CNTL7,
+> HHI_MPLL_CNTL8 and HHI_MPLL_CNTL9 default to zero. On all GX SoCs these
+> seem to be initialized by the bootloader to some default value.
+> However, on my Meson8 board they are not initialized, leading to a
+> division by zero in rate_from_params as the math is:
+> (parent_rate * SDM_DEN) / ((SDM_DEN * 0) + 0)
+> 
+> Although the rate_from_params function was only introduced recently the
+> original bug has been there for much longer. It was only exposed
+> recently when the MPLL clocks were added to the Meson8b clock driver.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org
----
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+The Documentation of the S905 also state that N2 minimal value is 4 and SDM
+minimal is 1 ... I should have been more careful ! Thanks for catching this
+Martin. We definitely need to fix this.
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index f4f944d813081857..0cd894f987a38e81 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -15,6 +15,11 @@ Required Properties:
-   - compatible: Must be one of:
-       - "renesas,r8a7743-cpg-mssr" for the r8a7743 SoC (RZ/G1M)
-       - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
-+      - "renesas,r8a7790-cpg-mssr" for the r8a7790 SoC (R-Car H2)
-+      - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC (R-Car M2-W)
-+      - "renesas,r8a7792-cpg-mssr" for the r8a7792 SoC (R-Car V2H)
-+      - "renesas,r8a7793-cpg-mssr" for the r8a7793 SoC (R-Car M2-N)
-+      - "renesas,r8a7794-cpg-mssr" for the r8a7794 SoC (R-Car E2)
-       - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
-       - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
- 
-@@ -24,9 +29,10 @@ Required Properties:
-   - clocks: References to external parent clocks, one entry for each entry in
-     clock-names
-   - clock-names: List of external parent clock names. Valid names are:
--      - "extal" (r8a7743, r8a7745, r8a7795, r8a7796)
-+      - "extal" (r8a7743, r8a7745, r8a7790, r8a7791, r8a7792, r8a7793, r8a7794,
-+		 r8a7795, r8a7796)
-       - "extalr" (r8a7795, r8a7796)
--      - "usb_extal" (r8a7743, r8a7745)
-+      - "usb_extal" (r8a7743, r8a7745, r8a7790, r8a7791, r8a7793, r8a7794)
- 
-   - #clock-cells: Must be 2
-       - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
--- 
-2.7.4
+Patch seems ok but I have one question. Is the rate actually zero when the
+divisor is zero ?
+I'll be away from my boards until Wednesday but I can check this when I get back
+if you can't.
+
+> 
+> Fixes: 1c50da4f27 ("clk: meson: add mpll support")
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/clk/meson/clk-mpll.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+> index 540dabe5adad..551aa2a5b291 100644
+> --- a/drivers/clk/meson/clk-mpll.c
+> +++ b/drivers/clk/meson/clk-mpll.c
+> @@ -76,7 +76,12 @@ static unsigned long rate_from_params(unsigned long
+> parent_rate,
+>  				      unsigned long sdm,
+>  				      unsigned long n2)
+>  {
+> -	return (parent_rate * SDM_DEN) / ((SDM_DEN * n2) + sdm);
+> +	unsigned long divisor = (SDM_DEN * n2) + sdm;
+> +
+> +	if (divisor == 0)
+> +		return 0;
+> +	else
+> +		return (parent_rate * SDM_DEN) / divisor;
+>  }
+>  
+>  static void params_from_rate(unsigned long requested_rate,
