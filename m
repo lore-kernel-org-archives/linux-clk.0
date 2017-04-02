@@ -1,80 +1,80 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:50400 "EHLO mail.kernel.org"
+Received: from ms.lwn.net ([45.79.88.28]:49780 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1041567AbdDURlO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 21 Apr 2017 13:41:14 -0400
+        id S1751663AbdDBUeV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 2 Apr 2017 16:34:21 -0400
+Date: Sun, 2 Apr 2017 14:34:18 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        Noam Camus <noamca@mellanox.com>,
+        James Morris <james.l.morris@oracle.com>,
+        zijun_hu <zijun_hu@htc.com>,
+        Markus Heiser <markus.heiser@darmarit.de>,
+        linux-clk@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-block@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        Silvio Fricke <silvio.fricke@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Jan Kara <jack@suse.cz>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-pci@vger.kernel.org, Matt Fleming <matt@codeblueprint.co.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Hillf Danton <hillf.zj@alibaba-inc.com>
+Subject: Re: [PATCH 0/9] convert genericirq.tmpl and kernel-api.tmpl to
+ DocBook
+Message-ID: <20170402143418.3de75239@lwn.net>
+In-Reply-To: <cover.1490904090.git.mchehab@s-opensource.com>
+References: <cover.1490904090.git.mchehab@s-opensource.com>
 MIME-Version: 1.0
-In-Reply-To: <E1d1cLy-0001qc-PC@debutante>
-References: <1492795191-31298-6-git-send-email-s.nawrocki@samsung.com> <E1d1cLy-0001qc-PC@debutante>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Fri, 21 Apr 2017 19:31:42 +0200
-Message-ID: <CAJKOXPebDt030tcdBGya4Wpm8HCvMqyM7qJzDvibmvnMttH-FA@mail.gmail.com>
-Subject: Re: Applied "ASoC: Add Odroid sound DT bindings documentation" to the
- asoc tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, jy0922.shim@samsung.com,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
-        <b.zolnierkie@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, robh+dt@kernel.org
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 21, 2017 at 7:28 PM, Mark Brown <broonie@kernel.org> wrote:
-> The patch
->
->    ASoC: Add Odroid sound DT bindings documentation
->
-> has been applied to the asoc tree at
->
->    git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
->
-> All being well this means that it will be integrated into the linux-next
-> tree (usually sometime in the next 24 hours) and sent to Linus during
-> the next merge window (or sooner if it is a bug fix), however if
-> problems are discovered then the patch may be dropped or reverted.
->
-> You may get further e-mails resulting from automated or manual testing
-> and review of the tree, please engage with people reporting problems and
-> send followup patches addressing any issues that are reported if needed.
->
-> If any updates are required or you are submitting further changes they
-> should be sent as incremental updates against current git, existing
-> patches will not be replaced.
->
-> Please add any relevant lists and maintainers to the CCs when replying
-> to this mail.
->
-> Thanks,
-> Mark
->
-> From 92c9f05ebc7290e638c7b1b85288918c4fc65d4e Mon Sep 17 00:00:00 2001
-> From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Date: Fri, 21 Apr 2017 19:19:49 +0200
-> Subject: [PATCH] ASoC: Add Odroid sound DT bindings documentation
->
-> This patch adds DT binding documentation for Odroid XU3/4
-> sound subsystem.
->
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  .../devicetree/bindings/sound/samsung,odroid.txt   | 57 ++++++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/samsung,odroid.txt
+On Thu, 30 Mar 2017 17:11:27 -0300
+Mauro Carvalho Chehab <mchehab@s-opensource.com> wrote:
 
+> This series converts just two documents, adding them to the
+> core-api.rst book. It addresses the errors/warnings that popup
+> after the conversion.
+> 
+> I had to add two fixes to scripts/kernel-doc, in order to solve
+> some of the issues.
 
-Hi Mark,
+I've applied the set, including the add-on to move some stuff to
+driver-api - thanks.
 
-Although Sylwester is known of writing good quality code and can be
-trusted but he posted it just 9 minutes ago. Isn't it a little bit too
-fast to apply? I just finished reading cover letter but didn't manage
-to start looking at the rest. :)
+For whatever reason, I had a hard time applying a few of these; "git am"
+would tell me this:
 
-Best regards,
-Krzysztof
+> Applying: docs-rst: core_api: move driver-specific stuff to drivers_api
+> fatal: sha1 information is lacking or useless (Documentation/driver-api/index.rst).
+> Patch failed at 0001 docs-rst: core_api: move driver-specific stuff to drivers_api
+> The copy of the patch that failed is found in: .git/rebase-apply/patch
+
+I was able to get around this, but it took some hand work.  How are you
+generating these?
+
+Thanks,
+
+jon
