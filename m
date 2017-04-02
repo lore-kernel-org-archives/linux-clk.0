@@ -1,97 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:46038 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S939254AbdDTWg5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 20 Apr 2017 18:36:57 -0400
+Return-Path: <martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-In-Reply-To: <20170420143617.v6yemhjamqufbqwj@lukather>
-References: <20170416120849.54542-1-icenowy@aosc.io> <20170416120849.54542-3-icenowy@aosc.io>
- <20170420140252.vd6aeeweshx2tdou@rob-hp-laptop> <20170420143617.v6yemhjamqufbqwj@lukather>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 20 Apr 2017 17:36:31 -0500
-Message-ID: <CAL_JsqL=bKVX4MsqHE+Nhg9TnR6B25_-5RPW2chTsCjXudtFfQ@mail.gmail.com>
-Subject: Re: [PATCH v4 02/11] clk: sunxi-ng: add support for DE2 CCU
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
-        David Airlie <airlied@linux.ie>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
+In-Reply-To: <1491144577.3480.1.camel@baylibre.com>
+References: <20170401130225.8811-1-martin.blumenstingl@googlemail.com>
+ <20170401130225.8811-2-martin.blumenstingl@googlemail.com> <1491144577.3480.1.camel@baylibre.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sun, 2 Apr 2017 20:43:47 +0200
+Message-ID: <CAFBinCDNsyEVzmkPQ5T_Kvkp3iARtS3VAG+RLrh_mLgn-7GQAA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: meson: mpll: fix division by zero in rate_from_params
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, khilman@baylibre.com, carlo@caione.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com, narmstrong@baylibre.com
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 20, 2017 at 9:36 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi Rob,
->
-> On Thu, Apr 20, 2017 at 09:02:53AM -0500, Rob Herring wrote:
->> On Sun, Apr 16, 2017 at 08:08:40PM +0800, Icenowy Zheng wrote:
->> > diff --git a/include/dt-bindings/clock/sun8i-de2.h b/include/dt-bindings/clock/sun8i-de2.h
->> > new file mode 100644
->> > index 000000000000..982c6d18c75b
->> > --- /dev/null
->> > +++ b/include/dt-bindings/clock/sun8i-de2.h
->> > @@ -0,0 +1,54 @@
->> > +/*
->> > + * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.io>
->> > + *
->> > + * This file is dual-licensed: you can use it either under the terms
->> > + * of the GPL or the X11 license, at your option. Note that this dual
->> > + * licensing only applies to this file, and not this project as a
->> > + * whole.
->> > + *
->> > + *  a) This file is free software; you can redistribute it and/or
->> > + *     modify it under the terms of the GNU General Public License as
->> > + *     published by the Free Software Foundation; either version 2 of the
->> > + *     License, or (at your option) any later version.
->> > + *
->> > + *     This file is distributed in the hope that it will be useful,
->> > + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
->> > + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> > + *     GNU General Public License for more details.
->> > + *
->> > + * Or, alternatively,
->> > + *
->> > + *  b) Permission is hereby granted, free of charge, to any person
->> > + *     obtaining a copy of this software and associated documentation
->> > + *     files (the "Software"), to deal in the Software without
->> > + *     restriction, including without limitation the rights to use,
->> > + *     copy, modify, merge, publish, distribute, sublicense, and/or
->> > + *     sell copies of the Software, and to permit persons to whom the
->> > + *     Software is furnished to do so, subject to the following
->> > + *     conditions:
->> > + *
->> > + *     The above copyright notice and this permission notice shall be
->> > + *     included in all copies or substantial portions of the Software.
->> > + *
->> > + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
->> > + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
->> > + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
->> > + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
->> > + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
->> > + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
->> > + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
->> > + *     OTHER DEALINGS IN THE SOFTWARE.
->> > + */
->>
->> You can use SPDX tag here:
->>
->> SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->
-> I don't think you ever addressed Russell's comment about what would
-> happen to the license if and when the SPDX doc is changed or goes
-> offline?
+Hi Jerome,
 
-Frankly, it's a copyright holders decision what they want to use. SPDX
-is already used in the kernel. Look in the USB subsystem. SPDX is not
-going anywhere and is endorsed by companies with well known legal
-depts. If people want to argue about it still, then I've got better
-things to do.
+On Sun, Apr 2, 2017 at 4:49 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> On Sat, 2017-04-01 at 15:02 +0200, Martin Blumenstingl wrote:
+>> According to the public datasheet all register bits in HHI_MPLL_CNTL7,
+>> HHI_MPLL_CNTL8 and HHI_MPLL_CNTL9 default to zero. On all GX SoCs these
+>> seem to be initialized by the bootloader to some default value.
+>> However, on my Meson8 board they are not initialized, leading to a
+>> division by zero in rate_from_params as the math is:
+>> (parent_rate * SDM_DEN) / ((SDM_DEN * 0) + 0)
+>>
+>> Although the rate_from_params function was only introduced recently the
+>> original bug has been there for much longer. It was only exposed
+>> recently when the MPLL clocks were added to the Meson8b clock driver.
+>
+> The Documentation of the S905 also state that N2 minimal value is 4 and SDM
+> minimal is 1 ... I should have been more careful ! Thanks for catching this
+> Martin. We definitely need to fix this.
+>
+> Patch seems ok but I have one question. Is the rate actually zero when the
+> divisor is zero ?
+> I'll be away from my boards until Wednesday but I can check this when I get back
+> if you can't.
+is there a way how I can check this? I have a consumer device so I
+can't measure the frequencies at some pin.
 
-Rob
+>>
+>> Fixes: 1c50da4f27 ("clk: meson: add mpll support")
+>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>> ---
+>>  drivers/clk/meson/clk-mpll.c | 7 ++++++-
+>>  1 file changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+>> index 540dabe5adad..551aa2a5b291 100644
+>> --- a/drivers/clk/meson/clk-mpll.c
+>> +++ b/drivers/clk/meson/clk-mpll.c
+>> @@ -76,7 +76,12 @@ static unsigned long rate_from_params(unsigned long
+>> parent_rate,
+>>                                     unsigned long sdm,
+>>                                     unsigned long n2)
+>>  {
+>> -     return (parent_rate * SDM_DEN) / ((SDM_DEN * n2) + sdm);
+>> +     unsigned long divisor = (SDM_DEN * n2) + sdm;
+>> +
+>> +     if (divisor == 0)
+>> +             return 0;
+>> +     else
+>> +             return (parent_rate * SDM_DEN) / divisor;
+>>  }
+>>
+>>  static void params_from_rate(unsigned long requested_rate,
