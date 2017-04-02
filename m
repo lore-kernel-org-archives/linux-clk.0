@@ -1,181 +1,228 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36168 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1425082AbdDVPWl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Apr 2017 11:22:41 -0400
-Date: Sat, 22 Apr 2017 17:22:36 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, cw00.choi@samsung.com,
-        javier@osg.samsung.com, jy0922.shim@samsung.com,
-        broonie@kernel.org, robh+dt@kernel.org, b.zolnierkie@samsung.com
-Subject: Re: [PATCH RFC 1/7] clk: samsung: Add enable/disable operation for
- PLL36XX clocks
-Message-ID: <20170422152236.tbf4iuoadqrvoc2n@kozik-lap>
-References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20170421172016epcas5p342c16e1219c1205a44a84eaa770ad5ac@epcas5p3.samsung.com>
- <1492795191-31298-2-git-send-email-s.nawrocki@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1492795191-31298-2-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1491148665.3480.8.camel@baylibre.com>
+Subject: Re: [PATCH 1/1] clk: meson: gxbb: remove the "cpu_clk" from the
+ GXBB and GXL driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: khilman@baylibre.com, carlo@caione.org, sboyd@codeaurora.org,
+ mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org, Neil
+ Armstrong <narmstrong@baylibre.com>
+Date: Sun, 02 Apr 2017 17:57:45 +0200
+In-Reply-To: <20170401125519.7339-2-martin.blumenstingl@googlemail.com>
+References: <20170401125519.7339-1-martin.blumenstingl@googlemail.com>
+	 <20170401125519.7339-2-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 21, 2017 at 07:19:45PM +0200, Sylwester Nawrocki wrote:
-> The existing enable/disable ops for PLL35XX are made more generic
-> and used also for PLL36XX. This fixes issues in the kernel with
-> PLL36XX PLLs when the PLL has not been already enabled by bootloader.
+On Sat, 2017-04-01 at 14:55 +0200, Martin Blumenstingl wrote:
+> It seems that the "cpu_clk" was carried over from the meson8b clock
+> controller driver. On Meson GX (GXBB/GXL/GXM) the registers which are
+> used by the cpu_clk have a different purpose (in other words: they don't
+> control the CPU clock anymore). HHI_SYS_CPU_CLK_CNTL1 bits 31:24 are
+> reserved according to the public S905 datasheet, while bit 23 is the
+> "A53_trace_clk_DIS" gate (which according to the datasheet should only
+> be used in case a silicon bug is discovered) and bits 22:20 are a
+> divider (A53_trace_clk). The meson clk-cpu code however expects that
+> bits 28:20 are reserved for a divider (according to the public S805
+> datasheet this "SCALE_DIV: This value represents an N+1 divider of the
+> input clock.").
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> The CPU clock on Meson GX SoCs is provided by the SCPI DVFS clock
+> driver instead. Two examples from a Meson GXL S905X SoC:
+> - vcpu (SCPI DVFS clock 0) rate: 1000000000 / cpu_clk rate: 708000000
+> - vcpu (SCPI DVFS clock 0) rate: 1512000000 / cpu_clk rate: 708000000
+> 
+> Unfortunately the CLKID_CPUCLK was already exported (but is currently
+> not used) to DT. Due to the removal of this clock definition there is
+> now a hole in the clk_hw_onecell_data (which is not a problem because
+> this case is already handled in gxbb_clkc_probe).
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+
+Looks good to me.
+I'll wait for the Ack of one of the DT maintainers to apply it.
+Thx Martin
+
+Cheers
+
 > ---
->  drivers/clk/samsung/clk-pll.c | 85 +++++++++++++++++++++++++------------------
->  1 file changed, 49 insertions(+), 36 deletions(-)
+>  drivers/clk/meson/gxbb.c              | 64 ++------------------------------
+> ---
+>  drivers/clk/meson/gxbb.h              |  2 +-
+>  include/dt-bindings/clock/gxbb-clkc.h |  1 -
+>  3 files changed, 4 insertions(+), 63 deletions(-)
 > 
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-> index 5229089..10c76eb 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -23,6 +23,10 @@ struct samsung_clk_pll {
->  	struct clk_hw		hw;
->  	void __iomem		*lock_reg;
->  	void __iomem		*con_reg;
-> +	/* PLL enable control bit offset in @con_reg register */
-> +	unsigned short		enable_offs;
-> +	/* PLL lock status bit offset in @con_reg register */
-> +	unsigned short		lock_offs;
->  	enum samsung_pll_type	type;
->  	unsigned int		rate_count;
->  	const struct samsung_pll_rate_table *rate_table;
-> @@ -61,6 +65,34 @@ static long samsung_pll_round_rate(struct clk_hw *hw,
->  	return rate_table[i - 1].rate;
->  }
->  
-> +static int samsung_pll3xxx_enable(struct clk_hw *hw)
-> +{
-> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> +	u32 tmp;
-> +
-> +	tmp = readl_relaxed(pll->con_reg);
-> +	tmp |= BIT(pll->enable_offs);
-> +	writel_relaxed(tmp, pll->con_reg);
-> +
-> +	/* wait lock time */
-> +	do {
-> +		cpu_relax();
-> +		tmp = readl_relaxed(pll->con_reg);
-> +	} while (!(tmp & BIT(pll->lock_offs)));
-> +
-> +	return 0;
-> +}
-> +
-> +static void samsung_pll3xxx_disable(struct clk_hw *hw)
-> +{
-> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> +	u32 tmp;
-> +
-> +	tmp = readl_relaxed(pll->con_reg);
-> +	tmp |= BIT(pll->enable_offs);
-
-I think you meant here:
-	tmp &= ~BIT()
-
-> +	writel_relaxed(tmp, pll->con_reg);
-> +}
-> +
->  /*
->   * PLL2126 Clock Type
->   */
-> @@ -142,34 +174,6 @@ static unsigned long samsung_pll3000_recalc_rate(struct clk_hw *hw,
->  #define PLL35XX_LOCK_STAT_SHIFT	(29)
->  #define PLL35XX_ENABLE_SHIFT	(31)
->  
-> -static int samsung_pll35xx_enable(struct clk_hw *hw)
-> -{
-> -	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> -	u32 tmp;
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index ad5f027af1a2..7cf88ca9bdce 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -278,20 +278,6 @@ static const struct pll_rate_table
+> gxl_gp0_pll_rate_table[] = {
+>  	{ /* sentinel */ },
+>  };
+>  
+> -static const struct clk_div_table cpu_div_table[] = {
+> -	{ .val = 1, .div = 1 },
+> -	{ .val = 2, .div = 2 },
+> -	{ .val = 3, .div = 3 },
+> -	{ .val = 2, .div = 4 },
+> -	{ .val = 3, .div = 6 },
+> -	{ .val = 4, .div = 8 },
+> -	{ .val = 5, .div = 10 },
+> -	{ .val = 6, .div = 12 },
+> -	{ .val = 7, .div = 14 },
+> -	{ .val = 8, .div = 16 },
+> -	{ /* sentinel */ },
+> -};
 > -
-> -	tmp = readl_relaxed(pll->con_reg);
-> -	tmp |= BIT(PLL35XX_ENABLE_SHIFT);
-> -	writel_relaxed(tmp, pll->con_reg);
+>  static struct meson_clk_pll gxbb_fixed_pll = {
+>  	.m = {
+>  		.reg_off = HHI_MPLL_CNTL,
+> @@ -612,21 +598,10 @@ static struct meson_clk_mpll gxbb_mpll2 = {
+>  };
+>  
+>  /*
+> - * FIXME cpu clocks and the legacy composite clocks (e.g. clk81) are both PLL
+> - * post-dividers and should be modeled with their respective PLLs via the
+> - * forthcoming coordinated clock rates feature
+> + * FIXME The legacy composite clocks (e.g. clk81) are both PLL post-dividers
+> + * and should be modeled with their respective PLLs via the forthcoming
+> + * coordinated clock rates feature
+>   */
+> -static struct meson_clk_cpu gxbb_cpu_clk = {
+> -	.reg_off = HHI_SYS_CPU_CLK_CNTL1,
+> -	.div_table = cpu_div_table,
+> -	.clk_nb.notifier_call = meson_clk_cpu_notifier_cb,
+> -	.hw.init = &(struct clk_init_data){
+> -		.name = "cpu_clk",
+> -		.ops = &meson_clk_cpu_ops,
+> -		.parent_names = (const char *[]){ "sys_pll" },
+> -		.num_parents = 1,
+> -	},
+> -};
+>  
+>  static u32 mux_table_clk81[]	= { 6, 5, 7 };
+>  
+> @@ -1045,7 +1020,6 @@ static MESON_GATE(gxbb_ao_i2c, HHI_GCLK_AO, 4);
+>  static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+>  	.hws = {
+>  		[CLKID_SYS_PLL]		    = &gxbb_sys_pll.hw,
+> -		[CLKID_CPUCLK]		    = &gxbb_cpu_clk.hw,
+>  		[CLKID_HDMI_PLL]	    = &gxbb_hdmi_pll.hw,
+>  		[CLKID_FIXED_PLL]	    = &gxbb_fixed_pll.hw,
+>  		[CLKID_FCLK_DIV2]	    = &gxbb_fclk_div2.hw,
+> @@ -1165,7 +1139,6 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data =
+> {
+>  static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+>  	.hws = {
+>  		[CLKID_SYS_PLL]		    = &gxbb_sys_pll.hw,
+> -		[CLKID_CPUCLK]		    = &gxbb_cpu_clk.hw,
+>  		[CLKID_HDMI_PLL]	    = &gxbb_hdmi_pll.hw,
+>  		[CLKID_FIXED_PLL]	    = &gxbb_fixed_pll.hw,
+>  		[CLKID_FCLK_DIV2]	    = &gxbb_fclk_div2.hw,
+> @@ -1430,7 +1403,6 @@ struct clkc_data {
+>  	unsigned int clk_dividers_count;
+>  	struct meson_clk_audio_divider *const *clk_audio_dividers;
+>  	unsigned int clk_audio_dividers_count;
+> -	struct meson_clk_cpu *cpu_clk;
+>  	struct clk_hw_onecell_data *hw_onecell_data;
+>  };
+>  
+> @@ -1447,7 +1419,6 @@ static const struct clkc_data gxbb_clkc_data = {
+>  	.clk_dividers_count = ARRAY_SIZE(gxbb_clk_dividers),
+>  	.clk_audio_dividers = gxbb_audio_dividers,
+>  	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
+> -	.cpu_clk = &gxbb_cpu_clk,
+>  	.hw_onecell_data = &gxbb_hw_onecell_data,
+>  };
+>  
+> @@ -1464,7 +1435,6 @@ static const struct clkc_data gxl_clkc_data = {
+>  	.clk_dividers_count = ARRAY_SIZE(gxbb_clk_dividers),
+>  	.clk_audio_dividers = gxbb_audio_dividers,
+>  	.clk_audio_dividers_count = ARRAY_SIZE(gxbb_audio_dividers),
+> -	.cpu_clk = &gxbb_cpu_clk,
+>  	.hw_onecell_data = &gxl_hw_onecell_data,
+>  };
+>  
+> @@ -1479,8 +1449,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+>  	const struct clkc_data *clkc_data;
+>  	void __iomem *clk_base;
+>  	int ret, clkid, i;
+> -	struct clk_hw *parent_hw;
+> -	struct clk *parent_clk;
+>  	struct device *dev = &pdev->dev;
+>  
+>  	clkc_data = of_device_get_match_data(&pdev->dev);
+> @@ -1502,9 +1470,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+>  	for (i = 0; i < clkc_data->clk_mplls_count; i++)
+>  		clkc_data->clk_mplls[i]->base = clk_base;
+>  
+> -	/* Populate the base address for CPU clk */
+> -	clkc_data->cpu_clk->base = clk_base;
 > -
-> -	/* wait_lock_time */
-> -	do {
-> -		cpu_relax();
-> -		tmp = readl_relaxed(pll->con_reg);
-> -	} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
+>  	/* Populate base address for gates */
+>  	for (i = 0; i < clkc_data->clk_gates_count; i++)
+>  		clkc_data->clk_gates[i]->reg = clk_base +
+> @@ -1538,29 +1503,6 @@ static int gxbb_clkc_probe(struct platform_device
+> *pdev)
+>  			goto iounmap;
+>  	}
+>  
+> -	/*
+> -	 * Register CPU clk notifier
+> -	 *
+> -	 * FIXME this is wrong for a lot of reasons. First, the muxes should
+> be
+> -	 * struct clk_hw objects. Second, we shouldn't program the muxes in
+> -	 * notifier handlers. The tricky programming sequence will be handled
+> -	 * by the forthcoming coordinated clock rates mechanism once that
+> -	 * feature is released.
+> -	 *
+> -	 * Furthermore, looking up the parent this way is terrible. At some
+> -	 * point we will stop allocating a default struct clk when
+> registering
+> -	 * a new clk_hw, and this hack will no longer work. Releasing the ccr
+> -	 * feature before that time solves the problem :-)
+> -	 */
+> -	parent_hw = clk_hw_get_parent(&clkc_data->cpu_clk->hw);
+> -	parent_clk = parent_hw->clk;
+> -	ret = clk_notifier_register(parent_clk, &clkc_data->cpu_clk->clk_nb);
+> -	if (ret) {
+> -		pr_err("%s: failed to register clock notifier for cpu_clk\n",
+> -				__func__);
+> -		goto iounmap;
+> -	}
 > -
-> -	return 0;
-> -}
-> -
-> -static void samsung_pll35xx_disable(struct clk_hw *hw)
-> -{
-> -	struct samsung_clk_pll *pll = to_clk_pll(hw);
-> -	u32 tmp;
-> -
-> -	tmp = readl_relaxed(pll->con_reg);
-> -	tmp &= ~BIT(PLL35XX_ENABLE_SHIFT);
-> -	writel_relaxed(tmp, pll->con_reg);
-> -}
-> -
->  static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
->  				unsigned long parent_rate)
->  {
-> @@ -239,11 +243,11 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
->  	writel_relaxed(tmp, pll->con_reg);
->  
->  	/* wait_lock_time if enabled */
-> -	if (tmp & BIT(PLL35XX_ENABLE_SHIFT)) {
-> +	if (tmp & BIT(pll->enable_offs)) {
->  		do {
->  			cpu_relax();
->  			tmp = readl_relaxed(pll->con_reg);
-> -		} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
-> +		} while (!(tmp & BIT(pll->lock_offs)));
->  	}
->  	return 0;
->  }
-> @@ -252,8 +256,8 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
->  	.recalc_rate = samsung_pll35xx_recalc_rate,
->  	.round_rate = samsung_pll_round_rate,
->  	.set_rate = samsung_pll35xx_set_rate,
-> -	.enable = samsung_pll35xx_enable,
-> -	.disable = samsung_pll35xx_disable,
-> +	.enable = samsung_pll3xxx_enable,
-> +	.disable = samsung_pll3xxx_disable,
->  };
->  
->  static const struct clk_ops samsung_pll35xx_clk_min_ops = {
-> @@ -275,6 +279,7 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
->  #define PLL36XX_SDIV_SHIFT	(0)
->  #define PLL36XX_KDIV_SHIFT	(0)
->  #define PLL36XX_LOCK_STAT_SHIFT	(29)
-> +#define PLL36XX_ENABLE_SHIFT	(31)
->  
->  static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
->  				unsigned long parent_rate)
-> @@ -354,10 +359,12 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
->  	writel_relaxed(pll_con1, pll->con_reg + 4);
->  
->  	/* wait_lock_time */
-> -	do {
-> -		cpu_relax();
-> -		tmp = readl_relaxed(pll->con_reg);
-> -	} while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
-> +	if (pll_con0 & BIT(pll->enable_offs)) {
-
-Why this additional if() is needed?
-
-> +		do {
-> +			cpu_relax();
-> +			tmp = readl_relaxed(pll->con_reg);
-> +		} while (!(tmp & BIT(PLL36XX_LOCK_STAT_SHIFT)));
-
-To be consistent:
-BIT(pll->lock_offs)?
-
-Best regards,
-Krzysztof
-
+>  	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+>  			clkc_data->hw_onecell_data);
+>  
+> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+> index 17c6aef033ff..36330c2d4433 100644
+> --- a/drivers/clk/meson/gxbb.h
+> +++ b/drivers/clk/meson/gxbb.h
+> @@ -171,7 +171,7 @@
+>   * to be exposed to client nodes in DT: include/dt-bindings/clock/gxbb-clkc.h
+>   */
+>  #define CLKID_SYS_PLL		  0
+> -/* CLKID_CPUCLK */
+> +/* ID 1 is unused (it was used by the non-existing CLKID_CPUCLK before) */
+>  /* CLKID_HDMI_PLL */
+>  #define CLKID_FIXED_PLL		  3
+>  /* CLKID_FCLK_DIV2 */
+> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-
+> bindings/clock/gxbb-clkc.h
+> index 4516bc4253b5..54faf83a4851 100644
+> --- a/include/dt-bindings/clock/gxbb-clkc.h
+> +++ b/include/dt-bindings/clock/gxbb-clkc.h
+> @@ -5,7 +5,6 @@
+>  #ifndef __GXBB_CLKC_H
+>  #define __GXBB_CLKC_H
+>  
+> -#define CLKID_CPUCLK		1
+>  #define CLKID_HDMI_PLL		2
+>  #define CLKID_FCLK_DIV2		4
+>  #define CLKID_FCLK_DIV3		5
