@@ -1,33 +1,79 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Apr 2017 19:46:17 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 4/8] clk: Replace four seq_printf() calls by seq_putc()
-Message-ID: <20170422024617.GM7065@codeaurora.org>
-References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
- <3f7979fe-3dc0-e6d1-b13b-ea3d990ecf91@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <3f7979fe-3dc0-e6d1-b13b-ea3d990ecf91@users.sourceforge.net>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1491168866.3480.10.camel@baylibre.com>
+Subject: Re: [PATCH 1/2] clk: meson: mpll: fix division by zero in
+ rate_from_params
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, khilman@baylibre.com,
+ carlo@caione.org,  sboyd@codeaurora.org, mturquette@baylibre.com,
+ narmstrong@baylibre.com
+Date: Sun, 02 Apr 2017 23:34:26 +0200
+In-Reply-To: <CAFBinCDNsyEVzmkPQ5T_Kvkp3iARtS3VAG+RLrh_mLgn-7GQAA@mail.gmail.com>
+References: <20170401130225.8811-1-martin.blumenstingl@googlemail.com>
+	 <20170401130225.8811-2-martin.blumenstingl@googlemail.com>
+	 <1491144577.3480.1.camel@baylibre.com>
+	 <CAFBinCDNsyEVzmkPQ5T_Kvkp3iARtS3VAG+RLrh_mLgn-7GQAA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/20, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 20 Apr 2017 08:45:43 +0200
+On Sun, 2017-04-02 at 20:43 +0200, Martin Blumenstingl wrote:
+> Hi Jerome,
 > 
-> Four single characters should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
+> On Sun, Apr 2, 2017 at 4:49 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > On Sat, 2017-04-01 at 15:02 +0200, Martin Blumenstingl wrote:
+> > > According to the public datasheet all register bits in HHI_MPLL_CNTL7,
+> > > HHI_MPLL_CNTL8 and HHI_MPLL_CNTL9 default to zero. On all GX SoCs these
+> > > seem to be initialized by the bootloader to some default value.
+> > > However, on my Meson8 board they are not initialized, leading to a
+> > > division by zero in rate_from_params as the math is:
+> > > (parent_rate * SDM_DEN) / ((SDM_DEN * 0) + 0)
+> > > 
+> > > Although the rate_from_params function was only introduced recently the
+> > > original bug has been there for much longer. It was only exposed
+> > > recently when the MPLL clocks were added to the Meson8b clock driver.
+> > 
+> > The Documentation of the S905 also state that N2 minimal value is 4 and SDM
+> > minimal is 1 ... I should have been more careful ! Thanks for catching this
+> > Martin. We definitely need to fix this.
+> > 
+> > Patch seems ok but I have one question. Is the rate actually zero when the
+> > divisor is zero ?
+> > I'll be away from my boards until Wednesday but I can check this when I get
+> > back
+> > if you can't.
 > 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+> is there a way how I can check this? I have a consumer device so I
+> can't measure the frequencies at some pin.
 
-Applied to clk-next
+I'll try through the audio pins on wednesday. Don't worry about it. 
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> 
+> > > 
+> > > Fixes: 1c50da4f27 ("clk: meson: add mpll support")
+> > > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> > > ---
+> > >  drivers/clk/meson/clk-mpll.c | 7 ++++++-
+> > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+> > > index 540dabe5adad..551aa2a5b291 100644
+> > > --- a/drivers/clk/meson/clk-mpll.c
+> > > +++ b/drivers/clk/meson/clk-mpll.c
+> > > @@ -76,7 +76,12 @@ static unsigned long rate_from_params(unsigned long
+> > > parent_rate,
+> > >                                     unsigned long sdm,
+> > >                                     unsigned long n2)
+> > >  {
+> > > -     return (parent_rate * SDM_DEN) / ((SDM_DEN * n2) + sdm);
+> > > +     unsigned long divisor = (SDM_DEN * n2) + sdm;
+> > > +
+> > > +     if (divisor == 0)
+> > > +             return 0;
+> > > +     else
+> > > +             return (parent_rate * SDM_DEN) / divisor;
+> > >  }
+> > > 
+> > >  static void params_from_rate(unsigned long requested_rate,
