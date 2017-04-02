@@ -1,309 +1,214 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Tue, 18 Apr 2017 10:55:48 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [PATCH v4 05/11] drm/sun4i: abstract a engine type
-Message-ID: <20170418085548.4cisone2yfcuizcp@lukather>
-References: <20170416120849.54542-1-icenowy@aosc.io>
- <20170416120849.54542-6-icenowy@aosc.io>
-MIME-Version: 1.0
-In-Reply-To: <20170416120849.54542-6-icenowy@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
- David Airlie <airlied@linux.ie>, linux-sunxi@googlegroups.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============4824089932659554726=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1491147496.3480.5.camel@baylibre.com>
+Subject: Re: [PATCH 1/1] clk: meson: meson8b: add support for the NAND clocks
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
+Cc: carlo@caione.org, khilman@baylibre.com,
+	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com, Stephen Boyd
+	 <sboyd@codeaurora.org>, narmstrong@baylibre.com
+Date: Sun, 02 Apr 2017 17:38:16 +0200
+In-Reply-To: <20170401131001.9988-2-martin.blumenstingl@googlemail.com>
+References: <20170401131001.9988-1-martin.blumenstingl@googlemail.com>
+	 <20170401131001.9988-2-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
+On Sat, 2017-04-01 at 15:10 +0200, Martin Blumenstingl wrote:
+> This adds the NAND clocks (from the HHI_NAND_CLK_CNTL register) to the
+> Meson8b clock driver. There are three NAND clocks: a gate which enables
+> or disables the NAND clock, a mux and a divider (which divides the mux
+> output).
+> Unfortunately the public S805 datasheet does not document the mux
+> parents. However, the vendor kernel has a few hints for us which allows
+> us to make an educated guess about the clock parents. To do this we need
+> to have a look at set_nand_core_clk() from the vendor's NAND driver (see
+> [0]):
+> - XTAL = (4<<9) | (1<<8) | 0
+> - 160MHz = (0<<9) | (1<<8) | 3)
+> - 182MHz = (3<<9) | (1<<8) | 1)
+> - 212MHz = (1<<9) | (1<<8) | 3)
+> - 255MHz = (2<<9) | (1<<8) | 1)
+> 
+> should only be used for debugging) we have to do a bit of math for the
+> other parents: target_freq * divider = rate of parent clock
+> Bit 8 above is the enable bit, so we can ignore it here. Bits 11:9 are
+> the mux index and bits 6:0 are the 0-based divider (so we need to add
+> 1). This gives us:
+> - mux 0 (160MHz * 4) = fclk_div4 (actual rate = 637.5MHz, off by 2.5MHz)
+> - mux 1 (212MHz * 4) = fclk_div3 (actual rate = 850MHz, off by 2MHz)
+> - mux 2 (255MHz * 2) = fclk_div5 (matches exactly 510MHz)
+> - mux 3 (182MHz * 2) = fclk_div7 (actual rate = 346.3MHz, off by 0.3MHz)
+> 
 
---===============4824089932659554726==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4eoi5okntjngbazg"
-Content-Disposition: inline
+Good job detective ;)
+What is strange is that amlogic seems to have change the index of these parents
+on the gxbb. I have a documentation (which I'm not at liberty to share
+unfortunately) which gives the following index on the S905:
+0: xtal
+1: fclk_div2
+2: fclk_div3
+3: flck_div5
+4: fclk_div7
+5: mpll2
+6: mpll3
+7: gp0
 
+Did they change the ids, or is the documentation wrong ? I don't know, but we'll
+to pay attention to that if you port your NAND work the gx family.
 
---4eoi5okntjngbazg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-Thanks for that rework.
-
-On Sun, Apr 16, 2017 at 08:08:43PM +0800, Icenowy Zheng wrote:
-> As we are going to add support for the Allwinner DE2 engine in sun4i-drm
-> driver, we will finally have two types of display engines -- the DE1
-> backend and the DE2 mixer. They both do some display blending and feed
-> graphics data to TCON, so I choose to call them both "engine" here.
->=20
-> Abstract the engine type to void * and a ops struct, which contains
-> functions that should be called outside the engine-specified code (in
-> TCON, CRTC or TV Encoder code).
->=20
-> A dedicated Kconfig option is also added to control whether
-> sun4i-backend-specified code (sun4i_backend.c and sun4i_layer.c) should
-> be built. As we removed the codes in CRTC code that directly call the
-> layer code, we can now extract the layer part and combine it with the
-> backend part into a new module, sun4i-backend.ko.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> [0]
+> https://github.com/khadas/linux/blob/9587681285cb/drivers/amlogic/amlnf/dev/am
+> lnf_ctrl.c#L314
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > ---
-> Changes in v4:
-> - Comments to tag the color correction functions as optional.
-> - Check before calling the optional functions.
-> - Change layers_init to satisfy new PATCH v4 04/11.
->=20
->  drivers/gpu/drm/sun4i/Kconfig         | 10 ++++++++++
->  drivers/gpu/drm/sun4i/Makefile        |  6 ++++--
->  drivers/gpu/drm/sun4i/sun4i_backend.c | 26 +++++++++++++++++++-------
->  drivers/gpu/drm/sun4i/sun4i_backend.h |  5 -----
->  drivers/gpu/drm/sun4i/sun4i_crtc.c    | 14 +++++++-------
->  drivers/gpu/drm/sun4i/sun4i_crtc.h    |  7 ++++---
->  drivers/gpu/drm/sun4i/sun4i_drv.h     |  3 ++-
->  drivers/gpu/drm/sun4i/sun4i_layer.c   |  2 +-
->  drivers/gpu/drm/sun4i/sun4i_layer.h   |  3 ++-
->  drivers/gpu/drm/sun4i/sun4i_tcon.c    |  2 +-
->  drivers/gpu/drm/sun4i/sun4i_tv.c      | 11 ++++++-----
->  drivers/gpu/drm/sun4i/sunxi_engine.h  | 35 +++++++++++++++++++++++++++++=
-++++++
->  12 files changed, 91 insertions(+), 33 deletions(-)
->  create mode 100644 drivers/gpu/drm/sun4i/sunxi_engine.h
->=20
-> diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-> index a4b357db8856..5a8227f37cc4 100644
-> --- a/drivers/gpu/drm/sun4i/Kconfig
-> +++ b/drivers/gpu/drm/sun4i/Kconfig
-> @@ -12,3 +12,13 @@ config DRM_SUN4I
->  	  Choose this option if you have an Allwinner SoC with a
->  	  Display Engine. If M is selected the module will be called
->  	  sun4i-drm.
+>  drivers/clk/meson/meson8b.c | 53
+> +++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/meson/meson8b.h |  6 ++++-
+>  2 files changed, 58 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index e9985503165c..b7f3cf8ed386 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+> @@ -403,6 +403,53 @@ struct clk_gate meson8b_clk81 = {
+>  	},
+>  };
+>  
+> +static u32 mux_table_nand[]	= { 0, 1, 2, 3, 4 };
+You can drop this table, you don't need it.
+
 > +
-> +config DRM_SUN4I_BACKEND
-> +	tristate "Support for Allwinner A10 Display Engine Backend"
-> +	depends on DRM_SUN4I
-> +	default DRM_SUN4I
-> +	help
-> +	  Choose this option if you have an Allwinner SoC with the
-> +	  original Allwinner Display Engine, which has a backend to
-> +	  do some alpha blending and feed graphics to TCON. If M is
-> +	  selected the module will be called sun4i-backend.
-> diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makef=
-ile
-> index 59b757350a1f..1db1068b9be1 100644
-> --- a/drivers/gpu/drm/sun4i/Makefile
-> +++ b/drivers/gpu/drm/sun4i/Makefile
-> @@ -5,9 +5,11 @@ sun4i-tcon-y +=3D sun4i_tcon.o
->  sun4i-tcon-y +=3D sun4i_rgb.o
->  sun4i-tcon-y +=3D sun4i_dotclock.o
->  sun4i-tcon-y +=3D sun4i_crtc.o
-> -sun4i-tcon-y +=3D sun4i_layer.o
+> +struct clk_mux meson8b_nand_clk_sel = {
+> +	.reg = (void *)HHI_NAND_CLK_CNTL,
+> +	.mask = 0x7,
+> +	.shift = 9,
+> +	.table = mux_table_nand,
+> +	.flags = CLK_MUX_ROUND_CLOSEST,
+
+If you go for CLK_SET_RATE_NO_REPARENT, I think this flag is not really useful.
+
+> +	.lock = &clk_lock,
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "nand_clk_sel",
+> +		.ops = &clk_mux_ops,
+> +		/* FIXME all other parents are unknown: */
+> +		.parent_names = (const char *[]){ "fclk_div4", "fclk_div3",
+> +			"fclk_div5", "fclk_div7", "xtal" },
+> +		.num_parents = 5,
+> +		.flags = CLK_SET_RATE_NO_REPARENT,
+
+PSB
+
+> +	},
+> +};
 > +
-> +sun4i-backend-y +=3D sun4i_layer.o
-> +sun4i-backend-y +=3D sun4i_backend.o
-> =20
->  obj-$(CONFIG_DRM_SUN4I)		+=3D sun4i-drm.o sun4i-tcon.o
-> -obj-$(CONFIG_DRM_SUN4I)		+=3D sun4i_backend.o
-> +obj-$(CONFIG_DRM_SUN4I_BACKEND)	+=3D sun4i-backend.o
->  obj-$(CONFIG_DRM_SUN4I)		+=3D sun6i_drc.o
->  obj-$(CONFIG_DRM_SUN4I)		+=3D sun4i_tv.o
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4=
-i/sun4i_backend.c
-> index d660741ba475..a16c96a002a4 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> @@ -23,6 +23,8 @@
-> =20
->  #include "sun4i_backend.h"
->  #include "sun4i_drv.h"
-> +#include "sun4i_layer.h"
-> +#include "sunxi_engine.h"
-> =20
->  static const u32 sunxi_rgb2yuv_coef[12] =3D {
->  	0x00000107, 0x00000204, 0x00000064, 0x00000108,
-> @@ -30,9 +32,10 @@ static const u32 sunxi_rgb2yuv_coef[12] =3D {
->  	0x000001c1, 0x00003e88, 0x00003fb8, 0x00000808
->  };
-> =20
-> -void sun4i_backend_apply_color_correction(struct sun4i_backend *backend)
-> +static void sun4i_backend_apply_color_correction(void *engine)
->  {
->  	int i;
-> +	struct sun4i_backend *backend =3D engine;
+> +struct clk_divider meson8b_nand_clk_div = {
+> +	.reg = (void *)HHI_NAND_CLK_CNTL,
+> +	.shift = 0,
+> +	.width = 6,
+> +	.flags = CLK_DIVIDER_ROUND_CLOSEST,
+> +	.lock = &clk_lock,
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "nand_clk_div",
+> +		.ops = &clk_divider_ops,
+> +		.parent_names = (const char *[]){ "nand_clk_sel" },
+> +		.num_parents = 1,
 
-I'm not really fond of passing an opaque pointer here, and hope that
-things will work out.
+I think you are trying to tightly control all those elements in your nand
+driver, aren't you ? To mimic the vendor driver settings, maybe ?
 
-I think having a common structure, holding the common thingsand a more
-specific structure for that one would work better.
+While it would surely work, another way is possible. You could give the flag
+CLK_SET_RATE_PARENT (and drop the CLK_SET_RATE_NO_REPARENT) to all those
+elements and let the CCF do the work for you.
 
-Something like
+There is a good chance it will come with same settings anyway (if that's the
+best math can provide)
 
-struct sunxi_engine {
-       struct regmap	*regs;
-};
+The good thing about it is that it hides those quirks from your driver. So if
+the gxbb has slighly different clock setup for the nand, you won't have to deal
+with it in your driver, just call clk_set_rate on the gate and be done with it.
 
-struct sun4i_backend {
-       struct sunxi_engine	engine;
+Could you give it try ?
 
-	struct clk		*sat_clk;
-	struct reset_control	*sat_reset;
-=09
-};
-
-static void sun4i_backend_apply_color_correction(struct sunxi_engine *engin=
-e)
-       struct sun4i_backend *backend =3D container_of(engine, struct sun4i_=
-backend, engine);
-
-=2E..
-
-> +static const struct sunxi_engine_ops sun4i_backend_engine_ops =3D {
-> +	.commit =3D sun4i_backend_commit,
-> +	.layers_init =3D sun4i_layers_init,
-> +	.apply_color_correction =3D sun4i_backend_apply_color_correction,
-> +	.disable_color_correction =3D sun4i_backend_disable_color_correction,
-
-Please align the values with tabs, like done in the other structures
-created that way in this driver.
-
->  static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
-> @@ -56,7 +55,7 @@ static void sun4i_crtc_atomic_flush(struct drm_crtc *cr=
-tc,
-> =20
->  	DRM_DEBUG_DRIVER("Committing plane changes\n");
-> =20
-> -	sun4i_backend_commit(scrtc->backend);
-> +	scrtc->engine_ops->commit(scrtc->engine);
-
-You rely on the backend having setup things properly, which is pretty
-fragile. Ideally, you should have a function to check that engine_ops
-and commit is !NULL, and call it, and the consumers would use that
-function...
-
-> @@ -362,7 +361,9 @@ static void sun4i_tv_disable(struct drm_encoder *enco=
-der)
->  	regmap_update_bits(tv->regs, SUN4I_TVE_EN_REG,
->  			   SUN4I_TVE_EN_ENABLE,
->  			   0);
-> -	sun4i_backend_disable_color_correction(backend);
+> +	},
+> +};
 > +
-> +	if (crtc->engine_ops->disable_color_correction)
-> +		crtc->engine_ops->disable_color_correction(crtc->engine);
->  }
-
-=2E.. Instead of having to do it in some cases, but not always ...
-
->  static void sun4i_tv_enable(struct drm_encoder *encoder)
-> @@ -370,11 +371,11 @@ static void sun4i_tv_enable(struct drm_encoder *enc=
-oder)
->  	struct sun4i_tv *tv =3D drm_encoder_to_sun4i_tv(encoder);
->  	struct sun4i_crtc *crtc =3D drm_crtc_to_sun4i_crtc(encoder->crtc);
->  	struct sun4i_tcon *tcon =3D crtc->tcon;
-> -	struct sun4i_backend *backend =3D crtc->backend;
-> =20
->  	DRM_DEBUG_DRIVER("Enabling the TV Output\n");
-> =20
-> -	sun4i_backend_apply_color_correction(backend);
-> +	if (crtc->engine_ops->apply_color_correction)
-> +		crtc->engine_ops->apply_color_correction(crtc->engine);
-> =20
->  	regmap_update_bits(tv->regs, SUN4I_TVE_EN_REG,
->  			   SUN4I_TVE_EN_ENABLE,
-> diff --git a/drivers/gpu/drm/sun4i/sunxi_engine.h b/drivers/gpu/drm/sun4i=
-/sunxi_engine.h
-> new file mode 100644
-> index 000000000000..a9128abda66f
-> --- /dev/null
-> +++ b/drivers/gpu/drm/sun4i/sunxi_engine.h
-> @@ -0,0 +1,35 @@
-> +/*
-> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License as
-> + * published by the Free Software Foundation; either version 2 of
-> + * the License, or (at your option) any later version.
-> + */
+> +struct clk_gate meson8b_nand_clk_gate = {
+> +	.reg = (void *)HHI_NAND_CLK_CNTL,
+> +	.bit_idx = 8,
+> +	.lock = &clk_lock,
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "nand_clk_gate",
+> +		.ops = &clk_gate_ops,
+> +		.parent_names = (const char *[]){ "nand_clk_div" },
+> +		.num_parents = 1,
+> +		.flags = CLK_SET_RATE_PARENT,
+> +	},
+> +};
 > +
-> +#ifndef _SUNXI_ENGINE_H_
-> +#define _SUNXI_ENGINE_H_
-> +
-> +struct sun4i_crtc;
-> +
-> +struct sunxi_engine_ops {
-> +	/* Commit the changes to the engine */
-> +	void (*commit)(void *engine);
-> +	/* Initialize layers (planes) for this engine */
-> +	struct drm_plane **(*layers_init)(struct drm_device *drm,
-> +					  struct sun4i_crtc *crtc);
-> +
-> +	/*
-> +	 * These are optional functions for the TV Encoder. Please check
-> +	 * their presence before calling them.
-> +	 *
-> +	 * The first function applies the color space correction needed
-> +	 * for outputing correct TV signal.
-> +	 *
-> +	 * The second function disabled the correction.
-> +	 */
-> +	void (*apply_color_correction)(void *engine);
-> +	void (*disable_color_correction)(void *engine);
-
-=2E.. And have to document it.
-
-Please also use kerneldoc for those comments.
-
-Thanks again!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---4eoi5okntjngbazg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJY9dSIAAoJEBx+YmzsjxAg4lgP/1c3CdGcFEH1zaCyp1LFdv9L
-KX8pwabsTJz7mi858IdRnXnGdyAuofjJL5WsClHCsovpBYhg5U1Gk/nkT1h9P8jL
-pI20ZsuFSNyEsgv9YHWGWc2OUJVjIjB30LWKgUOucALWXOs5Ru2i5h3NSGfP7Km1
-Sx7evdVlFnPQH5eqfejHfbeNQj326CHe6i8+Q2KrPStZPwP3Wmuwx9wKhjoTl4/Z
-3sQtycy6OpdjWvGJjJeK9bPoC98iwy1iqZ1cpMsWicnCetPfLnZP+lIZC7vaZS8o
-suNJ7WYUbMnNCjbsvcjkLCD+IR+GJUZqPHF/4SU5uzm+uTuzFHxU+ReGSK9JjORw
-v5K/OVKish0+fVjCpwZVfBe1gd7K3zNUAw+9ekS1uRKBtbn/FvC8q1OUb1Aj6n6r
-vuVnbJdMmGwVfwgQiTQOzx0f7CB+iwJt0RJ2DYRqDioyLmo5HY8bt5zIiOUZqTJH
-QC1nJQQxMKF8T2exEuXPWPIzMcy0GUGBHsGbrB2f4kzOKRRTt6Ep8cmMc7aK6f8r
-n7nybYGsa57GVoe4h+muE2XDX8g0RHhWSeMmqHnxqZUvBUrDJk7VJv7MeCPMf1ES
-T2CM+NV/Bbs6vux3ZgBwJTsKwldhG7yAlz6EEZ+cVNq0RB78PDMBd7SGiZm9h/5j
-9wNZPWj3rstuMzdFVI4x
-=l71y
------END PGP SIGNATURE-----
-
---4eoi5okntjngbazg--
-
-
---===============4824089932659554726==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============4824089932659554726==--
+>  /* Everything Else (EE) domain gates */
+>  
+>  static MESON_GATE(meson8b_ddr, HHI_GCLK_MPEG0, 0);
+> @@ -584,6 +631,9 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data
+> = {
+>  		[CLKID_MPLL0]		    = &meson8b_mpll0.hw,
+>  		[CLKID_MPLL1]		    = &meson8b_mpll1.hw,
+>  		[CLKID_MPLL2]		    = &meson8b_mpll2.hw,
+> +		[CLKID_NAND_SEL]	    = &meson8b_nand_clk_sel.hw,
+> +		[CLKID_NAND_DIV]	    = &meson8b_nand_clk_div.hw,
+> +		[CLKID_NAND_CLK]	    = &meson8b_nand_clk_gate.hw,
+>  	},
+>  	.num = CLK_NR_CLKS,
+>  };
+> @@ -679,14 +729,17 @@ static struct clk_gate *const meson8b_clk_gates[] = {
+>  	&meson8b_ao_ahb_sram,
+>  	&meson8b_ao_ahb_bus,
+>  	&meson8b_ao_iface,
+> +	&meson8b_nand_clk_gate,
+>  };
+>  
+>  static struct clk_mux *const meson8b_clk_muxes[] = {
+>  	&meson8b_mpeg_clk_sel,
+> +	&meson8b_nand_clk_sel,
+>  };
+>  
+>  static struct clk_divider *const meson8b_clk_dividers[] = {
+>  	&meson8b_mpeg_clk_div,
+> +	&meson8b_nand_clk_div,
+>  };
+>  
+>  static int meson8b_clkc_probe(struct platform_device *pdev)
+> diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+> index 3881defc8644..cbb8001b5fe8 100644
+> --- a/drivers/clk/meson/meson8b.h
+> +++ b/drivers/clk/meson/meson8b.h
+> @@ -37,6 +37,7 @@
+>  #define HHI_GCLK_AO			0x154 /* 0x55 offset in data sheet
+> */
+>  #define HHI_SYS_CPU_CLK_CNTL1		0x15c /* 0x57 offset in data
+> sheet */
+>  #define HHI_MPEG_CLK_CNTL		0x174 /* 0x5d offset in data sheet
+> */
+> +#define HHI_NAND_CLK_CNTL		0x25c /* 0x97 offset in data sheet
+> */
+>  #define HHI_MPLL_CNTL			0x280 /* 0xa0 offset in data
+> sheet */
+>  #define HHI_SYS_PLL_CNTL		0x300 /* 0xc0 offset in data sheet */
+>  #define HHI_VID_PLL_CNTL		0x320 /* 0xc8 offset in data sheet */
+> @@ -160,8 +161,11 @@
+>  #define CLKID_MPLL0		93
+>  #define CLKID_MPLL1		94
+>  #define CLKID_MPLL2		95
+> +#define CLKID_NAND_SEL		96
+> +#define CLKID_NAND_DIV		97
+> +#define CLKID_NAND_CLK		98
+>  
+> -#define CLK_NR_CLKS		96
+> +#define CLK_NR_CLKS		99
+>  
+>  /* include the CLKIDs that have been made part of the stable DT binding */
+>  #include <dt-bindings/clock/meson8b-clkc.h>
