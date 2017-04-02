@@ -1,47 +1,77 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 0/5] Some Allwinner CCU tweaks and basical DVFS support for H3/H2+
-Date: Sun,  9 Apr 2017 02:50:20 +0800
-Message-Id: <20170408185025.53841-1-icenowy@aosc.io>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Sun, 2 Apr 2017 18:02:37 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 0/5] Add support for the R_CCU on Allwinner H3/A64 SoCs
+Message-ID: <20170402160237.osgt32ugw7cz7ubg@lukather>
+References: <20170329104246.34204-1-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ei5u7bbps4yf4ctl"
+In-Reply-To: <20170329104246.34204-1-icenowy@aosc.io>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset aim to add basical DVFS support for Allwinner H3/H2+ SoCs, they
-seem to be nearly the same.
 
-The first patch is a CCU fix for all NKMP-type clocks, not H3 limited. Please
-schedule this patch to 4.11 queue, as A33 needs also this patch. It solves the
-problem that system hangs when the PLL_CPUX change for the first time.
+--ei5u7bbps4yf4ctl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The second patch allows the PLL_CPUX to change for CPUX clock on H3.
+Hi,
 
-The third patch imports a bunch of new SoCs' compatibles into
-cpufreq-dt-platdev driver.
+On Wed, Mar 29, 2017 at 06:42:41PM +0800, Icenowy Zheng wrote:
+> Allwinner SoCs after sun6i-a31 nearly all have a R_CCU in PRCM part.
+> (V3s and R40 do not have it, as they have even no PRCM)
+>=20
+> This patch adds support for the ones on H3/A64.
+>=20
+> Some clock/reset values are reserved for easier extending the support to
+> A31/A23, but for this I think some changes to the PRCM MFD should be made,
+> see [1] (Although this is only a sketch).
+>=20
+> The r_pio device node is also added for A64, as the driver is already
+> merged, and its depends (r_ccu) is now met.
+>=20
+> [1] https://github.com/wens/linux/commits/sunxi-ng-prcm
 
-The fourth patch adds several operating points for Allwinner H3/H2+ CPU.
+It looks good now, thanks.
 
-The fifth patch adds the regulator node to Orange Pi Zero board's device
-tree.
+Beside from the minor fix you've mentionned, please don't use the
+defined IDs (yet) in your DT patches (3 to 5).
 
-Icenowy Zheng (5):
-  clk: sunxi-ng: prevent NKMP clocks from temporarily get higher freq
-  clk: sunxi-ng: allow set parent clock (PLL_CPUX) for CPUX clock on H3
-  cpufreq: dt: Add support for some new Allwinner SoCs
-  ARM: sun8i: h3: add operating-points-v2 table for CPU
-  ARM: sun8i: h2+: add SY8113B regulator used by Orange Pi Zero board
+It will be a PITA to get merged otherwise. We'll fix it later.
 
- arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts | 21 +++++++
- arch/arm/boot/dts/sun8i-h3.dtsi                   | 38 +++++++++++-
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c               |  2 +-
- drivers/clk/sunxi-ng/ccu_nkmp.c                   | 76 +++++++++++++++++++----
- drivers/cpufreq/cpufreq-dt-platdev.c              |  5 ++
- 5 files changed, 129 insertions(+), 13 deletions(-)
+Thanks!
+Maxime
 
--- 
-2.12.2
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--ei5u7bbps4yf4ctl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJY4SCYAAoJEBx+YmzsjxAgEn4P/AtoGCilXGI4M7SwBbF1aOsa
+O9MguoSa22XPqW7YDz+4Y/lryFaNOr6ickazZJcmHLv70sGjkn06dfTR+L/d0cgX
+tIy8yjKTT0kCAemv/6jaXLTA/d79dTJCq1tD6UT34q+K+S+L35nnEP98zdorNRP/
+jBwW0D4y7PABpg/7FkA7s0mU0vVDNyOyPg2CxcTIqYlDeAZtuCsnSP5Ym1LLT/lY
+MPUbKTMqTfi/hS8Q2i4/6c/Qm1LTVvh6Dfzy6t4QjyXj5sCzb7nep578BAgk3BYE
+vC32QEvTesmaIraC/WVkYT5IyH5SPwRGYbU8Qjsr88g4gze+xFMNULW++4M3Isva
+povd3Neybj1MyJJwFZJ51vHMnKeEdsk1wUdbrvoILzBT6eY26xqzzIihjMvyrWux
+R9BMuH4Wp6vnrjGLLdjWWaIkGqQR4LvZb3axua3zyZSi0AKXQ8a5dyJlyvk7gXYi
+v8r6u+ybth/DrZ2dAOwV/ZWRm4ycgNTPzWZYhOqpO06AspLydIz4E8wO8yRqz8UT
+hHALTkgRMx4OXFBLMpkT+hD98GQGw3ZFc/U2Kg4eTxqyedHaPjh93NNQpcLp+Esr
+Obrgdkw+kssi/p9k5IiRNkjvr1Ch6OVhzw9YS2JVkTuxBKEgP9BHMPDRcE4fVLJQ
+8+YNXvy3aEJGQFgq2IxW
+=XXYu
+-----END PGP SIGNATURE-----
+
+--ei5u7bbps4yf4ctl--
