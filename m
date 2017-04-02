@@ -1,118 +1,66 @@
-Return-Path: <clabbe.montjoie@gmail.com>
-Return-Path: <clabbe.montjoie@gmail.com>
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH] clk: sunxi-ng: Fix dependency on sunxi_gate
-Date: Tue, 25 Apr 2017 19:12:09 +0200
-Message-Id: <20170425171209.6229-1-clabbe.montjoie@gmail.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1491145750.3480.3.camel@baylibre.com>
+Subject: Re: [PATCH 2/2] clk: meson: mpll: use 64bit math in rate_from_params
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, khilman@baylibre.com,
+	carlo@caione.org, sboyd@codeaurora.org, mturquette@baylibre.com,
+	narmstrong@baylibre.com
+Date: Sun, 02 Apr 2017 17:09:10 +0200
+In-Reply-To: <20170401130225.8811-3-martin.blumenstingl@googlemail.com>
+References: <20170401130225.8811-1-martin.blumenstingl@googlemail.com>
+	 <20170401130225.8811-3-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-When CONFIG_SUNXI_CCU is set but no other SUNXI_CCU is selected i got
-the following build error:
-drivers/built-in.o: In function `ccu_pll_notifier_cb':
-drivers/clk/sunxi-ng/ccu_common.c:71: undefined reference to `ccu_gate_helper_disable'
-drivers/clk/sunxi-ng/ccu_common.c:73: undefined reference to `ccu_gate_helper_enable'
+On Sat, 2017-04-01 at 15:02 +0200, Martin Blumenstingl wrote:
+> On Meson8b the MPLL parent clock (fixed_pll) has a rate of 2550MHz.
+> Multiplying this with SDM_DEN results in a value greater than 32bits.
+> This is not a problem on the 64bit Meson GX SoCs, but it may result in
+> undefined behavior on the older 32bit Meson8b SoC.
+> 
+> While rate_from_params was only introduced recently to make the math
+> reusable from _round_rate and _recalc_rate the original bug exists much
+> longer.
 
-The problem is the function ccu_pll_notifier_cb in ccu_common.c need
-some function from ccu_gate.c which is not compiled since SUNXI_CCU_GATE
-is not selected.
+Again, thanks for testing and fixing this Martin !
 
-This patch remove SUNXI_CCU_GATE and compile ccu_gate.c unconditionnaly
-since all other combination of options select SUNXI_CCU_GATE finally.
+> 
+> Fixes: 1c50da4f27 ("clk: meson: add mpll support")
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/clk/meson/clk-mpll.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+> index 551aa2a5b291..4306ad833a4f 100644
+> --- a/drivers/clk/meson/clk-mpll.c
+> +++ b/drivers/clk/meson/clk-mpll.c
+> @@ -62,6 +62,7 @@
+>   */
+>  
+>  #include <linux/clk-provider.h>
+> +#include <linux/math64.h>
+>  #include "clkc.h"
+>  
+>  #define SDM_DEN 16384
+> @@ -81,7 +82,7 @@ static unsigned long rate_from_params(unsigned long
+> parent_rate,
+>  	if (divisor == 0)
+>  		return 0;
+>  	else
+> -		return (parent_rate * SDM_DEN) / divisor;
+> +		return mul_u64_u32_div(parent_rate, SDM_DEN, divisor);
 
-Fixes: 02ae2bc6febd ("clk: sunxi-ng: Add clk notifier to gate then ungate PLL clocks")
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
----
- drivers/clk/sunxi-ng/Kconfig  | 11 -----------
- drivers/clk/sunxi-ng/Makefile |  2 +-
- 2 files changed, 1 insertion(+), 12 deletions(-)
+Just casting parent_rate to u64 should be enough, don't you think ?
+Actually, I was thinking of copying a pattern that is used a lot in CCF and use
+DIV_ROUND_UP_ULL((u64)foo, bar). See clk-divider.c.
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index 8bee225..d7842f9 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -15,9 +15,6 @@ config SUNXI_CCU_DIV
- config SUNXI_CCU_FRAC
- 	bool
- 
--config SUNXI_CCU_GATE
--	bool
--
- config SUNXI_CCU_MUX
- 	bool
- 
-@@ -32,24 +29,19 @@ config SUNXI_CCU_PHASE
- 
- config SUNXI_CCU_NK
- 	bool
--	select SUNXI_CCU_GATE
- 
- config SUNXI_CCU_NKM
- 	bool
--	select SUNXI_CCU_GATE
- 
- config SUNXI_CCU_NKMP
- 	bool
--	select SUNXI_CCU_GATE
- 
- config SUNXI_CCU_NM
- 	bool
- 	select SUNXI_CCU_FRAC
--	select SUNXI_CCU_GATE
- 
- config SUNXI_CCU_MP
- 	bool
--	select SUNXI_CCU_GATE
- 	select SUNXI_CCU_MUX
- 
- # SoC Drivers
-@@ -119,7 +111,6 @@ config SUN8I_A33_CCU
- config SUN8I_A83T_CCU
- 	bool "Support for the Allwinner A83T CCU"
- 	select SUNXI_CCU_DIV
--	select SUNXI_CCU_GATE
- 	select SUNXI_CCU_NKMP
- 	select SUNXI_CCU_NM
- 	select SUNXI_CCU_MP
-@@ -154,7 +145,6 @@ config SUN9I_A80_CCU
- 	bool "Support for the Allwinner A80 CCU"
- 	select SUNXI_CCU_DIV
- 	select SUNXI_CCU_MULT
--	select SUNXI_CCU_GATE
- 	select SUNXI_CCU_NKMP
- 	select SUNXI_CCU_NM
- 	select SUNXI_CCU_MP
-@@ -165,7 +155,6 @@ config SUN9I_A80_CCU
- config SUN8I_R_CCU
- 	bool "Support for Allwinner SoCs' PRCM CCUs"
- 	select SUNXI_CCU_DIV
--	select SUNXI_CCU_GATE
- 	default MACH_SUN8I || (ARCH_SUNXI && ARM64)
- 
- endif
-diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
-index 78028c8..52aab41 100644
---- a/drivers/clk/sunxi-ng/Makefile
-+++ b/drivers/clk/sunxi-ng/Makefile
-@@ -1,11 +1,11 @@
- # Common objects
- obj-$(CONFIG_SUNXI_CCU)		+= ccu_common.o
- obj-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
-+obj-$(CONFIG_SUNXI_CCU)		+= ccu_gate.o
- 
- # Base clock types
- obj-$(CONFIG_SUNXI_CCU_DIV)	+= ccu_div.o
- obj-$(CONFIG_SUNXI_CCU_FRAC)	+= ccu_frac.o
--obj-$(CONFIG_SUNXI_CCU_GATE)	+= ccu_gate.o
- obj-$(CONFIG_SUNXI_CCU_MUX)	+= ccu_mux.o
- obj-$(CONFIG_SUNXI_CCU_MULT)	+= ccu_mult.o
- obj-$(CONFIG_SUNXI_CCU_PHASE)	+= ccu_phase.o
--- 
-2.10.2
+Would this be ok with you ?
+
+>  }
+>  
+>  static void params_from_rate(unsigned long requested_rate,
