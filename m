@@ -1,66 +1,44 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 28 Apr 2017 13:24:01 -0500
-From: Rob Herring <robh@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, Janos Laube <janos.dev@gmail.com>,
-	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	openwrt-devel@openwrt.org, linux-arm-kernel@lists.infradead.org,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 1/2] clk: Add bindings for the Gemini Clock Controller
-Message-ID: <20170428182401.rpn7ytxvu6shy5sn@rob-hp-laptop>
-References: <20170424185545.26608-1-linus.walleij@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170424185545.26608-1-linus.walleij@linaro.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a7745: Remove nonexisting scu-src[0789] clocks
+Date: Mon,  3 Apr 2017 12:03:34 +0200
+Message-Id: <1491213814-13826-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 24, 2017 at 08:55:45PM +0200, Linus Walleij wrote:
-> This adds device tree bindings and a header for the Gemini SoC
-> Clock Controller.
-> 
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  .../clock/cortina,gemini-clock-controller.txt      | 25 +++++++++++++++++++
->  include/dt-bindings/clock/cortina,gemini-clock.h   | 29 ++++++++++++++++++++++
->  2 files changed, 54 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
->  create mode 100644 include/dt-bindings/clock/cortina,gemini-clock.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt b/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
-> new file mode 100644
-> index 000000000000..7af84acfcbce
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
-> @@ -0,0 +1,25 @@
-> +Clock bindings for the Cortina Systems Gemini SoC Clock Controller
-> +
-> +Required properties :
-> +- compatible : shall contain the following:
-> +  "cortina,gemini-clock-controller"
-> +- #clock-cells should be <1>
-> +
-> +The Gemini clock controller needs to be placed as a subnode of the
-> +system controller.
-> +
-> +All available clocks are defined as preprocessor macros in
-> +dt-bindings/clock/cortina,gemini-clock.h header and can be used in device
-> +tree sources.
-> +
-> +Example:
-> +
-> +syscon: syscon@40000000 {
-> +	compatible = "cortina,gemini-syscon", "syscon", "simple-mfd";
-> +	reg = <0x40000000 0x1000>;
-> +
-> +	clock-controller {
-> +		compatible = "cortina,gemini-clock-controller";
-> +		#clock-cells = <1>;
+RZ/G1E does not have the SCU-SRC[0789] modules and module clocks.
 
-There's not really much reason to have a child node here. The parent can 
-be the clock provider.
+Fixes: 9127d54bb8947159 ("clk: renesas: cpg-mssr: Add R8A7745 support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7745-cpg-mssr.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Rob
+diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+index 2f15ba786c3b0ea1..08db21cc6436bdc5 100644
+--- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+@@ -167,16 +167,12 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
+ 	DEF_MOD("scu-dvc0",		1019,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-ctu1-mix1",	1020,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-ctu0-mix0",	1021,	MOD_CLK_ID(1017)),
+-	DEF_MOD("scu-src9",		1022,	MOD_CLK_ID(1017)),
+-	DEF_MOD("scu-src8",		1023,	MOD_CLK_ID(1017)),
+-	DEF_MOD("scu-src7",		1024,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-src6",		1025,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-src5",		1026,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-src4",		1027,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-src3",		1028,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-src2",		1029,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scu-src1",		1030,	MOD_CLK_ID(1017)),
+-	DEF_MOD("scu-src0",		1031,	MOD_CLK_ID(1017)),
+ 	DEF_MOD("scifa3",		1106,	R8A7745_CLK_MP),
+ 	DEF_MOD("scifa4",		1107,	R8A7745_CLK_MP),
+ 	DEF_MOD("scifa5",		1108,	R8A7745_CLK_MP),
+-- 
+2.7.4
