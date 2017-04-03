@@ -1,103 +1,83 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:46988 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752042AbdDJEpd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2017 00:45:33 -0400
-Subject: Re: [PATCH V3 0/5] iommu/arm-smmu: Add runtime pm/sleep support
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
- <20170331175457.GD4897@arm.com>
- <CAF6AEGv_1pNvhCc-mVP5S28Yt5kTJmTRfe8tKSJpEmxfOKM7Jg@mail.gmail.com>
- <20170403172307.GI5706@arm.com> <20170404193914.GF18246@codeaurora.org>
- <20170407180105.GA22050@jcrouse-lnx.qualcomm.com>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <1ceef21f-240a-013d-4bcf-0b4ea5a24bf6@codeaurora.org>
-Date: Mon, 10 Apr 2017 10:15:18 +0530
-MIME-Version: 1.0
-In-Reply-To: <20170407180105.GA22050@jcrouse-lnx.qualcomm.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: rcar-gen2: Fix PLL0 on R-Car V2H and E2
+Date: Mon,  3 Apr 2017 12:02:33 +0200
+Message-Id: <1491213753-13731-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jordon,
+R-Car V2H and E2 do not have the PLL0CR register, but use a fixed
+multiplier (depending on mode pins) and divider.
 
-On 4/7/2017 11:31 PM, Jordan Crouse wrote:
-> On Tue, Apr 04, 2017 at 12:39:14PM -0700, Stephen Boyd wrote:
->> On 04/03, Will Deacon wrote:
->>> On Fri, Mar 31, 2017 at 10:58:16PM -0400, Rob Clark wrote:
->>>> On Fri, Mar 31, 2017 at 1:54 PM, Will Deacon <will.deacon@arm.com> wrote:
->>>>> On Thu, Mar 09, 2017 at 09:05:43PM +0530, Sricharan R wrote:
->>>>>> This series provides the support for turning on the arm-smmu's
->>>>>> clocks/power domains using runtime pm. This is done using the
->>>>>> recently introduced device links patches, which lets the symmu's
->>>>>> runtime to follow the master's runtime pm, so the smmu remains
->>>>>> powered only when the masters use it.
->>>>>
->>>>> Do you have any numbers for the power savings you achieve with this?
->>>>> How often do we actually manage to stop the SMMU clocks on an SoC with
->>>>> a handful of masters?
->>>>>
->>>>> In other words, is this too coarse-grained to be useful, or is it common
->>>>> that all the devices upstream of the SMMU are suspended?
->>>>
->>>> well, if you think about a phone/tablet with a command mode panel,
->>>> pretty much all devices will be suspended most of the time ;-)
->>>
->>> Well, that's really what I was asking about. I assumed that periodic
->>> modem/radio transactions would keep the SMMU clocked, so would like to get a
->>> rough idea of the power savings achieved with this coarse-grained approach.
->>
->> Sometimes we distribute SMMUs to each IP block in the system and
->> let each one of those live in their own clock + power domain. In
->> these cases, the SMMU can be powered down along with the only IP
->> block that uses it. Furthermore, sometimes we put the IP block
->> and the SMMU inside the same power domain to really tie the two
->> together, so we definitely have cases where all devices (device?)
->> upstream of the SMMU are suspended. And in the case of
->> multimedia, it could be very often that something like the camera
->> app isn't open and thus the SMMU dedicated for the camera can be
->> powered down.
->>
->> Other times we have two SMMUs in the system where one is
->> dedicated to GPU and the other is "everything else". Even in
->> these cases, we can suspend the GPU one when the GPU is inactive
->> because it's the only consumer. The other SMMU might not be as
->> fine grained, but I think we still power it down quite often
->> because the consumers are mostly multimedia devices that aren't
->> active when the display is off.
->
-> And just to confuse things even further: with per-instance pagetables we have an
-> interest in forcing the SMMU clocks *on* because we don't know when the GPU
-> might try to hit the registers to switch a pagetable and if somebody in the
-> pipeline is actively trying to do power management at the same time hilarity
-> will ensue.
->
+This corrects the clock rate of "pll0" (PLL0 VCO after post divider) on
+R-Car V2H and E2 from 1.5 GHz to 1 GHz.
 
-Ok, with per-process pagetables which gpu handles by itself, is the gpu driver
-not going to keep its own clocks pm_runtime active before handing it over
-to the firmware ? which would in this case take care of having the iommu clocks
-also enabled because of the device links in the behind.
+Inspired by Sergei Shtylyov's work for the common R-Car Gen2 and RZ/G
+Clock Pulse Generator support core.
 
-> The alternative to pm_runtime is the downstream driver that probes the SMMU
-> clocks from DT and frobs them itself. I think we can agree that is far less
-> reasonable.
+Fixes: 7c4163aae3d8e5b9 ("ARM: dts: r8a7792: initial SoC device tree")
+Fixes: 0dce5454d5c25858 ("ARM: shmobile: Initial r8a7794 SoC device tree")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/clk-rcar-gen2.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
-The idea here was to keep the iommu clocks only represented inside the IOMMU DT
-and handled by that driver. This works fine with the video decoder which is
-already fully pm_runtime enabled and works fine with basic gpu testing. Do you
-see any issues in testing this with the per-process pagetables ?
-
-Regards,
-  Sricharan
-
+diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-rcar-gen2.c
+index f39519edc645ca87..51a2479ed5d7c817 100644
+--- a/drivers/clk/renesas/clk-rcar-gen2.c
++++ b/drivers/clk/renesas/clk-rcar-gen2.c
+@@ -272,11 +272,14 @@ struct cpg_pll_config {
+ 	unsigned int extal_div;
+ 	unsigned int pll1_mult;
+ 	unsigned int pll3_mult;
++	unsigned int pll0_mult;		/* For R-Car V2H and E2 only */
+ };
+ 
+ static const struct cpg_pll_config cpg_pll_configs[8] __initconst = {
+-	{ 1, 208, 106 }, { 1, 208,  88 }, { 1, 156,  80 }, { 1, 156,  66 },
+-	{ 2, 240, 122 }, { 2, 240, 102 }, { 2, 208, 106 }, { 2, 208,  88 },
++	{ 1, 208, 106, 200 }, { 1, 208,  88, 200 },
++	{ 1, 156,  80, 150 }, { 1, 156,  66, 150 },
++	{ 2, 240, 122, 230 }, { 2, 240, 102, 230 },
++	{ 2, 208, 106, 200 }, { 2, 208,  88, 200 },
+ };
+ 
+ /* SDHI divisors */
+@@ -298,6 +301,12 @@ static const struct clk_div_table cpg_sd01_div_table[] = {
+ 
+ static u32 cpg_mode __initdata;
+ 
++static const char * const pll0_mult_match[] = {
++	"renesas,r8a7792-cpg-clocks",
++	"renesas,r8a7794-cpg-clocks",
++	NULL
++};
++
+ static struct clk * __init
+ rcar_gen2_cpg_register_clock(struct device_node *np, struct rcar_gen2_cpg *cpg,
+ 			     const struct cpg_pll_config *config,
+@@ -318,9 +327,15 @@ rcar_gen2_cpg_register_clock(struct device_node *np, struct rcar_gen2_cpg *cpg,
+ 		 * clock implementation and we currently have no need to change
+ 		 * the multiplier value.
+ 		 */
+-		u32 value = clk_readl(cpg->reg + CPG_PLL0CR);
++		if (of_device_compatible_match(np, pll0_mult_match)) {
++			/* R-Car V2H and E2 do not have PLL0CR */
++			mult = config->pll0_mult;
++			div = 3;
++		} else {
++			u32 value = clk_readl(cpg->reg + CPG_PLL0CR);
++			mult = ((value >> 24) & ((1 << 7) - 1)) + 1;
++		}
+ 		parent_name = "main";
+-		mult = ((value >> 24) & ((1 << 7) - 1)) + 1;
+ 	} else if (!strcmp(name, "pll1")) {
+ 		parent_name = "main";
+ 		mult = config->pll1_mult / 2;
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
