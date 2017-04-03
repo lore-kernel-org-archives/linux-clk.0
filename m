@@ -1,33 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 28 Apr 2017 11:38:11 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Irina Tirdea <irina.tirdea@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] clk: x86: pmc-atom: Checking for IS_ERR() instead of NULL
-Message-ID: <20170428183811.GC7065@codeaurora.org>
-References: <20170422104333.tcdpvessre3pvafk@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170422104333.tcdpvessre3pvafk@mwanda>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:51036 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752410AbdDCKIM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2017 06:08:12 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] ARM: dts: r8a7790: Drop _clk suffix from external CAN clock node name
+Date: Mon,  3 Apr 2017 12:08:07 +0200
+Message-Id: <1491214089-14093-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
+References: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/22, Dan Carpenter wrote:
-> clkdev_hw_create() returns NULLs on error, it doesn't return error
-> pointers.
-> 
-> Fixes: 41ee7caf59e1 ("clk: x86: add "mclk" alias for Baytrail/Cherrytrail")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-> index fafc99120dc2..f99abc1106f0 100644
-> --- a/drivers/clk/x86/clk-pmc-atom.c
+The current practice is to not add _clk suffixes to clock node names in
+DT, as these names are used as the actual clock names.
 
-Applied to clk-next
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index fe6b8c2a2d711536..99269aaca6fc953e 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1101,7 +1101,7 @@
+ 		};
+ 
+ 		/* External CAN clock */
+-		can_clk: can_clk {
++		can_clk: can {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			/* This value must be overridden by the board. */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
+
