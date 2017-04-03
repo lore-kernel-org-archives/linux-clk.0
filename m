@@ -1,87 +1,84 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 5 Apr 2017 15:02:18 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 2/3] clk: qcom: Elaborate on "active" clocks in the RPM
- clock bindings
-Message-ID: <20170405220218.GH7065@codeaurora.org>
-References: <20170322081842.20495-1-linus.walleij@linaro.org>
- <20170329005943.xqs6ouqbqwdzaayf@rob-hp-laptop>
- <CACRpkdYAT6Pw=9SjFgkQCaVN8EpSNdP61mkQSjV0FOfgQ0fZhw@mail.gmail.com>
+Return-Path: <huziji@marvell.com>
+Subject: Re: [PATCH v7 06/13] dt: bindings: Add bindings for Marvell Xenon SD
+ Host Controller
+To: Rob Herring <robh@kernel.org>,
+        Gregory CLEMENT
+	<gregory.clement@free-electrons.com>
+References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
+ <ecacddaa5d38b678e1c8c95b56f65f4a39527ead.1490886907.git-series.gregory.clement@free-electrons.com>
+ <20170403161926.wfj7foddu33gxuae@rob-hp-laptop>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter
+	<adrian.hunter@intel.com>, <linux-mmc@vger.kernel.org>,
+        Jason Cooper
+	<jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth
+	<sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni
+	<thomas.petazzoni@free-electrons.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Mike Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang
+	<jszhang@marvell.com>,
+        Nadav Haklai <nadavh@marvell.com>, Ryan Gao
+	<ygao@marvell.com>,
+        Doug Jones <dougj@marvell.com>, Victor Gu
+	<xigu@marvell.com>,
+        "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding
+	<dingwei@marvell.com>,
+        Yehuda Yitschak <yehuday@marvell.com>,
+        Marcin Wojtas
+	<mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
+        Kostya Porotchkin
+	<kostap@marvell.com>
+From: Hu Ziji <huziji@marvell.com>
+Message-ID: <df6d0972-21ce-589f-d786-7334f526867a@marvell.com>
+Date: Tue, 4 Apr 2017 01:07:26 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CACRpkdYAT6Pw=9SjFgkQCaVN8EpSNdP61mkQSjV0FOfgQ0fZhw@mail.gmail.com>
+In-Reply-To: <20170403161926.wfj7foddu33gxuae@rob-hp-laptop>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/29, Linus Walleij wrote:
-> On Wed, Mar 29, 2017 at 2:59 AM, Rob Herring <robh@kernel.org> wrote:
-> > On Wed, Mar 22, 2017 at 09:18:42AM +0100, Linus Walleij wrote:
-> >> The concept of "active" clocks is just explained in a bried comment in the
-> >> device driver, let's explain it a bit more in the device tree bindings
-> >> so everyone understands this.
-> >>
-> >> Cc: devicetree@vger.kernel.org
-> >> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> >> ---
-> >>  Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 8 ++++++++
-> >>  1 file changed, 8 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> >> index d470a0187035..cf80a00b7ff2 100644
-> >> --- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> >> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> >> @@ -18,6 +18,14 @@ Required properties :
-> >>
-> >>  - #clock-cells : shall contain 1
-> >>
-> >> +The clock enumerators are defined in <dt-bindings/clock/qcom,rpmcc.h>
-> >> +and come in pairs: FOO_CLK followed by FOO_A_CLK. The latter clock
-> >> +is an "active" clock, which means that the consumer only care that the
-> >> +clock is available when the system is active, i.e. not suspended. If
+Hi Rob,
 
-I would further say that "is available when the apps CPU
-subsystem is active", i.e. not suspended or in deep idle. Really
-it's about optimizing the idle path so we don't have to keep
-things on for the CPU when it powers down. The system suspend
-case can usually be handled by regular clk API calls.
+On 2017/4/4 0:19, Rob Herring wrote:
+> ----------------------------------------------------------------------
+> On Thu, Mar 30, 2017 at 05:22:58PM +0200, Gregory CLEMENT wrote:
+>> From: Hu Ziji <huziji@marvell.com>
+>>
+>> Marvell Xenon SDHC can support eMMC/SD/SDIO.
+>> Add Xenon-specific properties.
+>> Also add properties for Xenon PHY setting.
+>>
+>> Signed-off-by: Hu Ziji <huziji@marvell.com>
+>> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>> ---
+>>  Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt | 170 +++++++-
+>>  1 file changed, 170 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
+> 
+> I acked v6 and it seems like a minor change, though I had to search for 
+> both because there is no revision history nor explanation why you didn't 
+> add my ack.
+>
 
-> >> +it is important that the clock keeps running during system suspend,
-> >> +you need to specify the non-active clock, the one not containing
-> >> +*_A_* in the enumerator name.
-> >> +
-> >
-> > Sounds like abuse as the clock id is encoding policy into it. The number
-> > of clocks should be the number of inputs to a block. I wouldn't be
-> > opposed to some flags for clocks, but that should be a separate cell.
-> 
-> I'm sorry about that, but I'm just documenting what is already a fact and
-> was previously just implicit in the name.
-> 
-> I first had no idea what this *_A_* infix notation was about so after some
-> reading I found a comment in the driver saying this.
-> 
-> I guess Stephen can confirm and/or elaborate on this.
-> 
-> Keeping them around is I guess the lesser evil (as compard to
-> pulling up the deployed bindings with the roots) at this point.
-> 
+	Sorry for missing your ACK.
 
-Yes we can't really do much now that we've put the binding out
-there. I guess we could have two cells and then fold that into a
-custom clk_hw getter function to map the two cells to the right
-clk. And then leave the original code around for backwards compat
-and detect which one to register as the clk_hw provider.
+	I add a few but important comments on common Xenon power implementations
+	in the examples. It is recorded in the cover letter.
+	v6->v7:
+	 - Add comments on vqmmc and vmmc in examples in dt binding doc.
 
-Either way, that wouldn't change the consumer binding because if
-they want to control the *_A_* and non *_A_* clks as individual
-controls they'll list the same physical clk twice in their
-'clocks' property.
+	I was a little unsure if we can still add your ACK after adding the comment.
+ 	We will add your ACK back if we have to release another version later.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+	Thank you.
+
+Best regards,
+Hu Ziji
+
+> Acked-by: Rob Herring <robh@kernel.org> 
+> 
