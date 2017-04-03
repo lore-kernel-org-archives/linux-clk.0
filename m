@@ -1,49 +1,65 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 27 Apr 2017 18:15:33 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, wens@csie.org,
-	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: sunxi-ng: Fix dependency on SUNXI_CCU_GATE
-Message-ID: <20170428011533.GZ7065@codeaurora.org>
-References: <20170426115319.30951-1-clabbe.montjoie@gmail.com>
- <20170427070436.3qu4mzepq4gmmymi@lukather>
- <20170427081249.GA25781@Red>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170427081249.GA25781@Red>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a7745: Remove PLL configs for MD19=0
+Date: Mon,  3 Apr 2017 12:04:34 +0200
+Message-Id: <1491213874-13922-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/27, Corentin Labbe wrote:
-> On Thu, Apr 27, 2017 at 09:04:36AM +0200, Maxime Ripard wrote:
-> > On Wed, Apr 26, 2017 at 01:53:19PM +0200, Corentin Labbe wrote:
-> > > When CONFIG_SUNXI_CCU is set but no other SUNXI_CCU is selected i got
-> > > the following build error:
-> > > drivers/built-in.o: In function `ccu_pll_notifier_cb':
-> > > drivers/clk/sunxi-ng/ccu_common.c:71: undefined reference to `ccu_gate_helper_disable'
-> > > drivers/clk/sunxi-ng/ccu_common.c:73: undefined reference to `ccu_gate_helper_enable'
-> > > 
-> > > The problem is the function ccu_pll_notifier_cb in ccu_common.c need
-> > > some function from ccu_gate.c which is not compiled since SUNXI_CCU_GATE
-> > > is not selected.
-> > > 
-> > > This patch remove SUNXI_CCU_GATE and compile ccu_gate.c unconditionnaly
-> > > since all other combination of options select SUNXI_CCU_GATE finally.
-> > > 
-> > > Fixes: 02ae2bc6febd ("clk: sunxi-ng: Add clk notifier to gate then ungate PLL clocks")
-> > > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-> > 
-> > I think Chen-Yu had some comments that you didn't address.
-> > 
-> 
-> I have changed subject as requested
+According to tables 7.5b and 7.6b of the RZ/G Series Hardware User's
+Manual Rev.1.00, MD19=0 is a prohibited setting.
 
-There were more comments than just fixing the subject. And now
-Arnd has sent a patch. This is a problem in mainline, and the
-release is days away. I'm inclined to go with Arnd's patch unless
-someone sends something else and forward it directly to Linus.
+Hence stop looking at MD19, and remove all PLL configurations for
+MD19=0.
 
+Fixes: 9127d54bb8947159 ("clk: renesas: cpg-mssr: Add R8A7745 support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7745-cpg-mssr.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+index 08db21cc6436bdc5..9e2360a8e14b860e 100644
+--- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+@@ -190,31 +190,22 @@ static const unsigned int r8a7745_crit_mod_clks[] __initconst = {
+  *    MD	EXTAL		PLL0	PLL1	PLL3
+  * 14 13 19	(MHz)		*1	*2
+  *---------------------------------------------------
+- * 0  0  0	15		x200/3	x208/2	x106
+  * 0  0  1	15		x200/3	x208/2	x88
+- * 0  1  0	20		x150/3	x156/2	x80
+  * 0  1  1	20		x150/3	x156/2	x66
+- * 1  0  0	26 / 2		x230/3	x240/2	x122
+  * 1  0  1	26 / 2		x230/3	x240/2	x102
+- * 1  1  0	30 / 2		x200/3	x208/2	x106
+  * 1  1  1	30 / 2		x200/3	x208/2	x88
+  *
+  * *1 :	Table 7.5b indicates VCO output (PLL0 = VCO/3)
+  * *2 :	Table 7.5b indicates VCO output (PLL1 = VCO/2)
+  */
+-#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 12) | \
+-					 (((md) & BIT(13)) >> 12) | \
+-					 (((md) & BIT(19)) >> 19))
++#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 13) | \
++					 (((md) & BIT(13)) >> 13))
+ 
+ static const struct rcar_gen2_cpg_pll_config cpg_pll_configs[8] __initconst = {
+ 	/* EXTAL div	PLL1 mult	PLL3 mult	PLL0 mult */
+-	{ 1,		208,		106,		200	},
+ 	{ 1,		208,		88,		200	},
+-	{ 1,		156,		80,		150	},
+ 	{ 1,		156,		66,		150	},
+-	{ 2,		240,		122,		230	},
+ 	{ 2,		240,		102,		230	},
+-	{ 2,		208,		106,		200	},
+ 	{ 2,		208,		88,		200	},
+ };
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
