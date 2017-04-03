@@ -1,140 +1,93 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Mon, 3 Apr 2017 22:59:53 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 6/15] dt-bindings: display: sun4i: Add HDMI display
+ bindings
+Message-ID: <20170403205953.vdf5ynyvktpiheax@lukather>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <f1d46b79f933df724a6750d557ebe9517b6339b5.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <20170315172622.lb6vy7cmbwaf7crn@rob-hp-laptop>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1491392819-698-2-git-send-email-alexey_firago@mentor.com>
-References: <1491392819-698-1-git-send-email-alexey_firago@mentor.com> <1491392819-698-2-git-send-email-alexey_firago@mentor.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Apr 2017 14:15:37 +0200
-Message-ID: <CAMuHMdXEa=1__WMtsRphKbN6h+jVkP7szudENsM3hvGSzDfbwg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] clk: vc5: Add structure to describe particular
- chip features
-To: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vy7wvwz2minz7rwk"
+In-Reply-To: <20170315172622.lb6vy7cmbwaf7crn@rob-hp-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Alexey,
 
-On Wed, Apr 5, 2017 at 1:46 PM, Alexey Firago <alexey_firago@mentor.com> wrote:
-> Introduce vc5_chip_info structure to describe features of a particular
-> VC5 chip (id, number of FODs, number of outputs, flags).
-> For now flags are only used to indicate if chip has internal XTAL.
-> vc5_chip_info is set on probe from the matched of_device_id->data.
->
-> Also add defines to specify maximum number of FODs and clock outputs
-> supported by the driver.
->
-> With these changes it should be easier to extend driver to support
-> more VC5 models.
->
-> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
+--vy7wvwz2minz7rwk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your patch!
+Hi Rob,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Mar 15, 2017 at 12:26:22PM -0500, Rob Herring wrote:
+> > +HDMI Encoder
+> > +------------
+> > +
+> > +The HDMI Encoder supports the HDMI video and audio outputs, and does
+> > +CEC. It is one end of the pipeline.
+> > +
+> > +Required properties:
+> > +  - compatible: value must be one of:
+> > +    * allwinner,sun5i-a10s-hdmi
+> > +  - reg: base address and size of memory-mapped region
+> > +  - clocks: phandles to the clocks feeding the HDMI encoder
+> > +    * ahb: the HDMI interface clock
+> > +    * mod: the HDMI module clock
+> > +    * pll-0: the first video PLL
+> > +    * pll-1: the second video PLL
+> > +  - clock-names: the clock names mentioned above
+> > +
+> > +  - ports: A ports node with endpoint definitions as defined in
+> > +    Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> > +    first port should be the input endpoint.
+>=20
+> You need an output port to an HDMI connector node and an audio port.
 
-> --- a/drivers/clk/clk-versaclock5.c
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -113,12 +113,30 @@
->  #define VC5_MUX_IN_XIN         BIT(0)
->  #define VC5_MUX_IN_CLKIN       BIT(1)
->
-> +/* Maximum number of clk_out supported by this driver */
-> +#define VC5_MAX_CLK_OUT_NUM    3
-> +
-> +/* Maximum number of FODs supported by this driver */
-> +#define VC5_MAX_FOD_NUM        2
-> +
-> +/* flags to describe chip features */
-> +/* chip has built-in oscilator */
-> +#define VC5_HAS_INTERNAL_XTAL  BIT(0)
+I started to look at the audio, and I can't find a use for an audio
+port in the OF graph. As far as I understand, we will be using the
+hdmi-codec, that still requires an ASoC card to create the link
+between our i2s controller and the HDMI controller.
 
-VC5_HAS_INTERNAL_OSC?
+This work perfectly for us, but as far as I know, the simple-card
+stuff only requires a phandle, and not an OF graph endpoint, right?
 
-> +
->  /* Supported IDT VC5 models. */
->  enum vc5_model {
->         IDT_VC5_5P49V5923,
->         IDT_VC5_5P49V5933,
->  };
->
-> +/* Structure to describe features of a particular VC5 model */
-> +struct vc5_chip_info {
-> +       const enum vc5_model    model;
-> +       const int               clk_fod_cnt;
-> +       const int               clk_out_cnt;
+Thanks!
+Maxime
 
-const unsigned int (both)
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-> +       u32                     flags;
-> +};
-> +
->  struct vc5_driver_data;
->
->  struct vc5_hw_data {
-> @@ -132,15 +150,15 @@ struct vc5_hw_data {
->  struct vc5_driver_data {
->         struct i2c_client       *client;
->         struct regmap           *regmap;
-> -       enum vc5_model          model;
-> +       struct vc5_chip_info    *chip_info;
+--vy7wvwz2minz7rwk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-const struct vc5_chip_info    *chip_info;
+-----BEGIN PGP SIGNATURE-----
 
-> @@ -591,7 +609,7 @@ static int vc5_probe(struct i2c_client *client,
->         struct vc5_driver_data *vc5;
->         struct clk_init_data init;
->         const char *parent_names[2];
-> -       unsigned int n, idx;
-> +       unsigned int n, idx = 0;
->         int ret;
->
->         vc5 = devm_kzalloc(&client->dev, sizeof(*vc5), GFP_KERNEL);
-> @@ -600,7 +618,12 @@ static int vc5_probe(struct i2c_client *client,
->
->         i2c_set_clientdata(client, vc5);
->         vc5->client = client;
-> -       vc5->model = (enum vc5_model)of_id->data;
-> +
-> +       vc5->chip_info = (struct vc5_chip_info *)of_id->data;
+iQIcBAEBCAAGBQJY4rfFAAoJEBx+YmzsjxAggvIP/iF+5hj+pnV4OJar5PDA3Al6
+N9lcuVwEtwxpuBtmkqizHuxJS5xfdUuIE3CihLUGSFoQLmamhPgSPN4+lKsqtvwv
+zxuC8nr6wKywYADfMoikxSYZBr5zXJIspWga7difOczkqwFL6yp45kvvwE5Py68g
+H7ZIVfV2qLutjTFrZJCqZ55kftQeprOSU9Cg7qj5Zig+9oGaCVfNCRNXD+HS0d17
+pdxkq1hvrXNke5LHi47T0ury5jbggYKBIAkLVIhw1JgPbwSpIeONYo8UptOwhucn
+dvO6pa4Coi0hQrVXinVppC5EYVvkqmU9XqVF/95W5mCyk4znd22Lfv5oJtjoJ3C1
+5eTE+AchILfZB0bjShSpRmPcINitNpCbq6LQ5aCkYphujL7rkMx58aKsC9pfBkEg
+iVXWHDDeB2t6nN1hLlDHmd0zF0MunxesVtlXXHC+fvjrWNAHZzZV7kVDOG7wGFmI
+Daf2ekACY+LXEN5J0QeOL2xL/PxYgvuWxDxbmWnfrmR9/QJpW+VqOqxzXRZxEX6x
+XIoDehdAx95ITdnKsizUxMv2AvyFmxg6Idiuj2IEKeagZQTqbzJoRwtosmQ+egL5
+eX4ixnxGV7iAwrcA0JniFaNiHI28t7wN8YAIWQwOEfdbCpABE2fKlcxdM8rxhsoD
+at7B/P/qJdmFtW/RilGv
+=RgVB
+-----END PGP SIGNATURE-----
 
-I think the cast is no longer needed when chip_info becomes const.
-
-BTW, of_id is not really needed if you write it like:
-
-        vc5->chip_info = of_device_get_match_data(&client->dev);
-
-> +       if (!vc5->chip_info) {
-
-This can't really happen, can it?
-
-> +               dev_err(&client->dev, "No device match found\n");
-> +               return -ENODEV;
-> +       }
->
->         vc5->pin_xin = devm_clk_get(&client->dev, "xin");
->         if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
-> @@ -622,8 +645,8 @@ static int vc5_probe(struct i2c_client *client,
->         if (!IS_ERR(vc5->pin_xin)) {
->                 vc5->clk_mux_ins |= VC5_MUX_IN_XIN;
->                 parent_names[init.num_parents++] = __clk_get_name(vc5->pin_xin);
-> -       } else if (vc5->model == IDT_VC5_5P49V5933) {
-> -               /* IDT VC5 5P49V5933 has built-in oscilator. */
-> +       } else if (vc5->chip_info->flags & VC5_HAS_INTERNAL_XTAL) {
-> +               /* chip has built-in oscilator. */
-
-The comment is no longer needed when the bit is named VC5_HAS_INTERNAL_OSC :-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--vy7wvwz2minz7rwk--
