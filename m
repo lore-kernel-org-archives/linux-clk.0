@@ -1,99 +1,101 @@
-Return-Path: <Vladislav.Zakharov@synopsys.com>
-From: Vlad Zakharov <Vladislav.Zakharov@synopsys.com>
-To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
-CC: "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"Jose.Abreu@synopsys.com" <Jose.Abreu@synopsys.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>
-Subject: Re: [PATCH v2] clk/axs10x: introduce AXS10X pll driver
-Date: Thu, 20 Apr 2017 15:13:41 +0000
-Message-ID: <1492701221.18176.51.camel@synopsys.com>
-References: <1487682670-4164-1-git-send-email-vzakhar@synopsys.com>
-	 <20170405013525.GJ18246@codeaurora.org>
-	 <1491408370.9650.24.camel@synopsys.com>
-	 <20170419164949.GH7065@codeaurora.org>
-In-Reply-To: <20170419164949.GH7065@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <tony@atomide.com>
+Date: Mon, 3 Apr 2017 08:36:04 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
+Message-ID: <20170403153604.GI10760@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <20170317152536.GT20572@atomide.com>
+ <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
+ <20170323010057.GI10760@atomide.com>
+ <20170323170210.GL10760@atomide.com>
+ <8648f054-cf04-41df-20f3-82e0d63feefa@ti.com>
+ <20170330165448.GF10760@atomide.com>
+ <55b439ed-8b81-2e6b-64f1-34f9f3cc5369@ti.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <55b439ed-8b81-2e6b-64f1-34f9f3cc5369@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwNCg0KT24gV2VkLCAyMDE3LTA0LTE5IGF0IDA5OjQ5IC0wNzAwLCBzYm95ZEBj
-b2RlYXVyb3JhLm9yZyB3cm90ZToNCj4gT24gMDQvMDUsIFZsYWQgWmFraGFyb3Ygd3JvdGU6DQo+
-ID4gDQo+ID4gSGkgU3RlcGhlbiwNCj4gPiANCj4gPiBPbiBUdWUsIDIwMTctMDQtMDQgYXQgMTg6
-MzUgLTA3MDAsIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4gPiA+IA0KPiA+ID4gPiANCj4gPiA+ID4g
-K8KgwqDCoMKgwqAucGxsX3RhYmxlID0gKHN0cnVjdCBwbGxfb2ZfdGFibGUgW10pew0KPiA+ID4g
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB7DQo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAucHJhdGUgPSAyNzAwMDAwMCwNCj4gPiA+IA0KPiA+
-ID4gQ2FuIHRoaXMgYmUgYW5vdGhlciBjbGsgaW4gdGhlIGZyYW1ld29yayBpbnN0ZWFkIG9mIGhh
-cmRjb2RpbmcNCj4gPiA+IHRoZSBwYXJlbnQgcmF0ZT8NCj4gPiANCj4gPiBJbiBmYWN0IHRoZXJl
-IGlzIGFub3RoZXIgY2xrIGluIHRoZSBmcmFtZXdvcmsgdGhhdCByZXByZXNlbnRzIHRoaXMgcGFy
-ZW50IGNsb2NrLiBCdXQgdGhpcyBmaWVsZCBpcyBuZWVkZWQgdG8gZ2V0DQo+ID4gYXBwcm9wcmlh
-dGUgcGxsX2NmZ190YWJsZSBhcyBpdCBkZXBlbmRzIG9uIHBhcmVudCBjbG9jayBmcmVxdWVuY3ku
-IEJlbG93IGluIHBsbF9jZmdfZ2V0IGZ1bmN0aW9uIHdlIGFyZSBzZWFyY2hpbmcNCj4gPiBmb3IN
-Cj4gPiB0aGUgY29ycmVjdCB0YWJsZSBjb21wYXJpbmcgLnBhcmVudF9ub2RlIGZpZWxkIHdpdGgg
-cmVhbCBoYXJkd2FyZSBwYXJlbnQgY2xvY2sgZnJlcXVlbmN5Og0KPiA+IC0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQ0KPiA+IGZvciAoaSA9IDA7IHBsbF90YWJsZVtpXS5wcmF0ZSAhPSAwOyBpKyspDQo+ID4gwqAg
-wqAgaWYgKHBsbF90YWJsZVtpXS5wcmF0ZSA9PSBwcmF0ZSkNCj4gPiDCoCDCoCDCoCDCoCByZXR1
-cm4gcGxsX3RhYmxlW2ldLnBsbF9jZmdfdGFibGU7DQo+ID4gLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+IA0K
-PiBXaGVuIGlzIHRoYXQgZG9uZSB0aG91Z2g/IER1cmluZyByb3VuZF9yYXRlIGFuZCByZWNhbGNf
-cmF0ZSB0aGUNCj4gcGFyZW50IGZyZXF1ZW5jeSBpcyBwYXNzZWQgaW50byB0aGUgZnVuY3Rpb24s
-IHNvIGl0IHNob3VsZCBiZQ0KPiBwb3NzaWJsZSB0byB1c2UgdGhhdCBpZiB0aGUgdHJlZSBpcyBw
-cm9wZXJseSBleHByZXNzZWQuDQo+IA0KDQpJIHRoaW5rIHRoYXQgd2UgaGF2ZW4ndCB1bmRlcnN0
-b29kIGVhY2ggb3RoZXIgY29ycmVjdGx5Lg0KQW55d2F5IEkgaGF2ZSBjaGVja2VkIG91dCBvdXIg
-aGFyZHdhcmUgZG9jdW1lbnRhdGlvbnMgYW5kIGZpbmQgb3V0IHRoYXQgaW4gZmFjdCBmb3IgdG9k
-YXkncyB2ZXJzaW9uIG9mIGhhcmR3YXJlIHdlIGRvbid0DQpoYXZlIHNpdHVhdGlvbnMgd2hlbiBz
-dWNoIHBsbHMgY2FuIGJlIGRyaXZlbiBieSBkaWZmZXJlbnQgcGFyZW50IGNsb2NrLiBTbyB0aGlz
-IGFwcHJvYWNoIGlzIG5vdCByZXF1aXJlZCBhdCB0aGUgbW9tZW50Lg0KSSBhbSBnb2luZyB0byBz
-aW1wbGlmeSBteSBkcml2ZXIgc28gaXQgd2lsbCByZWZsZWN0IGN1cnJlbnQgdmVyc2lvbiBvZiBo
-YXJkd2FyZSBhbmQgaWYgYW55dGhpbmcgY2hhbmdlcyBJIHdpbGwgYmV0dGVyDQpwcm92aWRlIGEg
-bmV3IHBhdGNoLg0KDQo+ID4gU3VyZS4gQ291bGQgeW91IGJlIHNvIGtpbmQgdG8gZXhwbGFpbiB3
-aGF0IGlzIHRoZSBkaWZmZXJlbmNlIGJldHdlZW4gaHcgYW5kIG5vbi1odyBiYXNlZCBwcm92aWRl
-ciBhbmQgY2xrDQo+ID4gcmVnaXN0cmF0aW9uDQo+ID4gZnVuY3Rpb25zIHBsZWFzZT8gSW4gd2hp
-Y2ggY2FzZXMgdGhleSBhcmUgcHJlZmVycmVkP8KgDQo+ID4gDQo+IA0KPiBXZSdyZSB0cnlpbmcg
-dG8gc3BsaXQgdGhlIGNvbnN1bWVyIGFuZCBwcm92aWRlciBBUElzIGFsb25nIHN0cnVjdA0KPiBj
-bGtfaHcgYW5kIHN0cnVjdCBjbGsgcmVzcGVjdGl2ZWx5LiBJZiB3ZSBjYW4gaGF2ZSBkcml2ZXJz
-IG9ubHkNCj4gcmVnaXN0ZXJzIGNsa19odyBwb2ludGVycyBhbmQgbmV2ZXIgZ2V0IGJhY2sgYW55
-dGhpbmcgYnV0IGFuDQo+IGVycm9yIGNvZGUsIHRoZW4gd2UgY2FuIGZvcmNlIGNvbnN1bWVycyB0
-byBhbHdheXMgZ28gdGhyb3VnaCB0aGUNCj4gY2xrX2dldCgpIGZhbWlseSBvZiBBUElzLiBUaGVu
-IHdlIGNhbiBlYXNpbHkgdGVsbCB3aG8gaXMgYQ0KPiBwcm92aWRlciwgd2hvIGlzIGEgY29uc3Vt
-ZXIsIGFuZCB3aG8gaXMgYSBwcm92aWRlciArIGEgY29uc3VtZXIuDQo+IFJpZ2h0IG5vdyB0aGlz
-IGlzbid0IGFsd2F5cyBjbGVhciBjdXQgYmVjYXVzZSBjbGtfaHcgaGFzIGFjY2Vzcw0KPiB0byBz
-dHJ1Y3QgY2xrLCBhbmQgYWxzbyBjbGtfcmVnaXN0ZXIoKSByZXR1cm5zIGEgY2xrIHBvaW50ZXIs
-IGJ1dA0KPiBpdCBkb2Vzbid0IHJlYWxseSBnZXQgdXNlZCBieSBhbnl0aGluZyBpbiBhIHByb3Zp
-ZGVyIGRyaXZlciwNCj4gdW5sZXNzIHByb3ZpZGVyIGRyaXZlcnMgYXJlIGRvaW5nIHNvbWV0aGlu
-ZyB3aXRoIHRoZSBjb25zdW1lcg0KPiBBUEkuDQoNCkkgYW0gc29ycnkgZm9yIG15IGZvb2xpc2gg
-cXVlc3Rpb25zLCBidXQgYXMgSSB1bmRlcnN0YW5kIEkgc2hvdWxkIHVzZSBody1iYXNlZCBmdW5j
-dGlvbnMgZm9yIGNsayBwcm92aWRlcnMgYnV0IGl0IGlzIG5vdA0Kc3RpbGwgY2xlYXIgZW5vdWdo
-IGZvciBtZSB3aGVuIHNob3VsZCBJIHVzZSBub24taHcgZnVuY3Rpb25zPyBEb2VzIGFueSBkcml2
-ZXJzIG5lZWQgc3RydWN0IGNsayB3aGVuIHRoZXkgYXJlIGluaXRpYXRpbmcNCm9yIHByb2Jpbmcg
-dGhlbXNlbHZlcz8gQW5kIHdoYXQgY2xrIGNvbnN1bWVyIGNhbiBiZSB1c2VkIGZvcj8NCg0KPiAN
-Cj4gPiANCj4gPiA+IA0KPiA+ID4gDQo+ID4gPiA+IA0KPiA+ID4gPiArfQ0KPiA+ID4gPiArDQo+
-ID4gPiA+ICtDTEtfT0ZfREVDTEFSRShheHMxMHhfcGxsX2Nsb2NrLCAic25wcyxheHMxMHgtYXJj
-LXBsbC1jbG9jayIsIG9mX3BsbF9jbGtfc2V0dXApOw0KPiA+ID4gDQo+ID4gPiBEb2VzIHRoaXMg
-bmVlZCB0byBiZSBDTEtfT0ZfREVDTEFSRV9EUklWRVI/IEkgbWVhbiBkb2VzIHRoZQ0KPiA+ID4g
-ZHJpdmVyIG5lZWQgdG8gcHJvYmUgYW5kIGFsc28gaGF2ZSB0aGlzIG9mIGRlY2xhcmUgaGFwcGVu
-PyBJcyB0aGUNCj4gPiA+IFBMTCBzcGVjaWFsIGFuZCBuZWVkcyB0byBiZSB1c2VkIGZvciB0aGUg
-dGltZXJzPw0KPiA+IA0KPiA+IEl0IGlzIHNwZWNpYWwgYW5kIGlzIHVzZWQgZm9yIHRoZSB0aW1l
-cnMsIHNvIHdlIGhhdmUgdG8gQ0xLX09GX0RFQ0xBUkUgaXQuIE9uIHRoZSBvdGhlciBoYW5kIHNp
-bWlsYXIgcGxsIGlzIHVzZWQgdG8NCj4gPiBkcml2ZSBQR1UgY2xvY2sgZnJlcXVlbmN5IGFuZCBv
-dGhlciBzdWJzeXN0ZW1zIGFuZCBzbyB3ZSBhZGQgdXN1YWwgcHJvYmUgZnVuYy4NCj4gPiANCj4g
-DQo+IFByZXN1bWFibHkgd2UnbGwgaGF2ZSBkaWZmZXJlbnQgY29tcGF0aWJsZSBzdHJpbmdzIGZv
-ciB0aGUNCj4gZGlmZmVyZW50IFBMTHMgdGhlbj8gQ0xLX09GX0RFQ0xBUkUoKSB3aWxsIG1ha2Ug
-aXQgc28gdGhhdCB0aGUNCj4gZGV2aWNlIG5vZGUgdGhhdCBtYXRjaGVzIG5ldmVyIGdldHMgYSAt
-PnByb2JlKCkgZnJvbSBhDQo+IHBsYXRmb3JtX2RyaXZlciBjYWxsZWQgb24gaXQuIElmIHlvdSB3
-YW50IGl0IHRvIGJlIGNhbGxlZCB0d2ljZSwNCj4gdGhlbiB5b3UgbmVlZCB0byB1c2UgQ0xLX09G
-X0RFQ0xBUkVfRFJJVkVSKCkgaW5zdGVhZC4NCj4gDQoNCkluIGZhY3Qgd2UgZG9uJ3QgbmVlZCBp
-dCB0byBiZSBjYWxsZWQgdHdpY2UuIEFuZCBhcyB5b3UgY2FuIHNlZSBJIGRvIHByYWN0aWNhbGx5
-IHRoZSBzYW1lIHRoaW5ncyBpbiBzZXR1cCBhbmQgcHJvYmUNCmZ1bmN0aW9ucy4gU28gbWF5YmUg
-SSBjYW4gc29tZWhvdyBhdm9pZCB0aGlzIGNvZGUgZHVwbGljYXRpb24/wqANCkkgbWVhbiB0aGF0
-IHRoaXMgZHJpdmVyIGlzIGdvaW5nIGVpdGhlciB0byBiZSB1c2VkIGZvciB0aGUgdGltZXJzIG9y
-IGFzIGEgc2ltcGxlIHBsYXRmb3JtIGRyaXZlciBmb3IgY2xvY2tpbmcgc29tZQ0KcGVyaXBoZXJh
-cy4gU28gZm9yIHRoZSBmaXJzdCBjYXNlIEkgaGF2ZSB3cml0dGVuIGEgc2V0dXAgZnVuY3Rpb24g
-dG8gQ0xLX09GX0RFQ0xBUkUgbXkgZHJpdmVyIGFuZCBmb3IgdGhlIHNlY29uZCBjYXNlDQpJJ3Zl
-IHdyaXR0ZW4gdXN1YWwgcHJvYmUgZnVuY3Rpb24uIE1heWJlIEkgYW0gbWlzdGFrZW4gYW5kIGl0
-IGlzIG5vdCB0aGUgcmlnaHQgd2F5Pw0KDQpUaGFuayB5b3UgZm9yIHlvdSBhbnN3ZXJzLsKgDQoN
-Ci0tIA0KQmVzdCByZWdhcmRzLA0KVmxhZCBaYWtoYXJvdiA8dnpha2hhckBzeW5vcHN5cy5jb20+
+* Tero Kristo <t-kristo@ti.com> [170403 07:54]:
+> On 30/03/17 19:54, Tony Lindgren wrote:
+> > * Tero Kristo <t-kristo@ti.com> [170330 00:20]:
+> > > On 23/03/17 19:02, Tony Lindgren wrote:
+> > > > * Tony Lindgren <tony@atomide.com> [170322 18:03]:
+> > > > > * Tero Kristo <t-kristo@ti.com> [170317 14:39]:
+> > > > > > On 17/03/17 17:25, Tony Lindgren wrote:
+> > > > > > > * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+> > > > > > > > Any additional testing on omap4 welcome as this series basically
+> > > > > > > > tweaks every possible peripheral clock on the SoC.
+> > > > > > > 
+> > > > > > > Without the last patch in this series, booting fails for me:
+> > > > > > > 
+> > > > > > > [    5.074890] l4_per_cm:clk:0120:0: failed to disable
+> > > > > > > [    5.085113] l4_per_cm:clk:0128:0: failed to disable
+> > > > > > > 
+> > > > > > > Care to check that booting keeps working for each patch in the
+> > > > > > > series to avoid breaking git bisect for booting?
+> > > > > > 
+> > > > > > Hmm, I think patch 8+9 need to be squashed then. I can double check this
+> > > > > > next week though.
+> > > > > 
+> > > > > Also looks like with this set merged HDMI stops working on
+> > > > > omap4 with:
+> > > > > 
+> > > > > HDMIWP: omapdss HDMIWP error: Failed to set PHY power mode to 1
+> > > > 
+> > > > Forgot to mention that's with omapdrm with encoder-tpd12s015 and
+> > > > encoder-tfp410 modules loaded to get HDMI working. Here's more verbose
+> > > > dmesg output in case that provides more clues:
+> > > > 
+> > > > [   91.042877] omapdss HDMICORE error: operation stopped when reading edid
+> > > > [   91.078308] [drm] Enabling DMM ywrap scrolling
+> > > > [   91.099243] omapdss HDMIWP error: Failed to set PHY power mode to 1
+> > > > [   91.107879] omapdss HDMI error: failed to power on device
+> > > > [   91.107879] omapdrm omapdrm.0: Failed to enable display 'hdmi': -5
+> > > > [   91.359619] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+> > > > [   91.619964] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+> > > > [   91.620300] Console: switching to colour frame buffer device 128x48
+> > > > [   91.682434] omapdrm omapdrm.0: fb0: omapdrm frame buffer device
+> > > > [   91.770812] [drm] Initialized omapdrm 1.0.0 20110917 for omapdrm.0 on minor 0
+> > > > [   92.818054] omapdss HDMICORE error: operation stopped when reading edid
+> > > > [   93.090087] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+> > > > [   93.349853] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+> > > > 
+> > > > Regards,
+> > > > 
+> > > > Tony
+> > > > 
+> > > 
+> > > Can you try with this additional hwmod data tweak in place? Apply this on
+> > > top of the existing series.
+> > 
+> > Does not seem to help, still get the same errors. But maybe I'm doing
+> > something wrong as the patch did not apply and I applied it manually.
+> > 
+> > Regards,
+> > 
+> > Tony
+> > 
+> 
+> Hmm ok, can you provide some brief instructions how to test what you are
+> doing with the HDMI? Just connect it to some external monitor? My monitor
+> has a spare HDMI connector so I could try it out.
+
+Well build a kernel using omap2plus_defconfig, then with HDMI cable
+connected load the following modules:
+
+encoder-tpd12s015 encoder-tfp410 connector-hdmi omapfb
+
+And a console should appear on the HDMI monitor. If using omapdrm, then
+load omapdss and omapdrm instead.
+
+And if using NFSroot, you need to have ehci and smsc drivers built-in
+or use an initramfs.
+
+Regards,
+
+Tony
