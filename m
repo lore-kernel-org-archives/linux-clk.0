@@ -1,118 +1,61 @@
-Return-Path: <andy.tang@nxp.com>
-From: Andy Tang <andy.tang@nxp.com>
-To: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>
-CC: "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Scott Wood <oss@buserror.net>
-Subject: RE: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
-Date: Mon, 24 Apr 2017 03:14:44 +0000
-Message-ID: <DB6PR0402MB2837F82134ADCBAC53ECC51FF31F0@DB6PR0402MB2837.eurprd04.prod.outlook.com>
-References: <1489977443-33582-1-git-send-email-andy.tang@nxp.com>
- <DB6PR0402MB283701D478A1678D28894C77F30A0@DB6PR0402MB2837.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <alexandre.torgue@st.com>
+Subject: Re: [PATCH 0/4] Introduce STM32F7 Clocks
+To: <gabriel.fernandez@st.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>, <daniel.thompson@linaro.org>,
+        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
+References: <1483711165-17149-1-git-send-email-gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel@stlinux.com>, <ludovic.barre@st.com>, <olivier.bideau@st.com>,
+        <amelie.delaunay@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <c7042f7e-b4eb-1fcc-200c-b76b50e82424@st.com>
+Date: Mon, 3 Apr 2017 16:42:44 +0200
 MIME-Version: 1.0
+In-Reply-To: <1483711165-17149-1-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Does anyone give me a clue why this patch set can't be responded after so l=
-ong time?
+hi
 
-Thanks,
-Andy
+On 01/06/2017 02:59 PM, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>
+> This patch-set introduces STM32F7 clocks.
+> F7 Clocks are very similar as F4.
+>
+> We  have some new clocks:
+> - hdmi-cec
+> - spdif-rx
+> - lptim1
+> - sai2
+>
+> Uarts & I2cs can have different clock sources.
+>
+>
+>
+> Gabriel Fernandez (4):
+>   clk: stm32f7: Add stm32f7 clock DT bindings for STM32F746 boards
+>   clk: stm32f7: Introduce stm32f7 clocks for STM32F746 boards
+>   ARM: dts: stm32: stm32f7: Enable clocks for STM32F746 boards
+>   dt-bindings: mfd: Add STM32F7 RCC numeric constants into DT include
+>     file
+>
+>  .../devicetree/bindings/clock/st,stm32-rcc.txt     |  20 ++
+>  arch/arm/boot/dts/stm32f746.dtsi                   |  80 ++++--
+>  drivers/clk/clk-stm32f4.c                          | 277 ++++++++++++++++++++-
+>  include/dt-bindings/clock/stm32fx-clock.h          |  20 ++
+>  include/dt-bindings/mfd/stm32f7-rcc.h              | 112 +++++++++
+>  5 files changed, 476 insertions(+), 33 deletions(-)
+>  create mode 100644 include/dt-bindings/mfd/stm32f7-rcc.h
+>
 
------Original Message-----
-From: Andy Tang=20
-Sent: Monday, April 17, 2017 9:37 AM
-To: 'mturquette@baylibre.com' <mturquette@baylibre.com>; 'sboyd@codeaurora.=
-org' <sboyd@codeaurora.org>
-Cc: 'robh+dt@kernel.org' <robh+dt@kernel.org>; 'mark.rutland@arm.com' <mark=
-.rutland@arm.com>; 'linux-clk@vger.kernel.org' <linux-clk@vger.kernel.org>;=
- 'devicetree@vger.kernel.org' <devicetree@vger.kernel.org>; 'linux-kernel@v=
-ger.kernel.org' <linux-kernel@vger.kernel.org>; 'linux-arm-kernel@lists.inf=
-radead.org' <linux-arm-kernel@lists.infradead.org>; 'Scott Wood' <oss@buser=
-ror.net>
-Subject: RE: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
-
-Hi Stephen and Michael,
-
-This patch set has been pending for more than two months since it was first=
- sent.
-I have not received any response from you until now.
-
-Could you give some comments on it?
-
-Regards,
-Andy
-
------Original Message-----
-From: Andy Tang
-Sent: Wednesday, April 05, 2017 2:16 PM
-To: mturquette@baylibre.com; sboyd@codeaurora.org
-Cc: robh+dt@kernel.org; mark.rutland@arm.com; linux-clk@vger.kernel.org; de=
-vicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-kernel@li=
-sts.infradead.org; Scott Wood <oss@buserror.net>
-Subject: RE: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
-
-Hello=20
-
-Do you have any comments on this patch set which was acked by Rob?
-
-Regards,
-Andy
-
-> -----Original Message-----
-> From: Yuantian Tang [mailto:andy.tang@nxp.com]
-> Sent: Monday, March 20, 2017 10:37 AM
-> To: mturquette@baylibre.com
-> Cc: sboyd@codeaurora.org; robh+dt@kernel.org; mark.rutland@arm.com;=20
-> linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-=20
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Scott=20
-> Wood <oss@buserror.net>; Andy Tang <andy.tang@nxp.com>
-> Subject: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
->=20
-> From: Scott Wood <oss@buserror.net>
->=20
-> ls1012a has separate input root clocks for core PLLs versus the=20
-> platform PLL, with the latter described as sysclk in the hw docs.
-> Update the qoriq-clock binding to allow a second input clock, named=20
-> "coreclk".  If present, this clock will be used for the core PLLs.
->=20
-> Signed-off-by: Scott Wood <oss@buserror.net>
-> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
-> v2:
-> 	-- change the author to Scott
->  Documentation/devicetree/bindings/clock/qoriq-clock.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> index aa3526f..119cafd 100644
-> --- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> @@ -56,6 +56,11 @@ Optional properties:
->  - clocks: If clock-frequency is not specified, sysclk may be provided
->  	as an input clock.  Either clock-frequency or clocks must be
->  	provided.
-> +	A second input clock, called "coreclk", may be provided if
-> +	core PLLs are based on a different input clock from the
-> +	platform PLL.
-> +- clock-names: Required if a coreclk is present.  Valid names are
-> +	"sysclk" and "coreclk".
->=20
->  2. Clock Provider
->=20
-> @@ -72,6 +77,7 @@ second cell is the clock index for the specified type.
->  	2	hwaccel		index (n in CLKCGnHWACSR)
->  	3	fman		0 for fm1, 1 for fm2
->  	4	platform pll	0=3Dpll, 1=3Dpll/2, 2=3Dpll/3, 3=3Dpll/4
-> +	5	coreclk		must be 0
->=20
->  3. Example
->=20
-> --
-> 2.1.0.27.g96db324
+Patchs 3 & 4 applied on stm32-dt-for-v4.12
