@@ -1,42 +1,50 @@
-Return-Path: <ykaneko0929@gmail.com>
-Return-Path: <ykaneko0929@gmail.com>
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7796: add PWM clock
-Date: Thu, 20 Apr 2017 02:46:38 +0900
-Message-Id: <1492624001-3758-18-git-send-email-ykaneko0929@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:59244 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752126AbdDCKIM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2017 06:08:12 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/3] arm: dts: renesas: Drop _clk suffix from clock node names
+Date: Mon,  3 Apr 2017 12:08:06 +0200
+Message-Id: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Ryo Kodama <ryo.kodama.vz@renesas.com>
+	Hi Simon, Magnus,
 
-This patch adds PWM clock for PWM.
+The current practice is to not add _clk suffixes to clock node names in
+DT, as these names are used as the actual clock names.
 
-Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
+This patch removes the remaining offenders in the various Renesas DTSes.
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks!
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index c5523aa..64714ca 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -156,6 +156,7 @@ enum clk_ids {
- 	DEF_MOD("hscif1",		 519,	R8A7796_CLK_S3D1),
- 	DEF_MOD("hscif0",		 520,	R8A7796_CLK_S3D1),
- 	DEF_MOD("thermal",		 522,	R8A7796_CLK_CP),
-+	DEF_MOD("pwm",			 523,	R8A7796_CLK_S3D4),
- 	DEF_MOD("fcpvd2",		 601,	R8A7796_CLK_S0D2),
- 	DEF_MOD("fcpvd1",		 602,	R8A7796_CLK_S0D2),
- 	DEF_MOD("fcpvd0",		 603,	R8A7796_CLK_S0D2),
+Geert Uytterhoeven (3):
+  ARM: dts: r8a7790: Drop _clk suffix from external CAN clock node name
+  ARM: dts: r8a7791: Drop _clk suffix from external CAN clock node name
+  arm64: dts: r8a7795: salvator-x: Drop _clk suffix from X12 clock node
+    name
+
+ arch/arm/boot/dts/r8a7790.dtsi                     | 2 +-
+ arch/arm/boot/dts/r8a7791.dtsi                     | 2 +-
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
 -- 
-1.9.1
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
