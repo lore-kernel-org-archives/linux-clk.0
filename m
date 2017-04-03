@@ -1,123 +1,85 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: arm-soc <arm@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v2 1/7] arm: spear6xx: add labels to various nodes in spear600.dtsi
-Date: Mon, 17 Apr 2017 14:46:39 +0200
-Message-Id: <1492433205-13376-2-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
+To: Tony Lindgren <tony@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <20170317152536.GT20572@atomide.com>
+ <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
+ <20170323010057.GI10760@atomide.com> <20170323170210.GL10760@atomide.com>
+ <8648f054-cf04-41df-20f3-82e0d63feefa@ti.com>
+ <20170330165448.GF10760@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <55b439ed-8b81-2e6b-64f1-34f9f3cc5369@ti.com>
+Date: Mon, 3 Apr 2017 17:51:39 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170330165448.GF10760@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Having labels allows to more easily reference nodes in .dts files
-including spear600.dtsi.
+On 30/03/17 19:54, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [170330 00:20]:
+>> On 23/03/17 19:02, Tony Lindgren wrote:
+>>> * Tony Lindgren <tony@atomide.com> [170322 18:03]:
+>>>> * Tero Kristo <t-kristo@ti.com> [170317 14:39]:
+>>>>> On 17/03/17 17:25, Tony Lindgren wrote:
+>>>>>> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+>>>>>>> Any additional testing on omap4 welcome as this series basically
+>>>>>>> tweaks every possible peripheral clock on the SoC.
+>>>>>>
+>>>>>> Without the last patch in this series, booting fails for me:
+>>>>>>
+>>>>>> [    5.074890] l4_per_cm:clk:0120:0: failed to disable
+>>>>>> [    5.085113] l4_per_cm:clk:0128:0: failed to disable
+>>>>>>
+>>>>>> Care to check that booting keeps working for each patch in the
+>>>>>> series to avoid breaking git bisect for booting?
+>>>>>
+>>>>> Hmm, I think patch 8+9 need to be squashed then. I can double check this
+>>>>> next week though.
+>>>>
+>>>> Also looks like with this set merged HDMI stops working on
+>>>> omap4 with:
+>>>>
+>>>> HDMIWP: omapdss HDMIWP error: Failed to set PHY power mode to 1
+>>>
+>>> Forgot to mention that's with omapdrm with encoder-tpd12s015 and
+>>> encoder-tfp410 modules loaded to get HDMI working. Here's more verbose
+>>> dmesg output in case that provides more clues:
+>>>
+>>> [   91.042877] omapdss HDMICORE error: operation stopped when reading edid
+>>> [   91.078308] [drm] Enabling DMM ywrap scrolling
+>>> [   91.099243] omapdss HDMIWP error: Failed to set PHY power mode to 1
+>>> [   91.107879] omapdss HDMI error: failed to power on device
+>>> [   91.107879] omapdrm omapdrm.0: Failed to enable display 'hdmi': -5
+>>> [   91.359619] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+>>> [   91.619964] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+>>> [   91.620300] Console: switching to colour frame buffer device 128x48
+>>> [   91.682434] omapdrm omapdrm.0: fb0: omapdrm frame buffer device
+>>> [   91.770812] [drm] Initialized omapdrm 1.0.0 20110917 for omapdrm.0 on minor 0
+>>> [   92.818054] omapdss HDMICORE error: operation stopped when reading edid
+>>> [   93.090087] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+>>> [   93.349853] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+>>>
+>>> Regards,
+>>>
+>>> Tony
+>>>
+>>
+>> Can you try with this additional hwmod data tweak in place? Apply this on
+>> top of the existing series.
+>
+> Does not seem to help, still get the same errors. But maybe I'm doing
+> something wrong as the patch did not apply and I applied it manually.
+>
+> Regards,
+>
+> Tony
+>
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm/boot/dts/spear600.dtsi | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Hmm ok, can you provide some brief instructions how to test what you are 
+doing with the HDMI? Just connect it to some external monitor? My 
+monitor has a spare HDMI connector so I could try it out.
 
-diff --git a/arch/arm/boot/dts/spear600.dtsi b/arch/arm/boot/dts/spear600.dtsi
-index 9f60a7b..8459286 100644
---- a/arch/arm/boot/dts/spear600.dtsi
-+++ b/arch/arm/boot/dts/spear600.dtsi
-@@ -49,7 +49,7 @@
- 			#interrupt-cells = <1>;
- 		};
- 
--		clcd@fc200000 {
-+		clcd: clcd@fc200000 {
- 			compatible = "arm,pl110", "arm,primecell";
- 			reg = <0xfc200000 0x1000>;
- 			interrupt-parent = <&vic1>;
-@@ -57,7 +57,7 @@
- 			status = "disabled";
- 		};
- 
--		dma@fc400000 {
-+		dmac: dma@fc400000 {
- 			compatible = "arm,pl080", "arm,primecell";
- 			reg = <0xfc400000 0x1000>;
- 			interrupt-parent = <&vic1>;
-@@ -97,7 +97,7 @@
- 			status = "disabled";
- 		};
- 
--		ehci@e1800000 {
-+		ehci_usb0: ehci@e1800000 {
- 			compatible = "st,spear600-ehci", "usb-ehci";
- 			reg = <0xe1800000 0x1000>;
- 			interrupt-parent = <&vic1>;
-@@ -105,7 +105,7 @@
- 			status = "disabled";
- 		};
- 
--		ehci@e2000000 {
-+		ehci_usb1: ehci@e2000000 {
- 			compatible = "st,spear600-ehci", "usb-ehci";
- 			reg = <0xe2000000 0x1000>;
- 			interrupt-parent = <&vic1>;
-@@ -113,7 +113,7 @@
- 			status = "disabled";
- 		};
- 
--		ohci@e1900000 {
-+		ohci_usb0: ohci@e1900000 {
- 			compatible = "st,spear600-ohci", "usb-ohci";
- 			reg = <0xe1900000 0x1000>;
- 			interrupt-parent = <&vic1>;
-@@ -121,7 +121,7 @@
- 			status = "disabled";
- 		};
- 
--		ohci@e2100000 {
-+		ohci_usb1: ohci@e2100000 {
- 			compatible = "st,spear600-ohci", "usb-ohci";
- 			reg = <0xe2100000 0x1000>;
- 			interrupt-parent = <&vic1>;
-@@ -135,7 +135,7 @@
- 			compatible = "simple-bus";
- 			ranges = <0xd0000000 0xd0000000 0x30000000>;
- 
--			serial@d0000000 {
-+			uart0: serial@d0000000 {
- 				compatible = "arm,pl011", "arm,primecell";
- 				reg = <0xd0000000 0x1000>;
- 				interrupt-parent = <&vic0>;
-@@ -143,7 +143,7 @@
- 				status = "disabled";
- 			};
- 
--			serial@d0080000 {
-+			uart1: serial@d0080000 {
- 				compatible = "arm,pl011", "arm,primecell";
- 				reg = <0xd0080000 0x1000>;
- 				interrupt-parent = <&vic0>;
-@@ -181,7 +181,7 @@
- 				interrupts = <4>;
- 			};
- 
--			i2c@d0200000 {
-+			i2c: i2c@d0200000 {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
- 				compatible = "snps,designware-i2c";
-@@ -191,7 +191,7 @@
- 				status = "disabled";
- 			};
- 
--			rtc@fc900000 {
-+			rtc: rtc@fc900000 {
- 				compatible = "st,spear600-rtc";
- 				reg = <0xfc900000 0x1000>;
- 				interrupts = <10>;
--- 
-2.7.4
+-Tero
