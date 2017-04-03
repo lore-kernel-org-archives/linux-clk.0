@@ -1,41 +1,39 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 09:53:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: linux-clk@vger.kernel.org, x86@kernel.org,
-	platform-driver-x86@vger.kernel.org, alsa-devel@alsa-project.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH v2] clk: x86: add "mclk" alias for Baytrail/Cherrytrail
-Message-ID: <20170419165310.GK7065@codeaurora.org>
-References: <1487622236-16901-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 3 Apr 2017 09:49:34 -0500
+From: Rob Herring <robh@kernel.org>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH v3 1/5] dt-bindings: update device tree binding for
+ Allwinner PRCM CCUs
+Message-ID: <20170403144934.rnvftfuojq22aotu@rob-hp-laptop>
+References: <20170329104246.34204-1-icenowy@aosc.io>
+ <20170329104246.34204-2-icenowy@aosc.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1487622236-16901-1-git-send-email-pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20170329104246.34204-2-icenowy@aosc.io>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/20, Pierre-Louis Bossart wrote:
-> Due to timing requirements, TI and Conexant manage the audio
-> reference clock from their ASoC codec drivers using the "mclk"
-> string. This patch adds another lookup for the "pmc_plt_clk_3"
-> clock to avoid Intel-specific tests in those codec drivers and
-> use code as-is.
+On Wed, Mar 29, 2017 at 06:42:42PM +0800, Icenowy Zheng wrote:
+> From: Icenowy Zheng <icenowy@aosc.xyz>
 > 
-> To avoid a leak, clk_add_alias() is not used in this patch.
-> Instead the lookup is created manually as part of the .probe()
-> step and dropped in the .remove() step.
+> Many Allwinner SoCs after A31 have a CCU in PRCM block.
 > 
-> "pmc_plt_clk_3" is used exclusively for audio on all known
-> Baytrail/CherryTrail designs and is e.g. routed on the MCLK
-> (pin 26) of the MinnowBoardMAX Turbot LSE connector.
+> Give the ones on H3 and A64 compatible strings.
 > 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 > ---
+> Changes in v3:
+> - Removed frequency info of iosc in this device tree binding document.
+> Changes in v2:
+> - Add iosc for R_CCU's on H3/A64.
+> 
+>  Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
 
-Applied to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Acked-by: Rob Herring <robh@kernel.org>
