@@ -1,98 +1,60 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: Janos Laube <janos.dev@gmail.com>,
-	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
-	openwrt-devel@openwrt.org,
-	linux-arm-kernel@lists.infradead.org,
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 1/2] clk: Add bindings for the Gemini Clock Controller
-Date: Mon, 24 Apr 2017 20:55:45 +0200
-Message-Id: <20170424185545.26608-1-linus.walleij@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Helmut Klein <hgkr.klein@gmail.com>
+Subject: Re: [PATCH v3 0/4] tty/serial: meson_uart: add support for core clock
+ handling
+References: <20170331165437.26227-1-hgkr.klein@gmail.com>
+Date: Mon, 03 Apr 2017 08:44:16 -0700
+In-Reply-To: <20170331165437.26227-1-hgkr.klein@gmail.com> (Helmut Klein's
+ message of "Fri, 31 Mar 2017 18:54:33 +0200")
+Message-ID: <m2lgrha433.fsf@baylibre.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds device tree bindings and a header for the Gemini SoC
-Clock Controller.
+Helmut Klein <hgkr.klein@gmail.com> writes:
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- .../clock/cortina,gemini-clock-controller.txt      | 25 +++++++++++++++++++
- include/dt-bindings/clock/cortina,gemini-clock.h   | 29 ++++++++++++++++++++++
- 2 files changed, 54 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
- create mode 100644 include/dt-bindings/clock/cortina,gemini-clock.h
+> To be able to use the three none AO uarts of the meson gx SoCs (uart_A,
 
-diff --git a/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt b/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
-new file mode 100644
-index 000000000000..7af84acfcbce
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
-@@ -0,0 +1,25 @@
-+Clock bindings for the Cortina Systems Gemini SoC Clock Controller
-+
-+Required properties :
-+- compatible : shall contain the following:
-+  "cortina,gemini-clock-controller"
-+- #clock-cells should be <1>
-+
-+The Gemini clock controller needs to be placed as a subnode of the
-+system controller.
-+
-+All available clocks are defined as preprocessor macros in
-+dt-bindings/clock/cortina,gemini-clock.h header and can be used in device
-+tree sources.
-+
-+Example:
-+
-+syscon: syscon@40000000 {
-+	compatible = "cortina,gemini-syscon", "syscon", "simple-mfd";
-+	reg = <0x40000000 0x1000>;
-+
-+	clock-controller {
-+		compatible = "cortina,gemini-clock-controller";
-+		#clock-cells = <1>;
-+	};
-+};
-diff --git a/include/dt-bindings/clock/cortina,gemini-clock.h b/include/dt-bindings/clock/cortina,gemini-clock.h
-new file mode 100644
-index 000000000000..acf5cd550b0c
---- /dev/null
-+++ b/include/dt-bindings/clock/cortina,gemini-clock.h
-@@ -0,0 +1,29 @@
-+#ifndef DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
-+#define DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
-+
-+/* RTC, AHB, APB, CPU, PCI, TVC, UART clocks and 13 gates */
-+#define GEMINI_NUM_CLKS 20
-+
-+#define GEMINI_CLK_RTC 0
-+#define GEMINI_CLK_AHB 1
-+#define GEMINI_CLK_APB 2
-+#define GEMINI_CLK_CPU 3
-+#define GEMINI_CLK_PCI 4
-+#define GEMINI_CLK_TVC 5
-+#define GEMINI_CLK_UART 6
-+#define GEMINI_CLK_GATES 7
-+#define GEMINI_CLK_GATE_SECURITY 7
-+#define GEMINI_CLK_GATE_GMAC0 8
-+#define GEMINI_CLK_GATE_GMAC1 9
-+#define GEMINI_CLK_GATE_SATA0 10
-+#define GEMINI_CLK_GATE_SATA1 11
-+#define GEMINI_CLK_GATE_USB0 12
-+#define GEMINI_CLK_GATE_USB1 13
-+#define GEMINI_CLK_GATE_IDE 14
-+#define GEMINI_CLK_GATE_PCI 15
-+#define GEMINI_CLK_GATE_DDR 16
-+#define GEMINI_CLK_GATE_FLASH 17
-+#define GEMINI_CLK_GATE_TVC 18
-+#define GEMINI_CLK_GATE_BOOT 19
-+
-+#endif /* DT_BINDINGS_CORTINA_GEMINI_CLOCK_H */
--- 
-2.9.3
+s/none/non/
+
+> uart_B & uart_C), the core clock has to be enabled (see chapter 22.3 of
+> the public s905 data sheet).
+> At least the u-boot of my s905 based media player (netxeon minimx-g)
+> doesn't do this. so the driver must enable the clock.
+
+FYI: even if a booloader enablesq clocks, it's important that the kernel
+enable clocks that it uses so the kernel can be independent of any
+bootloader.
+
+> This patch set does:
+> - exposes the UART clock ids to the dtb
+> - adds documentation for the dt-bindings of meson_uart
+> - adds the core clock handling to the driver
+> - adds the core clock handling to meson-gxbb.dtsi and meson-gxl.dtsi
+>
+> The patchset is based on the branch "master" of the repository in [1]
+
+The master branch in my tree just tracks mainline master branch.
+
+To avoid conflicts with other on-going DT changes, the DT patches should
+probably be based on top of my v4.12/dt64 branch.
+
+Kevin
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
