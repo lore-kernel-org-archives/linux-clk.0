@@ -1,57 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:37463 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1166882AbdDXKKp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2017 06:10:45 -0400
-Received: by mail-wm0-f43.google.com with SMTP id m123so62649816wma.0
-        for <linux-clk@vger.kernel.org>; Mon, 24 Apr 2017 03:10:44 -0700 (PDT)
-Subject: Re: [PATCH] clk: meson: gxbb: fix build error without
- RESET_CONTROLLER
-To: Tobias Regnery <tobias.regnery@gmail.com>, sboyd@codeaurora.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20170424100542.20226-1-tobias.regnery@gmail.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <8556c66c-585f-d171-e2a8-1f59d109e9de@baylibre.com>
-Date: Mon, 24 Apr 2017 12:10:41 +0200
+Return-Path: <Alexey_Firago@mentor.com>
+Subject: Re: [PATCH 2/2] clk: vc5: Add support for IDT VersaClock 5P49V5935
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Marek Vasut
+	<marek.vasut@gmail.com>
+References: <1491311788-31905-1-git-send-email-alexey_firago@mentor.com>
+ <1491311788-31905-3-git-send-email-alexey_firago@mentor.com>
+ <72c66927-0acf-c888-2b4b-906a6c27e15c@gmail.com>
+ <CAMuHMdUOtY5i0_BoS7cKYzWKpA_fF3VssN4bZnNyFB117EpacQ@mail.gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, linux-clk
+	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+From: Alexey Firago <alexey_firago@mentor.com>
+Message-ID: <4f4bb110-7870-c5b3-9051-47ae8eece9df@mentor.com>
+Date: Tue, 4 Apr 2017 16:36:45 +0300
 MIME-Version: 1.0
-In-Reply-To: <20170424100542.20226-1-tobias.regnery@gmail.com>
-Content-Type: text/plain; charset=windows-1252
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdUOtY5i0_BoS7cKYzWKpA_fF3VssN4bZnNyFB117EpacQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/24/2017 12:05 PM, Tobias Regnery wrote:
-> With CONFIG_RESET_CONTROLLER=n we see the following link error in the
-> meson gxbb clk driver:
-> 
-> drivers/built-in.o: In function 'gxbb_aoclkc_probe':
-> drivers/clk/meson/gxbb-aoclk.c:161: undefined reference to 'devm_reset_controller_register'
-> 
-> Fix this by selecting the reset controller subsystem.
-> 
-> Signed-off-by: Tobias Regnery <tobias.regnery@gmail.com>
-> ---
->  drivers/clk/meson/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index 19480bcc7046..2f29ee1a4d00 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -14,6 +14,7 @@ config COMMON_CLK_MESON8B
->  config COMMON_CLK_GXBB
->  	bool
->  	depends on COMMON_CLK_AMLOGIC
-> +	select RESET_CONTROLLER
->  	help
->  	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
->  	  Say Y if you want peripherals and CPU frequency scaling to work.
-> 
+On 04.04.2017 16:23, Geert Uytterhoeven wrote:
+> On Tue, Apr 4, 2017 at 3:21 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> On 04/04/2017 03:16 PM, Alexey Firago wrote:
+>>> +     switch (vc5->model) {
+>>> +     case IDT_VC5_5P49V5923:
+>>> +     case IDT_VC5_5P49V5933:
+>>> +             vc5->clk_fod_cnt = 2;
+>>> +             vc5->clk_out_cnt = 3;
+>>> +             break;
+>>> +     case IDT_VC5_5P49V5935:
+>>> +             vc5->clk_fod_cnt = 4;
+>>> +             vc5->clk_out_cnt = 5;
+>>> +             break;
+>>> +     default:
+>>> +             /* Should never go here */
+>>> +             dev_err(&client->dev, "unsupported IDT VC5 ID specified\n");
+>>> +             return -EINVAL;
+>>> +     }
+>>> +
+>>>       vc5->pin_xin = devm_clk_get(&client->dev, "xin");
+>>>       if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
+>>>               return -EPROBE_DEFER;
+>
+>>> @@ -744,7 +772,7 @@ static int vc5_probe(struct i2c_client *client,
+>>>       return 0;
+>>>
+>>>  err_clk:
+>>> -     if (vc5->model == IDT_VC5_5P49V5933)
+>>> +     if (vc5->model == IDT_VC5_5P49V5933 || vc5->model == IDT_VC5_5P49V5935)
+>>
+>> Maybe we should introduce some sort of flags to describe the VC
+>> properties instead of using the model all over the place ?
+>
+> Yep, a structure describing the features (incl. fod_cnt and out_cnt), to be
+> pointed to by clk_vc5_of_match[].data.
 
-Hi Tobias,
+Ok, will rework and resend.
 
-I was going to push this, thanks for the patch !
-
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-
-Neil
+Thanks,
+Alexey
