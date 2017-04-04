@@ -1,54 +1,69 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:51892 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1046497AbdDXLMq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2017 07:12:46 -0400
-Subject: Re: [PATCH RFC 1/7] clk: samsung: Add enable/disable operation for
- PLL36XX clocks
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, cw00.choi@samsung.com,
-        javier@osg.samsung.com, krzk@kernel.org, jy0922.shim@samsung.com,
-        broonie@kernel.org, robh+dt@kernel.org, b.zolnierkie@samsung.com
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <cf931f91-aec1-d667-bede-da01e0b94258@samsung.com>
-Date: Mon, 24 Apr 2017 13:12:36 +0200
-MIME-version: 1.0
-In-reply-to: <20170422025127.GS7065@codeaurora.org>
-Content-type: text/plain; charset="windows-1252"; format="flowed"
-References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
-        <CGME20170421172016epcas5p342c16e1219c1205a44a84eaa770ad5ac@epcas5p3.samsung.com>
-        <1492795191-31298-2-git-send-email-s.nawrocki@samsung.com>
-        <20170422025127.GS7065@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Alexey_Firago@mentor.com>
+From: Alexey Firago <alexey_firago@mentor.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<marek.vasut@gmail.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+CC: Alexey Firago <alexey_firago@mentor.com>
+Subject: [PATCH 1/2] clk: vc5: Add bindings for IDT VersaClock 5P49V5935
+Date: Tue, 4 Apr 2017 16:16:27 +0300
+Message-ID: <1491311788-31905-2-git-send-email-alexey_firago@mentor.com>
+In-Reply-To: <1491311788-31905-1-git-send-email-alexey_firago@mentor.com>
+References: <1491311788-31905-1-git-send-email-alexey_firago@mentor.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/22/2017 04:51 AM, Stephen Boyd wrote:
->> +static int samsung_pll3xxx_enable(struct clk_hw *hw)
->> +{
->> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
->> +	u32 tmp;
->> +
->> +	tmp = readl_relaxed(pll->con_reg);
->> +	tmp |= BIT(pll->enable_offs);
->> +	writel_relaxed(tmp, pll->con_reg);
->> +
->> +	/* wait lock time */
->> +	do {
->> +		cpu_relax();
->> +		tmp = readl_relaxed(pll->con_reg);
->> +	} while (!(tmp & BIT(pll->lock_offs)));
- >
-> Not a problem with this patch because we're moving code around,
-> but this is a potential infinite loop that should have some sort
-> of timeout so we don't sit here forever trying to see a bit
-> toggle.
+IDT VersaClock 5 5P49V5935 has 4 clock outputs, 4 fractional dividers.
+Input clock source can be taken from either integrated crystal or from
+external reference clock.
 
-Yes, I will add some protection in new patch, like it is done
-for newer PLLs. Thanks for you review.
+Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
+---
+ .../devicetree/bindings/clock/idt,versaclock5.txt        | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+index 87e9c47..53d7e50 100644
+--- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+@@ -6,18 +6,21 @@ from 3 to 12 output clocks.
+ ==I2C device node==
+ 
+ Required properties:
+-- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933".
++- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
++		"idt,5p49v5935".
+ - reg:		i2c device address, shall be 0x68 or 0x6a.
+ - #clock-cells:	from common clock binding; shall be set to 1.
+ - clocks:	from common clock binding; list of parent clock handles,
+ 		- 5p49v5923: (required) either or both of XTAL or CLKIN
+ 					reference clock.
+-		- 5p49v5933: (optional) property not present (internal
++		- 5p49v5933 and
++		- 5p49v5935: (optional) property not present (internal
+ 					Xtal used) or CLKIN reference
+ 					clock.
+ - clock-names:	from common clock binding; clock input names, can be
+ 		- 5p49v5923: (required) either or both of "xin", "clkin".
+-		- 5p49v5933: (optional) property not present or "clkin".
++		- 5p49v5933 and
++		- 5p49v5935: (optional) property not present or "clkin".
+ 
+ ==Mapping between clock specifier and physical pins==
+ 
+@@ -34,6 +37,13 @@ clock specifier, the following mapping applies:
+ 	1 -- OUT1
+ 	2 -- OUT4
+ 
++5P49V5935:
++	0 -- OUT0_SEL_I2CB
++	1 -- OUT1
++	2 -- OUT2
++	3 -- OUT3
++	4 -- OUT4
++
+ ==Example==
+ 
+ /* 25MHz reference crystal */
 -- 
-Regards,
-Sylwester
+2.7.4
