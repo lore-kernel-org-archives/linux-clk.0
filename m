@@ -1,219 +1,51 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 3 Apr 2017 09:39:58 -0500
-From: Rob Herring <robh@kernel.org>
-To: gabriel.fernandez@st.com
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [PATCH v2] clk: stm32h7: Add stm32h743 clock driver
-Message-ID: <20170403143958.gi7vyhianzetnxz2@rob-hp-laptop>
-References: <1490778502-23651-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com> 
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org ,
+ Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Subject: [GIT PULL] Amlogic clock header updates for v4.12
+Date: Tue, 04 Apr 2017 16:14:03 -0700
+Message-ID: <m2tw637olg.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1490778502-23651-1-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 11:08:22AM +0200, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> This patch enables clocks for STM32H743 boards.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> Just for the MFD changes:
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> 
-> v2:
->   - rename compatible string "stm32,pll" into "stm32h7-pll"
->   - suppress "st,pllrge" property
->   - suppress "st, frac-status" property
->   - change management of "st,frac"  property
-> 	0 : enable 0 pll integer mode 
-> 	other values : enable pll in fractional mode (value is
-> 	the fractional factor)
-> ---
->  .../devicetree/bindings/clock/st,stm32h7-rcc.txt   |  151 ++
->  drivers/clk/Makefile                               |    1 +
->  drivers/clk/clk-stm32h7.c                          | 1610 ++++++++++++++++++++
->  include/dt-bindings/clock/stm32h7-clks.h           |  165 ++
->  include/dt-bindings/mfd/stm32h7-rcc.h              |  137 ++
->  5 files changed, 2064 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
->  create mode 100644 drivers/clk/clk-stm32h7.c
->  create mode 100644 include/dt-bindings/clock/stm32h7-clks.h
->  create mode 100644 include/dt-bindings/mfd/stm32h7-rcc.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
-> new file mode 100644
-> index 0000000..5f54f64
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
-> @@ -0,0 +1,151 @@
-> +STMicroelectronics STM32H7 Reset and Clock Controller
-> +=====================================================
-> +
-> +The RCC IP is both a reset and a clock controller.
-> +
-> +Please refer to clock-bindings.txt for common clock controller binding usage.
-> +Please also refer to reset.txt for common reset controller binding usage.
-> +
-> +Required properties:
-> +- compatible: Should be:
-> +  "st,stm32h743-rcc"
-> +
-> +- reg: should be register base and length as documented in the
-> +  datasheet
-> +
-> +- #reset-cells: 1, see below
-> +
-> +- #clock-cells : from common clock binding; shall be set to 1
-> +
-> +- clocks: External oscillator clock phandle
-> +  - high speed external clock signal (HSE)
-> +  - low speed external clock signal (LSE)
-> +  - external I2S clock (I2S_CKIN)
-> +
-> +- st,syscfg: phandle for pwrcfg, mandatory to disable/enable backup domain
-> +  write protection (RTC clock).
-> +
-> +- pll x node: Allow to register a pll with specific parameters.
-> +  Please see PLL section below.
-> +
-> +Example:
-> +
-> +	rcc: rcc@58024400 {
-> +		#reset-cells = <1>;
-> +		#clock-cells = <2>
-> +		compatible = "st,stm32h743-rcc", "st,stm32-rcc";
-> +		reg = <0x58024400 0x400>;
-> +		clocks = <&clk_hse>, <&clk_lse>, <&clk_i2s_ckin>;
-> +
-> +		st,syscfg = <&pwrcfg>;
-> +
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		vco1@0 {
-> +			#clock-cells = <0>;
-> +			compatible = "stm32h7-pll";
-> +			reg = <0>;
-> +		};
-> +
-> +		vco2@1 {
-> +			#clock-cells = <0>;
-> +			compatible = "stm32h7-pll";
-> +			reg = <1>;
-> +			st,clock-div = <2>;
-> +			st,clock-mult = <40>;
-> +			st,frac = <0>;
-> +			st,vcosel = <1>;
-> +		};
-> +		vco3@2 {
-> +			#clock-cells = <0>;
-> +			compatible = "stm32h7-pll";
-> +			reg = <2>;
-> +			st,clock-div = <2>;
-> +			st,clock-mult = <40>;
-> +			st,frac = <1024>;
-> +			st,vcosel = <1>;
-> +		};
-> +	};
-> +
-> +
-> +STM32H7 PLL
-> +-----------
-> +
-> +The VCO of STM32 PLL could be reprensented like this:
-> +
-> +  Vref    ---------       --------
-> +    ---->| / DIVM  |---->| x DIVN | ------> VCO
-> +          ---------       --------
-> +		             ^
-> +			     |
-> +	                  -------
-> +		         | FRACN |
-> +		          -------
-> +
-> +When the PLL is configured in integer mode:
-> +- VCO = ( Vref / DIVM ) * DIVN
-> +
-> +When the PLL is configured in fractional mode:
-> +- VCO = ( Vref / DIVM ) * ( DIVN + FRACN / 2^13)
-> +
-> +
-> +Required properties for pll node:
-> +- compatible: Should be:
-> +  "stm32h7-pll"
+Steven, Mike,
 
-stm,stm32h7-pll
+In order to restructure things so we only have clock headers/bindings in
+the dependencies needed by the Amlogic DT patches, I've split up the
+clock branch you've collected for us into a headers part and a drivers
+part.   Here's a pull req for the headers.
 
-With that,
+Kevin
 
-Acked-by: Rob Herring <robh@kernel.org>
+The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
 
-> +
-> +- #clock-cells: from common clock binding; shall be set to 0
-> +- reg: Should be the pll number.
-> +
-> +Optional properties:
-> +- st,clock-div:  DIVM division factor       : <1..63>
-> +- st,clock-mult: DIVN multiplication factor : <4..512>
-> +
-> +- st,frac:
-> +   - 0 Pll is configured in integer mode
-> +   - <1..8191> Pll is configure in fractional mode and the value is
-> +     the part of the multiplication factor.
-> +
-> +- st,vcosel: VCO selection
-> +  - 0: Wide VCO range:192 to 836 MHz
-> +  - 1: Medium VCO range:150 to 420 MHz
-> +
-> +The peripheral clock consumer should specify the desired clock by
-> +having the clock ID in its "clocks" phandle cell.
-> +
-> +All available clocks are defined as preprocessor macros in
-> +dt-bindings/clock/stm32h7-clks.h header and can be used in device
-> +tree sources.
-> +
-> +Example:
-> +
-> +		timer5: timer@40000c00 {
-> +			compatible = "st,stm32-timer";
-> +			reg = <0x40000c00 0x400>;
-> +			interrupts = <50>;
-> +			clocks = <&rcc TIM5_CK>;
-> +
-> +		};
-> +
-> +Specifying softreset control of devices
-> +=======================================
-> +
-> +Device nodes should specify the reset channel required in their "resets"
-> +property, containing a phandle to the reset device node and an index specifying
-> +which channel to use.
-> +The index is the bit number within the RCC registers bank, starting from RCC
-> +base address.
-> +It is calculated as: index = register_offset / 4 * 32 + bit_offset.
-> +Where bit_offset is the bit offset within the register.
-> +
-> +For example, for CRC reset:
-> +  crc = AHB4RSTR_offset / 4 * 32 + CRCRST_bit_offset = 0x88 / 4 * 32 + 19 = 1107
-> +
-> +All available preprocessor macros for reset are defined dt-bindings//mfd/stm32h7-rcc.h
-> +header and can be used in device tree sources.
-> +
-> +example:
-> +
-> +	timer2 {
-> +		resets	= <&rcc STM32H7_APB1L_RESET(TIM2)>;
-> +	};
+  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-amlogic.git tags/amlogic-clk-headers
+
+for you to fetch changes up to 92c2cc5d5566cb84e4f4a683e73c3516882c2ee8:
+
+  dt-bindings: clock: gxbb-clkc: Add GXL compatible variant (2017-04-04 11:00:07 -0700)
+
+----------------------------------------------------------------
+Amlogic clock headers and DT binding updates for v4.12
+- add clocks for I2S and Mali
+
+----------------------------------------------------------------
+Jerome Brunet (1):
+      dt-bindings: clk: gxbb: expose i2s output clock gates
+
+Neil Armstrong (3):
+      clk: meson-gxbb: Add MALI clock IDS
+      clk: meson-gxbb: Expose GP0 dt-bindings clock id
+      dt-bindings: clock: gxbb-clkc: Add GXL compatible variant
+
+ Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt |  3 ++-
+ drivers/clk/meson/gxbb.h                                      | 21 ++++++++++++++-------
+ include/dt-bindings/clock/gxbb-clkc.h                         | 11 +++++++++++
+ 3 files changed, 27 insertions(+), 8 deletions(-)
