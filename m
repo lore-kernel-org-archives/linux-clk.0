@@ -1,72 +1,76 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 27 Apr 2017 09:04:36 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc: wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: sunxi-ng: Fix dependency on SUNXI_CCU_GATE
-Message-ID: <20170427070436.3qu4mzepq4gmmymi@lukather>
-References: <20170426115319.30951-1-clabbe.montjoie@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:43044 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752935AbdDDTjR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2017 15:39:17 -0400
+Date: Tue, 4 Apr 2017 12:39:14 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Will Deacon <will.deacon@arm.com>
+Cc: Rob Clark <robdclark@gmail.com>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH V3 0/5] iommu/arm-smmu: Add runtime pm/sleep support
+Message-ID: <20170404193914.GF18246@codeaurora.org>
+References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
+ <20170331175457.GD4897@arm.com>
+ <CAF6AEGv_1pNvhCc-mVP5S28Yt5kTJmTRfe8tKSJpEmxfOKM7Jg@mail.gmail.com>
+ <20170403172307.GI5706@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="z4ql26xsvxmm4wsl"
-In-Reply-To: <20170426115319.30951-1-clabbe.montjoie@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170403172307.GI5706@arm.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On 04/03, Will Deacon wrote:
+> On Fri, Mar 31, 2017 at 10:58:16PM -0400, Rob Clark wrote:
+> > On Fri, Mar 31, 2017 at 1:54 PM, Will Deacon <will.deacon@arm.com> wrote:
+> > > On Thu, Mar 09, 2017 at 09:05:43PM +0530, Sricharan R wrote:
+> > >> This series provides the support for turning on the arm-smmu's
+> > >> clocks/power domains using runtime pm. This is done using the
+> > >> recently introduced device links patches, which lets the symmu's
+> > >> runtime to follow the master's runtime pm, so the smmu remains
+> > >> powered only when the masters use it.
+> > >
+> > > Do you have any numbers for the power savings you achieve with this?
+> > > How often do we actually manage to stop the SMMU clocks on an SoC with
+> > > a handful of masters?
+> > >
+> > > In other words, is this too coarse-grained to be useful, or is it common
+> > > that all the devices upstream of the SMMU are suspended?
+> > 
+> > well, if you think about a phone/tablet with a command mode panel,
+> > pretty much all devices will be suspended most of the time ;-)
+> 
+> Well, that's really what I was asking about. I assumed that periodic
+> modem/radio transactions would keep the SMMU clocked, so would like to get a
+> rough idea of the power savings achieved with this coarse-grained approach.
 
---z4ql26xsvxmm4wsl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sometimes we distribute SMMUs to each IP block in the system and
+let each one of those live in their own clock + power domain. In
+these cases, the SMMU can be powered down along with the only IP
+block that uses it. Furthermore, sometimes we put the IP block
+and the SMMU inside the same power domain to really tie the two
+together, so we definitely have cases where all devices (device?)
+upstream of the SMMU are suspended. And in the case of
+multimedia, it could be very often that something like the camera
+app isn't open and thus the SMMU dedicated for the camera can be
+powered down.
 
-On Wed, Apr 26, 2017 at 01:53:19PM +0200, Corentin Labbe wrote:
-> When CONFIG_SUNXI_CCU is set but no other SUNXI_CCU is selected i got
-> the following build error:
-> drivers/built-in.o: In function `ccu_pll_notifier_cb':
-> drivers/clk/sunxi-ng/ccu_common.c:71: undefined reference to `ccu_gate_he=
-lper_disable'
-> drivers/clk/sunxi-ng/ccu_common.c:73: undefined reference to `ccu_gate_he=
-lper_enable'
->=20
-> The problem is the function ccu_pll_notifier_cb in ccu_common.c need
-> some function from ccu_gate.c which is not compiled since SUNXI_CCU_GATE
-> is not selected.
->=20
-> This patch remove SUNXI_CCU_GATE and compile ccu_gate.c unconditionnaly
-> since all other combination of options select SUNXI_CCU_GATE finally.
->=20
-> Fixes: 02ae2bc6febd ("clk: sunxi-ng: Add clk notifier to gate then ungate=
- PLL clocks")
-> Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Other times we have two SMMUs in the system where one is
+dedicated to GPU and the other is "everything else". Even in
+these cases, we can suspend the GPU one when the GPU is inactive
+because it's the only consumer. The other SMMU might not be as
+fine grained, but I think we still power it down quite often
+because the consumers are mostly multimedia devices that aren't
+active when the display is off.
 
-I think Chen-Yu had some comments that you didn't address.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---z4ql26xsvxmm4wsl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJZAZgAAAoJEBx+YmzsjxAgUKoP/R8c3ueaGTaY3o8itVyiNXfj
-YpIb6FWUJmZoM4AA5v47lkAOgQIDMeS0in33U5dvg9UIKzRwlQloPNW0eHse5RS/
-UNFK9QY+9GuXKGxBpOuCj/HhKAW6ECbgVvtFSvCOOhO71mInOTTZLc1dcf3N+3iH
-ZtQ1/Sf6sC5Fz2O/v1UHz6ZWHkO42hlC7MydonR1VSfuxNrmWPXhWA/kdqUsK9y1
-WNyg6RUwDWsf36OyytVDsZcUf93BhA3dcDQvt4yCD9Hp6LzrACPHaeSdtvOrBlg3
-OV5TFxmAh3K5Z4BS1WMLDqcWQPE40rzGiezLuEUhALinP0JTUNvu1ytS+iPQoBVp
-UixET9F9AXGxVg317wu2SCpEmqK96UnjOs1BeunC/ENk78zn5hLy3dDJ7JiqbByt
-a+Q7R7xfXg4MG/bTLeLLWqnAO0NxuB/IX9m/5Krl3VtF4E8tOXl/FeTDz93kruGn
-ovzAJY6Pqi/J4hZFLXUjw/BfYhSmq/lXjnGdiKEYxBcpXLMx1cLRJ/584LBcmd+e
-ngTvR/vEDq3jQmf+B+rm4NnLd2Nq/OXuXXBzKNpBRsMYTlaymeDYQNn+K2+xaArc
-j1PFhuxv7chpOWOJG+vMBZxa7AQ3YxxyNRvPzJmYy6Uyh7IFuOB3SLeOUbQ1HTb3
-rk3AtgTz9PFm63RNTl3H
-=OSKO
------END PGP SIGNATURE-----
-
---z4ql26xsvxmm4wsl--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
