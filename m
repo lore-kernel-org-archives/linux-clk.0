@@ -1,70 +1,170 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Apr 2017 18:58:20 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>, Keerthy <j-keerthy@ti.com>,
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: ti: divider: try to fix ti_clk_register_divider
-Message-ID: <20170422015820.GZ7065@codeaurora.org>
-References: <20170419174507.4055014-1-arnd@arndb.de>
- <7f0c996e-df53-ffb7-2c02-2f7fa66d2b94@ti.com>
+Return-Path: <Alexey_Firago@mentor.com>
+Subject: Re: [PATCH 2/2] clk: vc5: Add support for IDT VersaClock 5P49V5935
+To: Marek Vasut <marek.vasut@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <robh+dt@kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+References: <1491311788-31905-1-git-send-email-alexey_firago@mentor.com>
+ <1491311788-31905-3-git-send-email-alexey_firago@mentor.com>
+ <72c66927-0acf-c888-2b4b-906a6c27e15c@gmail.com>
+From: Alexey Firago <alexey_firago@mentor.com>
+Message-ID: <10df98f4-519e-4f4f-9eeb-db52ad3d34ec@mentor.com>
+Date: Tue, 4 Apr 2017 16:35:37 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7f0c996e-df53-ffb7-2c02-2f7fa66d2b94@ti.com>
+In-Reply-To: <72c66927-0acf-c888-2b4b-906a6c27e15c@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/20, Tero Kristo wrote:
-> On 19/04/17 20:44, Arnd Bergmann wrote:
-> >The newly introduced function is entirely bogus as I found when looking
-> >at this warning:
-> >
-> >drivers/clk/ti/divider.c: In function 'ti_clk_register_divider':
-> >drivers/clk/ti/divider.c:460:8: error: 'reg' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-> >
-> >Treating a 'u32' variable as a structure leads to a stack overflow here,
-> >and the register address we pass down is never initialized.
-> >
-> >As the code in its original form makes no sense, I can only guess what
-> >the intention was, and change it to take the address from div->reg.ptr
-> >instead.
-> 
-> Actually, I believe the code you are fixing works before this commit:
-> 
-> commit 6c0afb503937a12a8d20a805fcf263e31afa9871
-> Author: Tero Kristo <t-kristo@ti.com>
-> Date:   Thu Feb 9 11:24:37 2017 +0200
-> 
->     clk: ti: convert to use proper register definition for all accesses
-> 
-> 
-> ... it attempted to convert all the register accesses to the new
-> format and change the size of the clk_omap_reg in bulk but I missed
-> converting this one. Previously the size of the clk_omap_reg
-> definition was u32, but this was confusing and bug prone so I
-> changed it.
-> 
-> The failing piece of code is only executed for legacy boot mode
-> OMAP3 right now, which could be potentially stripped out of the
-> kernel already (I think Tony removed the support for non-DT boot
-> OMAP3 boards already...?) This explains why I didn't notice the
-> issue in my local testing either.
-> 
-> >
-> >Fixes: d96f774b2538 ("clk: ti: divider: add support for legacy divider init")
-> >Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> So, this patch itself is fine, but the desc should be updated to
-> reflect the above somehow.
-> 
-> And the "Fixes:" line should be updated to point to the commit
-> mentioned above also.
-> 
+On 04.04.2017 16:21, Marek Vasut wrote:
+> On 04/04/2017 03:16 PM, Alexey Firago wrote:
+>> Update IDT VersaClock 5 driver to support 5P49V5935. This chip has
+>> two clock inputs (internal XTAL or external CLKIN), four fractional
+>> dividers (FODs) and five clock outputs (four universal clock outputs
+>> and one reference clock output at OUT0_SELB_I2C).
+>>
+>> Current driver supports up to 2 FODs and up to 3 clock outputs.
+>> This patch sets max number of supported FODs to 4 and max number
+>> of supported clocks to 5.
+>>
+>> Number of used FODs and clock outputs is set on probe according to
+>> the model specified via device-tree.
+>>
+>> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
+>> ---
+>>  drivers/clk/clk-versaclock5.c | 50 ++++++++++++++++++++++++++++++++++---------
+>>  1 file changed, 40 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+>> index 56741f3..f74d6e4 100644
+>> --- a/drivers/clk/clk-versaclock5.c
+>> +++ b/drivers/clk/clk-versaclock5.c
+>> @@ -113,10 +113,17 @@
+>>  #define VC5_MUX_IN_XIN		BIT(0)
+>>  #define VC5_MUX_IN_CLKIN	BIT(1)
+>>
+>> +/* Maximum number of clk_out supported by this driver */
+>> +#define VC5_MAX_CLK_OUT_NUM	5
+>> +
+>> +/* Maximum number of FODs supported by this driver */
+>> +#define VC5_MAX_FOD_NUM		4
+>> +
+>>  /* Supported IDT VC5 models. */
+>>  enum vc5_model {
+>>  	IDT_VC5_5P49V5923,
+>>  	IDT_VC5_5P49V5933,
+>> +	IDT_VC5_5P49V5935,
+>>  };
+>>
+>>  struct vc5_driver_data;
+>> @@ -139,8 +146,10 @@ struct vc5_driver_data {
+>>  	unsigned char		clk_mux_ins;
+>>  	struct clk_hw		clk_mux;
+>>  	struct vc5_hw_data	clk_pll;
+>> -	struct vc5_hw_data	clk_fod[2];
+>> -	struct vc5_hw_data	clk_out[3];
+>> +	int			clk_fod_cnt;
+>> +	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
+>> +	int			clk_out_cnt;
+>> +	struct vc5_hw_data	clk_out[VC5_MAX_CLK_OUT_NUM];
+>>  };
+>>
+>>  static const char * const vc5_mux_names[] = {
+>> @@ -563,7 +572,7 @@ static struct clk_hw *vc5_of_clk_get(struct of_phandle_args *clkspec,
+>>  	struct vc5_driver_data *vc5 = data;
+>>  	unsigned int idx = clkspec->args[0];
+>>
+>> -	if (idx > 2)
+>> +	if (idx > vc5->clk_out_cnt)
+>>  		return ERR_PTR(-EINVAL);
+>>
+>>  	return &vc5->clk_out[idx].hw;
+>> @@ -576,6 +585,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
+>>  	case IDT_VC5_5P49V5933:
+>>  		return (n == 0) ? 0 : 3;
+>>  	case IDT_VC5_5P49V5923:
+>> +	case IDT_VC5_5P49V5935:
+>>  	default:
+>>  		return n;
+>>  	}
+>> @@ -591,7 +601,7 @@ static int vc5_probe(struct i2c_client *client,
+>>  	struct vc5_driver_data *vc5;
+>>  	struct clk_init_data init;
+>>  	const char *parent_names[2];
+>> -	unsigned int n, idx;
+>> +	unsigned int n, idx = 0;
+>>  	int ret;
+>>
+>>  	vc5 = devm_kzalloc(&client->dev, sizeof(*vc5), GFP_KERNEL);
+>> @@ -602,6 +612,23 @@ static int vc5_probe(struct i2c_client *client,
+>>  	vc5->client = client;
+>>  	vc5->model = (enum vc5_model)of_id->data;
+>>
+>> +	/* Set number of supported outputs according to the repoted model */
+>
+> s/repoted/reported/ :)
 
-Waiting for Arnd to agree. I can also rename reg_setup to reg.
+Oops. Thanks, will fix.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>
+>> +	switch (vc5->model) {
+>> +	case IDT_VC5_5P49V5923:
+>> +	case IDT_VC5_5P49V5933:
+>> +		vc5->clk_fod_cnt = 2;
+>> +		vc5->clk_out_cnt = 3;
+>> +		break;
+>> +	case IDT_VC5_5P49V5935:
+>> +		vc5->clk_fod_cnt = 4;
+>> +		vc5->clk_out_cnt = 5;
+>> +		break;
+>> +	default:
+>> +		/* Should never go here */
+>> +		dev_err(&client->dev, "unsupported IDT VC5 ID specified\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>>  	vc5->pin_xin = devm_clk_get(&client->dev, "xin");
+>>  	if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
+>>  		return -EPROBE_DEFER;
+>> @@ -622,8 +649,9 @@ static int vc5_probe(struct i2c_client *client,
+>>  	if (!IS_ERR(vc5->pin_xin)) {
+>>  		vc5->clk_mux_ins |= VC5_MUX_IN_XIN;
+>>  		parent_names[init.num_parents++] = __clk_get_name(vc5->pin_xin);
+>> -	} else if (vc5->model == IDT_VC5_5P49V5933) {
+>> -		/* IDT VC5 5P49V5933 has built-in oscilator. */
+>> +	} else if (vc5->model == IDT_VC5_5P49V5933 ||
+>> +		   vc5->model == IDT_VC5_5P49V5935) {
+>> +		/* IDT VC5 5P49V5933 and 5P49V5935 have built-in oscilator. */
+>>  		vc5->pin_xin = clk_register_fixed_rate(&client->dev,
+>>  						       "internal-xtal", NULL,
+>>  						       0, 25000000);
+>> @@ -672,7 +700,7 @@ static int vc5_probe(struct i2c_client *client,
+>>  	}
+>>
+>>  	/* Register FODs */
+>> -	for (n = 0; n < 2; n++) {
+>> +	for (n = 0; n < vc5->clk_fod_cnt; n++) {
+>>  		idx = vc5_map_index_to_output(vc5->model, n);
+>>  		memset(&init, 0, sizeof(init));
+>>  		init.name = vc5_fod_names[idx];
+>> @@ -709,7 +737,7 @@ static int vc5_probe(struct i2c_client *client,
+>>  	}
+>>
+>>  	/* Register FOD-connected OUTx outputs */
+>> -	for (n = 1; n < 3; n++) {
+>> +	for (n = 1; n < vc5->clk_out_cnt; n++) {
+>>  		idx = vc5_map_index_to_output(vc5->model, n - 1);
+>>  		parent_names[0] = vc5_fod_names[idx];
+>>  		if (n == 1)
+>> @@ -744,7 +772,7 @@ static int vc5_probe(struct i2c_client *client,
+>>  	return 0;
+>>
+>>  err_clk:
+>> -	if (vc5->model == IDT_VC5_5P49V5933)
+>> +	if (vc5->model == IDT_VC5_5P49V5933 || vc5->model == IDT_VC5_5P49V5935)
+>
+> Maybe we should introduce some sort of flags to describe the VC
+> properties instead of using the model all over the place ?
+
+That makes sense. Will rework.
+
+Regards,
+Alexey
