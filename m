@@ -1,151 +1,99 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:42554 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752109AbdDHSvr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 8 Apr 2017 14:51:47 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 1/5] clk: sunxi-ng: prevent NKMP clocks from temporarily get higher freq
-Date: Sun,  9 Apr 2017 02:50:21 +0800
-Message-Id: <20170408185025.53841-2-icenowy@aosc.io>
-In-Reply-To: <20170408185025.53841-1-icenowy@aosc.io>
-References: <20170408185025.53841-1-icenowy@aosc.io>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:34787
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753852AbdDDMet (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2017 08:34:49 -0400
+Date: Tue, 4 Apr 2017 09:34:25 -0300
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        Noam Camus <noamca@mellanox.com>,
+        James Morris <james.l.morris@oracle.com>,
+        zijun_hu <zijun_hu@htc.com>,
+        Markus Heiser <markus.heiser@darmarit.de>,
+        linux-clk@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-block@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        Silvio Fricke <silvio.fricke@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Jan Kara <jack@suse.cz>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-pci@vger.kernel.org, Matt Fleming <matt@codeblueprint.co.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Hillf Danton <hillf.zj@alibaba-inc.com>
+Subject: Re: [PATCH 0/9] convert genericirq.tmpl and kernel-api.tmpl to
+ DocBook
+Message-ID: <20170404093425.54da2050@vento.lan>
+In-Reply-To: <20170402143418.3de75239@lwn.net>
+References: <cover.1490904090.git.mchehab@s-opensource.com>
+        <20170402143418.3de75239@lwn.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-It seems that on newer SoCs (already observed on A33, H3), when setting
-all NKMP factors at the same time, the multiplier get applied first,
-then the divider get applied. In some situations (e.g. the multiplier
-increased but the divider decreased), this will make the clock
-frequency temporarily higher than both the original frequency and the
-target frequency, which may lead to system hang due to PLL_CPU(X) clock
-usually being a NKMP clock.
+Em Sun, 2 Apr 2017 14:34:18 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-A comparsion between the old divider (M*P) and the new one is added, and
-if the divider get smaller when changing clock, the multiplier will be
-applied first, so that the clock won't go to a frequency higher than
-normal.
+> On Thu, 30 Mar 2017 17:11:27 -0300
+> Mauro Carvalho Chehab <mchehab@s-opensource.com> wrote:
+> 
+> > This series converts just two documents, adding them to the
+> > core-api.rst book. It addresses the errors/warnings that popup
+> > after the conversion.
+> > 
+> > I had to add two fixes to scripts/kernel-doc, in order to solve
+> > some of the issues.  
+> 
+> I've applied the set, including the add-on to move some stuff to
+> driver-api - thanks.
 
-The interval between applying the first group of factors and the second
-group is based on experiments results on an Orange Pi Zero board.
+Thanks!
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/clk/sunxi-ng/ccu_nkmp.c | 76 +++++++++++++++++++++++++++++++++++------
- 1 file changed, 65 insertions(+), 11 deletions(-)
+> For whatever reason, I had a hard time applying a few of these; "git am"
+> would tell me this:
+> 
+> > Applying: docs-rst: core_api: move driver-specific stuff to drivers_api
+> > fatal: sha1 information is lacking or useless (Documentation/driver-api/index.rst).
+> > Patch failed at 0001 docs-rst: core_api: move driver-specific stuff to drivers_api
+> > The copy of the patch that failed is found in: .git/rebase-apply/patch  
+> 
+> I was able to get around this, but it took some hand work.  How are you
+> generating these?
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index e58c95787f94..5da77eb60335 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -9,6 +9,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/delay.h>
- 
- #include "ccu_gate.h"
- #include "ccu_nkmp.h"
-@@ -130,12 +131,49 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
- 	return *parent_rate * _nkmp.n * _nkmp.k / (_nkmp.m * _nkmp.p);
- }
- 
-+static void ccu_nkmp_extract_factors(const struct ccu_nkmp *nkmp,
-+				     struct _ccu_nkmp *_nkmp, u32 reg)
-+{
-+	_nkmp->n = ((reg >> nkmp->n.shift) & GENMASK(nkmp->n.width - 1, 0))
-+		   + nkmp->n.offset;
-+	_nkmp->k = ((reg >> nkmp->k.shift) & GENMASK(nkmp->k.width - 1, 0))
-+		   + nkmp->k.offset;
-+	_nkmp->m = ((reg >> nkmp->m.shift) & GENMASK(nkmp->m.width - 1, 0))
-+		   + nkmp->m.offset;
-+	_nkmp->p = 1 <<
-+		   ((reg >> nkmp->p.shift) & GENMASK(nkmp->p.width - 1, 0));
-+}
-+
-+static u32 ccu_nkmp_apply_multiplier(const struct ccu_nkmp *nkmp,
-+				     const struct _ccu_nkmp *_nkmp, u32 reg)
-+{
-+	reg &= ~GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
-+	reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
-+
-+	reg |= (_nkmp->n - nkmp->n.offset) << nkmp->n.shift;
-+	reg |= (_nkmp->k - nkmp->k.offset) << nkmp->k.shift;
-+
-+	return reg;
-+}
-+
-+static u32 ccu_nkmp_apply_divider(const struct ccu_nkmp *nkmp,
-+				  const struct _ccu_nkmp *_nkmp, u32 reg)
-+{
-+	reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
-+	reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
-+
-+	reg |= (_nkmp->m - nkmp->m.offset) << nkmp->m.shift;
-+	reg |= ilog2(_nkmp->p) << nkmp->p.shift;
-+
-+	return reg;
-+}
-+
- static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
- 			   unsigned long parent_rate)
- {
- 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
--	struct _ccu_nkmp _nkmp;
--	unsigned long flags;
-+	struct _ccu_nkmp _nkmp, _nkmp_old;
-+	unsigned long flags, old_mp, mp;
- 	u32 reg;
- 
- 	_nkmp.min_n = nkmp->n.min ?: 1;
-@@ -152,17 +190,33 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
- 	spin_lock_irqsave(nkmp->common.lock, flags);
- 
- 	reg = readl(nkmp->common.base + nkmp->common.reg);
--	reg &= ~GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
--	reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
--	reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
--	reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
- 
--	reg |= (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
--	reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
--	reg |= (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
--	reg |= ilog2(_nkmp.p) << nkmp->p.shift;
-+	ccu_nkmp_extract_factors(nkmp, &_nkmp_old, reg);
-+
-+	old_mp = _nkmp_old.m * _nkmp_old.p;
-+	mp = _nkmp.m * _nkmp.p;
-+
-+	if (mp > old_mp) {
-+		reg = ccu_nkmp_apply_divider(nkmp, &_nkmp, reg);
-+		writel(reg, nkmp->common.base + nkmp->common.reg);
-+
-+		/*
-+		 * This value is decided by experiment results on an
-+		 * Allwinner H2+ board (Orange Pi Zero).
-+		 */
-+		udelay(500);
- 
--	writel(reg, nkmp->common.base + nkmp->common.reg);
-+		reg = ccu_nkmp_apply_multiplier(nkmp, &_nkmp, reg);
-+		writel(reg, nkmp->common.base + nkmp->common.reg);
-+	} else {
-+		reg = ccu_nkmp_apply_multiplier(nkmp, &_nkmp, reg);
-+		writel(reg, nkmp->common.base + nkmp->common.reg);
-+
-+		udelay(500);
-+
-+		reg = ccu_nkmp_apply_divider(nkmp, &_nkmp, reg);
-+		writel(reg, nkmp->common.base + nkmp->common.reg);
-+	}
- 
- 	spin_unlock_irqrestore(nkmp->common.lock, flags);
- 
--- 
-2.12.2
+That's weird. I'm using this to generate the patches:
 
+	git format-patch -o $tmp_dir --stat --summary --patience --signoff --thread=shallow
+
+plus some scripting that runs scripts/get_maintainers.
+
+After that, I run:
+
+	git send-email $tmp_dir
+
+Then, exim sends the patches to a smart SMTP server (currently,
+infradead.org, but I'm switching to s-opensource.org, as I'm getting
+some troubles because the IP doesn't match the From: line).
+
+Thanks,
+Mauro
