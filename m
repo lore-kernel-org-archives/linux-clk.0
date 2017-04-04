@@ -1,114 +1,56 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Apr 2017 20:16:47 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-	broonie@kernel.org, yibin.gong@nxp.com, rjw@rjwysocki.net,
-	viresh.kumar@linaro.org, mturquette@baylibre.com,
-	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
-	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com
-Subject: Re: [RFC PATCH 1/3] clk: add clk_bulk_get accessories
-Message-ID: <20170422031647.GW7065@codeaurora.org>
-References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
- <1491969809-20154-2-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1491969809-20154-2-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:56773 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753079AbdDDJvi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Apr 2017 05:51:38 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 0/5] Add support for the R_CCU on Allwinner H3/A64 SoCs
+Date: Tue,  4 Apr 2017 17:50:55 +0800
+Message-Id: <20170404095100.18649-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/12, Dong Aisheng wrote:
->  
->  #ifdef CONFIG_HAVE_CLK
-> @@ -230,6 +257,32 @@ static inline void clk_unprepare(struct clk *clk)
->  struct clk *clk_get(struct device *dev, const char *id);
->  
->  /**
-> + * clk_bulk_get - lookup and obtain a number of references to clock producer.
-> + * @dev: device for clock "consumer"
-> + * @num_clks: the number of clk_bulk_data
-> + * @clks: the clk_bulk_data table of consumer
-> + *
-> + * This helper function allows drivers to get several clk consumers in one
-> + * operation. If any of the clk cannot be acquired then any clks
-> + * that were obtained will be freed before returning to the caller.
-> + *
-> + * Returns 0 if all clocks specified in clk_bulk_data table are obtained
-> + * successfully, or valid IS_ERR() condition containing errno.
-> + * The implementation uses @dev and @clk_bulk_data.id to determine the
-> + * clock consumer, and thereby the clock producer.
-> + * (IOW, @id may be identical strings, but clk_get may return different
-> + * clock producers depending on @dev.) The clock returned is stored in
+Allwinner SoCs after sun6i-a31 nearly all have a R_CCU in PRCM part.
+(V3s and R40 do not have it, as they have even no PRCM)
 
-This comment is inaccurate. Only one dev is possible with this
-API.
+This patch adds support for the ones on H3/A64.
 
-> + * each @clk_bulk_data.clk field.
-> + *
-> + * Drivers must assume that the clock source is not enabled.
-> + *
-> + * clk_bulk_get should not be called from within interrupt context.
-> + */
-> +
+Some clock/reset values are reserved for easier extending the support to
+A31/A23, but for this I think some changes to the PRCM MFD should be made,
+see [1] (Although this is only a sketch).
 
-Drop space.
+The r_pio device node is also added for A64, as the driver is already
+merged, and its depends (r_ccu) is now met.
 
-> +int __must_check clk_bulk_get(struct device *dev, int num_clks,
-> +			      struct clk_bulk_data *clks);
-> +
-> +/**
->   * devm_clk_get - lookup and obtain a managed reference to a clock producer.
->   * @dev: device for clock "consumer"
->   * @id: clock consumer ID
-> @@ -279,6 +332,20 @@ struct clk *devm_get_clk_from_child(struct device *dev,
->  int clk_enable(struct clk *clk);
->  
->  /**
-> + * clk_bulk_enable - inform the system when the bulk of clock source should
-> + *		     be running.
-> + * @num_clks: the number of clk_bulk_data
-> + * @clks: the clk_bulk_data table of consumer
-> + *
-> + * If the clock can not be enabled/disabled all, this should return success.
-> + *
-> + * May be called from atomic contexts.
-> + *
-> + * Returns success (0) or negative errno.
-> + */
-> +int __must_check clk_bulk_enable(int num_clks, struct clk_bulk_data *clks);
-> +
-> +/**
->   * clk_disable - inform the system when the clock source is no longer required.
->   * @clk: clock source
->   *
-> @@ -295,6 +362,24 @@ int clk_enable(struct clk *clk);
->  void clk_disable(struct clk *clk);
->  
->  /**
-> + * clk_bulk_disable - inform the system when the bulk of clock source is no
-> + *		      longer required.
-> + * @num_clks: the number of clk_bulk_data
-> + * @clks: the clk_bulk_data table of consumer
-> + *
-> + * Inform the system that a bulk of clock source is no longer required by
-> + * a driver and may be shut down.
-> + *
-> + * May be called from atomic contexts.
-> + *
-> + * Implementation detail: if the bulk of clock source is shared between
+[1] https://github.com/wens/linux/commits/sunxi-ng-prcm
 
-I'm not sure "bulk of clock source" is the correct terminology.
-Perhaps "set of clks"?
+Icenowy Zheng (5):
+  dt-bindings: update device tree binding for Allwinner PRCM CCUs
+  clk: sunxi-ng: add support for PRCM CCUs
+  arm64: allwinner: a64: add r_ccu node
+  ARM: sunxi: h3/h5: switch apb0-related clocks to r_ccu
+  arm64: allwinner: a64: add R_PIO pinctrl node
 
-> + * multiple drivers, clk_bulk_enable() calls must be balanced by the
-> + * same number of clk_bulk_disable() calls for the clock source to be
-> + * disabled.
-> + */
-> +void clk_bulk_disable(int num_clks, struct clk_bulk_data *clks);
-
-We can mark clk_bulk_data structure as const here? Probably
-applies in other places as well in this patch.
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |  17 +-
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi                 |  45 ++---
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      |  29 +++
+ drivers/clk/sunxi-ng/Kconfig                       |   6 +
+ drivers/clk/sunxi-ng/Makefile                      |   1 +
+ drivers/clk/sunxi-ng/ccu-sun8i-r.c                 | 213 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-r.h                 |  27 +++
+ include/dt-bindings/clock/sun8i-r-ccu.h            |  59 ++++++
+ include/dt-bindings/reset/sun8i-r-ccu.h            |  53 +++++
+ 9 files changed, 418 insertions(+), 32 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r.h
+ create mode 100644 include/dt-bindings/clock/sun8i-r-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun8i-r-ccu.h
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.12.2
+
