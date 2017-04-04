@@ -1,158 +1,63 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 1/3] clk: sunxi-ng: Add clk notifier to gate then ungate PLL clocks
-Date: Thu, 13 Apr 2017 10:13:52 +0800
-Message-Id: <20170413021354.3258-2-wens@csie.org>
-In-Reply-To: <20170413021354.3258-1-wens@csie.org>
-References: <20170413021354.3258-1-wens@csie.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <72c66927-0acf-c888-2b4b-906a6c27e15c@gmail.com>
+References: <1491311788-31905-1-git-send-email-alexey_firago@mentor.com>
+ <1491311788-31905-3-git-send-email-alexey_firago@mentor.com> <72c66927-0acf-c888-2b4b-906a6c27e15c@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 4 Apr 2017 15:23:57 +0200
+Message-ID: <CAMuHMdUOtY5i0_BoS7cKYzWKpA_fF3VssN4bZnNyFB117EpacQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: vc5: Add support for IDT VersaClock 5P49V5935
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Alexey Firago <alexey_firago@mentor.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-In common PLL designs, changes to the dividers take effect almost
-immediately, while changes to the multipliers (implemented as
-dividers in the feedback loop) take a few cycles to work into
-the feedback loop for the PLL to stablize.
+On Tue, Apr 4, 2017 at 3:21 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>On 04/04/2017 03:16 PM, Alexey Firago wrote:
+>> +     switch (vc5->model) {
+>> +     case IDT_VC5_5P49V5923:
+>> +     case IDT_VC5_5P49V5933:
+>> +             vc5->clk_fod_cnt = 2;
+>> +             vc5->clk_out_cnt = 3;
+>> +             break;
+>> +     case IDT_VC5_5P49V5935:
+>> +             vc5->clk_fod_cnt = 4;
+>> +             vc5->clk_out_cnt = 5;
+>> +             break;
+>> +     default:
+>> +             /* Should never go here */
+>> +             dev_err(&client->dev, "unsupported IDT VC5 ID specified\n");
+>> +             return -EINVAL;
+>> +     }
+>> +
+>>       vc5->pin_xin = devm_clk_get(&client->dev, "xin");
+>>       if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
+>>               return -EPROBE_DEFER;
 
-Sometimes when the PLL clock rate is changed, the decrease in the
-divider is too much for the decrease in the multiplier to catch up.
-The PLL clock rate will spike, and in some cases, might lock up
-completely. This is especially the case if the divider changed is
-the pre-divider, which affects the reference frequency.
+>> @@ -744,7 +772,7 @@ static int vc5_probe(struct i2c_client *client,
+>>       return 0;
+>>
+>>  err_clk:
+>> -     if (vc5->model == IDT_VC5_5P49V5933)
+>> +     if (vc5->model == IDT_VC5_5P49V5933 || vc5->model == IDT_VC5_5P49V5935)
+>
+> Maybe we should introduce some sort of flags to describe the VC
+> properties instead of using the model all over the place ?
 
-This patch introduces a clk notifier callback that will gate and
-then ungate a clk after a rate change, effectively resetting it,
-so it continues to work, despite any possible lockups. Care must
-be taken to reparent any consumers to other temporary clocks during
-the rate change, and that this notifier callback must be the first
-to be registered.
+Yep, a structure describing the features (incl. fod_cnt and out_cnt), to be
+pointed to by clk_vc5_of_match[].data.
 
-This is intended to fix occasional lockups with cpufreq on newer
-Allwinner SoCs, such as the A33 and the H3. Previously it was
-thought that reparenting the cpu clock away from the PLL while
-it stabilized was enough, as this worked quite well on the A31.
+Gr{oetje,eeting}s,
 
-On the A33, hangs have been observed after cpufreq was recently
-introduced. With the H3, a more thorough test [1] showed that
-reparenting alone isn't enough. The system still locks up unless
-the dividers are limited to 1.
+                        Geert
 
-A hunch was if the PLL was stuck in some unknown state, perhaps
-gating then ungating it would bring it back to normal. Tests
-done by Icenowy Zheng using Ondrej's test firmware shows this
-to be a valid solution.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-[1] http://www.spinics.net/lists/arm-kernel/msg552501.html
-
-Reported-by: Ondrej Jirman <megous@megous.com>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Tested-by: Icenowy Zheng <icenowy@aosc.io>
-Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
----
- drivers/clk/sunxi-ng/ccu_common.c | 49 +++++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_common.h | 12 ++++++++++
- 2 files changed, 61 insertions(+)
-
-diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
-index 188fa50d0380..40aac316128f 100644
---- a/drivers/clk/sunxi-ng/ccu_common.c
-+++ b/drivers/clk/sunxi-ng/ccu_common.c
-@@ -14,11 +14,13 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/iopoll.h>
- #include <linux/slab.h>
- 
- #include "ccu_common.h"
-+#include "ccu_gate.h"
- #include "ccu_reset.h"
- 
- static DEFINE_SPINLOCK(ccu_lock);
-@@ -39,6 +41,53 @@ void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock)
- 	WARN_ON(readl_relaxed_poll_timeout(addr, reg, reg & lock, 100, 70000));
- }
- 
-+/*
-+ * This clock notifier is called when the frequency of a PLL clock is
-+ * changed. In common PLL designs, changes to the dividers take effect
-+ * almost immediately, while changes to the multipliers (implemented
-+ * as dividers in the feedback loop) take a few cycles to work into
-+ * the feedback loop for the PLL to stablize.
-+ *
-+ * Sometimes when the PLL clock rate is changed, the decrease in the
-+ * divider is too much for the decrease in the multiplier to catch up.
-+ * The PLL clock rate will spike, and in some cases, might lock up
-+ * completely.
-+ *
-+ * This notifier callback will gate and then ungate the clock,
-+ * effectively resetting it, so it proceeds to work. Care must be
-+ * taken to reparent consumers to other temporary clocks during the
-+ * rate change, and that this notifier callback must be the first
-+ * to be registered.
-+ */
-+static int ccu_pll_notifier_cb(struct notifier_block *nb,
-+			       unsigned long event, void *data)
-+{
-+	struct ccu_pll_nb *pll = to_ccu_pll_nb(nb);
-+	int ret = 0;
-+
-+	if (event != POST_RATE_CHANGE)
-+		goto out;
-+
-+	ccu_gate_helper_disable(pll->common, pll->enable);
-+
-+	ret = ccu_gate_helper_enable(pll->common, pll->enable);
-+	if (ret)
-+		goto out;
-+
-+	ccu_helper_wait_for_lock(pll->common, pll->lock);
-+
-+out:
-+	return notifier_from_errno(ret);
-+}
-+
-+int ccu_pll_notifier_register(struct ccu_pll_nb *pll_nb)
-+{
-+	pll_nb->clk_nb.notifier_call = ccu_pll_notifier_cb;
-+
-+	return clk_notifier_register(pll_nb->common->hw.clk,
-+				     &pll_nb->clk_nb);
-+}
-+
- int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
- 		    const struct sunxi_ccu_desc *desc)
- {
-diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
-index 73d81dc58fc5..d6fdd7a789aa 100644
---- a/drivers/clk/sunxi-ng/ccu_common.h
-+++ b/drivers/clk/sunxi-ng/ccu_common.h
-@@ -83,6 +83,18 @@ struct sunxi_ccu_desc {
- 
- void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock);
- 
-+struct ccu_pll_nb {
-+	struct notifier_block	clk_nb;
-+	struct ccu_common	*common;
-+
-+	u32	enable;
-+	u32	lock;
-+};
-+
-+#define to_ccu_pll_nb(_nb) container_of(_nb, struct ccu_pll_nb, clk_nb)
-+
-+int ccu_pll_notifier_register(struct ccu_pll_nb *pll_nb);
-+
- int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
- 		    const struct sunxi_ccu_desc *desc);
- 
--- 
-2.11.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
