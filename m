@@ -1,99 +1,132 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f174.google.com ([209.85.223.174]:34446 "EHLO
-        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752847AbdDRN7l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2017 09:59:41 -0400
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v4 4/5] ARM: sunxi: h3/h5: switch apb0-related clocks to r_ccu
+Date: Tue,  4 Apr 2017 17:50:59 +0800
+Message-Id: <20170404095100.18649-5-icenowy@aosc.io>
+In-Reply-To: <20170404095100.18649-1-icenowy@aosc.io>
+References: <20170404095100.18649-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-In-Reply-To: <20170416165709.27449-2-marek.vasut+renesas@gmail.com>
-References: <20170416165709.27449-1-marek.vasut+renesas@gmail.com> <20170416165709.27449-2-marek.vasut+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Apr 2017 15:59:38 +0200
-Message-ID: <CAMuHMdXFUkLypckz2n27or268xiMXCpX+YB3+-beTt92EFA=rQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: r8a7791: Add GyroADC bindings
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marek,
+From: Icenowy Zheng <icenowy@aosc.xyz>
 
-On Sun, Apr 16, 2017 at 6:57 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> Add bindings for the GyroADC block and it's associated clock.
+Now we have driver for the PRCM CCU, switch to use it instead of
+old-style clock nodes for apb0-related clocks in sunxi-h3-h5.dtsi .
 
-bindings??
+The mux 3 of R_CCU is still the internal oscillator, which is said to be
+16MHz plus minus 30%, and get a measured value of 15MHz~16MHz on my two
+H3 boards and one H5 board.
 
-> --- a/arch/arm/boot/dts/r8a7791.dtsi
-> +++ b/arch/arm/boot/dts/r8a7791.dtsi
-> @@ -776,6 +776,15 @@
->                 status = "disabled";
->         };
->
-> +       adc: adc@e6e54000 {
-> +               compatible = "renesas,r8a7791-gyroadc", "renesas,rcar-gyroadc";
-> +               reg = <0 0xe6e54000 0 64>;
-> +               clocks = <&mstp9_clks R8A7791_CLK_GYROADC>, <&adc_clk>;
-> +               clock-names = "fck", "if";
-> +               power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
-> +               status = "disabled";
-> +       };
-> +
->         scif2: serial@e6e58000 {
->                 compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
->                              "renesas,scif";
-> @@ -1133,6 +1142,13 @@
->                         clock-frequency = <0>;
->                 };
->
-> +               /* GyroADC clock */
-> +               adc_clk: adc_clk {
-> +                       compatible = "fixed-clock";
-> +                       #clock-cells = <0>;
-> +                       clock-frequency = <65000000>;
-> +               };
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+Changes in v4:
+- Temporarily dropped the CCU headers.
+Changes in v3:
+- Change osc32000 to iosc.
 
-Why do you have to add a clock?
-I think you should just refer to the on-SoC peripheral clock: &cp_clk.
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi | 45 ++++++++++++--------------------------
+ 1 file changed, 14 insertions(+), 31 deletions(-)
 
-> +
->                 /* Special CPG clocks */
->                 cpg_clocks: cpg_clocks@e6150000 {
->                         compatible = "renesas,r8a7791-cpg-clocks",
-> @@ -1432,6 +1448,7 @@
->                                  <&hp_clk>, <&hp_clk>;
+diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+index 6640ebfa6419..1aeeacb3a884 100644
+--- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
++++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+@@ -68,31 +68,12 @@
+ 			clock-output-names = "osc32k";
+ 		};
+ 
+-		apb0: apb0_clk {
+-			compatible = "fixed-factor-clock";
++		iosc: internal-osc-clk {
+ 			#clock-cells = <0>;
+-			clock-div = <1>;
+-			clock-mult = <1>;
+-			clocks = <&osc24M>;
+-			clock-output-names = "apb0";
+-		};
+-
+-		apb0_gates: clk@01f01428 {
+-			compatible = "allwinner,sun8i-h3-apb0-gates-clk",
+-				     "allwinner,sun4i-a10-gates-clk";
+-			reg = <0x01f01428 0x4>;
+-			#clock-cells = <1>;
+-			clocks = <&apb0>;
+-			clock-indices = <0>, <1>;
+-			clock-output-names = "apb0_pio", "apb0_ir";
+-		};
+-
+-		ir_clk: ir_clk@01f01454 {
+-			compatible = "allwinner,sun4i-a10-mod0-clk";
+-			reg = <0x01f01454 0x4>;
+-			#clock-cells = <0>;
+-			clocks = <&osc32k>, <&osc24M>;
+-			clock-output-names = "ir";
++			compatible = "fixed-clock";
++			clock-frequency = <16000000>;
++			clock-accuracy = <300000000>;
++			clock-output-names = "iosc";
+ 		};
+ 	};
+ 
+@@ -576,9 +557,12 @@
+ 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+-		apb0_reset: reset@01f014b0 {
+-			reg = <0x01f014b0 0x4>;
+-			compatible = "allwinner,sun6i-a31-clock-reset";
++		r_ccu: clock@1f01400 {
++			compatible = "allwinner,sun50i-a64-r-ccu";
++			reg = <0x01f01400 0x100>;
++			clocks = <&osc24M>, <&osc32k>, <&iosc>;
++			clock-names = "hosc", "losc", "iosc";
++			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 		};
+ 
+@@ -589,9 +573,9 @@
+ 
+ 		ir: ir@01f02000 {
+ 			compatible = "allwinner,sun5i-a13-ir";
+-			clocks = <&apb0_gates 1>, <&ir_clk>;
++			clocks = <&r_ccu 4>, <&r_ccu 11>;
+ 			clock-names = "apb", "ir";
+-			resets = <&apb0_reset 1>;
++			resets = <&r_ccu 0>;
+ 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x01f02000 0x40>;
+ 			status = "disabled";
+@@ -601,9 +585,8 @@
+ 			compatible = "allwinner,sun8i-h3-r-pinctrl";
+ 			reg = <0x01f02c00 0x400>;
+ 			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&apb0_gates 0>, <&osc24M>, <&osc32k>;
++			clocks = <&r_ccu 3>, <&osc24M>, <&osc32k>;
+ 			clock-names = "apb", "hosc", "losc";
+-			resets = <&apb0_reset 0>;
+ 			gpio-controller;
+ 			#gpio-cells = <3>;
+ 			interrupt-controller;
+-- 
+2.12.2
 
-Missing addition of the parent clock for the newly added module clock.
-Perhaps this should be the peripheral clock (<&cp_clk>)?
 
-Oops, that means there's no need to have two clock inputs in the adc device
-node, and thus we screwed up when reviewing the GyroADC bindings :-(
-
->                         #clock-cells = <1>;
->                         clock-indices = <
-> +                               R8A7791_CLK_GYROADC
->                                 R8A7791_CLK_GPIO7 R8A7791_CLK_GPIO6 R8A7791_CLK_GPIO5 R8A7791_CLK_GPIO4
->                                 R8A7791_CLK_GPIO3 R8A7791_CLK_GPIO2 R8A7791_CLK_GPIO1 R8A7791_CLK_GPIO0
->                                 R8A7791_CLK_RCAN1 R8A7791_CLK_RCAN0 R8A7791_CLK_QSPI_MOD R8A7791_CLK_I2C5
-> @@ -1439,6 +1456,7 @@
->                                 R8A7791_CLK_I2C1 R8A7791_CLK_I2C0
->                         >;
->                         clock-output-names =
-> +                               "gyroadc",
->                                 "gpio7", "gpio6", "gpio5", "gpio4", "gpio3", "gpio2", "gpio1", "gpio0",
->                                 "rcan1", "rcan0", "qspi_mod", "i2c5", "i2c6", "i2c4", "i2c3", "i2c2",
->                                 "i2c1", "i2c0";
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
