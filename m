@@ -1,157 +1,167 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
-To: Tony Lindgren <tony@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <20170317152536.GT20572@atomide.com>
- <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
- <20170323010057.GI10760@atomide.com> <20170323170210.GL10760@atomide.com>
- <8648f054-cf04-41df-20f3-82e0d63feefa@ti.com>
- <20170330165448.GF10760@atomide.com>
- <55b439ed-8b81-2e6b-64f1-34f9f3cc5369@ti.com>
- <20170403153604.GI10760@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <b135c5d6-f06d-030d-333b-5223ef1aca9a@ti.com>
-Date: Thu, 6 Apr 2017 19:49:02 +0300
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+Subject: Re: [PATCH 2/2] clk: vc5: Add support for IDT VersaClock 5P49V5935
+To: Alexey Firago <alexey_firago@mentor.com>, mturquette@baylibre.com,
+ sboyd@codeaurora.org, robh+dt@kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <1491311788-31905-1-git-send-email-alexey_firago@mentor.com>
+ <1491311788-31905-3-git-send-email-alexey_firago@mentor.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <72c66927-0acf-c888-2b4b-906a6c27e15c@gmail.com>
+Date: Tue, 4 Apr 2017 15:21:02 +0200
 MIME-Version: 1.0
-In-Reply-To: <20170403153604.GI10760@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <1491311788-31905-3-git-send-email-alexey_firago@mentor.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/04/17 18:36, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [170403 07:54]:
->> On 30/03/17 19:54, Tony Lindgren wrote:
->>> * Tero Kristo <t-kristo@ti.com> [170330 00:20]:
->>>> On 23/03/17 19:02, Tony Lindgren wrote:
->>>>> * Tony Lindgren <tony@atomide.com> [170322 18:03]:
->>>>>> * Tero Kristo <t-kristo@ti.com> [170317 14:39]:
->>>>>>> On 17/03/17 17:25, Tony Lindgren wrote:
->>>>>>>> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
->>>>>>>>> Any additional testing on omap4 welcome as this series basically
->>>>>>>>> tweaks every possible peripheral clock on the SoC.
->>>>>>>>
->>>>>>>> Without the last patch in this series, booting fails for me:
->>>>>>>>
->>>>>>>> [    5.074890] l4_per_cm:clk:0120:0: failed to disable
->>>>>>>> [    5.085113] l4_per_cm:clk:0128:0: failed to disable
->>>>>>>>
->>>>>>>> Care to check that booting keeps working for each patch in the
->>>>>>>> series to avoid breaking git bisect for booting?
->>>>>>>
->>>>>>> Hmm, I think patch 8+9 need to be squashed then. I can double check this
->>>>>>> next week though.
->>>>>>
->>>>>> Also looks like with this set merged HDMI stops working on
->>>>>> omap4 with:
->>>>>>
->>>>>> HDMIWP: omapdss HDMIWP error: Failed to set PHY power mode to 1
->>>>>
->>>>> Forgot to mention that's with omapdrm with encoder-tpd12s015 and
->>>>> encoder-tfp410 modules loaded to get HDMI working. Here's more verbose
->>>>> dmesg output in case that provides more clues:
->>>>>
->>>>> [   91.042877] omapdss HDMICORE error: operation stopped when reading edid
->>>>> [   91.078308] [drm] Enabling DMM ywrap scrolling
->>>>> [   91.099243] omapdss HDMIWP error: Failed to set PHY power mode to 1
->>>>> [   91.107879] omapdss HDMI error: failed to power on device
->>>>> [   91.107879] omapdrm omapdrm.0: Failed to enable display 'hdmi': -5
->>>>> [   91.359619] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
->>>>> [   91.619964] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
->>>>> [   91.620300] Console: switching to colour frame buffer device 128x48
->>>>> [   91.682434] omapdrm omapdrm.0: fb0: omapdrm frame buffer device
->>>>> [   91.770812] [drm] Initialized omapdrm 1.0.0 20110917 for omapdrm.0 on minor 0
->>>>> [   92.818054] omapdss HDMICORE error: operation stopped when reading edid
->>>>> [   93.090087] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
->>>>> [   93.349853] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
->>>>>
->>>>> Regards,
->>>>>
->>>>> Tony
->>>>>
->>>>
->>>> Can you try with this additional hwmod data tweak in place? Apply this on
->>>> top of the existing series.
->>>
->>> Does not seem to help, still get the same errors. But maybe I'm doing
->>> something wrong as the patch did not apply and I applied it manually.
->>>
->>> Regards,
->>>
->>> Tony
->>>
->>
->> Hmm ok, can you provide some brief instructions how to test what you are
->> doing with the HDMI? Just connect it to some external monitor? My monitor
->> has a spare HDMI connector so I could try it out.
->
-> Well build a kernel using omap2plus_defconfig, then with HDMI cable
-> connected load the following modules:
->
-> encoder-tpd12s015 encoder-tfp410 connector-hdmi omapfb
->
-> And a console should appear on the HDMI monitor. If using omapdrm, then
-> load omapdss and omapdrm instead.
->
-> And if using NFSroot, you need to have ehci and smsc drivers built-in
-> or use an initramfs.
+On 04/04/2017 03:16 PM, Alexey Firago wrote:
+> Update IDT VersaClock 5 driver to support 5P49V5935. This chip has
+> two clock inputs (internal XTAL or external CLKIN), four fractional
+> dividers (FODs) and five clock outputs (four universal clock outputs
+> and one reference clock output at OUT0_SELB_I2C).
+> 
+> Current driver supports up to 2 FODs and up to 3 clock outputs.
+> This patch sets max number of supported FODs to 4 and max number
+> of supported clocks to 5.
+> 
+> Number of used FODs and clock outputs is set on probe according to
+> the model specified via device-tree.
+> 
+> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
+> ---
+>  drivers/clk/clk-versaclock5.c | 50 ++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 40 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+> index 56741f3..f74d6e4 100644
+> --- a/drivers/clk/clk-versaclock5.c
+> +++ b/drivers/clk/clk-versaclock5.c
+> @@ -113,10 +113,17 @@
+>  #define VC5_MUX_IN_XIN		BIT(0)
+>  #define VC5_MUX_IN_CLKIN	BIT(1)
+>  
+> +/* Maximum number of clk_out supported by this driver */
+> +#define VC5_MAX_CLK_OUT_NUM	5
+> +
+> +/* Maximum number of FODs supported by this driver */
+> +#define VC5_MAX_FOD_NUM		4
+> +
+>  /* Supported IDT VC5 models. */
+>  enum vc5_model {
+>  	IDT_VC5_5P49V5923,
+>  	IDT_VC5_5P49V5933,
+> +	IDT_VC5_5P49V5935,
+>  };
+>  
+>  struct vc5_driver_data;
+> @@ -139,8 +146,10 @@ struct vc5_driver_data {
+>  	unsigned char		clk_mux_ins;
+>  	struct clk_hw		clk_mux;
+>  	struct vc5_hw_data	clk_pll;
+> -	struct vc5_hw_data	clk_fod[2];
+> -	struct vc5_hw_data	clk_out[3];
+> +	int			clk_fod_cnt;
+> +	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
+> +	int			clk_out_cnt;
+> +	struct vc5_hw_data	clk_out[VC5_MAX_CLK_OUT_NUM];
+>  };
+>  
+>  static const char * const vc5_mux_names[] = {
+> @@ -563,7 +572,7 @@ static struct clk_hw *vc5_of_clk_get(struct of_phandle_args *clkspec,
+>  	struct vc5_driver_data *vc5 = data;
+>  	unsigned int idx = clkspec->args[0];
+>  
+> -	if (idx > 2)
+> +	if (idx > vc5->clk_out_cnt)
+>  		return ERR_PTR(-EINVAL);
+>  
+>  	return &vc5->clk_out[idx].hw;
+> @@ -576,6 +585,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
+>  	case IDT_VC5_5P49V5933:
+>  		return (n == 0) ? 0 : 3;
+>  	case IDT_VC5_5P49V5923:
+> +	case IDT_VC5_5P49V5935:
+>  	default:
+>  		return n;
+>  	}
+> @@ -591,7 +601,7 @@ static int vc5_probe(struct i2c_client *client,
+>  	struct vc5_driver_data *vc5;
+>  	struct clk_init_data init;
+>  	const char *parent_names[2];
+> -	unsigned int n, idx;
+> +	unsigned int n, idx = 0;
+>  	int ret;
+>  
+>  	vc5 = devm_kzalloc(&client->dev, sizeof(*vc5), GFP_KERNEL);
+> @@ -602,6 +612,23 @@ static int vc5_probe(struct i2c_client *client,
+>  	vc5->client = client;
+>  	vc5->model = (enum vc5_model)of_id->data;
+>  
+> +	/* Set number of supported outputs according to the repoted model */
 
-Ok, I have a solution to the issue.
+s/repoted/reported/ :)
 
-Try the slightly modified patch below. It just required a couple of 
-hwmod flags applied in addition to the patch I sent before.
+> +	switch (vc5->model) {
+> +	case IDT_VC5_5P49V5923:
+> +	case IDT_VC5_5P49V5933:
+> +		vc5->clk_fod_cnt = 2;
+> +		vc5->clk_out_cnt = 3;
+> +		break;
+> +	case IDT_VC5_5P49V5935:
+> +		vc5->clk_fod_cnt = 4;
+> +		vc5->clk_out_cnt = 5;
+> +		break;
+> +	default:
+> +		/* Should never go here */
+> +		dev_err(&client->dev, "unsupported IDT VC5 ID specified\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	vc5->pin_xin = devm_clk_get(&client->dev, "xin");
+>  	if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
+>  		return -EPROBE_DEFER;
+> @@ -622,8 +649,9 @@ static int vc5_probe(struct i2c_client *client,
+>  	if (!IS_ERR(vc5->pin_xin)) {
+>  		vc5->clk_mux_ins |= VC5_MUX_IN_XIN;
+>  		parent_names[init.num_parents++] = __clk_get_name(vc5->pin_xin);
+> -	} else if (vc5->model == IDT_VC5_5P49V5933) {
+> -		/* IDT VC5 5P49V5933 has built-in oscilator. */
+> +	} else if (vc5->model == IDT_VC5_5P49V5933 ||
+> +		   vc5->model == IDT_VC5_5P49V5935) {
+> +		/* IDT VC5 5P49V5933 and 5P49V5935 have built-in oscilator. */
+>  		vc5->pin_xin = clk_register_fixed_rate(&client->dev,
+>  						       "internal-xtal", NULL,
+>  						       0, 25000000);
+> @@ -672,7 +700,7 @@ static int vc5_probe(struct i2c_client *client,
+>  	}
+>  
+>  	/* Register FODs */
+> -	for (n = 0; n < 2; n++) {
+> +	for (n = 0; n < vc5->clk_fod_cnt; n++) {
+>  		idx = vc5_map_index_to_output(vc5->model, n);
+>  		memset(&init, 0, sizeof(init));
+>  		init.name = vc5_fod_names[idx];
+> @@ -709,7 +737,7 @@ static int vc5_probe(struct i2c_client *client,
+>  	}
+>  
+>  	/* Register FOD-connected OUTx outputs */
+> -	for (n = 1; n < 3; n++) {
+> +	for (n = 1; n < vc5->clk_out_cnt; n++) {
+>  		idx = vc5_map_index_to_output(vc5->model, n - 1);
+>  		parent_names[0] = vc5_fod_names[idx];
+>  		if (n == 1)
+> @@ -744,7 +772,7 @@ static int vc5_probe(struct i2c_client *client,
+>  	return 0;
+>  
+>  err_clk:
+> -	if (vc5->model == IDT_VC5_5P49V5933)
+> +	if (vc5->model == IDT_VC5_5P49V5933 || vc5->model == IDT_VC5_5P49V5935)
 
-I also pushed a branch named "4.11-rc1-clkctrl-wip" as a reference, 
-where also the hdmi works fine on omap4.
+Maybe we should introduce some sort of flags to describe the VC
+properties instead of using the model all over the place ?
 
-===================================
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c 
-b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
-index dad871a..43163b5 100644
---- a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
-@@ -775,6 +775,7 @@
 
-  static struct omap_hwmod_opt_clk dss_hdmi_opt_clks[] = {
-  	{ .role = "sys_clk", .clk = "dss_sys_clk" },
-+	{ .role = "hdmi_clk", .clk = "dss_48mhz_clk" },
-  };
-
-  static struct omap_hwmod omap44xx_dss_hdmi_hwmod = {
-@@ -785,7 +786,7 @@
-  	 * HDMI audio requires to use no-idle mode. Hence,
-  	 * set idle mode by software.
-  	 */
--	.flags		= HWMOD_SWSUP_SIDLE,
-+	.flags		= HWMOD_SWSUP_SIDLE | HWMOD_OPT_CLKS_NEEDED,
-  	.mpu_irqs	= omap44xx_dss_hdmi_irqs,
-  	.xlate_irq	= omap4_xlate_irq,
-  	.sdma_reqs	= omap44xx_dss_hdmi_sdma_reqs,
-@@ -858,11 +859,16 @@
-  };
-
-  /* dss_venc */
-+static struct omap_hwmod_opt_clk dss_venc_opt_clks[] = {
-+	{ .role = "tv_clk", .clk = "dss_tv_clk" },
-+};
-+
-  static struct omap_hwmod omap44xx_dss_venc_hwmod = {
-  	.name		= "dss_venc",
-  	.class		= &omap44xx_venc_hwmod_class,
-  	.clkdm_name	= "l3_dss_clkdm",
-  	.main_clk	= "dss_tv_clk",
-+	.flags		= HWMOD_OPT_CLKS_NEEDED,
-  	.prcm = {
-  		.omap4 = {
-  			.clkctrl_offs = OMAP4_CM_DSS_DSS_CLKCTRL_OFFSET,
-@@ -870,6 +876,8 @@
-  		},
-  	},
-  	.parent_hwmod	= &omap44xx_dss_hwmod,
-+	.opt_clks	= dss_venc_opt_clks,
-+	.opt_clks_cnt	= ARRAY_SIZE(dss_venc_opt_clks),
-  };
-
-  /*
+-- 
+Best regards,
+Marek Vasut
