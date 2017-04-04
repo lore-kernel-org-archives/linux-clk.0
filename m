@@ -1,90 +1,97 @@
-Return-Path: <Alexey_Firago@mentor.com>
-From: Alexey Firago <alexey_firago@mentor.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<marek.vasut@gmail.com>, <geert@linux-m68k.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-CC: Alexey Firago <alexey_firago@mentor.com>
-Subject: [PATCH v3 3/3] clk: vc5: Add support for IDT VersaClock 5P49V5935
-Date: Thu, 6 Apr 2017 12:15:30 +0300
-Message-ID: <1491470130-6655-4-git-send-email-alexey_firago@mentor.com>
-In-Reply-To: <1491470130-6655-1-git-send-email-alexey_firago@mentor.com>
-References: <1491470130-6655-1-git-send-email-alexey_firago@mentor.com>
+Return-Path: <tony@atomide.com>
+Date: Tue, 4 Apr 2017 09:14:13 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+Subject: Re: [GIT PULL] clk: ti: cleanups for 4.12 merge window
+Message-ID: <20170404161413.GT10760@atomide.com>
+References: <8157b2e6-99c8-dc02-0c02-3d99778f255b@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <8157b2e6-99c8-dc02-0c02-3d99778f255b@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Update IDT VersaClock 5 driver to support 5P49V5935. This chip has
-two clock inputs (internal XTAL or external CLKIN), four fractional
-dividers (FODs) and five clock outputs (four universal clock outputs
-and one reference clock output at OUT0_SELB_I2C).
+* Tero Kristo <t-kristo@ti.com> [170317 05:55]:
+> Hi Stephen/Mike,
+> 
+> This is basically the TI clock driver cleanup series v2 posted last week,
+> sending a pull request now as there hasn't been any additional comments.
+> 
+> -Tero
+> 
+> ==================================================================
+> 
+> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+> 
+>   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+> 
+> are available in the git repository at:
+> 
+>   https://github.com/t-kristo/linux-pm.git for-4.12-ti-clk-cleanups
+> 
+> for you to fetch changes up to 6c0afb503937a12a8d20a805fcf263e31afa9871:
+> 
+>   clk: ti: convert to use proper register definition for all accesses
+> (2017-03-08 13:06:15 +0200)
 
-Current driver supports up to 2 FODs and up to 3 clock outputs. This
-patch sets max number of supported FODs to 4 and max number of supported
-clock outputs to 5.
+Any news on getting this merged?
 
-Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
----
- drivers/clk/clk-versaclock5.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+Regards,
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 4e81fb1..34c4e5a 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -114,10 +114,10 @@
- #define VC5_MUX_IN_CLKIN	BIT(1)
- 
- /* Maximum number of clk_out supported by this driver */
--#define VC5_MAX_CLK_OUT_NUM	3
-+#define VC5_MAX_CLK_OUT_NUM	5
- 
- /* Maximum number of FODs supported by this driver */
--#define VC5_MAX_FOD_NUM	2
-+#define VC5_MAX_FOD_NUM	4
- 
- /* flags to describe chip features */
- /* chip has built-in oscilator */
-@@ -127,6 +127,7 @@
- enum vc5_model {
- 	IDT_VC5_5P49V5923,
- 	IDT_VC5_5P49V5933,
-+	IDT_VC5_5P49V5935,
- };
- 
- /* Structure to describe features of a particular VC5 model */
-@@ -594,6 +595,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
- 	case IDT_VC5_5P49V5933:
- 		return (n == 0) ? 0 : 3;
- 	case IDT_VC5_5P49V5923:
-+	case IDT_VC5_5P49V5935:
- 	default:
- 		return n;
- 	}
-@@ -790,9 +792,17 @@ static const struct vc5_chip_info idt_5p49v5933_info = {
- 	.flags = VC5_HAS_INTERNAL_XTAL,
- };
- 
-+static const struct vc5_chip_info idt_5p49v5935_info = {
-+	.model = IDT_VC5_5P49V5935,
-+	.clk_fod_cnt = 4,
-+	.clk_out_cnt = 5,
-+	.flags = VC5_HAS_INTERNAL_XTAL,
-+};
-+
- static const struct i2c_device_id vc5_id[] = {
- 	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
- 	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
-+	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, vc5_id);
-@@ -800,6 +810,7 @@ MODULE_DEVICE_TABLE(i2c, vc5_id);
- static const struct of_device_id clk_vc5_of_match[] = {
- 	{ .compatible = "idt,5p49v5923", .data = &idt_5p49v5923_info },
- 	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
-+	{ .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
--- 
-2.7.4
+Tony
+
+> ----------------------------------------------------------------
+> Tero Kristo (15):
+>       clk: ti: remove un-used definitions from public clk_hw_omap struct
+>       clk: ti: add support for automatic clock alias generation
+>       clk: ti: add API for creating aliases automatically for simple clock
+> types
+>       clk: ti: use automatic clock alias generation framework
+>       clk: ti: add clkdm_lookup to the exported functions
+>       clk: ti: move omap2_init_clk_clkdm under TI clock driver
+>       clk: ti: enforce const types on string arrays
+>       clk: ti: omap4: cleanup unnecessary clock aliases
+>       clk: ti: drop unnecessary MEMMAP_ADDRESSING flag
+>       clk: ti: mux: convert TI mux clock to use its internal data
+> representation
+>       clk: ti: divider: convert TI divider clock to use its own data
+> representation
+>       clk: ti: divider: add driver internal API for parsing divider data
+>       clk: ti: gate: export gate_clk_ops locally
+>       clk: ti: dpll44xx: fix clksel register initialization
+>       clk: ti: convert to use proper register definition for all accesses
+> 
+>  arch/arm/mach-omap2/clkt2xxx_dpllcore.c |   3 +-
+>  arch/arm/mach-omap2/clock.c             |  35 +-----
+>  arch/arm/mach-omap2/clock.h             |   2 +
+>  arch/arm/mach-omap2/cm.h                |   5 +-
+>  arch/arm/mach-omap2/cm2xxx.c            |   9 +-
+>  arch/arm/mach-omap2/cm3xxx.c            |  10 +-
+>  arch/arm/mach-omap2/cm_common.c         |   2 +-
+>  drivers/clk/ti/apll.c                   |  50 ++++-----
+>  drivers/clk/ti/autoidle.c               |  18 +--
+>  drivers/clk/ti/clk-3xxx.c               |  55 +++++-----
+>  drivers/clk/ti/clk-44xx.c               | 188
+> +-------------------------------
+>  drivers/clk/ti/clk-dra7-atl.c           |  11 +-
+>  drivers/clk/ti/clk.c                    | 157 +++++++++++++++++++++-----
+>  drivers/clk/ti/clkt_dflt.c              |  61 ++++-------
+>  drivers/clk/ti/clkt_dpll.c              |   6 +-
+>  drivers/clk/ti/clkt_iclk.c              |  29 +++--
+>  drivers/clk/ti/clock.h                  |  41 ++++++-
+>  drivers/clk/ti/clockdomain.c            |  38 +++++--
+>  drivers/clk/ti/composite.c              |  18 ++-
+>  drivers/clk/ti/divider.c                | 111 +++++++++++--------
+>  drivers/clk/ti/dpll.c                   |  59 +++++-----
+>  drivers/clk/ti/dpll3xxx.c               |  38 +++----
+>  drivers/clk/ti/dpll44xx.c               |  14 +--
+>  drivers/clk/ti/fixed-factor.c           |   1 +
+>  drivers/clk/ti/gate.c                   |  44 ++++----
+>  drivers/clk/ti/interface.c              |  25 ++---
+>  drivers/clk/ti/mux.c                    |  59 +++++-----
+>  include/linux/clk/ti.h                  |  55 +++++-----
+>  28 files changed, 543 insertions(+), 601 deletions(-)
+> 
