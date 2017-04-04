@@ -1,57 +1,41 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 5 Apr 2017 09:03:22 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 0/3] clk: sunxi-ng: more misc fixes
-Message-ID: <20170405070322.6djvldy2ygxwacv4@lukather>
-References: <20170405063744.14389-1-wens@csie.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 4 Apr 2017 14:51:09 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	mike.leach@linaro.org, Suzuki.Poulose@arm.com, sudeep.holla@arm.com
+Subject: Re: [PATCH v5 7/9] clk: hi6220: add debug APB clock
+Message-ID: <20170404215109.GH18246@codeaurora.org>
+References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+ <1490466197-29163-8-git-send-email-leo.yan@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zsdly26rwt2ncdth"
-In-Reply-To: <20170405063744.14389-1-wens@csie.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1490466197-29163-8-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 03/26, Leo Yan wrote:
+> The debug APB clock is absent in hi6220 driver, so this patch is to add
+> support for it.
+> 
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
 
---zsdly26rwt2ncdth
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to clk-next. I suspect we don't need a topic branch for
+the DT header because arm-soc won't be taking the dts side of the
+changes?
 
-On Wed, Apr 05, 2017 at 02:37:41PM +0800, Chen-Yu Tsai wrote:
-> Hi Maxime,
->=20
-> Here are 3 more clk fixes. The first one is needed for the second.
-> The third is a TODO I spotted while doing the first two.
-
-Applied all three, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---zsdly26rwt2ncdth
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJY5Ja2AAoJEBx+YmzsjxAgblsP/0RnRnjAfbc68rcNbK8Y3Bti
-JFB641KzVUXJiVZOtHzeoz/92zPgqZfhElxKjCJFv6cyjgIhVbRZVV4L9Aj901nm
-YauNqJwPvenenvWWkeq4lE5PYiFUEYd7/8qtiUt3BEr/b2a5BdCSjdJfNNmspoIh
-eyk8pDOF4xlNDN/86j3lBLlb0Cyr4U/khL8Qew9I6z69cJWhzQOfhoPk8AxaxJpH
-4oI8YSNsJRppcrP36Cs/PTdnFPAdfO2UNQVGPy63GLHQ2G7TGHbzTdJJyO5i5bkx
-rn4nklKwC5s6NX6BsSTegrqaUDKCXFvvCIBxJYlhqU1mUjy2W+QaCVNmNuB8TmyH
-Ku+Wy4NE/Oy6hcNsFwwr41iQ4mFVzxyXs7iGyzr2jLmQfMM51KJ5Aws5+TCwREZ/
-0YuWXRITKjmzLN4h9KVI5CV6w1Z0UgRv6U/sgh4asx4yZdGwbQxCCf+D02t8sUyE
-RZcZcDLqVK3J4bFAA9RurpzfLQmrM6Qf+yUPKTDyiuNVX5PqZIt7bK+Cp5RLEhGG
-QvGZm6SHpNTW2YfMP4JIZTirhcHGVRL50281r+jMTev4zMrEiQ78Dg8h/20Bltof
-vcmXqb+ZPL7JEBeu2YVGTUUaKzAWeZJXdLU5is5PFMEtAcSQCSL4NWyKK6WomT+B
-EsBpbMQdKG5tsfIfvj2W
-=rQ/h
------END PGP SIGNATURE-----
-
---zsdly26rwt2ncdth--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
