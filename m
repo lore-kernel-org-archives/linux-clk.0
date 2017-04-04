@@ -1,150 +1,95 @@
-Return-Path: <Alexey_Firago@mentor.com>
-Subject: Re: [PATCH v2 1/3] clk: vc5: Add structure to describe particular
- chip features
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1491392819-698-1-git-send-email-alexey_firago@mentor.com>
- <1491392819-698-2-git-send-email-alexey_firago@mentor.com>
- <CAMuHMdXEa=1__WMtsRphKbN6h+jVkP7szudENsM3hvGSzDfbwg@mail.gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut
-	<marek.vasut@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-From: Alexey Firago <alexey_firago@mentor.com>
-Message-ID: <de978809-5bec-d675-1ea3-cc61804e2c61@mentor.com>
-Date: Wed, 5 Apr 2017 15:36:16 +0300
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v4 1/5] dt-bindings: update device tree binding for Allwinner
+ PRCM CCUs
+Date: Tue,  4 Apr 2017 17:50:56 +0800
+Message-Id: <20170404095100.18649-2-icenowy@aosc.io>
+In-Reply-To: <20170404095100.18649-1-icenowy@aosc.io>
+References: <20170404095100.18649-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXEa=1__WMtsRphKbN6h+jVkP7szudENsM3hvGSzDfbwg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+From: Icenowy Zheng <icenowy@aosc.xyz>
 
-On 05.04.2017 15:15, Geert Uytterhoeven wrote:
-> Hi Alexey,
->
-> On Wed, Apr 5, 2017 at 1:46 PM, Alexey Firago <alexey_firago@mentor.com> wrote:
->> Introduce vc5_chip_info structure to describe features of a particular
->> VC5 chip (id, number of FODs, number of outputs, flags).
->> For now flags are only used to indicate if chip has internal XTAL.
->> vc5_chip_info is set on probe from the matched of_device_id->data.
->>
->> Also add defines to specify maximum number of FODs and clock outputs
->> supported by the driver.
->>
->> With these changes it should be easier to extend driver to support
->> more VC5 models.
->>
->> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
->
-> Thanks for your patch!
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
->> --- a/drivers/clk/clk-versaclock5.c
->> +++ b/drivers/clk/clk-versaclock5.c
->> @@ -113,12 +113,30 @@
->>  #define VC5_MUX_IN_XIN         BIT(0)
->>  #define VC5_MUX_IN_CLKIN       BIT(1)
->>
->> +/* Maximum number of clk_out supported by this driver */
->> +#define VC5_MAX_CLK_OUT_NUM    3
->> +
->> +/* Maximum number of FODs supported by this driver */
->> +#define VC5_MAX_FOD_NUM        2
->> +
->> +/* flags to describe chip features */
->> +/* chip has built-in oscilator */
->> +#define VC5_HAS_INTERNAL_XTAL  BIT(0)
->
-> VC5_HAS_INTERNAL_OSC?
+Many Allwinner SoCs after A31 have a CCU in PRCM block.
 
-I'm fine with renaming it, but shouldn't it be consistent with the rest 
-of the driver (see "internal-xtal", VC5_XTAL*, etc) and IDT datasheet?
+Give the ones on H3 and A64 compatible strings.
 
->
->> +
->>  /* Supported IDT VC5 models. */
->>  enum vc5_model {
->>         IDT_VC5_5P49V5923,
->>         IDT_VC5_5P49V5933,
->>  };
->>
->> +/* Structure to describe features of a particular VC5 model */
->> +struct vc5_chip_info {
->> +       const enum vc5_model    model;
->> +       const int               clk_fod_cnt;
->> +       const int               clk_out_cnt;
->
-> const unsigned int (both)
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+Changes in v4:
+- Add Rob's ACK.
+Changes in v3:
+- Removed frequency info of iosc in this device tree binding document.
+Changes in v2:
+- Add iosc for R_CCU's on H3/A64.
 
-Will fix.
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
->
->> +       u32                     flags;
->> +};
->> +
->>  struct vc5_driver_data;
->>
->>  struct vc5_hw_data {
->> @@ -132,15 +150,15 @@ struct vc5_hw_data {
->>  struct vc5_driver_data {
->>         struct i2c_client       *client;
->>         struct regmap           *regmap;
->> -       enum vc5_model          model;
->> +       struct vc5_chip_info    *chip_info;
->
-> const struct vc5_chip_info    *chip_info;
->
->> @@ -591,7 +609,7 @@ static int vc5_probe(struct i2c_client *client,
->>         struct vc5_driver_data *vc5;
->>         struct clk_init_data init;
->>         const char *parent_names[2];
->> -       unsigned int n, idx;
->> +       unsigned int n, idx = 0;
->>         int ret;
->>
->>         vc5 = devm_kzalloc(&client->dev, sizeof(*vc5), GFP_KERNEL);
->> @@ -600,7 +618,12 @@ static int vc5_probe(struct i2c_client *client,
->>
->>         i2c_set_clientdata(client, vc5);
->>         vc5->client = client;
->> -       vc5->model = (enum vc5_model)of_id->data;
->> +
->> +       vc5->chip_info = (struct vc5_chip_info *)of_id->data;
->
-> I think the cast is no longer needed when chip_info becomes const.
->
-> BTW, of_id is not really needed if you write it like:
->
->         vc5->chip_info = of_device_get_match_data(&client->dev);
->
->> +       if (!vc5->chip_info) {
->
-> This can't really happen, can it?
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index 68512aa398a9..e9c5a1d9834a 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -7,9 +7,11 @@ Required properties :
+ 		- "allwinner,sun8i-a23-ccu"
+ 		- "allwinner,sun8i-a33-ccu"
+ 		- "allwinner,sun8i-h3-ccu"
++		- "allwinner,sun8i-h3-r-ccu"
+ 		- "allwinner,sun8i-v3s-ccu"
+ 		- "allwinner,sun9i-a80-ccu"
+ 		- "allwinner,sun50i-a64-ccu"
++		- "allwinner,sun50i-a64-r-ccu"
+ 		- "allwinner,sun50i-h5-ccu"
+ 
+ - reg: Must contain the registers base address and length
+@@ -20,7 +22,10 @@ Required properties :
+ - #clock-cells : must contain 1
+ - #reset-cells : must contain 1
+ 
+-Example:
++For the PRCM CCUs on H3/A64, one more clock is needed:
++- "iosc": the SoC's internal frequency oscillator
++
++Example for generic CCU:
+ ccu: clock@01c20000 {
+ 	compatible = "allwinner,sun8i-h3-ccu";
+ 	reg = <0x01c20000 0x400>;
+@@ -29,3 +34,13 @@ ccu: clock@01c20000 {
+ 	#clock-cells = <1>;
+ 	#reset-cells = <1>;
+ };
++
++Example for PRCM CCU:
++r_ccu: clock@01f01400 {
++	compatible = "allwinner,sun50i-a64-r-ccu";
++	reg = <0x01f01400 0x100>;
++	clocks = <&osc24M>, <&osc32k>, <&iosc>;
++	clock-names = "hosc", "losc", "iosc";
++	#clock-cells = <1>;
++	#reset-cells = <1>;
++};
+-- 
+2.12.2
 
-Ok. Will rework.
 
->
->> +               dev_err(&client->dev, "No device match found\n");
->> +               return -ENODEV;
->> +       }
->>
->>         vc5->pin_xin = devm_clk_get(&client->dev, "xin");
->>         if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
->> @@ -622,8 +645,8 @@ static int vc5_probe(struct i2c_client *client,
->>         if (!IS_ERR(vc5->pin_xin)) {
->>                 vc5->clk_mux_ins |= VC5_MUX_IN_XIN;
->>                 parent_names[init.num_parents++] = __clk_get_name(vc5->pin_xin);
->> -       } else if (vc5->model == IDT_VC5_5P49V5933) {
->> -               /* IDT VC5 5P49V5933 has built-in oscilator. */
->> +       } else if (vc5->chip_info->flags & VC5_HAS_INTERNAL_XTAL) {
->> +               /* chip has built-in oscilator. */
->
-> The comment is no longer needed when the bit is named VC5_HAS_INTERNAL_OSC :-)
-
-Ok. Will kill it.
-
-Thanks for your review!
-
-Regards,
-Alexey
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
