@@ -1,75 +1,52 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-Subject: Re: [PATCH v2 1/3] clk: vc5: Add structure to describe particular
- chip features
-To: Alexey Firago <alexey_firago@mentor.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1491392819-698-1-git-send-email-alexey_firago@mentor.com>
- <1491392819-698-2-git-send-email-alexey_firago@mentor.com>
- <CAMuHMdXEa=1__WMtsRphKbN6h+jVkP7szudENsM3hvGSzDfbwg@mail.gmail.com>
- <de978809-5bec-d675-1ea3-cc61804e2c61@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <23dd9324-ee97-633d-129e-6063af757f47@gmail.com>
-Date: Wed, 5 Apr 2017 16:20:07 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:53608 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752677AbdDETnP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2017 15:43:15 -0400
+Date: Wed, 5 Apr 2017 12:43:13 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: khilman@baylibre.com, carlo@caione.org,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] clk: meson-gxbb: Add MALI clocks
+Message-ID: <20170405194313.GM18246@codeaurora.org>
+References: <1490177935-9646-1-git-send-email-narmstrong@baylibre.com>
+ <1490177935-9646-3-git-send-email-narmstrong@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <de978809-5bec-d675-1ea3-cc61804e2c61@mentor.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1490177935-9646-3-git-send-email-narmstrong@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/05/2017 02:36 PM, Alexey Firago wrote:
-> Hi Geert,
-> 
-> On 05.04.2017 15:15, Geert Uytterhoeven wrote:
->> Hi Alexey,
->>
->> On Wed, Apr 5, 2017 at 1:46 PM, Alexey Firago
->> <alexey_firago@mentor.com> wrote:
->>> Introduce vc5_chip_info structure to describe features of a particular
->>> VC5 chip (id, number of FODs, number of outputs, flags).
->>> For now flags are only used to indicate if chip has internal XTAL.
->>> vc5_chip_info is set on probe from the matched of_device_id->data.
->>>
->>> Also add defines to specify maximum number of FODs and clock outputs
->>> supported by the driver.
->>>
->>> With these changes it should be easier to extend driver to support
->>> more VC5 models.
->>>
->>> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
->>
->> Thanks for your patch!
->>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>
->>> --- a/drivers/clk/clk-versaclock5.c
->>> +++ b/drivers/clk/clk-versaclock5.c
->>> @@ -113,12 +113,30 @@
->>>  #define VC5_MUX_IN_XIN         BIT(0)
->>>  #define VC5_MUX_IN_CLKIN       BIT(1)
->>>
->>> +/* Maximum number of clk_out supported by this driver */
->>> +#define VC5_MAX_CLK_OUT_NUM    3
->>> +
->>> +/* Maximum number of FODs supported by this driver */
->>> +#define VC5_MAX_FOD_NUM        2
->>> +
->>> +/* flags to describe chip features */
->>> +/* chip has built-in oscilator */
->>> +#define VC5_HAS_INTERNAL_XTAL  BIT(0)
->>
->> VC5_HAS_INTERNAL_OSC?
-> 
-> I'm fine with renaming it, but shouldn't it be consistent with the rest
-> of the driver (see "internal-xtal", VC5_XTAL*, etc) and IDT datasheet?
-> 
+On 03/22, Neil Armstrong wrote:
+> +/*
+> + * The MALI IP is clocked by two identical clocks (mali_0 and mali_1)
+> + * muxed by a glitch-free switch.
+> + */
+> +
+> +static u32 mux_table_mali_0_1[] = {0, 1, 2, 3, 4, 5, 6, 7};
+> +static const char *gxbb_mali_0_1_parent_names[] = {
 
-Do you have one with internal ring oscillator or with internal xtal ?
-The one I had has internal xtal according to the datasheet.
+const char * const?
+
+> +	"xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
+> +	"fclk_div4", "fclk_div3", "fclk_div5"
+> +};
+> +
+[..]
+> +	},
+> +};
+> +
+> +static u32 mux_table_mali[] = {0, 1};
+> +static const char *gxbb_mali_parent_names[] = {
+
+It's a pattern, so I can only suspect something else is going on.
+
+> +	"mali_0", "mali_1"
+> +};
+> +
 
 -- 
-Best regards,
-Marek Vasut
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
