@@ -1,42 +1,35 @@
-Return-Path: <elfring@users.sourceforge.net>
-Subject: [PATCH 7/8] clk: nomadik: Use seq_puts() in nomadik_src_clk_show()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
-Message-ID: <d3be1f2b-f3c4-0d1b-4fa0-84589bfc3f70@users.sourceforge.net>
-Date: Thu, 20 Apr 2017 10:30:46 +0200
+Return-Path: <Alexey_Firago@mentor.com>
+From: Alexey Firago <alexey_firago@mentor.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<marek.vasut@gmail.com>, <geert@linux-m68k.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+CC: Alexey Firago <alexey_firago@mentor.com>
+Subject: [PATCH v2 0/3] clk: Add support for IDT 5P49V5935
+Date: Wed, 5 Apr 2017 14:46:56 +0300
+Message-ID: <1491392819-698-1-git-send-email-alexey_firago@mentor.com>
 MIME-Version: 1.0
-In-Reply-To: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Apr 2017 09:45:04 +0200
+This series adds support for IDT VersaClock 5P49V5935 programmable clock
+generator to the existing clk-versaclock5 driver.
 
-A string which did not contain a data format specification should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+Patches were verified on Avnet UltraZed-EG board with IO Carrier Card.
 
-This issue was detected by using the Coccinelle software.
+Changes in V2:
+- Introduce vc5_chip_info structure describing chip features
+- Set vc5_chip_info for the supported chips using clk_vc5_of_match[].data
+- Add 5P49V5935 support using vc5_chip_info approach
+- Fix idx comparison in vc5_of_clk_get ('>' to '>=')
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/clk/clk-nomadik.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Alexey Firago (3):
+  clk: vc5: Add structure to describe particular chip features
+  clk: vc5: Add bindings for IDT VersaClock 5P49V5935
+  clk: vc5: Add support for IDT VersaClock 5P49V5935
 
-diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
-index 71677eb12565..8d57ab8d6ed8 100644
---- a/drivers/clk/clk-nomadik.c
-+++ b/drivers/clk/clk-nomadik.c
-@@ -467,7 +467,7 @@ static int nomadik_src_clk_show(struct seq_file *s, void *what)
- 	u32 src_pckensr0 = readl(src_base + SRC_PCKENSR0);
- 	u32 src_pckensr1 = readl(src_base + SRC_PCKENSR1);
- 
--	seq_printf(s, "Clock:      Boot:   Now:    Request: ASKED:\n");
-+	seq_puts(s, "Clock:      Boot:   Now:    Request: ASKED:\n");
- 	for (i = 0; i < ARRAY_SIZE(src_clk_names); i++) {
- 		u32 pcksrb = (i < 0x20) ? src_pcksr0_boot : src_pcksr1_boot;
- 		u32 pcksr = (i < 0x20) ? src_pcksr0 : src_pcksr1;
+ .../devicetree/bindings/clock/idt,versaclock5.txt  | 16 ++++-
+ drivers/clk/clk-versaclock5.c                      | 80 +++++++++++++++++-----
+ 2 files changed, 77 insertions(+), 19 deletions(-)
+
 -- 
-2.12.2
+2.7.4
