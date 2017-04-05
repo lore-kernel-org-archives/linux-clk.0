@@ -1,65 +1,57 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a7745: Remove PLL configs for MD19=0
-Date: Mon,  3 Apr 2017 12:04:34 +0200
-Message-Id: <1491213874-13922-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Wed, 5 Apr 2017 09:03:22 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 0/3] clk: sunxi-ng: more misc fixes
+Message-ID: <20170405070322.6djvldy2ygxwacv4@lukather>
+References: <20170405063744.14389-1-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="zsdly26rwt2ncdth"
+In-Reply-To: <20170405063744.14389-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-According to tables 7.5b and 7.6b of the RZ/G Series Hardware User's
-Manual Rev.1.00, MD19=0 is a prohibited setting.
 
-Hence stop looking at MD19, and remove all PLL configurations for
-MD19=0.
+--zsdly26rwt2ncdth
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 9127d54bb8947159 ("clk: renesas: cpg-mssr: Add R8A7745 support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7745-cpg-mssr.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+On Wed, Apr 05, 2017 at 02:37:41PM +0800, Chen-Yu Tsai wrote:
+> Hi Maxime,
+>=20
+> Here are 3 more clk fixes. The first one is needed for the second.
+> The third is a TODO I spotted while doing the first two.
 
-diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-index 08db21cc6436bdc5..9e2360a8e14b860e 100644
---- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-@@ -190,31 +190,22 @@ static const unsigned int r8a7745_crit_mod_clks[] __initconst = {
-  *    MD	EXTAL		PLL0	PLL1	PLL3
-  * 14 13 19	(MHz)		*1	*2
-  *---------------------------------------------------
-- * 0  0  0	15		x200/3	x208/2	x106
-  * 0  0  1	15		x200/3	x208/2	x88
-- * 0  1  0	20		x150/3	x156/2	x80
-  * 0  1  1	20		x150/3	x156/2	x66
-- * 1  0  0	26 / 2		x230/3	x240/2	x122
-  * 1  0  1	26 / 2		x230/3	x240/2	x102
-- * 1  1  0	30 / 2		x200/3	x208/2	x106
-  * 1  1  1	30 / 2		x200/3	x208/2	x88
-  *
-  * *1 :	Table 7.5b indicates VCO output (PLL0 = VCO/3)
-  * *2 :	Table 7.5b indicates VCO output (PLL1 = VCO/2)
-  */
--#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 12) | \
--					 (((md) & BIT(13)) >> 12) | \
--					 (((md) & BIT(19)) >> 19))
-+#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 13) | \
-+					 (((md) & BIT(13)) >> 13))
- 
- static const struct rcar_gen2_cpg_pll_config cpg_pll_configs[8] __initconst = {
- 	/* EXTAL div	PLL1 mult	PLL3 mult	PLL0 mult */
--	{ 1,		208,		106,		200	},
- 	{ 1,		208,		88,		200	},
--	{ 1,		156,		80,		150	},
- 	{ 1,		156,		66,		150	},
--	{ 2,		240,		122,		230	},
- 	{ 2,		240,		102,		230	},
--	{ 2,		208,		106,		200	},
- 	{ 2,		208,		88,		200	},
- };
- 
--- 
-2.7.4
+Applied all three, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--zsdly26rwt2ncdth
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJY5Ja2AAoJEBx+YmzsjxAgblsP/0RnRnjAfbc68rcNbK8Y3Bti
+JFB641KzVUXJiVZOtHzeoz/92zPgqZfhElxKjCJFv6cyjgIhVbRZVV4L9Aj901nm
+YauNqJwPvenenvWWkeq4lE5PYiFUEYd7/8qtiUt3BEr/b2a5BdCSjdJfNNmspoIh
+eyk8pDOF4xlNDN/86j3lBLlb0Cyr4U/khL8Qew9I6z69cJWhzQOfhoPk8AxaxJpH
+4oI8YSNsJRppcrP36Cs/PTdnFPAdfO2UNQVGPy63GLHQ2G7TGHbzTdJJyO5i5bkx
+rn4nklKwC5s6NX6BsSTegrqaUDKCXFvvCIBxJYlhqU1mUjy2W+QaCVNmNuB8TmyH
+Ku+Wy4NE/Oy6hcNsFwwr41iQ4mFVzxyXs7iGyzr2jLmQfMM51KJ5Aws5+TCwREZ/
+0YuWXRITKjmzLN4h9KVI5CV6w1Z0UgRv6U/sgh4asx4yZdGwbQxCCf+D02t8sUyE
+RZcZcDLqVK3J4bFAA9RurpzfLQmrM6Qf+yUPKTDyiuNVX5PqZIt7bK+Cp5RLEhGG
+QvGZm6SHpNTW2YfMP4JIZTirhcHGVRL50281r+jMTev4zMrEiQ78Dg8h/20Bltof
+vcmXqb+ZPL7JEBeu2YVGTUUaKzAWeZJXdLU5is5PFMEtAcSQCSL4NWyKK6WomT+B
+EsBpbMQdKG5tsfIfvj2W
+=rQ/h
+-----END PGP SIGNATURE-----
+
+--zsdly26rwt2ncdth--
