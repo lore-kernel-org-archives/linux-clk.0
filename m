@@ -1,42 +1,39 @@
-Return-Path: <ykaneko0929@gmail.com>
-Return-Path: <ykaneko0929@gmail.com>
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7796: Add HS-USB clock
-Date: Thu, 20 Apr 2017 02:46:37 +0900
-Message-Id: <1492624001-3758-17-git-send-email-ykaneko0929@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:44846 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753464AbdDEBiR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2017 21:38:17 -0400
+Date: Tue, 4 Apr 2017 18:38:15 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/3] arm: dts: renesas: Drop _clk suffix from clock node
+ names
+Message-ID: <20170405013815.GK18246@codeaurora.org>
+References: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+On 04/03, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> The current practice is to not add _clk suffixes to clock node names in
+> DT, as these names are used as the actual clock names.
+> 
+> This patch removes the remaining offenders in the various Renesas DTSes.
+> 
 
-This patch adds HS-USB-IF clock for R8A7796 SoC.
+This changes the names in the clk framework too though? If you're
+ok with that I'm ok too.
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 1e16b17..c5523aa 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -171,6 +171,7 @@ enum clk_ids {
- 	DEF_MOD("vspi0",		 631,	R8A7796_CLK_S0D1),
- 	DEF_MOD("ehci1",		 702,	R8A7796_CLK_S3D4),
- 	DEF_MOD("ehci0",		 703,	R8A7796_CLK_S3D4),
-+	DEF_MOD("hsusb",		 704,	R8A7796_CLK_S3D4),
- 	DEF_MOD("csi20",		 714,	R8A7796_CLK_CSI0),
- 	DEF_MOD("csi40",		 716,	R8A7796_CLK_CSI0),
- 	DEF_MOD("du2",			 722,	R8A7796_CLK_S2D1),
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
