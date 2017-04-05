@@ -1,323 +1,91 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:43617 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1755478AbdDHBZE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2017 21:25:04 -0400
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC: CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH v4 04/10] clk: mediatek: add mt6797 clock IDs
-Date: Sat, 8 Apr 2017 09:20:29 +0800
-Message-ID: <1491614435-23754-5-git-send-email-mars.cheng@mediatek.com>
-In-Reply-To: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
-References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
+Received: from mail.kmu-office.ch ([178.209.48.109]:50416 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752527AbdDECgP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2017 22:36:15 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Date: Tue, 04 Apr 2017 19:36:01 -0700
+From: Stefan Agner <stefan@agner.ch>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Dong Aisheng <dongas86@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>, robh+dt@kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] ARM: dts: imx7: add USDHC NAND clock to SDHC
+ instances
+In-Reply-To: <CAOMZO5A7QQEe5rgBbJBzo8GY41aYV9WA8e9teCUROyihg0kq_g@mail.gmail.com>
+References: <20170330005029.6472-1-stefan@agner.ch>
+ <20170330005029.6472-2-stefan@agner.ch>
+ <20170401030312.GB24882@b29396-OptiPlex-7040>
+ <5c8339900fa1bd6215fb94d4386f7e06@agner.ch>
+ <CAOMZO5CprxqnqRXMFJLBAgYAZGGnXNs3ZciyVz_mSLRnnSQQRQ@mail.gmail.com>
+ <CAOMZO5A7QQEe5rgBbJBzo8GY41aYV9WA8e9teCUROyihg0kq_g@mail.gmail.com>
+Message-ID: <c95a7f535296623bdd4e4a640b3c27f5@agner.ch>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
----
- include/dt-bindings/clock/mt6797-clk.h |  281 ++++++++++++++++++++++++++++++++
- 1 file changed, 281 insertions(+)
- create mode 100644 include/dt-bindings/clock/mt6797-clk.h
+On 2017-04-04 19:15, Fabio Estevam wrote:
+> On Sun, Apr 2, 2017 at 2:02 PM, Fabio Estevam <festevam@gmail.com> wrote:
+>> On Sat, Apr 1, 2017 at 1:15 AM, Stefan Agner <stefan@agner.ch> wrote:
+>>
+>>> IMX7D_IPG_ROOT_CLK is currently not a valid clock in upstream... So we
+>>> would have to add it to the clock driver first.
+>>>
+>>> I guess we could/should add it anyway at one point? But probably also as
+>>> init on, just to make sure Linux does not disable it since it is
+>>> currently used by several IPs implicitly.
+>>
+>> Yes, I made a previous attempt do add  IMX7D_IPG_ROOT_CLK and it did
+>> not work as I did not put it in the init_on clock list.
+>>
+>> Will submit a new patch adding it to init_on, thanks.
+> 
+> I thought that adding IMX7D_IPG_ROOT_CLK would do the trick, but the
+> patch below also causes the kernel to not boot:
+> 
+> --- a/drivers/clk/imx/clk-imx7d.c
+> +++ b/drivers/clk/imx/clk-imx7d.c
+> @@ -386,7 +386,7 @@ static int const clks_init_on[] __initconst = {
+>         IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_NAND_USDHC_BUS_ROOT_CLK,
+>         IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
+>         IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
+> -       IMX7D_AHB_CHANNEL_ROOT_CLK,
+> +       IMX7D_AHB_CHANNEL_ROOT_CLK, IMX7D_IPG_ROOT_CLK,
+>  };
+> 
+>  static struct clk_onecell_data clk_data;
+> @@ -788,7 +788,7 @@ static void __init imx7d_clocks_init(struct
+> device_node *ccm_node)
+>         clks[IMX7D_WRCLK_ROOT_DIV] =
+> imx_clk_divider2("wrclk_post_div", "wrclk_pre_div", base + 0xbd00, 0,
+> 6);
+>         clks[IMX7D_CLKO1_ROOT_DIV] =
+> imx_clk_divider2("clko1_post_div", "clko1_pre_div", base + 0xbd80, 0,
+> 6);
+>         clks[IMX7D_CLKO2_ROOT_DIV] =
+> imx_clk_divider2("clko2_post_div", "clko2_pre_div", base + 0xbe00, 0,
+> 6);
+> -
+> +       clks[IMX7D_IPG_ROOT_CLK] = imx_clk_divider2("ipg_root_clk",
+> "ahb_root_clk", base + 0x9080, 0, 2);
+>         clks[IMX7D_ARM_A7_ROOT_CLK] = imx_clk_gate4("arm_a7_root_clk",
+> "arm_a7_div", base + 0x4000, 0);
+>         clks[IMX7D_ARM_M4_ROOT_CLK] = imx_clk_gate4("arm_m4_root_clk",
+> "arm_m4_div", base + 0x4010, 0);
+>         clks[IMX7D_ARM_M0_ROOT_CLK] = imx_clk_gate4("arm_m0_root_clk",
+> "arm_m0_div", base + 0x4020, 0);
 
-diff --git a/include/dt-bindings/clock/mt6797-clk.h b/include/dt-bindings/clock/mt6797-clk.h
-new file mode 100644
-index 0000000..e48aa47
---- /dev/null
-+++ b/include/dt-bindings/clock/mt6797-clk.h
-@@ -0,0 +1,281 @@
-+/*
-+ * Copyright (c) 2017 MediaTek Inc.
-+ * Author: Kevin Chen <kevin-cw.chen@mediatek.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_MT6797_H
-+#define _DT_BINDINGS_CLK_MT6797_H
-+
-+/* TOPCKGEN */
-+#define	CLK_TOP_MUX_ULPOSC_AXI_CK_MUX_PRE	1
-+#define	CLK_TOP_MUX_ULPOSC_AXI_CK_MUX		2
-+#define	CLK_TOP_MUX_AXI				3
-+#define	CLK_TOP_MUX_MEM				4
-+#define	CLK_TOP_MUX_DDRPHYCFG			5
-+#define	CLK_TOP_MUX_MM				6
-+#define	CLK_TOP_MUX_PWM				7
-+#define	CLK_TOP_MUX_VDEC			8
-+#define	CLK_TOP_MUX_VENC			9
-+#define	CLK_TOP_MUX_MFG				10
-+#define	CLK_TOP_MUX_CAMTG			11
-+#define	CLK_TOP_MUX_UART			12
-+#define	CLK_TOP_MUX_SPI				13
-+#define	CLK_TOP_MUX_ULPOSC_SPI_CK_MUX		14
-+#define	CLK_TOP_MUX_USB20			15
-+#define	CLK_TOP_MUX_MSDC50_0_HCLK		16
-+#define	CLK_TOP_MUX_MSDC50_0			17
-+#define	CLK_TOP_MUX_MSDC30_1			18
-+#define	CLK_TOP_MUX_MSDC30_2			19
-+#define	CLK_TOP_MUX_AUDIO			20
-+#define	CLK_TOP_MUX_AUD_INTBUS			21
-+#define	CLK_TOP_MUX_PMICSPI			22
-+#define	CLK_TOP_MUX_SCP				23
-+#define	CLK_TOP_MUX_ATB				24
-+#define	CLK_TOP_MUX_MJC				25
-+#define	CLK_TOP_MUX_DPI0			26
-+#define	CLK_TOP_MUX_AUD_1			27
-+#define	CLK_TOP_MUX_AUD_2			28
-+#define	CLK_TOP_MUX_SSUSB_TOP_SYS		29
-+#define	CLK_TOP_MUX_SPM				30
-+#define	CLK_TOP_MUX_BSI_SPI			31
-+#define	CLK_TOP_MUX_AUDIO_H			32
-+#define	CLK_TOP_MUX_ANC_MD32			33
-+#define	CLK_TOP_MUX_MFG_52M			34
-+#define	CLK_TOP_SYSPLL_CK			35
-+#define	CLK_TOP_SYSPLL_D2			36
-+#define	CLK_TOP_SYSPLL1_D2			37
-+#define	CLK_TOP_SYSPLL1_D4			38
-+#define	CLK_TOP_SYSPLL1_D8			39
-+#define	CLK_TOP_SYSPLL1_D16			40
-+#define	CLK_TOP_SYSPLL_D3			41
-+#define	CLK_TOP_SYSPLL_D3_D3			42
-+#define	CLK_TOP_SYSPLL2_D2			43
-+#define	CLK_TOP_SYSPLL2_D4			44
-+#define	CLK_TOP_SYSPLL2_D8			45
-+#define	CLK_TOP_SYSPLL_D5			46
-+#define	CLK_TOP_SYSPLL3_D2			47
-+#define	CLK_TOP_SYSPLL3_D4			48
-+#define	CLK_TOP_SYSPLL_D7			49
-+#define	CLK_TOP_SYSPLL4_D2			50
-+#define	CLK_TOP_SYSPLL4_D4			51
-+#define	CLK_TOP_UNIVPLL_CK			52
-+#define	CLK_TOP_UNIVPLL_D7			53
-+#define	CLK_TOP_UNIVPLL_D26			54
-+#define	CLK_TOP_SSUSB_PHY_48M_CK		55
-+#define	CLK_TOP_USB_PHY48M_CK			56
-+#define	CLK_TOP_UNIVPLL_D2			57
-+#define	CLK_TOP_UNIVPLL1_D2			58
-+#define	CLK_TOP_UNIVPLL1_D4			59
-+#define	CLK_TOP_UNIVPLL1_D8			60
-+#define	CLK_TOP_UNIVPLL_D3			61
-+#define	CLK_TOP_UNIVPLL2_D2			62
-+#define	CLK_TOP_UNIVPLL2_D4			63
-+#define	CLK_TOP_UNIVPLL2_D8			64
-+#define	CLK_TOP_UNIVPLL_D5			65
-+#define	CLK_TOP_UNIVPLL3_D2			66
-+#define	CLK_TOP_UNIVPLL3_D4			67
-+#define	CLK_TOP_UNIVPLL3_D8			68
-+#define	CLK_TOP_ULPOSC_CK_ORG			69
-+#define	CLK_TOP_ULPOSC_CK			70
-+#define	CLK_TOP_ULPOSC_D2			71
-+#define	CLK_TOP_ULPOSC_D3			72
-+#define	CLK_TOP_ULPOSC_D4			73
-+#define	CLK_TOP_ULPOSC_D8			74
-+#define	CLK_TOP_ULPOSC_D10			75
-+#define	CLK_TOP_APLL1_CK			76
-+#define	CLK_TOP_APLL2_CK			77
-+#define	CLK_TOP_MFGPLL_CK			78
-+#define	CLK_TOP_MFGPLL_D2			79
-+#define	CLK_TOP_IMGPLL_CK			80
-+#define	CLK_TOP_IMGPLL_D2			81
-+#define	CLK_TOP_IMGPLL_D4			82
-+#define	CLK_TOP_CODECPLL_CK			83
-+#define	CLK_TOP_CODECPLL_D2			84
-+#define	CLK_TOP_VDECPLL_CK			85
-+#define	CLK_TOP_TVDPLL_CK			86
-+#define	CLK_TOP_TVDPLL_D2			87
-+#define	CLK_TOP_TVDPLL_D4			88
-+#define	CLK_TOP_TVDPLL_D8			89
-+#define	CLK_TOP_TVDPLL_D16			90
-+#define	CLK_TOP_MSDCPLL_CK			91
-+#define	CLK_TOP_MSDCPLL_D2			92
-+#define	CLK_TOP_MSDCPLL_D4			93
-+#define	CLK_TOP_MSDCPLL_D8			94
-+#define	CLK_TOP_NR				95
-+
-+/* APMIXED_SYS */
-+#define CLK_APMIXED_MAINPLL			1
-+#define CLK_APMIXED_UNIVPLL			2
-+#define CLK_APMIXED_MFGPLL			3
-+#define CLK_APMIXED_MSDCPLL			4
-+#define CLK_APMIXED_IMGPLL			5
-+#define CLK_APMIXED_TVDPLL			6
-+#define CLK_APMIXED_CODECPLL			7
-+#define CLK_APMIXED_VDECPLL			8
-+#define CLK_APMIXED_APLL1			9
-+#define CLK_APMIXED_APLL2			10
-+#define CLK_APMIXED_NR				11
-+
-+/* INFRA_SYS */
-+#define	CLK_INFRA_PMIC_TMR			1
-+#define	CLK_INFRA_PMIC_AP			2
-+#define	CLK_INFRA_PMIC_MD			3
-+#define	CLK_INFRA_PMIC_CONN			4
-+#define	CLK_INFRA_SCP				5
-+#define	CLK_INFRA_SEJ				6
-+#define	CLK_INFRA_APXGPT			7
-+#define	CLK_INFRA_SEJ_13M			8
-+#define	CLK_INFRA_ICUSB				9
-+#define	CLK_INFRA_GCE				10
-+#define	CLK_INFRA_THERM				11
-+#define	CLK_INFRA_I2C0				12
-+#define	CLK_INFRA_I2C1				13
-+#define	CLK_INFRA_I2C2				14
-+#define	CLK_INFRA_I2C3				15
-+#define	CLK_INFRA_PWM_HCLK			16
-+#define	CLK_INFRA_PWM1				17
-+#define	CLK_INFRA_PWM2				18
-+#define	CLK_INFRA_PWM3				19
-+#define	CLK_INFRA_PWM4				20
-+#define	CLK_INFRA_PWM				21
-+#define	CLK_INFRA_UART0				22
-+#define	CLK_INFRA_UART1				23
-+#define	CLK_INFRA_UART2				24
-+#define	CLK_INFRA_UART3				25
-+#define	CLK_INFRA_MD2MD_CCIF_0			26
-+#define	CLK_INFRA_MD2MD_CCIF_1			27
-+#define	CLK_INFRA_MD2MD_CCIF_2			28
-+#define	CLK_INFRA_FHCTL				29
-+#define	CLK_INFRA_BTIF				30
-+#define	CLK_INFRA_MD2MD_CCIF_3			31
-+#define	CLK_INFRA_SPI				32
-+#define	CLK_INFRA_MSDC0				33
-+#define	CLK_INFRA_MD2MD_CCIF_4			34
-+#define	CLK_INFRA_MSDC1				35
-+#define	CLK_INFRA_MSDC2				36
-+#define	CLK_INFRA_MD2MD_CCIF_5			37
-+#define	CLK_INFRA_GCPU				38
-+#define	CLK_INFRA_TRNG				39
-+#define	CLK_INFRA_AUXADC			40
-+#define	CLK_INFRA_CPUM				41
-+#define	CLK_INFRA_AP_C2K_CCIF_0			42
-+#define	CLK_INFRA_AP_C2K_CCIF_1			43
-+#define	CLK_INFRA_CLDMA				44
-+#define	CLK_INFRA_DISP_PWM			45
-+#define	CLK_INFRA_AP_DMA			46
-+#define	CLK_INFRA_DEVICE_APC			47
-+#define	CLK_INFRA_L2C_SRAM			48
-+#define	CLK_INFRA_CCIF_AP			49
-+#define	CLK_INFRA_AUDIO				50
-+#define	CLK_INFRA_CCIF_MD			51
-+#define	CLK_INFRA_DRAMC_F26M			52
-+#define	CLK_INFRA_I2C4				53
-+#define	CLK_INFRA_I2C_APPM			54
-+#define	CLK_INFRA_I2C_GPUPM			55
-+#define	CLK_INFRA_I2C2_IMM			56
-+#define	CLK_INFRA_I2C2_ARB			57
-+#define	CLK_INFRA_I2C3_IMM			58
-+#define	CLK_INFRA_I2C3_ARB			59
-+#define	CLK_INFRA_I2C5				60
-+#define	CLK_INFRA_SYS_CIRQ			61
-+#define	CLK_INFRA_SPI1				62
-+#define	CLK_INFRA_DRAMC_B_F26M			63
-+#define	CLK_INFRA_ANC_MD32			64
-+#define	CLK_INFRA_ANC_MD32_32K			65
-+#define	CLK_INFRA_DVFS_SPM1			66
-+#define	CLK_INFRA_AES_TOP0			67
-+#define	CLK_INFRA_AES_TOP1			68
-+#define	CLK_INFRA_SSUSB_BUS			69
-+#define	CLK_INFRA_SPI2				70
-+#define	CLK_INFRA_SPI3				71
-+#define	CLK_INFRA_SPI4				72
-+#define	CLK_INFRA_SPI5				73
-+#define	CLK_INFRA_IRTX				74
-+#define	CLK_INFRA_SSUSB_SYS			75
-+#define	CLK_INFRA_SSUSB_REF			76
-+#define	CLK_INFRA_AUDIO_26M			77
-+#define	CLK_INFRA_AUDIO_26M_PAD_TOP		78
-+#define	CLK_INFRA_MODEM_TEMP_SHARE		79
-+#define	CLK_INFRA_VAD_WRAP_SOC			80
-+#define	CLK_INFRA_DRAMC_CONF			81
-+#define	CLK_INFRA_DRAMC_B_CONF			82
-+#define	CLK_INFRA_MFG_VCG			83
-+#define	CLK_INFRA_13M				84
-+#define	CLK_INFRA_NR				85
-+
-+/* IMG_SYS */
-+#define	CLK_IMG_FDVT				1
-+#define	CLK_IMG_DPE				2
-+#define	CLK_IMG_DIP				3
-+#define	CLK_IMG_LARB6				4
-+#define	CLK_IMG_NR				5
-+
-+/* MM_SYS */
-+#define	CLK_MM_SMI_COMMON			1
-+#define	CLK_MM_SMI_LARB0			2
-+#define	CLK_MM_SMI_LARB5			3
-+#define	CLK_MM_CAM_MDP				4
-+#define	CLK_MM_MDP_RDMA0			5
-+#define	CLK_MM_MDP_RDMA1			6
-+#define	CLK_MM_MDP_RSZ0				7
-+#define	CLK_MM_MDP_RSZ1				8
-+#define	CLK_MM_MDP_RSZ2				9
-+#define	CLK_MM_MDP_TDSHP			10
-+#define	CLK_MM_MDP_COLOR			11
-+#define	CLK_MM_MDP_WDMA				12
-+#define	CLK_MM_MDP_WROT0			13
-+#define	CLK_MM_MDP_WROT1			14
-+#define	CLK_MM_FAKE_ENG				15
-+#define	CLK_MM_DISP_OVL0			16
-+#define	CLK_MM_DISP_OVL1			17
-+#define	CLK_MM_DISP_OVL0_2L			18
-+#define	CLK_MM_DISP_OVL1_2L			19
-+#define	CLK_MM_DISP_RDMA0			20
-+#define	CLK_MM_DISP_RDMA1			21
-+#define	CLK_MM_DISP_WDMA0			22
-+#define	CLK_MM_DISP_WDMA1			23
-+#define	CLK_MM_DISP_COLOR			24
-+#define	CLK_MM_DISP_CCORR			25
-+#define	CLK_MM_DISP_AAL				26
-+#define	CLK_MM_DISP_GAMMA			27
-+#define	CLK_MM_DISP_OD				28
-+#define	CLK_MM_DISP_DITHER			29
-+#define	CLK_MM_DISP_UFOE			30
-+#define	CLK_MM_DISP_DSC				31
-+#define	CLK_MM_DISP_SPLIT			32
-+#define	CLK_MM_DSI0_MM_CLOCK			33
-+#define	CLK_MM_DSI1_MM_CLOCK			34
-+#define	CLK_MM_DPI_MM_CLOCK			35
-+#define	CLK_MM_DPI_INTERFACE_CLOCK		36
-+#define	CLK_MM_LARB4_AXI_ASIF_MM_CLOCK		37
-+#define	CLK_MM_LARB4_AXI_ASIF_MJC_CLOCK		38
-+#define	CLK_MM_DISP_OVL0_MOUT_CLOCK		39
-+#define	CLK_MM_FAKE_ENG2			40
-+#define	CLK_MM_DSI0_INTERFACE_CLOCK		41
-+#define	CLK_MM_DSI1_INTERFACE_CLOCK		42
-+#define	CLK_MM_NR				43
-+
-+/* VDEC_SYS */
-+#define	CLK_VDEC_CKEN_ENG			1
-+#define	CLK_VDEC_ACTIVE				2
-+#define	CLK_VDEC_CKEN				3
-+#define	CLK_VDEC_LARB1_CKEN			4
-+#define	CLK_VDEC_NR				5
-+
-+/* VENC_SYS */
-+#define	CLK_VENC_0				1
-+#define	CLK_VENC_1				2
-+#define	CLK_VENC_2				3
-+#define	CLK_VENC_3				4
-+#define	CLK_VENC_NR				5
-+
-+#endif /* _DT_BINDINGS_CLK_MT6797_H */
--- 
-1.7.9.5
+Hm, imx_clk_divider2 sets CLK_SET_RATE_PARENT, maybe that influences the
+parent?
 
+I guess we actually don't want the clock framework to change that clock
+rate, not sure whether we can freeze it or similar.
+
+--
+Stefan
