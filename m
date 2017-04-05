@@ -1,66 +1,150 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <Alexey_Firago@mentor.com>
+Subject: Re: [PATCH v2 1/3] clk: vc5: Add structure to describe particular
+ chip features
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1491392819-698-1-git-send-email-alexey_firago@mentor.com>
+ <1491392819-698-2-git-send-email-alexey_firago@mentor.com>
+ <CAMuHMdXEa=1__WMtsRphKbN6h+jVkP7szudENsM3hvGSzDfbwg@mail.gmail.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Marek Vasut
+	<marek.vasut@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Alexey Firago <alexey_firago@mentor.com>
+Message-ID: <de978809-5bec-d675-1ea3-cc61804e2c61@mentor.com>
+Date: Wed, 5 Apr 2017 15:36:16 +0300
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <87d1cjyeb4.wl%kuninori.morimoto.gx@renesas.com>
-References: <87fuhfyedq.wl%kuninori.morimoto.gx@renesas.com> <87d1cjyeb4.wl%kuninori.morimoto.gx@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 11 Apr 2017 10:35:24 +0200
-Message-ID: <CAMuHMdU=8yRF9GggrM7wiFhZckAH-caso=6nL1sELXpykqLp6g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: cs2000: add AUX_OUT pin select support
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAMuHMdXEa=1__WMtsRphKbN6h+jVkP7szudENsM3hvGSzDfbwg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Morimoto-san,
+Hi Geert,
 
-On Tue, Apr 11, 2017 at 2:36 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On 05.04.2017 15:15, Geert Uytterhoeven wrote:
+> Hi Alexey,
 >
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-> ---
->  .../devicetree/bindings/clock/cs2000-cp.txt        |  9 +++
->  drivers/clk/clk-cs2000-cp.c                        | 73 +++++++++++++++++++++-
->  2 files changed, 80 insertions(+), 2 deletions(-)
+> On Wed, Apr 5, 2017 at 1:46 PM, Alexey Firago <alexey_firago@mentor.com> wrote:
+>> Introduce vc5_chip_info structure to describe features of a particular
+>> VC5 chip (id, number of FODs, number of outputs, flags).
+>> For now flags are only used to indicate if chip has internal XTAL.
+>> vc5_chip_info is set on probe from the matched of_device_id->data.
+>>
+>> Also add defines to specify maximum number of FODs and clock outputs
+>> supported by the driver.
+>>
+>> With these changes it should be easier to extend driver to support
+>> more VC5 models.
+>>
+>> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
 >
-> diff --git a/Documentation/devicetree/bindings/clock/cs2000-cp.txt b/Documentation/devicetree/bindings/clock/cs2000-cp.txt
-> index 54e6df0..4c2f9cb 100644
-> --- a/Documentation/devicetree/bindings/clock/cs2000-cp.txt
-> +++ b/Documentation/devicetree/bindings/clock/cs2000-cp.txt
-> @@ -8,6 +8,15 @@ Required properties:
->  - clock-names:         CLK_IN : clk_in, XTI/REF_CLK : ref_clk
->  - #clock-cells:                must be <0>
+> Thanks for your patch!
 >
-> +Option properties:
-> +
-> +- auxoutsrc:           select AUX_OUT source from these.
-> +                               refclk:         Timing Reference Clock
-> +                               clk_in:         Frequency Reference Clock
-> +                               pllclkout:      PLL Clock Output
-> +                               push-pull:      PLL Lock/Unlock Indication
-> +                               open-drain:     PLL Lock/Unlock Indication
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+>> --- a/drivers/clk/clk-versaclock5.c
+>> +++ b/drivers/clk/clk-versaclock5.c
+>> @@ -113,12 +113,30 @@
+>>  #define VC5_MUX_IN_XIN         BIT(0)
+>>  #define VC5_MUX_IN_CLKIN       BIT(1)
+>>
+>> +/* Maximum number of clk_out supported by this driver */
+>> +#define VC5_MAX_CLK_OUT_NUM    3
+>> +
+>> +/* Maximum number of FODs supported by this driver */
+>> +#define VC5_MAX_FOD_NUM        2
+>> +
+>> +/* flags to describe chip features */
+>> +/* chip has built-in oscilator */
+>> +#define VC5_HAS_INTERNAL_XTAL  BIT(0)
+>
+> VC5_HAS_INTERNAL_OSC?
 
-AUX_OUT is an output pin?
-Hence, isn't this software configuration instead of hardware description?
+I'm fine with renaming it, but shouldn't it be consistent with the rest 
+of the driver (see "internal-xtal", VC5_XTAL*, etc) and IDT datasheet?
 
-Selection of refclk vs. clk_in vs. pllclkout can be implemented as a mux clock
-driver with three parents.
+>
+>> +
+>>  /* Supported IDT VC5 models. */
+>>  enum vc5_model {
+>>         IDT_VC5_5P49V5923,
+>>         IDT_VC5_5P49V5933,
+>>  };
+>>
+>> +/* Structure to describe features of a particular VC5 model */
+>> +struct vc5_chip_info {
+>> +       const enum vc5_model    model;
+>> +       const int               clk_fod_cnt;
+>> +       const int               clk_out_cnt;
+>
+> const unsigned int (both)
 
-PLL Lock/Unlock Indication and its pinctrl are something different.
-How to support that?
+Will fix.
 
-Gr{oetje,eeting}s,
+>
+>> +       u32                     flags;
+>> +};
+>> +
+>>  struct vc5_driver_data;
+>>
+>>  struct vc5_hw_data {
+>> @@ -132,15 +150,15 @@ struct vc5_hw_data {
+>>  struct vc5_driver_data {
+>>         struct i2c_client       *client;
+>>         struct regmap           *regmap;
+>> -       enum vc5_model          model;
+>> +       struct vc5_chip_info    *chip_info;
+>
+> const struct vc5_chip_info    *chip_info;
+>
+>> @@ -591,7 +609,7 @@ static int vc5_probe(struct i2c_client *client,
+>>         struct vc5_driver_data *vc5;
+>>         struct clk_init_data init;
+>>         const char *parent_names[2];
+>> -       unsigned int n, idx;
+>> +       unsigned int n, idx = 0;
+>>         int ret;
+>>
+>>         vc5 = devm_kzalloc(&client->dev, sizeof(*vc5), GFP_KERNEL);
+>> @@ -600,7 +618,12 @@ static int vc5_probe(struct i2c_client *client,
+>>
+>>         i2c_set_clientdata(client, vc5);
+>>         vc5->client = client;
+>> -       vc5->model = (enum vc5_model)of_id->data;
+>> +
+>> +       vc5->chip_info = (struct vc5_chip_info *)of_id->data;
+>
+> I think the cast is no longer needed when chip_info becomes const.
+>
+> BTW, of_id is not really needed if you write it like:
+>
+>         vc5->chip_info = of_device_get_match_data(&client->dev);
+>
+>> +       if (!vc5->chip_info) {
+>
+> This can't really happen, can it?
 
-                        Geert
+Ok. Will rework.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+>> +               dev_err(&client->dev, "No device match found\n");
+>> +               return -ENODEV;
+>> +       }
+>>
+>>         vc5->pin_xin = devm_clk_get(&client->dev, "xin");
+>>         if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
+>> @@ -622,8 +645,8 @@ static int vc5_probe(struct i2c_client *client,
+>>         if (!IS_ERR(vc5->pin_xin)) {
+>>                 vc5->clk_mux_ins |= VC5_MUX_IN_XIN;
+>>                 parent_names[init.num_parents++] = __clk_get_name(vc5->pin_xin);
+>> -       } else if (vc5->model == IDT_VC5_5P49V5933) {
+>> -               /* IDT VC5 5P49V5933 has built-in oscilator. */
+>> +       } else if (vc5->chip_info->flags & VC5_HAS_INTERNAL_XTAL) {
+>> +               /* chip has built-in oscilator. */
+>
+> The comment is no longer needed when the bit is named VC5_HAS_INTERNAL_OSC :-)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Ok. Will kill it.
+
+Thanks for your review!
+
+Regards,
+Alexey
