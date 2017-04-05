@@ -1,199 +1,156 @@
-Return-Path: <Alexey_Firago@mentor.com>
-From: Alexey Firago <alexey_firago@mentor.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<marek.vasut@gmail.com>, <geert@linux-m68k.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-CC: Alexey Firago <alexey_firago@mentor.com>
-Subject: [PATCH v3 1/3] clk: vc5: Add structure to describe particular chip features
-Date: Thu, 6 Apr 2017 12:15:28 +0300
-Message-ID: <1491470130-6655-2-git-send-email-alexey_firago@mentor.com>
-In-Reply-To: <1491470130-6655-1-git-send-email-alexey_firago@mentor.com>
-References: <1491470130-6655-1-git-send-email-alexey_firago@mentor.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 2/3] clk: sunxi-ng: a80: Remodel CPU cluster PLLs as N-type multiplier clocks
+Date: Wed,  5 Apr 2017 14:37:43 +0800
+Message-Id: <20170405063744.14389-3-wens@csie.org>
+In-Reply-To: <20170405063744.14389-1-wens@csie.org>
+References: <20170405063744.14389-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce vc5_chip_info structure to describe features of a particular
-VC5 chip (id, number of FODs, number of outputs, flags).
-For now flags are only used to indicate if chip has internal XTAL.
-vc5_chip_info is set on probe from the matched of_device_id->data.
+The CPU cluster PLLs on the A80 are NP clocks that are atypical in two ways:
 
-Also add defines to specify maximum number of FODs and clock outputs
-supported by the driver.
+  - The P factor is 1 bit wide, and translates to a /1 or /4 divider.
 
-With these changes it should be easier to extend driver to support
-more VC5 models.
+  - The P factor should only be used for output frequencies lower than
+    288 MHz. The N factor has a lower limit of 12, which likely contributed
+    to this extra divider.
 
-Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
+According to the user manual, the clocks can only go as low as 200 MHz.
+The vendor BSP kernel does not even define operating points below 360
+MHz for these clocks. The lower end for cpufreq in the vendor kernel is
+even higher. The mainline Linux kernel doesn't support cpufreq for the
+A80 at the moment. This means the lower frequencies are untested, and
+will likely remain unused.
+
+The new sunxi-ng style clocks don't support the quirks listed above.
+Instead of trying to work the quirks in for something of little usage,
+we re-model the clocks into N-type multipler clocks, with P fixed at 1.
+At probe time we check if P is set to 4, and fix it up if needed. This
+is highly unlikely though.
+
+Fixes: b8eb71dcdd08 ("clk: sunxi-ng: Add A80 CCU")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/clk-versaclock5.c | 65 +++++++++++++++++++++++++++++++------------
- 1 file changed, 47 insertions(+), 18 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun9i-a80.c | 70 ++++++++++++++++++++++++++----------
+ 1 file changed, 52 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 56741f3..4e81fb1 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -113,12 +113,30 @@
- #define VC5_MUX_IN_XIN		BIT(0)
- #define VC5_MUX_IN_CLKIN	BIT(1)
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+index a031beefa5b5..8936ef87652c 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+@@ -29,41 +29,41 @@
  
-+/* Maximum number of clk_out supported by this driver */
-+#define VC5_MAX_CLK_OUT_NUM	3
+ #define CCU_SUN9I_LOCK_REG	0x09c
+ 
+-static struct clk_div_table pll_cpux_p_div_table[] = {
+-	{ .val = 0, .div = 1 },
+-	{ .val = 1, .div = 4 },
+-	{ /* Sentinel */ },
+-};
+-
+ /*
+- * The CPU PLLs are actually NP clocks, but P is /1 or /4, so here we
+- * use the NM clocks with a divider table for M.
++ * The CPU PLLs are actually NP clocks, with P being /1 or /4. However
++ * P should only be used for output frequencies lower than 228 MHz.
++ * Neither mainline Linux, U-boot, nor the vendor BSPs use these.
++ *
++ * For now we can just model it as a multiplier clock, and force P to /1.
+  */
+-static struct ccu_nm pll_c0cpux_clk = {
++#define SUN9I_A80_PLL_C0CPUX_REG	0x000
++#define SUN9I_A80_PLL_C1CPUX_REG	0x004
 +
-+/* Maximum number of FODs supported by this driver */
-+#define VC5_MAX_FOD_NUM	2
-+
-+/* flags to describe chip features */
-+/* chip has built-in oscilator */
-+#define VC5_HAS_INTERNAL_XTAL	BIT(0)
-+
- /* Supported IDT VC5 models. */
- enum vc5_model {
- 	IDT_VC5_5P49V5923,
- 	IDT_VC5_5P49V5933,
++static struct ccu_mult pll_c0cpux_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(0),
+-	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+-	.m		= _SUNXI_CCU_DIV_TABLE(16, 1, pll_cpux_p_div_table),
++	.mult		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.common		= {
+-		.reg		= 0x000,
++		.reg		= SUN9I_A80_PLL_C0CPUX_REG,
+ 		.lock_reg	= CCU_SUN9I_LOCK_REG,
+ 		.features	= CCU_FEATURE_LOCK_REG,
+ 		.hw.init	= CLK_HW_INIT("pll-c0cpux", "osc24M",
+-					      &ccu_nm_ops, CLK_SET_RATE_UNGATE),
++					      &ccu_mult_ops,
++					      CLK_SET_RATE_UNGATE),
+ 	},
  };
  
-+/* Structure to describe features of a particular VC5 model */
-+struct vc5_chip_info {
-+	const enum vc5_model	model;
-+	const unsigned int	clk_fod_cnt;
-+	const unsigned int	clk_out_cnt;
-+	u32			flags;
-+};
-+
- struct vc5_driver_data;
- 
- struct vc5_hw_data {
-@@ -132,15 +150,15 @@ struct vc5_hw_data {
- struct vc5_driver_data {
- 	struct i2c_client	*client;
- 	struct regmap		*regmap;
--	enum vc5_model		model;
-+	const struct vc5_chip_info	*chip_info;
- 
- 	struct clk		*pin_xin;
- 	struct clk		*pin_clkin;
- 	unsigned char		clk_mux_ins;
- 	struct clk_hw		clk_mux;
- 	struct vc5_hw_data	clk_pll;
--	struct vc5_hw_data	clk_fod[2];
--	struct vc5_hw_data	clk_out[3];
-+	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
-+	struct vc5_hw_data	clk_out[VC5_MAX_CLK_OUT_NUM];
+-static struct ccu_nm pll_c1cpux_clk = {
++static struct ccu_mult pll_c1cpux_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(1),
+-	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+-	.m		= _SUNXI_CCU_DIV_TABLE(16, 1, pll_cpux_p_div_table),
++	.mult		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.common		= {
+-		.reg		= 0x004,
++		.reg		= SUN9I_A80_PLL_C1CPUX_REG,
+ 		.lock_reg	= CCU_SUN9I_LOCK_REG,
+ 		.features	= CCU_FEATURE_LOCK_REG,
+ 		.hw.init	= CLK_HW_INIT("pll-c1cpux", "osc24M",
+-					      &ccu_nm_ops, CLK_SET_RATE_UNGATE),
++					      &ccu_mult_ops,
++					      CLK_SET_RATE_UNGATE),
+ 	},
  };
  
- static const char * const vc5_mux_names[] = {
-@@ -563,7 +581,7 @@ static struct clk_hw *vc5_of_clk_get(struct of_phandle_args *clkspec,
- 	struct vc5_driver_data *vc5 = data;
- 	unsigned int idx = clkspec->args[0];
+@@ -1188,6 +1188,36 @@ static const struct sunxi_ccu_desc sun9i_a80_ccu_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun9i_a80_ccu_resets),
+ };
  
--	if (idx > 2)
-+	if (idx >= vc5->chip_info->clk_out_cnt)
- 		return ERR_PTR(-EINVAL);
- 
- 	return &vc5->clk_out[idx].hw;
-@@ -586,12 +604,10 @@ static const struct of_device_id clk_vc5_of_match[];
- static int vc5_probe(struct i2c_client *client,
- 		     const struct i2c_device_id *id)
++#define SUN9I_A80_PLL_P_SHIFT	16
++#define SUN9I_A80_PLL_N_SHIFT	8
++#define SUN9I_A80_PLL_N_WIDTH	8
++
++static void sun9i_a80_cpu_pll_fixup(void __iomem *reg)
++{
++	u32 val = readl(reg);
++
++	/* bail out if P divider is not used */
++	if (!(val & BIT(SUN9I_A80_PLL_P_SHIFT)))
++		return;
++
++	/*
++	 * If P is used, output should be less than 288 MHz. When we
++	 * set P to 1, we should also decrease the multiplier so the
++	 * output doesn't go out of range, but not too much such that
++	 * the multiplier stays above 12, the minimal operation value.
++	 *
++	 * To keep it simple, set the multiplier to 17, the reset value.
++	 */
++	val &= ~GENMASK(SUN9I_A80_PLL_N_SHIFT + SUN9I_A80_PLL_N_WIDTH - 1,
++			SUN9I_A80_PLL_N_SHIFT);
++	val |= 17 << SUN9I_A80_PLL_N_SHIFT;
++
++	/* And clear P */
++	val &= ~BIT(SUN9I_A80_PLL_P_SHIFT);
++
++	writel(val, reg);
++}
++
+ static int sun9i_a80_ccu_probe(struct platform_device *pdev)
  {
--	const struct of_device_id *of_id =
--		of_match_device(clk_vc5_of_match, &client->dev);
- 	struct vc5_driver_data *vc5;
- 	struct clk_init_data init;
- 	const char *parent_names[2];
--	unsigned int n, idx;
-+	unsigned int n, idx = 0;
- 	int ret;
+ 	struct resource *res;
+@@ -1204,6 +1234,10 @@ static int sun9i_a80_ccu_probe(struct platform_device *pdev)
+ 	val &= (BIT(16) & BIT(18));
+ 	writel(val, reg + SUN9I_A80_PLL_AUDIO_REG);
  
- 	vc5 = devm_kzalloc(&client->dev, sizeof(*vc5), GFP_KERNEL);
-@@ -600,7 +616,7 @@ static int vc5_probe(struct i2c_client *client,
- 
- 	i2c_set_clientdata(client, vc5);
- 	vc5->client = client;
--	vc5->model = (enum vc5_model)of_id->data;
-+	vc5->chip_info = of_device_get_match_data(&client->dev);
- 
- 	vc5->pin_xin = devm_clk_get(&client->dev, "xin");
- 	if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
-@@ -622,8 +638,7 @@ static int vc5_probe(struct i2c_client *client,
- 	if (!IS_ERR(vc5->pin_xin)) {
- 		vc5->clk_mux_ins |= VC5_MUX_IN_XIN;
- 		parent_names[init.num_parents++] = __clk_get_name(vc5->pin_xin);
--	} else if (vc5->model == IDT_VC5_5P49V5933) {
--		/* IDT VC5 5P49V5933 has built-in oscilator. */
-+	} else if (vc5->chip_info->flags & VC5_HAS_INTERNAL_XTAL) {
- 		vc5->pin_xin = clk_register_fixed_rate(&client->dev,
- 						       "internal-xtal", NULL,
- 						       0, 25000000);
-@@ -672,8 +687,8 @@ static int vc5_probe(struct i2c_client *client,
- 	}
- 
- 	/* Register FODs */
--	for (n = 0; n < 2; n++) {
--		idx = vc5_map_index_to_output(vc5->model, n);
-+	for (n = 0; n < vc5->chip_info->clk_fod_cnt; n++) {
-+		idx = vc5_map_index_to_output(vc5->chip_info->model, n);
- 		memset(&init, 0, sizeof(init));
- 		init.name = vc5_fod_names[idx];
- 		init.ops = &vc5_fod_ops;
-@@ -709,8 +724,8 @@ static int vc5_probe(struct i2c_client *client,
- 	}
- 
- 	/* Register FOD-connected OUTx outputs */
--	for (n = 1; n < 3; n++) {
--		idx = vc5_map_index_to_output(vc5->model, n - 1);
-+	for (n = 1; n < vc5->chip_info->clk_out_cnt; n++) {
-+		idx = vc5_map_index_to_output(vc5->chip_info->model, n - 1);
- 		parent_names[0] = vc5_fod_names[idx];
- 		if (n == 1)
- 			parent_names[1] = vc5_mux_names[0];
-@@ -744,7 +759,7 @@ static int vc5_probe(struct i2c_client *client,
- 	return 0;
- 
- err_clk:
--	if (vc5->model == IDT_VC5_5P49V5933)
-+	if (vc5->chip_info->flags & VC5_HAS_INTERNAL_XTAL)
- 		clk_unregister_fixed_rate(vc5->pin_xin);
- 	return ret;
- }
-@@ -755,12 +770,26 @@ static int vc5_remove(struct i2c_client *client)
- 
- 	of_clk_del_provider(client->dev.of_node);
- 
--	if (vc5->model == IDT_VC5_5P49V5933)
-+	if (vc5->chip_info->flags & VC5_HAS_INTERNAL_XTAL)
- 		clk_unregister_fixed_rate(vc5->pin_xin);
- 
- 	return 0;
++	/* Enforce P = 1 for both CPU cluster PLLs */
++	sun9i_a80_cpu_pll_fixup(reg + SUN9I_A80_PLL_C0CPUX_REG);
++	sun9i_a80_cpu_pll_fixup(reg + SUN9I_A80_PLL_C1CPUX_REG);
++
+ 	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun9i_a80_ccu_desc);
  }
  
-+static const struct vc5_chip_info idt_5p49v5923_info = {
-+	.model = IDT_VC5_5P49V5923,
-+	.clk_fod_cnt = 2,
-+	.clk_out_cnt = 3,
-+	.flags = 0,
-+};
-+
-+static const struct vc5_chip_info idt_5p49v5933_info = {
-+	.model = IDT_VC5_5P49V5933,
-+	.clk_fod_cnt = 2,
-+	.clk_out_cnt = 3,
-+	.flags = VC5_HAS_INTERNAL_XTAL,
-+};
-+
- static const struct i2c_device_id vc5_id[] = {
- 	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
- 	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
-@@ -769,8 +798,8 @@ static const struct i2c_device_id vc5_id[] = {
- MODULE_DEVICE_TABLE(i2c, vc5_id);
- 
- static const struct of_device_id clk_vc5_of_match[] = {
--	{ .compatible = "idt,5p49v5923", .data = (void *)IDT_VC5_5P49V5923 },
--	{ .compatible = "idt,5p49v5933", .data = (void *)IDT_VC5_5P49V5933 },
-+	{ .compatible = "idt,5p49v5923", .data = &idt_5p49v5923_info },
-+	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
 -- 
-2.7.4
+2.11.0
