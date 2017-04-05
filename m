@@ -1,215 +1,147 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:59495 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754663AbdDHBZD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2017 21:25:03 -0400
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC: CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH v4 09/10] soc: mediatek: add MT6797 scpsys support
-Date: Sat, 8 Apr 2017 09:20:34 +0800
-Message-ID: <1491614435-23754-10-git-send-email-mars.cheng@mediatek.com>
-In-Reply-To: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
-References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
+Received: from mail-pg0-f41.google.com ([74.125.83.41]:34520 "EHLO
+        mail-pg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753442AbdDEAcB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2017 20:32:01 -0400
+Received: by mail-pg0-f41.google.com with SMTP id 21so165932994pgg.1
+        for <linux-clk@vger.kernel.org>; Tue, 04 Apr 2017 17:32:01 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: arm@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [GIT PULL] Amlogic 64-bit DT updates for v4.12 (redo)
+Date: Tue, 04 Apr 2017 17:31:59 -0700
+Message-ID: <m24ly37kzk.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds scpsys support for MT6797
+Hi Arnd, Olof,
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
----
- drivers/soc/mediatek/mtk-scpsys.c        |  114 ++++++++++++++++++++++++++++++
- include/dt-bindings/power/mt6797-power.h |   30 ++++++++
- 2 files changed, 144 insertions(+)
- create mode 100644 include/dt-bindings/power/mt6797-power.h
+Here's a redo of the Amlogic 64-bit DT updates for v4.12.
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index a8ba800..ceb2cc4 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -21,6 +21,7 @@
- #include <linux/soc/mediatek/infracfg.h>
- 
- #include <dt-bindings/power/mt2701-power.h>
-+#include <dt-bindings/power/mt6797-power.h>
- #include <dt-bindings/power/mt8173-power.h>
- 
- #define SPM_VDE_PWR_CON			0x0210
-@@ -585,6 +586,116 @@ static int __init scpsys_probe_mt2701(struct platform_device *pdev)
- }
- 
- /*
-+ * MT6797 power domain support
-+ */
-+
-+static const struct scp_domain_data scp_domain_data_mt6797[] = {
-+	[MT6797_POWER_DOMAIN_VDEC] = {
-+		.name = "vdec",
-+		.sta_mask = BIT(7),
-+		.ctl_offs = 0x300,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.clk_id = {CLK_VDEC},
-+	},
-+	[MT6797_POWER_DOMAIN_VENC] = {
-+		.name = "venc",
-+		.sta_mask = BIT(21),
-+		.ctl_offs = 0x304,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(15, 12),
-+		.clk_id = {CLK_NONE},
-+	},
-+	[MT6797_POWER_DOMAIN_ISP] = {
-+		.name = "isp",
-+		.sta_mask = BIT(5),
-+		.ctl_offs = 0x308,
-+		.sram_pdn_bits = GENMASK(9, 8),
-+		.sram_pdn_ack_bits = GENMASK(13, 12),
-+		.clk_id = {CLK_NONE},
-+	},
-+	[MT6797_POWER_DOMAIN_MM] = {
-+		.name = "mm",
-+		.sta_mask = BIT(3),
-+		.ctl_offs = 0x30C,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.clk_id = {CLK_MM},
-+		.bus_prot_mask = (BIT(1) | BIT(2)),
-+	},
-+	[MT6797_POWER_DOMAIN_AUDIO] = {
-+		.name = "audio",
-+		.sta_mask = BIT(24),
-+		.ctl_offs = 0x314,
-+		.sram_pdn_bits = GENMASK(11, 8),
-+		.sram_pdn_ack_bits = GENMASK(15, 12),
-+		.clk_id = {CLK_NONE},
-+	},
-+	[MT6797_POWER_DOMAIN_MFG_ASYNC] = {
-+		.name = "mfg_async",
-+		.sta_mask = BIT(13),
-+		.ctl_offs = 0x334,
-+		.sram_pdn_bits = 0,
-+		.sram_pdn_ack_bits = 0,
-+		.clk_id = {CLK_MFG},
-+	},
-+	[MT6797_POWER_DOMAIN_MJC] = {
-+		.name = "mjc",
-+		.sta_mask = BIT(20),
-+		.ctl_offs = 0x310,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+		.clk_id = {CLK_NONE},
-+	},
-+};
-+
-+#define NUM_DOMAINS_MT6797	ARRAY_SIZE(scp_domain_data_mt6797)
-+#define SPM_PWR_STATUS_MT6797		0x0180
-+#define SPM_PWR_STATUS_2ND_MT6797	0x0184
-+
-+static int __init scpsys_probe_mt6797(struct platform_device *pdev)
-+{
-+	struct scp *scp;
-+	struct genpd_onecell_data *pd_data;
-+	int ret;
-+	struct scp_ctrl_reg scp_reg;
-+
-+	scp_reg.pwr_sta_offs = SPM_PWR_STATUS_MT6797;
-+	scp_reg.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6797;
-+
-+	scp = init_scp(pdev, scp_domain_data_mt6797, NUM_DOMAINS_MT6797,
-+		       &scp_reg);
-+	if (IS_ERR(scp))
-+		return PTR_ERR(scp);
-+
-+	mtk_register_power_domains(pdev, scp, NUM_DOMAINS_MT6797);
-+
-+	pd_data = &scp->pd_data;
-+
-+	ret = pm_genpd_add_subdomain(pd_data->domains[MT6797_POWER_DOMAIN_MM],
-+				     pd_data->domains[MT6797_POWER_DOMAIN_VDEC]);
-+	if (ret && IS_ENABLED(CONFIG_PM))
-+		dev_err(&pdev->dev, "Failed to add subdomain: %d\n", ret);
-+
-+	ret = pm_genpd_add_subdomain(pd_data->domains[MT6797_POWER_DOMAIN_MM],
-+				     pd_data->domains[MT6797_POWER_DOMAIN_ISP]);
-+	if (ret && IS_ENABLED(CONFIG_PM))
-+		dev_err(&pdev->dev, "Failed to add subdomain: %d\n", ret);
-+
-+	ret = pm_genpd_add_subdomain(pd_data->domains[MT6797_POWER_DOMAIN_MM],
-+				     pd_data->domains[MT6797_POWER_DOMAIN_VENC]);
-+	if (ret && IS_ENABLED(CONFIG_PM))
-+		dev_err(&pdev->dev, "Failed to add subdomain: %d\n", ret);
-+
-+	ret = pm_genpd_add_subdomain(pd_data->domains[MT6797_POWER_DOMAIN_MM],
-+				     pd_data->domains[MT6797_POWER_DOMAIN_MJC]);
-+	if (ret && IS_ENABLED(CONFIG_PM))
-+		dev_err(&pdev->dev, "Failed to add subdomain: %d\n", ret);
-+
-+	return 0;
-+}
-+
-+/*
-  * MT8173 power domain support
-  */
- 
-@@ -721,6 +832,9 @@ static int __init scpsys_probe_mt8173(struct platform_device *pdev)
- 		.compatible = "mediatek,mt2701-scpsys",
- 		.data = scpsys_probe_mt2701,
- 	}, {
-+		.compatible = "mediatek,mt6797-scpsys",
-+		.data = scpsys_probe_mt6797,
-+	}, {
- 		.compatible = "mediatek,mt8173-scpsys",
- 		.data = scpsys_probe_mt8173,
- 	}, {
-diff --git a/include/dt-bindings/power/mt6797-power.h b/include/dt-bindings/power/mt6797-power.h
-new file mode 100644
-index 0000000..d54b377
---- /dev/null
-+++ b/include/dt-bindings/power/mt6797-power.h
-@@ -0,0 +1,30 @@
-+/*
-+ * Copyright (c) 2017 MediaTek Inc.
-+ * Author: Mars.C <mars.cheng@mediatek.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef _DT_BINDINGS_POWER_MT6797_POWER_H
-+#define _DT_BINDINGS_POWER_MT6797_POWER_H
-+
-+#define MT6797_POWER_DOMAIN_VDEC		0
-+#define MT6797_POWER_DOMAIN_VENC		1
-+#define MT6797_POWER_DOMAIN_ISP		2
-+#define MT6797_POWER_DOMAIN_MM			3
-+#define MT6797_POWER_DOMAIN_AUDIO		4
-+#define MT6797_POWER_DOMAIN_MFG_ASYNC		5
-+#define MT6797_POWER_DOMAIN_MFG		6
-+#define MT6797_POWER_DOMAIN_MFG_CORE0		7
-+#define MT6797_POWER_DOMAIN_MFG_CORE1		8
-+#define MT6797_POWER_DOMAIN_MFG_CORE2		9
-+#define MT6797_POWER_DOMAIN_MFG_CORE3		10
-+#define MT6797_POWER_DOMAIN_MJC		11
-+
-+#endif /* _DT_BINDINGS_POWER_MT6797_POWER_H */
--- 
-1.7.9.5
+This DT branch includes all our DT updates, plus merges in a clock
+branch that includes only clock header and binding updates which are
+dependencies.  This shared branch/tag is immutable and shared with the
+clock tree.
 
+I hope this iteration passes muster,
+
+Kevin
+
+
+The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+
+  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-amlogic.git tags/amlogic-dt64-redo
+
+for you to fetch changes up to b2121170143bf4708c657461740c922ce24bc94e:
+
+  Merge tag 'amlogic-clk-headers' into v4.12/dt64 (2017-04-04 16:16:52 -0700)
+
+----------------------------------------------------------------
+Amlogic 64-bit DT updates for v4.12
+- pinctrl: new pins for audio
+- clocks: more clocks exposed for GFX, audio
+- new board: Khadas Vim (S905X)
+- new board: HwaCom AmazeTV (S905X)
+- ethernet phy: add GPIO resets
+
+----------------------------------------------------------------
+Carlo Caione (3):
+      dt-bindings: Add vendor prefix for Hwacom Systems Inc.
+      dt-bindings: amlogic: Add HwaCom board
+      ARM64: dts: meson-gxl: Add support for HwaCom AmazeTV
+
+Heiner Kallweit (1):
+      ARM64: dts: meson-gxbb-odroidc2: Enable SARADC node
+
+Jerome Brunet (1):
+      dt-bindings: clk: gxbb: expose i2s output clock gates
+
+Kevin Hilman (1):
+      Merge tag 'amlogic-clk-headers' into v4.12/dt64
+
+Martin Blumenstingl (14):
+      ARM64: dts: meson-gxbb-odroidc2: add the ethernet PHY's reset GPIO
+      ARM64: dts: meson-gxbb-p200: add the ethernet PHY's reset GPIO
+      ARM64: dts: meson-gxbb-vega-s95: add the ethernet PHY's reset GPIO
+      ARM64: dts: meson-gxbb-nexbox-a95x: add the ethernet PHY's reset GPIO
+      ARM64: dts: meson-gxbb-wetek-hub: add the ethernet PHY's reset GPIO
+      ARM64: dts: meson-gxbb-wetek-play2: add the ethernet PHY's reset GPIO
+      ARM64: dts: meson-gxbb-p201: fix ethernet support
+      ARM64: dts: amlogic: add the ethernet TX delay configuration
+      ARM64: dts: meson-gx: remove the phy-mode property from meson-gx
+      ARM64: dts: meson-gxl: improve support for the P212 reference design
+      ARM64: dts: amlogic: meson-gxl: add the missing PWM pins
+      devicetree: add vendor prefix for Khadas
+      dt-bindings: amlogic: add the Khadas VIM
+      ARM64: dts: meson-gxl: add support for the Khadas VIM board
+
+Neil Armstrong (18):
+      ARM64: dts: meson-gx: Add Buttons to Q200 and P230 boards
+      ARM64: dts: meson-gxbb-odroidc2: Add GPIO lines names
+      ARM64: dts: meson-gxbb-odroidc2: Fix TFLASH VDD regulator GPIO line
+      ARM64: dts: meson-gx: Finally move common nodes to GX dtsi
+      ARM64: dts: meson-gx: empty line cleanup
+      ARM64: dts: meson-gx: Prepend GX generic compatible like other nodes
+      ARM64: dts: meson-gxl: Add missing pinctrl pins groups
+      ARM64: dts: meson-gx: Add Mali nodes for GXBB and GXL
+      ARM64: dts: meson-gxbb: Add gpio-ranges properties
+      ARM64: dts: meson-gxl: Add gpio-ranges properties
+      ARM: dts: meson8: Add gpio-ranges properties
+      ARM: dts: meson8b: Add gpio-ranges properties
+      ARM64: dts: meson-gxbb: Add USB Hub GPIO hog
+      clk: meson-gxbb: Add MALI clock IDS
+      clk: meson-gxbb: Expose GP0 dt-bindings clock id
+      dt-bindings: clock: gxbb-clkc: Add GXL compatible variant
+      ARM64: dts: meson-gx: Add shared CMA dma memory pool
+      ARM64: dts: meson-gx: Add support for HDMI output
+
+jbrunet (4):
+      ARM64: dts: meson-gxbb: add i2s output pins
+      ARM64: dts: meson-gxbb: add spdif output pins
+      ARM64: dts: meson-gxl: add i2s output pins
+      ARM64: dts: meson-gxl: add spdif output pins
+
+ Documentation/devicetree/bindings/arm/amlogic.txt              |   3 +
+ Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt  |   3 +-
+ Documentation/devicetree/bindings/vendor-prefixes.txt          |   2 +
+ arch/arm/boot/dts/meson8.dtsi                                  |   2 +
+ arch/arm/boot/dts/meson8b.dtsi                                 |   2 +
+ arch/arm64/boot/dts/amlogic/Makefile                           |   2 +
+ arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi            |  39 ++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi                      |  80 +++++++++++++++++---
+ arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts         |  40 ++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts            |  80 +++++++++++++++++++-
+ arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts                |  25 +++++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-p201.dts                |  11 +++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi               |  29 ++++++--
+ arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi           |  21 +++++-
+ arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-hub.dts           |  26 +++++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts         |  26 +++++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi                    | 172 +++++++++++++++++++++++++++++++++++--------
+ arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi                |  43 +++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905d-p230.dts           |  42 +++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905d.dtsi               |   1 +
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts | 164 +++++++++++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts     | 114 +++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts    |  23 ++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts           |  21 +++---
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi          | 173 +++++++++++++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x.dtsi               |   1 +
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi                     | 194 +++++++++++++++++++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts            |  25 +++++++
+ arch/arm64/boot/dts/amlogic/meson-gxm-q200.dts                 |  42 +++++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxm.dtsi                     |   3 +
+ drivers/clk/meson/gxbb.h                                       |  21 ++++--
+ include/dt-bindings/clock/gxbb-clkc.h                          |  11 +++
+ 32 files changed, 1375 insertions(+), 66 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
