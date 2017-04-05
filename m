@@ -1,53 +1,41 @@
-Return-Path: <ykaneko0929@gmail.com>
-Return-Path: <ykaneko0929@gmail.com>
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7796: Add Sound SSI clock
-Date: Thu, 20 Apr 2017 02:46:34 +0900
-Message-Id: <1492624001-3758-14-git-send-email-ykaneko0929@gmail.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1491392819-698-4-git-send-email-alexey_firago@mentor.com>
+References: <1491392819-698-1-git-send-email-alexey_firago@mentor.com> <1491392819-698-4-git-send-email-alexey_firago@mentor.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Apr 2017 14:20:31 +0200
+Message-ID: <CAMuHMdXsJq+8jg=hxTsMexjtKTVpOLTRx+HzxoZTWyC_3+z1Zw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] clk: vc5: Add support for IDT VersaClock 5P49V5935
+To: Alexey Firago <alexey_firago@mentor.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+On Wed, Apr 5, 2017 at 1:46 PM, Alexey Firago <alexey_firago@mentor.com> wrote:
+> Update IDT VersaClock 5 driver to support 5P49V5935. This chip has
+> two clock inputs (internal XTAL or external CLKIN), four fractional
+> dividers (FODs) and five clock outputs (four universal clock outputs
+> and one reference clock output at OUT0_SELB_I2C).
+>
+> Current driver supports up to 2 FODs and up to 3 clock outputs. This
+> patch sets max number of supported FODs to 4 and max number of supported
+> clock outputs to 5.
+>
+> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
 
-This patch adds SSI(all) and SSI{0,1,2,3,4,5,6,7,8,9} clocks for R8A7796
-SoC.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
+Gr{oetje,eeting}s,
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+                        Geert
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 27afd48..9be8187 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -208,6 +208,17 @@ enum clk_ids {
- 	DEF_MOD("i2c2",			 929,	R8A7796_CLK_S3D2),
- 	DEF_MOD("i2c1",			 930,	R8A7796_CLK_S3D2),
- 	DEF_MOD("i2c0",			 931,	R8A7796_CLK_S3D2),
-+	DEF_MOD("ssi-all",		1005,	R8A7796_CLK_S3D4),
-+	DEF_MOD("ssi9",			1006,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi8",			1007,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi7",			1008,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi6",			1009,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi5",			1010,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi4",			1011,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi3",			1012,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi2",			1013,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi1",			1014,	MOD_CLK_ID(1005)),
-+	DEF_MOD("ssi0",			1015,	MOD_CLK_ID(1005)),
- };
- 
- static const unsigned int r8a7796_crit_mod_clks[] __initconst = {
--- 
-1.9.1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
