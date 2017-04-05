@@ -1,102 +1,58 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: tegra: fix SS control on PLL enable/disable
-Date: Thu, 20 Apr 2017 15:39:49 +0300
-Message-ID: <1492691989-30539-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 5 Apr 2017 14:45:15 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [git pull] clk: renesas: Updates for v4.12 (take two)
+Message-ID: <20170405214515.GC7065@codeaurora.org>
+References: <1490952253-10963-1-git-send-email-geert+renesas@glider.be>
+ <20170405195605.GN18246@codeaurora.org>
+ <CAMuHMdUf7SX1fkbQsv7DPZ7OvdniiRqovQuiDjeQ1EdGXKxcRQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdUf7SX1fkbQsv7DPZ7OvdniiRqovQuiDjeQ1EdGXKxcRQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-PLL SS was only controlled when setting the PLL rate, not when the PLL
-itself is enabled or disabled. This means that if the PLL rate was set
-before the PLL is enabled, SS will not be enabled, even when configured.
+On 04/05, Geert Uytterhoeven wrote:
+> Hi Stephen,
+> 
+> On Wed, Apr 5, 2017 at 9:56 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 03/31, Geert Uytterhoeven wrote:
+> >> The following changes since commit cecbe87d73006cb321dec79b349e3fefd1a80962:
+> >>
+> >>   clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0 (2017-03-21 11:12:23 +0100)
+> >>
+> >> are available in the git repository at:
+> >>
+> >>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.12-tag2
+> >>
+> >> for you to fetch changes up to bb1953067c05be30a605ee1d5b05a2677735bb37:
+> >>
+> >>   clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0 (2017-03-30 13:26:02 +0200)
+> >>
+> >> ----------------------------------------------------------------
+> >> clk: renesas: Updates for v4.12 (take two)
+> >>
+> >>   - Add support for the Clock Pulse Generator / Module Standby and
+> >>     Software Reset module on revision ES2.0 of the R-Car H3 SoC, which
+> >>     differs from ES1.x in some areas.
+> >>
+> >> Note that this pull request is on top of my previous pull request for
+> >> v4.12, which accidentally had a wrong version number in the subject
+> >> line, and which I believe you haven't pulled yet.
+> >
+> > Thanks. I pulled both by pulling this one tag.
+> 
+> Thanks, but if you pull the second tag only, you don't record the contents
+> of the first tag, do you?
+> 
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c | 44 ++++++++++++++++++++++++--------------------
- 1 file changed, 24 insertions(+), 20 deletions(-)
+I copied the words into the commit message. Not sure anyone cares
+that the first tag signature is lost.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 159a854..e9bdb16 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -418,6 +418,26 @@ static void _clk_pll_disable(struct clk_hw *hw)
- 	}
- }
- 
-+static void pll_clk_start_ss(struct tegra_clk_pll *pll)
-+{
-+	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
-+		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
-+
-+		val |= pll->params->ssc_ctrl_en_mask;
-+		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
-+	}
-+}
-+
-+static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
-+{
-+	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
-+		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
-+
-+		val &= ~pll->params->ssc_ctrl_en_mask;
-+		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
-+	}
-+}
-+
- static int clk_pll_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-@@ -431,6 +451,8 @@ static int clk_pll_enable(struct clk_hw *hw)
- 
- 	ret = clk_pll_wait_for_lock(pll);
- 
-+	pll_clk_start_ss(pll);
-+
- 	if (pll->lock)
- 		spin_unlock_irqrestore(pll->lock, flags);
- 
-@@ -445,6 +467,8 @@ static void clk_pll_disable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-+	pll_clk_stop_ss(pll);
-+
- 	_clk_pll_disable(hw);
- 
- 	if (pll->lock)
-@@ -716,26 +740,6 @@ static void _update_pll_cpcon(struct tegra_clk_pll *pll,
- 	pll_writel_misc(val, pll);
- }
- 
--static void pll_clk_start_ss(struct tegra_clk_pll *pll)
--{
--	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
--		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
--
--		val |= pll->params->ssc_ctrl_en_mask;
--		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
--	}
--}
--
--static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
--{
--	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
--		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
--
--		val &= ~pll->params->ssc_ctrl_en_mask;
--		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
--	}
--}
--
- static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 			unsigned long rate)
- {
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
