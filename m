@@ -1,33 +1,55 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-Subject: Re: [PATCH v4 3/3] clk: vc5: Add support for IDT VersaClock 5P49V5935
-To: Alexey Firago <alexey_firago@mentor.com>, mturquette@baylibre.com,
- sboyd@codeaurora.org, robh+dt@kernel.org, geert@linux-m68k.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <1491556344-9465-1-git-send-email-alexey_firago@mentor.com>
- <1491556344-9465-4-git-send-email-alexey_firago@mentor.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <cb635515-7770-73cb-f9d3-f81b2d647614@gmail.com>
-Date: Fri, 7 Apr 2017 21:56:09 +0200
+Return-Path: <tony@atomide.com>
+Date: Wed, 5 Apr 2017 06:41:41 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Tero Kristo <t-kristo@ti.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+Subject: Re: [GIT PULL] clk: ti: cleanups for 4.12 merge window
+Message-ID: <20170405134141.GC13234@atomide.com>
+References: <8157b2e6-99c8-dc02-0c02-3d99778f255b@ti.com>
+ <20170404161413.GT10760@atomide.com>
+ <20170405012649.GI18246@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1491556344-9465-4-git-send-email-alexey_firago@mentor.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170405012649.GI18246@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/07/2017 11:12 AM, Alexey Firago wrote:
-> Update IDT VersaClock 5 driver to support 5P49V5935. This chip has
-> two clock inputs (internal XTAL or external CLKIN), four fractional
-> dividers (FODs) and five clock outputs (four universal clock outputs
-> and one reference clock output at OUT0_SELB_I2C).
+* Stephen Boyd <sboyd@codeaurora.org> [170404 18:29]:
+> On 04/04, Tony Lindgren wrote:
+> > * Tero Kristo <t-kristo@ti.com> [170317 05:55]:
+> > > Hi Stephen/Mike,
+> > > 
+> > > This is basically the TI clock driver cleanup series v2 posted last week,
+> > > sending a pull request now as there hasn't been any additional comments.
+> > > 
+> > > -Tero
+> > > 
+> > > ==================================================================
+> > > 
+> > > The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+> > > 
+> > >   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+> > > 
+> > > are available in the git repository at:
+> > > 
+> > >   https://github.com/t-kristo/linux-pm.git for-4.12-ti-clk-cleanups
+> > > 
+> > > for you to fetch changes up to 6c0afb503937a12a8d20a805fcf263e31afa9871:
+> > > 
+> > >   clk: ti: convert to use proper register definition for all accesses
+> > > (2017-03-08 13:06:15 +0200)
+> > 
+> > Any news on getting this merged?
+> > 
 > 
-> Current driver supports up to 2 FODs and up to 3 clock outputs. This
-> patch sets max number of supported FODs to 4 and max number of supported
-> clock outputs to 5.
-> 
-> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
+> Pulled into clk-next. Sorry for the slowness, I've been pulled
+> into some other work recently and also took a spring break
+> vacation last week so I'm just getting back to clk stuff.
 
-Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+OK thanks no problem, was just wondering.
 
--- 
-Best regards,
-Marek Vasut
+Regards,
+
+Tony
