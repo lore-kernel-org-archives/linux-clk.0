@@ -1,47 +1,37 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 0/4] Samsung clock providers: convert to the new clk_hw API
-Date: Thu, 20 Apr 2017 15:16:35 +0200
-Message-id: <1492694199-9553-1-git-send-email-m.szyprowski@samsung.com>
-References: 
- <CGME20170420131645eucas1p1953f481cf4ca328ad7cf6be53f626600@eucas1p1.samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 5 Apr 2017 14:52:26 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: gabriel.fernandez@st.com
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] clk: stm32f4: fix timeout management for pll and
+ ready gate
+Message-ID: <20170405215226.GG7065@codeaurora.org>
+References: <1489652201-19889-1-git-send-email-gabriel.fernandez@st.com>
+ <1489652201-19889-3-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1489652201-19889-3-git-send-email-gabriel.fernandez@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear All,
+On 03/16, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> Use a classic polling to test bit ready.
+> And the shift of the bit ready of LSE & LSI were wrongs.
+> 
+> Fixes: 861adc44d290 ("clk: stm32f4: Add LSI & LSE clocks")
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> ---
 
-Clock providers should use the new struct clk_hw based API, so convert
-all Samsung clock providers and their helper functions to the new approach.
-
-Patches are based on top of linux-next from 20170420.
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Marek Szyprowski (4):
-  clk: samsung: Convert common drivers to the new clk_hw API
-  clk: samsung: exynos-audss: Convert to the new clk_hw API
-  clk: samsung: exynos-clkout: Convert to the new clk_hw API
-  clk: samsung: s5pv210-audss: Convert to the new clk_hw API
-
- drivers/clk/samsung/clk-cpu.c           | 15 +++---
- drivers/clk/samsung/clk-exynos-audss.c  | 55 ++++++++++----------
- drivers/clk/samsung/clk-exynos-clkout.c | 18 +++----
- drivers/clk/samsung/clk-pll.c           | 14 ++---
- drivers/clk/samsung/clk-pll.h           |  4 --
- drivers/clk/samsung/clk-s3c2410-dclk.c  | 75 ++++++++++++++-------------
- drivers/clk/samsung/clk-s5pv210-audss.c | 50 +++++++++---------
- drivers/clk/samsung/clk.c               | 91 +++++++++++++++------------------
- drivers/clk/samsung/clk.h               |  9 ++--
- 9 files changed, 159 insertions(+), 172 deletions(-)
+Applied to clk-next
 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
