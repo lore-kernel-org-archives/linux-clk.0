@@ -1,84 +1,105 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 02/10] clk: renesas: Add r8a7790 CPG Core Clock Definitions
-Date: Tue, 25 Apr 2017 18:53:12 +0200
-Message-Id: <1493139200-27396-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
-References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <raltherr@google.com>
+MIME-Version: 1.0
+In-Reply-To: <20170405202744.GB7065@codeaurora.org>
+References: <20170323184136.7349-1-raltherr@google.com> <20170323184136.7349-2-raltherr@google.com>
+ <20170405202744.GB7065@codeaurora.org>
+From: Rick Altherr <raltherr@google.com>
+Date: Wed, 5 Apr 2017 16:49:49 -0700
+Message-ID: <CAPLgG=nYnVuwRZOdXuFCaFy9P0cx_zqfk0f9orBv+8+HxcnqKQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] iio: Aspeed ADC
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-iio@vger.kernel.org,
+	Quentin Schulz <quentin.schulz@free-electrons.com>, David Lechner <david@lechnology.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, linux-clk@vger.kernel.org,
+	Andreas Klinger <ak@it-klinger.de>, Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+	Alison Schofield <amsfield22@gmail.com>, Fabrice Gasnier <fabrice.gasnier@st.com>,
+	Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
+	Crestez Dan Leonard <leonard.crestez@intel.com>, Akinobu Mita <akinobu.mita@gmail.com>,
+	Matt Ranostay <mranostay@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add all R-Car H2 Clock Pulse Generator Core Clock Outputs, as listed in
-Table 7.2a ("List of Clocks [R-Car H2]") of the R-Car Gen2 Hardware
-User's Manual rev. 2.00.
+On Wed, Apr 5, 2017 at 1:27 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 03/23, Rick Altherr wrote:
+>> +
+>> +static int aspeed_adc_probe(struct platform_device *pdev)
+>> +{
+>> +     struct iio_dev *indio_dev;
+>> +     struct aspeed_adc_data *data;
+>> +     const struct aspeed_adc_model_data *model_data;
+>> +     struct resource *res;
+>> +     const char *clk_parent_name;
+>> +     int ret;
+>> +     u32 adc_engine_control_reg_val;
+>> +
+>> +     indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*data));
+>> +     if (!indio_dev)
+>> +             return -ENOMEM;
+>> +
+>> +     data = iio_priv(indio_dev);
+>> +     data->dev = &pdev->dev;
+>> +
+>> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +     data->base = devm_ioremap_resource(&pdev->dev, res);
+>> +     if (IS_ERR(data->base))
+>> +             return PTR_ERR(data->base);
+>> +
+>> +     /* Register ADC clock prescaler with source specified by device tree. */
+>> +     spin_lock_init(&data->clk_lock);
+>> +     clk_parent_name = of_clk_get_parent_name(pdev->dev.of_node, 0);
+>
+> What if the parent clk is not registered yet? Or if we're not
+> always using DT in this driver? Put another way, this code is
+> fragile. But I guess it probably works well enough for now so no
+> big deal, just pointing out my fear.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/dt-bindings/clock/r8a7790-cpg-mssr.h | 52 ++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7790-cpg-mssr.h
+I'm not terribly worried about not using DT for this driver as it is
+for an ARM SoC's built-in ADC which is only supported via DT.  I take
+your point though.  What's the right way to do this?  Use clk_get() to
+request by name and clock-names in the DT?
 
-diff --git a/include/dt-bindings/clock/r8a7790-cpg-mssr.h b/include/dt-bindings/clock/r8a7790-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..1625b8bf34822b6e
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7790-cpg-mssr.h
-@@ -0,0 +1,52 @@
-+/*
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_R8A7790_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7790_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7790 CPG Core Clocks */
-+#define R8A7790_CLK_Z			0
-+#define R8A7790_CLK_Z2			1
-+#define R8A7790_CLK_ZG			2
-+#define R8A7790_CLK_ZTR			3
-+#define R8A7790_CLK_ZTRD2		4
-+#define R8A7790_CLK_ZT			5
-+#define R8A7790_CLK_ZX			6
-+#define R8A7790_CLK_ZS			7
-+#define R8A7790_CLK_HP			8
-+#define R8A7790_CLK_I			9
-+#define R8A7790_CLK_B			10
-+#define R8A7790_CLK_LB			11
-+#define R8A7790_CLK_P			12
-+#define R8A7790_CLK_CL			13
-+#define R8A7790_CLK_M2			14
-+#define R8A7790_CLK_ADSP		15
-+#define R8A7790_CLK_IMP			16
-+#define R8A7790_CLK_ZB3			17
-+#define R8A7790_CLK_ZB3D2		18
-+#define R8A7790_CLK_DDR			19
-+#define R8A7790_CLK_SDH			20
-+#define R8A7790_CLK_SD0			21
-+#define R8A7790_CLK_SD1			22
-+#define R8A7790_CLK_SD2			23
-+#define R8A7790_CLK_SD3			24
-+#define R8A7790_CLK_MMC0		25
-+#define R8A7790_CLK_MMC1		26
-+#define R8A7790_CLK_MP			27
-+#define R8A7790_CLK_SSP			28
-+#define R8A7790_CLK_SSPRS		29
-+#define R8A7790_CLK_QSPI		30
-+#define R8A7790_CLK_CP			31
-+#define R8A7790_CLK_RCAN		32
-+#define R8A7790_CLK_R			33
-+#define R8A7790_CLK_OSC			34
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7790_CPG_MSSR_H__ */
--- 
-2.7.4
+>
+>> +
+>> +     data->clk_prescaler = clk_hw_register_divider(
+>> +                             &pdev->dev, "prescaler", clk_parent_name, 0,
+>> +                             data->base + ASPEED_REG_CLOCK_CONTROL,
+>> +                             17, 15, 0, &data->clk_lock);
+>> +     if (IS_ERR(data->clk_prescaler))
+>> +             return PTR_ERR(data->clk_prescaler);
+>> +
+>> +     /*
+>> +      * Register ADC clock scaler downstream from the prescaler. Allow rate
+>> +      * setting to adjust the prescaler as well.
+>> +      */
+>> +     data->clk_scaler = clk_hw_register_divider(
+>> +                             &pdev->dev, "scaler", "prescaler",
+>> +                             CLK_SET_RATE_PARENT,
+>> +                             data->base + ASPEED_REG_CLOCK_CONTROL,
+>> +                             0, 10, 0, &data->clk_lock);
+>> +     if (IS_ERR(data->clk_scaler)) {
+>> +             ret = PTR_ERR(data->clk_scaler);
+>> +             goto scaler_error;
+>> +     }
+>> +
+>> +     /* Start all channels in normal mode. */
+>> +     clk_prepare_enable(data->clk_scaler->clk);
+>
+> Eventually we'd like to get rid of hw->clk pointer so that users
+> have to call some sort of clk_get() API and then we get warm
+> fuzzies from knowing who is consuming a clk structure. Can you
+> change this to register a clk provider and call clk_get()? I
+> think a device that references itself should be OK in DT still,
+> and would properly reflect what's going on.
+
+Do you mean call of_clk_add_hw_provider with of_clk_hw_simple_get or
+something else?  I'm still wrapping my head around the distinction
+between clk, clk_hw, and a clk provider.
+
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
