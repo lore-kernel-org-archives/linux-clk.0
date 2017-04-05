@@ -1,51 +1,107 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: arm-soc <arm@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v2 6/7] arm: spear6xx: add DT description of the ADC on SPEAr600
-Date: Mon, 17 Apr 2017 14:46:44 +0200
-Message-Id: <1492433205-13376-7-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
+To: Tony Lindgren <tony@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <20170317152536.GT20572@atomide.com>
+ <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
+ <20170323010057.GI10760@atomide.com> <20170323170210.GL10760@atomide.com>
+ <8648f054-cf04-41df-20f3-82e0d63feefa@ti.com>
+ <20170330165448.GF10760@atomide.com>
+ <55b439ed-8b81-2e6b-64f1-34f9f3cc5369@ti.com>
+ <20170403153604.GI10760@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <c396df32-fad1-72a2-f22d-034a42af4186@ti.com>
+Date: Wed, 5 Apr 2017 19:59:38 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170403153604.GI10760@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The SPEAr600 has a built-in ADC, which already has a Device Tree binding
-described in
-Documentation/devicetree/bindings/staging/iio/adc/spear-adc.txt. This
-commit adds the description in the SPEAr600 Device Tree of this ADC
-device.
+On 03/04/17 18:36, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [170403 07:54]:
+>> On 30/03/17 19:54, Tony Lindgren wrote:
+>>> * Tero Kristo <t-kristo@ti.com> [170330 00:20]:
+>>>> On 23/03/17 19:02, Tony Lindgren wrote:
+>>>>> * Tony Lindgren <tony@atomide.com> [170322 18:03]:
+>>>>>> * Tero Kristo <t-kristo@ti.com> [170317 14:39]:
+>>>>>>> On 17/03/17 17:25, Tony Lindgren wrote:
+>>>>>>>> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+>>>>>>>>> Any additional testing on omap4 welcome as this series basically
+>>>>>>>>> tweaks every possible peripheral clock on the SoC.
+>>>>>>>>
+>>>>>>>> Without the last patch in this series, booting fails for me:
+>>>>>>>>
+>>>>>>>> [    5.074890] l4_per_cm:clk:0120:0: failed to disable
+>>>>>>>> [    5.085113] l4_per_cm:clk:0128:0: failed to disable
+>>>>>>>>
+>>>>>>>> Care to check that booting keeps working for each patch in the
+>>>>>>>> series to avoid breaking git bisect for booting?
+>>>>>>>
+>>>>>>> Hmm, I think patch 8+9 need to be squashed then. I can double check this
+>>>>>>> next week though.
+>>>>>>
+>>>>>> Also looks like with this set merged HDMI stops working on
+>>>>>> omap4 with:
+>>>>>>
+>>>>>> HDMIWP: omapdss HDMIWP error: Failed to set PHY power mode to 1
+>>>>>
+>>>>> Forgot to mention that's with omapdrm with encoder-tpd12s015 and
+>>>>> encoder-tfp410 modules loaded to get HDMI working. Here's more verbose
+>>>>> dmesg output in case that provides more clues:
+>>>>>
+>>>>> [   91.042877] omapdss HDMICORE error: operation stopped when reading edid
+>>>>> [   91.078308] [drm] Enabling DMM ywrap scrolling
+>>>>> [   91.099243] omapdss HDMIWP error: Failed to set PHY power mode to 1
+>>>>> [   91.107879] omapdss HDMI error: failed to power on device
+>>>>> [   91.107879] omapdrm omapdrm.0: Failed to enable display 'hdmi': -5
+>>>>> [   91.359619] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+>>>>> [   91.619964] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+>>>>> [   91.620300] Console: switching to colour frame buffer device 128x48
+>>>>> [   91.682434] omapdrm omapdrm.0: fb0: omapdrm frame buffer device
+>>>>> [   91.770812] [drm] Initialized omapdrm 1.0.0 20110917 for omapdrm.0 on minor 0
+>>>>> [   92.818054] omapdss HDMICORE error: operation stopped when reading edid
+>>>>> [   93.090087] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+>>>>> [   93.349853] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+>>>>>
+>>>>> Regards,
+>>>>>
+>>>>> Tony
+>>>>>
+>>>>
+>>>> Can you try with this additional hwmod data tweak in place? Apply this on
+>>>> top of the existing series.
+>>>
+>>> Does not seem to help, still get the same errors. But maybe I'm doing
+>>> something wrong as the patch did not apply and I applied it manually.
+>>>
+>>> Regards,
+>>>
+>>> Tony
+>>>
+>>
+>> Hmm ok, can you provide some brief instructions how to test what you are
+>> doing with the HDMI? Just connect it to some external monitor? My monitor
+>> has a spare HDMI connector so I could try it out.
+>
+> Well build a kernel using omap2plus_defconfig, then with HDMI cable
+> connected load the following modules:
+>
+> encoder-tpd12s015 encoder-tfp410 connector-hdmi omapfb
+>
+> And a console should appear on the HDMI monitor. If using omapdrm, then
+> load omapdss and omapdrm instead.
+>
+> And if using NFSroot, you need to have ehci and smsc drivers built-in
+> or use an initramfs.
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm/boot/dts/spear600.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Ok I am able to reproduce the issue. Seems something weird with the hdmi 
+hwmod itself, if I revert it back to its original form (just the hdmi 
+one) then it works fine. Haven't figured out yet what is the actual 
+problem but seems something timing related, as it also starts magically 
+working with the clkctrl clock driver setup if I add enough traces to 
+some critical points.
 
-diff --git a/arch/arm/boot/dts/spear600.dtsi b/arch/arm/boot/dts/spear600.dtsi
-index 8459286..6b32d20 100644
---- a/arch/arm/boot/dts/spear600.dtsi
-+++ b/arch/arm/boot/dts/spear600.dtsi
-@@ -204,6 +204,14 @@
- 				interrupt-parent = <&vic0>;
- 				interrupts = <16>;
- 			};
-+
-+			adc: adc@d820b000 {
-+				compatible = "st,spear600-adc";
-+				reg = <0xd820b000 0x1000>;
-+				interrupt-parent = <&vic1>;
-+				interrupts = <6>;
-+				status = "disabled";
-+			};
- 		};
- 	};
- };
--- 
-2.7.4
+-Tero
