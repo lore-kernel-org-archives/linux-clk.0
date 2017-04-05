@@ -1,75 +1,288 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:36856 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753500AbdDEC2M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2017 22:28:12 -0400
+MIME-Version: 1.0
+In-Reply-To: <dbf0f478-ff53-0ced-24a3-e9de7077efd9@aosc.io>
+References: <20170329194613.55548-1-icenowy@aosc.io> <20170329194613.55548-5-icenowy@aosc.io>
+ <20170404192837.pvlhwyeut45vg2wg@art_vandelay> <dbf0f478-ff53-0ced-24a3-e9de7077efd9@aosc.io>
 From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 0/3] clk: sunxi-ng: gate/ungate PLL CPU clk after rate change
-Date: Thu, 13 Apr 2017 10:13:51 +0800
-Message-Id: <20170413021354.3258-1-wens@csie.org>
+Date: Wed, 5 Apr 2017 10:27:41 +0800
+Message-ID: <CAGb2v66vxP0c3qMTAUCseTCbpJ6gxnKfNGNcC41jPHA_Ye4ggw@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v3 04/11] drm/sun4i: abstract the layer type
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Sean Paul <seanpaul@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+On Wed, Apr 5, 2017 at 3:53 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>
+>
+> 在 2017年04月05日 03:28, Sean Paul 写道:
+>>
+>> On Thu, Mar 30, 2017 at 03:46:06AM +0800, Icenowy Zheng wrote:
+>>>
+>>> As we are going to add support for the Allwinner DE2 Mixer in sun4i-drm
+>>> driver, we will finally have two types of layer.
+>>>
+>>> Abstract the layer type to void * and a ops struct, which contains the
+>>> only function used by crtc -- get the drm_plane struct of the layer.
+>>>
+>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>> ---
+>>> Refactored patch in v3.
+>>>
+>>>  drivers/gpu/drm/sun4i/sun4i_crtc.c  | 19 +++++++++++--------
+>>>  drivers/gpu/drm/sun4i/sun4i_crtc.h  |  3 ++-
+>>>  drivers/gpu/drm/sun4i/sun4i_layer.c | 19 ++++++++++++++++++-
+>>>  drivers/gpu/drm/sun4i/sun4i_layer.h |  2 +-
+>>>  drivers/gpu/drm/sun4i/sunxi_layer.h | 17 +++++++++++++++++
+>>>  5 files changed, 49 insertions(+), 11 deletions(-)
+>>>  create mode 100644 drivers/gpu/drm/sun4i/sunxi_layer.h
+>>>
+>>> diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c
+>>> b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+>>> index 3c876c3a356a..33854ee7f636 100644
+>>> --- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
+>>> +++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
+>>> @@ -29,6 +29,7 @@
+>>>  #include "sun4i_crtc.h"
+>>>  #include "sun4i_drv.h"
+>>>  #include "sun4i_layer.h"
+>>> +#include "sunxi_layer.h"
+>>>  #include "sun4i_tcon.h"
+>>>
+>>>  static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
+>>> @@ -149,7 +150,7 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device
+>>> *drm,
+>>>         scrtc->tcon = tcon;
+>>>
+>>>         /* Create our layers */
+>>> -       scrtc->layers = sun4i_layers_init(drm, scrtc->backend);
+>>> +       scrtc->layers = (void **)sun4i_layers_init(drm, scrtc);
+>>>         if (IS_ERR(scrtc->layers)) {
+>>>                 dev_err(drm->dev, "Couldn't create the planes\n");
+>>>                 return NULL;
+>>> @@ -157,14 +158,15 @@ struct sun4i_crtc *sun4i_crtc_init(struct
+>>> drm_device *drm,
+>>>
+>>>         /* find primary and cursor planes for drm_crtc_init_with_planes
+>>> */
+>>>         for (i = 0; scrtc->layers[i]; i++) {
+>>> -               struct sun4i_layer *layer = scrtc->layers[i];
+>>> +               void *layer = scrtc->layers[i];
+>>> +               struct drm_plane *plane =
+>>> scrtc->layer_ops->get_plane(layer);
+>>>
+>>> -               switch (layer->plane.type) {
+>>> +               switch (plane->type) {
+>>>                 case DRM_PLANE_TYPE_PRIMARY:
+>>> -                       primary = &layer->plane;
+>>> +                       primary = plane;
+>>>                         break;
+>>>                 case DRM_PLANE_TYPE_CURSOR:
+>>> -                       cursor = &layer->plane;
+>>> +                       cursor = plane;
+>>>                         break;
+>>>                 default:
+>>>                         break;
+>>> @@ -190,10 +192,11 @@ struct sun4i_crtc *sun4i_crtc_init(struct
+>>> drm_device *drm,
+>>>         /* Set possible_crtcs to this crtc for overlay planes */
+>>>         for (i = 0; scrtc->layers[i]; i++) {
+>>>                 uint32_t possible_crtcs =
+>>> BIT(drm_crtc_index(&scrtc->crtc));
+>>> -               struct sun4i_layer *layer = scrtc->layers[i];
+>>> +               void *layer = scrtc->layers[i];
+>>> +               struct drm_plane *plane =
+>>> scrtc->layer_ops->get_plane(layer);
+>>>
+>>> -               if (layer->plane.type == DRM_PLANE_TYPE_OVERLAY)
+>>> -                       layer->plane.possible_crtcs = possible_crtcs;
+>>> +               if (plane->type == DRM_PLANE_TYPE_OVERLAY)
+>>> +                       plane->possible_crtcs = possible_crtcs;
+>>>         }
+>>>
+>>>         return scrtc;
+>>> diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.h
+>>> b/drivers/gpu/drm/sun4i/sun4i_crtc.h
+>>> index 230cb8f0d601..a4036ee44cf8 100644
+>>> --- a/drivers/gpu/drm/sun4i/sun4i_crtc.h
+>>> +++ b/drivers/gpu/drm/sun4i/sun4i_crtc.h
+>>> @@ -19,7 +19,8 @@ struct sun4i_crtc {
+>>>
+>>>         struct sun4i_backend            *backend;
+>>>         struct sun4i_tcon               *tcon;
+>>> -       struct sun4i_layer              **layers;
+>>> +       void                            **layers;
+>>> +       const struct sunxi_layer_ops    *layer_ops;
+>>
+>>
+>> I think you should probably take a different approach to abstract the
+>> layer
+>> type. How about creating
+>>
+>> struct sunxi_layer {
+>>         struct drm_plane plane;
+>> }
+>>
+>> base and then subclassing that for sun4i and sun8i? By doing this you can
+>> avoid
+>> the nasty casting and you can also get rid of the get_plane() hook and
+>> layer_ops.
+>
+>
+> For the situation that using ** things are easily to get weird.
 
-This series adds a clk notifier for use on the PLL CPU clks found in
-Allwinner SoCs. Some people have observed issues with the design and
-implementation of the CPU PLL clock, starting from the A31. Changes
-to the PLL clock need a few cycles to stabilize. If the changes are
-too drastic, the dividers in particular, there is a good chance that
-the system will hang.
+That code could be reworked, by initializing the layers directly within
+the crtc init code. If you look at rockchip's drm driver, you'll see
+they do this. There is a good reason to do it this way, as you need
+to first create the primary and cursor layers, pass them in when you
+create the crtc, then initialize any additional layers with the
+possible_crtcs bitmap.
 
-Previously we thought that reparenting the CPU clock away from the PLL
-while changes were made, and then reparenting it back once it was stable,
-should have been enough to mitigate the issue. Unfortunately it was
-not. With cpufreq support for A33 recently introduced in commit
-03749eb88e63 ("ARM: dts: sun8i: add opp-v2 table for A33"), system hangs
-were observed one out of two to three boots, right after userspace
-configured cpufreq to switch to the ondemand governor. Other experiments
-done by Ondrej Jirman [1] show that it is not enough to just reparent
-the CPU clock, but the PLL clock's dividers must not be used.
+In our driver we are currently initializing all layers, then going
+back and filling in possible_crtcs for the extra layers.
 
-We suspect the divider changes make the PLL unstable to the point that
-it can not recover, possibly not providing any output afterwards. We
-lack any hard evidence (oscilloscope readings or hardware implementation
-details) to fully explain the behavior. However, if the hardware is
-stuck in some undesired state, it is possible to "reset" it, by gating
-the PLL, then ungating it.
-
-This series adds a new clk notifier that does exactly that. The clk
-notifier is registered on the PLL clock. Whenever its rate is changed,
-the notifier comes in and toggles the gate. The notifier should always
-be the first one registered. And all consumers of the clock must also
-have notifiers on it to temporarily reparent away during the change.
-
-Patches 2 and 3 register this new notifier for the CPU PLL clocks on
-the A33 and H3, respectively. With the first 2 patches applied, the
-cpufreq related system hangs on the A33 go away.
-
-Given that commit 03749eb88e63 ("ARM: dts: sun8i: add opp-v2 table for
-A33") is already in v4.11-rc, I suggest we either try to merge the
-first 2 patches for a very late -rc fix, or drop A33 cpufreq support
-from v4.11, and add it later once this series is merged.
+And as Maxime and I mentioned in the other thread, we don't really
+need to keep a reference to **layers.
 
 Regards
 ChenYu
 
-
-[1] http://www.spinics.net/lists/arm-kernel/msg552501.html
-
-Chen-Yu Tsai (3):
-  clk: sunxi-ng: Add clk notifier to gate then ungate PLL clocks
-  clk: sunxi-ng: a33: gate then ungate PLL CPU clk after rate change
-  clk: sunxi-ng: h3: gate then ungate PLL CPU clk after rate change
-
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 11 ++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c  | 11 ++++++++
- drivers/clk/sunxi-ng/ccu_common.c    | 49 ++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_common.h    | 12 +++++++++
- 4 files changed, 83 insertions(+)
-
--- 
-2.11.0
+>
+>>
+>> Sean
+>>
+>>
+>>
+>>>  };
+>>>
+>>>  static inline struct sun4i_crtc *drm_crtc_to_sun4i_crtc(struct drm_crtc
+>>> *crtc)
+>>> diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c
+>>> b/drivers/gpu/drm/sun4i/sun4i_layer.c
+>>> index f26bde5b9117..bc4a70d6968b 100644
+>>> --- a/drivers/gpu/drm/sun4i/sun4i_layer.c
+>>> +++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
+>>> @@ -16,7 +16,9 @@
+>>>  #include <drm/drmP.h>
+>>>
+>>>  #include "sun4i_backend.h"
+>>> +#include "sun4i_crtc.h"
+>>>  #include "sun4i_layer.h"
+>>> +#include "sunxi_layer.h"
+>>>
+>>>  struct sun4i_plane_desc {
+>>>                enum drm_plane_type     type;
+>>> @@ -100,6 +102,17 @@ static const struct sun4i_plane_desc
+>>> sun4i_backend_planes[] = {
+>>>         },
+>>>  };
+>>>
+>>> +static struct drm_plane *sun4i_layer_get_plane(void *layer)
+>>> +{
+>>> +       struct sun4i_layer *sun4i_layer = layer;
+>>> +
+>>> +       return &sun4i_layer->plane;
+>>> +}
+>>> +
+>>> +static const struct sunxi_layer_ops layer_ops = {
+>>> +       .get_plane = sun4i_layer_get_plane,
+>>> +};
+>>> +
+>>>  static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
+>>>                                                 struct sun4i_backend
+>>> *backend,
+>>>                                                 const struct
+>>> sun4i_plane_desc *plane)
+>>> @@ -129,9 +142,10 @@ static struct sun4i_layer
+>>> *sun4i_layer_init_one(struct drm_device *drm,
+>>>  }
+>>>
+>>>  struct sun4i_layer **sun4i_layers_init(struct drm_device *drm,
+>>> -                                      struct sun4i_backend *backend)
+>>> +                                      struct sun4i_crtc *crtc)
+>>>  {
+>>>         struct sun4i_layer **layers;
+>>> +       struct sun4i_backend *backend = crtc->backend;
+>>>         int i;
+>>>
+>>>         layers = devm_kcalloc(drm->dev, ARRAY_SIZE(sun4i_backend_planes)
+>>> + 1,
+>>> @@ -181,5 +195,8 @@ struct sun4i_layer **sun4i_layers_init(struct
+>>> drm_device *drm,
+>>>                 layers[i] = layer;
+>>>         };
+>>>
+>>> +       /* Assign layer ops to the CRTC */
+>>> +       crtc->layer_ops = &layer_ops;
+>>> +
+>>>         return layers;
+>>>  }
+>>> diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.h
+>>> b/drivers/gpu/drm/sun4i/sun4i_layer.h
+>>> index 4be1f0919df2..425eea7b9e3b 100644
+>>> --- a/drivers/gpu/drm/sun4i/sun4i_layer.h
+>>> +++ b/drivers/gpu/drm/sun4i/sun4i_layer.h
+>>> @@ -27,6 +27,6 @@ plane_to_sun4i_layer(struct drm_plane *plane)
+>>>  }
+>>>
+>>>  struct sun4i_layer **sun4i_layers_init(struct drm_device *drm,
+>>> -                                      struct sun4i_backend *backend);
+>>> +                                      struct sun4i_crtc *crtc);
+>>>
+>>>  #endif /* _SUN4I_LAYER_H_ */
+>>> diff --git a/drivers/gpu/drm/sun4i/sunxi_layer.h
+>>> b/drivers/gpu/drm/sun4i/sunxi_layer.h
+>>> new file mode 100644
+>>> index 000000000000..d8838ec39299
+>>> --- /dev/null
+>>> +++ b/drivers/gpu/drm/sun4i/sunxi_layer.h
+>>> @@ -0,0 +1,17 @@
+>>> +/*
+>>> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.xyz>
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or
+>>> + * modify it under the terms of the GNU General Public License as
+>>> + * published by the Free Software Foundation; either version 2 of
+>>> + * the License, or (at your option) any later version.
+>>> + */
+>>> +
+>>> +#ifndef _SUNXI_LAYER_H_
+>>> +#define _SUNXI_LAYER_H_
+>>> +
+>>> +struct sunxi_layer_ops {
+>>> +       struct drm_plane *(*get_plane)(void *layer);
+>>> +};
+>>> +
+>>> +#endif /* _SUNXI_LAYER_H_ */
+>>> --
+>>> 2.12.0
+>>>
+>>>
+>>> _______________________________________________
+>>> linux-arm-kernel mailing list
+>>> linux-arm-kernel@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>
+>>
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
