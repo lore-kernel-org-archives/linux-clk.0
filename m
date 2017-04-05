@@ -1,44 +1,40 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Tue, 11 Apr 2017 15:06:13 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com, xuwei5@hisilicon.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V2] clk: hi6220: Add the hi655x's pmic clock
-Message-ID: <20170411140613.jvhzsvrxa4evwxjh@dell>
-References: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
+Return-Path: <ray.jui@broadcom.com>
+Return-Path: <ray.jui@broadcom.com>
+From: Ray Jui <ray.jui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: David Binderman <dcb314@hotmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH] clk: iproc: Remove redundant check
+Date: Wed,  5 Apr 2017 12:53:37 -0700
+Message-Id: <1491422017-24421-1-git-send-email-ray.jui@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 08 Apr 2017, Daniel Lezcano wrote:
+Remove the redundant check of 'rate' in the if statement of the
+'pll_set_rate' function
 
-> The hi655x multi function device is a PMIC providing regulators.
-> 
-> The PMIC also provides a clock for the WiFi and the Bluetooth, let's implement
-> this clock in order to add it in the hi655x MFD and allow proper wireless
-> initialization.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
-> 
-> Changelog:
-> 
->  V2:
->     - Added COMPILE_TEST option, compiled on x86
->     - Removed useless parenthesis
->     - Used of_clk_hw_simple_get() instead of deref dance
->     - Do bailout if the clock-names is not specified
->     - Rollback on error
->     - Folded mfd line change and binding
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+Fixes: 5fe225c105fd ("clk: iproc: add initial common clock support")
+---
+ drivers/clk/bcm/clk-iproc-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Why did you do that?
-
+diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
+index e04634c..2d61893 100644
+--- a/drivers/clk/bcm/clk-iproc-pll.c
++++ b/drivers/clk/bcm/clk-iproc-pll.c
+@@ -277,7 +277,7 @@ static int pll_set_rate(struct iproc_clk *clk, unsigned int rate_index,
+ 	if (rate >= VCO_LOW && rate < VCO_HIGH) {
+ 		ki = 4;
+ 		kp_index = KP_BAND_MID;
+-	} else if (rate >= VCO_HIGH && rate && rate < VCO_HIGH_HIGH) {
++	} else if (rate >= VCO_HIGH && rate < VCO_HIGH_HIGH) {
+ 		ki = 3;
+ 		kp_index = KP_BAND_HIGH;
+ 	} else if (rate >= VCO_HIGH_HIGH && rate < VCO_MAX) {
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.1.4
