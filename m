@@ -1,45 +1,43 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 19 Apr 2017 09:44:39 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stefan Agner <stefan@agner.ch>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, aisheng.dong@nxp.com,
-        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: imx7d: fix USDHC NAND clock
-Message-ID: <20170419164439.GG7065@codeaurora.org>
-References: <20170410210015.1620-1-stefan@agner.ch>
- <20170419161435.GA7065@codeaurora.org>
- <9f0b9e83bc2a46bacb323d3ff2cfcf64@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <9f0b9e83bc2a46bacb323d3ff2cfcf64@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 6/6] arm64: dts: msm8996: Add CPU clock controller node
+Date: Wed,  5 Apr 2017 10:25:29 +0530
+Message-Id: <1491368129-24721-7-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1491368129-24721-1-git-send-email-rnayak@codeaurora.org>
+References: <1491368129-24721-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/19, Stefan Agner wrote:
-> On 2017-04-19 09:14, Stephen Boyd wrote:
-> > On 04/10, Stefan Agner wrote:
-> >> The USDHC NAND root clock is not gated by any CCM clock gate. Remove
-> >> the bogus gate definition.
-> >>
-> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> >> ---
-> > 
-> > Can this be applied? It's followed by a dtsi change and there is
-> > zero information about if the two depend on each other. Please
-> > add cover letters for these sorts of things in the future
-> > indicating how you expect merging to work.
-> 
-> This can be merged. The two changes are independent.
-> 
-> They look kind of dependent, but really aren't since
-> IMX7D_NAND_USDHC_BUS_ROOT_CLK is still in the init_on list. Should have
-> explicitly mentioned that, sorry about that.
-> 
+Add the DT node for Kryo CPU clock controller on msm8996
+devices.
 
-Thanks. Applied to clk-next.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index ed7223d..baae195 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -311,6 +311,12 @@
+ 			reg = <0x300000 0x90000>;
+ 		};
+ 
++		kryocc: clock-controller@6400000 {
++			compatible = "qcom,apcc-msm8996";
++			reg = <0x6400000 0x90000>;
++			#clock-cells = <1>;
++		};
++
+ 		blsp1_spi0: spi@07575000 {
+ 			compatible = "qcom,spi-qup-v2.2.1";
+ 			reg = <0x07575000 0x600>;
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
