@@ -1,60 +1,45 @@
-Return-Path: <horms@verge.net.au>
-Date: Wed, 26 Apr 2017 09:36:01 +0200
-From: Simon Horman <horms@verge.net.au>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 5 Apr 2017 12:56:05 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-	Kevin Hilman <khilman@kernel.org>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH/RFC 0/2] clk / soc: renesas: Rework Kconfig and Makefile
- logic
-Message-ID: <20170426073601.GF25517@verge.net.au>
-References: <1493137626-21404-1-git-send-email-geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [git pull] clk: renesas: Updates for v4.12 (take two)
+Message-ID: <20170405195605.GN18246@codeaurora.org>
+References: <1490952253-10963-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1493137626-21404-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1490952253-10963-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 25, 2017 at 06:27:04PM +0200, Geert Uytterhoeven wrote:
-> 	Hi all,
+On 03/31, Geert Uytterhoeven wrote:
+> 	Hi Mike, Stephen,
 > 
-> This RFC patch series reworks the Kconfig and Makefile logic for the
-> Renesas clock and SoC drivers. It was sparked by a discussion with Olof
-> about the Renesas clock driver dependencies.
+> The following changes since commit cecbe87d73006cb321dec79b349e3fefd1a80962:
 > 
-> The goals are to:
->   - Allow precise control over and automatic selection of which
->     (sub)drivers are used for which SoC (which may change in the
->     future),
->   - Allow adding support for new SoCs easily,
->   - Allow compile-testing of all (sub)drivers,
->   - Keep driver selection logic in the subsystem-specific Kconfig
->     independent from the architecture-specific Kconfig (i.e. no "select"
->     from arch/arm64/Kconfig.platforms), to avoid dependencies.
+>   clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0 (2017-03-21 11:12:23 +0100)
 > 
-> The series can't be applied as-is, because compile-testing all drivers
-> depends on independent fixes, some in other subsystems.
+> are available in the git repository at:
 > 
-> More details are provided in the individual patch descriptions.
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.12-tag2
 > 
-> For testing, this patch series, plus several fixes to allow more
-> compile-testing, are available in the
-> topic/clk-soc-renesas-Kconfig-rework branch of my renesas-drivers git
-> repository at 
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+> for you to fetch changes up to bb1953067c05be30a605ee1d5b05a2677735bb37:
 > 
-> This has been tested on R-Car Gen2 and Gen3, and compile-tested for
-> various other configurations.
+>   clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0 (2017-03-30 13:26:02 +0200)
 > 
-> Thanks for your comments!
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v4.12 (take two)
+> 
+>   - Add support for the Clock Pulse Generator / Module Standby and
+>     Software Reset module on revision ES2.0 of the R-Car H3 SoC, which
+>     differs from ES1.x in some areas.
+> 
+> Note that this pull request is on top of my previous pull request for
+> v4.12, which accidentally had a wrong version number in the subject
+> line, and which I believe you haven't pulled yet.
 
-Hi Geert,
+Thanks. I pulled both by pulling this one tag.
 
-thanks for working on this. I am very pleased to see something that
-is more robust with regards to adding new platforms without causing
-build breakage - I have been burnt by this several times.
-
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
