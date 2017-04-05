@@ -1,49 +1,46 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-Date: Thu, 6 Apr 2017 21:59:13 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org, Suzuki.Poulose@arm.com, sudeep.holla@arm.com
-Subject: Re: [PATCH v5 7/9] clk: hi6220: add debug APB clock
-Message-ID: <20170406135913.GA25216@leoy-linaro>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
- <1490466197-29163-8-git-send-email-leo.yan@linaro.org>
- <20170404215109.GH18246@codeaurora.org>
+Return-Path: <ray.jui@broadcom.com>
+Return-Path: <ray.jui@broadcom.com>
+Subject: Re: drivers/clk/bcm/clk-iproc-pll.c:280]: (style) Redundant condition
+To: David Binderman <dcb314@hotmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+ "rjui@broadcom.com" <rjui@broadcom.com>,
+ "sbranden@broadcom.com" <sbranden@broadcom.com>,
+ "jonmason@broadcom.com" <jonmason@broadcom.com>,
+ "bcm-kernel-feedback-list@broadcom.com"
+ <bcm-kernel-feedback-list@broadcom.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <HE1PR0801MB186548205AD0A49B09F6A3149C330@HE1PR0801MB1865.eurprd08.prod.outlook.com>
+From: Ray Jui <ray.jui@broadcom.com>
+Message-ID: <a7ed0f26-fbe6-c5d3-62d3-e940a7fec5ac@broadcom.com>
+Date: Wed, 5 Apr 2017 11:27:36 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170404215109.GH18246@codeaurora.org>
+In-Reply-To: <HE1PR0801MB186548205AD0A49B09F6A3149C330@HE1PR0801MB1865.eurprd08.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 04, 2017 at 02:51:09PM -0700, Stephen Boyd wrote:
-> On 03/26, Leo Yan wrote:
-> > The debug APB clock is absent in hi6220 driver, so this patch is to add
-> > support for it.
-> > 
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > ---
+Hi David,
+
+Thanks for reporting. I'll send out a patch to address this.
+
+Ray
+
+On 3/27/2017 3:47 AM, David Binderman wrote:
+> Hello there,
 > 
-> Applied to clk-next.
-
-Thanks a lot :)
-
-> I suspect we don't need a topic branch for
-> the DT header because arm-soc won't be taking the dts side of the
-> changes?
-
-I think this question is leaving for maintainers.
-
-Thanks,
-Leo Yan
+> 
+> linux-4.11-rc4/drivers/clk/bcm/clk-iproc-pll.c:280]: (style) Redundant condition: If 'rate >= 2200000000', the comparison 'rate' is always true.
+> 
+> Source code is
+> 
+>     } else if (rate >= VCO_HIGH && rate && rate < VCO_HIGH_HIGH) {
+> 
+> Suggest new code
+> 
+>     } else if (rate >= VCO_HIGH  && rate < VCO_HIGH_HIGH) {
+> 
+> Regards
+> 
+> David Binderman
+> 
