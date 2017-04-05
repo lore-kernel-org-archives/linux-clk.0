@@ -1,48 +1,58 @@
-Return-Path: <elfring@users.sourceforge.net>
-Subject: [PATCH 4/6] clk: hi3620: Use kcalloc() in hi3620_mmc_clk_init()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
-Message-ID: <9c35e91c-36c6-f33e-a283-4304ad118a22@users.sourceforge.net>
-Date: Tue, 18 Apr 2017 11:41:48 +0200
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170405195605.GN18246@codeaurora.org>
+References: <1490952253-10963-1-git-send-email-geert+renesas@glider.be> <20170405195605.GN18246@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Apr 2017 22:52:15 +0200
+Message-ID: <CAMuHMdUf7SX1fkbQsv7DPZ7OvdniiRqovQuiDjeQ1EdGXKxcRQ@mail.gmail.com>
+Subject: Re: [git pull] clk: renesas: Updates for v4.12 (take two)
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Apr 2017 10:30:04 +0200
+Hi Stephen,
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "kcalloc".
+On Wed, Apr 5, 2017 at 9:56 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 03/31, Geert Uytterhoeven wrote:
+>> The following changes since commit cecbe87d73006cb321dec79b349e3fefd1a80962:
+>>
+>>   clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0 (2017-03-21 11:12:23 +0100)
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.12-tag2
+>>
+>> for you to fetch changes up to bb1953067c05be30a605ee1d5b05a2677735bb37:
+>>
+>>   clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0 (2017-03-30 13:26:02 +0200)
+>>
+>> ----------------------------------------------------------------
+>> clk: renesas: Updates for v4.12 (take two)
+>>
+>>   - Add support for the Clock Pulse Generator / Module Standby and
+>>     Software Reset module on revision ES2.0 of the R-Car H3 SoC, which
+>>     differs from ES1.x in some areas.
+>>
+>> Note that this pull request is on top of my previous pull request for
+>> v4.12, which accidentally had a wrong version number in the subject
+>> line, and which I believe you haven't pulled yet.
+>
+> Thanks. I pulled both by pulling this one tag.
 
-  This issue was detected by using the Coccinelle software.
+Thanks, but if you pull the second tag only, you don't record the contents
+of the first tag, do you?
 
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/clk/hisilicon/clk-hi3620.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+                        Geert
 
-diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
-index d04a104ce1b4..f6dd971c9d3c 100644
---- a/drivers/clk/hisilicon/clk-hi3620.c
-+++ b/drivers/clk/hisilicon/clk-hi3620.c
-@@ -482,7 +482,7 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
- 	if (WARN_ON(!clk_data))
- 		return;
- 
--	clk_data->clks = kzalloc(sizeof(struct clk *) * num, GFP_KERNEL);
-+	clk_data->clks = kcalloc(num, sizeof(*clk_data->clks), GFP_KERNEL);
- 	if (!clk_data->clks) {
- 		pr_err("%s: fail to allocate mmc clk\n", __func__);
- 		return;
--- 
-2.12.2
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
