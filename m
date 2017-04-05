@@ -1,182 +1,107 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:45541 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1045012AbdDWKit (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 23 Apr 2017 06:38:49 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v5 04/11] drm/sun4i: return only planes for layers created
-Date: Sun, 23 Apr 2017 18:37:47 +0800
-Message-Id: <20170423103754.50012-5-icenowy@aosc.io>
-In-Reply-To: <20170423103754.50012-1-icenowy@aosc.io>
-References: <20170423103754.50012-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH 4/6] clk: qcom: cpu-8996: Add support to switch to alternate PLL
+Date: Wed,  5 Apr 2017 10:25:27 +0530
+Message-Id: <1491368129-24721-5-git-send-email-rnayak@codeaurora.org>
+In-Reply-To: <1491368129-24721-1-git-send-email-rnayak@codeaurora.org>
+References: <1491368129-24721-1-git-send-email-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-As we are going to add support for the Allwinner DE2 Mixer in sun4i-drm
-driver, we will finally have two types of layers.
+Each of the CPU clusters on msm8996 and powered via a primary
+PLL and a secondary PLL. The primary PLL is what drivers the
+CPU clk, except for times when we are reprogramming the PLL
+itself, when we temporarily switch to an alternate PLL.
+Use clock rate change notifiers to support this.
 
-Each layer is bound to a drm_plane that is CRTC-specific, so we create
-them when initializing CRTC (calling sun4i_layers_init, which will be
-generalized in next patch). The drm_plane's will be used when creating
-CRTC, but the CRTC initialization code do not care other properties of
-the layer, so we let the sun4i_layers_init function return drm_plane's
-only.
-
-As we have no need to trace the layers after the CRTC is properly
-created, we drop the layers pointer in sun4i_crtc struct.
-
-Doing these things makes the CRTC code independent to the type of layer
-(the sun4i_layers_init function name is still hardcoded and will be
-changed in the next patch), so that we can finally gain support for the
-mixer in DE2, which will has different layers.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_crtc.c  | 23 ++++++++++++-----------
- drivers/gpu/drm/sun4i/sun4i_crtc.h  |  1 -
- drivers/gpu/drm/sun4i/sun4i_layer.c | 18 ++++++++++--------
- drivers/gpu/drm/sun4i/sun4i_layer.h |  4 ++--
- 4 files changed, 24 insertions(+), 22 deletions(-)
+ drivers/clk/qcom/clk-cpu-8996.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-index 3c876c3a356a..708b3543d4e9 100644
---- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-@@ -139,6 +139,7 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
- 				   struct sun4i_tcon *tcon)
- {
- 	struct sun4i_crtc *scrtc;
-+	struct drm_plane **planes;
- 	struct drm_plane *primary = NULL, *cursor = NULL;
- 	int ret, i;
- 
-@@ -149,22 +150,22 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
- 	scrtc->tcon = tcon;
- 
- 	/* Create our layers */
--	scrtc->layers = sun4i_layers_init(drm, scrtc->backend);
--	if (IS_ERR(scrtc->layers)) {
-+	planes = sun4i_layers_init(drm, scrtc);
-+	if (IS_ERR(planes)) {
- 		dev_err(drm->dev, "Couldn't create the planes\n");
- 		return NULL;
- 	}
- 
- 	/* find primary and cursor planes for drm_crtc_init_with_planes */
--	for (i = 0; scrtc->layers[i]; i++) {
--		struct sun4i_layer *layer = scrtc->layers[i];
-+	for (i = 0; planes[i]; i++) {
-+		struct drm_plane *plane = planes[i];
- 
--		switch (layer->plane.type) {
-+		switch (plane->type) {
- 		case DRM_PLANE_TYPE_PRIMARY:
--			primary = &layer->plane;
-+			primary = plane;
- 			break;
- 		case DRM_PLANE_TYPE_CURSOR:
--			cursor = &layer->plane;
-+			cursor = plane;
- 			break;
- 		default:
- 			break;
-@@ -188,12 +189,12 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
- 						   1);
- 
- 	/* Set possible_crtcs to this crtc for overlay planes */
--	for (i = 0; scrtc->layers[i]; i++) {
-+	for (i = 0; planes[i]; i++) {
- 		uint32_t possible_crtcs = BIT(drm_crtc_index(&scrtc->crtc));
--		struct sun4i_layer *layer = scrtc->layers[i];
-+		struct drm_plane *plane = planes[i];
- 
--		if (layer->plane.type == DRM_PLANE_TYPE_OVERLAY)
--			layer->plane.possible_crtcs = possible_crtcs;
-+		if (plane->type == DRM_PLANE_TYPE_OVERLAY)
-+			plane->possible_crtcs = possible_crtcs;
- 	}
- 
- 	return scrtc;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.h b/drivers/gpu/drm/sun4i/sun4i_crtc.h
-index 230cb8f0d601..4dae3508424a 100644
---- a/drivers/gpu/drm/sun4i/sun4i_crtc.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_crtc.h
-@@ -19,7 +19,6 @@ struct sun4i_crtc {
- 
- 	struct sun4i_backend		*backend;
- 	struct sun4i_tcon		*tcon;
--	struct sun4i_layer		**layers;
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index bc60111..9bb25be 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -119,10 +119,14 @@ struct clk_cpu_8996_mux {
+ 	u32	reg;
+ 	u32	shift;
+ 	u32	width;
++	struct notifier_block nb;
+ 	struct clk_hw	*pll;
+ 	struct clk_regmap clkr;
  };
  
- static inline struct sun4i_crtc *drm_crtc_to_sun4i_crtc(struct drm_crtc *crtc)
-diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c b/drivers/gpu/drm/sun4i/sun4i_layer.c
-index f26bde5b9117..e1f03e1cc0ac 100644
---- a/drivers/gpu/drm/sun4i/sun4i_layer.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
-@@ -16,6 +16,7 @@
- #include <drm/drmP.h>
- 
- #include "sun4i_backend.h"
-+#include "sun4i_crtc.h"
- #include "sun4i_layer.h"
- 
- struct sun4i_plane_desc {
-@@ -128,15 +129,16 @@ static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
- 	return layer;
- }
- 
--struct sun4i_layer **sun4i_layers_init(struct drm_device *drm,
--				       struct sun4i_backend *backend)
-+struct drm_plane **sun4i_layers_init(struct drm_device *drm,
-+				     struct sun4i_crtc *crtc)
++#define to_clk_cpu_8996_mux_nb(_nb) \
++	container_of(_nb, struct clk_cpu_8996_mux, nb)
++
+ static inline
+ struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
  {
--	struct sun4i_layer **layers;
-+	struct drm_plane **planes;
-+	struct sun4i_backend *backend = crtc->backend;
- 	int i;
- 
--	layers = devm_kcalloc(drm->dev, ARRAY_SIZE(sun4i_backend_planes) + 1,
--			      sizeof(*layers), GFP_KERNEL);
--	if (!layers)
-+	planes = devm_kcalloc(drm->dev, ARRAY_SIZE(sun4i_backend_planes) + 1,
-+			      sizeof(*planes), GFP_KERNEL);
-+	if (!planes)
- 		return ERR_PTR(-ENOMEM);
- 
- 	/*
-@@ -178,8 +180,8 @@ struct sun4i_layer **sun4i_layers_init(struct drm_device *drm,
- 				   SUN4I_BACKEND_ATTCTL_REG0_LAY_PIPESEL(plane->pipe));
- 
- 		layer->id = i;
--		layers[i] = layer;
-+		planes[i] = &layer->plane;
- 	};
- 
--	return layers;
-+	return planes;
- }
-diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.h b/drivers/gpu/drm/sun4i/sun4i_layer.h
-index 4be1f0919df2..5ea5c994d6ea 100644
---- a/drivers/gpu/drm/sun4i/sun4i_layer.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_layer.h
-@@ -26,7 +26,7 @@ plane_to_sun4i_layer(struct drm_plane *plane)
- 	return container_of(plane, struct sun4i_layer, plane);
+@@ -173,6 +177,27 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	return 0;
  }
  
--struct sun4i_layer **sun4i_layers_init(struct drm_device *drm,
--				       struct sun4i_backend *backend);
-+struct drm_plane **sun4i_layers_init(struct drm_device *drm,
-+				     struct sun4i_crtc *crtc);
++int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
++			void *data)
++{
++	int ret;
++	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
++
++	switch (event) {
++	case PRE_RATE_CHANGE:
++		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
++		break;
++	case POST_RATE_CHANGE:
++		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
++		break;
++	default:
++		ret = 0;
++		break;
++	}
++
++	return notifier_from_errno(ret);
++};
++
+ const struct clk_ops clk_cpu_8996_mux_ops = {
+ 	.set_parent = clk_cpu_8996_mux_set_parent,
+ 	.get_parent = clk_cpu_8996_mux_get_parent,
+@@ -216,6 +241,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
++	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "pwrcl_pmux",
+ 		.parent_names = (const char *[]){
+@@ -235,6 +261,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
++	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "perfcl_pmux",
+ 		.parent_names = (const char *[]){
+@@ -310,6 +337,14 @@ struct clk_hw_clks {
+ 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
+ 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
  
- #endif /* _SUN4I_LAYER_H_ */
++	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
++	if (ret)
++		return ret;
++
++	ret = clk_notifier_register(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
++	if (ret)
++		return ret;
++
+ 	return ret;
+ }
+ 
 -- 
-2.12.2
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
