@@ -1,58 +1,32 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 5 Apr 2017 13:05:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [GIT PULL] rockchip clock changes for 4.12 part1
+Message-ID: <20170405200501.GA7065@codeaurora.org>
+References: <5160508.89PunkDez8@phil>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1492624001-3758-2-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-2-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 21 Apr 2017 16:04:14 +0200
-Message-ID: <CAMuHMdWgF8SES7+D-jpkw6eG1cYv0UA5YdnJKV0SQ8Pcc06mRA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7795: Add Z clock
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <5160508.89PunkDez8@phil>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Kaneko-san,
+On 03/28, Heiko Stuebner wrote:
+> Hi Mike, Stephen,
+> 
+> Please find below rockchip clock changes for 4.12. As the tag states,
+> I've included the rk1108 -> rv1108 clock rename in here. Pinctrl changes
+> go through the pinctrl tree and once everything is in mainline I'll put
+> the actual devicetree on top. That way we keep cross-tree changes to a
+> minimum while keeping everything error-free and bisectable.
+> 
+> So please pull if nothing stands out.
+> 
+> 
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch adds Z clock for R8A7795 SoC.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> ---
-> This patch is based on the clk-next branch of linux-clk tree.
->
->  drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> index eaa98b4..a9ee68e 100644
-> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> @@ -74,6 +74,7 @@ enum clk_ids {
->         DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
->
->         /* Core Clock Outputs */
-> +       DEF_BASE("z",           R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
+Thanks. Pulled into clk-next.
 
-Adding an internal CLK_PLL0_DIV2 (cfr. CLK_PLL1_DIV2), and using that as
-the parent clock may be the easiest fix for the wrong Z clock frequency.
-
-However, it may complicate things when making PLL0 programmable, like is
-done in the BSP.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
