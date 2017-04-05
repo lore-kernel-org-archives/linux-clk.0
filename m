@@ -1,36 +1,69 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 7 Apr 2017 12:22:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Jun Nie <jun.nie@linaro.org>,
-	Baoyou Xie <xie.baoyou@zte.com.cn>, Xin Zhou <zhou.xin8@zte.com.cn>,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH 2/3] zte: clk: pd_bit is not 0 on zx296718
-Message-ID: <20170407192213.GZ7065@codeaurora.org>
-References: <1490085503-15713-1-git-send-email-shawnguo@kernel.org>
- <1490085503-15713-3-git-send-email-shawnguo@kernel.org>
+Return-Path: <Alexey_Firago@mentor.com>
+From: Alexey Firago <alexey_firago@mentor.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<marek.vasut@gmail.com>, <geert@linux-m68k.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+CC: Alexey Firago <alexey_firago@mentor.com>
+Subject: [PATCH v2 2/3] clk: vc5: Add bindings for IDT VersaClock 5P49V5935
+Date: Wed, 5 Apr 2017 14:46:58 +0300
+Message-ID: <1491392819-698-3-git-send-email-alexey_firago@mentor.com>
+In-Reply-To: <1491392819-698-1-git-send-email-alexey_firago@mentor.com>
+References: <1491392819-698-1-git-send-email-alexey_firago@mentor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1490085503-15713-3-git-send-email-shawnguo@kernel.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/21, Shawn Guo wrote:
-> From: Shawn Guo <shawn.guo@linaro.org>
-> 
-> The bit 0 of PLL_CFG0 register is not powerdown on zx296718, but part of
-> of postdiv2 field.  The consequence is that functions like hw_to_idx()
-> and zx_pll_enable() will end up tampering the postdiv2 of the PLL.
-> 
-> Let's fix it by defining pd_bit 0xff which is obviously invalid for a
-> bit position and having PLL driver check the validity before operating
-> on the bit.
-> 
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> ---
+IDT VersaClock 5 5P49V5935 has 4 clock outputs, 4 fractional dividers.
+Input clock source can be taken from either integrated crystal or from
+external reference clock.
 
-Applied to clk-next
+Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
+---
+ .../devicetree/bindings/clock/idt,versaclock5.txt        | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+index 87e9c47..53d7e50 100644
+--- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+@@ -6,18 +6,21 @@ from 3 to 12 output clocks.
+ ==I2C device node==
+ 
+ Required properties:
+-- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933".
++- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
++		"idt,5p49v5935".
+ - reg:		i2c device address, shall be 0x68 or 0x6a.
+ - #clock-cells:	from common clock binding; shall be set to 1.
+ - clocks:	from common clock binding; list of parent clock handles,
+ 		- 5p49v5923: (required) either or both of XTAL or CLKIN
+ 					reference clock.
+-		- 5p49v5933: (optional) property not present (internal
++		- 5p49v5933 and
++		- 5p49v5935: (optional) property not present (internal
+ 					Xtal used) or CLKIN reference
+ 					clock.
+ - clock-names:	from common clock binding; clock input names, can be
+ 		- 5p49v5923: (required) either or both of "xin", "clkin".
+-		- 5p49v5933: (optional) property not present or "clkin".
++		- 5p49v5933 and
++		- 5p49v5935: (optional) property not present or "clkin".
+ 
+ ==Mapping between clock specifier and physical pins==
+ 
+@@ -34,6 +37,13 @@ clock specifier, the following mapping applies:
+ 	1 -- OUT1
+ 	2 -- OUT4
+ 
++5P49V5935:
++	0 -- OUT0_SEL_I2CB
++	1 -- OUT1
++	2 -- OUT2
++	3 -- OUT3
++	4 -- OUT4
++
+ ==Example==
+ 
+ /* 25MHz reference crystal */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
