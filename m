@@ -1,54 +1,49 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+Date: Thu, 6 Apr 2017 21:59:13 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Guodong Xu <guodong.xu@linaro.org>,
+	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	mike.leach@linaro.org, Suzuki.Poulose@arm.com, sudeep.holla@arm.com
+Subject: Re: [PATCH v5 7/9] clk: hi6220: add debug APB clock
+Message-ID: <20170406135913.GA25216@leoy-linaro>
+References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
+ <1490466197-29163-8-git-send-email-leo.yan@linaro.org>
+ <20170404215109.GH18246@codeaurora.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1492624001-3758-14-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-14-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:38:15 +0200
-Message-ID: <CAMuHMdUGS1hzH_=3U3RFhJ90jhJKdxjktsOdDm9fnwz5u2g9Cg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add Sound SSI clock
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170404215109.GH18246@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Kaneko-san,
+On Tue, Apr 04, 2017 at 02:51:09PM -0700, Stephen Boyd wrote:
+> On 03/26, Leo Yan wrote:
+> > The debug APB clock is absent in hi6220 driver, so this patch is to add
+> > support for it.
+> > 
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > ---
+> 
+> Applied to clk-next.
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
->
-> This patch adds SSI(all) and SSI{0,1,2,3,4,5,6,7,8,9} clocks for R8A7796
-> SoC.
->
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> ---
+Thanks a lot :)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> I suspect we don't need a topic branch for
+> the DT header because arm-soc won't be taking the dts side of the
+> changes?
 
-I.e. will queue in clk-renesas-for-v4.13.
+I think this question is leaving for maintainers.
 
-> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> @@ -208,6 +208,17 @@ enum clk_ids {
->         DEF_MOD("i2c2",                  929,   R8A7796_CLK_S3D2),
->         DEF_MOD("i2c1",                  930,   R8A7796_CLK_S3D2),
->         DEF_MOD("i2c0",                  931,   R8A7796_CLK_S3D2),
-> +       DEF_MOD("ssi-all",              1005,   R8A7796_CLK_S3D4),
-
-I cannot verify the parent clock, though.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Leo Yan
