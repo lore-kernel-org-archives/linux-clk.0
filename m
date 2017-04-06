@@ -1,63 +1,92 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <72c66927-0acf-c888-2b4b-906a6c27e15c@gmail.com>
-References: <1491311788-31905-1-git-send-email-alexey_firago@mentor.com>
- <1491311788-31905-3-git-send-email-alexey_firago@mentor.com> <72c66927-0acf-c888-2b4b-906a6c27e15c@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 4 Apr 2017 15:23:57 +0200
-Message-ID: <CAMuHMdUOtY5i0_BoS7cKYzWKpA_fF3VssN4bZnNyFB117EpacQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: vc5: Add support for IDT VersaClock 5P49V5935
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Alexey Firago <alexey_firago@mentor.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [GIT PULL] clk: tegra: Changes for v4.12-rc1
+Date: Fri,  7 Apr 2017 01:09:01 +0200
+Message-Id: <20170406230901.31704-1-thierry.reding@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 4, 2017 at 3:21 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
->On 04/04/2017 03:16 PM, Alexey Firago wrote:
->> +     switch (vc5->model) {
->> +     case IDT_VC5_5P49V5923:
->> +     case IDT_VC5_5P49V5933:
->> +             vc5->clk_fod_cnt = 2;
->> +             vc5->clk_out_cnt = 3;
->> +             break;
->> +     case IDT_VC5_5P49V5935:
->> +             vc5->clk_fod_cnt = 4;
->> +             vc5->clk_out_cnt = 5;
->> +             break;
->> +     default:
->> +             /* Should never go here */
->> +             dev_err(&client->dev, "unsupported IDT VC5 ID specified\n");
->> +             return -EINVAL;
->> +     }
->> +
->>       vc5->pin_xin = devm_clk_get(&client->dev, "xin");
->>       if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
->>               return -EPROBE_DEFER;
+Hi Michael, Stephen,
 
->> @@ -744,7 +772,7 @@ static int vc5_probe(struct i2c_client *client,
->>       return 0;
->>
->>  err_clk:
->> -     if (vc5->model == IDT_VC5_5P49V5933)
->> +     if (vc5->model == IDT_VC5_5P49V5933 || vc5->model == IDT_VC5_5P49V5935)
->
-> Maybe we should introduce some sort of flags to describe the VC
-> properties instead of using the model all over the place ?
+The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
 
-Yep, a structure describing the features (incl. fod_cnt and out_cnt), to be
-pointed to by clk_vc5_of_match[].data.
+  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
 
-Gr{oetje,eeting}s,
+are available in the git repository at:
 
-                        Geert
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.12-clk
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+for you to fetch changes up to 1116d5a7aff205b6d9879a6458788cac20d0cdf3:
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+  clk: tegra: Don't reset PLL-CX if it is already enabled (2017-04-04 16:06:05 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+clk: tegra: Changes for v4.12-rc1
+
+This contains a bunch of fixes and cleanups, mostly to the Tegra210
+clock driver.
+
+----------------------------------------------------------------
+Alex Frid (1):
+      clk: tegra: Propagate clk_out_x rate to parent
+
+Jon Hunter (1):
+      clk: tegra: Don't reset PLL-CX if it is already enabled
+
+Mikko Perttunen (1):
+      clk: tegra: Implement reset control reset
+
+Peter De Schrijver (20):
+      clk: tegra: Fix pll_a1 iddq register, add pll_a1
+      clk: tegra: Fix ISP clock modelling
+      clk: tegra: Correct afi clock parent
+      clk: tegra: Remove non-existing pll_m_out1 clock
+      clk: tegra: Don't warn for PLL defaults unnecessarily
+      clk: tegra: Correct tegra210_pll_fixed_mdiv_cfg rate calculation
+      clk: tegra: Fix type for m field
+      clk: tegra: Add CEC clock
+      clk: tegra: Define Tegra210 DMIC sync clocks
+      clk: tegra: Fix constness for peripheral clocks
+      clk: tegra: Define Tegra210 DMIC clocks
+      clk: tegra: Add super clock mux/divider
+      clk: tegra: Add aclk
+      clk: tegra: Handle UTMIPLL IDDQ
+      clk: tegra: Fix disable unused for clocks sharing enable bit
+      clk: tegra: Rework pll_u
+      clk: tegra: Add Tegra210 special resets
+      clk: tegra: Add SATA seq input control
+      clk: tegra: Mark TEGRA210_CLK_DBGAPB as always on
+      clk: tegra: Add missing Tegra210 clocks
+
+Thierry Reding (1):
+      clk: tegra: Fix build warnings on Tegra20/Tegra30
+
+ drivers/clk/tegra/clk-id.h                      |  17 +
+ drivers/clk/tegra/clk-periph-gate.c             |   3 +
+ drivers/clk/tegra/clk-periph.c                  |   6 +-
+ drivers/clk/tegra/clk-pll.c                     | 174 ---------
+ drivers/clk/tegra/clk-super.c                   |  87 ++++-
+ drivers/clk/tegra/clk-tegra-audio.c             |  85 ++--
+ drivers/clk/tegra/clk-tegra-periph.c            |  41 +-
+ drivers/clk/tegra/clk-tegra-pmc.c               |   6 +-
+ drivers/clk/tegra/clk-tegra114.c                |   1 +
+ drivers/clk/tegra/clk-tegra124.c                |   1 +
+ drivers/clk/tegra/clk-tegra210.c                | 499 ++++++++++++++++++++++--
+ drivers/clk/tegra/clk-tegra30.c                 |   1 +
+ drivers/clk/tegra/clk.c                         |  16 +
+ drivers/clk/tegra/clk.h                         |  15 +-
+ include/dt-bindings/clock/tegra114-car.h        |   2 +-
+ include/dt-bindings/clock/tegra124-car-common.h |   2 +-
+ include/dt-bindings/clock/tegra210-car.h        |  33 +-
+ include/dt-bindings/clock/tegra30-car.h         |   2 +-
+ include/dt-bindings/reset/tegra210-car.h        |  13 +
+ include/linux/clk/tegra.h                       |   3 +
+ 20 files changed, 739 insertions(+), 268 deletions(-)
+ create mode 100644 include/dt-bindings/reset/tegra210-car.h
