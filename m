@@ -1,71 +1,107 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 09:55:22 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org, Paul Walmsley <paul@pwsan.com>
-Subject: Re: [PATCHv3] Documentation: dt-bindings: Add binding documentation
- for TI clkctrl clocks
-Message-ID: <20170419165522.GL7065@codeaurora.org>
-References: <20170123221702.18420-1-tony@atomide.com>
- <dca1ef84-77d1-2b58-7913-91f3b69fde6d@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <dca1ef84-77d1-2b58-7913-91f3b69fde6d@ti.com>
+Return-Path: <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v6 1/4] clk: Add support for runtime PM
+To: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <5b4b2f3e-dc4b-0866-c4b8-4c7e4dba2be0@samsung.com>
+Date: Thu, 06 Apr 2017 14:46:55 +0200
+MIME-version: 1.0
+In-reply-to: <149089387341.31513.7531874072502656432@resonance>
+Content-type: text/plain; charset=utf-8; format=flowed
+References: <1490182543-28550-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170322113554eucas1p27471f0de278c55d5dce7fdf120395e09@eucas1p2.samsung.com>
+ <1490182543-28550-2-git-send-email-m.szyprowski@samsung.com>
+ <149081897388.31513.7062843004022908296@resonance>
+ <75509e0f-26cd-52e7-8c71-b004ab6abc81@samsung.com>
+ <149089387341.31513.7531874072502656432@resonance>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/13, Tero Kristo wrote:
-> On 24/01/17 00:17, Tony Lindgren wrote:
-> >Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
-> >clock controller instance for each interconnect target module. The clkctrl
-> >controls functional and interface clocks for the module.
-> >
-> >The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
-> >With this binding and a related clock device driver we can start moving the
-> >clkctrl clock handling to live in drivers/clk/ti.
-> >
-> >Note that this binding allows keeping the clockdomain related parts out of
-> >drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
-> >a separate driver in drivers/soc/ti and genpd. If the clockdomain driver
-> >needs to know it's clocks, we can just set the the clkctrl device
-> >instances to be children of the related clockdomain device.
-> >
-> >Each clkctrl clock can have multiple optional gate clocks, and multiple
-> >optional mux clocks. To represent this in device tree, it seems that
-> >it is best done using four clock cells #clock-cells = <2> property.
-> >
-> >The reasons for using #clock-cells = <2> are:
-> >
-> >1. We need to specify the clkctrl offset from the instance base. Otherwise
-> >   we end up with a large number of device tree nodes that need to be
-> >   patched when new clocks are discovered in a clkctrl clock with minor
-> >   hardware revision changes for example
-> >
-> >2. On omap5 CM_L3INIT_USB_HOST_HS_CLKCTRL has ten OPTFCLKEN bits. So we
-> >   need to use a separate cell for optional gate clocks to avoid address
-> >   space conflicts
-> >
-> >There is probably no need to list input clocks for each clkctrl clock
-> >instance in the binding. If we want to add them, the standard clocks
-> >binding can be used for that.
-> >
-> >For hardware reference, see omap4430 TRM "Table 3-1312. L4PER_CM2 Registers
-> >Mapping Summary" for example. It shows one instance of a clkctrl clock
-> >controller with multiple clkctrl registers.
-> >
-> >Cc: Paul Walmsley <paul@pwsan.com>
-> >Acked-by: Rob Herring <robh@kernel.org>
-> >Signed-off-by: Tony Lindgren <tony@atomide.com>
-> 
-> This binding works for me, so:
-> 
-> Acked-by: Tero Kristo <t-kristo@ti.com>
-> 
+Hi Michael,
 
-This wasn't in the TI clk PR. Shall I merge this to clk-next?
+On 2017-03-30 19:11, Michael Turquette wrote:
+> Quoting Marek Szyprowski (2017-03-30 00:24:15)
+>> On 2017-03-29 22:22, Michael Turquette wrote:
+>>> Quoting Marek Szyprowski (2017-03-22 04:35:40)
+>>>> Registers for some clocks might be located in the SOC area, which are under the
+>>>> power domain. To enable access to those registers respective domain has to be
+>>>> turned on. Additionally, registers for such clocks will usually loose its
+>>>> contents when power domain is turned off, so additional saving and restoring of
+>>>> them might be needed in the clock controller driver.
+>>>>
+>>>> This patch adds basic infrastructure in the clocks core to allow implementing
+>>>> driver for such clocks under power domains. Clock provider can supply a
+>>>> struct device pointer, which is the used by clock core for tracking and managing
+>>>> clock's controller runtime pm state. Each clk_prepare() operation
+>>>> will first call pm_runtime_get_sync() on the supplied device, while
+>>>> clk_unprepare() will do pm_runtime_put_sync() at the end.
+>>>>
+>>>> Additional calls to pm_runtime_get/put functions are required to ensure that any
+>>>> register access (like calculating/changing clock rates and unpreparing/disabling
+>>>> unused clocks on boot) will be done with clock controller in runtime resumend
+>>>> state.
+>>> The above is a bit confusing. Is clk_prepare really special? It seems to
+>>> me that every single clk_ops callback will need this?
+>> clk_prepare/unprepare are special, because they allow sleeping, so they
+>> are natural
+>> candidates for the place for calling runtime PM operations.
+>> clk_enable()/disable()
+>> is called under a spinlock, so runtime pm cannot be called efficiently
+>> there, but
+>> core guarantees that they are called after clk_prepare(), so accessing
+>> hw registers
+>> is safe. The only remaining calls are not guaranteed to be called always
+>> after
+>> clk_prepare(), so those additional calls and checks in runtime pm are
+>> needed there.
+> Right, so any call that holds prepare_lock and might touch the hardware
+> needs to first call pm_runtime_get_sync.
+>
+>>> That leads to my second question: why put this in the clk core? Can the
+>>> clk provider driver simply add pm_runtime_{get,put} calls into its
+>>> clk_ops callbacks instead? The clk core does not directly touch hardware
+>>> (e.g. reading registers) so putting the pm runtime calls into the
+>>> provider callbacks should be sufficient.
+>> In theory is should be possible to duplicate all kind of clock build blocks
+>> (gates, muxes, dividers, ...) with additional runtime pm calls. This
+>> would however
+>> end in much more code and a bit more complicated locking. Implementing
+>> it in clk
+>> core made the code simpler. It also turned out that runtime pm
+>> integration is
+>> needed for more that a single clock provider: besides Samsung SoCs
+>> (Exynos 5433
+>> and newer, Exynos 4412 ISP, Exynos Audio Subsystem, hacks in Exynos 542x
+>> can be
+>> also replaced by runtime PM calls), Ulf mentioned that exactly similar
+>> pattern
+>> is used for some UX500 SoCs (STE). More will probably come once the
+>> feature is
+>> in, because for now such drivers simply forces runtime active state as a
+>> workaround or don't instantiate related power domains at all.
+> I agree with the above, but I'm also wondering about the folks that use
+> regmap internally to their own clock provider drivers. I guess they will
+> have the option to either do their own thing or use this framework-level
+> solution.
+>
+> I've started reviewing the code itself and will respond to those mails
+> separately.
 
+Is there a chance to get your comments soon? I would really like to give
+this patchset a try in linux-next for a few days, but for now Sylwester
+waits for you.
+
+Stephen: what is your opinion on this patchset? Would you like to give it
+a try in -next?
+
+ > ...
+
+Best regards
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
