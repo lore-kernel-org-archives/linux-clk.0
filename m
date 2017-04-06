@@ -1,167 +1,67 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-Subject: Re: [PATCH 2/2] clk: vc5: Add support for IDT VersaClock 5P49V5935
-To: Alexey Firago <alexey_firago@mentor.com>, mturquette@baylibre.com,
- sboyd@codeaurora.org, robh+dt@kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <1491311788-31905-1-git-send-email-alexey_firago@mentor.com>
- <1491311788-31905-3-git-send-email-alexey_firago@mentor.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <72c66927-0acf-c888-2b4b-906a6c27e15c@gmail.com>
-Date: Tue, 4 Apr 2017 15:21:02 +0200
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1491311788-31905-3-git-send-email-alexey_firago@mentor.com>
-Content-Type: text/plain; charset=utf-8
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170405214515.GC7065@codeaurora.org>
+References: <1490952253-10963-1-git-send-email-geert+renesas@glider.be>
+ <20170405195605.GN18246@codeaurora.org> <CAMuHMdUf7SX1fkbQsv7DPZ7OvdniiRqovQuiDjeQ1EdGXKxcRQ@mail.gmail.com>
+ <20170405214515.GC7065@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Apr 2017 08:41:27 +0200
+Message-ID: <CAMuHMdXyXGODtGScnnbg-WUop1iynkwt=+ZhU_UGoh5cnF9KkA@mail.gmail.com>
+Subject: Re: [git pull] clk: renesas: Updates for v4.12 (take two)
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/04/2017 03:16 PM, Alexey Firago wrote:
-> Update IDT VersaClock 5 driver to support 5P49V5935. This chip has
-> two clock inputs (internal XTAL or external CLKIN), four fractional
-> dividers (FODs) and five clock outputs (four universal clock outputs
-> and one reference clock output at OUT0_SELB_I2C).
-> 
-> Current driver supports up to 2 FODs and up to 3 clock outputs.
-> This patch sets max number of supported FODs to 4 and max number
-> of supported clocks to 5.
-> 
-> Number of used FODs and clock outputs is set on probe according to
-> the model specified via device-tree.
-> 
-> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
-> ---
->  drivers/clk/clk-versaclock5.c | 50 ++++++++++++++++++++++++++++++++++---------
->  1 file changed, 40 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-> index 56741f3..f74d6e4 100644
-> --- a/drivers/clk/clk-versaclock5.c
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -113,10 +113,17 @@
->  #define VC5_MUX_IN_XIN		BIT(0)
->  #define VC5_MUX_IN_CLKIN	BIT(1)
->  
-> +/* Maximum number of clk_out supported by this driver */
-> +#define VC5_MAX_CLK_OUT_NUM	5
-> +
-> +/* Maximum number of FODs supported by this driver */
-> +#define VC5_MAX_FOD_NUM		4
-> +
->  /* Supported IDT VC5 models. */
->  enum vc5_model {
->  	IDT_VC5_5P49V5923,
->  	IDT_VC5_5P49V5933,
-> +	IDT_VC5_5P49V5935,
->  };
->  
->  struct vc5_driver_data;
-> @@ -139,8 +146,10 @@ struct vc5_driver_data {
->  	unsigned char		clk_mux_ins;
->  	struct clk_hw		clk_mux;
->  	struct vc5_hw_data	clk_pll;
-> -	struct vc5_hw_data	clk_fod[2];
-> -	struct vc5_hw_data	clk_out[3];
-> +	int			clk_fod_cnt;
-> +	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
-> +	int			clk_out_cnt;
-> +	struct vc5_hw_data	clk_out[VC5_MAX_CLK_OUT_NUM];
->  };
->  
->  static const char * const vc5_mux_names[] = {
-> @@ -563,7 +572,7 @@ static struct clk_hw *vc5_of_clk_get(struct of_phandle_args *clkspec,
->  	struct vc5_driver_data *vc5 = data;
->  	unsigned int idx = clkspec->args[0];
->  
-> -	if (idx > 2)
-> +	if (idx > vc5->clk_out_cnt)
->  		return ERR_PTR(-EINVAL);
->  
->  	return &vc5->clk_out[idx].hw;
-> @@ -576,6 +585,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
->  	case IDT_VC5_5P49V5933:
->  		return (n == 0) ? 0 : 3;
->  	case IDT_VC5_5P49V5923:
-> +	case IDT_VC5_5P49V5935:
->  	default:
->  		return n;
->  	}
-> @@ -591,7 +601,7 @@ static int vc5_probe(struct i2c_client *client,
->  	struct vc5_driver_data *vc5;
->  	struct clk_init_data init;
->  	const char *parent_names[2];
-> -	unsigned int n, idx;
-> +	unsigned int n, idx = 0;
->  	int ret;
->  
->  	vc5 = devm_kzalloc(&client->dev, sizeof(*vc5), GFP_KERNEL);
-> @@ -602,6 +612,23 @@ static int vc5_probe(struct i2c_client *client,
->  	vc5->client = client;
->  	vc5->model = (enum vc5_model)of_id->data;
->  
-> +	/* Set number of supported outputs according to the repoted model */
+Hi Stephen,
 
-s/repoted/reported/ :)
+On Wed, Apr 5, 2017 at 11:45 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 04/05, Geert Uytterhoeven wrote:
+>> On Wed, Apr 5, 2017 at 9:56 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> > On 03/31, Geert Uytterhoeven wrote:
+>> >> The following changes since commit cecbe87d73006cb321dec79b349e3fefd1a80962:
+>> >>
+>> >>   clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0 (2017-03-21 11:12:23 +0100)
+>> >>
+>> >> are available in the git repository at:
+>> >>
+>> >>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.12-tag2
+>> >>
+>> >> for you to fetch changes up to bb1953067c05be30a605ee1d5b05a2677735bb37:
+>> >>
+>> >>   clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0 (2017-03-30 13:26:02 +0200)
+>> >>
+>> >> ----------------------------------------------------------------
+>> >> clk: renesas: Updates for v4.12 (take two)
+>> >>
+>> >>   - Add support for the Clock Pulse Generator / Module Standby and
+>> >>     Software Reset module on revision ES2.0 of the R-Car H3 SoC, which
+>> >>     differs from ES1.x in some areas.
+>> >>
+>> >> Note that this pull request is on top of my previous pull request for
+>> >> v4.12, which accidentally had a wrong version number in the subject
+>> >> line, and which I believe you haven't pulled yet.
+>> >
+>> > Thanks. I pulled both by pulling this one tag.
+>>
+>> Thanks, but if you pull the second tag only, you don't record the contents
+>> of the first tag, do you?
+>
+> I copied the words into the commit message. Not sure anyone cares
+> that the first tag signature is lost.
 
-> +	switch (vc5->model) {
-> +	case IDT_VC5_5P49V5923:
-> +	case IDT_VC5_5P49V5933:
-> +		vc5->clk_fod_cnt = 2;
-> +		vc5->clk_out_cnt = 3;
-> +		break;
-> +	case IDT_VC5_5P49V5935:
-> +		vc5->clk_fod_cnt = 4;
-> +		vc5->clk_out_cnt = 5;
-> +		break;
-> +	default:
-> +		/* Should never go here */
-> +		dev_err(&client->dev, "unsupported IDT VC5 ID specified\n");
-> +		return -EINVAL;
-> +	}
-> +
->  	vc5->pin_xin = devm_clk_get(&client->dev, "xin");
->  	if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
->  		return -EPROBE_DEFER;
-> @@ -622,8 +649,9 @@ static int vc5_probe(struct i2c_client *client,
->  	if (!IS_ERR(vc5->pin_xin)) {
->  		vc5->clk_mux_ins |= VC5_MUX_IN_XIN;
->  		parent_names[init.num_parents++] = __clk_get_name(vc5->pin_xin);
-> -	} else if (vc5->model == IDT_VC5_5P49V5933) {
-> -		/* IDT VC5 5P49V5933 has built-in oscilator. */
-> +	} else if (vc5->model == IDT_VC5_5P49V5933 ||
-> +		   vc5->model == IDT_VC5_5P49V5935) {
-> +		/* IDT VC5 5P49V5933 and 5P49V5935 have built-in oscilator. */
->  		vc5->pin_xin = clk_register_fixed_rate(&client->dev,
->  						       "internal-xtal", NULL,
->  						       0, 25000000);
-> @@ -672,7 +700,7 @@ static int vc5_probe(struct i2c_client *client,
->  	}
->  
->  	/* Register FODs */
-> -	for (n = 0; n < 2; n++) {
-> +	for (n = 0; n < vc5->clk_fod_cnt; n++) {
->  		idx = vc5_map_index_to_output(vc5->model, n);
->  		memset(&init, 0, sizeof(init));
->  		init.name = vc5_fod_names[idx];
-> @@ -709,7 +737,7 @@ static int vc5_probe(struct i2c_client *client,
->  	}
->  
->  	/* Register FOD-connected OUTx outputs */
-> -	for (n = 1; n < 3; n++) {
-> +	for (n = 1; n < vc5->clk_out_cnt; n++) {
->  		idx = vc5_map_index_to_output(vc5->model, n - 1);
->  		parent_names[0] = vc5_fod_names[idx];
->  		if (n == 1)
-> @@ -744,7 +772,7 @@ static int vc5_probe(struct i2c_client *client,
->  	return 0;
->  
->  err_clk:
-> -	if (vc5->model == IDT_VC5_5P49V5933)
-> +	if (vc5->model == IDT_VC5_5P49V5933 || vc5->model == IDT_VC5_5P49V5935)
+OK, thx!
 
-Maybe we should introduce some sort of flags to describe the VC
-properties instead of using the model all over the place ?
+Gr{oetje,eeting}s,
 
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
--- 
-Best regards,
-Marek Vasut
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
