@@ -1,93 +1,149 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] clk: ti: fix linker error with !SOC_OMAP4
-To: Arnd Bergmann <arnd@arndb.de>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <20170419214318.1605787-1-arnd@arndb.de>
-CC: Tony Lindgren <tony@atomide.com>, Richard Watts <rrw@kynesim.co.uk>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <9df5f73d-3e3a-ee33-1b75-c14a1a707ad9@ti.com>
-Date: Thu, 20 Apr 2017 17:57:39 +0300
+Return-Path: <mars.cheng@mediatek.com>
+Message-ID: <1491521747.17643.6.camel@mtkswgap22>
+Subject: Re: [PATCH v3 07/12] clk: mediatek: add clk support for MT6797
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
+	<robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, CC Hwang <cc.hwang@mediatek.com>,
+	"Loda Chou" <loda.chou@mediatek.com>, Miles Chen <miles.chen@mediatek.com>,
+	"Jades Shih" <jades.shih@mediatek.com>, Yingjoe Chen
+	<yingjoe.chen@mediatek.com>, My Chuang <my.chuang@mediatek.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>,
+	<linux-clk@vger.kernel.org>, Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+Date: Fri, 7 Apr 2017 07:35:47 +0800
+In-Reply-To: <20170406200852.GQ7065@codeaurora.org>
+References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+	 <1489937193-2953-8-git-send-email-mars.cheng@mediatek.com>
+	 <20170406200852.GQ7065@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <20170419214318.1605787-1-arnd@arndb.de>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: mars.cheng@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20/04/17 00:43, Arnd Bergmann wrote:
-> When none of the OMAP4-generation SoCs are enabled, we run into a link
-> error for am43xx/am43xx:
->
-> drivers/clk/ti/dpll.o: In function `of_ti_am3_dpll_x2_setup':
-> dpll.c:(.init.text+0xd8): undefined reference to `clkhwops_omap4_dpllmx'
->
-> This is easily fixed by adding another #ifdef.
->
-> While looking at the code, I also spotted another problem with the
-> assignment of hw_ops variable that is not used again later. I'm
-> changing this to setting clk_hw->ops instead, which I guess is what
-> was intended here.
+Hi Stephen
 
-Good catch... It seems the corner case is masked in the testing I did 
-locally so far.
+On Thu, 2017-04-06 at 13:08 -0700, Stephen Boyd wrote:
+> On 03/19, Mars Cheng wrote:
+> > From: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+> > 
+> > Add MT6797 clock support, include topckgen, apmixedsys, infracfg
+> > and subsystem clocks
+> > 
+> > Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+> > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> > Tested-by: Matthias Brugger <matthias.bgg@gmail.com>
+> 
+> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> Looks fine to me except for the one comment below. Did you want
+> me to merge it into clk tree?
 
->
-> Fixes: 0565fb168d63 ("clk: ti: dpll: move omap3 DPLL functionality to clock driver")
+To prevent another run, I really like you to merge it.
+However, I also want to make the patch set more cleaner.
+So I will send v4 later. :-)  
 
-However, I believe the fixes tag should point to this one in linux-next:
+> 
+> > diff --git a/drivers/clk/mediatek/clk-mt6797.c b/drivers/clk/mediatek/clk-mt6797.c
+> > new file mode 100644
+> > index 0000000..7ebb7f1
+> > --- /dev/null
+> > +++ b/drivers/clk/mediatek/clk-mt6797.c
+> > @@ -0,0 +1,716 @@
+> > +/*
+> > + * Copyright (c) 2016 MediaTek Inc.
+> > + * Author: Kevin Chen <kevin-cw.chen@mediatek.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + *
+> > + * This program is distributed in the hope that it will be useful,
+> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> 
+> Is this include used? Please include clk-provider if the file is
+> a clk driver. Same comment applies to other files in this patch.
+> 
 
-commit 473adbf4e02857a6b78dfb3d9fcf752638bbadb9
-Author: Tero Kristo <t-kristo@ti.com>
-Date:   Thu Feb 9 11:25:28 2017 +0200
+Should be removed. Will be done in v4.
 
-     clk: ti: dpll44xx: fix clksel register initialization
+> > +#include <linux/of.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/of_device.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +#include "clk-mtk.h"
+> > +#include "clk-gate.h"
+> > +
+> > +#include <dt-bindings/clock/mt6797-clk.h>
+> > +
+> > +/*
+> > + * For some clocks, we don't care what their actual rates are. And these
+> > + * clocks may change their rate on different products or different scenarios.
+> > + * So we model these clocks' rate as 0, to denote it's not an actual rate.
+> > + */
+> > +
+> > +static DEFINE_SPINLOCK(mt6797_clk_lock);
+> > +
+> > +static const struct mtk_fixed_factor top_fixed_divs[] = {
+> > +	FACTOR(CLK_TOP_SYSPLL_CK, "syspll_ck", "mainpll", 1, 1),
+> > +	FACTOR(CLK_TOP_SYSPLL_D2, "syspll_d2", "mainpll", 1, 2),
+> > +	FACTOR(CLK_TOP_SYSPLL1_D2, "syspll1_d2", "syspll_d2", 1, 2),
+> [...]
+> > +	clk_init = of_device_get_match_data(&pdev->dev);
+> > +	if (!clk_init)
+> > +		return -EINVAL;
+> > +
+> > +	r = clk_init(pdev);
+> > +	if (r)
+> > +		dev_err(&pdev->dev,
+> > +			"could not register clock provider: %s: %d\n",
+> > +			pdev->name, r);
+> > +
+> > +	return r;
+> > +}
+> > +
+> > +static struct platform_driver clk_mt6797_drv = {
+> > +	.probe = clk_mt6797_probe,
+> > +	.driver = {
+> > +		.name = "clk-mt6797",
+> > +		.owner = THIS_MODULE,
+> 
+> This can be removed, platform_driver_register() does it already.
+> 
 
+got it, will be removed.
 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > +		.of_match_table = of_match_clk_mt6797,
+> > +	},
+> > +};
+> > +
+> > +static int __init clk_mt6797_init(void)
+> > +{
+> > +	return platform_driver_register(&clk_mt6797_drv);
+> > +}
+> > +
+> > +arch_initcall(clk_mt6797_init);
+> > diff --git a/include/dt-bindings/clock/mt6797-clk.h b/include/dt-bindings/clock/mt6797-clk.h
+> > new file mode 100644
+> > index 0000000..e48aa47
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/mt6797-clk.h
+> > @@ -0,0 +1,281 @@
+> 
+> I think arm-soc folks don't want us merging whole drivers into
+> the DT branch anymore, so please split off the dt-bindings header
+> into a different patch that we can apply directly. Then we can
+> layer the driver on top and just send off the header to arm-soc
+> via a stable clk branch.
+> 
 
-Other than that:
+Got it. Will be done in v4.
 
-Acked-by: Tero Kristo <t-kristo@ti.com>
-
-> ---
->  drivers/clk/ti/dpll.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-> index 96d84888c6c5..fcf297fd2233 100644
-> --- a/drivers/clk/ti/dpll.c
-> +++ b/drivers/clk/ti/dpll.c
-> @@ -312,7 +312,6 @@ static void _register_dpll_x2(struct device_node *node,
->  	struct clk_hw_omap *clk_hw;
->  	const char *name = node->name;
->  	const char *parent_name;
-> -	int ret;
->
->  	parent_name = of_clk_get_parent_name(node, 0);
->  	if (!parent_name) {
-> @@ -332,16 +331,21 @@ static void _register_dpll_x2(struct device_node *node,
->  	init.parent_names = &parent_name;
->  	init.num_parents = 1;
->
-> +#if defined(CONFIG_ARCH_OMAP4) || defined(CONFIG_SOC_OMAP5) || \
-> +        defined(CONFIG_SOC_DRA7XX)
->  	if (hw_ops == &clkhwops_omap4_dpllmx) {
-> +		int ret;
-> +
->  		/* Check if register defined, if not, drop hw-ops */
->  		ret = of_property_count_elems_of_size(node, "reg", 1);
->  		if (ret <= 0) {
-> -			hw_ops = NULL;
-> +			clk_hw->ops = NULL;
->  		} else if (ti_clk_get_reg_addr(node, 0, &clk_hw->clksel_reg)) {
->  			kfree(clk_hw);
->  			return;
->  		}
->  	}
-> +#endif
->
->  	/* register the clock */
->  	clk = ti_clk_register(NULL, &clk_hw->hw, name);
->
+Thanks for your review.
