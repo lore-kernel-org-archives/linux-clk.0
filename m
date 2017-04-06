@@ -1,39 +1,136 @@
-Return-Path: <clabbe.montjoie@gmail.com>
-Return-Path: <clabbe.montjoie@gmail.com>
-Date: Thu, 27 Apr 2017 10:12:49 +0200
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: wens@csie.org, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: sunxi-ng: Fix dependency on SUNXI_CCU_GATE
-Message-ID: <20170427081249.GA25781@Red>
-References: <20170426115319.30951-1-clabbe.montjoie@gmail.com>
- <20170427070436.3qu4mzepq4gmmymi@lukather>
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 6 Apr 2017 13:08:52 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mars Cheng <mars.cheng@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	CC Hwang <cc.hwang@mediatek.com>,
+	Loda Chou <loda.chou@mediatek.com>,
+	Miles Chen <miles.chen@mediatek.com>,
+	Jades Shih <jades.shih@mediatek.com>,
+	Yingjoe Chen <yingjoe.chen@mediatek.com>,
+	My Chuang <my.chuang@mediatek.com>, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+	wsd_upstream@mediatek.com, linux-clk@vger.kernel.org,
+	Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+Subject: Re: [PATCH v3 07/12] clk: mediatek: add clk support for MT6797
+Message-ID: <20170406200852.GQ7065@codeaurora.org>
+References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+ <1489937193-2953-8-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170427070436.3qu4mzepq4gmmymi@lukather>
+In-Reply-To: <1489937193-2953-8-git-send-email-mars.cheng@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 27, 2017 at 09:04:36AM +0200, Maxime Ripard wrote:
-> On Wed, Apr 26, 2017 at 01:53:19PM +0200, Corentin Labbe wrote:
-> > When CONFIG_SUNXI_CCU is set but no other SUNXI_CCU is selected i got
-> > the following build error:
-> > drivers/built-in.o: In function `ccu_pll_notifier_cb':
-> > drivers/clk/sunxi-ng/ccu_common.c:71: undefined reference to `ccu_gate_helper_disable'
-> > drivers/clk/sunxi-ng/ccu_common.c:73: undefined reference to `ccu_gate_helper_enable'
-> > 
-> > The problem is the function ccu_pll_notifier_cb in ccu_common.c need
-> > some function from ccu_gate.c which is not compiled since SUNXI_CCU_GATE
-> > is not selected.
-> > 
-> > This patch remove SUNXI_CCU_GATE and compile ccu_gate.c unconditionnaly
-> > since all other combination of options select SUNXI_CCU_GATE finally.
-> > 
-> > Fixes: 02ae2bc6febd ("clk: sunxi-ng: Add clk notifier to gate then ungate PLL clocks")
-> > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+On 03/19, Mars Cheng wrote:
+> From: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
 > 
-> I think Chen-Yu had some comments that you didn't address.
+> Add MT6797 clock support, include topckgen, apmixedsys, infracfg
+> and subsystem clocks
 > 
+> Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> Tested-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-I have changed subject as requested
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+
+Looks fine to me except for the one comment below. Did you want
+me to merge it into clk tree?
+
+> diff --git a/drivers/clk/mediatek/clk-mt6797.c b/drivers/clk/mediatek/clk-mt6797.c
+> new file mode 100644
+> index 0000000..7ebb7f1
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt6797.c
+> @@ -0,0 +1,716 @@
+> +/*
+> + * Copyright (c) 2016 MediaTek Inc.
+> + * Author: Kevin Chen <kevin-cw.chen@mediatek.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/clk.h>
+
+Is this include used? Please include clk-provider if the file is
+a clk driver. Same comment applies to other files in this patch.
+
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "clk-mtk.h"
+> +#include "clk-gate.h"
+> +
+> +#include <dt-bindings/clock/mt6797-clk.h>
+> +
+> +/*
+> + * For some clocks, we don't care what their actual rates are. And these
+> + * clocks may change their rate on different products or different scenarios.
+> + * So we model these clocks' rate as 0, to denote it's not an actual rate.
+> + */
+> +
+> +static DEFINE_SPINLOCK(mt6797_clk_lock);
+> +
+> +static const struct mtk_fixed_factor top_fixed_divs[] = {
+> +	FACTOR(CLK_TOP_SYSPLL_CK, "syspll_ck", "mainpll", 1, 1),
+> +	FACTOR(CLK_TOP_SYSPLL_D2, "syspll_d2", "mainpll", 1, 2),
+> +	FACTOR(CLK_TOP_SYSPLL1_D2, "syspll1_d2", "syspll_d2", 1, 2),
+[...]
+> +	clk_init = of_device_get_match_data(&pdev->dev);
+> +	if (!clk_init)
+> +		return -EINVAL;
+> +
+> +	r = clk_init(pdev);
+> +	if (r)
+> +		dev_err(&pdev->dev,
+> +			"could not register clock provider: %s: %d\n",
+> +			pdev->name, r);
+> +
+> +	return r;
+> +}
+> +
+> +static struct platform_driver clk_mt6797_drv = {
+> +	.probe = clk_mt6797_probe,
+> +	.driver = {
+> +		.name = "clk-mt6797",
+> +		.owner = THIS_MODULE,
+
+This can be removed, platform_driver_register() does it already.
+
+> +		.of_match_table = of_match_clk_mt6797,
+> +	},
+> +};
+> +
+> +static int __init clk_mt6797_init(void)
+> +{
+> +	return platform_driver_register(&clk_mt6797_drv);
+> +}
+> +
+> +arch_initcall(clk_mt6797_init);
+> diff --git a/include/dt-bindings/clock/mt6797-clk.h b/include/dt-bindings/clock/mt6797-clk.h
+> new file mode 100644
+> index 0000000..e48aa47
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/mt6797-clk.h
+> @@ -0,0 +1,281 @@
+
+I think arm-soc folks don't want us merging whole drivers into
+the DT branch anymore, so please split off the dt-bindings header
+into a different patch that we can apply directly. Then we can
+layer the driver on top and just send off the header to arm-soc
+via a stable clk branch.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
