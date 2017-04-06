@@ -1,46 +1,130 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 12 Apr 2017 09:59:36 -0700
+Date: Wed, 5 Apr 2017 18:10:03 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Colin King <colin.king@canonical.com>,
+To: Rick Altherr <raltherr@google.com>
+Cc: OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-iio@vger.kernel.org,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	David Lechner <david@lechnology.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	William Breathitt Gray <vilhelm.gray@gmail.com>,
+	linux-clk@vger.kernel.org, Andreas Klinger <ak@it-klinger.de>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Paul Gortmaker <paul.gortmaker@windriver.com>,
-	Konstantin Porotchkin <kostap@marvell.com>,
-	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: apn806: fix spelling mistake: "mising" -> "missing"
-Message-ID: <20170412165936.GQ7065@codeaurora.org>
-References: <20170411133743.21073-1-colin.king@canonical.com>
- <877f2qgdzh.fsf@free-electrons.com>
+	Rob Herring <robh@kernel.org>,
+	Alison Schofield <amsfield22@gmail.com>,
+	Fabrice Gasnier <fabrice.gasnier@st.com>,
+	Hartmut Knaack <knaack.h@gmx.de>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Crestez Dan Leonard <leonard.crestez@intel.com>,
+	Akinobu Mita <akinobu.mita@gmail.com>,
+	Matt Ranostay <mranostay@gmail.com>
+Subject: Re: [PATCH v4 2/2] iio: Aspeed ADC
+Message-ID: <20170406011003.GP7065@codeaurora.org>
+References: <20170323184136.7349-1-raltherr@google.com>
+ <20170323184136.7349-2-raltherr@google.com>
+ <20170405202744.GB7065@codeaurora.org>
+ <CAPLgG=nYnVuwRZOdXuFCaFy9P0cx_zqfk0f9orBv+8+HxcnqKQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <877f2qgdzh.fsf@free-electrons.com>
+In-Reply-To: <CAPLgG=nYnVuwRZOdXuFCaFy9P0cx_zqfk0f9orBv+8+HxcnqKQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/12, Gregory CLEMENT wrote:
-> Hi Colin,
->  
->  On mar., avril 11 2017, Colin King <colin.king@canonical.com> wrote:
-> 
-> > From: Colin Ian King <colin.king@canonical.com>
+On 04/05, Rick Altherr wrote:
+> On Wed, Apr 5, 2017 at 1:27 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 03/23, Rick Altherr wrote:
+> >> +
+> >> +static int aspeed_adc_probe(struct platform_device *pdev)
+> >> +{
+> >> +     struct iio_dev *indio_dev;
+> >> +     struct aspeed_adc_data *data;
+> >> +     const struct aspeed_adc_model_data *model_data;
+> >> +     struct resource *res;
+> >> +     const char *clk_parent_name;
+> >> +     int ret;
+> >> +     u32 adc_engine_control_reg_val;
+> >> +
+> >> +     indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*data));
+> >> +     if (!indio_dev)
+> >> +             return -ENOMEM;
+> >> +
+> >> +     data = iio_priv(indio_dev);
+> >> +     data->dev = &pdev->dev;
+> >> +
+> >> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >> +     data->base = devm_ioremap_resource(&pdev->dev, res);
+> >> +     if (IS_ERR(data->base))
+> >> +             return PTR_ERR(data->base);
+> >> +
+> >> +     /* Register ADC clock prescaler with source specified by device tree. */
+> >> +     spin_lock_init(&data->clk_lock);
+> >> +     clk_parent_name = of_clk_get_parent_name(pdev->dev.of_node, 0);
 > >
-> > trivial fix to spelling mistake in dev_warn message
+> > What if the parent clk is not registered yet? Or if we're not
+> > always using DT in this driver? Put another way, this code is
+> > fragile. But I guess it probably works well enough for now so no
+> > big deal, just pointing out my fear.
+> 
+> I'm not terribly worried about not using DT for this driver as it is
+> for an ARM SoC's built-in ADC which is only supported via DT.  I take
+> your point though.  What's the right way to do this?  Use clk_get() to
+> request by name and clock-names in the DT?
+
+Yes that will work. When we add probe defer to clk_get() things
+will work better. Presumably the clocks property already exists
+for this device so that of_clk_get_parent_name() works so it's
+not a binding change?
+
+> 
 > >
-> > Fixes: f109ca864414dc ("clk: apn806: Turn the eMMC clock as optional for dts backwards compatible")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> >> +
+> >> +     data->clk_prescaler = clk_hw_register_divider(
+> >> +                             &pdev->dev, "prescaler", clk_parent_name, 0,
+> >> +                             data->base + ASPEED_REG_CLOCK_CONTROL,
+> >> +                             17, 15, 0, &data->clk_lock);
+> >> +     if (IS_ERR(data->clk_prescaler))
+> >> +             return PTR_ERR(data->clk_prescaler);
+> >> +
+> >> +     /*
+> >> +      * Register ADC clock scaler downstream from the prescaler. Allow rate
+> >> +      * setting to adjust the prescaler as well.
+> >> +      */
+> >> +     data->clk_scaler = clk_hw_register_divider(
+> >> +                             &pdev->dev, "scaler", "prescaler",
+> >> +                             CLK_SET_RATE_PARENT,
+> >> +                             data->base + ASPEED_REG_CLOCK_CONTROL,
+> >> +                             0, 10, 0, &data->clk_lock);
+> >> +     if (IS_ERR(data->clk_scaler)) {
+> >> +             ret = PTR_ERR(data->clk_scaler);
+> >> +             goto scaler_error;
+> >> +     }
+> >> +
+> >> +     /* Start all channels in normal mode. */
+> >> +     clk_prepare_enable(data->clk_scaler->clk);
+> >
+> > Eventually we'd like to get rid of hw->clk pointer so that users
+> > have to call some sort of clk_get() API and then we get warm
+> > fuzzies from knowing who is consuming a clk structure. Can you
+> > change this to register a clk provider and call clk_get()? I
+> > think a device that references itself should be OK in DT still,
+> > and would properly reflect what's going on.
 > 
-> 
-> The intial patch was merged through the mmc subsystem while it modifies
-> a clk driver. So I would suggest either Ulf applying it or waiting for
-> v4.12-rc1 to apply the patch through the clk subsystem.
+> Do you mean call of_clk_add_hw_provider with of_clk_hw_simple_get or
+> something else?  I'm still wrapping my head around the distinction
+> between clk, clk_hw, and a clk provider.
 > 
 
-In case Ulf wants to take it now
+Yes. Unless you don't want to expose these details in DT because
+it's all internal to the device?
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+In that case we need to go merge that patch on the clk list to
+have clk_hw_create_clk() or something like that, so we can turn a
+clk_hw structure into a clk pointer without directly referencing
+the clk member of clk_hw.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
