@@ -1,50 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:59244 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752126AbdDCKIM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2017 06:08:12 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] arm: dts: renesas: Drop _clk suffix from clock node names
-Date: Mon,  3 Apr 2017 12:08:06 +0200
-Message-Id: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 6 Apr 2017 16:11:52 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon <horms@verge.net.au>, Michael Turquette <mturquette@baylibre.com>,
+	Magnus <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] cs-2000-cp: keep Reserved bit on each register
+Message-ID: <20170406231152.GT7065@codeaurora.org>
+References: <87y3vfxw3q.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <87y3vfxw3q.wl%kuninori.morimoto.gx@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Simon, Magnus,
+On 04/05, Kuninori Morimoto wrote:
+> 
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> Thus CS2000 datasheet is indicating below, this patch
+> follows it.
+> 
+> WARNING: All "Reserved" registers must maintain their default
+>          state to ensure proper functional operation.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
 
-The current practice is to not add _clk suffixes to clock node names in
-DT, as these names are used as the actual clock names.
-
-This patch removes the remaining offenders in the various Renesas DTSes.
-
-Thanks!
-
-Geert Uytterhoeven (3):
-  ARM: dts: r8a7790: Drop _clk suffix from external CAN clock node name
-  ARM: dts: r8a7791: Drop _clk suffix from external CAN clock node name
-  arm64: dts: r8a7795: salvator-x: Drop _clk suffix from X12 clock node
-    name
-
- arch/arm/boot/dts/r8a7790.dtsi                     | 2 +-
- arch/arm/boot/dts/r8a7791.dtsi                     | 2 +-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Applied to clk-next
 
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
