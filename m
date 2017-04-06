@@ -1,35 +1,64 @@
-Return-Path: <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/8] clk: Fine-tuning for ten function implementations
-Message-ID: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
-Date: Thu, 20 Apr 2017 10:20:44 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 6 Apr 2017 16:10:03 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [GIT PULL] Allwinner clock fixes for 4.11, bis
+Message-ID: <20170406231003.GS7065@codeaurora.org>
+References: <20170406074121.tkivdvghbr27tr54@lukather>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170406074121.tkivdvghbr27tr54@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Apr 2017 10:12:34 +0200
+On 04/06, Maxime Ripard wrote:
+> Hi Mike, Stephen,
+> 
+> Please pull the following changes for one of the 4.11-rc's
+> 
+> Thanks!
+> Maxime
+> 
+> The following changes since commit b467e08a15563dede0d37d3233baa24fb97a7310:
+> 
+>   clk: sunxi-ng: fix recalc_rate formula of NKMP clocks (2017-03-20 10:34:05 +0100)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-fixes-for-4.11-2
+> 
+> for you to fetch changes up to d054a839a0986136374d49f9f9fbc264abae9c4c:
+> 
+>   clk: sunxi-ng: fix build error without CONFIG_RESET_CONTROLLER (2017-03-27 13:37:05 +0200)
+> 
+> ----------------------------------------------------------------
+> Allwinner clock fixes for 4.11, bis
+> 
+> A few patches to fix a build error and a few minor typos and bugs in the
+> sunxi-ng code
+> 
+> ----------------------------------------------------------------
+> Chen-Yu Tsai (3):
+>       clk: sunxi-ng: use 1 as fallback for minimum multiplier
+>       clk: sunxi-ng: Fix round_rate/set_rate multiplier minimum mismatch
+>       clk: sunxi-ng: a80: Fix audio PLL comment not matching actual code
+> 
+> Tobias Regnery (1):
+>       clk: sunxi-ng: fix build error without CONFIG_RESET_CONTROLLER
+> 
 
-Some update suggestions were taken into account
-from static source code analysis.
+Two of these are fixes for regressions in v4.10? Why are these
+critical for the v4.11 release? The comment patch is totally
+bogus, it's not fixing any sort of regression that is causing
+problems for people so I'm not sure why it was put into this pull
+request. Am I right in assuming that the only real patch we need
+out of here is the last one for the build error from randconfigs?
+If so I can cherry-pick that from the branch into fixes and the
+rest can go the next merge window.
 
-Markus Elfring (8):
-  Use devm_kcalloc() in si5351_i2c_probe()
-  Delete an error message for a failed memory allocation in si5351_i2c_probe()
-  Adjust a null pointer check in si5351_dt_parse()
-  Replace four seq_printf() calls by seq_putc()
-  Combine two seq_puts() calls into one call in clk_summary_show()
-  Improve a size determination in two functions
-  Use seq_puts() in nomadik_src_clk_show()
-  Delete error messages for a failed memory allocation in two functions
-
- drivers/clk/clk-nomadik.c | 12 ++++--------
- drivers/clk/clk-si5351.c  | 10 ++++------
- drivers/clk/clk.c         | 19 +++++++++----------
- 3 files changed, 17 insertions(+), 24 deletions(-)
+Not pulling for now.
 
 -- 
-2.12.2
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
