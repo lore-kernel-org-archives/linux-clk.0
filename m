@@ -1,57 +1,78 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	jbrunet@baylibre.com,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	narmstrong@baylibre.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	khilman@baylibre.com,
-	carlo@caione.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/2] clk: meson: mpll: fix division by zero in rate_from_params
-Date: Sat,  1 Apr 2017 15:02:24 +0200
-Message-Id: <20170401130225.8811-2-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20170401130225.8811-1-martin.blumenstingl@googlemail.com>
-References: <20170401130225.8811-1-martin.blumenstingl@googlemail.com>
+Return-Path: <Alexey_Firago@mentor.com>
+Subject: Re: [PATCH v3 1/3] clk: vc5: Add structure to describe particular
+ chip features
+To: Marek Vasut <marek.vasut@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <robh+dt@kernel.org>, <geert@linux-m68k.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1491470130-6655-1-git-send-email-alexey_firago@mentor.com>
+ <1491470130-6655-2-git-send-email-alexey_firago@mentor.com>
+ <d461ac7d-4081-4444-6875-de4d8013dec3@gmail.com>
+From: Alexey Firago <alexey_firago@mentor.com>
+Message-ID: <ee0dbbd0-78ba-2344-759e-da022215fbe1@mentor.com>
+Date: Thu, 6 Apr 2017 18:45:49 +0300
+MIME-Version: 1.0
+In-Reply-To: <d461ac7d-4081-4444-6875-de4d8013dec3@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-According to the public datasheet all register bits in HHI_MPLL_CNTL7,
-HHI_MPLL_CNTL8 and HHI_MPLL_CNTL9 default to zero. On all GX SoCs these
-seem to be initialized by the bootloader to some default value.
-However, on my Meson8 board they are not initialized, leading to a
-division by zero in rate_from_params as the math is:
-(parent_rate * SDM_DEN) / ((SDM_DEN * 0) + 0)
 
-Although the rate_from_params function was only introduced recently the
-original bug has been there for much longer. It was only exposed
-recently when the MPLL clocks were added to the Meson8b clock driver.
 
-Fixes: 1c50da4f27 ("clk: meson: add mpll support")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/clk/meson/clk-mpll.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+On 06.04.2017 17:54, Marek Vasut wrote:
+> On 04/06/2017 11:15 AM, Alexey Firago wrote:
+>> Introduce vc5_chip_info structure to describe features of a particular
+>> VC5 chip (id, number of FODs, number of outputs, flags).
+>> For now flags are only used to indicate if chip has internal XTAL.
+>> vc5_chip_info is set on probe from the matched of_device_id->data.
+>>
+>> Also add defines to specify maximum number of FODs and clock outputs
+>> supported by the driver.
+>>
+>> With these changes it should be easier to extend driver to support
+>> more VC5 models.
+>>
+>> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
+>
+> Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+>
+>> ---
+>>  drivers/clk/clk-versaclock5.c | 65 +++++++++++++++++++++++++++++++------------
+>>  1 file changed, 47 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+>> index 56741f3..4e81fb1 100644
+>> --- a/drivers/clk/clk-versaclock5.c
+>> +++ b/drivers/clk/clk-versaclock5.c
+>> @@ -113,12 +113,30 @@
+>>  #define VC5_MUX_IN_XIN		BIT(0)
+>>  #define VC5_MUX_IN_CLKIN	BIT(1)
+>>
+>> +/* Maximum number of clk_out supported by this driver */
+>> +#define VC5_MAX_CLK_OUT_NUM	3
+>> +
+>> +/* Maximum number of FODs supported by this driver */
+>> +#define VC5_MAX_FOD_NUM	2
+>> +
+>> +/* flags to describe chip features */
+>> +/* chip has built-in oscilator */
+>> +#define VC5_HAS_INTERNAL_XTAL	BIT(0)
+>> +
+>>  /* Supported IDT VC5 models. */
+>>  enum vc5_model {
+>>  	IDT_VC5_5P49V5923,
+>>  	IDT_VC5_5P49V5933,
+>>  };
+>>
+>> +/* Structure to describe features of a particular VC5 model */
+>> +struct vc5_chip_info {
+>> +	const enum vc5_model	model;
+>> +	const unsigned int	clk_fod_cnt;
+>> +	const unsigned int	clk_out_cnt;
+>> +	u32			flags;
+>
+> Shouldn't this also be const ?
 
-diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-index 540dabe5adad..551aa2a5b291 100644
---- a/drivers/clk/meson/clk-mpll.c
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -76,7 +76,12 @@ static unsigned long rate_from_params(unsigned long parent_rate,
- 				      unsigned long sdm,
- 				      unsigned long n2)
- {
--	return (parent_rate * SDM_DEN) / ((SDM_DEN * n2) + sdm);
-+	unsigned long divisor = (SDM_DEN * n2) + sdm;
-+
-+	if (divisor == 0)
-+		return 0;
-+	else
-+		return (parent_rate * SDM_DEN) / divisor;
- }
- 
- static void params_from_rate(unsigned long requested_rate,
--- 
-2.12.1
+It probably should, since we are not changing flags at runtime 
+currently. Will resend.
+
+Thanks,
+Alexey
