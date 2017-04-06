@@ -1,214 +1,169 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1491147496.3480.5.camel@baylibre.com>
-Subject: Re: [PATCH 1/1] clk: meson: meson8b: add support for the NAND clocks
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-Cc: carlo@caione.org, khilman@baylibre.com,
-	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com, Stephen Boyd
-	 <sboyd@codeaurora.org>, narmstrong@baylibre.com
-Date: Sun, 02 Apr 2017 17:38:16 +0200
-In-Reply-To: <20170401131001.9988-2-martin.blumenstingl@googlemail.com>
-References: <20170401131001.9988-1-martin.blumenstingl@googlemail.com>
-	 <20170401131001.9988-2-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 6 Apr 2017 16:03:41 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Rick Altherr <raltherr@google.com>
+Cc: OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-iio@vger.kernel.org,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	David Lechner <david@lechnology.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	William Breathitt Gray <vilhelm.gray@gmail.com>,
+	linux-clk@vger.kernel.org, Andreas Klinger <ak@it-klinger.de>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Alison Schofield <amsfield22@gmail.com>,
+	Fabrice Gasnier <fabrice.gasnier@st.com>,
+	Hartmut Knaack <knaack.h@gmx.de>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Akinobu Mita <akinobu.mita@gmail.com>,
+	Matt Ranostay <mranostay@gmail.com>
+Subject: Re: [PATCH v4 2/2] iio: Aspeed ADC
+Message-ID: <20170406230341.GR7065@codeaurora.org>
+References: <20170323184136.7349-1-raltherr@google.com>
+ <20170323184136.7349-2-raltherr@google.com>
+ <20170405202744.GB7065@codeaurora.org>
+ <CAPLgG=nYnVuwRZOdXuFCaFy9P0cx_zqfk0f9orBv+8+HxcnqKQ@mail.gmail.com>
+ <20170406011003.GP7065@codeaurora.org>
+ <CAPLgG=mVG1iayk-m5Bu4QRZbMDaxXRTM-mJPQzTwgbOjGKwDpQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAPLgG=mVG1iayk-m5Bu4QRZbMDaxXRTM-mJPQzTwgbOjGKwDpQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 2017-04-01 at 15:10 +0200, Martin Blumenstingl wrote:
-> This adds the NAND clocks (from the HHI_NAND_CLK_CNTL register) to the
-> Meson8b clock driver. There are three NAND clocks: a gate which enables
-> or disables the NAND clock, a mux and a divider (which divides the mux
-> output).
-> Unfortunately the public S805 datasheet does not document the mux
-> parents. However, the vendor kernel has a few hints for us which allows
-> us to make an educated guess about the clock parents. To do this we need
-> to have a look at set_nand_core_clk() from the vendor's NAND driver (see
-> [0]):
-> - XTAL = (4<<9) | (1<<8) | 0
-> - 160MHz = (0<<9) | (1<<8) | 3)
-> - 182MHz = (3<<9) | (1<<8) | 1)
-> - 212MHz = (1<<9) | (1<<8) | 3)
-> - 255MHz = (2<<9) | (1<<8) | 1)
+On 04/06, Rick Altherr wrote:
+> On Wed, Apr 5, 2017 at 6:10 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > On 04/05, Rick Altherr wrote:
+> >> On Wed, Apr 5, 2017 at 1:27 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> >> > On 03/23, Rick Altherr wrote:
+> >> >> +
+> >> >> +static int aspeed_adc_probe(struct platform_device *pdev)
+> >> >> +{
+> >> >> +     struct iio_dev *indio_dev;
+> >> >> +     struct aspeed_adc_data *data;
+> >> >> +     const struct aspeed_adc_model_data *model_data;
+> >> >> +     struct resource *res;
+> >> >> +     const char *clk_parent_name;
+> >> >> +     int ret;
+> >> >> +     u32 adc_engine_control_reg_val;
+> >> >> +
+> >> >> +     indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*data));
+> >> >> +     if (!indio_dev)
+> >> >> +             return -ENOMEM;
+> >> >> +
+> >> >> +     data = iio_priv(indio_dev);
+> >> >> +     data->dev = &pdev->dev;
+> >> >> +
+> >> >> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >> >> +     data->base = devm_ioremap_resource(&pdev->dev, res);
+> >> >> +     if (IS_ERR(data->base))
+> >> >> +             return PTR_ERR(data->base);
+> >> >> +
+> >> >> +     /* Register ADC clock prescaler with source specified by device tree. */
+> >> >> +     spin_lock_init(&data->clk_lock);
+> >> >> +     clk_parent_name = of_clk_get_parent_name(pdev->dev.of_node, 0);
+> >> >
+> >> > What if the parent clk is not registered yet? Or if we're not
+> >> > always using DT in this driver? Put another way, this code is
+> >> > fragile. But I guess it probably works well enough for now so no
+> >> > big deal, just pointing out my fear.
+> >>
+> >> I'm not terribly worried about not using DT for this driver as it is
+> >> for an ARM SoC's built-in ADC which is only supported via DT.  I take
+> >> your point though.  What's the right way to do this?  Use clk_get() to
+> >> request by name and clock-names in the DT?
+> >
+> > Yes that will work. When we add probe defer to clk_get() things
+> > will work better. Presumably the clocks property already exists
+> > for this device so that of_clk_get_parent_name() works so it's
+> > not a binding change?
 > 
-> should only be used for debugging) we have to do a bit of math for the
-> other parents: target_freq * divider = rate of parent clock
-> Bit 8 above is the enable bit, so we can ignore it here. Bits 11:9 are
-> the mux index and bits 6:0 are the 0-based divider (so we need to add
-> 1). This gives us:
-> - mux 0 (160MHz * 4) = fclk_div4 (actual rate = 637.5MHz, off by 2.5MHz)
-> - mux 1 (212MHz * 4) = fclk_div3 (actual rate = 850MHz, off by 2MHz)
-> - mux 2 (255MHz * 2) = fclk_div5 (matches exactly 510MHz)
-> - mux 3 (182MHz * 2) = fclk_div7 (actual rate = 346.3MHz, off by 0.3MHz)
+> The bindings include clocks but not clock-names.  In this case,
+> clk_register_divider() only has variants that take a parent clock
+> name.  I can't see what I'd do with the result of clk_get().  If the
+> bindings provide clock-names, I can provide a fixed string for the
+> parent name instead of relying on of_clk_get_parent_name().  The
+> removes an explicit driver dependency on DT.  I'm unclear if it
+> resolves your concerns about registration ordering.
+
+We have __clk_get_name() as a helper in clk-provider.h to assist
+drivers in finding parent names of clks they get through
+clk_get(). Eventually we want to get rid of that function, but
+using it at least helps us find it later.
+
+Aside: This is a problem we've had for a while. You're an
+innocent bystander here. The usage of strings for clk tree
+description is not working well and we really need to move away
+from it. So far we have no solution so all I can say is sorry you
+tripped up on this.
+
+> 
+> >
+> >>
+> >> >
+> >> >> +
+> >> >> +     data->clk_prescaler = clk_hw_register_divider(
+> >> >> +                             &pdev->dev, "prescaler", clk_parent_name, 0,
+> >> >> +                             data->base + ASPEED_REG_CLOCK_CONTROL,
+> >> >> +                             17, 15, 0, &data->clk_lock);
+> >> >> +     if (IS_ERR(data->clk_prescaler))
+> >> >> +             return PTR_ERR(data->clk_prescaler);
+> >> >> +
+> >> >> +     /*
+> >> >> +      * Register ADC clock scaler downstream from the prescaler. Allow rate
+> >> >> +      * setting to adjust the prescaler as well.
+> >> >> +      */
+> >> >> +     data->clk_scaler = clk_hw_register_divider(
+> >> >> +                             &pdev->dev, "scaler", "prescaler",
+> >> >> +                             CLK_SET_RATE_PARENT,
+> >> >> +                             data->base + ASPEED_REG_CLOCK_CONTROL,
+> >> >> +                             0, 10, 0, &data->clk_lock);
+> >> >> +     if (IS_ERR(data->clk_scaler)) {
+> >> >> +             ret = PTR_ERR(data->clk_scaler);
+> >> >> +             goto scaler_error;
+> >> >> +     }
+> >> >> +
+> >> >> +     /* Start all channels in normal mode. */
+> >> >> +     clk_prepare_enable(data->clk_scaler->clk);
+> >> >
+> >> > Eventually we'd like to get rid of hw->clk pointer so that users
+> >> > have to call some sort of clk_get() API and then we get warm
+> >> > fuzzies from knowing who is consuming a clk structure. Can you
+> >> > change this to register a clk provider and call clk_get()? I
+> >> > think a device that references itself should be OK in DT still,
+> >> > and would properly reflect what's going on.
+> >>
+> >> Do you mean call of_clk_add_hw_provider with of_clk_hw_simple_get or
+> >> something else?  I'm still wrapping my head around the distinction
+> >> between clk, clk_hw, and a clk provider.
+> >>
+> >
+> > Yes. Unless you don't want to expose these details in DT because
+> > it's all internal to the device?
+> >
+> 
+> There's no reason to expose the scaler or prescaler in DT.  These are
+> clocks that internal to the ADC and have no way for other devices to
+> use them.  I only used the clock framework to avoid reinventing the
+> wheel on calculating divider values for a desired clock rate.
+> 
+> > In that case we need to go merge that patch on the clk list to
+> > have clk_hw_create_clk() or something like that, so we can turn a
+> > clk_hw structure into a clk pointer without directly referencing
+> > the clk member of clk_hw.
+> 
+> This makes the most sense to me.
 > 
 
-Good job detective ;)
-What is strange is that amlogic seems to have change the index of these parents
-on the gxbb. I have a documentation (which I'm not at liberty to share
-unfortunately) which gives the following index on the S905:
-0: xtal
-1: fclk_div2
-2: fclk_div3
-3: flck_div5
-4: fclk_div7
-5: mpll2
-6: mpll3
-7: gp0
+Ok. Let me see what I can do to merge that patch now. I should be
+able to put it on its own branch that could be pulled into the
+tree for this driver. Or a merge window can pass and things fixed
+then.
 
-Did they change the ids, or is the documentation wrong ? I don't know, but we'll
-to pay attention to that if you port your NAND work the gx family.
-
-> [0]
-> https://github.com/khadas/linux/blob/9587681285cb/drivers/amlogic/amlnf/dev/am
-> lnf_ctrl.c#L314
-> 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  drivers/clk/meson/meson8b.c | 53
-> +++++++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/meson/meson8b.h |  6 ++++-
->  2 files changed, 58 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> index e9985503165c..b7f3cf8ed386 100644
-> --- a/drivers/clk/meson/meson8b.c
-> +++ b/drivers/clk/meson/meson8b.c
-> @@ -403,6 +403,53 @@ struct clk_gate meson8b_clk81 = {
->  	},
->  };
->  
-> +static u32 mux_table_nand[]	= { 0, 1, 2, 3, 4 };
-You can drop this table, you don't need it.
-
-> +
-> +struct clk_mux meson8b_nand_clk_sel = {
-> +	.reg = (void *)HHI_NAND_CLK_CNTL,
-> +	.mask = 0x7,
-> +	.shift = 9,
-> +	.table = mux_table_nand,
-> +	.flags = CLK_MUX_ROUND_CLOSEST,
-
-If you go for CLK_SET_RATE_NO_REPARENT, I think this flag is not really useful.
-
-> +	.lock = &clk_lock,
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "nand_clk_sel",
-> +		.ops = &clk_mux_ops,
-> +		/* FIXME all other parents are unknown: */
-> +		.parent_names = (const char *[]){ "fclk_div4", "fclk_div3",
-> +			"fclk_div5", "fclk_div7", "xtal" },
-> +		.num_parents = 5,
-> +		.flags = CLK_SET_RATE_NO_REPARENT,
-
-PSB
-
-> +	},
-> +};
-> +
-> +struct clk_divider meson8b_nand_clk_div = {
-> +	.reg = (void *)HHI_NAND_CLK_CNTL,
-> +	.shift = 0,
-> +	.width = 6,
-> +	.flags = CLK_DIVIDER_ROUND_CLOSEST,
-> +	.lock = &clk_lock,
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "nand_clk_div",
-> +		.ops = &clk_divider_ops,
-> +		.parent_names = (const char *[]){ "nand_clk_sel" },
-> +		.num_parents = 1,
-
-I think you are trying to tightly control all those elements in your nand
-driver, aren't you ? To mimic the vendor driver settings, maybe ?
-
-While it would surely work, another way is possible. You could give the flag
-CLK_SET_RATE_PARENT (and drop the CLK_SET_RATE_NO_REPARENT) to all those
-elements and let the CCF do the work for you.
-
-There is a good chance it will come with same settings anyway (if that's the
-best math can provide)
-
-The good thing about it is that it hides those quirks from your driver. So if
-the gxbb has slighly different clock setup for the nand, you won't have to deal
-with it in your driver, just call clk_set_rate on the gate and be done with it.
-
-Could you give it try ?
-
-> +	},
-> +};
-> +
-> +struct clk_gate meson8b_nand_clk_gate = {
-> +	.reg = (void *)HHI_NAND_CLK_CNTL,
-> +	.bit_idx = 8,
-> +	.lock = &clk_lock,
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "nand_clk_gate",
-> +		.ops = &clk_gate_ops,
-> +		.parent_names = (const char *[]){ "nand_clk_div" },
-> +		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT,
-> +	},
-> +};
-> +
->  /* Everything Else (EE) domain gates */
->  
->  static MESON_GATE(meson8b_ddr, HHI_GCLK_MPEG0, 0);
-> @@ -584,6 +631,9 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data
-> = {
->  		[CLKID_MPLL0]		    = &meson8b_mpll0.hw,
->  		[CLKID_MPLL1]		    = &meson8b_mpll1.hw,
->  		[CLKID_MPLL2]		    = &meson8b_mpll2.hw,
-> +		[CLKID_NAND_SEL]	    = &meson8b_nand_clk_sel.hw,
-> +		[CLKID_NAND_DIV]	    = &meson8b_nand_clk_div.hw,
-> +		[CLKID_NAND_CLK]	    = &meson8b_nand_clk_gate.hw,
->  	},
->  	.num = CLK_NR_CLKS,
->  };
-> @@ -679,14 +729,17 @@ static struct clk_gate *const meson8b_clk_gates[] = {
->  	&meson8b_ao_ahb_sram,
->  	&meson8b_ao_ahb_bus,
->  	&meson8b_ao_iface,
-> +	&meson8b_nand_clk_gate,
->  };
->  
->  static struct clk_mux *const meson8b_clk_muxes[] = {
->  	&meson8b_mpeg_clk_sel,
-> +	&meson8b_nand_clk_sel,
->  };
->  
->  static struct clk_divider *const meson8b_clk_dividers[] = {
->  	&meson8b_mpeg_clk_div,
-> +	&meson8b_nand_clk_div,
->  };
->  
->  static int meson8b_clkc_probe(struct platform_device *pdev)
-> diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-> index 3881defc8644..cbb8001b5fe8 100644
-> --- a/drivers/clk/meson/meson8b.h
-> +++ b/drivers/clk/meson/meson8b.h
-> @@ -37,6 +37,7 @@
->  #define HHI_GCLK_AO			0x154 /* 0x55 offset in data sheet
-> */
->  #define HHI_SYS_CPU_CLK_CNTL1		0x15c /* 0x57 offset in data
-> sheet */
->  #define HHI_MPEG_CLK_CNTL		0x174 /* 0x5d offset in data sheet
-> */
-> +#define HHI_NAND_CLK_CNTL		0x25c /* 0x97 offset in data sheet
-> */
->  #define HHI_MPLL_CNTL			0x280 /* 0xa0 offset in data
-> sheet */
->  #define HHI_SYS_PLL_CNTL		0x300 /* 0xc0 offset in data sheet */
->  #define HHI_VID_PLL_CNTL		0x320 /* 0xc8 offset in data sheet */
-> @@ -160,8 +161,11 @@
->  #define CLKID_MPLL0		93
->  #define CLKID_MPLL1		94
->  #define CLKID_MPLL2		95
-> +#define CLKID_NAND_SEL		96
-> +#define CLKID_NAND_DIV		97
-> +#define CLKID_NAND_CLK		98
->  
-> -#define CLK_NR_CLKS		96
-> +#define CLK_NR_CLKS		99
->  
->  /* include the CLKIDs that have been made part of the stable DT binding */
->  #include <dt-bindings/clock/meson8b-clkc.h>
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
