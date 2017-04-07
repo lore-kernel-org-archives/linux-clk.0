@@ -1,87 +1,58 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:60004 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1036388AbdDUITA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 21 Apr 2017 04:19:00 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 7 Apr 2017 12:45:06 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: add clk_possible_parents debugfs file
+Message-ID: <20170407194506.GF7065@codeaurora.org>
+References: <1490102432-21314-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Fri, 21 Apr 2017 16:18:57 +0800
-From: icenowy@aosc.io
-To: linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: devicetree@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 06/11] drm/sun4i: add support for Allwinner DE2 mixers
-In-Reply-To: <20170420083707.wdtrdlxpvocpzc7g@lukather>
-References: <20170416120849.54542-1-icenowy@aosc.io>
- <20170416120849.54542-7-icenowy@aosc.io>
- <20170418090047.7i2k6dtoqxfdqwwy@lukather>
- <88F5FAC9-1873-4C76-9AB9-FF361C07664E@aosc.io>
- <20170420083707.wdtrdlxpvocpzc7g@lukather>
-Message-ID: <2C85F818-5612-4A53-A558-B633315B8D37@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1490102432-21314-1-git-send-email-pdeschrijver@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 03/21, Peter De Schrijver wrote:
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index f5f2bcd..2fa2fb8 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2128,6 +2128,34 @@ static int clk_dump_open(struct inode *inode, struct file *file)
+>  	.release	= single_release,
+>  };
+>  
+> +static int possible_parents_dump(struct seq_file *s, void *data)
+> +{
+> +	struct clk_core *core;
+> +	int i;
+> +
+> +	core = (struct clk_core *)s->private;
 
-于 2017年4月20日 GMT+08:00 下午4:37:07, Maxime Ripard 
-<maxime.ripard@free-electrons.com> 写到:
-> On Tue, Apr 18, 2017 at 06:47:56PM +0800, Icenowy Zheng wrote:
->> >> +	/* Get the physical address of the buffer in memory */
->> >> +	gem = drm_fb_cma_get_gem_obj(fb, 0);
->> >> +
->> >> +	DRM_DEBUG_DRIVER("Using GEM @ %pad\n", &gem->paddr);
->> >> +
->> >> +	/* Compute the start of the displayed memory */
->> >> +	bpp = fb->format->cpp[0];
->> >> +	paddr = gem->paddr + fb->offsets[0];
->> >> +	paddr += (state->src_x >> 16) * bpp;
->> >> +	paddr += (state->src_y >> 16) * fb->pitches[0];
->> >> +
->> >> +	DRM_DEBUG_DRIVER("Setting buffer address to %pad\n", &paddr);
->> >> +
->> >> +	paddr_u32 = (uint32_t) paddr;
->> >
->> >How does that work on 64-bits systems ?
->> 
->> The hardware is not designed to work on 64-bit systems.
->> 
->> Even 64-bit A64/H5 has also 3GiB memory limit.
-> 
-> That's a fragile assumption.
+Useless cast from void.
 
-Yes, it's only the basical reason.
+> +
+> +	for (i = 0; i < core->num_parents - 1; i++)
+> +		seq_printf(s, "%s ", core->parent_names[i]);
 
-> 
->> The address cell in mixer hardware is also only 32-bit.
->> 
->> So we should just keep the force conversion here. If we then really
->> met 4GiB-capable AW SoC without changing DE2, I think we should have
->> other way to limit CMA pool inside 4GiB.
-> 
-> The register name looks like this is only the lower 32 bits that you
-> can set here, and that there is another register for the upper 32 bits
-> of that address somewhere.
+I hope we don't have spaces in clk names! I don't think we do.
 
-Maybe... but no one can verify this as their's no currently any user
-which has 4GiB+ DRAM.
+> +
+> +	seq_printf(s, "%s\n", core->parent_names[i]);
+> +
+> +	return 0;
+> +}
+> +
+> +static int possible_parents_open(struct inode *inode, struct file *file)
+> +{
+> +	return single_open(file, possible_parents_dump, inode->i_private);
+> +}
+> +
+> +
 
-I think we should keep this until Allwinner really made a 4GiB-capable
-hardware.
+Double newline.
 
-> 
-> In that case, please use the lower_32_bits and upper_32_bits helper,
-> and don't cast it that way.
-> 
-> If it isn't the case, you should set the DMA mask (through
-> dma_set_mask) so that we only allocate memory that can be accessed by
-> this device.
+I fixed both when applying to clk-next.
 
-How to do it?
-
-> 
-> Maxime
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
