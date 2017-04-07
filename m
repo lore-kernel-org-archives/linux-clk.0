@@ -1,69 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41650 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1956385AbdDZHeY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Apr 2017 03:34:24 -0400
-Date: Wed, 26 Apr 2017 09:34:18 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] soc: renesas: Provide dummy rcar_rst_read_mode_pins()
- for compile-testing
-Message-ID: <20170426073418.GE25517@verge.net.au>
-References: <1493141785-29117-1-git-send-email-geert+renesas@glider.be>
- <20170426071305.GC25517@verge.net.au>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Fri, 7 Apr 2017 14:44:40 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: Re-evaluate clock rate on min/max update
+Message-ID: <20170407114440.GD25177@tbergstrom-lnx.Nvidia.com>
+References: <1490103807-21821-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170426071305.GC25517@verge.net.au>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1490103807-21821-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 26, 2017 at 09:13:06AM +0200, Simon Horman wrote:
-> On Tue, Apr 25, 2017 at 07:36:25PM +0200, Geert Uytterhoeven wrote:
-> > If the R-Car RST driver is not included, compile-testing R-Car clock
-> > drivers fails with a link error:
-> > 
-> >     undefined reference to `rcar_rst_read_mode_pins'
-> > 
-> > To fix this, provide a dummy version.  Use the exact same test logic as
-> > in drivers/soc/renesas/Makefile, as there is no Kconfig symbol (yet) to
-> > control compilation of the R-Car RST driver.
+On Tue, Mar 21, 2017 at 03:43:26PM +0200, Peter De Schrijver wrote:
+> Whenever a user change its min or max rate limit of a clock, we need to
+> re-evaluate the current clock rate and possibly change it if the new limits
+> require so. To do this clk_set_rate_range() already calls
+> clk_core_set_rate_nolock, however this won't have the intended effect
+> because the core clock rate hasn't changed. To fix this, move the test to
+> avoid setting the same core clock rate again, to clk_set_rate() so
+> clk_core_set_rate_nolock() can change the clock rate when min or max have
+> been updated, even when the core clock rate has not changed.
 > 
-> Adding a Kconfig symbol would be a bit cleaner IMHO.
 
-I now see you are doing so in other patches :)
+Ping! Any comments on this?
 
-> > Fixes: 527c02f66d263d2e ("soc: renesas: Add R-Car RST driver")
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > This isn't an issue now, but it does prevent enabling compile-testing of
-> > the R-Car clock drivers.  As this is a dependency between two different
-> > subsystems, I think this patch should be fast-tracked.
-> > 
-> > The #ifdef condition will be revised later, when the R-Car RST driver
-> > gains its own Kconfig symbol.
-> > ---
-> >  include/linux/soc/renesas/rcar-rst.h | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/include/linux/soc/renesas/rcar-rst.h b/include/linux/soc/renesas/rcar-rst.h
-> > index a18e0783946b66ec..787e7ad53d45f61c 100644
-> > --- a/include/linux/soc/renesas/rcar-rst.h
-> > +++ b/include/linux/soc/renesas/rcar-rst.h
-> > @@ -1,6 +1,11 @@
-> >  #ifndef __LINUX_SOC_RENESAS_RCAR_RST_H__
-> >  #define __LINUX_SOC_RENESAS_RCAR_RST_H__
-> >  
-> > +#if defined(CONFIG_ARCH_RCAR_GEN1) || defined(CONFIG_ARCH_RCAR_GEN2) || \
-> > +    defined(CONFIG_ARCH_R8A7795) || defined(CONFIG_ARCH_R8A7796)
-> >  int rcar_rst_read_mode_pins(u32 *mode);
-> > +#else
-> > +static inline int rcar_rst_read_mode_pins(u32 *mode) { return -ENODEV; }
-> > +#endif
-> >  
-> >  #endif /* __LINUX_SOC_RENESAS_RCAR_RST_H__ */
-> > -- 
-> > 2.7.4
-> > 
+Peter.
+
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/clk.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 2fa2fb8..0b815d1 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1569,10 +1569,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+>  	if (!core)
+>  		return 0;
+>  
+> -	/* bail early if nothing to do */
+> -	if (rate == clk_core_get_rate_nolock(core))
+> -		return 0;
+> -
+>  	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+>  		return -EBUSY;
+>  
+> @@ -1621,16 +1617,21 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+>   */
+>  int clk_set_rate(struct clk *clk, unsigned long rate)
+>  {
+> -	int ret;
+> +	int ret = 0;
+>  
+>  	if (!clk)
+> -		return 0;
+> +		return ret;
+>  
+>  	/* prevent racing with updates to the clock topology */
+>  	clk_prepare_lock();
+>  
+> +	/* bail early if nothing to do */
+> +	if (rate == clk_core_get_rate_nolock(clk->core))
+> +		goto out;
+> +
+>  	ret = clk_core_set_rate_nolock(clk->core, rate);
+>  
+> +out:
+>  	clk_prepare_unlock();
+>  
+>  	return ret;
+> -- 
+> 1.9.1
 > 
