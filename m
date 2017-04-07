@@ -1,81 +1,120 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33934 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1425284AbdDVP1J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Apr 2017 11:27:09 -0400
-Date: Sat, 22 Apr 2017 17:27:05 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, cw00.choi@samsung.com,
-        javier@osg.samsung.com, jy0922.shim@samsung.com,
-        broonie@kernel.org, robh+dt@kernel.org, b.zolnierkie@samsung.com
-Subject: Re: [PATCH RFC 2/7] clk: samsung: Add definitions of some audio
- related clocks
-Message-ID: <20170422152705.mvnycub4unjlseeq@kozik-lap>
-References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20170421172023epcas1p3dd7397c8c61daa548ffac88a76e53113@epcas1p3.samsung.com>
- <1492795191-31298-3-git-send-email-s.nawrocki@samsung.com>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH v2 1/2] clk: meson: mpll: fix division by zero in
+ rate_from_params
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+References: <20170407153433.18640-1-jbrunet@baylibre.com>
+ <20170407153433.18640-2-jbrunet@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, carlo@caione.org
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <5218d51a-3381-31e8-7fd5-07665163ddaa@baylibre.com>
+Date: Fri, 7 Apr 2017 17:39:18 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1492795191-31298-3-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170407153433.18640-2-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 21, 2017 at 07:19:46PM +0200, Sylwester Nawrocki wrote:
-> This patch adds missing definitions of mux clocks required for using
-> EPLL as the audio subsystem root clock on exynos5420/exynos5422 SoCs.
+On 04/07/2017 05:34 PM, Jerome Brunet wrote:
+> From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> According to the public datasheet all register bits in HHI_MPLL_CNTL7,
+> HHI_MPLL_CNTL8 and HHI_MPLL_CNTL9 default to zero. On all GX SoCs these
+> seem to be initialized by the bootloader to some default value.
+> However, on my Meson8 board they are not initialized, leading to a
+> division by zero in rate_from_params as the math is:
+> (parent_rate * SDM_DEN) / ((SDM_DEN * 0) + 0)
+> 
+> According to the datasheet, the minimum n2 value is 4. The rate provided
+> by the clock when n2 is less than this minimum is unpredictable. In such
+> case, we report an error.
+> 
+> Although the rate_from_params function was only introduced recently the
+> original bug has been there for much longer. It was only exposed
+> recently when the MPLL clocks were added to the Meson8b clock driver.
+> 
+> Fixes: 1c50da4f27 ("clk: meson: add mpll support")
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->  drivers/clk/samsung/clk-exynos5420.c   | 13 ++++++++-----
->  include/dt-bindings/clock/exynos5420.h |  3 +++
->  2 files changed, 11 insertions(+), 5 deletions(-)
+>  drivers/clk/meson/clk-mpll.c | 26 +++++++++++++++-----------
+>  1 file changed, 15 insertions(+), 11 deletions(-)
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index cdc092a..87c711a 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -477,8 +477,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
->  					"mout_sclk_mpll", "ff_dout_spll2",
->  					"mout_sclk_spll", "mout_sclk_epll"};
->  PNAME(mout_mau_epll_clk_5800_p)	= { "mout_sclk_epll", "mout_sclk_dpll",
-> -					"mout_sclk_mpll",
-> -					"ff_dout_spll2" };
-> +					"mout_sclk_mpll", "ff_dout_spll2" };
-
-Please split up cleaning from adding new features/clocks. While in
-cleaning mode, you might also consider fixing some checkpatch errors and
-warnings. There are few (without --strict).
-
->  PNAME(mout_group8_5800_p)	= { "dout_aclk432_scaler", "dout_sclk_sw" };
->  PNAME(mout_group9_5800_p)	= { "dout_osc_div", "mout_sw_aclk432_scaler" };
->  PNAME(mout_group10_5800_p)	= { "dout_aclk432_cam", "dout_sclk_sw" };
-> @@ -487,6 +486,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
->  PNAME(mout_group13_5800_p)	= { "dout_osc_div", "mout_sw_aclkfl1_550_cam" };
->  PNAME(mout_group14_5800_p)	= { "dout_aclk550_cam", "dout_sclk_sw" };
->  PNAME(mout_group15_5800_p)	= { "dout_osc_div", "mout_sw_aclk550_cam" };
-> +PNAME(mout_group16_5800_p)	= { "dout_osc_div", "mout_mau_epll_clk" };
+> diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+> index 540dabe5adad..d9462b505dcc 100644
+> --- a/drivers/clk/meson/clk-mpll.c
+> +++ b/drivers/clk/meson/clk-mpll.c
+> @@ -65,18 +65,21 @@
+>  #include "clkc.h"
 >  
->  /* fixed rate clocks generated outside the soc */
->  static struct samsung_fixed_rate_clock
-> @@ -536,8 +536,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
+>  #define SDM_DEN 16384
+> -#define SDM_MIN 1
+> -#define SDM_MAX 16383
+>  #define N2_MIN	4
+>  #define N2_MAX	511
 >  
->  	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
->  			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
-> -	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p, SRC_TOP7,
-> -			20, 2),
-> +	MUX(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
-> +							SRC_TOP7, 20, 2),
+>  #define to_meson_clk_mpll(_hw) container_of(_hw, struct meson_clk_mpll, hw)
+>  
+> -static unsigned long rate_from_params(unsigned long parent_rate,
+> +static long rate_from_params(unsigned long parent_rate,
+>  				      unsigned long sdm,
+>  				      unsigned long n2)
+>  {
+> -	return (parent_rate * SDM_DEN) / ((SDM_DEN * n2) + sdm);
+> +	unsigned long divisor = (SDM_DEN * n2) + sdm;
+> +
+> +	if (n2 < N2_MIN)
+> +		return -EINVAL;
+> +
+> +	return (parent_rate * SDM_DEN) / divisor;
+>  }
+>  
+>  static void params_from_rate(unsigned long requested_rate,
+> @@ -89,17 +92,13 @@ static void params_from_rate(unsigned long requested_rate,
+>  
+>  	if (div < N2_MIN) {
+>  		*n2 = N2_MIN;
+> -		*sdm = SDM_MIN;
+> +		*sdm = 0;
+>  	} else if (div > N2_MAX) {
+>  		*n2 = N2_MAX;
+> -		*sdm = SDM_MAX;
+> +		*sdm = SDM_DEN - 1;
+>  	} else {
+>  		*n2 = div;
+>  		*sdm = DIV_ROUND_UP(rem * SDM_DEN, requested_rate);
+> -		if (*sdm < SDM_MIN)
+> -			*sdm = SDM_MIN;
+> -		else if (*sdm > SDM_MAX)
+> -			*sdm = SDM_MAX;
+>  	}
+>  }
+>  
+> @@ -109,6 +108,7 @@ static unsigned long mpll_recalc_rate(struct clk_hw *hw,
+>  	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
+>  	struct parm *p;
+>  	unsigned long reg, sdm, n2;
+> +	long rate;
+>  
+>  	p = &mpll->sdm;
+>  	reg = readl(mpll->base + p->reg_off);
+> @@ -118,7 +118,11 @@ static unsigned long mpll_recalc_rate(struct clk_hw *hw,
+>  	reg = readl(mpll->base + p->reg_off);
+>  	n2 = PARM_GET(p->width, p->shift, reg);
+>  
+> -	return rate_from_params(parent_rate, sdm, n2);
+> +	rate = rate_from_params(parent_rate, sdm, n2);
+> +	if (rate < 0)
+> +		return 0;
+> +
+> +	return rate;
+>  }
+>  
+>  static long mpll_round_rate(struct clk_hw *hw,
+> 
 
-How about not changing the indention level of new line? On the other
-hand, if you want to change it so maybe align it with opening
-parenthesis?
-
-(same in other places below)
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
