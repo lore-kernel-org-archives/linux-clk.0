@@ -1,77 +1,28 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Sat, 15 Apr 2017 00:14:55 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Mark Brown <broonie@kernel.org>, yibin.gong@nxp.com,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, anson.huang@nxp.com,
-	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com
-Subject: Re: [RFC PATCH 1/3] clk: add clk_bulk_get accessories
-Message-ID: <20170414161455.GE1792@b29396-OptiPlex-7040>
-References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
- <1491969809-20154-2-git-send-email-aisheng.dong@nxp.com>
- <CAMuHMdXuuHmjWCrLa7r8xK=Dgad9Cz9C6xibJPRVud6aq4oHxQ@mail.gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 7 Apr 2017 12:47:04 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: aggregate return codes of notify chains
+Message-ID: <20170407194704.GG7065@codeaurora.org>
+References: <1490091386-4014-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdXuuHmjWCrLa7r8xK=Dgad9Cz9C6xibJPRVud6aq4oHxQ@mail.gmail.com>
+In-Reply-To: <1490091386-4014-1-git-send-email-pdeschrijver@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
-
-On Thu, Apr 13, 2017 at 09:56:31PM +0200, Geert Uytterhoeven wrote:
-> On Wed, Apr 12, 2017 at 6:03 AM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -520,6 +520,23 @@ void clk_unprepare(struct clk *clk)
-> >  }
-> >  EXPORT_SYMBOL_GPL(clk_unprepare);
-> >
-> > +/**
-> > + * clk_bulk_unprepare - undo preparation of a bulk of clock sources
-> > + * @num_clks: the number of clk_bulk_data
-> > + * @clks: the clk_bulk_data table being ungated
-> > + *
-> > + * clk_bulk_unprepare may sleep, which differentiates it from clk_bulk_disable.
-> > + * Returns 0 on success, -EERROR otherwise.
-> > + */
-> > +void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
+On 03/21, Peter De Schrijver wrote:
+> In case there are multiple notify chains for the same clocks (because they
+> were registered by different users), we need to propagate potential failure
+> of any single one of them to the caller. Otherwise we eg risk violating the
+> V/f curve when a notifier is used for DVFS.
 > 
-> unsigned int num_clks (everywhere)
-> 
-> > +{
-> > +       int i;
-> 
-> unsigned int i (everywhere)
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
 
-Any special purpose?
+Applied to clk-next. Let's see if anything blows up.
 
-Looks like 'int i' for a loop is widely used in kernel.
-
-Would you please help clarify more?
-
-> > +
-> > +       for (i = 0; i < num_clks; i++)
-> > +               clk_unprepare(clks[i].clk);
-> > +}
-> > +EXPORT_SYMBOL_GPL(clk_bulk_unprepare);
-> 
-> This does mean you have to change your "while (--i >= 0)" loops.
-
-Is that really necessary as i thought the clk_bulk_get/put does not
-guarantee any clk operation orders within the bulk?
-Should we need add that support?
-
-And currently this does the same thing as bulk regulator.
-
-Regards
-Dong Aisheng
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
