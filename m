@@ -1,224 +1,216 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 7 Apr 2017 09:48:51 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: mturquette@baylibre.com, lee.jones@linaro.org,
+	linux-kernel@vger.kernel.org, guodong.xu@linaro.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: hi6220: Add the hi655x's pmic clock
+Message-ID: <20170407164851.GU7065@codeaurora.org>
+References: <1489737531-3036-1-git-send-email-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-Date: Thu, 06 Apr 2017 01:14:40 +0800
-From: icenowy@aosc.io
-To: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 04/11] drm/sun4i: abstract the layer
- type
-In-Reply-To: <CAGb2v66vxP0c3qMTAUCseTCbpJ6gxnKfNGNcC41jPHA_Ye4ggw@mail.gmail.com>
-References: <20170329194613.55548-1-icenowy@aosc.io>
- <20170329194613.55548-5-icenowy@aosc.io>
- <20170404192837.pvlhwyeut45vg2wg@art_vandelay>
- <dbf0f478-ff53-0ced-24a3-e9de7077efd9@aosc.io>
- <CAGb2v66vxP0c3qMTAUCseTCbpJ6gxnKfNGNcC41jPHA_Ye4ggw@mail.gmail.com>
-Message-ID: <f30a838c1c044278cf2062edaf93f6b2@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree <devicetree@vger.kernel.org>,
- Jernej Skrabec <jernej.skrabec@siol.net>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- dri-devel <dri-devel@lists.freedesktop.org>,
- linux-sunxi <linux-sunxi@googlegroups.com>, Rob Herring <robh+dt@kernel.org>,
- Sean Paul <seanpaul@chromium.org>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1489737531-3036-1-git-send-email-daniel.lezcano@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-5ZyoIDIwMTctMDQtMDUgMTA6MjfvvIxDaGVuLVl1IFRzYWkg5YaZ6YGT77yaCj4gT24gV2VkLCBB
-cHIgNSwgMjAxNyBhdCAzOjUzIEFNLCBJY2Vub3d5IFpoZW5nIDxpY2Vub3d5QGFvc2MuaW8+IHdy
-b3RlOgo+PiAKPj4gCj4+IOWcqCAyMDE35bm0MDTmnIgwNeaXpSAwMzoyOCwgU2VhbiBQYXVsIOWG
-memBkzoKPj4+IAo+Pj4gT24gVGh1LCBNYXIgMzAsIDIwMTcgYXQgMDM6NDY6MDZBTSArMDgwMCwg
-SWNlbm93eSBaaGVuZyB3cm90ZToKPj4+PiAKPj4+PiBBcyB3ZSBhcmUgZ29pbmcgdG8gYWRkIHN1
-cHBvcnQgZm9yIHRoZSBBbGx3aW5uZXIgREUyIE1peGVyIGluIAo+Pj4+IHN1bjRpLWRybQo+Pj4+
-IGRyaXZlciwgd2Ugd2lsbCBmaW5hbGx5IGhhdmUgdHdvIHR5cGVzIG9mIGxheWVyLgo+Pj4+IAo+
-Pj4+IEFic3RyYWN0IHRoZSBsYXllciB0eXBlIHRvIHZvaWQgKiBhbmQgYSBvcHMgc3RydWN0LCB3
-aGljaCBjb250YWlucyAKPj4+PiB0aGUKPj4+PiBvbmx5IGZ1bmN0aW9uIHVzZWQgYnkgY3J0YyAt
-LSBnZXQgdGhlIGRybV9wbGFuZSBzdHJ1Y3Qgb2YgdGhlIGxheWVyLgo+Pj4+IAo+Pj4+IFNpZ25l
-ZC1vZmYtYnk6IEljZW5vd3kgWmhlbmcgPGljZW5vd3lAYW9zYy5pbz4KPj4+PiAtLS0KPj4+PiBS
-ZWZhY3RvcmVkIHBhdGNoIGluIHYzLgo+Pj4+IAo+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vc3VuNGkv
-c3VuNGlfY3J0Yy5jICB8IDE5ICsrKysrKysrKysrLS0tLS0tLS0KPj4+PiAgZHJpdmVycy9ncHUv
-ZHJtL3N1bjRpL3N1bjRpX2NydGMuaCAgfCAgMyArKy0KPj4+PiAgZHJpdmVycy9ncHUvZHJtL3N1
-bjRpL3N1bjRpX2xheWVyLmMgfCAxOSArKysrKysrKysrKysrKysrKystCj4+Pj4gIGRyaXZlcnMv
-Z3B1L2RybS9zdW40aS9zdW40aV9sYXllci5oIHwgIDIgKy0KPj4+PiAgZHJpdmVycy9ncHUvZHJt
-L3N1bjRpL3N1bnhpX2xheWVyLmggfCAxNyArKysrKysrKysrKysrKysrKwo+Pj4+ICA1IGZpbGVz
-IGNoYW5nZWQsIDQ5IGluc2VydGlvbnMoKyksIDExIGRlbGV0aW9ucygtKQo+Pj4+ICBjcmVhdGUg
-bW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bnhpX2xheWVyLmgKPj4+PiAKPj4+
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX2NydGMuYwo+Pj4+IGIv
-ZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX2NydGMuYwo+Pj4+IGluZGV4IDNjODc2YzNhMzU2
-YS4uMzM4NTRlZTdmNjM2IDEwMDY0NAo+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9z
-dW40aV9jcnRjLmMKPj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfY3J0Yy5j
-Cj4+Pj4gQEAgLTI5LDYgKzI5LDcgQEAKPj4+PiAgI2luY2x1ZGUgInN1bjRpX2NydGMuaCIKPj4+
-PiAgI2luY2x1ZGUgInN1bjRpX2Rydi5oIgo+Pj4+ICAjaW5jbHVkZSAic3VuNGlfbGF5ZXIuaCIK
-Pj4+PiArI2luY2x1ZGUgInN1bnhpX2xheWVyLmgiCj4+Pj4gICNpbmNsdWRlICJzdW40aV90Y29u
-LmgiCj4+Pj4gCj4+Pj4gIHN0YXRpYyB2b2lkIHN1bjRpX2NydGNfYXRvbWljX2JlZ2luKHN0cnVj
-dCBkcm1fY3J0YyAqY3J0YywKPj4+PiBAQCAtMTQ5LDcgKzE1MCw3IEBAIHN0cnVjdCBzdW40aV9j
-cnRjICpzdW40aV9jcnRjX2luaXQoc3RydWN0IAo+Pj4+IGRybV9kZXZpY2UKPj4+PiAqZHJtLAo+
-Pj4+ICAgICAgICAgc2NydGMtPnRjb24gPSB0Y29uOwo+Pj4+IAo+Pj4+ICAgICAgICAgLyogQ3Jl
-YXRlIG91ciBsYXllcnMgKi8KPj4+PiAtICAgICAgIHNjcnRjLT5sYXllcnMgPSBzdW40aV9sYXll
-cnNfaW5pdChkcm0sIHNjcnRjLT5iYWNrZW5kKTsKPj4+PiArICAgICAgIHNjcnRjLT5sYXllcnMg
-PSAodm9pZCAqKilzdW40aV9sYXllcnNfaW5pdChkcm0sIHNjcnRjKTsKPj4+PiAgICAgICAgIGlm
-IChJU19FUlIoc2NydGMtPmxheWVycykpIHsKPj4+PiAgICAgICAgICAgICAgICAgZGV2X2Vycihk
-cm0tPmRldiwgIkNvdWxkbid0IGNyZWF0ZSB0aGUgcGxhbmVzXG4iKTsKPj4+PiAgICAgICAgICAg
-ICAgICAgcmV0dXJuIE5VTEw7Cj4+Pj4gQEAgLTE1NywxNCArMTU4LDE1IEBAIHN0cnVjdCBzdW40
-aV9jcnRjICpzdW40aV9jcnRjX2luaXQoc3RydWN0Cj4+Pj4gZHJtX2RldmljZSAqZHJtLAo+Pj4+
-IAo+Pj4+ICAgICAgICAgLyogZmluZCBwcmltYXJ5IGFuZCBjdXJzb3IgcGxhbmVzIGZvciAKPj4+
-PiBkcm1fY3J0Y19pbml0X3dpdGhfcGxhbmVzCj4+Pj4gKi8KPj4+PiAgICAgICAgIGZvciAoaSA9
-IDA7IHNjcnRjLT5sYXllcnNbaV07IGkrKykgewo+Pj4+IC0gICAgICAgICAgICAgICBzdHJ1Y3Qg
-c3VuNGlfbGF5ZXIgKmxheWVyID0gc2NydGMtPmxheWVyc1tpXTsKPj4+PiArICAgICAgICAgICAg
-ICAgdm9pZCAqbGF5ZXIgPSBzY3J0Yy0+bGF5ZXJzW2ldOwo+Pj4+ICsgICAgICAgICAgICAgICBz
-dHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSA9Cj4+Pj4gc2NydGMtPmxheWVyX29wcy0+Z2V0X3BsYW5l
-KGxheWVyKTsKPj4+PiAKPj4+PiAtICAgICAgICAgICAgICAgc3dpdGNoIChsYXllci0+cGxhbmUu
-dHlwZSkgewo+Pj4+ICsgICAgICAgICAgICAgICBzd2l0Y2ggKHBsYW5lLT50eXBlKSB7Cj4+Pj4g
-ICAgICAgICAgICAgICAgIGNhc2UgRFJNX1BMQU5FX1RZUEVfUFJJTUFSWToKPj4+PiAtICAgICAg
-ICAgICAgICAgICAgICAgICBwcmltYXJ5ID0gJmxheWVyLT5wbGFuZTsKPj4+PiArICAgICAgICAg
-ICAgICAgICAgICAgICBwcmltYXJ5ID0gcGxhbmU7Cj4+Pj4gICAgICAgICAgICAgICAgICAgICAg
-ICAgYnJlYWs7Cj4+Pj4gICAgICAgICAgICAgICAgIGNhc2UgRFJNX1BMQU5FX1RZUEVfQ1VSU09S
-Ogo+Pj4+IC0gICAgICAgICAgICAgICAgICAgICAgIGN1cnNvciA9ICZsYXllci0+cGxhbmU7Cj4+
-Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgY3Vyc29yID0gcGxhbmU7Cj4+Pj4gICAgICAgICAg
-ICAgICAgICAgICAgICAgYnJlYWs7Cj4+Pj4gICAgICAgICAgICAgICAgIGRlZmF1bHQ6Cj4+Pj4g
-ICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7Cj4+Pj4gQEAgLTE5MCwxMCArMTkyLDExIEBA
-IHN0cnVjdCBzdW40aV9jcnRjICpzdW40aV9jcnRjX2luaXQoc3RydWN0Cj4+Pj4gZHJtX2Rldmlj
-ZSAqZHJtLAo+Pj4+ICAgICAgICAgLyogU2V0IHBvc3NpYmxlX2NydGNzIHRvIHRoaXMgY3J0YyBm
-b3Igb3ZlcmxheSBwbGFuZXMgKi8KPj4+PiAgICAgICAgIGZvciAoaSA9IDA7IHNjcnRjLT5sYXll
-cnNbaV07IGkrKykgewo+Pj4+ICAgICAgICAgICAgICAgICB1aW50MzJfdCBwb3NzaWJsZV9jcnRj
-cyA9Cj4+Pj4gQklUKGRybV9jcnRjX2luZGV4KCZzY3J0Yy0+Y3J0YykpOwo+Pj4+IC0gICAgICAg
-ICAgICAgICBzdHJ1Y3Qgc3VuNGlfbGF5ZXIgKmxheWVyID0gc2NydGMtPmxheWVyc1tpXTsKPj4+
-PiArICAgICAgICAgICAgICAgdm9pZCAqbGF5ZXIgPSBzY3J0Yy0+bGF5ZXJzW2ldOwo+Pj4+ICsg
-ICAgICAgICAgICAgICBzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSA9Cj4+Pj4gc2NydGMtPmxheWVy
-X29wcy0+Z2V0X3BsYW5lKGxheWVyKTsKPj4+PiAKPj4+PiAtICAgICAgICAgICAgICAgaWYgKGxh
-eWVyLT5wbGFuZS50eXBlID09IERSTV9QTEFORV9UWVBFX09WRVJMQVkpCj4+Pj4gLSAgICAgICAg
-ICAgICAgICAgICAgICAgbGF5ZXItPnBsYW5lLnBvc3NpYmxlX2NydGNzID0gCj4+Pj4gcG9zc2li
-bGVfY3J0Y3M7Cj4+Pj4gKyAgICAgICAgICAgICAgIGlmIChwbGFuZS0+dHlwZSA9PSBEUk1fUExB
-TkVfVFlQRV9PVkVSTEFZKQo+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHBsYW5lLT5wb3Nz
-aWJsZV9jcnRjcyA9IHBvc3NpYmxlX2NydGNzOwo+Pj4+ICAgICAgICAgfQo+Pj4+IAo+Pj4+ICAg
-ICAgICAgcmV0dXJuIHNjcnRjOwo+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vc3Vu
-NGkvc3VuNGlfY3J0Yy5oCj4+Pj4gYi9kcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfY3J0Yy5o
-Cj4+Pj4gaW5kZXggMjMwY2I4ZjBkNjAxLi5hNDAzNmVlNDRjZjggMTAwNjQ0Cj4+Pj4gLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX2NydGMuaAo+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9zdW40aS9zdW40aV9jcnRjLmgKPj4+PiBAQCAtMTksNyArMTksOCBAQCBzdHJ1Y3Qgc3Vu
-NGlfY3J0YyB7Cj4+Pj4gCj4+Pj4gICAgICAgICBzdHJ1Y3Qgc3VuNGlfYmFja2VuZCAgICAgICAg
-ICAgICpiYWNrZW5kOwo+Pj4+ICAgICAgICAgc3RydWN0IHN1bjRpX3Rjb24gICAgICAgICAgICAg
-ICAqdGNvbjsKPj4+PiAtICAgICAgIHN0cnVjdCBzdW40aV9sYXllciAgICAgICAgICAgICAgKips
-YXllcnM7Cj4+Pj4gKyAgICAgICB2b2lkICAgICAgICAgICAgICAgICAgICAgICAgICAgICoqbGF5
-ZXJzOwo+Pj4+ICsgICAgICAgY29uc3Qgc3RydWN0IHN1bnhpX2xheWVyX29wcyAgICAqbGF5ZXJf
-b3BzOwo+Pj4gCj4+PiAKPj4+IEkgdGhpbmsgeW91IHNob3VsZCBwcm9iYWJseSB0YWtlIGEgZGlm
-ZmVyZW50IGFwcHJvYWNoIHRvIGFic3RyYWN0IHRoZQo+Pj4gbGF5ZXIKPj4+IHR5cGUuIEhvdyBh
-Ym91dCBjcmVhdGluZwo+Pj4gCj4+PiBzdHJ1Y3Qgc3VueGlfbGF5ZXIgewo+Pj4gICAgICAgICBz
-dHJ1Y3QgZHJtX3BsYW5lIHBsYW5lOwo+Pj4gfQo+Pj4gCj4+PiBiYXNlIGFuZCB0aGVuIHN1YmNs
-YXNzaW5nIHRoYXQgZm9yIHN1bjRpIGFuZCBzdW44aT8gQnkgZG9pbmcgdGhpcyB5b3UgCj4+PiBj
-YW4KPj4+IGF2b2lkCj4+PiB0aGUgbmFzdHkgY2FzdGluZyBhbmQgeW91IGNhbiBhbHNvIGdldCBy
-aWQgb2YgdGhlIGdldF9wbGFuZSgpIGhvb2sgCj4+PiBhbmQKPj4+IGxheWVyX29wcy4KPj4gCj4+
-IAo+PiBGb3IgdGhlIHNpdHVhdGlvbiB0aGF0IHVzaW5nICoqIHRoaW5ncyBhcmUgZWFzaWx5IHRv
-IGdldCB3ZWlyZC4KPiAKPiBUaGF0IGNvZGUgY291bGQgYmUgcmV3b3JrZWQsIGJ5IGluaXRpYWxp
-emluZyB0aGUgbGF5ZXJzIGRpcmVjdGx5IHdpdGhpbgo+IHRoZSBjcnRjIGluaXQgY29kZS4gSWYg
-eW91IGxvb2sgYXQgcm9ja2NoaXAncyBkcm0gZHJpdmVyLCB5b3UnbGwgc2VlCj4gdGhleSBkbyB0
-aGlzLiBUaGVyZSBpcyBhIGdvb2QgcmVhc29uIHRvIGRvIGl0IHRoaXMgd2F5LCBhcyB5b3UgbmVl
-ZAo+IHRvIGZpcnN0IGNyZWF0ZSB0aGUgcHJpbWFyeSBhbmQgY3Vyc29yIGxheWVycywgcGFzcyB0
-aGVtIGluIHdoZW4geW91Cj4gY3JlYXRlIHRoZSBjcnRjLCB0aGVuIGluaXRpYWxpemUgYW55IGFk
-ZGl0aW9uYWwgbGF5ZXJzIHdpdGggdGhlCj4gcG9zc2libGVfY3J0Y3MgYml0bWFwLgoKSSBmZWVs
-IHRoYXQgaXQncyBzdGlsbCBtb3JlIHByb3BlciB0byBvZmZsb2FkIHBsYW5lIGNyZWF0aW9uIGNv
-ZGUKdG8gKl9sYXllcnNfaW5pdCBmdW5jdGlvbiwgYXM6CgoxLiBXZSBjYW5ub3QgYXNzdW1lIHRo
-ZSBjdXJzb3IgbGF5ZXIncwpleGlzdGFuY2UuIEluIGZhY3QgY3VycmVudGx5IG5vIGNvZGUgaW4g
-c3VuNGktZHJtIChpbmNsdWRpbmcgdGhpcwpwYXRjaHNldCkgY3JlYXRlIGEgY3Vyc29yIGxheWVy
-LgoKMi4gVGhlIGZvcm1hdCBvZiBwbGFuZXMgaGVhdmlseSBkZXBlbmQgb24gdGhlIGVuZ2luZSB0
-eXBlICgKc3VuNGktYmFja2VuZCBvciBzdW44aS1taXhlcikuCgozLiBXZSBzaG91bGQgY3JlYXRl
-IHBsYW5lcyBhY2NvcmRpbmcgdG8gdGhlIHR5cGUgb2YgZW5naW5lLgpDdXJyZW50bHkgdGhlICpf
-bGF5ZXJzX2luaXQgZnVuY3Rpb24gaXMgcGFydCBvZiBlbmdpbmUgY29kZSAoU2VlIG15Ck1ha2Vm
-aWxlIGNoYW5nZSkuCgo0LiBJZiB3ZSBkbyBzbyB3ZSB3aWxsIGhhdmUgdHdvIGNvZGVzIGZvciBw
-bGFuZSBjcmVhdGluZyAtLSBvbmUgZm9yCnByaW1hcnkgaW4gc3VuNGlfY3J0Y19pbml0LCBhbm90
-aGVyIGZvciBvdmVybGF5cyBpbiAqX2xheWVyc19pbml0LgoKPiAKPiBJbiBvdXIgZHJpdmVyIHdl
-IGFyZSBjdXJyZW50bHkgaW5pdGlhbGl6aW5nIGFsbCBsYXllcnMsIHRoZW4gZ29pbmcKPiBiYWNr
-IGFuZCBmaWxsaW5nIGluIHBvc3NpYmxlX2NydGNzIGZvciB0aGUgZXh0cmEgbGF5ZXJzLgo+IAo+
-IEFuZCBhcyBNYXhpbWUgYW5kIEkgbWVudGlvbmVkIGluIHRoZSBvdGhlciB0aHJlYWQsIHdlIGRv
-bid0IHJlYWxseQo+IG5lZWQgdG8ga2VlcCBhIHJlZmVyZW5jZSB0byAqKmxheWVycy4KCkl0J3Mg
-Y29ycmVjdCwgbGF5ZXJzIGRvZXNuJ3QgbmVlZCB0byBiZSBrZXB0LgoKQW5kIHRoZSBzdHJ1Y3Qg
-c3VueGlfbGF5ZXIgcmVmYWN0b3IgYWxzbyBtYWtlcyBzZW5zZS4KCj4gCj4gUmVnYXJkcwo+IENo
-ZW5ZdQo+IAo+PiAKPj4+IAo+Pj4gU2Vhbgo+Pj4gCj4+PiAKPj4+IAo+Pj4+ICB9Owo+Pj4+IAo+
-Pj4+ICBzdGF0aWMgaW5saW5lIHN0cnVjdCBzdW40aV9jcnRjICpkcm1fY3J0Y190b19zdW40aV9j
-cnRjKHN0cnVjdCAKPj4+PiBkcm1fY3J0Ywo+Pj4+ICpjcnRjKQo+Pj4+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfbGF5ZXIuYwo+Pj4+IGIvZHJpdmVycy9ncHUvZHJt
-L3N1bjRpL3N1bjRpX2xheWVyLmMKPj4+PiBpbmRleCBmMjZiZGU1YjkxMTcuLmJjNGE3MGQ2OTY4
-YiAxMDA2NDQKPj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfbGF5ZXIuYwo+
-Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV9sYXllci5jCj4+Pj4gQEAgLTE2
-LDcgKzE2LDkgQEAKPj4+PiAgI2luY2x1ZGUgPGRybS9kcm1QLmg+Cj4+Pj4gCj4+Pj4gICNpbmNs
-dWRlICJzdW40aV9iYWNrZW5kLmgiCj4+Pj4gKyNpbmNsdWRlICJzdW40aV9jcnRjLmgiCj4+Pj4g
-ICNpbmNsdWRlICJzdW40aV9sYXllci5oIgo+Pj4+ICsjaW5jbHVkZSAic3VueGlfbGF5ZXIuaCIK
-Pj4+PiAKPj4+PiAgc3RydWN0IHN1bjRpX3BsYW5lX2Rlc2Mgewo+Pj4+ICAgICAgICAgICAgICAg
-IGVudW0gZHJtX3BsYW5lX3R5cGUgICAgIHR5cGU7Cj4+Pj4gQEAgLTEwMCw2ICsxMDIsMTcgQEAg
-c3RhdGljIGNvbnN0IHN0cnVjdCBzdW40aV9wbGFuZV9kZXNjCj4+Pj4gc3VuNGlfYmFja2VuZF9w
-bGFuZXNbXSA9IHsKPj4+PiAgICAgICAgIH0sCj4+Pj4gIH07Cj4+Pj4gCj4+Pj4gK3N0YXRpYyBz
-dHJ1Y3QgZHJtX3BsYW5lICpzdW40aV9sYXllcl9nZXRfcGxhbmUodm9pZCAqbGF5ZXIpCj4+Pj4g
-K3sKPj4+PiArICAgICAgIHN0cnVjdCBzdW40aV9sYXllciAqc3VuNGlfbGF5ZXIgPSBsYXllcjsK
-Pj4+PiArCj4+Pj4gKyAgICAgICByZXR1cm4gJnN1bjRpX2xheWVyLT5wbGFuZTsKPj4+PiArfQo+
-Pj4+ICsKPj4+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBzdW54aV9sYXllcl9vcHMgbGF5ZXJfb3Bz
-ID0gewo+Pj4+ICsgICAgICAgLmdldF9wbGFuZSA9IHN1bjRpX2xheWVyX2dldF9wbGFuZSwKPj4+
-PiArfTsKPj4+PiArCj4+Pj4gIHN0YXRpYyBzdHJ1Y3Qgc3VuNGlfbGF5ZXIgKnN1bjRpX2xheWVy
-X2luaXRfb25lKHN0cnVjdCBkcm1fZGV2aWNlIAo+Pj4+ICpkcm0sCj4+Pj4gICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IHN1bjRpX2JhY2tlbmQK
-Pj4+PiAqYmFja2VuZCwKPj4+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBjb25zdCBzdHJ1Y3QKPj4+PiBzdW40aV9wbGFuZV9kZXNjICpwbGFuZSkKPj4+
-PiBAQCAtMTI5LDkgKzE0MiwxMCBAQCBzdGF0aWMgc3RydWN0IHN1bjRpX2xheWVyCj4+Pj4gKnN1
-bjRpX2xheWVyX2luaXRfb25lKHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sCj4+Pj4gIH0KPj4+PiAK
-Pj4+PiAgc3RydWN0IHN1bjRpX2xheWVyICoqc3VuNGlfbGF5ZXJzX2luaXQoc3RydWN0IGRybV9k
-ZXZpY2UgKmRybSwKPj4+PiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBz
-dHJ1Y3Qgc3VuNGlfYmFja2VuZCAKPj4+PiAqYmFja2VuZCkKPj4+PiArICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3Qgc3VuNGlfY3J0YyAqY3J0YykKPj4+PiAgewo+
-Pj4+ICAgICAgICAgc3RydWN0IHN1bjRpX2xheWVyICoqbGF5ZXJzOwo+Pj4+ICsgICAgICAgc3Ry
-dWN0IHN1bjRpX2JhY2tlbmQgKmJhY2tlbmQgPSBjcnRjLT5iYWNrZW5kOwo+Pj4+ICAgICAgICAg
-aW50IGk7Cj4+Pj4gCj4+Pj4gICAgICAgICBsYXllcnMgPSBkZXZtX2tjYWxsb2MoZHJtLT5kZXYs
-IAo+Pj4+IEFSUkFZX1NJWkUoc3VuNGlfYmFja2VuZF9wbGFuZXMpCj4+Pj4gKyAxLAo+Pj4+IEBA
-IC0xODEsNSArMTk1LDggQEAgc3RydWN0IHN1bjRpX2xheWVyICoqc3VuNGlfbGF5ZXJzX2luaXQo
-c3RydWN0Cj4+Pj4gZHJtX2RldmljZSAqZHJtLAo+Pj4+ICAgICAgICAgICAgICAgICBsYXllcnNb
-aV0gPSBsYXllcjsKPj4+PiAgICAgICAgIH07Cj4+Pj4gCj4+Pj4gKyAgICAgICAvKiBBc3NpZ24g
-bGF5ZXIgb3BzIHRvIHRoZSBDUlRDICovCj4+Pj4gKyAgICAgICBjcnRjLT5sYXllcl9vcHMgPSAm
-bGF5ZXJfb3BzOwo+Pj4+ICsKPj4+PiAgICAgICAgIHJldHVybiBsYXllcnM7Cj4+Pj4gIH0KPj4+
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX2xheWVyLmgKPj4+PiBi
-L2RyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV9sYXllci5oCj4+Pj4gaW5kZXggNGJlMWYwOTE5
-ZGYyLi40MjVlZWE3YjllM2IgMTAwNjQ0Cj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3N1bjRp
-L3N1bjRpX2xheWVyLmgKPj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfbGF5
-ZXIuaAo+Pj4+IEBAIC0yNyw2ICsyNyw2IEBAIHBsYW5lX3RvX3N1bjRpX2xheWVyKHN0cnVjdCBk
-cm1fcGxhbmUgKnBsYW5lKQo+Pj4+ICB9Cj4+Pj4gCj4+Pj4gIHN0cnVjdCBzdW40aV9sYXllciAq
-KnN1bjRpX2xheWVyc19pbml0KHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sCj4+Pj4gLSAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IHN1bjRpX2JhY2tlbmQgCj4+Pj4g
-KmJhY2tlbmQpOwo+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0
-cnVjdCBzdW40aV9jcnRjICpjcnRjKTsKPj4+PiAKPj4+PiAgI2VuZGlmIC8qIF9TVU40SV9MQVlF
-Ul9IXyAqLwo+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VueGlfbGF5
-ZXIuaAo+Pj4+IGIvZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bnhpX2xheWVyLmgKPj4+PiBuZXcg
-ZmlsZSBtb2RlIDEwMDY0NAo+Pj4+IGluZGV4IDAwMDAwMDAwMDAwMC4uZDg4MzhlYzM5Mjk5Cj4+
-Pj4gLS0tIC9kZXYvbnVsbAo+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW54aV9s
-YXllci5oCj4+Pj4gQEAgLTAsMCArMSwxNyBAQAo+Pj4+ICsvKgo+Pj4+ICsgKiBDb3B5cmlnaHQg
-KEMpIDIwMTcgSWNlbm93eSBaaGVuZyA8aWNlbm93eUBhb3NjLnh5ej4KPj4+PiArICoKPj4+PiAr
-ICogVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlIGl0
-IGFuZC9vcgo+Pj4+ICsgKiBtb2RpZnkgaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2Vu
-ZXJhbCBQdWJsaWMgTGljZW5zZSBhcwo+Pj4+ICsgKiBwdWJsaXNoZWQgYnkgdGhlIEZyZWUgU29m
-dHdhcmUgRm91bmRhdGlvbjsgZWl0aGVyIHZlcnNpb24gMiBvZgo+Pj4+ICsgKiB0aGUgTGljZW5z
-ZSwgb3IgKGF0IHlvdXIgb3B0aW9uKSBhbnkgbGF0ZXIgdmVyc2lvbi4KPj4+PiArICovCj4+Pj4g
-Kwo+Pj4+ICsjaWZuZGVmIF9TVU5YSV9MQVlFUl9IXwo+Pj4+ICsjZGVmaW5lIF9TVU5YSV9MQVlF
-Ul9IXwo+Pj4+ICsKPj4+PiArc3RydWN0IHN1bnhpX2xheWVyX29wcyB7Cj4+Pj4gKyAgICAgICBz
-dHJ1Y3QgZHJtX3BsYW5lICooKmdldF9wbGFuZSkodm9pZCAqbGF5ZXIpOwo+Pj4+ICt9Owo+Pj4+
-ICsKPj4+PiArI2VuZGlmIC8qIF9TVU5YSV9MQVlFUl9IXyAqLwo+Pj4+IC0tCj4+Pj4gMi4xMi4w
-Cj4+Pj4gCj4+Pj4gCj4+Pj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KPj4+PiBsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdAo+Pj4+IGxpbnV4LWFy
-bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwo+Pj4+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQu
-b3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo+Pj4gCj4+PiAKPj4gCj4+IC0t
-Cj4+IFlvdSByZWNlaXZlZCB0aGlzIG1lc3NhZ2UgYmVjYXVzZSB5b3UgYXJlIHN1YnNjcmliZWQg
-dG8gdGhlIEdvb2dsZSAKPj4gR3JvdXBzCj4+ICJsaW51eC1zdW54aSIgZ3JvdXAuCj4+IFRvIHVu
-c3Vic2NyaWJlIGZyb20gdGhpcyBncm91cCBhbmQgc3RvcCByZWNlaXZpbmcgZW1haWxzIGZyb20g
-aXQsIHNlbmQgCj4+IGFuCj4+IGVtYWlsIHRvIGxpbnV4LXN1bnhpK3Vuc3Vic2NyaWJlQGdvb2ds
-ZWdyb3Vwcy5jb20uCj4+IEZvciBtb3JlIG9wdGlvbnMsIHZpc2l0IGh0dHBzOi8vZ3JvdXBzLmdv
-b2dsZS5jb20vZC9vcHRvdXQuCj4gCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KPiBsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdAo+IGxpbnV4LWFy
-bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwo+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3Jn
-L21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QK
-bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRl
-YWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+On 03/17, Daniel Lezcano wrote:
+> The hi655x multi function device is a PMIC providing regulators.
+> 
+> The PMIC also provides a clock for the WiFi and the Bluetooth, let's implement
+> this clock in order to add it in the hi655x MFD and allow proper wireless
+> initialization.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
+Is there a binding patch for the PMIC?
+
+> ---
+>  drivers/clk/Kconfig      |   8 +++
+>  drivers/clk/Makefile     |   1 +
+>  drivers/clk/clk-hi655x.c | 145 +++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 154 insertions(+)
+>  create mode 100644 drivers/clk/clk-hi655x.c
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 9356ab4..471a433 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -47,6 +47,14 @@ config COMMON_CLK_RK808
+>  	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
+>  	  by control register.
+>  
+> +config COMMON_CLK_HI655X
+> +	tristate "Clock driver for Hi655x"
+> +	depends on MFD_HI655X_PMIC
+
+Plus an || COMPILE_TEST? Or would it not compile without some
+sort of PMIC define?
+
+> +	---help---
+> +	  This driver supports the hi655x PMIC clock. This
+> +	  multi-function device has one fixed-rate oscillator, clocked
+> +	  at 32KHz.
+> +
+>  config COMMON_CLK_SCPI
+>  	tristate "Clock driver controlled via SCPI interface"
+>  	depends on ARM_SCPI_PROTOCOL || COMPILE_TEST
+> diff --git a/drivers/clk/clk-hi655x.c b/drivers/clk/clk-hi655x.c
+> new file mode 100644
+> index 0000000..f827d76
+> --- /dev/null
+> +++ b/drivers/clk/clk-hi655x.c
+> @@ -0,0 +1,145 @@
+> +/* Clock driver for Hi655x
+> + *
+> + * Copyright (c) 2016, Linaro Ltd.
+> + *
+> + * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/hi655x-pmic.h>
+> +
+> +#define HI655X_CLK_BASE	HI655X_BUS_ADDR(0x1c)
+> +#define HI655X_CLK_SET	BIT(6)
+> +
+> +struct hi655x_clk {
+> +	struct hi655x_pmic *hi655x;
+> +	struct clk_hw       clk_hw;
+> +};
+> +
+> +static unsigned long hi655x_clk_recalc_rate(struct clk_hw *hw,
+> +					    unsigned long parent_rate)
+> +{
+> +	return 32768;
+> +}
+> +
+> +static int hi655x_clk_enable(struct clk_hw *hw, bool enable)
+> +{
+> +	struct hi655x_clk *hi655x_clk =
+> +		container_of(hw, struct hi655x_clk, clk_hw);
+> +
+> +	struct hi655x_pmic *hi655x = hi655x_clk->hi655x;
+> +
+> +	return regmap_update_bits(hi655x->regmap, HI655X_CLK_BASE,
+> +				  HI655X_CLK_SET, enable ? HI655X_CLK_SET : 0);
+> +}
+> +
+> +static int hi655x_clk_prepare(struct clk_hw *hw)
+> +{
+> +	return hi655x_clk_enable(hw, true);
+> +}
+> +
+> +static void hi655x_clk_unprepare(struct clk_hw *hw)
+> +{
+> +	hi655x_clk_enable(hw, false);
+> +}
+> +
+> +static int hi655x_clk_is_prepared(struct clk_hw *hw)
+> +{
+> +	struct hi655x_clk *hi655x_clk =
+> +		container_of(hw, struct hi655x_clk, clk_hw);
+> +	struct hi655x_pmic *hi655x = hi655x_clk->hi655x;
+> +	int ret;
+> +	uint32_t val;
+> +
+> +	ret = regmap_read(hi655x->regmap, HI655X_CLK_BASE, &val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return (val & HI655X_CLK_BASE);
+
+Useless parenthesis.
+
+> +}
+> +
+> +static const struct clk_ops hi655x_clk_ops = {
+> +	.prepare     = hi655x_clk_prepare,
+> +	.unprepare   = hi655x_clk_unprepare,
+> +	.is_prepared = hi655x_clk_is_prepared,
+> +	.recalc_rate = hi655x_clk_recalc_rate,
+> +};
+> +
+> +static struct clk_hw *of_clk_hi655x_get(struct of_phandle_args *clkspec,
+> +					void *data)
+> +{
+> +	struct hi655x_clk *hi655x_clk = data;
+> +
+> +	return &hi655x_clk->clk_hw;
+> +}
+
+Just use of_clk_hw_simple_get()?
+
+> +
+> +static int hi655x_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct device *parent = pdev->dev.parent;
+> +	struct hi655x_pmic *hi655x = dev_get_drvdata(parent);
+> +	struct clk_init_data *hi655x_clk_init;
+> +	struct hi655x_clk *hi655x_clk;
+> +	const char *clk_name = "hi655x-clk";
+
+Why do we set it and then overwrite it?
+
+> +	int ret;
+> +
+> +	hi655x_clk = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk), GFP_KERNEL);
+> +	if (!hi655x_clk)
+> +		return -ENOMEM;
+> +
+> +	hi655x_clk_init = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk_init), GFP_KERNEL);
+> +	if (!hi655x_clk_init)
+> +		return -ENOMEM;
+> +
+> +	ret = of_property_read_string_index(parent->of_node, "clock-output-names",
+> +					    0, &clk_name);
+> +	if (ret)
+> +		return ret;
+> +
+> +	hi655x_clk_init->name	= clk_name;
+> +	hi655x_clk_init->ops	= &hi655x_clk_ops;
+> +
+> +	hi655x_clk->clk_hw.init	= hi655x_clk_init;
+> +	hi655x_clk->hi655x	= hi655x;
+> +
+> +	platform_set_drvdata(pdev, hi655x_clk);
+> +
+> +	ret = devm_clk_hw_register(&pdev->dev, &hi655x_clk->clk_hw);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = clk_hw_register_clkdev(&hi655x_clk->clk_hw, clk_name, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return of_clk_add_hw_provider(parent->of_node,
+> +				      of_clk_hi655x_get, hi655x_clk);
+
+We forgot to drop the clkdev here if this fails.
+
+> +}
+> +
+> +static struct platform_driver hi655x_clk_driver = {
+> +	.probe =  hi655x_clk_probe,
+> +	.driver		= {
+> +		.name	= "hi655x-clk",
+> +	},
+> +};
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
