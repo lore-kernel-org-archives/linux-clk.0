@@ -1,91 +1,79 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:55815 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756617AbdDPMMN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 16 Apr 2017 08:12:13 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 11/11] [DO NOT MERGE] ARM: dts: sun8i: enable LCD panel of Lichee Pi Zero
-Date: Sun, 16 Apr 2017 20:08:49 +0800
-Message-Id: <20170416120849.54542-12-icenowy@aosc.io>
-In-Reply-To: <20170416120849.54542-1-icenowy@aosc.io>
-References: <20170416120849.54542-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+Subject: Re: [PATCH v4 2/3] clk: vc5: Add bindings for IDT VersaClock
+ 5P49V5935
+To: Alexey Firago <alexey_firago@mentor.com>, mturquette@baylibre.com,
+ sboyd@codeaurora.org, robh+dt@kernel.org, geert@linux-m68k.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+References: <1491556344-9465-1-git-send-email-alexey_firago@mentor.com>
+ <1491556344-9465-3-git-send-email-alexey_firago@mentor.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <a155e2a1-fe6c-6b22-7732-8bf65b7f4a6f@gmail.com>
+Date: Fri, 7 Apr 2017 21:56:29 +0200
+MIME-Version: 1.0
+In-Reply-To: <1491556344-9465-3-git-send-email-alexey_firago@mentor.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-A 480x272 QiaoDian QD43003C0-40-7LED panel is available from Lichee Pi.
+On 04/07/2017 11:12 AM, Alexey Firago wrote:
+> IDT VersaClock 5 5P49V5935 has 4 clock outputs, 4 fractional dividers.
+> Input clock source can be taken from either integrated crystal or from
+> external reference clock.
+> 
+> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
 
-This commit connects this panel to Lichee Pi Zero.
+I think you want a R-B from Rob on this.
 
-Lichee Pi also provides a 800x480 panel without accurate model number,
-so do not merge this patch. It will finally come as device tree overlay.
+> ---
+>  .../devicetree/bindings/clock/idt,versaclock5.txt        | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> index 87e9c47..53d7e50 100644
+> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> @@ -6,18 +6,21 @@ from 3 to 12 output clocks.
+>  ==I2C device node==
+>  
+>  Required properties:
+> -- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933".
+> +- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
+> +		"idt,5p49v5935".
+>  - reg:		i2c device address, shall be 0x68 or 0x6a.
+>  - #clock-cells:	from common clock binding; shall be set to 1.
+>  - clocks:	from common clock binding; list of parent clock handles,
+>  		- 5p49v5923: (required) either or both of XTAL or CLKIN
+>  					reference clock.
+> -		- 5p49v5933: (optional) property not present (internal
+> +		- 5p49v5933 and
+> +		- 5p49v5935: (optional) property not present (internal
+>  					Xtal used) or CLKIN reference
+>  					clock.
+>  - clock-names:	from common clock binding; clock input names, can be
+>  		- 5p49v5923: (required) either or both of "xin", "clkin".
+> -		- 5p49v5933: (optional) property not present or "clkin".
+> +		- 5p49v5933 and
+> +		- 5p49v5935: (optional) property not present or "clkin".
+>  
+>  ==Mapping between clock specifier and physical pins==
+>  
+> @@ -34,6 +37,13 @@ clock specifier, the following mapping applies:
+>  	1 -- OUT1
+>  	2 -- OUT4
+>  
+> +5P49V5935:
+> +	0 -- OUT0_SEL_I2CB
+> +	1 -- OUT1
+> +	2 -- OUT2
+> +	3 -- OUT3
+> +	4 -- OUT4
+> +
+>  ==Example==
+>  
+>  /* 25MHz reference crystal */
+> 
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts | 36 +++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-index 387fc2aa546d..7ae72bf63cd0 100644
---- a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-+++ b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
-@@ -75,6 +75,28 @@
- 			gpios = <&pio 6 2 GPIO_ACTIVE_LOW>; /* PG2 */
- 		};
- 	};
-+
-+	panel: panel {
-+		compatible = "qiaodian,qd43003c0-40", "simple-panel";
-+		enable-gpios = <&pio 1 4 GPIO_ACTIVE_HIGH>; /* Should be backlight */
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			panel_input: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&tcon0_out_lcd>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
- 
- &mmc0 {
-@@ -86,6 +108,20 @@
- 	status = "okay";
- };
- 
-+&tcon0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&lcd_rgb666_pins>;
-+	status = "okay";
-+
-+};
-+
-+&tcon0_out {
-+	tcon0_out_lcd: endpoint@0 {
-+		reg = <0>;
-+		remote-endpoint = <&panel_input>;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-0 = <&uart0_pins_a>;
- 	pinctrl-names = "default";
 -- 
-2.12.2
-
+Best regards,
+Marek Vasut
