@@ -1,305 +1,121 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Mon, 24 Apr 2017 10:31:54 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com, xuwei5@hisilicon.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V2] clk: hi6220: Add the hi655x's pmic clock
-Message-ID: <20170424093154.ffo7zsr66a2yjy74@dell>
-References: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 7 Apr 2017 12:33:24 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk: ls1021a: new platform clock driver
+Message-ID: <20170407193324.GB7065@codeaurora.org>
+References: <20170222150349.16790-1-alexander.stein@systec-electronic.com>
+ <20170222150349.16790-2-alexander.stein@systec-electronic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170222150349.16790-2-alexander.stein@systec-electronic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 08 Apr 2017, Daniel Lezcano wrote:
+On 02/22, Alexander Stein wrote:
+> This driver currently only implements the QSPI divider register
+> SCFG_QSPI_CFG.
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
 
-> The hi655x multi function device is a PMIC providing regulators.
-> 
-> The PMIC also provides a clock for the WiFi and the Bluetooth, let's implement
-> this clock in order to add it in the hi655x MFD and allow proper wireless
-> initialization.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
-> 
-> Changelog:
-> 
->  V2:
->     - Added COMPILE_TEST option, compiled on x86
->     - Removed useless parenthesis
->     - Used of_clk_hw_simple_get() instead of deref dance
->     - Do bailout if the clock-names is not specified
->     - Rollback on error
->     - Folded mfd line change and binding
->     - Added #clock-cells binding documentation
->     - Added #clock-cells in the DT
-> 
->  V1: initial post
-> ---
-
-??
+Nobody reviewed. Sorry it fell down in my queue and I forgot.
 
 > ---
-
-I'm unsure if this as been mentioned before, but bundling;
-driver & architecture changes and documentation into a single patch is
-very seldom a good idea.  In this case, you should split this into at
-least 3, perhaps 4 patches.
-
->  .../devicetree/bindings/mfd/hisilicon,hi655x.txt   |   6 +
-
-Patch 1
-
->  arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts     |   1 +
-
-Patch 2
-
->  drivers/clk/Kconfig                                |   8 ++
->  drivers/clk/Makefile                               |   1 +
->  drivers/clk/clk-hi655x.c                           | 140 +++++++++++++++++++++
-
-Patch 3
-
->  drivers/mfd/hi655x-pmic.c                          |   3 +-
-
-Patch 4
-
-[...]
-
->  6 files changed, 158 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/clk-hi655x.c
+>  drivers/clk/Makefile      |  1 +
+>  drivers/clk/clk-ls1021a.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 59 insertions(+)
+>  create mode 100644 drivers/clk/clk-ls1021a.c
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt b/Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt
-> index 0548569..194e2a9fd 100644
-> --- a/Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt
-> +++ b/Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt
-> @@ -16,6 +16,11 @@ Required properties:
->  - reg:                  Base address of PMIC on Hi6220 SoC.
->  - interrupt-controller: Hi655x has internal IRQs (has own IRQ domain).
->  - pmic-gpios:           The GPIO used by PMIC IRQ.
-> +- #clock-cells:		From common clock binding; shall be set to 0
-> +
-> +Optional properties:
-> +- clock-output-names: From common clock binding to override the
-> +  default output clock name
->  
->  Example:
->  	pmic: pmic@f8000000 {
-> @@ -24,4 +29,5 @@ Example:
->  		interrupt-controller;
->  		#interrupt-cells = <2>;
->  		pmic-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
-> +		clock-cells = <0>;
->  	}
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-> index dba3c13..bb9afb1 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-> +++ b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-> @@ -328,6 +328,7 @@
->  		interrupt-controller;
->  		#interrupt-cells = <2>;
->  		pmic-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
-> +		#clock-cells = <0>;
->  
->  		regulators {
->  			ldo2: LDO2 {
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 9356ab4..36cfea3 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -47,6 +47,14 @@ config COMMON_CLK_RK808
->  	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
->  	  by control register.
->  
-> +config COMMON_CLK_HI655X
-> +	tristate "Clock driver for Hi655x"
-> +	depends on MFD_HI655X_PMIC || COMPILE_TEST
-> +	---help---
-> +	  This driver supports the hi655x PMIC clock. This
-> +	  multi-function device has one fixed-rate oscillator, clocked
-> +	  at 32KHz.
-> +
->  config COMMON_CLK_SCPI
->  	tristate "Clock driver controlled via SCPI interface"
->  	depends on ARM_SCPI_PROTOCOL || COMPILE_TEST
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index 92c12b8..c19983a 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -36,6 +36,7 @@ obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
->  obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
->  obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
->  obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
-> +obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
->  obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
->  obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
->  obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
-> diff --git a/drivers/clk/clk-hi655x.c b/drivers/clk/clk-hi655x.c
+> diff --git a/drivers/clk/clk-ls1021a.c b/drivers/clk/clk-ls1021a.c
 > new file mode 100644
-> index 0000000..b2bea32
+> index 0000000..2f64806
 > --- /dev/null
-> +++ b/drivers/clk/clk-hi655x.c
-> @@ -0,0 +1,140 @@
+> +++ b/drivers/clk/clk-ls1021a.c
+> @@ -0,0 +1,58 @@
 > +/*
-> + * Clock driver for Hi655x
+> + * Copyright (C) 2017 SYS TEC electronic GmbH
+> + * Alexander Stein <alexander.stein@systec-electronic.com>
 > + *
-> + * Copyright (c) 2016, Linaro Ltd.
-> + *
-> + * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
+> + * This program is free software; you can redistribute it and/or modify it under
+> + * the terms of the GNU General Public License version 2 as published by the
+> + * Free Software Foundation.
 > + */
+> +#include <linux/io.h>
+> +#include <linux/clk.h>
 > +#include <linux/clk-provider.h>
-> +#include <linux/clkdev.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mfd/hi655x-pmic.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
 > +
-> +#define HI655X_CLK_BASE	HI655X_BUS_ADDR(0x1c)
-> +#define HI655X_CLK_SET	BIT(6)
-> +
-> +struct hi655x_clk {
-> +	struct hi655x_pmic *hi655x;
-> +	struct clk_hw       clk_hw;
+> +static const struct clk_div_table qspi_cfg_div_table[] = {
+> +	{ 0x0, 256 }, { 0x1, 64 }, { 0x2, 32 }, { 0x3, 24 },
+> +	{ 0x4,  20 }, { 0x5, 15 }, { 0x6, 12 }, { 0x7,  8 },
+> +	{ 0 },
 > +};
 > +
-> +static unsigned long hi655x_clk_recalc_rate(struct clk_hw *hw,
-> +					    unsigned long parent_rate)
+> +static void __init scfg_qspi_cfg_ls1021a_init(struct device_node *np)
 > +{
-> +	return 32768;
+> +	const char *parent_name;
+> +	const char *name;
+> +	void __iomem *base;
+> +	struct clk *parent_clk;
+> +	struct clk *clk;
+> +	struct resource res;
+
+Unused? but should be used!
+
+> +
+> +	base = of_iomap(np, 0);
+> +	if (!base) {
+> +		pr_warn("Failed to map address range for node %s\n", np->name);
+
+We don't typically need any sort of error message.
+
+> +		return;
+> +	}
+> +
+> +	parent_clk = of_clk_get(np, 0);
+> +	if (IS_ERR(parent_clk)) {
+> +		pr_warn("Failed to get clock for node %s\n", np->name);
+> +		return;
+> +	}
+> +
+> +	/* Register the input clock under the desired name. */
+> +	parent_name = __clk_get_name(parent_clk);
+> +
+> +	if (of_property_read_string(np, "clock-output-names", &name))
+> +		name = np->name;
+
+Please just hardcode it unless you really need different names
+from DT. We're trying to move away from clock-output-names for
+clk tree description as it's inflexible in the face of DT ABI.
+
+> +
+> +	/* Works only as those 4 bits (Bits 28-31 big endian) do not cross byte boundary */
+
+This line is too long, but also what's going on? Some sort of
+64-bit register here?
+
+> +	clk = clk_register_divider_table(NULL, name, parent_name,
+> +				   0, base,
+> +				   4, 4, 0, qspi_cfg_div_table, NULL);
+> +	if (IS_ERR(clk)) {
+> +		pr_warn("Failed to register divider table clock (%ld)\n", PTR_ERR(clk));
+> +		return;
+> +	}
+> +	of_clk_add_provider(np, of_clk_src_simple_get, clk);
+
+Can you please use the clk_hw based provider and divider
+registration APIs?
+
 > +}
-> +
-> +static int hi655x_clk_enable(struct clk_hw *hw, bool enable)
-> +{
-> +	struct hi655x_clk *hi655x_clk =
-> +		container_of(hw, struct hi655x_clk, clk_hw);
-> +
-> +	struct hi655x_pmic *hi655x = hi655x_clk->hi655x;
-> +
-> +	return regmap_update_bits(hi655x->regmap, HI655X_CLK_BASE,
-> +				  HI655X_CLK_SET, enable ? HI655X_CLK_SET : 0);
-> +}
-> +
-> +static int hi655x_clk_prepare(struct clk_hw *hw)
-> +{
-> +	return hi655x_clk_enable(hw, true);
-> +}
-> +
-> +static void hi655x_clk_unprepare(struct clk_hw *hw)
-> +{
-> +	hi655x_clk_enable(hw, false);
-> +}
-> +
-> +static int hi655x_clk_is_prepared(struct clk_hw *hw)
-> +{
-> +	struct hi655x_clk *hi655x_clk =
-> +		container_of(hw, struct hi655x_clk, clk_hw);
-> +	struct hi655x_pmic *hi655x = hi655x_clk->hi655x;
-> +	int ret;
-> +	uint32_t val;
-> +
-> +	ret = regmap_read(hi655x->regmap, HI655X_CLK_BASE, &val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return val & HI655X_CLK_BASE;
-> +}
-> +
-> +static const struct clk_ops hi655x_clk_ops = {
-> +	.prepare     = hi655x_clk_prepare,
-> +	.unprepare   = hi655x_clk_unprepare,
-> +	.is_prepared = hi655x_clk_is_prepared,
-> +	.recalc_rate = hi655x_clk_recalc_rate,
-> +};
-> +
-> +static int hi655x_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct device *parent = pdev->dev.parent;
-> +	struct hi655x_pmic *hi655x = dev_get_drvdata(parent);
-> +	struct clk_init_data *hi655x_clk_init;
-> +	struct hi655x_clk *hi655x_clk;
-> +	const char *clk_name = "hi655x-clk";
-> +	int ret;
-> +
-> +	hi655x_clk = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk), GFP_KERNEL);
-> +	if (!hi655x_clk)
-> +		return -ENOMEM;
-> +
-> +	hi655x_clk_init = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk_init),
-> +				       GFP_KERNEL);
-> +	if (!hi655x_clk_init)
-> +		return -ENOMEM;
-> +
-> +	of_property_read_string_index(parent->of_node, "clock-output-names",
-> +				      0, &clk_name);
-> +
-> +	hi655x_clk_init->name	= clk_name;
-> +	hi655x_clk_init->ops	= &hi655x_clk_ops;
-> +
-> +	hi655x_clk->clk_hw.init	= hi655x_clk_init;
-> +	hi655x_clk->hi655x	= hi655x;
-> +
-> +	platform_set_drvdata(pdev, hi655x_clk);
-> +
-> +	ret = devm_clk_hw_register(&pdev->dev, &hi655x_clk->clk_hw);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
-> +				     &hi655x_clk->clk_hw);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = clk_hw_register_clkdev(&hi655x_clk->clk_hw, clk_name, NULL);
-> +	if (ret)
-> +		of_clk_del_provider(parent->of_node);
-> +
-> +	return ret;
-> +}
-> +
-> +static struct platform_driver hi655x_clk_driver = {
-> +	.probe =  hi655x_clk_probe,
-> +	.driver		= {
-> +		.name	= "hi655x-clk",
-> +	},
-> +};
-> +
-> +module_platform_driver(hi655x_clk_driver);
-> +
-> +MODULE_DESCRIPTION("Clk driver for the hi655x series PMICs");
-> +MODULE_AUTHOR("Daniel Lezcano <daniel.lezcano@linaro.org>");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:hi655x-clk");
-> diff --git a/drivers/mfd/hi655x-pmic.c b/drivers/mfd/hi655x-pmic.c
-> index ba706ad..c37ccbf 100644
-> --- a/drivers/mfd/hi655x-pmic.c
-> +++ b/drivers/mfd/hi655x-pmic.c
-> @@ -77,7 +77,8 @@
->  		.num_resources	= ARRAY_SIZE(pwrkey_resources),
->  		.resources	= &pwrkey_resources[0],
->  	},
-> -	{	.name		= "hi655x-regulator", },
-> +	{	.name		= "hi655x-regulator",	},
-> +	{	.name		= "hi655x-clk",		},
->  };
->  
->  static void hi655x_local_irq_clear(struct regmap *map)
+> +CLK_OF_DECLARE(scfg_qspi_cfg_ls1021a, "fsl,scfg-qspi-cfg-ls1021a", scfg_qspi_cfg_ls1021a_init);
+
+Can this be a platform driver? We usually reserve CLK_OF_DECLARE
+for clks that we need to get the timer or interrupt controllers
+working because they need to probe so early. Otherwise use a
+proper driver and we can use platform device APIs instead of OF
+specific ones to map register regions and get clks.
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
