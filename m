@@ -1,87 +1,92 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 12 Apr 2017 09:46:05 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: Re-evaluate clock rate on min/max update
-Message-ID: <20170412164605.GO7065@codeaurora.org>
-References: <1490103807-21821-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1490103807-21821-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1491577956.3480.25.camel@baylibre.com>
+Subject: Re: [PATCH 1/2] clk: meson: mpll: fix division by zero in
+ rate_from_params
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, khilman@baylibre.com,
+ carlo@caione.org,  sboyd@codeaurora.org, mturquette@baylibre.com,
+ narmstrong@baylibre.com
+In-Reply-To: <1491168866.3480.10.camel@baylibre.com>
+References: <20170401130225.8811-1-martin.blumenstingl@googlemail.com>
+	 <20170401130225.8811-2-martin.blumenstingl@googlemail.com>
+	 <1491144577.3480.1.camel@baylibre.com>
+	 <CAFBinCDNsyEVzmkPQ5T_Kvkp3iARtS3VAG+RLrh_mLgn-7GQAA@mail.gmail.com>
+	 <1491168866.3480.10.camel@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Date: Fri, 07 Apr 2017 17:12:36 +0200
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/21, Peter De Schrijver wrote:
-> Whenever a user change its min or max rate limit of a clock, we need to
-> re-evaluate the current clock rate and possibly change it if the new limits
-> require so. To do this clk_set_rate_range() already calls
-> clk_core_set_rate_nolock, however this won't have the intended effect
-> because the core clock rate hasn't changed. To fix this, move the test to
-> avoid setting the same core clock rate again, to clk_set_rate() so
-> clk_core_set_rate_nolock() can change the clock rate when min or max have
-> been updated, even when the core clock rate has not changed.
+On Sun, 2017-04-02 at 23:34 +0200, Jerome Brunet wrote:
+> On Sun, 2017-04-02 at 20:43 +0200, Martin Blumenstingl wrote:
+> > Hi Jerome,
+> > 
+> > On Sun, Apr 2, 2017 at 4:49 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > > On Sat, 2017-04-01 at 15:02 +0200, Martin Blumenstingl wrote:
+> > > > According to the public datasheet all register bits in HHI_MPLL_CNTL7,
+> > > > HHI_MPLL_CNTL8 and HHI_MPLL_CNTL9 default to zero. On all GX SoCs these
+> > > > seem to be initialized by the bootloader to some default value.
+> > > > However, on my Meson8 board they are not initialized, leading to a
+> > > > division by zero in rate_from_params as the math is:
+> > > > (parent_rate * SDM_DEN) / ((SDM_DEN * 0) + 0)
+> > > > 
+> > > > Although the rate_from_params function was only introduced recently the
+> > > > original bug has been there for much longer. It was only exposed
+> > > > recently when the MPLL clocks were added to the Meson8b clock driver.
+> > > 
+> > > The Documentation of the S905 also state that N2 minimal value is 4 and
+> > > SDM
+> > > minimal is 1 ... I should have been more careful ! Thanks for catching
+> > > this
+> > > Martin. We definitely need to fix this.
+> > > 
+> > > Patch seems ok but I have one question. Is the rate actually zero when the
+> > > divisor is zero ?
+> > > I'll be away from my boards until Wednesday but I can check this when I
+> > > get
+> > > back
+> > > if you can't.
+> > 
+> > is there a way how I can check this? I have a consumer device so I
+> > can't measure the frequencies at some pin.
+> 
+> I'll try through the audio pins on wednesday. Don't worry about it.
 
-I'd expect some sort of Fixes: tag here? Or it never worked!?
+So I checked, when N2 is less than the documented minimum (4), the clock get
+into some weird state but is not grounded.
+For example, on gxbb with N2 the rate of the mpll is around 4Mhz.
+
+We have to return an error code here.
+I've reworked the patch ... i'll send it very soon
 
 > 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-
-I seem to recall some problems here around rate aggregation that
-we fixed after the patches merged. Sorry, but I have to go back
-and look at those conversations to refresh my memory and make
-sure this is all fine.
-
-Are you relying on the rate setting op to be called with the new
-min/max requirements if the aggregated rate is the same? I don't
-understand why clk drivers care.
-
-> ---
->  drivers/clk/clk.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 2fa2fb8..0b815d1 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1569,10 +1569,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->  	if (!core)
->  		return 0;
->  
-> -	/* bail early if nothing to do */
-> -	if (rate == clk_core_get_rate_nolock(core))
-> -		return 0;
-> -
->  	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
->  		return -EBUSY;
->  
-> @@ -1621,16 +1617,21 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->   */
->  int clk_set_rate(struct clk *clk, unsigned long rate)
->  {
-> -	int ret;
-> +	int ret = 0;
->  
->  	if (!clk)
-> -		return 0;
-> +		return ret;
-
-Why? Noise?
-
->  
->  	/* prevent racing with updates to the clock topology */
->  	clk_prepare_lock();
->  
-> +	/* bail early if nothing to do */
-> +	if (rate == clk_core_get_rate_nolock(clk->core))
-> +		goto out;
-> +
->  	ret = clk_core_set_rate_nolock(clk->core, rate);
->  
-> +out:
->  	clk_prepare_unlock();
->  
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> > 
+> > > > 
+> > > > Fixes: 1c50da4f27 ("clk: meson: add mpll support")
+> > > > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> > > > ---
+> > > >  drivers/clk/meson/clk-mpll.c | 7 ++++++-
+> > > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+> > > > index 540dabe5adad..551aa2a5b291 100644
+> > > > --- a/drivers/clk/meson/clk-mpll.c
+> > > > +++ b/drivers/clk/meson/clk-mpll.c
+> > > > @@ -76,7 +76,12 @@ static unsigned long rate_from_params(unsigned long
+> > > > parent_rate,
+> > > >                                     unsigned long sdm,
+> > > >                                     unsigned long n2)
+> > > >  {
+> > > > -     return (parent_rate * SDM_DEN) / ((SDM_DEN * n2) + sdm);
+> > > > +     unsigned long divisor = (SDM_DEN * n2) + sdm;
+> > > > +
+> > > > +     if (divisor == 0)
+> > > > +             return 0;
+> > > > +     else
+> > > > +             return (parent_rate * SDM_DEN) / divisor;
+> > > >  }
+> > > > 
+> > > >  static void params_from_rate(unsigned long requested_rate,
