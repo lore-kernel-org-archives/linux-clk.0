@@ -1,101 +1,117 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/10] clk: renesas: rcar-gen2: Add new CPG/MSSR drivers
-Date: Tue, 25 Apr 2017 18:53:10 +0200
-Message-Id: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	carlo@caione.org,
+	Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH v2 1/2] clk: meson: mpll: fix division by zero in rate_from_params
+Date: Fri,  7 Apr 2017 17:34:32 +0200
+Message-Id: <20170407153433.18640-2-jbrunet@baylibre.com>
+In-Reply-To: <20170407153433.18640-1-jbrunet@baylibre.com>
+References: <20170407153433.18640-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi all,
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Currently Renesas R-Car Gen2 SoCs use the common clk-rcar-gen2 and
-clk-mstp drivers, which depend on most clocks being described in DT.
-Especially the module (MSTP) clocks are cumbersome and error prone,
-due to 3 arrays (clocks, clock-indices, and clock-output-names) to be
-kept in sync. In addition, the clk-mstp driver cannot be extended easily
-to also support module resets, which are provided by the same hardware
-module.
+According to the public datasheet all register bits in HHI_MPLL_CNTL7,
+HHI_MPLL_CNTL8 and HHI_MPLL_CNTL9 default to zero. On all GX SoCs these
+seem to be initialized by the bootloader to some default value.
+However, on my Meson8 board they are not initialized, leading to a
+division by zero in rate_from_params as the math is:
+(parent_rate * SDM_DEN) / ((SDM_DEN * 0) + 0)
 
-Hence when developing support for R-Car Gen3 SoCs, another approach was
-chosen, which led to the CPG/MSSR driver core, and SoC-specific
-subdrivers (initially for R-Car Gen3, but later also for RZ/G1).
+According to the datasheet, the minimum n2 value is 4. The rate provided
+by the clock when n2 is less than this minimum is unpredictable. In such
+case, we report an error.
 
-This series introduces new clock drivers for all supported R-Car Gen2
-SoCs, using the CPG/MSSR driver core, and the support for RZ/G1.  They
-provide all clocks supported by the old driver, plus a few more.
-The old driver can still be used through a Kconfig option, to preserve
-backward compatibility with old DTBs.
+Although the rate_from_params function was only introduced recently the
+original bug has been there for much longer. It was only exposed
+recently when the MPLL clocks were added to the Meson8b clock driver.
 
-This series does not include the corresponding DTS updates.  These will
-be posted as a separate series later.
+Fixes: 1c50da4f27 ("clk: meson: add mpll support")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/clk-mpll.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
-This series depends on "[PATCH/RFC 0/2] clk / soc: renesas: Rework
-Kconfig and Makefile logic", which I posted before.
-
-For testing, this patch series, incl. all dependencies and the DTS
-updates, are available in the topic/rcar2-cpg-mssr branch of my
-renesas-drivers git repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-
-This has been tested on r8a7790/lager, r8a7791/koelsch, r8a7792/blanche,
-r8a7793/gose, and r8a7794/alt.  /sys/kernel/debug/clk/clk_summary has
-been compared before and after the conversion.
-
-I hope to queue this up in clk-renesas-for-v4.13.
-
-Thanks!
-
-Geert Uytterhoeven (10):
-  clk: renesas: cpg-mssr: Document R-Car Gen2 support
-  clk: renesas: Add r8a7790 CPG Core Clock Definitions
-  clk: renesas: Add r8a7791 CPG Core Clock Definitions
-  clk: renesas: Add r8a7792 CPG Core Clock Definitions
-  clk: renesas: Add r8a7793 CPG Core Clock Definitions
-  clk: renesas: Add r8a7794 CPG Core Clock Definitions
-  clk: renesas: r8a7790: Add new CPG/MSSR driver
-  clk: renesas: r8a7791/r8a7793: Add new CPG/MSSR driver
-  clk: renesas: r8a7792: Add new CPG/MSSR driver
-  clk: renesas: r8a7794: Add new CPG/MSSR driver
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  10 +-
- drivers/clk/renesas/Kconfig                        |  22 +-
- drivers/clk/renesas/Makefile                       |   4 +
- drivers/clk/renesas/r8a7790-cpg-mssr.c             | 278 ++++++++++++++++++++
- drivers/clk/renesas/r8a7791-cpg-mssr.c             | 286 +++++++++++++++++++++
- drivers/clk/renesas/r8a7792-cpg-mssr.c             | 221 ++++++++++++++++
- drivers/clk/renesas/r8a7794-cpg-mssr.c             | 255 ++++++++++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c             |  29 +++
- drivers/clk/renesas/renesas-cpg-mssr.h             |   4 +
- include/dt-bindings/clock/r8a7790-cpg-mssr.h       |  52 ++++
- include/dt-bindings/clock/r8a7791-cpg-mssr.h       |  48 ++++
- include/dt-bindings/clock/r8a7792-cpg-mssr.h       |  43 ++++
- include/dt-bindings/clock/r8a7793-cpg-mssr.h       |  48 ++++
- include/dt-bindings/clock/r8a7794-cpg-mssr.h       |  47 ++++
- 14 files changed, 1341 insertions(+), 6 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a7790-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a7791-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a7792-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/r8a7794-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/r8a7790-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7792-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7793-cpg-mssr.h
- create mode 100644 include/dt-bindings/clock/r8a7794-cpg-mssr.h
-
+diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+index 540dabe5adad..d9462b505dcc 100644
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -65,18 +65,21 @@
+ #include "clkc.h"
+ 
+ #define SDM_DEN 16384
+-#define SDM_MIN 1
+-#define SDM_MAX 16383
+ #define N2_MIN	4
+ #define N2_MAX	511
+ 
+ #define to_meson_clk_mpll(_hw) container_of(_hw, struct meson_clk_mpll, hw)
+ 
+-static unsigned long rate_from_params(unsigned long parent_rate,
++static long rate_from_params(unsigned long parent_rate,
+ 				      unsigned long sdm,
+ 				      unsigned long n2)
+ {
+-	return (parent_rate * SDM_DEN) / ((SDM_DEN * n2) + sdm);
++	unsigned long divisor = (SDM_DEN * n2) + sdm;
++
++	if (n2 < N2_MIN)
++		return -EINVAL;
++
++	return (parent_rate * SDM_DEN) / divisor;
+ }
+ 
+ static void params_from_rate(unsigned long requested_rate,
+@@ -89,17 +92,13 @@ static void params_from_rate(unsigned long requested_rate,
+ 
+ 	if (div < N2_MIN) {
+ 		*n2 = N2_MIN;
+-		*sdm = SDM_MIN;
++		*sdm = 0;
+ 	} else if (div > N2_MAX) {
+ 		*n2 = N2_MAX;
+-		*sdm = SDM_MAX;
++		*sdm = SDM_DEN - 1;
+ 	} else {
+ 		*n2 = div;
+ 		*sdm = DIV_ROUND_UP(rem * SDM_DEN, requested_rate);
+-		if (*sdm < SDM_MIN)
+-			*sdm = SDM_MIN;
+-		else if (*sdm > SDM_MAX)
+-			*sdm = SDM_MAX;
+ 	}
+ }
+ 
+@@ -109,6 +108,7 @@ static unsigned long mpll_recalc_rate(struct clk_hw *hw,
+ 	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
+ 	struct parm *p;
+ 	unsigned long reg, sdm, n2;
++	long rate;
+ 
+ 	p = &mpll->sdm;
+ 	reg = readl(mpll->base + p->reg_off);
+@@ -118,7 +118,11 @@ static unsigned long mpll_recalc_rate(struct clk_hw *hw,
+ 	reg = readl(mpll->base + p->reg_off);
+ 	n2 = PARM_GET(p->width, p->shift, reg);
+ 
+-	return rate_from_params(parent_rate, sdm, n2);
++	rate = rate_from_params(parent_rate, sdm, n2);
++	if (rate < 0)
++		return 0;
++
++	return rate;
+ }
+ 
+ static long mpll_round_rate(struct clk_hw *hw,
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.9.3
