@@ -1,124 +1,36 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 7 Apr 2017 12:22:08 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Jun Nie <jun.nie@linaro.org>,
+	Baoyou Xie <xie.baoyou@zte.com.cn>, Xin Zhou <zhou.xin8@zte.com.cn>,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH 1/3] clk: zte: set CLK_SET_RATE_PARENT for a few zx296718
+ clocks
+Message-ID: <20170407192208.GY7065@codeaurora.org>
+References: <1490085503-15713-1-git-send-email-shawnguo@kernel.org>
+ <1490085503-15713-2-git-send-email-shawnguo@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20170403081423.p6x4ytfoga2krygv@lukather>
-References: <20170329194613.55548-1-icenowy@aosc.io> <20170329194613.55548-5-icenowy@aosc.io>
- <20170403081423.p6x4ytfoga2krygv@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 3 Apr 2017 18:51:38 +0800
-Message-ID: <CAGb2v66gej-udjXVwrRLwTmVf+G1NL2eLeyTzTq8W1z=wD8NMQ@mail.gmail.com>
-Subject: Re: [PATCH v3 04/11] drm/sun4i: abstract the layer type
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1490085503-15713-2-git-send-email-shawnguo@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 3, 2017 at 4:14 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi,
->
-> On Thu, Mar 30, 2017 at 03:46:06AM +0800, Icenowy Zheng wrote:
->> As we are going to add support for the Allwinner DE2 Mixer in sun4i-drm
->> driver, we will finally have two types of layer.
->>
->> Abstract the layer type to void * and a ops struct, which contains the
->> only function used by crtc -- get the drm_plane struct of the layer.
->>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->> Refactored patch in v3.
->>
->>  drivers/gpu/drm/sun4i/sun4i_crtc.c  | 19 +++++++++++--------
->>  drivers/gpu/drm/sun4i/sun4i_crtc.h  |  3 ++-
->>  drivers/gpu/drm/sun4i/sun4i_layer.c | 19 ++++++++++++++++++-
->>  drivers/gpu/drm/sun4i/sun4i_layer.h |  2 +-
->>  drivers/gpu/drm/sun4i/sunxi_layer.h | 17 +++++++++++++++++
->>  5 files changed, 49 insertions(+), 11 deletions(-)
->>  create mode 100644 drivers/gpu/drm/sun4i/sunxi_layer.h
->>
->> diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
->> index 3c876c3a356a..33854ee7f636 100644
->> --- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
->> +++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
->> @@ -29,6 +29,7 @@
->>  #include "sun4i_crtc.h"
->>  #include "sun4i_drv.h"
->>  #include "sun4i_layer.h"
->> +#include "sunxi_layer.h"
->>  #include "sun4i_tcon.h"
->>
->>  static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
->> @@ -149,7 +150,7 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
->>       scrtc->tcon = tcon;
->>
->>       /* Create our layers */
->> -     scrtc->layers = sun4i_layers_init(drm, scrtc->backend);
->> +     scrtc->layers = (void **)sun4i_layers_init(drm, scrtc);
->>       if (IS_ERR(scrtc->layers)) {
->>               dev_err(drm->dev, "Couldn't create the planes\n");
->>               return NULL;
->> @@ -157,14 +158,15 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
->>
->>       /* find primary and cursor planes for drm_crtc_init_with_planes */
->>       for (i = 0; scrtc->layers[i]; i++) {
->> -             struct sun4i_layer *layer = scrtc->layers[i];
->> +             void *layer = scrtc->layers[i];
->> +             struct drm_plane *plane = scrtc->layer_ops->get_plane(layer);
->>
->> -             switch (layer->plane.type) {
->> +             switch (plane->type) {
->>               case DRM_PLANE_TYPE_PRIMARY:
->> -                     primary = &layer->plane;
->> +                     primary = plane;
->>                       break;
->>               case DRM_PLANE_TYPE_CURSOR:
->> -                     cursor = &layer->plane;
->> +                     cursor = plane;
->>                       break;
->>               default:
->>                       break;
->> @@ -190,10 +192,11 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
->>       /* Set possible_crtcs to this crtc for overlay planes */
->>       for (i = 0; scrtc->layers[i]; i++) {
->>               uint32_t possible_crtcs = BIT(drm_crtc_index(&scrtc->crtc));
->> -             struct sun4i_layer *layer = scrtc->layers[i];
->> +             void *layer = scrtc->layers[i];
->> +             struct drm_plane *plane = scrtc->layer_ops->get_plane(layer);
->>
->> -             if (layer->plane.type == DRM_PLANE_TYPE_OVERLAY)
->> -                     layer->plane.possible_crtcs = possible_crtcs;
->> +             if (plane->type == DRM_PLANE_TYPE_OVERLAY)
->> +                     plane->possible_crtcs = possible_crtcs;
->
-> I think the logic should be reversed here, the CRTC shouldn't care
-> (much) about the layers at all.
+On 03/21, Shawn Guo wrote:
+> From: Shawn Guo <shawn.guo@linaro.org>
+> 
+> To support VOU VGA display driver with different modes, we need to set
+> flag for a few clocks, so that clk_set_rate() call in VOU driver can get
+> VGA device desired pixel rate.
+> 
+> While at it, the divider between pll_vga and clk_vga gets corrected, as
+> it's 1:1 instead of 1:2.
+> 
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> ---
 
-Correct. It shouldn't. However since the layers are tied to a specific
-crtc, they get created as part of the crtc init sequence.
+Applied to clk-next
 
-> We should modify sun4i_crtc_init to get the argument it needs (primary
-> and cursor planes for example) through its parameters, and have the
-> caller (which iirc is sun4i_drv) call it with the right parameters
-
-The caller is (now) sun4i_crtc_init.
-
-> depending on whether you're using DE or DE2.
-
-Ack.
-
->
-> If we're doing that, I don't think we even need the pointer to the
-> array of layers in struct sun4i_crtc, which will make it easier to
-> deal with.
-
-Ack.
-
-ChenYu
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
