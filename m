@@ -1,61 +1,40 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Apr 2017 19:55:47 -0700
+Date: Fri, 7 Apr 2017 10:23:02 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-	broonie@kernel.org, yibin.gong@nxp.com, rjw@rjwysocki.net,
-	viresh.kumar@linaro.org, mturquette@baylibre.com,
-	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
-	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com
-Subject: Re: [RFC PATCH 2/3] clk: add managed version of clk_bulk_get
-Message-ID: <20170422025547.GT7065@codeaurora.org>
-References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
- <1491969809-20154-3-git-send-email-aisheng.dong@nxp.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: mturquette@baylibre.com, lee.jones@linaro.org,
+	linux-kernel@vger.kernel.org, guodong.xu@linaro.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: hi6220: Add the hi655x's pmic clock
+Message-ID: <20170407172302.GW7065@codeaurora.org>
+References: <1489737531-3036-1-git-send-email-daniel.lezcano@linaro.org>
+ <20170407164851.GU7065@codeaurora.org>
+ <20170407172148.GO2078@mai>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1491969809-20154-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <20170407172148.GO2078@mai>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/12, Dong Aisheng wrote:
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 1d05b66..3fc6010 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -278,11 +278,25 @@ struct clk *clk_get(struct device *dev, const char *id);
->   *
->   * clk_bulk_get should not be called from within interrupt context.
->   */
-> -
+On 04/07, Daniel Lezcano wrote:
+> On Fri, Apr 07, 2017 at 09:48:51AM -0700, Stephen Boyd wrote:
+> > On 03/17, Daniel Lezcano wrote:
+> > > The hi655x multi function device is a PMIC providing regulators.
+> > > 
+> > > The PMIC also provides a clock for the WiFi and the Bluetooth, let's implement
+> > > this clock in order to add it in the hi655x MFD and allow proper wireless
+> > > initialization.
+> > > 
+> > > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > 
+> > Is there a binding patch for the PMIC?
+> 
+> There is a binding for the hi655x at:
+> 
+> Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt
+> 
+> but I don't see what I should add there.
 
-Should be in previous patch?
-
->  int __must_check clk_bulk_get(struct device *dev, int num_clks,
->  			      struct clk_bulk_data *clks);
->  
->  /**
-> + * devm_clk_bulk_get - managed get multiple clk consumers
-> + * @dev: device for clock "consumer"
-> + * @num_clks: the number of clk_bulk_data
-> + * @clks: the clk_bulk_data table of consumer
-> + *
-> + * Return 0 on success, an errno on failure.
-> + *
-> + * This helper function allows drivers to get several regulator
-
-s/regulator/clk/
-
-> + * consumers in one operation with management, the clks will
-> + * automatically be freed when the device is unbound.
-> + */
-> +int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
-
-Thanks for the __must_check. We need to add more __must_check to
-clk APIs.
-
-> +				   struct clk_bulk_data *clks);
-> +
-> +/**
+#clock-cells?
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
