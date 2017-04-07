@@ -1,33 +1,36 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:50026 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940026AbdDTJAK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2017 05:00:10 -0400
-Date: Thu, 20 Apr 2017 18:00:05 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH 1/2] ARM: shmobile: r8a7791: add GyroADC clock
-Message-ID: <20170420090004.GH3760@verge.net.au>
-References: <20170416165709.27449-1-marek.vasut+renesas@gmail.com>
- <CAMuHMdWLWTpH27Zbwdf4SfQ-Ws2PC0sqwFPQrL3Ndry9-KeWTg@mail.gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+Subject: Re: [PATCH v4 1/3] clk: vc5: Add structure to describe particular
+ chip features
+To: Alexey Firago <alexey_firago@mentor.com>, mturquette@baylibre.com,
+ sboyd@codeaurora.org, robh+dt@kernel.org, geert@linux-m68k.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+References: <1491556344-9465-1-git-send-email-alexey_firago@mentor.com>
+ <1491556344-9465-2-git-send-email-alexey_firago@mentor.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <cf7f7276-23f6-6854-e59c-88f9d86057c6@gmail.com>
+Date: Fri, 7 Apr 2017 21:55:55 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdWLWTpH27Zbwdf4SfQ-Ws2PC0sqwFPQrL3Ndry9-KeWTg@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1491556344-9465-2-git-send-email-alexey_firago@mentor.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 18, 2017 at 03:42:25PM +0200, Geert Uytterhoeven wrote:
-> On Sun, Apr 16, 2017 at 6:57 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> > Add the GyroADC clock to the R8A7791 device tree.
-> >
-> > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+On 04/07/2017 11:12 AM, Alexey Firago wrote:
+> Introduce vc5_chip_info structure to describe features of a particular
+> VC5 chip (id, number of FODs, number of outputs, flags).
+> For now flags are only used to indicate if chip has internal XTAL.
+> vc5_chip_info is set on probe from the matched of_device_id->data.
 > 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Also add defines to specify maximum number of FODs and clock outputs
+> supported by the driver.
+> 
+> With these changes it should be easier to extend driver to support
+> more VC5 models.
+> 
+> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
 
-Thanks I have queued this patch (1/2) up for v4.13.
-I am expecting a v2 of patch 2/2 given the review it received.
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+
+-- 
+Best regards,
+Marek Vasut
