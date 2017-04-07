@@ -1,85 +1,33 @@
-Return-Path: <tony@atomide.com>
-Date: Wed, 19 Apr 2017 13:05:06 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Tero Kristo <t-kristo@ti.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Keerthy <j-keerthy@ti.com>,
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: ti: divider: try to fix ti_clk_register_divider
-Message-ID: <20170419200506.GB19537@atomide.com>
-References: <20170419174507.4055014-1-arnd@arndb.de>
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+Subject: Re: [PATCH v4 3/3] clk: vc5: Add support for IDT VersaClock 5P49V5935
+To: Alexey Firago <alexey_firago@mentor.com>, mturquette@baylibre.com,
+ sboyd@codeaurora.org, robh+dt@kernel.org, geert@linux-m68k.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+References: <1491556344-9465-1-git-send-email-alexey_firago@mentor.com>
+ <1491556344-9465-4-git-send-email-alexey_firago@mentor.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <cb635515-7770-73cb-f9d3-f81b2d647614@gmail.com>
+Date: Fri, 7 Apr 2017 21:56:09 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170419174507.4055014-1-arnd@arndb.de>
+In-Reply-To: <1491556344-9465-4-git-send-email-alexey_firago@mentor.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-* Arnd Bergmann <arnd@arndb.de> [170419 10:48]:
-> The newly introduced function is entirely bogus as I found when looking
-> at this warning:
+On 04/07/2017 11:12 AM, Alexey Firago wrote:
+> Update IDT VersaClock 5 driver to support 5P49V5935. This chip has
+> two clock inputs (internal XTAL or external CLKIN), four fractional
+> dividers (FODs) and five clock outputs (four universal clock outputs
+> and one reference clock output at OUT0_SELB_I2C).
 > 
-> drivers/clk/ti/divider.c: In function 'ti_clk_register_divider':
-> drivers/clk/ti/divider.c:460:8: error: 'reg' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+> Current driver supports up to 2 FODs and up to 3 clock outputs. This
+> patch sets max number of supported FODs to 4 and max number of supported
+> clock outputs to 5.
 > 
-> Treating a 'u32' variable as a structure leads to a stack overflow here,
-> and the register address we pass down is never initialized.
-> 
-> As the code in its original form makes no sense, I can only guess what
-> the intention was, and change it to take the address from div->reg.ptr
-> instead.
-> 
-> Fixes: d96f774b2538 ("clk: ti: divider: add support for legacy divider init")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/clk/ti/divider.c | 17 ++++++-----------
->  1 file changed, 6 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-> index d6dcb283b72b..a6d3bbfbbd31 100644
-> --- a/drivers/clk/ti/divider.c
-> +++ b/drivers/clk/ti/divider.c
-> @@ -428,22 +428,17 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
->  
->  struct clk *ti_clk_register_divider(struct ti_clk *setup)
->  {
-> -	struct ti_clk_divider *div;
-> -	struct clk_omap_reg *reg_setup;
-> -	u32 reg;
-> +	struct ti_clk_divider *div = setup->data;
-> +	struct clk_omap_reg reg_setup = {
-> +		.index = div->module,
-> +		.offset = div->reg,
-> +	};
->  	u8 width;
->  	u32 flags = 0;
->  	u8 div_flags = 0;
->  	const struct clk_div_table *table;
->  	struct clk *clk;
->  
-> -	div = setup->data;
-> -
-> -	reg_setup = (struct clk_omap_reg *)&reg;
-> -
-> -	reg_setup->index = div->module;
-> -	reg_setup->offset = div->reg;
-> -
->  	if (div->flags & CLKF_INDEX_STARTS_AT_ONE)
->  		div_flags |= CLK_DIVIDER_ONE_BASED;
->  
-> @@ -458,7 +453,7 @@ struct clk *ti_clk_register_divider(struct ti_clk *setup)
->  		return (struct clk *)table;
->  
->  	clk = _register_divider(NULL, setup->name, div->parent,
-> -				flags, (void __iomem *)reg, div->bit_shift,
-> +				flags, &reg_setup, div->bit_shift,
->  				width, div_flags, table);
->  
->  	if (IS_ERR(clk))
+> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
 
-Yeah seems broken. I wonder if this explains some of the omapdrm
-issues we're seeing in next?
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
 
-Regards,
-
-Tony
+-- 
+Best regards,
+Marek Vasut
