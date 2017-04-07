@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org
-Cc: aisheng.dong@nxp.com, fabio.estevam@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2 2/2] ARM: dts: imx7: add USDHC NAND and IPG clock to SDHC instances
-Date: Mon, 10 Apr 2017 14:00:15 -0700
-Message-Id: <20170410210015.1620-2-stefan@agner.ch>
-In-Reply-To: <20170410210015.1620-1-stefan@agner.ch>
-References: <20170410210015.1620-1-stefan@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 7 Apr 2017 12:51:52 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gabriel Fernandez <gabriel.fernandez@st.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+	daniel.thompson@linaro.org, andrea.merello@gmail.com,
+	radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com
+Subject: Re: [PATCH] clk: stm32h7: Add stm32h743 clock driver
+Message-ID: <20170407195152.GH7065@codeaurora.org>
+References: <1489569810-24350-1-git-send-email-gabriel.fernandez@st.com>
+ <20170405223233.GJ7065@codeaurora.org>
+ <bd680d0a-0b2f-91fc-a940-b2fef4300ca3@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <bd680d0a-0b2f-91fc-a940-b2fef4300ca3@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The USDHC instances need the USDHC NAND and IPG clock in order to
-operate. Reference them properly by replacing the dummy clocks with
-the actual clocks.
+On 04/06, Gabriel Fernandez wrote:
+> On 04/06/2017 12:32 AM, Stephen Boyd wrote:
+> >On 03/15, gabriel.fernandez@st.com wrote:
+> >>diff --git a/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+> >>new file mode 100644
+> >>index 0000000..9d4b587
+> >>--- /dev/null
+> >>+++ b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
+> >>@@ -0,0 +1,152 @@
+> >>+
+> >>+	rcc: rcc@58024400 {
+> >>+		#reset-cells = <1>;
+> >>+		#clock-cells = <2>
+> >>+		compatible = "st,stm32h743-rcc", "st,stm32-rcc";
+> >>+		reg = <0x58024400 0x400>;
+> >>+		clocks = <&clk_hse>, <&clk_lse>, <&clk_i2s_ckin>;
+> >>+
+> >>+		st,syscfg = <&pwrcfg>;
+> >>+
+> >>+		#address-cells = <1>;
+> >>+		#size-cells = <0>;
+> >>+
+> >>+		vco1@58024430 {
+> >>+			#clock-cells = <0>;
+> >>+			compatible = "stm32,pll";
+> >>+			reg = <0>;
+> >reg is super confusing and doesn't match unit address.
+> ok i fixed it in the v2
+> 
+> >
+> >>+		};
+> >Why? Shouldn't we know this from the compatible string how many
+> >PLLs there are and where they're located? Export the PLLs through
+> >rcc node's clock-cells?
+> >
+> Because i need to offer the possibility to change the PLL VCO
+> frequencies at the start-up of this driver clock.
+> The VCO algorithm needs a division factor, a multiplication factor
+> and a fractional factor.
+> Lot's of solution are possible for one frequency and it's nightmare
+> to satisfy the 3 output dividers of the PLL.
 
-Note that both clocks are currently implicitly enabled since they
-are part of the i.MX 7 clock drivers init_on list. This might
-change in the future.
+Sure, but do we need to configure that on a per-board basis or a
+per-SoC basis? If it's just some configuration, I wonder why we
+don't put that into the driver and base it off some compatible
+string that includes the SoC the device is for. 
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
-This patch depends on "clk: imx7d: add the missing ipg_root_clk"
-which adds the IPG clock.
-
---
-Stefan
-
- arch/arm/boot/dts/imx7s.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index c4f12fd2e044..843eb379e1ea 100644
---- a/arch/arm/boot/dts/imx7s.dtsi
-+++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -934,8 +934,8 @@
- 				compatible = "fsl,imx7d-usdhc", "fsl,imx6sl-usdhc";
- 				reg = <0x30b40000 0x10000>;
- 				interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX7D_CLK_DUMMY>,
--					<&clks IMX7D_CLK_DUMMY>,
-+				clocks = <&clks IMX7D_IPG_ROOT_CLK>,
-+					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
- 					<&clks IMX7D_USDHC1_ROOT_CLK>;
- 				clock-names = "ipg", "ahb", "per";
- 				bus-width = <4>;
-@@ -946,8 +946,8 @@
- 				compatible = "fsl,imx7d-usdhc", "fsl,imx6sl-usdhc";
- 				reg = <0x30b50000 0x10000>;
- 				interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX7D_CLK_DUMMY>,
--					<&clks IMX7D_CLK_DUMMY>,
-+				clocks = <&clks IMX7D_IPG_ROOT_CLK>,
-+					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
- 					<&clks IMX7D_USDHC2_ROOT_CLK>;
- 				clock-names = "ipg", "ahb", "per";
- 				bus-width = <4>;
-@@ -958,8 +958,8 @@
- 				compatible = "fsl,imx7d-usdhc", "fsl,imx6sl-usdhc";
- 				reg = <0x30b60000 0x10000>;
- 				interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX7D_CLK_DUMMY>,
--					<&clks IMX7D_CLK_DUMMY>,
-+				clocks = <&clks IMX7D_IPG_ROOT_CLK>,
-+					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
- 					<&clks IMX7D_USDHC3_ROOT_CLK>;
- 				clock-names = "ipg", "ahb", "per";
- 				bus-width = <4>;
 -- 
-2.12.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
