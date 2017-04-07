@@ -1,59 +1,75 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 2/6] clk: samsung: Add local variable to match it purpose
-Date: Mon, 24 Apr 2017 08:42:19 +0200
-Message-id: <1493016143-21569-3-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
-References: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170424064229eucas1p2367a90a36b5bcb99f48a24e72b29a629@eucas1p2.samsung.com>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Fri, 7 Apr 2017 14:49:01 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Alex Frid <afrid@nvidia.com>
+Subject: Re: [PATCH] clk: Add requested rate to clock summary output
+Message-ID: <20170407114901.GA30730@tbergstrom-lnx.Nvidia.com>
+References: <1490188803-13034-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1490188803-13034-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add new variable to avoid using clk pointer for different purposes across
-the exynos_register_cpu_clock() function. This will help in future rewrite
-for the new clk_hw API.
+On Wed, Mar 22, 2017 at 03:20:03PM +0200, Peter De Schrijver wrote:
+> From: Alex Frid <afrid@nvidia.com>
+> 
+> Added requested rate to clock summary output and to clock dump. This is
+> useful for clock tree debugging. Also expand the clock name field in the
+> clock tree debugfs output to provide room for deep multi-tier trees like
+> on Tegra.
+> 
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-cpu.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Ping! Any comments on this?
 
-diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-index 8bf7e805fd34..6e1c6007e721 100644
---- a/drivers/clk/samsung/clk-cpu.c
-+++ b/drivers/clk/samsung/clk-cpu.c
-@@ -410,6 +410,7 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
- {
- 	struct exynos_cpuclk *cpuclk;
- 	struct clk_init_data init;
-+	struct clk *parent_clk;
- 	struct clk *clk;
- 	int ret = 0;
- 
-@@ -440,15 +441,15 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
- 		goto free_cpuclk;
- 	}
- 
--	clk = __clk_lookup(parent);
--	if (!clk) {
-+	parent_clk = __clk_lookup(parent);
-+	if (!parent_clk) {
- 		pr_err("%s: could not lookup parent clock %s\n",
- 				__func__, parent);
- 		ret = -EINVAL;
- 		goto free_cpuclk;
- 	}
- 
--	ret = clk_notifier_register(clk, &cpuclk->clk_nb);
-+	ret = clk_notifier_register(parent_clk, &cpuclk->clk_nb);
- 	if (ret) {
- 		pr_err("%s: failed to register clock notifier for %s\n",
- 				__func__, name);
--- 
-1.9.1
+Peter.
+
+> Signed-off-by: Alex Frid <afrid@nvidia.com>
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/clk.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 0b815d1..3f6ae6d 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2007,10 +2007,10 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+>  	if (!c)
+>  		return;
+>  
+> -	seq_printf(s, "%*s%-*s %11d %12d %11lu %10lu %-3d\n",
+> +	seq_printf(s, "%*s%-*s %11d %12d %11lu %11lu %10lu %-3d\n",
+>  		   level * 3 + 1, "",
+> -		   30 - level * 3, c->name,
+> -		   c->enable_count, c->prepare_count, clk_core_get_rate(c),
+> +		   48 - level * 3, c->name, c->enable_count,
+> +		   c->prepare_count, clk_core_get_rate(c), c->req_rate,
+>  		   clk_core_get_accuracy(c), clk_core_get_phase(c));
+>  }
+>  
+> @@ -2033,8 +2033,8 @@ static int clk_summary_show(struct seq_file *s, void *data)
+>  	struct clk_core *c;
+>  	struct hlist_head **lists = (struct hlist_head **)s->private;
+>  
+> -	seq_puts(s, "   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase\n");
+> -	seq_puts(s, "----------------------------------------------------------------------------------------\n");
+> +	seq_puts(s, "   clock                                           enable_cnt  prepare_cnt        rate    req_rate   accuracy   phase\n");
+> +	seq_puts(s, "----------------------------------------------------------------------------------------------------------------------\n");
+>  
+>  	clk_prepare_lock();
+>  
+> @@ -2070,6 +2070,7 @@ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
+>  	seq_printf(s, "\"enable_count\": %d,", c->enable_count);
+>  	seq_printf(s, "\"prepare_count\": %d,", c->prepare_count);
+>  	seq_printf(s, "\"rate\": %lu,", clk_core_get_rate(c));
+> +	seq_printf(s, "\"req_rate\": %lu,", c->req_rate);
+>  	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
+>  	seq_printf(s, "\"phase\": %d", clk_core_get_phase(c));
+>  }
+> -- 
+> 1.9.1
+> 
