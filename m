@@ -1,94 +1,36 @@
-Return-Path: <daniel.lezcano@linaro.org>
-Return-Path: <daniel.lezcano@linaro.org>
-Date: Sun, 16 Apr 2017 22:57:13 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: mturquette@baylibre.com, lee.jones@linaro.org, xuwei5@hisilicon.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V2] clk: hi6220: Add the hi655x's pmic clock
-Message-ID: <20170416205713.GW2078@mai>
-References: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
- <20170412150245.GK7065@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 7 Apr 2017 12:22:13 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Jun Nie <jun.nie@linaro.org>,
+	Baoyou Xie <xie.baoyou@zte.com.cn>, Xin Zhou <zhou.xin8@zte.com.cn>,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH 2/3] zte: clk: pd_bit is not 0 on zx296718
+Message-ID: <20170407192213.GZ7065@codeaurora.org>
+References: <1490085503-15713-1-git-send-email-shawnguo@kernel.org>
+ <1490085503-15713-3-git-send-email-shawnguo@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20170412150245.GK7065@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1490085503-15713-3-git-send-email-shawnguo@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 12, 2017 at 08:02:45AM -0700, Stephen Boyd wrote:
-> On 04/08, Daniel Lezcano wrote:
-> >  
-> >  Example:
-> >  	pmic: pmic@f8000000 {
-> > @@ -24,4 +29,5 @@ Example:
-> >  		interrupt-controller;
-> >  		#interrupt-cells = <2>;
-> >  		pmic-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
-> > +		clock-cells = <0>;
+On 03/21, Shawn Guo wrote:
+> From: Shawn Guo <shawn.guo@linaro.org>
 > 
-> Should be #clock-cells instead.
-
-Ok.
-
-> > +static int hi655x_clk_probe(struct platform_device *pdev)
-> > +{
-> > +	struct device *parent = pdev->dev.parent;
-> > +	struct hi655x_pmic *hi655x = dev_get_drvdata(parent);
-> > +	struct clk_init_data *hi655x_clk_init;
+> The bit 0 of PLL_CFG0 register is not powerdown on zx296718, but part of
+> of postdiv2 field.  The consequence is that functions like hw_to_idx()
+> and zx_pll_enable() will end up tampering the postdiv2 of the PLL.
 > 
-> This can just go onto the stack? We don't need it around after
-> probe.
-
-Agree.
- 
-> > +	struct hi655x_clk *hi655x_clk;
-> > +	const char *clk_name = "hi655x-clk";
-> > +	int ret;
-> > +
-> > +	hi655x_clk = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk), GFP_KERNEL);
-> > +	if (!hi655x_clk)
-> > +		return -ENOMEM;
-> > +
-> > +	hi655x_clk_init = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk_init),
-> > +				       GFP_KERNEL);
-> > +	if (!hi655x_clk_init)
-> > +		return -ENOMEM;
-> > +
-> > +	of_property_read_string_index(parent->of_node, "clock-output-names",
-> > +				      0, &clk_name);
-> > +
-> > +	hi655x_clk_init->name	= clk_name;
-> > +	hi655x_clk_init->ops	= &hi655x_clk_ops;
-> > +
-> > +	hi655x_clk->clk_hw.init	= hi655x_clk_init;
-> > +	hi655x_clk->hi655x	= hi655x;
-> > +
-> > +	platform_set_drvdata(pdev, hi655x_clk);
-> > +
-> > +	ret = devm_clk_hw_register(&pdev->dev, &hi655x_clk->clk_hw);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
-> > +				     &hi655x_clk->clk_hw);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = clk_hw_register_clkdev(&hi655x_clk->clk_hw, clk_name, NULL);
+> Let's fix it by defining pd_bit 0xff which is obviously invalid for a
+> bit position and having PLL driver check the validity before operating
+> on the bit.
 > 
-> Missed this last time. Do you use this clkdev lookup? The name is
-> usually supposed to be based on what the device is expecting,
-> instead of clk_name, and we would want some device name for the
-> third argument here.
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> ---
 
-I'm not sure to get your comment. Are you saying the clk_name should be the
-third argument?
-
+Applied to clk-next
 
 -- 
-
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
