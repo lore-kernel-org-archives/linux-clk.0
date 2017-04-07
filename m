@@ -1,100 +1,44 @@
-Return-Path: <thomas.langer@intel.com>
-From: "Langer, Thomas" <thomas.langer@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Russell King
-	<linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, John Crispin <john@phrozen.org>, Ralf Baechle
-	<ralf@linux-mips.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] clk: Provide dummy of_clk_get_from_provider() for
- compile-testing
-Date: Fri, 28 Apr 2017 14:55:48 +0000
-Message-ID: <0DAF21CFE1B20740AE23D6AF6E54843F1E8AF019@IRSMSX101.ger.corp.intel.com>
-References: <1493384933-31297-1-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1493384933-31297-1-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <Alexey_Firago@mentor.com>
+From: Alexey Firago <alexey_firago@mentor.com>
+To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<marek.vasut@gmail.com>, <geert@linux-m68k.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+CC: Alexey Firago <alexey_firago@mentor.com>
+Subject: [PATCH v4 0/3] clk: Add support for IDT 5P49V5935
+Date: Fri, 7 Apr 2017 12:12:21 +0300
+Message-ID: <1491556344-9465-1-git-send-email-alexey_firago@mentor.com>
 MIME-Version: 1.0
-Return-Path: thomas.langer@intel.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+This series adds support for IDT VersaClock 5P49V5935 programmable clock
+generator to the existing clk-versaclock5 driver. Driver is also updated to
+simplify addition of support for more VersaClock 5 models. 
 
+Patches were verified on Avnet UltraZed-EG board with IO Carrier Card.
 
-> -----Original Message-----
-> From: devicetree-owner@vger.kernel.org [mailto:devicetree-
-> owner@vger.kernel.org] On Behalf Of Geert Uytterhoeven
-> Sent: Friday, April 28, 2017 3:09 PM
-> To: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
-> <sboyd@codeaurora.org>; Russell King <linux@armlinux.org.uk>; Rob Herring
-> <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>; John Crispin
-> <john@phrozen.org>; Ralf Baechle <ralf@linux-mips.org>
-> Cc: linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> mips@linux-mips.org; linux-kernel@vger.kernel.org; Geert Uytterhoeven
-> <geert+renesas@glider.be>
-> Subject: [PATCH v2] clk: Provide dummy of_clk_get_from_provider() for
-> compile-testing
->=20
-> When CONFIG_ON=3Dn, dummies are provided for of_clk_get() and
-> of_clk_get_by_name(), but not for of_clk_get_from_provider().
->=20
-> Provide a dummy for the latter, to improve the ability to do
-> compile-testing.  This requires removing the existing dummy in the
-> Lantiq clock code.
->=20
-> Fixes: 766e6a4ec602d0c1 ("clk: add DT clock binding support")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Changes in V2:
+- Introduce vc5_chip_info structure describing chip features
+- Set vc5_chip_info for the supported chips using clk_vc5_of_match[].data
+- Add 5P49V5935 support using vc5_chip_info approach
+- Fix idx comparison in vc5_of_clk_get ('>' to '>=')
 
-Regarding the Lantiq part:
-Acked-by: Thomas Langer <thomas.langer@intel.com>
+Changes in V3:
+- Change type of clk_fod_cnt and clk_out_cnt to unsigned int
+- Add missed 'const' to vc5_chip_info instance declaration
+- Use of_device_get_match_data() to initialize vc5_chip_info on probe 
 
-> ---
-> v2:
->   - Remove conflicting dummy in Lantiq clock code (reported by 0day).
-> ---
->  arch/mips/lantiq/clk.c | 5 -----
->  include/linux/clk.h    | 4 ++++
->  2 files changed, 4 insertions(+), 5 deletions(-)
->=20
-> diff --git a/arch/mips/lantiq/clk.c b/arch/mips/lantiq/clk.c
-> index 149f0513c4f5d0d4..a263d1b751ffe48d 100644
-> --- a/arch/mips/lantiq/clk.c
-> +++ b/arch/mips/lantiq/clk.c
-> @@ -160,11 +160,6 @@ void clk_deactivate(struct clk *clk)
->  }
->  EXPORT_SYMBOL(clk_deactivate);
->=20
-> -struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
-> -{
-> -	return NULL;
-> -}
-> -
->  static inline u32 get_counter_resolution(void)
->  {
->  	u32 res;
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index e9d36b3e49de5b1b..3ed97abb5cbb7f94 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -539,6 +539,10 @@ static inline struct clk *of_clk_get_by_name(struct
-> device_node *np,
->  {
->  	return ERR_PTR(-ENOENT);
->  }
-> +static inline struct clk *of_clk_get_from_provider(struct of_phandle_arg=
-s
-> *clkspec)
-> +{
-> +	return ERR_PTR(-ENOENT);
-> +}
->  #endif
->=20
->  #endif
-> --
-> 2.7.4
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Changes in V4:
+- Add 'const' to vc5_chip_info.flags
+
+Alexey Firago (3):
+  clk: vc5: Add structure to describe particular chip features
+  clk: vc5: Add bindings for IDT VersaClock 5P49V5935
+  clk: vc5: Add support for IDT VersaClock 5P49V5935
+
+ .../devicetree/bindings/clock/idt,versaclock5.txt  | 16 ++++-
+ drivers/clk/clk-versaclock5.c                      | 76 +++++++++++++++++-----
+ 2 files changed, 71 insertions(+), 21 deletions(-)
+
+-- 
+2.7.4
