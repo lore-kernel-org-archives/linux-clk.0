@@ -1,67 +1,56 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Tue, 4 Apr 2017 16:03:25 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 7 Apr 2017 12:41:07 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mars Cheng <mars.cheng@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: add missing Tegra210 clocks
-Message-ID: <20170404140325.GK843@ulmo.ba.sec>
-References: <1490192598-26862-1-git-send-email-pdeschrijver@nvidia.com>
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	CC Hwang <cc.hwang@mediatek.com>,
+	Loda Chou <loda.chou@mediatek.com>,
+	Miles Chen <miles.chen@mediatek.com>,
+	Jades Shih <jades.shih@mediatek.com>,
+	Yingjoe Chen <yingjoe.chen@mediatek.com>,
+	My Chuang <my.chuang@mediatek.com>, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+	wsd_upstream@mediatek.com, linux-clk@vger.kernel.org,
+	Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+Subject: Re: [PATCH v3 07/12] clk: mediatek: add clk support for MT6797
+Message-ID: <20170407194107.GE7065@codeaurora.org>
+References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
+ <1489937193-2953-8-git-send-email-mars.cheng@mediatek.com>
+ <20170406200852.GQ7065@codeaurora.org>
+ <1491521747.17643.6.camel@mtkswgap22>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7ArrI7P/b+va1vZ8"
-In-Reply-To: <1490192598-26862-1-git-send-email-pdeschrijver@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1491521747.17643.6.camel@mtkswgap22>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 04/07, Mars Cheng wrote:
+> Hi Stephen
+> 
+> On Thu, 2017-04-06 at 13:08 -0700, Stephen Boyd wrote:
+> > On 03/19, Mars Cheng wrote:
+> > > From: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+> > > 
+> > > Add MT6797 clock support, include topckgen, apmixedsys, infracfg
+> > > and subsystem clocks
+> > > 
+> > > Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+> > > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> > > Tested-by: Matthias Brugger <matthias.bgg@gmail.com>
+> > 
+> > Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+> > 
+> > Looks fine to me except for the one comment below. Did you want
+> > me to merge it into clk tree?
+> 
+> To prevent another run, I really like you to merge it.
+> However, I also want to make the patch set more cleaner.
+> So I will send v4 later. :-)  
 
---7ArrI7P/b+va1vZ8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok I'll merge v4 patch then.
 
-On Wed, Mar 22, 2017 at 04:23:16PM +0200, Peter De Schrijver wrote:
-> iqc1, iqc2, tegra_clk_pll_a_out_adsp, tegra_clk_pll_a_out0_out_adsp, adsp
-> and adsp neon were not modelled. dp2 wasn't modelled for Tegra210.
->=20
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-id.h               |  6 ++++++
->  drivers/clk/tegra/clk-tegra-periph.c     |  6 ++++++
->  drivers/clk/tegra/clk-tegra210.c         |  7 +++++++
->  include/dt-bindings/clock/tegra210-car.h | 16 ++++++++--------
->  4 files changed, 27 insertions(+), 8 deletions(-)
-
-Applied to for-4.12/clk, thanks.
-
-Thierry
-
---7ArrI7P/b+va1vZ8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljjp60ACgkQ3SOs138+
-s6Ff6BAAgAs8lgtU6unbMIYgOq6qzmXu6z3uHvHTZMYMDC+XMMd9r885n2gTgEtV
-Njq0cGyCFySlIK2ZXW2lb0lyNP1EaQcdVDufWIbJSxyuMe7y4dZ+lXBBqO0qPBPo
-I7WKpfKhvbBcrQjpdlHQEHYAc2gdn5V6XbuZLDNAGIelm596AxI3vSS4lnz0FIPd
-2SFXRJHib5kMcxeV7NTo2ZyEL8cKSsDQnLYmi/gNcTp07YriuE7Cu/jZrCrCiaDd
-7EQOkrZ3/sdmAwlUvJTcMkuT4dTXNfzY6wgNNJkl4H2Gas2ZYAMlLcUNai95Nduk
-icYIx8ixKpJERmJyyYN0/sx0uYipc/4oK2N2zESN093bWOFkKpw7Wg/d4TWA742U
-rHgzccw6TleWDqBQcgIZ9eGF5iq5LFWlJHm/IJ7RYdzvrWVFAAYGEBK402yZylac
-ipNf40XFr74uc9K/BZ93PJheI60B5Vd+Z7z/qpbFa/Pwb/eZsIL50J/4jhlEeisZ
-B29tof7/ylHcvmi4bzn6wenXJ7jbWgsoCkOQ/uas92AsOJtWLo9rNLE1suSYy3Cj
-ZxBz4Yk/MxmgUz3yLixflyEuP0uYyS96k7yuPmP+xt5EQqqTWFKG6gFp6MTLQ91v
-sXhIyOdLaX/m4Mya4bG9zVK5WWq2gzVfyvIxltLBaGvnRyWhIwI=
-=SOvC
------END PGP SIGNATURE-----
-
---7ArrI7P/b+va1vZ8--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
