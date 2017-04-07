@@ -1,556 +1,232 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] clk: Add functions to save and restore clock/dpll context
- en-masse
-To: Keerthy <j-keerthy@ti.com>, <sboyd@codeaurora.org>,
-        <mturquette@baylibre.com>
-References: <1492492369-19662-1-git-send-email-j-keerthy@ti.com>
-CC: <linux@armlinux.org.uk>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        Russ Dill
-	<Russ.Dill@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <18f86639-15a2-b2cf-8668-e1992fb88aab@ti.com>
-Date: Tue, 18 Apr 2017 18:00:40 +0300
+Return-Path: <daniel.lezcano@linaro.org>
+Return-Path: <daniel.lezcano@linaro.org>
+Date: Fri, 7 Apr 2017 15:46:27 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: mturquette@baylibre.com, sboyd@codeaurora.org, lee.jones@linaro.org
+Cc: linux-kernel@vger.kernel.org, guodong.xu@linaro.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: hi6220: Add the hi655x's pmic clock
+Message-ID: <20170407134627.GL2078@mai>
+References: <1489737531-3036-1-git-send-email-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1492492369-19662-1-git-send-email-j-keerthy@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1489737531-3036-1-git-send-email-daniel.lezcano@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 18/04/17 08:12, Keerthy wrote:
-> From: Russ Dill <Russ.Dill@ti.com>
->
-> The clock/dpll registers are in the WKUP power domain. Under both RTC-only
-> suspend and hibernation, these registers are lost. Hence save/restore
-> them accordingly.
->
-> Signed-off-by: Russ Dill <Russ.Dill@ti.com>
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
+On Fri, Mar 17, 2017 at 08:58:49AM +0100, Daniel Lezcano wrote:
+> The hi655x multi function device is a PMIC providing regulators.
+> 
+> The PMIC also provides a clock for the WiFi and the Bluetooth, let's implement
+> this clock in order to add it in the hi655x MFD and allow proper wireless
+> initialization.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-I think the core support should be provided in a separate patch, and the 
-TI clock driver stuff added after that. And, for each clock driver, 
-provide a separate patch for the context save/restore also.
+Hi Mike, Stephane,
 
-Some additional comments provided below.
+is there any comment on this driver?
+
+Thanks.
+
+  -- Daniel
 
 > ---
->  drivers/clk/clk.c            |  70 ++++++++++++++++++++++++
->  drivers/clk/ti/divider.c     |  36 +++++++++++++
->  drivers/clk/ti/dpll.c        |   6 +++
->  drivers/clk/ti/dpll3xxx.c    | 124 +++++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/ti/gate.c        |   3 ++
->  drivers/clk/ti/mux.c         |  29 ++++++++++
->  include/linux/clk-provider.h |  11 ++++
->  include/linux/clk.h          |  25 +++++++++
->  include/linux/clk/ti.h       |   6 +++
->  9 files changed, 310 insertions(+)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index cddddbe..1ca87f4 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -687,6 +687,76 @@ static int clk_core_enable_lock(struct clk_core *core)
->  	return ret;
->  }
->
-> +void clk_dflt_restore_context(struct clk_hw *hw)
+>  drivers/clk/Kconfig      |   8 +++
+>  drivers/clk/Makefile     |   1 +
+>  drivers/clk/clk-hi655x.c | 145 +++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 154 insertions(+)
+>  create mode 100644 drivers/clk/clk-hi655x.c
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 9356ab4..471a433 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -47,6 +47,14 @@ config COMMON_CLK_RK808
+>  	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
+>  	  by control register.
+>  
+> +config COMMON_CLK_HI655X
+> +	tristate "Clock driver for Hi655x"
+> +	depends on MFD_HI655X_PMIC
+> +	---help---
+> +	  This driver supports the hi655x PMIC clock. This
+> +	  multi-function device has one fixed-rate oscillator, clocked
+> +	  at 32KHz.
+> +
+>  config COMMON_CLK_SCPI
+>  	tristate "Clock driver controlled via SCPI interface"
+>  	depends on ARM_SCPI_PROTOCOL || COMPILE_TEST
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index 92c12b8..c19983a 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -36,6 +36,7 @@ obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
+>  obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
+>  obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
+>  obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
+> +obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
+>  obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
+>  obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
+>  obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
+> diff --git a/drivers/clk/clk-hi655x.c b/drivers/clk/clk-hi655x.c
+> new file mode 100644
+> index 0000000..f827d76
+> --- /dev/null
+> +++ b/drivers/clk/clk-hi655x.c
+> @@ -0,0 +1,145 @@
+> +/* Clock driver for Hi655x
+> + *
+> + * Copyright (c) 2016, Linaro Ltd.
+> + *
+> + * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/hi655x-pmic.h>
+> +
+> +#define HI655X_CLK_BASE	HI655X_BUS_ADDR(0x1c)
+> +#define HI655X_CLK_SET	BIT(6)
+> +
+> +struct hi655x_clk {
+> +	struct hi655x_pmic *hi655x;
+> +	struct clk_hw       clk_hw;
+> +};
+> +
+> +static unsigned long hi655x_clk_recalc_rate(struct clk_hw *hw,
+> +					    unsigned long parent_rate)
 > +{
-> +	if (hw->clk->core->enable_count)
-> +		hw->clk->core->ops->enable(hw);
-> +	else
-> +		hw->clk->core->ops->disable(hw);
+> +	return 32768;
 > +}
-> +EXPORT_SYMBOL_GPL(clk_dflt_restore_context);
-
-Is the above really needed? I guess it is mainly for optimization 
-purposes so that we don't need to read the HW state for every 
-save/restore cycle (which makes it rather important as such...?)
-
 > +
-> +static int clk_save_context(struct clk_core *clk)
+> +static int hi655x_clk_enable(struct clk_hw *hw, bool enable)
 > +{
-> +	struct clk_core *child;
-> +	int ret = 0;
+> +	struct hi655x_clk *hi655x_clk =
+> +		container_of(hw, struct hi655x_clk, clk_hw);
 > +
-> +	hlist_for_each_entry(child, &clk->children, child_node) {
-> +		ret = clk_save_context(child);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
+> +	struct hi655x_pmic *hi655x = hi655x_clk->hi655x;
 > +
-> +	if (clk->ops && clk->ops->save_context)
-> +		ret = clk->ops->save_context(clk->hw);
-> +
-> +	return ret;
+> +	return regmap_update_bits(hi655x->regmap, HI655X_CLK_BASE,
+> +				  HI655X_CLK_SET, enable ? HI655X_CLK_SET : 0);
 > +}
 > +
-> +static void clk_restore_context(struct clk_core *clk)
+> +static int hi655x_clk_prepare(struct clk_hw *hw)
 > +{
-> +	struct clk_core *child;
-> +
-> +	if (clk->ops && clk->ops->restore_context)
-> +		clk->ops->restore_context(clk->hw);
-> +
-> +	hlist_for_each_entry(child, &clk->children, child_node)
-> +		clk_restore_context(child);
+> +	return hi655x_clk_enable(hw, true);
 > +}
 > +
-> +int clks_save_context(void)
+> +static void hi655x_clk_unprepare(struct clk_hw *hw)
 > +{
-> +	struct clk_core *clk;
+> +	hi655x_clk_enable(hw, false);
+> +}
+> +
+> +static int hi655x_clk_is_prepared(struct clk_hw *hw)
+> +{
+> +	struct hi655x_clk *hi655x_clk =
+> +		container_of(hw, struct hi655x_clk, clk_hw);
+> +	struct hi655x_pmic *hi655x = hi655x_clk->hi655x;
+> +	int ret;
+> +	uint32_t val;
+> +
+> +	ret = regmap_read(hi655x->regmap, HI655X_CLK_BASE, &val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return (val & HI655X_CLK_BASE);
+> +}
+> +
+> +static const struct clk_ops hi655x_clk_ops = {
+> +	.prepare     = hi655x_clk_prepare,
+> +	.unprepare   = hi655x_clk_unprepare,
+> +	.is_prepared = hi655x_clk_is_prepared,
+> +	.recalc_rate = hi655x_clk_recalc_rate,
+> +};
+> +
+> +static struct clk_hw *of_clk_hi655x_get(struct of_phandle_args *clkspec,
+> +					void *data)
+> +{
+> +	struct hi655x_clk *hi655x_clk = data;
+> +
+> +	return &hi655x_clk->clk_hw;
+> +}
+> +
+> +static int hi655x_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct device *parent = pdev->dev.parent;
+> +	struct hi655x_pmic *hi655x = dev_get_drvdata(parent);
+> +	struct clk_init_data *hi655x_clk_init;
+> +	struct hi655x_clk *hi655x_clk;
+> +	const char *clk_name = "hi655x-clk";
 > +	int ret;
 > +
-> +	hlist_for_each_entry(clk, &clk_root_list, child_node) {
-> +		ret = clk_save_context(clk);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
+> +	hi655x_clk = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk), GFP_KERNEL);
+> +	if (!hi655x_clk)
+> +		return -ENOMEM;
 > +
-> +	hlist_for_each_entry(clk, &clk_orphan_list, child_node) {
-> +		ret = clk_save_context(clk);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
+> +	hi655x_clk_init = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk_init), GFP_KERNEL);
+> +	if (!hi655x_clk_init)
+> +		return -ENOMEM;
 > +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(clks_save_context);
+> +	ret = of_property_read_string_index(parent->of_node, "clock-output-names",
+> +					    0, &clk_name);
+> +	if (ret)
+> +		return ret;
 > +
-> +void clks_restore_context(void)
-> +{
-> +	struct clk_core *clk;
+> +	hi655x_clk_init->name	= clk_name;
+> +	hi655x_clk_init->ops	= &hi655x_clk_ops;
 > +
-> +	hlist_for_each_entry(clk, &clk_root_list, child_node)
-> +		clk_restore_context(clk);
+> +	hi655x_clk->clk_hw.init	= hi655x_clk_init;
+> +	hi655x_clk->hi655x	= hi655x;
 > +
-> +	hlist_for_each_entry(clk, &clk_orphan_list, child_node)
-> +		clk_restore_context(clk);
-> +}
-> +EXPORT_SYMBOL_GPL(clks_restore_context);
+> +	platform_set_drvdata(pdev, hi655x_clk);
 > +
->  /**
->   * clk_enable - ungate a clock
->   * @clk: the clk being ungated
-> diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-> index d6dcb28..350a58a 100644
-> --- a/drivers/clk/ti/divider.c
-> +++ b/drivers/clk/ti/divider.c
-> @@ -266,10 +266,46 @@ static int ti_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
->  	return 0;
->  }
->
-> +/**
-> + * clk_divider_save_context - Save the divider value
-> + * @hw: pointer  struct clk_hw
-> + *
-> + * Save the divider value
-> + */
-> +static int clk_divider_save_context(struct clk_hw *hw)
-> +{
-> +	struct clk_divider *divider = to_clk_divider(hw);
-> +	u32 val;
+> +	ret = devm_clk_hw_register(&pdev->dev, &hi655x_clk->clk_hw);
+> +	if (ret)
+> +		return ret;
 > +
-> +	val = ti_clk_ll_ops->clk_readl(divider->reg) >> divider->shift;
-> +	divider->context = val & div_mask(divider);
+> +	ret = clk_hw_register_clkdev(&hi655x_clk->clk_hw, clk_name, NULL);
+> +	if (ret)
+> +		return ret;
 > +
-> +	return 0;
+> +	return of_clk_add_hw_provider(parent->of_node,
+> +				      of_clk_hi655x_get, hi655x_clk);
 > +}
 > +
-> +/**
-> + * clk_divider_restore_context - restore the saved the divider value
-> + * @hw: pointer  struct clk_hw
-> + *
-> + * Restore the saved the divider value
-> + */
-> +static void clk_divider_restore_context(struct clk_hw *hw)
-> +{
-> +	struct clk_divider *divider = to_clk_divider(hw);
-> +	u32 val;
+> +static struct platform_driver hi655x_clk_driver = {
+> +	.probe =  hi655x_clk_probe,
+> +	.driver		= {
+> +		.name	= "hi655x-clk",
+> +	},
+> +};
 > +
-> +	val = ti_clk_ll_ops->clk_readl(divider->reg);
-> +	val &= ~(div_mask(divider) << divider->shift);
-> +	val |= divider->context << divider->shift;
-> +	ti_clk_ll_ops->clk_writel(val, divider->reg);
-> +}
+> +module_platform_driver(hi655x_clk_driver);
 > +
->  const struct clk_ops ti_clk_divider_ops = {
->  	.recalc_rate = ti_clk_divider_recalc_rate,
->  	.round_rate = ti_clk_divider_round_rate,
->  	.set_rate = ti_clk_divider_set_rate,
-> +	.save_context = clk_divider_save_context,
-> +	.restore_context = clk_divider_restore_context,
->  };
->
->  static struct clk *_register_divider(struct device *dev, const char *name,
-> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-> index 96d8488..791dd31 100644
-> --- a/drivers/clk/ti/dpll.c
-> +++ b/drivers/clk/ti/dpll.c
-> @@ -39,6 +39,8 @@
->  	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
->  	.determine_rate	= &omap4_dpll_regm4xen_determine_rate,
->  	.get_parent	= &omap2_init_dpll_parent,
-> +	.save_context	= &omap3_core_dpll_save_context,
-> +	.restore_context = &omap3_core_dpll_restore_context,
+> +MODULE_DESCRIPTION("Clk driver for the hi655x series PMICs");
+> +MODULE_AUTHOR("Daniel Lezcano <daniel.lezcano@linaro.org>");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:hi655x-clk");
+> -- 
+> 1.9.1
+> 
 
-Is this part ever executed? The save/restore code is only used on am43xx 
-right now for TI SoCs, and this piece of code is conditionally compiled 
-out unless OMAP4+ is supported.
+-- 
 
->  };
->  #else
->  static const struct clk_ops dpll_m4xen_ck_ops = {};
-> @@ -62,6 +64,8 @@
->  	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
->  	.determine_rate	= &omap3_noncore_dpll_determine_rate,
->  	.get_parent	= &omap2_init_dpll_parent,
-> +	.save_context	= &omap3_noncore_dpll_save_context,
-> +	.restore_context = &omap3_noncore_dpll_restore_context,
->  };
->
->  static const struct clk_ops dpll_no_gate_ck_ops = {
-> @@ -72,6 +76,8 @@
->  	.set_parent	= &omap3_noncore_dpll_set_parent,
->  	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
->  	.determine_rate	= &omap3_noncore_dpll_determine_rate,
-> +	.save_context	= &omap3_noncore_dpll_save_context,
-> +	.restore_context = &omap3_noncore_dpll_restore_context
->  };
->  #else
->  static const struct clk_ops dpll_core_ck_ops = {};
-> diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
-> index 4534de2..44b6b64 100644
-> --- a/drivers/clk/ti/dpll3xxx.c
-> +++ b/drivers/clk/ti/dpll3xxx.c
-> @@ -782,6 +782,130 @@ unsigned long omap3_clkoutx2_recalc(struct clk_hw *hw,
->  	return rate;
->  }
->
-> +/**
-> + * omap3_core_dpll_save_context - Save the m and n values of the divider
-> + * @hw: pointer  struct clk_hw
-> + *
-> + * Before the dpll registers are lost save the last rounded rate m and n
-> + * and the enable mask.
-> + */
-> +int omap3_core_dpll_save_context(struct clk_hw *hw)
-> +{
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Do we need this and the function below at all? Can you double check if 
-it is ever executed?
-
-> +	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-> +	struct dpll_data *dd;
-> +	u32 v;
-> +
-> +	dd = clk->dpll_data;
-> +
-> +	v = ti_clk_ll_ops->clk_readl(&dd->control_reg);
-> +	clk->context = (v & dd->enable_mask) >> __ffs(dd->enable_mask);
-> +
-> +	if (clk->context == DPLL_LOCKED) {
-> +		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-> +		dd->last_rounded_m = (v & dd->mult_mask) >>
-> +						__ffs(dd->mult_mask);
-> +		dd->last_rounded_n = ((v & dd->div1_mask) >>
-> +						__ffs(dd->div1_mask)) + 1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * omap3_core_dpll_restore_context - restore the m and n values of the divider
-> + * @hw: pointer  struct clk_hw
-> + *
-> + * Restore the last rounded rate m and n
-> + * and the enable mask.
-> + */
-> +void omap3_core_dpll_restore_context(struct clk_hw *hw)
-> +{
-> +	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-> +	const struct dpll_data *dd;
-> +	u32 v;
-> +
-> +	dd = clk->dpll_data;
-> +
-> +	if (clk->context == DPLL_LOCKED) {
-> +		_omap3_dpll_write_clken(clk, 0x4);
-> +		_omap3_wait_dpll_status(clk, 0);
-> +
-> +		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-> +		v &= ~(dd->mult_mask | dd->div1_mask);
-> +		v |= dd->last_rounded_m << __ffs(dd->mult_mask);
-> +		v |= (dd->last_rounded_n - 1) << __ffs(dd->div1_mask);
-> +		ti_clk_ll_ops->clk_writel(v, &dd->mult_div1_reg);
-> +
-> +		_omap3_dpll_write_clken(clk, DPLL_LOCKED);
-> +		_omap3_wait_dpll_status(clk, 1);
-> +	} else {
-> +		_omap3_dpll_write_clken(clk, clk->context);
-> +	}
-> +}
-> +
-> +/**
-> + * omap3_non_core_dpll_save_context - Save the m and n values of the divider
-> + * @hw: pointer  struct clk_hw
-> + *
-> + * Before the dpll registers are lost save the last rounded rate m and n
-> + * and the enable mask.
-> + */
-> +int omap3_noncore_dpll_save_context(struct clk_hw *hw)
-> +{
-> +	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-> +	struct dpll_data *dd;
-> +	u32 v;
-> +
-> +	dd = clk->dpll_data;
-> +
-> +	v = ti_clk_ll_ops->clk_readl(&dd->control_reg);
-> +	clk->context = (v & dd->enable_mask) >> __ffs(dd->enable_mask);
-> +
-> +	if (clk->context == DPLL_LOCKED) {
-> +		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-> +		dd->last_rounded_m = (v & dd->mult_mask) >>
-> +						__ffs(dd->mult_mask);
-> +		dd->last_rounded_n = ((v & dd->div1_mask) >>
-> +						__ffs(dd->div1_mask)) + 1;
-
-This part could potentially be optimized so that you don't need to read 
-the mult_div1_reg ever here. last_rounded_m/n should typically be set to 
-the latest value, unless clock framework has ever setup the rate for the 
-dpll. In this case, you could just read these during the registration of 
-the clock.
-
--Tero
-
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * omap3_core_dpll_restore_context - restore the m and n values of the divider
-> + * @hw: pointer  struct clk_hw
-> + *
-> + * Restore the last rounded rate m and n
-> + * and the enable mask.
-> + */
-> +void omap3_noncore_dpll_restore_context(struct clk_hw *hw)
-> +{
-> +	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-> +	const struct dpll_data *dd;
-> +	u32 ctrl, mult_div1;
-> +
-> +	dd = clk->dpll_data;
-> +
-> +	ctrl = ti_clk_ll_ops->clk_readl(&dd->control_reg);
-> +	mult_div1 = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-> +
-> +	if (clk->context == ((ctrl & dd->enable_mask) >>
-> +			     __ffs(dd->enable_mask)) &&
-> +	    dd->last_rounded_m == ((mult_div1 & dd->mult_mask) >>
-> +				   __ffs(dd->mult_mask)) &&
-> +	    dd->last_rounded_n == ((mult_div1 & dd->div1_mask) >>
-> +				   __ffs(dd->div1_mask)) + 1) {
-> +		/* nothing to be done */
-> +		return;
-> +	}
-> +
-> +	if (clk->context == DPLL_LOCKED)
-> +		omap3_noncore_dpll_program(clk, 0);
-> +	else
-> +		_omap3_dpll_write_clken(clk, clk->context);
-> +}
-> +
->  /* OMAP3/4 non-CORE DPLL clkops */
->  const struct clk_hw_omap_ops clkhwops_omap3_dpll = {
->  	.allow_idle	= omap3_dpll_allow_idle,
-> diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
-> index 7151ec3..098db66 100644
-> --- a/drivers/clk/ti/gate.c
-> +++ b/drivers/clk/ti/gate.c
-> @@ -33,6 +33,7 @@
->  	.init		= &omap2_init_clk_clkdm,
->  	.enable		= &omap2_clkops_enable_clkdm,
->  	.disable	= &omap2_clkops_disable_clkdm,
-> +	.restore_context = clk_dflt_restore_context,
->  };
->
->  const struct clk_ops omap_gate_clk_ops = {
-> @@ -40,6 +41,7 @@
->  	.enable		= &omap2_dflt_clk_enable,
->  	.disable	= &omap2_dflt_clk_disable,
->  	.is_enabled	= &omap2_dflt_clk_is_enabled,
-> +	.restore_context = clk_dflt_restore_context,
->  };
->
->  static const struct clk_ops omap_gate_clk_hsdiv_restore_ops = {
-> @@ -47,6 +49,7 @@
->  	.enable		= &omap36xx_gate_clk_enable_with_hsdiv_restore,
->  	.disable	= &omap2_dflt_clk_disable,
->  	.is_enabled	= &omap2_dflt_clk_is_enabled,
-> +	.restore_context = clk_dflt_restore_context,
->  };
->
->  /**
-> diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-> index 18c267b..e73764a 100644
-> --- a/drivers/clk/ti/mux.c
-> +++ b/drivers/clk/ti/mux.c
-> @@ -90,10 +90,39 @@ static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
->  	return 0;
->  }
->
-> +/**
-> + * clk_mux_save_context - Save the parent selcted in the mux
-> + * @hw: pointer  struct clk_hw
-> + *
-> + * Save the parent mux value.
-> + */
-> +static int clk_mux_save_context(struct clk_hw *hw)
-> +{
-> +	struct clk_mux *mux = to_clk_mux(hw);
-> +
-> +	mux->saved_parent = ti_clk_mux_get_parent(hw);
-> +	return 0;
-> +}
-> +
-> +/**
-> + * clk_mux_restore_context - Restore the parent in the mux
-> + * @hw: pointer  struct clk_hw
-> + *
-> + * Restore the saved parent mux value.
-> + */
-> +static void clk_mux_restore_context(struct clk_hw *hw)
-> +{
-> +	struct clk_mux *mux = to_clk_mux(hw);
-> +
-> +	ti_clk_mux_set_parent(hw, mux->saved_parent);
-> +}
-> +
->  const struct clk_ops ti_clk_mux_ops = {
->  	.get_parent = ti_clk_mux_get_parent,
->  	.set_parent = ti_clk_mux_set_parent,
->  	.determine_rate = __clk_mux_determine_rate,
-> +	.save_context = clk_mux_save_context,
-> +	.restore_context = clk_mux_restore_context,
->  };
->
->  static struct clk *_register_mux(struct device *dev, const char *name,
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index a428aec..2a8f636 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -103,6 +103,11 @@ struct clk_rate_request {
->   *		Called with enable_lock held.  This function must not
->   *		sleep.
->   *
-> + * @save_context: Save the context of the clock in prepration for poweroff.
-> + *
-> + * @restore_context: Restore the context of the clock after a restoration
-> + *		of power.
-> + *
->   * @recalc_rate	Recalculate the rate of this clock, by querying hardware. The
->   *		parent rate is an input parameter.  It is up to the caller to
->   *		ensure that the prepare_mutex is held across this call.
-> @@ -198,6 +203,8 @@ struct clk_ops {
->  	void		(*disable)(struct clk_hw *hw);
->  	int		(*is_enabled)(struct clk_hw *hw);
->  	void		(*disable_unused)(struct clk_hw *hw);
-> +	int		(*save_context)(struct clk_hw *hw);
-> +	void		(*restore_context)(struct clk_hw *hw);
->  	unsigned long	(*recalc_rate)(struct clk_hw *hw,
->  					unsigned long parent_rate);
->  	long		(*round_rate)(struct clk_hw *hw, unsigned long rate,
-> @@ -394,6 +401,7 @@ struct clk_divider {
->  	u8		flags;
->  	const struct clk_div_table	*table;
->  	spinlock_t	*lock;
-> +	u32		context;
->  };
->
->  #define to_clk_divider(_hw) container_of(_hw, struct clk_divider, hw)
-> @@ -471,6 +479,7 @@ struct clk_mux {
->  	u8		shift;
->  	u8		flags;
->  	spinlock_t	*lock;
-> +	u8		saved_parent;
->  };
->
->  #define to_clk_mux(_hw) container_of(_hw, struct clk_mux, hw)
-> @@ -912,5 +921,7 @@ struct dentry *clk_debugfs_add_file(struct clk_hw *hw, char *name, umode_t mode,
->  				void *data, const struct file_operations *fops);
->  #endif
->
-> +void clk_dflt_restore_context(struct clk_hw *hw);
-> +
->  #endif /* CONFIG_COMMON_CLK */
->  #endif /* CLK_PROVIDER_H */
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 024cd07..d071a65 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -438,6 +438,23 @@ struct clk *devm_get_clk_from_child(struct device *dev,
->   */
->  struct clk *clk_get_sys(const char *dev_id, const char *con_id);
->
-> +/**
-> + * clks_save_context - save clock context for poweroff
-> + *
-> + * Saves the context of the clock register for powerstates in which the
-> + * contents of the registers will be lost. Occurs deep within the suspend
-> + * code so locking is not necessary.
-> + */
-> +int clks_save_context(void);
-> +
-> +/**
-> + * clks_restore_context - restore clock context after poweroff
-> + *
-> + * This occurs with all clocks enabled. Occurs deep within the resume code
-> + * so locking is not necessary.
-> + */
-> +void clks_restore_context(void);
-> +
->  #else /* !CONFIG_HAVE_CLK */
->
->  static inline struct clk *clk_get(struct device *dev, const char *id)
-> @@ -501,6 +518,14 @@ static inline struct clk *clk_get_sys(const char *dev_id, const char *con_id)
->  {
->  	return NULL;
->  }
-> +
-> +static inline int clks_save_context(void)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline void clks_restore_context(void) {}
-> +
->  #endif
->
->  /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
-> diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-> index d18da83..f604936 100644
-> --- a/include/linux/clk/ti.h
-> +++ b/include/linux/clk/ti.h
-> @@ -159,6 +159,7 @@ struct clk_hw_omap {
->  	const char		*clkdm_name;
->  	struct clockdomain	*clkdm;
->  	const struct clk_hw_omap_ops	*ops;
-> +	u32			context;
->  };
->
->  /*
-> @@ -290,6 +291,11 @@ struct ti_clk_features {
->
->  void ti_clk_setup_features(struct ti_clk_features *features);
->  const struct ti_clk_features *ti_clk_get_features(void);
-> +int omap3_noncore_dpll_save_context(struct clk_hw *hw);
-> +void omap3_noncore_dpll_restore_context(struct clk_hw *hw);
-> +
-> +int omap3_core_dpll_save_context(struct clk_hw *hw);
-> +void omap3_core_dpll_restore_context(struct clk_hw *hw);
->
->  extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
->
->
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
