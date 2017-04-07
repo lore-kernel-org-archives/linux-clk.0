@@ -1,56 +1,35 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 0/6] Samsung clock providers: convert to the new clk_hw API
-Date: Mon, 24 Apr 2017 08:42:17 +0200
-Message-id: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
-References: 
- <CGME20170424064228eucas1p26228b4b334cc22ad22e77c8dd2e7dcdd@eucas1p2.samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 7 Apr 2017 09:53:04 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [GIT PULL] clk: tegra: Changes for v4.12-rc1
+Message-ID: <20170407165304.GV7065@codeaurora.org>
+References: <20170406230901.31704-1-thierry.reding@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170406230901.31704-1-thierry.reding@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear All,
+On 04/07, Thierry Reding wrote:
+> Hi Michael, Stephen,
+> 
+> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+> 
+>   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.12-clk
+> 
+> for you to fetch changes up to 1116d5a7aff205b6d9879a6458788cac20d0cdf3:
+> 
+>   clk: tegra: Don't reset PLL-CX if it is already enabled (2017-04-04 16:06:05 +0200)
+> 
 
-Clock providers should use the new struct clk_hw based API, so convert
-all Samsung clock providers and their helper functions to the new approach.
-
-Patches are based on top of linux-next from 20170420.
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Changle log:
-v2:
-- moved some changes to separate patches as requested by Krzysztof Kozlowski
-
-v1:
-- initial version
-
-Marek Szyprowski (6):
-  clk: samsung: Remove dead code
-  clk: samsung: Add local variable to match it purpose
-  clk: samsung: Convert common drivers to the new clk_hw API
-  clk: samsung: exynos-audss: Convert to the new clk_hw API
-  clk: samsung: exynos-clkout: Convert to the new clk_hw API
-  clk: samsung: s5pv210-audss: Convert to the new clk_hw API
-
- drivers/clk/samsung/clk-cpu.c           | 15 +++---
- drivers/clk/samsung/clk-exynos-audss.c  | 55 ++++++++++----------
- drivers/clk/samsung/clk-exynos-clkout.c | 18 +++----
- drivers/clk/samsung/clk-pll.c           | 14 ++---
- drivers/clk/samsung/clk-pll.h           |  4 --
- drivers/clk/samsung/clk-s3c2410-dclk.c  | 75 ++++++++++++++-------------
- drivers/clk/samsung/clk-s5pv210-audss.c | 50 +++++++++---------
- drivers/clk/samsung/clk.c               | 91 +++++++++++++++------------------
- drivers/clk/samsung/clk.h               |  9 ++--
- 9 files changed, 159 insertions(+), 172 deletions(-)
+Thanks. Pulled into clk-next.
 
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
