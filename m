@@ -1,31 +1,31 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Mon, 17 Apr 2017 09:38:01 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Viresh Kumar <vireshk@kernel.org>,
-	Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/2] ADC support for SPEAr600
-Message-ID: <20170417040801.GB28191@vireshk-i7>
-References: <1492203072-27771-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 7 Apr 2017 12:22:15 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Jun Nie <jun.nie@linaro.org>,
+	Baoyou Xie <xie.baoyou@zte.com.cn>, Xin Zhou <zhou.xin8@zte.com.cn>,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH 3/3] clk: zte: add pll_vga clock for zx296718
+Message-ID: <20170407192215.GA7065@codeaurora.org>
+References: <1490085503-15713-1-git-send-email-shawnguo@kernel.org>
+ <1490085503-15713-4-git-send-email-shawnguo@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1492203072-27771-1-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1490085503-15713-4-git-send-email-shawnguo@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14-04-17, 22:51, Thomas Petazzoni wrote:
-> Hello,
+On 03/21, Shawn Guo wrote:
+> From: Shawn Guo <shawn.guo@linaro.org>
 > 
-> This set of two patches add support for the ADC of the SPEAr600, using
-> the existing spear_adc driver. Only a Device Tree description and a
-> minor clock fix are needed to make the ADC work.
+> It adds zx296718 pll_vga clock for VGA support, so that VGA device can
+> get required pixel rate from clock driver for different display mode.
+> 
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> ---
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
-Please send them to arm-soc as well.
+Applied to clk-next
 
 -- 
-viresh
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
