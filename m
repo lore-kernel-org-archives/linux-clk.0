@@ -1,53 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:36568 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753320AbdDEHJW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2017 03:09:22 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170405013815.GK18246@codeaurora.org>
-References: <1491214089-14093-1-git-send-email-geert+renesas@glider.be> <20170405013815.GK18246@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Apr 2017 09:09:20 +0200
-Message-ID: <CAMuHMdWSLKjcyQP25mPCwn8EV1xzAyC=AipT8E0DbeVoEeemAw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] arm: dts: renesas: Drop _clk suffix from clock node names
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 0/5] Some Allwinner CCU tweaks and basical DVFS support for H3/H2+
+Date: Sun,  9 Apr 2017 02:50:20 +0800
+Message-Id: <20170408185025.53841-1-icenowy@aosc.io>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+This patchset aim to add basical DVFS support for Allwinner H3/H2+ SoCs, they
+seem to be nearly the same.
 
-On Wed, Apr 5, 2017 at 3:38 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 04/03, Geert Uytterhoeven wrote:
->> The current practice is to not add _clk suffixes to clock node names in
->> DT, as these names are used as the actual clock names.
->>
->> This patch removes the remaining offenders in the various Renesas DTSes.
->
-> This changes the names in the clk framework too though? If you're
-> ok with that I'm ok too.
+The first patch is a CCU fix for all NKMP-type clocks, not H3 limited. Please
+schedule this patch to 4.11 queue, as A33 needs also this patch. It solves the
+problem that system hangs when the PLL_CPUX change for the first time.
 
-Yes, that's my main motivation doing this: it's a bit silly to have some clocks
-show up in /sys/kernel/debug/clk/clk_summary with a "_clk" suffix.
+The second patch allows the PLL_CPUX to change for CPUX clock on H3.
 
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+The third patch imports a bunch of new SoCs' compatibles into
+cpufreq-dt-platdev driver.
 
-Thanks!
+The fourth patch adds several operating points for Allwinner H3/H2+ CPU.
 
-Gr{oetje,eeting}s,
+The fifth patch adds the regulator node to Orange Pi Zero board's device
+tree.
 
-                        Geert
+Icenowy Zheng (5):
+  clk: sunxi-ng: prevent NKMP clocks from temporarily get higher freq
+  clk: sunxi-ng: allow set parent clock (PLL_CPUX) for CPUX clock on H3
+  cpufreq: dt: Add support for some new Allwinner SoCs
+  ARM: sun8i: h3: add operating-points-v2 table for CPU
+  ARM: sun8i: h2+: add SY8113B regulator used by Orange Pi Zero board
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts | 21 +++++++
+ arch/arm/boot/dts/sun8i-h3.dtsi                   | 38 +++++++++++-
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c               |  2 +-
+ drivers/clk/sunxi-ng/ccu_nkmp.c                   | 76 +++++++++++++++++++----
+ drivers/cpufreq/cpufreq-dt-platdev.c              |  5 ++
+ 5 files changed, 129 insertions(+), 13 deletions(-)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+2.12.2
