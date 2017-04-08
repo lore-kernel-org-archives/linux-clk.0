@@ -1,36 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:41448 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965599AbdDSQOn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Apr 2017 12:14:43 -0400
-Date: Wed, 19 Apr 2017 09:14:35 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Stefan Agner <stefan@agner.ch>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, aisheng.dong@nxp.com,
-        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: imx7d: fix USDHC NAND clock
-Message-ID: <20170419161435.GA7065@codeaurora.org>
-References: <20170410210015.1620-1-stefan@agner.ch>
+Return-Path: <jic23@kernel.org>
+Subject: Re: [PATCH v5 2/2] iio: Aspeed ADC
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <20170328215259.31622-1-raltherr@google.com>
+ <20170328215259.31622-2-raltherr@google.com>
+ <d05cadfe-e3d3-f4e8-129f-19dcd2f637da@kernel.org>
+ <20170405215046.GE7065@codeaurora.org>
+Cc: Rick Altherr <raltherr@google.com>, openbmc@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, William Breathitt Gray
+ <vilhelm.gray@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+ Andreas Klinger <ak@it-klinger.de>, Rob Herring <robh@kernel.org>,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+ Quentin Schulz <quentin.schulz@free-electrons.com>,
+ linux-iio@vger.kernel.org, Zhiyong Tao <zhiyong.tao@mediatek.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>,
+ Scott Branden <scott.branden@broadcom.com>,
+ Crestez Dan Leonard <leonard.crestez@intel.com>,
+ Akinobu Mita <akinobu.mita@gmail.com>,
+ Fabrice Gasnier <fabrice.gasnier@st.com>, Hartmut Knaack <knaack.h@gmx.de>,
+ linux-clk@vger.kernel.org
+From: Jonathan Cameron <jic23@kernel.org>
+Message-ID: <b1919652-4db7-0373-278b-483357968e7e@kernel.org>
+Date: Sat, 8 Apr 2017 17:15:29 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170410210015.1620-1-stefan@agner.ch>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170405215046.GE7065@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/10, Stefan Agner wrote:
-> The USDHC NAND root clock is not gated by any CCM clock gate. Remove
-> the bogus gate definition.
+On 05/04/17 22:50, Stephen Boyd wrote:
+> On 04/01, Jonathan Cameron wrote:
+>> On 28/03/17 22:52, Rick Altherr wrote:
+>>> Aspeed BMC SoCs include a 16 channel, 10-bit ADC. Low and high threshold
+>>> interrupts are supported by the hardware but are not currently implemented.
+>>>
+>>> Signed-off-by: Rick Altherr <raltherr@google.com>
+>> Two really trivial things inline. I'll fix them whilst applying rather than
+>> having you do a v6 - please do sanity check I haven't messed it up though!
+>>
+>> Applied to the togreg branch of iio.git and pushed out as testing for
+>> the autobuilders to play with it.
+>>
 > 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
+> Oh I was too late. Blame work. Anyway, I made some comments on
+> v4. If they're fixed in a later patch or discussed on list that's
+> fine. No worries on my end.
+> 
+Oops. I went a bit quick on this one I guess.
 
-Can this be applied? It's followed by a dtsi change and there is
-zero information about if the two depend on each other. Please
-add cover letters for these sorts of things in the future
-indicating how you expect merging to work.
+Anyhow, from a quick read of your comments I'm not sure if any of
+them are such that we should revert.  Perhaps we Rick can prepare
+a follow up patch covering them?  I got a little lost so am not
+sure but if there is anything effecting bindings Rick, please
+get this through asap or let me know if we need to revert for now.
+Even if it is a case of adding a bit of binding and following up
+with the code using it a bit later.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I'd asked for input on the clock stuff then forgot all about it on
+the later version. Sorry about that!
+
+Jonathan
