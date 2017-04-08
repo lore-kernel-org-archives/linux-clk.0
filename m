@@ -1,57 +1,125 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:4733 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933518AbdDHBZM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2017 21:25:12 -0400
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, Mars Cheng <mars.cheng@mediatek.com>
+Subject: [PATCH v4 06/10] soc: mediatek: avoid using fixed spm power status defines
+Date: Sat, 8 Apr 2017 09:20:31 +0800
+Message-ID: <1491614435-23754-7-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
+References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <20170411025956.GA9067@b29396-OptiPlex-7040>
-References: <20170330005029.6472-1-stefan@agner.ch>
- <20170330005029.6472-2-stefan@agner.ch>
- <20170401030312.GB24882@b29396-OptiPlex-7040>
- <5c8339900fa1bd6215fb94d4386f7e06@agner.ch>
- <CAOMZO5CprxqnqRXMFJLBAgYAZGGnXNs3ZciyVz_mSLRnnSQQRQ@mail.gmail.com>
- <CAOMZO5A7QQEe5rgBbJBzo8GY41aYV9WA8e9teCUROyihg0kq_g@mail.gmail.com>
- <c95a7f535296623bdd4e4a640b3c27f5@agner.ch>
- <20170411025956.GA9067@b29396-OptiPlex-7040>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 11 Apr 2017 20:23:19 -0300
-Message-ID: <CAOMZO5DOib3PfCOQ-yqKAJnKRJZ2eBnMJnA84y=sv+vsYdbbBQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: imx7: add USDHC NAND clock to SDHC instances
-To: Dong Aisheng <dongas86@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Stephen Boyd <sboyd@codeaurora.org>,
- linux-kernel <linux-kernel@vger.kernel.org>, Stefan Agner <stefan@agner.ch>,
- "robh+dt@kernel.org" <robh+dt@kernel.org>,
- Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
- Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 10, 2017 at 11:59 PM, Dong Aisheng <dongas86@gmail.com> wrote:
+Use variables to replace fixed defines since the offset
+of the status of spm power might be different for some chips
 
-> This is caused by ahb_root_clk gets disabled accidently and system hangs.
->
-> Because this patch defines ipg_root_clk earlier before its parent
-> (ahb_root_clk) got registered, then it will be marked as a orphan clk
-> temporarily. Until the parent ahb_root_clk got registered, the clk core
-> will reparent it to the newly found parent. (see __clk_core_init() function).
->
-> Due to CLK_SET_RATE_PARENT flag, the ahb clk will be enabled during
-> set_parent operation and then disabled after that.
-> Then system hang cause we still get no chance to run init_on clks.
->
-> I just send out a proper fix patch with correct register sequence.
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+---
+ drivers/soc/mediatek/mtk-scpsys.c |   33 +++++++++++++++++++++++++++------
+ 1 file changed, 27 insertions(+), 6 deletions(-)
 
-Excellent, thanks!
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index beb7916..eadbf0d 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -107,21 +107,28 @@ struct scp_domain {
+ 	struct regulator *supply;
+ };
+ 
++struct scp_ctrl_reg {
++	int pwr_sta_offs;
++	int pwr_sta2nd_offs;
++};
++
+ struct scp {
+ 	struct scp_domain *domains;
+ 	struct genpd_onecell_data pd_data;
+ 	struct device *dev;
+ 	void __iomem *base;
+ 	struct regmap *infracfg;
++	struct scp_ctrl_reg ctrl_reg;
+ };
+ 
+ static int scpsys_domain_is_on(struct scp_domain *scpd)
+ {
+ 	struct scp *scp = scpd->scp;
+ 
+-	u32 status = readl(scp->base + SPM_PWR_STATUS) & scpd->data->sta_mask;
+-	u32 status2 = readl(scp->base + SPM_PWR_STATUS_2ND) &
+-				scpd->data->sta_mask;
++	u32 status = readl(scp->base + scp->ctrl_reg.pwr_sta_offs) &
++						scpd->data->sta_mask;
++	u32 status2 = readl(scp->base + scp->ctrl_reg.pwr_sta2nd_offs) &
++						scpd->data->sta_mask;
+ 
+ 	/*
+ 	 * A domain is on when both status bits are set. If only one is set
+@@ -346,7 +353,8 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
+ }
+ 
+ static struct scp *init_scp(struct platform_device *pdev,
+-			const struct scp_domain_data *scp_domain_data, int num)
++			const struct scp_domain_data *scp_domain_data, int num,
++			struct scp_ctrl_reg *scp_ctrl_reg)
+ {
+ 	struct genpd_onecell_data *pd_data;
+ 	struct resource *res;
+@@ -358,6 +366,9 @@ static struct scp *init_scp(struct platform_device *pdev,
+ 	if (!scp)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	scp->ctrl_reg.pwr_sta_offs = scp_ctrl_reg->pwr_sta_offs;
++	scp->ctrl_reg.pwr_sta2nd_offs = scp_ctrl_reg->pwr_sta2nd_offs;
++
+ 	scp->dev = &pdev->dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -556,8 +567,13 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+ static int __init scpsys_probe_mt2701(struct platform_device *pdev)
+ {
+ 	struct scp *scp;
++	struct scp_ctrl_reg scp_reg;
+ 
+-	scp = init_scp(pdev, scp_domain_data_mt2701, NUM_DOMAINS_MT2701);
++	scp_reg.pwr_sta_offs = SPM_PWR_STATUS;
++	scp_reg.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND;
++
++	scp = init_scp(pdev, scp_domain_data_mt2701, NUM_DOMAINS_MT2701,
++		       &scp_reg);
+ 	if (IS_ERR(scp))
+ 		return PTR_ERR(scp);
+ 
+@@ -667,8 +683,13 @@ static int __init scpsys_probe_mt8173(struct platform_device *pdev)
+ 	struct scp *scp;
+ 	struct genpd_onecell_data *pd_data;
+ 	int ret;
++	struct scp_ctrl_reg scp_reg;
++
++	scp_reg.pwr_sta_offs = SPM_PWR_STATUS;
++	scp_reg.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND;
+ 
+-	scp = init_scp(pdev, scp_domain_data_mt8173, NUM_DOMAINS_MT8173);
++	scp = init_scp(pdev, scp_domain_data_mt8173, NUM_DOMAINS_MT8173,
++		       &scp_reg);
+ 	if (IS_ERR(scp))
+ 		return PTR_ERR(scp);
+ 
+-- 
+1.7.9.5
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
