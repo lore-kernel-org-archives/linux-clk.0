@@ -1,39 +1,66 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:56730 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754320AbdDHBZC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2017 21:25:02 -0400
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, Mars Cheng <mars.cheng@mediatek.com>
+Subject: [PATCH v4 08/10] dt-bindings: mediatek: add MT6797 power dt-bindings
+Date: Sat, 8 Apr 2017 09:20:33 +0800
+Message-ID: <1491614435-23754-9-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
+References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Wed, 19 Apr 2017 09:23:44 -0700
-From: Stefan Agner <stefan@agner.ch>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, aisheng.dong@nxp.com,
-        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: imx7d: fix USDHC NAND clock
-In-Reply-To: <20170419161435.GA7065@codeaurora.org>
-References: <20170410210015.1620-1-stefan@agner.ch>
- <20170419161435.GA7065@codeaurora.org>
-Message-ID: <9f0b9e83bc2a46bacb323d3ff2cfcf64@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2017-04-19 09:14, Stephen Boyd wrote:
-> On 04/10, Stefan Agner wrote:
->> The USDHC NAND root clock is not gated by any CCM clock gate. Remove
->> the bogus gate definition.
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
-> 
-> Can this be applied? It's followed by a dtsi change and there is
-> zero information about if the two depend on each other. Please
-> add cover letters for these sorts of things in the future
-> indicating how you expect merging to work.
+This adds power dt-bindings for MT6797
 
-This can be merged. The two changes are independent.
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+---
+ .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-They look kind of dependent, but really aren't since
-IMX7D_NAND_USDHC_BUS_ROOT_CLK is still in the init_on list. Should have
-explicitly mentioned that, sorry about that.
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+index 16fe94d..b1d165b 100644
+--- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
++++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+@@ -9,11 +9,14 @@ domain control.
+ 
+ The driver implements the Generic PM domain bindings described in
+ power/power_domain.txt. It provides the power domains defined in
+-include/dt-bindings/power/mt8173-power.h and mt2701-power.h.
++- include/dt-bindings/power/mt8173-power.h
++- include/dt-bindings/power/mt6797-power.h
++- include/dt-bindings/power/mt2701-power.h
+ 
+ Required properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-scpsys"
++	- "mediatek,mt6797-scpsys"
+ 	- "mediatek,mt8173-scpsys"
+ - #power-domain-cells: Must be 1
+ - reg: Address range of the SCPSYS unit
+@@ -22,6 +25,7 @@ Required properties:
+                       These are clocks which hardware needs to be
+                       enabled before enabling certain power domains.
+ 	Required clocks for MT2701: "mm", "mfg", "ethif"
++	Required clocks for MT6797: "mm", "mfg", "vdec"
+ 	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
+ 
+ Optional properties:
+-- 
+1.7.9.5
 
---
-Stefan
