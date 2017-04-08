@@ -1,52 +1,134 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 28 Apr 2017 11:36:17 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Tero Kristo <t-kristo@ti.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>, Keerthy <j-keerthy@ti.com>,
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] clk: ti: divider: try to fix ti_clk_register_divider
-Message-ID: <20170428183617.GB7065@codeaurora.org>
-References: <20170419174507.4055014-1-arnd@arndb.de>
- <7f0c996e-df53-ffb7-2c02-2f7fa66d2b94@ti.com>
- <20170422015820.GZ7065@codeaurora.org>
- <CAK8P3a0CYxRqX-eNrsFCc_BotVodgR7zZ1i3jLefpst_yj7umw@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:4733 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751086AbdDHBZC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2017 21:25:02 -0400
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, Mars Cheng <mars.cheng@mediatek.com>
+Subject: [PATCH v4 03/10] dt-bindings: arm: mediatek: document clk bindings for MT6797
+Date: Sat, 8 Apr 2017 09:20:28 +0800
+Message-ID: <1491614435-23754-4-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
+References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAK8P3a0CYxRqX-eNrsFCc_BotVodgR7zZ1i3jLefpst_yj7umw@mail.gmail.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/22, Arnd Bergmann wrote:
-> On Sat, Apr 22, 2017 at 3:58 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 04/20, Tero Kristo wrote:
-> >> On 19/04/17 20:44, Arnd Bergmann wrote:
-> >> The failing piece of code is only executed for legacy boot mode
-> >> OMAP3 right now, which could be potentially stripped out of the
-> >> kernel already (I think Tony removed the support for non-DT boot
-> >> OMAP3 boards already...?) This explains why I didn't notice the
-> >> issue in my local testing either.
-> >>
-> >> >
-> >> >Fixes: d96f774b2538 ("clk: ti: divider: add support for legacy divider init")
-> >> >Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >>
-> >> So, this patch itself is fine, but the desc should be updated to
-> >> reflect the above somehow.
-> >>
-> >> And the "Fixes:" line should be updated to point to the commit
-> >> mentioned above also.
-> >>
-> >
-> > Waiting for Arnd to agree. I can also rename reg_setup to reg.
-> 
-> Yes, it would be great if you could update the patch description that way
-> so I don't have to send a new version. Thanks,
-> 
+From: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
 
-Ok. I came up with something and applied it to clk-next.
+This patch adds the binding documentation for apmixedsys, imgsys,
+infracfg, mmsys, topckgen, vdecsys and vencsys for MT6797.
 
+Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
+ .../bindings/arm/mediatek/mediatek,vencsys.txt     |    3 ++-
+ 7 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+index cb0054a..cd977db 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-apmixedsys"
++	- "mediatek,mt6797-apmixedsys"
+ 	- "mediatek,mt8135-apmixedsys"
+ 	- "mediatek,mt8173-apmixedsys"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+index f6a9166..047b11a 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-imgsys", "syscon"
++	- "mediatek,mt6797-imgsys", "syscon"
+ 	- "mediatek,mt8173-imgsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+index 1620ec2..58d58e2 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-infracfg", "syscon"
++	- "mediatek,mt6797-infracfg", "syscon"
+ 	- "mediatek,mt8135-infracfg", "syscon"
+ 	- "mediatek,mt8173-infracfg", "syscon"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+index 67dd2e4..70529e0 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-mmsys", "syscon"
++	- "mediatek,mt6797-mmsys", "syscon"
+ 	- "mediatek,mt8173-mmsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+index 9f2fe78..ec93ecb 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-topckgen"
++	- "mediatek,mt6797-topckgen"
+ 	- "mediatek,mt8135-topckgen"
+ 	- "mediatek,mt8173-topckgen"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+index 2440f73..d150104 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-vdecsys", "syscon"
++	- "mediatek,mt6797-vdecsys", "syscon"
+ 	- "mediatek,mt8173-vdecsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
+index 5bb2866..8a93be6 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
+@@ -5,7 +5,8 @@ The Mediatek vencsys controller provides various clocks to the system.
+ 
+ Required Properties:
+ 
+-- compatible: Should be:
++- compatible: Should be one of:
++	- "mediatek,mt6797-vencsys", "syscon"
+ 	- "mediatek,mt8173-vencsys", "syscon"
+ - #clock-cells: Must be 1
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
+
