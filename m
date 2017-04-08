@@ -1,46 +1,68 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
-To: Tony Lindgren <tony@atomide.com>
-References: <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
- <20170323010057.GI10760@atomide.com> <20170323170210.GL10760@atomide.com>
- <8648f054-cf04-41df-20f3-82e0d63feefa@ti.com>
- <20170330165448.GF10760@atomide.com>
- <55b439ed-8b81-2e6b-64f1-34f9f3cc5369@ti.com>
- <20170403153604.GI10760@atomide.com>
- <b135c5d6-f06d-030d-333b-5223ef1aca9a@ti.com>
- <20170407164731.GJ13234@atomide.com>
- <6dd4c892-f0b5-f72e-c5e9-357cb8506f05@ti.com>
- <20170410161816.GD5339@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <74c65472-cc1c-1ab9-7d27-65a164a6f025@ti.com>
-Date: Mon, 10 Apr 2017 21:33:43 +0300
-MIME-Version: 1.0
-In-Reply-To: <20170410161816.GD5339@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:42679 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752931AbdDHSxU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 8 Apr 2017 14:53:20 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 5/5] ARM: sun8i: h2+: add SY8113B regulator used by Orange Pi Zero board
+Date: Sun,  9 Apr 2017 02:50:25 +0800
+Message-Id: <20170408185025.53841-6-icenowy@aosc.io>
+In-Reply-To: <20170408185025.53841-1-icenowy@aosc.io>
+References: <20170408185025.53841-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/04/17 19:18, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [170410 00:34]:
->> On 07/04/17 19:47, Tony Lindgren wrote:
->>> OK hdmi works now on panda for both omapfb and omapdrm. Any ideas why
->>> that change is now needed though?
->>
->> Yes, it is pretty clear actually. Previously, the hwmod main clock was
->> controlling the hdmi clock, but this is now rerouted to the clkctrl module
->> clock, which is shared between all DSS submodules. This leaves the hdmi
->> clock disabled, causing the failure.
->>
->> The fix just puts the hdmi clock into the optional clocks list, and forces
->> all the optional clocks on when pm_runtime is enabled for the module.
->
-> OK so no need to fix it in the current kernels then.
+Orange Pi Zero board has a SY8113B regulator, which is controlled via
+GPIO and capable of outputing 1.1V when the PL6 GPIO is set to output 0
+or 1.3V when the PL6 GPIO is set to input or output 1, and the output is
+the power supply of the ARM cores in H2+ SoC.
 
-Yeah, just need to figure out a clean order of applying these patches. 
-The hwmod data change for DSS modules can most likely be applied before 
-the dts change for clkctrl is going in, as it is just causing double 
-clk_enable / disable for the main clocks in that case.
+Add the device tree node of this regulator and set the cpu's cpu-supply
+property to it.
 
--Tero
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts b/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts
+index 9e8b082c134f..8f6acca7d12d 100644
+--- a/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts
++++ b/arch/arm/boot/dts/sun8i-h2-plus-orangepi-zero.dts
+@@ -93,6 +93,27 @@
+ 		reset-gpios = <&r_pio 0 7 GPIO_ACTIVE_LOW>;
+ 		post-power-on-delay-ms = <200>;
+ 	};
++
++	reg_sy8113b: gpio-regulator {
++		compatible = "regulator-gpio";
++
++		regulator-name = "vdd-cpux";
++		regulator-type = "voltage";
++		regulator-boot-on;
++		regulator-always-on;
++		regulator-min-microvolt = <1100000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-ramp-delay = <50>; /* 4ms */
++
++		gpios = <&r_pio 0 6 GPIO_ACTIVE_HIGH>; /* PL6 */
++		gpios-states = <0x1>;
++		states = <1100000 0x0
++			  1300000 0x1>;
++	};
++};
++
++&cpu0 {
++	cpu-supply = <&reg_sy8113b>;
+ };
+ 
+ &ehci0 {
+-- 
+2.12.2
+
