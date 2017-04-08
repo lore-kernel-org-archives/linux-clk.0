@@ -1,60 +1,151 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Helmut Klein <hgkr.klein@gmail.com>
-Subject: Re: [PATCH v3 0/4] tty/serial: meson_uart: add support for core clock
- handling
-References: <20170331165437.26227-1-hgkr.klein@gmail.com>
-Date: Mon, 03 Apr 2017 08:44:16 -0700
-In-Reply-To: <20170331165437.26227-1-hgkr.klein@gmail.com> (Helmut Klein's
- message of "Fri, 31 Mar 2017 18:54:33 +0200")
-Message-ID: <m2lgrha433.fsf@baylibre.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:42554 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752109AbdDHSvr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 8 Apr 2017 14:51:47 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 1/5] clk: sunxi-ng: prevent NKMP clocks from temporarily get higher freq
+Date: Sun,  9 Apr 2017 02:50:21 +0800
+Message-Id: <20170408185025.53841-2-icenowy@aosc.io>
+In-Reply-To: <20170408185025.53841-1-icenowy@aosc.io>
+References: <20170408185025.53841-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Helmut Klein <hgkr.klein@gmail.com> writes:
+It seems that on newer SoCs (already observed on A33, H3), when setting
+all NKMP factors at the same time, the multiplier get applied first,
+then the divider get applied. In some situations (e.g. the multiplier
+increased but the divider decreased), this will make the clock
+frequency temporarily higher than both the original frequency and the
+target frequency, which may lead to system hang due to PLL_CPU(X) clock
+usually being a NKMP clock.
 
-> To be able to use the three none AO uarts of the meson gx SoCs (uart_A,
+A comparsion between the old divider (M*P) and the new one is added, and
+if the divider get smaller when changing clock, the multiplier will be
+applied first, so that the clock won't go to a frequency higher than
+normal.
 
-s/none/non/
+The interval between applying the first group of factors and the second
+group is based on experiments results on an Orange Pi Zero board.
 
-> uart_B & uart_C), the core clock has to be enabled (see chapter 22.3 of
-> the public s905 data sheet).
-> At least the u-boot of my s905 based media player (netxeon minimx-g)
-> doesn't do this. so the driver must enable the clock.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/clk/sunxi-ng/ccu_nkmp.c | 76 +++++++++++++++++++++++++++++++++++------
+ 1 file changed, 65 insertions(+), 11 deletions(-)
 
-FYI: even if a booloader enablesq clocks, it's important that the kernel
-enable clocks that it uses so the kernel can be independent of any
-bootloader.
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index e58c95787f94..5da77eb60335 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -9,6 +9,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/delay.h>
+ 
+ #include "ccu_gate.h"
+ #include "ccu_nkmp.h"
+@@ -130,12 +131,49 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	return *parent_rate * _nkmp.n * _nkmp.k / (_nkmp.m * _nkmp.p);
+ }
+ 
++static void ccu_nkmp_extract_factors(const struct ccu_nkmp *nkmp,
++				     struct _ccu_nkmp *_nkmp, u32 reg)
++{
++	_nkmp->n = ((reg >> nkmp->n.shift) & GENMASK(nkmp->n.width - 1, 0))
++		   + nkmp->n.offset;
++	_nkmp->k = ((reg >> nkmp->k.shift) & GENMASK(nkmp->k.width - 1, 0))
++		   + nkmp->k.offset;
++	_nkmp->m = ((reg >> nkmp->m.shift) & GENMASK(nkmp->m.width - 1, 0))
++		   + nkmp->m.offset;
++	_nkmp->p = 1 <<
++		   ((reg >> nkmp->p.shift) & GENMASK(nkmp->p.width - 1, 0));
++}
++
++static u32 ccu_nkmp_apply_multiplier(const struct ccu_nkmp *nkmp,
++				     const struct _ccu_nkmp *_nkmp, u32 reg)
++{
++	reg &= ~GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
++	reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
++
++	reg |= (_nkmp->n - nkmp->n.offset) << nkmp->n.shift;
++	reg |= (_nkmp->k - nkmp->k.offset) << nkmp->k.shift;
++
++	return reg;
++}
++
++static u32 ccu_nkmp_apply_divider(const struct ccu_nkmp *nkmp,
++				  const struct _ccu_nkmp *_nkmp, u32 reg)
++{
++	reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
++	reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
++
++	reg |= (_nkmp->m - nkmp->m.offset) << nkmp->m.shift;
++	reg |= ilog2(_nkmp->p) << nkmp->p.shift;
++
++	return reg;
++}
++
+ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			   unsigned long parent_rate)
+ {
+ 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
+-	struct _ccu_nkmp _nkmp;
+-	unsigned long flags;
++	struct _ccu_nkmp _nkmp, _nkmp_old;
++	unsigned long flags, old_mp, mp;
+ 	u32 reg;
+ 
+ 	_nkmp.min_n = nkmp->n.min ?: 1;
+@@ -152,17 +190,33 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	spin_lock_irqsave(nkmp->common.lock, flags);
+ 
+ 	reg = readl(nkmp->common.base + nkmp->common.reg);
+-	reg &= ~GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
+-	reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
+-	reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
+-	reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
+ 
+-	reg |= (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
+-	reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
+-	reg |= (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
+-	reg |= ilog2(_nkmp.p) << nkmp->p.shift;
++	ccu_nkmp_extract_factors(nkmp, &_nkmp_old, reg);
++
++	old_mp = _nkmp_old.m * _nkmp_old.p;
++	mp = _nkmp.m * _nkmp.p;
++
++	if (mp > old_mp) {
++		reg = ccu_nkmp_apply_divider(nkmp, &_nkmp, reg);
++		writel(reg, nkmp->common.base + nkmp->common.reg);
++
++		/*
++		 * This value is decided by experiment results on an
++		 * Allwinner H2+ board (Orange Pi Zero).
++		 */
++		udelay(500);
+ 
+-	writel(reg, nkmp->common.base + nkmp->common.reg);
++		reg = ccu_nkmp_apply_multiplier(nkmp, &_nkmp, reg);
++		writel(reg, nkmp->common.base + nkmp->common.reg);
++	} else {
++		reg = ccu_nkmp_apply_multiplier(nkmp, &_nkmp, reg);
++		writel(reg, nkmp->common.base + nkmp->common.reg);
++
++		udelay(500);
++
++		reg = ccu_nkmp_apply_divider(nkmp, &_nkmp, reg);
++		writel(reg, nkmp->common.base + nkmp->common.reg);
++	}
+ 
+ 	spin_unlock_irqrestore(nkmp->common.lock, flags);
+ 
+-- 
+2.12.2
 
-> This patch set does:
-> - exposes the UART clock ids to the dtb
-> - adds documentation for the dt-bindings of meson_uart
-> - adds the core clock handling to the driver
-> - adds the core clock handling to meson-gxbb.dtsi and meson-gxl.dtsi
->
-> The patchset is based on the branch "master" of the repository in [1]
-
-The master branch in my tree just tracks mainline master branch.
-
-To avoid conflicts with other on-going DT changes, the DT patches should
-probably be based on top of my v4.12/dt64 branch.
-
-Kevin
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
