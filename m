@@ -1,288 +1,276 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:36856 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753500AbdDEC2M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2017 22:28:12 -0400
-MIME-Version: 1.0
-In-Reply-To: <dbf0f478-ff53-0ced-24a3-e9de7077efd9@aosc.io>
-References: <20170329194613.55548-1-icenowy@aosc.io> <20170329194613.55548-5-icenowy@aosc.io>
- <20170404192837.pvlhwyeut45vg2wg@art_vandelay> <dbf0f478-ff53-0ced-24a3-e9de7077efd9@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 5 Apr 2017 10:27:41 +0800
-Message-ID: <CAGb2v66vxP0c3qMTAUCseTCbpJ6gxnKfNGNcC41jPHA_Ye4ggw@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 04/11] drm/sun4i: abstract the layer type
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Sean Paul <seanpaul@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <daniel.lezcano@linaro.org>
+Return-Path: <daniel.lezcano@linaro.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: sboyd@codeaurora.org,
+	mturquette@baylibre.com,
+	lee.jones@linaro.org
+Cc: xuwei5@hisilicon.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH V2] clk: hi6220: Add the hi655x's pmic clock
+Date: Sat,  8 Apr 2017 22:30:12 +0200
+Message-Id: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 5, 2017 at 3:53 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
->
->
-> 在 2017年04月05日 03:28, Sean Paul 写道:
->>
->> On Thu, Mar 30, 2017 at 03:46:06AM +0800, Icenowy Zheng wrote:
->>>
->>> As we are going to add support for the Allwinner DE2 Mixer in sun4i-drm
->>> driver, we will finally have two types of layer.
->>>
->>> Abstract the layer type to void * and a ops struct, which contains the
->>> only function used by crtc -- get the drm_plane struct of the layer.
->>>
->>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>> ---
->>> Refactored patch in v3.
->>>
->>>  drivers/gpu/drm/sun4i/sun4i_crtc.c  | 19 +++++++++++--------
->>>  drivers/gpu/drm/sun4i/sun4i_crtc.h  |  3 ++-
->>>  drivers/gpu/drm/sun4i/sun4i_layer.c | 19 ++++++++++++++++++-
->>>  drivers/gpu/drm/sun4i/sun4i_layer.h |  2 +-
->>>  drivers/gpu/drm/sun4i/sunxi_layer.h | 17 +++++++++++++++++
->>>  5 files changed, 49 insertions(+), 11 deletions(-)
->>>  create mode 100644 drivers/gpu/drm/sun4i/sunxi_layer.h
->>>
->>> diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c
->>> b/drivers/gpu/drm/sun4i/sun4i_crtc.c
->>> index 3c876c3a356a..33854ee7f636 100644
->>> --- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
->>> +++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
->>> @@ -29,6 +29,7 @@
->>>  #include "sun4i_crtc.h"
->>>  #include "sun4i_drv.h"
->>>  #include "sun4i_layer.h"
->>> +#include "sunxi_layer.h"
->>>  #include "sun4i_tcon.h"
->>>
->>>  static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
->>> @@ -149,7 +150,7 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device
->>> *drm,
->>>         scrtc->tcon = tcon;
->>>
->>>         /* Create our layers */
->>> -       scrtc->layers = sun4i_layers_init(drm, scrtc->backend);
->>> +       scrtc->layers = (void **)sun4i_layers_init(drm, scrtc);
->>>         if (IS_ERR(scrtc->layers)) {
->>>                 dev_err(drm->dev, "Couldn't create the planes\n");
->>>                 return NULL;
->>> @@ -157,14 +158,15 @@ struct sun4i_crtc *sun4i_crtc_init(struct
->>> drm_device *drm,
->>>
->>>         /* find primary and cursor planes for drm_crtc_init_with_planes
->>> */
->>>         for (i = 0; scrtc->layers[i]; i++) {
->>> -               struct sun4i_layer *layer = scrtc->layers[i];
->>> +               void *layer = scrtc->layers[i];
->>> +               struct drm_plane *plane =
->>> scrtc->layer_ops->get_plane(layer);
->>>
->>> -               switch (layer->plane.type) {
->>> +               switch (plane->type) {
->>>                 case DRM_PLANE_TYPE_PRIMARY:
->>> -                       primary = &layer->plane;
->>> +                       primary = plane;
->>>                         break;
->>>                 case DRM_PLANE_TYPE_CURSOR:
->>> -                       cursor = &layer->plane;
->>> +                       cursor = plane;
->>>                         break;
->>>                 default:
->>>                         break;
->>> @@ -190,10 +192,11 @@ struct sun4i_crtc *sun4i_crtc_init(struct
->>> drm_device *drm,
->>>         /* Set possible_crtcs to this crtc for overlay planes */
->>>         for (i = 0; scrtc->layers[i]; i++) {
->>>                 uint32_t possible_crtcs =
->>> BIT(drm_crtc_index(&scrtc->crtc));
->>> -               struct sun4i_layer *layer = scrtc->layers[i];
->>> +               void *layer = scrtc->layers[i];
->>> +               struct drm_plane *plane =
->>> scrtc->layer_ops->get_plane(layer);
->>>
->>> -               if (layer->plane.type == DRM_PLANE_TYPE_OVERLAY)
->>> -                       layer->plane.possible_crtcs = possible_crtcs;
->>> +               if (plane->type == DRM_PLANE_TYPE_OVERLAY)
->>> +                       plane->possible_crtcs = possible_crtcs;
->>>         }
->>>
->>>         return scrtc;
->>> diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.h
->>> b/drivers/gpu/drm/sun4i/sun4i_crtc.h
->>> index 230cb8f0d601..a4036ee44cf8 100644
->>> --- a/drivers/gpu/drm/sun4i/sun4i_crtc.h
->>> +++ b/drivers/gpu/drm/sun4i/sun4i_crtc.h
->>> @@ -19,7 +19,8 @@ struct sun4i_crtc {
->>>
->>>         struct sun4i_backend            *backend;
->>>         struct sun4i_tcon               *tcon;
->>> -       struct sun4i_layer              **layers;
->>> +       void                            **layers;
->>> +       const struct sunxi_layer_ops    *layer_ops;
->>
->>
->> I think you should probably take a different approach to abstract the
->> layer
->> type. How about creating
->>
->> struct sunxi_layer {
->>         struct drm_plane plane;
->> }
->>
->> base and then subclassing that for sun4i and sun8i? By doing this you can
->> avoid
->> the nasty casting and you can also get rid of the get_plane() hook and
->> layer_ops.
->
->
-> For the situation that using ** things are easily to get weird.
+The hi655x multi function device is a PMIC providing regulators.
 
-That code could be reworked, by initializing the layers directly within
-the crtc init code. If you look at rockchip's drm driver, you'll see
-they do this. There is a good reason to do it this way, as you need
-to first create the primary and cursor layers, pass them in when you
-create the crtc, then initialize any additional layers with the
-possible_crtcs bitmap.
+The PMIC also provides a clock for the WiFi and the Bluetooth, let's implement
+this clock in order to add it in the hi655x MFD and allow proper wireless
+initialization.
 
-In our driver we are currently initializing all layers, then going
-back and filling in possible_crtcs for the extra layers.
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
 
-And as Maxime and I mentioned in the other thread, we don't really
-need to keep a reference to **layers.
+Changelog:
 
-Regards
-ChenYu
+ V2:
+    - Added COMPILE_TEST option, compiled on x86
+    - Removed useless parenthesis
+    - Used of_clk_hw_simple_get() instead of deref dance
+    - Do bailout if the clock-names is not specified
+    - Rollback on error
+    - Folded mfd line change and binding
+    - Added #clock-cells binding documentation
+    - Added #clock-cells in the DT
 
->
->>
->> Sean
->>
->>
->>
->>>  };
->>>
->>>  static inline struct sun4i_crtc *drm_crtc_to_sun4i_crtc(struct drm_crtc
->>> *crtc)
->>> diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c
->>> b/drivers/gpu/drm/sun4i/sun4i_layer.c
->>> index f26bde5b9117..bc4a70d6968b 100644
->>> --- a/drivers/gpu/drm/sun4i/sun4i_layer.c
->>> +++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
->>> @@ -16,7 +16,9 @@
->>>  #include <drm/drmP.h>
->>>
->>>  #include "sun4i_backend.h"
->>> +#include "sun4i_crtc.h"
->>>  #include "sun4i_layer.h"
->>> +#include "sunxi_layer.h"
->>>
->>>  struct sun4i_plane_desc {
->>>                enum drm_plane_type     type;
->>> @@ -100,6 +102,17 @@ static const struct sun4i_plane_desc
->>> sun4i_backend_planes[] = {
->>>         },
->>>  };
->>>
->>> +static struct drm_plane *sun4i_layer_get_plane(void *layer)
->>> +{
->>> +       struct sun4i_layer *sun4i_layer = layer;
->>> +
->>> +       return &sun4i_layer->plane;
->>> +}
->>> +
->>> +static const struct sunxi_layer_ops layer_ops = {
->>> +       .get_plane = sun4i_layer_get_plane,
->>> +};
->>> +
->>>  static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
->>>                                                 struct sun4i_backend
->>> *backend,
->>>                                                 const struct
->>> sun4i_plane_desc *plane)
->>> @@ -129,9 +142,10 @@ static struct sun4i_layer
->>> *sun4i_layer_init_one(struct drm_device *drm,
->>>  }
->>>
->>>  struct sun4i_layer **sun4i_layers_init(struct drm_device *drm,
->>> -                                      struct sun4i_backend *backend)
->>> +                                      struct sun4i_crtc *crtc)
->>>  {
->>>         struct sun4i_layer **layers;
->>> +       struct sun4i_backend *backend = crtc->backend;
->>>         int i;
->>>
->>>         layers = devm_kcalloc(drm->dev, ARRAY_SIZE(sun4i_backend_planes)
->>> + 1,
->>> @@ -181,5 +195,8 @@ struct sun4i_layer **sun4i_layers_init(struct
->>> drm_device *drm,
->>>                 layers[i] = layer;
->>>         };
->>>
->>> +       /* Assign layer ops to the CRTC */
->>> +       crtc->layer_ops = &layer_ops;
->>> +
->>>         return layers;
->>>  }
->>> diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.h
->>> b/drivers/gpu/drm/sun4i/sun4i_layer.h
->>> index 4be1f0919df2..425eea7b9e3b 100644
->>> --- a/drivers/gpu/drm/sun4i/sun4i_layer.h
->>> +++ b/drivers/gpu/drm/sun4i/sun4i_layer.h
->>> @@ -27,6 +27,6 @@ plane_to_sun4i_layer(struct drm_plane *plane)
->>>  }
->>>
->>>  struct sun4i_layer **sun4i_layers_init(struct drm_device *drm,
->>> -                                      struct sun4i_backend *backend);
->>> +                                      struct sun4i_crtc *crtc);
->>>
->>>  #endif /* _SUN4I_LAYER_H_ */
->>> diff --git a/drivers/gpu/drm/sun4i/sunxi_layer.h
->>> b/drivers/gpu/drm/sun4i/sunxi_layer.h
->>> new file mode 100644
->>> index 000000000000..d8838ec39299
->>> --- /dev/null
->>> +++ b/drivers/gpu/drm/sun4i/sunxi_layer.h
->>> @@ -0,0 +1,17 @@
->>> +/*
->>> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.xyz>
->>> + *
->>> + * This program is free software; you can redistribute it and/or
->>> + * modify it under the terms of the GNU General Public License as
->>> + * published by the Free Software Foundation; either version 2 of
->>> + * the License, or (at your option) any later version.
->>> + */
->>> +
->>> +#ifndef _SUNXI_LAYER_H_
->>> +#define _SUNXI_LAYER_H_
->>> +
->>> +struct sunxi_layer_ops {
->>> +       struct drm_plane *(*get_plane)(void *layer);
->>> +};
->>> +
->>> +#endif /* _SUNXI_LAYER_H_ */
->>> --
->>> 2.12.0
->>>
->>>
->>> _______________________________________________
->>> linux-arm-kernel mailing list
->>> linux-arm-kernel@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
->>
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+ V1: initial post
+---
+---
+ .../devicetree/bindings/mfd/hisilicon,hi655x.txt   |   6 +
+ arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts     |   1 +
+ drivers/clk/Kconfig                                |   8 ++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-hi655x.c                           | 140 +++++++++++++++++++++
+ drivers/mfd/hi655x-pmic.c                          |   3 +-
+ 6 files changed, 158 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/clk-hi655x.c
+
+diff --git a/Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt b/Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt
+index 0548569..194e2a9fd 100644
+--- a/Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt
++++ b/Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt
+@@ -16,6 +16,11 @@ Required properties:
+ - reg:                  Base address of PMIC on Hi6220 SoC.
+ - interrupt-controller: Hi655x has internal IRQs (has own IRQ domain).
+ - pmic-gpios:           The GPIO used by PMIC IRQ.
++- #clock-cells:		From common clock binding; shall be set to 0
++
++Optional properties:
++- clock-output-names: From common clock binding to override the
++  default output clock name
+ 
+ Example:
+ 	pmic: pmic@f8000000 {
+@@ -24,4 +29,5 @@ Example:
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 		pmic-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
++		clock-cells = <0>;
+ 	}
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+index dba3c13..bb9afb1 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
++++ b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+@@ -328,6 +328,7 @@
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 		pmic-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
++		#clock-cells = <0>;
+ 
+ 		regulators {
+ 			ldo2: LDO2 {
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 9356ab4..36cfea3 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -47,6 +47,14 @@ config COMMON_CLK_RK808
+ 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
+ 	  by control register.
+ 
++config COMMON_CLK_HI655X
++	tristate "Clock driver for Hi655x"
++	depends on MFD_HI655X_PMIC || COMPILE_TEST
++	---help---
++	  This driver supports the hi655x PMIC clock. This
++	  multi-function device has one fixed-rate oscillator, clocked
++	  at 32KHz.
++
+ config COMMON_CLK_SCPI
+ 	tristate "Clock driver controlled via SCPI interface"
+ 	depends on ARM_SCPI_PROTOCOL || COMPILE_TEST
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 92c12b8..c19983a 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -36,6 +36,7 @@ obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
+ obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
+ obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
+ obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
++obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
+ obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
+ obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
+ obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
+diff --git a/drivers/clk/clk-hi655x.c b/drivers/clk/clk-hi655x.c
+new file mode 100644
+index 0000000..b2bea32
+--- /dev/null
++++ b/drivers/clk/clk-hi655x.c
+@@ -0,0 +1,140 @@
++/*
++ * Clock driver for Hi655x
++ *
++ * Copyright (c) 2016, Linaro Ltd.
++ *
++ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++#include <linux/mfd/core.h>
++#include <linux/mfd/hi655x-pmic.h>
++
++#define HI655X_CLK_BASE	HI655X_BUS_ADDR(0x1c)
++#define HI655X_CLK_SET	BIT(6)
++
++struct hi655x_clk {
++	struct hi655x_pmic *hi655x;
++	struct clk_hw       clk_hw;
++};
++
++static unsigned long hi655x_clk_recalc_rate(struct clk_hw *hw,
++					    unsigned long parent_rate)
++{
++	return 32768;
++}
++
++static int hi655x_clk_enable(struct clk_hw *hw, bool enable)
++{
++	struct hi655x_clk *hi655x_clk =
++		container_of(hw, struct hi655x_clk, clk_hw);
++
++	struct hi655x_pmic *hi655x = hi655x_clk->hi655x;
++
++	return regmap_update_bits(hi655x->regmap, HI655X_CLK_BASE,
++				  HI655X_CLK_SET, enable ? HI655X_CLK_SET : 0);
++}
++
++static int hi655x_clk_prepare(struct clk_hw *hw)
++{
++	return hi655x_clk_enable(hw, true);
++}
++
++static void hi655x_clk_unprepare(struct clk_hw *hw)
++{
++	hi655x_clk_enable(hw, false);
++}
++
++static int hi655x_clk_is_prepared(struct clk_hw *hw)
++{
++	struct hi655x_clk *hi655x_clk =
++		container_of(hw, struct hi655x_clk, clk_hw);
++	struct hi655x_pmic *hi655x = hi655x_clk->hi655x;
++	int ret;
++	uint32_t val;
++
++	ret = regmap_read(hi655x->regmap, HI655X_CLK_BASE, &val);
++	if (ret < 0)
++		return ret;
++
++	return val & HI655X_CLK_BASE;
++}
++
++static const struct clk_ops hi655x_clk_ops = {
++	.prepare     = hi655x_clk_prepare,
++	.unprepare   = hi655x_clk_unprepare,
++	.is_prepared = hi655x_clk_is_prepared,
++	.recalc_rate = hi655x_clk_recalc_rate,
++};
++
++static int hi655x_clk_probe(struct platform_device *pdev)
++{
++	struct device *parent = pdev->dev.parent;
++	struct hi655x_pmic *hi655x = dev_get_drvdata(parent);
++	struct clk_init_data *hi655x_clk_init;
++	struct hi655x_clk *hi655x_clk;
++	const char *clk_name = "hi655x-clk";
++	int ret;
++
++	hi655x_clk = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk), GFP_KERNEL);
++	if (!hi655x_clk)
++		return -ENOMEM;
++
++	hi655x_clk_init = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk_init),
++				       GFP_KERNEL);
++	if (!hi655x_clk_init)
++		return -ENOMEM;
++
++	of_property_read_string_index(parent->of_node, "clock-output-names",
++				      0, &clk_name);
++
++	hi655x_clk_init->name	= clk_name;
++	hi655x_clk_init->ops	= &hi655x_clk_ops;
++
++	hi655x_clk->clk_hw.init	= hi655x_clk_init;
++	hi655x_clk->hi655x	= hi655x;
++
++	platform_set_drvdata(pdev, hi655x_clk);
++
++	ret = devm_clk_hw_register(&pdev->dev, &hi655x_clk->clk_hw);
++	if (ret)
++		return ret;
++
++	ret = of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
++				     &hi655x_clk->clk_hw);
++	if (ret)
++		return ret;
++
++	ret = clk_hw_register_clkdev(&hi655x_clk->clk_hw, clk_name, NULL);
++	if (ret)
++		of_clk_del_provider(parent->of_node);
++
++	return ret;
++}
++
++static struct platform_driver hi655x_clk_driver = {
++	.probe =  hi655x_clk_probe,
++	.driver		= {
++		.name	= "hi655x-clk",
++	},
++};
++
++module_platform_driver(hi655x_clk_driver);
++
++MODULE_DESCRIPTION("Clk driver for the hi655x series PMICs");
++MODULE_AUTHOR("Daniel Lezcano <daniel.lezcano@linaro.org>");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:hi655x-clk");
+diff --git a/drivers/mfd/hi655x-pmic.c b/drivers/mfd/hi655x-pmic.c
+index ba706ad..c37ccbf 100644
+--- a/drivers/mfd/hi655x-pmic.c
++++ b/drivers/mfd/hi655x-pmic.c
+@@ -77,7 +77,8 @@
+ 		.num_resources	= ARRAY_SIZE(pwrkey_resources),
+ 		.resources	= &pwrkey_resources[0],
+ 	},
+-	{	.name		= "hi655x-regulator", },
++	{	.name		= "hi655x-regulator",	},
++	{	.name		= "hi655x-clk",		},
+ };
+ 
+ static void hi655x_local_irq_clear(struct regmap *map)
+-- 
+1.9.1
