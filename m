@@ -1,522 +1,157 @@
-Return-Path: <j-keerthy@ti.com>
-From: Keerthy <j-keerthy@ti.com>
-To: <sboyd@codeaurora.org>, <t-kristo@ti.com>, <mturquette@baylibre.com>
-CC: <j-keerthy@ti.com>, <linux@armlinux.org.uk>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        Russ Dill
-	<Russ.Dill@ti.com>
-Subject: [PATCH] clk: Add functions to save and restore clock/dpll context en-masse
-Date: Tue, 18 Apr 2017 10:42:49 +0530
-Message-ID: <1492492369-19662-1-git-send-email-j-keerthy@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:61327 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752080AbdDHBZC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2017 21:25:02 -0400
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, Mars Cheng <mars.cheng@mediatek.com>
+Subject: [PATCH v4 10/10] arm64: dts: mediatek: add clk and scp nodes for MT6797
+Date: Sat, 8 Apr 2017 09:20:35 +0800
+Message-ID: <1491614435-23754-11-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
+References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Russ Dill <Russ.Dill@ti.com>
+This adds clk and scp nodes for MT6797
 
-The clock/dpll registers are in the WKUP power domain. Under both RTC-only
-suspend and hibernation, these registers are lost. Hence save/restore
-them accordingly.
-
-Signed-off-by: Russ Dill <Russ.Dill@ti.com>
-Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
 ---
- drivers/clk/clk.c            |  70 ++++++++++++++++++++++++
- drivers/clk/ti/divider.c     |  36 +++++++++++++
- drivers/clk/ti/dpll.c        |   6 +++
- drivers/clk/ti/dpll3xxx.c    | 124 +++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/ti/gate.c        |   3 ++
- drivers/clk/ti/mux.c         |  29 ++++++++++
- include/linux/clk-provider.h |  11 ++++
- include/linux/clk.h          |  25 +++++++++
- include/linux/clk/ti.h       |   6 +++
- 9 files changed, 310 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt6797.dtsi |   71 ++++++++++++++++++++++++++++--
+ 1 file changed, 67 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index cddddbe..1ca87f4 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -687,6 +687,76 @@ static int clk_core_enable_lock(struct clk_core *core)
- 	return ret;
- }
- 
-+void clk_dflt_restore_context(struct clk_hw *hw)
-+{
-+	if (hw->clk->core->enable_count)
-+		hw->clk->core->ops->enable(hw);
-+	else
-+		hw->clk->core->ops->disable(hw);
-+}
-+EXPORT_SYMBOL_GPL(clk_dflt_restore_context);
-+
-+static int clk_save_context(struct clk_core *clk)
-+{
-+	struct clk_core *child;
-+	int ret = 0;
-+
-+	hlist_for_each_entry(child, &clk->children, child_node) {
-+		ret = clk_save_context(child);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	if (clk->ops && clk->ops->save_context)
-+		ret = clk->ops->save_context(clk->hw);
-+
-+	return ret;
-+}
-+
-+static void clk_restore_context(struct clk_core *clk)
-+{
-+	struct clk_core *child;
-+
-+	if (clk->ops && clk->ops->restore_context)
-+		clk->ops->restore_context(clk->hw);
-+
-+	hlist_for_each_entry(child, &clk->children, child_node)
-+		clk_restore_context(child);
-+}
-+
-+int clks_save_context(void)
-+{
-+	struct clk_core *clk;
-+	int ret;
-+
-+	hlist_for_each_entry(clk, &clk_root_list, child_node) {
-+		ret = clk_save_context(clk);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	hlist_for_each_entry(clk, &clk_orphan_list, child_node) {
-+		ret = clk_save_context(clk);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(clks_save_context);
-+
-+void clks_restore_context(void)
-+{
-+	struct clk_core *clk;
-+
-+	hlist_for_each_entry(clk, &clk_root_list, child_node)
-+		clk_restore_context(clk);
-+
-+	hlist_for_each_entry(clk, &clk_orphan_list, child_node)
-+		clk_restore_context(clk);
-+}
-+EXPORT_SYMBOL_GPL(clks_restore_context);
-+
- /**
-  * clk_enable - ungate a clock
-  * @clk: the clk being ungated
-diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-index d6dcb28..350a58a 100644
---- a/drivers/clk/ti/divider.c
-+++ b/drivers/clk/ti/divider.c
-@@ -266,10 +266,46 @@ static int ti_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
-+/**
-+ * clk_divider_save_context - Save the divider value
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Save the divider value
-+ */
-+static int clk_divider_save_context(struct clk_hw *hw)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	u32 val;
-+
-+	val = ti_clk_ll_ops->clk_readl(divider->reg) >> divider->shift;
-+	divider->context = val & div_mask(divider);
-+
-+	return 0;
-+}
-+
-+/**
-+ * clk_divider_restore_context - restore the saved the divider value
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Restore the saved the divider value
-+ */
-+static void clk_divider_restore_context(struct clk_hw *hw)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	u32 val;
-+
-+	val = ti_clk_ll_ops->clk_readl(divider->reg);
-+	val &= ~(div_mask(divider) << divider->shift);
-+	val |= divider->context << divider->shift;
-+	ti_clk_ll_ops->clk_writel(val, divider->reg);
-+}
-+
- const struct clk_ops ti_clk_divider_ops = {
- 	.recalc_rate = ti_clk_divider_recalc_rate,
- 	.round_rate = ti_clk_divider_round_rate,
- 	.set_rate = ti_clk_divider_set_rate,
-+	.save_context = clk_divider_save_context,
-+	.restore_context = clk_divider_restore_context,
- };
- 
- static struct clk *_register_divider(struct device *dev, const char *name,
-diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-index 96d8488..791dd31 100644
---- a/drivers/clk/ti/dpll.c
-+++ b/drivers/clk/ti/dpll.c
-@@ -39,6 +39,8 @@
- 	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
- 	.determine_rate	= &omap4_dpll_regm4xen_determine_rate,
- 	.get_parent	= &omap2_init_dpll_parent,
-+	.save_context	= &omap3_core_dpll_save_context,
-+	.restore_context = &omap3_core_dpll_restore_context,
- };
- #else
- static const struct clk_ops dpll_m4xen_ck_ops = {};
-@@ -62,6 +64,8 @@
- 	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
- 	.determine_rate	= &omap3_noncore_dpll_determine_rate,
- 	.get_parent	= &omap2_init_dpll_parent,
-+	.save_context	= &omap3_noncore_dpll_save_context,
-+	.restore_context = &omap3_noncore_dpll_restore_context,
- };
- 
- static const struct clk_ops dpll_no_gate_ck_ops = {
-@@ -72,6 +76,8 @@
- 	.set_parent	= &omap3_noncore_dpll_set_parent,
- 	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
- 	.determine_rate	= &omap3_noncore_dpll_determine_rate,
-+	.save_context	= &omap3_noncore_dpll_save_context,
-+	.restore_context = &omap3_noncore_dpll_restore_context
- };
- #else
- static const struct clk_ops dpll_core_ck_ops = {};
-diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
-index 4534de2..44b6b64 100644
---- a/drivers/clk/ti/dpll3xxx.c
-+++ b/drivers/clk/ti/dpll3xxx.c
-@@ -782,6 +782,130 @@ unsigned long omap3_clkoutx2_recalc(struct clk_hw *hw,
- 	return rate;
- }
- 
-+/**
-+ * omap3_core_dpll_save_context - Save the m and n values of the divider
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Before the dpll registers are lost save the last rounded rate m and n
-+ * and the enable mask.
-+ */
-+int omap3_core_dpll_save_context(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	struct dpll_data *dd;
-+	u32 v;
-+
-+	dd = clk->dpll_data;
-+
-+	v = ti_clk_ll_ops->clk_readl(&dd->control_reg);
-+	clk->context = (v & dd->enable_mask) >> __ffs(dd->enable_mask);
-+
-+	if (clk->context == DPLL_LOCKED) {
-+		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-+		dd->last_rounded_m = (v & dd->mult_mask) >>
-+						__ffs(dd->mult_mask);
-+		dd->last_rounded_n = ((v & dd->div1_mask) >>
-+						__ffs(dd->div1_mask)) + 1;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * omap3_core_dpll_restore_context - restore the m and n values of the divider
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Restore the last rounded rate m and n
-+ * and the enable mask.
-+ */
-+void omap3_core_dpll_restore_context(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	const struct dpll_data *dd;
-+	u32 v;
-+
-+	dd = clk->dpll_data;
-+
-+	if (clk->context == DPLL_LOCKED) {
-+		_omap3_dpll_write_clken(clk, 0x4);
-+		_omap3_wait_dpll_status(clk, 0);
-+
-+		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-+		v &= ~(dd->mult_mask | dd->div1_mask);
-+		v |= dd->last_rounded_m << __ffs(dd->mult_mask);
-+		v |= (dd->last_rounded_n - 1) << __ffs(dd->div1_mask);
-+		ti_clk_ll_ops->clk_writel(v, &dd->mult_div1_reg);
-+
-+		_omap3_dpll_write_clken(clk, DPLL_LOCKED);
-+		_omap3_wait_dpll_status(clk, 1);
-+	} else {
-+		_omap3_dpll_write_clken(clk, clk->context);
-+	}
-+}
-+
-+/**
-+ * omap3_non_core_dpll_save_context - Save the m and n values of the divider
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Before the dpll registers are lost save the last rounded rate m and n
-+ * and the enable mask.
-+ */
-+int omap3_noncore_dpll_save_context(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	struct dpll_data *dd;
-+	u32 v;
-+
-+	dd = clk->dpll_data;
-+
-+	v = ti_clk_ll_ops->clk_readl(&dd->control_reg);
-+	clk->context = (v & dd->enable_mask) >> __ffs(dd->enable_mask);
-+
-+	if (clk->context == DPLL_LOCKED) {
-+		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-+		dd->last_rounded_m = (v & dd->mult_mask) >>
-+						__ffs(dd->mult_mask);
-+		dd->last_rounded_n = ((v & dd->div1_mask) >>
-+						__ffs(dd->div1_mask)) + 1;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * omap3_core_dpll_restore_context - restore the m and n values of the divider
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Restore the last rounded rate m and n
-+ * and the enable mask.
-+ */
-+void omap3_noncore_dpll_restore_context(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	const struct dpll_data *dd;
-+	u32 ctrl, mult_div1;
-+
-+	dd = clk->dpll_data;
-+
-+	ctrl = ti_clk_ll_ops->clk_readl(&dd->control_reg);
-+	mult_div1 = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-+
-+	if (clk->context == ((ctrl & dd->enable_mask) >>
-+			     __ffs(dd->enable_mask)) &&
-+	    dd->last_rounded_m == ((mult_div1 & dd->mult_mask) >>
-+				   __ffs(dd->mult_mask)) &&
-+	    dd->last_rounded_n == ((mult_div1 & dd->div1_mask) >>
-+				   __ffs(dd->div1_mask)) + 1) {
-+		/* nothing to be done */
-+		return;
-+	}
-+
-+	if (clk->context == DPLL_LOCKED)
-+		omap3_noncore_dpll_program(clk, 0);
-+	else
-+		_omap3_dpll_write_clken(clk, clk->context);
-+}
-+
- /* OMAP3/4 non-CORE DPLL clkops */
- const struct clk_hw_omap_ops clkhwops_omap3_dpll = {
- 	.allow_idle	= omap3_dpll_allow_idle,
-diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
-index 7151ec3..098db66 100644
---- a/drivers/clk/ti/gate.c
-+++ b/drivers/clk/ti/gate.c
-@@ -33,6 +33,7 @@
- 	.init		= &omap2_init_clk_clkdm,
- 	.enable		= &omap2_clkops_enable_clkdm,
- 	.disable	= &omap2_clkops_disable_clkdm,
-+	.restore_context = clk_dflt_restore_context,
- };
- 
- const struct clk_ops omap_gate_clk_ops = {
-@@ -40,6 +41,7 @@
- 	.enable		= &omap2_dflt_clk_enable,
- 	.disable	= &omap2_dflt_clk_disable,
- 	.is_enabled	= &omap2_dflt_clk_is_enabled,
-+	.restore_context = clk_dflt_restore_context,
- };
- 
- static const struct clk_ops omap_gate_clk_hsdiv_restore_ops = {
-@@ -47,6 +49,7 @@
- 	.enable		= &omap36xx_gate_clk_enable_with_hsdiv_restore,
- 	.disable	= &omap2_dflt_clk_disable,
- 	.is_enabled	= &omap2_dflt_clk_is_enabled,
-+	.restore_context = clk_dflt_restore_context,
- };
- 
- /**
-diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-index 18c267b..e73764a 100644
---- a/drivers/clk/ti/mux.c
-+++ b/drivers/clk/ti/mux.c
-@@ -90,10 +90,39 @@ static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return 0;
- }
- 
-+/**
-+ * clk_mux_save_context - Save the parent selcted in the mux
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Save the parent mux value.
-+ */
-+static int clk_mux_save_context(struct clk_hw *hw)
-+{
-+	struct clk_mux *mux = to_clk_mux(hw);
-+
-+	mux->saved_parent = ti_clk_mux_get_parent(hw);
-+	return 0;
-+}
-+
-+/**
-+ * clk_mux_restore_context - Restore the parent in the mux
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Restore the saved parent mux value.
-+ */
-+static void clk_mux_restore_context(struct clk_hw *hw)
-+{
-+	struct clk_mux *mux = to_clk_mux(hw);
-+
-+	ti_clk_mux_set_parent(hw, mux->saved_parent);
-+}
-+
- const struct clk_ops ti_clk_mux_ops = {
- 	.get_parent = ti_clk_mux_get_parent,
- 	.set_parent = ti_clk_mux_set_parent,
- 	.determine_rate = __clk_mux_determine_rate,
-+	.save_context = clk_mux_save_context,
-+	.restore_context = clk_mux_restore_context,
- };
- 
- static struct clk *_register_mux(struct device *dev, const char *name,
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index a428aec..2a8f636 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -103,6 +103,11 @@ struct clk_rate_request {
-  *		Called with enable_lock held.  This function must not
-  *		sleep.
-  *
-+ * @save_context: Save the context of the clock in prepration for poweroff.
-+ *
-+ * @restore_context: Restore the context of the clock after a restoration
-+ *		of power.
-+ *
-  * @recalc_rate	Recalculate the rate of this clock, by querying hardware. The
-  *		parent rate is an input parameter.  It is up to the caller to
-  *		ensure that the prepare_mutex is held across this call.
-@@ -198,6 +203,8 @@ struct clk_ops {
- 	void		(*disable)(struct clk_hw *hw);
- 	int		(*is_enabled)(struct clk_hw *hw);
- 	void		(*disable_unused)(struct clk_hw *hw);
-+	int		(*save_context)(struct clk_hw *hw);
-+	void		(*restore_context)(struct clk_hw *hw);
- 	unsigned long	(*recalc_rate)(struct clk_hw *hw,
- 					unsigned long parent_rate);
- 	long		(*round_rate)(struct clk_hw *hw, unsigned long rate,
-@@ -394,6 +401,7 @@ struct clk_divider {
- 	u8		flags;
- 	const struct clk_div_table	*table;
- 	spinlock_t	*lock;
-+	u32		context;
- };
- 
- #define to_clk_divider(_hw) container_of(_hw, struct clk_divider, hw)
-@@ -471,6 +479,7 @@ struct clk_mux {
- 	u8		shift;
- 	u8		flags;
- 	spinlock_t	*lock;
-+	u8		saved_parent;
- };
- 
- #define to_clk_mux(_hw) container_of(_hw, struct clk_mux, hw)
-@@ -912,5 +921,7 @@ struct dentry *clk_debugfs_add_file(struct clk_hw *hw, char *name, umode_t mode,
- 				void *data, const struct file_operations *fops);
- #endif
- 
-+void clk_dflt_restore_context(struct clk_hw *hw);
-+
- #endif /* CONFIG_COMMON_CLK */
- #endif /* CLK_PROVIDER_H */
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 024cd07..d071a65 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -438,6 +438,23 @@ struct clk *devm_get_clk_from_child(struct device *dev,
+diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+index cf4529e..3512c8e 100644
+--- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+@@ -11,6 +11,8 @@
+  * GNU General Public License for more details.
   */
- struct clk *clk_get_sys(const char *dev_id, const char *con_id);
  
-+/**
-+ * clks_save_context - save clock context for poweroff
-+ *
-+ * Saves the context of the clock register for powerstates in which the
-+ * contents of the registers will be lost. Occurs deep within the suspend
-+ * code so locking is not necessary.
-+ */
-+int clks_save_context(void);
++#include <dt-bindings/clock/mt6797-clk.h>
++#include <dt-bindings/power/mt6797-power.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+@@ -123,6 +125,35 @@
+ 			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+ 	};
+ 
++	topckgen: topckgen@10000000 {
++		compatible = "mediatek,mt6797-topckgen";
++		reg = <0 0x10000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
 +
-+/**
-+ * clks_restore_context - restore clock context after poweroff
-+ *
-+ * This occurs with all clocks enabled. Occurs deep within the resume code
-+ * so locking is not necessary.
-+ */
-+void clks_restore_context(void);
++	infrasys: infracfg_ao@10001000 {
++		compatible = "mediatek,mt6797-infracfg", "syscon";
++		reg = <0 0x10001000 0 0x1000>;
++		#clock-cells = <1>;
++	};
 +
- #else /* !CONFIG_HAVE_CLK */
- 
- static inline struct clk *clk_get(struct device *dev, const char *id)
-@@ -501,6 +518,14 @@ static inline struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- {
- 	return NULL;
- }
++	scpsys: scpsys@10006000 {
++		compatible = "mediatek,mt6797-scpsys";
++		#power-domain-cells = <1>;
++		reg = <0 0x10006000 0 0x1000>;
++		clocks = <&topckgen CLK_TOP_MUX_MFG>,
++			 <&topckgen CLK_TOP_MUX_MM>,
++			 <&topckgen CLK_TOP_MUX_VDEC>;
++		clock-names = "mfg", "mm", "vdec";
++		infracfg = <&infrasys>;
++	};
 +
-+static inline int clks_save_context(void)
-+{
-+	return 0;
-+}
++	apmixedsys: apmixed@1000c000 {
++		compatible = "mediatek,mt6797-apmixedsys";
++		reg = <0 0x1000c000 0 0x1000>;
++		#clock-cells = <1>;
++	};
 +
-+static inline void clks_restore_context(void) {}
+ 	sysirq: intpol-controller@10200620 {
+ 		compatible = "mediatek,mt6797-sysirq",
+ 			     "mediatek,mt6577-sysirq";
+@@ -138,7 +169,9 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11002000 0 0x400>;
+ 		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&clk26m>;
++		clocks = <&infrasys CLK_INFRA_UART0>,
++			 <&infrasys CLK_INFRA_AP_DMA>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -147,7 +180,9 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11003000 0 0x400>;
+ 		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&clk26m>;
++		clocks = <&infrasys CLK_INFRA_UART1>,
++			 <&infrasys CLK_INFRA_AP_DMA>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -156,7 +191,9 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11004000 0 0x400>;
+ 		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&clk26m>;
++		clocks = <&infrasys CLK_INFRA_UART2>,
++			 <&infrasys CLK_INFRA_AP_DMA>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
+@@ -165,10 +202,36 @@
+ 			     "mediatek,mt6577-uart";
+ 		reg = <0 0x11005000 0 0x400>;
+ 		interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_LOW>;
+-		clocks = <&clk26m>;
++		clocks = <&infrasys CLK_INFRA_UART3>,
++			 <&infrasys CLK_INFRA_AP_DMA>;
++		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
+ 
++	mmsys: mmsys_config@14000000 {
++		compatible = "mediatek,mt6797-mmsys", "syscon";
++		reg = <0 0x14000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
 +
- #endif
- 
- /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index d18da83..f604936 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -159,6 +159,7 @@ struct clk_hw_omap {
- 	const char		*clkdm_name;
- 	struct clockdomain	*clkdm;
- 	const struct clk_hw_omap_ops	*ops;
-+	u32			context;
- };
- 
- /*
-@@ -290,6 +291,11 @@ struct ti_clk_features {
- 
- void ti_clk_setup_features(struct ti_clk_features *features);
- const struct ti_clk_features *ti_clk_get_features(void);
-+int omap3_noncore_dpll_save_context(struct clk_hw *hw);
-+void omap3_noncore_dpll_restore_context(struct clk_hw *hw);
++	imgsys: imgsys_config@15000000  {
++		compatible = "mediatek,mt6797-imgsys", "syscon";
++		reg = <0 0x15000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
 +
-+int omap3_core_dpll_save_context(struct clk_hw *hw);
-+void omap3_core_dpll_restore_context(struct clk_hw *hw);
- 
- extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
- 
++	vdecsys: vdec_gcon@16000000 {
++		compatible = "mediatek,mt6797-vdecsys", "syscon";
++		reg = <0 0x16000000 0 0x10000>;
++		#clock-cells = <1>;
++	};
++
++	vencsys: venc_gcon@17000000 {
++		compatible = "mediatek,mt6797-vencsys", "syscon";
++		reg = <0 0x17000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	gic: interrupt-controller@19000000 {
+ 		compatible = "arm,gic-v3";
+ 		#interrupt-cells = <3>;
 -- 
-1.9.1
+1.7.9.5
+
