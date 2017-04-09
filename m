@@ -1,40 +1,81 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 4 Apr 2017 14:48:58 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org, Suzuki.Poulose@arm.com, sudeep.holla@arm.com
-Subject: Re: [PATCH v5 5/9] coresight: use const for device_node structures
-Message-ID: <20170404214858.GG18246@codeaurora.org>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
- <1490466197-29163-6-git-send-email-leo.yan@linaro.org>
+Return-Path: <linux-pm-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1490466197-29163-6-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <20170408185025.53841-3-icenowy@aosc.io>
+References: <20170408185025.53841-1-icenowy@aosc.io> <20170408185025.53841-3-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 9 Apr 2017 09:05:32 +0800
+Message-ID: <CAGb2v67qxuFhN_oB4YqSTa04pb7T-7CQcmOrSUoTGTKMjW9CPg@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 2/5] clk: sunxi-ng: allow set parent clock
+ (PLL_CPUX) for CPUX clock on H3
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/26, Leo Yan wrote:
-> Almost low level functions from open firmware have used const to
-> qualify device_node structures, so add const for device_node
-> parameters in of_coresight related functions.
-> 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Hi,
+
+On Sun, Apr 9, 2017 at 2:50 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+
+The subject can just say "set CLK_SET_RATE_PARENT for CPUX clock on H3".
+
+> The CPUX clock, which is the main clock of the ARM core on Allwinner H3,
+> can be adjusted by changing the frequency of the PLL_CPUX clock.
+>
+> Allowing setting parent clock for the CPUX clock, thus the PLL_CPUX
+> clock can be adjusted when adjusting the CPUX clock.
+>
+
+This paragraph needs some work, particularly the verbs you chose. In the
+clk subsystem "setting parent clock" actually refers to re-parenting.
+
+>From include/linux/clk-provider.h:
+
+#define CLK_SET_RATE_PARENT     BIT(2) /* propagate rate change up one level */
+
+So what you want to say is to propagate rate changes to CPUX up one
+level, so PLL_CPUX gets changed as well.
+
+The precise wording could be something like:
+
+    The CPUX clock is the clock source for the ARM cores on the H3 SoC.
+    It is a mux clock fed by, amongst other fixed clock sources, the
+    configurable PLL_CPUX.
+
+    Set CLK_SET_RATE_PARENT on the CPUX clock, so rate changes to it
+    are propagated up one level to the PLL_CPUX clock.
+
+ChenYu
+
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > ---
-
-Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> index 4cbc1b701b7c..90b4e26a70bc 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+> @@ -135,7 +135,7 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_de_clk, "pll-de",
+>  static const char * const cpux_parents[] = { "osc32k", "osc24M",
+>                                              "pll-cpux" , "pll-cpux" };
+>  static SUNXI_CCU_MUX(cpux_clk, "cpux", cpux_parents,
+> -                    0x050, 16, 2, CLK_IS_CRITICAL);
+> +                    0x050, 16, 2, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT);
+>
+>  static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x050, 0, 2, 0);
+>
+> --
+> 2.12.2
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
