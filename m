@@ -1,34 +1,103 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Apr 2017 19:44:44 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/8] clk: si5351: Use devm_kcalloc() in si5351_i2c_probe()
-Message-ID: <20170422024444.GK7065@codeaurora.org>
-References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
- <b72a7329-0920-385d-008d-37dfc258f24d@users.sourceforge.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:46988 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752042AbdDJEpd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2017 00:45:33 -0400
+Subject: Re: [PATCH V3 0/5] iommu/arm-smmu: Add runtime pm/sleep support
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
+ <20170331175457.GD4897@arm.com>
+ <CAF6AEGv_1pNvhCc-mVP5S28Yt5kTJmTRfe8tKSJpEmxfOKM7Jg@mail.gmail.com>
+ <20170403172307.GI5706@arm.com> <20170404193914.GF18246@codeaurora.org>
+ <20170407180105.GA22050@jcrouse-lnx.qualcomm.com>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <1ceef21f-240a-013d-4bcf-0b4ea5a24bf6@codeaurora.org>
+Date: Mon, 10 Apr 2017 10:15:18 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <b72a7329-0920-385d-008d-37dfc258f24d@users.sourceforge.net>
+In-Reply-To: <20170407180105.GA22050@jcrouse-lnx.qualcomm.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/20, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 19 Apr 2017 22:37:30 +0200
-> 
-> Multiplications for the size determination of memory allocations
-> indicated that array data structures should be processed.
-> Thus use the corresponding function "devm_kcalloc".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+Hi Jordon,
 
-Applied to clk-next
+On 4/7/2017 11:31 PM, Jordan Crouse wrote:
+> On Tue, Apr 04, 2017 at 12:39:14PM -0700, Stephen Boyd wrote:
+>> On 04/03, Will Deacon wrote:
+>>> On Fri, Mar 31, 2017 at 10:58:16PM -0400, Rob Clark wrote:
+>>>> On Fri, Mar 31, 2017 at 1:54 PM, Will Deacon <will.deacon@arm.com> wrote:
+>>>>> On Thu, Mar 09, 2017 at 09:05:43PM +0530, Sricharan R wrote:
+>>>>>> This series provides the support for turning on the arm-smmu's
+>>>>>> clocks/power domains using runtime pm. This is done using the
+>>>>>> recently introduced device links patches, which lets the symmu's
+>>>>>> runtime to follow the master's runtime pm, so the smmu remains
+>>>>>> powered only when the masters use it.
+>>>>>
+>>>>> Do you have any numbers for the power savings you achieve with this?
+>>>>> How often do we actually manage to stop the SMMU clocks on an SoC with
+>>>>> a handful of masters?
+>>>>>
+>>>>> In other words, is this too coarse-grained to be useful, or is it common
+>>>>> that all the devices upstream of the SMMU are suspended?
+>>>>
+>>>> well, if you think about a phone/tablet with a command mode panel,
+>>>> pretty much all devices will be suspended most of the time ;-)
+>>>
+>>> Well, that's really what I was asking about. I assumed that periodic
+>>> modem/radio transactions would keep the SMMU clocked, so would like to get a
+>>> rough idea of the power savings achieved with this coarse-grained approach.
+>>
+>> Sometimes we distribute SMMUs to each IP block in the system and
+>> let each one of those live in their own clock + power domain. In
+>> these cases, the SMMU can be powered down along with the only IP
+>> block that uses it. Furthermore, sometimes we put the IP block
+>> and the SMMU inside the same power domain to really tie the two
+>> together, so we definitely have cases where all devices (device?)
+>> upstream of the SMMU are suspended. And in the case of
+>> multimedia, it could be very often that something like the camera
+>> app isn't open and thus the SMMU dedicated for the camera can be
+>> powered down.
+>>
+>> Other times we have two SMMUs in the system where one is
+>> dedicated to GPU and the other is "everything else". Even in
+>> these cases, we can suspend the GPU one when the GPU is inactive
+>> because it's the only consumer. The other SMMU might not be as
+>> fine grained, but I think we still power it down quite often
+>> because the consumers are mostly multimedia devices that aren't
+>> active when the display is off.
+>
+> And just to confuse things even further: with per-instance pagetables we have an
+> interest in forcing the SMMU clocks *on* because we don't know when the GPU
+> might try to hit the registers to switch a pagetable and if somebody in the
+> pipeline is actively trying to do power management at the same time hilarity
+> will ensue.
+>
+
+Ok, with per-process pagetables which gpu handles by itself, is the gpu driver
+not going to keep its own clocks pm_runtime active before handing it over
+to the firmware ? which would in this case take care of having the iommu clocks
+also enabled because of the device links in the behind.
+
+> The alternative to pm_runtime is the downstream driver that probes the SMMU
+> clocks from DT and frobs them itself. I think we can agree that is far less
+> reasonable.
+
+The idea here was to keep the iommu clocks only represented inside the IOMMU DT
+and handled by that driver. This works fine with the video decoder which is
+already fully pm_runtime enabled and works fine with basic gpu testing. Do you
+see any issues in testing this with the per-process pagetables ?
+
+Regards,
+  Sricharan
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
