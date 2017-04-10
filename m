@@ -1,62 +1,46 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57750 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1041937AbdDUSd0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2017 14:33:26 -0400
-Date: Fri, 21 Apr 2017 18:58:00 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, jy0922.shim@samsung.com,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?=
-        <b.zolnierkie@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, robh+dt@kernel.org
-Message-ID: <20170421175800.qiwvr46phfafqi75@sirena.org.uk>
-References: <1492795191-31298-6-git-send-email-s.nawrocki@samsung.com>
- <E1d1cLy-0001qc-PC@debutante>
- <CAJKOXPebDt030tcdBGya4Wpm8HCvMqyM7qJzDvibmvnMttH-FA@mail.gmail.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
+To: Tony Lindgren <tony@atomide.com>
+References: <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
+ <20170323010057.GI10760@atomide.com> <20170323170210.GL10760@atomide.com>
+ <8648f054-cf04-41df-20f3-82e0d63feefa@ti.com>
+ <20170330165448.GF10760@atomide.com>
+ <55b439ed-8b81-2e6b-64f1-34f9f3cc5369@ti.com>
+ <20170403153604.GI10760@atomide.com>
+ <b135c5d6-f06d-030d-333b-5223ef1aca9a@ti.com>
+ <20170407164731.GJ13234@atomide.com>
+ <6dd4c892-f0b5-f72e-c5e9-357cb8506f05@ti.com>
+ <20170410161816.GD5339@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <74c65472-cc1c-1ab9-7d27-65a164a6f025@ti.com>
+Date: Mon, 10 Apr 2017 21:33:43 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qh7evjb7nsszf276"
-In-Reply-To: <CAJKOXPebDt030tcdBGya4Wpm8HCvMqyM7qJzDvibmvnMttH-FA@mail.gmail.com>
-Subject: Re: Applied "ASoC: Add Odroid sound DT bindings documentation" to
- the asoc tree
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170410161816.GD5339@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+On 10/04/17 19:18, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [170410 00:34]:
+>> On 07/04/17 19:47, Tony Lindgren wrote:
+>>> OK hdmi works now on panda for both omapfb and omapdrm. Any ideas why
+>>> that change is now needed though?
+>>
+>> Yes, it is pretty clear actually. Previously, the hwmod main clock was
+>> controlling the hdmi clock, but this is now rerouted to the clkctrl module
+>> clock, which is shared between all DSS submodules. This leaves the hdmi
+>> clock disabled, causing the failure.
+>>
+>> The fix just puts the hdmi clock into the optional clocks list, and forces
+>> all the optional clocks on when pm_runtime is enabled for the module.
+>
+> OK so no need to fix it in the current kernels then.
 
---qh7evjb7nsszf276
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yeah, just need to figure out a clean order of applying these patches. 
+The hwmod data change for DSS modules can most likely be applied before 
+the dts change for clkctrl is going in, as it is just causing double 
+clk_enable / disable for the main clocks in that case.
 
-On Fri, Apr 21, 2017 at 07:31:42PM +0200, Krzysztof Kozlowski wrote:
-
-> Although Sylwester is known of writing good quality code and can be
-> trusted but he posted it just 9 minutes ago. Isn't it a little bit too
-> fast to apply? I just finished reading cover letter but didn't manage
-> to start looking at the rest. :)
-
-It's pretty standard boilerplate stuff, there's not much in there to
-review and Sylwester is one of the maintainers listed for this code so I
-wasn't particularly expecting extra review.
-
---qh7evjb7nsszf276
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlj6SCcACgkQJNaLcl1U
-h9C+Iwf8D6IKeh5wpio4MW6/M8koYR4I2MqmgLsi+HB6Dss3vXKs7zCQl8xrUEle
-c/iem7Q4BeljFC7aI9k/L7dTvP45eIgLGZehTqKdDzDfHO3ZPwTNxb0A3rsVsm/W
-7k1fUeTNn4i3DyaOPcCgo1f04zv50LME2/Jdqe0LI4B1AxcbICyAmURcW5BAUGJl
-FuvvKWiLrMm0r1ly5+jS+/vO6s1g/f3FGUWbajd7qzKnKF+ALQm1g7iiBbUkCLis
-2LCgA9yXuLxvwWqLgoWduUnmKqpqhD0XphKifwWLBWmx4toULGbEr7yumVc0d0EY
-UpA1+ekba31afTPRITzeVMco8hKKFQ==
-=0dvd
------END PGP SIGNATURE-----
-
---qh7evjb7nsszf276--
+-Tero
