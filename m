@@ -1,33 +1,80 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Apr 2017 19:48:31 -0700
+Date: Mon, 10 Apr 2017 11:24:31 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 7/8] clk: nomadik: Use seq_puts() in
- nomadik_src_clk_show()
-Message-ID: <20170422024831.GP7065@codeaurora.org>
-References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
- <d3be1f2b-f3c4-0d1b-4fa0-84589bfc3f70@users.sourceforge.net>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [GIT PULL] Allwinner clock fixes for 4.11, bis
+Message-ID: <20170410182431.GI7065@codeaurora.org>
+References: <20170406074121.tkivdvghbr27tr54@lukather>
+ <20170406231003.GS7065@codeaurora.org>
+ <20170410080048.l7xjndj457wa2b2q@lukather>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <d3be1f2b-f3c4-0d1b-4fa0-84589bfc3f70@users.sourceforge.net>
+In-Reply-To: <20170410080048.l7xjndj457wa2b2q@lukather>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/20, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 20 Apr 2017 09:45:04 +0200
+On 04/10, Maxime Ripard wrote:
+> On Thu, Apr 06, 2017 at 04:10:03PM -0700, Stephen Boyd wrote:
+> > On 04/06, Maxime Ripard wrote:
+> > > Hi Mike, Stephen,
+> > > 
+> > > Please pull the following changes for one of the 4.11-rc's
+> > > 
+> > > Thanks!
+> > > Maxime
+> > > 
+> > > The following changes since commit b467e08a15563dede0d37d3233baa24fb97a7310:
+> > > 
+> > >   clk: sunxi-ng: fix recalc_rate formula of NKMP clocks (2017-03-20 10:34:05 +0100)
+> > > 
+> > > are available in the git repository at:
+> > > 
+> > >   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-fixes-for-4.11-2
+> > > 
+> > > for you to fetch changes up to d054a839a0986136374d49f9f9fbc264abae9c4c:
+> > > 
+> > >   clk: sunxi-ng: fix build error without CONFIG_RESET_CONTROLLER (2017-03-27 13:37:05 +0200)
+> > > 
+> > > ----------------------------------------------------------------
+> > > Allwinner clock fixes for 4.11, bis
+> > > 
+> > > A few patches to fix a build error and a few minor typos and bugs in the
+> > > sunxi-ng code
+> > > 
+> > > ----------------------------------------------------------------
+> > > Chen-Yu Tsai (3):
+> > >       clk: sunxi-ng: use 1 as fallback for minimum multiplier
+> > >       clk: sunxi-ng: Fix round_rate/set_rate multiplier minimum mismatch
+> > >       clk: sunxi-ng: a80: Fix audio PLL comment not matching actual code
+> > > 
+> > > Tobias Regnery (1):
+> > >       clk: sunxi-ng: fix build error without CONFIG_RESET_CONTROLLER
+> > > 
+> > 
+> > Two of these are fixes for regressions in v4.10? Why are these
+> > critical for the v4.11 release? The comment patch is totally
+> > bogus, it's not fixing any sort of regression that is causing
+> > problems for people so I'm not sure why it was put into this pull
+> > request. Am I right in assuming that the only real patch we need
+> > out of here is the last one for the build error from randconfigs?
+> > If so I can cherry-pick that from the branch into fixes and the
+> > rest can go the next merge window.
+> > 
+> > Not pulling for now.
 > 
-> A string which did not contain a data format specification should be put
-> into a sequence. Thus use the corresponding function "seq_puts".
+> Actually, all of them but the comment fix are real fix.
 > 
-> This issue was detected by using the Coccinelle software.
+> "clk: sunxi-ng: use 1 as fallback for minimum multiplier" can lead to
+> a multiplier set to 0 in some cases (depending on the rate asked for),
+> and "clk: sunxi-ng: Fix round_rate/set_rate multiplier minimum
+> mismatch" will prevent inconsistensies in factors selection between
+> round_rate and set_rate.
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+> So, yes, they are not critical fixes in the sense that it will fix a
+> panic. but still those are bugs.
 
-Applied to clk-next
+Ok so it sounds like we agree that this can all wait until v4.12.
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
