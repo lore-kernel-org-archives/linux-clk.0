@@ -1,113 +1,187 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 11 Apr 2017 10:59:56 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>, robh+dt@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] ARM: dts: imx7: add USDHC NAND clock to SDHC
- instances
-Message-ID: <20170411025956.GA9067@b29396-OptiPlex-7040>
-References: <20170330005029.6472-1-stefan@agner.ch>
- <20170330005029.6472-2-stefan@agner.ch>
- <20170401030312.GB24882@b29396-OptiPlex-7040>
- <5c8339900fa1bd6215fb94d4386f7e06@agner.ch>
- <CAOMZO5CprxqnqRXMFJLBAgYAZGGnXNs3ZciyVz_mSLRnnSQQRQ@mail.gmail.com>
- <CAOMZO5A7QQEe5rgBbJBzo8GY41aYV9WA8e9teCUROyihg0kq_g@mail.gmail.com>
- <c95a7f535296623bdd4e4a640b3c27f5@agner.ch>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
+To: Tony Lindgren <tony@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <20170317152536.GT20572@atomide.com>
+ <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
+ <20170323010057.GI10760@atomide.com> <20170323170210.GL10760@atomide.com>
+ <8648f054-cf04-41df-20f3-82e0d63feefa@ti.com>
+ <20170330165448.GF10760@atomide.com>
+ <55b439ed-8b81-2e6b-64f1-34f9f3cc5369@ti.com>
+ <20170403153604.GI10760@atomide.com>
+ <b135c5d6-f06d-030d-333b-5223ef1aca9a@ti.com>
+ <20170407164731.GJ13234@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <6dd4c892-f0b5-f72e-c5e9-357cb8506f05@ti.com>
+Date: Mon, 10 Apr 2017 10:31:51 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <c95a7f535296623bdd4e4a640b3c27f5@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20170407164731.GJ13234@atomide.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 04, 2017 at 07:36:01PM -0700, Stefan Agner wrote:
-> On 2017-04-04 19:15, Fabio Estevam wrote:
-> > On Sun, Apr 2, 2017 at 2:02 PM, Fabio Estevam <festevam@gmail.com> wrote:
-> >> On Sat, Apr 1, 2017 at 1:15 AM, Stefan Agner <stefan@agner.ch> wrote:
-> >>
-> >>> IMX7D_IPG_ROOT_CLK is currently not a valid clock in upstream... So we
-> >>> would have to add it to the clock driver first.
-> >>>
-> >>> I guess we could/should add it anyway at one point? But probably also as
-> >>> init on, just to make sure Linux does not disable it since it is
-> >>> currently used by several IPs implicitly.
-> >>
-> >> Yes, I made a previous attempt do add  IMX7D_IPG_ROOT_CLK and it did
-> >> not work as I did not put it in the init_on clock list.
-> >>
-> >> Will submit a new patch adding it to init_on, thanks.
-> > 
-> > I thought that adding IMX7D_IPG_ROOT_CLK would do the trick, but the
-> > patch below also causes the kernel to not boot:
-> > 
-> > --- a/drivers/clk/imx/clk-imx7d.c
-> > +++ b/drivers/clk/imx/clk-imx7d.c
-> > @@ -386,7 +386,7 @@ static int const clks_init_on[] __initconst = {
-> >         IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_NAND_USDHC_BUS_ROOT_CLK,
-> >         IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
-> >         IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
-> > -       IMX7D_AHB_CHANNEL_ROOT_CLK,
-> > +       IMX7D_AHB_CHANNEL_ROOT_CLK, IMX7D_IPG_ROOT_CLK,
-> >  };
-> > 
-> >  static struct clk_onecell_data clk_data;
-> > @@ -788,7 +788,7 @@ static void __init imx7d_clocks_init(struct
-> > device_node *ccm_node)
-> >         clks[IMX7D_WRCLK_ROOT_DIV] =
-> > imx_clk_divider2("wrclk_post_div", "wrclk_pre_div", base + 0xbd00, 0,
-> > 6);
-> >         clks[IMX7D_CLKO1_ROOT_DIV] =
-> > imx_clk_divider2("clko1_post_div", "clko1_pre_div", base + 0xbd80, 0,
-> > 6);
-> >         clks[IMX7D_CLKO2_ROOT_DIV] =
-> > imx_clk_divider2("clko2_post_div", "clko2_pre_div", base + 0xbe00, 0,
-> > 6);
-> > -
-> > +       clks[IMX7D_IPG_ROOT_CLK] = imx_clk_divider2("ipg_root_clk",
-> > "ahb_root_clk", base + 0x9080, 0, 2);
-> >         clks[IMX7D_ARM_A7_ROOT_CLK] = imx_clk_gate4("arm_a7_root_clk",
-> > "arm_a7_div", base + 0x4000, 0);
-> >         clks[IMX7D_ARM_M4_ROOT_CLK] = imx_clk_gate4("arm_m4_root_clk",
-> > "arm_m4_div", base + 0x4010, 0);
-> >         clks[IMX7D_ARM_M0_ROOT_CLK] = imx_clk_gate4("arm_m0_root_clk",
-> > "arm_m0_div", base + 0x4020, 0);
-> 
-> Hm, imx_clk_divider2 sets CLK_SET_RATE_PARENT, maybe that influences the
-> parent?
-> 
-> I guess we actually don't want the clock framework to change that clock
-> rate, not sure whether we can freeze it or similar.
-> 
+On 07/04/17 19:47, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [170406 09:51]:
+>> On 03/04/17 18:36, Tony Lindgren wrote:
+>>> * Tero Kristo <t-kristo@ti.com> [170403 07:54]:
+>>>> On 30/03/17 19:54, Tony Lindgren wrote:
+>>>>> * Tero Kristo <t-kristo@ti.com> [170330 00:20]:
+>>>>>> On 23/03/17 19:02, Tony Lindgren wrote:
+>>>>>>> * Tony Lindgren <tony@atomide.com> [170322 18:03]:
+>>>>>>>> * Tero Kristo <t-kristo@ti.com> [170317 14:39]:
+>>>>>>>>> On 17/03/17 17:25, Tony Lindgren wrote:
+>>>>>>>>>> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+>>>>>>>>>>> Any additional testing on omap4 welcome as this series basically
+>>>>>>>>>>> tweaks every possible peripheral clock on the SoC.
+>>>>>>>>>>
+>>>>>>>>>> Without the last patch in this series, booting fails for me:
+>>>>>>>>>>
+>>>>>>>>>> [    5.074890] l4_per_cm:clk:0120:0: failed to disable
+>>>>>>>>>> [    5.085113] l4_per_cm:clk:0128:0: failed to disable
+>>>>>>>>>>
+>>>>>>>>>> Care to check that booting keeps working for each patch in the
+>>>>>>>>>> series to avoid breaking git bisect for booting?
+>>>>>>>>>
+>>>>>>>>> Hmm, I think patch 8+9 need to be squashed then. I can double check this
+>>>>>>>>> next week though.
+>>>>>>>>
+>>>>>>>> Also looks like with this set merged HDMI stops working on
+>>>>>>>> omap4 with:
+>>>>>>>>
+>>>>>>>> HDMIWP: omapdss HDMIWP error: Failed to set PHY power mode to 1
+>>>>>>>
+>>>>>>> Forgot to mention that's with omapdrm with encoder-tpd12s015 and
+>>>>>>> encoder-tfp410 modules loaded to get HDMI working. Here's more verbose
+>>>>>>> dmesg output in case that provides more clues:
+>>>>>>>
+>>>>>>> [   91.042877] omapdss HDMICORE error: operation stopped when reading edid
+>>>>>>> [   91.078308] [drm] Enabling DMM ywrap scrolling
+>>>>>>> [   91.099243] omapdss HDMIWP error: Failed to set PHY power mode to 1
+>>>>>>> [   91.107879] omapdss HDMI error: failed to power on device
+>>>>>>> [   91.107879] omapdrm omapdrm.0: Failed to enable display 'hdmi': -5
+>>>>>>> [   91.359619] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+>>>>>>> [   91.619964] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+>>>>>>> [   91.620300] Console: switching to colour frame buffer device 128x48
+>>>>>>> [   91.682434] omapdrm omapdrm.0: fb0: omapdrm frame buffer device
+>>>>>>> [   91.770812] [drm] Initialized omapdrm 1.0.0 20110917 for omapdrm.0 on minor 0
+>>>>>>> [   92.818054] omapdss HDMICORE error: operation stopped when reading edid
+>>>>>>> [   93.090087] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+>>>>>>> [   93.349853] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
+>>>>>>>
+>>>>>>> Regards,
+>>>>>>>
+>>>>>>> Tony
+>>>>>>>
+>>>>>>
+>>>>>> Can you try with this additional hwmod data tweak in place? Apply this on
+>>>>>> top of the existing series.
+>>>>>
+>>>>> Does not seem to help, still get the same errors. But maybe I'm doing
+>>>>> something wrong as the patch did not apply and I applied it manually.
+>>>>>
+>>>>> Regards,
+>>>>>
+>>>>> Tony
+>>>>>
+>>>>
+>>>> Hmm ok, can you provide some brief instructions how to test what you are
+>>>> doing with the HDMI? Just connect it to some external monitor? My monitor
+>>>> has a spare HDMI connector so I could try it out.
+>>>
+>>> Well build a kernel using omap2plus_defconfig, then with HDMI cable
+>>> connected load the following modules:
+>>>
+>>> encoder-tpd12s015 encoder-tfp410 connector-hdmi omapfb
+>>>
+>>> And a console should appear on the HDMI monitor. If using omapdrm, then
+>>> load omapdss and omapdrm instead.
+>>>
+>>> And if using NFSroot, you need to have ehci and smsc drivers built-in
+>>> or use an initramfs.
+>>
+>> Ok, I have a solution to the issue.
+>>
+>> Try the slightly modified patch below. It just required a couple of hwmod
+>> flags applied in addition to the patch I sent before.
+>>
+>> I also pushed a branch named "4.11-rc1-clkctrl-wip" as a reference, where
+>> also the hdmi works fine on omap4.
+>
+> OK hdmi works now on panda for both omapfb and omapdrm. Any ideas why
+> that change is now needed though?
 
-This is caused by ahb_root_clk gets disabled accidently and system hangs.
+Yes, it is pretty clear actually. Previously, the hwmod main clock was 
+controlling the hdmi clock, but this is now rerouted to the clkctrl 
+module clock, which is shared between all DSS submodules. This leaves 
+the hdmi clock disabled, causing the failure.
 
-Because this patch defines ipg_root_clk earlier before its parent
-(ahb_root_clk) got registered, then it will be marked as a orphan clk
-temporarily. Until the parent ahb_root_clk got registered, the clk core
-will reparent it to the newly found parent. (see __clk_core_init() function).
+The fix just puts the hdmi clock into the optional clocks list, and 
+forces all the optional clocks on when pm_runtime is enabled for the module.
 
-Due to CLK_SET_RATE_PARENT flag, the ahb clk will be enabled during
-set_parent operation and then disabled after that.
-Then system hang cause we still get no chance to run init_on clks.
+-Tero
 
-I just send out a proper fix patch with correct register sequence.
-
-Probably we can switch all imx clk driver to CLK_IS_CRITICAL for critical
-clocks in the future, but that's another thing to do later.
-
-Stefan,
-I think you can just resend your series based on my patches.
-
-Regards
-Dong Aisheng
-
+>
+> Regards,
+>
+> Tony
+>
+>> ===================================
+>>
+>> diff --git a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
+>> b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
+>> index dad871a..43163b5 100644
+>> --- a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
+>> +++ b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
+>> @@ -775,6 +775,7 @@
+>>
+>>  static struct omap_hwmod_opt_clk dss_hdmi_opt_clks[] = {
+>>  	{ .role = "sys_clk", .clk = "dss_sys_clk" },
+>> +	{ .role = "hdmi_clk", .clk = "dss_48mhz_clk" },
+>>  };
+>>
+>>  static struct omap_hwmod omap44xx_dss_hdmi_hwmod = {
+>> @@ -785,7 +786,7 @@
+>>  	 * HDMI audio requires to use no-idle mode. Hence,
+>>  	 * set idle mode by software.
+>>  	 */
+>> -	.flags		= HWMOD_SWSUP_SIDLE,
+>> +	.flags		= HWMOD_SWSUP_SIDLE | HWMOD_OPT_CLKS_NEEDED,
+>>  	.mpu_irqs	= omap44xx_dss_hdmi_irqs,
+>>  	.xlate_irq	= omap4_xlate_irq,
+>>  	.sdma_reqs	= omap44xx_dss_hdmi_sdma_reqs,
+>> @@ -858,11 +859,16 @@
+>>  };
+>>
+>>  /* dss_venc */
+>> +static struct omap_hwmod_opt_clk dss_venc_opt_clks[] = {
+>> +	{ .role = "tv_clk", .clk = "dss_tv_clk" },
+>> +};
+>> +
+>>  static struct omap_hwmod omap44xx_dss_venc_hwmod = {
+>>  	.name		= "dss_venc",
+>>  	.class		= &omap44xx_venc_hwmod_class,
+>>  	.clkdm_name	= "l3_dss_clkdm",
+>>  	.main_clk	= "dss_tv_clk",
+>> +	.flags		= HWMOD_OPT_CLKS_NEEDED,
+>>  	.prcm = {
+>>  		.omap4 = {
+>>  			.clkctrl_offs = OMAP4_CM_DSS_DSS_CLKCTRL_OFFSET,
+>> @@ -870,6 +876,8 @@
+>>  		},
+>>  	},
+>>  	.parent_hwmod	= &omap44xx_dss_hwmod,
+>> +	.opt_clks	= dss_venc_opt_clks,
+>> +	.opt_clks_cnt	= ARRAY_SIZE(dss_venc_opt_clks),
+>>  };
+>>
+>>  /*
+>>
+>>
+>>
 > --
-> Stefan
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
