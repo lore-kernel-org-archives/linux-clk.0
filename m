@@ -1,48 +1,33 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 5 Apr 2017 15:03:58 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/2] ARM/clk: move the ICST library to drivers/clk
-Message-ID: <20170405220358.GI7065@codeaurora.org>
-References: <20170318085944.15899-1-linus.walleij@linaro.org>
- <20170318085944.15899-3-linus.walleij@linaro.org>
- <CACRpkdY2wvae2n-vBmkXwh6rhVWP_pZddJ3e5BZzQO9q5OVzSA@mail.gmail.com>
+Return-Path: <dcb314@hotmail.com>
+From: David Binderman <dcb314@hotmail.com>
+To: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: linux-4.11-rc6/drivers/clk/versatile/clk-icst.c:290]: (style)
+ Redundant condition:
+Date: Mon, 10 Apr 2017 08:27:07 +0000
+Message-ID: <HE1PR0801MB1865E109A0F06F599FA02A3A9C010@HE1PR0801MB1865.eurprd08.prod.outlook.com>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CACRpkdY2wvae2n-vBmkXwh6rhVWP_pZddJ3e5BZzQO9q5OVzSA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/28, Linus Walleij wrote:
-> On Sat, Mar 18, 2017 at 9:59 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> 
-> > This moves the ICST clock divider helper library from
-> > arch/arm/common to drivers/clk/versatile so it is maintained
-> > with the other clock drivers.
-> >
-> > We keep the structure as a helper library intact and do not
-> > fuse it with the clk-icst.c Versatile ICST clock driver: there
-> > may be other users out there that need to use this library for
-> > their clocking, and then it will be helpful to keep the
-> > library contained. (The icst.[c|h] files could just be moved
-> > to drivers/clk/lib or a similar location to share the library.)
-> >
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> CLK maintainers: could you ACK this so that I can ask the ARM
-> SoC tree to pull in these two patches?
-> 
-> Or do you prefer to take all patches in the CLK tree so I should
-> ask the ARM people to ACK it?
-> 
 
-Either way is fine.
+Hello there,
 
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+linux-4.11-rc6/drivers/clk/versatile/clk-icst.c:290]: (style) Redundant con=
+dition: If 'rate <=3D 25000000', the comparison 'rate < 29000000' is always=
+ true.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Source code is
+
+        if (rate <=3D 25000000 || rate < 29000000)
+            return 25000000;
+
+Suggest new code
+
+        if ( rate < 29000000)
+            return 25000000;
+
+Regards
+
+David Binderman
