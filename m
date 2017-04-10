@@ -1,66 +1,65 @@
 Return-Path: <jbrunet@baylibre.com>
 Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1491145750.3480.3.camel@baylibre.com>
-Subject: Re: [PATCH 2/2] clk: meson: mpll: use 64bit math in rate_from_params
+Message-ID: <1491810121.3480.36.camel@baylibre.com>
+Subject: [GIT PULL] Amlogic clock driver updates for v4.12 - 2nd batch
 From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, khilman@baylibre.com,
-	carlo@caione.org, sboyd@codeaurora.org, mturquette@baylibre.com,
-	narmstrong@baylibre.com
-Date: Sun, 02 Apr 2017 17:09:10 +0200
-In-Reply-To: <20170401130225.8811-3-martin.blumenstingl@googlemail.com>
-References: <20170401130225.8811-1-martin.blumenstingl@googlemail.com>
-	 <20170401130225.8811-3-martin.blumenstingl@googlemail.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	 <sboyd@codeaurora.org>
+Cc: Kevin Hilman <khilman@baylibre.com>, Neil Armstrong
+	 <narmstrong@baylibre.com>, "linux-clk@vger.kernel.org"
+	 <linux-clk@vger.kernel.org>, "open list:ARM/Amlogic Meson..."
+	 <linux-amlogic@lists.infradead.org>
+Date: Mon, 10 Apr 2017 09:42:01 +0200
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 2017-04-01 at 15:02 +0200, Martin Blumenstingl wrote:
-> On Meson8b the MPLL parent clock (fixed_pll) has a rate of 2550MHz.
-> Multiplying this with SDM_DEN results in a value greater than 32bits.
-> This is not a problem on the 64bit Meson GX SoCs, but it may result in
-> undefined behavior on the older 32bit Meson8b SoC.
-> 
-> While rate_from_params was only introduced recently to make the math
-> reusable from _round_rate and _recalc_rate the original bug exists much
-> longer.
+Dear clock maintainers,
 
-Again, thanks for testing and fixing this Martin !
+Below is a request to pull a 2nd batch of update to the Amlogic clock driver. It
+is based on the previous PR sent by Kevin.
 
-> 
-> Fixes: 1c50da4f27 ("clk: meson: add mpll support")
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  drivers/clk/meson/clk-mpll.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-> index 551aa2a5b291..4306ad833a4f 100644
-> --- a/drivers/clk/meson/clk-mpll.c
-> +++ b/drivers/clk/meson/clk-mpll.c
-> @@ -62,6 +62,7 @@
->   */
->  
->  #include <linux/clk-provider.h>
-> +#include <linux/math64.h>
->  #include "clkc.h"
->  
->  #define SDM_DEN 16384
-> @@ -81,7 +82,7 @@ static unsigned long rate_from_params(unsigned long
-> parent_rate,
->  	if (divisor == 0)
->  		return 0;
->  	else
-> -		return (parent_rate * SDM_DEN) / divisor;
-> +		return mul_u64_u32_div(parent_rate, SDM_DEN, divisor);
+Cheers
 
-Just casting parent_rate to u64 should be enough, don't you think ?
-Actually, I was thinking of copying a pattern that is used a lot in CCF and use
-DIV_ROUND_UP_ULL((u64)foo, bar). See clk-divider.c.
+The following changes since commit 3a429818a2e48928ae0114df5fb3b0612dd57001:
 
-Would this be ok with you ?
+  Merge branch 'v4.12/clk-drivers' into v4.12/clk (2017-04-04 15:58:11 -0700)
 
->  }
->  
->  static void params_from_rate(unsigned long requested_rate,
+are available in the git repository at:
+
+  git://github.com/BayLibre/clk-meson.git tags/meson-clk-for-4.12
+
+for you to fetch changes up to b609338b26f5653aa211fc7af83477e2df6e3f0b:
+
+  clk: meson: mpll: use 64bit math in rate_from_params (2017-04-07 17:45:30
++0200)
+
+----------------------------------------------------------------
+2nd Amlogic clock driver update for 4.12:
+* Protect against holes in onecell_data
+* Fix divison by zero and overflow in the mpll driver
+* Add audio clock divider driver for i2s clocks
+* Add i2s and spdif master clocks
+
+----------------------------------------------------------------
+Jerome Brunet (6):
+      MAINTAINERS: Add maintainers for the meson clock driver
+      clk: meson: gxbb: protect against holes in the onecell_data array
+      clk: meson: add audio clock divider support
+      clk: meson: gxbb: add cts_amclk
+      clk: meson: gxbb: add cts_mclk_i958
+      clk: meson: gxbb: add cts_i958 clock
+
+Martin Blumenstingl (2):
+      clk: meson: mpll: fix division by zero in rate_from_params
+      clk: meson: mpll: use 64bit math in rate_from_params
+
+ MAINTAINERS                           |  10 +++
+ drivers/clk/meson/Makefile            |   2 +-
+ drivers/clk/meson/clk-audio-divider.c | 144 ++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/clk-mpll.c          |  26 +++---
+ drivers/clk/meson/clkc.h              |  10 +++
+ drivers/clk/meson/gxbb.c              | 144 ++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h              |   9 ++-
+ 7 files changed, 332 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/clk/meson/clk-audio-divider.c
