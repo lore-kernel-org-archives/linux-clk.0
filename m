@@ -1,31 +1,42 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 09:50:40 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jon Mason <jon.mason@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>
-Subject: Re: [PATCH] clk: ns2: Correct SDIO bits
-Message-ID: <20170419165040.GJ7065@codeaurora.org>
-References: <1490047934-3061-1-git-send-email-jon.mason@broadcom.com>
+Return-Path: <tony@atomide.com>
+Date: Mon, 10 Apr 2017 09:18:16 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
+Message-ID: <20170410161816.GD5339@atomide.com>
+References: <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
+ <20170323010057.GI10760@atomide.com>
+ <20170323170210.GL10760@atomide.com>
+ <8648f054-cf04-41df-20f3-82e0d63feefa@ti.com>
+ <20170330165448.GF10760@atomide.com>
+ <55b439ed-8b81-2e6b-64f1-34f9f3cc5369@ti.com>
+ <20170403153604.GI10760@atomide.com>
+ <b135c5d6-f06d-030d-333b-5223ef1aca9a@ti.com>
+ <20170407164731.GJ13234@atomide.com>
+ <6dd4c892-f0b5-f72e-c5e9-357cb8506f05@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1490047934-3061-1-git-send-email-jon.mason@broadcom.com>
+In-Reply-To: <6dd4c892-f0b5-f72e-c5e9-357cb8506f05@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/20, Jon Mason wrote:
-> From: Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>
+* Tero Kristo <t-kristo@ti.com> [170410 00:34]:
+> On 07/04/17 19:47, Tony Lindgren wrote:
+> > OK hdmi works now on panda for both omapfb and omapdrm. Any ideas why
+> > that change is now needed though?
 > 
-> Corrected the bits for power and iso.
+> Yes, it is pretty clear actually. Previously, the hwmod main clock was
+> controlling the hdmi clock, but this is now rerouted to the clkctrl module
+> clock, which is shared between all DSS submodules. This leaves the hdmi
+> clock disabled, causing the failure.
 > 
-> Signed-off-by: Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>
-> Signed-off-by: Jon Mason <jon.mason@broadcom.com>
-> Fixes: f7225a83 ("clk: ns2: add clock support for Broadcom Northstar 2 SoC")
-> ---
+> The fix just puts the hdmi clock into the optional clocks list, and forces
+> all the optional clocks on when pm_runtime is enabled for the module.
 
-Applied to clk-next
+OK so no need to fix it in the current kernels then.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+
+Tony
