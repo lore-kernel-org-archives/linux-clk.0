@@ -1,36 +1,90 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Apr 2017 19:14:55 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] clk: at91: Use kcalloc() in
- of_at91_clk_pll_get_characteristics()
-Message-ID: <20170422021455.GH7065@codeaurora.org>
-References: <2b5c3954-dc45-4f1b-5d94-397f688b23cb@users.sourceforge.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:36560 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752579AbdDKED0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2017 00:03:26 -0400
+Date: Wed, 12 Apr 2017 04:00:13 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org,
+        aisheng.dong@nxp.com, fabio.estevam@nxp.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] ARM: dts: imx7: add USDHC NAND and IPG clock to
+ SDHC instances
+Message-ID: <20170411200013.GB13181@b29396-OptiPlex-7040>
+References: <20170410210015.1620-1-stefan@agner.ch>
+ <20170410210015.1620-2-stefan@agner.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <2b5c3954-dc45-4f1b-5d94-397f688b23cb@users.sourceforge.net>
+In-Reply-To: <20170410210015.1620-2-stefan@agner.ch>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/19, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 19 Apr 2017 19:43:03 +0200
+On Mon, Apr 10, 2017 at 02:00:15PM -0700, Stefan Agner wrote:
+> The USDHC instances need the USDHC NAND and IPG clock in order to
+> operate. Reference them properly by replacing the dummy clocks with
+> the actual clocks.
 > 
-> Multiplications for the size determination of memory allocations
-> indicated that array data structures should be processed.
-> Thus use the corresponding function "kcalloc".
+> Note that both clocks are currently implicitly enabled since they
+> are part of the i.MX 7 clock drivers init_on list. This might
+> change in the future.
 > 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+
+Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+
+Regards
+Dong Aisheng
+
 > ---
-
-Applied to clk-next
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> This patch depends on "clk: imx7d: add the missing ipg_root_clk"
+> which adds the IPG clock.
+> 
+> --
+> Stefan
+> 
+>  arch/arm/boot/dts/imx7s.dtsi | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+> index c4f12fd2e044..843eb379e1ea 100644
+> --- a/arch/arm/boot/dts/imx7s.dtsi
+> +++ b/arch/arm/boot/dts/imx7s.dtsi
+> @@ -934,8 +934,8 @@
+>  				compatible = "fsl,imx7d-usdhc", "fsl,imx6sl-usdhc";
+>  				reg = <0x30b40000 0x10000>;
+>  				interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&clks IMX7D_CLK_DUMMY>,
+> -					<&clks IMX7D_CLK_DUMMY>,
+> +				clocks = <&clks IMX7D_IPG_ROOT_CLK>,
+> +					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
+>  					<&clks IMX7D_USDHC1_ROOT_CLK>;
+>  				clock-names = "ipg", "ahb", "per";
+>  				bus-width = <4>;
+> @@ -946,8 +946,8 @@
+>  				compatible = "fsl,imx7d-usdhc", "fsl,imx6sl-usdhc";
+>  				reg = <0x30b50000 0x10000>;
+>  				interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&clks IMX7D_CLK_DUMMY>,
+> -					<&clks IMX7D_CLK_DUMMY>,
+> +				clocks = <&clks IMX7D_IPG_ROOT_CLK>,
+> +					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
+>  					<&clks IMX7D_USDHC2_ROOT_CLK>;
+>  				clock-names = "ipg", "ahb", "per";
+>  				bus-width = <4>;
+> @@ -958,8 +958,8 @@
+>  				compatible = "fsl,imx7d-usdhc", "fsl,imx6sl-usdhc";
+>  				reg = <0x30b60000 0x10000>;
+>  				interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+> -				clocks = <&clks IMX7D_CLK_DUMMY>,
+> -					<&clks IMX7D_CLK_DUMMY>,
+> +				clocks = <&clks IMX7D_IPG_ROOT_CLK>,
+> +					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
+>  					<&clks IMX7D_USDHC3_ROOT_CLK>;
+>  				clock-names = "ipg", "ahb", "per";
+>  				bus-width = <4>;
+> -- 
+> 2.12.1
+> 
