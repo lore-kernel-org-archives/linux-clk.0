@@ -1,121 +1,114 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <f.fainelli@gmail.com>
+Return-Path: <f.fainelli@gmail.com>
+Subject: Re: [RFC PATCH 0/3] clk: introduce clk_bulk_get accessories
+To: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
+References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+Cc: leonard.crestez@nxp.com, ping.bai@nxp.com, anson.huang@nxp.com,
+ viresh.kumar@linaro.org, mturquette@baylibre.com, rjw@rjwysocki.net,
+ linux-kernel@vger.kernel.org, broonie@kernel.org, octavian.purdila@nxp.com,
+ kernel@pengutronix.de, fabio.estevam@nxp.com, yibin.gong@nxp.com,
+ shawnguo@kernel.org, sboyd@codeaurora.org,
+ linux-arm-kernel@lists.infradead.org
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <86200633-8349-f1c3-f4d8-a130a26381f7@gmail.com>
+Date: Tue, 11 Apr 2017 10:01:29 -0700
 MIME-Version: 1.0
-To: Kevin Hilman <khilman@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <149181015787.91618.7461737194577750243@resonance>
-Cc: linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org
-References: <m2o9wb7oho.fsf@baylibre.com>
- <149181015787.91618.7461737194577750243@resonance>
-Message-ID: <149200138297.88277.9296054276836015367@resonance>
-Subject: Re: [GIT PULL] Amlogic clock driver updates for v4.12
-Date: Wed, 12 Apr 2017 14:49:42 +0200
+In-Reply-To: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Michael Turquette (2017-04-10 09:42:37)
-> Quoting Kevin Hilman (2017-04-05 01:16:19)
-> > Steven, Mike,
-> > =
+On 04/11/2017 09:03 PM, Dong Aisheng wrote:
+> These helper function allows drivers to get several clk consumers in
+> one operation.  If any of the clk cannot be acquired then any clks
+> that were got will be put before returning to the caller.
+> 
+> The idea firstly came out when i wanted to clean up and optimize
+> imx6q-cpufreq driver which needs to handle a lot of clocks as it
+> becomes a bit mess.
+> 
+> e.g. drivers/cpufreq/imx6q-cpufreq.c
+> 
+> You will see we need get 7 clocks during driver probe.
+> (Add there will be more, e.g. pll1, pll1_bypass, pll1_bypass_src,
+> in the future when adding busfreq support).
+> 
+> static int imx6q_cpufreq_probe(struct platform_device *pdev)
+> {
+> ....
+> 	arm_clk = clk_get(cpu_dev, "arm");
+> 	pll1_sys_clk = clk_get(cpu_dev, "pll1_sys");
+> 	pll1_sw_clk = clk_get(cpu_dev, "pll1_sw");
+> 	step_clk = clk_get(cpu_dev, "step");
+> 	pll2_pfd2_396m_clk = clk_get(cpu_dev, "pll2_pfd2_396m");
+> 	if (IS_ERR(arm_clk) || IS_ERR(pll1_sys_clk) || IS_ERR(pll1_sw_clk) ||
+> 	    IS_ERR(step_clk) || IS_ERR(pll2_pfd2_396m_clk)) {
+> 		dev_err(cpu_dev, "failed to get clocks\n");
+> 		ret = -ENOENT;
+> 		goto put_clk;
+> 	}
+> 
+> 	if (of_machine_is_compatible("fsl,imx6ul")) {
+> 		pll2_bus_clk = clk_get(cpu_dev, "pll2_bus");
+> 		secondary_sel_clk = clk_get(cpu_dev, "secondary_sel");
+> 		if (IS_ERR(pll2_bus_clk) || IS_ERR(secondary_sel_clk)) {
+> 			dev_err(cpu_dev, "failed to get clocks specific to imx6ul\n");
+> 			ret = -ENOENT;
+> 			goto put_clk;
+> 		}
+> 	}
+> ....
+> put_clk: 
+>         if (!IS_ERR(arm_clk))
+>                 clk_put(arm_clk);
+>         if (!IS_ERR(pll1_sys_clk))
+>                 clk_put(pll1_sys_clk);
+> 	...........
+> }
+> 
+> Together with the err path handling for each clocks, it does make
+> things a bit ugly.
+> 
+> Since we already have regulator_bulk_get accessories, i thought we
+> probably could introduce clk_bulk_get as well to handle such case to
+> ease the driver owners' life. 
+> 
+> Besides IMX cpufreq driver, there is also some similar cases
+> in kernel which could befinit from this api as well.
+> e.g.
+> drivers/cpufreq/tegra124-cpufreq.c
+> drivers/cpufreq/s3c2412-cpufreq.c
+> sound/soc/samsung/smdk_spdif.c
+> arch/arm/mach-omap1/serial.c
+> ...
+> 
+> And actually, if we handle clocks more than 3, then it might be
+> worthy to try, which there is quite many manay in kernel and
+> that probably could save a lot codes.
+> 
+> This is a RFC patch intending to bring up the idea to discuss.
+> 
+> Comments are welcome and appreciated!
 
-> > Below is a request to pull the full set of Amlogic clock changes for
-> > v4.12.  Note that this includes the previous pull for headers, but I
-> > wanted to send them separately for completness, and so there's an
-> > obvious tag to use as a dependency source for our DT changes.
-> =
+Thanks a lot for doing this, we have historically done something similar
+on ARCH_BRCMSTB platforms in our downstream tree with a concept of a
+"software" clock which has multiple parents (yikes), using the bulk
+accessors would essentially allow us to remove part of this hack, so I
+am all in favor of this!
 
-> Pulled.
+> 
+> Dong Aisheng (3):
+>   clk: add clk_bulk_get accessories
+>   clk: add managed version of clk_bulk_get
+>   cpufreq: imx6q: refine clk operations
+> 
+>  drivers/clk/clk-devres.c        |  36 +++++++++++
+>  drivers/clk/clk.c               |  99 +++++++++++++++++++++++++++++
+>  drivers/clk/clkdev.c            |  42 +++++++++++++
+>  drivers/cpufreq/imx6q-cpufreq.c | 119 ++++++++++++++++-------------------
+>  include/linux/clk.h             | 135 ++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 365 insertions(+), 66 deletions(-)
+> 
 
-As we discussed, your PR included commits that I had already merged into
-the clk-meson stable branch and I have resolved this by dropping
-clk-meson from the clk tree. This PR is now merged into the clk tree
-without duplicated commits.
 
-Thanks,
-Mike
-
-> =
-
-> Regards,
-> Mike
-> =
-
-> > =
-
-> > Thanks,
-> > =
-
-> > Kevin
-> > =
-
-> > =
-
-> > The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d=
-9201:
-> > =
-
-> >   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-> > =
-
-> > are available in the git repository at:
-> > =
-
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-amlogic.g=
-it tags/amlogic-clk
-> > =
-
-> > for you to fetch changes up to 3a429818a2e48928ae0114df5fb3b0612dd57001:
-> > =
-
-> >   Merge branch 'v4.12/clk-drivers' into v4.12/clk (2017-04-04 15:58:11 =
--0700)
-> > =
-
-> > ----------------------------------------------------------------
-> > Amlogic clock driver updates for v4.12
-> > - meson8: add some new PLLs
-> > - new clocks for Mali
-> > - misc fixes.
-> > =
-
-> > ----------------------------------------------------------------
-> > Jerome Brunet (9):
-> >       clk: meson: fix SET_PARM macro
-> >       clk: meson: add missing const qualifiers on gate arrays
-> >       clk: meson8b: put dividers and muxes in tables
-> >       clk: gxbb: put dividers and muxes in tables
-> >       clk: meson: mpll: add rw operation
-> >       clk: meson: gxbb: mpll: use rw operation
-> >       clk: meson8b: add the mplls clocks 0, 1 and 2
-> >       clk: meson: mpll: correct N2 maximum value
-> >       dt-bindings: clk: gxbb: expose i2s output clock gates
-> > =
-
-> > Kevin Hilman (1):
-> >       Merge branch 'v4.12/clk-drivers' into v4.12/clk
-> > =
-
-> > Neil Armstrong (7):
-> >       clk: meson-gxbb: Add MALI clock IDS
-> >       clk: meson-gxbb: Expose GP0 dt-bindings clock id
-> >       dt-bindings: clock: gxbb-clkc: Add GXL compatible variant
-> >       clk: meson-gxbb: Add MALI clocks
-> >       clk: meson: Add support for parameters for specific PLLs
-> >       clk: meson-gxbb: Add GP0 PLL init parameters
-> >       clk: meson-gxbb: Add GXL/GXM GP0 Variant
-> > =
-
-> >  Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt |   3 +-
-> >  drivers/clk/meson/clk-mpll.c                                  | 152 ++=
-++++++++++++-
-> >  drivers/clk/meson/clk-pll.c                                   |  53 ++=
-+++-
-> >  drivers/clk/meson/clkc.h                                      |  29 ++-
-> >  drivers/clk/meson/gxbb.c                                      | 505 ++=
-++++++++++++++++++++++++++++++++++++++++++++----
-> >  drivers/clk/meson/gxbb.h                                      |  23 ++-
-> >  drivers/clk/meson/meson8b.c                                   | 127 ++=
-++++++++++-
-> >  drivers/clk/meson/meson8b.h                                   |  20 +-
-> >  include/dt-bindings/clock/gxbb-clkc.h                         |  11 ++
-> >  9 files changed, 867 insertions(+), 56 deletions(-)
-> >=20
+-- 
+Florian
