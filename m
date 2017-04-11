@@ -1,103 +1,61 @@
-Return-Path: <wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 12 Apr 2017 03:59:42 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org,
+        aisheng.dong@nxp.com, fabio.estevam@nxp.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: imx7d: fix USDHC NAND clock
+Message-ID: <20170411195941.GA13181@b29396-OptiPlex-7040>
+References: <20170410210015.1620-1-stefan@agner.ch>
 MIME-Version: 1.0
-In-Reply-To: <20170413070209.kjpv27fqc4o4znqs@lukather>
-References: <20170413021354.3258-1-wens@csie.org> <20170413021354.3258-2-wens@csie.org>
- <20170413070209.kjpv27fqc4o4znqs@lukather>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 13 Apr 2017 15:35:30 +0800
-Message-ID: <CAGb2v64z9+FyozKf=O4ASFrEgZoeGJVBSNR6NsnyP4dHgYZqfw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: sunxi-ng: Add clk notifier to gate then ungate
- PLL clocks
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170410210015.1620-1-stefan@agner.ch>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 13, 2017 at 3:02 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi Chen-Yu,
->
-> On Thu, Apr 13, 2017 at 10:13:52AM +0800, Chen-Yu Tsai wrote:
->> In common PLL designs, changes to the dividers take effect almost
->> immediately, while changes to the multipliers (implemented as
->> dividers in the feedback loop) take a few cycles to work into
->> the feedback loop for the PLL to stablize.
->>
->> Sometimes when the PLL clock rate is changed, the decrease in the
->> divider is too much for the decrease in the multiplier to catch up.
->> The PLL clock rate will spike, and in some cases, might lock up
->> completely. This is especially the case if the divider changed is
->> the pre-divider, which affects the reference frequency.
->>
->> This patch introduces a clk notifier callback that will gate and
->> then ungate a clk after a rate change, effectively resetting it,
->> so it continues to work, despite any possible lockups. Care must
->> be taken to reparent any consumers to other temporary clocks during
->> the rate change, and that this notifier callback must be the first
->> to be registered.
->>
->> This is intended to fix occasional lockups with cpufreq on newer
->> Allwinner SoCs, such as the A33 and the H3. Previously it was
->> thought that reparenting the cpu clock away from the PLL while
->> it stabilized was enough, as this worked quite well on the A31.
->>
->> On the A33, hangs have been observed after cpufreq was recently
->> introduced. With the H3, a more thorough test [1] showed that
->> reparenting alone isn't enough. The system still locks up unless
->> the dividers are limited to 1.
->>
->> A hunch was if the PLL was stuck in some unknown state, perhaps
->> gating then ungating it would bring it back to normal. Tests
->> done by Icenowy Zheng using Ondrej's test firmware shows this
->> to be a valid solution.
->>
->> [1] http://www.spinics.net/lists/arm-kernel/msg552501.html
->>
->> Reported-by: Ondrej Jirman <megous@megous.com>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> Tested-by: Icenowy Zheng <icenowy@aosc.io>
->> Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
->
-> Thanks for looking into this, and coming up with a clean solution, and
-> a great commit log.
->
-> However, I wondering, isn't that notifier just a re-implementation of
-> CLK_SET_RATE_GATE?
+On Mon, Apr 10, 2017 at 02:00:14PM -0700, Stefan Agner wrote:
+> The USDHC NAND root clock is not gated by any CCM clock gate. Remove
+> the bogus gate definition.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-They are not the same. AFAIK, CLK_SET_RATE_GATE tells the clk framework
-that this clk's rate cannot be changed if it is enabled (which means
-some one is using it). However the clk framework does nothing to
-actually handle it. It just returns an error. Any consumers are
-responsible for gating the clock before making changes. This is a nice
-thing to have, as it can prevent unintended changes to dot clocks or
-audio clocks used with active output streams. We could consider setting
-this for the audio and video PLLs.
-
-Here we are dealing with the CPU PLL, which, for practical reasons,
-is always enabled as far as the clk framework is concerned. The
-reason being the OPPs are never low enough for the CPU clock to
-use any other parent. To have it disabled, we would have to kick
-consumers (the CPU clock in this case) to use other clocks, so it's
-safe, remember which ones we kicked, and then bring them back once
-everything is done.
-
-AFAIK, we, samsung, rockchip, meson, do the temporary reparenting
-using clk_notifiers to access the mux registers directly. As far
-as the clk framework is concerned, nothing has changed.
-
-I'm not saying it's not possible to support this in the core, but
-the core already has to do a lot of bookkeeping and recalculation
-when anything changes. Adding something transient into the process
-isn't helping. And the reparenting might temporarily violate any
-downstream requirements.
-
-For now, I think clk notifiers is the easier solution for these
-one off requirements that are pretty much contained in a small
-part of the system.
+Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
 
 Regards
-ChenYu
+Dong Aisheng
+
+> ---
+>  drivers/clk/imx/clk-imx7d.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+> index 562055129ed8..93b03640da9b 100644
+> --- a/drivers/clk/imx/clk-imx7d.c
+> +++ b/drivers/clk/imx/clk-imx7d.c
+> @@ -724,7 +724,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+>  	clks[IMX7D_MAIN_AXI_ROOT_DIV] = imx_clk_divider2("axi_post_div", "axi_pre_div", base + 0x8800, 0, 6);
+>  	clks[IMX7D_DISP_AXI_ROOT_DIV] = imx_clk_divider2("disp_axi_post_div", "disp_axi_pre_div", base + 0x8880, 0, 6);
+>  	clks[IMX7D_ENET_AXI_ROOT_DIV] = imx_clk_divider2("enet_axi_post_div", "enet_axi_pre_div", base + 0x8900, 0, 6);
+> -	clks[IMX7D_NAND_USDHC_BUS_ROOT_DIV] = imx_clk_divider2("nand_usdhc_post_div", "nand_usdhc_pre_div", base + 0x8980, 0, 6);
+> +	clks[IMX7D_NAND_USDHC_BUS_ROOT_CLK] = imx_clk_divider2("nand_usdhc_root_clk", "nand_usdhc_pre_div", base + 0x8980, 0, 6);
+>  	clks[IMX7D_AHB_CHANNEL_ROOT_DIV] = imx_clk_divider2("ahb_root_clk", "ahb_pre_div", base + 0x9000, 0, 6);
+>  	clks[IMX7D_IPG_ROOT_CLK] = imx_clk_divider2("ipg_root_clk", "ahb_root_clk", base + 0x9080, 0, 2);
+>  	clks[IMX7D_DRAM_ROOT_DIV] = imx_clk_divider2("dram_post_div", "dram_cg", base + 0x9880, 0, 3);
+> @@ -798,7 +798,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+>  	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
+>  	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "axi_post_div", base + 0x4110, 0);
+>  	clks[IMX7D_OCRAM_S_CLK] = imx_clk_gate4("ocram_s_clk", "ahb_root_clk", base + 0x4120, 0);
+> -	clks[IMX7D_NAND_USDHC_BUS_ROOT_CLK] = imx_clk_gate4("nand_usdhc_root_clk", "nand_usdhc_post_div", base + 0x4130, 0);
+>  	clks[IMX7D_DRAM_ROOT_CLK] = imx_clk_gate4("dram_root_clk", "dram_post_div", base + 0x4130, 0);
+>  	clks[IMX7D_DRAM_PHYM_ROOT_CLK] = imx_clk_gate4("dram_phym_root_clk", "dram_phym_cg", base + 0x4130, 0);
+>  	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0);
+> -- 
+> 2.12.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
