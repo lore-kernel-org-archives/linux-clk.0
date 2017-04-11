@@ -1,38 +1,45 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.11-rc8
-Date: Fri, 28 Apr 2017 16:44:18 -0700
-Message-Id: <20170428234418.21044-1-sboyd@codeaurora.org>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Tue, 11 Apr 2017 16:47:06 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: add clk_possible_parents debugfs file
+Message-ID: <20170411134706.GG30730@tbergstrom-lnx.Nvidia.com>
+References: <1490102432-21314-1-git-send-email-pdeschrijver@nvidia.com>
+ <20170407194506.GF7065@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20170407194506.GF7065@codeaurora.org>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit e7590308d17e578e47f298cc3fec359108341cb6:
+On Fri, Apr 07, 2017 at 12:45:06PM -0700, Stephen Boyd wrote:
+> On 03/21, Peter De Schrijver wrote:
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index f5f2bcd..2fa2fb8 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -2128,6 +2128,34 @@ static int clk_dump_open(struct inode *inode, struct file *file)
+> >  	.release	= single_release,
+> >  };
+> >  
+> > +static int possible_parents_dump(struct seq_file *s, void *data)
+> > +{
+> > +	struct clk_core *core;
+> > +	int i;
+> > +
+> > +	core = (struct clk_core *)s->private;
+> 
+> Useless cast from void.
+> 
+> > +
+> > +	for (i = 0; i < core->num_parents - 1; i++)
+> > +		seq_printf(s, "%s ", core->parent_names[i]);
+> 
+> I hope we don't have spaces in clk names! I don't think we do.
+> 
 
-  Merge tag 'sunxi-clk-fixes-for-4.11-2-bis' of https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into clk-fixes (2017-04-17 11:04:12 -0700)
+I don't think we do either, at least I've never seen a clk name with a space.
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 36c02d0be4c3c8804e51f9740f0d768e17f3b566:
-
-  clk: sunxi-ng: always select CCU_GATE (2017-04-28 10:47:21 -0700)
-
-----------------------------------------------------------------
-One odd config build fix for a recent Allwinner clock driver change that
-got merged. The common code called code in another file that wasn't always
-built. This just forces it on so people don't run into this bad configuration.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      clk: sunxi-ng: always select CCU_GATE
-
- drivers/clk/sunxi-ng/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Peter.
