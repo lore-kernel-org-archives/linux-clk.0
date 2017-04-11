@@ -1,34 +1,59 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Apr 2017 19:49:21 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/5] clk: mvebu: Use kcalloc() in of_cpu_clk_setup()
-Message-ID: <20170422024921.GQ7065@codeaurora.org>
-References: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
- <9377530b-9b07-bfc6-848c-b0c1994e33f7@users.sourceforge.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-co1nam03on0051.outbound.protection.outlook.com ([104.47.40.51]:8612
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752829AbdDJKlK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Apr 2017 06:41:10 -0400
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <shawnguo@kernel.org>, <fabio.estevam@nxp.com>, <stefan@agner.ch>,
+        <linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+        <kernel@pengutronix.de>
+Subject: [PATCH 1/2] clk: clk-imx7d: fix ahb clk definition
+Date: Tue, 11 Apr 2017 10:37:48 +0800
+Message-ID: <1491878269-9559-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <9377530b-9b07-bfc6-848c-b0c1994e33f7@users.sourceforge.net>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/19, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 19 Apr 2017 20:15:21 +0200
-> 
-> Multiplications for the size determination of memory allocations
-> indicated that array data structures should be processed.
-> Thus use the corresponding function "kcalloc".
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+MX7D ahb clk actually has no LPCG gate, current LPCG offset 0x4200
+used actually is for adc, not ahb. After fix, correct ocram_s_clk
+parent accordingly as well.
 
-Applied to clk-next
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Stefan Agner <stefan@agner.ch>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index ae1d31b..ad04483 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -725,7 +725,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_DISP_AXI_ROOT_DIV] = imx_clk_divider2("disp_axi_post_div", "disp_axi_pre_div", base + 0x8880, 0, 6);
+ 	clks[IMX7D_ENET_AXI_ROOT_DIV] = imx_clk_divider2("enet_axi_post_div", "enet_axi_pre_div", base + 0x8900, 0, 6);
+ 	clks[IMX7D_NAND_USDHC_BUS_ROOT_DIV] = imx_clk_divider2("nand_usdhc_post_div", "nand_usdhc_pre_div", base + 0x8980, 0, 6);
+-	clks[IMX7D_AHB_CHANNEL_ROOT_DIV] = imx_clk_divider2("ahb_post_div", "ahb_pre_div", base + 0x9000, 0, 6);
++	clks[IMX7D_AHB_CHANNEL_ROOT_DIV] = imx_clk_divider2("ahb_root_clk", "ahb_pre_div", base + 0x9000, 0, 6);
+ 	clks[IMX7D_DRAM_ROOT_DIV] = imx_clk_divider2("dram_post_div", "dram_cg", base + 0x9880, 0, 3);
+ 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_DIV] = imx_clk_divider2("dram_phym_alt_post_div", "dram_phym_alt_pre_div", base + 0xa000, 0, 3);
+ 	clks[IMX7D_DRAM_ALT_ROOT_DIV] = imx_clk_divider2("dram_alt_post_div", "dram_alt_pre_div", base + 0xa080, 0, 3);
+@@ -796,9 +796,8 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_DISP_AXI_ROOT_CLK] = imx_clk_gate4("disp_axi_root_clk", "disp_axi_post_div", base + 0x4050, 0);
+ 	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
+ 	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "axi_post_div", base + 0x4110, 0);
+-	clks[IMX7D_OCRAM_S_CLK] = imx_clk_gate4("ocram_s_clk", "ahb_post_div", base + 0x4120, 0);
++	clks[IMX7D_OCRAM_S_CLK] = imx_clk_gate4("ocram_s_clk", "ahb_root_clk", base + 0x4120, 0);
+ 	clks[IMX7D_NAND_USDHC_BUS_ROOT_CLK] = imx_clk_gate4("nand_usdhc_root_clk", "nand_usdhc_post_div", base + 0x4130, 0);
+-	clks[IMX7D_AHB_CHANNEL_ROOT_CLK] = imx_clk_gate4("ahb_root_clk", "ahb_post_div", base + 0x4200, 0);
+ 	clks[IMX7D_DRAM_ROOT_CLK] = imx_clk_gate4("dram_root_clk", "dram_post_div", base + 0x4130, 0);
+ 	clks[IMX7D_DRAM_PHYM_ROOT_CLK] = imx_clk_gate4("dram_phym_root_clk", "dram_phym_cg", base + 0x4130, 0);
+ 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
+
