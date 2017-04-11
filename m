@@ -1,100 +1,45 @@
-Return-Path: <andy.tang@nxp.com>
-From: Andy Tang <andy.tang@nxp.com>
-To: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>
-CC: "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Scott Wood <oss@buserror.net>
-Subject: RE: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
-Date: Mon, 17 Apr 2017 01:37:22 +0000
-Message-ID: <DB6PR0402MB28375B80DB12F7461F86E138F3060@DB6PR0402MB2837.eurprd04.prod.outlook.com>
-References: <1489977443-33582-1-git-send-email-andy.tang@nxp.com>
- <DB6PR0402MB283701D478A1678D28894C77F30A0@DB6PR0402MB2837.eurprd04.prod.outlook.com>
-In-Reply-To: <DB6PR0402MB283701D478A1678D28894C77F30A0@DB6PR0402MB2837.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Paul Gortmaker <paul.gortmaker@windriver.com>,
+	Konstantin Porotchkin <kostap@marvell.com>,
+	linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: apn806: fix spelling mistake: "mising" -> "missing"
+Date: Tue, 11 Apr 2017 14:37:43 +0100
+Message-Id: <20170411133743.21073-1-colin.king@canonical.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen and Michael,
+From: Colin Ian King <colin.king@canonical.com>
 
-This patch set has been pending for more than two months since it was first=
- sent.
-I have not received any response from you until now.
+trivial fix to spelling mistake in dev_warn message
 
-Could you give some comments on it?
+Fixes: f109ca864414dc ("clk: apn806: Turn the eMMC clock as optional for dts backwards compatible")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/mvebu/ap806-system-controller.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Andy
-
------Original Message-----
-From: Andy Tang=20
-Sent: Wednesday, April 05, 2017 2:16 PM
-To: mturquette@baylibre.com; sboyd@codeaurora.org
-Cc: robh+dt@kernel.org; mark.rutland@arm.com; linux-clk@vger.kernel.org; de=
-vicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-kernel@li=
-sts.infradead.org; Scott Wood <oss@buserror.net>
-Subject: RE: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
-
-Hello=20
-
-Do you have any comments on this patch set which was acked by Rob?
-
-Regards,
-Andy
-
-> -----Original Message-----
-> From: Yuantian Tang [mailto:andy.tang@nxp.com]
-> Sent: Monday, March 20, 2017 10:37 AM
-> To: mturquette@baylibre.com
-> Cc: sboyd@codeaurora.org; robh+dt@kernel.org; mark.rutland@arm.com;=20
-> linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-=20
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Scott=20
-> Wood <oss@buserror.net>; Andy Tang <andy.tang@nxp.com>
-> Subject: [PATCH 1/2 v2] dt-bindings: qoriq-clock: Add coreclk
->=20
-> From: Scott Wood <oss@buserror.net>
->=20
-> ls1012a has separate input root clocks for core PLLs versus the=20
-> platform PLL, with the latter described as sysclk in the hw docs.
-> Update the qoriq-clock binding to allow a second input clock, named=20
-> "coreclk".  If present, this clock will be used for the core PLLs.
->=20
-> Signed-off-by: Scott Wood <oss@buserror.net>
-> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
-> v2:
-> 	-- change the author to Scott
->  Documentation/devicetree/bindings/clock/qoriq-clock.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> index aa3526f..119cafd 100644
-> --- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-> @@ -56,6 +56,11 @@ Optional properties:
->  - clocks: If clock-frequency is not specified, sysclk may be provided
->  	as an input clock.  Either clock-frequency or clocks must be
->  	provided.
-> +	A second input clock, called "coreclk", may be provided if
-> +	core PLLs are based on a different input clock from the
-> +	platform PLL.
-> +- clock-names: Required if a coreclk is present.  Valid names are
-> +	"sysclk" and "coreclk".
->=20
->  2. Clock Provider
->=20
-> @@ -72,6 +77,7 @@ second cell is the clock index for the specified type.
->  	2	hwaccel		index (n in CLKCGnHWACSR)
->  	3	fman		0 for fm1, 1 for fm2
->  	4	platform pll	0=3Dpll, 1=3Dpll/2, 2=3Dpll/3, 3=3Dpll/4
-> +	5	coreclk		must be 0
->=20
->  3. Example
->=20
-> --
-> 2.1.0.27.g96db324
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index 103fe18a3c29..8155baccc98e 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -140,7 +140,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+ 					  4, &name)) {
+ 		ap806_clk_data.clk_num--;
+ 		dev_warn(&pdev->dev,
+-			 "eMMC clock mising: update the device tree!\n");
++			 "eMMC clock missing: update the device tree!\n");
+ 	} else {
+ 		ap806_clks[4] = clk_register_fixed_factor(NULL, name,
+ 							  fixedclk_name,
+-- 
+2.11.0
