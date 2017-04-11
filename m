@@ -1,46 +1,37 @@
-Return-Path: <eddie.cai.linux@gmail.com>
-Return-Path: <eddie.cai.linux@gmail.com>
-From: Eddie Cai <eddie.cai.linux@gmail.com>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	heiko@sntech.de,
-	zhengxing@rock-chips.com,
-	zyw@rock-chips.com,
-	hl@rock-chips.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Eddie Cai <eddie.cai.linux@gmail.com>
-Subject: [PATCH 2/2] clk: rockchip: fix the incorrect id for clk_testout1
-Date: Wed, 19 Apr 2017 15:30:23 +0800
-Message-Id: <20170419073023.1921-3-eddie.cai.linux@gmail.com>
-In-Reply-To: <20170419073023.1921-1-eddie.cai.linux@gmail.com>
-References: <20170419073023.1921-1-eddie.cai.linux@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Tue, 11 Apr 2017 12:16:55 -0700
+From: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
+To: David Binderman <dcb314@hotmail.com>
+Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: linux-4.11-rc6/drivers/clk/versatile/clk-icst.c:290]: (style)
+ Redundant condition:
+Message-ID: <20170411191655.GJ7065@codeaurora.org>
+References: <HE1PR0801MB1865E109A0F06F599FA02A3A9C010@HE1PR0801MB1865.eurprd08.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <HE1PR0801MB1865E109A0F06F599FA02A3A9C010@HE1PR0801MB1865.eurprd08.prod.outlook.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-the id for clk_testout1 is wrong, so correct it.
+On 04/10, David Binderman wrote:
+> 
+> Hello there,
+> 
+> linux-4.11-rc6/drivers/clk/versatile/clk-icst.c:290]: (style) Redundant condition: If 'rate <= 25000000', the comparison 'rate < 29000000' is always true.
+> 
+> Source code is
+> 
+>         if (rate <= 25000000 || rate < 29000000)
+>             return 25000000;
+> 
+> Suggest new code
+> 
+>         if ( rate < 29000000)
+>             return 25000000;
+> 
 
-Signed-off-by: Eddie Cai <eddie.cai.linux@gmail.com>
----
- drivers/clk/rockchip/clk-rk3399.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is this automated? Patches welcome.
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 73121b14..322611d 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -1066,7 +1066,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 	/* cif_testout */
- 	MUX(0, "clk_testout1_pll_src", mux_pll_src_cpll_gpll_npll_p, 0,
- 			RK3399_CLKSEL_CON(38), 6, 2, MFLAGS),
--	COMPOSITE(0, "clk_testout1", mux_clk_testout1_p, 0,
-+	COMPOSITE(SCLK_TESTCLKOUT1, "clk_testout1", mux_clk_testout1_p, 0,
- 			RK3399_CLKSEL_CON(38), 5, 1, MFLAGS, 0, 5, DFLAGS,
- 			RK3399_CLKGATE_CON(13), 14, GFLAGS),
- 
 -- 
-2.10.2
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
