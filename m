@@ -1,97 +1,66 @@
-Return-Path: <tony@atomide.com>
-Date: Tue, 4 Apr 2017 09:14:13 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
-Subject: Re: [GIT PULL] clk: ti: cleanups for 4.12 merge window
-Message-ID: <20170404161413.GT10760@atomide.com>
-References: <8157b2e6-99c8-dc02-0c02-3d99778f255b@ti.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <8157b2e6-99c8-dc02-0c02-3d99778f255b@ti.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <87d1cjyeb4.wl%kuninori.morimoto.gx@renesas.com>
+References: <87fuhfyedq.wl%kuninori.morimoto.gx@renesas.com> <87d1cjyeb4.wl%kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 11 Apr 2017 10:35:24 +0200
+Message-ID: <CAMuHMdU=8yRF9GggrM7wiFhZckAH-caso=6nL1sELXpykqLp6g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: cs2000: add AUX_OUT pin select support
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [170317 05:55]:
-> Hi Stephen/Mike,
-> 
-> This is basically the TI clock driver cleanup series v2 posted last week,
-> sending a pull request now as there hasn't been any additional comments.
-> 
-> -Tero
-> 
-> ==================================================================
-> 
-> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
-> 
->   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-> 
-> are available in the git repository at:
-> 
->   https://github.com/t-kristo/linux-pm.git for-4.12-ti-clk-cleanups
-> 
-> for you to fetch changes up to 6c0afb503937a12a8d20a805fcf263e31afa9871:
-> 
->   clk: ti: convert to use proper register definition for all accesses
-> (2017-03-08 13:06:15 +0200)
+Hi Morimoto-san,
 
-Any news on getting this merged?
+On Tue, Apr 11, 2017 at 2:36 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+> ---
+>  .../devicetree/bindings/clock/cs2000-cp.txt        |  9 +++
+>  drivers/clk/clk-cs2000-cp.c                        | 73 +++++++++++++++++++++-
+>  2 files changed, 80 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/cs2000-cp.txt b/Documentation/devicetree/bindings/clock/cs2000-cp.txt
+> index 54e6df0..4c2f9cb 100644
+> --- a/Documentation/devicetree/bindings/clock/cs2000-cp.txt
+> +++ b/Documentation/devicetree/bindings/clock/cs2000-cp.txt
+> @@ -8,6 +8,15 @@ Required properties:
+>  - clock-names:         CLK_IN : clk_in, XTI/REF_CLK : ref_clk
+>  - #clock-cells:                must be <0>
+>
+> +Option properties:
+> +
+> +- auxoutsrc:           select AUX_OUT source from these.
+> +                               refclk:         Timing Reference Clock
+> +                               clk_in:         Frequency Reference Clock
+> +                               pllclkout:      PLL Clock Output
+> +                               push-pull:      PLL Lock/Unlock Indication
+> +                               open-drain:     PLL Lock/Unlock Indication
 
-Regards,
+AUX_OUT is an output pin?
+Hence, isn't this software configuration instead of hardware description?
 
-Tony
+Selection of refclk vs. clk_in vs. pllclkout can be implemented as a mux clock
+driver with three parents.
 
-> ----------------------------------------------------------------
-> Tero Kristo (15):
->       clk: ti: remove un-used definitions from public clk_hw_omap struct
->       clk: ti: add support for automatic clock alias generation
->       clk: ti: add API for creating aliases automatically for simple clock
-> types
->       clk: ti: use automatic clock alias generation framework
->       clk: ti: add clkdm_lookup to the exported functions
->       clk: ti: move omap2_init_clk_clkdm under TI clock driver
->       clk: ti: enforce const types on string arrays
->       clk: ti: omap4: cleanup unnecessary clock aliases
->       clk: ti: drop unnecessary MEMMAP_ADDRESSING flag
->       clk: ti: mux: convert TI mux clock to use its internal data
-> representation
->       clk: ti: divider: convert TI divider clock to use its own data
-> representation
->       clk: ti: divider: add driver internal API for parsing divider data
->       clk: ti: gate: export gate_clk_ops locally
->       clk: ti: dpll44xx: fix clksel register initialization
->       clk: ti: convert to use proper register definition for all accesses
-> 
->  arch/arm/mach-omap2/clkt2xxx_dpllcore.c |   3 +-
->  arch/arm/mach-omap2/clock.c             |  35 +-----
->  arch/arm/mach-omap2/clock.h             |   2 +
->  arch/arm/mach-omap2/cm.h                |   5 +-
->  arch/arm/mach-omap2/cm2xxx.c            |   9 +-
->  arch/arm/mach-omap2/cm3xxx.c            |  10 +-
->  arch/arm/mach-omap2/cm_common.c         |   2 +-
->  drivers/clk/ti/apll.c                   |  50 ++++-----
->  drivers/clk/ti/autoidle.c               |  18 +--
->  drivers/clk/ti/clk-3xxx.c               |  55 +++++-----
->  drivers/clk/ti/clk-44xx.c               | 188
-> +-------------------------------
->  drivers/clk/ti/clk-dra7-atl.c           |  11 +-
->  drivers/clk/ti/clk.c                    | 157 +++++++++++++++++++++-----
->  drivers/clk/ti/clkt_dflt.c              |  61 ++++-------
->  drivers/clk/ti/clkt_dpll.c              |   6 +-
->  drivers/clk/ti/clkt_iclk.c              |  29 +++--
->  drivers/clk/ti/clock.h                  |  41 ++++++-
->  drivers/clk/ti/clockdomain.c            |  38 +++++--
->  drivers/clk/ti/composite.c              |  18 ++-
->  drivers/clk/ti/divider.c                | 111 +++++++++++--------
->  drivers/clk/ti/dpll.c                   |  59 +++++-----
->  drivers/clk/ti/dpll3xxx.c               |  38 +++----
->  drivers/clk/ti/dpll44xx.c               |  14 +--
->  drivers/clk/ti/fixed-factor.c           |   1 +
->  drivers/clk/ti/gate.c                   |  44 ++++----
->  drivers/clk/ti/interface.c              |  25 ++---
->  drivers/clk/ti/mux.c                    |  59 +++++-----
->  include/linux/clk/ti.h                  |  55 +++++-----
->  28 files changed, 543 insertions(+), 601 deletions(-)
-> 
+PLL Lock/Unlock Indication and its pinctrl are something different.
+How to support that?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
