@@ -1,62 +1,58 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: sricharan@codeaurora.org,
-	absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH 5/5] arm64: defconfig: Enable QCOM IPQ8074 clock and pinctrl
-Date: Fri, 28 Apr 2017 15:26:43 +0530
-Message-Id: <1493373403-23462-6-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
-References: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-sn1nam01on0086.outbound.protection.outlook.com ([104.47.32.86]:30784
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751695AbdDKRT2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 11 Apr 2017 13:19:28 -0400
+Message-ID: <1491931159.31718.16.camel@nxp.com>
+Subject: Re: [RFC PATCH 1/3] clk: add clk_bulk_get accessories
+From: Leonard Crestez <leonard.crestez@nxp.com>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+CC: <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kernel@pengutronix.de>,
+        <broonie@kernel.org>, <yibin.gong@nxp.com>, <rjw@rjwysocki.net>,
+        <viresh.kumar@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <shawnguo@kernel.org>,
+        <fabio.estevam@nxp.com>, <anson.huang@nxp.com>, <ping.bai@nxp.com>,
+        <octavian.purdila@nxp.com>, <linux-clk@vger.kernel.org>
+Date: Tue, 11 Apr 2017 20:19:19 +0300
+In-Reply-To: <1491969809-20154-2-git-send-email-aisheng.dong@nxp.com>
+References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+         <1491969809-20154-2-git-send-email-aisheng.dong@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Abhishek Sahu <absahu@codeaurora.org>
+On Wed, 2017-04-12 at 12:03 +0800, Dong Aisheng wrote:
+> +/**
+> + * clk_bulk_enable - ungate a bulk of clocks
+> + * @num_clks: the number of clk_bulk_data
+> + * @clks: the clk_bulk_data table being ungated
+> + *
+> + * clk_bulk_enable must not sleep
+> + * Returns 0 on success, -EERROR otherwise.
+> + */
+> +int clk_bulk_enable(int num_clks, struct clk_bulk_data *clks)
+> +{
+> +       int ret;
+> +       int i;
+> +
+> +       for (i = 0; i < num_clks; i++) {
+> +               ret = clk_enable(clks[i].clk);
+> +               if (ret) {
+> +                       pr_err("Failed to enable clk '%s': %d\n",
+> +                               clks[i].id, ret);
+> +                       goto err;
+> +               }
+> +       }
+> +
+> +       return 0;
+> +
+> +err:
+> +       while (--i >= 0)
+> +               clk_put(clks[i].clk);
 
-These configs are required for booting kernel in QCOM
-IPQ8074 boards.
+Shouldn't this be clk_disable?
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 7c48028..e6aeb69 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -266,6 +266,7 @@ CONFIG_SPI_SPIDEV=m
- CONFIG_SPI_S3C64XX=y
- CONFIG_SPMI=y
- CONFIG_PINCTRL_SINGLE=y
-+CONFIG_PINCTRL_IPQ8074=y
- CONFIG_PINCTRL_MAX77620=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_MSM8994=y
-@@ -439,6 +440,7 @@ CONFIG_COMMON_CLK_PWM=y
- CONFIG_COMMON_CLK_RK808=y
- CONFIG_CLK_QORIQ=y
- CONFIG_COMMON_CLK_QCOM=y
-+CONFIG_IPQ_GCC_8074=y
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+And you can probably use clk_bulk_disable(i, clks) instead
