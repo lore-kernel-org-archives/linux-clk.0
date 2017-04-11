@@ -1,86 +1,113 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 11 Apr 2017 10:59:56 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>, robh+dt@kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] ARM: dts: imx7: add USDHC NAND clock to SDHC
+ instances
+Message-ID: <20170411025956.GA9067@b29396-OptiPlex-7040>
+References: <20170330005029.6472-1-stefan@agner.ch>
+ <20170330005029.6472-2-stefan@agner.ch>
+ <20170401030312.GB24882@b29396-OptiPlex-7040>
+ <5c8339900fa1bd6215fb94d4386f7e06@agner.ch>
+ <CAOMZO5CprxqnqRXMFJLBAgYAZGGnXNs3ZciyVz_mSLRnnSQQRQ@mail.gmail.com>
+ <CAOMZO5A7QQEe5rgBbJBzo8GY41aYV9WA8e9teCUROyihg0kq_g@mail.gmail.com>
+ <c95a7f535296623bdd4e4a640b3c27f5@agner.ch>
 MIME-Version: 1.0
-To: Helmut Klein <hgkr.klein@gmail.com>,  sboyd@codeaurora.org
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20170331165437.26227-2-hgkr.klein@gmail.com>
-Cc: "Helmut Klein" <hgkr.klein@gmail.com>, linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20170331165437.26227-1-hgkr.klein@gmail.com>
- <20170331165437.26227-2-hgkr.klein@gmail.com>
-Message-ID: <149129522024.91618.13395564164212234056@resonance>
-Subject: Re: [PATCH v3 1/4] dt-bindings: clock: gxbb: expose UART clocks
-Date: Tue, 04 Apr 2017 10:40:20 +0200
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <c95a7f535296623bdd4e4a640b3c27f5@agner.ch>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Helmut Klein (2017-03-31 18:54:34)
-> Expose the clock ids of the three none AO uarts to the dt-bindings
-> =
+On Tue, Apr 04, 2017 at 07:36:01PM -0700, Stefan Agner wrote:
+> On 2017-04-04 19:15, Fabio Estevam wrote:
+> > On Sun, Apr 2, 2017 at 2:02 PM, Fabio Estevam <festevam@gmail.com> wrote:
+> >> On Sat, Apr 1, 2017 at 1:15 AM, Stefan Agner <stefan@agner.ch> wrote:
+> >>
+> >>> IMX7D_IPG_ROOT_CLK is currently not a valid clock in upstream... So we
+> >>> would have to add it to the clock driver first.
+> >>>
+> >>> I guess we could/should add it anyway at one point? But probably also as
+> >>> init on, just to make sure Linux does not disable it since it is
+> >>> currently used by several IPs implicitly.
+> >>
+> >> Yes, I made a previous attempt do add  IMX7D_IPG_ROOT_CLK and it did
+> >> not work as I did not put it in the init_on clock list.
+> >>
+> >> Will submit a new patch adding it to init_on, thanks.
+> > 
+> > I thought that adding IMX7D_IPG_ROOT_CLK would do the trick, but the
+> > patch below also causes the kernel to not boot:
+> > 
+> > --- a/drivers/clk/imx/clk-imx7d.c
+> > +++ b/drivers/clk/imx/clk-imx7d.c
+> > @@ -386,7 +386,7 @@ static int const clks_init_on[] __initconst = {
+> >         IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_NAND_USDHC_BUS_ROOT_CLK,
+> >         IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
+> >         IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
+> > -       IMX7D_AHB_CHANNEL_ROOT_CLK,
+> > +       IMX7D_AHB_CHANNEL_ROOT_CLK, IMX7D_IPG_ROOT_CLK,
+> >  };
+> > 
+> >  static struct clk_onecell_data clk_data;
+> > @@ -788,7 +788,7 @@ static void __init imx7d_clocks_init(struct
+> > device_node *ccm_node)
+> >         clks[IMX7D_WRCLK_ROOT_DIV] =
+> > imx_clk_divider2("wrclk_post_div", "wrclk_pre_div", base + 0xbd00, 0,
+> > 6);
+> >         clks[IMX7D_CLKO1_ROOT_DIV] =
+> > imx_clk_divider2("clko1_post_div", "clko1_pre_div", base + 0xbd80, 0,
+> > 6);
+> >         clks[IMX7D_CLKO2_ROOT_DIV] =
+> > imx_clk_divider2("clko2_post_div", "clko2_pre_div", base + 0xbe00, 0,
+> > 6);
+> > -
+> > +       clks[IMX7D_IPG_ROOT_CLK] = imx_clk_divider2("ipg_root_clk",
+> > "ahb_root_clk", base + 0x9080, 0, 2);
+> >         clks[IMX7D_ARM_A7_ROOT_CLK] = imx_clk_gate4("arm_a7_root_clk",
+> > "arm_a7_div", base + 0x4000, 0);
+> >         clks[IMX7D_ARM_M4_ROOT_CLK] = imx_clk_gate4("arm_m4_root_clk",
+> > "arm_m4_div", base + 0x4010, 0);
+> >         clks[IMX7D_ARM_M0_ROOT_CLK] = imx_clk_gate4("arm_m0_root_clk",
+> > "arm_m0_div", base + 0x4020, 0);
+> 
+> Hm, imx_clk_divider2 sets CLK_SET_RATE_PARENT, maybe that influences the
+> parent?
+> 
+> I guess we actually don't want the clock framework to change that clock
+> rate, not sure whether we can freeze it or similar.
+> 
 
-> Signed-off-by: Helmut Klein <hgkr.klein@gmail.com>
+This is caused by ahb_root_clk gets disabled accidently and system hangs.
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
+Because this patch defines ipg_root_clk earlier before its parent
+(ahb_root_clk) got registered, then it will be marked as a orphan clk
+temporarily. Until the parent ahb_root_clk got registered, the clk core
+will reparent it to the newly found parent. (see __clk_core_init() function).
 
-> ---
->  drivers/clk/meson/gxbb.h              | 6 +++---
->  include/dt-bindings/clock/gxbb-clkc.h | 3 +++
->  2 files changed, 6 insertions(+), 3 deletions(-)
-> =
+Due to CLK_SET_RATE_PARENT flag, the ahb clk will be enabled during
+set_parent operation and then disabled after that.
+Then system hang cause we still get no chance to run init_on clks.
 
-> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-> index 8ee2022ce5d5..1edfaa5fe307 100644
-> --- a/drivers/clk/meson/gxbb.h
-> +++ b/drivers/clk/meson/gxbb.h
-> @@ -194,7 +194,7 @@
->  /* #define CLKID_SAR_ADC */
->  #define CLKID_SMART_CARD         24
->  #define CLKID_RNG0               25
-> -#define CLKID_UART0              26
-> +/* CLKID_UART0 */
->  #define CLKID_SDHC               27
->  #define CLKID_STREAM             28
->  #define CLKID_ASYNC_FIFO         29
-> @@ -216,7 +216,7 @@
->  #define CLKID_ADC                45
->  #define CLKID_BLKMV              46
->  #define CLKID_AIU                47
-> -#define CLKID_UART1              48
-> +/* CLKID_UART1 */
->  #define CLKID_G2D                49
->  /* CLKID_USB0 */
->  /* CLKID_USB1 */
-> @@ -236,7 +236,7 @@
->  /* CLKID_USB0_DDR_BRIDGE */
->  #define CLKID_MMC_PCLK           66
->  #define CLKID_DVIN               67
-> -#define CLKID_UART2              68
-> +/* CLKID_UART2 */
->  /* #define CLKID_SANA */
->  #define CLKID_VPU_INTR           70
->  #define CLKID_SEC_AHB_AHB3_BRIDGE 71
-> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/=
-clock/gxbb-clkc.h
-> index 692846c7941b..7b329df47752 100644
-> --- a/include/dt-bindings/clock/gxbb-clkc.h
-> +++ b/include/dt-bindings/clock/gxbb-clkc.h
-> @@ -15,13 +15,16 @@
->  #define CLKID_SPI              34
->  #define CLKID_I2C              22
->  #define CLKID_SAR_ADC          23
-> +#define CLKID_UART0            26
->  #define CLKID_ETH              36
-> +#define CLKID_UART1            48
->  #define CLKID_USB0             50
->  #define CLKID_USB1             51
->  #define CLKID_USB              55
->  #define CLKID_HDMI_PCLK                63
->  #define CLKID_USB1_DDR_BRIDGE  64
->  #define CLKID_USB0_DDR_BRIDGE  65
-> +#define CLKID_UART2            68
->  #define CLKID_SANA             69
->  #define CLKID_GCLK_VENCI_INT0  77
->  #define CLKID_AO_I2C           93
+I just send out a proper fix patch with correct register sequence.
+
+Probably we can switch all imx clk driver to CLK_IS_CRITICAL for critical
+clocks in the future, but that's another thing to do later.
+
+Stefan,
+I think you can just resend your series based on my patches.
+
+Regards
+Dong Aisheng
+
 > --
-> 2.11.0
->=20
+> Stefan
