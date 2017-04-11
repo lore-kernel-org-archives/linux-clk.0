@@ -1,129 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57750 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161951AbdDUSeH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2017 14:34:07 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        jy0922.shim@samsung.com, javier@osg.samsung.com,
-        b.zolnierkie@samsung.com, sw0312.kim@samsung.com, krzk@kernel.org,
-        inki.dae@samsung.com, cw00.choi@samsung.com, broonie@kernel.org,
-        robh+dt@kernel.org, alsa-devel@alsa-project.org
-In-Reply-To: <1492795191-31298-6-git-send-email-s.nawrocki@samsung.com>
-Message-Id: <E1d1cLy-0001qc-PC@debutante>
-Date: Fri, 21 Apr 2017 18:28:18 +0100
-Subject: Applied "ASoC: Add Odroid sound DT bindings documentation" to the asoc tree
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
+	<fabio.estevam@nxp.com>, <stefan@agner.ch>,
+	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
+	<kernel@pengutronix.de>
+Subject: [PATCH 2/2] clk: imx7d: add the missing ipg_root_clk
+Date: Tue, 11 Apr 2017 10:37:49 +0800
+Message-ID: <1491878269-9559-2-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1491878269-9559-1-git-send-email-aisheng.dong@nxp.com>
+References: <1491878269-9559-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch
+Add the missing ipg_root_clk which actually is already used by many
+orphan clks in current tree.
 
-   ASoC: Add Odroid sound DT bindings documentation
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 92c9f05ebc7290e638c7b1b85288918c4fc65d4e Mon Sep 17 00:00:00 2001
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Fri, 21 Apr 2017 19:19:49 +0200
-Subject: [PATCH] ASoC: Add Odroid sound DT bindings documentation
-
-This patch adds DT binding documentation for Odroid XU3/4
-sound subsystem.
-
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Stefan Agner <stefan@agner.ch>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- .../devicetree/bindings/sound/samsung,odroid.txt   | 57 ++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/samsung,odroid.txt
+ drivers/clk/imx/clk-imx7d.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.txt b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
-new file mode 100644
-index 000000000000..c1ac70cb0afb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
-@@ -0,0 +1,57 @@
-+Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
-+
-+Required properties:
-+
-+ - compatible - "samsung,odroidxu3-audio" - for Odroid XU3 board,
-+		"samsung,odroidxu4-audio" - for Odroid XU4 board
-+ - model - the user-visible name of this sound complex
-+ - 'cpu' subnode with a 'sound-dai' property containing the phandle of the I2S
-+    controller
-+ - 'codec' subnode with a 'sound-dai' property containing list of phandles
-+    to the CODEC nodes, first entry must be corresponding to the MAX98090
-+    CODEC and the second entry must be the phandle of the HDMI IP block node
-+ - clocks - should contain entries matching clock names in the clock-names
-+    property
-+ - clock-names - should contain following entries:
-+    - "epll" - indicating the EPLL output clock
-+    - "i2s_rclk" - indicating the RCLK (root) clock of the I2S0 controller
-+ - samsung,audio-widgets - this property specifies off-codec audio elements
-+   like headphones or speakers, for details see widgets.txt
-+ - samsung,audio-routing - a list of the connections between audio
-+   components;  each entry is a pair of strings, the first being the
-+   connection's sink, the second being the connection's source;
-+   valid names for sources and sinks are the MAX98090's pins (as
-+   documented in its binding), and the jacks on the board
-+
-+   For Odroid X2:
-+     "Headphone Jack", "Mic Jack", "DMIC"
-+
-+   For Odroid U3, XU3:
-+     "Headphone Jack", "Speakers"
-+
-+   For Odroid XU4:
-+     no entries
-+
-+Example:
-+
-+sound {
-+	compatible = "samsung,odroidxu3-audio";
-+	samsung,cpu-dai = <&i2s0>;
-+	samsung,codec-dai = <&max98090>;
-+	model = "Odroid-XU3";
-+	samsung,audio-routing =
-+		"Headphone Jack", "HPL",
-+		"Headphone Jack", "HPR",
-+		"IN1", "Mic Jack",
-+		"Mic Jack", "MICBIAS";
-+
-+	clocks = <&clock CLK_FOUT_EPLL>, <&i2s0 CLK_I2S_RCLK_SRC>;
-+	clock-names = "epll", "sclk_i2s";
-+
-+	cpu {
-+		sound-dai = <&i2s0 0>;
-+	};
-+	codec {
-+		sound-dai = <&hdmi>, <&max98090>;
-+	};
-+};
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index ad04483..5620551 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -386,7 +386,7 @@ static int const clks_init_on[] __initconst = {
+ 	IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_NAND_USDHC_BUS_ROOT_CLK,
+ 	IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
+ 	IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
+-	IMX7D_AHB_CHANNEL_ROOT_CLK,
++	IMX7D_AHB_CHANNEL_ROOT_CLK, IMX7D_IPG_ROOT_CLK,
+ };
+ 
+ static struct clk_onecell_data clk_data;
+@@ -726,6 +726,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_ENET_AXI_ROOT_DIV] = imx_clk_divider2("enet_axi_post_div", "enet_axi_pre_div", base + 0x8900, 0, 6);
+ 	clks[IMX7D_NAND_USDHC_BUS_ROOT_DIV] = imx_clk_divider2("nand_usdhc_post_div", "nand_usdhc_pre_div", base + 0x8980, 0, 6);
+ 	clks[IMX7D_AHB_CHANNEL_ROOT_DIV] = imx_clk_divider2("ahb_root_clk", "ahb_pre_div", base + 0x9000, 0, 6);
++	clks[IMX7D_IPG_ROOT_CLK] = imx_clk_divider2("ipg_root_clk", "ahb_root_clk", base + 0x9080, 0, 2);
+ 	clks[IMX7D_DRAM_ROOT_DIV] = imx_clk_divider2("dram_post_div", "dram_cg", base + 0x9880, 0, 3);
+ 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_DIV] = imx_clk_divider2("dram_phym_alt_post_div", "dram_phym_alt_pre_div", base + 0xa000, 0, 3);
+ 	clks[IMX7D_DRAM_ALT_ROOT_DIV] = imx_clk_divider2("dram_alt_post_div", "dram_alt_pre_div", base + 0xa080, 0, 3);
 -- 
-2.11.0
-
+2.7.4
