@@ -1,52 +1,109 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:49520 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754801AbdDLQiQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2017 12:38:16 -0400
-Date: Wed, 12 Apr 2017 09:38:10 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-clk@vger.kernel.org
-Subject: Re: [bug report] clk: ti: divider: add driver internal API for
- parsing divider data
-Message-ID: <20170412163810.GN7065@codeaurora.org>
-References: <20170411221635.GA23587@mwanda>
- <71a0fa41-8f71-a7bc-0a1a-7cee1dd908f6@ti.com>
+Return-Path: <alexander.stein@systec-electronic.com>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk: ls1021a: new platform clock driver
+Date: Wed, 12 Apr 2017 17:01:59 +0200
+Message-ID: <4595163.lvBEMnN8DZ@ws-stein>
+In-Reply-To: <20170407193324.GB7065@codeaurora.org>
+References: <20170222150349.16790-1-alexander.stein@systec-electronic.com> <20170222150349.16790-2-alexander.stein@systec-electronic.com> <20170407193324.GB7065@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <71a0fa41-8f71-a7bc-0a1a-7cee1dd908f6@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/12, Tero Kristo wrote:
-> On 12/04/17 01:16, Dan Carpenter wrote:
-> >Hello Tero Kristo,
-> >
-> >The patch 4f6be5655dc9: "clk: ti: divider: add driver internal API
-> >for parsing divider data" from Feb 9, 2017, leads to the following
-> >static checker warning:
-> >
-> >	drivers/clk/ti/divider.c:457 ti_clk_register_divider()
-> >	warn: 'table' isn't an ERR_PTR
-> >
-> >drivers/clk/ti/divider.c
-> >   453          if (div->flags & CLKF_SET_RATE_PARENT)
-> >   454                  flags |= CLK_SET_RATE_PARENT;
-> >   455
-> >   456          table = _get_div_table_from_setup(div, &width);
-> >   457          if (IS_ERR(table))
-> >                    ^^^^^^^^^^^^
-> >This needs to be updated to a NULL check.
+On Friday 07 April 2017 12:33:24, Stephen Boyd wrote:
+> On 02/22, Alexander Stein wrote:
+> > +static const struct clk_div_table qspi_cfg_div_table[] = {
+> > +	{ 0x0, 256 }, { 0x1, 64 }, { 0x2, 32 }, { 0x3, 24 },
+> > +	{ 0x4,  20 }, { 0x5, 15 }, { 0x6, 12 }, { 0x7,  8 },
+> > +	{ 0 },
+> > +};
+> > +
+> > +static void __init scfg_qspi_cfg_ls1021a_init(struct device_node *np)
+> > +{
+> > +	const char *parent_name;
+> > +	const char *name;
+> > +	void __iomem *base;
+> > +	struct clk *parent_clk;
+> > +	struct clk *clk;
+> > +	struct resource res;
 > 
-> Thanks for catching.
+> Unused? but should be used!
+
+Just copy & paste mistake. It can be removed.
+
+> > +
+> > +	base = of_iomap(np, 0);
+> > +	if (!base) {
+> > +		pr_warn("Failed to map address range for node %s\n", np->name);
 > 
-> I'll send a fix for this against 4.12-rc1. Only case where this can
-> fail is if we run out of memory during boot which is pretty
-> unlikely.
-> 
+> We don't typically need any sort of error message.
 
 Ok.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> > +		return;
+> > +	}
+> > +
+> > +	parent_clk = of_clk_get(np, 0);
+> > +	if (IS_ERR(parent_clk)) {
+> > +		pr_warn("Failed to get clock for node %s\n", np->name);
+> > +		return;
+> > +	}
+> > +
+> > +	/* Register the input clock under the desired name. */
+> > +	parent_name = __clk_get_name(parent_clk);
+> > +
+> > +	if (of_property_read_string(np, "clock-output-names", &name))
+> > +		name = np->name;
+> 
+> Please just hardcode it unless you really need different names
+> from DT. We're trying to move away from clock-output-names for
+> clk tree description as it's inflexible in the face of DT ABI.
+
+But how do you then reference this clock from another DT node if clock-output-
+names is remove dfrom patch 2/3? See path 3/3. I have to admit I'm not an 
+expert on DT clocks.
+
+> > +
+> > +	/* Works only as those 4 bits (Bits 28-31 big endian) do not cross 
+byte
+> > boundary */
+> This line is too long, but also what's going on? Some sort of
+> 64-bit register here?
+
+No, this is periphery attached as big-endian on a little-endian CPU, the 
+infamous LS1021A has lots (but not all) of them. Finally this needs a proper 
+clk improvement to support big-endian accesses on little-endian CPUs. Don't 
+look at it (in detail), yet.
+
+> > +	clk = clk_register_divider_table(NULL, name, parent_name,
+> > +				   0, base,
+> > +				   4, 4, 0, qspi_cfg_div_table, NULL);
+> > +	if (IS_ERR(clk)) {
+> > +		pr_warn("Failed to register divider table clock (%ld)\n",
+> > PTR_ERR(clk));
+> > +		return;
+> > +	}
+> > +	of_clk_add_provider(np, of_clk_src_simple_get, clk);
+> 
+> Can you please use the clk_hw based provider and divider
+> registration APIs?
+
+Is there a specific reason to use clk_hw based API? Both apparently do the 
+same.
+
+> > +}
+> > +CLK_OF_DECLARE(scfg_qspi_cfg_ls1021a, "fsl,scfg-qspi-cfg-ls1021a",
+> > scfg_qspi_cfg_ls1021a_init);
+> Can this be a platform driver? We usually reserve CLK_OF_DECLARE
+> for clks that we need to get the timer or interrupt controllers
+> working because they need to probe so early. Otherwise use a
+> proper driver and we can use platform device APIs instead of OF
+> specific ones to map register regions and get clks.
+
+As this is a simple clock divider neither timers nor interrupts are involved. 
+There should be no problem to change this to a platform driver changing the 
+init function into a probe one.
+
+Best regards,
+Alexander
