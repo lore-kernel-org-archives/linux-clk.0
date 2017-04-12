@@ -1,42 +1,102 @@
-Return-Path: <fengguang.wu@intel.com>
-Date: Sat, 29 Apr 2017 13:50:51 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Varadarajan Narayanan <varada@codeaurora.org>
-Cc: kbuild-all@01.org, robh+dt@kernel.org, mark.rutland@arm.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linus.walleij@linaro.org, andy.gross@linaro.org,
-	david.brown@linaro.org, catalin.marinas@arm.com,
-	will.deacon@arm.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	sricharan@codeaurora.org, absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: Re: [PATCH 2/5] clk: qcom: ipq8074: Add Global Clock Controller
- support
-Message-ID: <201704291326.jFi4mgNw%fengguang.wu@intel.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1493373403-23462-3-git-send-email-varada@codeaurora.org>
+To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <1491810121.3480.36.camel@baylibre.com>
+Cc: "Kevin Hilman" <khilman@baylibre.com>,
+ "Neil Armstrong" <narmstrong@baylibre.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>
+References: <1491810121.3480.36.camel@baylibre.com>
+Message-ID: <149200155158.88277.17726479755345151565@resonance>
+Subject: Re: [GIT PULL] Amlogic clock driver updates for v4.12 - 2nd batch
+Date: Wed, 12 Apr 2017 14:52:31 +0200
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Abhishek,
+Quoting Jerome Brunet (2017-04-10 09:42:01)
+> Dear clock maintainers,
+> =
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on v4.11-rc8 next-20170428]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> Below is a request to pull a 2nd batch of update to the Amlogic clock dri=
+ver. It
+> is based on the previous PR sent by Kevin.
+> =
 
-url:    https://github.com/0day-ci/linux/commits/Varadarajan-Narayanan/Add-minimal-boot-support-for-IPQ8074/20170429-130315
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+> Cheers
+> =
 
+> The following changes since commit 3a429818a2e48928ae0114df5fb3b0612dd570=
+01:
+> =
 
-coccinelle warnings: (new ones prefixed by >>)
+> =C2=A0 Merge branch 'v4.12/clk-drivers' into v4.12/clk (2017-04-04 15:58:=
+11 -0700)
+> =
 
->> drivers/clk/qcom/gcc-ipq8074.c:1014:3-8: No need to set .owner here. The core will do it.
+> are available in the git repository at:
+> =
 
-Please review and possibly fold the followup patch.
+> =C2=A0 git://github.com/BayLibre/clk-meson.git tags/meson-clk-for-4.12
+> =
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> for you to fetch changes up to b609338b26f5653aa211fc7af83477e2df6e3f0b:
+> =
+
+> =C2=A0 clk: meson: mpll: use 64bit math in rate_from_params (2017-04-07 1=
+7:45:30
+> +0200)
+
+Pulled.
+
+Regards,
+Mike
+
+> =
+
+> ----------------------------------------------------------------
+> 2nd Amlogic clock driver update for 4.12:
+> * Protect against holes in onecell_data
+> * Fix divison by zero and overflow in the mpll driver
+> * Add audio clock divider driver for i2s clocks
+> * Add i2s and spdif master clocks
+> =
+
+> ----------------------------------------------------------------
+> Jerome Brunet (6):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0MAINTAINERS: Add maintainers for the =
+meson clock driver
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clk: meson: gxbb: protect against hol=
+es in the onecell_data array
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clk: meson: add audio clock divider s=
+upport
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clk: meson: gxbb: add cts_amclk
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clk: meson: gxbb: add cts_mclk_i958
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clk: meson: gxbb: add cts_i958 clock
+> =
+
+> Martin Blumenstingl (2):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clk: meson: mpll: fix division by zer=
+o in rate_from_params
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clk: meson: mpll: use 64bit math in r=
+ate_from_params
+> =
+
+> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A010 +++
+> =C2=A0drivers/clk/meson/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A02 +-
+> =C2=A0drivers/clk/meson/clk-audio-divider.c | 144 +++++++++++++++++++++++=
++++++++++++
+> =C2=A0drivers/clk/meson/clk-mpll.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A026 +++---
+> =C2=A0drivers/clk/meson/clkc.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A010 +++
+> =C2=A0drivers/clk/meson/gxbb.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 144 +++++++++++++++++++++++++++=
++++++++
+> =C2=A0drivers/clk/meson/gxbb.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A09 ++-
+> =C2=A07 files changed, 332 insertions(+), 13 deletions(-)
+> =C2=A0create mode 100644 drivers/clk/meson/clk-audio-divider.c
