@@ -1,42 +1,52 @@
-Return-Path: <ykaneko0929@gmail.com>
-Return-Path: <ykaneko0929@gmail.com>
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7795: Add EHCI/OHCI ch3 clock
-Date: Thu, 20 Apr 2017 02:46:23 +0900
-Message-Id: <1492624001-3758-3-git-send-email-ykaneko0929@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:49520 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754801AbdDLQiQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2017 12:38:16 -0400
+Date: Wed, 12 Apr 2017 09:38:10 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-clk@vger.kernel.org
+Subject: Re: [bug report] clk: ti: divider: add driver internal API for
+ parsing divider data
+Message-ID: <20170412163810.GN7065@codeaurora.org>
+References: <20170411221635.GA23587@mwanda>
+ <71a0fa41-8f71-a7bc-0a1a-7cee1dd908f6@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <71a0fa41-8f71-a7bc-0a1a-7cee1dd908f6@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On 04/12, Tero Kristo wrote:
+> On 12/04/17 01:16, Dan Carpenter wrote:
+> >Hello Tero Kristo,
+> >
+> >The patch 4f6be5655dc9: "clk: ti: divider: add driver internal API
+> >for parsing divider data" from Feb 9, 2017, leads to the following
+> >static checker warning:
+> >
+> >	drivers/clk/ti/divider.c:457 ti_clk_register_divider()
+> >	warn: 'table' isn't an ERR_PTR
+> >
+> >drivers/clk/ti/divider.c
+> >   453          if (div->flags & CLKF_SET_RATE_PARENT)
+> >   454                  flags |= CLK_SET_RATE_PARENT;
+> >   455
+> >   456          table = _get_div_table_from_setup(div, &width);
+> >   457          if (IS_ERR(table))
+> >                    ^^^^^^^^^^^^
+> >This needs to be updated to a NULL check.
+> 
+> Thanks for catching.
+> 
+> I'll send a fix for this against 4.12-rc1. Only case where this can
+> fail is if we run out of memory during boot which is pretty
+> unlikely.
+> 
 
-This patch supports the clock of EHCI/OHCI ch3 module added from R8A7795
-ES2.0 SoC.
+Ok.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index a9ee68e..e48d5cf 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -190,6 +190,7 @@ enum clk_ids {
- 	DEF_MOD("vspi2",		 629,	R8A7795_CLK_S2D1), /* ES1.x */
- 	DEF_MOD("vspi1",		 630,	R8A7795_CLK_S0D1),
- 	DEF_MOD("vspi0",		 631,	R8A7795_CLK_S0D1),
-+	DEF_MOD("ehci3",		 700,	R8A7795_CLK_S3D4),
- 	DEF_MOD("ehci2",		 701,	R8A7795_CLK_S3D4),
- 	DEF_MOD("ehci1",		 702,	R8A7795_CLK_S3D4),
- 	DEF_MOD("ehci0",		 703,	R8A7795_CLK_S3D4),
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
