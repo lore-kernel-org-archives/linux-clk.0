@@ -1,80 +1,58 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 05/10] clk: renesas: Add r8a7793 CPG Core Clock Definitions
-Date: Tue, 25 Apr 2017 18:53:15 +0200
-Message-Id: <1493139200-27396-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
-References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <gregory.clement@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,  Ulf Hansson <ulf.hansson@linaro.org>,  Russell King <rmk+kernel@armlinux.org.uk>,  Paul Gortmaker <paul.gortmaker@windriver.com>,  Konstantin Porotchkin <kostap@marvell.com>,  linux-clk@vger.kernel.org,  kernel-janitors@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: apn806: fix spelling mistake: "mising" -> "missing"
+References: <20170411133743.21073-1-colin.king@canonical.com>
+Date: Wed, 12 Apr 2017 11:41:06 +0200
+In-Reply-To: <20170411133743.21073-1-colin.king@canonical.com> (Colin King's
+	message of "Tue, 11 Apr 2017 14:37:43 +0100")
+Message-ID: <877f2qgdzh.fsf@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add all R-Car M2-N Clock Pulse Generator Core Clock Outputs, as listed
-in Table 7.2b ("List of Clocks [R-Car M2-W/M2-N]") of the R-Car Gen2
-Hardware User's Manual rev. 2.00.
+Hi Colin,
+ 
+ On mar., avril 11 2017, Colin King <colin.king@canonical.com> wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/dt-bindings/clock/r8a7793-cpg-mssr.h | 48 ++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7793-cpg-mssr.h
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> trivial fix to spelling mistake in dev_warn message
+>
+> Fixes: f109ca864414dc ("clk: apn806: Turn the eMMC clock as optional for dts backwards compatible")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/include/dt-bindings/clock/r8a7793-cpg-mssr.h b/include/dt-bindings/clock/r8a7793-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..8809b0f62d615457
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7793-cpg-mssr.h
-@@ -0,0 +1,48 @@
-+/*
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7793 CPG Core Clocks */
-+#define R8A7793_CLK_Z			0
-+#define R8A7793_CLK_ZG			1
-+#define R8A7793_CLK_ZTR			2
-+#define R8A7793_CLK_ZTRD2		3
-+#define R8A7793_CLK_ZT			4
-+#define R8A7793_CLK_ZX			5
-+#define R8A7793_CLK_ZS			6
-+#define R8A7793_CLK_HP			7
-+#define R8A7793_CLK_I			8
-+#define R8A7793_CLK_B			9
-+#define R8A7793_CLK_LB			10
-+#define R8A7793_CLK_P			11
-+#define R8A7793_CLK_CL			12
-+#define R8A7793_CLK_M2			13
-+#define R8A7793_CLK_ADSP		14
-+#define R8A7793_CLK_ZB3			15
-+#define R8A7793_CLK_ZB3D2		16
-+#define R8A7793_CLK_DDR			17
-+#define R8A7793_CLK_SDH			18
-+#define R8A7793_CLK_SD0			19
-+#define R8A7793_CLK_SD2			20
-+#define R8A7793_CLK_SD3			21
-+#define R8A7793_CLK_MMC0		22
-+#define R8A7793_CLK_MP			23
-+#define R8A7793_CLK_SSP			24
-+#define R8A7793_CLK_SSPRS		25
-+#define R8A7793_CLK_QSPI		26
-+#define R8A7793_CLK_CP			27
-+#define R8A7793_CLK_RCAN		28
-+#define R8A7793_CLK_R			29
-+#define R8A7793_CLK_OSC			30
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__ */
+
+The intial patch was merged through the mmc subsystem while it modifies
+a clk driver. So I would suggest either Ulf applying it or waiting for
+v4.12-rc1 to apply the patch through the clk subsystem.
+
+Gregory
+
+> ---
+>  drivers/clk/mvebu/ap806-system-controller.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+> index 103fe18a3c29..8155baccc98e 100644
+> --- a/drivers/clk/mvebu/ap806-system-controller.c
+> +++ b/drivers/clk/mvebu/ap806-system-controller.c
+> @@ -140,7 +140,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
+>  					  4, &name)) {
+>  		ap806_clk_data.clk_num--;
+>  		dev_warn(&pdev->dev,
+> -			 "eMMC clock mising: update the device tree!\n");
+> +			 "eMMC clock missing: update the device tree!\n");
+>  	} else {
+>  		ap806_clks[4] = clk_register_fixed_factor(NULL, name,
+>  							  fixedclk_name,
+> -- 
+> 2.11.0
+>
+
 -- 
-2.7.4
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
