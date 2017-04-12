@@ -1,74 +1,86 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 7 Apr 2017 12:51:52 -0700
+Date: Wed, 12 Apr 2017 09:46:05 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Gabriel Fernandez <gabriel.fernandez@st.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [PATCH] clk: stm32h7: Add stm32h743 clock driver
-Message-ID: <20170407195152.GH7065@codeaurora.org>
-References: <1489569810-24350-1-git-send-email-gabriel.fernandez@st.com>
- <20170405223233.GJ7065@codeaurora.org>
- <bd680d0a-0b2f-91fc-a940-b2fef4300ca3@st.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: Re-evaluate clock rate on min/max update
+Message-ID: <20170412164605.GO7065@codeaurora.org>
+References: <1490103807-21821-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <bd680d0a-0b2f-91fc-a940-b2fef4300ca3@st.com>
+In-Reply-To: <1490103807-21821-1-git-send-email-pdeschrijver@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/06, Gabriel Fernandez wrote:
-> On 04/06/2017 12:32 AM, Stephen Boyd wrote:
-> >On 03/15, gabriel.fernandez@st.com wrote:
-> >>diff --git a/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
-> >>new file mode 100644
-> >>index 0000000..9d4b587
-> >>--- /dev/null
-> >>+++ b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
-> >>@@ -0,0 +1,152 @@
-> >>+
-> >>+	rcc: rcc@58024400 {
-> >>+		#reset-cells = <1>;
-> >>+		#clock-cells = <2>
-> >>+		compatible = "st,stm32h743-rcc", "st,stm32-rcc";
-> >>+		reg = <0x58024400 0x400>;
-> >>+		clocks = <&clk_hse>, <&clk_lse>, <&clk_i2s_ckin>;
-> >>+
-> >>+		st,syscfg = <&pwrcfg>;
-> >>+
-> >>+		#address-cells = <1>;
-> >>+		#size-cells = <0>;
-> >>+
-> >>+		vco1@58024430 {
-> >>+			#clock-cells = <0>;
-> >>+			compatible = "stm32,pll";
-> >>+			reg = <0>;
-> >reg is super confusing and doesn't match unit address.
-> ok i fixed it in the v2
-> 
-> >
-> >>+		};
-> >Why? Shouldn't we know this from the compatible string how many
-> >PLLs there are and where they're located? Export the PLLs through
-> >rcc node's clock-cells?
-> >
-> Because i need to offer the possibility to change the PLL VCO
-> frequencies at the start-up of this driver clock.
-> The VCO algorithm needs a division factor, a multiplication factor
-> and a fractional factor.
-> Lot's of solution are possible for one frequency and it's nightmare
-> to satisfy the 3 output dividers of the PLL.
+On 03/21, Peter De Schrijver wrote:
+> Whenever a user change its min or max rate limit of a clock, we need to
+> re-evaluate the current clock rate and possibly change it if the new limits
+> require so. To do this clk_set_rate_range() already calls
+> clk_core_set_rate_nolock, however this won't have the intended effect
+> because the core clock rate hasn't changed. To fix this, move the test to
+> avoid setting the same core clock rate again, to clk_set_rate() so
+> clk_core_set_rate_nolock() can change the clock rate when min or max have
+> been updated, even when the core clock rate has not changed.
 
-Sure, but do we need to configure that on a per-board basis or a
-per-SoC basis? If it's just some configuration, I wonder why we
-don't put that into the driver and base it off some compatible
-string that includes the SoC the device is for. 
+I'd expect some sort of Fixes: tag here? Or it never worked!?
+
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+
+I seem to recall some problems here around rate aggregation that
+we fixed after the patches merged. Sorry, but I have to go back
+and look at those conversations to refresh my memory and make
+sure this is all fine.
+
+Are you relying on the rate setting op to be called with the new
+min/max requirements if the aggregated rate is the same? I don't
+understand why clk drivers care.
+
+> ---
+>  drivers/clk/clk.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 2fa2fb8..0b815d1 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1569,10 +1569,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+>  	if (!core)
+>  		return 0;
+>  
+> -	/* bail early if nothing to do */
+> -	if (rate == clk_core_get_rate_nolock(core))
+> -		return 0;
+> -
+>  	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+>  		return -EBUSY;
+>  
+> @@ -1621,16 +1617,21 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+>   */
+>  int clk_set_rate(struct clk *clk, unsigned long rate)
+>  {
+> -	int ret;
+> +	int ret = 0;
+>  
+>  	if (!clk)
+> -		return 0;
+> +		return ret;
+
+Why? Noise?
+
+>  
+>  	/* prevent racing with updates to the clock topology */
+>  	clk_prepare_lock();
+>  
+> +	/* bail early if nothing to do */
+> +	if (rate == clk_core_get_rate_nolock(clk->core))
+> +		goto out;
+> +
+>  	ret = clk_core_set_rate_nolock(clk->core, rate);
+>  
+> +out:
+>  	clk_prepare_unlock();
+>  
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
