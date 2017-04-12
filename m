@@ -1,107 +1,109 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
-To: Tony Lindgren <tony@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <20170317152536.GT20572@atomide.com>
- <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
- <20170323010057.GI10760@atomide.com> <20170323170210.GL10760@atomide.com>
- <8648f054-cf04-41df-20f3-82e0d63feefa@ti.com>
- <20170330165448.GF10760@atomide.com>
- <55b439ed-8b81-2e6b-64f1-34f9f3cc5369@ti.com>
- <20170403153604.GI10760@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <c396df32-fad1-72a2-f22d-034a42af4186@ti.com>
-Date: Wed, 5 Apr 2017 19:59:38 +0300
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v5] drm/pl111: Initial drm/kms driver for pl111
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Eric Anholt <eric@anholt.net>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <20170411011801.15788-1-eric@anholt.net>
+ <CACRpkdacg9tR3n3V2cZ=S9yv-xb+rxLRv8mE8nXQLoja6zXd0g@mail.gmail.com>
+ <87lgr6ego2.fsf@eliezer.anholt.net>
+ <CACRpkdZOY5jNB6UqwAufadE-FCRY2cyS1sU6UYMH9iFdSd7Lvw@mail.gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Russell King <linux@armlinux.org.uk>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <3cba2a40-64fa-b73d-cc21-ebc27f4051bf@baylibre.com>
+Date: Wed, 12 Apr 2017 17:27:53 +0200
 MIME-Version: 1.0
-In-Reply-To: <20170403153604.GI10760@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <CACRpkdZOY5jNB6UqwAufadE-FCRY2cyS1sU6UYMH9iFdSd7Lvw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/04/17 18:36, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [170403 07:54]:
->> On 30/03/17 19:54, Tony Lindgren wrote:
->>> * Tero Kristo <t-kristo@ti.com> [170330 00:20]:
->>>> On 23/03/17 19:02, Tony Lindgren wrote:
->>>>> * Tony Lindgren <tony@atomide.com> [170322 18:03]:
->>>>>> * Tero Kristo <t-kristo@ti.com> [170317 14:39]:
->>>>>>> On 17/03/17 17:25, Tony Lindgren wrote:
->>>>>>>> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
->>>>>>>>> Any additional testing on omap4 welcome as this series basically
->>>>>>>>> tweaks every possible peripheral clock on the SoC.
->>>>>>>>
->>>>>>>> Without the last patch in this series, booting fails for me:
->>>>>>>>
->>>>>>>> [    5.074890] l4_per_cm:clk:0120:0: failed to disable
->>>>>>>> [    5.085113] l4_per_cm:clk:0128:0: failed to disable
->>>>>>>>
->>>>>>>> Care to check that booting keeps working for each patch in the
->>>>>>>> series to avoid breaking git bisect for booting?
->>>>>>>
->>>>>>> Hmm, I think patch 8+9 need to be squashed then. I can double check this
->>>>>>> next week though.
->>>>>>
->>>>>> Also looks like with this set merged HDMI stops working on
->>>>>> omap4 with:
->>>>>>
->>>>>> HDMIWP: omapdss HDMIWP error: Failed to set PHY power mode to 1
->>>>>
->>>>> Forgot to mention that's with omapdrm with encoder-tpd12s015 and
->>>>> encoder-tfp410 modules loaded to get HDMI working. Here's more verbose
->>>>> dmesg output in case that provides more clues:
->>>>>
->>>>> [   91.042877] omapdss HDMICORE error: operation stopped when reading edid
->>>>> [   91.078308] [drm] Enabling DMM ywrap scrolling
->>>>> [   91.099243] omapdss HDMIWP error: Failed to set PHY power mode to 1
->>>>> [   91.107879] omapdss HDMI error: failed to power on device
->>>>> [   91.107879] omapdrm omapdrm.0: Failed to enable display 'hdmi': -5
->>>>> [   91.359619] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
->>>>> [   91.619964] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
->>>>> [   91.620300] Console: switching to colour frame buffer device 128x48
->>>>> [   91.682434] omapdrm omapdrm.0: fb0: omapdrm frame buffer device
->>>>> [   91.770812] [drm] Initialized omapdrm 1.0.0 20110917 for omapdrm.0 on minor 0
->>>>> [   92.818054] omapdss HDMICORE error: operation stopped when reading edid
->>>>> [   93.090087] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
->>>>> [   93.349853] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
->>>>>
->>>>> Regards,
->>>>>
->>>>> Tony
->>>>>
->>>>
->>>> Can you try with this additional hwmod data tweak in place? Apply this on
->>>> top of the existing series.
->>>
->>> Does not seem to help, still get the same errors. But maybe I'm doing
->>> something wrong as the patch did not apply and I applied it manually.
->>>
->>> Regards,
->>>
->>> Tony
->>>
->>
->> Hmm ok, can you provide some brief instructions how to test what you are
->> doing with the HDMI? Just connect it to some external monitor? My monitor
->> has a spare HDMI connector so I could try it out.
->
-> Well build a kernel using omap2plus_defconfig, then with HDMI cable
-> connected load the following modules:
->
-> encoder-tpd12s015 encoder-tfp410 connector-hdmi omapfb
->
-> And a console should appear on the HDMI monitor. If using omapdrm, then
-> load omapdss and omapdrm instead.
->
-> And if using NFSroot, you need to have ehci and smsc drivers built-in
-> or use an initramfs.
+On 04/12/2017 09:40 AM, Linus Walleij wrote:
+> On Wed, Apr 12, 2017 at 12:13 AM, Eric Anholt <eric@anholt.net> wrote:
+> 
+>> Oh, one last thing I think we need to figure out: I'm using TIM2_CLKSEL,
+>> which seems to be necessary on this platform.  My understanding is that
+>> this means that the pixel clock is divided from clcdclk instead of
+>> apb_pclk.  Do you agree?
+> 
+> Yes the pixed clock is always derived from clcdclk.
+> 
+> In most older ARM reference designs this is a VCO so that
+> is why there is a clk_set_rate() on this in the fbdev code.
+> (On some platforms that even has no effect I guess.)
+> 
+>> The fbdev driver is using
+>> clk_get(&fb->dev->dev, NULL) and not TIM2_CLKSEL, which I'm surprised by
+>> because I would have thought that would give us the first clock from the
+>> DT node (also clcdclk).
+> 
+> So that thing is a 1-bit line that can select one of two clocks
+> to be muxed into the PL111/CLCD.
+> 
+> I guess that up until now all platforms just left that line dangling in
+> the silicon. Congratulations, you came here first ;)
+> 
+> Though when I look at the Nomadik it seems that it might be muxing
+> the clock between 48 and 72 MHz, and I've been using 48MHz
+> all along ooopsie.
+> 
+> The current assumption in the bindings is that we have only
+> one clock and TIM2_CLKSEL is N/A.
+> 
+> If we want proper clcdclk handling with CLKSEL you should
+> probably add some code to implement a real mux clock for
+> this using <linux/clock-provider.h> and drivers/clk/clk-mux.c
+> with select COMMON_CLK
+> so that the driver still only sees clcdclk but that in turn is a
+> mux that can select one of two sources and will react to
+> the clk_set_rate() call by selecting the clock which is
+> closest in frequency to what you want.
+> 
+> This needs a small patch to alter the bindings too I guess.
+> A small clock node inside the CLCD, just like PCI bridges have
+> irqchips inside them etc:
+> 
+> clcd@10120000 {
+>         compatible = "arm,pl110", "arm,primecell";
+>         reg = <0x10120000 0x1000>;
+>         (...)
+>         clocks = <&clcdclk>, <&foo>;
+>         clock-names = "clcdclk", "apb_pclk";
+> 
+>         clcdclk: clock-controller@0 {
+>                 compatible = "arm,pl11x-clock-mux";
+>                 clocks = <&source_a>, <&source_b>;
+>         };
+> };
+> 
+> This can be set up easily in the OF probe path since that
+> is what we're doing: just look for this subnode, if it is there
+> create the clock controller.
+> 
+> I do not think the clk maintainers would mind a small mux
+> clock controller inside the CLCD driver to handle this mux
+> if we need it.
 
-Ok I am able to reproduce the issue. Seems something weird with the hdmi 
-hwmod itself, if I revert it back to its original form (just the hdmi 
-one) then it works fine. Haven't figured out yet what is the actual 
-problem but seems something timing related, as it also starts magically 
-working with the clkctrl clock driver setup if I add enough traces to 
-some critical points.
+Hi Linus,
 
--Tero
+Indeed it's the way of handling this use case, but no need to add
+a clk node here, you can copy what we did in pwm-meson, meson-gx-mmc.c,
+or dwmac-meson8b.c (we went further by also adding clk dividers).
+
+In the probe code, simply add a clock mux provider with the two parents
+clock names (these can and should be platform specific) and only call
+a clk_set_parent() with the clock specified in the node clocks cell.
+
+> 
+> It would *maybe* also be possible to add a second "clcdclk2"
+> to the block and make an educated decision on which clock
+> to use in the driver but that is not as elegant as using the
+> clock framework mux clock I think.
+> 
+> Yours,
+> Linus Walleij
+
+Neil
