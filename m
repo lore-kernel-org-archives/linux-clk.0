@@ -1,52 +1,50 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 3 Apr 2017 11:19:26 -0500
-From: Rob Herring <robh@kernel.org>
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
-	Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Ziji Hu <huziji@marvell.com>, Jimmy Xu <zmxu@marvell.com>,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>, Ryan Gao <ygao@marvell.com>,
-	Doug Jones <dougj@marvell.com>, Victor Gu <xigu@marvell.com>,
-	"Wei(SOCP) Liu" <liuw@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Yehuda Yitschak <yehuday@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>
-Subject: Re: [PATCH v7 06/13] dt: bindings: Add bindings for Marvell Xenon SD
- Host Controller
-Message-ID: <20170403161926.wfj7foddu33gxuae@rob-hp-laptop>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
- <ecacddaa5d38b678e1c8c95b56f65f4a39527ead.1490886907.git-series.gregory.clement@free-electrons.com>
+Return-Path: <daniel.lezcano@linaro.org>
+Return-Path: <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH V2] clk: hi6220: Add the hi655x's pmic clock
+To: Lee Jones <lee.jones@linaro.org>
+References: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
+ <20170411140613.jvhzsvrxa4evwxjh@dell> <20170411211936.GT2078@mai>
+ <20170412080038.kk4vrjhvr3eao26q@dell>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, xuwei5@hisilicon.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <c1dba250-a60c-febc-a5c3-5ba645a61ce0@linaro.org>
+Date: Wed, 12 Apr 2017 14:10:31 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <ecacddaa5d38b678e1c8c95b56f65f4a39527ead.1490886907.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <20170412080038.kk4vrjhvr3eao26q@dell>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 30, 2017 at 05:22:58PM +0200, Gregory CLEMENT wrote:
-> From: Hu Ziji <huziji@marvell.com>
+On 12/04/2017 10:00, Lee Jones wrote:
+> On Tue, 11 Apr 2017, Daniel Lezcano wrote:
 > 
-> Marvell Xenon SDHC can support eMMC/SD/SDIO.
-> Add Xenon-specific properties.
-> Also add properties for Xenon PHY setting.
+>> On Tue, Apr 11, 2017 at 03:06:13PM +0100, Lee Jones wrote:
+>>> On Sat, 08 Apr 2017, Daniel Lezcano wrote:
+>>>
+>>>> The hi655x multi function device is a PMIC providing regulators.
+>>>>
+>>>> The PMIC also provides a clock for the WiFi and the Bluetooth, let's implement
+>>>> this clock in order to add it in the hi655x MFD and allow proper wireless
+>>>> initialization.
+>>>>
+>>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
+[ ... ]
+
+>> Do you want to drop it from your tree or shall I resubmit a V3 without the mfd
+>> change?
 > 
-> Signed-off-by: Hu Ziji <huziji@marvell.com>
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt | 170 +++++++-
->  1 file changed, 170 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
+> The latter please.
 
-I acked v6 and it seems like a minor change, though I had to search for 
-both because there is no revision history nor explanation why you didn't 
-add my ack.
+Ok.
 
-Acked-by: Rob Herring <robh@kernel.org> 
+What about the DT binding change?
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
