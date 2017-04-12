@@ -1,90 +1,55 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36560 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752579AbdDKED0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2017 00:03:26 -0400
-Date: Wed, 12 Apr 2017 04:00:13 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org,
-        aisheng.dong@nxp.com, fabio.estevam@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] ARM: dts: imx7: add USDHC NAND and IPG clock to
- SDHC instances
-Message-ID: <20170411200013.GB13181@b29396-OptiPlex-7040>
-References: <20170410210015.1620-1-stefan@agner.ch>
- <20170410210015.1620-2-stefan@agner.ch>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 12 Apr 2017 14:34:54 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, xuwei5@hisilicon.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH V2] clk: hi6220: Add the hi655x's pmic clock
+Message-ID: <20170412133454.cfywpavifwpoetwo@dell>
+References: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
+ <20170411140613.jvhzsvrxa4evwxjh@dell>
+ <20170411211936.GT2078@mai>
+ <20170412080038.kk4vrjhvr3eao26q@dell>
+ <c1dba250-a60c-febc-a5c3-5ba645a61ce0@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170410210015.1620-2-stefan@agner.ch>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <c1dba250-a60c-febc-a5c3-5ba645a61ce0@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 10, 2017 at 02:00:15PM -0700, Stefan Agner wrote:
-> The USDHC instances need the USDHC NAND and IPG clock in order to
-> operate. Reference them properly by replacing the dummy clocks with
-> the actual clocks.
-> 
-> Note that both clocks are currently implicitly enabled since they
-> are part of the i.MX 7 clock drivers init_on list. This might
-> change in the future.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+On Wed, 12 Apr 2017, Daniel Lezcano wrote:
 
-Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+> On 12/04/2017 10:00, Lee Jones wrote:
+> > On Tue, 11 Apr 2017, Daniel Lezcano wrote:
+> > 
+> >> On Tue, Apr 11, 2017 at 03:06:13PM +0100, Lee Jones wrote:
+> >>> On Sat, 08 Apr 2017, Daniel Lezcano wrote:
+> >>>
+> >>>> The hi655x multi function device is a PMIC providing regulators.
+> >>>>
+> >>>> The PMIC also provides a clock for the WiFi and the Bluetooth, let's implement
+> >>>> this clock in order to add it in the hi655x MFD and allow proper wireless
+> >>>> initialization.
+> >>>>
+> >>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> 
+> [ ... ]
+> 
+> >> Do you want to drop it from your tree or shall I resubmit a V3 without the mfd
+> >> change?
+> > 
+> > The latter please.
+> 
+> Ok.
+> 
+> What about the DT binding change?
 
-Regards
-Dong Aisheng
+If I haven't merged it already, you'll need to re-send that
+(separately) too.
 
-> ---
-> This patch depends on "clk: imx7d: add the missing ipg_root_clk"
-> which adds the IPG clock.
-> 
-> --
-> Stefan
-> 
->  arch/arm/boot/dts/imx7s.dtsi | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-> index c4f12fd2e044..843eb379e1ea 100644
-> --- a/arch/arm/boot/dts/imx7s.dtsi
-> +++ b/arch/arm/boot/dts/imx7s.dtsi
-> @@ -934,8 +934,8 @@
->  				compatible = "fsl,imx7d-usdhc", "fsl,imx6sl-usdhc";
->  				reg = <0x30b40000 0x10000>;
->  				interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clks IMX7D_CLK_DUMMY>,
-> -					<&clks IMX7D_CLK_DUMMY>,
-> +				clocks = <&clks IMX7D_IPG_ROOT_CLK>,
-> +					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
->  					<&clks IMX7D_USDHC1_ROOT_CLK>;
->  				clock-names = "ipg", "ahb", "per";
->  				bus-width = <4>;
-> @@ -946,8 +946,8 @@
->  				compatible = "fsl,imx7d-usdhc", "fsl,imx6sl-usdhc";
->  				reg = <0x30b50000 0x10000>;
->  				interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clks IMX7D_CLK_DUMMY>,
-> -					<&clks IMX7D_CLK_DUMMY>,
-> +				clocks = <&clks IMX7D_IPG_ROOT_CLK>,
-> +					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
->  					<&clks IMX7D_USDHC2_ROOT_CLK>;
->  				clock-names = "ipg", "ahb", "per";
->  				bus-width = <4>;
-> @@ -958,8 +958,8 @@
->  				compatible = "fsl,imx7d-usdhc", "fsl,imx6sl-usdhc";
->  				reg = <0x30b60000 0x10000>;
->  				interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clks IMX7D_CLK_DUMMY>,
-> -					<&clks IMX7D_CLK_DUMMY>,
-> +				clocks = <&clks IMX7D_IPG_ROOT_CLK>,
-> +					<&clks IMX7D_NAND_USDHC_BUS_ROOT_CLK>,
->  					<&clks IMX7D_USDHC3_ROOT_CLK>;
->  				clock-names = "ipg", "ahb", "per";
->  				bus-width = <4>;
-> -- 
-> 2.12.1
-> 
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
