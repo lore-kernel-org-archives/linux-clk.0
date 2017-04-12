@@ -1,41 +1,133 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Tue, 4 Apr 2017 14:51:09 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wei Xu <xuwei5@hisilicon.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Guodong Xu <guodong.xu@linaro.org>,
-	John Stultz <john.stultz@linaro.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	mike.leach@linaro.org, Suzuki.Poulose@arm.com, sudeep.holla@arm.com
-Subject: Re: [PATCH v5 7/9] clk: hi6220: add debug APB clock
-Message-ID: <20170404215109.GH18246@codeaurora.org>
-References: <1490466197-29163-1-git-send-email-leo.yan@linaro.org>
- <1490466197-29163-8-git-send-email-leo.yan@linaro.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<aisheng.dong@nxp.com>, <kernel@pengutronix.de>, <broonie@kernel.org>,
+	<yibin.gong@nxp.com>, <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <shawnguo@kernel.org>,
+	<fabio.estevam@nxp.com>, <anson.huang@nxp.com>, <ping.bai@nxp.com>,
+	<leonard.crestez@nxp.com>, <octavian.purdila@nxp.com>
+Subject: [RFC PATCH 2/3] clk: add managed version of clk_bulk_get
+Date: Wed, 12 Apr 2017 12:03:28 +0800
+Message-ID: <1491969809-20154-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1490466197-29163-8-git-send-email-leo.yan@linaro.org>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/26, Leo Yan wrote:
-> The debug APB clock is absent in hi6220 driver, so this patch is to add
-> support for it.
-> 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
+This patch introduces the managed version of clk_bulk_get.
 
-Applied to clk-next. I suspect we don't need a topic branch for
-the DT header because arm-soc won't be taking the dts side of the
-changes?
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Anson Huang <anson.huang@nxp.com>
+Cc: Robin Gong <yibin.gong@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Cc: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Octavian Purdila <octavian.purdila@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/clk-devres.c | 36 ++++++++++++++++++++++++++++++++++++
+ include/linux/clk.h      | 22 +++++++++++++++++++++-
+ 2 files changed, 57 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 3a218c3..c7fb31d 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -34,6 +34,42 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ }
+ EXPORT_SYMBOL(devm_clk_get);
+ 
++struct clk_bulk_devres {
++	struct clk_bulk_data *clks;
++	int num_clks;
++};
++
++static void devm_clk_bulk_release(struct device *dev, void *res)
++{
++	struct clk_bulk_devres *devres = res;
++
++	clk_bulk_put(devres->num_clks, devres->clks);
++}
++
++int devm_clk_bulk_get(struct device *dev, int num_clks,
++		      struct clk_bulk_data *clks)
++{
++	struct clk_bulk_devres *devres;
++	int ret;
++
++	devres = devres_alloc(devm_clk_bulk_release,
++			      sizeof(*devres), GFP_KERNEL);
++	if (!devres)
++		return -ENOMEM;
++
++	ret = clk_bulk_get(dev, num_clks, clks);
++	if (!ret) {
++		devres->clks = clks;
++		devres->num_clks = num_clks;
++		devres_add(dev, devres);
++	} else {
++		devres_free(devres);
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(devm_clk_bulk_get);
++
+ static int devm_clk_match(struct device *dev, void *res, void *data)
+ {
+ 	struct clk **c = res;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 1d05b66..3fc6010 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -278,11 +278,25 @@ struct clk *clk_get(struct device *dev, const char *id);
+  *
+  * clk_bulk_get should not be called from within interrupt context.
+  */
+-
+ int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ 			      struct clk_bulk_data *clks);
+ 
+ /**
++ * devm_clk_bulk_get - managed get multiple clk consumers
++ * @dev: device for clock "consumer"
++ * @num_clks: the number of clk_bulk_data
++ * @clks: the clk_bulk_data table of consumer
++ *
++ * Return 0 on success, an errno on failure.
++ *
++ * This helper function allows drivers to get several regulator
++ * consumers in one operation with management, the clks will
++ * automatically be freed when the device is unbound.
++ */
++int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
++				   struct clk_bulk_data *clks);
++
++/**
+  * devm_clk_get - lookup and obtain a managed reference to a clock producer.
+  * @dev: device for clock "consumer"
+  * @id: clock consumer ID
+@@ -554,6 +568,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
++static inline int devm_clk_bulk_get(struct device *dev, int num_clks,
++				    struct clk_bulk_data *clks)
++{
++	return NULL;
++}
++
+ static inline struct clk *devm_get_clk_from_child(struct device *dev,
+ 				struct device_node *np, const char *con_id)
+ {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
