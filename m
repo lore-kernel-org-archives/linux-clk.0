@@ -1,61 +1,121 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 12 Apr 2017 03:59:42 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org,
-        aisheng.dong@nxp.com, fabio.estevam@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: imx7d: fix USDHC NAND clock
-Message-ID: <20170411195941.GA13181@b29396-OptiPlex-7040>
-References: <20170410210015.1620-1-stefan@agner.ch>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170410210015.1620-1-stefan@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
+To: Kevin Hilman <khilman@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <149181015787.91618.7461737194577750243@resonance>
+Cc: linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org
+References: <m2o9wb7oho.fsf@baylibre.com>
+ <149181015787.91618.7461737194577750243@resonance>
+Message-ID: <149200138297.88277.9296054276836015367@resonance>
+Subject: Re: [GIT PULL] Amlogic clock driver updates for v4.12
+Date: Wed, 12 Apr 2017 14:49:42 +0200
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 10, 2017 at 02:00:14PM -0700, Stefan Agner wrote:
-> The USDHC NAND root clock is not gated by any CCM clock gate. Remove
-> the bogus gate definition.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+Quoting Michael Turquette (2017-04-10 09:42:37)
+> Quoting Kevin Hilman (2017-04-05 01:16:19)
+> > Steven, Mike,
+> > =
 
-Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > Below is a request to pull the full set of Amlogic clock changes for
+> > v4.12.  Note that this includes the previous pull for headers, but I
+> > wanted to send them separately for completness, and so there's an
+> > obvious tag to use as a dependency source for our DT changes.
+> =
 
-Regards
-Dong Aisheng
+> Pulled.
 
-> ---
->  drivers/clk/imx/clk-imx7d.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-> index 562055129ed8..93b03640da9b 100644
-> --- a/drivers/clk/imx/clk-imx7d.c
-> +++ b/drivers/clk/imx/clk-imx7d.c
-> @@ -724,7 +724,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
->  	clks[IMX7D_MAIN_AXI_ROOT_DIV] = imx_clk_divider2("axi_post_div", "axi_pre_div", base + 0x8800, 0, 6);
->  	clks[IMX7D_DISP_AXI_ROOT_DIV] = imx_clk_divider2("disp_axi_post_div", "disp_axi_pre_div", base + 0x8880, 0, 6);
->  	clks[IMX7D_ENET_AXI_ROOT_DIV] = imx_clk_divider2("enet_axi_post_div", "enet_axi_pre_div", base + 0x8900, 0, 6);
-> -	clks[IMX7D_NAND_USDHC_BUS_ROOT_DIV] = imx_clk_divider2("nand_usdhc_post_div", "nand_usdhc_pre_div", base + 0x8980, 0, 6);
-> +	clks[IMX7D_NAND_USDHC_BUS_ROOT_CLK] = imx_clk_divider2("nand_usdhc_root_clk", "nand_usdhc_pre_div", base + 0x8980, 0, 6);
->  	clks[IMX7D_AHB_CHANNEL_ROOT_DIV] = imx_clk_divider2("ahb_root_clk", "ahb_pre_div", base + 0x9000, 0, 6);
->  	clks[IMX7D_IPG_ROOT_CLK] = imx_clk_divider2("ipg_root_clk", "ahb_root_clk", base + 0x9080, 0, 2);
->  	clks[IMX7D_DRAM_ROOT_DIV] = imx_clk_divider2("dram_post_div", "dram_cg", base + 0x9880, 0, 3);
-> @@ -798,7 +798,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
->  	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
->  	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "axi_post_div", base + 0x4110, 0);
->  	clks[IMX7D_OCRAM_S_CLK] = imx_clk_gate4("ocram_s_clk", "ahb_root_clk", base + 0x4120, 0);
-> -	clks[IMX7D_NAND_USDHC_BUS_ROOT_CLK] = imx_clk_gate4("nand_usdhc_root_clk", "nand_usdhc_post_div", base + 0x4130, 0);
->  	clks[IMX7D_DRAM_ROOT_CLK] = imx_clk_gate4("dram_root_clk", "dram_post_div", base + 0x4130, 0);
->  	clks[IMX7D_DRAM_PHYM_ROOT_CLK] = imx_clk_gate4("dram_phym_root_clk", "dram_phym_cg", base + 0x4130, 0);
->  	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0);
-> -- 
-> 2.12.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+As we discussed, your PR included commits that I had already merged into
+the clk-meson stable branch and I have resolved this by dropping
+clk-meson from the clk tree. This PR is now merged into the clk tree
+without duplicated commits.
+
+Thanks,
+Mike
+
+> =
+
+> Regards,
+> Mike
+> =
+
+> > =
+
+> > Thanks,
+> > =
+
+> > Kevin
+> > =
+
+> > =
+
+> > The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d=
+9201:
+> > =
+
+> >   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+> > =
+
+> > are available in the git repository at:
+> > =
+
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-amlogic.g=
+it tags/amlogic-clk
+> > =
+
+> > for you to fetch changes up to 3a429818a2e48928ae0114df5fb3b0612dd57001:
+> > =
+
+> >   Merge branch 'v4.12/clk-drivers' into v4.12/clk (2017-04-04 15:58:11 =
+-0700)
+> > =
+
+> > ----------------------------------------------------------------
+> > Amlogic clock driver updates for v4.12
+> > - meson8: add some new PLLs
+> > - new clocks for Mali
+> > - misc fixes.
+> > =
+
+> > ----------------------------------------------------------------
+> > Jerome Brunet (9):
+> >       clk: meson: fix SET_PARM macro
+> >       clk: meson: add missing const qualifiers on gate arrays
+> >       clk: meson8b: put dividers and muxes in tables
+> >       clk: gxbb: put dividers and muxes in tables
+> >       clk: meson: mpll: add rw operation
+> >       clk: meson: gxbb: mpll: use rw operation
+> >       clk: meson8b: add the mplls clocks 0, 1 and 2
+> >       clk: meson: mpll: correct N2 maximum value
+> >       dt-bindings: clk: gxbb: expose i2s output clock gates
+> > =
+
+> > Kevin Hilman (1):
+> >       Merge branch 'v4.12/clk-drivers' into v4.12/clk
+> > =
+
+> > Neil Armstrong (7):
+> >       clk: meson-gxbb: Add MALI clock IDS
+> >       clk: meson-gxbb: Expose GP0 dt-bindings clock id
+> >       dt-bindings: clock: gxbb-clkc: Add GXL compatible variant
+> >       clk: meson-gxbb: Add MALI clocks
+> >       clk: meson: Add support for parameters for specific PLLs
+> >       clk: meson-gxbb: Add GP0 PLL init parameters
+> >       clk: meson-gxbb: Add GXL/GXM GP0 Variant
+> > =
+
+> >  Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt |   3 +-
+> >  drivers/clk/meson/clk-mpll.c                                  | 152 ++=
+++++++++++++-
+> >  drivers/clk/meson/clk-pll.c                                   |  53 ++=
++++-
+> >  drivers/clk/meson/clkc.h                                      |  29 ++-
+> >  drivers/clk/meson/gxbb.c                                      | 505 ++=
+++++++++++++++++++++++++++++++++++++++++++++----
+> >  drivers/clk/meson/gxbb.h                                      |  23 ++-
+> >  drivers/clk/meson/meson8b.c                                   | 127 ++=
+++++++++++-
+> >  drivers/clk/meson/meson8b.h                                   |  20 +-
+> >  include/dt-bindings/clock/gxbb-clkc.h                         |  11 ++
+> >  9 files changed, 867 insertions(+), 56 deletions(-)
+> >=20
