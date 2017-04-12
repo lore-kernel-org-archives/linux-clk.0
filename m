@@ -1,96 +1,99 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Thu, 20 Apr 2017 10:17:49 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [GIT PULL] Allwinner clock changes for 4.12, take 2
-Message-ID: <20170420081749.bok3wwusmk2no5vw@lukather>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f176.google.com ([209.85.223.176]:33960 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753209AbdDLHkk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2017 03:40:40 -0400
+Received: by mail-io0-f176.google.com with SMTP id a103so31629537ioj.1
+        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2017 00:40:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7roefruvokk5g4na"
+In-Reply-To: <87lgr6ego2.fsf@eliezer.anholt.net>
+References: <20170411011801.15788-1-eric@anholt.net> <CACRpkdacg9tR3n3V2cZ=S9yv-xb+rxLRv8mE8nXQLoja6zXd0g@mail.gmail.com>
+ <87lgr6ego2.fsf@eliezer.anholt.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 12 Apr 2017 09:40:38 +0200
+Message-ID: <CACRpkdZOY5jNB6UqwAufadE-FCRY2cyS1sU6UYMH9iFdSd7Lvw@mail.gmail.com>
+Subject: Re: [PATCH v5] drm/pl111: Initial drm/kms driver for pl111
+To: Eric Anholt <eric@anholt.net>,
+        linux-clk <linux-clk@vger.kernel.org>
+Cc: "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Tom Cooksey <tom.cooksey@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mike Turquette <mturquette@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wed, Apr 12, 2017 at 12:13 AM, Eric Anholt <eric@anholt.net> wrote:
 
---7roefruvokk5g4na
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Oh, one last thing I think we need to figure out: I'm using TIM2_CLKSEL,
+> which seems to be necessary on this platform.  My understanding is that
+> this means that the pixel clock is divided from clcdclk instead of
+> apb_pclk.  Do you agree?
 
-Hi Mike, Stephen,
+Yes the pixed clock is always derived from clcdclk.
 
-Here are the few last minor fixes that didn't go through for 4.11,
-plus two fixes for previous drivers changes found in the earlier pull
-request for 4.12.
+In most older ARM reference designs this is a VCO so that
+is why there is a clk_set_rate() on this in the fbdev code.
+(On some platforms that even has no effect I guess.)
 
-Thanks!
-Maxime
+> The fbdev driver is using
+> clk_get(&fb->dev->dev, NULL) and not TIM2_CLKSEL, which I'm surprised by
+> because I would have thought that would give us the first clock from the
+> DT node (also clcdclk).
 
-The following changes since commit cb545960dea2749771c88b0cb26e5adfd12a0315:
+So that thing is a 1-bit line that can select one of two clocks
+to be muxed into the PL111/CLCD.
 
-  clk: sunxi-ng: Display index when clock registration fails (2017-04-06 09=
-:10:30 +0200)
+I guess that up until now all platforms just left that line dangling in
+the silicon. Congratulations, you came here first ;)
 
-are available in the git repository at:
+Though when I look at the Nomadik it seems that it might be muxing
+the clock between 48 and 72 MHz, and I've been using 48MHz
+all along ooopsie.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunx=
-i-clk-for-4.12-2
+The current assumption in the bindings is that we have only
+one clock and TIM2_CLKSEL is N/A.
 
-for you to fetch changes up to 7149c1becddf49022fe0aad2fa395377cd8f753e:
+If we want proper clcdclk handling with CLKSEL you should
+probably add some code to implement a real mux clock for
+this using <linux/clock-provider.h> and drivers/clk/clk-mux.c
+with select COMMON_CLK
+so that the driver still only sees clcdclk but that in turn is a
+mux that can select one of two sources and will react to
+the clk_set_rate() call by selecting the clock which is
+closest in frequency to what you want.
 
-  clk: sunxi-ng: a80: Fix audio PLL comment not matching actual code (2017-=
-04-13 14:09:30 +0200)
+This needs a small patch to alter the bindings too I guess.
+A small clock node inside the CLCD, just like PCI bridges have
+irqchips inside them etc:
 
-----------------------------------------------------------------
-Allwinner clock changes, take 2
+clcd@10120000 {
+        compatible = "arm,pl110", "arm,primecell";
+        reg = <0x10120000 0x1000>;
+        (...)
+        clocks = <&clcdclk>, <&foo>;
+        clock-names = "clcdclk", "apb_pclk";
 
-A few minor bug and comment fixes, plus some fixes for the PRCM CCU driver
-merged in the prior pull request
+        clcdclk: clock-controller@0 {
+                compatible = "arm,pl11x-clock-mux";
+                clocks = <&source_a>, <&source_b>;
+        };
+};
 
-----------------------------------------------------------------
-Chen-Yu Tsai (3):
-      clk: sunxi-ng: use 1 as fallback for minimum multiplier
-      clk: sunxi-ng: Fix round_rate/set_rate multiplier minimum mismatch
-      clk: sunxi-ng: a80: Fix audio PLL comment not matching actual code
+This can be set up easily in the OF probe path since that
+is what we're doing: just look for this subnode, if it is there
+create the clock controller.
 
-Icenowy Zheng (2):
-      clk: sunxi-ng: fix PRCM CCU ir clk parent
-      clk: sunxi-ng: fix PRCM CCU CLK_NUMBER value
+I do not think the clk maintainers would mind a small mux
+clock controller inside the CLCD driver to handle this mux
+if we need it.
 
- drivers/clk/sunxi-ng/ccu-sun8i-r.c   | 2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-r.h   | 2 +-
- drivers/clk/sunxi-ng/ccu-sun9i-a80.c | 3 +--
- drivers/clk/sunxi-ng/ccu_nk.c        | 8 ++++----
- drivers/clk/sunxi-ng/ccu_nkm.c       | 8 ++++----
- drivers/clk/sunxi-ng/ccu_nkmp.c      | 8 ++++----
- drivers/clk/sunxi-ng/ccu_nm.c        | 4 ++--
- 7 files changed, 17 insertions(+), 18 deletions(-)
+It would *maybe* also be possible to add a second "clcdclk2"
+to the block and make an educated decision on which clock
+to use in the driver but that is not as elegant as using the
+clock framework mux clock I think.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---7roefruvokk5g4na
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJY+G6tAAoJEBx+YmzsjxAgg/IP/1sABHmx+NijfAdZsIzZhChR
-6qhrZnmhCE4HK4X8+0cZydcUW6z/JlVju3nb3GUqzzH190+b9+2J+B9XQJTpVoVk
-7chKtO1Fx8GXKzuo4Eoot1oRaNopejCXjMH3RfH92+m6AjMZy/t+a+Gk6ocLSckt
-3iOTtJwBje8LBfhvVqEbCdM3FoYZG4Y9C59nVuKJrnzNkyCj8d8ji4KYNrkqciFh
-kUXMwHSdSm/WJr42rHvpAKIPa/1ymngaCtkf5wtKYZ8gskAeVX/XhiZKW7fTaPkK
-ACqwYueuy0pkmcfNYhJq/GYJqP4kuL0Lffd5fwYozMwvUXuUddOcYnPPVBiFVcGC
-YEf9sjmaydKoje6t42bXY9fs+qxPwnB6wI93HmPOFBQtBj5828y5y/utMEKDQr1d
-aABZlt3SzRPF1FuIjfClWge1My9uKN22mX+5vSVjNFUu/pzu2D8PtUXMm4ek0Ii8
-7LIw/bnwdmYFSCvRM24P12oNfE7U6qcIG0TsWlS47uPXYT2bb7EFPdPjg60a32WW
-owPbtOi1WAhhHKmlx/+gBf+mlOi4iUnK3D8fOXCvzrJrELCS96pnoqZOPd5/Ype+
-/MbE/ir1AmiN6GTx5TZp9khOF5I45n1bTqg+zIOqbVUIBR5gNDuDbjakDIma7TYa
-zhrYJK/t9VbkQ+2atZEb
-=YmfA
------END PGP SIGNATURE-----
-
---7roefruvokk5g4na--
+Yours,
+Linus Walleij
