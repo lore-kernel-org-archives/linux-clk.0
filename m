@@ -1,76 +1,47 @@
-Return-Path: <Jose.Abreu@synopsys.com>
-Subject: Re: [PATCH v3] clk/axs10x: introduce AXS10X pll driver
-To: Vlad Zakharov <Vladislav.Zakharov@synopsys.com>,
-	<linux-clk@vger.kernel.org>
-References: <1492775151-20059-1-git-send-email-vzakhar@synopsys.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-snps-arc@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Message-ID: <55592751-9de4-af5a-792c-2209be535f44@synopsys.com>
-Date: Fri, 21 Apr 2017 13:25:25 +0100
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 12 Apr 2017 09:59:36 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Colin King <colin.king@canonical.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Paul Gortmaker <paul.gortmaker@windriver.com>,
+	Konstantin Porotchkin <kostap@marvell.com>,
+	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: apn806: fix spelling mistake: "mising" -> "missing"
+Message-ID: <20170412165936.GQ7065@codeaurora.org>
+References: <20170411133743.21073-1-colin.king@canonical.com>
+ <877f2qgdzh.fsf@free-electrons.com>
 MIME-Version: 1.0
-In-Reply-To: <1492775151-20059-1-git-send-email-vzakhar@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <877f2qgdzh.fsf@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Vlad,
-
-
-On 21-04-2017 12:45, Vlad Zakharov wrote:
-> AXS10X boards manages it's clocks using various PLLs. These PLL has same
-> dividers and corresponding control registers mapped to different addresses.
-> So we add one common driver for such PLLs.
->
-> Each PLL on AXS10X board consist of three dividers: IDIV, FBDIV and
-> ODIV. Output clock value is managed using these dividers.
->
-> We add pre-defined tables with supported rate values and appropriate
-> configurations of IDIV, FBDIV and ODIV for each value.
->
-> As of today we add support for PLLs that generate clock for the
-> following devices:
->  * ARC core on AXC CPU tiles.
->  * ARC PGU on ARC SDP Mainboard.
-> and more to come later.
->
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Vlad Zakharov <vzakhar@synopsys.com>
-> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> ---
-> Changes v2..v3
->   - replaced complex data structures with simple cfg tables
->   - replaced non-hw based provider and clk registration functions with hw-based
->   - fixed typos and minor code styling issues
->
->  .../devicetree/bindings/clock/snps,pll-clock.txt   |  28 ++
->  MAINTAINERS                                        |   6 +
->  drivers/clk/axs10x/Makefile                        |   1 +
->  drivers/clk/axs10x/pll_clock.c                     | 334 +++++++++++++++++++++
->  4 files changed, 369 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/snps,pll-clock.txt
->  create mode 100644 drivers/clk/axs10x/pll_clock.c
->
-
-[snip]
-
+On 04/12, Gregory CLEMENT wrote:
+> Hi Colin,
 >  
-> +SYNOPSYS ARC SDP clock driver
-> +M:	Vlad Zakharov <vzakhar@synopsys.com>
-> +S:	Supported
-> +F:	drivers/clk/axs10x/*
+>  On mar., avril 11 2017, Colin King <colin.king@canonical.com> wrote:
+> 
+> > From: Colin Ian King <colin.king@canonical.com>
+> >
+> > trivial fix to spelling mistake in dev_warn message
+> >
+> > Fixes: f109ca864414dc ("clk: apn806: Turn the eMMC clock as optional for dts backwards compatible")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> 
+> The intial patch was merged through the mmc subsystem while it modifies
+> a clk driver. So I would suggest either Ulf applying it or waiting for
+> v4.12-rc1 to apply the patch through the clk subsystem.
+> 
 
-Acked-by: Jose Abreu <joabreu@synopsys.com>
+In case Ulf wants to take it now
 
-Best regards,
-Jose Miguel Abreu
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 
-> +F:	Documentation/devicetree/bindings/clock/snps,pll-clock.txt
-> +
->  SYSTEM CONFIGURATION (SYSCON)
->  M:	Lee Jones <lee.jones@linaro.org>
->  M:	Arnd Bergmann <arnd@arndb.de>
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
