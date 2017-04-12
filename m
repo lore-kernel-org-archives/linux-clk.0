@@ -1,66 +1,113 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 4 Apr 2017 17:45:44 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 0/5] Add support for the R_CCU on Allwinner H3/A64 SoCs
-Message-ID: <20170404154544.ofecao56dpcvk3wc@lukather>
-References: <20170404095100.18649-1-icenowy@aosc.io>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:48054 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752721AbdDLQhc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2017 12:37:32 -0400
+Date: Wed, 12 Apr 2017 09:37:30 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Eric Anholt <eric@anholt.net>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Mike Turquette <mturquette@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH v5] drm/pl111: Initial drm/kms driver for pl111
+Message-ID: <20170412163730.GM7065@codeaurora.org>
+References: <20170411011801.15788-1-eric@anholt.net>
+ <CACRpkdacg9tR3n3V2cZ=S9yv-xb+rxLRv8mE8nXQLoja6zXd0g@mail.gmail.com>
+ <87lgr6ego2.fsf@eliezer.anholt.net>
+ <CACRpkdZOY5jNB6UqwAufadE-FCRY2cyS1sU6UYMH9iFdSd7Lvw@mail.gmail.com>
+ <3cba2a40-64fa-b73d-cc21-ebc27f4051bf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xestqvaia3sdnjo7"
-In-Reply-To: <20170404095100.18649-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <3cba2a40-64fa-b73d-cc21-ebc27f4051bf@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On 04/12, Neil Armstrong wrote:
+> On 04/12/2017 09:40 AM, Linus Walleij wrote:
+> > On Wed, Apr 12, 2017 at 12:13 AM, Eric Anholt <eric@anholt.net> wrote:
+> > 
+> >> Oh, one last thing I think we need to figure out: I'm using TIM2_CLKSEL,
+> >> which seems to be necessary on this platform.  My understanding is that
+> >> this means that the pixel clock is divided from clcdclk instead of
+> >> apb_pclk.  Do you agree?
+> > 
+> > Yes the pixed clock is always derived from clcdclk.
+> > 
+> > In most older ARM reference designs this is a VCO so that
+> > is why there is a clk_set_rate() on this in the fbdev code.
+> > (On some platforms that even has no effect I guess.)
+> > 
+> >> The fbdev driver is using
+> >> clk_get(&fb->dev->dev, NULL) and not TIM2_CLKSEL, which I'm surprised by
+> >> because I would have thought that would give us the first clock from the
+> >> DT node (also clcdclk).
+> > 
+> > So that thing is a 1-bit line that can select one of two clocks
+> > to be muxed into the PL111/CLCD.
+> > 
+> > I guess that up until now all platforms just left that line dangling in
+> > the silicon. Congratulations, you came here first ;)
+> > 
+> > Though when I look at the Nomadik it seems that it might be muxing
+> > the clock between 48 and 72 MHz, and I've been using 48MHz
+> > all along ooopsie.
+> > 
+> > The current assumption in the bindings is that we have only
+> > one clock and TIM2_CLKSEL is N/A.
+> > 
+> > If we want proper clcdclk handling with CLKSEL you should
+> > probably add some code to implement a real mux clock for
+> > this using <linux/clock-provider.h> and drivers/clk/clk-mux.c
+> > with select COMMON_CLK
+> > so that the driver still only sees clcdclk but that in turn is a
+> > mux that can select one of two sources and will react to
+> > the clk_set_rate() call by selecting the clock which is
+> > closest in frequency to what you want.
+> > 
+> > This needs a small patch to alter the bindings too I guess.
+> > A small clock node inside the CLCD, just like PCI bridges have
+> > irqchips inside them etc:
+> > 
+> > clcd@10120000 {
+> >         compatible = "arm,pl110", "arm,primecell";
+> >         reg = <0x10120000 0x1000>;
+> >         (...)
+> >         clocks = <&clcdclk>, <&foo>;
+> >         clock-names = "clcdclk", "apb_pclk";
+> > 
+> >         clcdclk: clock-controller@0 {
+> >                 compatible = "arm,pl11x-clock-mux";
+> >                 clocks = <&source_a>, <&source_b>;
+> >         };
+> > };
+> > 
+> > This can be set up easily in the OF probe path since that
+> > is what we're doing: just look for this subnode, if it is there
+> > create the clock controller.
+> > 
+> > I do not think the clk maintainers would mind a small mux
+> > clock controller inside the CLCD driver to handle this mux
+> > if we need it.
+> 
+> Hi Linus,
+> 
+> Indeed it's the way of handling this use case, but no need to add
+> a clk node here, you can copy what we did in pwm-meson, meson-gx-mmc.c,
+> or dwmac-meson8b.c (we went further by also adding clk dividers).
+> 
+> In the probe code, simply add a clock mux provider with the two parents
+> clock names (these can and should be platform specific) and only call
+> a clk_set_parent() with the clock specified in the node clocks cell.
+> 
 
---xestqvaia3sdnjo7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
++1
 
-On Tue, Apr 04, 2017 at 05:50:55PM +0800, Icenowy Zheng wrote:
-> Allwinner SoCs after sun6i-a31 nearly all have a R_CCU in PRCM part.
-> (V3s and R40 do not have it, as they have even no PRCM)
->=20
-> This patch adds support for the ones on H3/A64.
->=20
-> Some clock/reset values are reserved for easier extending the support to
-> A31/A23, but for this I think some changes to the PRCM MFD should be made,
-> see [1] (Although this is only a sketch).
->=20
-> The r_pio device node is also added for A64, as the driver is already
-> merged, and its depends (r_ccu) is now met.
+Avoiding a binding update is nice.
 
-Applied all, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---xestqvaia3sdnjo7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJY47+oAAoJEBx+YmzsjxAg/pkP/jjmMHxAdkZt5gvgrKBpPmH5
-OkwnJlPbjKt65Z+vajmm65IAmBRKTM7IHnvGHwbEF4lR11qYeznaaih5pGUH5BNs
-OccrPVJnb+TW+5UjAyrxN46UjHONLyvU5lJ8wbjAjbBErOT+XFnF5DfP1ftCO/Xp
-GjeEThT8zJDIoLzvtkXLDMsPy5kw02W9S63PufcBT5wxxk/tILm4tjC1Dhz3UJCa
-yGWN0q5mk5vpj/rmLg6t+OD5f9IIbHMtLjMgrA1yCwet3QjxZ43jqvSe3tNy3ZKY
-d6VuC71upWT+ZMVEMHAv+7Dv2Z8mhBwZx4RVRdE0+q9v8bemEPNzTULwR2GxhYi6
-o17DhsT4g5Glzcqma7oJGX5HOEQq6+Ys1r7h8AzgA7VSLCGnu5D/peF8/tIPw54F
-WQhBksveHXLMI+nO9RRj4wjONzna9kZ5/QZp3atUnmdv3LeEyzTYwKuM0tstSpaI
-ao8TXdwCQfA4fpbOPdAdpn70ji8l0GO8MG5c/dEZPOM2w1ZT7FRvNtUM0sUDwQZy
-w4Je3LWhvZI7dXomS7hIkYHclOfkvjILi/A5SyD924LWMiUq9Y+PloHJW7luwAki
-DQ5K9vBidVXYBk0vndtg0IWn3knp+W6BJYpR6pDHk03WILkBnqRPUg3QpPQuVGoH
-c9B/cYh35IQ3ktmOxa12
-=hGWa
------END PGP SIGNATURE-----
-
---xestqvaia3sdnjo7--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
