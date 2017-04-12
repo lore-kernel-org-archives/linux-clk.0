@@ -1,271 +1,221 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: sricharan@codeaurora.org,
-	absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>,
-	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Subject: [PATCH 4/5] arm64: dts: Add ipq8074 SoC and MTP board support
-Date: Fri, 28 Apr 2017 15:26:42 +0530
-Message-Id: <1493373403-23462-5-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
-References: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<aisheng.dong@nxp.com>, <kernel@pengutronix.de>, <broonie@kernel.org>,
+	<yibin.gong@nxp.com>, <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <shawnguo@kernel.org>,
+	<fabio.estevam@nxp.com>, <anson.huang@nxp.com>, <ping.bai@nxp.com>,
+	<leonard.crestez@nxp.com>, <octavian.purdila@nxp.com>
+Subject: [RFC PATCH 3/3] cpufreq: imx6q: refine clk operations
+Date: Wed, 12 Apr 2017 12:03:29 +0800
+Message-ID: <1491969809-20154-4-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: aisheng.dong@nxp.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add initial device tree support for the Qualcomm IPQ8074 SoC and
-HK01 evaluation board.
+Use clk_bulk_get to ease the driver clocks handling.
 
-Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Anson Huang <anson.huang@nxp.com>
+Cc: Robin Gong <yibin.gong@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Cc: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Octavian Purdila <octavian.purdila@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- arch/arm64/boot/dts/qcom/Makefile         |   1 +
- arch/arm64/boot/dts/qcom/ipq8074-hk01.dts |  48 ++++++++++
- arch/arm64/boot/dts/qcom/ipq8074.dtsi     | 153 ++++++++++++++++++++++++++++++
- 3 files changed, 202 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
+ drivers/cpufreq/imx6q-cpufreq.c | 119 ++++++++++++++++++----------------------
+ 1 file changed, 53 insertions(+), 66 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index cc0f02d..7c6963e 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -4,6 +4,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-bullhead-rev-101.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-angler-rev-101.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8996-mtp.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
+diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+index 7719b02..6158910 100644
+--- a/drivers/cpufreq/imx6q-cpufreq.c
++++ b/drivers/cpufreq/imx6q-cpufreq.c
+@@ -24,15 +24,29 @@ static struct regulator *arm_reg;
+ static struct regulator *pu_reg;
+ static struct regulator *soc_reg;
  
- always		:= $(dtb-y)
- subdir-y	:= $(dts-dirs)
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-new file mode 100644
-index 0000000..c150bea
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-@@ -0,0 +1,48 @@
-+/dts-v1/;
-+/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+#include "ipq8074.dtsi"
-+
-+/ {
-+	#address-cells = <0x2>;
-+	#size-cells = <0x2>;
-+	model = "Qualcomm Technologies, Inc. IPQ8074-HK01";
-+	compatible = "qcom,ipq8074-hk01", "qcom,ipq8074";
-+	interrupt-parent = <&intc>;
-+
-+	chosen {
-+		bootargs = "console=ttyMSM0,115200,n8 root=/dev/ram0 rw init=/init";
-+	};
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x0 0x40000000 0x0 0x20000000>;
-+	};
-+
-+	soc: soc {
-+		pinctrl@1000000 {
-+			serial_4_pins: serial4_pinmux {
-+				mux {
-+					pins = "gpio23", "gpio24";
-+					function = "blsp4_uart1";
-+					bias-disable;
-+				};
-+			};
-+		};
-+
-+		serial@78b3000 {
-+			pinctrl-0 = <&serial_4_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+		};
-+	};
+-static struct clk *arm_clk;
+-static struct clk *pll1_sys_clk;
+-static struct clk *pll1_sw_clk;
+-static struct clk *step_clk;
+-static struct clk *pll2_pfd2_396m_clk;
+-
+-/* clk used by i.MX6UL */
+-static struct clk *pll2_bus_clk;
+-static struct clk *secondary_sel_clk;
++enum IMX6_CPUFREQ_CLKS {
++	ARM,
++	PLL1_SYS,
++	STEP,
++	PLL1_SW,
++	PLL2_PFD2_396M,
++	/* MX6UL requires two more clks */
++	PLL2_BUS,
++	SECONDARY_SEL,
 +};
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-new file mode 100644
-index 0000000..f910cc0
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-@@ -0,0 +1,153 @@
-+/*
-+ * Copyright (c) 2017, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
++#define IMX6Q_CPUFREQ_CLK_NUM		5
++#define IMX6UL_CPUFREQ_CLK_NUM		7
 +
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/qcom,gcc-ipq8074.h>
-+
-+/ {
-+	model = "Qualcomm Technologies, Inc. IPQ8074";
-+	compatible = "qcom,ipq8074";
-+
-+	soc: soc {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x1>;
-+		ranges = <0 0 0 0xffffffff>;
-+		compatible = "simple-bus";
-+
-+		pinctrl@1000000 {
-+			compatible = "qcom,ipq8074-pinctrl";
-+			reg = <0x1000000 0x300000>;
-+			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <0x2>;
-+			interrupt-controller;
-+			#interrupt-cells = <0x2>;
-+		};
-+
-+		intc: interrupt-controller@b000000 {
-+			compatible = "qcom,msm-qgic2";
-+			interrupt-controller;
-+			#interrupt-cells = <0x3>;
-+			reg = <0xb000000 0x1000>,
-+			<0xb002000 0x1000>;
-+		};
-+
-+		timer {
-+			compatible = "arm,armv8-timer";
-+			interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+		};
-+
-+		gcc: gcc@1800000 {
-+			compatible = "qcom,gcc-ipq8074";
-+			reg = <0x1800000 0x80000>;
-+			#clock-cells = <0x1>;
-+			#reset-cells = <0x1>;
-+		};
-+
-+		serial@78b3000 {
-+			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-+			reg = <0x78b3000 0x200>;
-+			interrupts = <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_UART5_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			status = "disabled";
-+		};
-+	};
-+
-+	cpus {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+
-+		cpu-map {
-+
-+			cluster0 {
-+
-+				core0 {
-+					cpu = <&CPU0>;
-+				};
-+
-+				core1 {
-+					cpu = <&CPU1>;
-+				};
-+
-+				core2 {
-+					cpu = <&CPU2>;
-+				};
-+
-+				core3 {
-+					cpu = <&CPU3>;
-+				};
-+			};
-+		};
-+
-+		CPU0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x0>;
-+			next-level-cache = <&L2_0>;
-+			enable-method = "psci";
-+		};
-+
-+		CPU1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x1>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		CPU2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x2>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		CPU3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x3>;
-+			next-level-cache = <&L2_0>;
-+		};
-+
-+		L2_0: l2-cache {
-+			compatible = "cache";
-+			cache-level = <0x2>;
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	clocks {
-+		sleep_clk: sleep_clk {
-+			compatible = "fixed-clock";
-+			clock-frequency = <32000>;
-+			#clock-cells = <0>;
-+		};
-+
-+		xo: xo {
-+			compatible = "fixed-clock";
-+			clock-frequency = <19200000>;
-+			#clock-cells = <0>;
-+		};
-+	};
++static int num_clks;
++static struct clk_bulk_data clks[] = {
++	{ .id = "arm" },
++	{ .id = "pll1_sys" },
++	{ .id = "step" },
++	{ .id = "pll1_sw" },
++	{ .id = "pll2_pfd2_396m" },
++	{ .id = "pll2_bus" },
++	{ .id = "secondary_sel" },
 +};
+ 
+ static struct device *cpu_dev;
+ static bool free_opp;
+@@ -51,7 +65,7 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
+ 
+ 	new_freq = freq_table[index].frequency;
+ 	freq_hz = new_freq * 1000;
+-	old_freq = clk_get_rate(arm_clk) / 1000;
++	old_freq = clk_get_rate(clks[ARM].clk) / 1000;
+ 
+ 	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &freq_hz);
+ 	if (IS_ERR(opp)) {
+@@ -109,25 +123,27 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
+ 		 * voltage of 528MHz, so lower the CPU frequency to one
+ 		 * half before changing CPU frequency.
+ 		 */
+-		clk_set_rate(arm_clk, (old_freq >> 1) * 1000);
+-		clk_set_parent(pll1_sw_clk, pll1_sys_clk);
+-		if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk))
+-			clk_set_parent(secondary_sel_clk, pll2_bus_clk);
++		clk_set_rate(clks[ARM].clk, (old_freq >> 1) * 1000);
++		clk_set_parent(clks[PLL1_SW].clk, clks[PLL1_SYS].clk);
++		if (freq_hz > clk_get_rate(clks[PLL2_PFD2_396M].clk))
++			clk_set_parent(clks[SECONDARY_SEL].clk,
++				       clks[PLL2_BUS].clk);
+ 		else
+-			clk_set_parent(secondary_sel_clk, pll2_pfd2_396m_clk);
+-		clk_set_parent(step_clk, secondary_sel_clk);
+-		clk_set_parent(pll1_sw_clk, step_clk);
++			clk_set_parent(clks[SECONDARY_SEL].clk,
++				       clks[PLL2_PFD2_396M].clk);
++		clk_set_parent(clks[STEP].clk, clks[SECONDARY_SEL].clk);
++		clk_set_parent(clks[PLL1_SW].clk, clks[STEP].clk);
+ 	} else {
+-		clk_set_parent(step_clk, pll2_pfd2_396m_clk);
+-		clk_set_parent(pll1_sw_clk, step_clk);
+-		if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk)) {
+-			clk_set_rate(pll1_sys_clk, new_freq * 1000);
+-			clk_set_parent(pll1_sw_clk, pll1_sys_clk);
++		clk_set_parent(clks[STEP].clk, clks[PLL2_PFD2_396M].clk);
++		clk_set_parent(clks[PLL1_SW].clk, clks[STEP].clk);
++		if (freq_hz > clk_get_rate(clks[PLL2_PFD2_396M].clk)) {
++			clk_set_rate(clks[PLL1_SYS].clk, new_freq * 1000);
++			clk_set_parent(clks[PLL1_SW].clk, clks[PLL1_SYS].clk);
+ 		}
+ 	}
+ 
+ 	/* Ensure the arm clock divider is what we expect */
+-	ret = clk_set_rate(arm_clk, new_freq * 1000);
++	ret = clk_set_rate(clks[ARM].clk, new_freq * 1000);
+ 	if (ret) {
+ 		dev_err(cpu_dev, "failed to set clock rate: %d\n", ret);
+ 		regulator_set_voltage_tol(arm_reg, volt_old, 0);
+@@ -161,7 +177,7 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
+ 
+ static int imx6q_cpufreq_init(struct cpufreq_policy *policy)
+ {
+-	policy->clk = arm_clk;
++	policy->clk = clks[ARM].clk;
+ 	return cpufreq_generic_init(policy, freq_table, transition_latency);
+ }
+ 
+@@ -197,27 +213,14 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 	}
+ 
+-	arm_clk = clk_get(cpu_dev, "arm");
+-	pll1_sys_clk = clk_get(cpu_dev, "pll1_sys");
+-	pll1_sw_clk = clk_get(cpu_dev, "pll1_sw");
+-	step_clk = clk_get(cpu_dev, "step");
+-	pll2_pfd2_396m_clk = clk_get(cpu_dev, "pll2_pfd2_396m");
+-	if (IS_ERR(arm_clk) || IS_ERR(pll1_sys_clk) || IS_ERR(pll1_sw_clk) ||
+-	    IS_ERR(step_clk) || IS_ERR(pll2_pfd2_396m_clk)) {
+-		dev_err(cpu_dev, "failed to get clocks\n");
+-		ret = -ENOENT;
+-		goto put_clk;
+-	}
++	if (of_machine_is_compatible("fsl,imx6ul"))
++		num_clks = IMX6UL_CPUFREQ_CLK_NUM;
++	else
++		num_clks = IMX6Q_CPUFREQ_CLK_NUM;
+ 
+-	if (of_machine_is_compatible("fsl,imx6ul")) {
+-		pll2_bus_clk = clk_get(cpu_dev, "pll2_bus");
+-		secondary_sel_clk = clk_get(cpu_dev, "secondary_sel");
+-		if (IS_ERR(pll2_bus_clk) || IS_ERR(secondary_sel_clk)) {
+-			dev_err(cpu_dev, "failed to get clocks specific to imx6ul\n");
+-			ret = -ENOENT;
+-			goto put_clk;
+-		}
+-	}
++	ret = clk_bulk_get(cpu_dev, num_clks, clks);
++	if (ret)
++		goto put_node;
+ 
+ 	arm_reg = regulator_get(cpu_dev, "arm");
+ 	pu_reg = regulator_get_optional(cpu_dev, "pu");
+@@ -354,22 +357,11 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
+ 		regulator_put(pu_reg);
+ 	if (!IS_ERR(soc_reg))
+ 		regulator_put(soc_reg);
+-put_clk:
+-	if (!IS_ERR(arm_clk))
+-		clk_put(arm_clk);
+-	if (!IS_ERR(pll1_sys_clk))
+-		clk_put(pll1_sys_clk);
+-	if (!IS_ERR(pll1_sw_clk))
+-		clk_put(pll1_sw_clk);
+-	if (!IS_ERR(step_clk))
+-		clk_put(step_clk);
+-	if (!IS_ERR(pll2_pfd2_396m_clk))
+-		clk_put(pll2_pfd2_396m_clk);
+-	if (!IS_ERR(pll2_bus_clk))
+-		clk_put(pll2_bus_clk);
+-	if (!IS_ERR(secondary_sel_clk))
+-		clk_put(secondary_sel_clk);
++
++	clk_bulk_put(num_clks, clks);
++put_node:
+ 	of_node_put(np);
++
+ 	return ret;
+ }
+ 
+@@ -383,13 +375,8 @@ static int imx6q_cpufreq_remove(struct platform_device *pdev)
+ 	if (!IS_ERR(pu_reg))
+ 		regulator_put(pu_reg);
+ 	regulator_put(soc_reg);
+-	clk_put(arm_clk);
+-	clk_put(pll1_sys_clk);
+-	clk_put(pll1_sw_clk);
+-	clk_put(step_clk);
+-	clk_put(pll2_pfd2_396m_clk);
+-	clk_put(pll2_bus_clk);
+-	clk_put(secondary_sel_clk);
++
++	clk_bulk_put(num_clks, clks);
+ 
+ 	return 0;
+ }
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
