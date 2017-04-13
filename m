@@ -1,27 +1,63 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Eddie Cai <eddie.cai.linux@gmail.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, zhengxing@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH V2  0/2] correct ids for clk_testout
-Date: Tue, 25 Apr 2017 23:04:53 +0200
-Message-ID: <5003001.RcGOJBte3U@diego>
-In-Reply-To: <1493102470-22965-1-git-send-email-eddie.cai.linux@gmail.com>
-References: <1493102470-22965-1-git-send-email-eddie.cai.linux@gmail.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1491969809-20154-2-git-send-email-aisheng.dong@nxp.com>
+References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com> <1491969809-20154-2-git-send-email-aisheng.dong@nxp.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Apr 2017 21:56:31 +0200
+Message-ID: <CAMuHMdXuuHmjWCrLa7r8xK=Dgad9Cz9C6xibJPRVud6aq4oHxQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/3] clk: add clk_bulk_get accessories
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Mark Brown <broonie@kernel.org>, yibin.gong@nxp.com,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, anson.huang@nxp.com,
+	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Eddie,
+On Wed, Apr 12, 2017 at 6:03 AM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -520,6 +520,23 @@ void clk_unprepare(struct clk *clk)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_unprepare);
+>
+> +/**
+> + * clk_bulk_unprepare - undo preparation of a bulk of clock sources
+> + * @num_clks: the number of clk_bulk_data
+> + * @clks: the clk_bulk_data table being ungated
+> + *
+> + * clk_bulk_unprepare may sleep, which differentiates it from clk_bulk_disable.
+> + * Returns 0 on success, -EERROR otherwise.
+> + */
+> +void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
 
-Am Dienstag, 25. April 2017, 14:41:08 CEST schrieb Eddie Cai:
-> we use clk_testout1 and clk_testout2 for camera. e.g. mipi 24M mclk. the ids
-> of clk_testout1 and clk_testout2 is wrong. it's time to correct it.
+unsigned int num_clks (everywhere)
 
-Just to say, patches look good - thanks for explaining what the clocks are 
-going to be used for.
+> +{
+> +       int i;
 
-I'll apply them after 4.12-rc1 is released (in roughly 2.5 weeks), due to
-needing a stable base for the clock-ids.
+unsigned int i (everywhere)
 
+> +
+> +       for (i = 0; i < num_clks; i++)
+> +               clk_unprepare(clks[i].clk);
+> +}
+> +EXPORT_SYMBOL_GPL(clk_bulk_unprepare);
 
-Heiko
+This does mean you have to change your "while (--i >= 0)" loops.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
