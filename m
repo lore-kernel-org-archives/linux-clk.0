@@ -1,205 +1,71 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: arm-soc <arm@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v2 2/7] arm: spear6xx: use node labels in spear600-evb.dts
-Date: Mon, 17 Apr 2017 14:46:40 +0200
-Message-Id: <1492433205-13376-3-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1491931159.31718.16.camel@nxp.com>
+References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+ <1491969809-20154-2-git-send-email-aisheng.dong@nxp.com> <1491931159.31718.16.camel@nxp.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Apr 2017 21:57:46 +0200
+Message-ID: <CAMuHMdUpi9rSUNkoEvFWpN-TB0xaYKKrZLy2wO2eOAoig1c56w@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/3] clk: add clk_bulk_get accessories
+To: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Mark Brown <broonie@kernel.org>, yibin.gong@nxp.com,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, anson.huang@nxp.com,
+	ping.bai@nxp.com, octavian.purdila@nxp.com,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Now that we have introduced node labels in spear600.dtsi, we can use
-them for spear600-evb.dts.
+On Tue, Apr 11, 2017 at 7:19 PM, Leonard Crestez
+<leonard.crestez@nxp.com> wrote:
+> On Wed, 2017-04-12 at 12:03 +0800, Dong Aisheng wrote:
+>> +/**
+>> + * clk_bulk_enable - ungate a bulk of clocks
+>> + * @num_clks: the number of clk_bulk_data
+>> + * @clks: the clk_bulk_data table being ungated
+>> + *
+>> + * clk_bulk_enable must not sleep
+>> + * Returns 0 on success, -EERROR otherwise.
+>> + */
+>> +int clk_bulk_enable(int num_clks, struct clk_bulk_data *clks)
+>> +{
+>> +       int ret;
+>> +       int i;
+>> +
+>> +       for (i = 0; i < num_clks; i++) {
+>> +               ret = clk_enable(clks[i].clk);
+>> +               if (ret) {
+>> +                       pr_err("Failed to enable clk '%s': %d\n",
+>> +                               clks[i].id, ret);
+>> +                       goto err;
+>> +               }
+>> +       }
+>> +
+>> +       return 0;
+>> +
+>> +err:
+>> +       while (--i >= 0)
+>> +               clk_put(clks[i].clk);
+>
+> Shouldn't this be clk_disable?
+>
+> And you can probably use clk_bulk_disable(i, clks) instead
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm/boot/dts/spear600-evb.dts | 156 ++++++++++++++++++-------------------
- 1 file changed, 76 insertions(+), 80 deletions(-)
+To avoid nasty surprises, clk_bulk_disable() should loop over all clocks
+in reverse order.
 
-diff --git a/arch/arm/boot/dts/spear600-evb.dts b/arch/arm/boot/dts/spear600-evb.dts
-index d865a89..375eb61 100644
---- a/arch/arm/boot/dts/spear600-evb.dts
-+++ b/arch/arm/boot/dts/spear600-evb.dts
-@@ -22,95 +22,91 @@
- 		device_type = "memory";
- 		reg = <0 0x10000000>;
- 	};
-+};
- 
--	ahb {
--		clcd@fc200000 {
--			status = "okay";
--		};
-+&clcd {
-+	status = "okay";
-+};
- 
--		dma@fc400000 {
--			status = "okay";
--		};
-+&dmac {
-+	status = "okay";
-+};
- 
--		ehci@e1800000 {
--			status = "okay";
--		};
-+&ehci_usb0 {
-+	status = "okay";
-+};
- 
--		ehci@e2000000 {
--			status = "okay";
--		};
-+&ehci_usb1 {
-+	status = "okay";
-+};
- 
--		gmac: ethernet@e0800000 {
--			phy-mode = "gmii";
--			status = "okay";
--		};
-+&gmac {
-+	phy-mode = "gmii";
-+	status = "okay";
-+};
- 
--		ohci@e1900000 {
--			status = "okay";
--		};
-+&ohci_usb0 {
-+	status = "okay";
-+};
- 
--		ohci@e2100000 {
--			status = "okay";
--		};
-+&ohci_usb1 {
-+	status = "okay";
-+};
- 
--		smi: flash@fc000000 {
--			status = "okay";
--			clock-rate=<50000000>;
--
--			flash@f8000000 {
--				#address-cells = <1>;
--				#size-cells = <1>;
--				reg = <0xf8000000 0x800000>;
--				st,smi-fast-mode;
--
--				partition@0 {
--					label = "xloader";
--					reg = <0x0 0x10000>;
--				};
--				partition@10000 {
--					label = "u-boot";
--					reg = <0x10000 0x50000>;
--				};
--				partition@60000 {
--					label = "environment";
--					reg = <0x60000 0x10000>;
--				};
--				partition@70000 {
--					label = "dtb";
--					reg = <0x70000 0x10000>;
--				};
--				partition@80000 {
--					label = "linux";
--					reg = <0x80000 0x310000>;
--				};
--				partition@390000 {
--					label = "rootfs";
--					reg = <0x390000 0x0>;
--				};
--			};
--		};
-+&smi {
-+	status = "okay";
-+	clock-rate=<50000000>;
-+
-+	flash@f8000000 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		reg = <0xf8000000 0x800000>;
-+		st,smi-fast-mode;
- 
--		apb {
--			serial@d0000000 {
--				status = "okay";
--				pinctrl-names = "default";
--				pinctrl-0 = <>;
--			};
--
--			serial@d0080000 {
--				status = "okay";
--				pinctrl-names = "default";
--				pinctrl-0 = <>;
--			};
--
--			rtc@fc900000 {
--			       status = "okay";
--			};
--
--			i2c@d0200000 {
--				clock-frequency = <400000>;
--				status = "okay";
--			};
-+		partition@0 {
-+			label = "xloader";
-+			reg = <0x0 0x10000>;
-+		};
-+		partition@10000 {
-+			label = "u-boot";
-+			reg = <0x10000 0x50000>;
-+		};
-+		partition@60000 {
-+			label = "environment";
-+			reg = <0x60000 0x10000>;
-+		};
-+		partition@70000 {
-+			label = "dtb";
-+			reg = <0x70000 0x10000>;
-+		};
-+		partition@80000 {
-+			label = "linux";
-+			reg = <0x80000 0x310000>;
-+		};
-+		partition@390000 {
-+			label = "rootfs";
-+			reg = <0x390000 0x0>;
- 		};
- 	};
- };
-+
-+&uart0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <>;
-+};
-+
-+&uart1 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <>;
-+};
-+
-+&rtc {
-+	status = "okay";
-+};
-+
-+&i2c {
-+	clock-frequency = <400000>;
-+	status = "okay";
-+};
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
