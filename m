@@ -1,48 +1,158 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20170403143958.gi7vyhianzetnxz2@rob-hp-laptop>
-References: <1490778502-23651-1-git-send-email-gabriel.fernandez@st.com> <20170403143958.gi7vyhianzetnxz2@rob-hp-laptop>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 3 Apr 2017 11:04:49 -0500
-Message-ID: <CAL_JsqJYu+4puvB-WhaLVtjHASVOdY0acM2OxxMpZOvG9MAziQ@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: stm32h7: Add stm32h743 clock driver
-To: Gabriel Fernandez <gabriel.fernandez@st.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	Daniel Thompson <daniel.thompson@linaro.org>, Andrea Merello <andrea.merello@gmail.com>,
-	=?UTF-8?Q?Rados=C5=82aw_Pietrzyk?= <radoslaw.pietrzyk@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Ludovic Barre <ludovic.barre@st.com>, Olivier Bideau <olivier.bideau@st.com>,
-	Amelie Delaunay <amelie.delaunay@st.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 1/3] clk: sunxi-ng: Add clk notifier to gate then ungate PLL clocks
+Date: Thu, 13 Apr 2017 10:13:52 +0800
+Message-Id: <20170413021354.3258-2-wens@csie.org>
+In-Reply-To: <20170413021354.3258-1-wens@csie.org>
+References: <20170413021354.3258-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 3, 2017 at 9:39 AM, Rob Herring <robh@kernel.org> wrote:
-> On Wed, Mar 29, 2017 at 11:08:22AM +0200, gabriel.fernandez@st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->>
->> This patch enables clocks for STM32H743 boards.
->>
->> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
->>
->> Just for the MFD changes:
->> Acked-by: Lee Jones <lee.jones@linaro.org>
->>
+In common PLL designs, changes to the dividers take effect almost
+immediately, while changes to the multipliers (implemented as
+dividers in the feedback loop) take a few cycles to work into
+the feedback loop for the PLL to stablize.
 
->> +Required properties for pll node:
->> +- compatible: Should be:
->> +  "stm32h7-pll"
->
-> stm,stm32h7-pll
+Sometimes when the PLL clock rate is changed, the decrease in the
+divider is too much for the decrease in the multiplier to catch up.
+The PLL clock rate will spike, and in some cases, might lock up
+completely. This is especially the case if the divider changed is
+the pre-divider, which affects the reference frequency.
 
-Err, I meant st,stm32h7-pll.
+This patch introduces a clk notifier callback that will gate and
+then ungate a clk after a rate change, effectively resetting it,
+so it continues to work, despite any possible lockups. Care must
+be taken to reparent any consumers to other temporary clocks during
+the rate change, and that this notifier callback must be the first
+to be registered.
 
->
-> With that,
->
-> Acked-by: Rob Herring <robh@kernel.org>
+This is intended to fix occasional lockups with cpufreq on newer
+Allwinner SoCs, such as the A33 and the H3. Previously it was
+thought that reparenting the cpu clock away from the PLL while
+it stabilized was enough, as this worked quite well on the A31.
+
+On the A33, hangs have been observed after cpufreq was recently
+introduced. With the H3, a more thorough test [1] showed that
+reparenting alone isn't enough. The system still locks up unless
+the dividers are limited to 1.
+
+A hunch was if the PLL was stuck in some unknown state, perhaps
+gating then ungating it would bring it back to normal. Tests
+done by Icenowy Zheng using Ondrej's test firmware shows this
+to be a valid solution.
+
+[1] http://www.spinics.net/lists/arm-kernel/msg552501.html
+
+Reported-by: Ondrej Jirman <megous@megous.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Tested-by: Icenowy Zheng <icenowy@aosc.io>
+Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/ccu_common.c | 49 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_common.h | 12 ++++++++++
+ 2 files changed, 61 insertions(+)
+
+diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
+index 188fa50d0380..40aac316128f 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.c
++++ b/drivers/clk/sunxi-ng/ccu_common.c
+@@ -14,11 +14,13 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/iopoll.h>
+ #include <linux/slab.h>
+ 
+ #include "ccu_common.h"
++#include "ccu_gate.h"
+ #include "ccu_reset.h"
+ 
+ static DEFINE_SPINLOCK(ccu_lock);
+@@ -39,6 +41,53 @@ void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock)
+ 	WARN_ON(readl_relaxed_poll_timeout(addr, reg, reg & lock, 100, 70000));
+ }
+ 
++/*
++ * This clock notifier is called when the frequency of a PLL clock is
++ * changed. In common PLL designs, changes to the dividers take effect
++ * almost immediately, while changes to the multipliers (implemented
++ * as dividers in the feedback loop) take a few cycles to work into
++ * the feedback loop for the PLL to stablize.
++ *
++ * Sometimes when the PLL clock rate is changed, the decrease in the
++ * divider is too much for the decrease in the multiplier to catch up.
++ * The PLL clock rate will spike, and in some cases, might lock up
++ * completely.
++ *
++ * This notifier callback will gate and then ungate the clock,
++ * effectively resetting it, so it proceeds to work. Care must be
++ * taken to reparent consumers to other temporary clocks during the
++ * rate change, and that this notifier callback must be the first
++ * to be registered.
++ */
++static int ccu_pll_notifier_cb(struct notifier_block *nb,
++			       unsigned long event, void *data)
++{
++	struct ccu_pll_nb *pll = to_ccu_pll_nb(nb);
++	int ret = 0;
++
++	if (event != POST_RATE_CHANGE)
++		goto out;
++
++	ccu_gate_helper_disable(pll->common, pll->enable);
++
++	ret = ccu_gate_helper_enable(pll->common, pll->enable);
++	if (ret)
++		goto out;
++
++	ccu_helper_wait_for_lock(pll->common, pll->lock);
++
++out:
++	return notifier_from_errno(ret);
++}
++
++int ccu_pll_notifier_register(struct ccu_pll_nb *pll_nb)
++{
++	pll_nb->clk_nb.notifier_call = ccu_pll_notifier_cb;
++
++	return clk_notifier_register(pll_nb->common->hw.clk,
++				     &pll_nb->clk_nb);
++}
++
+ int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
+ 		    const struct sunxi_ccu_desc *desc)
+ {
+diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
+index 73d81dc58fc5..d6fdd7a789aa 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.h
++++ b/drivers/clk/sunxi-ng/ccu_common.h
+@@ -83,6 +83,18 @@ struct sunxi_ccu_desc {
+ 
+ void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock);
+ 
++struct ccu_pll_nb {
++	struct notifier_block	clk_nb;
++	struct ccu_common	*common;
++
++	u32	enable;
++	u32	lock;
++};
++
++#define to_ccu_pll_nb(_nb) container_of(_nb, struct ccu_pll_nb, clk_nb)
++
++int ccu_pll_notifier_register(struct ccu_pll_nb *pll_nb);
++
+ int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
+ 		    const struct sunxi_ccu_desc *desc);
+ 
+-- 
+2.11.0
