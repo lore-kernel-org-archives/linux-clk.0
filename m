@@ -1,78 +1,45 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Subject: Re: [PATCH v3 01/11] dt-bindings: add binding for the Allwinner DE2
- CCU
-To: Rob Herring <robh@kernel.org>
-References: <20170329194613.55548-1-icenowy@aosc.io>
- <20170329194613.55548-2-icenowy@aosc.io>
- <20170403153323.kmq3ku7h3sj7fp4g@rob-hp-laptop>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <517f0d78-7b43-7e5b-5ad0-c51743639172@aosc.io>
-Date: Tue, 4 Apr 2017 00:18:08 +0800
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Thu, 13 Apr 2017 16:50:45 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Alex Frid <afrid@nvidia.com>
+Subject: Re: [PATCH] clk: Add requested rate to clock summary output
+Message-ID: <20170413135045.GW30730@tbergstrom-lnx.Nvidia.com>
+References: <1490188803-13034-1-git-send-email-pdeschrijver@nvidia.com>
+ <20170412164856.GP7065@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20170403153323.kmq3ku7h3sj7fp4g@rob-hp-laptop>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
- linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
- Icenowy Zheng <icenowy@aosc.xyz>,
- Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20170412164856.GP7065@codeaurora.org>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-CgrlnKggMjAxN+W5tDA05pyIMDPml6UgMjM6MzMsIFJvYiBIZXJyaW5nIOWGmemBkzoKPiBPbiBU
-aHUsIE1hciAzMCwgMjAxNyBhdCAwMzo0NjowM0FNICswODAwLCBJY2Vub3d5IFpoZW5nIHdyb3Rl
-Ogo+PiBGcm9tOiBJY2Vub3d5IFpoZW5nIDxpY2Vub3d5QGFvc2MueHl6Pgo+Pgo+PiBBbGx3aW5u
-ZXIgIkRpc3BsYXkgRW5naW5lIDIuMCIgY29udGFpbnMgc29tZSBjbG9jayBjb250cm9scyBpbiBp
-dC4KPj4KPj4gSW4gb3JkZXIgdG8gYWRkIHRoZW0gYXMgY2xvY2sgZHJpdmVycywgd2UgbmVlZCBh
-IGRldmljZSB0cmVlIGJpbmRpbmcuCj4+IEFkZCB0aGUgYmluZGluZyBoZXJlLgo+Pgo+PiBTaWdu
-ZWQtb2ZmLWJ5OiBJY2Vub3d5IFpoZW5nIDxpY2Vub3d5QGFvc2MueHl6Pgo+PiAtLS0KPj4gQ2hh
-bmdlcyBpbiB2MzoKPj4gLSBGaWxsIHRoZSBhZGRyZXNzIHNwYWNlIGxlbmd0aCBvZiBERTIgQ0NV
-IHRvIDB4MTAwMDAwLCBqdXN0IHJlYWNoIHRoZSBzdGFydCBvZiBtaXhlcjAuCj4KPiBXaHk/IFlv
-dSB3YXN0ZSB2aXJ0dWFsIG1lbW9yeSBzcGFjZSBtYWtpbmcgdGhpcyBiaWdnZXIgdGhhbiBpdCBu
-ZWVkcyB0bwo+IGJlLiBOb3QgYW4gaXNzdWUgc28gbXVjaCBmb3IgNjQtYml0Lgo+Cj4+Cj4+ICAu
-Li4vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9zdW44aS1kZTIudHh0ICAgICAgICB8IDMxICsr
-KysrKysrKysrKysrKysrKysrKysKPj4gIDEgZmlsZSBjaGFuZ2VkLCAzMSBpbnNlcnRpb25zKCsp
-Cj4+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L2Nsb2NrL3N1bjhpLWRlMi50eHQKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9jbG9jay9zdW44aS1kZTIudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZp
-Y2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3N1bjhpLWRlMi50eHQKPj4gbmV3IGZpbGUgbW9kZSAxMDA2
-NDQKPj4gaW5kZXggMDAwMDAwMDAwMDAwLi4zNGNmNzljMDVmMTMKPj4gLS0tIC9kZXYvbnVsbAo+
-PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svc3VuOGktZGUy
-LnR4dAo+PiBAQCAtMCwwICsxLDMxIEBACj4+ICtBbGx3aW5uZXIgRGlzcGxheSBFbmdpbmUgMi4w
-IENsb2NrIENvbnRyb2wgQmluZGluZwo+PiArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0KPj4gKwo+PiArUmVxdWlyZWQgcHJvcGVydGllcyA6Cj4+ICst
-IGNvbXBhdGlibGU6IG11c3QgY29udGFpbiBvbmUgb2YgdGhlIGZvbGxvd2luZyBjb21wYXRpYmxl
-czoKPj4gKwkJLSAiYWxsd2lubmVyLHN1bjhpLWE4M3QtZGUyLWNsayIKPj4gKwkJLSAiYWxsd2lu
-bmVyLHN1bjUwaS1hNjQtZGUyLWNsayIKPj4gKwkJLSAiYWxsd2lubmVyLHN1bjUwaS1oNS1kZTIt
-Y2xrIgo+PiArCj4+ICstIHJlZzogTXVzdCBjb250YWluIHRoZSByZWdpc3RlcnMgYmFzZSBhZGRy
-ZXNzIGFuZCBsZW5ndGgKPj4gKy0gY2xvY2tzOiBwaGFuZGxlIHRvIHRoZSBjbG9ja3MgZmVlZGlu
-ZyB0aGUgZGlzcGxheSBlbmdpbmUgc3Vic3lzdGVtLgo+PiArCSAgVGhyZWUgYXJlIG5lZWRlZDoK
-Pj4gKyAgLSAibW9kIjogdGhlIGRpc3BsYXkgZW5naW5lIG1vZHVsZSBjbG9jawo+PiArICAtICJi
-dXMiOiB0aGUgYnVzIGNsb2NrIGZvciB0aGUgd2hvbGUgZGlzcGxheSBlbmdpbmUgc3Vic3lzdGVt
-Cj4+ICstIGNsb2NrLW5hbWVzOiBNdXN0IGNvbnRhaW4gdGhlIGNsb2NrIG5hbWVzIGRlc2NyaWJl
-ZCBqdXN0IGFib3ZlCj4+ICstIHJlc2V0czogcGhhbmRsZSB0byB0aGUgcmVzZXQgY29udHJvbCBm
-b3IgdGhlIGRpc3BsYXkgZW5naW5lIHN1YnN5c3RlbS4KPj4gKy0gI2Nsb2NrLWNlbGxzIDogbXVz
-dCBjb250YWluIDEKPj4gKy0gI3Jlc2V0LWNlbGxzIDogbXVzdCBjb250YWluIDEKPj4gKwo+PiAr
-RXhhbXBsZToKPj4gK2RlMl9jbG9ja3M6IGNsb2NrQDAxMDAwMDAwIHsKPgo+IERyb3AgdGhlIGxl
-YWRpbmcgMHMuIGR0YyBpbiBsaW51eC1uZXh0IHdpbGwgbm93IHdhcm4gb24gdGhpcyB3aXRoIFc9
-MQo+IGNvbXBpbGUuIExvb2tzIGxpa2Ugc3VueGkgaGFzIGEgbG90IG9mIHRoZW0uIFBsZWFzZSBm
-aXggc28gd2UgZG9uJ3Qga2VlcAo+IHJlcGVhdGluZyB0aGlzIHNhbWUgY29weS1uLXBhc3RlLgoK
-VGhhbmtzIDstKQoKSSB3aWxsIHRyeSB0byBraWxsIHRoZW0gYWxsIDstKQoKPgo+PiArCWNvbXBh
-dGlibGUgPSAiYWxsd2lubmVyLHN1bjUwaS1hNjQtZGUyLWNsayI7Cj4+ICsJcmVnID0gPDB4MDEw
-MDAwMDAgMHgxMDAwMDA+Owo+PiArCWNsb2NrcyA9IDwmY2N1IENMS19ERT4sCj4+ICsJCSA8JmNj
-dSBDTEtfQlVTX0RFPjsKPj4gKwljbG9jay1uYW1lcyA9ICJtb2QiLAo+PiArCQkgICAgICAiYnVz
-IjsKPj4gKwlyZXNldHMgPSA8JmNjdSBSU1RfQlVTX0RFPjsKPj4gKwkjY2xvY2stY2VsbHMgPSA8
-MT47Cj4+ICsJI3Jlc2V0LWNlbGxzID0gPDE+Owo+PiArfTsKPj4gLS0KPj4gMi4xMi4wCj4+Cgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0t
-a2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcK
-aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2Vy
-bmVsCg==
+On Wed, Apr 12, 2017 at 09:48:56AM -0700, Stephen Boyd wrote:
+> On 03/22, Peter De Schrijver wrote:
+> > From: Alex Frid <afrid@nvidia.com>
+> > 
+> > Added requested rate to clock summary output and to clock dump. This is
+> > useful for clock tree debugging. Also expand the clock name field in the
+> > clock tree debugfs output to provide room for deep multi-tier trees like
+> > on Tegra.
+> > 
+> > Signed-off-by: Alex Frid <afrid@nvidia.com>
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> 
+> We should print out all the consumers (struct clks) and their
+> requested rates + prepare/enable counts instead. req_rate is sort
+> of an internal variable that records what the last aggregated
+> rate was. I'm not sure if we want to expose that to debugfs.
+> 
+
+While this certainly would provide more information, I think it would also
+make the summary quite large. Hence the just printing the aggregate rate
+seems a reasonable compromise. Maybe the consumers and requested rates
+can be exposed in a file in the per clock directory. The prepare and enable
+counts are not maintained per consumer today, so that's not possible?
+
+Peter.
+
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
