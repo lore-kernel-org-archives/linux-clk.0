@@ -1,55 +1,67 @@
-Return-Path: <tony@atomide.com>
-Date: Wed, 5 Apr 2017 06:41:41 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Tero Kristo <t-kristo@ti.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
-Subject: Re: [GIT PULL] clk: ti: cleanups for 4.12 merge window
-Message-ID: <20170405134141.GC13234@atomide.com>
-References: <8157b2e6-99c8-dc02-0c02-3d99778f255b@ti.com>
- <20170404161413.GT10760@atomide.com>
- <20170405012649.GI18246@codeaurora.org>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Thu, 13 Apr 2017 22:02:25 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
+	broonie@kernel.org, yibin.gong@nxp.com, rjw@rjwysocki.net,
+	viresh.kumar@linaro.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, shawnguo@kernel.org, fabio.estevam@nxp.com,
+	anson.huang@nxp.com, ping.bai@nxp.com, octavian.purdila@nxp.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [RFC PATCH 1/3] clk: add clk_bulk_get accessories
+Message-ID: <20170413140225.GB24254@b29396-OptiPlex-7040>
+References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+ <1491969809-20154-2-git-send-email-aisheng.dong@nxp.com>
+ <1491931159.31718.16.camel@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170405012649.GI18246@codeaurora.org>
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1491931159.31718.16.camel@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Stephen Boyd <sboyd@codeaurora.org> [170404 18:29]:
-> On 04/04, Tony Lindgren wrote:
-> > * Tero Kristo <t-kristo@ti.com> [170317 05:55]:
-> > > Hi Stephen/Mike,
-> > > 
-> > > This is basically the TI clock driver cleanup series v2 posted last week,
-> > > sending a pull request now as there hasn't been any additional comments.
-> > > 
-> > > -Tero
-> > > 
-> > > ==================================================================
-> > > 
-> > > The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
-> > > 
-> > >   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-> > > 
-> > > are available in the git repository at:
-> > > 
-> > >   https://github.com/t-kristo/linux-pm.git for-4.12-ti-clk-cleanups
-> > > 
-> > > for you to fetch changes up to 6c0afb503937a12a8d20a805fcf263e31afa9871:
-> > > 
-> > >   clk: ti: convert to use proper register definition for all accesses
-> > > (2017-03-08 13:06:15 +0200)
-> > 
-> > Any news on getting this merged?
-> > 
+On Tue, Apr 11, 2017 at 08:19:19PM +0300, Leonard Crestez wrote:
+> On Wed, 2017-04-12 at 12:03 +0800, Dong Aisheng wrote:
+> > +/**
+> > + * clk_bulk_enable - ungate a bulk of clocks
+> > + * @num_clks: the number of clk_bulk_data
+> > + * @clks: the clk_bulk_data table being ungated
+> > + *
+> > + * clk_bulk_enable must not sleep
+> > + * Returns 0 on success, -EERROR otherwise.
+> > + */
+> > +int clk_bulk_enable(int num_clks, struct clk_bulk_data *clks)
+> > +{
+> > +       int ret;
+> > +       int i;
+> > +
+> > +       for (i = 0; i < num_clks; i++) {
+> > +               ret = clk_enable(clks[i].clk);
+> > +               if (ret) {
+> > +                       pr_err("Failed to enable clk '%s': %d\n",
+> > +                               clks[i].id, ret);
+> > +                       goto err;
+> > +               }
+> > +       }
+> > +
+> > +       return 0;
+> > +
+> > +err:
+> > +       while (--i >= 0)
+> > +               clk_put(clks[i].clk);
 > 
-> Pulled into clk-next. Sorry for the slowness, I've been pulled
-> into some other work recently and also took a spring break
-> vacation last week so I'm just getting back to clk stuff.
+> Shouldn't this be clk_disable?
+> 
 
-OK thanks no problem, was just wondering.
+Good catch!
+Will change in the formal version if Maintainer accepts this idea.
 
-Regards,
+> And you can probably use clk_bulk_disable(i, clks) instead
 
-Tony
+Probably i'd prefer keep clk_disable to match with clk_enable
+to make things more clear.
+
+Thanks
+
+Regards
+Dong Aisheng
