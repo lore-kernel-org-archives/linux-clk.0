@@ -1,78 +1,97 @@
-Return-Path: <Alexey_Firago@mentor.com>
-Subject: Re: [PATCH v3 1/3] clk: vc5: Add structure to describe particular
- chip features
-To: Marek Vasut <marek.vasut@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <robh+dt@kernel.org>, <geert@linux-m68k.org>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1491470130-6655-1-git-send-email-alexey_firago@mentor.com>
- <1491470130-6655-2-git-send-email-alexey_firago@mentor.com>
- <d461ac7d-4081-4444-6875-de4d8013dec3@gmail.com>
-From: Alexey Firago <alexey_firago@mentor.com>
-Message-ID: <ee0dbbd0-78ba-2344-759e-da022215fbe1@mentor.com>
-Date: Thu, 6 Apr 2017 18:45:49 +0300
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 13 Apr 2017 11:59:38 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [GIT PULL] Allwinner clock fixes for 4.11, again
+Message-ID: <20170413095938.ac4zjp7ql6y76sst@lukather>
 MIME-Version: 1.0
-In-Reply-To: <d461ac7d-4081-4444-6875-de4d8013dec3@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rlbwklamz6koupsu"
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--rlbwklamz6koupsu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 06.04.2017 17:54, Marek Vasut wrote:
-> On 04/06/2017 11:15 AM, Alexey Firago wrote:
->> Introduce vc5_chip_info structure to describe features of a particular
->> VC5 chip (id, number of FODs, number of outputs, flags).
->> For now flags are only used to indicate if chip has internal XTAL.
->> vc5_chip_info is set on probe from the matched of_device_id->data.
->>
->> Also add defines to specify maximum number of FODs and clock outputs
->> supported by the driver.
->>
->> With these changes it should be easier to extend driver to support
->> more VC5 models.
->>
->> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
->
-> Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
->
->> ---
->>  drivers/clk/clk-versaclock5.c | 65 +++++++++++++++++++++++++++++++------------
->>  1 file changed, 47 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
->> index 56741f3..4e81fb1 100644
->> --- a/drivers/clk/clk-versaclock5.c
->> +++ b/drivers/clk/clk-versaclock5.c
->> @@ -113,12 +113,30 @@
->>  #define VC5_MUX_IN_XIN		BIT(0)
->>  #define VC5_MUX_IN_CLKIN	BIT(1)
->>
->> +/* Maximum number of clk_out supported by this driver */
->> +#define VC5_MAX_CLK_OUT_NUM	3
->> +
->> +/* Maximum number of FODs supported by this driver */
->> +#define VC5_MAX_FOD_NUM	2
->> +
->> +/* flags to describe chip features */
->> +/* chip has built-in oscilator */
->> +#define VC5_HAS_INTERNAL_XTAL	BIT(0)
->> +
->>  /* Supported IDT VC5 models. */
->>  enum vc5_model {
->>  	IDT_VC5_5P49V5923,
->>  	IDT_VC5_5P49V5933,
->>  };
->>
->> +/* Structure to describe features of a particular VC5 model */
->> +struct vc5_chip_info {
->> +	const enum vc5_model	model;
->> +	const unsigned int	clk_fod_cnt;
->> +	const unsigned int	clk_out_cnt;
->> +	u32			flags;
->
-> Shouldn't this also be const ?
+Hi Mike, Stephen,
 
-It probably should, since we are not changing flags at runtime 
-currently. Will resend.
+Here is another PR, without the patches that you didn't want as fixes.
 
-Thanks,
-Alexey
+A few more fixes showed up in between, one of them being another build
+fix, the other one fixing random CPU crashes happening with CPUfreq
+since 4.11
+
+Please merge it for one of 4.11-rc's, thanks!
+Maxime
+
+The following changes since commit b467e08a15563dede0d37d3233baa24fb97a7310:
+
+  clk: sunxi-ng: fix recalc_rate formula of NKMP clocks (2017-03-20 10:34:0=
+5 +0100)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git sunxi-clk=
+-fixes-for-4.11-2-bis
+
+for you to fetch changes up to 372fa10172a2f9e1bfbc70778449628e82b72341:
+
+  clk: sunxi-ng: a33: gate then ungate PLL CPU clk after rate change (2017-=
+04-13 11:22:04 +0200)
+
+----------------------------------------------------------------
+Allwinner clock fixes for 4.11
+
+Two build errors fixes for the sunxi-ng drivers.
+
+The two other patches fix random CPU crashes happening on the A33 since
+CPUFreq has been enabled in 4.11.
+
+----------------------------------------------------------------
+Chen-Yu Tsai (2):
+      clk: sunxi-ng: Add clk notifier to gate then ungate PLL clocks
+      clk: sunxi-ng: a33: gate then ungate PLL CPU clk after rate change
+
+Tobias Regnery (2):
+      clk: sunxi-ng: fix build error without CONFIG_RESET_CONTROLLER
+      clk: sunxi-ng: fix build failure in ccu-sun9i-a80 driver
+
+ drivers/clk/sunxi-ng/Kconfig         |  2 ++
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 11 ++++++++
+ drivers/clk/sunxi-ng/ccu_common.c    | 49 ++++++++++++++++++++++++++++++++=
+++++
+ drivers/clk/sunxi-ng/ccu_common.h    | 12 +++++++++
+ 4 files changed, 74 insertions(+)
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--rlbwklamz6koupsu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJY70wKAAoJEBx+YmzsjxAg9HYP/iFFZw5O3I10hO3CRfht2sx9
+Dp9kjnkOPmy7O4XOohe8NUAhDNc+VMEf0d7p3N6rfvZxuxdWUwnkrsGx3Anj3421
+hwh/1Sn43c3IlqqcgEQ+/GTW+5vh8wUKFxtC1GxWHXw/qN5OlSPQduFBzoEPXj0h
+rOokujP22rA6oMLnYiE55fvWW0hRq/AjZDvSKimWdGi42g7VIkn3grEFgbvOqWlv
+p6As3FX7BJzeVdWAftIjoTl3tGNSp1iGhOW6TagPbTzkuHH4mAdLJsoJ6oHnII+M
+Q07kHNeDrkko3x6t+KJiCL0+rLJAi/mnad2N1IpX4TVyu7TSFaHmIbFsXImK3Lzs
+Ux7KUI9jobOB5l/3/UrH+XDiHTTbPDxwo+HCATtHx/yMoXw97x4cRvHl33cjS+ch
+ukaNofno/DqqYqLUun1MRXA88YP9lneGWA6zKc0ojw3lUv2lynmy1hF9ZmVG6ow0
+2Mn/zQE/8PRPlRBdfmyuxOIN6uvUIcGyky1o5QSDoGlXQON34LmP+a7ZHpO8M5e2
+OfMJ8unAoi2FiMnROea4RmB1VqEGMEvxyf6uf0IlbhNp6wEiZduZUpEWS5/szaBF
+cgL38vlB9ruqJw2UWCvc+4ThrzT9y5hD/NyzrsaVR6od37Fa15cgxlrEd3UGtdhI
+s+5Tt3hRMFWD+D26I1PR
+=58ZZ
+-----END PGP SIGNATURE-----
+
+--rlbwklamz6koupsu--
