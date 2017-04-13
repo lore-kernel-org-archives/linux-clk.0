@@ -1,101 +1,107 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 5 Apr 2017 13:27:44 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rick Altherr <raltherr@google.com>
-Cc: openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	David Lechner <david@lechnology.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	William Breathitt Gray <vilhelm.gray@gmail.com>,
-	linux-clk@vger.kernel.org, Andreas Klinger <ak@it-klinger.de>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Alison Schofield <amsfield22@gmail.com>,
-	Fabrice Gasnier <fabrice.gasnier@st.com>,
-	Hartmut Knaack <knaack.h@gmx.de>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Crestez Dan Leonard <leonard.crestez@intel.com>,
-	Akinobu Mita <akinobu.mita@gmail.com>,
-	Matt Ranostay <mranostay@gmail.com>
-Subject: Re: [PATCH v4 2/2] iio: Aspeed ADC
-Message-ID: <20170405202744.GB7065@codeaurora.org>
-References: <20170323184136.7349-1-raltherr@google.com>
- <20170323184136.7349-2-raltherr@google.com>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Thu, 13 Apr 2017 10:48:19 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Michael Turquette <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: Re-evaluate clock rate on min/max update
+Message-ID: <20170413074819.GS30730@tbergstrom-lnx.Nvidia.com>
+References: <1490103807-21821-1-git-send-email-pdeschrijver@nvidia.com>
+ <20170412164605.GO7065@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170323184136.7349-2-raltherr@google.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20170412164605.GO7065@codeaurora.org>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/23, Rick Altherr wrote:
-> +
-> +static int aspeed_adc_probe(struct platform_device *pdev)
-> +{
-> +	struct iio_dev *indio_dev;
-> +	struct aspeed_adc_data *data;
-> +	const struct aspeed_adc_model_data *model_data;
-> +	struct resource *res;
-> +	const char *clk_parent_name;
-> +	int ret;
-> +	u32 adc_engine_control_reg_val;
-> +
-> +	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*data));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	data = iio_priv(indio_dev);
-> +	data->dev = &pdev->dev;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	data->base = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(data->base))
-> +		return PTR_ERR(data->base);
-> +
-> +	/* Register ADC clock prescaler with source specified by device tree. */
-> +	spin_lock_init(&data->clk_lock);
-> +	clk_parent_name = of_clk_get_parent_name(pdev->dev.of_node, 0);
+On Wed, Apr 12, 2017 at 09:46:05AM -0700, Stephen Boyd wrote:
+> On 03/21, Peter De Schrijver wrote:
+> > Whenever a user change its min or max rate limit of a clock, we need to
+> > re-evaluate the current clock rate and possibly change it if the new limits
+> > require so. To do this clk_set_rate_range() already calls
+> > clk_core_set_rate_nolock, however this won't have the intended effect
+> > because the core clock rate hasn't changed. To fix this, move the test to
+> > avoid setting the same core clock rate again, to clk_set_rate() so
+> > clk_core_set_rate_nolock() can change the clock rate when min or max have
+> > been updated, even when the core clock rate has not changed.
+> 
+> I'd expect some sort of Fixes: tag here? Or it never worked!?
 
-What if the parent clk is not registered yet? Or if we're not
-always using DT in this driver? Put another way, this code is
-fragile. But I guess it probably works well enough for now so no
-big deal, just pointing out my fear.
+I don't think this ever worked.
 
-> +
-> +	data->clk_prescaler = clk_hw_register_divider(
-> +				&pdev->dev, "prescaler", clk_parent_name, 0,
-> +				data->base + ASPEED_REG_CLOCK_CONTROL,
-> +				17, 15, 0, &data->clk_lock);
-> +	if (IS_ERR(data->clk_prescaler))
-> +		return PTR_ERR(data->clk_prescaler);
-> +
-> +	/*
-> +	 * Register ADC clock scaler downstream from the prescaler. Allow rate
-> +	 * setting to adjust the prescaler as well.
-> +	 */
-> +	data->clk_scaler = clk_hw_register_divider(
-> +				&pdev->dev, "scaler", "prescaler",
-> +				CLK_SET_RATE_PARENT,
-> +				data->base + ASPEED_REG_CLOCK_CONTROL,
-> +				0, 10, 0, &data->clk_lock);
-> +	if (IS_ERR(data->clk_scaler)) {
-> +		ret = PTR_ERR(data->clk_scaler);
-> +		goto scaler_error;
-> +	}
-> +
-> +	/* Start all channels in normal mode. */
-> +	clk_prepare_enable(data->clk_scaler->clk);
+> 
+> > 
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> 
+> I seem to recall some problems here around rate aggregation that
+> we fixed after the patches merged. Sorry, but I have to go back
+> and look at those conversations to refresh my memory and make
+> sure this is all fine.
+> 
+> Are you relying on the rate setting op to be called with the new
+> min/max requirements if the aggregated rate is the same? I don't
+> understand why clk drivers care.
+> 
 
-Eventually we'd like to get rid of hw->clk pointer so that users
-have to call some sort of clk_get() API and then we get warm
-fuzzies from knowing who is consuming a clk structure. Can you
-change this to register a clk provider and call clk_get()? I
-think a device that references itself should be OK in DT still,
-and would properly reflect what's going on.
+No. But I do rely on the rate setting op to be called when a new min or max
+rate would cause the rate to be changed even when there is no new rate request.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Eg:
+
+min = 100MHz, max = 500MHz, current rate request is 400MHz, then max changes to
+300MHz. Today the rate setting op will not be called, while I think it should
+be called to lower the rate to 300MHz.
+
+Peter.
+
+
+
+> > ---
+> >  drivers/clk/clk.c | 13 +++++++------
+> >  1 file changed, 7 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 2fa2fb8..0b815d1 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -1569,10 +1569,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+> >  	if (!core)
+> >  		return 0;
+> >  
+> > -	/* bail early if nothing to do */
+> > -	if (rate == clk_core_get_rate_nolock(core))
+> > -		return 0;
+> > -
+> >  	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+> >  		return -EBUSY;
+> >  
+> > @@ -1621,16 +1617,21 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+> >   */
+> >  int clk_set_rate(struct clk *clk, unsigned long rate)
+> >  {
+> > -	int ret;
+> > +	int ret = 0;
+> >  
+> >  	if (!clk)
+> > -		return 0;
+> > +		return ret;
+> 
+> Why? Noise?
+> 
+> >  
+> >  	/* prevent racing with updates to the clock topology */
+> >  	clk_prepare_lock();
+> >  
+> > +	/* bail early if nothing to do */
+> > +	if (rate == clk_core_get_rate_nolock(clk->core))
+> > +		goto out;
+> > +
+> >  	ret = clk_core_set_rate_nolock(clk->core, rate);
+> >  
+> > +out:
+> >  	clk_prepare_unlock();
+> >  
+> 
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
