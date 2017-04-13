@@ -1,100 +1,40 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH 4/5 v2] clk: qcom: Update DT bindings for MSM8660 LCC
-Date: Wed, 19 Apr 2017 11:13:25 +0200
-Message-Id: <20170419091326.11226-4-linus.walleij@linaro.org>
-In-Reply-To: <20170419091326.11226-1-linus.walleij@linaro.org>
-References: <20170419091326.11226-1-linus.walleij@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:36459 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755085AbdDMUCM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2017 16:02:12 -0400
+Date: Thu, 13 Apr 2017 15:02:10 -0500
+From: Rob Herring <robh@kernel.org>
+To: Mars Cheng <mars.cheng@mediatek.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        wsd_upstream@mediatek.com
+Subject: Re: [PATCH v4 08/10] dt-bindings: mediatek: add MT6797 power
+ dt-bindings
+Message-ID: <20170413200210.spjtg2d3uwiobukt@rob-hp-laptop>
+References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
+ <1491614435-23754-9-git-send-email-mars.cheng@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1491614435-23754-9-git-send-email-mars.cheng@mediatek.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the right compatible string and header for the
-MSM8660 LCC and some new defines to the dt-bindings header.
+On Sat, Apr 08, 2017 at 09:20:33AM +0800, Mars Cheng wrote:
+> This adds power dt-bindings for MT6797
+> 
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+> ---
+>  .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 
-Take this opportunity to spell out the acronym LPASS for
-Low-power Audio Subsystem.
-
-Cc: devicetree@vger.kernel.org
 Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Add Rob's ACK.
----
- .../devicetree/bindings/clock/qcom,lcc.txt         |  5 +--
- include/dt-bindings/clock/qcom,lcc-msm8660.h       | 40 ++++++++++++++++++++++
- 2 files changed, 43 insertions(+), 2 deletions(-)
- create mode 100644 include/dt-bindings/clock/qcom,lcc-msm8660.h
-
-diff --git a/Documentation/devicetree/bindings/clock/qcom,lcc.txt b/Documentation/devicetree/bindings/clock/qcom,lcc.txt
-index a3c78aa88038..4de51df37f1a 100644
---- a/Documentation/devicetree/bindings/clock/qcom,lcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,lcc.txt
-@@ -1,10 +1,11 @@
--Qualcomm LPASS Clock & Reset Controller Binding
--------------------------------------------------
-+Qualcomm Low-power Audio Subsystem (LPASS) Clock & Reset Controller Binding
-+---------------------------------------------------------------------------
- 
- Required properties :
- - compatible : shall contain only one of the following:
- 
- 			"qcom,lcc-msm8960"
-+			"qcom,lcc-msm8660"
- 			"qcom,lcc-apq8064"
- 			"qcom,lcc-ipq8064"
- 			"qcom,lcc-mdm9615"
-diff --git a/include/dt-bindings/clock/qcom,lcc-msm8660.h b/include/dt-bindings/clock/qcom,lcc-msm8660.h
-new file mode 100644
-index 000000000000..7cddcbd6b1ee
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,lcc-msm8660.h
-@@ -0,0 +1,40 @@
-+/*
-+ * Copyright (c) 2017 Linus Walleij <linus.walleij@linaro.org>
-+ * Qualcomm MSM8660 Low-power Audio Subsystem (LPASS) Clock Controller
-+ * devicetree definitions
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_LCC_MSM8660_H
-+#define _DT_BINDINGS_CLK_LCC_MSM8660_H
-+
-+#define LPA_PLL0			0
-+#define MI2S_OSR_SRC			1
-+#define MI2S_OSR_CLK			2
-+#define MI2S_DIV_CLK			3
-+#define MI2S_BIT_DIV_CLK		4
-+#define MI2S_BIT_CLK			5
-+#define CODEC_I2S_MIC_OSR_SRC		6
-+#define CODEC_I2S_MIC_OSR_CLK		7
-+#define CODEC_I2S_MIC_DIV_CLK		8
-+#define CODEC_I2S_MIC_BIT_DIV_CLK	9
-+#define CODEC_I2S_MIC_BIT_CLK		10
-+#define SPARE_I2S_MIC_OSR_SRC		11
-+#define SPARE_I2S_MIC_OSR_CLK		12
-+#define SPARE_I2S_MIC_DIV_CLK		13
-+#define SPARE_I2S_MIC_BIT_DIV_CLK	14
-+#define SPARE_I2S_MIC_BIT_CLK		15
-+#define CODEC_I2S_SPKR_OSR_SRC		16
-+#define CODEC_I2S_SPKR_OSR_CLK		17
-+#define CODEC_I2S_SPKR_DIV_CLK		18
-+#define CODEC_I2S_SPKR_BIT_DIV_CLK	19
-+#define CODEC_I2S_SPKR_BIT_CLK		20
-+#define SPARE_I2S_SPKR_OSR_SRC		21
-+#define SPARE_I2S_SPKR_OSR_CLK		22
-+#define SPARE_I2S_SPKR_DIV_CLK		23
-+#define SPARE_I2S_SPKR_BIT_DIV_CLK	24
-+#define SPARE_I2S_SPKR_BIT_CLK		25
-+#define PCM_SRC				26
-+#define PCM_CLK_OUT			27
-+#define PCM_CLK				28
-+
-+#endif
--- 
-2.9.3
