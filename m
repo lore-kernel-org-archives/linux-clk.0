@@ -1,179 +1,92 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:29894 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932622AbdD0KNB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Apr 2017 06:13:01 -0400
-Subject: Re: [PATCH v2] clk: at91: Add sama5d2 suspend/resume
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <20170426112148.25256-1-alexandre.belloni@free-electrons.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Message-ID: <238085fc-b047-78f0-7fdc-63606654e351@microchip.com>
-Date: Thu, 27 Apr 2017 12:13:23 +0200
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Thu, 13 Apr 2017 22:21:22 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de, broonie@kernel.org, yibin.gong@nxp.com,
+	rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@baylibre.com,
+	sboyd@codeaurora.org, shawnguo@kernel.org, fabio.estevam@nxp.com,
+	anson.huang@nxp.com, ping.bai@nxp.com, octavian.purdila@nxp.com
+Subject: Re: [RFC PATCH 3/3] cpufreq: imx6q: refine clk operations
+Message-ID: <20170413142122.GC24254@b29396-OptiPlex-7040>
+References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+ <1491969809-20154-4-git-send-email-aisheng.dong@nxp.com>
+ <1491932908.31718.33.camel@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20170426112148.25256-1-alexandre.belloni@free-electrons.com>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1491932908.31718.33.camel@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Le 26/04/2017 à 13:21, Alexandre Belloni a écrit :
-> On sama5d2, VDD core maybe be cut while in suspend. This means registers
-> will be lost. Ensure they are saved and restored properly.
+On Tue, Apr 11, 2017 at 08:48:28PM +0300, Leonard Crestez wrote:
+> On Wed, 2017-04-12 at 12:03 +0800, Dong Aisheng wrote:
+> > +static int num_clks;
+> > +static struct clk_bulk_data clks[] = {
+> > +	{ .id = "arm" },
+> > +	{ .id = "pll1_sys" },
+> > +	{ .id = "step" },
+> > +	{ .id = "pll1_sw" },
+> > +	{ .id = "pll2_pfd2_396m" },
+> > +	{ .id = "pll2_bus" },
+> > +	{ .id = "secondary_sel" },
+> > +};
 > 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> ---
+> The .id is only required for initialization, it seems strange to keep
+> it around runtime data.
+
+Well, this is mainly referencing how regulator bulk does the job.
+
+> It might be better for this API to work with an
+> array of clk* and separate array of names (or clk_bulk_init_data if we
+> need flags). Variable references would be shorter and it would allow
+> more data to be const.
+
+It also has side effect that we then need one more param for each API.
+Is that worth?
+
+> > -put_clk:
+> > -	if (!IS_ERR(arm_clk))
+> > -		clk_put(arm_clk);
+> > -	if (!IS_ERR(pll1_sys_clk))
+> > -		clk_put(pll1_sys_clk);
+> > -	if (!IS_ERR(pll1_sw_clk))
+> > -		clk_put(pll1_sw_clk);
+> > -	if (!IS_ERR(step_clk))
+> > -		clk_put(step_clk);
+> > -	if (!IS_ERR(pll2_pfd2_396m_clk))
+> > -		clk_put(pll2_pfd2_396m_clk);
+> > -	if (!IS_ERR(pll2_bus_clk))
+> > -		clk_put(pll2_bus_clk);
+> > -	if (!IS_ERR(secondary_sel_clk))
+> > -		clk_put(secondary_sel_clk);
+> > +
+> > +	clk_bulk_put(num_clks, clks);
+> > +put_node:
+> >  	of_node_put(np);
+> > +
+> >  	return ret;
+> >  }
 > 
-> Changes in v2:
->  - don't set MCKR or PLLAR and expect them to be properly set by the
->    firmware/bootloader.
 > 
->  drivers/clk/at91/pmc.c | 114 +++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 114 insertions(+)
+> My subjective opinion is that a better way to clean this up would be to
+> have a single imx6q_cpufreq_clean function that takes all resources and
+> does stuff like:
 > 
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index 526df5ba042d..338cd293b356 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -13,7 +13,9 @@
->  #include <linux/clk/at91_pmc.h>
->  #include <linux/of.h>
->  #include <linux/mfd/syscon.h>
-> +#include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> +#include <linux/syscore_ops.h>
->  
->  #include <asm/proc-fns.h>
->  
-> @@ -41,3 +43,115 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
-> +
-> +#ifdef CONFIG_PM
-> +static struct regmap *pmcreg;
-> +
-> +static struct
-> +{
-> +	u32 scsr;
-> +	u32 pcsr0;
-> +	u32 uckr;
-> +	u32 mor;
-> +	u32 mcfr;
-> +	u32 pllar;
-> +	u32 mckr;
-> +	u32 usb;
-> +	u32 imr;
-> +	u32 pcsr1;
-> +	u32 pcr[64];
-> +} pmc_cache;
-> +
-> +static int pmc_suspend(void)
-> +{
-> +	int i;
-> +
-> +	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
-> +	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
-> +	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
-> +	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
-> +	regmap_read(pmcreg, AT91_CKGR_MCFR, &pmc_cache.mcfr);
-> +	regmap_read(pmcreg, AT91_CKGR_PLLAR, &pmc_cache.pllar);
-> +	regmap_read(pmcreg, AT91_PMC_MCKR, &pmc_cache.mckr);
-> +	regmap_read(pmcreg, AT91_PMC_USB, &pmc_cache.usb);
-> +	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.imr);
-> +	regmap_read(pmcreg, AT91_PMC_PCSR1, &pmc_cache.pcsr1);
-> +
-> +	for (i = 2; i < 64; i++) {
-> +		regmap_write(pmcreg, AT91_PMC_PCR, (i & AT91_PMC_PCR_PID_MASK));
-> +		regmap_read(pmcreg, AT91_PMC_PCR, &pmc_cache.pcr[i]);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static bool pmc_ready(unsigned int mask)
-> +{
-> +	unsigned int status;
-> +
-> +	regmap_read(pmcreg, AT91_PMC_SR, &status);
-> +
-> +	return ((status & mask) == mask) ? 1 : 0;
-> +}
-> +
-> +static void pmc_resume(void)
-> +{
-> +	int i;
-> +	unsigned int mask = 0;
-> +	u32 tmp;
-> +
-> +	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
-> +	if (pmc_cache.mckr != tmp)
-> +		pr_warn("MCKR was not configured properly by the firmware\n");
-> +	regmap_read(pmcreg, AT91_CKGR_PLLAR, &tmp);
-> +	if (pmc_cache.pllar != tmp)
-> +		pr_warn("PLLAR was not configured properly by the firmware\n");
-> +
-> +	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
-> +	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
-> +	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
-> +	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
-> +	regmap_write(pmcreg, AT91_CKGR_MCFR, pmc_cache.mcfr);
-> +	regmap_write(pmcreg, AT91_PMC_USB, pmc_cache.usb);
-> +	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.imr);
-> +	regmap_write(pmcreg, AT91_PMC_PCER1, pmc_cache.pcsr1);
-> +
-> +	for (i = 2; i < 64; i++) {
-> +		regmap_write(pmcreg, AT91_PMC_PCR, (i & AT91_PMC_PCR_PID_MASK));
-> +		regmap_write(pmcreg, AT91_PMC_PCR, pmc_cache.pcr[i]);
-> +	}
-> +
-> +	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
-> +		mask |= AT91_PMC_LOCKU;
-
-I understand the use of mask to be generic... but this one ^ is now the
-only one used: we can simplify (and even remove the use of a function).
-
-> +
-> +	while (!pmc_ready(mask))
-> +		cpu_relax();
-
-I would prefer to have a timeout + printk(KERN_CRIT ...) here
-
-> +}
-> +
-> +static struct syscore_ops pmc_syscore_ops = {
-> +	.suspend = pmc_suspend,
-> +	.resume = pmc_resume,
-> +};
-> +
-> +static const struct of_device_id sama5d2_pmc_dt_ids[] = {
-> +	{ .compatible = "atmel,sama5d2-pmc" },
-> +	{ /* sentinel */ }
-> +};
-> +
-> +static int __init pmc_register_ops(void)
-> +{
-> +	struct device_node *np;
-> +
-> +	np = of_find_matching_node(NULL, sama5d2_pmc_dt_ids);
-> +
-> +	pmcreg = syscon_node_to_regmap(np);
-> +	if (IS_ERR(pmcreg))
-> +		return PTR_ERR(pmcreg);
-> +
-> +	register_syscore_ops(&pmc_syscore_ops);
-> +
-> +	return 0;
-> +}
-> +/* This has to happen before arch_initcall becaues of the tcb_clksrc driver */
-
-NIT: typo ^ (because)
-
-> +postcore_initcall(pmc_register_ops);
-> +#endif
+> if (!IS_ERR(clk)) clk_put(clk);
+> clk = NULL;
+> 
+> That function can be called from both _remove and failed _probe without
+> having to keep track of which resources have been allocated until then.
+> Just free and NULL all clocks/regulators and simplify control flow.
 > 
 
+I once thought of that way.
 
--- 
-Nicolas Ferre
+Now i'd like to remove them rather than form them into a function
+which can't permanently fix the issue.
+
+But, if Maintainers dislike it, we could do that.
+
+Regards
+Dong Aisheng
