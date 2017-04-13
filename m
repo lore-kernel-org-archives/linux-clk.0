@@ -1,35 +1,58 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 28 Apr 2017 08:35:53 -0500
-From: Rob Herring <robh@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/5 v2] clk: qcom: Elaborate on "active" clocks in the
- RPM clock bindings
-Message-ID: <20170428133553.pcyireh6atw7rlrw@rob-hp-laptop>
-References: <20170419091326.11226-1-linus.walleij@linaro.org>
- <20170419091326.11226-2-linus.walleij@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170419091326.11226-2-linus.walleij@linaro.org>
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 2/3] clk: sunxi-ng: a33: gate then ungate PLL CPU clk after rate change
+Date: Thu, 13 Apr 2017 10:13:53 +0800
+Message-Id: <20170413021354.3258-3-wens@csie.org>
+In-Reply-To: <20170413021354.3258-1-wens@csie.org>
+References: <20170413021354.3258-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 19, 2017 at 11:13:23AM +0200, Linus Walleij wrote:
-> The concept of "active" clocks is just explained in a bried comment in the
-> device driver, let's explain it a bit more in the device tree bindings
-> so everyone understands this.
-> 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Reword slighty in accordance with Stephens feedback.
-> ---
->  Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 8 ++++++++
->  1 file changed, 8 insertions(+)
+This patch utilizes the new PLL clk notifier to gate then ungate the
+PLL CPU clock after rate changes. This should mitigate the system
+hangs observed after the introduction of cpufreq for the A33.
 
-Despite my objections, you're just documenting what is already there.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Acked-by: Rob Herring <robh@kernel.org>
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+index 56370c2c7f98..8d38e6510e29 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+@@ -756,6 +756,13 @@ static const struct sunxi_ccu_desc sun8i_a33_ccu_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun8i_a33_ccu_resets),
+ };
+ 
++static struct ccu_pll_nb sun8i_a33_pll_cpu_nb = {
++	.common	= &pll_cpux_clk.common,
++	/* copy from pll_cpux_clk */
++	.enable	= BIT(31),
++	.lock	= BIT(28),
++};
++
+ static struct ccu_mux_nb sun8i_a33_cpu_nb = {
+ 	.common		= &cpux_clk.common,
+ 	.cm		= &cpux_clk.mux,
+@@ -787,6 +794,10 @@ static void __init sun8i_a33_ccu_setup(struct device_node *node)
+ 
+ 	sunxi_ccu_probe(node, reg, &sun8i_a33_ccu_desc);
+ 
++	/* Gate then ungate PLL CPU after any rate changes */
++	ccu_pll_notifier_register(&sun8i_a33_pll_cpu_nb);
++
++	/* Reparent CPU during PLL CPU rate changes */
+ 	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
+ 				  &sun8i_a33_cpu_nb);
+ }
+-- 
+2.11.0
