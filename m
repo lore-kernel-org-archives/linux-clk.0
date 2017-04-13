@@ -1,75 +1,75 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] clk: ti: fix linker error with !SOC_OMAP4
-To: Arnd Bergmann <arnd@arndb.de>
-References: <20170419214318.1605787-1-arnd@arndb.de>
- <9df5f73d-3e3a-ee33-1b75-c14a1a707ad9@ti.com>
- <CAK8P3a2=pDP7-b4njRo9KKa-JAueTp8O=stmyMz68-Piy__UKQ@mail.gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Tony Lindgren <tony@atomide.com>,
-        Richard Watts
-	<rrw@kynesim.co.uk>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <c20456ea-dee2-878a-6cf1-2b3169fd20f4@ti.com>
-Date: Thu, 20 Apr 2017 18:13:50 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a2=pDP7-b4njRo9KKa-JAueTp8O=stmyMz68-Piy__UKQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 0/3] clk: sunxi-ng: gate/ungate PLL CPU clk after rate change
+Date: Thu, 13 Apr 2017 10:13:51 +0800
+Message-Id: <20170413021354.3258-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20/04/17 18:06, Arnd Bergmann wrote:
-> On Thu, Apr 20, 2017 at 4:57 PM, Tero Kristo <t-kristo@ti.com> wrote:
->> On 20/04/17 00:43, Arnd Bergmann wrote:
->>>
->>> When none of the OMAP4-generation SoCs are enabled, we run into a link
->>> error for am43xx/am43xx:
->>>
->>> drivers/clk/ti/dpll.o: In function `of_ti_am3_dpll_x2_setup':
->>> dpll.c:(.init.text+0xd8): undefined reference to `clkhwops_omap4_dpllmx'
->>>
->>> This is easily fixed by adding another #ifdef.
->>>
->>> While looking at the code, I also spotted another problem with the
->>> assignment of hw_ops variable that is not used again later. I'm
->>> changing this to setting clk_hw->ops instead, which I guess is what
->>> was intended here.
->>
->>
->> Good catch... It seems the corner case is masked in the testing I did
->> locally so far.
->>
->>>
->>> Fixes: 0565fb168d63 ("clk: ti: dpll: move omap3 DPLL functionality to
->>> clock driver")
->>
->>
->> However, I believe the fixes tag should point to this one in linux-next:
->>
->> commit 473adbf4e02857a6b78dfb3d9fcf752638bbadb9
->> Author: Tero Kristo <t-kristo@ti.com>
->> Date:   Thu Feb 9 11:25:28 2017 +0200
->>
->>     clk: ti: dpll44xx: fix clksel register initialization
->
-> Ah, right.
->
->> Other than that:
->>
->> Acked-by: Tero Kristo <t-kristo@ti.com>
->
-> Do you want me to resend, or can you forward the patch with the
-> fixed fixes line?
+Hi everyone,
 
-I guess thats up to Stephen, he typically picks single fixes like these. 
-I can also create a pull request with the fixes you provided if Stephen 
-prefers that, in that case I can fix the "Fixes:" tag myself.
+This series adds a clk notifier for use on the PLL CPU clks found in
+Allwinner SoCs. Some people have observed issues with the design and
+implementation of the CPU PLL clock, starting from the A31. Changes
+to the PLL clock need a few cycles to stabilize. If the changes are
+too drastic, the dividers in particular, there is a good chance that
+the system will hang.
 
-Stephen any preference?
+Previously we thought that reparenting the CPU clock away from the PLL
+while changes were made, and then reparenting it back once it was stable,
+should have been enough to mitigate the issue. Unfortunately it was
+not. With cpufreq support for A33 recently introduced in commit
+03749eb88e63 ("ARM: dts: sun8i: add opp-v2 table for A33"), system hangs
+were observed one out of two to three boots, right after userspace
+configured cpufreq to switch to the ondemand governor. Other experiments
+done by Ondrej Jirman [1] show that it is not enough to just reparent
+the CPU clock, but the PLL clock's dividers must not be used.
 
--Tero
+We suspect the divider changes make the PLL unstable to the point that
+it can not recover, possibly not providing any output afterwards. We
+lack any hard evidence (oscilloscope readings or hardware implementation
+details) to fully explain the behavior. However, if the hardware is
+stuck in some undesired state, it is possible to "reset" it, by gating
+the PLL, then ungating it.
 
-PS: I'm still checking the other two patches you provided, as they are 
-more complex than this one.
+This series adds a new clk notifier that does exactly that. The clk
+notifier is registered on the PLL clock. Whenever its rate is changed,
+the notifier comes in and toggles the gate. The notifier should always
+be the first one registered. And all consumers of the clock must also
+have notifiers on it to temporarily reparent away during the change.
+
+Patches 2 and 3 register this new notifier for the CPU PLL clocks on
+the A33 and H3, respectively. With the first 2 patches applied, the
+cpufreq related system hangs on the A33 go away.
+
+Given that commit 03749eb88e63 ("ARM: dts: sun8i: add opp-v2 table for
+A33") is already in v4.11-rc, I suggest we either try to merge the
+first 2 patches for a very late -rc fix, or drop A33 cpufreq support
+from v4.11, and add it later once this series is merged.
+
+Regards
+ChenYu
+
+
+[1] http://www.spinics.net/lists/arm-kernel/msg552501.html
+
+Chen-Yu Tsai (3):
+  clk: sunxi-ng: Add clk notifier to gate then ungate PLL clocks
+  clk: sunxi-ng: a33: gate then ungate PLL CPU clk after rate change
+  clk: sunxi-ng: h3: gate then ungate PLL CPU clk after rate change
+
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 11 ++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c  | 11 ++++++++
+ drivers/clk/sunxi-ng/ccu_common.c    | 49 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_common.h    | 12 +++++++++
+ 4 files changed, 83 insertions(+)
+
+-- 
+2.11.0
