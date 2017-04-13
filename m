@@ -1,50 +1,59 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 5 Apr 2017 14:50:46 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Rick Altherr <raltherr@google.com>, openbmc@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	William Breathitt Gray <vilhelm.gray@gmail.com>,
+Return-Path: <wens@mirror2.csie.ntu.edu.tw>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Andreas Klinger <ak@it-klinger.de>, Rob Herring <robh@kernel.org>,
-	Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	linux-iio@vger.kernel.org, Zhiyong Tao <zhiyong.tao@mediatek.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>,
-	Scott Branden <scott.branden@broadcom.com>,
-	Crestez Dan Leonard <leonard.crestez@intel.com>,
-	Akinobu Mita <akinobu.mita@gmail.com>,
-	Fabrice Gasnier <fabrice.gasnier@st.com>,
-	Hartmut Knaack <knaack.h@gmx.de>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] iio: Aspeed ADC
-Message-ID: <20170405215046.GE7065@codeaurora.org>
-References: <20170328215259.31622-1-raltherr@google.com>
- <20170328215259.31622-2-raltherr@google.com>
- <d05cadfe-e3d3-f4e8-129f-19dcd2f637da@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <d05cadfe-e3d3-f4e8-129f-19dcd2f637da@kernel.org>
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 3/3] clk: sunxi-ng: h3: gate then ungate PLL CPU clk after rate change
+Date: Thu, 13 Apr 2017 10:13:54 +0800
+Message-Id: <20170413021354.3258-4-wens@csie.org>
+In-Reply-To: <20170413021354.3258-1-wens@csie.org>
+References: <20170413021354.3258-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/01, Jonathan Cameron wrote:
-> On 28/03/17 22:52, Rick Altherr wrote:
-> > Aspeed BMC SoCs include a 16 channel, 10-bit ADC. Low and high threshold
-> > interrupts are supported by the hardware but are not currently implemented.
-> > 
-> > Signed-off-by: Rick Altherr <raltherr@google.com>
-> Two really trivial things inline. I'll fix them whilst applying rather than
-> having you do a v6 - please do sanity check I haven't messed it up though!
-> 
-> Applied to the togreg branch of iio.git and pushed out as testing for
-> the autobuilders to play with it.
-> 
+This patch utilizes the new PLL clk notifier to gate then ungate the
+PLL CPU clock after rate changes. This should prevent any system hangs
+resulting from cpufreq changes to the clk.
 
-Oh I was too late. Blame work. Anyway, I made some comments on
-v4. If they're fixed in a later patch or discussed on list that's
-fine. No worries on my end.
+Reported-by: Ondrej Jirman <megous@megous.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Tested-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 4cbc1b701b7c..fc04ef2af1ac 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -1103,6 +1103,13 @@ static const struct sunxi_ccu_desc sun50i_h5_ccu_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun50i_h5_ccu_resets),
+ };
+ 
++static struct ccu_pll_nb sun8i_h3_pll_cpu_nb = {
++	.common	= &pll_cpux_clk.common,
++	/* copy from pll_cpux_clk */
++	.enable	= BIT(31),
++	.lock	= BIT(28),
++};
++
+ static struct ccu_mux_nb sun8i_h3_cpu_nb = {
+ 	.common		= &cpux_clk.common,
+ 	.cm		= &cpux_clk.mux,
+@@ -1130,6 +1137,10 @@ static void __init sunxi_h3_h5_ccu_init(struct device_node *node,
+ 
+ 	sunxi_ccu_probe(node, reg, desc);
+ 
++	/* Gate then ungate PLL CPU after any rate changes */
++	ccu_pll_notifier_register(&sun8i_h3_pll_cpu_nb);
++
++	/* Reparent CPU during PLL CPU rate changes */
+ 	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
+ 				  &sun8i_h3_cpu_nb);
+ }
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
