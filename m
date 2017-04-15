@@ -1,36 +1,171 @@
-Return-Path: <phil@raspberrypi.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH 0/2] clk: bcm2835: PCM clock improvements
-Message-ID: <4c11ad43-ef4e-3fbd-500a-02b2b46e0fbd@raspberrypi.org>
-Date: Tue, 30 May 2017 17:27:56 +0100
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Kevin Hilman" <khilman@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20170321183330.26722-1-jbrunet@baylibre.com>
+Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org
+References: <20170321183330.26722-1-jbrunet@baylibre.com>
+Message-ID: <149228583018.88277.3542713369128557565@resonance>
+Subject: Re: [RFC 0/7] clk: implement clock locking mechanism
+Date: Sat, 15 Apr 2017 21:50:30 +0200
 List-ID: <linux-clk.vger.kernel.org>
 
-The switch to using the upstream bcm2835_cprman clock driver caused a
-few problems for users of PCM (I2S) peripherals. Audio applications
-require accurate, stable clocks, and the cprman driver wasn't
-conservative enough in its choice of clock sources.
+Hi Jerome,
 
-These patches restrict the clock sources for the PCM peripheral in two
-ways: the first causes all possible sources except OSC and PLLD_PER
-to be ignored, while the second allows clocks to be specified as
-"low_jitter", causing the effects of fractional divisors to be taken
-into account when comparing potential clocks for accuracy. In practice,
-the combined effect of the two patches is to choose OSC as a source if
-an integer divisor can be used, otherwise PLLD_PER is chosen.
+Thanks for sending this series. The concept is one we've been talking
+about for years, and your approach makes sense. Some comments below.
 
-Phil Elwell (2):
-  clk: bcm2835: Limit PCM clock to OSC and PLLD_PER
-  clk: bcm2835: Minimise clock jitter for PCM clock
+Quoting Jerome Brunet (2017-03-21 19:33:23)
+> This RFC patchset is related to the discussion around CLK_SET_RATE_GATE a=
+nd
+> clk_lock which available here [0]
 
- drivers/clk/bcm/clk-bcm2835.c | 50 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 45 insertions(+), 5 deletions(-)
+If we merge this solution then we may want to convert some of those
+CLK_SET_RATE_GATE users and potentially some of the rate-range users
+that set min/max to the same value over to this new api.
 
--- 
-1.9.1
+> =
+
+> The goal of this patchset is to provide a way for consumers to inform the
+> system that they depend on the rate of the clock source and can't tolerate
+> other consumers changing the rate or causing glitches.
+> =
+
+> Patches 1 to 3 are just rework to ease the integration of the locking
+> mechanism. They should not introduce any functional differences.
+> =
+
+> Patch 4 is the important bit. It introduce 2 new functions to the CCF API:
+> clk_protect and clk_unprotect (The "lock" word is already used lot in
+> clk.c. Using clk_lock and clk_unlock would have been very messy. If you
+> found "protect" to be a poor choice, I'm happy to sed the whole thing in
+> future version)
+> =
+
+> These calls can happen at anytime during the life of the clk. As for
+> prepare and enable, the calls must be balanced.
+> =
+
+> Inside the clock framework, 2 new count values are introduced to keep tra=
+ck
+> of the protection:
+> * core "protect_count": this reference count value works in the same way =
+as
+>   prepare and enable count, and track whether the clock is protected or
+>   not. This is the value that will checked to allow operation which may
+>   cause glitches or change the rate of clock source.
+> * clk consumer "protect_ucount": this allows to track if the consumer is
+>   protecting the clock.
+> =
+
+> Requiring the consumer to unprotect its clock before changing it would ha=
+ve
+> been very annoying for the consumer. It would also be unsafe, as it would
+> still be possible for another consumer to change the rate between the call
+> to set_rate and protect. This needs to happen in a critical section.  A
+> solution would be to add "set_rate_protect", but we would need to do the
+> same for the set_parent and set_phase (and the possible future
+> functions). It does not scale well.  The solution proposed in this patch =
+is
+> to use the consumer protect count.
+> =
+
+> In function altering the clock, if the consumer is protecting the clock,
+> the protection is temporarily release under the prepare_lock. This ensure
+> that:
+> * the clock is still protect from another consumer because of the
+>   prepare_lock
+> * the rate set on a protected clock cannot change between set_rate and
+>   later enable
+> * only a consumer protecting a clock can do this temporary protection
+>   removal (less chance of people messing with the refcount)
+> * if more than one consumer protect the clock, it remains protected.
+>   Because the protection is removed for the calling consumer, it gives
+>   it a chance to jump to another provider, if available.
+> =
+
+> This protection mechanism assume that "protecting" consumer knows what it
+> is doing when it comes to setting the rate, and does not expect to be
+> protected against itself.
+> =
+
+> This was tested with the audio use case mentioned in [0]
+> =
+
+> One caveat is the following case:
+> N+1 consumers protect their clocks. These clocks come from N possible
+> providers. We should able to satisfy at least N consumers before exhausti=
+ng
+> the resources.  In the particular case where all the consumers call
+> "protect" before having a chance to call "set_rate", the last 2 consumers
+> will remains stuck on the last provider w/o being able to set the rate on
+> it. This means that in situation where there is 2 consumers on 1
+> providers, they will compete for the clock, and may end up in situation
+> where both protect the clock and none can set the rate they need.  This c=
+an
+> be solved if, when the rate fails to be set, the consumer release the
+> protection. Then the second consumer will be able to satisfy its request.
+
+This situation can be handled a bit more gracefully if clk_set_rate_lock
+both returns an error code if setting the rate failes AND it releases
+the rate lock in that case. At least that helps for the case of
+initializing rates during .probe(). Automatically dropping the lock
+might complicate things in other cases though...
+
+Best regards,
+Mike
+
+> =
+
+> Patch 5 is a small change on set_rate_range to restore the old range on
+> failure. It don't use set_rate_range in any driver so I could not test th=
+is
+> change.
+> =
+
+> Patch 6 is just a cosmetic change to clk_summary debugfs entry to make it
+> less wide after adding protect count in it.
+> =
+
+> Patch 7 fix a warning reported by checkpatch.pl. Apparently, ENOSYS is us=
+ed
+> incorrectly.
+> =
+
+> Bonus:
+> =
+
+> With this patchset, we should probably change the use the flags
+> "CLK_SET_RATE_GATE" and "CLK_SET_PARENT_GATE" We discussed removing
+> them. Another solution would be to have them automatically gate the clock
+> before performing the related operation.  What is your view on this ?
+> =
+
+> [0]: http://lkml.kernel.org/r/148942423440.82235.17188153691656009029@res=
+onance
+> =
+
+> Jerome Brunet (7):
+>   clk: take the prepare lock out of clk_core_set_parent
+>   clk: add set_phase core function
+>   clk: rework calls to round and determine rate callbacks
+>   clk: add support for clock protection
+>   clk: rollback set_rate_range changes on failure
+>   clk: cosmetic changes to clk_summary debugfs entry
+>   clk: fix incorrect usage of ENOSYS
+> =
+
+>  drivers/clk/clk.c            | 313 ++++++++++++++++++++++++++++++++++---=
+------
+>  include/linux/clk-provider.h |   1 +
+>  include/linux/clk.h          |  29 ++++
+>  3 files changed, 279 insertions(+), 64 deletions(-)
+> =
+
+> -- =
+
+> 2.9.3
+>=20
