@@ -1,92 +1,169 @@
-Return-Path: <anup.patel@broadcom.com>
-Return-Path: <anup.patel@broadcom.com>
-From: Anup Patel <anup.patel@broadcom.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Oza Pawandeep <oza.oza@broadcom.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Sandeep Tripathy <sandeep.tripathy@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	Abhishek Shah <abhishek.shah@broadcom.com>
-Subject: [PATCH v2 06/11] arm64: dts: Add NAND DT nodes for Stingray SOC
-Date: Mon, 15 May 2017 17:32:16 +0530
-Message-Id: <1494849741-21294-7-git-send-email-anup.patel@broadcom.com>
-In-Reply-To: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
-References: <1494849741-21294-1-git-send-email-anup.patel@broadcom.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Jerome Brunet <jbrunet@baylibre.com>, "Stephen Boyd" <sboyd@codeaurora.org>,
+ "Kevin Hilman" <khilman@baylibre.com>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20170321183330.26722-2-jbrunet@baylibre.com>
+Cc: "Jerome Brunet" <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org
+References: <20170321183330.26722-1-jbrunet@baylibre.com>
+ <20170321183330.26722-2-jbrunet@baylibre.com>
+Message-ID: <149228696755.88277.11390638024881688991@resonance>
+Subject: Re: [RFC 1/7] clk: take the prepare lock out of clk_core_set_parent
+Date: Sat, 15 Apr 2017 22:09:27 +0200
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Pramod Kumar <pramod.kumar@broadcom.com>
+Hi Jerome,
 
-This patch adds NAND controller DT Node and NAND chip DT
-node for Stingray SOC and Stingray reference boards.
+Quoting Jerome Brunet (2017-03-21 19:33:24)
+> Rework set_parent core function so it can be called when the prepare lock
+> is already held by the caller.
+> =
 
-Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-Signed-off-by: Abhishek Shah <abhishek.shah@broadcom.com>
-Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
----
- arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi | 15 +++++++++++++++
- arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi       | 13 +++++++++++++
- 2 files changed, 28 insertions(+)
+> This rework is done to ease the integration of the "protected" clock
+> functionality.
+> =
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-index 0a427da..ce46224 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/bcm958742-base.dtsi
-@@ -56,3 +56,18 @@
- &uart1 {
- 	status = "okay";
- };
-+
-+&nand {
-+	status = "ok";
-+	nandcs@0 {
-+		compatible = "brcm,nandcs";
-+		reg = <0>;
-+		nand-ecc-mode = "hw";
-+		nand-ecc-strength = <8>;
-+		nand-ecc-step-size = <512>;
-+		nand-bus-width = <16>;
-+		brcm,nand-oob-sector-size = <16>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-index 24856e3..c5493e7 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
-@@ -312,5 +312,18 @@
- 			compatible = "brcm,iproc-rng200";
- 			reg = <0x00220000 0x28>;
- 		};
-+
-+		nand: nand@68c60000 {
-+			compatible = "brcm,nand-iproc", "brcm,brcmnand-v6.1";
-+			reg = <0x00360000 0x600>,
-+			      <0x0050a408 0x600>,
-+			      <0x00360f00 0x20>;
-+			reg-names = "nand", "iproc-idm", "iproc-ext";
-+			interrupts = <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			brcm,nand-has-wp;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-2.7.4
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/clk.c | 38 ++++++++++++++++++++------------------
+>  1 file changed, 20 insertions(+), 18 deletions(-)
+> =
+
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 67201f67a14a..e77f03a47da6 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1794,23 +1794,16 @@ static int clk_core_set_parent(struct clk_core *c=
+ore, struct clk_core *parent)
+
+Nitpick: rename clk_core_set_parent to clk_core_st_parent_nolock. Drop
+the clk_core_set_parent_lock name below and just call it
+clk_core_set_parent.
+
+This matches all the other nolock patterns in clk.c.
+
+>         if (!core)
+>                 return 0;
+>  =
+
+> -       /* prevent racing with updates to the clock topology */
+> -       clk_prepare_lock();
+> -
+>         if (core->parent =3D=3D parent)
+> -               goto out;
+> +               return 0;
+>  =
+
+>         /* verify ops for for multi-parent clks */
+> -       if ((core->num_parents > 1) && (!core->ops->set_parent)) {
+> -               ret =3D -ENOSYS;
+> -               goto out;
+> -       }
+> +       if ((core->num_parents > 1) && (!core->ops->set_parent))
+> +               return -ENOSYS;
+>  =
+
+>         /* check that we are allowed to re-parent if the clock is in use =
+*/
+> -       if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count) {
+> -               ret =3D -EBUSY;
+> -               goto out;
+> -       }
+> +       if ((core->flags & CLK_SET_PARENT_GATE) && core->prepare_count)
+> +               return -EBUSY;
+>  =
+
+>         /* try finding the new parent index */
+>         if (parent) {
+> @@ -1818,8 +1811,7 @@ static int clk_core_set_parent(struct clk_core *cor=
+e, struct clk_core *parent)
+>                 if (p_index < 0) {
+>                         pr_debug("%s: clk %s can not be parent of clk %s\=
+n",
+>                                         __func__, parent->name, core->nam=
+e);
+> -                       ret =3D p_index;
+> -                       goto out;
+> +                       return p_index;
+>                 }
+>                 p_rate =3D parent->rate;
+>         }
+> @@ -1829,7 +1821,7 @@ static int clk_core_set_parent(struct clk_core *cor=
+e, struct clk_core *parent)
+>  =
+
+>         /* abort if a driver objects */
+>         if (ret & NOTIFY_STOP_MASK)
+> -               goto out;
+> +               return ret;
+>  =
+
+>         /* do the re-parent */
+>         ret =3D __clk_set_parent(core, parent, p_index);
+> @@ -1842,7 +1834,16 @@ static int clk_core_set_parent(struct clk_core *co=
+re, struct clk_core *parent)
+>                 __clk_recalc_accuracies(core);
+>         }
+>  =
+
+> -out:
+> +       return ret;
+
+I do not understand the benefit of the code churn above where gotos are
+replaced with returns. This should be a few line patch but it is much
+more than that due to this churn.
+
+> +}
+> +
+> +static int clk_core_set_parent_lock(struct clk_core *core,
+> +                                   struct clk_core *parent)
+> +{
+> +       int ret;
+> +
+> +       clk_prepare_lock();
+> +       ret =3D clk_core_set_parent(core, parent);
+
+Above line should be nolock.
+
+>         clk_prepare_unlock();
+>  =
+
+>         return ret;
+> @@ -1870,7 +1871,8 @@ int clk_set_parent(struct clk *clk, struct clk *par=
+ent)
+>         if (!clk)
+>                 return 0;
+>  =
+
+> -       return clk_core_set_parent(clk->core, parent ? parent->core : NUL=
+L);
+> +       return clk_core_set_parent_lock(clk->core,
+> +                                       parent ? parent->core : NULL);
+
+We can avoid this line by using the nolock pattern.
+
+Basic premise of the patch is OK though.
+
+Regards,
+Mike
+
+>  }
+>  EXPORT_SYMBOL_GPL(clk_set_parent);
+>  =
+
+> @@ -2720,7 +2722,7 @@ void clk_unregister(struct clk *clk)
+>                 /* Reparent all children to the orphan list. */
+>                 hlist_for_each_entry_safe(child, t, &clk->core->children,
+>                                           child_node)
+> -                       clk_core_set_parent(child, NULL);
+> +                       clk_core_set_parent_lock(child, NULL);
+>         }
+>  =
+
+>         hlist_del_init(&clk->core->child_node);
+> -- =
+
+> 2.9.3
+>=20
