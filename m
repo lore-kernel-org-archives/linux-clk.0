@@ -1,45 +1,78 @@
-Return-Path: <eddie.cai.linux@gmail.com>
-Return-Path: <eddie.cai.linux@gmail.com>
-From: Eddie Cai <eddie.cai.linux@gmail.com>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	heiko@sntech.de,
-	zhengxing@rock-chips.com,
-	zyw@rock-chips.com,
-	hl@rock-chips.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Eddie Cai <eddie.cai.linux@gmail.com>
-Subject: [PATCH 1/2] clk: rockchip: add SCLK_TESTCLKOUT1 id
-Date: Wed, 19 Apr 2017 15:30:22 +0800
-Message-Id: <20170419073023.1921-2-eddie.cai.linux@gmail.com>
-In-Reply-To: <20170419073023.1921-1-eddie.cai.linux@gmail.com>
-References: <20170419073023.1921-1-eddie.cai.linux@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:55524 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755687AbdDPMJz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 16 Apr 2017 08:09:55 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 01/11] dt-bindings: add binding for the Allwinner DE2 CCU
+Date: Sun, 16 Apr 2017 20:08:39 +0800
+Message-Id: <20170416120849.54542-2-icenowy@aosc.io>
+In-Reply-To: <20170416120849.54542-1-icenowy@aosc.io>
+References: <20170416120849.54542-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-we use SCLK_TESTCLKOUT1 for camera, so add this id.
+Allwinner "Display Engine 2.0" contains some clock controls in it.
 
-Signed-off-by: Eddie Cai <eddie.cai.linux@gmail.com>
+In order to add them as clock drivers, we need a device tree binding.
+Add the binding here.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- include/dt-bindings/clock/rk3399-cru.h | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v4:
+- Dropped the leading 0 in clock@1000000 .
+Changes in v3:
+- Fill the address space length of DE2 CCU to 0x100000, just reach the start of mixer0.
 
-diff --git a/include/dt-bindings/clock/rk3399-cru.h b/include/dt-bindings/clock/rk3399-cru.h
-index 220a60f..c505a98 100644
---- a/include/dt-bindings/clock/rk3399-cru.h
-+++ b/include/dt-bindings/clock/rk3399-cru.h
-@@ -132,6 +132,7 @@
- #define SCLK_RMII_SRC			166
- #define SCLK_PCIEPHY_REF100M		167
- #define SCLK_DDRC			168
-+#define SCLK_TESTCLKOUT1		169
- 
- #define DCLK_VOP0			180
- #define DCLK_VOP1			181
+ .../devicetree/bindings/clock/sun8i-de2.txt        | 31 ++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+new file mode 100644
+index 000000000000..15a60bd7dcf3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+@@ -0,0 +1,31 @@
++Allwinner Display Engine 2.0 Clock Control Binding
++--------------------------------------------------
++
++Required properties :
++- compatible: must contain one of the following compatibles:
++		- "allwinner,sun8i-a83t-de2-clk"
++		- "allwinner,sun50i-a64-de2-clk"
++		- "allwinner,sun50i-h5-de2-clk"
++
++- reg: Must contain the registers base address and length
++- clocks: phandle to the clocks feeding the display engine subsystem.
++	  Three are needed:
++  - "mod": the display engine module clock
++  - "bus": the bus clock for the whole display engine subsystem
++- clock-names: Must contain the clock names described just above
++- resets: phandle to the reset control for the display engine subsystem.
++- #clock-cells : must contain 1
++- #reset-cells : must contain 1
++
++Example:
++de2_clocks: clock@1000000 {
++	compatible = "allwinner,sun50i-a64-de2-clk";
++	reg = <0x01000000 0x100000>;
++	clocks = <&ccu CLK_DE>,
++		 <&ccu CLK_BUS_DE>;
++	clock-names = "mod",
++		      "bus";
++	resets = <&ccu RST_BUS_DE>;
++	#clock-cells = <1>;
++	#reset-cells = <1>;
++};
 -- 
-2.10.2
+2.12.2
+
