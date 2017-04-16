@@ -1,63 +1,50 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Tue, 4 Apr 2017 16:02:37 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Alex Frid <afrid@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: Propagate clk_out_x rate to parent
-Message-ID: <20170404140237.GJ843@ulmo.ba.sec>
-References: <1490189899-19401-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="LG0Ll82vYr46+VA1"
-In-Reply-To: <1490189899-19401-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 10/11] ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
+Date: Sun, 16 Apr 2017 20:08:48 +0800
+Message-Id: <20170416120849.54542-11-icenowy@aosc.io>
+In-Reply-To: <20170416120849.54542-1-icenowy@aosc.io>
+References: <20170416120849.54542-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Allwinner V3s SoC features a set of pins that have functionality of RGB
+LCD, the pins are at different pin ban than other SoCs.
 
---LG0Ll82vYr46+VA1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add pinctrl node for them.
 
-On Wed, Mar 22, 2017 at 03:38:19PM +0200, Peter De Schrijver wrote:
-> From: Alex Frid <afrid@nvidia.com>
->=20
-> Given that externx can only be used as a parent for clk_out_x, it makes
-> sense to propagate requests to make clk_out_x easier to handle.
->=20
-> Signed-off-by: Alex Frid <afrid@nvidia.com>
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra-pmc.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm/boot/dts/sun8i-v3s.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Applied to for-4.12/clk, thanks.
-
-Thierry
-
---LG0Ll82vYr46+VA1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljjp30ACgkQ3SOs138+
-s6FBPw//UO6MIeqZlfrw7RsRHg3Tlhnw16p0VjCtHHHilXvnt/gScqIHVWZKArqQ
-MsQxeBt3o5CDdpvKfH5Nc4XX4/WfrdMuYJja7r18c5JKZWQZ5A819AUP74gfExlB
-CQAwYKCpvR3rjs9X8CBysi/2ZLPnlj7aiA34sOae+T+N0Z9DgZdBJPSLBJgdSy7O
-uF6q8GzyHQDok5vTnbEjSITYAJkLhmea3fkfIzNGPl6BJanD0Eueiy3kCUWa+YW8
-Lbqhat/JrCq5t4Je1TO0uSnRkYsNtkz5AiB1vV9Db0ZcmBv/n9GBTFhXEaJHcHF4
-PNkTvMJ2bctS0Bar3Yne0GO931EnmD3xRRD63imiMlibU1DmII1BBsSRlSjEj/EM
-drZmLqNbG1TRqmrP2tWWe053BgdC3KEh2kAea7RS+tNGrtdTyiV+q2FDE+tM1T0Y
-ft1TA7y2MkWzZpI6E1g64y0spueyErCiEMPBaLgaL46TS8I6ugb0C6az9u/qdCTo
-LGos3f0FV+EzUFSd2PV73ePJvd9O8koOIgLxFHjI59Eydz+vwZ/xe1IPWB6egZMt
-n1vg7TjqfnWYJHZ/EgvbLsV2Fn0rOkTGmk9bvKiWsvq60uFQ+8lJGiC2nujrmIqM
-PF2xwuoJIAlcPTIWtxScZI4DZ7eqCoRkc9xap/wEVrLbs90vBJY=
-=9vKM
------END PGP SIGNATURE-----
-
---LG0Ll82vYr46+VA1--
+diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
+index ae23746731a8..ac783a8a4fd3 100644
+--- a/arch/arm/boot/dts/sun8i-v3s.dtsi
++++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
+@@ -297,6 +297,15 @@
+ 				function = "i2c0";
+ 			};
+ 
++			lcd_rgb666_pins: lcd_rgb666@0 {
++				pins = "PE0", "PE1", "PE2", "PE3", "PE4",
++				       "PE5", "PE6", "PE7", "PE8", "PE9",
++				       "PE10", "PE11", "PE12", "PE13", "PE14",
++				       "PE15", "PE16", "PE17", "PE18", "PE19",
++				       "PE23", "PE24";
++				function = "lcd";
++			};
++
+ 			uart0_pins_a: uart0@0 {
+ 				pins = "PB8", "PB9";
+ 				function = "uart0";
+-- 
+2.12.2
