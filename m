@@ -1,121 +1,136 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 7 Apr 2017 12:33:24 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: ls1021a: new platform clock driver
-Message-ID: <20170407193324.GB7065@codeaurora.org>
-References: <20170222150349.16790-1-alexander.stein@systec-electronic.com>
- <20170222150349.16790-2-alexander.stein@systec-electronic.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:38744 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756638AbdDPVzL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 16 Apr 2017 17:55:11 -0400
+Date: Mon, 17 Apr 2017 05:00:00 +0800
+In-Reply-To: <20170416205740.b5pk3kcxwaegij6g@lukather>
+References: <20170408185025.53841-1-icenowy@aosc.io> <20170408185025.53841-5-icenowy@aosc.io> <20170411091346.mcwyskezadabsobn@lukather> <b37490ed1282f45542168701dea332bb@aosc.io> <20170416205740.b5pk3kcxwaegij6g@lukather>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170222150349.16790-2-alexander.stein@systec-electronic.com>
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH 4/5] ARM: sun8i: h3: add operating-points-v2 table for CPU
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+CC: linux-pm@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-kernel@vger.kernel.org,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <40F4D1F2-EA59-4BD1-9A00-4C0AA7FED9D3@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/22, Alexander Stein wrote:
-> This driver currently only implements the QSPI divider register
-> SCFG_QSPI_CFG.
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
 
-Nobody reviewed. Sorry it fell down in my queue and I forgot.
 
-> ---
->  drivers/clk/Makefile      |  1 +
->  drivers/clk/clk-ls1021a.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 59 insertions(+)
->  create mode 100644 drivers/clk/clk-ls1021a.c
-> 
-> diff --git a/drivers/clk/clk-ls1021a.c b/drivers/clk/clk-ls1021a.c
-> new file mode 100644
-> index 0000000..2f64806
-> --- /dev/null
-> +++ b/drivers/clk/clk-ls1021a.c
-> @@ -0,0 +1,58 @@
-> +/*
-> + * Copyright (C) 2017 SYS TEC electronic GmbH
-> + * Alexander Stein <alexander.stein@systec-electronic.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify it under
-> + * the terms of the GNU General Public License version 2 as published by the
-> + * Free Software Foundation.
-> + */
-> +#include <linux/io.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +
-> +static const struct clk_div_table qspi_cfg_div_table[] = {
-> +	{ 0x0, 256 }, { 0x1, 64 }, { 0x2, 32 }, { 0x3, 24 },
-> +	{ 0x4,  20 }, { 0x5, 15 }, { 0x6, 12 }, { 0x7,  8 },
-> +	{ 0 },
-> +};
-> +
-> +static void __init scfg_qspi_cfg_ls1021a_init(struct device_node *np)
-> +{
-> +	const char *parent_name;
-> +	const char *name;
-> +	void __iomem *base;
-> +	struct clk *parent_clk;
-> +	struct clk *clk;
-> +	struct resource res;
+于 2017年4月17日 GMT+08:00 上午4:57:40, Maxime Ripard <maxime.ripard@free-electrons.com> 写到:
+>On Tue, Apr 11, 2017 at 09:28:55PM +0800, icenowy@aosc.io wrote:
+>> 在 2017-04-11 17:13，Maxime Ripard 写道：
+>> > On Sun, Apr 09, 2017 at 02:50:24AM +0800, Icenowy Zheng wrote:
+>> > > The CPU on Allwinner H3 can do dynamic frequency scaling.
+>> > > 
+>> > > Add a DVFS table based on the one tweaked by Armbian developers,
+>which
+>> > > are proven to work stably on BSP kernels.
+>> > > 
+>> > > Frequencies higher than 1008MHz are temporarily dropped in the
+>> > > table, as
+>> > > they may lead to over voltage on boards without proper regulator
+>> > > settings or over temperature on boards with proper regulator
+>settings.
+>> > > They will be added back once regulator settings are ready and
+>thermal
+>> > > sensor driver is merged.
+>> > > 
+>> > > In order to satisfy all different regulators (SY8106A which is
+>50mV
+>> > > per
+>> > > level, SY8113B which have two states: 1.1V and 1.3V, and some
+>board
+>> > > with
+>> > > non-tweakable regulators), all the OPPs are defined with a range
+>> > > which has
+>> > > the target value as the minimum allowed value, and 1.3V (the
+>highest
+>> > > VDD-CPUX voltage suggested by the datasheet) as the maximum
+>allowed
+>> > > value.
+>> > > It's proven to work well with a board with SY8113B.
+>> > > 
+>> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> > > ---
+>> > >  arch/arm/boot/dts/sun8i-h3.dtsi | 38
+>> > > +++++++++++++++++++++++++++++++++++++-
+>> > >  1 file changed, 37 insertions(+), 1 deletion(-)
+>> > > 
+>> > > diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
+>> > > b/arch/arm/boot/dts/sun8i-h3.dtsi
+>> > > index b36f9f423c39..a0cee17fe44b 100644
+>> > > --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+>> > > +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+>> > > @@ -43,32 +43,68 @@
+>> > >  #include "sunxi-h3-h5.dtsi"
+>> > > 
+>> > >  / {
+>> > > +	cpu0_opp_table: opp_table0 {
+>> > > +		compatible = "operating-points-v2";
+>> > > +		opp-shared;
+>> > > +
+>> > > +		opp@480000000 {
+>> > > +			opp-hz = /bits/ 64 <480000000>;
+>> > > +			opp-microvolt = <980000 980000 1300000>;
+>> > > +			clock-latency-ns = <244144>; /* 8 32k periods */
+>> > > +		};
+>> > > +
+>> > > +		opp@648000000 {
+>> > > +			opp-hz = /bits/ 64 <816000000>;
+>> > > +			opp-microvolt = <1020000 1020000 1300000>;
+>> > > +			clock-latency-ns = <244144>; /* 8 32k periods */
+>> > > +		};
+>> > > +
+>> > > +		opp@912000000 {
+>> > > +			opp-hz = /bits/ 64 <960000000>;
+>> > > +			opp-microvolt = <1080000 1080000 1300000>;
+>> > > +			clock-latency-ns = <244144>; /* 8 32k periods */
+>> > > +		};
+>> > > +
+>> > > +		opp@1008000000 {
+>> > > +			opp-hz = /bits/ 64 <1008000000>;
+>> > > +			opp-microvolt = <1140000 1140000 1300000>;
+>> > > +			clock-latency-ns = <244144>; /* 8 32k periods */
+>> > > +		};
+>> > > +	};
+>> > > +
+>> > 
+>> > From your serie, I guess you never actually tested those OPPs on
+>any
+>> > board without SY8113B, right?
+>> 
+>> Yes. But I will test them on an Orange Pi PC (newly got) soon.
+>
+>The orange pi pc also uses the SY8113B.
 
-Unused? but should be used!
+I remember in H3 Orange Pi's only One, Lite and Zero uses SY8113B, and PC is SY8106A.
 
-> +
-> +	base = of_iomap(np, 0);
-> +	if (!base) {
-> +		pr_warn("Failed to map address range for node %s\n", np->name);
+>
+>> (After all PLL_CPUX-related things are well fixed)
+>> 
+>> P.S. how to implement such a thing:
+>> 
+>> - Before tweaking CPUX clock, first switch it to osc24M
+>>   (implemented yet)
+>> - Before tweaking PLL_CPUX clock (triggered by tweaking CPUX
+>>   clock), first gate it
+>> - After tweaking PLL_CPUX clock, ungate it and wait it to be stable
+>> - After tweaking PLL_CPUX clock, change CPUX mux back to PLL_CPUX
+>>   (implemented yet)
+>> 
+>> I think notifiers on PLL_CPUX can be used to implement the second
+>> and third part?
+>
+>Do you still have any issues with the code we merged?
 
-We don't typically need any sort of error message.
+Chen-Yu's? I tested it and it has no issue at all.
 
-> +		return;
-> +	}
-> +
-> +	parent_clk = of_clk_get(np, 0);
-> +	if (IS_ERR(parent_clk)) {
-> +		pr_warn("Failed to get clock for node %s\n", np->name);
-> +		return;
-> +	}
-> +
-> +	/* Register the input clock under the desired name. */
-> +	parent_name = __clk_get_name(parent_clk);
-> +
-> +	if (of_property_read_string(np, "clock-output-names", &name))
-> +		name = np->name;
-
-Please just hardcode it unless you really need different names
-from DT. We're trying to move away from clock-output-names for
-clk tree description as it's inflexible in the face of DT ABI.
-
-> +
-> +	/* Works only as those 4 bits (Bits 28-31 big endian) do not cross byte boundary */
-
-This line is too long, but also what's going on? Some sort of
-64-bit register here?
-
-> +	clk = clk_register_divider_table(NULL, name, parent_name,
-> +				   0, base,
-> +				   4, 4, 0, qspi_cfg_div_table, NULL);
-> +	if (IS_ERR(clk)) {
-> +		pr_warn("Failed to register divider table clock (%ld)\n", PTR_ERR(clk));
-> +		return;
-> +	}
-> +	of_clk_add_provider(np, of_clk_src_simple_get, clk);
-
-Can you please use the clk_hw based provider and divider
-registration APIs?
-
-> +}
-> +CLK_OF_DECLARE(scfg_qspi_cfg_ls1021a, "fsl,scfg-qspi-cfg-ls1021a", scfg_qspi_cfg_ls1021a_init);
-
-Can this be a platform driver? We usually reserve CLK_OF_DECLARE
-for clks that we need to get the timer or interrupt controllers
-working because they need to probe so early. Otherwise use a
-proper driver and we can use platform device APIs instead of OF
-specific ones to map register regions and get clks.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>
+>Maxime
