@@ -1,36 +1,94 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Date: Sat, 22 Apr 2017 17:06:01 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 2/4] clk: samsung: exynos-audss: Convert to the new
- clk_hw API
-Message-ID: <20170422150601.qcrbjctlubx5slai@kozik-lap>
-References: <1492694199-9553-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170420131646eucas1p1d302e43fd2823f8e8defe93a24e03e29@eucas1p1.samsung.com>
- <1492694199-9553-3-git-send-email-m.szyprowski@samsung.com>
+Return-Path: <daniel.lezcano@linaro.org>
+Return-Path: <daniel.lezcano@linaro.org>
+Date: Sun, 16 Apr 2017 22:57:13 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: mturquette@baylibre.com, lee.jones@linaro.org, xuwei5@hisilicon.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH V2] clk: hi6220: Add the hi655x's pmic clock
+Message-ID: <20170416205713.GW2078@mai>
+References: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
+ <20170412150245.GK7065@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1492694199-9553-3-git-send-email-m.szyprowski@samsung.com>
+In-Reply-To: <20170412150245.GK7065@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 20, 2017 at 03:16:37PM +0200, Marek Szyprowski wrote:
-> Clock providers should use the new struct clk_hw based API, so convert
-> Exynos Audio Subsystem clock provider to the new approach.
+On Wed, Apr 12, 2017 at 08:02:45AM -0700, Stephen Boyd wrote:
+> On 04/08, Daniel Lezcano wrote:
+> >  
+> >  Example:
+> >  	pmic: pmic@f8000000 {
+> > @@ -24,4 +29,5 @@ Example:
+> >  		interrupt-controller;
+> >  		#interrupt-cells = <2>;
+> >  		pmic-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+> > +		clock-cells = <0>;
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos-audss.c | 55 +++++++++++++++++-----------------
->  1 file changed, 28 insertions(+), 27 deletions(-)
+> Should be #clock-cells instead.
+
+Ok.
+
+> > +static int hi655x_clk_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device *parent = pdev->dev.parent;
+> > +	struct hi655x_pmic *hi655x = dev_get_drvdata(parent);
+> > +	struct clk_init_data *hi655x_clk_init;
 > 
+> This can just go onto the stack? We don't need it around after
+> probe.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Agree.
+ 
+> > +	struct hi655x_clk *hi655x_clk;
+> > +	const char *clk_name = "hi655x-clk";
+> > +	int ret;
+> > +
+> > +	hi655x_clk = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk), GFP_KERNEL);
+> > +	if (!hi655x_clk)
+> > +		return -ENOMEM;
+> > +
+> > +	hi655x_clk_init = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk_init),
+> > +				       GFP_KERNEL);
+> > +	if (!hi655x_clk_init)
+> > +		return -ENOMEM;
+> > +
+> > +	of_property_read_string_index(parent->of_node, "clock-output-names",
+> > +				      0, &clk_name);
+> > +
+> > +	hi655x_clk_init->name	= clk_name;
+> > +	hi655x_clk_init->ops	= &hi655x_clk_ops;
+> > +
+> > +	hi655x_clk->clk_hw.init	= hi655x_clk_init;
+> > +	hi655x_clk->hi655x	= hi655x;
+> > +
+> > +	platform_set_drvdata(pdev, hi655x_clk);
+> > +
+> > +	ret = devm_clk_hw_register(&pdev->dev, &hi655x_clk->clk_hw);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
+> > +				     &hi655x_clk->clk_hw);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = clk_hw_register_clkdev(&hi655x_clk->clk_hw, clk_name, NULL);
+> 
+> Missed this last time. Do you use this clkdev lookup? The name is
+> usually supposed to be based on what the device is expecting,
+> instead of clk_name, and we would want some device name for the
+> third argument here.
 
-Best regards,
-Krzysztof
+I'm not sure to get your comment. Are you saying the clk_name should be the
+third argument?
+
+
+-- 
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
