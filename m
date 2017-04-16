@@ -1,54 +1,70 @@
-Return-Path: <elfring@users.sourceforge.net>
-Subject: [PATCH 4/5] clk: mvebu: Adjust two checks for null pointers in
- kirkwood_fix_sscg_deviation()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
-Message-ID: <8c5bdefb-896b-cd96-7e69-77ccb4a9286e@users.sourceforge.net>
-Date: Wed, 19 Apr 2017 21:56:21 +0200
-MIME-Version: 1.0
-In-Reply-To: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:55718 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756486AbdDPML2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 16 Apr 2017 08:11:28 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 08/11] drm/sun4i: tcon: add support for V3s TCON
+Date: Sun, 16 Apr 2017 20:08:46 +0800
+Message-Id: <20170416120849.54542-9-icenowy@aosc.io>
+In-Reply-To: <20170416120849.54542-1-icenowy@aosc.io>
+References: <20170416120849.54542-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Apr 2017 21:17:19 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Allwinner V3s SoC features a TCON without channel 1.
 
-The script “checkpatch.pl” pointed information out like the following.
+Add support for it.
 
-Comparison to NULL could be written !…
-
-Thus fix the affected source code places.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/mvebu/common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_drv.c  | 3 ++-
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 5 +++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
-index 472c88b90256..659d534a137b 100644
---- a/drivers/clk/mvebu/common.c
-+++ b/drivers/clk/mvebu/common.c
-@@ -51,13 +51,13 @@ u32 kirkwood_fix_sscg_deviation(u32 system_clk)
- 	u64 freq_swing_half;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 68c0b754cdb5..736b28e47281 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -176,7 +176,8 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
+ 	return of_device_is_compatible(node, "allwinner,sun5i-a13-tcon") ||
+ 		of_device_is_compatible(node, "allwinner,sun6i-a31-tcon") ||
+ 		of_device_is_compatible(node, "allwinner,sun6i-a31s-tcon") ||
+-		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon");
++		of_device_is_compatible(node, "allwinner,sun8i-a33-tcon") ||
++		of_device_is_compatible(node, "allwinner,sun8i-v3s-tcon");
+ }
  
- 	sscg_np = of_find_node_by_name(NULL, "sscg");
--	if (sscg_np == NULL) {
-+	if (!sscg_np) {
- 		pr_err("cannot get SSCG register node\n");
- 		return system_clk;
- 	}
+ static int compare_of(struct device *dev, void *data)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index f50ecb75c177..e85a726a9c36 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -533,11 +533,16 @@ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
+ 	/* nothing is supported */
+ };
  
- 	sscg_map = of_iomap(sscg_np, 0);
--	if (sscg_map == NULL) {
-+	if (!sscg_map) {
- 		pr_err("cannot map SSCG register\n");
- 		goto out;
- 	}
++static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
++	/* nothing is supported */
++};
++
+ static const struct of_device_id sun4i_tcon_of_table[] = {
+ 	{ .compatible = "allwinner,sun5i-a13-tcon", .data = &sun5i_a13_quirks },
+ 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
+ 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
+ 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
++	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sun4i_tcon_of_table);
 -- 
 2.12.2
+
