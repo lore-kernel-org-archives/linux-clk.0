@@ -1,131 +1,112 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 5 Apr 2017 18:10:03 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rick Altherr <raltherr@google.com>
-Cc: OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-iio@vger.kernel.org,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	David Lechner <david@lechnology.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	William Breathitt Gray <vilhelm.gray@gmail.com>,
-	linux-clk@vger.kernel.org, Andreas Klinger <ak@it-klinger.de>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Alison Schofield <amsfield22@gmail.com>,
-	Fabrice Gasnier <fabrice.gasnier@st.com>,
-	Hartmut Knaack <knaack.h@gmx.de>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Crestez Dan Leonard <leonard.crestez@intel.com>,
-	Akinobu Mita <akinobu.mita@gmail.com>,
-	Matt Ranostay <mranostay@gmail.com>
-Subject: Re: [PATCH v4 2/2] iio: Aspeed ADC
-Message-ID: <20170406011003.GP7065@codeaurora.org>
-References: <20170323184136.7349-1-raltherr@google.com>
- <20170323184136.7349-2-raltherr@google.com>
- <20170405202744.GB7065@codeaurora.org>
- <CAPLgG=nYnVuwRZOdXuFCaFy9P0cx_zqfk0f9orBv+8+HxcnqKQ@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:30700 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751582AbdDPDmj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Apr 2017 23:42:39 -0400
+Message-ID: <1492314150.19878.2.camel@mtkswgap22>
+Subject: Re: [PATCH v4 00/10] Add Basic SoC support for MT6797
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>
+Date: Sun, 16 Apr 2017 11:42:30 +0800
+In-Reply-To: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
+References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAPLgG=nYnVuwRZOdXuFCaFy9P0cx_zqfk0f9orBv+8+HxcnqKQ@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/05, Rick Altherr wrote:
-> On Wed, Apr 5, 2017 at 1:27 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 03/23, Rick Altherr wrote:
-> >> +
-> >> +static int aspeed_adc_probe(struct platform_device *pdev)
-> >> +{
-> >> +     struct iio_dev *indio_dev;
-> >> +     struct aspeed_adc_data *data;
-> >> +     const struct aspeed_adc_model_data *model_data;
-> >> +     struct resource *res;
-> >> +     const char *clk_parent_name;
-> >> +     int ret;
-> >> +     u32 adc_engine_control_reg_val;
-> >> +
-> >> +     indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*data));
-> >> +     if (!indio_dev)
-> >> +             return -ENOMEM;
-> >> +
-> >> +     data = iio_priv(indio_dev);
-> >> +     data->dev = &pdev->dev;
-> >> +
-> >> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >> +     data->base = devm_ioremap_resource(&pdev->dev, res);
-> >> +     if (IS_ERR(data->base))
-> >> +             return PTR_ERR(data->base);
-> >> +
-> >> +     /* Register ADC clock prescaler with source specified by device tree. */
-> >> +     spin_lock_init(&data->clk_lock);
-> >> +     clk_parent_name = of_clk_get_parent_name(pdev->dev.of_node, 0);
-> >
-> > What if the parent clk is not registered yet? Or if we're not
-> > always using DT in this driver? Put another way, this code is
-> > fragile. But I guess it probably works well enough for now so no
-> > big deal, just pointing out my fear.
+Hi Stephen, Matthias
+
+gentle ping. :-)
+
+Thanks.
+
+On Sat, 2017-04-08 at 09:20 +0800, Mars Cheng wrote:
+> This patch set adds basic SoC support for mediatek's first 10-core
+> chip, X20, also known as MT6797.
 > 
-> I'm not terribly worried about not using DT for this driver as it is
-> for an ARM SoC's built-in ADC which is only supported via DT.  I take
-> your point though.  What's the right way to do this?  Use clk_get() to
-> request by name and clock-names in the DT?
-
-Yes that will work. When we add probe defer to clk_get() things
-will work better. Presumably the clocks property already exists
-for this device so that of_clk_get_parent_name() works so it's
-not a binding change?
-
+> - based on 4.11-rc1
+> - support common clk framework
+> - apply patches about intpol just accepted to get full feature support:
+> http://lists.infradead.org/pipermail/linux-mediatek/2017-March/008371.html
+> http://lists.infradead.org/pipermail/linux-mediatek/2017-March/008375.html
+> http://lists.infradead.org/pipermail/linux-mediatek/2017-March/008373.html
 > 
-> >
-> >> +
-> >> +     data->clk_prescaler = clk_hw_register_divider(
-> >> +                             &pdev->dev, "prescaler", clk_parent_name, 0,
-> >> +                             data->base + ASPEED_REG_CLOCK_CONTROL,
-> >> +                             17, 15, 0, &data->clk_lock);
-> >> +     if (IS_ERR(data->clk_prescaler))
-> >> +             return PTR_ERR(data->clk_prescaler);
-> >> +
-> >> +     /*
-> >> +      * Register ADC clock scaler downstream from the prescaler. Allow rate
-> >> +      * setting to adjust the prescaler as well.
-> >> +      */
-> >> +     data->clk_scaler = clk_hw_register_divider(
-> >> +                             &pdev->dev, "scaler", "prescaler",
-> >> +                             CLK_SET_RATE_PARENT,
-> >> +                             data->base + ASPEED_REG_CLOCK_CONTROL,
-> >> +                             0, 10, 0, &data->clk_lock);
-> >> +     if (IS_ERR(data->clk_scaler)) {
-> >> +             ret = PTR_ERR(data->clk_scaler);
-> >> +             goto scaler_error;
-> >> +     }
-> >> +
-> >> +     /* Start all channels in normal mode. */
-> >> +     clk_prepare_enable(data->clk_scaler->clk);
-> >
-> > Eventually we'd like to get rid of hw->clk pointer so that users
-> > have to call some sort of clk_get() API and then we get warm
-> > fuzzies from knowing who is consuming a clk structure. Can you
-> > change this to register a clk provider and call clk_get()? I
-> > think a device that references itself should be OK in DT still,
-> > and would properly reflect what's going on.
+> Changes since v3:
+> - since intpol patches accepted in v3, remove them
+> - clk ID header separated from original clk driver submit
+> - clean up clk driver, including unnecessary header and fields in structure
 > 
-> Do you mean call of_clk_add_hw_provider with of_clk_hw_simple_get or
-> something else?  I'm still wrapping my head around the distinction
-> between clk, clk_hw, and a clk provider.
+> Changes since v2:
+> - prevent uncessary #intpol-bases for mtk-sysirq
+> - add fast path for mtk-sysirq set_type when introducing multiple bases
+> - add acked-by and tested-by
+> - remove wrong usage for timer node
 > 
+> Changes since v1:
+> - add multiple base addresses support, v1 only allow 2 bases
+> - clean up clk driver
+> 
+> Kevin-CW Chen (2):
+>   dt-bindings: arm: mediatek: document clk bindings for MT6797
+>   clk: mediatek: add clk support for MT6797
+> 
+> Mars Cheng (8):
+>   dt-bindings: mediatek: Add bindings for mediatek MT6797 Platform
+>   arm64: dts: mediatek: add mt6797 support
+>   clk: mediatek: add mt6797 clock IDs
+>   soc: mediatek: avoid using fixed spm power status defines
+>   soc: mediatek: add vdec item for scpsys
+>   dt-bindings: mediatek: add MT6797 power dt-bindings
+>   soc: mediatek: add MT6797 scpsys support
+>   arm64: dts: mediatek: add clk and scp nodes for MT6797
+> 
+>  Documentation/devicetree/bindings/arm/mediatek.txt |    4 +
+>  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
+>  .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
+>  .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
+>  .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
+>  .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
+>  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
+>  .../bindings/arm/mediatek/mediatek,vencsys.txt     |    3 +-
+>  .../interrupt-controller/mediatek,sysirq.txt       |    1 +
+>  .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
+>  .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +-
+>  arch/arm64/boot/dts/mediatek/Makefile              |    1 +
+>  arch/arm64/boot/dts/mediatek/mt6797-evb.dts        |   36 +
+>  arch/arm64/boot/dts/mediatek/mt6797.dtsi           |  245 +++++++
+>  drivers/clk/mediatek/Kconfig                       |   32 +
+>  drivers/clk/mediatek/Makefile                      |    5 +
+>  drivers/clk/mediatek/clk-mt6797-img.c              |   76 +++
+>  drivers/clk/mediatek/clk-mt6797-mm.c               |  136 ++++
+>  drivers/clk/mediatek/clk-mt6797-vdec.c             |   93 +++
+>  drivers/clk/mediatek/clk-mt6797-venc.c             |   78 +++
+>  drivers/clk/mediatek/clk-mt6797.c                  |  714 ++++++++++++++++++++
+>  drivers/soc/mediatek/mtk-scpsys.c                  |  149 +++-
+>  include/dt-bindings/clock/mt6797-clk.h             |  281 ++++++++
+>  include/dt-bindings/power/mt6797-power.h           |   30 +
+>  24 files changed, 1889 insertions(+), 8 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-evb.dts
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797.dtsi
+>  create mode 100644 drivers/clk/mediatek/clk-mt6797-img.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt6797-mm.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt6797-vdec.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt6797-venc.c
+>  create mode 100644 drivers/clk/mediatek/clk-mt6797.c
+>  create mode 100644 include/dt-bindings/clock/mt6797-clk.h
+>  create mode 100644 include/dt-bindings/power/mt6797-power.h
+> 
+> --
+> 1.7.9.5
 
-Yes. Unless you don't want to expose these details in DT because
-it's all internal to the device?
 
-In that case we need to go merge that patch on the clk list to
-have clk_hw_create_clk() or something like that, so we can turn a
-clk_hw structure into a clk pointer without directly referencing
-the clk member of clk_hw.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
