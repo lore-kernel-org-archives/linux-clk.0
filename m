@@ -1,43 +1,42 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v5 07/11] drm/sun4i: Add compatible string for V3s display engine
-Date: Sun, 23 Apr 2017 18:37:50 +0800
-Message-Id: <20170423103754.50012-8-icenowy@aosc.io>
-In-Reply-To: <20170423103754.50012-1-icenowy@aosc.io>
-References: <20170423103754.50012-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:34471 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756149AbdDPQ6L (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Apr 2017 12:58:11 -0400
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/2] ARM: shmobile: r8a7791: add GyroADC clock
+Date: Sun, 16 Apr 2017 18:57:08 +0200
+Message-Id: <20170416165709.27449-1-marek.vasut+renesas@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s features the new "Display Engine 2.0", which can now also
-be driven with our subdrivers in sun4i-drm.
+Add the GyroADC clock to the R8A7791 device tree.
 
-Add the compatible string for in sun4i_drv.c, in order to make the
-display engine and its components probed.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: linux-renesas-soc@vger.kernel.org
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
+ include/dt-bindings/clock/r8a7791-clock.h | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 8ddd72cd5873..68c0b754cdb5 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -294,6 +294,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
- 	{ .compatible = "allwinner,sun6i-a31-display-engine" },
- 	{ .compatible = "allwinner,sun6i-a31s-display-engine" },
- 	{ .compatible = "allwinner,sun8i-a33-display-engine" },
-+	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun4i_drv_of_table);
+diff --git a/include/dt-bindings/clock/r8a7791-clock.h b/include/dt-bindings/clock/r8a7791-clock.h
+index adc50dc31ab3..ef692134146b 100644
+--- a/include/dt-bindings/clock/r8a7791-clock.h
++++ b/include/dt-bindings/clock/r8a7791-clock.h
+@@ -109,6 +109,7 @@
+ #define R8A7791_CLK_SATA0		15
+ 
+ /* MSTP9 */
++#define R8A7791_CLK_GYROADC		1
+ #define R8A7791_CLK_GPIO7		4
+ #define R8A7791_CLK_GPIO6		5
+ #define R8A7791_CLK_GPIO5		7
 -- 
-2.12.2
+2.11.0
+
