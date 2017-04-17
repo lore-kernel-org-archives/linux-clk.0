@@ -1,49 +1,49 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Mon, 24 Apr 2017 09:59:44 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com,
-	xuwei5@hisilicon.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V3 2/2] ARM64: dts: hi6220-hikey: Add clock binding for
- the pmic mfd
-Message-ID: <20170424085944.aa5dsc4g6bwm5rgi@dell>
-References: <1492449567-31399-1-git-send-email-daniel.lezcano@linaro.org>
- <1492449567-31399-2-git-send-email-daniel.lezcano@linaro.org>
- <20170422020233.GA7065@codeaurora.org>
- <370c36f9-e6fc-416c-776b-edc1e42d7ddc@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <370c36f9-e6fc-416c-776b-edc1e42d7ddc@linaro.org>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: arm-soc <arm@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v2 0/7] ARM: SPEAr600 updates
+Date: Mon, 17 Apr 2017 14:46:38 +0200
+Message-Id: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 22 Apr 2017, Daniel Lezcano wrote:
+Arnd, Olof, Mike, Stephen,
 
-> On 22/04/2017 04:02, Stephen Boyd wrote:
-> > On 04/17, Daniel Lezcano wrote:
-> >> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> >> ---
-> >>  Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt | 6 ++++++
-> >>  arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts             | 1 +
-> >>  2 files changed, 7 insertions(+)
-> >>
-> > 
-> > I take it this goes through arm-soc? Not sure why I'm on To:
-> > line.
-> 
-> Probably it should go through Lee's tree.
+Here are a set of patches touching the support of the SPEAr600
+platform, for which the platform maintained Viresh Kumar has Acked the
+patches, but would like the arm-soc and clk maintainers to pick up the
+patches directly, see
+http://lists.infradead.org/pipermail/linux-arm-kernel/2017-April/501653.html.
 
-Unlikely.
+Arnd, Olof, could you pick patches 1 to 6 directly in your arm-soc tree ?
 
-The document and the DTS change should really have gone separately,
-but to save you from having to mess around so close to the merge window:
+Mike, Stephen, could you pick patch 7 directly in your clk tree ?
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Thanks a lot,
+
+Thomas Petazzoni
+
+Thomas Petazzoni (7):
+  arm: spear6xx: add labels to various nodes in spear600.dtsi
+  arm: spear6xx: use node labels in spear600-evb.dts
+  arm: spear6xx: fix spaces in spear600-evb.dts
+  arm: spear6xx: switch spear600-evb to the new flash partition DT
+    binding
+  arm: spear6xx: remove unneeded pinctrl properties in spear600-evb
+  arm: spear6xx: add DT description of the ADC on SPEAr600
+  clk: spear: fix ADC clock definition on SPEAr600
+
+ arch/arm/boot/dts/spear600-evb.dts | 148 ++++++++++++++++++-------------------
+ arch/arm/boot/dts/spear600.dtsi    |  28 ++++---
+ drivers/clk/spear/spear6xx_clock.c |   2 +-
+ 3 files changed, 91 insertions(+), 87 deletions(-)
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.7.4
