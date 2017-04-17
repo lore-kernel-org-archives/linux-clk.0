@@ -1,40 +1,44 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:36459 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755085AbdDMUCM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2017 16:02:12 -0400
-Date: Thu, 13 Apr 2017 15:02:10 -0500
-From: Rob Herring <robh@kernel.org>
-To: Mars Cheng <mars.cheng@mediatek.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        wsd_upstream@mediatek.com
-Subject: Re: [PATCH v4 08/10] dt-bindings: mediatek: add MT6797 power
- dt-bindings
-Message-ID: <20170413200210.spjtg2d3uwiobukt@rob-hp-laptop>
-References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
- <1491614435-23754-9-git-send-email-mars.cheng@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1491614435-23754-9-git-send-email-mars.cheng@mediatek.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: arm-soc <arm@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v2 7/7] clk: spear: fix ADC clock definition on SPEAr600
+Date: Mon, 17 Apr 2017 14:46:45 +0200
+Message-Id: <1492433205-13376-8-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Apr 08, 2017 at 09:20:33AM +0800, Mars Cheng wrote:
-> This adds power dt-bindings for MT6797
-> 
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
-> ---
->  .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+There is no SPEAr600 device named "adc". Instead, the description of the
+ADC was recently added to the Device Tree, and the device name is
+"d820b000.adc", so we should associate the ADC gatable clock to this
+device name.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/clk/spear/spear6xx_clock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/spear/spear6xx_clock.c b/drivers/clk/spear/spear6xx_clock.c
+index 7c9383c..f911d9f 100644
+--- a/drivers/clk/spear/spear6xx_clock.c
++++ b/drivers/clk/spear/spear6xx_clock.c
+@@ -313,7 +313,7 @@ void __init spear6xx_clk_init(void __iomem *misc_base)
+ 	/* clock derived from apb clk */
+ 	clk = clk_register_gate(NULL, "adc_clk", "apb_clk", 0, PERIP1_CLK_ENB,
+ 			ADC_CLK_ENB, 0, &_lock);
+-	clk_register_clkdev(clk, NULL, "adc");
++	clk_register_clkdev(clk, NULL, "d820b000.adc");
+ 
+ 	clk = clk_register_fixed_factor(NULL, "gpio0_clk", "apb_clk", 0, 1, 1);
+ 	clk_register_clkdev(clk, NULL, "f0100000.gpio");
+-- 
+2.7.4
