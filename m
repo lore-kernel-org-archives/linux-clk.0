@@ -1,172 +1,161 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH] clk: at91: Add sama5d2 suspend/resume
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <20170414215618.16534-1-alexandre.belloni@free-electrons.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Message-ID: <b90ec1d7-f3db-60ac-e0cd-54c4143e6579@microchip.com>
-Date: Mon, 24 Apr 2017 18:25:31 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:46912 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932413AbdDQHqb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2017 03:46:31 -0400
+Date: Mon, 17 Apr 2017 09:46:19 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: linux-pm@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-kernel@vger.kernel.org,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/5] ARM: sun8i: h3: add operating-points-v2 table for CPU
+Message-ID: <20170417074619.ilxkrdavmcoeno2v@lukather>
+References: <20170408185025.53841-1-icenowy@aosc.io>
+ <20170408185025.53841-5-icenowy@aosc.io>
+ <20170411091346.mcwyskezadabsobn@lukather>
+ <b37490ed1282f45542168701dea332bb@aosc.io>
+ <20170416205740.b5pk3kcxwaegij6g@lukather>
+ <40F4D1F2-EA59-4BD1-9A00-4C0AA7FED9D3@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <20170414215618.16534-1-alexandre.belloni@free-electrons.com>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="phl23oyx6qgx6gfm"
+In-Reply-To: <40F4D1F2-EA59-4BD1-9A00-4C0AA7FED9D3@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Le 14/04/2017 à 23:56, Alexandre Belloni a écrit :
-> On sama5d2, VDD core maybe be cut while in suspend. This means registers
-> will be lost. Ensure they are saved and restored properly.
 
-I'm pretty sure we can't just restore them like you do. But the
-bootloader must have restored the registers already, so maybe an update
-of the regmap cache should be sufficient...
+--phl23oyx6qgx6gfm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> ---
->  drivers/clk/at91/pmc.c | 108 +++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 108 insertions(+)
-> 
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index 526df5ba042d..5cd1f0a2ea72 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -13,7 +13,9 @@
->  #include <linux/clk/at91_pmc.h>
->  #include <linux/of.h>
->  #include <linux/mfd/syscon.h>
-> +#include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> +#include <linux/syscore_ops.h>
->  
->  #include <asm/proc-fns.h>
->  
-> @@ -41,3 +43,109 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
-> +
-> +#ifdef CONFIG_PM
-> +static struct regmap *pmcreg;
-> +
-> +static struct
-> +{
-> +	u32 scsr;
-> +	u32 pcsr0;
-> +	u32 uckr;
-> +	u32 mor;
-> +	u32 mcfr;
-> +	u32 pllar;
-> +	u32 mckr;
-> +	u32 usb;
-> +	u32 imr;
-> +	u32 pcsr1;
-> +	u32 pcr[64];
-> +} pmc_cache;
-> +
-> +static int pmc_suspend(void)
-> +{
-> +	int i;
-> +
-> +	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
-> +	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
-> +	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
-> +	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
-> +	regmap_read(pmcreg, AT91_CKGR_MCFR, &pmc_cache.mcfr);
-> +	regmap_read(pmcreg, AT91_CKGR_PLLAR, &pmc_cache.pllar);
-> +	regmap_read(pmcreg, AT91_PMC_MCKR, &pmc_cache.mckr);
-> +	regmap_read(pmcreg, AT91_PMC_USB, &pmc_cache.usb);
-> +	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.imr);
-> +	regmap_read(pmcreg, AT91_PMC_PCSR1, &pmc_cache.pcsr1);
-> +
-> +	for (i = 2; i < 64; i++) {
-> +		regmap_write(pmcreg, AT91_PMC_PCR, (i & AT91_PMC_PCR_PID_MASK));
-> +		regmap_read(pmcreg, AT91_PMC_PCR, &pmc_cache.pcr[i]);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static bool pmc_ready(unsigned int mask)
-> +{
-> +	unsigned int status;
-> +
-> +	regmap_read(pmcreg, AT91_PMC_SR, &status);
-> +
-> +	return ((status & mask) == mask) ? 1 : 0;
-> +}
-> +
-> +static void pmc_resume(void)
-> +{
-> +	int i;
-> +	unsigned int mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
+On Mon, Apr 17, 2017 at 05:00:00AM +0800, Icenowy Zheng wrote:
+>=20
+>=20
+> =E4=BA=8E 2017=E5=B9=B44=E6=9C=8817=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=88=
+4:57:40, Maxime Ripard <maxime.ripard@free-electrons.com> =E5=86=99=E5=88=
+=B0:
+> >On Tue, Apr 11, 2017 at 09:28:55PM +0800, icenowy@aosc.io wrote:
+> >> =E5=9C=A8 2017-04-11 17:13=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=
+=BC=9A
+> >> > On Sun, Apr 09, 2017 at 02:50:24AM +0800, Icenowy Zheng wrote:
+> >> > > The CPU on Allwinner H3 can do dynamic frequency scaling.
+> >> > >=20
+> >> > > Add a DVFS table based on the one tweaked by Armbian developers,
+> >which
+> >> > > are proven to work stably on BSP kernels.
+> >> > >=20
+> >> > > Frequencies higher than 1008MHz are temporarily dropped in the
+> >> > > table, as
+> >> > > they may lead to over voltage on boards without proper regulator
+> >> > > settings or over temperature on boards with proper regulator
+> >settings.
+> >> > > They will be added back once regulator settings are ready and
+> >thermal
+> >> > > sensor driver is merged.
+> >> > >=20
+> >> > > In order to satisfy all different regulators (SY8106A which is
+> >50mV
+> >> > > per
+> >> > > level, SY8113B which have two states: 1.1V and 1.3V, and some
+> >board
+> >> > > with
+> >> > > non-tweakable regulators), all the OPPs are defined with a range
+> >> > > which has
+> >> > > the target value as the minimum allowed value, and 1.3V (the
+> >highest
+> >> > > VDD-CPUX voltage suggested by the datasheet) as the maximum
+> >allowed
+> >> > > value.
+> >> > > It's proven to work well with a board with SY8113B.
+> >> > >=20
+> >> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> >> > > ---
+> >> > >  arch/arm/boot/dts/sun8i-h3.dtsi | 38
+> >> > > +++++++++++++++++++++++++++++++++++++-
+> >> > >  1 file changed, 37 insertions(+), 1 deletion(-)
+> >> > >=20
+> >> > > diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
+> >> > > b/arch/arm/boot/dts/sun8i-h3.dtsi
+> >> > > index b36f9f423c39..a0cee17fe44b 100644
+> >> > > --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+> >> > > +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+> >> > > @@ -43,32 +43,68 @@
+> >> > >  #include "sunxi-h3-h5.dtsi"
+> >> > >=20
+> >> > >  / {
+> >> > > +	cpu0_opp_table: opp_table0 {
+> >> > > +		compatible =3D "operating-points-v2";
+> >> > > +		opp-shared;
+> >> > > +
+> >> > > +		opp@480000000 {
+> >> > > +			opp-hz =3D /bits/ 64 <480000000>;
+> >> > > +			opp-microvolt =3D <980000 980000 1300000>;
+> >> > > +			clock-latency-ns =3D <244144>; /* 8 32k periods */
+> >> > > +		};
+> >> > > +
+> >> > > +		opp@648000000 {
+> >> > > +			opp-hz =3D /bits/ 64 <816000000>;
+> >> > > +			opp-microvolt =3D <1020000 1020000 1300000>;
+> >> > > +			clock-latency-ns =3D <244144>; /* 8 32k periods */
+> >> > > +		};
+> >> > > +
+> >> > > +		opp@912000000 {
+> >> > > +			opp-hz =3D /bits/ 64 <960000000>;
+> >> > > +			opp-microvolt =3D <1080000 1080000 1300000>;
+> >> > > +			clock-latency-ns =3D <244144>; /* 8 32k periods */
+> >> > > +		};
+> >> > > +
+> >> > > +		opp@1008000000 {
+> >> > > +			opp-hz =3D /bits/ 64 <1008000000>;
+> >> > > +			opp-microvolt =3D <1140000 1140000 1300000>;
+> >> > > +			clock-latency-ns =3D <244144>; /* 8 32k periods */
+> >> > > +		};
+> >> > > +	};
+> >> > > +
+> >> >=20
+> >> > From your serie, I guess you never actually tested those OPPs on
+> >any
+> >> > board without SY8113B, right?
+> >>=20
+> >> Yes. But I will test them on an Orange Pi PC (newly got) soon.
+> >
+> >The orange pi pc also uses the SY8113B.
+>=20
+> I remember in H3 Orange Pi's only One, Lite and Zero uses SY8113B,
+> and PC is SY8106A.
 
-...Moreover, some of these registers needs a particular sequencing to
-behave properly while writing to it. The rationale behind that (if we
-can speak about rationale) is that you should only change *one* field at
-a time and for some fields wait for the proper "ready bit" to show up.
+Ah, my bad, I confused the two.
 
-A proven good sequence is available in AT91Bootstrap:
+Thanks!
+Maxime
 
-> +	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
-> +	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
-> +	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
-> +	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
-> +	regmap_write(pmcreg, AT91_CKGR_MCFR, pmc_cache.mcfr);
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-for this one:
-> +	regmap_write(pmcreg, AT91_CKGR_PLLAR, pmc_cache.pllar);
-https://github.com/linux4sam/at91bootstrap/blob/master/driver/pmc.c#L156
+--phl23oyx6qgx6gfm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-and this one at least:
-> +	regmap_write(pmcreg, AT91_PMC_MCKR, pmc_cache.mckr);
-https://github.com/linux4sam/at91bootstrap/blob/master/driver/pmc.c#L168
+-----BEGIN PGP SIGNATURE-----
 
-> +	regmap_write(pmcreg, AT91_PMC_USB, pmc_cache.usb);
-> +	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.imr);
-> +	regmap_write(pmcreg, AT91_PMC_PCER1, pmc_cache.pcsr1);
-> +
-> +	for (i = 2; i < 64; i++) {
-> +		regmap_write(pmcreg, AT91_PMC_PCR, (i & AT91_PMC_PCR_PID_MASK));
-> +		regmap_write(pmcreg, AT91_PMC_PCR, pmc_cache.pcr[i]);
-> +	}
-> +
-> +	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
-> +		mask |= AT91_PMC_LOCKU;
-> +
-> +	while (!pmc_ready(mask))
-> +		cpu_relax();
-> +}
-> +
-> +static struct syscore_ops pmc_syscore_ops = {
-> +	.suspend = pmc_suspend,
-> +	.resume = pmc_resume,
-> +};
-> +
-> +static const struct of_device_id sama5d2_pmc_dt_ids[] = {
-> +	{ .compatible = "atmel,sama5d2-pmc" },
-> +	{ /* sentinel */ }
-> +};
-> +
-> +static int __init pmc_register_ops(void)
-> +{
-> +	struct device_node *np;
-> +
-> +	np = of_find_matching_node(NULL, sama5d2_pmc_dt_ids);
-> +
-> +	pmcreg = syscon_node_to_regmap(np);
-> +	if (IS_ERR(pmcreg))
-> +		return PTR_ERR(pmcreg);
-> +
-> +	register_syscore_ops(&pmc_syscore_ops);
-> +
-> +	return 0;
-> +}
-> +/* This has to happen before arch_initcall becaues of the tcb_clksrc driver */
-> +postcore_initcall(pmc_register_ops);
-> +#endif
-> 
+iQIcBAABCAAGBQJY9HLCAAoJEBx+YmzsjxAgYtIP/Rp7dPyP/m/vyHRDEtrshat5
+yXWViAyZIFC4q2l+fu0Ybu61ol4XEG/wfcX9z9uMy4daIhBJbUa8Boxlj3AvfWpM
+tQR0Hejxpkstmk9LOVRxn1hrXM4hIm0d9WR9uKS34/uuD87MP/Y2o1yeG1PTVJcI
+EDggUH1gmCfvSfLsB7iXo+SjjboLxfRk8YKPxwyOoJM7L6Z5v/FBftkiT8XZbYB7
+MERKfFKLAfStI4VuTPAnoh7RDOQC08FUTiPDnNXPra+t22dPI2Dm/4mPWZJ86i1P
+Vbk7jep1Gbda8v4qrxBC5IKrRSVNiSaD5xQjKVjtiOwstpoV5zBUJt9gLk6LRB8t
+FrlX0/Aq7ktpGtGRvSuDqHGTh7u65rzgY7aKdnkV90SrTKWTO7uvDWAorP+emIg4
+ZGXdqHSscKeEb6QgAwybxc7FEgPTqbM7WG1o9SvHM/LLANJT9ws8UEiOvpVXU14t
+H3TptJu9xkA1QoE5kKZ/kMPVRlVAGDbITPKiFwL7saWgJ3muWpbIDHB02bMDcU6Y
+ZToNNnz/PU8ad38kDf2m4DQT/dEoI8gH7y2gmSCmd/SuDg5TdiRP7m4AB58h3/uQ
+o2TwAFs7WzKqeTx7x7jKazb0CrpdhH2Evst2ID2pLyPm0EC1NtLC3OuxI8j7n4HM
+11vFsv1AUbTEevWNfyic
+=S1Ax
+-----END PGP SIGNATURE-----
 
-
--- 
-Nicolas Ferre
+--phl23oyx6qgx6gfm--
