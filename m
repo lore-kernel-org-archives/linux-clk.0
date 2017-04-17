@@ -1,56 +1,205 @@
-Return-Path: <s.nawrocki@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] clk/samsung updates
-To: Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- linux-samsung-soc@vger.kernel.org
-Message-id: <d3368372-c7c7-8d34-e8c1-64c94ffd06a9@samsung.com>
-Date: Tue, 25 Apr 2017 12:48:39 +0200
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-References: 
- <CGME20170425104844epcas5p2aaaca4371c1510c7beecf670e0e58b2b@epcas5p2.samsung.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: arm-soc <arm@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v2 2/7] arm: spear6xx: use node labels in spear600-evb.dts
+Date: Mon, 17 Apr 2017 14:46:40 +0200
+Message-Id: <1492433205-13376-3-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen, Mike,
+Now that we have introduced node labels in spear600.dtsi, we can use
+them for spear600-evb.dts.
 
-This pull request contains only patches converting clk/samsung to the clk_hw
-API, if it's too late please just postpone that to 4.13 merge window. Thanks.
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ arch/arm/boot/dts/spear600-evb.dts | 156 ++++++++++++++++++-------------------
+ 1 file changed, 76 insertions(+), 80 deletions(-)
 
-The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
-
-  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-
-are available in the git repository at:
-
-  git://linuxtv.org/snawrocki/samsung.git for-v4.12/clk/next
-
-for you to fetch changes up to 6a907d767e72eaf26c57fc54a372d34ab303bfbb:
-
-  clk: samsung: s5pv210-audss: Convert to the new clk_hw API (2017-04-25 11:32:55 +0200)
-
-----------------------------------------------------------------
-Marek Szyprowski (6):
-      clk: samsung: Remove dead code
-      clk: samsung: Add local variable to match its purpose
-      clk: samsung: Convert common drivers to the new clk_hw API
-      clk: samsung: exynos-audss: Convert to the new clk_hw API
-      clk: samsung: exynos-clkout: Convert to the new clk_hw API
-      clk: samsung: s5pv210-audss: Convert to the new clk_hw API
-
- drivers/clk/samsung/clk-cpu.c           | 17 +++--
- drivers/clk/samsung/clk-exynos-audss.c  | 55 +++++++-------
- drivers/clk/samsung/clk-exynos-clkout.c | 18 ++---
- drivers/clk/samsung/clk-pll.c           | 14 ++--
- drivers/clk/samsung/clk-pll.h           |  4 --
- drivers/clk/samsung/clk-s3c2410-dclk.c  | 75 ++++++++++---------
- drivers/clk/samsung/clk-s5pv210-audss.c | 50 ++++++-------
- drivers/clk/samsung/clk.c               | 91 +++++++++++-------------
- drivers/clk/samsung/clk.h               |  9 ++-
- 9 files changed, 160 insertions(+), 173 deletions(-)
-
+diff --git a/arch/arm/boot/dts/spear600-evb.dts b/arch/arm/boot/dts/spear600-evb.dts
+index d865a89..375eb61 100644
+--- a/arch/arm/boot/dts/spear600-evb.dts
++++ b/arch/arm/boot/dts/spear600-evb.dts
+@@ -22,95 +22,91 @@
+ 		device_type = "memory";
+ 		reg = <0 0x10000000>;
+ 	};
++};
+ 
+-	ahb {
+-		clcd@fc200000 {
+-			status = "okay";
+-		};
++&clcd {
++	status = "okay";
++};
+ 
+-		dma@fc400000 {
+-			status = "okay";
+-		};
++&dmac {
++	status = "okay";
++};
+ 
+-		ehci@e1800000 {
+-			status = "okay";
+-		};
++&ehci_usb0 {
++	status = "okay";
++};
+ 
+-		ehci@e2000000 {
+-			status = "okay";
+-		};
++&ehci_usb1 {
++	status = "okay";
++};
+ 
+-		gmac: ethernet@e0800000 {
+-			phy-mode = "gmii";
+-			status = "okay";
+-		};
++&gmac {
++	phy-mode = "gmii";
++	status = "okay";
++};
+ 
+-		ohci@e1900000 {
+-			status = "okay";
+-		};
++&ohci_usb0 {
++	status = "okay";
++};
+ 
+-		ohci@e2100000 {
+-			status = "okay";
+-		};
++&ohci_usb1 {
++	status = "okay";
++};
+ 
+-		smi: flash@fc000000 {
+-			status = "okay";
+-			clock-rate=<50000000>;
+-
+-			flash@f8000000 {
+-				#address-cells = <1>;
+-				#size-cells = <1>;
+-				reg = <0xf8000000 0x800000>;
+-				st,smi-fast-mode;
+-
+-				partition@0 {
+-					label = "xloader";
+-					reg = <0x0 0x10000>;
+-				};
+-				partition@10000 {
+-					label = "u-boot";
+-					reg = <0x10000 0x50000>;
+-				};
+-				partition@60000 {
+-					label = "environment";
+-					reg = <0x60000 0x10000>;
+-				};
+-				partition@70000 {
+-					label = "dtb";
+-					reg = <0x70000 0x10000>;
+-				};
+-				partition@80000 {
+-					label = "linux";
+-					reg = <0x80000 0x310000>;
+-				};
+-				partition@390000 {
+-					label = "rootfs";
+-					reg = <0x390000 0x0>;
+-				};
+-			};
+-		};
++&smi {
++	status = "okay";
++	clock-rate=<50000000>;
++
++	flash@f8000000 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		reg = <0xf8000000 0x800000>;
++		st,smi-fast-mode;
+ 
+-		apb {
+-			serial@d0000000 {
+-				status = "okay";
+-				pinctrl-names = "default";
+-				pinctrl-0 = <>;
+-			};
+-
+-			serial@d0080000 {
+-				status = "okay";
+-				pinctrl-names = "default";
+-				pinctrl-0 = <>;
+-			};
+-
+-			rtc@fc900000 {
+-			       status = "okay";
+-			};
+-
+-			i2c@d0200000 {
+-				clock-frequency = <400000>;
+-				status = "okay";
+-			};
++		partition@0 {
++			label = "xloader";
++			reg = <0x0 0x10000>;
++		};
++		partition@10000 {
++			label = "u-boot";
++			reg = <0x10000 0x50000>;
++		};
++		partition@60000 {
++			label = "environment";
++			reg = <0x60000 0x10000>;
++		};
++		partition@70000 {
++			label = "dtb";
++			reg = <0x70000 0x10000>;
++		};
++		partition@80000 {
++			label = "linux";
++			reg = <0x80000 0x310000>;
++		};
++		partition@390000 {
++			label = "rootfs";
++			reg = <0x390000 0x0>;
+ 		};
+ 	};
+ };
++
++&uart0 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <>;
++};
++
++&uart1 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <>;
++};
++
++&rtc {
++	status = "okay";
++};
++
++&i2c {
++	clock-frequency = <400000>;
++	status = "okay";
++};
 -- 
-Regards,
-Sylwester
+2.7.4
