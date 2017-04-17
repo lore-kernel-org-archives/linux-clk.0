@@ -1,50 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Apr 2017 19:10:43 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: cs2000: Fix the setting of saved_rate during the
- resume process
-Message-ID: <20170422021043.GD7065@codeaurora.org>
-References: <1492624001-3758-12-git-send-email-ykaneko0929@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1492624001-3758-12-git-send-email-ykaneko0929@gmail.com>
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: arm-soc <arm@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v2 5/7] arm: spear6xx: remove unneeded pinctrl properties in spear600-evb
+Date: Mon, 17 Apr 2017 14:46:43 +0200
+Message-Id: <1492433205-13376-6-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/20, Yoshihiro Kaneko wrote:
-> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> 
-> In the resume process, there is the case that other drivers call
-> cs2000_enable before cs2000_resume is called. Since the order of
-> resume process is not guaranteed, it is needed to reset the clk
-> rate in any cases before cs2000 is used.
-> 
-> Also, the current cs2000 driver is using resume_early function.
-> The using .resume_early is bad idea because the dependency with
-> other drivers is to be complicated.
-> 
-> This patch adds to reset the clk rate in cs2000_enable and
-> changes to use from .resume_early to .resume.
-> 
-> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> ---
+The spear6xx doesn't have a pinctrl driver, since the pinmux is globally
+defined through a single register, generally configured by the
+firmware/bootloader.
 
-Was this supposed to be sent as a series? This is the second
-patch in the series? 
+Therefore, the pinctrl related properties in spear600-evb.dts are not
+necessary.
 
-In what situation does a driver call clk_prepare() on the clocks
-in here before the device's resume callback is called? I would
-think that any devices that use the clks provided by this driver
-would be probe defered until the clks are registered, so they
-would be later in the suspend/resume list than this clk driver?
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ arch/arm/boot/dts/spear600-evb.dts | 4 ----
+ 1 file changed, 4 deletions(-)
 
+diff --git a/arch/arm/boot/dts/spear600-evb.dts b/arch/arm/boot/dts/spear600-evb.dts
+index f36603f..c67e76c 100644
+--- a/arch/arm/boot/dts/spear600-evb.dts
++++ b/arch/arm/boot/dts/spear600-evb.dts
+@@ -96,14 +96,10 @@
+ 
+ &uart0 {
+ 	status = "okay";
+-	pinctrl-names = "default";
+-	pinctrl-0 = <>;
+ };
+ 
+ &uart1 {
+ 	status = "okay";
+-	pinctrl-names = "default";
+-	pinctrl-0 = <>;
+ };
+ 
+ &rtc {
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
