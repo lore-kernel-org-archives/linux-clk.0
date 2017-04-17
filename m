@@ -1,76 +1,102 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:43044 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752935AbdDDTjR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2017 15:39:17 -0400
-Date: Tue, 4 Apr 2017 12:39:14 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Will Deacon <will.deacon@arm.com>
-Cc: Rob Clark <robdclark@gmail.com>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH V3 0/5] iommu/arm-smmu: Add runtime pm/sleep support
-Message-ID: <20170404193914.GF18246@codeaurora.org>
-References: <1489073748-3659-1-git-send-email-sricharan@codeaurora.org>
- <20170331175457.GD4897@arm.com>
- <CAF6AEGv_1pNvhCc-mVP5S28Yt5kTJmTRfe8tKSJpEmxfOKM7Jg@mail.gmail.com>
- <20170403172307.GI5706@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170403172307.GI5706@arm.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <thomas.petazzoni@free-electrons.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: arm-soc <arm@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH v2 4/7] arm: spear6xx: switch spear600-evb to the new flash partition DT binding
+Date: Mon, 17 Apr 2017 14:46:42 +0200
+Message-Id: <1492433205-13376-5-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
+References: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/03, Will Deacon wrote:
-> On Fri, Mar 31, 2017 at 10:58:16PM -0400, Rob Clark wrote:
-> > On Fri, Mar 31, 2017 at 1:54 PM, Will Deacon <will.deacon@arm.com> wrote:
-> > > On Thu, Mar 09, 2017 at 09:05:43PM +0530, Sricharan R wrote:
-> > >> This series provides the support for turning on the arm-smmu's
-> > >> clocks/power domains using runtime pm. This is done using the
-> > >> recently introduced device links patches, which lets the symmu's
-> > >> runtime to follow the master's runtime pm, so the smmu remains
-> > >> powered only when the masters use it.
-> > >
-> > > Do you have any numbers for the power savings you achieve with this?
-> > > How often do we actually manage to stop the SMMU clocks on an SoC with
-> > > a handful of masters?
-> > >
-> > > In other words, is this too coarse-grained to be useful, or is it common
-> > > that all the devices upstream of the SMMU are suspended?
-> > 
-> > well, if you think about a phone/tablet with a command mode panel,
-> > pretty much all devices will be suspended most of the time ;-)
-> 
-> Well, that's really what I was asking about. I assumed that periodic
-> modem/radio transactions would keep the SMMU clocked, so would like to get a
-> rough idea of the power savings achieved with this coarse-grained approach.
+This commit moves spear600-evb.dts to use the new flash partition Device
+Tree binding documented in
+Documentation/devicetree/bindings/mtd/partition.txt.
 
-Sometimes we distribute SMMUs to each IP block in the system and
-let each one of those live in their own clock + power domain. In
-these cases, the SMMU can be powered down along with the only IP
-block that uses it. Furthermore, sometimes we put the IP block
-and the SMMU inside the same power domain to really tie the two
-together, so we definitely have cases where all devices (device?)
-upstream of the SMMU are suspended. And in the case of
-multimedia, it could be very often that something like the camera
-app isn't open and thus the SMMU dedicated for the camera can be
-powered down.
+As this Device Tree binding document says: "For backwards compatibility
+partitions as direct subnodes of the mtd device are supported. This use
+is discouraged."
 
-Other times we have two SMMUs in the system where one is
-dedicated to GPU and the other is "everything else". Even in
-these cases, we can suspend the GPU one when the GPU is inactive
-because it's the only consumer. The other SMMU might not be as
-fine grained, but I think we still power it down quite often
-because the consumers are mostly multimedia devices that aren't
-active when the display is off.
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ arch/arm/boot/dts/spear600-evb.dts | 54 ++++++++++++++++++++------------------
+ 1 file changed, 29 insertions(+), 25 deletions(-)
 
+diff --git a/arch/arm/boot/dts/spear600-evb.dts b/arch/arm/boot/dts/spear600-evb.dts
+index 32a44b6..f36603f 100644
+--- a/arch/arm/boot/dts/spear600-evb.dts
++++ b/arch/arm/boot/dts/spear600-evb.dts
+@@ -58,34 +58,38 @@
+ 	clock-rate = <50000000>;
+ 
+ 	flash@f8000000 {
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+ 		reg = <0xf8000000 0x800000>;
+ 		st,smi-fast-mode;
+ 
+-		partition@0 {
+-			label = "xloader";
+-			reg = <0x0 0x10000>;
+-		};
+-		partition@10000 {
+-			label = "u-boot";
+-			reg = <0x10000 0x50000>;
+-		};
+-		partition@60000 {
+-			label = "environment";
+-			reg = <0x60000 0x10000>;
+-		};
+-		partition@70000 {
+-			label = "dtb";
+-			reg = <0x70000 0x10000>;
+-		};
+-		partition@80000 {
+-			label = "linux";
+-			reg = <0x80000 0x310000>;
+-		};
+-		partition@390000 {
+-			label = "rootfs";
+-			reg = <0x390000 0x0>;
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "xloader";
++				reg = <0x0 0x10000>;
++			};
++			partition@10000 {
++				label = "u-boot";
++				reg = <0x10000 0x50000>;
++			};
++			partition@60000 {
++				label = "environment";
++				reg = <0x60000 0x10000>;
++			};
++			partition@70000 {
++				label = "dtb";
++				reg = <0x70000 0x10000>;
++			};
++			partition@80000 {
++				label = "linux";
++				reg = <0x80000 0x310000>;
++			};
++			partition@390000 {
++				label = "rootfs";
++				reg = <0x390000 0x0>;
++			};
+ 		};
+ 	};
+ };
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
