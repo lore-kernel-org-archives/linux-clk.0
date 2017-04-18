@@ -1,45 +1,89 @@
-Return-Path: <colin.king@canonical.com>
-From: Colin King <colin.king@canonical.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Paul Gortmaker <paul.gortmaker@windriver.com>,
-	Konstantin Porotchkin <kostap@marvell.com>,
-	linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: apn806: fix spelling mistake: "mising" -> "missing"
-Date: Tue, 11 Apr 2017 14:37:43 +0100
-Message-Id: <20170411133743.21073-1-colin.king@canonical.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36357 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755988AbdDRTFu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2017 15:05:50 -0400
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7791: Add GyroADC bindings
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <20170416165709.27449-1-marek.vasut+renesas@gmail.com>
+ <20170416165709.27449-2-marek.vasut+renesas@gmail.com>
+ <776957e7-0500-3fc2-f6bc-1b2ba0e6594c@cogentembedded.com>
+Cc: linux-clk@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <baf4dc51-3fa0-cca5-d742-56603d8cc052@gmail.com>
+Date: Tue, 18 Apr 2017 20:44:34 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <776957e7-0500-3fc2-f6bc-1b2ba0e6594c@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On 04/17/2017 11:19 AM, Sergei Shtylyov wrote:
+> Hello!
 
-trivial fix to spelling mistake in dev_warn message
+Hi!
 
-Fixes: f109ca864414dc ("clk: apn806: Turn the eMMC clock as optional for dts backwards compatible")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/clk/mvebu/ap806-system-controller.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On 4/16/2017 7:57 PM, Marek Vasut wrote:
+> 
+>> Add bindings for the GyroADC block and it's associated clock.
+> 
+>    Well, I already spoke to you about the bindings on IRC...
 
-diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
-index 103fe18a3c29..8155baccc98e 100644
---- a/drivers/clk/mvebu/ap806-system-controller.c
-+++ b/drivers/clk/mvebu/ap806-system-controller.c
-@@ -140,7 +140,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
- 					  4, &name)) {
- 		ap806_clk_data.clk_num--;
- 		dev_warn(&pdev->dev,
--			 "eMMC clock mising: update the device tree!\n");
-+			 "eMMC clock missing: update the device tree!\n");
- 	} else {
- 		ap806_clks[4] = clk_register_fixed_factor(NULL, name,
- 							  fixedclk_name,
+That's fixed.
+
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Simon Horman <horms+renesas@verge.net.au>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> ---
+>>  arch/arm/boot/dts/r8a7791.dtsi | 18 ++++++++++++++++++
+>>  1 file changed, 18 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/r8a7791.dtsi
+>> b/arch/arm/boot/dts/r8a7791.dtsi
+>> index 4d0c2ce59900..1b099dbc9eef 100644
+>> --- a/arch/arm/boot/dts/r8a7791.dtsi
+>> +++ b/arch/arm/boot/dts/r8a7791.dtsi
+>> @@ -776,6 +776,15 @@
+>>          status = "disabled";
+>>      };
+>>
+>> +    adc: adc@e6e54000 {
+> 
+>    Why not label it "gyroadc:"?
+
+We can ... I don't mind either way. Shall we ?
+
+>> +        compatible = "renesas,r8a7791-gyroadc", "renesas,rcar-gyroadc";
+>> +        reg = <0 0xe6e54000 0 64>;
+> 
+>    s/64/0x40/.
+
+The surrounding code uses 64, so I kept it consistent.
+
+> [...]
+>> @@ -1133,6 +1142,13 @@
+>>              clock-frequency = <0>;
+>>          };
+>>
+>> +        /* GyroADC clock */
+>> +        adc_clk: adc_clk {
+> 
+>    We geberally skip the "_clk" suffix in the clock node names, so that
+> the clock name generated from the node name doesn't have this suffix.
+
+Fixed
+
+> [...]
+> 
+> MBR, Sergei
+> 
+
+
 -- 
-2.11.0
+Best regards,
+Marek Vasut
