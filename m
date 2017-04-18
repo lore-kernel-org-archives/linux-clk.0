@@ -1,40 +1,52 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <elfring@users.sourceforge.net>
+Subject: [PATCH 3/6] clk: hisilicon: Use devm_kmalloc_array() in
+ hisi_clk_alloc()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
+Message-ID: <bb46c386-99d2-b96f-a513-35a0d1f87fc2@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 11:40:22 +0200
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1492624001-3758-19-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-19-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:43:58 +0200
-Message-ID: <CAMuHMdVof+=gawQv4W9TTBQbQpjq=f8ErLByaBH532Xf7WHNfg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add PCIe clocks
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
->
-> This patch adds PCIEC{0,1} clocks for R8A7796 SoC.
->
-> Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Apr 2017 10:15:19 +0200
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+* A multiplication for the size determination of a memory allocation
+  indicated that an array data structure should be processed.
+  Thus use the corresponding function "devm_kmalloc_array".
 
-I.e. will queue in clk-renesas-for-v4.13.
+  This issue was detected by using the Coccinelle software.
 
-Gr{oetje,eeting}s,
+* Replace the specification of a data type by a pointer dereference
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-                        Geert
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/hisilicon/clk.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+index eca4c66e316c..b73c1dfae7f1 100644
+--- a/drivers/clk/hisilicon/clk.c
++++ b/drivers/clk/hisilicon/clk.c
+@@ -54,8 +54,9 @@ struct hisi_clock_data *hisi_clk_alloc(struct platform_device *pdev,
+ 	if (!clk_data->base)
+ 		return NULL;
+ 
+-	clk_table = devm_kmalloc(&pdev->dev, sizeof(struct clk *) * nr_clks,
+-				GFP_KERNEL);
++	clk_table = devm_kmalloc_array(&pdev->dev, nr_clks,
++				       sizeof(*clk_table),
++				       GFP_KERNEL);
+ 	if (!clk_table)
+ 		return NULL;
+ 
+-- 
+2.12.2
