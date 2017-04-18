@@ -1,653 +1,183 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Tue, 18 Apr 2017 19:05:12 +0800
+In-Reply-To: <20170418085548.4cisone2yfcuizcp@lukather>
+References: <20170416120849.54542-1-icenowy@aosc.io>
+ <20170416120849.54542-6-icenowy@aosc.io>
+ <20170418085548.4cisone2yfcuizcp@lukather>
+MIME-Version: 1.0
+Subject: Re: [PATCH v4 05/11] drm/sun4i: abstract a engine type
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
 From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v5 05/11] drm/sun4i: abstract a engine type
-Date: Sun, 23 Apr 2017 18:37:48 +0800
-Message-Id: <20170423103754.50012-6-icenowy@aosc.io>
-In-Reply-To: <20170423103754.50012-1-icenowy@aosc.io>
-References: <20170423103754.50012-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <5F52665D-8A24-40D3-B84B-E8991B3BE457@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
+ David Airlie <airlied@linux.ie>, linux-sunxi@googlegroups.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-As we are going to add support for the Allwinner DE2 engine in sun4i-drm
-driver, we will finally have two types of display engines -- the DE1
-backend and the DE2 mixer. They both do some display blending and feed
-graphics data to TCON, so I choose to call them both "engine" here.
-
-Abstract the engine type to a new struct with an ops struct, which contains
-functions that should be called outside the engine-specified code (in
-TCON, CRTC or TV Encoder code).
-
-A dedicated Kconfig option is also added to control whether
-sun4i-backend-specified code (sun4i_backend.c and sun4i_layer.c) should
-be built. As we removed the codes in CRTC code that directly call the
-layer code, we can now extract the layer part and combine it with the
-backend part into a new module, sun4i-backend.ko.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v5:
-- Really made a sunxi_engine struct type, and moved ops pointer
-  into it.
-- Added checked ops wrappers.
-- Changed the second parameter of layers_init from crtc to engine.
-Changes in v4:
-- Comments to tag the color correction functions as optional.
-- Check before calling the optional functions.
-- Change layers_init to satisfy new PATCH v4 04/11.
-
- drivers/gpu/drm/sun4i/Kconfig         | 10 ++++
- drivers/gpu/drm/sun4i/Makefile        |  6 ++-
- drivers/gpu/drm/sun4i/sun4i_backend.c | 68 ++++++++++++++------------
- drivers/gpu/drm/sun4i/sun4i_backend.h | 13 +++--
- drivers/gpu/drm/sun4i/sun4i_crtc.c    | 11 ++---
- drivers/gpu/drm/sun4i/sun4i_crtc.h    |  4 +-
- drivers/gpu/drm/sun4i/sun4i_drv.h     |  2 +-
- drivers/gpu/drm/sun4i/sun4i_layer.c   |  8 ++-
- drivers/gpu/drm/sun4i/sun4i_layer.h   |  5 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.c    |  2 +-
- drivers/gpu/drm/sun4i/sun4i_tv.c      |  9 ++--
- drivers/gpu/drm/sun4i/sunxi_engine.h  | 91 +++++++++++++++++++++++++++++++++++
- 12 files changed, 169 insertions(+), 60 deletions(-)
- create mode 100644 drivers/gpu/drm/sun4i/sunxi_engine.h
-
-diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-index a4b357db8856..5a8227f37cc4 100644
---- a/drivers/gpu/drm/sun4i/Kconfig
-+++ b/drivers/gpu/drm/sun4i/Kconfig
-@@ -12,3 +12,13 @@ config DRM_SUN4I
- 	  Choose this option if you have an Allwinner SoC with a
- 	  Display Engine. If M is selected the module will be called
- 	  sun4i-drm.
-+
-+config DRM_SUN4I_BACKEND
-+	tristate "Support for Allwinner A10 Display Engine Backend"
-+	depends on DRM_SUN4I
-+	default DRM_SUN4I
-+	help
-+	  Choose this option if you have an Allwinner SoC with the
-+	  original Allwinner Display Engine, which has a backend to
-+	  do some alpha blending and feed graphics to TCON. If M is
-+	  selected the module will be called sun4i-backend.
-diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
-index 59b757350a1f..1db1068b9be1 100644
---- a/drivers/gpu/drm/sun4i/Makefile
-+++ b/drivers/gpu/drm/sun4i/Makefile
-@@ -5,9 +5,11 @@ sun4i-tcon-y += sun4i_tcon.o
- sun4i-tcon-y += sun4i_rgb.o
- sun4i-tcon-y += sun4i_dotclock.o
- sun4i-tcon-y += sun4i_crtc.o
--sun4i-tcon-y += sun4i_layer.o
-+
-+sun4i-backend-y += sun4i_layer.o
-+sun4i-backend-y += sun4i_backend.o
- 
- obj-$(CONFIG_DRM_SUN4I)		+= sun4i-drm.o sun4i-tcon.o
--obj-$(CONFIG_DRM_SUN4I)		+= sun4i_backend.o
-+obj-$(CONFIG_DRM_SUN4I_BACKEND)	+= sun4i-backend.o
- obj-$(CONFIG_DRM_SUN4I)		+= sun6i_drc.o
- obj-$(CONFIG_DRM_SUN4I)		+= sun4i_tv.o
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index d660741ba475..360ab046121b 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -23,6 +23,8 @@
- 
- #include "sun4i_backend.h"
- #include "sun4i_drv.h"
-+#include "sun4i_layer.h"
-+#include "sunxi_engine.h"
- 
- static const u32 sunxi_rgb2yuv_coef[12] = {
- 	0x00000107, 0x00000204, 0x00000064, 0x00000108,
-@@ -30,41 +32,38 @@ static const u32 sunxi_rgb2yuv_coef[12] = {
- 	0x000001c1, 0x00003e88, 0x00003fb8, 0x00000808
- };
- 
--void sun4i_backend_apply_color_correction(struct sun4i_backend *backend)
-+static void sun4i_backend_apply_color_correction(struct sunxi_engine *engine)
- {
- 	int i;
- 
- 	DRM_DEBUG_DRIVER("Applying RGB to YUV color correction\n");
- 
- 	/* Set color correction */
--	regmap_write(backend->regs, SUN4I_BACKEND_OCCTL_REG,
-+	regmap_write(engine->regs, SUN4I_BACKEND_OCCTL_REG,
- 		     SUN4I_BACKEND_OCCTL_ENABLE);
- 
- 	for (i = 0; i < 12; i++)
--		regmap_write(backend->regs, SUN4I_BACKEND_OCRCOEF_REG(i),
-+		regmap_write(engine->regs, SUN4I_BACKEND_OCRCOEF_REG(i),
- 			     sunxi_rgb2yuv_coef[i]);
- }
--EXPORT_SYMBOL(sun4i_backend_apply_color_correction);
- 
--void sun4i_backend_disable_color_correction(struct sun4i_backend *backend)
-+static void sun4i_backend_disable_color_correction(struct sunxi_engine *engine)
- {
- 	DRM_DEBUG_DRIVER("Disabling color correction\n");
- 
- 	/* Disable color correction */
--	regmap_update_bits(backend->regs, SUN4I_BACKEND_OCCTL_REG,
-+	regmap_update_bits(engine->regs, SUN4I_BACKEND_OCCTL_REG,
- 			   SUN4I_BACKEND_OCCTL_ENABLE, 0);
- }
--EXPORT_SYMBOL(sun4i_backend_disable_color_correction);
- 
--void sun4i_backend_commit(struct sun4i_backend *backend)
-+static void sun4i_backend_commit(struct sunxi_engine *engine)
- {
- 	DRM_DEBUG_DRIVER("Committing changes\n");
- 
--	regmap_write(backend->regs, SUN4I_BACKEND_REGBUFFCTL_REG,
-+	regmap_write(engine->regs, SUN4I_BACKEND_REGBUFFCTL_REG,
- 		     SUN4I_BACKEND_REGBUFFCTL_AUTOLOAD_DIS |
- 		     SUN4I_BACKEND_REGBUFFCTL_LOADCTL);
- }
--EXPORT_SYMBOL(sun4i_backend_commit);
- 
- void sun4i_backend_layer_enable(struct sun4i_backend *backend,
- 				int layer, bool enable)
-@@ -78,10 +77,9 @@ void sun4i_backend_layer_enable(struct sun4i_backend *backend,
- 	else
- 		val = 0;
- 
--	regmap_update_bits(backend->regs, SUN4I_BACKEND_MODCTL_REG,
-+	regmap_update_bits(backend->engine.regs, SUN4I_BACKEND_MODCTL_REG,
- 			   SUN4I_BACKEND_MODCTL_LAY_EN(layer), val);
- }
--EXPORT_SYMBOL(sun4i_backend_layer_enable);
- 
- static int sun4i_backend_drm_format_to_layer(struct drm_plane *plane,
- 					     u32 format, u32 *mode)
-@@ -141,33 +139,33 @@ int sun4i_backend_update_layer_coord(struct sun4i_backend *backend,
- 	if (plane->type == DRM_PLANE_TYPE_PRIMARY) {
- 		DRM_DEBUG_DRIVER("Primary layer, updating global size W: %u H: %u\n",
- 				 state->crtc_w, state->crtc_h);
--		regmap_write(backend->regs, SUN4I_BACKEND_DISSIZE_REG,
-+		regmap_write(backend->engine.regs, SUN4I_BACKEND_DISSIZE_REG,
- 			     SUN4I_BACKEND_DISSIZE(state->crtc_w,
- 						   state->crtc_h));
- 	}
- 
- 	/* Set the line width */
- 	DRM_DEBUG_DRIVER("Layer line width: %d bits\n", fb->pitches[0] * 8);
--	regmap_write(backend->regs, SUN4I_BACKEND_LAYLINEWIDTH_REG(layer),
-+	regmap_write(backend->engine.regs,
-+		     SUN4I_BACKEND_LAYLINEWIDTH_REG(layer),
- 		     fb->pitches[0] * 8);
- 
- 	/* Set height and width */
- 	DRM_DEBUG_DRIVER("Layer size W: %u H: %u\n",
- 			 state->crtc_w, state->crtc_h);
--	regmap_write(backend->regs, SUN4I_BACKEND_LAYSIZE_REG(layer),
-+	regmap_write(backend->engine.regs, SUN4I_BACKEND_LAYSIZE_REG(layer),
- 		     SUN4I_BACKEND_LAYSIZE(state->crtc_w,
- 					   state->crtc_h));
- 
- 	/* Set base coordinates */
- 	DRM_DEBUG_DRIVER("Layer coordinates X: %d Y: %d\n",
- 			 state->crtc_x, state->crtc_y);
--	regmap_write(backend->regs, SUN4I_BACKEND_LAYCOOR_REG(layer),
-+	regmap_write(backend->engine.regs, SUN4I_BACKEND_LAYCOOR_REG(layer),
- 		     SUN4I_BACKEND_LAYCOOR(state->crtc_x,
- 					   state->crtc_y));
- 
- 	return 0;
- }
--EXPORT_SYMBOL(sun4i_backend_update_layer_coord);
- 
- int sun4i_backend_update_layer_formats(struct sun4i_backend *backend,
- 				       int layer, struct drm_plane *plane)
-@@ -182,7 +180,7 @@ int sun4i_backend_update_layer_formats(struct sun4i_backend *backend,
- 		interlaced = plane->state->crtc->state->adjusted_mode.flags
- 			& DRM_MODE_FLAG_INTERLACE;
- 
--	regmap_update_bits(backend->regs, SUN4I_BACKEND_MODCTL_REG,
-+	regmap_update_bits(backend->engine.regs, SUN4I_BACKEND_MODCTL_REG,
- 			   SUN4I_BACKEND_MODCTL_ITLMOD_EN,
- 			   interlaced ? SUN4I_BACKEND_MODCTL_ITLMOD_EN : 0);
- 
-@@ -196,12 +194,12 @@ int sun4i_backend_update_layer_formats(struct sun4i_backend *backend,
- 		return ret;
- 	}
- 
--	regmap_update_bits(backend->regs, SUN4I_BACKEND_ATTCTL_REG1(layer),
-+	regmap_update_bits(backend->engine.regs,
-+			   SUN4I_BACKEND_ATTCTL_REG1(layer),
- 			   SUN4I_BACKEND_ATTCTL_REG1_LAY_FBFMT, val);
- 
- 	return 0;
- }
--EXPORT_SYMBOL(sun4i_backend_update_layer_formats);
- 
- int sun4i_backend_update_layer_buffer(struct sun4i_backend *backend,
- 				      int layer, struct drm_plane *plane)
-@@ -229,19 +227,19 @@ int sun4i_backend_update_layer_buffer(struct sun4i_backend *backend,
- 	/* Write the 32 lower bits of the address (in bits) */
- 	lo_paddr = paddr << 3;
- 	DRM_DEBUG_DRIVER("Setting address lower bits to 0x%x\n", lo_paddr);
--	regmap_write(backend->regs, SUN4I_BACKEND_LAYFB_L32ADD_REG(layer),
-+	regmap_write(backend->engine.regs,
-+		     SUN4I_BACKEND_LAYFB_L32ADD_REG(layer),
- 		     lo_paddr);
- 
- 	/* And the upper bits */
- 	hi_paddr = paddr >> 29;
- 	DRM_DEBUG_DRIVER("Setting address high bits to 0x%x\n", hi_paddr);
--	regmap_update_bits(backend->regs, SUN4I_BACKEND_LAYFB_H4ADD_REG,
-+	regmap_update_bits(backend->engine.regs, SUN4I_BACKEND_LAYFB_H4ADD_REG,
- 			   SUN4I_BACKEND_LAYFB_H4ADD_MSK(layer),
- 			   SUN4I_BACKEND_LAYFB_H4ADD(layer, hi_paddr));
- 
- 	return 0;
- }
--EXPORT_SYMBOL(sun4i_backend_update_layer_buffer);
- 
- static int sun4i_backend_init_sat(struct device *dev) {
- 	struct sun4i_backend *backend = dev_get_drvdata(dev);
-@@ -288,6 +286,13 @@ static int sun4i_backend_free_sat(struct device *dev) {
- 	return 0;
- }
- 
-+static const struct sunxi_engine_ops sun4i_backend_engine_ops = {
-+	.commit				= sun4i_backend_commit,
-+	.layers_init			= sun4i_layers_init,
-+	.apply_color_correction		= sun4i_backend_apply_color_correction,
-+	.disable_color_correction	= sun4i_backend_disable_color_correction,
-+};
-+
- static struct regmap_config sun4i_backend_regmap_config = {
- 	.reg_bits	= 32,
- 	.val_bits	= 32,
-@@ -310,18 +315,19 @@ static int sun4i_backend_bind(struct device *dev, struct device *master,
- 	if (!backend)
- 		return -ENOMEM;
- 	dev_set_drvdata(dev, backend);
--	drv->backend = backend;
-+	drv->engine = &backend->engine;
-+	drv->engine->ops = &sun4i_backend_engine_ops;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	regs = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
- 
--	backend->regs = devm_regmap_init_mmio(dev, regs,
--					      &sun4i_backend_regmap_config);
--	if (IS_ERR(backend->regs)) {
-+	backend->engine.regs = devm_regmap_init_mmio(dev, regs,
-+						&sun4i_backend_regmap_config);
-+	if (IS_ERR(backend->engine.regs)) {
- 		dev_err(dev, "Couldn't create the backend0 regmap\n");
--		return PTR_ERR(backend->regs);
-+		return PTR_ERR(backend->engine.regs);
- 	}
- 
- 	backend->reset = devm_reset_control_get(dev, NULL);
-@@ -371,14 +377,14 @@ static int sun4i_backend_bind(struct device *dev, struct device *master,
- 
- 	/* Reset the registers */
- 	for (i = 0x800; i < 0x1000; i += 4)
--		regmap_write(backend->regs, i, 0);
-+		regmap_write(backend->engine.regs, i, 0);
- 
- 	/* Disable registers autoloading */
--	regmap_write(backend->regs, SUN4I_BACKEND_REGBUFFCTL_REG,
-+	regmap_write(backend->engine.regs, SUN4I_BACKEND_REGBUFFCTL_REG,
- 		     SUN4I_BACKEND_REGBUFFCTL_AUTOLOAD_DIS);
- 
- 	/* Enable the backend */
--	regmap_write(backend->regs, SUN4I_BACKEND_MODCTL_REG,
-+	regmap_write(backend->engine.regs, SUN4I_BACKEND_MODCTL_REG,
- 		     SUN4I_BACKEND_MODCTL_DEBE_EN |
- 		     SUN4I_BACKEND_MODCTL_START_CTL);
- 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.h b/drivers/gpu/drm/sun4i/sun4i_backend.h
-index 83e63cc702b4..a92f50eca948 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.h
-@@ -17,6 +17,8 @@
- #include <linux/regmap.h>
- #include <linux/reset.h>
- 
-+#include "sunxi_engine.h"
-+
- #define SUN4I_BACKEND_MODCTL_REG		0x800
- #define SUN4I_BACKEND_MODCTL_LINE_SEL			BIT(29)
- #define SUN4I_BACKEND_MODCTL_ITLMOD_EN			BIT(28)
-@@ -139,7 +141,7 @@
- #define SUN4I_BACKEND_PIPE_OFF(p)		(0x5000 + (0x400 * (p)))
- 
- struct sun4i_backend {
--	struct regmap		*regs;
-+	struct sunxi_engine	engine;
- 
- 	struct reset_control	*reset;
- 
-@@ -151,10 +153,11 @@ struct sun4i_backend {
- 	struct reset_control	*sat_reset;
- };
- 
--void sun4i_backend_apply_color_correction(struct sun4i_backend *backend);
--void sun4i_backend_disable_color_correction(struct sun4i_backend *backend);
--
--void sun4i_backend_commit(struct sun4i_backend *backend);
-+static inline struct sun4i_backend *
-+engine_to_sun4i_backend(struct sunxi_engine *engine)
-+{
-+	return container_of(engine, struct sun4i_backend, engine);
-+}
- 
- void sun4i_backend_layer_enable(struct sun4i_backend *backend,
- 				int layer, bool enable);
-diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.c b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-index 708b3543d4e9..f8c70439d1e2 100644
---- a/drivers/gpu/drm/sun4i/sun4i_crtc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_crtc.c
-@@ -25,10 +25,9 @@
- 
- #include <video/videomode.h>
- 
--#include "sun4i_backend.h"
- #include "sun4i_crtc.h"
- #include "sun4i_drv.h"
--#include "sun4i_layer.h"
-+#include "sunxi_engine.h"
- #include "sun4i_tcon.h"
- 
- static void sun4i_crtc_atomic_begin(struct drm_crtc *crtc,
-@@ -56,7 +55,7 @@ static void sun4i_crtc_atomic_flush(struct drm_crtc *crtc,
- 
- 	DRM_DEBUG_DRIVER("Committing plane changes\n");
- 
--	sun4i_backend_commit(scrtc->backend);
-+	sunxi_engine_commit(scrtc->engine);
- 
- 	if (event) {
- 		crtc->state->event = NULL;
-@@ -135,7 +134,7 @@ static const struct drm_crtc_funcs sun4i_crtc_funcs = {
- };
- 
- struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
--				   struct sun4i_backend *backend,
-+				   struct sunxi_engine *engine,
- 				   struct sun4i_tcon *tcon)
- {
- 	struct sun4i_crtc *scrtc;
-@@ -146,11 +145,11 @@ struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
- 	scrtc = devm_kzalloc(drm->dev, sizeof(*scrtc), GFP_KERNEL);
- 	if (!scrtc)
- 		return ERR_PTR(-ENOMEM);
--	scrtc->backend = backend;
-+	scrtc->engine = engine;
- 	scrtc->tcon = tcon;
- 
- 	/* Create our layers */
--	planes = sun4i_layers_init(drm, scrtc);
-+	planes = sunxi_engine_layers_init(drm, engine);
- 	if (IS_ERR(planes)) {
- 		dev_err(drm->dev, "Couldn't create the planes\n");
- 		return NULL;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_crtc.h b/drivers/gpu/drm/sun4i/sun4i_crtc.h
-index 4dae3508424a..bf0ce36eb518 100644
---- a/drivers/gpu/drm/sun4i/sun4i_crtc.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_crtc.h
-@@ -17,7 +17,7 @@ struct sun4i_crtc {
- 	struct drm_crtc			crtc;
- 	struct drm_pending_vblank_event	*event;
- 
--	struct sun4i_backend		*backend;
-+	struct sunxi_engine		*engine;
- 	struct sun4i_tcon		*tcon;
- };
- 
-@@ -27,7 +27,7 @@ static inline struct sun4i_crtc *drm_crtc_to_sun4i_crtc(struct drm_crtc *crtc)
- }
- 
- struct sun4i_crtc *sun4i_crtc_init(struct drm_device *drm,
--				   struct sun4i_backend *backend,
-+				   struct sunxi_engine *engine,
- 				   struct sun4i_tcon *tcon);
- 
- #endif /* _SUN4I_CRTC_H_ */
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.h b/drivers/gpu/drm/sun4i/sun4i_drv.h
-index 5df50126ff52..dee8e88e99b0 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.h
-@@ -17,7 +17,7 @@
- #include <linux/regmap.h>
- 
- struct sun4i_drv {
--	struct sun4i_backend	*backend;
-+	struct sunxi_engine	*engine;
- 	struct sun4i_tcon	*tcon;
- 
- 	struct drm_fbdev_cma	*fbdev;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c b/drivers/gpu/drm/sun4i/sun4i_layer.c
-index e1f03e1cc0ac..ab33e4d06782 100644
---- a/drivers/gpu/drm/sun4i/sun4i_layer.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
-@@ -11,12 +11,10 @@
-  */
- 
- #include <drm/drm_atomic_helper.h>
--#include <drm/drm_crtc.h>
- #include <drm/drm_plane_helper.h>
- #include <drm/drmP.h>
- 
- #include "sun4i_backend.h"
--#include "sun4i_crtc.h"
- #include "sun4i_layer.h"
- 
- struct sun4i_plane_desc {
-@@ -130,10 +128,10 @@ static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
- }
- 
- struct drm_plane **sun4i_layers_init(struct drm_device *drm,
--				     struct sun4i_crtc *crtc)
-+				     struct sunxi_engine *engine)
- {
- 	struct drm_plane **planes;
--	struct sun4i_backend *backend = crtc->backend;
-+	struct sun4i_backend *backend = engine_to_sun4i_backend(engine);
- 	int i;
- 
- 	planes = devm_kcalloc(drm->dev, ARRAY_SIZE(sun4i_backend_planes) + 1,
-@@ -175,7 +173,7 @@ struct drm_plane **sun4i_layers_init(struct drm_device *drm,
- 
- 		DRM_DEBUG_DRIVER("Assigning %s plane to pipe %d\n",
- 				 i ? "overlay" : "primary", plane->pipe);
--		regmap_update_bits(backend->regs, SUN4I_BACKEND_ATTCTL_REG0(i),
-+		regmap_update_bits(engine->regs, SUN4I_BACKEND_ATTCTL_REG0(i),
- 				   SUN4I_BACKEND_ATTCTL_REG0_LAY_PIPESEL_MASK,
- 				   SUN4I_BACKEND_ATTCTL_REG0_LAY_PIPESEL(plane->pipe));
- 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.h b/drivers/gpu/drm/sun4i/sun4i_layer.h
-index 5ea5c994d6ea..004b7cfe8ffb 100644
---- a/drivers/gpu/drm/sun4i/sun4i_layer.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_layer.h
-@@ -13,6 +13,8 @@
- #ifndef _SUN4I_LAYER_H_
- #define _SUN4I_LAYER_H_
- 
-+struct sunxi_engine;
-+
- struct sun4i_layer {
- 	struct drm_plane	plane;
- 	struct sun4i_drv	*drv;
-@@ -27,6 +29,5 @@ plane_to_sun4i_layer(struct drm_plane *plane)
- }
- 
- struct drm_plane **sun4i_layers_init(struct drm_device *drm,
--				     struct sun4i_crtc *crtc);
--
-+				     struct sunxi_engine *engine);
- #endif /* _SUN4I_LAYER_H_ */
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 9a83a85529ac..e4fef0639656 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -459,7 +459,7 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 		goto err_free_dotclock;
- 	}
- 
--	tcon->crtc = sun4i_crtc_init(drm, drv->backend, tcon);
-+	tcon->crtc = sun4i_crtc_init(drm, drv->engine, tcon);
- 	if (IS_ERR(tcon->crtc)) {
- 		dev_err(dev, "Couldn't create our CRTC\n");
- 		ret = PTR_ERR(tcon->crtc);
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
-index 49c49431a053..e598594ccea2 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
-@@ -22,10 +22,10 @@
- #include <drm/drm_of.h>
- #include <drm/drm_panel.h>
- 
--#include "sun4i_backend.h"
- #include "sun4i_crtc.h"
- #include "sun4i_drv.h"
- #include "sun4i_tcon.h"
-+#include "sunxi_engine.h"
- 
- #define SUN4I_TVE_EN_REG		0x000
- #define SUN4I_TVE_EN_DAC_MAP_MASK		GENMASK(19, 4)
-@@ -353,7 +353,6 @@ static void sun4i_tv_disable(struct drm_encoder *encoder)
- 	struct sun4i_tv *tv = drm_encoder_to_sun4i_tv(encoder);
- 	struct sun4i_crtc *crtc = drm_crtc_to_sun4i_crtc(encoder->crtc);
- 	struct sun4i_tcon *tcon = crtc->tcon;
--	struct sun4i_backend *backend = crtc->backend;
- 
- 	DRM_DEBUG_DRIVER("Disabling the TV Output\n");
- 
-@@ -362,7 +361,8 @@ static void sun4i_tv_disable(struct drm_encoder *encoder)
- 	regmap_update_bits(tv->regs, SUN4I_TVE_EN_REG,
- 			   SUN4I_TVE_EN_ENABLE,
- 			   0);
--	sun4i_backend_disable_color_correction(backend);
-+
-+	sunxi_engine_disable_color_correction(crtc->engine);
- }
- 
- static void sun4i_tv_enable(struct drm_encoder *encoder)
-@@ -370,11 +370,10 @@ static void sun4i_tv_enable(struct drm_encoder *encoder)
- 	struct sun4i_tv *tv = drm_encoder_to_sun4i_tv(encoder);
- 	struct sun4i_crtc *crtc = drm_crtc_to_sun4i_crtc(encoder->crtc);
- 	struct sun4i_tcon *tcon = crtc->tcon;
--	struct sun4i_backend *backend = crtc->backend;
- 
- 	DRM_DEBUG_DRIVER("Enabling the TV Output\n");
- 
--	sun4i_backend_apply_color_correction(backend);
-+	sunxi_engine_apply_color_correction(crtc->engine);
- 
- 	regmap_update_bits(tv->regs, SUN4I_TVE_EN_REG,
- 			   SUN4I_TVE_EN_ENABLE,
-diff --git a/drivers/gpu/drm/sun4i/sunxi_engine.h b/drivers/gpu/drm/sun4i/sunxi_engine.h
-new file mode 100644
-index 000000000000..85790d2f5f62
---- /dev/null
-+++ b/drivers/gpu/drm/sun4i/sunxi_engine.h
-@@ -0,0 +1,91 @@
-+/*
-+ * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation; either version 2 of
-+ * the License, or (at your option) any later version.
-+ */
-+
-+#ifndef _SUNXI_ENGINE_H_
-+#define _SUNXI_ENGINE_H_
-+
-+struct sun4i_crtc;
-+struct drm_plane;
-+struct drm_device;
-+
-+struct sunxi_engine;
-+
-+struct sunxi_engine_ops {
-+	void (*commit)(struct sunxi_engine *engine);
-+	struct drm_plane **(*layers_init)(struct drm_device *drm,
-+					  struct sunxi_engine *engine);
-+
-+	void (*apply_color_correction)(struct sunxi_engine *engine);
-+	void (*disable_color_correction)(struct sunxi_engine *engine);
-+};
-+
-+/**
-+ * struct sunxi_engine - the common parts of an engine for sun4i-drm driver
-+ * @ops:	the operations of the engine
-+ * @regs:	the regmap of the engine
-+ */
-+struct sunxi_engine {
-+	const struct sunxi_engine_ops	*ops;
-+
-+	struct regmap			*regs;
-+};
-+
-+/**
-+ * sunxi_engine_commit() - commit all changes of the engine
-+ * @engine:	pointer to the engine
-+ */
-+static inline void
-+sunxi_engine_commit(struct sunxi_engine *engine)
-+{
-+	if (engine->ops && engine->ops->commit)
-+		engine->ops->commit(engine);
-+}
-+
-+/**
-+ * sunxi_engine_layers_init() - Create planes (layers) for the engine
-+ * @drm:	pointer to the drm_device for which planes will be created
-+ * @engine:	pointer to the engine
-+ */
-+static inline struct drm_plane **
-+sunxi_engine_layers_init(struct drm_device *drm, struct sunxi_engine *engine)
-+{
-+	if (engine->ops && engine->ops->layers_init)
-+		return engine->ops->layers_init(drm, engine);
-+	return ERR_PTR(-ENOSYS);
-+}
-+
-+/**
-+ * sunxi_engine_apply_color_correction - Apply the RGB2YUV color correction
-+ * @engine:	pointer to the engine
-+ *
-+ * This functionality is optional for an engine, however, if the engine is
-+ * intended to be used with TV Encoder, the output will be incorrect
-+ * without the color correction, due to TV Encoder expects the engine to
-+ * output directly YUV signal.
-+ */
-+static inline void
-+sunxi_engine_apply_color_correction(struct sunxi_engine *engine)
-+{
-+	if (engine->ops && engine->ops->apply_color_correction)
-+		engine->ops->apply_color_correction(engine);
-+}
-+
-+/**
-+ * sunxi_engine_disable_color_correction - Disable the color space correction
-+ * @engine:	pointer to the engine
-+ *
-+ * This function is paired with apply_color_correction().
-+ */
-+static inline void
-+sunxi_engine_disable_color_correction(struct sunxi_engine *engine)
-+{
-+	if (engine->ops && engine->ops->disable_color_correction)
-+		engine->ops->disable_color_correction(engine);
-+}
-+#endif /* _SUNXI_ENGINE_H_ */
--- 
-2.12.2
+Cgrkuo4gMjAxN+W5tDTmnIgxOOaXpSBHTVQrMDg6MDAg5LiL5Y2INDo1NTo0OCwgTWF4aW1lIFJp
+cGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+IOWGmeWIsDoKPkhpLAo+Cj5U
+aGFua3MgZm9yIHRoYXQgcmV3b3JrLgo+Cj5PbiBTdW4sIEFwciAxNiwgMjAxNyBhdCAwODowODo0
+M1BNICswODAwLCBJY2Vub3d5IFpoZW5nIHdyb3RlOgo+PiBBcyB3ZSBhcmUgZ29pbmcgdG8gYWRk
+IHN1cHBvcnQgZm9yIHRoZSBBbGx3aW5uZXIgREUyIGVuZ2luZSBpbgo+c3VuNGktZHJtCj4+IGRy
+aXZlciwgd2Ugd2lsbCBmaW5hbGx5IGhhdmUgdHdvIHR5cGVzIG9mIGRpc3BsYXkgZW5naW5lcyAt
+LSB0aGUgREUxCj4+IGJhY2tlbmQgYW5kIHRoZSBERTIgbWl4ZXIuIFRoZXkgYm90aCBkbyBzb21l
+IGRpc3BsYXkgYmxlbmRpbmcgYW5kCj5mZWVkCj4+IGdyYXBoaWNzIGRhdGEgdG8gVENPTiwgc28g
+SSBjaG9vc2UgdG8gY2FsbCB0aGVtIGJvdGggImVuZ2luZSIgaGVyZS4KPj4gCj4+IEFic3RyYWN0
+IHRoZSBlbmdpbmUgdHlwZSB0byB2b2lkICogYW5kIGEgb3BzIHN0cnVjdCwgd2hpY2ggY29udGFp
+bnMKPj4gZnVuY3Rpb25zIHRoYXQgc2hvdWxkIGJlIGNhbGxlZCBvdXRzaWRlIHRoZSBlbmdpbmUt
+c3BlY2lmaWVkIGNvZGUgKGluCj4+IFRDT04sIENSVEMgb3IgVFYgRW5jb2RlciBjb2RlKS4KPj4g
+Cj4+IEEgZGVkaWNhdGVkIEtjb25maWcgb3B0aW9uIGlzIGFsc28gYWRkZWQgdG8gY29udHJvbCB3
+aGV0aGVyCj4+IHN1bjRpLWJhY2tlbmQtc3BlY2lmaWVkIGNvZGUgKHN1bjRpX2JhY2tlbmQuYyBh
+bmQgc3VuNGlfbGF5ZXIuYykKPnNob3VsZAo+PiBiZSBidWlsdC4gQXMgd2UgcmVtb3ZlZCB0aGUg
+Y29kZXMgaW4gQ1JUQyBjb2RlIHRoYXQgZGlyZWN0bHkgY2FsbCB0aGUKPj4gbGF5ZXIgY29kZSwg
+d2UgY2FuIG5vdyBleHRyYWN0IHRoZSBsYXllciBwYXJ0IGFuZCBjb21iaW5lIGl0IHdpdGggdGhl
+Cj4+IGJhY2tlbmQgcGFydCBpbnRvIGEgbmV3IG1vZHVsZSwgc3VuNGktYmFja2VuZC5rby4KPj4g
+Cj4+IFNpZ25lZC1vZmYtYnk6IEljZW5vd3kgWmhlbmcgPGljZW5vd3lAYW9zYy5pbz4KPj4gLS0t
+Cj4+IENoYW5nZXMgaW4gdjQ6Cj4+IC0gQ29tbWVudHMgdG8gdGFnIHRoZSBjb2xvciBjb3JyZWN0
+aW9uIGZ1bmN0aW9ucyBhcyBvcHRpb25hbC4KPj4gLSBDaGVjayBiZWZvcmUgY2FsbGluZyB0aGUg
+b3B0aW9uYWwgZnVuY3Rpb25zLgo+PiAtIENoYW5nZSBsYXllcnNfaW5pdCB0byBzYXRpc2Z5IG5l
+dyBQQVRDSCB2NCAwNC8xMS4KPj4gCj4+ICBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvS2NvbmZpZyAg
+ICAgICAgIHwgMTAgKysrKysrKysrKwo+PiAgZHJpdmVycy9ncHUvZHJtL3N1bjRpL01ha2VmaWxl
+ICAgICAgICB8ICA2ICsrKystLQo+PiAgZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX2JhY2tl
+bmQuYyB8IDI2Cj4rKysrKysrKysrKysrKysrKysrLS0tLS0tLQo+PiAgZHJpdmVycy9ncHUvZHJt
+L3N1bjRpL3N1bjRpX2JhY2tlbmQuaCB8ICA1IC0tLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vc3Vu
+NGkvc3VuNGlfY3J0Yy5jICAgIHwgMTQgKysrKysrKy0tLS0tLS0KPj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9zdW40aS9zdW40aV9jcnRjLmggICAgfCAgNyArKysrLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0v
+c3VuNGkvc3VuNGlfZHJ2LmggICAgIHwgIDMgKystCj4+ICBkcml2ZXJzL2dwdS9kcm0vc3VuNGkv
+c3VuNGlfbGF5ZXIuYyAgIHwgIDIgKy0KPj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV9s
+YXllci5oICAgfCAgMyArKy0KPj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV90Y29uLmMg
+ICAgfCAgMiArLQo+PiAgZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX3R2LmMgICAgICB8IDEx
+ICsrKysrKy0tLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VueGlfZW5naW5lLmggIHwg
+MzUKPisrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4+ICAxMiBmaWxlcyBjaGFu
+Z2VkLCA5MSBpbnNlcnRpb25zKCspLCAzMyBkZWxldGlvbnMoLSkKPj4gIGNyZWF0ZSBtb2RlIDEw
+MDY0NCBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VueGlfZW5naW5lLmgKPj4gCj4+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vc3VuNGkvS2NvbmZpZwo+Yi9kcml2ZXJzL2dwdS9kcm0vc3Vu
+NGkvS2NvbmZpZwo+PiBpbmRleCBhNGIzNTdkYjg4NTYuLjVhODIyN2YzN2NjNCAxMDA2NDQKPj4g
+LS0tIGEvZHJpdmVycy9ncHUvZHJtL3N1bjRpL0tjb25maWcKPj4gKysrIGIvZHJpdmVycy9ncHUv
+ZHJtL3N1bjRpL0tjb25maWcKPj4gQEAgLTEyLDMgKzEyLDEzIEBAIGNvbmZpZyBEUk1fU1VONEkK
+Pj4gIAkgIENob29zZSB0aGlzIG9wdGlvbiBpZiB5b3UgaGF2ZSBhbiBBbGx3aW5uZXIgU29DIHdp
+dGggYQo+PiAgCSAgRGlzcGxheSBFbmdpbmUuIElmIE0gaXMgc2VsZWN0ZWQgdGhlIG1vZHVsZSB3
+aWxsIGJlIGNhbGxlZAo+PiAgCSAgc3VuNGktZHJtLgo+PiArCj4+ICtjb25maWcgRFJNX1NVTjRJ
+X0JBQ0tFTkQKPj4gKwl0cmlzdGF0ZSAiU3VwcG9ydCBmb3IgQWxsd2lubmVyIEExMCBEaXNwbGF5
+IEVuZ2luZSBCYWNrZW5kIgo+PiArCWRlcGVuZHMgb24gRFJNX1NVTjRJCj4+ICsJZGVmYXVsdCBE
+Uk1fU1VONEkKPj4gKwloZWxwCj4+ICsJICBDaG9vc2UgdGhpcyBvcHRpb24gaWYgeW91IGhhdmUg
+YW4gQWxsd2lubmVyIFNvQyB3aXRoIHRoZQo+PiArCSAgb3JpZ2luYWwgQWxsd2lubmVyIERpc3Bs
+YXkgRW5naW5lLCB3aGljaCBoYXMgYSBiYWNrZW5kIHRvCj4+ICsJICBkbyBzb21lIGFscGhhIGJs
+ZW5kaW5nIGFuZCBmZWVkIGdyYXBoaWNzIHRvIFRDT04uIElmIE0gaXMKPj4gKwkgIHNlbGVjdGVk
+IHRoZSBtb2R1bGUgd2lsbCBiZSBjYWxsZWQgc3VuNGktYmFja2VuZC4KPj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9zdW40aS9NYWtlZmlsZQo+Yi9kcml2ZXJzL2dwdS9kcm0vc3VuNGkv
+TWFrZWZpbGUKPj4gaW5kZXggNTliNzU3MzUwYTFmLi4xZGIxMDY4YjliZTEgMTAwNjQ0Cj4+IC0t
+LSBhL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9NYWtlZmlsZQo+PiArKysgYi9kcml2ZXJzL2dwdS9k
+cm0vc3VuNGkvTWFrZWZpbGUKPj4gQEAgLTUsOSArNSwxMSBAQCBzdW40aS10Y29uLXkgKz0gc3Vu
+NGlfdGNvbi5vCj4+ICBzdW40aS10Y29uLXkgKz0gc3VuNGlfcmdiLm8KPj4gIHN1bjRpLXRjb24t
+eSArPSBzdW40aV9kb3RjbG9jay5vCj4+ICBzdW40aS10Y29uLXkgKz0gc3VuNGlfY3J0Yy5vCj4+
+IC1zdW40aS10Y29uLXkgKz0gc3VuNGlfbGF5ZXIubwo+PiArCj4+ICtzdW40aS1iYWNrZW5kLXkg
+Kz0gc3VuNGlfbGF5ZXIubwo+PiArc3VuNGktYmFja2VuZC15ICs9IHN1bjRpX2JhY2tlbmQubwo+
+PiAgCj4+ICBvYmotJChDT05GSUdfRFJNX1NVTjRJKQkJKz0gc3VuNGktZHJtLm8gc3VuNGktdGNv
+bi5vCj4+IC1vYmotJChDT05GSUdfRFJNX1NVTjRJKQkJKz0gc3VuNGlfYmFja2VuZC5vCj4+ICtv
+YmotJChDT05GSUdfRFJNX1NVTjRJX0JBQ0tFTkQpCSs9IHN1bjRpLWJhY2tlbmQubwo+PiAgb2Jq
+LSQoQ09ORklHX0RSTV9TVU40SSkJCSs9IHN1bjZpX2RyYy5vCj4+ICBvYmotJChDT05GSUdfRFJN
+X1NVTjRJKQkJKz0gc3VuNGlfdHYubwo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3N1
+bjRpL3N1bjRpX2JhY2tlbmQuYwo+Yi9kcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfYmFja2Vu
+ZC5jCj4+IGluZGV4IGQ2NjA3NDFiYTQ3NS4uYTE2Yzk2YTAwMmE0IDEwMDY0NAo+PiAtLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfYmFja2VuZC5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1
+L2RybS9zdW40aS9zdW40aV9iYWNrZW5kLmMKPj4gQEAgLTIzLDYgKzIzLDggQEAKPj4gIAo+PiAg
+I2luY2x1ZGUgInN1bjRpX2JhY2tlbmQuaCIKPj4gICNpbmNsdWRlICJzdW40aV9kcnYuaCIKPj4g
+KyNpbmNsdWRlICJzdW40aV9sYXllci5oIgo+PiArI2luY2x1ZGUgInN1bnhpX2VuZ2luZS5oIgo+
+PiAgCj4+ICBzdGF0aWMgY29uc3QgdTMyIHN1bnhpX3JnYjJ5dXZfY29lZlsxMl0gPSB7Cj4+ICAJ
+MHgwMDAwMDEwNywgMHgwMDAwMDIwNCwgMHgwMDAwMDA2NCwgMHgwMDAwMDEwOCwKPj4gQEAgLTMw
+LDkgKzMyLDEwIEBAIHN0YXRpYyBjb25zdCB1MzIgc3VueGlfcmdiMnl1dl9jb2VmWzEyXSA9IHsK
+Pj4gIAkweDAwMDAwMWMxLCAweDAwMDAzZTg4LCAweDAwMDAzZmI4LCAweDAwMDAwODA4Cj4+ICB9
+Owo+PiAgCj4+IC12b2lkIHN1bjRpX2JhY2tlbmRfYXBwbHlfY29sb3JfY29ycmVjdGlvbihzdHJ1
+Y3Qgc3VuNGlfYmFja2VuZAo+KmJhY2tlbmQpCj4+ICtzdGF0aWMgdm9pZCBzdW40aV9iYWNrZW5k
+X2FwcGx5X2NvbG9yX2NvcnJlY3Rpb24odm9pZCAqZW5naW5lKQo+PiAgewo+PiAgCWludCBpOwo+
+PiArCXN0cnVjdCBzdW40aV9iYWNrZW5kICpiYWNrZW5kID0gZW5naW5lOwo+Cj5JJ20gbm90IHJl
+YWxseSBmb25kIG9mIHBhc3NpbmcgYW4gb3BhcXVlIHBvaW50ZXIgaGVyZSwgYW5kIGhvcGUgdGhh
+dAo+dGhpbmdzIHdpbGwgd29yayBvdXQuCj4KPkkgdGhpbmsgaGF2aW5nIGEgY29tbW9uIHN0cnVj
+dHVyZSwgaG9sZGluZyB0aGUgY29tbW9uIHRoaW5nc2FuZCBhIG1vcmUKPnNwZWNpZmljIHN0cnVj
+dHVyZSBmb3IgdGhhdCBvbmUgd291bGQgd29yayBiZXR0ZXIuCj4KPlNvbWV0aGluZyBsaWtlCj4K
+PnN0cnVjdCBzdW54aV9lbmdpbmUgewo+ICAgICAgIHN0cnVjdCByZWdtYXAJKnJlZ3M7Cj59Owo+
+Cj5zdHJ1Y3Qgc3VuNGlfYmFja2VuZCB7Cj4gICAgICAgc3RydWN0IHN1bnhpX2VuZ2luZQllbmdp
+bmU7Cj4KPglzdHJ1Y3QgY2xrCQkqc2F0X2NsazsKPglzdHJ1Y3QgcmVzZXRfY29udHJvbAkqc2F0
+X3Jlc2V0Owo+CQo+fTsKClNvdW5kcyBnb29kIDstKQoKPgo+c3RhdGljIHZvaWQgc3VuNGlfYmFj
+a2VuZF9hcHBseV9jb2xvcl9jb3JyZWN0aW9uKHN0cnVjdCBzdW54aV9lbmdpbmUKPiplbmdpbmUp
+Cj5zdHJ1Y3Qgc3VuNGlfYmFja2VuZCAqYmFja2VuZCA9IGNvbnRhaW5lcl9vZihlbmdpbmUsIHN0
+cnVjdAo+c3VuNGlfYmFja2VuZCwgZW5naW5lKTsKPgo+Li4uCj4KPj4gK3N0YXRpYyBjb25zdCBz
+dHJ1Y3Qgc3VueGlfZW5naW5lX29wcyBzdW40aV9iYWNrZW5kX2VuZ2luZV9vcHMgPSB7Cj4+ICsJ
+LmNvbW1pdCA9IHN1bjRpX2JhY2tlbmRfY29tbWl0LAo+PiArCS5sYXllcnNfaW5pdCA9IHN1bjRp
+X2xheWVyc19pbml0LAo+PiArCS5hcHBseV9jb2xvcl9jb3JyZWN0aW9uID0gc3VuNGlfYmFja2Vu
+ZF9hcHBseV9jb2xvcl9jb3JyZWN0aW9uLAo+PiArCS5kaXNhYmxlX2NvbG9yX2NvcnJlY3Rpb24g
+PSBzdW40aV9iYWNrZW5kX2Rpc2FibGVfY29sb3JfY29ycmVjdGlvbiwKPgo+UGxlYXNlIGFsaWdu
+IHRoZSB2YWx1ZXMgd2l0aCB0YWJzLCBsaWtlIGRvbmUgaW4gdGhlIG90aGVyIHN0cnVjdHVyZXMK
+PmNyZWF0ZWQgdGhhdCB3YXkgaW4gdGhpcyBkcml2ZXIuCj4KPj4gIHN0YXRpYyB2b2lkIHN1bjRp
+X2NydGNfYXRvbWljX2JlZ2luKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKPj4gQEAgLTU2LDcgKzU1
+LDcgQEAgc3RhdGljIHZvaWQgc3VuNGlfY3J0Y19hdG9taWNfZmx1c2goc3RydWN0IGRybV9jcnRj
+Cj4qY3J0YywKPj4gIAo+PiAgCURSTV9ERUJVR19EUklWRVIoIkNvbW1pdHRpbmcgcGxhbmUgY2hh
+bmdlc1xuIik7Cj4+ICAKPj4gLQlzdW40aV9iYWNrZW5kX2NvbW1pdChzY3J0Yy0+YmFja2VuZCk7
+Cj4+ICsJc2NydGMtPmVuZ2luZV9vcHMtPmNvbW1pdChzY3J0Yy0+ZW5naW5lKTsKPgo+WW91IHJl
+bHkgb24gdGhlIGJhY2tlbmQgaGF2aW5nIHNldHVwIHRoaW5ncyBwcm9wZXJseSwgd2hpY2ggaXMg
+cHJldHR5Cj5mcmFnaWxlLiBJZGVhbGx5LCB5b3Ugc2hvdWxkIGhhdmUgYSBmdW5jdGlvbiB0byBj
+aGVjayB0aGF0IGVuZ2luZV9vcHMKPmFuZCBjb21taXQgaXMgIU5VTEwsIGFuZCBjYWxsIGl0LCBh
+bmQgdGhlIGNvbnN1bWVycyB3b3VsZCB1c2UgdGhhdAo+ZnVuY3Rpb24uLi4KCklmIGl0J3MgcmVh
+bGx5IE5VTEwgaG93IHNob3VsZCB0aGUgZnVuY3Rpb24gcmV0dXJuPwoKPgo+PiBAQCAtMzYyLDcg
+KzM2MSw5IEBAIHN0YXRpYyB2b2lkIHN1bjRpX3R2X2Rpc2FibGUoc3RydWN0IGRybV9lbmNvZGVy
+Cj4qZW5jb2RlcikKPj4gIAlyZWdtYXBfdXBkYXRlX2JpdHModHYtPnJlZ3MsIFNVTjRJX1RWRV9F
+Tl9SRUcsCj4+ICAJCQkgICBTVU40SV9UVkVfRU5fRU5BQkxFLAo+PiAgCQkJICAgMCk7Cj4+IC0J
+c3VuNGlfYmFja2VuZF9kaXNhYmxlX2NvbG9yX2NvcnJlY3Rpb24oYmFja2VuZCk7Cj4+ICsKPj4g
+KwlpZiAoY3J0Yy0+ZW5naW5lX29wcy0+ZGlzYWJsZV9jb2xvcl9jb3JyZWN0aW9uKQo+PiArCQlj
+cnRjLT5lbmdpbmVfb3BzLT5kaXNhYmxlX2NvbG9yX2NvcnJlY3Rpb24oY3J0Yy0+ZW5naW5lKTsK
+Pj4gIH0KPgo+Li4uIEluc3RlYWQgb2YgaGF2aW5nIHRvIGRvIGl0IGluIHNvbWUgY2FzZXMsIGJ1
+dCBub3QgYWx3YXlzIC4uLgo+Cj4+ICBzdGF0aWMgdm9pZCBzdW40aV90dl9lbmFibGUoc3RydWN0
+IGRybV9lbmNvZGVyICplbmNvZGVyKQo+PiBAQCAtMzcwLDExICszNzEsMTEgQEAgc3RhdGljIHZv
+aWQgc3VuNGlfdHZfZW5hYmxlKHN0cnVjdCBkcm1fZW5jb2Rlcgo+KmVuY29kZXIpCj4+ICAJc3Ry
+dWN0IHN1bjRpX3R2ICp0diA9IGRybV9lbmNvZGVyX3RvX3N1bjRpX3R2KGVuY29kZXIpOwo+PiAg
+CXN0cnVjdCBzdW40aV9jcnRjICpjcnRjID0gZHJtX2NydGNfdG9fc3VuNGlfY3J0YyhlbmNvZGVy
+LT5jcnRjKTsKPj4gIAlzdHJ1Y3Qgc3VuNGlfdGNvbiAqdGNvbiA9IGNydGMtPnRjb247Cj4+IC0J
+c3RydWN0IHN1bjRpX2JhY2tlbmQgKmJhY2tlbmQgPSBjcnRjLT5iYWNrZW5kOwo+PiAgCj4+ICAJ
+RFJNX0RFQlVHX0RSSVZFUigiRW5hYmxpbmcgdGhlIFRWIE91dHB1dFxuIik7Cj4+ICAKPj4gLQlz
+dW40aV9iYWNrZW5kX2FwcGx5X2NvbG9yX2NvcnJlY3Rpb24oYmFja2VuZCk7Cj4+ICsJaWYgKGNy
+dGMtPmVuZ2luZV9vcHMtPmFwcGx5X2NvbG9yX2NvcnJlY3Rpb24pCj4+ICsJCWNydGMtPmVuZ2lu
+ZV9vcHMtPmFwcGx5X2NvbG9yX2NvcnJlY3Rpb24oY3J0Yy0+ZW5naW5lKTsKPj4gIAo+PiAgCXJl
+Z21hcF91cGRhdGVfYml0cyh0di0+cmVncywgU1VONElfVFZFX0VOX1JFRywKPj4gIAkJCSAgIFNV
+TjRJX1RWRV9FTl9FTkFCTEUsCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vc3VuNGkv
+c3VueGlfZW5naW5lLmgKPmIvZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bnhpX2VuZ2luZS5oCj4+
+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+IGluZGV4IDAwMDAwMDAwMDAwMC4uYTkxMjhhYmRhNjZm
+Cj4+IC0tLSAvZGV2L251bGwKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3N1bjRpL3N1bnhpX2Vu
+Z2luZS5oCj4+IEBAIC0wLDAgKzEsMzUgQEAKPj4gKy8qCj4+ICsgKiBDb3B5cmlnaHQgKEMpIDIw
+MTcgSWNlbm93eSBaaGVuZyA8aWNlbm93eUBhb3NjLmlvPgo+PiArICoKPj4gKyAqIFRoaXMgcHJv
+Z3JhbSBpcyBmcmVlIHNvZnR3YXJlOyB5b3UgY2FuIHJlZGlzdHJpYnV0ZSBpdCBhbmQvb3IKPj4g
+KyAqIG1vZGlmeSBpdCB1bmRlciB0aGUgdGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYyBM
+aWNlbnNlIGFzCj4+ICsgKiBwdWJsaXNoZWQgYnkgdGhlIEZyZWUgU29mdHdhcmUgRm91bmRhdGlv
+bjsgZWl0aGVyIHZlcnNpb24gMiBvZgo+PiArICogdGhlIExpY2Vuc2UsIG9yIChhdCB5b3VyIG9w
+dGlvbikgYW55IGxhdGVyIHZlcnNpb24uCj4+ICsgKi8KPj4gKwo+PiArI2lmbmRlZiBfU1VOWElf
+RU5HSU5FX0hfCj4+ICsjZGVmaW5lIF9TVU5YSV9FTkdJTkVfSF8KPj4gKwo+PiArc3RydWN0IHN1
+bjRpX2NydGM7Cj4+ICsKPj4gK3N0cnVjdCBzdW54aV9lbmdpbmVfb3BzIHsKPj4gKwkvKiBDb21t
+aXQgdGhlIGNoYW5nZXMgdG8gdGhlIGVuZ2luZSAqLwo+PiArCXZvaWQgKCpjb21taXQpKHZvaWQg
+KmVuZ2luZSk7Cj4+ICsJLyogSW5pdGlhbGl6ZSBsYXllcnMgKHBsYW5lcykgZm9yIHRoaXMgZW5n
+aW5lICovCj4+ICsJc3RydWN0IGRybV9wbGFuZSAqKigqbGF5ZXJzX2luaXQpKHN0cnVjdCBkcm1f
+ZGV2aWNlICpkcm0sCj4+ICsJCQkJCSAgc3RydWN0IHN1bjRpX2NydGMgKmNydGMpOwo+PiArCj4+
+ICsJLyoKPj4gKwkgKiBUaGVzZSBhcmUgb3B0aW9uYWwgZnVuY3Rpb25zIGZvciB0aGUgVFYgRW5j
+b2Rlci4gUGxlYXNlIGNoZWNrCj4+ICsJICogdGhlaXIgcHJlc2VuY2UgYmVmb3JlIGNhbGxpbmcg
+dGhlbS4KPj4gKwkgKgo+PiArCSAqIFRoZSBmaXJzdCBmdW5jdGlvbiBhcHBsaWVzIHRoZSBjb2xv
+ciBzcGFjZSBjb3JyZWN0aW9uIG5lZWRlZAo+PiArCSAqIGZvciBvdXRwdXRpbmcgY29ycmVjdCBU
+ViBzaWduYWwuCj4+ICsJICoKPj4gKwkgKiBUaGUgc2Vjb25kIGZ1bmN0aW9uIGRpc2FibGVkIHRo
+ZSBjb3JyZWN0aW9uLgo+PiArCSAqLwo+PiArCXZvaWQgKCphcHBseV9jb2xvcl9jb3JyZWN0aW9u
+KSh2b2lkICplbmdpbmUpOwo+PiArCXZvaWQgKCpkaXNhYmxlX2NvbG9yX2NvcnJlY3Rpb24pKHZv
+aWQgKmVuZ2luZSk7Cj4KPi4uLiBBbmQgaGF2ZSB0byBkb2N1bWVudCBpdC4KPgo+UGxlYXNlIGFs
+c28gdXNlIGtlcm5lbGRvYyBmb3IgdGhvc2UgY29tbWVudHMuCj4KPlRoYW5rcyBhZ2FpbiEKPk1h
+eGltZQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGlu
+dXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRl
+YWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgt
+YXJtLWtlcm5lbAo=
