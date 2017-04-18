@@ -1,125 +1,93 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:4733 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S933518AbdDHBZM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2017 21:25:12 -0400
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC: CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH v4 06/10] soc: mediatek: avoid using fixed spm power status defines
-Date: Sat, 8 Apr 2017 09:20:31 +0800
-Message-ID: <1491614435-23754-7-git-send-email-mars.cheng@mediatek.com>
-In-Reply-To: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
-References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33975 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751300AbdDRTJK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2017 15:09:10 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <85ca1a60-3367-1282-28f4-e94409a391a7@gmail.com>
+References: <20170416165709.27449-1-marek.vasut+renesas@gmail.com>
+ <20170416165709.27449-2-marek.vasut+renesas@gmail.com> <CAMuHMdXFUkLypckz2n27or268xiMXCpX+YB3+-beTt92EFA=rQ@mail.gmail.com>
+ <85ca1a60-3367-1282-28f4-e94409a391a7@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Apr 2017 21:09:08 +0200
+Message-ID: <CAMuHMdUoaRSGX7=Jh28d9SRRj3MQ+M4k1Bo1qH1OsWPkqEc3ow@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7791: Add GyroADC bindings
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Use variables to replace fixed defines since the offset
-of the status of spm power might be different for some chips
+Hi Marek,
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
----
- drivers/soc/mediatek/mtk-scpsys.c |   33 +++++++++++++++++++++++++++------
- 1 file changed, 27 insertions(+), 6 deletions(-)
+On Tue, Apr 18, 2017 at 9:05 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> On 04/18/2017 03:59 PM, Geert Uytterhoeven wrote:
+>> On Sun, Apr 16, 2017 at 6:57 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>>> --- a/arch/arm/boot/dts/r8a7791.dtsi
+>>> +++ b/arch/arm/boot/dts/r8a7791.dtsi
+>>> @@ -776,6 +776,15 @@
+>>>                 status = "disabled";
+>>>         };
+>>>
+>>> +       adc: adc@e6e54000 {
+>>> +               compatible = "renesas,r8a7791-gyroadc", "renesas,rcar-gyroadc";
+>>> +               reg = <0 0xe6e54000 0 64>;
+>>> +               clocks = <&mstp9_clks R8A7791_CLK_GYROADC>, <&adc_clk>;
+>>> +               clock-names = "fck", "if";
+>>> +               power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+>>> +               status = "disabled";
+>>> +       };
+>>> +
+>>>         scif2: serial@e6e58000 {
+>>>                 compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
+>>>                              "renesas,scif";
+>>> @@ -1133,6 +1142,13 @@
+>>>                         clock-frequency = <0>;
+>>>                 };
+>>>
+>>> +               /* GyroADC clock */
+>>> +               adc_clk: adc_clk {
+>>> +                       compatible = "fixed-clock";
+>>> +                       #clock-cells = <0>;
+>>> +                       clock-frequency = <65000000>;
+>>> +               };
+>>
+>> Why do you have to add a clock?
+>> I think you should just refer to the on-SoC peripheral clock: &cp_clk.
+>
+> I think you are right, in fact, see below ...
+>
+>>> +
+>>>                 /* Special CPG clocks */
+>>>                 cpg_clocks: cpg_clocks@e6150000 {
+>>>                         compatible = "renesas,r8a7791-cpg-clocks",
+>>> @@ -1432,6 +1448,7 @@
+>>>                                  <&hp_clk>, <&hp_clk>;
+>>
+>> Missing addition of the parent clock for the newly added module clock.
+>> Perhaps this should be the peripheral clock (<&cp_clk>)?
+>>
+>> Oops, that means there's no need to have two clock inputs in the adc device
+>> node, and thus we screwed up when reviewing the GyroADC bindings :-(
+>
+> I think you're right. I should be just getting the clk rate of the fck
+> and derive the gyroadc timings from that, correct ? I can send a patch
+> for the driver to just ignore the second clock entry and update the DT
+> binding document to drop the "if" clock (?) .
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index beb7916..eadbf0d 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -107,21 +107,28 @@ struct scp_domain {
- 	struct regulator *supply;
- };
- 
-+struct scp_ctrl_reg {
-+	int pwr_sta_offs;
-+	int pwr_sta2nd_offs;
-+};
-+
- struct scp {
- 	struct scp_domain *domains;
- 	struct genpd_onecell_data pd_data;
- 	struct device *dev;
- 	void __iomem *base;
- 	struct regmap *infracfg;
-+	struct scp_ctrl_reg ctrl_reg;
- };
- 
- static int scpsys_domain_is_on(struct scp_domain *scpd)
- {
- 	struct scp *scp = scpd->scp;
- 
--	u32 status = readl(scp->base + SPM_PWR_STATUS) & scpd->data->sta_mask;
--	u32 status2 = readl(scp->base + SPM_PWR_STATUS_2ND) &
--				scpd->data->sta_mask;
-+	u32 status = readl(scp->base + scp->ctrl_reg.pwr_sta_offs) &
-+						scpd->data->sta_mask;
-+	u32 status2 = readl(scp->base + scp->ctrl_reg.pwr_sta2nd_offs) &
-+						scpd->data->sta_mask;
- 
- 	/*
- 	 * A domain is on when both status bits are set. If only one is set
-@@ -346,7 +353,8 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
- }
- 
- static struct scp *init_scp(struct platform_device *pdev,
--			const struct scp_domain_data *scp_domain_data, int num)
-+			const struct scp_domain_data *scp_domain_data, int num,
-+			struct scp_ctrl_reg *scp_ctrl_reg)
- {
- 	struct genpd_onecell_data *pd_data;
- 	struct resource *res;
-@@ -358,6 +366,9 @@ static struct scp *init_scp(struct platform_device *pdev,
- 	if (!scp)
- 		return ERR_PTR(-ENOMEM);
- 
-+	scp->ctrl_reg.pwr_sta_offs = scp_ctrl_reg->pwr_sta_offs;
-+	scp->ctrl_reg.pwr_sta2nd_offs = scp_ctrl_reg->pwr_sta2nd_offs;
-+
- 	scp->dev = &pdev->dev;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -556,8 +567,13 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- static int __init scpsys_probe_mt2701(struct platform_device *pdev)
- {
- 	struct scp *scp;
-+	struct scp_ctrl_reg scp_reg;
- 
--	scp = init_scp(pdev, scp_domain_data_mt2701, NUM_DOMAINS_MT2701);
-+	scp_reg.pwr_sta_offs = SPM_PWR_STATUS;
-+	scp_reg.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND;
-+
-+	scp = init_scp(pdev, scp_domain_data_mt2701, NUM_DOMAINS_MT2701,
-+		       &scp_reg);
- 	if (IS_ERR(scp))
- 		return PTR_ERR(scp);
- 
-@@ -667,8 +683,13 @@ static int __init scpsys_probe_mt8173(struct platform_device *pdev)
- 	struct scp *scp;
- 	struct genpd_onecell_data *pd_data;
- 	int ret;
-+	struct scp_ctrl_reg scp_reg;
-+
-+	scp_reg.pwr_sta_offs = SPM_PWR_STATUS;
-+	scp_reg.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND;
- 
--	scp = init_scp(pdev, scp_domain_data_mt8173, NUM_DOMAINS_MT8173);
-+	scp = init_scp(pdev, scp_domain_data_mt8173, NUM_DOMAINS_MT8173,
-+		       &scp_reg);
- 	if (IS_ERR(scp))
- 		return PTR_ERR(scp);
- 
--- 
-1.7.9.5
+Fine for me. Thanks!
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
