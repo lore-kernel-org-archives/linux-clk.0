@@ -1,128 +1,50 @@
-Return-Path: <eric@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "open list\:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Tom Cooksey <tom.cooksey@arm.com>, Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/pl111: Register the clock divider and use it.
-In-Reply-To: <CACRpkdZkz16hfW7S1m5=gY=L8fN9u47zfoHHbwrL=_HgQx=TCg@mail.gmail.com>
-References: <20170424194527.19426-1-eric@anholt.net> <CACRpkdZkz16hfW7S1m5=gY=L8fN9u47zfoHHbwrL=_HgQx=TCg@mail.gmail.com>
-Date: Wed, 26 Apr 2017 09:54:32 -0700
-Message-ID: <8737cvkt2v.fsf@eliezer.anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-Path: <ykaneko0929@gmail.com>
+Return-Path: <ykaneko0929@gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a7796: Add HDMI clock
+Date: Thu, 20 Apr 2017 02:46:26 +0900
+Message-Id: <1492624001-3758-6-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
-Linus Walleij <linus.walleij@linaro.org> writes:
+This patch adds HDMI-IF0 clock for R8A7796 SoC.
 
-> On Mon, Apr 24, 2017 at 9:45 PM, Eric Anholt <eric@anholt.net> wrote:
->> +static long pl111_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
->> +                                    unsigned long *prate)
->> +{
->> +       int div = pl111_clk_div_choose_div(hw, rate, prate, true);
->
-> ...which we seem to assume that we can, actually why do you pass
-> this parameter set_parent at all? It is always true in this code.
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
-Because the other caller just below passes false: When we're being asked
-to set_rate, the parent rate has been set by the core and we just need
-to choose our best divider given that.
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
->> +static int pl111_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
->> +                                 unsigned long prate)
->> +{
->> +       struct pl111_drm_dev_private *priv =
->> +               container_of(hw, struct pl111_drm_dev_private, clk_div);
->> +       int div = pl111_clk_div_choose_div(hw, rate, &prate, false);
->> +       u32 tim2;
->> +
->> +       spin_lock(&priv->tim2_lock);
->> +       tim2 = readl(priv->regs + CLCD_TIM2);
->> +       tim2 &= ~(TIM2_BCD | TIM2_PCD_LO_MASK | TIM2_PCD_HI_MASK);
->> +
->> +       if (div == 1) {
->> +               tim2 |= TIM2_BCD;
->> +       } else {
->> +               div -= 2;
->> +               tim2 |= div & TIM2_PCD_LO_MASK;
->> +               tim2 |= (div >> TIM2_PCD_LO_BITS) << TIM2_PCD_HI_SHIFT;
->> +       }
->> +
->> +       writel(tim2, priv->regs + CLCD_TIM2);
->> +       spin_unlock(&priv->tim2_lock);
->> +
->> +       return 0;
->> +}
->
-> So this will write the divisor, which is nice. But what if we also need
-> to change the rate of the parent?
-
-The clk core will have already done that.
-
->> +static int
->> +pl111_init_clock_divider(struct drm_device *drm)
->> +{
->> +       struct pl111_drm_dev_private *priv = drm->dev_private;
->> +       struct clk *parent = devm_clk_get(drm->dev, "clcdclk");
->> +       struct clk_hw *div = &priv->clk_div;
->> +       const char *parent_name;
->> +       struct clk_init_data init = {
->> +               .name = "pl111_div",
->> +               .ops = &pl111_clk_div_ops,
->> +               .parent_names = &parent_name,
->> +               .num_parents = 1,
->> +       };
->
-> I think it is necessary to set .flags in the init data to
-> .flags = CLK_SET_RATE_PARENT,
-> for this code to work with a parent that can change rate.
-
-I was thinking this flag was used internally in things like
-clk-divider.c, but the core uses it too.  I'll fix that, thanks!
-
->> - * - Use the internal clock divisor to reduce power consumption by
->> - *   using HCLK (apb_pclk) when appropriate.
->> + * - Use the CLKSEL bit to support switching between the two external
->> + *   clock parents.
->
-> OK so that remains to be done. We discussed this previously
-> so I got a bit confused. The divisor code seems fine, after this
-> we only need some more code to choose the best parent for
-> the divided clock.
->
-> It seems that what would pe Perfect(TM) would be to calculate the
-> best end result using clock A and the best end result using clock B,
-> both utilizing the divisor, and then choose the best of those two.
->
-> I think struct clk_mux is supposed to do that so it would eventually
-> be:
->
-> CLK A -|\_ clk_mux --> clk_divider --> pixel clock
-> CLK B -|/
-
-I agree.  This patch got things going for this platform, without needing
-the bindings change (and helped confirm for me that I do understand the
-platform design correctly).
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlkA0MgACgkQtdYpNtH8
-nuj1zxAAj+MdIpqzAEp0YNc9ehHjf7/sDnraDcxwDs121DWatBH+nb1EvNHW3dVG
-msNrngJpKwSW5a3my39P2R6Ua5W5690SRm3Mh53+dThvX+gT8IYYKl0IRZJPsOv9
-WkBzKMEUTB9n6JAxoCwKDgUUuOtha0/sAsZ1hct7tvjv1m6rAIECoWgt1IzLd7gP
-A8tLHrK59PMTERLZw2cX11T850DE/t67AeZN7mNxRff/Y6OxMTYkPY1C46ztURkY
-VTJ++uAcNBNlDnwX8uMhtvUw8j+sgDU3c5boHMlj/RkpO+QCEALFhyYr5DGJs1mG
-NYwZ+CarpomFS7gZh40asowD4aYngBEEorVUuFvzf24BFmIpY+C/YdEqWFkwVqxl
-XuqBkV3ytrNX7HLT1VaE2ccCB0E5U+8tlw9vC3CGaMB4ZTP8FLgM8dlQVOJLvJSL
-rs9p7JTRLSGH8kReVGxNwy41exivSoV0YgLZUuE6V4YHl0Jke3E2qzeIdjw3mrEf
-pST0Sg0C3hUjJBUQj2xE9HQCQyY17yhJp2gBM4eHIi36eQmKpCnLtK9yjT2ZskVp
-A5qy3/h/YWfNsIM7XHb/ghZwZXsr2x57rKg6A2H2crQZxDqK+wYEB84suaINH6ay
-2V8IJk97EnYWDSKavKgXVf3Dr1yH956rZo76ALYODMoY0qjytD0=
-=Pmel
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 9d114b3..1d8c5c2 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -106,6 +106,7 @@ enum clk_ids {
+ 	DEF_DIV6P1("canfd",     R8A7796_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
+ 	DEF_DIV6P1("csi0",      R8A7796_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
+ 	DEF_DIV6P1("mso",       R8A7796_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
++	DEF_DIV6P1("hdmi",      R8A7796_CLK_HDMI,  CLK_PLL1_DIV4, 0x250),
+ 
+ 	DEF_DIV6_RO("osc",      R8A7796_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
+ 	DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
+@@ -170,6 +171,7 @@ enum clk_ids {
+ 	DEF_MOD("du1",			 723,	R8A7796_CLK_S2D1),
+ 	DEF_MOD("du0",			 724,	R8A7796_CLK_S2D1),
+ 	DEF_MOD("lvds",			 727,	R8A7796_CLK_S2D1),
++	DEF_MOD("hdmi0",		 729,	R8A7796_CLK_HDMI),
+ 	DEF_MOD("vin7",			 804,	R8A7796_CLK_S0D2),
+ 	DEF_MOD("vin6",			 805,	R8A7796_CLK_S0D2),
+ 	DEF_MOD("vin5",			 806,	R8A7796_CLK_S0D2),
+-- 
+1.9.1
