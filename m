@@ -1,56 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:56773 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753079AbdDDJvi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Apr 2017 05:51:38 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 0/5] Add support for the R_CCU on Allwinner H3/A64 SoCs
-Date: Tue,  4 Apr 2017 17:50:55 +0800
-Message-Id: <20170404095100.18649-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ykaneko0929@gmail.com>
+Return-Path: <ykaneko0929@gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a7796: Add Sound SRC clock
+Date: Thu, 20 Apr 2017 02:46:35 +0900
+Message-Id: <1492624001-3758-15-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner SoCs after sun6i-a31 nearly all have a R_CCU in PRCM part.
-(V3s and R40 do not have it, as they have even no PRCM)
+From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-This patch adds support for the ones on H3/A64.
+This patch adds SCU(all), SCU(SRC{0,1,2,3,4,5,6,7,8,9}), SCU(CTU00,
+CTU01, CTU02, CTU03, MIX0) and SCU (CTU10, CTU11, CTU12, CTU13, MIX1)
+clocks for R8A7796 SoC.
 
-Some clock/reset values are reserved for easier extending the support to
-A31/A23, but for this I think some changes to the PRCM MFD should be made,
-see [1] (Although this is only a sketch).
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
-The r_pio device node is also added for A64, as the driver is already
-merged, and its depends (r_ccu) is now met.
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-[1] https://github.com/wens/linux/commits/sunxi-ng-prcm
-
-Icenowy Zheng (5):
-  dt-bindings: update device tree binding for Allwinner PRCM CCUs
-  clk: sunxi-ng: add support for PRCM CCUs
-  arm64: allwinner: a64: add r_ccu node
-  ARM: sunxi: h3/h5: switch apb0-related clocks to r_ccu
-  arm64: allwinner: a64: add R_PIO pinctrl node
-
- .../devicetree/bindings/clock/sunxi-ccu.txt        |  17 +-
- arch/arm/boot/dts/sunxi-h3-h5.dtsi                 |  45 ++---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      |  29 +++
- drivers/clk/sunxi-ng/Kconfig                       |   6 +
- drivers/clk/sunxi-ng/Makefile                      |   1 +
- drivers/clk/sunxi-ng/ccu-sun8i-r.c                 | 213 +++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-r.h                 |  27 +++
- include/dt-bindings/clock/sun8i-r-ccu.h            |  59 ++++++
- include/dt-bindings/reset/sun8i-r-ccu.h            |  53 +++++
- 9 files changed, 418 insertions(+), 32 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r.h
- create mode 100644 include/dt-bindings/clock/sun8i-r-ccu.h
- create mode 100644 include/dt-bindings/reset/sun8i-r-ccu.h
-
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 9be8187..9a18cb7 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -219,6 +219,19 @@ enum clk_ids {
+ 	DEF_MOD("ssi2",			1013,	MOD_CLK_ID(1005)),
+ 	DEF_MOD("ssi1",			1014,	MOD_CLK_ID(1005)),
+ 	DEF_MOD("ssi0",			1015,	MOD_CLK_ID(1005)),
++	DEF_MOD("scu-all",		1017,	R8A7796_CLK_S3D4),
++	DEF_MOD("scu-ctu1-mix1",	1020,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-ctu0-mix0",	1021,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src9",		1022,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src8",		1023,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src7",		1024,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src6",		1025,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src5",		1026,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src4",		1027,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src3",		1028,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src2",		1029,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src1",		1030,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src0",		1031,	MOD_CLK_ID(1017)),
+ };
+ 
+ static const unsigned int r8a7796_crit_mod_clks[] __initconst = {
 -- 
-2.12.2
-
+1.9.1
