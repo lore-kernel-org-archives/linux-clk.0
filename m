@@ -1,50 +1,45 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH 2/5 v2] clk: qcom: Elaborate on "active" clocks in the RPM clock bindings
-Date: Wed, 19 Apr 2017 11:13:23 +0200
-Message-Id: <20170419091326.11226-2-linus.walleij@linaro.org>
-In-Reply-To: <20170419091326.11226-1-linus.walleij@linaro.org>
-References: <20170419091326.11226-1-linus.walleij@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:58560 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1762730AbdDSQ1m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Apr 2017 12:27:42 -0400
+Date: Wed, 19 Apr 2017 09:27:39 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Mars Cheng <mars.cheng@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        wsd_upstream@mediatek.com
+Subject: Re: [PATCH v4 03/10] dt-bindings: arm: mediatek: document clk
+ bindings for MT6797
+Message-ID: <20170419162007.GD7065@codeaurora.org>
+References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
+ <1491614435-23754-4-git-send-email-mars.cheng@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1491614435-23754-4-git-send-email-mars.cheng@mediatek.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The concept of "active" clocks is just explained in a bried comment in the
-device driver, let's explain it a bit more in the device tree bindings
-so everyone understands this.
+On 04/08, Mars Cheng wrote:
+> From: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+> 
+> This patch adds the binding documentation for apmixedsys, imgsys,
+> infracfg, mmsys, topckgen, vdecsys and vencsys for MT6797.
+> 
+> Signed-off-by: Kevin-CW Chen <kevin-cw.chen@mediatek.com>
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Reword slighty in accordance with Stephens feedback.
----
- Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Applied to clk-next
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-index d470a0187035..833a89f06ae0 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -18,6 +18,14 @@ Required properties :
- 
- - #clock-cells : shall contain 1
- 
-+The clock enumerators are defined in <dt-bindings/clock/qcom,rpmcc.h>
-+and come in pairs: FOO_CLK followed by FOO_A_CLK. The latter clock
-+is an "active" clock, which means that the consumer only care that the
-+clock is available when the apps CPU subsystem is active, i.e. not
-+suspended or in deep idle. If it is important that the clock keeps running
-+during system suspend, you need to specify the non-active clock, the one
-+not containing *_A_* in the enumerator name.
-+
- Example:
- 	smd {
- 		compatible = "qcom,smd";
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
