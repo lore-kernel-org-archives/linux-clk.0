@@ -1,65 +1,41 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Mon, 24 Apr 2017 14:01:25 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com,
-	xuwei5@hisilicon.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V3 2/2] ARM64: dts: hi6220-hikey: Add clock binding for
- the pmic mfd
-Message-ID: <20170424130125.bzpljoomnfyemqpz@dell>
-References: <1492449567-31399-1-git-send-email-daniel.lezcano@linaro.org>
- <1492449567-31399-2-git-send-email-daniel.lezcano@linaro.org>
- <20170422020233.GA7065@codeaurora.org>
- <370c36f9-e6fc-416c-776b-edc1e42d7ddc@linaro.org>
- <20170424085944.aa5dsc4g6bwm5rgi@dell>
- <20170424091609.GA2137@mai>
+Return-Path: <elfring@users.sourceforge.net>
+Subject: [PATCH 5/5] clk: mvebu: Delete an unnecessary variable initialisation
+ in kirkwood_fix_sscg_deviation()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
+Message-ID: <adc65587-9ae6-96ad-51fc-ee8a2bedeef0@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 21:57:21 +0200
 MIME-Version: 1.0
+In-Reply-To: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
 Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20170424091609.GA2137@mai>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 24 Apr 2017, Daniel Lezcano wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 21:31:43 +0200
 
-> On Mon, Apr 24, 2017 at 09:59:44AM +0100, Lee Jones wrote:
-> > On Sat, 22 Apr 2017, Daniel Lezcano wrote:
-> > 
-> > > On 22/04/2017 04:02, Stephen Boyd wrote:
-> > > > On 04/17, Daniel Lezcano wrote:
-> > > >> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> > > >> ---
-> > > >>  Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt | 6 ++++++
-> > > >>  arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts             | 1 +
-> > > >>  2 files changed, 7 insertions(+)
-> > > >>
-> > > > 
-> > > > I take it this goes through arm-soc? Not sure why I'm on To:
-> > > > line.
-> > > 
-> > > Probably it should go through Lee's tree.
-> > 
-> > Unlikely.
-> > 
-> > The document and the DTS change should really have gone separately,
-> > but to save you from having to mess around so close to the merge window:
-> > 
-> > Acked-by: Lee Jones <lee.jones@linaro.org>
-> 
-> Thanks Lee.
-> 
-> Usually, I take the DT changes (including doc) with the timers changes with the
-> maintainer and Rob's blessing. So the DT and the driver changes are aligned in
-> my tree and make the submission changes easier.
+A pointer is immediately assigned to the local variable "sscg_np".
+Thus omit the explicit initialisation at the beginning.
 
-The binding docs go with the bindings, not the DTS changes.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/mvebu/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> I agree mixing the patches for different destinations into a single patchset is
-> fuzzy, I will take care next time to separate the patches.
-
+diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
+index 659d534a137b..6cfa38566e19 100644
+--- a/drivers/clk/mvebu/common.c
++++ b/drivers/clk/mvebu/common.c
+@@ -44,7 +44,7 @@ static struct clk_onecell_data clk_data;
+  */
+ u32 kirkwood_fix_sscg_deviation(u32 system_clk)
+ {
+-	struct device_node *sscg_np = NULL;
++	struct device_node *sscg_np;
+ 	void __iomem *sscg_map;
+ 	u32 sscg_reg;
+ 	s32 low_bound, high_bound;
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.12.2
