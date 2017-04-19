@@ -1,68 +1,45 @@
-Return-Path: <stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Mon, 10 Apr 2017 09:51:12 -0700
-From: Stefan Agner <stefan@agner.ch>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
- mturquette@baylibre.com, shawnguo@kernel.org, fabio.estevam@nxp.com,
- linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
-Subject: Re: [PATCH 2/2] clk: imx7d: add the missing ipg_root_clk
-In-Reply-To: <1491878269-9559-2-git-send-email-aisheng.dong@nxp.com>
-References: <1491878269-9559-1-git-send-email-aisheng.dong@nxp.com>
- <1491878269-9559-2-git-send-email-aisheng.dong@nxp.com>
-Message-ID: <28a132b609dc5765d1f5f9669f525fd0@agner.ch>
+Return-Path: <ykaneko0929@gmail.com>
+Return-Path: <ykaneko0929@gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a7795: Add USB-DMAC ch3 clock
+Date: Thu, 20 Apr 2017 02:46:24 +0900
+Message-Id: <1492624001-3758-4-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2017-04-10 19:37, Dong Aisheng wrote:
-> Add the missing ipg_root_clk which actually is already used by many
-> orphan clks in current tree.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Reviewed-by: Stefan Agner <stefan@agner.ch>
-Tested-by: Stefan Agner <stefan@agner.ch>
+This patch supports the clock of USB-DMAC ch3 module added from R8A7795
+ES2.0 SoC.
 
---
-Stefan
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
-> 
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx7d.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-> index ad04483..5620551 100644
-> --- a/drivers/clk/imx/clk-imx7d.c
-> +++ b/drivers/clk/imx/clk-imx7d.c
-> @@ -386,7 +386,7 @@ static int const clks_init_on[] __initconst = {
->  	IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_NAND_USDHC_BUS_ROOT_CLK,
->  	IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
->  	IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
-> -	IMX7D_AHB_CHANNEL_ROOT_CLK,
-> +	IMX7D_AHB_CHANNEL_ROOT_CLK, IMX7D_IPG_ROOT_CLK,
->  };
->  
->  static struct clk_onecell_data clk_data;
-> @@ -726,6 +726,7 @@ static void __init imx7d_clocks_init(struct
-> device_node *ccm_node)
->  	clks[IMX7D_ENET_AXI_ROOT_DIV] =
-> imx_clk_divider2("enet_axi_post_div", "enet_axi_pre_div", base +
-> 0x8900, 0, 6);
->  	clks[IMX7D_NAND_USDHC_BUS_ROOT_DIV] =
-> imx_clk_divider2("nand_usdhc_post_div", "nand_usdhc_pre_div", base +
-> 0x8980, 0, 6);
->  	clks[IMX7D_AHB_CHANNEL_ROOT_DIV] = imx_clk_divider2("ahb_root_clk",
-> "ahb_pre_div", base + 0x9000, 0, 6);
-> +	clks[IMX7D_IPG_ROOT_CLK] = imx_clk_divider2("ipg_root_clk",
-> "ahb_root_clk", base + 0x9080, 0, 2);
->  	clks[IMX7D_DRAM_ROOT_DIV] = imx_clk_divider2("dram_post_div",
-> "dram_cg", base + 0x9880, 0, 3);
->  	clks[IMX7D_DRAM_PHYM_ALT_ROOT_DIV] =
-> imx_clk_divider2("dram_phym_alt_post_div", "dram_phym_alt_pre_div",
-> base + 0xa000, 0, 3);
->  	clks[IMX7D_DRAM_ALT_ROOT_DIV] =
-> imx_clk_divider2("dram_alt_post_div", "dram_alt_pre_div", base +
-> 0xa080, 0, 3);
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index e48d5cf..fd4dbc6 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -142,8 +142,10 @@ enum clk_ids {
+ 	DEF_MOD("sdif0",		 314,	R8A7795_CLK_SD0),
+ 	DEF_MOD("pcie1",		 318,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("pcie0",		 319,	R8A7795_CLK_S3D1),
++	DEF_MOD("usb-dmac30",		 326,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("usb3-if1",		 327,	R8A7795_CLK_S3D1), /* ES1.x */
+ 	DEF_MOD("usb3-if0",		 328,	R8A7795_CLK_S3D1),
++	DEF_MOD("usb-dmac31",		 329,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("usb-dmac0",		 330,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("usb-dmac1",		 331,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("rwdt",			 402,	R8A7795_CLK_R),
+-- 
+1.9.1
