@@ -1,58 +1,57 @@
-Return-Path: <wens@mirror2.csie.ntu.edu.tw>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 2/3] clk: sunxi-ng: a33: gate then ungate PLL CPU clk after rate change
-Date: Thu, 13 Apr 2017 10:13:53 +0800
-Message-Id: <20170413021354.3258-3-wens@csie.org>
-In-Reply-To: <20170413021354.3258-1-wens@csie.org>
-References: <20170413021354.3258-1-wens@csie.org>
+Return-Path: <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] clk: at91: Use kcalloc() in
+ of_at91_clk_pll_get_characteristics()
+Message-ID: <2b5c3954-dc45-4f1b-5d94-397f688b23cb@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 19:54:04 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch utilizes the new PLL clk notifier to gate then ungate the
-PLL CPU clock after rate changes. This should mitigate the system
-hangs observed after the introduction of cpufreq for the A33.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 19:43:03 +0200
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "kcalloc".
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/clk/at91/clk-pll.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 56370c2c7f98..8d38e6510e29 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -756,6 +756,13 @@ static const struct sunxi_ccu_desc sun8i_a33_ccu_desc = {
- 	.num_resets	= ARRAY_SIZE(sun8i_a33_ccu_resets),
- };
+diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
+index 45ad168e1496..7d3223fc7161 100644
+--- a/drivers/clk/at91/clk-pll.c
++++ b/drivers/clk/at91/clk-pll.c
+@@ -399,18 +399,18 @@ of_at91_clk_pll_get_characteristics(struct device_node *np)
+ 	if (!characteristics)
+ 		return NULL;
  
-+static struct ccu_pll_nb sun8i_a33_pll_cpu_nb = {
-+	.common	= &pll_cpux_clk.common,
-+	/* copy from pll_cpux_clk */
-+	.enable	= BIT(31),
-+	.lock	= BIT(28),
-+};
-+
- static struct ccu_mux_nb sun8i_a33_cpu_nb = {
- 	.common		= &cpux_clk.common,
- 	.cm		= &cpux_clk.mux,
-@@ -787,6 +794,10 @@ static void __init sun8i_a33_ccu_setup(struct device_node *node)
+-	output = kzalloc(sizeof(*output) * num_output, GFP_KERNEL);
++	output = kcalloc(num_output, sizeof(*output), GFP_KERNEL);
+ 	if (!output)
+ 		goto out_free_characteristics;
  
- 	sunxi_ccu_probe(node, reg, &sun8i_a33_ccu_desc);
+ 	if (num_cells > 2) {
+-		out = kzalloc(sizeof(*out) * num_output, GFP_KERNEL);
++		out = kcalloc(num_output, sizeof(*out), GFP_KERNEL);
+ 		if (!out)
+ 			goto out_free_output;
+ 	}
  
-+	/* Gate then ungate PLL CPU after any rate changes */
-+	ccu_pll_notifier_register(&sun8i_a33_pll_cpu_nb);
-+
-+	/* Reparent CPU during PLL CPU rate changes */
- 	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
- 				  &sun8i_a33_cpu_nb);
- }
+ 	if (num_cells > 3) {
+-		icpll = kzalloc(sizeof(*icpll) * num_output, GFP_KERNEL);
++		icpll = kcalloc(num_output, sizeof(*icpll), GFP_KERNEL);
+ 		if (!icpll)
+ 			goto out_free_output;
+ 	}
 -- 
-2.11.0
+2.12.2
