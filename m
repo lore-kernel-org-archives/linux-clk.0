@@ -1,117 +1,83 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	carlo@caione.org,
-	Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH v2 1/2] clk: meson: mpll: fix division by zero in rate_from_params
-Date: Fri,  7 Apr 2017 17:34:32 +0200
-Message-Id: <20170407153433.18640-2-jbrunet@baylibre.com>
-In-Reply-To: <20170407153433.18640-1-jbrunet@baylibre.com>
-References: <20170407153433.18640-1-jbrunet@baylibre.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 19 Apr 2017 09:00:05 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: mturquette@baylibre.com, lee.jones@linaro.org, xuwei5@hisilicon.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH V2] clk: hi6220: Add the hi655x's pmic clock
+Message-ID: <20170419160005.GS7065@codeaurora.org>
+References: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
+ <20170412150245.GK7065@codeaurora.org>
+ <20170416205713.GW2078@mai>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170416205713.GW2078@mai>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On 04/16, Daniel Lezcano wrote:
+> On Wed, Apr 12, 2017 at 08:02:45AM -0700, Stephen Boyd wrote:
+> > On 04/08, Daniel Lezcano wrote:
+>  
+> > > +	struct hi655x_clk *hi655x_clk;
+> > > +	const char *clk_name = "hi655x-clk";
+> > > +	int ret;
+> > > +
+> > > +	hi655x_clk = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk), GFP_KERNEL);
+> > > +	if (!hi655x_clk)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	hi655x_clk_init = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk_init),
+> > > +				       GFP_KERNEL);
+> > > +	if (!hi655x_clk_init)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	of_property_read_string_index(parent->of_node, "clock-output-names",
+> > > +				      0, &clk_name);
+> > > +
+> > > +	hi655x_clk_init->name	= clk_name;
+> > > +	hi655x_clk_init->ops	= &hi655x_clk_ops;
+> > > +
+> > > +	hi655x_clk->clk_hw.init	= hi655x_clk_init;
+> > > +	hi655x_clk->hi655x	= hi655x;
+> > > +
+> > > +	platform_set_drvdata(pdev, hi655x_clk);
+> > > +
+> > > +	ret = devm_clk_hw_register(&pdev->dev, &hi655x_clk->clk_hw);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret = of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
+> > > +				     &hi655x_clk->clk_hw);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret = clk_hw_register_clkdev(&hi655x_clk->clk_hw, clk_name, NULL);
+> > 
+> > Missed this last time. Do you use this clkdev lookup? The name is
+> > usually supposed to be based on what the device is expecting,
+> > instead of clk_name, and we would want some device name for the
+> > third argument here.
+> 
+> I'm not sure to get your comment. Are you saying the clk_name should be the
+> third argument?
+> 
+> 
 
-According to the public datasheet all register bits in HHI_MPLL_CNTL7,
-HHI_MPLL_CNTL8 and HHI_MPLL_CNTL9 default to zero. On all GX SoCs these
-seem to be initialized by the bootloader to some default value.
-However, on my Meson8 board they are not initialized, leading to a
-division by zero in rate_from_params as the math is:
-(parent_rate * SDM_DEN) / ((SDM_DEN * 0) + 0)
+Sorry, no. I meant that con_id is typically something like "core"
+or "ahb" or something like that, and dev_id is something like
+"a456002.pmic_device" or whatever dev_name(pmic_dev) would return for
+the consuming device. That way when we call clk_get(dev, "core")
+it will find the lookup with "core" and "a456002.pmic_device" to
+match up the clk lookup.
 
-According to the datasheet, the minimum n2 value is 4. The rate provided
-by the clock when n2 is less than this minimum is unpredictable. In such
-case, we report an error.
+If anything, the clk_name should just go into the con_id for now,
+and then it will need to be a globally unique identifier for the
+clk. But that is going against how clkdev is supposed to be used.
+Hence the question if you even need to use it. If not, just don't
+add it. I can fix up v3 of this patch to put clk_name back at
+con_id if you like. No need to resend.
 
-Although the rate_from_params function was only introduced recently the
-original bug has been there for much longer. It was only exposed
-recently when the MPLL clocks were added to the Meson8b clock driver.
-
-Fixes: 1c50da4f27 ("clk: meson: add mpll support")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/clk-mpll.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-index 540dabe5adad..d9462b505dcc 100644
---- a/drivers/clk/meson/clk-mpll.c
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -65,18 +65,21 @@
- #include "clkc.h"
- 
- #define SDM_DEN 16384
--#define SDM_MIN 1
--#define SDM_MAX 16383
- #define N2_MIN	4
- #define N2_MAX	511
- 
- #define to_meson_clk_mpll(_hw) container_of(_hw, struct meson_clk_mpll, hw)
- 
--static unsigned long rate_from_params(unsigned long parent_rate,
-+static long rate_from_params(unsigned long parent_rate,
- 				      unsigned long sdm,
- 				      unsigned long n2)
- {
--	return (parent_rate * SDM_DEN) / ((SDM_DEN * n2) + sdm);
-+	unsigned long divisor = (SDM_DEN * n2) + sdm;
-+
-+	if (n2 < N2_MIN)
-+		return -EINVAL;
-+
-+	return (parent_rate * SDM_DEN) / divisor;
- }
- 
- static void params_from_rate(unsigned long requested_rate,
-@@ -89,17 +92,13 @@ static void params_from_rate(unsigned long requested_rate,
- 
- 	if (div < N2_MIN) {
- 		*n2 = N2_MIN;
--		*sdm = SDM_MIN;
-+		*sdm = 0;
- 	} else if (div > N2_MAX) {
- 		*n2 = N2_MAX;
--		*sdm = SDM_MAX;
-+		*sdm = SDM_DEN - 1;
- 	} else {
- 		*n2 = div;
- 		*sdm = DIV_ROUND_UP(rem * SDM_DEN, requested_rate);
--		if (*sdm < SDM_MIN)
--			*sdm = SDM_MIN;
--		else if (*sdm > SDM_MAX)
--			*sdm = SDM_MAX;
- 	}
- }
- 
-@@ -109,6 +108,7 @@ static unsigned long mpll_recalc_rate(struct clk_hw *hw,
- 	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
- 	struct parm *p;
- 	unsigned long reg, sdm, n2;
-+	long rate;
- 
- 	p = &mpll->sdm;
- 	reg = readl(mpll->base + p->reg_off);
-@@ -118,7 +118,11 @@ static unsigned long mpll_recalc_rate(struct clk_hw *hw,
- 	reg = readl(mpll->base + p->reg_off);
- 	n2 = PARM_GET(p->width, p->shift, reg);
- 
--	return rate_from_params(parent_rate, sdm, n2);
-+	rate = rate_from_params(parent_rate, sdm, n2);
-+	if (rate < 0)
-+		return 0;
-+
-+	return rate;
- }
- 
- static long mpll_round_rate(struct clk_hw *hw,
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
