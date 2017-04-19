@@ -1,54 +1,56 @@
-Return-Path: <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.11-rc7
-Date: Wed, 19 Apr 2017 16:44:10 -0700
-Message-Id: <20170419234410.13616-1-sboyd@codeaurora.org>
+Return-Path: <elfring@users.sourceforge.net>
+Subject: [PATCH 3/5] clk: mvebu: Use kcalloc() in two functions
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
+Message-ID: <6d6837ee-ea98-00cc-faea-cfa2a556109b@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 21:55:32 +0200
+MIME-Version: 1.0
+In-Reply-To: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The following changes since commit 7f0b97d5bb4c1c99c38dd6770ad11f714ea42583:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 21:08:54 +0200
 
-  Merge tag 'sunxi-clk-fixes-for-4.11' of https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux into clk-fixes (2017-03-23 16:08:46 -0700)
+* Multiplications for the size determination of memory allocations
+  indicated that array data structures should be processed.
+  Thus use the corresponding function "kcalloc".
 
-are available in the git repository at:
+  This issue was detected by using the Coccinelle software.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+* Replace the specification of data types by pointer dereferences
+  to make the corresponding size determination a bit safer according to
+  the Linux coding style convention.
 
-for you to fetch changes up to e7590308d17e578e47f298cc3fec359108341cb6:
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/mvebu/common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  Merge tag 'sunxi-clk-fixes-for-4.11-2-bis' of https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into clk-fixes (2017-04-17 11:04:12 -0700)
-
-----------------------------------------------------------------
-One stm32f4 fix for a change that introduced the PLL_I2S and PLL_SAI boards
-and then two Allwinner clk driver build fixes and two CPU clk driver fixes
-where we see random CPUFreq crashes because the CPU's PLL locks up sometimes
-when we change the rate.
-
-----------------------------------------------------------------
-Chen-Yu Tsai (2):
-      clk: sunxi-ng: Add clk notifier to gate then ungate PLL clocks
-      clk: sunxi-ng: a33: gate then ungate PLL CPU clk after rate change
-
-Gabriel Fernandez (1):
-      clk: stm32f4: fix: exclude values 0 and 1 for PLLQ
-
-Stephen Boyd (1):
-      Merge tag 'sunxi-clk-fixes-for-4.11-2-bis' of https://git.kernel.org/.../sunxi/linux into clk-fixes
-
-Tobias Regnery (2):
-      clk: sunxi-ng: fix build error without CONFIG_RESET_CONTROLLER
-      clk: sunxi-ng: fix build failure in ccu-sun9i-a80 driver
-
- drivers/clk/clk-stm32f4.c            | 13 +++++++---
- drivers/clk/sunxi-ng/Kconfig         |  2 ++
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 11 ++++++++
- drivers/clk/sunxi-ng/ccu_common.c    | 49 ++++++++++++++++++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu_common.h    | 12 +++++++++
- 5 files changed, 84 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
+index 66be2e0c82b4..472c88b90256 100644
+--- a/drivers/clk/mvebu/common.c
++++ b/drivers/clk/mvebu/common.c
+@@ -126,7 +126,7 @@ void __init mvebu_coreclk_setup(struct device_node *np,
+ 	if (desc->get_refclk_freq)
+ 		clk_data.clk_num += 1;
+ 
+-	clk_data.clks = kzalloc(clk_data.clk_num * sizeof(struct clk *),
++	clk_data.clks = kcalloc(clk_data.clk_num, sizeof(*clk_data.clks),
+ 				GFP_KERNEL);
+ 	if (WARN_ON(!clk_data.clks)) {
+ 		iounmap(base);
+@@ -270,7 +270,7 @@ void __init mvebu_clk_gating_setup(struct device_node *np,
+ 		n++;
+ 
+ 	ctrl->num_gates = n;
+-	ctrl->gates = kzalloc(ctrl->num_gates * sizeof(struct clk *),
++	ctrl->gates = kcalloc(ctrl->num_gates, sizeof(*ctrl->gates),
+ 			      GFP_KERNEL);
+ 	if (WARN_ON(!ctrl->gates))
+ 		goto gates_out;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.12.2
