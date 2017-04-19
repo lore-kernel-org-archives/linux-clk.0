@@ -1,30 +1,31 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 09:09:43 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexey Firago <alexey_firago@mentor.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, marek.vasut@gmail.com,
-	geert@linux-m68k.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] clk: vc5: Add bindings for IDT VersaClock
- 5P49V5935
-Message-ID: <20170419160943.GW7065@codeaurora.org>
-References: <1491556344-9465-1-git-send-email-alexey_firago@mentor.com>
- <1491556344-9465-3-git-send-email-alexey_firago@mentor.com>
+Return-Path: <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/5] clk-mvebu: Fine-tuning for four function implementations
+Message-ID: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 21:51:24 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1491556344-9465-3-git-send-email-alexey_firago@mentor.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/07, Alexey Firago wrote:
-> IDT VersaClock 5 5P49V5935 has 4 clock outputs, 4 fractional dividers.
-> Input clock source can be taken from either integrated crystal or from
-> external reference clock.
-> 
-> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 21:45:43 +0200
 
-Applied to clk-next
+A few update suggestions were taken into account
+from static source code analysis.
+
+Markus Elfring (5):
+  Use kcalloc() in of_cpu_clk_setup()
+  Adjust two checks for null pointers in of_cpu_clk_setup()
+  Use kcalloc() in two functions
+  Adjust two checks for null pointers in kirkwood_fix_sscg_deviation()
+  Delete an unnecessary variable initialisation in kirkwood_fix_sscg_deviation()
+
+ drivers/clk/mvebu/clk-cpu.c |  8 ++++----
+ drivers/clk/mvebu/common.c  | 10 +++++-----
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.12.2
