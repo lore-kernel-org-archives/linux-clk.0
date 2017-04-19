@@ -1,42 +1,87 @@
-Return-Path: <thomas.petazzoni@free-electrons.com>
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-To: arm-soc <arm@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v2 3/7] arm: spear6xx: fix spaces in spear600-evb.dts
-Date: Mon, 17 Apr 2017 14:46:41 +0200
-Message-Id: <1492433205-13376-4-git-send-email-thomas.petazzoni@free-electrons.com>
-In-Reply-To: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
-References: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 19 Apr 2017 09:06:32 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [GIT PULL] Allwinner clock fixes for 4.11, bis
+Message-ID: <20170419160632.GU7065@codeaurora.org>
+References: <20170406074121.tkivdvghbr27tr54@lukather>
+ <20170406231003.GS7065@codeaurora.org>
+ <20170410080048.l7xjndj457wa2b2q@lukather>
+ <20170410182431.GI7065@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170410182431.GI7065@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit fixes a minor coding style issue in spear600-evb.dts:
-missing spaces around equal sign.
+On 04/10, Stephen Boyd wrote:
+> On 04/10, Maxime Ripard wrote:
+> > On Thu, Apr 06, 2017 at 04:10:03PM -0700, Stephen Boyd wrote:
+> > > On 04/06, Maxime Ripard wrote:
+> > > > Hi Mike, Stephen,
+> > > > 
+> > > > Please pull the following changes for one of the 4.11-rc's
+> > > > 
+> > > > Thanks!
+> > > > Maxime
+> > > > 
+> > > > The following changes since commit b467e08a15563dede0d37d3233baa24fb97a7310:
+> > > > 
+> > > >   clk: sunxi-ng: fix recalc_rate formula of NKMP clocks (2017-03-20 10:34:05 +0100)
+> > > > 
+> > > > are available in the git repository at:
+> > > > 
+> > > >   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-fixes-for-4.11-2
+> > > > 
+> > > > for you to fetch changes up to d054a839a0986136374d49f9f9fbc264abae9c4c:
+> > > > 
+> > > >   clk: sunxi-ng: fix build error without CONFIG_RESET_CONTROLLER (2017-03-27 13:37:05 +0200)
+> > > > 
+> > > > ----------------------------------------------------------------
+> > > > Allwinner clock fixes for 4.11, bis
+> > > > 
+> > > > A few patches to fix a build error and a few minor typos and bugs in the
+> > > > sunxi-ng code
+> > > > 
+> > > > ----------------------------------------------------------------
+> > > > Chen-Yu Tsai (3):
+> > > >       clk: sunxi-ng: use 1 as fallback for minimum multiplier
+> > > >       clk: sunxi-ng: Fix round_rate/set_rate multiplier minimum mismatch
+> > > >       clk: sunxi-ng: a80: Fix audio PLL comment not matching actual code
+> > > > 
+> > > > Tobias Regnery (1):
+> > > >       clk: sunxi-ng: fix build error without CONFIG_RESET_CONTROLLER
+> > > > 
+> > > 
+> > > Two of these are fixes for regressions in v4.10? Why are these
+> > > critical for the v4.11 release? The comment patch is totally
+> > > bogus, it's not fixing any sort of regression that is causing
+> > > problems for people so I'm not sure why it was put into this pull
+> > > request. Am I right in assuming that the only real patch we need
+> > > out of here is the last one for the build error from randconfigs?
+> > > If so I can cherry-pick that from the branch into fixes and the
+> > > rest can go the next merge window.
+> > > 
+> > > Not pulling for now.
+> > 
+> > Actually, all of them but the comment fix are real fix.
+> > 
+> > "clk: sunxi-ng: use 1 as fallback for minimum multiplier" can lead to
+> > a multiplier set to 0 in some cases (depending on the rate asked for),
+> > and "clk: sunxi-ng: Fix round_rate/set_rate multiplier minimum
+> > mismatch" will prevent inconsistensies in factors selection between
+> > round_rate and set_rate.
+> > 
+> > So, yes, they are not critical fixes in the sense that it will fix a
+> > panic. but still those are bugs.
+> 
+> Ok so it sounds like we agree that this can all wait until v4.12.
+> 
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm/boot/dts/spear600-evb.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Will you resend the few patches in here that aren't in the redone
+PR for fixes or the PR for v4.12?
 
-diff --git a/arch/arm/boot/dts/spear600-evb.dts b/arch/arm/boot/dts/spear600-evb.dts
-index 375eb61..32a44b6 100644
---- a/arch/arm/boot/dts/spear600-evb.dts
-+++ b/arch/arm/boot/dts/spear600-evb.dts
-@@ -55,7 +55,7 @@
- 
- &smi {
- 	status = "okay";
--	clock-rate=<50000000>;
-+	clock-rate = <50000000>;
- 
- 	flash@f8000000 {
- 		#address-cells = <1>;
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
