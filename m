@@ -1,27 +1,33 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 7 Apr 2017 12:22:15 -0700
+Date: Wed, 19 Apr 2017 11:31:46 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Jun Nie <jun.nie@linaro.org>,
-	Baoyou Xie <xie.baoyou@zte.com.cn>, Xin Zhou <zhou.xin8@zte.com.cn>,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH 3/3] clk: zte: add pll_vga clock for zx296718
-Message-ID: <20170407192215.GA7065@codeaurora.org>
-References: <1490085503-15713-1-git-send-email-shawnguo@kernel.org>
- <1490085503-15713-4-git-send-email-shawnguo@kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 5/6] clk: hi3620: Delete error messages for a failed
+ memory allocation in two functions
+Message-ID: <20170419183146.GU7065@codeaurora.org>
+References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
+ <fa6898a1-8068-2b46-24c2-995329831358@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1490085503-15713-4-git-send-email-shawnguo@kernel.org>
+In-Reply-To: <fa6898a1-8068-2b46-24c2-995329831358@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/21, Shawn Guo wrote:
-> From: Shawn Guo <shawn.guo@linaro.org>
+On 04/18, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 18 Apr 2017 10:50:53 +0200
 > 
-> It adds zx296718 pll_vga clock for VGA support, so that VGA device can
-> get required pixel rate from clock driver for different display mode.
+> The script "checkpatch.pl" pointed information out like the following.
 > 
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> WARNING: Possible unnecessary 'out of memory' message
+> 
+> Thus remove such statements here.
+> 
+> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
 
 Applied to clk-next
