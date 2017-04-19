@@ -1,55 +1,60 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:45716 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1044950AbdDWKkS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 23 Apr 2017 06:40:18 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v5 10/11] ARM: dts: sun8i: add pinmux for LCD pins of V3s SoC
-Date: Sun, 23 Apr 2017 18:37:53 +0800
-Message-Id: <20170423103754.50012-11-icenowy@aosc.io>
-In-Reply-To: <20170423103754.50012-1-icenowy@aosc.io>
-References: <20170423103754.50012-1-icenowy@aosc.io>
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:33913 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1763529AbdDSNIM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Apr 2017 09:08:12 -0400
+Received: by mail-lf0-f65.google.com with SMTP id x72so2360483lfb.1
+        for <linux-clk@vger.kernel.org>; Wed, 19 Apr 2017 06:08:12 -0700 (PDT)
+Date: Wed, 19 Apr 2017 05:29:56 -0700
+From: Olof Johansson <olof@lixom.net>
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: arm@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [GIT PULL] Amlogic 64-bit DT updates for v4.12 (redo)
+Message-ID: <20170419122956.GK17004@localhost>
+References: <m24ly37kzk.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <m24ly37kzk.fsf@baylibre.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s SoC features a set of pins that have functionality of RGB
-LCD, the pins are at different pin ban than other SoCs.
+On Tue, Apr 04, 2017 at 05:31:59PM -0700, Kevin Hilman wrote:
+> Hi Arnd, Olof,
+> 
+> Here's a redo of the Amlogic 64-bit DT updates for v4.12.
+> 
+> This DT branch includes all our DT updates, plus merges in a clock
+> branch that includes only clock header and binding updates which are
+> dependencies.  This shared branch/tag is immutable and shared with the
+> clock tree.
+> 
+> I hope this iteration passes muster,
+> 
+> Kevin
+> 
+> 
+> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+> 
+>   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-amlogic.git tags/amlogic-dt64-redo
+> 
+> for you to fetch changes up to b2121170143bf4708c657461740c922ce24bc94e:
+> 
+>   Merge tag 'amlogic-clk-headers' into v4.12/dt64 (2017-04-04 16:16:52 -0700)
+> 
+> ----------------------------------------------------------------
+> Amlogic 64-bit DT updates for v4.12
+> - pinctrl: new pins for audio
+> - clocks: more clocks exposed for GFX, audio
+> - new board: Khadas Vim (S905X)
+> - new board: HwaCom AmazeTV (S905X)
+> - ethernet phy: add GPIO resets
 
-Add pinctrl node for them.
+Merged, thanks.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm/boot/dts/sun8i-v3s.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
-index 0a895179d8ae..a37d68b227bc 100644
---- a/arch/arm/boot/dts/sun8i-v3s.dtsi
-+++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
-@@ -297,6 +297,15 @@
- 				function = "i2c0";
- 			};
- 
-+			lcd_rgb666_pins: lcd_rgb666@0 {
-+				pins = "PE0", "PE1", "PE2", "PE3", "PE4",
-+				       "PE5", "PE6", "PE7", "PE8", "PE9",
-+				       "PE10", "PE11", "PE12", "PE13", "PE14",
-+				       "PE15", "PE16", "PE17", "PE18", "PE19",
-+				       "PE23", "PE24";
-+				function = "lcd";
-+			};
-+
- 			uart0_pins_a: uart0@0 {
- 				pins = "PB8", "PB9";
- 				function = "uart0";
--- 
-2.12.2
-
+-Olof
