@@ -1,64 +1,43 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 6 Apr 2017 16:10:03 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [GIT PULL] Allwinner clock fixes for 4.11, bis
-Message-ID: <20170406231003.GS7065@codeaurora.org>
-References: <20170406074121.tkivdvghbr27tr54@lukather>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170406074121.tkivdvghbr27tr54@lukather>
+Return-Path: <ykaneko0929@gmail.com>
+Return-Path: <ykaneko0929@gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a7796: Add EHCI/OHCI clocks
+Date: Thu, 20 Apr 2017 02:46:27 +0900
+Message-Id: <1492624001-3758-7-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/06, Maxime Ripard wrote:
-> Hi Mike, Stephen,
-> 
-> Please pull the following changes for one of the 4.11-rc's
-> 
-> Thanks!
-> Maxime
-> 
-> The following changes since commit b467e08a15563dede0d37d3233baa24fb97a7310:
-> 
->   clk: sunxi-ng: fix recalc_rate formula of NKMP clocks (2017-03-20 10:34:05 +0100)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-fixes-for-4.11-2
-> 
-> for you to fetch changes up to d054a839a0986136374d49f9f9fbc264abae9c4c:
-> 
->   clk: sunxi-ng: fix build error without CONFIG_RESET_CONTROLLER (2017-03-27 13:37:05 +0200)
-> 
-> ----------------------------------------------------------------
-> Allwinner clock fixes for 4.11, bis
-> 
-> A few patches to fix a build error and a few minor typos and bugs in the
-> sunxi-ng code
-> 
-> ----------------------------------------------------------------
-> Chen-Yu Tsai (3):
->       clk: sunxi-ng: use 1 as fallback for minimum multiplier
->       clk: sunxi-ng: Fix round_rate/set_rate multiplier minimum mismatch
->       clk: sunxi-ng: a80: Fix audio PLL comment not matching actual code
-> 
-> Tobias Regnery (1):
->       clk: sunxi-ng: fix build error without CONFIG_RESET_CONTROLLER
-> 
+From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-Two of these are fixes for regressions in v4.10? Why are these
-critical for the v4.11 release? The comment patch is totally
-bogus, it's not fixing any sort of regression that is causing
-problems for people so I'm not sure why it was put into this pull
-request. Am I right in assuming that the only real patch we need
-out of here is the last one for the build error from randconfigs?
-If so I can cherry-pick that from the branch into fixes and the
-rest can go the next merge window.
+This patch adds EHCI/OHCI{0,1} clocks for R8A7796 SoC.
 
-Not pulling for now.
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 1d8c5c2..c6c5026 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -165,6 +165,8 @@ enum clk_ids {
+ 	DEF_MOD("vspd0",		 623,	R8A7796_CLK_S0D2),
+ 	DEF_MOD("vspb",			 626,	R8A7796_CLK_S0D1),
+ 	DEF_MOD("vspi0",		 631,	R8A7796_CLK_S0D1),
++	DEF_MOD("ehci1",		 702,	R8A7796_CLK_S3D4),
++	DEF_MOD("ehci0",		 703,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("csi20",		 714,	R8A7796_CLK_CSI0),
+ 	DEF_MOD("csi40",		 716,	R8A7796_CLK_CSI0),
+ 	DEF_MOD("du2",			 722,	R8A7796_CLK_S2D1),
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
