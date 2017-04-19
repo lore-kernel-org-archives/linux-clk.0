@@ -1,40 +1,56 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 19 Apr 2017 10:18:35 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: John Crispin <john@phrozen.org>
+Cc: James Liao <jamesjj.liao@mediatek.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Erin Lo <erin.lo@mediatek.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] clk: mediatek: add missing ethernet reset definition
+Message-ID: <20170419171835.GO7065@codeaurora.org>
+References: <1485175707-58528-1-git-send-email-john@phrozen.org>
+ <20170127001441.GS8801@codeaurora.org>
+ <6803ef87-fb22-075c-bee1-3c0adb8e297d@phrozen.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1492624001-3758-3-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-3-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:27:05 +0200
-Message-ID: <CAMuHMdWYcobSuqptfmsOdg9UZFA+5hYEwi6EZZxuKwsm7nba1g@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7795: Add EHCI/OHCI ch3 clock
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <6803ef87-fb22-075c-bee1-3c0adb8e297d@phrozen.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch supports the clock of EHCI/OHCI ch3 module added from R8A7795
-> ES2.0 SoC.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+On 01/27, John Crispin wrote:
+> 
+> 
+> On 27/01/2017 01:14, Stephen Boyd wrote:
+> > On 01/23, John Crispin wrote:
+> >> When the clk code for mt2701 was merged, we forgot to add the reset
+> >> controller of the ethernet subsystem. This series adds the missing code
+> >> and header files required to reference the bits from within a devicetree
+> >> file.
+> >>
+> >> John Crispin (2):
+> >>   clk: mediatek: add mt2701 ethernet reset
+> >>   reset: mediatek: Add MT2701 ethsys reset controller include file
+> >>
+> >>  drivers/clk/mediatek/clk-mt2701-eth.c     |    2 ++
+> >>  include/dt-bindings/reset/mt2701-resets.h |    7 +++++++
+> > 
+> > Any planned DT users in the next merge window? Should I put this
+> > into a topic branch? Do you want a clk maintainer ack? At the
+> > least we need someone like James to ack this first.
+> > 
+> 
+> Hi Stephen,
+> 
+> the addition of the dtsi snippets for the ethernet core is pending due
+> to this patch. getting it into v4.11 would be geat so that i can sent
+> dtsi changes during the next merge window.
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Sorry, I never saw anything from anyone @mediatek so I never did
+anything here. I suppose I'll just go and apply this to clk-next
+now and then v4.13 can get the ethernet patches?
 
-I.e. will queue in clk-renesas-for-v4.13.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
