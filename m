@@ -1,59 +1,37 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 3 Apr 2017 00:32:08 +0800 (CST)
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-cc: devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/5] Add support for the R_CCU on Allwinner H3/A64
- SoCs
-In-Reply-To: <20170402160237.osgt32ugw7cz7ubg@lukather>
-Message-ID: <alpine.LNX.2.20.1704030029590.823@x220i>
-References: <20170329104246.34204-1-icenowy@aosc.io> <20170402160237.osgt32ugw7cz7ubg@lukather>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 19 Apr 2017 09:09:38 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexey Firago <alexey_firago@mentor.com>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, marek.vasut@gmail.com,
+	geert@linux-m68k.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] clk: vc5: Add structure to describe particular
+ chip features
+Message-ID: <20170419160938.GV7065@codeaurora.org>
+References: <1491556344-9465-1-git-send-email-alexey_firago@mentor.com>
+ <1491556344-9465-2-git-send-email-alexey_firago@mentor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1491556344-9465-2-git-send-email-alexey_firago@mentor.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 04/07, Alexey Firago wrote:
+> Introduce vc5_chip_info structure to describe features of a particular
+> VC5 chip (id, number of FODs, number of outputs, flags).
+> For now flags are only used to indicate if chip has internal XTAL.
+> vc5_chip_info is set on probe from the matched of_device_id->data.
+> 
+> Also add defines to specify maximum number of FODs and clock outputs
+> supported by the driver.
+> 
+> With these changes it should be easier to extend driver to support
+> more VC5 models.
+> 
+> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
+> ---
 
+Applied to clk-next
 
-On Sun, 2 Apr 2017, Maxime Ripard wrote:
-
-> Hi,
->
-> On Wed, Mar 29, 2017 at 06:42:41PM +0800, Icenowy Zheng wrote:
->> Allwinner SoCs after sun6i-a31 nearly all have a R_CCU in PRCM part.
->> (V3s and R40 do not have it, as they have even no PRCM)
->>
->> This patch adds support for the ones on H3/A64.
->>
->> Some clock/reset values are reserved for easier extending the support to
->> A31/A23, but for this I think some changes to the PRCM MFD should be made,
->> see [1] (Although this is only a sketch).
->>
->> The r_pio device node is also added for A64, as the driver is already
->> merged, and its depends (r_ccu) is now met.
->>
->> [1] https://github.com/wens/linux/commits/sunxi-ng-prcm
->
-> It looks good now, thanks.
->
-> Beside from the minor fix you've mentionned, please don't use the
-> defined IDs (yet) in your DT patches (3 to 5).
-
-Thanks! (I think it's the same question we meet when merging V3s patchset, 
-right? :-) )
-
->
-> It will be a PITA to get merged otherwise. We'll fix it later.
->
-> Thanks!
-> Maxime
->
-> -- 
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
->
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
