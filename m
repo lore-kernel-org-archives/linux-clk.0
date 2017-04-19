@@ -1,45 +1,85 @@
-Return-Path: <Alexey_Firago@mentor.com>
-Subject: Re: [PATCH v2 1/3] clk: vc5: Add structure to describe particular
- chip features
-To: Marek Vasut <marek.vasut@gmail.com>, Geert Uytterhoeven
-	<geert@linux-m68k.org>
-References: <1491392819-698-1-git-send-email-alexey_firago@mentor.com>
- <1491392819-698-2-git-send-email-alexey_firago@mentor.com>
- <CAMuHMdXEa=1__WMtsRphKbN6h+jVkP7szudENsM3hvGSzDfbwg@mail.gmail.com>
- <de978809-5bec-d675-1ea3-cc61804e2c61@mentor.com>
- <23dd9324-ee97-633d-129e-6063af757f47@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, linux-clk
-	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-From: Alexey Firago <alexey_firago@mentor.com>
-Message-ID: <1ddf7610-035a-eb00-caf7-90f9d25f0172@mentor.com>
-Date: Wed, 5 Apr 2017 18:09:09 +0300
+Return-Path: <tony@atomide.com>
+Date: Wed, 19 Apr 2017 13:05:06 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Tero Kristo <t-kristo@ti.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Keerthy <j-keerthy@ti.com>,
+	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: ti: divider: try to fix ti_clk_register_divider
+Message-ID: <20170419200506.GB19537@atomide.com>
+References: <20170419174507.4055014-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <23dd9324-ee97-633d-129e-6063af757f47@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170419174507.4055014-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marek,
+* Arnd Bergmann <arnd@arndb.de> [170419 10:48]:
+> The newly introduced function is entirely bogus as I found when looking
+> at this warning:
+> 
+> drivers/clk/ti/divider.c: In function 'ti_clk_register_divider':
+> drivers/clk/ti/divider.c:460:8: error: 'reg' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+> 
+> Treating a 'u32' variable as a structure leads to a stack overflow here,
+> and the register address we pass down is never initialized.
+> 
+> As the code in its original form makes no sense, I can only guess what
+> the intention was, and change it to take the address from div->reg.ptr
+> instead.
+> 
+> Fixes: d96f774b2538 ("clk: ti: divider: add support for legacy divider init")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/clk/ti/divider.c | 17 ++++++-----------
+>  1 file changed, 6 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+> index d6dcb283b72b..a6d3bbfbbd31 100644
+> --- a/drivers/clk/ti/divider.c
+> +++ b/drivers/clk/ti/divider.c
+> @@ -428,22 +428,17 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+>  
+>  struct clk *ti_clk_register_divider(struct ti_clk *setup)
+>  {
+> -	struct ti_clk_divider *div;
+> -	struct clk_omap_reg *reg_setup;
+> -	u32 reg;
+> +	struct ti_clk_divider *div = setup->data;
+> +	struct clk_omap_reg reg_setup = {
+> +		.index = div->module,
+> +		.offset = div->reg,
+> +	};
+>  	u8 width;
+>  	u32 flags = 0;
+>  	u8 div_flags = 0;
+>  	const struct clk_div_table *table;
+>  	struct clk *clk;
+>  
+> -	div = setup->data;
+> -
+> -	reg_setup = (struct clk_omap_reg *)&reg;
+> -
+> -	reg_setup->index = div->module;
+> -	reg_setup->offset = div->reg;
+> -
+>  	if (div->flags & CLKF_INDEX_STARTS_AT_ONE)
+>  		div_flags |= CLK_DIVIDER_ONE_BASED;
+>  
+> @@ -458,7 +453,7 @@ struct clk *ti_clk_register_divider(struct ti_clk *setup)
+>  		return (struct clk *)table;
+>  
+>  	clk = _register_divider(NULL, setup->name, div->parent,
+> -				flags, (void __iomem *)reg, div->bit_shift,
+> +				flags, &reg_setup, div->bit_shift,
+>  				width, div_flags, table);
+>  
+>  	if (IS_ERR(clk))
 
-On 05.04.2017 17:20, Marek Vasut wrote:
->>>> +
->>>> +/* flags to describe chip features */
->>>> +/* chip has built-in oscilator */
->>>> +#define VC5_HAS_INTERNAL_XTAL  BIT(0)
->>>
->>> VC5_HAS_INTERNAL_OSC?
->>
->> I'm fine with renaming it, but shouldn't it be consistent with the rest
->> of the driver (see "internal-xtal", VC5_XTAL*, etc) and IDT datasheet?
->>
->
-> Do you have one with internal ring oscillator or with internal xtal ?
-> The one I had has internal xtal according to the datasheet.
->
+Yeah seems broken. I wonder if this explains some of the omapdrm
+issues we're seeing in next?
 
-The one I have (5P49V5935) has internal 25MHz crystal according to the 
-datasheet.
+Regards,
 
---
-Alexey
+Tony
