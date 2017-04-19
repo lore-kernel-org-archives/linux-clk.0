@@ -1,67 +1,46 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Thu, 13 Apr 2017 22:02:25 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-	broonie@kernel.org, yibin.gong@nxp.com, rjw@rjwysocki.net,
-	viresh.kumar@linaro.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, shawnguo@kernel.org, fabio.estevam@nxp.com,
-	anson.huang@nxp.com, ping.bai@nxp.com, octavian.purdila@nxp.com,
-	linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH 1/3] clk: add clk_bulk_get accessories
-Message-ID: <20170413140225.GB24254@b29396-OptiPlex-7040>
-References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
- <1491969809-20154-2-git-send-email-aisheng.dong@nxp.com>
- <1491931159.31718.16.camel@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1491931159.31718.16.camel@nxp.com>
+Return-Path: <eddie.cai.linux@gmail.com>
+Return-Path: <eddie.cai.linux@gmail.com>
+From: Eddie Cai <eddie.cai.linux@gmail.com>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	heiko@sntech.de,
+	zhengxing@rock-chips.com,
+	zyw@rock-chips.com,
+	hl@rock-chips.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Eddie Cai <eddie.cai.linux@gmail.com>
+Subject: [PATCH 2/2] clk: rockchip: fix the incorrect id for clk_testout1
+Date: Wed, 19 Apr 2017 15:30:23 +0800
+Message-Id: <20170419073023.1921-3-eddie.cai.linux@gmail.com>
+In-Reply-To: <20170419073023.1921-1-eddie.cai.linux@gmail.com>
+References: <20170419073023.1921-1-eddie.cai.linux@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 11, 2017 at 08:19:19PM +0300, Leonard Crestez wrote:
-> On Wed, 2017-04-12 at 12:03 +0800, Dong Aisheng wrote:
-> > +/**
-> > + * clk_bulk_enable - ungate a bulk of clocks
-> > + * @num_clks: the number of clk_bulk_data
-> > + * @clks: the clk_bulk_data table being ungated
-> > + *
-> > + * clk_bulk_enable must not sleep
-> > + * Returns 0 on success, -EERROR otherwise.
-> > + */
-> > +int clk_bulk_enable(int num_clks, struct clk_bulk_data *clks)
-> > +{
-> > +       int ret;
-> > +       int i;
-> > +
-> > +       for (i = 0; i < num_clks; i++) {
-> > +               ret = clk_enable(clks[i].clk);
-> > +               if (ret) {
-> > +                       pr_err("Failed to enable clk '%s': %d\n",
-> > +                               clks[i].id, ret);
-> > +                       goto err;
-> > +               }
-> > +       }
-> > +
-> > +       return 0;
-> > +
-> > +err:
-> > +       while (--i >= 0)
-> > +               clk_put(clks[i].clk);
-> 
-> Shouldn't this be clk_disable?
-> 
+the id for clk_testout1 is wrong, so correct it.
 
-Good catch!
-Will change in the formal version if Maintainer accepts this idea.
+Signed-off-by: Eddie Cai <eddie.cai.linux@gmail.com>
+---
+ drivers/clk/rockchip/clk-rk3399.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> And you can probably use clk_bulk_disable(i, clks) instead
-
-Probably i'd prefer keep clk_disable to match with clk_enable
-to make things more clear.
-
-Thanks
-
-Regards
-Dong Aisheng
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 73121b14..322611d 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -1066,7 +1066,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 	/* cif_testout */
+ 	MUX(0, "clk_testout1_pll_src", mux_pll_src_cpll_gpll_npll_p, 0,
+ 			RK3399_CLKSEL_CON(38), 6, 2, MFLAGS),
+-	COMPOSITE(0, "clk_testout1", mux_clk_testout1_p, 0,
++	COMPOSITE(SCLK_TESTCLKOUT1, "clk_testout1", mux_clk_testout1_p, 0,
+ 			RK3399_CLKSEL_CON(38), 5, 1, MFLAGS, 0, 5, DFLAGS,
+ 			RK3399_CLKGATE_CON(13), 14, GFLAGS),
+ 
+-- 
+2.10.2
