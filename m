@@ -1,99 +1,64 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Mon, 3 Apr 2017 09:36:40 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/5] Add support for the R_CCU on Allwinner H3/A64 SoCs
-Message-ID: <20170403073640.7l7mar6zjcgytf6z@lukather>
-References: <20170329104246.34204-1-icenowy@aosc.io>
- <20170402160237.osgt32ugw7cz7ubg@lukather>
- <alpine.LNX.2.20.1704030029590.823@x220i>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="tolepy6lgddw5d5l"
-In-Reply-To: <alpine.LNX.2.20.1704030029590.823@x220i>
+Return-Path: <ykaneko0929@gmail.com>
+Return-Path: <ykaneko0929@gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: cs2000: Add cs2000_set_saved_rate
+Date: Thu, 20 Apr 2017 02:46:31 +0900
+Message-Id: <1492624001-3758-11-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
 
---tolepy6lgddw5d5l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch adds the common function to reset the clk rate in order to
+be able to use it in other cases.
 
-On Mon, Apr 03, 2017 at 12:32:08AM +0800, Icenowy Zheng wrote:
->=20
->=20
-> On Sun, 2 Apr 2017, Maxime Ripard wrote:
->=20
-> > Hi,
-> >=20
-> > On Wed, Mar 29, 2017 at 06:42:41PM +0800, Icenowy Zheng wrote:
-> > > Allwinner SoCs after sun6i-a31 nearly all have a R_CCU in PRCM part.
-> > > (V3s and R40 do not have it, as they have even no PRCM)
-> > >=20
-> > > This patch adds support for the ones on H3/A64.
-> > >=20
-> > > Some clock/reset values are reserved for easier extending the support=
- to
-> > > A31/A23, but for this I think some changes to the PRCM MFD should be =
-made,
-> > > see [1] (Although this is only a sketch).
-> > >=20
-> > > The r_pio device node is also added for A64, as the driver is already
-> > > merged, and its depends (r_ccu) is now met.
-> > >=20
-> > > [1] https://github.com/wens/linux/commits/sunxi-ng-prcm
-> >=20
-> > It looks good now, thanks.
-> >=20
-> > Beside from the minor fix you've mentionned, please don't use the
-> > defined IDs (yet) in your DT patches (3 to 5).
->=20
-> Thanks! (I think it's the same question we meet when merging V3s patchset,
-> right? :-) )
+Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
-Exactly. When doing that kind of conversion, in order to not break the
-compilation, we would take the DT patches through the clock
-tree.
+ drivers/clk/clk-cs2000-cp.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-However, this doesn't work very well when we also have DT patches that
-conflicts with those clock conversion ones that would need to get
-through arm-soc.
-
-And in this case, this is even more complex since you have the H3/H5
-split patches that would need to go through yet another branch.
-
-Not using the defines for now, and sending a fix later fixes all these
-issues.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---tolepy6lgddw5d5l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJY4fuEAAoJEBx+YmzsjxAgS7sQAI+ZtOyolj/NoV+ewIHPTzt/
-DWWEg2yDmJPxrBDKEbmn0p18+8g/38HBKmOarN55a68FRoyY+Qc26lqbrBzSzDuJ
-fAhf2dCMvx/K8oMOFjcdb5szqEqNXC+Xn+EoaGTNRUkXxGtKMP7NIN8dwfTmHUkO
-8ODvMkjvzq1RipWlS64uWko745QD75NkJ4owpODCRILz2R90aUveiz04aTbnapoz
-SvLeAhcxzN+iNRL7g2sHqzUTxe+1FTsQYwgK/sJOJ5SZQNjQMBpaT4ZGOKn0K6dy
-L2iXdRZ5jTtjHOU15lS7rpHqTI6pTpeRtIGz0HdKAcHshIW+ADra1TFcuIdGaaIt
-RKTXZBE54YVyk5Vyga+ig6TXbFKN7Cdwu5qQ3whdv07vij7sLs0P5fyy7HC1CuI1
-3uEFOZ3rybpm/QXT4eBbvK0OrIxfIMgXmZwd9BuwWF4ZAWQNlhxQi4hrQo+SraAw
-AUZ9HtuwiSOIQCzAxXt2IJqAd2JK5nYAIZivrDUr2jqaaY3MVwClxxBwxStrE5au
-3N8+hQ+SInSkOV9xAqnOySU0dmiVdbqTKGIBuYl9P8I8VkyZLq6BXhs3OUPsfMyX
-kwDcY16ur8vrF9mxGNDGNG9a0izIvzoxr8o50f20Bq4W+/zOEDLwALxDgGidtQo6
-pbJ40wpEs1qnLwqABIJU
-=ZBeu
------END PGP SIGNATURE-----
-
---tolepy6lgddw5d5l--
+diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
+index 4df38c5..5b3516d 100644
+--- a/drivers/clk/clk-cs2000-cp.c
++++ b/drivers/clk/clk-cs2000-cp.c
+@@ -324,6 +324,15 @@ static int cs2000_set_rate(struct clk_hw *hw,
+ 	return __cs2000_set_rate(priv, ch, rate, parent_rate);
+ }
+ 
++static int cs2000_set_saved_rate(struct cs2000_priv *priv)
++{
++	int ch = 0; /* it uses ch0 only at this point */
++
++	return __cs2000_set_rate(priv, ch,
++				 priv->saved_rate,
++				 priv->saved_parent_rate);
++}
++
+ static int cs2000_enable(struct clk_hw *hw)
+ {
+ 	struct cs2000_priv *priv = hw_to_priv(hw);
+@@ -516,11 +525,8 @@ static int cs2000_probe(struct i2c_client *client,
+ static int cs2000_resume(struct device *dev)
+ {
+ 	struct cs2000_priv *priv = dev_get_drvdata(dev);
+-	int ch = 0; /* it uses ch0 only at this point */
+ 
+-	return __cs2000_set_rate(priv, ch,
+-				 priv->saved_rate,
+-				 priv->saved_parent_rate);
++	return cs2000_set_saved_rate(priv);
+ }
+ 
+ static const struct dev_pm_ops cs2000_pm_ops = {
+-- 
+1.9.1
