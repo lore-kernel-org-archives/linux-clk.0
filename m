@@ -1,68 +1,64 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: sricharan@codeaurora.org,
-	absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH 0/5] Add minimal boot support for IPQ8074
-Date: Fri, 28 Apr 2017 15:26:38 +0530
-Message-Id: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <ykaneko0929@gmail.com>
+Return-Path: <ykaneko0929@gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: cs2000: Fix the setting of saved_rate during the resume process
+Date: Thu, 20 Apr 2017 02:46:32 +0900
+Message-Id: <1492624001-3758-12-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The IPQ8074 is Qualcomm’s High-capacity 802.11ax SoC for Routers,
-Gateways and Access Points.
+From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
 
-This series adds minimal board boot support for ipq8074-hk01
-board.
+In the resume process, there is the case that other drivers call
+cs2000_enable before cs2000_resume is called. Since the order of
+resume process is not guaranteed, it is needed to reset the clk
+rate in any cases before cs2000 is used.
 
-Abhishek Sahu (2):
-  clk: qcom: ipq8074: Add Global Clock Controller support
-  arm64: defconfig: Enable QCOM IPQ8074 clock and pinctrl
+Also, the current cs2000 driver is using resume_early function.
+The using .resume_early is bad idea because the dependency with
+other drivers is to be complicated.
 
-Varadarajan Narayanan (3):
-  pinctrl: qcom: Add ipq8074 pinctrl driver
-  dt-bindings: qcom: Add IPQ8074 bindings
-  arm64: dts: Add ipq8074 SoC and MTP board support
+This patch adds to reset the clk rate in cs2000_enable and
+changes to use from .resume_early to .resume.
 
- Documentation/devicetree/bindings/arm/qcom.txt     |    2 +
- .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
- .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt      |  202 ++++
- arch/arm64/boot/dts/qcom/Makefile                  |    1 +
- arch/arm64/boot/dts/qcom/ipq8074-hk01.dts          |   48 +
- arch/arm64/boot/dts/qcom/ipq8074.dtsi              |  153 +++
- arch/arm64/configs/defconfig                       |    2 +
- drivers/clk/qcom/Kconfig                           |    9 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/gcc-ipq8074.c                     | 1033 +++++++++++++++++
- drivers/pinctrl/qcom/Kconfig                       |   10 +
- drivers/pinctrl/qcom/Makefile                      |    1 +
- drivers/pinctrl/qcom/pinctrl-ipq8074.c             | 1220 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-ipq8074.h       |  152 +++
- 14 files changed, 2835 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
- create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
- create mode 100644 drivers/clk/qcom/gcc-ipq8074.c
- create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq8074.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq8074.h
+Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
+ drivers/clk/clk-cs2000-cp.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
+index 5b3516d..de6e8c6 100644
+--- a/drivers/clk/clk-cs2000-cp.c
++++ b/drivers/clk/clk-cs2000-cp.c
+@@ -338,6 +338,10 @@ static int cs2000_enable(struct clk_hw *hw)
+ 	struct cs2000_priv *priv = hw_to_priv(hw);
+ 	int ret;
+ 
++	ret = cs2000_set_saved_rate(priv);
++	if (ret < 0)
++		return ret;
++
+ 	ret = cs2000_enable_dev_config(priv, true);
+ 	if (ret < 0)
+ 		return ret;
+@@ -530,7 +534,7 @@ static int cs2000_resume(struct device *dev)
+ }
+ 
+ static const struct dev_pm_ops cs2000_pm_ops = {
+-	.resume_early	= cs2000_resume,
++	.resume		= cs2000_resume,
+ };
+ 
+ static struct i2c_driver cs2000_driver = {
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
