@@ -1,29 +1,27 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 09:27:54 -0700
+Date: Wed, 19 Apr 2017 09:50:40 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: arm-soc <arm@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	linux-arm-kernel@lists.infradead.org,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v2 7/7] clk: spear: fix ADC clock definition on SPEAr600
-Message-ID: <20170419162754.GE7065@codeaurora.org>
-References: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1492433205-13376-8-git-send-email-thomas.petazzoni@free-electrons.com>
+To: Jon Mason <jon.mason@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>
+Subject: Re: [PATCH] clk: ns2: Correct SDIO bits
+Message-ID: <20170419165040.GJ7065@codeaurora.org>
+References: <1490047934-3061-1-git-send-email-jon.mason@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1492433205-13376-8-git-send-email-thomas.petazzoni@free-electrons.com>
+In-Reply-To: <1490047934-3061-1-git-send-email-jon.mason@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/17, Thomas Petazzoni wrote:
-> There is no SPEAr600 device named "adc". Instead, the description of the
-> ADC was recently added to the Device Tree, and the device name is
-> "d820b000.adc", so we should associate the ADC gatable clock to this
-> device name.
+On 03/20, Jon Mason wrote:
+> From: Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>
 > 
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Corrected the bits for power and iso.
+> 
+> Signed-off-by: Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>
+> Signed-off-by: Jon Mason <jon.mason@broadcom.com>
+> Fixes: f7225a83 ("clk: ns2: add clock support for Broadcom Northstar 2 SoC")
 > ---
 
 Applied to clk-next
