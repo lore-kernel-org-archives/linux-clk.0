@@ -1,120 +1,34 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH v2 1/2] clk: meson: mpll: fix division by zero in
- rate_from_params
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Kevin Hilman <khilman@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <20170407153433.18640-1-jbrunet@baylibre.com>
- <20170407153433.18640-2-jbrunet@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, carlo@caione.org
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <5218d51a-3381-31e8-7fd5-07665163ddaa@baylibre.com>
-Date: Fri, 7 Apr 2017 17:39:18 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 19 Apr 2017 09:09:46 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Alexey Firago <alexey_firago@mentor.com>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, marek.vasut@gmail.com,
+	geert@linux-m68k.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] clk: vc5: Add support for IDT VersaClock 5P49V5935
+Message-ID: <20170419160946.GX7065@codeaurora.org>
+References: <1491556344-9465-1-git-send-email-alexey_firago@mentor.com>
+ <1491556344-9465-4-git-send-email-alexey_firago@mentor.com>
 MIME-Version: 1.0
-In-Reply-To: <20170407153433.18640-2-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1491556344-9465-4-git-send-email-alexey_firago@mentor.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/07/2017 05:34 PM, Jerome Brunet wrote:
-> From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On 04/07, Alexey Firago wrote:
+> Update IDT VersaClock 5 driver to support 5P49V5935. This chip has
+> two clock inputs (internal XTAL or external CLKIN), four fractional
+> dividers (FODs) and five clock outputs (four universal clock outputs
+> and one reference clock output at OUT0_SELB_I2C).
 > 
-> According to the public datasheet all register bits in HHI_MPLL_CNTL7,
-> HHI_MPLL_CNTL8 and HHI_MPLL_CNTL9 default to zero. On all GX SoCs these
-> seem to be initialized by the bootloader to some default value.
-> However, on my Meson8 board they are not initialized, leading to a
-> division by zero in rate_from_params as the math is:
-> (parent_rate * SDM_DEN) / ((SDM_DEN * 0) + 0)
+> Current driver supports up to 2 FODs and up to 3 clock outputs. This
+> patch sets max number of supported FODs to 4 and max number of supported
+> clock outputs to 5.
 > 
-> According to the datasheet, the minimum n2 value is 4. The rate provided
-> by the clock when n2 is less than this minimum is unpredictable. In such
-> case, we report an error.
-> 
-> Although the rate_from_params function was only introduced recently the
-> original bug has been there for much longer. It was only exposed
-> recently when the MPLL clocks were added to the Meson8b clock driver.
-> 
-> Fixes: 1c50da4f27 ("clk: meson: add mpll support")
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
 > ---
->  drivers/clk/meson/clk-mpll.c | 26 +++++++++++++++-----------
->  1 file changed, 15 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-> index 540dabe5adad..d9462b505dcc 100644
-> --- a/drivers/clk/meson/clk-mpll.c
-> +++ b/drivers/clk/meson/clk-mpll.c
-> @@ -65,18 +65,21 @@
->  #include "clkc.h"
->  
->  #define SDM_DEN 16384
-> -#define SDM_MIN 1
-> -#define SDM_MAX 16383
->  #define N2_MIN	4
->  #define N2_MAX	511
->  
->  #define to_meson_clk_mpll(_hw) container_of(_hw, struct meson_clk_mpll, hw)
->  
-> -static unsigned long rate_from_params(unsigned long parent_rate,
-> +static long rate_from_params(unsigned long parent_rate,
->  				      unsigned long sdm,
->  				      unsigned long n2)
->  {
-> -	return (parent_rate * SDM_DEN) / ((SDM_DEN * n2) + sdm);
-> +	unsigned long divisor = (SDM_DEN * n2) + sdm;
-> +
-> +	if (n2 < N2_MIN)
-> +		return -EINVAL;
-> +
-> +	return (parent_rate * SDM_DEN) / divisor;
->  }
->  
->  static void params_from_rate(unsigned long requested_rate,
-> @@ -89,17 +92,13 @@ static void params_from_rate(unsigned long requested_rate,
->  
->  	if (div < N2_MIN) {
->  		*n2 = N2_MIN;
-> -		*sdm = SDM_MIN;
-> +		*sdm = 0;
->  	} else if (div > N2_MAX) {
->  		*n2 = N2_MAX;
-> -		*sdm = SDM_MAX;
-> +		*sdm = SDM_DEN - 1;
->  	} else {
->  		*n2 = div;
->  		*sdm = DIV_ROUND_UP(rem * SDM_DEN, requested_rate);
-> -		if (*sdm < SDM_MIN)
-> -			*sdm = SDM_MIN;
-> -		else if (*sdm > SDM_MAX)
-> -			*sdm = SDM_MAX;
->  	}
->  }
->  
-> @@ -109,6 +108,7 @@ static unsigned long mpll_recalc_rate(struct clk_hw *hw,
->  	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
->  	struct parm *p;
->  	unsigned long reg, sdm, n2;
-> +	long rate;
->  
->  	p = &mpll->sdm;
->  	reg = readl(mpll->base + p->reg_off);
-> @@ -118,7 +118,11 @@ static unsigned long mpll_recalc_rate(struct clk_hw *hw,
->  	reg = readl(mpll->base + p->reg_off);
->  	n2 = PARM_GET(p->width, p->shift, reg);
->  
-> -	return rate_from_params(parent_rate, sdm, n2);
-> +	rate = rate_from_params(parent_rate, sdm, n2);
-> +	if (rate < 0)
-> +		return 0;
-> +
-> +	return rate;
->  }
->  
->  static long mpll_round_rate(struct clk_hw *hw,
-> 
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
