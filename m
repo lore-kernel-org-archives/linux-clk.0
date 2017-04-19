@@ -1,49 +1,92 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:32801 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751237AbdDJU6k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Apr 2017 16:58:40 -0400
+Return-Path: <stefan@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Tue, 18 Apr 2017 22:09:45 -0700
 From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org, kernel@pengutronix.de, sboyd@codeaurora.org
-Cc: aisheng.dong@nxp.com, fabio.estevam@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2 1/2] clk: imx7d: fix USDHC NAND clock
-Date: Mon, 10 Apr 2017 14:00:14 -0700
-Message-Id: <20170410210015.1620-1-stefan@agner.ch>
-Sender: linux-clk-owner@vger.kernel.org
+To: sboyd@codeaurora.org
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+ mturquette@baylibre.com, shawnguo@kernel.org, fabio.estevam@nxp.com,
+ linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+Subject: Re: [PATCH 1/2] clk: clk-imx7d: fix ahb clk definition
+In-Reply-To: <1491878269-9559-1-git-send-email-aisheng.dong@nxp.com>
+References: <1491878269-9559-1-git-send-email-aisheng.dong@nxp.com>
+Message-ID: <4c0056597ed4c755327fffa3d6969dff@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-The USDHC NAND root clock is not gated by any CCM clock gate. Remove
-the bogus gate definition.
+Stephen, Shawn,
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/clk/imx/clk-imx7d.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Will this patchset make it into 4.12? It would be good, because this
+device tree change:
+https://patchwork.kernel.org/patch/9652841/
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 562055129ed8..93b03640da9b 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -724,7 +724,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_MAIN_AXI_ROOT_DIV] = imx_clk_divider2("axi_post_div", "axi_pre_div", base + 0x8800, 0, 6);
- 	clks[IMX7D_DISP_AXI_ROOT_DIV] = imx_clk_divider2("disp_axi_post_div", "disp_axi_pre_div", base + 0x8880, 0, 6);
- 	clks[IMX7D_ENET_AXI_ROOT_DIV] = imx_clk_divider2("enet_axi_post_div", "enet_axi_pre_div", base + 0x8900, 0, 6);
--	clks[IMX7D_NAND_USDHC_BUS_ROOT_DIV] = imx_clk_divider2("nand_usdhc_post_div", "nand_usdhc_pre_div", base + 0x8980, 0, 6);
-+	clks[IMX7D_NAND_USDHC_BUS_ROOT_CLK] = imx_clk_divider2("nand_usdhc_root_clk", "nand_usdhc_pre_div", base + 0x8980, 0, 6);
- 	clks[IMX7D_AHB_CHANNEL_ROOT_DIV] = imx_clk_divider2("ahb_root_clk", "ahb_pre_div", base + 0x9000, 0, 6);
- 	clks[IMX7D_IPG_ROOT_CLK] = imx_clk_divider2("ipg_root_clk", "ahb_root_clk", base + 0x9080, 0, 2);
- 	clks[IMX7D_DRAM_ROOT_DIV] = imx_clk_divider2("dram_post_div", "dram_cg", base + 0x9880, 0, 3);
-@@ -798,7 +798,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
- 	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "axi_post_div", base + 0x4110, 0);
- 	clks[IMX7D_OCRAM_S_CLK] = imx_clk_gate4("ocram_s_clk", "ahb_root_clk", base + 0x4120, 0);
--	clks[IMX7D_NAND_USDHC_BUS_ROOT_CLK] = imx_clk_gate4("nand_usdhc_root_clk", "nand_usdhc_post_div", base + 0x4130, 0);
- 	clks[IMX7D_DRAM_ROOT_CLK] = imx_clk_gate4("dram_root_clk", "dram_post_div", base + 0x4130, 0);
- 	clks[IMX7D_DRAM_PHYM_ROOT_CLK] = imx_clk_gate4("dram_phym_root_clk", "dram_phym_cg", base + 0x4130, 0);
- 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0);
--- 
-2.12.1
+...depends on patch 2. Assuming the device tree change will go into
+4.13, if this makes into 4.12 we do not have to deal with the dependency
+in the 4.13 merge window...
 
+--
+Stefan
+
+On 2017-04-10 19:37, Dong Aisheng wrote:
+> MX7D ahb clk actually has no LPCG gate, current LPCG offset 0x4200
+> used actually is for adc, not ahb. After fix, correct ocram_s_clk
+> parent accordingly as well.
+> 
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx7d.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+> index ae1d31b..ad04483 100644
+> --- a/drivers/clk/imx/clk-imx7d.c
+> +++ b/drivers/clk/imx/clk-imx7d.c
+> @@ -725,7 +725,7 @@ static void __init imx7d_clocks_init(struct
+> device_node *ccm_node)
+>  	clks[IMX7D_DISP_AXI_ROOT_DIV] =
+> imx_clk_divider2("disp_axi_post_div", "disp_axi_pre_div", base +
+> 0x8880, 0, 6);
+>  	clks[IMX7D_ENET_AXI_ROOT_DIV] =
+> imx_clk_divider2("enet_axi_post_div", "enet_axi_pre_div", base +
+> 0x8900, 0, 6);
+>  	clks[IMX7D_NAND_USDHC_BUS_ROOT_DIV] =
+> imx_clk_divider2("nand_usdhc_post_div", "nand_usdhc_pre_div", base +
+> 0x8980, 0, 6);
+> -	clks[IMX7D_AHB_CHANNEL_ROOT_DIV] = imx_clk_divider2("ahb_post_div",
+> "ahb_pre_div", base + 0x9000, 0, 6);
+> +	clks[IMX7D_AHB_CHANNEL_ROOT_DIV] = imx_clk_divider2("ahb_root_clk",
+> "ahb_pre_div", base + 0x9000, 0, 6);
+>  	clks[IMX7D_DRAM_ROOT_DIV] = imx_clk_divider2("dram_post_div",
+> "dram_cg", base + 0x9880, 0, 3);
+>  	clks[IMX7D_DRAM_PHYM_ALT_ROOT_DIV] =
+> imx_clk_divider2("dram_phym_alt_post_div", "dram_phym_alt_pre_div",
+> base + 0xa000, 0, 3);
+>  	clks[IMX7D_DRAM_ALT_ROOT_DIV] =
+> imx_clk_divider2("dram_alt_post_div", "dram_alt_pre_div", base +
+> 0xa080, 0, 3);
+> @@ -796,9 +796,8 @@ static void __init imx7d_clocks_init(struct
+> device_node *ccm_node)
+>  	clks[IMX7D_DISP_AXI_ROOT_CLK] = imx_clk_gate4("disp_axi_root_clk",
+> "disp_axi_post_div", base + 0x4050, 0);
+>  	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk",
+> "enet_axi_post_div", base + 0x4060, 0);
+>  	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "axi_post_div",
+> base + 0x4110, 0);
+> -	clks[IMX7D_OCRAM_S_CLK] = imx_clk_gate4("ocram_s_clk",
+> "ahb_post_div", base + 0x4120, 0);
+> +	clks[IMX7D_OCRAM_S_CLK] = imx_clk_gate4("ocram_s_clk",
+> "ahb_root_clk", base + 0x4120, 0);
+>  	clks[IMX7D_NAND_USDHC_BUS_ROOT_CLK] =
+> imx_clk_gate4("nand_usdhc_root_clk", "nand_usdhc_post_div", base +
+> 0x4130, 0);
+> -	clks[IMX7D_AHB_CHANNEL_ROOT_CLK] = imx_clk_gate4("ahb_root_clk",
+> "ahb_post_div", base + 0x4200, 0);
+>  	clks[IMX7D_DRAM_ROOT_CLK] = imx_clk_gate4("dram_root_clk",
+> "dram_post_div", base + 0x4130, 0);
+>  	clks[IMX7D_DRAM_PHYM_ROOT_CLK] = imx_clk_gate4("dram_phym_root_clk",
+> "dram_phym_cg", base + 0x4130, 0);
+>  	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] =
+> imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base
+> + 0x4130, 0);
