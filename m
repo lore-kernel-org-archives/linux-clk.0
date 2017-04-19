@@ -1,42 +1,31 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36042 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424515AbdDVP2Z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Apr 2017 11:28:25 -0400
-Date: Sat, 22 Apr 2017 17:28:21 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, cw00.choi@samsung.com,
-        javier@osg.samsung.com, jy0922.shim@samsung.com,
-        broonie@kernel.org, robh+dt@kernel.org, b.zolnierkie@samsung.com
-Subject: Re: [PATCH RFC 3/7] clk: samsung: exynos542x: Add EPLL rate table
-Message-ID: <20170422152821.v35c2ffrmejpe5oo@kozik-lap>
-References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20170421172029epcas5p1b32ed135c5e0f1b86fbcc54279126349@epcas5p1.samsung.com>
- <1492795191-31298-4-git-send-email-s.nawrocki@samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 19 Apr 2017 09:11:13 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com, shawnguo@kernel.org,
+	fabio.estevam@nxp.com, stefan@agner.ch,
+	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+Subject: Re: [PATCH 1/2] clk: clk-imx7d: fix ahb clk definition
+Message-ID: <20170419161113.GY7065@codeaurora.org>
+References: <1491878269-9559-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1492795191-31298-4-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1491878269-9559-1-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 21, 2017 at 07:19:47PM +0200, Sylwester Nawrocki wrote:
-> A specific clock rate table is added for EPLL so it is possible
-> to set frequency of the EPLL output clock as multiple of various
-> audio sampling rates.
+On 04/11, Dong Aisheng wrote:
+> MX7D ahb clk actually has no LPCG gate, current LPCG offset 0x4200
+> used actually is for adc, not ahb. After fix, correct ocram_s_clk
+> parent accordingly as well.
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 > ---
->  drivers/clk/samsung/clk-exynos5420.c | 20 ++++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
-> 
 
-Looks correct although I didn't check the numbers.
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Applied to clk-next
 
-Best regards,
-Krzysztof
-
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
