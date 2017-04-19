@@ -1,36 +1,42 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Date: Sat, 22 Apr 2017 17:08:59 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+Return-Path: <ykaneko0929@gmail.com>
+Return-Path: <ykaneko0929@gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 3/4] clk: samsung: exynos-clkout: Convert to the new
- clk_hw API
-Message-ID: <20170422150859.plofehrvh3fs4afq@kozik-lap>
-References: <1492694199-9553-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170420131647eucas1p27a8e65eb92f64f872bfce611ac031700@eucas1p2.samsung.com>
- <1492694199-9553-4-git-send-email-m.szyprowski@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1492694199-9553-4-git-send-email-m.szyprowski@samsung.com>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a7795: Add EHCI/OHCI ch3 clock
+Date: Thu, 20 Apr 2017 02:46:23 +0900
+Message-Id: <1492624001-3758-3-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 20, 2017 at 03:16:38PM +0200, Marek Szyprowski wrote:
-> Clock providers should use the new struct clk_hw based API, so convert
-> Exynos CLKOUT clock provider to the new approach.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos-clkout.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+This patch supports the clock of EHCI/OHCI ch3 module added from R8A7795
+ES2.0 SoC.
 
-Best regards,
-Krzysztof
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
+
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index a9ee68e..e48d5cf 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -190,6 +190,7 @@ enum clk_ids {
+ 	DEF_MOD("vspi2",		 629,	R8A7795_CLK_S2D1), /* ES1.x */
+ 	DEF_MOD("vspi1",		 630,	R8A7795_CLK_S0D1),
+ 	DEF_MOD("vspi0",		 631,	R8A7795_CLK_S0D1),
++	DEF_MOD("ehci3",		 700,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("ehci2",		 701,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("ehci1",		 702,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("ehci0",		 703,	R8A7795_CLK_S3D4),
+-- 
+1.9.1
