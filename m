@@ -1,54 +1,78 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1492624001-3758-7-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-7-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:29:00 +0200
-Message-ID: <CAMuHMdUPqSp8rb58uLtuBGYA1VWOUVfdAFCbeUD4YZ=_g6WxmQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add EHCI/OHCI clocks
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Tero Kristo <t-kristo@ti.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Tony Lindgren <tony@atomide.com>,
+	Keerthy <j-keerthy@ti.com>,
+	linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] clk: ti: divider: try to fix ti_clk_register_divider
+Date: Wed, 19 Apr 2017 19:44:55 +0200
+Message-Id: <20170419174507.4055014-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Kaneko-san,
+The newly introduced function is entirely bogus as I found when looking
+at this warning:
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
->
-> This patch adds EHCI/OHCI{0,1} clocks for R8A7796 SoC.
->
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> ---
+drivers/clk/ti/divider.c: In function 'ti_clk_register_divider':
+drivers/clk/ti/divider.c:460:8: error: 'reg' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Treating a 'u32' variable as a structure leads to a stack overflow here,
+and the register address we pass down is never initialized.
 
-I.e. will queue in clk-renesas-for-v4.13.
+As the code in its original form makes no sense, I can only guess what
+the intention was, and change it to take the address from div->reg.ptr
+instead.
 
-> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> @@ -165,6 +165,8 @@ enum clk_ids {
->         DEF_MOD("vspd0",                 623,   R8A7796_CLK_S0D2),
->         DEF_MOD("vspb",                  626,   R8A7796_CLK_S0D1),
->         DEF_MOD("vspi0",                 631,   R8A7796_CLK_S0D1),
-> +       DEF_MOD("ehci1",                 702,   R8A7796_CLK_S3D4),
-> +       DEF_MOD("ehci0",                 703,   R8A7796_CLK_S3D4),
+Fixes: d96f774b2538 ("clk: ti: divider: add support for legacy divider init")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/ti/divider.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-I cannot confirm the parent clock, though.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index d6dcb283b72b..a6d3bbfbbd31 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -428,22 +428,17 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+ 
+ struct clk *ti_clk_register_divider(struct ti_clk *setup)
+ {
+-	struct ti_clk_divider *div;
+-	struct clk_omap_reg *reg_setup;
+-	u32 reg;
++	struct ti_clk_divider *div = setup->data;
++	struct clk_omap_reg reg_setup = {
++		.index = div->module,
++		.offset = div->reg,
++	};
+ 	u8 width;
+ 	u32 flags = 0;
+ 	u8 div_flags = 0;
+ 	const struct clk_div_table *table;
+ 	struct clk *clk;
+ 
+-	div = setup->data;
+-
+-	reg_setup = (struct clk_omap_reg *)&reg;
+-
+-	reg_setup->index = div->module;
+-	reg_setup->offset = div->reg;
+-
+ 	if (div->flags & CLKF_INDEX_STARTS_AT_ONE)
+ 		div_flags |= CLK_DIVIDER_ONE_BASED;
+ 
+@@ -458,7 +453,7 @@ struct clk *ti_clk_register_divider(struct ti_clk *setup)
+ 		return (struct clk *)table;
+ 
+ 	clk = _register_divider(NULL, setup->name, div->parent,
+-				flags, (void __iomem *)reg, div->bit_shift,
++				flags, &reg_setup, div->bit_shift,
+ 				width, div_flags, table);
+ 
+ 	if (IS_ERR(clk))
+-- 
+2.9.0
