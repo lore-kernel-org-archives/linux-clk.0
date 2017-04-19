@@ -1,41 +1,43 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 0/6] clk: qcom: CPU clock driver for msm8996  
-Date: Wed,  5 Apr 2017 10:25:23 +0530
-Message-Id: <1491368129-24721-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <ykaneko0929@gmail.com>
+Return-Path: <ykaneko0929@gmail.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: renesas: r8a7796: Add USB-DMAC clocks
+Date: Thu, 20 Apr 2017 02:46:29 +0900
+Message-Id: <1492624001-3758-9-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series adds support for the CPU clocks on msm8996 devices.
-A previous post of RFC can be found here
-https://patchwork.kernel.org/patch/9355925/
+From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
 
-Rajendra Nayak (5):
-  clk: qcom: Make clk_alpha_pll_configure available to modules
-  clk: qcom: Add CPU clock driver for msm8996
-  clk: qcom: cpu-8996: Add support to switch to alternate PLL
-  clk: qcom: cpu-8996: Add support to switch below 600Mhz
-  arm64: dts: msm8996: Add CPU clock controller node
+This patch adds USB-DMAC{0,1} clocks for R8A7796 SoC.
 
-Taniya Das (1):
-  clk: qcom: Fix .set_rate to handle alpha PLLs w/wo dynamic update
+Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+This patch is based on the clk-next branch of linux-clk tree.
 
- .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
- arch/arm64/boot/dts/qcom/msm8996.dtsi              |   6 +
- drivers/clk/qcom/Kconfig                           |   8 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/clk-alpha-pll.c                   |  72 +++-
- drivers/clk/qcom/clk-alpha-pll.h                   |   5 +
- drivers/clk/qcom/clk-cpu-8996.c                    | 440 +++++++++++++++++++++
- 7 files changed, 538 insertions(+), 11 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
- create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index f217796..27afd48 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -137,6 +137,8 @@ enum clk_ids {
+ 	DEF_MOD("sdif1",		 313,	R8A7796_CLK_SD1),
+ 	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
+ 	DEF_MOD("rwdt",			 402,	R8A7796_CLK_R),
++	DEF_MOD("usb-dmac0",		 330,	R8A7796_CLK_S3D1),
++	DEF_MOD("usb-dmac1",		 331,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("audmac0",		 502,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("audmac1",		 501,	R8A7796_CLK_S3D4),
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
