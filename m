@@ -1,40 +1,34 @@
-Return-Path: <daniel.lezcano@linaro.org>
-Return-Path: <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH V3 2/2] ARM64: dts: hi6220-hikey: Add clock binding for
- the pmic mfd
-To: Stephen Boyd <sboyd@codeaurora.org>, lee.jones@linaro.org
-References: <1492449567-31399-1-git-send-email-daniel.lezcano@linaro.org>
- <1492449567-31399-2-git-send-email-daniel.lezcano@linaro.org>
- <20170422020233.GA7065@codeaurora.org>
-Cc: mturquette@baylibre.com, xuwei5@hisilicon.com,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <370c36f9-e6fc-416c-776b-edc1e42d7ddc@linaro.org>
-Date: Sat, 22 Apr 2017 16:09:45 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170422020233.GA7065@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <eddie.cai.linux@gmail.com>
+Return-Path: <eddie.cai.linux@gmail.com>
+From: Eddie Cai <eddie.cai.linux@gmail.com>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	heiko@sntech.de,
+	zhengxing@rock-chips.com,
+	zyw@rock-chips.com,
+	hl@rock-chips.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Eddie Cai <eddie.cai.linux@gmail.com>
+Subject: [PATCH 0/2] correct id for clk_testout1
+Date: Wed, 19 Apr 2017 15:30:21 +0800
+Message-Id: <20170419073023.1921-1-eddie.cai.linux@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 22/04/2017 04:02, Stephen Boyd wrote:
-> On 04/17, Daniel Lezcano wrote:
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> ---
->>  Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt | 6 ++++++
->>  arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts             | 1 +
->>  2 files changed, 7 insertions(+)
->>
-> 
-> I take it this goes through arm-soc? Not sure why I'm on To:
-> line.
+the id for clk_testout1 is wrong, it's time to correct it. 
 
-Probably it should go through Lee's tree.
+Eddie Cai (2):
+  clk: rockchip: add SCLK_TESTCLKOUT1 id
+  clk: rockchip: fix the incorrect id for clk_testout1
 
+ drivers/clk/rockchip/clk-rk3399.c      | 2 +-
+ include/dt-bindings/clock/rk3399-cru.h | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.10.2
