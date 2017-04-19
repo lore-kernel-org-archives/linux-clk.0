@@ -1,27 +1,26 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 09:11:16 -0700
+Date: Wed, 19 Apr 2017 09:09:43 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com, shawnguo@kernel.org,
-	fabio.estevam@nxp.com, stefan@agner.ch,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
-Subject: Re: [PATCH 2/2] clk: imx7d: add the missing ipg_root_clk
-Message-ID: <20170419161116.GZ7065@codeaurora.org>
-References: <1491878269-9559-1-git-send-email-aisheng.dong@nxp.com>
- <1491878269-9559-2-git-send-email-aisheng.dong@nxp.com>
+To: Alexey Firago <alexey_firago@mentor.com>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, marek.vasut@gmail.com,
+	geert@linux-m68k.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] clk: vc5: Add bindings for IDT VersaClock
+ 5P49V5935
+Message-ID: <20170419160943.GW7065@codeaurora.org>
+References: <1491556344-9465-1-git-send-email-alexey_firago@mentor.com>
+ <1491556344-9465-3-git-send-email-alexey_firago@mentor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1491878269-9559-2-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1491556344-9465-3-git-send-email-alexey_firago@mentor.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/11, Dong Aisheng wrote:
-> Add the missing ipg_root_clk which actually is already used by many
-> orphan clks in current tree.
+On 04/07, Alexey Firago wrote:
+> IDT VersaClock 5 5P49V5935 has 4 clock outputs, 4 fractional dividers.
+> Input clock source can be taken from either integrated crystal or from
+> external reference clock.
 > 
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
 > ---
 
 Applied to clk-next
