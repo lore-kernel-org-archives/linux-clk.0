@@ -1,40 +1,82 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <tony@atomide.com>
+Date: Wed, 19 Apr 2017 10:02:48 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Tero Kristo <t-kristo@ti.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, Paul Walmsley <paul@pwsan.com>
+Subject: Re: [PATCHv3] Documentation: dt-bindings: Add binding documentation
+ for TI clkctrl clocks
+Message-ID: <20170419170246.GA19537@atomide.com>
+References: <20170123221702.18420-1-tony@atomide.com>
+ <dca1ef84-77d1-2b58-7913-91f3b69fde6d@ti.com>
+ <20170419165522.GL7065@codeaurora.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1492624001-3758-6-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-6-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:48:43 +0200
-Message-ID: <CAMuHMdWctkUWduOeQ-rXJQW7Oi=rwpW4uMEUuYgU3jbNz_Owbw@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add HDMI clock
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170419165522.GL7065@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
->
-> This patch adds HDMI-IF0 clock for R8A7796 SoC.
->
-> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+* Stephen Boyd <sboyd@codeaurora.org> [170419 09:58]:
+> On 02/13, Tero Kristo wrote:
+> > On 24/01/17 00:17, Tony Lindgren wrote:
+> > >Texas Instruments omap variant SoCs starting with omap4 have a clkctrl
+> > >clock controller instance for each interconnect target module. The clkctrl
+> > >controls functional and interface clocks for the module.
+> > >
+> > >The clkctrl clocks are currently handled by arch/arm/mach-omap2 hwmod code.
+> > >With this binding and a related clock device driver we can start moving the
+> > >clkctrl clock handling to live in drivers/clk/ti.
+> > >
+> > >Note that this binding allows keeping the clockdomain related parts out of
+> > >drivers/clock. The CLKCTCTRL and DYNAMICDEP registers can be handled by
+> > >a separate driver in drivers/soc/ti and genpd. If the clockdomain driver
+> > >needs to know it's clocks, we can just set the the clkctrl device
+> > >instances to be children of the related clockdomain device.
+> > >
+> > >Each clkctrl clock can have multiple optional gate clocks, and multiple
+> > >optional mux clocks. To represent this in device tree, it seems that
+> > >it is best done using four clock cells #clock-cells = <2> property.
+> > >
+> > >The reasons for using #clock-cells = <2> are:
+> > >
+> > >1. We need to specify the clkctrl offset from the instance base. Otherwise
+> > >   we end up with a large number of device tree nodes that need to be
+> > >   patched when new clocks are discovered in a clkctrl clock with minor
+> > >   hardware revision changes for example
+> > >
+> > >2. On omap5 CM_L3INIT_USB_HOST_HS_CLKCTRL has ten OPTFCLKEN bits. So we
+> > >   need to use a separate cell for optional gate clocks to avoid address
+> > >   space conflicts
+> > >
+> > >There is probably no need to list input clocks for each clkctrl clock
+> > >instance in the binding. If we want to add them, the standard clocks
+> > >binding can be used for that.
+> > >
+> > >For hardware reference, see omap4430 TRM "Table 3-1312. L4PER_CM2 Registers
+> > >Mapping Summary" for example. It shows one instance of a clkctrl clock
+> > >controller with multiple clkctrl registers.
+> > >
+> > >Cc: Paul Walmsley <paul@pwsan.com>
+> > >Acked-by: Rob Herring <robh@kernel.org>
+> > >Signed-off-by: Tony Lindgren <tony@atomide.com>
+> > 
+> > This binding works for me, so:
+> > 
+> > Acked-by: Tero Kristo <t-kristo@ti.com>
+> > 
+> 
+> This wasn't in the TI clk PR. Shall I merge this to clk-next?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tero has this included in his clkctrl series and there's one typo
+fix needed where the doc still says #clock-cells = <4> instead of <2>.
 
-I.e. will queue in clk-renesas-for-v4.13.
+I suggest let's wait a bit on this and let's try to get the clkctrl
+driver parts into next early after v4.12-rc1 if no issues.
 
-Gr{oetje,eeting}s,
+It seems the clkctrl series clock driver part is pretty much
+ready to go, the remaining issues seem to be in the hwmod code.
 
-                        Geert
+Regards,
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Tony
