@@ -1,85 +1,60 @@
-Return-Path: <wens@csie.org>
-MIME-Version: 1.0
-In-Reply-To: <20170420195917.GA16113@plaes.org>
-References: <cover.a58841efb571d44013658505f3fa140536a89d1c.1490545262.git-series.plaes@plaes.org>
- <ac8c4dab4f160ec605d52120517774bf1de87c2e.1490545262.git-series.plaes@plaes.org>
- <20170327075438.cw3d6s7zyeemenwr@lukather> <20170404200919.GA22159@plaes.org>
- <20170407133805.aiythp3hdvuyhcrc@lukather> <20170420195917.GA16113@plaes.org>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 21 Apr 2017 09:46:58 +0800
-Message-ID: <CAGb2v66iNddKty4ObeGuVRDOp1NV-9A6=cg7omGMiDLJe7T_=g@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v2 1/6] clk: sunxi-ng: Add sun4i/sun7i
- CCU driver
-To: Priit Laes <plaes@plaes.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>, Icenowy Zheng <icenowy@aosc.xyz>,
-	Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
-	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 1/5 v2] clk: qcom: Update DT bindings for the MSM8660/APQ8060 RPMCC
+Date: Wed, 19 Apr 2017 11:13:22 +0200
+Message-Id: <20170419091326.11226-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 21, 2017 at 3:59 AM, Priit Laes <plaes@plaes.org> wrote:
-> On Fri, Apr 07, 2017 at 03:38:05PM +0200, Maxime Ripard wrote:
->> Hi Priit,
->>
->> On Tue, Apr 04, 2017 at 08:09:19PM +0000, Priit Laes wrote:
->> > > > +/* Not documented on A10 */
->> > > > +static SUNXI_CCU_GATE(pll_periph_sata_clk, "pll-periph-sata", "pll-periph",
->> > > > +                     0x028, BIT(14), 0);
->> > >
->> > > The rate doesn't come from pll-periph directly, does it?
->> >
->> > So it uses hosc (24MHz parent clock) instead of pll-periph?
->>
->> I never looked too much at this, but it looks more like the input is
->> pll-periph-sata itself.
->
-> OK, I think I have now fixed most of the issues thanks to Maxime and Chen-Yu
-> and I'm almost ready to send out V3.
->
-> From my side there is only single issue remaining - how to create "sata-ext"
-> clock?
->
-> [snip]
-> static struct ccu_div pll_periph_sata_clk = {
->         .enable         = BIT(14),
->         .div            = _SUNXI_CCU_DIV(0, 2),
->         .common         = {
->                 .prediv         = 6,
->                 .reg            = 0x028,
->                 .features       = CCU_FEATURE_ALL_PREDIV,
->                 .hw.init        = CLK_HW_INIT("pll-periph-sata",
->                                               "pll-periph-base",
->                                               &ccu_nk_ops, 0),
->         },
-> };
->
-> static const char* const sata_parents[] = {"pll-periph-sata", "sata-ext"};
-> static SUNXI_CCU_MUX_WITH_GATE(sata_clk, "sata", sata_parents,
->                                0x0c8, 24, 1, BIT(31), 0);
-> [/snip]
->
-> Should I create a fixed-clock node in the dtsi:
->
-> sata-ext: clk@0 {
->         #clock-cells = <0>;
->         compatible = "fixed-clock";
->         clock-frequency = <200000000>;
->         clock-output-names = "sata-ext";
-> };
+These compatible strings need to be added to extend support
+for the RPM CC to cover MSM8660/APQ8060. We also need to add
+enumberators to the include file for a few clocks that were
+missing.
 
-You can just leave it missing. You probably shouldn't register it
-if it's not populated. The clk core can cope with missing parents,
-as long as they aren't all missing.
+Cc: devicetree@vger.kernel.org
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- Collect Rob's ACK
+---
+ Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 2 ++
+ include/dt-bindings/clock/qcom,rpmcc.h                 | 4 ++++
+ 2 files changed, 6 insertions(+)
 
->
-> And would it also need pio definition?
-
-Nope. It has dedicated pins.
-
-ChenYu
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+index a7235e9e1c97..d470a0187035 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+@@ -10,6 +10,8 @@ Required properties :
+ - compatible : shall contain only one of the following. The generic
+                compatible "qcom,rpmcc" should be also included.
+ 
++			"qcom,rpmcc-msm8660", "qcom,rpmcc"
++			"qcom,rpmcc-apq8060", "qcom,rpmcc"
+ 			"qcom,rpmcc-msm8916", "qcom,rpmcc"
+ 			"qcom,rpmcc-msm8974", "qcom,rpmcc"
+ 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
+diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
+index 96b63c00249e..44358562a031 100644
+--- a/include/dt-bindings/clock/qcom,rpmcc.h
++++ b/include/dt-bindings/clock/qcom,rpmcc.h
+@@ -37,6 +37,10 @@
+ #define RPM_SYS_FABRIC_A_CLK			19
+ #define RPM_SFPB_CLK				20
+ #define RPM_SFPB_A_CLK				21
++#define RPM_PLL4_CLK				22
++#define RPM_PLL4_A_CLK				23
++#define RPM_SMI_CLK				24
++#define RPM_SMI_A_CLK				25
+ 
+ /* SMD RPM clocks */
+ #define RPM_SMD_XO_CLK_SRC				0
+-- 
+2.9.3
