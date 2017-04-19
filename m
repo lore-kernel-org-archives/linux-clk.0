@@ -1,148 +1,35 @@
-Return-Path: <k.kozlowski.k@gmail.com>
-Return-Path: <k.kozlowski.k@gmail.com>
-Date: Fri, 21 Apr 2017 20:54:33 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 19 Apr 2017 11:31:49 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 1/4] clk: samsung: Convert common drivers to the new
- clk_hw API
-Message-ID: <20170421185433.b5awu24nlw7bbm5f@kozik-lap>
-References: <1492694199-9553-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170420131645eucas1p2324270d9801342eeebe8eddaf8172315@eucas1p2.samsung.com>
- <1492694199-9553-2-git-send-email-m.szyprowski@samsung.com>
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 6/6] clk: hi3620: Fix a typo in one variable name
+Message-ID: <20170419183149.GV7065@codeaurora.org>
+References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
+ <6034a36d-a1a2-e942-0651-61f08475d8c8@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1492694199-9553-2-git-send-email-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <6034a36d-a1a2-e942-0651-61f08475d8c8@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 20, 2017 at 03:16:36PM +0200, Marek Szyprowski wrote:
-> Clock providers should use the new struct clk_hw based API, so convert
-> Samsung clock providers and their helper functions to the new approach.
+On 04/18, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 18 Apr 2017 11:15:56 +0200
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> The script "checkpatch.pl" pointed information out like the following.
+> 
+> CHECK: 'seperated' may be misspelled - perhaps 'separated'?
+> 
+> Thus rename the affected variable.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  drivers/clk/samsung/clk-cpu.c          | 15 +++---
->  drivers/clk/samsung/clk-pll.c          | 14 +++---
->  drivers/clk/samsung/clk-pll.h          |  4 --
->  drivers/clk/samsung/clk-s3c2410-dclk.c | 75 ++++++++++++++--------------
->  drivers/clk/samsung/clk.c              | 91 +++++++++++++++-------------------
->  drivers/clk/samsung/clk.h              |  9 ++--
->  6 files changed, 96 insertions(+), 112 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-> index 8bf7e805fd34..fbf0154b81a5 100644
-> --- a/drivers/clk/samsung/clk-cpu.c
-> +++ b/drivers/clk/samsung/clk-cpu.c
-> @@ -410,7 +410,7 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
->  {
->  	struct exynos_cpuclk *cpuclk;
->  	struct clk_init_data init;
-> -	struct clk *clk;
-> +	struct clk *parent_clk;
->  	int ret = 0;
->  
->  	cpuclk = kzalloc(sizeof(*cpuclk), GFP_KERNEL);
-> @@ -440,15 +440,15 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
->  		goto free_cpuclk;
->  	}
->  
-> -	clk = __clk_lookup(parent);
-> -	if (!clk) {
-> +	parent_clk = __clk_lookup(parent);
-> +	if (!parent_clk) {
 
-This looks unrelated to this change. Can you split it to separate
-commit?
+Applied to clk-next
 
->  		pr_err("%s: could not lookup parent clock %s\n",
->  				__func__, parent);
->  		ret = -EINVAL;
->  		goto free_cpuclk;
->  	}
->  
-> -	ret = clk_notifier_register(clk, &cpuclk->clk_nb);
-> +	ret = clk_notifier_register(parent_clk, &cpuclk->clk_nb);
->  	if (ret) {
->  		pr_err("%s: failed to register clock notifier for %s\n",
->  				__func__, name);
-> @@ -463,14 +463,13 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
->  		goto unregister_clk_nb;
->  	}
->  
-> -	clk = clk_register(NULL, &cpuclk->hw);
-> -	if (IS_ERR(clk)) {
-> +	ret = clk_hw_register(NULL, &cpuclk->hw);
-> +	if (ret) {
->  		pr_err("%s: could not register cpuclk %s\n", __func__,	name);
-> -		ret = PTR_ERR(clk);
->  		goto free_cpuclk_data;
->  	}
->  
-> -	samsung_clk_add_lookup(ctx, clk, lookup_id);
-> +	samsung_clk_add_lookup(ctx, &cpuclk->hw, lookup_id);
->  	return 0;
->  
->  free_cpuclk_data:
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-> index 52290894857a..db680575a9bd 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -1244,7 +1244,6 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
->  				void __iomem *base)
->  {
->  	struct samsung_clk_pll *pll;
-> -	struct clk *clk;
->  	struct clk_init_data init;
->  	int ret, len;
->  
-> @@ -1376,20 +1375,21 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
->  	pll->lock_reg = base + pll_clk->lock_offset;
->  	pll->con_reg = base + pll_clk->con_offset;
->  
-> -	clk = clk_register(NULL, &pll->hw);
-> -	if (IS_ERR(clk)) {
-> -		pr_err("%s: failed to register pll clock %s : %ld\n",
-> -			__func__, pll_clk->name, PTR_ERR(clk));
-> +	ret = clk_hw_register(NULL, &pll->hw);
-> +	if (ret) {
-> +		pr_err("%s: failed to register pll clock %s : %d\n",
-> +			__func__, pll_clk->name, ret);
->  		kfree(pll);
->  		return;
->  	}
->  
-> -	samsung_clk_add_lookup(ctx, clk, pll_clk->id);
-> +	samsung_clk_add_lookup(ctx, &pll->hw, pll_clk->id);
->  
->  	if (!pll_clk->alias)
->  		return;
->  
-> -	ret = clk_register_clkdev(clk, pll_clk->alias, pll_clk->dev_name);
-> +	ret = clk_hw_register_clkdev(&pll->hw, pll_clk->alias,
-> +				     pll_clk->dev_name);
->  	if (ret)
->  		pr_err("%s: failed to register lookup for %s : %d",
->  			__func__, pll_clk->name, ret);
-> diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-> index a1ca0233cb4b..61eb8abbfd9c 100644
-> --- a/drivers/clk/samsung/clk-pll.h
-> +++ b/drivers/clk/samsung/clk-pll.h
-> @@ -103,8 +103,4 @@ struct samsung_pll_rate_table {
->  	unsigned int vsel;
->  };
->  
-> -extern struct clk * __init samsung_clk_register_pll2550x(const char *name,
-> -			const char *pname, const void __iomem *reg_base,
-> -			const unsigned long offset);
-> -
-
-The same, looks unrelated so maybe split it out?
-
-
-Best regards,
-Krzysztof
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
