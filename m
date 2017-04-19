@@ -1,69 +1,39 @@
-Return-Path: <Alexey_Firago@mentor.com>
-From: Alexey Firago <alexey_firago@mentor.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<marek.vasut@gmail.com>, <geert@linux-m68k.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-CC: Alexey Firago <alexey_firago@mentor.com>
-Subject: [PATCH v4 2/3] clk: vc5: Add bindings for IDT VersaClock 5P49V5935
-Date: Fri, 7 Apr 2017 12:12:23 +0300
-Message-ID: <1491556344-9465-3-git-send-email-alexey_firago@mentor.com>
-In-Reply-To: <1491556344-9465-1-git-send-email-alexey_firago@mentor.com>
-References: <1491556344-9465-1-git-send-email-alexey_firago@mentor.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 19 Apr 2017 09:23:44 -0700
+From: Stefan Agner <stefan@agner.ch>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, aisheng.dong@nxp.com,
+        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: imx7d: fix USDHC NAND clock
+In-Reply-To: <20170419161435.GA7065@codeaurora.org>
+References: <20170410210015.1620-1-stefan@agner.ch>
+ <20170419161435.GA7065@codeaurora.org>
+Message-ID: <9f0b9e83bc2a46bacb323d3ff2cfcf64@agner.ch>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-IDT VersaClock 5 5P49V5935 has 4 clock outputs, 4 fractional dividers.
-Input clock source can be taken from either integrated crystal or from
-external reference clock.
+On 2017-04-19 09:14, Stephen Boyd wrote:
+> On 04/10, Stefan Agner wrote:
+>> The USDHC NAND root clock is not gated by any CCM clock gate. Remove
+>> the bogus gate definition.
+>>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+> 
+> Can this be applied? It's followed by a dtsi change and there is
+> zero information about if the two depend on each other. Please
+> add cover letters for these sorts of things in the future
+> indicating how you expect merging to work.
 
-Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
----
- .../devicetree/bindings/clock/idt,versaclock5.txt        | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+This can be merged. The two changes are independent.
 
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-index 87e9c47..53d7e50 100644
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-@@ -6,18 +6,21 @@ from 3 to 12 output clocks.
- ==I2C device node==
- 
- Required properties:
--- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933".
-+- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
-+		"idt,5p49v5935".
- - reg:		i2c device address, shall be 0x68 or 0x6a.
- - #clock-cells:	from common clock binding; shall be set to 1.
- - clocks:	from common clock binding; list of parent clock handles,
- 		- 5p49v5923: (required) either or both of XTAL or CLKIN
- 					reference clock.
--		- 5p49v5933: (optional) property not present (internal
-+		- 5p49v5933 and
-+		- 5p49v5935: (optional) property not present (internal
- 					Xtal used) or CLKIN reference
- 					clock.
- - clock-names:	from common clock binding; clock input names, can be
- 		- 5p49v5923: (required) either or both of "xin", "clkin".
--		- 5p49v5933: (optional) property not present or "clkin".
-+		- 5p49v5933 and
-+		- 5p49v5935: (optional) property not present or "clkin".
- 
- ==Mapping between clock specifier and physical pins==
- 
-@@ -34,6 +37,13 @@ clock specifier, the following mapping applies:
- 	1 -- OUT1
- 	2 -- OUT4
- 
-+5P49V5935:
-+	0 -- OUT0_SEL_I2CB
-+	1 -- OUT1
-+	2 -- OUT2
-+	3 -- OUT3
-+	4 -- OUT4
-+
- ==Example==
- 
- /* 25MHz reference crystal */
--- 
-2.7.4
+They look kind of dependent, but really aren't since
+IMX7D_NAND_USDHC_BUS_ROOT_CLK is still in the init_on list. Should have
+explicitly mentioned that, sorry about that.
+
+--
+Stefan
