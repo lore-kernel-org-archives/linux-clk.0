@@ -1,58 +1,58 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 7 Apr 2017 12:45:06 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: add clk_possible_parents debugfs file
-Message-ID: <20170407194506.GF7065@codeaurora.org>
-References: <1490102432-21314-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <john@phrozen.org>
+Subject: Re: [PATCH 0/2] clk: mediatek: add missing ethernet reset definition
+To: Stephen Boyd <sboyd@codeaurora.org>
+References: <1485175707-58528-1-git-send-email-john@phrozen.org>
+ <20170127001441.GS8801@codeaurora.org>
+ <6803ef87-fb22-075c-bee1-3c0adb8e297d@phrozen.org>
+ <20170419171835.GO7065@codeaurora.org>
+Cc: James Liao <jamesjj.liao@mediatek.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, Matthias Brugger
+ <matthias.bgg@gmail.com>, Erin Lo <erin.lo@mediatek.com>,
+ linux-arm-kernel@lists.infradead.org
+From: John Crispin <john@phrozen.org>
+Message-ID: <0753780a-0a08-e0b2-0eb0-c3272d7bc487@phrozen.org>
+Date: Wed, 19 Apr 2017 21:17:52 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1490102432-21314-1-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <20170419171835.GO7065@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/21, Peter De Schrijver wrote:
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index f5f2bcd..2fa2fb8 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2128,6 +2128,34 @@ static int clk_dump_open(struct inode *inode, struct file *file)
->  	.release	= single_release,
->  };
->  
-> +static int possible_parents_dump(struct seq_file *s, void *data)
-> +{
-> +	struct clk_core *core;
-> +	int i;
-> +
-> +	core = (struct clk_core *)s->private;
 
-Useless cast from void.
 
-> +
-> +	for (i = 0; i < core->num_parents - 1; i++)
-> +		seq_printf(s, "%s ", core->parent_names[i]);
+On 19/04/17 19:18, Stephen Boyd wrote:
+> On 01/27, John Crispin wrote:
+>>
+>> On 27/01/2017 01:14, Stephen Boyd wrote:
+>>> On 01/23, John Crispin wrote:
+>>>> When the clk code for mt2701 was merged, we forgot to add the reset
+>>>> controller of the ethernet subsystem. This series adds the missing code
+>>>> and header files required to reference the bits from within a devicetree
+>>>> file.
+>>>>
+>>>> John Crispin (2):
+>>>>    clk: mediatek: add mt2701 ethernet reset
+>>>>    reset: mediatek: Add MT2701 ethsys reset controller include file
+>>>>
+>>>>   drivers/clk/mediatek/clk-mt2701-eth.c     |    2 ++
+>>>>   include/dt-bindings/reset/mt2701-resets.h |    7 +++++++
+>>> Any planned DT users in the next merge window? Should I put this
+>>> into a topic branch? Do you want a clk maintainer ack? At the
+>>> least we need someone like James to ack this first.
+>>>
+>> Hi Stephen,
+>>
+>> the addition of the dtsi snippets for the ethernet core is pending due
+>> to this patch. getting it into v4.11 would be geat so that i can sent
+>> dtsi changes during the next merge window.
+>>
+> Sorry, I never saw anything from anyone @mediatek so I never did
+> anything here. I suppose I'll just go and apply this to clk-next
+> now and then v4.13 can get the ethernet patches?
+>
+Hi Stephen,
 
-I hope we don't have spaces in clk names! I don't think we do.
+sounds like a plan. i'll add the series to my local pending tree and 
+resend stuff during the next merge window if it was not merged by then.
 
-> +
-> +	seq_printf(s, "%s\n", core->parent_names[i]);
-> +
-> +	return 0;
-> +}
-> +
-> +static int possible_parents_open(struct inode *inode, struct file *file)
-> +{
-> +	return single_open(file, possible_parents_dump, inode->i_private);
-> +}
-> +
-> +
-
-Double newline.
-
-I fixed both when applying to clk-next.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+     John
