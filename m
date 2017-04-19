@@ -1,51 +1,48 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <shawnguo@kernel.org>,
-	<fabio.estevam@nxp.com>, <stefan@agner.ch>,
-	<linux-arm-kernel@lists.infradead.org>, <aisheng.dong@nxp.com>,
-	<kernel@pengutronix.de>
-Subject: [PATCH 2/2] clk: imx7d: add the missing ipg_root_clk
-Date: Tue, 11 Apr 2017 10:37:49 +0800
-Message-ID: <1491878269-9559-2-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1491878269-9559-1-git-send-email-aisheng.dong@nxp.com>
-References: <1491878269-9559-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <elfring@users.sourceforge.net>
+Subject: [PATCH 1/5] clk: mvebu: Use kcalloc() in of_cpu_clk_setup()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
+Message-ID: <9377530b-9b07-bfc6-848c-b0c1994e33f7@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 21:52:55 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the missing ipg_root_clk which actually is already used by many
-orphan clks in current tree.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Apr 2017 20:15:21 +0200
 
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Multiplications for the size determination of memory allocations
+indicated that array data structures should be processed.
+Thus use the corresponding function "kcalloc".
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/clk/imx/clk-imx7d.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/mvebu/clk-cpu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index ad04483..5620551 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -386,7 +386,7 @@ static int const clks_init_on[] __initconst = {
- 	IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_NAND_USDHC_BUS_ROOT_CLK,
- 	IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
- 	IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
--	IMX7D_AHB_CHANNEL_ROOT_CLK,
-+	IMX7D_AHB_CHANNEL_ROOT_CLK, IMX7D_IPG_ROOT_CLK,
- };
+diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
+index 044892b6534d..072aa38374ce 100644
+--- a/drivers/clk/mvebu/clk-cpu.c
++++ b/drivers/clk/mvebu/clk-cpu.c
+@@ -186,11 +186,11 @@ static void __init of_cpu_clk_setup(struct device_node *node)
+ 	for_each_node_by_type(dn, "cpu")
+ 		ncpus++;
  
- static struct clk_onecell_data clk_data;
-@@ -726,6 +726,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_ENET_AXI_ROOT_DIV] = imx_clk_divider2("enet_axi_post_div", "enet_axi_pre_div", base + 0x8900, 0, 6);
- 	clks[IMX7D_NAND_USDHC_BUS_ROOT_DIV] = imx_clk_divider2("nand_usdhc_post_div", "nand_usdhc_pre_div", base + 0x8980, 0, 6);
- 	clks[IMX7D_AHB_CHANNEL_ROOT_DIV] = imx_clk_divider2("ahb_root_clk", "ahb_pre_div", base + 0x9000, 0, 6);
-+	clks[IMX7D_IPG_ROOT_CLK] = imx_clk_divider2("ipg_root_clk", "ahb_root_clk", base + 0x9080, 0, 2);
- 	clks[IMX7D_DRAM_ROOT_DIV] = imx_clk_divider2("dram_post_div", "dram_cg", base + 0x9880, 0, 3);
- 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_DIV] = imx_clk_divider2("dram_phym_alt_post_div", "dram_phym_alt_pre_div", base + 0xa000, 0, 3);
- 	clks[IMX7D_DRAM_ALT_ROOT_DIV] = imx_clk_divider2("dram_alt_post_div", "dram_alt_pre_div", base + 0xa080, 0, 3);
+-	cpuclk = kzalloc(ncpus * sizeof(*cpuclk), GFP_KERNEL);
++	cpuclk = kcalloc(ncpus, sizeof(*cpuclk), GFP_KERNEL);
+ 	if (WARN_ON(!cpuclk))
+ 		goto cpuclk_out;
+ 
+-	clks = kzalloc(ncpus * sizeof(*clks), GFP_KERNEL);
++	clks = kcalloc(ncpus, sizeof(*clks), GFP_KERNEL);
+ 	if (WARN_ON(!clks))
+ 		goto clks_out;
+ 
 -- 
-2.7.4
+2.12.2
