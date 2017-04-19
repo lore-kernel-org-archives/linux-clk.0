@@ -1,34 +1,54 @@
-Return-Path: <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/6] clk-Hisilicon: Fine-tuning for some function
- implementations
-Message-ID: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
-Date: Tue, 18 Apr 2017 11:34:52 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.11-rc7
+Date: Wed, 19 Apr 2017 16:44:10 -0700
+Message-Id: <20170419234410.13616-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Apr 2017 11:27:32 +0200
+The following changes since commit 7f0b97d5bb4c1c99c38dd6770ad11f714ea42583:
 
-A few update suggestions were taken into account
-from static source code analysis.
+  Merge tag 'sunxi-clk-fixes-for-4.11' of https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux into clk-fixes (2017-03-23 16:08:46 -0700)
 
-Markus Elfring (6):
-  Use kcalloc() in hisi_clk_init()
-  Delete error messages for failed memory allocations in hisi_clk_init()
-  Use devm_kmalloc_array() in hisi_clk_alloc()
-  Use kcalloc() in hi3620_mmc_clk_init()
-  Delete error messages for a failed memory allocation in two functions
-  Fix a typo in one variable name
+are available in the git repository at:
 
- drivers/clk/hisilicon/clk-hi3620.c | 16 ++++++----------
- drivers/clk/hisilicon/clk.c        | 18 ++++++++----------
- 2 files changed, 14 insertions(+), 20 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to e7590308d17e578e47f298cc3fec359108341cb6:
+
+  Merge tag 'sunxi-clk-fixes-for-4.11-2-bis' of https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into clk-fixes (2017-04-17 11:04:12 -0700)
+
+----------------------------------------------------------------
+One stm32f4 fix for a change that introduced the PLL_I2S and PLL_SAI boards
+and then two Allwinner clk driver build fixes and two CPU clk driver fixes
+where we see random CPUFreq crashes because the CPU's PLL locks up sometimes
+when we change the rate.
+
+----------------------------------------------------------------
+Chen-Yu Tsai (2):
+      clk: sunxi-ng: Add clk notifier to gate then ungate PLL clocks
+      clk: sunxi-ng: a33: gate then ungate PLL CPU clk after rate change
+
+Gabriel Fernandez (1):
+      clk: stm32f4: fix: exclude values 0 and 1 for PLLQ
+
+Stephen Boyd (1):
+      Merge tag 'sunxi-clk-fixes-for-4.11-2-bis' of https://git.kernel.org/.../sunxi/linux into clk-fixes
+
+Tobias Regnery (2):
+      clk: sunxi-ng: fix build error without CONFIG_RESET_CONTROLLER
+      clk: sunxi-ng: fix build failure in ccu-sun9i-a80 driver
+
+ drivers/clk/clk-stm32f4.c            | 13 +++++++---
+ drivers/clk/sunxi-ng/Kconfig         |  2 ++
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 11 ++++++++
+ drivers/clk/sunxi-ng/ccu_common.c    | 49 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_common.h    | 12 +++++++++
+ 5 files changed, 84 insertions(+), 3 deletions(-)
 
 -- 
-2.12.2
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
