@@ -1,67 +1,39 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Wed, 19 Apr 2017 11:31:39 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 4/6] clk: hi3620: Use kcalloc() in hi3620_mmc_clk_init()
+Message-ID: <20170419183139.GT7065@codeaurora.org>
+References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
+ <9c35e91c-36c6-f33e-a283-4304ad118a22@users.sourceforge.net>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20170405214515.GC7065@codeaurora.org>
-References: <1490952253-10963-1-git-send-email-geert+renesas@glider.be>
- <20170405195605.GN18246@codeaurora.org> <CAMuHMdUf7SX1fkbQsv7DPZ7OvdniiRqovQuiDjeQ1EdGXKxcRQ@mail.gmail.com>
- <20170405214515.GC7065@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Apr 2017 08:41:27 +0200
-Message-ID: <CAMuHMdXyXGODtGScnnbg-WUop1iynkwt=+ZhU_UGoh5cnF9KkA@mail.gmail.com>
-Subject: Re: [git pull] clk: renesas: Updates for v4.12 (take two)
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <9c35e91c-36c6-f33e-a283-4304ad118a22@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On 04/18, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 18 Apr 2017 10:30:04 +0200
+> 
+> * A multiplication for the size determination of a memory allocation
+>   indicated that an array data structure should be processed.
+>   Thus use the corresponding function "kcalloc".
+> 
+>   This issue was detected by using the Coccinelle software.
+> 
+> * Replace the specification of a data type by a pointer dereference
+>   to make the corresponding size determination a bit safer according to
+>   the Linux coding style convention.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-On Wed, Apr 5, 2017 at 11:45 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 04/05, Geert Uytterhoeven wrote:
->> On Wed, Apr 5, 2017 at 9:56 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
->> > On 03/31, Geert Uytterhoeven wrote:
->> >> The following changes since commit cecbe87d73006cb321dec79b349e3fefd1a80962:
->> >>
->> >>   clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0 (2017-03-21 11:12:23 +0100)
->> >>
->> >> are available in the git repository at:
->> >>
->> >>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.12-tag2
->> >>
->> >> for you to fetch changes up to bb1953067c05be30a605ee1d5b05a2677735bb37:
->> >>
->> >>   clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0 (2017-03-30 13:26:02 +0200)
->> >>
->> >> ----------------------------------------------------------------
->> >> clk: renesas: Updates for v4.12 (take two)
->> >>
->> >>   - Add support for the Clock Pulse Generator / Module Standby and
->> >>     Software Reset module on revision ES2.0 of the R-Car H3 SoC, which
->> >>     differs from ES1.x in some areas.
->> >>
->> >> Note that this pull request is on top of my previous pull request for
->> >> v4.12, which accidentally had a wrong version number in the subject
->> >> line, and which I believe you haven't pulled yet.
->> >
->> > Thanks. I pulled both by pulling this one tag.
->>
->> Thanks, but if you pull the second tag only, you don't record the contents
->> of the first tag, do you?
->
-> I copied the words into the commit message. Not sure anyone cares
-> that the first tag signature is lost.
+Applied to clk-next
 
-OK, thx!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
