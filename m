@@ -1,268 +1,494 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 28 Apr 2017 11:53:49 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Varadarajan Narayanan <varada@codeaurora.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	linus.walleij@linaro.org, andy.gross@linaro.org,
-	david.brown@linaro.org, catalin.marinas@arm.com,
-	will.deacon@arm.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	sricharan@codeaurora.org, absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Subject: Re: [PATCH 4/5] arm64: dts: Add ipq8074 SoC and MTP board support
-Message-ID: <20170428185349.GD7065@codeaurora.org>
-References: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
- <1493373403-23462-5-git-send-email-varada@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1493373403-23462-5-git-send-email-varada@codeaurora.org>
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 5/5 v2] clk: qcom: Add support for MSM8660 LCC
+Date: Wed, 19 Apr 2017 11:13:26 +0200
+Message-Id: <20170419091326.11226-5-linus.walleij@linaro.org>
+In-Reply-To: <20170419091326.11226-1-linus.walleij@linaro.org>
+References: <20170419091326.11226-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/28, Varadarajan Narayanan wrote:
-> diff --git a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-> new file mode 100644
-> index 0000000..c150bea
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-> @@ -0,0 +1,48 @@
-> +/dts-v1/;
-> +/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 and
-> + * only version 2 as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +#include "ipq8074.dtsi"
-> +
-> +/ {
-> +	#address-cells = <0x2>;
-> +	#size-cells = <0x2>;
-> +	model = "Qualcomm Technologies, Inc. IPQ8074-HK01";
-> +	compatible = "qcom,ipq8074-hk01", "qcom,ipq8074";
-> +	interrupt-parent = <&intc>;
-> +
-> +	chosen {
-> +		bootargs = "console=ttyMSM0,115200,n8 root=/dev/ram0 rw init=/init";
+This adds support for the MSM8660 Low-power audio
+subsystem (LPASS) clock controller (LCC). This is nice when
+you want to have audio from the system.
 
-Add an aliases node for serial0 and use a chosen node with stdout-path = "serial0" instead please.
+We currently only support using the PLL4 (which is an RPM
+clock) as the parent, however the LPASS has its own PLL named
+LPA_PLL0 that we can experiment with enabling later on, so
+for this reason the code contains a few hints on how to enable
+the LPA_PLL0.
 
-> +	};
-> +
-> +	memory {
-> +		device_type = "memory";
-> +		reg = <0x0 0x40000000 0x0 0x20000000>;
-> +	};
-> +
-> +	soc: soc {
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- No changes.
+---
+ drivers/clk/qcom/Kconfig       |   9 +
+ drivers/clk/qcom/Makefile      |   1 +
+ drivers/clk/qcom/lcc-msm8660.c | 418 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 428 insertions(+)
+ create mode 100644 drivers/clk/qcom/lcc-msm8660.c
 
-Do you need the soc label here? Please remove.
-
-> +		pinctrl@1000000 {
-> +			serial_4_pins: serial4_pinmux {
-> +				mux {
-> +					pins = "gpio23", "gpio24";
-> +					function = "blsp4_uart1";
-> +					bias-disable;
-> +				};
-> +			};
-> +		};
-> +
-> +		serial@78b3000 {
-> +			pinctrl-0 = <&serial_4_pins>;
-> +			pinctrl-names = "default";
-> +			status = "ok";
-> +		};
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-> new file mode 100644
-> index 0000000..f910cc0
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-> @@ -0,0 +1,153 @@
-> +/*
-> + * Copyright (c) 2017, The Linux Foundation. All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 and
-> + * only version 2 as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/qcom,gcc-ipq8074.h>
-> +
-> +/ {
-> +	model = "Qualcomm Technologies, Inc. IPQ8074";
-> +	compatible = "qcom,ipq8074";
-> +
-> +	soc: soc {
-> +		#address-cells = <0x1>;
-> +		#size-cells = <0x1>;
-> +		ranges = <0 0 0 0xffffffff>;
-> +		compatible = "simple-bus";
-> +
-> +		pinctrl@1000000 {
-> +			compatible = "qcom,ipq8074-pinctrl";
-> +			reg = <0x1000000 0x300000>;
-> +			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-> +			gpio-controller;
-> +			#gpio-cells = <0x2>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <0x2>;
-> +		};
-> +
-> +		intc: interrupt-controller@b000000 {
-> +			compatible = "qcom,msm-qgic2";
-> +			interrupt-controller;
-> +			#interrupt-cells = <0x3>;
-> +			reg = <0xb000000 0x1000>,
-> +			<0xb002000 0x1000>;
-
-Please align this up with previous reg property.
-
-> +		};
-> +
-> +		timer {
-> +			compatible = "arm,armv8-timer";
-> +			interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +				     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-> +		};
-
-Is there an mmio timer as well? We should add it too.
-
-> +
-> +		gcc: gcc@1800000 {
-> +			compatible = "qcom,gcc-ipq8074";
-> +			reg = <0x1800000 0x80000>;
-
-Wow that is a huge area! Is it really that large?
-
-> +			#clock-cells = <0x1>;
-> +			#reset-cells = <0x1>;
-> +		};
-> +
-> +		serial@78b3000 {
-> +			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-> +			reg = <0x78b3000 0x200>;
-> +			interrupts = <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&gcc GCC_BLSP1_UART5_APPS_CLK>,
-> +				 <&gcc GCC_BLSP1_AHB_CLK>;
-> +			clock-names = "core", "iface";
-> +			status = "disabled";
-> +		};
-> +	};
-> +
-> +	cpus {
-> +		#address-cells = <0x1>;
-> +		#size-cells = <0x0>;
-> +
-> +		cpu-map {
-> +
-> +			cluster0 {
-> +
-> +				core0 {
-> +					cpu = <&CPU0>;
-> +				};
-> +
-> +				core1 {
-> +					cpu = <&CPU1>;
-> +				};
-> +
-> +				core2 {
-> +					cpu = <&CPU2>;
-> +				};
-> +
-> +				core3 {
-> +					cpu = <&CPU3>;
-> +				};
-> +			};
-> +		};
-
-Is this needed? Looks ok, but just curious if we need to do it
-for other arm64 platforms we support.
-
-> +
-> +		CPU0: cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53", "arm,armv8";
-> +			reg = <0x0>;
-> +			next-level-cache = <&L2_0>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		CPU1: cpu@1 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53", "arm,armv8";
-> +			enable-method = "psci";
-> +			reg = <0x1>;
-> +			next-level-cache = <&L2_0>;
-> +		};
-> +
-> +		CPU2: cpu@2 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53", "arm,armv8";
-> +			enable-method = "psci";
-> +			reg = <0x2>;
-> +			next-level-cache = <&L2_0>;
-> +		};
-> +
-> +		CPU3: cpu@3 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53", "arm,armv8";
-> +			enable-method = "psci";
-> +			reg = <0x3>;
-> +			next-level-cache = <&L2_0>;
-> +		};
-> +
-> +		L2_0: l2-cache {
-> +			compatible = "cache";
-> +			cache-level = <0x2>;
-> +		};
-
-This should be inside some CPU? CPU0?
-
-> +	};
-
-We should be able to add the performance monitor node too?
-
-> +
-> +	psci {
-> +		compatible = "arm,psci-1.0";
-> +		method = "smc";
-> +	};
-> +
-> +	clocks {
-> +		sleep_clk: sleep_clk {
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <32000>;
-
-Not 32765 or 32768?
-
-> +			#clock-cells = <0>;
-> +		};
-> +
-> +		xo: xo {
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <19200000>;
-> +			#clock-cells = <0>;
-> +		};
-> +	};
-
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 5fb8d7430908..d657d94d372f 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -90,6 +90,15 @@ config MSM_GCC_8660
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+ 	  i2c, USB, SD/eMMC, etc.
+ 
++config MSM_LCC_8660
++	tristate "MSM8660 LPASS Clock Controller"
++	select MSM_GCC_8660
++	depends on COMMON_CLK_QCOM
++	help
++	  Support for the Low-power Audio Subsystem (LPASS) clock controller
++	  on MSM8660 devices.
++	  Say Y if you want to use audio devices such as I2S and PCM.
++
+ config MSM_GCC_8916
+ 	tristate "MSM8916 Global Clock Controller"
+ 	select QCOM_GDSC
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 1c3e222b917b..d6d5ab178522 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -21,6 +21,7 @@ obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
+ obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
+ obj-$(CONFIG_MDM_LCC_9615) += lcc-mdm9615.o
+ obj-$(CONFIG_MSM_GCC_8660) += gcc-msm8660.o
++obj-$(CONFIG_MSM_LCC_8660) += lcc-msm8660.o
+ obj-$(CONFIG_MSM_GCC_8916) += gcc-msm8916.o
+ obj-$(CONFIG_MSM_GCC_8960) += gcc-msm8960.o
+ obj-$(CONFIG_MSM_GCC_8974) += gcc-msm8974.o
+diff --git a/drivers/clk/qcom/lcc-msm8660.c b/drivers/clk/qcom/lcc-msm8660.c
+new file mode 100644
+index 000000000000..73dc8ede6a2a
+--- /dev/null
++++ b/drivers/clk/qcom/lcc-msm8660.c
+@@ -0,0 +1,418 @@
++/*
++ * Qualcomm MSM8660/APQ8060 Low-power Audio Subsystem (LPASS) Clock Controller
++ * Copyright (c) 2017 Linus Walleij <linus.walleij@linaro.org>
++ *
++ * Based on a copy of the IPQ806x driver
++ * (C) 2014 Rajendra Nayak
++ * and portions of the MDM9615 driver
++ * (C) 2014 Neil Armstrong.
++ */
++
++#include <linux/kernel.h>
++#include <linux/bitops.h>
++#include <linux/err.h>
++#include <linux/platform_device.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++
++#include <dt-bindings/clock/qcom,lcc-msm8660.h>
++
++#include "common.h"
++#include "clk-regmap.h"
++#include "clk-pll.h"
++#include "clk-rcg.h"
++#include "clk-branch.h"
++#include "clk-regmap-divider.h"
++#include "clk-regmap-mux.h"
++
++/*
++ * The vendor tree calls this "PLL0" but we are going to refer to it as
++ * LPA_PLL0 so as not to confuse it with the PLL0 on the GCC.
++ */
++static struct clk_pll lpa_pll0 = {
++	.l_reg = 0x4,
++	.m_reg = 0x8,
++	.n_reg = 0xc,
++	.config_reg = 0x14,
++	.mode_reg = 0x0,
++	.status_reg = 0x18,
++	.status_bit = 16,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "lpa_pll0",
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.ops = &clk_pll_ops,
++	},
++};
++
++/*
++ * The l/m/n values were read out of the registers after a cold boot.
++ * The config register read 00c22080 and the mode register 0x00000007.
++ */
++static const struct pll_config lpa_pll0_config = {
++	.l = 0xf,
++	.m = 0x1c,
++	.n = 0x465,
++	.vco_val = BIT(17),
++	.vco_mask = BIT(17) | BIT(16),
++	.pre_div_val = 0x0,
++	.pre_div_mask = BIT(19),
++	.post_div_val = 0x0,
++	.post_div_mask = BIT(21) | BIT(20),
++	.mn_ena_mask = BIT(22),
++	.main_output_mask = BIT(23),
++};
++
++enum {
++	P_PXO,
++	P_CXO,
++	P_PLL4_LPA_PLL0,
++	P_GND,
++};
++
++/* The vendor code uses PLL4 as parent everywhere */
++static const struct parent_map lcc_parent_map[] = {
++	{ P_PXO, 0 },
++	{ P_CXO, 1 },
++	/* Select RPM PLL4, but also used for selecting LPA PLL0 */
++	{ P_PLL4_LPA_PLL0, 2 },
++	/* Will just ground the line */
++	{ P_GND, 6 },
++};
++
++static const char * const lcc_parent_tbl[] = {
++	"pxo",
++	"cxo",
++	/*
++	 * PLL4 is an RPM clock on MSM8660/APQ8060, set to "pll4" for this
++	 * If we enable and mux in the LPA_PLL0 on this platform, we can
++	 * set this to "lpa_pll0" instead
++	 */
++	"pll4_clk",
++	"gnd", /* This is a very inactive parent */
++};
++
++/*
++ * This table is evidently for using PLL4 as parent, if we start using
++ * LPA_PLL0 we need to provide a second table.
++ */
++static struct freq_tbl clk_tbl_aif_osr_pll4[] = {
++	{   768000, P_PLL4_LPA_PLL0, 4,  1, 176 },
++	{  1024000, P_PLL4_LPA_PLL0, 4,  1, 132 },
++	{  1536000, P_PLL4_LPA_PLL0, 4,  1,  88 },
++	{  2048000, P_PLL4_LPA_PLL0, 4,  1,  66 },
++	{  3072000, P_PLL4_LPA_PLL0, 4,  1,  44 },
++	{  4096000, P_PLL4_LPA_PLL0, 4,  1,  33 },
++	{  6144000, P_PLL4_LPA_PLL0, 4,  1,  22 },
++	{  8192000, P_PLL4_LPA_PLL0, 2,  1,  33 },
++	{ 12288000, P_PLL4_LPA_PLL0, 4,  1,  11 },
++	{ 24576000, P_PLL4_LPA_PLL0, 2,  1,  11 },
++	{ 27000000, P_PXO,           1,  0,   0 },
++	{ }
++};
++
++/*
++ * This macro is modified from lcc-mdm9516.c, it's used for all the
++ * AIF clocks, all of them have an OSR clock and a bit clock derived
++ * from the OSR clock.
++ *
++ * These clocks differ from many other platforms by using
++ * BRANCH_HALT_DELAY for the *_bit_div_clk
++ */
++#define CLK_AIF_OSR_DIV(prefix, _ns, _md, _hr)			\
++static struct clk_rcg prefix##_osr_src = {			\
++	.ns_reg = _ns,						\
++	.md_reg = _md,						\
++	.mn = {							\
++		.mnctr_en_bit = 8,				\
++		.mnctr_reset_bit = 7,				\
++		.mnctr_mode_shift = 5,				\
++		.n_val_shift = 24,				\
++		.m_val_shift = 8,				\
++		.width = 8,					\
++	},							\
++	.p = {							\
++		.pre_div_shift = 3,				\
++		.pre_div_width = 2,				\
++	},							\
++	.s = {							\
++		.src_sel_shift = 0,				\
++		.parent_map = lcc_parent_map,			\
++	},							\
++	.freq_tbl = clk_tbl_aif_osr_pll4,			\
++	.clkr = {						\
++		.enable_reg = _ns,				\
++		.enable_mask = BIT(9),				\
++		.hw.init = &(struct clk_init_data){		\
++			.name = #prefix "_osr_src",		\
++			.parent_names = lcc_parent_tbl,		\
++			.num_parents = 4,			\
++			.ops = &clk_rcg_ops,			\
++			.flags = CLK_SET_RATE_GATE,		\
++		},						\
++	},							\
++};								\
++								\
++static const char * const lcc_##prefix##_parents[] = {		\
++	#prefix "_osr_src",					\
++};								\
++								\
++static struct clk_branch prefix##_osr_clk = {			\
++	.halt_reg = _hr,					\
++	.halt_bit = 1,						\
++	.halt_check = BRANCH_HALT_ENABLE,			\
++	.clkr = {						\
++		.enable_reg = _ns,				\
++		.enable_mask = BIT(17),				\
++		.hw.init = &(struct clk_init_data){		\
++			.name = #prefix "_osr_clk",		\
++			.parent_names = lcc_##prefix##_parents,	\
++			.num_parents = 1,			\
++			.ops = &clk_branch_ops,			\
++			.flags = CLK_SET_RATE_PARENT,		\
++		},						\
++	},							\
++};								\
++								\
++static struct clk_regmap_div prefix##_div_clk = {		\
++	.reg = _ns,						\
++	.shift = 10,						\
++	.width = 4,						\
++	.clkr = {						\
++		.hw.init = &(struct clk_init_data){		\
++			.name = #prefix "_div_clk",		\
++			.parent_names = lcc_##prefix##_parents,	\
++			.num_parents = 1,			\
++			.ops = &clk_regmap_div_ops,		\
++		},						\
++	},							\
++};								\
++								\
++static struct clk_branch prefix##_bit_div_clk = {		\
++	.halt_reg = _hr,					\
++	.halt_bit = 0,						\
++	.halt_check = BRANCH_HALT_DELAY,			\
++	.clkr = {						\
++		.enable_reg = _ns,				\
++		.enable_mask = BIT(15),				\
++		.hw.init = &(struct clk_init_data){		\
++			.name = #prefix "_bit_div_clk",		\
++			.parent_names = (const char *[]){	\
++				#prefix "_div_clk"		\
++			},					\
++			.num_parents = 1,			\
++			.ops = &clk_branch_ops,			\
++			.flags = CLK_SET_RATE_PARENT,		\
++		},						\
++	},							\
++};								\
++								\
++static struct clk_regmap_mux prefix##_bit_clk = {		\
++	.reg = _ns,						\
++	.shift = 14,						\
++	.width = 1,						\
++	.clkr = {						\
++		.hw.init = &(struct clk_init_data){		\
++			.name = #prefix "_bit_clk",		\
++			.parent_names = (const char *[]){	\
++				#prefix "_bit_div_clk",		\
++				#prefix "_codec_clk",		\
++			},					\
++			.num_parents = 2,			\
++			.ops = &clk_regmap_mux_closest_ops,	\
++			.flags = CLK_SET_RATE_PARENT,		\
++		},						\
++	},							\
++}
++
++CLK_AIF_OSR_DIV(mi2s, 0x48, 0x4c, 0x50);
++CLK_AIF_OSR_DIV(codec_i2s_mic, 0x60, 0x64, 0x68);
++CLK_AIF_OSR_DIV(spare_i2s_mic, 0x78, 0x7c, 0x80);
++CLK_AIF_OSR_DIV(codec_i2s_spkr, 0x6c, 0x70, 0x74);
++CLK_AIF_OSR_DIV(spare_i2s_spkr, 0x84, 0x88, 0x8c);
++
++/*
++ * PCM clock
++ * This table is evidently for using PLL4 as parent, if we start using
++ * LPA_PLL0 we need to provide a second table.
++ */
++static struct freq_tbl clk_tbl_pcm_pll4[] = {
++	{   512000, P_PLL4_LPA_PLL0, 4, 1, 264 },
++	{   768000, P_PLL4_LPA_PLL0, 4, 1, 176 },
++	{  1024000, P_PLL4_LPA_PLL0, 4, 1, 132 },
++	{  1536000, P_PLL4_LPA_PLL0, 4, 1,  88 },
++	{  2048000, P_PLL4_LPA_PLL0, 4, 1,  66 },
++	{  3072000, P_PLL4_LPA_PLL0, 4, 1,  44 },
++	{  4096000, P_PLL4_LPA_PLL0, 4, 1,  33 },
++	{  6144000, P_PLL4_LPA_PLL0, 4, 1,  22 },
++	{  8192000, P_PLL4_LPA_PLL0, 2, 1,  33 },
++	{ 12288000, P_PLL4_LPA_PLL0, 4, 1,  11 },
++	{ 24580000, P_PLL4_LPA_PLL0, 2, 1,  11 },
++	{ 27000000, P_PXO,           1, 0,   0 },
++	{ },
++};
++
++static struct clk_rcg pcm_src = {
++	.ns_reg = 0x54,
++	.md_reg = 0x58,
++	.mn = {
++		.mnctr_en_bit = 8,
++		.mnctr_reset_bit = 7,
++		.mnctr_mode_shift = 5,
++		.n_val_shift = 16,
++		.m_val_shift = 16,
++		.width = 16,
++	},
++	.p = {
++		.pre_div_shift = 3,
++		.pre_div_width = 2,
++	},
++	.s = {
++		.src_sel_shift = 0,
++		.parent_map = lcc_parent_map,
++	},
++	.freq_tbl = clk_tbl_pcm_pll4,
++	.clkr = {
++		.enable_reg = 0x54,
++		.enable_mask = BIT(9),
++		.hw.init = &(struct clk_init_data){
++			.name = "pcm_src",
++			.parent_names = lcc_parent_tbl,
++			.num_parents = 4,
++			.ops = &clk_rcg_ops,
++			.flags = CLK_SET_RATE_GATE,
++		},
++	},
++};
++
++static struct clk_branch pcm_clk_out = {
++	.halt_reg = 0x5c,
++	.halt_bit = 0,
++	.halt_check = BRANCH_HALT_ENABLE,
++	.clkr = {
++		.enable_reg = 0x54,
++		.enable_mask = BIT(11),
++		.hw.init = &(struct clk_init_data){
++			.name = "pcm_clk_out",
++			.parent_names = (const char *[]){ "pcm_src" },
++			.num_parents = 1,
++			.ops = &clk_branch_ops,
++			.flags = CLK_SET_RATE_PARENT,
++		},
++	},
++};
++
++static struct clk_regmap_mux pcm_clk = {
++	.reg = 0x54,
++	.shift = 10,
++	.width = 1,
++	.clkr = {
++		.hw.init = &(struct clk_init_data){
++			.name = "pcm_clk",
++			.parent_names = (const char *[]){
++				"pcm_clk_out",
++				"pcm_codec_clk",
++			},
++			.num_parents = 2,
++			.ops = &clk_regmap_mux_closest_ops,
++			.flags = CLK_SET_RATE_PARENT,
++		},
++	},
++};
++
++static struct clk_regmap *lcc_msm8660_clks[] = {
++	[LPA_PLL0] = &lpa_pll0.clkr,
++	[MI2S_OSR_SRC] = &mi2s_osr_src.clkr,
++	[MI2S_OSR_CLK] = &mi2s_osr_clk.clkr,
++	[MI2S_DIV_CLK] = &mi2s_div_clk.clkr,
++	[MI2S_BIT_DIV_CLK] = &mi2s_bit_div_clk.clkr,
++	[MI2S_BIT_CLK] = &mi2s_bit_clk.clkr,
++	[CODEC_I2S_MIC_OSR_SRC] = &codec_i2s_mic_osr_src.clkr,
++	[CODEC_I2S_MIC_OSR_CLK] = &codec_i2s_mic_osr_clk.clkr,
++	[CODEC_I2S_MIC_DIV_CLK] = &codec_i2s_mic_div_clk.clkr,
++	[CODEC_I2S_MIC_BIT_DIV_CLK] = &codec_i2s_mic_bit_div_clk.clkr,
++	[CODEC_I2S_MIC_BIT_CLK] = &codec_i2s_mic_bit_clk.clkr,
++	[SPARE_I2S_MIC_OSR_SRC] = &spare_i2s_mic_osr_src.clkr,
++	[SPARE_I2S_MIC_OSR_CLK] = &spare_i2s_mic_osr_clk.clkr,
++	[SPARE_I2S_MIC_DIV_CLK] = &spare_i2s_mic_div_clk.clkr,
++	[SPARE_I2S_MIC_BIT_DIV_CLK] = &spare_i2s_mic_bit_div_clk.clkr,
++	[SPARE_I2S_MIC_BIT_CLK] = &spare_i2s_mic_bit_clk.clkr,
++	[CODEC_I2S_SPKR_OSR_SRC] = &codec_i2s_spkr_osr_src.clkr,
++	[CODEC_I2S_SPKR_OSR_CLK] = &codec_i2s_spkr_osr_clk.clkr,
++	[CODEC_I2S_SPKR_DIV_CLK] = &codec_i2s_spkr_div_clk.clkr,
++	[CODEC_I2S_SPKR_BIT_DIV_CLK] = &codec_i2s_spkr_bit_div_clk.clkr,
++	[CODEC_I2S_SPKR_BIT_CLK] = &codec_i2s_spkr_bit_clk.clkr,
++	[SPARE_I2S_SPKR_OSR_SRC] = &spare_i2s_spkr_osr_src.clkr,
++	[SPARE_I2S_SPKR_OSR_CLK] = &spare_i2s_spkr_osr_clk.clkr,
++	[SPARE_I2S_SPKR_DIV_CLK] = &spare_i2s_spkr_div_clk.clkr,
++	[SPARE_I2S_SPKR_BIT_DIV_CLK] = &spare_i2s_spkr_bit_div_clk.clkr,
++	[SPARE_I2S_SPKR_BIT_CLK] = &spare_i2s_spkr_bit_clk.clkr,
++	[PCM_SRC] = &pcm_src.clkr,
++	[PCM_CLK_OUT] = &pcm_clk_out.clkr,
++	[PCM_CLK] = &pcm_clk.clkr,
++};
++
++static const struct regmap_config lcc_msm8660_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.max_register	= 0xfc,
++	.fast_io	= true,
++};
++
++static const struct qcom_cc_desc lcc_msm8660_desc = {
++	.config = &lcc_msm8660_regmap_config,
++	.clks = lcc_msm8660_clks,
++	.num_clks = ARRAY_SIZE(lcc_msm8660_clks),
++};
++
++static const struct of_device_id lcc_msm8660_match_table[] = {
++	{ .compatible = "qcom,lcc-msm8660" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, lcc_msm8660_match_table);
++
++static int lcc_msm8660_probe(struct platform_device *pdev)
++{
++	u32 val;
++	struct regmap *regmap;
++
++	regmap = qcom_cc_map(pdev, &lcc_msm8660_desc);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	/* Configure the rate of LPA_PLL0 if the bootloader hasn't already */
++	regmap_read(regmap, 0x0, &val);
++	if (!val) {
++		dev_info(&pdev->dev, "configuring LPA_PLL0\n");
++		clk_pll_configure_sr(&lpa_pll0, regmap, &lpa_pll0_config, true);
++	} else {
++		dev_info(&pdev->dev,
++			 "LPA_PLL0 already configured\n");
++	}
++
++	/*
++	 * Enable LPA_PLL0 source on the LPASS Primary PLL Mux. Incidentally
++	 * this is set to 0x00000001 at boot.
++	 * 0x01 = LPA_PLL0
++	 */
++	regmap_write(regmap, 0xc4, 0x1);
++
++	return qcom_cc_really_probe(pdev, &lcc_msm8660_desc, regmap);
++}
++
++static struct platform_driver lcc_msm8660_driver = {
++	.probe		= lcc_msm8660_probe,
++	.driver		= {
++		.name	= "lcc-msm8660",
++		.of_match_table = lcc_msm8660_match_table,
++	},
++};
++module_platform_driver(lcc_msm8660_driver);
++
++MODULE_DESCRIPTION("QCOM LCC MSM8660 Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:lcc-msm8660");
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.9.3
