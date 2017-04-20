@@ -1,62 +1,54 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Fri, 28 Apr 2017 10:17:43 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-CC: Michael Turquette <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: Re-evaluate clock rate on min/max update
-Message-ID: <20170428071743.GL30730@tbergstrom-lnx.Nvidia.com>
-References: <1490103807-21821-1-git-send-email-pdeschrijver@nvidia.com>
- <20170412164605.GO7065@codeaurora.org>
- <20170413074819.GS30730@tbergstrom-lnx.Nvidia.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20170413074819.GS30730@tbergstrom-lnx.Nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1492624001-3758-15-git-send-email-ykaneko0929@gmail.com>
+References: <1492624001-3758-15-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Apr 2017 20:40:05 +0200
+Message-ID: <CAMuHMdVGB1Rm0uRhbkbfEJkx2HA8T4nSB8XPJ+3k-9vqisM6ZA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add Sound SRC clock
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 13, 2017 at 10:48:19AM +0300, Peter De Schrijver wrote:
-> On Wed, Apr 12, 2017 at 09:46:05AM -0700, Stephen Boyd wrote:
-> > On 03/21, Peter De Schrijver wrote:
-> > > Whenever a user change its min or max rate limit of a clock, we need to
-> > > re-evaluate the current clock rate and possibly change it if the new limits
-> > > require so. To do this clk_set_rate_range() already calls
-> > > clk_core_set_rate_nolock, however this won't have the intended effect
-> > > because the core clock rate hasn't changed. To fix this, move the test to
-> > > avoid setting the same core clock rate again, to clk_set_rate() so
-> > > clk_core_set_rate_nolock() can change the clock rate when min or max have
-> > > been updated, even when the core clock rate has not changed.
-> > 
-> > I'd expect some sort of Fixes: tag here? Or it never worked!?
-> 
-> I don't think this ever worked.
-> 
-> > 
-> > > 
-> > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > 
-> > I seem to recall some problems here around rate aggregation that
-> > we fixed after the patches merged. Sorry, but I have to go back
-> > and look at those conversations to refresh my memory and make
-> > sure this is all fine.
-> > 
-> > Are you relying on the rate setting op to be called with the new
-> > min/max requirements if the aggregated rate is the same? I don't
-> > understand why clk drivers care.
-> > 
-> 
-> No. But I do rely on the rate setting op to be called when a new min or max
-> rate would cause the rate to be changed even when there is no new rate request.
-> 
-> Eg:
-> 
-> min = 100MHz, max = 500MHz, current rate request is 400MHz, then max changes to
-> 300MHz. Today the rate setting op will not be called, while I think it should
-> be called to lower the rate to 300MHz.
-> 
+Hi Kaneko-san,
 
-Any news on this? or do you think this is an unreasonable assumption?
+On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+>
+> This patch adds SCU(all), SCU(SRC{0,1,2,3,4,5,6,7,8,9}), SCU(CTU00,
+> CTU01, CTU02, CTU03, MIX0) and SCU (CTU10, CTU11, CTU12, CTU13, MIX1)
+> clocks for R8A7796 SoC.
+>
+> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Thanks,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Peter.
+I.e. will queue in clk-renesas-for-v4.13.
+
+> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> @@ -219,6 +219,19 @@ enum clk_ids {
+>         DEF_MOD("ssi2",                 1013,   MOD_CLK_ID(1005)),
+>         DEF_MOD("ssi1",                 1014,   MOD_CLK_ID(1005)),
+>         DEF_MOD("ssi0",                 1015,   MOD_CLK_ID(1005)),
+> +       DEF_MOD("scu-all",              1017,   R8A7796_CLK_S3D4),
+
+I cannot verify the parent clock, though.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
