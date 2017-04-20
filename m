@@ -1,112 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:30700 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751582AbdDPDmj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Apr 2017 23:42:39 -0400
-Message-ID: <1492314150.19878.2.camel@mtkswgap22>
-Subject: Re: [PATCH v4 00/10] Add Basic SoC support for MT6797
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC: CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>
-Date: Sun, 16 Apr 2017 11:42:30 +0800
-In-Reply-To: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
-References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1492624001-3758-21-git-send-email-ykaneko0929@gmail.com>
+References: <1492624001-3758-21-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Apr 2017 20:22:27 +0200
+Message-ID: <CAMuHMdWs_BmoAj22-C=mL4bA44T5=FiAxB8phNQAyTZZD_UpCA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add INTC-EX clock
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen, Matthias
+Hi Kaneko-san,
 
-gentle ping. :-)
+On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> Add the "intc-ex" clock to the R8A7796 CPG MSSR driver.
+>
+> According to information from the hardware team the INTC-EX
+> parent clock is CP. The next data sheet version will include
+> this information.
+>
+> [takeshi.kihara.df: Ported from commit f099aa075749 ("clk: shmobile:
+>  r8a7795: Add INTC-EX clock") to drivers/clk/renesas/r8a7796-cpg-mssr.c]
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Thanks.
+Thank you!
 
-On Sat, 2017-04-08 at 09:20 +0800, Mars Cheng wrote:
-> This patch set adds basic SoC support for mediatek's first 10-core
-> chip, X20, also known as MT6797.
-> 
-> - based on 4.11-rc1
-> - support common clk framework
-> - apply patches about intpol just accepted to get full feature support:
-> http://lists.infradead.org/pipermail/linux-mediatek/2017-March/008371.html
-> http://lists.infradead.org/pipermail/linux-mediatek/2017-March/008375.html
-> http://lists.infradead.org/pipermail/linux-mediatek/2017-March/008373.html
-> 
-> Changes since v3:
-> - since intpol patches accepted in v3, remove them
-> - clk ID header separated from original clk driver submit
-> - clean up clk driver, including unnecessary header and fields in structure
-> 
-> Changes since v2:
-> - prevent uncessary #intpol-bases for mtk-sysirq
-> - add fast path for mtk-sysirq set_type when introducing multiple bases
-> - add acked-by and tested-by
-> - remove wrong usage for timer node
-> 
-> Changes since v1:
-> - add multiple base addresses support, v1 only allow 2 bases
-> - clean up clk driver
-> 
-> Kevin-CW Chen (2):
->   dt-bindings: arm: mediatek: document clk bindings for MT6797
->   clk: mediatek: add clk support for MT6797
-> 
-> Mars Cheng (8):
->   dt-bindings: mediatek: Add bindings for mediatek MT6797 Platform
->   arm64: dts: mediatek: add mt6797 support
->   clk: mediatek: add mt6797 clock IDs
->   soc: mediatek: avoid using fixed spm power status defines
->   soc: mediatek: add vdec item for scpsys
->   dt-bindings: mediatek: add MT6797 power dt-bindings
->   soc: mediatek: add MT6797 scpsys support
->   arm64: dts: mediatek: add clk and scp nodes for MT6797
-> 
->  Documentation/devicetree/bindings/arm/mediatek.txt |    4 +
->  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
->  .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
->  .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
->  .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
->  .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
->  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
->  .../bindings/arm/mediatek/mediatek,vencsys.txt     |    3 +-
->  .../interrupt-controller/mediatek,sysirq.txt       |    1 +
->  .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
->  .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +-
->  arch/arm64/boot/dts/mediatek/Makefile              |    1 +
->  arch/arm64/boot/dts/mediatek/mt6797-evb.dts        |   36 +
->  arch/arm64/boot/dts/mediatek/mt6797.dtsi           |  245 +++++++
->  drivers/clk/mediatek/Kconfig                       |   32 +
->  drivers/clk/mediatek/Makefile                      |    5 +
->  drivers/clk/mediatek/clk-mt6797-img.c              |   76 +++
->  drivers/clk/mediatek/clk-mt6797-mm.c               |  136 ++++
->  drivers/clk/mediatek/clk-mt6797-vdec.c             |   93 +++
->  drivers/clk/mediatek/clk-mt6797-venc.c             |   78 +++
->  drivers/clk/mediatek/clk-mt6797.c                  |  714 ++++++++++++++++++++
->  drivers/soc/mediatek/mtk-scpsys.c                  |  149 +++-
->  include/dt-bindings/clock/mt6797-clk.h             |  281 ++++++++
->  include/dt-bindings/power/mt6797-power.h           |   30 +
->  24 files changed, 1889 insertions(+), 8 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-evb.dts
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797.dtsi
->  create mode 100644 drivers/clk/mediatek/clk-mt6797-img.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6797-mm.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6797-vdec.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6797-venc.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6797.c
->  create mode 100644 include/dt-bindings/clock/mt6797-clk.h
->  create mode 100644 include/dt-bindings/power/mt6797-power.h
-> 
-> --
-> 1.7.9.5
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+I.e. will queue in clk-renesas-for-v4.13.
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
