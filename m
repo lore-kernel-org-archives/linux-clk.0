@@ -1,69 +1,43 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	John Crispin <john@phrozen.org>,
-	Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] clk: Provide dummy of_clk_get_from_provider() for compile-testing
-Date: Fri, 28 Apr 2017 15:08:53 +0200
-Message-Id: <1493384933-31297-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:36001 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031668AbdDTN6d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2017 09:58:33 -0400
+Date: Thu, 20 Apr 2017 08:58:31 -0500
+From: Rob Herring <robh@kernel.org>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 01/11] dt-bindings: add binding for the Allwinner DE2
+ CCU
+Message-ID: <20170420135831.owkaymplu4tbzdzs@rob-hp-laptop>
+References: <20170416120849.54542-1-icenowy@aosc.io>
+ <20170416120849.54542-2-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170416120849.54542-2-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-When CONFIG_ON=n, dummies are provided for of_clk_get() and
-of_clk_get_by_name(), but not for of_clk_get_from_provider().
+On Sun, Apr 16, 2017 at 08:08:39PM +0800, Icenowy Zheng wrote:
+> Allwinner "Display Engine 2.0" contains some clock controls in it.
+> 
+> In order to add them as clock drivers, we need a device tree binding.
+> Add the binding here.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v4:
+> - Dropped the leading 0 in clock@1000000 .
+> Changes in v3:
+> - Fill the address space length of DE2 CCU to 0x100000, just reach the start of mixer0.
+> 
+>  .../devicetree/bindings/clock/sun8i-de2.txt        | 31 ++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
 
-Provide a dummy for the latter, to improve the ability to do
-compile-testing.  This requires removing the existing dummy in the
-Lantiq clock code.
-
-Fixes: 766e6a4ec602d0c1 ("clk: add DT clock binding support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Remove conflicting dummy in Lantiq clock code (reported by 0day).
----
- arch/mips/lantiq/clk.c | 5 -----
- include/linux/clk.h    | 4 ++++
- 2 files changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/arch/mips/lantiq/clk.c b/arch/mips/lantiq/clk.c
-index 149f0513c4f5d0d4..a263d1b751ffe48d 100644
---- a/arch/mips/lantiq/clk.c
-+++ b/arch/mips/lantiq/clk.c
-@@ -160,11 +160,6 @@ void clk_deactivate(struct clk *clk)
- }
- EXPORT_SYMBOL(clk_deactivate);
- 
--struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
--{
--	return NULL;
--}
--
- static inline u32 get_counter_resolution(void)
- {
- 	u32 res;
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index e9d36b3e49de5b1b..3ed97abb5cbb7f94 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -539,6 +539,10 @@ static inline struct clk *of_clk_get_by_name(struct device_node *np,
- {
- 	return ERR_PTR(-ENOENT);
- }
-+static inline struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
-+{
-+	return ERR_PTR(-ENOENT);
-+}
- #endif
- 
- #endif
--- 
-2.7.4
+Acked-by: Rob Herring <robh@kernel.org>
