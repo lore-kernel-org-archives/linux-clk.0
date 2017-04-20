@@ -1,35 +1,40 @@
-Return-Path: <Alexey_Firago@mentor.com>
-From: Alexey Firago <alexey_firago@mentor.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<marek.vasut@gmail.com>, <geert@linux-m68k.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-CC: Alexey Firago <alexey_firago@mentor.com>
-Subject: [PATCH v2 0/3] clk: Add support for IDT 5P49V5935
-Date: Wed, 5 Apr 2017 14:46:56 +0300
-Message-ID: <1491392819-698-1-git-send-email-alexey_firago@mentor.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1492624001-3758-6-git-send-email-ykaneko0929@gmail.com>
+References: <1492624001-3758-6-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Apr 2017 20:48:43 +0200
+Message-ID: <CAMuHMdWctkUWduOeQ-rXJQW7Oi=rwpW4uMEUuYgU3jbNz_Owbw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add HDMI clock
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This series adds support for IDT VersaClock 5P49V5935 programmable clock
-generator to the existing clk-versaclock5 driver.
+On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+>
+> This patch adds HDMI-IF0 clock for R8A7796 SoC.
+>
+> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Patches were verified on Avnet UltraZed-EG board with IO Carrier Card.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Changes in V2:
-- Introduce vc5_chip_info structure describing chip features
-- Set vc5_chip_info for the supported chips using clk_vc5_of_match[].data
-- Add 5P49V5935 support using vc5_chip_info approach
-- Fix idx comparison in vc5_of_clk_get ('>' to '>=')
+I.e. will queue in clk-renesas-for-v4.13.
 
-Alexey Firago (3):
-  clk: vc5: Add structure to describe particular chip features
-  clk: vc5: Add bindings for IDT VersaClock 5P49V5935
-  clk: vc5: Add support for IDT VersaClock 5P49V5935
+Gr{oetje,eeting}s,
 
- .../devicetree/bindings/clock/idt,versaclock5.txt  | 16 ++++-
- drivers/clk/clk-versaclock5.c                      | 80 +++++++++++++++++-----
- 2 files changed, 77 insertions(+), 19 deletions(-)
+                        Geert
 
--- 
-2.7.4
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
