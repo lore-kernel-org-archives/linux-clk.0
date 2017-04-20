@@ -1,76 +1,96 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <maxime.ripard@free-electrons.com>
+Date: Thu, 20 Apr 2017 10:17:49 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [GIT PULL] Allwinner clock changes for 4.12, take 2
+Message-ID: <20170420081749.bok3wwusmk2no5vw@lukather>
 MIME-Version: 1.0
-In-Reply-To: <CAOMZO5CprxqnqRXMFJLBAgYAZGGnXNs3ZciyVz_mSLRnnSQQRQ@mail.gmail.com>
-References: <20170330005029.6472-1-stefan@agner.ch> <20170330005029.6472-2-stefan@agner.ch>
- <20170401030312.GB24882@b29396-OptiPlex-7040> <5c8339900fa1bd6215fb94d4386f7e06@agner.ch>
- <CAOMZO5CprxqnqRXMFJLBAgYAZGGnXNs3ZciyVz_mSLRnnSQQRQ@mail.gmail.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 4 Apr 2017 23:15:24 -0300
-Message-ID: <CAOMZO5A7QQEe5rgBbJBzo8GY41aYV9WA8e9teCUROyihg0kq_g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: imx7: add USDHC NAND clock to SDHC instances
-To: Stefan Agner <stefan@agner.ch>
-Cc: Dong Aisheng <dongas86@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7roefruvokk5g4na"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Apr 2, 2017 at 2:02 PM, Fabio Estevam <festevam@gmail.com> wrote:
-> On Sat, Apr 1, 2017 at 1:15 AM, Stefan Agner <stefan@agner.ch> wrote:
->
->> IMX7D_IPG_ROOT_CLK is currently not a valid clock in upstream... So we
->> would have to add it to the clock driver first.
->>
->> I guess we could/should add it anyway at one point? But probably also as
->> init on, just to make sure Linux does not disable it since it is
->> currently used by several IPs implicitly.
->
-> Yes, I made a previous attempt do add  IMX7D_IPG_ROOT_CLK and it did
-> not work as I did not put it in the init_on clock list.
->
-> Will submit a new patch adding it to init_on, thanks.
 
-I thought that adding IMX7D_IPG_ROOT_CLK would do the trick, but the
-patch below also causes the kernel to not boot:
+--7roefruvokk5g4na
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -386,7 +386,7 @@ static int const clks_init_on[] __initconst = {
-        IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_NAND_USDHC_BUS_ROOT_CLK,
-        IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
-        IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
--       IMX7D_AHB_CHANNEL_ROOT_CLK,
-+       IMX7D_AHB_CHANNEL_ROOT_CLK, IMX7D_IPG_ROOT_CLK,
- };
+Hi Mike, Stephen,
 
- static struct clk_onecell_data clk_data;
-@@ -788,7 +788,7 @@ static void __init imx7d_clocks_init(struct
-device_node *ccm_node)
-        clks[IMX7D_WRCLK_ROOT_DIV] =
-imx_clk_divider2("wrclk_post_div", "wrclk_pre_div", base + 0xbd00, 0,
-6);
-        clks[IMX7D_CLKO1_ROOT_DIV] =
-imx_clk_divider2("clko1_post_div", "clko1_pre_div", base + 0xbd80, 0,
-6);
-        clks[IMX7D_CLKO2_ROOT_DIV] =
-imx_clk_divider2("clko2_post_div", "clko2_pre_div", base + 0xbe00, 0,
-6);
--
-+       clks[IMX7D_IPG_ROOT_CLK] = imx_clk_divider2("ipg_root_clk",
-"ahb_root_clk", base + 0x9080, 0, 2);
-        clks[IMX7D_ARM_A7_ROOT_CLK] = imx_clk_gate4("arm_a7_root_clk",
-"arm_a7_div", base + 0x4000, 0);
-        clks[IMX7D_ARM_M4_ROOT_CLK] = imx_clk_gate4("arm_m4_root_clk",
-"arm_m4_div", base + 0x4010, 0);
-        clks[IMX7D_ARM_M0_ROOT_CLK] = imx_clk_gate4("arm_m0_root_clk",
-"arm_m0_div", base + 0x4020, 0);
+Here are the few last minor fixes that didn't go through for 4.11,
+plus two fixes for previous drivers changes found in the earlier pull
+request for 4.12.
+
+Thanks!
+Maxime
+
+The following changes since commit cb545960dea2749771c88b0cb26e5adfd12a0315:
+
+  clk: sunxi-ng: Display index when clock registration fails (2017-04-06 09=
+:10:30 +0200)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunx=
+i-clk-for-4.12-2
+
+for you to fetch changes up to 7149c1becddf49022fe0aad2fa395377cd8f753e:
+
+  clk: sunxi-ng: a80: Fix audio PLL comment not matching actual code (2017-=
+04-13 14:09:30 +0200)
+
+----------------------------------------------------------------
+Allwinner clock changes, take 2
+
+A few minor bug and comment fixes, plus some fixes for the PRCM CCU driver
+merged in the prior pull request
+
+----------------------------------------------------------------
+Chen-Yu Tsai (3):
+      clk: sunxi-ng: use 1 as fallback for minimum multiplier
+      clk: sunxi-ng: Fix round_rate/set_rate multiplier minimum mismatch
+      clk: sunxi-ng: a80: Fix audio PLL comment not matching actual code
+
+Icenowy Zheng (2):
+      clk: sunxi-ng: fix PRCM CCU ir clk parent
+      clk: sunxi-ng: fix PRCM CCU CLK_NUMBER value
+
+ drivers/clk/sunxi-ng/ccu-sun8i-r.c   | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-r.h   | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun9i-a80.c | 3 +--
+ drivers/clk/sunxi-ng/ccu_nk.c        | 8 ++++----
+ drivers/clk/sunxi-ng/ccu_nkm.c       | 8 ++++----
+ drivers/clk/sunxi-ng/ccu_nkmp.c      | 8 ++++----
+ drivers/clk/sunxi-ng/ccu_nm.c        | 4 ++--
+ 7 files changed, 17 insertions(+), 18 deletions(-)
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--7roefruvokk5g4na
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJY+G6tAAoJEBx+YmzsjxAgg/IP/1sABHmx+NijfAdZsIzZhChR
+6qhrZnmhCE4HK4X8+0cZydcUW6z/JlVju3nb3GUqzzH190+b9+2J+B9XQJTpVoVk
+7chKtO1Fx8GXKzuo4Eoot1oRaNopejCXjMH3RfH92+m6AjMZy/t+a+Gk6ocLSckt
+3iOTtJwBje8LBfhvVqEbCdM3FoYZG4Y9C59nVuKJrnzNkyCj8d8ji4KYNrkqciFh
+kUXMwHSdSm/WJr42rHvpAKIPa/1ymngaCtkf5wtKYZ8gskAeVX/XhiZKW7fTaPkK
+ACqwYueuy0pkmcfNYhJq/GYJqP4kuL0Lffd5fwYozMwvUXuUddOcYnPPVBiFVcGC
+YEf9sjmaydKoje6t42bXY9fs+qxPwnB6wI93HmPOFBQtBj5828y5y/utMEKDQr1d
+aABZlt3SzRPF1FuIjfClWge1My9uKN22mX+5vSVjNFUu/pzu2D8PtUXMm4ek0Ii8
+7LIw/bnwdmYFSCvRM24P12oNfE7U6qcIG0TsWlS47uPXYT2bb7EFPdPjg60a32WW
+owPbtOi1WAhhHKmlx/+gBf+mlOi4iUnK3D8fOXCvzrJrELCS96pnoqZOPd5/Ype+
+/MbE/ir1AmiN6GTx5TZp9khOF5I45n1bTqg+zIOqbVUIBR5gNDuDbjakDIma7TYa
+zhrYJK/t9VbkQ+2atZEb
+=YmfA
+-----END PGP SIGNATURE-----
+
+--7roefruvokk5g4na--
