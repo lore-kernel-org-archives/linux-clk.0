@@ -1,51 +1,54 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <elfring@users.sourceforge.net>
+Subject: [PATCH 2/8] clk: si5351: Delete an error message for a failed memory
+ allocation in si5351_i2c_probe()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
+Message-ID: <2a7dd521-86bb-09b8-d49d-7518b51094ea@users.sourceforge.net>
+Date: Thu, 20 Apr 2017 10:23:48 +0200
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAMuHMdVYA9z0DFsaj662=E3+3b1QCnWHYzEKZ23sykKbXu4Ong@mail.gmail.com>
-References: <1492624001-3758-9-git-send-email-ykaneko0929@gmail.com> <CAMuHMdVYA9z0DFsaj662=E3+3b1QCnWHYzEKZ23sykKbXu4Ong@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 21 Apr 2017 15:06:47 +0200
-Message-ID: <CAMuHMdW6wV01BzCwJEaZXqmqtp_yDNZN8pHuGe9BT647iFb7Cg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add USB-DMAC clocks
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 20, 2017 at 8:36 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
->> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
->>
->> This patch adds USB-DMAC{0,1} clocks for R8A7796 SoC.
->>
->> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->> ---
->> This patch is based on the clk-next branch of linux-clk tree.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> I.e. will queue in clk-renesas-for-v4.13.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Apr 2017 07:34:54 +0200
 
-and after correcting sort order:
+The script "checkpatch.pl" pointed information out like the following.
 
-> >         DEF_MOD("rwdt",                  402,   R8A7796_CLK_R),
-> > +       DEF_MOD("usb-dmac0",             330,   R8A7796_CLK_S3D1),
-> > +       DEF_MOD("usb-dmac1",             331,   R8A7796_CLK_S3D1),
-> >         DEF_MOD("intc-ap",               408,   R8A7796_CLK_S3D1),
+* CHECK: Comparison to NULL could be written "!drvdata"
 
-Gr{oetje,eeting}s,
+  Thus adjust this expression.
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+* WARNING: Possible unnecessary 'out of memory' message
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+  Thus remove such a statement here.
+
+  Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/clk-si5351.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index a4c009e1e70d..2492442eea77 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -1354,10 +1354,8 @@ static int si5351_i2c_probe(struct i2c_client *client,
+ 		return -EINVAL;
+ 
+ 	drvdata = devm_kzalloc(&client->dev, sizeof(*drvdata), GFP_KERNEL);
+-	if (drvdata == NULL) {
+-		dev_err(&client->dev, "unable to allocate driver data\n");
++	if (!drvdata)
+ 		return -ENOMEM;
+-	}
+ 
+ 	i2c_set_clientdata(client, drvdata);
+ 	drvdata->client = client;
+-- 
+2.12.2
