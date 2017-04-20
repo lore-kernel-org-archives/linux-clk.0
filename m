@@ -1,41 +1,53 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: [PATCH 6/8] clk: Improve a size determination in two functions
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
+Message-ID: <599640c0-d9a1-f1a4-47f3-edaf98f407c1@users.sourceforge.net>
+Date: Thu, 20 Apr 2017 10:29:43 +0200
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1491392819-698-4-git-send-email-alexey_firago@mentor.com>
-References: <1491392819-698-1-git-send-email-alexey_firago@mentor.com> <1491392819-698-4-git-send-email-alexey_firago@mentor.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Apr 2017 14:20:31 +0200
-Message-ID: <CAMuHMdXsJq+8jg=hxTsMexjtKTVpOLTRx+HzxoZTWyC_3+z1Zw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] clk: vc5: Add support for IDT VersaClock 5P49V5935
-To: Alexey Firago <alexey_firago@mentor.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Marek Vasut <marek.vasut@gmail.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 5, 2017 at 1:46 PM, Alexey Firago <alexey_firago@mentor.com> wrote:
-> Update IDT VersaClock 5 driver to support 5P49V5935. This chip has
-> two clock inputs (internal XTAL or external CLKIN), four fractional
-> dividers (FODs) and five clock outputs (four universal clock outputs
-> and one reference clock output at OUT0_SELB_I2C).
->
-> Current driver supports up to 2 FODs and up to 3 clock outputs. This
-> patch sets max number of supported FODs to 4 and max number of supported
-> clock outputs to 5.
->
-> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Apr 2017 09:30:52 +0200
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Replace the specification of two data structures by pointer dereferences
+as the parameter for the operator "sizeof" to make the corresponding size
+determination a bit safer according to the Linux coding style convention.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/clk/clk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 684642ab4212..3f2ee0469d3e 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2939,7 +2939,7 @@ int clk_notifier_register(struct clk *clk, struct notifier_block *nb)
+ 
+ 	/* if clk wasn't in the notifier list, allocate new clk_notifier */
+ 	if (cn->clk != clk) {
+-		cn = kzalloc(sizeof(struct clk_notifier), GFP_KERNEL);
++		cn = kzalloc(sizeof(*cn), GFP_KERNEL);
+ 		if (!cn)
+ 			goto out;
+ 
+@@ -3087,7 +3087,7 @@ int of_clk_add_provider(struct device_node *np,
+ 	struct of_clk_provider *cp;
+ 	int ret;
+ 
+-	cp = kzalloc(sizeof(struct of_clk_provider), GFP_KERNEL);
++	cp = kzalloc(sizeof(*cp), GFP_KERNEL);
+ 	if (!cp)
+ 		return -ENOMEM;
+ 
+-- 
+2.12.2
