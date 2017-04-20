@@ -1,60 +1,102 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	devicetree@vger.kernel.org
-Subject: [PATCH 1/5 v2] clk: qcom: Update DT bindings for the MSM8660/APQ8060 RPMCC
-Date: Wed, 19 Apr 2017 11:13:22 +0200
-Message-Id: <20170419091326.11226-1-linus.walleij@linaro.org>
+Return-Path: <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: tegra: fix SS control on PLL enable/disable
+Date: Thu, 20 Apr 2017 15:39:49 +0300
+Message-ID: <1492691989-30539-1-git-send-email-pdeschrijver@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-These compatible strings need to be added to extend support
-for the RPM CC to cover MSM8660/APQ8060. We also need to add
-enumberators to the include file for a few clocks that were
-missing.
+PLL SS was only controlled when setting the PLL rate, not when the PLL
+itself is enabled or disabled. This means that if the PLL rate was set
+before the PLL is enabled, SS will not be enabled, even when configured.
 
-Cc: devicetree@vger.kernel.org
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
-ChangeLog v1->v2:
-- Collect Rob's ACK
----
- Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 2 ++
- include/dt-bindings/clock/qcom,rpmcc.h                 | 4 ++++
- 2 files changed, 6 insertions(+)
+ drivers/clk/tegra/clk-pll.c | 44 ++++++++++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 20 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-index a7235e9e1c97..d470a0187035 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -10,6 +10,8 @@ Required properties :
- - compatible : shall contain only one of the following. The generic
-                compatible "qcom,rpmcc" should be also included.
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 159a854..e9bdb16 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -418,6 +418,26 @@ static void _clk_pll_disable(struct clk_hw *hw)
+ 	}
+ }
  
-+			"qcom,rpmcc-msm8660", "qcom,rpmcc"
-+			"qcom,rpmcc-apq8060", "qcom,rpmcc"
- 			"qcom,rpmcc-msm8916", "qcom,rpmcc"
- 			"qcom,rpmcc-msm8974", "qcom,rpmcc"
- 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
-diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
-index 96b63c00249e..44358562a031 100644
---- a/include/dt-bindings/clock/qcom,rpmcc.h
-+++ b/include/dt-bindings/clock/qcom,rpmcc.h
-@@ -37,6 +37,10 @@
- #define RPM_SYS_FABRIC_A_CLK			19
- #define RPM_SFPB_CLK				20
- #define RPM_SFPB_A_CLK				21
-+#define RPM_PLL4_CLK				22
-+#define RPM_PLL4_A_CLK				23
-+#define RPM_SMI_CLK				24
-+#define RPM_SMI_A_CLK				25
++static void pll_clk_start_ss(struct tegra_clk_pll *pll)
++{
++	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
++		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
++
++		val |= pll->params->ssc_ctrl_en_mask;
++		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
++	}
++}
++
++static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
++{
++	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
++		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
++
++		val &= ~pll->params->ssc_ctrl_en_mask;
++		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
++	}
++}
++
+ static int clk_pll_enable(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+@@ -431,6 +451,8 @@ static int clk_pll_enable(struct clk_hw *hw)
  
- /* SMD RPM clocks */
- #define RPM_SMD_XO_CLK_SRC				0
+ 	ret = clk_pll_wait_for_lock(pll);
+ 
++	pll_clk_start_ss(pll);
++
+ 	if (pll->lock)
+ 		spin_unlock_irqrestore(pll->lock, flags);
+ 
+@@ -445,6 +467,8 @@ static void clk_pll_disable(struct clk_hw *hw)
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
++	pll_clk_stop_ss(pll);
++
+ 	_clk_pll_disable(hw);
+ 
+ 	if (pll->lock)
+@@ -716,26 +740,6 @@ static void _update_pll_cpcon(struct tegra_clk_pll *pll,
+ 	pll_writel_misc(val, pll);
+ }
+ 
+-static void pll_clk_start_ss(struct tegra_clk_pll *pll)
+-{
+-	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
+-		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
+-
+-		val |= pll->params->ssc_ctrl_en_mask;
+-		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
+-	}
+-}
+-
+-static void pll_clk_stop_ss(struct tegra_clk_pll *pll)
+-{
+-	if (pll->params->defaults_set && pll->params->ssc_ctrl_reg) {
+-		u32 val = pll_readl(pll->params->ssc_ctrl_reg, pll);
+-
+-		val &= ~pll->params->ssc_ctrl_en_mask;
+-		pll_writel(val, pll->params->ssc_ctrl_reg, pll);
+-	}
+-}
+-
+ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 			unsigned long rate)
+ {
 -- 
-2.9.3
+1.9.1
