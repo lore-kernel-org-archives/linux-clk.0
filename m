@@ -1,43 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:37640 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752336AbdDCKIM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Apr 2017 06:08:12 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] ARM: dts: r8a7791: Drop _clk suffix from external CAN clock node name
-Date: Mon,  3 Apr 2017 12:08:08 +0200
-Message-Id: <1491214089-14093-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
-References: <1491214089-14093-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH 2/2] clk: ti: fix building without legacy omap3
+To: Arnd Bergmann <arnd@arndb.de>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <20170419174507.4055014-1-arnd@arndb.de>
+ <20170419174507.4055014-2-arnd@arndb.de>
+CC: Tony Lindgren <tony@atomide.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <88ae109e-4442-df96-be4c-2aabd6246e37@ti.com>
+Date: Thu, 20 Apr 2017 18:25:23 +0300
+MIME-Version: 1.0
+In-Reply-To: <20170419174507.4055014-2-arnd@arndb.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The current practice is to not add _clk suffixes to clock node names in
-DT, as these names are used as the actual clock names.
+On 19/04/17 20:44, Arnd Bergmann wrote:
+> When CONFIG_ATAGS or CONFIG_OMAP3 is disabled, we get a build error:
+>
+> In file included from include/linux/clk-provider.h:15:0,
+>                  from drivers/clk/ti/clk.c:19:
+> drivers/clk/ti/clk.c: In function 'ti_clk_add_aliases':
+> drivers/clk/ti/clk.c:438:29: error: 'simple_clk_match_table' undeclared (first use in this function); did you mean 'simple_attr_write'?
+>
+> Moving the match table down fixes it.
+>
+> Fixes: c17435c56bb1 ("clk: ti: add API for creating aliases automatically for simple clock types")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7791.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This one is clear... I think I should start running the single SoC build 
+testing script again before posting stuff, this is an area where I seem 
+to fail repeatedly... sorry about that.
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index a6478ca3f4ca7554..4d0c2ce59900f811 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1126,7 +1126,7 @@
- 		};
- 
- 		/* External CAN clock */
--		can_clk: can_clk {
-+		can_clk: can {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			/* This value must be overridden by the board. */
--- 
-2.7.4
+Acked-by: Tero Kristo <t-kristo@ti.com>
 
+> ---
+>  drivers/clk/ti/clk.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+> index ddbad7e8d7c9..e5a1c8297a1d 100644
+> --- a/drivers/clk/ti/clk.c
+> +++ b/drivers/clk/ti/clk.c
+> @@ -371,12 +371,6 @@ struct clk __init *ti_clk_register_clk(struct ti_clk *setup)
+>  	return clk;
+>  }
+>
+> -static const struct of_device_id simple_clk_match_table[] __initconst = {
+> -	{ .compatible = "fixed-clock" },
+> -	{ .compatible = "fixed-factor-clock" },
+> -	{ }
+> -};
+> -
+>  int __init ti_clk_register_legacy_clks(struct ti_clk_alias *clks)
+>  {
+>  	struct clk *clk;
+> @@ -425,6 +419,12 @@ int __init ti_clk_register_legacy_clks(struct ti_clk_alias *clks)
+>  }
+>  #endif
+>
+> +static const struct of_device_id simple_clk_match_table[] __initconst = {
+> +	{ .compatible = "fixed-clock" },
+> +	{ .compatible = "fixed-factor-clock" },
+> +	{ }
+> +};
+> +
+>  /**
+>   * ti_clk_add_aliases - setup clock aliases
+>   *
+>
