@@ -1,95 +1,115 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:34014 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938699AbdD0HMt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Apr 2017 03:12:49 -0400
-Date: Thu, 27 Apr 2017 09:12:37 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: icenowy@aosc.io
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] Re: [PATCH v5 02/11] clk: sunxi-ng: add support
- for DE2 CCU
-Message-ID: <20170427071237.eqv2pyp6t2i4auv2@lukather>
-References: <20170423103754.50012-1-icenowy@aosc.io>
- <20170423103754.50012-3-icenowy@aosc.io>
- <20170424085109.p44bmzbyjkuf7ckv@lukather>
- <9def8a6b635880095e6b75e3a53af1f4@aosc.io>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH 1/2] clk: ti: divider: try to fix ti_clk_register_divider
+To: Arnd Bergmann <arnd@arndb.de>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <20170419174507.4055014-1-arnd@arndb.de>
+CC: Tony Lindgren <tony@atomide.com>, Keerthy <j-keerthy@ti.com>,
+        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <7f0c996e-df53-ffb7-2c02-2f7fa66d2b94@ti.com>
+Date: Thu, 20 Apr 2017 18:46:35 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pzucutq7d4x42opo"
-In-Reply-To: <9def8a6b635880095e6b75e3a53af1f4@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170419174507.4055014-1-arnd@arndb.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+On 19/04/17 20:44, Arnd Bergmann wrote:
+> The newly introduced function is entirely bogus as I found when looking
+> at this warning:
+>
+> drivers/clk/ti/divider.c: In function 'ti_clk_register_divider':
+> drivers/clk/ti/divider.c:460:8: error: 'reg' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+>
+> Treating a 'u32' variable as a structure leads to a stack overflow here,
+> and the register address we pass down is never initialized.
+>
+> As the code in its original form makes no sense, I can only guess what
+> the intention was, and change it to take the address from div->reg.ptr
+> instead.
 
---pzucutq7d4x42opo
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Actually, I believe the code you are fixing works before this commit:
 
-On Mon, Apr 24, 2017 at 06:26:51PM +0800, icenowy@aosc.io wrote:
-> =E5=9C=A8 2017-04-24 16:51=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=BC=
-=9A
-> > Hi,
-> >=20
-> > On Sun, Apr 23, 2017 at 06:37:45PM +0800, Icenowy Zheng wrote:
-> > > +static const struct of_device_id sunxi_de2_clk_ids[] =3D {
-> > > +	{
-> > > +		.compatible =3D "allwinner,sun8i-a83t-de2-clk",
-> > > +		.data =3D &sun8i_a83t_de2_clk_desc,
-> > > +	},
-> > > +	{
-> > > +		.compatible =3D "allwinner,sun50i-h5-de2-clk",
-> > > +		.data =3D &sun50i_a64_de2_clk_desc,
-> > > +	},
-> > > +	/*
-> > > +	 * The Allwinner A64 SoC needs some bit to be poke in syscon to make
-> > > +	 * DE2 really working.
-> > > +	 * So there's currently no A64 compatible here.
-> > > +	 * H5 shares the same reset line with A64, so here H5 is using the
-> > > +	 * clock description of A64.
-> > > +	 */
-> > > +	{ }
-> > > +};
-> >=20
-> > So that A64 driver would require more than just what you defined in
-> > the binding in order to operate?
->=20
-> Yes. When trying to do A64 driver, I will send out first a patch to
-> add the needed binding bit.
+commit 6c0afb503937a12a8d20a805fcf263e31afa9871
+Author: Tero Kristo <t-kristo@ti.com>
+Date:   Thu Feb 9 11:24:37 2017 +0200
 
-Then remove the A64 compatible from the binding document.
+     clk: ti: convert to use proper register definition for all accesses
 
-Thanks!
-Maxime
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+... it attempted to convert all the register accesses to the new format 
+and change the size of the clk_omap_reg in bulk but I missed converting 
+this one. Previously the size of the clk_omap_reg definition was u32, 
+but this was confusing and bug prone so I changed it.
 
---pzucutq7d4x42opo
-Content-Type: application/pgp-signature; name="signature.asc"
+The failing piece of code is only executed for legacy boot mode OMAP3 
+right now, which could be potentially stripped out of the kernel already 
+(I think Tony removed the support for non-DT boot OMAP3 boards 
+already...?) This explains why I didn't notice the issue in my local 
+testing either.
 
------BEGIN PGP SIGNATURE-----
+>
+> Fixes: d96f774b2538 ("clk: ti: divider: add support for legacy divider init")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-iQIcBAABCAAGBQJZAZnlAAoJEBx+YmzsjxAgAVsP/1M8THXWL5F2JlzIdE6qolJe
-fw3ZrVK8r140LFjNGQj6oQvaifnFig1CnLMG6oWD4yInX91NxnKZlGgSIjH1atBn
-2JmEBqoYa594qbhujG9qbgnqSaVWA0nTscOOgOiyECfmMBqrRjUtPhyhEJKl8T3f
-BD1VjuzYdk2hy7SENOclL2wMKn+z7pWwUvcFLWe1gcI3qWd+OoDlVHIZDBxsvklB
-WF7fal0edmeSLv3hGBdYE2RedjYotRxum/1Cn3LD+ZPoOsNT8OCCVXbAwXvVvztV
-m5WGHjetA8huz0/qTqj3f/LtH1z6jceRlUgOj2FI8HK4NT2daPh0cRUa4LdP6dMK
-V9Le4R90zTvJZDPGMsNxkqlrEGsHhHS2F7xmTWe59O0yB62ayUd+Eck0+rhQUJmy
-2uR0V0TqulN7AGHIDsooFZhg+sz9ziHSE6TtIuKKDkOnQBRpa2C5/kQUnf6YAQib
-JgBQRhqXf9TQKSnkOTtTZ3QR0mp18Ij6OOah/tA+exMzYWQUmzXWOhZHwVP/o4sT
-FihdIBuA98HSwrZ9nM0U+VN/eiBAurVN4vrrINIkFlMIXpnX/IR851W904lB/DhM
-5H0DspqIrjzx1Un9wTMOCstvsufCGDAQY2osyqbYak0QkO+zZGMy4ZtRE6tnT4w4
-0RLwdLi0AHfPCkgMLTDL
-=6vSS
------END PGP SIGNATURE-----
+So, this patch itself is fine, but the desc should be updated to reflect 
+the above somehow.
 
---pzucutq7d4x42opo--
+And the "Fixes:" line should be updated to point to the commit mentioned 
+above also.
+
+-Tero
+
+> ---
+>  drivers/clk/ti/divider.c | 17 ++++++-----------
+>  1 file changed, 6 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+> index d6dcb283b72b..a6d3bbfbbd31 100644
+> --- a/drivers/clk/ti/divider.c
+> +++ b/drivers/clk/ti/divider.c
+> @@ -428,22 +428,17 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+>
+>  struct clk *ti_clk_register_divider(struct ti_clk *setup)
+>  {
+> -	struct ti_clk_divider *div;
+> -	struct clk_omap_reg *reg_setup;
+> -	u32 reg;
+> +	struct ti_clk_divider *div = setup->data;
+> +	struct clk_omap_reg reg_setup = {
+> +		.index = div->module,
+> +		.offset = div->reg,
+> +	};
+
+reg_setup here could be just named as 'reg' as I've done elsewhere.
+
+-Tero
+
+>  	u8 width;
+>  	u32 flags = 0;
+>  	u8 div_flags = 0;
+>  	const struct clk_div_table *table;
+>  	struct clk *clk;
+>
+> -	div = setup->data;
+> -
+> -	reg_setup = (struct clk_omap_reg *)&reg;
+> -
+> -	reg_setup->index = div->module;
+> -	reg_setup->offset = div->reg;
+> -
+>  	if (div->flags & CLKF_INDEX_STARTS_AT_ONE)
+>  		div_flags |= CLK_DIVIDER_ONE_BASED;
+>
+> @@ -458,7 +453,7 @@ struct clk *ti_clk_register_divider(struct ti_clk *setup)
+>  		return (struct clk *)table;
+>
+>  	clk = _register_divider(NULL, setup->name, div->parent,
+> -				flags, (void __iomem *)reg, div->bit_shift,
+> +				flags, &reg_setup, div->bit_shift,
+>  				width, div_flags, table);
+>
+>  	if (IS_ERR(clk))
+>
