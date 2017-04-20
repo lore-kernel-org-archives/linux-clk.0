@@ -1,198 +1,97 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:50769 "EHLO
-        epoutp02.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1423020AbdDURkH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2017 13:40:07 -0400
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org
-Cc: inki.dae@samsung.com, sw0312.kim@samsung.com,
-        cw00.choi@samsung.com, javier@osg.samsung.com, krzk@kernel.org,
-        jy0922.shim@samsung.com, broonie@kernel.org, robh+dt@kernel.org,
-        b.zolnierkie@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC 1/7] clk: samsung: Add enable/disable operation for
- PLL36XX clocks
-Date: Fri, 21 Apr 2017 19:19:45 +0200
-Message-id: <1492795191-31298-2-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
-References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
-        <CGME20170421172016epcas5p342c16e1219c1205a44a84eaa770ad5ac@epcas5p3.samsung.com>
+Received: from mail.kernel.org ([198.145.29.136]:46038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S939254AbdDTWg5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 20 Apr 2017 18:36:57 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170420143617.v6yemhjamqufbqwj@lukather>
+References: <20170416120849.54542-1-icenowy@aosc.io> <20170416120849.54542-3-icenowy@aosc.io>
+ <20170420140252.vd6aeeweshx2tdou@rob-hp-laptop> <20170420143617.v6yemhjamqufbqwj@lukather>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 20 Apr 2017 17:36:31 -0500
+Message-ID: <CAL_JsqL=bKVX4MsqHE+Nhg9TnR6B25_-5RPW2chTsCjXudtFfQ@mail.gmail.com>
+Subject: Re: [PATCH v4 02/11] clk: sunxi-ng: add support for DE2 CCU
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
+        David Airlie <airlied@linux.ie>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The existing enable/disable ops for PLL35XX are made more generic
-and used also for PLL36XX. This fixes issues in the kernel with
-PLL36XX PLLs when the PLL has not been already enabled by bootloader.
+On Thu, Apr 20, 2017 at 9:36 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi Rob,
+>
+> On Thu, Apr 20, 2017 at 09:02:53AM -0500, Rob Herring wrote:
+>> On Sun, Apr 16, 2017 at 08:08:40PM +0800, Icenowy Zheng wrote:
+>> > diff --git a/include/dt-bindings/clock/sun8i-de2.h b/include/dt-bindings/clock/sun8i-de2.h
+>> > new file mode 100644
+>> > index 000000000000..982c6d18c75b
+>> > --- /dev/null
+>> > +++ b/include/dt-bindings/clock/sun8i-de2.h
+>> > @@ -0,0 +1,54 @@
+>> > +/*
+>> > + * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.io>
+>> > + *
+>> > + * This file is dual-licensed: you can use it either under the terms
+>> > + * of the GPL or the X11 license, at your option. Note that this dual
+>> > + * licensing only applies to this file, and not this project as a
+>> > + * whole.
+>> > + *
+>> > + *  a) This file is free software; you can redistribute it and/or
+>> > + *     modify it under the terms of the GNU General Public License as
+>> > + *     published by the Free Software Foundation; either version 2 of the
+>> > + *     License, or (at your option) any later version.
+>> > + *
+>> > + *     This file is distributed in the hope that it will be useful,
+>> > + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> > + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> > + *     GNU General Public License for more details.
+>> > + *
+>> > + * Or, alternatively,
+>> > + *
+>> > + *  b) Permission is hereby granted, free of charge, to any person
+>> > + *     obtaining a copy of this software and associated documentation
+>> > + *     files (the "Software"), to deal in the Software without
+>> > + *     restriction, including without limitation the rights to use,
+>> > + *     copy, modify, merge, publish, distribute, sublicense, and/or
+>> > + *     sell copies of the Software, and to permit persons to whom the
+>> > + *     Software is furnished to do so, subject to the following
+>> > + *     conditions:
+>> > + *
+>> > + *     The above copyright notice and this permission notice shall be
+>> > + *     included in all copies or substantial portions of the Software.
+>> > + *
+>> > + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+>> > + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+>> > + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+>> > + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+>> > + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+>> > + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+>> > + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+>> > + *     OTHER DEALINGS IN THE SOFTWARE.
+>> > + */
+>>
+>> You can use SPDX tag here:
+>>
+>> SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>
+> I don't think you ever addressed Russell's comment about what would
+> happen to the license if and when the SPDX doc is changed or goes
+> offline?
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/clk-pll.c | 85 +++++++++++++++++++++++++------------------
- 1 file changed, 49 insertions(+), 36 deletions(-)
+Frankly, it's a copyright holders decision what they want to use. SPDX
+is already used in the kernel. Look in the USB subsystem. SPDX is not
+going anywhere and is endorsed by companies with well known legal
+depts. If people want to argue about it still, then I've got better
+things to do.
 
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 5229089..10c76eb 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -23,6 +23,10 @@ struct samsung_clk_pll {
- 	struct clk_hw		hw;
- 	void __iomem		*lock_reg;
- 	void __iomem		*con_reg;
-+	/* PLL enable control bit offset in @con_reg register */
-+	unsigned short		enable_offs;
-+	/* PLL lock status bit offset in @con_reg register */
-+	unsigned short		lock_offs;
- 	enum samsung_pll_type	type;
- 	unsigned int		rate_count;
- 	const struct samsung_pll_rate_table *rate_table;
-@@ -61,6 +65,34 @@ static long samsung_pll_round_rate(struct clk_hw *hw,
- 	return rate_table[i - 1].rate;
- }
- 
-+static int samsung_pll3xxx_enable(struct clk_hw *hw)
-+{
-+	struct samsung_clk_pll *pll = to_clk_pll(hw);
-+	u32 tmp;
-+
-+	tmp = readl_relaxed(pll->con_reg);
-+	tmp |= BIT(pll->enable_offs);
-+	writel_relaxed(tmp, pll->con_reg);
-+
-+	/* wait lock time */
-+	do {
-+		cpu_relax();
-+		tmp = readl_relaxed(pll->con_reg);
-+	} while (!(tmp & BIT(pll->lock_offs)));
-+
-+	return 0;
-+}
-+
-+static void samsung_pll3xxx_disable(struct clk_hw *hw)
-+{
-+	struct samsung_clk_pll *pll = to_clk_pll(hw);
-+	u32 tmp;
-+
-+	tmp = readl_relaxed(pll->con_reg);
-+	tmp |= BIT(pll->enable_offs);
-+	writel_relaxed(tmp, pll->con_reg);
-+}
-+
- /*
-  * PLL2126 Clock Type
-  */
-@@ -142,34 +174,6 @@ static unsigned long samsung_pll3000_recalc_rate(struct clk_hw *hw,
- #define PLL35XX_LOCK_STAT_SHIFT	(29)
- #define PLL35XX_ENABLE_SHIFT	(31)
- 
--static int samsung_pll35xx_enable(struct clk_hw *hw)
--{
--	struct samsung_clk_pll *pll = to_clk_pll(hw);
--	u32 tmp;
--
--	tmp = readl_relaxed(pll->con_reg);
--	tmp |= BIT(PLL35XX_ENABLE_SHIFT);
--	writel_relaxed(tmp, pll->con_reg);
--
--	/* wait_lock_time */
--	do {
--		cpu_relax();
--		tmp = readl_relaxed(pll->con_reg);
--	} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
--
--	return 0;
--}
--
--static void samsung_pll35xx_disable(struct clk_hw *hw)
--{
--	struct samsung_clk_pll *pll = to_clk_pll(hw);
--	u32 tmp;
--
--	tmp = readl_relaxed(pll->con_reg);
--	tmp &= ~BIT(PLL35XX_ENABLE_SHIFT);
--	writel_relaxed(tmp, pll->con_reg);
--}
--
- static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
- 				unsigned long parent_rate)
- {
-@@ -239,11 +243,11 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	writel_relaxed(tmp, pll->con_reg);
- 
- 	/* wait_lock_time if enabled */
--	if (tmp & BIT(PLL35XX_ENABLE_SHIFT)) {
-+	if (tmp & BIT(pll->enable_offs)) {
- 		do {
- 			cpu_relax();
- 			tmp = readl_relaxed(pll->con_reg);
--		} while (!(tmp & BIT(PLL35XX_LOCK_STAT_SHIFT)));
-+		} while (!(tmp & BIT(pll->lock_offs)));
- 	}
- 	return 0;
- }
-@@ -252,8 +256,8 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	.recalc_rate = samsung_pll35xx_recalc_rate,
- 	.round_rate = samsung_pll_round_rate,
- 	.set_rate = samsung_pll35xx_set_rate,
--	.enable = samsung_pll35xx_enable,
--	.disable = samsung_pll35xx_disable,
-+	.enable = samsung_pll3xxx_enable,
-+	.disable = samsung_pll3xxx_disable,
- };
- 
- static const struct clk_ops samsung_pll35xx_clk_min_ops = {
-@@ -275,6 +279,7 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
- #define PLL36XX_SDIV_SHIFT	(0)
- #define PLL36XX_KDIV_SHIFT	(0)
- #define PLL36XX_LOCK_STAT_SHIFT	(29)
-+#define PLL36XX_ENABLE_SHIFT	(31)
- 
- static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
- 				unsigned long parent_rate)
-@@ -354,10 +359,12 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	writel_relaxed(pll_con1, pll->con_reg + 4);
- 
- 	/* wait_lock_time */
--	do {
--		cpu_relax();
--		tmp = readl_relaxed(pll->con_reg);
--	} while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
-+	if (pll_con0 & BIT(pll->enable_offs)) {
-+		do {
-+			cpu_relax();
-+			tmp = readl_relaxed(pll->con_reg);
-+		} while (!(tmp & BIT(PLL36XX_LOCK_STAT_SHIFT)));
-+	}
- 
- 	return 0;
- }
-@@ -366,6 +373,8 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	.recalc_rate = samsung_pll36xx_recalc_rate,
- 	.set_rate = samsung_pll36xx_set_rate,
- 	.round_rate = samsung_pll_round_rate,
-+	.enable = samsung_pll3xxx_enable,
-+	.disable = samsung_pll3xxx_disable,
- };
- 
- static const struct clk_ops samsung_pll36xx_clk_min_ops = {
-@@ -1288,6 +1297,8 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 	case pll_1450x:
- 	case pll_1451x:
- 	case pll_1452x:
-+		pll->enable_offs = PLL35XX_ENABLE_SHIFT;
-+		pll->lock_offs = PLL35XX_LOCK_STAT_SHIFT;
- 		if (!pll->rate_table)
- 			init.ops = &samsung_pll35xx_clk_min_ops;
- 		else
-@@ -1306,6 +1317,8 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 	/* clk_ops for 36xx and 2650 are similar */
- 	case pll_36xx:
- 	case pll_2650:
-+		pll->enable_offs = PLL36XX_ENABLE_SHIFT;
-+		pll->lock_offs = PLL36XX_LOCK_STAT_SHIFT;
- 		if (!pll->rate_table)
- 			init.ops = &samsung_pll36xx_clk_min_ops;
- 		else
--- 
-1.9.1
-
+Rob
