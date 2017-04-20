@@ -1,80 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:57078 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1168445AbdDXLuO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 24 Apr 2017 07:50:14 -0400
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH] clk: ti: fix linker error with !SOC_OMAP4
+To: Arnd Bergmann <arnd@arndb.de>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <20170419214318.1605787-1-arnd@arndb.de>
+CC: Tony Lindgren <tony@atomide.com>, Richard Watts <rrw@kynesim.co.uk>,
+        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <9df5f73d-3e3a-ee33-1b75-c14a1a707ad9@ti.com>
+Date: Thu, 20 Apr 2017 17:57:39 +0300
 MIME-Version: 1.0
-In-Reply-To: <3232b6e5-05b6-2d91-07ef-e5473ee70889@samsung.com>
-References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20170421172016epcas5p342c16e1219c1205a44a84eaa770ad5ac@epcas5p3.samsung.com>
- <1492795191-31298-2-git-send-email-s.nawrocki@samsung.com>
- <20170422152236.tbf4iuoadqrvoc2n@kozik-lap> <017b3ec8-c185-c29a-2944-12f519b461fe@samsung.com>
- <CAJKOXPdKRzC+f4mLCPhHKNuGS4=K-9CC_AKor0Etfu7Bxp-+iw@mail.gmail.com> <3232b6e5-05b6-2d91-07ef-e5473ee70889@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 24 Apr 2017 13:50:10 +0200
-Message-ID: <CAJKOXPepqf0FoGb-Yv7yWBAmOdq_jBiEjScEsZLJHEU=nYd5wQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/7] clk: samsung: Add enable/disable operation for
- PLL36XX clocks
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
-        <b.zolnierkie@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170419214318.1605787-1-arnd@arndb.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 24, 2017 at 1:35 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> (dropping unrelated addresses from Cc list)
+On 20/04/17 00:43, Arnd Bergmann wrote:
+> When none of the OMAP4-generation SoCs are enabled, we run into a link
+> error for am43xx/am43xx:
 >
-> On 04/24/2017 01:18 PM, Krzysztof Kozlowski wrote:
->>
->> On Mon, Apr 24, 2017 at 1:12 PM, Sylwester Nawrocki
->> <s.nawrocki@samsung.com> wrote:
->>>
->>> On 04/22/2017 05:22 PM, Krzysztof Kozlowski wrote:
->>>>>
->>>>> @@ -354,10 +359,12 @@ static int samsung_pll36xx_set_rate(struct clk_hw
->>>>> *hw, unsigned long drate,
->>>>>         writel_relaxed(pll_con1, pll->con_reg + 4);
->>>>>
->>>>>         /* wait_lock_time */
->>>>> -       do {
->>>>> -               cpu_relax();
->>>>> -               tmp = readl_relaxed(pll->con_reg);
->>>>> -       } while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
->>>
->>>
->>>
->>> I will add a comment here like:
->>> /* Wait until the PLL is locked if it is enabled. */
->>>
->>>>> +       if (pll_con0 & BIT(pll->enable_offs)) {
->>>>
->>>>
->>>>
->>>> Why this additional if() is needed?
->>>
->>>
->>>
->>> The PLL will never transition to a locked state if it is disabled,
->>> without
->>> this test we would end up with an indefinite loop below.
->>
->>
->> Hmmm... shouldn't this be split from this change? Or maybe this is
->> needed only because you added enable/disable for pl36xx and previously
->> this was not existing?
+> drivers/clk/ti/dpll.o: In function `of_ti_am3_dpll_x2_setup':
+> dpll.c:(.init.text+0xd8): undefined reference to `clkhwops_omap4_dpllmx'
 >
+> This is easily fixed by adding another #ifdef.
 >
-> Yes, it looks like previously the PLLs were always on after were enabled.
-> I wouldn't be separating that part, as it's all logically dependent.
-> Just the commit message might need some improvement.
+> While looking at the code, I also spotted another problem with the
+> assignment of hw_ops variable that is not used again later. I'm
+> changing this to setting clk_hw->ops instead, which I guess is what
+> was intended here.
 
-Thanks for explanation.
+Good catch... It seems the corner case is masked in the testing I did 
+locally so far.
 
-Best regards,
-Krzysztof
+>
+> Fixes: 0565fb168d63 ("clk: ti: dpll: move omap3 DPLL functionality to clock driver")
+
+However, I believe the fixes tag should point to this one in linux-next:
+
+commit 473adbf4e02857a6b78dfb3d9fcf752638bbadb9
+Author: Tero Kristo <t-kristo@ti.com>
+Date:   Thu Feb 9 11:25:28 2017 +0200
+
+     clk: ti: dpll44xx: fix clksel register initialization
+
+
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Other than that:
+
+Acked-by: Tero Kristo <t-kristo@ti.com>
+
+> ---
+>  drivers/clk/ti/dpll.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+> index 96d84888c6c5..fcf297fd2233 100644
+> --- a/drivers/clk/ti/dpll.c
+> +++ b/drivers/clk/ti/dpll.c
+> @@ -312,7 +312,6 @@ static void _register_dpll_x2(struct device_node *node,
+>  	struct clk_hw_omap *clk_hw;
+>  	const char *name = node->name;
+>  	const char *parent_name;
+> -	int ret;
+>
+>  	parent_name = of_clk_get_parent_name(node, 0);
+>  	if (!parent_name) {
+> @@ -332,16 +331,21 @@ static void _register_dpll_x2(struct device_node *node,
+>  	init.parent_names = &parent_name;
+>  	init.num_parents = 1;
+>
+> +#if defined(CONFIG_ARCH_OMAP4) || defined(CONFIG_SOC_OMAP5) || \
+> +        defined(CONFIG_SOC_DRA7XX)
+>  	if (hw_ops == &clkhwops_omap4_dpllmx) {
+> +		int ret;
+> +
+>  		/* Check if register defined, if not, drop hw-ops */
+>  		ret = of_property_count_elems_of_size(node, "reg", 1);
+>  		if (ret <= 0) {
+> -			hw_ops = NULL;
+> +			clk_hw->ops = NULL;
+>  		} else if (ti_clk_get_reg_addr(node, 0, &clk_hw->clksel_reg)) {
+>  			kfree(clk_hw);
+>  			return;
+>  		}
+>  	}
+> +#endif
+>
+>  	/* register the clock */
+>  	clk = ti_clk_register(NULL, &clk_hw->hw, name);
+>
