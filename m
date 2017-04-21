@@ -1,66 +1,66 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:34922 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1174301AbdDXUTz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2017 16:19:55 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170424201139.GF2137@mai>
-References: <1492449567-31399-1-git-send-email-daniel.lezcano@linaro.org>
- <1492449567-31399-2-git-send-email-daniel.lezcano@linaro.org>
- <20170422020233.GA7065@codeaurora.org> <370c36f9-e6fc-416c-776b-edc1e42d7ddc@linaro.org>
- <20170424085944.aa5dsc4g6bwm5rgi@dell> <20170424201139.GF2137@mai>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 24 Apr 2017 22:19:53 +0200
-Message-ID: <CAK8P3a24Y+HO=XcGjcXb65PyKkzKRsLJiKQTpntYvpaUuew8Jw@mail.gmail.com>
-Subject: Re: [PATCH V3 2/2] ARM64: dts: hi6220-hikey: Add clock binding for
- the pmic mfd
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from mailout1.samsung.com ([203.254.224.24]:44982 "EHLO
+        epoutp01.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1041602AbdDUShh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2017 14:37:37 -0400
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org
+Cc: inki.dae@samsung.com, sw0312.kim@samsung.com,
+        cw00.choi@samsung.com, javier@osg.samsung.com, krzk@kernel.org,
+        jy0922.shim@samsung.com, broonie@kernel.org, robh+dt@kernel.org,
+        b.zolnierkie@samsung.com,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH RFC 0/7] HDMI audio support for Exynos Odroid boards
+Date: Fri, 21 Apr 2017 19:19:44 +0200
+Message-id: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
+References: <CGME20170421172007epcas1p25dba753df34c309e6b00ed08ae930043@epcas1p2.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 24, 2017 at 10:11 PM, Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
-> On Mon, Apr 24, 2017 at 09:59:44AM +0100, Lee Jones wrote:
->> On Sat, 22 Apr 2017, Daniel Lezcano wrote:
->>
->> > On 22/04/2017 04:02, Stephen Boyd wrote:
->> > > On 04/17, Daniel Lezcano wrote:
->> > >> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> > >> ---
->> > >>  Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt | 6 ++++++
->> > >>  arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts             | 1 +
->> > >>  2 files changed, 7 insertions(+)
->> > >>
->> > >
->> > > I take it this goes through arm-soc? Not sure why I'm on To:
->> > > line.
->> >
->> > Probably it should go through Lee's tree.
->>
->> Unlikely.
->>
->> The document and the DTS change should really have gone separately,
->> but to save you from having to mess around so close to the merge window:
->>
->> Acked-by: Lee Jones <lee.jones@linaro.org>
->
-> So who is supposed to take this patch? Xu? Rob?
+In this series I gathered patches touching various subsystems to make 
+the overall review easier, finally I'm going to post independently
+patches for each subsystem and the dts patch(es) will be postponed
+to subsequent merge window.
 
-The DTS file changes should normally go through the platform maintainer
-and from there to arm-soc, to minimize the risk for patch conflicts.
+The main purpose of this series is to add audio codec interface to the Exynos
+DRM driver, so HDMI audio can be properly supported, also on boards where
+HDMI is the only connector available for audio.
 
-For binding changes, conflicts are much rarer, so we any of the tree
-(arm-soc, driver subsystem, or devicetree) works equally well IMHO.
-In this particular case,keeping the two together is best, so please send
-it to Wei Xu with the added chagnelog and Acks.
+Currently in mainline the ASoC simple-card is used for Odroid XU3, 
+I decided to change it and use a dedicated ASoC machine driver, which allowed 
+to implemement specific clock settings (EPLL and the I2S root clock adjusted 
+to audio sample rates) and to ensure proper number of audio channels 
+gets negotiated in multicodec system configuration.
 
-       Arnd
+This series is based on v4.11-rc6, has been tested on Odroid XU3. 
+
+Sylwester Nawrocki (7):
+  clk: samsung: Add enable/disable operation for PLL36XX clocks
+  clk: samsung: Add definitions of some audio related clocks
+  clk: samsung: exynos542x: Add EPLL rate table
+  drm: exynos: Add driver for HDMI audio interface
+  ASoC: Add Odroid sound DT bindings documentation
+  ASoC: samsung: Add Odroid ASoC machine driver
+  ARM: dts: samsung: Switch to dedicated Odroid sound card binding
+
+ .../devicetree/bindings/sound/samsung,odroid.txt   |  57 ++++++
+ arch/arm/boot/dts/exynos4.dtsi                     |   1 +
+ arch/arm/boot/dts/exynos5420.dtsi                  |   1 +
+ arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi  |  59 ++++--
+ drivers/clk/samsung/clk-exynos5420.c               |  31 ++-
+ drivers/clk/samsung/clk-pll.c                      |  85 ++++----
+ drivers/gpu/drm/exynos/Kconfig                     |   1 +
+ drivers/gpu/drm/exynos/exynos_hdmi.c               | 220 +++++++++++++++++----
+ include/dt-bindings/clock/exynos5420.h             |   3 +
+ sound/soc/samsung/Kconfig                          |   8 +
+ sound/soc/samsung/Makefile                         |   2 +
+ sound/soc/samsung/odroid.c                         | 219 ++++++++++++++++++++
+ 12 files changed, 599 insertions(+), 88 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung,odroid.txt
+ create mode 100644 sound/soc/samsung/odroid.c
+
+-- 
+1.9.1
+
