@@ -1,63 +1,85 @@
-Return-Path: <elfring@users.sourceforge.net>
-Subject: [PATCH 8/8] clk: nomadik: Delete error messages for a failed memory
- allocation in two functions
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Wolfram Sang <wsa@the-dreams.de>
-References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
-Message-ID: <fd5dc7a7-2ab0-b39f-248b-7191984c6666@users.sourceforge.net>
-Date: Thu, 20 Apr 2017 10:32:18 +0200
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20170420195917.GA16113@plaes.org>
+References: <cover.a58841efb571d44013658505f3fa140536a89d1c.1490545262.git-series.plaes@plaes.org>
+ <ac8c4dab4f160ec605d52120517774bf1de87c2e.1490545262.git-series.plaes@plaes.org>
+ <20170327075438.cw3d6s7zyeemenwr@lukather> <20170404200919.GA22159@plaes.org>
+ <20170407133805.aiythp3hdvuyhcrc@lukather> <20170420195917.GA16113@plaes.org>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 21 Apr 2017 09:46:58 +0800
+Message-ID: <CAGb2v66iNddKty4ObeGuVRDOp1NV-9A6=cg7omGMiDLJe7T_=g@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v2 1/6] clk: sunxi-ng: Add sun4i/sun7i
+ CCU driver
+To: Priit Laes <plaes@plaes.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>, Icenowy Zheng <icenowy@aosc.xyz>,
+	Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
+	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Apr 2017 10:04:00 +0200
+On Fri, Apr 21, 2017 at 3:59 AM, Priit Laes <plaes@plaes.org> wrote:
+> On Fri, Apr 07, 2017 at 03:38:05PM +0200, Maxime Ripard wrote:
+>> Hi Priit,
+>>
+>> On Tue, Apr 04, 2017 at 08:09:19PM +0000, Priit Laes wrote:
+>> > > > +/* Not documented on A10 */
+>> > > > +static SUNXI_CCU_GATE(pll_periph_sata_clk, "pll-periph-sata", "pll-periph",
+>> > > > +                     0x028, BIT(14), 0);
+>> > >
+>> > > The rate doesn't come from pll-periph directly, does it?
+>> >
+>> > So it uses hosc (24MHz parent clock) instead of pll-periph?
+>>
+>> I never looked too much at this, but it looks more like the input is
+>> pll-periph-sata itself.
+>
+> OK, I think I have now fixed most of the issues thanks to Maxime and Chen-Yu
+> and I'm almost ready to send out V3.
+>
+> From my side there is only single issue remaining - how to create "sata-ext"
+> clock?
+>
+> [snip]
+> static struct ccu_div pll_periph_sata_clk = {
+>         .enable         = BIT(14),
+>         .div            = _SUNXI_CCU_DIV(0, 2),
+>         .common         = {
+>                 .prediv         = 6,
+>                 .reg            = 0x028,
+>                 .features       = CCU_FEATURE_ALL_PREDIV,
+>                 .hw.init        = CLK_HW_INIT("pll-periph-sata",
+>                                               "pll-periph-base",
+>                                               &ccu_nk_ops, 0),
+>         },
+> };
+>
+> static const char* const sata_parents[] = {"pll-periph-sata", "sata-ext"};
+> static SUNXI_CCU_MUX_WITH_GATE(sata_clk, "sata", sata_parents,
+>                                0x0c8, 24, 1, BIT(31), 0);
+> [/snip]
+>
+> Should I create a fixed-clock node in the dtsi:
+>
+> sata-ext: clk@0 {
+>         #clock-cells = <0>;
+>         compatible = "fixed-clock";
+>         clock-frequency = <200000000>;
+>         clock-output-names = "sata-ext";
+> };
 
-The script "checkpatch.pl" pointed information out like the following.
+You can just leave it missing. You probably shouldn't register it
+if it's not populated. The clk core can cope with missing parents,
+as long as they aren't all missing.
 
-WARNING: Possible unnecessary 'out of memory' message
+>
+> And would it also need pio definition?
 
-Thus remove such statements here.
+Nope. It has dedicated pins.
 
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/clk/clk-nomadik.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
-index 8d57ab8d6ed8..13ad6d1e5090 100644
---- a/drivers/clk/clk-nomadik.c
-+++ b/drivers/clk/clk-nomadik.c
-@@ -267,10 +267,8 @@ pll_clk_register(struct device *dev, const char *name,
- 	}
- 
- 	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
--	if (!pll) {
--		pr_err("%s: could not allocate PLL clk\n", __func__);
-+	if (!pll)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	init.name = name;
- 	init.ops = &pll_clk_ops;
-@@ -356,11 +354,9 @@ src_clk_register(struct device *dev, const char *name,
- 	struct clk_init_data init;
- 
- 	sclk = kzalloc(sizeof(*sclk), GFP_KERNEL);
--	if (!sclk) {
--		pr_err("could not allocate SRC clock %s\n",
--			name);
-+	if (!sclk)
- 		return ERR_PTR(-ENOMEM);
--	}
-+
- 	init.name = name;
- 	init.ops = &src_clk_ops;
- 	/* Do not force-disable the static SDRAM controller */
--- 
-2.12.2
+ChenYu
