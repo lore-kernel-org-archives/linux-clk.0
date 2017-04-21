@@ -1,45 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 5 Apr 2017 12:56:05 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [git pull] clk: renesas: Updates for v4.12 (take two)
-Message-ID: <20170405195605.GN18246@codeaurora.org>
-References: <1490952253-10963-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:32917 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1041622AbdDUSHU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2017 14:07:20 -0400
+Date: Fri, 21 Apr 2017 20:07:10 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, jy0922.shim@samsung.com,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?=
+        <b.zolnierkie@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, robh+dt@kernel.org
+Subject: Re: Applied "ASoC: Add Odroid sound DT bindings documentation" to
+ the asoc tree
+Message-ID: <20170421180710.6gdaosnk2gn2leoo@kozik-lap>
+References: <1492795191-31298-6-git-send-email-s.nawrocki@samsung.com>
+ <E1d1cLy-0001qc-PC@debutante>
+ <CAJKOXPebDt030tcdBGya4Wpm8HCvMqyM7qJzDvibmvnMttH-FA@mail.gmail.com>
+ <20170421175800.qiwvr46phfafqi75@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1490952253-10963-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20170421175800.qiwvr46phfafqi75@sirena.org.uk>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/31, Geert Uytterhoeven wrote:
-> 	Hi Mike, Stephen,
+On Fri, Apr 21, 2017 at 06:58:00PM +0100, Mark Brown wrote:
+> On Fri, Apr 21, 2017 at 07:31:42PM +0200, Krzysztof Kozlowski wrote:
 > 
-> The following changes since commit cecbe87d73006cb321dec79b349e3fefd1a80962:
+> > Although Sylwester is known of writing good quality code and can be
+> > trusted but he posted it just 9 minutes ago. Isn't it a little bit too
+> > fast to apply? I just finished reading cover letter but didn't manage
+> > to start looking at the rest. :)
 > 
->   clk: renesas: rcar-gen3: Add workaround for PLL0/2/4 errata on H3 ES1.0 (2017-03-21 11:12:23 +0100)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.12-tag2
-> 
-> for you to fetch changes up to bb1953067c05be30a605ee1d5b05a2677735bb37:
-> 
->   clk: renesas: rcar-gen3-cpg: Add support for RCLK on R-Car H3 ES2.0 (2017-03-30 13:26:02 +0200)
-> 
-> ----------------------------------------------------------------
-> clk: renesas: Updates for v4.12 (take two)
-> 
->   - Add support for the Clock Pulse Generator / Module Standby and
->     Software Reset module on revision ES2.0 of the R-Car H3 SoC, which
->     differs from ES1.x in some areas.
-> 
-> Note that this pull request is on top of my previous pull request for
-> v4.12, which accidentally had a wrong version number in the subject
-> line, and which I believe you haven't pulled yet.
+> It's pretty standard boilerplate stuff, there's not much in there to
+> review and Sylwester is one of the maintainers listed for this code so I
+> wasn't particularly expecting extra review.
 
-Thanks. I pulled both by pulling this one tag.
+Off the list, off-topic,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Mutt is complaining that your key used to sign the mails has expired:
+	gpg: Note: This key has expired!
+	Primary key fingerprint: 3F25 68AA C269 98F9 E813  A1C5 C3F4 36CA 30F5 D8EB
+	Subkey fingerprint: ADE6 68AA 6757 18B5 9FE2  9FEA 24D6 8B72 5D54 87D0
+
+Best regards,
+Krzysztof
+
