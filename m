@@ -1,77 +1,80 @@
-Return-Path: <Vladislav.Zakharov@synopsys.com>
-From: Vlad Zakharov <Vladislav.Zakharov@synopsys.com>
-To: "sboyd@codeaurora.org" <sboyd@codeaurora.org>
-CC: "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Jose.Abreu@synopsys.com" <Jose.Abreu@synopsys.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-snps-arc@lists.infradead.org" <linux-snps-arc@lists.infradead.org>
-Subject: Re: [PATCH v2] clk/axs10x: introduce AXS10X pll driver
-Date: Wed, 5 Apr 2017 16:06:11 +0000
-Message-ID: <1491408370.9650.24.camel@synopsys.com>
-References: <1487682670-4164-1-git-send-email-vzakhar@synopsys.com>
-	 <20170405013525.GJ18246@codeaurora.org>
-In-Reply-To: <20170405013525.GJ18246@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:52269 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1041121AbdDUSer (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2017 14:34:47 -0400
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org
+Cc: inki.dae@samsung.com, sw0312.kim@samsung.com,
+        cw00.choi@samsung.com, javier@osg.samsung.com, krzk@kernel.org,
+        jy0922.shim@samsung.com, broonie@kernel.org, robh+dt@kernel.org,
+        b.zolnierkie@samsung.com,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH RFC 3/7] clk: samsung: exynos542x: Add EPLL rate table
+Date: Fri, 21 Apr 2017 19:19:47 +0200
+Message-id: <1492795191-31298-4-git-send-email-s.nawrocki@samsung.com>
+In-reply-to: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
+References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
+ <CGME20170421172029epcas5p1b32ed135c5e0f1b86fbcc54279126349@epcas5p1.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwNCg0KT24gVHVlLCAyMDE3LTA0LTA0IGF0IDE4OjM1IC0wNzAwLCBTdGVwaGVu
-IEJveWQgd3JvdGU6DQo+ID4gK8KgwqDCoMKgwqAucGxsX3RhYmxlID0gKHN0cnVjdCBwbGxfb2Zf
-dGFibGUgW10pew0KPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHsNCj4gPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLnByYXRlID0gMjcwMDAwMDAsDQo+
-IA0KPiBDYW4gdGhpcyBiZSBhbm90aGVyIGNsayBpbiB0aGUgZnJhbWV3b3JrIGluc3RlYWQgb2Yg
-aGFyZGNvZGluZw0KPiB0aGUgcGFyZW50IHJhdGU/DQoNCkluIGZhY3QgdGhlcmUgaXMgYW5vdGhl
-ciBjbGsgaW4gdGhlIGZyYW1ld29yayB0aGF0IHJlcHJlc2VudHMgdGhpcyBwYXJlbnQgY2xvY2su
-IEJ1dCB0aGlzIGZpZWxkIGlzIG5lZWRlZCB0byBnZXQNCmFwcHJvcHJpYXRlIHBsbF9jZmdfdGFi
-bGUgYXMgaXQgZGVwZW5kcyBvbiBwYXJlbnQgY2xvY2sgZnJlcXVlbmN5LiBCZWxvdyBpbiBwbGxf
-Y2ZnX2dldCBmdW5jdGlvbiB3ZSBhcmUgc2VhcmNoaW5nIGZvcg0KdGhlIGNvcnJlY3QgdGFibGUg
-Y29tcGFyaW5nIC5wYXJlbnRfbm9kZSBmaWVsZCB3aXRoIHJlYWwgaGFyZHdhcmUgcGFyZW50IGNs
-b2NrIGZyZXF1ZW5jeToNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KZm9yIChpID0gMDsgcGxsX3RhYmxlW2ld
-LnByYXRlICE9IDA7IGkrKykNCsKgIMKgIGlmIChwbGxfdGFibGVbaV0ucHJhdGUgPT0gcHJhdGUp
-DQrCoCDCoCDCoCDCoCByZXR1cm4gcGxsX3RhYmxlW2ldLnBsbF9jZmdfdGFibGU7DQotLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0NCg0KPiANCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgLnBsbF9jZmdfdGFibGUgPSAoc3RydWN0IHBsbF9jZmcgW10pew0KPiA+ICvCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgeyAyNTIw
-MDAwMCwgMSwgODQsIDkwIH0sDQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB7IDUwMDAwMDAwLCAxLCAxMDAsIDU0IH0sDQo+ID4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqB7IDc0MjUwMDAwLCAxLCA0NCwgMTYgfSwNCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHsgfSwNCj4gPiArwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfSwNCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqB9LA0KPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qIFVzZWQgYXMgbGlz
-dCBsaW1pdGVyICovDQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgeyB9LA0KPiANCj4g
-VGhlcmUncyBvbmx5IGV2ZXIgb25lLCBzbyBJJ20gY29uZnVzZWQgd2h5IHdlJ3JlIG1ha2luZyBh
-IGxpc3QuDQoNCkJ5IHRoaXMgcGF0Y2ggd2Ugb25seSBhZGQgc3VwcG9ydCBvZiBjb3JlIGFyYyBw
-bGwgYW5kIHBndSBwbGwgYW5kIHRvZGF5IHRoZXkgYXJlIGNsb2NrZWQgYnkgdGhlIG9ubHkgcGFy
-ZW50IGNsb2Nrcw0KaW50cm9kdWNlZCBoZXJlLiBCdXQgb3RoZXIgcGxscyBvbiBheHMxMHggbWF5
-IGJlIGRyaXZlbiBieSBkaWZmZXJlbnQgb3IgY29uZmlndXJhYmxlIGNsb2Nrcywgc28gaW4gc3Vj
-aCBjYXNlcyB3ZSB3aWxsDQpoYXZlIG1vcmUgdGhhbiBvbmUgZW50cnkgaW4gdGhpcyBsaXN0LiBB
-bmQgd2UgYXJlIGdvaW5nIHRvIGFkZCBtb3JlIHN1cHBvcnRlZCBwbGxzIHRvIHRoaXMgZHJpdmVy
-IGluIHRoZSBuZWFyZXN0IGZ1dHVyZS4NCg0KPiA+ICsNCj4gPiArwqDCoMKgwqDCoGNsayA9IGNs
-a19yZWdpc3RlcihOVUxMLCAmcGxsX2Nsay0+aHcpOw0KPiA+ICvCoMKgwqDCoMKgaWYgKElTX0VS
-UihjbGspKSB7DQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcHJfZXJyKCJmYWlsZWQg
-dG8gcmVnaXN0ZXIgJXMgY2xvY2sgKCVsZClcbiIsDQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBub2RlLT5uYW1lLCBQVFJfRVJS
-KGNsaykpOw0KPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGtmcmVlKHBsbF9jbGspOw0K
-PiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybjsNCj4gPiArwqDCoMKgwqDCoH0N
-Cj4gPiArDQo+ID4gK8KgwqDCoMKgwqBvZl9jbGtfYWRkX3Byb3ZpZGVyKG5vZGUsIG9mX2Nsa19z
-cmNfc2ltcGxlX2dldCwgY2xrKTsNCj4gDQo+IENhbiB5b3UgcGxlYXNlIHVzZSB0aGUgY2xrX2h3
-IGJhc2VkIHByb3ZpZGVyIGFuZCBjbGsgcmVnaXN0cmF0aW9uDQo+IGZ1bmN0aW9ucz8NCg0KU3Vy
-ZS4gQ291bGQgeW91IGJlIHNvIGtpbmQgdG8gZXhwbGFpbiB3aGF0IGlzIHRoZSBkaWZmZXJlbmNl
-IGJldHdlZW4gaHcgYW5kIG5vbi1odyBiYXNlZCBwcm92aWRlciBhbmQgY2xrIHJlZ2lzdHJhdGlv
-bg0KZnVuY3Rpb25zIHBsZWFzZT8gSW4gd2hpY2ggY2FzZXMgdGhleSBhcmUgcHJlZmVycmVkP8Kg
-DQoNCj4gDQo+ID4gK30NCj4gPiArDQo+ID4gK0NMS19PRl9ERUNMQVJFKGF4czEweF9wbGxfY2xv
-Y2ssICJzbnBzLGF4czEweC1hcmMtcGxsLWNsb2NrIiwgb2ZfcGxsX2Nsa19zZXR1cCk7DQo+IA0K
-PiBEb2VzIHRoaXMgbmVlZCB0byBiZSBDTEtfT0ZfREVDTEFSRV9EUklWRVI/IEkgbWVhbiBkb2Vz
-IHRoZQ0KPiBkcml2ZXIgbmVlZCB0byBwcm9iZSBhbmQgYWxzbyBoYXZlIHRoaXMgb2YgZGVjbGFy
-ZSBoYXBwZW4/IElzIHRoZQ0KPiBQTEwgc3BlY2lhbCBhbmQgbmVlZHMgdG8gYmUgdXNlZCBmb3Ig
-dGhlIHRpbWVycz8NCg0KSXQgaXMgc3BlY2lhbCBhbmQgaXMgdXNlZCBmb3IgdGhlIHRpbWVycywg
-c28gd2UgaGF2ZSB0byBDTEtfT0ZfREVDTEFSRSBpdC4gT24gdGhlIG90aGVyIGhhbmQgc2ltaWxh
-ciBwbGwgaXMgdXNlZCB0bw0KZHJpdmUgUEdVIGNsb2NrIGZyZXF1ZW5jeSBhbmQgb3RoZXIgc3Vi
-c3lzdGVtcyBhbmQgc28gd2UgYWRkIHVzdWFsIHByb2JlIGZ1bmMuDQoNCi0tIA0KQmVzdCByZWdh
-cmRzLA0KVmxhZCBaYWtoYXJvdiA8dnpha2hhckBzeW5vcHN5cy5jb20+
+A specific clock rate table is added for EPLL so it is possible
+to set frequency of the EPLL output clock as multiple of various
+audio sampling rates.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 87c711a..6fbd6ae 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1279,6 +1279,22 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 	PLL_35XX_RATE(200000000,  200, 3, 3),
+ };
+ 
++static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
++	PLL_36XX_RATE(600000000U, 100, 2, 1, 0),
++	PLL_36XX_RATE(400000000U, 200, 2, 2, 0),
++	PLL_36XX_RATE(393216000U, 197, 3, 2, 25690),
++	PLL_36XX_RATE(361267200U, 301, 5, 2, 3671),
++	PLL_36XX_RATE(200000000U, 200, 3, 3, 0),
++	PLL_36XX_RATE(196608000U, 197, 3, 3, -25690),
++	PLL_36XX_RATE(180633600U, 301, 5, 3, 3671),
++	PLL_36XX_RATE(131072000U, 131, 3, 3, 4719),
++	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
++	PLL_36XX_RATE( 65536000U, 131, 3, 4, 4719),
++	PLL_36XX_RATE( 49152000U, 197, 3, 5, 25690),
++	PLL_36XX_RATE( 45158400U, 301, 5, 3, 3671),
++	PLL_36XX_RATE( 32768000U, 131, 3, 5, 4719),
++};
++
+ static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
+ 	[apll] = PLL(pll_2550, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
+ 		APLL_CON0, NULL),
+@@ -1286,7 +1302,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
+ 		CPLL_CON0, NULL),
+ 	[dpll] = PLL(pll_2550, CLK_FOUT_DPLL, "fout_dpll", "fin_pll", DPLL_LOCK,
+ 		DPLL_CON0, NULL),
+-	[epll] = PLL(pll_2650, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
++	[epll] = PLL(pll_36xx, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
+ 		EPLL_CON0, NULL),
+ 	[rpll] = PLL(pll_2650, CLK_FOUT_RPLL, "fout_rpll", "fin_pll", RPLL_LOCK,
+ 		RPLL_CON0, NULL),
+@@ -1401,7 +1417,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 
+ 	if (_get_rate("fin_pll") == 24 * MHZ) {
+ 		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+-		exynos5x_plls[epll].rate_table = exynos5420_pll2550x_24mhz_tbl;
++		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
+ 		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+ 		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+ 	}
+-- 
+1.9.1
+
