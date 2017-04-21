@@ -1,41 +1,76 @@
-Return-Path: <ykaneko0929@gmail.com>
-Return-Path: <ykaneko0929@gmail.com>
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7795: Add HS-USB ch3 clock
-Date: Thu, 20 Apr 2017 02:46:25 +0900
-Message-Id: <1492624001-3758-5-git-send-email-ykaneko0929@gmail.com>
+Return-Path: <Jose.Abreu@synopsys.com>
+Subject: Re: [PATCH v3] clk/axs10x: introduce AXS10X pll driver
+To: Vlad Zakharov <Vladislav.Zakharov@synopsys.com>,
+	<linux-clk@vger.kernel.org>
+References: <1492775151-20059-1-git-send-email-vzakhar@synopsys.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-snps-arc@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Message-ID: <55592751-9de4-af5a-792c-2209be535f44@synopsys.com>
+Date: Fri, 21 Apr 2017 13:25:25 +0100
+MIME-Version: 1.0
+In-Reply-To: <1492775151-20059-1-git-send-email-vzakhar@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Vlad,
 
-This patch adds valid HS-USB ch3 clock from R8A7795 ES2.0 SoC.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
+On 21-04-2017 12:45, Vlad Zakharov wrote:
+> AXS10X boards manages it's clocks using various PLLs. These PLL has same
+> dividers and corresponding control registers mapped to different addresses.
+> So we add one common driver for such PLLs.
+>
+> Each PLL on AXS10X board consist of three dividers: IDIV, FBDIV and
+> ODIV. Output clock value is managed using these dividers.
+>
+> We add pre-defined tables with supported rate values and appropriate
+> configurations of IDIV, FBDIV and ODIV for each value.
+>
+> As of today we add support for PLLs that generate clock for the
+> following devices:
+>  * ARC core on AXC CPU tiles.
+>  * ARC PGU on ARC SDP Mainboard.
+> and more to come later.
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Vlad Zakharov <vzakhar@synopsys.com>
+> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> ---
+> Changes v2..v3
+>   - replaced complex data structures with simple cfg tables
+>   - replaced non-hw based provider and clk registration functions with hw-based
+>   - fixed typos and minor code styling issues
+>
+>  .../devicetree/bindings/clock/snps,pll-clock.txt   |  28 ++
+>  MAINTAINERS                                        |   6 +
+>  drivers/clk/axs10x/Makefile                        |   1 +
+>  drivers/clk/axs10x/pll_clock.c                     | 334 +++++++++++++++++++++
+>  4 files changed, 369 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/snps,pll-clock.txt
+>  create mode 100644 drivers/clk/axs10x/pll_clock.c
+>
 
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+[snip]
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index fd4dbc6..41cd108 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -197,6 +197,7 @@ enum clk_ids {
- 	DEF_MOD("ehci1",		 702,	R8A7795_CLK_S3D4),
- 	DEF_MOD("ehci0",		 703,	R8A7795_CLK_S3D4),
- 	DEF_MOD("hsusb",		 704,	R8A7795_CLK_S3D4),
-+	DEF_MOD("hsusb3",		 705,	R8A7795_CLK_S3D4),
- 	DEF_MOD("csi21",		 713,	R8A7795_CLK_CSI0), /* ES1.x */
- 	DEF_MOD("csi20",		 714,	R8A7795_CLK_CSI0),
- 	DEF_MOD("csi41",		 715,	R8A7795_CLK_CSI0),
--- 
-1.9.1
+>  
+> +SYNOPSYS ARC SDP clock driver
+> +M:	Vlad Zakharov <vzakhar@synopsys.com>
+> +S:	Supported
+> +F:	drivers/clk/axs10x/*
+
+Acked-by: Jose Abreu <joabreu@synopsys.com>
+
+Best regards,
+Jose Miguel Abreu
+
+> +F:	Documentation/devicetree/bindings/clock/snps,pll-clock.txt
+> +
+>  SYSTEM CONFIGURATION (SYSCON)
+>  M:	Lee Jones <lee.jones@linaro.org>
+>  M:	Arnd Bergmann <arnd@arndb.de>
+>
