@@ -1,104 +1,52 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 12 Apr 2017 08:02:45 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: mturquette@baylibre.com, lee.jones@linaro.org, xuwei5@hisilicon.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V2] clk: hi6220: Add the hi655x's pmic clock
-Message-ID: <20170412150245.GK7065@codeaurora.org>
-References: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1492624001-3758-20-git-send-email-ykaneko0929@gmail.com>
+References: <1492624001-3758-20-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 21 Apr 2017 16:05:07 +0200
+Message-ID: <CAMuHMdWWz5OiTFRjePk2fZogjn3bvxrar6ig6PYR1da=xDWkaA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add Z clock
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/08, Daniel Lezcano wrote:
->  
->  Example:
->  	pmic: pmic@f8000000 {
-> @@ -24,4 +29,5 @@ Example:
->  		interrupt-controller;
->  		#interrupt-cells = <2>;
->  		pmic-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
-> +		clock-cells = <0>;
+On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds Z clock for R8A7796 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> ---
+> This patch is based on the clk-next branch of linux-clk tree.
+>
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> index 877fc75..a5399f7 100644
+> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> @@ -74,6 +74,7 @@ enum clk_ids {
+>         DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
+>
+>         /* Core Clock Outputs */
+> +       DEF_BASE("z",           R8A7796_CLK_Z,     CLK_TYPE_GEN3_Z, CLK_PLL0),
 
-Should be #clock-cells instead.
+See my comment about the patch for r8a7795.
 
->  	}
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index 92c12b8..c19983a 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -36,6 +36,7 @@ obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
->  obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
->  obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
->  obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
-> +obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
->  obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
->  obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
->  obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
-> diff --git a/drivers/clk/clk-hi655x.c b/drivers/clk/clk-hi655x.c
-> new file mode 100644
-> index 0000000..b2bea32
-> --- /dev/null
-> +++ b/drivers/clk/clk-hi655x.c
-> @@ -0,0 +1,140 @@
-> +
-> +static int hi655x_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct device *parent = pdev->dev.parent;
-> +	struct hi655x_pmic *hi655x = dev_get_drvdata(parent);
-> +	struct clk_init_data *hi655x_clk_init;
+Gr{oetje,eeting}s,
 
-This can just go onto the stack? We don't need it around after
-probe.
+                        Geert
 
-> +	struct hi655x_clk *hi655x_clk;
-> +	const char *clk_name = "hi655x-clk";
-> +	int ret;
-> +
-> +	hi655x_clk = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk), GFP_KERNEL);
-> +	if (!hi655x_clk)
-> +		return -ENOMEM;
-> +
-> +	hi655x_clk_init = devm_kzalloc(&pdev->dev, sizeof(*hi655x_clk_init),
-> +				       GFP_KERNEL);
-> +	if (!hi655x_clk_init)
-> +		return -ENOMEM;
-> +
-> +	of_property_read_string_index(parent->of_node, "clock-output-names",
-> +				      0, &clk_name);
-> +
-> +	hi655x_clk_init->name	= clk_name;
-> +	hi655x_clk_init->ops	= &hi655x_clk_ops;
-> +
-> +	hi655x_clk->clk_hw.init	= hi655x_clk_init;
-> +	hi655x_clk->hi655x	= hi655x;
-> +
-> +	platform_set_drvdata(pdev, hi655x_clk);
-> +
-> +	ret = devm_clk_hw_register(&pdev->dev, &hi655x_clk->clk_hw);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
-> +				     &hi655x_clk->clk_hw);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = clk_hw_register_clkdev(&hi655x_clk->clk_hw, clk_name, NULL);
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Missed this last time. Do you use this clkdev lookup? The name is
-usually supposed to be based on what the device is expecting,
-instead of clk_name, and we would want some device name for the
-third argument here.
-
-> +	if (ret)
-> +		of_clk_del_provider(parent->of_node);
-> +
-> +	return ret;
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
