@@ -1,37 +1,51 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 5 Apr 2017 14:52:26 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] clk: stm32f4: fix timeout management for pll and
- ready gate
-Message-ID: <20170405215226.GG7065@codeaurora.org>
-References: <1489652201-19889-1-git-send-email-gabriel.fernandez@st.com>
- <1489652201-19889-3-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1489652201-19889-3-git-send-email-gabriel.fernandez@st.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAMuHMdVYA9z0DFsaj662=E3+3b1QCnWHYzEKZ23sykKbXu4Ong@mail.gmail.com>
+References: <1492624001-3758-9-git-send-email-ykaneko0929@gmail.com> <CAMuHMdVYA9z0DFsaj662=E3+3b1QCnWHYzEKZ23sykKbXu4Ong@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 21 Apr 2017 15:06:47 +0200
+Message-ID: <CAMuHMdW6wV01BzCwJEaZXqmqtp_yDNZN8pHuGe9BT647iFb7Cg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add USB-DMAC clocks
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/16, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> Use a classic polling to test bit ready.
-> And the shift of the bit ready of LSE & LSI were wrongs.
-> 
-> Fixes: 861adc44d290 ("clk: stm32f4: Add LSI & LSE clocks")
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
+On Thu, Apr 20, 2017 at 8:36 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+>> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+>>
+>> This patch adds USB-DMAC{0,1} clocks for R8A7796 SoC.
+>>
+>> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+>> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>> ---
+>> This patch is based on the clk-next branch of linux-clk tree.
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> I.e. will queue in clk-renesas-for-v4.13.
 
-Applied to clk-next
+and after correcting sort order:
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> >         DEF_MOD("rwdt",                  402,   R8A7796_CLK_R),
+> > +       DEF_MOD("usb-dmac0",             330,   R8A7796_CLK_S3D1),
+> > +       DEF_MOD("usb-dmac1",             331,   R8A7796_CLK_S3D1),
+> >         DEF_MOD("intc-ap",               408,   R8A7796_CLK_S3D1),
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
