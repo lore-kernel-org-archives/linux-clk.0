@@ -1,52 +1,48 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:53608 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752677AbdDETnP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Apr 2017 15:43:15 -0400
-Date: Wed, 5 Apr 2017 12:43:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: khilman@baylibre.com, carlo@caione.org,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] clk: meson-gxbb: Add MALI clocks
-Message-ID: <20170405194313.GM18246@codeaurora.org>
-References: <1490177935-9646-1-git-send-email-narmstrong@baylibre.com>
- <1490177935-9646-3-git-send-email-narmstrong@baylibre.com>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34565 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423299AbdDUSGq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2017 14:06:46 -0400
+Date: Fri, 21 Apr 2017 20:01:34 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, jy0922.shim@samsung.com,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?=
+        <b.zolnierkie@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, robh+dt@kernel.org
+Subject: Re: Applied "ASoC: Add Odroid sound DT bindings documentation" to
+ the asoc tree
+Message-ID: <20170421180134.arna3kvjh2kn6iz5@kozik-lap>
+References: <1492795191-31298-6-git-send-email-s.nawrocki@samsung.com>
+ <E1d1cLy-0001qc-PC@debutante>
+ <CAJKOXPebDt030tcdBGya4Wpm8HCvMqyM7qJzDvibmvnMttH-FA@mail.gmail.com>
+ <20170421175800.qiwvr46phfafqi75@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1490177935-9646-3-git-send-email-narmstrong@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20170421175800.qiwvr46phfafqi75@sirena.org.uk>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/22, Neil Armstrong wrote:
-> +/*
-> + * The MALI IP is clocked by two identical clocks (mali_0 and mali_1)
-> + * muxed by a glitch-free switch.
-> + */
-> +
-> +static u32 mux_table_mali_0_1[] = {0, 1, 2, 3, 4, 5, 6, 7};
-> +static const char *gxbb_mali_0_1_parent_names[] = {
+On Fri, Apr 21, 2017 at 06:58:00PM +0100, Mark Brown wrote:
+> On Fri, Apr 21, 2017 at 07:31:42PM +0200, Krzysztof Kozlowski wrote:
+> 
+> > Although Sylwester is known of writing good quality code and can be
+> > trusted but he posted it just 9 minutes ago. Isn't it a little bit too
+> > fast to apply? I just finished reading cover letter but didn't manage
+> > to start looking at the rest. :)
+> 
+> It's pretty standard boilerplate stuff, there's not much in there to
+> review and Sylwester is one of the maintainers listed for this code so I
+> wasn't particularly expecting extra review.
 
-const char * const?
+Okay then. Probably it was one of fastest applies. :)
 
-> +	"xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
-> +	"fclk_div4", "fclk_div3", "fclk_div5"
-> +};
-> +
-[..]
-> +	},
-> +};
-> +
-> +static u32 mux_table_mali[] = {0, 1};
-> +static const char *gxbb_mali_parent_names[] = {
+Best regards,
+Krzysztof
 
-It's a pattern, so I can only suspect something else is going on.
 
-> +	"mali_0", "mali_1"
-> +};
-> +
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
