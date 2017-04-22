@@ -1,63 +1,38 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 21 Apr 2017 19:49:36 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 3/5] clk: mvebu: Use kcalloc() in two functions
+Message-ID: <20170422024936.GR7065@codeaurora.org>
+References: <8af5ccb0-f7c1-297c-2661-8ced61302c37@users.sourceforge.net>
+ <6d6837ee-ea98-00cc-faea-cfa2a556109b@users.sourceforge.net>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1493141328-28201-1-git-send-email-geert+renesas@glider.be>
-References: <1493141328-28201-1-git-send-email-geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 27 Apr 2017 14:43:24 +0200
-Message-ID: <CAMuHMdU+o15+7jZp46KgushRQvyJ=j1btZAu1+e3h4vr4h7Vng@mail.gmail.com>
-Subject: Re: [PATCH] clk: Provide dummy of_clk_get_from_provider() for compile-testing
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, John Crispin <john@phrozen.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <6d6837ee-ea98-00cc-faea-cfa2a556109b@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 25, 2017 at 7:28 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> When CONFIG_ON=n, dummies are provided for of_clk_get() and
-> of_clk_get_by_name(), but not for of_clk_get_from_provider().
->
-> Provide a dummy for the latter, to improve the ability to do
-> compile-testing.
->
-> Fixes: 766e6a4ec602d0c1 ("clk: add DT clock binding support")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On 04/19, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 19 Apr 2017 21:08:54 +0200
+> 
+> * Multiplications for the size determination of memory allocations
+>   indicated that array data structures should be processed.
+>   Thus use the corresponding function "kcalloc".
+> 
+>   This issue was detected by using the Coccinelle software.
+> 
+> * Replace the specification of data types by pointer dereferences
+>   to make the corresponding size determination a bit safer according to
+>   the Linux coding style convention.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  include/linux/clk.h | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index e9d36b3e49de5b1b..3ed97abb5cbb7f94 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -539,6 +539,10 @@ static inline struct clk *of_clk_get_by_name(struct device_node *np,
->  {
->         return ERR_PTR(-ENOENT);
->  }
-> +static inline struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
-> +{
-> +       return ERR_PTR(-ENOENT);
-> +}
->  #endif
 
-0day reported an issue with arch/mips/lantiq/clk.c, which defines its own
-dummy version:
+Applied to clk-next
 
-| arch/mips//lantiq/clk.c:163:13: error: redefinition of
-'of_clk_get_from_provider'
-
-I will add its removal to my v2.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
