@@ -1,99 +1,81 @@
-Return-Path: <niklas.soderlund@ragnatech.se>
-Return-Path: <niklas.soderlund@ragnatech.se>
-Date: Fri, 28 Apr 2017 14:42:11 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 03/10] clk: renesas: Add r8a7791 CPG Core Clock
- Definitions
-Message-ID: <20170428124211.GG1532@bigcity.dyn.berto.se>
-References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
- <1493139200-27396-4-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33934 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1425284AbdDVP1J (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Apr 2017 11:27:09 -0400
+Date: Sat, 22 Apr 2017 17:27:05 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, cw00.choi@samsung.com,
+        javier@osg.samsung.com, jy0922.shim@samsung.com,
+        broonie@kernel.org, robh+dt@kernel.org, b.zolnierkie@samsung.com
+Subject: Re: [PATCH RFC 2/7] clk: samsung: Add definitions of some audio
+ related clocks
+Message-ID: <20170422152705.mvnycub4unjlseeq@kozik-lap>
+References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
+ <CGME20170421172023epcas1p3dd7397c8c61daa548ffac88a76e53113@epcas1p3.samsung.com>
+ <1492795191-31298-3-git-send-email-s.nawrocki@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1493139200-27396-4-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1492795191-31298-3-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
-
-On 2017-04-25 18:53:13 +0200, Geert Uytterhoeven wrote:
-> Add all R-Car M2-W Clock Pulse Generator Core Clock Outputs, as listed
-> in Table 7.2b ("List of Clocks [R-Car M2-W/M2-N]") of the R-Car Gen2
-> Hardware User's Manual rev. 2.00.
+On Fri, Apr 21, 2017 at 07:19:46PM +0200, Sylwester Nawrocki wrote:
+> This patch adds missing definitions of mux clocks required for using
+> EPLL as the audio subsystem root clock on exynos5420/exynos5422 SoCs.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->  include/dt-bindings/clock/r8a7791-cpg-mssr.h | 48 ++++++++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
->  create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
+>  drivers/clk/samsung/clk-exynos5420.c   | 13 ++++++++-----
+>  include/dt-bindings/clock/exynos5420.h |  3 +++
+>  2 files changed, 11 insertions(+), 5 deletions(-)
 > 
-> diff --git a/include/dt-bindings/clock/r8a7791-cpg-mssr.h b/include/dt-bindings/clock/r8a7791-cpg-mssr.h
-> new file mode 100644
-> index 0000000000000000..e8823410c01c5a09
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/r8a7791-cpg-mssr.h
-> @@ -0,0 +1,48 @@
-> +/*
-> + * Copyright (C) 2015 Renesas Electronics Corp.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + */
-> +
-> +#ifndef __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__
-> +#define __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__
-> +
-> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
-> +
-> +/* r8a7791 CPG Core Clocks */
-> +#define R8A7791_CLK_Z			0
-> +#define R8A7791_CLK_ZG			1
-> +#define R8A7791_CLK_ZTR			2
-> +#define R8A7791_CLK_ZTRD2		3
-> +#define R8A7791_CLK_ZT			4
-> +#define R8A7791_CLK_ZX			5
-> +#define R8A7791_CLK_ZS			6
-> +#define R8A7791_CLK_HP			7
-> +#define R8A7791_CLK_I			8
-> +#define R8A7791_CLK_B			9
-> +#define R8A7791_CLK_LB			10
-> +#define R8A7791_CLK_P			11
-> +#define R8A7791_CLK_CL			12
-> +#define R8A7791_CLK_M2			13
-> +#define R8A7791_CLK_ADSP		14
-> +#define R8A7791_CLK_ZB3			15
-> +#define R8A7791_CLK_ZB3D2		16
-> +#define R8A7791_CLK_DDR			17
-> +#define R8A7791_CLK_SDH			18
-> +#define R8A7791_CLK_SD0			19
-> +#define R8A7791_CLK_SD2			20
-> +#define R8A7791_CLK_SD3			21
-> +#define R8A7791_CLK_MMC0		22
-> +#define R8A7791_CLK_MP			23
-> +#define R8A7791_CLK_SSP			24
-> +#define R8A7791_CLK_SSPRS		25
-> +#define R8A7791_CLK_QSPI		26
-> +#define R8A7791_CLK_CP			27
-> +#define R8A7791_CLK_RCAN		28
-> +#define R8A7791_CLK_R			29
-> +#define R8A7791_CLK_OSC			30
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index cdc092a..87c711a 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -477,8 +477,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
+>  					"mout_sclk_mpll", "ff_dout_spll2",
+>  					"mout_sclk_spll", "mout_sclk_epll"};
+>  PNAME(mout_mau_epll_clk_5800_p)	= { "mout_sclk_epll", "mout_sclk_dpll",
+> -					"mout_sclk_mpll",
+> -					"ff_dout_spll2" };
+> +					"mout_sclk_mpll", "ff_dout_spll2" };
 
-The last two are called RCLR and OSCCLK in the Table 7.2b ("List of 
-Clocks [R-Car M2-W/M2-N]"). I'm sure this is intentional on your side, 
-and if so:
+Please split up cleaning from adding new features/clocks. While in
+cleaning mode, you might also consider fixing some checkpatch errors and
+warnings. There are few (without --strict).
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>  PNAME(mout_group8_5800_p)	= { "dout_aclk432_scaler", "dout_sclk_sw" };
+>  PNAME(mout_group9_5800_p)	= { "dout_osc_div", "mout_sw_aclk432_scaler" };
+>  PNAME(mout_group10_5800_p)	= { "dout_aclk432_cam", "dout_sclk_sw" };
+> @@ -487,6 +486,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
+>  PNAME(mout_group13_5800_p)	= { "dout_osc_div", "mout_sw_aclkfl1_550_cam" };
+>  PNAME(mout_group14_5800_p)	= { "dout_aclk550_cam", "dout_sclk_sw" };
+>  PNAME(mout_group15_5800_p)	= { "dout_osc_div", "mout_sw_aclk550_cam" };
+> +PNAME(mout_group16_5800_p)	= { "dout_osc_div", "mout_mau_epll_clk" };
+>  
+>  /* fixed rate clocks generated outside the soc */
+>  static struct samsung_fixed_rate_clock
+> @@ -536,8 +536,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
+>  
+>  	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
+>  			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
+> -	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p, SRC_TOP7,
+> -			20, 2),
+> +	MUX(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
+> +							SRC_TOP7, 20, 2),
 
-> +
-> +#endif /* __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__ */
-> -- 
-> 2.7.4
-> 
+How about not changing the indention level of new line? On the other
+hand, if you want to change it so maybe align it with opening
+parenthesis?
 
--- 
-Regards,
-Niklas Söderlund
+(same in other places below)
+
+Best regards,
+Krzysztof
+
