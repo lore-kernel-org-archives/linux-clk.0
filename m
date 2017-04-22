@@ -1,28 +1,28 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Apr 2017 19:03:45 -0700
+Date: Fri, 21 Apr 2017 19:38:48 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: mturquette@baylibre.com, lee.jones@linaro.org, xuwei5@hisilicon.com,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V3 1/2] clk: hi6220: Add the hi655x's pmic clock
-Message-ID: <20170422020345.GB7065@codeaurora.org>
-References: <1492449567-31399-1-git-send-email-daniel.lezcano@linaro.org>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: fix SS control on PLL enable/disable
+Message-ID: <20170422023848.GJ7065@codeaurora.org>
+References: <1492691989-30539-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1492449567-31399-1-git-send-email-daniel.lezcano@linaro.org>
+In-Reply-To: <1492691989-30539-1-git-send-email-pdeschrijver@nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/17, Daniel Lezcano wrote:
-> The hi655x multi function device is a PMIC providing regulators.
+On 04/20, Peter De Schrijver wrote:
+> PLL SS was only controlled when setting the PLL rate, not when the PLL
+> itself is enabled or disabled. This means that if the PLL rate was set
+> before the PLL is enabled, SS will not be enabled, even when configured.
 > 
-> The PMIC also provides a clock for the WiFi and the Bluetooth, let's implement
-> this clock in order to add it in the hi655x MFD and allow proper wireless
-> initialization.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Applied to clk-next
+Fixes tag? Or this isn't a problem right now, just future fix?
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
