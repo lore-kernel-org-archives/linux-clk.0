@@ -1,40 +1,47 @@
-Return-Path: <Alexey_Firago@mentor.com>
-From: Alexey Firago <alexey_firago@mentor.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<marek.vasut@gmail.com>, <geert@linux-m68k.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-CC: Alexey Firago <alexey_firago@mentor.com>
-Subject: [PATCH v3 0/3] clk: Add support for IDT 5P49V5935
-Date: Thu, 6 Apr 2017 12:15:27 +0300
-Message-ID: <1491470130-6655-1-git-send-email-alexey_firago@mentor.com>
+Return-Path: <net147@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <ac8c4dab4f160ec605d52120517774bf1de87c2e.1490545262.git-series.plaes@plaes.org>
+References: <cover.a58841efb571d44013658505f3fa140536a89d1c.1490545262.git-series.plaes@plaes.org>
+ <ac8c4dab4f160ec605d52120517774bf1de87c2e.1490545262.git-series.plaes@plaes.org>
+From: Jonathan Liu <net147@gmail.com>
+Date: Sun, 23 Apr 2017 00:46:24 +1000
+Message-ID: <CANwerB3CySDKDF0Q5g4h5yaKBEF2S_rmp8ikR2HgGyf+RXzgAQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 1/6] clk: sunxi-ng: Add sun4i/sun7i CCU driver
+To: plaes@plaes.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree <devicetree@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-sunxi <linux-sunxi@googlegroups.com>, Icenowy Zheng <icenowy@aosc.xyz>,
+	Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This series adds support for IDT VersaClock 5P49V5935 programmable clock
-generator to the existing clk-versaclock5 driver.
+Hi Priit,
 
-Patches were verified on Avnet UltraZed-EG board with IO Carrier Card.
+On 27 March 2017 at 04:20, Priit Laes <plaes@plaes.org> wrote:
+> +static struct ccu_nkmp pll_ve_clk = {
+> +       .enable         = BIT(31),
+> +       .n              = _SUNXI_CCU_MULT_OFFSET(8, 5, 0),
+> +       .k              = _SUNXI_CCU_MULT(4, 2),
+> +       .m              = _SUNXI_CCU_DIV(0, 2),
+> +       .p              = _SUNXI_CCU_DIV(16, 2),
+> +       .common         = {
+> +               .reg            = 0x018,
+> +               .hw.init        = CLK_HW_INIT("pll-ve",
+> +                                             "hosc",
+> +                                             &ccu_nkmp_ops,
+> +                                             0),
+> +       },
+> +};
 
-Changes in V2:
-- Introduce vc5_chip_info structure describing chip features
-- Set vc5_chip_info for the supported chips using clk_vc5_of_match[].data
-- Add 5P49V5935 support using vc5_chip_info approach
-- Fix idx comparison in vc5_of_clk_get ('>' to '>=')
+pll-ve is a NKMP clock in A10 but a NK clock in A20.
 
-Changes in V3:
-- Change type of clk_fod_cnt and clk_out_cnt to unsigned int
-- Add missed 'const' to vc5_chip_info instance declaration
-- Use of_device_get_match_data() to initialize vc5_chip_info on probe 
+> +static const char *const hdmi_parents[] = { "pll-video0", "pll-video0-2x",
+> +                                           "pll-vide01", "pll-video1-2x" };
 
-Alexey Firago (3):
-  clk: vc5: Add structure to describe particular chip features
-  clk: vc5: Add bindings for IDT VersaClock 5P49V5935
-  clk: vc5: Add support for IDT VersaClock 5P49V5935
+"pll-vide01" should be "pll-video1".
 
- .../devicetree/bindings/clock/idt,versaclock5.txt  | 16 ++++-
- drivers/clk/clk-versaclock5.c                      | 76 +++++++++++++++++-----
- 2 files changed, 71 insertions(+), 21 deletions(-)
-
--- 
-2.7.4
+Regards,
+Jonathan
