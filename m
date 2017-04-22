@@ -1,65 +1,62 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1491810121.3480.36.camel@baylibre.com>
-Subject: [GIT PULL] Amlogic clock driver updates for v4.12 - 2nd batch
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, Neil Armstrong
-	 <narmstrong@baylibre.com>, "linux-clk@vger.kernel.org"
-	 <linux-clk@vger.kernel.org>, "open list:ARM/Amlogic Meson..."
-	 <linux-amlogic@lists.infradead.org>
-Date: Mon, 10 Apr 2017 09:42:01 +0200
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 21 Apr 2017 19:55:47 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
+	broonie@kernel.org, yibin.gong@nxp.com, rjw@rjwysocki.net,
+	viresh.kumar@linaro.org, mturquette@baylibre.com,
+	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
+	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com
+Subject: Re: [RFC PATCH 2/3] clk: add managed version of clk_bulk_get
+Message-ID: <20170422025547.GT7065@codeaurora.org>
+References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
+ <1491969809-20154-3-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1491969809-20154-3-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear clock maintainers,
+On 04/12, Dong Aisheng wrote:
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index 1d05b66..3fc6010 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -278,11 +278,25 @@ struct clk *clk_get(struct device *dev, const char *id);
+>   *
+>   * clk_bulk_get should not be called from within interrupt context.
+>   */
+> -
 
-Below is a request to pull a 2nd batch of update to the Amlogic clock driver. It
-is based on the previous PR sent by Kevin.
+Should be in previous patch?
 
-Cheers
+>  int __must_check clk_bulk_get(struct device *dev, int num_clks,
+>  			      struct clk_bulk_data *clks);
+>  
+>  /**
+> + * devm_clk_bulk_get - managed get multiple clk consumers
+> + * @dev: device for clock "consumer"
+> + * @num_clks: the number of clk_bulk_data
+> + * @clks: the clk_bulk_data table of consumer
+> + *
+> + * Return 0 on success, an errno on failure.
+> + *
+> + * This helper function allows drivers to get several regulator
 
-The following changes since commit 3a429818a2e48928ae0114df5fb3b0612dd57001:
+s/regulator/clk/
 
-  Merge branch 'v4.12/clk-drivers' into v4.12/clk (2017-04-04 15:58:11 -0700)
+> + * consumers in one operation with management, the clks will
+> + * automatically be freed when the device is unbound.
+> + */
+> +int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
 
-are available in the git repository at:
+Thanks for the __must_check. We need to add more __must_check to
+clk APIs.
 
-  git://github.com/BayLibre/clk-meson.git tags/meson-clk-for-4.12
+> +				   struct clk_bulk_data *clks);
+> +
+> +/**
 
-for you to fetch changes up to b609338b26f5653aa211fc7af83477e2df6e3f0b:
-
-  clk: meson: mpll: use 64bit math in rate_from_params (2017-04-07 17:45:30
-+0200)
-
-----------------------------------------------------------------
-2nd Amlogic clock driver update for 4.12:
-* Protect against holes in onecell_data
-* Fix divison by zero and overflow in the mpll driver
-* Add audio clock divider driver for i2s clocks
-* Add i2s and spdif master clocks
-
-----------------------------------------------------------------
-Jerome Brunet (6):
-      MAINTAINERS: Add maintainers for the meson clock driver
-      clk: meson: gxbb: protect against holes in the onecell_data array
-      clk: meson: add audio clock divider support
-      clk: meson: gxbb: add cts_amclk
-      clk: meson: gxbb: add cts_mclk_i958
-      clk: meson: gxbb: add cts_i958 clock
-
-Martin Blumenstingl (2):
-      clk: meson: mpll: fix division by zero in rate_from_params
-      clk: meson: mpll: use 64bit math in rate_from_params
-
- MAINTAINERS                           |  10 +++
- drivers/clk/meson/Makefile            |   2 +-
- drivers/clk/meson/clk-audio-divider.c | 144 ++++++++++++++++++++++++++++++++++
- drivers/clk/meson/clk-mpll.c          |  26 +++---
- drivers/clk/meson/clkc.h              |  10 +++
- drivers/clk/meson/gxbb.c              | 144 ++++++++++++++++++++++++++++++++++
- drivers/clk/meson/gxbb.h              |   9 ++-
- 7 files changed, 332 insertions(+), 13 deletions(-)
- create mode 100644 drivers/clk/meson/clk-audio-divider.c
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
