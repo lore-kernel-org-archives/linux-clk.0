@@ -1,52 +1,44 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <arndbergmann@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20170411133743.21073-1-colin.king@canonical.com>
-References: <20170411133743.21073-1-colin.king@canonical.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 20 Apr 2017 16:11:15 +0200
-Message-ID: <CAPDyKFrT3XfMqE7_f3x=7hztATXTsGt-oUe=ehrNLcb33WkBdg@mail.gmail.com>
-Subject: Re: [PATCH] clk: apn806: fix spelling mistake: "mising" -> "missing"
-To: Colin King <colin.king@canonical.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>, Paul Gortmaker <paul.gortmaker@windriver.com>,
-	Konstantin Porotchkin <kostap@marvell.com>, linux-clk <linux-clk@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Sender: arndbergmann@gmail.com
+In-Reply-To: <20170422015820.GZ7065@codeaurora.org>
+References: <20170419174507.4055014-1-arnd@arndb.de> <7f0c996e-df53-ffb7-2c02-2f7fa66d2b94@ti.com>
+ <20170422015820.GZ7065@codeaurora.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Sat, 22 Apr 2017 14:08:19 +0200
+Message-ID: <CAK8P3a0CYxRqX-eNrsFCc_BotVodgR7zZ1i3jLefpst_yj7umw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: ti: divider: try to fix ti_clk_register_divider
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Tero Kristo <t-kristo@ti.com>, Michael Turquette <mturquette@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>, Keerthy <j-keerthy@ti.com>, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 11 April 2017 at 15:37, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Sat, Apr 22, 2017 at 3:58 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 04/20, Tero Kristo wrote:
+>> On 19/04/17 20:44, Arnd Bergmann wrote:
+>> The failing piece of code is only executed for legacy boot mode
+>> OMAP3 right now, which could be potentially stripped out of the
+>> kernel already (I think Tony removed the support for non-DT boot
+>> OMAP3 boards already...?) This explains why I didn't notice the
+>> issue in my local testing either.
+>>
+>> >
+>> >Fixes: d96f774b2538 ("clk: ti: divider: add support for legacy divider init")
+>> >Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>
+>> So, this patch itself is fine, but the desc should be updated to
+>> reflect the above somehow.
+>>
+>> And the "Fixes:" line should be updated to point to the commit
+>> mentioned above also.
+>>
 >
-> trivial fix to spelling mistake in dev_warn message
->
-> Fixes: f109ca864414dc ("clk: apn806: Turn the eMMC clock as optional for dts backwards compatible")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Waiting for Arnd to agree. I can also rename reg_setup to reg.
 
-Thanks, applied for next at mmc tree!
+Yes, it would be great if you could update the patch description that way
+so I don't have to send a new version. Thanks,
 
-Kind regards
-Uffe
-
-> ---
->  drivers/clk/mvebu/ap806-system-controller.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
-> index 103fe18a3c29..8155baccc98e 100644
-> --- a/drivers/clk/mvebu/ap806-system-controller.c
-> +++ b/drivers/clk/mvebu/ap806-system-controller.c
-> @@ -140,7 +140,7 @@ static int ap806_syscon_clk_probe(struct platform_device *pdev)
->                                           4, &name)) {
->                 ap806_clk_data.clk_num--;
->                 dev_warn(&pdev->dev,
-> -                        "eMMC clock mising: update the device tree!\n");
-> +                        "eMMC clock missing: update the device tree!\n");
->         } else {
->                 ap806_clks[4] = clk_register_fixed_factor(NULL, name,
->                                                           fixedclk_name,
-> --
-> 2.11.0
->
+     Arnd
