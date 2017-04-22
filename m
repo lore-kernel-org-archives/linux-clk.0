@@ -1,63 +1,49 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Wed, 12 Apr 2017 09:00:38 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com, xuwei5@hisilicon.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V2] clk: hi6220: Add the hi655x's pmic clock
-Message-ID: <20170412080038.kk4vrjhvr3eao26q@dell>
-References: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
- <20170411140613.jvhzsvrxa4evwxjh@dell>
- <20170411211936.GT2078@mai>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 21 Apr 2017 20:04:19 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
+	broonie@kernel.org, yibin.gong@nxp.com, rjw@rjwysocki.net,
+	viresh.kumar@linaro.org, mturquette@baylibre.com,
+	shawnguo@kernel.org, fabio.estevam@nxp.com, anson.huang@nxp.com,
+	ping.bai@nxp.com, leonard.crestez@nxp.com, octavian.purdila@nxp.com
+Subject: Re: [RFC PATCH 0/3] clk: introduce clk_bulk_get accessories
+Message-ID: <20170422030419.GV7065@codeaurora.org>
+References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20170411211936.GT2078@mai>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 11 Apr 2017, Daniel Lezcano wrote:
-
-> On Tue, Apr 11, 2017 at 03:06:13PM +0100, Lee Jones wrote:
-> > On Sat, 08 Apr 2017, Daniel Lezcano wrote:
-> > 
-> > > The hi655x multi function device is a PMIC providing regulators.
-> > > 
-> > > The PMIC also provides a clock for the WiFi and the Bluetooth, let's implement
-> > > this clock in order to add it in the hi655x MFD and allow proper wireless
-> > > initialization.
-> > > 
-> > > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> > > ---
-> > > 
-> > > Changelog:
-> > > 
-> > >  V2:
-> > >     - Added COMPILE_TEST option, compiled on x86
-> > >     - Removed useless parenthesis
-> > >     - Used of_clk_hw_simple_get() instead of deref dance
-> > >     - Do bailout if the clock-names is not specified
-> > >     - Rollback on error
-> > >     - Folded mfd line change and binding
-> > 
-> > Why did you do that?
+On 04/12, Dong Aisheng wrote:
 > 
-> I thought as the V1 had comments you would have waited for the V2 and as it was
-> trivial enough, it could be folded and picked up via the clk tree via with your
-> acked-by.
-
-It's *always* a good idea to keep patches subsystem orthogonal if
-at all possible.
-
-> I realize it was not a good idea.
+> Together with the err path handling for each clocks, it does make
+> things a bit ugly.
 > 
-> Do you want to drop it from your tree or shall I resubmit a V3 without the mfd
-> change?
+> Since we already have regulator_bulk_get accessories, i thought we
+> probably could introduce clk_bulk_get as well to handle such case to
+> ease the driver owners' life. 
+> 
+> Besides IMX cpufreq driver, there is also some similar cases
+> in kernel which could befinit from this api as well.
+> e.g.
+> drivers/cpufreq/tegra124-cpufreq.c
+> drivers/cpufreq/s3c2412-cpufreq.c
+> sound/soc/samsung/smdk_spdif.c
+> arch/arm/mach-omap1/serial.c
+> ...
+> 
+> And actually, if we handle clocks more than 3, then it might be
+> worthy to try, which there is quite many manay in kernel and
+> that probably could save a lot codes.
+> 
+> This is a RFC patch intending to bring up the idea to discuss.
+> 
 
-The latter please.
+Idea seems fine to me. Please also add Russell King, as we need
+an ack from him on the clk.h API changes.
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
