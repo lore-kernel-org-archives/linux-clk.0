@@ -1,58 +1,79 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sn1nam01on0086.outbound.protection.outlook.com ([104.47.32.86]:30784
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751695AbdDKRT2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Apr 2017 13:19:28 -0400
-Message-ID: <1491931159.31718.16.camel@nxp.com>
-Subject: Re: [RFC PATCH 1/3] clk: add clk_bulk_get accessories
-From: Leonard Crestez <leonard.crestez@nxp.com>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-CC: <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@pengutronix.de>,
-        <broonie@kernel.org>, <yibin.gong@nxp.com>, <rjw@rjwysocki.net>,
-        <viresh.kumar@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <shawnguo@kernel.org>,
-        <fabio.estevam@nxp.com>, <anson.huang@nxp.com>, <ping.bai@nxp.com>,
-        <octavian.purdila@nxp.com>, <linux-clk@vger.kernel.org>
-Date: Tue, 11 Apr 2017 20:19:19 +0300
-In-Reply-To: <1491969809-20154-2-git-send-email-aisheng.dong@nxp.com>
-References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
-         <1491969809-20154-2-git-send-email-aisheng.dong@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Received: from smtp.codeaurora.org ([198.145.29.96]:39390 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1042392AbdDVCva (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2017 22:51:30 -0400
+Date: Fri, 21 Apr 2017 19:51:27 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, cw00.choi@samsung.com,
+        javier@osg.samsung.com, krzk@kernel.org, jy0922.shim@samsung.com,
+        broonie@kernel.org, robh+dt@kernel.org, b.zolnierkie@samsung.com
+Subject: Re: [PATCH RFC 1/7] clk: samsung: Add enable/disable operation for
+ PLL36XX clocks
+Message-ID: <20170422025127.GS7065@codeaurora.org>
+References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
+ <CGME20170421172016epcas5p342c16e1219c1205a44a84eaa770ad5ac@epcas5p3.samsung.com>
+ <1492795191-31298-2-git-send-email-s.nawrocki@samsung.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1492795191-31298-2-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2017-04-12 at 12:03 +0800, Dong Aisheng wrote:
-> +/**
-> + * clk_bulk_enable - ungate a bulk of clocks
-> + * @num_clks: the number of clk_bulk_data
-> + * @clks: the clk_bulk_data table being ungated
-> + *
-> + * clk_bulk_enable must not sleep
-> + * Returns 0 on success, -EERROR otherwise.
-> + */
-> +int clk_bulk_enable(int num_clks, struct clk_bulk_data *clks)
+On 04/21, Sylwester Nawrocki wrote:
+> The existing enable/disable ops for PLL35XX are made more generic
+> and used also for PLL36XX. This fixes issues in the kernel with
+> PLL36XX PLLs when the PLL has not been already enabled by bootloader.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-pll.c | 85 +++++++++++++++++++++++++------------------
+>  1 file changed, 49 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> index 5229089..10c76eb 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -23,6 +23,10 @@ struct samsung_clk_pll {
+>  	struct clk_hw		hw;
+>  	void __iomem		*lock_reg;
+>  	void __iomem		*con_reg;
+> +	/* PLL enable control bit offset in @con_reg register */
+> +	unsigned short		enable_offs;
+> +	/* PLL lock status bit offset in @con_reg register */
+> +	unsigned short		lock_offs;
+>  	enum samsung_pll_type	type;
+>  	unsigned int		rate_count;
+>  	const struct samsung_pll_rate_table *rate_table;
+> @@ -61,6 +65,34 @@ static long samsung_pll_round_rate(struct clk_hw *hw,
+>  	return rate_table[i - 1].rate;
+>  }
+>  
+> +static int samsung_pll3xxx_enable(struct clk_hw *hw)
 > +{
-> +       int ret;
-> +       int i;
+> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
+> +	u32 tmp;
 > +
-> +       for (i = 0; i < num_clks; i++) {
-> +               ret = clk_enable(clks[i].clk);
-> +               if (ret) {
-> +                       pr_err("Failed to enable clk '%s': %d\n",
-> +                               clks[i].id, ret);
-> +                       goto err;
-> +               }
-> +       }
+> +	tmp = readl_relaxed(pll->con_reg);
+> +	tmp |= BIT(pll->enable_offs);
+> +	writel_relaxed(tmp, pll->con_reg);
 > +
-> +       return 0;
-> +
-> +err:
-> +       while (--i >= 0)
-> +               clk_put(clks[i].clk);
+> +	/* wait lock time */
+> +	do {
+> +		cpu_relax();
+> +		tmp = readl_relaxed(pll->con_reg);
+> +	} while (!(tmp & BIT(pll->lock_offs)));
 
-Shouldn't this be clk_disable?
+Not a problem with this patch because we're moving code around,
+but this is a potential infinite loop that should have some sort
+of timeout so we don't sit here forever trying to see a bit
+toggle.
 
-And you can probably use clk_bulk_disable(i, clks) instead
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
