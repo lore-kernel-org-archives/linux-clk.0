@@ -1,89 +1,89 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36357 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755988AbdDRTFu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2017 15:05:50 -0400
-Subject: Re: [PATCH 2/2] ARM: dts: r8a7791: Add GyroADC bindings
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org
-References: <20170416165709.27449-1-marek.vasut+renesas@gmail.com>
- <20170416165709.27449-2-marek.vasut+renesas@gmail.com>
- <776957e7-0500-3fc2-f6bc-1b2ba0e6594c@cogentembedded.com>
-Cc: linux-clk@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <baf4dc51-3fa0-cca5-d742-56603d8cc052@gmail.com>
-Date: Tue, 18 Apr 2017 20:44:34 +0200
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Date: Sat, 22 Apr 2017 17:11:15 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 4/4] clk: samsung: s5pv210-audss: Convert to the new
+ clk_hw API
+Message-ID: <20170422151115.r3x3lyaevyh4kqp3@kozik-lap>
+References: <1492694199-9553-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170420131647eucas1p2c9c0fa48776f7af4652250e3384bf52b@eucas1p2.samsung.com>
+ <1492694199-9553-5-git-send-email-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <776957e7-0500-3fc2-f6bc-1b2ba0e6594c@cogentembedded.com>
 Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1492694199-9553-5-git-send-email-m.szyprowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/17/2017 11:19 AM, Sergei Shtylyov wrote:
-> Hello!
-
-Hi!
-
-> On 4/16/2017 7:57 PM, Marek Vasut wrote:
+On Thu, Apr 20, 2017 at 03:16:39PM +0200, Marek Szyprowski wrote:
+> Clock providers should use the new struct clk_hw based API, so convert
+> Samsung S5PV210 Audio Subsystem clock provider to the new approach.
 > 
->> Add bindings for the GyroADC block and it's associated clock.
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-s5pv210-audss.c | 50 +++++++++++++++++----------------
+>  1 file changed, 26 insertions(+), 24 deletions(-)
 > 
->    Well, I already spoke to you about the bindings on IRC...
+> diff --git a/drivers/clk/samsung/clk-s5pv210-audss.c b/drivers/clk/samsung/clk-s5pv210-audss.c
+> index c66ed2d1450e..14d2e3367878 100644
+> --- a/drivers/clk/samsung/clk-s5pv210-audss.c
+> +++ b/drivers/clk/samsung/clk-s5pv210-audss.c
+> @@ -24,9 +24,8 @@
+>  #include <dt-bindings/clock/s5pv210-audss.h>
+>  
+>  static DEFINE_SPINLOCK(lock);
+> -static struct clk **clk_table;
+>  static void __iomem *reg_base;
+> -static struct clk_onecell_data clk_data;
+> +static struct clk_hw_onecell_data *clk_data;
+>  
+>  #define ASS_CLK_SRC 0x0
+>  #define ASS_CLK_DIV 0x4
+> @@ -71,6 +70,7 @@ static int s5pv210_audss_clk_probe(struct platform_device *pdev)
+>  	const char *mout_audss_p[2];
+>  	const char *mout_i2s_p[3];
+>  	const char *hclk_p;
+> +	struct clk_hw **clk_table;
+>  	struct clk *hclk, *pll_ref, *pll_in, *cdclk, *sclk_audio;
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> @@ -80,14 +80,16 @@ static int s5pv210_audss_clk_probe(struct platform_device *pdev)
+>  		return PTR_ERR(reg_base);
+>  	}
+>  
+> -	clk_table = devm_kzalloc(&pdev->dev,
+> -				sizeof(struct clk *) * AUDSS_MAX_CLKS,
+> +	clk_data = devm_kzalloc(&pdev->dev,
+> +				sizeof(*clk_data) +
+> +				sizeof(*clk_data->hws) * AUDSS_MAX_CLKS,
+>  				GFP_KERNEL);
+> -	if (!clk_table)
+> +
+> +	if (!clk_data)
+>  		return -ENOMEM;
+>  
+> -	clk_data.clks = clk_table;
+> -	clk_data.clk_num = AUDSS_MAX_CLKS;
+> +	clk_data->num = AUDSS_MAX_CLKS;
+> +	clk_table = clk_data->hws;
+>  
+>  	hclk = devm_clk_get(&pdev->dev, "hclk");
+>  	if (IS_ERR(hclk)) {
+> @@ -116,7 +118,7 @@ static int s5pv210_audss_clk_probe(struct platform_device *pdev)
+>  	else
+>  		mout_audss_p[0] = "xxti";
+>  	mout_audss_p[1] = __clk_get_name(pll_in);
+> -	clk_table[CLK_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
+> +	clk_data->hws[CLK_MOUT_AUDSS] = clk_hw_register_mux(NULL, "mout_audss",
 
-That's fixed.
+Shouldn't it be:
+clk_table[CLK_MOUT_AUDSS]
+?
 
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->> Cc: Simon Horman <horms+renesas@verge.net.au>
->> Cc: linux-renesas-soc@vger.kernel.org
->> ---
->>  arch/arm/boot/dts/r8a7791.dtsi | 18 ++++++++++++++++++
->>  1 file changed, 18 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/r8a7791.dtsi
->> b/arch/arm/boot/dts/r8a7791.dtsi
->> index 4d0c2ce59900..1b099dbc9eef 100644
->> --- a/arch/arm/boot/dts/r8a7791.dtsi
->> +++ b/arch/arm/boot/dts/r8a7791.dtsi
->> @@ -776,6 +776,15 @@
->>          status = "disabled";
->>      };
->>
->> +    adc: adc@e6e54000 {
-> 
->    Why not label it "gyroadc:"?
-
-We can ... I don't mind either way. Shall we ?
-
->> +        compatible = "renesas,r8a7791-gyroadc", "renesas,rcar-gyroadc";
->> +        reg = <0 0xe6e54000 0 64>;
-> 
->    s/64/0x40/.
-
-The surrounding code uses 64, so I kept it consistent.
-
-> [...]
->> @@ -1133,6 +1142,13 @@
->>              clock-frequency = <0>;
->>          };
->>
->> +        /* GyroADC clock */
->> +        adc_clk: adc_clk {
-> 
->    We geberally skip the "_clk" suffix in the clock node names, so that
-> the clock name generated from the node name doesn't have this suffix.
-
-Fixed
-
-> [...]
-> 
-> MBR, Sergei
-> 
-
-
--- 
 Best regards,
-Marek Vasut
+Krzysztof
