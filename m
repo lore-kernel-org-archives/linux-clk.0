@@ -1,46 +1,39 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 10:16:39 -0700
+Date: Fri, 21 Apr 2017 18:56:24 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Tony Lindgren <tony@atomide.com>
+To: Arnd Bergmann <arnd@arndb.de>
 Cc: Tero Kristo <t-kristo@ti.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org, Paul Walmsley <paul@pwsan.com>
-Subject: Re: [PATCHv3] Documentation: dt-bindings: Add binding documentation
- for TI clkctrl clocks
-Message-ID: <20170419171639.GN7065@codeaurora.org>
-References: <20170123221702.18420-1-tony@atomide.com>
- <dca1ef84-77d1-2b58-7913-91f3b69fde6d@ti.com>
- <20170419165522.GL7065@codeaurora.org>
- <20170419170246.GA19537@atomide.com>
+	Tony Lindgren <tony@atomide.com>, Richard Watts <rrw@kynesim.co.uk>,
+	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: ti: fix linker error with !SOC_OMAP4
+Message-ID: <20170422015624.GY7065@codeaurora.org>
+References: <20170419214318.1605787-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170419170246.GA19537@atomide.com>
+In-Reply-To: <20170419214318.1605787-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/19, Tony Lindgren wrote:
-> * Stephen Boyd <sboyd@codeaurora.org> [170419 09:58]:
-> > On 02/13, Tero Kristo wrote:
-> > > On 24/01/17 00:17, Tony Lindgren wrote:
-> > > 
-> > > This binding works for me, so:
-> > > 
-> > > Acked-by: Tero Kristo <t-kristo@ti.com>
-> > > 
-> > 
-> > This wasn't in the TI clk PR. Shall I merge this to clk-next?
+On 04/19, Arnd Bergmann wrote:
+> When none of the OMAP4-generation SoCs are enabled, we run into a link
+> error for am43xx/am43xx:
 > 
-> Tero has this included in his clkctrl series and there's one typo
-> fix needed where the doc still says #clock-cells = <4> instead of <2>.
+> drivers/clk/ti/dpll.o: In function `of_ti_am3_dpll_x2_setup':
+> dpll.c:(.init.text+0xd8): undefined reference to `clkhwops_omap4_dpllmx'
 > 
-> I suggest let's wait a bit on this and let's try to get the clkctrl
-> driver parts into next early after v4.12-rc1 if no issues.
+> This is easily fixed by adding another #ifdef.
 > 
-> It seems the clkctrl series clock driver part is pretty much
-> ready to go, the remaining issues seem to be in the hwmod code.
+> While looking at the code, I also spotted another problem with the
+> assignment of hw_ops variable that is not used again later. I'm
+> changing this to setting clk_hw->ops instead, which I guess is what
+> was intended here.
 > 
+> Fixes: 0565fb168d63 ("clk: ti: dpll: move omap3 DPLL functionality to clock driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-Ok thanks. I'll remove this from my queue.
+Applied to clk-next
 
 -- 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
