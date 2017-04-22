@@ -1,91 +1,50 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:50416 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752527AbdDECgP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Apr 2017 22:36:15 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 21 Apr 2017 19:10:43 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: cs2000: Fix the setting of saved_rate during the
+ resume process
+Message-ID: <20170422021043.GD7065@codeaurora.org>
+References: <1492624001-3758-12-git-send-email-ykaneko0929@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Tue, 04 Apr 2017 19:36:01 -0700
-From: Stefan Agner <stefan@agner.ch>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Dong Aisheng <dongas86@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>, robh+dt@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] ARM: dts: imx7: add USDHC NAND clock to SDHC
- instances
-In-Reply-To: <CAOMZO5A7QQEe5rgBbJBzo8GY41aYV9WA8e9teCUROyihg0kq_g@mail.gmail.com>
-References: <20170330005029.6472-1-stefan@agner.ch>
- <20170330005029.6472-2-stefan@agner.ch>
- <20170401030312.GB24882@b29396-OptiPlex-7040>
- <5c8339900fa1bd6215fb94d4386f7e06@agner.ch>
- <CAOMZO5CprxqnqRXMFJLBAgYAZGGnXNs3ZciyVz_mSLRnnSQQRQ@mail.gmail.com>
- <CAOMZO5A7QQEe5rgBbJBzo8GY41aYV9WA8e9teCUROyihg0kq_g@mail.gmail.com>
-Message-ID: <c95a7f535296623bdd4e4a640b3c27f5@agner.ch>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1492624001-3758-12-git-send-email-ykaneko0929@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2017-04-04 19:15, Fabio Estevam wrote:
-> On Sun, Apr 2, 2017 at 2:02 PM, Fabio Estevam <festevam@gmail.com> wrote:
->> On Sat, Apr 1, 2017 at 1:15 AM, Stefan Agner <stefan@agner.ch> wrote:
->>
->>> IMX7D_IPG_ROOT_CLK is currently not a valid clock in upstream... So we
->>> would have to add it to the clock driver first.
->>>
->>> I guess we could/should add it anyway at one point? But probably also as
->>> init on, just to make sure Linux does not disable it since it is
->>> currently used by several IPs implicitly.
->>
->> Yes, I made a previous attempt do add  IMX7D_IPG_ROOT_CLK and it did
->> not work as I did not put it in the init_on clock list.
->>
->> Will submit a new patch adding it to init_on, thanks.
+On 04/20, Yoshihiro Kaneko wrote:
+> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
 > 
-> I thought that adding IMX7D_IPG_ROOT_CLK would do the trick, but the
-> patch below also causes the kernel to not boot:
+> In the resume process, there is the case that other drivers call
+> cs2000_enable before cs2000_resume is called. Since the order of
+> resume process is not guaranteed, it is needed to reset the clk
+> rate in any cases before cs2000 is used.
 > 
-> --- a/drivers/clk/imx/clk-imx7d.c
-> +++ b/drivers/clk/imx/clk-imx7d.c
-> @@ -386,7 +386,7 @@ static int const clks_init_on[] __initconst = {
->         IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_NAND_USDHC_BUS_ROOT_CLK,
->         IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
->         IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
-> -       IMX7D_AHB_CHANNEL_ROOT_CLK,
-> +       IMX7D_AHB_CHANNEL_ROOT_CLK, IMX7D_IPG_ROOT_CLK,
->  };
+> Also, the current cs2000 driver is using resume_early function.
+> The using .resume_early is bad idea because the dependency with
+> other drivers is to be complicated.
 > 
->  static struct clk_onecell_data clk_data;
-> @@ -788,7 +788,7 @@ static void __init imx7d_clocks_init(struct
-> device_node *ccm_node)
->         clks[IMX7D_WRCLK_ROOT_DIV] =
-> imx_clk_divider2("wrclk_post_div", "wrclk_pre_div", base + 0xbd00, 0,
-> 6);
->         clks[IMX7D_CLKO1_ROOT_DIV] =
-> imx_clk_divider2("clko1_post_div", "clko1_pre_div", base + 0xbd80, 0,
-> 6);
->         clks[IMX7D_CLKO2_ROOT_DIV] =
-> imx_clk_divider2("clko2_post_div", "clko2_pre_div", base + 0xbe00, 0,
-> 6);
-> -
-> +       clks[IMX7D_IPG_ROOT_CLK] = imx_clk_divider2("ipg_root_clk",
-> "ahb_root_clk", base + 0x9080, 0, 2);
->         clks[IMX7D_ARM_A7_ROOT_CLK] = imx_clk_gate4("arm_a7_root_clk",
-> "arm_a7_div", base + 0x4000, 0);
->         clks[IMX7D_ARM_M4_ROOT_CLK] = imx_clk_gate4("arm_m4_root_clk",
-> "arm_m4_div", base + 0x4010, 0);
->         clks[IMX7D_ARM_M0_ROOT_CLK] = imx_clk_gate4("arm_m0_root_clk",
-> "arm_m0_div", base + 0x4020, 0);
+> This patch adds to reset the clk rate in cs2000_enable and
+> changes to use from .resume_early to .resume.
+> 
+> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> ---
 
-Hm, imx_clk_divider2 sets CLK_SET_RATE_PARENT, maybe that influences the
-parent?
+Was this supposed to be sent as a series? This is the second
+patch in the series? 
 
-I guess we actually don't want the clock framework to change that clock
-rate, not sure whether we can freeze it or similar.
+In what situation does a driver call clk_prepare() on the clocks
+in here before the device's resume callback is called? I would
+think that any devices that use the clks provided by this driver
+would be probe defered until the clks are registered, so they
+would be later in the suspend/resume list than this clk driver?
 
---
-Stefan
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
