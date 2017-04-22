@@ -1,90 +1,33 @@
-Return-Path: <Alexey_Firago@mentor.com>
-From: Alexey Firago <alexey_firago@mentor.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<marek.vasut@gmail.com>, <geert@linux-m68k.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-CC: Alexey Firago <alexey_firago@mentor.com>
-Subject: [PATCH v2 3/3] clk: vc5: Add support for IDT VersaClock 5P49V5935
-Date: Wed, 5 Apr 2017 14:46:59 +0300
-Message-ID: <1491392819-698-4-git-send-email-alexey_firago@mentor.com>
-In-Reply-To: <1491392819-698-1-git-send-email-alexey_firago@mentor.com>
-References: <1491392819-698-1-git-send-email-alexey_firago@mentor.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 21 Apr 2017 19:46:17 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 4/8] clk: Replace four seq_printf() calls by seq_putc()
+Message-ID: <20170422024617.GM7065@codeaurora.org>
+References: <94b24eaa-c5fb-80ea-441a-883989d14ef5@users.sourceforge.net>
+ <3f7979fe-3dc0-e6d1-b13b-ea3d990ecf91@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <3f7979fe-3dc0-e6d1-b13b-ea3d990ecf91@users.sourceforge.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Update IDT VersaClock 5 driver to support 5P49V5935. This chip has
-two clock inputs (internal XTAL or external CLKIN), four fractional
-dividers (FODs) and five clock outputs (four universal clock outputs
-and one reference clock output at OUT0_SELB_I2C).
+On 04/20, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 20 Apr 2017 08:45:43 +0200
+> 
+> Four single characters should be put into a sequence.
+> Thus use the corresponding function "seq_putc".
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-Current driver supports up to 2 FODs and up to 3 clock outputs. This
-patch sets max number of supported FODs to 4 and max number of supported
-clock outputs to 5.
+Applied to clk-next
 
-Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
----
- drivers/clk/clk-versaclock5.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 7d31390..4c268e3 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -114,10 +114,10 @@
- #define VC5_MUX_IN_CLKIN	BIT(1)
- 
- /* Maximum number of clk_out supported by this driver */
--#define VC5_MAX_CLK_OUT_NUM	3
-+#define VC5_MAX_CLK_OUT_NUM	5
- 
- /* Maximum number of FODs supported by this driver */
--#define VC5_MAX_FOD_NUM	2
-+#define VC5_MAX_FOD_NUM	4
- 
- /* flags to describe chip features */
- /* chip has built-in oscilator */
-@@ -127,6 +127,7 @@
- enum vc5_model {
- 	IDT_VC5_5P49V5923,
- 	IDT_VC5_5P49V5933,
-+	IDT_VC5_5P49V5935,
- };
- 
- /* Structure to describe features of a particular VC5 model */
-@@ -594,6 +595,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
- 	case IDT_VC5_5P49V5933:
- 		return (n == 0) ? 0 : 3;
- 	case IDT_VC5_5P49V5923:
-+	case IDT_VC5_5P49V5935:
- 	default:
- 		return n;
- 	}
-@@ -798,9 +800,17 @@ static const struct vc5_chip_info idt_5p49v5933_info = {
- 	.flags = VC5_HAS_INTERNAL_XTAL,
- };
- 
-+static const struct vc5_chip_info idt_5p49v5935_info = {
-+	.model = IDT_VC5_5P49V5935,
-+	.clk_fod_cnt = 4,
-+	.clk_out_cnt = 5,
-+	.flags = VC5_HAS_INTERNAL_XTAL,
-+};
-+
- static const struct i2c_device_id vc5_id[] = {
- 	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
- 	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
-+	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, vc5_id);
-@@ -808,6 +818,7 @@ MODULE_DEVICE_TABLE(i2c, vc5_id);
- static const struct of_device_id clk_vc5_of_match[] = {
- 	{ .compatible = "idt,5p49v5923", .data = &idt_5p49v5923_info },
- 	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
-+	{ .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
