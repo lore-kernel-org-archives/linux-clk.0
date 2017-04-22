@@ -1,92 +1,36 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Thu, 13 Apr 2017 22:21:22 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de, broonie@kernel.org, yibin.gong@nxp.com,
-	rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, shawnguo@kernel.org, fabio.estevam@nxp.com,
-	anson.huang@nxp.com, ping.bai@nxp.com, octavian.purdila@nxp.com
-Subject: Re: [RFC PATCH 3/3] cpufreq: imx6q: refine clk operations
-Message-ID: <20170413142122.GC24254@b29396-OptiPlex-7040>
-References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
- <1491969809-20154-4-git-send-email-aisheng.dong@nxp.com>
- <1491932908.31718.33.camel@nxp.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 21 Apr 2017 19:23:56 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Tero Kristo <t-kristo@ti.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: ti: fix building without legacy omap3
+Message-ID: <20170422022356.GI7065@codeaurora.org>
+References: <20170419174507.4055014-1-arnd@arndb.de>
+ <20170419174507.4055014-2-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1491932908.31718.33.camel@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170419174507.4055014-2-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 11, 2017 at 08:48:28PM +0300, Leonard Crestez wrote:
-> On Wed, 2017-04-12 at 12:03 +0800, Dong Aisheng wrote:
-> > +static int num_clks;
-> > +static struct clk_bulk_data clks[] = {
-> > +	{ .id = "arm" },
-> > +	{ .id = "pll1_sys" },
-> > +	{ .id = "step" },
-> > +	{ .id = "pll1_sw" },
-> > +	{ .id = "pll2_pfd2_396m" },
-> > +	{ .id = "pll2_bus" },
-> > +	{ .id = "secondary_sel" },
-> > +};
+On 04/19, Arnd Bergmann wrote:
+> When CONFIG_ATAGS or CONFIG_OMAP3 is disabled, we get a build error:
 > 
-> The .id is only required for initialization, it seems strange to keep
-> it around runtime data.
-
-Well, this is mainly referencing how regulator bulk does the job.
-
-> It might be better for this API to work with an
-> array of clk* and separate array of names (or clk_bulk_init_data if we
-> need flags). Variable references would be shorter and it would allow
-> more data to be const.
-
-It also has side effect that we then need one more param for each API.
-Is that worth?
-
-> > -put_clk:
-> > -	if (!IS_ERR(arm_clk))
-> > -		clk_put(arm_clk);
-> > -	if (!IS_ERR(pll1_sys_clk))
-> > -		clk_put(pll1_sys_clk);
-> > -	if (!IS_ERR(pll1_sw_clk))
-> > -		clk_put(pll1_sw_clk);
-> > -	if (!IS_ERR(step_clk))
-> > -		clk_put(step_clk);
-> > -	if (!IS_ERR(pll2_pfd2_396m_clk))
-> > -		clk_put(pll2_pfd2_396m_clk);
-> > -	if (!IS_ERR(pll2_bus_clk))
-> > -		clk_put(pll2_bus_clk);
-> > -	if (!IS_ERR(secondary_sel_clk))
-> > -		clk_put(secondary_sel_clk);
-> > +
-> > +	clk_bulk_put(num_clks, clks);
-> > +put_node:
-> >  	of_node_put(np);
-> > +
-> >  	return ret;
-> >  }
+> In file included from include/linux/clk-provider.h:15:0,
+>                  from drivers/clk/ti/clk.c:19:
+> drivers/clk/ti/clk.c: In function 'ti_clk_add_aliases':
+> drivers/clk/ti/clk.c:438:29: error: 'simple_clk_match_table' undeclared (first use in this function); did you mean 'simple_attr_write'?
 > 
+> Moving the match table down fixes it.
 > 
-> My subjective opinion is that a better way to clean this up would be to
-> have a single imx6q_cpufreq_clean function that takes all resources and
-> does stuff like:
-> 
-> if (!IS_ERR(clk)) clk_put(clk);
-> clk = NULL;
-> 
-> That function can be called from both _remove and failed _probe without
-> having to keep track of which resources have been allocated until then.
-> Just free and NULL all clocks/regulators and simplify control flow.
-> 
+> Fixes: c17435c56bb1 ("clk: ti: add API for creating aliases automatically for simple clock types")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-I once thought of that way.
+Applied to clk-next
 
-Now i'd like to remove them rather than form them into a function
-which can't permanently fix the issue.
-
-But, if Maintainers dislike it, we could do that.
-
-Regards
-Dong Aisheng
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
