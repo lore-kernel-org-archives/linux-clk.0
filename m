@@ -1,200 +1,76 @@
-Return-Path: <Alexey_Firago@mentor.com>
-From: Alexey Firago <alexey_firago@mentor.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<marek.vasut@gmail.com>, <geert@linux-m68k.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-CC: Alexey Firago <alexey_firago@mentor.com>
-Subject: [PATCH v2 1/3] clk: vc5: Add structure to describe particular chip features
-Date: Wed, 5 Apr 2017 14:46:57 +0300
-Message-ID: <1491392819-698-2-git-send-email-alexey_firago@mentor.com>
-In-Reply-To: <1491392819-698-1-git-send-email-alexey_firago@mentor.com>
-References: <1491392819-698-1-git-send-email-alexey_firago@mentor.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 21 Apr 2017 18:54:13 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>, Richard Watts <rrw@kynesim.co.uk>,
+	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: ti: fix linker error with !SOC_OMAP4
+Message-ID: <20170422015413.GX7065@codeaurora.org>
+References: <20170419214318.1605787-1-arnd@arndb.de>
+ <9df5f73d-3e3a-ee33-1b75-c14a1a707ad9@ti.com>
+ <CAK8P3a2=pDP7-b4njRo9KKa-JAueTp8O=stmyMz68-Piy__UKQ@mail.gmail.com>
+ <c20456ea-dee2-878a-6cf1-2b3169fd20f4@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <c20456ea-dee2-878a-6cf1-2b3169fd20f4@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce vc5_chip_info structure to describe features of a particular
-VC5 chip (id, number of FODs, number of outputs, flags).
-For now flags are only used to indicate if chip has internal XTAL.
-vc5_chip_info is set on probe from the matched of_device_id->data.
+On 04/20, Tero Kristo wrote:
+> On 20/04/17 18:06, Arnd Bergmann wrote:
+> >On Thu, Apr 20, 2017 at 4:57 PM, Tero Kristo <t-kristo@ti.com> wrote:
+> >>On 20/04/17 00:43, Arnd Bergmann wrote:
+> >>>
+> >>>When none of the OMAP4-generation SoCs are enabled, we run into a link
+> >>>error for am43xx/am43xx:
+> >>>
+> >>>drivers/clk/ti/dpll.o: In function `of_ti_am3_dpll_x2_setup':
+> >>>dpll.c:(.init.text+0xd8): undefined reference to `clkhwops_omap4_dpllmx'
+> >>>
+> >>>This is easily fixed by adding another #ifdef.
+> >>>
+> >>>While looking at the code, I also spotted another problem with the
+> >>>assignment of hw_ops variable that is not used again later. I'm
+> >>>changing this to setting clk_hw->ops instead, which I guess is what
+> >>>was intended here.
+> >>
+> >>
+> >>Good catch... It seems the corner case is masked in the testing I did
+> >>locally so far.
+> >>
+> >>>
+> >>>Fixes: 0565fb168d63 ("clk: ti: dpll: move omap3 DPLL functionality to
+> >>>clock driver")
+> >>
+> >>
+> >>However, I believe the fixes tag should point to this one in linux-next:
+> >>
+> >>commit 473adbf4e02857a6b78dfb3d9fcf752638bbadb9
+> >>Author: Tero Kristo <t-kristo@ti.com>
+> >>Date:   Thu Feb 9 11:25:28 2017 +0200
+> >>
+> >>    clk: ti: dpll44xx: fix clksel register initialization
+> >
+> >Ah, right.
+> >
+> >>Other than that:
+> >>
+> >>Acked-by: Tero Kristo <t-kristo@ti.com>
+> >
+> >Do you want me to resend, or can you forward the patch with the
+> >fixed fixes line?
+> 
+> I guess thats up to Stephen, he typically picks single fixes like
+> these. I can also create a pull request with the fixes you provided
+> if Stephen prefers that, in that case I can fix the "Fixes:" tag
+> myself.
+> 
+> Stephen any preference?
 
-Also add defines to specify maximum number of FODs and clock outputs
-supported by the driver.
+I'll just apply it right now.
 
-With these changes it should be easier to extend driver to support
-more VC5 models.
-
-Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
----
- drivers/clk/clk-versaclock5.c | 69 +++++++++++++++++++++++++++++++++----------
- 1 file changed, 53 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 56741f3..7d31390 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -113,12 +113,30 @@
- #define VC5_MUX_IN_XIN		BIT(0)
- #define VC5_MUX_IN_CLKIN	BIT(1)
- 
-+/* Maximum number of clk_out supported by this driver */
-+#define VC5_MAX_CLK_OUT_NUM	3
-+
-+/* Maximum number of FODs supported by this driver */
-+#define VC5_MAX_FOD_NUM	2
-+
-+/* flags to describe chip features */
-+/* chip has built-in oscilator */
-+#define VC5_HAS_INTERNAL_XTAL	BIT(0)
-+
- /* Supported IDT VC5 models. */
- enum vc5_model {
- 	IDT_VC5_5P49V5923,
- 	IDT_VC5_5P49V5933,
- };
- 
-+/* Structure to describe features of a particular VC5 model */
-+struct vc5_chip_info {
-+	const enum vc5_model	model;
-+	const int		clk_fod_cnt;
-+	const int		clk_out_cnt;
-+	u32			flags;
-+};
-+
- struct vc5_driver_data;
- 
- struct vc5_hw_data {
-@@ -132,15 +150,15 @@ struct vc5_hw_data {
- struct vc5_driver_data {
- 	struct i2c_client	*client;
- 	struct regmap		*regmap;
--	enum vc5_model		model;
-+	struct vc5_chip_info	*chip_info;
- 
- 	struct clk		*pin_xin;
- 	struct clk		*pin_clkin;
- 	unsigned char		clk_mux_ins;
- 	struct clk_hw		clk_mux;
- 	struct vc5_hw_data	clk_pll;
--	struct vc5_hw_data	clk_fod[2];
--	struct vc5_hw_data	clk_out[3];
-+	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
-+	struct vc5_hw_data	clk_out[VC5_MAX_CLK_OUT_NUM];
- };
- 
- static const char * const vc5_mux_names[] = {
-@@ -563,7 +581,7 @@ static struct clk_hw *vc5_of_clk_get(struct of_phandle_args *clkspec,
- 	struct vc5_driver_data *vc5 = data;
- 	unsigned int idx = clkspec->args[0];
- 
--	if (idx > 2)
-+	if (idx >= vc5->chip_info->clk_out_cnt)
- 		return ERR_PTR(-EINVAL);
- 
- 	return &vc5->clk_out[idx].hw;
-@@ -591,7 +609,7 @@ static int vc5_probe(struct i2c_client *client,
- 	struct vc5_driver_data *vc5;
- 	struct clk_init_data init;
- 	const char *parent_names[2];
--	unsigned int n, idx;
-+	unsigned int n, idx = 0;
- 	int ret;
- 
- 	vc5 = devm_kzalloc(&client->dev, sizeof(*vc5), GFP_KERNEL);
-@@ -600,7 +618,12 @@ static int vc5_probe(struct i2c_client *client,
- 
- 	i2c_set_clientdata(client, vc5);
- 	vc5->client = client;
--	vc5->model = (enum vc5_model)of_id->data;
-+
-+	vc5->chip_info = (struct vc5_chip_info *)of_id->data;
-+	if (!vc5->chip_info) {
-+		dev_err(&client->dev, "No device match found\n");
-+		return -ENODEV;
-+	}
- 
- 	vc5->pin_xin = devm_clk_get(&client->dev, "xin");
- 	if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
-@@ -622,8 +645,8 @@ static int vc5_probe(struct i2c_client *client,
- 	if (!IS_ERR(vc5->pin_xin)) {
- 		vc5->clk_mux_ins |= VC5_MUX_IN_XIN;
- 		parent_names[init.num_parents++] = __clk_get_name(vc5->pin_xin);
--	} else if (vc5->model == IDT_VC5_5P49V5933) {
--		/* IDT VC5 5P49V5933 has built-in oscilator. */
-+	} else if (vc5->chip_info->flags & VC5_HAS_INTERNAL_XTAL) {
-+		/* chip has built-in oscilator. */
- 		vc5->pin_xin = clk_register_fixed_rate(&client->dev,
- 						       "internal-xtal", NULL,
- 						       0, 25000000);
-@@ -672,8 +695,8 @@ static int vc5_probe(struct i2c_client *client,
- 	}
- 
- 	/* Register FODs */
--	for (n = 0; n < 2; n++) {
--		idx = vc5_map_index_to_output(vc5->model, n);
-+	for (n = 0; n < vc5->chip_info->clk_fod_cnt; n++) {
-+		idx = vc5_map_index_to_output(vc5->chip_info->model, n);
- 		memset(&init, 0, sizeof(init));
- 		init.name = vc5_fod_names[idx];
- 		init.ops = &vc5_fod_ops;
-@@ -709,8 +732,8 @@ static int vc5_probe(struct i2c_client *client,
- 	}
- 
- 	/* Register FOD-connected OUTx outputs */
--	for (n = 1; n < 3; n++) {
--		idx = vc5_map_index_to_output(vc5->model, n - 1);
-+	for (n = 1; n < vc5->chip_info->clk_out_cnt; n++) {
-+		idx = vc5_map_index_to_output(vc5->chip_info->model, n - 1);
- 		parent_names[0] = vc5_fod_names[idx];
- 		if (n == 1)
- 			parent_names[1] = vc5_mux_names[0];
-@@ -744,7 +767,7 @@ static int vc5_probe(struct i2c_client *client,
- 	return 0;
- 
- err_clk:
--	if (vc5->model == IDT_VC5_5P49V5933)
-+	if (vc5->chip_info->flags & VC5_HAS_INTERNAL_XTAL)
- 		clk_unregister_fixed_rate(vc5->pin_xin);
- 	return ret;
- }
-@@ -755,12 +778,26 @@ static int vc5_remove(struct i2c_client *client)
- 
- 	of_clk_del_provider(client->dev.of_node);
- 
--	if (vc5->model == IDT_VC5_5P49V5933)
-+	if (vc5->chip_info->flags & VC5_HAS_INTERNAL_XTAL)
- 		clk_unregister_fixed_rate(vc5->pin_xin);
- 
- 	return 0;
- }
- 
-+static const struct vc5_chip_info idt_5p49v5923_info = {
-+	.model = IDT_VC5_5P49V5923,
-+	.clk_fod_cnt = 2,
-+	.clk_out_cnt = 3,
-+	.flags = 0,
-+};
-+
-+static const struct vc5_chip_info idt_5p49v5933_info = {
-+	.model = IDT_VC5_5P49V5933,
-+	.clk_fod_cnt = 2,
-+	.clk_out_cnt = 3,
-+	.flags = VC5_HAS_INTERNAL_XTAL,
-+};
-+
- static const struct i2c_device_id vc5_id[] = {
- 	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
- 	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
-@@ -769,8 +806,8 @@ static const struct i2c_device_id vc5_id[] = {
- MODULE_DEVICE_TABLE(i2c, vc5_id);
- 
- static const struct of_device_id clk_vc5_of_match[] = {
--	{ .compatible = "idt,5p49v5923", .data = (void *)IDT_VC5_5P49V5923 },
--	{ .compatible = "idt,5p49v5933", .data = (void *)IDT_VC5_5P49V5933 },
-+	{ .compatible = "idt,5p49v5923", .data = &idt_5p49v5923_info },
-+	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
