@@ -1,93 +1,36 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	xf@rock-chips.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 1/3] clk: rockchip: fix up the RK3228 clk cpu setting table
-Date: Fri, 28 Apr 2017 15:02:45 +0800
-Message-Id: <1493362967-4040-2-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1493362967-4040-1-git-send-email-zhangqing@rock-chips.com>
-References: <1493362967-4040-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Date: Sat, 22 Apr 2017 17:06:01 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 2/4] clk: samsung: exynos-audss: Convert to the new
+ clk_hw API
+Message-ID: <20170422150601.qcrbjctlubx5slai@kozik-lap>
+References: <1492694199-9553-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170420131646eucas1p1d302e43fd2823f8e8defe93a24e03e29@eucas1p1.samsung.com>
+ <1492694199-9553-3-git-send-email-m.szyprowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1492694199-9553-3-git-send-email-m.szyprowski@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-support more cpu freq, and add armcore div setting.
+On Thu, Apr 20, 2017 at 03:16:37PM +0200, Marek Szyprowski wrote:
+> Clock providers should use the new struct clk_hw based API, so convert
+> Exynos Audio Subsystem clock provider to the new approach.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos-audss.c | 55 +++++++++++++++++-----------------
+>  1 file changed, 28 insertions(+), 27 deletions(-)
+> 
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3228.c | 50 ++++++++++++++++++++++++++-------------
- 1 file changed, 34 insertions(+), 16 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-index db6e5a9e6de6..a6cdf8fc1e75 100644
---- a/drivers/clk/rockchip/clk-rk3228.c
-+++ b/drivers/clk/rockchip/clk-rk3228.c
-@@ -86,25 +86,43 @@ enum rk3228_plls {
- #define RK3228_DIV_PCLK_MASK		0x7
- #define RK3228_DIV_PCLK_SHIFT		12
- 
--#define RK3228_CLKSEL1(_core_peri_div)					\
--	{									\
--		.reg = RK2928_CLKSEL_CON(1),					\
--		.val = HIWORD_UPDATE(_core_peri_div, RK3228_DIV_PERI_MASK,	\
--				RK3228_DIV_PERI_SHIFT)				\
--	}
-+#define RK3228_CLKSEL1(_core_aclk_div, _core_peri_div)			\
-+{									\
-+	.reg = RK2928_CLKSEL_CON(1),					\
-+	.val = HIWORD_UPDATE(_core_peri_div, RK3228_DIV_PERI_MASK,	\
-+			     RK3228_DIV_PERI_SHIFT) |			\
-+	       HIWORD_UPDATE(_core_aclk_div, RK3228_DIV_ACLK_MASK,	\
-+			     RK3228_DIV_ACLK_SHIFT),			\
-+}
- 
--#define RK3228_CPUCLK_RATE(_prate, _core_peri_div)			\
--	{								\
--		.prate = _prate,					\
--		.divs = {						\
--			RK3228_CLKSEL1(_core_peri_div),		\
--		},							\
--	}
-+#define RK3228_CPUCLK_RATE(_prate, _core_aclk_div, _core_peri_div)	\
-+{									\
-+	.prate = _prate,						\
-+	.divs = {							\
-+		RK3228_CLKSEL1(_core_aclk_div, _core_peri_div),		\
-+	},								\
-+}
- 
- static struct rockchip_cpuclk_rate_table rk3228_cpuclk_rates[] __initdata = {
--	RK3228_CPUCLK_RATE(816000000, 4),
--	RK3228_CPUCLK_RATE(600000000, 4),
--	RK3228_CPUCLK_RATE(312000000, 4),
-+	RK3228_CPUCLK_RATE(1800000000, 1, 7),
-+	RK3228_CPUCLK_RATE(1704000000, 1, 7),
-+	RK3228_CPUCLK_RATE(1608000000, 1, 7),
-+	RK3228_CPUCLK_RATE(1512000000, 1, 7),
-+	RK3228_CPUCLK_RATE(1488000000, 1, 5),
-+	RK3228_CPUCLK_RATE(1416000000, 1, 5),
-+	RK3228_CPUCLK_RATE(1392000000, 1, 5),
-+	RK3228_CPUCLK_RATE(1296000000, 1, 5),
-+	RK3228_CPUCLK_RATE(1200000000, 1, 5),
-+	RK3228_CPUCLK_RATE(1104000000, 1, 5),
-+	RK3228_CPUCLK_RATE(1008000000, 1, 5),
-+	RK3228_CPUCLK_RATE(912000000, 1, 5),
-+	RK3228_CPUCLK_RATE(816000000, 1, 3),
-+	RK3228_CPUCLK_RATE(696000000, 1, 3),
-+	RK3228_CPUCLK_RATE(600000000, 1, 3),
-+	RK3228_CPUCLK_RATE(408000000, 1, 1),
-+	RK3228_CPUCLK_RATE(312000000, 1, 1),
-+	RK3228_CPUCLK_RATE(216000000,  1, 1),
-+	RK3228_CPUCLK_RATE(96000000, 1, 1),
- };
- 
- static const struct rockchip_cpuclk_reg_data rk3228_cpuclk_data = {
--- 
-1.9.1
+Best regards,
+Krzysztof
