@@ -1,74 +1,147 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from elvis.franken.de ([193.175.24.41]:55113 "EHLO elvis.franken.de"
+Received: from hermes.aosc.io ([199.195.250.187]:45679 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1428724AbdDYNhW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Apr 2017 09:37:22 -0400
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Date: Tue, 25 Apr 2017 14:30:07 +0200
-Subject: [PATCH] Fix returns of some CLK API calls, if !CONFIG_HAVE_CLOCK
-To: linux@armlinux.org.uk, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: linux-mips@linux-mips.org
-Message-Id: <20170425125547.865FB508DA7@solo.franken.de>
+        id S1045130AbdDWKkQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 23 Apr 2017 06:40:16 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v5 09/11] ARM: dts: sun8i: add DE2 nodes for V3s SoC
+Date: Sun, 23 Apr 2017 18:37:52 +0800
+Message-Id: <20170423103754.50012-10-icenowy@aosc.io>
+In-Reply-To: <20170423103754.50012-1-icenowy@aosc.io>
+References: <20170423103754.50012-1-icenowy@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-If CONFIG_HAVE_CLOCK is not set, return values of clk_get(),
-devm_clk_get(), devm_get_clk_from_child(), clk_get_parent()
-and clk_get_sys() are wrong. According to spec these functions
-should either return a pointer to a struct clk or a valid IS_ERR
-condition. NULL is neither, so returning ERR_PTR(-ENODEV) makes
-more sense.
+Allwinner V3s SoC features a "Display Engine 2.0" with only one TCON
+which have RGB LCD output.
 
-Without this change serial console on SNI RM400 machines (MIPS arch)
-is broken, because sccnxp driver doesn't get a valid clock rate.
+Add device nodes for it as well as the TCON.
 
-Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- include/linux/clk.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/sun8i-v3s.dtsi | 87 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
 
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index e9d36b3..b844a65 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -442,18 +442,18 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id);
+diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
+index 71075969e5e6..0a895179d8ae 100644
+--- a/arch/arm/boot/dts/sun8i-v3s.dtsi
++++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
+@@ -41,6 +41,10 @@
+  */
  
- static inline struct clk *clk_get(struct device *dev, const char *id)
- {
--	return NULL;
-+	return ERR_PTR(-ENODEV);
- }
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/sun8i-v3s-ccu.h>
++#include <dt-bindings/clock/sun8i-de2.h>
++#include <dt-bindings/reset/sun8i-v3s-ccu.h>
++#include <dt-bindings/reset/sun8i-de2.h>
  
- static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- {
--	return NULL;
-+	return ERR_PTR(-ENODEV);
- }
+ / {
+ 	#address-cells = <1>;
+@@ -59,6 +63,12 @@
+ 		};
+ 	};
  
- static inline struct clk *devm_get_clk_from_child(struct device *dev,
- 				struct device_node *np, const char *con_id)
- {
--	return NULL;
-+	return ERR_PTR(-ENODEV);
- }
++	de: display-engine {
++		compatible = "allwinner,sun8i-v3s-display-engine";
++		allwinner,pipelines = <&de2_mixer0>;
++		status = "disabled";
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+@@ -93,6 +103,83 @@
+ 		#size-cells = <1>;
+ 		ranges;
  
- static inline void clk_put(struct clk *clk) {}
-@@ -494,12 +494,12 @@ static inline int clk_set_parent(struct clk *clk, struct clk *parent)
- 
- static inline struct clk *clk_get_parent(struct clk *clk)
- {
--	return NULL;
-+	return ERR_PTR(-ENODEV);
- }
- 
- static inline struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- {
--	return NULL;
-+	return ERR_PTR(-ENODEV);
- }
- #endif
- 
++		de2_clocks: clock@1000000 {
++			compatible = "allwinner,sun50i-h5-de2-clk";
++			reg = <0x01000000 0x100000>;
++			clocks = <&ccu CLK_DE>,
++				 <&ccu CLK_BUS_DE>;
++			clock-names = "mod",
++				      "bus";
++			resets = <&ccu RST_BUS_DE>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
++		de2_mixer0: mixer@1100000 {
++			compatible = "allwinner,sun8i-v3s-de2-mixer";
++			reg = <0x01100000 0x100000>;
++			clocks = <&de2_clocks CLK_MIXER0>,
++				 <&de2_clocks CLK_BUS_MIXER0>;
++			clock-names = "mod",
++				      "bus";
++			resets = <&de2_clocks RST_MIXER0>;
++			assigned-clocks = <&de2_clocks CLK_MIXER0>;
++			assigned-clock-rates = <150000000>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				mixer0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					mixer0_out_tcon0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&tcon0_in_mixer0>;
++					};
++				};
++			};
++		};
++
++		tcon0: lcd-controller@1c0c000 {
++			compatible = "allwinner,sun8i-v3s-tcon";
++			reg = <0x01c0c000 0x1000>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON0>,
++				 <&ccu CLK_TCON0>;
++			clock-names = "ahb",
++				      "tcon-ch0";
++			clock-output-names = "tcon-pixel-clock";
++			resets = <&ccu RST_BUS_TCON0>;
++			reset-names = "lcd";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon0_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					tcon0_in_mixer0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&mixer0_out_tcon0>;
++					};
++				};
++
++				tcon0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
++
+ 		mmc0: mmc@01c0f000 {
+ 			compatible = "allwinner,sun7i-a20-mmc";
+ 			reg = <0x01c0f000 0x1000>;
 -- 
-2.1.4
+2.12.2
 
