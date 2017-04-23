@@ -1,97 +1,86 @@
-Return-Path: <dongas86@gmail.com>
-Return-Path: <dongas86@gmail.com>
-Date: Thu, 13 Apr 2017 22:37:27 +0800
-From: Dong Aisheng <dongas86@gmail.com>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-	broonie@kernel.org, yibin.gong@nxp.com, rjw@rjwysocki.net,
-	viresh.kumar@linaro.org, mturquette@baylibre.com,
-	sboyd@codeaurora.org, shawnguo@kernel.org, fabio.estevam@nxp.com,
-	anson.huang@nxp.com, ping.bai@nxp.com, leonard.crestez@nxp.com,
-	octavian.purdila@nxp.com
-Subject: Re: [RFC PATCH 2/3] clk: add managed version of clk_bulk_get
-Message-ID: <20170413143727.GE24254@b29396-OptiPlex-7040>
-References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
- <1491969809-20154-3-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1491969809-20154-3-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v5 11/11] [DO NOT MERGE] ARM: dts: sun8i: enable LCD panel of Lichee Pi Zero
+Date: Sun, 23 Apr 2017 18:37:54 +0800
+Message-Id: <20170423103754.50012-12-icenowy@aosc.io>
+In-Reply-To: <20170423103754.50012-1-icenowy@aosc.io>
+References: <20170423103754.50012-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 12, 2017 at 12:03:28PM +0800, Dong Aisheng wrote:
-> This patch introduces the managed version of clk_bulk_get.
-> 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Sascha Hauer <kernel@pengutronix.de>
-> Cc: Anson Huang <anson.huang@nxp.com>
-> Cc: Robin Gong <yibin.gong@nxp.com>
-> Cc: Bai Ping <ping.bai@nxp.com>
-> Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> Cc: Octavian Purdila <octavian.purdila@nxp.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
->  drivers/clk/clk-devres.c | 36 ++++++++++++++++++++++++++++++++++++
->  include/linux/clk.h      | 22 +++++++++++++++++++++-
->  2 files changed, 57 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-> index 3a218c3..c7fb31d 100644
-> --- a/drivers/clk/clk-devres.c
-> +++ b/drivers/clk/clk-devres.c
-> @@ -34,6 +34,42 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
->  }
->  EXPORT_SYMBOL(devm_clk_get);
->  
-> +struct clk_bulk_devres {
-> +	struct clk_bulk_data *clks;
-> +	int num_clks;
-> +};
-> +
-> +static void devm_clk_bulk_release(struct device *dev, void *res)
-> +{
-> +	struct clk_bulk_devres *devres = res;
-> +
-> +	clk_bulk_put(devres->num_clks, devres->clks);
-> +}
-> +
-> +int devm_clk_bulk_get(struct device *dev, int num_clks,
-> +		      struct clk_bulk_data *clks)
-> +{
-> +	struct clk_bulk_devres *devres;
-> +	int ret;
-> +
-> +	devres = devres_alloc(devm_clk_bulk_release,
-> +			      sizeof(*devres), GFP_KERNEL);
-> +	if (!devres)
-> +		return -ENOMEM;
-> +
-> +	ret = clk_bulk_get(dev, num_clks, clks);
+A 480x272 QiaoDian QD43003C0-40-7LED panel is available from Lichee Pi.
 
+This commit connects this panel to Lichee Pi Zero.
 
-Another catch by 0day robot.
+Lichee Pi also provides a 800x480 panel without accurate model number,
+so do not merge this patch. It will finally come as device tree overlay.
 
-   drivers/built-in.o: In function `devm_clk_bulk_get':
->> (.text+0x1930e): undefined reference to `clk_bulk_get'
-   drivers/built-in.o: In function `devm_clk_bulk_release':
->> clk-devres.c:(.text+0x19370): undefined reference to `clk_bulk_put'
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts | 36 +++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-clk_bulk_get is defined in clkdev.c which depends on CONFIG_CLKDEV_LOOKUP.
-However, some platforms like m68k may not select CLKDEV_LOOKUP but
-select HAVE_CLK. Thus compiling devm_clk_bulk_get may cause a undefined
-reference to 'clk_bulk_get'.
-
-Since clk_bulk_get is built upon the platform specific clk_get api,
-clk_bulk_get can also be used by that platform accordingly.
-
-Then we probably could move clk_bulk_get into clk-devres.c as well which
-is controlled by common CONFIG_HAVE_CLK to benifit all platforms.
-
-Regards
-Dong Aisheng
+diff --git a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+index 387fc2aa546d..7ae72bf63cd0 100644
+--- a/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
++++ b/arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+@@ -75,6 +75,28 @@
+ 			gpios = <&pio 6 2 GPIO_ACTIVE_LOW>; /* PG2 */
+ 		};
+ 	};
++
++	panel: panel {
++		compatible = "qiaodian,qd43003c0-40", "simple-panel";
++		enable-gpios = <&pio 1 4 GPIO_ACTIVE_HIGH>; /* Should be backlight */
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			panel_input: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&tcon0_out_lcd>;
++			};
++		};
++	};
++};
++
++&de {
++	status = "okay";
+ };
+ 
+ &mmc0 {
+@@ -86,6 +108,20 @@
+ 	status = "okay";
+ };
+ 
++&tcon0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&lcd_rgb666_pins>;
++	status = "okay";
++
++};
++
++&tcon0_out {
++	tcon0_out_lcd: endpoint@0 {
++		reg = <0>;
++		remote-endpoint = <&panel_input>;
++	};
++};
++
+ &uart0 {
+ 	pinctrl-0 = <&uart0_pins_a>;
+ 	pinctrl-names = "default";
+-- 
+2.12.2
