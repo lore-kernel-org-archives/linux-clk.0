@@ -1,260 +1,333 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 26 Apr 2017 08:50:05 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] [PATCH 13/15] drm/sun4i: Add HDMI support
-Message-ID: <20170426065005.zoewz53q7l7r5e7p@lukather>
-References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
- <c63d01aedeccc58bf8d6f5bfd66d8595156e9491.1488876832.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v66n6AXbOAh05V_Gv2UgRp=xEMG9qhJU8JSuy4-F-UOQQQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="is3dkn7zscvo5sqd"
-In-Reply-To: <CAGb2v66n6AXbOAh05V_Gv2UgRp=xEMG9qhJU8JSuy4-F-UOQQQ@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:45502 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1044993AbdDWKib (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 23 Apr 2017 06:38:31 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v5 02/11] clk: sunxi-ng: add support for DE2 CCU
+Date: Sun, 23 Apr 2017 18:37:45 +0800
+Message-Id: <20170423103754.50012-3-icenowy@aosc.io>
+In-Reply-To: <20170423103754.50012-1-icenowy@aosc.io>
+References: <20170423103754.50012-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+The "Display Engine 2.0" in Allwinner newer SoCs contains a clock
+management unit for its subunits, like the DE CCU in A80.
 
---is3dkn7zscvo5sqd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add a sunxi-ng style driver for it.
 
-Hi Chen-Yu,
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v5:
+- Removed dt-bindings headers (they're now in patch 1).
+Changes in v4:
+- Fixed the inconsistence between mixer_div clocks' number and real clock.
+Changes in v2:
+- Rename sunxi-de2-ccu to sun8i-de2-ccu.
 
-On Fri, Apr 21, 2017 at 11:17:17PM +0800, Chen-Yu Tsai wrote:
-> Hi,
->=20
-> On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > The earlier Allwinner SoCs (A10, A10s, A20, A31) have an embedded HDMI
-> > controller.
-> >
-> > That HDMI controller is able to do audio and CEC, but those have been l=
-eft
-> > out for now.
-> >
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  drivers/gpu/drm/sun4i/Makefile              |   5 +-
-> >  drivers/gpu/drm/sun4i/sun4i_hdmi.h          | 124 ++++++-
-> >  drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c  | 128 ++++++-
-> >  drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c      | 449 ++++++++++++++++++++=
-+-
-> >  drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c | 236 +++++++++++-
-> >  5 files changed, 942 insertions(+), 0 deletions(-)
-> >  create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi.h
-> >  create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi_ddc_clk.c
-> >  create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-> >  create mode 100644 drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
->=20
-> Applying patch #9608371 using 'git am'
-> Description: [13/15] drm/sun4i: Add HDMI support
-> Applying: drm/sun4i: Add HDMI support
-> .git/rebase-apply/patch:116: trailing whitespace.
->=20
-> .git/rebase-apply/patch:531: trailing whitespace.
->=20
-> .git/rebase-apply/patch:701: trailing whitespace.
->=20
-> warning: 3 lines add whitespace errors.
+ drivers/clk/sunxi-ng/Kconfig         |   5 +
+ drivers/clk/sunxi-ng/Makefile        |   1 +
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 218 +++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.h |  28 +++++
+ 4 files changed, 252 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-de2.h
 
-Fixed.
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 64088e599404..2e4d804fbf61 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -140,6 +140,11 @@ config SUN8I_V3S_CCU
+ 	default MACH_SUN8I
+ 	depends on MACH_SUN8I || COMPILE_TEST
+ 
++config SUN8I_DE2_CCU
++	bool "Support for the Allwinner SoCs DE2 CCU"
++	select SUNXI_CCU_DIV
++	select SUNXI_CCU_GATE
++
+ config SUN9I_A80_CCU
+ 	bool "Support for the Allwinner A80 CCU"
+ 	select SUNXI_CCU_DIV
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 0ec02fe14c50..be616279450e 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -25,6 +25,7 @@ obj-$(CONFIG_SUN8I_A23_CCU)	+= ccu-sun8i-a23.o
+ obj-$(CONFIG_SUN8I_A33_CCU)	+= ccu-sun8i-a33.o
+ obj-$(CONFIG_SUN8I_H3_CCU)	+= ccu-sun8i-h3.o
+ obj-$(CONFIG_SUN8I_V3S_CCU)	+= ccu-sun8i-v3s.o
++obj-$(CONFIG_SUN8I_DE2_CCU)	+= ccu-sun8i-de2.o
+ obj-$(CONFIG_SUN8I_R_CCU)	+= ccu-sun8i-r.o
+ obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80.o
+ obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80-de.o
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+new file mode 100644
+index 000000000000..adb2c344692a
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+@@ -0,0 +1,218 @@
++/*
++ * Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.io>
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/reset.h>
++
++#include "ccu_common.h"
++#include "ccu_div.h"
++#include "ccu_gate.h"
++#include "ccu_reset.h"
++
++#include "ccu-sun8i-de2.h"
++
++static SUNXI_CCU_GATE(bus_mixer0_clk,	"bus-mixer0",	"bus-de",
++		      0x04, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_mixer1_clk,	"bus-mixer1",	"bus-de",
++		      0x04, BIT(1), 0);
++static SUNXI_CCU_GATE(bus_wb_clk,	"bus-wb",	"bus-de",
++		      0x04, BIT(2), 0);
++
++static SUNXI_CCU_GATE(mixer0_clk,	"mixer0",	"mixer0-div",
++		      0x00, BIT(0), CLK_SET_RATE_PARENT);
++static SUNXI_CCU_GATE(mixer1_clk,	"mixer1",	"mixer1-div",
++		      0x00, BIT(1), CLK_SET_RATE_PARENT);
++static SUNXI_CCU_GATE(wb_clk,		"wb",		"wb-div",
++		      0x00, BIT(2), CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
++		   CLK_SET_RATE_PARENT);
++static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div", "de", 0x0c, 4, 4,
++		   CLK_SET_RATE_PARENT);
++static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
++		   CLK_SET_RATE_PARENT);
++
++static struct ccu_common *sunxi_de2_clks[] = {
++	&mixer0_clk.common,
++	&mixer1_clk.common,
++	&wb_clk.common,
++
++	&bus_mixer0_clk.common,
++	&bus_mixer1_clk.common,
++	&bus_wb_clk.common,
++
++	&mixer0_div_clk.common,
++	&mixer1_div_clk.common,
++	&wb_div_clk.common,
++};
++
++static struct clk_hw_onecell_data sunxi_de2_hw_clks = {
++	.hws	= {
++		[CLK_MIXER0]		= &mixer0_clk.common.hw,
++		[CLK_MIXER1]		= &mixer1_clk.common.hw,
++		[CLK_WB]		= &wb_clk.common.hw,
++
++		[CLK_BUS_MIXER0]	= &bus_mixer0_clk.common.hw,
++		[CLK_BUS_MIXER1]	= &bus_mixer1_clk.common.hw,
++		[CLK_BUS_WB]		= &bus_wb_clk.common.hw,
++
++		[CLK_MIXER0_DIV]	= &mixer0_div_clk.common.hw,
++		[CLK_MIXER1_DIV]	= &mixer1_div_clk.common.hw,
++		[CLK_WB_DIV]		= &wb_div_clk.common.hw,
++	},
++	.num	= CLK_NUMBER,
++};
++
++static struct ccu_reset_map sun8i_a83t_de2_resets[] = {
++	[RST_MIXER0]	= { 0x08, BIT(0) },
++	/*
++	 * For A83T, H3 and R40, mixer1 reset line is shared with wb, so
++	 * only RST_WB is exported here.
++	 */
++	[RST_WB]	= { 0x08, BIT(2) },
++};
++
++static struct ccu_reset_map sun50i_a64_de2_resets[] = {
++	[RST_MIXER0]	= { 0x08, BIT(0) },
++	[RST_MIXER1]	= { 0x08, BIT(1) },
++	[RST_WB]	= { 0x08, BIT(2) },
++};
++
++static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc = {
++	.ccu_clks	= sunxi_de2_clks,
++	.num_ccu_clks	= ARRAY_SIZE(sunxi_de2_clks),
++
++	.hw_clks	= &sunxi_de2_hw_clks,
++
++	.resets		= sun8i_a83t_de2_resets,
++	.num_resets	= ARRAY_SIZE(sun8i_a83t_de2_resets),
++};
++
++static const struct sunxi_ccu_desc sun50i_a64_de2_clk_desc = {
++	.ccu_clks	= sunxi_de2_clks,
++	.num_ccu_clks	= ARRAY_SIZE(sunxi_de2_clks),
++
++	.hw_clks	= &sunxi_de2_hw_clks,
++
++	.resets		= sun50i_a64_de2_resets,
++	.num_resets	= ARRAY_SIZE(sun50i_a64_de2_resets),
++};
++
++static int sunxi_de2_clk_probe(struct platform_device *pdev)
++{
++	struct resource *res;
++	struct clk *bus_clk, *mod_clk;
++	struct reset_control *rstc;
++	void __iomem *reg;
++	const struct sunxi_ccu_desc *ccu_desc;
++	int ret;
++
++	ccu_desc = of_device_get_match_data(&pdev->dev);
++	if (!ccu_desc)
++		return -EINVAL;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	reg = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(reg))
++		return PTR_ERR(reg);
++
++	bus_clk = devm_clk_get(&pdev->dev, "bus");
++	if (IS_ERR(bus_clk)) {
++		ret = PTR_ERR(bus_clk);
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "Couldn't get bus clk: %d\n", ret);
++		return ret;
++	}
++
++	mod_clk = devm_clk_get(&pdev->dev, "mod");
++	if (IS_ERR(mod_clk)) {
++		ret = PTR_ERR(mod_clk);
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "Couldn't get mod clk: %d\n", ret);
++		return ret;
++	}
++
++	rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
++	if (IS_ERR(rstc)) {
++		ret = PTR_ERR(bus_clk);
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"Couldn't get reset control: %d\n", ret);
++		return ret;
++	}
++
++	/* The clocks need to be enabled for us to access the registers */
++	ret = clk_prepare_enable(bus_clk);
++	if (ret) {
++		dev_err(&pdev->dev, "Couldn't enable bus clk: %d\n", ret);
++		return ret;
++	}
++
++	ret = clk_prepare_enable(mod_clk);
++	if (ret) {
++		dev_err(&pdev->dev, "Couldn't enable mod clk: %d\n", ret);
++		return ret;
++	}
++
++	/* The reset control needs to be asserted for the controls to work */
++	ret = reset_control_deassert(rstc);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"Couldn't deassert reset control: %d\n", ret);
++		goto err_disable_clk;
++	}
++
++	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, ccu_desc);
++	if (ret)
++		goto err_assert_reset;
++
++	return 0;
++
++err_assert_reset:
++	reset_control_assert(rstc);
++err_disable_clk:
++	clk_disable_unprepare(bus_clk);
++	return ret;
++}
++
++static const struct of_device_id sunxi_de2_clk_ids[] = {
++	{
++		.compatible = "allwinner,sun8i-a83t-de2-clk",
++		.data = &sun8i_a83t_de2_clk_desc,
++	},
++	{
++		.compatible = "allwinner,sun50i-h5-de2-clk",
++		.data = &sun50i_a64_de2_clk_desc,
++	},
++	/*
++	 * The Allwinner A64 SoC needs some bit to be poke in syscon to make
++	 * DE2 really working.
++	 * So there's currently no A64 compatible here.
++	 * H5 shares the same reset line with A64, so here H5 is using the
++	 * clock description of A64.
++	 */
++	{ }
++};
++
++static struct platform_driver sunxi_de2_clk_driver = {
++	.probe	= sunxi_de2_clk_probe,
++	.driver	= {
++		.name	= "sunxi-de2-clks",
++		.of_match_table	= sunxi_de2_clk_ids,
++	},
++};
++builtin_platform_driver(sunxi_de2_clk_driver);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+new file mode 100644
+index 000000000000..530c006e0ae9
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+@@ -0,0 +1,28 @@
++/*
++ * Copyright 2016 Icenowy Zheng <icenowy@aosc.io>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _CCU_SUN8I_DE2_H_
++#define _CCU_SUN8I_DE2_H_
++
++#include <dt-bindings/clock/sun8i-de2.h>
++#include <dt-bindings/reset/sun8i-de2.h>
++
++/* Intermediary clock dividers are not exported */
++#define CLK_MIXER0_DIV	3
++#define CLK_MIXER1_DIV	4
++#define CLK_WB_DIV	5
++
++#define CLK_NUMBER	(CLK_WB + 1)
++
++#endif /* _CCU_SUN8I_DE2_H_ */
+-- 
+2.12.2
 
-> > +int sun4i_ddc_create(struct sun4i_hdmi *hdmi, struct clk *parent)
-> > +{
-> > +       struct clk_init_data init;
-> > +       struct sun4i_ddc *ddc;
-> > +       const char *parent_name;
-> > +
-> > +       parent_name =3D __clk_get_name(parent);
-> > +       if (!parent_name)
-> > +               return -ENODEV;
-> > +
-> > +       ddc =3D devm_kzalloc(hdmi->dev, sizeof(*ddc), GFP_KERNEL);
-> > +       if (!ddc)
-> > +               return -ENOMEM;
-> > +
-> > +       init.name =3D "hdmi-ddc";
-> > +       init.ops =3D &sun4i_ddc_ops;
-> > +       init.parent_names =3D &parent_name;
-> > +       init.num_parents =3D 1;
-> > +       init.flags =3D CLK_SET_RATE_PARENT;
->=20
-> I don't think this is really needed. It probably doesn't hurt though,
-> since DDC is used when HDMI is not used for displaying, but it might
-> affect any upstream PLLs, which theoretically may affect other users
-> of said PLLs. The DDC clock is slow enough that we should be able to
-> generate a usable clock rate anyway.
-
-Good point, I removed it.
-
-> > +       writel(SUN4I_HDMI_VID_TIMING_X(mode->hdisplay) |
-> > +              SUN4I_HDMI_VID_TIMING_Y(mode->vdisplay),
-> > +              hdmi->base + SUN4I_HDMI_VID_TIMING_ACT_REG);
-> > +
-> > +       x =3D mode->htotal - mode->hsync_start;
-> > +       y =3D mode->vtotal - mode->vsync_start;
->=20
-> I'm a bit skeptical about this one. All the other parameters are not
-> inclusive of other, why would this one be different? Shouldn't it
-> be "Xtotal - Xsync_end" instead?
-
-By the usual meaning of backporch, you're right. However, Allwinner's
-seems to have it's own, which is actually the backporch + sync length.
-
-We also have that on all the other connectors (and TCON), and this was
-confirmed at the time using a scope on an RGB signal.
-
->=20
-> > +       writel(SUN4I_HDMI_VID_TIMING_X(x) | SUN4I_HDMI_VID_TIMING_Y(y),
-> > +              hdmi->base + SUN4I_HDMI_VID_TIMING_BP_REG);
-> > +
-> > +       x =3D mode->hsync_start - mode->hdisplay;
-> > +       y =3D mode->vsync_start - mode->vdisplay;
-> > +       writel(SUN4I_HDMI_VID_TIMING_X(x) | SUN4I_HDMI_VID_TIMING_Y(y),
-> > +              hdmi->base + SUN4I_HDMI_VID_TIMING_FP_REG);
-> > +
-> > +       x =3D mode->hsync_end - mode->hsync_start;
-> > +       y =3D mode->vsync_end - mode->vsync_start;
-> > +       writel(SUN4I_HDMI_VID_TIMING_X(x) | SUN4I_HDMI_VID_TIMING_Y(y),
-> > +              hdmi->base + SUN4I_HDMI_VID_TIMING_SPW_REG);
-> > +
-> > +       val =3D SUN4I_HDMI_VID_TIMING_POL_TX_CLK;
-> > +       if (mode->flags & DRM_MODE_FLAG_PHSYNC)
-> > +               val |=3D SUN4I_HDMI_VID_TIMING_POL_HSYNC;
-> > +
-> > +       if (mode->flags & DRM_MODE_FLAG_PVSYNC)
-> > +               val |=3D SUN4I_HDMI_VID_TIMING_POL_VSYNC;
-> > +
-> > +       writel(val, hdmi->base + SUN4I_HDMI_VID_TIMING_POL_REG);
->=20
-> You don't handle the interlaced video here, even though you set
->=20
->     hdmi->connector.interlace_allowed =3D true
->=20
-> later.
-
-I'll fix that.
-
-> The double clock and double scan flags aren't handled either, though
-> I don't understand which one is supposed to represent the need for the
-> HDMI pixel repeater. AFAIK this is required for resolutions with pixel
-> clocks lower than 25 MHz, the lower limit of HDMI's TMDS link.
-
-I'm not sure about this one though. I'd like to keep things quite
-simple for now and build up on that once the basis is working. Is it
-common in the wild?
-
-> > +              hdmi->base + SUN4I_HDMI_DDC_FIFO_CTRL_REG);
-> > +       writel(SUN4I_HDMI_DDC_ADDR_SEGMENT(offset >> 8) |
-> > +              SUN4I_HDMI_DDC_ADDR_EDDC(0x60) |
-> > +              SUN4I_HDMI_DDC_ADDR_OFFSET(offset) |
-> > +              SUN4I_HDMI_DDC_ADDR_SLAVE(0x50),
->=20
-> You can use DDC_ADDR from drm_edid.h.
-
-Done.
-
-> > +static enum drm_connector_status
-> > +sun4i_hdmi_connector_detect(struct drm_connector *connector, bool forc=
-e)
-> > +{
-> > +       struct sun4i_hdmi *hdmi =3D drm_connector_to_sun4i_hdmi(connect=
-or);
-> > +       unsigned long reg;
-> > +
-> > +       if (readl_poll_timeout(hdmi->base + SUN4I_HDMI_HPD_REG, reg,
-> > +                              reg & SUN4I_HDMI_HPD_HIGH,
-> > +                              0, 500000))
->=20
-> We shouldn't need to do polling here. It should just return the status
-> at the instance it's called. Instead we should have a worker that does
-> polling to check if something is plugged or unplugged. I don't see any
-> interrupt bits for this though. :(
-
-As far as I know, polling in detect is okay. Why would you want to
-remove it?
-
-> > +       ret =3D drm_encoder_init(drm,
-> > +                              &hdmi->encoder,
-> > +                              &sun4i_hdmi_funcs,
-> > +                              DRM_MODE_ENCODER_TMDS,
-> > +                              NULL);
-> > +       if (ret) {
-> > +               dev_err(dev, "Couldn't initialise the HDMI encoder\n");
-> > +               return ret;
-> > +       }
-> > +
-> > +       hdmi->encoder.possible_crtcs =3D BIT(0);
->=20
-> You can use drm_of_find_possible_crtcs() now. See the TV encoder driver.
-
-Ack.
-
-> > +
-> > +       drm_connector_helper_add(&hdmi->connector,
-> > +                                &sun4i_hdmi_connector_helper_funcs);
-> > +       ret =3D drm_connector_init(drm, &hdmi->connector,
-> > +                                &sun4i_hdmi_connector_funcs,
-> > +                                DRM_MODE_CONNECTOR_HDMIA);
-> > +       if (ret) {
-> > +               dev_err(dev,
-> > +                       "Couldn't initialise the Composite connector\n"=
-);
->=20
-> Wrong connector.
-
-Fixed.
-
-> > +       ret =3D sun4i_ddc_create(hdmi, hdmi->tmds_clk);
-> > +       if (ret) {
-> > +               dev_err(&pdev->dev, "Couldn't create the DDC clock\n");
-> > +               return ret;
-> > +       }
->=20
-> We do all this in the bind function for all the other components.
-> Any particular reason to do it differently here?
-
-Not really, I'll change it.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---is3dkn7zscvo5sqd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJZAEMZAAoJEBx+YmzsjxAglOkP/1mcGKViorRDjQaplvn7yRYp
-oJhYOuXp5RRrSTv72V0VdGjHBoNyAW6QXiaocNUaV1Wr1NxIBlyrSlfquS/qPxFy
-ywMldLLGPs1yandPQtdrf801Emp3XpqcZKhq5iuKxrDY7MbB3M9j++Z/3GUzIYoS
-zAX+vLf5dnaXFyeN71SczbGr7J6JQFKKf+/q+RtLoBINjfCGGKddBSdCVtNfw3nx
-X1LttRcJSoA7mll8EG6E/2zsgpTPWFhg5BROTp6GlNlpY5bq3PuqrWAZXNHVWwuI
-vMF6UAt5Q4rV4NiA/evuTlKjoxhTfj7v95MJS9CeyQvCMBEfCLKeAQua1hXjl0Rf
-XJhmcIbvtXo2oS8aeG47H8liCCY5ioRDIqXF+cPLD+OQCVmnJ4Fxb5AGkXvMHVAF
-qKLC+zVQynhDMUs4CYVNIY4mfK19qVzDnFgX+raX6wk17v9k0Dc5wC55lWI15A7e
-RwYvVh3xWFYKnFgCnBQKot1iN3lPesrN9NiQop75sAmmyEthowVx/y9zgLfh05Rz
-+2+l+UmlMee1S36Yc5Zhwg0P48T+K1vCbdBTKC8USSnC7lprR8arejWBA7waBdPo
-tKrA4t8vSNzpNWjFgGkrP5cnjIAEj8kjqr6+4BTDgYZvwDjKSPWl/CmpykiVWT2v
-nn7LPC/gXWeTh2a8M9dV
-=jpXQ
------END PGP SIGNATURE-----
-
---is3dkn7zscvo5sqd--
