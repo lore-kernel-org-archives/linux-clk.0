@@ -1,169 +1,64 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Thu, 6 Apr 2017 16:03:41 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Rick Altherr <raltherr@google.com>
-Cc: OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-iio@vger.kernel.org,
-	Quentin Schulz <quentin.schulz@free-electrons.com>,
-	David Lechner <david@lechnology.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	William Breathitt Gray <vilhelm.gray@gmail.com>,
-	linux-clk@vger.kernel.org, Andreas Klinger <ak@it-klinger.de>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Alison Schofield <amsfield22@gmail.com>,
-	Fabrice Gasnier <fabrice.gasnier@st.com>,
-	Hartmut Knaack <knaack.h@gmx.de>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Akinobu Mita <akinobu.mita@gmail.com>,
-	Matt Ranostay <mranostay@gmail.com>
-Subject: Re: [PATCH v4 2/2] iio: Aspeed ADC
-Message-ID: <20170406230341.GR7065@codeaurora.org>
-References: <20170323184136.7349-1-raltherr@google.com>
- <20170323184136.7349-2-raltherr@google.com>
- <20170405202744.GB7065@codeaurora.org>
- <CAPLgG=nYnVuwRZOdXuFCaFy9P0cx_zqfk0f9orBv+8+HxcnqKQ@mail.gmail.com>
- <20170406011003.GP7065@codeaurora.org>
- <CAPLgG=mVG1iayk-m5Bu4QRZbMDaxXRTM-mJPQzTwgbOjGKwDpQ@mail.gmail.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAPLgG=mVG1iayk-m5Bu4QRZbMDaxXRTM-mJPQzTwgbOjGKwDpQ@mail.gmail.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170422021043.GD7065@codeaurora.org>
+References: <1492624001-3758-12-git-send-email-ykaneko0929@gmail.com> <20170422021043.GD7065@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 23 Apr 2017 22:16:28 +0200
+Message-ID: <CAMuHMdVgd2c++xPd8iMOWE6c1CZWoK73Jod1WM_MSJJ2mUroNg@mail.gmail.com>
+Subject: Re: [PATCH] clk: cs2000: Fix the setting of saved_rate during the
+ resume process
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/06, Rick Altherr wrote:
-> On Wed, Apr 5, 2017 at 6:10 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > On 04/05, Rick Altherr wrote:
-> >> On Wed, Apr 5, 2017 at 1:27 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> >> > On 03/23, Rick Altherr wrote:
-> >> >> +
-> >> >> +static int aspeed_adc_probe(struct platform_device *pdev)
-> >> >> +{
-> >> >> +     struct iio_dev *indio_dev;
-> >> >> +     struct aspeed_adc_data *data;
-> >> >> +     const struct aspeed_adc_model_data *model_data;
-> >> >> +     struct resource *res;
-> >> >> +     const char *clk_parent_name;
-> >> >> +     int ret;
-> >> >> +     u32 adc_engine_control_reg_val;
-> >> >> +
-> >> >> +     indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*data));
-> >> >> +     if (!indio_dev)
-> >> >> +             return -ENOMEM;
-> >> >> +
-> >> >> +     data = iio_priv(indio_dev);
-> >> >> +     data->dev = &pdev->dev;
-> >> >> +
-> >> >> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >> >> +     data->base = devm_ioremap_resource(&pdev->dev, res);
-> >> >> +     if (IS_ERR(data->base))
-> >> >> +             return PTR_ERR(data->base);
-> >> >> +
-> >> >> +     /* Register ADC clock prescaler with source specified by device tree. */
-> >> >> +     spin_lock_init(&data->clk_lock);
-> >> >> +     clk_parent_name = of_clk_get_parent_name(pdev->dev.of_node, 0);
-> >> >
-> >> > What if the parent clk is not registered yet? Or if we're not
-> >> > always using DT in this driver? Put another way, this code is
-> >> > fragile. But I guess it probably works well enough for now so no
-> >> > big deal, just pointing out my fear.
-> >>
-> >> I'm not terribly worried about not using DT for this driver as it is
-> >> for an ARM SoC's built-in ADC which is only supported via DT.  I take
-> >> your point though.  What's the right way to do this?  Use clk_get() to
-> >> request by name and clock-names in the DT?
-> >
-> > Yes that will work. When we add probe defer to clk_get() things
-> > will work better. Presumably the clocks property already exists
-> > for this device so that of_clk_get_parent_name() works so it's
-> > not a binding change?
-> 
-> The bindings include clocks but not clock-names.  In this case,
-> clk_register_divider() only has variants that take a parent clock
-> name.  I can't see what I'd do with the result of clk_get().  If the
-> bindings provide clock-names, I can provide a fixed string for the
-> parent name instead of relying on of_clk_get_parent_name().  The
-> removes an explicit driver dependency on DT.  I'm unclear if it
-> resolves your concerns about registration ordering.
+Hi Stephen,
 
-We have __clk_get_name() as a helper in clk-provider.h to assist
-drivers in finding parent names of clks they get through
-clk_get(). Eventually we want to get rid of that function, but
-using it at least helps us find it later.
+On Sat, Apr 22, 2017 at 4:10 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 04/20, Yoshihiro Kaneko wrote:
+>> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+>>
+>> In the resume process, there is the case that other drivers call
+>> cs2000_enable before cs2000_resume is called. Since the order of
+>> resume process is not guaranteed, it is needed to reset the clk
+>> rate in any cases before cs2000 is used.
+>>
+>> Also, the current cs2000 driver is using resume_early function.
+>> The using .resume_early is bad idea because the dependency with
+>> other drivers is to be complicated.
+>>
+>> This patch adds to reset the clk rate in cs2000_enable and
+>> changes to use from .resume_early to .resume.
+>>
+>> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+>> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>> ---
+>
+> Was this supposed to be sent as a series? This is the second
+> patch in the series?
+>
+> In what situation does a driver call clk_prepare() on the clocks
+> in here before the device's resume callback is called? I would
+> think that any devices that use the clks provided by this driver
+> would be probe defered until the clks are registered, so they
+> would be later in the suspend/resume list than this clk driver?
 
-Aside: This is a problem we've had for a while. You're an
-innocent bystander here. The usage of strings for clk tree
-description is not working well and we really need to move away
-from it. So far we have no solution so all I can say is sorry you
-tripped up on this.
+Deferred probing is used during driver initialization only.
+This patch is about clock users calling into the clock API during the resume
+procedure, before the clock provider has been resumed.
 
-> 
-> >
-> >>
-> >> >
-> >> >> +
-> >> >> +     data->clk_prescaler = clk_hw_register_divider(
-> >> >> +                             &pdev->dev, "prescaler", clk_parent_name, 0,
-> >> >> +                             data->base + ASPEED_REG_CLOCK_CONTROL,
-> >> >> +                             17, 15, 0, &data->clk_lock);
-> >> >> +     if (IS_ERR(data->clk_prescaler))
-> >> >> +             return PTR_ERR(data->clk_prescaler);
-> >> >> +
-> >> >> +     /*
-> >> >> +      * Register ADC clock scaler downstream from the prescaler. Allow rate
-> >> >> +      * setting to adjust the prescaler as well.
-> >> >> +      */
-> >> >> +     data->clk_scaler = clk_hw_register_divider(
-> >> >> +                             &pdev->dev, "scaler", "prescaler",
-> >> >> +                             CLK_SET_RATE_PARENT,
-> >> >> +                             data->base + ASPEED_REG_CLOCK_CONTROL,
-> >> >> +                             0, 10, 0, &data->clk_lock);
-> >> >> +     if (IS_ERR(data->clk_scaler)) {
-> >> >> +             ret = PTR_ERR(data->clk_scaler);
-> >> >> +             goto scaler_error;
-> >> >> +     }
-> >> >> +
-> >> >> +     /* Start all channels in normal mode. */
-> >> >> +     clk_prepare_enable(data->clk_scaler->clk);
-> >> >
-> >> > Eventually we'd like to get rid of hw->clk pointer so that users
-> >> > have to call some sort of clk_get() API and then we get warm
-> >> > fuzzies from knowing who is consuming a clk structure. Can you
-> >> > change this to register a clk provider and call clk_get()? I
-> >> > think a device that references itself should be OK in DT still,
-> >> > and would properly reflect what's going on.
-> >>
-> >> Do you mean call of_clk_add_hw_provider with of_clk_hw_simple_get or
-> >> something else?  I'm still wrapping my head around the distinction
-> >> between clk, clk_hw, and a clk provider.
-> >>
-> >
-> > Yes. Unless you don't want to expose these details in DT because
-> > it's all internal to the device?
-> >
-> 
-> There's no reason to expose the scaler or prescaler in DT.  These are
-> clocks that internal to the ADC and have no way for other devices to
-> use them.  I only used the clock framework to avoid reinventing the
-> wheel on calculating divider values for a desired clock rate.
-> 
-> > In that case we need to go merge that patch on the clk list to
-> > have clk_hw_create_clk() or something like that, so we can turn a
-> > clk_hw structure into a clk pointer without directly referencing
-> > the clk member of clk_hw.
-> 
-> This makes the most sense to me.
-> 
+Gr{oetje,eeting}s,
 
-Ok. Let me see what I can do to merge that patch now. I should be
-able to put it on its own branch that could be pulled into the
-tree for this driver. Or a merge window can pass and things fixed
-then.
+                        Geert
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
