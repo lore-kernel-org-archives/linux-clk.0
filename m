@@ -1,43 +1,126 @@
-Return-Path: <ykaneko0929@gmail.com>
-Return-Path: <ykaneko0929@gmail.com>
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7796: Add EHCI/OHCI clocks
-Date: Thu, 20 Apr 2017 02:46:27 +0900
-Message-Id: <1492624001-3758-7-git-send-email-ykaneko0929@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v5 01/11] dt-bindings: add binding for the Allwinner DE2 CCU
+Date: Sun, 23 Apr 2017 18:37:44 +0800
+Message-Id: <20170423103754.50012-2-icenowy@aosc.io>
+In-Reply-To: <20170423103754.50012-1-icenowy@aosc.io>
+References: <20170423103754.50012-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Allwinner "Display Engine 2.0" contains some clock controls in it.
 
-This patch adds EHCI/OHCI{0,1} clocks for R8A7796 SoC.
+In order to add them as clock drivers, we need a device tree binding.
+Add the binding here.
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Also add the device tree binding headers.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
-This patch is based on the clk-next branch of linux-clk tree.
+Changes in v5:
+- Moved dt-binding headers here.
+- Changed dt-binding headers' license header to SPDX license.
+Changes in v4:
+- Dropped the leading 0 in clock at 1000000 .
+Changes in v3:
+- Fill the address space length of DE2 CCU to 0x100000, just reach the start of mixer0.
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../devicetree/bindings/clock/sun8i-de2.txt        | 31 ++++++++++++++++++++++
+ include/dt-bindings/clock/sun8i-de2.h              | 18 +++++++++++++
+ include/dt-bindings/reset/sun8i-de2.h              | 14 ++++++++++
+ 3 files changed, 63 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
+ create mode 100644 include/dt-bindings/clock/sun8i-de2.h
+ create mode 100644 include/dt-bindings/reset/sun8i-de2.h
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 1d8c5c2..c6c5026 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -165,6 +165,8 @@ enum clk_ids {
- 	DEF_MOD("vspd0",		 623,	R8A7796_CLK_S0D2),
- 	DEF_MOD("vspb",			 626,	R8A7796_CLK_S0D1),
- 	DEF_MOD("vspi0",		 631,	R8A7796_CLK_S0D1),
-+	DEF_MOD("ehci1",		 702,	R8A7796_CLK_S3D4),
-+	DEF_MOD("ehci0",		 703,	R8A7796_CLK_S3D4),
- 	DEF_MOD("csi20",		 714,	R8A7796_CLK_CSI0),
- 	DEF_MOD("csi40",		 716,	R8A7796_CLK_CSI0),
- 	DEF_MOD("du2",			 722,	R8A7796_CLK_S2D1),
+diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+new file mode 100644
+index 000000000000..15a60bd7dcf3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
+@@ -0,0 +1,31 @@
++Allwinner Display Engine 2.0 Clock Control Binding
++--------------------------------------------------
++
++Required properties :
++- compatible: must contain one of the following compatibles:
++		- "allwinner,sun8i-a83t-de2-clk"
++		- "allwinner,sun50i-a64-de2-clk"
++		- "allwinner,sun50i-h5-de2-clk"
++
++- reg: Must contain the registers base address and length
++- clocks: phandle to the clocks feeding the display engine subsystem.
++	  Three are needed:
++  - "mod": the display engine module clock
++  - "bus": the bus clock for the whole display engine subsystem
++- clock-names: Must contain the clock names described just above
++- resets: phandle to the reset control for the display engine subsystem.
++- #clock-cells : must contain 1
++- #reset-cells : must contain 1
++
++Example:
++de2_clocks: clock@1000000 {
++	compatible = "allwinner,sun50i-a64-de2-clk";
++	reg = <0x01000000 0x100000>;
++	clocks = <&ccu CLK_DE>,
++		 <&ccu CLK_BUS_DE>;
++	clock-names = "mod",
++		      "bus";
++	resets = <&ccu RST_BUS_DE>;
++	#clock-cells = <1>;
++	#reset-cells = <1>;
++};
+diff --git a/include/dt-bindings/clock/sun8i-de2.h b/include/dt-bindings/clock/sun8i-de2.h
+new file mode 100644
+index 000000000000..3bed63b524aa
+--- /dev/null
++++ b/include/dt-bindings/clock/sun8i-de2.h
+@@ -0,0 +1,18 @@
++/*
++ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.io>
++ *
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_SUN8I_DE2_H_
++#define _DT_BINDINGS_CLOCK_SUN8I_DE2_H_
++
++#define CLK_BUS_MIXER0		0
++#define CLK_BUS_MIXER1		1
++#define CLK_BUS_WB		2
++
++#define CLK_MIXER0		6
++#define CLK_MIXER1		7
++#define CLK_WB			8
++
++#endif /* _DT_BINDINGS_CLOCK_SUN8I_DE2_H_ */
+diff --git a/include/dt-bindings/reset/sun8i-de2.h b/include/dt-bindings/reset/sun8i-de2.h
+new file mode 100644
+index 000000000000..9526017432f0
+--- /dev/null
++++ b/include/dt-bindings/reset/sun8i-de2.h
+@@ -0,0 +1,14 @@
++/*
++ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.io>
++ *
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++ */
++
++#ifndef _DT_BINDINGS_RESET_SUN8I_DE2_H_
++#define _DT_BINDINGS_RESET_SUN8I_DE2_H_
++
++#define RST_MIXER0	0
++#define RST_MIXER1	1
++#define RST_WB		2
++
++#endif /* _DT_BINDINGS_RESET_SUN8I_DE2_H_ */
 -- 
-1.9.1
+2.12.2
