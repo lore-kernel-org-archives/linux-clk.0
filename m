@@ -1,41 +1,78 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 09:03:45 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Chen-Yu Tsai <wens@csie.org>,
+Return-Path: <daniel.lezcano@linaro.org>
+Return-Path: <daniel.lezcano@linaro.org>
+Date: Mon, 24 Apr 2017 11:43:38 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, xuwei5@hisilicon.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [GIT PULL] Allwinner clock changes for 4.12
-Message-ID: <20170419160345.GT7065@codeaurora.org>
-References: <20170406081001.kjyrisz4f5cdy4a7@lukather>
+Subject: Re: [PATCH V2] clk: hi6220: Add the hi655x's pmic clock
+Message-ID: <20170424094338.GC2137@mai>
+References: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
+ <20170424093154.ffo7zsr66a2yjy74@dell>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170406081001.kjyrisz4f5cdy4a7@lukather>
+In-Reply-To: <20170424093154.ffo7zsr66a2yjy74@dell>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/06, Maxime Ripard wrote:
-> Hi Mike, Stephen,
+On Mon, Apr 24, 2017 at 10:31:54AM +0100, Lee Jones wrote:
+> On Sat, 08 Apr 2017, Daniel Lezcano wrote:
 > 
-> Here is our usual patches for the next merge window.
+> > The hi655x multi function device is a PMIC providing regulators.
+> > 
+> > The PMIC also provides a clock for the WiFi and the Bluetooth, let's implement
+> > this clock in order to add it in the hi655x MFD and allow proper wireless
+> > initialization.
+> > 
+> > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > ---
+> > 
+> > Changelog:
+> > 
+> >  V2:
+> >     - Added COMPILE_TEST option, compiled on x86
+> >     - Removed useless parenthesis
+> >     - Used of_clk_hw_simple_get() instead of deref dance
+> >     - Do bailout if the clock-names is not specified
+> >     - Rollback on error
+> >     - Folded mfd line change and binding
+> >     - Added #clock-cells binding documentation
+> >     - Added #clock-cells in the DT
+> > 
+> >  V1: initial post
+> > ---
 > 
-> Thanks!
-> Maxime
+> ??
 > 
-> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+> > ---
 > 
->   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+> I'm unsure if this as been mentioned before, but bundling;
+> driver & architecture changes and documentation into a single patch is
+> very seldom a good idea.  In this case, you should split this into at
+> least 3, perhaps 4 patches.
 > 
-> are available in the git repository at:
+> >  .../devicetree/bindings/mfd/hisilicon,hi655x.txt   |   6 +
 > 
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-4.12
+> Patch 1
 > 
-> for you to fetch changes up to cb545960dea2749771c88b0cb26e5adfd12a0315:
+> >  arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts     |   1 +
 > 
->   clk: sunxi-ng: Display index when clock registration fails (2017-04-06 09:10:30 +0200)
+> Patch 2
 > 
+> >  drivers/clk/Kconfig                                |   8 ++
+> >  drivers/clk/Makefile                               |   1 +
+> >  drivers/clk/clk-hi655x.c                           | 140 +++++++++++++++++++++
+> 
+> Patch 3
+> 
+> >  drivers/mfd/hi655x-pmic.c                          |   3 +-
+> 
+> Patch 4
+> 
+> [...]
 
-Pulled into clk-next.
+Yep. Will do that next time.
 
+Thanks.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+  -- Daniel
