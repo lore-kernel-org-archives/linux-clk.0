@@ -1,99 +1,79 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f176.google.com ([209.85.223.176]:33960 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753209AbdDLHkk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2017 03:40:40 -0400
-Received: by mail-io0-f176.google.com with SMTP id a103so31629537ioj.1
-        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2017 00:40:40 -0700 (PDT)
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 24 Apr 2017 10:51:09 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v5 02/11] clk: sunxi-ng: add support for DE2 CCU
+Message-ID: <20170424085109.p44bmzbyjkuf7ckv@lukather>
+References: <20170423103754.50012-1-icenowy@aosc.io>
+ <20170423103754.50012-3-icenowy@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <87lgr6ego2.fsf@eliezer.anholt.net>
-References: <20170411011801.15788-1-eric@anholt.net> <CACRpkdacg9tR3n3V2cZ=S9yv-xb+rxLRv8mE8nXQLoja6zXd0g@mail.gmail.com>
- <87lgr6ego2.fsf@eliezer.anholt.net>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 12 Apr 2017 09:40:38 +0200
-Message-ID: <CACRpkdZOY5jNB6UqwAufadE-FCRY2cyS1sU6UYMH9iFdSd7Lvw@mail.gmail.com>
-Subject: Re: [PATCH v5] drm/pl111: Initial drm/kms driver for pl111
-To: Eric Anholt <eric@anholt.net>,
-        linux-clk <linux-clk@vger.kernel.org>
-Cc: "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Tom Cooksey <tom.cooksey@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mike Turquette <mturquette@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="durw7a273rduc6nt"
+In-Reply-To: <20170423103754.50012-3-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 12, 2017 at 12:13 AM, Eric Anholt <eric@anholt.net> wrote:
 
-> Oh, one last thing I think we need to figure out: I'm using TIM2_CLKSEL,
-> which seems to be necessary on this platform.  My understanding is that
-> this means that the pixel clock is divided from clcdclk instead of
-> apb_pclk.  Do you agree?
+--durw7a273rduc6nt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes the pixed clock is always derived from clcdclk.
+Hi,
 
-In most older ARM reference designs this is a VCO so that
-is why there is a clk_set_rate() on this in the fbdev code.
-(On some platforms that even has no effect I guess.)
+On Sun, Apr 23, 2017 at 06:37:45PM +0800, Icenowy Zheng wrote:
+> +static const struct of_device_id sunxi_de2_clk_ids[] =3D {
+> +	{
+> +		.compatible =3D "allwinner,sun8i-a83t-de2-clk",
+> +		.data =3D &sun8i_a83t_de2_clk_desc,
+> +	},
+> +	{
+> +		.compatible =3D "allwinner,sun50i-h5-de2-clk",
+> +		.data =3D &sun50i_a64_de2_clk_desc,
+> +	},
+> +	/*
+> +	 * The Allwinner A64 SoC needs some bit to be poke in syscon to make
+> +	 * DE2 really working.
+> +	 * So there's currently no A64 compatible here.
+> +	 * H5 shares the same reset line with A64, so here H5 is using the
+> +	 * clock description of A64.
+> +	 */
+> +	{ }
+> +};
 
-> The fbdev driver is using
-> clk_get(&fb->dev->dev, NULL) and not TIM2_CLKSEL, which I'm surprised by
-> because I would have thought that would give us the first clock from the
-> DT node (also clcdclk).
+So that A64 driver would require more than just what you defined in
+the binding in order to operate?
 
-So that thing is a 1-bit line that can select one of two clocks
-to be muxed into the PL111/CLCD.
+Maxime
 
-I guess that up until now all platforms just left that line dangling in
-the silicon. Congratulations, you came here first ;)
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-Though when I look at the Nomadik it seems that it might be muxing
-the clock between 48 and 72 MHz, and I've been using 48MHz
-all along ooopsie.
+--durw7a273rduc6nt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The current assumption in the bindings is that we have only
-one clock and TIM2_CLKSEL is N/A.
+-----BEGIN PGP SIGNATURE-----
 
-If we want proper clcdclk handling with CLKSEL you should
-probably add some code to implement a real mux clock for
-this using <linux/clock-provider.h> and drivers/clk/clk-mux.c
-with select COMMON_CLK
-so that the driver still only sees clcdclk but that in turn is a
-mux that can select one of two sources and will react to
-the clk_set_rate() call by selecting the clock which is
-closest in frequency to what you want.
+iQIcBAABCAAGBQJY/bx1AAoJEBx+YmzsjxAg/g4P/RL8VLuuS5zS1riDe+pjLPUm
+XjfYvFFireCrdFg9i1Bnz5ex6PY2sNkVN/NuHcY47wq1irf2yxzV4475KhS8NKYC
+H4CJ4a2A+nPIXmjBXqEsLXHQ9DXgEzT8FnQItV1llePaHnj+sjcvOgUwxUPEaTuJ
+tHr9/XfpPnY1ZC4+n1N5N0Zw3sXOT0/gjc4urq5/1F1/QH58vlp+UODvxN5nW1V5
+mi380GyWot4sOA2XSXaa7rOcqiHx8FRNx7qmgH/PieUmiWxuYcY7pkiVIOOZMIu6
+WNDvQFbAjVGmZ1IjO4mRh1NsjHc5cMkrobS1uRVOKXmgtSI4vyUCZevuZoricvK7
+jo/9c64oPZQyQ2h8eVY9ir6eriwp9apqRhGP93C1WcRHbYwORAtHUz5xPkAAHpQH
+ujkf5R7cLaJPaougx0Gnuq6WM39OxHuSL16kzX+gqzCj4DvqxG4J6CZujGI6ouJr
+/ONcyE/lptj/5qFWjThikfka6u4BaoKP9BWt7dnvbWytinx/Xp8sct8qCVUY4hSE
+i41LYmu2C24nO9JiUgbaR2dEyj9GvRHjnu2Q5KKWHVaSgTTQjiLZ49GvqsuEnb60
+Bp1nqv+/hEHBaGMl8SlTnHYp+79fMSgIiI64GcT1rHBUZZOyCng6S+rI+1V+gAbI
+c3ETp5kWi5TOrxSH/IvA
+=xMwC
+-----END PGP SIGNATURE-----
 
-This needs a small patch to alter the bindings too I guess.
-A small clock node inside the CLCD, just like PCI bridges have
-irqchips inside them etc:
-
-clcd@10120000 {
-        compatible = "arm,pl110", "arm,primecell";
-        reg = <0x10120000 0x1000>;
-        (...)
-        clocks = <&clcdclk>, <&foo>;
-        clock-names = "clcdclk", "apb_pclk";
-
-        clcdclk: clock-controller@0 {
-                compatible = "arm,pl11x-clock-mux";
-                clocks = <&source_a>, <&source_b>;
-        };
-};
-
-This can be set up easily in the OF probe path since that
-is what we're doing: just look for this subnode, if it is there
-create the clock controller.
-
-I do not think the clk maintainers would mind a small mux
-clock controller inside the CLCD driver to handle this mux
-if we need it.
-
-It would *maybe* also be possible to add a second "clcdclk2"
-to the block and make an educated decision on which clock
-to use in the driver but that is not as elegant as using the
-clock framework mux clock I think.
-
-Yours,
-Linus Walleij
+--durw7a273rduc6nt--
