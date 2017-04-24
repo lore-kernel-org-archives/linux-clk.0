@@ -1,69 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:35196 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1168560AbdDXLfV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2017 07:35:21 -0400
-Subject: Re: [PATCH RFC 1/7] clk: samsung: Add enable/disable operation for
- PLL36XX clocks
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?=
-        <b.zolnierkie@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <3232b6e5-05b6-2d91-07ef-e5473ee70889@samsung.com>
-Date: Mon, 24 Apr 2017 13:35:13 +0200
-MIME-version: 1.0
-In-reply-to: <CAJKOXPdKRzC+f4mLCPhHKNuGS4=K-9CC_AKor0Etfu7Bxp-+iw@mail.gmail.com>
-Content-type: text/plain; charset=windows-1252; format=flowed
-References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20170421172016epcas5p342c16e1219c1205a44a84eaa770ad5ac@epcas5p3.samsung.com>
- <1492795191-31298-2-git-send-email-s.nawrocki@samsung.com>
- <20170422152236.tbf4iuoadqrvoc2n@kozik-lap>
- <017b3ec8-c185-c29a-2944-12f519b461fe@samsung.com>
- <CAJKOXPdKRzC+f4mLCPhHKNuGS4=K-9CC_AKor0Etfu7Bxp-+iw@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tony@atomide.com>
+Date: Mon, 24 Apr 2017 14:49:36 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
+	sboyd@codeaurora.org, mturquette@baylibre.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 3/9] dt-bindings: clk: add omap4 clkctrl definitions
+Message-ID: <20170424214936.GF3780@atomide.com>
+References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
+ <1489741781-12816-4-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1489741781-12816-4-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-(dropping unrelated addresses from Cc list)
+Hi Tero,
 
-On 04/24/2017 01:18 PM, Krzysztof Kozlowski wrote:
-> On Mon, Apr 24, 2017 at 1:12 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> On 04/22/2017 05:22 PM, Krzysztof Kozlowski wrote:
->>>> @@ -354,10 +359,12 @@ static int samsung_pll36xx_set_rate(struct clk_hw
->>>> *hw, unsigned long drate,
->>>>         writel_relaxed(pll_con1, pll->con_reg + 4);
->>>>
->>>>         /* wait_lock_time */
->>>> -       do {
->>>> -               cpu_relax();
->>>> -               tmp = readl_relaxed(pll->con_reg);
->>>> -       } while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
->>
->>
->> I will add a comment here like:
->> /* Wait until the PLL is locked if it is enabled. */
->>
->>>> +       if (pll_con0 & BIT(pll->enable_offs)) {
->>>
->>>
->>> Why this additional if() is needed?
->>
->>
->> The PLL will never transition to a locked state if it is disabled, without
->> this test we would end up with an indefinite loop below.
->
-> Hmmm... shouldn't this be split from this change? Or maybe this is
-> needed only because you added enable/disable for pl36xx and previously
-> this was not existing?
+* Tero Kristo <t-kristo@ti.com> [170317 02:12]:
+> Contains offsets for all omap4 clkctrl main and optional clocks.
 
-Yes, it looks like previously the PLLs were always on after were enabled.
-I wouldn't be separating that part, as it's all logically dependent.
-Just the commit message might need some improvement.
+Can you please sort these by the clock controller instance and
+add comments to this file to make easier to read?
 
--- 
-Thanks,
-Sylwester
+This way it will be easy to see how the clocks are grouped
+just by looking at this file :)
+
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/omap4.h
+...
+> +#define OMAP4_CLKCTRL_OFFSET	0x20
+> +#define OMAP4_CLKCTRL_INDEX(offset)	((offset) - OMAP4_CLKCTRL_OFFSET)
+...
+
+Something like below for example:
+
+/* abe clocks */
+#define OMAP4_L4_ABE_CLKCTRL    OMAP4_CLKCTRL_INDEX(0x20)
+> +#define OMAP4_MCPDM_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
+> +#define OMAP4_DMIC_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x38)
+> +#define OMAP4_MCASP_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x40)
+> +#define OMAP4_MCBSP1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x48)
+> +#define OMAP4_MCBSP2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x50)
+> +#define OMAP4_MCBSP3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x58)
+> +#define OMAP4_SLIMBUS1_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x60)
+> +#define OMAP4_TIMER5_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x68)
+> +#define OMAP4_TIMER6_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x70)
+> +#define OMAP4_TIMER7_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x78)
+> +#define OMAP4_TIMER8_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x80)
+> +#define OMAP4_WD_TIMER3_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x88)
+...
+
+/* l3_2 clocks */
+> +#define OMAP4_L3_MAIN_2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
+> +#define OMAP4_GPMC_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x28)
+...
+
+Regards,
+
+Tony
