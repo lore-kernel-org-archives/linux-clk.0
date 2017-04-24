@@ -1,78 +1,70 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:55524 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755687AbdDPMJz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 16 Apr 2017 08:09:55 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 01/11] dt-bindings: add binding for the Allwinner DE2 CCU
-Date: Sun, 16 Apr 2017 20:08:39 +0800
-Message-Id: <20170416120849.54542-2-icenowy@aosc.io>
-In-Reply-To: <20170416120849.54542-1-icenowy@aosc.io>
-References: <20170416120849.54542-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2.1 2/6] clk: samsung: Add local variable to match it purpose
+Date: Mon, 24 Apr 2017 09:54:12 +0200
+Message-id: <1493020452-23085-1-git-send-email-m.szyprowski@samsung.com>
+In-reply-to: 
+ <CAJKOXPdDBsqHp-qXFFjcK10PUb_Vo1q6DsdgerYW4j+9ESpxfw@mail.gmail.com>
+References: 
+ <CAJKOXPdDBsqHp-qXFFjcK10PUb_Vo1q6DsdgerYW4j+9ESpxfw@mail.gmail.com>
+ <CGME20170424075423eucas1p239eaef08b93dade23292c175b838d9a5@eucas1p2.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner "Display Engine 2.0" contains some clock controls in it.
+Add new variable to avoid using clk pointer for different purposes across
+the exynos_register_cpu_clock() function. This will help in future rewrite
+for the new clk_hw API.
 
-In order to add them as clock drivers, we need a device tree binding.
-Add the binding here.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
-Changes in v4:
-- Dropped the leading 0 in clock@1000000 .
-Changes in v3:
-- Fill the address space length of DE2 CCU to 0x100000, just reach the start of mixer0.
+ drivers/clk/samsung/clk-cpu.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
- .../devicetree/bindings/clock/sun8i-de2.txt        | 31 ++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-new file mode 100644
-index 000000000000..15a60bd7dcf3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-@@ -0,0 +1,31 @@
-+Allwinner Display Engine 2.0 Clock Control Binding
-+--------------------------------------------------
-+
-+Required properties :
-+- compatible: must contain one of the following compatibles:
-+		- "allwinner,sun8i-a83t-de2-clk"
-+		- "allwinner,sun50i-a64-de2-clk"
-+		- "allwinner,sun50i-h5-de2-clk"
-+
-+- reg: Must contain the registers base address and length
-+- clocks: phandle to the clocks feeding the display engine subsystem.
-+	  Three are needed:
-+  - "mod": the display engine module clock
-+  - "bus": the bus clock for the whole display engine subsystem
-+- clock-names: Must contain the clock names described just above
-+- resets: phandle to the reset control for the display engine subsystem.
-+- #clock-cells : must contain 1
-+- #reset-cells : must contain 1
-+
-+Example:
-+de2_clocks: clock@1000000 {
-+	compatible = "allwinner,sun50i-a64-de2-clk";
-+	reg = <0x01000000 0x100000>;
-+	clocks = <&ccu CLK_DE>,
-+		 <&ccu CLK_BUS_DE>;
-+	clock-names = "mod",
-+		      "bus";
-+	resets = <&ccu RST_BUS_DE>;
-+	#clock-cells = <1>;
-+	#reset-cells = <1>;
-+};
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index 8bf7e805fd34..c6dd83dce09d 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -410,6 +410,7 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ {
+ 	struct exynos_cpuclk *cpuclk;
+ 	struct clk_init_data init;
++	struct clk *parent_clk;
+ 	struct clk *clk;
+ 	int ret = 0;
+ 
+@@ -440,15 +441,15 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ 		goto free_cpuclk;
+ 	}
+ 
+-	clk = __clk_lookup(parent);
+-	if (!clk) {
++	parent_clk = __clk_lookup(parent);
++	if (!parent_clk) {
+ 		pr_err("%s: could not lookup parent clock %s\n",
+ 				__func__, parent);
+ 		ret = -EINVAL;
+ 		goto free_cpuclk;
+ 	}
+ 
+-	ret = clk_notifier_register(clk, &cpuclk->clk_nb);
++	ret = clk_notifier_register(parent_clk, &cpuclk->clk_nb);
+ 	if (ret) {
+ 		pr_err("%s: failed to register clock notifier for %s\n",
+ 				__func__, name);
+@@ -476,7 +477,7 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ free_cpuclk_data:
+ 	kfree(cpuclk->cfg);
+ unregister_clk_nb:
+-	clk_notifier_unregister(__clk_lookup(parent), &cpuclk->clk_nb);
++	clk_notifier_unregister(parent_clk, &cpuclk->clk_nb);
+ free_cpuclk:
+ 	kfree(cpuclk);
+ 	return ret;
 -- 
-2.12.2
-
+1.9.1
