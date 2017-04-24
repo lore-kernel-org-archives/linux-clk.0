@@ -1,43 +1,45 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 6/6] arm64: dts: msm8996: Add CPU clock controller node
-Date: Wed,  5 Apr 2017 10:25:29 +0530
-Message-Id: <1491368129-24721-7-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1491368129-24721-1-git-send-email-rnayak@codeaurora.org>
-References: <1491368129-24721-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [PATCH] clk: x86: pmc-atom: Checking for IS_ERR() instead of NULL
+To: Dan Carpenter <dan.carpenter@oracle.com>,
+ Michael Turquette <mturquette@baylibre.com>
+References: <20170422104333.tcdpvessre3pvafk@mwanda>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Irina Tirdea
+ <irina.tirdea@intel.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, linux-clk@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <0ee5fc92-9189-8628-c872-4488d0e3d525@linux.intel.com>
+Date: Mon, 24 Apr 2017 08:45:19 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170422104333.tcdpvessre3pvafk@mwanda>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the DT node for Kryo CPU clock controller on msm8996
-devices.
+On 4/22/17 5:43 AM, Dan Carpenter wrote:
+> clkdev_hw_create() returns NULLs on error, it doesn't return error
+> pointers.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Yes indeed. Thanks for the fix.
+FWIW
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index ed7223d..baae195 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -311,6 +311,12 @@
- 			reg = <0x300000 0x90000>;
- 		};
- 
-+		kryocc: clock-controller@6400000 {
-+			compatible = "qcom,apcc-msm8996";
-+			reg = <0x6400000 0x90000>;
-+			#clock-cells = <1>;
-+		};
-+
- 		blsp1_spi0: spi@07575000 {
- 			compatible = "qcom,spi-qup-v2.2.1";
- 			reg = <0x07575000 0x600>;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+>
+> Fixes: 41ee7caf59e1 ("clk: x86: add "mclk" alias for Baytrail/Cherrytrail")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+> index fafc99120dc2..f99abc1106f0 100644
+> --- a/drivers/clk/x86/clk-pmc-atom.c
+> +++ b/drivers/clk/x86/clk-pmc-atom.c
+> @@ -339,8 +339,8 @@ static int plt_clk_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  	data->mclk_lookup = clkdev_hw_create(&data->clks[3]->hw, "mclk", NULL);
+> -	if (IS_ERR(data->mclk_lookup)) {
+> -		err = PTR_ERR(data->mclk_lookup);
+> +	if (!data->mclk_lookup) {
+> +		err = -ENOMEM;
+>  		goto err_unreg_clk_plt;
+>  	}
+>
+>
