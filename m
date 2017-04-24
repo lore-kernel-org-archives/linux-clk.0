@@ -1,42 +1,49 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Mon, 24 Apr 2017 09:59:44 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com,
+	xuwei5@hisilicon.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V3 2/2] ARM64: dts: hi6220-hikey: Add clock binding for
+ the pmic mfd
+Message-ID: <20170424085944.aa5dsc4g6bwm5rgi@dell>
+References: <1492449567-31399-1-git-send-email-daniel.lezcano@linaro.org>
+ <1492449567-31399-2-git-send-email-daniel.lezcano@linaro.org>
+ <20170422020233.GA7065@codeaurora.org>
+ <370c36f9-e6fc-416c-776b-edc1e42d7ddc@linaro.org>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1492624001-3758-9-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-9-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:36:44 +0200
-Message-ID: <CAMuHMdVYA9z0DFsaj662=E3+3b1QCnWHYzEKZ23sykKbXu4Ong@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add USB-DMAC clocks
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <370c36f9-e6fc-416c-776b-edc1e42d7ddc@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
->
-> This patch adds USB-DMAC{0,1} clocks for R8A7796 SoC.
->
-> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> ---
-> This patch is based on the clk-next branch of linux-clk tree.
+On Sat, 22 Apr 2017, Daniel Lezcano wrote:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> On 22/04/2017 04:02, Stephen Boyd wrote:
+> > On 04/17, Daniel Lezcano wrote:
+> >> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> >> ---
+> >>  Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt | 6 ++++++
+> >>  arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts             | 1 +
+> >>  2 files changed, 7 insertions(+)
+> >>
+> > 
+> > I take it this goes through arm-soc? Not sure why I'm on To:
+> > line.
+> 
+> Probably it should go through Lee's tree.
 
-I.e. will queue in clk-renesas-for-v4.13.
+Unlikely.
 
-Gr{oetje,eeting}s,
+The document and the DTS change should really have gone separately,
+but to save you from having to mess around so close to the merge window:
 
-                        Geert
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
