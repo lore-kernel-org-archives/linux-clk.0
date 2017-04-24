@@ -1,45 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:36657 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933588AbdDGQTw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 7 Apr 2017 12:19:52 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 1/2] clk: sunxi-ng: fix PRCM CCU ir clk parent
-Date: Sat,  8 Apr 2017 00:19:03 +0800
-Message-Id: <20170407161904.32624-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 0/6] Samsung clock providers: convert to the new clk_hw API
+Date: Mon, 24 Apr 2017 08:42:17 +0200
+Message-id: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
+References: 
+ <CGME20170424064228eucas1p26228b4b334cc22ad22e77c8dd2e7dcdd@eucas1p2.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The first parent of ir clk in PRCM CCU is wrongly written as "osc32K"
-instead of "osc32k".
+Dear All,
 
-Change it to "osc32k".
+Clock providers should use the new struct clk_hw based API, so convert
+all Samsung clock providers and their helper functions to the new approach.
 
-Fixes: cdb8b80b6093 ("clk: sunxi-ng: add support for PRCM CCUs")
+Patches are based on top of linux-next from 20170420.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/clk/sunxi-ng/ccu-sun8i-r.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r.c b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-index 0d027d53dbdf..119f47b568ea 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-@@ -81,7 +81,7 @@ static SUNXI_CCU_GATE(apb0_i2c_clk,	"apb0-i2c",	"apb0",
- static SUNXI_CCU_GATE(apb0_twd_clk,	"apb0-twd",	"apb0",
- 		      0x28, BIT(7), 0);
- 
--static const char * const r_mod0_default_parents[] = { "osc32K", "osc24M" };
-+static const char * const r_mod0_default_parents[] = { "osc32k", "osc24M" };
- static SUNXI_CCU_MP_WITH_MUX_GATE(ir_clk, "ir",
- 				  r_mod0_default_parents, 0x54,
- 				  0, 4,		/* M */
+
+Changle log:
+v2:
+- moved some changes to separate patches as requested by Krzysztof Kozlowski
+
+v1:
+- initial version
+
+Marek Szyprowski (6):
+  clk: samsung: Remove dead code
+  clk: samsung: Add local variable to match it purpose
+  clk: samsung: Convert common drivers to the new clk_hw API
+  clk: samsung: exynos-audss: Convert to the new clk_hw API
+  clk: samsung: exynos-clkout: Convert to the new clk_hw API
+  clk: samsung: s5pv210-audss: Convert to the new clk_hw API
+
+ drivers/clk/samsung/clk-cpu.c           | 15 +++---
+ drivers/clk/samsung/clk-exynos-audss.c  | 55 ++++++++++----------
+ drivers/clk/samsung/clk-exynos-clkout.c | 18 +++----
+ drivers/clk/samsung/clk-pll.c           | 14 ++---
+ drivers/clk/samsung/clk-pll.h           |  4 --
+ drivers/clk/samsung/clk-s3c2410-dclk.c  | 75 ++++++++++++++-------------
+ drivers/clk/samsung/clk-s5pv210-audss.c | 50 +++++++++---------
+ drivers/clk/samsung/clk.c               | 91 +++++++++++++++------------------
+ drivers/clk/samsung/clk.h               |  9 ++--
+ 9 files changed, 159 insertions(+), 172 deletions(-)
+
 -- 
-2.12.2
-
+1.9.1
