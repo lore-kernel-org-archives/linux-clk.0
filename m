@@ -1,38 +1,56 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@codeaurora.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH 2/6] clk: qcom: Make clk_alpha_pll_configure available to modules
-Date: Wed,  5 Apr 2017 10:25:25 +0530
-Message-Id: <1491368129-24721-3-git-send-email-rnayak@codeaurora.org>
-In-Reply-To: <1491368129-24721-1-git-send-email-rnayak@codeaurora.org>
-References: <1491368129-24721-1-git-send-email-rnayak@codeaurora.org>
+Return-Path: <daniel.lezcano@linaro.org>
+Return-Path: <daniel.lezcano@linaro.org>
+Date: Mon, 24 Apr 2017 22:11:39 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com,
+	xuwei5@hisilicon.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, arnd@arndb.de,
+	robh@kernel.org
+Subject: Re: [PATCH V3 2/2] ARM64: dts: hi6220-hikey: Add clock binding for
+ the pmic mfd
+Message-ID: <20170424201139.GF2137@mai>
+References: <1492449567-31399-1-git-send-email-daniel.lezcano@linaro.org>
+ <1492449567-31399-2-git-send-email-daniel.lezcano@linaro.org>
+ <20170422020233.GA7065@codeaurora.org>
+ <370c36f9-e6fc-416c-776b-edc1e42d7ddc@linaro.org>
+ <20170424085944.aa5dsc4g6bwm5rgi@dell>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20170424085944.aa5dsc4g6bwm5rgi@dell>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allow clk_alpha_pll_configure to be called from loadable
-kernel modules.
+On Mon, Apr 24, 2017 at 09:59:44AM +0100, Lee Jones wrote:
+> On Sat, 22 Apr 2017, Daniel Lezcano wrote:
+> 
+> > On 22/04/2017 04:02, Stephen Boyd wrote:
+> > > On 04/17, Daniel Lezcano wrote:
+> > >> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > >> ---
+> > >>  Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt | 6 ++++++
+> > >>  arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts             | 1 +
+> > >>  2 files changed, 7 insertions(+)
+> > >>
+> > > 
+> > > I take it this goes through arm-soc? Not sure why I'm on To:
+> > > line.
+> > 
+> > Probably it should go through Lee's tree.
+> 
+> Unlikely.
+> 
+> The document and the DTS change should really have gone separately,
+> but to save you from having to mess around so close to the merge window:
+> 
+> Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 1 +
- 1 file changed, 1 insertion(+)
+So who is supposed to take this patch? Xu? Rob?
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index ecb9e7f..7b06e21 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -141,6 +141,7 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 	if (pll->flags & SUPPORTS_FSM_MODE)
- 		qcom_pll_set_fsm_mode(regmap, off + PLL_MODE, 6, 0);
- }
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_configure);
- 
- static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
- {
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
