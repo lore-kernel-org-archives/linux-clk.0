@@ -1,32 +1,59 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 5 Apr 2017 13:05:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [GIT PULL] rockchip clock changes for 4.12 part1
-Message-ID: <20170405200501.GA7065@codeaurora.org>
-References: <5160508.89PunkDez8@phil>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5160508.89PunkDez8@phil>
+Return-Path: <m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 2/6] clk: samsung: Add local variable to match it purpose
+Date: Mon, 24 Apr 2017 08:42:19 +0200
+Message-id: <1493016143-21569-3-git-send-email-m.szyprowski@samsung.com>
+In-reply-to: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
+References: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170424064229eucas1p2367a90a36b5bcb99f48a24e72b29a629@eucas1p2.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/28, Heiko Stuebner wrote:
-> Hi Mike, Stephen,
-> 
-> Please find below rockchip clock changes for 4.12. As the tag states,
-> I've included the rk1108 -> rv1108 clock rename in here. Pinctrl changes
-> go through the pinctrl tree and once everything is in mainline I'll put
-> the actual devicetree on top. That way we keep cross-tree changes to a
-> minimum while keeping everything error-free and bisectable.
-> 
-> So please pull if nothing stands out.
-> 
-> 
+Add new variable to avoid using clk pointer for different purposes across
+the exynos_register_cpu_clock() function. This will help in future rewrite
+for the new clk_hw API.
 
-Thanks. Pulled into clk-next.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-cpu.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index 8bf7e805fd34..6e1c6007e721 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -410,6 +410,7 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ {
+ 	struct exynos_cpuclk *cpuclk;
+ 	struct clk_init_data init;
++	struct clk *parent_clk;
+ 	struct clk *clk;
+ 	int ret = 0;
+ 
+@@ -440,15 +441,15 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ 		goto free_cpuclk;
+ 	}
+ 
+-	clk = __clk_lookup(parent);
+-	if (!clk) {
++	parent_clk = __clk_lookup(parent);
++	if (!parent_clk) {
+ 		pr_err("%s: could not lookup parent clock %s\n",
+ 				__func__, parent);
+ 		ret = -EINVAL;
+ 		goto free_cpuclk;
+ 	}
+ 
+-	ret = clk_notifier_register(clk, &cpuclk->clk_nb);
++	ret = clk_notifier_register(parent_clk, &cpuclk->clk_nb);
+ 	if (ret) {
+ 		pr_err("%s: failed to register clock notifier for %s\n",
+ 				__func__, name);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
