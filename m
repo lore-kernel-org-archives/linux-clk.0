@@ -1,54 +1,66 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	carlo@caione.org,
-	Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH v2 2/2] clk: meson: mpll: use 64bit math in rate_from_params
-Date: Fri,  7 Apr 2017 17:34:33 +0200
-Message-Id: <20170407153433.18640-3-jbrunet@baylibre.com>
-In-Reply-To: <20170407153433.18640-1-jbrunet@baylibre.com>
-References: <20170407153433.18640-1-jbrunet@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:34922 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1174301AbdDXUTz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2017 16:19:55 -0400
+MIME-Version: 1.0
+In-Reply-To: <20170424201139.GF2137@mai>
+References: <1492449567-31399-1-git-send-email-daniel.lezcano@linaro.org>
+ <1492449567-31399-2-git-send-email-daniel.lezcano@linaro.org>
+ <20170422020233.GA7065@codeaurora.org> <370c36f9-e6fc-416c-776b-edc1e42d7ddc@linaro.org>
+ <20170424085944.aa5dsc4g6bwm5rgi@dell> <20170424201139.GF2137@mai>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 24 Apr 2017 22:19:53 +0200
+Message-ID: <CAK8P3a24Y+HO=XcGjcXb65PyKkzKRsLJiKQTpntYvpaUuew8Jw@mail.gmail.com>
+Subject: Re: [PATCH V3 2/2] ARM64: dts: hi6220-hikey: Add clock binding for
+ the pmic mfd
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Wei Xu <xuwei5@hisilicon.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On Mon, Apr 24, 2017 at 10:11 PM, Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+> On Mon, Apr 24, 2017 at 09:59:44AM +0100, Lee Jones wrote:
+>> On Sat, 22 Apr 2017, Daniel Lezcano wrote:
+>>
+>> > On 22/04/2017 04:02, Stephen Boyd wrote:
+>> > > On 04/17, Daniel Lezcano wrote:
+>> > >> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> > >> ---
+>> > >>  Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt | 6 ++++++
+>> > >>  arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts             | 1 +
+>> > >>  2 files changed, 7 insertions(+)
+>> > >>
+>> > >
+>> > > I take it this goes through arm-soc? Not sure why I'm on To:
+>> > > line.
+>> >
+>> > Probably it should go through Lee's tree.
+>>
+>> Unlikely.
+>>
+>> The document and the DTS change should really have gone separately,
+>> but to save you from having to mess around so close to the merge window:
+>>
+>> Acked-by: Lee Jones <lee.jones@linaro.org>
+>
+> So who is supposed to take this patch? Xu? Rob?
 
-On Meson8b the MPLL parent clock (fixed_pll) has a rate of 2550MHz.
-Multiplying this with SDM_DEN results in a value greater than 32bits.
-This is not a problem on the 64bit Meson GX SoCs, but it may result in
-undefined behavior on the older 32bit Meson8b SoC.
+The DTS file changes should normally go through the platform maintainer
+and from there to arm-soc, to minimize the risk for patch conflicts.
 
-While rate_from_params was only introduced recently to make the math
-reusable from _round_rate and _recalc_rate the original bug exists much
-longer.
+For binding changes, conflicts are much rarer, so we any of the tree
+(arm-soc, driver subsystem, or devicetree) works equally well IMHO.
+In this particular case,keeping the two together is best, so please send
+it to Wei Xu with the added chagnelog and Acks.
 
-Fixes: 1c50da4f27 ("clk: meson: add mpll support")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-[as discussed on the ml, use DIV_ROUND_UP_ULL]
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/clk-mpll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-index d9462b505dcc..39eab69fe51a 100644
---- a/drivers/clk/meson/clk-mpll.c
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -79,7 +79,7 @@ static long rate_from_params(unsigned long parent_rate,
- 	if (n2 < N2_MIN)
- 		return -EINVAL;
- 
--	return (parent_rate * SDM_DEN) / divisor;
-+	return DIV_ROUND_UP_ULL((u64)parent_rate * SDM_DEN, divisor);
- }
- 
- static void params_from_rate(unsigned long requested_rate,
--- 
-2.9.3
+       Arnd
