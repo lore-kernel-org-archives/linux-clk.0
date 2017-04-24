@@ -1,306 +1,87 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 5 Apr 2017 15:32:33 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: gabriel.fernandez@st.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nicolas Pitre <nico@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
-	daniel.thompson@linaro.org, andrea.merello@gmail.com,
-	radoslaw.pietrzyk@gmail.com, Lee Jones <lee.jones@linaro.org>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	ludovic.barre@st.com, olivier.bideau@st.com, amelie.delaunay@st.com
-Subject: Re: [PATCH] clk: stm32h7: Add stm32h743 clock driver
-Message-ID: <20170405223233.GJ7065@codeaurora.org>
-References: <1489569810-24350-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1489569810-24350-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 5/6] clk: samsung: exynos-clkout: Convert to the new clk_hw
+ API
+Date: Mon, 24 Apr 2017 08:42:22 +0200
+Message-id: <1493016143-21569-6-git-send-email-m.szyprowski@samsung.com>
+In-reply-to: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
+References: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170424064231eucas1p2edd27880b5adc7c884e00db54c100cc2@eucas1p2.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/15, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> This patch enables clocks for STM32H743 boards.
+Clock providers should use the new struct clk_hw based API, so convert
+Exynos CLKOUT clock provider to the new approach.
 
-Like what clocks exactly? All of them?
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/samsung/clk-exynos-clkout.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-> diff --git a/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
-> new file mode 100644
-> index 0000000..9d4b587
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/st,stm32h7-rcc.txt
-> @@ -0,0 +1,152 @@
-> +STMicroelectronics STM32H7 Reset and Clock Controller
-> +=====================================================
-> +
-> +The RCC IP is both a reset and a clock controller.
-> +
-> +Please refer to clock-bindings.txt for common clock controller binding usage.
-> +Please also refer to reset.txt for common reset controller binding usage.
-> +
-> +Required properties:
-> +- compatible: Should be:
-> +  "st,stm32h743-rcc"
-> +
-> +- reg: should be register base and length as documented in the
-> +  datasheet
-> +
-> +- #reset-cells: 1, see below
-> +
-> +- #clock-cells : from common clock binding; shall be set to 1
-> +
-> +- clocks: External oscillator clock phandle
-> +  - high speed external clock signal (HSE)
-> +  - low speed external clock signal (LSE)
-> +  - external I2S clock (I2S_CKIN)
-> +
-> +- st,syscfg: phandle for pwrcfg, mandatory to disable/enable backup domain
-> +  write protection (RTC clock).
-> +
-> +- pll x node: Allow to register a pll with specific parameters.
-> +  Please see PLL section below.
-> +
-> +Example:
-> +
-> +	rcc: rcc@58024400 {
-> +		#reset-cells = <1>;
-> +		#clock-cells = <2>
-> +		compatible = "st,stm32h743-rcc", "st,stm32-rcc";
-> +		reg = <0x58024400 0x400>;
-> +		clocks = <&clk_hse>, <&clk_lse>, <&clk_i2s_ckin>;
-> +
-> +		st,syscfg = <&pwrcfg>;
-> +
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		vco1@58024430 {
-> +			#clock-cells = <0>;
-> +			compatible = "stm32,pll";
-> +			reg = <0>;
-
-reg is super confusing and doesn't match unit address.
-
-> +		};
-
-Why? Shouldn't we know this from the compatible string how many
-PLLs there are and where they're located? Export the PLLs through
-rcc node's clock-cells?
-
-> +
-> +		vco2@58024438 {
-> +			#clock-cells = <0>;
-> +			compatible = "stm32,pll";
-> +			reg = <1>;
-
-reg is super confusing and doesn't match unit address.
-
-> +			st,clock-div = <2>;
-> +			st,clock-mult = <40>;
-> +			st,frac-status = <0>;
-> +			st,frac = <0>;
-> +			st,vcosel = <1>;
-> +			st,pllrge = <2>;
-
-Does this stuff change on a per-board basis? I hope none of these
-properties need to be in DT.
-
-> +		};
-> +	};
-> +
-> +
-> +STM32H7 PLL
-> +-----------
-> +
-[...]
-> +
-> +Specifying softreset control of devices
-> +=======================================
-> +
-> +Device nodes should specify the reset channel required in their "resets"
-> +property, containing a phandle to the reset device node and an index specifying
-> +which channel to use.
-> +The index is the bit number within the RCC registers bank, starting from RCC
-> +base address.
-> +It is calculated as: index = register_offset / 4 * 32 + bit_offset.
-> +Where bit_offset is the bit offset within the register.
-> +
-> +For example, for CRC reset:
-> +  crc = AHB4RSTR_offset / 4 * 32 + CRCRST_bit_offset = 0x88 / 4 * 32 + 19 = 1107
-> +
-> +All available preprocessor macros for reset are defined dt-bindings//mfd/stm32h7-rcc.h
-
-One too many slashes?
-
-> +header and can be used in device tree sources.
-> +
-> +example:
-> +
-> +	timer2 {
-> +		resets	= <&rcc STM32H7_APB1L_RESET(TIM2)>;
-> +	};
-> diff --git a/drivers/clk/clk-stm32h7.c b/drivers/clk/clk-stm32h7.c
-> new file mode 100644
-> index 0000000..c8eb729
-> --- /dev/null
-> +++ b/drivers/clk/clk-stm32h7.c
-> @@ -0,0 +1,1586 @@
-> +/*
-> + * Copyright (C) Gabriel Fernandez 2017
-> + * Author: Gabriel Fernandez <gabriel.fernandez@st.com>
-> + *
-> + * License terms: GPL V2.0.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License along with
-> + * this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/clk.h>
-
-Is this used?
-
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/stm32h7-clks.h>
-> +
-> +/* Reset Clock Control Registers */
-> +#define RCC_CR		0x00
-> +#define RCC_CFGR	0x10
-> +#define RCC_D1CFGR	0x18
-> +#define RCC_D2CFGR	0x1C
-> +#define RCC_D3CFGR	0x20
-> +#define RCC_PLLCKSELR	0x28
-> +#define RCC_PLLCFGR	0x2C
-> +#define RCC_PLL1DIVR	0x30
-> +#define RCC_PLL1FRACR	0x34
-> +#define RCC_PLL2DIVR	0x38
-> +#define RCC_PLL2FRACR	0x3C
-> +#define RCC_PLL3DIVR	0x40
-> +#define RCC_PLL3FRACR	0x44
-> +#define RCC_D1CCIPR	0x4C
-> +#define RCC_D2CCIP1R	0x50
-> +#define RCC_D2CCIP2R	0x54
-> +#define RCC_D3CCIPR	0x58
-> +#define RCC_BDCR	0x70
-> +#define RCC_CSR		0x74
-> +#define RCC_AHB3ENR	0xD4
-> +#define RCC_AHB1ENR	0xD8
-> +#define RCC_AHB2ENR	0xDC
-> +#define RCC_AHB4ENR	0xE0
-> +#define RCC_APB3ENR	0xE4
-> +#define RCC_APB1LENR	0xE8
-> +#define RCC_APB1HENR	0xEC
-> +#define RCC_APB2ENR	0xF0
-> +#define RCC_APB4ENR	0xF4
-> +
-> +static DEFINE_SPINLOCK(rlock);
-
-This is super generic and will make lockdep debugging sad.
-Perhaps stm32rcc_lock?
-
-> +
-> +static void __iomem *base;
-> +static struct regmap *pdrm;
-> +static struct clk_hw **hws;
-> +
-> +/* System clock parent */
-> +static const char * const sys_src[] = {
-> +	"hsi_ck", "csi_ck", "hse_ck", "pll1_p" };
-> +
-> +static const char * const tracein_src[] = {
-> +	"hsi_ck", "csi_ck", "hse_ck", "pll1_r" };
-[...]
-> +
-> +static unsigned long pll_fd_recalc_rate(struct clk_hw *hw,
-> +		unsigned long parent_rate)
-> +{
-> +	struct stm32_pll_obj *clk_elem = to_pll(hw);
-> +	struct stm32_fractional_divider *fd = &clk_elem->div;
-> +	unsigned long m, n;
-> +	u32 val, mask;
-> +	u64 rate, rate1 = 0;
-> +
-> +	val = clk_readl(fd->mreg);
-
-Please don't use clk_readl() unless you need it for some reason.
-
-> +	mask = (GENMASK(fd->mwidth - 1, 0) << fd->mshift);
-> +	m = (val & mask) >> fd->mshift;
-> +
-> +	val = clk_readl(fd->nreg);
-> +	mask = (GENMASK(fd->nwidth - 1, 0) << fd->nshift);
-
-Useless parentheses. And isn't GENMASK supposed to take the
-actual bit positions? Then we avoid overflow issues?
-
-> +	n = ((val & mask) >> fd->nshift) + 1;
-> +
-> +	if (!n || !m)
-> +		return parent_rate;
-> +
-> +	rate = (u64)parent_rate * n;
-> +	do_div(rate, m);
-> +
-> +	if (pll_frac_is_enabled(hw)) {
-> +		val = pll_read_frac(hw);
-> +		rate1 = (u64) parent_rate * (u64) val;
-> +		do_div(rate1, (m * 8191));
-> +	}
-> +
-> +	return rate + rate1;
-> +}
-> +
-[...]
-> +
-> +	/* Micro-controller clocks */
-> +	for (n = 0; n < ARRAY_SIZE(mco_clk); n++) {
-> +		get_cfg_composite_div(&mco_clk_cfg, &mco_clk[n], &c_cfg,
-> +				&rlock);
-> +
-> +		hws[MCO_BANK + n] = clk_hw_register_composite(NULL,
-> +				mco_clk[n].name,
-> +				mco_clk[n].parent_name,
-> +				mco_clk[n].num_parents,
-> +				c_cfg.mux_hw, c_cfg.mux_ops,
-> +				c_cfg.div_hw, c_cfg.div_ops,
-> +				c_cfg.gate_hw, c_cfg.gate_ops,
-> +				mco_clk[n].flags);
-> +	}
-> +
-> +	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
-> +
-> +	return;
-> +
-> +err_free_clks:
-> +	kfree(clk_data);
-> +}
-> +CLK_OF_DECLARE_DRIVER(stm32h7_rcc, "st,stm32h743-rcc", stm32h7_rcc_init);
-
-Is there another driver that uses the same register space?
-Nothing showing up in -next right now. Perhaps a comment should
-be added to indicate the other driver.
-
+diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+index 6c6afb87b4ce..a21aea062bae 100644
+--- a/drivers/clk/samsung/clk-exynos-clkout.c
++++ b/drivers/clk/samsung/clk-exynos-clkout.c
+@@ -29,10 +29,9 @@ struct exynos_clkout {
+ 	struct clk_gate gate;
+ 	struct clk_mux mux;
+ 	spinlock_t slock;
+-	struct clk_onecell_data data;
+-	struct clk *clk_table[EXYNOS_CLKOUT_NR_CLKS];
+ 	void __iomem *reg;
+ 	u32 pmu_debug_save;
++	struct clk_hw_onecell_data data;
+ };
+ 
+ static struct exynos_clkout *clkout;
+@@ -62,7 +61,9 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
+ 	int ret;
+ 	int i;
+ 
+-	clkout = kzalloc(sizeof(*clkout), GFP_KERNEL);
++	clkout = kzalloc(sizeof(*clkout) +
++			 sizeof(*clkout->data.hws) * EXYNOS_CLKOUT_NR_CLKS,
++			 GFP_KERNEL);
+ 	if (!clkout)
+ 		return;
+ 
+@@ -100,17 +101,16 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
+ 	clkout->mux.shift = EXYNOS_CLKOUT_MUX_SHIFT;
+ 	clkout->mux.lock = &clkout->slock;
+ 
+-	clkout->clk_table[0] = clk_register_composite(NULL, "clkout",
++	clkout->data.hws[0] = clk_hw_register_composite(NULL, "clkout",
+ 				parent_names, parent_count, &clkout->mux.hw,
+ 				&clk_mux_ops, NULL, NULL, &clkout->gate.hw,
+ 				&clk_gate_ops, CLK_SET_RATE_PARENT
+ 				| CLK_SET_RATE_NO_REPARENT);
+-	if (IS_ERR(clkout->clk_table[0]))
++	if (IS_ERR(clkout->data.hws[0]))
+ 		goto err_unmap;
+ 
+-	clkout->data.clks = clkout->clk_table;
+-	clkout->data.clk_num = EXYNOS_CLKOUT_NR_CLKS;
+-	ret = of_clk_add_provider(node, of_clk_src_onecell_get, &clkout->data);
++	clkout->data.num = EXYNOS_CLKOUT_NR_CLKS;
++	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, &clkout->data);
+ 	if (ret)
+ 		goto err_clk_unreg;
+ 
+@@ -119,7 +119,7 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
+ 	return;
+ 
+ err_clk_unreg:
+-	clk_unregister(clkout->clk_table[0]);
++	clk_hw_unregister(clkout->data.hws[0]);
+ err_unmap:
+ 	iounmap(clkout->reg);
+ clks_put:
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
