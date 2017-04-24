@@ -1,69 +1,62 @@
-Return-Path: <Alexey_Firago@mentor.com>
-From: Alexey Firago <alexey_firago@mentor.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<marek.vasut@gmail.com>, <geert@linux-m68k.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-CC: Alexey Firago <alexey_firago@mentor.com>
-Subject: [PATCH v2 2/3] clk: vc5: Add bindings for IDT VersaClock 5P49V5935
-Date: Wed, 5 Apr 2017 14:46:58 +0300
-Message-ID: <1491392819-698-3-git-send-email-alexey_firago@mentor.com>
-In-Reply-To: <1491392819-698-1-git-send-email-alexey_firago@mentor.com>
-References: <1491392819-698-1-git-send-email-alexey_firago@mentor.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:50102 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1168492AbdDXK06 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 24 Apr 2017 06:26:58 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Mon, 24 Apr 2017 18:26:51 +0800
+From: icenowy@aosc.io
+To: maxime.ripard@free-electrons.com
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: Re: [linux-sunxi] Re: [PATCH v5 02/11] clk: sunxi-ng: add support for
+ DE2 CCU
+In-Reply-To: <20170424085109.p44bmzbyjkuf7ckv@lukather>
+References: <20170423103754.50012-1-icenowy@aosc.io>
+ <20170423103754.50012-3-icenowy@aosc.io>
+ <20170424085109.p44bmzbyjkuf7ckv@lukather>
+Message-ID: <9def8a6b635880095e6b75e3a53af1f4@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-IDT VersaClock 5 5P49V5935 has 4 clock outputs, 4 fractional dividers.
-Input clock source can be taken from either integrated crystal or from
-external reference clock.
+在 2017-04-24 16:51，Maxime Ripard 写道：
+> Hi,
+> 
+> On Sun, Apr 23, 2017 at 06:37:45PM +0800, Icenowy Zheng wrote:
+>> +static const struct of_device_id sunxi_de2_clk_ids[] = {
+>> +	{
+>> +		.compatible = "allwinner,sun8i-a83t-de2-clk",
+>> +		.data = &sun8i_a83t_de2_clk_desc,
+>> +	},
+>> +	{
+>> +		.compatible = "allwinner,sun50i-h5-de2-clk",
+>> +		.data = &sun50i_a64_de2_clk_desc,
+>> +	},
+>> +	/*
+>> +	 * The Allwinner A64 SoC needs some bit to be poke in syscon to make
+>> +	 * DE2 really working.
+>> +	 * So there's currently no A64 compatible here.
+>> +	 * H5 shares the same reset line with A64, so here H5 is using the
+>> +	 * clock description of A64.
+>> +	 */
+>> +	{ }
+>> +};
+> 
+> So that A64 driver would require more than just what you defined in
+> the binding in order to operate?
 
-Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
----
- .../devicetree/bindings/clock/idt,versaclock5.txt        | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+Yes. When trying to do A64 driver, I will send out first a patch to
+add the needed binding bit.
 
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-index 87e9c47..53d7e50 100644
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-@@ -6,18 +6,21 @@ from 3 to 12 output clocks.
- ==I2C device node==
- 
- Required properties:
--- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933".
-+- compatible:	shall be one of "idt,5p49v5923" , "idt,5p49v5933" ,
-+		"idt,5p49v5935".
- - reg:		i2c device address, shall be 0x68 or 0x6a.
- - #clock-cells:	from common clock binding; shall be set to 1.
- - clocks:	from common clock binding; list of parent clock handles,
- 		- 5p49v5923: (required) either or both of XTAL or CLKIN
- 					reference clock.
--		- 5p49v5933: (optional) property not present (internal
-+		- 5p49v5933 and
-+		- 5p49v5935: (optional) property not present (internal
- 					Xtal used) or CLKIN reference
- 					clock.
- - clock-names:	from common clock binding; clock input names, can be
- 		- 5p49v5923: (required) either or both of "xin", "clkin".
--		- 5p49v5933: (optional) property not present or "clkin".
-+		- 5p49v5933 and
-+		- 5p49v5935: (optional) property not present or "clkin".
- 
- ==Mapping between clock specifier and physical pins==
- 
-@@ -34,6 +37,13 @@ clock specifier, the following mapping applies:
- 	1 -- OUT1
- 	2 -- OUT4
- 
-+5P49V5935:
-+	0 -- OUT0_SEL_I2CB
-+	1 -- OUT1
-+	2 -- OUT2
-+	3 -- OUT3
-+	4 -- OUT4
-+
- ==Example==
- 
- /* 25MHz reference crystal */
--- 
-2.7.4
+> 
+> Maxime
+> 
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
