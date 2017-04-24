@@ -1,118 +1,69 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Fri, 28 Apr 2017 20:58:25 +0200
-From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: Varadarajan Narayanan <varada@codeaurora.org>
-Subject: Re: [PATCH 4/5] arm64: dts: Add ipq8074 SoC and MTP board support
-Message-ID: <20170428185825.75usyll55p3aclnm@latitude>
-References: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
- <1493373403-23462-5-git-send-email-varada@codeaurora.org>
-MIME-Version: 1.0
-In-Reply-To: <1493373403-23462-5-git-send-email-varada@codeaurora.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
- Manoharan Vijaya Raghavan <mraghava@codeaurora.org>,
- linux-gpio@vger.kernel.org, catalin.marinas@arm.com, mturquette@baylibre.com,
- sjaganat@codeaurora.org, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
- will.deacon@arm.com, linux-clk@vger.kernel.org, david.brown@linaro.org,
- absahu@codeaurora.org, robh+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- andy.gross@linaro.org, sricharan@codeaurora.org, linux-soc@vger.kernel.org,
- linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org
-Content-Type: multipart/mixed; boundary="===============5417218298070034646=="
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:35196 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1168560AbdDXLfV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2017 07:35:21 -0400
+Subject: Re: [PATCH RFC 1/7] clk: samsung: Add enable/disable operation for
+ PLL36XX clocks
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?=
+        <b.zolnierkie@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <3232b6e5-05b6-2d91-07ef-e5473ee70889@samsung.com>
+Date: Mon, 24 Apr 2017 13:35:13 +0200
+MIME-version: 1.0
+In-reply-to: <CAJKOXPdKRzC+f4mLCPhHKNuGS4=K-9CC_AKor0Etfu7Bxp-+iw@mail.gmail.com>
+Content-type: text/plain; charset=windows-1252; format=flowed
+References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
+ <CGME20170421172016epcas5p342c16e1219c1205a44a84eaa770ad5ac@epcas5p3.samsung.com>
+ <1492795191-31298-2-git-send-email-s.nawrocki@samsung.com>
+ <20170422152236.tbf4iuoadqrvoc2n@kozik-lap>
+ <017b3ec8-c185-c29a-2944-12f519b461fe@samsung.com>
+ <CAJKOXPdKRzC+f4mLCPhHKNuGS4=K-9CC_AKor0Etfu7Bxp-+iw@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+(dropping unrelated addresses from Cc list)
 
---===============5417218298070034646==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pqg273g3yd2geaxh"
-Content-Disposition: inline
+On 04/24/2017 01:18 PM, Krzysztof Kozlowski wrote:
+> On Mon, Apr 24, 2017 at 1:12 PM, Sylwester Nawrocki
+> <s.nawrocki@samsung.com> wrote:
+>> On 04/22/2017 05:22 PM, Krzysztof Kozlowski wrote:
+>>>> @@ -354,10 +359,12 @@ static int samsung_pll36xx_set_rate(struct clk_hw
+>>>> *hw, unsigned long drate,
+>>>>         writel_relaxed(pll_con1, pll->con_reg + 4);
+>>>>
+>>>>         /* wait_lock_time */
+>>>> -       do {
+>>>> -               cpu_relax();
+>>>> -               tmp = readl_relaxed(pll->con_reg);
+>>>> -       } while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
+>>
+>>
+>> I will add a comment here like:
+>> /* Wait until the PLL is locked if it is enabled. */
+>>
+>>>> +       if (pll_con0 & BIT(pll->enable_offs)) {
+>>>
+>>>
+>>> Why this additional if() is needed?
+>>
+>>
+>> The PLL will never transition to a locked state if it is disabled, without
+>> this test we would end up with an indefinite loop below.
+>
+> Hmmm... shouldn't this be split from this change? Or maybe this is
+> needed only because you added enable/disable for pl36xx and previously
+> this was not existing?
 
+Yes, it looks like previously the PLLs were always on after were enabled.
+I wouldn't be separating that part, as it's all logically dependent.
+Just the commit message might need some improvement.
 
---pqg273g3yd2geaxh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Fri, Apr 28, 2017 at 03:26:42PM +0530, Varadarajan Narayanan wrote:
-> Subject: [PATCH 4/5] arm64: dts: Add ipq8074 SoC and MTP board support
-
-s/MTP/HK01/ ?
-
-> Add initial device tree support for the Qualcomm IPQ8074 SoC and
-> HK01 evaluation board.
->=20
-> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile         |   1 +
->  arch/arm64/boot/dts/qcom/ipq8074-hk01.dts |  48 ++++++++++
->  arch/arm64/boot/dts/qcom/ipq8074.dtsi     | 153 ++++++++++++++++++++++++=
-++++++
->  3 files changed, 202 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
->  create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
->=20
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom=
-/Makefile
-> index cc0f02d..7c6963e 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -4,6 +4,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+=3D msm8916-mtp.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+=3D msm8992-bullhead-rev-101.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+=3D msm8994-angler-rev-101.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+=3D msm8996-mtp.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+=3D ipq8074-hk01.dtb
-
-Maybe this list should be alphabetically sorted ('i' before 'm').
-(I have no strong preference)
-
-
+-- 
 Thanks,
-Jonathan Neusch=C3=A4fer
-
---pqg273g3yd2geaxh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAABAgAGBQJZA5DEAAoJEAgwRJqO81/bK1MP/R3QQEDLkPrxHMI2uG/Gzzw+
-3WGIBb6/E9hLxpLIc+glHUK+eEVHLJo5G8VoSIotVWMaz8WdyGNRl5jMsREI1V8x
-YbRKs4qO3POsnsSWEzAmOQXAuVF62moXhOm4y13g2Lr0LUtMOG+yIjT6mya7NKFW
-7RiT+Gcfkws8xszw8TAmIDUgGbPyri3emM0POMiSFoAB4W6K0kjLdZzypTS9w701
-j49QLt+/207wDVq2pggmKOT81Bfp6MmQ5O7QxIgPRzR4QCC12kwMbIQeicxmWJPz
-0Aqb3N4tPO5DVNh4wblffY9ReqYSo96XTWuRZP6Ss8j+lEIuEUKN7x70CHVEO58x
-Sc5DeoU06mykZQ23A1xyDdwejOIhMGgu2umK/hk/7bcjZFUnkMKJt2faU8FDE+2F
-Kah4nHK7qLc+jC7Oi9WOgMOSHeJrTKkhUr8IEIJvgkGqUG8tMV1qQS6VusKC8Luz
-RZeIEdhrc56cQz0M6OfXx0enubqgjzHvhVLT4UfPEizRbJRbZftiQUHqXWpAGEte
-nbXo3XjrvE4+FiX2fOmg/Nw98SVvMIfoIAKollcbWJg0mdoAbG5hJgv+T3nc6F0T
-KqxosLe8sIVwWbVg1pNKdDpHpMnuUCjEZzwGBKe4wV4dQLQvtZntXBlReltCwYta
-Ut7D1+Iq3SZ6qIdLX+JX
-=OHQk
------END PGP SIGNATURE-----
-
---pqg273g3yd2geaxh--
-
-
---===============5417218298070034646==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============5417218298070034646==--
+Sylwester
