@@ -1,55 +1,98 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:35976 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751862AbdDKHD1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Apr 2017 03:03:27 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170408185025.53841-4-icenowy@aosc.io>
-References: <20170408185025.53841-1-icenowy@aosc.io> <20170408185025.53841-4-icenowy@aosc.io>
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Tue, 11 Apr 2017 12:33:25 +0530
-Message-ID: <CAOh2x=kQE3fb0b-rD6-E0XJ0Xjm-c1PsnPFfGyLPhJur=urwLQ@mail.gmail.com>
-Subject: Re: [PATCH 3/5] cpufreq: dt: Add support for some new Allwinner SoCs
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linus.walleij@linaro.org>
+Return-Path: <linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Janos Laube <janos.dev@gmail.com>,
+	Paulius Zaleckas <paulius.zaleckas@gmail.com>,
+	openwrt-devel@openwrt.org,
+	linux-arm-kernel@lists.infradead.org,
+	Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/2] clk: Add bindings for the Gemini Clock Controller
+Date: Mon, 24 Apr 2017 20:55:45 +0200
+Message-Id: <20170424185545.26608-1-linus.walleij@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Apr 9, 2017 at 12:20 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> Some new Allwinner SoCs get supported in the kernel after the
-> compatibles are added to cpufreq-dt-platdev driver.
->
-> Add their compatible strings in the cpufreq-dt-platdev driver.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  drivers/cpufreq/cpufreq-dt-platdev.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-> index 921b4a6c3d16..2180e509e383 100644
-> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> @@ -24,7 +24,12 @@ static const struct of_device_id machines[] __initconst = {
->         { .compatible = "allwinner,sun8i-a23", },
->         { .compatible = "allwinner,sun8i-a33", },
->         { .compatible = "allwinner,sun8i-a83t", },
-> +       { .compatible = "allwinner,sun8i-h2-plus", },
->         { .compatible = "allwinner,sun8i-h3", },
-> +       { .compatible = "allwinner,sun8i-v3s", },
-> +       { .compatible = "allwinner,sun50i-a64", },
-> +       { .compatible = "allwinner,sun50i-h5", },
-> +       { .compatible = "nextthing,gr8", },
+This adds device tree bindings and a header for the Gemini SoC
+Clock Controller.
 
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ .../clock/cortina,gemini-clock-controller.txt      | 25 +++++++++++++++++++
+ include/dt-bindings/clock/cortina,gemini-clock.h   | 29 ++++++++++++++++++++++
+ 2 files changed, 54 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
+ create mode 100644 include/dt-bindings/clock/cortina,gemini-clock.h
 
-This needs to be in alphabetical order and please cc cpufreq
-maintainers next time.
+diff --git a/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt b/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
+new file mode 100644
+index 000000000000..7af84acfcbce
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/cortina,gemini-clock-controller.txt
+@@ -0,0 +1,25 @@
++Clock bindings for the Cortina Systems Gemini SoC Clock Controller
++
++Required properties :
++- compatible : shall contain the following:
++  "cortina,gemini-clock-controller"
++- #clock-cells should be <1>
++
++The Gemini clock controller needs to be placed as a subnode of the
++system controller.
++
++All available clocks are defined as preprocessor macros in
++dt-bindings/clock/cortina,gemini-clock.h header and can be used in device
++tree sources.
++
++Example:
++
++syscon: syscon@40000000 {
++	compatible = "cortina,gemini-syscon", "syscon", "simple-mfd";
++	reg = <0x40000000 0x1000>;
++
++	clock-controller {
++		compatible = "cortina,gemini-clock-controller";
++		#clock-cells = <1>;
++	};
++};
+diff --git a/include/dt-bindings/clock/cortina,gemini-clock.h b/include/dt-bindings/clock/cortina,gemini-clock.h
+new file mode 100644
+index 000000000000..acf5cd550b0c
+--- /dev/null
++++ b/include/dt-bindings/clock/cortina,gemini-clock.h
+@@ -0,0 +1,29 @@
++#ifndef DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
++#define DT_BINDINGS_CORTINA_GEMINI_CLOCK_H
++
++/* RTC, AHB, APB, CPU, PCI, TVC, UART clocks and 13 gates */
++#define GEMINI_NUM_CLKS 20
++
++#define GEMINI_CLK_RTC 0
++#define GEMINI_CLK_AHB 1
++#define GEMINI_CLK_APB 2
++#define GEMINI_CLK_CPU 3
++#define GEMINI_CLK_PCI 4
++#define GEMINI_CLK_TVC 5
++#define GEMINI_CLK_UART 6
++#define GEMINI_CLK_GATES 7
++#define GEMINI_CLK_GATE_SECURITY 7
++#define GEMINI_CLK_GATE_GMAC0 8
++#define GEMINI_CLK_GATE_GMAC1 9
++#define GEMINI_CLK_GATE_SATA0 10
++#define GEMINI_CLK_GATE_SATA1 11
++#define GEMINI_CLK_GATE_USB0 12
++#define GEMINI_CLK_GATE_USB1 13
++#define GEMINI_CLK_GATE_IDE 14
++#define GEMINI_CLK_GATE_PCI 15
++#define GEMINI_CLK_GATE_DDR 16
++#define GEMINI_CLK_GATE_FLASH 17
++#define GEMINI_CLK_GATE_TVC 18
++#define GEMINI_CLK_GATE_BOOT 19
++
++#endif /* DT_BINDINGS_CORTINA_GEMINI_CLOCK_H */
+-- 
+2.9.3
