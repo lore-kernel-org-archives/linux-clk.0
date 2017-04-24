@@ -1,93 +1,57 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de,
-	xf@rock-chips.com
-Cc: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux-clk@vger.kernel.org,
-	huangtao@rock-chips.com,
-	xxx@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1 1/2] clk: rockchip: fix up the RK3228 clk cpu setting table
-Date: Fri, 28 Apr 2017 10:33:20 +0800
-Message-Id: <1493346801-23785-2-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1493346801-23785-1-git-send-email-zhangqing@rock-chips.com>
-References: <1493346801-23785-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:37463 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1166882AbdDXKKp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2017 06:10:45 -0400
+Received: by mail-wm0-f43.google.com with SMTP id m123so62649816wma.0
+        for <linux-clk@vger.kernel.org>; Mon, 24 Apr 2017 03:10:44 -0700 (PDT)
+Subject: Re: [PATCH] clk: meson: gxbb: fix build error without
+ RESET_CONTROLLER
+To: Tobias Regnery <tobias.regnery@gmail.com>, sboyd@codeaurora.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20170424100542.20226-1-tobias.regnery@gmail.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <8556c66c-585f-d171-e2a8-1f59d109e9de@baylibre.com>
+Date: Mon, 24 Apr 2017 12:10:41 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170424100542.20226-1-tobias.regnery@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-support more cpu freq, and add armcore div setting.
+On 04/24/2017 12:05 PM, Tobias Regnery wrote:
+> With CONFIG_RESET_CONTROLLER=n we see the following link error in the
+> meson gxbb clk driver:
+> 
+> drivers/built-in.o: In function 'gxbb_aoclkc_probe':
+> drivers/clk/meson/gxbb-aoclk.c:161: undefined reference to 'devm_reset_controller_register'
+> 
+> Fix this by selecting the reset controller subsystem.
+> 
+> Signed-off-by: Tobias Regnery <tobias.regnery@gmail.com>
+> ---
+>  drivers/clk/meson/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> index 19480bcc7046..2f29ee1a4d00 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -14,6 +14,7 @@ config COMMON_CLK_MESON8B
+>  config COMMON_CLK_GXBB
+>  	bool
+>  	depends on COMMON_CLK_AMLOGIC
+> +	select RESET_CONTROLLER
+>  	help
+>  	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
+>  	  Say Y if you want peripherals and CPU frequency scaling to work.
+> 
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3228.c | 50 ++++++++++++++++++++++++++-------------
- 1 file changed, 34 insertions(+), 16 deletions(-)
+Hi Tobias,
 
-diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-index db6e5a9e6de6..a6cdf8fc1e75 100644
---- a/drivers/clk/rockchip/clk-rk3228.c
-+++ b/drivers/clk/rockchip/clk-rk3228.c
-@@ -86,25 +86,43 @@ enum rk3228_plls {
- #define RK3228_DIV_PCLK_MASK		0x7
- #define RK3228_DIV_PCLK_SHIFT		12
- 
--#define RK3228_CLKSEL1(_core_peri_div)					\
--	{									\
--		.reg = RK2928_CLKSEL_CON(1),					\
--		.val = HIWORD_UPDATE(_core_peri_div, RK3228_DIV_PERI_MASK,	\
--				RK3228_DIV_PERI_SHIFT)				\
--	}
-+#define RK3228_CLKSEL1(_core_aclk_div, _core_peri_div)			\
-+{									\
-+	.reg = RK2928_CLKSEL_CON(1),					\
-+	.val = HIWORD_UPDATE(_core_peri_div, RK3228_DIV_PERI_MASK,	\
-+			     RK3228_DIV_PERI_SHIFT) |			\
-+	       HIWORD_UPDATE(_core_aclk_div, RK3228_DIV_ACLK_MASK,	\
-+			     RK3228_DIV_ACLK_SHIFT),			\
-+}
- 
--#define RK3228_CPUCLK_RATE(_prate, _core_peri_div)			\
--	{								\
--		.prate = _prate,					\
--		.divs = {						\
--			RK3228_CLKSEL1(_core_peri_div),		\
--		},							\
--	}
-+#define RK3228_CPUCLK_RATE(_prate, _core_aclk_div, _core_peri_div)	\
-+{									\
-+	.prate = _prate,						\
-+	.divs = {							\
-+		RK3228_CLKSEL1(_core_aclk_div, _core_peri_div),		\
-+	},								\
-+}
- 
- static struct rockchip_cpuclk_rate_table rk3228_cpuclk_rates[] __initdata = {
--	RK3228_CPUCLK_RATE(816000000, 4),
--	RK3228_CPUCLK_RATE(600000000, 4),
--	RK3228_CPUCLK_RATE(312000000, 4),
-+	RK3228_CPUCLK_RATE(1800000000, 1, 7),
-+	RK3228_CPUCLK_RATE(1704000000, 1, 7),
-+	RK3228_CPUCLK_RATE(1608000000, 1, 7),
-+	RK3228_CPUCLK_RATE(1512000000, 1, 7),
-+	RK3228_CPUCLK_RATE(1488000000, 1, 5),
-+	RK3228_CPUCLK_RATE(1416000000, 1, 5),
-+	RK3228_CPUCLK_RATE(1392000000, 1, 5),
-+	RK3228_CPUCLK_RATE(1296000000, 1, 5),
-+	RK3228_CPUCLK_RATE(1200000000, 1, 5),
-+	RK3228_CPUCLK_RATE(1104000000, 1, 5),
-+	RK3228_CPUCLK_RATE(1008000000, 1, 5),
-+	RK3228_CPUCLK_RATE(912000000, 1, 5),
-+	RK3228_CPUCLK_RATE(816000000, 1, 3),
-+	RK3228_CPUCLK_RATE(696000000, 1, 3),
-+	RK3228_CPUCLK_RATE(600000000, 1, 3),
-+	RK3228_CPUCLK_RATE(408000000, 1, 1),
-+	RK3228_CPUCLK_RATE(312000000, 1, 1),
-+	RK3228_CPUCLK_RATE(216000000,  1, 1),
-+	RK3228_CPUCLK_RATE(96000000, 1, 1),
- };
- 
- static const struct rockchip_cpuclk_reg_data rk3228_cpuclk_data = {
--- 
-1.9.1
+I was going to push this, thanks for the patch !
+
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+
+Neil
