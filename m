@@ -1,49 +1,62 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:53974 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1046504AbdDXLU2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 24 Apr 2017 07:20:28 -0400
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1492624001-3758-21-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-21-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:22:27 +0200
-Message-ID: <CAMuHMdWs_BmoAj22-C=mL4bA44T5=FiAxB8phNQAyTZZD_UpCA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add INTC-EX clock
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+In-Reply-To: <017b3ec8-c185-c29a-2944-12f519b461fe@samsung.com>
+References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
+ <CGME20170421172016epcas5p342c16e1219c1205a44a84eaa770ad5ac@epcas5p3.samsung.com>
+ <1492795191-31298-2-git-send-email-s.nawrocki@samsung.com>
+ <20170422152236.tbf4iuoadqrvoc2n@kozik-lap> <017b3ec8-c185-c29a-2944-12f519b461fe@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Mon, 24 Apr 2017 13:18:44 +0200
+Message-ID: <CAJKOXPdKRzC+f4mLCPhHKNuGS4=K-9CC_AKor0Etfu7Bxp-+iw@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/7] clk: samsung: Add enable/disable operation for
+ PLL36XX clocks
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
+        Seung Woo Kim <sw0312.kim@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        jy0922.shim@samsung.com, broonie@kernel.org, robh+dt@kernel.org,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
+        <b.zolnierkie@samsung.com>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Kaneko-san,
-
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Mon, Apr 24, 2017 at 1:12 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> On 04/22/2017 05:22 PM, Krzysztof Kozlowski wrote:
+>>> @@ -354,10 +359,12 @@ static int samsung_pll36xx_set_rate(struct clk_hw
+>>> *hw, unsigned long drate,
+>>>         writel_relaxed(pll_con1, pll->con_reg + 4);
+>>>
+>>>         /* wait_lock_time */
+>>> -       do {
+>>> -               cpu_relax();
+>>> -               tmp = readl_relaxed(pll->con_reg);
+>>> -       } while (!(tmp & (1 << PLL36XX_LOCK_STAT_SHIFT)));
 >
-> Add the "intc-ex" clock to the R8A7796 CPG MSSR driver.
 >
-> According to information from the hardware team the INTC-EX
-> parent clock is CP. The next data sheet version will include
-> this information.
+> I will add a comment here like:
+> /* Wait until the PLL is locked if it is enabled. */
 >
-> [takeshi.kihara.df: Ported from commit f099aa075749 ("clk: shmobile:
->  r8a7795: Add INTC-EX clock") to drivers/clk/renesas/r8a7796-cpg-mssr.c]
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>>> +       if (pll_con0 & BIT(pll->enable_offs)) {
+>>
+>>
+>> Why this additional if() is needed?
+>
+>
+> The PLL will never transition to a locked state if it is disabled, without
+> this test we would end up with an indefinite loop below.
 
-Thank you!
+Hmmm... shouldn't this be split from this change? Or maybe this is
+needed only because you added enable/disable for pl36xx and previously
+this was not existing?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-I.e. will queue in clk-renesas-for-v4.13.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof
