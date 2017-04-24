@@ -1,84 +1,71 @@
-Return-Path: <huziji@marvell.com>
-Subject: Re: [PATCH v7 06/13] dt: bindings: Add bindings for Marvell Xenon SD
- Host Controller
-To: Rob Herring <robh@kernel.org>,
-        Gregory CLEMENT
-	<gregory.clement@free-electrons.com>
-References: <cover.51071caa64e5df81264a91b9a81ed1e94f47d2c4.1490886907.git-series.gregory.clement@free-electrons.com>
- <ecacddaa5d38b678e1c8c95b56f65f4a39527ead.1490886907.git-series.gregory.clement@free-electrons.com>
- <20170403161926.wfj7foddu33gxuae@rob-hp-laptop>
-CC: Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter
-	<adrian.hunter@intel.com>, <linux-mmc@vger.kernel.org>,
-        Jason Cooper
-	<jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni
-	<thomas.petazzoni@free-electrons.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Mike Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Jimmy Xu <zmxu@marvell.com>, Jisheng Zhang
-	<jszhang@marvell.com>,
-        Nadav Haklai <nadavh@marvell.com>, Ryan Gao
-	<ygao@marvell.com>,
-        Doug Jones <dougj@marvell.com>, Victor Gu
-	<xigu@marvell.com>,
-        "Wei(SOCP) Liu" <liuw@marvell.com>, Wilson Ding
-	<dingwei@marvell.com>,
-        Yehuda Yitschak <yehuday@marvell.com>,
-        Marcin Wojtas
-	<mw@semihalf.com>, Hanna Hawa <hannah@marvell.com>,
-        Kostya Porotchkin
-	<kostap@marvell.com>
-From: Hu Ziji <huziji@marvell.com>
-Message-ID: <df6d0972-21ce-589f-d786-7334f526867a@marvell.com>
-Date: Tue, 4 Apr 2017 01:07:26 +0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:51248 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1167405AbdDXJGf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2017 05:06:35 -0400
+Date: Mon, 24 Apr 2017 11:06:33 +0200
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v5 09/11] ARM: dts: sun8i: add DE2 nodes for V3s SoC
+Message-ID: <20170424090633.7pn46u63qzeoxjrl@lukather>
+References: <20170423103754.50012-1-icenowy@aosc.io>
+ <20170423103754.50012-10-icenowy@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <20170403161926.wfj7foddu33gxuae@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pvw7qhbjggs2ywpx"
+In-Reply-To: <20170423103754.50012-10-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
 
-On 2017/4/4 0:19, Rob Herring wrote:
-> ----------------------------------------------------------------------
-> On Thu, Mar 30, 2017 at 05:22:58PM +0200, Gregory CLEMENT wrote:
->> From: Hu Ziji <huziji@marvell.com>
->>
->> Marvell Xenon SDHC can support eMMC/SD/SDIO.
->> Add Xenon-specific properties.
->> Also add properties for Xenon PHY setting.
->>
->> Signed-off-by: Hu Ziji <huziji@marvell.com>
->> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
->> ---
->>  Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt | 170 +++++++-
->>  1 file changed, 170 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.txt
-> 
-> I acked v6 and it seems like a minor change, though I had to search for 
-> both because there is no revision history nor explanation why you didn't 
-> add my ack.
->
+--pvw7qhbjggs2ywpx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	Sorry for missing your ACK.
+On Sun, Apr 23, 2017 at 06:37:52PM +0800, Icenowy Zheng wrote:
+> +				tcon0_out: port@1 {
+> +					#address-cells =3D <1>;
+> +					#size-cells =3D <0>;
+> +					reg =3D <1>;
+> +				};
+> +			};
+> +		};
+> +
+> +
 
-	I add a few but important comments on common Xenon power implementations
-	in the examples. It is recorded in the cover letter.
-	v6->v7:
-	 - Add comments on vqmmc and vmmc in examples in dt binding doc.
+There's one too many newline here.
 
-	I was a little unsure if we can still add your ACK after adding the comment.
- 	We will add your ACK back if we have to release another version later.
+Maxime
 
-	Thank you.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-Best regards,
-Hu Ziji
+--pvw7qhbjggs2ywpx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> Acked-by: Rob Herring <robh@kernel.org> 
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJY/cAZAAoJEBx+YmzsjxAgnxcP/3k6VMFcQOxcz5ls8ezYCvWS
+m62u7knA/I9D6WsZQEVuSnaYspr++E+hsHvvFgbRvQBFkYNcNawmPWtbl83J6JTn
+F2OI6CYumm64AUth0y/LJ9Q8HRyYYtxRHq9frOgp0R6jklojvO97XzLafzIzJm8D
+D+jsBl6uMwjypqyQRxcVZJzH8d+YemibJR8LcNuLZ8MQKYAAa4+aUujuuKS5TxOp
+T5/Hz3efitHS+gAB/e+CWShRHWPQq/W5D749iDCi9Drrifu0BORwGmihUBYG0bOd
+ofCjddbVSddI19IV3Vyl4K/SxIT5yEqjMzevZ4ATAmq9cqsYe5rv2gZzZ3Y6JOuF
+h1oaKijEgQ67NPgsftYnDDrUhaAcuTRDNAyTxZJeVYFWSt0BtVQXDb1lUAouGaLk
+zi1xC6/vO911KGxtKr1CCiFPeAl9GeIFqFXnioYdPxiHZOgt1BjEyRfPqNfd/khB
+7H4mFTGssI8J8haXAWkxxmvzPic8C0giRhtv+OlBOG0HQCorD3C/x9Z5HknANeC8
+GgrJOMDaa67S7rCLTBbTMObmW9FumMcWUz2toIqWQK8zhsOu4AvgPq13NzPTqkjT
+f2uGA/aXYRugOpd7/19CAWVq9gQVYSXbBKBZwU/ugjzve4sO3/OH/pfC8SruUcy6
+DxH2/Odm5pI++303xI6W
+=Q/yG
+-----END PGP SIGNATURE-----
+
+--pvw7qhbjggs2ywpx--
