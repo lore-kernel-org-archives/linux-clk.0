@@ -1,87 +1,44 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 5/6] clk: samsung: exynos-clkout: Convert to the new clk_hw
- API
-Date: Mon, 24 Apr 2017 08:42:22 +0200
-Message-id: <1493016143-21569-6-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
-References: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170424064231eucas1p2edd27880b5adc7c884e00db54c100cc2@eucas1p2.samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36046 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761440AbdDXKJQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2017 06:09:16 -0400
+From: Tobias Regnery <tobias.regnery@gmail.com>
+To: narmstrong@baylibre.com, sboyd@codeaurora.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc: Tobias Regnery <tobias.regnery@gmail.com>
+Subject: [PATCH] clk: meson: gxbb: fix build error without RESET_CONTROLLER
+Date: Mon, 24 Apr 2017 12:05:42 +0200
+Message-Id: <20170424100542.20226-1-tobias.regnery@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock providers should use the new struct clk_hw based API, so convert
-Exynos CLKOUT clock provider to the new approach.
+With CONFIG_RESET_CONTROLLER=n we see the following link error in the
+meson gxbb clk driver:
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+drivers/built-in.o: In function 'gxbb_aoclkc_probe':
+drivers/clk/meson/gxbb-aoclk.c:161: undefined reference to 'devm_reset_controller_register'
+
+Fix this by selecting the reset controller subsystem.
+
+Signed-off-by: Tobias Regnery <tobias.regnery@gmail.com>
 ---
- drivers/clk/samsung/clk-exynos-clkout.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/clk/meson/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index 6c6afb87b4ce..a21aea062bae 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -29,10 +29,9 @@ struct exynos_clkout {
- 	struct clk_gate gate;
- 	struct clk_mux mux;
- 	spinlock_t slock;
--	struct clk_onecell_data data;
--	struct clk *clk_table[EXYNOS_CLKOUT_NR_CLKS];
- 	void __iomem *reg;
- 	u32 pmu_debug_save;
-+	struct clk_hw_onecell_data data;
- };
- 
- static struct exynos_clkout *clkout;
-@@ -62,7 +61,9 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 	int ret;
- 	int i;
- 
--	clkout = kzalloc(sizeof(*clkout), GFP_KERNEL);
-+	clkout = kzalloc(sizeof(*clkout) +
-+			 sizeof(*clkout->data.hws) * EXYNOS_CLKOUT_NR_CLKS,
-+			 GFP_KERNEL);
- 	if (!clkout)
- 		return;
- 
-@@ -100,17 +101,16 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 	clkout->mux.shift = EXYNOS_CLKOUT_MUX_SHIFT;
- 	clkout->mux.lock = &clkout->slock;
- 
--	clkout->clk_table[0] = clk_register_composite(NULL, "clkout",
-+	clkout->data.hws[0] = clk_hw_register_composite(NULL, "clkout",
- 				parent_names, parent_count, &clkout->mux.hw,
- 				&clk_mux_ops, NULL, NULL, &clkout->gate.hw,
- 				&clk_gate_ops, CLK_SET_RATE_PARENT
- 				| CLK_SET_RATE_NO_REPARENT);
--	if (IS_ERR(clkout->clk_table[0]))
-+	if (IS_ERR(clkout->data.hws[0]))
- 		goto err_unmap;
- 
--	clkout->data.clks = clkout->clk_table;
--	clkout->data.clk_num = EXYNOS_CLKOUT_NR_CLKS;
--	ret = of_clk_add_provider(node, of_clk_src_onecell_get, &clkout->data);
-+	clkout->data.num = EXYNOS_CLKOUT_NR_CLKS;
-+	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, &clkout->data);
- 	if (ret)
- 		goto err_clk_unreg;
- 
-@@ -119,7 +119,7 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 	return;
- 
- err_clk_unreg:
--	clk_unregister(clkout->clk_table[0]);
-+	clk_hw_unregister(clkout->data.hws[0]);
- err_unmap:
- 	iounmap(clkout->reg);
- clks_put:
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 19480bcc7046..2f29ee1a4d00 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -14,6 +14,7 @@ config COMMON_CLK_MESON8B
+ config COMMON_CLK_GXBB
+ 	bool
+ 	depends on COMMON_CLK_AMLOGIC
++	select RESET_CONTROLLER
+ 	help
+ 	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
+ 	  Say Y if you want peripherals and CPU frequency scaling to work.
 -- 
-1.9.1
+2.11.0
+
