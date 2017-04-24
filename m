@@ -1,36 +1,70 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Fri, 21 Apr 2017 19:23:56 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Tero Kristo <t-kristo@ti.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: ti: fix building without legacy omap3
-Message-ID: <20170422022356.GI7065@codeaurora.org>
-References: <20170419174507.4055014-1-arnd@arndb.de>
- <20170419174507.4055014-2-arnd@arndb.de>
+Return-Path: <daniel.lezcano@linaro.org>
+Return-Path: <daniel.lezcano@linaro.org>
+Date: Mon, 24 Apr 2017 11:16:10 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com,
+	xuwei5@hisilicon.com, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V3 2/2] ARM64: dts: hi6220-hikey: Add clock binding for
+ the pmic mfd
+Message-ID: <20170424091609.GA2137@mai>
+References: <1492449567-31399-1-git-send-email-daniel.lezcano@linaro.org>
+ <1492449567-31399-2-git-send-email-daniel.lezcano@linaro.org>
+ <20170422020233.GA7065@codeaurora.org>
+ <370c36f9-e6fc-416c-776b-edc1e42d7ddc@linaro.org>
+ <20170424085944.aa5dsc4g6bwm5rgi@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170419174507.4055014-2-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20170424085944.aa5dsc4g6bwm5rgi@dell>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/19, Arnd Bergmann wrote:
-> When CONFIG_ATAGS or CONFIG_OMAP3 is disabled, we get a build error:
+On Mon, Apr 24, 2017 at 09:59:44AM +0100, Lee Jones wrote:
+> On Sat, 22 Apr 2017, Daniel Lezcano wrote:
 > 
-> In file included from include/linux/clk-provider.h:15:0,
->                  from drivers/clk/ti/clk.c:19:
-> drivers/clk/ti/clk.c: In function 'ti_clk_add_aliases':
-> drivers/clk/ti/clk.c:438:29: error: 'simple_clk_match_table' undeclared (first use in this function); did you mean 'simple_attr_write'?
+> > On 22/04/2017 04:02, Stephen Boyd wrote:
+> > > On 04/17, Daniel Lezcano wrote:
+> > >> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > >> ---
+> > >>  Documentation/devicetree/bindings/mfd/hisilicon,hi655x.txt | 6 ++++++
+> > >>  arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts             | 1 +
+> > >>  2 files changed, 7 insertions(+)
+> > >>
+> > > 
+> > > I take it this goes through arm-soc? Not sure why I'm on To:
+> > > line.
+> > 
+> > Probably it should go through Lee's tree.
 > 
-> Moving the match table down fixes it.
+> Unlikely.
 > 
-> Fixes: c17435c56bb1 ("clk: ti: add API for creating aliases automatically for simple clock types")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+> The document and the DTS change should really have gone separately,
+> but to save you from having to mess around so close to the merge window:
+> 
+> Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Applied to clk-next
+Thanks Lee.
+
+Usually, I take the DT changes (including doc) with the timers changes with the
+maintainer and Rob's blessing. So the DT and the driver changes are aligned in
+my tree and make the submission changes easier.
+
+I agree mixing the patches for different destinations into a single patchset is
+fuzzy, I will take care next time to separate the patches.
+
+  -- Daniel
+
+> -- 
+> Lee Jones
+> Linaro STMicroelectronics Landing Team Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
