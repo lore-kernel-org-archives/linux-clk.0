@@ -1,64 +1,69 @@
-Return-Path: <ykaneko0929@gmail.com>
-Return-Path: <ykaneko0929@gmail.com>
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: cs2000: Fix the setting of saved_rate during the resume process
-Date: Thu, 20 Apr 2017 02:46:32 +0900
-Message-Id: <1492624001-3758-12-git-send-email-ykaneko0929@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from elvis.franken.de ([193.175.24.41]:56111 "EHLO elvis.franken.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1954540AbdDYUyt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Apr 2017 16:54:49 -0400
+Date: Tue, 25 Apr 2017 22:54:35 +0200
+From: Tom Bogendoerfer <tsbogend@alpha.franken.de>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org
+Subject: Re: [PATCH] Fix returns of some CLK API calls, if !CONFIG_HAVE_CLOCK
+Message-ID: <20170425205435.GA13744@alpha.franken.de>
+References: <20170425125547.865FB508DA7@solo.franken.de>
+ <20170425163137.GR17774@n2100.armlinux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170425163137.GR17774@n2100.armlinux.org.uk>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+On Tue, Apr 25, 2017 at 05:31:37PM +0100, Russell King - ARM Linux wrote:
+> On Tue, Apr 25, 2017 at 02:30:07PM +0200, Thomas Bogendoerfer wrote:
+> > If CONFIG_HAVE_CLOCK is not set, return values of clk_get(),
+> > devm_clk_get(), devm_get_clk_from_child(), clk_get_parent()
+> > and clk_get_sys() are wrong. According to spec these functions
+> > should either return a pointer to a struct clk or a valid IS_ERR
+> > condition. NULL is neither, so returning ERR_PTR(-ENODEV) makes
+> > more sense.
+> 
+> That's wrong.  When the clk API is disabled, the expected behaviour is
+> that drivers will not fail.  Returning ERR_PTR(-ENODEV) will cause them
+> to fail, so will break platforms.
+>
+> NAK.
+> 
 
-In the resume process, there is the case that other drivers call
-cs2000_enable before cs2000_resume is called. Since the order of
-resume process is not guaranteed, it is needed to reset the clk
-rate in any cases before cs2000 is used.
+then we have to go through all drivers, which could work with and
+without HAVE_CLK and replace the IS_ERR() checks with something
+like IS_ERR_OR_NULL().  Easy for the part I'm interested in the first place.
 
-Also, the current cs2000 driver is using resume_early function.
-The using .resume_early is bad idea because the dependency with
-other drivers is to be complicated.
+> > Without this change serial console on SNI RM400 machines (MIPS arch)
+> > is broken, because sccnxp driver doesn't get a valid clock rate.
+> 
+> So the driver needs to depeond on HAVE_CLOCK.
 
-This patch adds to reset the clk rate in cs2000_enable and
-changes to use from .resume_early to .resume.
+the driver worked without HAVE_CLOCK before just fine, and while it
+got invaded by CLK API it got broken.
 
-Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
-This patch is based on the clk-next branch of linux-clk tree.
+No problem to fix that, but just looking at include/linux/clk.h:
 
- drivers/clk/clk-cs2000-cp.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+/**
+ * devm_clk_get - lookup and obtain a managed reference to a clock producer.
+ * @dev: device for clock "consumer"
+ * @id: clock consumer ID
+ *
+ * Returns a struct clk corresponding to the clock producer, or
+ * valid IS_ERR() condition containing errno.  The implementation
 
-diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
-index 5b3516d..de6e8c6 100644
---- a/drivers/clk/clk-cs2000-cp.c
-+++ b/drivers/clk/clk-cs2000-cp.c
-@@ -338,6 +338,10 @@ static int cs2000_enable(struct clk_hw *hw)
- 	struct cs2000_priv *priv = hw_to_priv(hw);
- 	int ret;
- 
-+	ret = cs2000_set_saved_rate(priv);
-+	if (ret < 0)
-+		return ret;
-+
- 	ret = cs2000_enable_dev_config(priv, true);
- 	if (ret < 0)
- 		return ret;
-@@ -530,7 +534,7 @@ static int cs2000_resume(struct device *dev)
- }
- 
- static const struct dev_pm_ops cs2000_pm_ops = {
--	.resume_early	= cs2000_resume,
-+	.resume		= cs2000_resume,
- };
- 
- static struct i2c_driver cs2000_driver = {
+I would expect either no replacement for that, if !HAVE_CLOCK
+or simple a sane result code... and NULL isn't sane at least
+with the description above...
+
+But still it's your call.
+
+Thomas.
+
 -- 
-1.9.1
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
