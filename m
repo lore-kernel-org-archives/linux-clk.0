@@ -1,61 +1,75 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH 2/6] clk: hisilicon: Delete error messages for failed memory
- allocations in hisi_clk_init()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: linux-clk@vger.kernel.org,
-        Jiancheng Xue <xuejiancheng@hisilicon.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
-Message-ID: <362845e2-00da-9631-a049-1a53749a1fcf@users.sourceforge.net>
-Date: Tue, 18 Apr 2017 11:39:16 +0200
-MIME-Version: 1.0
-In-Reply-To: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 04/10] clk: renesas: Add r8a7792 CPG Core Clock Definitions
+Date: Tue, 25 Apr 2017 18:53:14 +0200
+Message-Id: <1493139200-27396-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Apr 2017 10:12:32 +0200
+Add all R-Car V2H Clock Pulse Generator Core Clock Outputs, as listed in
+Table 7.2c ("List of Clocks [R-Car V2H]") of the R-Car Gen2 Hardware
+User's Manual rev. 2.00.
 
-The script "checkpatch.pl" pointed information out like the following.
-
-WARNING: Possible unnecessary 'out of memory' message
-
-Thus remove such statements here.
-
-Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/hisilicon/clk.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ include/dt-bindings/clock/r8a7792-cpg-mssr.h | 43 ++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7792-cpg-mssr.h
 
-diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-index 9268e80b7566..eca4c66e316c 100644
---- a/drivers/clk/hisilicon/clk.c
-+++ b/drivers/clk/hisilicon/clk.c
-@@ -80,16 +80,14 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
- 	}
- 
- 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
--	if (!clk_data) {
--		pr_err("%s: could not allocate clock data\n", __func__);
-+	if (!clk_data)
- 		goto err;
--	}
+diff --git a/include/dt-bindings/clock/r8a7792-cpg-mssr.h b/include/dt-bindings/clock/r8a7792-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..72ce85cb2f94b0ab
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7792-cpg-mssr.h
+@@ -0,0 +1,43 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
 +
- 	clk_data->base = base;
- 	clk_table = kcalloc(nr_clks, sizeof(*clk_table), GFP_KERNEL);
--	if (!clk_table) {
--		pr_err("%s: could not allocate clock lookup table\n", __func__);
-+	if (!clk_table)
- 		goto err_data;
--	}
++#ifndef __DT_BINDINGS_CLOCK_R8A7792_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7792_CPG_MSSR_H__
 +
- 	clk_data->clk_data.clks = clk_table;
- 	clk_data->clk_data.clk_num = nr_clks;
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7792 CPG Core Clocks */
++#define R8A7792_CLK_Z			0
++#define R8A7792_CLK_ZG			1
++#define R8A7792_CLK_ZTR			2
++#define R8A7792_CLK_ZTRD2		3
++#define R8A7792_CLK_ZT			4
++#define R8A7792_CLK_ZX			5
++#define R8A7792_CLK_ZS			6
++#define R8A7792_CLK_HP			7
++#define R8A7792_CLK_I			8
++#define R8A7792_CLK_B			9
++#define R8A7792_CLK_LB			10
++#define R8A7792_CLK_P			11
++#define R8A7792_CLK_CL			12
++#define R8A7792_CLK_M2			13
++#define R8A7792_CLK_IMP			14
++#define R8A7792_CLK_ZB3			15
++#define R8A7792_CLK_ZB3D2		16
++#define R8A7792_CLK_DDR			17
++#define R8A7792_CLK_SD			18
++#define R8A7792_CLK_MP			19
++#define R8A7792_CLK_QSPI		20
++#define R8A7792_CLK_CP			21
++#define R8A7792_CLK_CPEX		22
++#define R8A7792_CLK_RCAN		23
++#define R8A7792_CLK_R			24
++#define R8A7792_CLK_OSC			25
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7792_CPG_MSSR_H__ */
 -- 
-2.12.2
+2.7.4
