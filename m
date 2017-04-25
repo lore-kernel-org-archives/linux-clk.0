@@ -1,40 +1,56 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 1/6] clk: samsung: Remove dead code
-Date: Mon, 24 Apr 2017 08:42:18 +0200
-Message-id: <1493016143-21569-2-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
-References: <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170424064228eucas1p2543d7f206ac18476891e500991611733@eucas1p2.samsung.com>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: Use pm_clk_no_clocks() helper i.s.o. direct access
+Date: Tue, 25 Apr 2017 19:33:58 +0200
+Message-Id: <1493141638-28940-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-samsung_clk_register_pll2550x() function is not used anymore, so remove its
-declaration.
+The pm_subsys_data.clock_list member exists only if CONFIG_PM_CLK=y.
+Hence direct accesses to this field break compile-testing on platforms
+where CONFIG_PM_CLK=n.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+To fix this, use the pm_clk_no_clocks() helper instead, for which a
+dummy version is provided if CONFIG_PM_CLK=n.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/samsung/clk-pll.h | 4 ----
- 1 file changed, 4 deletions(-)
+To be queued up in clk-renesas-for-v4.13.
 
-diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-index a1ca0233cb4b..61eb8abbfd9c 100644
---- a/drivers/clk/samsung/clk-pll.h
-+++ b/drivers/clk/samsung/clk-pll.h
-@@ -103,8 +103,4 @@ struct samsung_pll_rate_table {
- 	unsigned int vsel;
- };
+ drivers/clk/renesas/clk-mstp.c         | 2 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 4067216bf31fbce9..f1617dd044cbbe15 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -325,7 +325,7 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev)
  
--extern struct clk * __init samsung_clk_register_pll2550x(const char *name,
--			const char *pname, const void __iomem *reg_base,
--			const unsigned long offset);
--
- #endif /* __SAMSUNG_CLK_PLL_H */
+ void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev)
+ {
+-	if (!list_empty(&dev->power.subsys_data->clock_list))
++	if (!pm_clk_no_clocks(dev))
+ 		pm_clk_destroy(dev);
+ }
+ 
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 99eeec6f24ec6c6b..38a01406740dfc04 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -477,7 +477,7 @@ int cpg_mssr_attach_dev(struct generic_pm_domain *unused, struct device *dev)
+ 
+ void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev)
+ {
+-	if (!list_empty(&dev->power.subsys_data->clock_list))
++	if (!pm_clk_no_clocks(dev))
+ 		pm_clk_destroy(dev);
+ }
+ 
 -- 
-1.9.1
+2.7.4
