@@ -1,36 +1,44 @@
-Return-Path: <krzk@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1493016143-21569-4-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170424064229eucas1p2f2feb95623d6c4ac8db01ff519a53fa9@eucas1p2.samsung.com>
- <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com> <1493016143-21569-4-git-send-email-m.szyprowski@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 24 Apr 2017 08:55:20 +0200
-Message-ID: <CAJKOXPc0gqW5qR6BCj7rS_4KDLoDFQFT634Sum1AoNPpddxEig@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] clk: samsung: Convert common drivers to the new
- clk_hw API
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: Provide dummy of_clk_get_from_provider() for compile-testing
+Date: Tue, 25 Apr 2017 19:28:48 +0200
+Message-Id: <1493141328-28201-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 24, 2017 at 8:42 AM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Clock providers should use the new struct clk_hw based API, so convert
-> Samsung clock providers and their helper functions to the new approach.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-cpu.c          |  8 ++-
->  drivers/clk/samsung/clk-pll.c          | 14 +++---
->  drivers/clk/samsung/clk-s3c2410-dclk.c | 75 ++++++++++++++--------------
->  drivers/clk/samsung/clk.c              | 91 +++++++++++++++-------------------
->  drivers/clk/samsung/clk.h              |  9 ++--
->  5 files changed, 92 insertions(+), 105 deletions(-)
+When CONFIG_ON=n, dummies are provided for of_clk_get() and
+of_clk_get_by_name(), but not for of_clk_get_from_provider().
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Provide a dummy for the latter, to improve the ability to do
+compile-testing.
 
-Best regards,
-Krzysztof
+Fixes: 766e6a4ec602d0c1 ("clk: add DT clock binding support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ include/linux/clk.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index e9d36b3e49de5b1b..3ed97abb5cbb7f94 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -539,6 +539,10 @@ static inline struct clk *of_clk_get_by_name(struct device_node *np,
+ {
+ 	return ERR_PTR(-ENOENT);
+ }
++static inline struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
++{
++	return ERR_PTR(-ENOENT);
++}
+ #endif
+ 
+ #endif
+-- 
+2.7.4
