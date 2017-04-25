@@ -1,34 +1,80 @@
-Return-Path: <olof@lixom.net>
-Return-Path: <olof@lixom.net>
-Date: Wed, 19 Apr 2017 07:08:38 -0700
-From: Olof Johansson <olof@lixom.net>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: arm-soc <arm@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v2 0/7] ARM: SPEAr600 updates
-Message-ID: <20170419140838.GQ29219@localhost>
-References: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1492433205-13376-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 05/10] clk: renesas: Add r8a7793 CPG Core Clock Definitions
+Date: Tue, 25 Apr 2017 18:53:15 +0200
+Message-Id: <1493139200-27396-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 17, 2017 at 02:46:38PM +0200, Thomas Petazzoni wrote:
-> Arnd, Olof, Mike, Stephen,
-> 
-> Here are a set of patches touching the support of the SPEAr600
-> platform, for which the platform maintained Viresh Kumar has Acked the
-> patches, but would like the arm-soc and clk maintainers to pick up the
-> patches directly, see
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-April/501653.html.
-> 
-> Arnd, Olof, could you pick patches 1 to 6 directly in your arm-soc tree ?
-> 
-> Mike, Stephen, could you pick patch 7 directly in your clk tree ?
+Add all R-Car M2-N Clock Pulse Generator Core Clock Outputs, as listed
+in Table 7.2b ("List of Clocks [R-Car M2-W/M2-N]") of the R-Car Gen2
+Hardware User's Manual rev. 2.00.
 
-Thanks, applied patches 1-6 to next/dt.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ include/dt-bindings/clock/r8a7793-cpg-mssr.h | 48 ++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7793-cpg-mssr.h
 
-
--Olof
+diff --git a/include/dt-bindings/clock/r8a7793-cpg-mssr.h b/include/dt-bindings/clock/r8a7793-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..8809b0f62d615457
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7793-cpg-mssr.h
+@@ -0,0 +1,48 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7793 CPG Core Clocks */
++#define R8A7793_CLK_Z			0
++#define R8A7793_CLK_ZG			1
++#define R8A7793_CLK_ZTR			2
++#define R8A7793_CLK_ZTRD2		3
++#define R8A7793_CLK_ZT			4
++#define R8A7793_CLK_ZX			5
++#define R8A7793_CLK_ZS			6
++#define R8A7793_CLK_HP			7
++#define R8A7793_CLK_I			8
++#define R8A7793_CLK_B			9
++#define R8A7793_CLK_LB			10
++#define R8A7793_CLK_P			11
++#define R8A7793_CLK_CL			12
++#define R8A7793_CLK_M2			13
++#define R8A7793_CLK_ADSP		14
++#define R8A7793_CLK_ZB3			15
++#define R8A7793_CLK_ZB3D2		16
++#define R8A7793_CLK_DDR			17
++#define R8A7793_CLK_SDH			18
++#define R8A7793_CLK_SD0			19
++#define R8A7793_CLK_SD2			20
++#define R8A7793_CLK_SD3			21
++#define R8A7793_CLK_MMC0		22
++#define R8A7793_CLK_MP			23
++#define R8A7793_CLK_SSP			24
++#define R8A7793_CLK_SSPRS		25
++#define R8A7793_CLK_QSPI		26
++#define R8A7793_CLK_CP			27
++#define R8A7793_CLK_RCAN		28
++#define R8A7793_CLK_R			29
++#define R8A7793_CLK_OSC			30
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__ */
+-- 
+2.7.4
