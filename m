@@ -1,64 +1,80 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20170422021043.GD7065@codeaurora.org>
-References: <1492624001-3758-12-git-send-email-ykaneko0929@gmail.com> <20170422021043.GD7065@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 23 Apr 2017 22:16:28 +0200
-Message-ID: <CAMuHMdVgd2c++xPd8iMOWE6c1CZWoK73Jod1WM_MSJJ2mUroNg@mail.gmail.com>
-Subject: Re: [PATCH] clk: cs2000: Fix the setting of saved_rate during the
- resume process
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 03/10] clk: renesas: Add r8a7791 CPG Core Clock Definitions
+Date: Tue, 25 Apr 2017 18:53:13 +0200
+Message-Id: <1493139200-27396-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Add all R-Car M2-W Clock Pulse Generator Core Clock Outputs, as listed
+in Table 7.2b ("List of Clocks [R-Car M2-W/M2-N]") of the R-Car Gen2
+Hardware User's Manual rev. 2.00.
 
-On Sat, Apr 22, 2017 at 4:10 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 04/20, Yoshihiro Kaneko wrote:
->> From: Gaku Inami <gaku.inami.xw@bp.renesas.com>
->>
->> In the resume process, there is the case that other drivers call
->> cs2000_enable before cs2000_resume is called. Since the order of
->> resume process is not guaranteed, it is needed to reset the clk
->> rate in any cases before cs2000 is used.
->>
->> Also, the current cs2000 driver is using resume_early function.
->> The using .resume_early is bad idea because the dependency with
->> other drivers is to be complicated.
->>
->> This patch adds to reset the clk rate in cs2000_enable and
->> changes to use from .resume_early to .resume.
->>
->> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
->> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->> ---
->
-> Was this supposed to be sent as a series? This is the second
-> patch in the series?
->
-> In what situation does a driver call clk_prepare() on the clocks
-> in here before the device's resume callback is called? I would
-> think that any devices that use the clks provided by this driver
-> would be probe defered until the clks are registered, so they
-> would be later in the suspend/resume list than this clk driver?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ include/dt-bindings/clock/r8a7791-cpg-mssr.h | 48 ++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7791-cpg-mssr.h
 
-Deferred probing is used during driver initialization only.
-This patch is about clock users calling into the clock API during the resume
-procedure, before the clock provider has been resumed.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/include/dt-bindings/clock/r8a7791-cpg-mssr.h b/include/dt-bindings/clock/r8a7791-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..e8823410c01c5a09
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7791-cpg-mssr.h
+@@ -0,0 +1,48 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7791 CPG Core Clocks */
++#define R8A7791_CLK_Z			0
++#define R8A7791_CLK_ZG			1
++#define R8A7791_CLK_ZTR			2
++#define R8A7791_CLK_ZTRD2		3
++#define R8A7791_CLK_ZT			4
++#define R8A7791_CLK_ZX			5
++#define R8A7791_CLK_ZS			6
++#define R8A7791_CLK_HP			7
++#define R8A7791_CLK_I			8
++#define R8A7791_CLK_B			9
++#define R8A7791_CLK_LB			10
++#define R8A7791_CLK_P			11
++#define R8A7791_CLK_CL			12
++#define R8A7791_CLK_M2			13
++#define R8A7791_CLK_ADSP		14
++#define R8A7791_CLK_ZB3			15
++#define R8A7791_CLK_ZB3D2		16
++#define R8A7791_CLK_DDR			17
++#define R8A7791_CLK_SDH			18
++#define R8A7791_CLK_SD0			19
++#define R8A7791_CLK_SD2			20
++#define R8A7791_CLK_SD3			21
++#define R8A7791_CLK_MMC0		22
++#define R8A7791_CLK_MP			23
++#define R8A7791_CLK_SSP			24
++#define R8A7791_CLK_SSPRS		25
++#define R8A7791_CLK_QSPI		26
++#define R8A7791_CLK_CP			27
++#define R8A7791_CLK_RCAN		28
++#define R8A7791_CLK_R			29
++#define R8A7791_CLK_OSC			30
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7791_CPG_MSSR_H__ */
+-- 
+2.7.4
