@@ -1,124 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:60330 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1429614AbdDYVdQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2017 17:33:16 -0400
-Date: Tue, 25 Apr 2017 22:33:03 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Tom Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org
-Subject: Re: [PATCH] Fix returns of some CLK API calls, if !CONFIG_HAVE_CLOCK
-Message-ID: <20170425213303.GU17774@n2100.armlinux.org.uk>
-References: <20170425125547.865FB508DA7@solo.franken.de>
- <20170425163137.GR17774@n2100.armlinux.org.uk>
- <20170425205435.GA13744@alpha.franken.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20170425205435.GA13744@alpha.franken.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 01/10] clk: renesas: cpg-mssr: Document R-Car Gen2 support
+Date: Tue, 25 Apr 2017 18:53:11 +0200
+Message-Id: <1493139200-27396-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 25, 2017 at 10:54:35PM +0200, Tom Bogendoerfer wrote:
-> On Tue, Apr 25, 2017 at 05:31:37PM +0100, Russell King - ARM Linux wrote:
-> > On Tue, Apr 25, 2017 at 02:30:07PM +0200, Thomas Bogendoerfer wrote:
-> > > If CONFIG_HAVE_CLOCK is not set, return values of clk_get(),
-> > > devm_clk_get(), devm_get_clk_from_child(), clk_get_parent()
-> > > and clk_get_sys() are wrong. According to spec these functions
-> > > should either return a pointer to a struct clk or a valid IS_ERR
-> > > condition. NULL is neither, so returning ERR_PTR(-ENODEV) makes
-> > > more sense.
-> > 
-> > That's wrong.  When the clk API is disabled, the expected behaviour is
-> > that drivers will not fail.  Returning ERR_PTR(-ENODEV) will cause them
-> > to fail, so will break platforms.
-> >
-> > NAK.
-> > 
-> 
-> then we have to go through all drivers, which could work with and
-> without HAVE_CLK and replace the IS_ERR() checks with something
-> like IS_ERR_OR_NULL().  Easy for the part I'm interested in the
-> first place.
+Document use of the Renesas Clock Pulse Generator / Module Standby and
+Software Reset DT Bindings for various member of the R-Car Gen2 family
+(H2, M2-W, V2H, M2-N, and E2).
 
-What you describe is exactly what you're proposing to happen if your
-patch gets merged - we go from a situation where drivers that do this
-today:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
+---
+ Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-	clk = devm_clk_get();
-	if (IS_ERR(clk))
-		return PTR_ERR(clk);
-
-start failing to probe, whereas the current situation is that they
-work.
-
-It's well established that the NULL clk means that there is no clock
-available (eg, because the architecture doesn't support the clk API)
-and this allows drivers to work across different architectures today.
-provided they aren't reliant on obtaining the current clock rate.
-
-> > > Without this change serial console on SNI RM400 machines (MIPS arch)
-> > > is broken, because sccnxp driver doesn't get a valid clock rate.
-> > 
-> > So the driver needs to depeond on HAVE_CLOCK.
-> 
-> the driver worked without HAVE_CLOCK before just fine, and while it
-> got invaded by CLK API it got broken.
-> 
-> No problem to fix that, but just looking at include/linux/clk.h:
-> 
-> /**
->  * devm_clk_get - lookup and obtain a managed reference to a clock producer.
->  * @dev: device for clock "consumer"
->  * @id: clock consumer ID
->  *
->  * Returns a struct clk corresponding to the clock producer, or
->  * valid IS_ERR() condition containing errno.  The implementation
-> 
-> I would expect either no replacement for that, if !HAVE_CLOCK
-> or simple a sane result code... and NULL isn't sane at least
-> with the description above...
-
-As far as drivers are concerned, any value returned that IS_ERR()
-tests false must not be assumed to be a failure.
-
-However, looking at commit 90efa75f7ab0, there's one point that's
-definitely wrong, and another that can be improved to avoid your
-problem.
-
-1. clk_get_rate() on a disabled clock:
-
- * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
- *                This is only valid once the clock source has been enabled.
-
-   The clock is expected to be enabled before clk_get_rate() is called,
-   and the driver is not doing that.
-
-2. if uartclk is zero after enabling, then there's clearly no clock
-   rate available, and the driver really ought to fallback to using
-   the old method.
-
-So, I'd suggest that the driver should be coded:
-
-	clk = devm_clk_get(&pdev->dev, NULL);
-	if (IS_ERR(clk)) {
-		ret = PTR_ERR(clk);
-		if (ret == -EPROBE_DEFER)
-			goto err_out;
-		uartclk = 0;
-	} else {
-		uartclk = clk_get_rate(clk);
-	}
-
-	if (!uartclk) {
-		dev_notice(&pdev->dev, "Using default clock frequency\n");
-		uartclk = s->freq_std;
-	}
-
-	/* Check input frequency */
-	...
-
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+index f4f944d813081857..0cd894f987a38e81 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -15,6 +15,11 @@ Required Properties:
+   - compatible: Must be one of:
+       - "renesas,r8a7743-cpg-mssr" for the r8a7743 SoC (RZ/G1M)
+       - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
++      - "renesas,r8a7790-cpg-mssr" for the r8a7790 SoC (R-Car H2)
++      - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC (R-Car M2-W)
++      - "renesas,r8a7792-cpg-mssr" for the r8a7792 SoC (R-Car V2H)
++      - "renesas,r8a7793-cpg-mssr" for the r8a7793 SoC (R-Car M2-N)
++      - "renesas,r8a7794-cpg-mssr" for the r8a7794 SoC (R-Car E2)
+       - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
+       - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
+ 
+@@ -24,9 +29,10 @@ Required Properties:
+   - clocks: References to external parent clocks, one entry for each entry in
+     clock-names
+   - clock-names: List of external parent clock names. Valid names are:
+-      - "extal" (r8a7743, r8a7745, r8a7795, r8a7796)
++      - "extal" (r8a7743, r8a7745, r8a7790, r8a7791, r8a7792, r8a7793, r8a7794,
++		 r8a7795, r8a7796)
+       - "extalr" (r8a7795, r8a7796)
+-      - "usb_extal" (r8a7743, r8a7745)
++      - "usb_extal" (r8a7743, r8a7745, r8a7790, r8a7791, r8a7793, r8a7794)
+ 
+   - #clock-cells: Must be 2
+       - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.7.4
