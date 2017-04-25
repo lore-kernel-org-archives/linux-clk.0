@@ -1,70 +1,118 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:47773 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750745AbdDMJLM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2017 05:11:12 -0400
-Date: Thu, 13 Apr 2017 11:11:10 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Tobias Regnery <tobias.regnery@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: fix build failure in ccu-sun9i-a80 driver
-Message-ID: <20170413091110.wfbrzwyxpbdkwz74@lukather>
-References: <20170410121544.13248-1-tobias.regnery@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fbk2vaxxeqq5ynig"
-In-Reply-To: <20170410121544.13248-1-tobias.regnery@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <clabbe.montjoie@gmail.com>
+Return-Path: <clabbe.montjoie@gmail.com>
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>
+Subject: [PATCH] clk: sunxi-ng: Fix dependency on sunxi_gate
+Date: Tue, 25 Apr 2017 19:12:09 +0200
+Message-Id: <20170425171209.6229-1-clabbe.montjoie@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+When CONFIG_SUNXI_CCU is set but no other SUNXI_CCU is selected i got
+the following build error:
+drivers/built-in.o: In function `ccu_pll_notifier_cb':
+drivers/clk/sunxi-ng/ccu_common.c:71: undefined reference to `ccu_gate_helper_disable'
+drivers/clk/sunxi-ng/ccu_common.c:73: undefined reference to `ccu_gate_helper_enable'
 
---fbk2vaxxeqq5ynig
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The problem is the function ccu_pll_notifier_cb in ccu_common.c need
+some function from ccu_gate.c which is not compiled since SUNXI_CCU_GATE
+is not selected.
 
-On Mon, Apr 10, 2017 at 02:15:44PM +0200, Tobias Regnery wrote:
-> The ccu-sun9i-a80 driver uses the ccu_mult_ops struct, but unlike the oth=
-er
-> users it doesen't select the corresponding Kconfig symbol under which the
-> struct is compiled in.
->=20
-> This results in the following link error with CONFIG_SUN9I_A80_CCU=3Dy and
-> CONFIG_SUNXI_CCU_MULT=3Dn:
->=20
-> drivers/built-in.o:(.data+0x2d638): undefined reference to 'ccu_mult_ops'
->=20
-> Fix this by explicitly selecting CONFIG_SUNXI_CCU_MULT like the other
-> users of the struct.
->=20
-> Signed-off-by: Tobias Regnery <tobias.regnery@gmail.com>
+This patch remove SUNXI_CCU_GATE and compile ccu_gate.c unconditionnaly
+since all other combination of options select SUNXI_CCU_GATE finally.
 
-Applied, thanks!
-Maxime
+Fixes: 02ae2bc6febd ("clk: sunxi-ng: Add clk notifier to gate then ungate PLL clocks")
+Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+---
+ drivers/clk/sunxi-ng/Kconfig  | 11 -----------
+ drivers/clk/sunxi-ng/Makefile |  2 +-
+ 2 files changed, 1 insertion(+), 12 deletions(-)
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---fbk2vaxxeqq5ynig
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJY70CqAAoJEBx+YmzsjxAgnskQAKCR1mgW/ykPnltlPp+6Ccz7
-amtkFJFyG4MM7cLUZgAMAEIz8QkgayUdjykp5gqAapzROQstoweA89rkI1aMWs5u
-xHe0buMxy2z9lY0nQjbehTCnWgFBRGBqmNOyu9DF6iMbbAeFFLLI66Uj4/nZ6oKw
-FWZq4IoEsoslhv+VU5kZ8TPNYN8y6JvyBcrbVcKsh6E0C0W3Wgwgu6BeauIYmOvh
-Cd9BBW3aEpwu7xN5kXSFSDktZDsoOej3eeUGLFuRDpUxlfkhmc+BRXn0i35bidZ3
-XtmkrC98BlJt0olukzxu9AARbVtoyW2pkRE/Infs8p4SX0750pnRFg/SWzYrkbol
-eO2j7eBF4oH14gSPqf5XufyiQWIZRXxP75zV4KEUEfQKOvN0W0vpmKWIMF/OIZNL
-sMPsPPCT9r7CZtuQaePMXVWvZZLSMYzP1Xerw09LQLo8LBADhSPl8odb+8gXgMnh
-XR0ITTtpVBsQxld4IbN8doLORXGNP7rAjy65y78eu/Y/5X8CebqqJtF1tctF+U8A
-1y2+tMPuLwzop3v1eAUiBtF6FTIyB4Akm13UdtXKcvzfs1y6LqzqNRhqIR9Yccjd
-eZB4RHrtpnR+Wj4EdYJ/yWvU9EDomVVCUEC7wFnfpeI9KJyAKYBvYtDNx+Hri4HL
-PEbHRoZ/+p5FTr/almGN
-=8G0a
------END PGP SIGNATURE-----
-
---fbk2vaxxeqq5ynig--
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 8bee225..d7842f9 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -15,9 +15,6 @@ config SUNXI_CCU_DIV
+ config SUNXI_CCU_FRAC
+ 	bool
+ 
+-config SUNXI_CCU_GATE
+-	bool
+-
+ config SUNXI_CCU_MUX
+ 	bool
+ 
+@@ -32,24 +29,19 @@ config SUNXI_CCU_PHASE
+ 
+ config SUNXI_CCU_NK
+ 	bool
+-	select SUNXI_CCU_GATE
+ 
+ config SUNXI_CCU_NKM
+ 	bool
+-	select SUNXI_CCU_GATE
+ 
+ config SUNXI_CCU_NKMP
+ 	bool
+-	select SUNXI_CCU_GATE
+ 
+ config SUNXI_CCU_NM
+ 	bool
+ 	select SUNXI_CCU_FRAC
+-	select SUNXI_CCU_GATE
+ 
+ config SUNXI_CCU_MP
+ 	bool
+-	select SUNXI_CCU_GATE
+ 	select SUNXI_CCU_MUX
+ 
+ # SoC Drivers
+@@ -119,7 +111,6 @@ config SUN8I_A33_CCU
+ config SUN8I_A83T_CCU
+ 	bool "Support for the Allwinner A83T CCU"
+ 	select SUNXI_CCU_DIV
+-	select SUNXI_CCU_GATE
+ 	select SUNXI_CCU_NKMP
+ 	select SUNXI_CCU_NM
+ 	select SUNXI_CCU_MP
+@@ -154,7 +145,6 @@ config SUN9I_A80_CCU
+ 	bool "Support for the Allwinner A80 CCU"
+ 	select SUNXI_CCU_DIV
+ 	select SUNXI_CCU_MULT
+-	select SUNXI_CCU_GATE
+ 	select SUNXI_CCU_NKMP
+ 	select SUNXI_CCU_NM
+ 	select SUNXI_CCU_MP
+@@ -165,7 +155,6 @@ config SUN9I_A80_CCU
+ config SUN8I_R_CCU
+ 	bool "Support for Allwinner SoCs' PRCM CCUs"
+ 	select SUNXI_CCU_DIV
+-	select SUNXI_CCU_GATE
+ 	default MACH_SUN8I || (ARCH_SUNXI && ARM64)
+ 
+ endif
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 78028c8..52aab41 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -1,11 +1,11 @@
+ # Common objects
+ obj-$(CONFIG_SUNXI_CCU)		+= ccu_common.o
+ obj-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
++obj-$(CONFIG_SUNXI_CCU)		+= ccu_gate.o
+ 
+ # Base clock types
+ obj-$(CONFIG_SUNXI_CCU_DIV)	+= ccu_div.o
+ obj-$(CONFIG_SUNXI_CCU_FRAC)	+= ccu_frac.o
+-obj-$(CONFIG_SUNXI_CCU_GATE)	+= ccu_gate.o
+ obj-$(CONFIG_SUNXI_CCU_MUX)	+= ccu_mux.o
+ obj-$(CONFIG_SUNXI_CCU_MULT)	+= ccu_mult.o
+ obj-$(CONFIG_SUNXI_CCU_PHASE)	+= ccu_phase.o
+-- 
+2.10.2
