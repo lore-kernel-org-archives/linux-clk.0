@@ -1,64 +1,51 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAMuHMdUM=7-tMajOCUWjDTpSZO+EtDzWYz1+a2h-m=sodjTiBA@mail.gmail.com>
-References: <1492624001-3758-8-git-send-email-ykaneko0929@gmail.com> <CAMuHMdUM=7-tMajOCUWjDTpSZO+EtDzWYz1+a2h-m=sodjTiBA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Apr 2017 10:10:30 +0200
-Message-ID: <CAMuHMdXAkprpLHpnQVEDAWjom7UBYgiJ+5-nyCccQBc=toqOeQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add Audio-DMAC clocks
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <eddie.cai.linux@gmail.com>
+Return-Path: <eddie.cai.linux@gmail.com>
+From: Eddie Cai <eddie.cai.linux@gmail.com>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	heiko@sntech.de,
+	zhengxing@rock-chips.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Eddie Cai <eddie.cai.linux@gmail.com>
+Subject: [PATCH V2  2/2] clk: rockchip: fix the incorrect ids
+Date: Tue, 25 Apr 2017 14:41:10 +0800
+Message-Id: <1493102470-22965-3-git-send-email-eddie.cai.linux@gmail.com>
+In-Reply-To: <1493102470-22965-1-git-send-email-eddie.cai.linux@gmail.com>
+References: <1493102470-22965-1-git-send-email-eddie.cai.linux@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 20, 2017 at 8:35 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
->> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
->>
->> This patch adds A-DMAC{0,1} clocks for R8A7796 SoC.
->>
->> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->> ---
->> This patch is based on the clk-next branch of linux-clk tree.
->>
->>  drivers/clk/renesas/r8a7796-cpg-mssr.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
->> index c6c5026..f217796 100644
->> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
->> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
->> @@ -138,6 +138,8 @@ enum clk_ids {
->>         DEF_MOD("sdif0",                 314,   R8A7796_CLK_SD0),
->>         DEF_MOD("rwdt",                  402,   R8A7796_CLK_R),
->>         DEF_MOD("intc-ap",               408,   R8A7796_CLK_S3D1),
->> +       DEF_MOD("audmac0",               502,   R8A7796_CLK_S3D4),
->> +       DEF_MOD("audmac1",               501,   R8A7796_CLK_S3D4),
->
-> I believe the parent clock should be S0D3, like on R-Car H3 ES2.0,
-> cfr. commits
-> 5573d194128b4733 ("clk: renesas: r8a7795: Add support for R-Car H3 ES2.0")
-> a843ed3f6c3e856f ("clk: renesas: r8a7795: Correct parent clock and
-> sort order for Audio DMACs")
->
-> Please sort by module clock number.
+the ids of clk_testout1 and clk_testout2 is incorrect now. let's correct it
 
-Fixing those up while applying.
+Signed-off-by: Eddie Cai <eddie.cai.linux@gmail.com>
+---
+ drivers/clk/rockchip/clk-rk3399.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 73121b14..f3656ba 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -1066,13 +1066,13 @@ enum rk3399_pmu_plls {
+ 	/* cif_testout */
+ 	MUX(0, "clk_testout1_pll_src", mux_pll_src_cpll_gpll_npll_p, 0,
+ 			RK3399_CLKSEL_CON(38), 6, 2, MFLAGS),
+-	COMPOSITE(0, "clk_testout1", mux_clk_testout1_p, 0,
++	COMPOSITE(SCLK_TESTCLKOUT1, "clk_testout1", mux_clk_testout1_p, 0,
+ 			RK3399_CLKSEL_CON(38), 5, 1, MFLAGS, 0, 5, DFLAGS,
+ 			RK3399_CLKGATE_CON(13), 14, GFLAGS),
+ 
+ 	MUX(0, "clk_testout2_pll_src", mux_pll_src_cpll_gpll_npll_p, 0,
+ 			RK3399_CLKSEL_CON(38), 14, 2, MFLAGS),
+-	COMPOSITE(0, "clk_testout2", mux_clk_testout2_p, 0,
++	COMPOSITE(SCLK_TESTCLKOUT2, "clk_testout2", mux_clk_testout2_p, 0,
+ 			RK3399_CLKSEL_CON(38), 13, 1, MFLAGS, 8, 5, DFLAGS,
+ 			RK3399_CLKGATE_CON(13), 15, GFLAGS),
+ 
+-- 
+1.9.1
