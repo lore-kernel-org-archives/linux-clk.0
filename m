@@ -1,131 +1,296 @@
-Return-Path: <raltherr@google.com>
-MIME-Version: 1.0
-In-Reply-To: <b1919652-4db7-0373-278b-483357968e7e@kernel.org>
-References: <20170328215259.31622-1-raltherr@google.com> <20170328215259.31622-2-raltherr@google.com>
- <d05cadfe-e3d3-f4e8-129f-19dcd2f637da@kernel.org> <20170405215046.GE7065@codeaurora.org>
- <b1919652-4db7-0373-278b-483357968e7e@kernel.org>
-From: Rick Altherr <raltherr@google.com>
-Date: Mon, 10 Apr 2017 09:34:33 -0700
-Message-ID: <CAPLgG=kQ-ZaG5W46A8sdtMdOGk7-8jpqTtFNTE_OwfnsYXhC9A@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] iio: Aspeed ADC
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	William Breathitt Gray <vilhelm.gray@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
-	Andreas Klinger <ak@it-klinger.de>, Rob Herring <robh@kernel.org>,
-	Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Quentin Schulz <quentin.schulz@free-electrons.com>,
-	linux-iio@vger.kernel.org, Zhiyong Tao <zhiyong.tao@mediatek.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>, Lars-Peter Clausen <lars@metafoo.de>,
-	Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>,
-	Scott Branden <scott.branden@broadcom.com>,
-	Crestez Dan Leonard <leonard.crestez@intel.com>, Akinobu Mita <akinobu.mita@gmail.com>,
-	Fabrice Gasnier <fabrice.gasnier@st.com>, Hartmut Knaack <knaack.h@gmx.de>, linux-clk@vger.kernel.org
-Content-Type: multipart/alternative; boundary=f403045f155eee357f054cd28c53
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Olof Johansson <olof@lixom.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Kevin Hilman <khilman@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 1/2] clk: renesas: Rework Kconfig and Makefile logic
+Date: Tue, 25 Apr 2017 18:27:05 +0200
+Message-Id: <1493137626-21404-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1493137626-21404-1-git-send-email-geert+renesas@glider.be>
+References: <1493137626-21404-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
---f403045f155eee357f054cd28c53
-Content-Type: text/plain; charset=UTF-8
+The goals are to:
+  - Allow precise control over and automatic selection of which
+    (sub)drivers are used for which SoC (which may change in the
+    future),
+  - Allow adding support for new SoCs easily,
+  - Allow compile-testing of all (sub)drivers,
+  - Keep driver selection logic in the subsystem-specific Kconfig
+    independent from the architecture-specific Kconfig (i.e. no "select"
+    from arch/arm64/Kconfig.platforms), to avoid dependencies.
 
-I don't believe there are any bindings changes or a need to revert.
-Stephen's suggested changes are small improvements that make the driver
-suitable for non-DT platforms (not an issue anytime soon) and help with a
-planned refactor of the clk_hw structure.  I'll send out follow-up changes
-when Stephen and I have reached consensus on how to resolve the latter
-improvement.
+This is implemented by:
+  - Introducing Kconfig symbols for all drivers and sub-drivers,
+  - Introducing the Kconfig symbol CLK_RENESAS, which is enabled
+    automatically when building for a Renesas ARM platform, and which
+    enables all required drivers without interaction of the user, based
+    on SoC-specific ARCH_* symbols,
+  - Allowing the user to enable any Kconfig symbol manually if
+    COMPILE_TEST is enabled,
+  - Using the new Kconfig symbols instead of the ARCH_* symbols to
+    control compilation in the Makefile,
+  - Always entering drivers/clk/renesas/ during the build.
 
-On Sat, Apr 8, 2017 at 9:15 AM, Jonathan Cameron <jic23@kernel.org> wrote:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This rework was sparked by a discussion with Olof about the Renesas
+clock driver dependencies.
 
-> On 05/04/17 22:50, Stephen Boyd wrote:
-> > On 04/01, Jonathan Cameron wrote:
-> >> On 28/03/17 22:52, Rick Altherr wrote:
-> >>> Aspeed BMC SoCs include a 16 channel, 10-bit ADC. Low and high
-> threshold
-> >>> interrupts are supported by the hardware but are not currently
-> implemented.
-> >>>
-> >>> Signed-off-by: Rick Altherr <raltherr@google.com>
-> >> Two really trivial things inline. I'll fix them whilst applying rather
-> than
-> >> having you do a v6 - please do sanity check I haven't messed it up
-> though!
-> >>
-> >> Applied to the togreg branch of iio.git and pushed out as testing for
-> >> the autobuilders to play with it.
-> >>
-> >
-> > Oh I was too late. Blame work. Anyway, I made some comments on
-> > v4. If they're fixed in a later patch or discussed on list that's
-> > fine. No worries on my end.
-> >
-> Oops. I went a bit quick on this one I guess.
->
-> Anyhow, from a quick read of your comments I'm not sure if any of
-> them are such that we should revert.  Perhaps we Rick can prepare
-> a follow up patch covering them?  I got a little lost so am not
-> sure but if there is anything effecting bindings Rick, please
-> get this through asap or let me know if we need to revert for now.
-> Even if it is a case of adding a bit of binding and following up
-> with the code using it a bit later.
->
-> I'd asked for input on the clock stuff then forgot all about it on
-> the later version. Sorry about that!
->
-> Jonathan
->
+For now, some of the 'bool "foo clock support" if COMPILE_TEST' will
+need to be replaced by 'bool', as compile-testing all drivers depends on
+independent fixes, some in other subsystems.
 
---f403045f155eee357f054cd28c53
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Before anyone responds "But the CLK_R8A779[0-4] symbols can be removed,
+just select CLK_RCAR_GEN2 directly!": the latter will go away, as the
+shared R-Car Gen2 clock driver (which depends on describing most clocks
+in DT, which is error prone, inflexible, and which prevents implementing
+module reset support) will be replaced by SoC-specific drivers using the
+CPG/MSSR driver core, as is already done on R-Car Gen3 and on RZ/G.
+Compatibility with old DTBs will be preserved through a new Kconfig
+option.
+---
+ drivers/clk/Makefile                   |   2 +-
+ drivers/clk/renesas/Kconfig            | 129 ++++++++++++++++++++++++++++-----
+ drivers/clk/renesas/Makefile           |  37 +++++-----
+ drivers/clk/renesas/renesas-cpg-mssr.c |   8 +-
+ 4 files changed, 137 insertions(+), 39 deletions(-)
 
-<div dir=3D"ltr">I don&#39;t believe there are any bindings changes or a ne=
-ed to revert.=C2=A0 Stephen&#39;s suggested changes are small improvements =
-that make the driver suitable for non-DT platforms (not an issue anytime so=
-on) and help with a planned refactor of the clk_hw structure.=C2=A0 I&#39;l=
-l send out follow-up changes when Stephen and I have reached consensus on h=
-ow to resolve the latter improvement.</div><div class=3D"gmail_extra"><br><=
-div class=3D"gmail_quote">On Sat, Apr 8, 2017 at 9:15 AM, Jonathan Cameron =
-<span dir=3D"ltr">&lt;<a href=3D"mailto:jic23@kernel.org" target=3D"_blank"=
->jic23@kernel.org</a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote=
-" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><=
-span class=3D"">On 05/04/17 22:50, Stephen Boyd wrote:<br>
-&gt; On 04/01, Jonathan Cameron wrote:<br>
-&gt;&gt; On 28/03/17 22:52, Rick Altherr wrote:<br>
-&gt;&gt;&gt; Aspeed BMC SoCs include a 16 channel, 10-bit ADC. Low and high=
- threshold<br>
-&gt;&gt;&gt; interrupts are supported by the hardware but are not currently=
- implemented.<br>
-&gt;&gt;&gt;<br>
-&gt;&gt;&gt; Signed-off-by: Rick Altherr &lt;<a href=3D"mailto:raltherr@goo=
-gle.com">raltherr@google.com</a>&gt;<br>
-&gt;&gt; Two really trivial things inline. I&#39;ll fix them whilst applyin=
-g rather than<br>
-&gt;&gt; having you do a v6 - please do sanity check I haven&#39;t messed i=
-t up though!<br>
-&gt;&gt;<br>
-&gt;&gt; Applied to the togreg branch of iio.git and pushed out as testing =
-for<br>
-&gt;&gt; the autobuilders to play with it.<br>
-&gt;&gt;<br>
-&gt;<br>
-&gt; Oh I was too late. Blame work. Anyway, I made some comments on<br>
-&gt; v4. If they&#39;re fixed in a later patch or discussed on list that&#3=
-9;s<br>
-&gt; fine. No worries on my end.<br>
-&gt;<br>
-</span>Oops. I went a bit quick on this one I guess.<br>
-<br>
-Anyhow, from a quick read of your comments I&#39;m not sure if any of<br>
-them are such that we should revert.=C2=A0 Perhaps we Rick can prepare<br>
-a follow up patch covering them?=C2=A0 I got a little lost so am not<br>
-sure but if there is anything effecting bindings Rick, please<br>
-get this through asap or let me know if we need to revert for now.<br>
-Even if it is a case of adding a bit of binding and following up<br>
-with the code using it a bit later.<br>
-<br>
-I&#39;d asked for input on the clock stuff then forgot all about it on<br>
-the later version. Sorry about that!<br>
-<span class=3D"HOEnZb"><font color=3D"#888888"><br>
-Jonathan<br>
-</font></span></blockquote></div><br></div>
-
---f403045f155eee357f054cd28c53--
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 92c12b86c2e86f20..6d341c802b299241 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -74,7 +74,7 @@ obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
+ obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
+ obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
+ obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
+-obj-$(CONFIG_ARCH_RENESAS)		+= renesas/
++obj-y					+= renesas/
+ obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+ obj-$(CONFIG_ARCH_SIRF)			+= sirf/
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 2586dfa0026bb015..ec17edc6c4ab2e2a 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -1,20 +1,115 @@
++config CLK_RENESAS
++	bool "Renesas SoC clock support" if COMPILE_TEST && !ARCH_RENESAS
++	default y if ARCH_RENESAS
++	select CLK_EMEV2 if ARCH_EMEV2
++	select CLK_RZA1 if ARCH_R7S72100
++	select CLK_R8A73A4 if ARCH_R8A73A4
++	select CLK_R8A7740 if ARCH_R8A7740
++	select CLK_R8A7743 if ARCH_R8A7743
++	select CLK_R8A7745 if ARCH_R8A7745
++	select CLK_R8A7778 if ARCH_R8A7778
++	select CLK_R8A7779 if ARCH_R8A7779
++	select CLK_R8A7790 if ARCH_R8A7790
++	select CLK_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
++	select CLK_R8A7792 if ARCH_R8A7792
++	select CLK_R8A7794 if ARCH_R8A7794
++	select CLK_R8A7795 if ARCH_R8A7795
++	select CLK_R8A7796 if ARCH_R8A7796
++	select CLK_SH73A0 if ARCH_SH73A0
++
++if CLK_RENESAS
++
++# SoC
++config CLK_EMEV2
++	bool "Emma Mobile EV2 clock support" if COMPILE_TEST
++
++config CLK_RZA1
++	bool "RZ/A1H clock support" if COMPILE_TEST
++	select CLK_RENESAS_CPG_MSTP
++
++config CLK_R8A73A4
++	bool "R-Mobile APE6 clock support" if COMPILE_TEST
++	select CLK_RENESAS_CPG_MSTP
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7740
++	bool "R-Mobile A1 clock support" if COMPILE_TEST
++	select CLK_RENESAS_CPG_MSTP
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7743
++	bool "RZ/G1M clock support" if COMPILE_TEST
++	select CLK_RCAR_GEN2_CPG
++
++config CLK_R8A7745
++	bool "RZ/G1E clock support" if COMPILE_TEST
++	select CLK_RCAR_GEN2_CPG
++
++config CLK_R8A7778
++	bool "R-Car M1A clock support" if COMPILE_TEST
++	select CLK_RENESAS_CPG_MSTP
++
++config CLK_R8A7779
++	bool "R-Car H1 clock support" if COMPILE_TEST
++	select CLK_RENESAS_CPG_MSTP
++
++config CLK_R8A7790
++	bool "R-Car H2 clock support" if COMPILE_TEST
++	select CLK_RCAR_GEN2
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7791
++	bool "R-Car M2-W/N clock support" if COMPILE_TEST
++	select CLK_RCAR_GEN2
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7792
++	bool "R-Car V2H clock support" if COMPILE_TEST
++	select CLK_RCAR_GEN2
++
++config CLK_R8A7794
++	bool "R-Car E2 clock support" if COMPILE_TEST
++	select CLK_RCAR_GEN2
++	select CLK_RENESAS_DIV6
++
++config CLK_R8A7795
++	bool "R-Car H3 clock support" if COMPILE_TEST
++	select CLK_RCAR_GEN3_CPG
++
++config CLK_R8A7796
++	bool "R-Car M3-W clock support" if COMPILE_TEST
++	select CLK_RCAR_GEN3_CPG
++
++config CLK_SH73A0
++	bool "SH-Mobile AG5 clock support" if COMPILE_TEST
++	select CLK_RENESAS_CPG_MSTP
++	select CLK_RENESAS_DIV6
++
++
++# Family
++config CLK_RCAR_GEN2
++	bool "R-Car Gen2 clock support" if COMPILE_TEST
++	select CLK_RENESAS_CPG_MSTP
++	select CLK_RENESAS_DIV6
++
++config CLK_RCAR_GEN2_CPG
++	bool "R-Car Gen2 CPG clock support" if COMPILE_TEST
++	select CLK_RENESAS_CPG_MSSR
++
++config CLK_RCAR_GEN3_CPG
++	bool "R-Car Gen3 CPG clock support" if COMPILE_TEST
++	select CLK_RENESAS_CPG_MSSR
++
++
++# Generic
+ config CLK_RENESAS_CPG_MSSR
+-	bool
+-	default y if ARCH_R8A7743
+-	default y if ARCH_R8A7745
+-	default y if ARCH_R8A7795
+-	default y if ARCH_R8A7796
++	bool "CPG/MSSR clock support" if COMPILE_TEST
++	select CLK_RENESAS_DIV6
+ 
+ config CLK_RENESAS_CPG_MSTP
+-	bool
+-	default y if ARCH_R7S72100
+-	default y if ARCH_R8A73A4
+-	default y if ARCH_R8A7740
+-	default y if ARCH_R8A7778
+-	default y if ARCH_R8A7779
+-	default y if ARCH_R8A7790
+-	default y if ARCH_R8A7791
+-	default y if ARCH_R8A7792
+-	default y if ARCH_R8A7793
+-	default y if ARCH_R8A7794
+-	default y if ARCH_SH73A0
++	bool "MSTP clock support" if COMPILE_TEST
++
++config CLK_RENESAS_DIV6
++	bool "DIV6 clock support" if COMPILE_TEST
++
++endif # CLK_RENESAS
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index 5b8fccf574787632..aa24c2f5078ca333 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -1,19 +1,22 @@
+-obj-$(CONFIG_ARCH_EMEV2)		+= clk-emev2.o
+-obj-$(CONFIG_ARCH_R7S72100)		+= clk-rz.o
+-obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7743)		+= r8a7743-cpg-mssr.o rcar-gen2-cpg.o
+-obj-$(CONFIG_ARCH_R8A7745)		+= r8a7745-cpg-mssr.o rcar-gen2-cpg.o
+-obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+-obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+-obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o
+-obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o rcar-gen3-cpg.o
+-obj-$(CONFIG_ARCH_R8A7796)		+= r8a7796-cpg-mssr.o rcar-gen3-cpg.o
+-obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-div6.o
++# SoC
++obj-$(CONFIG_CLK_EMEV2)			+= clk-emev2.o
++obj-$(CONFIG_CLK_RZA1)			+= clk-rz.o
++obj-$(CONFIG_CLK_R8A73A4)		+= clk-r8a73a4.o
++obj-$(CONFIG_CLK_R8A7740)		+= clk-r8a7740.o
++obj-$(CONFIG_CLK_R8A7743)		+= r8a7743-cpg-mssr.o
++obj-$(CONFIG_CLK_R8A7745)		+= r8a7745-cpg-mssr.o
++obj-$(CONFIG_CLK_R8A7778)		+= clk-r8a7778.o
++obj-$(CONFIG_CLK_R8A7779)		+= clk-r8a7779.o
++obj-$(CONFIG_CLK_R8A7795)		+= r8a7795-cpg-mssr.o
++obj-$(CONFIG_CLK_R8A7796)		+= r8a7796-cpg-mssr.o
++obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
+ 
+-obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+= renesas-cpg-mssr.o clk-div6.o
++# Family
++obj-$(CONFIG_CLK_RCAR_GEN2)		+= clk-rcar-gen2.o
++obj-$(CONFIG_CLK_RCAR_GEN2_CPG)		+= rcar-gen2-cpg.o
++obj-$(CONFIG_CLK_RCAR_GEN3_CPG)		+= rcar-gen3-cpg.o
++
++# Generic
++obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+= renesas-cpg-mssr.o
+ obj-$(CONFIG_CLK_RENESAS_CPG_MSTP)	+= clk-mstp.o
++obj-$(CONFIG_CLK_RENESAS_DIV6)		+= clk-div6.o
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 1799e160c88f8299..4b281a8d06edf1d3 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -627,25 +627,25 @@ static inline int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
+ 
+ 
+ static const struct of_device_id cpg_mssr_match[] = {
+-#ifdef CONFIG_ARCH_R8A7743
++#ifdef CONFIG_CLK_R8A7743
+ 	{
+ 		.compatible = "renesas,r8a7743-cpg-mssr",
+ 		.data = &r8a7743_cpg_mssr_info,
+ 	},
+ #endif
+-#ifdef CONFIG_ARCH_R8A7745
++#ifdef CONFIG_CLK_R8A7745
+ 	{
+ 		.compatible = "renesas,r8a7745-cpg-mssr",
+ 		.data = &r8a7745_cpg_mssr_info,
+ 	},
+ #endif
+-#ifdef CONFIG_ARCH_R8A7795
++#ifdef CONFIG_CLK_R8A7795
+ 	{
+ 		.compatible = "renesas,r8a7795-cpg-mssr",
+ 		.data = &r8a7795_cpg_mssr_info,
+ 	},
+ #endif
+-#ifdef CONFIG_ARCH_R8A7796
++#ifdef CONFIG_CLK_R8A7796
+ 	{
+ 		.compatible = "renesas,r8a7796-cpg-mssr",
+ 		.data = &r8a7796_cpg_mssr_info,
+-- 
+2.7.4
