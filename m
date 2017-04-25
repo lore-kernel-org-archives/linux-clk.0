@@ -1,59 +1,27 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yuantian Tang <andy.tang@nxp.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Yuantian Tang <andy.tang@nxp.com>
-Subject: [PATCH 2/2] clk: qoriq: add pll clock to clock lookup table
-Date: Thu, 6 Apr 2017 10:21:23 +0800
-Message-ID: <1491445283-13053-2-git-send-email-andy.tang@nxp.com>
-In-Reply-To: <1491445283-13053-1-git-send-email-andy.tang@nxp.com>
-References: <1491445283-13053-1-git-send-email-andy.tang@nxp.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Eddie Cai <eddie.cai.linux@gmail.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, zhengxing@rock-chips.com, mturquette@baylibre.com, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH V2  0/2] correct ids for clk_testout
+Date: Tue, 25 Apr 2017 23:04:53 +0200
+Message-ID: <5003001.RcGOJBte3U@diego>
+In-Reply-To: <1493102470-22965-1-git-send-email-eddie.cai.linux@gmail.com>
+References: <1493102470-22965-1-git-send-email-eddie.cai.linux@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Register each PLL and its division clocks to clock
-lookup table to facilitate the clock look up for
-clock consumer.
+Hi Eddie,
 
-Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
----
- drivers/clk/clk-qoriq.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Am Dienstag, 25. April 2017, 14:41:08 CEST schrieb Eddie Cai:
+> we use clk_testout1 and clk_testout2 for camera. e.g. mipi 24M mclk. the ids
+> of clk_testout1 and clk_testout2 is wrong. it's time to correct it.
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 62cf32f..1bb691a 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -12,6 +12,7 @@
- 
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
- #include <linux/fsl/guts.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
-@@ -1124,6 +1125,7 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
- 
- 	for (i = 0; i < ARRAY_SIZE(pll->div); i++) {
- 		struct clk *clk;
-+		int ret;
- 
- 		snprintf(pll->div[i].name, sizeof(pll->div[i].name),
- 			 "cg-pll%d-div%d", idx, i + 1);
-@@ -1137,6 +1139,11 @@ static void __init create_one_pll(struct clockgen *cg, int idx)
- 		}
- 
- 		pll->div[i].clk = clk;
-+		ret = clk_register_clkdev(clk, pll->div[i].name, NULL);
-+		if (ret != 0)
-+			pr_err("%s: %s: register to lookup table failed %ld\n",
-+			       __func__, pll->div[i].name, PTR_ERR(clk));
-+
- 	}
- }
- 
--- 
-2.1.0.27.g96db324
+Just to say, patches look good - thanks for explaining what the clocks are 
+going to be used for.
+
+I'll apply them after 4.12-rc1 is released (in roughly 2.5 weeks), due to
+needing a stable base for the clock-ids.
+
+
+Heiko
