@@ -1,68 +1,85 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1491144577.3480.1.camel@baylibre.com>
-References: <20170401130225.8811-1-martin.blumenstingl@googlemail.com>
- <20170401130225.8811-2-martin.blumenstingl@googlemail.com> <1491144577.3480.1.camel@baylibre.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Sun, 2 Apr 2017 20:43:47 +0200
-Message-ID: <CAFBinCDNsyEVzmkPQ5T_Kvkp3iARtS3VAG+RLrh_mLgn-7GQAA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: meson: mpll: fix division by zero in rate_from_params
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, khilman@baylibre.com, carlo@caione.org,
-	sboyd@codeaurora.org, mturquette@baylibre.com, narmstrong@baylibre.com
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170425110246.GV30730@tbergstrom-lnx.Nvidia.com>
+References: <1492624001-3758-1-git-send-email-ykaneko0929@gmail.com>
+ <CAMuHMdWfouuGZqPGV7_-cXUmYe-SXd9popja8T43V5hPP+DQQw@mail.gmail.com>
+ <20170424080308.GJ30730@tbergstrom-lnx.Nvidia.com> <CAMuHMdVS9ypvdN9p9G3rWP1cu933wCv+Wgd-65q4dvf-JfBPSg@mail.gmail.com>
+ <20170425101852.GU30730@tbergstrom-lnx.Nvidia.com> <CAMuHMdWOhWEw-ot8P8r3t9erdj-uTLF32uYT4ZGfOv+sq_yspw@mail.gmail.com>
+ <20170425110246.GV30730@tbergstrom-lnx.Nvidia.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 25 Apr 2017 13:39:20 +0200
+Message-ID: <CAMuHMdWHvurjVyEp+pXXNJv8rfsDXkuC=vLFywvEz3CJE6JdHA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: Add Z clock divider support
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome,
+Hi Peter,
 
-On Sun, Apr 2, 2017 at 4:49 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> On Sat, 2017-04-01 at 15:02 +0200, Martin Blumenstingl wrote:
->> According to the public datasheet all register bits in HHI_MPLL_CNTL7,
->> HHI_MPLL_CNTL8 and HHI_MPLL_CNTL9 default to zero. On all GX SoCs these
->> seem to be initialized by the bootloader to some default value.
->> However, on my Meson8 board they are not initialized, leading to a
->> division by zero in rate_from_params as the math is:
->> (parent_rate * SDM_DEN) / ((SDM_DEN * 0) + 0)
+On Tue, Apr 25, 2017 at 1:02 PM, Peter De Schrijver
+<pdeschrijver@nvidia.com> wrote:
+> On Tue, Apr 25, 2017 at 12:28:29PM +0200, Geert Uytterhoeven wrote:
+>> On Tue, Apr 25, 2017 at 12:18 PM, Peter De Schrijver
+>> <pdeschrijver@nvidia.com> wrote:
+>> > On Mon, Apr 24, 2017 at 10:09:10AM +0200, Geert Uytterhoeven wrote:
+>> >> On Mon, Apr 24, 2017 at 10:03 AM, Peter De Schrijver
+>> >> <pdeschrijver@nvidia.com> wrote:
+>> >> >> > --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+>> >> >> > +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+>> >> >>
+>> >> >> > +static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+>> >> >> > +                                          unsigned long parent_rate)
+>> >> >> > +{
+>> >> >> > +       struct cpg_z_clk *zclk = to_z_clk(hw);
+>> >> >> > +       unsigned int mult;
+>> >> >> > +       unsigned int val;
+>> >> >> > +       unsigned long rate;
+>> >> >> > +
+>> >> >> > +       val = (clk_readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK)
+>> >> >> > +           >> CPG_FRQCRC_ZFC_SHIFT;
+>> >> >> > +       mult = 32 - val;
+>> >> >> > +
+>> >> >> > +       rate = div_u64((u64)parent_rate * mult + 16, 32);
+>> >> >> > +       /* Round to closest value at 100MHz unit */
+>> >> >> > +       rate = 100000000*DIV_ROUND_CLOSEST(rate, 100000000);
+>> >> >>
+>> >> >> Mike, Stephen: what's your opinion about such rounding tricks?
+>> >> >
+>> >> > Is this an actual divider or a pulse skipper?
+>> >>
+>> >> Forgive my ignorance, but what is the difference?
+>> >
+>> > A pulse skipper, as the name says, skips pulses. Eg, if you configure the
+>> > skipper to 3/4, it will skip 1 input clock pulse out of 4. The pulse width
+>> > will be the same as the parent clock pulse width though. A divider stretches
+>> > the clock pulse. So the output of a divider configured to 1/2 will have a
+>> > pulse width which is twice as large as the pulse width of the input clock.
 >>
->> Although the rate_from_params function was only introduced recently the
->> original bug has been there for much longer. It was only exposed
->> recently when the MPLL clocks were added to the Meson8b clock driver.
+>> OK, thanks! So a pulse skipper changes the duty cycle of the signal.
 >
-> The Documentation of the S905 also state that N2 minimal value is 4 and SDM
-> minimal is 1 ... I should have been more careful ! Thanks for catching this
-> Martin. We definitely need to fix this.
+> Yes, it does.
 >
-> Patch seems ok but I have one question. Is the rate actually zero when the
-> divisor is zero ?
-> I'll be away from my boards until Wednesday but I can check this when I get back
-> if you can't.
-is there a way how I can check this? I have a consumer device so I
-can't measure the frequencies at some pin.
+>> I would expect this to be a real divider, as that would allow the Cortex A53
+>> core to do work on both edges of the clock signal.
+>
+> Maybe. Although I know we've run A53s from skippers. One difference is that a
+> real divider allows you to lower the voltage, while a skipper does not,
+> because it only changes the duty cycle as you mentioned.
 
->>
->> Fixes: 1c50da4f27 ("clk: meson: add mpll support")
->> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->> ---
->>  drivers/clk/meson/clk-mpll.c | 7 ++++++-
->>  1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
->> index 540dabe5adad..551aa2a5b291 100644
->> --- a/drivers/clk/meson/clk-mpll.c
->> +++ b/drivers/clk/meson/clk-mpll.c
->> @@ -76,7 +76,12 @@ static unsigned long rate_from_params(unsigned long
->> parent_rate,
->>                                     unsigned long sdm,
->>                                     unsigned long n2)
->>  {
->> -     return (parent_rate * SDM_DEN) / ((SDM_DEN * n2) + sdm);
->> +     unsigned long divisor = (SDM_DEN * n2) + sdm;
->> +
->> +     if (divisor == 0)
->> +             return 0;
->> +     else
->> +             return (parent_rate * SDM_DEN) / divisor;
->>  }
->>
->>  static void params_from_rate(unsigned long requested_rate,
+Then it must be a real divider, as it supports DVFS.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
