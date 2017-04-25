@@ -1,37 +1,84 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 11:31:46 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-clk@vger.kernel.org, Jiancheng Xue <xuejiancheng@hisilicon.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 5/6] clk: hi3620: Delete error messages for a failed
- memory allocation in two functions
-Message-ID: <20170419183146.GU7065@codeaurora.org>
-References: <7a649967-8ff1-8682-2f87-43871172fc28@users.sourceforge.net>
- <fa6898a1-8068-2b46-24c2-995329831358@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <fa6898a1-8068-2b46-24c2-995329831358@users.sourceforge.net>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 02/10] clk: renesas: Add r8a7790 CPG Core Clock Definitions
+Date: Tue, 25 Apr 2017 18:53:12 +0200
+Message-Id: <1493139200-27396-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/18, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 18 Apr 2017 10:50:53 +0200
-> 
-> The script "checkpatch.pl" pointed information out like the following.
-> 
-> WARNING: Possible unnecessary 'out of memory' message
-> 
-> Thus remove such statements here.
-> 
-> Link: http://events.linuxfoundation.org/sites/events/files/slides/LCJ16-Refactor_Strings-WSang_0.pdf
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+Add all R-Car H2 Clock Pulse Generator Core Clock Outputs, as listed in
+Table 7.2a ("List of Clocks [R-Car H2]") of the R-Car Gen2 Hardware
+User's Manual rev. 2.00.
 
-Applied to clk-next
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ include/dt-bindings/clock/r8a7790-cpg-mssr.h | 52 ++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7790-cpg-mssr.h
 
+diff --git a/include/dt-bindings/clock/r8a7790-cpg-mssr.h b/include/dt-bindings/clock/r8a7790-cpg-mssr.h
+new file mode 100644
+index 0000000000000000..1625b8bf34822b6e
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7790-cpg-mssr.h
+@@ -0,0 +1,52 @@
++/*
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_R8A7790_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7790_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7790 CPG Core Clocks */
++#define R8A7790_CLK_Z			0
++#define R8A7790_CLK_Z2			1
++#define R8A7790_CLK_ZG			2
++#define R8A7790_CLK_ZTR			3
++#define R8A7790_CLK_ZTRD2		4
++#define R8A7790_CLK_ZT			5
++#define R8A7790_CLK_ZX			6
++#define R8A7790_CLK_ZS			7
++#define R8A7790_CLK_HP			8
++#define R8A7790_CLK_I			9
++#define R8A7790_CLK_B			10
++#define R8A7790_CLK_LB			11
++#define R8A7790_CLK_P			12
++#define R8A7790_CLK_CL			13
++#define R8A7790_CLK_M2			14
++#define R8A7790_CLK_ADSP		15
++#define R8A7790_CLK_IMP			16
++#define R8A7790_CLK_ZB3			17
++#define R8A7790_CLK_ZB3D2		18
++#define R8A7790_CLK_DDR			19
++#define R8A7790_CLK_SDH			20
++#define R8A7790_CLK_SD0			21
++#define R8A7790_CLK_SD1			22
++#define R8A7790_CLK_SD2			23
++#define R8A7790_CLK_SD3			24
++#define R8A7790_CLK_MMC0		25
++#define R8A7790_CLK_MMC1		26
++#define R8A7790_CLK_MP			27
++#define R8A7790_CLK_SSP			28
++#define R8A7790_CLK_SSPRS		29
++#define R8A7790_CLK_QSPI		30
++#define R8A7790_CLK_CP			31
++#define R8A7790_CLK_RCAN		32
++#define R8A7790_CLK_R			33
++#define R8A7790_CLK_OSC			34
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7790_CPG_MSSR_H__ */
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
