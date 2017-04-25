@@ -1,44 +1,74 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a7745: Remove nonexisting scu-src[0789] clocks
-Date: Mon,  3 Apr 2017 12:03:34 +0200
-Message-Id: <1491213814-13826-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170425101852.GU30730@tbergstrom-lnx.Nvidia.com>
+References: <1492624001-3758-1-git-send-email-ykaneko0929@gmail.com>
+ <CAMuHMdWfouuGZqPGV7_-cXUmYe-SXd9popja8T43V5hPP+DQQw@mail.gmail.com>
+ <20170424080308.GJ30730@tbergstrom-lnx.Nvidia.com> <CAMuHMdVS9ypvdN9p9G3rWP1cu933wCv+Wgd-65q4dvf-JfBPSg@mail.gmail.com>
+ <20170425101852.GU30730@tbergstrom-lnx.Nvidia.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 25 Apr 2017 12:28:29 +0200
+Message-ID: <CAMuHMdWOhWEw-ot8P8r3t9erdj-uTLF32uYT4ZGfOv+sq_yspw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: Add Z clock divider support
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-RZ/G1E does not have the SCU-SRC[0789] modules and module clocks.
+Hi Peter,
 
-Fixes: 9127d54bb8947159 ("clk: renesas: cpg-mssr: Add R8A7745 support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7745-cpg-mssr.c | 4 ----
- 1 file changed, 4 deletions(-)
+On Tue, Apr 25, 2017 at 12:18 PM, Peter De Schrijver
+<pdeschrijver@nvidia.com> wrote:
+> On Mon, Apr 24, 2017 at 10:09:10AM +0200, Geert Uytterhoeven wrote:
+>> On Mon, Apr 24, 2017 at 10:03 AM, Peter De Schrijver
+>> <pdeschrijver@nvidia.com> wrote:
+>> >> > --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+>> >> > +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+>> >>
+>> >> > +static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+>> >> > +                                          unsigned long parent_rate)
+>> >> > +{
+>> >> > +       struct cpg_z_clk *zclk = to_z_clk(hw);
+>> >> > +       unsigned int mult;
+>> >> > +       unsigned int val;
+>> >> > +       unsigned long rate;
+>> >> > +
+>> >> > +       val = (clk_readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK)
+>> >> > +           >> CPG_FRQCRC_ZFC_SHIFT;
+>> >> > +       mult = 32 - val;
+>> >> > +
+>> >> > +       rate = div_u64((u64)parent_rate * mult + 16, 32);
+>> >> > +       /* Round to closest value at 100MHz unit */
+>> >> > +       rate = 100000000*DIV_ROUND_CLOSEST(rate, 100000000);
+>> >>
+>> >> Mike, Stephen: what's your opinion about such rounding tricks?
+>> >
+>> > Is this an actual divider or a pulse skipper?
+>>
+>> Forgive my ignorance, but what is the difference?
+>
+> A pulse skipper, as the name says, skips pulses. Eg, if you configure the
+> skipper to 3/4, it will skip 1 input clock pulse out of 4. The pulse width
+> will be the same as the parent clock pulse width though. A divider stretches
+> the clock pulse. So the output of a divider configured to 1/2 will have a
+> pulse width which is twice as large as the pulse width of the input clock.
 
-diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-index 2f15ba786c3b0ea1..08db21cc6436bdc5 100644
---- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-@@ -167,16 +167,12 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
- 	DEF_MOD("scu-dvc0",		1019,	MOD_CLK_ID(1017)),
- 	DEF_MOD("scu-ctu1-mix1",	1020,	MOD_CLK_ID(1017)),
- 	DEF_MOD("scu-ctu0-mix0",	1021,	MOD_CLK_ID(1017)),
--	DEF_MOD("scu-src9",		1022,	MOD_CLK_ID(1017)),
--	DEF_MOD("scu-src8",		1023,	MOD_CLK_ID(1017)),
--	DEF_MOD("scu-src7",		1024,	MOD_CLK_ID(1017)),
- 	DEF_MOD("scu-src6",		1025,	MOD_CLK_ID(1017)),
- 	DEF_MOD("scu-src5",		1026,	MOD_CLK_ID(1017)),
- 	DEF_MOD("scu-src4",		1027,	MOD_CLK_ID(1017)),
- 	DEF_MOD("scu-src3",		1028,	MOD_CLK_ID(1017)),
- 	DEF_MOD("scu-src2",		1029,	MOD_CLK_ID(1017)),
- 	DEF_MOD("scu-src1",		1030,	MOD_CLK_ID(1017)),
--	DEF_MOD("scu-src0",		1031,	MOD_CLK_ID(1017)),
- 	DEF_MOD("scifa3",		1106,	R8A7745_CLK_MP),
- 	DEF_MOD("scifa4",		1107,	R8A7745_CLK_MP),
- 	DEF_MOD("scifa5",		1108,	R8A7745_CLK_MP),
--- 
-2.7.4
+OK, thanks! So a pulse skipper changes the duty cycle of the signal.
+
+I would expect this to be a real divider, as that would allow the Cortex A53
+core to do work on both edges of the clock signal.
+It's a bit difficult to measure, though ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
