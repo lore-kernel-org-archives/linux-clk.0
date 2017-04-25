@@ -1,1513 +1,396 @@
-Return-Path: <varada@codeaurora.org>
-From: Varadarajan Narayanan <varada@codeaurora.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linus.walleij@linaro.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: sricharan@codeaurora.org,
-	absahu@codeaurora.org,
-	sjaganat@codeaurora.org,
-	Varadarajan Narayanan <varada@codeaurora.org>,
-	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Subject: [PATCH 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
-Date: Fri, 28 Apr 2017 15:26:39 +0530
-Message-Id: <1493373403-23462-2-git-send-email-varada@codeaurora.org>
-In-Reply-To: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
-References: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 08/10] clk: renesas: r8a7791/r8a7793: Add new CPG/MSSR driver
+Date: Tue, 25 Apr 2017 18:53:18 +0200
+Message-Id: <1493139200-27396-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add initial pinctrl driver to support pin configuration with
-pinctrl framework for ipq8074.
+Add a new R-Car M2-W/N Clock Pulse Generator / Module Standby and
+Software Reset driver, using the CPG/MSSR driver core.
 
-Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+The small difference between R-Car M2-N and M2-W is handled by patching
+the clock tables at runtime.
+
+The old driver can still be used through a Kconfig option, to preserve
+backward compatibility with old DTBs.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt      |  202 ++++
- drivers/pinctrl/qcom/Kconfig                       |   10 +
- drivers/pinctrl/qcom/Makefile                      |    1 +
- drivers/pinctrl/qcom/pinctrl-ipq8074.c             | 1220 ++++++++++++++++++++
- 4 files changed, 1433 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
- create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq8074.c
+ drivers/clk/renesas/Kconfig            |   5 +-
+ drivers/clk/renesas/Makefile           |   1 +
+ drivers/clk/renesas/r8a7791-cpg-mssr.c | 286 +++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c |  11 ++
+ drivers/clk/renesas/renesas-cpg-mssr.h |   1 +
+ 5 files changed, 302 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a7791-cpg-mssr.c
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
-new file mode 100644
-index 0000000..1978026
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
-@@ -0,0 +1,202 @@
-+Qualcomm Technologies, Inc. IPQ8074 TLMM block
-+
-+This binding describes the Top Level Mode Multiplexer block found in the
-+IPQ8074 platform.
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be "qcom,ipq8074-pinctrl"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: the base address and size of the TLMM register space.
-+
-+- interrupts:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: should specify the TLMM summary IRQ.
-+
-+- interrupt-controller:
-+	Usage: required
-+	Value type: <none>
-+	Definition: identifies this node as an interrupt controller
-+
-+- #interrupt-cells:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: must be 2. Specifying the pin number and flags, as defined
-+		    in <dt-bindings/interrupt-controller/irq.h>
-+
-+- gpio-controller:
-+	Usage: required
-+	Value type: <none>
-+	Definition: identifies this node as a gpio controller
-+
-+- #gpio-cells:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: must be 2. Specifying the pin number and flags, as defined
-+		    in <dt-bindings/gpio/gpio.h>
-+
-+Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
-+a general description of GPIO and interrupt bindings.
-+
-+Please refer to pinctrl-bindings.txt in this directory for details of the
-+common pinctrl bindings used by client devices, including the meaning of the
-+phrase "pin configuration node".
-+
-+The pin configuration nodes act as a container for an arbitrary number of
-+subnodes. Each of these subnodes represents some desired configuration for a
-+pin, a group, or a list of pins or groups. This configuration can include the
-+mux function to select on those pin(s)/group(s), and various pin configuration
-+parameters, such as pull-up, drive strength, etc.
-+
-+
-+PIN CONFIGURATION NODES:
-+
-+The name of each subnode is not important; all subnodes should be enumerated
-+and processed purely based on their content.
-+
-+Each subnode only affects those parameters that are explicitly listed. In
-+other words, a subnode that lists a mux function but no pin configuration
-+parameters implies no information about any pin configuration parameters.
-+Similarly, a pin subnode that describes a pullup parameter implies no
-+information about e.g. the mux function.
-+
-+
-+The following generic properties as defined in pinctrl-bindings.txt are valid
-+to specify in a pin configuration subnode:
-+
-+- pins:
-+	Usage: required
-+	Value type: <string-array>
-+	Definition: List of gpio pins affected by the properties specified in
-+		    this subnode.  Valid pins are:
-+		    gpio0-gpio121,
-+		    sdc1_clk,
-+		    sdc1_cmd,
-+		    sdc1_data
-+		    sdc2_clk,
-+		    sdc2_cmd,
-+		    sdc2_data,
-+		    qdsd_cmd,
-+		    qdsd_data0,
-+		    qdsd_data1,
-+		    qdsd_data2,
-+		    qdsd_data3
-+
-+- function:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Specify the alternative function to be configured for the
-+		    specified pins. Functions are only valid for gpio pins.
-+		    Valid values are:
-+	msm_mux_gpio, msm_mux_qpic_pad, msm_mux_, msm_mux_blsp5_i2c,
-+	msm_mux_blsp5_spi, msm_mux_wci20, msm_mux_blsp3_spi3, msm_mux_burn0,
-+	msm_mux_pcm_zsi0, msm_mux_blsp5_uart, msm_mux_mac12,
-+	msm_mux_blsp3_spi0, msm_mux_burn1, msm_mux_mac01,
-+	msm_mux_qdss_cti_trig_out_b0, msm_mux_qdss_cti_trig_in_b0,
-+	msm_mux_qpic_pad4, msm_mux_blsp4_uart0, msm_mux_blsp4_i2c0,
-+	msm_mux_blsp4_spi0, msm_mux_mac21, msm_mux_qdss_cti_trig_out_b1,
-+	msm_mux_qpic_pad5, msm_mux_qdss_cti_trig_in_b1, msm_mux_qpic_pad6,
-+	msm_mux_qpic_pad7, msm_mux_cxc0, msm_mux_mac13,
-+	msm_mux_qdss_cti_trig_in_a1, msm_mux_qdss_cti_trig_out_a1,
-+	msm_mux_wci22, msm_mux_qdss_cti_trig_in_a0, msm_mux_qpic_pad1,
-+	msm_mux_qdss_cti_trig_out_a0, msm_mux_qpic_pad2, msm_mux_qpic_pad3,
-+	msm_mux_qdss_traceclk_b, msm_mux_qpic_pad0, msm_mux_qdss_tracectl_b,
-+	msm_mux_qpic_pad8, msm_mux_pcm_zsi1, msm_mux_qdss_tracedata_b,
-+	msm_mux_led0, msm_mux_pwm04, msm_mux_led1, msm_mux_pwm14, msm_mux_led2,
-+	msm_mux_pwm24, msm_mux_pwm00, msm_mux_blsp4_uart1, msm_mux_blsp4_i2c1,
-+	msm_mux_blsp4_spi1, msm_mux_wci23, msm_mux_mac11, msm_mux_blsp3_spi2,
-+	msm_mux_pwm10, msm_mux_pwm20, msm_mux_pwm30, msm_mux_audio_txmclk,
-+	msm_mux_pwm02, msm_mux_audio_txbclk, msm_mux_pwm12,
-+	msm_mux_audio_txfsync, msm_mux_pwm22, msm_mux_audio_txd, msm_mux_pwm32,
-+	msm_mux_audio_rxmclk, msm_mux_pwm03, msm_mux_atest_char0,
-+	msm_mux_audio_rxbclk, msm_mux_pwm13, msm_mux_atest_char1,
-+	msm_mux_audio_rxfsync, msm_mux_pwm23, msm_mux_atest_char2,
-+	msm_mux_audio_rxd, msm_mux_pwm33, msm_mux_atest_char3, msm_mux_pcm_drx,
-+	msm_mux_mac10, msm_mux_mac00, msm_mux_pcm_dtx, msm_mux_pcm_fsync,
-+	msm_mux_mac20, msm_mux_qdss_traceclk_a, msm_mux_pcm_pclk,
-+	msm_mux_qdss_tracectl_a, msm_mux_atest_char, msm_mux_qdss_tracedata_a,
-+	msm_mux_blsp0_uart, msm_mux_blsp0_i2c, msm_mux_blsp0_spi,
-+	msm_mux_blsp1_uart, msm_mux_blsp1_i2c, msm_mux_blsp1_spi,
-+	msm_mux_blsp2_uart, msm_mux_blsp2_i2c, msm_mux_blsp2_spi,
-+	msm_mux_blsp3_uart, msm_mux_blsp3_i2c, msm_mux_blsp3_spi, msm_mux_pta2_0,
-+	msm_mux_wci21, msm_mux_cxc1, msm_mux_blsp3_spi1, msm_mux_pta2_1,
-+	msm_mux_pta2_2, msm_mux_pcie0_clk, msm_mux_dbg_out, msm_mux_cri_trng0,
-+	msm_mux_pcie0_rst, msm_mux_cri_trng1, msm_mux_pcie0_wake,
-+	msm_mux_cri_trng, msm_mux_pcie1_clk, msm_mux_rx2, msm_mux_ldo_update,
-+	msm_mux_pcie1_rst, msm_mux_ldo_en, msm_mux_pcie1_wake,
-+	msm_mux_gcc_plltest, msm_mux_sd_card, msm_mux_pwm01,
-+	msm_mux_pta1_1, msm_mux_pwm11, 	msm_mux_rx1, msm_mux_pta1_2,
-+	msm_mux_gcc_tlmm, msm_mux_pta1_0, msm_mux_pwm21, msm_mux_prng_rosc,
-+	msm_mux_sd_write, msm_mux_pwm31, msm_mux_rx0, msm_mux_tsens_max,
-+	msm_mux_mdc, msm_mux_mdio, msm_mux_NA,
-+
-+- bias-disable:
-+	Usage: optional
-+	Value type: <none>
-+	Definition: The specified pins should be configued as no pull.
-+
-+- bias-pull-down:
-+	Usage: optional
-+	Value type: <none>
-+	Definition: The specified pins should be configued as pull down.
-+
-+- bias-pull-up:
-+	Usage: optional
-+	Value type: <none>
-+	Definition: The specified pins should be configued as pull up.
-+
-+- output-high:
-+	Usage: optional
-+	Value type: <none>
-+	Definition: The specified pins are configured in output mode, driven
-+		    high.
-+		    Not valid for sdc pins.
-+
-+- output-low:
-+	Usage: optional
-+	Value type: <none>
-+	Definition: The specified pins are configured in output mode, driven
-+		    low.
-+		    Not valid for sdc pins.
-+
-+- drive-strength:
-+	Usage: optional
-+	Value type: <u32>
-+	Definition: Selects the drive strength for the specified pins, in mA.
-+		    Valid values are: 2, 4, 6, 8, 10, 12, 14 and 16
-+
-+Example:
-+
-+	tlmm: pinctrl@1000000 {
-+		compatible = "qcom,ipq8074-pinctrl";
-+		reg = <0x1000000 0x300000>;
-+		interrupts = <0 208 0>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		uart2: uart2-default {
-+			mux {
-+				pins = "gpio4", "gpio5";
-+				function = "blsp_uart2";
-+			};
-+
-+			tx {
-+				pins = "gpio4";
-+				drive-strength = <4>;
-+				bias-disable;
-+			};
-+
-+			rx {
-+				pins = "gpio5";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+		};
-+	};
-diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-index 3ebdc01..9e504db 100644
---- a/drivers/pinctrl/qcom/Kconfig
-+++ b/drivers/pinctrl/qcom/Kconfig
-@@ -39,6 +39,16 @@ config PINCTRL_IPQ8064
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
- 	  Qualcomm TLMM block found in the Qualcomm IPQ8064 platform.
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index a9f9800d08a2cdc9..d12248c80d67ee28 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -21,7 +21,7 @@ if CLK_RENESAS
  
-+config PINCTRL_IPQ8074
-+	tristate "Qualcomm Technologies, Inc. IPQ8074 pin controller driver"
-+	depends on GPIOLIB && OF
-+	select PINCTRL_MSM
-+	help
-+	  This is the pinctrl, pinmux, pinconf and gpiolib driver for
-+	  the Qualcomm Technologies Inc. TLMM block found on the
-+	  Qualcomm Technologies Inc. IPQ8074 platform. Select this for
-+	  IPQ8074.
-+
- config PINCTRL_MSM8660
- 	tristate "Qualcomm 8660 pin controller driver"
- 	depends on GPIOLIB && OF
-diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
-index ab47764..06c8b2a 100644
---- a/drivers/pinctrl/qcom/Makefile
-+++ b/drivers/pinctrl/qcom/Makefile
-@@ -4,6 +4,7 @@ obj-$(CONFIG_PINCTRL_APQ8064)	+= pinctrl-apq8064.o
- obj-$(CONFIG_PINCTRL_APQ8084)	+= pinctrl-apq8084.o
- obj-$(CONFIG_PINCTRL_IPQ4019)	+= pinctrl-ipq4019.o
- obj-$(CONFIG_PINCTRL_IPQ8064)	+= pinctrl-ipq8064.o
-+obj-$(CONFIG_PINCTRL_IPQ8074)	+= pinctrl-ipq8074.o
- obj-$(CONFIG_PINCTRL_MSM8660)	+= pinctrl-msm8660.o
- obj-$(CONFIG_PINCTRL_MSM8960)	+= pinctrl-msm8960.o
- obj-$(CONFIG_PINCTRL_MSM8X74)	+= pinctrl-msm8x74.o
-diff --git a/drivers/pinctrl/qcom/pinctrl-ipq8074.c b/drivers/pinctrl/qcom/pinctrl-ipq8074.c
+ config CLK_RENESAS_LEGACY
+ 	bool "Legacy DT clock support"
+-	depends on CLK_R8A7790
++	depends on CLK_R8A7790 || CLK_R8A7791
+ 	default y
+ 	help
+ 	  Enable backward compatibility with old device trees describing a
+@@ -71,7 +71,8 @@ config CLK_R8A7790
+ 
+ config CLK_R8A7791
+ 	bool "R-Car M2-W/N clock support" if COMPILE_TEST
+-	select CLK_RCAR_GEN2
++	select CLK_RCAR_GEN2 if CLK_RENESAS_LEGACY
++	select CLK_RCAR_GEN2_CPG
+ 	select CLK_RENESAS_DIV6
+ 
+ config CLK_R8A7792
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index f0c622aadc6745bf..7f70a2a1c514e91f 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -8,6 +8,7 @@ obj-$(CONFIG_CLK_R8A7745)		+= r8a7745-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A7778)		+= clk-r8a7778.o
+ obj-$(CONFIG_CLK_R8A7779)		+= clk-r8a7779.o
+ obj-$(CONFIG_CLK_R8A7790)		+= r8a7790-cpg-mssr.o
++obj-$(CONFIG_CLK_R8A7791)		+= r8a7791-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A7795)		+= r8a7795-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A7796)		+= r8a7796-cpg-mssr.o
+ obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
+diff --git a/drivers/clk/renesas/r8a7791-cpg-mssr.c b/drivers/clk/renesas/r8a7791-cpg-mssr.c
 new file mode 100644
-index 0000000..5866ed6
+index 0000000000000000..c0b51f9bb2789350
 --- /dev/null
-+++ b/drivers/pinctrl/qcom/pinctrl-ipq8074.c
-@@ -0,0 +1,1220 @@
++++ b/drivers/clk/renesas/r8a7791-cpg-mssr.c
+@@ -0,0 +1,286 @@
 +/*
-+ * Copyright (c) 2017, The Linux Foundation. All rights reserved.
++ * r8a7791 Clock Pulse Generator / Module Standby and Software Reset
++ *
++ * Copyright (C) 2015-2017 Glider bvba
++ *
++ * Based on clk-rcar-gen2.c
++ *
++ * Copyright (C) 2013 Ideas On Board SPRL
 + *
 + * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
 + */
 +
-+#include <linux/module.h>
++#include <linux/device.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
 +#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+
-+#include "pinctrl-msm.h"
-+
-+#define FUNCTION(fname)			                \
-+	[msm_mux_##fname] = {		                \
-+		.name = #fname,				\
-+		.groups = fname##_groups,               \
-+		.ngroups = ARRAY_SIZE(fname##_groups),	\
-+	}
-+
-+#define REG_SIZE 0x1000
-+#define PINGROUP(id, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
-+	{					        \
-+		.name = "gpio" #id,			\
-+		.pins = gpio##id##_pins,		\
-+		.npins = (unsigned int)ARRAY_SIZE(gpio##id##_pins),	\
-+		.funcs = (int[]){			\
-+			msm_mux_gpio, /* gpio mode */	\
-+			msm_mux_##f1,			\
-+			msm_mux_##f2,			\
-+			msm_mux_##f3,			\
-+			msm_mux_##f4,			\
-+			msm_mux_##f5,			\
-+			msm_mux_##f6,			\
-+			msm_mux_##f7,			\
-+			msm_mux_##f8,			\
-+			msm_mux_##f9			\
-+		},				        \
-+		.nfuncs = 10,				\
-+		.ctl_reg = REG_SIZE * id,		\
-+		.io_reg = 0x4 + REG_SIZE * id,		\
-+		.intr_cfg_reg = 0x8 + REG_SIZE * id,		\
-+		.intr_status_reg = 0xc + REG_SIZE * id,	\
-+		.intr_target_reg = 0x8 + REG_SIZE * id,	\
-+		.mux_bit = 2,			\
-+		.pull_bit = 0,			\
-+		.drv_bit = 6,			\
-+		.oe_bit = 9,			\
-+		.in_bit = 0,			\
-+		.out_bit = 1,			\
-+		.intr_enable_bit = 0,		\
-+		.intr_status_bit = 0,		\
-+		.intr_target_bit = 5,		\
-+		.intr_raw_status_bit = 4,	\
-+		.intr_polarity_bit = 1,		\
-+		.intr_detection_bit = 2,	\
-+		.intr_detection_width = 2,	\
-+	}
-+
-+static const struct pinctrl_pin_desc ipq8074_pins[] = {
-+	PINCTRL_PIN(0, "GPIO_0"),
-+	PINCTRL_PIN(1, "GPIO_1"),
-+	PINCTRL_PIN(2, "GPIO_2"),
-+	PINCTRL_PIN(3, "GPIO_3"),
-+	PINCTRL_PIN(4, "GPIO_4"),
-+	PINCTRL_PIN(5, "GPIO_5"),
-+	PINCTRL_PIN(6, "GPIO_6"),
-+	PINCTRL_PIN(7, "GPIO_7"),
-+	PINCTRL_PIN(8, "GPIO_8"),
-+	PINCTRL_PIN(9, "GPIO_9"),
-+	PINCTRL_PIN(10, "GPIO_10"),
-+	PINCTRL_PIN(11, "GPIO_11"),
-+	PINCTRL_PIN(12, "GPIO_12"),
-+	PINCTRL_PIN(13, "GPIO_13"),
-+	PINCTRL_PIN(14, "GPIO_14"),
-+	PINCTRL_PIN(15, "GPIO_15"),
-+	PINCTRL_PIN(16, "GPIO_16"),
-+	PINCTRL_PIN(17, "GPIO_17"),
-+	PINCTRL_PIN(18, "GPIO_18"),
-+	PINCTRL_PIN(19, "GPIO_19"),
-+	PINCTRL_PIN(20, "GPIO_20"),
-+	PINCTRL_PIN(21, "GPIO_21"),
-+	PINCTRL_PIN(22, "GPIO_22"),
-+	PINCTRL_PIN(23, "GPIO_23"),
-+	PINCTRL_PIN(24, "GPIO_24"),
-+	PINCTRL_PIN(25, "GPIO_25"),
-+	PINCTRL_PIN(26, "GPIO_26"),
-+	PINCTRL_PIN(27, "GPIO_27"),
-+	PINCTRL_PIN(28, "GPIO_28"),
-+	PINCTRL_PIN(29, "GPIO_29"),
-+	PINCTRL_PIN(30, "GPIO_30"),
-+	PINCTRL_PIN(31, "GPIO_31"),
-+	PINCTRL_PIN(32, "GPIO_32"),
-+	PINCTRL_PIN(33, "GPIO_33"),
-+	PINCTRL_PIN(34, "GPIO_34"),
-+	PINCTRL_PIN(35, "GPIO_35"),
-+	PINCTRL_PIN(36, "GPIO_36"),
-+	PINCTRL_PIN(37, "GPIO_37"),
-+	PINCTRL_PIN(38, "GPIO_38"),
-+	PINCTRL_PIN(39, "GPIO_39"),
-+	PINCTRL_PIN(40, "GPIO_40"),
-+	PINCTRL_PIN(41, "GPIO_41"),
-+	PINCTRL_PIN(42, "GPIO_42"),
-+	PINCTRL_PIN(43, "GPIO_43"),
-+	PINCTRL_PIN(44, "GPIO_44"),
-+	PINCTRL_PIN(45, "GPIO_45"),
-+	PINCTRL_PIN(46, "GPIO_46"),
-+	PINCTRL_PIN(47, "GPIO_47"),
-+	PINCTRL_PIN(48, "GPIO_48"),
-+	PINCTRL_PIN(49, "GPIO_49"),
-+	PINCTRL_PIN(50, "GPIO_50"),
-+	PINCTRL_PIN(51, "GPIO_51"),
-+	PINCTRL_PIN(52, "GPIO_52"),
-+	PINCTRL_PIN(53, "GPIO_53"),
-+	PINCTRL_PIN(54, "GPIO_54"),
-+	PINCTRL_PIN(55, "GPIO_55"),
-+	PINCTRL_PIN(56, "GPIO_56"),
-+	PINCTRL_PIN(57, "GPIO_57"),
-+	PINCTRL_PIN(58, "GPIO_58"),
-+	PINCTRL_PIN(59, "GPIO_59"),
-+	PINCTRL_PIN(60, "GPIO_60"),
-+	PINCTRL_PIN(61, "GPIO_61"),
-+	PINCTRL_PIN(62, "GPIO_62"),
-+	PINCTRL_PIN(63, "GPIO_63"),
-+	PINCTRL_PIN(64, "GPIO_64"),
-+	PINCTRL_PIN(65, "GPIO_65"),
-+	PINCTRL_PIN(66, "GPIO_66"),
-+	PINCTRL_PIN(67, "GPIO_67"),
-+	PINCTRL_PIN(68, "GPIO_68"),
-+	PINCTRL_PIN(69, "GPIO_69"),
-+};
-+
-+#define DECLARE_MSM_GPIO_PINS(pin) \
-+	static const unsigned int gpio##pin##_pins[] = { pin }
-+DECLARE_MSM_GPIO_PINS(0);
-+DECLARE_MSM_GPIO_PINS(1);
-+DECLARE_MSM_GPIO_PINS(2);
-+DECLARE_MSM_GPIO_PINS(3);
-+DECLARE_MSM_GPIO_PINS(4);
-+DECLARE_MSM_GPIO_PINS(5);
-+DECLARE_MSM_GPIO_PINS(6);
-+DECLARE_MSM_GPIO_PINS(7);
-+DECLARE_MSM_GPIO_PINS(8);
-+DECLARE_MSM_GPIO_PINS(9);
-+DECLARE_MSM_GPIO_PINS(10);
-+DECLARE_MSM_GPIO_PINS(11);
-+DECLARE_MSM_GPIO_PINS(12);
-+DECLARE_MSM_GPIO_PINS(13);
-+DECLARE_MSM_GPIO_PINS(14);
-+DECLARE_MSM_GPIO_PINS(15);
-+DECLARE_MSM_GPIO_PINS(16);
-+DECLARE_MSM_GPIO_PINS(17);
-+DECLARE_MSM_GPIO_PINS(18);
-+DECLARE_MSM_GPIO_PINS(19);
-+DECLARE_MSM_GPIO_PINS(20);
-+DECLARE_MSM_GPIO_PINS(21);
-+DECLARE_MSM_GPIO_PINS(22);
-+DECLARE_MSM_GPIO_PINS(23);
-+DECLARE_MSM_GPIO_PINS(24);
-+DECLARE_MSM_GPIO_PINS(25);
-+DECLARE_MSM_GPIO_PINS(26);
-+DECLARE_MSM_GPIO_PINS(27);
-+DECLARE_MSM_GPIO_PINS(28);
-+DECLARE_MSM_GPIO_PINS(29);
-+DECLARE_MSM_GPIO_PINS(30);
-+DECLARE_MSM_GPIO_PINS(31);
-+DECLARE_MSM_GPIO_PINS(32);
-+DECLARE_MSM_GPIO_PINS(33);
-+DECLARE_MSM_GPIO_PINS(34);
-+DECLARE_MSM_GPIO_PINS(35);
-+DECLARE_MSM_GPIO_PINS(36);
-+DECLARE_MSM_GPIO_PINS(37);
-+DECLARE_MSM_GPIO_PINS(38);
-+DECLARE_MSM_GPIO_PINS(39);
-+DECLARE_MSM_GPIO_PINS(40);
-+DECLARE_MSM_GPIO_PINS(41);
-+DECLARE_MSM_GPIO_PINS(42);
-+DECLARE_MSM_GPIO_PINS(43);
-+DECLARE_MSM_GPIO_PINS(44);
-+DECLARE_MSM_GPIO_PINS(45);
-+DECLARE_MSM_GPIO_PINS(46);
-+DECLARE_MSM_GPIO_PINS(47);
-+DECLARE_MSM_GPIO_PINS(48);
-+DECLARE_MSM_GPIO_PINS(49);
-+DECLARE_MSM_GPIO_PINS(50);
-+DECLARE_MSM_GPIO_PINS(51);
-+DECLARE_MSM_GPIO_PINS(52);
-+DECLARE_MSM_GPIO_PINS(53);
-+DECLARE_MSM_GPIO_PINS(54);
-+DECLARE_MSM_GPIO_PINS(55);
-+DECLARE_MSM_GPIO_PINS(56);
-+DECLARE_MSM_GPIO_PINS(57);
-+DECLARE_MSM_GPIO_PINS(58);
-+DECLARE_MSM_GPIO_PINS(59);
-+DECLARE_MSM_GPIO_PINS(60);
-+DECLARE_MSM_GPIO_PINS(61);
-+DECLARE_MSM_GPIO_PINS(62);
-+DECLARE_MSM_GPIO_PINS(63);
-+DECLARE_MSM_GPIO_PINS(64);
-+DECLARE_MSM_GPIO_PINS(65);
-+DECLARE_MSM_GPIO_PINS(66);
-+DECLARE_MSM_GPIO_PINS(67);
-+DECLARE_MSM_GPIO_PINS(68);
-+DECLARE_MSM_GPIO_PINS(69);
-+
-+enum ipq8074_functions {
-+	msm_mux_gpio,
-+	msm_mux_qpic_pad,
-+	msm_mux_,
-+	msm_mux_blsp5_i2c,
-+	msm_mux_blsp5_spi,
-+	msm_mux_wci20,
-+	msm_mux_blsp3_spi3,
-+	msm_mux_burn0,
-+	msm_mux_pcm_zsi0,
-+	msm_mux_blsp5_uart,
-+	msm_mux_mac12,
-+	msm_mux_blsp3_spi0,
-+	msm_mux_burn1,
-+	msm_mux_mac01,
-+	msm_mux_qdss_cti_trig_out_b0,
-+	msm_mux_qdss_cti_trig_in_b0,
-+	msm_mux_qpic_pad4,
-+	msm_mux_blsp4_uart0,
-+	msm_mux_blsp4_i2c0,
-+	msm_mux_blsp4_spi0,
-+	msm_mux_mac21,
-+	msm_mux_qdss_cti_trig_out_b1,
-+	msm_mux_qpic_pad5,
-+	msm_mux_qdss_cti_trig_in_b1,
-+	msm_mux_qpic_pad6,
-+	msm_mux_qpic_pad7,
-+	msm_mux_cxc0,
-+	msm_mux_mac13,
-+	msm_mux_qdss_cti_trig_in_a1,
-+	msm_mux_qdss_cti_trig_out_a1,
-+	msm_mux_wci22,
-+	msm_mux_qdss_cti_trig_in_a0,
-+	msm_mux_qpic_pad1,
-+	msm_mux_qdss_cti_trig_out_a0,
-+	msm_mux_qpic_pad2,
-+	msm_mux_qpic_pad3,
-+	msm_mux_qdss_traceclk_b,
-+	msm_mux_qpic_pad0,
-+	msm_mux_qdss_tracectl_b,
-+	msm_mux_qpic_pad8,
-+	msm_mux_pcm_zsi1,
-+	msm_mux_qdss_tracedata_b,
-+	msm_mux_led0,
-+	msm_mux_pwm04,
-+	msm_mux_led1,
-+	msm_mux_pwm14,
-+	msm_mux_led2,
-+	msm_mux_pwm24,
-+	msm_mux_pwm00,
-+	msm_mux_blsp4_uart1,
-+	msm_mux_blsp4_i2c1,
-+	msm_mux_blsp4_spi1,
-+	msm_mux_wci23,
-+	msm_mux_mac11,
-+	msm_mux_blsp3_spi2,
-+	msm_mux_pwm10,
-+	msm_mux_pwm20,
-+	msm_mux_pwm30,
-+	msm_mux_audio_txmclk,
-+	msm_mux_pwm02,
-+	msm_mux_audio_txbclk,
-+	msm_mux_pwm12,
-+	msm_mux_audio_txfsync,
-+	msm_mux_pwm22,
-+	msm_mux_audio_txd,
-+	msm_mux_pwm32,
-+	msm_mux_audio_rxmclk,
-+	msm_mux_pwm03,
-+	msm_mux_atest_char0,
-+	msm_mux_audio_rxbclk,
-+	msm_mux_pwm13,
-+	msm_mux_atest_char1,
-+	msm_mux_audio_rxfsync,
-+	msm_mux_pwm23,
-+	msm_mux_atest_char2,
-+	msm_mux_audio_rxd,
-+	msm_mux_pwm33,
-+	msm_mux_atest_char3,
-+	msm_mux_pcm_drx,
-+	msm_mux_mac10,
-+	msm_mux_mac00,
-+	msm_mux_pcm_dtx,
-+	msm_mux_pcm_fsync,
-+	msm_mux_mac20,
-+	msm_mux_qdss_traceclk_a,
-+	msm_mux_pcm_pclk,
-+	msm_mux_qdss_tracectl_a,
-+	msm_mux_atest_char,
-+	msm_mux_qdss_tracedata_a,
-+	msm_mux_blsp0_uart,
-+	msm_mux_blsp0_i2c,
-+	msm_mux_blsp0_spi,
-+	msm_mux_blsp1_uart,
-+	msm_mux_blsp1_i2c,
-+	msm_mux_blsp1_spi,
-+	msm_mux_blsp2_uart,
-+	msm_mux_blsp2_i2c,
-+	msm_mux_blsp2_spi,
-+	msm_mux_blsp3_uart,
-+	msm_mux_blsp3_i2c,
-+	msm_mux_blsp3_spi,
-+	msm_mux_pta2_0,
-+	msm_mux_wci21,
-+	msm_mux_cxc1,
-+	msm_mux_blsp3_spi1,
-+	msm_mux_pta2_1,
-+	msm_mux_pta2_2,
-+	msm_mux_pcie0_clk,
-+	msm_mux_dbg_out,
-+	msm_mux_cri_trng0,
-+	msm_mux_pcie0_rst,
-+	msm_mux_cri_trng1,
-+	msm_mux_pcie0_wake,
-+	msm_mux_cri_trng,
-+	msm_mux_pcie1_clk,
-+	msm_mux_rx2,
-+	msm_mux_ldo_update,
-+	msm_mux_pcie1_rst,
-+	msm_mux_ldo_en,
-+	msm_mux_pcie1_wake,
-+	msm_mux_gcc_plltest,
-+	msm_mux_sd_card,
-+	msm_mux_pwm01,
-+	msm_mux_pta1_1,
-+	msm_mux_pwm11,
-+	msm_mux_rx1,
-+	msm_mux_pta1_2,
-+	msm_mux_gcc_tlmm,
-+	msm_mux_pta1_0,
-+	msm_mux_pwm21,
-+	msm_mux_prng_rosc,
-+	msm_mux_sd_write,
-+	msm_mux_pwm31,
-+	msm_mux_rx0,
-+	msm_mux_tsens_max,
-+	msm_mux_mdc,
-+	msm_mux_mdio,
-+	msm_mux_NA,
-+};
-+
-+static const char * const qpic_pad_groups[] = {
-+	"gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio9", "gpio10",
-+	"gpio11", "gpio17",
-+};
-+
-+static const char * const _groups[] = {
-+	"gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6", "gpio7",
-+	"gpio8", "gpio9", "gpio10", "gpio11", "gpio12", "gpio13", "gpio14",
-+	"gpio15", "gpio16", "gpio17", "gpio18", "gpio19", "gpio20", "gpio21",
-+	"gpio22", "gpio23", "gpio24", "gpio25", "gpio26", "gpio27", "gpio28",
-+	"gpio29", "gpio30", "gpio31", "gpio32", "gpio33", "gpio34", "gpio35",
-+	"gpio36", "gpio37", "gpio38", "gpio39", "gpio40", "gpio41", "gpio42",
-+	"gpio43", "gpio44", "gpio45", "gpio46", "gpio47", "gpio48", "gpio49",
-+	"gpio50", "gpio51", "gpio52", "gpio53", "gpio54", "gpio55", "gpio56",
-+	"gpio57", "gpio58", "gpio59", "gpio60", "gpio61", "gpio62", "gpio63",
-+	"gpio64", "gpio65", "gpio66", "gpio67", "gpio68", "gpio69",
-+};
-+
-+static const char * const blsp5_i2c_groups[] = {
-+	"gpio0", "gpio2",
-+};
-+
-+static const char * const blsp5_spi_groups[] = {
-+	"gpio0", "gpio2", "gpio9", "gpio16",
-+};
-+
-+static const char * const wci20_groups[] = {
-+	"gpio0", "gpio2",
-+};
-+
-+static const char * const blsp3_spi3_groups[] = {
-+	"gpio0", "gpio2", "gpio9",
-+};
-+
-+static const char * const burn0_groups[] = {
-+	"gpio0",
-+};
-+
-+static const char * const pcm_zsi0_groups[] = {
-+	"gpio1",
-+};
-+
-+static const char * const blsp5_uart_groups[] = {
-+	"gpio0", "gpio2", "gpio9", "gpio16",
-+};
-+
-+static const char * const mac12_groups[] = {
-+	"gpio1", "gpio11",
-+};
-+
-+static const char * const blsp3_spi0_groups[] = {
-+	"gpio1", "gpio3", "gpio4",
-+};
-+
-+static const char * const burn1_groups[] = {
-+	"gpio1",
-+};
-+
-+static const char * const mac01_groups[] = {
-+	"gpio3", "gpio4",
-+};
-+
-+static const char * const qdss_cti_trig_out_b0_groups[] = {
-+	"gpio3",
-+};
-+
-+static const char * const qdss_cti_trig_in_b0_groups[] = {
-+	"gpio4",
-+};
-+
-+static const char * const qpic_pad4_groups[] = {
-+	"gpio5",
-+};
-+
-+static const char * const blsp4_uart0_groups[] = {
-+	"gpio5", "gpio6", "gpio7", "gpio8",
-+};
-+
-+static const char * const blsp4_i2c0_groups[] = {
-+	"gpio5", "gpio6",
-+};
-+
-+static const char * const blsp4_spi0_groups[] = {
-+	"gpio5", "gpio6", "gpio7", "gpio8",
-+};
-+
-+static const char * const mac21_groups[] = {
-+	"gpio5", "gpio6",
-+};
-+
-+static const char * const qdss_cti_trig_out_b1_groups[] = {
-+	"gpio5",
-+};
-+
-+static const char * const qpic_pad5_groups[] = {
-+	"gpio6",
-+};
-+
-+static const char * const qdss_cti_trig_in_b1_groups[] = {
-+	"gpio6",
-+};
-+
-+static const char * const qpic_pad6_groups[] = {
-+	"gpio7",
-+};
-+
-+static const char * const qpic_pad7_groups[] = {
-+	"gpio8",
-+};
-+
-+static const char * const cxc0_groups[] = {
-+	"gpio9", "gpio16",
-+};
-+
-+static const char * const mac13_groups[] = {
-+	"gpio9", "gpio16",
-+};
-+
-+static const char * const qdss_cti_trig_in_a1_groups[] = {
-+	"gpio9",
-+};
-+
-+static const char * const qdss_cti_trig_out_a1_groups[] = {
-+	"gpio10",
-+};
-+
-+static const char * const wci22_groups[] = {
-+	"gpio11", "gpio17",
-+};
-+
-+static const char * const qdss_cti_trig_in_a0_groups[] = {
-+	"gpio11",
-+};
-+
-+static const char * const qpic_pad1_groups[] = {
-+	"gpio12",
-+};
-+
-+static const char * const qdss_cti_trig_out_a0_groups[] = {
-+	"gpio12",
-+};
-+
-+static const char * const qpic_pad2_groups[] = {
-+	"gpio13",
-+};
-+
-+static const char * const qpic_pad3_groups[] = {
-+	"gpio14",
-+};
-+
-+static const char * const qdss_traceclk_b_groups[] = {
-+	"gpio14",
-+};
-+
-+static const char * const qpic_pad0_groups[] = {
-+	"gpio15",
-+};
-+
-+static const char * const qdss_tracectl_b_groups[] = {
-+	"gpio15",
-+};
-+
-+static const char * const qpic_pad8_groups[] = {
-+	"gpio16",
-+};
-+
-+static const char * const pcm_zsi1_groups[] = {
-+	"gpio16",
-+};
-+
-+static const char * const qdss_tracedata_b_groups[] = {
-+	"gpio16", "gpio17", "gpio18", "gpio19", "gpio20", "gpio21", "gpio22",
-+	"gpio23", "gpio24", "gpio25", "gpio26", "gpio27", "gpio28", "gpio29",
-+	"gpio30", "gpio31",
-+};
-+
-+static const char * const led0_groups[] = {
-+	"gpio18",
-+};
-+
-+static const char * const pwm04_groups[] = {
-+	"gpio18",
-+};
-+
-+static const char * const led1_groups[] = {
-+	"gpio19",
-+};
-+
-+static const char * const pwm14_groups[] = {
-+	"gpio19",
-+};
-+
-+static const char * const led2_groups[] = {
-+	"gpio20",
-+};
-+
-+static const char * const pwm24_groups[] = {
-+	"gpio20",
-+};
-+
-+static const char * const pwm00_groups[] = {
-+	"gpio21",
-+};
-+
-+static const char * const blsp4_uart1_groups[] = {
-+	"gpio21", "gpio22", "gpio23", "gpio24",
-+};
-+
-+static const char * const blsp4_i2c1_groups[] = {
-+	"gpio21", "gpio22",
-+};
-+
-+static const char * const blsp4_spi1_groups[] = {
-+	"gpio21", "gpio22", "gpio23", "gpio24",
-+};
-+
-+static const char * const wci23_groups[] = {
-+	"gpio21", "gpio22",
-+};
-+
-+static const char * const mac11_groups[] = {
-+	"gpio21", "gpio22",
-+};
-+
-+static const char * const blsp3_spi2_groups[] = {
-+	"gpio21", "gpio22", "gpio23",
-+};
-+
-+static const char * const pwm10_groups[] = {
-+	"gpio22",
-+};
-+
-+static const char * const pwm20_groups[] = {
-+	"gpio23",
-+};
-+
-+static const char * const pwm30_groups[] = {
-+	"gpio24",
-+};
-+
-+static const char * const audio_txmclk_groups[] = {
-+	"gpio25",
-+};
-+
-+static const char * const pwm02_groups[] = {
-+	"gpio25",
-+};
-+
-+static const char * const audio_txbclk_groups[] = {
-+	"gpio26",
-+};
-+
-+static const char * const pwm12_groups[] = {
-+	"gpio26",
-+};
-+
-+static const char * const audio_txfsync_groups[] = {
-+	"gpio27",
-+};
-+
-+static const char * const pwm22_groups[] = {
-+	"gpio27",
-+};
-+
-+static const char * const audio_txd_groups[] = {
-+	"gpio28",
-+};
-+
-+static const char * const pwm32_groups[] = {
-+	"gpio28",
-+};
-+
-+static const char * const audio_rxmclk_groups[] = {
-+	"gpio29",
-+};
-+
-+static const char * const pwm03_groups[] = {
-+	"gpio29",
-+};
-+
-+static const char * const atest_char0_groups[] = {
-+	"gpio29",
-+};
-+
-+static const char * const audio_rxbclk_groups[] = {
-+	"gpio30",
-+};
-+
-+static const char * const pwm13_groups[] = {
-+	"gpio30",
-+};
-+
-+static const char * const atest_char1_groups[] = {
-+	"gpio30",
-+};
-+
-+static const char * const audio_rxfsync_groups[] = {
-+	"gpio31",
-+};
-+
-+static const char * const pwm23_groups[] = {
-+	"gpio31",
-+};
-+
-+static const char * const atest_char2_groups[] = {
-+	"gpio31",
-+};
-+
-+static const char * const audio_rxd_groups[] = {
-+	"gpio32",
-+};
-+
-+static const char * const pwm33_groups[] = {
-+	"gpio32",
-+};
-+
-+static const char * const atest_char3_groups[] = {
-+	"gpio32",
-+};
-+
-+static const char * const pcm_drx_groups[] = {
-+	"gpio33",
-+};
-+
-+static const char * const mac10_groups[] = {
-+	"gpio33", "gpio34",
-+};
-+
-+static const char * const mac00_groups[] = {
-+	"gpio33", "gpio34",
-+};
-+
-+static const char * const pcm_dtx_groups[] = {
-+	"gpio34",
-+};
-+
-+static const char * const pcm_fsync_groups[] = {
-+	"gpio35",
-+};
-+
-+static const char * const mac20_groups[] = {
-+	"gpio35", "gpio36",
-+};
-+
-+static const char * const qdss_traceclk_a_groups[] = {
-+	"gpio35",
-+};
-+
-+static const char * const pcm_pclk_groups[] = {
-+	"gpio36",
-+};
-+
-+static const char * const qdss_tracectl_a_groups[] = {
-+	"gpio36",
-+};
-+
-+static const char * const atest_char_groups[] = {
-+	"gpio37",
-+};
-+
-+static const char * const qdss_tracedata_a_groups[] = {
-+	"gpio37", "gpio38", "gpio39", "gpio40", "gpio41", "gpio42", "gpio43",
-+	"gpio44", "gpio45", "gpio46", "gpio47", "gpio48", "gpio49", "gpio50",
-+	"gpio51", "gpio52",
-+};
-+
-+static const char * const blsp0_uart_groups[] = {
-+	"gpio38", "gpio39", "gpio40", "gpio41",
-+};
-+
-+static const char * const blsp0_i2c_groups[] = {
-+	"gpio38", "gpio39",
-+};
-+
-+static const char * const blsp0_spi_groups[] = {
-+	"gpio38", "gpio39", "gpio40", "gpio41",
-+};
-+
-+static const char * const blsp1_uart_groups[] = {
-+	"gpio42", "gpio43", "gpio44", "gpio45",
-+};
-+
-+static const char * const blsp1_i2c_groups[] = {
-+	"gpio42", "gpio43",
-+};
-+
-+static const char * const blsp1_spi_groups[] = {
-+	"gpio42", "gpio43", "gpio44", "gpio45",
-+};
-+
-+static const char * const blsp2_uart_groups[] = {
-+	"gpio46", "gpio47", "gpio48", "gpio49",
-+};
-+
-+static const char * const blsp2_i2c_groups[] = {
-+	"gpio46", "gpio47",
-+};
-+
-+static const char * const blsp2_spi_groups[] = {
-+	"gpio46", "gpio47", "gpio48", "gpio49",
-+};
-+
-+static const char * const blsp3_uart_groups[] = {
-+	"gpio50", "gpio51", "gpio52", "gpio53",
-+};
-+
-+static const char * const blsp3_i2c_groups[] = {
-+	"gpio50", "gpio51",
-+};
-+
-+static const char * const blsp3_spi_groups[] = {
-+	"gpio50", "gpio51", "gpio52", "gpio53",
-+};
-+
-+static const char * const pta2_0_groups[] = {
-+	"gpio54",
-+};
-+
-+static const char * const wci21_groups[] = {
-+	"gpio54", "gpio56",
-+};
-+
-+static const char * const cxc1_groups[] = {
-+	"gpio54", "gpio56",
-+};
-+
-+static const char * const blsp3_spi1_groups[] = {
-+	"gpio54", "gpio55", "gpio56",
-+};
-+
-+static const char * const pta2_1_groups[] = {
-+	"gpio55",
-+};
-+
-+static const char * const pta2_2_groups[] = {
-+	"gpio56",
-+};
-+
-+static const char * const pcie0_clk_groups[] = {
-+	"gpio57",
-+};
-+
-+static const char * const dbg_out_groups[] = {
-+	"gpio57",
-+};
-+
-+static const char * const cri_trng0_groups[] = {
-+	"gpio57",
-+};
-+
-+static const char * const pcie0_rst_groups[] = {
-+	"gpio58",
-+};
-+
-+static const char * const cri_trng1_groups[] = {
-+	"gpio58",
-+};
-+
-+static const char * const pcie0_wake_groups[] = {
-+	"gpio59",
-+};
-+
-+static const char * const cri_trng_groups[] = {
-+	"gpio59",
-+};
-+
-+static const char * const pcie1_clk_groups[] = {
-+	"gpio60",
-+};
-+
-+static const char * const rx2_groups[] = {
-+	"gpio60",
-+};
-+
-+static const char * const ldo_update_groups[] = {
-+	"gpio60",
-+};
-+
-+static const char * const pcie1_rst_groups[] = {
-+	"gpio61",
-+};
-+
-+static const char * const ldo_en_groups[] = {
-+	"gpio61",
-+};
-+
-+static const char * const pcie1_wake_groups[] = {
-+	"gpio62",
-+};
-+
-+static const char * const gcc_plltest_groups[] = {
-+	"gpio62", "gpio63",
-+};
-+
-+static const char * const sd_card_groups[] = {
-+	"gpio63",
-+};
-+
-+static const char * const pwm01_groups[] = {
-+	"gpio63",
-+};
-+
-+static const char * const pta1_1_groups[] = {
-+	"gpio64",
-+};
-+
-+static const char * const pwm11_groups[] = {
-+	"gpio64",
-+};
-+
-+static const char * const rx1_groups[] = {
-+	"gpio64",
-+};
-+
-+static const char * const pta1_2_groups[] = {
-+	"gpio65",
-+};
-+
-+static const char * const gcc_tlmm_groups[] = {
-+	"gpio65",
-+};
-+
-+static const char * const pta1_0_groups[] = {
-+	"gpio66",
-+};
-+
-+static const char * const pwm21_groups[] = {
-+	"gpio66",
-+};
-+
-+static const char * const prng_rosc_groups[] = {
-+	"gpio66",
-+};
-+
-+static const char * const sd_write_groups[] = {
-+	"gpio67",
-+};
-+
-+static const char * const pwm31_groups[] = {
-+	"gpio67",
-+};
-+
-+static const char * const rx0_groups[] = {
-+	"gpio67",
-+};
-+
-+static const char * const tsens_max_groups[] = {
-+	"gpio67",
-+};
-+
-+static const char * const mdc_groups[] = {
-+	"gpio68",
-+};
-+
-+static const char * const mdio_groups[] = {
-+	"gpio69",
-+};
-+
-+static const char * const gpio_groups[] = {
-+	"gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6", "gpio7",
-+	"gpio8", "gpio9", "gpio10", "gpio11", "gpio12", "gpio13", "gpio14",
-+	"gpio15", "gpio16", "gpio17", "gpio18", "gpio19", "gpio20", "gpio21",
-+	"gpio22", "gpio23", "gpio24", "gpio25", "gpio26", "gpio27", "gpio28",
-+	"gpio29", "gpio30", "gpio31", "gpio32", "gpio33", "gpio34", "gpio35",
-+	"gpio36", "gpio37", "gpio38", "gpio39", "gpio40", "gpio41", "gpio42",
-+	"gpio43", "gpio44", "gpio45", "gpio46", "gpio47", "gpio48", "gpio49",
-+	"gpio50", "gpio51", "gpio52", "gpio53", "gpio54", "gpio55", "gpio56",
-+	"gpio57", "gpio58", "gpio59", "gpio60", "gpio61", "gpio62", "gpio63",
-+	"gpio64", "gpio65", "gpio66", "gpio67", "gpio68", "gpio69",
-+};
-+
-+static const struct msm_function ipq8074_functions[] = {
-+	FUNCTION(gpio),
-+	FUNCTION(qpic_pad),
-+	FUNCTION(),
-+	FUNCTION(blsp5_i2c),
-+	FUNCTION(blsp5_spi),
-+	FUNCTION(wci20),
-+	FUNCTION(blsp3_spi3),
-+	FUNCTION(burn0),
-+	FUNCTION(pcm_zsi0),
-+	FUNCTION(blsp5_uart),
-+	FUNCTION(mac12),
-+	FUNCTION(blsp3_spi0),
-+	FUNCTION(burn1),
-+	FUNCTION(mac01),
-+	FUNCTION(qdss_cti_trig_out_b0),
-+	FUNCTION(qdss_cti_trig_in_b0),
-+	FUNCTION(qpic_pad4),
-+	FUNCTION(blsp4_uart0),
-+	FUNCTION(blsp4_i2c0),
-+	FUNCTION(blsp4_spi0),
-+	FUNCTION(mac21),
-+	FUNCTION(qdss_cti_trig_out_b1),
-+	FUNCTION(qpic_pad5),
-+	FUNCTION(qdss_cti_trig_in_b1),
-+	FUNCTION(qpic_pad6),
-+	FUNCTION(qpic_pad7),
-+	FUNCTION(cxc0),
-+	FUNCTION(mac13),
-+	FUNCTION(qdss_cti_trig_in_a1),
-+	FUNCTION(qdss_cti_trig_out_a1),
-+	FUNCTION(wci22),
-+	FUNCTION(qdss_cti_trig_in_a0),
-+	FUNCTION(qpic_pad1),
-+	FUNCTION(qdss_cti_trig_out_a0),
-+	FUNCTION(qpic_pad2),
-+	FUNCTION(qpic_pad3),
-+	FUNCTION(qdss_traceclk_b),
-+	FUNCTION(qpic_pad0),
-+	FUNCTION(qdss_tracectl_b),
-+	FUNCTION(qpic_pad8),
-+	FUNCTION(pcm_zsi1),
-+	FUNCTION(qdss_tracedata_b),
-+	FUNCTION(led0),
-+	FUNCTION(pwm04),
-+	FUNCTION(led1),
-+	FUNCTION(pwm14),
-+	FUNCTION(led2),
-+	FUNCTION(pwm24),
-+	FUNCTION(pwm00),
-+	FUNCTION(blsp4_uart1),
-+	FUNCTION(blsp4_i2c1),
-+	FUNCTION(blsp4_spi1),
-+	FUNCTION(wci23),
-+	FUNCTION(mac11),
-+	FUNCTION(blsp3_spi2),
-+	FUNCTION(pwm10),
-+	FUNCTION(pwm20),
-+	FUNCTION(pwm30),
-+	FUNCTION(audio_txmclk),
-+	FUNCTION(pwm02),
-+	FUNCTION(audio_txbclk),
-+	FUNCTION(pwm12),
-+	FUNCTION(audio_txfsync),
-+	FUNCTION(pwm22),
-+	FUNCTION(audio_txd),
-+	FUNCTION(pwm32),
-+	FUNCTION(audio_rxmclk),
-+	FUNCTION(pwm03),
-+	FUNCTION(atest_char0),
-+	FUNCTION(audio_rxbclk),
-+	FUNCTION(pwm13),
-+	FUNCTION(atest_char1),
-+	FUNCTION(audio_rxfsync),
-+	FUNCTION(pwm23),
-+	FUNCTION(atest_char2),
-+	FUNCTION(audio_rxd),
-+	FUNCTION(pwm33),
-+	FUNCTION(atest_char3),
-+	FUNCTION(pcm_drx),
-+	FUNCTION(mac10),
-+	FUNCTION(mac00),
-+	FUNCTION(pcm_dtx),
-+	FUNCTION(pcm_fsync),
-+	FUNCTION(mac20),
-+	FUNCTION(qdss_traceclk_a),
-+	FUNCTION(pcm_pclk),
-+	FUNCTION(qdss_tracectl_a),
-+	FUNCTION(atest_char),
-+	FUNCTION(qdss_tracedata_a),
-+	FUNCTION(blsp0_uart),
-+	FUNCTION(blsp0_i2c),
-+	FUNCTION(blsp0_spi),
-+	FUNCTION(blsp1_uart),
-+	FUNCTION(blsp1_i2c),
-+	FUNCTION(blsp1_spi),
-+	FUNCTION(blsp2_uart),
-+	FUNCTION(blsp2_i2c),
-+	FUNCTION(blsp2_spi),
-+	FUNCTION(blsp3_uart),
-+	FUNCTION(blsp3_i2c),
-+	FUNCTION(blsp3_spi),
-+	FUNCTION(pta2_0),
-+	FUNCTION(wci21),
-+	FUNCTION(cxc1),
-+	FUNCTION(blsp3_spi1),
-+	FUNCTION(pta2_1),
-+	FUNCTION(pta2_2),
-+	FUNCTION(pcie0_clk),
-+	FUNCTION(dbg_out),
-+	FUNCTION(cri_trng0),
-+	FUNCTION(pcie0_rst),
-+	FUNCTION(cri_trng1),
-+	FUNCTION(pcie0_wake),
-+	FUNCTION(cri_trng),
-+	FUNCTION(pcie1_clk),
-+	FUNCTION(rx2),
-+	FUNCTION(ldo_update),
-+	FUNCTION(pcie1_rst),
-+	FUNCTION(ldo_en),
-+	FUNCTION(pcie1_wake),
-+	FUNCTION(gcc_plltest),
-+	FUNCTION(sd_card),
-+	FUNCTION(pwm01),
-+	FUNCTION(pta1_1),
-+	FUNCTION(pwm11),
-+	FUNCTION(rx1),
-+	FUNCTION(pta1_2),
-+	FUNCTION(gcc_tlmm),
-+	FUNCTION(pta1_0),
-+	FUNCTION(pwm21),
-+	FUNCTION(prng_rosc),
-+	FUNCTION(sd_write),
-+	FUNCTION(pwm31),
-+	FUNCTION(rx0),
-+	FUNCTION(tsens_max),
-+	FUNCTION(mdc),
-+	FUNCTION(mdio),
-+};
-+
-+static const struct msm_pingroup ipq8074_groups[] = {
-+	PINGROUP(0, qpic_pad, blsp5_uart, blsp5_i2c, blsp5_spi, wci20,
-+		 blsp3_spi3, NA, burn0, NA),
-+	PINGROUP(1, qpic_pad, pcm_zsi0, mac12, blsp3_spi0, NA, burn1, NA, NA,
-+		 NA),
-+	PINGROUP(2, qpic_pad, blsp5_uart, blsp5_i2c, blsp5_spi, wci20,
-+		 blsp3_spi3, NA, NA, NA),
-+	PINGROUP(3, qpic_pad, mac01, blsp3_spi0, qdss_cti_trig_out_b0, NA, NA,
-+		 NA, NA, NA),
-+	PINGROUP(4, qpic_pad, mac01, blsp3_spi0, qdss_cti_trig_in_b0, NA, NA,
-+		 NA, NA, NA),
-+	PINGROUP(5, qpic_pad4, blsp4_uart0, blsp4_i2c0, blsp4_spi0, mac21,
-+		 qdss_cti_trig_out_b1, NA, NA, NA),
-+	PINGROUP(6, qpic_pad5, blsp4_uart0, blsp4_i2c0, blsp4_spi0, mac21,
-+		 qdss_cti_trig_in_b1, NA, NA, NA),
-+	PINGROUP(7, qpic_pad6, blsp4_uart0, blsp4_spi0, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(8, qpic_pad7, blsp4_uart0, blsp4_spi0, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(9, qpic_pad, blsp5_uart, blsp5_spi, cxc0, mac13, blsp3_spi3,
-+		 qdss_cti_trig_in_a1, NA, NA),
-+	PINGROUP(10, qpic_pad, qdss_cti_trig_out_a1, NA, NA, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(11, qpic_pad, wci22, mac12, qdss_cti_trig_in_a0, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(12, qpic_pad1, qdss_cti_trig_out_a0, NA, NA, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(13, qpic_pad2, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(14, qpic_pad3, qdss_traceclk_b, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(15, qpic_pad0, qdss_tracectl_b, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(16, qpic_pad8, blsp5_uart, pcm_zsi1, blsp5_spi, cxc0, mac13,
-+		 qdss_tracedata_b, NA, NA),
-+	PINGROUP(17, qpic_pad, wci22, qdss_tracedata_b, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(18, led0, pwm04, qdss_tracedata_b, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(19, led1, pwm14, NA, qdss_tracedata_b, NA, NA, NA, NA, NA),
-+	PINGROUP(20, led2, pwm24, NA, qdss_tracedata_b, NA, NA, NA, NA, NA),
-+	PINGROUP(21, pwm00, blsp4_uart1, blsp4_i2c1, blsp4_spi1, wci23, mac11,
-+		 blsp3_spi2, NA, qdss_tracedata_b),
-+	PINGROUP(22, pwm10, blsp4_uart1, blsp4_i2c1, blsp4_spi1, wci23, mac11,
-+		 blsp3_spi2, NA, qdss_tracedata_b),
-+	PINGROUP(23, pwm20, blsp4_uart1, blsp4_spi1, blsp3_spi2, NA,
-+		 qdss_tracedata_b, NA, NA, NA),
-+	PINGROUP(24, pwm30, blsp4_uart1, blsp4_spi1, NA, qdss_tracedata_b, NA,
-+		 NA, NA, NA),
-+	PINGROUP(25, audio_txmclk, pwm02, NA, qdss_tracedata_b, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(26, audio_txbclk, pwm12, NA, qdss_tracedata_b, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(27, audio_txfsync, pwm22, NA, qdss_tracedata_b, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(28, audio_txd, pwm32, NA, qdss_tracedata_b, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(29, audio_rxmclk, pwm03, atest_char0, NA, qdss_tracedata_b,
-+		 NA, NA, NA, NA),
-+	PINGROUP(30, audio_rxbclk, pwm13, atest_char1, NA, qdss_tracedata_b,
-+		 NA, NA, NA, NA),
-+	PINGROUP(31, audio_rxfsync, pwm23, atest_char2, NA, qdss_tracedata_b,
-+		 NA, NA, NA, NA),
-+	PINGROUP(32, audio_rxd, pwm33, atest_char3, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(33, pcm_drx, mac10, mac00, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(34, pcm_dtx, mac10, mac00, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(35, pcm_fsync, mac20, qdss_traceclk_a, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(36, pcm_pclk, mac20, NA, qdss_tracectl_a, NA, NA, NA, NA, NA),
-+	PINGROUP(37, atest_char, NA, qdss_tracedata_a, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(38, blsp0_uart, blsp0_i2c, blsp0_spi, NA, qdss_tracedata_a,
-+		 NA, NA, NA, NA),
-+	PINGROUP(39, blsp0_uart, blsp0_i2c, blsp0_spi, NA, qdss_tracedata_a,
-+		 NA, NA, NA, NA),
-+	PINGROUP(40, blsp0_uart, blsp0_spi, NA, qdss_tracedata_a, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(41, blsp0_uart, blsp0_spi, NA, qdss_tracedata_a, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(42, blsp1_uart, blsp1_i2c, blsp1_spi, NA, qdss_tracedata_a,
-+		 NA, NA, NA, NA),
-+	PINGROUP(43, blsp1_uart, blsp1_i2c, blsp1_spi, NA, qdss_tracedata_a,
-+		 NA, NA, NA, NA),
-+	PINGROUP(44, blsp1_uart, blsp1_spi, NA, qdss_tracedata_a, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(45, blsp1_uart, blsp1_spi, qdss_tracedata_a, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(46, blsp2_uart, blsp2_i2c, blsp2_spi, qdss_tracedata_a, NA,
-+		 NA, NA, NA, NA),
-+	PINGROUP(47, blsp2_uart, blsp2_i2c, blsp2_spi, NA, qdss_tracedata_a,
-+		 NA, NA, NA, NA),
-+	PINGROUP(48, blsp2_uart, blsp2_spi, NA, qdss_tracedata_a, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(49, blsp2_uart, blsp2_spi, NA, qdss_tracedata_a, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(50, blsp3_uart, blsp3_i2c, blsp3_spi, NA, qdss_tracedata_a,
-+		 NA, NA, NA, NA),
-+	PINGROUP(51, blsp3_uart, blsp3_i2c, blsp3_spi, NA, qdss_tracedata_a,
-+		 NA, NA, NA, NA),
-+	PINGROUP(52, blsp3_uart, blsp3_spi, NA, qdss_tracedata_a, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(53, blsp3_uart, blsp3_spi, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(54, pta2_0, wci21, cxc1, blsp3_spi1, NA, NA, NA, NA, NA),
-+	PINGROUP(55, pta2_1, blsp3_spi1, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(56, pta2_2, wci21, cxc1, blsp3_spi1, NA, NA, NA, NA, NA),
-+	PINGROUP(57, pcie0_clk, NA, dbg_out, cri_trng0, NA, NA, NA, NA, NA),
-+	PINGROUP(58, pcie0_rst, NA, cri_trng1, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(59, pcie0_wake, NA, cri_trng, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(60, pcie1_clk, rx2, ldo_update, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(61, pcie1_rst, ldo_en, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(62, pcie1_wake, gcc_plltest, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(63, sd_card, pwm01, NA, gcc_plltest, NA, NA, NA, NA, NA),
-+	PINGROUP(64, pta1_1, pwm11, NA, rx1, NA, NA, NA, NA, NA),
-+	PINGROUP(65, pta1_2, NA, gcc_tlmm, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(66, pta1_0, pwm21, prng_rosc, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(67, sd_write, pwm31, rx0, tsens_max, NA, NA, NA, NA, NA),
-+	PINGROUP(68, mdc, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(69, mdio, NA, NA, NA, NA, NA, NA, NA, NA),
-+};
-+
-+static const struct msm_pinctrl_soc_data ipq8074_pinctrl = {
-+	.pins = ipq8074_pins,
-+	.npins = ARRAY_SIZE(ipq8074_pins),
-+	.functions = ipq8074_functions,
-+	.nfunctions = ARRAY_SIZE(ipq8074_functions),
-+	.groups = ipq8074_groups,
-+	.ngroups = ARRAY_SIZE(ipq8074_groups),
-+	.ngpios = 70,
-+};
-+
-+static int ipq8074_pinctrl_probe(struct platform_device *pdev)
++#include <linux/soc/renesas/rcar-rst.h>
++
++#include <dt-bindings/clock/r8a7791-cpg-mssr.h>
++
++#include "renesas-cpg-mssr.h"
++#include "rcar-gen2-cpg.h"
++
++enum clk_ids {
++	/* Core Clock Outputs exported to DT */
++	LAST_DT_CORE_CLK = R8A7791_CLK_OSC,
++
++	/* External Input Clocks */
++	CLK_EXTAL,
++	CLK_USB_EXTAL,
++
++	/* Internal Core Clocks */
++	CLK_MAIN,
++	CLK_PLL0,
++	CLK_PLL1,
++	CLK_PLL3,
++	CLK_PLL1_DIV2,
++
++	/* Module Clocks */
++	MOD_CLK_BASE
++};
++
++static struct cpg_core_clk r8a7791_core_clks[] __initdata = {
++	/* External Clock Inputs */
++	DEF_INPUT("extal",     CLK_EXTAL),
++	DEF_INPUT("usb_extal", CLK_USB_EXTAL),
++
++	/* Internal Core Clocks */
++	DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_GEN2_MAIN, CLK_EXTAL),
++	DEF_BASE(".pll0",       CLK_PLL0, CLK_TYPE_GEN2_PLL0, CLK_MAIN),
++	DEF_BASE(".pll1",       CLK_PLL1, CLK_TYPE_GEN2_PLL1, CLK_MAIN),
++	DEF_BASE(".pll3",       CLK_PLL3, CLK_TYPE_GEN2_PLL3, CLK_MAIN),
++
++	DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
++
++	/* Core Clock Outputs */
++	DEF_BASE("z",    R8A7791_CLK_Z,    CLK_TYPE_GEN2_Z,    CLK_PLL0),
++	DEF_BASE("lb",   R8A7791_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
++	DEF_BASE("adsp", R8A7791_CLK_ADSP, CLK_TYPE_GEN2_ADSP, CLK_PLL1),
++	DEF_BASE("sdh",  R8A7791_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
++	DEF_BASE("sd0",  R8A7791_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
++	DEF_BASE("qspi", R8A7791_CLK_QSPI, CLK_TYPE_GEN2_QSPI, CLK_PLL1_DIV2),
++	DEF_BASE("rcan", R8A7791_CLK_RCAN, CLK_TYPE_GEN2_RCAN, CLK_USB_EXTAL),
++
++	DEF_FIXED("zg",     R8A7791_CLK_ZG,    CLK_PLL1,          3, 1),
++	DEF_FIXED("zx",     R8A7791_CLK_ZX,    CLK_PLL1,          3, 1),
++	DEF_FIXED("zs",     R8A7791_CLK_ZS,    CLK_PLL1,          6, 1),
++	DEF_FIXED("hp",     R8A7791_CLK_HP,    CLK_PLL1,         12, 1),
++	DEF_FIXED("i",      R8A7791_CLK_I,     CLK_PLL1,          2, 1),
++	DEF_FIXED("b",      R8A7791_CLK_B,     CLK_PLL1,         12, 1),
++	DEF_FIXED("p",      R8A7791_CLK_P,     CLK_PLL1,         24, 1),
++	DEF_FIXED("cl",     R8A7791_CLK_CL,    CLK_PLL1,         48, 1),
++	DEF_FIXED("m2",     R8A7791_CLK_M2,    CLK_PLL1,          8, 1),
++	DEF_FIXED("zb3",    R8A7791_CLK_ZB3,   CLK_PLL3,          4, 1),
++	DEF_FIXED("zb3d2",  R8A7791_CLK_ZB3D2, CLK_PLL3,          8, 1),
++	DEF_FIXED("ddr",    R8A7791_CLK_DDR,   CLK_PLL3,          8, 1),
++	DEF_FIXED("mp",     R8A7791_CLK_MP,    CLK_PLL1_DIV2,    15, 1),
++	DEF_FIXED("cp",     R8A7791_CLK_CP,    CLK_EXTAL,         2, 1),
++	DEF_FIXED("r",      R8A7791_CLK_R,     CLK_PLL1,      49152, 1),
++	DEF_FIXED("osc",    R8A7791_CLK_OSC,   CLK_PLL1,      12288, 1),
++
++	DEF_DIV6P1("sd2",   R8A7791_CLK_SD2,   CLK_PLL1_DIV2, 0x078),
++	DEF_DIV6P1("sd3",   R8A7791_CLK_SD3,   CLK_PLL1_DIV2, 0x26c),
++	DEF_DIV6P1("mmc0",  R8A7791_CLK_MMC0,  CLK_PLL1_DIV2, 0x240),
++	DEF_DIV6P1("ssp",   R8A7791_CLK_SSP,   CLK_PLL1_DIV2, 0x248),
++	DEF_DIV6P1("ssprs", R8A7791_CLK_SSPRS, CLK_PLL1_DIV2, 0x24c),
++};
++
++static const struct mssr_mod_clk r8a7791_mod_clks[] __initconst = {
++	DEF_MOD("msiof0",		   0,	R8A7791_CLK_MP),
++	DEF_MOD("vcp0",			 101,	R8A7791_CLK_ZS),
++	DEF_MOD("vpc0",			 103,	R8A7791_CLK_ZS),
++	DEF_MOD("jpu",			 106,	R8A7791_CLK_M2),
++	DEF_MOD("ssp1",			 109,	R8A7791_CLK_ZS),
++	DEF_MOD("tmu1",			 111,	R8A7791_CLK_P),
++	DEF_MOD("3dg",			 112,	R8A7791_CLK_ZG),
++	DEF_MOD("2d-dmac",		 115,	R8A7791_CLK_ZS),
++	DEF_MOD("fdp1-1",		 118,	R8A7791_CLK_ZS),
++	DEF_MOD("fdp1-0",		 119,	R8A7791_CLK_ZS),
++	DEF_MOD("tmu3",			 121,	R8A7791_CLK_P),
++	DEF_MOD("tmu2",			 122,	R8A7791_CLK_P),
++	DEF_MOD("cmt0",			 124,	R8A7791_CLK_R),
++	DEF_MOD("tmu0",			 125,	R8A7791_CLK_CP),
++	DEF_MOD("vsp1du1",		 127,	R8A7791_CLK_ZS),
++	DEF_MOD("vsp1du0",		 128,	R8A7791_CLK_ZS),
++	DEF_MOD("vsp1-sy",		 131,	R8A7791_CLK_ZS),
++	DEF_MOD("scifa2",		 202,	R8A7791_CLK_MP),
++	DEF_MOD("scifa1",		 203,	R8A7791_CLK_MP),
++	DEF_MOD("scifa0",		 204,	R8A7791_CLK_MP),
++	DEF_MOD("msiof2",		 205,	R8A7791_CLK_MP),
++	DEF_MOD("scifb0",		 206,	R8A7791_CLK_MP),
++	DEF_MOD("scifb1",		 207,	R8A7791_CLK_MP),
++	DEF_MOD("msiof1",		 208,	R8A7791_CLK_MP),
++	DEF_MOD("scifb2",		 216,	R8A7791_CLK_MP),
++	DEF_MOD("sys-dmac1",		 218,	R8A7791_CLK_ZS),
++	DEF_MOD("sys-dmac0",		 219,	R8A7791_CLK_ZS),
++	DEF_MOD("tpu0",			 304,	R8A7791_CLK_CP),
++	DEF_MOD("sdhi3",		 311,	R8A7791_CLK_SD3),
++	DEF_MOD("sdhi2",		 312,	R8A7791_CLK_SD2),
++	DEF_MOD("sdhi0",		 314,	R8A7791_CLK_SD0),
++	DEF_MOD("mmcif0",		 315,	R8A7791_CLK_MMC0),
++	DEF_MOD("iic0",			 318,	R8A7791_CLK_HP),
++	DEF_MOD("pciec",		 319,	R8A7791_CLK_MP),
++	DEF_MOD("iic1",			 323,	R8A7791_CLK_HP),
++	DEF_MOD("usb3.0",		 328,	R8A7791_CLK_MP),
++	DEF_MOD("cmt1",			 329,	R8A7791_CLK_R),
++	DEF_MOD("usbhs-dmac0",		 330,	R8A7791_CLK_HP),
++	DEF_MOD("usbhs-dmac1",		 331,	R8A7791_CLK_HP),
++	DEF_MOD("irqc",			 407,	R8A7791_CLK_CP),
++	DEF_MOD("intc-sys",		 408,	R8A7791_CLK_ZS),
++	DEF_MOD("audio-dmac1",		 501,	R8A7791_CLK_HP),
++	DEF_MOD("audio-dmac0",		 502,	R8A7791_CLK_HP),
++	DEF_MOD("adsp_mod",		 506,	R8A7791_CLK_ADSP),
++	DEF_MOD("thermal",		 522,	CLK_EXTAL),
++	DEF_MOD("pwm",			 523,	R8A7791_CLK_P),
++	DEF_MOD("usb-ehci",		 703,	R8A7791_CLK_MP),
++	DEF_MOD("usbhs",		 704,	R8A7791_CLK_HP),
++	DEF_MOD("hscif2",		 713,	R8A7791_CLK_ZS),
++	DEF_MOD("scif5",		 714,	R8A7791_CLK_P),
++	DEF_MOD("scif4",		 715,	R8A7791_CLK_P),
++	DEF_MOD("hscif1",		 716,	R8A7791_CLK_ZS),
++	DEF_MOD("hscif0",		 717,	R8A7791_CLK_ZS),
++	DEF_MOD("scif3",		 718,	R8A7791_CLK_P),
++	DEF_MOD("scif2",		 719,	R8A7791_CLK_P),
++	DEF_MOD("scif1",		 720,	R8A7791_CLK_P),
++	DEF_MOD("scif0",		 721,	R8A7791_CLK_P),
++	DEF_MOD("du1",			 723,	R8A7791_CLK_ZX),
++	DEF_MOD("du0",			 724,	R8A7791_CLK_ZX),
++	DEF_MOD("lvds0",		 726,	R8A7791_CLK_ZX),
++	DEF_MOD("ipmmu-sgx",		 800,	R8A7791_CLK_ZX),
++	DEF_MOD("mlb",			 802,	R8A7791_CLK_HP),
++	DEF_MOD("vin2",			 809,	R8A7791_CLK_ZG),
++	DEF_MOD("vin1",			 810,	R8A7791_CLK_ZG),
++	DEF_MOD("vin0",			 811,	R8A7791_CLK_ZG),
++	DEF_MOD("etheravb",		 812,	R8A7791_CLK_HP),
++	DEF_MOD("ether",		 813,	R8A7791_CLK_P),
++	DEF_MOD("sata1",		 814,	R8A7791_CLK_ZS),
++	DEF_MOD("sata0",		 815,	R8A7791_CLK_ZS),
++	DEF_MOD("gyro-adc",		 901,	R8A7791_CLK_P),
++	DEF_MOD("gpio7",		 904,	R8A7791_CLK_CP),
++	DEF_MOD("gpio6",		 905,	R8A7791_CLK_CP),
++	DEF_MOD("gpio5",		 907,	R8A7791_CLK_CP),
++	DEF_MOD("gpio4",		 908,	R8A7791_CLK_CP),
++	DEF_MOD("gpio3",		 909,	R8A7791_CLK_CP),
++	DEF_MOD("gpio2",		 910,	R8A7791_CLK_CP),
++	DEF_MOD("gpio1",		 911,	R8A7791_CLK_CP),
++	DEF_MOD("gpio0",		 912,	R8A7791_CLK_CP),
++	DEF_MOD("can1",			 915,	R8A7791_CLK_P),
++	DEF_MOD("can0",			 916,	R8A7791_CLK_P),
++	DEF_MOD("qspi_mod",		 917,	R8A7791_CLK_QSPI),
++	DEF_MOD("i2c5",			 925,	R8A7791_CLK_HP),
++	DEF_MOD("iicdvfs",		 926,	R8A7791_CLK_CP),
++	DEF_MOD("i2c4",			 927,	R8A7791_CLK_HP),
++	DEF_MOD("i2c3",			 928,	R8A7791_CLK_HP),
++	DEF_MOD("i2c2",			 929,	R8A7791_CLK_HP),
++	DEF_MOD("i2c1",			 930,	R8A7791_CLK_HP),
++	DEF_MOD("i2c0",			 931,	R8A7791_CLK_HP),
++	DEF_MOD("ssi-all",		1005,	R8A7791_CLK_P),
++	DEF_MOD("ssi9",			1006,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi8",			1007,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi7",			1008,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi6",			1009,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi5",			1010,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi4",			1011,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi3",			1012,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi2",			1013,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi1",			1014,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi0",			1015,	MOD_CLK_ID(1005)),
++	DEF_MOD("scu-all",		1017,	R8A7791_CLK_P),
++	DEF_MOD("scu-dvc1",		1018,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-dvc0",		1019,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-ctu1-mix1",	1020,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-ctu0-mix0",	1021,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src9",		1022,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src8",		1023,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src7",		1024,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src6",		1025,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src5",		1026,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src4",		1027,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src3",		1028,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src2",		1029,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src1",		1030,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src0",		1031,	MOD_CLK_ID(1017)),
++	DEF_MOD("scifa3",		1106,	R8A7791_CLK_MP),
++	DEF_MOD("scifa4",		1107,	R8A7791_CLK_MP),
++	DEF_MOD("scifa5",		1108,	R8A7791_CLK_MP),
++};
++
++static const unsigned int r8a7791_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
++};
++
++/*
++ * CPG Clock Data
++ */
++
++/*
++ *   MD		EXTAL		PLL0	PLL1	PLL3
++ * 14 13 19	(MHz)		*1	*1
++ *---------------------------------------------------
++ * 0  0  0	15		x172/2	x208/2	x106
++ * 0  0  1	15		x172/2	x208/2	x88
++ * 0  1  0	20		x130/2	x156/2	x80
++ * 0  1  1	20		x130/2	x156/2	x66
++ * 1  0  0	26 / 2		x200/2	x240/2	x122
++ * 1  0  1	26 / 2		x200/2	x240/2	x102
++ * 1  1  0	30 / 2		x172/2	x208/2	x106
++ * 1  1  1	30 / 2		x172/2	x208/2	x88
++ *
++ * *1 :	Table 7.5a indicates VCO output (PLLx = VCO/2)
++ */
++#define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 12) | \
++					 (((md) & BIT(13)) >> 12) | \
++					 (((md) & BIT(19)) >> 19))
++static const struct rcar_gen2_cpg_pll_config cpg_pll_configs[8] __initconst = {
++	{ 1, 208, 106 }, { 1, 208,  88 }, { 1, 156,  80 }, { 1, 156,  66 },
++	{ 2, 240, 122 }, { 2, 240, 102 }, { 2, 208, 106 }, { 2, 208,  88 },
++};
++
++static int __init r8a7791_cpg_mssr_init(struct device *dev)
 +{
-+	return msm_pinctrl_probe(pdev, &ipq8074_pinctrl);
++	const struct rcar_gen2_cpg_pll_config *cpg_pll_config;
++	struct device_node *np = dev->of_node;
++	unsigned int i;
++	u32 cpg_mode;
++	int error;
++
++	error = rcar_rst_read_mode_pins(&cpg_mode);
++	if (error)
++		return error;
++
++	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
++
++	if (of_device_is_compatible(np, "renesas,r8a7793-cpg-mssr")) {
++		/* R-Car M2-N uses a 1/5 divider for ZG */
++		for (i = 0; i < ARRAY_SIZE(r8a7791_core_clks); i++)
++			if (r8a7791_core_clks[i].id == R8A7791_CLK_ZG) {
++				r8a7791_core_clks[i].div = 5;
++				break;
++			}
++	}
++	return rcar_gen2_cpg_init(cpg_pll_config, 2, cpg_mode);
 +}
 +
-+static const struct of_device_id ipq8074_pinctrl_of_match[] = {
-+	{ .compatible = "qcom,ipq8074-pinctrl", },
-+	{ },
-+};
++const struct cpg_mssr_info r8a7791_cpg_mssr_info __initconst = {
++	/* Core Clocks */
++	.core_clks = r8a7791_core_clks,
++	.num_core_clks = ARRAY_SIZE(r8a7791_core_clks),
++	.last_dt_core_clk = LAST_DT_CORE_CLK,
++	.num_total_core_clks = MOD_CLK_BASE,
 +
-+static struct platform_driver ipq8074_pinctrl_driver = {
-+	.driver = {
-+		.name = "ipq8074-pinctrl",
-+		.owner = THIS_MODULE,
-+		.of_match_table = ipq8074_pinctrl_of_match,
++	/* Module Clocks */
++	.mod_clks = r8a7791_mod_clks,
++	.num_mod_clks = ARRAY_SIZE(r8a7791_mod_clks),
++	.num_hw_mod_clks = 12 * 32,
++
++	/* Critical Module Clocks */
++	.crit_mod_clks = r8a7791_crit_mod_clks,
++	.num_crit_mod_clks = ARRAY_SIZE(r8a7791_crit_mod_clks),
++
++	/* Callbacks */
++	.init = r8a7791_cpg_mssr_init,
++	.cpg_clk_register = rcar_gen2_cpg_clk_register,
++};
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 36a09cf68b2de93c..04ac51dcf48203ac 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -645,6 +645,17 @@ static const struct of_device_id cpg_mssr_match[] = {
+ 		.data = &r8a7790_cpg_mssr_info,
+ 	},
+ #endif
++#ifdef CONFIG_CLK_R8A7791
++	{
++		.compatible = "renesas,r8a7791-cpg-mssr",
++		.data = &r8a7791_cpg_mssr_info,
 +	},
-+	.probe = ipq8074_pinctrl_probe,
-+	.remove = msm_pinctrl_remove,
-+};
-+
-+static int __init ipq8074_pinctrl_init(void)
-+{
-+	return platform_driver_register(&ipq8074_pinctrl_driver);
-+}
-+arch_initcall(ipq8074_pinctrl_init);
-+
-+static void __exit ipq8074_pinctrl_exit(void)
-+{
-+	platform_driver_unregister(&ipq8074_pinctrl_driver);
-+}
-+module_exit(ipq8074_pinctrl_exit);
-+
-+MODULE_DESCRIPTION("Qualcomm ipq8074 pinctrl driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DEVICE_TABLE(of, ipq8074_pinctrl_of_match);
++	/* R-Car M2-N is (almost) identical to R-Car M2-W w.r.t. clocks. */
++	{
++		.compatible = "renesas,r8a7793-cpg-mssr",
++		.data = &r8a7791_cpg_mssr_info,
++	},
++#endif
+ #ifdef CONFIG_CLK_R8A7795
+ 	{
+ 		.compatible = "renesas,r8a7795-cpg-mssr",
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
+index 38fcb25c876ea3b5..c93f36c471a32841 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.h
++++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -133,6 +133,7 @@ struct cpg_mssr_info {
+ extern const struct cpg_mssr_info r8a7743_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a7745_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a7790_cpg_mssr_info;
++extern const struct cpg_mssr_info r8a7791_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a7795_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a7796_cpg_mssr_info;
+ 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
