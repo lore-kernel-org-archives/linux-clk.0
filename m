@@ -1,167 +1,49 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	jbrunet@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	narmstrong@baylibre.com
-Cc: carlo@caione.org,
-	khilman@baylibre.com,
-	linux-arm-kernel@lists.infradead.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/1] clk: meson: meson8b: add support for the NAND clocks
-Date: Sat,  1 Apr 2017 15:10:01 +0200
-Message-Id: <20170401131001.9988-2-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20170401131001.9988-1-martin.blumenstingl@googlemail.com>
-References: <20170401131001.9988-1-martin.blumenstingl@googlemail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:33983 "EHLO
+        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031022AbdDZVop (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Apr 2017 17:44:45 -0400
+Received: by mail-oi0-f43.google.com with SMTP id x184so17200988oia.1
+        for <linux-clk@vger.kernel.org>; Wed, 26 Apr 2017 14:44:44 -0700 (PDT)
+Date: Wed, 26 Apr 2017 16:44:43 -0500
+From: Andy Gross <andy.gross@linaro.org>
+To: Ritesh Harjani <riteshh@codeaurora.org>
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        adrian.hunter@intel.com, sboyd@codeaurora.org,
+        shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
+        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
+        david.griego@linaro.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, rnayak@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v9 07/16] mmc: sdhci-msm: Add get_min_clock() and
+ get_max_clock() callback
+Message-ID: <20170426214443.GA32019@hector.attlocal.net>
+References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
+ <1479710246-26676-8-git-send-email-riteshh@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1479710246-26676-8-git-send-email-riteshh@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the NAND clocks (from the HHI_NAND_CLK_CNTL register) to the
-Meson8b clock driver. There are three NAND clocks: a gate which enables
-or disables the NAND clock, a mux and a divider (which divides the mux
-output).
-Unfortunately the public S805 datasheet does not document the mux
-parents. However, the vendor kernel has a few hints for us which allows
-us to make an educated guess about the clock parents. To do this we need
-to have a look at set_nand_core_clk() from the vendor's NAND driver (see
-[0]):
-- XTAL = (4<<9) | (1<<8) | 0
-- 160MHz = (0<<9) | (1<<8) | 3)
-- 182MHz = (3<<9) | (1<<8) | 1)
-- 212MHz = (1<<9) | (1<<8) | 3)
-- 255MHz = (2<<9) | (1<<8) | 1)
+On Mon, Nov 21, 2016 at 12:07:17PM +0530, Ritesh Harjani wrote:
+> This add get_min_clock() and get_max_clock() callback
+> for sdhci-msm. sdhci-msm min/max clocks may be different
+> hence implement these callbacks.
+> 
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-While there is a comment for the XTAL parent (which indicates that it
-should only be used for debugging) we have to do a bit of math for the
-other parents: target_freq * divider = rate of parent clock
-Bit 8 above is the enable bit, so we can ignore it here. Bits 11:9 are
-the mux index and bits 6:0 are the 0-based divider (so we need to add
-1). This gives us:
-- mux 0 (160MHz * 4) = fclk_div4 (actual rate = 637.5MHz, off by 2.5MHz)
-- mux 1 (212MHz * 4) = fclk_div3 (actual rate = 850MHz, off by 2MHz)
-- mux 2 (255MHz * 2) = fclk_div5 (matches exactly 510MHz)
-- mux 3 (182MHz * 2) = fclk_div7 (actual rate = 346.3MHz, off by 0.3MHz)
+This patch needs to be picked up for stable as 4.9 is currently broken w.r.t.
+MMC on Qualcomm platforms.
 
-[0] https://github.com/khadas/linux/blob/9587681285cb/drivers/amlogic/amlnf/dev/amlnf_ctrl.c#L314
+Fixes: d84be51d1c1d ("mmc: sdhci-msm: Enable few quirks")
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/clk/meson/meson8b.c | 53 +++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/meson8b.h |  6 ++++-
- 2 files changed, 58 insertions(+), 1 deletion(-)
+Regards,
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index e9985503165c..b7f3cf8ed386 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -403,6 +403,53 @@ struct clk_gate meson8b_clk81 = {
- 	},
- };
- 
-+static u32 mux_table_nand[]	= { 0, 1, 2, 3, 4 };
-+
-+struct clk_mux meson8b_nand_clk_sel = {
-+	.reg = (void *)HHI_NAND_CLK_CNTL,
-+	.mask = 0x7,
-+	.shift = 9,
-+	.table = mux_table_nand,
-+	.flags = CLK_MUX_ROUND_CLOSEST,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "nand_clk_sel",
-+		.ops = &clk_mux_ops,
-+		/* FIXME all other parents are unknown: */
-+		.parent_names = (const char *[]){ "fclk_div4", "fclk_div3",
-+			"fclk_div5", "fclk_div7", "xtal" },
-+		.num_parents = 5,
-+		.flags = CLK_SET_RATE_NO_REPARENT,
-+	},
-+};
-+
-+struct clk_divider meson8b_nand_clk_div = {
-+	.reg = (void *)HHI_NAND_CLK_CNTL,
-+	.shift = 0,
-+	.width = 6,
-+	.flags = CLK_DIVIDER_ROUND_CLOSEST,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "nand_clk_div",
-+		.ops = &clk_divider_ops,
-+		.parent_names = (const char *[]){ "nand_clk_sel" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+struct clk_gate meson8b_nand_clk_gate = {
-+	.reg = (void *)HHI_NAND_CLK_CNTL,
-+	.bit_idx = 8,
-+	.lock = &clk_lock,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "nand_clk_gate",
-+		.ops = &clk_gate_ops,
-+		.parent_names = (const char *[]){ "nand_clk_div" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- /* Everything Else (EE) domain gates */
- 
- static MESON_GATE(meson8b_ddr, HHI_GCLK_MPEG0, 0);
-@@ -584,6 +631,9 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
- 		[CLKID_MPLL0]		    = &meson8b_mpll0.hw,
- 		[CLKID_MPLL1]		    = &meson8b_mpll1.hw,
- 		[CLKID_MPLL2]		    = &meson8b_mpll2.hw,
-+		[CLKID_NAND_SEL]	    = &meson8b_nand_clk_sel.hw,
-+		[CLKID_NAND_DIV]	    = &meson8b_nand_clk_div.hw,
-+		[CLKID_NAND_CLK]	    = &meson8b_nand_clk_gate.hw,
- 	},
- 	.num = CLK_NR_CLKS,
- };
-@@ -679,14 +729,17 @@ static struct clk_gate *const meson8b_clk_gates[] = {
- 	&meson8b_ao_ahb_sram,
- 	&meson8b_ao_ahb_bus,
- 	&meson8b_ao_iface,
-+	&meson8b_nand_clk_gate,
- };
- 
- static struct clk_mux *const meson8b_clk_muxes[] = {
- 	&meson8b_mpeg_clk_sel,
-+	&meson8b_nand_clk_sel,
- };
- 
- static struct clk_divider *const meson8b_clk_dividers[] = {
- 	&meson8b_mpeg_clk_div,
-+	&meson8b_nand_clk_div,
- };
- 
- static int meson8b_clkc_probe(struct platform_device *pdev)
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index 3881defc8644..cbb8001b5fe8 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -37,6 +37,7 @@
- #define HHI_GCLK_AO			0x154 /* 0x55 offset in data sheet */
- #define HHI_SYS_CPU_CLK_CNTL1		0x15c /* 0x57 offset in data sheet */
- #define HHI_MPEG_CLK_CNTL		0x174 /* 0x5d offset in data sheet */
-+#define HHI_NAND_CLK_CNTL		0x25c /* 0x97 offset in data sheet */
- #define HHI_MPLL_CNTL			0x280 /* 0xa0 offset in data sheet */
- #define HHI_SYS_PLL_CNTL		0x300 /* 0xc0 offset in data sheet */
- #define HHI_VID_PLL_CNTL		0x320 /* 0xc8 offset in data sheet */
-@@ -160,8 +161,11 @@
- #define CLKID_MPLL0		93
- #define CLKID_MPLL1		94
- #define CLKID_MPLL2		95
-+#define CLKID_NAND_SEL		96
-+#define CLKID_NAND_DIV		97
-+#define CLKID_NAND_CLK		98
- 
--#define CLK_NR_CLKS		96
-+#define CLK_NR_CLKS		99
- 
- /* include the CLKIDs that have been made part of the stable DT binding */
- #include <dt-bindings/clock/meson8b-clkc.h>
--- 
-2.12.1
+Andy Gross
