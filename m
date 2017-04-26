@@ -1,109 +1,152 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:47790 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1041648AbdDUSdg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2017 14:33:36 -0400
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org
-Cc: inki.dae@samsung.com, sw0312.kim@samsung.com,
-        cw00.choi@samsung.com, javier@osg.samsung.com, krzk@kernel.org,
-        jy0922.shim@samsung.com, broonie@kernel.org, robh+dt@kernel.org,
-        b.zolnierkie@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC 2/7] clk: samsung: Add definitions of some audio related
- clocks
-Date: Fri, 21 Apr 2017 19:19:46 +0200
-Message-id: <1492795191-31298-3-git-send-email-s.nawrocki@samsung.com>
-In-reply-to: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
-References: <1492795191-31298-1-git-send-email-s.nawrocki@samsung.com>
- <CGME20170421172023epcas1p3dd7397c8c61daa548ffac88a76e53113@epcas1p3.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20170424194527.19426-1-eric@anholt.net>
+References: <20170424194527.19426-1-eric@anholt.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 26 Apr 2017 16:23:50 +0200
+Message-ID: <CACRpkdZkz16hfW7S1m5=gY=L8fN9u47zfoHHbwrL=_HgQx=TCg@mail.gmail.com>
+Subject: Re: [PATCH] drm/pl111: Register the clock divider and use it.
+To: Eric Anholt <eric@anholt.net>
+Cc: "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Tom Cooksey <tom.cooksey@arm.com>,
+	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds missing definitions of mux clocks required for using
-EPLL as the audio subsystem root clock on exynos5420/exynos5422 SoCs.
+On Mon, Apr 24, 2017 at 9:45 PM, Eric Anholt <eric@anholt.net> wrote:
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c   | 13 ++++++++-----
- include/dt-bindings/clock/exynos5420.h |  3 +++
- 2 files changed, 11 insertions(+), 5 deletions(-)
+> This is required for the panel to work on bcm911360, where CLCDCLK is
+> the fixed 200Mhz AXI41 clock.  The rate set is still passed up to the
+> CLCDCLK, for platforms that have a settable rate on that one.
+>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index cdc092a..87c711a 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -477,8 +477,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 					"mout_sclk_mpll", "ff_dout_spll2",
- 					"mout_sclk_spll", "mout_sclk_epll"};
- PNAME(mout_mau_epll_clk_5800_p)	= { "mout_sclk_epll", "mout_sclk_dpll",
--					"mout_sclk_mpll",
--					"ff_dout_spll2" };
-+					"mout_sclk_mpll", "ff_dout_spll2" };
- PNAME(mout_group8_5800_p)	= { "dout_aclk432_scaler", "dout_sclk_sw" };
- PNAME(mout_group9_5800_p)	= { "dout_osc_div", "mout_sw_aclk432_scaler" };
- PNAME(mout_group10_5800_p)	= { "dout_aclk432_cam", "dout_sclk_sw" };
-@@ -487,6 +486,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
- PNAME(mout_group13_5800_p)	= { "dout_osc_div", "mout_sw_aclkfl1_550_cam" };
- PNAME(mout_group14_5800_p)	= { "dout_aclk550_cam", "dout_sclk_sw" };
- PNAME(mout_group15_5800_p)	= { "dout_osc_div", "mout_sw_aclk550_cam" };
-+PNAME(mout_group16_5800_p)	= { "dout_osc_div", "mout_mau_epll_clk" };
- 
- /* fixed rate clocks generated outside the soc */
- static struct samsung_fixed_rate_clock
-@@ -536,8 +536,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 
- 	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
- 			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
--	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p, SRC_TOP7,
--			20, 2),
-+	MUX(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
-+							SRC_TOP7, 20, 2),
- 	MUX(0, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
- 	MUX(0, "mout_epll2", mout_epll2_5800_p, SRC_TOP7, 28, 1),
- 
-@@ -546,6 +546,8 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	MUX(0, "mout_aclk432_cam", mout_group6_5800_p, SRC_TOP8, 24, 2),
- 	MUX(0, "mout_aclk432_scaler", mout_group6_5800_p, SRC_TOP8, 28, 2),
- 
-+	MUX(CLK_MOUT_USER_MAU_EPLL, "mout_user_mau_epll", mout_group16_5800_p,
-+							SRC_TOP9, 8, 1),
- 	MUX(0, "mout_user_aclk550_cam", mout_group15_5800_p,
- 							SRC_TOP9, 16, 1),
- 	MUX(0, "mout_user_aclkfl1_550_cam", mout_group13_5800_p,
-@@ -703,7 +705,7 @@ static void __init exynos5420_clk_sleep_init(void) {}
- 	MUX(0, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
- 	MUX(0, "mout_sclk_ipll", mout_ipll_p, SRC_TOP6, 12, 1),
- 	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
--	MUX(0, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1),
-+	MUX(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1),
- 	MUX(0, "mout_sclk_dpll", mout_dpll_p, SRC_TOP6, 24, 1),
- 	MUX(0, "mout_sclk_cpll", mout_cpll_p, SRC_TOP6, 28, 1),
- 
-@@ -1399,6 +1401,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
- 
- 	if (_get_rate("fin_pll") == 24 * MHZ) {
- 		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
-+		exynos5x_plls[epll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 	}
-diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
-index 6fd21c2..2740ae0 100644
---- a/include/dt-bindings/clock/exynos5420.h
-+++ b/include/dt-bindings/clock/exynos5420.h
-@@ -217,6 +217,9 @@
- #define CLK_MOUT_MCLK_CDREX	654
- #define CLK_MOUT_BPLL		655
- #define CLK_MOUT_MX_MSPLL_CCORE	656
-+#define CLK_MOUT_EPLL		657
-+#define CLK_MOUT_MAU_EPLL	658
-+#define CLK_MOUT_USER_MAU_EPLL	659
- 
- /* divider clocks */
- #define CLK_DOUT_PIXEL		768
--- 
-1.9.1
+I like this, it is pretty.
 
+> +static int pl111_clk_div_choose_div(struct clk_hw *hw, unsigned long rate,
+> +                                   unsigned long *prate, bool set_parent)
+> +{
+> +       int best_div = 1, div;
+> +       struct clk_hw *parent = clk_hw_get_parent(hw);
+> +       unsigned long best_prate = 0;
+> +       unsigned long best_diff = ~0ul;
+> +       int max_div = (1 << (TIM2_PCD_LO_BITS + TIM2_PCD_HI_BITS)) - 1;
+> +
+> +       for (div = 1; div < max_div; div++) {
+> +               unsigned long this_prate, div_rate, diff;
+> +
+> +               if (set_parent)
+> +                       this_prate = clk_hw_round_rate(parent, rate * div);
+> +               else
+> +                       this_prate = *prate;
+> +               div_rate = DIV_ROUND_UP_ULL(this_prate, div);
+> +               diff = abs(rate - div_rate);
+> +
+> +               if (diff < best_diff) {
+> +                       best_div = div;
+> +                       best_diff = diff;
+> +                       best_prate = this_prate;
+> +               }
+> +       }
+> +
+> +       *prate = best_prate;
+> +       return best_div;
+> +}
+
+So since this will choose a divisor using clk_hw_round_rate() on the parent
+if we can set the rate of the parent...
+
+> +static long pl111_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                                    unsigned long *prate)
+> +{
+> +       int div = pl111_clk_div_choose_div(hw, rate, prate, true);
+
+...which we seem to assume that we can, actually why do you pass
+this parameter set_parent at all? It is always true in this code.
+
+You should not need to know whether we can set the rate of the
+parent or not: clk_hw_round_rate() will simply return the fixed
+rate anyway.
+
+And if the divider can make the set rate even more precise:
+all the better!
+
+So I think the parameter can go.
+
+> +static int pl111_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                                 unsigned long prate)
+> +{
+> +       struct pl111_drm_dev_private *priv =
+> +               container_of(hw, struct pl111_drm_dev_private, clk_div);
+> +       int div = pl111_clk_div_choose_div(hw, rate, &prate, false);
+> +       u32 tim2;
+> +
+> +       spin_lock(&priv->tim2_lock);
+> +       tim2 = readl(priv->regs + CLCD_TIM2);
+> +       tim2 &= ~(TIM2_BCD | TIM2_PCD_LO_MASK | TIM2_PCD_HI_MASK);
+> +
+> +       if (div == 1) {
+> +               tim2 |= TIM2_BCD;
+> +       } else {
+> +               div -= 2;
+> +               tim2 |= div & TIM2_PCD_LO_MASK;
+> +               tim2 |= (div >> TIM2_PCD_LO_BITS) << TIM2_PCD_HI_SHIFT;
+> +       }
+> +
+> +       writel(tim2, priv->regs + CLCD_TIM2);
+> +       spin_unlock(&priv->tim2_lock);
+> +
+> +       return 0;
+> +}
+
+So this will write the divisor, which is nice. But what if we also need
+to change the rate of the parent?
+
+> +static int
+> +pl111_init_clock_divider(struct drm_device *drm)
+> +{
+> +       struct pl111_drm_dev_private *priv = drm->dev_private;
+> +       struct clk *parent = devm_clk_get(drm->dev, "clcdclk");
+> +       struct clk_hw *div = &priv->clk_div;
+> +       const char *parent_name;
+> +       struct clk_init_data init = {
+> +               .name = "pl111_div",
+> +               .ops = &pl111_clk_div_ops,
+> +               .parent_names = &parent_name,
+> +               .num_parents = 1,
+> +       };
+
+I think it is necessary to set .flags in the init data to
+.flags = CLK_SET_RATE_PARENT,
+for this code to work with a parent that can change rate.
+
+>         void *regs;
+> +       /* The pixel clock (a reference to our clock divider off of CLCDCLK). */
+>         struct clk *clk;
+
+Maybe we should simply rename it pixclk so it is clear what it's for,
+but that can be a separate patch.
+
+> - * - Use the internal clock divisor to reduce power consumption by
+> - *   using HCLK (apb_pclk) when appropriate.
+> + * - Use the CLKSEL bit to support switching between the two external
+> + *   clock parents.
+
+OK so that remains to be done. We discussed this previously
+so I got a bit confused. The divisor code seems fine, after this
+we only need some more code to choose the best parent for
+the divided clock.
+
+It seems that what would pe Perfect(TM) would be to calculate the
+best end result using clock A and the best end result using clock B,
+both utilizing the divisor, and then choose the best of those two.
+
+I think struct clk_mux is supposed to do that so it would eventually
+be:
+
+CLK A -|\_ clk_mux --> clk_divider --> pixel clock
+CLK B -|/
+
+Yours,
+Linus Walleij
