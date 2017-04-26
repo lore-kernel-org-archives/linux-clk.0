@@ -1,51 +1,69 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com> 
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org ,
- Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Subject: [GIT PULL] Amlogic clock header updates for v4.12
-Date: Tue, 04 Apr 2017 16:14:03 -0700
-Message-ID: <m2tw637olg.fsf@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:41650 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1956385AbdDZHeY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Apr 2017 03:34:24 -0400
+Date: Wed, 26 Apr 2017 09:34:18 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] soc: renesas: Provide dummy rcar_rst_read_mode_pins()
+ for compile-testing
+Message-ID: <20170426073418.GE25517@verge.net.au>
+References: <1493141785-29117-1-git-send-email-geert+renesas@glider.be>
+ <20170426071305.GC25517@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170426071305.GC25517@verge.net.au>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Steven, Mike,
+On Wed, Apr 26, 2017 at 09:13:06AM +0200, Simon Horman wrote:
+> On Tue, Apr 25, 2017 at 07:36:25PM +0200, Geert Uytterhoeven wrote:
+> > If the R-Car RST driver is not included, compile-testing R-Car clock
+> > drivers fails with a link error:
+> > 
+> >     undefined reference to `rcar_rst_read_mode_pins'
+> > 
+> > To fix this, provide a dummy version.  Use the exact same test logic as
+> > in drivers/soc/renesas/Makefile, as there is no Kconfig symbol (yet) to
+> > control compilation of the R-Car RST driver.
+> 
+> Adding a Kconfig symbol would be a bit cleaner IMHO.
 
-In order to restructure things so we only have clock headers/bindings in
-the dependencies needed by the Amlogic DT patches, I've split up the
-clock branch you've collected for us into a headers part and a drivers
-part.   Here's a pull req for the headers.
+I now see you are doing so in other patches :)
 
-Kevin
-
-The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
-
-  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-amlogic.git tags/amlogic-clk-headers
-
-for you to fetch changes up to 92c2cc5d5566cb84e4f4a683e73c3516882c2ee8:
-
-  dt-bindings: clock: gxbb-clkc: Add GXL compatible variant (2017-04-04 11:00:07 -0700)
-
-----------------------------------------------------------------
-Amlogic clock headers and DT binding updates for v4.12
-- add clocks for I2S and Mali
-
-----------------------------------------------------------------
-Jerome Brunet (1):
-      dt-bindings: clk: gxbb: expose i2s output clock gates
-
-Neil Armstrong (3):
-      clk: meson-gxbb: Add MALI clock IDS
-      clk: meson-gxbb: Expose GP0 dt-bindings clock id
-      dt-bindings: clock: gxbb-clkc: Add GXL compatible variant
-
- Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt |  3 ++-
- drivers/clk/meson/gxbb.h                                      | 21 ++++++++++++++-------
- include/dt-bindings/clock/gxbb-clkc.h                         | 11 +++++++++++
- 3 files changed, 27 insertions(+), 8 deletions(-)
+> > Fixes: 527c02f66d263d2e ("soc: renesas: Add R-Car RST driver")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > This isn't an issue now, but it does prevent enabling compile-testing of
+> > the R-Car clock drivers.  As this is a dependency between two different
+> > subsystems, I think this patch should be fast-tracked.
+> > 
+> > The #ifdef condition will be revised later, when the R-Car RST driver
+> > gains its own Kconfig symbol.
+> > ---
+> >  include/linux/soc/renesas/rcar-rst.h | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/include/linux/soc/renesas/rcar-rst.h b/include/linux/soc/renesas/rcar-rst.h
+> > index a18e0783946b66ec..787e7ad53d45f61c 100644
+> > --- a/include/linux/soc/renesas/rcar-rst.h
+> > +++ b/include/linux/soc/renesas/rcar-rst.h
+> > @@ -1,6 +1,11 @@
+> >  #ifndef __LINUX_SOC_RENESAS_RCAR_RST_H__
+> >  #define __LINUX_SOC_RENESAS_RCAR_RST_H__
+> >  
+> > +#if defined(CONFIG_ARCH_RCAR_GEN1) || defined(CONFIG_ARCH_RCAR_GEN2) || \
+> > +    defined(CONFIG_ARCH_R8A7795) || defined(CONFIG_ARCH_R8A7796)
+> >  int rcar_rst_read_mode_pins(u32 *mode);
+> > +#else
+> > +static inline int rcar_rst_read_mode_pins(u32 *mode) { return -ENODEV; }
+> > +#endif
+> >  
+> >  #endif /* __LINUX_SOC_RENESAS_RCAR_RST_H__ */
+> > -- 
+> > 2.7.4
+> > 
+> 
