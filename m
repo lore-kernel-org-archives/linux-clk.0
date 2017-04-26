@@ -1,221 +1,128 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<aisheng.dong@nxp.com>, <kernel@pengutronix.de>, <broonie@kernel.org>,
-	<yibin.gong@nxp.com>, <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <shawnguo@kernel.org>,
-	<fabio.estevam@nxp.com>, <anson.huang@nxp.com>, <ping.bai@nxp.com>,
-	<leonard.crestez@nxp.com>, <octavian.purdila@nxp.com>
-Subject: [RFC PATCH 3/3] cpufreq: imx6q: refine clk operations
-Date: Wed, 12 Apr 2017 12:03:29 +0800
-Message-ID: <1491969809-20154-4-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
-References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <eric@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "open list\:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Tom Cooksey <tom.cooksey@arm.com>, Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/pl111: Register the clock divider and use it.
+In-Reply-To: <CACRpkdZkz16hfW7S1m5=gY=L8fN9u47zfoHHbwrL=_HgQx=TCg@mail.gmail.com>
+References: <20170424194527.19426-1-eric@anholt.net> <CACRpkdZkz16hfW7S1m5=gY=L8fN9u47zfoHHbwrL=_HgQx=TCg@mail.gmail.com>
+Date: Wed, 26 Apr 2017 09:54:32 -0700
+Message-ID: <8737cvkt2v.fsf@eliezer.anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-Use clk_bulk_get to ease the driver clocks handling.
+--=-=-=
+Content-Type: text/plain
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Anson Huang <anson.huang@nxp.com>
-Cc: Robin Gong <yibin.gong@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Octavian Purdila <octavian.purdila@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/cpufreq/imx6q-cpufreq.c | 119 ++++++++++++++++++----------------------
- 1 file changed, 53 insertions(+), 66 deletions(-)
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
-index 7719b02..6158910 100644
---- a/drivers/cpufreq/imx6q-cpufreq.c
-+++ b/drivers/cpufreq/imx6q-cpufreq.c
-@@ -24,15 +24,29 @@ static struct regulator *arm_reg;
- static struct regulator *pu_reg;
- static struct regulator *soc_reg;
- 
--static struct clk *arm_clk;
--static struct clk *pll1_sys_clk;
--static struct clk *pll1_sw_clk;
--static struct clk *step_clk;
--static struct clk *pll2_pfd2_396m_clk;
--
--/* clk used by i.MX6UL */
--static struct clk *pll2_bus_clk;
--static struct clk *secondary_sel_clk;
-+enum IMX6_CPUFREQ_CLKS {
-+	ARM,
-+	PLL1_SYS,
-+	STEP,
-+	PLL1_SW,
-+	PLL2_PFD2_396M,
-+	/* MX6UL requires two more clks */
-+	PLL2_BUS,
-+	SECONDARY_SEL,
-+};
-+#define IMX6Q_CPUFREQ_CLK_NUM		5
-+#define IMX6UL_CPUFREQ_CLK_NUM		7
-+
-+static int num_clks;
-+static struct clk_bulk_data clks[] = {
-+	{ .id = "arm" },
-+	{ .id = "pll1_sys" },
-+	{ .id = "step" },
-+	{ .id = "pll1_sw" },
-+	{ .id = "pll2_pfd2_396m" },
-+	{ .id = "pll2_bus" },
-+	{ .id = "secondary_sel" },
-+};
- 
- static struct device *cpu_dev;
- static bool free_opp;
-@@ -51,7 +65,7 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
- 
- 	new_freq = freq_table[index].frequency;
- 	freq_hz = new_freq * 1000;
--	old_freq = clk_get_rate(arm_clk) / 1000;
-+	old_freq = clk_get_rate(clks[ARM].clk) / 1000;
- 
- 	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &freq_hz);
- 	if (IS_ERR(opp)) {
-@@ -109,25 +123,27 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
- 		 * voltage of 528MHz, so lower the CPU frequency to one
- 		 * half before changing CPU frequency.
- 		 */
--		clk_set_rate(arm_clk, (old_freq >> 1) * 1000);
--		clk_set_parent(pll1_sw_clk, pll1_sys_clk);
--		if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk))
--			clk_set_parent(secondary_sel_clk, pll2_bus_clk);
-+		clk_set_rate(clks[ARM].clk, (old_freq >> 1) * 1000);
-+		clk_set_parent(clks[PLL1_SW].clk, clks[PLL1_SYS].clk);
-+		if (freq_hz > clk_get_rate(clks[PLL2_PFD2_396M].clk))
-+			clk_set_parent(clks[SECONDARY_SEL].clk,
-+				       clks[PLL2_BUS].clk);
- 		else
--			clk_set_parent(secondary_sel_clk, pll2_pfd2_396m_clk);
--		clk_set_parent(step_clk, secondary_sel_clk);
--		clk_set_parent(pll1_sw_clk, step_clk);
-+			clk_set_parent(clks[SECONDARY_SEL].clk,
-+				       clks[PLL2_PFD2_396M].clk);
-+		clk_set_parent(clks[STEP].clk, clks[SECONDARY_SEL].clk);
-+		clk_set_parent(clks[PLL1_SW].clk, clks[STEP].clk);
- 	} else {
--		clk_set_parent(step_clk, pll2_pfd2_396m_clk);
--		clk_set_parent(pll1_sw_clk, step_clk);
--		if (freq_hz > clk_get_rate(pll2_pfd2_396m_clk)) {
--			clk_set_rate(pll1_sys_clk, new_freq * 1000);
--			clk_set_parent(pll1_sw_clk, pll1_sys_clk);
-+		clk_set_parent(clks[STEP].clk, clks[PLL2_PFD2_396M].clk);
-+		clk_set_parent(clks[PLL1_SW].clk, clks[STEP].clk);
-+		if (freq_hz > clk_get_rate(clks[PLL2_PFD2_396M].clk)) {
-+			clk_set_rate(clks[PLL1_SYS].clk, new_freq * 1000);
-+			clk_set_parent(clks[PLL1_SW].clk, clks[PLL1_SYS].clk);
- 		}
- 	}
- 
- 	/* Ensure the arm clock divider is what we expect */
--	ret = clk_set_rate(arm_clk, new_freq * 1000);
-+	ret = clk_set_rate(clks[ARM].clk, new_freq * 1000);
- 	if (ret) {
- 		dev_err(cpu_dev, "failed to set clock rate: %d\n", ret);
- 		regulator_set_voltage_tol(arm_reg, volt_old, 0);
-@@ -161,7 +177,7 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
- 
- static int imx6q_cpufreq_init(struct cpufreq_policy *policy)
- {
--	policy->clk = arm_clk;
-+	policy->clk = clks[ARM].clk;
- 	return cpufreq_generic_init(policy, freq_table, transition_latency);
- }
- 
-@@ -197,27 +213,14 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 	}
- 
--	arm_clk = clk_get(cpu_dev, "arm");
--	pll1_sys_clk = clk_get(cpu_dev, "pll1_sys");
--	pll1_sw_clk = clk_get(cpu_dev, "pll1_sw");
--	step_clk = clk_get(cpu_dev, "step");
--	pll2_pfd2_396m_clk = clk_get(cpu_dev, "pll2_pfd2_396m");
--	if (IS_ERR(arm_clk) || IS_ERR(pll1_sys_clk) || IS_ERR(pll1_sw_clk) ||
--	    IS_ERR(step_clk) || IS_ERR(pll2_pfd2_396m_clk)) {
--		dev_err(cpu_dev, "failed to get clocks\n");
--		ret = -ENOENT;
--		goto put_clk;
--	}
-+	if (of_machine_is_compatible("fsl,imx6ul"))
-+		num_clks = IMX6UL_CPUFREQ_CLK_NUM;
-+	else
-+		num_clks = IMX6Q_CPUFREQ_CLK_NUM;
- 
--	if (of_machine_is_compatible("fsl,imx6ul")) {
--		pll2_bus_clk = clk_get(cpu_dev, "pll2_bus");
--		secondary_sel_clk = clk_get(cpu_dev, "secondary_sel");
--		if (IS_ERR(pll2_bus_clk) || IS_ERR(secondary_sel_clk)) {
--			dev_err(cpu_dev, "failed to get clocks specific to imx6ul\n");
--			ret = -ENOENT;
--			goto put_clk;
--		}
--	}
-+	ret = clk_bulk_get(cpu_dev, num_clks, clks);
-+	if (ret)
-+		goto put_node;
- 
- 	arm_reg = regulator_get(cpu_dev, "arm");
- 	pu_reg = regulator_get_optional(cpu_dev, "pu");
-@@ -354,22 +357,11 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
- 		regulator_put(pu_reg);
- 	if (!IS_ERR(soc_reg))
- 		regulator_put(soc_reg);
--put_clk:
--	if (!IS_ERR(arm_clk))
--		clk_put(arm_clk);
--	if (!IS_ERR(pll1_sys_clk))
--		clk_put(pll1_sys_clk);
--	if (!IS_ERR(pll1_sw_clk))
--		clk_put(pll1_sw_clk);
--	if (!IS_ERR(step_clk))
--		clk_put(step_clk);
--	if (!IS_ERR(pll2_pfd2_396m_clk))
--		clk_put(pll2_pfd2_396m_clk);
--	if (!IS_ERR(pll2_bus_clk))
--		clk_put(pll2_bus_clk);
--	if (!IS_ERR(secondary_sel_clk))
--		clk_put(secondary_sel_clk);
-+
-+	clk_bulk_put(num_clks, clks);
-+put_node:
- 	of_node_put(np);
-+
- 	return ret;
- }
- 
-@@ -383,13 +375,8 @@ static int imx6q_cpufreq_remove(struct platform_device *pdev)
- 	if (!IS_ERR(pu_reg))
- 		regulator_put(pu_reg);
- 	regulator_put(soc_reg);
--	clk_put(arm_clk);
--	clk_put(pll1_sys_clk);
--	clk_put(pll1_sw_clk);
--	clk_put(step_clk);
--	clk_put(pll2_pfd2_396m_clk);
--	clk_put(pll2_bus_clk);
--	clk_put(secondary_sel_clk);
-+
-+	clk_bulk_put(num_clks, clks);
- 
- 	return 0;
- }
--- 
-2.7.4
+> On Mon, Apr 24, 2017 at 9:45 PM, Eric Anholt <eric@anholt.net> wrote:
+>> +static long pl111_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
+>> +                                    unsigned long *prate)
+>> +{
+>> +       int div = pl111_clk_div_choose_div(hw, rate, prate, true);
+>
+> ...which we seem to assume that we can, actually why do you pass
+> this parameter set_parent at all? It is always true in this code.
+
+Because the other caller just below passes false: When we're being asked
+to set_rate, the parent rate has been set by the core and we just need
+to choose our best divider given that.
+
+>> +static int pl111_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +                                 unsigned long prate)
+>> +{
+>> +       struct pl111_drm_dev_private *priv =
+>> +               container_of(hw, struct pl111_drm_dev_private, clk_div);
+>> +       int div = pl111_clk_div_choose_div(hw, rate, &prate, false);
+>> +       u32 tim2;
+>> +
+>> +       spin_lock(&priv->tim2_lock);
+>> +       tim2 = readl(priv->regs + CLCD_TIM2);
+>> +       tim2 &= ~(TIM2_BCD | TIM2_PCD_LO_MASK | TIM2_PCD_HI_MASK);
+>> +
+>> +       if (div == 1) {
+>> +               tim2 |= TIM2_BCD;
+>> +       } else {
+>> +               div -= 2;
+>> +               tim2 |= div & TIM2_PCD_LO_MASK;
+>> +               tim2 |= (div >> TIM2_PCD_LO_BITS) << TIM2_PCD_HI_SHIFT;
+>> +       }
+>> +
+>> +       writel(tim2, priv->regs + CLCD_TIM2);
+>> +       spin_unlock(&priv->tim2_lock);
+>> +
+>> +       return 0;
+>> +}
+>
+> So this will write the divisor, which is nice. But what if we also need
+> to change the rate of the parent?
+
+The clk core will have already done that.
+
+>> +static int
+>> +pl111_init_clock_divider(struct drm_device *drm)
+>> +{
+>> +       struct pl111_drm_dev_private *priv = drm->dev_private;
+>> +       struct clk *parent = devm_clk_get(drm->dev, "clcdclk");
+>> +       struct clk_hw *div = &priv->clk_div;
+>> +       const char *parent_name;
+>> +       struct clk_init_data init = {
+>> +               .name = "pl111_div",
+>> +               .ops = &pl111_clk_div_ops,
+>> +               .parent_names = &parent_name,
+>> +               .num_parents = 1,
+>> +       };
+>
+> I think it is necessary to set .flags in the init data to
+> .flags = CLK_SET_RATE_PARENT,
+> for this code to work with a parent that can change rate.
+
+I was thinking this flag was used internally in things like
+clk-divider.c, but the core uses it too.  I'll fix that, thanks!
+
+>> - * - Use the internal clock divisor to reduce power consumption by
+>> - *   using HCLK (apb_pclk) when appropriate.
+>> + * - Use the CLKSEL bit to support switching between the two external
+>> + *   clock parents.
+>
+> OK so that remains to be done. We discussed this previously
+> so I got a bit confused. The divisor code seems fine, after this
+> we only need some more code to choose the best parent for
+> the divided clock.
+>
+> It seems that what would pe Perfect(TM) would be to calculate the
+> best end result using clock A and the best end result using clock B,
+> both utilizing the divisor, and then choose the best of those two.
+>
+> I think struct clk_mux is supposed to do that so it would eventually
+> be:
+>
+> CLK A -|\_ clk_mux --> clk_divider --> pixel clock
+> CLK B -|/
+
+I agree.  This patch got things going for this platform, without needing
+the bindings change (and helped confirm for me that I do understand the
+platform design correctly).
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlkA0MgACgkQtdYpNtH8
+nuj1zxAAj+MdIpqzAEp0YNc9ehHjf7/sDnraDcxwDs121DWatBH+nb1EvNHW3dVG
+msNrngJpKwSW5a3my39P2R6Ua5W5690SRm3Mh53+dThvX+gT8IYYKl0IRZJPsOv9
+WkBzKMEUTB9n6JAxoCwKDgUUuOtha0/sAsZ1hct7tvjv1m6rAIECoWgt1IzLd7gP
+A8tLHrK59PMTERLZw2cX11T850DE/t67AeZN7mNxRff/Y6OxMTYkPY1C46ztURkY
+VTJ++uAcNBNlDnwX8uMhtvUw8j+sgDU3c5boHMlj/RkpO+QCEALFhyYr5DGJs1mG
+NYwZ+CarpomFS7gZh40asowD4aYngBEEorVUuFvzf24BFmIpY+C/YdEqWFkwVqxl
+XuqBkV3ytrNX7HLT1VaE2ccCB0E5U+8tlw9vC3CGaMB4ZTP8FLgM8dlQVOJLvJSL
+rs9p7JTRLSGH8kReVGxNwy41exivSoV0YgLZUuE6V4YHl0Jke3E2qzeIdjw3mrEf
+pST0Sg0C3hUjJBUQj2xE9HQCQyY17yhJp2gBM4eHIi36eQmKpCnLtK9yjT2ZskVp
+A5qy3/h/YWfNsIM7XHb/ghZwZXsr2x57rKg6A2H2crQZxDqK+wYEB84suaINH6ay
+2V8IJk97EnYWDSKavKgXVf3Dr1yH956rZo76ALYODMoY0qjytD0=
+=Pmel
+-----END PGP SIGNATURE-----
+--=-=-=--
