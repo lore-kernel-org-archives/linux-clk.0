@@ -1,42 +1,65 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	carlo@caione.org,
-	khilman@baylibre.com
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 5/5] dt-bindings: clock: gxbb-clkc: Add GXL compatible variant
-Date: Wed, 22 Mar 2017 11:32:27 +0100
-Message-Id: <1490178747-14837-6-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1490178747-14837-1-git-send-email-narmstrong@baylibre.com>
-References: <1490178747-14837-1-git-send-email-narmstrong@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:40439 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1435202AbdDZHNN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Apr 2017 03:13:13 -0400
+Date: Wed, 26 Apr 2017 09:13:06 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] soc: renesas: Provide dummy rcar_rst_read_mode_pins()
+ for compile-testing
+Message-ID: <20170426071305.GC25517@verge.net.au>
+References: <1493141785-29117-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1493141785-29117-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Tue, Apr 25, 2017 at 07:36:25PM +0200, Geert Uytterhoeven wrote:
+> If the R-Car RST driver is not included, compile-testing R-Car clock
+> drivers fails with a link error:
+> 
+>     undefined reference to `rcar_rst_read_mode_pins'
+> 
+> To fix this, provide a dummy version.  Use the exact same test logic as
+> in drivers/soc/renesas/Makefile, as there is no Kconfig symbol (yet) to
+> control compilation of the R-Car RST driver.
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-index ce06435..a09d627 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-@@ -5,7 +5,8 @@ controllers within the SoC.
- 
- Required Properties:
- 
--- compatible: should be "amlogic,gxbb-clkc"
-+- compatible: should be "amlogic,gxbb-clkc" for GXBB SoC,
-+	      or "amlogic,gxl-clkc" for GXL and GXM SoC.
- - reg: physical base address of the clock controller and length of memory
-        mapped region.
- 
--- 
-1.9.1
+Adding a Kconfig symbol would be a bit cleaner IMHO.
+
+> 
+> Fixes: 527c02f66d263d2e ("soc: renesas: Add R-Car RST driver")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This isn't an issue now, but it does prevent enabling compile-testing of
+> the R-Car clock drivers.  As this is a dependency between two different
+> subsystems, I think this patch should be fast-tracked.
+> 
+> The #ifdef condition will be revised later, when the R-Car RST driver
+> gains its own Kconfig symbol.
+> ---
+>  include/linux/soc/renesas/rcar-rst.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/include/linux/soc/renesas/rcar-rst.h b/include/linux/soc/renesas/rcar-rst.h
+> index a18e0783946b66ec..787e7ad53d45f61c 100644
+> --- a/include/linux/soc/renesas/rcar-rst.h
+> +++ b/include/linux/soc/renesas/rcar-rst.h
+> @@ -1,6 +1,11 @@
+>  #ifndef __LINUX_SOC_RENESAS_RCAR_RST_H__
+>  #define __LINUX_SOC_RENESAS_RCAR_RST_H__
+>  
+> +#if defined(CONFIG_ARCH_RCAR_GEN1) || defined(CONFIG_ARCH_RCAR_GEN2) || \
+> +    defined(CONFIG_ARCH_R8A7795) || defined(CONFIG_ARCH_R8A7796)
+>  int rcar_rst_read_mode_pins(u32 *mode);
+> +#else
+> +static inline int rcar_rst_read_mode_pins(u32 *mode) { return -ENODEV; }
+> +#endif
+>  
+>  #endif /* __LINUX_SOC_RENESAS_RCAR_RST_H__ */
+> -- 
+> 2.7.4
+> 
