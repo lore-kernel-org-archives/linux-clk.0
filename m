@@ -1,114 +1,163 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-Subject: Re: [RFC PATCH 0/3] clk: introduce clk_bulk_get accessories
-To: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
-References: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
-Cc: leonard.crestez@nxp.com, ping.bai@nxp.com, anson.huang@nxp.com,
- viresh.kumar@linaro.org, mturquette@baylibre.com, rjw@rjwysocki.net,
- linux-kernel@vger.kernel.org, broonie@kernel.org, octavian.purdila@nxp.com,
- kernel@pengutronix.de, fabio.estevam@nxp.com, yibin.gong@nxp.com,
- shawnguo@kernel.org, sboyd@codeaurora.org,
- linux-arm-kernel@lists.infradead.org
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <86200633-8349-f1c3-f4d8-a130a26381f7@gmail.com>
-Date: Tue, 11 Apr 2017 10:01:29 -0700
-MIME-Version: 1.0
-In-Reply-To: <1491969809-20154-1-git-send-email-aisheng.dong@nxp.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:46762 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1954121AbdDZLV5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Apr 2017 07:21:57 -0400
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH v2] clk: at91: Add sama5d2 suspend/resume
+Date: Wed, 26 Apr 2017 13:21:48 +0200
+Message-Id: <20170426112148.25256-1-alexandre.belloni@free-electrons.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/11/2017 09:03 PM, Dong Aisheng wrote:
-> These helper function allows drivers to get several clk consumers in
-> one operation.  If any of the clk cannot be acquired then any clks
-> that were got will be put before returning to the caller.
-> 
-> The idea firstly came out when i wanted to clean up and optimize
-> imx6q-cpufreq driver which needs to handle a lot of clocks as it
-> becomes a bit mess.
-> 
-> e.g. drivers/cpufreq/imx6q-cpufreq.c
-> 
-> You will see we need get 7 clocks during driver probe.
-> (Add there will be more, e.g. pll1, pll1_bypass, pll1_bypass_src,
-> in the future when adding busfreq support).
-> 
-> static int imx6q_cpufreq_probe(struct platform_device *pdev)
-> {
-> ....
-> 	arm_clk = clk_get(cpu_dev, "arm");
-> 	pll1_sys_clk = clk_get(cpu_dev, "pll1_sys");
-> 	pll1_sw_clk = clk_get(cpu_dev, "pll1_sw");
-> 	step_clk = clk_get(cpu_dev, "step");
-> 	pll2_pfd2_396m_clk = clk_get(cpu_dev, "pll2_pfd2_396m");
-> 	if (IS_ERR(arm_clk) || IS_ERR(pll1_sys_clk) || IS_ERR(pll1_sw_clk) ||
-> 	    IS_ERR(step_clk) || IS_ERR(pll2_pfd2_396m_clk)) {
-> 		dev_err(cpu_dev, "failed to get clocks\n");
-> 		ret = -ENOENT;
-> 		goto put_clk;
-> 	}
-> 
-> 	if (of_machine_is_compatible("fsl,imx6ul")) {
-> 		pll2_bus_clk = clk_get(cpu_dev, "pll2_bus");
-> 		secondary_sel_clk = clk_get(cpu_dev, "secondary_sel");
-> 		if (IS_ERR(pll2_bus_clk) || IS_ERR(secondary_sel_clk)) {
-> 			dev_err(cpu_dev, "failed to get clocks specific to imx6ul\n");
-> 			ret = -ENOENT;
-> 			goto put_clk;
-> 		}
-> 	}
-> ....
-> put_clk: 
->         if (!IS_ERR(arm_clk))
->                 clk_put(arm_clk);
->         if (!IS_ERR(pll1_sys_clk))
->                 clk_put(pll1_sys_clk);
-> 	...........
-> }
-> 
-> Together with the err path handling for each clocks, it does make
-> things a bit ugly.
-> 
-> Since we already have regulator_bulk_get accessories, i thought we
-> probably could introduce clk_bulk_get as well to handle such case to
-> ease the driver owners' life. 
-> 
-> Besides IMX cpufreq driver, there is also some similar cases
-> in kernel which could befinit from this api as well.
-> e.g.
-> drivers/cpufreq/tegra124-cpufreq.c
-> drivers/cpufreq/s3c2412-cpufreq.c
-> sound/soc/samsung/smdk_spdif.c
-> arch/arm/mach-omap1/serial.c
-> ...
-> 
-> And actually, if we handle clocks more than 3, then it might be
-> worthy to try, which there is quite many manay in kernel and
-> that probably could save a lot codes.
-> 
-> This is a RFC patch intending to bring up the idea to discuss.
-> 
-> Comments are welcome and appreciated!
+On sama5d2, VDD core maybe be cut while in suspend. This means registers
+will be lost. Ensure they are saved and restored properly.
 
-Thanks a lot for doing this, we have historically done something similar
-on ARCH_BRCMSTB platforms in our downstream tree with a concept of a
-"software" clock which has multiple parents (yikes), using the bulk
-accessors would essentially allow us to remove part of this hack, so I
-am all in favor of this!
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
 
-> 
-> Dong Aisheng (3):
->   clk: add clk_bulk_get accessories
->   clk: add managed version of clk_bulk_get
->   cpufreq: imx6q: refine clk operations
-> 
->  drivers/clk/clk-devres.c        |  36 +++++++++++
->  drivers/clk/clk.c               |  99 +++++++++++++++++++++++++++++
->  drivers/clk/clkdev.c            |  42 +++++++++++++
->  drivers/cpufreq/imx6q-cpufreq.c | 119 ++++++++++++++++-------------------
->  include/linux/clk.h             | 135 ++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 365 insertions(+), 66 deletions(-)
-> 
+Changes in v2:
+ - don't set MCKR or PLLAR and expect them to be properly set by the
+   firmware/bootloader.
 
+ drivers/clk/at91/pmc.c | 114 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 114 insertions(+)
 
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 526df5ba042d..338cd293b356 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -13,7 +13,9 @@
+ #include <linux/clk/at91_pmc.h>
+ #include <linux/of.h>
+ #include <linux/mfd/syscon.h>
++#include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/syscore_ops.h>
+ 
+ #include <asm/proc-fns.h>
+ 
+@@ -41,3 +43,115 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
++
++#ifdef CONFIG_PM
++static struct regmap *pmcreg;
++
++static struct
++{
++	u32 scsr;
++	u32 pcsr0;
++	u32 uckr;
++	u32 mor;
++	u32 mcfr;
++	u32 pllar;
++	u32 mckr;
++	u32 usb;
++	u32 imr;
++	u32 pcsr1;
++	u32 pcr[64];
++} pmc_cache;
++
++static int pmc_suspend(void)
++{
++	int i;
++
++	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
++	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
++	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
++	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
++	regmap_read(pmcreg, AT91_CKGR_MCFR, &pmc_cache.mcfr);
++	regmap_read(pmcreg, AT91_CKGR_PLLAR, &pmc_cache.pllar);
++	regmap_read(pmcreg, AT91_PMC_MCKR, &pmc_cache.mckr);
++	regmap_read(pmcreg, AT91_PMC_USB, &pmc_cache.usb);
++	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.imr);
++	regmap_read(pmcreg, AT91_PMC_PCSR1, &pmc_cache.pcsr1);
++
++	for (i = 2; i < 64; i++) {
++		regmap_write(pmcreg, AT91_PMC_PCR, (i & AT91_PMC_PCR_PID_MASK));
++		regmap_read(pmcreg, AT91_PMC_PCR, &pmc_cache.pcr[i]);
++	}
++
++	return 0;
++}
++
++static bool pmc_ready(unsigned int mask)
++{
++	unsigned int status;
++
++	regmap_read(pmcreg, AT91_PMC_SR, &status);
++
++	return ((status & mask) == mask) ? 1 : 0;
++}
++
++static void pmc_resume(void)
++{
++	int i;
++	unsigned int mask = 0;
++	u32 tmp;
++
++	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
++	if (pmc_cache.mckr != tmp)
++		pr_warn("MCKR was not configured properly by the firmware\n");
++	regmap_read(pmcreg, AT91_CKGR_PLLAR, &tmp);
++	if (pmc_cache.pllar != tmp)
++		pr_warn("PLLAR was not configured properly by the firmware\n");
++
++	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
++	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
++	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
++	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
++	regmap_write(pmcreg, AT91_CKGR_MCFR, pmc_cache.mcfr);
++	regmap_write(pmcreg, AT91_PMC_USB, pmc_cache.usb);
++	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.imr);
++	regmap_write(pmcreg, AT91_PMC_PCER1, pmc_cache.pcsr1);
++
++	for (i = 2; i < 64; i++) {
++		regmap_write(pmcreg, AT91_PMC_PCR, (i & AT91_PMC_PCR_PID_MASK));
++		regmap_write(pmcreg, AT91_PMC_PCR, pmc_cache.pcr[i]);
++	}
++
++	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
++		mask |= AT91_PMC_LOCKU;
++
++	while (!pmc_ready(mask))
++		cpu_relax();
++}
++
++static struct syscore_ops pmc_syscore_ops = {
++	.suspend = pmc_suspend,
++	.resume = pmc_resume,
++};
++
++static const struct of_device_id sama5d2_pmc_dt_ids[] = {
++	{ .compatible = "atmel,sama5d2-pmc" },
++	{ /* sentinel */ }
++};
++
++static int __init pmc_register_ops(void)
++{
++	struct device_node *np;
++
++	np = of_find_matching_node(NULL, sama5d2_pmc_dt_ids);
++
++	pmcreg = syscon_node_to_regmap(np);
++	if (IS_ERR(pmcreg))
++		return PTR_ERR(pmcreg);
++
++	register_syscore_ops(&pmc_syscore_ops);
++
++	return 0;
++}
++/* This has to happen before arch_initcall becaues of the tcb_clksrc driver */
++postcore_initcall(pmc_register_ops);
++#endif
 -- 
-Florian
+2.11.0
+
