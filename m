@@ -1,157 +1,79 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:61327 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752080AbdDHBZC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Apr 2017 21:25:02 -0400
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC: CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Kevin-CW Chen <kevin-cw.chen@mediatek.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH v4 10/10] arm64: dts: mediatek: add clk and scp nodes for MT6797
-Date: Sat, 8 Apr 2017 09:20:35 +0800
-Message-ID: <1491614435-23754-11-git-send-email-mars.cheng@mediatek.com>
-In-Reply-To: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
-References: <1491614435-23754-1-git-send-email-mars.cheng@mediatek.com>
+Received: from kirsty.vergenet.net ([202.4.237.240]:46837 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938593AbdD1IBj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Apr 2017 04:01:39 -0400
+Date: Fri, 28 Apr 2017 10:01:33 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] soc: renesas: Provide dummy rcar_rst_read_mode_pins()
+ for compile-testing
+Message-ID: <20170428080132.GH10196@verge.net.au>
+References: <1493141785-29117-1-git-send-email-geert+renesas@glider.be>
+ <20170426071305.GC25517@verge.net.au>
+ <20170426073418.GE25517@verge.net.au>
+ <CAMuHMdXJVbBCsFPvYRMPktW1cG7Qm-7fBxSAqcaG-5V9gw0tnQ@mail.gmail.com>
+ <20170428051430.GB18349@verge.net.au>
+ <CAMuHMdV3jCudFEfRMseDf_efdEPCKMKV02TVEvq5SKfaFY45hg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdV3jCudFEfRMseDf_efdEPCKMKV02TVEvq5SKfaFY45hg@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds clk and scp nodes for MT6797
+On Fri, Apr 28, 2017 at 09:28:20AM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Fri, Apr 28, 2017 at 7:14 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Wed, Apr 26, 2017 at 02:35:58PM +0200, Geert Uytterhoeven wrote:
+> >> On Wed, Apr 26, 2017 at 9:34 AM, Simon Horman <horms@verge.net.au> wrote:
+> >> > On Wed, Apr 26, 2017 at 09:13:06AM +0200, Simon Horman wrote:
+> >> >> On Tue, Apr 25, 2017 at 07:36:25PM +0200, Geert Uytterhoeven wrote:
+> >> >> > If the R-Car RST driver is not included, compile-testing R-Car clock
+> >> >> > drivers fails with a link error:
+> >> >> >
+> >> >> >     undefined reference to `rcar_rst_read_mode_pins'
+> >> >> >
+> >> >> > To fix this, provide a dummy version.  Use the exact same test logic as
+> >> >> > in drivers/soc/renesas/Makefile, as there is no Kconfig symbol (yet) to
+> >> >> > control compilation of the R-Car RST driver.
+> >> >>
+> >> >> Adding a Kconfig symbol would be a bit cleaner IMHO.
+> >> >
+> >> > I now see you are doing so in other patches :)
+> >>
+> >> Indeed. I went with this quick fix, as drivers/soc/renesas doesn't have
+> >> a Kconfig file yet, and introducing a Kconfig symbol would thus be more
+> >> intrusive.
+> >
+> > Thanks. Given that it doesn't appear that the problem resolved by this fix
+> > manifests at this time I have queued it up for v4.13 rather than as a fix
+> > for v4.12. Let me know if you'd like me to revisit that decision.
+> 
+> I had hoped you could still queue it as a fix for v4.12...
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt6797.dtsi |   71 ++++++++++++++++++++++++++++--
- 1 file changed, 67 insertions(+), 4 deletions(-)
+Sure, I'll see what I can do.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-index cf4529e..3512c8e 100644
---- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-@@ -11,6 +11,8 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <dt-bindings/clock/mt6797-clk.h>
-+#include <dt-bindings/power/mt6797-power.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-@@ -123,6 +125,35 @@
- 			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
- 	};
- 
-+	topckgen: topckgen@10000000 {
-+		compatible = "mediatek,mt6797-topckgen";
-+		reg = <0 0x10000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	infrasys: infracfg_ao@10001000 {
-+		compatible = "mediatek,mt6797-infracfg", "syscon";
-+		reg = <0 0x10001000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	scpsys: scpsys@10006000 {
-+		compatible = "mediatek,mt6797-scpsys";
-+		#power-domain-cells = <1>;
-+		reg = <0 0x10006000 0 0x1000>;
-+		clocks = <&topckgen CLK_TOP_MUX_MFG>,
-+			 <&topckgen CLK_TOP_MUX_MM>,
-+			 <&topckgen CLK_TOP_MUX_VDEC>;
-+		clock-names = "mfg", "mm", "vdec";
-+		infracfg = <&infrasys>;
-+	};
-+
-+	apmixedsys: apmixed@1000c000 {
-+		compatible = "mediatek,mt6797-apmixedsys";
-+		reg = <0 0x1000c000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
- 	sysirq: intpol-controller@10200620 {
- 		compatible = "mediatek,mt6797-sysirq",
- 			     "mediatek,mt6577-sysirq";
-@@ -138,7 +169,9 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11002000 0 0x400>;
- 		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&clk26m>;
-+		clocks = <&infrasys CLK_INFRA_UART0>,
-+			 <&infrasys CLK_INFRA_AP_DMA>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -147,7 +180,9 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11003000 0 0x400>;
- 		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&clk26m>;
-+		clocks = <&infrasys CLK_INFRA_UART1>,
-+			 <&infrasys CLK_INFRA_AP_DMA>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -156,7 +191,9 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11004000 0 0x400>;
- 		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&clk26m>;
-+		clocks = <&infrasys CLK_INFRA_UART2>,
-+			 <&infrasys CLK_INFRA_AP_DMA>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-@@ -165,10 +202,36 @@
- 			     "mediatek,mt6577-uart";
- 		reg = <0 0x11005000 0 0x400>;
- 		interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&clk26m>;
-+		clocks = <&infrasys CLK_INFRA_UART3>,
-+			 <&infrasys CLK_INFRA_AP_DMA>;
-+		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
- 
-+	mmsys: mmsys_config@14000000 {
-+		compatible = "mediatek,mt6797-mmsys", "syscon";
-+		reg = <0 0x14000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	imgsys: imgsys_config@15000000  {
-+		compatible = "mediatek,mt6797-imgsys", "syscon";
-+		reg = <0 0x15000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	vdecsys: vdec_gcon@16000000 {
-+		compatible = "mediatek,mt6797-vdecsys", "syscon";
-+		reg = <0 0x16000000 0 0x10000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	vencsys: venc_gcon@17000000 {
-+		compatible = "mediatek,mt6797-vencsys", "syscon";
-+		reg = <0 0x17000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
- 	gic: interrupt-controller@19000000 {
- 		compatible = "arm,gic-v3";
- 		#interrupt-cells = <3>;
--- 
-1.7.9.5
-
+> This is one of the blockers for enabling compile-testing of the R-Car clock
+> drivers in v4.13.  Of course some of the other blockers may not make v4.12
+> neither.
+> 
+> Instead of  postponing it to v4.13, you could as well drop it, and wait for
+> the better solution in "[RFC] soc: renesas: Rework Kconfig and Makefile
+> logic".
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
