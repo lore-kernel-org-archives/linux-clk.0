@@ -1,61 +1,118 @@
-Return-Path: <alexandre.torgue@st.com>
-Subject: Re: [PATCH 0/4] Introduce STM32F7 Clocks
-To: <gabriel.fernandez@st.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Nicolas Pitre <nico@linaro.org>,
-        Arnd
- Bergmann <arnd@arndb.de>, <daniel.thompson@linaro.org>,
-        <andrea.merello@gmail.com>, <radoslaw.pietrzyk@gmail.com>
-References: <1483711165-17149-1-git-send-email-gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel@stlinux.com>, <ludovic.barre@st.com>, <olivier.bideau@st.com>,
-        <amelie.delaunay@st.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <c7042f7e-b4eb-1fcc-200c-b76b50e82424@st.com>
-Date: Mon, 3 Apr 2017 16:42:44 +0200
-MIME-Version: 1.0
-In-Reply-To: <1483711165-17149-1-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de,
+	xf@rock-chips.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2 2/3] clk: rockchip: add clock-ids for rk3228 clocks
+Date: Fri, 28 Apr 2017 15:02:46 +0800
+Message-Id: <1493362967-4040-3-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1493362967-4040-1-git-send-email-zhangqing@rock-chips.com>
+References: <1493362967-4040-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-hi
+This patch exports related BUS/VPU/RGA/HDCP/IEP/TSP/WIFI/
+VIO/USB/EFUSE/GPU/CRYPTO clocks for dts reference.
 
-On 01/06/2017 02:59 PM, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->
-> This patch-set introduces STM32F7 clocks.
-> F7 Clocks are very similar as F4.
->
-> We  have some new clocks:
-> - hdmi-cec
-> - spdif-rx
-> - lptim1
-> - sai2
->
-> Uarts & I2cs can have different clock sources.
->
->
->
-> Gabriel Fernandez (4):
->   clk: stm32f7: Add stm32f7 clock DT bindings for STM32F746 boards
->   clk: stm32f7: Introduce stm32f7 clocks for STM32F746 boards
->   ARM: dts: stm32: stm32f7: Enable clocks for STM32F746 boards
->   dt-bindings: mfd: Add STM32F7 RCC numeric constants into DT include
->     file
->
->  .../devicetree/bindings/clock/st,stm32-rcc.txt     |  20 ++
->  arch/arm/boot/dts/stm32f746.dtsi                   |  80 ++++--
->  drivers/clk/clk-stm32f4.c                          | 277 ++++++++++++++++++++-
->  include/dt-bindings/clock/stm32fx-clock.h          |  20 ++
->  include/dt-bindings/mfd/stm32f7-rcc.h              | 112 +++++++++
->  5 files changed, 476 insertions(+), 33 deletions(-)
->  create mode 100644 include/dt-bindings/mfd/stm32f7-rcc.h
->
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ include/dt-bindings/clock/rk3228-cru.h | 47 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-Patchs 3 & 4 applied on stm32-dt-for-v4.12
+diff --git a/include/dt-bindings/clock/rk3228-cru.h b/include/dt-bindings/clock/rk3228-cru.h
+index b27e2b1a65e3..56f841c22801 100644
+--- a/include/dt-bindings/clock/rk3228-cru.h
++++ b/include/dt-bindings/clock/rk3228-cru.h
+@@ -61,6 +61,17 @@
+ #define SCLK_MAC_TX		130
+ #define SCLK_MAC_PHY		131
+ #define SCLK_MAC_OUT		132
++#define SCLK_VDEC_CABAC		133
++#define SCLK_VDEC_CORE		134
++#define SCLK_RGA		135
++#define SCLK_HDCP		136
++#define SCLK_HDMI_CEC		137
++#define SCLK_CRYPTO		138
++#define SCLK_TSP		139
++#define SCLK_HSADC		140
++#define SCLK_WIFI		141
++#define SCLK_OTGPHY0		142
++#define SCLK_OTGPHY1		143
+ 
+ /* dclk gates */
+ #define DCLK_VOP		190
+@@ -68,15 +79,32 @@
+ 
+ /* aclk gates */
+ #define ACLK_DMAC		194
++#define ACLK_CPU		195
++#define ACLK_VPU_PRE		196
++#define ACLK_RKVDEC_PRE		197
++#define ACLK_RGA_PRE		198
++#define ACLK_IEP_PRE		199
++#define ACLK_HDCP_PRE		200
++#define ACLK_VOP_PRE		201
++#define ACLK_VPU		202
++#define ACLK_RKVDEC		203
++#define ACLK_IEP		204
++#define ACLK_RGA		205
++#define ACLK_HDCP		206
+ #define ACLK_PERI		210
+ #define ACLK_VOP		211
+ #define ACLK_GMAC		212
++#define ACLK_GPU		213
+ 
+ /* pclk gates */
+ #define PCLK_GPIO0		320
+ #define PCLK_GPIO1		321
+ #define PCLK_GPIO2		322
+ #define PCLK_GPIO3		323
++#define PCLK_VIO_H2P		324
++#define PCLK_HDCP		325
++#define PCLK_EFUSE_1024		326
++#define PCLK_EFUSE_256		327
+ #define PCLK_GRF		329
+ #define PCLK_I2C0		332
+ #define PCLK_I2C1		333
+@@ -89,6 +117,7 @@
+ #define PCLK_TSADC		344
+ #define PCLK_PWM		350
+ #define PCLK_TIMER		353
++#define PCLK_CPU		354
+ #define PCLK_PERI		363
+ #define PCLK_HDMI_CTRL		364
+ #define PCLK_HDMI_PHY		365
+@@ -104,6 +133,24 @@
+ #define HCLK_SDMMC		456
+ #define HCLK_SDIO		457
+ #define HCLK_EMMC		459
++#define HCLK_CPU		460
++#define HCLK_VPU_PRE		461
++#define HCLK_RKVDEC_PRE		462
++#define HCLK_VIO_PRE		463
++#define HCLK_VPU		464
++#define HCLK_RKVDEC		465
++#define HCLK_VIO		466
++#define HCLK_RGA		467
++#define HCLK_IEP		468
++#define HCLK_VIO_H2P		469
++#define HCLK_HDCP_MMU		470
++#define HCLK_HOST0		471
++#define HCLK_HOST1		472
++#define HCLK_HOST2		473
++#define HCLK_OTG		474
++#define HCLK_TSP		475
++#define HCLK_M_CRYPTO		476
++#define HCLK_S_CRYPTO		477
+ #define HCLK_PERI		478
+ 
+ #define CLK_NR_CLKS		(HCLK_PERI + 1)
+-- 
+1.9.1
