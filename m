@@ -1,70 +1,268 @@
-Return-Path: <m.szyprowski@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2.1 2/6] clk: samsung: Add local variable to match it purpose
-Date: Mon, 24 Apr 2017 09:54:12 +0200
-Message-id: <1493020452-23085-1-git-send-email-m.szyprowski@samsung.com>
-In-reply-to: 
- <CAJKOXPdDBsqHp-qXFFjcK10PUb_Vo1q6DsdgerYW4j+9ESpxfw@mail.gmail.com>
-References: 
- <CAJKOXPdDBsqHp-qXFFjcK10PUb_Vo1q6DsdgerYW4j+9ESpxfw@mail.gmail.com>
- <CGME20170424075423eucas1p239eaef08b93dade23292c175b838d9a5@eucas1p2.samsung.com>
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 28 Apr 2017 11:53:49 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	linus.walleij@linaro.org, andy.gross@linaro.org,
+	david.brown@linaro.org, catalin.marinas@arm.com,
+	will.deacon@arm.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	sricharan@codeaurora.org, absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+Subject: Re: [PATCH 4/5] arm64: dts: Add ipq8074 SoC and MTP board support
+Message-ID: <20170428185349.GD7065@codeaurora.org>
+References: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
+ <1493373403-23462-5-git-send-email-varada@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1493373403-23462-5-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add new variable to avoid using clk pointer for different purposes across
-the exynos_register_cpu_clock() function. This will help in future rewrite
-for the new clk_hw API.
+On 04/28, Varadarajan Narayanan wrote:
+> diff --git a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+> new file mode 100644
+> index 0000000..c150bea
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+> @@ -0,0 +1,48 @@
+> +/dts-v1/;
+> +/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +#include "ipq8074.dtsi"
+> +
+> +/ {
+> +	#address-cells = <0x2>;
+> +	#size-cells = <0x2>;
+> +	model = "Qualcomm Technologies, Inc. IPQ8074-HK01";
+> +	compatible = "qcom,ipq8074-hk01", "qcom,ipq8074";
+> +	interrupt-parent = <&intc>;
+> +
+> +	chosen {
+> +		bootargs = "console=ttyMSM0,115200,n8 root=/dev/ram0 rw init=/init";
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-cpu.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Add an aliases node for serial0 and use a chosen node with stdout-path = "serial0" instead please.
 
-diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-index 8bf7e805fd34..c6dd83dce09d 100644
---- a/drivers/clk/samsung/clk-cpu.c
-+++ b/drivers/clk/samsung/clk-cpu.c
-@@ -410,6 +410,7 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
- {
- 	struct exynos_cpuclk *cpuclk;
- 	struct clk_init_data init;
-+	struct clk *parent_clk;
- 	struct clk *clk;
- 	int ret = 0;
- 
-@@ -440,15 +441,15 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
- 		goto free_cpuclk;
- 	}
- 
--	clk = __clk_lookup(parent);
--	if (!clk) {
-+	parent_clk = __clk_lookup(parent);
-+	if (!parent_clk) {
- 		pr_err("%s: could not lookup parent clock %s\n",
- 				__func__, parent);
- 		ret = -EINVAL;
- 		goto free_cpuclk;
- 	}
- 
--	ret = clk_notifier_register(clk, &cpuclk->clk_nb);
-+	ret = clk_notifier_register(parent_clk, &cpuclk->clk_nb);
- 	if (ret) {
- 		pr_err("%s: failed to register clock notifier for %s\n",
- 				__func__, name);
-@@ -476,7 +477,7 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
- free_cpuclk_data:
- 	kfree(cpuclk->cfg);
- unregister_clk_nb:
--	clk_notifier_unregister(__clk_lookup(parent), &cpuclk->clk_nb);
-+	clk_notifier_unregister(parent_clk, &cpuclk->clk_nb);
- free_cpuclk:
- 	kfree(cpuclk);
- 	return ret;
+> +	};
+> +
+> +	memory {
+> +		device_type = "memory";
+> +		reg = <0x0 0x40000000 0x0 0x20000000>;
+> +	};
+> +
+> +	soc: soc {
+
+Do you need the soc label here? Please remove.
+
+> +		pinctrl@1000000 {
+> +			serial_4_pins: serial4_pinmux {
+> +				mux {
+> +					pins = "gpio23", "gpio24";
+> +					function = "blsp4_uart1";
+> +					bias-disable;
+> +				};
+> +			};
+> +		};
+> +
+> +		serial@78b3000 {
+> +			pinctrl-0 = <&serial_4_pins>;
+> +			pinctrl-names = "default";
+> +			status = "ok";
+> +		};
+> +	};
+> +};
+> diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+> new file mode 100644
+> index 0000000..f910cc0
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+> @@ -0,0 +1,153 @@
+> +/*
+> + * Copyright (c) 2017, The Linux Foundation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/qcom,gcc-ipq8074.h>
+> +
+> +/ {
+> +	model = "Qualcomm Technologies, Inc. IPQ8074";
+> +	compatible = "qcom,ipq8074";
+> +
+> +	soc: soc {
+> +		#address-cells = <0x1>;
+> +		#size-cells = <0x1>;
+> +		ranges = <0 0 0 0xffffffff>;
+> +		compatible = "simple-bus";
+> +
+> +		pinctrl@1000000 {
+> +			compatible = "qcom,ipq8074-pinctrl";
+> +			reg = <0x1000000 0x300000>;
+> +			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <0x2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <0x2>;
+> +		};
+> +
+> +		intc: interrupt-controller@b000000 {
+> +			compatible = "qcom,msm-qgic2";
+> +			interrupt-controller;
+> +			#interrupt-cells = <0x3>;
+> +			reg = <0xb000000 0x1000>,
+> +			<0xb002000 0x1000>;
+
+Please align this up with previous reg property.
+
+> +		};
+> +
+> +		timer {
+> +			compatible = "arm,armv8-timer";
+> +			interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +				     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +				     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +				     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> +		};
+
+Is there an mmio timer as well? We should add it too.
+
+> +
+> +		gcc: gcc@1800000 {
+> +			compatible = "qcom,gcc-ipq8074";
+> +			reg = <0x1800000 0x80000>;
+
+Wow that is a huge area! Is it really that large?
+
+> +			#clock-cells = <0x1>;
+> +			#reset-cells = <0x1>;
+> +		};
+> +
+> +		serial@78b3000 {
+> +			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+> +			reg = <0x78b3000 0x200>;
+> +			interrupts = <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&gcc GCC_BLSP1_UART5_APPS_CLK>,
+> +				 <&gcc GCC_BLSP1_AHB_CLK>;
+> +			clock-names = "core", "iface";
+> +			status = "disabled";
+> +		};
+> +	};
+> +
+> +	cpus {
+> +		#address-cells = <0x1>;
+> +		#size-cells = <0x0>;
+> +
+> +		cpu-map {
+> +
+> +			cluster0 {
+> +
+> +				core0 {
+> +					cpu = <&CPU0>;
+> +				};
+> +
+> +				core1 {
+> +					cpu = <&CPU1>;
+> +				};
+> +
+> +				core2 {
+> +					cpu = <&CPU2>;
+> +				};
+> +
+> +				core3 {
+> +					cpu = <&CPU3>;
+> +				};
+> +			};
+> +		};
+
+Is this needed? Looks ok, but just curious if we need to do it
+for other arm64 platforms we support.
+
+> +
+> +		CPU0: cpu@0 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			reg = <0x0>;
+> +			next-level-cache = <&L2_0>;
+> +			enable-method = "psci";
+> +		};
+> +
+> +		CPU1: cpu@1 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x1>;
+> +			next-level-cache = <&L2_0>;
+> +		};
+> +
+> +		CPU2: cpu@2 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x2>;
+> +			next-level-cache = <&L2_0>;
+> +		};
+> +
+> +		CPU3: cpu@3 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53", "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x3>;
+> +			next-level-cache = <&L2_0>;
+> +		};
+> +
+> +		L2_0: l2-cache {
+> +			compatible = "cache";
+> +			cache-level = <0x2>;
+> +		};
+
+This should be inside some CPU? CPU0?
+
+> +	};
+
+We should be able to add the performance monitor node too?
+
+> +
+> +	psci {
+> +		compatible = "arm,psci-1.0";
+> +		method = "smc";
+> +	};
+> +
+> +	clocks {
+> +		sleep_clk: sleep_clk {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <32000>;
+
+Not 32765 or 32768?
+
+> +			#clock-cells = <0>;
+> +		};
+> +
+> +		xo: xo {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <19200000>;
+> +			#clock-cells = <0>;
+> +		};
+> +	};
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
