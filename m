@@ -1,49 +1,99 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:33983 "EHLO
-        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031022AbdDZVop (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Apr 2017 17:44:45 -0400
-Received: by mail-oi0-f43.google.com with SMTP id x184so17200988oia.1
-        for <linux-clk@vger.kernel.org>; Wed, 26 Apr 2017 14:44:44 -0700 (PDT)
-Date: Wed, 26 Apr 2017 16:44:43 -0500
-From: Andy Gross <andy.gross@linaro.org>
-To: Ritesh Harjani <riteshh@codeaurora.org>
-Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        adrian.hunter@intel.com, sboyd@codeaurora.org,
-        shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        alex.lemberg@sandisk.com, mateusz.nowak@intel.com,
-        Yuliy.Izrailov@sandisk.com, asutoshd@codeaurora.org,
-        david.griego@linaro.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, rnayak@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v9 07/16] mmc: sdhci-msm: Add get_min_clock() and
- get_max_clock() callback
-Message-ID: <20170426214443.GA32019@hector.attlocal.net>
-References: <1479710246-26676-1-git-send-email-riteshh@codeaurora.org>
- <1479710246-26676-8-git-send-email-riteshh@codeaurora.org>
+Return-Path: <niklas.soderlund@ragnatech.se>
+Return-Path: <niklas.soderlund@ragnatech.se>
+Date: Fri, 28 Apr 2017 14:46:45 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 05/10] clk: renesas: Add r8a7793 CPG Core Clock
+ Definitions
+Message-ID: <20170428124645.GI1532@bigcity.dyn.berto.se>
+References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+ <1493139200-27396-6-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1479710246-26676-8-git-send-email-riteshh@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1493139200-27396-6-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Nov 21, 2016 at 12:07:17PM +0530, Ritesh Harjani wrote:
-> This add get_min_clock() and get_max_clock() callback
-> for sdhci-msm. sdhci-msm min/max clocks may be different
-> hence implement these callbacks.
+Hi Geert,
+
+On 2017-04-25 18:53:15 +0200, Geert Uytterhoeven wrote:
+> Add all R-Car M2-N Clock Pulse Generator Core Clock Outputs, as listed
+> in Table 7.2b ("List of Clocks [R-Car M2-W/M2-N]") of the R-Car Gen2
+> Hardware User's Manual rev. 2.00.
 > 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  include/dt-bindings/clock/r8a7793-cpg-mssr.h | 48 ++++++++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/r8a7793-cpg-mssr.h
+> 
+> diff --git a/include/dt-bindings/clock/r8a7793-cpg-mssr.h b/include/dt-bindings/clock/r8a7793-cpg-mssr.h
+> new file mode 100644
+> index 0000000000000000..8809b0f62d615457
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/r8a7793-cpg-mssr.h
+> @@ -0,0 +1,48 @@
+> +/*
+> + * Copyright (C) 2015 Renesas Electronics Corp.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +
+> +#ifndef __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* r8a7793 CPG Core Clocks */
+> +#define R8A7793_CLK_Z			0
+> +#define R8A7793_CLK_ZG			1
+> +#define R8A7793_CLK_ZTR			2
+> +#define R8A7793_CLK_ZTRD2		3
+> +#define R8A7793_CLK_ZT			4
+> +#define R8A7793_CLK_ZX			5
+> +#define R8A7793_CLK_ZS			6
+> +#define R8A7793_CLK_HP			7
+> +#define R8A7793_CLK_I			8
+> +#define R8A7793_CLK_B			9
+> +#define R8A7793_CLK_LB			10
+> +#define R8A7793_CLK_P			11
+> +#define R8A7793_CLK_CL			12
+> +#define R8A7793_CLK_M2			13
+> +#define R8A7793_CLK_ADSP		14
+> +#define R8A7793_CLK_ZB3			15
+> +#define R8A7793_CLK_ZB3D2		16
+> +#define R8A7793_CLK_DDR			17
+> +#define R8A7793_CLK_SDH			18
+> +#define R8A7793_CLK_SD0			19
+> +#define R8A7793_CLK_SD2			20
+> +#define R8A7793_CLK_SD3			21
+> +#define R8A7793_CLK_MMC0		22
+> +#define R8A7793_CLK_MP			23
+> +#define R8A7793_CLK_SSP			24
+> +#define R8A7793_CLK_SSPRS		25
+> +#define R8A7793_CLK_QSPI		26
+> +#define R8A7793_CLK_CP			27
+> +#define R8A7793_CLK_RCAN		28
+> +#define R8A7793_CLK_R			29
+> +#define R8A7793_CLK_OSC			30
 
-This patch needs to be picked up for stable as 4.9 is currently broken w.r.t.
-MMC on Qualcomm platforms.
+The last two are called RCLK and OSCCLK in the Table 7.2b ("List of 
+Clocks [R-Car M2-W/M2-N]"). I'm  sure this is intentional on your side, 
+and if so:
 
-Fixes: d84be51d1c1d ("mmc: sdhci-msm: Enable few quirks")
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
+> +
+> +#endif /* __DT_BINDINGS_CLOCK_R8A7793_CPG_MSSR_H__ */
+> -- 
+> 2.7.4
+> 
+
+-- 
 Regards,
-
-Andy Gross
+Niklas Söderlund
