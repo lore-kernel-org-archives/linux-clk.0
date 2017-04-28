@@ -1,31 +1,62 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 09:11:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com, shawnguo@kernel.org,
-	fabio.estevam@nxp.com, stefan@agner.ch,
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
-Subject: Re: [PATCH 1/2] clk: clk-imx7d: fix ahb clk definition
-Message-ID: <20170419161113.GY7065@codeaurora.org>
-References: <1491878269-9559-1-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1491878269-9559-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <varada@codeaurora.org>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linus.walleij@linaro.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: sricharan@codeaurora.org,
+	absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	Varadarajan Narayanan <varada@codeaurora.org>
+Subject: [PATCH 5/5] arm64: defconfig: Enable QCOM IPQ8074 clock and pinctrl
+Date: Fri, 28 Apr 2017 15:26:43 +0530
+Message-Id: <1493373403-23462-6-git-send-email-varada@codeaurora.org>
+In-Reply-To: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
+References: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/11, Dong Aisheng wrote:
-> MX7D ahb clk actually has no LPCG gate, current LPCG offset 0x4200
-> used actually is for adc, not ahb. After fix, correct ocram_s_clk
-> parent accordingly as well.
-> 
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
+From: Abhishek Sahu <absahu@codeaurora.org>
 
-Applied to clk-next
+These configs are required for booting kernel in QCOM
+IPQ8074 boards.
 
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+---
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 7c48028..e6aeb69 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -266,6 +266,7 @@ CONFIG_SPI_SPIDEV=m
+ CONFIG_SPI_S3C64XX=y
+ CONFIG_SPMI=y
+ CONFIG_PINCTRL_SINGLE=y
++CONFIG_PINCTRL_IPQ8074=y
+ CONFIG_PINCTRL_MAX77620=y
+ CONFIG_PINCTRL_MSM8916=y
+ CONFIG_PINCTRL_MSM8994=y
+@@ -439,6 +440,7 @@ CONFIG_COMMON_CLK_PWM=y
+ CONFIG_COMMON_CLK_RK808=y
+ CONFIG_CLK_QORIQ=y
+ CONFIG_COMMON_CLK_QCOM=y
++CONFIG_IPQ_GCC_8074=y
+ CONFIG_MSM_GCC_8916=y
+ CONFIG_MSM_GCC_8994=y
+ CONFIG_MSM_MMCC_8996=y
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
