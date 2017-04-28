@@ -1,54 +1,69 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1492624001-3758-15-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-15-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:40:05 +0200
-Message-ID: <CAMuHMdVGB1Rm0uRhbkbfEJkx2HA8T4nSB8XPJ+3k-9vqisM6ZA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add Sound SRC clock
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	John Crispin <john@phrozen.org>,
+	Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] clk: Provide dummy of_clk_get_from_provider() for compile-testing
+Date: Fri, 28 Apr 2017 15:08:53 +0200
+Message-Id: <1493384933-31297-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Kaneko-san,
+When CONFIG_ON=n, dummies are provided for of_clk_get() and
+of_clk_get_by_name(), but not for of_clk_get_from_provider().
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
->
-> This patch adds SCU(all), SCU(SRC{0,1,2,3,4,5,6,7,8,9}), SCU(CTU00,
-> CTU01, CTU02, CTU03, MIX0) and SCU (CTU10, CTU11, CTU12, CTU13, MIX1)
-> clocks for R8A7796 SoC.
->
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Provide a dummy for the latter, to improve the ability to do
+compile-testing.  This requires removing the existing dummy in the
+Lantiq clock code.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 766e6a4ec602d0c1 ("clk: add DT clock binding support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Remove conflicting dummy in Lantiq clock code (reported by 0day).
+---
+ arch/mips/lantiq/clk.c | 5 -----
+ include/linux/clk.h    | 4 ++++
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-I.e. will queue in clk-renesas-for-v4.13.
-
-> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> @@ -219,6 +219,19 @@ enum clk_ids {
->         DEF_MOD("ssi2",                 1013,   MOD_CLK_ID(1005)),
->         DEF_MOD("ssi1",                 1014,   MOD_CLK_ID(1005)),
->         DEF_MOD("ssi0",                 1015,   MOD_CLK_ID(1005)),
-> +       DEF_MOD("scu-all",              1017,   R8A7796_CLK_S3D4),
-
-I cannot verify the parent clock, though.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/mips/lantiq/clk.c b/arch/mips/lantiq/clk.c
+index 149f0513c4f5d0d4..a263d1b751ffe48d 100644
+--- a/arch/mips/lantiq/clk.c
++++ b/arch/mips/lantiq/clk.c
+@@ -160,11 +160,6 @@ void clk_deactivate(struct clk *clk)
+ }
+ EXPORT_SYMBOL(clk_deactivate);
+ 
+-struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
+-{
+-	return NULL;
+-}
+-
+ static inline u32 get_counter_resolution(void)
+ {
+ 	u32 res;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index e9d36b3e49de5b1b..3ed97abb5cbb7f94 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -539,6 +539,10 @@ static inline struct clk *of_clk_get_by_name(struct device_node *np,
+ {
+ 	return ERR_PTR(-ENOENT);
+ }
++static inline struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
++{
++	return ERR_PTR(-ENOENT);
++}
+ #endif
+ 
+ #endif
+-- 
+2.7.4
