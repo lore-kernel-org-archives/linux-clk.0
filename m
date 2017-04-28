@@ -1,111 +1,271 @@
-Return-Path: <mars.cheng@mediatek.com>
-Message-ID: <1491480665.6485.4.camel@mtkswgap22>
-Subject: Re: [PATCH v3 00/12] Add Basic SoC support for MT6797
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: Rob Herring <robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, CC Hwang <cc.hwang@mediatek.com>, Loda Chou
-	<loda.chou@mediatek.com>, Miles Chen <miles.chen@mediatek.com>, Jades Shih
-	<jades.shih@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, "My
- Chuang" <my.chuang@mediatek.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<wsd_upstream@mediatek.com>, <linux-clk@vger.kernel.org>
-Date: Thu, 6 Apr 2017 20:11:05 +0800
-In-Reply-To: <1490229971.25996.2.camel@mtkswgap22>
-References: <1489937193-2953-1-git-send-email-mars.cheng@mediatek.com>
-	 <1490229971.25996.2.camel@mtkswgap22>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Return-Path: mars.cheng@mediatek.com
+Return-Path: <varada@codeaurora.org>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linus.walleij@linaro.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: sricharan@codeaurora.org,
+	absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	Varadarajan Narayanan <varada@codeaurora.org>,
+	Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+Subject: [PATCH 4/5] arm64: dts: Add ipq8074 SoC and MTP board support
+Date: Fri, 28 Apr 2017 15:26:42 +0530
+Message-Id: <1493373403-23462-5-git-send-email-varada@codeaurora.org>
+In-Reply-To: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
+References: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Matthias, Stephen
+Add initial device tree support for the Qualcomm IPQ8074 SoC and
+HK01 evaluation board.
 
-Would you like to give some comments for this patch set?
-If there are any suggestions, I will try my best to fix the errors.
+Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/Makefile         |   1 +
+ arch/arm64/boot/dts/qcom/ipq8074-hk01.dts |  48 ++++++++++
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi     | 153 ++++++++++++++++++++++++++++++
+ 3 files changed, 202 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
 
-Thanks. 
-
-On Thu, 2017-03-23 at 08:46 +0800, Mars Cheng wrote:
-> Hi Matthias, Rob, Marc, Stephen
-> 
-> gentle ping for this patch set.
-> 
-> Thanks.
-> 
-> On Sun, 2017-03-19 at 23:26 +0800, Mars Cheng wrote:
-> > This patch set adds basic SoC support for mediatek's first 10-core
-> > chip, X20, also known as MT6797.
-> > 
-> > - based on 4.11-rc1
-> > - support multiple base address for sysirq
-> > - support common clk framework
-> > 
-> > Changes since v2:
-> > - prevent uncessary #intpol-bases for mtk-sysirq
-> > - add fast path for mtk-sysirq set_type when introducing multiple bases
-> > - add acked-by and tested-by
-> > - remove wrong usage for timer node
-> > 
-> > Changes since v1:
-> > - add multiple base addresses support, v1 only allow 2 bases
-> > - clean up clk driver
-> > 
-> > 
-> > Kevin-CW Chen (2):
-> >   dt-bindings: arm: mediatek: document clk bindings for MT6797
-> >   clk: mediatek: add clk support for MT6797
-> > 
-> > Mars Cheng (10):
-> >   dt-bindings: mediatek: multiple bases support for sysirq
-> >   irqchip: mtk-sysirq: extend intpol base to arbitrary number
-> >   irqchip: mtk-sysirq: prevent unnecessary visibility when set_type
-> >   dt-bindings: mediatek: Add bindings for mediatek MT6797 Platform
-> >   arm64: dts: mediatek: add mt6797 support
-> >   soc: mediatek: avoid using fixed spm power status defines
-> >   soc: mediatek: add vdec item for scpsys
-> >   dt-bindings: mediatek: add MT6797 power dt-bindings
-> >   soc: mediatek: add MT6797 scysys support
-> >   arm64: dts: mediatek: add clk and scp nodes for MT6797
-> > 
-> >  Documentation/devicetree/bindings/arm/mediatek.txt |    4 +
-> >  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
-> >  .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
-> >  .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
-> >  .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
-> >  .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
-> >  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
-> >  .../bindings/arm/mediatek/mediatek,vencsys.txt     |    3 +-
-> >  .../interrupt-controller/mediatek,sysirq.txt       |   12 +-
-> >  .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
-> >  .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 +-
-> >  arch/arm64/boot/dts/mediatek/Makefile              |    1 +
-> >  arch/arm64/boot/dts/mediatek/mt6797-evb.dts        |   36 +
-> >  arch/arm64/boot/dts/mediatek/mt6797.dtsi           |  245 +++++++
-> >  drivers/clk/mediatek/Kconfig                       |   32 +
-> >  drivers/clk/mediatek/Makefile                      |    5 +
-> >  drivers/clk/mediatek/clk-mt6797-img.c              |   76 +++
-> >  drivers/clk/mediatek/clk-mt6797-mm.c               |  136 ++++
-> >  drivers/clk/mediatek/clk-mt6797-vdec.c             |   93 +++
-> >  drivers/clk/mediatek/clk-mt6797-venc.c             |   78 +++
-> >  drivers/clk/mediatek/clk-mt6797.c                  |  716 ++++++++++++++++++++
-> >  drivers/irqchip/irq-mtk-sysirq.c                   |  116 +++-
-> >  drivers/soc/mediatek/mtk-scpsys.c                  |  149 +++-
-> >  include/dt-bindings/clock/mt6797-clk.h             |  281 ++++++++
-> >  include/dt-bindings/power/mt6797-power.h           |   30 +
-> >  25 files changed, 1993 insertions(+), 33 deletions(-)
-> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-evb.dts
-> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797.dtsi
-> >  create mode 100644 drivers/clk/mediatek/clk-mt6797-img.c
-> >  create mode 100644 drivers/clk/mediatek/clk-mt6797-mm.c
-> >  create mode 100644 drivers/clk/mediatek/clk-mt6797-vdec.c
-> >  create mode 100644 drivers/clk/mediatek/clk-mt6797-venc.c
-> >  create mode 100644 drivers/clk/mediatek/clk-mt6797.c
-> >  create mode 100644 include/dt-bindings/clock/mt6797-clk.h
-> >  create mode 100644 include/dt-bindings/power/mt6797-power.h
-> > 
-> > --
-> > 1.7.9.5
-> > 
-> 
+diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+index cc0f02d..7c6963e 100644
+--- a/arch/arm64/boot/dts/qcom/Makefile
++++ b/arch/arm64/boot/dts/qcom/Makefile
+@@ -4,6 +4,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-bullhead-rev-101.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-angler-rev-101.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8996-mtp.dtb
++dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
+ 
+ always		:= $(dtb-y)
+ subdir-y	:= $(dts-dirs)
+diff --git a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+new file mode 100644
+index 0000000..c150bea
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+@@ -0,0 +1,48 @@
++/dts-v1/;
++/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#include "ipq8074.dtsi"
++
++/ {
++	#address-cells = <0x2>;
++	#size-cells = <0x2>;
++	model = "Qualcomm Technologies, Inc. IPQ8074-HK01";
++	compatible = "qcom,ipq8074-hk01", "qcom,ipq8074";
++	interrupt-parent = <&intc>;
++
++	chosen {
++		bootargs = "console=ttyMSM0,115200,n8 root=/dev/ram0 rw init=/init";
++	};
++
++	memory {
++		device_type = "memory";
++		reg = <0x0 0x40000000 0x0 0x20000000>;
++	};
++
++	soc: soc {
++		pinctrl@1000000 {
++			serial_4_pins: serial4_pinmux {
++				mux {
++					pins = "gpio23", "gpio24";
++					function = "blsp4_uart1";
++					bias-disable;
++				};
++			};
++		};
++
++		serial@78b3000 {
++			pinctrl-0 = <&serial_4_pins>;
++			pinctrl-names = "default";
++			status = "ok";
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+new file mode 100644
+index 0000000..f910cc0
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+@@ -0,0 +1,153 @@
++/*
++ * Copyright (c) 2017, The Linux Foundation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/qcom,gcc-ipq8074.h>
++
++/ {
++	model = "Qualcomm Technologies, Inc. IPQ8074";
++	compatible = "qcom,ipq8074";
++
++	soc: soc {
++		#address-cells = <0x1>;
++		#size-cells = <0x1>;
++		ranges = <0 0 0 0xffffffff>;
++		compatible = "simple-bus";
++
++		pinctrl@1000000 {
++			compatible = "qcom,ipq8074-pinctrl";
++			reg = <0x1000000 0x300000>;
++			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <0x2>;
++			interrupt-controller;
++			#interrupt-cells = <0x2>;
++		};
++
++		intc: interrupt-controller@b000000 {
++			compatible = "qcom,msm-qgic2";
++			interrupt-controller;
++			#interrupt-cells = <0x3>;
++			reg = <0xb000000 0x1000>,
++			<0xb002000 0x1000>;
++		};
++
++		timer {
++			compatible = "arm,armv8-timer";
++			interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++		};
++
++		gcc: gcc@1800000 {
++			compatible = "qcom,gcc-ipq8074";
++			reg = <0x1800000 0x80000>;
++			#clock-cells = <0x1>;
++			#reset-cells = <0x1>;
++		};
++
++		serial@78b3000 {
++			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
++			reg = <0x78b3000 0x200>;
++			interrupts = <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_UART5_APPS_CLK>,
++				 <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			status = "disabled";
++		};
++	};
++
++	cpus {
++		#address-cells = <0x1>;
++		#size-cells = <0x0>;
++
++		cpu-map {
++
++			cluster0 {
++
++				core0 {
++					cpu = <&CPU0>;
++				};
++
++				core1 {
++					cpu = <&CPU1>;
++				};
++
++				core2 {
++					cpu = <&CPU2>;
++				};
++
++				core3 {
++					cpu = <&CPU3>;
++				};
++			};
++		};
++
++		CPU0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x0>;
++			next-level-cache = <&L2_0>;
++			enable-method = "psci";
++		};
++
++		CPU1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			enable-method = "psci";
++			reg = <0x1>;
++			next-level-cache = <&L2_0>;
++		};
++
++		CPU2: cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			enable-method = "psci";
++			reg = <0x2>;
++			next-level-cache = <&L2_0>;
++		};
++
++		CPU3: cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			enable-method = "psci";
++			reg = <0x3>;
++			next-level-cache = <&L2_0>;
++		};
++
++		L2_0: l2-cache {
++			compatible = "cache";
++			cache-level = <0x2>;
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-1.0";
++		method = "smc";
++	};
++
++	clocks {
++		sleep_clk: sleep_clk {
++			compatible = "fixed-clock";
++			clock-frequency = <32000>;
++			#clock-cells = <0>;
++		};
++
++		xo: xo {
++			compatible = "fixed-clock";
++			clock-frequency = <19200000>;
++			#clock-cells = <0>;
++		};
++	};
++};
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
