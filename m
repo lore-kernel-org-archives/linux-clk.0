@@ -1,50 +1,33 @@
-Return-Path: <daniel.lezcano@linaro.org>
-Return-Path: <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH V2] clk: hi6220: Add the hi655x's pmic clock
-To: Lee Jones <lee.jones@linaro.org>
-References: <1491683412-12237-1-git-send-email-daniel.lezcano@linaro.org>
- <20170411140613.jvhzsvrxa4evwxjh@dell> <20170411211936.GT2078@mai>
- <20170412080038.kk4vrjhvr3eao26q@dell>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com, xuwei5@hisilicon.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <c1dba250-a60c-febc-a5c3-5ba645a61ce0@linaro.org>
-Date: Wed, 12 Apr 2017 14:10:31 +0200
+Return-Path: <sboyd@codeaurora.org>
+Date: Fri, 28 Apr 2017 11:38:11 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Irina Tirdea <irina.tirdea@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] clk: x86: pmc-atom: Checking for IS_ERR() instead of NULL
+Message-ID: <20170428183811.GC7065@codeaurora.org>
+References: <20170422104333.tcdpvessre3pvafk@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <20170412080038.kk4vrjhvr3eao26q@dell>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170422104333.tcdpvessre3pvafk@mwanda>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/04/2017 10:00, Lee Jones wrote:
-> On Tue, 11 Apr 2017, Daniel Lezcano wrote:
+On 04/22, Dan Carpenter wrote:
+> clkdev_hw_create() returns NULLs on error, it doesn't return error
+> pointers.
 > 
->> On Tue, Apr 11, 2017 at 03:06:13PM +0100, Lee Jones wrote:
->>> On Sat, 08 Apr 2017, Daniel Lezcano wrote:
->>>
->>>> The hi655x multi function device is a PMIC providing regulators.
->>>>
->>>> The PMIC also provides a clock for the WiFi and the Bluetooth, let's implement
->>>> this clock in order to add it in the hi655x MFD and allow proper wireless
->>>> initialization.
->>>>
->>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
-[ ... ]
-
->> Do you want to drop it from your tree or shall I resubmit a V3 without the mfd
->> change?
+> Fixes: 41ee7caf59e1 ("clk: x86: add "mclk" alias for Baytrail/Cherrytrail")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> The latter please.
+> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+> index fafc99120dc2..f99abc1106f0 100644
+> --- a/drivers/clk/x86/clk-pmc-atom.c
 
-Ok.
-
-What about the DT binding change?
-
+Applied to clk-next
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
