@@ -1,52 +1,37 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1492624001-3758-17-git-send-email-ykaneko0929@gmail.com>
-References: <1492624001-3758-17-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Apr 2017 20:43:12 +0200
-Message-ID: <CAMuHMdWJkMbUz2BLPAxnTyZb8OimkhSzRd5YMiiYQSitiuR=hw@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7796: Add HS-USB clock
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de,
+	xf@rock-chips.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2 0/3] clk: rockchip: Perfect clock description for RK3228
+Date: Fri, 28 Apr 2017 15:02:44 +0800
+Message-Id: <1493362967-4040-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Kaneko-san,
+support more cpu freq, and support armcore div setting.
+Add some necessary clks ID.
 
-On Wed, Apr 19, 2017 at 7:46 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
->
-> This patch adds HS-USB-IF clock for R8A7796 SoC.
->
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Change in V2:
+separate [PATCH V1 2/2] into two patches with one adding the
+clock-ids to the rk3228-cru.h and a second patch then doing the
+assignment in clk-rk3228.c
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Elaine Zhang (3):
+  clk: rockchip: fix up the RK3228 clk cpu setting table
+  clk: rockchip: add clock-ids for rk3228 clocks
+  clk: rockchip: export rk3228 clocks ID
 
-I.e. will queue in clk-renesas-for-v4.13.
+ drivers/clk/rockchip/clk-rk3228.c      | 142 +++++++++++++++++++--------------
+ include/dt-bindings/clock/rk3228-cru.h |  47 +++++++++++
+ 2 files changed, 127 insertions(+), 62 deletions(-)
 
-> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> @@ -171,6 +171,7 @@ enum clk_ids {
->         DEF_MOD("vspi0",                 631,   R8A7796_CLK_S0D1),
->         DEF_MOD("ehci1",                 702,   R8A7796_CLK_S3D4),
->         DEF_MOD("ehci0",                 703,   R8A7796_CLK_S3D4),
-> +       DEF_MOD("hsusb",                 704,   R8A7796_CLK_S3D4),
-
-I could not verify the parent clock, though (it could be S3D2 instead).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+1.9.1
