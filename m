@@ -1,85 +1,68 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCHv2 0/9] clk: ti: add support for clkctrl clocks
-To: Tony Lindgren <tony@atomide.com>
-References: <1489741781-12816-1-git-send-email-t-kristo@ti.com>
- <20170317152536.GT20572@atomide.com>
- <94d20a17-5072-ffab-3529-4bbb14327a10@ti.com>
- <20170323010057.GI10760@atomide.com> <20170323170210.GL10760@atomide.com>
- <8648f054-cf04-41df-20f3-82e0d63feefa@ti.com>
- <20170330165448.GF10760@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <55b439ed-8b81-2e6b-64f1-34f9f3cc5369@ti.com>
-Date: Mon, 3 Apr 2017 17:51:39 +0300
+Return-Path: <varada@codeaurora.org>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linus.walleij@linaro.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: sricharan@codeaurora.org,
+	absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	Varadarajan Narayanan <varada@codeaurora.org>
+Subject: [PATCH 0/5] Add minimal boot support for IPQ8074
+Date: Fri, 28 Apr 2017 15:26:38 +0530
+Message-Id: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20170330165448.GF10760@atomide.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30/03/17 19:54, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [170330 00:20]:
->> On 23/03/17 19:02, Tony Lindgren wrote:
->>> * Tony Lindgren <tony@atomide.com> [170322 18:03]:
->>>> * Tero Kristo <t-kristo@ti.com> [170317 14:39]:
->>>>> On 17/03/17 17:25, Tony Lindgren wrote:
->>>>>> * Tero Kristo <t-kristo@ti.com> [170317 02:12]:
->>>>>>> Any additional testing on omap4 welcome as this series basically
->>>>>>> tweaks every possible peripheral clock on the SoC.
->>>>>>
->>>>>> Without the last patch in this series, booting fails for me:
->>>>>>
->>>>>> [    5.074890] l4_per_cm:clk:0120:0: failed to disable
->>>>>> [    5.085113] l4_per_cm:clk:0128:0: failed to disable
->>>>>>
->>>>>> Care to check that booting keeps working for each patch in the
->>>>>> series to avoid breaking git bisect for booting?
->>>>>
->>>>> Hmm, I think patch 8+9 need to be squashed then. I can double check this
->>>>> next week though.
->>>>
->>>> Also looks like with this set merged HDMI stops working on
->>>> omap4 with:
->>>>
->>>> HDMIWP: omapdss HDMIWP error: Failed to set PHY power mode to 1
->>>
->>> Forgot to mention that's with omapdrm with encoder-tpd12s015 and
->>> encoder-tfp410 modules loaded to get HDMI working. Here's more verbose
->>> dmesg output in case that provides more clues:
->>>
->>> [   91.042877] omapdss HDMICORE error: operation stopped when reading edid
->>> [   91.078308] [drm] Enabling DMM ywrap scrolling
->>> [   91.099243] omapdss HDMIWP error: Failed to set PHY power mode to 1
->>> [   91.107879] omapdss HDMI error: failed to power on device
->>> [   91.107879] omapdrm omapdrm.0: Failed to enable display 'hdmi': -5
->>> [   91.359619] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
->>> [   91.619964] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
->>> [   91.620300] Console: switching to colour frame buffer device 128x48
->>> [   91.682434] omapdrm omapdrm.0: fb0: omapdrm frame buffer device
->>> [   91.770812] [drm] Initialized omapdrm 1.0.0 20110917 for omapdrm.0 on minor 0
->>> [   92.818054] omapdss HDMICORE error: operation stopped when reading edid
->>> [   93.090087] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
->>> [   93.349853] omapdrm omapdrm.0: atomic complete timeout (pipe 0)!
->>>
->>> Regards,
->>>
->>> Tony
->>>
->>
->> Can you try with this additional hwmod data tweak in place? Apply this on
->> top of the existing series.
->
-> Does not seem to help, still get the same errors. But maybe I'm doing
-> something wrong as the patch did not apply and I applied it manually.
->
-> Regards,
->
-> Tony
->
+The IPQ8074 is Qualcomm’s High-capacity 802.11ax SoC for Routers,
+Gateways and Access Points.
 
-Hmm ok, can you provide some brief instructions how to test what you are 
-doing with the HDMI? Just connect it to some external monitor? My 
-monitor has a spare HDMI connector so I could try it out.
+This series adds minimal board boot support for ipq8074-hk01
+board.
 
--Tero
+Abhishek Sahu (2):
+  clk: qcom: ipq8074: Add Global Clock Controller support
+  arm64: defconfig: Enable QCOM IPQ8074 clock and pinctrl
+
+Varadarajan Narayanan (3):
+  pinctrl: qcom: Add ipq8074 pinctrl driver
+  dt-bindings: qcom: Add IPQ8074 bindings
+  arm64: dts: Add ipq8074 SoC and MTP board support
+
+ Documentation/devicetree/bindings/arm/qcom.txt     |    2 +
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt      |  202 ++++
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/ipq8074-hk01.dts          |   48 +
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi              |  153 +++
+ arch/arm64/configs/defconfig                       |    2 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/gcc-ipq8074.c                     | 1033 +++++++++++++++++
+ drivers/pinctrl/qcom/Kconfig                       |   10 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-ipq8074.c             | 1220 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h       |  152 +++
+ 14 files changed, 2835 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-ipq8074.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq8074.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq8074.h
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
