@@ -1,74 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:44782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1165737AbdDXGxv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 24 Apr 2017 02:53:51 -0400
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 27 Apr 2017 18:15:33 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, wens@csie.org,
+	mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: sunxi-ng: Fix dependency on SUNXI_CCU_GATE
+Message-ID: <20170428011533.GZ7065@codeaurora.org>
+References: <20170426115319.30951-1-clabbe.montjoie@gmail.com>
+ <20170427070436.3qu4mzepq4gmmymi@lukather>
+ <20170427081249.GA25781@Red>
 MIME-Version: 1.0
-In-Reply-To: <1493016143-21569-3-git-send-email-m.szyprowski@samsung.com>
-References: <CGME20170424064229eucas1p2367a90a36b5bcb99f48a24e72b29a629@eucas1p2.samsung.com>
- <1493016143-21569-1-git-send-email-m.szyprowski@samsung.com> <1493016143-21569-3-git-send-email-m.szyprowski@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 24 Apr 2017 08:53:20 +0200
-Message-ID: <CAJKOXPdDBsqHp-qXFFjcK10PUb_Vo1q6DsdgerYW4j+9ESpxfw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] clk: samsung: Add local variable to match it purpose
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20170427081249.GA25781@Red>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 24, 2017 at 8:42 AM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Add new variable to avoid using clk pointer for different purposes across
-> the exynos_register_cpu_clock() function. This will help in future rewrite
-> for the new clk_hw API.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-cpu.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-> index 8bf7e805fd34..6e1c6007e721 100644
-> --- a/drivers/clk/samsung/clk-cpu.c
-> +++ b/drivers/clk/samsung/clk-cpu.c
-> @@ -410,6 +410,7 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
->  {
->         struct exynos_cpuclk *cpuclk;
->         struct clk_init_data init;
-> +       struct clk *parent_clk;
->         struct clk *clk;
->         int ret = 0;
->
-> @@ -440,15 +441,15 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
->                 goto free_cpuclk;
->         }
->
-> -       clk = __clk_lookup(parent);
-> -       if (!clk) {
-> +       parent_clk = __clk_lookup(parent);
-> +       if (!parent_clk) {
->                 pr_err("%s: could not lookup parent clock %s\n",
->                                 __func__, parent);
->                 ret = -EINVAL;
->                 goto free_cpuclk;
->         }
->
-> -       ret = clk_notifier_register(clk, &cpuclk->clk_nb);
-> +       ret = clk_notifier_register(parent_clk, &cpuclk->clk_nb);
->         if (ret) {
->                 pr_err("%s: failed to register clock notifier for %s\n",
->                                 __func__, name);
+On 04/27, Corentin Labbe wrote:
+> On Thu, Apr 27, 2017 at 09:04:36AM +0200, Maxime Ripard wrote:
+> > On Wed, Apr 26, 2017 at 01:53:19PM +0200, Corentin Labbe wrote:
+> > > When CONFIG_SUNXI_CCU is set but no other SUNXI_CCU is selected i got
+> > > the following build error:
+> > > drivers/built-in.o: In function `ccu_pll_notifier_cb':
+> > > drivers/clk/sunxi-ng/ccu_common.c:71: undefined reference to `ccu_gate_helper_disable'
+> > > drivers/clk/sunxi-ng/ccu_common.c:73: undefined reference to `ccu_gate_helper_enable'
+> > > 
+> > > The problem is the function ccu_pll_notifier_cb in ccu_common.c need
+> > > some function from ccu_gate.c which is not compiled since SUNXI_CCU_GATE
+> > > is not selected.
+> > > 
+> > > This patch remove SUNXI_CCU_GATE and compile ccu_gate.c unconditionnaly
+> > > since all other combination of options select SUNXI_CCU_GATE finally.
+> > > 
+> > > Fixes: 02ae2bc6febd ("clk: sunxi-ng: Add clk notifier to gate then ungate PLL clocks")
+> > > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+> > 
+> > I think Chen-Yu had some comments that you didn't address.
+> > 
+> 
+> I have changed subject as requested
 
-You can also remove one clk_lookup and just use "parent_clk" in error path:
+There were more comments than just fixing the subject. And now
+Arnd has sent a patch. This is a problem in mainline, and the
+release is days away. I'm inclined to go with Arnd's patch unless
+someone sends something else and forward it directly to Linus.
 
-478 unregister_clk_nb:
-479         clk_notifier_unregister(__clk_lookup(parent), &cpuclk->clk_nb);
-
-Best regards,
-Krzysztof
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
