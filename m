@@ -1,34 +1,38 @@
 Return-Path: <sboyd@codeaurora.org>
-Date: Wed, 19 Apr 2017 09:09:46 -0700
 From: Stephen Boyd <sboyd@codeaurora.org>
-To: Alexey Firago <alexey_firago@mentor.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, marek.vasut@gmail.com,
-	geert@linux-m68k.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] clk: vc5: Add support for IDT VersaClock 5P49V5935
-Message-ID: <20170419160946.GX7065@codeaurora.org>
-References: <1491556344-9465-1-git-send-email-alexey_firago@mentor.com>
- <1491556344-9465-4-git-send-email-alexey_firago@mentor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1491556344-9465-4-git-send-email-alexey_firago@mentor.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.11-rc8
+Date: Fri, 28 Apr 2017 16:44:18 -0700
+Message-Id: <20170428234418.21044-1-sboyd@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/07, Alexey Firago wrote:
-> Update IDT VersaClock 5 driver to support 5P49V5935. This chip has
-> two clock inputs (internal XTAL or external CLKIN), four fractional
-> dividers (FODs) and five clock outputs (four universal clock outputs
-> and one reference clock output at OUT0_SELB_I2C).
-> 
-> Current driver supports up to 2 FODs and up to 3 clock outputs. This
-> patch sets max number of supported FODs to 4 and max number of supported
-> clock outputs to 5.
-> 
-> Signed-off-by: Alexey Firago <alexey_firago@mentor.com>
-> ---
+The following changes since commit e7590308d17e578e47f298cc3fec359108341cb6:
 
-Applied to clk-next
+  Merge tag 'sunxi-clk-fixes-for-4.11-2-bis' of https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into clk-fixes (2017-04-17 11:04:12 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 36c02d0be4c3c8804e51f9740f0d768e17f3b566:
+
+  clk: sunxi-ng: always select CCU_GATE (2017-04-28 10:47:21 -0700)
+
+----------------------------------------------------------------
+One odd config build fix for a recent Allwinner clock driver change that
+got merged. The common code called code in another file that wasn't always
+built. This just forces it on so people don't run into this bad configuration.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      clk: sunxi-ng: always select CCU_GATE
+
+ drivers/clk/sunxi-ng/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
