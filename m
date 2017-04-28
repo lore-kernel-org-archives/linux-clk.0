@@ -1,58 +1,93 @@
-Return-Path: <john@phrozen.org>
-Subject: Re: [PATCH 0/2] clk: mediatek: add missing ethernet reset definition
-To: Stephen Boyd <sboyd@codeaurora.org>
-References: <1485175707-58528-1-git-send-email-john@phrozen.org>
- <20170127001441.GS8801@codeaurora.org>
- <6803ef87-fb22-075c-bee1-3c0adb8e297d@phrozen.org>
- <20170419171835.GO7065@codeaurora.org>
-Cc: James Liao <jamesjj.liao@mediatek.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- linux-mediatek@lists.infradead.org, Matthias Brugger
- <matthias.bgg@gmail.com>, Erin Lo <erin.lo@mediatek.com>,
- linux-arm-kernel@lists.infradead.org
-From: John Crispin <john@phrozen.org>
-Message-ID: <0753780a-0a08-e0b2-0eb0-c3272d7bc487@phrozen.org>
-Date: Wed, 19 Apr 2017 21:17:52 +0200
-MIME-Version: 1.0
-In-Reply-To: <20170419171835.GO7065@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de,
+	xf@rock-chips.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2 1/3] clk: rockchip: fix up the RK3228 clk cpu setting table
+Date: Fri, 28 Apr 2017 15:02:45 +0800
+Message-Id: <1493362967-4040-2-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1493362967-4040-1-git-send-email-zhangqing@rock-chips.com>
+References: <1493362967-4040-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+support more cpu freq, and add armcore div setting.
 
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-rk3228.c | 50 ++++++++++++++++++++++++++-------------
+ 1 file changed, 34 insertions(+), 16 deletions(-)
 
-On 19/04/17 19:18, Stephen Boyd wrote:
-> On 01/27, John Crispin wrote:
->>
->> On 27/01/2017 01:14, Stephen Boyd wrote:
->>> On 01/23, John Crispin wrote:
->>>> When the clk code for mt2701 was merged, we forgot to add the reset
->>>> controller of the ethernet subsystem. This series adds the missing code
->>>> and header files required to reference the bits from within a devicetree
->>>> file.
->>>>
->>>> John Crispin (2):
->>>>    clk: mediatek: add mt2701 ethernet reset
->>>>    reset: mediatek: Add MT2701 ethsys reset controller include file
->>>>
->>>>   drivers/clk/mediatek/clk-mt2701-eth.c     |    2 ++
->>>>   include/dt-bindings/reset/mt2701-resets.h |    7 +++++++
->>> Any planned DT users in the next merge window? Should I put this
->>> into a topic branch? Do you want a clk maintainer ack? At the
->>> least we need someone like James to ack this first.
->>>
->> Hi Stephen,
->>
->> the addition of the dtsi snippets for the ethernet core is pending due
->> to this patch. getting it into v4.11 would be geat so that i can sent
->> dtsi changes during the next merge window.
->>
-> Sorry, I never saw anything from anyone @mediatek so I never did
-> anything here. I suppose I'll just go and apply this to clk-next
-> now and then v4.13 can get the ethernet patches?
->
-Hi Stephen,
-
-sounds like a plan. i'll add the series to my local pending tree and 
-resend stuff during the next merge window if it was not merged by then.
-
-     John
+diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+index db6e5a9e6de6..a6cdf8fc1e75 100644
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -86,25 +86,43 @@ enum rk3228_plls {
+ #define RK3228_DIV_PCLK_MASK		0x7
+ #define RK3228_DIV_PCLK_SHIFT		12
+ 
+-#define RK3228_CLKSEL1(_core_peri_div)					\
+-	{									\
+-		.reg = RK2928_CLKSEL_CON(1),					\
+-		.val = HIWORD_UPDATE(_core_peri_div, RK3228_DIV_PERI_MASK,	\
+-				RK3228_DIV_PERI_SHIFT)				\
+-	}
++#define RK3228_CLKSEL1(_core_aclk_div, _core_peri_div)			\
++{									\
++	.reg = RK2928_CLKSEL_CON(1),					\
++	.val = HIWORD_UPDATE(_core_peri_div, RK3228_DIV_PERI_MASK,	\
++			     RK3228_DIV_PERI_SHIFT) |			\
++	       HIWORD_UPDATE(_core_aclk_div, RK3228_DIV_ACLK_MASK,	\
++			     RK3228_DIV_ACLK_SHIFT),			\
++}
+ 
+-#define RK3228_CPUCLK_RATE(_prate, _core_peri_div)			\
+-	{								\
+-		.prate = _prate,					\
+-		.divs = {						\
+-			RK3228_CLKSEL1(_core_peri_div),		\
+-		},							\
+-	}
++#define RK3228_CPUCLK_RATE(_prate, _core_aclk_div, _core_peri_div)	\
++{									\
++	.prate = _prate,						\
++	.divs = {							\
++		RK3228_CLKSEL1(_core_aclk_div, _core_peri_div),		\
++	},								\
++}
+ 
+ static struct rockchip_cpuclk_rate_table rk3228_cpuclk_rates[] __initdata = {
+-	RK3228_CPUCLK_RATE(816000000, 4),
+-	RK3228_CPUCLK_RATE(600000000, 4),
+-	RK3228_CPUCLK_RATE(312000000, 4),
++	RK3228_CPUCLK_RATE(1800000000, 1, 7),
++	RK3228_CPUCLK_RATE(1704000000, 1, 7),
++	RK3228_CPUCLK_RATE(1608000000, 1, 7),
++	RK3228_CPUCLK_RATE(1512000000, 1, 7),
++	RK3228_CPUCLK_RATE(1488000000, 1, 5),
++	RK3228_CPUCLK_RATE(1416000000, 1, 5),
++	RK3228_CPUCLK_RATE(1392000000, 1, 5),
++	RK3228_CPUCLK_RATE(1296000000, 1, 5),
++	RK3228_CPUCLK_RATE(1200000000, 1, 5),
++	RK3228_CPUCLK_RATE(1104000000, 1, 5),
++	RK3228_CPUCLK_RATE(1008000000, 1, 5),
++	RK3228_CPUCLK_RATE(912000000, 1, 5),
++	RK3228_CPUCLK_RATE(816000000, 1, 3),
++	RK3228_CPUCLK_RATE(696000000, 1, 3),
++	RK3228_CPUCLK_RATE(600000000, 1, 3),
++	RK3228_CPUCLK_RATE(408000000, 1, 1),
++	RK3228_CPUCLK_RATE(312000000, 1, 1),
++	RK3228_CPUCLK_RATE(216000000,  1, 1),
++	RK3228_CPUCLK_RATE(96000000, 1, 1),
+ };
+ 
+ static const struct rockchip_cpuclk_reg_data rk3228_cpuclk_data = {
+-- 
+1.9.1
