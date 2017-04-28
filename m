@@ -1,105 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:45523 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1045005AbdDWKin (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 23 Apr 2017 06:38:43 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v5 03/11] dt-bindings: add bindings for DE2 on V3s SoC
-Date: Sun, 23 Apr 2017 18:37:46 +0800
-Message-Id: <20170423103754.50012-4-icenowy@aosc.io>
-In-Reply-To: <20170423103754.50012-1-icenowy@aosc.io>
-References: <20170423103754.50012-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20170428123837.GF1532@bigcity.dyn.berto.se>
+References: <1493139200-27396-1-git-send-email-geert+renesas@glider.be>
+ <1493139200-27396-3-git-send-email-geert+renesas@glider.be> <20170428123837.GF1532@bigcity.dyn.berto.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 28 Apr 2017 14:45:43 +0200
+Message-ID: <CAMuHMdVHJhJ46DSF_vw+jedDJZab1+FbtzuQgopqumSAwoGUEA@mail.gmail.com>
+Subject: Re: [PATCH 02/10] clk: renesas: Add r8a7790 CPG Core Clock Definitions
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s SoC have a display engine which have a different pipeline
-with older SoCs.
+Hi Niklas,
 
-Add document for it (new compatibles and the new "mixer" part).
+On Fri, Apr 28, 2017 at 2:38 PM, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+>
+> On 2017-04-25 18:53:12 +0200, Geert Uytterhoeven wrote:
+>> Add all R-Car H2 Clock Pulse Generator Core Clock Outputs, as listed in
+>> Table 7.2a ("List of Clocks [R-Car H2]") of the R-Car Gen2 Hardware
+>> User's Manual rev. 2.00.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Acked-by: Rob Herring <robh@kernel.org>
----
-Changes in v4:
-- Removed the refactor at TCON chapter.
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/r8a7790-cpg-mssr.h
 
-Changes in v3:
-- Remove the description of having a BE directly as allwinner,pipeline.
+>> +#define R8A7790_CLK_R                        33
+>> +#define R8A7790_CLK_OSC                      34
+>
+> The last two are called RCLR and OSCCLK in the Table 7.2a ("List of
+> Clocks [R-Car H2]"). I'm sure this is intentional on your side, and if
+> so:
 
- .../bindings/display/sunxi/sun4i-drm.txt           | 29 ++++++++++++++++++++--
- 1 file changed, 27 insertions(+), 2 deletions(-)
+It's a bit silly to have two clocks with "clk" in their name, while
+all others don't.
+We did the same on R-Car Gen3.
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 57a8d0610062..7da80e26d61b 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -31,6 +31,7 @@ Required properties:
-    * allwinner,sun6i-a31-tcon
-    * allwinner,sun6i-a31s-tcon
-    * allwinner,sun8i-a33-tcon
-+   * allwinner,sun8i-v3s-tcon
-  - reg: base address and size of memory-mapped region
-  - interrupts: interrupt associated to this IP
-  - clocks: phandles to the clocks feeding the TCON. Three are needed:
-@@ -52,7 +53,7 @@ Required properties:
-   second the block connected to the TCON channel 1 (usually the TV
-   encoder)
- 
--On SoCs other than the A33, there is one more clock required:
-+On SoCs other than the A33 and V3s, there is one more clock required:
-    - 'tcon-ch1': The clock driving the TCON channel 1
- 
- DRC
-@@ -138,6 +139,26 @@ Required properties:
-   Documentation/devicetree/bindings/media/video-interfaces.txt. The
-   first port should be the input endpoints, the second one the outputs
- 
-+Display Engine 2.0 Mixer
-+------------------------
-+
-+The DE2 mixer have many functionalities, currently only layer blending is
-+supported.
-+
-+Required properties:
-+  - compatible: value must be one of:
-+    * allwinner,sun8i-v3s-de2-mixer
-+  - reg: base address and size of the memory-mapped region.
-+  - clocks: phandles to the clocks feeding the frontend and backend
-+    * bus: the backend interface clock
-+    * ram: the backend DRAM clock
-+  - clock-names: the clock names mentioned above
-+  - resets: phandles to the reset controllers driving the backend
-+
-+- ports: A ports node with endpoint definitions as defined in
-+  Documentation/devicetree/bindings/media/video-interfaces.txt. The
-+  first port should be the input endpoints, the second one the output
-+
- 
- Display Engine Pipeline
- -----------------------
-@@ -152,9 +173,13 @@ Required properties:
-     * allwinner,sun6i-a31-display-engine
-     * allwinner,sun6i-a31s-display-engine
-     * allwinner,sun8i-a33-display-engine
-+    * allwinner,sun8i-v3s-display-engine
- 
-   - allwinner,pipelines: list of phandle to the display engine
--    frontends available.
-+    pipeline entry point. For SoCs with original DE (currently
-+    all SoCs supported by display engine except V3s), this
-+    phandle should be a display frontend; for SoCs with DE2,
-+    this phandle should be a mixer.
- 
- Example:
- 
--- 
-2.12.2
+> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se=
+>
 
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
