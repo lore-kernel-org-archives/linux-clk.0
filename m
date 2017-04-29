@@ -1,84 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:43490 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S946435AbdDTOj7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2017 10:39:59 -0400
-Date: Thu, 20 Apr 2017 16:39:57 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        David Airlie <airlied@linux.ie>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 05/11] drm/sun4i: abstract a engine type
-Message-ID: <20170420143957.t4vppaeydlaeocgh@lukather>
-References: <20170416120849.54542-1-icenowy@aosc.io>
- <20170416120849.54542-6-icenowy@aosc.io>
- <20170418085548.4cisone2yfcuizcp@lukather>
- <5F52665D-8A24-40D3-B84B-E8991B3BE457@aosc.io>
+Return-Path: <fengguang.wu@intel.com>
+Date: Sat, 29 Apr 2017 13:50:51 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: kbuild-all@01.org, robh+dt@kernel.org, mark.rutland@arm.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linus.walleij@linaro.org, andy.gross@linaro.org,
+	david.brown@linaro.org, catalin.marinas@arm.com,
+	will.deacon@arm.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	sricharan@codeaurora.org, absahu@codeaurora.org,
+	sjaganat@codeaurora.org,
+	Varadarajan Narayanan <varada@codeaurora.org>
+Subject: Re: [PATCH 2/5] clk: qcom: ipq8074: Add Global Clock Controller
+ support
+Message-ID: <201704291326.jFi4mgNw%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="52falea6r2qekzsn"
-In-Reply-To: <5F52665D-8A24-40D3-B84B-E8991B3BE457@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1493373403-23462-3-git-send-email-varada@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Abhishek,
 
---52falea6r2qekzsn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on v4.11-rc8 next-20170428]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-On Tue, Apr 18, 2017 at 07:05:12PM +0800, Icenowy Zheng wrote:
-> >> @@ -56,7 +55,7 @@ static void sun4i_crtc_atomic_flush(struct drm_crtc
-> >*crtc,
-> >> =20
-> >>  	DRM_DEBUG_DRIVER("Committing plane changes\n");
-> >> =20
-> >> -	sun4i_backend_commit(scrtc->backend);
-> >> +	scrtc->engine_ops->commit(scrtc->engine);
-> >
-> >You rely on the backend having setup things properly, which is pretty
-> >fragile. Ideally, you should have a function to check that engine_ops
-> >and commit is !NULL, and call it, and the consumers would use that
-> >function...
->=20
-> If it's really NULL how should the function return?
+url:    https://github.com/0day-ci/linux/commits/Varadarajan-Narayanan/Add-minimal-boot-support-for-IPQ8074/20170429-130315
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
 
-It depends on the return code. ENOSYS if it returns an int, and simply
-does nothing if it's a void. I don't think any of the current
-functions return an error code at the moment though, so I'd just keep
-the current behaviour and just call the function if it's set.
 
-You cannot fail in atomic_flush anyway.
+coccinelle warnings: (new ones prefixed by >>)
 
-Maxime
+>> drivers/clk/qcom/gcc-ipq8074.c:1014:3-8: No need to set .owner here. The core will do it.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Please review and possibly fold the followup patch.
 
---52falea6r2qekzsn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJY+Mg8AAoJEBx+YmzsjxAgrCEP/0mm+8kAM9NuwW4p7aB4fCXo
-PcOnhUvpRIiEaD56JE7eIBfczIZTxW45aucXBFHGVFlEmC5pMnAsUVM21LGkd+Ub
-jnVuIucc5T08VekSo51y7TGa+daRWgPzkKCgQvPAJ27yS/z7lfQTXlxGxEC3a5os
-gCw520/meEWKPoU/IAm4gMiAMcfXPrKuZ7lOIoOrRfdCci4mfWg6VEXNSmYsz7qv
-4cXzSkidlhBehGGOCzJ9rd+7SXNzDMQBLO8SxDrlgfNPbZzLwJbHetGCX8ZEml0w
-r9ElwrTH10MqfmlQOdyW5KF5gdUpbt7urkXT0hRNxnYblXuxd7hYWA0DU1t5SiiO
-kzvzLdMeYoIZbYVLCWWBMh77Oj0/sulX+8xjE/wxJP/JBkozla8nwUyGPZYs/fRq
-FJ6ipW36yuRgxvMJOxjdnpYVkmYlKPVp85cajze5SNbu2fC9g/fzT/TKHz+DIMrX
-MJzpNjDLGG4ELVn4ChXMka0eF9F8FlzsKOXDDXuN63j8onBtHsie0JsHepP4GMmP
-0kXzX6SGs7asilf0VDQRPhQIPJwT53vPSKxzJOat9W+UAHNmGCkKWOG4MIEg/KcT
-hJiruiDyuFGrCAcmqaVLMUTBSXe/jStNcskQzEQiEWyiB1Lr0KGFvSiAAh1CPFAU
-QvpGTMRJWSqe5sNPPyw3
-=XTQO
------END PGP SIGNATURE-----
-
---52falea6r2qekzsn--
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
