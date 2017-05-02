@@ -1,52 +1,40 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.132]:44994 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbdEQEpp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2017 00:45:45 -0400
-From: Frank Wang <frank.wang@rock-chips.com>
-To: heiko@sntech.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, mturquette@baylibre.com,
-        sboyd@codeaurora.org, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        rui.zhang@intel.com, edubezval@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, charles.chen@rock-chips.com,
-        cody.xie@rock-chips.com, kevan.lan@rock-chips.com,
-        huangtao@rock-chips.com, rocky.hao@rock-chips.com,
-        finley.xiao@rock-chips.com, zhangqing@rock-chips.com,
-        wmc@rock-chips.com, Frank Wang <frank.wang@rock-chips.com>
-Subject: [PATCH 0/4] amend some properties related clk and cpu for rk322x
-Date: Wed, 17 May 2017 12:45:19 +0800
-Message-Id: <1494996323-4678-1-git-send-email-frank.wang@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de,
+	xf@rock-chips.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux-clk@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v3 0/4] make some special clk as critical_clocks
+Date: Tue,  2 May 2017 15:34:02 +0800
+Message-Id: <1493710446-7203-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-These series of patches amend some assigned-clocks and add cpu opp table
-for rk322x SoCs.
+change in V3:
+reword the commit message,explain why the specific clocks are need to be critical.
 
-the following patches on patchwork are required for this changes.
-https://patchwork.kernel.org/patch/9627639/
-https://patchwork.kernel.org/patch/9703945/
-https://patchwork.kernel.org/patch/9703939/
-https://patchwork.kernel.org/patch/9707517/
+change in v2:
+fix up some clks which have their own driver, not need to set as critical clocks
 
-Elaine Zhang (1):
-  arm: dts: rk322x: add some assigned-clocks
+Elaine Zhang (4):
+  clk: rockchip: rk3036: make pclk_ddrupctl as critical_clock
+  clk: rockchip: rk3228: make noc and some special clk as
+    critical_clocks
+  clk: rockchip: rk3288: make noc and some special clk as
+    critical_clocks
+  clk: rockchip: rk3368: make some special clk as critical_clocks
 
-Finley Xiao (2):
-  arm: dts: rk322x: add operating-points-v2 property for cpu
-  arm: dts: rk3229: add a new cpu opp table
-
-Rocky Hao (1):
-  arm: dts: rk322x: update tsadc's frequence setting
-
- arch/arm/boot/dts/rk3229-cpu-opp.dtsi | 85 +++++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/rk322x.dtsi         | 52 ++++++++++++++++++---
- 2 files changed, 131 insertions(+), 6 deletions(-)
- create mode 100644 arch/arm/boot/dts/rk3229-cpu-opp.dtsi
+ drivers/clk/rockchip/clk-rk3036.c |  1 +
+ drivers/clk/rockchip/clk-rk3228.c | 30 +++++++++++++++++++++++++++++-
+ drivers/clk/rockchip/clk-rk3288.c | 14 ++++++++++----
+ drivers/clk/rockchip/clk-rk3368.c |  5 ++++-
+ 4 files changed, 44 insertions(+), 6 deletions(-)
 
 -- 
-2.0.0
-
-
+1.9.1
