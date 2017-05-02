@@ -1,134 +1,88 @@
-Return-Path: <maxime.ripard@free-electrons.com>
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de,
+	xf@rock-chips.com
+Cc: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
+	huangtao@rock-chips.com,
+	xxx@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: [PATCH v3 01/21] clk: divider: Make divider_round_rate take the parent clock
-Date: Wed, 17 May 2017 09:40:30 +0200
-Message-Id: <af976be0ecc2ea335cd9694a83fb29174d87e17d.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
-References: <cover.463df61c38224ecbfb5bf1cf192deeb63718b693.1495006350.git-series.maxime.ripard@free-electrons.com>
+	linux-arm-kernel@lists.infradead.org,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v3 3/4] clk: rockchip: rk3288: make noc and some special clk as critical_clocks
+Date: Tue,  2 May 2017 15:34:05 +0800
+Message-Id: <1493710446-7203-4-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1493710446-7203-1-git-send-email-zhangqing@rock-chips.com>
+References: <1493710446-7203-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-So far, divider_round_rate only considers the parent clock returned by
-clk_hw_get_parent.
+The atclk\dbg\jtag\xin12m\pclk_core clks no driver to handle them.
+But this clks need enable,so make it as critical.
 
-This works fine on clocks that have a single parents, this doesn't work on
-muxes, since we will only consider the first parent, while other parents
-may totally be able to provide a better combination.
+The ddrupctl0\ddrupctl1\publ0\publ1 clks no driver to handle them,
+Chip design requirements for these clock to always on,
+The new document will update the description of these clock.
 
-Clocks in that case cannot use divider_round_rate, so would have to come up
-with a very similar logic to work around it. Instead of having to do
-something like this, and duplicate that logic everywhere, create a
-divider_round_rate parent to allow caller to give an additional parameter
-for the parent clock to consider.
+The pmu_hclk_otg0 is Chip design defect, must be always on,
+The new document will update the description of this clock.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- drivers/clk/clk-divider.c    | 19 ++++++++++---------
- include/linux/clk-provider.h | 16 +++++++++++++---
- 2 files changed, 23 insertions(+), 12 deletions(-)
+ drivers/clk/rockchip/clk-rk3288.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index 96386ffc8483..9bb472cccca6 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -275,7 +275,8 @@ static int _next_div(const struct clk_div_table *table, int div,
- 	return div;
- }
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 68ba7d4105e7..450de24a1b42 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -292,13 +292,13 @@ enum rk3288_plls {
+ 	COMPOSITE_NOMUX(0, "aclk_core_mp", "armclk", CLK_IGNORE_UNUSED,
+ 			RK3288_CLKSEL_CON(0), 4, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,
+ 			RK3288_CLKGATE_CON(12), 6, GFLAGS),
+-	COMPOSITE_NOMUX(0, "atclk", "armclk", 0,
++	COMPOSITE_NOMUX(0, "atclk", "armclk", CLK_IGNORE_UNUSED,
+ 			RK3288_CLKSEL_CON(37), 4, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
+ 			RK3288_CLKGATE_CON(12), 7, GFLAGS),
+ 	COMPOSITE_NOMUX(0, "pclk_dbg_pre", "armclk", CLK_IGNORE_UNUSED,
+ 			RK3288_CLKSEL_CON(37), 9, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
+ 			RK3288_CLKGATE_CON(12), 8, GFLAGS),
+-	GATE(0, "pclk_dbg", "pclk_dbg_pre", 0,
++	GATE(0, "pclk_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
+ 			RK3288_CLKGATE_CON(12), 9, GFLAGS),
+ 	GATE(0, "cs_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
+ 			RK3288_CLKGATE_CON(12), 10, GFLAGS),
+@@ -626,7 +626,7 @@ enum rk3288_plls {
+ 	INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
+ 			RK3288_CLKSEL_CON(22), 7, IFLAGS),
  
--static int clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
-+static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
-+			       unsigned long rate,
- 			       unsigned long *best_parent_rate,
- 			       const struct clk_div_table *table, u8 width,
- 			       unsigned long flags)
-@@ -314,8 +315,7 @@ static int clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
- 			*best_parent_rate = parent_rate_saved;
- 			return i;
- 		}
--		parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
--					       rate * i);
-+		parent_rate = clk_hw_round_rate(parent, rate * i);
- 		now = DIV_ROUND_UP_ULL((u64)parent_rate, i);
- 		if (_is_best_div(rate, now, best, flags)) {
- 			bestdiv = i;
-@@ -326,23 +326,24 @@ static int clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
+-	GATE(0, "jtag", "ext_jtag", 0,
++	GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
+ 			RK3288_CLKGATE_CON(4), 14, GFLAGS),
  
- 	if (!bestdiv) {
- 		bestdiv = _get_maxdiv(table, width, flags);
--		*best_parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), 1);
-+		*best_parent_rate = clk_hw_round_rate(parent, 1);
- 	}
+ 	COMPOSITE_NODIV(SCLK_USBPHY480M_SRC, "usbphy480m_src", mux_usbphy480m_p, 0,
+@@ -635,7 +635,7 @@ enum rk3288_plls {
+ 	COMPOSITE_NODIV(SCLK_HSICPHY480M, "sclk_hsicphy480m", mux_hsicphy480m_p, 0,
+ 			RK3288_CLKSEL_CON(29), 0, 2, MFLAGS,
+ 			RK3288_CLKGATE_CON(3), 6, GFLAGS),
+-	GATE(0, "hsicphy12m_xin12m", "xin12m", 0,
++	GATE(0, "hsicphy12m_xin12m", "xin12m", CLK_IGNORE_UNUSED,
+ 			RK3288_CLKGATE_CON(13), 9, GFLAGS),
+ 	DIV(0, "hsicphy12m_usbphy", "sclk_hsicphy480m", 0,
+ 			RK3288_CLKSEL_CON(11), 8, 6, DFLAGS),
+@@ -816,6 +816,12 @@ enum rk3288_plls {
+ 	"pclk_alive_niu",
+ 	"pclk_pd_pmu",
+ 	"pclk_pmu_niu",
++	"pclk_core_niu",
++	"pclk_ddrupctl0",
++	"pclk_publ0",
++	"pclk_ddrupctl1",
++	"pclk_publ1",
++	"pmu_hclk_otg0",
+ };
  
- 	return bestdiv;
- }
- 
--long divider_round_rate(struct clk_hw *hw, unsigned long rate,
--			unsigned long *prate, const struct clk_div_table *table,
--			u8 width, unsigned long flags)
-+long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
-+			       unsigned long rate, unsigned long *prate,
-+			       const struct clk_div_table *table,
-+			       u8 width, unsigned long flags)
- {
- 	int div;
- 
--	div = clk_divider_bestdiv(hw, rate, prate, table, width, flags);
-+	div = clk_divider_bestdiv(hw, parent, rate, prate, table, width, flags);
- 
- 	return DIV_ROUND_UP_ULL((u64)*prate, div);
- }
--EXPORT_SYMBOL_GPL(divider_round_rate);
-+EXPORT_SYMBOL_GPL(divider_round_rate_parent);
- 
- static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long *prate)
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index a428aec36ace..c59c62571e4f 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -412,9 +412,10 @@ extern const struct clk_ops clk_divider_ro_ops;
- unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
- 		unsigned int val, const struct clk_div_table *table,
- 		unsigned long flags);
--long divider_round_rate(struct clk_hw *hw, unsigned long rate,
--		unsigned long *prate, const struct clk_div_table *table,
--		u8 width, unsigned long flags);
-+long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
-+			       unsigned long rate, unsigned long *prate,
-+			       const struct clk_div_table *table,
-+			       u8 width, unsigned long flags);
- int divider_get_val(unsigned long rate, unsigned long parent_rate,
- 		const struct clk_div_table *table, u8 width,
- 		unsigned long flags);
-@@ -757,6 +758,15 @@ static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
- 	dst->core = src->core;
- }
- 
-+static inline long divider_round_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long *prate,
-+				      const struct clk_div_table *table,
-+				      u8 width, unsigned long flags)
-+{
-+	return divider_round_rate_parent(hw, clk_hw_get_parent(hw),
-+					 rate, prate, table, width, flags);
-+}
-+
- /*
-  * FIXME clock api without lock protection
-  */
+ static void __iomem *rk3288_cru_base;
 -- 
-git-series 0.9.1
+1.9.1
