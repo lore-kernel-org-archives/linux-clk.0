@@ -1,178 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:40142 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751330AbdESJOX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2017 05:14:23 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] ARM: dts: r8a7790: Stop grouping clocks under a "clocks" subnode
-Date: Fri, 19 May 2017 11:14:13 +0200
-Message-Id: <1495185256-26674-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
-References: <1495185256-26674-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 8/8] ARM: sun8i: a83t: Switch to CCU device tree binding macros
+Date: Wed,  3 May 2017 11:16:58 +0800
+Message-Id: <20170503031658.29299-9-wens@csie.org>
+In-Reply-To: <20170503031658.29299-1-wens@csie.org>
+References: <20170503031658.29299-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The current practice is to not group clocks under a "clocks" subnode,
-but just put them together with the other on-SoC devices.
+Now that the CCU device tree binding headers have been merged, we can
+use the properly named macros in the device tree, instead of raw
+numbers.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 137 ++++++++++++++++++++---------------------
- 1 file changed, 66 insertions(+), 71 deletions(-)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 522f4f81d70601d8..e36d6dd1b086dbba 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1043,77 +1043,72 @@
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 	};
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index e12dd7170b8f..050d3e347740 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -44,6 +44,9 @@
  
--	clocks {
--		#address-cells = <2>;
--		#size-cells = <2>;
--		ranges;
--
--		/* External root clock */
--		extal_clk: extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overriden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External PCIe clock - can be overridden by the board */
--		pcie_bus_clk: pcie_bus {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--
--		/*
--		 * The external audio clocks are configured as 0 Hz fixed frequency clocks by
--		 * default. Boards that provide audio clocks should override them.
--		 */
--		audio_clk_a: audio_clk_a {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clk_b: audio_clk_b {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--		audio_clk_c: audio_clk_c {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--		};
--
--		/* External SCIF clock */
--		scif_clk: scif {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		/* External USB clock - can be overridden by the board */
--		usb_extal_clk: usb_extal {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			clock-frequency = <48000000>;
--		};
--
--		/* External CAN clock */
--		can_clk: can {
--			compatible = "fixed-clock";
--			#clock-cells = <0>;
--			/* This value must be overridden by the board. */
--			clock-frequency = <0>;
--		};
--
--		cpg: clock-controller@e6150000 {
--			compatible = "renesas,r8a7790-cpg-mssr";
--			reg = <0 0xe6150000 0 0x1000>;
--			clocks = <&extal_clk>, <&usb_extal_clk>;
--			clock-names = "extal", "usb_extal";
--			#clock-cells = <2>;
--			#power-domain-cells = <0>;
--		};
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	cpg: clock-controller@e6150000 {
-+		compatible = "renesas,r8a7790-cpg-mssr";
-+		reg = <0 0xe6150000 0 0x1000>;
-+		clocks = <&extal_clk>, <&usb_extal_clk>;
-+		clock-names = "extal", "usb_extal";
-+		#clock-cells = <2>;
-+		#power-domain-cells = <0>;
- 	};
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
  
- 	prr: chipid@ff000044 {
++#include <dt-bindings/clock/sun8i-a83t-ccu.h>
++#include <dt-bindings/reset/sun8i-a83t-ccu.h>
++
+ / {
+ 	interrupt-parent = <&gic>;
+ 	#address-cells = <1>;
+@@ -178,7 +181,7 @@
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x01c20800 0x400>;
+-			clocks = <&ccu 45>, <&osc24M>, <&osc16Md512>;
++			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc16Md512>;
+ 			clock-names = "apb", "hosc", "losc";
+ 			gpio-controller;
+ 			interrupt-controller;
+@@ -225,8 +228,8 @@
+ 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&ccu 53>;
+-			resets = <&ccu 40>;
++			clocks = <&ccu CLK_BUS_UART0>;
++			resets = <&ccu RST_BUS_UART0>;
+ 			status = "disabled";
+ 		};
+ 
 -- 
-2.7.4
-
+2.11.0
