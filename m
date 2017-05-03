@@ -1,87 +1,69 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 11/11] clk: move CLK_SET_RATE_GATE protection from prepare to enable
-Date: Sun, 21 May 2017 23:59:58 +0200
-Message-Id: <20170521215958.19743-12-jbrunet@baylibre.com>
-In-Reply-To: <20170521215958.19743-1-jbrunet@baylibre.com>
-References: <20170521215958.19743-1-jbrunet@baylibre.com>
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 6/8] ARM: sun8i: a83t: Add CCU device nodes
+Date: Wed,  3 May 2017 11:09:27 +0800
+Message-Id: <20170503030929.28763-7-wens@csie.org>
+In-Reply-To: <20170503030929.28763-1-wens@csie.org>
+References: <20170503030929.28763-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-CLK_SET_RATE_GATE name suggest that the rate can be set when the provider
-is gated (disabled). With the current implementation, the rate can only be
-set when the provider is unprepared, while it should be allowed to set a
-prepared and disable provider.
-Fix this by moving the rate protection mechanism in the enable/disable
-core functions
+Now that we have support for the A83T CCU, add a device node for it,
+and replace any existing placeholder clock phandles with the correct
+ones.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/clk.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 6ee5fc59cf1f..e6e5048ce186 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -491,9 +491,6 @@ static void clk_core_unprepare(struct clk_core *core)
- 	if (WARN_ON(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL))
- 		return;
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index c0a1e4f74b89..c9a5d07b2ada 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -162,13 +162,23 @@
+ 		#size-cells = <1>;
+ 		ranges;
  
--	if (core->flags & CLK_SET_RATE_GATE)
--		clk_core_rate_unprotect(core);
--
- 	if (--core->prepare_count > 0)
- 		return;
- 
-@@ -564,14 +561,6 @@ static int clk_core_prepare(struct clk_core *core)
- 
- 	core->prepare_count++;
- 
--	/*
--	 * CLK_SET_RATE_GATE is a special case of clock protection
--	 * Instead of a consumer protection, the provider is protecting
--	 * itself when prepared
--	 */
--	if (core->flags & CLK_SET_RATE_GATE)
--		clk_core_rate_protect(core);
--
- 	return 0;
- }
- 
-@@ -716,6 +705,9 @@ static void clk_core_disable(struct clk_core *core)
- 	if (WARN_ON(core->enable_count == 1 && core->flags & CLK_IS_CRITICAL))
- 		return;
- 
-+	if (core->flags & CLK_SET_RATE_GATE)
-+		clk_core_rate_unprotect(core);
++		ccu: clock@1c20000 {
++			compatible = "allwinner,sun8i-a83t-ccu";
++			reg = <0x01c20000 0x400>;
++			clocks = <&osc24M>, <&osc16Md512>;
++			clock-names = "hosc", "losc";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
 +
- 	if (--core->enable_count > 0)
- 		return;
- 
-@@ -791,6 +783,15 @@ static int clk_core_enable(struct clk_core *core)
- 	}
- 
- 	core->enable_count++;
-+
-+	/*
-+	 * CLK_SET_RATE_GATE is a special case of clock protection
-+	 * Instead of a consumer protection, the provider is protecting
-+	 * itself when enabled
-+	 */
-+	if (core->flags & CLK_SET_RATE_GATE)
-+		clk_core_rate_protect(core);
-+
- 	return 0;
- }
+ 		pio: pinctrl@1c20800 {
+ 			compatible = "allwinner,sun8i-a83t-pinctrl";
+ 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x01c20800 0x400>;
+-			clocks = <&osc24M>;
++			clocks = <&ccu 45>, <&osc24M>, <&osc16Md512>;
++			clock-names = "apb", "hosc", "losc";
+ 			gpio-controller;
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
+@@ -214,7 +224,8 @@
+ 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&osc24M>;
++			clocks = <&ccu 53>;
++			resets = <&ccu 40>;
+ 			status = "disabled";
+ 		};
  
 -- 
-2.9.4
+2.11.0
