@@ -1,119 +1,118 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:38635 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751765AbdEDLnC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 May 2017 07:43:02 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 01/13] dt-bindings: add binding for the Allwinner DE2 CCU
-Date: Thu,  4 May 2017 19:41:56 +0800
-Message-Id: <20170504114208.8524-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 10/20] drm/sun4i: tcon: Move the muxing out of the mode set function
+Date: Wed,  3 May 2017 13:59:47 +0200
+Message-Id: <ea29ffd2bc3c76203168d0fd1e969b045424b24c.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner "Display Engine 2.0" contains some clock controls in it.
+The muxing can actually happen on both channels on some SoCs, so it makes
+more sense to just move it out of the sun4i_tcon1_mode_set function and
+create a separate function that needs to be called by the encoders.
 
-In order to add them as clock drivers, we need a device tree binding.
-Add the binding here.
+Let's do that and convert the existing drivers.
 
-Also add the device tree binding headers.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- .../devicetree/bindings/clock/sun8i-de2.txt        | 30 ++++++++++++++++++++++
- include/dt-bindings/clock/sun8i-de2.h              | 18 +++++++++++++
- include/dt-bindings/reset/sun8i-de2.h              | 14 ++++++++++
- 3 files changed, 62 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sun8i-de2.txt
- create mode 100644 include/dt-bindings/clock/sun8i-de2.h
- create mode 100644 include/dt-bindings/reset/sun8i-de2.h
+ drivers/gpu/drm/sun4i/sun4i_rgb.c  |  1 +
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 22 ++++++++++++++++------
+ drivers/gpu/drm/sun4i/sun4i_tcon.h |  2 ++
+ drivers/gpu/drm/sun4i/sun4i_tv.c   |  1 +
+ 4 files changed, 20 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-new file mode 100644
-index 000000000000..d710c0111cd3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-@@ -0,0 +1,30 @@
-+Allwinner Display Engine 2.0 Clock Control Binding
-+--------------------------------------------------
+diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+index 67f0b91a99de..3003d290c635 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
++++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+@@ -175,6 +175,7 @@ static void sun4i_rgb_encoder_mode_set(struct drm_encoder *encoder,
+ 	struct sun4i_tcon *tcon = rgb->tcon;
+ 
+ 	sun4i_tcon0_mode_set(tcon, mode);
++	sun4i_tcon_set_mux(tcon, 0, encoder);
+ 
+ 	clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
+ 
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 66a5bb9b85e9..0204d9fadb66 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -108,6 +108,22 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable)
+ }
+ EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
+ 
++void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
++			struct drm_encoder *encoder)
++{
++	if (!tcon->quirks->has_unknown_mux)
++		return;
 +
-+Required properties :
-+- compatible: must contain one of the following compatibles:
-+		- "allwinner,sun8i-a83t-de2-clk"
-+		- "allwinner,sun50i-h5-de2-clk"
++	if (channel != 1)
++		return;
 +
-+- reg: Must contain the registers base address and length
-+- clocks: phandle to the clocks feeding the display engine subsystem.
-+	  Three are needed:
-+  - "mod": the display engine module clock
-+  - "bus": the bus clock for the whole display engine subsystem
-+- clock-names: Must contain the clock names described just above
-+- resets: phandle to the reset control for the display engine subsystem.
-+- #clock-cells : must contain 1
-+- #reset-cells : must contain 1
++	/*
++	 * FIXME: Undocumented bits
++	 */
++	regmap_write(tcon->regs, SUN4I_TCON_MUX_CTRL_REG, 1);
++}
++EXPORT_SYMBOL(sun4i_tcon_set_mux);
 +
-+Example:
-+de2_clocks: clock@1000000 {
-+	compatible = "allwinner,sun8i-a83t-de2-clk";
-+	reg = <0x01000000 0x100000>;
-+	clocks = <&ccu CLK_DE>,
-+		 <&ccu CLK_BUS_DE>;
-+	clock-names = "mod",
-+		      "bus";
-+	resets = <&ccu RST_BUS_DE>;
-+	#clock-cells = <1>;
-+	#reset-cells = <1>;
-+};
-diff --git a/include/dt-bindings/clock/sun8i-de2.h b/include/dt-bindings/clock/sun8i-de2.h
-new file mode 100644
-index 000000000000..3bed63b524aa
---- /dev/null
-+++ b/include/dt-bindings/clock/sun8i-de2.h
-@@ -0,0 +1,18 @@
-+/*
-+ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.io>
-+ *
-+ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+ */
-+
-+#ifndef _DT_BINDINGS_CLOCK_SUN8I_DE2_H_
-+#define _DT_BINDINGS_CLOCK_SUN8I_DE2_H_
-+
-+#define CLK_BUS_MIXER0		0
-+#define CLK_BUS_MIXER1		1
-+#define CLK_BUS_WB		2
-+
-+#define CLK_MIXER0		6
-+#define CLK_MIXER1		7
-+#define CLK_WB			8
-+
-+#endif /* _DT_BINDINGS_CLOCK_SUN8I_DE2_H_ */
-diff --git a/include/dt-bindings/reset/sun8i-de2.h b/include/dt-bindings/reset/sun8i-de2.h
-new file mode 100644
-index 000000000000..9526017432f0
---- /dev/null
-+++ b/include/dt-bindings/reset/sun8i-de2.h
-@@ -0,0 +1,14 @@
-+/*
-+ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.io>
-+ *
-+ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+ */
-+
-+#ifndef _DT_BINDINGS_RESET_SUN8I_DE2_H_
-+#define _DT_BINDINGS_RESET_SUN8I_DE2_H_
-+
-+#define RST_MIXER0	0
-+#define RST_MIXER1	1
-+#define RST_WB		2
-+
-+#endif /* _DT_BINDINGS_RESET_SUN8I_DE2_H_ */
+ static int sun4i_tcon_get_clk_delay(struct drm_display_mode *mode,
+ 				    int channel)
+ {
+@@ -266,12 +282,6 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+ 	regmap_update_bits(tcon->regs, SUN4I_TCON_GCTL_REG,
+ 			   SUN4I_TCON_GCTL_IOMAP_MASK,
+ 			   SUN4I_TCON_GCTL_IOMAP_TCON1);
+-
+-	/*
+-	 * FIXME: Undocumented bits
+-	 */
+-	if (tcon->quirks->has_unknown_mux)
+-		regmap_write(tcon->regs, SUN4I_TCON_MUX_CTRL_REG, 1);
+ }
+ EXPORT_SYMBOL(sun4i_tcon1_mode_set);
+ 
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index f636343a935d..0350936b413c 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -190,6 +190,8 @@ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable);
+ /* Mode Related Controls */
+ void sun4i_tcon_switch_interlace(struct sun4i_tcon *tcon,
+ 				 bool enable);
++void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
++			struct drm_encoder *encoder);
+ void sun4i_tcon0_mode_set(struct sun4i_tcon *tcon,
+ 			  struct drm_display_mode *mode);
+ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
+index 49c49431a053..03c494b8159c 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
+@@ -393,6 +393,7 @@ static void sun4i_tv_mode_set(struct drm_encoder *encoder,
+ 	const struct tv_mode *tv_mode = sun4i_tv_find_tv_by_mode(mode);
+ 
+ 	sun4i_tcon1_mode_set(tcon, mode);
++	sun4i_tcon_set_mux(tcon, 1, encoder);
+ 
+ 	/* Enable and map the DAC to the output */
+ 	regmap_update_bits(tv->regs, SUN4I_TVE_EN_REG,
 -- 
-2.12.2
-
+git-series 0.8.11
