@@ -1,191 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:47716 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752769AbdEEIxo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 May 2017 04:53:44 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Fri, 05 May 2017 16:53:43 +0800
-From: icenowy@aosc.io
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-kernel-owner@vger.kernel.org
-Subject: Re: [linux-sunxi] [PATCH v6 11/13] ARM: dts: sun8i: add DE2 nodes for
- V3s SoC
-In-Reply-To: <CAGb2v67uE2iuP+wrL2t0fSMY8C1qnX=pYru7pZGX+0WhC_z2EA@mail.gmail.com>
-References: <20170504114858.9008-1-icenowy@aosc.io>
- <20170504114858.9008-12-icenowy@aosc.io>
- <CAGb2v67uE2iuP+wrL2t0fSMY8C1qnX=pYru7pZGX+0WhC_z2EA@mail.gmail.com>
-Message-ID: <8ad5de02ffc13348dfc71e9ec203205c@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 2/8] clk: Provide option to query hardware for clk phase
+Date: Wed,  3 May 2017 11:09:23 +0800
+Message-Id: <20170503030929.28763-3-wens@csie.org>
+In-Reply-To: <20170503030929.28763-1-wens@csie.org>
+References: <20170503030929.28763-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2017-05-05 11:31，Chen-Yu Tsai 写道：
-> On Thu, May 4, 2017 at 7:48 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->> Allwinner V3s SoC features a "Display Engine 2.0" with only one TCON
->> which have RGB LCD output.
-> 
-> Please also mention that it only has one mixer.
-> 
-> For the subject, you could just say "Add device nodes for the display 
-> pipeline".
-> 
->> 
->> Add device nodes for it as well as the TCON.
->> 
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->>  arch/arm/boot/dts/sun8i-v3s.dtsi | 87 
->> ++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 87 insertions(+)
->> 
->> diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi 
->> b/arch/arm/boot/dts/sun8i-v3s.dtsi
->> index 71075969e5e6..0a895179d8ae 100644
->> --- a/arch/arm/boot/dts/sun8i-v3s.dtsi
->> +++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
->> @@ -41,6 +41,10 @@
->>   */
->> 
->>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/clock/sun8i-v3s-ccu.h>
->> +#include <dt-bindings/clock/sun8i-de2.h>
->> +#include <dt-bindings/reset/sun8i-v3s-ccu.h>
->> +#include <dt-bindings/reset/sun8i-de2.h>
->> 
->>  / {
->>         #address-cells = <1>;
->> @@ -59,6 +63,12 @@
->>                 };
->>         };
->> 
->> +       de: display-engine {
->> +               compatible = "allwinner,sun8i-v3s-display-engine";
->> +               allwinner,pipelines = <&de2_mixer0>;
->> +               status = "disabled";
->> +       };
->> +
->>         timer {
->>                 compatible = "arm,armv7-timer";
->>                 interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | 
->> IRQ_TYPE_LEVEL_LOW)>,
->> @@ -93,6 +103,83 @@
->>                 #size-cells = <1>;
->>                 ranges;
->> 
->> +               de2_clocks: clock@1000000 {
->> +                       compatible = "allwinner,sun50i-h5-de2-clk";
-> 
-> I am a bit skeptical about this. Since the V3S only has one mixer, do 
-> the clocks
-> for the second one even exist?
+On some hardware, the clk phase is tied to the parent clk's
+rate and some clk delay programmed into the hardware. As the
+parent clk rate changes, so does the clk phase.
 
-It's described in the de_clock.c in the BSP source code, and in hardware
-these bits can be really set (although without clock output).
+Add a clk flag specifying not to use the cached clk phase,
+but always query the hardware for it.
 
-So I use this compatible which has still the extra clocks.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/clk.c            | 6 +++++-
+ include/linux/clk-provider.h | 1 +
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-> 
->> +                       reg = <0x01000000 0x100000>;
->> +                       clocks = <&ccu CLK_DE>,
->> +                                <&ccu CLK_BUS_DE>;
->> +                       clock-names = "mod",
->> +                                     "bus";
->> +                       resets = <&ccu RST_BUS_DE>;
->> +                       #clock-cells = <1>;
->> +                       #reset-cells = <1>;
->> +               };
->> +
->> +               de2_mixer0: mixer@1100000 {
->> +                       compatible = "allwinner,sun8i-v3s-de2-mixer";
->> +                       reg = <0x01100000 0x100000>;
->> +                       clocks = <&de2_clocks CLK_MIXER0>,
->> +                                <&de2_clocks CLK_BUS_MIXER0>;
->> +                       clock-names = "mod",
->> +                                     "bus";
-> 
-> Nit: could you list the bus clock first?
-> 
-> Regards
-> ChenYu
-> 
->> +                       resets = <&de2_clocks RST_MIXER0>;
->> +                       assigned-clocks = <&de2_clocks CLK_MIXER0>;
->> +                       assigned-clock-rates = <150000000>;
->> +
->> +                       ports {
->> +                               #address-cells = <1>;
->> +                               #size-cells = <0>;
->> +
->> +                               mixer0_out: port@1 {
->> +                                       #address-cells = <1>;
->> +                                       #size-cells = <0>;
->> +                                       reg = <1>;
->> +
->> +                                       mixer0_out_tcon0: endpoint@0 {
->> +                                               reg = <0>;
->> +                                               remote-endpoint = 
->> <&tcon0_in_mixer0>;
->> +                                       };
->> +                               };
->> +                       };
->> +               };
->> +
->> +               tcon0: lcd-controller@1c0c000 {
->> +                       compatible = "allwinner,sun8i-v3s-tcon";
->> +                       reg = <0x01c0c000 0x1000>;
->> +                       interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
->> +                       clocks = <&ccu CLK_BUS_TCON0>,
->> +                                <&ccu CLK_TCON0>;
->> +                       clock-names = "ahb",
->> +                                     "tcon-ch0";
->> +                       clock-output-names = "tcon-pixel-clock";
->> +                       resets = <&ccu RST_BUS_TCON0>;
->> +                       reset-names = "lcd";
->> +                       status = "disabled";
->> +
->> +                       ports {
->> +                               #address-cells = <1>;
->> +                               #size-cells = <0>;
->> +
->> +                               tcon0_in: port@0 {
->> +                                       #address-cells = <1>;
->> +                                       #size-cells = <0>;
->> +                                       reg = <0>;
->> +
->> +                                       tcon0_in_mixer0: endpoint@0 {
->> +                                               reg = <0>;
->> +                                               remote-endpoint = 
->> <&mixer0_out_tcon0>;
->> +                                       };
->> +                               };
->> +
->> +                               tcon0_out: port@1 {
->> +                                       #address-cells = <1>;
->> +                                       #size-cells = <0>;
->> +                                       reg = <1>;
->> +                               };
->> +                       };
->> +               };
->> +
->> +
->>                 mmc0: mmc@01c0f000 {
->>                         compatible = "allwinner,sun7i-a20-mmc";
->>                         reg = <0x01c0f000 0x1000>;
->> --
->> 2.12.2
->> 
->> --
->> You received this message because you are subscribed to the Google 
->> Groups "linux-sunxi" group.
->> To unsubscribe from this group and stop receiving emails from it, send 
->> an email to linux-sunxi+unsubscribe@googlegroups.com.
->> For more options, visit https://groups.google.com/d/optout.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 67201f67a14a..05e2481c1340 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1929,7 +1929,11 @@ static int clk_core_get_phase(struct clk_core *core)
+ 	int ret;
+ 
+ 	clk_prepare_lock();
+-	ret = core->phase;
++	if (core && (core->flags & CLK_GET_PHASE_NOCACHE) &&
++	    core->ops->get_phase)
++		ret = core->ops->get_phase(core->hw);
++	else
++		ret = core->phase;
+ 	clk_prepare_unlock();
+ 
+ 	return ret;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index a428aec36ace..e2e856b1a81f 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -35,6 +35,7 @@
+ #define CLK_IS_CRITICAL		BIT(11) /* do not gate, ever */
+ /* parents need enable during gate/ungate, set rate and re-parent */
+ #define CLK_OPS_PARENT_ENABLE	BIT(12)
++#define CLK_GET_PHASE_NOCACHE	BIT(13) /* do not use the cached clk phase */
+ 
+ struct clk;
+ struct clk_hw;
+-- 
+2.11.0
