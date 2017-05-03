@@ -1,43 +1,74 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Mark Rutland <mark.rutland@arm.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-sunxi@googlegroups.com
-Subject: [PATCH v4 5/6] ARM: sun8i: a83t: Set clock accuracy for 24MHz oscillator
-Date: Fri, 19 May 2017 15:06:11 +0800
-Message-Id: <20170519070612.32159-6-wens@csie.org>
-In-Reply-To: <20170519070612.32159-1-wens@csie.org>
-References: <20170519070612.32159-1-wens@csie.org>
+Subject: [PATCH v2 8/20] clk: sunxi-ng: sun5i: Export video PLLs
+Date: Wed,  3 May 2017 13:59:45 +0200
+Message-Id: <1fc17b7a14830306a83747b5086c0fd5d6dff290.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The datasheets for Allwinner SoCs set strict requirements on the
-stability of the external crystal oscillators. Add the accuracy
-for the main 24MHz oscillator to the device tree.
+The video PLLs are used directly by the HDMI controller. Export them so
+that we can use them in our DT node.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/sunxi-ng/ccu-sun5i.h      | 6 ++++--
+ include/dt-bindings/clock/sun5i-ccu.h | 3 +++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index c9a5d07b2ada..e12dd7170b8f 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -126,6 +126,7 @@
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
- 			clock-frequency = <24000000>;
-+			clock-accuracy = <50000>;
- 			clock-output-names = "osc24M";
- 		};
+diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.h b/drivers/clk/sunxi-ng/ccu-sun5i.h
+index 8144487eb7ca..93a275fbd9a9 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun5i.h
++++ b/drivers/clk/sunxi-ng/ccu-sun5i.h
+@@ -28,15 +28,17 @@
+ #define CLK_PLL_AUDIO_4X	6
+ #define CLK_PLL_AUDIO_8X	7
+ #define CLK_PLL_VIDEO0		8
+-#define CLK_PLL_VIDEO0_2X	9
++
++/* The PLL_VIDEO0_2X is exported for HDMI */
++
+ #define CLK_PLL_VE		10
+ #define CLK_PLL_DDR_BASE	11
+ #define CLK_PLL_DDR		12
+ #define CLK_PLL_DDR_OTHER	13
+ #define CLK_PLL_PERIPH		14
+ #define CLK_PLL_VIDEO1		15
+-#define CLK_PLL_VIDEO1_2X	16
  
++/* The PLL_VIDEO1_2X is exported for HDMI */
+ /* The CPU clock is exported */
+ 
+ #define CLK_AXI			18
+diff --git a/include/dt-bindings/clock/sun5i-ccu.h b/include/dt-bindings/clock/sun5i-ccu.h
+index aeb2e2f781fb..81f34d477aeb 100644
+--- a/include/dt-bindings/clock/sun5i-ccu.h
++++ b/include/dt-bindings/clock/sun5i-ccu.h
+@@ -19,6 +19,9 @@
+ 
+ #define CLK_HOSC		1
+ 
++#define CLK_PLL_VIDEO0_2X	9
++
++#define CLK_PLL_VIDEO1_2X	16
+ #define CLK_CPU			17
+ 
+ #define CLK_AHB_OTG		23
 -- 
-2.11.0
+git-series 0.8.11
