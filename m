@@ -1,92 +1,64 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 03/13] dt-bindings: add bindings for DE2 on V3s SoC
-Date: Thu,  4 May 2017 19:41:58 +0800
-Message-Id: <20170504114208.8524-3-icenowy@aosc.io>
-In-Reply-To: <20170504114208.8524-1-icenowy@aosc.io>
-References: <20170504114208.8524-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 8/8] ARM: sun8i: a83t: Switch to CCU device tree binding macros
+Date: Wed,  3 May 2017 11:09:29 +0800
+Message-Id: <20170503030929.28763-9-wens@csie.org>
+In-Reply-To: <20170503030929.28763-1-wens@csie.org>
+References: <20170503030929.28763-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner V3s SoC have a display engine which have a different pipeline
-with older SoCs.
+Now that the CCU device tree binding headers have been merged, we can
+use the properly named macros in the device tree, instead of raw
+numbers.
 
-Add document for it (new compatibles and the new "mixer" part).
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- .../bindings/display/sunxi/sun4i-drm.txt           | 29 ++++++++++++++++++++--
- 1 file changed, 27 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 7acdbf14ae1c..33452884b96e 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -41,6 +41,7 @@ Required properties:
-    * allwinner,sun6i-a31-tcon
-    * allwinner,sun6i-a31s-tcon
-    * allwinner,sun8i-a33-tcon
-+   * allwinner,sun8i-v3s-tcon
-  - reg: base address and size of memory-mapped region
-  - interrupts: interrupt associated to this IP
-  - clocks: phandles to the clocks feeding the TCON. Three are needed:
-@@ -62,7 +63,7 @@ Required properties:
-   second the block connected to the TCON channel 1 (usually the TV
-   encoder)
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index e12dd7170b8f..050d3e347740 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -44,6 +44,9 @@
  
--On SoCs other than the A33, there is one more clock required:
-+On SoCs other than the A33 and V3s, there is one more clock required:
-    - 'tcon-ch1': The clock driving the TCON channel 1
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
  
- DRC
-@@ -148,6 +149,26 @@ Required properties:
-   Documentation/devicetree/bindings/media/video-interfaces.txt. The
-   first port should be the input endpoints, the second one the outputs
- 
-+Display Engine 2.0 Mixer
-+------------------------
++#include <dt-bindings/clock/sun8i-a83t-ccu.h>
++#include <dt-bindings/reset/sun8i-a83t-ccu.h>
 +
-+The DE2 mixer have many functionalities, currently only layer blending is
-+supported.
-+
-+Required properties:
-+  - compatible: value must be one of:
-+    * allwinner,sun8i-v3s-de2-mixer
-+  - reg: base address and size of the memory-mapped region.
-+  - clocks: phandles to the clocks feeding the frontend and backend
-+    * bus: the backend interface clock
-+    * ram: the backend DRAM clock
-+  - clock-names: the clock names mentioned above
-+  - resets: phandles to the reset controllers driving the backend
-+
-+- ports: A ports node with endpoint definitions as defined in
-+  Documentation/devicetree/bindings/media/video-interfaces.txt. The
-+  first port should be the input endpoints, the second one the output
-+
- 
- Display Engine Pipeline
- -----------------------
-@@ -162,9 +183,13 @@ Required properties:
-     * allwinner,sun6i-a31-display-engine
-     * allwinner,sun6i-a31s-display-engine
-     * allwinner,sun8i-a33-display-engine
-+    * allwinner,sun8i-v3s-display-engine
- 
-   - allwinner,pipelines: list of phandle to the display engine
--    frontends available.
-+    pipeline entry point. For SoCs with original DE (currently
-+    all SoCs supported by display engine except V3s), this
-+    phandle should be a display frontend; for SoCs with DE2,
-+    this phandle should be a mixer.
- 
- Example:
+ / {
+ 	interrupt-parent = <&gic>;
+ 	#address-cells = <1>;
+@@ -178,7 +181,7 @@
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x01c20800 0x400>;
+-			clocks = <&ccu 45>, <&osc24M>, <&osc16Md512>;
++			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc16Md512>;
+ 			clock-names = "apb", "hosc", "losc";
+ 			gpio-controller;
+ 			interrupt-controller;
+@@ -225,8 +228,8 @@
+ 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&ccu 53>;
+-			resets = <&ccu 40>;
++			clocks = <&ccu CLK_BUS_UART0>;
++			resets = <&ccu RST_BUS_UART0>;
+ 			status = "disabled";
+ 		};
  
 -- 
-2.12.2
+2.11.0
