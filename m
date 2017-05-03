@@ -1,61 +1,72 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-amlogic@lists.infradead.org,
-	jbrunet@baylibre.com,
-	narmstrong@baylibre.com,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	khilman@baylibre.com,
-	carlo@caione.org,
-	sboyd@codeaurora.org,
-	mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 0/2] remove the "cpu_clk" from the GXBB/GXL/GXM driver
-Date: Thu,  4 May 2017 20:19:18 +0200
-Message-Id: <20170504181920.21880-1-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20170401125519.7339-1-martin.blumenstingl@googlemail.com>
-References: <20170401125519.7339-1-martin.blumenstingl@googlemail.com>
+Return-Path: <wens@csie.org>
+MIME-Version: 1.0
+In-Reply-To: <f1d46b79f933df724a6750d557ebe9517b6339b5.1488876832.git-series.maxime.ripard@free-electrons.com>
+References: <cover.bc06ffa88f847ddd9ddd7c259415d5f61b55307b.1488876832.git-series.maxime.ripard@free-electrons.com>
+ <f1d46b79f933df724a6750d557ebe9517b6339b5.1488876832.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 3 May 2017 11:27:20 +0800
+Message-ID: <CAGb2v67vJriXzPj8nVH=F9XPXgD-+LwDvqp6dDRxyPT8UyG64A@mail.gmail.com>
+Subject: Re: [PATCH 6/15] dt-bindings: display: sun4i: Add HDMI display bindings
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The quick summary for this patch is that the "cpu_clk" seems to have
-been copied from the Meson8b clock driver when the GXBB clock driver
-was initially added. However, on GXBB (and the other GX SoCs) the
-actual CPU clock is provided by a SCPI DVFS clock.
-More details can be found in the description of the actual patch (#2).
+On Tue, Mar 7, 2017 at 4:56 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> One of the possible output of the display pipeline, on the SoCs that have
+> it, is the HDMI controller.
+>
+> Add a binding for it.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 21 +++++++-
+>  1 file changed, 21 insertions(+), 0 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> index b82c00449468..4b280672658e 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> @@ -4,6 +4,27 @@ Allwinner A10 Display Pipeline
+>  The Allwinner A10 Display pipeline is composed of several components
+>  that are going to be documented below:
+>
+> +HDMI Encoder
+> +------------
+> +
+> +The HDMI Encoder supports the HDMI video and audio outputs, and does
+> +CEC. It is one end of the pipeline.
+> +
+> +Required properties:
+> +  - compatible: value must be one of:
+> +    * allwinner,sun5i-a10s-hdmi
+> +  - reg: base address and size of memory-mapped region
+> +  - clocks: phandles to the clocks feeding the HDMI encoder
+> +    * ahb: the HDMI interface clock
+> +    * mod: the HDMI module clock
+> +    * pll-0: the first video PLL
+> +    * pll-1: the second video PLL
+> +  - clock-names: the clock names mentioned above
 
-This was tested on a Khadas VIM board (GXL S905X).
+The audio part needs a DMA handle. May we add this from day one?
 
+Thanks
+ChenYu
 
-Changes since v1:
-- split the patch into two patches: one which un-exports the clock ID
-  first and a second which does the actual cleanup. This was done based
-  on the recent discussion that new clocks should be added first and then
-  exported in a second patch (this patch does the same, just the other
-  way round: un-exporting first, then removing the actual clock)
-
-Changes since the RFC version from [0]:
-- rebased to the "clk-meson" branch (e65ae3fb97b4 "dt-bindings: clock:
-  gxbb-clkc: Add GXL compatible variant") and Jerome's audio clock
-  patches (in version 2: [1])
-- remove the now unused cpu_div_table (which was left over in the RFC
-  version)
-- slightly updated the comment for the now unused clock ID 1 in
-  drivers/clk/meson/gxbb.h
-
-
-[0] https://patchwork.kernel.org/patch/9644993/
-[1] http://lists.infradead.org/pipermail/linux-amlogic/2017-March/003200.html
-
-Martin Blumenstingl (2):
-  clk: meson-gxbb: un-export the CPU clock
-  clk: meson: gxbb: remove the "cpu_clk" from the GXBB and GXL driver
-
- drivers/clk/meson/gxbb.c              | 64 ++---------------------------------
- drivers/clk/meson/gxbb.h              |  2 +-
- include/dt-bindings/clock/gxbb-clkc.h |  1 -
- 3 files changed, 4 insertions(+), 63 deletions(-)
-
--- 
-2.12.2
+> +
+> +  - ports: A ports node with endpoint definitions as defined in
+> +    Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> +    first port should be the input endpoint.
+> +
+>  TV Encoder
+>  ----------
+>
+> --
+> git-series 0.8.11
