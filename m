@@ -1,92 +1,96 @@
 Return-Path: <maxime.ripard@free-electrons.com>
-Date: Mon, 29 May 2017 09:58:33 +0200
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+To: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Mark Rutland <mark.rutland@arm.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 3/3] ARM: sun8i: a83t: Add device node for PRCM
-Message-ID: <20170529075833.6dc4uqwa6uxtzs5y@flea.lan>
-References: <20170526080025.28532-1-wens@csie.org>
- <20170526080025.28532-4-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xssk3n67pxvhqels"
-In-Reply-To: <20170526080025.28532-4-wens@csie.org>
+Subject: [PATCH v2 20/20] ARM: sun5i: a10s-olinuxino: Enable HDMI
+Date: Wed,  3 May 2017 13:59:57 +0200
+Message-Id: <c7ac6faa0568e6418291255af537c4b070bdea63.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+The A10s Olinuxino has an HDMI connector. Make sure we can use it.
 
---xssk3n67pxvhqels
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts | 29 +++++++++++++++++-
+ 1 file changed, 29 insertions(+), 0 deletions(-)
 
-Hi,
-
-On Fri, May 26, 2017 at 04:00:25PM +0800, Chen-Yu Tsai wrote:
-> The A83T's PRCM has the same set of clocks and resets as the A64.
-> However, a few dividers are different. And due to the lack of a low
-> speed 32.768 kHz oscillator, a few of the clock parents are different.
->=20
-> The PRCM also has controls for various power domains. These are not
-> supported yet, neither in software nor in the device tree binding.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  arch/arm/boot/dts/sun8i-a83t.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-=
-a83t.dtsi
-> index 1dc4cfe81534..8089f36deeff 100644
-> --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-> +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> @@ -270,5 +270,14 @@
->  			#interrupt-cells =3D <3>;
->  			interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HI=
-GH)>;
->  		};
-> +
-> +		r_ccu: clock@1f01400 {
-> +			compatible =3D "allwinner,sun8i-a83t-r-ccu";
-> +			reg =3D <0x01f01400 0x400>;
-> +			clocks =3D <&osc24M>, <&osc16Md512>, <&osc16M>;
-
-I applied patches 1 and 2, but that made me realise that the
-pll-periph0 is also a parent and should be listed there.
-
-Can you send a patch adjusting the binding documentation so that we
-can have it in time for 4.12, and patches for the A64 / H3 DTSs ?
-
-Thanks,
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---xssk3n67pxvhqels
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZK9SpAAoJEBx+YmzsjxAgrW0QAJC5NGGBoTsv0yfL9J2lAekw
-+WUPlMQP3u7akrB5ksqesOugp6AJFSv6ybNSfyxbD2efmqUEq9s5vrxJwAGWazYC
-s0PJNbO2GXy+Wr1ItiFOp0wP6PXG1WVxG/DPNeAfMbbxxIl57liu7UDpg4hx4CBK
-vw3V2YWekyMI2i5Q8pZzm1+BPVZ/GJ5Hrd2YknuGcg+nibIhv8c7K2dat0GswZAB
-rk0I9t/qVD4zteS43LwqypYYzmBgNdVQbAJxgQVY0kyzIEeLuz1RH2NqZtV3q8HW
-JppvRupiXNnH+enJn4p3dkISl3oHaqM4NnkVrIWxcvMat9QMT/9dbe4ZNjUE3wL7
-5moo3WiSAhtXjQxV3ICdw1LSfl6c8dl9fPYzM/R7OXSh1V/BC2OJn8/yC/he/+PO
-3eFo07Rk+R/c8A87MYBgOyYw5RnZfS3HXLEnOyhFqqrq9GPWtBd9FK3Lu8Vb2moC
-Q2wZTopgK111Jq3OQeoSYPqoyjprFKZuqBlPrHDydWDxmvUiI9QEwNlMw+UZMEuB
-fPL+WGeOVlZn/WnSZ3Tu1Y/wEo9xuol66gY2/GfHO/gaBoMKRBA5h256Vrc6U3vD
-wW2jloJgKUUlzGvkiYCcorKwPKYybCKsxNhl2JEICZzDy+UivdPOwOPt9N6PSFO4
-JpBfeUF3eLBQ/azpwFdT
-=+1Mz
------END PGP SIGNATURE-----
-
---xssk3n67pxvhqels--
+diff --git a/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts b/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
+index 894f874a5beb..1d13b6407222 100644
+--- a/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
++++ b/arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts
+@@ -63,6 +63,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+@@ -76,6 +87,10 @@
+ 	};
+ };
+ 
++&be0 {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -91,6 +106,16 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &i2c0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c0_pins_a>;
+@@ -248,6 +273,10 @@
+ 	status = "okay";
+ };
+ 
++&tcon0 {
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+-- 
+git-series 0.8.11
