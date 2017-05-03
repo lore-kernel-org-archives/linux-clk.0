@@ -1,43 +1,105 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Thu, 04 May 2017 22:07:47 +0800
-In-Reply-To: <20170504140431.zhpcxvphxnxj7ipq@lukather>
-References: <20170504135006.16483-1-icenowy@aosc.io>
- <20170504135006.16483-3-icenowy@aosc.io>
- <20170504140431.zhpcxvphxnxj7ipq@lukather>
-MIME-Version: 1.0
-Subject: Re: [PATCH v2 02/10] pinctrl: sunxi: add definitions for add A20 and
- R40 support to A10 driver
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <318E9984-9F5A-41C3-A3E0-52D5ECA05212@aosc.io>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 7/20] clk: sunxi-ng: mux: Re-adjust parent rate
+Date: Wed,  3 May 2017 13:59:44 +0200
+Message-Id: <0d8fc6d976c64be906fa86ead20aa10bb490386b.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Cgrkuo4gMjAxN+W5tDXmnIg05pelIEdNVCswODowMCDkuIvljYgxMDowNDozMSwgTWF4aW1lIFJp
-cGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0cm9ucy5jb20+IOWGmeWIsDoKPk9uIFRodSwg
-TWF5IDA0LCAyMDE3IGF0IDA5OjQ5OjU4UE0gKzA4MDAsIEljZW5vd3kgWmhlbmcgd3JvdGU6Cj4+
-IEFsbHdpbm5lciBBMTAsIEEyMCBhbmQgUjQwIFNvQ3MgaGF2ZSBzaW1pbGFyIEdQSU8gbGF5b3V0
-Lgo+PiAKPj4gQWRkIFNvQyBkZWZpbml0aW9ucyBpbiBwaW5jdHJsLXN1bnhpLmgsIGluIG9yZGVy
-IHRvIG1lcmdlIEEyMCBzdXBwb3J0Cj4+IGludG8gQTEwIGRyaXZlciwgYW5kIGFkZCBSNDAgc3Vw
-cG9ydCBpbnRvIGl0Lgo+Cj5XaGlsZSB5b3VyIGNvbW1pdCBsb2cgaXMgZ29vZCwgdGhlIGNvbW1p
-dCB0aXRsZSBpcyBtaXNsZWFkaW5nIHNpbmNlCj55b3UncmUgbm90IGFkZGluZyBpdCB0byB0aGUg
-QTEwIGRyaXZlci4gWW91IGp1c3QgYWRkaW5nIFNvQyBJRHMKPmRlZmluaXRpb25zCgpJcyAicGlu
-Y3RybDogc3VueGk6IEFkZCBTb0MgSUQgZGVmaW5pdGlvbnMgZm9yIEExMCwgQTIwIGFuZCBSNDAg
-U29DcyIgT0s/Cgo+Cj5NYXhpbWUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJu
-ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+Currently, the parent rate given back to the clock framework in our
+request is the original parent rate we calculated before trying to round
+the rate of our clock.
+
+This works fine unless our clock also changes its parent rate, in which
+case we will simply ignore that change and still use the previous parent
+rate.
+
+Create a new function to re-adjust the parent rate to take the pre-dividers
+into account, and give that back to the clock framework.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/clk/sunxi-ng/ccu_mux.c | 33 ++++++++++++++++++++++++++++-----
+ 1 file changed, 28 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
+index c33210972581..1ce62cc23f8a 100644
+--- a/drivers/clk/sunxi-ng/ccu_mux.c
++++ b/drivers/clk/sunxi-ng/ccu_mux.c
+@@ -64,6 +64,14 @@ unsigned long ccu_mux_helper_apply_prediv(struct ccu_common *common,
+ 	return parent_rate / ccu_mux_get_prediv(common, cm, parent_index);
+ }
+ 
++unsigned long ccu_mux_helper_unapply_prediv(struct ccu_common *common,
++					    struct ccu_mux_internal *cm,
++					    int parent_index,
++					    unsigned long parent_rate)
++{
++	return parent_rate * ccu_mux_get_prediv(common, cm, parent_index);
++}
++
+ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+ 				  struct ccu_mux_internal *cm,
+ 				  struct clk_rate_request *req,
+@@ -89,22 +97,37 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
+ 		best_rate = round(cm, best_parent, &adj_parent_rate,
+ 				  req->rate, data);
+ 
++		/*
++		 * parent_rate might have been modified by our clock.
++		 * Re-apply the pre-divider if there's one, and give
++		 * the actual frequency the parent needs to run at.
++		 */
++		best_parent_rate = ccu_mux_helper_unapply_prediv(common, cm, -1,
++								 adj_parent_rate);
++
+ 		goto out;
+ 	}
+ 
+ 	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
+-		unsigned long tmp_rate, parent_rate, adj_parent_rate;
++		unsigned long tmp_rate, parent_rate;
+ 		struct clk_hw *parent;
+ 
+ 		parent = clk_hw_get_parent_by_index(hw, i);
+ 		if (!parent)
+ 			continue;
+ 
+-		parent_rate = clk_hw_get_rate(parent);
+-		adj_parent_rate = ccu_mux_helper_apply_prediv(common, cm, i,
+-							      parent_rate);
++		parent_rate = ccu_mux_helper_apply_prediv(common, cm, i,
++							  clk_hw_get_rate(parent));
++
++		tmp_rate = round(cm, parent, &parent_rate, req->rate, data);
+ 
+-		tmp_rate = round(cm, parent, &adj_parent_rate, req->rate, data);
++		/*
++		 * parent_rate might have been modified by our clock.
++		 * Re-apply the pre-divider if there's one, and give
++		 * the actual frequency the parent needs to run at.
++		 */
++		parent_rate = ccu_mux_helper_unapply_prediv(common, cm, i,
++							    parent_rate);
+ 		if (tmp_rate == req->rate) {
+ 			best_parent = parent;
+ 			best_parent_rate = parent_rate;
+-- 
+git-series 0.8.11
