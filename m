@@ -1,90 +1,64 @@
-Return-Path: <gregory.clement@free-electrons.com>
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Nadav Haklai <nadavh@marvell.com>,
-	Kostya Porotchkin <kostap@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Omri Itach <omrii@marvell.com>,
-	Shadi Ammouri <shadi@marvell.com>
-Subject: [PATCH v2 00/11] Improve cp110 clk support on Marvell Armada 7K/8K
-Date: Wed, 31 May 2017 15:41:44 +0200
-Message-Id: <cover.d3a417499f4e5f039deaa27832bf6eccdd090a6f.1496237893.git-series.gregory.clement@free-electrons.com>
+	Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 2/8] clk: Provide option to query hardware for clk phase
+Date: Wed,  3 May 2017 11:16:52 +0800
+Message-Id: <20170503031658.29299-3-wens@csie.org>
+In-Reply-To: <20170503031658.29299-1-wens@csie.org>
+References: <20170503031658.29299-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On some hardware, the clk phase is tied to the parent clk's
+rate and some clk delay programmed into the hardware. As the
+parent clk rate changes, so does the clk phase.
 
-We got more information about the clock controllers and the clock tree
-of the CP110 part that we find in the Marvell Armada 7K/8K SoCs.
+Add a clk flag specifying not to use the cached clk phase,
+but always query the hardware for it.
 
-The main change in this second version is about the binding
-documentation: all the documentation related changes are now move in
-their own patches. It allows to provide a stable -dt branch for theses
-changes. I also added the acked-by from Rob Herring.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/clk.c            | 6 +++++-
+ include/linux/clk-provider.h | 1 +
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-However the last two patches modifying the device tree _must_ be
-merged through the mvebu tree to avoid future conflict (especially
-with the recent ICU series sent by Thomas Petazzoni).
-
-For the record:
-
-The clock tree needs to be fixed, indeed the GOP clock is only the
-clock for the GOIP and not for the SDIO, it is fixed in the first
-patch.
-
-The third patch does a small improve of the code itself.
-
-The purpose of the fifth patch is to have an easier way to add new
-clocks without breaking the backward compatibility. Indeed, we expect
-to continue to have new update on the datasheet and this patch will
-allow integrating this change easier and faster.
-
-The  patch 7 is needed to ease the integration of the pinctrl node
-in the device tree.
-
-The patch 9 adds a new clock for the SDIO, it also fixes the clock
-tree.
-
-In this series, even if there is some change in the device tree
-binding, we paid attention to the backward compatibility, and the
-driver can still work with the old device tree.
-
-Thanks,
-
-Gregory
-
-Gregory CLEMENT (10):
-  dt-bindings: cp110: fix name of the GOP gate clock
-  clk: mvebu: cp110 fix name of the GOP gate clock
-  clk: mvebu: cp110: make failure labels more meaningful
-  dt-bindings: cp110: do not depend anymore of the *-clock-output-names
-  clk: mvebu: cp110: do not depend anymore of the *-clock-output-names
-  dt-bindings: cp110: introduce a new binding
-  clk: mvebu: cp110: introduce a new binding
-  dt-bindings: cp110: add sdio clock to cp-110 system controller
-  arm64: dts: marvell: remove *-clock-output-names on cp110
-  arm64: dts: marvell: use new binding for the system controller on cp110
-
-Konstantin Porotchkin (1):
-  clk: mvebu: cp110: add sdio clock to cp-110 system controller
-
- Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt |  35 +++++-------
- arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi                       |  54 +++++++------------
- arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi                        |  48 ++++++-----------
- drivers/clk/mvebu/cp110-system-controller.c                                | 202 +++++++++++++++++++++++++++++++++++++++++++++++++-----------------------
- 4 files changed, 196 insertions(+), 143 deletions(-)
-
-base-commit: 2ea659a9ef488125eb46da6eb571de5eae5c43f6
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 67201f67a14a..05e2481c1340 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1929,7 +1929,11 @@ static int clk_core_get_phase(struct clk_core *core)
+ 	int ret;
+ 
+ 	clk_prepare_lock();
+-	ret = core->phase;
++	if (core && (core->flags & CLK_GET_PHASE_NOCACHE) &&
++	    core->ops->get_phase)
++		ret = core->ops->get_phase(core->hw);
++	else
++		ret = core->phase;
+ 	clk_prepare_unlock();
+ 
+ 	return ret;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index a428aec36ace..e2e856b1a81f 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -35,6 +35,7 @@
+ #define CLK_IS_CRITICAL		BIT(11) /* do not gate, ever */
+ /* parents need enable during gate/ungate, set rate and re-parent */
+ #define CLK_OPS_PARENT_ENABLE	BIT(12)
++#define CLK_GET_PHASE_NOCACHE	BIT(13) /* do not use the cached clk phase */
+ 
+ struct clk;
+ struct clk_hw;
 -- 
-git-series 0.9.1
+2.11.0
