@@ -1,74 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:38100 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751592AbdEEDOt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2017 23:14:49 -0400
-MIME-Version: 1.0
-In-Reply-To: <20170504114858.9008-8-icenowy@aosc.io>
-References: <20170504114858.9008-1-icenowy@aosc.io> <20170504114858.9008-8-icenowy@aosc.io>
+Return-Path: <wens@wens.csie.org>
 From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 5 May 2017 11:14:25 +0800
-Message-ID: <CAGb2v64GYR=S1eTBzvG3jzJBa8EDO9ZupChkfo05JCxP73d6Cw@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v6 07/13] drm/sun4i: add a Kconfig option
- for sun4i-backend
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 1/8] dt-bindings: clock: sunxi-ccu: Add compatible string for A83T CCU
+Date: Wed,  3 May 2017 11:09:22 +0800
+Message-Id: <20170503030929.28763-2-wens@csie.org>
+In-Reply-To: <20170503030929.28763-1-wens@csie.org>
+References: <20170503030929.28763-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 4, 2017 at 7:48 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> As sun4i-backend is now a dedicated module, add an Kconfig option for
-> it to make it optional, since some build may only use other engines.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Splited out patch.
->
->  drivers/gpu/drm/sun4i/Kconfig  | 10 ++++++++++
->  drivers/gpu/drm/sun4i/Makefile |  2 +-
->  2 files changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-> index a4b357db8856..5a8227f37cc4 100644
-> --- a/drivers/gpu/drm/sun4i/Kconfig
-> +++ b/drivers/gpu/drm/sun4i/Kconfig
-> @@ -12,3 +12,13 @@ config DRM_SUN4I
->           Choose this option if you have an Allwinner SoC with a
->           Display Engine. If M is selected the module will be called
->           sun4i-drm.
-> +
-> +config DRM_SUN4I_BACKEND
-> +       tristate "Support for Allwinner A10 Display Engine Backend"
-> +       depends on DRM_SUN4I
-> +       default DRM_SUN4I
-> +       help
-> +         Choose this option if you have an Allwinner SoC with the
-> +         original Allwinner Display Engine, which has a backend to
-> +         do some alpha blending and feed graphics to TCON. If M is
-> +         selected the module will be called sun4i-backend.
-> diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
-> index a251fb36c951..a08df56759e3 100644
-> --- a/drivers/gpu/drm/sun4i/Makefile
-> +++ b/drivers/gpu/drm/sun4i/Makefile
-> @@ -9,6 +9,6 @@ sun4i-tcon-y += sun4i_crtc.o
->  sun4i-backend-y += sun4i_backend.o sun4i_layer.o
->
->  obj-$(CONFIG_DRM_SUN4I)                += sun4i-drm.o sun4i-tcon.o
-> -obj-$(CONFIG_DRM_SUN4I)                += sun4i-backend.o
-> +obj-$(CONFIG_DRM_SUN4I_BACKEND)                += sun4i-backend.o
->  obj-$(CONFIG_DRM_SUN4I)                += sun6i_drc.o
->  obj-$(CONFIG_DRM_SUN4I)                += sun4i_tv.o
+The A83T clock control unit is a hybrid of some new style clock designs
+from the A80, and old style layout from the other Allwinner SoCs.
 
-Can you move sun4i-backend to the bottom in a separate section? The idea
-is to have a bunch of core or common stuff, then platform specific modules.
+Like the A80, the SoC does not have a low speed 32.768 kHz oscillator.
+Unlike the A80, there is no clock input either. The only low speed clock
+available is the internal oscillator which runs at around 16 MHz,
+divided by 512, yielding a low speed clock around 31.250 kHz.
 
-Thanks
-ChenYu
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index e9c5a1d9834a..34b2a9249a94 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -6,6 +6,7 @@ Required properties :
+ 		- "allwinner,sun6i-a31-ccu"
+ 		- "allwinner,sun8i-a23-ccu"
+ 		- "allwinner,sun8i-a33-ccu"
++		- "allwinner,sun8i-a83t-ccu"
+ 		- "allwinner,sun8i-h3-ccu"
+ 		- "allwinner,sun8i-h3-r-ccu"
+ 		- "allwinner,sun8i-v3s-ccu"
+@@ -18,6 +19,7 @@ Required properties :
+ - clocks: phandle to the oscillators feeding the CCU. Two are needed:
+   - "hosc": the high frequency oscillator (usually at 24MHz)
+   - "losc": the low frequency oscillator (usually at 32kHz)
++	    On the A83T, this is the internal 16MHz oscillator divided by 512
+ - clock-names: Must contain the clock names described just above
+ - #clock-cells : must contain 1
+ - #reset-cells : must contain 1
+-- 
+2.11.0
