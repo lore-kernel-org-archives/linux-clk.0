@@ -1,176 +1,298 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:55436 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752996AbdELNgy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2017 09:36:54 -0400
-Date: Fri, 12 May 2017 15:36:41 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] clk: at91: Add sama5d2 suspend/resume
-Message-ID: <20170512133641.peki4i2husb6cg6m@piout.net>
-References: <20170510170941.8027-1-alexandre.belloni@free-electrons.com>
- <caa76c98-98aa-c0fb-b7b9-77c53864e152@microchip.com>
+Return-Path: <varada@codeaurora.org>
+Subject: Re: [PATCH 4/5] arm64: dts: Add ipq8074 SoC and MTP board support
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+ linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org,
+ catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ sricharan@codeaurora.org, absahu@codeaurora.org, sjaganat@codeaurora.org,
+ Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+References: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
+ <1493373403-23462-5-git-send-email-varada@codeaurora.org>
+ <20170428185349.GD7065@codeaurora.org>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+Message-ID: <5d5c88ac-6261-9209-b7f9-b6d794f677e5@codeaurora.org>
+Date: Wed, 3 May 2017 13:00:54 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <caa76c98-98aa-c0fb-b7b9-77c53864e152@microchip.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20170428185349.GD7065@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-On 11/05/2017 at 09:17:41 +0200, Nicolas Ferre wrote:
-> Le 10/05/2017 à 19:09, Alexandre Belloni a écrit :
-> > On sama5d2, VDD core maybe be cut while in suspend. This means registers
-> > will be lost. Ensure they are saved and restored properly.
-> > 
-> > Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+
+On 4/29/2017 12:23 AM, Stephen Boyd wrote:
+> On 04/28, Varadarajan Narayanan wrote:
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+>> new file mode 100644
+>> index 0000000..c150bea
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+>> @@ -0,0 +1,48 @@
+>> +/dts-v1/;
+>> +/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 and
+>> + * only version 2 as published by the Free Software Foundation.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + */
+>> +#include "ipq8074.dtsi"
+>> +
+>> +/ {
+>> +	#address-cells = <0x2>;
+>> +	#size-cells = <0x2>;
+>> +	model = "Qualcomm Technologies, Inc. IPQ8074-HK01";
+>> +	compatible = "qcom,ipq8074-hk01", "qcom,ipq8074";
+>> +	interrupt-parent = <&intc>;
+>> +
+>> +	chosen {
+>> +		bootargs = "console=ttyMSM0,115200,n8 root=/dev/ram0 rw init=/init";
 > 
-> Very good, thanks!
+> Add an aliases node for serial0 and use a chosen node with stdout-path = "serial0" instead please.
+
+Ok
+
 > 
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+>> +	};
+>> +
+>> +	memory {
+>> +		device_type = "memory";
+>> +		reg = <0x0 0x40000000 0x0 0x20000000>;
+>> +	};
+>> +
+>> +	soc: soc {
+> 
+> Do you need the soc label here? Please remove.
+
+Ok
+
+> 
+>> +		pinctrl@1000000 {
+>> +			serial_4_pins: serial4_pinmux {
+>> +				mux {
+>> +					pins = "gpio23", "gpio24";
+>> +					function = "blsp4_uart1";
+>> +					bias-disable;
+>> +				};
+>> +			};
+>> +		};
+>> +
+>> +		serial@78b3000 {
+>> +			pinctrl-0 = <&serial_4_pins>;
+>> +			pinctrl-names = "default";
+>> +			status = "ok";
+>> +		};
+>> +	};
+>> +};
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+>> new file mode 100644
+>> index 0000000..f910cc0
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+>> @@ -0,0 +1,153 @@
+>> +/*
+>> + * Copyright (c) 2017, The Linux Foundation. All rights reserved.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 and
+>> + * only version 2 as published by the Free Software Foundation.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + */
+>> +
+>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +#include <dt-bindings/clock/qcom,gcc-ipq8074.h>
+>> +
+>> +/ {
+>> +	model = "Qualcomm Technologies, Inc. IPQ8074";
+>> +	compatible = "qcom,ipq8074";
+>> +
+>> +	soc: soc {
+>> +		#address-cells = <0x1>;
+>> +		#size-cells = <0x1>;
+>> +		ranges = <0 0 0 0xffffffff>;
+>> +		compatible = "simple-bus";
+>> +
+>> +		pinctrl@1000000 {
+>> +			compatible = "qcom,ipq8074-pinctrl";
+>> +			reg = <0x1000000 0x300000>;
+>> +			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+>> +			gpio-controller;
+>> +			#gpio-cells = <0x2>;
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <0x2>;
+>> +		};
+>> +
+>> +		intc: interrupt-controller@b000000 {
+>> +			compatible = "qcom,msm-qgic2";
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <0x3>;
+>> +			reg = <0xb000000 0x1000>,
+>> +			<0xb002000 0x1000>;
+> 
+> Please align this up with previous reg property.
+
+Ok
+
+> 
+>> +		};
+>> +
+>> +		timer {
+>> +			compatible = "arm,armv8-timer";
+>> +			interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+>> +				     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+>> +				     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+>> +				     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+>> +		};
+> 
+> Is there an mmio timer as well? We should add it too.
+
+Ok
+
+> 
+>> +
+>> +		gcc: gcc@1800000 {
+>> +			compatible = "qcom,gcc-ipq8074";
+>> +			reg = <0x1800000 0x80000>;
+> 
+> Wow that is a huge area! Is it really that large?
+
+Yes, per the memory map this region is 512K.
+
+> 
+>> +			#clock-cells = <0x1>;
+>> +			#reset-cells = <0x1>;
+>> +		};
+>> +
+>> +		serial@78b3000 {
+>> +			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+>> +			reg = <0x78b3000 0x200>;
+>> +			interrupts = <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&gcc GCC_BLSP1_UART5_APPS_CLK>,
+>> +				 <&gcc GCC_BLSP1_AHB_CLK>;
+>> +			clock-names = "core", "iface";
+>> +			status = "disabled";
+>> +		};
+>> +	};
+>> +
+>> +	cpus {
+>> +		#address-cells = <0x1>;
+>> +		#size-cells = <0x0>;
+>> +
+>> +		cpu-map {
+>> +
+>> +			cluster0 {
+>> +
+>> +				core0 {
+>> +					cpu = <&CPU0>;
+>> +				};
+>> +
+>> +				core1 {
+>> +					cpu = <&CPU1>;
+>> +				};
+>> +
+>> +				core2 {
+>> +					cpu = <&CPU2>;
+>> +				};
+>> +
+>> +				core3 {
+>> +					cpu = <&CPU3>;
+>> +				};
+>> +			};
+>> +		};
+> 
+> Is this needed? Looks ok, but just curious if we need to do it
+> for other arm64 platforms we support.
+
+Don't see the need for topology at this time, will add it later if needed.
+
+> 
+>> +
+>> +		CPU0: cpu@0 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a53", "arm,armv8";
+>> +			reg = <0x0>;
+>> +			next-level-cache = <&L2_0>;
+>> +			enable-method = "psci";
+>> +		};
+>> +
+>> +		CPU1: cpu@1 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a53", "arm,armv8";
+>> +			enable-method = "psci";
+>> +			reg = <0x1>;
+>> +			next-level-cache = <&L2_0>;
+>> +		};
+>> +
+>> +		CPU2: cpu@2 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a53", "arm,armv8";
+>> +			enable-method = "psci";
+>> +			reg = <0x2>;
+>> +			next-level-cache = <&L2_0>;
+>> +		};
+>> +
+>> +		CPU3: cpu@3 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a53", "arm,armv8";
+>> +			enable-method = "psci";
+>> +			reg = <0x3>;
+>> +			next-level-cache = <&L2_0>;
+>> +		};
+>> +
+>> +		L2_0: l2-cache {
+>> +			compatible = "cache";
+>> +			cache-level = <0x2>;
+>> +		};
+> 
+> This should be inside some CPU? CPU0?
+
+There is only one L2. We followed the same convention as in msm8916.dtsi.
+
+> 
+>> +	};
+> 
+> We should be able to add the performance monitor node too?
+> 
+Ok
+
+>> +
+>> +	psci {
+>> +		compatible = "arm,psci-1.0";
+>> +		method = "smc";
+>> +	};
+>> +
+>> +	clocks {
+>> +		sleep_clk: sleep_clk {
+>> +			compatible = "fixed-clock";
+>> +			clock-frequency = <32000>;
+> 
+> Not 32765 or 32768?
+
+It is 32000.
+
+> 
+>> +			#clock-cells = <0>;
+>> +		};
+>> +
+>> +		xo: xo {
+>> +			compatible = "fixed-clock";
+>> +			clock-frequency = <19200000>;
+>> +			#clock-cells = <0>;
+>> +		};
+>> +	};
 > 
 
-I've found some issue with this, I'll send v4 soon.
-
-> > ---
-> > Changes in v3:
-> >  - use regmap_read_poll_timeout to handle the USB PLL
-> >  - fix typo
-> > 
-> > 
-> >  drivers/clk/at91/pmc.c | 104 +++++++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 104 insertions(+)
-> > 
-> > diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> > index 526df5ba042d..7fe1dc8d1829 100644
-> > --- a/drivers/clk/at91/pmc.c
-> > +++ b/drivers/clk/at91/pmc.c
-> > @@ -13,7 +13,9 @@
-> >  #include <linux/clk/at91_pmc.h>
-> >  #include <linux/of.h>
-> >  #include <linux/mfd/syscon.h>
-> > +#include <linux/platform_device.h>
-> >  #include <linux/regmap.h>
-> > +#include <linux/syscore_ops.h>
-> >  
-> >  #include <asm/proc-fns.h>
-> >  
-> > @@ -41,3 +43,105 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
-> >  	return 0;
-> >  }
-> >  EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
-> > +
-> > +#ifdef CONFIG_PM
-> > +static struct regmap *pmcreg;
-> > +
-> > +static struct
-> > +{
-> > +	u32 scsr;
-> > +	u32 pcsr0;
-> > +	u32 uckr;
-> > +	u32 mor;
-> > +	u32 mcfr;
-> > +	u32 pllar;
-> > +	u32 mckr;
-> > +	u32 usb;
-> > +	u32 imr;
-> > +	u32 pcsr1;
-> > +	u32 pcr[64];
-> > +} pmc_cache;
-> > +
-> > +static int pmc_suspend(void)
-> > +{
-> > +	int i;
-> > +
-> > +	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
-> > +	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
-> > +	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
-> > +	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
-> > +	regmap_read(pmcreg, AT91_CKGR_MCFR, &pmc_cache.mcfr);
-> > +	regmap_read(pmcreg, AT91_CKGR_PLLAR, &pmc_cache.pllar);
-> > +	regmap_read(pmcreg, AT91_PMC_MCKR, &pmc_cache.mckr);
-> > +	regmap_read(pmcreg, AT91_PMC_USB, &pmc_cache.usb);
-> > +	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.imr);
-> > +	regmap_read(pmcreg, AT91_PMC_PCSR1, &pmc_cache.pcsr1);
-> > +
-> > +	for (i = 2; i < 64; i++) {
-> > +		regmap_write(pmcreg, AT91_PMC_PCR, (i & AT91_PMC_PCR_PID_MASK));
-> > +		regmap_read(pmcreg, AT91_PMC_PCR, &pmc_cache.pcr[i]);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static void pmc_resume(void)
-> > +{
-> > +	int i, ret = 0;
-> > +	u32 tmp;
-> > +
-> > +	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
-> > +	if (pmc_cache.mckr != tmp)
-> > +		pr_warn("MCKR was not configured properly by the firmware\n");
-> > +	regmap_read(pmcreg, AT91_CKGR_PLLAR, &tmp);
-> > +	if (pmc_cache.pllar != tmp)
-> > +		pr_warn("PLLAR was not configured properly by the firmware\n");
-> > +
-> > +	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
-> > +	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
-> > +	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
-> > +	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
-> > +	regmap_write(pmcreg, AT91_CKGR_MCFR, pmc_cache.mcfr);
-> > +	regmap_write(pmcreg, AT91_PMC_USB, pmc_cache.usb);
-> > +	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.imr);
-> > +	regmap_write(pmcreg, AT91_PMC_PCER1, pmc_cache.pcsr1);
-> > +
-> > +	for (i = 2; i < 64; i++) {
-> > +		regmap_write(pmcreg, AT91_PMC_PCR, (i & AT91_PMC_PCR_PID_MASK));
-> > +		regmap_write(pmcreg, AT91_PMC_PCR, pmc_cache.pcr[i]);
-> > +	}
-> > +
-> > +	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
-> > +		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp, !(tmp & AT91_PMC_LOCKU), 10, 5000);
-> > +		if (ret)
-> > +			pr_crit("USB PLL didn't lock when resuming\n");
-> > +	}
-> > +}
-> > +
-> > +static struct syscore_ops pmc_syscore_ops = {
-> > +	.suspend = pmc_suspend,
-> > +	.resume = pmc_resume,
-> > +};
-> > +
-> > +static const struct of_device_id sama5d2_pmc_dt_ids[] = {
-> > +	{ .compatible = "atmel,sama5d2-pmc" },
-> > +	{ /* sentinel */ }
-> > +};
-> > +
-> > +static int __init pmc_register_ops(void)
-> > +{
-> > +	struct device_node *np;
-> > +
-> > +	np = of_find_matching_node(NULL, sama5d2_pmc_dt_ids);
-> > +
-> > +	pmcreg = syscon_node_to_regmap(np);
-> > +	if (IS_ERR(pmcreg))
-> > +		return PTR_ERR(pmcreg);
-> > +
-> > +	register_syscore_ops(&pmc_syscore_ops);
-> > +
-> > +	return 0;
-> > +}
-> > +/* This has to happen before arch_initcall because of the tcb_clksrc driver */
-> > +postcore_initcall(pmc_register_ops);
-> > +#endif
-> > 
-> 
-> 
-> -- 
-> Nicolas Ferre
-
+-Varada
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum, a Linux Foundation Collaborative Project
