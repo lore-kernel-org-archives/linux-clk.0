@@ -1,73 +1,58 @@
 Return-Path: <maxime.ripard@free-electrons.com>
-Date: Wed, 31 May 2017 21:58:27 +0200
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+To: Mike Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Mark Rutland <mark.rutland@arm.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 0/6] clk: sunxi-ng: Add support for A83T's PRCM
-Message-ID: <20170531195827.kcbkwf5k2mh4q4re@flea.home>
-References: <20170531075824.657-1-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qkey6pgizbckwfak"
-In-Reply-To: <20170531075824.657-1-wens@csie.org>
+Subject: [PATCH v2 9/20] drm/sun4i: tcon: Add channel debug
+Date: Wed,  3 May 2017 13:59:46 +0200
+Message-Id: <d9cecce96aa531b83f58b38df827e38ba1618858.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+While all functions have debug logs, the channel enable and disable are not
+logged. Make sure this is the case.
 
---qkey6pgizbckwfak
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 ++++
+ 1 file changed, 4 insertions(+), 0 deletions(-)
 
-On Wed, May 31, 2017 at 03:58:18PM +0800, Chen-Yu Tsai wrote:
-> Hi everyone,
->=20
-> This is the remaining parts of my A83T PRCM support series, along with
-> changes requested by Maxime.
->=20
-> Patch 1 updates the device tree bindings for the PRCM, adding pll-periph
-> to the list of required clocks
->=20
-> Patch 2 adds a device node for the PRCM on the A83T SoC, updated from v1
-> to include the pll-periph clock.
->=20
-> Patch 3 exports the PLL_PERIPH0 clock from the CCU on the H3/H5, for
-> consumption by the PRCM.
->=20
-> Patch 4 adds the pll-periph clock to the PRCM device node on the H3/H5.
->=20
-> Patch 5 / 6 are the same as 3 / 4, but for the A64.
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---qkey6pgizbckwfak
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZLyBjAAoJEBx+YmzsjxAgKG4P/iVzjBTJ1EiWJFghrcrAKNiZ
-XRE5O5KRh8wrarfw2FXAON+wKXF0pAUnqv4s4rqaflWnEp+O+xhMm2FWMi18dZSX
-tzP7rXT14ESC2IySvlv9n8yhg27JpsptwXE+VS37xTMRGcVAN7Hx/ak8WhyCdHoh
-N3p2UDlguXmaDiPNtdtgv0dpPZTy1T4M3euhBZMy2Oz1W4tE3qevGFsVAomrsK/s
-fA7T/3zULGh0enm9POeLQBYKZj/IuqImUReCuzDXNWOR+1cGTOKxvRT0HhRpqK8g
-ZUIafnW/ZipFKx2D9mY/8WxyfLC+BNk3SaWxzUjMGBchuUc4koaG6TIJ9nfhmQIm
-Pi8hWwtVknRtY/UnEuqBKnjVBy91rapTuDhcNRT061CoYr2nApwlN5DBa7quKj3W
-LqvakT6NRRgPDPjXcBF84RLRDkC7mBFV1Buas+01s7EMIXLjBvfHqWtad3siA8dA
-n2CRid5CyHQ5hWWjNSmz0hAm/3t/2pwBKE8f/smZwPQXmnPCqy5l5z82n0yuk2f9
-z8QDquTAQb9hUr8Ezkb5vdLHmUCPhm2bYPE99eP8fG1g086IKB0gIRQS1piU9GyG
-GG8IpYtyUciuMf9ZDgibpmrzjgid6qtbSuGLgGAiuDEtrr9VKECAPtZHPkUi9OuS
-82o4YgTRuMAYJ53aq+1k
-=jW0a
------END PGP SIGNATURE-----
-
---qkey6pgizbckwfak--
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 9a83a85529ac..66a5bb9b85e9 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -54,6 +54,8 @@ EXPORT_SYMBOL(sun4i_tcon_enable);
+ 
+ void sun4i_tcon_channel_disable(struct sun4i_tcon *tcon, int channel)
+ {
++	DRM_DEBUG_DRIVER("Disabling TCON channel %d\n", channel);
++
+ 	/* Disable the TCON's channel */
+ 	if (channel == 0) {
+ 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
+@@ -71,6 +73,8 @@ EXPORT_SYMBOL(sun4i_tcon_channel_disable);
+ 
+ void sun4i_tcon_channel_enable(struct sun4i_tcon *tcon, int channel)
+ {
++	DRM_DEBUG_DRIVER("Enabling TCON channel %d\n", channel);
++
+ 	/* Enable the TCON's channel */
+ 	if (channel == 0) {
+ 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
+-- 
+git-series 0.8.11
