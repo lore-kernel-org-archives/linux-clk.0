@@ -1,222 +1,136 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: [PATCH v4 2/2] clk: at91: Add sama5d2 suspend/resume
-Date: Fri, 12 May 2017 16:25:31 +0200
-Message-Id: <20170512142531.11274-2-alexandre.belloni@free-electrons.com>
-In-Reply-To: <20170512142531.11274-1-alexandre.belloni@free-electrons.com>
-References: <20170512142531.11274-1-alexandre.belloni@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 3/8] clk: sunxi-ng: Add class of phase clocks supporting MMC new timing modes
+Date: Wed,  3 May 2017 11:16:53 +0800
+Message-Id: <20170503031658.29299-4-wens@csie.org>
+In-Reply-To: <20170503031658.29299-1-wens@csie.org>
+References: <20170503031658.29299-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On sama5d2, VDD core maybe be cut while in suspend. This means registers
-will be lost. Ensure they are saved and restored properly.
+The MMC clocks on newer SoCs, such as the A83T and H3, support the
+"new timing mode". Under this mode, the output of the clock is divided
+by 2, and the clock delays no longer apply.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Due to how the clock tree is modeled and setup, we need to model
+this function in two places, the master mmc clock and the two
+child phase clocks. In the mmc clock, we can easily model the
+mode bit as an extra variable post-divider. In the phase clocks,
+we check the bit and return -ENOTSUPP if the bit is set, signaling
+that the phase clocks are not to be used.
+
+This patch introduces a class of phase clocks that checks the
+timing mode bit.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
-Changes in v4:
- - only save and restore PCR for used ids
+ drivers/clk/sunxi-ng/ccu_phase.c | 47 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_phase.h | 16 ++++++++++++++
+ 2 files changed, 63 insertions(+)
 
- drivers/clk/at91/clk-generated.c  |   3 +
- drivers/clk/at91/clk-peripheral.c |   4 +-
- drivers/clk/at91/pmc.c            | 129 ++++++++++++++++++++++++++++++++++++++
- drivers/clk/at91/pmc.h            |   2 +
- 4 files changed, 137 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index 70474bd97a10..f0b7ae904ce2 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -266,6 +266,9 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
- 	if (ret) {
- 		kfree(gck);
- 		hw = ERR_PTR(ret);
-+	} else {
-+		pmc_register_id(id);
-+	}
+diff --git a/drivers/clk/sunxi-ng/ccu_phase.c b/drivers/clk/sunxi-ng/ccu_phase.c
+index 400c58ad72fd..e6ff7551c855 100644
+--- a/drivers/clk/sunxi-ng/ccu_phase.c
++++ b/drivers/clk/sunxi-ng/ccu_phase.c
+@@ -8,6 +8,7 @@
+  * the License, or (at your option) any later version.
+  */
  
- 	return hw;
- }
-diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
-index dc29fd979d3f..770118369230 100644
---- a/drivers/clk/at91/clk-peripheral.c
-+++ b/drivers/clk/at91/clk-peripheral.c
-@@ -367,8 +367,10 @@ at91_clk_register_sam9x5_peripheral(struct regmap *regmap, spinlock_t *lock,
- 	if (ret) {
- 		kfree(periph);
- 		hw = ERR_PTR(ret);
--	} else
-+	} else {
- 		clk_sam9x5_peripheral_autodiv(periph);
-+		pmc_register_id(id);
-+	}
++#include <linux/bitops.h>
+ #include <linux/clk-provider.h>
+ #include <linux/spinlock.h>
  
- 	return hw;
- }
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 526df5ba042d..a4cd9f35160e 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -13,12 +13,16 @@
- #include <linux/clk/at91_pmc.h>
- #include <linux/of.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <linux/syscore_ops.h>
- 
- #include <asm/proc-fns.h>
- 
- #include "pmc.h"
- 
-+#define PMC_MAX_IDS 128
+@@ -124,3 +125,49 @@ const struct clk_ops ccu_phase_ops = {
+ 	.get_phase	= ccu_phase_get_phase,
+ 	.set_phase	= ccu_phase_set_phase,
+ };
 +
- int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 			  struct clk_range *range)
++/*
++ * The MMC clocks on newer SoCs support the "new timing mode". Under
++ * this mode, the output of the clock is divided by 2, and the clock
++ * delays no longer apply.
++ *
++ * Due to how the clock tree is modeled and setup, we need to model
++ * this function in two places, the master mmc clock and the two
++ * child phase clocks. In the mmc clock, we can easily model the
++ * mode bit as an extra variable post-divider. In the phase clocks,
++ * we check the bit and return -ENOTSUPP if the bit is set, signaling
++ * that the phase clocks are not to be used.
++ *
++ * We do not support runtime configuration of the modes. Instead a
++ * mode is enforced at CCU probe time.
++ */
++#define CCU_MMC_NEW_TIMING_MODE	    BIT(30)
++
++static int ccu_phase_mmc_new_timing_get_phase(struct clk_hw *hw)
++{
++	struct ccu_phase *phase = hw_to_ccu_phase(hw);
++	u32 reg;
++
++	reg = readl(phase->common.base + phase->common.reg);
++	if (reg & CCU_MMC_NEW_TIMING_MODE)
++		return -ENOTSUPP;
++
++	return ccu_phase_get_phase(hw);
++}
++
++static int ccu_phase_mmc_new_timing_set_phase(struct clk_hw *hw, int degrees)
++{
++	struct ccu_phase *phase = hw_to_ccu_phase(hw);
++	u32 reg;
++
++	reg = readl(phase->common.base + phase->common.reg);
++	if (reg & CCU_MMC_NEW_TIMING_MODE)
++		return -ENOTSUPP;
++
++	return ccu_phase_set_phase(hw, degrees);
++}
++
++const struct clk_ops ccu_phase_mmc_new_timing_ops = {
++	.get_phase	= ccu_phase_mmc_new_timing_get_phase,
++	.set_phase	= ccu_phase_mmc_new_timing_set_phase,
++};
+diff --git a/drivers/clk/sunxi-ng/ccu_phase.h b/drivers/clk/sunxi-ng/ccu_phase.h
+index 75a091a4c565..c514d1798cdd 100644
+--- a/drivers/clk/sunxi-ng/ccu_phase.h
++++ b/drivers/clk/sunxi-ng/ccu_phase.h
+@@ -38,6 +38,20 @@ struct ccu_phase {
+ 		}							\
+ 	}
+ 
++#define SUNXI_CCU_PHASE_MMC_NEW_TIMING(_struct, _name, _parent, _reg,	\
++				       _shift, _width, _flags)		\
++	struct ccu_phase _struct = {					\
++		.shift	= _shift,					\
++		.width	= _width,					\
++		.common	= {						\
++			.reg		= _reg,				\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &ccu_phase_mmc_new_timing_ops, \
++						      _flags),		\
++		}							\
++	}
++
+ static inline struct ccu_phase *hw_to_ccu_phase(struct clk_hw *hw)
  {
-@@ -41,3 +45,128 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
-+
-+static u8 registered_ids[PMC_MAX_IDS];
-+
-+void pmc_register_id(u8 id)
-+{
-+	int i;
-+
-+	for (i = 0; i < PMC_MAX_IDS; i++) {
-+		if (registered_ids[i] == 0) {
-+			registered_ids[i] = id;
-+			break;
-+		}
-+		if (registered_ids[i] == id)
-+			break;
-+	}
-+}
-+
-+#ifdef CONFIG_PM
-+static struct regmap *pmcreg;
-+
-+static struct
-+{
-+	u32 scsr;
-+	u32 pcsr0;
-+	u32 uckr;
-+	u32 mor;
-+	u32 mcfr;
-+	u32 pllar;
-+	u32 mckr;
-+	u32 usb;
-+	u32 imr;
-+	u32 pcsr1;
-+	u32 pcr[PMC_MAX_IDS];
-+	u32 audio_pll0;
-+	u32 audio_pll1;
-+} pmc_cache;
-+
-+static int pmc_suspend(void)
-+{
-+	int i;
-+
-+	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.scsr);
-+	regmap_read(pmcreg, AT91_PMC_PCSR, &pmc_cache.pcsr0);
-+	regmap_read(pmcreg, AT91_CKGR_UCKR, &pmc_cache.uckr);
-+	regmap_read(pmcreg, AT91_CKGR_MOR, &pmc_cache.mor);
-+	regmap_read(pmcreg, AT91_CKGR_MCFR, &pmc_cache.mcfr);
-+	regmap_read(pmcreg, AT91_CKGR_PLLAR, &pmc_cache.pllar);
-+	regmap_read(pmcreg, AT91_PMC_MCKR, &pmc_cache.mckr);
-+	regmap_read(pmcreg, AT91_PMC_USB, &pmc_cache.usb);
-+	regmap_read(pmcreg, AT91_PMC_IMR, &pmc_cache.imr);
-+	regmap_read(pmcreg, AT91_PMC_PCSR1, &pmc_cache.pcsr1);
-+
-+	for (i = 0; registered_ids[i]; i++) {
-+		regmap_write(pmcreg, AT91_PMC_PCR,
-+			     (registered_ids[i] & AT91_PMC_PCR_PID_MASK));
-+		regmap_read(pmcreg, AT91_PMC_PCR,
-+			    &pmc_cache.pcr[registered_ids[i]]);
-+	}
-+
-+	return 0;
-+}
-+
-+static void pmc_resume(void)
-+{
-+	int i, ret = 0;
-+	u32 tmp;
-+
-+	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
-+	if (pmc_cache.mckr != tmp)
-+		pr_warn("MCKR was not configured properly by the firmware\n");
-+	regmap_read(pmcreg, AT91_CKGR_PLLAR, &tmp);
-+	if (pmc_cache.pllar != tmp)
-+		pr_warn("PLLAR was not configured properly by the firmware\n");
-+
-+	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.scsr);
-+	regmap_write(pmcreg, AT91_PMC_PCER, pmc_cache.pcsr0);
-+	regmap_write(pmcreg, AT91_CKGR_UCKR, pmc_cache.uckr);
-+	regmap_write(pmcreg, AT91_CKGR_MOR, pmc_cache.mor);
-+	regmap_write(pmcreg, AT91_CKGR_MCFR, pmc_cache.mcfr);
-+	regmap_write(pmcreg, AT91_PMC_USB, pmc_cache.usb);
-+	regmap_write(pmcreg, AT91_PMC_IMR, pmc_cache.imr);
-+	regmap_write(pmcreg, AT91_PMC_PCER1, pmc_cache.pcsr1);
-+
-+	for (i = 0; registered_ids[i]; i++) {
-+		regmap_write(pmcreg, AT91_PMC_PCR,
-+			     pmc_cache.pcr[registered_ids[i]] |
-+			     AT91_PMC_PCR_CMD);
-+	}
-+
-+	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
-+		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
-+					       !(tmp & AT91_PMC_LOCKU),
-+					       10, 5000);
-+		if (ret)
-+			pr_crit("USB PLL didn't lock when resuming\n");
-+	}
-+}
-+
-+static struct syscore_ops pmc_syscore_ops = {
-+	.suspend = pmc_suspend,
-+	.resume = pmc_resume,
-+};
-+
-+static const struct of_device_id sama5d2_pmc_dt_ids[] = {
-+	{ .compatible = "atmel,sama5d2-pmc" },
-+	{ /* sentinel */ }
-+};
-+
-+static int __init pmc_register_ops(void)
-+{
-+	struct device_node *np;
-+
-+	np = of_find_matching_node(NULL, sama5d2_pmc_dt_ids);
-+
-+	pmcreg = syscon_node_to_regmap(np);
-+	if (IS_ERR(pmcreg))
-+		return PTR_ERR(pmcreg);
-+
-+	register_syscore_ops(&pmc_syscore_ops);
-+
-+	return 0;
-+}
-+/* This has to happen before arch_initcall because of the tcb_clksrc driver */
-+postcore_initcall(pmc_register_ops);
-+#endif
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 5771fff0ee3f..aa7e1f1e3265 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -29,4 +29,6 @@ struct clk_range {
- int of_at91_get_clk_range(struct device_node *np, const char *propname,
- 			  struct clk_range *range);
+ 	struct ccu_common *common = hw_to_ccu_common(hw);
+@@ -47,4 +61,6 @@ static inline struct ccu_phase *hw_to_ccu_phase(struct clk_hw *hw)
  
-+void pmc_register_id(u8 id);
+ extern const struct clk_ops ccu_phase_ops;
+ 
++extern const struct clk_ops ccu_phase_mmc_new_timing_ops;
 +
- #endif /* __PMC_H_ */
+ #endif /* _CCU_PHASE_H_ */
 -- 
 2.11.0
