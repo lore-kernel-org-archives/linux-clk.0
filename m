@@ -1,92 +1,126 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <wens@csie.org>
 MIME-Version: 1.0
-To: Angus Ainslie <angus@akkea.ca>, 
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <ae41e508eac104a1d0c305cceccea84a@www.akkea.ca>
-Cc: "Boris Brezillon" <boris.brezillon@free-electrons.com>,
- "Maxime Ripard" <maxime.ripard@free-electrons.com>,
- "Chen-Yu Tsai" <wens@csie.org>, "Stephen Boyd" <sboyd@codeaurora.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- stable@vger.kernel.org
-References: <1495643669-28221-1-git-send-email-boris.brezillon@free-electrons.com>
- <149573823221.52617.2350903252470015903@resonance>
- <ae41e508eac104a1d0c305cceccea84a@www.akkea.ca>
-Message-ID: <149574635703.52617.18257216525587339599@resonance>
-Subject: Re: [PATCH] clk: sunxi-ng: sun5i: Fix ahb_bist_clk definition
-Date: Thu, 25 May 2017 14:05:57 -0700
+In-Reply-To: <9c2f3ed66ae32e55721bfced41dfd70e49cb746c.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+ <9c2f3ed66ae32e55721bfced41dfd70e49cb746c.1493812478.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 3 May 2017 20:53:33 +0800
+Message-ID: <CAGb2v65yYcC4P-CDHhEJchbwecQyC8uGnHVWSPSvbZ=L8vMy8w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/20] clk: divider: Make divider_round_rate take the
+ parent clock
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>, Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Angus Ainslie (2017-05-25 12:23:54)
-> On 2017-05-25 12:50, Michael Turquette wrote:
-> > Quoting Boris Brezillon (2017-05-24 09:34:29)
-> >> AHB BIST gate is actually controlled with bit 7.
-> >> =
+On Wed, May 3, 2017 at 7:59 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> So far, divider_round_rate only considers the parent clock returned by
+> clk_hw_get_parent.
+>
+> This works fine on clocks that have a single parents, this doesn't work on
+> muxes, since we will only consider the first parent, while other parents
+> may totally be able to provide a better combination.
+>
+> Clocks in that case cannot use divider_round_rate, so would have to come up
+> with a very similar logic to work around it. Instead of having to do
+> something like this, and duplicate that logic everywhere, create a
+> divider_round_rate parent to allow caller to give an additional parameter
+> for the parent clock to consider.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/clk/clk-divider.c    | 26 ++++++++++++++++++--------
+>  include/linux/clk-provider.h |  4 ++++
+>  2 files changed, 22 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> index 96386ffc8483..48750439b1cd 100644
+> --- a/drivers/clk/clk-divider.c
+> +++ b/drivers/clk/clk-divider.c
+> @@ -275,7 +275,8 @@ static int _next_div(const struct clk_div_table *table, int div,
+>         return div;
+>  }
+>
+> -static int clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
+> +static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
+> +                              unsigned long rate,
+>                                unsigned long *best_parent_rate,
+>                                const struct clk_div_table *table, u8 width,
+>                                unsigned long flags)
+> @@ -314,8 +315,7 @@ static int clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
+>                         *best_parent_rate = parent_rate_saved;
+>                         return i;
+>                 }
+> -               parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
+> -                                              rate * i);
+> +               parent_rate = clk_hw_round_rate(parent, rate * i);
+>                 now = DIV_ROUND_UP_ULL((u64)parent_rate, i);
+>                 if (_is_best_div(rate, now, best, flags)) {
+>                         bestdiv = i;
+> @@ -326,22 +326,32 @@ static int clk_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
+>
+>         if (!bestdiv) {
+>                 bestdiv = _get_maxdiv(table, width, flags);
+> -               *best_parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), 1);
+> +               *best_parent_rate = clk_hw_round_rate(parent, 1);
+>         }
+>
+>         return bestdiv;
+>  }
+>
+> -long divider_round_rate(struct clk_hw *hw, unsigned long rate,
+> -                       unsigned long *prate, const struct clk_div_table *table,
+> -                       u8 width, unsigned long flags)
+> +long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+> +                              unsigned long rate, unsigned long *prate,
+> +                              const struct clk_div_table *table,
+> +                              u8 width, unsigned long flags)
+>  {
+>         int div;
+>
+> -       div = clk_divider_bestdiv(hw, rate, prate, table, width, flags);
+> +       div = clk_divider_bestdiv(hw, parent, rate, prate, table, width, flags);
+>
+>         return DIV_ROUND_UP_ULL((u64)*prate, div);
+>  }
+> +EXPORT_SYMBOL_GPL(divider_round_rate_parent);
+> +
+> +long divider_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                       unsigned long *prate, const struct clk_div_table *table,
+> +                       u8 width, unsigned long flags)
+> +{
+> +       return divider_round_rate_parent(hw, clk_hw_get_parent(hw), rate, prate,
+> +                                        table, width, flags);
+> +}
+>  EXPORT_SYMBOL_GPL(divider_round_rate);
 
-> >> This bug was detected while trying to use the NAND controller which is
-> >> using the DMA engine to transfer data to the NAND.
-> >> Since the ahb_bist_clk gate bit conflicts with the ahb_dma_clk gate =
+Could this be made a static inline instead? Otherwise,
 
-> >> bit,
-> >> the core was disabling the DMA engine clock as part of its 'disable
-> >> unused clks' procedure, which was causing all DMA transfers to fail =
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
-> >> after
-> >> this point.
-> >> =
-
-> >> Fixes: 5e73761786d6 ("clk: sunxi-ng: Add sun5i CCU driver")
-> >> Cc: stable@vger.kernel.org
-> >> Reported-by: Angus Ainslie <angus@akkea.ca>
-> >> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > =
-
-> > Patch looks good to me. Did this ever work? I'm trying to figure out if
-> > it should go into -fixes or -next.
-> > =
-
-> > Thanks,
-> > Mike
-> > =
-
-> =
-
-> It fixed the problem for me so I think fixes is the right place.
-
-Applied to clk-fixes towards -rc3 or -rc4.
-
-Regards,
-Mike
-
-> =
-
-> Angus
-> =
-
-> >> ---
-> >>  drivers/clk/sunxi-ng/ccu-sun5i.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >> =
-
-> >> diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.c =
-
-> >> b/drivers/clk/sunxi-ng/ccu-sun5i.c
-> >> index 5c476f966a72..5372bf8be5e6 100644
-> >> --- a/drivers/clk/sunxi-ng/ccu-sun5i.c
-> >> +++ b/drivers/clk/sunxi-ng/ccu-sun5i.c
-> >> @@ -243,7 +243,7 @@ static SUNXI_CCU_GATE(ahb_ss_clk,   "ahb-ss",      =
-
-> >>  "ahb",
-> >>  static SUNXI_CCU_GATE(ahb_dma_clk,     "ahb-dma",      "ahb",
-> >>                       0x060, BIT(6), 0);
-> >>  static SUNXI_CCU_GATE(ahb_bist_clk,    "ahb-bist",     "ahb",
-> >> -                     0x060, BIT(6), 0);
-> >> +                     0x060, BIT(7), 0);
-> >>  static SUNXI_CCU_GATE(ahb_mmc0_clk,    "ahb-mmc0",     "ahb",
-> >>                       0x060, BIT(8), 0);
-> >>  static SUNXI_CCU_GATE(ahb_mmc1_clk,    "ahb-mmc1",     "ahb",
-> >> --
-> >> 2.7.4
-> >> =
-
->=20
+>
+>  static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index a428aec36ace..14102f783f64 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -412,6 +412,10 @@ extern const struct clk_ops clk_divider_ro_ops;
+>  unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+>                 unsigned int val, const struct clk_div_table *table,
+>                 unsigned long flags);
+> +long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+> +                              unsigned long rate, unsigned long *prate,
+> +                              const struct clk_div_table *table,
+> +                              u8 width, unsigned long flags);
+>  long divider_round_rate(struct clk_hw *hw, unsigned long rate,
+>                 unsigned long *prate, const struct clk_div_table *table,
+>                 u8 width, unsigned long flags);
+> --
+> git-series 0.8.11
