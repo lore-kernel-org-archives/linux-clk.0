@@ -1,67 +1,55 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:43812 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760367AbdEOJYa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2017 05:24:30 -0400
-Date: Mon, 15 May 2017 11:24:28 +0200
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v7 03/13] dt-bindings: add bindings for DE2 on V3s SoC
-Message-ID: <20170515092428.dby2cw62gfbfq3ry@flea.home>
-References: <20170514163045.40366-1-icenowy@aosc.io>
- <20170514163045.40366-4-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="lcuelmmv4kxkmqfp"
-In-Reply-To: <20170514163045.40366-4-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 1/8] dt-bindings: clock: sunxi-ccu: Add compatible string for A83T CCU
+Date: Wed,  3 May 2017 11:16:51 +0800
+Message-Id: <20170503031658.29299-2-wens@csie.org>
+In-Reply-To: <20170503031658.29299-1-wens@csie.org>
+References: <20170503031658.29299-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+The A83T clock control unit is a hybrid of some new style clock designs
+from the A80, and old style layout from the other Allwinner SoCs.
 
---lcuelmmv4kxkmqfp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Like the A80, the SoC does not have a low speed 32.768 kHz oscillator.
+Unlike the A80, there is no clock input either. The only low speed clock
+available is the internal oscillator which runs at around 16 MHz,
+divided by 512, yielding a low speed clock around 31.250 kHz.
 
-On Mon, May 15, 2017 at 12:30:35AM +0800, Icenowy Zheng wrote:
-> Allwinner V3s SoC have a display engine which have a different pipeline
-> with older SoCs.
->=20
-> Add document for it (new compatibles and the new "mixer" part).
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Applied, thanks!
-maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---lcuelmmv4kxkmqfp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZGXPMAAoJEBx+YmzsjxAg0oQP/irKJ8Zdox9T0Q3/m5qF2RAl
-NRBtfNi4uknzZ5Z+FQIaG/AxvF76xGYQ8RdSAlZX5mizBK69aSicV07YyLL62TOD
-w6CN1fF1oIntrlVWqXaYR1IEitOvXt1ojZFGHG3U5vpAfvYxpyjNWGQy7ORy1ryc
-ZcTCdIxyZucv1uDh1q8FUzFhRo3dVLA5isB4wHDE0yHN6jyLLMWH8Wd/afulCpyo
-q1bvyFWKFmMaZ8cLdG5h8BjRyk2+qS8jCKQxFsVlL6lATFx3oqN1qXzpd6Wbbrfr
-CCbWQtccoWJS0avju5RKZ0FdFlYzQpi966WMQncRTQhD60m0GJeqtDMqtKn6S+D0
-tZLVQMJuzEjIHntGlYEHBO9cVEsoPx93nIDrEs7Ivb3UwtI4lFIdDZPVQWXCskbI
-67Nor5LSrXl+kTUBOIW9mAFZZpYhaP2cFNC7d87o8f4uxCj9v8nap411OkDO99jy
-cSBGZbEvfxGDkKmfRtit5lXJ+0vjZmqcFXc15XhcasNXJL5A8dnvjvli3SpBcAcv
-QIPRO6bNISbdEumiAiSHUDmXOliHlQ9mH5F+5WK0STw4tVz0LRuNBecszMYLyX9j
-xP/nYxvEiv4ABTLSyrLCAvosNO2DOEi0Hl2YC+AjU2DGOT1J4zgtDsJ5/In13DVX
-RnAvqs9/fn1fg1/VnSE4
-=l2aA
------END PGP SIGNATURE-----
-
---lcuelmmv4kxkmqfp--
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index e9c5a1d9834a..34b2a9249a94 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -6,6 +6,7 @@ Required properties :
+ 		- "allwinner,sun6i-a31-ccu"
+ 		- "allwinner,sun8i-a23-ccu"
+ 		- "allwinner,sun8i-a33-ccu"
++		- "allwinner,sun8i-a83t-ccu"
+ 		- "allwinner,sun8i-h3-ccu"
+ 		- "allwinner,sun8i-h3-r-ccu"
+ 		- "allwinner,sun8i-v3s-ccu"
+@@ -18,6 +19,7 @@ Required properties :
+ - clocks: phandle to the oscillators feeding the CCU. Two are needed:
+   - "hosc": the high frequency oscillator (usually at 24MHz)
+   - "losc": the low frequency oscillator (usually at 32kHz)
++	    On the A83T, this is the internal 16MHz oscillator divided by 512
+ - clock-names: Must contain the clock names described just above
+ - #clock-cells : must contain 1
+ - #reset-cells : must contain 1
+-- 
+2.11.0
