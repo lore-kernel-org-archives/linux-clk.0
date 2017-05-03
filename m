@@ -1,136 +1,70 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<aisheng.dong@nxp.com>, <kernel@pengutronix.de>, <broonie@kernel.org>,
-	<yibin.gong@nxp.com>, <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <shawnguo@kernel.org>,
-	<fabio.estevam@nxp.com>, <anson.huang@nxp.com>, <ping.bai@nxp.com>,
-	<leonard.crestez@nxp.com>, <octavian.purdila@nxp.com>,
-	<linux@armlinux.org.uk>, <geert@linux-m68k.org>, <f.fainelli@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>
-Subject: [PATCH V2 2/3] clk: add managed version of clk_bulk_get
-Date: Mon, 8 May 2017 22:03:52 +0800
-Message-ID: <1494252233-21074-3-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1494252233-21074-1-git-send-email-aisheng.dong@nxp.com>
-References: <1494252233-21074-1-git-send-email-aisheng.dong@nxp.com>
-Return-Path: aisheng.dong@nxp.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 6/8] ARM: sun8i: a83t: Add CCU device nodes
+Date: Wed,  3 May 2017 11:16:56 +0800
+Message-Id: <20170503031658.29299-7-wens@csie.org>
+In-Reply-To: <20170503031658.29299-1-wens@csie.org>
+References: <20170503031658.29299-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch introduces the managed version of clk_bulk_get.
+Now that we have support for the A83T CCU, add a device node for it,
+and replace any existing placeholder clock phandles with the correct
+ones.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Anson Huang <anson.huang@nxp.com>
-Cc: Robin Gong <yibin.gong@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Octavian Purdila <octavian.purdila@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
-ChangeLog:
-v1->v2: only one minor comment change
----
- drivers/clk/clk-devres.c | 36 ++++++++++++++++++++++++++++++++++++
- include/linux/clk.h      | 21 +++++++++++++++++++++
- 2 files changed, 57 insertions(+)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index 3a218c3..d854e26 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -34,6 +34,42 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
- }
- EXPORT_SYMBOL(devm_clk_get);
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index c0a1e4f74b89..c9a5d07b2ada 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -162,13 +162,23 @@
+ 		#size-cells = <1>;
+ 		ranges;
  
-+struct clk_bulk_devres {
-+	struct clk_bulk_data *clks;
-+	int num_clks;
-+};
++		ccu: clock@1c20000 {
++			compatible = "allwinner,sun8i-a83t-ccu";
++			reg = <0x01c20000 0x400>;
++			clocks = <&osc24M>, <&osc16Md512>;
++			clock-names = "hosc", "losc";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
 +
-+static void devm_clk_bulk_release(struct device *dev, void *res)
-+{
-+	struct clk_bulk_devres *devres = res;
-+
-+	clk_bulk_put(devres->num_clks, devres->clks);
-+}
-+
-+int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
-+		      struct clk_bulk_data *clks)
-+{
-+	struct clk_bulk_devres *devres;
-+	int ret;
-+
-+	devres = devres_alloc(devm_clk_bulk_release,
-+			      sizeof(*devres), GFP_KERNEL);
-+	if (!devres)
-+		return -ENOMEM;
-+
-+	ret = clk_bulk_get(dev, num_clks, clks);
-+	if (!ret) {
-+		devres->clks = clks;
-+		devres->num_clks = num_clks;
-+		devres_add(dev, devres);
-+	} else {
-+		devres_free(devres);
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(devm_clk_bulk_get);
-+
- static int devm_clk_match(struct device *dev, void *res, void *data)
- {
- 	struct clk **c = res;
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 1201944..1ebccf3 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -281,6 +281,21 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 			      struct clk_bulk_data *clks);
+ 		pio: pinctrl@1c20800 {
+ 			compatible = "allwinner,sun8i-a83t-pinctrl";
+ 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg = <0x01c20800 0x400>;
+-			clocks = <&osc24M>;
++			clocks = <&ccu 45>, <&osc24M>, <&osc16Md512>;
++			clock-names = "apb", "hosc", "losc";
+ 			gpio-controller;
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
+@@ -214,7 +224,8 @@
+ 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&osc24M>;
++			clocks = <&ccu 53>;
++			resets = <&ccu 40>;
+ 			status = "disabled";
+ 		};
  
- /**
-+ * devm_clk_bulk_get - managed get multiple clk consumers
-+ * @dev: device for clock "consumer"
-+ * @num_clks: the number of clk_bulk_data
-+ * @clks: the clk_bulk_data table of consumer
-+ *
-+ * Return 0 on success, an errno on failure.
-+ *
-+ * This helper function allows drivers to get several clk
-+ * consumers in one operation with management, the clks will
-+ * automatically be freed when the device is unbound.
-+ */
-+int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
-+				   struct clk_bulk_data *clks);
-+
-+/**
-  * devm_clk_get - lookup and obtain a managed reference to a clock producer.
-  * @dev: device for clock "consumer"
-  * @id: clock consumer ID
-@@ -550,6 +565,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline int devm_clk_bulk_get(struct device *dev, int num_clks,
-+				    struct clk_bulk_data *clks)
-+{
-+	return 0;
-+}
-+
- static inline struct clk *devm_get_clk_from_child(struct device *dev,
- 				struct device_node *np, const char *con_id)
- {
 -- 
-2.7.4
+2.11.0
