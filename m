@@ -1,91 +1,69 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1494252233-21074-2-git-send-email-aisheng.dong@nxp.com>
-References: <1494252233-21074-1-git-send-email-aisheng.dong@nxp.com> <1494252233-21074-2-git-send-email-aisheng.dong@nxp.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 8 May 2017 17:08:46 +0200
-Message-ID: <CAMuHMdVDOor0E2cjEKO+=Pm+1MGO4BibGTdULPvPKd390fTxuw@mail.gmail.com>
-Subject: Re: [PATCH V2 1/3] clk: add clk_bulk_get accessories
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Mark Brown <broonie@kernel.org>, yibin.gong@nxp.com,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, anson.huang@nxp.com,
-	ping.bai@nxp.com, Leonard Crestez <leonard.crestez@nxp.com>, octavian.purdila@nxp.com,
-	Russell King <linux@armlinux.org.uk>, Florian Fainelli <f.fainelli@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 17/20] dt-bindings: display: sun4i: Add allwinner,tcon-channel property
+Date: Wed,  3 May 2017 13:59:54 +0200
+Message-Id: <2f00be9d75b68090ffed30654be65132a156a317.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dong,
+The Allwinner Timings Controller has two, mutually exclusive, channels.
+When the binding has been introduced, it was assumed that there would be
+only a single user per channel in the system.
 
-On Mon, May 8, 2017 at 4:03 PM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
-> --- /dev/null
-> +++ b/drivers/clk/clk-bulk.c
-> @@ -0,0 +1,165 @@
+While this is likely for the channel 0 which only connects to LCD displays,
+it turns out that the channel 1 can be connected to multiple controllers in
+the SoC (HDMI and TV encoders for example). And while the simultaneous use
+of HDMI and TV outputs cannot be achieved, switching from one to the other
+at runtime definitely sounds plausible.
 
-> +int __must_check clk_bulk_get(struct device *dev, int num_clks,
-> +                             struct clk_bulk_data *clks)
-> +{
-> +       int ret;
-> +       int i;
-> +
-> +       for (i = 0; i < num_clks; i++)
-> +               clks[i].clk = NULL;
-> +
-> +       for (i = 0; i < num_clks; i++) {
-> +               clks[i].clk = clk_get(dev, clks[i].id);
-> +               if (IS_ERR(clks[i].clk)) {
-> +                       ret = PTR_ERR(clks[i].clk);
-> +                       dev_err(dev, "Failed to get clk '%s': %d\n",
-> +                               clks[i].id, ret);
-> +                       clks[i].clk = NULL;
-> +                       goto err;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +
-> +err:
-> +       while (--i >= 0)
-> +               clk_put(clks[i].clk);
+Add an extra property, allwinner,tcon-channel, to specify for a given
+endpoint which TCON channel it is connected to, while falling back to the
+previous mechanism if that property is missing.
 
-These are released in inverse order, which is good.
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 11 ++++---
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-> +
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL(clk_bulk_get);
-> +
-> +void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
-> +{
-> +       int i;
-> +
-> +       for (i = 0; i < num_clks; i++) {
-> +               clk_put(clks[i].clk);
-> +               clks[i].clk = NULL;
-
-These aren't.
-
-Typically resources are released in the inverse order. Not doing so may
-cause subtle issues.
-
-I can't come up with an example. but I'm quite sure the real world will find
-one soon ;-)
-
-The same is true for enable vs. disable, and prepare vs. unprepare.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 91ce2c920750..acdc0c17c00e 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -75,10 +75,13 @@ Required properties:
+   Documentation/devicetree/bindings/media/video-interfaces.txt. The
+   first port should be the input endpoint, the second one the output
+ 
+-  The output should have two endpoints. The first is the block
+-  connected to the TCON channel 0 (usually a panel or a bridge), the
+-  second the block connected to the TCON channel 1 (usually the TV
+-  encoder)
++  The output may have multiple endpoints. The TCON has two channels,
++  usually with the first channel being used for the panels interfaces
++  (RGB, LVDS, etc.), and the second being used for the outputs that
++  require another controller (TV Encoder, HDMI, etc.). The endpoints
++  will take an extra property, allwinner,tcon-channel, to specify the
++  channel the endpoint is associated to. If that property is not
++  present, the endpoint number will be used as the channel number.
+ 
+ On SoCs other than the A33, there is one more clock required:
+    - 'tcon-ch1': The clock driving the TCON channel 1
+-- 
+git-series 0.8.11
