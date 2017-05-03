@@ -1,90 +1,58 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-MIME-Version: 1.0
-In-Reply-To: <20170504135006.16483-11-icenowy@aosc.io>
-References: <20170504135006.16483-1-icenowy@aosc.io>
- <20170504135006.16483-11-icenowy@aosc.io>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 11 May 2017 15:44:54 +0200
-Message-ID: <CACRpkdYg7jLymwi14BMJ3p6oeOwjt+PLzQFC1S8e01v9dtw3=w@mail.gmail.com>
-Subject: Re: [PATCH v2 10/10] ARM: dts: sun8i: Add board dts file for Banana
- Pi M2 Ultra
-To: Icenowy Zheng <icenowy@aosc.io>, Eric Anholt <eric@anholt.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- linux-sunxi <linux-sunxi@googlegroups.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
- Icenowy Zheng <icenowy@aosc.xyz>,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <maxime.ripard@free-electrons.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Daniel Vetter <daniel.vetter@intel.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 12/20] drm/sun4i: tcon: Fix tcon channel 1 backporch calculation
+Date: Wed,  3 May 2017 13:59:49 +0200
+Message-Id: <c742fe1641de0a5a8ce83c1dbcb8df79f953a19e.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
+References: <cover.d697f34bb7b0605c5e76cbc4167a64453e5e0984.1493812478.git-series.maxime.ripard@free-electrons.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 4, 2017 at 3:50 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+It seems like what's called a backporch in the datasheet is actually the
+backporch plus the sync period. Fix that in our driver.
 
-> From: Chen-Yu Tsai <wens@csie.org>
->
-> The Banana Pi M2 Ultra is an SBC based on the Allwinner R40 SoC. The
-> form factor and position of various connectors, leds and buttons is
-> similar to the Banana Pi M1+, Banana Pi M3, and is exactly the same
-> as the latest Banana Pi M64.
->
-> It features:
->
->   - X-Powers AXP221s PMIC connected to i2c0
->   - 2 GB DDR3 DRAM
->   - 8 GB eMMC
->   - micro SD card slot
->   - DC power jack
->   - HDMI output
->   - MIPI DSI connector
->   - 2x USB 2.0 hosts
->   - 1x USB 2.0 OTG
->   - gigabit ethernet with Realtek RTL8211E transceiver
->   - WiFi/Bluetooth with AP6212 chip, with external antenna connector
->   - SATA and power connectors for native SATA support
->   - camera sensor connector
->   - consumer IR receiver
->   - audio out headphone jack
->   - onboard microphone
->   - red, green, and blue LEDs
->   - debug UART pins
->   - Li-Po battery connector
->   - Raspberry Pi B+ compatible GPIO header
->   - power, reset, and boot control buttons
->
-> This patch adds a dts file that enables debug UART and MMC support.
->
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Eric put a lot of time and effort into naming the GPIO lines on the
-other Pi board.
-
-So please follow the good example and name the GPIO lines on this board
-like in the other rpi boards, should be something like:
-
-&pio {
-    gpio-line-names = "...", "...";
-};
-
-This is very helpful for users.
-
-Yours,
-Linus Walleij
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 1c609d808b86..86a806fae9fb 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -262,7 +262,7 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+ 		     SUN4I_TCON1_BASIC2_Y(mode->crtc_vdisplay));
+ 
+ 	/* Set horizontal display timings */
+-	bp = mode->crtc_htotal - mode->crtc_hsync_end;
++	bp = mode->crtc_htotal - mode->crtc_hsync_start;
+ 	DRM_DEBUG_DRIVER("Setting horizontal total %d, backporch %d\n",
+ 			 mode->htotal, bp);
+ 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC3_REG,
+@@ -270,7 +270,7 @@ void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+ 		     SUN4I_TCON1_BASIC3_H_BACKPORCH(bp));
+ 
+ 	/* Set vertical display timings */
+-	bp = mode->crtc_vtotal - mode->crtc_vsync_end;
++	bp = mode->crtc_vtotal - mode->crtc_vsync_start;
+ 	DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
+ 			 mode->vtotal, bp);
+ 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC4_REG,
+-- 
+git-series 0.8.11
